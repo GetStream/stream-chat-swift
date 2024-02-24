@@ -379,7 +379,7 @@ final class CurrentUserUpdater_Tests: XCTestCase {
 
         // Simulate API error
         let error = TestError()
-        apiClient.test_simulateResponse(Result<EmptyResponse, Error>.failure(error))
+        apiClient.test_simulateResponse(Result<Response, Error>.failure(error))
         apiClient.cleanUp()
 
         // Assert the completion is called with the error
@@ -562,7 +562,7 @@ final class CurrentUserUpdater_Tests: XCTestCase {
             completionCalled = true
         }
 
-        apiClient.test_simulateResponse(Result<EmptyResponse, Error>.success(.init()))
+        apiClient.test_simulateResponse(Result<MarkReadResponse, Error>.success(.init(duration: "")))
 
         // THEN
         AssertAsync.willBeTrue(completionCalled)
@@ -575,7 +575,7 @@ final class CurrentUserUpdater_Tests: XCTestCase {
 
         // WHEN
         currentUserUpdater.markAllRead { completionCalledError = $0 }
-        apiClient.test_simulateResponse(Result<EmptyResponse, Error>.failure(error))
+        apiClient.test_simulateResponse(Result<MarkReadResponse, Error>.failure(error))
 
         // THEN
         AssertAsync.willBeEqual(completionCalledError as? TestError, error)

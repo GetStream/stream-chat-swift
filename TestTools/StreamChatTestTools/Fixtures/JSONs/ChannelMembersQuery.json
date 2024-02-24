@@ -1,6 +1,10 @@
 {
+  "duration": "",
   "members": [
       {
+        "banned": false,
+        "channel_role": "owner",
+        "shadow_banned": false,
         "created_at" : "2020-06-05T12:53:09.862721Z",
         "updated_at" : "2020-06-05T12:53:09.862721Z",
         "role" : "owner",

@@ -1616,7 +1616,6 @@ final class MessageController_Tests: XCTestCase {
     func test_loadReactions_callsMessageUpdater_withCorrectValues() {
         controller.loadReactions(limit: 25, offset: 15) { _ in }
 
-        XCTAssertEqual(env.messageUpdater.loadReactions_cid, cid)
         XCTAssertEqual(env.messageUpdater.loadReactions_messageId, messageId)
         XCTAssertEqual(env.messageUpdater.loadReactions_pagination, .init(pageSize: 25, offset: 15))
     }

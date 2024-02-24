@@ -1,4 +1,5 @@
 {
+  "duration": "",
   "access_token" : "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiYnJva2VuLXdhdGVyZmFsbC01In0.QPeAmdig1KbLwYInW8hwi0XML3kO1M6HH76k4IU0sDg",
   "user" : {
     "id" : "broken-waterfall-5",
@@ -8,6 +9,7 @@
     "banned" : false,
     "online" : true,
     "name" : "Broken Waterfall",
-    "image" : "https:\/\/getstream.io\/random_svg\/?id=broken-waterfall-5&amp;name=Broken+waterfall"
+    "image" : "https:\/\/getstream.io\/random_svg\/?id=broken-waterfall-5&amp;name=Broken+waterfall",
+    "custom" : {}
   }
 }

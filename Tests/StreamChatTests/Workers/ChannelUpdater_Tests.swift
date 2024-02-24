@@ -1926,10 +1926,7 @@ final class ChannelUpdater_Tests: XCTestCase {
             exp.fulfill()
         }
 
-        apiClient.test_simulateResponse(.success(LinkAttachmentPayload(
-            originalURL: url,
-            title: "Google"
-        )))
+        apiClient.test_simulateResponse(.success(GetOGResponse(duration: "", custom: [:], title: "Google")))
 
         wait(for: [exp], timeout: defaultTimeout)
 
@@ -1948,7 +1945,7 @@ final class ChannelUpdater_Tests: XCTestCase {
         }
 
         apiClient
-            .test_simulateResponse(Result<LinkAttachmentPayload, Error>.failure(ClientError()))
+            .test_simulateResponse(Result<GetOGResponse, Error>.failure(ClientError()))
 
         wait(for: [exp], timeout: defaultTimeout)
 

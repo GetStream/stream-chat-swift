@@ -1368,6 +1368,9 @@
           "created_at" : "2020-01-20T19:15:03.911517Z",
           "updated_at" : "2020-01-20T19:15:03.911517Z",
           "role" : "member",
+          "channel_role": "user",
+          "shadow_banned": false,
+          "banned": false,
           "user" : {
             "id" : "broken-waterfall-5",
             "banned" : false,
@@ -1389,6 +1392,9 @@
           }
         },
         {
+          "channel_role": "user",
+"shadow_banned": false,
+          "banned": false,
           "created_at" : "2020-06-04T13:36:37.96589Z",
           "updated_at" : "2020-06-04T13:36:37.96589Z",
           "role" : "member",
@@ -1404,6 +1410,9 @@
           }
         },
         {
+          "channel_role": "user",
+"shadow_banned": false,
+          "banned": false,
           "created_at" : "2020-06-04T13:36:44.793348Z",
           "updated_at" : "2020-06-04T13:36:44.793348Z",
           "role" : "member",
@@ -1419,6 +1428,9 @@
           }
         },
         {
+          "channel_role": "user",
+"shadow_banned": false,
+          "banned": false,
           "created_at" : "2020-06-05T12:55:48.581959Z",
           "updated_at" : "2020-06-05T12:55:48.581959Z",
           "role" : "member",
@@ -1465,6 +1477,7 @@
     {
       "messages" : [
         {
+          "cid": "messaging:general",
           "id" : "bender-e1da3870-79a2-45d6-a89d-241bee64b66f",
           "reaction_counts" : {
             
@@ -1621,6 +1634,7 @@
           "pinned_by": null
         },
         {
+          "cid": "messaging:general",
           "id" : "bender-55243541-7acd-4f26-b4e9-023e6c95b5df",
           "reaction_counts" : {
             
@@ -2412,9 +2426,12 @@
       ],
       "members" : [
         {
+          "banned": false,
           "created_at" : "2019-12-12T15:41:05.025286Z",
           "updated_at" : "2019-12-12T15:41:05.025286Z",
           "role" : "owner",
+          "channel_role": "user",
+"shadow_banned": false,
           "user" : {
             "id" : "broken-waterfall-5",
             "banned" : false,
@@ -2461,6 +2478,7 @@
     {
       "messages" : [
         {
+          "cid": "messaging:general",
           "id" : "11e44a7c-7ace-49e6-aa70-f089fcc6e36d",
           "reaction_counts" : {
             
@@ -2509,6 +2527,7 @@
           "pinned_by": null
         },
         {
+          "cid": "messaging:general",
           "id" : "831eb92b-271e-4da2-80ed-96c8ea1d7910",
           "reaction_counts" : {
             
@@ -2558,6 +2577,7 @@
         },
         {
           "id" : "a08ca6ed-2b95-4baa-b654-9f694e06451a",
+          "cid": "messaging:general",
           "reaction_counts" : {
             
           },
@@ -2606,6 +2626,7 @@
         },
         {
           "id" : "c2e41fda-9fdb-448c-8afb-856e9f7d0769",
+          "cid": "messaging:general",
           "reaction_counts" : {
             
           },
@@ -2654,6 +2675,7 @@
         },
         {
           "id" : "14f533cd-1a70-4680-9f62-082fbe45e8a2",
+          "cid": "messaging:general",
           "reaction_counts" : {
             
           },
@@ -2702,6 +2724,7 @@
         },
         {
           "id" : "6c40df9c-1591-467a-b07f-ccb20431b199",
+          "cid": "messaging:general",
           "reaction_counts" : {
             
           },
@@ -2750,6 +2773,7 @@
         },
         {
           "id" : "f5e328a9-30b4-4c00-b5f4-0cc74626f427",
+          "cid": "messaging:general",
           "reaction_counts" : {
             
           },
@@ -2794,6 +2818,7 @@
         },
         {
           "id" : "ad59e5e7-2092-4b50-b9bf-f46b2bf26145",
+          "cid": "messaging:general",
           "reaction_counts" : {
             
           },
@@ -2838,6 +2863,7 @@
         },
         {
           "id" : "84f77a0e-354a-4407-86a5-a71ad9912b61",
+          "cid": "messaging:general",
           "reaction_counts" : {
             
           },
@@ -2882,6 +2908,7 @@
         },
         {
           "id" : "a7411fd7-d271-46ed-beb9-d095c54d5026",
+          "cid": "messaging:general",
           "reaction_counts" : {
             
           },
@@ -2926,6 +2953,7 @@
         },
         {
           "id" : "09e79c84-8e0d-45f9-a466-aab6c961b460",
+          "cid": "messaging:general",
           "reaction_counts" : {
             
           },
@@ -2970,6 +2998,7 @@
         },
         {
           "id" : "dc6c3a48-7533-43cd-9582-5d0e88f18eaf",
+          "cid": "messaging:general",
           "reaction_counts" : {
             
           },
@@ -3058,6 +3087,7 @@
         },
         {
           "id" : "d39a60c4-7ae8-4b36-acf4-7691ad61d3cb",
+          "cid": "messaging:general",
           "reaction_counts" : {
             
           },
@@ -3102,6 +3132,7 @@
         },
         {
           "id" : "49ec3c79-1abc-4685-941f-54ab36b9666a",
+          "cid": "messaging:general",
           "reaction_counts" : {
             
           },
@@ -3146,6 +3177,7 @@
         },
         {
           "id" : "ae96cb9a-3507-4259-97c1-ea2142b9a579",
+          "cid": "messaging:general",
           "reaction_counts" : {
             
           },
@@ -3192,6 +3224,7 @@
       "pinned_messages": [
           {
             "id" : "jolly-base-0-8b51b803-e44c-4e2f-8178-dce0c1cb5611",
+            "cid": "messaging:general",            
             "reaction_counts" : {
 
             },
@@ -3339,6 +3372,9 @@
           "created_at" : "2020-06-05T12:53:09.862721Z",
           "updated_at" : "2020-06-05T12:53:09.862721Z",
           "role" : "owner",
+          "channel_role": "user",
+"shadow_banned": false,
+          "banned": false,
           "user" : {
             "id" : "broken-waterfall-5",
             "banned" : false,
@@ -3407,6 +3443,7 @@
       "messages" : [
         {
           "id" : "c9ca125d-8aa5-4531-9577-8059b37bdfa5",
+          "cid": "messaging:general",
           "reaction_counts" : {
             
           },
@@ -3451,6 +3488,7 @@
         },
         {
           "id" : "816f3adf-adda-4bb8-a0ee-d541558a2a35",
+          "cid": "messaging:general",
           "reaction_counts" : {
             
           },
@@ -3495,6 +3533,7 @@
         },
         {
           "id" : "506edce7-1b8d-4167-9c40-53e85ebaf1ea",
+          "cid": "messaging:general",
           "reaction_counts" : {
             
           },
@@ -3539,6 +3578,7 @@
         },
         {
           "id" : "f3892fda-cece-4652-ab48-6a140b43f115",
+          "cid": "messaging:general",
           "reaction_counts" : {
             
           },
@@ -3583,6 +3623,7 @@
         },
         {
           "id" : "48525631-2ed0-4726-a5f5-57438eb673e0",
+          "cid": "messaging:general",
           "reaction_counts" : {
             
           },
@@ -3627,6 +3668,7 @@
         },
         {
           "id" : "9c9013e7-5210-472a-9d1b-25f2391a2ce6",
+          "cid": "messaging:general",
           "reaction_counts" : {
             
           },
@@ -3671,6 +3713,7 @@
         },
         {
           "id" : "857ebebf-8815-424a-a55e-2ca57499ec8e",
+          "cid": "messaging:general",
           "reaction_counts" : {
             
           },
@@ -3715,6 +3758,7 @@
         },
         {
           "id" : "fca830e1-cfd5-42f1-a35d-47e37739d6e7",
+          "cid": "messaging:general",
           "reaction_counts" : {
             
           },
@@ -3759,6 +3803,7 @@
         },
         {
           "id" : "d629eaad-18e3-4fc0-b634-9c525c1b7622",
+          "cid": "messaging:general",
           "reaction_counts" : {
             
           },
@@ -3803,6 +3848,7 @@
         },
         {
           "id" : "957f1472-cbe4-42f1-b11d-1b84d08b6419",
+          "cid": "messaging:general",
           "reaction_counts" : {
             
           },
@@ -3847,6 +3893,7 @@
         },
         {
           "id" : "e50dad23-bcd2-4349-9424-65c429a53f66",
+          "cid": "messaging:general",
           "reaction_counts" : {
             
           },
@@ -3891,6 +3938,7 @@
         },
         {
           "id" : "c74a442f-5ff1-4268-b646-5d06ffa0244e",
+          "cid": "messaging:general",
           "reaction_counts" : {
             
           },
@@ -3935,6 +3983,7 @@
         },
         {
           "id" : "8aa90b87-5e7a-4d73-9b66-799495b8dd4d",
+          "cid": "messaging:general",
           "reaction_counts" : {
             
           },
@@ -3979,6 +4028,7 @@
         },
         {
           "id" : "0e310948-f236-4bbe-886c-6db10d067bf5",
+          "cid": "messaging:general",
           "reaction_counts" : {
             
           },
@@ -4023,6 +4073,7 @@
         },
         {
           "id" : "741db1f4-9856-414b-be39-a98eb32e9a18",
+          "cid": "messaging:general",
           "reaction_counts" : {
             
           },
@@ -4067,6 +4118,7 @@
         },
         {
           "id" : "8f45fa48-9c3c-4652-a534-2c54ace399ad",
+          "cid": "messaging:general",
           "reaction_counts" : {
             
           },
@@ -4111,6 +4163,7 @@
         },
         {
           "id" : "9f695cc0-0e15-445e-897d-be3f2adbc556",
+          "cid": "messaging:general",
           "reaction_counts" : {
             
           },
@@ -4155,6 +4208,7 @@
         },
         {
           "id" : "0511251f-c8c1-4ec3-a887-c99bf4876bfb",
+          "cid": "messaging:general",
           "reaction_counts" : {
             
           },
@@ -4201,6 +4255,7 @@
       "pinned_messages": [
           {
             "id" : "jolly-base-0-8b51b803-e44c-4e2f-8178-dce0c1cb5611",
+            "cid": "messaging:general",            
             "reaction_counts" : {
 
             },
@@ -4348,6 +4403,9 @@
           "created_at" : "2020-06-08T11:57:36.664052Z",
           "updated_at" : "2020-06-08T11:57:36.664052Z",
           "role" : "owner",
+          "channel_role": "user",
+"shadow_banned": false,
+          "banned": false,
           "user" : {
             "id" : "broken-waterfall-5",
             "banned" : false,
@@ -5093,6 +5151,9 @@
           "created_at" : "2020-06-08T11:52:39.734117Z",
           "updated_at" : "2020-06-08T11:52:39.734117Z",
           "role" : "owner",
+          "channel_role": "user",
+"shadow_banned": false,
+          "banned": false,
           "user" : {
             "id" : "broken-waterfall-5",
             "banned" : false,
@@ -5441,6 +5502,9 @@
           "created_at" : "2020-06-08T11:51:12.274612Z",
           "updated_at" : "2020-06-08T11:51:12.274612Z",
           "role" : "owner",
+          "channel_role": "user",
+"shadow_banned": false,
+          "banned": false,
           "user" : {
             "id" : "broken-waterfall-5",
             "banned" : false,
@@ -5732,6 +5796,9 @@
           "created_at" : "2020-06-08T11:50:51.392009Z",
           "updated_at" : "2020-06-08T11:50:51.392009Z",
           "role" : "owner",
+          "channel_role": "user",
+"shadow_banned": false,
+          "banned": false,
           "user" : {
             "id" : "broken-waterfall-5",
             "banned" : false,
@@ -6049,6 +6116,9 @@
           "created_at" : "2020-06-08T11:49:28.889886Z",
           "updated_at" : "2020-06-08T11:49:28.889886Z",
           "role" : "owner",
+          "channel_role": "user",
+"shadow_banned": false,
+          "banned": false,
           "user" : {
             "id" : "broken-waterfall-5",
             "banned" : false,
@@ -6379,6 +6449,9 @@
           "created_at" : "2020-06-06T02:32:06.864569Z",
           "updated_at" : "2020-06-06T02:32:06.864569Z",
           "role" : "owner",
+          "channel_role": "user",
+"shadow_banned": false,
+          "banned": false,
           "user" : {
             "id" : "broken-waterfall-5",
             "banned" : false,
@@ -6419,6 +6492,9 @@
         "created_at" : "2020-06-06T02:32:06.864569Z",
         "updated_at" : "2020-06-06T02:32:06.864569Z",
         "role" : "channel_member",
+        "channel_role": "user",
+"shadow_banned": false,
+        "banned": false,
         "user" : {
           "id" : "broken-waterfall-5",
           "banned" : false,
@@ -7705,6 +7781,9 @@
           "created_at" : "2019-12-13T14:29:33.360061Z",
           "updated_at" : "2019-12-13T14:29:33.360061Z",
           "role" : "owner",
+          "channel_role": "user",
+"shadow_banned": false,
+          "banned": false,
           "user" : {
             "id" : "broken-waterfall-5",
             "banned" : false,
@@ -7751,6 +7830,9 @@
         "created_at" : "2019-12-13T14:29:33.360061Z",
         "updated_at" : "2019-12-13T14:29:33.360061Z",
         "role" : "channel_member",
+        "channel_role": "user",
+"shadow_banned": false,
+        "banned": false,
         "user" : {
           "id" : "broken-waterfall-5",
           "banned" : false,
@@ -8112,6 +8194,9 @@
           "created_at" : "2020-06-04T14:53:35.139416Z",
           "updated_at" : "2020-06-04T14:53:35.139416Z",
           "role" : "owner",
+          "channel_role": "user",
+"shadow_banned": false,
+          "banned": false,
           "user" : {
             "id" : "broken-waterfall-5",
             "banned" : false,
@@ -9436,6 +9521,9 @@
           "created_at" : "2019-12-16T15:19:47.270346Z",
           "updated_at" : "2019-12-16T15:19:47.270346Z",
           "role" : "owner",
+          "channel_role": "user",
+"shadow_banned": false,
+          "banned": false,
           "user" : {
             "id" : "broken-waterfall-5",
             "banned" : false,
@@ -11210,6 +11298,9 @@
           "created_at" : "2019-12-12T20:41:06.191606Z",
           "updated_at" : "2019-12-12T20:41:06.191606Z",
           "role" : "owner",
+          "channel_role": "user",
+"shadow_banned": false,
+          "banned": false,
           "user" : {
             "id" : "bender",
             "banned" : false,
@@ -11660,6 +11751,9 @@
           "created_at" : "2020-05-18T02:33:45.574394Z",
           "updated_at" : "2020-05-18T02:33:45.574394Z",
           "role" : "owner",
+          "channel_role": "user",
+"shadow_banned": false,
+          "banned": false,
           "user" : {
             "id" : "broken-waterfall-5",
             "banned" : false,
@@ -11975,6 +12069,9 @@
           "created_at" : "2020-05-17T02:33:45.586276Z",
           "updated_at" : "2020-05-17T02:33:45.586276Z",
           "role" : "owner",
+          "channel_role": "user",
+"shadow_banned": false,
+          "banned": false,
           "user" : {
             "id" : "broken-waterfall-5",
             "banned" : false,
@@ -12187,6 +12284,9 @@
           "created_at" : "2020-05-17T02:33:12.373057Z",
           "updated_at" : "2020-05-17T02:33:12.373057Z",
           "role" : "owner",
+          "channel_role": "user",
+"shadow_banned": false,
+          "banned": false,
           "user" : {
             "id" : "broken-waterfall-5",
             "banned" : false,
@@ -12399,6 +12499,9 @@
           "created_at" : "2020-05-17T02:32:06.96436Z",
           "updated_at" : "2020-05-17T02:32:06.96436Z",
           "role" : "owner",
+          "channel_role": "user",
+"shadow_banned": false,
+          "banned": false,
           "user" : {
             "id" : "broken-waterfall-5",
             "banned" : false,
@@ -12714,6 +12817,9 @@
           "created_at" : "2020-05-17T02:30:58.05297Z",
           "updated_at" : "2020-05-17T02:30:58.05297Z",
           "role" : "owner",
+          "channel_role": "user",
+"shadow_banned": false,
+          "banned": false,
           "user" : {
             "id" : "broken-waterfall-5",
             "banned" : false,
@@ -13407,6 +13513,9 @@
           "created_at" : "2020-05-15T02:42:18.263412Z",
           "updated_at" : "2020-05-15T02:42:18.263412Z",
           "role" : "owner",
+          "channel_role": "user",
+"shadow_banned": false,
+          "banned": false,
           "user" : {
             "id" : "broken-waterfall-5",
             "banned" : false,

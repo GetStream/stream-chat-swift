@@ -306,6 +306,7 @@ final class IdentifiablePayload_Tests: XCTestCase {
             let cid = ChannelId(type: .messaging, id: "channel-\(channelIndex)")
             let channelDetail = ChannelResponse.dummy(
                 cid: cid,
+                createdBy: users.randomElement()!,
                 members: users.map { user in
                     ChannelMember(
                         banned: false,
@@ -332,6 +333,7 @@ final class IdentifiablePayload_Tests: XCTestCase {
                 let messageAuthor = users[channelIndex]
                 return Message.dummy(
                     messageId: messageId,
+                    threadParticipants: [],
                     authorUserId: messageAuthor.id,
                     latestReactions: (0..<messageReactionsCount).map { _ in
                         Reaction(
@@ -341,8 +343,8 @@ final class IdentifiablePayload_Tests: XCTestCase {
                             type: "like",
                             updatedAt: .unique,
                             custom: [:],
-                            userId: messageAuthor.id,
-                            user: messageAuthor
+                            userId: users[0].id,
+                            user: users[0]
                         )
                     },
                     ownReactions: (0..<messageReactionsCount).map { _ in
@@ -353,12 +355,13 @@ final class IdentifiablePayload_Tests: XCTestCase {
                             type: "love",
                             updatedAt: .unique,
                             custom: [:],
-                            userId: messageAuthor.id,
-                            user: messageAuthor
+                            userId: users[0].id,
+                            user: users[0]
                         )
                     },
                     createdAt: messageCreatedDate,
-                    cid: cid
+                    cid: cid,
+                    mentionedUsers: []
                 )
             }
 

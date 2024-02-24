@@ -57,7 +57,19 @@ final class EventSender_Tests: XCTestCase {
         XCTAssertFalse(completionCalled)
 
         // Simulate API response with success
-        apiClient.test_simulateResponse(Result<EmptyResponse, Error>.success(.init()))
+        let event = EventResponse(
+            duration: "",
+            event: .typeMessageReadEvent(
+                .init(
+                    channelId: .unique,
+                    channelType: "messaging",
+                    cid: .unique,
+                    createdAt: .unique,
+                    type: EventType.messageRead.rawValue
+                )
+            )
+        )
+        apiClient.test_simulateResponse(Result<EventResponse, Error>.success(event))
 
         // Assert completion is called
         AssertAsync.willBeTrue(completionCalled)
@@ -72,7 +84,7 @@ final class EventSender_Tests: XCTestCase {
 
         // Simulate API response with failure
         let error = TestError()
-        apiClient.test_simulateResponse(Result<EmptyResponse, Error>.failure(error))
+        apiClient.test_simulateResponse(Result<EventResponse, Error>.failure(error))
 
         // Assert the completion is called with the error
         AssertAsync.willBeEqual(completionCalledError as? TestError, error)

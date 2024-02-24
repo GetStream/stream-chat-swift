@@ -1,4 +1,5 @@
 {
+  "duration" : "",
   "access_token" : "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiYnJva2VuLXdhdGVyZmFsbC01In0.QPeAmdig1KbLwYInW8hwi0XML3kO1M6HH76k4IU0sDg",
   "user" : {
     "id" : "broken-waterfall-5",
@@ -7,6 +8,9 @@
     "updated_at" : "2020-06-10T14:11:29.946106Z",
     "banned" : false,
     "online" : true,
-    "company" : "getstream.io"
+    "company" : "getstream.io",
+    "custom": {
+        "company" : "getstream.io"        
+    }
   }
 }

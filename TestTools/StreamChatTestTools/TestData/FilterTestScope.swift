@@ -42,7 +42,7 @@ extension String {
     }
 
     func deserializeFilterThrows<Scope: FilterScope>() throws -> Filter<Scope> {
-        try JSONDecoder.default.decode(Filter<Scope>.self, from: data(using: .utf8)!)
+        try TestJSONDecoder.shared.decode(Filter<Scope>.self, from: data(using: .utf8)!)
     }
 }
 
@@ -205,5 +205,51 @@ extension FilterCodingTestPair {
         let json = "{\"test_key_Int\":{\"$exists\":\(exists)}}"
         let filter: Filter<FilterTestScope> = .exists(.testKeyInt, exists: exists)
         return FilterCodingTestPair(json: json, filter: filter)
+    }
+}
+
+final class TestJSONDecoder: JSONDecoder {
+    let iso8601formatter: ISO8601DateFormatter
+    let dateCache: NSCache<NSString, NSDate>
+    
+    static let shared = TestJSONDecoder()
+
+    override convenience init() {
+        let iso8601formatter = ISO8601DateFormatter()
+        iso8601formatter.formatOptions = [.withFractionalSeconds, .withInternetDateTime]
+
+        let dateCache = NSCache<NSString, NSDate>()
+        dateCache.countLimit = 5000 // We cache at most 5000 dates, which gives good enough performance
+
+        self.init(dateFormatter: iso8601formatter, dateCache: dateCache)
+    }
+
+    init(dateFormatter: ISO8601DateFormatter, dateCache: NSCache<NSString, NSDate>) {
+        iso8601formatter = dateFormatter
+        self.dateCache = dateCache
+
+        super.init()
+
+        dateDecodingStrategy = .custom { [weak self] decoder throws -> Date in
+            let container = try decoder.singleValueContainer()
+            let dateString: String = try container.decode(String.self)
+
+            if let date = self?.dateCache.object(forKey: dateString as NSString) {
+                return date.bridgeDate
+            }
+
+            if let date = self?.iso8601formatter.date(from: dateString) {
+                self?.dateCache.setObject(date.bridgeDate, forKey: dateString as NSString)
+                return date
+            }
+
+            if let date = DateFormatter.Stream.rfc3339Date(from: dateString) {
+                self?.dateCache.setObject(date.bridgeDate, forKey: dateString as NSString)
+                return date
+            }
+
+            // Fail
+            throw DecodingError.dataCorruptedError(in: container, debugDescription: "Invalid date: \(dateString)")
+        }
     }
 }

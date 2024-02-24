@@ -1,5 +1,7 @@
 {
   "member" : {
+    "channel_role": "user",
+    "shadow_banned": false,
     "banned" : false,
     "shadow_banned" : false,
     "created_at" : "2021-04-23T10:42:21.146483Z",

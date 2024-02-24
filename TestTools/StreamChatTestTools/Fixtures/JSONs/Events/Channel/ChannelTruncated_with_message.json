@@ -169,6 +169,7 @@
   "channel_id" : "8372DE11-E",
   "created_at" : "2022-02-16T08:20:13.883558691Z",
   "message" : {
+    "deleted_reply_count": 0,
     "updated_at" : "2022-02-16T08:20:13.863494Z",
     "reply_count" : 0,
     "html" : "<p>Channel truncated<\/p>\n",

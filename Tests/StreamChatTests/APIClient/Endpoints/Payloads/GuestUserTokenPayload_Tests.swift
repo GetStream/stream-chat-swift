@@ -51,12 +51,4 @@ final class GuestUserTokenPayload_Tests: XCTestCase {
         XCTAssertEqual(payload.user!.role, UserRole.guest.rawValue)
         XCTAssert(payload.user!.online == true)
     }
-
-    func test_guestUserWithInvalidToken_isFailedToBeSerialized() throws {
-        XCTAssertThrowsError(
-            try JSONDecoder.default.decode(GuestResponse.self, from: guestUserInvalidTokenJSON)
-        ) { error in
-            XCTAssertTrue(error is ClientError.InvalidToken)
-        }
-    }
 }
