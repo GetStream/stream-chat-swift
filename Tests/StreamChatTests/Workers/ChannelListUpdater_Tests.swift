@@ -463,7 +463,7 @@ final class ChannelListUpdater_Tests: XCTestCase {
 
         XCTAssertFalse(completionCalled)
 
-        apiClient.test_simulateResponse(Result<EmptyResponse, Error>.success(.init()))
+        apiClient.test_simulateResponse(Result<MarkReadResponse, Error>.success(.init(duration: "")))
 
         AssertAsync.willBeTrue(completionCalled)
     }
@@ -473,7 +473,7 @@ final class ChannelListUpdater_Tests: XCTestCase {
         listUpdater.markAllRead { completionCalledError = $0 }
 
         let error = TestError()
-        apiClient.test_simulateResponse(Result<EmptyResponse, Error>.failure(error))
+        apiClient.test_simulateResponse(Result<MarkReadResponse, Error>.failure(error))
 
         AssertAsync.willBeEqual(completionCalledError as? TestError, error)
     }

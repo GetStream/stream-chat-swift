@@ -3,11 +3,12 @@
     "channel_id" : "general",
     "created_at" : "2020-07-21T14:47:57.138121907Z",
     "total_unread_count" : 3,
+    "hard_delete" : false,
     "message" : {
         "cid" : "messaging:general",
         "deleted_reply_count" : 0,
         "shadowed" : false,
-        "id" : "042772db-4af2-460d-beaa-1e49d1b8e3b9",
+        "id" : "1ff9f6d0-df70-4703-aef0-379f95ad7366",
         "reaction_counts" : {},
         "silent" : false,
         "created_at" : "2020-07-21T14:47:57.127921Z",
@@ -55,6 +56,7 @@
     },
     "unread_count" : 3,
     "unread_channels" : 3,
-    "type" : "notification.message_new",
+    "watcher_count": 0,
+    "type" : "message.new",
     "cid" : "messaging:general"
 }

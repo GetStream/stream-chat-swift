@@ -163,13 +163,12 @@ final class ChannelVisibilityEventMiddleware_Tests: XCTestCase {
         let cid: ChannelId = .unique
 
         // Create the event
-        let event = ChannelHiddenEvent(
+        let event = ChannelVisibleEvent(
             channelId: cid.id,
             channelType: cid.type.rawValue,
             cid: cid.rawValue,
-            clearHistory: false,
             createdAt: .unique,
-            type: EventType.channelHidden.rawValue,
+            type: EventType.channelVisible.rawValue,
             user: .dummy(userId: .unique)
         )
 
@@ -265,7 +264,7 @@ final class ChannelVisibilityEventMiddleware_Tests: XCTestCase {
             createdAt: .unique,
             type: EventType.notificationMessageNew.rawValue,
             message: .dummy(messageId: .unique, authorUserId: .unique),
-            channel: .dummy(cid: .unique)
+            channel: .dummy(cid: cid)
         )
 
         // Create a channel in the DB with `isHidden` set to true

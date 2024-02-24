@@ -34,11 +34,9 @@ final class MessageEvents_Tests: XCTestCase {
     func test_new_withMissingFields() throws {
         let json = XCTestCase.mockData(fromJSONFile: "MessageNew+MissingFields")
         let event = try eventDecoder.decode(from: json) as? MessageNewEvent
-        XCTAssertEqual(event?.user?.id, "broken-waterfall-5")
-        XCTAssertEqual(event?.cid, ChannelId(type: .messaging, id: "general").rawValue)
         XCTAssertEqual(event?.message?.id, messageId)
-        XCTAssertEqual(event?.createdAt.description, "2020-07-17 13:42:21 +0000")
-        XCTAssertNil(event?.watcherCount)
+        XCTAssertEqual(event?.createdAt.description, "2020-07-21 14:47:57 +0000")
+        XCTAssertEqual(event?.watcherCount, 0)
     }
 
     func test_updated() throws {

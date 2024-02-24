@@ -57,5 +57,6 @@
         "pinned_by": null
     },
     "type" : "message.deleted",
-    "cid" : "messaging:general"
+    "cid" : "messaging:general",
+    "hard_delete" : false
 }

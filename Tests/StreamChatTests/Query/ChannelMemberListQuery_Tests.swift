@@ -211,8 +211,8 @@ final class ChannelMemberListQuery_Tests: XCTestCase {
 
     func test_sortingByName_ascending() throws {
         // Declare some channel member payloads
-        let member1: ChannelMember = .dummy(user: .dummy(userId: .unique, name: "A"))
-        let member2: ChannelMember = .dummy(user: .dummy(userId: .unique, name: "B"))
+        let member1: ChannelMember = .dummy(user: .dummy(userId: .unique, extraData: ["name": "A"]))
+        let member2: ChannelMember = .dummy(user: .dummy(userId: .unique, extraData: ["name": "B"]))
 
         // Declare channel payload
         let cid = ChannelId.unique
@@ -263,14 +263,14 @@ final class ChannelMemberListQuery_Tests: XCTestCase {
     func test_sortingByName_descending() throws {
         // Declare some channel member payloads
         let member1: ChannelMember = .dummy(
-            user: .dummy(userId: .unique, name: "A")
+            user: .dummy(userId: .unique, extraData: ["name": "A"])
         )
         let member2: ChannelMember = .dummy(
-            user: .dummy(userId: .unique, name: "B"),
+            user: .dummy(userId: .unique, extraData: ["name": "B"]),
             createdAt: member1.createdAt.addingTimeInterval(10)
         )
         let member3: ChannelMember = .dummy(
-            user: .dummy(userId: .unique, name: "B"),
+            user: .dummy(userId: .unique, extraData: ["name": "B"]),
             createdAt: member1.createdAt.addingTimeInterval(-10)
         )
 
@@ -328,14 +328,14 @@ final class ChannelMemberListQuery_Tests: XCTestCase {
     func test_sortingByNameThenCreatedAt() throws {
         // Declare some channel member payloads
         let member1: ChannelMember = .dummy(
-            user: .dummy(userId: .unique, name: "A")
+            user: .dummy(userId: .unique, extraData: ["name": "A"])
         )
         let member2: ChannelMember = .dummy(
-            user: .dummy(userId: .unique, name: "B"),
+            user: .dummy(userId: .unique, extraData: ["name": "B"]),
             createdAt: member1.createdAt.addingTimeInterval(10)
         )
         let member3: ChannelMember = .dummy(
-            user: .dummy(userId: .unique, name: "B"),
+            user: .dummy(userId: .unique, extraData: ["name": "B"]),
             createdAt: member1.createdAt.addingTimeInterval(-10)
         )
 
@@ -350,9 +350,8 @@ final class ChannelMemberListQuery_Tests: XCTestCase {
         )
 
         // Declare channel list query sorting by `name` and `createdAt`
-        let cid = ChannelId.unique
         let memberListQuery = ChannelMemberListQuery(
-            cid: cid,
+            cid: try ChannelId(cid: channel.cid),
             sort: [
                 .init(key: .name, isAscending: true),
                 .init(key: .createdAt, isAscending: true)

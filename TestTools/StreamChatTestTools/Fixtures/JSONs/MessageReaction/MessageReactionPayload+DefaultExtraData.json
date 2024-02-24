@@ -21,5 +21,6 @@
         "total_unread_count" : 0,
         "online" : true,
         "name" : "John Doe"
-    }
+    },
+    "custom" : {}
 }
