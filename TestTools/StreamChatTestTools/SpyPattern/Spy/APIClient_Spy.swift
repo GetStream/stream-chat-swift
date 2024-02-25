@@ -137,6 +137,18 @@ final class APIClient_Spy: APIClient, Spy {
         _request_allRecordedCalls.mutate { $0.append((request_endpoint!, request_completion!)) }
         request_expectation.fulfill()
     }
+    
+    override func unmanagedRequest<Response: Decodable>(
+        _ request: URLRequest,
+        completion: @escaping (Result<Response, Error>) -> Void
+    ) {
+        unmanagedRequest_endpoint = AnyEndpoint(Endpoint<Data>.dummy())
+        unmanagedRequest_completion = completion
+        _unmanagedRequest_allRecordedCalls.mutate { $0.append((unmanagedRequest_endpoint!, unmanagedRequest_completion!)) }
+        if let result = unmanagedRequest_result as? Result<Response, Error> {
+            completion(result)
+        }
+    }
 
     func recoveryRequest<Response>(
         endpoint: Endpoint<Response>,

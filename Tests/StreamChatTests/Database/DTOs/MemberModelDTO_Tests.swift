@@ -48,7 +48,9 @@ final class MemberModelDTO_Tests: XCTestCase {
             channelRole: "moderator",
             createdAt: .unique,
             shadowBanned: true,
-            updatedAt: .unique
+            updatedAt: .unique,
+            userId: userId,
+            user: userPayload
         )
 
         // Asynchronously save the payload to the db
@@ -94,6 +96,7 @@ final class MemberModelDTO_Tests: XCTestCase {
             createdAt: .unique,
             shadowBanned: true,
             updatedAt: .unique,
+            userId: userId,
             user: userPayload
         )
 

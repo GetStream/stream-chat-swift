@@ -13,6 +13,7 @@ final class AuthenticationRepository_Tests: XCTestCase {
     private var database: DatabaseContainer_Spy!
     private var connectionRepository: ConnectionRepository_Mock!
     private var retryStrategy: RetryStrategy_Spy!
+    let tokenValue = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoibHVrZV9za3l3YWxrZXIifQ._ylrPoIuYe68Jfm9fkMY6yiPNd7bOsC8GsICCEHI47k"
 
     override func setUp() {
         super.setUp()
@@ -662,14 +663,11 @@ final class AuthenticationRepository_Tests: XCTestCase {
         waitForExpectations(timeout: defaultTimeout)
         XCTAssertNil(repository.currentToken)
         XCTAssertEqual(receivedError, apiError)
-        let request = try XCTUnwrap(apiClient.unmanagedRequest_endpoint)
-//        XCTAssertEqual(request.path, .guest)
         XCTAssertNotCall(ConnectionRepository_Mock.Signature.connect, on: connectionRepository)
         XCTAssertNotCall(ConnectionRepository_Mock.Signature.forceConnectionInactiveMode, on: connectionRepository)
         XCTAssertEqual(delegate.logoutCallCount, 1)
     }
 
-    // TODO: important to fix
     func test_connectGuestUser_isNotGettingToken_tokenProviderSuccess_connectFailure() throws {
         let userInfo = UserInfo(id: "123")
 
@@ -677,20 +675,22 @@ final class AuthenticationRepository_Tests: XCTestCase {
         repository.delegate = delegate
 
         // Token Provider Success
-        let apiToken = Token.unique()
+        let apiToken = try Token(rawValue: tokenValue)
 
         // Simulate Failure on Connection Repository
         let testError = TestError()
         connectionRepository.connectResult = .failure(testError)
 
         // API Result
-//        apiClient.test_mockUnmanagedResponseResult(
-//            Result<GuestUserTokenPayload, Error>.success(GuestUserTokenPayload(
-//                user: CurrentUserPayload.dummy(userId: "", role: .user),
-//                token: apiToken
-//            )
-//            )
-//        )
+        apiClient.test_mockUnmanagedResponseResult(
+            Result<GuestResponse, Error>.success(
+                GuestResponse(
+                    accessToken: apiToken.rawValue,
+                    duration: "",
+                    user: .dummy(userId: "", role: .user)
+                )
+            )
+        )
 
         let completionExpectation = expectation(description: "Connect completion")
         var receivedError: Error?
@@ -704,8 +704,6 @@ final class AuthenticationRepository_Tests: XCTestCase {
         XCTAssertNotNil(repository.tokenProvider)
         waitForExpectations(timeout: defaultTimeout)
         XCTAssertEqual(repository.currentToken, apiToken)
-        let request = try XCTUnwrap(apiClient.unmanagedRequest_endpoint)
-//        XCTAssertEqual(request.path, .guest)
         XCTAssertEqual(connectionRepository.updateWebSocketEndpointToken, apiToken)
         XCTAssertEqual(connectionRepository.updateWebSocketEndpointUserInfo, userInfo)
         XCTAssertCall(ConnectionRepository_Mock.Signature.connect, on: connectionRepository)
@@ -721,19 +719,21 @@ final class AuthenticationRepository_Tests: XCTestCase {
         repository.delegate = delegate
 
         // Token Provider Success
-        let apiToken = Token.unique()
+        let apiToken = try Token(rawValue: tokenValue)
 
         // Simulate Success on Connection Repository
         connectionRepository.connectResult = .success(())
 
         // API Result
-//        apiClient.test_mockUnmanagedResponseResult(
-//            Result<GuestUserTokenPayload, Error>.success(GuestUserTokenPayload(
-//                user: CurrentUserPayload.dummy(userId: "", role: .user),
-//                token: apiToken
-//            )
-//            )
-//        )
+        apiClient.test_mockUnmanagedResponseResult(
+            Result<GuestResponse, Error>.success(
+                GuestResponse(
+                    accessToken: apiToken.rawValue,
+                    duration: "",
+                    user: .dummy(userId: "", role: .user)
+                )
+            )
+        )
 
         let completionExpectation = expectation(description: "Connect completion")
         var receivedError: Error?
@@ -747,8 +747,6 @@ final class AuthenticationRepository_Tests: XCTestCase {
         XCTAssertNotNil(repository.tokenProvider)
         waitForExpectations(timeout: defaultTimeout)
         XCTAssertEqual(repository.currentToken, apiToken)
-        let request = try XCTUnwrap(apiClient.unmanagedRequest_endpoint)
-//        XCTAssertEqual(request.path, .guest)
         XCTAssertEqual(connectionRepository.updateWebSocketEndpointToken, apiToken)
         XCTAssertEqual(connectionRepository.updateWebSocketEndpointUserInfo, userInfo)
         XCTAssertCall(ConnectionRepository_Mock.Signature.connect, on: connectionRepository)
