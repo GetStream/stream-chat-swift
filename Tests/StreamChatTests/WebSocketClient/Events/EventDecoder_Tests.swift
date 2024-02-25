@@ -108,6 +108,7 @@ final class EventDecoder_Tests: XCTestCase {
             "user" : {
                 "id" : "\(userId)",
                 "banned" : false,
+                "shadow_banned" : false,
                 "created_at" : "2019-12-12T15:33:46.488935Z",
                 "invisible" : false,
                 "unreadChannels" : 0,

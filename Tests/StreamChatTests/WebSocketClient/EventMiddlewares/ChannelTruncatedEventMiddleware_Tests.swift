@@ -68,7 +68,7 @@ final class ChannelTruncatedEventMiddleware_Tests: XCTestCase {
             cid: cid.rawValue,
             createdAt: .unique,
             type: EventType.channelTruncated.rawValue,
-            channel: .dummy(cid: cid)
+            channel: .dummy(cid: cid, truncatedAt: date)
         )
 
         try database.createChannel(cid: cid, withMessages: true, truncatedAt: nil)

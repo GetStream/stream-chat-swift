@@ -653,7 +653,7 @@ final class ChannelDTO_Tests: XCTestCase {
         )
         
         let channelId: ChannelId = .unique
-        let oldPinnedMessage = Message.dummy(authorUserId: dummyUser.id, mentionedUsers: [dummyCurrentUser.toUser])
+        let oldPinnedMessage = Message.dummy(authorUserId: dummyUser.id, createdAt: Date.distantPast, mentionedUsers: [dummyCurrentUser.toUser])
         let payload = dummyPayload(with: channelId, numberOfMessages: 1, pinnedMessages: [oldPinnedMessage])
 
         try database.writeSynchronously { session in
@@ -813,7 +813,7 @@ final class ChannelDTO_Tests: XCTestCase {
     func test_DTO_updateFromSamePayload_doNotProduceChanges() throws {
         // Arrange: Store random channel payload to db
         let channelId: ChannelId = .unique
-        let payload = ChannelResponse.dummy(cid: channelId, createdAt: .unique)
+        let payload = ChannelResponse.dummy(cid: channelId, name: "test", createdAt: .unique)
 
         try database.writeSynchronously { session in
             try session.saveChannel(payload: payload, query: nil, cache: nil)

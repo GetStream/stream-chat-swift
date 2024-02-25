@@ -12,7 +12,11 @@ struct EventDecoder: AnyEventDecoder {
             let response = try decoder.decode(WSEvent.self, from: data)
             return response.rawValue
         } catch is ClientError.UnknownChannelEvent {
-            return try decoder.decode(UnknownChannelEvent.self, from: data)
+            do {
+                return try decoder.decode(UnknownChannelEvent.self, from: data)
+            } catch {
+                return try decoder.decode(UnknownUserEvent.self, from: data)
+            }
         } catch is ClientError.UnknownUserEvent {
             return try decoder.decode(UnknownUserEvent.self, from: data)
         } catch let error as ClientError.IgnoredEventType {

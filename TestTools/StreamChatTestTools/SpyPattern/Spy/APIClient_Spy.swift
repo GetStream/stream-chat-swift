@@ -122,6 +122,7 @@ final class APIClient_Spy: APIClient, Spy {
         isRecoveryOperation: Bool,
         completion: @escaping (Result<Response, Error>) -> Void
     ) where Response : Decodable {
+        request_endpoint = AnyEndpoint(Endpoint<Data>.dummy())
         if isRecoveryOperation {
             recoveryRequest_completion = completion
             recoveryRequest_endpoint = AnyEndpoint(Endpoint<Data>.dummy())
@@ -133,6 +134,7 @@ final class APIClient_Spy: APIClient, Spy {
             completion(result)
         }
         request_completion = completion
+        _request_allRecordedCalls.mutate { $0.append((request_endpoint!, request_completion!)) }
         request_expectation.fulfill()
     }
 

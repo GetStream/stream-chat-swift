@@ -179,8 +179,8 @@ final class MessageEditor_Tests: XCTestCase {
         AssertAsync.willBeTrue(apiClient.request_endpoint != nil)
 
         // Simulate successfull API response
-        let callback = apiClient.request_completion as? (Result<EmptyResponse, Error>) -> Void
-        callback?(.success(.init()))
+        let callback = apiClient.request_completion as? (Result<UpdateMessageResponse, Error>) -> Void
+        callback?(.success(.init(duration: "", message: .dummy())))
 
         // Check the state is eventually changed to `nil`
         AssertAsync.willBeEqual(messageRepository.updatedMessageLocalState, nil)
@@ -205,7 +205,7 @@ final class MessageEditor_Tests: XCTestCase {
         AssertAsync.willBeTrue(apiClient.request_endpoint != nil)
 
         // Simulate API response with the error
-        apiClient.test_simulateResponse(Result<EmptyResponse, Error>.failure(TestError()))
+        apiClient.test_simulateResponse(Result<UpdateMessageResponse, Error>.failure(TestError()))
 
         // Check the state is eventually changed to `syncingFailed`
         AssertAsync.willBeEqual(messageRepository.updatedMessageLocalState, .syncingFailed)

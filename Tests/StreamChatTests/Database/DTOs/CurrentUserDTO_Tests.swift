@@ -70,7 +70,7 @@ final class CurrentUserModelDTO_Tests: XCTestCase {
             ]
         )
 
-        let mutedUserIDs = Set(payload.mutes.map(\.?.user?.id))
+        let mutedUserIDs = Set(payload.mutes.compactMap(\.?.user?.id))
         let mutedChannelIDs = Set(payload.channelMutes.map(\.?.channel?.cid))
 
         // Asynchronously save the payload to the db
