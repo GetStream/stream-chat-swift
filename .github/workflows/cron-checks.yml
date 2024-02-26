@@ -85,6 +85,7 @@ jobs:
     - uses: ./.github/actions/bootstrap
       env:
         INSTALL_ALLURE: true
+        INSTALL_YEETD: true
     - name: Cache iOS Simulator Runtime
       uses: actions/cache@v3
       id: runtime-cache
@@ -170,6 +171,8 @@ jobs:
     steps:
     - uses: actions/checkout@v4.1.1
     - uses: ./.github/actions/bootstrap
+      env:
+        INSTALL_YEETD: true
     - name: Cache iOS Simulator Runtime
       uses: actions/cache@v3
       id: runtime-cache
@@ -182,8 +185,8 @@ jobs:
       timeout-minutes: 60
       run: bundle exec fastlane install_sim ios:"${{ matrix.ios }}"
     - name: Run LLC Tests (Debug)
-      run: bundle exec fastlane test device:"${{ matrix.device }} (${{ matrix.ios }})"
-      timeout-minutes: 40
+      run: bundle exec fastlane test device:"${{ matrix.device }} (${{ matrix.ios }})" cron:true
+      timeout-minutes: 100
     - uses: 8398a7/action-slack@v3
       with:
         status: ${{ job.status }}

@@ -37,7 +37,6 @@ final class ChannelList_Tests: StreamTestCase {
 
         GIVEN("user opens the channel") {
             userRobot
-                .setConnectivitySwitchVisibility(to: .on)
                 .login()
                 .openChannel()
                 .tapOnBackButton()

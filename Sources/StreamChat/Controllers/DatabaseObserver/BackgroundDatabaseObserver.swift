@@ -143,16 +143,18 @@ class BackgroundDatabaseObserver<Item, DTO: NSManagedObject> {
 
     /// This method will add a new operation to the `processingQueue`, where operations are executed one-by-one.
     /// The operation added to the queue will start the process of getting new results for the observer.
-    private func updateItems(changes: [ListChange<Item>]?) {
+    func updateItems(changes: [ListChange<Item>]?, completion: (() -> Void)? = nil) {
         let operation = AsyncOperation { [weak self] _, done in
             guard let self = self else {
                 done(.continue)
+                completion?()
                 return
             }
 
             self.frc.managedObjectContext.perform {
                 self.processItems(changes) {
                     done(.continue)
+                    completion?()
                 }
             }
         }

@@ -121,33 +121,24 @@ open class ChatChannelAvatarView: _View, ThemeProvider, SwiftUIRepresentable {
         completion: @escaping ([UIImage], ChannelId)
             -> Void
     ) {
-        var placeholderAvatars: [UIImage] = []
-
         var placeholderImages = [
             appearance.images.userAvatarPlaceholder1,
             appearance.images.userAvatarPlaceholder2,
             appearance.images.userAvatarPlaceholder3,
             appearance.images.userAvatarPlaceholder4
         ]
-
-        var avatarUrls: [URL] = []
-
-        for url in urls.prefix(maxNumberOfImagesInCombinedAvatar) {
-            if let avatarUrl = url {
-                avatarUrls.append(avatarUrl)
-            } else {
-                placeholderAvatars.append(placeholderImages.removeFirst())
-            }
-        }
-
         let avatarSize = components.avatarThumbnailSize
-        let requests = avatarUrls.map {
-            ImageDownloadRequest(url: $0, options: ImageDownloadOptions(resize: .init(avatarSize)))
-        }
+        let imageProcessor = components.imageProcessor
+        let requests = urls.prefix(maxNumberOfImagesInCombinedAvatar)
+            .compactMap { $0 }
+            .map { ImageDownloadRequest(url: $0, options: ImageDownloadOptions(resize: .init(avatarSize))) }
 
         components.imageLoader.downloadMultipleImages(with: requests) { results in
+            // Scale only placeholders since images already have a correct size
             let imagesMapper = ImageResultsMapper(results: results)
-            let images = imagesMapper.mapErrors(with: placeholderImages)
+            let images = imagesMapper.mapErrors {
+                imageProcessor.scale(image: placeholderImages.removeFirst(), to: avatarSize)
+            }
             completion(images, channelId)
         }
     }
@@ -161,12 +152,8 @@ open class ChatChannelAvatarView: _View, ThemeProvider, SwiftUIRepresentable {
         }
 
         var combinedImage: UIImage?
-
+        let images = avatars
         let imageProcessor = components.imageProcessor
-
-        let images = avatars.map {
-            imageProcessor.scale(image: $0, to: components.avatarThumbnailSize)
-        }
 
         // The half of the width of the avatar
         let size = components.avatarThumbnailSize

@@ -206,8 +206,10 @@ public class ChatMessageSearchController: DataController, DelegateCallable, Data
             }
 
             let error = result.error
-            self.state = error == nil ? .remoteDataFetched : .remoteDataFetchFailed(ClientError(with: error))
             self.callback { completion?(error) }
+            self.messagesObserver?.refreshItems { [weak self] in
+                self?.state = error == nil ? .remoteDataFetched : .remoteDataFetchFailed(ClientError(with: error))
+            }
         }
     }
 

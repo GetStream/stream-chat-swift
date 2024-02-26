@@ -63,8 +63,11 @@ open class ZoomDismissalInteractionController: NSObject, UIViewControllerInterac
                     transitionImageView.removeFromSuperview()
                     animator.transitionImageView = nil
 
-                    transitionContext.cancelInteractiveTransition()
-                    transitionContext.completeTransition(!transitionContext.transitionWasCancelled)
+                    // We should only cancel the transition if it was not cancelled already.
+                    if !transitionContext.transitionWasCancelled {
+                        transitionContext.cancelInteractiveTransition()
+                        transitionContext.completeTransition(false)
+                    }
                 }
             )
         } else {

@@ -21,6 +21,17 @@ class ListDatabaseObserverWrapper<Item, DTO: NSManagedObject> {
         }
     }
 
+    /// This function is only useful with background mapping enabled.
+    /// Since DB updates now happen in a background thread, sometimes we need to
+    /// wait for the updates to do some action, so this function is useful for that.
+    func refreshItems(completion: @escaping () -> Void) {
+        if let background = background {
+            background.updateItems(changes: nil, completion: completion)
+        } else {
+            completion()
+        }
+    }
+
     /// Called with the aggregated changes after the internal `NSFetchResultsController` calls `controllerWillChangeContent`
     /// on its delegate.
     var onWillChange: (() -> Void)? {

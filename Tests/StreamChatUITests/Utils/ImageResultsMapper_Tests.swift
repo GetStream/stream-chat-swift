@@ -128,4 +128,24 @@ final class ImageResultsMapper_Tests: XCTestCase {
             fakePlaceholderImage4
         ])
     }
+    
+    func test_mapErrorsWithPlaceholders_when2ErrorsBut1Placeholder_then1FailingResultIsDropped() {
+        let results: [Result<UIImage, Error>] = [
+            .success(TestImages.chewbacca.image),
+            .failure(MockError()),
+            .failure(MockError()),
+            .success(TestImages.yoda.image)
+        ]
+
+        let mapper = ImageResultsMapper(results: results)
+        let images = mapper.mapErrors(with: [
+            fakePlaceholderImage1
+        ])
+
+        XCTAssertEqual(images, [
+            TestImages.chewbacca.image,
+            fakePlaceholderImage1,
+            TestImages.yoda.image
+        ])
+    }
 }

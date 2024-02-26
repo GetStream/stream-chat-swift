@@ -289,7 +289,7 @@ open class ComposerVC: _ViewController,
 
     open var cooldownTracker: CooldownTracker = CooldownTracker(timer: ScheduledStreamTimer(interval: 1))
 
-    public var enrichUrlDebouncer = Debouncer(0.3, queue: .main)
+    public var enrichUrlDebouncer = Debouncer(0.4, queue: .main)
 
     lazy var linkDetector = TextLinkDetector()
 
@@ -1010,6 +1010,19 @@ open class ComposerVC: _ViewController,
 
         enrichUrlDebouncer.execute { [weak self] in
             self?.channelController?.enrichUrl(link.url) { [weak self] result in
+                let enrichedUrlText = link.url.absoluteString
+                let currentLinks = self?.composerView.inputMessageView.textView.links ?? []
+                guard let currentUrlText = currentLinks.first?.url.absoluteString else {
+                    return
+                }
+
+                // Only show/dismiss enrichment if the current url is still the one
+                // that should be shown. Since we currently do not support
+                // cancelling previous requests, this is the current optimal solution.
+                guard enrichedUrlText == currentUrlText else {
+                    return
+                }
+
                 switch result {
                 case let .success(linkPayload):
                     self?.showLinkPreview(for: linkPayload)

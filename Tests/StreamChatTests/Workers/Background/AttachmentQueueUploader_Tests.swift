@@ -605,6 +605,44 @@ final class AttachmentQueueUploader_Tests: XCTestCase {
             "messaging:dummy-fake-0.txt"
         )
     }
+
+    func test_uploadAttachmentsInParallel() throws {
+        let cid: ChannelId = .unique
+        let messageId: MessageId = .unique
+
+        // Create channel in the database.
+        try database.createChannel(cid: cid, withMessages: false)
+        // Create message in the database.
+        try database.createMessage(id: messageId, cid: cid, localState: .pendingSend)
+
+        let attachmentPayloads: [AnyAttachmentPayload] = [
+            .mockFile,
+            .mockImage,
+            .mockVideo,
+            .mockAudio,
+            .mockVoiceRecording
+        ]
+
+        for (index, envelope) in attachmentPayloads.enumerated() {
+            let attachmentId = AttachmentId(cid: cid, messageId: messageId, index: index)
+            // Seed attachment in `.pendingUpload` state to the database.
+            try database.writeSynchronously { session in
+                try session.createNewAttachment(attachment: envelope, id: attachmentId)
+            }
+
+            // Load attachment from the database.
+            let attachment = try XCTUnwrap(database.viewContext.attachment(id: attachmentId))
+
+            // Assert attachment is in `.pendingUpload` state.
+            XCTAssertEqual(attachment.localState, .pendingUpload)
+        }
+
+        // Attachments start all uploading at the same time.
+        AssertAsync.willBeEqual(
+            apiClient.uploadFile_callCount,
+            attachmentPayloads.count
+        )
+    }
 }
 
 private extension URL {

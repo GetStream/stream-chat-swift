@@ -256,7 +256,6 @@ final class MessageList_Tests: StreamTestCase {
         GIVEN("user opens the channel") {
             backendRobot.generateChannels(count: 1, messagesCount: 40)
             userRobot
-                .setConnectivitySwitchVisibility(to: .on)
                 .login()
                 .openChannel()
         }
@@ -282,7 +281,6 @@ final class MessageList_Tests: StreamTestCase {
         GIVEN("user opens the channel") {
             userRobot
                 .setIsLocalStorageEnabled(to: .on)
-                .setConnectivitySwitchVisibility(to: .on)
                 .login()
                 .openChannel()
         }

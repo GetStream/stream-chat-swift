@@ -4,6 +4,26 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 # Upcoming
 
 ## StreamChat
+### ✅ Added
+- Add parallel attachment uploading [#3034](https://github.com/GetStream/stream-chat-swift/pull/3034)
+### 🐞 Fixed
+- Fix controllers having empty data when state changed to `.remoteDataFetched` with background mapping enabled [#3042](https://github.com/GetStream/stream-chat-swift/pull/3042)
+- Fix showing empty search results with background mapping enabled [#3042](https://github.com/GetStream/stream-chat-swift/pull/3042)
+
+## StreamChatUI
+### 🐞 Fixed
+- Fix composer link preview overridden by previous enrichment [#3025](https://github.com/GetStream/stream-chat-swift/pull/3025)
+- Fix merged avatars changing sub-image locations when opening channel list [#3013](https://github.com/GetStream/stream-chat-swift/pull/3013)
+- Fix native swipe-back gesture overridden by swipe-to-reply [#3029](https://github.com/GetStream/stream-chat-swift/pull/3029)
+- Fix `CGBitmapContextInfoCreate` console log warning when creating merged channel avatars [#3018](https://github.com/GetStream/stream-chat-swift/pull/3018)
+- Slight performance improvement in the message list by caching `NSRegularExpression` in `MarkdownFormatter` [#3020](https://github.com/GetStream/stream-chat-swift/pull/3020)
+- Slight performance improvement in the message list by skipping channel list updates when it is not visible [#3021](https://github.com/GetStream/stream-chat-swift/pull/3021)
+- Fix rare race condition when dismissing the gallery causing the UI to be blocked [#3037](https://github.com/GetStream/stream-chat-swift/pull/3037)
+
+# [4.48.1](https://github.com/GetStream/stream-chat-swift/releases/tag/4.48.1)
+_February 09, 2024_
+
+## StreamChat
 ### 🐞 Fixed
 - Fix `TextLink.url` in `TextLinkDetector` not having the HTTP URL [#3023](https://github.com/GetStream/stream-chat-swift/pull/3023)
 

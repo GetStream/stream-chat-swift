@@ -6,7 +6,7 @@ import Foundation
 import StreamChatUI
 import UIKit
 
-final class DemoChatChannelVC: ChatChannelVC {
+final class DemoChatChannelVC: ChatChannelVC, UIGestureRecognizerDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -17,6 +17,16 @@ final class DemoChatChannelVC: ChatChannelVC {
             action: #selector(debugTap)
         )
         navigationItem.rightBarButtonItems?.append(debugButton)
+
+        // Custom back button to make sure swipe back gesture is not overridden.
+        let customBackButton = UIBarButtonItem(
+            title: "Back",
+            style: .plain,
+            target: self,
+            action: #selector(goBack)
+        )
+        navigationItem.leftBarButtonItems = [customBackButton]
+        navigationController?.interactivePopGestureRecognizer?.delegate = self
     }
 
     @objc private func debugTap() {
@@ -33,5 +43,9 @@ final class DemoChatChannelVC: ChatChannelVC {
         }
 
         channelListVC.demoRouter?.didTapMoreButton(for: cid)
+    }
+
+    @objc private func goBack() {
+        navigationController?.popViewController(animated: true)
     }
 }

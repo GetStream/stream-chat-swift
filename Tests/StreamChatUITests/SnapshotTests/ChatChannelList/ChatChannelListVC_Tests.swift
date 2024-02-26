@@ -307,6 +307,7 @@ final class ChatChannelListVC_Tests: XCTestCase {
         mockedChannelListController.channels_mock = [.mock(cid: .unique)]
         channelListVC.emptyView.isHidden = false
 
+        channelListVC.viewWillAppear(false)
         channelListVC.controller(mockedChannelListController, didChangeChannels: [])
 
         XCTAssertEqual(channelListVC.emptyView.isHidden, true)
@@ -320,6 +321,7 @@ final class ChatChannelListVC_Tests: XCTestCase {
         mockedChannelListController.channels_mock = []
         channelListVC.emptyView.isHidden = true
 
+        channelListVC.viewWillAppear(false)
         channelListVC.controller(mockedChannelListController, didChangeChannels: [])
 
         XCTAssertEqual(channelListVC.emptyView.isHidden, false)
@@ -332,13 +334,15 @@ final class ChatChannelListVC_Tests: XCTestCase {
         mockedChannelListController.channels_mock = [.mock(cid: .unique), .mock(cid: .unique)]
         channelListVC.controller(mockedChannelListController, didChangeChannels: [])
         XCTAssertEqual(channelListVC.skippedRendering, true)
-
+        XCTAssertEqual(channelListVC.skipChannelUpdates, true)
+        
         channelListVC.viewWillAppear(false)
 
         XCTAssertEqual(channelListVC.skippedRendering, false)
+        XCTAssertEqual(channelListVC.skipChannelUpdates, false)
         XCTAssertEqual(channelListVC.reloadChannelsCallCount, 1)
     }
-
+    
     func test_swipeableViewActionViews() {
         mockedChannelListController.channels_mock = [.mock(cid: .unique, ownCapabilities: [.deleteChannel])]
         let channelListVC = ChatChannelListVC()
