@@ -247,6 +247,16 @@ public final class Chat {
         try await loadMessagesInteractor.loadFirstPage(to: state, with: channelQuery)
     }
     
+    // MARK: - Message Rich Content
+    
+    /// Retrieve the link attachment preview for the specified URL.
+    ///
+    /// - Returns: The data present in the [Open Graph metadata](https://ogp.me).
+    /// - Throws: An error while fetching more messages from the Stream API.
+    public func enrichURL(_ url: URL) async throws -> LinkAttachmentPayload {
+        try await channelUpdater.enrichUrl(url)
+    }
+    
     // MARK: - Message Pinning
     
 //    public func pinMessage(_ message: ChatMessage) async throws {
