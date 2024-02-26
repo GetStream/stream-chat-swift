@@ -534,6 +534,26 @@ class MessageDTO: NSManagedObject {
         request.predicate = NSPredicate(format: "localMessageStateRaw == %@", LocalMessageState.sending.rawValue)
         return load(by: request, context: context)
     }
+    
+    static func loadChannelMessage(
+        before id: MessageId,
+        cid: String,
+        deletedMessagesVisibility: ChatClientConfig.DeletedMessageVisibility,
+        shouldShowShadowedMessages: Bool,
+        context: NSManagedObjectContext
+    ) -> MessageDTO? {
+        guard let message = load(id: id, context: context) else { return nil }
+        
+        let request = NSFetchRequest<MessageDTO>(entityName: entityName)
+        request.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [
+            channelMessagesPredicate(for: cid, deletedMessagesVisibility: deletedMessagesVisibility, shouldShowShadowedMessages: shouldShowShadowedMessages),
+            .init(format: "id != %@", id),
+            .init(format: "createdAt <= %@", message.createdAt)
+        ])
+        request.sortDescriptors = [NSSortDescriptor(keyPath: \MessageDTO.createdAt, ascending: true)]
+        request.fetchLimit = 1
+        return try? context.fetch(request).first
+    }
 }
 
 // MARK: - State Helpers
