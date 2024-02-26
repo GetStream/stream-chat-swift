@@ -11,6 +11,7 @@ public final class Chat {
     private let loadMessagesInteractor: LoadMessagesInteractor
     private let sendMessageInteractor: SendMessageInteractor
     private let typingEventsSender: TypingEventsSender
+    private let unreadMessagesInteractor: UnreadMessagesInteractor
     
     public let cid: ChannelId
     public let channelListQuery: ChannelListQuery?
@@ -45,7 +46,13 @@ public final class Chat {
             client.databaseContainer,
             client.apiClient
         )
-        state = ChatState(cid: cid, messageOrder: messageOrdering)
+        unreadMessagesInteractor = environment.unreadMessagesInteractorBuilder(
+            cid,
+            channelUpdater,
+            client.authenticationRepository,
+            client.messageRepository
+        )
+        state = ChatState(cid: cid, database: client.databaseContainer, messageOrder: messageOrdering)
         
         Task {
             try await loadFirstPage()
@@ -279,6 +286,26 @@ public final class Chat {
     public func loadPinnedMessages(for pagination: PinnedMessagesPagination? = nil, sort: [Sorting<PinnedMessagesSortingKey>] = [], limit: Int = .messagesPageSize) async throws -> [ChatMessage] {
         let query = PinnedMessagesQuery(pageSize: limit, sorting: sort, pagination: pagination)
         return try await channelUpdater.loadPinnedMessages(in: cid, query: query)
+    }
+    
+    // MARK: - Message Reading
+    
+    /// Marks all the unread messages in the channel as read.
+    ///
+    /// - Throws: An error while communicating with the Stream API.
+    func markRead() async throws {
+        guard let channel = state.channel else { throw ClientError.ChannelDoesNotExist(cid: cid) }
+        try await unreadMessagesInteractor.markRead(channel)
+    }
+    
+    /// Marks all the messages after and including the specified message as unread.
+    ///
+    /// - Parameter message: The id of the first message that will be marked as unread.
+    ///
+    /// - Throws: An error while communicating with the Stream API.
+    func markUnread(from message: MessageId) async throws {
+        guard let channel = state.channel else { throw ClientError.ChannelDoesNotExist(cid: cid) }
+        try await unreadMessagesInteractor.markUnread(from: message, in: channel)
     }
     
     // MARK: - Muting or Hiding the Channel
@@ -530,6 +557,13 @@ extension Chat {
             _ eventNotificationCenter: EventNotificationCenter,
             _ messageSender: MessageSender
         ) -> SendMessageInteractor = SendMessageInteractor.init
+        
+        var unreadMessagesInteractorBuilder: (
+            _ cid: ChannelId,
+            _ channelUpdater: ChannelUpdater,
+            _ authenticationRepository: AuthenticationRepository,
+            _ messageRepository: MessageRepository
+        ) -> UnreadMessagesInteractor = UnreadMessagesInteractor.init
         
         var typingEventsSenderBuilder: (
             _ database: DatabaseContainer,
