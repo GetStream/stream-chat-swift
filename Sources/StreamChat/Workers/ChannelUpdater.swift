@@ -748,6 +748,14 @@ extension ChannelUpdater {
         }
     }
     
+    func enrichUrl(_ url: URL) async throws -> LinkAttachmentPayload {
+        try await withCheckedThrowingContinuation { continuation in
+            enrichUrl(url) { result in
+                continuation.resume(with: result)
+            }
+        }
+    }
+    
     func freezeChannel(_ freeze: Bool, cid: ChannelId) async throws {
         try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
             freezeChannel(freeze, cid: cid) { error in
