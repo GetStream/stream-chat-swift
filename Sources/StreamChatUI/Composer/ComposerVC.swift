@@ -294,7 +294,7 @@ open class ComposerVC: _ViewController,
     public var enrichUrlDebouncer = Debouncer(0.4, queue: .main)
 
     /// The debouncer to control user searching requests when mentioning users.
-    public var userMentionsDebouncer = Debouncer(0.4, queue: .main)
+    public var userMentionsDebouncer = Debouncer(0.25, queue: .main)
 
     lazy var linkDetector = TextLinkDetector()
 
