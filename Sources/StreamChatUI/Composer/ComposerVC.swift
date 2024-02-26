@@ -981,35 +981,49 @@ open class ComposerVC: _ViewController,
             return nil
         }
 
-        if mentionAllAppUsers {
-            guard typingMention.isEmpty == false else {
-                return nil
+        // Because we re-create the ChatMessageComposerSuggestionsMentionDataSource always from scratch
+        // We lose the results of the previous search query, so we need to provide it manually.
+        let initialUsers: (String, [ChatUser]) -> [ChatUser] = { previousQuery, previousResult in
+            if typingMention.isEmpty {
+                return []
             }
+            if typingMention.hasPrefix(previousQuery) || previousQuery.hasPrefix(typingMention) {
+                return previousResult
+            }
+            return []
+        }
+
+        if mentionAllAppUsers {
             let previousResult = userSearchController.userArray
-            userSearchController.search(
-                query: queryForMentionSuggestionsSearch(typingMention: typingMention)
-            )
+            let previousQuery = (userSearchController?.query?.filter?.value as? String) ?? ""
+            if !typingMention.isEmpty {
+                userSearchController.search(
+                    query: queryForMentionSuggestionsSearch(typingMention: typingMention)
+                )
+            } else {
+                userSearchController.clearResults()
+            }
             return ChatMessageComposerSuggestionsMentionDataSource(
                 collectionView: suggestionsVC.collectionView,
                 searchController: userSearchController,
                 memberListController: nil,
-                initialUsers: previousResult
+                initialUsers: initialUsers(previousQuery, previousResult)
             )
         }
 
         let memberCount = channel.memberCount
         if memberCount > channel.lastActiveMembers.count {
-            guard typingMention.isEmpty == false else {
-                return nil
-            }
             let previousResult = Array(memberListController?.members ?? [])
+            let previousQuery = (memberListController?.query.filter?.value as? String) ?? ""
             memberListController = makeMemberListControllerForMemberSuggestions(typingMention: typingMention)
-            memberListController?.synchronize()
+            if !typingMention.isEmpty {
+                memberListController?.synchronize()
+            }
             return ChatMessageComposerSuggestionsMentionDataSource(
                 collectionView: suggestionsVC.collectionView,
                 searchController: userSearchController,
                 memberListController: memberListController,
-                initialUsers: previousResult
+                initialUsers: initialUsers(previousQuery, previousResult)
             )
         }
 

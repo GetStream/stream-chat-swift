@@ -303,11 +303,12 @@ final class ComposerVC_Tests: XCTestCase {
         mockedSearchController.users_mock = [.mock(id: .unique, name: "1"), .mock(id: .unique, name: "2")]
         composerVC.userSearchController = mockedSearchController
 
-        // When empty, return nil
-        XCTAssertNil(composerVC.makeMentionSuggestionsDataSource(for: ""))
+        // When empty, should not search.
+        _ = composerVC.makeMentionSuggestionsDataSource(for: "")
+        XCTAssertEqual(mockedSearchController.searchCallCount, 0)
 
+        // When regular search
         let dataSource = try XCTUnwrap(composerVC.makeMentionSuggestionsDataSource(for: "Leia"))
-
         XCTAssertNil(dataSource.memberListController)
         XCTAssertEqual(dataSource.users, mockedSearchController.users_mock ?? [])
         XCTAssertEqual(mockedSearchController.searchCallCount, 1)
@@ -321,12 +322,9 @@ final class ComposerVC_Tests: XCTestCase {
         mockedSearchController.users_mock = []
         composerVC.userSearchController = mockedSearchController
 
-        // When empty, return nil
-        XCTAssertNil(composerVC.makeMentionSuggestionsDataSource(for: ""))
-
         let dataSource = try XCTUnwrap(composerVC.makeMentionSuggestionsDataSource(for: "Leia"))
-
         XCTAssertNotNil(dataSource.memberListController)
+        XCTAssertEqual(dataSource.memberListController?.state, .localDataFetched)
         XCTAssertEqual(mockedSearchController.searchCallCount, 0)
     }
 
@@ -346,7 +344,6 @@ final class ComposerVC_Tests: XCTestCase {
         XCTAssertNotNil(composerVC.makeMentionSuggestionsDataSource(for: ""))
 
         let dataSource = try XCTUnwrap(composerVC.makeMentionSuggestionsDataSource(for: "Leia"))
-
         XCTAssertNil(dataSource.memberListController)
         XCTAssertEqual(dataSource.users, mockedChatChannelController.channel?.lastActiveMembers)
         XCTAssertEqual(dataSource.users.isEmpty, false)
