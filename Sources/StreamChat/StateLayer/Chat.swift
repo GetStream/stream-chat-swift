@@ -315,6 +315,8 @@ public final class Chat {
     }
     
     /// Disables slow mode which removes the limits of how often members can post new messages to the channel.
+    ///
+    /// - Throws: An error while communicating with the Stream API.
     public func disableSlowMode() async throws {
         try await channelUpdater.enableSlowMode(cid: cid, cooldownDuration: 0)
     }
@@ -331,6 +333,8 @@ public final class Chat {
     ///   - systemMessage: A system message to be added after truncating the channel.
     ///   - hardDelete: If true, messages are deleted, otherwise messages are hidden. The default value is set to true.
     ///   - skipPush: If true, push notification is not sent to channel members, otherwise push notification is sent. The default value is set to false.
+    ///
+    /// - Throws: An error while communicating with the Stream API.
     public func truncate(systemMessage: String? = nil, hardDelete: Bool = true, skipPush: Bool = false) async throws {
         try await channelUpdater.truncateChannel(cid: cid, skipPush: skipPush, hardDelete: hardDelete, systemMessage: systemMessage)
     }
@@ -400,13 +404,25 @@ public final class Chat {
     
     /// The update operation updates only specified fields and retain existing channel data.
     ///
-    /// A partial update can be used to set and unset specific fields when it is necessary to retain additional custom data fields on the object (a patch style update).
+    /// A partial update can be used to set and unset specific fields when it is necessary to retain additional
+    /// custom data fields on the object (a patch style update).
+    ///
+    /// - Parameters:
+    ///   - name: The name of the channel.
+    ///   - imageURL: The channel avatar URL.
+    ///   - team: The team for the channel.
+    ///   - members: A list of members for the channel.
+    ///   - invites: A list of users who will get invites.
+    ///   - extraData: Extra data for the channel.
+    ///   - unsetProperties: A list of properties to reset.
+    ///
+    /// - Throws: An error while communicating with the Stream API.
     public func updatePartial(
         name: String? = nil,
         imageURL: URL? = nil,
         team: String? = nil,
-        members: Set<UserId> = [],
-        invites: Set<UserId> = [],
+        members: [UserId] = [],
+        invites: [UserId] = [],
         extraData: [String: RawJSON] = [:],
         unsetProperties: [String] = []
     ) async throws {
@@ -416,8 +432,8 @@ public final class Chat {
                 name: name,
                 imageURL: imageURL,
                 team: team,
-                members: members,
-                invites: invites,
+                members: Set(members),
+                invites: Set(invites),
                 extraData: extraData
             ),
             unsetProperties: unsetProperties
