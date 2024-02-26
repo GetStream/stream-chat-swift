@@ -513,3 +513,12 @@ public extension ChatChannel {
         ownCapabilities.contains(.slowMode)
     }
 }
+
+extension ChatChannel {
+    func requireCapability(of capability: ChannelCapability) throws {
+        guard !ownCapabilities.contains(capability) else { return }
+        let error = ClientError.ChannelFeatureDisabled("Channel feature: \(capability) is disabled for \(cid).")
+        log.error(error.localizedDescription)
+        throw error
+    }
+}
