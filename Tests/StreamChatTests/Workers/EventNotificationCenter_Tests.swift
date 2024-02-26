@@ -17,7 +17,6 @@ final class EventNotificationCenter_Tests: XCTestCase {
 
     override func tearDown() {
         AssertAsync.canBeReleased(&database)
-        database = nil
         super.tearDown()
     }
 
