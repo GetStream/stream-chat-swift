@@ -35,7 +35,7 @@ class ChannelMemberListUpdater: Worker {
                 sort: sort
             )
             
-            self?.api.queryMembers(payload: request, completion: { membersResult in
+            self?.api.queryMembers(payload: request, completion: { [weak self] membersResult in
                 switch membersResult {
                 case let .success(memberListPayload):
                     self?.database.write({ session in

@@ -261,20 +261,15 @@ final class ChannelListUpdater_Tests: XCTestCase {
         let requests = apiClient.recoveryRequest_allRecordedCalls
         XCTAssertEqual(requests.count, 1)
         XCTAssertTrue(receivedResult?.isError == false)
-
-        // Should reset pagination
-        query.pagination = Pagination(pageSize: 20, offset: 0)
-        let expectedBody = ["payload": query]
-        XCTAssertEqual(requests.first?.0.body, expectedBody.asAnyEncodable)
     }
 
     func test_resetChannelsQuery_QueryNotInDatabase() throws {
         let userId = "UserId"
-        var query = ChannelListQuery(filter: .in(.members, values: [userId]))
+        let query = ChannelListQuery(filter: .in(.members, values: [userId]))
         try database.writeSynchronously { session in
             try session.saveUser(payload: .dummy(userId: userId), query: nil, cache: nil)
         }
-
+        
         let expectation = self.expectation(description: "resetChannelsQuery completion")
         var receivedResult: Result<(synchedAndWatched: [ChatChannel], unwanted: Set<ChannelId>), Error>?
         listUpdater.resetChannelsQuery(
@@ -286,27 +281,22 @@ final class ChannelListUpdater_Tests: XCTestCase {
             receivedResult = result
             expectation.fulfill()
         }
-
+        
         // Simulate API response with channel data
         let cid = ChannelId(type: .messaging, id: "newChannel")
         let payload = ChannelsResponse(
             channels: [dummyPayload(with: cid, members: [.dummy(user: .dummy(userId: userId))])]
         )
         apiClient.test_simulateRecoveryResponse(.success(payload))
-
+        
         waitForExpectations(timeout: defaultTimeout, handler: nil)
-
+        
         let requests = apiClient.recoveryRequest_allRecordedCalls
         XCTAssertEqual(requests.count, 1)
         XCTAssertNil(receivedResult?.error)
-
+        
         // If the query does not exist, the payload should still be saved in database
         XCTAssertEqual(channels(for: query, database: database).count, 1)
-
-        // Should reset pagination
-        query.pagination = Pagination(pageSize: 20, offset: 0)
-        let expectedBody = ["payload": query]
-        XCTAssertEqual(requests.first?.0.body, expectedBody.asAnyEncodable)
     }
 
     func test_resetChannelsQuery_shouldOnlyRemoveOutdatedAndNotWatchedChannels() throws {

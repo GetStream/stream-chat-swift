@@ -1602,14 +1602,14 @@ final class ChannelListController_Tests: XCTestCase {
             .autocomplete(.memberName, text: "test"),
             channelsInDB: [
                 .dummy(channel: .dummy(cid: .unique, members: [
-                    .dummy(user: .dummy(userId: .unique, name: "userA")),
-                    .dummy(user: .dummy(userId: .unique, name: "userC"))
+                    .dummy(user: .dummy(userId: .unique, extraData: ["name": "userA"])),
+                    .dummy(user: .dummy(userId: .unique, extraData: ["name": "userC"]))
                 ])),
                 .dummy(channel: .dummy(cid: .unique, members: [
-                    .dummy(user: .dummy(userId: .unique, name: "userB"))
+                    .dummy(user: .dummy(userId: .unique, extraData: ["name": "userB"]))
                 ])),
                 .dummy(channel: .dummy(cid: cid, members: [
-                    .dummy(user: .dummy(userId: .unique, name: "testUser"))
+                    .dummy(user: .dummy(userId: .unique, extraData: ["name": "testUser"]))
                 ]))
             ],
             expectedResult: [cid]
@@ -1638,14 +1638,14 @@ final class ChannelListController_Tests: XCTestCase {
             .contains(.memberName, value: "test"),
             channelsInDB: [
                 .dummy(channel: .dummy(cid: cid1, members: [
-                    .dummy(user: .dummy(userId: .unique, name: "userA")),
-                    .dummy(user: .dummy(userId: .unique, name: "userCtest"))
+                    .dummy(user: .dummy(userId: .unique, extraData: ["name": "userA"])),
+                    .dummy(user: .dummy(userId: .unique, extraData: ["name": "userCtest"]))
                 ])),
                 .dummy(channel: .dummy(cid: .unique, members: [
-                    .dummy(user: .dummy(userId: .unique, name: "userB"))
+                    .dummy(user: .dummy(userId: .unique, extraData: ["name": "userB"]))
                 ])),
                 .dummy(channel: .dummy(cid: cid2, members: [
-                    .dummy(user: .dummy(userId: .unique, name: "testUser"))
+                    .dummy(user: .dummy(userId: .unique, extraData: ["name": "testUser"]))
                 ]))
             ],
             expectedResult: [cid1, cid2]

@@ -190,7 +190,7 @@ final class CurrentUserUpdater_Tests: XCTestCase {
         // Call update user
         var completionError: Error?
         currentUserUpdater.updateUserData(
-            currentUserId: .unique,
+            currentUserId: userPayload.id,
             name: .unique,
             imageURL: nil,
             completion: { error in
@@ -200,7 +200,7 @@ final class CurrentUserUpdater_Tests: XCTestCase {
 
         // Simulate API response
         let currentUpdateUsersResponse = UpdateUsersResponse(
-            duration: "", users: [userPayload.toUser.id: userPayload.toUser]
+            duration: "", users: [userPayload.id: userPayload.toUser]
         )
         apiClient.test_simulateResponse(.success(currentUpdateUsersResponse))
 

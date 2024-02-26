@@ -782,6 +782,7 @@ final class ChannelDTO_Tests: XCTestCase {
         let mainMessage = Message.dummy(
             messageId: mainMessageId,
             authorUserId: user.id,
+            createdAt: Date.distantPast,
             cid: channelId,
             mentionedUsers: [dummyCurrentUser.toUser]
         )
@@ -789,6 +790,7 @@ final class ChannelDTO_Tests: XCTestCase {
         let threadMessage = Message.dummy(
             parentId: mainMessageId,
             authorUserId: user.id,
+            createdAt: Date(),
             cid: channelId,
             mentionedUsers: [dummyCurrentUser.toUser]
         )
@@ -813,7 +815,7 @@ final class ChannelDTO_Tests: XCTestCase {
     func test_DTO_updateFromSamePayload_doNotProduceChanges() throws {
         // Arrange: Store random channel payload to db
         let channelId: ChannelId = .unique
-        let payload = ChannelResponse.dummy(cid: channelId, name: "test", createdAt: .unique)
+        let payload = ChannelResponse.dummy(cid: channelId, name: "test", extraData: ["name": "test"], createdAt: .unique)
 
         try database.writeSynchronously { session in
             try session.saveChannel(payload: payload, query: nil, cache: nil)

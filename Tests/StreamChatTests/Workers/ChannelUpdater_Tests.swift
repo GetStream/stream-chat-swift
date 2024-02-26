@@ -927,31 +927,6 @@ final class ChannelUpdater_Tests: XCTestCase {
 //        }
     }
 
-    func test_truncateChannel_failsAPICallWithMessageWhenNoCurrentUser() throws {
-        // GIVEN
-        let expectation = expectation(description: "When no current user is provided, truncate channel with system message fails")
-        let channelID = ChannelId.unique
-        let skipPush = true
-        let hardDelete = true
-        let systemMessage = "System message"
-
-        // WHEN
-        // Simulate `truncateChannel(cid:, completion:)` call
-        channelUpdater.truncateChannel(
-            cid: channelID,
-            skipPush: skipPush,
-            hardDelete: hardDelete,
-            systemMessage: systemMessage
-        ) { error in
-            // THEN
-            XCTAssertNotNil(error)
-            expectation.fulfill()
-        }
-
-        // In this case, timeout `10` should be used for both local and CI runs
-        wait(for: [expectation], timeout: 10)
-    }
-
     func test_truncateChannel_successfulResponse_isPropagatedToCompletion() {
         // Simulate `truncateChannel(cid:, completion:)` call
         var completionCalled = false

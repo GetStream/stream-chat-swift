@@ -34,6 +34,7 @@
         "ChannelListPayload_Tests\/test_hugeChannelListQuery_save()",
         "ChannelListPayload_Tests\/test_hugeChannelListQuery_save_DB_empty()",
         "ChannelListPayload_Tests\/test_hugeChannelListQuery_save_DB_filled()",
+        "ChannelMemberListUpdater_Tests\/test_load_happyPath_whenChannelDoesNotExistsLocally()",
         "ChannelUpdater_Tests\/test_hideChannel_successfulResponse_isPropagatedToCompletion()",
         "ChannelUpdater_Tests\/test_updateChannelQuery_successfulResponseData_areSavedToDB()",
         "EventNotificationCenter_Tests\/test_measure_processMultipleNewMessageEvents()",

@@ -56,14 +56,14 @@ final class OfflineRequestsRepository_Tests: XCTestCase {
 
     func test_runQueuedRequestsWithPendingRequests() throws {
         // We add one request to the queue
-        try createSendMessageRequests(count: 1)
+        try createSendMessageRequests(count: 1, path: .sendMessageResponse)
 
         let expectation = self.expectation(description: "Running completes")
         repository.runQueuedRequests {
             expectation.fulfill()
         }
 
-//        AssertAsync.willBeTrue(apiClient.recoveryRequest_endpoint != nil)
+        AssertAsync.willBeTrue(apiClient.recoveryRequest_endpoint != nil)
         apiClient.test_simulateRecoveryResponse(.success(Data()))
 
         waitForExpectations(timeout: defaultTimeout, handler: nil)
@@ -99,7 +99,7 @@ final class OfflineRequestsRepository_Tests: XCTestCase {
 
     func test_runQueuedRequestsWithPendingRequests_sendMessage() throws {
         // We add one .sendMessage request to the queue
-        try createRequest(id: .unique, path: "message")
+        try createRequest(id: .unique, path: .sendMessageResponse)
 
         let expectation = self.expectation(description: "Running completes")
         repository.runQueuedRequests {
@@ -126,7 +126,7 @@ final class OfflineRequestsRepository_Tests: XCTestCase {
 
     func test_runQueuedRequestsWithPendingRequests_editMessage() throws {
         // We add one .editMessage request to the queue
-        try createRequest(id: .unique, path: "edit-message")
+        try createRequest(id: .unique, path: .updateMessageResponse)
 
         let expectation = self.expectation(description: "Running completes")
         repository.runQueuedRequests {
@@ -137,7 +137,9 @@ final class OfflineRequestsRepository_Tests: XCTestCase {
         database.writeSessionCounter = 0
         AssertAsync.willBeTrue(apiClient.recoveryRequest_endpoint != nil)
 
-        apiClient.test_simulateRecoveryResponse(.success(Data()))
+        let response = UpdateMessageResponse(duration: "", message: .dummy())
+        let data = try JSONEncoder.stream.encode(response)
+        apiClient.test_simulateRecoveryResponse(.success(data))
 
         waitForExpectations(timeout: defaultTimeout, handler: nil)
 
@@ -152,7 +154,7 @@ final class OfflineRequestsRepository_Tests: XCTestCase {
 
     func test_runQueuedRequestsWithPendingRequests_deleteMessage() throws {
         // We add one .deleteMessage request to the queue
-        try createRequest(id: .unique, path: "delete-message")
+        try createRequest(id: .unique, path: .messageResponse)
 
         let expectation = self.expectation(description: "Running completes")
         repository.runQueuedRequests {
@@ -163,7 +165,8 @@ final class OfflineRequestsRepository_Tests: XCTestCase {
         database.writeSessionCounter = 0
         AssertAsync.willBeTrue(apiClient.recoveryRequest_endpoint != nil)
 
-        let jsonData = XCTestCase.mockData(fromJSONFile: "Message")
+        let response = MessageResponse(duration: "", message: .dummy())
+        let jsonData = try JSONEncoder.stream.encode(response)
         apiClient.test_simulateRecoveryResponse(.success(jsonData))
 
         waitForExpectations(timeout: defaultTimeout, handler: nil)
@@ -180,7 +183,7 @@ final class OfflineRequestsRepository_Tests: XCTestCase {
     func test_runQueuedRequestsWithManyPendingRequests() throws {
         // We put 5 .sendMessage requests in the queue
         let count = 5
-        try createSendMessageRequests(count: count)
+        try createSendMessageRequests(count: count, path: .sendMessageResponse)
 
         let expectation = self.expectation(description: "Running completes")
         repository.runQueuedRequests {
@@ -269,7 +272,7 @@ final class OfflineRequestsRepository_Tests: XCTestCase {
         // We put 3 .sendMessage requests in the queue, 20 hours old.
         let count = 3
         let date = Date(timeIntervalSinceNow: -3600 * 20)
-        try createSendMessageRequests(count: count, date: date)
+        try createSendMessageRequests(count: count, path: .sendMessageResponse, date: date)
 
         let expectation = self.expectation(description: "Running completes")
         repository.runQueuedRequests {
@@ -289,13 +292,13 @@ final class OfflineRequestsRepository_Tests: XCTestCase {
         // We put 3 .sendMessage requests in the queue, 20 hours old.
         let count = 3
         let date = Date(timeIntervalSinceNow: -3600 * 20)
-        try createSendMessageRequests(count: count, date: date)
+        try createSendMessageRequests(count: count, path: .sendMessageResponse, date: date)
         
         // Create one recent.
         let id = "request\(count)"
         try createRequest(
             id: id,
-            path: "message-\(id)",
+            path: .sendMessageResponse,
             body: ["some\(id)": 123],
             date: Date()
         )
@@ -321,12 +324,12 @@ final class OfflineRequestsRepository_Tests: XCTestCase {
         XCTAssertEqual(pendingRequests.count, 0)
     }
 
-    private func createSendMessageRequests(count: Int, date: Date = Date()) throws {
+    private func createSendMessageRequests(count: Int, path: String, date: Date = Date()) throws {
         try (1...count).forEach {
             let id = "request\($0)"
             try self.createRequest(
                 id: id,
-                path: "message-\(id)",
+                path: path,
                 body: ["some\($0)": 123],
                 date: date
             )
@@ -336,17 +339,17 @@ final class OfflineRequestsRepository_Tests: XCTestCase {
         XCTAssertEqual(allRequests.count, count)
     }
 
-    private func createRequest(id: String, path: String, body: Encodable? = nil, date: Date = Date()) throws {
+    private func createRequest(id: String, path: String = .updateMessageResponse, body: Encodable? = nil, date: Date = Date()) throws {
         let queuedRequest = QueuedRequest(
             baseURL: .unique,
             path: path,
-            method: "POST",
+            method: path == .messageResponse ? "DELETE" : "POST",
             queryItems: [],
             headers: [:],
             body: body as? Data,
             requiresConnectionId: true,
             requiresToken: false,
-            responseType: ResponseType(value: .updateMessageResponse)
+            responseType: ResponseType(value: path)
         )
         let endpointData: Data = try JSONEncoder.stream.encode(queuedRequest)
         try database.writeSynchronously { _ in

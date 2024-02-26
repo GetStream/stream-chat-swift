@@ -171,7 +171,7 @@ class OfflineRequestsRepository {
                 completion()
                 return
             }
-            messageRepository.saveSuccessfullyDeletedMessage(message: message)
+            messageRepository.saveSuccessfullyDeletedMessage(message: message) { _ in completion() }
         } else if responseType.value == .reactionResponse || responseType.value == .reactionRemovalResponse {
             completion()
         }

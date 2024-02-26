@@ -54,6 +54,8 @@ final class ChannelMemberListUpdater_Tests: XCTestCase {
             completionCalled = true
         }
         
+        AssertAsync.willBeTrue(apiClient.request_endpoint != nil)
+        
         // Simulate members response.
         let payload = MembersResponse(
             duration: "",
@@ -92,6 +94,11 @@ final class ChannelMemberListUpdater_Tests: XCTestCase {
         // Simulate successful channel response.
         let dummyChannelPayload = dummyPayload(with: query.cid)
         apiClient.test_simulateResponse(.success(dummyChannelPayload))
+        
+        AssertAsync {
+            // Assert members endpoint is called.
+            Assert.willBeTrue(self.apiClient.request_allRecordedCalls.count == 1)
+        }
 
         // Simulate members response.
         let payload = MembersResponse(
@@ -102,8 +109,14 @@ final class ChannelMemberListUpdater_Tests: XCTestCase {
                 .dummy(user: .dummy(userId: .unique))
             ]
         )
-        apiClient.test_simulateResponse(.success(payload))
+        
+        AssertAsync {
+            // Assert members endpoint is called.
+            Assert.willBeTrue(self.apiClient.request_allRecordedCalls.count == 2)
+        }
 
+        apiClient.test_simulateResponse(.success(payload))
+        
         // Assert completion is called.
         AssertAsync.willBeTrue(completionCalled)
 
@@ -135,6 +148,8 @@ final class ChannelMemberListUpdater_Tests: XCTestCase {
         listUpdater.load(query) {
             completionCalledError = $0
         }
+        
+        AssertAsync.willBeTrue(apiClient.request_endpoint != nil)
 
         // Simulate channel response with failure.
         let networkError = TestError()
@@ -171,6 +186,8 @@ final class ChannelMemberListUpdater_Tests: XCTestCase {
         listUpdater.load(query) {
             completionCalledError = $0
         }
+        
+        AssertAsync.willBeTrue(apiClient.request_endpoint != nil)
 
         // Simulate members response with failure.
         let networkError = TestError()
@@ -189,6 +206,8 @@ final class ChannelMemberListUpdater_Tests: XCTestCase {
         listUpdater.load(query) {
             completionCalledError = $0
         }
+        
+        AssertAsync.willBeTrue(apiClient.request_endpoint != nil)
 
         // Update database to throw the error.
         let databaseError = TestError()
