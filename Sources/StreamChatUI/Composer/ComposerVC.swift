@@ -981,6 +981,9 @@ open class ComposerVC: _ViewController,
             return nil
         }
 
+        let trimmedTypingMention = typingMention.trimmingCharacters(in: .whitespacesAndNewlines)
+        let mentionIsAlreadyPresent = content.mentionedUsers.map(\.name).contains(trimmedTypingMention)
+
         // Because we re-create the ChatMessageComposerSuggestionsMentionDataSource always from scratch
         // We lose the results of the previous search query, so we need to provide it manually.
         let initialUsers: (String, [ChatUser]) -> [ChatUser] = { previousQuery, previousResult in
@@ -994,14 +997,15 @@ open class ComposerVC: _ViewController,
         }
 
         if mentionAllAppUsers {
-            let previousResult = userSearchController.userArray
+            var previousResult = userSearchController.userArray
             let previousQuery = (userSearchController?.query?.filter?.value as? String) ?? ""
-            if !typingMention.isEmpty {
+            if typingMention.isEmpty || mentionIsAlreadyPresent {
+                userSearchController.clearResults()
+                previousResult = []
+            } else {
                 userSearchController.search(
                     query: queryForMentionSuggestionsSearch(typingMention: typingMention)
                 )
-            } else {
-                userSearchController.clearResults()
             }
             return ChatMessageComposerSuggestionsMentionDataSource(
                 collectionView: suggestionsVC.collectionView,
@@ -1013,10 +1017,13 @@ open class ComposerVC: _ViewController,
 
         let memberCount = channel.memberCount
         if memberCount > channel.lastActiveMembers.count {
-            let previousResult = Array(memberListController?.members ?? [])
+            var previousResult = Array(memberListController?.members ?? [])
             let previousQuery = (memberListController?.query.filter?.value as? String) ?? ""
             memberListController = makeMemberListControllerForMemberSuggestions(typingMention: typingMention)
-            if !typingMention.isEmpty {
+            if typingMention.isEmpty || mentionIsAlreadyPresent {
+                memberListController = nil
+                previousResult = []
+            } else {
                 memberListController?.synchronize()
             }
             return ChatMessageComposerSuggestionsMentionDataSource(
