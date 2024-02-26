@@ -772,6 +772,14 @@ extension ChannelUpdater {
         }
     }
     
+    func loadPinnedMessages(in cid: ChannelId, query: PinnedMessagesQuery) async throws -> [ChatMessage] {
+        try await withCheckedThrowingContinuation { continuation in
+            loadPinnedMessages(in: cid, query: query) { result in
+                continuation.resume(with: result)
+            }
+        }
+    }
+    
     func muteChannel(_ mute: Bool, cid: ChannelId) async throws {
         try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
             muteChannel(cid: cid, mute: mute) { error in
