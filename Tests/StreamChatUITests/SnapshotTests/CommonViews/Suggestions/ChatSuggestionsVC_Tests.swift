@@ -17,8 +17,8 @@ final class ChatSuggestionsVC_Tests: XCTestCase {
     // MARK: - Mock Data
 
     private let commands: [Command] = [
-        .init(name: "yodafy", description: "", set: "", args: "[text]"),
-        .init(name: "vaderfy", description: "", set: "", args: "[@username] [text]")
+        .init(args: "[text]", description: "", name: "yodafy", set: ""),
+        .init(args: "[@username] [text]", description: "", name: "vaderfy", set: "")
     ]
 
     private let mentions: [ChatUser] = [

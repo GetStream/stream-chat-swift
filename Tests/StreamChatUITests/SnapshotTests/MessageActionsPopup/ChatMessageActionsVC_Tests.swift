@@ -99,10 +99,12 @@ final class ChatMessageActionsVC_Tests: XCTestCase {
 
         let currentUser = try XCTUnwrap(chatMessageController.dataStore.currentUser())
         try chatMessageController.client.databaseContainer.writeSynchronously {
-            try $0.saveCurrentUser(payload: .dummy(
-                userPayload: .dummy(userId: currentUser.id),
-                mutedUsers: [.dummy(userId: messageAuthor.id)]
-            )
+            try $0.saveCurrentUser(
+                payload: .dummy(
+                    userId: currentUser.id,
+                    role: .user,
+                    mutedUsers: [.dummy(userId: messageAuthor.id)]
+                )
             )
         }
 

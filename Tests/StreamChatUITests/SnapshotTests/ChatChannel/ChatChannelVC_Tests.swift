@@ -668,7 +668,7 @@ final class ChatChannelVC_Tests: XCTestCase {
 
     // This test is temporary until we support jumping to inside a thread.
     func test_shouldLoadPageAroundMessageId_whenMessageIsInsideThread_thenDontLoadPageAroundMessageId() throws {
-        let messageInsideThread = MessagePayload.dummy(
+        let messageInsideThread = Message.dummy(
             parentId: .unique,
             showReplyInChannel: false
         )

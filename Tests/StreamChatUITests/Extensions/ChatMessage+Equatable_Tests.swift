@@ -145,12 +145,12 @@ final class ChatMessage_Equatable_Tests: XCTestCase {
                 let reads = try (1...numberOfReads).map { index in
                     try session.saveChannelRead(
                         payload: .init(
-                            user: self.userPayload(id: index),
-                            lastReadAt: previousMessage?.createdAt.bridgeDate ?? Date(),
+                            lastRead: previousMessage?.createdAt.bridgeDate ?? Date(),
+                            unreadMessages: index,
                             lastReadMessageId: previousMessage?.id,
-                            unreadMessagesCount: index
+                            user: self.userPayload(id: index)
                         ),
-                        for: channelId,
+                        for: channelId.rawValue,
                         cache: nil
                     )
                 }
@@ -208,23 +208,16 @@ final class ChatMessage_Equatable_Tests: XCTestCase {
         return messages
     }
 
-    private func userPayload(id: Int) -> UserPayload {
+    private func userPayload(id: Int) -> UserObject {
         let userId = "user-\(id)"
-        return UserPayload(
+        return UserObject(
             id: userId,
-            name: userId,
-            imageURL: nil,
-            role: .user,
             createdAt: Date(timeIntervalSince1970: 3),
-            updatedAt: Date(timeIntervalSince1970: 3),
             deactivatedAt: Date(timeIntervalSince1970: 3),
-            lastActiveAt: Date(timeIntervalSince1970: 3),
-            isOnline: true,
-            isInvisible: true,
-            isBanned: false,
-            teams: [],
-            language: nil,
-            extraData: [:]
+            lastActive: Date(timeIntervalSince1970: 3),
+            online: true,
+            role: "user",
+            updatedAt: Date(timeIntervalSince1970: 3)
         )
     }
 }

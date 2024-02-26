@@ -12,7 +12,7 @@ final class ChatCommandSuggestionView_Tests: XCTestCase {
     private let defaultCellWidth: CGFloat = 250
 
     /// Default content of the view
-    private let defaultCommand = Command(name: "Default", description: "", set: "", args: "[text]")
+    private let defaultCommand = Command(args: "[text]", description: "", name: "Default", set: "")
 
     func test_updateContent_whenCommandIsRecognized_commandIconImageIsUsed() {
         var appearance = Appearance()
@@ -23,7 +23,7 @@ final class ChatCommandSuggestionView_Tests: XCTestCase {
 
         let view = ChatCommandSuggestionView()
         view.appearance = appearance
-        view.content = .init(name: "yoda", description: "", set: "", args: "[text]")
+        view.content = .init(args: "[text]", description: "", name: "yoda", set: "")
 
         view.updateContent()
 
@@ -39,7 +39,7 @@ final class ChatCommandSuggestionView_Tests: XCTestCase {
 
         let view = ChatCommandSuggestionView()
         view.appearance = appearance
-        view.content = .init(name: "R2", description: "", set: "", args: "[text]")
+        view.content = .init(args: "[text]", description: "", name: "R2", set: "")
 
         view.updateContent()
 

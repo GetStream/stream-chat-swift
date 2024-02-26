@@ -216,10 +216,10 @@ final class ComposerVC_Tests: XCTestCase {
         
         composerVC.content = .initial()
         composerVC.content.addCommand(.init(
-            name: "ARGNEEDED",
+            args: "[text]",
             description: "some command",
-            set: "special",
-            args: "[text]"
+            name: "ARGNEEDED",
+            set: "special"
         ))
         
         AssertSnapshot(composerVC)
@@ -230,10 +230,10 @@ final class ComposerVC_Tests: XCTestCase {
         
         composerVC.content = .initial()
         composerVC.content.addCommand(.init(
-            name: "NOARGNEEDED",
+            args: "",
             description: "some command",
-            set: "special",
-            args: ""
+            name: "NOARGNEEDED",
+            set: "special"
         ))
         
         AssertSnapshot(composerVC)
@@ -333,8 +333,8 @@ final class ComposerVC_Tests: XCTestCase {
 
         let encoder = JSONEncoder.default
         let attachments: [AnyChatMessageAttachment] = [
-            MessageAttachmentPayload.dummy(type: .image),
-            MessageAttachmentPayload.dummy(type: .image)
+            Attachment.dummy(type: .image),
+            Attachment.dummy(type: .image)
         ].compactMap {
             guard let payload = try? encoder.encode($0.payload) else { return nil }
             return AnyChatMessageAttachment.dummy(type: $0.type, payload: payload)
