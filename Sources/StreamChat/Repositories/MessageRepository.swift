@@ -276,4 +276,19 @@ extension MessageRepository {
                 .map { try $0.asModel() }
         }
     }
+    
+    /// Fetches a message id before the specified message when sorting by the creation date in the local database.
+    func message(before id: MessageId, in cid: ChannelId) async throws -> MessageId? {
+        try await database.backgroundRead { context in
+            let deletedMessagesVisibility = context.deletedMessagesVisibility ?? .alwaysVisible
+            let shouldShowShadowedMessages = context.shouldShowShadowedMessages ?? true
+            return MessageDTO.loadChannelMessage(
+                before: id,
+                cid: cid.rawValue,
+                deletedMessagesVisibility: deletedMessagesVisibility,
+                shouldShowShadowedMessages: shouldShowShadowedMessages,
+                context: context
+            )?.id
+        }
+    }
 }
