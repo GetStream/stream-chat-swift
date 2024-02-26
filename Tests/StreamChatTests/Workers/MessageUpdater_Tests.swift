@@ -527,8 +527,8 @@ final class MessageUpdater_Tests: XCTestCase {
         let currentUserId: UserId = .unique
         let messageId: MessageId = .unique
 
-        let pairs: [(Result<Message.Boxed, Error>, LocalMessageState?)] = [
-            (.success(.init(message: .dummy(messageId: messageId, authorUserId: currentUserId))), nil),
+        let pairs: [(Result<MessageResponse, Error>, LocalMessageState?)] = [
+            (.success(.init(duration: "", message: .dummy(messageId: messageId, authorUserId: currentUserId))), nil),
             (.failure(TestError()), .deletingFailed)
         ]
 

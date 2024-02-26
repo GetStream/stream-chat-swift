@@ -669,7 +669,6 @@ final class SyncRepository_Tests: XCTestCase {
         // Let /sync operation to complete
         let syncResponse = Result<SyncResponse, Error>.success(.init(duration: "", events: []))
         apiClient.test_simulateRecoveryResponse(syncResponse)
-        apiClient.recoveryRequest_completion = nil
 
         // Wait for watch operation
         AssertAsync.willBeTrue(apiClient.recoveryRequest_completion != nil)
