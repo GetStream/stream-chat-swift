@@ -247,6 +247,30 @@ public final class Chat {
         try await loadMessagesInteractor.loadFirstPage(to: state, with: channelQuery)
     }
     
+    // MARK: - Message Pinning
+    
+//    public func pinMessage(_ message: ChatMessage) async throws {
+    // TODO: implement
+//    }
+    
+//    public func unpinMessage(_ message: ChatMessage) async throws {
+//        TODO: implement
+//    }
+    
+    /// Loads pinned messages for the specified pagination options, sorting order, and limit.
+    ///
+    /// - Parameters:
+    ///   - pagination: The pagination option used for retrieving pinned messages. If nil, most recently pinned messages are returned.
+    ///   - sort: The sorting order for pinned messages. The default value is descending by `pinned_at` field.
+    ///   - limit: The limit for the page size. The default limit is 25.
+    ///
+    /// - Throws: An error while communicating with the Stream API.
+    /// - Returns: An array of pinned messages for the specified pagination.
+    public func loadPinnedMessages(for pagination: PinnedMessagesPagination? = nil, sort: [Sorting<PinnedMessagesSortingKey>] = [], limit: Int = .messagesPageSize) async throws -> [ChatMessage] {
+        let query = PinnedMessagesQuery(pageSize: limit, sorting: sort, pagination: pagination)
+        return try await channelUpdater.loadPinnedMessages(in: cid, query: query)
+    }
+    
     // MARK: - Muting or Hiding the Channel
     
     /// Mutes the channel which disables push notifications and unread count for new messages.
