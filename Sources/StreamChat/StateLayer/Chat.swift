@@ -423,6 +423,44 @@ public final class Chat {
             unsetProperties: unsetProperties
         )
     }
+    
+    // MARK: - Uploading and Deleting Files
+    
+    /// Deletes the file associated with the given URL in the channel.
+    ///
+    /// - Parameters:
+    ///   - url: The URL of the file to be deleted.
+    ///
+    /// - Throws: An error while communicating with the Stream API.
+    public func deleteFile(at url: URL) async throws {
+        try await channelUpdater.deleteFile(in: cid, url: url.absoluteString)
+    }
+    
+    /// Deletes the image associated with the given URL in the channel.
+    ///
+    /// - Parameters:
+    ///   - url: The URL of the image to be deleted.
+    ///
+    /// - Throws: An error while communicating with the Stream API.
+    public func deleteImage(at url: URL) async throws {
+        try await channelUpdater.deleteImage(in: cid, url: url.absoluteString)
+    }
+    
+    /// Uploads the given file to CDN and returns an attachment containing the remote URL.
+    ///
+    /// - Note: The maximum file size is 100 MB.
+    /// - Note: This functionality defaults to using the Stream CDN. The used CDN can be configured.
+    ///
+    /// - Parameters:
+    ///   - localFileURL: The URL to a local file.
+    ///   - type: The attachment type.
+    ///   - progress: The uploading progress handler.
+    ///
+    /// - Throws: An error while communicating with the Stream API.
+    /// - Returns: Returns an uploaded attachment containing the remote url and the attachment metadata.
+    public func uploadAttachment(with localFileURL: URL, type: AttachmentType, progress: ((Double) -> Void)? = nil) async throws -> UploadedAttachment {
+        try await channelUpdater.uploadFile(type: type, localFileURL: localFileURL, cid: cid, progress: progress)
+    }
 }
 
 // MARK: - Environment
