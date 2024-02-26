@@ -49,6 +49,8 @@ extension ChatClient {
     ///   - channelQuery: The channel query used for looking up a channel.
     ///   - channelListQuery: The channel list query the channel belongs to.
     ///   - messageOrdering: Describes the ordering the messages are presented.
+    ///
+    /// - Throws: An error while communicating with the Stream API.
     /// - Returns: An instance of `Chat` representing the channel.
     public func chat(
         with channelQuery: ChannelQuery,
@@ -88,15 +90,17 @@ extension ChatClient {
     ///   - messageOrdering: Describes the ordering the messages are presented.
     ///   - channelListQuery: The channel list query the channel belongs to.
     ///   - extraData: Extra data for the new channel.
+    ///
+    /// - Throws: An error while communicating with the Stream API.
     /// - Returns: An instance of `Chat` representing the channel.
     public func chat(
         with cid: ChannelId,
         name: String? = nil,
         imageURL: URL? = nil,
         team: String? = nil,
-        members: Set<UserId> = [],
+        members: [UserId] = [],
         isCurrentUserMember: Bool = true,
-        invites: Set<UserId> = [],
+        invites: [UserId] = [],
         messageOrdering: MessageOrdering = .topToBottom,
         channelListQuery: ChannelListQuery? = nil,
         extraData: [String: RawJSON] = [:]
@@ -107,8 +111,8 @@ extension ChatClient {
             name: name,
             imageURL: imageURL,
             team: team,
-            members: members.union(isCurrentUserMember ? [currentUserId] : []),
-            invites: invites,
+            members: Set(members).union(isCurrentUserMember ? [currentUserId] : []),
+            invites: Set(invites),
             extraData: extraData
         )
         let channelQuery = ChannelQuery(channelPayload: payload)
@@ -143,9 +147,11 @@ extension ChatClient {
     ///   - messageOrdering: Describes the ordering the messages are presented.
     ///   - channelListQuery: The channel list query the channel belongs to.
     ///   - extraData: Extra data for the new channel.
+    ///
+    /// - Throws: An error while communicating with the Stream API.
     /// - Returns: An instance of `Chat` representing the channel.
     public func directMessageChat(
-        with members: Set<UserId>,
+        with members: [UserId],
         type: ChannelType = .messaging,
         isCurrentUserMember: Bool = true,
         name: String? = nil,
@@ -162,7 +168,7 @@ extension ChatClient {
             name: name,
             imageURL: imageURL,
             team: team,
-            members: members.union(isCurrentUserMember ? [currentUserId] : []),
+            members: Set(members).union(isCurrentUserMember ? [currentUserId] : []),
             invites: [],
             extraData: extraData
         )
