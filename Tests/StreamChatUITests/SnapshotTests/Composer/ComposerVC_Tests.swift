@@ -307,7 +307,12 @@ final class ComposerVC_Tests: XCTestCase {
         _ = composerVC.makeMentionSuggestionsDataSource(for: "")
         XCTAssertEqual(mockedSearchController.searchCallCount, 0)
 
-        // When regular search
+        // When mention already exists, should not search.
+        composerVC.content.mentionedUsers.insert(.mock(id: .unique, name: "Han Solo"))
+        let existingMentionDataSource = try XCTUnwrap(composerVC.makeMentionSuggestionsDataSource(for: "Han Solo"))
+        XCTAssertEqual(mockedSearchController.searchCallCount, 0)
+
+        // Happy path
         let dataSource = try XCTUnwrap(composerVC.makeMentionSuggestionsDataSource(for: "Leia"))
         XCTAssertNil(dataSource.memberListController)
         XCTAssertEqual(dataSource.users, mockedSearchController.users_mock ?? [])
@@ -322,6 +327,16 @@ final class ComposerVC_Tests: XCTestCase {
         mockedSearchController.users_mock = []
         composerVC.userSearchController = mockedSearchController
 
+        // When empty, should not create member list controller.
+        let emptyDataSource = try XCTUnwrap(composerVC.makeMentionSuggestionsDataSource(for: ""))
+        XCTAssertNil(emptyDataSource.memberListController)
+
+        // When mention already exists, should not create member list controller.
+        composerVC.content.mentionedUsers.insert(.mock(id: .unique, name: "Han Solo"))
+        let existingMentionDataSource = try XCTUnwrap(composerVC.makeMentionSuggestionsDataSource(for: "Han Solo"))
+        XCTAssertNil(existingMentionDataSource.memberListController)
+
+        // Happy path
         let dataSource = try XCTUnwrap(composerVC.makeMentionSuggestionsDataSource(for: "Leia"))
         XCTAssertNotNil(dataSource.memberListController)
         XCTAssertEqual(dataSource.memberListController?.state, .localDataFetched)

@@ -983,6 +983,7 @@ open class ComposerVC: _ViewController,
 
         let trimmedTypingMention = typingMention.trimmingCharacters(in: .whitespacesAndNewlines)
         let mentionIsAlreadyPresent = content.mentionedUsers.map(\.name).contains(trimmedTypingMention)
+        let shouldShowEmptyMentions = typingMention.isEmpty || mentionIsAlreadyPresent
 
         // Because we re-create the ChatMessageComposerSuggestionsMentionDataSource always from scratch
         // We lose the results of the previous search query, so we need to provide it manually.
@@ -999,7 +1000,7 @@ open class ComposerVC: _ViewController,
         if mentionAllAppUsers {
             var previousResult = userSearchController.userArray
             let previousQuery = (userSearchController?.query?.filter?.value as? String) ?? ""
-            if typingMention.isEmpty || mentionIsAlreadyPresent {
+            if shouldShowEmptyMentions {
                 userSearchController.clearResults()
                 previousResult = []
             } else {
@@ -1020,7 +1021,7 @@ open class ComposerVC: _ViewController,
             var previousResult = Array(memberListController?.members ?? [])
             let previousQuery = (memberListController?.query.filter?.value as? String) ?? ""
             memberListController = makeMemberListControllerForMemberSuggestions(typingMention: typingMention)
-            if typingMention.isEmpty || mentionIsAlreadyPresent {
+            if shouldShowEmptyMentions {
                 memberListController = nil
                 previousResult = []
             } else {
