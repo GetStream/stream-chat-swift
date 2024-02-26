@@ -724,6 +724,22 @@ extension ChannelUpdater {
         }
     }
     
+    func deleteFile(in cid: ChannelId, url: String) async throws {
+        try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
+            deleteFile(in: cid, url: url) { error in
+                continuation.resume(with: error)
+            }
+        }
+    }
+    
+    func deleteImage(in cid: ChannelId, url: String) async throws {
+        try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
+            deleteImage(in: cid, url: url) { error in
+                continuation.resume(with: error)
+            }
+        }
+    }
+    
     func enableSlowMode(cid: ChannelId, cooldownDuration: Int) async throws {
         try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
             enableSlowMode(cid: cid, cooldownDuration: cooldownDuration) { error in
@@ -788,13 +804,7 @@ extension ChannelUpdater {
         }
     }
     
-    func truncateChannel(
-        cid: ChannelId,
-        skipPush: Bool = false,
-        hardDelete: Bool = true,
-        systemMessage: String? = nil,
-        completion: ((Error?) -> Void)? = nil
-    ) async throws {
+    func truncateChannel(cid: ChannelId, skipPush: Bool, hardDelete: Bool, systemMessage: String?) async throws {
         try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
             truncateChannel(cid: cid, skipPush: skipPush, hardDelete: hardDelete, systemMessage: systemMessage) { error in
                 continuation.resume(with: error)
@@ -802,10 +812,7 @@ extension ChannelUpdater {
         }
     }
 
-    func update(
-        channelQuery: ChannelQuery,
-        isInRecoveryMode: Bool
-    ) async throws -> ChannelPayload {
+    func update(channelQuery: ChannelQuery, isInRecoveryMode: Bool) async throws -> ChannelPayload {
         try await withCheckedThrowingContinuation { continuation in
             update(channelQuery: channelQuery, isInRecoveryMode: isInRecoveryMode, onChannelCreated: nil) { result in
                 continuation.resume(with: result)
@@ -825,6 +832,14 @@ extension ChannelUpdater {
         try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
             partialChannelUpdate(updates: channelPayload, unsetProperties: unsetProperties) { error in
                 continuation.resume(with: error)
+            }
+        }
+    }
+    
+    func uploadFile(type: AttachmentType, localFileURL: URL, cid: ChannelId, progress: ((Double) -> Void)? = nil) async throws -> UploadedAttachment {
+        try await withCheckedThrowingContinuation { continuation in
+            uploadFile(type: type, localFileURL: localFileURL, cid: cid, progress: progress) { result in
+                continuation.resume(with: result)
             }
         }
     }
