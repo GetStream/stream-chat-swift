@@ -254,6 +254,8 @@
 		4F8E531D2B833D6C008C0F9F /* ChatState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F8E531B2B833D6C008C0F9F /* ChatState.swift */; };
 		4F8E53222B8341E5008C0F9F /* LoadMessagesInteractor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F8E53212B8341E5008C0F9F /* LoadMessagesInteractor.swift */; };
 		4F8E53232B8341E5008C0F9F /* LoadMessagesInteractor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F8E53212B8341E5008C0F9F /* LoadMessagesInteractor.swift */; };
+		4FF2A80A2B8CB6C200941A64 /* UnreadMessagesInteractor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FF2A8092B8CB6C200941A64 /* UnreadMessagesInteractor.swift */; };
+		4FF2A80B2B8CB6C200941A64 /* UnreadMessagesInteractor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FF2A8092B8CB6C200941A64 /* UnreadMessagesInteractor.swift */; };
 		6428DD5526201DCC0065DA1D /* BannerShowingConnectionDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6428DD5426201DCC0065DA1D /* BannerShowingConnectionDelegate.swift */; };
 		647F66D5261E22C200111B19 /* BannerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 647F66D4261E22C200111B19 /* BannerView.swift */; };
 		648EC576261EF9D400B8F05F /* DemoAppCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 648EC575261EF9D400B8F05F /* DemoAppCoordinator.swift */; };
@@ -2974,6 +2976,7 @@
 		4F8E530A2B7CEBFB008C0F9F /* ChatClient+Chat.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ChatClient+Chat.swift"; sourceTree = "<group>"; };
 		4F8E531B2B833D6C008C0F9F /* ChatState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatState.swift; sourceTree = "<group>"; };
 		4F8E53212B8341E5008C0F9F /* LoadMessagesInteractor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadMessagesInteractor.swift; sourceTree = "<group>"; };
+		4FF2A8092B8CB6C200941A64 /* UnreadMessagesInteractor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UnreadMessagesInteractor.swift; sourceTree = "<group>"; };
 		6428DD5426201DCC0065DA1D /* BannerShowingConnectionDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BannerShowingConnectionDelegate.swift; sourceTree = "<group>"; };
 		647F66D4261E22C200111B19 /* BannerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BannerView.swift; sourceTree = "<group>"; };
 		648EC575261EF9D400B8F05F /* DemoAppCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DemoAppCoordinator.swift; sourceTree = "<group>"; };
@@ -4942,6 +4945,7 @@
 			children = (
 				4F8E53212B8341E5008C0F9F /* LoadMessagesInteractor.swift */,
 				4F8E53082B7CD082008C0F9F /* SendMessageInteractor.swift */,
+				4FF2A8092B8CB6C200941A64 /* UnreadMessagesInteractor.swift */,
 			);
 			path = Interactors;
 			sourceTree = "<group>";
@@ -11006,6 +11010,7 @@
 				799C9447247D50F3001F1104 /* Worker.swift in Sources */,
 				79280F782489181200CDEB89 /* URLSessionWebSocketEngine.swift in Sources */,
 				792A4F3C247FFBB400EAF71D /* Timers.swift in Sources */,
+				4FF2A80A2B8CB6C200941A64 /* UnreadMessagesInteractor.swift in Sources */,
 				79682C4624BC9DAF0071578E /* ChannelUpdater.swift in Sources */,
 				792A4F482480107A00EAF71D /* Pagination.swift in Sources */,
 				79AF43B42632AF1C00E75CDA /* ChannelVisibilityEventMiddleware.swift in Sources */,
@@ -11611,6 +11616,7 @@
 				C121E818274544AD00023E4C /* EventPayload.swift in Sources */,
 				C121E819274544AD00023E4C /* EventDecoder.swift in Sources */,
 				C121E81A274544AD00023E4C /* ConnectionEvents.swift in Sources */,
+				4FF2A80B2B8CB6C200941A64 /* UnreadMessagesInteractor.swift in Sources */,
 				C121E81B274544AD00023E4C /* UserEvents.swift in Sources */,
 				4042968D29FAD03B0089126D /* AudioSamplesPercentageTransformer_Tests.swift in Sources */,
 				C121E81C274544AD00023E4C /* TypingEvent.swift in Sources */,
