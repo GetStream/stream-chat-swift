@@ -278,13 +278,12 @@ open class ChatMessageComposerSuggestionsMentionDataSource: NSObject,
         _ controller: ChatChannelMemberListController,
         didChangeMembers changes: [ListChange<ChatChannelMember>]
     ) {
-        /// With background mapping, the controller.members can be empty when `state == .localDataFetched`,
-        /// so this avoids the data being empty for a split second when creating the data source.
-        guard controller.state == .remoteDataFetched else {
-            return
-        }
-
         users = Array(controller.members)
+        collectionView.reloadData()
+    }
+
+    public func controller(_ controller: DataController, didChangeState state: DataController.State) {
+        users = Array(memberListController?.members ?? [])
         collectionView.reloadData()
     }
 }
