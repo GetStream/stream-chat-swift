@@ -120,7 +120,7 @@ extension XCTestCase {
                 team: .unique,
                 cooldownDuration: cooldownDuration ?? .random(in: 0...120)
             ),
-            membership: membership
+            membership: membership ?? (includeMembership ? members.first : nil)
         )
 
         return payload

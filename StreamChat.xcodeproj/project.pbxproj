@@ -544,6 +544,7 @@
 		842E29412B5F2D1C009FB926 /* test.json in Resources */ = {isa = PBXBuildFile; fileRef = 842E29402B5F2D1C009FB926 /* test.json */; };
 		842E29422B5FB5EE009FB926 /* test.json in Resources */ = {isa = PBXBuildFile; fileRef = 842E29402B5F2D1C009FB926 /* test.json */; };
 		842E29462B5FB76D009FB926 /* DefaultAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 842E29442B5FB744009FB926 /* DefaultAPI.swift */; };
+		842E70942B8DF2C700D2D68B /* MemberEventMiddleware_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79D6CF2025FA6ACF00BE2EEC /* MemberEventMiddleware_Tests.swift */; };
 		842F9745277A09B10060A489 /* PinnedMessagesQuery.swift in Sources */ = {isa = PBXBuildFile; fileRef = 842F9744277A09B10060A489 /* PinnedMessagesQuery.swift */; };
 		842F9746277A09B10060A489 /* PinnedMessagesQuery.swift in Sources */ = {isa = PBXBuildFile; fileRef = 842F9744277A09B10060A489 /* PinnedMessagesQuery.swift */; };
 		842F9749277A1CCF0060A489 /* PinnedMessagesPagination.swift in Sources */ = {isa = PBXBuildFile; fileRef = 842F9748277A1CCF0060A489 /* PinnedMessagesPagination.swift */; };
@@ -11766,6 +11767,7 @@
 				797EEA4A24FFC37600C81203 /* ConnectionStatus_Tests.swift in Sources */,
 				79877A2B2498E51500015F8B /* UserDTO_Tests.swift in Sources */,
 				799F611B2530B62C007F218C /* ChannelListQuery_Tests.swift in Sources */,
+				842E70942B8DF2C700D2D68B /* MemberEventMiddleware_Tests.swift in Sources */,
 				792921C524C0479700116BBB /* ChannelListUpdater_Tests.swift in Sources */,
 				A3F65E3727EB7161003F6256 /* WebSocketClient_Tests.swift in Sources */,
 				84E06BE22B7FB3420024B3B4 /* TypingEvents_IntegrationTests.swift in Sources */,
