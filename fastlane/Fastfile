@@ -359,7 +359,7 @@ lane :test_e2e_mock do |options|
     derived_data_path: derived_data_path,
     cloned_source_packages_path: source_packages_path,
     clean: is_localhost,
-    test_without_building: options[:test_without_building],
+    test_without_building: options[:cron] && options[:device].include?('17.') ? nil : options[:test_without_building],
     xcargs: buildcache_xcargs,
     devices: options[:device],
     prelaunch_simulator: is_ci,
