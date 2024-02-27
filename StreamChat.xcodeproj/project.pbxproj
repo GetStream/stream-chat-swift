@@ -609,6 +609,7 @@
 		84AD17E128F85870008C69BF /* ChatUser+CustomFields.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43016E1526B734410054E805 /* ChatUser+CustomFields.swift */; };
 		84B8779E2AC30F0E009EF76A /* DemoShareViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84B8779D2AC30F0E009EF76A /* DemoShareViewModel.swift */; };
 		84B877A02AC31AB8009EF76A /* StreamChat+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84B8779F2AC31AB8009EF76A /* StreamChat+Extensions.swift */; };
+		84BA86A92B8CE15700B670E3 /* ChannelReadUpdaterMiddleware_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79896D65250A6D1500BA8F1C /* ChannelReadUpdaterMiddleware_Tests.swift */; };
 		84BE85DA2AC30E88007DD47C /* DemoShareView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84BE85D92AC30E88007DD47C /* DemoShareView.swift */; };
 		84C11BE127FB2C2B00000A9E /* ChannelReadDTO_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84C11BE027FB2C2B00000A9E /* ChannelReadDTO_Tests.swift */; };
 		84C11BE527FB459900000A9E /* ChatMessageDeliveryStatusView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84C11BE427FB459900000A9E /* ChatMessageDeliveryStatusView.swift */; };
@@ -11789,6 +11790,7 @@
 				79BA19F324B3386B00E11FC2 /* CurrentUserDTO_Tests.swift in Sources */,
 				888E8C59252B56A100195E03 /* MemberController_Tests.swift in Sources */,
 				88EA9AE225471999007EE76B /* Dictionary_Tests.swift in Sources */,
+				84BA86A92B8CE15700B670E3 /* ChannelReadUpdaterMiddleware_Tests.swift in Sources */,
 				A3F65E3427EB70BF003F6256 /* AssertAsync+Events.swift in Sources */,
 				8819DFE625262B1500FD1A50 /* UserController_Tests.swift in Sources */,
 				84E06BBC2B7E724A0024B3B4 /* UserEvents_Tests.swift in Sources */,

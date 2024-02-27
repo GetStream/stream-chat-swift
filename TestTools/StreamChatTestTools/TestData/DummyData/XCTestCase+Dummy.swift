@@ -61,7 +61,7 @@ extension XCTestCase {
             lastRead: Date(timeIntervalSince1970: 1),
             unreadMessages: 10,
             lastReadMessageId: .unique,
-            user: dummyUser
+            user: dummyCurrentUser.toUser
         )
     }
 
