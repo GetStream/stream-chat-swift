@@ -3,6 +3,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 # Upcoming
 
+### 🔄 Changed
+
+# [4.49.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.49.0)
+_February 27, 2024_
+
 ## StreamChat
 ### ✅ Added
 - Add parallel attachment uploading [#3034](https://github.com/GetStream/stream-chat-swift/pull/3034)
