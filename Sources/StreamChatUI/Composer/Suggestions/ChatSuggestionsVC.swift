@@ -283,7 +283,9 @@ open class ChatMessageComposerSuggestionsMentionDataSource: NSObject,
     }
 
     public func controller(_ controller: DataController, didChangeState state: DataController.State) {
-        users = Array(memberListController?.members ?? [])
-        collectionView.reloadData()
+        if let memberListController = controller as? ChatChannelMemberListController {
+            users = Array(memberListController.members)
+            collectionView.reloadData()
+        }
     }
 }
