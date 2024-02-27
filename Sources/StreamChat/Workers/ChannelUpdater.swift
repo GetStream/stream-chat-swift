@@ -837,6 +837,22 @@ extension ChannelUpdater {
         }
     }
     
+    func startWatching(cid: ChannelId, isInRecoveryMode: Bool) async throws {
+        try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
+            startWatching(cid: cid, isInRecoveryMode: isInRecoveryMode) { error in
+                continuation.resume(with: error)
+            }
+        }
+    }
+    
+    func stopWatching(cid: ChannelId) async throws {
+        try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
+            stopWatching(cid: cid) { error in
+                continuation.resume(with: error)
+            }
+        }
+    }
+    
     func truncateChannel(cid: ChannelId, skipPush: Bool, hardDelete: Bool, systemMessage: String?) async throws {
         try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
             truncateChannel(cid: cid, skipPush: skipPush, hardDelete: hardDelete, systemMessage: systemMessage) { error in
