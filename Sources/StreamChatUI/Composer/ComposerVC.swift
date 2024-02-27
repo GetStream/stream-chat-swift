@@ -936,6 +936,11 @@ open class ComposerVC: _ViewController,
     ///   - typingMention: The potential user mention the current user is typing.
     ///   - mentionRange: The position where the current user is typing a mention to it can be replaced with the suggestion.
     open func showMentionSuggestions(for typingMention: String, mentionRange: NSRange) {
+        guard !content.text.isEmpty else {
+            // Because we do not have cancellation, when a mention request is finished it can happen
+            // that we already published the message, so we don't need to show the suggestions anymore.
+            return
+        }
         guard let dataSource = makeMentionSuggestionsDataSource(for: typingMention) else {
             return
         }
@@ -953,6 +958,10 @@ open class ComposerVC: _ViewController,
             let textView = self.composerView.inputMessageView.textView
             let text = textView.text as NSString
             let mentionText = self.mentionText(for: user)
+            guard mentionRange.length <= mentionText.count else {
+                return self.dismissSuggestions()
+            }
+
             let newText = text.replacingCharacters(in: mentionRange, with: mentionText)
             // Add additional spacing to help continue writing the message
             self.content.text = newText + " "
