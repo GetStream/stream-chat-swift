@@ -26,6 +26,15 @@ public class ChatChannelController_Mock: ChatChannelController {
         )
     }
 
+    /// Creates a new mock instance of `ChatChannelController`.
+    static func mock(chatClient: ChatClient_Mock) -> ChatChannelController_Mock {
+        .init(
+            channelQuery: .init(cid: try! .init(cid: "mock:channel")),
+            channelListQuery: nil,
+            client: chatClient
+        )
+    }
+
     public static func mock(
         channelQuery: ChannelQuery,
         channelListQuery: ChannelListQuery?,

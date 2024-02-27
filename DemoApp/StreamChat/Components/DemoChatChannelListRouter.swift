@@ -409,7 +409,7 @@ final class DemoChatChannelListRouter: ChatChannelListRouter {
                 guard let cid = channelController.channel?.cid else { return }
                 let client = channelController.client
                 self.rootViewController.present(MembersViewController(
-                    membersController: client.memberListController(query: .init(cid: cid))
+                    membersController: client.memberListController(query: .init(cid: cid, pageSize: 105))
                 ), animated: true)
             }),
             .init(title: "Show Banned Members", handler: { [unowned self] _ in

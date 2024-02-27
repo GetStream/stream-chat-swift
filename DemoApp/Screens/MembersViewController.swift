@@ -54,7 +54,7 @@ class MembersViewController: UITableViewController, ChatChannelMemberListControl
         if let imageURL = member.imageURL {
             Nuke.loadImage(with: imageURL, into: cell.avatarView)
         }
-        cell.nameLabel.text = member.name
+        cell.nameLabel.text = member.name ?? member.id
         cell.removeButton.isHidden = true
         return cell
     }
