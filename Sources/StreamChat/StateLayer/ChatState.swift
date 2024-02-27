@@ -4,29 +4,68 @@
 
 import Foundation
 
+/// Represent a ``ChatChannel`` and its state.
 @available(iOS 13.0, *)
 public final class ChatState: ObservableObject {
     private let cid: ChannelId
     private var channelObserver: EntityDatabaseObserverWrapper<ChatChannel, ChannelDTO>?
-    let messageOrder: MessageOrdering
+    private let paginationState: MessagesPaginationState
     
-    init(cid: ChannelId, database: DatabaseContainer, messageOrder: MessageOrdering) {
+    init(cid: ChannelId, database: DatabaseContainer, messageOrder: MessageOrdering, paginationState: MessagesPaginationState) {
         self.cid = cid
         self.messageOrder = messageOrder
+        self.paginationState = paginationState
         startObservingChannel(with: cid, in: database)
     }
     
-    // MARK: Represented Channel
+    // MARK: - Represented Channel
     
     // TODO: Exposing it as non-nil? Requires one DB fetch on Chat creation
     @Published private(set) var channel: ChatChannel?
     
-    // MARK: Messages
+    // MARK: - Messages
+    
+    /// Describes the ordering of messages.
+    public let messageOrder: MessageOrdering
     
     /// An array of loaded messages.
     ///
+    /// Messages are ordered by timestamp and``messageOrder``.
+    ///
     /// Use load messages in ``Chat`` for loading more messages.
     @Published public private(set) var messages: [ChatMessage] = []
+    
+    /// A Boolean value that returns whether the oldest messages have all been loaded or not.
+    public var hasLoadedAllPreviousMessages: Bool {
+        paginationState.hasLoadedAllPreviousMessages
+    }
+    
+    /// A Boolean value that returns whether the newest messages have all been loaded or not.
+    public var hasLoadedAllNextMessages: Bool {
+        paginationState.hasLoadedAllNextMessages || messages.isEmpty
+    }
+
+    /// A Boolean value that returns whether the channel is currently in a mid-page.
+    /// The value is false if the channel has the first page loaded.
+    /// The value is true if the channel is in a mid fragment and didn't load the first page yet.
+    public var isJumpingToMessage: Bool {
+        paginationState.isJumpingToMessage
+    }
+
+    /// A Boolean value that returns whether the channel is currently loading a page around a message.
+    public var isLoadingMiddleMessages: Bool {
+        paginationState.isLoadingMiddleMessages
+    }
+
+    /// A Boolean value that returns whether the channel is currently loading next (new) messages.
+    public var isLoadingNextMessages: Bool {
+        paginationState.isLoadingNextMessages
+    }
+
+    /// A Boolean value that returns whether the channel is currently loading previous (old) messages.
+    public var isLoadingPreviousMessages: Bool {
+        paginationState.isLoadingPreviousMessages
+    }
     
     // MARK: - Throttling and Slow Mode
     

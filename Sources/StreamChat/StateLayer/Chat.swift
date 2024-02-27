@@ -52,7 +52,12 @@ public final class Chat {
             client.authenticationRepository,
             client.messageRepository
         )
-        state = ChatState(cid: cid, database: client.databaseContainer, messageOrder: messageOrdering)
+        state = environment.chatStateBuilder(
+            cid,
+            messageOrdering,
+            client.databaseContainer,
+            channelUpdater.paginationState
+        )
         
         Task {
             try await loadFirstPage()
@@ -570,6 +575,13 @@ public final class Chat {
 @available(iOS 13.0, *)
 extension Chat {
     struct Environment {
+        var chatStateBuilder: (
+            _ cid: ChannelId,
+            _ messageOrder: MessageOrdering,
+            _ database: DatabaseContainer,
+            _ paginationState: MessagesPaginationState
+        ) -> ChatState = ChatState.init
+        
         var loadMessagesInteractorBuilder: (
             _ cid: ChannelId,
             _ messageOrdering: MessageOrdering,
