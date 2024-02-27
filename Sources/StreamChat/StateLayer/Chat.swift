@@ -413,9 +413,9 @@ public final class Chat {
     ///
     /// - Parameter parentMessageId: A message id of the message in a thread the user is replying to.
     ///
-    /// - Throws: An error while communicating with the Stream API.
+    /// - Throws: An error while communicating with the Stream API or missing required capabilities.
     public func keystroke(parentMessageId: MessageId? = nil) async throws {
-        // TODO: Missing capabilities check
+        try state.channel?.requireCapability(of: .sendTypingEvents)
         try await typingEventsSender.keystroke(in: cid, parentMessageId: parentMessageId)
     }
     
@@ -425,10 +425,9 @@ public final class Chat {
     ///
     /// - Parameter parentMessageId: A message id of the message in a thread the user is replying to.
     ///
-    /// - Throws: An error while communicating with the Stream API.
+    /// - Throws: An error while communicating with the Stream API or missing required capabilities.
     public func stopTyping(parentMessageId: MessageId? = nil) async throws {
-        // TODO: Missing capabilities check
-        // TODO: Call stopTyping when sending and editing messages
+        try state.channel?.requireCapability(of: .sendTypingEvents)
         try await typingEventsSender.stopTyping(in: cid, parentMessageId: parentMessageId)
     }
     
