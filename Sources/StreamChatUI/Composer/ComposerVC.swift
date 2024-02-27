@@ -982,7 +982,9 @@ open class ComposerVC: _ViewController,
         }
 
         let trimmedTypingMention = typingMention.trimmingCharacters(in: .whitespacesAndNewlines)
-        let mentionIsAlreadyPresent = content.mentionedUsers.map(\.name).contains(trimmedTypingMention)
+        let mentionedUsersNames = content.mentionedUsers.map(\.name)
+        let mentionedUsersIds = content.mentionedUsers.map(\.id)
+        let mentionIsAlreadyPresent = mentionedUsersNames.contains(trimmedTypingMention) || mentionedUsersIds.contains(trimmedTypingMention)
         let shouldShowEmptyMentions = typingMention.isEmpty || mentionIsAlreadyPresent
 
         // Because we re-create the ChatMessageComposerSuggestionsMentionDataSource always from scratch
