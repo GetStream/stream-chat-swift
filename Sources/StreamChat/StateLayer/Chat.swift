@@ -538,6 +538,31 @@ public final class Chat {
     public func uploadAttachment(with localFileURL: URL, type: AttachmentType, progress: ((Double) -> Void)? = nil) async throws -> UploadedAttachment {
         try await channelUpdater.uploadFile(type: type, localFileURL: localFileURL, cid: cid, progress: progress)
     }
+    
+    // MARK: - Watching the Channel
+    
+    /// Start watching the channel which enables server-side events.
+    ///
+    /// Watching queries the channel state and returns members, watchers and messages, and notifies the server to start sending events when anything in this channel changes.
+    ///
+    /// Please refer to [Watching a Channel](https://getstream.io/chat/docs/ios-swift/watch_channel/?language=swift) for additional information.
+    ///
+    /// - Note: Creating an instance of `Chat` starts watching the channel automatically.
+    ///
+    /// - Throws: An error while communicating with the Stream API.
+    public func watch() async throws {
+        // Note that watching is started in ChatClient+Chat when channel updater's update is called.
+        try await channelUpdater.startWatching(cid: cid, isInRecoveryMode: false)
+    }
+    
+    /// Stop watching the channel which disables server-side events.
+    ///
+    /// Please refer to [Watching a Channel](https://getstream.io/chat/docs/ios-swift/watch_channel/?language=swift) for additional information.
+    ///
+    /// - Throws: An error while communicating with the Stream API.
+    public func stopWatching() async throws {
+        try await channelUpdater.stopWatching(cid: cid)
+    }
 }
 
 // MARK: - Environment
