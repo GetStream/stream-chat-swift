@@ -23,10 +23,35 @@ public final class ChatState: ObservableObject {
     
     // MARK: Messages
     
+    /// An array of loaded messages.
+    ///
+    /// Use load messages in ``Chat`` for loading more messages.
     @Published public private(set) var messages: [ChatMessage] = []
     
+    // MARK: - Throttling and Slow Mode
+    
+    /// The duration until the current user can't send new messages when the channel has slow mode enabled.
+    ///
+    /// - SeeAlso: ``Chat.enableSlowMode(cooldownDuration:)``
+    /// - Returns: 0, if slow mode is not enabled, otherwise the remining cooldown duration in seconds.
+    public var remainingCooldownDuration: Int {
+        guard let channel else { return 0 }
+        guard channel.cooldownDuration > 0 else { return 0 }
+        guard !channel.ownCapabilities.contains(.skipSlowMode) else { return 0 }
+        guard let lastMessageTimestamp = channel.lastMessageFromCurrentUser?.createdAt else { return 0 }
+        let currentTime = Date().timeIntervalSince(lastMessageTimestamp)
+        return max(0, channel.cooldownDuration - Int(currentTime))
+    }
+    
+    // MARK: - Mutating the State
+    
+    // Force mutations on main actor since ChatState is meant to be used by UI.
+    @MainActor func setValue<Value>(_ value: Value, for keyPath: ReferenceWritableKeyPath<ChatState, Value>) {
+        self[keyPath: keyPath] = value
+    }
+    
     @MainActor func setMessages(_ messages: [ChatMessage]) {
-        self.messages = messages
+        setValue(messages, for: \.messages)
     }
 }
 
@@ -41,8 +66,9 @@ extension ChatState {
                 database: database,
                 fetchRequest: ChannelDTO.fetchRequest(for: cid),
                 itemCreator: { try $0.asModel() as ChatChannel }
-            ).onChange { [weak self] change in
-                self?.channel = change.item
+            )
+            .onChange { [weak self] change in
+                self?.onChannelChange(change.item)
             }
             return observer
         }()
@@ -51,5 +77,9 @@ extension ChatState {
         } catch {
             log.error("Failed to start the channel observer for \(cid)")
         }
+    }
+    
+    private func onChannelChange(_ channel: ChatChannel) {
+        Task { await setValue(channel, for: \.channel) }
     }
 }
