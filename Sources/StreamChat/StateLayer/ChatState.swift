@@ -11,7 +11,7 @@ public final class ChatState: ObservableObject {
     private var channelObserver: EntityDatabaseObserverWrapper<ChatChannel, ChannelDTO>?
     private let paginationState: MessagesPaginationState
     
-    init(cid: ChannelId, database: DatabaseContainer, messageOrder: MessageOrdering, paginationState: MessagesPaginationState) {
+    init(cid: ChannelId, messageOrder: MessageOrdering, database: DatabaseContainer, paginationState: MessagesPaginationState) {
         self.cid = cid
         self.messageOrder = messageOrder
         self.paginationState = paginationState
