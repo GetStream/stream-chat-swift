@@ -894,7 +894,7 @@ extension ChannelUpdater {
 }
 
 @available(iOS 13.0, *)
-private extension CheckedContinuation where T == Void, E == Error {
+extension CheckedContinuation where T == Void, E == Error {
     func resume(with error: Error?) {
         if let error {
             resume(throwing: error)

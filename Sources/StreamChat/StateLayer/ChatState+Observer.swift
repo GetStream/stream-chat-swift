@@ -9,11 +9,11 @@ extension ChatState {
     final class Observer {
         private let cid: ChannelId
         private let channelObserver: BackgroundEntityDatabaseObserver<ChatChannel, ChannelDTO>
-        private let eventNotificationCenter: EventNotificationCenter?
+        private let eventNotificationCenter: EventNotificationCenter
         private let messagesObserver: BackgroundListDatabaseObserver<ChatMessage, MessageDTO>
         private var webSocketEventObservers = [EventObserver]()
         
-        init(cid: ChannelId, channelQuery: ChannelQuery, database: DatabaseContainer, eventNotificationCenter: EventNotificationCenter?) {
+        init(cid: ChannelId, channelQuery: ChannelQuery, database: DatabaseContainer, eventNotificationCenter: EventNotificationCenter) {
             // TODO: Feasability of using context did change notification instead of FRC based observers
             // Note: Ordering and filtering is dependent on DB
             self.cid = cid
