@@ -12,7 +12,7 @@ public final class ChatState: ObservableObject {
     private let paginationState: MessagesPaginationState
     private let observer: Observer
     
-    init(cid: ChannelId, channelQuery: ChannelQuery, messageOrder: MessageOrdering, database: DatabaseContainer, eventNotificationCenter: EventNotificationCenter?, paginationState: MessagesPaginationState) {
+    init(cid: ChannelId, channelQuery: ChannelQuery, messageOrder: MessageOrdering, database: DatabaseContainer, eventNotificationCenter: EventNotificationCenter, paginationState: MessagesPaginationState) {
         self.cid = cid
         self.messageOrder = messageOrder
         self.paginationState = paginationState
