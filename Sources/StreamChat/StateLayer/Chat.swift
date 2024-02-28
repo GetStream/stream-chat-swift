@@ -57,6 +57,7 @@ public final class Chat {
             channelQuery,
             messageOrdering,
             client.databaseContainer,
+            client.webSocketClient?.eventNotificationCenter,
             channelUpdater.paginationState
         )
         
@@ -580,6 +581,7 @@ extension Chat {
             _ channelQuery: ChannelQuery,
             _ messageOrder: MessageOrdering,
             _ database: DatabaseContainer,
+            _ eventNotificationCenter: EventNotificationCenter?,
             _ paginationState: MessagesPaginationState
         ) -> ChatState = ChatState.init
         
