@@ -770,3 +770,22 @@ private extension DatabaseSession {
         return messageDTO
     }
 }
+
+@available(iOS 13.0, *)
+extension MessageUpdater {
+    func pinMessage(messageId: MessageId, pinning: MessagePinning) async throws {
+        try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
+            pinMessage(messageId: messageId, pinning: pinning) { error in
+                continuation.resume(with: error)
+            }
+        }
+    }
+    
+    func unpinMessage(messageId: MessageId) async throws {
+        try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
+            unpinMessage(messageId: messageId) { error in
+                continuation.resume(with: error)
+            }
+        }
+    }
+}
