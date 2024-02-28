@@ -49,9 +49,9 @@ final class LoadMessagesInteractor {
         }
         let resetsToLocal: Bool = pagination.parameter == nil || pagination.parameter?.isJumpingToMessage ?? false
         let payload = try await channelUpdater.update(channelQuery: channelQuery, isInRecoveryMode: false)
-        let messageIds = payload.messages.map(\.id)
-        let messages = try await messageRepository.messages(for: messageIds)
-        // TODO: Missing filtering: use channel messages predicate with ids or timestamps
+        guard let fromDate = payload.messages.first?.createdAt else { return }
+        guard let toDate = payload.messages.last?.createdAt else { return }
+        let messages = try await messageRepository.messages(from: fromDate, to: toDate, in: cid)
         await state.insertPaginatedMessages(messages, resetToLocalOnly: resetsToLocal)
     }
     
