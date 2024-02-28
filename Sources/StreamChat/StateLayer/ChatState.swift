@@ -10,12 +10,24 @@ public final class ChatState: ObservableObject {
     private let cid: ChannelId
     private var channelObserver: EntityDatabaseObserverWrapper<ChatChannel, ChannelDTO>?
     private let paginationState: MessagesPaginationState
+    private let observer: Observer
     
-    init(cid: ChannelId, messageOrder: MessageOrdering, database: DatabaseContainer, paginationState: MessagesPaginationState) {
+    init(cid: ChannelId, channelQuery: ChannelQuery, messageOrder: MessageOrdering, database: DatabaseContainer, paginationState: MessagesPaginationState) {
         self.cid = cid
         self.messageOrder = messageOrder
         self.paginationState = paginationState
-        startObservingChannel(with: cid, in: database)
+        observer = Observer(cid: cid, channelQuery: channelQuery, database: database)
+        
+        observer.start(
+            with: .init(
+                channelDidChange: { [weak self] in await self?.setValue($0, for: \.channel) },
+                messagesDidChange: { [weak self] changes in
+                    guard let self else { return }
+                    await self.setValue(self.orderedMessages.withListChanges(changes), for: \.messages)
+                },
+                typingUsersDidChange: { [weak self] in await self?.setValue($0, for: \.typingUsers) }
+            )
+        )
     }
     
     // MARK: - Represented Channel
@@ -30,7 +42,7 @@ public final class ChatState: ObservableObject {
     
     /// An array of loaded messages.
     ///
-    /// Messages are ordered by timestamp and``messageOrder``.
+    /// Messages are ordered by timestamp and``messageOrder`` (In case of ``MessageOrdering.bottomToTop`` the list is sorted in ascending order).
     ///
     /// Use load messages in ``Chat`` for loading more messages.
     @Published public private(set) var messages: [ChatMessage] = []
@@ -82,6 +94,11 @@ public final class ChatState: ObservableObject {
         return max(0, channel.cooldownDuration - Int(currentTime))
     }
     
+    // MARK: - Typing Users
+    
+    /// A list of users who are currently typing.
+    @Published public private(set) var typingUsers = Set<ChatUser>()
+    
     // MARK: - Mutating the State
     
     // Force mutations on main actor since ChatState is meant to be used by UI.
@@ -89,36 +106,12 @@ public final class ChatState: ObservableObject {
         self[keyPath: keyPath] = value
     }
     
-    @MainActor func setMessages(_ messages: [ChatMessage]) {
-        setValue(messages, for: \.messages)
-    }
-}
-
-// MARK: Observing the channel
-
-@available(iOS 13.0, *)
-extension ChatState {
-    private func startObservingChannel(with cid: ChannelId, in database: DatabaseContainer) {
-        channelObserver = { [weak self] in
-            let observer = EntityDatabaseObserverWrapper(
-                isBackground: true,
-                database: database,
-                fetchRequest: ChannelDTO.fetchRequest(for: cid),
-                itemCreator: { try $0.asModel() as ChatChannel }
-            )
-            .onChange { [weak self] change in
-                self?.onChannelChange(change.item)
-            }
-            return observer
-        }()
-        do {
-            try channelObserver?.startObserving()
-        } catch {
-            log.error("Failed to start the channel observer for \(cid)")
-        }
+    @MainActor var orderedMessages: OrderedMessages {
+        OrderedMessages(messageOrdering: messageOrder, orderedMessages: messages)
     }
     
-    private func onChannelChange(_ channel: ChatChannel) {
-        Task { await setValue(channel, for: \.channel) }
+    @MainActor func insertPaginatedMessages(_ newSortedMessages: [ChatMessage], resetToLocalOnly: Bool) {
+        let result = orderedMessages.withInsertingPaginated(newSortedMessages, resetToLocalOnly: resetToLocalOnly)
+        setValue(result, for: \.messages)
     }
 }
