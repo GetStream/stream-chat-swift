@@ -60,10 +60,6 @@ public final class Chat {
             client.webSocketClient?.eventNotificationCenter,
             channelUpdater.paginationState
         )
-        
-        Task {
-            try await loadFirstPage()
-        }
     }
     
     public internal(set) var state: ChatState
