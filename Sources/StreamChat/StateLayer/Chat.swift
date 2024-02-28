@@ -9,6 +9,8 @@ public final class Chat {
     private let authenticationRepository: AuthenticationRepository
     private let channelUpdater: ChannelUpdater
     private let loadMessagesInteractor: LoadMessagesInteractor
+    private let messageEditor: MessageEditor
+    private let messageUpdater: MessageUpdater
     private let sendMessageInteractor: SendMessageInteractor
     private let typingEventsSender: TypingEventsSender
     private let unreadMessagesInteractor: UnreadMessagesInteractor
@@ -31,6 +33,14 @@ public final class Chat {
         self.channelListQuery = channelListQuery
         self.cid = cid
         self.channelUpdater = channelUpdater
+        messageEditor = client.messageEditor
+        messageUpdater = environment.messageUpdaterBuilder(
+            client.config.isLocalStorageEnabled,
+            client.messageRepository,
+            client.makeMessagesPaginationStateHandler(),
+            client.databaseContainer,
+            client.apiClient
+        )
         loadMessagesInteractor = environment.loadMessagesInteractorBuilder(
             cid,
             messageOrdering,
@@ -57,7 +67,7 @@ public final class Chat {
             channelQuery,
             messageOrdering,
             client.databaseContainer,
-            client.webSocketClient?.eventNotificationCenter,
+            client.eventNotificationCenter,
             channelUpdater.paginationState
         )
     }
@@ -269,13 +279,33 @@ public final class Chat {
     
     // MARK: - Message Pinning
     
-//    public func pinMessage(_ message: ChatMessage) async throws {
-    // TODO: implement
-//    }
+    /// Pins the message to the channel until the specified date.
+    ///
+    /// - Note: To pin the message user has to have `PinMessage` permission.
+    ///
+    /// - Parameters:
+    ///   - message: The id of the message to be pinned.
+    ///   - pinning: The pinning expiration information. Supports an infinite expiration, setting a date, or the amount of time a message is pinned.
+    ///
+    /// - Throws: An error while fetching more messages from the Stream API or missing required capabilities.
+    public func pinMessage(_ message: MessageId, pinning: MessagePinning) async throws {
+        try state.channel?.requireCapability(of: .pinMessage)
+        try await messageUpdater.pinMessage(messageId: message, pinning: pinning)
+        try await messageEditor.waitForAPIRequest(messageId: message)
+    }
     
-//    public func unpinMessage(_ message: ChatMessage) async throws {
-//        TODO: implement
-//    }
+    /// Removes the message from the channel's pinned messages.
+    ///
+    /// - Note: To unpin the message user has to have `PinMessage` permission.
+    ///
+    /// - Parameter message: The id of the message to unpin.
+    ///
+    /// - Throws: An error while fetching more messages from the Stream API or missing required capabilities.
+    public func unpinMessage(_ message: MessageId) async throws {
+        try state.channel?.requireCapability(of: .pinMessage)
+        try await messageUpdater.unpinMessage(messageId: message)
+        try await messageEditor.waitForAPIRequest(messageId: message)
+    }
     
     /// Loads pinned messages for the specified pagination options, sorting order, and limit.
     ///
@@ -295,7 +325,7 @@ public final class Chat {
     
     /// Marks all the unread messages in the channel as read.
     ///
-    /// - Throws: An error while communicating with the Stream API.
+    /// - Throws: An error while communicating with the Stream API or missing required capabilities.
     func markRead() async throws {
         guard let channel = state.channel else { throw ClientError.ChannelDoesNotExist(cid: cid) }
         try await unreadMessagesInteractor.markRead(channel)
@@ -305,7 +335,7 @@ public final class Chat {
     ///
     /// - Parameter message: The id of the first message that will be marked as unread.
     ///
-    /// - Throws: An error while communicating with the Stream API.
+    /// - Throws: An error while communicating with the Stream API or missing required capabilities.
     func markUnread(from message: MessageId) async throws {
         guard let channel = state.channel else { throw ClientError.ChannelDoesNotExist(cid: cid) }
         try await unreadMessagesInteractor.markUnread(from: message, in: channel)
@@ -577,7 +607,7 @@ extension Chat {
             _ channelQuery: ChannelQuery,
             _ messageOrder: MessageOrdering,
             _ database: DatabaseContainer,
-            _ eventNotificationCenter: EventNotificationCenter?,
+            _ eventNotificationCenter: EventNotificationCenter,
             _ paginationState: MessagesPaginationState
         ) -> ChatState = ChatState.init
         
@@ -587,6 +617,14 @@ extension Chat {
             _ channelUpdater: ChannelUpdater,
             _ messageRepository: MessageRepository
         ) -> LoadMessagesInteractor = LoadMessagesInteractor.init
+        
+        var messageUpdaterBuilder: (
+            _ isLocalStorageEnabled: Bool,
+            _ messageRepository: MessageRepository,
+            _ paginationStateHandler: MessagesPaginationStateHandling,
+            _ database: DatabaseContainer,
+            _ apiClient: APIClient
+        ) -> MessageUpdater = MessageUpdater.init
         
         var sendMessageInteractorBuilder: (
             _ channelUpdater: ChannelUpdater,
@@ -608,9 +646,14 @@ extension Chat {
     }
 }
 
-// MARK: - Needs Review
+// MARK: - Chat Client
 
 private extension ChatClient {
+    // TODO: Needs a better solution
+    var messageEditor: MessageEditor {
+        backgroundWorkers.compactMap { $0 as? MessageEditor }.first!
+    }
+
     // TODO: Needs a better solution
     var messageSender: MessageSender {
         backgroundWorkers.compactMap { $0 as? MessageSender }.first!
