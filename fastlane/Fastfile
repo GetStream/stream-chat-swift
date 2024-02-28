@@ -391,7 +391,7 @@ lane :xcmetrics do |options|
   performance_benchmarks = JSON.parse(File.read(performance_path))
   previous_release_performance = performance_benchmarks[previous_release_branch]
 
-  markdown_table = "## StreamChat XCMetrics\n| `target` | `metric` | `branch` | `#{previous_release_branch}` | `performance` | `status` |\n| - | - | - | - | - | - |\n"
+  markdown_table = "## StreamChat XCMetrics\n| `target` | `metric` | `#{previous_release_branch}` | `branch` | `performance` | `status` |\n| - | - | - | - | - | - |\n"
   ['testMessageListScrollTime', 'testChannelListScrollTime'].each do |test_name|
     index = 0
     ['hitches_total_duration', 'duration', 'hitch_time_ratio', 'frame_rate', 'number_of_hitches'].each do |metric|
@@ -416,12 +416,12 @@ lane :xcmetrics do |options|
       target = index.zero? ? test_name.match(/(?<=test)(.*?)(?=ScrollTime)/).to_s : ''
       index += 1
 
-      markdown_table << "| #{target} | #{title} | #{branch_value} #{value_extension} | #{release_value} #{value_extension} | #{diff}% #{diff_emoji} | #{status_emoji} |\n"
+      markdown_table << "| #{target} | #{title} | #{release_value} #{value_extension} | #{branch_value} #{value_extension} | #{diff}% #{diff_emoji} | #{status_emoji} |\n"
       FastlaneCore::PrintTable.print_values(
         title: "⏳ #{title} ⏳",
         config: {
-          branch: "#{branch_value} #{value_extension}",
           "#{previous_release_branch}": "#{release_value} #{value_extension}",
+          branch: "#{branch_value} #{value_extension}",
           diff: "#{diff}% #{diff_emoji}",
           status: status_emoji
         }
