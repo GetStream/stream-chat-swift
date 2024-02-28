@@ -12,7 +12,7 @@ extension ChatClient {
     
     /// An instance of `Chat` which represents a channel with the specified id.
     ///
-    /// - Note: Provides a quick lookup of a channel. Use if for channels which are available locally.
+    /// - Note: Provides a quick lookup of a chat. It is caller's responsibility to call ``Chat.watch()`` for receiving the most recent state from the server.
     ///
     /// - Parameters:
     ///   - cid: The id of the channel.
@@ -20,18 +20,14 @@ extension ChatClient {
     ///   - messageOrdering: Describes the ordering the messages are presented.
     /// - Returns: An instance of Chat representing the channel.
     ///
-    
-    // TODO: we should rename: makeXXX
-    public func chat(
+    public func makeChat(
         for cid: ChannelId,
         channelListQuery: ChannelListQuery? = nil,
         messageOrdering: MessageOrdering = .topToBottom
     ) -> Chat {
         let channelUpdater = makeChannelUpdater()
         let channelQuery = ChannelQuery(cid: cid)
-        Task {
-            try await channelUpdater.update(channelQuery: channelQuery, isInRecoveryMode: false)
-        }
+        // TODO: Review pagination state since watch and channel updater's update are slightly different
         return Chat(
             cid: cid,
             channelQuery: channelQuery,
@@ -46,7 +42,7 @@ extension ChatClient {
     
     /// An instance of `Chat` which represents a channel with the channel query.
     ///
-    /// - Note: The method syncs the state before returning the instance.
+    /// - Note: The method syncs the state before returning the instance and starts watching for changes.
     ///
     /// - Parameters:
     ///   - channelQuery: The channel query used for looking up a channel.
@@ -55,7 +51,7 @@ extension ChatClient {
     ///
     /// - Throws: An error while communicating with the Stream API.
     /// - Returns: An instance of `Chat` representing the channel.
-    public func chat(
+    public func makeChat(
         with channelQuery: ChannelQuery,
         channelListQuery: ChannelListQuery? = nil,
         messageOrdering: MessageOrdering = .topToBottom
@@ -80,7 +76,7 @@ extension ChatClient {
     ///
     /// Creates a new channel or returns an existing channel by modifying its configuration if needed.
     ///
-    /// - Note: The method syncs the state before returning the instance.
+    /// - Note: The method syncs the state before returning the instance and starts watching for changes.
     ///
     /// - Parameters:
     ///   - cid: The id of the channel.
@@ -96,7 +92,7 @@ extension ChatClient {
     ///
     /// - Throws: An error while communicating with the Stream API.
     /// - Returns: An instance of `Chat` representing the channel.
-    public func chat(
+    public func makeChat(
         with cid: ChannelId,
         name: String? = nil,
         imageURL: URL? = nil,
@@ -138,7 +134,7 @@ extension ChatClient {
     /// Use this for direct message channels because the channel is uniquely identified by
     /// its members. Creates a new channel or returns an existing channel by modifying its configuration if needed.
     ///
-    /// - Note: The method syncs the state before returning the instance.
+    /// - Note: The method syncs the state before returning the instance and starts watching for changes.
     ///
     /// - Parameters:
     ///   - members: An array of user ids.
@@ -153,7 +149,7 @@ extension ChatClient {
     ///
     /// - Throws: An error while communicating with the Stream API.
     /// - Returns: An instance of `Chat` representing the channel.
-    public func directMessageChat(
+    public func makeDirectMessageChat(
         with members: [UserId],
         type: ChannelType = .messaging,
         isCurrentUserMember: Bool = true,
@@ -205,10 +201,14 @@ extension ChatClient {
 extension ChatChannelController {
     /// Converts the channel controller to an instance of `Chat`.
     ///
-    /// - Note: This is a compatibility method for the new state layer represented by `Chat`.
-    public var chat: Chat {
+    /// - Warning: This is a compatibility method for the new state layer represented by `Chat`. It is destined to be removed.
+    public func makeChat(watch: Bool = true) -> Chat {
         if let cid = cid {
-            return client.chat(for: cid)
+            let chat = client.makeChat(for: cid)
+            if watch {
+                Task { try await chat.watch() }
+            }
+            return chat
         } else {
             fatalError("Trying to access channel controller before it was synchronized")
         }
