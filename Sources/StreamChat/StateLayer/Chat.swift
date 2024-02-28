@@ -54,6 +54,7 @@ public final class Chat {
         )
         state = environment.chatStateBuilder(
             cid,
+            channelQuery,
             messageOrdering,
             client.databaseContainer,
             channelUpdater.paginationState
@@ -576,6 +577,7 @@ extension Chat {
     struct Environment {
         var chatStateBuilder: (
             _ cid: ChannelId,
+            _ channelQuery: ChannelQuery,
             _ messageOrder: MessageOrdering,
             _ database: DatabaseContainer,
             _ paginationState: MessagesPaginationState
