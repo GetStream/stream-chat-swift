@@ -3,6 +3,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 # Upcoming
 
+### 🔄 Changed
+
+# [4.49.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.49.0)
+_February 27, 2024_
+
 ## StreamChat
 ### ✅ Added
 - Add parallel attachment uploading [#3034](https://github.com/GetStream/stream-chat-swift/pull/3034)
@@ -11,6 +16,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Fix showing empty search results with background mapping enabled [#3042](https://github.com/GetStream/stream-chat-swift/pull/3042)
 
 ## StreamChatUI
+### ✅ Added
+- Add support for user mentions in channels with 100+ members [#3043](https://github.com/GetStream/stream-chat-swift/pull/3043)
 ### 🐞 Fixed
 - Fix composer link preview overridden by previous enrichment [#3025](https://github.com/GetStream/stream-chat-swift/pull/3025)
 - Fix merged avatars changing sub-image locations when opening channel list [#3013](https://github.com/GetStream/stream-chat-swift/pull/3013)

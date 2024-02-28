@@ -140,7 +140,9 @@ final class ChatSuggestionsVC_Tests: XCTestCase {
         searchController.users_mock = []
         vc.dataSource = ChatMessageComposerSuggestionsMentionDataSource(
             collectionView: vc.collectionView,
-            searchController: searchController
+            searchController: searchController,
+            memberListController: nil,
+            initialUsers: []
         )
 
         AssertSnapshot(vc, variants: .onlyUserInterfaceStyles, screenSize: defaultSuggestionsSize)
@@ -152,7 +154,8 @@ final class ChatSuggestionsVC_Tests: XCTestCase {
         vc.dataSource = ChatMessageComposerSuggestionsMentionDataSource(
             collectionView: vc.collectionView,
             searchController: searchController,
-            usersCache: mentions
+            memberListController: nil,
+            initialUsers: mentions
         )
         vc.components = .mock
 
@@ -188,7 +191,8 @@ final class ChatSuggestionsVC_Tests: XCTestCase {
         vc.dataSource = ChatMessageComposerSuggestionsMentionDataSource(
             collectionView: vc.collectionView,
             searchController: searchController,
-            usersCache: mentions
+            memberListController: nil,
+            initialUsers: mentions
         )
 
         AssertSnapshot(vc, variants: .onlyUserInterfaceStyles, screenSize: defaultSuggestionsSize)
@@ -216,7 +220,8 @@ final class ChatSuggestionsVC_Tests: XCTestCase {
         vc.dataSource = ChatMessageComposerSuggestionsMentionDataSource(
             collectionView: vc.collectionView,
             searchController: searchController,
-            usersCache: mentions
+            memberListController: nil,
+            initialUsers: mentions
         )
 
         AssertSnapshot(vc, variants: [.defaultLight], screenSize: defaultSuggestionsSize)

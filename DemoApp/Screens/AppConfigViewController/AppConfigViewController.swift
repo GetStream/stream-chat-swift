@@ -176,6 +176,7 @@ class AppConfigViewController: UITableViewController {
         case channelListSearchStrategy
         case isUnreadMessageSeparatorEnabled
         case isJumpToUnreadEnabled
+        case mentionAllAppUsers
     }
 
     enum ChatClientConfigOption: String, CaseIterable {
@@ -437,6 +438,10 @@ class AppConfigViewController: UITableViewController {
         case .isJumpToUnreadEnabled:
             cell.accessoryView = makeSwitchButton(Components.default.isJumpToUnreadEnabled) { newValue in
                 Components.default.isJumpToUnreadEnabled = newValue
+            }
+        case .mentionAllAppUsers:
+            cell.accessoryView = makeSwitchButton(Components.default.mentionAllAppUsers) { newValue in
+                Components.default.mentionAllAppUsers = newValue
             }
         }
     }

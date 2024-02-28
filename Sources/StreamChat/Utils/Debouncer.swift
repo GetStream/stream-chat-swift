@@ -35,6 +35,12 @@ public struct Debouncer {
     public mutating func execute(block: @escaping () -> Void) {
         /// Cancels the current job if there is one.
         job?.cancel()
+        
+        if interval == .zero {
+            block()
+            return
+        }
+
         /// Creates a new job with the given block and assigns it to the newJob constant.
         let newJob = DispatchWorkItem { block() }
         /// Schedules the new job to be executed after a certain time interval on the provided queue.
