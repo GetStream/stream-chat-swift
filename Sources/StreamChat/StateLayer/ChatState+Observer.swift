@@ -6,13 +6,17 @@ import Foundation
 
 @available(iOS 13.0, *)
 extension ChatState {
-    struct Observer {
+    final class Observer {
+        private let cid: ChannelId
         private let channelObserver: BackgroundEntityDatabaseObserver<ChatChannel, ChannelDTO>
+        private let eventNotificationCenter: EventNotificationCenter?
         private let messagesObserver: BackgroundListDatabaseObserver<ChatMessage, MessageDTO>
+        private var webSocketEventObservers = [EventObserver]()
         
-        init(cid: ChannelId, channelQuery: ChannelQuery, database: DatabaseContainer) {
+        init(cid: ChannelId, channelQuery: ChannelQuery, database: DatabaseContainer, eventNotificationCenter: EventNotificationCenter?) {
             // TODO: Feasability of using context did change notification instead of FRC based observers
             // Note: Ordering and filtering is dependent on DB
+            self.cid = cid
             let context = database.backgroundReadOnlyContext
             channelObserver = BackgroundEntityDatabaseObserver(
                 context: context,
@@ -31,8 +35,7 @@ extension ChatState {
                 itemCreator: { try $0.asModel() as ChatMessage },
                 sorting: []
             )
-            
-            // setup eventscontroller and try to skip DB observers
+            self.eventNotificationCenter = eventNotificationCenter
         }
         
         struct Handlers {
@@ -45,6 +48,13 @@ extension ChatState {
             channelObserver.onChange(do: { change in Task { await handlers.channelDidChange(change.item) } })
             channelObserver.onFieldChange(\.currentlyTypingUsers, do: { change in Task { await handlers.typingUsersDidChange(change.item) } })
             messagesObserver.onDidChange = { change in Task { await handlers.messagesDidChange(change) } }
+            
+            // TODO: Implement member list
+//            if let eventNotificationCenter {
+//                webSocketEventObservers = [
+//                    MemberEventObserver(notificationCenter: eventNotificationCenter, cid: cid) { event in Task {  } }
+//                ]
+//            }
             
             do {
                 try channelObserver.startObserving()
