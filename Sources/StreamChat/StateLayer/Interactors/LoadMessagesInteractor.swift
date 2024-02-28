@@ -51,7 +51,8 @@ final class LoadMessagesInteractor {
         let payload = try await channelUpdater.update(channelQuery: channelQuery, isInRecoveryMode: false)
         let messageIds = payload.messages.map(\.id)
         let messages = try await messageRepository.messages(for: messageIds)
-        await state.insertMessages(messages, resetsToLocal: resetsToLocal)
+        // TODO: Missing filtering: use channel messages predicate with ids or timestamps
+        await state.insertPaginatedMessages(messages, resetToLocalOnly: resetsToLocal)
     }
     
     func loadMorePrecedingMessages(to state: ChatState, channelQuery: ChannelQuery, before messageId: MessageId?, limit: Int?) async throws {
@@ -91,73 +92,14 @@ final class LoadMessagesInteractor {
 
 // MARK: -
 
-extension MessageOrdering {
-    var isReversed: Bool {
-        switch self {
-        case .bottomToTop: return true
-        case .topToBottom: return false
-        }
-    }
-}
-
 @available(iOS 13.0, *)
 private extension ChatState {
     @MainActor var oldestAPIMessageId: MessageId? {
-        let messages = messageOrder.isReversed ? messages.reversed() : messages
-        return messages.first(where: { !$0.isLocalOnly })?.id
+        orderedMessages.ascendingSortedMessages.first(where: { !$0.isLocalOnly })?.id
     }
     
     @MainActor var newestAPIMessageId: MessageId? {
-        let messages = messageOrder.isReversed ? messages.reversed() : messages
-        return messages.last(where: { !$0.isLocalOnly })?.id
-    }
-    
-    @MainActor func insertMessages(_ newMessages: [ChatMessage], resetsToLocal: Bool) {
-        var messages = self.messages
-        if resetsToLocal {
-            messages = messages.filter { $0.isLocalOnly }
-        }
-        switch messageOrder {
-        case .topToBottom:
-            setMessages(ChatState.mergeSorted(messages.reversed(), newMessages).reversed())
-        case .bottomToTop:
-            setMessages(ChatState.mergeSorted(messages, newMessages))
-        }
-    }
-    
-    /// Merges a sorted array into a already sorted array with ignoring duplicates. The resulting array keeps its sort order.
-    static func mergeSorted(_ currentElements: [ChatMessage], _ newElements: [ChatMessage]) -> [ChatMessage] {
-        func insert(_ merged: inout [ChatMessage], newElement: ChatMessage) {
-            // Prefer the new element when detecting duplicates (e.g. API fetch tries to insert updated message)
-            if merged.last?.id == newElement.id {
-                merged.removeLast()
-            }
-            merged.append(newElement)
-        }
-
-        var merged = [ChatMessage]()
-        merged.reserveCapacity(currentElements.count + newElements.count)
-        
-        var currentElementIndex = 0
-        var newElementIndex = 0
-        while currentElementIndex < currentElements.count, newElementIndex < newElements.count {
-            if currentElements[currentElementIndex].createdAt < newElements[newElementIndex].createdAt {
-                insert(&merged, newElement: currentElements[currentElementIndex])
-                currentElementIndex += 1
-            } else {
-                insert(&merged, newElement: newElements[newElementIndex])
-                newElementIndex += 1
-            }
-        }
-        while currentElementIndex < currentElements.count {
-            insert(&merged, newElement: currentElements[currentElementIndex])
-            currentElementIndex += 1
-        }
-        while newElementIndex < newElements.count {
-            insert(&merged, newElement: newElements[newElementIndex])
-            newElementIndex += 1
-        }
-        return merged
+        orderedMessages.ascendingSortedMessages.last(where: { !$0.isLocalOnly })?.id
     }
 }
 
