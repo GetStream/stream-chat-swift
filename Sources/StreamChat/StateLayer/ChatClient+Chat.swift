@@ -19,6 +19,9 @@ extension ChatClient {
     ///   - channelListQuery: The channel list query the channel belongs to.
     ///   - messageOrdering: Describes the ordering the messages are presented.
     /// - Returns: An instance of Chat representing the channel.
+    ///
+    
+    // TODO: we should rename: makeXXX
     public func chat(
         for cid: ChannelId,
         channelListQuery: ChannelListQuery? = nil,
