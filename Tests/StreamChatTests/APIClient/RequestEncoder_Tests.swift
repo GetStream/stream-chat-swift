@@ -7,308 +7,252 @@
 import XCTest
 
 // TODO: rewrite these.
-// final class RequestEncoder_Tests: XCTestCase {
-//    var encoder: RequestEncoder!
-//    var baseURL: URL!
-//    var apiKey: APIKey!
-//    fileprivate var connectionDetailsProvider: ConnectionDetailsProviderDelegate_Spy!
-//
-//    override func setUp() {
-//        super.setUp()
-//
-//        apiKey = APIKey(.unique)
-//        baseURL = .unique()
-//        encoder = DefaultRequestEncoder(baseURL: baseURL, apiKey: apiKey)
-//
-//        connectionDetailsProvider = ConnectionDetailsProviderDelegate_Spy()
-//        encoder.connectionDetailsProviderDelegate = connectionDetailsProvider
-//
-//        VirtualTimeTimer.time = VirtualTime()
-//    }
-//
-//    override func tearDown() {
-//        encoder = nil
-//        baseURL = nil
-//        apiKey = nil
-//        connectionDetailsProvider = nil
-//        VirtualTimeTimer.invalidate()
-//
-//        super.tearDown()
-//    }
-//
-//    func test_requiredQueryItems() throws {
-//        // Prepare a new endpoint
-//        let endpoint = Endpoint<Data>(
-//            path: .guest,
-//            method: .get,
-//            queryItems: nil,
-//            requiresConnectionId: false,
-//            requiresToken: false,
-//            body: nil
-//        )
-//
-//        // Encode the request and wait for the result
-//        let request = try waitFor { encoder.encodeRequest(for: endpoint, completion: $0) }.get()
-//
-//        // Check the required query item values are present
-//        let urlComponents = try XCTUnwrap(URLComponents(url: request.url!, resolvingAgainstBaseURL: false))
-//        XCTAssertEqual(urlComponents.queryItems?["api_key"], apiKey.apiKeyString)
-//    }
-//
-//    func test_endpointRequiringToken_hasCorrectHeaders_ifTokenIsProvided() throws {
-//        // Prepare a new endpoint
-//        let endpoint = Endpoint<Data>(
-//            path: .guest,
-//            method: .get,
-//            requiresConnectionId: false,
-//            requiresToken: true
-//        )
-//
-//        // Simulate provided token
-//        let token = Token.unique()
-//        connectionDetailsProvider.provideTokenResult = .success(token)
-//
-//        // Encode the request and wait for the result
-//        let request = try waitFor { encoder.encodeRequest(for: endpoint, completion: $0) }.get()
-//
-//        // Check the auth headers are present
-//        XCTAssertEqual(request.allHTTPHeaderFields?["Stream-Auth-Type"], "jwt")
-//        XCTAssertEqual(request.allHTTPHeaderFields?["Authorization"], token.rawValue)
-//    }
-//
-//    func test_endpointRequiringToken_hasCorrectHeaders_ifAnonymousTokenIsProvided() throws {
-//        // Prepare a new endpoint
-//        let endpoint = Endpoint<Data>(
-//            path: .guest,
-//            method: .get,
-//            requiresConnectionId: false,
-//            requiresToken: true
-//        )
-//
-//        // Set anonymous token.
-//        connectionDetailsProvider.provideTokenResult = .success(.anonymous)
-//
-//        // Encode the request and wait for the result.
-//        let request = try waitFor { encoder.encodeRequest(for: endpoint, completion: $0) }.get()
-//
-//        // Check the anonymous auth header is set.
-//        XCTAssertEqual(request.allHTTPHeaderFields?["Stream-Auth-Type"], "anonymous")
-//    }
-//
-//    func test_endpointRequiringToken_isCancelled_ifNilTokenIsProvided() throws {
-//        // Prepare a new endpoint.
-//        let endpoint = Endpoint<Data>(
-//            path: .guest,
-//            method: .get,
-//            requiresConnectionId: false,
-//            requiresToken: true
-//        )
-//
-//        // Reset the token.
-//        connectionDetailsProvider.provideTokenResult = nil
-//
-//        // Encode the request and capture the result
-//        var encodingResult: Result<URLRequest, Error>?
-//        encoder.encodeRequest(for: endpoint) { encodingResult = $0 }
-//
-//        // Cancel all token waiting requests.
-//        connectionDetailsProvider.completeTokenWaiters(passing: nil)
-//
-//        // Assert request encoding has failed.
-//        AssertAsync.willBeTrue(encodingResult?.error is ClientError.MissingToken)
-//    }
-//
-//    func test_endpointRequiringToken_whenTokenProviderTimeouts_returnsCorrectError() throws {
-//        // Prepare a new endpoint.
-//        let endpoint = Endpoint<Data>(
-//            path: .guest,
-//            method: .get,
-//            requiresConnectionId: false,
-//            requiresToken: true
-//        )
-//
-//        // Reset the token.
-//        connectionDetailsProvider.provideTokenResult = .failure(ClientError.WaiterTimeout())
-//
-//        // Encode the request and capture the result
-//        var encodingResult: Result<URLRequest, Error>?
-//        encoder.encodeRequest(for: endpoint) { encodingResult = $0 }
-//
-//        // Assert request encoding has failed with the correct error.
-//        AssertAsync.willBeTrue(encodingResult?.error is ClientError.WaiterTimeout)
-//    }
-//
-//    func test_endpointRequiringToken_whenTokenProviderFailsWithUnknownError_returnsMissingTokenError() throws {
-//        // Prepare a new endpoint.
-//        let endpoint = Endpoint<Data>(
-//            path: .guest,
-//            method: .get,
-//            requiresConnectionId: false,
-//            requiresToken: true
-//        )
-//
-//        // Reset the token.
-//        connectionDetailsProvider.provideTokenResult = .failure(TestError())
-//
-//        // Encode the request and capture the result
-//        var encodingResult: Result<URLRequest, Error>?
-//        encoder.encodeRequest(for: endpoint) { encodingResult = $0 }
-//
-//        // Assert request encoding has failed with the correct error.
-//        AssertAsync.willBeTrue(encodingResult?.error is ClientError.MissingToken)
-//    }
-//
-//    func test_endpointRequiringConnectionId_hasCorrectQueryItems_ifConnectionIdIsProvided() throws {
-//        // Prepare an endpoint that requires connection id
-//        let endpoint = Endpoint<Data>(
-//            path: .guest,
-//            method: .get,
-//            queryItems: nil,
-//            requiresConnectionId: true,
-//            requiresToken: false,
-//            body: nil
-//        )
-//
-//        // Set a new connection id
-//        let connectionId = String.unique
-//        connectionDetailsProvider.provideConnectionIdResult = .success(connectionId)
-//
-//        // Encode the request and wait for the result
-//        let request = try waitFor { encoder.encodeRequest(for: endpoint, completion: $0) }.get()
-//
-//        // Check the connection id is set
-//        let urlComponents = try XCTUnwrap(URLComponents(url: request.url!, resolvingAgainstBaseURL: false))
-//        XCTAssertEqual(urlComponents.queryItems?["connection_id"], connectionId)
-//    }
-//
-//    func test_endpointRequiringConnectionId_isCanceled_ifNilConnectionIdIsProvided() throws {
-//        // Prepare an endpoint that requires connection id
-//        let endpoint = Endpoint<Data>(
-//            path: .guest,
-//            method: .get,
-//            queryItems: nil,
-//            requiresConnectionId: true,
-//            requiresToken: false,
-//            body: nil
-//        )
-//
-//        // Reset a connection id
-//        connectionDetailsProvider.provideConnectionIdResult = nil
-//
-//        // Encode the request and capture the result
-//        var encodingResult: Result<URLRequest, Error>?
-//        encoder.encodeRequest(for: endpoint) { encodingResult = $0 }
-//
-//        // Cancel all connection id waiting requests.
-//        connectionDetailsProvider.completeConnectionIdWaiters(passing: nil)
-//
-//        // Assert request encoding has failed.
-//        AssertAsync.willBeTrue(encodingResult?.error is ClientError.MissingConnectionId)
-//    }
-//
-//    func test_endpointRequiringConnectionId_whenConnectionIdProviderTimeouts_returnsCorrectError() throws {
-//        // Prepare an endpoint that requires connection id
-//        let endpoint = Endpoint<Data>(
-//            path: .guest,
-//            method: .get,
-//            queryItems: nil,
-//            requiresConnectionId: true,
-//            requiresToken: false,
-//            body: nil
-//        )
-//
-//        // Reset the token.
-//        connectionDetailsProvider.provideConnectionIdResult = .failure(ClientError.WaiterTimeout())
-//
-//        // Encode the request and capture the result
-//        var encodingResult: Result<URLRequest, Error>?
-//        encoder.encodeRequest(for: endpoint) { encodingResult = $0 }
-//
-//        // Assert request encoding has failed with the correct error.
-//        AssertAsync.willBeTrue(encodingResult?.error is ClientError.WaiterTimeout)
-//    }
-//
-//    func test_endpointRequiringConnectionId_whenConnectionIdFailsWithUnknownError_returnsMissingConnectionIdError() throws {
-//        // Prepare an endpoint that requires connection id
-//        let endpoint = Endpoint<Data>(
-//            path: .guest,
-//            method: .get,
-//            queryItems: nil,
-//            requiresConnectionId: true,
-//            requiresToken: false,
-//            body: nil
-//        )
-//
-//        // Reset the token.
-//        connectionDetailsProvider.provideConnectionIdResult = .failure(TestError())
-//
-//        // Encode the request and capture the result
-//        var encodingResult: Result<URLRequest, Error>?
-//        encoder.encodeRequest(for: endpoint) { encodingResult = $0 }
-//
-//        // Assert request encoding has failed with the correct error.
-//        AssertAsync.willBeTrue(encodingResult?.error is ClientError.MissingConnectionId)
-//    }
-//
-//    func test_endpointRequiringConnectionIdAndToken_isEncodedCorrectly_ifBothAreProvided() throws {
-//        // Prepare an endpoint that requires connection id
-//        let endpoint = Endpoint<Data>(
-//            path: .guest,
-//            method: .get,
-//            queryItems: nil,
-//            requiresConnectionId: true,
-//            requiresToken: true,
-//            body: nil
-//        )
-//
-//        // Set a new connection id
-//        let connectionId = String.unique
-//        connectionDetailsProvider.provideConnectionIdResult = .success(connectionId)
-//
-//        // Set a new token
-//        let token = Token.unique()
-//        connectionDetailsProvider.provideTokenResult = .success(token)
-//
-//        // Encode the request and wait for the result
-//        let request = try waitFor { encoder.encodeRequest(for: endpoint, completion: $0) }.get()
-//
-//        // Check the connection id is set
-//        let urlComponents = try XCTUnwrap(URLComponents(url: request.url!, resolvingAgainstBaseURL: false))
-//        XCTAssertEqual(urlComponents.queryItems?["connection_id"], connectionId)
-//        // Check the auth headers are set.
-//        XCTAssertEqual(request.allHTTPHeaderFields?["Stream-Auth-Type"], "jwt")
-//        XCTAssertEqual(request.allHTTPHeaderFields?["Authorization"], token.rawValue)
-//    }
-//
-//    func test_encodeRequest_syncVersion_whenEndpointRequiresConnectionId_shouldReturnRequest() {
-//        let endpoint = Endpoint<Data>(
-//            path: .guest,
-//            method: .get,
-//            queryItems: nil,
-//            requiresConnectionId: true,
-//            requiresToken: false,
-//            body: nil
-//        )
-//
-//        connectionDetailsProvider.provideConnectionIdResult = .success(.unique)
-//
-//        XCTAssertNoThrow(try encoder.encodeRequest(for: endpoint))
-//    }
-//
-//    func test_encodeRequest_syncVersion_whenEndpointRequiresConnectionId_whenConnectionFails_shouldThrow() {
-//        let endpoint = Endpoint<Data>(
-//            path: .guest,
-//            method: .get,
-//            queryItems: nil,
-//            requiresConnectionId: true,
-//            requiresToken: false,
-//            body: nil
-//        )
-//
-//        connectionDetailsProvider.provideConnectionIdResult = .failure(TestError())
-//
-//        XCTAssertThrowsError(try encoder.encodeRequest(for: endpoint))
-//    }
+final class RequestEncoder_Tests: XCTestCase {
+    var encoder: RequestEncoder!
+    var baseURL: URL!
+    var apiKey: APIKey!
+    fileprivate var connectionDetailsProvider: ConnectionDetailsProviderDelegate_Spy!
+
+    override func setUp() {
+        super.setUp()
+
+        apiKey = APIKey(.unique)
+        baseURL = .unique()
+        encoder = DefaultRequestEncoder(baseURL: baseURL, apiKey: apiKey)
+
+        connectionDetailsProvider = ConnectionDetailsProviderDelegate_Spy()
+        encoder.connectionDetailsProviderDelegate = connectionDetailsProvider
+
+        VirtualTimeTimer.time = VirtualTime()
+    }
+
+    override func tearDown() {
+        encoder = nil
+        baseURL = nil
+        apiKey = nil
+        connectionDetailsProvider = nil
+        VirtualTimeTimer.invalidate()
+
+        super.tearDown()
+    }
+
+    func test_endpointRequiringToken_hasCorrectHeaders_ifTokenIsProvided() throws {
+        // Prepare a new request
+        let initialRequest = URLRequest(url: .unique())
+
+        // Simulate provided token
+        let token = Token.unique()
+        connectionDetailsProvider.provideTokenResult = .success(token)
+
+        // Encode the request and wait for the result
+        let request = try waitFor {
+            encoder.encode(
+                request: initialRequest,
+                requiresConnectionId: false,
+                requiresToken: true,
+                completion: $0
+            )
+        }.get()
+
+        // Check the auth headers are present
+        XCTAssertEqual(request.allHTTPHeaderFields?["Stream-Auth-Type"], "jwt")
+        XCTAssertEqual(request.allHTTPHeaderFields?["Authorization"], token.rawValue)
+    }
+
+    func test_endpointRequiringToken_hasCorrectHeaders_ifAnonymousTokenIsProvided() throws {
+        // Prepare a new request
+        let initialRequest = URLRequest(url: .unique())
+
+        // Set anonymous token.
+        connectionDetailsProvider.provideTokenResult = .success(.anonymous)
+
+        // Encode the request and wait for the result.
+        let request = try waitFor {
+            encoder.encode(
+                request: initialRequest,
+                requiresConnectionId: false,
+                requiresToken: true,
+                completion: $0
+            )
+        }.get()
+
+        // Check the anonymous auth header is set.
+        XCTAssertEqual(request.allHTTPHeaderFields?["Stream-Auth-Type"], "anonymous")
+    }
+
+    func test_endpointRequiringToken_isCancelled_ifNilTokenIsProvided() throws {
+        // Prepare a new request
+        let initialRequest = URLRequest(url: .unique())
+
+        // Reset the token.
+        connectionDetailsProvider.provideTokenResult = nil
+
+        // Encode the request and capture the result
+        var encodingResult: Result<URLRequest, Error>?
+        encoder.encode(
+            request: initialRequest,
+            requiresConnectionId: false,
+            requiresToken: true
+        ) { encodingResult = $0 }
+
+        // Cancel all token waiting requests.
+        connectionDetailsProvider.completeTokenWaiters(passing: nil)
+
+        // Assert request encoding has failed.
+        AssertAsync.willBeTrue(encodingResult?.error is ClientError.MissingToken)
+    }
+
+    func test_endpointRequiringToken_whenTokenProviderTimeouts_returnsCorrectError() throws {
+        // Prepare a new request
+        let initialRequest = URLRequest(url: .unique())
+
+        // Reset the token.
+        connectionDetailsProvider.provideTokenResult = .failure(ClientError.WaiterTimeout())
+
+        // Encode the request and capture the result
+        var encodingResult: Result<URLRequest, Error>?
+        encoder.encode(
+            request: initialRequest,
+            requiresConnectionId: false,
+            requiresToken: true
+        ) { encodingResult = $0 }
+
+        // Assert request encoding has failed with the correct error.
+        AssertAsync.willBeTrue(encodingResult?.error is ClientError.WaiterTimeout)
+    }
+
+    func test_endpointRequiringToken_whenTokenProviderFailsWithUnknownError_returnsMissingTokenError() throws {
+        // Prepare a new request
+        let initialRequest = URLRequest(url: .unique())
+
+        // Reset the token.
+        connectionDetailsProvider.provideTokenResult = .failure(TestError())
+
+        // Encode the request and capture the result
+        var encodingResult: Result<URLRequest, Error>?
+        encoder.encode(
+            request: initialRequest,
+            requiresConnectionId: false,
+            requiresToken: true
+        ) { encodingResult = $0 }
+
+        // Assert request encoding has failed with the correct error.
+        AssertAsync.willBeTrue(encodingResult?.error is ClientError.MissingToken)
+    }
+
+    func test_endpointRequiringConnectionId_hasCorrectQueryItems_ifConnectionIdIsProvided() throws {
+        // Prepare a new request
+        let initialRequest = URLRequest(url: .unique())
+
+        // Set a new connection id
+        let connectionId = String.unique
+        connectionDetailsProvider.provideConnectionIdResult = .success(connectionId)
+
+        // Encode the request and wait for the result
+        let request = try waitFor {
+            encoder.encode(
+                request: initialRequest,
+                requiresConnectionId: true,
+                requiresToken: false,
+                completion: $0
+            )
+        }.get()
+
+        // Check the connection id is set
+        let urlComponents = try XCTUnwrap(URLComponents(url: request.url!, resolvingAgainstBaseURL: false))
+        XCTAssertEqual(urlComponents.queryItems?["connection_id"], connectionId)
+    }
+
+    func test_endpointRequiringConnectionId_isCanceled_ifNilConnectionIdIsProvided() throws {
+        // Prepare a new request
+        let initialRequest = URLRequest(url: .unique())
+
+        // Reset a connection id
+        connectionDetailsProvider.provideConnectionIdResult = nil
+
+        // Encode the request and capture the result
+        var encodingResult: Result<URLRequest, Error>?
+        encoder.encode(
+            request: initialRequest,
+            requiresConnectionId: true,
+            requiresToken: false
+        ) { encodingResult = $0 }
+
+        // Cancel all connection id waiting requests.
+        connectionDetailsProvider.completeConnectionIdWaiters(passing: nil)
+
+        // Assert request encoding has failed.
+        AssertAsync.willBeTrue(encodingResult?.error is ClientError.MissingConnectionId)
+    }
+
+    func test_endpointRequiringConnectionId_whenConnectionIdProviderTimeouts_returnsCorrectError() throws {
+        // Prepare a new request
+        let initialRequest = URLRequest(url: .unique())
+
+        // Reset the token.
+        connectionDetailsProvider.provideConnectionIdResult = .failure(ClientError.WaiterTimeout())
+
+        // Encode the request and capture the result
+        var encodingResult: Result<URLRequest, Error>?
+        encoder.encode(
+            request: initialRequest,
+            requiresConnectionId: true,
+            requiresToken: false
+        ) { encodingResult = $0 }
+
+        // Assert request encoding has failed with the correct error.
+        AssertAsync.willBeTrue(encodingResult?.error is ClientError.WaiterTimeout)
+    }
+
+    func test_endpointRequiringConnectionId_whenConnectionIdFailsWithUnknownError_returnsMissingConnectionIdError() throws {
+        // Prepare a new request
+        let initialRequest = URLRequest(url: .unique())
+
+        // Reset the token.
+        connectionDetailsProvider.provideConnectionIdResult = .failure(TestError())
+
+        // Encode the request and capture the result
+        var encodingResult: Result<URLRequest, Error>?
+        encoder.encode(
+            request: initialRequest,
+            requiresConnectionId: true,
+            requiresToken: false
+        ) { encodingResult = $0 }
+
+        // Assert request encoding has failed with the correct error.
+        AssertAsync.willBeTrue(encodingResult?.error is ClientError.MissingConnectionId)
+    }
+
+    func test_endpointRequiringConnectionIdAndToken_isEncodedCorrectly_ifBothAreProvided() throws {
+        // Prepare a new request
+        let initialRequest = URLRequest(url: .unique())
+
+        // Set a new connection id
+        let connectionId = String.unique
+        connectionDetailsProvider.provideConnectionIdResult = .success(connectionId)
+
+        // Set a new token
+        let token = Token.unique()
+        connectionDetailsProvider.provideTokenResult = .success(token)
+
+        // Encode the request and wait for the result
+        let request = try waitFor {
+            encoder.encode(
+                request: initialRequest,
+                requiresConnectionId: true,
+                requiresToken: true,
+                completion: $0
+            )
+        }.get()
+
+        // Check the connection id is set
+        let urlComponents = try XCTUnwrap(URLComponents(url: request.url!, resolvingAgainstBaseURL: false))
+        XCTAssertEqual(urlComponents.queryItems?["connection_id"], connectionId)
+        // Check the auth headers are set.
+        XCTAssertEqual(request.allHTTPHeaderFields?["Stream-Auth-Type"], "jwt")
+        XCTAssertEqual(request.allHTTPHeaderFields?["Authorization"], token.rawValue)
+    }
+
 //
 //    func test_encodingRequestURL() throws {
 //        let testStringValue = String.unique
@@ -588,4 +532,4 @@ import XCTest
 //        let userJSON = try JSONDecoder.default.decode(TestUser.self, from: userString.data(using: .utf8)!)
 //        XCTAssertEqual(userJSON, TestUser(name: "Luke", age: 22))
 //    }
-// }
+}
