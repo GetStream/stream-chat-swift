@@ -345,7 +345,7 @@ class BackgroundEntityDatabaseObserver<Item, DTO: NSManagedObject>: BackgroundDa
     }
 }
 
-private extension BackgroundEntityDatabaseObserver {
+extension BackgroundEntityDatabaseObserver {
     /// A builder-function that adds new listener to the current instance and returns it
     @discardableResult
     func onChange(do listener: @escaping (EntityChange<Item>) -> Void) -> BackgroundEntityDatabaseObserver {
