@@ -262,18 +262,19 @@ class MessageRepository {
 
 @available(iOS 13.0.0, *)
 extension MessageRepository {
-    /// Fetches messages from the database.
-    func messages(for ids: [MessageId]) async throws -> [ChatMessage] {
+    /// Fetches messages from the database with a date range.
+    func messages(from fromDate: Date, to toDate: Date, in cid: ChannelId) async throws -> [ChatMessage] {
         try await database.backgroundRead { context in
-            // TODO: Use fetch request for better performance
-            try ids
-                .map { id in
-                    guard let messageDTO = context.message(id: id) else {
-                        throw ClientError.MessageDoesNotExist(messageId: id)
-                    }
-                    return messageDTO
-                }
-                .map { try $0.asModel() }
+            try MessageDTO.loadMessages(
+                from: fromDate,
+                to: toDate,
+                in: cid,
+                sortAscending: true,
+                deletedMessagesVisibility: context.deletedMessagesVisibility ?? .alwaysVisible,
+                shouldShowShadowedMessages: context.shouldShowShadowedMessages ?? true,
+                context: context
+            )
+            .map { try $0.asModel() }
         }
     }
     
@@ -282,7 +283,7 @@ extension MessageRepository {
         try await database.backgroundRead { context in
             let deletedMessagesVisibility = context.deletedMessagesVisibility ?? .alwaysVisible
             let shouldShowShadowedMessages = context.shouldShowShadowedMessages ?? true
-            return MessageDTO.loadChannelMessage(
+            return try MessageDTO.loadMessage(
                 before: id,
                 cid: cid.rawValue,
                 deletedMessagesVisibility: deletedMessagesVisibility,
