@@ -60,6 +60,11 @@ extension NSManagedObject {
             return []
         }
     }
+    
+    static func load<T: NSManagedObject>(_ request: NSFetchRequest<T>, context: NSManagedObjectContext) throws -> [T] {
+        request.entity = NSEntityDescription.entity(forEntityName: T.entityName, in: context)!
+        return try context.fetch(request, using: FetchCache.shared)
+    }
 }
 
 class FetchCache {
