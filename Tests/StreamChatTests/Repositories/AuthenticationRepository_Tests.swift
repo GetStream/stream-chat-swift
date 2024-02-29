@@ -799,13 +799,12 @@ final class AuthenticationRepository_Tests: XCTestCase {
     }
 
     func test_clearTokenProvider_thenIsGettingTokenFalse() {
-        let userInfo = UserInfo(id: "123")
         repository.connectUser(
             userInfo: .init(id: .newUniqueId),
             tokenProvider: { _ in },
             completion: { _ in }
         )
-        XCTAssertTrue(repository.isGettingToken)
+        AssertAsync.willBeTrue(repository.isGettingToken)
 
         repository.clearTokenProvider()
 
