@@ -328,6 +328,7 @@ public final class Chat {
     /// - Throws: An error while communicating with the Stream API or missing required capabilities.
     func markRead() async throws {
         guard let channel = state.channel else { throw ClientError.ChannelDoesNotExist(cid: cid) }
+        try channel.requireCapability(of: .readEvents)
         try await unreadMessagesInteractor.markRead(channel)
     }
     
@@ -338,6 +339,7 @@ public final class Chat {
     /// - Throws: An error while communicating with the Stream API or missing required capabilities.
     func markUnread(from message: MessageId) async throws {
         guard let channel = state.channel else { throw ClientError.ChannelDoesNotExist(cid: cid) }
+        try channel.requireCapability(of: .readEvents)
         try await unreadMessagesInteractor.markUnread(from: message, in: channel)
     }
     
