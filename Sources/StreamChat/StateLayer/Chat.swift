@@ -321,6 +321,44 @@ public final class Chat {
         return try await channelUpdater.loadPinnedMessages(in: cid, query: query)
     }
     
+    // MARK: - Message Reactions
+    
+    /// Adds a reaction to the specified message.
+    ///
+    /// - Note: Custom data for reactions is limited to 1 KB.
+    ///
+    /// - Parameters:
+    ///   - message: The id of the message to send the reaction.
+    ///   - type: The type that describes a message reaction. Common examples are: “like”, “love”, “smile”, etc. An user can have only 1 reaction of each type per message.
+    ///   - score: The score of the reaction for cumulative reactions (example: n number of claps).
+    ///   - enforceUnique: If `true`, the added reaction will replace all reactions the user has (if any) on this message.
+    ///   - extraData: The reaction's extra data.
+    ///
+    /// - Throws: An error while communicating with the Stream API.
+    public func sendReaction(to message: MessageId, with type: MessageReactionType, score: Int = 1, enforceUnique: Bool = false, extraData: [String: RawJSON] = [:]) async throws {
+        try await messageUpdater.addReaction(type, score: score, enforceUnique: enforceUnique, extraData: extraData, messageId: message)
+    }
+    
+    /// Removes a reaction with a specified type from a message.
+    /// - Parameters:
+    ///   - message: The id of the message to remove the reaction from.
+    ///   - type: The type that describes a message reaction. Common examples are: “like”, “love”, “smile”, etc. An user can have only 1 reaction of each type per message.
+    public func deleteReaction(from message: MessageId, with type: MessageReactionType) async throws {
+        try await messageUpdater.deleteReaction(type, messageId: message)
+    }
+    
+    /// Loads reactions for the specified message with pagination parameters.
+    ///
+    /// - Parameters:
+    ///   - message: The id of the message to load reactions.
+    ///   - pagination: The pagination configuration which includes limit and offset or cursor.
+    ///
+    /// - Throws: An error while communicating with the Stream API.
+    /// - Returns: An array of reactions for given limit and offset.
+    public func loadReactions(of message: MessageId, pagination: Pagination) async throws -> [ChatMessageReaction] {
+        try await messageUpdater.loadReactions(cid: cid, messageId: message, pagination: pagination)
+    }
+    
     // MARK: - Message Reading
     
     /// Marks all the unread messages in the channel as read.
