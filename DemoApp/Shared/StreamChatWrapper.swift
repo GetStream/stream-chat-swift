@@ -115,8 +115,6 @@ extension StreamChatWrapper {
         }
 
         client.logout(completion: completion)
-
-        self.client = nil
     }
 }
 
