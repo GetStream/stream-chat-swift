@@ -87,6 +87,9 @@ extension StreamChatWrapper {
         // Setup Stream Chat
         setUpChat()
 
+        // Reset number of refresh tokens
+        numberOfRefreshTokens = 0
+
         // We connect from a background thread to make sure it works without issues/crashes.
         // This is for testing purposes only. As a customer you can connect directly without dispatching to any queue.
         DispatchQueue.global().async {
