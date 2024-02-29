@@ -4,7 +4,7 @@
 
 import Foundation
 
-/// Represent a ``ChatChannel`` and its state.
+/// Represents a ``ChatChannel`` and its state.
 @available(iOS 13.0, *)
 public final class ChatState: ObservableObject {
     private let cid: ChannelId
