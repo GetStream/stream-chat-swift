@@ -26,6 +26,10 @@ class AttachmentQueueUploader: Worker {
     private let attachmentPostProcessor: UploadedAttachmentPostProcessor?
     private let attachmentUpdater = AnyAttachmentUpdater()
     private let attachmentStorage = AttachmentStorage()
+    
+    // Any because CheckedContinuation<Void, Error> requires iOS 13
+    private var continuations = [AttachmentId: Any]()
+    private let continuationsQueue = DispatchQueue(label: "co.getStream.ChatClient.AttachmentQueueUploader")
 
     var minSignificantUploadingProgressChange: Double = 0.05
 
@@ -76,7 +80,7 @@ class AttachmentQueueUploader: Worker {
     private func uploadAttachment(with id: AttachmentId) {
         prepareAttachmentForUpload(with: id) { [weak self] attachment in
             guard let attachment = attachment else {
-                self?.removePendingAttachment(with: id)
+                self?.removePendingAttachment(with: id, error: ClientError.AttachmentDoesNotExist(id: id))
                 return
             }
 
@@ -96,7 +100,7 @@ class AttachmentQueueUploader: Worker {
                         uploadedAttachment: result.value,
                         newState: result.error == nil ? .uploaded : .uploadingFailed,
                         completion: {
-                            self?.removePendingAttachment(with: id)
+                            self?.removePendingAttachment(with: id, error: result.error)
                         }
                     )
                 }
@@ -107,7 +111,10 @@ class AttachmentQueueUploader: Worker {
     private func prepareAttachmentForUpload(with id: AttachmentId, completion: @escaping (AnyChatMessageAttachment?) -> Void) {
         let attachmentStorage = self.attachmentStorage
         database.write { session in
-            guard let attachment = session.attachment(id: id) else { return }
+            guard let attachment = session.attachment(id: id) else {
+                completion(nil)
+                return
+            }
 
             if let temporaryURL = attachment.localURL {
                 do {
@@ -126,8 +133,11 @@ class AttachmentQueueUploader: Worker {
         }
     }
 
-    private func removePendingAttachment(with id: AttachmentId) {
+    private func removePendingAttachment(with id: AttachmentId, error: Error?) {
         _pendingAttachmentIDs.mutate { $0.remove(id) }
+        if #available(iOSApplicationExtension 13.0, *) {
+            notifyAPIRequestFinished(for: id, error: error)
+        }
     }
 
     private func updateAttachmentIfNeeded(
@@ -289,5 +299,33 @@ private class AttachmentStorage {
 
     private func fileExists(at url: URL) -> Bool {
         fileManager.fileExists(atPath: url.path)
+    }
+}
+
+// MARK: - Chat State Layer
+
+@available(iOS 13.0, *)
+extension AttachmentQueueUploader {
+    func waitForAPIRequest(attachmentId: AttachmentId) async throws {
+        try await withCheckedThrowingContinuation { continuation in
+            registerContinuation(for: attachmentId, continuation: continuation)
+        }
+    }
+    
+    private func registerContinuation(for attachmentId: AttachmentId, continuation: CheckedContinuation<Void, Error>) {
+        continuationsQueue.async {
+            self.continuations[attachmentId] = continuation
+        }
+    }
+    
+    private func notifyAPIRequestFinished(for attachmentId: AttachmentId, error: Error?) {
+        continuationsQueue.async {
+            guard let continuation = self.continuations.removeValue(forKey: attachmentId) as? CheckedContinuation<Void, Error> else { return }
+            if let error {
+                continuation.resume(throwing: error)
+            } else {
+                continuation.resume(returning: ())
+            }
+        }
     }
 }
