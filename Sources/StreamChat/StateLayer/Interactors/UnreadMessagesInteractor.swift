@@ -22,8 +22,6 @@ actor UnreadMessagesInteractor {
     private var markingUnreadTask: Task<Void, Error>?
     
     func markRead(_ channel: ChatChannel) async throws {
-        try channel.requireCapability(of: .readEvents)
-        
         // Wait for marking unread
         if let task = markingUnreadTask {
             _ = try? await task.value
@@ -46,8 +44,6 @@ actor UnreadMessagesInteractor {
     }
     
     func markUnread(from message: MessageId, in channel: ChatChannel) async throws {
-        try channel.requireCapability(of: .readEvents)
-        
         // Wait for marking read
         if let task = markingReadTask {
             _ = try? await task.value
