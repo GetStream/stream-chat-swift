@@ -10,6 +10,10 @@ import UserNotifications
 final class StreamChatWrapper {
     static let shared = StreamChatWrapper()
 
+    /// How many times the token has been refreshed. This is mostly used
+    /// to fake token refresh fails.
+    var numberOfRefreshTokens = 0
+
     // This closure is called once the SDK is ready to register for remote push notifications
     var onRemotePushRegistration: (() -> Void)?
 
@@ -60,8 +64,7 @@ extension StreamChatWrapper {
                     userInfo: userInfo,
                     tokenProvider: refreshingTokenProvider(
                         initialToken: userCredentials.token,
-                        appSecret: tokenRefreshDetails.appSecret,
-                        tokenDuration: tokenRefreshDetails.duration
+                        refreshDetails: tokenRefreshDetails
                     ),
                     completion: completion
                 )
