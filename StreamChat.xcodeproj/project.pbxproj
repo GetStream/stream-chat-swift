@@ -546,6 +546,7 @@
 		842E29462B5FB76D009FB926 /* DefaultAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 842E29442B5FB744009FB926 /* DefaultAPI.swift */; };
 		842E70942B8DF2C700D2D68B /* MemberEventMiddleware_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79D6CF2025FA6ACF00BE2EEC /* MemberEventMiddleware_Tests.swift */; };
 		842E70952B8E232800D2D68B /* EventDataProcessorMiddleware_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 792FCB4624A33CC2000290C7 /* EventDataProcessorMiddleware_Tests.swift */; };
+		842E70C32B90AE7E00D2D68B /* API_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 842E70C22B90AE7E00D2D68B /* API_Tests.swift */; };
 		842F9745277A09B10060A489 /* PinnedMessagesQuery.swift in Sources */ = {isa = PBXBuildFile; fileRef = 842F9744277A09B10060A489 /* PinnedMessagesQuery.swift */; };
 		842F9746277A09B10060A489 /* PinnedMessagesQuery.swift in Sources */ = {isa = PBXBuildFile; fileRef = 842F9744277A09B10060A489 /* PinnedMessagesQuery.swift */; };
 		842F9749277A1CCF0060A489 /* PinnedMessagesPagination.swift in Sources */ = {isa = PBXBuildFile; fileRef = 842F9748277A1CCF0060A489 /* PinnedMessagesPagination.swift */; };
@@ -3551,6 +3552,7 @@
 		84196FA22805892500185E99 /* LocalMessageState+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "LocalMessageState+Extensions.swift"; sourceTree = "<group>"; };
 		842E29402B5F2D1C009FB926 /* test.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = test.json; sourceTree = "<group>"; };
 		842E29442B5FB744009FB926 /* DefaultAPI.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DefaultAPI.swift; sourceTree = "<group>"; };
+		842E70C22B90AE7E00D2D68B /* API_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = API_Tests.swift; sourceTree = "<group>"; };
 		842F9744277A09B10060A489 /* PinnedMessagesQuery.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PinnedMessagesQuery.swift; sourceTree = "<group>"; };
 		842F9748277A1CCF0060A489 /* PinnedMessagesPagination.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PinnedMessagesPagination.swift; sourceTree = "<group>"; };
 		8431843A26FB53B400B5B25E /* NotificationMessageNew+MissingFields.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = "NotificationMessageNew+MissingFields.json"; sourceTree = "<group>"; };
@@ -7075,6 +7077,7 @@
 		A364D09127D0BECE0029857A /* APIClient */ = {
 			isa = PBXGroup;
 			children = (
+				842E70C22B90AE7E00D2D68B /* API_Tests.swift */,
 				79DDF811249CD5AC002F4412 /* APIClient_Tests.swift */,
 				437FCA1826D906B20000223C /* ChatPushNotificationContent_Tests.swift */,
 				88CD395E25B5844700399F8E /* HTTPHeader_Tests.swift */,
@@ -11880,6 +11883,7 @@
 				C12DBE612A67E2D60045D9F0 /* SortingValue_Tests.swift in Sources */,
 				C186BFB627AAFDAB0099CCA6 /* SyncOperations_Tests.swift in Sources */,
 				A3C2700427E1DB2B0057D5A8 /* MessageSearchController_Tests.swift in Sources */,
+				842E70C32B90AE7E00D2D68B /* API_Tests.swift in Sources */,
 				8AC9CBD424C7351D006E236C /* ReactionEvents_Tests.swift in Sources */,
 				C11B575629D20F3600D5A248 /* User_Tests.swift in Sources */,
 				8AC9CBE424C74ECB006E236C /* NotificationEvents_Tests.swift in Sources */,

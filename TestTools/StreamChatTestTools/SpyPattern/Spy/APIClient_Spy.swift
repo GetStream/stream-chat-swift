@@ -14,12 +14,14 @@ final class APIClient_Spy: APIClient, Spy {
     var recordedFunctions: [String] = []
 
     /// The last endpoint `request` function was called with.
+    @Atomic var current_request: URLRequest?
     @Atomic var request_endpoint: AnyEndpoint?
     @Atomic var request_completion: Any?
     @Atomic private var request_result: Any?
     @Atomic var request_allRecordedCalls: [(endpoint: AnyEndpoint, completion: Any?)] = []
 
     /// The last endpoint `recoveryRequest` function was called with.
+    @Atomic var current_recovery_request: URLRequest?
     @Atomic var recoveryRequest_endpoint: AnyEndpoint?
     @Atomic var recoveryRequest_completion: Any?
     @Atomic var recoveryRequest_allRecordedCalls: [(endpoint: AnyEndpoint, completion: Any?)] = []
@@ -128,12 +130,14 @@ final class APIClient_Spy: APIClient, Spy {
             recoveryRequest_completion = completion
             recoveryRequest_endpoint = AnyEndpoint(Endpoint<Data>.dummy())
             _recoveryRequest_allRecordedCalls.mutate { $0.append((recoveryRequest_endpoint!, recoveryRequest_completion!)) }
+            current_recovery_request = request
             recoveryRequest_expectation.fulfill()
             return
         }
         if let result = request_result as? Result<Response, Error> {
             completion(result)
         }
+        current_request = request
         request_completion = completion
         _request_allRecordedCalls.mutate { $0.append((request_endpoint!, request_completion!)) }
         request_expectation.fulfill()
@@ -143,6 +147,7 @@ final class APIClient_Spy: APIClient, Spy {
         _ request: URLRequest,
         completion: @escaping (Result<Response, Error>) -> Void
     ) {
+        current_request = request
         unmanagedRequest_endpoint = AnyEndpoint(Endpoint<Data>.dummy())
         unmanagedRequest_completion = completion
         _unmanagedRequest_allRecordedCalls.mutate { $0.append((unmanagedRequest_endpoint!, unmanagedRequest_completion!)) }

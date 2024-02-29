@@ -254,12 +254,12 @@ extension ChatClient {
 }
 
 extension API {
-    static func mock(with apiClient: APIClient) -> API {
+    static func mock(with apiClient: APIClient, encoder: RequestEncoder? = nil) -> API {
         let basePath = "http://localhost.com"
         let apiKey = APIKey.init("")
         return API(
             apiClient: apiClient,
-            encoder: RequestEncoder_Spy(
+            encoder: encoder ?? RequestEncoder_Spy(
                 baseURL: URL(string: basePath)!,
                 apiKey: apiKey
             ),
