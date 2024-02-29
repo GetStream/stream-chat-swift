@@ -773,6 +773,30 @@ private extension DatabaseSession {
 
 @available(iOS 13.0, *)
 extension MessageUpdater {
+    func addReaction(_ type: MessageReactionType, score: Int, enforceUnique: Bool, extraData: [String: RawJSON], messageId: MessageId) async throws {
+        try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
+            addReaction(type, score: score, enforceUnique: enforceUnique, extraData: extraData, messageId: messageId) { error in
+                continuation.resume(with: error)
+            }
+        }
+    }
+    
+    func deleteReaction(_ type: MessageReactionType, messageId: MessageId) async throws {
+        try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
+            deleteReaction(type, messageId: messageId) { error in
+                continuation.resume(with: error)
+            }
+        }
+    }
+    
+    func loadReactions(cid: ChannelId, messageId: MessageId, pagination: Pagination) async throws -> [ChatMessageReaction] {
+        try await withCheckedThrowingContinuation { continuation in
+            loadReactions(cid: cid, messageId: messageId, pagination: pagination) { result in
+                continuation.resume(with: result)
+            }
+        }
+    }
+    
     func pinMessage(messageId: MessageId, pinning: MessagePinning) async throws {
         try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
             pinMessage(messageId: messageId, pinning: pinning) { error in
