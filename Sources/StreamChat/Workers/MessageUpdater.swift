@@ -636,6 +636,7 @@ class MessageUpdater: Worker {
                 // For ephemeral messages we don't change `state` to `.deleted`
                 messageDTO.deletedAt = DBDate()
                 messageDTO.previewOfChannel?.previewMessage = session.preview(for: cid)
+                completion?(nil)
                 return
             }
 
@@ -696,19 +697,35 @@ class MessageUpdater: Worker {
     }
 
     func translate(messageId: MessageId, to language: TranslationLanguage, completion: ((Error?) -> Void)? = nil) {
+        translate(messageId: messageId, to: language) { result in
+            completion?(result.error)
+        }
+    }
+    
+    func translate(messageId: MessageId, to language: TranslationLanguage, completion: ((Result<ChatMessage, Error>) -> Void)? = nil) {
         apiClient.request(endpoint: .translate(messageId: messageId, to: language), completion: { result in
             switch result {
             case let .success(boxedMessage):
+                var translatedMessage: ChatMessage?
                 self.database.write { session in
-                    try session.saveMessage(
+                    let messageDTO = try session.saveMessage(
                         payload: boxedMessage.message,
                         for: boxedMessage.message.cid,
                         syncOwnReactions: false,
                         cache: nil
                     )
-                } completion: { completion?($0) }
+                    if completion != nil {
+                        translatedMessage = try messageDTO.asModel()
+                    }
+                } completion: { error in
+                    if let translatedMessage {
+                        completion?(.success(translatedMessage))
+                    } else {
+                        completion?(.failure(error ?? ClientError.Unknown()))
+                    }
+                }
             case let .failure(error):
-                completion?(error)
+                completion?(.failure(error))
             }
         })
     }
@@ -781,9 +798,41 @@ extension MessageUpdater {
         }
     }
     
+    func deleteMessage(messageId: MessageId, hard: Bool) async throws {
+        try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
+            deleteMessage(messageId: messageId, hard: hard) { error in
+                continuation.resume(with: error)
+            }
+        }
+    }
+    
     func deleteReaction(_ type: MessageReactionType, messageId: MessageId) async throws {
         try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
             deleteReaction(type, messageId: messageId) { error in
+                continuation.resume(with: error)
+            }
+        }
+    }
+    
+    func dispatchEphemeralMessageAction(cid: ChannelId, messageId: MessageId, action: AttachmentAction) async throws {
+        try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
+            dispatchEphemeralMessageAction(cid: cid, messageId: messageId, action: action) { error in
+                continuation.resume(with: error)
+            }
+        }
+    }
+    
+    func editMessage(messageId: MessageId, text: String, skipEnrichUrl: Bool, attachments: [AnyAttachmentPayload] = [], extraData: [String: RawJSON]? = nil) async throws {
+        try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
+            editMessage(messageId: messageId, text: text, skipEnrichUrl: skipEnrichUrl, attachments: attachments, extraData: extraData) { error in
+                continuation.resume(with: error)
+            }
+        }
+    }
+    
+    func flagMessage(_ flag: Bool, with messageId: MessageId, in cid: ChannelId) async throws {
+        try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
+            flagMessage(flag, with: messageId, in: cid) { error in
                 continuation.resume(with: error)
             }
         }
@@ -801,6 +850,30 @@ extension MessageUpdater {
         try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
             pinMessage(messageId: messageId, pinning: pinning) { error in
                 continuation.resume(with: error)
+            }
+        }
+    }
+    
+    func resendAttachment(with id: AttachmentId) async throws {
+        try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
+            restartFailedAttachmentUploading(with: id) { error in
+                continuation.resume(with: error)
+            }
+        }
+    }
+    
+    func resendMessage(with messageId: MessageId) async throws {
+        try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
+            resendMessage(with: messageId) { error in
+                continuation.resume(with: error)
+            }
+        }
+    }
+    
+    func translate(messageId: MessageId, to language: TranslationLanguage) async throws -> ChatMessage {
+        try await withCheckedThrowingContinuation { continuation in
+            translate(messageId: messageId, to: language) { result in
+                continuation.resume(with: result)
             }
         }
     }
