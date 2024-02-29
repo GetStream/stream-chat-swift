@@ -45,7 +45,6 @@ extension DeviceDTO {
 
 extension DeviceDTO {
     func asModel() throws -> Device {
-        guard isValid else { throw InvalidModel(self) }
-        return Device(id: id, createdAt: createdAt?.bridgeDate)
+        Device(id: id, createdAt: createdAt?.bridgeDate)
     }
 }

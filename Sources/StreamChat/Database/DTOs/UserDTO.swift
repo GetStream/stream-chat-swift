@@ -232,8 +232,6 @@ extension UserDTO {
 
 extension ChatUser {
     fileprivate static func create(fromDTO dto: UserDTO) throws -> ChatUser {
-        guard dto.isValid else { throw InvalidModel(dto) }
-
         let extraData: [String: RawJSON]
         do {
             extraData = try JSONDecoder.default.decode([String: RawJSON].self, from: dto.extraData)

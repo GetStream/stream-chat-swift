@@ -1088,7 +1088,7 @@ private extension ChatMessage {
         guard StreamRuntimeCheck._canFetchRelationship(currentDepth: depth) else {
             throw RecursionLimitError()
         }
-        guard dto.isValid, let context = dto.managedObjectContext else {
+        guard let context = dto.managedObjectContext else {
             throw InvalidModel(dto)
         }
 

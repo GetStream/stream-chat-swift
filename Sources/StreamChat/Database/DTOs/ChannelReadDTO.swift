@@ -193,8 +193,7 @@ extension NSManagedObjectContext {
 
 extension ChatChannelRead {
     fileprivate static func create(fromDTO dto: ChannelReadDTO) throws -> ChatChannelRead {
-        guard dto.isValid else { throw InvalidModel(dto) }
-        return try .init(
+        try .init(
             lastReadAt: dto.lastReadAt.bridgeDate,
             lastReadMessageId: dto.lastReadMessageId,
             unreadMessagesCount: Int(dto.unreadMessageCount),
