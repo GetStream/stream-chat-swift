@@ -798,6 +798,20 @@ final class AuthenticationRepository_Tests: XCTestCase {
         XCTAssertNotNil(repository.currentUserId)
     }
 
+    func test_clearTokenProvider_thenIsGettingTokenFalse() {
+        let userInfo = UserInfo(id: "123")
+        repository.connectUser(
+            userInfo: .init(id: .newUniqueId),
+            tokenProvider: { _ in },
+            completion: { _ in }
+        )
+        XCTAssertTrue(repository.isGettingToken)
+
+        repository.clearTokenProvider()
+
+        XCTAssertFalse(repository.isGettingToken)
+    }
+
     // MARK: Log out
 
     func test_logOut_clearsUserData() {

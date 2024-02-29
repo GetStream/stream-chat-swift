@@ -51,7 +51,7 @@ class AuthenticationRepository {
     private var _tokenProviderTimer: TimerControl?
     private var _connectionProviderTimer: TimerControl?
 
-    private var isGettingToken: Bool {
+    private(set) var isGettingToken: Bool {
         get { tokenQueue.sync { _isGettingToken } }
         set { tokenQueue.async(flags: .barrier) { self._isGettingToken = newValue }}
     }
@@ -198,6 +198,7 @@ class AuthenticationRepository {
 
     func clearTokenProvider() {
         tokenProvider = nil
+        isGettingToken = false
     }
 
     func cancelTimers() {
