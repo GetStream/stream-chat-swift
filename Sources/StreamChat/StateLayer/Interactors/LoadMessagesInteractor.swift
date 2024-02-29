@@ -47,12 +47,13 @@ final class LoadMessagesInteractor {
         guard let pagination = channelQuery.pagination else {
             throw ClientError.Unknown("Pagination is not set")
         }
-        let resetsToLocal: Bool = pagination.parameter == nil || pagination.parameter?.isJumpingToMessage ?? false
+        let resetToLocalOnly: Bool = pagination.parameter == nil || pagination.parameter?.isJumpingToMessage ?? false
         let payload = try await channelUpdater.update(channelQuery: channelQuery, isInRecoveryMode: false)
         guard let fromDate = payload.messages.first?.createdAt else { return }
         guard let toDate = payload.messages.last?.createdAt else { return }
-        let messages = try await messageRepository.messages(from: fromDate, to: toDate, in: cid)
-        await state.insertPaginatedMessages(messages, resetToLocalOnly: resetsToLocal)
+        let newSortedMessages = try await messageRepository.messages(from: fromDate, to: toDate, in: cid)
+        let merged = await state.orderedMessages.withInsertingPaginated(newSortedMessages, resetToLocalOnly: resetToLocalOnly)
+        await state.setSortedMessages(merged)
     }
     
     func loadPreviousMessages(to state: ChatState, channelQuery: ChannelQuery, before messageId: MessageId?, limit: Int?) async throws {
