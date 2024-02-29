@@ -1026,6 +1026,32 @@ final class AuthenticationRepository_Tests: XCTestCase {
         XCTAssertEqual(state, .newToken)
     }
 
+    // MARK: Cancel Timers
+
+    func test_cancelTimers() {
+        let mockTimer = MockTimer()
+        FakeTimer.mockTimer = mockTimer
+        let repository = AuthenticationRepository(
+            apiClient: apiClient,
+            databaseContainer: database,
+            connectionRepository: connectionRepository,
+            tokenExpirationRetryStrategy: retryStrategy,
+            timerType: FakeTimer.self
+        )
+
+        repository.provideToken(completion: { _ in })
+        repository.connectUser(
+            userInfo: .init(id: .newUniqueId),
+            tokenProvider: { _ in },
+            completion: { _ in }
+        )
+
+        repository.cancelTimers()
+        // should cancel the connection provider timer and the
+        // the token provider timer
+        XCTAssertEqual(mockTimer.cancelCallCount, 2)
+    }
+
     // MARK: Helpers
 
     private func testPrepareEnvironmentAfterConnect(
