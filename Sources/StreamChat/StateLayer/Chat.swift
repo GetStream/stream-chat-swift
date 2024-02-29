@@ -229,7 +229,7 @@ public final class Chat {
     ///
     /// - Throws: An error while fetching more messages from the Stream API.
     public func loadPreviousMessages(before messageId: MessageId? = nil, limit: Int? = nil) async throws {
-        try await loadMessagesInteractor.loadMorePrecedingMessages(to: state, channelQuery: channelQuery, before: messageId, limit: limit)
+        try await loadMessagesInteractor.loadPreviousMessages(to: state, channelQuery: channelQuery, before: messageId, limit: limit)
     }
     
     /// Loads more succeeding messages to ``ChatState.messages``.
@@ -240,7 +240,7 @@ public final class Chat {
     ///
     /// - Throws: An error while fetching more messages from the Stream API.
     public func loadNextMessages(after messageId: MessageId? = nil, limit: Int? = nil) async throws {
-        try await loadMessagesInteractor.loadMoreSucceedingMessages(to: state, with: channelQuery, after: messageId, limit: limit)
+        try await loadMessagesInteractor.loadNextMessages(to: state, with: channelQuery, after: messageId, limit: limit)
     }
     
     /// Loads messages around the given message id.
@@ -255,7 +255,7 @@ public final class Chat {
     ///
     /// - Throws: An error while fetching more messages from the Stream API.
     public func loadMessagesAround(messageId: MessageId, limit: Int? = nil) async throws {
-        try await loadMessagesInteractor.loadMoreMessages(to: state, with: channelQuery, around: messageId, limit: limit)
+        try await loadMessagesInteractor.loadMessages(to: state, with: channelQuery, around: messageId, limit: limit)
     }
     
     /// Loads messages for the first page.
