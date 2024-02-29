@@ -78,7 +78,7 @@ public final class ChatState: ObservableObject {
     public var isLoadingPreviousMessages: Bool {
         paginationState.isLoadingPreviousMessages
     }
-    
+        
     // MARK: - Throttling and Slow Mode
     
     /// The duration until the current user can't send new messages when the channel has slow mode enabled.
