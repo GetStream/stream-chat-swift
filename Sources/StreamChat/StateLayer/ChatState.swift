@@ -78,7 +78,7 @@ public final class ChatState: ObservableObject {
     public var isLoadingPreviousMessages: Bool {
         paginationState.isLoadingPreviousMessages
     }
-        
+
     // MARK: - Throttling and Slow Mode
     
     /// The duration until the current user can't send new messages when the channel has slow mode enabled.
@@ -101,6 +101,11 @@ public final class ChatState: ObservableObject {
     
     // MARK: - Mutating the State
     
+    // Force main actor when accessing the state.
+    @MainActor func value<Value>(forKeyPath keyPath: KeyPath<ChatState, Value>) -> Value {
+        self[keyPath: keyPath]
+    }
+    
     // Force mutations on main actor since ChatState is meant to be used by UI.
     @MainActor func setValue<Value>(_ value: Value, for keyPath: ReferenceWritableKeyPath<ChatState, Value>) {
         self[keyPath: keyPath] = value
@@ -110,8 +115,7 @@ public final class ChatState: ObservableObject {
         OrderedMessages(messageOrdering: messageOrder, orderedMessages: messages)
     }
     
-    @MainActor func insertPaginatedMessages(_ newSortedMessages: [ChatMessage], resetToLocalOnly: Bool) {
-        let result = orderedMessages.withInsertingPaginated(newSortedMessages, resetToLocalOnly: resetToLocalOnly)
-        setValue(result, for: \.messages)
+    @MainActor func setSortedMessages(_ sortedMessages: [ChatMessage]) {
+        setValue(sortedMessages, for: \.messages)
     }
 }
