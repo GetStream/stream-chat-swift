@@ -68,7 +68,6 @@ public class ChatMessageSearchController: DataController, DelegateCallable, Data
         .messageUpdaterBuilder(
             client.config.isLocalStorageEnabled,
             client.messageRepository,
-            client.makeMessagesPaginationStateHandler(),
             client.databaseContainer,
             client.apiClient
         )
@@ -254,7 +253,6 @@ extension ChatMessageSearchController {
         var messageUpdaterBuilder: (
             _ isLocalStorageEnabled: Bool,
             _ messageRepository: MessageRepository,
-            _ paginationStateHandler: MessagesPaginationStateHandling,
             _ database: DatabaseContainer,
             _ apiClient: APIClient
         ) -> MessageUpdater = MessageUpdater.init

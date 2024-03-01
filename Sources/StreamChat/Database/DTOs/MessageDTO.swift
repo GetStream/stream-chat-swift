@@ -577,6 +577,29 @@ class MessageDTO: NSManagedObject {
         ])
         return try load(request, context: context)
     }
+    
+    static func loadReplies(
+        from fromIncludingDate: Date,
+        to toIncludingDate: Date,
+        in messageId: MessageId,
+        sortAscending: Bool,
+        deletedMessagesVisibility: ChatClientConfig.DeletedMessageVisibility,
+        shouldShowShadowedMessages: Bool,
+        context: NSManagedObjectContext
+    ) throws -> [MessageDTO] {
+        let request = NSFetchRequest<MessageDTO>(entityName: MessageDTO.entityName)
+        request.sortDescriptors = [NSSortDescriptor(keyPath: \MessageDTO.defaultSortingKey, ascending: sortAscending)]
+        request.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [
+            threadRepliesPredicate(
+                for: messageId,
+                deletedMessagesVisibility: deletedMessagesVisibility,
+                shouldShowShadowedMessages: shouldShowShadowedMessages
+            ),
+            .init(format: "createdAt >= %@", fromIncludingDate.bridgeDate),
+            .init(format: "createdAt <= %@", toIncludingDate.bridgeDate)
+        ])
+        return try load(request, context: context)
+    }
 }
 
 // MARK: - State Helpers

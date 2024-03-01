@@ -21,10 +21,7 @@ public final class ChatState: ObservableObject {
         observer.start(
             with: .init(
                 channelDidChange: { [weak self] in await self?.setValue($0, for: \.channel) },
-                messagesDidChange: { [weak self] changes in
-                    guard let self else { return }
-                    await self.setValue(self.orderedMessages.withListChanges(changes), for: \.messages)
-                },
+                messagesDidChange: { [weak self] in await self?.setValue($0, for: \.messages) },
                 typingUsersDidChange: { [weak self] in await self?.setValue($0, for: \.typingUsers) }
             )
         )
@@ -109,13 +106,5 @@ public final class ChatState: ObservableObject {
     // Force mutations on main actor since ChatState is meant to be used by UI.
     @MainActor func setValue<Value>(_ value: Value, for keyPath: ReferenceWritableKeyPath<ChatState, Value>) {
         self[keyPath: keyPath] = value
-    }
-    
-    @MainActor var orderedMessages: OrderedMessages {
-        OrderedMessages(messageOrdering: messageOrder, orderedMessages: messages)
-    }
-    
-    @MainActor func setSortedMessages(_ sortedMessages: [ChatMessage]) {
-        setValue(sortedMessages, for: \.messages)
     }
 }

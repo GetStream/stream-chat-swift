@@ -292,4 +292,20 @@ extension MessageRepository {
             )?.id
         }
     }
+    
+    /// Fetches replies from the database with a date range.
+    func replies(from fromDate: Date, to toDate: Date, in message: MessageId) async throws -> [ChatMessage] {
+        try await database.backgroundRead { context in
+            try MessageDTO.loadReplies(
+                from: fromDate,
+                to: toDate,
+                in: message,
+                sortAscending: true,
+                deletedMessagesVisibility: context.deletedMessagesVisibility ?? .alwaysVisible,
+                shouldShowShadowedMessages: context.shouldShowShadowedMessages ?? true,
+                context: context
+            )
+            .map { try $0.asModel() }
+        }
+    }
 }
