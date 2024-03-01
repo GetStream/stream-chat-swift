@@ -311,7 +311,9 @@ class ChannelUpdater: Worker {
                 skipEnrichUrl: skipEnrichUrl,
                 extraData: extraData
             )
-
+            if quotedMessageId != nil {
+                newMessageDTO.showInsideThread = true
+            }
             newMessageDTO.localMessageState = .pendingSend
             newMessage = try newMessageDTO.asModel()
         }) { error in
