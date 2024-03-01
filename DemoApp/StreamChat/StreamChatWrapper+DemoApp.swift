@@ -13,11 +13,6 @@ extension StreamChatWrapper {
             Components.default.mixedAttachmentInjector.register(.location, with: LocationAttachmentViewInjector.self)
         }
 
-        guard client == nil else {
-            log.error("Client was already instantiated")
-            return
-        }
-
         // Set the log level
         LogConfig.level = .warning
         LogConfig.formatters = [
@@ -25,7 +20,9 @@ extension StreamChatWrapper {
         ]
 
         // Create Client
-        client = ChatClient(config: config)
+        if client == nil {
+            client = ChatClient(config: config)
+        }
         client?.registerAttachment(LocationAttachmentPayload.self)
 
         // L10N
