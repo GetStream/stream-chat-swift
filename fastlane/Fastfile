@@ -615,7 +615,7 @@ end
 private_lane :create_pr do |options|
   options[:base_branch] ||= 'develop'
   sh("git checkout -b #{options[:head_branch]}")
-  sh('git restore Brewfile.lock.json')
+  sh('git restore Brewfile.lock.json || true')
   sh('git add -A')
   sh("git commit -m '#{options[:title]}'")
   push_to_git_remote(tags: false)
