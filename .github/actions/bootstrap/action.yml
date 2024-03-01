@@ -22,6 +22,7 @@ runs:
           ~/Library/Caches/Homebrew/mint*
           ~/Library/Caches/Homebrew/xcparse*
           ~/Library/Caches/Homebrew/sonar-scanner*
+          ~/Library/Caches/Homebrew/google-cloud-sdk*
         key: ${{ env.IMAGE }}-brew-${{ hashFiles('**/Brewfile.lock.json') }}
         restore-keys: ${{ env.IMAGE }}-brew-
     - uses: ./.github/actions/ruby-cache

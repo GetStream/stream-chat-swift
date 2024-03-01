@@ -68,6 +68,17 @@ if [[ ${INSTALL_YEETD-default} == true ]]; then
   yeetd &
 fi
 
+if [[ ${INSTALL_GCLOUD-default} == true ]]; then
+  puts "Install gcloud"
+  brew install --cask google-cloud-sdk
+
+  # Editor access required: https://console.cloud.google.com/iam-admin/iam
+  printf "%s" "$GOOGLE_APPLICATION_CREDENTIALS" > ./fastlane/gcloud-service-account-key.json
+  gcloud auth activate-service-account --key-file="./fastlane/gcloud-service-account-key.json"
+  gcloud config set project stream-chat-swift
+  gcloud services enable toolresults.googleapis.com
+fi
+
 # Vale should not be installed on CI
 if [ "$GITHUB_ACTIONS" != true ]; then
   brew install vale

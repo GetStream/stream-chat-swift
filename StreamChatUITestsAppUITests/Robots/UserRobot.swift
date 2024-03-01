@@ -29,11 +29,10 @@ final class UserRobot: Robot {
         ChannelListPage.userAvatar.safeTap()
         return self
     }
-
+    
     @discardableResult
-    func openChannel(channelCellIndex: Int = 0) -> Self {
-        let minExpectedCount = channelCellIndex + 1
-        let cells = ChannelListPage.cells.waitCount(minExpectedCount)
+    func waitForChannelListToLoad() -> Self {
+        let cells = ChannelListPage.cells.waitCount(1, timeout: 7)
 
         // TODO: CIS-1737
         if !cells.firstMatch.exists {
@@ -44,18 +43,19 @@ final class UserRobot: Robot {
                 sleep(1)
                 app.launch()
                 login()
-                cells.waitCount(minExpectedCount)
+                cells.waitCount(1)
                 if cells.firstMatch.exists { break }
             }
         }
 
-        XCTAssertGreaterThanOrEqual(
-            cells.count,
-            minExpectedCount,
-            "Channel cell is not found at index #\(channelCellIndex)"
-        )
+        XCTAssertGreaterThanOrEqual(cells.count, 1, "Channel list has not been loaded")
+        return self
+    }
 
-        cells.allElementsBoundByIndex[channelCellIndex].waitForHitPoint().safeTap()
+    @discardableResult
+    func openChannel(channelCellIndex: Int = 0) -> Self {
+        waitForChannelListToLoad()
+        ChannelListPage.cells.allElementsBoundByIndex[channelCellIndex].waitForHitPoint().safeTap()
         return self
     }
 
@@ -312,9 +312,25 @@ extension UserRobot {
     }
 
     @discardableResult
+    func scrollChannelListDown(times: Int = 1) -> Self {
+        for _ in 1...times {
+            ChannelListPage.list.swipeUp(velocity: .fast)
+        }
+        return self
+    }
+    
+    @discardableResult
+    func scrollChannelListUp(times: Int = 1) -> Self {
+        for _ in 1...times {
+            ChannelListPage.list.swipeDown(velocity: .fast)
+        }
+        return self
+    }
+
+    @discardableResult
     func scrollMessageListDown(times: Int = 1) -> Self {
         for _ in 1...times {
-            MessageListPage.list.swipeUp()
+            MessageListPage.list.swipeUp(velocity: .fast)
         }
         return self
     }
@@ -322,7 +338,7 @@ extension UserRobot {
     @discardableResult
     func scrollMessageListUp(times: Int = 1) -> Self {
         for _ in 1...times {
-            MessageListPage.list.swipeDown()
+            MessageListPage.list.swipeDown(velocity: .fast)
         }
         return self
     }

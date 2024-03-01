@@ -48,7 +48,8 @@ public class BackendRobot {
             UserDetails.lukeSkywalker,
             UserDetails.hanSolo,
             UserDetails.countDooku
-        ]
+        ],
+        withAttachments: Bool = false
     ) -> Self  {
         var json = server.channelList
         guard let sampleChannel = (json[JSONKey.channels] as? [[String: Any]])?.first else { return self }
@@ -69,7 +70,8 @@ public class BackendRobot {
             replyCount: replyCount,
             author: author,
             members: members,
-            sampleChannel: sampleChannel
+            sampleChannel: sampleChannel,
+            withAttachments: withAttachments
         )
 
         json[JSONKey.channels] = channels

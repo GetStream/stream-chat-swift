@@ -37,7 +37,7 @@ private_lane :sonar_options do |options|
   if ENV['GITHUB_EVENT_NAME'] == 'pull_request'
     default_options.merge(pull_request_branch: ENV.fetch('GITHUB_HEAD_REF', nil),
                           pull_request_base: ENV.fetch('GITHUB_BASE_REF', nil),
-                          pull_request_key: ENV.fetch('PR_NUMBER', nil))
+                          pull_request_key: ENV.fetch('GITHUB_PR_NUM', nil))
   else
     default_options.merge(branch_name: current_branch, project_version: options[:version_number])
   end
