@@ -10,6 +10,10 @@ import UserNotifications
 final class StreamChatWrapper {
     static let shared = StreamChatWrapper()
 
+    /// How many times the token has been refreshed. This is mostly used
+    /// to fake token refresh fails.
+    var numberOfRefreshTokens = 0
+
     // This closure is called once the SDK is ready to register for remote push notifications
     var onRemotePushRegistration: (() -> Void)?
 
@@ -60,8 +64,7 @@ extension StreamChatWrapper {
                     userInfo: userInfo,
                     tokenProvider: refreshingTokenProvider(
                         initialToken: userCredentials.token,
-                        appSecret: tokenRefreshDetails.appSecret,
-                        tokenDuration: tokenRefreshDetails.duration
+                        refreshDetails: tokenRefreshDetails
                     ),
                     completion: completion
                 )
@@ -83,6 +86,9 @@ extension StreamChatWrapper {
     func logIn(as user: DemoUserType, completion: @escaping (Error?) -> Void) {
         // Setup Stream Chat
         setUpChat()
+
+        // Reset number of refresh tokens
+        numberOfRefreshTokens = 0
 
         // We connect from a background thread to make sure it works without issues/crashes.
         // This is for testing purposes only. As a customer you can connect directly without dispatching to any queue.
@@ -115,8 +121,6 @@ extension StreamChatWrapper {
         }
 
         client.logout(completion: completion)
-
-        self.client = nil
     }
 }
 
