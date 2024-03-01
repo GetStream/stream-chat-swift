@@ -18,12 +18,11 @@ final class LoadMessagesInteractor {
         self.order = order
     }
     
-    private var canLoad: Bool {
-        let state = channelUpdater.paginationStateHandler.state
-        return !state.hasLoadedAllPreviousMessages && !state.isLoadingPreviousMessages
+    private var paginationState: MessagesPaginationState {
+        channelUpdater.paginationStateHandler.state
     }
     
-    private func defaultPrecedingMessage(for proposed: MessageId?, in state: ChatState) async -> MessageId? {
+    private func defaultPreviousMessage(for proposed: MessageId?, in state: ChatState) async -> MessageId? {
         if let proposed {
             return proposed
         } else if let id = channelUpdater.paginationState.oldestFetchedMessage?.id {
@@ -33,7 +32,7 @@ final class LoadMessagesInteractor {
         }
     }
     
-    private func defaultSucceedingMessage(for proposed: MessageId?, in state: ChatState) async -> MessageId? {
+    private func defaultNextMessage(for proposed: MessageId?, in state: ChatState) async -> MessageId? {
         if let proposed {
             return proposed
         } else if let id = channelUpdater.paginationState.newestFetchedMessage?.id {
@@ -43,22 +42,23 @@ final class LoadMessagesInteractor {
         }
     }
     
-    private func loadMessages(to state: ChatState, with channelQuery: ChannelQuery) async throws {
+    @discardableResult func loadMessages(to state: ChatState, with channelQuery: ChannelQuery) async throws -> [ChatMessage] {
         guard let pagination = channelQuery.pagination else {
             throw ClientError.Unknown("Pagination is not set")
         }
         let resetToLocalOnly: Bool = pagination.parameter == nil || pagination.parameter?.isJumpingToMessage ?? false
         let payload = try await channelUpdater.update(channelQuery: channelQuery, isInRecoveryMode: false)
-        guard let fromDate = payload.messages.first?.createdAt else { return }
-        guard let toDate = payload.messages.last?.createdAt else { return }
+        guard let fromDate = payload.messages.first?.createdAt else { return [] }
+        guard let toDate = payload.messages.last?.createdAt else { return [] }
         let newSortedMessages = try await messageRepository.messages(from: fromDate, to: toDate, in: cid)
         let merged = await state.orderedMessages.withInsertingPaginated(newSortedMessages, resetToLocalOnly: resetToLocalOnly)
         await state.setSortedMessages(merged)
+        return newSortedMessages
     }
     
-    func loadPreviousMessages(to state: ChatState, channelQuery: ChannelQuery, before messageId: MessageId?, limit: Int?) async throws {
-        guard canLoad else { return }
-        guard let messageId = await defaultPrecedingMessage(for: messageId, in: state) else {
+    func loadMessages(to state: ChatState, channelQuery: ChannelQuery, before messageId: MessageId?, limit: Int?) async throws {
+        guard !state.hasLoadedAllPreviousMessages && !state.isLoadingPreviousMessages else { return }
+        guard let messageId = await defaultPreviousMessage(for: messageId, in: state) else {
             throw ClientError.ChannelEmptyMessages()
         }
         let pageSize = limit ?? channelQuery.pagination?.pageSize ?? .messagesPageSize
@@ -66,9 +66,9 @@ final class LoadMessagesInteractor {
         try await loadMessages(to: state, with: channelQuery.withPagination(pagination))
     }
     
-    func loadNextMessages(to state: ChatState, with channelQuery: ChannelQuery, after messageId: MessageId?, limit: Int?) async throws {
-        guard canLoad else { return }
-        guard let messageId = await defaultSucceedingMessage(for: messageId, in: state) else {
+    func loadMessages(to state: ChatState, with channelQuery: ChannelQuery, after messageId: MessageId?, limit: Int?) async throws {
+        guard !state.hasLoadedAllNextMessages && !state.isLoadingNextMessages else { return }
+        guard let messageId = await defaultNextMessage(for: messageId, in: state) else {
             throw ClientError.ChannelEmptyMessages()
         }
         let pageSize = limit ?? channelQuery.pagination?.pageSize ?? .messagesPageSize
@@ -77,14 +77,13 @@ final class LoadMessagesInteractor {
     }
     
     func loadMessages(to state: ChatState, with channelQuery: ChannelQuery, around messageId: MessageId, limit: Int?) async throws {
-        guard canLoad else { return }
+        guard !state.isLoadingMiddleMessages else { return }
         let pageSize = limit ?? channelQuery.pagination?.pageSize ?? .messagesPageSize
         let pagination = MessagesPagination(pageSize: pageSize, parameter: .around(messageId))
         try await loadMessages(to: state, with: channelQuery.withPagination(pagination))
     }
 
     func loadFirstPage(to state: ChatState, with channelQuery: ChannelQuery) async throws {
-        guard canLoad else { return }
         let pageSize = channelQuery.pagination?.pageSize ?? .messagesPageSize
         let pagination = MessagesPagination(pageSize: pageSize, parameter: nil)
         try await loadMessages(to: state, with: channelQuery.withPagination(pagination))
@@ -104,7 +103,7 @@ private extension ChatState {
     }
 }
 
-private extension ChannelQuery {
+extension ChannelQuery {
     func withPagination(_ pagination: MessagesPagination) -> Self {
         var query = self
         query.pagination = pagination
