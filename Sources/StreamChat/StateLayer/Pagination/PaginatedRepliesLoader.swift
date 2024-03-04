@@ -4,8 +4,9 @@
 
 import Foundation
 
+/// Loads paginated replies for messages.
 @available(iOS 13.0, *)
-struct LoadRepliesInteractor {
+struct PaginatedRepliesLoader {
     private let cid: ChannelId
     private let messageRepository: MessageRepository
     private let messageUpdater: MessageUpdater
