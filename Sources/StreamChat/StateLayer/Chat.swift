@@ -14,11 +14,11 @@ public final class Chat {
     private let messageUpdater: MessageUpdater
     private let typingEventsSender: TypingEventsSender
 
-    private let loadMessagesInteractor: LoadMessagesInteractor
-    private let loadReactionsInteractor: LoadReactionsInteractor
-    private let loadRepliesInteractor: LoadRepliesInteractor
-    private let sendMessageInteractor: SendMessageInteractor
-    private let unreadMessagesInteractor: UnreadMessagesInteractor
+    private let paginatedMessagesLoader: PaginatedMessagesLoader
+    private let paginatedReactionsLoader: PaginatedReactionsLoader
+    private let paginatedRepliesLoader: PaginatedRepliesLoader
+    private let sendMessageCoordinator: SendMessageCoordinator
+    private let unreadMessagesCoordinator: UnreadMessagesCoordinator
     
     private var messageStates = NSMapTable<NSString, MessageState>(valueOptions: .weakMemory)
     
@@ -49,23 +49,23 @@ public final class Chat {
             client.databaseContainer,
             client.apiClient
         )
-        loadMessagesInteractor = environment.loadMessagesInteractorBuilder(
+        paginatedMessagesLoader = environment.paginatedMessagesLoaderBuilder(
             cid,
             messageOrdering,
             channelUpdater,
             client.messageRepository
         )
-        loadReactionsInteractor = environment.loadReactionsInteractorBuilder(
+        paginatedReactionsLoader = environment.paginatedReactionsLoaderBuilder(
             cid,
             messageUpdater
         )
-        loadRepliesInteractor = environment.loadRepliesInteractorBuilder(
+        paginatedRepliesLoader = environment.paginatedRepliesLoaderBuilder(
             cid,
             messageOrdering,
             messageUpdater,
             client.messageRepository
         )
-        sendMessageInteractor = environment.sendMessageInteractorBuilder(
+        sendMessageCoordinator = environment.sendMessageCoordinatorBuilder(
             channelUpdater,
             client.eventNotificationCenter,
             client.messageSender
@@ -74,7 +74,7 @@ public final class Chat {
             client.databaseContainer,
             client.apiClient
         )
-        unreadMessagesInteractor = environment.unreadMessagesInteractorBuilder(
+        unreadMessagesCoordinator = environment.unreadMessagesCoordinatorBuilder(
             cid,
             channelUpdater,
             client.authenticationRepository,
@@ -264,7 +264,7 @@ public final class Chat {
         skipEnrichURL: Bool = false,
         messageId: MessageId? = nil
     ) async throws -> ChatMessage {
-        try await sendMessageInteractor.sendMessage(
+        try await sendMessageCoordinator.sendMessage(
             with: text,
             in: cid,
             attachments: attachments,
@@ -306,7 +306,7 @@ public final class Chat {
     /// - Returns: An array of messages for the pagination.
     public func loadMessages(with pagination: MessagesPagination) async throws -> [ChatMessage] {
         let query = channelQuery.withPagination(pagination)
-        return try await loadMessagesInteractor.loadMessages(to: state, with: query)
+        return try await paginatedMessagesLoader.loadMessages(to: state, with: query)
     }
     
     // MARK: -
@@ -317,7 +317,7 @@ public final class Chat {
     ///
     /// - Throws: An error while communicating with the Stream API.
     public func loadMessagesFirstPage() async throws {
-        try await loadMessagesInteractor.loadFirstPage(to: state, with: channelQuery)
+        try await paginatedMessagesLoader.loadFirstPage(to: state, with: channelQuery)
     }
     
     /// Loads more messages before the specified message to ``ChatState.messages``.
@@ -328,7 +328,7 @@ public final class Chat {
     ///
     /// - Throws: An error while communicating with the Stream API.
     public func loadMessages(before messageId: MessageId? = nil, limit: Int? = nil) async throws {
-        try await loadMessagesInteractor.loadMessages(to: state, channelQuery: channelQuery, before: messageId, limit: limit)
+        try await paginatedMessagesLoader.loadMessages(to: state, channelQuery: channelQuery, before: messageId, limit: limit)
     }
     
     /// Loads more messages after the specified message to ``ChatState.messages``.
@@ -339,7 +339,7 @@ public final class Chat {
     ///
     /// - Throws: An error while communicating with the Stream API.
     public func loadMessages(after messageId: MessageId? = nil, limit: Int? = nil) async throws {
-        try await loadMessagesInteractor.loadMessages(to: state, with: channelQuery, after: messageId, limit: limit)
+        try await paginatedMessagesLoader.loadMessages(to: state, with: channelQuery, after: messageId, limit: limit)
     }
     
     /// Loads messages around the given message id to ``ChatState.messages``.
@@ -354,7 +354,7 @@ public final class Chat {
     ///
     /// - Throws: An error while communicating with the Stream API.
     public func loadMessages(around messageId: MessageId, limit: Int? = nil) async throws {
-        try await loadMessagesInteractor.loadMessages(to: state, with: channelQuery, around: messageId, limit: limit)
+        try await paginatedMessagesLoader.loadMessages(to: state, with: channelQuery, around: messageId, limit: limit)
     }
     
     // MARK: - Message Attachment Actions
@@ -484,7 +484,7 @@ public final class Chat {
     /// - Returns: An array of reactions for given limit and offset.
     public func loadReactions(of message: MessageId, pagination: Pagination) async throws -> [ChatMessageReaction] {
         let messageState = try await makeMessageState(for: message)
-        return try await loadReactionsInteractor.loadReactions(to: messageState, cid: cid, messageId: message, pagination: pagination)
+        return try await paginatedReactionsLoader.loadReactions(to: messageState, cid: cid, messageId: message, pagination: pagination)
     }
     
     // MARK: - Message Reading
@@ -495,7 +495,7 @@ public final class Chat {
     public func markRead() async throws {
         guard let channel = state.channel else { throw ClientError.ChannelDoesNotExist(cid: cid) }
         try channel.requireCapability(of: .readEvents)
-        try await unreadMessagesInteractor.markRead(channel)
+        try await unreadMessagesCoordinator.markRead(channel)
     }
     
     /// Marks all the messages after and including the specified message as unread.
@@ -506,7 +506,7 @@ public final class Chat {
     public func markUnread(from message: MessageId) async throws {
         guard let channel = state.channel else { throw ClientError.ChannelDoesNotExist(cid: cid) }
         try channel.requireCapability(of: .readEvents)
-        try await unreadMessagesInteractor.markUnread(from: message, in: channel)
+        try await unreadMessagesCoordinator.markUnread(from: message, in: channel)
     }
     
     // MARK: - Message Replies
@@ -521,7 +521,7 @@ public final class Chat {
     /// - Returns: An array of messages for the pagination.
     public func loadReplies(of message: MessageId, pagination: MessagesPagination) async throws -> [ChatMessage] {
         let messageState = try await makeMessageState(for: message)
-        return try await loadRepliesInteractor.loadReplies(to: messageState, pagination: pagination)
+        return try await paginatedRepliesLoader.loadReplies(to: messageState, pagination: pagination)
     }
 
     // MARK: -
@@ -537,7 +537,7 @@ public final class Chat {
     /// - Throws: An error while communicating with the Stream API.
     public func loadRepliesFirstPage(of messageId: MessageId, limit: Int? = nil) async throws {
         let messageState = try await makeMessageState(for: messageId)
-        return try await loadRepliesInteractor.loadRepliesFirstPage(to: messageState, limit: limit)
+        return try await paginatedRepliesLoader.loadRepliesFirstPage(to: messageState, limit: limit)
     }
     
     /// Loads more replies before the specified reply id to ``MessageState.replies``.
@@ -550,7 +550,7 @@ public final class Chat {
     /// - Throws: An error while communicating with the Stream API.
     public func loadReplies(of messageId: MessageId, before replyId: MessageId, limit: Int? = nil) async throws {
         let messageState = try await makeMessageState(for: messageId)
-        return try await loadRepliesInteractor.loadReplies(to: messageState, before: replyId, limit: limit)
+        return try await paginatedRepliesLoader.loadReplies(to: messageState, before: replyId, limit: limit)
     }
     
     /// Loads more replies after the specified reply id to ``MessageState.replies``.
@@ -563,7 +563,7 @@ public final class Chat {
     /// - Throws: An error while communicating with the Stream API.
     public func loadReplies(of messageId: MessageId, after replyId: MessageId, limit: Int? = nil) async throws {
         let messageState = try await makeMessageState(for: messageId)
-        return try await loadRepliesInteractor.loadReplies(to: messageState, after: replyId, limit: limit)
+        return try await paginatedRepliesLoader.loadReplies(to: messageState, after: replyId, limit: limit)
     }
     
     /// Loads replies around the specified reply id to ``MessageState.replies``.
@@ -576,7 +576,7 @@ public final class Chat {
     /// - Throws: An error while communicating with the Stream API.
     public func loadReplies(of messageId: MessageId, around replyId: MessageId, limit: Int? = nil) async throws {
         let messageState = try await makeMessageState(for: messageId)
-        return try await loadRepliesInteractor.loadReplies(to: messageState, around: replyId, limit: limit)
+        return try await paginatedRepliesLoader.loadReplies(to: messageState, around: replyId, limit: limit)
     }
     
     // MARK: - Message State Observing
@@ -895,24 +895,24 @@ extension Chat {
             _ paginationState: MessagesPaginationState
         ) -> ChatState = ChatState.init
         
-        var loadMessagesInteractorBuilder: (
+        var paginatedMessagesLoaderBuilder: (
             _ cid: ChannelId,
             _ messageOrdering: MessageOrdering,
             _ channelUpdater: ChannelUpdater,
             _ messageRepository: MessageRepository
-        ) -> LoadMessagesInteractor = LoadMessagesInteractor.init
+        ) -> PaginatedMessagesLoader = PaginatedMessagesLoader.init
         
-        var loadReactionsInteractorBuilder: (
+        var paginatedReactionsLoaderBuilder: (
             _ cid: ChannelId,
             _ messageUpdater: MessageUpdater
-        ) -> LoadReactionsInteractor = LoadReactionsInteractor.init
+        ) -> PaginatedReactionsLoader = PaginatedReactionsLoader.init
         
-        var loadRepliesInteractorBuilder: (
+        var paginatedRepliesLoaderBuilder: (
             _ cid: ChannelId,
             _ messageOrdering: MessageOrdering,
             _ messageUpdater: MessageUpdater,
             _ messageRepository: MessageRepository
-        ) -> LoadRepliesInteractor = LoadRepliesInteractor.init
+        ) -> PaginatedRepliesLoader = PaginatedRepliesLoader.init
         
         var messageUpdaterBuilder: (
             _ isLocalStorageEnabled: Bool,
@@ -921,18 +921,18 @@ extension Chat {
             _ apiClient: APIClient
         ) -> MessageUpdater = MessageUpdater.init
         
-        var sendMessageInteractorBuilder: (
+        var sendMessageCoordinatorBuilder: (
             _ channelUpdater: ChannelUpdater,
             _ eventNotificationCenter: EventNotificationCenter,
             _ messageSender: MessageSender
-        ) -> SendMessageInteractor = SendMessageInteractor.init
+        ) -> SendMessageCoordinator = SendMessageCoordinator.init
         
-        var unreadMessagesInteractorBuilder: (
+        var unreadMessagesCoordinatorBuilder: (
             _ cid: ChannelId,
             _ channelUpdater: ChannelUpdater,
             _ authenticationRepository: AuthenticationRepository,
             _ messageRepository: MessageRepository
-        ) -> UnreadMessagesInteractor = UnreadMessagesInteractor.init
+        ) -> UnreadMessagesCoordinator = UnreadMessagesCoordinator.init
         
         var typingEventsSenderBuilder: (
             _ database: DatabaseContainer,
