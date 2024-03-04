@@ -128,7 +128,7 @@ class ConnectionRepository {
 
     func handleConnectionUpdate(
         state: WebSocketConnectionState,
-        onInvalidToken: () -> Void
+        onExpiredToken: () -> Void
     ) {
         connectionStatus = .init(webSocketConnectionState: state)
 
@@ -140,9 +140,10 @@ class ConnectionRepository {
         case let .connected(connectionId: id):
             shouldNotifyConnectionIdWaiters = true
             connectionId = id
-
         case let .disconnected(source) where source.serverError?.isInvalidTokenError == true:
-            onInvalidToken()
+            if source.serverError?.isExpiredTokenError == true {
+                onExpiredToken()
+            }
             shouldNotifyConnectionIdWaiters = false
             connectionId = nil
         case .disconnected:
