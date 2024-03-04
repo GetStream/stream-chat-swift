@@ -9,15 +9,13 @@ extension ChatClient {
     struct Environment {
         var apiClientBuilder: (
             _ sessionConfiguration: URLSessionConfiguration,
-            _ requestEncoder: RequestEncoder,
             _ requestDecoder: RequestDecoder,
             _ attachmentUploader: AttachmentUploader
         ) -> APIClient = {
             APIClient(
                 sessionConfiguration: $0,
-                requestEncoder: $1,
-                requestDecoder: $2,
-                attachmentUploader: $3
+                requestDecoder: $1,
+                attachmentUploader: $2
             )
         }
 

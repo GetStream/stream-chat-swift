@@ -55,7 +55,6 @@ class ChatClientFactory {
         )
         let apiClient = environment.apiClientBuilder(
             urlSessionConfiguration,
-            encoder,
             decoder,
             attachmentUploader
         )

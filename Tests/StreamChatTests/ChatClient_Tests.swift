@@ -253,7 +253,6 @@ final class ChatClient_Tests: XCTestCase {
 
         assertMandatoryHeaderFields(testEnv.apiClient?.init_sessionConfiguration)
         XCTAssert(testEnv.apiClient?.init_requestDecoder is RequestDecoder_Spy)
-        XCTAssert(testEnv.apiClient?.init_requestEncoder is RequestEncoder_Spy)
     }
 
     func test_disconnect_flushesRequestsQueue() throws {
@@ -870,9 +869,8 @@ private class TestEnvironment {
             apiClientBuilder: {
                 self.apiClient = APIClient_Spy(
                     sessionConfiguration: $0,
-                    requestEncoder: $1,
-                    requestDecoder: $2,
-                    attachmentUploader: $3
+                    requestDecoder: $1,
+                    attachmentUploader: $2
                 )
                 return self.apiClient!
             },

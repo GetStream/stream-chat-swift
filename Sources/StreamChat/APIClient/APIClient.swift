@@ -9,9 +9,6 @@ class APIClient {
     /// The URL session used for all requests.
     let session: URLSession
 
-    /// `APIClient` uses this object to encode `Endpoint` objects into `URLRequest`s.
-    let encoder: RequestEncoder
-
     /// `APIClient` uses this object to decode the results of network requests.
     let decoder: RequestDecoder
 
@@ -57,11 +54,9 @@ class APIClient {
     /// Creates a new `APIClient`.
     init(
         sessionConfiguration: URLSessionConfiguration,
-        requestEncoder: RequestEncoder,
         requestDecoder: RequestDecoder,
         attachmentUploader: AttachmentUploader
     ) {
-        encoder = requestEncoder
         decoder = requestDecoder
         session = URLSession(configuration: sessionConfiguration)
         self.attachmentUploader = attachmentUploader

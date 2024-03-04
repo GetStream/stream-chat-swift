@@ -39,7 +39,6 @@ final class APIClient_Spy: APIClient, Spy {
     @Atomic var uploadFile_callCount = 0
 
     @Atomic var init_sessionConfiguration: URLSessionConfiguration
-    @Atomic var init_requestEncoder: RequestEncoder
     @Atomic var init_requestDecoder: RequestDecoder
     @Atomic var init_attachmentUploader: AttachmentUploader
     @Atomic var request_expectation: XCTestExpectation
@@ -68,12 +67,10 @@ final class APIClient_Spy: APIClient, Spy {
 
     override init(
         sessionConfiguration: URLSessionConfiguration,
-        requestEncoder: RequestEncoder,
         requestDecoder: RequestDecoder,
         attachmentUploader: AttachmentUploader
     ) {
         init_sessionConfiguration = sessionConfiguration
-        init_requestEncoder = requestEncoder
         init_requestDecoder = requestDecoder
         init_attachmentUploader = attachmentUploader
         request_expectation = .init()
@@ -82,7 +79,6 @@ final class APIClient_Spy: APIClient, Spy {
 
         super.init(
             sessionConfiguration: sessionConfiguration,
-            requestEncoder: requestEncoder,
             requestDecoder: requestDecoder,
             attachmentUploader: attachmentUploader
         )
@@ -221,7 +217,6 @@ extension APIClient_Spy {
     convenience init() {
         self.init(
             sessionConfiguration: .ephemeral,
-            requestEncoder: DefaultRequestEncoder(baseURL: .unique(), apiKey: .init(.unique)),
             requestDecoder: DefaultRequestDecoder(),
             attachmentUploader: AttachmentUploader_Spy()
         )
