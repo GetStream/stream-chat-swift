@@ -59,7 +59,7 @@ class DatabaseContainer: NSPersistentContainer {
     static var cachedModel: NSManagedObjectModel?
 
     /// All `NSManagedObjectContext`s this container owns.
-    private lazy var allContext: [NSManagedObjectContext] = [viewContext, backgroundReadOnlyContext, writableContext]
+    private(set) lazy var allContext: [NSManagedObjectContext] = [viewContext, backgroundReadOnlyContext, writableContext]
 
     /// Creates a new `DatabaseContainer` instance.
     ///
@@ -224,8 +224,14 @@ class DatabaseContainer: NSPersistentContainer {
 
     /// Removes all data from the local storage.
     func removeAllData(completion: ((Error?) -> Void)? = nil) {
+        /// Cleanup the current user cache for all manage object contexts.
+        allContext.forEach { context in
+            context.perform {
+                context.invalidateCurrentUserCache()
+            }
+        }
+
         writableContext.performAndWait { [weak self] in
-            self?.writableContext.invalidateCurrentUserCache()
             let entityNames = self?.managedObjectModel.entities.compactMap(\.name)
             var deleteError: Error?
             entityNames?.forEach { [weak self] entityName in
