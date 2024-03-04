@@ -9,8 +9,7 @@ import StreamChat
 extension StreamChatWrapper {
     func refreshingTokenProvider(
         initialToken: Token,
-        appSecret: String,
-        tokenDuration: TimeInterval
+        refreshDetails: DemoAppConfig.TokenRefreshDetails
     ) -> TokenProvider {
         { completion in
             // Simulate API call delay
@@ -19,20 +18,27 @@ extension StreamChatWrapper {
                 
                 if #available(iOS 13.0, *) {
                     generatedToken = _generateUserToken(
-                        secret: appSecret,
+                        secret: refreshDetails.appSecret,
                         userID: initialToken.userId,
-                        expirationDate: Date().addingTimeInterval(tokenDuration)
+                        expirationDate: Date().addingTimeInterval(refreshDetails.duration)
                     )
                 }
 
                 if generatedToken == nil {
-                    print("Demo App Token Refreshing: Unable to generate token.")
-                } else {
-                    print("Demo App Token Refreshing: New token generated.")
+                    log.error("Demo App Token Refreshing: Unable to generate token. Using initialToken instead.")
                 }
 
-                let newToken = generatedToken ?? initialToken
-                completion(.success(newToken))
+                let numberOfSuccessfulRefreshes = refreshDetails.numberOfSuccessfulRefreshesBeforeFailing
+                let shouldNotFail = numberOfSuccessfulRefreshes == 0
+                if shouldNotFail || self.numberOfRefreshTokens <= numberOfSuccessfulRefreshes {
+                    print("Demo App Token Refreshing: New token generated successfully.")
+                    let newToken = generatedToken ?? initialToken
+                    completion(.success(newToken))
+                } else {
+                    print("Demo App Token Refreshing: Token refresh failed.")
+                    completion(.failure(ClientError("Token Refresh Failed")))
+                }
+                self.numberOfRefreshTokens += 1
             }
         }
     }

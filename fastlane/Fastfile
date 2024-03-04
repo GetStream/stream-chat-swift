@@ -13,6 +13,7 @@ github_repo = ENV['GITHUB_REPOSITORY'] || 'GetStream/stream-chat-swift'
 stress_tests_cycles = 50
 derived_data_path = 'derived_data'
 source_packages_path = 'spm_cache'
+performance_path = "performance/#{github_repo.split('/').last}.json"
 buildcache_xcargs = 'CC=clang CPLUSPLUS=clang++ LD=clang LDPLUSPLUS=clang++'
 is_localhost = !is_ci
 @force_check = false
@@ -247,7 +248,10 @@ lane :match_me do |options|
     'io.getstream.iOS.MessengerClone',
     'io.getstream.iOS.YouTubeClone',
     'io.getstream.iOS.DemoAppUIKit',
-    'io.getstream.iOS.ChatDemoApp.DemoShare'
+    'io.getstream.iOS.ChatDemoApp.DemoShare',
+    'io.getstream.iOS.StreamChatMockServer',
+    'io.getstream.iOS.StreamChatUITestsApp',
+    'io.getstream.iOS.StreamChatUITestsAppUITests.xctrunner'
   ]
   custom_match(
     api_key: appstore_api_key,
@@ -343,6 +347,150 @@ lane :build_test_app_and_frameworks do
     build_for_testing: true,
     xcargs: buildcache_xcargs
   )
+end
+
+lane :xcmetrics do |options|
+  next unless is_check_required(sources: sources_matrix[:xcmetrics], force_check: @force_check)
+
+  ['test_output/', 'performance/', "../#{derived_data_path}/Build/Products"].each { |dir| FileUtils.remove_dir(dir, force: true) }
+
+  match_me
+
+  scan(
+    project: xcode_project,
+    scheme: 'StreamChatUITestsApp',
+    testplan: 'Performance',
+    result_bundle: true,
+    derived_data_path: derived_data_path,
+    cloned_source_packages_path: source_packages_path,
+    clean: is_localhost,
+    xcargs: buildcache_xcargs,
+    sdk: 'iphoneos',
+    skip_detect_devices: true,
+    build_for_testing: true
+  )
+
+  firebase_error = ''
+  xcodebuild_output = ''
+  Dir.chdir("../#{derived_data_path}/Build/Products") do
+    begin
+      sh("zip -r MyTests.zip .")
+      sh("gcloud firebase test ios run --test MyTests.zip --timeout 7m --results-dir test_output --device 'model=iphone14pro,version=16.6,orientation=portrait'")
+    rescue StandardError => e
+      UI.error("Test failed on Firebase:\n#{e}")
+      firebase_error = e
+    end
+
+    sh("gsutil cp -r gs://test-lab-af3rt9m4yh360-mqm1zzm767nhc/test_output/iphone14pro-16.6-en-portrait/xcodebuild_output.log xcodebuild_output.log")
+    xcodebuild_output = File.read('xcodebuild_output.log')
+  end
+
+  sh("git clone git@github.com:GetStream/stream-swift-performance-benchmarks.git #{File.dirname(performance_path)}")
+  branch_performance = xcmetrics_log_parser(log: xcodebuild_output)
+  previous_release_branch = "release/#{last_git_tag}"
+  performance_benchmarks = JSON.parse(File.read(performance_path))
+  previous_release_performance = performance_benchmarks[previous_release_branch]
+
+  markdown_table = "## StreamChat XCMetrics\n| `target` | `metric` | `#{previous_release_branch}` | `branch` | `performance` | `status` |\n| - | - | - | - | - | - |\n"
+  ['testMessageListScrollTime', 'testChannelListScrollTime'].each do |test_name|
+    index = 0
+    ['hitches_total_duration', 'duration', 'hitch_time_ratio', 'frame_rate', 'number_of_hitches'].each do |metric|
+      release_value = previous_release_performance[test_name][metric]['value']
+      branch_value = branch_performance[test_name][metric]['value']
+      value_extension = branch_performance[test_name][metric]['ext']
+
+      max_stddev = 0.1 # Default Xcode Max STDDEV is 10%
+      status_emoji =
+        if branch_value > release_value && branch_value < release_value + (release_value * max_stddev)
+          '🟡' # Warning if a branch is 10% less performant than the previous release
+        elsif branch_value > release_value
+          '🔴' # Failure if a branch is more than 10% less performant than the previous release
+        else
+          '🟢' # Success if a branch is more performant or equals to the previous release
+        end
+
+      diff = ((release_value - branch_value) * 100 / release_value.to_f).to_f.round(1)
+      diff_emoji = diff > 0 ? '🔼' : '🔽'
+
+      title = metric.to_s.gsub('_', ' ').capitalize
+      target = index.zero? ? test_name.match(/(?<=test)(.*?)(?=ScrollTime)/).to_s : ''
+      index += 1
+
+      markdown_table << "| #{target} | #{title} | #{release_value} #{value_extension} | #{branch_value} #{value_extension} | #{diff}% #{diff_emoji} | #{status_emoji} |\n"
+      FastlaneCore::PrintTable.print_values(
+        title: "⏳ #{title} ⏳",
+        config: {
+          "#{previous_release_branch}": "#{release_value} #{value_extension}",
+          branch: "#{branch_value} #{value_extension}",
+          diff: "#{diff}% #{diff_emoji}",
+          status: status_emoji
+        }
+      )
+    end
+  end
+
+  UI.user_error!("See Firebase error above ☝️") unless firebase_error.to_s.empty?
+
+  if is_ci && ENV.key?('GITHUB_PR_NUM')
+    pr_comment_required = true
+    performance_benchmarks[current_branch] = branch_performance
+    UI.message("Performance benchmarks: #{performance_benchmarks}")
+    File.write(performance_path, JSON.pretty_generate(performance_benchmarks))
+
+    Dir.chdir(File.dirname(performance_path)) do
+      if sh('git status -s', log: false).to_s.empty?
+        pr_comment_required = false
+        UI.important('No changes in performance benchmarks. Skipping commit and comment.')
+      else
+        sh('git add -A')
+        sh("git commit -m 'Update #{github_repo.split('/').last}.json: #{current_branch}'")
+        sh('git push')
+      end
+    end
+
+    sh("gh pr comment #{ENV.fetch('GITHUB_PR_NUM')} -b '#{markdown_table}'") if pr_comment_required
+  end
+
+  UI.user_error!('Performance benchmark failed.') if markdown_table.include?('🔴')
+end
+
+private_lane :xcmetrics_log_parser do |options|
+  log = options[:log]
+  method = 'Scroll_DraggingAndDeceleration'
+  metrics = {}
+
+  ['testMessageListScrollTime', 'testChannelListScrollTime'].each do |test_name|
+    hitches_total_duration = log.match(/#{test_name}\]' measured \[Hitches Total Duration \(#{method}\), ms\] average: (\d+\.\d+)/)
+    duration = log.match(/#{test_name}\]' measured \[Duration \(#{method}\), s\] average: (\d+\.\d+)/)
+    hitch_time_ratio = log.match(/#{test_name}\]' measured \[Hitch Time Ratio \(#{method}\), ms per s\] average: (\d+\.\d+)/)
+    frame_rate = log.match(/#{test_name}\]' measured \[Frame Rate \(#{method}\), fps\] average: (\d+\.\d+)/)
+    number_of_hitches = log.match(/#{test_name}\]' measured \[Number of Hitches \(#{method}\), hitches\] average: (\d+\.\d+)/)
+
+    metrics[test_name] = {
+      'hitches_total_duration' => {
+        'value' => hitches_total_duration ? hitches_total_duration[1].to_f.round(1) : '?',
+        'ext' => 'ms'
+      },
+      'duration' => {
+        'value' => duration ? duration[1].to_f.round(1) : '?',
+        'ext' => 's'
+      },
+      'hitch_time_ratio' => {
+        'value' => hitch_time_ratio ? hitch_time_ratio[1].to_f.round(1) : '?',
+        'ext' => 'ms per s'
+      },
+      'frame_rate' => {
+        'value' => frame_rate ? frame_rate[1].to_f.round(1) : '?',
+        'ext' => 'fps'
+      },
+      'number_of_hitches' => {
+        'value' => number_of_hitches ? number_of_hitches[1].to_i : '?',
+        'ext' => ''
+      }
+    }
+  end
+
+  metrics
 end
 
 desc 'Runs e2e ui tests using mock server in Debug config'
@@ -598,7 +746,8 @@ lane :sources_matrix do
     ui: ['Sources', 'Tests/StreamChatUITests', 'Tests/Shared', xcode_project],
     sample_apps: ['Sources', 'Examples', 'DemoApp', xcode_project],
     integration: ['Sources', 'Integration', xcode_project],
-    ruby: ['fastlane', 'Gemfile', 'Gemfile.lock']
+    ruby: ['fastlane', 'Gemfile', 'Gemfile.lock'],
+    xcmetrics: ['Sources']
   }
 end
 
@@ -615,7 +764,7 @@ end
 private_lane :create_pr do |options|
   options[:base_branch] ||= 'develop'
   sh("git checkout -b #{options[:head_branch]}")
-  sh('git restore Brewfile.lock.json')
+  sh('git restore Brewfile.lock.json || true')
   sh('git add -A')
   sh("git commit -m '#{options[:title]}'")
   push_to_git_remote(tags: false)

@@ -20,10 +20,16 @@ extension DemoAppCoordinator {
     func showChat(for user: DemoUserType, cid: ChannelId?, animated: Bool, completion: @escaping (Error?) -> Void) {
         logIn(as: user, completion: completion)
 
-        let chatVC = makeChatVC(for: user, startOn: cid) { [weak self] in
-            guard let self = self else { return }
-            self.logOut()
-        }
+        let chatVC = makeChatVC(
+            for: user,
+            startOn: cid,
+            onLogout: { [weak self] in
+                self?.logOut()
+            },
+            onDisconnect: { [weak self] in
+                self?.disconnect()
+            }
+        )
 
         set(rootViewController: chatVC, animated: animated)
         DemoAppConfiguration.showPerformanceTracker()
@@ -58,7 +64,12 @@ extension DemoAppCoordinator {
         return nil
     }
 
-    func makeChatVC(for user: DemoUserType, startOn cid: ChannelId?, onLogout: @escaping () -> Void) -> UIViewController {
+    func makeChatVC(
+        for user: DemoUserType,
+        startOn cid: ChannelId?,
+        onLogout: @escaping () -> Void,
+        onDisconnect: @escaping () -> Void
+    ) -> UIViewController {
         // Construct channel list query
         let channelListQuery: ChannelListQuery
         switch user {
@@ -90,7 +101,8 @@ extension DemoAppCoordinator {
         let channelListVC = makeChannelListVC(
             controller: channelListController,
             selectedChannel: selectedChannel,
-            onLogout: onLogout
+            onLogout: onLogout,
+            onDisconnect: onDisconnect
         )
 
         let channelListNVC = UINavigationController(rootViewController: channelListVC)
@@ -109,10 +121,12 @@ extension DemoAppCoordinator {
     func makeChannelListVC(
         controller: ChatChannelListController,
         selectedChannel: ChatChannel?,
-        onLogout: @escaping () -> Void
+        onLogout: @escaping () -> Void,
+        onDisconnect: @escaping () -> Void
     ) -> UIViewController {
         let channelListVC = DemoChatChannelListVC.make(with: controller)
         channelListVC.demoRouter?.onLogout = onLogout
+        channelListVC.demoRouter?.onDisconnect = onDisconnect
         channelListVC.selectedChannel = selectedChannel
         channelListVC.components.isChatChannelListStatesEnabled = true
         return channelListVC
@@ -155,13 +169,17 @@ private extension DemoAppCoordinator {
     }
 
     func logOut() {
-        // logout client
         chat.logOut { [weak self] in
-            // clean user id
             UserDefaults.shared.currentUserId = nil
-
-            // show login screen
             self?.showLogin(animated: true)
+        }
+    }
+
+    func disconnect() {
+        chat.client?.disconnect { [weak self] in
+            DispatchQueue.main.async {
+                self?.showLogin(animated: true)
+            }
         }
     }
 }

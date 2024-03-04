@@ -71,11 +71,11 @@ jobs:
     runs-on: ${{ matrix.os }}
     env:
       GITHUB_EVENT: ${{ toJson(github.event) }}
-      GITHUB_PR_NUM: ${{ github.event.number }}
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       ALLURE_TOKEN: ${{ secrets.ALLURE_TOKEN }}
       STREAM_DEMO_APP_SECRET: ${{ secrets.STREAM_DEMO_APP_SECRET }}
       XCODE_VERSION: ${{ matrix.xcode }}
+      IOS_SIMULATOR_DEVICE: "${{ matrix.device }} (${{ matrix.ios }})" # For the Allure report
     steps:
     - uses: actions/checkout@v4.1.1
     - uses: actions/download-artifact@v3
@@ -166,7 +166,6 @@ jobs:
     runs-on: ${{ matrix.os }}
     env:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      GITHUB_PR_NUM: ${{ github.event.number }}
       XCODE_VERSION: ${{ matrix.xcode }}
     steps:
     - uses: actions/checkout@v4.1.1
