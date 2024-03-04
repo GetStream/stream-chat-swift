@@ -4,8 +4,9 @@
 
 import Foundation
 
+/// A coordinator managing the send message flow by writing a message to a local database and then waiting for the message sending request.
 @available(iOS 13.0, *)
-final class SendMessageInteractor {
+final class SendMessageCoordinator {
     private let channelUpdater: ChannelUpdater
     private let eventNotificationCenter: EventNotificationCenter
     private let messageSender: MessageSender
