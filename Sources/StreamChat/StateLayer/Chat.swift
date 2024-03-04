@@ -4,6 +4,7 @@
 
 import Foundation
 
+/// An object which represents `ChatChannel`, its state and actions.
 @available(iOS 13.0, *)
 public final class Chat {
     private let attachmentQueueUploader: AttachmentQueueUploader
@@ -90,6 +91,7 @@ public final class Chat {
         )
     }
     
+    /// An observable object representing the current state of the channel.
     public internal(set) var state: ChatState
     
     // MARK: - Deleting the Channel
@@ -299,7 +301,6 @@ public final class Chat {
     /// Loads messages for the specified pagination parameters and updates ``ChatState.messages``.
     ///
     /// - Parameters:
-    ///   - message: The parent message id which has replies.
     ///   - pagination: The pagination configuration which includes limit and cursor.
     ///
     /// - Throws: An error while communicating with the Stream API.

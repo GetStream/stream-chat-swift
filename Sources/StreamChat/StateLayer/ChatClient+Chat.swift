@@ -4,7 +4,7 @@
 
 import Foundation
 
-// MARK: - Factory methods to create the chat.
+// MARK: - Factory Methods for Creating Chats
 
 @available(iOS 13.0, *)
 extension ChatClient {

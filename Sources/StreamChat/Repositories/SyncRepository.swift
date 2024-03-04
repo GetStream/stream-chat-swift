@@ -37,8 +37,11 @@ class SyncRepository {
     private let apiClient: APIClient
     let activeChannelControllers: ThreadSafeWeakCollection<ChatChannelController>
     let activeChannelListControllers: ThreadSafeWeakCollection<ChatChannelListController>
+    private var activeChannelListQueries = [() -> ChannelListQuery?]()
     let offlineRequestsRepository: OfflineRequestsRepository
     let eventNotificationCenter: EventNotificationCenter
+    private let channelListUpdater: ChannelListUpdater
+    private let propertyQueue = DispatchQueue(label: "io.getstream.sync-repository")
 
     private lazy var operationQueue: OperationQueue = {
         let operationQueue = OperationQueue()
@@ -59,6 +62,7 @@ class SyncRepository {
         self.config = config
         self.activeChannelControllers = activeChannelControllers
         self.activeChannelListControllers = activeChannelListControllers
+        channelListUpdater = ChannelListUpdater(database: database, apiClient: apiClient)
         self.offlineRequestsRepository = offlineRequestsRepository
         self.eventNotificationCenter = eventNotificationCenter
         self.database = database
@@ -68,6 +72,20 @@ class SyncRepository {
     deinit {
         cancelRecoveryFlow()
     }
+    
+    // MARK: - Tracking Active
+    
+    func trackChannelListQuery(_ provider: @escaping () -> ChannelListQuery?) {
+        propertyQueue.sync { activeChannelListQueries.append(provider) }
+    }
+    
+    func resetTracking() {
+        activeChannelControllers.removeAllObjects()
+        activeChannelListControllers.removeAllObjects()
+        propertyQueue.sync { activeChannelListQueries.removeAll() }
+    }
+    
+    // MARK: -
 
     func syncLocalState(completion: @escaping () -> Void) {
         cancelRecoveryFlow()
@@ -134,6 +152,16 @@ class SyncRepository {
                 )
             }
         operations.append(contentsOf: refetchChannelListQueryOperations)
+        operations.append(contentsOf: propertyQueue.sync {
+            activeChannelListQueries
+                .map {
+                    RefetchChannelListQueryOperation(
+                        queryProvider: $0,
+                        updater: channelListUpdater,
+                        context: context
+                    )
+                }
+        })
 
         // 4. Clean up unwanted channels
         operations.append(DeleteUnwantedChannelsOperation(database: database, context: context))

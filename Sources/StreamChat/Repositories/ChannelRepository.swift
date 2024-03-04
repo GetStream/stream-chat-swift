@@ -78,3 +78,18 @@ class ChannelRepository {
         }
     }
 }
+
+@available(iOS 13.0, *)
+extension ChannelRepository {
+    func channels(for ids: [ChannelId], query: ChannelListQuery, config: ChatClientConfig) async throws -> [ChatChannel] {
+        try await database.backgroundRead { context in
+            try ChannelDTO.loadChannelList(
+                query: query,
+                chatClientConfig: config,
+                ids: Set(ids),
+                context: context
+            )
+            .map { try $0.asModel() }
+        }
+    }
+}

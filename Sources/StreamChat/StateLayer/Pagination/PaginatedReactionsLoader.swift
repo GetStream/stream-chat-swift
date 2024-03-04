@@ -30,8 +30,8 @@ struct PaginatedReactionsLoader {
                 first.updatedAt > second.updatedAt
             },
             
-            unique: { first, second in
-                first.author != second.author && first.type != second.type
+            dropsExisting: { first, second in
+                first.author == second.author && first.type == second.type
             }
         )
         await state.setSortedReactions(result)

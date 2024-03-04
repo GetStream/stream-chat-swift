@@ -74,6 +74,8 @@ public class ChatClient {
     let callRepository: CallRepository
 
     let channelRepository: ChannelRepository
+    
+    let channelListUpdater: ChannelListUpdater
 
     func makeMessagesPaginationStateHandler() -> MessagesPaginationStateHandling {
         MessagesPaginationStateHandler()
@@ -195,6 +197,10 @@ public class ChatClient {
         extensionLifecycle = environment.extensionLifecycleBuilder(config.applicationGroupIdentifier)
         callRepository = environment.callRepositoryBuilder(apiClient)
         channelRepository = environment.channelRepositoryBuilder(
+            databaseContainer,
+            apiClient
+        )
+        channelListUpdater = environment.channelListUpdaterBuilder(
             databaseContainer,
             apiClient
         )
@@ -355,8 +361,7 @@ public class ChatClient {
         authenticationRepository.logOutUser()
 
         // Stop tracking active components
-        activeChannelControllers.removeAllObjects()
-        activeChannelListControllers.removeAllObjects()
+        syncRepository.resetTracking()
 
         let group = DispatchGroup()
         group.enter()

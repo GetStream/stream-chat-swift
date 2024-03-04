@@ -372,6 +372,17 @@ extension ChannelDTO {
         request.fetchBatchSize = query.pagination.pageSize
         return request
     }
+    
+    static func loadChannelList(query: ChannelListQuery, chatClientConfig: ChatClientConfig, ids: Set<ChannelId>, context: NSManagedObjectContext) throws -> [ChannelDTO] {
+        let request = channelListFetchRequest(query: query, chatClientConfig: chatClientConfig)
+        if let predicate = request.predicate {
+            request.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [
+                predicate,
+                NSPredicate(format: "cid in %@", ids)
+            ])
+        }
+        return try ChannelDTO.load(request, context: context)
+    }
 }
 
 extension ChannelDTO {

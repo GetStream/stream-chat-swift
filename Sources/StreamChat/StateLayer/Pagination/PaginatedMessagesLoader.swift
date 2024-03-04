@@ -6,7 +6,7 @@ import Foundation
 
 /// Loads paginated messages to the ``ChatState`` and keeps the ``ChatState.messages`` sorted.
 @available(iOS 13.0.0, *)
-final class PaginatedMessagesLoader {
+struct PaginatedMessagesLoader {
     private let cid: ChannelId
     private let channelUpdater: ChannelUpdater
     private let messageRepository: MessageRepository

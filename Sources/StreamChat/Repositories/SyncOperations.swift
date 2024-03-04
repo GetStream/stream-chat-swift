@@ -104,21 +104,42 @@ final class RefetchChannelListQueryOperation: AsyncOperation {
                 watchedAndSynchedChannelIds: context.watchedAndSynchedChannelIds,
                 synchedChannelIds: context.synchedChannelIds
             ) { result in
-                switch result {
-                case let .success((watchedChannels, unwantedCids)):
-                    log.info("Successfully refetched query for \(query.debugDescription)", subsystems: .offlineSupport)
-                    let queryChannelIds = watchedChannels.map(\.cid)
-                    context.watchedAndSynchedChannelIds = context.watchedAndSynchedChannelIds.union(queryChannelIds)
-                    context.unwantedChannelIds = context.unwantedChannelIds.union(unwantedCids)
-                    done(.continue)
-                case let .failure(error):
-                    log.error(
-                        "Failed refetching query for \(query.debugDescription): \(error)",
-                        subsystems: .offlineSupport
-                    )
-                    done(.retry)
-                }
+                Self.handleReset(query, with: result, context: context, done: done)
             }
+        }
+    }
+    
+    init(queryProvider: @escaping () -> ChannelListQuery?, updater: ChannelListUpdater, context: SyncContext) {
+        super.init(maxRetries: syncOperationsMaximumRetries) { _, done in
+            guard let query = queryProvider() else {
+                done(.continue)
+                return
+            }
+            updater.resetChannelsQuery(
+                for: query,
+                pageSize: query.pagination.pageSize,
+                watchedAndSynchedChannelIds: context.watchedAndSynchedChannelIds,
+                synchedChannelIds: context.synchedChannelIds
+            ) { result in
+                Self.handleReset(query, with: result, context: context, done: done)
+            }
+        }
+    }
+    
+    private static func handleReset(_ query: ChannelListQuery, with result: Result<(synchedAndWatched: [ChatChannel], unwanted: Set<ChannelId>), Error>, context: SyncContext, done: (Output) -> Void) {
+        switch result {
+        case let .success((watchedChannels, unwantedCids)):
+            log.info("Successfully refetched query for \(query.debugDescription)", subsystems: .offlineSupport)
+            let queryChannelIds = watchedChannels.map(\.cid)
+            context.watchedAndSynchedChannelIds = context.watchedAndSynchedChannelIds.union(queryChannelIds)
+            context.unwantedChannelIds = context.unwantedChannelIds.union(unwantedCids)
+            done(.continue)
+        case let .failure(error):
+            log.error(
+                "Failed refetching query for \(query.debugDescription): \(error)",
+                subsystems: .offlineSupport
+            )
+            done(.retry)
         }
     }
 }
