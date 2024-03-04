@@ -4,8 +4,9 @@
 
 import Foundation
 
+/// A coordinator for scheduling and invoking mark read and unread API calls in a serial manner.
 @available(iOS 13.0, *)
-actor UnreadMessagesInteractor {
+actor UnreadMessagesCoordinator {
     private let cid: ChannelId
     private let authenticationRepository: AuthenticationRepository
     private let messageRepository: MessageRepository
