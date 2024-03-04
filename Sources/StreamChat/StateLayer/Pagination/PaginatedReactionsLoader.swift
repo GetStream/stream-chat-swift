@@ -4,8 +4,9 @@
 
 import Foundation
 
+/// Loads paginated reactions for messages.
 @available(iOS 13.0, *)
-struct LoadReactionsInteractor {
+struct PaginatedReactionsLoader {
     let cid: ChannelId
     let messageUpdater: MessageUpdater
     
