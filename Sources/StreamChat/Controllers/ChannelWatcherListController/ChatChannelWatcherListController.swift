@@ -91,7 +91,8 @@ public class ChatChannelWatcherListController: DataController, DelegateCallable,
             return
         }
 
-        updater.channelWatchers(query: query) { error in
+        updater.channelWatchers(query: query) { result in
+            let error = result.error
             self.state = error == nil ? .remoteDataFetched : .remoteDataFetchFailed(ClientError(with: error))
             self.callback { completion?(error) }
         }
@@ -179,9 +180,9 @@ public extension ChatChannelWatcherListController {
     func loadNextWatchers(limit: Int = .channelWatchersPageSize, completion: ((Error?) -> Void)? = nil) {
         var updatedQuery = query
         updatedQuery.pagination = .init(pageSize: limit, offset: watchers.count)
-        updater.channelWatchers(query: updatedQuery) { error in
+        updater.channelWatchers(query: updatedQuery) { result in
             self.query = updatedQuery
-            self.callback { completion?(error) }
+            self.callback { completion?(result.error) }
         }
     }
 }

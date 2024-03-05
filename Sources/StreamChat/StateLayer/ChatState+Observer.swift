@@ -11,6 +11,7 @@ extension ChatState {
         private let channelObserver: BackgroundEntityDatabaseObserver<ChatChannel, ChannelDTO>
         private let eventNotificationCenter: EventNotificationCenter
         private let messagesObserver: BackgroundListDatabaseObserver<ChatMessage, MessageDTO>
+        private let watchersObserver: BackgroundListDatabaseObserver<ChatUser, UserDTO>
         private var webSocketEventObservers = [EventObserver]()
         
         init(cid: ChannelId, channelQuery: ChannelQuery, database: DatabaseContainer, eventNotificationCenter: EventNotificationCenter) {
@@ -24,7 +25,7 @@ extension ChatState {
                 itemCreator: { try $0.asModel() as ChatChannel }
             )
             messagesObserver = BackgroundListDatabaseObserver(
-                context: database.backgroundReadOnlyContext,
+                context: context,
                 fetchRequest: MessageDTO.messagesFetchRequest(
                     for: cid,
                     pageSize: channelQuery.pagination?.pageSize ?? .messagesPageSize,
@@ -35,6 +36,12 @@ extension ChatState {
                 itemCreator: { try $0.asModel() as ChatMessage },
                 sorting: []
             )
+            watchersObserver = BackgroundListDatabaseObserver(
+                context: context,
+                fetchRequest: UserDTO.watcherFetchRequest(cid: cid),
+                itemCreator: { try $0.asModel() as ChatUser },
+                sorting: []
+            )
             self.eventNotificationCenter = eventNotificationCenter
         }
         
@@ -42,12 +49,14 @@ extension ChatState {
             let channelDidChange: (ChatChannel) async -> Void
             let messagesDidChange: ([ListChange<ChatMessage>]) async -> Void
             let typingUsersDidChange: (Set<ChatUser>) async -> Void
+            let watchersDidChange: ([ListChange<ChatUser>]) async -> Void
         }
         
         func start(with handlers: Handlers) {
             channelObserver.onChange(do: { change in Task { await handlers.channelDidChange(change.item) } })
             channelObserver.onFieldChange(\.currentlyTypingUsers, do: { change in Task { await handlers.typingUsersDidChange(change.item) } })
-            messagesObserver.onDidChange = { change in Task { await handlers.messagesDidChange(change) } }
+            messagesObserver.onDidChange = { changes in Task { await handlers.messagesDidChange(changes) } }
+            watchersObserver.onDidChange = { changes in Task { await handlers.watchersDidChange(changes) } }
             
             // TODO: Implement member list
 //            if let eventNotificationCenter {
@@ -59,12 +68,17 @@ extension ChatState {
             do {
                 try channelObserver.startObserving()
             } catch {
-                log.error("Failed to start the channel observer")
+                log.error("Failed to start the channel observer for cid: \(cid)")
             }
             do {
                 try messagesObserver.startObserving()
             } catch {
-                log.error("Failed to start the messages observer")
+                log.error("Failed to start the messages observer for cid: \(cid)")
+            }
+            do {
+                try watchersObserver.startObserving()
+            } catch {
+                log.error("Failed to start the watchers observer for cid: \(cid)")
             }
         }
     }

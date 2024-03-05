@@ -126,6 +126,17 @@ extension UserDTO {
         request.fetchLimit = context.localCachingSettings?.chatChannel.lastActiveWatchersLimit ?? 100
         return load(by: request, context: context)
     }
+    
+    static func loadWatchers(cid: ChannelId, ids: Set<UserId>, context: NSManagedObjectContext) throws -> [UserDTO] {
+        let request = UserDTO.watcherFetchRequest(cid: cid)
+        if let predicate = request.predicate {
+            request.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [
+                predicate,
+                NSPredicate(format: "id in %@", ids)
+            ])
+        }
+        return try load(request, context: context)
+    }
 }
 
 extension NSManagedObjectContext: UserDatabaseSession {

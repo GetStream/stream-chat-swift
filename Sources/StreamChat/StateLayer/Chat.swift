@@ -18,6 +18,8 @@ public final class Chat {
     private let paginatedMessagesLoader: PaginatedMessagesLoader
     private let paginatedReactionsLoader: PaginatedReactionsLoader
     private let paginatedRepliesLoader: PaginatedRepliesLoader
+    private let paginatedWatchersLoader: PaginatedWatchersLoader
+    
     private let sendMessageCoordinator: SendMessageCoordinator
     private let unreadMessagesCoordinator: UnreadMessagesCoordinator
     
@@ -65,6 +67,11 @@ public final class Chat {
             messageOrdering,
             messageUpdater,
             client.messageRepository
+        )
+        paginatedWatchersLoader = environment.paginatedWatchersLoaderBuilder(
+            cid,
+            channelUpdater,
+            client.userRepository
         )
         sendMessageCoordinator = environment.sendMessageCoordinatorBuilder(
             channelUpdater,
@@ -301,7 +308,7 @@ public final class Chat {
     /// Loads messages for the specified pagination parameters and updates ``ChatState.messages``.
     ///
     /// - Parameters:
-    ///   - pagination: The pagination configuration which includes limit and cursor.
+    ///   - pagination: The pagination configuration which includes a limit and a cursor or an offset.
     ///
     /// - Throws: An error while communicating with the Stream API.
     /// - Returns: An array of messages for the pagination.
@@ -479,7 +486,7 @@ public final class Chat {
     ///
     /// - Parameters:
     ///   - message: The id of the message to load reactions.
-    ///   - pagination: The pagination configuration which includes limit and offset or cursor.
+    ///   - pagination: The pagination configuration which includes a limit and a cursor or an offset.
     ///
     /// - Throws: An error while communicating with the Stream API.
     /// - Returns: An array of reactions for given limit and offset.
@@ -516,7 +523,7 @@ public final class Chat {
     ///
     /// - Parameters:
     ///   - message: The parent message id which has replies.
-    ///   - pagination: The pagination configuration which includes limit and cursor.
+    ///   - pagination: The pagination configuration which includes a limit and a cursor.
     ///
     /// - Throws: An error while communicating with the Stream API.
     /// - Returns: An array of messages for the pagination.
@@ -880,6 +887,28 @@ public final class Chat {
     public func stopWatching() async throws {
         try await channelUpdater.stopWatching(cid: cid)
     }
+    
+    /// Loads watchers for the specified pagination parameters and updates ``ChatState.watchers``.
+    ///
+    /// - Parameters:
+    ///   - pagination: The pagination configuration which includes a limit and a cursor or an offset.
+    ///
+    /// - Throws: An error while communicating with the Stream API.
+    /// - Returns: An array of watchers for the pagination.
+    @discardableResult public func loadWatchers(with pagination: Pagination) async throws -> [ChatUser] {
+        try await paginatedWatchersLoader.loadWatchers(to: state, with: pagination)
+    }
+    
+    /// Loads more watchers and updates ``ChatState.watchers``.
+    ///
+    /// - Parameters:
+    ///   - limit: The limit for the page size. The default limit is 30.
+    ///
+    /// - Throws: An error while communicating with the Stream API.
+    /// - Returns: An array of loaded watchers.
+    @discardableResult public func loadMoreWatchers(with limit: Int? = nil) async throws -> [ChatUser] {
+        try await paginatedWatchersLoader.loadMoreWatchers(to: state, limit: limit)
+    }
 }
 
 // MARK: - Environment
@@ -914,6 +943,12 @@ extension Chat {
             _ messageUpdater: MessageUpdater,
             _ messageRepository: MessageRepository
         ) -> PaginatedRepliesLoader = PaginatedRepliesLoader.init
+        
+        var paginatedWatchersLoaderBuilder: (
+            _ cid: ChannelId,
+            _ channelUpdater: ChannelUpdater,
+            _ userRepository: UserRepository
+        ) -> PaginatedWatchersLoader = PaginatedWatchersLoader.init
         
         var messageUpdaterBuilder: (
             _ isLocalStorageEnabled: Bool,

@@ -25,7 +25,11 @@ public final class ChatState: ObservableObject {
                     guard let self else { return }
                     await self.setValue(self.orderedMessages.withListChanges(changes), for: \.messages)
                 },
-                typingUsersDidChange: { [weak self] in await self?.setValue($0, for: \.typingUsers) }
+                typingUsersDidChange: { [weak self] in await self?.setValue($0, for: \.typingUsers) },
+                watchersDidChange: { [weak self] changes in
+                    guard let self else { return }
+                    await self.setValue(self.orderedWatchers.withListChanges(changes), for: \.watchers)
+                }
             )
         )
     }
@@ -99,6 +103,16 @@ public final class ChatState: ObservableObject {
     /// A list of users who are currently typing.
     @Published public private(set) var typingUsers = Set<ChatUser>()
     
+    // MARK: - Watchers
+    
+    /// A list of users who are currently watching the channel.
+    ///
+    /// Use ``Chat.loadWatchers(with:)`` and ``Chat.loadMoreWatchers(with:)`` for loading watchers.
+    @Published public private(set) var watchers = [ChatUser]()
+    
+    /// True, if all the watchers were loaded with paginated loading.
+    @Published public private(set) var hasLoadedAllWatchers = false
+    
     // MARK: - Mutating the State
     
     // Force main actor when accessing the state.
@@ -115,7 +129,16 @@ public final class ChatState: ObservableObject {
         OrderedMessages(messageOrdering: messageOrder, orderedMessages: messages)
     }
     
+    @MainActor var orderedWatchers: OrderedUsers {
+        OrderedUsers(cid: cid, orderedWatchers: watchers)
+    }
+    
     @MainActor func setSortedMessages(_ sortedMessages: [ChatMessage]) {
         setValue(sortedMessages, for: \.messages)
+    }
+    
+    @MainActor func setSortedWatchers(_ sortedWatchers: [ChatUser], hasLoadedAll: Bool) {
+        setValue(hasLoadedAll, for: \.hasLoadedAllWatchers)
+        setValue(sortedWatchers, for: \.watchers)
     }
 }

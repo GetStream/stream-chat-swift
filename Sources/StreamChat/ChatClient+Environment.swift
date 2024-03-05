@@ -180,5 +180,12 @@ extension ChatClient {
                 maxHoursThreshold: $3
             )
         }
+        
+        var userRepositoryBuilder: (
+            _ database: DatabaseContainer,
+            _ apiClient: APIClient
+        ) -> UserRepository = {
+            UserRepository(database: $0, apiClient: $1)
+        }
     }
 }

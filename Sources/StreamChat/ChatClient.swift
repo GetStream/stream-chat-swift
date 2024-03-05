@@ -75,6 +75,8 @@ public class ChatClient {
 
     let channelRepository: ChannelRepository
     
+    let userRepository: UserRepository
+    
     let channelListUpdater: ChannelListUpdater
 
     func makeMessagesPaginationStateHandler() -> MessagesPaginationStateHandling {
@@ -201,6 +203,10 @@ public class ChatClient {
             apiClient
         )
         channelListUpdater = environment.channelListUpdaterBuilder(
+            databaseContainer,
+            apiClient
+        )
+        userRepository = environment.userRepositoryBuilder(
             databaseContainer,
             apiClient
         )

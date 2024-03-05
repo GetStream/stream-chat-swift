@@ -109,6 +109,41 @@ extension BidirectionalCollection where Element == ChatChannel {
     }
 }
 
+extension BidirectionalCollection where Element == ChatUser {
+    func uniquelyMerged(_ insertedSortedElements: [Element], sortDescriptors: [NSSortDescriptor]) -> [Element] {
+        uniquelyMerged(
+            insertedSortedElements,
+            areInIncreasingOrder: { sortDescriptors.compare($0, to: $1) == .orderedAscending },
+            dropsExisting: { existing, incoming in
+                existing.id == incoming.id
+            }
+        )
+    }
+    
+    func uniquelyApplied(_ changes: [ListChange<Element>], sortDescriptors: [NSSortDescriptor]) -> [Element] {
+        var removedIds = Set<UserId>()
+        var updatedSortedChanges = [ListChange<Element>]()
+        updatedSortedChanges.reserveCapacity(changes.count)
+        
+        for change in changes {
+            if change.isRemove {
+                removedIds.insert(change.item.id)
+            } else {
+                updatedSortedChanges.append(change)
+            }
+        }
+        updatedSortedChanges = updatedSortedChanges.sort(using: [.init(keyPath: \.indexPath, isAscending: true)])
+        
+        return uniquelyMerged(
+            updatedSortedChanges.map(\.item),
+            areInIncreasingOrder: { sortDescriptors.compare($0, to: $1) == .orderedAscending },
+            dropsExisting: { existing, incoming in
+                removedIds.contains(existing.id) || existing.id == incoming.id
+            }
+        )
+    }
+}
+
 private extension Array where Element == NSSortDescriptor {
     func compare(_ object1: Any, to object2: Any) -> ComparisonResult {
         var result = ComparisonResult.orderedSame

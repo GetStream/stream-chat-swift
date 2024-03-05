@@ -550,7 +550,7 @@ class ChannelUpdater: Worker {
     /// - Parameters:
     ///   - query: Query object for watchers. See `ChannelWatcherListQuery`
     ///   - completion: Called when the API call is finished. Called with `Error` if the remote update fails.
-    func channelWatchers(query: ChannelWatcherListQuery, completion: ((Error?) -> Void)? = nil) {
+    func channelWatchers(query: ChannelWatcherListQuery, completion: ((Result<ChannelPayload, Error>) -> Void)? = nil) {
         apiClient.request(endpoint: .channelWatchers(query: query)) { (result: Result<ChannelPayload, Error>) in
             do {
                 let payload = try result.get()
@@ -566,10 +566,14 @@ class ChannelUpdater: Worker {
                     // we should save the payload as it's the latest state of the channel
                     try session.saveChannel(payload: payload)
                 } completion: { error in
-                    completion?(error)
+                    if let error {
+                        completion?(.failure(error))
+                    } else {
+                        completion?(result)
+                    }
                 }
             } catch {
-                completion?(error)
+                completion?(.failure(error))
             }
         }
     }
@@ -889,6 +893,14 @@ extension ChannelUpdater {
     func uploadFile(type: AttachmentType, localFileURL: URL, cid: ChannelId, progress: ((Double) -> Void)? = nil) async throws -> UploadedAttachment {
         try await withCheckedThrowingContinuation { continuation in
             uploadFile(type: type, localFileURL: localFileURL, cid: cid, progress: progress) { result in
+                continuation.resume(with: result)
+            }
+        }
+    }
+    
+    func watchers(for query: ChannelWatcherListQuery) async throws -> ChannelPayload {
+        try await withCheckedThrowingContinuation { continuation in
+            channelWatchers(query: query) { result in
                 continuation.resume(with: result)
             }
         }
