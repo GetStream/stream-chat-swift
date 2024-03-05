@@ -150,6 +150,11 @@ open class ChatMessageLayoutOptionsResolver {
             return true
         }
 
+        // If message was edited, always break the grouping of messages.
+        if components?.isMessageEditedLabelEnabled == true && message.textUpdatedAt != nil {
+            return true
+        }
+
         // The message after the current one has different author so the current message
         // is either a standalone or last in sequence.
         guard nextMessage.author == message.author else { return true }

@@ -205,6 +205,8 @@ internal enum L10n {
   internal enum Message {
     /// Message deleted
     internal static var deletedMessagePlaceholder: String { L10n.tr("Localizable", "message.deleted-message-placeholder") }
+    /// Edited At
+    internal static var editedAt: String { L10n.tr("Localizable", "message.edited-at") }
     /// Only visible to you
     internal static var onlyVisibleToYou: String { L10n.tr("Localizable", "message.only-visible-to-you") }
     /// Translated to %@
