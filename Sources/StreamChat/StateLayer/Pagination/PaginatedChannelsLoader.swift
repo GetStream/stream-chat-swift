@@ -21,7 +21,7 @@ struct PaginatedChannelsLoader {
             config: chatClientConfig
         )
         let result = await state.orderedChannels.withInsertingPaginated(newSortedChannels)
-        await state.setSortedChannels(result, canLoadMore: payloadChannels.count < pagination.pageSize)
+        await state.setSortedChannels(result, hasLoadedAll: payloadChannels.count < pagination.pageSize)
         
         return payloadChannels
     }

@@ -46,8 +46,8 @@ public final class ChatListState: ObservableObject {
         OrderedChannels(orderedChannels: channels, query: query, clientConfig: clientConfig)
     }
     
-    @MainActor func setSortedChannels(_ sortedChannels: [ChatChannel], canLoadMore: Bool) {
-        setValue(canLoadMore, for: \.hasLoadedAllChannels)
+    @MainActor func setSortedChannels(_ sortedChannels: [ChatChannel], hasLoadedAll: Bool) {
+        setValue(hasLoadedAll, for: \.hasLoadedAllChannels)
         setValue(sortedChannels, for: \.channels)
     }
 }
