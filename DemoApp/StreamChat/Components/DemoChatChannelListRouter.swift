@@ -15,6 +15,7 @@ final class DemoChatChannelListRouter: ChatChannelListRouter {
 
     var channelPresentingStyle: ChannelPresentingStyle = .push
     var onLogout: (() -> Void)?
+    var onDisconnect: (() -> Void)?
 
     lazy var streamModalTransitioningDelegate = StreamModalTransitioningDelegate()
 
@@ -36,6 +37,9 @@ final class DemoChatChannelListRouter: ChatChannelListRouter {
             }),
             .init(title: "Logout", style: .destructive, handler: { [weak self] _ in
                 self?.onLogout?()
+            }),
+            .init(title: "Disconnect", style: .destructive, handler: { [weak self] _ in
+                self?.onDisconnect?()
             })
         ])
     }
@@ -409,7 +413,7 @@ final class DemoChatChannelListRouter: ChatChannelListRouter {
                 guard let cid = channelController.channel?.cid else { return }
                 let client = channelController.client
                 self.rootViewController.present(MembersViewController(
-                    membersController: client.memberListController(query: .init(cid: cid))
+                    membersController: client.memberListController(query: .init(cid: cid, pageSize: 105))
                 ), animated: true)
             }),
             .init(title: "Show Banned Members", handler: { [unowned self] _ in

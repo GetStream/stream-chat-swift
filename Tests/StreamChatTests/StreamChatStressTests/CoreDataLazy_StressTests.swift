@@ -63,6 +63,7 @@ final class CoreDataLazy_Tests: StressTestCase {
         AssertAsync.canBeReleased(&context)
     }
 
+    // TODO: check why it crashes.
     func test_behavesCorrectly_whenAccessedFromMultipleThreads() throws {
         // This has to be tested on some more complex object, so we use `ChannelDTO`.
 

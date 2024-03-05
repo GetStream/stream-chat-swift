@@ -177,6 +177,10 @@ extension ChatClient {
         offlineRequestsRepository as! OfflineRequestsRepository_Mock
     }
 
+    var mockAuthenticationRepository: AuthenticationRepository_Mock {
+        authenticationRepository as! AuthenticationRepository_Mock
+    }
+
     func simulateProvidedConnectionId(connectionId: ConnectionId?) {
         guard let connectionId = connectionId else {
             webSocketClient(

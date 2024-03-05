@@ -353,6 +353,7 @@ public class ChatClient {
             completion()
         }
         authenticationRepository.clearTokenProvider()
+        authenticationRepository.cancelTimers()
     }
 
     /// Disconnects the chat client form the chat servers and removes all the local data related.

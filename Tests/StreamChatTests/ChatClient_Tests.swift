@@ -325,7 +325,7 @@ final class ChatClient_Tests: XCTestCase {
         XCTAssertEqual(client.activeChannelControllers.count, 0)
         XCTAssertEqual(client.activeChannelListControllers.count, 0)
     }
-    
+
     func test_apiClient_usesInjectedURLSessionConfiguration() {
         // configure a URLSessionConfiguration with a URLProtocol class
         var urlSessionConfiguration = URLSessionConfiguration.default
@@ -642,7 +642,7 @@ final class ChatClient_Tests: XCTestCase {
 
     // MARK: - Disconnect
 
-    func test_disconnect_shouldCallConnectionRepository_andClearTokenProvider() throws {
+    func test_disconnect_shouldCallConnectionRepository_andClearTokenProvider_andCancelTimers() throws {
         let client = ChatClient(config: inMemoryStorageConfig, environment: testEnv.environment)
         let authenticationRepository = try XCTUnwrap(client.authenticationRepository as? AuthenticationRepository_Mock)
         let connectionRepository = try XCTUnwrap(client.connectionRepository as? ConnectionRepository_Mock)
@@ -656,6 +656,7 @@ final class ChatClient_Tests: XCTestCase {
 
         XCTAssertCall(ConnectionRepository_Mock.Signature.disconnect, on: connectionRepository)
         XCTAssertCall(AuthenticationRepository_Mock.Signature.clearTokenProvider, on: authenticationRepository)
+        XCTAssertEqual(client.mockAuthenticationRepository.cancelTimersCallCount, 1)
     }
 
     func test_logout_shouldDisconnect_logOut_andRemoveAllData() throws {

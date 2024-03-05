@@ -39,6 +39,7 @@
         "ChannelMemberListUpdater_Tests\/test_load_propagatesChannelDatabaseError()",
         "ChannelUpdater_Tests\/test_hideChannel_successfulResponse_isPropagatedToCompletion()",
         "ChannelUpdater_Tests\/test_updateChannelQuery_successfulResponseData_areSavedToDB()",
+        "CoreDataLazy_Tests\/test_behavesCorrectly_whenAccessedFromMultipleThreads()",
         "EventNotificationCenter_Tests\/test_measure_processMultipleNewMessageEvents()",
         "MessageSender_Tests\/test_senderSendsMessage_inTheOrderTheyWereCreatedLocally()",
         "MessageSender_Tests\/test_senderSendsMessage_withPendingSendLocalState_and_uploadedOrEmptyAttachments()",

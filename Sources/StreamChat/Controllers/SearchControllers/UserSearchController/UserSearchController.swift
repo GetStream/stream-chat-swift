@@ -23,7 +23,7 @@ public class ChatUserSearchController: DataController, DelegateCallable, DataSto
     public let client: ChatClient
 
     /// Copy of last search query made, used for getting next page.
-    private(set) var query: UserListQuery?
+    public private(set) var query: UserListQuery?
 
     /// The users matching the last query of this controller.
     private var _users: [ChatUser] = []
@@ -110,6 +110,11 @@ public class ChatUserSearchController: DataController, DelegateCallable, DataSto
         updatedQuery.pagination = Pagination(pageSize: limit, offset: userArray.count)
 
         fetch(updatedQuery, completion: completion)
+    }
+
+    /// Clears the current search results.
+    public func clearResults() {
+        _users = []
     }
 }
 

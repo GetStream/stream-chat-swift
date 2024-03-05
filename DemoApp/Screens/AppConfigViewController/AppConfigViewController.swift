@@ -23,10 +23,14 @@ struct DemoAppConfig {
 
     /// The details to generate expirable tokens in the demo app.
     struct TokenRefreshDetails {
-        // The app secret from the dashboard.
+        /// The app secret from the dashboard.
         let appSecret: String
-        // The duration in seconds until the token is expired.
+        /// The duration in seconds until the token is expired.
         let duration: TimeInterval
+        /// In order to test token refresh fails, we can set a value of how
+        /// many token refresh will succeed before it starts failing.
+        /// By default it is 0. Which means it will always succeed.
+        let numberOfSuccessfulRefreshesBeforeFailing: Int
     }
 }
 
@@ -176,6 +180,7 @@ class AppConfigViewController: UITableViewController {
         case channelListSearchStrategy
         case isUnreadMessageSeparatorEnabled
         case isJumpToUnreadEnabled
+        case mentionAllAppUsers
     }
 
     enum ChatClientConfigOption: String, CaseIterable {
@@ -438,6 +443,10 @@ class AppConfigViewController: UITableViewController {
             cell.accessoryView = makeSwitchButton(Components.default.isJumpToUnreadEnabled) { newValue in
                 Components.default.isJumpToUnreadEnabled = newValue
             }
+        case .mentionAllAppUsers:
+            cell.accessoryView = makeSwitchButton(Components.default.mentionAllAppUsers) { newValue in
+                Components.default.mentionAllAppUsers = newValue
+            }
         }
     }
 
@@ -559,18 +568,33 @@ class AppConfigViewController: UITableViewController {
             textField.placeholder = "App Secret"
             textField.autocapitalizationType = .none
             textField.autocorrectionType = .no
+            if let appSecret = self.demoAppConfig.tokenRefreshDetails?.appSecret {
+                textField.text = appSecret
+            }
         }
         alert.addTextField { textField in
             textField.placeholder = "Duration (Seconds)"
             textField.keyboardType = .numberPad
+            if let duration = self.demoAppConfig.tokenRefreshDetails?.duration {
+                textField.text = "\(duration)"
+            }
+        }
+        alert.addTextField { textField in
+            textField.placeholder = "Number of Refreshes Before Failing"
+            textField.keyboardType = .numberPad
+            if let numberOfRefreshes = self.demoAppConfig.tokenRefreshDetails?.numberOfSuccessfulRefreshesBeforeFailing {
+                textField.text = "\(numberOfRefreshes)"
+            }
         }
 
         alert.addAction(.init(title: "Enable", style: .default, handler: { _ in
             guard let appSecret = alert.textFields?[0].text else { return }
             guard let duration = alert.textFields?[1].text else { return }
+            guard let successfulRetries = alert.textFields?[2].text else { return }
             self.demoAppConfig.tokenRefreshDetails = .init(
                 appSecret: appSecret,
-                duration: TimeInterval(duration)!
+                duration: TimeInterval(duration) ?? 60,
+                numberOfSuccessfulRefreshesBeforeFailing: Int(successfulRetries) ?? 0
             )
         }))
 

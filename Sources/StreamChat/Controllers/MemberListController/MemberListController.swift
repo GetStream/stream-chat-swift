@@ -98,7 +98,7 @@ public class ChatChannelMemberListController: DataController, DelegateCallable, 
 
     private func createMemberListObserver() -> ListDatabaseObserverWrapper<ChatChannelMember, MemberDTO> {
         let observer = environment.memberListObserverBuilder(
-            StreamRuntimeCheck._isBackgroundMappingEnabled,
+            false,
             client.databaseContainer,
             MemberDTO.members(matching: query),
             { try $0.asModel() },

@@ -94,6 +94,11 @@ class AuthenticationRepository_Mock: AuthenticationRepository, Spy {
         record()
     }
 
+    var cancelTimersCallCount: Int = 0
+    override func cancelTimers() {
+        cancelTimersCallCount += 1
+    }
+
     override func completeTokenWaiters(token: Token?) {
         record()
         completeWaitersToken = token

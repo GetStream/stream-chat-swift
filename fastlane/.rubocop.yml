@@ -22,6 +22,8 @@ Performance/RegexpMatch:
   Enabled: false
 Performance/StringReplacement:
   Enabled: false
+Performance/CollectionLiteralInLoop:
+  Enabled: false
 Style/NumericPredicate:
   Enabled: false
 Metrics/BlockLength:

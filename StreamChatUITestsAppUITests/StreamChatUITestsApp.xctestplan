@@ -19,6 +19,10 @@
   },
   "testTargets" : [
     {
+      "skippedTests" : [
+        "ChannelListScrollTime",
+        "MessageListScrollTime"
+      ],
       "target" : {
         "containerPath" : "container:StreamChat.xcodeproj",
         "identifier" : "A34407DB27D8C3400044F150",

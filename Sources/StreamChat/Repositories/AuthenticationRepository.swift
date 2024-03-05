@@ -44,13 +44,14 @@ class AuthenticationRepository {
     private var _consecutiveRefreshFailures: Int = 0
     private var _currentUserId: UserId?
     private var _currentToken: Token?
-    /// Retry timing strategy for refreshing an expired token
     private var _tokenExpirationRetryStrategy: RetryStrategy
     private var _tokenProvider: TokenProvider?
     private var _tokenRequestCompletions: [(Error?) -> Void] = []
     private var _tokenWaiters: [String: (Result<Token, Error>) -> Void] = [:]
+    private var _tokenProviderTimer: TimerControl?
+    private var _connectionProviderTimer: TimerControl?
 
-    private var isGettingToken: Bool {
+    private(set) var isGettingToken: Bool {
         get { tokenQueue.sync { _isGettingToken } }
         set { tokenQueue.async(flags: .barrier) { self._isGettingToken = newValue }}
     }
@@ -76,7 +77,21 @@ class AuthenticationRepository {
         get { tokenQueue.sync { _tokenProvider } }
         set { tokenQueue.async(flags: .barrier) { self._tokenProvider = newValue }}
     }
+
+    private var tokenProviderTimer: TimerControl? {
+        get { tokenQueue.sync { _tokenProviderTimer } }
+        set { tokenQueue.async(flags: .barrier) {
+            self._tokenProviderTimer = newValue
+        }}
+    }
     
+    private var connectionProviderTimer: TimerControl? {
+        get { tokenQueue.sync { _connectionProviderTimer } }
+        set { tokenQueue.async(flags: .barrier) {
+            self._connectionProviderTimer = newValue
+        }}
+    }
+
     weak var delegate: AuthenticationRepositoryDelegate?
 
     private let apiClient: APIClient
@@ -185,6 +200,12 @@ class AuthenticationRepository {
 
     func clearTokenProvider() {
         tokenProvider = nil
+        isGettingToken = false
+    }
+
+    func cancelTimers() {
+        connectionProviderTimer?.cancel()
+        tokenProviderTimer?.cancel()
     }
 
     func logOutUser() {
@@ -246,7 +267,7 @@ class AuthenticationRepository {
         }
 
         let globalQueue = DispatchQueue.global()
-        timerType.schedule(timeInterval: timeout, queue: globalQueue) { [weak self] in
+        connectionProviderTimer = timerType.schedule(timeInterval: timeout, queue: globalQueue) { [weak self] in
             guard let self = self else { return }
             // Not the nicest, but we need to ensure the read and write below are treated as an atomic operation,
             // in a queue that is concurrent, whilst the completion needs to be called outside of the barrier'ed operation.
@@ -296,7 +317,7 @@ class AuthenticationRepository {
         let interval = tokenQueue.sync(flags: .barrier) {
             _tokenExpirationRetryStrategy.getDelayAfterTheFailure()
         }
-        timerType.schedule(
+        tokenProviderTimer = timerType.schedule(
             timeInterval: interval,
             queue: .main
         ) { [weak self] in

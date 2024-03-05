@@ -799,6 +799,19 @@ final class AuthenticationRepository_Tests: XCTestCase {
         XCTAssertNotNil(repository.currentUserId)
     }
 
+    func test_clearTokenProvider_thenIsGettingTokenFalse() {
+        repository.connectUser(
+            userInfo: .init(id: .newUniqueId),
+            tokenProvider: { _ in },
+            completion: { _ in }
+        )
+        AssertAsync.willBeTrue(repository.isGettingToken)
+
+        repository.clearTokenProvider()
+
+        XCTAssertFalse(repository.isGettingToken)
+    }
+
     // MARK: Log out
 
     func test_logOut_clearsUserData() {
@@ -1025,6 +1038,32 @@ final class AuthenticationRepository_Tests: XCTestCase {
     func test_environmentState_currentUserId_equalToNew() {
         let state = EnvironmentState(currentUserId: "123", newUserId: "123")
         XCTAssertEqual(state, .newToken)
+    }
+
+    // MARK: Cancel Timers
+
+    func test_cancelTimers() {
+        let mockTimer = MockTimer()
+        FakeTimer.mockTimer = mockTimer
+        let repository = AuthenticationRepository(
+            api: api,
+            databaseContainer: database,
+            connectionRepository: connectionRepository,
+            tokenExpirationRetryStrategy: retryStrategy,
+            timerType: FakeTimer.self
+        )
+
+        repository.provideToken(completion: { _ in })
+        repository.connectUser(
+            userInfo: .init(id: .newUniqueId),
+            tokenProvider: { _ in },
+            completion: { _ in }
+        )
+
+        repository.cancelTimers()
+        // should cancel the connection provider timer and the
+        // the token provider timer
+        XCTAssertEqual(mockTimer.cancelCallCount, 2)
     }
 
     // MARK: Helpers

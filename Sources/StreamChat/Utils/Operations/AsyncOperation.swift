@@ -21,6 +21,7 @@ class AsyncOperation: BaseOperation {
     init(maxRetries: Int = 0, executionBlock: @escaping (AsyncOperation, @escaping (_ output: Output) -> Void) -> Void) {
         self.maxRetries = maxRetries
         self.executionBlock = executionBlock
+        super.init()
     }
 
     override func start() {

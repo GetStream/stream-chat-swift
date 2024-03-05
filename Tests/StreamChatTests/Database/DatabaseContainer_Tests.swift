@@ -154,6 +154,13 @@ final class DatabaseContainer_Tests: XCTestCase {
             let fetchedObjects = try container.viewContext.fetch(fetchRequrest)
             XCTAssertTrue(fetchedObjects.isEmpty)
         }
+
+        // Assert that currentUser cache has been deleted
+        container.allContext.forEach { context in
+            context.performAndWait {
+                XCTAssertNil(context.currentUser)
+            }
+        }
     }
 
     func test_databaseContainer_callsResetEphemeralValues_onAllEphemeralValuesContainerEntities() throws {
