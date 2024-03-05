@@ -124,6 +124,10 @@ class MessageUpdater: Worker {
             let messageDTO = try session.messageEditableByCurrentUser(messageId)
 
             func updateMessage(localState: LocalMessageState) throws {
+                if messageDTO.text != text {
+                    messageDTO.textUpdatedAt = DBDate()
+                }
+
                 messageDTO.text = text
                 let encodedExtraData = extraData.map { try? JSONEncoder.default.encode($0) } ?? messageDTO.extraData
                 messageDTO.extraData = encodedExtraData
