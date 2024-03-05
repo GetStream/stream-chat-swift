@@ -87,7 +87,8 @@ public extension ChatMessage {
             moderationDetails: moderationsDetails,
             readBy: { readBy },
             readByCount: { readBy.count },
-            underlyingContext: underlyingContext
+            underlyingContext: underlyingContext,
+            textUpdatedAt: nil
         )
     }
 }

@@ -513,7 +513,8 @@ final class MessageDTO_Tests: XCTestCase {
             moderationDetails: .init(
                 originalText: "Original",
                 action: "BOUNCE"
-            )
+            ),
+            messageTextUpdatedAt: .unique
         )
 
         try! database.writeSynchronously { session in
@@ -584,6 +585,8 @@ final class MessageDTO_Tests: XCTestCase {
         XCTAssertNearlySameDate(messagePayload.createdAt, loadedMessage?.createdAt.bridgeDate)
         XCTAssertNearlySameDate(messagePayload.updatedAt, loadedMessage?.updatedAt.bridgeDate)
         XCTAssertNearlySameDate(messagePayload.deletedAt, loadedMessage?.deletedAt?.bridgeDate)
+        XCTAssertNearlySameDate(messagePayload.messageTextUpdatedAt, loadedMessage?.textUpdatedAt?.bridgeDate)
+        XCTAssertNotNil(messagePayload.messageTextUpdatedAt)
         XCTAssertEqual(messagePayload.text, loadedMessage?.text)
         XCTAssertEqual(loadedMessage?.command, messagePayload.command)
         XCTAssertEqual(loadedMessage?.args, messagePayload.args)
