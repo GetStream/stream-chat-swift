@@ -24,8 +24,7 @@ final class ChannelConfigDTO: NSManagedObject {
     @NSManaged var commands: NSOrderedSet
 
     func asModel() throws -> ChannelConfig {
-        guard isValid else { throw InvalidModel(self) }
-        return .init(
+        .init(
             reactionsEnabled: reactionsEnabled,
             typingEventsEnabled: typingEventsEnabled,
             readEventsEnabled: readEventsEnabled,
