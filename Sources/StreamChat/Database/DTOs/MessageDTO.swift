@@ -29,6 +29,7 @@ class MessageDTO: NSManagedObject {
     @NSManaged var createdAt: DBDate
     @NSManaged var updatedAt: DBDate
     @NSManaged var deletedAt: DBDate?
+    @NSManaged var textUpdatedAt: DBDate?
     @NSManaged var isHardDeleted: Bool
     @NSManaged var args: String?
     @NSManaged var parentMessageId: MessageId?
@@ -658,6 +659,7 @@ extension NSManagedObjectContext: MessageDatabaseSession {
         dto.createdAt = payload.createdAt.bridgeDate
         dto.updatedAt = payload.updatedAt.bridgeDate
         dto.deletedAt = payload.deletedAt?.bridgeDate
+        dto.textUpdatedAt = payload.messageTextUpdatedAt?.bridgeDate
         dto.type = payload.type.rawValue
         dto.command = payload.command
         dto.args = payload.args
@@ -1118,6 +1120,7 @@ private extension ChatMessage {
                 action: MessageModerationAction(rawValue: $0.action)
             )
         }
+        textUpdatedAt = dto.textUpdatedAt?.bridgeDate
 
         if let extraData = dto.extraData, !extraData.isEmpty {
             do {

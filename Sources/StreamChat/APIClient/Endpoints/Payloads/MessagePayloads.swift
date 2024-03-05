@@ -40,6 +40,7 @@ enum MessagePayloadsCodingKeys: String, CodingKey, CaseIterable {
     case imageLabels = "image_labels"
     case shadowed
     case moderationDetails = "moderation_details"
+    case messageTextUpdatedAt = "message_text_updated_at"
 }
 
 extension MessagePayload {
@@ -65,6 +66,7 @@ class MessagePayload: Decodable {
     let createdAt: Date
     let updatedAt: Date
     let deletedAt: Date?
+    let messageTextUpdatedAt: Date?
     let text: String
     let command: String?
     let args: String?
@@ -152,6 +154,7 @@ class MessagePayload: Decodable {
         translations = i18n?.translated
         originalLanguage = i18n?.originalLanguage
         moderationDetails = try container.decodeIfPresent(MessageModerationDetailsPayload.self, forKey: .moderationDetails)
+        messageTextUpdatedAt = try container.decodeIfPresent(Date.self, forKey: .messageTextUpdatedAt)
     }
 
     init(
@@ -187,7 +190,8 @@ class MessagePayload: Decodable {
         pinExpires: Date? = nil,
         translations: [TranslationLanguage: String]? = nil,
         originalLanguage: String? = nil,
-        moderationDetails: MessageModerationDetailsPayload? = nil
+        moderationDetails: MessageModerationDetailsPayload? = nil,
+        messageTextUpdatedAt: Date? = nil
     ) {
         self.id = id
         self.cid = cid
@@ -222,6 +226,7 @@ class MessagePayload: Decodable {
         self.translations = translations
         self.originalLanguage = originalLanguage
         self.moderationDetails = moderationDetails
+        self.messageTextUpdatedAt = messageTextUpdatedAt
     }
 }
 
