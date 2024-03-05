@@ -758,14 +758,14 @@ final class ChatClient_Tests: XCTestCase {
         XCTAssertNotCall(AuthenticationRepository_Mock.Signature.refreshToken, on: authenticationRepository)
     }
 
-    func test_webSocketClientStateUpdate_calls_connectionRepository_invalidToken() throws {
+    func test_webSocketClientStateUpdate_calls_connectionRepository_expiredToken() throws {
         let client = ChatClient(config: inMemoryStorageConfig, environment: testEnv.environment)
         let webSocketClient = try XCTUnwrap(client.webSocketClient)
         let connectionRepository = try XCTUnwrap(client.connectionRepository as? ConnectionRepository_Mock)
         let authenticationRepository = try XCTUnwrap(client.authenticationRepository as? AuthenticationRepository_Mock)
 
         let state = WebSocketConnectionState.disconnected(source: .systemInitiated)
-        connectionRepository.simulateInvalidTokenOnConnectionUpdate = true
+        connectionRepository.simulateExpiredTokenOnConnectionUpdate = true
         client.webSocketClient(webSocketClient, didUpdateConnectionState: state)
 
         XCTAssertCall(ConnectionRepository_Mock.Signature.handleConnectionUpdate, on: connectionRepository)

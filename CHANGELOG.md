@@ -9,6 +9,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Fix connect user never completing when disconnecting after token provider fails [#3052](https://github.com/GetStream/stream-chat-swift/pull/3052)
 - Fix current user cache not deleted on logout causing unread count issues after switching users [#3055](https://github.com/GetStream/stream-chat-swift/pull/3055)
 - Fix rare crash in `startObserver()` on logout when converting DTO to model in `itemCreator` [#3053](https://github.com/GetStream/stream-chat-swift/pull/3053)
+- Fix invalid token triggering token refresh in an infinite loop [#3056](https://github.com/GetStream/stream-chat-swift/pull/3056)
 
 # [4.49.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.49.0)
 _February 27, 2024_
