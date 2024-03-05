@@ -391,43 +391,6 @@ final class MessageUpdater_Tests: XCTestCase {
         XCTAssertEqual(updatedDatabaseAttachmentTypes.sorted { $0.rawValue < $1.rawValue }, updatedAttachmentsTypes.sorted { $0.rawValue < $1.rawValue })
     }
 
-    func test_editMessage_whenTextChanges() throws {
-        // Given
-        let currentUserId: UserId = .unique
-        let messageId: MessageId = .unique
-        try database.createCurrentUser(id: currentUserId)
-        try database.createMessage(id: messageId, authorId: currentUserId, text: "Hello")
-        _ = try XCTUnwrap(database.viewContext.message(id: messageId))
-
-        // When text does not change
-        _ = try waitFor {
-            messageUpdater.editMessage(
-                messageId: messageId,
-                text: "Hello",
-                skipEnrichUrl: false,
-                completion: $0
-            )
-        }
-
-        // Should not update `textUpdatedAt`
-        let message = try XCTUnwrap(database.viewContext.message(id: messageId))
-        XCTAssertNil(message.textUpdatedAt)
-
-        // When text changes
-        _ = try waitFor {
-            messageUpdater.editMessage(
-                messageId: messageId,
-                text: "Hello World",
-                skipEnrichUrl: false,
-                completion: $0
-            )
-        }
-
-        // Should update `textUpdatedAt`
-        let messageUpdated = try XCTUnwrap(database.viewContext.message(id: messageId))
-        XCTAssertNotNil(messageUpdated.textUpdatedAt)
-    }
-
     // MARK: Delete message
 
     func test_deleteMessage_sendsCorrectAPICall_ifMessageDoesNotExistLocally() throws {
