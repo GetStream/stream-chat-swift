@@ -16,7 +16,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## StreamChatUI
 ### ✅ Added
 - Add new `Components.isMessageEditedLabelEnabled` [#3059](https://github.com/GetStream/stream-chat-swift/pull/3059)
-- Add "Edited At" label when a message is edited [#3059](https://github.com/GetStream/stream-chat-swift/pull/3059)
+- Add "Edited" label when a message is edited [#3059](https://github.com/GetStream/stream-chat-swift/pull/3059)
    - Note: For now, only when the text changes it is marked as edited.
 
 # [4.49.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.49.0)
