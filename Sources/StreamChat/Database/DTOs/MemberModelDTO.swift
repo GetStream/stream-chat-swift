@@ -105,6 +105,58 @@ extension MemberDTO {
 }
 
 extension NSManagedObjectContext {
+    func saveMember(
+        payload: ChannelMember,
+        channelId: ChannelId,
+        query: ChannelMemberListQuery?,
+        cache: PreWarmedCache?
+    ) throws -> MemberDTO {
+        let dto = MemberDTO.loadOrCreate(userId: payload.userId ?? .newUniqueId, channelId: channelId, context: self, cache: cache)
+
+        // Save user-part of member first
+        if let userPayload = payload.user {
+            dto.user = try saveUser(payload: userPayload, query: nil, cache: cache)
+        }
+
+        // Save member specific data
+        dto.channelRoleRaw = payload.channelRole
+
+        dto.memberCreatedAt = payload.createdAt.bridgeDate
+        dto.memberUpdatedAt = payload.updatedAt.bridgeDate
+        dto.isBanned = payload.banned
+        dto.isShadowBanned = payload.shadowBanned
+        dto.banExpiresAt = payload.banExpires?.bridgeDate
+        dto.isInvited = payload.invited ?? false
+        dto.inviteAcceptedAt = payload.inviteAcceptedAt?.bridgeDate
+        dto.inviteRejectedAt = payload.inviteRejectedAt?.bridgeDate
+
+        if let query = query {
+            let queryDTO = try saveQuery(query)
+            queryDTO.members.insert(dto)
+        }
+
+        if let channelDTO = channel(cid: channelId) {
+            channelDTO.members.insert(dto)
+        }
+
+        return dto
+    }
+    
+    func saveMembers(
+        payload: MembersResponse,
+        channelId: ChannelId,
+        query: ChannelMemberListQuery?
+    ) -> [MemberDTO] {
+        let cache = payload.getPayloadToModelIdMappings(context: self)
+        return payload.members.compactMapLoggingError {
+            if let member = $0 {
+                return try saveMember(payload: member, channelId: channelId, query: query, cache: cache)
+            } else {
+                return nil
+            }
+        }
+    }
+    
     func member(userId: UserId, cid: ChannelId) -> MemberDTO? {
         MemberDTO.load(userId: userId, channelId: cid, context: self)
     }

@@ -157,7 +157,7 @@ private extension UserObject {
     }
 }
 
-extension ChannelDatabaseSessionV2 {
+extension ChannelDatabaseSession {
     @discardableResult
     func saveChannel(
         payload: ChannelStateResponse,

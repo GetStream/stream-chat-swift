@@ -69,6 +69,38 @@ extension CurrentUserDTO {
 }
 
 extension NSManagedObjectContext: CurrentUserDatabaseSession {
+    func saveCurrentUser(payload: OwnUser) throws -> CurrentUserDTO {
+        let dto = CurrentUserDTO.loadOrCreate(context: self)
+        dto.user = try saveUser(payload: payload, query: nil, cache: nil)
+        dto.isInvisible = payload.invisible ?? false
+
+        let mutedUsers = try payload.mutes.compactMap {
+            if let user = $0?.user {
+                return try saveUser(payload: user, query: nil, cache: nil)
+            } else {
+                return nil
+            }
+        }
+        dto.mutedUsers = Set(mutedUsers)
+
+        let channelMutes = Set(
+            try payload.channelMutes.map { try saveChannelMute(payload: $0) }
+        )
+        dto.channelMutes.subtracting(channelMutes).forEach { delete($0) }
+        dto.channelMutes = channelMutes
+
+        try saveCurrentUserUnreadCount(
+            count: UnreadCount(
+                channels: payload.unreadChannels,
+                messages: payload.totalUnreadCount
+            )
+        )
+
+        _ = try saveCurrentUserDevices(payload.devices, clearExisting: true)
+
+        return dto
+    }
+    
     func saveCurrentUserUnreadCount(count: UnreadCount) throws {
         invalidateCurrentUserCache()
 
@@ -78,6 +110,28 @@ extension NSManagedObjectContext: CurrentUserDatabaseSession {
 
         dto.unreadChannelsCount = Int64(clamping: count.channels)
         dto.unreadMessagesCount = Int64(clamping: count.messages)
+    }
+    
+    func saveCurrentUserDevices(_ devices: [Device], clearExisting: Bool) throws -> [DeviceDTO] {
+        guard let currentUser = currentUser else {
+            throw ClientError.CurrentUserDoesNotExist()
+        }
+
+        if clearExisting {
+            currentUser.devices.removeAll()
+            if !devices.contains(where: { $0.id == currentUser.currentDevice?.id }) {
+                currentUser.currentDevice = nil
+            }
+        }
+
+        let deviceDTOs = devices.map { device -> DeviceDTO in
+            let dto = DeviceDTO.loadOrCreate(id: device.id, context: self)
+            dto.createdAt = device.createdAt.bridgeDate
+            dto.user = currentUser
+            return dto
+        }
+
+        return deviceDTOs
     }
 
     func saveCurrentDevice(_ deviceId: String) throws {

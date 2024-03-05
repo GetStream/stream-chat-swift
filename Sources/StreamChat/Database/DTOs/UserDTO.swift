@@ -129,6 +129,101 @@ extension UserDTO {
 }
 
 extension NSManagedObjectContext: UserDatabaseSession {
+    @discardableResult
+    func saveUser(
+        payload: UserObject
+    ) throws -> UserDTO {
+        try saveUser(payload: payload, query: nil, cache: nil)
+    }
+    
+    @discardableResult
+    func saveUser(
+        payload: UserObject,
+        query: UserListQuery?,
+        cache: PreWarmedCache?
+    ) throws -> UserDTO {
+        let dto = UserDTO.loadOrCreate(id: payload.id, context: self, cache: cache)
+
+        dto.name = payload.custom?["name"]?.stringValue
+        dto.imageURL = URL(string: payload.custom?["image"]?.stringValue ?? "")
+        dto.isBanned = payload.banned ?? false
+        dto.isOnline = payload.online ?? false
+        dto.lastActivityAt = payload.lastActive?.bridgeDate
+        dto.userCreatedAt = (payload.createdAt ?? Date()).bridgeDate
+        dto.userRoleRaw = payload.role ?? "member"
+        dto.userUpdatedAt = (payload.updatedAt ?? Date()).bridgeDate
+        dto.userDeactivatedAt = payload.deactivatedAt?.bridgeDate
+        dto.language = payload.language
+
+        do {
+            dto.extraData = try JSONEncoder.default.encode(payload.custom ?? [:])
+        } catch {
+            log.error(
+                "Failed to decode extra payload for User with id: <\(payload.id)>, using default value instead. "
+                    + "Error: \(error)"
+            )
+            dto.extraData = Data()
+        }
+
+        dto.teams = payload.teams ?? []
+
+        // payloadHash doesn't cover the query
+        if let query = query, let queryDTO = try saveQuery(query: query) {
+            queryDTO.users.insert(dto)
+        }
+        return dto
+    }
+    
+    @discardableResult
+    func saveUser(
+        payload: OwnUser,
+        query: UserListQuery?,
+        cache: PreWarmedCache?
+    ) throws -> UserDTO {
+        let dto = UserDTO.loadOrCreate(id: payload.id, context: self, cache: cache)
+
+        dto.name = payload.custom?["name"]?.stringValue
+        dto.imageURL = URL(string: payload.custom?["image"]?.stringValue ?? "")
+        dto.isBanned = payload.banned
+        dto.isOnline = payload.online
+        dto.lastActivityAt = payload.lastActive?.bridgeDate
+        dto.userCreatedAt = payload.createdAt.bridgeDate
+        dto.userRoleRaw = payload.role
+        dto.userUpdatedAt = payload.updatedAt.bridgeDate
+        dto.userDeactivatedAt = payload.deactivatedAt?.bridgeDate
+        dto.language = payload.language
+
+        do {
+            dto.extraData = try JSONEncoder.default.encode(payload.custom)
+        } catch {
+            log.error(
+                "Failed to decode extra payload for User with id: <\(payload.id)>, using default value instead. "
+                    + "Error: \(error)"
+            )
+            dto.extraData = Data()
+        }
+
+        dto.teams = payload.teams ?? []
+
+        // payloadHash doesn't cover the query
+        if let query = query, let queryDTO = try saveQuery(query: query) {
+            queryDTO.users.insert(dto)
+        }
+        return dto
+    }
+    
+    @discardableResult
+    func saveUsers(payload: UsersResponse, query: UserListQuery?) -> [UserDTO] {
+        let cache = payload.getPayloadToModelIdMappings(context: self)
+        return payload.users.compactMapLoggingError {
+            if let user = $0?.toUser {
+                return try saveUser(payload: user, query: query, cache: cache)
+            } else {
+                return nil
+            }
+        }
+    }
+    
     func user(id: UserId) -> UserDTO? {
         UserDTO.load(id: id, context: self)
     }

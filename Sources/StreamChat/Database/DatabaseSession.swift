@@ -7,6 +7,21 @@ import CoreData
 extension NSManagedObjectContext: DatabaseSession {}
 
 protocol UserDatabaseSession {
+    @discardableResult
+    func saveUser(
+        payload: UserObject,
+        query: UserListQuery?,
+        cache: PreWarmedCache?
+    ) throws -> UserDTO
+    
+    @discardableResult
+    func saveUser(
+        payload: UserObject
+    ) throws -> UserDTO
+    
+    @discardableResult
+    func saveUsers(payload: UsersResponse, query: UserListQuery?) -> [UserDTO]
+
     /// Saves the provided query to the DB. Return's the matching `UserListQueryDTO` if the save was successful. Throws an error
     /// if the save fails.
     @discardableResult
@@ -24,10 +39,19 @@ protocol UserDatabaseSession {
 }
 
 protocol CurrentUserDatabaseSession {
+    @discardableResult
+    func saveCurrentUser(payload: OwnUser) throws -> CurrentUserDTO
+    
     /// Updates the `CurrentUserDTO` with the provided unread.
     /// If there is no current user, the error will be thrown.
     func saveCurrentUserUnreadCount(count: UnreadCount) throws
 
+    @discardableResult
+    func saveCurrentUserDevices(
+        _ devices: [Device],
+        clearExisting: Bool
+    ) throws -> [DeviceDTO]
+    
     /// Saves the `currentDevice` for current user.
     func saveCurrentDevice(_ deviceId: String) throws
 
@@ -67,6 +91,29 @@ protocol MessageDatabaseSession {
         syncOwnReactions: Bool,
         cache: PreWarmedCache?
     ) throws -> MessageDTO
+    
+    func saveMessage(
+        payload: Message,
+        channelDTO: ChannelDTO,
+        syncOwnReactions: Bool,
+        cache: PreWarmedCache?
+    ) throws -> MessageDTO
+    
+    func saveMessages(
+        messagesPayload: GetRepliesResponse,
+        for cid: ChannelId?,
+        syncOwnReactions: Bool
+    ) -> [MessageDTO]
+    
+    func saveReactions(
+        payload: GetReactionsResponse
+    ) -> [MessageReactionDTO]
+    
+    @discardableResult
+    func saveReaction(
+        payload: Reaction?,
+        cache: PreWarmedCache?
+    ) throws -> MessageReactionDTO
 
     func addReaction(
         to messageId: MessageId,
@@ -97,6 +144,12 @@ protocol MessageDatabaseSession {
 
     /// Fetches preview message for channel  from the database.
     func preview(for cid: ChannelId) -> MessageDTO?
+    
+    @discardableResult
+    func saveMessageSearch(
+        payload: SearchResponse,
+        for query: MessageSearchQuery
+    ) -> [MessageDTO]
 
     /// Deletes the provided dto from a database
     /// - Parameter message: The DTO to be deleted
@@ -114,6 +167,9 @@ protocol MessageDatabaseSession {
     /// to avoid those from being stuck there in limbo.
     /// Messages can get stuck in `.sending` state if the network request to send them takes to much, and the app is backgrounded or killed.
     func rescueMessagesStuckInSending()
+    
+    @discardableResult
+    func saveMessage(payload: Message, for query: MessageSearchQuery, cache: PreWarmedCache?) throws -> MessageDTO
 }
 
 extension MessageDatabaseSession {
@@ -160,6 +216,32 @@ protocol MessageSearchDatabaseSession {
 }
 
 protocol ChannelDatabaseSession {
+    /// Creates `ChannelDTO` objects for the given channel payloads and `query`. ignores items that could not be saved
+    @discardableResult
+    func saveChannelList(
+        payload: ChannelsResponse?,
+        query: ChannelListQuery?
+    ) -> [ChannelDTO]
+    
+    @discardableResult
+    func saveChannel(
+        payload: ChannelResponse,
+        query: ChannelListQuery?,
+        cache: PreWarmedCache?
+    ) throws -> ChannelDTO
+    
+    @discardableResult
+    func saveChannel(
+        payload: ChannelResponse
+    ) throws -> ChannelDTO
+    
+    @discardableResult
+    func saveChannel(
+        payload: ChannelStateResponseFields,
+        query: ChannelListQuery?,
+        cache: PreWarmedCache?
+    ) throws -> ChannelDTO
+
     /// Loads channel list query with the given filter hash from the database.
     /// - Parameter filterHash: The filter hash.
     func channelListQuery(filterHash: String) -> ChannelListQueryDTO?
@@ -185,6 +267,13 @@ protocol ChannelDatabaseSession {
 }
 
 protocol ChannelReadDatabaseSession {
+    @discardableResult
+    func saveChannelRead(
+        payload: Read?,
+        for cid: String?,
+        cache: PreWarmedCache?
+    ) throws -> ChannelReadDTO
+    
     /// Creates (if doesn't exist) and fetches  `ChannelReadDTO` with the given `cid` and `userId`
     /// from the DB.
     func loadOrCreateChannelRead(cid: ChannelId, userId: UserId) -> ChannelReadDTO?
@@ -217,7 +306,28 @@ protocol ChannelReadDatabaseSession {
     func markChannelAsUnread(cid: ChannelId, by userId: UserId)
 }
 
+protocol ChannelMuteDatabaseSession {
+    /// Creates a new `ChannelMuteDTO` object in the database. Throws an error if the `ChannelMuteDTO` fails to be created.
+    @discardableResult
+    func saveChannelMute(payload: ChannelMute?) throws -> ChannelMuteDTO
+}
+
 protocol MemberDatabaseSession {
+    @discardableResult
+    func saveMember(
+        payload: ChannelMember,
+        channelId: ChannelId,
+        query: ChannelMemberListQuery?,
+        cache: PreWarmedCache?
+    ) throws -> MemberDTO
+    
+    @discardableResult
+    func saveMembers(
+        payload: MembersResponse,
+        channelId: ChannelId,
+        query: ChannelMemberListQuery?
+    ) -> [MemberDTO]
+
     /// Fetches `MemberDTO`entity for the given `userId` and `cid`.
     func member(userId: UserId, cid: ChannelId) -> MemberDTO?
 }
@@ -234,6 +344,12 @@ protocol MemberListQueryDatabaseSession {
 protocol AttachmentDatabaseSession {
     /// Fetches `AttachmentDTO`entity for the given `id`.
     func attachment(id: AttachmentId) -> AttachmentDTO?
+    
+    @discardableResult
+    func saveAttachment(
+        payload: Attachment?,
+        id: AttachmentId
+    ) throws -> AttachmentDTO
 
     /// Creates a new `AttachmentDTO` object in the database from the given model for the message
     /// with the given `messageId` in the channel with the given `cid`.
@@ -258,11 +374,11 @@ protocol DatabaseSession: UserDatabaseSession,
     MessageSearchDatabaseSession,
     ChannelReadDatabaseSession,
     ChannelDatabaseSession,
+    ChannelMuteDatabaseSession,
     MemberDatabaseSession,
     MemberListQueryDatabaseSession,
     AttachmentDatabaseSession,
-    QueuedRequestDatabaseSession,
-    ChannelDatabaseSessionV2 {}
+    QueuedRequestDatabaseSession {}
 
 extension DatabaseSession {
     // MARK: - Event

@@ -94,3 +94,34 @@ extension ChannelConfig {
         return dto
     }
 }
+
+extension ChannelConfigWithInfo {
+    func asDTO(context: NSManagedObjectContext, cid: String) -> ChannelConfigDTO {
+        let request = NSFetchRequest<ChannelConfigDTO>(entityName: ChannelConfigDTO.entityName)
+        request.predicate = NSPredicate(format: "channel.cid == %@", cid)
+
+        let dto: ChannelConfigDTO
+        if let loadedDto = ChannelConfigDTO.load(by: request, context: context).first {
+            dto = loadedDto
+        } else {
+            dto = NSEntityDescription.insertNewObject(into: context, for: request)
+        }
+
+        dto.reactionsEnabled = reactions
+        dto.typingEventsEnabled = typingEvents
+        dto.readEventsEnabled = readEvents
+        dto.connectEventsEnabled = connectEvents
+        dto.uploadsEnabled = uploads
+        dto.repliesEnabled = replies
+        dto.quotesEnabled = quotes
+        dto.searchEnabled = search
+        dto.mutesEnabled = mutes
+        dto.urlEnrichmentEnabled = urlEnrichment
+        dto.messageRetention = messageRetention
+        dto.maxMessageLength = Int32(maxMessageLength)
+        dto.createdAt = createdAt.bridgeDate
+        dto.updatedAt = updatedAt.bridgeDate
+        dto.commands = NSOrderedSet(array: commands.compactMap { $0?.asDTO(context: context) })
+        return dto
+    }
+}

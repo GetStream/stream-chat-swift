@@ -158,6 +158,176 @@ extension ChannelDTO: EphemeralValuesContainer {
 // MARK: Saving and loading the data
 
 extension NSManagedObjectContext {
+    func saveChannelList(
+        payload: ChannelsResponse?,
+        query: ChannelListQuery?
+    ) -> [ChannelDTO] {
+        guard let payload else { return [] }
+        let cache = payload.getPayloadToModelIdMappings(context: self)
+
+        // The query will be saved during `saveChannel` call
+        // but in case this query does not have any channels,
+        // the query won't be saved, which will cause any future
+        // channels to not become linked to this query
+        if let query = query {
+            _ = saveQuery(query: query)
+        }
+
+        return payload.channels.compactMapLoggingError { channelPayload in
+            try saveChannel(payload: channelPayload, query: query, cache: cache)
+        }
+    }
+
+    @discardableResult
+    func saveChannel(
+        payload: ChannelResponse,
+        query: ChannelListQuery?,
+        cache: PreWarmedCache?
+    ) throws -> ChannelDTO {
+        let cid = try ChannelId(cid: payload.cid)
+        let dto = ChannelDTO.loadOrCreate(cid: cid, context: self, cache: cache)
+
+        dto.name = payload.custom?["name"]?.stringValue
+        // TODO: revisit this.
+        dto.imageURL = URL(string: payload.custom?["image"]?.stringValue ?? "")
+        do {
+            dto.extraData = try JSONEncoder.default.encode(payload.custom)
+        } catch {
+            log.error(
+                "Failed to decode extra payload for Channel with cid: <\(dto.cid)>, using default value instead. "
+                    + "Error: \(error)"
+            )
+            dto.extraData = Data()
+        }
+        dto.typeRawValue = payload.type
+        if let config = payload.config?.asDTO(context: self, cid: dto.cid) {
+            dto.config = config
+        }
+        if let ownCapabilities = payload.ownCapabilities {
+            dto.ownCapabilities = ownCapabilities
+        }
+        dto.createdAt = payload.createdAt.bridgeDate
+        dto.deletedAt = payload.deletedAt?.bridgeDate
+        dto.updatedAt = payload.updatedAt.bridgeDate
+        dto.defaultSortingAt = (payload.lastMessageAt ?? payload.createdAt)?.bridgeDate ?? Date().bridgeDate
+        dto.lastMessageAt = payload.lastMessageAt?.bridgeDate
+        dto.memberCount = Int64(clamping: payload.memberCount ?? 0)
+
+        // Because `truncatedAt` is used, client side, for both truncation and channel hiding cases, we need to avoid using the
+        // value returned by the Backend in some cases.
+        //
+        // Whenever our Backend is not returning a value for `truncatedAt`, we simply do nothing. It is possible that our
+        // DTO already has a value for it if it has been hidden in the past, but we are not touching it.
+        //
+        // Whenever we do receive a value from our Backend, we have 2 options:
+        //  1. If we don't have a value for `truncatedAt` in the DTO -> We set the date from the payload
+        //  2. If we have a value for `truncatedAt` in the DTO -> We pick the latest date.
+        if let newTruncatedAt = payload.truncatedAt {
+            let canUpdateTruncatedAt = dto.truncatedAt.map { $0.bridgeDate < newTruncatedAt } ?? true
+            if canUpdateTruncatedAt {
+                dto.truncatedAt = newTruncatedAt.bridgeDate
+            }
+        }
+
+        dto.isFrozen = payload.frozen
+
+        // Backend only returns a boolean for hidden state
+        // on channel query and channel list query
+        if let isHidden = payload.hidden {
+            dto.isHidden = isHidden
+        }
+
+        dto.cooldownDuration = payload.cooldown ?? 0
+        dto.team = payload.team
+
+        if let createdByPayload = payload.createdBy {
+            let creatorDTO = try saveUser(payload: createdByPayload, query: nil, cache: cache)
+            dto.createdBy = creatorDTO
+        }
+
+        try payload.members?.forEach { memberPayload in
+            if let memberPayload, let cid = try? ChannelId(cid: payload.cid) {
+                let member = try saveMember(payload: memberPayload, channelId: cid, query: nil, cache: cache)
+                dto.members.insert(member)
+            }
+        }
+
+        if let query = query {
+            let queryDTO = saveQuery(query: query)
+            queryDTO.channels.insert(dto)
+        }
+
+        return dto
+    }
+    
+    @discardableResult
+    func saveChannel(
+        payload: ChannelResponse
+    ) throws -> ChannelDTO {
+        try saveChannel(payload: payload, query: nil, cache: nil)
+    }
+
+    func saveChannel(
+        payload: ChannelStateResponseFields,
+        query: ChannelListQuery?,
+        cache: PreWarmedCache?
+    ) throws -> ChannelDTO {
+        guard let channel = payload.channel else { throw ClientError.Unknown() }
+        let dto = try saveChannel(payload: channel, query: query, cache: cache)
+
+        let readsArray = try payload.read?.compactMap {
+            try saveChannelRead(payload: $0, for: payload.channel?.cid, cache: cache)
+        } ?? []
+        let reads = Set(readsArray)
+        dto.reads.subtracting(reads).forEach { delete($0) }
+        dto.reads = reads
+
+        try payload.messages.forEach { _ = try saveMessage(payload: $0, channelDTO: dto, syncOwnReactions: true, cache: cache) }
+        
+        if dto.needsPreviewUpdate(payload), let payloadCid = payload.channel?.cid, let cid = try? ChannelId(cid: payloadCid) {
+            dto.previewMessage = preview(for: cid)
+        }
+
+        dto.updateOldestMessageAt(payload: payload)
+
+        try payload.pinnedMessages.forEach {
+            _ = try saveMessage(payload: $0, channelDTO: dto, syncOwnReactions: true, cache: cache)
+        }
+
+        // Sometimes, `members` are not part of `ChannelDetailPayload` so they need to be saved here too.
+        try payload.members.forEach {
+            if let item = $0, let cidValue = payload.channel?.cid, let cid = try? ChannelId(cid: cidValue) {
+                let member = try saveMember(payload: item, channelId: cid, query: nil, cache: cache)
+                dto.members.insert(member)
+            }
+        }
+
+        if let membership = payload.membership {
+            if let cidValue = payload.channel?.cid, let cid = try? ChannelId(cid: cidValue) {
+                let membership = try saveMember(payload: membership, channelId: cid, query: nil, cache: cache)
+                dto.membership = membership
+            }
+        } else {
+            dto.membership = nil
+        }
+
+        dto.watcherCount = Int64(clamping: payload.watcherCount ?? 0)
+
+        if let watchers = payload.watchers {
+            // We don't call `removeAll` on watchers since user could've requested
+            // a different page
+            try watchers.forEach {
+                let user = try saveUser(payload: $0, query: nil, cache: cache)
+                dto.watchers.insert(user)
+            }
+        }
+        // We don't reset `watchers` array if it's missing
+        // since that can mean that user didn't request watchers
+        // This is done in `ChannelUpdater.channelWatchers` func
+
+        return dto
+    }
+    
     func channel(cid: ChannelId) -> ChannelDTO? {
         ChannelDTO.load(cid: cid, context: self)
     }
@@ -388,5 +558,25 @@ extension ChatChannel {
 extension ChannelDTO {
     func cleanAllMessagesExcludingLocalOnly() {
         messages = messages.filter { $0.isLocalOnly }
+    }
+    
+    func needsPreviewUpdate(_ payload: ChannelStateResponseFields) -> Bool {
+        guard let first = payload.messages.first, let last = payload.messages.last else { return false }
+
+        let newestMessage = first.createdAt > last.createdAt ? first : last
+        
+        guard let preview = previewMessage else {
+            return true
+        }
+
+        return newestMessage.createdAt > preview.createdAt.bridgeDate
+    }
+    
+    func updateOldestMessageAt(payload: ChannelStateResponseFields) {
+        guard let payloadOldestMessageAt = payload.messages.map(\.createdAt).min() else { return }
+        let isOlderThanCurrentOldestMessage = payloadOldestMessageAt < (oldestMessageAt?.bridgeDate ?? Date.distantFuture)
+        if isOlderThanCurrentOldestMessage {
+            oldestMessageAt = payloadOldestMessageAt.bridgeDate
+        }
     }
 }

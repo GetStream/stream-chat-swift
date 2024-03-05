@@ -95,6 +95,26 @@ extension NSManagedObjectContext: AttachmentDatabaseSession {
     func attachment(id: AttachmentId) -> AttachmentDTO? {
         AttachmentDTO.load(id: id, context: self)
     }
+    
+    func saveAttachment(
+        payload: Attachment?,
+        id: AttachmentId
+    ) throws -> AttachmentDTO {
+        guard let payload, let messageDTO = message(id: id.messageId) else {
+            throw ClientError.MessageDoesNotExist(messageId: id.messageId)
+        }
+
+        let dto = AttachmentDTO.loadOrCreate(id: id, context: self)
+
+        dto.attachmentType = payload.type
+        dto.data = try JSONEncoder.default.encode(payload)
+        dto.message = messageDTO
+
+        dto.localURL = nil
+        dto.localState = nil
+
+        return dto
+    }
 
     func createNewAttachment(
         attachment: AnyAttachmentPayload,

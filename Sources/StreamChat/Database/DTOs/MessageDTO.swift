@@ -639,7 +639,182 @@ extension NSManagedObjectContext: MessageDatabaseSession {
 
         return message
     }
+    
+    func saveMessage(
+        payload: Message,
+        channelDTO: ChannelDTO,
+        syncOwnReactions: Bool,
+        cache: PreWarmedCache?
+    ) throws -> MessageDTO {
+        let cid = try ChannelId(cid: channelDTO.cid)
+        let dto = MessageDTO.loadOrCreate(id: payload.id, context: self, cache: cache)
 
+        if dto.localMessageState == .pendingSend || dto.localMessageState == .pendingSync {
+            return dto
+        }
+
+        dto.cid = payload.cid
+        dto.text = payload.text
+        dto.createdAt = payload.createdAt.bridgeDate
+        dto.updatedAt = payload.updatedAt.bridgeDate
+        dto.deletedAt = payload.deletedAt?.bridgeDate
+        dto.type = payload.type
+        dto.command = payload.command
+//        dto.args = payload.args //TODO: what is this?
+        dto.parentMessageId = payload.parentId
+        dto.showReplyInChannel = payload.showInChannel ?? false
+        dto.replyCount = Int32(payload.replyCount)
+
+        do {
+            dto.extraData = try JSONEncoder.default.encode(payload.custom)
+        } catch {
+            log.error(
+                "Failed to decode extra payload for Message with id: <\(dto.id)>, using default value instead. "
+                    + "Error: \(error)"
+            )
+            dto.extraData = Data()
+        }
+
+        dto.isSilent = payload.silent
+        dto.isShadowed = payload.shadowed
+        // Due to backend not working as advertised
+        // (sending `shadowed: true` flag to the shadow banned user)
+        // we have to implement this workaround to get the advertised behavior
+        // info on slack: https://getstream.slack.com/archives/CE5N802GP/p1635785568060500
+        // TODO: Remove the workaround once backend bug is fixed
+        if currentUser?.user.id == payload.user?.id {
+            dto.isShadowed = false
+        }
+
+        dto.pinned = payload.pinned
+        dto.pinExpires = payload.pinExpires?.bridgeDate
+        dto.pinnedAt = payload.pinnedAt?.bridgeDate
+        if let pinnedByUser = payload.pinnedBy {
+            dto.pinnedBy = try saveUser(payload: pinnedByUser, query: nil, cache: cache)
+        }
+
+        if dto.pinned && !channelDTO.pinnedMessages.contains(dto) {
+            channelDTO.pinnedMessages.insert(dto)
+        } else {
+            channelDTO.pinnedMessages.remove(dto)
+        }
+
+        if let quotedMessageId = payload.quotedMessageId,
+           let quotedMessage = message(id: quotedMessageId) {
+            // In case we do not have a fully formed quoted message in the payload,
+            // we check for quotedMessageId. This can happen in the case of nested quoted messages.
+            dto.quotedMessage = quotedMessage
+        } else if let quotedMessage = payload.quotedMessage {
+            dto.quotedMessage = try saveMessage(
+                payload: quotedMessage,
+                channelDTO: channelDTO,
+                syncOwnReactions: false,
+                cache: cache
+            )
+        } else {
+            dto.quotedMessage = nil
+        }
+
+        if let payloadUser = payload.user {
+            let user = try saveUser(payload: payloadUser, query: nil, cache: cache)
+            dto.user = user
+        }
+
+        dto.reactionScores = payload.reactionScores
+        // TODO: check why was this scores.
+        dto.reactionCounts = payload.reactionCounts
+
+        // If user edited their message to remove mentioned users, we need to get rid of it
+        // as backend does
+        dto.mentionedUsers = try Set(payload.mentionedUsers.map {
+            let user = try saveUser(payload: $0, query: nil, cache: cache)
+            return user
+        })
+
+        // If user participated in thread, but deleted message later, we need to get rid of it if backends does
+        let threadParticipants = try payload.threadParticipants?.map {
+            try saveUser(payload: $0, query: nil, cache: cache)
+        } ?? []
+        dto.threadParticipants = NSOrderedSet(array: threadParticipants)
+
+        channelDTO.lastMessageAt = max(channelDTO.lastMessageAt?.bridgeDate ?? payload.createdAt, payload.createdAt).bridgeDate
+        
+        dto.channel = channelDTO
+
+        dto.latestReactions = payload
+            .latestReactions
+            .compactMap { try? saveReaction(payload: $0, cache: cache) }
+            .map(\.id)
+
+        if syncOwnReactions {
+            dto.ownReactions = payload
+                .ownReactions
+                .compactMap { try? saveReaction(payload: $0, cache: cache) }
+                .map(\.id)
+        }
+
+        let attachments: Set<AttachmentDTO> = try Set(
+            payload.attachments.enumerated().map { index, attachment in
+                let id = AttachmentId(cid: cid, messageId: payload.id, index: index)
+                let dto = try saveAttachment(payload: attachment, id: id)
+                return dto
+            }
+        )
+        dto.attachments = attachments
+
+        // Only insert message into Parent's replies if not already present.
+        // This in theory would not be needed since replies is a Set, but
+        // it will trigger an FRC update, which will cause the message to disappear
+        // in the Message List if there is already a message with the same ID.
+        if let parentMessageId = payload.parentId,
+           let parentMessageDTO = MessageDTO.load(id: parentMessageId, context: self),
+           !parentMessageDTO.replies.contains(dto) {
+            parentMessageDTO.replies.insert(dto)
+        }
+
+        dto.translations = payload.i18n
+        dto.originalLanguage = payload.i18n?["language"] as? String
+        
+//        if let moderationDetailsPayload = payload.moderationDetails {
+//            dto.moderationDetails = MessageModerationDetailsDTO.create(
+//                from: moderationDetailsPayload,
+//                context: self
+//            )
+//        } else {
+//            dto.moderationDetails = nil
+//        }
+
+        // Calculate reads if the message is authored by the current user.
+        if payload.user?.id == currentUser?.user.id {
+            dto.reads = Set(
+                channelDTO.reads.filter {
+                    $0.lastReadAt.bridgeDate >= payload.createdAt && $0.user.id != payload.user?.id
+                }
+            )
+        }
+
+        // Refetch channel preview if the current preview has changed.
+        //
+        // The current message can stop being a valid preview e.g.
+        // if it didn't pass moderation and obtained `error` type.
+        if payload.id == channelDTO.previewMessage?.id {
+            channelDTO.previewMessage = preview(for: cid)
+        }
+
+        return dto
+    }
+    
+    func saveMessages(
+        messagesPayload: GetRepliesResponse,
+        for cid: ChannelId?,
+        syncOwnReactions: Bool = true
+    ) -> [MessageDTO] {
+        let cache = messagesPayload.getPayloadToModelIdMappings(context: self)
+        return messagesPayload.messages.compactMapLoggingError {
+            try saveMessage(payload: $0, for: cid, syncOwnReactions: syncOwnReactions, cache: cache)
+        }
+    }
+    
     func message(id: MessageId) -> MessageDTO? { .load(id: id, context: self) }
 
     func messageExists(id: MessageId) -> Bool {
@@ -787,6 +962,21 @@ extension NSManagedObjectContext: MessageDatabaseSession {
     func preview(for cid: ChannelId) -> MessageDTO? {
         MessageDTO.preview(for: cid.rawValue, context: self)
     }
+    
+    func saveMessageSearch(payload: SearchResponse, for query: MessageSearchQuery) -> [MessageDTO] {
+        let cache = payload.getPayloadToModelIdMappings(context: self)
+        return payload.results.compactMapLoggingError {
+            if let message = $0?.message {
+                return try saveMessage(
+                    payload: message.toMessage,
+                    for: query,
+                    cache: cache
+                )
+            } else {
+                return nil
+            }
+        }
+    }
 
     /// Changes the state to `.pendingSend` for all messages in `.sending` state. This method is expected to be used at the beginning of the session
     /// to avoid those from being stuck there in limbo.
@@ -803,6 +993,38 @@ extension NSManagedObjectContext: MessageDatabaseSession {
         attachments.forEach {
             $0.localState = .pendingUpload
         }
+    }
+    
+    func saveMessage(payload: Message, for query: MessageSearchQuery, cache: PreWarmedCache?) throws -> MessageDTO {
+        let cid = try ChannelId(cid: payload.cid)
+        let messageDTO = try saveMessage(payload: payload, for: cid, cache: cache)
+        messageDTO.searches.insert(saveQuery(query: query))
+        return messageDTO
+    }
+    
+    func saveMessage(
+        payload: Message,
+        for cid: ChannelId?,
+        syncOwnReactions: Bool = true,
+        cache: PreWarmedCache?
+    ) throws -> MessageDTO {
+        guard let cid else {
+            throw ClientError.MessagePayloadSavingFailure("""
+            `cid` must be provided to sucessfuly save the message payload.
+            - `cid` value: \(String(describing: cid))
+            """)
+        }
+
+        var channelDTO: ChannelDTO?
+        channelDTO = ChannelDTO.load(cid: cid, context: self)
+
+        guard let channel = channelDTO else {
+            let description = "Should never happen, a channel should have been fetched."
+            log.assertionFailure(description)
+            throw ClientError.MessagePayloadSavingFailure(description)
+        }
+
+        return try saveMessage(payload: payload, channelDTO: channel, syncOwnReactions: syncOwnReactions, cache: cache)
     }
 }
 
