@@ -15,7 +15,7 @@ final class ConnectionRepository_Mock: ConnectionRepository, Spy {
         static let updateWebSocketEndpointUserId = "updateWebSocketEndpoint(with:)"
         static let completeConnectionIdWaiters = "completeConnectionIdWaiters(connectionId:)"
         static let provideConnectionId = "provideConnectionId(timeout:completion:)"
-        static let handleConnectionUpdate = "handleConnectionUpdate(state:onInvalidToken:)"
+        static let handleConnectionUpdate = "handleConnectionUpdate(state:onExpiredToken:)"
     }
 
     var recordedFunctions: [String] = []
@@ -28,7 +28,7 @@ final class ConnectionRepository_Mock: ConnectionRepository, Spy {
     var updateWebSocketEndpointUserInfo: UserInfo?
     var completeWaitersConnectionId: ConnectionId?
     var connectionUpdateState: WebSocketConnectionState?
-    var simulateInvalidTokenOnConnectionUpdate = false
+    var simulateExpiredTokenOnConnectionUpdate = false
 
     convenience init() {
         self.init(isClientInActiveMode: true,
@@ -100,11 +100,11 @@ final class ConnectionRepository_Mock: ConnectionRepository, Spy {
         record()
     }
 
-    override func handleConnectionUpdate(state: WebSocketConnectionState, onInvalidToken: () -> Void) {
+    override func handleConnectionUpdate(state: WebSocketConnectionState, onExpiredToken: () -> Void) {
         record()
         connectionUpdateState = state
-        if simulateInvalidTokenOnConnectionUpdate {
-            onInvalidToken()
+        if simulateExpiredTokenOnConnectionUpdate {
+            onExpiredToken()
         }
     }
 
@@ -117,7 +117,7 @@ final class ConnectionRepository_Mock: ConnectionRepository, Spy {
 
         disconnectResult = nil
         disconnectSource = nil
-        simulateInvalidTokenOnConnectionUpdate = false
+        simulateExpiredTokenOnConnectionUpdate = false
         connectionUpdateState = nil
         completeWaitersConnectionId = nil
         updateWebSocketEndpointToken = nil
