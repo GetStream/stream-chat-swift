@@ -15,6 +15,7 @@ derived_data_path = 'derived_data'
 source_packages_path = 'spm_cache'
 performance_path = "performance/#{github_repo.split('/').last}.json"
 buildcache_xcargs = 'CC=clang CPLUSPLUS=clang++ LD=clang LDPLUSPLUS=clang++'
+testlab_bucket = 'gs://test-lab-af3rt9m4yh360-mqm1zzm767nhc'
 is_localhost = !is_ci
 @force_check = false
 
@@ -381,7 +382,7 @@ lane :xcmetrics do |options|
       firebase_error = e
     end
 
-    sh("gsutil cp -r gs://test-lab-af3rt9m4yh360-mqm1zzm767nhc/test_output/iphone14pro-16.6-en-portrait/xcodebuild_output.log xcodebuild_output.log")
+    sh("gsutil cp -r #{testlab_bucket}/test_output/iphone14pro-16.6-en-portrait/xcodebuild_output.log xcodebuild_output.log")
     xcodebuild_output = File.read('xcodebuild_output.log')
   end
 
