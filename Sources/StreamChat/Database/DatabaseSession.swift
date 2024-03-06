@@ -442,9 +442,7 @@ extension DatabaseSession {
                 }
             }
         }
-        
-        // TODO: Handle user unread count
-        
+                
         updateChannelPreview(from: event)
     }
     
@@ -526,27 +524,27 @@ extension DatabaseSession {
     }
     
     func updateChannelPreview(from event: Event) {
-        if let newMessage = event as? MessageNewEvent,
-           let cid = try? ChannelId(cid: newMessage.cid),
-           let channelDTO = channel(cid: cid) {
-            let newPreview = preview(for: cid)
-            let newPreviewCreatedAt = newPreview?.createdAt.bridgeDate ?? .distantFuture
-            let currentPreviewCreatedAt = channelDTO.previewMessage?.createdAt.bridgeDate ?? .distantPast
-            if newPreviewCreatedAt > currentPreviewCreatedAt {
-                channelDTO.previewMessage = newPreview
-            }
+        if let newMessage = event as? MessageNewEvent {
+            updatePreviewMessage(for: newMessage.cid)
         }
         
-        // TODO: refactor.
-        if let newMessage = event as? NotificationNewMessageEvent,
-           let cid = try? ChannelId(cid: newMessage.cid),
+        if let newMessage = event as? NotificationNewMessageEvent {
+            updatePreviewMessage(for: newMessage.cid)
+        }
+        
+        if let messageDeleted = event as? MessageDeletedEvent,
+           let cid = try? ChannelId(cid: messageDeleted.cid),
+           let channelDTO = channel(cid: cid),
+           channelDTO.previewMessage?.id == messageDeleted.message?.id {
+            let newPreview = preview(for: cid)
+            channelDTO.previewMessage = newPreview
+        }
+        
+        if let channelHidden = event as? ChannelHiddenEvent,
+           let cid = try? ChannelId(cid: channelHidden.cid),
            let channelDTO = channel(cid: cid) {
             let newPreview = preview(for: cid)
-            let newPreviewCreatedAt = newPreview?.createdAt.bridgeDate ?? .distantFuture
-            let currentPreviewCreatedAt = channelDTO.previewMessage?.createdAt.bridgeDate ?? .distantPast
-            if newPreviewCreatedAt > currentPreviewCreatedAt {
-                channelDTO.previewMessage = newPreview
-            }
+            channelDTO.previewMessage = newPreview
         }
         
         if let channelTruncated = event as? ChannelTruncatedEvent,
@@ -554,8 +552,20 @@ extension DatabaseSession {
            let channelDTO = channel(cid: cid) {
             channelDTO.previewMessage = channelTruncated.message.flatMap { message(id: $0.id) }
         }
-
-        // TODO: handle other events
+    }
+    
+    // MARK: - private
+    
+    private func updatePreviewMessage(for cid: String) {
+        if let cid = try? ChannelId(cid: cid),
+           let channelDTO = channel(cid: cid) {
+            let newPreview = preview(for: cid)
+            let newPreviewCreatedAt = newPreview?.createdAt.bridgeDate ?? .distantFuture
+            let currentPreviewCreatedAt = channelDTO.previewMessage?.createdAt.bridgeDate ?? .distantPast
+            if newPreviewCreatedAt > currentPreviewCreatedAt {
+                channelDTO.previewMessage = newPreview
+            }
+        }
     }
 }
 
