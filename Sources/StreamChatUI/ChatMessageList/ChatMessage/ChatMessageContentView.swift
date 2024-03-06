@@ -150,6 +150,11 @@ open class ChatMessageContentView: _View, ThemeProvider, UITextViewDelegate {
         return appearance.colorPalette.text
     }
 
+    /// The character separator of the "Edited" label.
+    open var editedLabelSeparator: String {
+        " • "
+    }
+
     // MARK: - Content views
 
     /// Shows the bubble around message content.
@@ -670,7 +675,13 @@ open class ChatMessageContentView: _View, ThemeProvider, UITextViewDelegate {
         authorNameLabel?.text = content?.author.name
 
         if let createdAt = content?.createdAt {
-            timestampLabel?.text = timestampFormatter.format(createdAt)
+            let timestamp = timestampFormatter.format(createdAt)
+            var text = timestamp
+            let messageWasEdited = components.isMessageEditedLabelEnabled && content?.textUpdatedAt != nil
+            if messageWasEdited && content?.isDeleted == false {
+                text = timestamp + editedLabelSeparator + L10n.Message.edited
+            }
+            timestampLabel?.text = text
         } else {
             timestampLabel?.text = nil
         }

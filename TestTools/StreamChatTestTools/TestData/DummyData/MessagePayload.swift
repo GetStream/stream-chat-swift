@@ -45,7 +45,8 @@ extension MessagePayload {
         translations: [TranslationLanguage: String]? = nil,
         originalLanguage: String? = nil,
         moderationDetails: MessageModerationDetailsPayload? = nil,
-        mentionedUsers: [UserPayload] = [.dummy(userId: .unique)]
+        mentionedUsers: [UserPayload] = [.dummy(userId: .unique)],
+        messageTextUpdatedAt: Date? = nil
     ) -> MessagePayload {
         .init(
             id: messageId,
@@ -81,7 +82,8 @@ extension MessagePayload {
             pinExpires: pinExpires,
             translations: translations,
             originalLanguage: originalLanguage,
-            moderationDetails: moderationDetails
+            moderationDetails: moderationDetails,
+            messageTextUpdatedAt: messageTextUpdatedAt
         )
     }
 

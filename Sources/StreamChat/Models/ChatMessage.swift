@@ -32,11 +32,14 @@ public struct ChatMessage {
     /// Date when the message was created locally and scheduled to be send. Applies only for the messages of the current user.
     public let locallyCreatedAt: Date?
 
-    /// A date when the message was updated last time.
+    /// A date when the message was updated last time. This includes any action to the message, like reactions.
     public let updatedAt: Date
 
     /// If the message was deleted, this variable contains a timestamp of that event, otherwise `nil`.
     public let deletedAt: Date?
+
+    /// The date when the message text, and only the text, was edited. `Nil` if it was not edited.
+    public let textUpdatedAt: Date?
 
     /// If the message was created by a specific `/` command, the arguments of the command are stored in this variable.
     public let arguments: String?
@@ -236,7 +239,8 @@ public struct ChatMessage {
         moderationDetails: MessageModerationDetails?,
         readBy: @escaping () -> Set<ChatUser>,
         readByCount: @escaping () -> Int,
-        underlyingContext: NSManagedObjectContext?
+        underlyingContext: NSManagedObjectContext?,
+        textUpdatedAt: Date?
     ) {
         self.id = id
         self.cid = cid
@@ -264,6 +268,7 @@ public struct ChatMessage {
         self.translations = translations
         self.originalLanguage = originalLanguage
         self.moderationDetails = moderationDetails
+        self.textUpdatedAt = textUpdatedAt
 
         $_author = (author, underlyingContext)
         $_mentionedUsers = (mentionedUsers, underlyingContext)
