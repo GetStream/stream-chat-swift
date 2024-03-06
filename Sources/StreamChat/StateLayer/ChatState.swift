@@ -28,7 +28,10 @@ public final class ChatState: ObservableObject {
                 typingUsersDidChange: { [weak self] in await self?.setValue($0, for: \.typingUsers) },
                 watchersDidChange: { [weak self] changes in
                     guard let self else { return }
-                    await self.setValue(self.orderedWatchers.withListChanges(changes), for: \.watchers)
+                    let current = await self.value(forKeyPath: \.watchers)
+                    let sortDescriptors = UserDTO.watcherFetchRequest(cid: cid).sortDescriptors ?? []
+                    let merged = current.uniquelyApplied(changes, sortDescriptors: sortDescriptors)
+                    await self.setValue(merged, for: \.watchers)
                 }
             )
         )
@@ -128,11 +131,7 @@ public final class ChatState: ObservableObject {
     @MainActor var orderedMessages: OrderedMessages {
         OrderedMessages(messageOrdering: messageOrder, orderedMessages: messages)
     }
-    
-    @MainActor var orderedWatchers: OrderedUsers {
-        OrderedUsers(cid: cid, orderedWatchers: watchers)
-    }
-    
+        
     @MainActor func setSortedMessages(_ sortedMessages: [ChatMessage]) {
         setValue(sortedMessages, for: \.messages)
     }

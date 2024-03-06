@@ -278,8 +278,6 @@
 		4FC59F6B2B974AF50078C950 /* PaginatedWatchersLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FC59F692B974AF50078C950 /* PaginatedWatchersLoader.swift */; };
 		4FC59F702B97534F0078C950 /* UserRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FC59F6F2B97534F0078C950 /* UserRepository.swift */; };
 		4FC59F712B97534F0078C950 /* UserRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FC59F6F2B97534F0078C950 /* UserRepository.swift */; };
-		4FC59F732B975C6B0078C950 /* OrderedUsers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FC59F722B975C6B0078C950 /* OrderedUsers.swift */; };
-		4FC59F742B975C6B0078C950 /* OrderedUsers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FC59F722B975C6B0078C950 /* OrderedUsers.swift */; };
 		4FF2A80A2B8CB6C200941A64 /* UnreadMessagesCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FF2A8092B8CB6C200941A64 /* UnreadMessagesCoordinator.swift */; };
 		4FF2A80B2B8CB6C200941A64 /* UnreadMessagesCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FF2A8092B8CB6C200941A64 /* UnreadMessagesCoordinator.swift */; };
 		4FF2A80D2B8E011000941A64 /* ChatState+Observer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FF2A80C2B8E011000941A64 /* ChatState+Observer.swift */; };
@@ -2938,7 +2936,6 @@
 		4FC59F662B960AC30078C950 /* ChannelListQueryLinkingCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelListQueryLinkingCoordinator.swift; sourceTree = "<group>"; };
 		4FC59F692B974AF50078C950 /* PaginatedWatchersLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaginatedWatchersLoader.swift; sourceTree = "<group>"; };
 		4FC59F6F2B97534F0078C950 /* UserRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserRepository.swift; sourceTree = "<group>"; };
-		4FC59F722B975C6B0078C950 /* OrderedUsers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrderedUsers.swift; sourceTree = "<group>"; };
 		4FF2A8092B8CB6C200941A64 /* UnreadMessagesCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UnreadMessagesCoordinator.swift; sourceTree = "<group>"; };
 		4FF2A80C2B8E011000941A64 /* ChatState+Observer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ChatState+Observer.swift"; sourceTree = "<group>"; };
 		4FF2A80F2B8E147200941A64 /* BidirectionalCollection+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "BidirectionalCollection+Extensions.swift"; sourceTree = "<group>"; };
@@ -4851,7 +4848,6 @@
 			isa = PBXGroup;
 			children = (
 				4FF2A8152B8F1E5D00941A64 /* OrderedMessages.swift */,
-				4FC59F722B975C6B0078C950 /* OrderedUsers.swift */,
 			);
 			path = General;
 			sourceTree = "<group>";
@@ -10681,7 +10677,6 @@
 				79280F4F2485308100CDEB89 /* DataController.swift in Sources */,
 				ADC40C3426E294EB005B616C /* MessageSearchController+Combine.swift in Sources */,
 				F6ED5F7825027907005D7327 /* MissingEventsRequestBody.swift in Sources */,
-				4FC59F732B975C6B0078C950 /* OrderedUsers.swift in Sources */,
 				7964F3B7249A314D002A09EC /* LogFormatter.swift in Sources */,
 				84CF9C73274D473D00BCDE2D /* EventBatcher.swift in Sources */,
 				40789D1B29F6AC500018C2BB /* AudioPlaybackState.swift in Sources */,
@@ -11651,7 +11646,6 @@
 				C121E88B274544AF00023E4C /* ChannelRead.swift in Sources */,
 				40789D4329F6B3250018C2BB /* VoiceRecordingAttachmentPayload_Tests.swift in Sources */,
 				C121E88C274544AF00023E4C /* Channel.swift in Sources */,
-				4FC59F742B975C6B0078C950 /* OrderedUsers.swift in Sources */,
 				C121E88D274544AF00023E4C /* BanEnabling.swift in Sources */,
 				C121E88E274544AF00023E4C /* ChannelType.swift in Sources */,
 				C121E88F274544AF00023E4C /* CurrentUser.swift in Sources */,

@@ -23,7 +23,9 @@ struct PaginatedWatchersLoader {
         let ids = payload.watchers?.map(\.id) ?? []
         // Optimization: skip DB fetch when chat users can be created from payload
         let newWatchers = try await userRepository.watchers(for: Set(ids), in: cid)
-        let result = await state.orderedWatchers.withInsertingPaginated(newWatchers)
+        let sortDescriptors = UserDTO.watcherFetchRequest(cid: cid).sortDescriptors ?? []
+        let current = await state.value(forKeyPath: \.watchers)
+        let result = current.uniquelyMerged(newWatchers, sortDescriptors: sortDescriptors)
         await state.setSortedWatchers(result, hasLoadedAll: ids.count < pagination.pageSize)
         return newWatchers
     }
