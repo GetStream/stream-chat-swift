@@ -121,7 +121,7 @@ extension Array where Element == Sorting<ChannelListSortingKey> {
     }
 }
 
-private extension Sorting where Key == ChannelListSortingKey {
+extension Sorting where Key == ChannelListSortingKey {
     var sortValue: SortValue<ChatChannel>? {
         SortValue(keyPath: key.keyPath, isAscending: isAscending)
     }
@@ -130,5 +130,17 @@ private extension Sorting where Key == ChannelListSortingKey {
 extension ChatChannel {
     var defaultSortingAt: Date {
         lastMessageAt ?? createdAt
+    }
+}
+
+extension Array where Element == SortValue<ChatChannel> {
+    func areInIncreasingOrder(_ lhs: ChatChannel, _ rhs: ChatChannel) -> Bool {
+        var result = false
+        var index = startIndex
+        repeat {
+            result = self[index].areInIncreasingOrder(lhs, rhs)
+            index = self.index(after: index)
+        } while result == false && index < endIndex
+        return result
     }
 }

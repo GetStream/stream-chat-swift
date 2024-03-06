@@ -22,8 +22,7 @@ public final class ChatListState: ObservableObject {
             with: .init(channelsDidChange: { [weak self] changes in
                 guard let self else { return }
                 let channels = await value(forKeyPath: \.channels)
-                let sortDescriptors = ChannelDTO.channelListFetchRequest(query: query, chatClientConfig: clientConfig).sortDescriptors ?? []
-                await self.setValue(channels.uniquelyApplied(changes, sortDescriptors: sortDescriptors), for: \.channels)
+                await self.setValue(channels.uniquelyApplied(changes, sorting: query.sort), for: \.channels)
             })
         )
     }

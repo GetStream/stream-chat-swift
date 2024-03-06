@@ -12,25 +12,31 @@ struct SortValue<T> {
 extension Array {
     func sort(using sorting: [SortValue<Element>]) -> [Element] {
         var result = self
-
+        
         for sort in sorting.reversed() {
             result = result.sorted { lhs, rhs in
-                let lhsValue = lhs[keyPath: sort.keyPath]
-                let rhsValue = rhs[keyPath: sort.keyPath]
-
-                if sort.isAscending, evaluate(lhs: lhsValue, rhs: rhsValue, isAscending: sort.isAscending) {
-                    return true
-                } else if !sort.isAscending, evaluate(lhs: lhsValue, rhs: rhsValue, isAscending: sort.isAscending) {
-                    return true
-                } else {
-                    return false
-                }
+                sort.areInIncreasingOrder(lhs, rhs)
             }
         }
-
+        
         return result
     }
+}
 
+extension SortValue {
+    func areInIncreasingOrder(_ lhs: T, _ rhs: T) -> Bool {
+        let lhsValue = lhs[keyPath: keyPath]
+        let rhsValue = rhs[keyPath: keyPath]
+        
+        if isAscending, evaluate(lhs: lhsValue, rhs: rhsValue, isAscending: isAscending) {
+            return true
+        } else if !isAscending, evaluate(lhs: lhsValue, rhs: rhsValue, isAscending: isAscending) {
+            return true
+        } else {
+            return false
+        }
+    }
+    
     private func evaluate(lhs: Any?, rhs: Any?, isAscending: Bool) -> Bool {
         if lhs == nil, rhs != nil, !isAscending {
             return true

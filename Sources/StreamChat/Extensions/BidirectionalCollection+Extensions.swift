@@ -75,17 +75,24 @@ extension BidirectionalCollection where Element == ChatMessage {
 }
 
 extension BidirectionalCollection where Element == ChatChannel {
-    func uniquelyMerged(_ insertedSortedElements: [Element], sortDescriptors: [NSSortDescriptor]) -> [Element] {
-        uniquelyMerged(
+    private func sortValues(for sorting: [Sorting<ChannelListSortingKey>]) -> [SortValue<ChatChannel>] {
+        let keys = sorting.isEmpty ? [Sorting(key: ChannelListSortingKey.default)] : sorting
+        return keys.compactMap(\.sortValue)
+    }
+    
+    func uniquelyMerged(_ insertedSortedElements: [Element], sorting: [Sorting<ChannelListSortingKey>]) -> [Element] {
+        let sortValues = sortValues(for: sorting)
+        return uniquelyMerged(
             insertedSortedElements,
-            areInIncreasingOrder: { sortDescriptors.compare($0, to: $1) == .orderedAscending },
+            areInIncreasingOrder: { sortValues.areInIncreasingOrder($0, $1) },
             dropsExisting: { existing, incoming in
                 existing.cid == incoming.cid
             }
         )
     }
     
-    func uniquelyApplied(_ changes: [ListChange<Element>], sortDescriptors: [NSSortDescriptor]) -> [Element] {
+    func uniquelyApplied(_ changes: [ListChange<Element>], sorting: [Sorting<ChannelListSortingKey>]) -> [Element] {
+        let sortValues = sortValues(for: sorting)
         var removedIds = Set<ChannelId>()
         var updatedSortedChanges = [ListChange<Element>]()
         updatedSortedChanges.reserveCapacity(changes.count)
@@ -101,22 +108,10 @@ extension BidirectionalCollection where Element == ChatChannel {
         
         return uniquelyMerged(
             updatedSortedChanges.map(\.item),
-            areInIncreasingOrder: { sortDescriptors.compare($0, to: $1) == .orderedAscending },
+            areInIncreasingOrder: { sortValues.areInIncreasingOrder($0, $1) },
             dropsExisting: { existing, incoming in
                 removedIds.contains(existing.cid) || existing.cid == incoming.cid
             }
         )
-    }
-}
-
-private extension Array where Element == NSSortDescriptor {
-    func compare(_ object1: Any, to object2: Any) -> ComparisonResult {
-        var result = ComparisonResult.orderedSame
-        var index = startIndex
-        repeat {
-            result = self[index].compare(object1, to: object2)
-            index = self.index(after: index)
-        } while result == ComparisonResult.orderedSame && index < endIndex
-        return result
     }
 }
