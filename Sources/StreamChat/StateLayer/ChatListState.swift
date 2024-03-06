@@ -21,7 +21,9 @@ public final class ChatListState: ObservableObject {
         observer.start(
             with: .init(channelsDidChange: { [weak self] changes in
                 guard let self else { return }
-                await self.setValue(self.orderedChannels.withListChanges(changes), for: \.channels)
+                let channels = await value(forKeyPath: \.channels)
+                let sortDescriptors = ChannelDTO.channelListFetchRequest(query: query, chatClientConfig: clientConfig).sortDescriptors ?? []
+                await self.setValue(channels.uniquelyApplied(changes, sortDescriptors: sortDescriptors), for: \.channels)
             })
         )
     }
@@ -41,11 +43,7 @@ public final class ChatListState: ObservableObject {
     @MainActor func setValue<Value>(_ value: Value, for keyPath: ReferenceWritableKeyPath<ChatListState, Value>) {
         self[keyPath: keyPath] = value
     }
-    
-    @MainActor var orderedChannels: OrderedChannels {
-        OrderedChannels(orderedChannels: channels, query: query, clientConfig: clientConfig)
-    }
-    
+        
     @MainActor func setSortedChannels(_ sortedChannels: [ChatChannel], hasLoadedAll: Bool) {
         setValue(hasLoadedAll, for: \.hasLoadedAllChannels)
         setValue(sortedChannels, for: \.channels)

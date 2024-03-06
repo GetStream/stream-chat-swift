@@ -272,8 +272,6 @@
 		4FC59F5C2B95C36A0078C950 /* PaginatedChannelsLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FC59F5A2B95C36A0078C950 /* PaginatedChannelsLoader.swift */; };
 		4FC59F5E2B95EAAB0078C950 /* ChatListState+Observer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FC59F5D2B95EAAB0078C950 /* ChatListState+Observer.swift */; };
 		4FC59F5F2B95EAAB0078C950 /* ChatListState+Observer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FC59F5D2B95EAAB0078C950 /* ChatListState+Observer.swift */; };
-		4FC59F642B95F9F70078C950 /* OrderedChannels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FC59F632B95F9F70078C950 /* OrderedChannels.swift */; };
-		4FC59F652B95F9F70078C950 /* OrderedChannels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FC59F632B95F9F70078C950 /* OrderedChannels.swift */; };
 		4FC59F672B960AC30078C950 /* ChannelListQueryLinkingCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FC59F662B960AC30078C950 /* ChannelListQueryLinkingCoordinator.swift */; };
 		4FC59F682B960AC30078C950 /* ChannelListQueryLinkingCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FC59F662B960AC30078C950 /* ChannelListQueryLinkingCoordinator.swift */; };
 		4FF2A80A2B8CB6C200941A64 /* UnreadMessagesCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FF2A8092B8CB6C200941A64 /* UnreadMessagesCoordinator.swift */; };
@@ -2931,7 +2929,6 @@
 		4FC59F572B95C1220078C950 /* ChatListState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatListState.swift; sourceTree = "<group>"; };
 		4FC59F5A2B95C36A0078C950 /* PaginatedChannelsLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaginatedChannelsLoader.swift; sourceTree = "<group>"; };
 		4FC59F5D2B95EAAB0078C950 /* ChatListState+Observer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ChatListState+Observer.swift"; sourceTree = "<group>"; };
-		4FC59F632B95F9F70078C950 /* OrderedChannels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrderedChannels.swift; sourceTree = "<group>"; };
 		4FC59F662B960AC30078C950 /* ChannelListQueryLinkingCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelListQueryLinkingCoordinator.swift; sourceTree = "<group>"; };
 		4FF2A8092B8CB6C200941A64 /* UnreadMessagesCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UnreadMessagesCoordinator.swift; sourceTree = "<group>"; };
 		4FF2A80C2B8E011000941A64 /* ChatState+Observer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ChatState+Observer.swift"; sourceTree = "<group>"; };
@@ -4844,7 +4841,6 @@
 		4F73F3A32B9219E500563CD9 /* General */ = {
 			isa = PBXGroup;
 			children = (
-				4FC59F632B95F9F70078C950 /* OrderedChannels.swift */,
 				4FF2A8152B8F1E5D00941A64 /* OrderedMessages.swift */,
 			);
 			path = General;
@@ -10889,7 +10885,6 @@
 				79682C4624BC9DAF0071578E /* ChannelUpdater.swift in Sources */,
 				792A4F482480107A00EAF71D /* Pagination.swift in Sources */,
 				79AF43B42632AF1C00E75CDA /* ChannelVisibilityEventMiddleware.swift in Sources */,
-				4FC59F642B95F9F70078C950 /* OrderedChannels.swift in Sources */,
 				DAF1BED525066114003CEDC0 /* MessageController+Combine.swift in Sources */,
 				A36C39F52860680A0004EB7E /* URL+EnrichedURL.swift in Sources */,
 				C1FC2F9B2742579D0062530F /* FrameCollector.swift in Sources */,
@@ -11676,7 +11671,6 @@
 				C121E8A6274544B000023E4C /* MemberController+Combine.swift in Sources */,
 				C121E8A7274544B000023E4C /* MemberListController.swift in Sources */,
 				C121E8A8274544B000023E4C /* MemberListController+SwiftUI.swift in Sources */,
-				4FC59F652B95F9F70078C950 /* OrderedChannels.swift in Sources */,
 				C121E8A9274544B000023E4C /* MemberListController+Combine.swift in Sources */,
 				C121E8AA274544B000023E4C /* ChatChannelWatcherListController.swift in Sources */,
 				C143788E27BBEBB900E23965 /* OfflineRequestsRepository.swift in Sources */,

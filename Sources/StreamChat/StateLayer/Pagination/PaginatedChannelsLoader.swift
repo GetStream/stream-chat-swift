@@ -20,8 +20,10 @@ struct PaginatedChannelsLoader {
             query: query,
             config: chatClientConfig
         )
-        let result = await state.orderedChannels.withInsertingPaginated(newSortedChannels)
-        await state.setSortedChannels(result, hasLoadedAll: payloadChannels.count < pagination.pageSize)
+        let currentChannels = await state.value(forKeyPath: \.channels)
+        let sortDescriptors = ChannelDTO.channelListFetchRequest(query: query, chatClientConfig: chatClientConfig).sortDescriptors ?? []
+        let merged = currentChannels.uniquelyMerged(newSortedChannels, sortDescriptors: sortDescriptors)
+        await state.setSortedChannels(merged, hasLoadedAll: payloadChannels.count < pagination.pageSize)
         
         return payloadChannels
     }
