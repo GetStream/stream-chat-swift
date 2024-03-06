@@ -677,7 +677,8 @@ open class ChatMessageContentView: _View, ThemeProvider, UITextViewDelegate {
         if let createdAt = content?.createdAt {
             let timestamp = timestampFormatter.format(createdAt)
             var text = timestamp
-            if components.isMessageEditedLabelEnabled && content?.textUpdatedAt != nil {
+            let messageWasEdited = components.isMessageEditedLabelEnabled && content?.textUpdatedAt != nil
+            if messageWasEdited && content?.isDeleted == false {
                 text = timestamp + editedLabelSeparator + L10n.Message.edited
             }
             timestampLabel?.text = text
