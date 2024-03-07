@@ -36,7 +36,7 @@ extension MessageState {
         struct Handlers {
             let messageDidChange: (ChatMessage) async -> Void
             let reactionsDidChange: ([ChatMessageReaction]) async -> Void
-            let repliesDidChange: ([ListChange<ChatMessage>]) async -> Void
+            let repliesDidChange: ([ChatMessage]) async -> Void
         }
         
         func start(with handlers: Handlers) {
@@ -45,7 +45,10 @@ extension MessageState {
                 let sortedReactions = change.item.sorted(by: { $0.updatedAt > $1.updatedAt })
                 Task { await handlers.reactionsDidChange(sortedReactions) }
             })
-            repliesObserver.onDidChange = { changes in Task { await handlers.repliesDidChange(changes) } }
+            repliesObserver.onDidChange = { [weak repliesObserver] _ in
+                guard let items = repliesObserver?.items else { return }
+                Task { await handlers.repliesDidChange(Array(items)) }
+            }
             
             do {
                 try messageObserver.startObserving()
