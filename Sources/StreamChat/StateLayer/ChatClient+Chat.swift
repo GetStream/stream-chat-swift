@@ -188,6 +188,7 @@ extension ChatClient {
         ChannelUpdater(
             channelRepository: channelRepository,
             callRepository: callRepository,
+            messageRepository: messageRepository,
             paginationStateHandler: makeMessagesPaginationStateHandler(),
             database: databaseContainer,
             apiClient: apiClient
