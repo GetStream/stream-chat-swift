@@ -21,9 +21,7 @@ public final class ChatState: ObservableObject {
         observer.start(
             with: .init(
                 channelDidChange: { [weak self] in await self?.setValue($0, for: \.channel) },
-                messagesDidChange: { _ in
-                    // TODO: messages did change
-                },
+                messagesDidChange: { [weak self] in await self?.setValue($0, for: \.messages) },
                 typingUsersDidChange: { [weak self] in await self?.setValue($0, for: \.typingUsers) }
             )
         )
