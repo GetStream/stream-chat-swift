@@ -12,6 +12,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Fix current user cache not deleted on logout causing unread count issues after switching users [#3055](https://github.com/GetStream/stream-chat-swift/pull/3055)
 - Fix rare crash in `startObserver()` on logout when converting DTO to model in `itemCreator` [#3053](https://github.com/GetStream/stream-chat-swift/pull/3053)
 - Fix invalid token triggering token refresh in an infinite loop [#3056](https://github.com/GetStream/stream-chat-swift/pull/3056)
+- Do not mark a message as failed when the server returns duplicated message error [#3061](https://github.com/GetStream/stream-chat-swift/pull/3061)
 
 ## StreamChatUI
 ### ✅ Added
