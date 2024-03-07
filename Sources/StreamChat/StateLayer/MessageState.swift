@@ -23,9 +23,8 @@ public final class MessageState: ObservableObject {
             with: .init(
                 messageDidChange: { [weak self] in await self?.setValue($0, for: \.message) },
                 reactionsDidChange: { [weak self] in await self?.setValue($0, for: \.reactions) },
-                repliesDidChange: { [weak self] changes in
-                    guard let self else { return }
-                    await self.setValue(self.orderedReplies.withListChanges(changes), for: \.replies)
+                repliesDidChange: { _ in
+                    // TODO: Update replies
                 }
             )
         )
@@ -89,17 +88,5 @@ public final class MessageState: ObservableObject {
     // Force mutations on main actor since ChatState is meant to be used by UI.
     @MainActor func setValue<Value>(_ value: Value, for keyPath: ReferenceWritableKeyPath<MessageState, Value>) {
         self[keyPath: keyPath] = value
-    }
-    
-    @MainActor var orderedReplies: OrderedMessages {
-        OrderedMessages(messageOrdering: messageOrder, orderedMessages: replies)
-    }
-    
-    @MainActor func setSortedReplies(_ replies: [ChatMessage]) {
-        setValue(replies, for: \.replies)
-    }
-    
-    @MainActor func setSortedReactions(_ reactions: [ChatMessageReaction]) {
-        setValue(reactions, for: \.reactions)
     }
 }
