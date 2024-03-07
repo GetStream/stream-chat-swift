@@ -848,7 +848,7 @@ extension MessageUpdater {
         }
     }
     
-    func loadReplies(cid: ChannelId, messageId: MessageId, pagination: MessagesPagination, paginationStateHandler: MessagesPaginationStateHandling) async throws -> MessageRepliesPayload {
+    @discardableResult func loadReplies(cid: ChannelId, messageId: MessageId, pagination: MessagesPagination, paginationStateHandler: MessagesPaginationStateHandling) async throws -> MessageRepliesPayload {
         try await withCheckedThrowingContinuation { continuation in
             loadReplies(cid: cid, messageId: messageId, pagination: pagination, paginationStateHandler: paginationStateHandler) { result in
                 continuation.resume(with: result)
@@ -894,5 +894,48 @@ extension MessageUpdater {
                 continuation.resume(with: error)
             }
         }
+    }
+    
+    // MARK: -
+    
+    func loadReplies(of messageId: MessageId, pagination: MessagesPagination, cid: ChannelId, paginationStateHandler: MessagesPaginationStateHandling) async throws -> [ChatMessage] {
+        let payload = try await loadReplies(cid: cid, messageId: messageId, pagination: pagination, paginationStateHandler: paginationStateHandler)
+        guard let fromDate = payload.messages.first?.createdAt else { return [] }
+        guard let toDate = payload.messages.last?.createdAt else { return [] }
+        return try await repository.replies(from: fromDate, to: toDate, in: messageId)
+    }
+    
+    func loadRepliesFirstPage(of messageId: MessageId, limit: Int?, cid: ChannelId, paginationStateHandler: MessagesPaginationStateHandling) async throws {
+        let pageSize = limit ?? .messagesPageSize
+        try await loadReplies(cid: cid, messageId: messageId, pagination: MessagesPagination(pageSize: pageSize), paginationStateHandler: paginationStateHandler)
+    }
+    
+    func loadReplies(of messageId: MessageId, before replyId: MessageId?, limit: Int?, cid: ChannelId, paginationStateHandler: MessagesPaginationStateHandling) async throws {
+        guard !paginationStateHandler.state.hasLoadedAllPreviousMessages else { return }
+        guard !paginationStateHandler.state.isLoadingPreviousMessages else { return }
+        guard let replyId = replyId ?? paginationStateHandler.state.oldestFetchedMessage?.id else {
+            throw ClientError.MessageEmptyReplies()
+        }
+        let pageSize = limit ?? .messagesPageSize
+        let pagination = MessagesPagination(pageSize: pageSize, parameter: .lessThan(replyId))
+        try await loadReplies(cid: cid, messageId: messageId, pagination: pagination, paginationStateHandler: paginationStateHandler)
+    }
+    
+    func loadReplies(of messageId: MessageId, after replyId: MessageId?, limit: Int?, cid: ChannelId, paginationStateHandler: MessagesPaginationStateHandling) async throws {
+        guard !paginationStateHandler.state.hasLoadedAllNextMessages else { return }
+        guard !paginationStateHandler.state.isLoadingNextMessages else { return }
+        guard let replyId = replyId ?? paginationStateHandler.state.newestFetchedMessage?.id else {
+            throw ClientError.MessageEmptyReplies()
+        }
+        let pageSize = limit ?? .messagesPageSize
+        let pagination = MessagesPagination(pageSize: pageSize, parameter: .greaterThan(replyId))
+        try await loadReplies(cid: cid, messageId: messageId, pagination: pagination, paginationStateHandler: paginationStateHandler)
+    }
+    
+    func loadReplies(of messageId: MessageId, around replyId: MessageId, limit: Int?, cid: ChannelId, paginationStateHandler: MessagesPaginationStateHandling) async throws {
+        guard !paginationStateHandler.state.isLoadingMiddleMessages else { return }
+        let pageSize = limit ?? .messagesPageSize
+        let pagination = MessagesPagination(pageSize: pageSize, parameter: .around(replyId))
+        try await loadReplies(cid: cid, messageId: messageId, pagination: pagination, paginationStateHandler: paginationStateHandler)
     }
 }
