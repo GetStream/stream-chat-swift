@@ -6,12 +6,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## StreamChat
 ### ✅ Added
 - Add new `ChatMessage.textUpdatedAt` for when the message text is edited [#3059](https://github.com/GetStream/stream-chat-swift/pull/3059)
+- Expose `ClientError.errorPayload` to easily check for server error details [#3061](https://github.com/GetStream/stream-chat-swift/pull/3061)
 ### 🐞 Fixed
 - Fix token provider retrying after calling disconnect [#3052](https://github.com/GetStream/stream-chat-swift/pull/3052)
 - Fix connect user never completing when disconnecting after token provider fails [#3052](https://github.com/GetStream/stream-chat-swift/pull/3052)
 - Fix current user cache not deleted on logout causing unread count issues after switching users [#3055](https://github.com/GetStream/stream-chat-swift/pull/3055)
 - Fix rare crash in `startObserver()` on logout when converting DTO to model in `itemCreator` [#3053](https://github.com/GetStream/stream-chat-swift/pull/3053)
 - Fix invalid token triggering token refresh in an infinite loop [#3056](https://github.com/GetStream/stream-chat-swift/pull/3056)
+- Do not mark a message as failed when the server returns duplicated message error [#3061](https://github.com/GetStream/stream-chat-swift/pull/3061)
 
 ## StreamChatUI
 ### ✅ Added

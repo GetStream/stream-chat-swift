@@ -102,6 +102,37 @@ final class MessageRepositoryTests: XCTestCase {
         }
     }
 
+    func test_sendMessage_APIFailure_whenDuplicatedMessage_shouldNotMarkMessageAsFailed() throws {
+        let id = MessageId.unique
+        try createMessage(id: id, localState: .pendingSend)
+        let expectation = self.expectation(description: "Send Message completes")
+        var result: Result<ChatMessage, MessageRepositoryError>?
+        repository.sendMessage(with: id) {
+            result = $0
+            expectation.fulfill()
+        }
+
+        wait(for: [apiClient.request_expectation], timeout: defaultTimeout)
+
+        let error = ClientError(with: ErrorPayload(code: 4, message: "Message X already exists.", statusCode: 400))
+        (apiClient.request_completion as? (Result<MessagePayload.Boxed, Error>) -> Void)?(.failure(error))
+
+        wait(for: [expectation], timeout: defaultTimeout)
+
+        var currentMessageState: LocalMessageState?
+        try database.writeSynchronously { session in
+            currentMessageState = session.message(id: id)?.localMessageState
+        }
+
+        XCTAssertNil(currentMessageState)
+        switch result?.error {
+        case .failedToSendMessage:
+            break
+        default:
+            XCTFail()
+        }
+    }
+
     func test_sendMessage_APISuccess() throws {
         let id = MessageId.unique
         try createMessage(id: id, localState: .pendingSend)

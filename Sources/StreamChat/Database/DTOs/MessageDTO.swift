@@ -1083,6 +1083,17 @@ extension MessageDTO {
             extraData: decodedExtraData
         )
     }
+
+    /// The message has been successfully sent to the server.
+    func markMessageAsSent() {
+        locallyCreatedAt = nil
+        localMessageState = nil
+    }
+
+    /// The message failed to be sent to the server.
+    func markMessageAsFailed() {
+        localMessageState = .sendingFailed
+    }
 }
 
 private extension ChatMessage {
