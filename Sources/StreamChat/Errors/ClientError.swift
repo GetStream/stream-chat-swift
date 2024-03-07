@@ -19,7 +19,10 @@ public class ClientError: Error, CustomStringConvertible {
     /// An underlying error.
     public let underlyingError: Error?
 
-    var errorDescription: String? { underlyingError.map(String.init(describing:)) }
+    public var errorDescription: String? { underlyingError.map(String.init(describing:)) }
+
+    /// The error payload if the underlying error comes from a server error.
+    public var errorPayload: ErrorPayload? { underlyingError as? ErrorPayload }
 
     /// Retrieve the localized description for this error.
     public var localizedDescription: String { message ?? errorDescription ?? "" }

@@ -24,7 +24,7 @@ public struct ErrorPayload: LocalizedError, Codable, CustomDebugStringConvertibl
     }
 
     public var debugDescription: String {
-        "ServerErrorPayload(code: \(code), message: \"\(message)\", statusCode: \(statusCode)))."
+        "\(String(describing: Self.self))(code: \(code), message: \"\(message)\", statusCode: \(statusCode)))."
     }
 }
 
