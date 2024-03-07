@@ -23,9 +23,7 @@ public final class MessageState: ObservableObject {
             with: .init(
                 messageDidChange: { [weak self] in await self?.setValue($0, for: \.message) },
                 reactionsDidChange: { [weak self] in await self?.setValue($0, for: \.reactions) },
-                repliesDidChange: { _ in
-                    // TODO: Update replies
-                }
+                repliesDidChange: { [weak self] in await self?.setValue($0, for: \.replies) }
             )
         )
     }
