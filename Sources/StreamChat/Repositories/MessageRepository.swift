@@ -96,8 +96,7 @@ class MessageRepository {
         database.write({
             let messageDTO = try $0.saveMessage(payload: message, for: cid, syncOwnReactions: false, cache: nil)
             if messageDTO.localMessageState == .sending || messageDTO.localMessageState == .sendingFailed {
-                messageDTO.locallyCreatedAt = nil
-                messageDTO.localMessageState = nil
+                messageDTO.markMessageAsSent()
             }
 
             let messageModel = try messageDTO.asModel()
@@ -117,6 +116,18 @@ class MessageRepository {
     ) {
         log.error("Sending the message with id \(messageId) failed with error: \(error)")
 
+        if let clientError = error as? ClientError, let errorPayload = clientError.errorPayload {
+            let isDuplicatedMessageError = errorPayload.code == 4
+            if isDuplicatedMessageError {
+                database.write {
+                    let messageDTO = $0.message(id: messageId)
+                    messageDTO?.markMessageAsSent()
+                    completion(.failure(.failedToSendMessage(error)))
+                }
+                return
+            }
+        }
+
         markMessageAsFailedToSend(id: messageId) {
             completion(.failure(.failedToSendMessage(error)))
         }
@@ -126,7 +137,7 @@ class MessageRepository {
         database.write({
             let dto = $0.message(id: id)
             if dto?.localMessageState == .sending {
-                dto?.localMessageState = .sendingFailed
+                dto?.markMessageAsFailed()
             }
         }, completion: {
             if let error = $0 {
