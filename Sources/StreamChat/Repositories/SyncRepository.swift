@@ -350,20 +350,18 @@ private extension Date {
 extension SyncRepository {
     final class ChannelListRegistry {
         private var channelListQueries = [ChannelListQuery]()
-        private let lock = NSLock()
+        private let queue = DispatchQueue(label: "io.getstream.sync-repository.channel-list-registry")
         
         var registeredChannelListQueries: [ChannelListQuery] {
-            let queries: [ChannelListQuery]
-            lock.lock()
-            queries = channelListQueries
-            lock.unlock()
-            return queries
+            queue.sync {
+                channelListQueries
+            }
         }
         
         func register(query: ChannelListQuery) {
-            lock.lock()
-            channelListQueries.append(query)
-            lock.unlock()
+            queue.sync {
+                channelListQueries.append(query)
+            }
         }
     }
     
