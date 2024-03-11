@@ -36,7 +36,7 @@ extension MessageState {
         struct Handlers {
             let messageDidChange: (ChatMessage) async -> Void
             let reactionsDidChange: ([ChatMessageReaction]) async -> Void
-            let repliesDidChange: ([ChatMessage]) async -> Void
+            let repliesDidChange: (StreamCollection<ChatMessage>) async -> Void
         }
         
         func start(with handlers: Handlers) {
@@ -47,7 +47,8 @@ extension MessageState {
             })
             repliesObserver.onDidChange = { [weak repliesObserver] _ in
                 guard let items = repliesObserver?.items else { return }
-                Task { await handlers.repliesDidChange(Array(items)) }
+                let collection = StreamCollection(items)
+                Task { await handlers.repliesDidChange(collection) }
             }
             
             do {
