@@ -135,7 +135,7 @@ class AttachmentQueueUploader: Worker {
 
     private func removePendingAttachment(with id: AttachmentId, error: Error?) {
         _pendingAttachmentIDs.mutate { $0.remove(id) }
-        if #available(iOSApplicationExtension 13.0, *) {
+        if #available(iOS 13.0, *) {
             notifyAPIRequestFinished(for: id, error: error)
         }
     }
