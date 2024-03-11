@@ -42,7 +42,7 @@ public final class ChatState: ObservableObject {
     /// Messages are ordered by timestamp and``messageOrder`` (In case of ``MessageOrdering.bottomToTop`` the list is sorted in ascending order).
     ///
     /// Use load messages in ``Chat`` for loading more messages.
-    @Published public private(set) var messages: [ChatMessage] = []
+    @Published public private(set) var messages = StreamCollection<ChatMessage>([])
     
     /// A Boolean value that returns whether the oldest messages have all been loaded or not.
     public var hasLoadedAllPreviousMessages: Bool {
