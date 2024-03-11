@@ -913,7 +913,7 @@ extension ChannelUpdater {
         try await update(channelQuery: channelQuery.withPagination(pagination), isInRecoveryMode: false)
     }
     
-    func loadMessages(before messageId: MessageId?, limit: Int?, channelQuery: ChannelQuery, loaded: [ChatMessage]) async throws {
+    func loadMessages(before messageId: MessageId?, limit: Int?, channelQuery: ChannelQuery, loaded: StreamCollection<ChatMessage>) async throws {
         guard !paginationState.isLoadingPreviousMessages else { return }
         guard !paginationState.hasLoadedAllPreviousMessages else { return }
         let lastLocalMessageId: () -> MessageId? = { loaded.last { !$0.isLocalOnly }?.id }
@@ -925,7 +925,7 @@ extension ChannelUpdater {
         try await update(channelQuery: channelQuery.withPagination(pagination), isInRecoveryMode: false)
     }
 
-    func loadMessages(after messageId: MessageId?, limit: Int?, channelQuery: ChannelQuery, loaded: [ChatMessage]) async throws {
+    func loadMessages(after messageId: MessageId?, limit: Int?, channelQuery: ChannelQuery, loaded: StreamCollection<ChatMessage>) async throws {
         guard !paginationState.isLoadingNextMessages else { return }
         guard !(paginationState.hasLoadedAllNextMessages || loaded.isEmpty) else { return }
         guard let messageId = messageId ?? paginationState.newestFetchedMessage?.id ?? loaded.first?.id else {
@@ -936,7 +936,7 @@ extension ChannelUpdater {
         try await update(channelQuery: channelQuery.withPagination(pagination), isInRecoveryMode: false)
     }
         
-    func loadMessages(around messageId: MessageId, limit: Int?, channelQuery: ChannelQuery, loaded: [ChatMessage]) async throws {
+    func loadMessages(around messageId: MessageId, limit: Int?, channelQuery: ChannelQuery, loaded: StreamCollection<ChatMessage>) async throws {
         guard !paginationState.isLoadingMiddleMessages else { return }
         let limit = limit ?? channelQuery.pagination?.pageSize ?? .messagesPageSize
         let pagination = MessagesPagination(pageSize: limit, parameter: .around(messageId))
