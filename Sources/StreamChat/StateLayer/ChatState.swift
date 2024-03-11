@@ -29,8 +29,8 @@ public final class ChatState: ObservableObject {
     
     // MARK: - Represented Channel
     
-    // TODO: Exposing it as non-nil? Requires one DB fetch on Chat creation
-    @Published private(set) var channel: ChatChannel?
+    /// The represented ``ChatChannel``.
+    @Published public private(set) var channel: ChatChannel?
     
     // MARK: - Messages
     
