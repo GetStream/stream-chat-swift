@@ -16,21 +16,22 @@ public final class ChatState: ObservableObject {
         self.cid = cid
         self.messageOrder = messageOrder
         self.paginationState = paginationState
-        observer = Observer(cid: cid, channelQuery: channelQuery, database: database, eventNotificationCenter: eventNotificationCenter)
+        observer = Observer(cid: cid, channelQuery: channelQuery, messageOrder: messageOrder, database: database, eventNotificationCenter: eventNotificationCenter)
         
         observer.start(
             with: .init(
                 channelDidChange: { [weak self] in await self?.setValue($0, for: \.channel) },
                 messagesDidChange: { [weak self] in await self?.setValue($0, for: \.messages) },
-                typingUsersDidChange: { [weak self] in await self?.setValue($0, for: \.typingUsers) }
+                typingUsersDidChange: { [weak self] in await self?.setValue($0, for: \.typingUsers) },
+                watchersDidChange: { [weak self] in await self?.setValue($0, for: \.watchers) }
             )
         )
     }
     
     // MARK: - Represented Channel
     
-    // TODO: Exposing it as non-nil? Requires one DB fetch on Chat creation
-    @Published private(set) var channel: ChatChannel?
+    /// The represented ``ChatChannel``.
+    @Published public private(set) var channel: ChatChannel?
     
     // MARK: - Messages
     
@@ -95,6 +96,13 @@ public final class ChatState: ObservableObject {
     
     /// A list of users who are currently typing.
     @Published public private(set) var typingUsers = Set<ChatUser>()
+    
+    // MARK: - Watchers
+    
+    /// An array of users who are currently watching the channel.
+    ///
+    /// Use load watchers method in ``Chat`` for populating this array.
+    @Published public private(set) var watchers = StreamCollection<ChatUser>([])
     
     // MARK: - Mutating the State
     
