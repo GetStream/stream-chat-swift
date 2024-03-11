@@ -49,7 +49,7 @@ public final class MessageState: ObservableObject {
     // MARK: - Replies
     
     /// An array of loaded replies sorted by ``MessageOrdering``.
-    @Published public private(set) var replies = [ChatMessage]()
+    @Published public private(set) var replies = StreamCollection<ChatMessage>([])
     
     /// A Boolean value that returns whether the oldest replies have all been loaded or not.
     public var hasLoadedAllPreviousReplies: Bool {
