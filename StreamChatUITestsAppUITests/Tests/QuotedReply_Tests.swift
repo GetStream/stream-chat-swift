@@ -62,7 +62,7 @@ final class QuotedReply_Tests: StreamTestCase {
     func test_quotedReplyInList_whenParticipantAddsQuotedReply_Message() {
         linkToScenario(withId: 1668)
 
-        let messageCount = 20
+        let messageCount = 25
 
         GIVEN("user opens the channel") {
             backendRobot.generateChannels(count: 1, messagesCount: messageCount)
@@ -296,7 +296,7 @@ final class QuotedReply_Tests: StreamTestCase {
     func test_quotedReplyInList_whenParticipantAddsQuotedReply_Message_InThread() {
         linkToScenario(withId: 1932)
 
-        let messageCount = 20
+        let messageCount = 25
 
         GIVEN("user opens the channel") {
             backendRobot.generateChannels(count: 1, messageText: parentText, messagesCount: 1, replyCount: messageCount)
