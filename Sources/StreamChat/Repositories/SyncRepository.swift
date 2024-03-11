@@ -35,6 +35,7 @@ class SyncRepository {
     private let config: ChatClientConfig
     private let database: DatabaseContainer
     private let apiClient: APIClient
+    private let channelListUpdater: ChannelListUpdater
     let activeChannelControllers: ThreadSafeWeakCollection<ChatChannelController>
     let activeChannelListControllers: ThreadSafeWeakCollection<ChatChannelListController>
     let offlineRequestsRepository: OfflineRequestsRepository
@@ -54,12 +55,14 @@ class SyncRepository {
         offlineRequestsRepository: OfflineRequestsRepository,
         eventNotificationCenter: EventNotificationCenter,
         database: DatabaseContainer,
-        apiClient: APIClient
+        apiClient: APIClient,
+        channelListUpdater: ChannelListUpdater
     ) {
         self.config = config
         self.activeChannelControllers = activeChannelControllers
         self.activeChannelListControllers = activeChannelListControllers
         self.offlineRequestsRepository = offlineRequestsRepository
+        self.channelListUpdater = channelListUpdater
         self.eventNotificationCenter = eventNotificationCenter
         self.database = database
         self.apiClient = apiClient
@@ -134,6 +137,12 @@ class SyncRepository {
                 )
             }
         operations.append(contentsOf: refetchChannelListQueryOperations)
+        let channelListRegistry = ChannelListRegistry()
+        let notification = Notification(name: SyncRepository.syncRepositoryChannelListQueryRegistrationNotification, object: channelListRegistry)
+        NotificationCenter.default.post(notification)
+        operations.append(contentsOf: channelListRegistry.registeredChannelListQueries.map { query in
+            RefetchChannelListQueryOperation(query: query, channelListUpdater: channelListUpdater, context: context)
+        })
 
         // 4. Clean up unwanted channels
         operations.append(DeleteUnwantedChannelsOperation(database: database, context: context))
@@ -336,4 +345,28 @@ private extension Date {
     var numberOfDaysUntilNow: Int {
         Calendar.current.dateComponents([.day], from: self, to: Date()).day ?? 0
     }
+}
+
+extension SyncRepository {
+    final class ChannelListRegistry {
+        private var channelListQueries = [ChannelListQuery]()
+        private let lock = NSLock()
+        
+        var registeredChannelListQueries: [ChannelListQuery] {
+            let queries: [ChannelListQuery]
+            lock.lock()
+            queries = channelListQueries
+            lock.unlock()
+            return queries
+        }
+        
+        func register(query: ChannelListQuery) {
+            lock.lock()
+            channelListQueries.append(query)
+            lock.unlock()
+        }
+    }
+    
+    /// A notification which contains ChannelListRegistry as the notification's object.
+    static let syncRepositoryChannelListQueryRegistrationNotification = Notification.Name("syncRepositoryChannelListQueryRegistrationNotification")
 }
