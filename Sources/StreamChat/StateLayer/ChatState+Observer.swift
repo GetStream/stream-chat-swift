@@ -38,7 +38,7 @@ extension ChatState {
         
         struct Handlers {
             let channelDidChange: (ChatChannel) async -> Void
-            let messagesDidChange: ([ChatMessage]) async -> Void
+            let messagesDidChange: (StreamCollection<ChatMessage>) async -> Void
             let typingUsersDidChange: (Set<ChatUser>) async -> Void
         }
         
@@ -47,7 +47,8 @@ extension ChatState {
             channelObserver.onFieldChange(\.currentlyTypingUsers, do: { change in Task { await handlers.typingUsersDidChange(change.item) } })
             messagesObserver.onDidChange = { [weak messagesObserver] _ in
                 guard let items = messagesObserver?.items else { return }
-                Task { await handlers.messagesDidChange(Array(items)) }
+                let collection = StreamCollection(items)
+                Task { await handlers.messagesDidChange(collection) }
             }
             
             // TODO: Implement member list
