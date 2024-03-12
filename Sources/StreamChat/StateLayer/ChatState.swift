@@ -81,7 +81,7 @@ public final class ChatState: ObservableObject {
     // MARK: - Message Reading
     
     /// The id of the message which the current user last read.
-    public var lastReadMessage: MessageId? {
+    public var lastReadMessageId: MessageId? {
         guard let channel else { return nil }
         guard let userId = authenticationRepository.currentUserId else { return nil }
         return channel.lastReadMessageId(userId: userId)
@@ -95,7 +95,7 @@ public final class ChatState: ObservableObject {
     /// * Read state's ``ChatChannelRead.lastReadMessageId`` is nil: oldest message if all the messages have been paginated, otherwise nil
     /// * Last read message is unreachable (e.g. channel was truncated): oldest message if all the messages have been paginated, otherwise nil
     /// * Next message after the last read message id not from the current user
-    public var firstUnreadMessage: MessageId? {
+    public var firstUnreadMessageId: MessageId? {
         guard let userId = authenticationRepository.currentUserId else { return nil }
         return UnreadMessageLookup.firstUnreadMessage(in: self, userId: userId)
     }
