@@ -2,7 +2,6 @@
 // Copyright © 2024 Stream.io Inc. All rights reserved.
 //
 
-import Combine
 import Foundation
 
 @available(iOS 13.0, *)
@@ -16,7 +15,7 @@ extension ChannelListState {
         private let eventNotificationCenter: EventNotificationCenter
         private var eventObservers = [EventObserver]()
         private let query: ChannelListQuery
-        private var syncRepositoryCancellable: AnyCancellable?
+        private var channelListSyncRegistrationObserver: NSObjectProtocol?
         
         init(
             query: ChannelListQuery,
@@ -47,15 +46,22 @@ extension ChannelListState {
             )
         }
         
+        deinit {
+            if let channelListSyncRegistrationObserver {
+                NotificationCenter.default.removeObserver(channelListSyncRegistrationObserver)
+            }
+        }
+        
         struct Handlers {
             let channelsDidChange: (StreamCollection<ChatChannel>) async -> Void
         }
         
         func start(with handlers: Handlers) {
-            syncRepositoryCancellable = NotificationCenter.default
-                .publisher(for: .syncRepositoryChannelListQueryRegistration)
-                .compactMap { $0.object as? SyncRepository.ChannelListRegistry }
-                .sink(receiveValue: { [query] registry in registry.register(query: query) })
+            channelListSyncRegistrationObserver = NotificationCenter.default.addObserver(forName: .syncRepositoryChannelListQueryRegistration, object: nil, queue: nil) { [query] notification in
+                guard let registry = notification.object as? SyncRepository.ChannelListRegistry else { return }
+                registry.register(.init(query: query))
+            }
+
             /// When we receive events, we need to check if a channel should be added or removed from
             /// the current query depending on the following events:
             /// - Channel created: We analyse if the channel should be added to the current query.

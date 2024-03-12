@@ -121,6 +121,7 @@ public class ChatChannelListController: DataController, DelegateCallable, DataSt
 
     private let filter: ((ChatChannel) -> Bool)?
     private let environment: Environment
+    private var channelListSyncRegistrationObserver: NSObjectProtocol?
 
     /// Creates a new `ChannelListController`.
     ///
@@ -140,8 +141,19 @@ public class ChatChannelListController: DataController, DelegateCallable, DataSt
         self.environment = environment
         eventsController = client.eventsController()
         super.init()
-        client.trackChannelListController(self)
+        channelListSyncRegistrationObserver = NotificationCenter.default.addObserver(forName: .syncRepositoryChannelListQueryRegistration, object: nil, queue: nil) { notification in
+            guard let registry = notification.object as? SyncRepository.ChannelListRegistry else { return }
+            registry.register(.init(query: query, notifyDidReset: { [weak self] newChannels in
+                self?.hasLoadedAllPreviousChannels = newChannels.count < query.pagination.pageSize
+            }))
+        }
         eventsController.delegate = self
+    }
+    
+    deinit {
+        if let channelListSyncRegistrationObserver {
+            NotificationCenter.default.removeObserver(channelListSyncRegistrationObserver)
+        }
     }
 
     override public func synchronize(_ completion: ((_ error: Error?) -> Void)? = nil) {
@@ -186,30 +198,6 @@ public class ChatChannelListController: DataController, DelegateCallable, DataSt
         worker.markAllRead { error in
             self.callback {
                 completion?(error)
-            }
-        }
-    }
-
-    // MARK: - Internal
-
-    func resetQuery(
-        watchedAndSynchedChannelIds: Set<ChannelId>,
-        synchedChannelIds: Set<ChannelId>,
-        completion: @escaping (Result<(synchedAndWatched: [ChatChannel], unwanted: Set<ChannelId>), Error>) -> Void
-    ) {
-        let pageSize = query.pagination.pageSize
-        worker.resetChannelsQuery(
-            for: query,
-            pageSize: pageSize,
-            watchedAndSynchedChannelIds: watchedAndSynchedChannelIds,
-            synchedChannelIds: synchedChannelIds
-        ) { [weak self] result in
-            switch result {
-            case let .success((newChannels, unwantedCids)):
-                self?.hasLoadedAllPreviousChannels = newChannels.count < pageSize
-                completion(.success((newChannels, unwantedCids)))
-            case let .failure(error):
-                completion(.failure(error))
             }
         }
     }

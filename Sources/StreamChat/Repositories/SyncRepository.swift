@@ -37,7 +37,6 @@ class SyncRepository {
     private let apiClient: APIClient
     private let channelListUpdater: ChannelListUpdater
     let activeChannelControllers: ThreadSafeWeakCollection<ChatChannelController>
-    let activeChannelListControllers: ThreadSafeWeakCollection<ChatChannelListController>
     let offlineRequestsRepository: OfflineRequestsRepository
     let eventNotificationCenter: EventNotificationCenter
 
@@ -51,7 +50,6 @@ class SyncRepository {
     init(
         config: ChatClientConfig,
         activeChannelControllers: ThreadSafeWeakCollection<ChatChannelController>,
-        activeChannelListControllers: ThreadSafeWeakCollection<ChatChannelListController>,
         offlineRequestsRepository: OfflineRequestsRepository,
         eventNotificationCenter: EventNotificationCenter,
         database: DatabaseContainer,
@@ -60,7 +58,6 @@ class SyncRepository {
     ) {
         self.config = config
         self.activeChannelControllers = activeChannelControllers
-        self.activeChannelListControllers = activeChannelListControllers
         self.offlineRequestsRepository = offlineRequestsRepository
         self.channelListUpdater = channelListUpdater
         self.eventNotificationCenter = eventNotificationCenter
@@ -129,18 +126,10 @@ class SyncRepository {
         // 3. Refetch channel lists queries, link only what backend returns (the 1st page)
         // We use `context.synchedChannelIds` to keep track of the channels that were synched both in the previous step and
         // after each ChannelListController recovery.
-        let refetchChannelListQueryOperations: [AsyncOperation] = activeChannelListControllers.allObjects
-            .map { controller in
-                RefetchChannelListQueryOperation(
-                    controller: controller,
-                    context: context
-                )
-            }
-        operations.append(contentsOf: refetchChannelListQueryOperations)
         let channelListRegistry = ChannelListRegistry()
         NotificationCenter.default.post(Notification(name: .syncRepositoryChannelListQueryRegistration, object: channelListRegistry))
-        operations.append(contentsOf: channelListRegistry.registeredChannelListQueries.map { query in
-            RefetchChannelListQueryOperation(query: query, channelListUpdater: channelListUpdater, context: context)
+        operations.append(contentsOf: channelListRegistry.entries.map { entry in
+            RefetchChannelListQueryOperation(entry: entry, channelListUpdater: channelListUpdater, context: context)
         })
 
         // 4. Clean up unwanted channels
@@ -348,18 +337,28 @@ private extension Date {
 
 extension SyncRepository {
     final class ChannelListRegistry {
-        private var channelListQueries = [ChannelListQuery]()
-        private let queue = DispatchQueue(label: "io.getstream.sync-repository.channel-list-registry")
-        
-        var registeredChannelListQueries: [ChannelListQuery] {
-            queue.sync {
-                channelListQueries
+        struct Entry {
+            let query: ChannelListQuery
+            let notifyDidReset: (([ChatChannel]) -> Void)?
+            
+            init(query: ChannelListQuery, notifyDidReset: (([ChatChannel]) -> Void)? = nil) {
+                self.query = query
+                self.notifyDidReset = notifyDidReset
             }
         }
         
-        func register(query: ChannelListQuery) {
+        private var _entries = [Entry]()
+        private let queue = DispatchQueue(label: "io.getstream.sync-repository.channel-list-registry")
+        
+        var entries: [Entry] {
             queue.sync {
-                channelListQueries.append(query)
+                _entries
+            }
+        }
+        
+        func register(_ entry: Entry) {
+            queue.sync {
+                _entries.append(entry)
             }
         }
     }

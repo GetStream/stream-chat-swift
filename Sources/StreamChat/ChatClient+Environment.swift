@@ -123,7 +123,6 @@ extension ChatClient {
         var syncRepositoryBuilder: (
             _ config: ChatClientConfig,
             _ activeChannelControllers: ThreadSafeWeakCollection<ChatChannelController>,
-            _ activeChannelListControllers: ThreadSafeWeakCollection<ChatChannelListController>,
             _ offlineRequestsRepository: OfflineRequestsRepository,
             _ eventNotificationCenter: EventNotificationCenter,
             _ database: DatabaseContainer,
@@ -133,12 +132,11 @@ extension ChatClient {
             SyncRepository(
                 config: $0,
                 activeChannelControllers: $1,
-                activeChannelListControllers: $2,
-                offlineRequestsRepository: $3,
-                eventNotificationCenter: $4,
-                database: $5,
-                apiClient: $6,
-                channelListUpdater: $7
+                offlineRequestsRepository: $2,
+                eventNotificationCenter: $3,
+                database: $4,
+                apiClient: $5,
+                channelListUpdater: $6
             )
         }
 

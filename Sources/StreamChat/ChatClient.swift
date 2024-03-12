@@ -41,8 +41,7 @@ public class ChatClient {
     /// work if needed (i.e. when a new message pending sent appears in the database, a worker tries to send it.)
     private(set) var backgroundWorkers: [Worker] = []
 
-    /// Keeps a weak reference to the active channel list controllers to ensure a proper recovery when coming back online
-    private(set) var activeChannelListControllers = ThreadSafeWeakCollection<ChatChannelListController>()
+    /// Keeps a weak reference to the active channel controllers to ensure a proper recovery when coming back online
     private(set) var activeChannelControllers = ThreadSafeWeakCollection<ChatChannelController>()
 
     /// Background worker that takes care about client connection recovery when the Internet comes back OR app transitions from background to foreground.
@@ -163,7 +162,6 @@ public class ChatClient {
         let syncRepository = environment.syncRepositoryBuilder(
             config,
             activeChannelControllers,
-            activeChannelListControllers,
             offlineRequestsRepository,
             eventNotificationCenter,
             databaseContainer,
@@ -364,7 +362,6 @@ public class ChatClient {
 
         // Stop tracking active components
         activeChannelControllers.removeAllObjects()
-        activeChannelListControllers.removeAllObjects()
 
         let group = DispatchGroup()
         group.enter()
@@ -410,10 +407,6 @@ public class ChatClient {
 
     func trackChannelController(_ channelController: ChatChannelController) {
         activeChannelControllers.add(channelController)
-    }
-
-    func trackChannelListController(_ channelListController: ChatChannelListController) {
-        activeChannelListControllers.add(channelListController)
     }
 
     func completeConnectionIdWaiters(connectionId: String?) {
