@@ -13,7 +13,7 @@ extension ChatState {
         private let messagesObserver: BackgroundListDatabaseObserver<ChatMessage, MessageDTO>
         private var webSocketEventObservers = [EventObserver]()
         
-        init(cid: ChannelId, channelQuery: ChannelQuery, database: DatabaseContainer, eventNotificationCenter: EventNotificationCenter) {
+        init(cid: ChannelId, channelQuery: ChannelQuery, messageOrder: MessageOrdering, database: DatabaseContainer, eventNotificationCenter: EventNotificationCenter) {
             self.cid = cid
             let context = database.backgroundReadOnlyContext
             channelObserver = BackgroundEntityDatabaseObserver(
@@ -26,7 +26,7 @@ extension ChatState {
                 fetchRequest: MessageDTO.messagesFetchRequest(
                     for: cid,
                     pageSize: channelQuery.pagination?.pageSize ?? .messagesPageSize,
-                    sortAscending: true,
+                    sortAscending: messageOrder.isAscending,
                     deletedMessagesVisibility: context.deletedMessagesVisibility ?? .visibleForCurrentUser,
                     shouldShowShadowedMessages: context.shouldShowShadowedMessages ?? false
                 ),
@@ -68,6 +68,17 @@ extension ChatState {
             } catch {
                 log.error("Failed to start the messages observer")
             }
+        }
+    }
+}
+
+private extension MessageOrdering {
+    var isAscending: Bool {
+        switch self {
+        case .topToBottom:
+            return false
+        case .bottomToTop:
+            return true
         }
     }
 }
