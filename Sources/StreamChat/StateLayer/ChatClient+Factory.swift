@@ -4,7 +4,30 @@
 
 import Foundation
 
-// MARK: - Factory methods to create the chat.
+// MARK: - Factory Methods for Creating Chat Lists
+
+@available(iOS 13.0, *)
+extension ChatClient {
+    /// Creates an instance of ``ChannelList`` which represents an array of channels matching to the specified ``ChannelListQuery``.
+    ///
+    /// Matching channels are stored in ``ChannelListState.channels``. Use pagination methods in ``ChannelList`` for loading more matching channels to the observable state.
+    /// Refer to [querying channels in Stream documentation](https://getstream.io/chat/docs/ios-swift/query_channels/?language=swift) for additional details.
+    ///
+    /// - Note: Only channels that the user can read are returned, therefore, make sure that the query uses a filter that includes such logic. It is recommended to include a members filter which includes the currently logged in user (e.g. `.containMembers(userIds: ["thierry"])`).
+    ///
+    /// - Parameters:
+    ///   - query: The query specifies which channels are part of the list and how channels are sorted.
+    ///   - dynamicFilter: A filter block for filtering by channel's extra data fields or as a manual filter when ``ChatClientConfig.isChannelAutomaticFilteringEnabled`` is false ([read more](https://getstream.io/chat/docs/sdk/ios/client/controllers/channels/)).
+    ///
+    /// - Throws: An error while communicating with the Stream API.
+    /// - Returns: An instance of ``ChannelList`` which represents actions and the current state of the list.
+    public func makeChannelList(with query: ChannelListQuery, dynamicFilter: ((ChatChannel) -> Bool)? = nil) async throws -> ChannelList {
+        let channels = try await channelListUpdater.update(channelListQuery: query)
+        return ChannelList(channels: channels, query: query, dynamicFilter: dynamicFilter, channelListUpdater: channelListUpdater, client: self)
+    }
+}
+
+// MARK: - Factory Methods for Creating Chats.
 
 @available(iOS 13.0, *)
 extension ChatClient {
@@ -193,25 +216,5 @@ extension ChatClient {
             database: databaseContainer,
             apiClient: apiClient
         )
-    }
-}
-
-// MARK: - Compatibility Methods
-
-@available(iOS 13.0, *)
-extension ChatChannelController {
-    /// Converts the channel controller to an instance of `Chat`.
-    ///
-    /// - Warning: This is a compatibility method for the new state layer represented by `Chat`. It is destined to be removed.
-    public func makeChat(watch: Bool = true) -> Chat {
-        if let cid = cid {
-            let chat = client.makeChat(for: cid)
-            if watch {
-                Task { try await chat.watch() }
-            }
-            return chat
-        } else {
-            fatalError("Trying to access channel controller before it was synchronized")
-        }
     }
 }
