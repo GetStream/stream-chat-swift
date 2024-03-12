@@ -554,7 +554,7 @@ class ChannelUpdater: Worker {
     /// - Parameters:
     ///   - query: Query object for watchers. See `ChannelWatcherListQuery`
     ///   - completion: Called when the API call is finished. Called with `Error` if the remote update fails.
-    func channelWatchers(query: ChannelWatcherListQuery, completion: ((Error?) -> Void)? = nil) {
+    func channelWatchers(query: ChannelWatcherListQuery, completion: ((Result<ChannelPayload, Error>) -> Void)? = nil) {
         apiClient.request(endpoint: .channelWatchers(query: query)) { (result: Result<ChannelPayload, Error>) in
             do {
                 let payload = try result.get()
@@ -570,10 +570,14 @@ class ChannelUpdater: Worker {
                     // we should save the payload as it's the latest state of the channel
                     try session.saveChannel(payload: payload)
                 } completion: { error in
-                    completion?(error)
+                    if let error {
+                        completion?(.failure(error))
+                    } else {
+                        completion?(result)
+                    }
                 }
             } catch {
-                completion?(error)
+                completion?(.failure(error))
             }
         }
     }
@@ -718,6 +722,18 @@ extension ChannelUpdater {
             addMembers(currentUserId: currentUserId, cid: cid, userIds: userIds, message: message, hideHistory: hideHistory) { error in
                 continuation.resume(with: error)
             }
+        }
+    }
+    
+    func channelWatchers(for query: ChannelWatcherListQuery) async throws -> [ChatUser] {
+        let payload = try await withCheckedThrowingContinuation { continuation in
+            channelWatchers(query: query) { result in
+                continuation.resume(with: result)
+            }
+        }
+        guard let ids = payload.watchers?.map(\.id) else { return [] }
+        return try await database.backgroundRead { context in
+            try ids.compactMap { try UserDTO.load(id: $0, context: context)?.asModel() }
         }
     }
     
