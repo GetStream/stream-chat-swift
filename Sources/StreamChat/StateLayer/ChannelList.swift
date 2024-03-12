@@ -24,7 +24,6 @@ public struct ChannelList {
         self.state = state
         
         // These are currently not implemented compared to ChannelListController:
-        #warning("Implement query reset (e.g. SyncRepository)")
         #warning("Implement linking and unlinking based on EventController callbacks")
     }
     
