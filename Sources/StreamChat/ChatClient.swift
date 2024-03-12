@@ -78,6 +78,8 @@ public class ChatClient {
     let callRepository: CallRepository
 
     let channelRepository: ChannelRepository
+    
+    let channelListUpdater: ChannelListUpdater
 
     func makeMessagesPaginationStateHandler() -> MessagesPaginationStateHandling {
         MessagesPaginationStateHandler()
@@ -158,6 +160,10 @@ public class ChatClient {
             apiClient,
             config.queuedActionsMaxHoursThreshold
         )
+        let channelListUpdater = environment.channelListUpdaterBuilder(
+            databaseContainer,
+            apiClient
+        )
         let syncRepository = environment.syncRepositoryBuilder(
             config,
             activeChannelControllers,
@@ -165,7 +171,8 @@ public class ChatClient {
             offlineRequestsRepository,
             eventNotificationCenter,
             databaseContainer,
-            apiClient
+            apiClient,
+            channelListUpdater
         )
         let webSocketClient = factory.makeWebSocketClient(
             requestEncoder: webSocketEncoder,
@@ -187,6 +194,7 @@ public class ChatClient {
             environment.timerType
         )
 
+        self.channelListUpdater = channelListUpdater
         self.databaseContainer = databaseContainer
         self.apiClient = apiClient
         self.webSocketClient = webSocketClient

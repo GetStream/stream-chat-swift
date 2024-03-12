@@ -1,0 +1,132 @@
+//
+// Copyright © 2024 Stream.io Inc. All rights reserved.
+//
+
+import Combine
+import Foundation
+
+@available(iOS 13.0, *)
+extension ChannelListState {
+    final class Observer {
+        private let channelListObserver: BackgroundListDatabaseObserver<ChatChannel, ChannelDTO>
+        private let clientConfig: ChatClientConfig
+        private let channelListUpdater: ChannelListUpdater
+        private let database: DatabaseContainer
+        private let dynamicFilter: ((ChatChannel) -> Bool)?
+        private let eventNotificationCenter: EventNotificationCenter
+        private var eventObservers = [EventObserver]()
+        private let query: ChannelListQuery
+        private var syncRepositoryCancellable: AnyCancellable?
+        
+        init(
+            query: ChannelListQuery,
+            dynamicFilter: ((ChatChannel) -> Bool)?,
+            clientConfig: ChatClientConfig,
+            channelListUpdater: ChannelListUpdater,
+            database: DatabaseContainer,
+            eventNotificationCenter: EventNotificationCenter
+        ) {
+            self.clientConfig = clientConfig
+            self.channelListUpdater = channelListUpdater
+            self.database = database
+            self.dynamicFilter = dynamicFilter
+            self.query = query
+            self.eventNotificationCenter = eventNotificationCenter
+            
+            // Note that for channel list we sort outside of NSFetchRequest because ChannelListQuery defines its own sorting (see runtimeSorting)
+            channelListObserver = BackgroundListDatabaseObserver(
+                context: database.backgroundReadOnlyContext,
+                fetchRequest: ChannelDTO.channelListFetchRequest(
+                    query: query,
+                    chatClientConfig: clientConfig
+                ),
+                itemCreator: {
+                    try $0.asModel() as ChatChannel
+                },
+                sorting: query.sort.runtimeSorting
+            )
+        }
+        
+        struct Handlers {
+            let channelsDidChange: (StreamCollection<ChatChannel>) async -> Void
+        }
+        
+        func start(with handlers: Handlers) {
+            syncRepositoryCancellable = NotificationCenter.default
+                .publisher(for: .syncRepositoryChannelListQueryRegistration)
+                .compactMap { $0.object as? SyncRepository.ChannelListRegistry }
+                .sink(receiveValue: { [query] registry in registry.register(query: query) })
+            /// When we receive events, we need to check if a channel should be added or removed from
+            /// the current query depending on the following events:
+            /// - Channel created: We analyse if the channel should be added to the current query.
+            /// - New message sent: This means the channel will reorder and appear on first position,
+            ///   so we also analyse if it should be added to the current query.
+            /// - Channel is updated: We only check if we should remove it from the current query.
+            ///   We don't try to add it to the current query to not mess with pagination.
+            let nc = eventNotificationCenter
+            eventObservers = [
+                EventObserver(notificationCenter: nc, transform: { $0 as? NotificationAddedToChannelEvent }) { [weak self] event in
+                    try await self?.linkChannelIfNeeded(event.channel)
+                },
+                EventObserver(notificationCenter: nc, transform: { $0 as? MessageNewEvent }) { [weak self] event in
+                    try await self?.linkChannelIfNeeded(event.channel)
+                },
+                EventObserver(notificationCenter: nc, transform: { $0 as? NotificationMessageNewEvent }) { [weak self] event in
+                    try await self?.linkChannelIfNeeded(event.channel)
+                },
+                EventObserver(notificationCenter: nc, transform: { $0 as? ChannelUpdatedEvent }) { [weak self] event in
+                    try await self?.unlinkChannelIfNeeded(event.channel)
+                },
+                EventObserver(notificationCenter: nc, transform: { $0 as? ChannelVisibleEvent }) { [weak self] event in
+                    guard let self else { return }
+                    let channel = try await self.database.backgroundRead { context in
+                        guard let dto = ChannelDTO.load(cid: event.cid, context: context) else {
+                            throw ClientError.ChannelDoesNotExist(cid: event.cid)
+                        }
+                        return try dto.asModel()
+                    }
+                    try await self.linkChannelIfNeeded(channel)
+                }
+            ]
+            
+            channelListObserver.onDidChange = { [weak channelListObserver] _ in
+                guard let items = channelListObserver?.items else { return }
+                let collection = StreamCollection(items)
+                Task { await handlers.channelsDidChange(collection) }
+            }
+            
+            do {
+                try channelListObserver.startObserving()
+            } catch {
+                log.error("Failed to start the channel list observer for query: \(query)")
+            }
+        }
+        
+        // MARK: Linking and Unlinking Channels from the Query
+        
+        private func isBelongingToChannelListQuery(channel: ChatChannel) -> Bool {
+            if let filter = dynamicFilter {
+                return filter(channel)
+            }
+            // When auto-filtering is enabled the channel will appear or not automatically if the
+            // query matches the DB Predicate. So here we default to saying it always belong to the current query.
+            if clientConfig.isChannelAutomaticFilteringEnabled {
+                return true
+            }
+            return false
+        }
+        
+        private func linkChannelIfNeeded(_ channel: ChatChannel) async throws {
+            guard !channelListObserver.items.contains(where: { $0.cid == channel.cid }) else { return }
+            guard isBelongingToChannelListQuery(channel: channel) else { return }
+            try await channelListUpdater.link(channel: channel, with: query)
+            try await channelListUpdater.startWatchingChannels(withIds: [channel.cid])
+        }
+        
+        private func unlinkChannelIfNeeded(_ channel: ChatChannel) async throws {
+            guard channelListObserver.items.contains(where: { $0.cid == channel.cid }) else { return }
+            guard !isBelongingToChannelListQuery(channel: channel) else { return }
+            try await channelListUpdater.unlink(channel: channel, with: query)
+        }
+    }
+}
