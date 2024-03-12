@@ -31,13 +31,6 @@ public struct ChannelList {
             client.databaseContainer,
             client.eventNotificationCenter
         )
-        
-        // These are currently not implemented compared to ChannelListController:
-<<<<<<< HEAD
-        #warning("Implement linking and unlinking based on EventController callbacks")
-=======
-        #warning("Implement query reset (e.g. SyncRepository)")
->>>>>>> 37812d05c (Add linking and unlinking channels from channel list query when channel related events are triggered)
     }
     
     /// An observable object representing the current state of the channel list.
