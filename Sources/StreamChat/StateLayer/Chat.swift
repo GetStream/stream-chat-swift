@@ -282,7 +282,7 @@ public final class Chat {
     ///
     /// - Parameters:
     ///   - message: The parent message id which has replies.
-    ///   - pagination: The pagination configuration which includes limit and cursor.
+    ///   - pagination: The pagination configuration which includes a limit and a cursor.
     ///
     /// - Throws: An error while communicating with the Stream API.
     /// - Returns: An array of messages for the pagination.
@@ -459,7 +459,7 @@ public final class Chat {
     ///
     /// - Parameters:
     ///   - messageId: The id of the message to load reactions.
-    ///   - pagination: The pagination configuration which includes limit and offset or cursor.
+    ///   - pagination: The pagination configuration which includes a limit and an offset or a cursor.
     ///
     /// - Throws: An error while communicating with the Stream API.
     /// - Returns: An array of reactions for given limit and offset.
@@ -495,7 +495,7 @@ public final class Chat {
     ///
     /// - Parameters:
     ///   - messageId: The parent message id which has replies.
-    ///   - pagination: The pagination configuration which includes limit and cursor.
+    ///   - pagination: The pagination configuration which includes a limit and a cursor.
     ///
     /// - Throws: An error while communicating with the Stream API.
     /// - Returns: An array of messages for the pagination.
@@ -858,6 +858,32 @@ public final class Chat {
     /// - Throws: An error while communicating with the Stream API.
     public func stopWatching() async throws {
         try await channelUpdater.stopWatching(cid: cid)
+    }
+    
+    // MARK: -
+    
+    /// Loads watchers for the specified pagination parameters and updates ``ChatState.watchers``.
+    ///
+    /// - Parameters:
+    ///   - pagination: The pagination configuration which includes a limit and a cursor or an offset.
+    ///
+    /// - Throws: An error while communicating with the Stream API.
+    /// - Returns: An array of watchers for the pagination.
+    @discardableResult public func loadWatchers(with pagination: Pagination) async throws -> [ChatUser] {
+        try await channelUpdater.channelWatchers(for: .init(cid: cid, pagination: pagination))
+    }
+
+    /// Loads more watchers and updates ``ChatState.watchers``.
+    ///
+    /// - Parameters:
+    ///   - limit: The limit for the page size. The default limit is 30.
+    ///
+    /// - Throws: An error while communicating with the Stream API.
+    /// - Returns: An array of loaded watchers.
+    @discardableResult public func loadNextWatchers(with limit: Int? = nil) async throws -> [ChatUser] {
+        let count = await state.value(forKeyPath: \.watchers.count)
+        let pagination = Pagination(pageSize: limit ?? .channelWatchersPageSize, offset: count)
+        return try await loadWatchers(with: pagination)
     }
 }
 
