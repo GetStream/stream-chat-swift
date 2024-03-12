@@ -14,7 +14,6 @@ public final class ChannelListState: ObservableObject {
     init(channels: [ChatChannel], query: ChannelListQuery, clientConfig: ChatClientConfig, database: DatabaseContainer) {
         self.channels = StreamCollection<ChatChannel>(channels)
         self.clientConfig = clientConfig
-        hasLoadedAllChannels = channels.count < query.pagination.pageSize
         observer = Observer(query: query, chatClientConfig: clientConfig, database: database)
         self.query = query
         
@@ -26,9 +25,6 @@ public final class ChannelListState: ObservableObject {
     /// An array of channels for the specified ``ChannelListQuery``.
     @Published public private(set) var channels = StreamCollection<ChatChannel>([])
     
-    /// True, if all the channels were loaded with paginated loading.
-    @Published public private(set) var hasLoadedAllChannels = false
-    
     // MARK: - Mutating the State
     
     @MainActor func value<Value>(forKeyPath keyPath: KeyPath<ChannelListState, Value>) -> Value {
@@ -37,9 +33,5 @@ public final class ChannelListState: ObservableObject {
     
     @MainActor func setValue<Value>(_ value: Value, for keyPath: ReferenceWritableKeyPath<ChannelListState, Value>) {
         self[keyPath: keyPath] = value
-    }
-    
-    @MainActor func setLoadedAllChannels(_ value: Bool) {
-        setValue(value, for: \.hasLoadedAllChannels)
     }
 }

@@ -42,9 +42,7 @@ public struct ChannelList {
     /// - Returns: An array of channels for the pagination.
     @discardableResult public func loadChannels(with pagination: Pagination) async throws -> [ChatChannel] {
         guard pagination.pageSize > 0 else { return [] }
-        let channels = try await channelListUpdater.loadChannels(query: query, pagination: pagination)
-        await state.setLoadedAllChannels(channels.count < pagination.pageSize)
-        return channels
+        return try await channelListUpdater.loadChannels(query: query, pagination: pagination)
     }
     
     /// Loads more channels and updates ``ChatListState.channels``.
@@ -57,9 +55,7 @@ public struct ChannelList {
     @discardableResult public func loadNextChannels(with limit: Int? = nil) async throws -> [ChatChannel] {
         let limit = limit ?? query.pagination.pageSize
         let count = await state.value(forKeyPath: \.channels.count)
-        let channels = try await channelListUpdater.loadNextChannels(query: query, limit: limit, loadedChannelsCount: count)
-        await state.setLoadedAllChannels(channels.count < limit)
-        return channels
+        return try await channelListUpdater.loadNextChannels(query: query, limit: limit, loadedChannelsCount: count)
     }
 }
 
