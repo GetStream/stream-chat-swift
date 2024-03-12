@@ -8,15 +8,25 @@ import Foundation
 @available(iOS 13.0, *)
 public final class ChannelListState: ObservableObject {
     private let observer: Observer
-    private let clientConfig: ChatClientConfig
-    let query: ChannelListQuery
     
-    init(channels: [ChatChannel], query: ChannelListQuery, clientConfig: ChatClientConfig, database: DatabaseContainer) {
+    init(
+        channels: [ChatChannel],
+        query: ChannelListQuery,
+        dynamicFilter: ((ChatChannel) -> Bool)?,
+        clientConfig: ChatClientConfig,
+        channelListUpdater: ChannelListUpdater,
+        database: DatabaseContainer,
+        eventNotificationCenter: EventNotificationCenter
+    ) {
         self.channels = StreamCollection<ChatChannel>(channels)
-        self.clientConfig = clientConfig
-        observer = Observer(query: query, chatClientConfig: clientConfig, database: database)
-        self.query = query
-        
+        observer = Observer(
+            query: query,
+            dynamicFilter: dynamicFilter,
+            clientConfig: clientConfig,
+            channelListUpdater: channelListUpdater,
+            database: database,
+            eventNotificationCenter: eventNotificationCenter
+        )
         observer.start(
             with: .init(channelsDidChange: { [weak self] channels in await self?.setValue(channels, for: \.channels) })
         )
