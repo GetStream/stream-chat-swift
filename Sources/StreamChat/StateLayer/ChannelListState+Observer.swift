@@ -34,7 +34,7 @@ extension ChannelListState {
         
         func start(with handlers: Handlers) {
             syncRepositoryCancellable = NotificationCenter.default
-                .publisher(for: SyncRepository.syncRepositoryChannelListQueryRegistrationNotification)
+                .publisher(for: .syncRepositoryChannelListQueryRegistration)
                 .compactMap { $0.object as? SyncRepository.ChannelListRegistry }
                 .sink(receiveValue: { [query] registry in registry.register(query: query) })
             

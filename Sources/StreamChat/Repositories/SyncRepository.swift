@@ -138,8 +138,7 @@ class SyncRepository {
             }
         operations.append(contentsOf: refetchChannelListQueryOperations)
         let channelListRegistry = ChannelListRegistry()
-        let notification = Notification(name: SyncRepository.syncRepositoryChannelListQueryRegistrationNotification, object: channelListRegistry)
-        NotificationCenter.default.post(notification)
+        NotificationCenter.default.post(Notification(name: .syncRepositoryChannelListQueryRegistration, object: channelListRegistry))
         operations.append(contentsOf: channelListRegistry.registeredChannelListQueries.map { query in
             RefetchChannelListQueryOperation(query: query, channelListUpdater: channelListUpdater, context: context)
         })
@@ -364,7 +363,9 @@ extension SyncRepository {
             }
         }
     }
-    
-    /// A notification which contains ChannelListRegistry as the notification's object.
-    static let syncRepositoryChannelListQueryRegistrationNotification = Notification.Name("syncRepositoryChannelListQueryRegistrationNotification")
+}
+
+extension Notification.Name {
+    /// A notification which contains ``ChannelListRegistry`` as the notification's object.
+    static let syncRepositoryChannelListQueryRegistration = Notification.Name("io.getstream.StreamChat.channelListQueryRegistration")
 }
