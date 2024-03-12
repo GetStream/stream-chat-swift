@@ -22,7 +22,8 @@ public final class ChatState: ObservableObject {
             with: .init(
                 channelDidChange: { [weak self] in await self?.setValue($0, for: \.channel) },
                 messagesDidChange: { [weak self] in await self?.setValue($0, for: \.messages) },
-                typingUsersDidChange: { [weak self] in await self?.setValue($0, for: \.typingUsers) }
+                typingUsersDidChange: { [weak self] in await self?.setValue($0, for: \.typingUsers) },
+                watchersDidChange: { [weak self] in await self?.setValue($0, for: \.watchers) }
             )
         )
     }
@@ -95,6 +96,13 @@ public final class ChatState: ObservableObject {
     
     /// A list of users who are currently typing.
     @Published public private(set) var typingUsers = Set<ChatUser>()
+    
+    // MARK: - Watchers
+    
+    /// An array of users who are currently watching the channel.
+    ///
+    /// Use load watchers method in ``Chat`` for populating this array.
+    @Published public private(set) var watchers = StreamCollection<ChatUser>([])
     
     // MARK: - Mutating the State
     
