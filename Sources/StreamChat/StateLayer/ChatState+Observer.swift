@@ -11,6 +11,7 @@ extension ChatState {
         private let channelObserver: BackgroundEntityDatabaseObserver<ChatChannel, ChannelDTO>
         private let eventNotificationCenter: EventNotificationCenter
         private let messagesObserver: BackgroundListDatabaseObserver<ChatMessage, MessageDTO>
+        private let watchersObserver: BackgroundListDatabaseObserver<ChatUser, UserDTO>
         private var webSocketEventObservers = [EventObserver]()
         
         init(cid: ChannelId, channelQuery: ChannelQuery, messageOrder: MessageOrdering, database: DatabaseContainer, eventNotificationCenter: EventNotificationCenter) {
@@ -33,6 +34,12 @@ extension ChatState {
                 itemCreator: { try $0.asModel() as ChatMessage },
                 sorting: []
             )
+            watchersObserver = BackgroundListDatabaseObserver(
+                context: context,
+                fetchRequest: UserDTO.watcherFetchRequest(cid: cid),
+                itemCreator: { try $0.asModel() as ChatUser },
+                sorting: []
+            )
             self.eventNotificationCenter = eventNotificationCenter
         }
         
@@ -40,6 +47,7 @@ extension ChatState {
             let channelDidChange: (ChatChannel) async -> Void
             let messagesDidChange: (StreamCollection<ChatMessage>) async -> Void
             let typingUsersDidChange: (Set<ChatUser>) async -> Void
+            let watchersDidChange: (StreamCollection<ChatUser>) async -> Void
         }
         
         func start(with handlers: Handlers) {
@@ -49,6 +57,11 @@ extension ChatState {
                 guard let items = messagesObserver?.items else { return }
                 let collection = StreamCollection(items)
                 Task { await handlers.messagesDidChange(collection) }
+            }
+            watchersObserver.onDidChange = { [weak watchersObserver] _ in
+                guard let items = watchersObserver?.items else { return }
+                let collection = StreamCollection(items)
+                Task { await handlers.watchersDidChange(collection) }
             }
             
             // TODO: Implement member list
@@ -61,12 +74,17 @@ extension ChatState {
             do {
                 try channelObserver.startObserving()
             } catch {
-                log.error("Failed to start the channel observer")
+                log.error("Failed to start the channel observer for cid: \(cid)")
             }
             do {
                 try messagesObserver.startObserving()
             } catch {
-                log.error("Failed to start the messages observer")
+                log.error("Failed to start the messages observer for cid: \(cid)")
+            }
+            do {
+                try watchersObserver.startObserving()
+            } catch {
+                log.error("Failed to start the watchers observer for cid: \(cid)")
             }
         }
     }
