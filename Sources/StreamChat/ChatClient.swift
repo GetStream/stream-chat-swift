@@ -160,6 +160,10 @@ public class ChatClient {
             apiClient,
             config.queuedActionsMaxHoursThreshold
         )
+        let channelListUpdater = environment.channelListUpdaterBuilder(
+            databaseContainer,
+            apiClient
+        )
         let syncRepository = environment.syncRepositoryBuilder(
             config,
             activeChannelControllers,
@@ -167,7 +171,8 @@ public class ChatClient {
             offlineRequestsRepository,
             eventNotificationCenter,
             databaseContainer,
-            apiClient
+            apiClient,
+            channelListUpdater
         )
         let webSocketClient = factory.makeWebSocketClient(
             requestEncoder: webSocketEncoder,
@@ -189,6 +194,7 @@ public class ChatClient {
             environment.timerType
         )
 
+        self.channelListUpdater = channelListUpdater
         self.databaseContainer = databaseContainer
         self.apiClient = apiClient
         self.webSocketClient = webSocketClient
@@ -201,10 +207,6 @@ public class ChatClient {
         extensionLifecycle = environment.extensionLifecycleBuilder(config.applicationGroupIdentifier)
         callRepository = environment.callRepositoryBuilder(apiClient)
         channelRepository = environment.channelRepositoryBuilder(
-            databaseContainer,
-            apiClient
-        )
-        channelListUpdater = environment.channelListUpdaterBuilder(
             databaseContainer,
             apiClient
         )
