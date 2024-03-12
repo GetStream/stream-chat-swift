@@ -15,11 +15,17 @@ extension ChatState {
         
         static func firstUnreadMessage(in state: ChatState, userId: UserId) -> MessageId? {
             guard let channel = state.channel else { return nil }
-            let lookup = UnreadMessageLookup(userId: userId, readStates: channel.reads, messageOrder: state.messageOrder, messages: state.messages, hasLoadedAllPreviousMessages: state.hasLoadedAllPreviousMessages)
-            return lookup.firstUnreadMessage
+            let lookup = UnreadMessageLookup(
+                userId: userId,
+                readStates: channel.reads,
+                messageOrder: state.messageOrder,
+                messages: state.messages,
+                hasLoadedAllPreviousMessages: state.hasLoadedAllPreviousMessages
+            )
+            return lookup.firstUnreadMessageId
         }
         
-        private var firstUnreadMessage: MessageId? {
+        private var firstUnreadMessageId: MessageId? {
             guard let readInfo = readStates.first(where: { $0.user.id == userId }) else {
                 // Read state is unavailable
                 return hasLoadedAllPreviousMessages ? oldestRegularMessageId : nil
@@ -29,12 +35,12 @@ extension ChatState {
                 // Everything is unread if read state is there but there is no lastReadMessageId
                 return hasLoadedAllPreviousMessages ? oldestRegularMessageId : nil
             }
-            if let lastReadIndex = indexOfMessage(lastReadMessageId) {
+            if let lastReadIndex = indexOfMessageId(lastReadMessageId) {
                 if isMostRecent(at: lastReadIndex) {
                     // Everything has been read
                     return nil
                 } else {
-                    return lookupUnreadMessage(after: lastReadIndex)
+                    return lookupUnreadMessageId(after: lastReadIndex)
                 }
             } else {
                 // Can't reach the last read message (if all have been loaded then the channel might have been truncated or hidden, in that case, use the oldest message)
@@ -42,7 +48,7 @@ extension ChatState {
             }
         }
         
-        private func lookupUnreadMessage(after excludedSearchIndex: Int) -> MessageId? {
+        private func lookupUnreadMessageId(after excludedSearchIndex: Int) -> MessageId? {
             let searchRange: ReversedCollection<Range<Int>> = {
                 if messageOrder.isAscending {
                     return (messages.endIndex..<excludedSearchIndex).reversed()
@@ -58,7 +64,7 @@ extension ChatState {
             return nil
         }
         
-        private func indexOfMessage(_ messageId: MessageId) -> Int? {
+        private func indexOfMessageId(_ messageId: MessageId) -> Int? {
             messages.firstIndex(where: { $0.id == messageId })
         }
         
