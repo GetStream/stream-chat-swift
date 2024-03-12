@@ -158,6 +158,10 @@ extension ChatClient {
     var mockAPIClient: APIClient_Spy {
         apiClient as! APIClient_Spy
     }
+    
+    var mockChannelListUpdater: ChannelListUpdater_Spy {
+        channelListUpdater as! ChannelListUpdater_Spy
+    }
 
     var mockWebSocketClient: WebSocketClient_Mock {
         webSocketClient as! WebSocketClient_Mock
@@ -228,6 +232,7 @@ extension ChatClient.Environment {
             notificationCenterBuilder: EventNotificationCenter.init,
             authenticationRepositoryBuilder: AuthenticationRepository_Mock.init,
             syncRepositoryBuilder: SyncRepository_Mock.init,
+            channelListUpdaterBuilder: ChannelListUpdater_Spy.init, 
             messageRepositoryBuilder: MessageRepository_Mock.init,
             offlineRequestsRepositoryBuilder: OfflineRequestsRepository_Mock.init
         )

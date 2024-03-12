@@ -172,7 +172,7 @@ class ChannelListUpdater: Worker {
     }
 }
 
-private extension DatabaseSession {
+extension DatabaseSession {
     func getChannelWithQuery(cid: ChannelId, query: ChannelListQuery) -> (ChannelDTO, ChannelListQueryDTO)? {
         guard let queryDTO = channelListQuery(filterHash: query.filter.filterHash) else {
             log.debug("Channel list query has not yet created \(query)")

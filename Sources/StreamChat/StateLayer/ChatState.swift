@@ -7,13 +7,17 @@ import Foundation
 /// Represents a ``ChatChannel`` and its state.
 @available(iOS 13.0, *)
 public final class ChatState: ObservableObject {
+    private let authenticationRepository: AuthenticationRepository
     private let cid: ChannelId
     private var channelObserver: EntityDatabaseObserverWrapper<ChatChannel, ChannelDTO>?
+    private let dataStore: DataStore
     private let paginationState: MessagesPaginationState
     private let observer: Observer
     
-    init(cid: ChannelId, channelQuery: ChannelQuery, messageOrder: MessageOrdering, database: DatabaseContainer, eventNotificationCenter: EventNotificationCenter, paginationState: MessagesPaginationState) {
+    init(cid: ChannelId, channelQuery: ChannelQuery, messageOrder: MessageOrdering, authenticationRepository: AuthenticationRepository, database: DatabaseContainer, eventNotificationCenter: EventNotificationCenter, paginationState: MessagesPaginationState) {
+        self.authenticationRepository = authenticationRepository
         self.cid = cid
+        dataStore = DataStore(database: database)
         self.messageOrder = messageOrder
         self.paginationState = paginationState
         observer = Observer(cid: cid, channelQuery: channelQuery, messageOrder: messageOrder, database: database, eventNotificationCenter: eventNotificationCenter)
@@ -45,6 +49,20 @@ public final class ChatState: ObservableObject {
     /// Use load messages in ``Chat`` for loading more messages.
     @Published public private(set) var messages = StreamCollection<ChatMessage>([])
     
+    /// Access a message which is available locally by its id.
+    ///
+    /// - Note: This method does a local lookup of the message and returns a message present in ``ChatState.messages``.
+    ///
+    /// - Parameter messageId: The id of the message which is available locally.
+    ///
+    /// - Returns: An instance of the locally available chat message
+    public func localMessage(for messageId: MessageId) -> ChatMessage? {
+        if let message = dataStore.message(id: messageId), message.cid == cid {
+            return message
+        }
+        return nil
+    }
+    
     /// A Boolean value that returns whether the oldest messages have all been loaded or not.
     public var hasLoadedAllPreviousMessages: Bool {
         paginationState.hasLoadedAllPreviousMessages
@@ -75,6 +93,28 @@ public final class ChatState: ObservableObject {
     /// A Boolean value that returns whether the channel is currently loading previous (old) messages.
     public var isLoadingPreviousMessages: Bool {
         paginationState.isLoadingPreviousMessages
+    }
+    
+    // MARK: - Message Reading
+    
+    /// The id of the message which the current user last read.
+    public var lastReadMessageId: MessageId? {
+        guard let channel else { return nil }
+        guard let userId = authenticationRepository.currentUserId else { return nil }
+        return channel.lastReadMessageId(userId: userId)
+    }
+    
+    /// The id of the first unread message.
+    ///
+    /// The returned message id follows requirements:
+    /// * Read state is unavailable: oldest message if all the messages have been paginated, otherwise nil
+    /// * Unread message count is zero: nil
+    /// * Read state's ``ChatChannelRead.lastReadMessageId`` is nil: oldest message if all the messages have been paginated, otherwise nil
+    /// * Last read message is unreachable (e.g. channel was truncated): oldest message if all the messages have been paginated, otherwise nil
+    /// * Next message after the last read message id not from the current user
+    public var firstUnreadMessageId: MessageId? {
+        guard let userId = authenticationRepository.currentUserId else { return nil }
+        return UnreadMessageLookup.firstUnreadMessage(in: self, userId: userId)
     }
 
     // MARK: - Throttling and Slow Mode

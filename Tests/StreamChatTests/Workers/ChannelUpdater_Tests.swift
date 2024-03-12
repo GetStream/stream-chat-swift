@@ -10,6 +10,7 @@ final class ChannelUpdater_Tests: XCTestCase {
     var apiClient: APIClient_Spy!
     var database: DatabaseContainer_Spy!
     var channelRepository: ChannelRepository_Mock!
+    var messageRepository: MessageRepository_Mock!
     var paginationStateHandler: MessagesPaginationStateHandler_Mock!
     var channelUpdater: ChannelUpdater!
 
@@ -19,10 +20,12 @@ final class ChannelUpdater_Tests: XCTestCase {
         apiClient = APIClient_Spy()
         database = DatabaseContainer_Spy()
         channelRepository = ChannelRepository_Mock(database: database, apiClient: apiClient)
+        messageRepository = MessageRepository_Mock(database: database, apiClient: apiClient)
         paginationStateHandler = MessagesPaginationStateHandler_Mock()
         channelUpdater = ChannelUpdater(
             channelRepository: channelRepository,
             callRepository: CallRepository(apiClient: apiClient),
+            messageRepository: messageRepository,
             paginationStateHandler: paginationStateHandler,
             database: database,
             apiClient: apiClient
@@ -34,6 +37,7 @@ final class ChannelUpdater_Tests: XCTestCase {
         apiClient = nil
         channelRepository = nil
         channelUpdater = nil
+        messageRepository = nil
 
         AssertAsync.canBeReleased(&database)
         database = nil
@@ -1716,8 +1720,8 @@ final class ChannelUpdater_Tests: XCTestCase {
         var completionCalled = false
         let cid = ChannelId.unique
         let query = ChannelWatcherListQuery(cid: cid)
-        channelUpdater.channelWatchers(query: query) { error in
-            XCTAssertNil(error)
+        channelUpdater.channelWatchers(query: query) { result in
+            XCTAssertNil(result.error)
             completionCalled = true
         }
 
@@ -1733,7 +1737,7 @@ final class ChannelUpdater_Tests: XCTestCase {
     func test_channelWatchers_errorResponse_isPropagatedToCompletion() {
         var completionCalledError: Error?
         let query = ChannelWatcherListQuery(cid: .unique)
-        channelUpdater.channelWatchers(query: query) { completionCalledError = $0 }
+        channelUpdater.channelWatchers(query: query) { completionCalledError = $0.error }
 
         let error = TestError()
         apiClient.test_simulateResponse(Result<ChannelPayload, Error>.failure(error))
