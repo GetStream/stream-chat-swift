@@ -15,7 +15,7 @@ public struct StreamCollection<Element>: RandomAccessCollection {
     private let _startIndex: () -> Index
 
     /// Creates an instance of the collection using the base collection as the data source.
-    init<BaseCollection>(_ baseCollection: BaseCollection) where BaseCollection: RandomAccessCollection, BaseCollection.Element == Element, BaseCollection.Index == Index {
+    public init<BaseCollection>(_ baseCollection: BaseCollection) where BaseCollection: RandomAccessCollection, BaseCollection.Element == Element, BaseCollection.Index == Index {
         _endIndex = { baseCollection.endIndex }
         _position = { baseCollection[$0] }
         _startIndex = { baseCollection.startIndex }
