@@ -7,12 +7,14 @@ import Foundation
 /// Represents a ``ChatChannel`` and its state.
 @available(iOS 13.0, *)
 public final class ChatState: ObservableObject {
+    private let authenticationRepository: AuthenticationRepository
     private let cid: ChannelId
     private var channelObserver: EntityDatabaseObserverWrapper<ChatChannel, ChannelDTO>?
     private let paginationState: MessagesPaginationState
     private let observer: Observer
     
-    init(cid: ChannelId, channelQuery: ChannelQuery, messageOrder: MessageOrdering, database: DatabaseContainer, eventNotificationCenter: EventNotificationCenter, paginationState: MessagesPaginationState) {
+    init(cid: ChannelId, channelQuery: ChannelQuery, messageOrder: MessageOrdering, authenticationRepository: AuthenticationRepository, database: DatabaseContainer, eventNotificationCenter: EventNotificationCenter, paginationState: MessagesPaginationState) {
+        self.authenticationRepository = authenticationRepository
         self.cid = cid
         self.messageOrder = messageOrder
         self.paginationState = paginationState
@@ -75,6 +77,28 @@ public final class ChatState: ObservableObject {
     /// A Boolean value that returns whether the channel is currently loading previous (old) messages.
     public var isLoadingPreviousMessages: Bool {
         paginationState.isLoadingPreviousMessages
+    }
+    
+    // MARK: - Message Reading
+    
+    /// The id of the message which the current user last read.
+    public var lastReadMessageId: MessageId? {
+        guard let channel else { return nil }
+        guard let userId = authenticationRepository.currentUserId else { return nil }
+        return channel.lastReadMessageId(userId: userId)
+    }
+    
+    /// The id of the first unread message.
+    ///
+    /// The returned message id follows requirements:
+    /// * Read state is unavailable: oldest message if all the messages have been paginated, otherwise nil
+    /// * Unread message count is zero: nil
+    /// * Read state's ``ChatChannelRead.lastReadMessageId`` is nil: oldest message if all the messages have been paginated, otherwise nil
+    /// * Last read message is unreachable (e.g. channel was truncated): oldest message if all the messages have been paginated, otherwise nil
+    /// * Next message after the last read message id not from the current user
+    public var firstUnreadMessageId: MessageId? {
+        guard let userId = authenticationRepository.currentUserId else { return nil }
+        return UnreadMessageLookup.firstUnreadMessage(in: self, userId: userId)
     }
 
     // MARK: - Throttling and Slow Mode
