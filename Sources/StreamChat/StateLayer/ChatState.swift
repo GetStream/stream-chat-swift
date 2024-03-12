@@ -16,7 +16,7 @@ public final class ChatState: ObservableObject {
         self.cid = cid
         self.messageOrder = messageOrder
         self.paginationState = paginationState
-        observer = Observer(cid: cid, channelQuery: channelQuery, database: database, eventNotificationCenter: eventNotificationCenter)
+        observer = Observer(cid: cid, channelQuery: channelQuery, messageOrder: messageOrder, database: database, eventNotificationCenter: eventNotificationCenter)
         
         observer.start(
             with: .init(
