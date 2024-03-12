@@ -72,7 +72,7 @@ extension ChatState {
     }
 }
 
-private extension MessageOrdering {
+extension MessageOrdering {
     var isAscending: Bool {
         switch self {
         case .topToBottom:
