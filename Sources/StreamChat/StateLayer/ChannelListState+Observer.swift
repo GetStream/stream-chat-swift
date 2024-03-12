@@ -2,13 +2,15 @@
 // Copyright © 2024 Stream.io Inc. All rights reserved.
 //
 
+import Combine
 import Foundation
 
 @available(iOS 13.0, *)
 extension ChannelListState {
-    struct Observer {
+    final class Observer {
         private let channelListObserver: BackgroundListDatabaseObserver<ChatChannel, ChannelDTO>
         private let query: ChannelListQuery
+        private var syncRepositoryCancellable: AnyCancellable?
         
         init(query: ChannelListQuery, chatClientConfig: ChatClientConfig, database: DatabaseContainer) {
             self.query = query
@@ -31,6 +33,11 @@ extension ChannelListState {
         }
         
         func start(with handlers: Handlers) {
+            syncRepositoryCancellable = NotificationCenter.default
+                .publisher(for: .syncRepositoryChannelListQueryRegistration)
+                .compactMap { $0.object as? SyncRepository.ChannelListRegistry }
+                .sink(receiveValue: { [query] registry in registry.register(query: query) })
+            
             channelListObserver.onDidChange = { [weak channelListObserver] _ in
                 guard let items = channelListObserver?.items else { return }
                 let collection = StreamCollection(items)
