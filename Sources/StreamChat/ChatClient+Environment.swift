@@ -152,6 +152,13 @@ extension ChatClient {
         ) -> ChannelRepository = {
             ChannelRepository(database: $0, apiClient: $1)
         }
+        
+        var channelListUpdaterBuilder: (
+            _ database: DatabaseContainer,
+            _ apiClient: APIClient
+        ) -> ChannelListUpdater = {
+            ChannelListUpdater(database: $0, apiClient: $1)
+        }
 
         var messageRepositoryBuilder: (
             _ database: DatabaseContainer,
