@@ -104,11 +104,6 @@ public final class ChatState: ObservableObject {
     /// Use load watchers method in ``Chat`` for populating this array.
     @Published public private(set) var watchers = StreamCollection<ChatUser>([])
     
-    /// True, if all the watchers were loaded with paginated loading.
-    ///
-    /// The value is set to true when the pagination request returns less than the pagination page size.
-    @Published public private(set) var hasLoadedAllWatchers = false
-    
     // MARK: - Mutating the State
     
     // Force main actor when accessing the state.
@@ -119,9 +114,5 @@ public final class ChatState: ObservableObject {
     // Force mutations on main actor since ChatState is meant to be used by UI.
     @MainActor func setValue<Value>(_ value: Value, for keyPath: ReferenceWritableKeyPath<ChatState, Value>) {
         self[keyPath: keyPath] = value
-    }
-    
-    @MainActor func setLoadedAllWatchers(_ flag: Bool) {
-        hasLoadedAllWatchers = flag
     }
 }

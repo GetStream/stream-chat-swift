@@ -870,9 +870,7 @@ public final class Chat {
     /// - Throws: An error while communicating with the Stream API.
     /// - Returns: An array of watchers for the pagination.
     @discardableResult public func loadWatchers(with pagination: Pagination) async throws -> [ChatUser] {
-        let watchers = try await channelUpdater.channelWatchers(for: .init(cid: cid, pagination: pagination))
-        await state.setLoadedAllWatchers(watchers.count < pagination.pageSize)
-        return watchers
+        try await channelUpdater.channelWatchers(for: .init(cid: cid, pagination: pagination))
     }
 
     /// Loads more watchers and updates ``ChatState.watchers``.
