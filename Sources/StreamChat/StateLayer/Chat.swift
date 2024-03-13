@@ -11,6 +11,8 @@ public final class Chat {
     private let channelUpdater: ChannelUpdater
     private let databaseContainer: DatabaseContainer
     private let eventNotificationCenter: EventNotificationCenter
+    private let memberListUpdater: ChannelMemberListUpdater
+    private let memberUpdater: ChannelMemberUpdater
     private let messageEditor: MessageEditor
     private let messageSender: MessageSender
     private let messageUpdater: MessageUpdater
@@ -40,6 +42,8 @@ public final class Chat {
         self.channelUpdater = channelUpdater
         eventNotificationCenter = client.eventNotificationCenter
         databaseContainer = client.databaseContainer
+        memberListUpdater = client.memberListUpdater
+        memberUpdater = client.memberUpdater
         messageEditor = client.messageEditor
         messageSender = client.messageSender
         messageUpdater = environment.messageUpdaterBuilder(
@@ -166,6 +170,20 @@ public final class Chat {
     public func removeMembers(_ members: [UserId], systemMessage: String? = nil) async throws {
         let currentUserId = authenticationRepository.currentUserId
         try await channelUpdater.removeMembers(currentUserId: currentUserId, cid: cid, userIds: Set(members), message: systemMessage)
+    }
+    
+    // MARK: Member State Observing
+    
+    /// Returns an observable member state for the specified user id.
+    ///
+    /// The member state is refreshed before returning the observable state.
+    ///
+    /// - Parameter userId: The user id of the channel member.
+    ///
+    /// - Returns: An instance of `MemberState` which conforms to the `ObservableObject`.
+    public func makeMemberState(for userId: UserId) async throws -> MemberState {
+        let member = try await memberListUpdater.member(with: userId, cid: cid)
+        return MemberState(member: member, cid: cid, database: databaseContainer)
     }
     
     // MARK: - Messages
@@ -604,6 +622,57 @@ public final class Chat {
     /// - Throws: An error while communicating with the Stream API
     @discardableResult public func translateMessage(_ message: MessageId, to language: TranslationLanguage) async throws -> ChatMessage {
         try await messageUpdater.translate(messageId: message, to: language)
+    }
+    
+    // MARK: - Moderation
+    
+    /// Bans the specified user from the channel.
+    ///
+    /// When the user is banned, they will not be allowed to post messages until the ban is removed
+    /// or expired but will be able to connect to Chat and to channels as before.
+    ///
+    /// Learn more about [banning and moderation tools](https://getstream.io/chat/docs/ios-swift/moderation/?language=swift#ban).
+    ///
+    ///  - Note: Channel watchers cannot be banned.
+    ///  - Note: In most cases, only admins or moderators are allowed to ban other users from the channel.
+    ///
+    /// - Parameters:
+    ///   - userId: The user id of the channel member.
+    ///   - reason: The reason that the ban was created.
+    ///   - timeoutInMinutes: The number of minutes the user should be banned for. Nil means that the user is banned forever or until the user is unbanned explicitly.
+    ///
+    /// - Throws: An error while communicating with the Stream API or missing required capabilities.
+    public func banUser(_ userId: UserId, reason: String? = nil, timeout timeoutInMinutes: Int? = nil) async throws {
+        try state.channel?.requireCapability(of: .banChannelMembers)
+        try await memberUpdater.banMember(userId, in: cid, shadow: false, for: timeoutInMinutes, reason: reason)
+    }
+    
+    /// Shadow bans the specified user from the channel.
+    ///
+    /// When the user is shadow banned, they will still be allowed to post messages, but any message
+    /// sent during the ban will only be visible to the author of the message and invisible to other users of the app.
+    ///
+    /// Learn more about [shadow banning and moderation tools](https://getstream.io/chat/docs/ios-swift/moderation/?language=swift#shadow-ban).
+    ///
+    /// - Parameters:
+    ///   - userId: The user id of the channel member.
+    ///   - reason: The reason that the ban was created.
+    ///   - timeoutInMinutes: The number of minutes the user should be banned for. Nil means that the user is banned forever or until the user is unbanned explicitly.
+    ///
+    /// - Throws: An error while communicating with the Stream API or missing required capabilities.
+    public func shadowBanUser(_ userId: UserId, reason: String? = nil, timeout timeoutInMinutes: Int? = nil) async throws {
+        try state.channel?.requireCapability(of: .banChannelMembers)
+        try await memberUpdater.banMember(userId, in: cid, shadow: true, for: timeoutInMinutes, reason: reason)
+    }
+    
+    /// Removes the user from the ban list.
+    ///
+    /// - Parameter userId: The user id of the channel member.
+    ///
+    /// - Throws: An error while communicating with the Stream API or missing required capabilities.
+    public func unbanUser(_ userId: UserId) async throws {
+        try state.channel?.requireCapability(of: .banChannelMembers)
+        try await memberUpdater.unbanMember(userId, in: cid)
     }
     
     // MARK: - Muting or Hiding the Channel

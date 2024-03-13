@@ -11,9 +11,15 @@ class ChannelMemberListUpdater: Worker {
     ///   - query: The query used in the request.
     ///   - completion: Called when the API call is finished. Called with `Error` if the remote update fails.
     func load(_ query: ChannelMemberListQuery, completion: ((Error?) -> Void)? = nil) {
+        load(query, includeMembersResponse: false, completion: { result in
+            completion?(result.error)
+        })
+    }
+    
+    private func load(_ query: ChannelMemberListQuery, includeMembersResponse: Bool, completion: ((Result<[ChatChannelMember], Error>) -> Void)? = nil) {
         fetchAndSaveChannelIfNeeded(query.cid) { [weak self] error in
-            guard error == nil else {
-                completion?(error)
+            if let error {
+                completion?(.failure(error))
                 return
             }
 
@@ -21,19 +27,40 @@ class ChannelMemberListUpdater: Worker {
             self?.apiClient.request(endpoint: membersEndpoint) { membersResult in
                 switch membersResult {
                 case let .success(memberListPayload):
+                    var members = [ChatChannelMember]()
                     self?.database.write({ session in
-                        session.saveMembers(payload: memberListPayload, channelId: query.cid, query: query)
+                        let dtos = session.saveMembers(payload: memberListPayload, channelId: query.cid, query: query)
+                        if includeMembersResponse {
+                            members = try dtos.map { try $0.asModel() }
+                        }
                     }, completion: { error in
                         if let error = error {
                             log.error("Failed to save `ChannelMemberListQuery` related data to the database. Error: \(error)")
                         }
-                        completion?(error)
+                        completion?(.success(members))
                     })
                 case let .failure(error):
-                    completion?(error)
+                    completion?(.failure(error))
                 }
             }
         }
+    }
+}
+
+@available(iOS 13.0, *)
+extension ChannelMemberListUpdater {
+    func load(_ query: ChannelMemberListQuery) async throws -> [ChatChannelMember] {
+        try await withCheckedThrowingContinuation { continuation in
+            load(query, includeMembersResponse: true) { result in
+                continuation.resume(with: result)
+            }
+        }
+    }
+    
+    func member(with userId: UserId, cid: ChannelId) async throws -> ChatChannelMember {
+        let members = try await load(.channelMember(userId: userId, cid: cid))
+        guard let member = members.first else { throw ClientError.MemberDoesNotExist(userId: userId, cid: cid) }
+        return member
     }
 }
 
