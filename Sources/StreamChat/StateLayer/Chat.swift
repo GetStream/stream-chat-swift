@@ -62,6 +62,7 @@ public final class Chat {
             cid,
             channelQuery,
             messageOrdering,
+            client.authenticationRepository,
             client.databaseContainer,
             client.eventNotificationCenter,
             channelUpdater.paginationState
@@ -896,6 +897,7 @@ extension Chat {
             _ cid: ChannelId,
             _ channelQuery: ChannelQuery,
             _ messageOrder: MessageOrdering,
+            _ authenticationRepository: AuthenticationRepository,
             _ database: DatabaseContainer,
             _ eventNotificationCenter: EventNotificationCenter,
             _ paginationState: MessagesPaginationState
