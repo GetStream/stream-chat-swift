@@ -5557,9 +5557,10 @@ private class TestEnvironment {
             self.channelUpdater = ChannelUpdater_Mock(
                 channelRepository: $0,
                 callRepository: $1,
-                paginationStateHandler: $2,
-                database: $3,
-                apiClient: $4
+                messageRepository: $2,
+                paginationStateHandler: $3,
+                database: $4,
+                apiClient: $5
             )
             return self.channelUpdater!
         },
