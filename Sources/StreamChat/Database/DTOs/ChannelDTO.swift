@@ -451,7 +451,7 @@ extension ChatChannel {
                 return .noUnread
             }
         }
-        
+
         let fetchMessages: () -> [ChatMessage] = {
             guard dto.isValid else { return [] }
             return MessageDTO
@@ -494,7 +494,8 @@ extension ChatChannel {
 
             return .init(
                 createdAt: mute.createdAt.bridgeDate,
-                updatedAt: mute.updatedAt.bridgeDate
+                updatedAt: mute.updatedAt.bridgeDate,
+                expiresAt: mute.expiresAt?.bridgeDate
             )
         }
 

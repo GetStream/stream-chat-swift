@@ -21,6 +21,7 @@ final class ChannelUpdater_Mock: ChannelUpdater {
 
     @Atomic var muteChannel_cid: ChannelId?
     @Atomic var muteChannel_mute: Bool?
+    @Atomic var muteChannel_expiration: Int?
     @Atomic var muteChannel_completion: ((Error?) -> Void)?
 
     @Atomic var deleteChannel_cid: ChannelId?
@@ -239,9 +240,10 @@ final class ChannelUpdater_Mock: ChannelUpdater {
         partialChannelUpdate_completion = completion
     }
 
-    override func muteChannel(cid: ChannelId, mute: Bool, completion: ((Error?) -> Void)? = nil) {
+    override func muteChannel(cid: ChannelId, mute: Bool, expiration: Int? = nil, completion: ((Error?) -> Void)? = nil) {
         muteChannel_cid = cid
         muteChannel_mute = mute
+        muteChannel_expiration = expiration
         muteChannel_completion = completion
     }
 

@@ -212,6 +212,35 @@ final class ChannelEndpoints_Tests: XCTestCase {
             XCTAssertEqual(mute ? "moderation/mute/channel" : "moderation/unmute/channel", endpoint.path.value)
         }
     }
+    
+    func test_muteChannelWithExpiration_buildsCorrectly() {
+        let testCases = [true, false]
+        let expiration = 1_000_000
+
+        for mute in testCases {
+            let channelID = ChannelId.unique
+            
+            let body: [String: AnyEncodable] = [
+                "channel_cid": AnyEncodable(channelID),
+                "expiration": AnyEncodable(expiration)
+            ]
+
+            let expectedEndpoint = Endpoint<EmptyResponse>(
+                path: .muteChannel(mute),
+                method: .post,
+                queryItems: nil,
+                requiresConnectionId: true,
+                body: body
+            )
+
+            // Build endpoint
+            let endpoint: Endpoint<EmptyResponse> = .muteChannel(cid: channelID, mute: mute, expiration: expiration)
+
+            // Assert endpoint is built correctly
+            XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
+            XCTAssertEqual(mute ? "moderation/mute/channel" : "moderation/unmute/channel", endpoint.path.value)
+        }
+    }
 
     func test_showChannel_buildsCorrectly() {
         let cid = ChannelId.unique

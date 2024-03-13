@@ -3,7 +3,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 # Upcoming
 
-### 🔄 Changed
+## StreamChat
+### ✅ Added
+- Add mute expiration support when muting a channel [#3083](https://github.com/GetStream/stream-chat-swift/pull/3083)
 
 # [4.50.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.50.0)
 _March 11, 2024_
