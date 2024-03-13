@@ -2713,9 +2713,9 @@ final class MessageUpdater_Tests: XCTestCase {
         // Make translate call
         var completionCalled = false
         let testError = TestError()
-        messageUpdater.translate(messageId: messageId, to: language) { error in
+        messageUpdater.translate(messageId: messageId, to: language) { result in
             completionCalled = true
-            XCTAssertEqual(error as? TestError, testError)
+            XCTAssertEqual(result.error as? TestError, testError)
         }
 
         // Simulate failure response
@@ -2739,9 +2739,9 @@ final class MessageUpdater_Tests: XCTestCase {
 
         // Make translate call
         var completionCalled = false
-        messageUpdater.translate(messageId: messageId, to: language) { error in
+        messageUpdater.translate(messageId: messageId, to: language) { result in
             completionCalled = true
-            XCTAssertEqual(error as? TestError, testError)
+            XCTAssertEqual(result.error as? TestError, testError)
         }
 
         // Simulate successful response

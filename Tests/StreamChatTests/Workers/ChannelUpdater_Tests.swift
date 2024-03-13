@@ -1672,8 +1672,8 @@ final class ChannelUpdater_Tests: XCTestCase {
         var completionCalled = false
         let cid = ChannelId.unique
         let query = ChannelWatcherListQuery(cid: cid)
-        channelUpdater.channelWatchers(query: query) { error in
-            XCTAssertNil(error)
+        channelUpdater.channelWatchers(query: query) { result in
+            XCTAssertNil(result.error)
             completionCalled = true
         }
 
