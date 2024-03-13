@@ -42,6 +42,7 @@ final class MessageUpdater_Mock: MessageUpdater {
     @Atomic var loadReplies_callCount = 0
     @Atomic var loadReplies_messageId: MessageId?
     @Atomic var loadReplies_pagination: MessagesPagination?
+    @Atomic var loadReplies_paginationStateHandler: MessagesPaginationStateHandling?
     @Atomic var loadReplies_completion: ((Result<MessageRepliesPayload, Error>) -> Void)?
 
     @Atomic var loadReactions_cid: ChannelId?
@@ -94,11 +95,6 @@ final class MessageUpdater_Mock: MessageUpdater {
     @Atomic var translate_messageId: MessageId?
     @Atomic var translate_language: TranslationLanguage?
     @Atomic var translate_completion: ((Error?) -> Void)?
-
-    var mockPaginationState: MessagesPaginationState = .initial
-    override var paginationState: MessagesPaginationState {
-        mockPaginationState
-    }
 
     // Cleans up all recorded values
     func cleanUp() {
@@ -256,12 +252,14 @@ final class MessageUpdater_Mock: MessageUpdater {
         cid: ChannelId,
         messageId: MessageId,
         pagination: MessagesPagination,
+        paginationStateHandler: MessagesPaginationStateHandling,
         completion: ((Result<MessageRepliesPayload, Error>) -> Void)? = nil
     ) {
         loadReplies_callCount += 1
         loadReplies_cid = cid
         loadReplies_messageId = messageId
         loadReplies_pagination = pagination
+        loadReplies_paginationStateHandler = paginationStateHandler
         loadReplies_completion = completion
     }
 
