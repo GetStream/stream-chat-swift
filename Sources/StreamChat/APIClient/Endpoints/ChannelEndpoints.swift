@@ -60,10 +60,11 @@ extension Endpoint {
     }
     
     static func muteChannel(cid: ChannelId, mute: Bool, expiration: Int? = nil) -> Endpoint<EmptyResponse> {
-        let body: [String: AnyEncodable] = [
-            "channel_cid": AnyEncodable(cid),
-            "expiration": AnyEncodable(expiration)
-        ]
+        var body: [String: AnyEncodable] = ["channel_cid": AnyEncodable(cid)]
+        
+        if let expiration = expiration {
+            body["expiration"] = AnyEncodable(expiration)
+        }
         
         return .init(
             path: .muteChannel(mute),
