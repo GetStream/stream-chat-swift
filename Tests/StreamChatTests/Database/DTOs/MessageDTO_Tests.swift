@@ -523,7 +523,8 @@ final class MessageDTO_Tests: XCTestCase {
             moderationDetails: .init(
                 originalText: "Original",
                 action: MessageModerationAction(rawValue: "BOUNCE")
-            )
+            ),
+            messageTextUpdatedAt: .unique
         )
 
         try! database.writeSynchronously { session in

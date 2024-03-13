@@ -13,8 +13,7 @@ final class CommandDTO: NSManagedObject {
     @NSManaged var args: String
 
     func asModel() throws -> Command {
-        guard isValid else { throw InvalidModel(self) }
-        return .init(
+        .init(
             args: args,
             description: desc,
             name: name,

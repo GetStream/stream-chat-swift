@@ -463,9 +463,12 @@ extension ChatClient: AuthenticationRepositoryDelegate {
 
 extension ChatClient: ConnectionStateDelegate {
     func webSocketClient(_ client: WebSocketClient, didUpdateConnectionState state: WebSocketConnectionState) {
-        connectionRepository.handleConnectionUpdate(state: state, onInvalidToken: { [weak self] in
-            self?.refreshToken(completion: nil)
-        })
+        connectionRepository.handleConnectionUpdate(
+            state: state,
+            onExpiredToken: { [weak self] in
+                self?.refreshToken(completion: nil)
+            }
+        )
         connectionRecoveryHandler?.webSocketClient(client, didUpdateConnectionState: state)
     }
 }

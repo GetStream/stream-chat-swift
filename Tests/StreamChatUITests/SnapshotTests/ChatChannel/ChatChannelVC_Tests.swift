@@ -604,6 +604,50 @@ final class ChatChannelVC_Tests: XCTestCase {
         AssertSnapshot(vc, variants: [.defaultLight])
     }
 
+    func test_whenMessageEditedAt_editedMessageIsNotGrouped() {
+        let channel: ChatChannel = .mock(cid: .unique)
+        let user: ChatUser = .mock(id: .unique)
+
+        let closingGroupMessage: ChatMessage = .mock(
+            id: .unique,
+            cid: channel.cid,
+            text: "Closes the group",
+            author: user,
+            isSentByCurrentUser: true
+        )
+        let editedMessage: ChatMessage = .mock(
+            id: .unique,
+            cid: channel.cid,
+            text: "Ignores group because it is edited",
+            author: user,
+            createdAt: closingGroupMessage.createdAt.addingTimeInterval(-maxTimeInterval / 2),
+            isSentByCurrentUser: true,
+            textUpdatedAt: .unique
+        )
+        let openingGroupMessage: ChatMessage = .mock(
+            id: .unique,
+            cid: channel.cid,
+            text: "Opens the group",
+            author: user,
+            createdAt: editedMessage.createdAt.addingTimeInterval(-maxTimeInterval),
+            isSentByCurrentUser: true
+        )
+
+        channelControllerMock.simulateInitial(
+            channel: channel,
+            messages: [
+                closingGroupMessage,
+                editedMessage,
+                openingGroupMessage
+            ],
+            state: .localDataFetched
+        )
+
+        vc.components.isMessageEditedLabelEnabled = true
+
+        AssertSnapshot(vc, variants: [.defaultLight])
+    }
+
     func test_didReceiveNewMessagePendingEvent_whenFirstPageNotLoaded_whenMessageSentByCurrentUser_whenMessageNotPartOfThread_thenLoadsFirstPage() {
         channelControllerMock.hasLoadedAllNextMessages_mock = false
         let message = ChatMessage.mock(

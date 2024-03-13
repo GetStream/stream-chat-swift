@@ -45,8 +45,6 @@ extension DeviceDTO {
 
 extension DeviceDTO {
     func asModel() throws -> Device {
-        guard isValid else { throw InvalidModel(self) }
-        // TODO: push provider name.
-        return Device(createdAt: createdAt?.bridgeDate ?? Date(), id: id, pushProvider: "")
+        Device(createdAt: createdAt?.bridgeDate ?? Date(), id: id, pushProvider: "")
     }
 }

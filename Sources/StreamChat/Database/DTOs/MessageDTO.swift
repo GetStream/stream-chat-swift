@@ -29,6 +29,7 @@ class MessageDTO: NSManagedObject {
     @NSManaged var createdAt: DBDate
     @NSManaged var updatedAt: DBDate
     @NSManaged var deletedAt: DBDate?
+    @NSManaged var textUpdatedAt: DBDate?
     @NSManaged var isHardDeleted: Bool
     @NSManaged var args: String?
     @NSManaged var parentMessageId: MessageId?
@@ -1082,6 +1083,17 @@ extension MessageDTO {
         
         return messageRequest
     }
+
+    /// The message has been successfully sent to the server.
+    func markMessageAsSent() {
+        locallyCreatedAt = nil
+        localMessageState = nil
+    }
+
+    /// The message failed to be sent to the server.
+    func markMessageAsFailed() {
+        localMessageState = .sendingFailed
+    }
 }
 
 private extension ChatMessage {
@@ -1089,7 +1101,7 @@ private extension ChatMessage {
         guard StreamRuntimeCheck._canFetchRelationship(currentDepth: depth) else {
             throw RecursionLimitError()
         }
-        guard dto.isValid, let context = dto.managedObjectContext else {
+        guard let context = dto.managedObjectContext else {
             throw InvalidModel(dto)
         }
 
@@ -1119,6 +1131,7 @@ private extension ChatMessage {
                 action: MessageModerationAction(rawValue: $0.action)
             )
         }
+        textUpdatedAt = dto.textUpdatedAt?.bridgeDate
 
         if let extraData = dto.extraData, !extraData.isEmpty {
             do {

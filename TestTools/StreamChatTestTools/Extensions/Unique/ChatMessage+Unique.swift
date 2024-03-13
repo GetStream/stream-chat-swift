@@ -46,7 +46,8 @@ extension ChatMessage {
             moderationDetails: nil,
             readBy: { [] },
             readByCount: { 0 },
-            underlyingContext: nil
+            underlyingContext: nil,
+            textUpdatedAt: nil
         )
     }
 }

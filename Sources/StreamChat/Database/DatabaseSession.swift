@@ -92,6 +92,7 @@ protocol MessageDatabaseSession {
         cache: PreWarmedCache?
     ) throws -> MessageDTO
     
+    @discardableResult
     func saveMessage(
         payload: Message,
         channelDTO: ChannelDTO,
@@ -99,12 +100,14 @@ protocol MessageDatabaseSession {
         cache: PreWarmedCache?
     ) throws -> MessageDTO
     
+    @discardableResult
     func saveMessages(
         messagesPayload: GetRepliesResponse,
         for cid: ChannelId?,
         syncOwnReactions: Bool
     ) -> [MessageDTO]
     
+    @discardableResult
     func saveReactions(
         payload: GetReactionsResponse
     ) -> [MessageReactionDTO]
@@ -115,6 +118,7 @@ protocol MessageDatabaseSession {
         cache: PreWarmedCache?
     ) throws -> MessageReactionDTO
 
+    @discardableResult
     func addReaction(
         to messageId: MessageId,
         type: MessageReactionType,

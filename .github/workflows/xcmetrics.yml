@@ -6,7 +6,9 @@ on:
     - cron: '0 3 * * *'
 
   pull_request:
-    types: [opened, ready_for_review]
+    types:
+      - opened
+      - ready_for_review
 
   workflow_dispatch:
 
@@ -40,7 +42,7 @@ jobs:
       - name: Run Performance Metrics
         if: ${{ github.event_name != 'pull_request' || github.event.pull_request.draft == false }}
         run: bundle exec fastlane xcmetrics
-        timeout-minutes: 60
+        timeout-minutes: 120
         env:
           GITHUB_PR_NUM: ${{ github.event.pull_request.number }}
           BRANCH_NAME: ${{ github.event.pull_request.head.ref }}

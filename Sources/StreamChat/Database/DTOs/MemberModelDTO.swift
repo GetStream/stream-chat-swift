@@ -168,7 +168,6 @@ extension MemberDTO {
 
 extension ChatChannelMember {
     fileprivate static func create(fromDTO dto: MemberDTO) throws -> ChatChannelMember {
-        guard dto.isValid else { throw InvalidModel(dto) }
         let extraData: [String: RawJSON]
         do {
             extraData = try JSONDecoder.default.decode([String: RawJSON].self, from: dto.user.extraData)

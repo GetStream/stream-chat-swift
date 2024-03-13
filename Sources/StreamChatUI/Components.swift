@@ -298,6 +298,10 @@ public struct Components {
     /// The view that displays the number of unread messages in the chat.
     public var unreadMessagesCounterDecorationView: ChatUnreadMessagesCountDecorationView.Type = ChatUnreadMessagesCountDecorationView.self
 
+    /// A flag which determines if edited messages should show a "Edited" label.
+    /// It is disabled by default.
+    public var isMessageEditedLabelEnabled = false
+
     /// The view that displays the number of unread messages in the chat.
     public var messageHeaderDecorationView: ChatChannelMessageHeaderDecoratorView.Type = ChatChannelMessageHeaderDecoratorView.self
 

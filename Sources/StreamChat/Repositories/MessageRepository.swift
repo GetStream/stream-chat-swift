@@ -102,8 +102,7 @@ class MessageRepository {
         database.write({
             let messageDTO = try $0.saveMessage(payload: message, for: cid, syncOwnReactions: false, cache: nil)
             if messageDTO.localMessageState == .sending || messageDTO.localMessageState == .sendingFailed {
-                messageDTO.locallyCreatedAt = nil
-                messageDTO.localMessageState = nil
+                messageDTO.markMessageAsSent()
             }
 
             let messageModel = try messageDTO.asModel()
@@ -123,6 +122,23 @@ class MessageRepository {
     ) {
         log.error("Sending the message with id \(messageId) failed with error: \(error)")
 
+        if let clientError = error as? ClientError, let errorPayload = clientError.errorPayload {
+            // If the message already exists on the server we do not want to mark it as failed,
+            // since this will cause an unrecoverable state, where the user will keep resending
+            // the message and it will always fail. Right now, the only way to check this error is
+            // by checking a combination of the error code and description, since there is no special
+            // error code for duplicated messages.
+            let isDuplicatedMessageError = errorPayload.code == 4 && errorPayload.message.contains("already exists")
+            if isDuplicatedMessageError {
+                database.write {
+                    let messageDTO = $0.message(id: messageId)
+                    messageDTO?.markMessageAsSent()
+                    completion(.failure(.failedToSendMessage(error)))
+                }
+                return
+            }
+        }
+
         markMessageAsFailedToSend(id: messageId) {
             completion(.failure(.failedToSendMessage(error)))
         }
@@ -132,7 +148,7 @@ class MessageRepository {
         database.write({
             let dto = $0.message(id: id)
             if dto?.localMessageState == .sending {
-                dto?.localMessageState = .sendingFailed
+                dto?.markMessageAsFailed()
             }
         }, completion: {
             if let error = $0 {

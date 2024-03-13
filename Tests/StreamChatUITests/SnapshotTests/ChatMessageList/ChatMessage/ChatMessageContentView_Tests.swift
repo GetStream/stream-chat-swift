@@ -639,6 +639,49 @@ final class ChatMessageContentView_Tests: XCTestCase {
         AssertSnapshot(view, variants: [.defaultLight])
     }
 
+    func test_appearance_whenMessageIsEdited() throws {
+        let message: ChatMessage = .mock(
+            id: .unique,
+            cid: .unique,
+            text: "Hello World",
+            author: .unique,
+            createdAt: createdAt,
+            localState: nil,
+            isSentByCurrentUser: true,
+            textUpdatedAt: .unique
+        )
+
+        let view = contentView(
+            message: message,
+            channel: .mock(cid: .unique)
+        )
+        view.components.isMessageEditedLabelEnabled = true
+
+        AssertSnapshot(view, variants: .all)
+    }
+
+    func test_appearance_whenMessageIsEdited_andDeleted_shouldNotShowEditedLabel() throws {
+        let message: ChatMessage = .mock(
+            id: .unique,
+            cid: .unique,
+            text: "Hello World",
+            author: .unique,
+            createdAt: createdAt,
+            deletedAt: .unique,
+            localState: nil,
+            isSentByCurrentUser: true,
+            textUpdatedAt: .unique
+        )
+
+        let view = contentView(
+            message: message,
+            channel: .mock(cid: .unique)
+        )
+        view.components.isMessageEditedLabelEnabled = true
+
+        AssertSnapshot(view, variants: [.defaultLight])
+    }
+
     func test_chatReactionsBubbleViewInjectable() {
         let testMessage: ChatMessage = .mock(
             id: .unique,

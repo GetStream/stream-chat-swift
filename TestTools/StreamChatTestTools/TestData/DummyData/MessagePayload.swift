@@ -46,6 +46,7 @@ extension Message {
         originalLanguage: String? = nil,
         moderationDetails: MessageModerationDetails? = nil,
         mentionedUsers: [UserObject] = [.dummy(userId: .unique)],
+        messageTextUpdatedAt: Date? = nil,
         command: String? = nil
     ) -> Message {
         .init(

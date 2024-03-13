@@ -24,12 +24,12 @@ public struct ErrorPayload: LocalizedError, Codable, CustomDebugStringConvertibl
     }
 
     public var debugDescription: String {
-        "ServerErrorPayload(code: \(code), message: \"\(message)\", statusCode: \(statusCode)))."
+        "\(String(describing: Self.self))(code: \(code), message: \"\(message)\", statusCode: \(statusCode)))."
     }
 }
 
 /// https://getstream.io/chat/docs/ios-swift/api_errors_response/
-private enum StreamErrorCode {
+enum StreamErrorCode {
     /// Usually returned when trying to perform an API call without a token.
     static let accessKeyInvalid = 2
     static let expiredToken = 40

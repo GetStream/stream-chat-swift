@@ -87,6 +87,8 @@
 "message.moderation.edit" = "Edit Message";
 /// Shown as a delete message action in the popup shown when a message was bounced due to moderation.
 "message.moderation.delete" = "Delete Message";
+/// Shown as a label below the message, to notify that a message has been edited.
+"message.edited" = "Edited";
 
 /// Shown when a user is online.
 "message.title.online" = "Online";
