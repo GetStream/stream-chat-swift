@@ -95,7 +95,7 @@ final class ChannelUpdater_Mock: ChannelUpdater {
     @Atomic var stopWatching_completion: ((Error?) -> Void)?
 
     @Atomic var channelWatchers_query: ChannelWatcherListQuery?
-    @Atomic var channelWatchers_completion: ((Error?) -> Void)?
+    @Atomic var channelWatchers_completion: ((Result<ChannelPayload, any Error>) -> Void)?
 
     @Atomic var freezeChannel_freeze: Bool?
     @Atomic var freezeChannel_cid: ChannelId?
@@ -392,7 +392,7 @@ final class ChannelUpdater_Mock: ChannelUpdater {
         stopWatching_completion = completion
     }
 
-    override func channelWatchers(query: ChannelWatcherListQuery, completion: ((Error?) -> Void)? = nil) {
+    override func channelWatchers(query: ChannelWatcherListQuery, completion: ((Result<ChannelPayload, any Error>) -> Void)? = nil) {
         channelWatchers_query = query
         channelWatchers_completion = completion
     }

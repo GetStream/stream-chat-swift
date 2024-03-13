@@ -28,7 +28,6 @@ final class MessageUpdater_Tests: XCTestCase {
         messageUpdater = MessageUpdater(
             isLocalStorageEnabled: true,
             messageRepository: messageRepository,
-            paginationStateHandler: paginationStateHandler,
             database: database,
             apiClient: apiClient
         )
@@ -45,6 +44,7 @@ final class MessageUpdater_Tests: XCTestCase {
             Assert.canBeReleased(&webSocketClient)
             Assert.canBeReleased(&apiClient)
             Assert.canBeReleased(&database)
+            Assert.canBeReleased(&paginationStateHandler)
         }
     }
 
@@ -52,7 +52,6 @@ final class MessageUpdater_Tests: XCTestCase {
         messageUpdater = MessageUpdater(
             isLocalStorageEnabled: isLocalStorageEnabled,
             messageRepository: messageRepository,
-            paginationStateHandler: paginationStateHandler,
             database: database,
             apiClient: apiClient
         )
@@ -967,7 +966,7 @@ final class MessageUpdater_Tests: XCTestCase {
 
         // Simulate `loadReplies` call
         let exp = expectation(description: "load replies should complete")
-        messageUpdater.loadReplies(cid: .unique, messageId: messageId, pagination: pagination) { _ in
+        messageUpdater.loadReplies(cid: .unique, messageId: messageId, pagination: pagination, paginationStateHandler: paginationStateHandler) { _ in
             exp.fulfill()
         }
 
@@ -995,7 +994,7 @@ final class MessageUpdater_Tests: XCTestCase {
     func test_loadReplies_propagatesRequestError() {
         // Simulate `loadReplies` call
         var completionCalledError: Error?
-        messageUpdater.loadReplies(cid: .unique, messageId: .unique, pagination: .init(pageSize: 25)) {
+        messageUpdater.loadReplies(cid: .unique, messageId: .unique, pagination: .init(pageSize: 25), paginationStateHandler: paginationStateHandler) {
             completionCalledError = $0.error
         }
 
@@ -1022,7 +1021,7 @@ final class MessageUpdater_Tests: XCTestCase {
 
         // Simulate `loadReplies` call
         var completionCalledError: Error?
-        messageUpdater.loadReplies(cid: cid, messageId: .unique, pagination: .init(pageSize: 25)) {
+        messageUpdater.loadReplies(cid: cid, messageId: .unique, pagination: .init(pageSize: 25), paginationStateHandler: paginationStateHandler) {
             completionCalledError = $0.error
         }
 
@@ -1046,7 +1045,7 @@ final class MessageUpdater_Tests: XCTestCase {
 
         // Simulate `loadReplies` call
         var completionCalled = false
-        messageUpdater.loadReplies(cid: cid, messageId: .unique, pagination: .init(pageSize: 25)) { _ in
+        messageUpdater.loadReplies(cid: cid, messageId: .unique, pagination: .init(pageSize: 25), paginationStateHandler: paginationStateHandler) { _ in
             completionCalled = true
         }
 
@@ -2591,9 +2590,9 @@ final class MessageUpdater_Tests: XCTestCase {
 
         // Make translate call
         var completionCalled = false
-        messageUpdater.translate(messageId: messageId, to: language) { error in
+        messageUpdater.translate(messageId: messageId, to: language) { result in
             completionCalled = true
-            XCTAssertNil(error)
+            XCTAssertNil(result.error)
         }
 
         // Simulate successful response
@@ -2619,9 +2618,9 @@ final class MessageUpdater_Tests: XCTestCase {
         // Make translate call
         var completionCalled = false
         let testError = TestError()
-        messageUpdater.translate(messageId: messageId, to: language) { error in
+        messageUpdater.translate(messageId: messageId, to: language) { result in
             completionCalled = true
-            XCTAssertEqual(error as? TestError, testError)
+            XCTAssertEqual(result.error as? TestError, testError)
         }
 
         // Simulate failure response
@@ -2645,9 +2644,9 @@ final class MessageUpdater_Tests: XCTestCase {
 
         // Make translate call
         var completionCalled = false
-        messageUpdater.translate(messageId: messageId, to: language) { error in
+        messageUpdater.translate(messageId: messageId, to: language) { result in
             completionCalled = true
-            XCTAssertEqual(error as? TestError, testError)
+            XCTAssertEqual(result.error as? TestError, testError)
         }
 
         // Simulate successful response
@@ -2692,7 +2691,7 @@ extension MessageUpdater_Tests {
 
         // WHEN
         let exp = expectation(description: "load replies completes")
-        messageUpdater.loadReplies(cid: cid, messageId: parentMessageId, pagination: pagination) { _ in
+        messageUpdater.loadReplies(cid: cid, messageId: parentMessageId, pagination: pagination, paginationStateHandler: paginationStateHandler) { _ in
             exp.fulfill()
         }
         apiClient.test_simulateResponse(Result<MessageRepliesPayload, Error>.success(repliesPayload))
@@ -2745,7 +2744,7 @@ extension MessageUpdater_Tests {
 
         // Simulate `loadReplies` call
         let exp = expectation(description: "should load replies")
-        messageUpdater.loadReplies(cid: cid, messageId: parentMessageId, pagination: pagination) { _ in
+        messageUpdater.loadReplies(cid: cid, messageId: parentMessageId, pagination: pagination, paginationStateHandler: paginationStateHandler) { _ in
             exp.fulfill()
         }
 
