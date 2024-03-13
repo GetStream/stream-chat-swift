@@ -11,7 +11,7 @@ public extension ChatClient {
     /// - Parameter messageId: The message identifier.
     /// - Returns: A new instance of `MessageController`.
     func messageController(cid: ChannelId, messageId: MessageId) -> ChatMessageController {
-        .init(client: self, cid: cid, messageId: messageId)
+        .init(client: self, cid: cid, messageId: messageId, replyPaginationHandler: makeMessagesPaginationStateHandler())
     }
 }
 
@@ -192,12 +192,12 @@ public class ChatMessageController: DataController, DelegateCallable, DataStoreP
     ///   - cid: The channel identifier the message belongs to.
     ///   - messageId: The message identifier.
     ///   - environment: The source of internal dependencies.
-    init(client: ChatClient, cid: ChannelId, messageId: MessageId, environment: Environment = .init()) {
+    init(client: ChatClient, cid: ChannelId, messageId: MessageId, replyPaginationHandler: MessagesPaginationStateHandling, environment: Environment = .init()) {
         self.client = client
         self.cid = cid
         self.messageId = messageId
+        self.replyPaginationHandler = replyPaginationHandler
         self.environment = environment
-        replyPaginationHandler = client.makeMessagesPaginationStateHandler()
         messageUpdater = environment.messageUpdaterBuilder(
             client.config.isLocalStorageEnabled,
             client.messageRepository,
@@ -712,9 +712,9 @@ public class ChatMessageController: DataController, DelegateCallable, DataStoreP
     ///   - completion: The completion. Will be called on a **callbackQueue** when the operation is finished.
     ///                 If operation fails, the completion is called with the error.
     public func translate(to language: TranslationLanguage, completion: ((Error?) -> Void)? = nil) {
-        messageUpdater.translate(messageId: messageId, to: language) { error in
+        messageUpdater.translate(messageId: messageId, to: language) { result in
             self.callback {
-                completion?(error)
+                completion?(result.error)
             }
         }
     }
