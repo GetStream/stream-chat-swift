@@ -659,7 +659,7 @@ class MessageUpdater: Worker {
                         translatedMessage = try messageDTO.asModel()
                     }
                 } completion: { error in
-                    if let translatedMessage {
+                    if let translatedMessage, error == nil {
                         completion?(.success(translatedMessage))
                     } else {
                         completion?(.failure(error ?? ClientError.Unknown()))
