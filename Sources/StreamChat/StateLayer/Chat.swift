@@ -43,10 +43,16 @@ public final class Chat {
         self.channelUpdater = channelUpdater
         eventNotificationCenter = client.eventNotificationCenter
         databaseContainer = client.databaseContainer
-        memberListUpdater = client.memberListUpdater
-        memberUpdater = client.memberUpdater
         messageEditor = client.messageEditor
         messageSender = client.messageSender
+        memberListUpdater = environment.memberListUpdaterBuilder(
+            client.databaseContainer,
+            client.apiClient
+        )
+        memberUpdater = environment.memberUpdaterBuilder(
+            client.databaseContainer,
+            client.apiClient
+        )
         messageUpdater = environment.messageUpdaterBuilder(
             client.config.isLocalStorageEnabled,
             client.messageRepository,
@@ -172,20 +178,6 @@ public final class Chat {
     public func removeMembers(_ members: [UserId], systemMessage: String? = nil) async throws {
         let currentUserId = authenticationRepository.currentUserId
         try await channelUpdater.removeMembers(currentUserId: currentUserId, cid: cid, userIds: Set(members), message: systemMessage)
-    }
-    
-    // MARK: Member State Observing
-    
-    /// Returns an observable member state for the specified user id.
-    ///
-    /// The member state is refreshed before returning the observable state.
-    ///
-    /// - Parameter userId: The user id of the channel member.
-    ///
-    /// - Returns: An instance of `MemberState` which conforms to the `ObservableObject`.
-    public func makeMemberState(for userId: UserId) async throws -> MemberState {
-        let member = try await memberListUpdater.member(with: userId, cid: cid)
-        return MemberState(member: member, cid: cid, database: databaseContainer)
     }
     
     // MARK: - Messages
@@ -973,6 +965,16 @@ extension Chat {
             _ eventNotificationCenter: EventNotificationCenter,
             _ paginationState: MessagesPaginationState
         ) -> ChatState = ChatState.init
+        
+        var memberUpdaterBuilder: (
+            _ database: DatabaseContainer,
+            _ apiClient: APIClient
+        ) -> ChannelMemberUpdater = ChannelMemberUpdater.init
+        
+        var memberListUpdaterBuilder: (
+            _ database: DatabaseContainer,
+            _ apiClient: APIClient
+        ) -> ChannelMemberListUpdater = ChannelMemberListUpdater.init
         
         var messageUpdaterBuilder: (
             _ isLocalStorageEnabled: Bool,

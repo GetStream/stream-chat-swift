@@ -76,10 +76,6 @@ public class ChatClient {
     let channelRepository: ChannelRepository
     
     let channelListUpdater: ChannelListUpdater
-    
-    let memberUpdater: ChannelMemberUpdater
-    
-    let memberListUpdater: ChannelMemberListUpdater
 
     func makeMessagesPaginationStateHandler() -> MessagesPaginationStateHandling {
         MessagesPaginationStateHandler()
@@ -207,14 +203,6 @@ public class ChatClient {
         extensionLifecycle = environment.extensionLifecycleBuilder(config.applicationGroupIdentifier)
         callRepository = environment.callRepositoryBuilder(apiClient)
         channelRepository = environment.channelRepositoryBuilder(
-            databaseContainer,
-            apiClient
-        )
-        memberUpdater = environment.memberUpdaterBuilder(
-            databaseContainer,
-            apiClient
-        )
-        memberListUpdater = environment.memberListUpdaterBuilder(
             databaseContainer,
             apiClient
         )

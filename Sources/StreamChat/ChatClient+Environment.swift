@@ -161,16 +161,6 @@ extension ChatClient {
         ) -> ChannelListUpdater = {
             ChannelListUpdater(database: $0, apiClient: $1)
         }
-        
-        var memberUpdaterBuilder: (
-            _ database: DatabaseContainer,
-            _ apiClient: APIClient
-        ) -> ChannelMemberUpdater = ChannelMemberUpdater.init
-        
-        var memberListUpdaterBuilder: (
-            _ database: DatabaseContainer,
-            _ apiClient: APIClient
-        ) -> ChannelMemberListUpdater = ChannelMemberListUpdater.init
 
         var messageRepositoryBuilder: (
             _ database: DatabaseContainer,
