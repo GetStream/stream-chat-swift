@@ -16,12 +16,13 @@ public struct NotificationMarkUnreadEvent: Codable, Hashable, Event {
     public var unreadChannels: Int
     public var unreadCount: Int
     public var unreadMessages: Int
+    public var unreadThreads: Int
     public var lastReadMessageId: String? = nil
     public var team: String? = nil
     public var channel: ChannelResponse? = nil
     public var user: UserObject? = nil
 
-    public init(channelId: String, channelType: String, cid: String, createdAt: Date, firstUnreadMessageId: String, lastReadAt: Date, totalUnreadCount: Int, type: String, unreadChannels: Int, unreadCount: Int, unreadMessages: Int, lastReadMessageId: String? = nil, team: String? = nil, channel: ChannelResponse? = nil, user: UserObject? = nil) {
+    public init(channelId: String, channelType: String, cid: String, createdAt: Date, firstUnreadMessageId: String, lastReadAt: Date, totalUnreadCount: Int, type: String, unreadChannels: Int, unreadCount: Int, unreadMessages: Int, unreadThreads: Int, lastReadMessageId: String? = nil, team: String? = nil, channel: ChannelResponse? = nil, user: UserObject? = nil) {
         self.channelId = channelId
         self.channelType = channelType
         self.cid = cid
@@ -33,6 +34,7 @@ public struct NotificationMarkUnreadEvent: Codable, Hashable, Event {
         self.unreadChannels = unreadChannels
         self.unreadCount = unreadCount
         self.unreadMessages = unreadMessages
+        self.unreadThreads = unreadThreads
         self.lastReadMessageId = lastReadMessageId
         self.team = team
         self.channel = channel
@@ -51,6 +53,7 @@ public struct NotificationMarkUnreadEvent: Codable, Hashable, Event {
         case unreadChannels = "unread_channels"
         case unreadCount = "unread_count"
         case unreadMessages = "unread_messages"
+        case unreadThreads = "unread_threads"
         case lastReadMessageId = "last_read_message_id"
         case team
         case channel

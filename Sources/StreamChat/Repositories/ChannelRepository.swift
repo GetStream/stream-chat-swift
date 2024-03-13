@@ -56,7 +56,7 @@ class ChannelRepository {
         api.markUnread(
             type: cid.type.rawValue,
             id: cid.id,
-            markUnreadRequest: MarkUnreadRequest(messageId: messageId, userId: userId)
+            markUnreadRequest: MarkUnreadRequest(messageId: messageId, threadId: "") // TODO: check this
         ) { [weak self] result in
             if let error = result.error {
                 completion?(.failure(error))

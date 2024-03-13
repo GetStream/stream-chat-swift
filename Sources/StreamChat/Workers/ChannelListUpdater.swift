@@ -57,6 +57,7 @@ class ChannelListUpdater: Worker {
         let requiresConnectionId = updatedQuery.options.contains(oneOf: [.presence, .state, .watch])
         api.queryChannels(
             queryChannelsRequest: request,
+            clientId: nil, // TODO: check this.
             requiresConnectionId: requiresConnectionId,
             isRecoveryOperation: true
         ) { [weak self] result in
@@ -149,6 +150,7 @@ class ChannelListUpdater: Worker {
         let requiresConnectionId = channelListQuery.options.contains(oneOf: [.presence, .state, .watch])
         api.queryChannels(
             queryChannelsRequest: request,
+            clientId: nil, // TODO: check this.
             requiresConnectionId: requiresConnectionId,
             completion: completion
         )

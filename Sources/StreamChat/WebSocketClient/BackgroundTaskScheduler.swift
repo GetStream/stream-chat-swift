@@ -35,7 +35,7 @@ class IOSBackgroundTaskScheduler: BackgroundTaskScheduler {
 
     var isAppActive: Bool {
         let app = self.app
-        if Thread.isMainThread {
+        if Foundation.Thread.isMainThread {
             return app?.applicationState == .active
         }
 

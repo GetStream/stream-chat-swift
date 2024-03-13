@@ -14,16 +14,14 @@ public struct QueryMembersRequest: Codable, Hashable {
     public var id: String? = nil
     public var limit: Int? = nil
     public var offset: Int? = nil
-    public var userId: String? = nil
     public var userIdGt: String? = nil
     public var userIdGte: String? = nil
     public var userIdLt: String? = nil
     public var userIdLte: String? = nil
     public var members: [ChannelMember?]? = nil
     public var sort: [SortParam?]? = nil
-    public var user: UserObject? = nil
 
-    public init(type: String, filterConditions: [String: RawJSON], createdAtAfter: Date? = nil, createdAtAfterOrEqual: Date? = nil, createdAtBefore: Date? = nil, createdAtBeforeOrEqual: Date? = nil, id: String? = nil, limit: Int? = nil, offset: Int? = nil, userId: String? = nil, userIdGt: String? = nil, userIdGte: String? = nil, userIdLt: String? = nil, userIdLte: String? = nil, members: [ChannelMember?]? = nil, sort: [SortParam?]? = nil, user: UserObject? = nil) {
+    public init(type: String, filterConditions: [String: RawJSON], createdAtAfter: Date? = nil, createdAtAfterOrEqual: Date? = nil, createdAtBefore: Date? = nil, createdAtBeforeOrEqual: Date? = nil, id: String? = nil, limit: Int? = nil, offset: Int? = nil, userIdGt: String? = nil, userIdGte: String? = nil, userIdLt: String? = nil, userIdLte: String? = nil, members: [ChannelMember?]? = nil, sort: [SortParam?]? = nil) {
         self.type = type
         self.filterConditions = filterConditions
         self.createdAtAfter = createdAtAfter
@@ -33,14 +31,12 @@ public struct QueryMembersRequest: Codable, Hashable {
         self.id = id
         self.limit = limit
         self.offset = offset
-        self.userId = userId
         self.userIdGt = userIdGt
         self.userIdGte = userIdGte
         self.userIdLt = userIdLt
         self.userIdLte = userIdLte
         self.members = members
         self.sort = sort
-        self.user = user
     }
     
     public enum CodingKeys: String, CodingKey, CaseIterable {
@@ -53,13 +49,11 @@ public struct QueryMembersRequest: Codable, Hashable {
         case id
         case limit
         case offset
-        case userId = "user_id"
         case userIdGt = "user_id_gt"
         case userIdGte = "user_id_gte"
         case userIdLt = "user_id_lt"
         case userIdLte = "user_id_lte"
         case members
         case sort
-        case user
     }
 }

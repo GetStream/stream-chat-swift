@@ -8,6 +8,7 @@ public struct ChannelStateResponseFields: Codable, Hashable {
     public var members: [ChannelMember?]
     public var messages: [Message]
     public var pinnedMessages: [Message]
+    public var threads: [ThreadState?]
     public var hidden: Bool? = nil
     public var hideMessagesBefore: Date? = nil
     public var watcherCount: Int? = nil
@@ -17,10 +18,11 @@ public struct ChannelStateResponseFields: Codable, Hashable {
     public var channel: ChannelResponse? = nil
     public var membership: ChannelMember? = nil
 
-    public init(members: [ChannelMember?], messages: [Message], pinnedMessages: [Message], hidden: Bool? = nil, hideMessagesBefore: Date? = nil, watcherCount: Int? = nil, pendingMessages: [PendingMessage?]? = nil, read: [Read?]? = nil, watchers: [UserObject]? = nil, channel: ChannelResponse? = nil, membership: ChannelMember? = nil) {
+    public init(members: [ChannelMember?], messages: [Message], pinnedMessages: [Message], threads: [ThreadState?], hidden: Bool? = nil, hideMessagesBefore: Date? = nil, watcherCount: Int? = nil, pendingMessages: [PendingMessage?]? = nil, read: [Read?]? = nil, watchers: [UserObject]? = nil, channel: ChannelResponse? = nil, membership: ChannelMember? = nil) {
         self.members = members
         self.messages = messages
         self.pinnedMessages = pinnedMessages
+        self.threads = threads
         self.hidden = hidden
         self.hideMessagesBefore = hideMessagesBefore
         self.watcherCount = watcherCount
@@ -35,6 +37,7 @@ public struct ChannelStateResponseFields: Codable, Hashable {
         case members
         case messages
         case pinnedMessages = "pinned_messages"
+        case threads
         case hidden
         case hideMessagesBefore = "hide_messages_before"
         case watcherCount = "watcher_count"

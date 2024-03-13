@@ -24,7 +24,7 @@ class UserUpdater: Worker {
     ///   - completion: Called when the API call is finished. Called with `Error` if the remote update fails.
     ///
     func unmuteUser(_ userId: UserId, completion: ((Error?) -> Void)? = nil) {
-        let request = UnmuteUserRequest(targetId: userId, targetIds: [userId])
+        let request = UnmuteUserRequest(targetIds: [userId])
         api.unmuteUser(unmuteUserRequest: request) {
             completion?($0.error)
         }
@@ -37,8 +37,8 @@ class UserUpdater: Worker {
     ///   - completion: Called when the API call is finished. Called with `Error` if the remote update fails.
     ///
     func loadUser(_ userId: UserId, completion: ((Error?) -> Void)? = nil) {
-        let request = QueryUsersRequest(filterConditions: ["id": ["$eq": .string(userId)]])
-        api.queryUsers(payload: request) { [weak self] (result: Result<UsersResponse, Error>) in
+        let request = QueryUsersPayload(filterConditions: ["id": ["$eq": .string(userId)]])
+        api.queryUsers(payload: request) { [weak self] (result: Result<QueryUsersResponse, Error>) in
             guard let self else { return }
             switch result {
             case let .success(payload):
@@ -55,9 +55,7 @@ class UserUpdater: Worker {
                 }
 
                 self.database.write({ session in
-                    if let user = user?.toUser {
-                        try session.saveUser(payload: user, query: nil, cache: nil)
-                    }
+                    try session.saveUser(payload: user.toUser, query: nil, cache: nil)
                 }, completion: { error in
                     if let error = error {
                         log.error("Failed to save user with id: <\(userId)> to the database. Error: \(error)")

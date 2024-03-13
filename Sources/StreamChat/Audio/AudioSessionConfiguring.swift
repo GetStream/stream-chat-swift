@@ -143,7 +143,7 @@ open class StreamAudioSessionConfigurator: AudioSessionConfiguring {
         _ permissionGranted: Bool,
         completionHandler: @escaping (Bool) -> Void
     ) {
-        guard Thread.isMainThread else {
+        guard Foundation.Thread.isMainThread else {
             DispatchQueue.main.async { [weak self] in
                 self?.handleRecordPermissionResponse(
                     permissionGranted,

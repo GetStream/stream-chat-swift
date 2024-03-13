@@ -4,11 +4,11 @@
 
 import Foundation
 
-public struct UsersResponse: Codable, Hashable {
+public struct QueryUsersResponse: Codable, Hashable {
     public var duration: String
-    public var users: [UserResponse?]
+    public var users: [QueryUserResult]
 
-    public init(duration: String, users: [UserResponse?]) {
+    public init(duration: String, users: [QueryUserResult]) {
         self.duration = duration
         self.users = users
     }

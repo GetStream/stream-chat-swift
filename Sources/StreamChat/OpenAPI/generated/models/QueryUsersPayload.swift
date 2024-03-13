@@ -4,47 +4,47 @@
 
 import Foundation
 
-public struct QueryUsersRequest: Codable, Hashable {
+public struct QueryUsersPayload: Codable, Hashable {
     public var filterConditions: [String: RawJSON]
+    public var clientId: String? = nil
     public var connectionId: String? = nil
     public var idGt: String? = nil
     public var idGte: String? = nil
     public var idLt: String? = nil
     public var idLte: String? = nil
+    public var includeDeactivatedUsers: Bool? = nil
     public var limit: Int? = nil
     public var offset: Int? = nil
     public var presence: Bool? = nil
-    public var userId: String? = nil
     public var sort: [SortParam?]? = nil
-    public var user: UserObject? = nil
 
-    public init(filterConditions: [String: RawJSON], connectionId: String? = nil, idGt: String? = nil, idGte: String? = nil, idLt: String? = nil, idLte: String? = nil, limit: Int? = nil, offset: Int? = nil, presence: Bool? = nil, userId: String? = nil, sort: [SortParam?]? = nil, user: UserObject? = nil) {
+    public init(filterConditions: [String: RawJSON], clientId: String? = nil, connectionId: String? = nil, idGt: String? = nil, idGte: String? = nil, idLt: String? = nil, idLte: String? = nil, includeDeactivatedUsers: Bool? = nil, limit: Int? = nil, offset: Int? = nil, presence: Bool? = nil, sort: [SortParam?]? = nil) {
         self.filterConditions = filterConditions
+        self.clientId = clientId
         self.connectionId = connectionId
         self.idGt = idGt
         self.idGte = idGte
         self.idLt = idLt
         self.idLte = idLte
+        self.includeDeactivatedUsers = includeDeactivatedUsers
         self.limit = limit
         self.offset = offset
         self.presence = presence
-        self.userId = userId
         self.sort = sort
-        self.user = user
     }
     
     public enum CodingKeys: String, CodingKey, CaseIterable {
         case filterConditions = "filter_conditions"
+        case clientId = "client_id"
         case connectionId = "connection_id"
         case idGt = "id_gt"
         case idGte = "id_gte"
         case idLt = "id_lt"
         case idLte = "id_lte"
+        case includeDeactivatedUsers = "include_deactivated_users"
         case limit
         case offset
         case presence
-        case userId = "user_id"
         case sort
-        case user
     }
 }

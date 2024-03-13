@@ -6,10 +6,10 @@ import Foundation
 
 public struct SendMessageResponse: Codable, Hashable {
     public var duration: String
-    public var message: Message
+    public var message: MessageResponse
     public var pendingMessageMetadata: [String: String]? = nil
 
-    public init(duration: String, message: Message, pendingMessageMetadata: [String: String]? = nil) {
+    public init(duration: String, message: MessageResponse, pendingMessageMetadata: [String: String]? = nil) {
         self.duration = duration
         self.message = message
         self.pendingMessageMetadata = pendingMessageMetadata

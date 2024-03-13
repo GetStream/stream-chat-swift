@@ -20,7 +20,7 @@ protocol UserDatabaseSession {
     ) throws -> UserDTO
     
     @discardableResult
-    func saveUsers(payload: UsersResponse, query: UserListQuery?) -> [UserDTO]
+    func saveUsers(payload: QueryUsersResponse, query: UserListQuery?) -> [UserDTO]
 
     /// Saves the provided query to the DB. Return's the matching `UserListQueryDTO` if the save was successful. Throws an error
     /// if the save fails.
@@ -551,11 +551,11 @@ extension DatabaseSession {
             channelDTO.previewMessage = newPreview
         }
         
-        if let channelTruncated = event as? ChannelTruncatedEvent,
-           let cid = try? ChannelId(cid: channelTruncated.cid),
-           let channelDTO = channel(cid: cid) {
-            channelDTO.previewMessage = channelTruncated.message.flatMap { message(id: $0.id) }
-        }
+//        if let channelTruncated = event as? ChannelTruncatedEvent,
+//           let cid = try? ChannelId(cid: channelTruncated.cid),
+//           let channelDTO = channel(cid: cid) {
+//            channelDTO.previewMessage = channelTruncated.message.flatMap { message(id: $0.id) }
+//        }
     }
     
     // MARK: - private

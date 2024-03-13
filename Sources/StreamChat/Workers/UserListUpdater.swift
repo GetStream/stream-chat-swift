@@ -14,7 +14,7 @@ class UserListUpdater: Worker {
     ///   - completion: Called when the API call is finished. Called with `Error` if the remote update fails.
     ///
     func update(userListQuery: UserListQuery, policy: UpdatePolicy = .merge, completion: ((Error?) -> Void)? = nil) {
-        fetch(userListQuery: userListQuery) { [weak self] (result: Result<UsersResponse, Error>) in
+        fetch(userListQuery: userListQuery) { [weak self] (result: Result<QueryUsersResponse, Error>) in
             switch result {
             case let .success(userListPayload):
                 self?.database.write { session in
@@ -47,7 +47,7 @@ class UserListUpdater: Worker {
     ///
     func fetch(
         userListQuery: UserListQuery,
-        completion: @escaping (Result<UsersResponse, Error>) -> Void
+        completion: @escaping (Result<QueryUsersResponse, Error>) -> Void
     ) {
         var filter: [String: RawJSON]?
         if let data = try? JSONEncoder.default.encode(userListQuery.filter) {
@@ -58,7 +58,7 @@ class UserListUpdater: Worker {
             SortParam(direction: sortingKey.direction, field: sortingKey.key.rawValue)
         }
         
-        let request = QueryUsersRequest(
+        let request = QueryUsersPayload(
             filterConditions: filter ?? [:],
             limit: userListQuery.pagination?.pageSize,
             offset: userListQuery.pagination?.offset,

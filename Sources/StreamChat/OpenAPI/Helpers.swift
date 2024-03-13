@@ -12,6 +12,7 @@ extension ChannelStateResponse {
             members: members,
             messages: messages,
             pinnedMessages: pinnedMessages,
+            threads: threads,
             hidden: hidden,
             hideMessagesBefore: hideMessagesBefore,
             watcherCount: watcherCount,
@@ -69,21 +70,124 @@ extension UserResponse {
     var toUser: UserObject {
         UserObject(
             id: id,
-            banExpires: banExpires,
+            banExpires: nil,
             banned: banned,
             createdAt: createdAt,
-            deactivatedAt: deactivatedAt,
+            deactivatedAt: nil,
             deletedAt: deletedAt,
-            invisible: invisible,
+            invisible: false,
             language: language,
-            lastActive: lastActive,
+            lastActive: nil,
+            online: online,
+            revokeTokensIssuedBefore: nil,
+            role: nil,
+            updatedAt: updatedAt,
+            teams: nil,
+            custom: custom,
+            pushNotifications: nil
+        )
+    }
+}
+
+extension MessageResponse {
+    var toMessage: Message {
+        Message(
+            cid: cid,
+            createdAt: createdAt,
+            deletedReplyCount: deletedReplyCount,
+            html: html,
+            id: id,
+            pinned: pinned,
+            replyCount: replyCount,
+            shadowed: shadowed,
+            silent: silent,
+            text: text,
+            type: type,
+            updatedAt: updatedAt,
+            attachments: attachments,
+            latestReactions: latestReactions,
+            mentionedUsers: mentionedUsers.map(\.toUser),
+            ownReactions: ownReactions,
+            custom: custom ?? [:],
+            reactionCounts: reactionCounts,
+            reactionScores: reactionScores,
+            command: command,
+            deletedAt: deletedAt,
+            mml: mml,
+            parentId: parentId,
+            pinExpires: pinExpires,
+            pinnedAt: pinnedAt,
+            quotedMessageId: quotedMessageId,
+            showInChannel: showInChannel,
+            threadParticipants: threadParticipants?.compactMap { $0 }.map(\.toUser),
+            i18n: i18n,
+            imageLabels: imageLabels,
+            pinnedBy: pinnedBy?.toUser,
+            quotedMessage: quotedMessage,
+            user: user.toUser
+        )
+    }
+}
+
+extension MessageWithChannelResponse {
+    var toMessage: Message {
+        Message(
+            cid: cid,
+            createdAt: createdAt,
+            deletedReplyCount: deletedReplyCount,
+            html: html,
+            id: id,
+            pinned: pinned,
+            replyCount: replyCount,
+            shadowed: shadowed,
+            silent: silent,
+            text: text,
+            type: type,
+            updatedAt: updatedAt,
+            attachments: attachments,
+            latestReactions: latestReactions,
+            mentionedUsers: mentionedUsers.map(\.toUser),
+            ownReactions: ownReactions,
+            custom: custom,
+            reactionCounts: reactionCounts,
+            reactionScores: reactionScores,
+            command: command,
+            deletedAt: deletedAt,
+            mml: mml,
+            parentId: parentId,
+            pinExpires: pinExpires,
+            pinnedAt: pinnedAt,
+            quotedMessageId: quotedMessageId,
+            showInChannel: showInChannel,
+            threadParticipants: threadParticipants?.compactMap { $0 }.map(\.toUser),
+            i18n: i18n,
+            imageLabels: imageLabels,
+            pinnedBy: pinnedBy?.toUser,
+            quotedMessage: quotedMessage,
+            user: user.toUser
+        )
+    }
+}
+
+extension QueryUserResult {
+    var toUser: UserObject {
+        UserObject(
+            id: id,
+            banExpires: nil,
+            banned: banned,
+            createdAt: createdAt,
+            deactivatedAt: nil,
+            deletedAt: deletedAt,
+            invisible: false,
+            language: language,
+            lastActive: nil,
             online: online,
             revokeTokensIssuedBefore: revokeTokensIssuedBefore,
-            role: role,
+            role: nil,
             updatedAt: updatedAt,
-            teams: teams,
+            teams: nil,
             custom: custom,
-            pushNotifications: pushNotifications
+            pushNotifications: nil
         )
     }
 }

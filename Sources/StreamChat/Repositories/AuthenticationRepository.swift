@@ -126,7 +126,7 @@ class AuthenticationRepository {
         var currentUserId: UserId?
 
         let context = databaseContainer.viewContext
-        if Thread.isMainThread {
+        if Foundation.Thread.isMainThread {
             currentUserId = context.currentUser?.user.id
         } else {
             context.performAndWait {
@@ -410,13 +410,13 @@ class AuthenticationRepository {
         if let imageURL = userInfo.imageURL?.absoluteString {
             custom["image"] = .string(imageURL)
         }
-        let user = UserObjectRequest(id: userInfo.id, custom: custom)
-        let request = GuestRequest(user: user)
+        let user = UserRequest(id: userInfo.id, custom: custom)
+        let request = CreateGuestRequest(user: user)
         
         /// We need to ensure that the request to fetch the userToken will be executed. As APIClient's
         /// operationQueue may be suspended (due to the getToken operation) we are firing an
         /// unmanagedRequest/Operation that will be added on the `OperationQueue.main`
-        api.createGuest(guestRequest: request) {
+        api.createGuest(createGuestRequest: request) {
             switch $0 {
             case let .success(payload):
                 do {

@@ -14,6 +14,7 @@ public struct OwnUser: Codable, Hashable {
     public var totalUnreadCount: Int
     public var unreadChannels: Int
     public var unreadCount: Int
+    public var unreadThreads: Int
     public var updatedAt: Date
     public var channelMutes: [ChannelMute?]
     public var devices: [Device]
@@ -27,7 +28,7 @@ public struct OwnUser: Codable, Hashable {
     public var teams: [String]? = nil
     public var pushNotifications: PushNotificationSettings? = nil
 
-    public init(banned: Bool, createdAt: Date, id: String, language: String, online: Bool, role: String, totalUnreadCount: Int, unreadChannels: Int, unreadCount: Int, updatedAt: Date, channelMutes: [ChannelMute?], devices: [Device], mutes: [UserMute?], custom: [String: RawJSON], deactivatedAt: Date? = nil, deletedAt: Date? = nil, invisible: Bool? = nil, lastActive: Date? = nil, latestHiddenChannels: [String]? = nil, teams: [String]? = nil, pushNotifications: PushNotificationSettings? = nil) {
+    public init(banned: Bool, createdAt: Date, id: String, language: String, online: Bool, role: String, totalUnreadCount: Int, unreadChannels: Int, unreadCount: Int, unreadThreads: Int, updatedAt: Date, channelMutes: [ChannelMute?], devices: [Device], mutes: [UserMute?], custom: [String: RawJSON], deactivatedAt: Date? = nil, deletedAt: Date? = nil, invisible: Bool? = nil, lastActive: Date? = nil, latestHiddenChannels: [String]? = nil, teams: [String]? = nil, pushNotifications: PushNotificationSettings? = nil) {
         self.banned = banned
         self.createdAt = createdAt
         self.id = id
@@ -37,6 +38,7 @@ public struct OwnUser: Codable, Hashable {
         self.totalUnreadCount = totalUnreadCount
         self.unreadChannels = unreadChannels
         self.unreadCount = unreadCount
+        self.unreadThreads = unreadThreads
         self.updatedAt = updatedAt
         self.channelMutes = channelMutes
         self.devices = devices
@@ -61,6 +63,7 @@ public struct OwnUser: Codable, Hashable {
         case totalUnreadCount = "total_unread_count"
         case unreadChannels = "unread_channels"
         case unreadCount = "unread_count"
+        case unreadThreads = "unread_threads"
         case updatedAt = "updated_at"
         case channelMutes = "channel_mutes"
         case devices

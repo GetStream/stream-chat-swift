@@ -4,10 +4,10 @@
 
 import Foundation
 
-public struct GuestRequest: Codable, Hashable {
-    public var user: UserObjectRequest
+public struct CreateGuestRequest: Codable, Hashable {
+    public var user: UserRequest
 
-    public init(user: UserObjectRequest) {
+    public init(user: UserRequest) {
         self.user = user
     }
     

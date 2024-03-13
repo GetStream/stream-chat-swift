@@ -51,7 +51,7 @@ public struct LazyCachedMapCollection<Element>: RandomAccessCollection {
         if !StreamRuntimeCheck._isBackgroundMappingEnabled {
             cache = .init(capacity: source.count)
         } else {
-            if Thread.isMainThread {
+            if Foundation.Thread.isMainThread {
                 log.debug("This should not be happening on the Main Thread")
             }
             cache = .init(elements: source.map(map))

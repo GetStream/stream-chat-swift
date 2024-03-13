@@ -6,18 +6,15 @@ import Foundation
 
 public struct MarkUnreadRequest: Codable, Hashable {
     public var messageId: String
-    public var userId: String? = nil
-    public var user: UserObjectRequest? = nil
+    public var threadId: String
 
-    public init(messageId: String, userId: String? = nil, user: UserObjectRequest? = nil) {
+    public init(messageId: String, threadId: String) {
         self.messageId = messageId
-        self.userId = userId
-        self.user = user
+        self.threadId = threadId
     }
     
     public enum CodingKeys: String, CodingKey, CaseIterable {
         case messageId = "message_id"
-        case userId = "user_id"
-        case user
+        case threadId = "thread_id"
     }
 }

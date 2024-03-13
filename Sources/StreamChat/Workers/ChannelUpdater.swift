@@ -124,6 +124,7 @@ class ChannelUpdater: Worker {
             type: channelQuery.type.rawValue,
             id: channelQuery.id ?? "", // TODO: check this
             channelGetOrCreateRequest: request,
+            clientId: nil,
             requiresConnectionId: requiresConnectionId,
             isRecoveryOperation: isInRecoveryMode,
             completion: completion
@@ -215,9 +216,7 @@ class ChannelUpdater: Worker {
                 }
             }
         } else {
-            // TODO: check why twice.
             let request = UnmuteChannelRequest(
-                channelCid: cid.rawValue,
                 channelCids: [cid.rawValue]
             )
             api.unmuteChannel(unmuteChannelRequest: request) { result in
@@ -640,6 +639,7 @@ class ChannelUpdater: Worker {
         api.getOrCreateChannel(
             type: cid.apiPath,
             channelGetOrCreateRequest: request,
+            clientId: nil,
             requiresConnectionId: true,
             isRecoveryOperation: isInRecoveryMode
         ) { completion?($0.error) }
@@ -657,6 +657,7 @@ class ChannelUpdater: Worker {
             type: cid.type.rawValue,
             id: cid.id,
             channelStopWatchingRequest: ChannelStopWatchingRequest(),
+            clientId: nil,
             requiresConnectionId: true,
             completion: {
                 completion?($0.error)
@@ -684,6 +685,7 @@ class ChannelUpdater: Worker {
         api.getOrCreateChannel(
             type: query.cid.apiPath,
             channelGetOrCreateRequest: request,
+            clientId: nil,
             requiresConnectionId: true
         ) { (result: Result<ChannelStateResponse, Error>) in
             do {

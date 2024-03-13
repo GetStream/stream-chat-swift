@@ -11,7 +11,7 @@ extension DispatchQueue {
     /// one, it performs the action safely without dead-locking the thread.
     ///
     static func performSynchronouslyOnMainQueue(_ action: () throws -> Void) rethrows {
-        if Thread.current.isMainThread {
+        if Foundation.Thread.current.isMainThread {
             try action()
         } else {
             try DispatchQueue.main.sync {

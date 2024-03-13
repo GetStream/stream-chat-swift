@@ -90,11 +90,7 @@ class MessageUpdater: Worker {
             api?.deleteMessage(id: messageId, hard: hard, deletedBy: nil) { result in
                 switch result {
                 case let .success(response):
-                    if let message = response.message {
-                        repository?.saveSuccessfullyDeletedMessage(message: message, completion: completion)
-                    } else {
-                        completion?(ClientError.MessageDoesNotExist(messageId: messageId))
-                    }
+                    repository?.saveSuccessfullyDeletedMessage(message: response.toMessage, completion: completion)
                 case let .failure(error):
                     database?.write { session in
                         let messageDTO = session.message(id: messageId)
@@ -613,12 +609,8 @@ class MessageUpdater: Worker {
             api?.runMessageAction(id: messageId, messageActionRequest: request) {
                 switch $0 {
                 case let .success(payload):
-                    guard let message = payload.message else {
-                        completion?(ClientError.MessageDoesNotExist(messageId: messageId))
-                        return
-                    }
                     self.database.write({ session in
-                        try session.saveMessage(payload: message, for: cid, syncOwnReactions: true, cache: nil)
+                        try session.saveMessage(payload: payload.toMessage, for: cid, syncOwnReactions: true, cache: nil)
                     }, completion: { error in
                         completion?(error)
                     })
@@ -693,14 +685,13 @@ class MessageUpdater: Worker {
             guard let self else { return }
             switch result {
             case let .success(boxedMessage):
-                guard let message = boxedMessage.message,
-                      let cid = try? ChannelId(cid: message.cid) else {
+                guard let cid = try? ChannelId(cid: boxedMessage.cid) else {
                     completion?(ClientError.Unexpected())
                     return
                 }
                 self.database.write { session in
                     try session.saveMessage(
-                        payload: message,
+                        payload: boxedMessage.toMessage,
                         for: cid,
                         syncOwnReactions: false,
                         cache: nil

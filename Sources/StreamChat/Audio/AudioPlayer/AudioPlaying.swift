@@ -328,7 +328,7 @@ open class StreamAudioPlayer: AudioPlaying, AppStateObserverDelegate {
     private func handleDurationLoading(
         _ result: Result<AVURLAsset, AssetPropertyLoadingCompositeError>
     ) {
-        guard Thread.isMainThread else {
+        guard Foundation.Thread.isMainThread else {
             DispatchQueue.main.async { [weak self] in
                 self?.handleDurationLoading(result)
             }
@@ -365,7 +365,7 @@ open class StreamAudioPlayer: AudioPlaying, AppStateObserverDelegate {
 
     /// It executes a seek request at the specified time on the player in order to progress the playback.
     private func executeSeek(to time: TimeInterval) {
-        guard Thread.isMainThread else {
+        guard Foundation.Thread.isMainThread else {
             DispatchQueue.main.async { [weak self] in
                 self?.executeSeek(to: time)
             }

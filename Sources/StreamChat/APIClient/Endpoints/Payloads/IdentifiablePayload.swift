@@ -89,7 +89,7 @@ extension Array where Element: IdentifiablePayload {
     }
 }
 
-extension UsersResponse: IdentifiablePayloadProxy {
+extension QueryUsersResponse: IdentifiablePayloadProxy {
     func fillIds(cache: inout [DatabaseType: Set<DatabaseId>]) {
         users.compactMap { $0 }.fillIds(cache: &cache)
     }
@@ -125,7 +125,7 @@ extension ChannelResponse: IdentifiablePayload {
     }
 }
 
-extension UserResponse: IdentifiablePayload {
+extension QueryUserResult: IdentifiablePayload {
     var databaseId: DatabaseId? { id }
     static let modelClass: (IdentifiableDatabaseObject).Type? = UserDTO.self
 

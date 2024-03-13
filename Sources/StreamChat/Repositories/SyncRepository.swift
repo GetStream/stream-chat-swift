@@ -299,6 +299,7 @@ class SyncRepository {
             syncRequest: request,
             withInaccessibleCids: nil,
             watch: false,
+            clientId: nil,
             requiresConnectionId: false,
             isRecoveryOperation: isRecoveryRequest,
             completion: requestCompletion

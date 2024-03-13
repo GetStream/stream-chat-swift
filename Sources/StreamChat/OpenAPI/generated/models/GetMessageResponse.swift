@@ -4,12 +4,12 @@
 
 import Foundation
 
-public struct MessageWithPendingMetadataResponse: Codable, Hashable {
+public struct GetMessageResponse: Codable, Hashable {
     public var duration: String
-    public var message: Message? = nil
+    public var message: MessageWithChannelResponse
     public var pendingMessageMetadata: [String: String]? = nil
 
-    public init(duration: String, message: Message? = nil, pendingMessageMetadata: [String: String]? = nil) {
+    public init(duration: String, message: MessageWithChannelResponse, pendingMessageMetadata: [String: String]? = nil) {
         self.duration = duration
         self.message = message
         self.pendingMessageMetadata = pendingMessageMetadata

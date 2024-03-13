@@ -4,12 +4,12 @@
 
 import Foundation
 
-public struct GuestResponse: Codable, Hashable {
+public struct CreateGuestResponse: Codable, Hashable {
     public var accessToken: String
     public var duration: String
-    public var user: UserObject? = nil
+    public var user: UserResponse
 
-    public init(accessToken: String, duration: String, user: UserObject? = nil) {
+    public init(accessToken: String, duration: String, user: UserResponse) {
         self.accessToken = accessToken
         self.duration = duration
         self.user = user

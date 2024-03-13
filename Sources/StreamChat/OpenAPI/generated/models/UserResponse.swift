@@ -6,60 +6,39 @@ import Foundation
 
 public struct UserResponse: Codable, Hashable {
     public var banned: Bool
+    public var createdAt: Date
     public var id: String
+    public var language: String
     public var online: Bool
-    public var role: String
-    public var shadowBanned: Bool
-    public var custom: [String: RawJSON]
-    public var banExpires: Date? = nil
-    public var createdAt: Date? = nil
-    public var deactivatedAt: Date? = nil
+    public var updatedAt: Date
     public var deletedAt: Date? = nil
-    public var invisible: Bool? = nil
-    public var language: String? = nil
-    public var lastActive: Date? = nil
-    public var revokeTokensIssuedBefore: Date? = nil
-    public var updatedAt: Date? = nil
-    public var teams: [String]? = nil
-    public var pushNotifications: PushNotificationSettings? = nil
+    public var image: String? = nil
+    public var name: String? = nil
+    public var custom: [String: RawJSON]? = nil
 
-    public init(banned: Bool, id: String, online: Bool, role: String, shadowBanned: Bool, custom: [String: RawJSON], banExpires: Date? = nil, createdAt: Date? = nil, deactivatedAt: Date? = nil, deletedAt: Date? = nil, invisible: Bool? = nil, language: String? = nil, lastActive: Date? = nil, revokeTokensIssuedBefore: Date? = nil, updatedAt: Date? = nil, teams: [String]? = nil, pushNotifications: PushNotificationSettings? = nil) {
+    public init(banned: Bool, createdAt: Date, id: String, language: String, online: Bool, updatedAt: Date, deletedAt: Date? = nil, image: String? = nil, name: String? = nil, custom: [String: RawJSON]? = nil) {
         self.banned = banned
-        self.id = id
-        self.online = online
-        self.role = role
-        self.shadowBanned = shadowBanned
-        self.custom = custom
-        self.banExpires = banExpires
         self.createdAt = createdAt
-        self.deactivatedAt = deactivatedAt
-        self.deletedAt = deletedAt
-        self.invisible = invisible
+        self.id = id
         self.language = language
-        self.lastActive = lastActive
-        self.revokeTokensIssuedBefore = revokeTokensIssuedBefore
+        self.online = online
         self.updatedAt = updatedAt
-        self.teams = teams
-        self.pushNotifications = pushNotifications
+        self.deletedAt = deletedAt
+        self.image = image
+        self.name = name
+        self.custom = custom
     }
     
     public enum CodingKeys: String, CodingKey, CaseIterable {
         case banned
-        case id
-        case online
-        case role
-        case shadowBanned = "shadow_banned"
-        case custom
-        case banExpires = "ban_expires"
         case createdAt = "created_at"
-        case deactivatedAt = "deactivated_at"
-        case deletedAt = "deleted_at"
-        case invisible
+        case id
         case language
-        case lastActive = "last_active"
-        case revokeTokensIssuedBefore = "revoke_tokens_issued_before"
+        case online
         case updatedAt = "updated_at"
-        case teams
-        case pushNotifications = "push_notifications"
+        case deletedAt = "deleted_at"
+        case image
+        case name
+        case custom
     }
 }

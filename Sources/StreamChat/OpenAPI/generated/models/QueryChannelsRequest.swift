@@ -5,6 +5,7 @@
 import Foundation
 
 public struct QueryChannelsRequest: Codable, Hashable {
+    public var clientId: String? = nil
     public var connectionId: String? = nil
     public var limit: Int? = nil
     public var memberLimit: Int? = nil
@@ -12,13 +13,12 @@ public struct QueryChannelsRequest: Codable, Hashable {
     public var offset: Int? = nil
     public var presence: Bool? = nil
     public var state: Bool? = nil
-    public var userId: String? = nil
     public var watch: Bool? = nil
     public var sort: [SortParamRequest?]? = nil
     public var filterConditions: [String: RawJSON]? = nil
-    public var user: UserObjectRequest? = nil
 
-    public init(connectionId: String? = nil, limit: Int? = nil, memberLimit: Int? = nil, messageLimit: Int? = nil, offset: Int? = nil, presence: Bool? = nil, state: Bool? = nil, userId: String? = nil, watch: Bool? = nil, sort: [SortParamRequest?]? = nil, filterConditions: [String: RawJSON]? = nil, user: UserObjectRequest? = nil) {
+    public init(clientId: String? = nil, connectionId: String? = nil, limit: Int? = nil, memberLimit: Int? = nil, messageLimit: Int? = nil, offset: Int? = nil, presence: Bool? = nil, state: Bool? = nil, watch: Bool? = nil, sort: [SortParamRequest?]? = nil, filterConditions: [String: RawJSON]? = nil) {
+        self.clientId = clientId
         self.connectionId = connectionId
         self.limit = limit
         self.memberLimit = memberLimit
@@ -26,14 +26,13 @@ public struct QueryChannelsRequest: Codable, Hashable {
         self.offset = offset
         self.presence = presence
         self.state = state
-        self.userId = userId
         self.watch = watch
         self.sort = sort
         self.filterConditions = filterConditions
-        self.user = user
     }
     
     public enum CodingKeys: String, CodingKey, CaseIterable {
+        case clientId = "client_id"
         case connectionId = "connection_id"
         case limit
         case memberLimit = "member_limit"
@@ -41,10 +40,8 @@ public struct QueryChannelsRequest: Codable, Hashable {
         case offset
         case presence
         case state
-        case userId = "user_id"
         case watch
         case sort
         case filterConditions = "filter_conditions"
-        case user
     }
 }

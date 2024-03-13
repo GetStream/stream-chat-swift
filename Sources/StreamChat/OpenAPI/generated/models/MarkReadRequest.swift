@@ -6,18 +6,15 @@ import Foundation
 
 public struct MarkReadRequest: Codable, Hashable {
     public var messageId: String? = nil
-    public var userId: String? = nil
-    public var user: UserObjectRequest? = nil
+    public var threadId: String? = nil
 
-    public init(messageId: String? = nil, userId: String? = nil, user: UserObjectRequest? = nil) {
+    public init(messageId: String? = nil, threadId: String? = nil) {
         self.messageId = messageId
-        self.userId = userId
-        self.user = user
+        self.threadId = threadId
     }
     
     public enum CodingKeys: String, CodingKey, CaseIterable {
         case messageId = "message_id"
-        case userId = "user_id"
-        case user
+        case threadId = "thread_id"
     }
 }

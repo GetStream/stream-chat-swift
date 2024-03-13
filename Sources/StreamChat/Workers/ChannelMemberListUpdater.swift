@@ -68,6 +68,7 @@ private extension ChannelMemberListUpdater {
         api.getOrCreateChannel(
             type: query.apiPath,
             channelGetOrCreateRequest: ChannelGetOrCreateRequest(),
+            clientId: nil, // TODO: check this.
             requiresConnectionId: true
         ) { [weak self] result in
             switch result {

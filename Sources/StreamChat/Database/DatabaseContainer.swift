@@ -132,7 +132,7 @@ class DatabaseContainer: NSPersistentContainer {
 
         viewContext.mergePolicy = NSMergeByPropertyObjectTrumpMergePolicy
         viewContext.automaticallyMergesChangesFromParent = true
-        if Thread.current.isMainThread {
+        if Foundation.Thread.current.isMainThread {
             viewContext.localCachingSettings = localCachingSettings
             viewContext.deletedMessagesVisibility = deletedMessagesVisibility
             viewContext.shouldShowShadowedMessages = shouldShowShadowedMessages

@@ -13,11 +13,9 @@ public struct QueryBannedUsersRequest: Codable, Hashable {
     public var excludeExpiredBans: Bool? = nil
     public var limit: Int? = nil
     public var offset: Int? = nil
-    public var userId: String? = nil
     public var sort: [SortParam?]? = nil
-    public var user: UserObject? = nil
 
-    public init(filterConditions: [String: RawJSON], createdAtAfter: Date? = nil, createdAtAfterOrEqual: Date? = nil, createdAtBefore: Date? = nil, createdAtBeforeOrEqual: Date? = nil, excludeExpiredBans: Bool? = nil, limit: Int? = nil, offset: Int? = nil, userId: String? = nil, sort: [SortParam?]? = nil, user: UserObject? = nil) {
+    public init(filterConditions: [String: RawJSON], createdAtAfter: Date? = nil, createdAtAfterOrEqual: Date? = nil, createdAtBefore: Date? = nil, createdAtBeforeOrEqual: Date? = nil, excludeExpiredBans: Bool? = nil, limit: Int? = nil, offset: Int? = nil, sort: [SortParam?]? = nil) {
         self.filterConditions = filterConditions
         self.createdAtAfter = createdAtAfter
         self.createdAtAfterOrEqual = createdAtAfterOrEqual
@@ -26,9 +24,7 @@ public struct QueryBannedUsersRequest: Codable, Hashable {
         self.excludeExpiredBans = excludeExpiredBans
         self.limit = limit
         self.offset = offset
-        self.userId = userId
         self.sort = sort
-        self.user = user
     }
     
     public enum CodingKeys: String, CodingKey, CaseIterable {
@@ -40,8 +36,6 @@ public struct QueryBannedUsersRequest: Codable, Hashable {
         case excludeExpiredBans = "exclude_expired_bans"
         case limit
         case offset
-        case userId = "user_id"
         case sort
-        case user
     }
 }

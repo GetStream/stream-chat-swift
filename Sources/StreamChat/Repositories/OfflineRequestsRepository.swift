@@ -158,7 +158,7 @@ class OfflineRequestsRepository {
                 completion()
                 return
             }
-            messageRepository.saveSuccessfullySentMessage(cid: cid, message: messageResponse.message) { _ in completion() }
+            messageRepository.saveSuccessfullySentMessage(cid: cid, message: messageResponse.message.toMessage) { _ in completion() }
         } else if responseType.value == .updateMessageResponse {
             guard let messageResponse = decodeTo(UpdateMessageResponse.self) else {
                 completion()
@@ -166,12 +166,11 @@ class OfflineRequestsRepository {
             }
             messageRepository.saveSuccessfullyEditedMessage(for: messageResponse.message.id) { completion() }
         } else if responseType.value == .messageResponse && queuedRequest.method == "DELETE" {
-            guard let messageResponse = decodeTo(MessageResponse.self),
-                  let message = messageResponse.message else {
+            guard let messageResponse = decodeTo(MessageResponse.self) else {
                 completion()
                 return
             }
-            messageRepository.saveSuccessfullyDeletedMessage(message: message) { _ in completion() }
+            messageRepository.saveSuccessfullyDeletedMessage(message: messageResponse.toMessage) { _ in completion() }
         } else if responseType.value == .reactionResponse || responseType.value == .reactionRemovalResponse {
             completion()
         }

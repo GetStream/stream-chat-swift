@@ -26,6 +26,7 @@ public enum WSEvent: Codable, Hashable {
     case typeMessageDeletedEvent(MessageDeletedEvent)
     case typeMessageNewEvent(MessageNewEvent)
     case typeMessageReadEvent(MessageReadEvent)
+    case typeMessageUndeletedEvent(MessageUndeletedEvent)
     case typeMessageUpdatedEvent(MessageUpdatedEvent)
     case typeNotificationAddedToChannelEvent(NotificationAddedToChannelEvent)
     case typeNotificationChannelDeletedEvent(NotificationChannelDeletedEvent)
@@ -39,9 +40,11 @@ public enum WSEvent: Codable, Hashable {
     case typeNotificationNewMessageEvent(NotificationNewMessageEvent)
     case typeNotificationMutesUpdatedEvent(NotificationMutesUpdatedEvent)
     case typeNotificationRemovedFromChannelEvent(NotificationRemovedFromChannelEvent)
+//    case typeMessageNewEvent(MessageNewEvent)
     case typeReactionDeletedEvent(ReactionDeletedEvent)
     case typeReactionNewEvent(ReactionNewEvent)
     case typeReactionUpdatedEvent(ReactionUpdatedEvent)
+    case typeThreadUpdatedEvent(ThreadUpdatedEvent)
     case typeTypingStartEvent(TypingStartEvent)
     case typeTypingStopEvent(TypingStopEvent)
     case typeUserBannedEvent(UserBannedEvent)
@@ -91,6 +94,8 @@ public enum WSEvent: Codable, Hashable {
             return value.type
         case let .typeMessageReadEvent(value):
             return value.type
+        case let .typeMessageUndeletedEvent(value):
+            return value.type
         case let .typeMessageUpdatedEvent(value):
             return value.type
         case let .typeNotificationAddedToChannelEvent(value):
@@ -117,11 +122,15 @@ public enum WSEvent: Codable, Hashable {
             return value.type
         case let .typeNotificationRemovedFromChannelEvent(value):
             return value.type
+        case let .typeMessageNewEvent(value):
+            return value.type
         case let .typeReactionDeletedEvent(value):
             return value.type
         case let .typeReactionNewEvent(value):
             return value.type
         case let .typeReactionUpdatedEvent(value):
+            return value.type
+        case let .typeThreadUpdatedEvent(value):
             return value.type
         case let .typeTypingStartEvent(value):
             return value.type
@@ -186,6 +195,8 @@ public enum WSEvent: Codable, Hashable {
             return value
         case let .typeMessageReadEvent(value):
             return value
+        case let .typeMessageUndeletedEvent(value):
+            return value
         case let .typeMessageUpdatedEvent(value):
             return value
         case let .typeNotificationAddedToChannelEvent(value):
@@ -212,11 +223,15 @@ public enum WSEvent: Codable, Hashable {
             return value
         case let .typeNotificationRemovedFromChannelEvent(value):
             return value
+        case let .typeMessageNewEvent(value):
+            return value
         case let .typeReactionDeletedEvent(value):
             return value
         case let .typeReactionNewEvent(value):
             return value
         case let .typeReactionUpdatedEvent(value):
+            return value
+        case let .typeThreadUpdatedEvent(value):
             return value
         case let .typeTypingStartEvent(value):
             return value
@@ -282,6 +297,8 @@ public enum WSEvent: Codable, Hashable {
             try container.encode(value)
         case let .typeMessageReadEvent(value):
             try container.encode(value)
+        case let .typeMessageUndeletedEvent(value):
+            try container.encode(value)
         case let .typeMessageUpdatedEvent(value):
             try container.encode(value)
         case let .typeNotificationAddedToChannelEvent(value):
@@ -308,11 +325,15 @@ public enum WSEvent: Codable, Hashable {
             try container.encode(value)
         case let .typeNotificationRemovedFromChannelEvent(value):
             try container.encode(value)
+        case let .typeMessageNewEvent(value):
+            try container.encode(value)
         case let .typeReactionDeletedEvent(value):
             try container.encode(value)
         case let .typeReactionNewEvent(value):
             try container.encode(value)
         case let .typeReactionUpdatedEvent(value):
+            try container.encode(value)
+        case let .typeThreadUpdatedEvent(value):
             try container.encode(value)
         case let .typeTypingStartEvent(value):
             try container.encode(value)
@@ -395,6 +416,9 @@ public enum WSEvent: Codable, Hashable {
         } else if dto.type == "message.read" {
             let value = try container.decode(MessageReadEvent.self)
             self = .typeMessageReadEvent(value)
+        } else if dto.type == "message.undeleted" {
+            let value = try container.decode(MessageUndeletedEvent.self)
+            self = .typeMessageUndeletedEvent(value)
         } else if dto.type == "message.updated" {
             let value = try container.decode(MessageUpdatedEvent.self)
             self = .typeMessageUpdatedEvent(value)
@@ -434,6 +458,9 @@ public enum WSEvent: Codable, Hashable {
         } else if dto.type == "notification.removed_from_channel" {
             let value = try container.decode(NotificationRemovedFromChannelEvent.self)
             self = .typeNotificationRemovedFromChannelEvent(value)
+        } else if dto.type == "notification.thread_message_new" {
+            let value = try container.decode(MessageNewEvent.self)
+            self = .typeMessageNewEvent(value)
         } else if dto.type == "reaction.deleted" {
             let value = try container.decode(ReactionDeletedEvent.self)
             self = .typeReactionDeletedEvent(value)
@@ -443,6 +470,9 @@ public enum WSEvent: Codable, Hashable {
         } else if dto.type == "reaction.updated" {
             let value = try container.decode(ReactionUpdatedEvent.self)
             self = .typeReactionUpdatedEvent(value)
+        } else if dto.type == "thread.updated" {
+            let value = try container.decode(ThreadUpdatedEvent.self)
+            self = .typeThreadUpdatedEvent(value)
         } else if dto.type == "typing.start" {
             let value = try container.decode(TypingStartEvent.self)
             self = .typeTypingStartEvent(value)

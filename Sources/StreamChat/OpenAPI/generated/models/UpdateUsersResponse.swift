@@ -6,9 +6,9 @@ import Foundation
 
 public struct UpdateUsersResponse: Codable, Hashable {
     public var duration: String
-    public var users: [String: UserObject]
+    public var users: [String: UserResponse]
 
-    public init(duration: String, users: [String: UserObject]) {
+    public init(duration: String, users: [String: UserResponse]) {
         self.duration = duration
         self.users = users
     }

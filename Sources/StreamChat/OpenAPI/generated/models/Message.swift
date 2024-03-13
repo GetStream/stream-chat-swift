@@ -27,6 +27,7 @@ public class Message: Codable, Hashable {
     public var beforeMessageSendFailed: Bool? = nil
     public var command: String? = nil
     public var deletedAt: Date? = nil
+    public var messageTextUpdatedAt: Date? = nil
     public var mml: String? = nil
     public var parentId: String? = nil
     public var pinExpires: Date? = nil
@@ -63,6 +64,7 @@ public class Message: Codable, Hashable {
             && lhs.beforeMessageSendFailed == rhs.beforeMessageSendFailed
             && lhs.command == rhs.command
             && lhs.deletedAt == rhs.deletedAt
+            && lhs.messageTextUpdatedAt == rhs.messageTextUpdatedAt
             && lhs.mml == rhs.mml
             && lhs.parentId == rhs.parentId
             && lhs.pinExpires == rhs.pinExpires
@@ -100,6 +102,7 @@ public class Message: Codable, Hashable {
         hasher.combine(beforeMessageSendFailed)
         hasher.combine(command)
         hasher.combine(deletedAt)
+        hasher.combine(messageTextUpdatedAt)
         hasher.combine(mml)
         hasher.combine(parentId)
         hasher.combine(pinExpires)
@@ -114,7 +117,7 @@ public class Message: Codable, Hashable {
         hasher.combine(user)
     }
 
-    public init(cid: String, createdAt: Date, deletedReplyCount: Int, html: String, id: String, pinned: Bool, replyCount: Int, shadowed: Bool, silent: Bool, text: String, type: String, updatedAt: Date, attachments: [Attachment?], latestReactions: [Reaction?], mentionedUsers: [UserObject], ownReactions: [Reaction?], custom: [String: RawJSON], reactionCounts: [String: Int], reactionScores: [String: Int], beforeMessageSendFailed: Bool? = nil, command: String? = nil, deletedAt: Date? = nil, mml: String? = nil, parentId: String? = nil, pinExpires: Date? = nil, pinnedAt: Date? = nil, quotedMessageId: String? = nil, showInChannel: Bool? = nil, threadParticipants: [UserObject]? = nil, i18n: [String: String]? = nil, imageLabels: [String: [String]]? = nil, pinnedBy: UserObject? = nil, quotedMessage: Message? = nil, user: UserObject? = nil) {
+    public init(cid: String, createdAt: Date, deletedReplyCount: Int, html: String, id: String, pinned: Bool, replyCount: Int, shadowed: Bool, silent: Bool, text: String, type: String, updatedAt: Date, attachments: [Attachment?], latestReactions: [Reaction?], mentionedUsers: [UserObject], ownReactions: [Reaction?], custom: [String: RawJSON], reactionCounts: [String: Int], reactionScores: [String: Int], beforeMessageSendFailed: Bool? = nil, command: String? = nil, deletedAt: Date? = nil, messageTextUpdatedAt: Date? = nil, mml: String? = nil, parentId: String? = nil, pinExpires: Date? = nil, pinnedAt: Date? = nil, quotedMessageId: String? = nil, showInChannel: Bool? = nil, threadParticipants: [UserObject]? = nil, i18n: [String: String]? = nil, imageLabels: [String: [String]]? = nil, pinnedBy: UserObject? = nil, quotedMessage: Message? = nil, user: UserObject? = nil) {
         self.cid = cid
         self.createdAt = createdAt
         self.deletedReplyCount = deletedReplyCount
@@ -137,6 +140,7 @@ public class Message: Codable, Hashable {
         self.beforeMessageSendFailed = beforeMessageSendFailed
         self.command = command
         self.deletedAt = deletedAt
+        self.messageTextUpdatedAt = messageTextUpdatedAt
         self.mml = mml
         self.parentId = parentId
         self.pinExpires = pinExpires
@@ -174,6 +178,7 @@ public class Message: Codable, Hashable {
         case beforeMessageSendFailed = "before_message_send_failed"
         case command
         case deletedAt = "deleted_at"
+        case messageTextUpdatedAt = "message_text_updated_at"
         case mml
         case parentId = "parent_id"
         case pinExpires = "pin_expires"
