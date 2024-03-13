@@ -152,6 +152,10 @@ extension ChatClient {
     var mockAPIClient: APIClient_Spy {
         apiClient as! APIClient_Spy
     }
+    
+    var mockChannelListUpdater: ChannelListUpdater_Spy {
+        channelListUpdater as! ChannelListUpdater_Spy
+    }
 
     var mockWebSocketClient: WebSocketClient_Mock {
         webSocketClient as! WebSocketClient_Mock

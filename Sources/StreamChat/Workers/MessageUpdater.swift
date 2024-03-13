@@ -642,12 +642,6 @@ class MessageUpdater: Worker {
             completion?(error)
         }
     }
-
-    func translate(messageId: MessageId, to language: TranslationLanguage, completion: ((Error?) -> Void)? = nil) {
-        translate(messageId: messageId, to: language) { result in
-            completion?(result.error)
-        }
-    }
     
     func translate(messageId: MessageId, to language: TranslationLanguage, completion: ((Result<ChatMessage, Error>) -> Void)? = nil) {
         apiClient.request(endpoint: .translate(messageId: messageId, to: language), completion: { result in

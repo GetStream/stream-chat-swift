@@ -94,7 +94,7 @@ final class MessageUpdater_Mock: MessageUpdater {
 
     @Atomic var translate_messageId: MessageId?
     @Atomic var translate_language: TranslationLanguage?
-    @Atomic var translate_completion: ((Error?) -> Void)?
+    @Atomic var translate_completion: ((Result<ChatMessage, Error>) -> Void)?
 
     // Cleans up all recorded values
     func cleanUp() {
@@ -363,7 +363,7 @@ final class MessageUpdater_Mock: MessageUpdater {
     override func translate(
         messageId: MessageId,
         to language: TranslationLanguage,
-        completion: ((Error?) -> Void)? = nil
+        completion: ((Result<ChatMessage, Error>) -> Void)? = nil
     ) {
         translate_messageId = messageId
         translate_language = language
