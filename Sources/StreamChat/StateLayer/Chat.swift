@@ -186,6 +186,40 @@ public final class Chat {
         return MemberState(member: member, cid: cid, database: databaseContainer)
     }
     
+    // MARK: - Member List
+    
+    /// Loads an array of members for the specified query.
+    ///
+    /// - Parameters:
+    ///   - filter: The filter to use for fetching channel members.
+    ///   - sort: An array of sorting parameters.
+    ///   - pagination: The pagination configuration which includes a limit and an offset or a cursor.
+    ///
+    /// - Throws: An error while communicating with the Stream API.
+    /// - Returns: An array of paginated channel members for the query.
+    public func loadMembers(with filter: Filter<MemberListFilterScope>, sort: [Sorting<ChannelMemberListSortingKey>] = [], pagination: Pagination) async throws -> [ChatChannelMember] {
+        var query = ChannelMemberListQuery(cid: cid, filter: filter, sort: sort)
+        query.pagination = pagination
+        return try await memberListUpdater.load(query)
+    }
+    
+    /// Returns an observable member list state for the specified query.
+    ///
+    /// Calling ``Chat.loadMembers(with:sort:pagination:)`` automatically updates ``MemberListState.members`` for the same query.
+    ///
+    /// - Parameters:
+    ///   - filter: The filter to use for fetching channel members.
+    ///   - sort: An array of sorting parameters.
+    ///   - pagination: The pagination configuration which includes a limit and an offset or a cursor.
+    ///
+    /// - Returns: An instance of `MemberListState` which conforms to the `ObservableObject`.
+    public func makeMemberListState(for filter: Filter<MemberListFilterScope>, sort: [Sorting<ChannelMemberListSortingKey>] = [], pagination: Pagination) async throws -> MemberListState {
+        var query = ChannelMemberListQuery(cid: cid, filter: filter, sort: sort)
+        query.pagination = pagination
+        let members = try await memberListUpdater.load(query)
+        return MemberListState(members: members, query: query, database: databaseContainer)
+    }
+    
     // MARK: - Messages
     
     /// Deletes the specified message.
