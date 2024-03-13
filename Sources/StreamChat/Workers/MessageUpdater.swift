@@ -689,12 +689,6 @@ class MessageUpdater: Worker {
             completion?(error)
         }
     }
-
-    func translate(messageId: MessageId, to language: TranslationLanguage, completion: ((Error?) -> Void)? = nil) {
-        translate(messageId: messageId, to: language) { result in
-            completion?(result.error)
-        }
-    }
     
     func translate(messageId: MessageId, to language: TranslationLanguage, completion: ((Result<ChatMessage, Error>) -> Void)? = nil) {
         apiClient.request(endpoint: .translate(messageId: messageId, to: language), completion: { result in
@@ -712,7 +706,7 @@ class MessageUpdater: Worker {
                         translatedMessage = try messageDTO.asModel()
                     }
                 } completion: { error in
-                    if let translatedMessage {
+                    if let translatedMessage, error == nil {
                         completion?(.success(translatedMessage))
                     } else {
                         completion?(.failure(error ?? ClientError.Unknown()))
