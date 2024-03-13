@@ -14,6 +14,7 @@ final class SyncRepository_Mock: SyncRepository, Spy {
     var syncMissingEventsResult: Result<[ChannelId], SyncError>?
 
     convenience init() {
+        let apiClient = APIClient_Spy()
         let database = DatabaseContainer_Spy()
         self.init(config: .init(apiKeyString: ""),
                   activeChannelControllers: ThreadSafeWeakCollection<ChatChannelController>(),
@@ -21,11 +22,12 @@ final class SyncRepository_Mock: SyncRepository, Spy {
                   offlineRequestsRepository: OfflineRequestsRepository_Mock(),
                   eventNotificationCenter: EventNotificationCenter_Mock(database: database),
                   database: database,
-                  apiClient: APIClient_Spy())
+                  apiClient: apiClient,
+                  channelListUpdater: ChannelListUpdater_Spy(database: database, apiClient: apiClient))
     }
 
-    override init(config: ChatClientConfig, activeChannelControllers: ThreadSafeWeakCollection<ChatChannelController>, activeChannelListControllers: ThreadSafeWeakCollection<ChatChannelListController>, offlineRequestsRepository: OfflineRequestsRepository, eventNotificationCenter: EventNotificationCenter, database: DatabaseContainer, apiClient: APIClient) {
-        super.init(config: config, activeChannelControllers: activeChannelControllers, activeChannelListControllers: activeChannelListControllers, offlineRequestsRepository: offlineRequestsRepository, eventNotificationCenter: eventNotificationCenter, database: database, apiClient: apiClient)
+    override init(config: ChatClientConfig, activeChannelControllers: ThreadSafeWeakCollection<ChatChannelController>, activeChannelListControllers: ThreadSafeWeakCollection<ChatChannelListController>, offlineRequestsRepository: OfflineRequestsRepository, eventNotificationCenter: EventNotificationCenter, database: DatabaseContainer, apiClient: APIClient, channelListUpdater: ChannelListUpdater) {
+        super.init(config: config, activeChannelControllers: activeChannelControllers, activeChannelListControllers: activeChannelListControllers, offlineRequestsRepository: offlineRequestsRepository, eventNotificationCenter: eventNotificationCenter, database: database, apiClient: apiClient, channelListUpdater: channelListUpdater)
     }
 
     override func syncLocalState(completion: @escaping () -> Void) {
