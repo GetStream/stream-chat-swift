@@ -5,10 +5,10 @@
 import Foundation
 
 public struct UpdateChannelPartialRequest: Codable, Hashable {
-    public var unset: [String]
-    public var set: [String: RawJSON]
+    public var unset: [String]? = nil
+    public var set: [String: RawJSON]? = nil
 
-    public init(unset: [String], set: [String: RawJSON]) {
+    public init(unset: [String]? = nil, set: [String: RawJSON]? = nil) {
         self.unset = unset
         self.set = set
     }

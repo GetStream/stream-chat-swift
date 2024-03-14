@@ -6,10 +6,10 @@ import Foundation
 
 public struct UpdateUserPartialRequest: Codable, Hashable {
     public var id: String
-    public var unset: [String]
-    public var set: [String: RawJSON]
+    public var unset: [String]? = nil
+    public var set: [String: RawJSON]? = nil
 
-    public init(id: String, unset: [String], set: [String: RawJSON]) {
+    public init(id: String, unset: [String]? = nil, set: [String: RawJSON]? = nil) {
         self.id = id
         self.unset = unset
         self.set = set

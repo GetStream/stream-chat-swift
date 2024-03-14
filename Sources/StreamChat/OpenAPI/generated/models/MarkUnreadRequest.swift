@@ -5,10 +5,10 @@
 import Foundation
 
 public struct MarkUnreadRequest: Codable, Hashable {
-    public var messageId: String
-    public var threadId: String
+    public var messageId: String? = nil
+    public var threadId: String? = nil
 
-    public init(messageId: String, threadId: String) {
+    public init(messageId: String? = nil, threadId: String? = nil) {
         self.messageId = messageId
         self.threadId = threadId
     }

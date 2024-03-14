@@ -5,7 +5,6 @@
 import Foundation
 
 public struct MessageRequest: Codable, Hashable {
-    public var attachments: [AttachmentRequest?]
     public var id: String? = nil
     public var parentId: String? = nil
     public var pinExpires: Date? = nil
@@ -16,11 +15,11 @@ public struct MessageRequest: Codable, Hashable {
     public var silent: Bool? = nil
     public var text: String? = nil
     public var type: String? = nil
+    public var attachments: [AttachmentRequest?]? = nil
     public var mentionedUsers: [String]? = nil
     public var custom: [String: RawJSON]? = nil
 
-    public init(attachments: [AttachmentRequest?], id: String? = nil, parentId: String? = nil, pinExpires: Date? = nil, pinned: Bool? = nil, pinnedAt: Date? = nil, quotedMessageId: String? = nil, showInChannel: Bool? = nil, silent: Bool? = nil, text: String? = nil, type: String? = nil, mentionedUsers: [String]? = nil, custom: [String: RawJSON]? = nil) {
-        self.attachments = attachments
+    public init(id: String? = nil, parentId: String? = nil, pinExpires: Date? = nil, pinned: Bool? = nil, pinnedAt: Date? = nil, quotedMessageId: String? = nil, showInChannel: Bool? = nil, silent: Bool? = nil, text: String? = nil, type: String? = nil, attachments: [AttachmentRequest?]? = nil, mentionedUsers: [String]? = nil, custom: [String: RawJSON]? = nil) {
         self.id = id
         self.parentId = parentId
         self.pinExpires = pinExpires
@@ -31,12 +30,12 @@ public struct MessageRequest: Codable, Hashable {
         self.silent = silent
         self.text = text
         self.type = type
+        self.attachments = attachments
         self.mentionedUsers = mentionedUsers
         self.custom = custom
     }
     
     public enum CodingKeys: String, CodingKey, CaseIterable {
-        case attachments
         case id
         case parentId = "parent_id"
         case pinExpires = "pin_expires"
@@ -47,6 +46,7 @@ public struct MessageRequest: Codable, Hashable {
         case silent
         case text
         case type
+        case attachments
         case mentionedUsers = "mentioned_users"
         case custom
     }

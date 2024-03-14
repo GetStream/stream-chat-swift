@@ -5,7 +5,6 @@
 import Foundation
 
 public struct ChannelGetOrCreateRequest: Codable, Hashable {
-    public var clientId: String? = nil
     public var connectionId: String? = nil
     public var hideForCreator: Bool? = nil
     public var presence: Bool? = nil
@@ -17,8 +16,7 @@ public struct ChannelGetOrCreateRequest: Codable, Hashable {
     public var messages: MessagePaginationParamsRequest? = nil
     public var watchers: PaginationParamsRequest? = nil
 
-    public init(clientId: String? = nil, connectionId: String? = nil, hideForCreator: Bool? = nil, presence: Bool? = nil, state: Bool? = nil, threadUnreadCounts: Bool? = nil, watch: Bool? = nil, data: ChannelRequest? = nil, members: PaginationParamsRequest? = nil, messages: MessagePaginationParamsRequest? = nil, watchers: PaginationParamsRequest? = nil) {
-        self.clientId = clientId
+    public init(connectionId: String? = nil, hideForCreator: Bool? = nil, presence: Bool? = nil, state: Bool? = nil, threadUnreadCounts: Bool? = nil, watch: Bool? = nil, data: ChannelRequest? = nil, members: PaginationParamsRequest? = nil, messages: MessagePaginationParamsRequest? = nil, watchers: PaginationParamsRequest? = nil) {
         self.connectionId = connectionId
         self.hideForCreator = hideForCreator
         self.presence = presence
@@ -32,7 +30,6 @@ public struct ChannelGetOrCreateRequest: Codable, Hashable {
     }
     
     public enum CodingKeys: String, CodingKey, CaseIterable {
-        case clientId = "client_id"
         case connectionId = "connection_id"
         case hideForCreator = "hide_for_creator"
         case presence

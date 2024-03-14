@@ -5,16 +5,16 @@
 import Foundation
 
 public struct UnmuteChannelRequest: Codable, Hashable {
-    public var channelCids: [String]
     public var expiration: Int? = nil
+    public var channelCids: [String]? = nil
 
-    public init(channelCids: [String], expiration: Int? = nil) {
-        self.channelCids = channelCids
+    public init(expiration: Int? = nil, channelCids: [String]? = nil) {
         self.expiration = expiration
+        self.channelCids = channelCids
     }
     
     public enum CodingKeys: String, CodingKey, CaseIterable {
-        case channelCids = "channel_cids"
         case expiration
+        case channelCids = "channel_cids"
     }
 }

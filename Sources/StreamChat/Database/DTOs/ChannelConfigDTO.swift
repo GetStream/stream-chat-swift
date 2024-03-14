@@ -33,7 +33,6 @@ final class ChannelConfigDTO: NSManagedObject {
             customEvents: false,
             markMessagesPending: false,
             maxMessageLength: Int(maxMessageLength),
-            messageRetention: messageRetention,
             mutes: mutesEnabled,
             name: "",
             pushNotifications: false,
@@ -76,7 +75,6 @@ extension ChannelConfig {
         dto.searchEnabled = search
         dto.mutesEnabled = mutes
         dto.urlEnrichmentEnabled = urlEnrichment
-        dto.messageRetention = messageRetention
         dto.maxMessageLength = Int32(maxMessageLength)
         dto.createdAt = createdAt.bridgeDate
         dto.updatedAt = updatedAt.bridgeDate
@@ -116,7 +114,6 @@ extension ChannelConfigWithInfo {
         dto.searchEnabled = search
         dto.mutesEnabled = mutes
         dto.urlEnrichmentEnabled = urlEnrichment
-        dto.messageRetention = messageRetention
         dto.maxMessageLength = Int32(maxMessageLength)
         dto.createdAt = createdAt.bridgeDate
         dto.updatedAt = updatedAt.bridgeDate

@@ -6,7 +6,6 @@ import Foundation
 
 public struct QueryUsersPayload: Codable, Hashable {
     public var filterConditions: [String: RawJSON]
-    public var clientId: String? = nil
     public var connectionId: String? = nil
     public var idGt: String? = nil
     public var idGte: String? = nil
@@ -18,9 +17,8 @@ public struct QueryUsersPayload: Codable, Hashable {
     public var presence: Bool? = nil
     public var sort: [SortParam?]? = nil
 
-    public init(filterConditions: [String: RawJSON], clientId: String? = nil, connectionId: String? = nil, idGt: String? = nil, idGte: String? = nil, idLt: String? = nil, idLte: String? = nil, includeDeactivatedUsers: Bool? = nil, limit: Int? = nil, offset: Int? = nil, presence: Bool? = nil, sort: [SortParam?]? = nil) {
+    public init(filterConditions: [String: RawJSON], connectionId: String? = nil, idGt: String? = nil, idGte: String? = nil, idLt: String? = nil, idLte: String? = nil, includeDeactivatedUsers: Bool? = nil, limit: Int? = nil, offset: Int? = nil, presence: Bool? = nil, sort: [SortParam?]? = nil) {
         self.filterConditions = filterConditions
-        self.clientId = clientId
         self.connectionId = connectionId
         self.idGt = idGt
         self.idGte = idGte
@@ -35,7 +33,6 @@ public struct QueryUsersPayload: Codable, Hashable {
     
     public enum CodingKeys: String, CodingKey, CaseIterable {
         case filterConditions = "filter_conditions"
-        case clientId = "client_id"
         case connectionId = "connection_id"
         case idGt = "id_gt"
         case idGte = "id_gte"

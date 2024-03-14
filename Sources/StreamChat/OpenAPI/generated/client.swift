@@ -134,7 +134,7 @@ public class API: DefaultAPIEndpoints {
         }
     }
 
-    public func queryChannels(queryChannelsRequest: QueryChannelsRequest, clientId: String?, requiresConnectionId: Bool, isRecoveryOperation: Bool = false, completion: @escaping (Result<ChannelsResponse, Error>) -> Void) {
+    public func queryChannels(queryChannelsRequest: QueryChannelsRequest, requiresConnectionId: Bool, isRecoveryOperation: Bool = false, completion: @escaping (Result<ChannelsResponse, Error>) -> Void) {
         var connectionIdRequired: Bool
         connectionIdRequired = false
         var tokenRequired: Bool
@@ -143,11 +143,6 @@ public class API: DefaultAPIEndpoints {
         
         var queryParams = [URLQueryItem]()
         
-        if let clientId {
-            let clientIdValue = String(clientId)
-            let clientIdQueryItem = URLQueryItem(name: "client_id", value: clientIdValue)
-            queryParams.append(clientIdQueryItem)
-        }
         connectionIdRequired = requiresConnectionId
         let apiKey = URLQueryItem(name: "api_key", value: apiKey.apiKeyString)
         queryParams.append(apiKey)
@@ -239,7 +234,7 @@ public class API: DefaultAPIEndpoints {
         }
     }
 
-    public func getOrCreateChannel(type: String, channelGetOrCreateRequest: ChannelGetOrCreateRequest, clientId: String?, requiresConnectionId: Bool, isRecoveryOperation: Bool = false, completion: @escaping (Result<ChannelStateResponse, Error>) -> Void) {
+    public func getOrCreateChannel(type: String, channelGetOrCreateRequest: ChannelGetOrCreateRequest, requiresConnectionId: Bool, isRecoveryOperation: Bool = false, completion: @escaping (Result<ChannelStateResponse, Error>) -> Void) {
         var connectionIdRequired: Bool
         connectionIdRequired = false
         var tokenRequired: Bool
@@ -251,11 +246,6 @@ public class API: DefaultAPIEndpoints {
         path = path.replacingOccurrences(of: String(format: "{%@}", "type"), with: typePostEscape, options: .literal, range: nil)
         var queryParams = [URLQueryItem]()
         
-        if let clientId {
-            let clientIdValue = String(clientId)
-            let clientIdQueryItem = URLQueryItem(name: "client_id", value: clientIdValue)
-            queryParams.append(clientIdQueryItem)
-        }
         connectionIdRequired = requiresConnectionId
         let apiKey = URLQueryItem(name: "api_key", value: apiKey.apiKeyString)
         queryParams.append(apiKey)
@@ -726,7 +716,7 @@ public class API: DefaultAPIEndpoints {
         }
     }
 
-    public func getOrCreateChannel(type: String, id: String, channelGetOrCreateRequest: ChannelGetOrCreateRequest, clientId: String?, requiresConnectionId: Bool, isRecoveryOperation: Bool = false, completion: @escaping (Result<ChannelStateResponse, Error>) -> Void) {
+    public func getOrCreateChannel(type: String, id: String, channelGetOrCreateRequest: ChannelGetOrCreateRequest, requiresConnectionId: Bool, isRecoveryOperation: Bool = false, completion: @escaping (Result<ChannelStateResponse, Error>) -> Void) {
         var connectionIdRequired: Bool
         connectionIdRequired = false
         var tokenRequired: Bool
@@ -741,11 +731,6 @@ public class API: DefaultAPIEndpoints {
         path = path.replacingOccurrences(of: String(format: "{%@}", "id"), with: idPostEscape, options: .literal, range: nil)
         var queryParams = [URLQueryItem]()
         
-        if let clientId {
-            let clientIdValue = String(clientId)
-            let clientIdQueryItem = URLQueryItem(name: "client_id", value: clientIdValue)
-            queryParams.append(clientIdQueryItem)
-        }
         connectionIdRequired = requiresConnectionId
         let apiKey = URLQueryItem(name: "api_key", value: apiKey.apiKeyString)
         queryParams.append(apiKey)
@@ -849,7 +834,7 @@ public class API: DefaultAPIEndpoints {
         }
     }
 
-    public func stopWatchingChannel(type: String, id: String, channelStopWatchingRequest: ChannelStopWatchingRequest, clientId: String?, requiresConnectionId: Bool, isRecoveryOperation: Bool = false, completion: @escaping (Result<StopWatchingResponse, Error>) -> Void) {
+    public func stopWatchingChannel(type: String, id: String, channelStopWatchingRequest: ChannelStopWatchingRequest, requiresConnectionId: Bool, isRecoveryOperation: Bool = false, completion: @escaping (Result<StopWatchingResponse, Error>) -> Void) {
         var connectionIdRequired: Bool
         connectionIdRequired = false
         var tokenRequired: Bool
@@ -864,11 +849,6 @@ public class API: DefaultAPIEndpoints {
         path = path.replacingOccurrences(of: String(format: "{%@}", "id"), with: idPostEscape, options: .literal, range: nil)
         var queryParams = [URLQueryItem]()
         
-        if let clientId {
-            let clientIdValue = String(clientId)
-            let clientIdQueryItem = URLQueryItem(name: "client_id", value: clientIdValue)
-            queryParams.append(clientIdQueryItem)
-        }
         connectionIdRequired = requiresConnectionId
         let apiKey = URLQueryItem(name: "api_key", value: apiKey.apiKeyString)
         queryParams.append(apiKey)
@@ -1804,7 +1784,7 @@ public class API: DefaultAPIEndpoints {
         }
     }
 
-    public func sync(syncRequest: SyncRequest, withInaccessibleCids: Bool?, watch: Bool?, clientId: String?, requiresConnectionId: Bool, isRecoveryOperation: Bool = false, completion: @escaping (Result<SyncResponse, Error>) -> Void) {
+    public func sync(syncRequest: SyncRequest, withInaccessibleCids: Bool?, watch: Bool?, requiresConnectionId: Bool, isRecoveryOperation: Bool = false, completion: @escaping (Result<SyncResponse, Error>) -> Void) {
         var connectionIdRequired: Bool
         connectionIdRequired = false
         var tokenRequired: Bool
@@ -1822,11 +1802,6 @@ public class API: DefaultAPIEndpoints {
             let watchValue = String(watch)
             let watchQueryItem = URLQueryItem(name: "watch", value: watchValue)
             queryParams.append(watchQueryItem)
-        }
-        if let clientId {
-            let clientIdValue = String(clientId)
-            let clientIdQueryItem = URLQueryItem(name: "client_id", value: clientIdValue)
-            queryParams.append(clientIdQueryItem)
         }
         connectionIdRequired = requiresConnectionId
         let apiKey = URLQueryItem(name: "api_key", value: apiKey.apiKeyString)
@@ -1980,38 +1955,6 @@ public class API: DefaultAPIEndpoints {
         var tokenRequired: Bool
         tokenRequired = true
         let path = "/api/v2/chat/unread"
-        
-        var queryParams = [URLQueryItem]()
-        
-        let apiKey = URLQueryItem(name: "api_key", value: apiKey.apiKeyString)
-        queryParams.append(apiKey)
-        
-        makeRequest(
-            uriPath: path,
-            queryParams: queryParams,
-            httpMethod: "GET",
-            requiresConnectionId: connectionIdRequired,
-            requiresToken: tokenRequired
-        ) { [weak self] result in
-            guard let self else {
-                completion(.failure(ClientError.Unknown()))
-                return
-            }
-            switch result {
-            case let .success(request):
-                apiClient.request(request, isRecoveryOperation: isRecoveryOperation, completion: completion)
-            case let .failure(error):
-                completion(.failure(error))
-            }
-        }
-    }
-
-    public func connect(isRecoveryOperation: Bool = false, completion: @escaping (Result<EmptyResponse, Error>) -> Void) {
-        var connectionIdRequired: Bool
-        connectionIdRequired = false
-        var tokenRequired: Bool
-        tokenRequired = true
-        let path = "/api/v2/connect"
         
         var queryParams = [URLQueryItem]()
         

@@ -5,19 +5,19 @@
 import Foundation
 
 public struct UpdateMessagePartialRequest: Codable, Hashable {
-    public var unset: [String]
-    public var set: [String: RawJSON]
     public var skipEnrichUrl: Bool? = nil
+    public var unset: [String]? = nil
+    public var set: [String: RawJSON]? = nil
 
-    public init(unset: [String], set: [String: RawJSON], skipEnrichUrl: Bool? = nil) {
+    public init(skipEnrichUrl: Bool? = nil, unset: [String]? = nil, set: [String: RawJSON]? = nil) {
+        self.skipEnrichUrl = skipEnrichUrl
         self.unset = unset
         self.set = set
-        self.skipEnrichUrl = skipEnrichUrl
     }
     
     public enum CodingKeys: String, CodingKey, CaseIterable {
+        case skipEnrichUrl = "skip_enrich_url"
         case unset
         case set
-        case skipEnrichUrl = "skip_enrich_url"
     }
 }

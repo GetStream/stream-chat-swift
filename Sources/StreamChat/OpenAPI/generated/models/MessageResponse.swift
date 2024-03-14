@@ -21,7 +21,7 @@ public struct MessageResponse: Codable, Hashable {
     public var latestReactions: [Reaction?]
     public var mentionedUsers: [UserResponse]
     public var ownReactions: [Reaction?]
-    public var custom: [String: RawJSON]?
+    public var custom: [String: RawJSON]
     public var reactionCounts: [String: Int]
     public var reactionScores: [String: Int]
     public var user: UserResponse

@@ -124,7 +124,6 @@ class ChannelUpdater: Worker {
             type: channelQuery.type.rawValue,
             id: channelQuery.id ?? "", // TODO: check this
             channelGetOrCreateRequest: request,
-            clientId: nil,
             requiresConnectionId: requiresConnectionId,
             isRecoveryOperation: isInRecoveryMode,
             completion: completion
@@ -153,8 +152,8 @@ class ChannelUpdater: Worker {
         let request = UpdateChannelRequest(
             addModerators: [],
             demoteModerators: [],
-            removeMembers: [],
             invites: channelPayload.invites.map { ChannelMemberRequest(userId: $0) },
+            removeMembers: [],
             data: channelRequest
         )
 
@@ -280,9 +279,9 @@ class ChannelUpdater: Worker {
         let context = database.backgroundReadOnlyContext
         context.perform { [weak self] in
             let requestBody = MessageRequest(
-                attachments: [],
                 id: .newUniqueId,
-                text: message
+                text: message,
+                attachments: []
             )
             self?.truncate(
                 cid: cid,
@@ -445,11 +444,11 @@ class ChannelUpdater: Worker {
     ) {
         let messagePayload = messagePayload(text: message, currentUserId: currentUserId)
         let request = UpdateChannelRequest(
+            hideHistory: hideHistory,
+            addMembers: userIds.map { ChannelMemberRequest(userId: $0) },
             addModerators: [],
             demoteModerators: [],
             removeMembers: [],
-            hideHistory: hideHistory,
-            addMembers: userIds.map { ChannelMemberRequest(userId: $0) },
             message: messagePayload
         )
         api.updateChannel(
@@ -502,8 +501,8 @@ class ChannelUpdater: Worker {
         let request = UpdateChannelRequest(
             addModerators: [],
             demoteModerators: [],
-            removeMembers: [],
-            invites: userIds.map { ChannelMemberRequest(userId: $0) }
+            invites: userIds.map { ChannelMemberRequest(userId: $0) },
+            removeMembers: []
         )
         api.updateChannel(
             type: cid.type.rawValue,
@@ -523,12 +522,12 @@ class ChannelUpdater: Worker {
         message: String?,
         completion: ((Error?) -> Void)? = nil
     ) {
-        let messageRequest = MessageRequest(attachments: [], text: message)
+        let messageRequest = MessageRequest(text: message, attachments: [])
         let request = UpdateChannelRequest(
+            acceptInvite: true,
             addModerators: [],
             demoteModerators: [],
             removeMembers: [],
-            acceptInvite: true,
             message: messageRequest
         )
         api.updateChannel(
@@ -548,10 +547,10 @@ class ChannelUpdater: Worker {
         completion: ((Error?) -> Void)? = nil
     ) {
         let request = UpdateChannelRequest(
+            rejectInvite: true,
             addModerators: [],
             demoteModerators: [],
-            removeMembers: [],
-            rejectInvite: true
+            removeMembers: []
         )
         api.updateChannel(
             type: cid.type.rawValue,
@@ -605,10 +604,10 @@ class ChannelUpdater: Worker {
     ///   - completion: Called when the API call is finished. Called with `Error` if the remote update fails.
     func enableSlowMode(cid: ChannelId, cooldownDuration: Int, completion: ((Error?) -> Void)? = nil) {
         let request = UpdateChannelRequest(
+            cooldown: cooldownDuration,
             addModerators: [],
             demoteModerators: [],
-            removeMembers: [],
-            cooldown: cooldownDuration
+            removeMembers: []
         )
         api.updateChannel(
             type: cid.type.rawValue,
@@ -639,7 +638,6 @@ class ChannelUpdater: Worker {
         api.getOrCreateChannel(
             type: cid.apiPath,
             channelGetOrCreateRequest: request,
-            clientId: nil,
             requiresConnectionId: true,
             isRecoveryOperation: isInRecoveryMode
         ) { completion?($0.error) }
@@ -657,7 +655,6 @@ class ChannelUpdater: Worker {
             type: cid.type.rawValue,
             id: cid.id,
             channelStopWatchingRequest: ChannelStopWatchingRequest(),
-            clientId: nil,
             requiresConnectionId: true,
             completion: {
                 completion?($0.error)
@@ -685,7 +682,6 @@ class ChannelUpdater: Worker {
         api.getOrCreateChannel(
             type: query.cid.apiPath,
             channelGetOrCreateRequest: request,
-            clientId: nil,
             requiresConnectionId: true
         ) { (result: Result<ChannelStateResponse, Error>) in
             do {
@@ -844,9 +840,9 @@ class ChannelUpdater: Worker {
         var messagePayload: MessageRequest?
         if let text = text {
             messagePayload = MessageRequest(
-                attachments: [],
                 id: .newUniqueId,
-                text: text
+                text: text,
+                attachments: []
             )
             return messagePayload
         }

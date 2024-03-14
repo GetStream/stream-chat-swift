@@ -222,7 +222,6 @@ extension ChannelConfig {
         customEvents: false,
         markMessagesPending: false,
         maxMessageLength: 0,
-        messageRetention: "",
         mutes: false,
         name: "",
         pushNotifications: false,

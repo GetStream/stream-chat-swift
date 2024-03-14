@@ -40,7 +40,6 @@ public enum WSEvent: Codable, Hashable {
     case typeNotificationNewMessageEvent(NotificationNewMessageEvent)
     case typeNotificationMutesUpdatedEvent(NotificationMutesUpdatedEvent)
     case typeNotificationRemovedFromChannelEvent(NotificationRemovedFromChannelEvent)
-//    case typeMessageNewEvent(MessageNewEvent)
     case typeReactionDeletedEvent(ReactionDeletedEvent)
     case typeReactionNewEvent(ReactionNewEvent)
     case typeReactionUpdatedEvent(ReactionUpdatedEvent)

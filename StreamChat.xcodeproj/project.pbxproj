@@ -1133,6 +1133,10 @@
 		84DC448E2BA1E5010050290C /* GetMessageResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84DC44612BA1E5010050290C /* GetMessageResponse.swift */; };
 		84DC448F2BA1E5010050290C /* Thread.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84DC44622BA1E5010050290C /* Thread.swift */; };
 		84DC44902BA1E5010050290C /* Thread.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84DC44622BA1E5010050290C /* Thread.swift */; };
+		84DC44932BA3188F0050290C /* WSAuthMessageRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84DC44912BA3188E0050290C /* WSAuthMessageRequest.swift */; };
+		84DC44942BA3188F0050290C /* WSAuthMessageRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84DC44912BA3188E0050290C /* WSAuthMessageRequest.swift */; };
+		84DC44952BA3188F0050290C /* ConnectUserDetailsRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84DC44922BA3188F0050290C /* ConnectUserDetailsRequest.swift */; };
+		84DC44962BA3188F0050290C /* ConnectUserDetailsRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84DC44922BA3188F0050290C /* ConnectUserDetailsRequest.swift */; };
 		84DCB84F269F46BE006CDF32 /* EventsController_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84DCB84E269F46BE006CDF32 /* EventsController_Tests.swift */; };
 		84DCB851269F4D31006CDF32 /* EventsController+Combine_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84DCB850269F4D31006CDF32 /* EventsController+Combine_Tests.swift */; };
 		84DCB853269F569A006CDF32 /* EventsController+SwiftUI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84DCB852269F569A006CDF32 /* EventsController+SwiftUI.swift */; };
@@ -3900,6 +3904,8 @@
 		84DC44602BA1E5010050290C /* QueryUsersResponse.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = QueryUsersResponse.swift; sourceTree = "<group>"; };
 		84DC44612BA1E5010050290C /* GetMessageResponse.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GetMessageResponse.swift; sourceTree = "<group>"; };
 		84DC44622BA1E5010050290C /* Thread.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Thread.swift; sourceTree = "<group>"; };
+		84DC44912BA3188E0050290C /* WSAuthMessageRequest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WSAuthMessageRequest.swift; sourceTree = "<group>"; };
+		84DC44922BA3188F0050290C /* ConnectUserDetailsRequest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ConnectUserDetailsRequest.swift; sourceTree = "<group>"; };
 		84DCB84E269F46BE006CDF32 /* EventsController_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventsController_Tests.swift; sourceTree = "<group>"; };
 		84DCB850269F4D31006CDF32 /* EventsController+Combine_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "EventsController+Combine_Tests.swift"; sourceTree = "<group>"; };
 		84DCB852269F569A006CDF32 /* EventsController+SwiftUI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "EventsController+SwiftUI.swift"; sourceTree = "<group>"; };
@@ -6093,6 +6099,8 @@
 		842E70E62B970E1600D2D68B /* models */ = {
 			isa = PBXGroup;
 			children = (
+				84DC44922BA3188F0050290C /* ConnectUserDetailsRequest.swift */,
+				84DC44912BA3188E0050290C /* WSAuthMessageRequest.swift */,
 				84DC44552BA1E4FF0050290C /* CreateGuestRequest.swift */,
 				84DC44542BA1E4FF0050290C /* CreateGuestResponse.swift */,
 				84DC44612BA1E5010050290C /* GetMessageResponse.swift */,
@@ -11509,6 +11517,7 @@
 				DA640FC12535CFA100D32944 /* ChannelMemberListSortingKey.swift in Sources */,
 				842E736D2B970E1800D2D68B /* UpdateChannelResponse.swift in Sources */,
 				7900452625374CA20096ECA1 /* User+SwiftUI.swift in Sources */,
+				84DC44952BA3188F0050290C /* ConnectUserDetailsRequest.swift in Sources */,
 				404296DA2A0112D00089126D /* AudioQueuePlayer.swift in Sources */,
 				842E72E52B970E1700D2D68B /* ImageSizeRequest.swift in Sources */,
 				792FCB4924A3BF38000290C7 /* OptionSet+Extensions.swift in Sources */,
@@ -11556,6 +11565,7 @@
 				F63CC37324E592D30052844D /* MemberEventObserver.swift in Sources */,
 				842E72ED2B970E1700D2D68B /* BanResponse.swift in Sources */,
 				842E72D52B970E1700D2D68B /* UserBannedEvent.swift in Sources */,
+				84DC44932BA3188F0050290C /* WSAuthMessageRequest.swift in Sources */,
 				842E72632B970E1700D2D68B /* Channel.swift in Sources */,
 				842E731B2B970E1800D2D68B /* Images.swift in Sources */,
 				842E727D2B970E1700D2D68B /* MuteChannelResponse.swift in Sources */,
@@ -12268,6 +12278,7 @@
 				40789D2E29F6AC500018C2BB /* AudioRecordingState.swift in Sources */,
 				842E72562B970E1700D2D68B /* HealthCheckEvent.swift in Sources */,
 				842E71F62B970E1700D2D68B /* PushNotificationSettings.swift in Sources */,
+				84DC44962BA3188F0050290C /* ConnectUserDetailsRequest.swift in Sources */,
 				C14D27B72869EEE40063F6F2 /* Array+CompactMapLoggingError.swift in Sources */,
 				842E72242B970E1700D2D68B /* ChannelUnFrozenEvent.swift in Sources */,
 				C121E82C274544AD00023E4C /* APIClient.swift in Sources */,
@@ -12600,6 +12611,7 @@
 				84DC3FB32B74B52300834BC1 /* AttachmentEndpoints.swift in Sources */,
 				842E727A2B970E1700D2D68B /* DataDogInfo.swift in Sources */,
 				842E73382B970E1800D2D68B /* MessageActionRequest.swift in Sources */,
+				84DC44942BA3188F0050290C /* WSAuthMessageRequest.swift in Sources */,
 				842E734C2B970E1800D2D68B /* ChannelResponse.swift in Sources */,
 				C121E8CE274544B100023E4C /* Sorting.swift in Sources */,
 				842E72C22B970E1700D2D68B /* Response.swift in Sources */,

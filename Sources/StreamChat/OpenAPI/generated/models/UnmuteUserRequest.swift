@@ -5,16 +5,16 @@
 import Foundation
 
 public struct UnmuteUserRequest: Codable, Hashable {
-    public var targetIds: [String]
     public var timeout: Int? = nil
+    public var targetIds: [String]? = nil
 
-    public init(targetIds: [String], timeout: Int? = nil) {
-        self.targetIds = targetIds
+    public init(timeout: Int? = nil, targetIds: [String]? = nil) {
         self.timeout = timeout
+        self.targetIds = targetIds
     }
     
     public enum CodingKeys: String, CodingKey, CaseIterable {
-        case targetIds = "target_ids"
         case timeout
+        case targetIds = "target_ids"
     }
 }

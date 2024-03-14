@@ -12,7 +12,6 @@ public struct ChannelConfigWithInfo: Codable, Hashable {
     public var customEvents: Bool
     public var markMessagesPending: Bool
     public var maxMessageLength: Int
-    public var messageRetention: String
     public var mutes: Bool
     public var name: String
     public var pushNotifications: Bool
@@ -34,7 +33,7 @@ public struct ChannelConfigWithInfo: Codable, Hashable {
     public var automodThresholds: Thresholds? = nil
     public var grants: [String: [String]]? = nil
 
-    public init(automod: String, automodBehavior: String, connectEvents: Bool, createdAt: Date, customEvents: Bool, markMessagesPending: Bool, maxMessageLength: Int, messageRetention: String, mutes: Bool, name: String, pushNotifications: Bool, quotes: Bool, reactions: Bool, readEvents: Bool, reminders: Bool, replies: Bool, search: Bool, typingEvents: Bool, updatedAt: Date, uploads: Bool, urlEnrichment: Bool, commands: [Command?], blocklist: String? = nil, blocklistBehavior: String? = nil, allowedFlagReasons: [String]? = nil, blocklists: [BlockListOptions]? = nil, automodThresholds: Thresholds? = nil, grants: [String: [String]]? = nil) {
+    public init(automod: String, automodBehavior: String, connectEvents: Bool, createdAt: Date, customEvents: Bool, markMessagesPending: Bool, maxMessageLength: Int, mutes: Bool, name: String, pushNotifications: Bool, quotes: Bool, reactions: Bool, readEvents: Bool, reminders: Bool, replies: Bool, search: Bool, typingEvents: Bool, updatedAt: Date, uploads: Bool, urlEnrichment: Bool, commands: [Command?], blocklist: String? = nil, blocklistBehavior: String? = nil, allowedFlagReasons: [String]? = nil, blocklists: [BlockListOptions]? = nil, automodThresholds: Thresholds? = nil, grants: [String: [String]]? = nil) {
         self.automod = automod
         self.automodBehavior = automodBehavior
         self.connectEvents = connectEvents
@@ -42,7 +41,6 @@ public struct ChannelConfigWithInfo: Codable, Hashable {
         self.customEvents = customEvents
         self.markMessagesPending = markMessagesPending
         self.maxMessageLength = maxMessageLength
-        self.messageRetention = messageRetention
         self.mutes = mutes
         self.name = name
         self.pushNotifications = pushNotifications
@@ -73,7 +71,6 @@ public struct ChannelConfigWithInfo: Codable, Hashable {
         case customEvents = "custom_events"
         case markMessagesPending = "mark_messages_pending"
         case maxMessageLength = "max_message_length"
-        case messageRetention = "message_retention"
         case mutes
         case name
         case pushNotifications = "push_notifications"

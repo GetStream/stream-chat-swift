@@ -5,7 +5,6 @@
 import Foundation
 
 public struct QueryChannelsRequest: Codable, Hashable {
-    public var clientId: String? = nil
     public var connectionId: String? = nil
     public var limit: Int? = nil
     public var memberLimit: Int? = nil
@@ -17,8 +16,7 @@ public struct QueryChannelsRequest: Codable, Hashable {
     public var sort: [SortParamRequest?]? = nil
     public var filterConditions: [String: RawJSON]? = nil
 
-    public init(clientId: String? = nil, connectionId: String? = nil, limit: Int? = nil, memberLimit: Int? = nil, messageLimit: Int? = nil, offset: Int? = nil, presence: Bool? = nil, state: Bool? = nil, watch: Bool? = nil, sort: [SortParamRequest?]? = nil, filterConditions: [String: RawJSON]? = nil) {
-        self.clientId = clientId
+    public init(connectionId: String? = nil, limit: Int? = nil, memberLimit: Int? = nil, messageLimit: Int? = nil, offset: Int? = nil, presence: Bool? = nil, state: Bool? = nil, watch: Bool? = nil, sort: [SortParamRequest?]? = nil, filterConditions: [String: RawJSON]? = nil) {
         self.connectionId = connectionId
         self.limit = limit
         self.memberLimit = memberLimit
@@ -32,7 +30,6 @@ public struct QueryChannelsRequest: Codable, Hashable {
     }
     
     public enum CodingKeys: String, CodingKey, CaseIterable {
-        case clientId = "client_id"
         case connectionId = "connection_id"
         case limit
         case memberLimit = "member_limit"

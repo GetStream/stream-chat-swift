@@ -1066,7 +1066,6 @@ extension MessageDTO {
             .sorted { ($0.attachmentID?.index ?? 0) < ($1.attachmentID?.index ?? 0) }
             .compactMap { $0.asRequestPayload() }
         let messageRequest = MessageRequest(
-            attachments: attachments,
             id: id,
             parentId: parentMessageId,
             pinExpires: pinExpires?.bridgeDate,
@@ -1077,6 +1076,7 @@ extension MessageDTO {
             silent: isSilent,
             text: text,
             type: type,
+            attachments: attachments,
             mentionedUsers: mentionedUserIds,
             custom: decodedExtraData
         )

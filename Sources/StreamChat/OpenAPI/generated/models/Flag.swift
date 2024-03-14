@@ -12,6 +12,7 @@ public struct Flag: Codable, Hashable {
     public var reason: String? = nil
     public var rejectedAt: Date? = nil
     public var reviewedAt: Date? = nil
+    public var reviewedBy: String? = nil
     public var targetMessageId: String? = nil
     public var custom: [String: RawJSON]? = nil
     public var details: FlagDetails? = nil
@@ -19,7 +20,7 @@ public struct Flag: Codable, Hashable {
     public var targetUser: UserObject? = nil
     public var user: UserObject? = nil
 
-    public init(createdAt: Date, createdByAutomod: Bool, updatedAt: Date, approvedAt: Date? = nil, reason: String? = nil, rejectedAt: Date? = nil, reviewedAt: Date? = nil, targetMessageId: String? = nil, custom: [String: RawJSON]? = nil, details: FlagDetails? = nil, targetMessage: Message? = nil, targetUser: UserObject? = nil, user: UserObject? = nil) {
+    public init(createdAt: Date, createdByAutomod: Bool, updatedAt: Date, approvedAt: Date? = nil, reason: String? = nil, rejectedAt: Date? = nil, reviewedAt: Date? = nil, reviewedBy: String? = nil, targetMessageId: String? = nil, custom: [String: RawJSON]? = nil, details: FlagDetails? = nil, targetMessage: Message? = nil, targetUser: UserObject? = nil, user: UserObject? = nil) {
         self.createdAt = createdAt
         self.createdByAutomod = createdByAutomod
         self.updatedAt = updatedAt
@@ -27,6 +28,7 @@ public struct Flag: Codable, Hashable {
         self.reason = reason
         self.rejectedAt = rejectedAt
         self.reviewedAt = reviewedAt
+        self.reviewedBy = reviewedBy
         self.targetMessageId = targetMessageId
         self.custom = custom
         self.details = details
@@ -43,6 +45,7 @@ public struct Flag: Codable, Hashable {
         case reason
         case rejectedAt = "rejected_at"
         case reviewedAt = "reviewed_at"
+        case reviewedBy = "reviewed_by"
         case targetMessageId = "target_message_id"
         case custom
         case details
