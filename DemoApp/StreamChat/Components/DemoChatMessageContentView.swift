@@ -32,6 +32,7 @@ final class DemoChatMessageContentView: ChatMessageContentView {
         /// If automatic translation is added, do not show manual translation
         /// (Demo App only feature to test LLC manual translation)
         if layoutOptions?.contains(.translation) == false,
+           content?.isDeleted == false,
            let translations = content?.translations,
            let turkishTranslation = translations[.turkish] {
             textView?.text = turkishTranslation
