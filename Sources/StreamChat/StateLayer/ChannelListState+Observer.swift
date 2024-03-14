@@ -116,15 +116,24 @@ extension ChannelListState {
             return false
         }
         
+        private func isChannelInList(_ cid: ChannelId) async throws -> Bool {
+            try await database.backgroundRead { [query] context in
+                guard let (channelDTO, queryDTO) = context.getChannelWithQuery(cid: cid, query: query) else { return false }
+                return queryDTO.channels.contains(channelDTO)
+            }
+        }
+        
         private func linkChannelIfNeeded(_ channel: ChatChannel) async throws {
-            guard !channelListObserver.items.contains(where: { $0.cid == channel.cid }) else { return }
+            let listContainsChannel = try await isChannelInList(channel.cid)
+            guard !listContainsChannel else { return }
             guard isBelongingToChannelListQuery(channel: channel) else { return }
             try await channelListUpdater.link(channel: channel, with: query)
             try await channelListUpdater.startWatchingChannels(withIds: [channel.cid])
         }
         
         private func unlinkChannelIfNeeded(_ channel: ChatChannel) async throws {
-            guard channelListObserver.items.contains(where: { $0.cid == channel.cid }) else { return }
+            let listContainsChannel = try await isChannelInList(channel.cid)
+            guard listContainsChannel else { return }
             guard !isBelongingToChannelListQuery(channel: channel) else { return }
             try await channelListUpdater.unlink(channel: channel, with: query)
         }
