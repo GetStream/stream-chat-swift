@@ -298,6 +298,19 @@ final class DemoChatChannelListRouter: ChatChannelListRouter {
                     }
                 }
             }),
+            .init(title: "Mute channel with expiration", isEnabled: canMuteChannel, handler: { [unowned self] _ in
+                self.rootViewController.presentAlert(title: "Enter expiration", textFieldPlaceholder: "Seconds") { expiration in
+                    guard let expiration = Int(expiration ?? ""), expiration != 0 else {
+                        self.rootViewController.presentAlert(title: "Expiration is not valid")
+                        return
+                    }
+                    channelController.muteChannel(expiration: expiration * 1000) { error in
+                        if let error = error {
+                            self.rootViewController.presentAlert(title: "Couldn't mute channel \(cid)", message: "\(error)")
+                        }
+                    }
+                }
+            }),
             .init(title: "Cool channel", isEnabled: canMuteChannel, handler: { [unowned self] _ in
                 channelController.partialChannelUpdate(extraData: ["is_cool": true]) { error in
                     if let error = error {

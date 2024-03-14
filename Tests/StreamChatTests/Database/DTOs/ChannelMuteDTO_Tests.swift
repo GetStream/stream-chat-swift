@@ -31,7 +31,8 @@ final class ChannelMuteDTO_Tests: XCTestCase {
             mutedChannel: .dummy(cid: .unique),
             user: currentUserPayload,
             createdAt: .unique,
-            updatedAt: .unique
+            updatedAt: .unique,
+            expiresAt: .unique
         )
 
         try database.writeSynchronously { session in
@@ -42,6 +43,7 @@ final class ChannelMuteDTO_Tests: XCTestCase {
         let channel: ChatChannel = try XCTUnwrap(database.viewContext.channel(cid: mutePayload.mutedChannel.cid)?.asModel())
         XCTAssertEqual(channel.muteDetails?.createdAt, mutePayload.createdAt)
         XCTAssertEqual(channel.muteDetails?.updatedAt, mutePayload.updatedAt)
+        XCTAssertEqual(channel.muteDetails?.expiresAt, mutePayload.expiresAt)
 
         let currentUser: CurrentChatUser = try XCTUnwrap(database.viewContext.currentUser?.asModel())
         XCTAssertEqual(currentUser.mutedChannels, [channel])
@@ -53,7 +55,8 @@ final class ChannelMuteDTO_Tests: XCTestCase {
             mutedChannel: .dummy(cid: .unique),
             user: .dummy(userId: .unique),
             createdAt: .unique,
-            updatedAt: .unique
+            updatedAt: .unique,
+            expiresAt: .unique
         )
 
         // WHEN
@@ -71,7 +74,8 @@ final class ChannelMuteDTO_Tests: XCTestCase {
             mutedChannel: channel,
             user: currentUser,
             createdAt: .unique,
-            updatedAt: .unique
+            updatedAt: .unique,
+            expiresAt: .unique
         )
 
         var loadedMuteDTO: ChannelMuteDTO? {
@@ -89,6 +93,7 @@ final class ChannelMuteDTO_Tests: XCTestCase {
         let muteDTO = try XCTUnwrap(loadedMuteDTO)
         XCTAssertEqual(muteDTO.createdAt.bridgeDate, mute.createdAt)
         XCTAssertEqual(muteDTO.updatedAt.bridgeDate, mute.updatedAt)
+        XCTAssertEqual(muteDTO.expiresAt?.bridgeDate, mute.expiresAt)
         XCTAssertEqual(muteDTO.currentUser.user.id, currentUser.id)
         XCTAssertEqual(muteDTO.channel.cid, channel.cid.rawValue)
     }
@@ -101,7 +106,8 @@ final class ChannelMuteDTO_Tests: XCTestCase {
             mutedChannel: channel,
             user: currentUser,
             createdAt: .unique,
-            updatedAt: .unique
+            updatedAt: .unique,
+            expiresAt: .unique
         )
 
         try database.writeSynchronously { session in
@@ -114,7 +120,8 @@ final class ChannelMuteDTO_Tests: XCTestCase {
             mutedChannel: channel,
             user: currentUser,
             createdAt: .unique,
-            updatedAt: .unique
+            updatedAt: .unique,
+            expiresAt: .unique
         )
         try database.writeSynchronously { session in
             try session.saveChannelMute(payload: updatedMute)
@@ -126,6 +133,7 @@ final class ChannelMuteDTO_Tests: XCTestCase {
         )
         XCTAssertEqual(muteDTO.createdAt.bridgeDate, updatedMute.createdAt)
         XCTAssertEqual(muteDTO.updatedAt.bridgeDate, updatedMute.updatedAt)
+        XCTAssertEqual(muteDTO.expiresAt?.bridgeDate, updatedMute.expiresAt)
         XCTAssertEqual(muteDTO.currentUser.user.id, currentUser.id)
         XCTAssertEqual(muteDTO.channel.cid, channel.cid.rawValue)
     }
