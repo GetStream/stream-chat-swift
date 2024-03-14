@@ -36,8 +36,10 @@ class ChannelMemberListUpdater: Worker {
                     }, completion: { error in
                         if let error = error {
                             log.error("Failed to save `ChannelMemberListQuery` related data to the database. Error: \(error)")
+                            completion?(.failure(error))
+                        } else {
+                            completion?(.success(members))
                         }
-                        completion?(.success(members))
                     })
                 case let .failure(error):
                     completion?(.failure(error))
