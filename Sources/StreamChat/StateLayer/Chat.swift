@@ -4,6 +4,7 @@
 
 import Foundation
 
+/// An object which represents a `ChatChannel`.
 @available(iOS 13.0, *)
 public final class Chat {
     private let attachmentQueueUploader: AttachmentQueueUploader
@@ -69,7 +70,8 @@ public final class Chat {
         )
     }
     
-    public internal(set) var state: ChatState
+    /// An observable object representing the current state of the channel.
+    public let state: ChatState
     
     // MARK: - Deleting the Channel
     
