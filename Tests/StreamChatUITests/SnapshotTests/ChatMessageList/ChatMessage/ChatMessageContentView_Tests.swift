@@ -284,19 +284,20 @@ final class ChatMessageContentView_Tests: XCTestCase {
             config: .mock(readEventsEnabled: true)
         )
 
-        let messageWithMarkdownOrderedList = """
-           https://getstream.io/test_endpoint_in_snake_style
-           Test_text_in_snake_style and plain text
-           Test plain text and text_in_snake_style
+        let messageWithMarkdown = """
+           https://getstream.io/test_endpoint_in__snake__style
+           Test_text_in__snake__style and plain text
+           Test plain text and the_text_in__snake__style
            _Test text in italic style_ and plain text
            Test plain text and _text in italic style_
            Test plain text, _text in italic style_ and plain text
+           Test plain text, __text in bold style__ and plain text
         """
 
         let sentMessageFromCurrentUser: ChatMessage = .mock(
             id: .unique,
             cid: channelWithReadsEnabled.cid,
-            text: messageWithMarkdownOrderedList,
+            text: messageWithMarkdown,
             author: me,
             createdAt: createdAt,
             localState: nil,

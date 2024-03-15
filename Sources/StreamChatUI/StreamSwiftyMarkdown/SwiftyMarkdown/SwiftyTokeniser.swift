@@ -119,10 +119,13 @@ class SwiftyTokeniser {
 			let lastElementStyles = lastElement.styles as? [CharacterStyle] ?? []
 			let currentElementStyles = currentElement.styles as? [CharacterStyle] ?? []
 
-			if !lastTagStyles.contains(.italic) &&
-				((currentElement.character == "_" && lastElement.type == .string) ||
-				(currentElement.character != "_" && currentElementStyles.contains(.italic))) {
-				currentElement.styles.removeAll(where: { $0 as? CharacterStyle == .italic })
+			if  !lastTagStyles.contains(.italic) &&
+                !lastTagStyles.contains(.bold) &&
+				(
+                    (currentElement.character == "_" && lastElement.type == .string) ||
+                    (currentElement.character != "_" && currentElement.character != "*" && currentElementStyles.contains { $0 == .italic || $0 == .bold })
+                ) {
+                currentElement.styles.removeAll(where: { [.italic, .bold].contains($0 as? CharacterStyle) })
 				currentElement.type = .string
 			}
 
