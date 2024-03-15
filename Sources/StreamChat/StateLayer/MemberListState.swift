@@ -13,8 +13,7 @@ public final class MemberListState: ObservableObject {
         self.members = StreamCollection(members)
         observer = Observer(query: query, database: database)
         observer.start(
-            with: .init(membersDidChange: { [weak self] members in await self?.setValue(members, for: \.members)
-            })
+            with: .init(membersDidChange: { [weak self] members in await self?.setValue(members, for: \.members) })
         )
     }
     

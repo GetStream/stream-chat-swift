@@ -37,6 +37,13 @@ public final class ChatState: ObservableObject {
     /// The represented ``ChatChannel``.
     @Published public private(set) var channel: ChatChannel?
     
+    // MARK: - Members
+    
+    /// An array of loaded channel members.
+    ///
+    /// Use load members in ``Chat`` for loading more members.
+    @Published public private(set) var members = StreamCollection<ChatChannelMember>([])
+    
     // MARK: - Messages
     
     /// Describes the ordering of messages.

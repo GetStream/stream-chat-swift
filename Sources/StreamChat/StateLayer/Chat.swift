@@ -12,7 +12,6 @@ public final class Chat {
     private let channelUpdater: ChannelUpdater
     private let databaseContainer: DatabaseContainer
     private let eventNotificationCenter: EventNotificationCenter
-    private let memberListUpdater: ChannelMemberListUpdater
     private let memberUpdater: ChannelMemberUpdater
     private let messageEditor: MessageEditor
     private let messageSender: MessageSender
@@ -20,6 +19,7 @@ public final class Chat {
     private let readStateSender: ReadStateSender
     private let typingEventsSender: TypingEventsSender
     
+    private let memberList: MemberList
     private var messageStates = NSMapTable<NSString, MessageState>(valueOptions: .weakMemory)
     
     public let cid: ChannelId
@@ -31,6 +31,7 @@ public final class Chat {
         channelQuery: ChannelQuery,
         channelListQuery: ChannelListQuery?,
         messageOrdering: MessageOrdering = .topToBottom,
+        memberSorting: [Sorting<ChannelMemberListSortingKey>],
         channelUpdater: ChannelUpdater,
         client: ChatClient,
         environment: Environment = .init()
@@ -45,9 +46,9 @@ public final class Chat {
         databaseContainer = client.databaseContainer
         messageEditor = client.messageEditor
         messageSender = client.messageSender
-        memberListUpdater = environment.memberListUpdaterBuilder(
-            client.databaseContainer,
-            client.apiClient
+        memberList = MemberList(
+            query: ChannelMemberListQuery(cid: cid, sort: memberSorting),
+            client: client
         )
         memberUpdater = environment.memberUpdaterBuilder(
             client.databaseContainer,
@@ -180,36 +181,17 @@ public final class Chat {
         try await channelUpdater.removeMembers(currentUserId: currentUserId, cid: cid, userIds: Set(members), message: systemMessage)
     }
     
-    /// Loads an array of members for the specified query.
+    /// Loads an array of members for the specified query and updates ``ChatState.members``.
     ///
-    /// - Parameters:
-    ///   - filter: The filter to use for fetching channel members.
-    ///   - sort: An array of sorting parameters.
-    ///   - pagination: The pagination configuration which includes a limit and an offset or a cursor.
+    /// - Note: Channel member sorting keys are set when creating the ``Chat`` instance.
+    /// It is also possible to create separate ``MemberList`` objects if needed with different filtering options. See ``ChatClient.makeMemberList(with:)``.
+    ///
+    /// - Parameter pagination: The pagination configuration which includes a limit and an offset or a cursor.
     ///
     /// - Throws: An error while communicating with the Stream API.
     /// - Returns: An array of paginated channel members for the query.
-    public func loadMembers(with filter: Filter<MemberListFilterScope>, sort: [Sorting<ChannelMemberListSortingKey>] = [], pagination: Pagination) async throws -> [ChatChannelMember] {
-        var query = ChannelMemberListQuery(cid: cid, filter: filter, sort: sort)
-        query.pagination = pagination
-        return try await memberListUpdater.load(query)
-    }
-    
-    /// Returns an observable member list state for the specified query.
-    ///
-    /// Calling ``Chat.loadMembers(with:sort:pagination:)`` automatically updates ``MemberListState.members`` for the same query.
-    ///
-    /// - Parameters:
-    ///   - filter: The filter to use for fetching channel members.
-    ///   - sort: An array of sorting parameters.
-    ///   - pagination: The pagination configuration which includes a limit and an offset or a cursor.
-    ///
-    /// - Returns: An instance of `MemberListState` which conforms to the `ObservableObject`.
-    public func makeMemberListState(for filter: Filter<MemberListFilterScope>, sort: [Sorting<ChannelMemberListSortingKey>] = [], pagination: Pagination) async throws -> MemberListState {
-        var query = ChannelMemberListQuery(cid: cid, filter: filter, sort: sort)
-        query.pagination = pagination
-        let members = try await memberListUpdater.load(query)
-        return MemberListState(members: members, query: query, database: databaseContainer)
+    @discardableResult public func loadMembers(with pagination: Pagination) async throws -> [ChatChannelMember] {
+        try await memberList.loadMembers(with: pagination)
     }
     
     // MARK: - Member Moderation
@@ -1002,11 +984,6 @@ extension Chat {
             _ database: DatabaseContainer,
             _ apiClient: APIClient
         ) -> ChannelMemberUpdater = ChannelMemberUpdater.init
-        
-        var memberListUpdaterBuilder: (
-            _ database: DatabaseContainer,
-            _ apiClient: APIClient
-        ) -> ChannelMemberListUpdater = ChannelMemberListUpdater.init
         
         var messageUpdaterBuilder: (
             _ isLocalStorageEnabled: Bool,

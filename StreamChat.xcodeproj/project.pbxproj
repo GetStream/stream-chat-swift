@@ -254,6 +254,8 @@
 		4F73F3992B91BD3000563CD9 /* MessageState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F73F3972B91BD3000563CD9 /* MessageState.swift */; };
 		4F73F39E2B91C7BF00563CD9 /* MessageState+Observer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F73F39D2B91C7BF00563CD9 /* MessageState+Observer.swift */; };
 		4F73F39F2B91C7BF00563CD9 /* MessageState+Observer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F73F39D2B91C7BF00563CD9 /* MessageState+Observer.swift */; };
+		4F83FA462BA43DC3008BD8CD /* MemberList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F83FA452BA43DC3008BD8CD /* MemberList.swift */; };
+		4F83FA472BA43DC3008BD8CD /* MemberList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F83FA452BA43DC3008BD8CD /* MemberList.swift */; };
 		4F8E53062B7CD01D008C0F9F /* Chat.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F8E53052B7CD01D008C0F9F /* Chat.swift */; };
 		4F8E530B2B7CEBFB008C0F9F /* ChatClient+Factory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F8E530A2B7CEBFB008C0F9F /* ChatClient+Factory.swift */; };
 		4F8E53162B7F58BE008C0F9F /* Chat.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F8E53052B7CD01D008C0F9F /* Chat.swift */; };
@@ -2920,6 +2922,7 @@
 		4F427F6B2BA2F53200D92238 /* ConnectedUserState+Observer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ConnectedUserState+Observer.swift"; sourceTree = "<group>"; };
 		4F73F3972B91BD3000563CD9 /* MessageState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageState.swift; sourceTree = "<group>"; };
 		4F73F39D2B91C7BF00563CD9 /* MessageState+Observer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MessageState+Observer.swift"; sourceTree = "<group>"; };
+		4F83FA452BA43DC3008BD8CD /* MemberList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemberList.swift; sourceTree = "<group>"; };
 		4F8E53052B7CD01D008C0F9F /* Chat.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Chat.swift; sourceTree = "<group>"; };
 		4F8E530A2B7CEBFB008C0F9F /* ChatClient+Factory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ChatClient+Factory.swift"; sourceTree = "<group>"; };
 		4F8E531B2B833D6C008C0F9F /* ChatState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatState.swift; sourceTree = "<group>"; };
@@ -4853,6 +4856,7 @@
 				4F427F682BA2F52100D92238 /* ConnectedUserState.swift */,
 				4F427F6B2BA2F53200D92238 /* ConnectedUserState+Observer.swift */,
 				4FFB5EA52BA0993000F0454F /* MemberState.swift */,
+				4F83FA452BA43DC3008BD8CD /* MemberList.swift */,
 				4F94B0DF2BA1C4220045216B /* MemberListState.swift */,
 				4F73F3972B91BD3000563CD9 /* MessageState.swift */,
 				4F73F39D2B91C7BF00563CD9 /* MessageState+Observer.swift */,
@@ -10869,6 +10873,7 @@
 				40789D2129F6AC500018C2BB /* AppStateObserving.swift in Sources */,
 				79280F7A248918FD00CDEB89 /* StarscreamWebSocketEngine.swift in Sources */,
 				4F427F6C2BA2F53200D92238 /* ConnectedUserState+Observer.swift in Sources */,
+				4F83FA462BA43DC3008BD8CD /* MemberList.swift in Sources */,
 				7963BD6926B0208900281F8C /* ChatMessageAudioAttachment.swift in Sources */,
 				697C6F90260CFA37000E9023 /* Deprecations.swift in Sources */,
 				7964F3A4249A0ACF002A09EC /* ChannelListQueryDTO.swift in Sources */,
@@ -11711,6 +11716,7 @@
 				C121E8D6274544B100023E4C /* InternetConnection.swift in Sources */,
 				C121E8D7274544B100023E4C /* Reachability_Vendor.swift in Sources */,
 				C121E8D8274544B100023E4C /* Error+InternetNotAvailable.swift in Sources */,
+				4F83FA472BA43DC3008BD8CD /* MemberList.swift in Sources */,
 				C121E8D9274544B100023E4C /* LogFormatter.swift in Sources */,
 				C121E8DA274544B100023E4C /* PrefixLogFormatter.swift in Sources */,
 				C1B0B38727BFE8AB00C8207D /* MessageRepository.swift in Sources */,
