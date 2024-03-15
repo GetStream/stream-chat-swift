@@ -5,7 +5,7 @@
 import Foundation
 
 @available(iOS 13.0, *)
-extension CurrentUserState {
+extension ConnectedUserState {
     struct Observer {
         private let userObserver: BackgroundEntityDatabaseObserver<CurrentChatUser, CurrentUserDTO>
         

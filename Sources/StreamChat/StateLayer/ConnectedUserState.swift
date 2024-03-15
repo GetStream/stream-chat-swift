@@ -4,9 +4,10 @@
 
 import Foundation
 
+/// Represents a ``CurrentChatUser`` and its state.
 @available(iOS 13.0, *)
 @dynamicMemberLookup
-public final class CurrentUserState: ObservableObject {
+public final class ConnectedUserState: ObservableObject {
     private let observer: Observer
     
     init(user: CurrentChatUser, database: DatabaseContainer) {
@@ -30,7 +31,7 @@ public final class CurrentUserState: ObservableObject {
     
     // MARK: - Mutating the State
     
-    @MainActor func setValue<Value>(_ value: Value, for keyPath: ReferenceWritableKeyPath<CurrentUserState, Value>) {
+    @MainActor func setValue<Value>(_ value: Value, for keyPath: ReferenceWritableKeyPath<ConnectedUserState, Value>) {
         self[keyPath: keyPath] = value
     }
 }

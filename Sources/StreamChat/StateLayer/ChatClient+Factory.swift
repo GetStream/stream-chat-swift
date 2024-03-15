@@ -8,12 +8,12 @@ import Foundation
 
 @available(iOS 13.0, *)
 extension ChatClient {
-    /// Creates an instance of ``CurrentUser`` which represents the logged-in user state and its actions.
+    /// Creates an instance of ``ConnectedUser`` which represents the logged-in user state and its actions.
     ///
     /// - Throws: An error if no user is currently logged-in.
-    func makeCurrentUser() async throws -> CurrentUser {
+    func makeConnectedUser() async throws -> ConnectedUser {
         let user = try await databaseContainer.backgroundRead { try CurrentUserDTO.load(context: $0) }
-        return CurrentUser(user: user, client: self)
+        return ConnectedUser(user: user, client: self)
     }
 }
 

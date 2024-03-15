@@ -6,7 +6,7 @@ import Foundation
 
 /// An object which represents the currently logged in user.
 @available(iOS 13.0, *)
-public struct CurrentUser {
+public struct ConnectedUser {
     private let authenticationRepository: AuthenticationRepository
     private let currentUserUpdater: CurrentUserUpdater
     
@@ -23,7 +23,7 @@ public struct CurrentUser {
     }
     
     /// An observable object representing the current state of the user.
-    public let state: CurrentUserState
+    public let state: ConnectedUserState
     
     /// Updates the currently logged-in user's data.
     ///
@@ -52,7 +52,7 @@ public struct CurrentUser {
     
     /// Loads an array of devices associated with the logged-in user.
     ///
-    /// - Note: Devices can be read later from ``CurrentUserState.devices``.
+    /// - Note: Devices can be read later from ``ConnectedUserState.devices``.
     ///
     /// - Throws: An error while communicating with the Stream API or when user is not logged in.
     /// - Returns: An array of devices receiving push notifications.
@@ -93,12 +93,12 @@ public struct CurrentUser {
 }
 
 @available(iOS 13.0, *)
-extension CurrentUser {
+extension ConnectedUser {
     struct Environment {
         var stateBuilder: (
             _ user: CurrentChatUser,
             _ database: DatabaseContainer
-        ) -> CurrentUserState = CurrentUserState.init
+        ) -> ConnectedUserState = ConnectedUserState.init
         
         var currentUserUpdaterBuilder = CurrentUserUpdater.init
     }
