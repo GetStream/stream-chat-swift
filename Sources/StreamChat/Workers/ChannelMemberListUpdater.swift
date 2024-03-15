@@ -10,13 +10,7 @@ class ChannelMemberListUpdater: Worker {
     /// - Parameters:
     ///   - query: The query used in the request.
     ///   - completion: Called when the API call is finished. Called with `Error` if the remote update fails.
-    func load(_ query: ChannelMemberListQuery, completion: ((Error?) -> Void)? = nil) {
-        load(query, includeMembersResponse: false, completion: { result in
-            completion?(result.error)
-        })
-    }
-    
-    private func load(_ query: ChannelMemberListQuery, includeMembersResponse: Bool, completion: ((Result<[ChatChannelMember], Error>) -> Void)? = nil) {
+    func load(_ query: ChannelMemberListQuery, completion: ((Result<[ChatChannelMember], Error>) -> Void)? = nil) {
         fetchAndSaveChannelIfNeeded(query.cid) { [weak self] error in
             if let error {
                 completion?(.failure(error))
@@ -29,10 +23,12 @@ class ChannelMemberListUpdater: Worker {
                 case let .success(memberListPayload):
                     var members = [ChatChannelMember]()
                     self?.database.write({ session in
-                        let dtos = session.saveMembers(payload: memberListPayload, channelId: query.cid, query: query)
-                        if includeMembersResponse {
-                            members = try dtos.map { try $0.asModel() }
-                        }
+                        members = try session.saveMembers(
+                            payload: memberListPayload,
+                            channelId: query.cid,
+                            query: query
+                        )
+                        .map { try $0.asModel() }
                     }, completion: { error in
                         if let error = error {
                             log.error("Failed to save `ChannelMemberListQuery` related data to the database. Error: \(error)")
@@ -53,7 +49,7 @@ class ChannelMemberListUpdater: Worker {
 extension ChannelMemberListUpdater {
     func load(_ query: ChannelMemberListQuery) async throws -> [ChatChannelMember] {
         try await withCheckedThrowingContinuation { continuation in
-            load(query, includeMembersResponse: true) { result in
+            load(query) { result in
                 continuation.resume(with: result)
             }
         }
