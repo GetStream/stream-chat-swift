@@ -117,10 +117,10 @@ extension StreamChatWrapper {
                 if let error = error {
                     log.warning("removing the device failed with an error \(error)")
                 }
+
+                client.logout(completion: completion)
             }
         }
-
-        client.logout(completion: completion)
     }
 }
 
