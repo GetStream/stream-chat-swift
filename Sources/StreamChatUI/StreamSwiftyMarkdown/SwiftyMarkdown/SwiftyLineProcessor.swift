@@ -81,7 +81,9 @@ class SwiftyLineProcessor {
 	let frontMatterRules : [FrontMatterRule]
 	
 	let perfomanceLog = PerformanceLog(with: "SwiftyLineProcessorPerformanceLogging", identifier: "Line Processor", log: OSLog.swiftyLineProcessorPerformance)
-	    
+    
+	let orderedListTemplate = "1. "
+
 	init( rules : [LineRule], defaultRule: LineStyling, frontMatterRules : [FrontMatterRule] = []) {
         self.lineRules = rules
         self.defaultType = defaultRule
@@ -125,7 +127,12 @@ class SwiftyLineProcessor {
 				return nil
 			}
             
-			if !text.contains(element.token) {
+
+			if element.token == orderedListTemplate {
+				output = processOrderedListRegex(output)
+			}
+
+			if !text.contains(element.token) && element.token != orderedListTemplate {
 				continue
 			}
 			
@@ -151,8 +158,6 @@ class SwiftyLineProcessor {
 				self.closeToken = (self.closeToken == nil) ? element.token : nil
 				return nil
 			}
-
-			
 			
             output = (element.shouldTrim) ? output.trimmingCharacters(in: .whitespaces) : output
             return SwiftyLine(line: output, lineStyle: element.type)
@@ -244,6 +249,15 @@ class SwiftyLineProcessor {
         return foundAttributes
     }
     
+    func processOrderedListRegex(_ text: String) -> String {
+        let regex = try? NSRegularExpression(pattern: "^[0-9]+. ", options: .caseInsensitive)
+        let range = NSMakeRange(0, text.count)
+        let result = regex?.stringByReplacingMatches(
+            in: text,
+            options: [],
+            range: range,
+            withTemplate: orderedListTemplate
+        )
+        return result ?? text
+    }
 }
-
-
