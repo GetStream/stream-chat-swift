@@ -84,7 +84,7 @@ public struct CurrentUser {
         try await currentUserUpdater.removeDevice(id: deviceId, currentUserId: try currentUserId())
     }
     
-    // MARK: -
+    // MARK: - Private
     
     private func currentUserId() throws -> UserId {
         guard let id = authenticationRepository.currentUserId else { throw ClientError.CurrentUserDoesNotExist() }
