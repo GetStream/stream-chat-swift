@@ -22,6 +22,10 @@ public struct DataStore {
     init(client: ChatClient) {
         database = client.databaseContainer
     }
+    
+    init(database: DatabaseContainer) {
+        self.database = database
+    }
 
     /// Loads a user model with a matching `id` from the **local data store**.
     ///
