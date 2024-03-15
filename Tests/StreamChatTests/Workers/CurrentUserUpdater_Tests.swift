@@ -523,17 +523,18 @@ final class CurrentUserUpdater_Tests: XCTestCase {
             // Simulate 4 devices exist in the DB
             try $0.saveCurrentUserDevices([.dummy, .dummy, .dummy, .dummy])
         }
+        
+        let dummyDevices = DeviceListPayload.dummy
+        let apiDevices = dummyDevices.devices.map { Device(id: $0.id, createdAt: $0.createdAt) }
 
         // Call updateDevices
         var callbackCalled = false
-        currentUserUpdater.fetchDevices(currentUserId: .unique) {
-            // No error should be returned
-            XCTAssertNil($0)
+        currentUserUpdater.fetchDevices(currentUserId: .unique) { result in
+            XCTAssertEqual(result, success: apiDevices)
             callbackCalled = true
         }
 
         // Simulate API response with devices data
-        let dummyDevices = DeviceListPayload.dummy
         assert(dummyDevices.devices.isEmpty == false)
         apiClient.test_simulateResponse(.success(dummyDevices))
 

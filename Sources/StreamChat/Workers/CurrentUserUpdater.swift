@@ -129,7 +129,8 @@ class CurrentUserUpdater: Worker {
                     devices = try session.saveCurrentUserDevices(
                         devicesPayload.devices,
                         clearExisting: true
-                    ).map { try $0.asModel() }
+                    )
+                    .map { try $0.asModel() }
                 }) { error in
                     if let error {
                         completion?(.failure(error))
