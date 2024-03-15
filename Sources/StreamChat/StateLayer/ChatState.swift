@@ -49,15 +49,18 @@ public final class ChatState: ObservableObject {
     /// Use load messages in ``Chat`` for loading more messages.
     @Published public private(set) var messages = StreamCollection<ChatMessage>([])
     
-    /// Access a message available locally by its id.
+    /// Access a message which is available locally by its id.
     ///
-    /// - Note: This method does a local lookup of the message.
+    /// - Note: This method does a local lookup of the message and returns a message present in ``ChatState.messages``.
     ///
-    /// - Parameter messageId: The id of the message available locally.
+    /// - Parameter messageId: The id of the message which is available locally.
     ///
     /// - Returns: An instance of the locally available chat message
-    public func message(for messageId: MessageId) -> ChatMessage? {
-        dataStore.message(id: messageId)
+    public func localMessage(for messageId: MessageId) -> ChatMessage? {
+        if let message = dataStore.message(id: messageId), message.cid == cid {
+            return message
+        }
+        return nil
     }
     
     /// A Boolean value that returns whether the oldest messages have all been loaded or not.
