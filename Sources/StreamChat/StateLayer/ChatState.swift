@@ -10,12 +10,14 @@ public final class ChatState: ObservableObject {
     private let authenticationRepository: AuthenticationRepository
     private let cid: ChannelId
     private var channelObserver: EntityDatabaseObserverWrapper<ChatChannel, ChannelDTO>?
+    private let dataStore: DataStore
     private let paginationState: MessagesPaginationState
     private let observer: Observer
     
     init(cid: ChannelId, channelQuery: ChannelQuery, messageOrder: MessageOrdering, authenticationRepository: AuthenticationRepository, database: DatabaseContainer, eventNotificationCenter: EventNotificationCenter, paginationState: MessagesPaginationState) {
         self.authenticationRepository = authenticationRepository
         self.cid = cid
+        dataStore = DataStore(database: database)
         self.messageOrder = messageOrder
         self.paginationState = paginationState
         observer = Observer(cid: cid, channelQuery: channelQuery, messageOrder: messageOrder, database: database, eventNotificationCenter: eventNotificationCenter)
@@ -46,6 +48,20 @@ public final class ChatState: ObservableObject {
     ///
     /// Use load messages in ``Chat`` for loading more messages.
     @Published public private(set) var messages = StreamCollection<ChatMessage>([])
+    
+    /// Access a message which is available locally by its id.
+    ///
+    /// - Note: This method does a local lookup of the message and returns a message present in ``ChatState.messages``.
+    ///
+    /// - Parameter messageId: The id of the message which is available locally.
+    ///
+    /// - Returns: An instance of the locally available chat message
+    public func localMessage(for messageId: MessageId) -> ChatMessage? {
+        if let message = dataStore.message(id: messageId), message.cid == cid {
+            return message
+        }
+        return nil
+    }
     
     /// A Boolean value that returns whether the oldest messages have all been loaded or not.
     public var hasLoadedAllPreviousMessages: Bool {
