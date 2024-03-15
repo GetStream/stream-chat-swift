@@ -5,6 +5,10 @@
 import Foundation
 
 class StarscreamWebSocketProvider: WebSocketEngine {
+    func send(jsonMessage: any Codable) {
+        // TODO: implement.
+    }
+    
     private let webSocket: WebSocket
     var request: URLRequest { webSocket.request }
     var callbackQueue: DispatchQueue { webSocket.callbackQueue }

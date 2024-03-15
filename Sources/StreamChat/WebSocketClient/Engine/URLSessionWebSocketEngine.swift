@@ -52,6 +52,25 @@ class URLSessionWebSocketEngine: NSObject, WebSocketEngine {
         doRead()
         task?.resume()
     }
+    
+    func send(jsonMessage: Codable) {
+        do {
+            let data = try JSONEncoder().encode(jsonMessage)
+            send(data: data)
+        } catch {
+            log.error("Failed sending JSON message", subsystems: .webSocket)
+        }
+    }
+
+    private func send(data: Data) {
+        let message: URLSessionWebSocketTask.Message = .data(data)
+        task?.send(message) { [weak self] error in
+            if error == nil {
+                log.debug("Event message sent", subsystems: .webSocket)
+                self?.doRead()
+            }
+        }
+    }
 
     func disconnect() {
         task?.cancel(with: .normalClosure, reason: nil)
@@ -63,7 +82,13 @@ class URLSessionWebSocketEngine: NSObject, WebSocketEngine {
     }
 
     func sendPing() {
-        task?.sendPing { _ in }
+        task?.sendPing { error in
+            if let error {
+                print("====== \(error.localizedDescription)")
+            } else {
+                print("====== successful ping")
+            }
+        }
     }
 
     private func doRead() {
@@ -74,9 +99,14 @@ class URLSessionWebSocketEngine: NSObject, WebSocketEngine {
 
             switch result {
             case let .success(message):
-                if case let .string(string) = message {
+                if case let .data(data) = message {
                     self.callbackQueue.async { [weak self] in
-                        self?.delegate?.webSocketDidReceiveMessage(string)
+                        self?.delegate?.webSocketDidReceiveMessage(data)
+                    }
+                } else if case let .string(string) = message {
+                    let messageData = Data(string.utf8)
+                    self.callbackQueue.async { [weak self] in
+                        self?.delegate?.webSocketDidReceiveMessage(messageData)
                     }
                 }
                 self.doRead()

@@ -411,7 +411,7 @@ class MessageUpdater: Worker {
         } completion: { [weak self, weak repository] error in
             let reactionRequest = ReactionRequest(
                 type: type.rawValue,
-                messageId: messageId,
+//                messageId: messageId,//TODO: check this.
                 score: score,
                 custom: extraData
             )

@@ -5,16 +5,16 @@
 import Foundation
 
 public struct DeleteChannelsRequest: Codable, Hashable {
+    public var cids: [String]
     public var hardDelete: Bool? = nil
-    public var cids: [String]? = nil
 
-    public init(hardDelete: Bool? = nil, cids: [String]? = nil) {
-        self.hardDelete = hardDelete
+    public init(cids: [String], hardDelete: Bool? = nil) {
         self.cids = cids
+        self.hardDelete = hardDelete
     }
     
     public enum CodingKeys: String, CodingKey, CaseIterable {
-        case hardDelete = "hard_delete"
         case cids
+        case hardDelete = "hard_delete"
     }
 }

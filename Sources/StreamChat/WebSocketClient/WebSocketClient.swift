@@ -20,6 +20,8 @@ class WebSocketClient {
 
             guard connectionState != oldValue else { return }
 
+            print("==== Web socket connection state changed: \(connectionState)")
+            
             log.info("Web socket connection state changed: \(connectionState)", subsystems: .webSocket)
 
             connectionStateDelegate?.webSocketClient(self, didUpdateConnectionState: connectionState)
@@ -184,6 +186,30 @@ extension WebSocketClient {
 extension WebSocketClient: WebSocketEngineDelegate {
     func webSocketDidConnect() {
         connectionState = .waitingForConnectionId
+    }
+    
+    func webSocketDidReceiveMessage(_ data: Data) {
+        do {
+            let event = try eventDecoder.decode(from: data)
+            if let healthCheckEvent = event as? HealthCheckEvent {
+                eventNotificationCenter.process(healthCheckEvent, postNotification: false) { [weak self] in
+                    self?.engineQueue.async { [weak self] in
+                        self?.pingController.pongReceived()
+                        self?.connectionState = .connected(connectionId: healthCheckEvent.connectionId)
+                    }
+                }
+            } else {
+                eventsBatcher.append(event)
+            }
+        } catch is ClientError.IgnoredEventType {
+            log.info("Skipping unsupported event type", subsystems: .webSocket)
+        } catch {
+            // Check if the message contains an error object from the server
+            if let error = try? JSONDecoder.default.decode(WebSocketErrorContainer.self, from: data) {
+                let webSocketError = ClientError.WebSocket(with: error.error)
+                connectionState = .disconnecting(source: .serverInitiated(error: webSocketError))
+            }
+        }
     }
 
     func webSocketDidReceiveMessage(_ message: String) {

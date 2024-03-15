@@ -11,11 +11,9 @@ extension Endpoint {
         .init(
             path: .connect,
             method: .get,
-            queryItems: nil,
+            queryItems: ["stream-auth-type": "jwt"],
             requiresConnectionId: false,
-            body: [
-                "json": WebSocketConnectPayload(userInfo: userInfo)
-            ]
+            body: nil
         )
     }
 }

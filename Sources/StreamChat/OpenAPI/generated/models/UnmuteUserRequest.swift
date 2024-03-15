@@ -5,10 +5,10 @@
 import Foundation
 
 public struct UnmuteUserRequest: Codable, Hashable {
-    public var timeout: Int? = nil
+    public var timeout: Int
     public var targetIds: [String]? = nil
 
-    public init(timeout: Int? = nil, targetIds: [String]? = nil) {
+    public init(timeout: Int, targetIds: [String]? = nil) {
         self.timeout = timeout
         self.targetIds = targetIds
     }

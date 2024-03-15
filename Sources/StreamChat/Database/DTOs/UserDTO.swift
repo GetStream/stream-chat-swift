@@ -188,7 +188,7 @@ extension NSManagedObjectContext: UserDatabaseSession {
         dto.isOnline = payload.online
         dto.lastActivityAt = payload.lastActive?.bridgeDate
         dto.userCreatedAt = payload.createdAt.bridgeDate
-        dto.userRoleRaw = payload.role
+        dto.userRoleRaw = payload.role ?? "user"
         dto.userUpdatedAt = payload.updatedAt.bridgeDate
         dto.userDeactivatedAt = payload.deactivatedAt?.bridgeDate
         dto.language = payload.language

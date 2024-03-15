@@ -91,8 +91,8 @@ extension NSManagedObjectContext: CurrentUserDatabaseSession {
 
         try saveCurrentUserUnreadCount(
             count: UnreadCount(
-                channels: payload.unreadChannels,
-                messages: payload.totalUnreadCount
+                channels: payload.unreadChannels ?? 0,
+                messages: payload.totalUnreadCount ?? 0
             )
         )
 

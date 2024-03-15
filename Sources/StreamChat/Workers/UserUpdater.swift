@@ -12,7 +12,7 @@ class UserUpdater: Worker {
     ///   - completion: Called when the API call is finished. Called with `Error` if the remote update fails.
     ///
     func muteUser(_ userId: UserId, completion: ((Error?) -> Void)? = nil) {
-        let request = MuteUserRequest(targetIds: [userId])
+        let request = MuteUserRequest(timeout: 0, targetIds: [userId])
         api.muteUser(muteUserRequest: request) {
             completion?($0.error)
         }
@@ -24,7 +24,7 @@ class UserUpdater: Worker {
     ///   - completion: Called when the API call is finished. Called with `Error` if the remote update fails.
     ///
     func unmuteUser(_ userId: UserId, completion: ((Error?) -> Void)? = nil) {
-        let request = UnmuteUserRequest(targetIds: [userId])
+        let request = UnmuteUserRequest(timeout: 0, targetIds: [userId])
         api.unmuteUser(unmuteUserRequest: request) {
             completion?($0.error)
         }

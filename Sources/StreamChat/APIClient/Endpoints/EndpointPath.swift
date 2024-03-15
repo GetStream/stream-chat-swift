@@ -10,7 +10,7 @@ enum EndpointPath: Codable {
 
     var value: String {
         switch self {
-        case .connect: return "connect"
+        case .connect: return "api/v2/connect"
         case let .uploadAttachment(channelId, type): return "channels/\(channelId)/\(type)"
         }
         

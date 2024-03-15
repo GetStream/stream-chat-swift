@@ -394,7 +394,7 @@ public enum WSEvent: Codable, Hashable {
         } else if dto.type == "custom" {
             let value = try container.decode(AnyEvent.self)
             self = .typeAnyEvent(value)
-        } else if dto.type == "health.check" {
+        } else if dto.type == "health.check" || dto.type == "connection.ok" {
             let value = try container.decode(HealthCheckEvent.self)
             self = .typeHealthCheckEvent(value)
         } else if dto.type == "member.added" {

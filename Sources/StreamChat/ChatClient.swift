@@ -19,6 +19,8 @@ public class ChatClient {
     var currentToken: Token? {
         authenticationRepository.currentToken
     }
+    
+    private var currentUserInfo: UserInfo?
 
     /// The current connection status of the client.
     ///
@@ -282,6 +284,7 @@ public class ChatClient {
         tokenProvider: @escaping TokenProvider,
         completion: ((Error?) -> Void)? = nil
     ) {
+        currentUserInfo = userInfo
         authenticationRepository.connectUser(
             userInfo: userInfo,
             tokenProvider: tokenProvider,
@@ -470,6 +473,21 @@ extension ChatClient: ConnectionStateDelegate {
             }
         )
         connectionRecoveryHandler?.webSocketClient(client, didUpdateConnectionState: state)
+        if state == .waitingForConnectionId, let currentUserInfo, let currentToken {
+            let connectUserRequest = ConnectUserDetailsRequest(
+                id: currentUserInfo.id,
+                image: currentUserInfo.imageURL?.absoluteString,
+                language: currentUserInfo.language?.languageCode,
+                name: currentUserInfo.name,
+                custom: currentUserInfo.extraData
+            )
+            let authRequest = WSAuthMessageRequest(
+                token: currentToken.rawValue,
+                userDetails: connectUserRequest,
+                products: ["chat"] // TODO: fix.
+            )
+            client.engine?.send(jsonMessage: authRequest)
+        }
     }
 }
 
