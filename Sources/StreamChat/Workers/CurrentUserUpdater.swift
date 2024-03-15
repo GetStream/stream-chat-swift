@@ -118,11 +118,7 @@ class CurrentUserUpdater: Worker {
     /// - Parameters:
     ///     - currentUserId: The current user identifier.
     ///     - completion: Called when request is successfully completed, or with error.
-    func fetchDevices(currentUserId: UserId, completion: ((Error?) -> Void)? = nil) {
-        fetchDevices(currentUserId: currentUserId, includeResponse: false, completion: { completion?($0.error) })
-    }
-    
-    private func fetchDevices(currentUserId: UserId, includeResponse: Bool, completion: ((Result<[Device], Error>) -> Void)? = nil) {
+    func fetchDevices(currentUserId: UserId, completion: ((Result<[Device], Error>) -> Void)? = nil) {
         apiClient.request(endpoint: .devices(userId: currentUserId)) { [weak self] result in
             do {
                 var devices = [Device]()
@@ -130,10 +126,10 @@ class CurrentUserUpdater: Worker {
                 self?.database.write({ (session) in
                     // Since this call always return all device, we want' to clear the existing ones
                     // to remove the deleted devices.
-                    let dtos = try session.saveCurrentUserDevices(devicesPayload.devices, clearExisting: true)
-                    if includeResponse {
-                        devices = try dtos.map { try $0.asModel() }
-                    }
+                    devices = try session.saveCurrentUserDevices(
+                        devicesPayload.devices,
+                        clearExisting: true
+                    ).map { try $0.asModel() }
                 }) { error in
                     if let error {
                         completion?(.failure(error))
@@ -176,7 +172,7 @@ extension CurrentUserUpdater {
     
     func fetchDevices(currentUserId: UserId) async throws -> [Device] {
         try await withCheckedThrowingContinuation { continuation in
-            fetchDevices(currentUserId: currentUserId, includeResponse: true) { result in
+            fetchDevices(currentUserId: currentUserId) { result in
                 continuation.resume(with: result)
             }
         }

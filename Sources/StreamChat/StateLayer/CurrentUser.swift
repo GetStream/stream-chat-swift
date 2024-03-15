@@ -25,7 +25,7 @@ public struct CurrentUser {
     /// An observable object representing the current state of the user.
     public let state: CurrentUserState
     
-    /// Updates the currently logged-in user data.
+    /// Updates the currently logged-in user's data.
     ///
     /// - Note: Setting any arguments to nil will keep the existing value.
     ///
@@ -35,7 +35,7 @@ public struct CurrentUser {
     ///   - extraData: Additional data associated with the user.
     ///
     /// - Throws: An error while communicating with the Stream API or when user is not logged in.
-    public func updateUserData(name: String? = nil, imageURL: URL? = nil, extraData: [String: RawJSON] = [:]) async throws {
+    public func update(name: String? = nil, imageURL: URL? = nil, extraData: [String: RawJSON] = [:]) async throws {
         try await currentUserUpdater.updateUserData(currentUserId: try currentUserId(), name: name, imageURL: imageURL, userExtraData: extraData)
     }
     

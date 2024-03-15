@@ -424,7 +424,9 @@ final class CurrentUserUpdater_Tests: XCTestCase {
     // MARK: fetchDevices
 
     func test_fetchDevices_makesCorrectAPICall() throws {
-        let userPayload: CurrentUserPayload = .dummy(userId: .unique, role: .user)
+        let payloads: [DevicePayload] = [.dummy, .dummy]
+        let expectedDevices = payloads.map { Device(id: $0.id, createdAt: $0.createdAt) }
+        let userPayload: CurrentUserPayload = .dummy(userId: .unique, role: .user, devices: payloads)
 
         // Save user to the db
         try database.writeSynchronously {
@@ -434,7 +436,8 @@ final class CurrentUserUpdater_Tests: XCTestCase {
         // Call updateDevices
         currentUserUpdater.fetchDevices(currentUserId: userPayload.id) {
             // No error should be returned
-            XCTAssertNil($0)
+            XCTAssertNil($0.error)
+            XCTAssertEqual($0, success: expectedDevices)
         }
 
         // Assert that request is made to the correct endpoint
@@ -453,7 +456,7 @@ final class CurrentUserUpdater_Tests: XCTestCase {
         // Call updateDevices
         var completionCalledError: Error?
         currentUserUpdater.fetchDevices(currentUserId: .unique) {
-            completionCalledError = $0
+            completionCalledError = $0.error
         }
 
         // Keep a weak ref so we can check if it's actually deallocated
@@ -489,7 +492,7 @@ final class CurrentUserUpdater_Tests: XCTestCase {
         // Call updateDevices
         var completionCalledError: Error?
         currentUserUpdater.fetchDevices(currentUserId: .unique) {
-            completionCalledError = $0
+            completionCalledError = $0.error
         }
 
         // Simulate successful API response
