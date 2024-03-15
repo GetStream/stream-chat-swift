@@ -76,4 +76,5 @@ fi
 if [[ $dependency_directory == *"SwiftyMarkdown"* ]]; then
     # We currently use customized version of SwiftyLineProcessor.swift
     git restore $output_directory/SwiftyMarkdown/SwiftyLineProcessor.swift || true
+    git restore $output_directory/SwiftyMarkdown/SwiftyTokeniser.swift || true
 fi
