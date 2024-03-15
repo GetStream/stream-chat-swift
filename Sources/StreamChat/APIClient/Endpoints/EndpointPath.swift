@@ -52,6 +52,8 @@ enum EndpointPath: Codable {
     case deleteFile(String)
     case deleteImage(String)
 
+    case appSettings
+
     var value: String {
         switch self {
         case .connect: return "connect"
@@ -98,6 +100,7 @@ enum EndpointPath: Codable {
         case let .createCall(queryString): return "channels/\(queryString)/call"
         case let .deleteFile(channelId): return "channels/\(channelId)/file"
         case let .deleteImage(channelId): return "channels/\(channelId)/image"
+        case .appSettings: return "app"
         }
     }
 

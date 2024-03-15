@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## StreamChat
 ### ✅ Added
 - Add mute expiration support when muting a channel [#3083](https://github.com/GetStream/stream-chat-swift/pull/3083)
+- Add `ChatClient.loadAppSettings` and `ChatClient.appSettings` [#3091](https://github.com/GetStream/stream-chat-swift/pull/3091)
+- Load the app settings when connecting the user [#3091](https://github.com/GetStream/stream-chat-swift/pull/3091)
 
 ## StreamChatUI
 ### 🐞 Fixed
