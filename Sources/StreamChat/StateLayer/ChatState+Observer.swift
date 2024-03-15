@@ -2,6 +2,7 @@
 // Copyright © 2024 Stream.io Inc. All rights reserved.
 //
 
+import Combine
 import Foundation
 
 @available(iOS 13.0, *)
@@ -10,12 +11,22 @@ extension ChatState {
         private let cid: ChannelId
         private let channelObserver: BackgroundEntityDatabaseObserver<ChatChannel, ChannelDTO>
         private let eventNotificationCenter: EventNotificationCenter
+        private let memberListState: MemberListState
+        private var memberListObserver: AnyCancellable?
         private let messagesObserver: BackgroundListDatabaseObserver<ChatMessage, MessageDTO>
         private let watchersObserver: BackgroundListDatabaseObserver<ChatUser, UserDTO>
         private var webSocketEventObservers = [EventObserver]()
         
-        init(cid: ChannelId, channelQuery: ChannelQuery, messageOrder: MessageOrdering, database: DatabaseContainer, eventNotificationCenter: EventNotificationCenter) {
+        init(
+            cid: ChannelId,
+            channelQuery: ChannelQuery,
+            messageOrder: MessageOrdering,
+            memberListState: MemberListState,
+            database: DatabaseContainer,
+            eventNotificationCenter: EventNotificationCenter
+        ) {
             self.cid = cid
+            self.memberListState = memberListState
             let context = database.backgroundReadOnlyContext
             channelObserver = BackgroundEntityDatabaseObserver(
                 context: context,
@@ -45,6 +56,7 @@ extension ChatState {
         
         struct Handlers {
             let channelDidChange: (ChatChannel) async -> Void
+            let membersDidChange: (StreamCollection<ChatChannelMember>) async -> Void
             let messagesDidChange: (StreamCollection<ChatMessage>) async -> Void
             let typingUsersDidChange: (Set<ChatUser>) async -> Void
             let watchersDidChange: (StreamCollection<ChatUser>) async -> Void
@@ -53,6 +65,7 @@ extension ChatState {
         func start(with handlers: Handlers) {
             channelObserver.onChange(do: { change in Task { await handlers.channelDidChange(change.item) } })
             channelObserver.onFieldChange(\.currentlyTypingUsers, do: { change in Task { await handlers.typingUsersDidChange(change.item) } })
+            memberListObserver = memberListState.$members.sink(receiveValue: { change in Task { await handlers.membersDidChange(change) } })
             messagesObserver.onDidChange = { [weak messagesObserver] _ in
                 guard let items = messagesObserver?.items else { return }
                 let collection = StreamCollection(items)
