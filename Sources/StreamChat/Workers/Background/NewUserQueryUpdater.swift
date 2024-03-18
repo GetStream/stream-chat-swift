@@ -89,8 +89,8 @@ final class NewUserQueryUpdater: Worker {
 
                 // Send `update(userListQuery:` requests so corresponding queries will be linked to the user
                 updatedQueries?.forEach {
-                    self?.userListUpdater.update(userListQuery: $0) { error in
-                        if let error = error {
+                    self?.userListUpdater.update(userListQuery: $0) { result in
+                        if let error = result.error {
                             log.error("Internal error. Failed to update UserListQueries for the new user: \(error)")
                         }
                     }
