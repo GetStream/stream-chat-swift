@@ -29,8 +29,8 @@
       "skippedTests" : [
         "APIClient_Tests\/test_runningARequestAndSwitchingToRecoveryMode()",
         "APIClient_Tests\/test_startingMultipleRequestsAtTheSameTimeShouldResultInParallelRequests()",
-        "AttachmentQueueUploader_Tests",
         "AttachmentQueueUploader_Tests\/test_attachmentsAreCopiedToSandbox_beforeBeingSent()",
+        "AttachmentQueueUploader_Tests\/test_uploader_whenAllAttachmentsFinishUploading_whenMessageNotSendingFailed_doNotMarkMessagePendingSend()",
         "ChannelController_Tests\/test_createCall_propagatesResultFromUpdater()",
         "ChannelListPayload_Tests\/test_decode_bigChannelListPayload()",
         "ChannelListPayload_Tests\/test_hugeChannelListQuery_save()",
