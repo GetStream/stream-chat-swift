@@ -4,7 +4,20 @@
 
 import Foundation
 
-// MARK: - Factory Methods for Creating Chat Lists
+// MARK: - Factory Methods for Currently Logged In User
+
+@available(iOS 13.0, *)
+extension ChatClient {
+    /// Creates an instance of ``ConnectedUser`` which represents the logged-in user state and its actions.
+    ///
+    /// - Throws: An error if no user is currently logged-in.
+    func makeConnectedUser() async throws -> ConnectedUser {
+        let user = try await databaseContainer.backgroundRead { try CurrentUserDTO.load(context: $0) }
+        return ConnectedUser(user: user, client: self)
+    }
+}
+
+// MARK: - Factory Methods for Creating Channel Lists
 
 @available(iOS 13.0, *)
 extension ChatClient {
@@ -27,7 +40,7 @@ extension ChatClient {
     }
 }
 
-// MARK: - Factory Methods for Creating Chats.
+// MARK: - Factory Methods for Creating Chats
 
 @available(iOS 13.0, *)
 extension ChatClient {
