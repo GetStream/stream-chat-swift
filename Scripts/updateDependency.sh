@@ -72,3 +72,8 @@ if [[ $dependency_directory == *"DifferenceKit"* ]]; then
     # We currently use customized UIKit extensions in Utils/DifferenceKit+Stream.swift
     rm $output_directory/Extensions/UIKitExtension.swift
 fi
+
+if [[ $dependency_directory == *"SwiftyMarkdown"* ]]; then
+    # We currently use customized version of SwiftyLineProcessor.swift
+    git restore $output_directory/SwiftyMarkdown/SwiftyLineProcessor.swift || true
+fi
