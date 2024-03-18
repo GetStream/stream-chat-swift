@@ -291,6 +291,24 @@ public class ChatClient {
         // Whenever the user is connected, we trigger an app settings configuration refetch.
         loadAppSettings()
     }
+    
+    /// Connects the client with the given user.
+    ///
+    /// - Parameters:
+    ///   - userInfo: The user info passed to `connect` endpoint.
+    ///   - tokenProvider: The closure used to retreive a token. Token provider will be used to establish the initial connection and also to obtain the new token when the previous one expires.
+    ///
+    /// - Throws: An error while communicating with the Stream API.
+    /// - Returns: A type representing the connected user and its state.
+    @available(iOS 13.0, *)
+    public func connectUser(userInfo: UserInfo, tokenProvider: @escaping TokenProvider) async throws -> ConnectedUser {
+        try await withCheckedThrowingContinuation { continuation in
+            connectUser(userInfo: userInfo, tokenProvider: tokenProvider) { error in
+                continuation.resume(with: error)
+            }
+        }
+        return try await makeConnectedUser()
+    }
 
     /// Connects the client with the given user.
     ///
