@@ -9,6 +9,7 @@ import Foundation
 public struct ConnectedUser {
     private let authenticationRepository: AuthenticationRepository
     private let currentUserUpdater: CurrentUserUpdater
+    private let userUpdater: UserUpdater
     
     init(user: CurrentChatUser, client: ChatClient, environment: Environment = .init()) {
         authenticationRepository = client.authenticationRepository
@@ -19,6 +20,10 @@ public struct ConnectedUser {
         state = environment.stateBuilder(
             user,
             client.databaseContainer
+        )
+        userUpdater = environment.userUpdaterBuilder(
+            client.databaseContainer,
+            client.apiClient
         )
     }
     
@@ -84,6 +89,46 @@ public struct ConnectedUser {
         try await currentUserUpdater.removeDevice(id: deviceId, currentUserId: try currentUserId())
     }
     
+    // MARK: - Moderating Users
+    
+    /// Mutes the user in all the channels.
+    ///
+    /// - Note: Messages from muted users are not delivered via push notifications.
+    ///
+    /// - Parameter userId: The id of the user to mute.
+    ///
+    /// - Throws: An error while communicating with the Stream API.
+    public func muteUser(_ userId: UserId) async throws {
+        try await userUpdater.muteUser(userId)
+    }
+    
+    /// Unmutes the user in all the channels.
+    ///
+    /// - Parameter userId: The id of the user to unmute.
+    ///
+    /// - Throws: An error while communicating with the Stream API.
+    public func unmuteUser(_ userId: UserId) async throws {
+        try await userUpdater.unmuteUser(userId)
+    }
+    
+    /// Flags the specified user.
+    ///
+    /// - Parameter userId: The id of the user to flag.
+    ///
+    /// - Throws: An error while communicating with the Stream API.
+    public func flag(_ userId: UserId) async throws {
+        try await userUpdater.flag(userId)
+    }
+    
+    /// Unflags the specified user.
+    ///
+    /// - Parameter userId: The id of the user to unflag.
+    ///
+    /// - Throws: An error while communicating with the Stream API.
+    public func unflag(_ userId: UserId) async throws {
+        try await userUpdater.unflag(userId)
+    }
+    
     // MARK: - Private
     
     private func currentUserId() throws -> UserId {
@@ -101,5 +146,10 @@ extension ConnectedUser {
         ) -> ConnectedUserState = ConnectedUserState.init
         
         var currentUserUpdaterBuilder = CurrentUserUpdater.init
+        
+        var userUpdaterBuilder: (
+            _ database: DatabaseContainer,
+            _ apiClient: APIClient
+        ) -> UserUpdater = UserUpdater.init
     }
 }
