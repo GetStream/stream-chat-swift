@@ -120,17 +120,28 @@ class CurrentUserUpdater: Worker {
     /// - Parameters:
     ///     - currentUserId: The current user identifier.
     ///     - completion: Called when request is successfully completed, or with error.
-    func fetchDevices(currentUserId: UserId, completion: ((Error?) -> Void)? = nil) {
+    func fetchDevices(currentUserId: UserId, completion: ((Result<[Device], Error>) -> Void)? = nil) {
         apiClient.request(endpoint: .devices(userId: currentUserId)) { [weak self] result in
             do {
+                var devices = [Device]()
                 let devicesPayload = try result.get()
                 self?.database.write({ (session) in
                     // Since this call always return all device, we want' to clear the existing ones
                     // to remove the deleted devices.
-                    try session.saveCurrentUserDevices(devicesPayload.devices, clearExisting: true)
-                }) { completion?($0) }
+                    devices = try session.saveCurrentUserDevices(
+                        devicesPayload.devices,
+                        clearExisting: true
+                    )
+                    .map { try $0.asModel() }
+                }) { error in
+                    if let error {
+                        completion?(.failure(error))
+                    } else {
+                        completion?(.success(devices))
+                    }
+                }
             } catch {
-                completion?(error)
+                completion?(.failure(error))
             }
         }
     }
@@ -140,6 +151,49 @@ class CurrentUserUpdater: Worker {
     func markAllRead(completion: ((Error?) -> Void)? = nil) {
         apiClient.request(endpoint: .markAllRead()) {
             completion?($0.error)
+        }
+    }
+}
+
+@available(iOS 13.0, *)
+extension CurrentUserUpdater {
+    func addDevice(_ device: PushDevice, currentUserId: UserId) async throws {
+        try await withCheckedThrowingContinuation { continuation in
+            addDevice(deviceId: device.deviceId, pushProvider: device.pushProvider, providerName: device.providerName, currentUserId: currentUserId) { error in
+                continuation.resume(with: error)
+            }
+        }
+    }
+    
+    func removeDevice(id: DeviceId, currentUserId: UserId) async throws {
+        try await withCheckedThrowingContinuation { continuation in
+            removeDevice(id: id, currentUserId: currentUserId) { error in
+                continuation.resume(with: error)
+            }
+        }
+    }
+    
+    func fetchDevices(currentUserId: UserId) async throws -> [Device] {
+        try await withCheckedThrowingContinuation { continuation in
+            fetchDevices(currentUserId: currentUserId) { result in
+                continuation.resume(with: result)
+            }
+        }
+    }
+    
+    func markAllRead(currentUserId: UserId) async throws {
+        try await withCheckedThrowingContinuation { continuation in
+            markAllRead { error in
+                continuation.resume(with: error)
+            }
+        }
+    }
+    
+    func updateUserData(currentUserId: UserId, name: String?, imageURL: URL?, userExtraData: [String: RawJSON]?) async throws {
+        try await withCheckedThrowingContinuation { continuation in
+            updateUserData(currentUserId: currentUserId, name: name, imageURL: imageURL, userExtraData: userExtraData) { error in
+                continuation.resume(with: error)
+            }
         }
     }
 }
