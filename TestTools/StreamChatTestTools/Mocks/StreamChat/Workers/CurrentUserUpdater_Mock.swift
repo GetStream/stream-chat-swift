@@ -25,7 +25,7 @@ final class CurrentUserUpdater_Mock: CurrentUserUpdater {
     @Atomic var removeDevice_completion: ((Error?) -> Void)?
 
     @Atomic var fetchDevices_currentUserId: UserId?
-    @Atomic var fetchDevices_completion: ((Error?) -> Void)?
+    @Atomic var fetchDevices_completion: ((Result<[Device], Error>) -> Void)?
 
     @Atomic var markAllRead_completion: ((Error?) -> Void)?
 
@@ -69,7 +69,7 @@ final class CurrentUserUpdater_Mock: CurrentUserUpdater {
         removeDevice_completion = completion
     }
 
-    override func fetchDevices(currentUserId: UserId, completion: ((Error?) -> Void)? = nil) {
+    override func fetchDevices(currentUserId: UserId, completion: ((Result<[Device], Error>) -> Void)? = nil) {
         fetchDevices_currentUserId = currentUserId
         fetchDevices_completion = completion
     }
