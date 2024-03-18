@@ -260,6 +260,10 @@
 		4F8E53172B7F58C1008C0F9F /* ChatClient+Factory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F8E530A2B7CEBFB008C0F9F /* ChatClient+Factory.swift */; };
 		4F8E531C2B833D6C008C0F9F /* ChatState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F8E531B2B833D6C008C0F9F /* ChatState.swift */; };
 		4F8E531D2B833D6C008C0F9F /* ChatState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F8E531B2B833D6C008C0F9F /* ChatState.swift */; };
+		4F97F2672BA83146001C4D66 /* UserList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F97F2662BA83146001C4D66 /* UserList.swift */; };
+		4F97F2682BA83146001C4D66 /* UserList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F97F2662BA83146001C4D66 /* UserList.swift */; };
+		4F97F26A2BA83150001C4D66 /* UserListState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F97F2692BA83150001C4D66 /* UserListState.swift */; };
+		4F97F26B2BA83150001C4D66 /* UserListState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F97F2692BA83150001C4D66 /* UserListState.swift */; };
 		4FD2BE502B99F68300FFC6F2 /* ReadStateSender.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FD2BE4F2B99F68300FFC6F2 /* ReadStateSender.swift */; };
 		4FD2BE512B99F68300FFC6F2 /* ReadStateSender.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FD2BE4F2B99F68300FFC6F2 /* ReadStateSender.swift */; };
 		4FD2BE532B9AEE3500FFC6F2 /* StreamCollection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FD2BE522B9AEE3500FFC6F2 /* StreamCollection.swift */; };
@@ -2999,6 +3003,8 @@
 		4F8E53052B7CD01D008C0F9F /* Chat.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Chat.swift; sourceTree = "<group>"; };
 		4F8E530A2B7CEBFB008C0F9F /* ChatClient+Factory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ChatClient+Factory.swift"; sourceTree = "<group>"; };
 		4F8E531B2B833D6C008C0F9F /* ChatState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatState.swift; sourceTree = "<group>"; };
+		4F97F2662BA83146001C4D66 /* UserList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserList.swift; sourceTree = "<group>"; };
+		4F97F2692BA83150001C4D66 /* UserListState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserListState.swift; sourceTree = "<group>"; };
 		4FD2BE4F2B99F68300FFC6F2 /* ReadStateSender.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReadStateSender.swift; sourceTree = "<group>"; };
 		4FD2BE522B9AEE3500FFC6F2 /* StreamCollection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StreamCollection.swift; sourceTree = "<group>"; };
 		4FD2BE552B9AF8A300FFC6F2 /* ChannelList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelList.swift; sourceTree = "<group>"; };
@@ -4975,6 +4981,8 @@
 				4F427F6B2BA2F53200D92238 /* CurrentUserState+Observer.swift */,
 				4F73F3972B91BD3000563CD9 /* MessageState.swift */,
 				4F73F39D2B91C7BF00563CD9 /* MessageState+Observer.swift */,
+				4F97F2662BA83146001C4D66 /* UserList.swift */,
+				4F97F2692BA83150001C4D66 /* UserListState.swift */,
 			);
 			path = StateLayer;
 			sourceTree = "<group>";
@@ -10771,6 +10779,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4F97F2672BA83146001C4D66 /* UserList.swift in Sources */,
 				DA8407032524F7E6005A0F62 /* UserListUpdater.swift in Sources */,
 				4F8E53062B7CD01D008C0F9F /* Chat.swift in Sources */,
 				DAE566E724FFD22300E39431 /* ChannelController+SwiftUI.swift in Sources */,
@@ -11078,6 +11087,7 @@
 				AD0CC0372BDC4B5A005E2C66 /* ReactionListController+SwiftUI.swift in Sources */,
 				841BAA042BCE94F8000C73E4 /* QueryPollsRequestBody.swift in Sources */,
 				C1EFF3F3285E459C0057B91B /* IdentifiableModel.swift in Sources */,
+				4F97F26A2BA83150001C4D66 /* UserListState.swift in Sources */,
 				DAFAD6A124DC476A0043ED06 /* Result+Extensions.swift in Sources */,
 				C1FC2F982742579D0062530F /* TCPTransport.swift in Sources */,
 				AD17CDF927E4DB2700E0D092 /* PushProvider.swift in Sources */,
@@ -11656,6 +11666,7 @@
 				AD70DC3A2ADEC3C400CFC3B7 /* MessageModerationDetailsDTO.swift in Sources */,
 				AD0CC0242BDBF715005E2C66 /* ReactionListUpdater.swift in Sources */,
 				C121E817274544AD00023E4C /* Event.swift in Sources */,
+				4F97F2682BA83146001C4D66 /* UserList.swift in Sources */,
 				C121E818274544AD00023E4C /* EventPayload.swift in Sources */,
 				C121E819274544AD00023E4C /* EventDecoder.swift in Sources */,
 				C121E81A274544AD00023E4C /* ConnectionEvents.swift in Sources */,
@@ -11741,6 +11752,7 @@
 				C121E84E274544AE00023E4C /* ChannelEndpoints.swift in Sources */,
 				C121E84F274544AE00023E4C /* UserEndpoints.swift in Sources */,
 				C121E850274544AE00023E4C /* SyncEndpoint.swift in Sources */,
+				4F97F26B2BA83150001C4D66 /* UserListState.swift in Sources */,
 				84D5BC70277B61A000A65C75 /* PinnedMessagesSortingKey.swift in Sources */,
 				C121E851274544AE00023E4C /* MessageEndpoints.swift in Sources */,
 				C121E852274544AE00023E4C /* ModerationEndpoints.swift in Sources */,
