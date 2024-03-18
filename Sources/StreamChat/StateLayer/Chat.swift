@@ -212,9 +212,8 @@ public final class Chat {
     ///   - reason: The reason that the ban was created.
     ///   - timeoutInMinutes: The number of minutes the user should be banned for. Nil means that the user is banned forever or until the user is unbanned explicitly.
     ///
-    /// - Throws: An error while communicating with the Stream API or missing required capabilities.
+    /// - Throws: An error while communicating with the Stream API.
     public func banMember(_ userId: UserId, reason: String? = nil, timeout timeoutInMinutes: Int? = nil) async throws {
-        try state.channel?.requireCapability(of: .banChannelMembers)
         try await memberUpdater.banMember(userId, in: cid, shadow: false, for: timeoutInMinutes, reason: reason)
     }
     
@@ -230,9 +229,8 @@ public final class Chat {
     ///   - reason: The reason that the ban was created.
     ///   - timeoutInMinutes: The number of minutes the user should be banned for. Nil means that the user is banned forever or until the user is unbanned explicitly.
     ///
-    /// - Throws: An error while communicating with the Stream API or missing required capabilities.
+    /// - Throws: An error while communicating with the Stream API.
     public func shadowBanMember(_ userId: UserId, reason: String? = nil, timeout timeoutInMinutes: Int? = nil) async throws {
-        try state.channel?.requireCapability(of: .banChannelMembers)
         try await memberUpdater.banMember(userId, in: cid, shadow: true, for: timeoutInMinutes, reason: reason)
     }
     
@@ -240,9 +238,8 @@ public final class Chat {
     ///
     /// - Parameter userId: The user id of the channel member.
     ///
-    /// - Throws: An error while communicating with the Stream API or missing required capabilities.
+    /// - Throws: An error while communicating with the Stream API.
     public func unbanMember(_ userId: UserId) async throws {
-        try state.channel?.requireCapability(of: .banChannelMembers)
         try await memberUpdater.unbanMember(userId, in: cid)
     }
     
