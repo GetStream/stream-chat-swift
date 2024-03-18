@@ -23,7 +23,7 @@ extension ChatClient {
 extension ChatClient {
     /// Creates an instance of ``ChannelList`` which represents an array of channels matching to the specified ``ChannelListQuery``.
     ///
-    /// Matching channels are stored in ``ChannelListState.channels``. Use pagination methods in ``ChannelList`` for loading more matching channels to the observable state.
+    /// Loaded channels are stored in ``ChannelListState.channels``. Use pagination methods in ``ChannelList`` for loading more matching channels to the observable state.
     /// Refer to [querying channels in Stream documentation](https://getstream.io/chat/docs/ios-swift/query_channels/?language=swift) for additional details.
     ///
     /// - Note: Only channels that the user can read are returned, therefore, make sure that the query uses a filter that includes such logic. It is recommended to include a members filter which includes the currently logged in user (e.g. `.containMembers(userIds: ["thierry"])`).
@@ -37,6 +37,26 @@ extension ChatClient {
     public func makeChannelList(with query: ChannelListQuery, dynamicFilter: ((ChatChannel) -> Bool)? = nil) async throws -> ChannelList {
         let channels = try await channelListUpdater.update(channelListQuery: query)
         return ChannelList(channels: channels, query: query, dynamicFilter: dynamicFilter, channelListUpdater: channelListUpdater, client: self)
+    }
+}
+
+// MARK: - Factory Methods for Creating User Lists
+
+@available(iOS 13.0, *)
+extension ChatClient {
+    /// Creates an instance of ``UserList`` which represents an array of users matching to the specified ``UserListQuery``.
+    ///
+    /// Loaded users are stored in ``UserListState.users``. Use pagination methods in ``UserList`` for loading more matching users to the observable state.
+    /// Refer to [querying users in Stream documentation](https://getstream.io/chat/docs/ios-swift/query_users/?language=swift) for additional details.
+    ///
+    /// - Parameter query: The query specifies which users are part of the list and how users are sorted.
+    ///
+    /// - Throws: An error while communicating with the Stream API.
+    /// - Returns: An instance of ``UserList`` which represents actions and the current state of the list.
+    public func makeUserList(with query: UserListQuery) async throws -> UserList {
+        let userListUpdater = UserListUpdater(database: databaseContainer, apiClient: apiClient)
+        let users = try await userListUpdater.update(userListQuery: query)
+        return UserList(users: users, query: query, userListUpdater: userListUpdater, client: self)
     }
 }
 

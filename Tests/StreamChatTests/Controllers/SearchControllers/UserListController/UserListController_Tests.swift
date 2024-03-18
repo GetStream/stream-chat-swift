@@ -63,7 +63,7 @@ final class UserListController_Tests: XCTestCase {
         controller.synchronize()
 
         // Simulate successfull network call.
-        env.userListUpdater?.update_completion?(nil)
+        env.userListUpdater?.update_completion?(.success([]))
 
         // Check if state changed after successful network call.
         XCTAssertEqual(controller.state, .remoteDataFetched)
@@ -89,7 +89,7 @@ final class UserListController_Tests: XCTestCase {
 
         // Simulate failed network call.
         let error = TestError()
-        env.userListUpdater?.update_completion?(error)
+        env.userListUpdater?.update_completion?(.failure(error))
 
         // Check if state changed after failed network call.
         XCTAssertEqual(controller.state, .remoteDataFetchFailed(ClientError(with: error)))
@@ -136,7 +136,7 @@ final class UserListController_Tests: XCTestCase {
         }
 
         // Simulate successful network call.
-        env.userListUpdater?.update_completion?(nil)
+        env.userListUpdater?.update_completion?(.success([]))
 
         // Assert the existing user is loaded
         XCTAssertEqual(controller.users.map(\.id), [userId])
@@ -167,7 +167,7 @@ final class UserListController_Tests: XCTestCase {
         XCTAssertFalse(completionCalled)
 
         // Simulate successful update
-        env.userListUpdater!.update_completion?(nil)
+        env.userListUpdater!.update_completion?(.success([]))
         // Release reference of completion so we can deallocate stuff
         env.userListUpdater!.update_completion = nil
 
@@ -189,7 +189,7 @@ final class UserListController_Tests: XCTestCase {
 
         // Simulate failed update
         let testError = TestError()
-        env.userListUpdater!.update_completion?(testError)
+        env.userListUpdater!.update_completion?(.failure(testError))
 
         // Completion should be called with the error
         AssertAsync.willBeEqual(completionCalledError as? TestError, testError)
@@ -240,7 +240,7 @@ final class UserListController_Tests: XCTestCase {
         controller.synchronize()
 
         // Simulate network call response
-        env.userListUpdater?.update_completion?(nil)
+        env.userListUpdater?.update_completion?(.success([]))
 
         // Assert delegate is notified about state changes
         AssertAsync.willBeEqual(delegate.state, .remoteDataFetched)
@@ -293,7 +293,7 @@ final class UserListController_Tests: XCTestCase {
         controller = nil
 
         // Simulate successful update
-        env!.userListUpdater?.update_completion?(nil)
+        env!.userListUpdater?.update_completion?(.success([]))
         // Release reference of completion so we can deallocate stuff
         env.userListUpdater!.update_completion = nil
 
@@ -313,7 +313,7 @@ final class UserListController_Tests: XCTestCase {
 
         // Simulate failed udpate
         let testError = TestError()
-        env.userListUpdater!.update_completion?(testError)
+        env.userListUpdater!.update_completion?(.failure(testError))
 
         // Completion should be called with the error
         AssertAsync.willBeEqual(completionCalledError as? TestError, testError)
