@@ -9,7 +9,7 @@ import XCTest
 final class UserListUpdater_Mock: UserListUpdater {
     @Atomic var update_queries: [UserListQuery] = []
     @Atomic var update_policy: UpdatePolicy?
-    @Atomic var update_completion: ((Error?) -> Void)?
+    @Atomic var update_completion: ((Result<[ChatUser], Error>) -> Void)?
 
     @Atomic var fetch_queries: [UserListQuery] = []
     @Atomic var fetch_completion: ((Result<UserListPayload, Error>) -> Void)?
@@ -26,7 +26,7 @@ final class UserListUpdater_Mock: UserListUpdater {
     override func update(
         userListQuery: UserListQuery,
         policy: UpdatePolicy = .merge,
-        completion: ((Error?) -> Void)? = nil
+        completion: ((Result<[ChatUser], Error>) -> Void)? = nil
     ) {
         _update_queries.mutate { $0.append(userListQuery) }
         update_policy = policy
