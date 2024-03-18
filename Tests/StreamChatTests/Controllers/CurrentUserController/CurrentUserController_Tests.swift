@@ -405,7 +405,7 @@ final class CurrentUserController_Tests: XCTestCase {
         }
 
         // Simulate successful network call.
-        env.currentUserUpdater.fetchDevices_completion?(nil)
+        env.currentUserUpdater.fetchDevices_completion?(.success([]))
 
         AssertAsync.willBeNil(completionError)
     }
@@ -422,7 +422,7 @@ final class CurrentUserController_Tests: XCTestCase {
 
         // Simulate network response with the error.
         let networkError = TestError()
-        env.currentUserUpdater.fetchDevices_completion?(networkError)
+        env.currentUserUpdater.fetchDevices_completion?(.failure(networkError))
 
         // Assert error is propogated.
         AssertAsync.willBeEqual(completionError as? TestError, networkError)
@@ -452,7 +452,7 @@ final class CurrentUserController_Tests: XCTestCase {
         delayExecution(of: { completion in
             self.controller.synchronizeDevices(completion: completion)
         }, onCompletion: {
-            self.env.currentUserUpdater.fetchDevices_completion?(nil)
+            self.env.currentUserUpdater.fetchDevices_completion?(.success([]))
         })
     }
 

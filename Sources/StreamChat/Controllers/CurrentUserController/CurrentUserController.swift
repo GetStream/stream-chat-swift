@@ -195,8 +195,8 @@ public extension CurrentChatUserController {
             return
         }
 
-        currentUserUpdater.fetchDevices(currentUserId: currentUserId) { error in
-            self.callback { completion?(error) }
+        currentUserUpdater.fetchDevices(currentUserId: currentUserId) { result in
+            self.callback { completion?(result.error) }
         }
     }
 

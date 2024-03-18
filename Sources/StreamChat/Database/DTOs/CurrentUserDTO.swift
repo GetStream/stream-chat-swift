@@ -71,6 +71,11 @@ extension CurrentUserDTO {
         let new = NSEntityDescription.insertNewObject(into: context, for: request)
         return new
     }
+    
+    static func load(context: NSManagedObjectContext) throws -> CurrentChatUser {
+        guard let dto = load(context: context) else { throw ClientError.CurrentUserDoesNotExist() }
+        return try dto.asModel()
+    }
 }
 
 extension NSManagedObjectContext: CurrentUserDatabaseSession {
