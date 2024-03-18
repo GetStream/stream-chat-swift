@@ -301,7 +301,7 @@ public class ChatClient {
     /// - Throws: An error while communicating with the Stream API.
     /// - Returns: A type representing the connected user and its state.
     @available(iOS 13.0, *)
-    public func connectUser(userInfo: UserInfo, tokenProvider: @escaping TokenProvider) async throws -> ConnectedUser {
+    @discardableResult public func connectUser(userInfo: UserInfo, tokenProvider: @escaping TokenProvider) async throws -> ConnectedUser {
         try await withCheckedThrowingContinuation { continuation in
             connectUser(userInfo: userInfo, tokenProvider: tokenProvider) { error in
                 continuation.resume(with: error)
