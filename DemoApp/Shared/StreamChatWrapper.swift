@@ -90,18 +90,14 @@ extension StreamChatWrapper {
         // Reset number of refresh tokens
         numberOfRefreshTokens = 0
 
-        // We connect from a background thread to make sure it works without issues/crashes.
-        // This is for testing purposes only. As a customer you can connect directly without dispatching to any queue.
-        DispatchQueue.global().async {
-            self.connect(user: user) { [weak self] error in
-                if let error = error {
-                    log.warning(error.localizedDescription)
-                } else {
-                    self?.onRemotePushRegistration?()
-                }
-                DispatchQueue.main.async {
-                    completion(error)
-                }
+        connect(user: user) { [weak self] error in
+            if let error = error {
+                log.warning(error.localizedDescription)
+            } else {
+                self?.onRemotePushRegistration?()
+            }
+            DispatchQueue.main.async {
+                completion(error)
             }
         }
     }
@@ -117,10 +113,10 @@ extension StreamChatWrapper {
                 if let error = error {
                     log.warning("removing the device failed with an error \(error)")
                 }
+
+                client.logout(completion: completion)
             }
         }
-
-        client.logout(completion: completion)
     }
 }
 
