@@ -56,7 +56,7 @@ public struct MessageSearch {
         query.filterHash = state.explicitFilterHash
         let result = try await messageUpdater.search(query: query, policy: .replace)
         await state.set(query: query, cursor: result.payload.next)
-        return result.messages
+        return result.models
     }
     
     /// Searches for more messages matching with the last search query.
@@ -70,14 +70,14 @@ public struct MessageSearch {
         let limit = (limit ?? query.pagination?.pageSize) ?? Int.messagesPageSize
         let pagination: Pagination = await {
             if !query.sort.isEmpty, let nextPageCursor = await state.value(forKeyPath: \.nextPageCursor) {
-                Pagination(pageSize: limit, cursor: nextPageCursor)
+                return Pagination(pageSize: limit, cursor: nextPageCursor)
             } else {
-                Pagination(pageSize: limit, offset: await state.value(forKeyPath: \.messages.count))
+                return Pagination(pageSize: limit, offset: await state.value(forKeyPath: \.messages.count))
             }
         }()
         let result = try await messageUpdater.search(query: query.withPagination(pagination), policy: .merge)
         await state.set(query: query, cursor: result.payload.next)
-        return result.messages
+        return result.models
     }
     
     // MARK: - Private

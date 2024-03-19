@@ -610,7 +610,7 @@ class MessageUpdater: Worker {
         })
     }
 
-    func search(query: MessageSearchQuery, policy: UpdatePolicy = .merge, completion: ((Result<(payload: MessageSearchResultsPayload, messages: [ChatMessage]), Error>) -> Void)? = nil) {
+    func search(query: MessageSearchQuery, policy: UpdatePolicy = .merge, completion: ((Result<MessageSearchResults, Error>) -> Void)? = nil) {
         apiClient.request(endpoint: .search(query: query)) { result in
             switch result {
             case let .success(payload):
@@ -629,7 +629,7 @@ class MessageUpdater: Worker {
                     if let error = error {
                         completion?(.failure(error))
                     } else {
-                        completion?(.success((payload, messages)))
+                        completion?(.success(MessageSearchResults(payload: payload, models: messages)))
                     }
                 }
             case let .failure(error):
@@ -673,6 +673,15 @@ class MessageUpdater: Worker {
                 completion?(.failure(error))
             }
         })
+    }
+}
+
+extension MessageUpdater {
+    struct MessageSearchResults {
+        let payload: MessageSearchResultsPayload
+        let models: [ChatMessage]
+        
+        var next: String? { payload.next }
     }
 }
 
@@ -839,7 +848,7 @@ extension MessageUpdater {
         }
     }
     
-    func search(query: MessageSearchQuery, policy: UpdatePolicy) async throws -> (payload: MessageSearchResultsPayload, messages: [ChatMessage]) {
+    func search(query: MessageSearchQuery, policy: UpdatePolicy) async throws -> MessageSearchResults {
         try await withCheckedThrowingContinuation { continuation in
             search(query: query, policy: policy) { result in
                 continuation.resume(with: result)
