@@ -273,6 +273,20 @@ final class ChatMessageListVC_Tests: XCTestCase {
         XCTAssertFalse(messageDiff1.isContentEqual(to: messageDiff2))
     }
 
+    func test_messageIsContentEqual_whenTranslationsAreDifferent() throws {
+        let sameUser = ChatUser.mock(id: .unique, name: "Leia Organa")
+
+        // When translations are the same, should be equal
+        let messageSame1 = ChatMessage.mock(id: "1", text: "same", author: sameUser, translations: [.portuguese: "mesmo"])
+        let messageSame2 = ChatMessage.mock(id: "1", text: "same", author: sameUser, translations: [.portuguese: "mesmo"])
+        XCTAssert(messageSame1.isContentEqual(to: messageSame2))
+
+        // When translations are different, should not be equal
+        let messageDiff1 = ChatMessage.mock(id: "1", text: "same", author: sameUser, translations: [.portuguese: "mesmo"])
+        let messageDiff2 = ChatMessage.mock(id: "1", text: "same", author: sameUser, translations: [.portuguese: "mesmo", .arabic: "no idea"])
+        XCTAssertFalse(messageDiff1.isContentEqual(to: messageDiff2))
+    }
+
     // MARK: - isScrollToBottomButtonVisible
 
     func test_isScrollToBottomButtonVisible_whenLastCellNotVisible_whenMoreContentThanOnePage_whenFirstPageIsLoaded_returnsTrue() {
