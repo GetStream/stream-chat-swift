@@ -5,7 +5,8 @@
 import Foundation
 import StreamChat
 
-let apiKeyString = "8br4watad788"
+let apiKeyString = "892s22ypvt6m"
+// let apiKeyString = "8br4watad788"
 let applicationGroupIdentifier = "group.io.getstream.iOS.ChatDemoApp"
 
 enum DemoUserType {
@@ -35,6 +36,7 @@ struct UserCredentials {
 
 extension UserCredentials {
     static let builtInUsers: [UserCredentials] = [
+        .martin,
         .luke,
         .leia,
         .hanSolo,
@@ -61,7 +63,7 @@ extension UserCredentials {
         id: "luke_skywalker",
         name: "Luke Skywalker",
         avatarURL: URL(string: "https://vignette.wikia.nocookie.net/starwars/images/2/20/LukeTLJ.jpg")!,
-        token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoibHVrZV9za3l3YWxrZXIifQ.kFSLHRB5X62t0Zlc7nwczWUfsQMwfkpylC6jCUZ6Mc0",
+        token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoibHVrZV9za3l3YWxrZXIifQ._ylrPoIuYe68Jfm9fkMY6yiPNd7bOsC8GsICCEHI47k",
         birthLand: "Tatooine"
     )
 
@@ -69,8 +71,16 @@ extension UserCredentials {
         id: "leia_organa",
         name: "Leia Organa",
         avatarURL: URL(string: "https://vignette.wikia.nocookie.net/starwars/images/f/fc/Leia_Organa_TLJ.png")!,
-        token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoibGVpYV9vcmdhbmEifQ.IzwBuaYwX5dRvnDDnJN2AyW3wwfYwgQm3w-1RD4BLPU",
+        token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoibGVpYV9vcmdhbmEifQ.c4ckT6AqB72w2g07e06SqalhK0X7qd1SPVQyNABJMew",
         birthLand: "Polis Massa"
+    )
+    
+    static let martin = Self(
+        id: "martin",
+        name: "Martin",
+        avatarURL: URL(string: "https://vignette.wikia.nocookie.net/starwars/images/e/e2/TFAHanSolo.png")!,
+        token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoibWFydGluIn0.-8mL49OqMdlvzXR_1IgYboVXXuXFc04r0EvYgko-X8I",
+        birthLand: "Corellia"
     )
 
     static let hanSolo = Self(
