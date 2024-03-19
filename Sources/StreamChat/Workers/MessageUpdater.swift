@@ -610,22 +610,26 @@ class MessageUpdater: Worker {
         })
     }
 
-    func search(query: MessageSearchQuery, policy: UpdatePolicy = .merge, completion: ((Result<MessageSearchResultsPayload, Error>) -> Void)? = nil) {
+    func search(query: MessageSearchQuery, policy: UpdatePolicy = .merge, completion: ((Result<(payload: MessageSearchResultsPayload, messages: [ChatMessage]), Error>) -> Void)? = nil) {
         apiClient.request(endpoint: .search(query: query)) { result in
             switch result {
             case let .success(payload):
+                var messages = [ChatMessage]()
                 self.database.write { session in
                     if case .replace = policy {
                         let dto = session.saveQuery(query: query)
                         dto.messages.removeAll()
                     }
 
-                    session.saveMessageSearch(payload: payload, for: query)
+                    let dtos = session.saveMessageSearch(payload: payload, for: query)
+                    if completion != nil {
+                        messages = try dtos.map { try $0.asModel() }
+                    }
                 } completion: { error in
                     if let error = error {
                         completion?(.failure(error))
                     } else {
-                        completion?(.success(payload))
+                        completion?(.success((payload, messages)))
                     }
                 }
             case let .failure(error):
@@ -739,6 +743,14 @@ extension MessageUpdater {
         }
     }
     
+    func clearSearchResults(for query: MessageSearchQuery) async throws {
+        try await withCheckedThrowingContinuation { continuation in
+            clearSearchResults(for: query) { error in
+                continuation.resume(with: error)
+            }
+        }
+    }
+    
     func deleteMessage(messageId: MessageId, hard: Bool) async throws {
         try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
             deleteMessage(messageId: messageId, hard: hard) { error in
@@ -823,6 +835,14 @@ extension MessageUpdater {
         try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
             resendMessage(with: messageId) { error in
                 continuation.resume(with: error)
+            }
+        }
+    }
+    
+    func search(query: MessageSearchQuery, policy: UpdatePolicy) async throws -> (payload: MessageSearchResultsPayload, messages: [ChatMessage]) {
+        try await withCheckedThrowingContinuation { continuation in
+            search(query: query, policy: policy) { result in
+                continuation.resume(with: result)
             }
         }
     }
