@@ -543,6 +543,20 @@ public final class Chat {
         try await messageUpdater.loadReactions(cid: cid, messageId: messageId, pagination: pagination)
     }
     
+    /// Loads more reactions and updates ``MessageState/reactions``.
+    ///
+    /// - Parameters:
+    ///   - messageId: The id of the message to load reactions.
+    ///   - limit: The limit for the page size. The default limit is 25.
+    ///
+    /// - Throws: An error while communicating with the Stream API.
+    /// - Returns: An array of reactions for the next page.
+    public func loadNextReactions(of messageId: MessageId, limit: Int? = nil) async throws -> [ChatMessageReaction] {
+        let offset = try await makeMessageState(for: messageId).value(forKeyPath: \.reactions.count)
+        let pagination = Pagination(pageSize: limit ?? 25, offset: offset)
+        return try await messageUpdater.loadReactions(cid: cid, messageId: messageId, pagination: pagination)
+    }
+    
     // MARK: - Message Reading
     
     /// Marks all the unread messages in the channel as read.
