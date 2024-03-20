@@ -17,9 +17,11 @@ final class AppSettingsPayload_Tests: XCTestCase {
         XCTAssertEqual(payload.app.fileUploadConfig.blockedFileExtensions, ["webp"])
         XCTAssertEqual(payload.app.fileUploadConfig.allowedMimeTypes, ["image/jpg", "image/png"])
         XCTAssertEqual(payload.app.fileUploadConfig.blockedMimeTypes, ["image/webp"])
+        XCTAssertEqual(payload.app.fileUploadConfig.sizeLimit, 104_857_600)
         XCTAssertEqual(payload.app.imageUploadConfig.allowedFileExtensions, ["mp3", "wav"])
         XCTAssertEqual(payload.app.imageUploadConfig.blockedFileExtensions, ["mp4"])
         XCTAssertEqual(payload.app.imageUploadConfig.allowedMimeTypes, ["audio/mp3", "audio/wav"])
         XCTAssertEqual(payload.app.imageUploadConfig.blockedMimeTypes, ["audio/mp4"])
+        XCTAssertEqual(payload.app.imageUploadConfig.sizeLimit, 10_485_760)
     }
 }

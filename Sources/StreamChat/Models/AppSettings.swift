@@ -19,13 +19,16 @@ public struct AppSettings {
 
     public struct UploadConfig {
         /// The allowed file extensions.
-        public var allowedFileExtensions: [String]
+        public let allowedFileExtensions: [String]
         /// The blocked file extensions.
-        public var blockedFileExtensions: [String]
+        public let blockedFileExtensions: [String]
         /// The allowed mime types.
-        public var allowedMimeTypes: [String]
+        public let allowedMimeTypes: [String]
         /// The blocked mime types.
-        public var blockedMimeTypes: [String]
+        public let blockedMimeTypes: [String]
+        /// The file size limit allowed in Bytes.
+        /// This value is configurable from Stream's Dashboard App Settings.
+        public let sizeLimitInBytes: Int64?
     }
 }
 
@@ -49,7 +52,8 @@ extension AppSettingsPayload.UploadConfigPayload {
             allowedFileExtensions: allowedFileExtensions,
             blockedFileExtensions: blockedFileExtensions,
             allowedMimeTypes: allowedMimeTypes,
-            blockedMimeTypes: blockedMimeTypes
+            blockedMimeTypes: blockedMimeTypes,
+            sizeLimitInBytes: sizeLimit
         )
     }
 }
