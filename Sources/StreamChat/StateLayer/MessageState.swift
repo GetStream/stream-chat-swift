@@ -41,9 +41,9 @@ public final class MessageState: ObservableObject {
     
     // MARK: - Reactions
     
-    /// An array of loaded message reactions sorted by ``ChatMessageReaction.updatedAt`` with descending order.
+    /// An array of loaded message reactions sorted by ``ChatMessageReaction/updatedAt`` with descending order.
     ///
-    /// Use ``Chat.loadReactions(of:pagination:)`` for loading more reaactions.
+    /// Use ``Chat/loadReactions(of:pagination:)`` for loading more reaactions.
     @Published public private(set) var reactions = [ChatMessageReaction]()
     
     // MARK: - Replies
