@@ -43,7 +43,7 @@ public struct MemberList {
     ///
     /// - Throws: An error while communicating with the Stream API.
     /// - Returns: An array of channel members.
-    @discardableResult public func loadNextMembers(with limit: Int? = nil) async throws -> [ChatChannelMember] {
+    @discardableResult public func loadNextMembers(limit: Int? = nil) async throws -> [ChatChannelMember] {
         let pageSize = limit ?? Int.channelMembersPageSize
         let pagination = Pagination(pageSize: pageSize, offset: state.members.count)
         return try await loadMembers(with: pagination)
