@@ -24,7 +24,7 @@ public struct MessageSearch {
     /// An observable object representing the current state of the search.
     public let state: MessageSearchState
     
-    /// Searches for messages with the specified full text search text and updates ``MessageSearchState.messages``.
+    /// Searches for messages with the specified full text search text and updates ``MessageSearchState/messages``.
     ///
     /// - Parameter text: A string to search for (which is a full text search).
     ///
@@ -45,7 +45,7 @@ public struct MessageSearch {
         return try await search(query: query)
     }
     
-    /// Searches for messages with the specified query and updates ``MessageSearchState.messages``.
+    /// Searches for messages with the specified query and updates ``MessageSearchState/messages``.
     ///
     /// - Parameter query: The search query specifying filters, sorting and pagination.
     ///
