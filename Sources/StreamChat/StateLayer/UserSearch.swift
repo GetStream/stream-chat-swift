@@ -32,8 +32,7 @@ public struct UserSearch {
     
     /// Searches for users with the specified query and updates ``UserSearchState/users``.
     ///
-    /// - Parameters:
-    ///   - query: The user list query used for searching.
+    /// - Parameter query: The user list query used for searching.
     ///
     /// - Throws: An error while communicating with the Stream API.
     /// - Returns: An array of users for the query.

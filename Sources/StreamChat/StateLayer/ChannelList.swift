@@ -40,8 +40,7 @@ public struct ChannelList {
     
     /// Loads channels for the specified pagination parameters and updates ``ChannelListState/channels``.
     ///
-    /// - Parameters:
-    ///   - pagination: The pagination configuration which includes limit and cursor.
+    /// - Parameter pagination: The pagination configuration which includes limit and cursor.
     ///
     /// - Throws: An error while communicating with the Stream API.
     /// - Returns: An array of channels for the pagination.
