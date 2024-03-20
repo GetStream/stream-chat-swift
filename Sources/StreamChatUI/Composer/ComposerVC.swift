@@ -1254,7 +1254,7 @@ open class ComposerVC: _ViewController,
             maxAttachmentSize = client.appSettings?.fileUploadConfig.sizeLimitInBytes
         }
 
-        // If not value is set in the dashboard, the size_limit is nil or zero,
+        // If no value is set in the dashboard, the size_limit will be nil or zero,
         // so in this case we fallback to the deprecated value.
         guard let maxSize = maxAttachmentSize, maxSize > 0 else {
             return client.config.maxAttachmentSize
