@@ -28,8 +28,7 @@ public struct MemberList {
     
     /// Loads channel members for the specified pagination parameters and updates ``MemberListState/members``.
     ///
-    /// - Parameters:
-    ///   - pagination: The pagination configuration which includes a limit and an offset or a cursor.
+    /// - Parameter pagination: The pagination configuration which includes a limit and an offset or a cursor.
     ///
     /// - Throws: An error while communicating with the Stream API.
     /// - Returns: An array of channel members for the pagination.

@@ -29,8 +29,7 @@ public struct UserList {
     
     /// Loads users for the specified pagination parameters and updates ``UserListState/users``.
     ///
-    /// - Parameters:
-    ///   - pagination: The pagination configuration which includes a limit and an offset or a cursor.
+    /// - Parameter pagination: The pagination configuration which includes a limit and an offset or a cursor.
     ///
     /// - Throws: An error while communicating with the Stream API.
     /// - Returns: An array of users for the pagination.
