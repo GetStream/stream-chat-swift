@@ -657,22 +657,26 @@ class MessageUpdater: Worker {
         })
     }
 
-    func search(query: MessageSearchQuery, policy: UpdatePolicy = .merge, completion: ((Result<MessageSearchResultsPayload, Error>) -> Void)? = nil) {
+    func search(query: MessageSearchQuery, policy: UpdatePolicy = .merge, completion: ((Result<MessageSearchResults, Error>) -> Void)? = nil) {
         apiClient.request(endpoint: .search(query: query)) { result in
             switch result {
             case let .success(payload):
+                var messages = [ChatMessage]()
                 self.database.write { session in
                     if case .replace = policy {
                         let dto = session.saveQuery(query: query)
                         dto.messages.removeAll()
                     }
 
-                    session.saveMessageSearch(payload: payload, for: query)
+                    let dtos = session.saveMessageSearch(payload: payload, for: query)
+                    if completion != nil {
+                        messages = try dtos.map { try $0.asModel() }
+                    }
                 } completion: { error in
                     if let error = error {
                         completion?(.failure(error))
                     } else {
-                        completion?(.success(payload))
+                        completion?(.success(MessageSearchResults(payload: payload, models: messages)))
                     }
                 }
             case let .failure(error):
@@ -716,6 +720,15 @@ class MessageUpdater: Worker {
                 completion?(.failure(error))
             }
         })
+    }
+}
+
+extension MessageUpdater {
+    struct MessageSearchResults {
+        let payload: MessageSearchResultsPayload
+        let models: [ChatMessage]
+        
+        var next: String? { payload.next }
     }
 }
 
@@ -781,6 +794,14 @@ extension MessageUpdater {
     func addReaction(_ type: MessageReactionType, score: Int, enforceUnique: Bool, extraData: [String: RawJSON], messageId: MessageId) async throws {
         try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
             addReaction(type, score: score, enforceUnique: enforceUnique, extraData: extraData, messageId: messageId) { error in
+                continuation.resume(with: error)
+            }
+        }
+    }
+    
+    func clearSearchResults(for query: MessageSearchQuery) async throws {
+        try await withCheckedThrowingContinuation { continuation in
+            clearSearchResults(for: query) { error in
                 continuation.resume(with: error)
             }
         }
@@ -870,6 +891,14 @@ extension MessageUpdater {
         try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
             resendMessage(with: messageId) { error in
                 continuation.resume(with: error)
+            }
+        }
+    }
+    
+    func search(query: MessageSearchQuery, policy: UpdatePolicy) async throws -> MessageSearchResults {
+        try await withCheckedThrowingContinuation { continuation in
+            search(query: query, policy: policy) { result in
+                continuation.resume(with: result)
             }
         }
     }
