@@ -539,7 +539,7 @@ public final class Chat {
     ///
     /// - Throws: An error while communicating with the Stream API.
     /// - Returns: An array of reactions for given limit and offset.
-    public func loadReactions(of messageId: MessageId, pagination: Pagination) async throws -> [ChatMessageReaction] {
+    @discardableResult public func loadReactions(of messageId: MessageId, pagination: Pagination) async throws -> [ChatMessageReaction] {
         try await messageUpdater.loadReactions(cid: cid, messageId: messageId, pagination: pagination)
     }
     
@@ -551,7 +551,7 @@ public final class Chat {
     ///
     /// - Throws: An error while communicating with the Stream API.
     /// - Returns: An array of reactions for the next page.
-    public func loadNextReactions(of messageId: MessageId, limit: Int? = nil) async throws -> [ChatMessageReaction] {
+    @discardableResult public func loadNextReactions(of messageId: MessageId, limit: Int? = nil) async throws -> [ChatMessageReaction] {
         let offset = try await makeMessageState(for: messageId).value(forKeyPath: \.reactions.count)
         let pagination = Pagination(pageSize: limit ?? 25, offset: offset)
         return try await messageUpdater.loadReactions(cid: cid, messageId: messageId, pagination: pagination)
