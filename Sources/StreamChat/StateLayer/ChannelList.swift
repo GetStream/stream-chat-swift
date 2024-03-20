@@ -56,7 +56,7 @@ public struct ChannelList {
     ///
     /// - Throws: An error while communicating with the Stream API.
     /// - Returns: An array of loaded channels.
-    @discardableResult public func loadNextChannels(with limit: Int? = nil) async throws -> [ChatChannel] {
+    @discardableResult public func loadNextChannels(limit: Int? = nil) async throws -> [ChatChannel] {
         let limit = limit ?? query.pagination.pageSize
         let count = await state.value(forKeyPath: \.channels.count)
         return try await channelListUpdater.loadNextChannels(query: query, limit: limit, loadedChannelsCount: count)
