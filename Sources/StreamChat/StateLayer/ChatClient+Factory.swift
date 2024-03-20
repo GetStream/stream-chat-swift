@@ -280,3 +280,17 @@ extension ChatClient {
         MemberList(query: query, client: self)
     }
 }
+
+// MARK: - Factory Methods for Searching Messages
+
+@available(iOS 13.0, *)
+extension ChatClient {
+    /// Creates an instance of ``MessageSearch`` which represents an array of messages matching to the specified ``MessageSearchQuery``.
+    ///
+    /// Use ``MessageSearch`` as a data source for UIs representing message search.
+    ///
+    /// - Returns: An instance of ``MessageSearch`` which represents search actions and the search state.
+    public func makeMessageSearch() -> MessageSearch {
+        MessageSearch(client: self)
+    }
+}
