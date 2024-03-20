@@ -294,3 +294,17 @@ extension ChatClient {
         MessageSearch(client: self)
     }
 }
+
+// MARK: - Factory Methods for Searching User
+
+@available(iOS 13.0, *)
+extension ChatClient {
+    /// Creates an instance of ``UserSearch`` which represents an array of users matching to the specified ``UserListQuery``.
+    ///
+    /// Use ``UserSearch`` as a data source for user search UIs.
+    ///
+    /// - Returns: An instance of ``UserSearch`` which represents search actions and the search state.
+    public func makeUserSearch() -> UserSearch {
+        UserSearch(client: self)
+    }
+}
