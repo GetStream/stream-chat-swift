@@ -46,8 +46,8 @@ final class ChannelMemberListUpdater_Tests: XCTestCase {
 
         // Simulate `load` call.
         var completionCalled = false
-        listUpdater.load(query) { error in
-            XCTAssertNil(error)
+        listUpdater.load(query) { result in
+            XCTAssertNil(result.error)
             completionCalled = true
         }
 
@@ -81,8 +81,8 @@ final class ChannelMemberListUpdater_Tests: XCTestCase {
     func test_load_happyPath_whenChannelDoesNotExistsLocally() {
         // Simulate `load` call.
         var completionCalled = false
-        listUpdater.load(query) { error in
-            XCTAssertNil(error)
+        listUpdater.load(query) { result in
+            XCTAssertNil(result.error)
             completionCalled = true
         }
 
