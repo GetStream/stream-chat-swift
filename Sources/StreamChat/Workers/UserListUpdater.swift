@@ -36,7 +36,6 @@ class UserListUpdater: Worker {
                         completion?(.success(users))
                     }
                 }
-
             case let .failure(error):
                 completion?(.failure(error))
             }
@@ -68,7 +67,7 @@ enum UpdatePolicy {
     case replace
 }
 
-@available(iOS 13.0.0, *)
+@available(iOS 13.0, *)
 extension UserListUpdater {
     func update(userListQuery: UserListQuery, policy: UpdatePolicy = .merge) async throws -> [ChatUser] {
         try await withCheckedThrowingContinuation { continuation in
@@ -76,6 +75,15 @@ extension UserListUpdater {
                 continuation.resume(with: result)
             }
         }
+    }
+    
+    func fetch(userListQuery: UserListQuery, pagination: Pagination) async throws -> [ChatUser] {
+        let payload = try await withCheckedThrowingContinuation { continuation in
+            fetch(userListQuery: userListQuery.withPagination(pagination)) { result in
+                continuation.resume(with: result)
+            }
+        }
+        return payload.users.map { $0.asModel() }
     }
     
     func loadUsers(_ userListQuery: UserListQuery, pagination: Pagination) async throws -> [ChatUser] {
@@ -92,5 +100,26 @@ private extension UserListQuery {
         var query = self
         query.pagination = pagination
         return query
+    }
+}
+
+private extension UserPayload {
+    func asModel() -> ChatUser {
+        ChatUser(
+            id: id,
+            name: name,
+            imageURL: imageURL,
+            isOnline: isOnline,
+            isBanned: isBanned,
+            isFlaggedByCurrentUser: false, // TODO: isFlaggedByCurrentUser is not set
+            userRole: role,
+            createdAt: createdAt,
+            updatedAt: updatedAt,
+            deactivatedAt: deactivatedAt,
+            lastActiveAt: lastActiveAt,
+            teams: Set(teams),
+            language: language.map(TranslationLanguage.init),
+            extraData: extraData
+        )
     }
 }
