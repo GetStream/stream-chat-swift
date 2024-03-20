@@ -88,7 +88,7 @@ final class MessageUpdater_Mock: MessageUpdater {
 
     @Atomic var search_query: MessageSearchQuery?
     @Atomic var search_policy: UpdatePolicy?
-    @Atomic var search_completion: ((Result<MessageSearchResultsPayload, Error>) -> Void)?
+    @Atomic var search_completion: ((Result<MessageSearchResults, Error>) -> Void)?
 
     @Atomic var clearSearchResults_query: MessageSearchQuery?
     @Atomic var clearSearchResults_completion: ((Error?) -> Void)?
@@ -350,11 +350,11 @@ final class MessageUpdater_Mock: MessageUpdater {
         dispatchEphemeralMessageAction_action = action
         dispatchEphemeralMessageAction_completion = completion
     }
-
+    
     override func search(
         query: MessageSearchQuery,
         policy: UpdatePolicy = .merge,
-        completion: ((Result<MessageSearchResultsPayload, Error>) -> Void)? = nil
+        completion: ((Result<MessageSearchResults, Error>) -> Void)? = nil
     ) {
         search_query = query
         search_policy = policy
@@ -377,5 +377,15 @@ final class MessageUpdater_Mock: MessageUpdater {
         translate_messageId = messageId
         translate_language = language
         translate_completion = completion
+    }
+}
+
+extension MessageUpdater.MessageSearchResults {
+    static func empty() -> Self {
+        .make(api: [], next: nil, models: [])
+    }
+    
+    static func make(api apiMessages: [MessagePayload.Boxed], next: String?, models: [ChatMessage]) -> Self {
+        MessageUpdater.MessageSearchResults(payload: MessageSearchResultsPayload(results: apiMessages, next: next), models: models)
     }
 }
