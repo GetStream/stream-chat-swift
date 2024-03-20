@@ -14,17 +14,33 @@ public final class ChatState: ObservableObject {
     private let paginationState: MessagesPaginationState
     private let observer: Observer
     
-    init(cid: ChannelId, channelQuery: ChannelQuery, messageOrder: MessageOrdering, authenticationRepository: AuthenticationRepository, database: DatabaseContainer, eventNotificationCenter: EventNotificationCenter, paginationState: MessagesPaginationState) {
+    init(
+        cid: ChannelId,
+        channelQuery: ChannelQuery,
+        messageOrder: MessageOrdering,
+        memberListState: MemberListState,
+        authenticationRepository: AuthenticationRepository,
+        database: DatabaseContainer,
+        eventNotificationCenter: EventNotificationCenter,
+        paginationState: MessagesPaginationState
+    ) {
         self.authenticationRepository = authenticationRepository
         self.cid = cid
         dataStore = DataStore(database: database)
         self.messageOrder = messageOrder
         self.paginationState = paginationState
-        observer = Observer(cid: cid, channelQuery: channelQuery, messageOrder: messageOrder, database: database, eventNotificationCenter: eventNotificationCenter)
-        
+        observer = Observer(
+            cid: cid,
+            channelQuery: channelQuery,
+            messageOrder: messageOrder,
+            memberListState: memberListState,
+            database: database,
+            eventNotificationCenter: eventNotificationCenter
+        )
         observer.start(
             with: .init(
                 channelDidChange: { [weak self] in await self?.setValue($0, for: \.channel) },
+                membersDidChange: { [weak self] in await self?.setValue($0, for: \.members) },
                 messagesDidChange: { [weak self] in await self?.setValue($0, for: \.messages) },
                 typingUsersDidChange: { [weak self] in await self?.setValue($0, for: \.typingUsers) },
                 watchersDidChange: { [weak self] in await self?.setValue($0, for: \.watchers) }
@@ -36,6 +52,13 @@ public final class ChatState: ObservableObject {
     
     /// The represented ``ChatChannel``.
     @Published public private(set) var channel: ChatChannel?
+    
+    // MARK: - Members
+    
+    /// An array of loaded channel members.
+    ///
+    /// Use load members in ``Chat`` for loading more members.
+    @Published public private(set) var members = StreamCollection<ChatChannelMember>([])
     
     // MARK: - Messages
     
