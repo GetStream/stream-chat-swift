@@ -74,12 +74,15 @@ extension ChatClient {
     ///   - cid: The id of the channel.
     ///   - channelListQuery: The channel list query the channel belongs to.
     ///   - messageOrdering: Describes the ordering the messages are presented.
+    ///   - memberSorting: The sorting order for channel members (the default sorting by created at in ascending order).
+    ///
     /// - Returns: An instance of Chat representing the channel.
     ///
     public func makeChat(
         for cid: ChannelId,
         channelListQuery: ChannelListQuery? = nil,
-        messageOrdering: MessageOrdering = .topToBottom
+        messageOrdering: MessageOrdering = .topToBottom,
+        memberSorting: [Sorting<ChannelMemberListSortingKey>] = []
     ) -> Chat {
         let channelUpdater = makeChannelUpdater()
         let channelQuery = ChannelQuery(cid: cid)
@@ -89,6 +92,7 @@ extension ChatClient {
             channelQuery: channelQuery,
             channelListQuery: channelListQuery,
             messageOrdering: messageOrdering,
+            memberSorting: memberSorting,
             channelUpdater: channelUpdater,
             client: self
         )
@@ -104,13 +108,15 @@ extension ChatClient {
     ///   - channelQuery: The channel query used for looking up a channel.
     ///   - channelListQuery: The channel list query the channel belongs to.
     ///   - messageOrdering: Describes the ordering the messages are presented.
+    ///   - memberSorting: The sorting order for channel members (the default sorting by created at in ascending order).
     ///
     /// - Throws: An error while communicating with the Stream API.
     /// - Returns: An instance of `Chat` representing the channel.
     public func makeChat(
         with channelQuery: ChannelQuery,
         channelListQuery: ChannelListQuery? = nil,
-        messageOrdering: MessageOrdering = .topToBottom
+        messageOrdering: MessageOrdering = .topToBottom,
+        memberSorting: [Sorting<ChannelMemberListSortingKey>] = []
     ) async throws -> Chat {
         // Always update although the cid could be provided through channel query
         let channelUpdater = makeChannelUpdater()
@@ -121,6 +127,7 @@ extension ChatClient {
             channelQuery: channelQuery,
             channelListQuery: channelListQuery,
             messageOrdering: messageOrdering,
+            memberSorting: memberSorting,
             channelUpdater: channelUpdater,
             client: self
         )
@@ -143,6 +150,7 @@ extension ChatClient {
     ///   - isCurrentUserMember: If `true`, the current user is added as member.
     ///   - invites: A list of users who will get invites.
     ///   - messageOrdering: Describes the ordering the messages are presented.
+    ///   - memberSorting: The sorting order for channel members (the default sorting by created at in ascending order).
     ///   - channelListQuery: The channel list query the channel belongs to.
     ///   - extraData: Extra data for the new channel.
     ///
@@ -157,6 +165,7 @@ extension ChatClient {
         isCurrentUserMember: Bool = true,
         invites: [UserId] = [],
         messageOrdering: MessageOrdering = .topToBottom,
+        memberSorting: [Sorting<ChannelMemberListSortingKey>] = [],
         channelListQuery: ChannelListQuery? = nil,
         extraData: [String: RawJSON] = [:]
     ) async throws -> Chat {
@@ -178,6 +187,7 @@ extension ChatClient {
             channelQuery: channelQuery,
             channelListQuery: channelListQuery,
             messageOrdering: messageOrdering,
+            memberSorting: memberSorting,
             channelUpdater: channelUpdater,
             client: self
         )
@@ -200,6 +210,7 @@ extension ChatClient {
     ///   - imageURL: The channel avatar URL.
     ///   - team: The team for the channel.
     ///   - messageOrdering: Describes the ordering the messages are presented.
+    ///   - memberSorting: The sorting order for channel members (the default sorting by created at in ascending order).
     ///   - channelListQuery: The channel list query the channel belongs to.
     ///   - extraData: Extra data for the new channel.
     ///
@@ -213,6 +224,7 @@ extension ChatClient {
         imageURL: URL? = nil,
         team: String? = nil,
         messageOrdering: MessageOrdering = .topToBottom,
+        memberSorting: [Sorting<ChannelMemberListSortingKey>] = [],
         channelListQuery: ChannelListQuery? = nil,
         extraData: [String: RawJSON]
     ) async throws -> Chat {
@@ -235,6 +247,7 @@ extension ChatClient {
             channelQuery: channelQuery,
             channelListQuery: channelListQuery,
             messageOrdering: messageOrdering,
+            memberSorting: memberSorting,
             channelUpdater: channelUpdater,
             client: self
         )
@@ -249,5 +262,21 @@ extension ChatClient {
             database: databaseContainer,
             apiClient: apiClient
         )
+    }
+}
+
+// MARK: - Factory Methods for Creating Channel Member Lists
+
+@available(iOS 13.0, *)
+extension ChatClient {
+    /// Creates an instance of ``MemberList`` which represents an array of channel members matching to the specified ``ChannelMemberListQuery``.
+    ///
+    /// - Note: Call the paginated load methods for loading the list of channel members.
+    ///
+    /// - Parameter query: The query which defines a channel, filter and sorting options.
+    ///
+    /// - Returns: An instance of ``MemberList`` which represents actions and the current state of the list.
+    public func makeMemberList(with query: ChannelMemberListQuery) -> MemberList {
+        MemberList(query: query, client: self)
     }
 }

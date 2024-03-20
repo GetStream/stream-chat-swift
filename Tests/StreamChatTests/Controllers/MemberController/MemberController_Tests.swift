@@ -101,7 +101,7 @@ final class MemberController_Tests: XCTestCase {
         controller = nil
 
         // Simulate successful network call.
-        env.memberListUpdater!.load_completion!(nil)
+        env.memberListUpdater!.load_completion!(.success([]))
         // Release reference of completion so we can deallocate stuff
         env.memberListUpdater!.load_completion = nil
 
@@ -140,7 +140,7 @@ final class MemberController_Tests: XCTestCase {
 
         // Simulate failed network call.
         let updaterError = TestError()
-        env.memberListUpdater!.load_completion?(updaterError)
+        env.memberListUpdater!.load_completion?(.failure(updaterError))
 
         AssertAsync {
             // Assert controller is in `remoteDataFetchFailed` state.
@@ -180,7 +180,7 @@ final class MemberController_Tests: XCTestCase {
         try client.databaseContainer.createMember(userId: userId, cid: cid)
 
         // Simulate updater callback
-        env.memberListUpdater?.load_completion?(nil)
+        env.memberListUpdater?.load_completion?(.success([]))
 
         // Assert the user is loaded
         XCTAssertEqual(controller.member?.id, userId)
@@ -265,7 +265,7 @@ final class MemberController_Tests: XCTestCase {
         AssertAsync.willBeEqual(delegate.state, .localDataFetched)
 
         // Simulate network call response
-        env.memberListUpdater!.load_completion!(nil)
+        env.memberListUpdater!.load_completion!(.success([]))
 
         // Assert delegate is notified about state changes
         AssertAsync.willBeEqual(delegate.state, .remoteDataFetched)
@@ -295,7 +295,7 @@ final class MemberController_Tests: XCTestCase {
             let dto = try XCTUnwrap(session.member(userId: self.userId, cid: self.cid))
             dto.channelRoleRaw = updatedRole.rawValue
         }
-        env.memberListUpdater!.load_completion!(nil)
+        env.memberListUpdater!.load_completion!(.success([]))
 
         // Assert `update` entity change is received by the delegate
         AssertAsync {
