@@ -14,7 +14,7 @@ public enum AttachmentValidationError: Error {
     /// The number of attachments reached the limit.
     case maxAttachmentsCountPerMessageExceeded(limit: Int)
 
-    fileprivate static var fileSizeMaxLimitFallback: Int64 = 100 * 1024 * 1024
+    internal static var fileSizeMaxLimitFallback: Int64 = 100 * 1024 * 1024
 }
 
 public struct LocalAttachmentInfoKey: Hashable, Equatable, RawRepresentable {
