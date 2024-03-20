@@ -47,6 +47,7 @@ extension ChatMessage: Differentiable {
             && reactionCounts == source.reactionCounts
             && reactionScores == source.reactionScores
             && extraData == source.extraData
+            && translations == source.translations
             && currentUserReactionsCount == source.currentUserReactionsCount
             && threadParticipantsCount == source.threadParticipantsCount
             && readByCount == source.readByCount

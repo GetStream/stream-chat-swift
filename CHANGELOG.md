@@ -13,6 +13,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### 🐞 Fixed
 - Fix support for markdown ordered list with all numbers [#3090](https://github.com/GetStream/stream-chat-swift/pull/3090)
 - Fix support for markdown italic and bold styles inside snake-styled text [#3094](https://github.com/GetStream/stream-chat-swift/pull/3094)
+- Fix Message View not updated when new translations are added or removed [#3103](https://github.com/GetStream/stream-chat-swift/pull/3103)
 
 # [4.50.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.50.0)
 _March 11, 2024_
