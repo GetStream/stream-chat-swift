@@ -26,7 +26,7 @@ public struct MemberList {
     /// An observable object representing the current state of the member list.
     public let state: MemberListState
     
-    /// Loads channel members for the specified pagination parameters and updates ``MemberListState.members``.
+    /// Loads channel members for the specified pagination parameters and updates ``MemberListState/members``.
     ///
     /// - Parameters:
     ///   - pagination: The pagination configuration which includes a limit and an offset or a cursor.
@@ -37,7 +37,7 @@ public struct MemberList {
         try await memberListUpdater.load(query.withPagination(pagination))
     }
     
-    /// Loads more channel members and updates ``MemberListState.members``.
+    /// Loads more channel members and updates ``MemberListState/members``.
     ///
     /// - Parameters
     ///   - limit: The limit for the page size. The default limit is 30.
