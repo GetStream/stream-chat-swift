@@ -673,8 +673,7 @@ public final class Chat {
     ///
     /// - Note: The translated message is automatically inserted into ``ChatState/messages``.
     ///
-    /// - Parameters:
-    ///   - language: The language message text should be translated to.
+    /// - Parameter language: The language message text should be translated to.
     ///
     /// - Throws: An error while communicating with the Stream API
     @discardableResult public func translateMessage(_ message: MessageId, to language: TranslationLanguage) async throws -> ChatMessage {
@@ -877,8 +876,7 @@ public final class Chat {
     
     /// Deletes the file associated with the given URL in the channel.
     ///
-    /// - Parameters:
-    ///   - url: The URL of the file to be deleted.
+    /// - Parameter url: The URL of the file to be deleted.
     ///
     /// - Throws: An error while communicating with the Stream API.
     public func deleteFile(at url: URL) async throws {
@@ -887,8 +885,7 @@ public final class Chat {
     
     /// Deletes the image associated with the given URL in the channel.
     ///
-    /// - Parameters:
-    ///   - url: The URL of the image to be deleted.
+    /// - Parameter url: The URL of the image to be deleted.
     ///
     /// - Throws: An error while communicating with the Stream API.
     public func deleteImage(at url: URL) async throws {
@@ -940,8 +937,7 @@ public final class Chat {
     
     /// Loads watchers for the specified pagination parameters and updates ``ChatState/watchers``.
     ///
-    /// - Parameters:
-    ///   - pagination: The pagination configuration which includes a limit and a cursor or an offset.
+    /// - Parameter pagination: The pagination configuration which includes a limit and a cursor or an offset.
     ///
     /// - Throws: An error while communicating with the Stream API.
     /// - Returns: An array of watchers for the pagination.
@@ -951,8 +947,7 @@ public final class Chat {
 
     /// Loads more watchers and updates ``ChatState/watchers``.
     ///
-    /// - Parameters:
-    ///   - limit: The limit for the page size. The default limit is 30.
+    /// - Parameter limit: The limit for the page size. The default limit is 30.
     ///
     /// - Throws: An error while communicating with the Stream API.
     /// - Returns: An array of loaded watchers.
