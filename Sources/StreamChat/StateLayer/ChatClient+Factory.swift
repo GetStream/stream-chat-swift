@@ -23,14 +23,14 @@ extension ChatClient {
 extension ChatClient {
     /// Creates an instance of ``ChannelList`` which represents an array of channels matching to the specified ``ChannelListQuery``.
     ///
-    /// Loaded channels are stored in ``ChannelListState.channels``. Use pagination methods in ``ChannelList`` for loading more matching channels to the observable state.
+    /// Loaded channels are stored in ``ChannelListState/channels``. Use pagination methods in ``ChannelList`` for loading more matching channels to the observable state.
     /// Refer to [querying channels in Stream documentation](https://getstream.io/chat/docs/ios-swift/query_channels/?language=swift) for additional details.
     ///
     /// - Note: Only channels that the user can read are returned, therefore, make sure that the query uses a filter that includes such logic. It is recommended to include a members filter which includes the currently logged in user (e.g. `.containMembers(userIds: ["thierry"])`).
     ///
     /// - Parameters:
     ///   - query: The query specifies which channels are part of the list and how channels are sorted.
-    ///   - dynamicFilter: A filter block for filtering by channel's extra data fields or as a manual filter when ``ChatClientConfig.isChannelAutomaticFilteringEnabled`` is false ([read more](https://getstream.io/chat/docs/sdk/ios/client/controllers/channels/)).
+    ///   - dynamicFilter: A filter block for filtering by channel's extra data fields or as a manual filter when ``ChatClientConfig/isChannelAutomaticFilteringEnabled`` is false ([read more](https://getstream.io/chat/docs/sdk/ios/client/controllers/channels/)).
     ///
     /// - Throws: An error while communicating with the Stream API.
     /// - Returns: An instance of ``ChannelList`` which represents actions and the current state of the list.
@@ -46,7 +46,7 @@ extension ChatClient {
 extension ChatClient {
     /// Creates an instance of ``UserList`` which represents an array of users matching to the specified ``UserListQuery``.
     ///
-    /// Loaded users are stored in ``UserListState.users``. Use pagination methods in ``UserList`` for loading more matching users to the observable state.
+    /// Loaded users are stored in ``UserListState/users``. Use pagination methods in ``UserList`` for loading more matching users to the observable state.
     /// Refer to [querying users in Stream documentation](https://getstream.io/chat/docs/ios-swift/query_users/?language=swift) for additional details.
     ///
     /// - Parameter query: The query specifies which users are part of the list and how users are sorted.
@@ -68,7 +68,7 @@ extension ChatClient {
     
     /// An instance of `Chat` which represents a channel with the specified id.
     ///
-    /// - Note: Provides a quick lookup of a chat. It is caller's responsibility to call ``Chat.watch()`` for receiving the most recent state from the server.
+    /// - Note: Provides a quick lookup of a chat. It is caller's responsibility to call ``Chat/watch()`` for receiving the most recent state from the server.
     ///
     /// - Parameters:
     ///   - cid: The id of the channel.

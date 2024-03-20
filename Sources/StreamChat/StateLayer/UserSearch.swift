@@ -20,7 +20,7 @@ public struct UserSearch {
     /// An observable object representing the current state of the search.
     public let state: UserSearchState
     
-    /// Searches for users with the specified search term and updates ``UserSearchState.users``.
+    /// Searches for users with the specified search term and updates ``UserSearchState/users``.
     ///
     /// - Parameter term: The search term for searching users.
     ///
@@ -30,10 +30,9 @@ public struct UserSearch {
         try await search(query: .search(term: term))
     }
     
-    /// Searches for users with the specified query and updates ``UserSearchState.users``.
+    /// Searches for users with the specified query and updates ``UserSearchState/users``.
     ///
-    /// - Parameters:
-    ///   - query: The user list query used for searching.
+    /// - Parameter query: The user list query used for searching.
     ///
     /// - Throws: An error while communicating with the Stream API.
     /// - Returns: An array of users for the query.
@@ -43,7 +42,7 @@ public struct UserSearch {
         return try await search(query: query, pagination: pagination)
     }
     
-    /// Searches for more users with the specified query and updates ``UserSearchState.users``.
+    /// Searches for more users with the specified query and updates ``UserSearchState/users``.
     ///
     /// - Parameters
     ///   - limit: The limit for the page size. The default limit is 30.

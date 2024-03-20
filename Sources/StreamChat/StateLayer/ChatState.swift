@@ -67,14 +67,14 @@ public final class ChatState: ObservableObject {
     
     /// An array of loaded messages.
     ///
-    /// Messages are ordered by timestamp and``messageOrder`` (In case of ``MessageOrdering.bottomToTop`` the list is sorted in ascending order).
+    /// Messages are ordered by timestamp and ``messageOrder`` (In case of ``MessageOrdering/bottomToTop`` the list is sorted in ascending order).
     ///
     /// Use load messages in ``Chat`` for loading more messages.
     @Published public private(set) var messages = StreamCollection<ChatMessage>([])
     
     /// Access a message which is available locally by its id.
     ///
-    /// - Note: This method does a local lookup of the message and returns a message present in ``ChatState.messages``.
+    /// - Note: This method does a local lookup of the message and returns a message present in ``ChatState/messages``.
     ///
     /// - Parameter messageId: The id of the message which is available locally.
     ///
@@ -132,7 +132,7 @@ public final class ChatState: ObservableObject {
     /// The returned message id follows requirements:
     /// * Read state is unavailable: oldest message if all the messages have been paginated, otherwise nil
     /// * Unread message count is zero: nil
-    /// * Read state's ``ChatChannelRead.lastReadMessageId`` is nil: oldest message if all the messages have been paginated, otherwise nil
+    /// * Read state's ``ChatChannelRead/lastReadMessageId`` is nil: oldest message if all the messages have been paginated, otherwise nil
     /// * Last read message is unreachable (e.g. channel was truncated): oldest message if all the messages have been paginated, otherwise nil
     /// * Next message after the last read message id not from the current user
     public var firstUnreadMessageId: MessageId? {
@@ -144,7 +144,7 @@ public final class ChatState: ObservableObject {
     
     /// The duration until the current user can't send new messages when the channel has slow mode enabled.
     ///
-    /// - SeeAlso: ``Chat.enableSlowMode(cooldownDuration:)``
+    /// - SeeAlso: ``Chat/enableSlowMode(cooldownDuration:)``
     /// - Returns: 0, if slow mode is not enabled, otherwise the remining cooldown duration in seconds.
     public var remainingCooldownDuration: Int {
         guard let channel else { return 0 }

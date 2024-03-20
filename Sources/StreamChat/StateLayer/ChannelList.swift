@@ -38,10 +38,9 @@ public struct ChannelList {
     
     // MARK: - Channel List Pagination
     
-    /// Loads channels for the specified pagination parameters and updates ``ChatListState.channels``.
+    /// Loads channels for the specified pagination parameters and updates ``ChannelListState/channels``.
     ///
-    /// - Parameters:
-    ///   - pagination: The pagination configuration which includes limit and cursor.
+    /// - Parameter pagination: The pagination configuration which includes limit and cursor.
     ///
     /// - Throws: An error while communicating with the Stream API.
     /// - Returns: An array of channels for the pagination.
@@ -50,14 +49,14 @@ public struct ChannelList {
         return try await channelListUpdater.loadChannels(query: query, pagination: pagination)
     }
     
-    /// Loads more channels and updates ``ChatListState.channels``.
+    /// Loads more channels and updates ``ChannelListState/channels``.
     ///
     /// - Parameters
     ///   - limit: The limit for the page size. The default limit is 20.
     ///
     /// - Throws: An error while communicating with the Stream API.
     /// - Returns: An array of loaded channels.
-    @discardableResult public func loadNextChannels(with limit: Int? = nil) async throws -> [ChatChannel] {
+    @discardableResult public func loadNextChannels(limit: Int? = nil) async throws -> [ChatChannel] {
         let limit = limit ?? query.pagination.pageSize
         let count = await state.value(forKeyPath: \.channels.count)
         return try await channelListUpdater.loadNextChannels(query: query, limit: limit, loadedChannelsCount: count)

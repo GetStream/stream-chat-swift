@@ -182,10 +182,10 @@ public final class Chat {
         try await channelUpdater.removeMembers(currentUserId: currentUserId, cid: cid, userIds: Set(members), message: systemMessage)
     }
     
-    /// Loads an array of members for the specified query and updates ``ChatState.members``.
+    /// Loads an array of members for the specified query and updates ``ChatState/members``.
     ///
     /// - Note: Channel member sorting keys are set when creating the ``Chat`` instance.
-    /// It is also possible to create separate ``MemberList`` objects if needed with different filtering options. See ``ChatClient.makeMemberList(with:)``.
+    /// It is also possible to create separate ``MemberList`` objects if needed with different filtering options. See ``ChatClient/makeMemberList(with:)``.
     ///
     /// - Parameter pagination: The pagination configuration which includes a limit and an offset or a cursor.
     ///
@@ -263,7 +263,7 @@ public final class Chat {
     
     /// Resends a failed message.
     ///
-    /// The ``sendMessage`` method can fail but the message is not discarded. Failed messages are kept locally and can be retried.
+    /// The ``sendMessage(with:attachments:replyTo:mentions:pinning:extraData:silent:skipPushNotification:skipEnrichURL:messageId:)`` method can fail but the message is not discarded. Failed messages are kept locally and can be retried.
     ///
     /// - Parameter message: The id of the message to resend.
     ///
@@ -354,7 +354,7 @@ public final class Chat {
     
     // MARK: - Message Loading
     
-    /// Loads messages for the specified pagination parameters and updates ``ChatState.messages``.
+    /// Loads messages for the specified pagination parameters and updates ``ChatState/messages``.
     ///
     /// - Parameters:
     ///   - message: The parent message id which has replies.
@@ -368,16 +368,16 @@ public final class Chat {
     
     // MARK: -
     
-    /// Loads messages for the first page and updates ``ChatState.messages``.
+    /// Loads messages for the first page and updates ``ChatState/messages``.
     ///
-    /// - Note: Loading the first page resets the ``ChatState.messages``.
+    /// - Note: Loading the first page resets the ``ChatState/messages``.
     ///
     /// - Throws: An error while communicating with the Stream API.
     public func loadMessagesFirstPage() async throws {
         try await channelUpdater.loadMessagesFirstPage(with: channelQuery)
     }
     
-    /// Loads more messages before the specified message to ``ChatState.messages``.
+    /// Loads more messages before the specified message to ``ChatState/messages``.
     ///
     /// - Parameters:
     ///   - messageId: The message id of the message from which older messages are loaded.
@@ -388,7 +388,7 @@ public final class Chat {
         try await channelUpdater.loadMessages(before: messageId, limit: limit, channelQuery: channelQuery, loaded: state.messages)
     }
     
-    /// Loads more messages after the specified message to ``ChatState.messages``.
+    /// Loads more messages after the specified message to ``ChatState/messages``.
     ///
     /// - Parameters:
     ///   - messageId: The message id of the message from which newer messages are loaded.
@@ -399,11 +399,11 @@ public final class Chat {
         try await channelUpdater.loadMessages(after: messageId, limit: limit, channelQuery: channelQuery, loaded: state.messages)
     }
     
-    /// Loads messages around the given message id to ``ChatState.messages``.
+    /// Loads messages around the given message id to ``ChatState/messages``.
     ///
     /// Useful for jumping to a message which hasn't been loaded yet.
     ///
-    /// - Note: Jumping to a messages resets the ``ChatState.messages``.
+    /// - Note: Jumping to a messages resets the ``ChatState/messages``.
     ///
     /// - Parameters:
     ///   - messageId: The message id of the middle message in the loaded list of messages.
@@ -531,7 +531,7 @@ public final class Chat {
     
     /// Loads reactions for the specified message and pagination parameters.
     ///
-    /// All the currently loaded reactions can be accessed through ``MessageState.reactions``.
+    /// All the currently loaded reactions can be accessed through ``MessageState/reactions``.
     ///
     /// - Parameters:
     ///   - messageId: The id of the message to load reactions.
@@ -539,8 +539,22 @@ public final class Chat {
     ///
     /// - Throws: An error while communicating with the Stream API.
     /// - Returns: An array of reactions for given limit and offset.
-    public func loadReactions(of messageId: MessageId, pagination: Pagination) async throws -> [ChatMessageReaction] {
+    @discardableResult public func loadReactions(of messageId: MessageId, pagination: Pagination) async throws -> [ChatMessageReaction] {
         try await messageUpdater.loadReactions(cid: cid, messageId: messageId, pagination: pagination)
+    }
+    
+    /// Loads more reactions and updates ``MessageState/reactions``.
+    ///
+    /// - Parameters:
+    ///   - messageId: The id of the message to load reactions.
+    ///   - limit: The limit for the page size. The default limit is 25.
+    ///
+    /// - Throws: An error while communicating with the Stream API.
+    /// - Returns: An array of reactions for the next page.
+    @discardableResult public func loadNextReactions(of messageId: MessageId, limit: Int? = nil) async throws -> [ChatMessageReaction] {
+        let offset = try await makeMessageState(for: messageId).value(forKeyPath: \.reactions.count)
+        let pagination = Pagination(pageSize: limit ?? 25, offset: offset)
+        return try await messageUpdater.loadReactions(cid: cid, messageId: messageId, pagination: pagination)
     }
     
     // MARK: - Message Reading
@@ -567,7 +581,7 @@ public final class Chat {
     
     // MARK: - Message Replies
     
-    /// Loads replies for the specified message and pagination parameters and updates ``MessageState.replies``.
+    /// Loads replies for the specified message and pagination parameters and updates ``MessageState/replies``.
     ///
     /// - Parameters:
     ///   - messageId: The parent message id which has replies.
@@ -582,9 +596,9 @@ public final class Chat {
 
     // MARK: -
     
-    /// Loads replies for the first page of the specified message and updates ``MessageState.replies``.
+    /// Loads replies for the first page of the specified message and updates ``MessageState/replies``.
     ///
-    /// - Note: Loading the first page resets the ``MessageState.replies``.
+    /// - Note: Loading the first page resets the ``MessageState/replies``.
     ///
     /// - Parameters:
     ///   - message: The parent message id which has replies.
@@ -596,11 +610,11 @@ public final class Chat {
         return try await messageUpdater.loadRepliesFirstPage(of: messageId, limit: limit, cid: cid, paginationStateHandler: messageState.replyPaginationHandler)
     }
     
-    /// Loads more replies before the specified reply id to ``MessageState.replies``.
+    /// Loads more replies before the specified reply id to ``MessageState/replies``.
     ///
     /// - Parameters:
     ///   - messageId: The parent message id which has replies.
-    ///   - replyId: The message id of the reply from which older messages are loaded. If nil, the oldest currently loaded message id in ``MessageState.replies`` is used.
+    ///   - replyId: The message id of the reply from which older messages are loaded. If nil, the oldest currently loaded message id in ``MessageState/replies`` is used.
     ///   - limit: The limit for the page size. The default limit is 25.
     ///
     /// - Throws: An error while communicating with the Stream API.
@@ -609,11 +623,11 @@ public final class Chat {
         return try await messageUpdater.loadReplies(of: messageId, before: replyId, limit: limit, cid: cid, paginationStateHandler: messageState.replyPaginationHandler)
     }
     
-    /// Loads more replies after the specified reply id to ``MessageState.replies``.
+    /// Loads more replies after the specified reply id to ``MessageState/replies``.
     ///
     /// - Parameters:
     ///   - messageId: The parent message id which has replies.
-    ///   - replyId: The message id of the reply from which newer messages are loaded. If nil, the newest currently loaded message id in ``MessageState.replies`` is used.
+    ///   - replyId: The message id of the reply from which newer messages are loaded. If nil, the newest currently loaded message id in ``MessageState/replies`` is used.
     ///   - limit: The limit for the page size. The default limit is 25.
     ///
     /// - Throws: An error while communicating with the Stream API.
@@ -622,7 +636,7 @@ public final class Chat {
         return try await messageUpdater.loadReplies(of: messageId, after: replyId, limit: limit, cid: cid, paginationStateHandler: messageState.replyPaginationHandler)
     }
     
-    /// Loads replies around the specified reply id to ``MessageState.replies``.
+    /// Loads replies around the specified reply id to ``MessageState/replies``.
     ///
     /// - Parameters:
     ///   - messageId: The parent message id which has replies.
@@ -671,10 +685,9 @@ public final class Chat {
     ///
     /// The translated text can be retrieved with `message.translations[language]`.
     ///
-    /// - Note: The translated message is automatically inserted into ``ChatState.messages``.
+    /// - Note: The translated message is automatically inserted into ``ChatState/messages``.
     ///
-    /// - Parameters:
-    ///   - language: The language message text should be translated to.
+    /// - Parameter language: The language message text should be translated to.
     ///
     /// - Throws: An error while communicating with the Stream API
     @discardableResult public func translateMessage(_ message: MessageId, to language: TranslationLanguage) async throws -> ChatMessage {
@@ -709,7 +722,7 @@ public final class Chat {
     /// Optionally you can also clear the entire message history of that channel for the user. This way,
     /// when a new message is received, it will be the only one present in the channel.
     ///
-    /// - Note: You can retrieve the list of hidden channels using the `hidden` query parameter (``FilterKey.hidden``).
+    /// - Note: You can retrieve the list of hidden channels using the `hidden` query parameter (``FilterKey/hidden``).
     ///
     /// - Parameter clearHistory: If true, the whole channel history is deleted. The default value is false.
     ///
@@ -877,8 +890,7 @@ public final class Chat {
     
     /// Deletes the file associated with the given URL in the channel.
     ///
-    /// - Parameters:
-    ///   - url: The URL of the file to be deleted.
+    /// - Parameter url: The URL of the file to be deleted.
     ///
     /// - Throws: An error while communicating with the Stream API.
     public func deleteFile(at url: URL) async throws {
@@ -887,8 +899,7 @@ public final class Chat {
     
     /// Deletes the image associated with the given URL in the channel.
     ///
-    /// - Parameters:
-    ///   - url: The URL of the image to be deleted.
+    /// - Parameter url: The URL of the image to be deleted.
     ///
     /// - Throws: An error while communicating with the Stream API.
     public func deleteImage(at url: URL) async throws {
@@ -938,10 +949,9 @@ public final class Chat {
     
     // MARK: -
     
-    /// Loads watchers for the specified pagination parameters and updates ``ChatState.watchers``.
+    /// Loads watchers for the specified pagination parameters and updates ``ChatState/watchers``.
     ///
-    /// - Parameters:
-    ///   - pagination: The pagination configuration which includes a limit and a cursor or an offset.
+    /// - Parameter pagination: The pagination configuration which includes a limit and a cursor or an offset.
     ///
     /// - Throws: An error while communicating with the Stream API.
     /// - Returns: An array of watchers for the pagination.
@@ -949,14 +959,13 @@ public final class Chat {
         try await channelUpdater.channelWatchers(for: .init(cid: cid, pagination: pagination))
     }
 
-    /// Loads more watchers and updates ``ChatState.watchers``.
+    /// Loads more watchers and updates ``ChatState/watchers``.
     ///
-    /// - Parameters:
-    ///   - limit: The limit for the page size. The default limit is 30.
+    /// - Parameter limit: The limit for the page size. The default limit is 30.
     ///
     /// - Throws: An error while communicating with the Stream API.
     /// - Returns: An array of loaded watchers.
-    @discardableResult public func loadNextWatchers(with limit: Int? = nil) async throws -> [ChatUser] {
+    @discardableResult public func loadNextWatchers(limit: Int? = nil) async throws -> [ChatUser] {
         let count = await state.value(forKeyPath: \.watchers.count)
         let pagination = Pagination(pageSize: limit ?? .channelWatchersPageSize, offset: count)
         return try await loadWatchers(with: pagination)
