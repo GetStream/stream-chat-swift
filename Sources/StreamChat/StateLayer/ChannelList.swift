@@ -38,7 +38,7 @@ public struct ChannelList {
     
     // MARK: - Channel List Pagination
     
-    /// Loads channels for the specified pagination parameters and updates ``ChatListState.channels``.
+    /// Loads channels for the specified pagination parameters and updates ``ChannelListState/channels``.
     ///
     /// - Parameters:
     ///   - pagination: The pagination configuration which includes limit and cursor.
@@ -50,7 +50,7 @@ public struct ChannelList {
         return try await channelListUpdater.loadChannels(query: query, pagination: pagination)
     }
     
-    /// Loads more channels and updates ``ChatListState.channels``.
+    /// Loads more channels and updates ``ChannelListState/channels``.
     ///
     /// - Parameters
     ///   - limit: The limit for the page size. The default limit is 20.
