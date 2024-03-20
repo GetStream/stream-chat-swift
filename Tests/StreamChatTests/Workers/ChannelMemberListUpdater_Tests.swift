@@ -137,7 +137,7 @@ final class ChannelMemberListUpdater_Tests: XCTestCase {
         // Simulate `load` call and catch the error.
         var completionCalledError: Error?
         listUpdater.load(query) {
-            completionCalledError = $0
+            completionCalledError = $0.error
         }
 
         // Assert channel endpoint is called.
@@ -160,7 +160,7 @@ final class ChannelMemberListUpdater_Tests: XCTestCase {
         // Simulate `load` call and catch the error.
         var completionCalledError: Error?
         listUpdater.load(query) {
-            completionCalledError = $0
+            completionCalledError = $0.error
         }
 
         // Assert channel endpoint is called.
@@ -181,7 +181,7 @@ final class ChannelMemberListUpdater_Tests: XCTestCase {
         // Simulate `load` call and catch the error.
         var completionCalledError: Error?
         listUpdater.load(query) {
-            completionCalledError = $0
+            completionCalledError = $0.error
         }
 
         // Assert members endpoint is called.
@@ -203,7 +203,7 @@ final class ChannelMemberListUpdater_Tests: XCTestCase {
         // Simulate `load` call and catch the error.
         var completionCalledError: Error?
         listUpdater.load(query) {
-            completionCalledError = $0
+            completionCalledError = $0.error
         }
 
         // Assert members endpoint is called.
