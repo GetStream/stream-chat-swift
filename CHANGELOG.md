@@ -8,8 +8,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Add mute expiration support when muting a channel [#3083](https://github.com/GetStream/stream-chat-swift/pull/3083)
 - Add `ChatClient.loadAppSettings` and `ChatClient.appSettings` [#3091](https://github.com/GetStream/stream-chat-swift/pull/3091)
 - Load the app settings when connecting the user [#3091](https://github.com/GetStream/stream-chat-swift/pull/3091)
+### 🔄 Changed
+- Deprecates `ChatClientConfig.maxAttachmentSize` in favour of defining the value from Stream's Dashboard [#3105](https://github.com/GetStream/stream-chat-swift/pull/3105)
 
 ## StreamChatUI
+### ✅ Added
+- Validates file size limit per attachment type defined in Stream's Dashboard [#3105](https://github.com/GetStream/stream-chat-swift/pull/3105)
 ### 🐞 Fixed
 - Fix support for markdown ordered list with all numbers [#3090](https://github.com/GetStream/stream-chat-swift/pull/3090)
 - Fix support for markdown italic and bold styles inside snake-styled text [#3094](https://github.com/GetStream/stream-chat-swift/pull/3094)
