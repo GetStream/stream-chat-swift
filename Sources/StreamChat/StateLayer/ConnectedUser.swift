@@ -57,7 +57,7 @@ public struct ConnectedUser {
     
     /// Loads an array of devices associated with the logged-in user.
     ///
-    /// - Note: Devices can be read later from ``ConnectedUserState.devices``.
+    /// - Note: Devices can be read later from ``ConnectedUserState/devices``.
     ///
     /// - Throws: An error while communicating with the Stream API or when user is not logged in.
     /// - Returns: An array of devices receiving push notifications.
@@ -71,7 +71,7 @@ public struct ConnectedUser {
     ///
     /// - Tip: Register the user's device for remote push notifications once your user is successfully connected to Chat.
     ///
-    /// - Parameter device: The device information required for registering the device. Use ``PushDevice.apn(token:providerName:)`` for APN.
+    /// - Parameter device: The device information required for registering the device. Use ``PushDevice/apn(token:providerName:)`` for APN.
     ///
     /// - Throws: An error while communicating with the Stream API or when user is not logged in.
     public func addDevice(_ device: PushDevice) async throws {
