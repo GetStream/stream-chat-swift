@@ -250,27 +250,27 @@ public final class Chat {
     /// Messages can be soft deleted or hard deleted. Note that deleting a message doesn't delete its attachments.
     ///
     /// - Parameters:
-    ///   - message: The id of the message to delete.
+    ///   - messageId: The id of the message to delete.
     ///   - hard: True, if the message should be permanently deleted. The default value is false. The recommend approach is to always do a soft delete (hard = false).
     ///   You can control the UI Visibility of the deleted message in the client side.
     ///
     /// - Warning: If you hard delete the message, the message will be permanently lost since it will be erased from the backend's database.
     ///
     /// - Throws: An error while communicating with the Stream API.
-    public func deleteMessage(_ message: MessageId, hard: Bool = false) async throws {
-        try await messageUpdater.deleteMessage(messageId: message, hard: hard)
+    public func deleteMessage(_ messageId: MessageId, hard: Bool = false) async throws {
+        try await messageUpdater.deleteMessage(messageId: messageId, hard: hard)
     }
     
     /// Resends a failed message.
     ///
     /// The ``sendMessage(with:attachments:replyTo:mentions:pinning:extraData:silent:skipPushNotification:skipEnrichURL:messageId:)`` method can fail but the message is not discarded. Failed messages are kept locally and can be retried.
     ///
-    /// - Parameter message: The id of the message to resend.
+    /// - Parameter messageId: The id of the message to resend.
     ///
     /// - Throws: An error while sending a message to the Stream API.
-    public func resendMessage(_ message: MessageId) async throws {
-        try await messageUpdater.resendMessage(with: message)
-        try await messageEditor.waitForAPIRequest(messageId: message)
+    public func resendMessage(_ messageId: MessageId) async throws {
+        try await messageUpdater.resendMessage(with: messageId)
+        try await messageEditor.waitForAPIRequest(messageId: messageId)
     }
     
     /// Resends a failed attachment.
@@ -340,16 +340,16 @@ public final class Chat {
     /// Edits the specified message in the channel.
     ///
     /// - Parameters:
-    ///   - message: The id of the message to edit.
+    ///   - messageId: The id of the message to edit.
     ///   - text: Text of the message.
     ///   - attachments: An array of the attachments for the message.
     ///   - extraData: Additional extra data of the message object.
     ///   - skipEnrichURL: If true, the url preview won't be attached to the message.
     ///
     /// - Throws: An error while communicating with the Stream API.
-    public func updateMessage(_ message: MessageId, with text: String, attachments: [AnyAttachmentPayload] = [], extraData: [String: RawJSON]? = nil, skipEnrichURL: Bool = false) async throws {
-        try await messageUpdater.editMessage(messageId: message, text: text, skipEnrichUrl: skipEnrichURL, attachments: attachments, extraData: extraData)
-        try await messageEditor.waitForAPIRequest(messageId: message)
+    public func updateMessage(_ messageId: MessageId, with text: String, attachments: [AnyAttachmentPayload] = [], extraData: [String: RawJSON]? = nil, skipEnrichURL: Bool = false) async throws {
+        try await messageUpdater.editMessage(messageId: messageId, text: text, skipEnrichUrl: skipEnrichURL, attachments: attachments, extraData: extraData)
+        try await messageEditor.waitForAPIRequest(messageId: messageId)
     }
     
     // MARK: - Message Loading
@@ -419,12 +419,12 @@ public final class Chat {
     /// Invokes the ephermal action specified by the attachment.
     ///
     /// - Parameters:
-    ///   - message: The id of the message with the action.
+    ///   - messageId: The id of the message with the action.
     ///   - action: The ephermal action to be invoked.
     ///
     /// - Throws: An error while communicating with the Stream API.
-    public func sendMessageAction(in message: MessageId, action: AttachmentAction) async throws {
-        try await messageUpdater.dispatchEphemeralMessageAction(cid: cid, messageId: message, action: action)
+    public func sendMessageAction(in messageId: MessageId, action: AttachmentAction) async throws {
+        try await messageUpdater.dispatchEphemeralMessageAction(cid: cid, messageId: messageId, action: action)
     }
     
     // MARK: - Message Flagging
@@ -433,20 +433,20 @@ public final class Chat {
     ///
     /// - Note: Any user is allowed to flag a message.
     ///
-    /// - Parameter message: The id of the message to be flagged.
+    /// - Parameter messageId: The id of the message to be flagged.
     ///
     /// - Throws: An error while communicating with the Stream API.
-    public func flagMessage(_ message: MessageId) async throws {
-        try await messageUpdater.flagMessage(true, with: message, in: cid)
+    public func flagMessage(_ messageId: MessageId) async throws {
+        try await messageUpdater.flagMessage(true, with: messageId, in: cid)
     }
     
     /// Removes the flag from the specified message.
     ///
-    /// - Parameter message: The id of the message to be unflagged.
+    /// - Parameter messageId: The id of the message to be unflagged.
     ///
     /// - Throws: An error while communicating with the Stream API.
-    public func unflagMessage(_ message: MessageId) async throws {
-        try await messageUpdater.flagMessage(false, with: message, in: cid)
+    public func unflagMessage(_ messageId: MessageId) async throws {
+        try await messageUpdater.flagMessage(false, with: messageId, in: cid)
     }
     
     // MARK: - Message Rich Content
@@ -466,27 +466,27 @@ public final class Chat {
     /// - Note: To pin the message user has to have `PinMessage` permission.
     ///
     /// - Parameters:
-    ///   - message: The id of the message to be pinned.
+    ///   - messageId: The id of the message to be pinned.
     ///   - pinning: The pinning expiration information. Supports an infinite expiration, setting a date, or the amount of time a message is pinned.
     ///
     /// - Throws: An error while communicating with the Stream API or missing required capabilities.
-    public func pinMessage(_ message: MessageId, pinning: MessagePinning) async throws {
+    public func pinMessage(_ messageId: MessageId, pinning: MessagePinning) async throws {
         try state.channel?.requireCapability(of: .pinMessage)
-        try await messageUpdater.pinMessage(messageId: message, pinning: pinning)
-        try await messageEditor.waitForAPIRequest(messageId: message)
+        try await messageUpdater.pinMessage(messageId: messageId, pinning: pinning)
+        try await messageEditor.waitForAPIRequest(messageId: messageId)
     }
     
     /// Removes the message from the channel's pinned messages.
     ///
     /// - Note: To unpin the message user has to have `PinMessage` permission.
     ///
-    /// - Parameter message: The id of the message to unpin.
+    /// - Parameter messageId: The id of the message to unpin.
     ///
     /// - Throws: An error while communicating with the Stream API or missing required capabilities.
-    public func unpinMessage(_ message: MessageId) async throws {
+    public func unpinMessage(_ messageId: MessageId) async throws {
         try state.channel?.requireCapability(of: .pinMessage)
-        try await messageUpdater.unpinMessage(messageId: message)
-        try await messageEditor.waitForAPIRequest(messageId: message)
+        try await messageUpdater.unpinMessage(messageId: messageId)
+        try await messageEditor.waitForAPIRequest(messageId: messageId)
     }
     
     /// Loads pinned messages for the specified pagination options, sorting order, and limit.
@@ -507,10 +507,10 @@ public final class Chat {
     
     /// Removes a reaction with a specified type from a message.
     /// - Parameters:
-    ///   - message: The id of the message to remove the reaction from.
+    ///   - messageId: The id of the message to remove the reaction from.
     ///   - type: The type that describes a message reaction. Common examples are: “like”, “love”, “smile”, etc. An user can have only 1 reaction of each type per message.
-    public func deleteReaction(from message: MessageId, with type: MessageReactionType) async throws {
-        try await messageUpdater.deleteReaction(type, messageId: message)
+    public func deleteReaction(from messageId: MessageId, with type: MessageReactionType) async throws {
+        try await messageUpdater.deleteReaction(type, messageId: messageId)
     }
     
     /// Adds a reaction to the specified message.
@@ -518,15 +518,15 @@ public final class Chat {
     /// - Note: Custom data for reactions is limited to 1 KB.
     ///
     /// - Parameters:
-    ///   - message: The id of the message to send the reaction.
+    ///   - messageId: The id of the message to send the reaction.
     ///   - type: The type that describes a message reaction. Common examples are: “like”, “love”, “smile”, etc. An user can have only 1 reaction of each type per message.
     ///   - score: The score of the reaction for cumulative reactions (example: n number of claps).
     ///   - enforceUnique: If `true`, the added reaction will replace all reactions the user has (if any) on this message.
     ///   - extraData: The reaction's extra data.
     ///
     /// - Throws: An error while communicating with the Stream API.
-    public func sendReaction(to message: MessageId, with type: MessageReactionType, score: Int = 1, enforceUnique: Bool = false, extraData: [String: RawJSON] = [:]) async throws {
-        try await messageUpdater.addReaction(type, score: score, enforceUnique: enforceUnique, extraData: extraData, messageId: message)
+    public func sendReaction(to messageId: MessageId, with type: MessageReactionType, score: Int = 1, enforceUnique: Bool = false, extraData: [String: RawJSON] = [:]) async throws {
+        try await messageUpdater.addReaction(type, score: score, enforceUnique: enforceUnique, extraData: extraData, messageId: messageId)
     }
     
     /// Loads reactions for the specified message and pagination parameters.
@@ -589,7 +589,7 @@ public final class Chat {
     ///
     /// - Throws: An error while communicating with the Stream API.
     /// - Returns: An array of messages for the pagination.
-    public func loadReplies(of messageId: MessageId, pagination: MessagesPagination) async throws -> [ChatMessage] {
+    @discardableResult public func loadReplies(of messageId: MessageId, pagination: MessagesPagination) async throws -> [ChatMessage] {
         let messageState = try await makeMessageState(for: messageId)
         return try await messageUpdater.loadReplies(of: messageId, pagination: pagination, cid: cid, paginationStateHandler: messageState.replyPaginationHandler)
     }
@@ -687,11 +687,13 @@ public final class Chat {
     ///
     /// - Note: The translated message is automatically inserted into ``ChatState/messages``.
     ///
-    /// - Parameter language: The language message text should be translated to.
+    /// - Parameters:
+    ///   - messageId: The id of the message to be translated.
+    ///   - language: The language message text should be translated to.
     ///
     /// - Throws: An error while communicating with the Stream API
-    @discardableResult public func translateMessage(_ message: MessageId, to language: TranslationLanguage) async throws -> ChatMessage {
-        try await messageUpdater.translate(messageId: message, to: language)
+    @discardableResult public func translateMessage(_ messageId: MessageId, to language: TranslationLanguage) async throws -> ChatMessage {
+        try await messageUpdater.translate(messageId: messageId, to: language)
     }
     
     // MARK: - Muting or Hiding the Channel
