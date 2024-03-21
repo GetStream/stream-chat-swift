@@ -721,7 +721,7 @@ extension NSManagedObjectContext: MessageDatabaseSession {
         dto.user = user
 
         dto.reactionScores = payload.reactionScores.mapKeys { $0.rawValue }
-        dto.reactionCounts = payload.reactionScores.mapKeys { $0.rawValue }
+        dto.reactionCounts = payload.reactionCounts.mapKeys { $0.rawValue }
 
         // If user edited their message to remove mentioned users, we need to get rid of it
         // as backend does

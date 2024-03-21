@@ -860,6 +860,35 @@ final class MessageDTO_Tests: XCTestCase {
                 .contains(messageDTO.inContext(database.viewContext))
         )
     }
+    
+    func test_messagePayload_whenMessageHasReactionsWithScoresAndCounts_isCorrectlyStored() throws {
+        let channelId: ChannelId = .unique
+        let channelPayload: ChannelPayload = dummyPayload(with: channelId)
+        let payload: MessagePayload = .dummy(
+            messageId: .unique,
+            authorUserId: .unique,
+            reactionScores: ["like": 10],
+            reactionCounts: ["like": 2]
+        )
+        let (channelDTO, messageDTO): (ChannelDTO, MessageDTO) = try waitFor { completion in
+            var channelDTO: ChannelDTO!
+            var messageDTO: MessageDTO!
+
+            // Asynchronously save the payload to the db
+            database.write { session in
+                // Create the channel first
+                channelDTO = try! session.saveChannel(payload: channelPayload, query: nil, cache: nil)
+
+                // Save the message
+                messageDTO = try! session.saveMessage(payload: payload, for: channelId, syncOwnReactions: true, cache: nil)
+                
+                XCTAssertEqual(2, messageDTO.reactionCounts["like"])
+                XCTAssertEqual(10, messageDTO.reactionScores["like"])
+            } completion: { _ in
+                completion((channelDTO, messageDTO))
+            }
+        }
+    }
 
     func test_messagePayloadNotStored_withoutChannelInfo() throws {
         let payload: MessagePayload = .dummy(messageId: .unique, authorUserId: .unique)
