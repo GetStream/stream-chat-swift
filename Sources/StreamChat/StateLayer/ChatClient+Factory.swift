@@ -37,8 +37,7 @@ extension ChatClient {
     public func makeChannelList(with query: ChannelListQuery, dynamicFilter: ((ChatChannel) -> Bool)? = nil) async throws -> ChannelList {
         let channels = try await channelListUpdater.update(channelListQuery: query)
         let channelList = ChannelList(channels: channels, query: query, dynamicFilter: dynamicFilter, channelListUpdater: channelListUpdater, client: self)
-        let state = channelList.state
-        syncRepository.trackChannelListQuery { [weak state] in state?.query }
+        syncRepository.trackChannelListQuery { [weak channelList] in channelList?.state.query }
         return channelList
     }
 }
