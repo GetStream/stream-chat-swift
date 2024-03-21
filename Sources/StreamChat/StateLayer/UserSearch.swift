@@ -6,7 +6,7 @@ import Foundation
 
 /// An object which represents a list of `ChatUser` for the specified search query.
 @available(iOS 13.0, *)
-public struct UserSearch {
+public final class UserSearch {
     private let userListUpdater: UserListUpdater
     
     init(client: ChatClient, environment: Environment = .init()) {

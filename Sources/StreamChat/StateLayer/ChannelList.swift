@@ -6,7 +6,7 @@ import Foundation
 
 /// An object which represents a list of `ChatChannel`.
 @available(iOS 13.0, *)
-public struct ChannelList {
+public class ChannelList {
     /// The query specifying and filtering the list of channels.
     public let query: ChannelListQuery
     
