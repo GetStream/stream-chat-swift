@@ -42,6 +42,9 @@ public class ChatChannelMember: ChatUser {
     ///
     public let isShadowBannedFromChannel: Bool
 
+    /// A boolean value that returns whether the user has muted the channel or not.
+    public let notificationsMuted: Bool
+
     init(
         id: String,
         name: String?,
@@ -65,7 +68,8 @@ public class ChatChannelMember: ChatUser {
         inviteRejectedAt: Date?,
         isBannedFromChannel: Bool,
         banExpiresAt: Date?,
-        isShadowBannedFromChannel: Bool
+        isShadowBannedFromChannel: Bool,
+        notificationsMuted: Bool
     ) {
         self.memberRole = memberRole
         self.memberCreatedAt = memberCreatedAt
@@ -76,6 +80,7 @@ public class ChatChannelMember: ChatUser {
         self.isBannedFromChannel = isBannedFromChannel
         self.isShadowBannedFromChannel = isShadowBannedFromChannel
         self.banExpiresAt = banExpiresAt
+        self.notificationsMuted = notificationsMuted
 
         super.init(
             id: id,

@@ -39,6 +39,7 @@ struct MemberPayload: Decodable {
         case isInvited = "invited"
         case inviteAcceptedAt = "invite_accepted_at"
         case inviteRejectedAt = "invite_rejected_at"
+        case notificationsMuted = "notifications_muted"
     }
 
     let userId: String
@@ -63,6 +64,9 @@ struct MemberPayload: Decodable {
     /// A date when an invited was rejected.
     let inviteRejectedAt: Date?
 
+    /// A boolean value that returns whether the user has muted the channel or not.
+    let notificationsMuted: Bool
+
     init(
         user: UserPayload?,
         userId: String,
@@ -74,7 +78,8 @@ struct MemberPayload: Decodable {
         isShadowBanned: Bool? = nil,
         isInvited: Bool? = nil,
         inviteAcceptedAt: Date? = nil,
-        inviteRejectedAt: Date? = nil
+        inviteRejectedAt: Date? = nil,
+        notificationsMuted: Bool = false
     ) {
         self.user = user
         self.userId = userId
@@ -87,6 +92,7 @@ struct MemberPayload: Decodable {
         self.isInvited = isInvited
         self.inviteAcceptedAt = inviteAcceptedAt
         self.inviteRejectedAt = inviteRejectedAt
+        self.notificationsMuted = notificationsMuted
     }
 
     init(from decoder: Decoder) throws {
@@ -101,6 +107,7 @@ struct MemberPayload: Decodable {
         isInvited = try container.decodeIfPresent(Bool.self, forKey: .isInvited)
         inviteAcceptedAt = try container.decodeIfPresent(Date.self, forKey: .inviteAcceptedAt)
         inviteRejectedAt = try container.decodeIfPresent(Date.self, forKey: .inviteRejectedAt)
+        notificationsMuted = try container.decodeIfPresent(Bool.self, forKey: .notificationsMuted) ?? false
 
         if let user = user {
             userId = user.id
