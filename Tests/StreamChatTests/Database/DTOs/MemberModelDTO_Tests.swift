@@ -49,7 +49,8 @@ final class MemberModelDTO_Tests: XCTestCase {
             updatedAt: .unique,
             banExpiresAt: .unique,
             isBanned: true,
-            isShadowBanned: true
+            isShadowBanned: true,
+            notificationsMuted: true
         )
 
         // Asynchronously save the payload to the db
@@ -69,6 +70,7 @@ final class MemberModelDTO_Tests: XCTestCase {
             Assert.willBeEqual(payload.isBanned, loadedMember?.isBannedFromChannel)
             Assert.willBeEqual(payload.banExpiresAt, loadedMember?.banExpiresAt)
             Assert.willBeEqual(payload.isShadowBanned, loadedMember?.isShadowBannedFromChannel)
+            Assert.willBeEqual(payload.notificationsMuted, loadedMember?.notificationsMuted)
 
             Assert.willBeEqual(payload.user!.id, loadedMember?.id)
             Assert.willBeEqual(payload.user!.isOnline, loadedMember?.isOnline)
