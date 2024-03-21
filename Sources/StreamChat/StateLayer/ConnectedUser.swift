@@ -6,7 +6,7 @@ import Foundation
 
 /// An object which represents the currently logged in user.
 @available(iOS 13.0, *)
-public struct ConnectedUser {
+public final class ConnectedUser {
     private let authenticationRepository: AuthenticationRepository
     private let currentUserUpdater: CurrentUserUpdater
     private let userUpdater: UserUpdater

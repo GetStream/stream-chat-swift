@@ -6,7 +6,7 @@ import Foundation
 
 /// An object which represents a list of `ChatChannelMember` for the specified channel.
 @available(iOS 13.0, *)
-public struct MemberList {
+public final class MemberList {
     private let query: ChannelMemberListQuery
     private let memberListUpdater: ChannelMemberListUpdater
     
