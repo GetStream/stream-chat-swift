@@ -589,7 +589,7 @@ public final class Chat {
     ///
     /// - Throws: An error while communicating with the Stream API.
     /// - Returns: An array of messages for the pagination.
-    public func loadReplies(of messageId: MessageId, pagination: MessagesPagination) async throws -> [ChatMessage] {
+    @discardableResult public func loadReplies(of messageId: MessageId, pagination: MessagesPagination) async throws -> [ChatMessage] {
         let messageState = try await makeMessageState(for: messageId)
         return try await messageUpdater.loadReplies(of: messageId, pagination: pagination, cid: cid, paginationStateHandler: messageState.replyPaginationHandler)
     }
