@@ -949,9 +949,10 @@ public final class Chat {
         try await channelUpdater.stopWatching(cid: cid)
     }
     
-    /// Subscribes to web-socket events of a single type in this channel.
+    /// Subscribes to web-socket events of a single type which is a channel specific event in this channel.
     ///
     /// - Note: The handler is always called on the main thread.
+    /// - Important: Subscribing to events not related to this channel, like ``ConnectionStatusUpdated``, does not trigger the handler.
     /// - SeeAlso: ``ChatClient.subscribe(to:handler:)`` for subscribing to client events.
     ///
     /// - Parameters:
