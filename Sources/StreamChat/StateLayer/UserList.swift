@@ -6,7 +6,7 @@ import Foundation
 
 /// An object which represents a list of `ChatUser`.
 @available(iOS 13.0, *)
-public struct UserList {
+public final class UserList {
     private let userListUpdater: UserListUpdater
     
     /// The query specifying and filtering the list of users.
