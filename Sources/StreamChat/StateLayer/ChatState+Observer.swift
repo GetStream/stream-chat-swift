@@ -15,7 +15,6 @@ extension ChatState {
         private var memberListObserver: AnyCancellable?
         private let messagesObserver: BackgroundListDatabaseObserver<ChatMessage, MessageDTO>
         private let watchersObserver: BackgroundListDatabaseObserver<ChatUser, UserDTO>
-        private var webSocketEventObservers = [EventObserver]()
         
         init(
             cid: ChannelId,
@@ -76,13 +75,6 @@ extension ChatState {
                 let collection = StreamCollection(items)
                 Task { await handlers.watchersDidChange(collection) }
             }
-            
-            // TODO: Implement member list
-//            if let eventNotificationCenter {
-//                webSocketEventObservers = [
-//                    MemberEventObserver(notificationCenter: eventNotificationCenter, cid: cid) { event in Task {  } }
-//                ]
-//            }
             
             do {
                 try channelObserver.startObserving()
