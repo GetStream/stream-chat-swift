@@ -262,22 +262,22 @@
 		4F8E53172B7F58C1008C0F9F /* ChatClient+Factory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F8E530A2B7CEBFB008C0F9F /* ChatClient+Factory.swift */; };
 		4F8E531C2B833D6C008C0F9F /* ChatState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F8E531B2B833D6C008C0F9F /* ChatState.swift */; };
 		4F8E531D2B833D6C008C0F9F /* ChatState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F8E531B2B833D6C008C0F9F /* ChatState.swift */; };
+		4F94B0E02BA1C4220045216B /* MemberListState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F94B0DF2BA1C4220045216B /* MemberListState.swift */; };
+		4F94B0E12BA1C4220045216B /* MemberListState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F94B0DF2BA1C4220045216B /* MemberListState.swift */; };
 		4F97F2672BA83146001C4D66 /* UserList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F97F2662BA83146001C4D66 /* UserList.swift */; };
 		4F97F2682BA83146001C4D66 /* UserList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F97F2662BA83146001C4D66 /* UserList.swift */; };
 		4F97F26A2BA83150001C4D66 /* UserListState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F97F2692BA83150001C4D66 /* UserListState.swift */; };
 		4F97F26B2BA83150001C4D66 /* UserListState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F97F2692BA83150001C4D66 /* UserListState.swift */; };
-		4F94B0E02BA1C4220045216B /* MemberListState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F94B0DF2BA1C4220045216B /* MemberListState.swift */; };
-		4F94B0E12BA1C4220045216B /* MemberListState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F94B0DF2BA1C4220045216B /* MemberListState.swift */; };
+		4F97F26D2BA858E9001C4D66 /* UserSearch.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F97F26C2BA858E9001C4D66 /* UserSearch.swift */; };
+		4F97F26E2BA858E9001C4D66 /* UserSearch.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F97F26C2BA858E9001C4D66 /* UserSearch.swift */; };
+		4F97F2702BA86491001C4D66 /* UserSearchState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F97F26F2BA86491001C4D66 /* UserSearchState.swift */; };
+		4F97F2712BA86491001C4D66 /* UserSearchState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F97F26F2BA86491001C4D66 /* UserSearchState.swift */; };
 		4F97F2742BA87C41001C4D66 /* MessageSearch.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F97F2732BA87C41001C4D66 /* MessageSearch.swift */; };
 		4F97F2752BA87C41001C4D66 /* MessageSearch.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F97F2732BA87C41001C4D66 /* MessageSearch.swift */; };
 		4F97F2772BA87E30001C4D66 /* MessageSearchState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F97F2762BA87E30001C4D66 /* MessageSearchState.swift */; };
 		4F97F2782BA87E30001C4D66 /* MessageSearchState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F97F2762BA87E30001C4D66 /* MessageSearchState.swift */; };
 		4F97F27A2BA88936001C4D66 /* MessageSearchState+Observer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F97F2792BA88936001C4D66 /* MessageSearchState+Observer.swift */; };
 		4F97F27B2BA88936001C4D66 /* MessageSearchState+Observer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F97F2792BA88936001C4D66 /* MessageSearchState+Observer.swift */; };
-		4F97F26D2BA858E9001C4D66 /* UserSearch.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F97F26C2BA858E9001C4D66 /* UserSearch.swift */; };
-		4F97F26E2BA858E9001C4D66 /* UserSearch.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F97F26C2BA858E9001C4D66 /* UserSearch.swift */; };
-		4F97F2702BA86491001C4D66 /* UserSearchState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F97F26F2BA86491001C4D66 /* UserSearchState.swift */; };
-		4F97F2712BA86491001C4D66 /* UserSearchState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F97F26F2BA86491001C4D66 /* UserSearchState.swift */; };
 		4FD2BE502B99F68300FFC6F2 /* ReadStateSender.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FD2BE4F2B99F68300FFC6F2 /* ReadStateSender.swift */; };
 		4FD2BE512B99F68300FFC6F2 /* ReadStateSender.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FD2BE4F2B99F68300FFC6F2 /* ReadStateSender.swift */; };
 		4FD2BE532B9AEE3500FFC6F2 /* StreamCollection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FD2BE522B9AEE3500FFC6F2 /* StreamCollection.swift */; };
@@ -288,6 +288,10 @@
 		4FD2BE5A2B9AF8B600FFC6F2 /* ChannelListState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FD2BE582B9AF8B600FFC6F2 /* ChannelListState.swift */; };
 		4FD2BE5C2B9AF8C300FFC6F2 /* ChannelListState+Observer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FD2BE5B2B9AF8C300FFC6F2 /* ChannelListState+Observer.swift */; };
 		4FD2BE5D2B9AF8C300FFC6F2 /* ChannelListState+Observer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FD2BE5B2B9AF8C300FFC6F2 /* ChannelListState+Observer.swift */; };
+		4FE6E1AA2BAC79F400C80AF1 /* MemberListState+Observer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FE6E1A92BAC79F400C80AF1 /* MemberListState+Observer.swift */; };
+		4FE6E1AB2BAC79F400C80AF1 /* MemberListState+Observer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FE6E1A92BAC79F400C80AF1 /* MemberListState+Observer.swift */; };
+		4FE6E1AD2BAC7A1B00C80AF1 /* UserListState+Observer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FE6E1AC2BAC7A1B00C80AF1 /* UserListState+Observer.swift */; };
+		4FE6E1AE2BAC7A1B00C80AF1 /* UserListState+Observer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FE6E1AC2BAC7A1B00C80AF1 /* UserListState+Observer.swift */; };
 		4FF2A80D2B8E011000941A64 /* ChatState+Observer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FF2A80C2B8E011000941A64 /* ChatState+Observer.swift */; };
 		4FF2A80E2B8E011000941A64 /* ChatState+Observer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FF2A80C2B8E011000941A64 /* ChatState+Observer.swift */; };
 		4FFB5EA02BA0507900F0454F /* Collection+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FFB5E9F2BA0507900F0454F /* Collection+Extensions.swift */; };
@@ -3018,19 +3022,21 @@
 		4F8E53052B7CD01D008C0F9F /* Chat.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Chat.swift; sourceTree = "<group>"; };
 		4F8E530A2B7CEBFB008C0F9F /* ChatClient+Factory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ChatClient+Factory.swift"; sourceTree = "<group>"; };
 		4F8E531B2B833D6C008C0F9F /* ChatState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatState.swift; sourceTree = "<group>"; };
+		4F94B0DF2BA1C4220045216B /* MemberListState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemberListState.swift; sourceTree = "<group>"; };
 		4F97F2662BA83146001C4D66 /* UserList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserList.swift; sourceTree = "<group>"; };
 		4F97F2692BA83150001C4D66 /* UserListState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserListState.swift; sourceTree = "<group>"; };
-		4F94B0DF2BA1C4220045216B /* MemberListState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemberListState.swift; sourceTree = "<group>"; };
+		4F97F26C2BA858E9001C4D66 /* UserSearch.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserSearch.swift; sourceTree = "<group>"; };
+		4F97F26F2BA86491001C4D66 /* UserSearchState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserSearchState.swift; sourceTree = "<group>"; };
 		4F97F2732BA87C41001C4D66 /* MessageSearch.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageSearch.swift; sourceTree = "<group>"; };
 		4F97F2762BA87E30001C4D66 /* MessageSearchState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageSearchState.swift; sourceTree = "<group>"; };
 		4F97F2792BA88936001C4D66 /* MessageSearchState+Observer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MessageSearchState+Observer.swift"; sourceTree = "<group>"; };
-		4F97F26C2BA858E9001C4D66 /* UserSearch.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserSearch.swift; sourceTree = "<group>"; };
-		4F97F26F2BA86491001C4D66 /* UserSearchState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserSearchState.swift; sourceTree = "<group>"; };
 		4FD2BE4F2B99F68300FFC6F2 /* ReadStateSender.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReadStateSender.swift; sourceTree = "<group>"; };
 		4FD2BE522B9AEE3500FFC6F2 /* StreamCollection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StreamCollection.swift; sourceTree = "<group>"; };
 		4FD2BE552B9AF8A300FFC6F2 /* ChannelList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelList.swift; sourceTree = "<group>"; };
 		4FD2BE582B9AF8B600FFC6F2 /* ChannelListState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelListState.swift; sourceTree = "<group>"; };
 		4FD2BE5B2B9AF8C300FFC6F2 /* ChannelListState+Observer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ChannelListState+Observer.swift"; sourceTree = "<group>"; };
+		4FE6E1A92BAC79F400C80AF1 /* MemberListState+Observer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MemberListState+Observer.swift"; sourceTree = "<group>"; };
+		4FE6E1AC2BAC7A1B00C80AF1 /* UserListState+Observer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UserListState+Observer.swift"; sourceTree = "<group>"; };
 		4FF2A80C2B8E011000941A64 /* ChatState+Observer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ChatState+Observer.swift"; sourceTree = "<group>"; };
 		4FFB5E9F2BA0507900F0454F /* Collection+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Collection+Extensions.swift"; sourceTree = "<group>"; };
 		4FFB5EA22BA0524600F0454F /* ChatState+Internal.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ChatState+Internal.swift"; sourceTree = "<group>"; };
@@ -5000,9 +5006,9 @@
 				4F427F652BA2F43200D92238 /* ConnectedUser.swift */,
 				4F427F682BA2F52100D92238 /* ConnectedUserState.swift */,
 				4F427F6B2BA2F53200D92238 /* ConnectedUserState+Observer.swift */,
-				4FFB5EA52BA0993000F0454F /* MemberState.swift */,
 				4F83FA452BA43DC3008BD8CD /* MemberList.swift */,
 				4F94B0DF2BA1C4220045216B /* MemberListState.swift */,
+				4FE6E1A92BAC79F400C80AF1 /* MemberListState+Observer.swift */,
 				4F97F2732BA87C41001C4D66 /* MessageSearch.swift */,
 				4F97F2762BA87E30001C4D66 /* MessageSearchState.swift */,
 				4F97F2792BA88936001C4D66 /* MessageSearchState+Observer.swift */,
@@ -5010,6 +5016,7 @@
 				4F73F39D2B91C7BF00563CD9 /* MessageState+Observer.swift */,
 				4F97F2662BA83146001C4D66 /* UserList.swift */,
 				4F97F2692BA83150001C4D66 /* UserListState.swift */,
+				4FE6E1AC2BAC7A1B00C80AF1 /* UserListState+Observer.swift */,
 				4F97F26C2BA858E9001C4D66 /* UserSearch.swift */,
 				4F97F26F2BA86491001C4D66 /* UserSearchState.swift */,
 			);
@@ -10848,6 +10855,7 @@
 				40789D3729F6AC500018C2BB /* AssetPropertyLoading.swift in Sources */,
 				7931818C24FD2660002F8C84 /* ChannelListController+Combine.swift in Sources */,
 				40789D2F29F6AC500018C2BB /* AudioRecordingDelegate.swift in Sources */,
+				4FE6E1AA2BAC79F400C80AF1 /* MemberListState+Observer.swift in Sources */,
 				790A4C55252F25DA001F4A23 /* DeviceDTO.swift in Sources */,
 				79C5CBE825F66DBD00D98001 /* ChatChannelWatcherListController.swift in Sources */,
 				8A62706E24BF45360040BFD6 /* BanEnabling.swift in Sources */,
@@ -11072,6 +11080,7 @@
 				84A43CB326A9A54700302763 /* EventSender.swift in Sources */,
 				88BEBCD62536FDBF00D9E8B7 /* MemberListController+SwiftUI.swift in Sources */,
 				A3B0CFA227BBF52600F352F9 /* ChannelTruncateRequestPayload.swift in Sources */,
+				4FE6E1AD2BAC7A1B00C80AF1 /* UserListState+Observer.swift in Sources */,
 				88F6DF91252C8845009A8AF0 /* ChannelMemberUpdater.swift in Sources */,
 				79BF83F2248F8F60007611A1 /* Logger.swift in Sources */,
 				799C943B247D2FB9001F1104 /* MessageDTO.swift in Sources */,
@@ -12077,8 +12086,10 @@
 				C121E901274544B200023E4C /* Compression.swift in Sources */,
 				C121E902274544B200023E4C /* WSCompression.swift in Sources */,
 				C121E903274544B200023E4C /* WebSocket.swift in Sources */,
+				4FE6E1AE2BAC7A1B00C80AF1 /* UserListState+Observer.swift in Sources */,
 				C121E904274544B200023E4C /* Engine.swift in Sources */,
 				C121E905274544B200023E4C /* NativeEngine.swift in Sources */,
+				4FE6E1AB2BAC79F400C80AF1 /* MemberListState+Observer.swift in Sources */,
 				AD8FEE592AA8E1A100273F88 /* ChatClient+Environment.swift in Sources */,
 				C121E906274544B200023E4C /* WSEngine.swift in Sources */,
 			);
