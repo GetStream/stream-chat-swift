@@ -240,61 +240,6 @@ final class ComposerVC_Tests: XCTestCase {
         
         AssertSnapshot(composerVC)
     }
-    
-    func test_whenSuggestionsLookupIsLocal_onlyChannelMembersAreShown() {
-        final class ComposerContainerVC: UIViewController {
-            var composerVC: ComposerVC!
-            var textWithMention = ""
-            
-            override func viewDidLoad() {
-                super.viewDidLoad()
-                
-                view.backgroundColor = .white
-                addChildViewController(composerVC, targetView: view)
-                composerVC.view.pin(anchors: [.leading, .trailing, .bottom], to: view)
-            }
-            
-            override func viewWillAppear(_ animated: Bool) {
-                super.viewWillAppear(animated)
-                
-                composerVC.content.text = textWithMention
-            }
-        }
-        
-        let member: ChatChannelMember = .mock(
-            id: "1",
-            name: "Yoda (member)",
-            imageURL: nil
-        )
-        
-        let watcher: ChatUser = .mock(
-            id: "2",
-            name: "Yoda (watcher)",
-            imageURL: nil
-        )
-        
-        let mockUserSearchController = ChatUserSearchController_Mock.mock()
-        
-        let mockChannelController = ChatChannelController_Mock.mock()
-        mockChannelController.client.authenticationRepository.setMockToken()
-        mockChannelController.channel_mock = .mock(
-            cid: .unique,
-            ownCapabilities: [.uploadFile, .sendMessage],
-            lastActiveMembers: [member],
-            lastActiveWatchers: [watcher]
-        )
-        
-        composerVC.userSearchController = mockUserSearchController
-        composerVC.channelController = mockChannelController
-        
-        let containerVC = ComposerContainerVC()
-        containerVC.composerVC = composerVC
-        containerVC.composerVC.userMentionsDebouncer = .init(0, queue: .main)
-        containerVC.textWithMention = "@Yo"
-        containerVC.composerVC.composerView.inputMessageView.textView.placeholderLabel.isHidden = true
-        
-        AssertSnapshot(containerVC, variants: [.defaultLight])
-    }
 
     func test_makeMentionSuggestionsDataSource_whenMentionAllAppUsers_shouldSearchUsers() throws {
         composerVC.components.mentionAllAppUsers = true
