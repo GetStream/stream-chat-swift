@@ -515,8 +515,8 @@ open class ComposerVC: _ViewController,
         updateRecordButtonVisibility()
         updateCooldownView()
         updateCooldownViewVisibility()
-        updateSendButtonWhenContentEmpty()
-        updateConfirmButtonWhenContentEmpty()
+        updateSendButtonEnabled()
+        updateConfirmButtonEnabled()
         updateInputMessageView()
         updateInputMessageViewVisibility()
         updateInputAttachmentsView()
@@ -598,11 +598,11 @@ open class ComposerVC: _ViewController,
         }
     }
 
-    open func updateSendButtonWhenContentEmpty() {
+    open func updateSendButtonEnabled() {
         composerView.sendButton.isEnabled = !content.isEmpty
     }
 
-    open func updateConfirmButtonWhenContentEmpty() {
+    open func updateConfirmButtonEnabled() {
         composerView.confirmButton.isEnabled = !content.isEmpty
     }
 
