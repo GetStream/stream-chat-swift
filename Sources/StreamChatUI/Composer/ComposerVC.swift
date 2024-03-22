@@ -98,6 +98,11 @@ open class ComposerVC: _ViewController,
             cooldownTime > 0
         }
 
+        /// A boolean that checks if the composer is in voice recording mode.
+        public var isVoiceRecording: Bool {
+            state == .recording || state == .recordingLocked
+        }
+
         /// A boolean that checks if the message only contains link attachments.
         public var hasOnlyLinkAttachments: Bool {
             let linkAttachmentsCount = attachments.filter { $0.type == .linkPreview }.count
@@ -641,7 +646,7 @@ open class ComposerVC: _ViewController,
 
     open func updateInputMessageViewVisibility() {
         Animate {
-            self.composerView.inputMessageView.isHidden = self.content.state == .recording
+            self.composerView.inputMessageView.isHidden = self.content.isVoiceRecording
         }
     }
 
@@ -686,7 +691,7 @@ open class ComposerVC: _ViewController,
 
     open func updateLeadingContainerVisibility() {
         Animate {
-            self.composerView.leadingContainer.isHidden = self.content.state == .recording
+            self.composerView.leadingContainer.isHidden = self.content.isVoiceRecording
         }
     }
 
