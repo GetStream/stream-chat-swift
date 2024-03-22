@@ -19,6 +19,7 @@ final class MemberPayload_Tests: XCTestCase {
         XCTAssertEqual(payload.banExpiresAt, "2021-03-08T15:42:31.355923Z".toDate())
         XCTAssertEqual(payload.isBanned, true)
         XCTAssertEqual(payload.isShadowBanned, true)
+        XCTAssertEqual(payload.notificationsMuted, true)
 
         XCTAssertNotNil(payload.user)
         XCTAssertEqual(payload.user!.id, "broken-waterfall-5")

@@ -30,7 +30,8 @@ extension ChatChannelMember {
             inviteRejectedAt: nil,
             isBannedFromChannel: true,
             banExpiresAt: .unique,
-            isShadowBannedFromChannel: true
+            isShadowBannedFromChannel: true, 
+            notificationsMuted: false
         )
     }
 }
