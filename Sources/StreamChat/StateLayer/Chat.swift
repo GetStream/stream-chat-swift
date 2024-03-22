@@ -469,9 +469,8 @@ public final class Chat {
     ///   - messageId: The id of the message to be pinned.
     ///   - pinning: The pinning expiration information. Supports an infinite expiration, setting a date, or the amount of time a message is pinned.
     ///
-    /// - Throws: An error while communicating with the Stream API or missing required capabilities.
+    /// - Throws: An error while communicating with the Stream API.
     public func pinMessage(_ messageId: MessageId, pinning: MessagePinning) async throws {
-        try state.channel?.requireCapability(of: .pinMessage)
         try await messageUpdater.pinMessage(messageId: messageId, pinning: pinning)
         try await messageEditor.waitForAPIRequest(messageId: messageId)
     }
@@ -482,9 +481,8 @@ public final class Chat {
     ///
     /// - Parameter messageId: The id of the message to unpin.
     ///
-    /// - Throws: An error while communicating with the Stream API or missing required capabilities.
+    /// - Throws: An error while communicating with the Stream API.
     public func unpinMessage(_ messageId: MessageId) async throws {
-        try state.channel?.requireCapability(of: .pinMessage)
         try await messageUpdater.unpinMessage(messageId: messageId)
         try await messageEditor.waitForAPIRequest(messageId: messageId)
     }
@@ -561,10 +559,9 @@ public final class Chat {
     
     /// Marks all the unread messages in the channel as read.
     ///
-    /// - Throws: An error while communicating with the Stream API or missing required capabilities.
+    /// - Throws: An error while communicating with the Stream API.
     public func markRead() async throws {
         guard let channel = state.channel else { throw ClientError.ChannelDoesNotExist(cid: cid) }
-        try channel.requireCapability(of: .readEvents)
         try await readStateSender.markRead(channel)
     }
     
@@ -572,10 +569,9 @@ public final class Chat {
     ///
     /// - Parameter messageId: The id of the first message that will be marked as unread.
     ///
-    /// - Throws: An error while communicating with the Stream API or missing required capabilities.
+    /// - Throws: An error while communicating with the Stream API.
     public func markUnread(from messageId: MessageId) async throws {
         guard let channel = state.channel else { throw ClientError.ChannelDoesNotExist(cid: cid) }
-        try channel.requireCapability(of: .readEvents)
         try await readStateSender.markUnread(from: messageId, in: channel)
     }
     
@@ -796,9 +792,8 @@ public final class Chat {
     ///
     /// - Parameter parentMessageId: A message id of the message in a thread the user is replying to.
     ///
-    /// - Throws: An error while communicating with the Stream API or missing required capabilities.
+    /// - Throws: An error while communicating with the Stream API.
     public func keystroke(parentMessageId: MessageId? = nil) async throws {
-        try state.channel?.requireCapability(of: .sendTypingEvents)
         try await typingEventsSender.keystroke(in: cid, parentMessageId: parentMessageId)
     }
     
@@ -808,9 +803,8 @@ public final class Chat {
     ///
     /// - Parameter parentMessageId: A message id of the message in a thread the user is replying to.
     ///
-    /// - Throws: An error while communicating with the Stream API or missing required capabilities.
+    /// - Throws: An error while communicating with the Stream API.
     public func stopTyping(parentMessageId: MessageId? = nil) async throws {
-        try state.channel?.requireCapability(of: .sendTypingEvents)
         try await typingEventsSender.stopTyping(in: cid, parentMessageId: parentMessageId)
     }
     
