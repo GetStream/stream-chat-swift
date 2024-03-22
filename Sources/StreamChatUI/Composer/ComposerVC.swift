@@ -472,6 +472,20 @@ open class ComposerVC: _ViewController,
         composerView.pin(to: view)
     }
 
+    open func setupAttachmentsView() {
+        addChildViewController(attachmentsVC, embedIn: composerView.inputMessageView.attachmentsViewContainer)
+        attachmentsVC.didTapRemoveItemButton = { [weak self] index in
+            self?.content.attachments.remove(at: index)
+        }
+    }
+
+    open func setupVoiceRecordingView() {
+        voiceRecordingVC.delegate = self
+        addChild(voiceRecordingVC)
+        voiceRecordingVC.didMove(toParent: self)
+        voiceRecordingVC.setUp()
+    }
+
     override open func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
 
@@ -484,18 +498,45 @@ open class ComposerVC: _ViewController,
         dismissSuggestions()
     }
 
+    // MARK: Update Content
+
     override open func updateContent() {
         super.updateContent()
 
+        // Note: The order of the calls is important.
+        updateText()
+        updateKeystrokeEvents()
+        updateState()
+        updateCooldownView()
+        updateSendButtonWhenContentEmpty()
+        updateConfirmButtonWhenContentEmpty()
+        updateAttachmentButton()
+        updateCommandsButton()
+        updateInputMessageView()
+        updateAttachmentsView()
+        updateLinkPreview()
+        updateCheckbox()
+        updateBottomContainer()
+        updateCommandSuggestions()
+        updateMentionSuggestions()
+        updateSendMessageDisabled()
+        dismissSuggestions()
+    }
+
+    open func updateText() {
         if composerView.inputMessageView.textView.text != content.text {
             // Updating the text unnecessarily makes the caret jump to the end of input
             composerView.inputMessageView.textView.text = content.text
         }
+    }
 
+    open func updateKeystrokeEvents() {
         if !content.isEmpty && channelConfig?.typingEventsEnabled == true {
             channelController?.sendKeystrokeEvent(parentMessageId: content.threadMessage?.id)
         }
+    }
 
+    open func updateState() {
         switch content.state {
         case .new:
             composerView.inputMessageView.textView.placeholderLabel.text = content.isSlowModeOn
@@ -550,26 +591,43 @@ open class ComposerVC: _ViewController,
         default:
             log.warning("The composer state \(content.state.description) was not handled.")
         }
+    }
 
+    open func updateCooldownView() {
         composerView.cooldownView.content = .init(cooldown: content.cooldownTime)
+    }
 
+    open func updateSendButtonWhenContentEmpty() {
         composerView.sendButton.isEnabled = !content.isEmpty
+    }
+
+    open func updateConfirmButtonWhenContentEmpty() {
         composerView.confirmButton.isEnabled = !content.isEmpty
+    }
 
+    open func updateAttachmentButton() {
         let isAttachmentButtonHidden = !isAttachmentsEnabled || content.hasCommand || !composerView.shrinkInputButton.isHidden
-        let isCommandsButtonHidden = !isCommandsEnabled || content.hasCommand || !composerView.shrinkInputButton.isHidden
-
         Animate {
             self.composerView.attachmentButton.isHidden = isAttachmentButtonHidden
+        }
+    }
+
+    open func updateCommandsButton() {
+        let isCommandsButtonHidden = !isCommandsEnabled || content.hasCommand || !composerView.shrinkInputButton.isHidden
+        Animate {
             self.composerView.commandsButton.isHidden = isCommandsButtonHidden
         }
+    }
 
+    open func updateInputMessageView() {
         composerView.inputMessageView.content = .init(
             quotingMessage: content.quotingMessage,
             command: content.command,
             channel: channelController?.channel
         )
+    }
 
+    open func updateAttachmentsView() {
         attachmentsVC.content = content.attachments.map {
             if let provider = $0.payload as? AttachmentPreviewProvider {
                 return provider
@@ -582,13 +640,17 @@ open class ComposerVC: _ViewController,
             }
         }
         composerView.inputMessageView.attachmentsViewContainer.isHidden = content.attachments.isEmpty
+    }
 
+    open func updateLinkPreview() {
         // Since we don't want to show link previews with other attachment types, we dismiss the
         // link preview in case it is being shown and there are other types of attachments in the message.
         if content.hasOnlyLinkAttachments == false && content.skipEnrichUrl == false {
             dismissLinkPreview()
         }
+    }
 
+    open func updateCheckbox() {
         if content.isInsideThread {
             if channelController?.channel?.isDirectMessageChannel == true {
                 composerView.checkboxControl.label.text = L10n.Composer.Checkmark.directMessageReply
@@ -596,22 +658,31 @@ open class ComposerVC: _ViewController,
                 composerView.checkboxControl.label.text = L10n.Composer.Checkmark.channelReply
             }
         }
+    }
+
+    open func updateBottomContainer() {
         Animate {
             self.composerView.bottomContainer.isHidden = !self.content.isInsideThread
         }
+    }
 
+    open func updateCommandSuggestions() {
         if isCommandsEnabled, let typingCommand = typingCommand(in: composerView.inputMessageView.textView) {
             showCommandSuggestions(for: typingCommand)
             return
         }
+    }
 
+    open func updateMentionSuggestions() {
         if isMentionsEnabled, let (typingMention, mentionRange) = typingMention(in: composerView.inputMessageView.textView) {
             userMentionsDebouncer.execute { [weak self] in
                 self?.showMentionSuggestions(for: typingMention, mentionRange: mentionRange)
             }
             return
         }
+    }
 
+    open func updateSendMessageDisabled() {
         if !isSendMessageEnabled {
             composerView.inputMessageView.textView.placeholderLabel.text = L10n.Composer.Placeholder.messageDisabled
             composerView.recordButton.isHidden = true
@@ -619,22 +690,6 @@ open class ComposerVC: _ViewController,
             composerView.commandsButton.isHidden = true
         }
         composerView.inputMessageView.isUserInteractionEnabled = isSendMessageEnabled
-
-        dismissSuggestions()
-    }
-
-    open func setupAttachmentsView() {
-        addChildViewController(attachmentsVC, embedIn: composerView.inputMessageView.attachmentsViewContainer)
-        attachmentsVC.didTapRemoveItemButton = { [weak self] index in
-            self?.content.attachments.remove(at: index)
-        }
-    }
-
-    open func setupVoiceRecordingView() {
-        voiceRecordingVC.delegate = self
-        addChild(voiceRecordingVC)
-        voiceRecordingVC.didMove(toParent: self)
-        voiceRecordingVC.setUp()
     }
 
     // MARK: - Actions
