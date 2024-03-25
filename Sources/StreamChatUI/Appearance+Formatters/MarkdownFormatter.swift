@@ -74,14 +74,14 @@ open class DefaultMarkdownFormatter: MarkdownFormatter {
 
 /// Configures the font style properties for base Markdown elements
 public struct MarkdownStyles {
-    
+
     /// The regular paragraph font.
     public var bodyFont: MarkdownFont = .init()
     
     /// The font used for coding blocks in markdown text.
     public var codeFont: MarkdownFont = .init()
     
-    /// /// The font used for links found in markdown text.
+    /// The font used for links found in markdown text.
     public var linkFont: MarkdownFont = .init()
     
     /// The font used for H1 headers in markdown text.
