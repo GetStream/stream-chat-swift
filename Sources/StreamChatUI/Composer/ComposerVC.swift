@@ -100,6 +100,11 @@ open class ComposerVC: _ViewController,
             cooldownTime > 0
         }
 
+        /// A boolean that checks if the composer is in voice recording mode.
+        public var isVoiceRecording: Bool {
+            state == .recording || state == .recordingLocked
+        }
+
         /// A boolean that checks if the message only contains link attachments.
         public var hasOnlyLinkAttachments: Bool {
             let linkAttachmentsCount = attachments.filter { $0.type == .linkPreview }.count
@@ -474,157 +479,6 @@ open class ComposerVC: _ViewController,
         composerView.pin(to: view)
     }
 
-    override open func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-
-        resumeCurrentCooldown()
-    }
-
-    override open func viewDidDisappear(_ animated: Bool) {
-        super.viewDidDisappear(animated)
-
-        dismissSuggestions()
-    }
-
-    override open func updateContent() {
-        super.updateContent()
-
-        if composerView.inputMessageView.textView.text != content.text {
-            // Updating the text unnecessarily makes the caret jump to the end of input
-            composerView.inputMessageView.textView.text = content.text
-        }
-
-        if !content.isEmpty && channelConfig?.typingEventsEnabled == true {
-            channelController?.sendKeystrokeEvent(parentMessageId: content.threadMessage?.id)
-        }
-
-        switch content.state {
-        case .new:
-            composerView.inputMessageView.textView.placeholderLabel.text = content.isSlowModeOn
-                ? L10n.Composer.Placeholder.slowMode
-                : L10n.Composer.Placeholder.message
-            Animate {
-                self.composerView.confirmButton.isHidden = true
-                self.composerView.sendButton.isHidden = self.content.isSlowModeOn
-                self.composerView.recordButton.isHidden = self.composerView.sendButton.isHidden || !self.components.isVoiceRecordingEnabled || !self.isAttachmentsEnabled
-                self.composerView.headerView.isHidden = true
-                self.composerView.cooldownView.isHidden = !self.content.isSlowModeOn
-                self.composerView.leadingContainer.isHidden = false
-                self.composerView.inputMessageView.isHidden = false
-            }
-        case .recording:
-            Animate {
-                self.composerView.confirmButton.isHidden = true
-                self.composerView.sendButton.isHidden = true
-                self.composerView.recordButton.isHidden = false
-                self.composerView.headerView.isHidden = true
-                self.composerView.cooldownView.isHidden = true
-                self.composerView.leadingContainer.isHidden = true
-                self.composerView.inputMessageView.isHidden = true
-            }
-        case .recordingLocked:
-            Animate {
-                self.composerView.headerView.isHidden = false
-                self.composerView.recordButton.isHidden = true
-            }
-        case .quote:
-            composerView.titleLabel.text = L10n.Composer.Title.reply
-            Animate {
-                self.composerView.confirmButton.isHidden = true
-                self.composerView.sendButton.isHidden = self.content.isSlowModeOn
-                self.composerView.recordButton.isHidden = self.composerView.sendButton.isHidden || !self.components.isVoiceRecordingEnabled || !self.isAttachmentsEnabled
-                self.composerView.headerView.isHidden = false
-                self.composerView.cooldownView.isHidden = !self.content.isSlowModeOn
-                self.composerView.leadingContainer.isHidden = false
-                self.composerView.inputMessageView.isHidden = false
-            }
-        case .edit:
-            composerView.titleLabel.text = L10n.Composer.Title.edit
-            Animate {
-                self.composerView.confirmButton.isHidden = false
-                self.composerView.sendButton.isHidden = true
-                self.composerView.recordButton.isHidden = self.composerView.confirmButton.isHidden || !self.isAttachmentsEnabled
-                self.composerView.headerView.isHidden = false
-                self.composerView.cooldownView.isHidden = true
-                self.composerView.leadingContainer.isHidden = false
-                self.composerView.inputMessageView.isHidden = false
-            }
-        default:
-            log.warning("The composer state \(content.state.description) was not handled.")
-        }
-
-        composerView.cooldownView.content = .init(cooldown: content.cooldownTime)
-
-        composerView.sendButton.isEnabled = !content.isEmpty
-        composerView.confirmButton.isEnabled = !content.isEmpty
-
-        let isAttachmentButtonHidden = !isAttachmentsEnabled || content.hasCommand || !composerView.shrinkInputButton.isHidden
-        let isCommandsButtonHidden = !isCommandsEnabled || content.hasCommand || !composerView.shrinkInputButton.isHidden
-
-        Animate {
-            self.composerView.attachmentButton.isHidden = isAttachmentButtonHidden
-            self.composerView.commandsButton.isHidden = isCommandsButtonHidden
-        }
-
-        composerView.inputMessageView.content = .init(
-            quotingMessage: content.quotingMessage,
-            command: content.command,
-            channel: channelController?.channel
-        )
-
-        attachmentsVC.content = content.attachments.map {
-            if let provider = $0.payload as? AttachmentPreviewProvider {
-                return provider
-            } else {
-                log.warning("""
-                Attachment \($0) doesn't conform to the `AttachmentPreviewProvider` protocol. Add the conformance \
-                to this protocol to avoid using the attachment preview placeholder in the composer.
-                """)
-                return DefaultAttachmentPreviewProvider()
-            }
-        }
-        composerView.inputMessageView.attachmentsViewContainer.isHidden = content.attachments.isEmpty
-
-        // Since we don't want to show link previews with other attachment types, we dismiss the
-        // link preview in case it is being shown and there are other types of attachments in the message.
-        if content.hasOnlyLinkAttachments == false && content.skipEnrichUrl == false {
-            dismissLinkPreview()
-        }
-
-        if content.isInsideThread {
-            if channelController?.channel?.isDirectMessageChannel == true {
-                composerView.checkboxControl.label.text = L10n.Composer.Checkmark.directMessageReply
-            } else {
-                composerView.checkboxControl.label.text = L10n.Composer.Checkmark.channelReply
-            }
-        }
-        Animate {
-            self.composerView.bottomContainer.isHidden = !self.content.isInsideThread
-        }
-
-        if isCommandsEnabled, let typingCommand = typingCommand(in: composerView.inputMessageView.textView) {
-            showCommandSuggestions(for: typingCommand)
-            return
-        }
-
-        if isMentionsEnabled, let (typingMention, mentionRange) = typingMention(in: composerView.inputMessageView.textView) {
-            userMentionsDebouncer.execute { [weak self] in
-                self?.showMentionSuggestions(for: typingMention, mentionRange: mentionRange)
-            }
-            return
-        }
-
-        if !isSendMessageEnabled {
-            composerView.inputMessageView.textView.placeholderLabel.text = L10n.Composer.Placeholder.messageDisabled
-            composerView.recordButton.isHidden = true
-            composerView.attachmentButton.isHidden = true
-            composerView.commandsButton.isHidden = true
-        }
-        composerView.inputMessageView.isUserInteractionEnabled = isSendMessageEnabled
-
-        dismissSuggestions()
-    }
-
     open func setupAttachmentsView() {
         addChildViewController(attachmentsVC, embedIn: composerView.inputMessageView.attachmentsViewContainer)
         attachmentsVC.didTapRemoveItemButton = { [weak self] index in
@@ -637,6 +491,274 @@ open class ComposerVC: _ViewController,
         addChild(voiceRecordingVC)
         voiceRecordingVC.didMove(toParent: self)
         voiceRecordingVC.setUp()
+    }
+
+    override open func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+
+        resumeCurrentCooldown()
+    }
+
+    override open func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+
+        dismissSuggestions()
+    }
+
+    // MARK: Update Content
+
+    override open func updateContent() {
+        super.updateContent()
+
+        // Note: The order of the calls is important.
+        updateText()
+        updateKeystrokeEvents()
+        updateTitleLabel()
+        updateCommandsButtonVisibility()
+        updateConfirmButtonVisibility()
+        updateSendButtonVisibility()
+        updateAttachmentButtonVisibility()
+        updateHeaderViewVisibility()
+        updateRecordButtonVisibility()
+        updateCooldownView()
+        updateCooldownViewVisibility()
+        updateSendButtonEnabled()
+        updateConfirmButtonEnabled()
+        updateInputMessageView()
+        updateInputMessageViewVisibility()
+        updateInputAttachmentsView()
+        updateLinkPreview()
+        updateCheckbox()
+        updateBottomContainerVisibility()
+        updateLeadingContainerVisibility()
+        updateCommandSuggestions()
+        updateMentionSuggestions()
+        updatePlaceholderLabel()
+        dismissSuggestions()
+    }
+
+    open func updateText() {
+        if composerView.inputMessageView.textView.text != content.text {
+            // Updating the text unnecessarily makes the caret jump to the end of input
+            composerView.inputMessageView.textView.text = content.text
+        }
+    }
+
+    open func updateKeystrokeEvents() {
+        if !content.isEmpty && channelConfig?.typingEventsEnabled == true {
+            channelController?.sendKeystrokeEvent(parentMessageId: content.threadMessage?.id)
+        }
+    }
+
+    open func updateRecordButtonVisibility() {
+        guard isSendMessageEnabled else {
+            composerView.recordButton.isHidden = true
+            return
+        }
+
+        let isSendButtonHidden = composerView.sendButton.isHidden
+        let isConfirmButtonHidden = composerView.confirmButton.isHidden
+        let isVoiceRecordingEnabled = components.isVoiceRecordingEnabled
+        Animate {
+            switch self.content.state {
+            case .new:
+                self.composerView.recordButton.isHidden = isSendButtonHidden || !isVoiceRecordingEnabled || !self.isAttachmentsEnabled
+            case .recording:
+                self.composerView.recordButton.isHidden = false
+            case .recordingLocked:
+                self.composerView.recordButton.isHidden = true
+            case .quote:
+                self.composerView.recordButton.isHidden = isSendButtonHidden || !isVoiceRecordingEnabled || !self.isAttachmentsEnabled
+            case .edit:
+                self.composerView.recordButton.isHidden = isConfirmButtonHidden || !self.isAttachmentsEnabled
+            default:
+                break
+            }
+        }
+    }
+
+    open func updateTitleLabel() {
+        switch content.state {
+        case .edit:
+            composerView.titleLabel.text = L10n.Composer.Title.edit
+        case .quote:
+            composerView.titleLabel.text = L10n.Composer.Title.reply
+        default:
+            break
+        }
+    }
+
+    open func updateCooldownView() {
+        composerView.cooldownView.content = .init(cooldown: content.cooldownTime)
+    }
+
+    open func updateCooldownViewVisibility() {
+        Animate {
+            switch self.content.state {
+            case .new, .quote:
+                self.composerView.cooldownView.isHidden = !self.content.isSlowModeOn
+            case .edit, .recording, .recordingLocked:
+                self.composerView.cooldownView.isHidden = true
+            default:
+                break
+            }
+        }
+    }
+
+    open func updateSendButtonEnabled() {
+        composerView.sendButton.isEnabled = !content.isEmpty
+    }
+
+    open func updateConfirmButtonEnabled() {
+        composerView.confirmButton.isEnabled = !content.isEmpty
+    }
+
+    open func updateAttachmentButtonVisibility() {
+        guard isSendMessageEnabled else {
+            composerView.attachmentButton.isHidden = true
+            return
+        }
+
+        let isAttachmentButtonHidden = !isAttachmentsEnabled || content.hasCommand || !composerView.shrinkInputButton.isHidden
+        Animate {
+            self.composerView.attachmentButton.isHidden = isAttachmentButtonHidden
+        }
+    }
+
+    open func updateCommandsButtonVisibility() {
+        guard isSendMessageEnabled else {
+            composerView.commandsButton.isHidden = true
+            return
+        }
+
+        let isCommandsButtonHidden = !isCommandsEnabled || content.hasCommand || !composerView.shrinkInputButton.isHidden
+        Animate {
+            self.composerView.commandsButton.isHidden = isCommandsButtonHidden
+        }
+    }
+
+    open func updateInputMessageView() {
+        composerView.inputMessageView.content = .init(
+            quotingMessage: content.quotingMessage,
+            command: content.command,
+            channel: channelController?.channel
+        )
+        composerView.inputMessageView.isUserInteractionEnabled = isSendMessageEnabled
+    }
+
+    open func updateInputMessageViewVisibility() {
+        Animate {
+            self.composerView.inputMessageView.isHidden = self.content.isVoiceRecording
+        }
+    }
+
+    open func updateInputAttachmentsView() {
+        attachmentsVC.content = content.attachments.map {
+            if let provider = $0.payload as? AttachmentPreviewProvider {
+                return provider
+            } else {
+                log.warning("""
+                Attachment \($0) doesn't conform to the `AttachmentPreviewProvider` protocol. Add the conformance \
+                to this protocol to avoid using the attachment preview placeholder in the composer.
+                """)
+                return DefaultAttachmentPreviewProvider()
+            }
+        }
+        composerView.inputMessageView.attachmentsViewContainer.isHidden = content.attachments.isEmpty
+    }
+
+    open func updateLinkPreview() {
+        // Since we don't want to show link previews with other attachment types, we dismiss the
+        // link preview in case it is being shown and there are other types of attachments in the message.
+        if content.hasOnlyLinkAttachments == false && content.skipEnrichUrl == false {
+            dismissLinkPreview()
+        }
+    }
+
+    open func updateCheckbox() {
+        if content.isInsideThread {
+            if channelController?.channel?.isDirectMessageChannel == true {
+                composerView.checkboxControl.label.text = L10n.Composer.Checkmark.directMessageReply
+            } else {
+                composerView.checkboxControl.label.text = L10n.Composer.Checkmark.channelReply
+            }
+        }
+    }
+
+    open func updateBottomContainerVisibility() {
+        Animate {
+            self.composerView.bottomContainer.isHidden = !self.content.isInsideThread
+        }
+    }
+
+    open func updateLeadingContainerVisibility() {
+        Animate {
+            self.composerView.leadingContainer.isHidden = self.content.isVoiceRecording
+        }
+    }
+
+    open func updateCommandSuggestions() {
+        if isCommandsEnabled, let typingCommand = typingCommand(in: composerView.inputMessageView.textView) {
+            showCommandSuggestions(for: typingCommand)
+            return
+        }
+    }
+
+    open func updateMentionSuggestions() {
+        if isMentionsEnabled, let (typingMention, mentionRange) = typingMention(in: composerView.inputMessageView.textView) {
+            userMentionsDebouncer.execute { [weak self] in
+                self?.showMentionSuggestions(for: typingMention, mentionRange: mentionRange)
+            }
+            return
+        }
+    }
+
+    open func updatePlaceholderLabel() {
+        guard isSendMessageEnabled else {
+            composerView.inputMessageView.textView.placeholderLabel.text = L10n.Composer.Placeholder.messageDisabled
+            return
+        }
+
+        composerView.inputMessageView.textView.placeholderLabel.text = content.isSlowModeOn
+            ? L10n.Composer.Placeholder.slowMode
+            : L10n.Composer.Placeholder.message
+    }
+
+    open func updateConfirmButtonVisibility() {
+        guard isSendMessageEnabled else {
+            composerView.confirmButton.isHidden = true
+            return
+        }
+        
+        Animate {
+            self.composerView.confirmButton.isHidden = self.content.state != .edit
+        }
+    }
+
+    open func updateSendButtonVisibility() {
+        Animate {
+            switch self.content.state {
+            case .new, .quote:
+                self.composerView.sendButton.isHidden = self.content.isSlowModeOn
+            case .edit, .recording, .recordingLocked:
+                self.composerView.sendButton.isHidden = true
+            default:
+                break
+            }
+        }
+    }
+
+    open func updateHeaderViewVisibility() {
+        Animate {
+            switch self.content.state {
+            case .new, .recording:
+                self.composerView.headerView.isHidden = true
+            case .edit, .quote, .recordingLocked:
+                self.composerView.headerView.isHidden = false
+            default:
+                break
+            }
+        }
     }
 
     // MARK: - Actions
@@ -1293,15 +1415,7 @@ open class ComposerVC: _ViewController,
     // MARK: - UITextViewDelegate
 
     open func textViewDidChange(_ textView: UITextView) {
-        Animate {
-            let leadingViews = self.composerView.leadingContainer.subviews
-            let isNotShrinkInputButton: (UIView) -> Bool = { $0 !== self.composerView.shrinkInputButton }
-            let isLeadingActionsVisible = leadingViews
-                .filter { isNotShrinkInputButton($0) && self.composerView.shrinkInputButton.isHidden }
-                .filter(\.isHidden).isEmpty
-            self.composerView.shrinkInputButton.isHidden = textView.text.isEmpty || self.content
-                .hasCommand || !isLeadingActionsVisible
-        }
+        updateShrinkButtonVisibility()
 
         // This guard removes the possibility of having a loop when updating the `UITextView`.
         // The aim is that `UITextView.text` is always in sync with `Content.text`.
@@ -1319,6 +1433,19 @@ open class ComposerVC: _ViewController,
     ) -> Bool {
         guard let maxMessageLength = channelConfig?.maxMessageLength else { return true }
         return textView.text.count + (text.count - range.length) <= maxMessageLength
+    }
+
+    open func updateShrinkButtonVisibility() {
+        let textView = composerView.inputMessageView.textView
+        Animate {
+            let leadingViews = self.composerView.leadingContainer.subviews
+            let isNotShrinkInputButton: (UIView) -> Bool = { $0 !== self.composerView.shrinkInputButton }
+            let isLeadingActionsVisible = leadingViews
+                .filter { isNotShrinkInputButton($0) && self.composerView.shrinkInputButton.isHidden }
+                .filter(\.isHidden).isEmpty
+            self.composerView.shrinkInputButton.isHidden = textView.text.isEmpty || self.content
+                .hasCommand || !isLeadingActionsVisible
+        }
     }
 
     // MARK: - UIImagePickerControllerDelegate
