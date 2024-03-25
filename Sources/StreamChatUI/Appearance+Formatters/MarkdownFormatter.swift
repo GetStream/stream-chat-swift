@@ -75,31 +75,31 @@ open class DefaultMarkdownFormatter: MarkdownFormatter {
 /// Configures the font style properties for base Markdown elements
 public struct MarkdownStyles {
     
-    /// This is the base font style and will be used for e.g. headers if no other style override it
+    /// The regular paragraph font.
     public var bodyFont: MarkdownFont = .init()
     
-    /// Code style font: `...`
+    /// The font used for coding blocks in markdown text.
     public var codeFont: MarkdownFont = .init()
     
-    /// Link style font: [...](...)
+    /// /// The font used for links found in markdown text.
     public var linkFont: MarkdownFont = .init()
     
-    /// H1 style font: # ...
+    /// The font used for H1 headers in markdown text.
     public var h1Font: MarkdownFont = .init()
     
-    /// H2 style font: ## ...
+    /// The font used for H2 headers in markdown text.
     public var h2Font: MarkdownFont = .init()
     
-    /// H3 style font: ### ...
+    /// The font used for H3 headers in markdown text.
     public var h3Font: MarkdownFont = .init()
     
-    /// H4 style font: #### ...
+    /// The font used for H4 headers in markdown text.
     public var h4Font: MarkdownFont = .init()
     
-    /// H5 style font: ##### ...
+    /// The font used for H5 headers in markdown text.
     public var h5Font: MarkdownFont = .init()
     
-    /// H6 style font: ###### ...
+    /// The font used for H6 headers in markdown text.
     public var h6Font: MarkdownFont = .init()
 
     public init() {
