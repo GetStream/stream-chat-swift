@@ -60,5 +60,16 @@ extension StreamChatWrapper {
         Components.default.messageActionsVC = DemoChatMessageActionsVC.self
         Components.default.reactionsSorting = { $0.type.position < $1.type.position }
         Components.default.messageLayoutOptionsResolver = DemoChatMessageLayoutOptionsResolver()
+        
+        // Customize MarkdownFormatter
+        let defaultFormatter = DefaultMarkdownFormatter()
+        defaultFormatter.styles.codeFont.color = .systemPurple
+        defaultFormatter.styles.h1Font.color = .systemBlue
+        defaultFormatter.styles.h2Font.color = .systemRed
+        defaultFormatter.styles.h3Font.color = .systemYellow
+        defaultFormatter.styles.h4Font.color = .systemGreen
+        defaultFormatter.styles.h5Font.color = .systemOrange
+        defaultFormatter.styles.h6Font.color = .systemPink
+        Appearance.default.formatters.markdownFormatter = defaultFormatter
     }
 }

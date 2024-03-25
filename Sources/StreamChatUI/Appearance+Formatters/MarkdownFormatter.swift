@@ -63,13 +63,15 @@ open class DefaultMarkdownFormatter: MarkdownFormatter {
         if let fontSize = font.size {
             swiftyMarkdownFont.fontSize = fontSize
         }
+        if let fontColor = font.color {
+            swiftyMarkdownFont.color = fontColor
+        }
         if let fontStyle = font.styling?.asSwiftyMarkdownFontStyle() {
             swiftyMarkdownFont.fontStyle = fontStyle
         }
     }
 }
 
-// TODO: Should we put this inside the DefaultFormatter?
 public struct MarkdownStyles {
     public var bodyFont: MarkdownFont = .init()
     public var codeFont: MarkdownFont = .init()
@@ -87,13 +89,15 @@ public struct MarkdownStyles {
 }
 
 public struct MarkdownFont {
-    var name: String?
-    var size: Double?
-    var styling: MarkdownFontStyle?
+    public var name: String?
+    public var size: Double?
+    public var color: UIColor?
+    public var styling: MarkdownFontStyle?
 
     public init() {
         name = nil
         size = nil
+        color = nil
         styling = nil
     }
 }
