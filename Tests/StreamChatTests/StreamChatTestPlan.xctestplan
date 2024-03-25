@@ -22,7 +22,9 @@
       {
         "argument" : "-com.apple.CoreData.ConcurrencyDebug 1"
       }
-    ]
+    ],
+    "defaultTestExecutionTimeAllowance" : 60,
+    "testTimeoutsEnabled" : true
   },
   "testTargets" : [
     {
