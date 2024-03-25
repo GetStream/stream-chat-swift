@@ -11,9 +11,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Expose `notificationsMuted` in `ChatChannelMember` [#3111](https://github.com/GetStream/stream-chat-swift/pull/3111)
 ### 🐞 Fixed
 - Fix saving reaction counts for messages [#3109](https://github.com/GetStream/stream-chat-swift/pull/3109)
+### 🔄 Changed
+- Deprecates `ChatClientConfig.maxAttachmentSize` in favour of defining the value from Stream's Dashboard [#3105](https://github.com/GetStream/stream-chat-swift/pull/3105)
 
 ## StreamChatUI
 ### ✅ Added
+- Validates file size limit per attachment type defined in Stream's Dashboard [#3105](https://github.com/GetStream/stream-chat-swift/pull/3105)
 - Make it easier to customize `ComposerVC.updateContent()` [#3112](https://github.com/GetStream/stream-chat-swift/pull/3112)
 ### 🐞 Fixed
 - Fix support for markdown ordered list with all numbers [#3090](https://github.com/GetStream/stream-chat-swift/pull/3090)

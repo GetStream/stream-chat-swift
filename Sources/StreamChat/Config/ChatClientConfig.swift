@@ -127,6 +127,7 @@ public struct ChatClientConfig {
     /// Returns max possible attachment size in bytes.
     /// By default the value is taken from `CDNClient.maxAttachmentSize` type.
     /// But it can be overridden by setting a value here.
+    @available(*, deprecated, message: "The max attachment size can now be set from the Stream's Dashboard App Settings. It supports setting a size limit per attachment type.")
     public var maxAttachmentSize: Int64 {
         // TODO: For v5 the maxAttachmentSize should be responsibility of the UI SDK.
         // Since this is not even used in the StreamChat LLC SDK.
