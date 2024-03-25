@@ -681,7 +681,7 @@ public final class Chat {
     ///   - limit: The limit for the page size. The default limit is 25.
     ///
     /// - Throws: An error while communicating with the Stream API.
-    public func loadReplies(of messageId: MessageId, before replyId: MessageId, limit: Int? = nil) async throws {
+    public func loadReplies(of messageId: MessageId, before replyId: MessageId? = nil, limit: Int? = nil) async throws {
         let messageState = try await makeMessageState(for: messageId)
         return try await messageUpdater.loadReplies(of: messageId, before: replyId, limit: limit, cid: cid, paginationStateHandler: messageState.replyPaginationHandler)
     }
@@ -694,7 +694,7 @@ public final class Chat {
     ///   - limit: The limit for the page size. The default limit is 25.
     ///
     /// - Throws: An error while communicating with the Stream API.
-    public func loadReplies(of messageId: MessageId, after replyId: MessageId, limit: Int? = nil) async throws {
+    public func loadReplies(of messageId: MessageId, after replyId: MessageId? = nil, limit: Int? = nil) async throws {
         let messageState = try await makeMessageState(for: messageId)
         return try await messageUpdater.loadReplies(of: messageId, after: replyId, limit: limit, cid: cid, paginationStateHandler: messageState.replyPaginationHandler)
     }
