@@ -40,6 +40,9 @@ class SyncRepository {
     let activeChannelListControllers: ThreadSafeWeakCollection<ChatChannelListController>
     let offlineRequestsRepository: OfflineRequestsRepository
     let eventNotificationCenter: EventNotificationCenter
+    
+    private var _activeChannelListQueryProviders = [() -> ChannelListQuery?]()
+    private let syncQueue = DispatchQueue(label: "io.getstream.sync-repository-queue")
 
     private lazy var operationQueue: OperationQueue = {
         let operationQueue = OperationQueue()
@@ -71,6 +74,22 @@ class SyncRepository {
     deinit {
         cancelRecoveryFlow()
     }
+    
+    // MARK: - Tracking Active
+    
+    func trackChannelListQuery(_ provider: @escaping () -> ChannelListQuery?) {
+        syncQueue.sync {
+            _activeChannelListQueryProviders.append(provider)
+        }
+    }
+    
+    func removeAllTracked() {
+        syncQueue.sync {
+            _activeChannelListQueryProviders.removeAll()
+        }
+    }
+    
+    // MARK: -
 
     func syncLocalState(completion: @escaping () -> Void) {
         cancelRecoveryFlow()
@@ -137,11 +156,20 @@ class SyncRepository {
                 )
             }
         operations.append(contentsOf: refetchChannelListQueryOperations)
-        let channelListRegistry = ChannelListRegistry()
-        NotificationCenter.default.post(Notification(name: .syncRepositoryChannelListQueryRegistration, object: channelListRegistry))
-        operations.append(contentsOf: channelListRegistry.registeredChannelListQueries.map { query in
-            RefetchChannelListQueryOperation(query: query, channelListUpdater: channelListUpdater, context: context)
-        })
+        
+        let channelListQueries = syncQueue.sync {
+            var queries = _activeChannelListQueryProviders.compactMap { $0() }
+            _activeChannelListQueryProviders.removeAll()
+            return queries
+        }
+        operations.append(contentsOf: channelListQueries
+            .map { channelListQuery in
+                RefetchChannelListQueryOperation(
+                    query: channelListQuery,
+                    channelListUpdater: channelListUpdater,
+                    context: context
+                )
+            })
 
         // 4. Clean up unwanted channels
         operations.append(DeleteUnwantedChannelsOperation(database: database, context: context))
@@ -344,28 +372,4 @@ private extension Date {
     var numberOfDaysUntilNow: Int {
         Calendar.current.dateComponents([.day], from: self, to: Date()).day ?? 0
     }
-}
-
-extension SyncRepository {
-    final class ChannelListRegistry {
-        private var channelListQueries = [ChannelListQuery]()
-        private let queue = DispatchQueue(label: "io.getstream.sync-repository.channel-list-registry")
-        
-        var registeredChannelListQueries: [ChannelListQuery] {
-            queue.sync {
-                channelListQueries
-            }
-        }
-        
-        func register(query: ChannelListQuery) {
-            queue.sync {
-                channelListQueries.append(query)
-            }
-        }
-    }
-}
-
-extension Notification.Name {
-    /// A notification which contains ``ChannelListRegistry`` as the notification's object.
-    static let syncRepositoryChannelListQueryRegistration = Notification.Name("io.getstream.StreamChat.channelListQueryRegistration")
 }

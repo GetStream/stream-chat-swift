@@ -8,6 +8,7 @@ import Foundation
 @available(iOS 13.0, *)
 public final class ChannelListState: ObservableObject {
     private let observer: Observer
+    let query: ChannelListQuery
     
     init(
         channels: [ChatChannel],
@@ -19,6 +20,7 @@ public final class ChannelListState: ObservableObject {
         eventNotificationCenter: EventNotificationCenter
     ) {
         self.channels = StreamCollection<ChatChannel>(channels)
+        self.query = query
         observer = Observer(
             query: query,
             dynamicFilter: dynamicFilter,
