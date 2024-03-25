@@ -18,7 +18,7 @@ public final class MessageState: ObservableObject {
         self.message = message
         self.messageOrder = messageOrder
         self.replyPaginationHandler = replyPaginationHandler
-        observer = Observer(messageId: message.id, database: database)
+        observer = Observer(messageId: message.id, messageOrder: messageOrder, database: database)
         observer.start(
             with: .init(
                 messageDidChange: { [weak self] in await self?.setValue($0, for: \.message) },
