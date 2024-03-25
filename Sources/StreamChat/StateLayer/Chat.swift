@@ -2,6 +2,7 @@
 // Copyright © 2024 Stream.io Inc. All rights reserved.
 //
 
+import Combine
 import Foundation
 
 /// An object which represents a `ChatChannel`.
@@ -12,6 +13,7 @@ public final class Chat {
     private let channelUpdater: ChannelUpdater
     private let databaseContainer: DatabaseContainer
     private let eventNotificationCenter: EventNotificationCenter
+    private let eventSender: EventSender
     private let memberUpdater: ChannelMemberUpdater
     private let messageEditor: MessageEditor
     private let messageSender: MessageSender
@@ -51,6 +53,10 @@ public final class Chat {
             client: client
         )
         memberUpdater = environment.memberUpdaterBuilder(
+            client.databaseContainer,
+            client.apiClient
+        )
+        eventSender = environment.eventSenderBuilder(
             client.databaseContainer,
             client.apiClient
         )
@@ -943,6 +949,52 @@ public final class Chat {
         try await channelUpdater.stopWatching(cid: cid)
     }
     
+    /// Subscribes to web-socket events of a single type which is a channel specific event in this channel.
+    ///
+    /// - Note: The handler is always called on the main thread.
+    /// - Important: Subscribing to events not related to this channel, like ``ConnectionStatusUpdated``, does not trigger the handler.
+    /// - SeeAlso: ``ChatClient.subscribe(toEvent:handler:)`` for subscribing to client events.
+    ///
+    /// - Parameters:
+    ///   - event: The event type to subscribe to (e.g. ``MessageNewEvent``).
+    ///   - handler: The handler closure which is called when the event happens.
+    ///
+    /// - Returns: A cancellable instance, which you use when you end the subscription. Deallocation of the result will tear down the subscription stream.
+    public func subscribe<E>(toEvent event: E.Type, handler: @escaping (E) -> Void) -> AnyCancellable where E: Event {
+        eventNotificationCenter.subscribe(
+            to: event,
+            filter: { [cid] in
+                EventNotificationCenter.channelFilter(cid: cid, event: $0)
+            },
+            handler: handler
+        )
+    }
+    
+    /// Subscribes to all the web-socket events of this channel.
+    ///
+    /// - SeeAlso: ``ChatClient.subscribe(handler:)`` for subscribing to client events.
+    ///
+    /// - Parameter handler: The handler closure which is called when the event happens.
+    ///
+    /// - Returns: A cancellable instance, which you use when you end the subscription. Deallocation of the result will tear down the subscription stream.
+    public func subscribe(_ handler: @escaping (Event) -> Void) -> AnyCancellable {
+        eventNotificationCenter.subscribe(
+            filter: { [cid] in
+                EventNotificationCenter.channelFilter(cid: cid, event: $0)
+            },
+            handler: handler
+        )
+    }
+    
+    /// Sends a custom event to the channel.
+    ///
+    /// Please refer to [Custom Events](https://getstream.io/chat/docs/ios-swift/custom_events/?language=swift) for additional details.
+    ///
+    /// - Parameter payload: The custom event payload to be sent.
+    public func sendEvent<EventPayload>(_ payload: EventPayload) async throws where EventPayload: CustomEventPayload {
+        try await eventSender.sendEvent(payload, to: cid)
+    }
+    
     // MARK: -
     
     /// Loads watchers for the specified pagination parameters and updates ``ChatState/watchers``.
@@ -983,12 +1035,17 @@ extension Chat {
             _ eventNotificationCenter: EventNotificationCenter,
             _ paginationState: MessagesPaginationState
         ) -> ChatState = ChatState.init
+
+        var eventSenderBuilder: (
+            _ database: DatabaseContainer,
+            _ apiClient: APIClient
+        ) -> EventSender = EventSender.init
         
         var memberUpdaterBuilder: (
             _ database: DatabaseContainer,
             _ apiClient: APIClient
         ) -> ChannelMemberUpdater = ChannelMemberUpdater.init
-        
+
         var messageUpdaterBuilder: (
             _ isLocalStorageEnabled: Bool,
             _ messageRepository: MessageRepository,
