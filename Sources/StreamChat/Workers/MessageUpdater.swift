@@ -633,27 +633,28 @@ class MessageUpdater: Worker {
                 completion?(nil)
                 return
             }
-
-            let endpoint: Endpoint<MessagePayload.Boxed> = .dispatchEphemeralMessageAction(
-                cid: cid,
-                messageId: messageId,
-                action: action
-            )
-
-            self.apiClient.request(endpoint: endpoint) {
-                switch $0 {
-                case let .success(payload):
-                    self.database.write({ session in
-                        try session.saveMessage(payload: payload.message, for: cid, syncOwnReactions: true, cache: nil)
-                    }, completion: { error in
+        }, completion: { error in
+            if let error {
+                completion?(error)
+            } else {
+                let endpoint: Endpoint<MessagePayload.Boxed> = .dispatchEphemeralMessageAction(
+                    cid: cid,
+                    messageId: messageId,
+                    action: action
+                )
+                self.apiClient.request(endpoint: endpoint) {
+                    switch $0 {
+                    case let .success(payload):
+                        self.database.write({ session in
+                            try session.saveMessage(payload: payload.message, for: cid, syncOwnReactions: true, cache: nil)
+                        }, completion: { error in
+                            completion?(error)
+                        })
+                    case let .failure(error):
                         completion?(error)
-                    })
-                case let .failure(error):
-                    completion?(error)
+                    }
                 }
             }
-        }, completion: { error in
-            completion?(error)
         })
     }
 
@@ -803,6 +804,46 @@ extension MessageUpdater {
         try await withCheckedThrowingContinuation { continuation in
             clearSearchResults(for: query) { error in
                 continuation.resume(with: error)
+            }
+        }
+    }
+    
+    func createNewReply(
+        in cid: ChannelId,
+        messageId: MessageId?,
+        text: String,
+        pinning: MessagePinning?,
+        command: String?,
+        arguments: String?,
+        parentMessageId: MessageId,
+        attachments: [AnyAttachmentPayload],
+        mentionedUserIds: [UserId],
+        showReplyInChannel: Bool,
+        isSilent: Bool,
+        quotedMessageId: MessageId?,
+        skipPush: Bool,
+        skipEnrichUrl: Bool,
+        extraData: [String: RawJSON]
+    ) async throws -> ChatMessage {
+        try await withCheckedThrowingContinuation { continuation in
+            createNewReply(
+                in: cid,
+                messageId: messageId,
+                text: text,
+                pinning: pinning,
+                command: command,
+                arguments: arguments,
+                parentMessageId: parentMessageId,
+                attachments: attachments,
+                mentionedUserIds: mentionedUserIds,
+                showReplyInChannel: showReplyInChannel,
+                isSilent: isSilent,
+                quotedMessageId: quotedMessageId,
+                skipPush: skipPush,
+                skipEnrichUrl: skipEnrichUrl,
+                extraData: extraData
+            ) { result in
+                continuation.resume(with: result)
             }
         }
     }
