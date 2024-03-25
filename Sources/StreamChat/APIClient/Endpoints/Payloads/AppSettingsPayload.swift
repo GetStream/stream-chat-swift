@@ -21,6 +21,7 @@ struct AppSettingsPayload: Decodable {
         let blockedFileExtensions: [String]
         let allowedMimeTypes: [String]
         let blockedMimeTypes: [String]
+        let sizeLimit: Int64?
     }
 }
 
@@ -48,5 +49,6 @@ extension AppSettingsPayload.UploadConfigPayload {
         case blockedFileExtensions = "blocked_file_extensions"
         case allowedMimeTypes = "allowed_mime_types"
         case blockedMimeTypes = "blocked_mime_types"
+        case sizeLimit = "size_limit"
     }
 }

@@ -967,6 +967,55 @@ final class ComposerVC_Tests: XCTestCase {
         XCTAssertEqual(composerVC.dismissLinkPreviewCallCount, 0)
     }
 
+    // MARK: - maxAttachmentSize
+
+    func test_maxAttachmentSize_whenChannelControllerNotSet_thenReturnsDefaultFallbackLimit() {
+        composerVC.channelController = nil
+        XCTAssertEqual(composerVC.maxAttachmentSize(for: .file), AttachmentValidationError.fileSizeMaxLimitFallback)
+    }
+
+    func test_maxAttachmentSize_whenImageType_thenReturnsLimitFromImageUploadConfig() {
+        let expectedValue: Int64 = 50 * 1024 * 1024
+        let chatClient = ChatClient_Mock.mock
+        chatClient.mockedAppSettings = .mock(imageUploadConfig: .mock(
+            sizeLimitInBytes: expectedValue
+        ))
+        composerVC.channelController = ChatChannelController_Mock.mock(chatClient: chatClient)
+
+        XCTAssertEqual(composerVC.maxAttachmentSize(for: .image), expectedValue)
+    }
+
+    func test_maxAttachmentSize_whenFileType_thenReturnsLimitFromFileUploadConfig() {
+        let expectedValue: Int64 = 50 * 1024 * 1024
+        let chatClient = ChatClient_Mock.mock
+        chatClient.mockedAppSettings = .mock(fileUploadConfig: .mock(
+            sizeLimitInBytes: expectedValue
+        ))
+        composerVC.channelController = ChatChannelController_Mock.mock(chatClient: chatClient)
+
+        XCTAssertEqual(composerVC.maxAttachmentSize(for: .file), expectedValue)
+    }
+
+    func test_maxAttachmentSize_whenOtherType_thenReturnsLimitFromFileUploadConfig() {
+        let expectedValue: Int64 = 50 * 1024 * 1024
+        let chatClient = ChatClient_Mock.mock
+        chatClient.mockedAppSettings = .mock(fileUploadConfig: .mock(
+            sizeLimitInBytes: expectedValue
+        ))
+        composerVC.channelController = ChatChannelController_Mock.mock(chatClient: chatClient)
+
+        XCTAssertEqual(composerVC.maxAttachmentSize(for: .video), expectedValue)
+    }
+
+    func test_maxAttachmentSize_whenSizeLimitNotDefined_thenReturnsLimitFromChatClientConfig() {
+        let expectedValue: Int64 = 50 * 1024 * 1024
+        var config = ChatClientConfig(apiKeyString: "sadsad")
+        config.maxAttachmentSize = expectedValue
+        composerVC.channelController = ChatChannelController_Mock.mock(chatClientConfig: config)
+
+        XCTAssertEqual(composerVC.maxAttachmentSize(for: .image), expectedValue)
+    }
+
     // MARK: - audioPlayer
     
     func test_audioPlayer_voiceRecordingAndAttachmentsVCGetTheSameInstance() {
