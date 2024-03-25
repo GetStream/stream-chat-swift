@@ -630,6 +630,7 @@ public final class Chat {
         skipEnrichURL: Bool = false,
         messageId: MessageId? = nil
     ) async throws -> ChatMessage {
+        let messageSender = try client.backgroundWorker(of: MessageSender.self)
         let message = try await messageUpdater.createNewReply(
             in: cid,
             messageId: messageId,

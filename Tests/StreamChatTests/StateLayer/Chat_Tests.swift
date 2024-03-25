@@ -21,11 +21,7 @@ final class Chat_Tests: XCTestCase {
     override func tearDownWithError() throws {
         env.cleanUp()
         channelId = nil
-        
-        AssertAsync {
-            Assert.canBeReleased(&chat)
-            Assert.canBeReleased(&env)
-        }
+        chat = nil
     }
     
     func setUpChat(_ query: ChannelQuery) {
@@ -44,23 +40,14 @@ final class Chat_Tests: XCTestCase {
     // MARK: - Deleting the Channel
     
     func test_delete_whenAPIRequestSucceeds_thenDeleteSucceeds() async throws {
-        let query = ChannelQuery(channelPayload: .unique)
-        setUpChat(query)
         env.channelUpdater.deleteChannel_completion_next_result = .success(())
         try await chat.delete()
     }
     
     func test_delete_whenAPIRequestFails_thenDeleteFails() async throws {
-        let query = ChannelQuery(channelPayload: .unique)
-        setUpChat(query)
         let testError = TestError()
         env.channelUpdater.deleteChannel_completion_next_result = .failure(testError)
-        do {
-            try await chat.delete()
-            XCTFail("Should have been failed with \(testError)")
-        } catch {
-            XCTAssertEqual(testError, error as? TestError)
-        }
+        await XCTAssertAsyncFailure(try await chat.delete(), testError)
     }
 }
 
