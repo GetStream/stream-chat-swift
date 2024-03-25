@@ -464,6 +464,7 @@ public class ChatClient {
         // Stop tracking active components
         activeChannelControllers.removeAllObjects()
         activeChannelListControllers.removeAllObjects()
+        syncRepository.removeAllTracked()
 
         let group = DispatchGroup()
         group.enter()
