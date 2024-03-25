@@ -26,6 +26,7 @@ final class ChannelUpdater_Mock: ChannelUpdater {
 
     @Atomic var deleteChannel_cid: ChannelId?
     @Atomic var deleteChannel_completion: ((Error?) -> Void)?
+    @Atomic var deleteChannel_completion_next_result: Result<Void, Error>?
 
     @Atomic var truncateChannel_cid: ChannelId?
     @Atomic var truncateChannel_completion: ((Error?) -> Void)?
@@ -133,6 +134,7 @@ final class ChannelUpdater_Mock: ChannelUpdater {
 
         deleteChannel_cid = nil
         deleteChannel_completion = nil
+        deleteChannel_completion_next_result = nil
 
         truncateChannel_cid = nil
         truncateChannel_completion = nil
@@ -250,6 +252,12 @@ final class ChannelUpdater_Mock: ChannelUpdater {
     override func deleteChannel(cid: ChannelId, completion: ((Error?) -> Void)? = nil) {
         deleteChannel_cid = cid
         deleteChannel_completion = completion
+        if let result = deleteChannel_completion_next_result {
+            switch result {
+            case .success: completion?(nil)
+            case .failure(let error): completion?(error)
+            }
+        }
     }
 
     override func truncateChannel(
