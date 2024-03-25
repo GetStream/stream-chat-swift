@@ -72,6 +72,7 @@ open class DefaultMarkdownFormatter: MarkdownFormatter {
     }
 }
 
+/// Configures the font style properties for base Markdown elements
 public struct MarkdownStyles {
     public var bodyFont: MarkdownFont = .init()
     public var codeFont: MarkdownFont = .init()
