@@ -2,6 +2,7 @@
 // Copyright © 2024 Stream.io Inc. All rights reserved.
 //
 
+import Combine
 import CoreData
 import Foundation
 
@@ -495,7 +496,47 @@ public class ChatClient {
         }
     }
     
-    // MARK: - Internal
+    // MARK: - Listening for Client Events
+    
+    /// Subscribes to web-socket events of the specified event type.
+    ///
+    /// - Note: The handler is always called on the main thread.
+    ///
+    /// An example of observing connection status changes:
+    /// ```swift
+    /// client.subscribe(toEvent: ConnectionStatusUpdated.self) { connectionEvent in
+    ///     switch connectionEvent.connectionStatus {
+    ///         case .connected:
+    ///           …
+    ///     }
+    /// }
+    /// ```
+    ///
+    /// - SeeAlso: ``Chat.subscribe(toEvent:handler:)`` for subscribing to channel specific events.
+    ///
+    /// - Parameters:
+    ///   - event: The event type to subscribe to (e.g. ``ConnectionStatusUpdated``).
+    ///   - handler: The handler closure which is called when the event happens.
+    ///
+    /// - Returns: A cancellable instance, which you use when you end the subscription. Deallocation of the result will tear down the subscription stream.
+    @available(iOS 13.0, *)
+    public func subscribe<E>(toEvent event: E.Type, handler: @escaping (E) -> Void) -> AnyCancellable where E: Event {
+        eventNotificationCenter.subscribe(to: E.self, handler: handler)
+    }
+
+    /// Subscribes to all the web-socket events.
+    ///
+    /// - SeeAlso: ``Chat.subscribe(handler:)`` for subscribing to channel specific events.
+    ///
+    /// - Parameter handler: The handler closure which is called when the event happens.
+    ///
+    /// - Returns: A cancellable instance, which you use when you end the subscription. Deallocation of the result will tear down the subscription stream.
+    @available(iOS 13.0, *)
+    public func subscribe(_ handler: @escaping (Event) -> Void) -> AnyCancellable {
+        eventNotificationCenter.subscribe(handler: handler)
+    }
+    
+    // MARK: -
 
     /// Fetches the app settings and updates the `ChatClient.appSettings`.
     /// - Parameter completion: The completion block once the app settings has finished fetching.
@@ -513,6 +554,8 @@ public class ChatClient {
             }
         }
     }
+
+    // MARK: - Internal
 
     func createBackgroundWorkers() {
         guard config.isClientInActiveMode else { return }
