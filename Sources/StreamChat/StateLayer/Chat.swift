@@ -953,14 +953,14 @@ public final class Chat {
     ///
     /// - Note: The handler is always called on the main thread.
     /// - Important: Subscribing to events not related to this channel, like ``ConnectionStatusUpdated``, does not trigger the handler.
-    /// - SeeAlso: ``ChatClient.subscribe(to:handler:)`` for subscribing to client events.
+    /// - SeeAlso: ``ChatClient.subscribe(toEvent:handler:)`` for subscribing to client events.
     ///
     /// - Parameters:
     ///   - event: The event type to subscribe to (e.g. ``MessageNewEvent``).
     ///   - handler: The handler closure which is called when the event happens.
     ///
     /// - Returns: A cancellable instance, which you use when you end the subscription. Deallocation of the result will tear down the subscription stream.
-    public func subscribe<E>(to event: E.Type, handler: @escaping (E) -> Void) -> AnyCancellable where E: Event {
+    public func subscribe<E>(toEvent event: E.Type, handler: @escaping (E) -> Void) -> AnyCancellable where E: Event {
         eventNotificationCenter.subscribe(
             to: event,
             filter: { [cid] in

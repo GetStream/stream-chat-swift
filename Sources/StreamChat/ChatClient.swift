@@ -504,7 +504,7 @@ public class ChatClient {
     ///
     /// An example of observing connection status changes:
     /// ```swift
-    /// client.subscribe(to: ConnectionStatusUpdated.self) { connectionEvent in
+    /// client.subscribe(toEvent: ConnectionStatusUpdated.self) { connectionEvent in
     ///     switch connectionEvent.connectionStatus {
     ///         case .connected:
     ///           …
@@ -512,7 +512,7 @@ public class ChatClient {
     /// }
     /// ```
     ///
-    /// - SeeAlso: ``Chat.subscribe(to:handler:)`` for subscribing to channel specific events.
+    /// - SeeAlso: ``Chat.subscribe(toEvent:handler:)`` for subscribing to channel specific events.
     ///
     /// - Parameters:
     ///   - event: The event type to subscribe to (e.g. ``ConnectionStatusUpdated``).
@@ -520,7 +520,7 @@ public class ChatClient {
     ///
     /// - Returns: A cancellable instance, which you use when you end the subscription. Deallocation of the result will tear down the subscription stream.
     @available(iOS 13.0, *)
-    public func subscribe<E>(to event: E.Type, handler: @escaping (E) -> Void) -> AnyCancellable where E: Event {
+    public func subscribe<E>(toEvent event: E.Type, handler: @escaping (E) -> Void) -> AnyCancellable where E: Event {
         eventNotificationCenter.subscribe(to: E.self, handler: handler)
     }
 
