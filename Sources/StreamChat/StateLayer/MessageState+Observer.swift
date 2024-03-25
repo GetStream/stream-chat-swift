@@ -11,7 +11,7 @@ extension MessageState {
         private let messageObserver: BackgroundEntityDatabaseObserver<ChatMessage, MessageDTO>
         private let repliesObserver: BackgroundListDatabaseObserver<ChatMessage, MessageDTO>
         
-        init(messageId: MessageId, database: DatabaseContainer) {
+        init(messageId: MessageId, messageOrder: MessageOrdering, database: DatabaseContainer) {
             self.messageId = messageId
             let context = database.backgroundReadOnlyContext
             messageObserver = BackgroundEntityDatabaseObserver(
@@ -24,7 +24,7 @@ extension MessageState {
                 fetchRequest: MessageDTO.repliesFetchRequest(
                     for: messageId,
                     pageSize: .messagesPageSize,
-                    sortAscending: true,
+                    sortAscending: messageOrder.isAscending,
                     deletedMessagesVisibility: context.deletedMessagesVisibility ?? .visibleForCurrentUser,
                     shouldShowShadowedMessages: context.shouldShowShadowedMessages ?? false
                 ),
