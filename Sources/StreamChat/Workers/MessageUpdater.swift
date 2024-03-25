@@ -633,27 +633,28 @@ class MessageUpdater: Worker {
                 completion?(nil)
                 return
             }
-
-            let endpoint: Endpoint<MessagePayload.Boxed> = .dispatchEphemeralMessageAction(
-                cid: cid,
-                messageId: messageId,
-                action: action
-            )
-
-            self.apiClient.request(endpoint: endpoint) {
-                switch $0 {
-                case let .success(payload):
-                    self.database.write({ session in
-                        try session.saveMessage(payload: payload.message, for: cid, syncOwnReactions: true, cache: nil)
-                    }, completion: { error in
+        }, completion: { error in
+            if let error {
+                completion?(error)
+            } else {
+                let endpoint: Endpoint<MessagePayload.Boxed> = .dispatchEphemeralMessageAction(
+                    cid: cid,
+                    messageId: messageId,
+                    action: action
+                )
+                self.apiClient.request(endpoint: endpoint) {
+                    switch $0 {
+                    case let .success(payload):
+                        self.database.write({ session in
+                            try session.saveMessage(payload: payload.message, for: cid, syncOwnReactions: true, cache: nil)
+                        }, completion: { error in
+                            completion?(error)
+                        })
+                    case let .failure(error):
                         completion?(error)
-                    })
-                case let .failure(error):
-                    completion?(error)
+                    }
                 }
             }
-        }, completion: { error in
-            completion?(error)
         })
     }
 
