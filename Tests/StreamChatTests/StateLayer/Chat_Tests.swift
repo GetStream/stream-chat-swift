@@ -49,6 +49,19 @@ final class Chat_Tests: XCTestCase {
         env.channelUpdater.deleteChannel_completion_next_result = .success(())
         try await chat.delete()
     }
+    
+    func test_delete_whenAPIRequestFails_thenDeleteFails() async throws {
+        let query = ChannelQuery(channelPayload: .unique)
+        setUpChat(query)
+        let testError = TestError()
+        env.channelUpdater.deleteChannel_completion_next_result = .failure(testError)
+        do {
+            try await chat.delete()
+            XCTFail("Should have been failed with \(testError)")
+        } catch {
+            XCTAssertEqual(testError, error as? TestError)
+        }
+    }
 }
 
 @available(iOS 13.0, *)
