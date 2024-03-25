@@ -807,6 +807,46 @@ extension MessageUpdater {
         }
     }
     
+    func createNewReply(
+        in cid: ChannelId,
+        messageId: MessageId?,
+        text: String,
+        pinning: MessagePinning?,
+        command: String?,
+        arguments: String?,
+        parentMessageId: MessageId,
+        attachments: [AnyAttachmentPayload],
+        mentionedUserIds: [UserId],
+        showReplyInChannel: Bool,
+        isSilent: Bool,
+        quotedMessageId: MessageId?,
+        skipPush: Bool,
+        skipEnrichUrl: Bool,
+        extraData: [String: RawJSON]
+    ) async throws -> ChatMessage {
+        try await withCheckedThrowingContinuation { continuation in
+            createNewReply(
+                in: cid,
+                messageId: messageId,
+                text: text,
+                pinning: pinning,
+                command: command,
+                arguments: arguments,
+                parentMessageId: parentMessageId,
+                attachments: attachments,
+                mentionedUserIds: mentionedUserIds,
+                showReplyInChannel: showReplyInChannel,
+                isSilent: isSilent,
+                quotedMessageId: quotedMessageId,
+                skipPush: skipPush,
+                skipEnrichUrl: skipEnrichUrl,
+                extraData: extraData
+            ) { result in
+                continuation.resume(with: result)
+            }
+        }
+    }
+    
     func deleteMessage(messageId: MessageId, hard: Bool) async throws {
         try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
             deleteMessage(messageId: messageId, hard: hard) { error in
