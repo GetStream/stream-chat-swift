@@ -101,6 +101,7 @@ final class ChannelUpdater_Mock: ChannelUpdater {
     @Atomic var freezeChannel_freeze: Bool?
     @Atomic var freezeChannel_cid: ChannelId?
     @Atomic var freezeChannel_completion: ((Error?) -> Void)?
+    @Atomic var freezeChannel_completion_next_result: Result<Void, Error>?
 
     @Atomic var uploadFile_type: AttachmentType?
     @Atomic var uploadFile_localFileURL: URL?
@@ -196,6 +197,7 @@ final class ChannelUpdater_Mock: ChannelUpdater {
         freezeChannel_freeze = nil
         freezeChannel_cid = nil
         freezeChannel_completion = nil
+        freezeChannel_completion_next_result = nil
 
         uploadFile_type = nil
         uploadFile_localFileURL = nil
@@ -252,12 +254,7 @@ final class ChannelUpdater_Mock: ChannelUpdater {
     override func deleteChannel(cid: ChannelId, completion: ((Error?) -> Void)? = nil) {
         deleteChannel_cid = cid
         deleteChannel_completion = completion
-        if let result = deleteChannel_completion_next_result {
-            switch result {
-            case .success: completion?(nil)
-            case .failure(let error): completion?(error)
-            }
-        }
+        deleteChannel_completion_next_result?.invoke(with: completion)
     }
 
     override func truncateChannel(
@@ -409,6 +406,7 @@ final class ChannelUpdater_Mock: ChannelUpdater {
         freezeChannel_freeze = freeze
         freezeChannel_cid = cid
         freezeChannel_completion = completion
+        freezeChannel_completion_next_result?.invoke(with: completion)
     }
 
     override func uploadFile(
@@ -449,5 +447,11 @@ final class ChannelUpdater_Mock: ChannelUpdater {
         enrichUrl_callCount += 1
         enrichUrl_url = url
         enrichUrl_completion = completion
+    }
+}
+
+private extension Result where Success == Void {
+    func invoke(with completion: ((Error?) -> Void)? = nil) {
+        completion?(error)
     }
 }

@@ -49,6 +49,34 @@ final class Chat_Tests: XCTestCase {
         env.channelUpdater.deleteChannel_completion_next_result = .failure(testError)
         await XCTAssertAsyncFailure(try await chat.delete(), testError)
     }
+    
+    // MARK: - Disabling/Freezing the Channel
+    
+    func test_freeze_whenAPIRequestSucceeds_thenFreezeSucceeds() async throws {
+        env.channelUpdater.freezeChannel_completion_next_result = .success(())
+        try await chat.freeze()
+        XCTAssertEqual(channelId, env.channelUpdater.freezeChannel_cid)
+        XCTAssertEqual(true, env.channelUpdater.freezeChannel_freeze)
+    }
+    
+    func test_freeze_whenAPIRequestFails_thenFreezeFails() async throws {
+        let testError = TestError()
+        env.channelUpdater.freezeChannel_completion_next_result = .failure(testError)
+        await XCTAssertAsyncFailure(try await chat.freeze(), testError)
+    }
+    
+    func test_unfreeze_whenAPIRequestSucceeds_thenUnfreezeSucceeds() async throws {
+        env.channelUpdater.freezeChannel_completion_next_result = .success(())
+        try await chat.unfreeze()
+        XCTAssertEqual(channelId, env.channelUpdater.freezeChannel_cid)
+        XCTAssertEqual(false, env.channelUpdater.freezeChannel_freeze)
+    }
+    
+    func test_unfreeze_whenAPIRequestFails_thenUnfreezeFails() async throws {
+        let testError = TestError()
+        env.channelUpdater.freezeChannel_completion_next_result = .failure(testError)
+        await XCTAssertAsyncFailure(try await chat.unfreeze(), testError)
+    }
 }
 
 @available(iOS 13.0, *)
