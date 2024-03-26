@@ -49,13 +49,16 @@ final class ChannelUpdater_Mock: ChannelUpdater {
     @Atomic var inviteMembers_cid: ChannelId?
     @Atomic var inviteMembers_userIds: Set<UserId>?
     @Atomic var inviteMembers_completion: ((Error?) -> Void)?
+    @Atomic var inviteMembers_completion_next_result: Result<Void, Error>?
 
     @Atomic var acceptInvite_cid: ChannelId?
     @Atomic var acceptInvite_message: String?
     @Atomic var acceptInvite_completion: ((Error?) -> Void)?
+    @Atomic var acceptInvite_completion_next_result: Result<Void, Error>?
 
     @Atomic var rejectInvite_cid: ChannelId?
     @Atomic var rejectInvite_completion: ((Error?) -> Void)?
+    @Atomic var rejectInvite_completion_next_result: Result<Void, Error>?
 
     @Atomic var removeMembers_cid: ChannelId?
     @Atomic var removeMembers_userIds: Set<UserId>?
@@ -154,13 +157,16 @@ final class ChannelUpdater_Mock: ChannelUpdater {
         inviteMembers_cid = nil
         inviteMembers_userIds = nil
         inviteMembers_completion = nil
+        inviteMembers_completion_next_result = nil
 
         acceptInvite_cid = nil
         acceptInvite_message = nil
         acceptInvite_completion = nil
+        acceptInvite_completion_next_result = nil
 
         rejectInvite_cid = nil
         rejectInvite_completion = nil
+        rejectInvite_completion_next_result = nil
 
         removeMembers_cid = nil
         removeMembers_userIds = nil
@@ -335,6 +341,7 @@ final class ChannelUpdater_Mock: ChannelUpdater {
         inviteMembers_cid = cid
         inviteMembers_userIds = userIds
         inviteMembers_completion = completion
+        inviteMembers_completion_next_result?.invoke(with: completion)
     }
 
     override func acceptInvite(
@@ -345,6 +352,7 @@ final class ChannelUpdater_Mock: ChannelUpdater {
         acceptInvite_cid = cid
         acceptInvite_message = message
         acceptInvite_completion = completion
+        acceptInvite_completion_next_result?.invoke(with: completion)
     }
 
     override func rejectInvite(
@@ -353,6 +361,7 @@ final class ChannelUpdater_Mock: ChannelUpdater {
     ) {
         rejectInvite_cid = cid
         rejectInvite_completion = completion
+        rejectInvite_completion_next_result?.invoke(with: completion)
     }
 
     override func removeMembers(
