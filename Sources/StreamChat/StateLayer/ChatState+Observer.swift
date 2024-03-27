@@ -19,6 +19,7 @@ extension ChatState {
         init(
             cid: ChannelId,
             channelQuery: ChannelQuery,
+            clientConfig: ChatClientConfig,
             messageOrder: MessageOrdering,
             memberListState: MemberListState,
             database: DatabaseContainer,
@@ -38,8 +39,8 @@ extension ChatState {
                     for: cid,
                     pageSize: channelQuery.pagination?.pageSize ?? .messagesPageSize,
                     sortAscending: messageOrder.isAscending,
-                    deletedMessagesVisibility: context.deletedMessagesVisibility ?? .visibleForCurrentUser,
-                    shouldShowShadowedMessages: context.shouldShowShadowedMessages ?? false
+                    deletedMessagesVisibility: clientConfig.deletedMessagesVisibility,
+                    shouldShowShadowedMessages: clientConfig.shouldShowShadowedMessages
                 ),
                 itemCreator: { try $0.asModel() as ChatMessage },
                 sorting: []

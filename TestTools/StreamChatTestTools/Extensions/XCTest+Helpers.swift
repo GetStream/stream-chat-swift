@@ -316,6 +316,34 @@ public func XCTAssertResultFailure<Value, U: Error, ErrorType: Error>(_ result: 
     }
 }
 
+/// Asserts when the given async throwing function does not throw the expected error.
+///
+/// - Parameters:
+///   - expression: The evaluated async throwing expression.
+///   - expectedError: The instance of the expected error.
+///   - message: An optional description of a failure.
+///   - file: The file where the failure occurs. The default is the filename of the test case where you call this function.
+///   - line: The line number where the failure occurs. The default is the line number where you call this function.
+@available(iOS 13.0, *)
+func XCTAssertAsyncFailure<Failure>(
+    _ expression: @autoclosure () async throws -> Void,
+    _ expectedError: @autoclosure () -> Failure,
+    _ message: @autoclosure () -> String = "",
+    file: StaticString = #filePath,
+    line: UInt = #line
+) async where Failure: Error {
+    do {
+        try await expression()
+        XCTFail("Expected to fail with error \(expectedError())", file: file, line: line)
+    } catch {
+        guard let receivedError = error as? Failure else {
+            XCTFail("Async error: \(error) doesnt match with given error type: \(Failure.self)", file: file, line: line)
+            return
+        }
+        XCTAssertEqual(expectedError(), receivedError, file: file, line: line)
+    }
+}
+
 /// Errors are compared through string reflection
 public extension Error {
     var stringReflection: String {
