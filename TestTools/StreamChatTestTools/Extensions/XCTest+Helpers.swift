@@ -324,6 +324,7 @@ public func XCTAssertResultFailure<Value, U: Error, ErrorType: Error>(_ result: 
 ///   - message: An optional description of a failure.
 ///   - file: The file where the failure occurs. The default is the filename of the test case where you call this function.
 ///   - line: The line number where the failure occurs. The default is the line number where you call this function.
+@available(iOS 13.0, *)
 func XCTAssertAsyncFailure<Failure>(
     _ expression: @autoclosure () async throws -> Void,
     _ expectedError: @autoclosure () -> Failure,
