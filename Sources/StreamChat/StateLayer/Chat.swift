@@ -8,15 +8,12 @@ import Foundation
 /// An object which represents a `ChatChannel`.
 @available(iOS 13.0, *)
 public final class Chat {
-    private let attachmentQueueUploader: AttachmentQueueUploader
     private let authenticationRepository: AuthenticationRepository
     private let channelUpdater: ChannelUpdater
     private let databaseContainer: DatabaseContainer
     private let eventNotificationCenter: EventNotificationCenter
     private let eventSender: EventSender
     private let memberUpdater: ChannelMemberUpdater
-    private let messageEditor: MessageEditor
-    private let messageSender: MessageSender
     private let messageUpdater: MessageUpdater
     private let readStateSender: ReadStateSender
     private let typingEventsSender: TypingEventsSender
@@ -24,9 +21,14 @@ public final class Chat {
     private let memberList: MemberList
     private var messageStates = NSMapTable<NSString, MessageState>(valueOptions: .weakMemory)
     
+    /// The id of the channel represented by the Chat.
     public let cid: ChannelId
+    /// The channel list query the current channel belongs to.
     public let channelListQuery: ChannelListQuery?
+    /// The channel query used for looking up the channel.
     public let channelQuery: ChannelQuery
+    /// The client instance the ``Chat`` was created with.
+    public let client: ChatClient
     
     init(
         cid: ChannelId,
@@ -38,16 +40,14 @@ public final class Chat {
         client: ChatClient,
         environment: Environment = .init()
     ) {
-        attachmentQueueUploader = client.attachmentQueueUploader
         authenticationRepository = client.authenticationRepository
         self.channelQuery = ChannelQuery(cid: cid, channelQuery: channelQuery)
         self.channelListQuery = channelListQuery
         self.cid = cid
         self.channelUpdater = channelUpdater
+        self.client = client
         eventNotificationCenter = client.eventNotificationCenter
         databaseContainer = client.databaseContainer
-        messageEditor = client.messageEditor
-        messageSender = client.messageSender
         memberList = MemberList(
             query: ChannelMemberListQuery(cid: cid, sort: memberSorting),
             client: client
@@ -79,6 +79,7 @@ public final class Chat {
         state = environment.chatStateBuilder(
             cid,
             channelQuery,
+            client.config,
             messageOrdering,
             memberList.state,
             client.authenticationRepository,
@@ -275,6 +276,7 @@ public final class Chat {
     ///
     /// - Throws: An error while sending a message to the Stream API.
     public func resendMessage(_ messageId: MessageId) async throws {
+        let messageEditor = try client.backgroundWorker(of: MessageEditor.self)
         try await messageUpdater.resendMessage(with: messageId)
         try await messageEditor.waitForAPIRequest(messageId: messageId)
     }
@@ -285,6 +287,7 @@ public final class Chat {
     ///
     /// - Throws: An error while sending a message to the Stream API.
     public func resendAttachment(_ attachment: AttachmentId) async throws {
+        let attachmentQueueUploader = try client.backgroundWorker(of: AttachmentQueueUploader.self)
         try await messageUpdater.resendAttachment(with: attachment)
         try await attachmentQueueUploader.waitForAPIRequest(attachmentId: attachment)
     }
@@ -325,6 +328,7 @@ public final class Chat {
         skipEnrichURL: Bool = false,
         messageId: MessageId? = nil
     ) async throws -> ChatMessage {
+        let messageSender = try client.backgroundWorker(of: MessageSender.self)
         let message = try await channelUpdater.createNewMessage(
             in: cid,
             messageId: messageId,
@@ -355,6 +359,7 @@ public final class Chat {
     ///
     /// - Throws: An error while communicating with the Stream API.
     public func updateMessage(_ messageId: MessageId, with text: String, attachments: [AnyAttachmentPayload] = [], extraData: [String: RawJSON]? = nil, skipEnrichURL: Bool = false) async throws {
+        let messageEditor = try client.backgroundWorker(of: MessageEditor.self)
         try await messageUpdater.editMessage(messageId: messageId, text: text, skipEnrichUrl: skipEnrichURL, attachments: attachments, extraData: extraData)
         try await messageEditor.waitForAPIRequest(messageId: messageId)
     }
@@ -478,6 +483,7 @@ public final class Chat {
     ///
     /// - Throws: An error while communicating with the Stream API.
     public func pinMessage(_ messageId: MessageId, pinning: MessagePinning) async throws {
+        let messageEditor = try client.backgroundWorker(of: MessageEditor.self)
         try await messageUpdater.pinMessage(messageId: messageId, pinning: pinning)
         try await messageEditor.waitForAPIRequest(messageId: messageId)
     }
@@ -490,6 +496,7 @@ public final class Chat {
     ///
     /// - Throws: An error while communicating with the Stream API.
     public func unpinMessage(_ messageId: MessageId) async throws {
+        let messageEditor = try client.backgroundWorker(of: MessageEditor.self)
         try await messageUpdater.unpinMessage(messageId: messageId)
         try await messageEditor.waitForAPIRequest(messageId: messageId)
     }
@@ -623,6 +630,7 @@ public final class Chat {
         skipEnrichURL: Bool = false,
         messageId: MessageId? = nil
     ) async throws -> ChatMessage {
+        let messageSender = try client.backgroundWorker(of: MessageSender.self)
         let message = try await messageUpdater.createNewReply(
             in: cid,
             messageId: messageId,
@@ -1089,6 +1097,7 @@ extension Chat {
         var chatStateBuilder: (
             _ cid: ChannelId,
             _ channelQuery: ChannelQuery,
+            _ clientConfig: ChatClientConfig,
             _ messageOrder: MessageOrdering,
             _ memberListState: MemberListState,
             _ authenticationRepository: AuthenticationRepository,
@@ -1130,17 +1139,17 @@ extension Chat {
 
 // MARK: - Chat Client
 
-// TODO: Needs a better solution
 private extension ChatClient {
-    var attachmentQueueUploader: AttachmentQueueUploader {
-        backgroundWorkers.compactMap { $0 as? AttachmentQueueUploader }.first!
-    }
-    
-    var messageEditor: MessageEditor {
-        backgroundWorkers.compactMap { $0 as? MessageEditor }.first!
-    }
-
-    var messageSender: MessageSender {
-        backgroundWorkers.compactMap { $0 as? MessageSender }.first!
+    func backgroundWorker<T>(of type: T.Type) throws -> T {
+        if let worker = backgroundWorkers.compactMap({ $0 as? T }).first {
+            return worker
+        }
+        if currentUserId == nil {
+            throw ClientError.CurrentUserDoesNotExist()
+        }
+        if !config.isClientInActiveMode {
+            throw ClientError.ClientIsNotInActiveMode()
+        }
+        throw ClientError("Background worker of type \(T.self) is not set up")
     }
 }
