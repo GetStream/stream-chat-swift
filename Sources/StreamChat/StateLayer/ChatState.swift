@@ -17,6 +17,7 @@ public final class ChatState: ObservableObject {
     init(
         cid: ChannelId,
         channelQuery: ChannelQuery,
+        clientConfig: ChatClientConfig,
         messageOrder: MessageOrdering,
         memberListState: MemberListState,
         authenticationRepository: AuthenticationRepository,
@@ -32,6 +33,7 @@ public final class ChatState: ObservableObject {
         observer = Observer(
             cid: cid,
             channelQuery: channelQuery,
+            clientConfig: clientConfig,
             messageOrder: messageOrder,
             memberListState: memberListState,
             database: database,
