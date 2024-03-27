@@ -2159,6 +2159,7 @@ final class ChannelController_Tests: XCTestCase {
 
         // Simulate `deleteChannel` call and assert no error is returned
         error = try waitFor { [callbackQueueID] completion in
+            env.channelUpdater?.deleteChannel_completion_result = .success(())
             controller.deleteChannel { error in
                 AssertTestQueue(withId: callbackQueueID)
                 completion(error)
