@@ -775,9 +775,11 @@ public final class Chat {
     ///
     /// - Note: The list of muted channels and their expiration time is returned when the user connects.
     ///
+    /// - Parameter expiration: The duration of mute in milliseconds.
+    ///
     /// - Throws: An error while communicating with the Stream API.
-    public func mute() async throws {
-        try await channelUpdater.muteChannel(true, cid: cid)
+    public func mute(expiration: Int? = nil) async throws {
+        try await channelUpdater.muteChannel(true, cid: cid, expiration: expiration)
     }
     
     /// Unmutes the channel which enables push notifications and unread count changes for new messages.
