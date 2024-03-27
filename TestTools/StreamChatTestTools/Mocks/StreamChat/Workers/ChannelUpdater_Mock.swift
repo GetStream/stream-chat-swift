@@ -26,6 +26,7 @@ final class ChannelUpdater_Mock: ChannelUpdater {
 
     @Atomic var deleteChannel_cid: ChannelId?
     @Atomic var deleteChannel_completion: ((Error?) -> Void)?
+    @Atomic var deleteChannel_completion_next_result: Result<Void, Error>?
 
     @Atomic var truncateChannel_cid: ChannelId?
     @Atomic var truncateChannel_completion: ((Error?) -> Void)?
@@ -48,13 +49,16 @@ final class ChannelUpdater_Mock: ChannelUpdater {
     @Atomic var inviteMembers_cid: ChannelId?
     @Atomic var inviteMembers_userIds: Set<UserId>?
     @Atomic var inviteMembers_completion: ((Error?) -> Void)?
+    @Atomic var inviteMembers_completion_next_result: Result<Void, Error>?
 
     @Atomic var acceptInvite_cid: ChannelId?
     @Atomic var acceptInvite_message: String?
     @Atomic var acceptInvite_completion: ((Error?) -> Void)?
+    @Atomic var acceptInvite_completion_next_result: Result<Void, Error>?
 
     @Atomic var rejectInvite_cid: ChannelId?
     @Atomic var rejectInvite_completion: ((Error?) -> Void)?
+    @Atomic var rejectInvite_completion_next_result: Result<Void, Error>?
 
     @Atomic var removeMembers_cid: ChannelId?
     @Atomic var removeMembers_userIds: Set<UserId>?
@@ -100,6 +104,7 @@ final class ChannelUpdater_Mock: ChannelUpdater {
     @Atomic var freezeChannel_freeze: Bool?
     @Atomic var freezeChannel_cid: ChannelId?
     @Atomic var freezeChannel_completion: ((Error?) -> Void)?
+    @Atomic var freezeChannel_completion_next_result: Result<Void, Error>?
 
     @Atomic var uploadFile_type: AttachmentType?
     @Atomic var uploadFile_localFileURL: URL?
@@ -133,6 +138,7 @@ final class ChannelUpdater_Mock: ChannelUpdater {
 
         deleteChannel_cid = nil
         deleteChannel_completion = nil
+        deleteChannel_completion_next_result = nil
 
         truncateChannel_cid = nil
         truncateChannel_completion = nil
@@ -151,13 +157,16 @@ final class ChannelUpdater_Mock: ChannelUpdater {
         inviteMembers_cid = nil
         inviteMembers_userIds = nil
         inviteMembers_completion = nil
+        inviteMembers_completion_next_result = nil
 
         acceptInvite_cid = nil
         acceptInvite_message = nil
         acceptInvite_completion = nil
+        acceptInvite_completion_next_result = nil
 
         rejectInvite_cid = nil
         rejectInvite_completion = nil
+        rejectInvite_completion_next_result = nil
 
         removeMembers_cid = nil
         removeMembers_userIds = nil
@@ -194,6 +203,7 @@ final class ChannelUpdater_Mock: ChannelUpdater {
         freezeChannel_freeze = nil
         freezeChannel_cid = nil
         freezeChannel_completion = nil
+        freezeChannel_completion_next_result = nil
 
         uploadFile_type = nil
         uploadFile_localFileURL = nil
@@ -250,6 +260,7 @@ final class ChannelUpdater_Mock: ChannelUpdater {
     override func deleteChannel(cid: ChannelId, completion: ((Error?) -> Void)? = nil) {
         deleteChannel_cid = cid
         deleteChannel_completion = completion
+        deleteChannel_completion_next_result?.invoke(with: completion)
     }
 
     override func truncateChannel(
@@ -330,6 +341,7 @@ final class ChannelUpdater_Mock: ChannelUpdater {
         inviteMembers_cid = cid
         inviteMembers_userIds = userIds
         inviteMembers_completion = completion
+        inviteMembers_completion_next_result?.invoke(with: completion)
     }
 
     override func acceptInvite(
@@ -340,6 +352,7 @@ final class ChannelUpdater_Mock: ChannelUpdater {
         acceptInvite_cid = cid
         acceptInvite_message = message
         acceptInvite_completion = completion
+        acceptInvite_completion_next_result?.invoke(with: completion)
     }
 
     override func rejectInvite(
@@ -348,6 +361,7 @@ final class ChannelUpdater_Mock: ChannelUpdater {
     ) {
         rejectInvite_cid = cid
         rejectInvite_completion = completion
+        rejectInvite_completion_next_result?.invoke(with: completion)
     }
 
     override func removeMembers(
@@ -401,6 +415,7 @@ final class ChannelUpdater_Mock: ChannelUpdater {
         freezeChannel_freeze = freeze
         freezeChannel_cid = cid
         freezeChannel_completion = completion
+        freezeChannel_completion_next_result?.invoke(with: completion)
     }
 
     override func uploadFile(
@@ -441,5 +456,11 @@ final class ChannelUpdater_Mock: ChannelUpdater {
         enrichUrl_callCount += 1
         enrichUrl_url = url
         enrichUrl_completion = completion
+    }
+}
+
+private extension Result where Success == Void {
+    func invoke(with completion: ((Error?) -> Void)? = nil) {
+        completion?(error)
     }
 }
