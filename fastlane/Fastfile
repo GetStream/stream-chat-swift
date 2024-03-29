@@ -433,7 +433,7 @@ lane :xcmetrics do |options|
   UI.user_error!("See Firebase error above ☝️") unless firebase_error.to_s.empty?
 
   if is_ci
-    pr_comment_required = ENV.key?('GITHUB_PR_NUM')
+    pr_comment_required = !ENV['GITHUB_PR_NUM'].to_s.empty?
     performance_benchmarks[current_branch] = branch_performance
     UI.message("Performance benchmarks: #{performance_benchmarks}")
     File.write(performance_path, JSON.pretty_generate(performance_benchmarks))
