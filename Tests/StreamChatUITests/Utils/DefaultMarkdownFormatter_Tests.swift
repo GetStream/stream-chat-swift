@@ -234,7 +234,7 @@ final class DefaultMarkdownFormatter_Tests: XCTestCase {
                 XCTAssertEqual(expectedBoldAttributedSubstring, attributedString.attributedSubstring(from: range).string)
             } else if let fontAttribute = fontAttribute,
                       let fontNameAttribute = fontAttribute.fontDescriptor.fontAttributes[.name] as? String,
-                      fontNameAttribute == DefaultMarkdownFormatter.Attributes.Code.fontName {
+                      fontNameAttribute == DefaultMarkdownFormatter().styles.codeFont.name {
                 XCTAssertEqual(expectedCodeAttributedSubstring, attributedString.attributedSubstring(from: range).string)
             } else if let linkAttribute = attributes[.link] as? NSURL,
                       let url = linkAttribute.absoluteString {

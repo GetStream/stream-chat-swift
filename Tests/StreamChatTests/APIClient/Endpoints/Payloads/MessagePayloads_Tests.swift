@@ -88,12 +88,11 @@ final class MessagePayload_Tests: XCTestCase {
     }
 
     func test_messagePayload_isSerialized_withCustomExtraData() throws {
-        let box = try JSONDecoder.default.decode(MessageResponse.self, from: messageJSON)
-        let payload = box.message!
-
+        let payload = try JSONDecoder.default.decode(MessageResponse.self, from: messageJSON)
+        
         XCTAssertEqual(payload.id, "7baa1533-3294-4c0c-9a62-c9d0928bf733")
         XCTAssertEqual(payload.type, "regular")
-        XCTAssertEqual(payload.user?.id, "broken-waterfall-5")
+        XCTAssertEqual(payload.user.id, "broken-waterfall-5")
         XCTAssertEqual(payload.createdAt, "2020-07-16T15:39:03.010717Z".toDate())
         XCTAssertEqual(payload.updatedAt, "2020-08-17T13:15:39.895109Z".toDate())
         XCTAssertEqual(payload.deletedAt, "2020-07-16T15:55:03.010717Z".toDate())

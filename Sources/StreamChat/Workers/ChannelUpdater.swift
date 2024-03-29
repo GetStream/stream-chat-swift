@@ -200,10 +200,11 @@ class ChannelUpdater: Worker {
     /// - Parameters:
     ///   - cid: The channel identifier.
     ///   - mute: Defines if the channel with the specified **cid** should be muted.
+    ///   - expiration: Duration of mute in milliseconds.
     ///   - completion: Called when the API call is finished. Called with `Error` if the remote update fails.
-    func muteChannel(cid: ChannelId, mute: Bool, completion: ((Error?) -> Void)? = nil) {
+    func muteChannel(cid: ChannelId, mute: Bool, expiration: Int? = nil, completion: ((Error?) -> Void)? = nil) {
         if mute {
-            let request = MuteChannelRequest(channelCids: [cid.rawValue])
+            let request = MuteChannelRequest(expiration: expiration, channelCids: [cid.rawValue])
             api.muteChannel(
                 muteChannelRequest: request
             ) { result in
@@ -216,6 +217,7 @@ class ChannelUpdater: Worker {
             }
         } else {
             let request = UnmuteChannelRequest(
+                expiration: expiration,
                 channelCids: [cid.rawValue]
             )
             api.unmuteChannel(unmuteChannelRequest: request) { result in

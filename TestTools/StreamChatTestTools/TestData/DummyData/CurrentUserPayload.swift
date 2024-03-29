@@ -37,6 +37,7 @@ extension OwnUser {
             totalUnreadCount: unreadCount?.messages ?? 0,
             unreadChannels: unreadCount?.channels ?? 0,
             unreadCount: unreadCount?.channels ?? 0,
+            unreadThreads: 0,
             updatedAt: updatedAt,
             channelMutes: mutedChannels,
             devices: devices,

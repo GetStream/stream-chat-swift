@@ -19,14 +19,15 @@ public protocol MarkdownFormatter {
 
 /// Default implementation for the Markdown formatter
 open class DefaultMarkdownFormatter: MarkdownFormatter {
-    enum Attributes {
-        enum Code {
-            static let fontName: String = "CourierNewPSMT"
-        }
-    }
+    public var styles: MarkdownStyles
+    public var markdownRegexPattern: String
 
-    private let markdownRegexPattern: String =
-        "((?:\\`(.*?)\\`)|(?:\\*{1,2}(.*?)\\*{1,2})|(?:\\~{2}(.*?)\\~{2})|(?:\\_{1,2}(.*?)\\_{1,2})|^(>){1}|(#){1,6}|(=){3,10}|(-){1,3}|(\\d{1,3}\\.)|(?:\\[(.*?)\\])(?:\\((.*?)\\))|(?:\\[(.*?)\\])(?:\\[(.*?)\\])|(\\]\\:))+"
+    private let defaultMarkdownRegex = "((?:\\`(.*?)\\`)|(?:\\*{1,2}(.*?)\\*{1,2})|(?:\\~{2}(.*?)\\~{2})|(?:\\_{1,2}(.*?)\\_{1,2})|^(>){1}|(#){1,6}|(=){3,10}|(-){1,3}|(\\d{1,3}\\.)|(?:\\[(.*?)\\])(?:\\((.*?)\\))|(?:\\[(.*?)\\])(?:\\[(.*?)\\])|(\\]\\:))+"
+
+    public init() {
+        styles = MarkdownStyles()
+        markdownRegexPattern = defaultMarkdownRegex
+    }
 
     private lazy var regex: NSRegularExpression? = {
         guard let regex = try? NSRegularExpression(pattern: markdownRegexPattern, options: .anchorsMatchLines) else {
@@ -43,7 +44,98 @@ open class DefaultMarkdownFormatter: MarkdownFormatter {
 
     open func format(_ string: String) -> NSAttributedString {
         let markdownFormatter = SwiftyMarkdown(string: string)
-        markdownFormatter.code.fontName = Attributes.Code.fontName
+        modify(swiftyMarkdownFont: markdownFormatter.code, with: styles.codeFont)
+        modify(swiftyMarkdownFont: markdownFormatter.body, with: styles.bodyFont)
+        modify(swiftyMarkdownFont: markdownFormatter.link, with: styles.linkFont)
+        modify(swiftyMarkdownFont: markdownFormatter.h1, with: styles.h1Font)
+        modify(swiftyMarkdownFont: markdownFormatter.h2, with: styles.h2Font)
+        modify(swiftyMarkdownFont: markdownFormatter.h3, with: styles.h3Font)
+        modify(swiftyMarkdownFont: markdownFormatter.h4, with: styles.h4Font)
+        modify(swiftyMarkdownFont: markdownFormatter.h5, with: styles.h5Font)
+        modify(swiftyMarkdownFont: markdownFormatter.h6, with: styles.h6Font)
         return markdownFormatter.attributedString()
+    }
+
+    private func modify(swiftyMarkdownFont: FontProperties, with font: MarkdownFont) {
+        if let fontName = font.name {
+            swiftyMarkdownFont.fontName = fontName
+        }
+        if let fontSize = font.size {
+            swiftyMarkdownFont.fontSize = fontSize
+        }
+        if let fontColor = font.color {
+            swiftyMarkdownFont.color = fontColor
+        }
+        if let fontStyle = font.styling?.asSwiftyMarkdownFontStyle() {
+            swiftyMarkdownFont.fontStyle = fontStyle
+        }
+    }
+}
+
+/// Configures the font style properties for base Markdown elements
+public struct MarkdownStyles {
+    /// The regular paragraph font.
+    public var bodyFont: MarkdownFont = .init()
+
+    /// The font used for coding blocks in markdown text.
+    public var codeFont: MarkdownFont = .init()
+
+    /// The font used for links found in markdown text.
+    public var linkFont: MarkdownFont = .init()
+
+    /// The font used for H1 headers in markdown text.
+    public var h1Font: MarkdownFont = .init()
+
+    /// The font used for H2 headers in markdown text.
+    public var h2Font: MarkdownFont = .init()
+
+    /// The font used for H3 headers in markdown text.
+    public var h3Font: MarkdownFont = .init()
+
+    /// The font used for H4 headers in markdown text.
+    public var h4Font: MarkdownFont = .init()
+
+    /// The font used for H5 headers in markdown text.
+    public var h5Font: MarkdownFont = .init()
+
+    /// The font used for H6 headers in markdown text.
+    public var h6Font: MarkdownFont = .init()
+
+    public init() {
+        codeFont.name = "CourierNewPSMT"
+    }
+}
+
+public struct MarkdownFont {
+    public var name: String?
+    public var size: Double?
+    public var color: UIColor?
+    public var styling: MarkdownFontStyle?
+
+    public init() {
+        name = nil
+        size = nil
+        color = nil
+        styling = nil
+    }
+}
+
+public enum MarkdownFontStyle: Int {
+    case normal
+    case bold
+    case italic
+    case boldItalic
+
+    func asSwiftyMarkdownFontStyle() -> FontStyle {
+        switch self {
+        case .normal:
+            return .normal
+        case .bold:
+            return .bold
+        case .italic:
+            return .italic
+        case .boldItalic:
+            return .boldItalic
+        }
     }
 }

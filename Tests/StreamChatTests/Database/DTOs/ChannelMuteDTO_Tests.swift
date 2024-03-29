@@ -30,6 +30,7 @@ final class ChannelMuteDTO_Tests: XCTestCase {
         let mutePayload = ChannelMute(
             createdAt: .unique,
             updatedAt: .unique,
+            expires: .unique,
             channel: .dummy(cid: .unique),
             user: currentUserPayload.toUser
         )
@@ -42,6 +43,7 @@ final class ChannelMuteDTO_Tests: XCTestCase {
         let channel: ChatChannel = try XCTUnwrap(database.viewContext.channel(cid: try ChannelId(cid: mutePayload.channel!.cid))?.asModel())
         XCTAssertEqual(channel.muteDetails?.createdAt, mutePayload.createdAt)
         XCTAssertEqual(channel.muteDetails?.updatedAt, mutePayload.updatedAt)
+        XCTAssertEqual(channel.muteDetails?.expiresAt, mutePayload.expires)
 
         let currentUser: CurrentChatUser = try XCTUnwrap(database.viewContext.currentUser?.asModel())
         XCTAssertEqual(currentUser.mutedChannels, [channel])
@@ -52,6 +54,7 @@ final class ChannelMuteDTO_Tests: XCTestCase {
         let mute = ChannelMute(
             createdAt: .unique,
             updatedAt: .unique,
+            expires: .unique,
             channel: .dummy(cid: .unique),
             user: .dummy(userId: .unique)
         )
@@ -70,6 +73,7 @@ final class ChannelMuteDTO_Tests: XCTestCase {
         let mute = ChannelMute(
             createdAt: .unique,
             updatedAt: .unique,
+            expires: .unique,
             channel: channel,
             user: currentUser.toUser
         )
@@ -92,6 +96,7 @@ final class ChannelMuteDTO_Tests: XCTestCase {
         let muteDTO = try XCTUnwrap(loadedMuteDTO)
         XCTAssertEqual(muteDTO.createdAt.bridgeDate, mute.createdAt)
         XCTAssertEqual(muteDTO.updatedAt.bridgeDate, mute.updatedAt)
+        XCTAssertEqual(muteDTO.expiresAt?.bridgeDate, mute.expires)
         XCTAssertEqual(muteDTO.currentUser.user.id, currentUser.id)
         XCTAssertEqual(muteDTO.channel.cid, channel.cid)
     }
@@ -103,6 +108,7 @@ final class ChannelMuteDTO_Tests: XCTestCase {
         let initialMute = ChannelMute(
             createdAt: .unique,
             updatedAt: .unique,
+            expires: .unique,
             channel: channel,
             user: currentUser.toUser
         )
@@ -116,6 +122,7 @@ final class ChannelMuteDTO_Tests: XCTestCase {
         let updatedMute = ChannelMute(
             createdAt: .unique,
             updatedAt: .unique,
+            expires: .unique,
             channel: channel,
             user: currentUser.toUser
         )
@@ -130,6 +137,7 @@ final class ChannelMuteDTO_Tests: XCTestCase {
         )
         XCTAssertEqual(muteDTO.createdAt.bridgeDate, updatedMute.createdAt)
         XCTAssertEqual(muteDTO.updatedAt.bridgeDate, updatedMute.updatedAt)
+        XCTAssertEqual(muteDTO.expiresAt?.bridgeDate, updatedMute.expires)
         XCTAssertEqual(muteDTO.currentUser.user.id, currentUser.id)
         XCTAssertEqual(muteDTO.channel.cid, channel.cid)
     }

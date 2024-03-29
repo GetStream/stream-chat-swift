@@ -49,6 +49,8 @@ final class MemberModelDTO_Tests: XCTestCase {
             createdAt: .unique,
             shadowBanned: true,
             updatedAt: .unique,
+            banExpires: .unique,
+            isModerator: true,
             userId: userId,
             user: userPayload
         )

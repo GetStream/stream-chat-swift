@@ -32,7 +32,6 @@ public extension ChannelConfig {
             customEvents: false,
             markMessagesPending: false,
             maxMessageLength: maxMessageLength,
-            messageRetention: messageRetention,
             mutes: mutesEnabled,
             name: "",
             pushNotifications: false,

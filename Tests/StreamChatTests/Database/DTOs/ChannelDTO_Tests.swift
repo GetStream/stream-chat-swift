@@ -391,7 +391,6 @@ final class ChannelDTO_Tests: XCTestCase {
             Assert.willBeEqual(payload.channel?.config?.search, loadedChannel.config.search)
             Assert.willBeEqual(payload.channel?.config?.mutes, loadedChannel.config.mutes)
             Assert.willBeEqual(payload.channel?.config?.urlEnrichment, loadedChannel.config.urlEnrichment)
-            Assert.willBeEqual(payload.channel?.config?.messageRetention, loadedChannel.config.messageRetention)
             Assert.willBeEqual(payload.channel?.config?.maxMessageLength, loadedChannel.config.maxMessageLength)
             Assert.willBeEqual(payload.channel?.config?.commands.map(\.!.name), loadedChannel.config.commands)
             Assert.willBeEqual(payload.channel?.config?.createdAt, loadedChannel.config.createdAt)

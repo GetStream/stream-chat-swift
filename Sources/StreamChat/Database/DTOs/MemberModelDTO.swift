@@ -18,6 +18,7 @@ class MemberDTO: NSManagedObject {
     @NSManaged var banExpiresAt: DBDate?
     @NSManaged var isBanned: Bool
     @NSManaged var isShadowBanned: Bool
+    @NSManaged var notificationsMuted: Bool
 
     @NSManaged var inviteAcceptedAt: DBDate?
     @NSManaged var inviteRejectedAt: DBDate?
@@ -129,6 +130,7 @@ extension NSManagedObjectContext {
         dto.isInvited = payload.invited ?? false
         dto.inviteAcceptedAt = payload.inviteAcceptedAt?.bridgeDate
         dto.inviteRejectedAt = payload.inviteRejectedAt?.bridgeDate
+//        dto.notificationsMuted = payload.notificationsMuted //TODO: missing
 
         if let query = query {
             let queryDTO = try saveQuery(query)
@@ -205,7 +207,8 @@ extension ChatChannelMember {
             inviteRejectedAt: dto.inviteRejectedAt?.bridgeDate,
             isBannedFromChannel: dto.isBanned,
             banExpiresAt: dto.banExpiresAt?.bridgeDate,
-            isShadowBannedFromChannel: dto.isShadowBanned
+            isShadowBannedFromChannel: dto.isShadowBanned,
+            notificationsMuted: dto.notificationsMuted
         )
     }
 }

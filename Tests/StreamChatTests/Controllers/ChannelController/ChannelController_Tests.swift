@@ -1951,6 +1951,37 @@ final class ChannelController_Tests: XCTestCase {
 
         XCTAssertNil(error)
     }
+    
+    func test_muteChannelWithExpiration_failsForNewChannels() throws {
+        let expiration = 1_000_000
+        
+        //  Create `ChannelController` for new channel
+        let query = ChannelQuery(channelPayload: .unique)
+        setupControllerForNewChannel(query: query)
+
+        // Simulate `muteChannel` call and assert error is returned
+        var error: Error? = try waitFor { [callbackQueueID] completion in
+            controller.muteChannel(expiration: expiration) { error in
+                AssertTestQueue(withId: callbackQueueID)
+                completion(error)
+            }
+        }
+        XCTAssert(error is ClientError.ChannelNotCreatedYet)
+
+        // Simulate successful backend channel creation
+        env.channelUpdater!.update_onChannelCreated?(query.cid!)
+
+        // Simulate `muteChannel` call and assert no error is returned
+        error = try waitFor { [callbackQueueID] completion in
+            controller.muteChannel(expiration: expiration) { error in
+                AssertTestQueue(withId: callbackQueueID)
+                completion(error)
+            }
+            env.channelUpdater!.muteChannel_completion?(nil)
+        }
+
+        XCTAssertNil(error)
+    }
 
     func test_muteChannel_callsChannelUpdater() {
         // Simulate `muteChannel` call and catch the completion
@@ -1983,11 +2014,64 @@ final class ChannelController_Tests: XCTestCase {
         // `weakController` should be deallocated too
         AssertAsync.canBeReleased(&weakController)
     }
+    
+    func test_muteChannelWithExpiration_callsChannelUpdater() {
+        let expiration = 1_000_000
+        
+        // Simulate `muteChannel` call and catch the completion
+        var completionCalled = false
+        controller.muteChannel(expiration: expiration) { [callbackQueueID] error in
+            AssertTestQueue(withId: callbackQueueID)
+            XCTAssertNil(error)
+            completionCalled = true
+        }
+
+        // Keep a weak ref so we can check if it's actually deallocated
+        weak var weakController = controller
+
+        // (Try to) deallocate the controller
+        // by not keeping any references to it
+        controller = nil
+
+        // Assert cid, muted state and expiration are passed to `channelUpdater`, completion is not called yet
+        XCTAssertEqual(env.channelUpdater!.muteChannel_cid, channelId)
+        XCTAssertEqual(env.channelUpdater!.muteChannel_mute, true)
+        XCTAssertEqual(env.channelUpdater!.muteChannel_expiration, expiration)
+        XCTAssertFalse(completionCalled)
+
+        // Simulate successful update
+        env.channelUpdater!.muteChannel_completion?(nil)
+        // Release reference of completion so we can deallocate stuff
+        env.channelUpdater!.muteChannel_completion = nil
+
+        // Assert completion is called
+        AssertAsync.willBeTrue(completionCalled)
+        // `weakController` should be deallocated too
+        AssertAsync.canBeReleased(&weakController)
+    }
 
     func test_muteChannel_propagatesErrorFromUpdater() {
         // Simulate `muteChannel` call and catch the completion
         var completionCalledError: Error?
         controller.muteChannel { [callbackQueueID] in
+            AssertTestQueue(withId: callbackQueueID)
+            completionCalledError = $0
+        }
+
+        // Simulate failed update
+        let testError = TestError()
+        env.channelUpdater!.muteChannel_completion?(testError)
+
+        // Completion should be called with the error
+        AssertAsync.willBeEqual(completionCalledError as? TestError, testError)
+    }
+    
+    func test_muteChannelWithExpiration_propagatesErrorFromUpdater() {
+        let expiration = 1_000_000
+        
+        // Simulate `muteChannel` call and catch the completion
+        var completionCalledError: Error?
+        controller.muteChannel(expiration: expiration) { [callbackQueueID] in
             AssertTestQueue(withId: callbackQueueID)
             completionCalledError = $0
         }

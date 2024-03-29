@@ -213,8 +213,10 @@ struct ChannelReadUpdaterMiddleware: EventMiddleware {
         channelRead: ChannelReadDTO,
         message: Message
     ) -> UnreadSkippingReason? {
-        if channelRead.channel.mute != nil {
-            return .channelIsMuted
+        if let mute = channelRead.channel.mute {
+            guard let expiredDate = mute.expiresAt, expiredDate.bridgeDate <= Date() else {
+                return .channelIsMuted
+            }
         }
 
         if message.user?.id == currentUser.user.id {

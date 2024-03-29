@@ -648,7 +648,7 @@ final class AuthenticationRepository_Tests: XCTestCase {
 
         // Token Provider Failure
         let apiError = TestError()
-        apiClient.test_mockUnmanagedResponseResult(Result<GuestResponse, Error>.failure(apiError))
+        apiClient.test_mockUnmanagedResponseResult(Result<CreateGuestResponse, Error>.failure(apiError))
 
         let completionExpectation = expectation(description: "Connect completion")
         var receivedError: Error?
@@ -683,11 +683,21 @@ final class AuthenticationRepository_Tests: XCTestCase {
 
         // API Result
         apiClient.test_mockUnmanagedResponseResult(
-            Result<GuestResponse, Error>.success(
-                GuestResponse(
+            Result<CreateGuestResponse, Error>.success(
+                CreateGuestResponse(
                     accessToken: apiToken.rawValue,
                     duration: "",
-                    user: .dummy(userId: "", role: .user)
+                    user: .init(
+                        banned: false,
+                        createdAt: .unique,
+                        id: .unique,
+                        language: "en",
+                        online: false,
+                        role: "member",
+                        updatedAt: .unique,
+                        teams: [],
+                        custom: [:]
+                    )
                 )
             )
         )
@@ -726,11 +736,21 @@ final class AuthenticationRepository_Tests: XCTestCase {
 
         // API Result
         apiClient.test_mockUnmanagedResponseResult(
-            Result<GuestResponse, Error>.success(
-                GuestResponse(
+            Result<CreateGuestResponse, Error>.success(
+                CreateGuestResponse(
                     accessToken: apiToken.rawValue,
                     duration: "",
-                    user: .dummy(userId: "", role: .user)
+                    user: .init(
+                        banned: false,
+                        createdAt: .unique,
+                        id: .unique,
+                        language: "en",
+                        online: false,
+                        role: "member",
+                        updatedAt: .unique,
+                        teams: [],
+                        custom: [:]
+                    )
                 )
             )
         )

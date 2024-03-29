@@ -110,6 +110,7 @@
     </entity>
     <entity name="ChannelMuteDTO" representedClassName="ChannelMuteDTO" syncable="YES">
         <attribute name="createdAt" attributeType="Date" defaultDateTimeInterval="0" usesScalarValueType="NO"/>
+        <attribute name="expiresAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="updatedAt" attributeType="Date" defaultDateTimeInterval="0" usesScalarValueType="NO"/>
         <relationship name="channel" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="ChannelDTO" inverseName="mute" inverseEntity="ChannelDTO"/>
         <relationship name="currentUser" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="CurrentUserDTO" inverseName="channelMutes" inverseEntity="CurrentUserDTO"/>
@@ -170,6 +171,7 @@
         <attribute name="isShadowBanned" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
         <attribute name="memberCreatedAt" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="memberUpdatedAt" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="notificationsMuted" optional="YES" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
         <relationship name="channel" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="ChannelDTO" inverseName="members" inverseEntity="ChannelDTO"/>
         <relationship name="membershipChannel" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="ChannelDTO" inverseName="membership" inverseEntity="ChannelDTO"/>
         <relationship name="queries" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="ChannelMemberListQueryDTO" inverseName="members" inverseEntity="ChannelMemberListQueryDTO"/>

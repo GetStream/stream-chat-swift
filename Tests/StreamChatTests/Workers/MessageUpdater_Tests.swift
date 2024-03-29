@@ -528,7 +528,7 @@ final class MessageUpdater_Tests: XCTestCase {
         let messageId: MessageId = .unique
 
         let pairs: [(Result<MessageResponse, Error>, LocalMessageState?)] = [
-            (.success(.init(duration: "", message: .dummy(messageId: messageId, authorUserId: currentUserId))), nil),
+            (.success(MessageResponse.dummy(messageId: messageId, authorUserId: currentUserId)), nil),
             (.failure(TestError()), .deletingFailed)
         ]
 
@@ -606,7 +606,7 @@ final class MessageUpdater_Tests: XCTestCase {
 
         // Simulate API response
         let networkResult: Result<MessageResponse, Error> = .success(
-            .init(duration: "", message: .dummy(messageId: messageId, authorUserId: currentUserId))
+            .dummy(messageId: messageId, authorUserId: currentUserId)
         )
         apiClient.test_simulateResponse(networkResult)
 
@@ -2709,13 +2709,10 @@ final class MessageUpdater_Tests: XCTestCase {
         // Simulate successful response
         apiClient.test_simulateResponse(
             Result<MessageResponse, Error>.success(
-                .init(
-                    duration: "",
-                    message: .dummy(
-                        messageId: messageId,
-                        authorUserId: .unique,
-                        cid: cid
-                    )
+                .dummy(
+                    messageId: messageId,
+                    authorUserId: .unique,
+                    cid: cid
                 )
             )
         )
@@ -2764,13 +2761,10 @@ final class MessageUpdater_Tests: XCTestCase {
         // Simulate successful response
         apiClient.test_simulateResponse(
             Result<MessageResponse, Error>.success(
-                .init(
-                    duration: "",
-                    message: .dummy(
-                        messageId: messageId,
-                        authorUserId: .unique,
-                        cid: cid
-                    )
+                .dummy(
+                    messageId: messageId,
+                    authorUserId: .unique,
+                    cid: cid
                 )
             )
         )

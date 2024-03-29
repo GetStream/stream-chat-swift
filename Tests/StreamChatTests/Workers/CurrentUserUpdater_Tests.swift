@@ -108,7 +108,7 @@ final class CurrentUserUpdater_Tests: XCTestCase {
 
         // Simulate API response
         let currentUpdateUsersResponse = UpdateUsersResponse(
-            duration: "", users: [userPayload.toUser.id: userPayload.toUser]
+            duration: "", users: [userPayload.toUser.id: userPayload.toUser.toUserResponse]
         )
         apiClient.test_simulateResponse(.success(currentUpdateUsersResponse))
 
@@ -200,7 +200,7 @@ final class CurrentUserUpdater_Tests: XCTestCase {
 
         // Simulate API response
         let currentUpdateUsersResponse = UpdateUsersResponse(
-            duration: "", users: [userPayload.id: userPayload.toUser]
+            duration: "", users: [userPayload.id: userPayload.toUser.toUserResponse]
         )
         apiClient.test_simulateResponse(.success(currentUpdateUsersResponse))
 

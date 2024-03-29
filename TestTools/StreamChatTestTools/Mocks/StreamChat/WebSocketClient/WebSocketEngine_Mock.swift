@@ -42,6 +42,8 @@ final class WebSocketEngine_Mock: WebSocketEngine {
     func sendPing() {
         sendPing_calledCount += 1
     }
+    
+    func send(jsonMessage: any Codable) {}
 
     // MARK: - Functions to simulate behavior
 

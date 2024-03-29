@@ -9,6 +9,7 @@ import Foundation
 final class ChannelMuteDTO: NSManagedObject {
     @NSManaged var createdAt: DBDate
     @NSManaged var updatedAt: DBDate
+    @NSManaged var expiresAt: DBDate?
     @NSManaged var channel: ChannelDTO
     @NSManaged var currentUser: CurrentUserDTO
 
@@ -50,6 +51,7 @@ extension NSManagedObjectContext {
         dto.currentUser = currentUser
         dto.createdAt = payload.createdAt.bridgeDate
         dto.updatedAt = payload.updatedAt.bridgeDate
+        dto.expiresAt = payload.expires?.bridgeDate
 
         return dto
     }

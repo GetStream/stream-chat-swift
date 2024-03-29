@@ -76,7 +76,7 @@ class DatabaseSession_Mock: DatabaseSession {
         return try underlyingSession.saveUser(payload: payload, query: query, cache: cache)
     }
 
-    func saveUsers(payload: UsersResponse, query: UserListQuery?) -> [UserDTO] {
+    func saveUsers(payload: QueryUsersResponse, query: UserListQuery?) -> [UserDTO] {
         return underlyingSession.saveUsers(payload: payload, query: query)
     }
 

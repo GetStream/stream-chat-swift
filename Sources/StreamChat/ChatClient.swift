@@ -22,6 +22,10 @@ public class ChatClient {
     
     private var currentUserInfo: UserInfo?
 
+    /// The app configuration settings. It is automatically fetched when `connectUser` is called.
+    /// Can be manually refetched by calling `loadAppSettings()`.
+    public private(set) var appSettings: AppSettings?
+
     /// The current connection status of the client.
     ///
     /// To observe changes in the connection status, create an instance of `ChatConnectionController`, and use it to receive
@@ -290,6 +294,9 @@ public class ChatClient {
             tokenProvider: tokenProvider,
             completion: { completion?($0) }
         )
+
+        // Whenever the user is connected, we trigger an app settings configuration refetch.
+        loadAppSettings()
     }
 
     /// Connects the client with the given user.
@@ -391,6 +398,23 @@ public class ChatClient {
 
         group.notify(queue: .main) {
             completion()
+        }
+    }
+
+    /// Fetches the app settings and updates the `ChatClient.appSettings`.
+    /// - Parameter completion: The completion block once the app settings has finished fetching.
+    public func loadAppSettings(
+        completion: ((Result<AppSettings, Error>) -> Void)? = nil
+    ) {
+        api.getApp { [weak self] result in
+            switch result {
+            case let .success(payload):
+                let appSettings = payload.asModel()
+                self?.appSettings = appSettings
+                completion?(.success(appSettings))
+            case let .failure(error):
+                completion?(.failure(error))
+            }
         }
     }
 

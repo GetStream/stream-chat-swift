@@ -160,10 +160,13 @@ class MessageDTO: NSManagedObject {
     }
 
     static func allAttachmentsAreUploadedOrEmptyPredicate() -> NSCompoundPredicate {
-        .init(
-            format: "SUBQUERY(attachments, $a, $a.localStateRaw == %@).@count == attachments.@count",
-            LocalAttachmentState.uploaded.rawValue
-        )
+        NSCompoundPredicate(orPredicateWithSubpredicates: [
+            .init(
+                format: "SUBQUERY(attachments, $a, $a.localStateRaw == %@).@count == attachments.@count",
+                LocalAttachmentState.uploaded.rawValue
+            ),
+            .init(format: "SUBQUERY(attachments, $a, $a.localStateRaw == nil).@count == attachments.@count")
+        ])
     }
 
     /// Returns a predicate that filters out deleted message by other than the current user
@@ -722,7 +725,6 @@ extension NSManagedObjectContext: MessageDatabaseSession {
         }
 
         dto.reactionScores = payload.reactionScores
-        // TODO: check why was this scores.
         dto.reactionCounts = payload.reactionCounts
 
         // If user edited their message to remove mentioned users, we need to get rid of it

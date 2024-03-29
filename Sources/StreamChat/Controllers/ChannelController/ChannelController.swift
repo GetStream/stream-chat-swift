@@ -306,17 +306,19 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
 
     /// Mutes the channel this controller manages.
     ///
-    /// - Parameter completion: The completion. Will be called on a **callbackQueue** when the network request is finished.
-    ///                         If request fails, the completion will be called with an error.
+    /// - Parameters:
+    ///   - expiration: Duration of mute in milliseconds.
+    ///   - completion: The completion. Will be called on a **callbackQueue** when the network request is finished.
+    ///                 If request fails, the completion will be called with an error.
     ///
-    public func muteChannel(completion: ((Error?) -> Void)? = nil) {
+    public func muteChannel(expiration: Int? = nil, completion: ((Error?) -> Void)? = nil) {
         /// Perform action only if channel is already created on backend side and have a valid `cid`.
         guard let cid = cid, isChannelAlreadyCreated else {
             channelModificationFailed(completion)
             return
         }
 
-        updater.muteChannel(cid: cid, mute: true) { error in
+        updater.muteChannel(cid: cid, mute: true, expiration: expiration) { error in
             self.callback {
                 completion?(error)
             }

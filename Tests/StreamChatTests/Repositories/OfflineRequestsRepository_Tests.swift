@@ -165,7 +165,7 @@ final class OfflineRequestsRepository_Tests: XCTestCase {
         database.writeSessionCounter = 0
         AssertAsync.willBeTrue(apiClient.recoveryRequest_endpoint != nil)
 
-        let response = MessageResponse(duration: "", message: .dummy())
+        let response = Message.dummy()
         let jsonData = try JSONEncoder.stream.encode(response)
         apiClient.test_simulateRecoveryResponse(.success(jsonData))
 

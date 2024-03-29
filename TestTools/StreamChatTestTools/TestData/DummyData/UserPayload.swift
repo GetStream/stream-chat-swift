@@ -36,3 +36,35 @@ extension UserObject {
         )
     }
 }
+
+extension UserResponse {
+    /// Returns a dummy user payload with the given `id` and `extraData`
+    static func dummy(
+        userId: UserId,
+        name: String = .unique,
+        imageUrl: URL? = .unique(),
+        role: UserRole = .admin,
+        extraData: [String: RawJSON] = [:],
+        teams: [TeamId] = [.unique, .unique, .unique],
+        language: String? = nil,
+        isBanned: Bool = false,
+        updatedAt: Date = .unique,
+        lastActive: Date = .unique,
+        deactivatedAt: Date? = nil
+    ) -> UserResponse {
+        .init(
+            banned: isBanned,
+            createdAt: .unique,
+            id: userId,
+            language: language ?? "en",
+            online: false,
+            role: role.rawValue,
+            updatedAt: updatedAt,
+            teams: teams,
+            custom: extraData,
+            deletedAt: nil,
+            image: imageUrl?.absoluteString,
+            name: name
+        )
+    }
+}

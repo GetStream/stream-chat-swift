@@ -94,32 +94,34 @@ extension XCTestCase {
 
         let lastMessageAt: Date? = payloadMessages.map(\.createdAt).max()
 
+        let channel = ChannelResponse.dummy(
+            cid: channelId,
+            extraData: channelExtraData,
+            lastMessageAt: lastMessageAt,
+            createdAt: createdAt,
+            updatedAt: .unique,
+            truncatedAt: truncatedAt,
+            createdBy: dummyUser,
+            config: channelConfig,
+            ownCapabilities: ownCapabilities,
+            isFrozen: true,
+            isHidden: nil,
+            members: members,
+            memberCount: memberCount,
+            team: .unique,
+            cooldownDuration: cooldownDuration ?? .random(in: 0...120)
+        )
         let payload: ChannelStateResponse = .init(
             duration: "",
             members: members,
             messages: payloadMessages,
-            pinnedMessages: pinnedMessages,
+            pinnedMessages: pinnedMessages, 
+            threads: [],
             hidden: false,
             watcherCount: watchers?.count,
             read: channelReads ?? [dummyChannelRead],
             watchers: watchers ?? [dummyUser],
-            channel: .dummy(
-                cid: channelId,
-                extraData: channelExtraData,
-                lastMessageAt: lastMessageAt,
-                createdAt: createdAt,
-                updatedAt: .unique,
-                truncatedAt: truncatedAt,
-                createdBy: dummyUser,
-                config: channelConfig,
-                ownCapabilities: ownCapabilities,
-                isFrozen: true,
-                isHidden: nil,
-                members: members,
-                memberCount: memberCount,
-                team: .unique,
-                cooldownDuration: cooldownDuration ?? .random(in: 0...120)
-            ),
+            channel: channel,
             membership: membership ?? (includeMembership ? members.first : nil)
         )
 
@@ -207,7 +209,6 @@ extension ChannelConfig {
         customEvents: true,
         markMessagesPending: true,
         maxMessageLength: 0,
-        messageRetention: "1000",
         mutes: true,
         name: "",
         pushNotifications: true,

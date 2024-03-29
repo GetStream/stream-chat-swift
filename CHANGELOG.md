@@ -3,7 +3,34 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 # Upcoming
 
+## StreamChat
+### 🐞 Fixed
+- Fix pinning messages with attachments stuck in sending state [#3116](https://github.com/GetStream/stream-chat-swift/pull/3116)
+
+# [4.51.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.51.0)
+_March 26, 2024_
+
+## StreamChat
+### ✅ Added
+- Add mute expiration support when muting a channel [#3083](https://github.com/GetStream/stream-chat-swift/pull/3083)
+- Add `ChatClient.loadAppSettings` and `ChatClient.appSettings` [#3091](https://github.com/GetStream/stream-chat-swift/pull/3091)
+- Load the app settings when connecting the user [#3091](https://github.com/GetStream/stream-chat-swift/pull/3091)
+- Expose `notificationsMuted` in `ChatChannelMember` [#3111](https://github.com/GetStream/stream-chat-swift/pull/3111)
+### 🐞 Fixed
+- Fix saving reaction counts for messages [#3109](https://github.com/GetStream/stream-chat-swift/pull/3109)
 ### 🔄 Changed
+- Deprecates `ChatClientConfig.maxAttachmentSize` in favour of defining the value from Stream's Dashboard [#3105](https://github.com/GetStream/stream-chat-swift/pull/3105)
+
+## StreamChatUI
+### ✅ Added
+- Validates file size limit per attachment type defined in Stream's Dashboard [#3105](https://github.com/GetStream/stream-chat-swift/pull/3105)
+- Make it easier to customize `ComposerVC.updateContent()` [#3112](https://github.com/GetStream/stream-chat-swift/pull/3112)
+- Add support markdown font styling customization [#3101](https://github.com/GetStream/stream-chat-swift/pull/3101)
+
+### 🐞 Fixed
+- Fix support for markdown ordered list with all numbers [#3090](https://github.com/GetStream/stream-chat-swift/pull/3090)
+- Fix support for markdown italic and bold styles inside snake-styled text [#3094](https://github.com/GetStream/stream-chat-swift/pull/3094)
+- Fix Message View not updated when new translations are added or removed [#3103](https://github.com/GetStream/stream-chat-swift/pull/3103)
 
 # [4.50.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.50.0)
 _March 11, 2024_

@@ -572,7 +572,6 @@ final class MessageDTO_Tests: XCTestCase {
         XCTAssertEqual(ChannelStateResponse.config?.search, loadedChannel?.config.search)
         XCTAssertEqual(ChannelStateResponse.config?.mutes, loadedChannel?.config.mutes)
         XCTAssertEqual(ChannelStateResponse.config?.urlEnrichment, loadedChannel?.config.urlEnrichment)
-        XCTAssertEqual(ChannelStateResponse.config?.messageRetention, loadedChannel?.config.messageRetention)
         XCTAssertEqual(ChannelStateResponse.config?.maxMessageLength, loadedChannel?.config.maxMessageLength)
 //        XCTAssertEqual(ChannelStateResponse.config?.commands, loadedChannel?.config.commands)
         XCTAssertNearlySameDate(ChannelStateResponse.config?.createdAt, loadedChannel?.config.createdAt)
@@ -863,6 +862,35 @@ final class MessageDTO_Tests: XCTestCase {
                 .contains(messageDTO.inContext(database.viewContext))
         )
     }
+    
+    func test_messagePayload_whenMessageHasReactionsWithScoresAndCounts_isCorrectlyStored() throws {
+        let channelId: ChannelId = .unique
+        let channelPayload: ChannelStateResponse = dummyPayload(with: channelId)
+        let payload: Message = .dummy(
+            messageId: .unique,
+            authorUserId: .unique,
+            reactionScores: ["like": 10],
+            reactionCounts: ["like": 2]
+        )
+        let (channelDTO, messageDTO): (ChannelDTO, MessageDTO) = try waitFor { completion in
+            var channelDTO: ChannelDTO!
+            var messageDTO: MessageDTO!
+
+            // Asynchronously save the payload to the db
+            database.write { session in
+                // Create the channel first
+                channelDTO = try! session.saveChannel(payload: channelPayload, query: nil, cache: nil)
+
+                // Save the message
+                messageDTO = try! session.saveMessage(payload: payload, for: channelId, syncOwnReactions: true, cache: nil)
+                
+                XCTAssertEqual(2, messageDTO.reactionCounts["like"])
+                XCTAssertEqual(10, messageDTO.reactionScores["like"])
+            } completion: { _ in
+                completion((channelDTO, messageDTO))
+            }
+        }
+    }
 
     func test_defaultExtraDataIsUsed_whenExtraDataDecodingFails() throws {
         let userId: UserId = .unique
@@ -1114,8 +1142,8 @@ final class MessageDTO_Tests: XCTestCase {
         XCTAssertEqual(requestBody.custom, ["k": .string("v")])
         XCTAssertEqual(requestBody.pinned, true)
         XCTAssertEqual(requestBody.pinExpires, messagePinning!.expirationDate)
-        XCTAssertEqual(requestBody.attachments.map(\.!.type), [.image, .video])
-        XCTAssertEqual(requestBody.attachments.count, 2)
+        XCTAssertEqual(requestBody.attachments?.map(\.!.type), [.image, .video])
+        XCTAssertEqual(requestBody.attachments?.count, 2)
         XCTAssertEqual(requestBody.mentionedUsers, mentionedUserIds)
     }
 
@@ -2325,6 +2353,51 @@ final class MessageDTO_Tests: XCTestCase {
                 id: .init(cid: cid, messageId: message.id, index: 2)
             )
             attachment2.localState = .uploaded
+
+            message.attachments.insert(attachment1)
+            message.attachments.insert(attachment2)
+        }
+
+        var retrievedMessages: [MessageDTO] = []
+        retrievedMessages = try database.viewContext.fetch(request)
+        XCTAssertEqual(retrievedMessages.filter { msg in msg.id == message.id }.count, 1)
+    }
+
+    func test_allAttachmentsAreUploadedOrEmptyPredicate_whenAllUploadedFromServer_returnsMessages() throws {
+        let request = NSFetchRequest<MessageDTO>(entityName: MessageDTO.entityName)
+        request.sortDescriptors = [NSSortDescriptor(keyPath: \MessageDTO.defaultSortingKey, ascending: true)]
+        request.predicate = MessageDTO.allAttachmentsAreUploadedOrEmptyPredicate()
+
+        let cid = ChannelId.unique
+        let message: Message =
+            .dummy(
+                type: .regular,
+                messageId: .unique,
+                attachments: [],
+                authorUserId: .unique,
+                createdAt: Date(timeIntervalSince1970: 1),
+                channel: .dummy(cid: cid)
+            )
+
+        try database.writeSynchronously { session in
+            let message = try session.saveMessage(
+                payload: message,
+                for: .unique,
+                syncOwnReactions: true,
+                cache: nil
+            )
+
+            let attachment1 = try session.saveAttachment(
+                payload: .image(),
+                id: .init(cid: cid, messageId: message.id, index: 1)
+            )
+            attachment1.localState = nil
+
+            let attachment2 = try session.saveAttachment(
+                payload: .image(),
+                id: .init(cid: cid, messageId: message.id, index: 2)
+            )
+            attachment2.localState = nil
 
             message.attachments.insert(attachment1)
             message.attachments.insert(attachment2)

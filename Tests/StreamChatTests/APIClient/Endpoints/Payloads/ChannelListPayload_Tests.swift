@@ -284,7 +284,6 @@ final class ChannelPayload_Tests: XCTestCase {
         XCTAssertEqual(config.search, true)
         XCTAssertEqual(config.mutes, true)
         XCTAssertEqual(config.urlEnrichment, true)
-        XCTAssertEqual(config.messageRetention, "infinite")
         XCTAssertEqual(config.maxMessageLength, 5000)
         // TODO: check the flag user command again.
         XCTAssertEqual(

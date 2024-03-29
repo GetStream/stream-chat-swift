@@ -115,7 +115,7 @@ final class API_Tests: XCTestCase {
         // Given
         let api = API.mock(with: APIClient_Spy(), encoder: encoder)
         let messageId = String.unique
-        let messageRequest = MessageRequest(attachments: [], id: messageId)
+        let messageRequest = MessageRequest(id: messageId, attachments: [])
         
         // When
         let request = try waitFor {
@@ -278,7 +278,7 @@ final class API_Tests: XCTestCase {
 
         // We are not interested in the result of the request, only in the request itself
         apiClient.test_simulateResponse(
-            Result<UnreadCountsResponse, Error>.failure(ClientError.Unknown())
+            Result<WrappedUnreadCountsResponse, Error>.failure(ClientError.Unknown())
         )
 
         waitForExpectations(timeout: defaultTimeout)
@@ -348,7 +348,7 @@ final class API_Tests: XCTestCase {
 
         // When
         let expectation = expectation(description: "request")
-        api.createDevice(createDeviceRequest: .init(), completion: { _ in
+        api.createDevice(createDeviceRequest: .init(id: "id", pushProvider: "provider"), completion: { _ in
             expectation.fulfill()
         })
 
@@ -620,7 +620,7 @@ final class API_Tests: XCTestCase {
 
         // When
         let expectation = expectation(description: "request")
-        api.muteUser(muteUserRequest: .init(targetIds: []), completion: { _ in
+        api.muteUser(muteUserRequest: .init(timeout: 0, targetIds: []), completion: { _ in
             expectation.fulfill()
         })
 
@@ -893,7 +893,7 @@ final class API_Tests: XCTestCase {
 
         // When
         let expectation = expectation(description: "request")
-        api.sync(syncRequest: .init(lastSyncAt: .unique), withInaccessibleCids: false, watch: true, requiresConnectionId: true) { _ in
+        api.sync(syncRequest: .init(lastSyncAt: .unique, channelCids: ["id"]), withInaccessibleCids: false, watch: true, requiresConnectionId: true) { _ in
             expectation.fulfill()
         }
 
@@ -968,7 +968,7 @@ final class API_Tests: XCTestCase {
 
         // When
         let expectation = expectation(description: "request")
-        api.deleteChannels(deleteChannelsRequest: .init(), completion: { _ in
+        api.deleteChannels(deleteChannelsRequest: .init(cids: ["id"]), completion: { _ in
             expectation.fulfill()
         })
 
@@ -1195,7 +1195,7 @@ final class API_Tests: XCTestCase {
 
         // When
         let expectation = expectation(description: "request")
-        api.unmuteChannel(unmuteChannelRequest: .init(channelCid: "id", channelCids: ["id"]), completion: { _ in
+        api.unmuteChannel(unmuteChannelRequest: .init(channelCids: ["id"]), completion: { _ in
             expectation.fulfill()
         })
 
@@ -1566,7 +1566,7 @@ final class API_Tests: XCTestCase {
 
         // We are not interested in the result of the request, only in the request itself
         apiClient.test_simulateResponse(
-            Result<UsersResponse, Error>.failure(ClientError.Unknown())
+            Result<QueryUsersResponse, Error>.failure(ClientError.Unknown())
         )
 
         waitForExpectations(timeout: defaultTimeout)
@@ -1680,7 +1680,7 @@ final class API_Tests: XCTestCase {
 
         // When
         let expectation = expectation(description: "request")
-        api.unmuteUser(unmuteUserRequest: .init(targetId: "id", targetIds: ["id"]), completion: { _ in
+        api.unmuteUser(unmuteUserRequest: .init(timeout: 0, targetIds: ["id"]), completion: { _ in
             expectation.fulfill()
         })
 
@@ -1889,13 +1889,13 @@ final class API_Tests: XCTestCase {
 
         // When
         let expectation = expectation(description: "request")
-        api.getMessage(id: "id", completion: { _ in
+        api.getMessage(id: "id", showDeletedMessage: false, completion: { _ in
             expectation.fulfill()
         })
 
         // We are not interested in the result of the request, only in the request itself
         apiClient.test_simulateResponse(
-            Result<MessageWithPendingMetadataResponse, Error>.failure(ClientError.Unknown())
+            Result<GetMessageResponse, Error>.failure(ClientError.Unknown())
         )
 
         waitForExpectations(timeout: defaultTimeout)

@@ -46,6 +46,7 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
             members: [.dummy(user: currentUserPayload.toUser), .dummy(user: anotherUserPayload)],
             messages: [],
             pinnedMessages: [],
+            threads: [],
             read: [currentUserReadPayload],
             channel: .dummy()
         )
@@ -939,6 +940,7 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
             type: EventType.notificationMarkRead.rawValue,
             unreadChannels: 0,
             unreadCount: 0,
+            unreadThreads: 0,
             channel: channelDetailPayload,
             user: dummyCurrentUser.toUser
         )
@@ -991,6 +993,7 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
             type: EventType.notificationMarkRead.rawValue,
             unreadChannels: 0,
             unreadCount: 0,
+            unreadThreads: 0,
             channel: payload.channel,
             user: dummyUser(id: memberId)
         )
@@ -1041,6 +1044,7 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
             type: EventType.notificationMarkRead.rawValue,
             unreadChannels: 19,
             unreadCount: 124,
+            unreadThreads: 0,
             user: dummyCurrentUser.toUser
         )
         // Let the middleware handle the event

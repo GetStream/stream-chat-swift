@@ -535,7 +535,7 @@ final class UserSearchController_Tests: XCTestCase {
         // Simulate successful API response for `loadNextUsers`
         let userPayload2 = dummyUser(id: .unique).toUserResponse
         let userPayload3 = dummyUser(id: .unique).toUserResponse
-        let nextPage = UsersResponse(users: [userPayload2, userPayload3])
+        let nextPage = QueryUsersResponse(users: [userPayload2, userPayload3])
         env.userListUpdater!.fetch_completion!(.success(nextPage))
 
         // Wait for `loadNextUsers` completion to be called
@@ -687,28 +687,40 @@ extension UserObject {
     var toUserResponse: UserResponse {
         UserResponse(
             banned: banned ?? false,
+            createdAt: createdAt ?? .unique,
             id: id,
+            language: language ?? "en",
             online: online ?? false,
             role: role ?? "user",
-            shadowBanned: false,
+            updatedAt: updatedAt ?? .unique,
+            teams: teams ?? [],
             custom: custom ?? [:],
-            banExpires: banExpires,
-            createdAt: createdAt,
-            deactivatedAt: deactivatedAt,
             deletedAt: deletedAt,
-            invisible: invisible,
-            language: language,
-            lastActive: lastActive,
-            revokeTokensIssuedBefore: revokeTokensIssuedBefore,
-            updatedAt: updatedAt,
-            teams: teams,
-            pushNotifications: pushNotifications
+            image: custom?["image"]?.stringValue,
+            name: custom?["name"]?.stringValue
         )
     }
 }
 
-extension UsersResponse {
+extension QueryUsersResponse {
     init(users: [UserResponse?]) {
-        self.init(duration: "", users: users)
+        self.init(duration: "", users: users.compactMap { response in
+            if let response {
+                return QueryUserResult(
+                    banned: response.banned,
+                    createdAt: response.createdAt,
+                    id: response.id,
+                    language: response.language,
+                    online: response.online,
+                    role: response.role,
+                    shadowBanned: false,
+                    updatedAt: response.updatedAt,
+                    teams: response.teams,
+                    custom: response.custom
+                )
+            } else {
+                return nil
+            }
+        })
     }
 }

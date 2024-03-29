@@ -238,6 +238,80 @@ final class ChatMessageContentView_Tests: XCTestCase {
 
         AssertSnapshot(view, variants: .onlyUserInterfaceStyles)
     }
+    
+    func test_appearance_whenMessageWithMarkdownOrderedListFromTheCurrentUserIsSent() {
+        let channelWithReadsEnabled: ChatChannel = .mock(
+            cid: .unique,
+            config: .mock(readEventsEnabled: true)
+        )
+
+        let messageWithMarkdownOrderedList = """
+           1. Test1
+           2. Test2
+           3. Test3
+           4. Test4
+           5. Test5
+           6. Test6
+           7. Test7
+           8. Test8
+           9. Test9
+           10. Test10
+           33. Test33
+        """
+
+        let sentMessageFromCurrentUser: ChatMessage = .mock(
+            id: .unique,
+            cid: channelWithReadsEnabled.cid,
+            text: messageWithMarkdownOrderedList,
+            author: me,
+            createdAt: createdAt,
+            localState: nil,
+            isSentByCurrentUser: true,
+            readBy: []
+        )
+
+        let view = contentView(
+            message: sentMessageFromCurrentUser,
+            channel: channelWithReadsEnabled
+        )
+
+        AssertSnapshot(view, variants: .onlyUserInterfaceStyles)
+    }
+    
+    func test_appearance_whenMessageWithMarkdownItalicStyleFromTheCurrentUserIsSent() {
+        let channelWithReadsEnabled: ChatChannel = .mock(
+            cid: .unique,
+            config: .mock(readEventsEnabled: true)
+        )
+
+        let messageWithMarkdown = """
+           https://getstream.io/test_endpoint_in__snake__style
+           Test_text_in__snake__style and plain text
+           Test plain text and the_text_in__snake__style
+           _Test text in italic style_ and plain text
+           Test plain text and _text in italic style_
+           Test plain text, _text in italic style_ and plain text
+           Test plain text, __text in bold style__ and plain text
+        """
+
+        let sentMessageFromCurrentUser: ChatMessage = .mock(
+            id: .unique,
+            cid: channelWithReadsEnabled.cid,
+            text: messageWithMarkdown,
+            author: me,
+            createdAt: createdAt,
+            localState: nil,
+            isSentByCurrentUser: true,
+            readBy: []
+        )
+
+        let view = contentView(
+            message: sentMessageFromCurrentUser,
+            channel: channelWithReadsEnabled
+        )
+
+        AssertSnapshot(view, variants: .onlyUserInterfaceStyles)
+    }
 
     func test_appearance_whenMessageFromTheCurrentUserIsRead_inDirectMesssagesChannel() {
         let dmChannelWithReadsEnabled: ChatChannel = .mock(

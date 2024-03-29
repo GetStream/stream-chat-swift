@@ -21,6 +21,12 @@ final class ChatClient_Mock: ChatClient {
     @Atomic var completeTokenWaiters_called = false
     @Atomic var completeTokenWaiters_token: Token?
 
+    var mockedAppSettings: AppSettings?
+
+    override var appSettings: AppSettings? {
+        mockedAppSettings
+    }
+
     var mockedEventNotificationCenter: EventNotificationCenter_Mock? = nil
 
     override var eventNotificationCenter: EventNotificationCenter {
@@ -269,6 +275,42 @@ extension API {
             ),
             basePath: basePath,
             apiKey: apiKey
+        )
+    }
+}
+
+extension AppSettings {
+    static func mock(
+        name: String = "Stream iOS",
+        fileUploadConfig: UploadConfig? = nil,
+        imageUploadConfig: UploadConfig? = nil,
+        autoTranslationEnabled: Bool = false,
+        asyncUrlEnrichEnabled: Bool = false
+    ) -> AppSettings {
+        .init(
+            name: name,
+            fileUploadConfig: fileUploadConfig ?? .mock(),
+            imageUploadConfig: imageUploadConfig ?? .mock(),
+            autoTranslationEnabled: autoTranslationEnabled,
+            asyncUrlEnrichEnabled: asyncUrlEnrichEnabled
+        )
+    }
+}
+
+extension AppSettings.UploadConfig {
+    static func mock(
+        allowedFileExtensions: [String] = [],
+        blockedFileExtensions: [String] = [],
+        allowedMimeTypes: [String] = [],
+        blockedMimeTypes: [String] = [],
+        sizeLimitInBytes: Int64? = nil
+    ) -> AppSettings.UploadConfig {
+        .init(
+            allowedFileExtensions: allowedFileExtensions,
+            blockedFileExtensions: blockedFileExtensions,
+            allowedMimeTypes: allowedMimeTypes,
+            blockedMimeTypes: blockedMimeTypes,
+            sizeLimitInBytes: sizeLimitInBytes
         )
     }
 }

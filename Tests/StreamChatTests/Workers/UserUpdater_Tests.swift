@@ -154,7 +154,7 @@ final class UserUpdater_Tests: XCTestCase {
 
         // Simulate API response with failure
         let error = TestError()
-        apiClient.test_simulateResponse(Result<UsersResponse, Error>.failure(error))
+        apiClient.test_simulateResponse(Result<QueryUsersResponse, Error>.failure(error))
 
         // Assert the completion is called with the error
         AssertAsync.willBeEqual(completionError as? TestError, error)
@@ -168,7 +168,7 @@ final class UserUpdater_Tests: XCTestCase {
         }
 
         // Simulate API response with empty users list
-        let response = Result<UsersResponse, Error>.success(.init(users: []))
+        let response = Result<QueryUsersResponse, Error>.success(.init(users: []))
         apiClient.test_simulateResponse(response)
 
         // Assert the `UserDoesNotExist` is received
@@ -185,7 +185,7 @@ final class UserUpdater_Tests: XCTestCase {
         }
 
         // Simulate API response with multiple users
-        let response = Result<UsersResponse, Error>.success(.init(users: [
+        let response = Result<QueryUsersResponse, Error>.success(.init(users: [
             UserObject.dummy(userId: userId).toUserResponse,
             UserObject.dummy(userId: userId).toUserResponse,
             UserObject.dummy(userId: userId).toUserResponse
@@ -217,7 +217,7 @@ final class UserUpdater_Tests: XCTestCase {
 
         // Simulate API response with one user
         let userPayload = UserObject.dummy(userId: .unique).toUserResponse
-        let response = Result<UsersResponse, Error>.success(.init(users: [userPayload]))
+        let response = Result<QueryUsersResponse, Error>.success(.init(users: [userPayload]))
         apiClient.test_simulateResponse(response)
 
         // Assert the database error is propogated
@@ -233,7 +233,7 @@ final class UserUpdater_Tests: XCTestCase {
 
         // Simulate API response with empty users list
         let userPayload = UserObject.dummy(userId: .unique).toUserResponse
-        let response = Result<UsersResponse, Error>.success(.init(users: [userPayload]))
+        let response = Result<QueryUsersResponse, Error>.success(.init(users: [userPayload]))
         apiClient.test_simulateResponse(response)
 
         AssertAsync.willBeTrue(completionIsCalled)

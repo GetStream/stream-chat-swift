@@ -105,22 +105,43 @@ class SwiftyTokeniser {
 			string.removeAll()
 			tokens.append(token)
 		}
-		
+
+		var lastTag: Element? = nil
 		var accumulatedString = ""
 		for element in elementArray {
-			guard element.type != .escape else {
+			var currentElement = element
+
+			guard currentElement.type != .escape else {
 				continue
 			}
-			
-			guard element.type == .string || element.type == .space || element.type == .newline else {
+
+			let lastTagStyles = lastTag?.styles as? [CharacterStyle] ?? []
+			let lastElementStyles = lastElement.styles as? [CharacterStyle] ?? []
+			let currentElementStyles = currentElement.styles as? [CharacterStyle] ?? []
+
+			if  !lastTagStyles.contains(.italic) &&
+                !lastTagStyles.contains(.bold) &&
+				(
+                    (currentElement.character == "_" && lastElement.type == .string) ||
+                    (currentElement.character != "_" && currentElement.character != "*" && currentElementStyles.contains { $0 == .italic || $0 == .bold })
+                ) {
+                currentElement.styles.removeAll(where: { [.italic, .bold].contains($0 as? CharacterStyle) })
+				currentElement.type = .string
+			}
+
+			if currentElement.type == .tag {
+				lastTag = currentElement
+			}
+
+			guard currentElement.type == .string || currentElement.type == .space || currentElement.type == .newline else {
 				empty(&accumulatedString, into: &output)
 				continue
 			}
-			if lastElement.styles as? [CharacterStyle] != element.styles as? [CharacterStyle] {
+			if lastElementStyles != currentElementStyles {
 				empty(&accumulatedString, into: &output)
 			}
-			accumulatedString.append(element.character)
-			lastElement = element
+			accumulatedString.append(currentElement.character)
+			lastElement = currentElement
 		}
 		empty(&accumulatedString, into: &output)
 		

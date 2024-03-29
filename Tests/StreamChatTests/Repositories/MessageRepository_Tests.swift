@@ -334,16 +334,16 @@ final class MessageRepositoryTests: XCTestCase {
 
         // Simulate API response with failure
         let error = TestError()
-        apiClient.test_simulateResponse(Result<MessageWithPendingMetadataResponse, Error>.failure(error))
+        apiClient.test_simulateResponse(Result<GetMessageResponse, Error>.failure(error))
 
         // Assert the completion is called with the error
         AssertAsync.willBeEqual(completionCalledError as? TestError, error)
     }
 
     func test_getMessage_propagatesDatabaseError() throws {
-        let messagePayload: MessageWithPendingMetadataResponse = .init(
+        let messagePayload: GetMessageResponse = .init(
             duration: "",
-            message: .dummy(messageId: .unique, authorUserId: .unique)
+            message: .dummy(messageId: .unique, authorUserId: .unique, channel: .dummy())
         )
         let channelId = ChannelId.unique
 
@@ -356,12 +356,12 @@ final class MessageRepositoryTests: XCTestCase {
 
         // Simulate `getMessage(cid:, messageId:)` call
         var completionCalledError: Error?
-        repository.getMessage(cid: channelId, messageId: messagePayload.message!.id, store: true) {
+        repository.getMessage(cid: channelId, messageId: messagePayload.message.id, store: true) {
             completionCalledError = $0.error
         }
 
         // Simulate API response with success
-        apiClient.test_simulateResponse(Result<MessageWithPendingMetadataResponse, Error>.success(messagePayload))
+        apiClient.test_simulateResponse(Result<GetMessageResponse, Error>.success(messagePayload))
 
         // Assert database error is propogated
         AssertAsync.willBeEqual(completionCalledError as? TestError, testError)
@@ -385,11 +385,11 @@ final class MessageRepositoryTests: XCTestCase {
         }
 
         // Simulate API response with success
-        let messagePayload: MessageWithPendingMetadataResponse = .init(
+        let messagePayload: GetMessageResponse = .init(
             duration: "",
-            message: .dummy(messageId: messageId, authorUserId: currentUserId)
+            message: .dummy(messageId: messageId, authorUserId: currentUserId, channel: .dummy())
         )
-        apiClient.test_simulateResponse(Result<MessageWithPendingMetadataResponse, Error>.success(messagePayload))
+        apiClient.test_simulateResponse(Result<GetMessageResponse, Error>.success(messagePayload))
 
         // Assert completion is called
         AssertAsync.willBeTrue(completionCalled)
@@ -416,11 +416,11 @@ final class MessageRepositoryTests: XCTestCase {
         }
 
         // Simulate API response with success
-        let messagePayload: MessageWithPendingMetadataResponse = .init(
+        let messagePayload: GetMessageResponse = .init(
             duration: "",
-            message: .dummy(messageId: messageId, authorUserId: currentUserId)
+            message: .dummy(messageId: messageId, authorUserId: currentUserId, channel: .dummy())
         )
-        apiClient.test_simulateResponse(Result<MessageWithPendingMetadataResponse, Error>.success(messagePayload))
+        apiClient.test_simulateResponse(Result<GetMessageResponse, Error>.success(messagePayload))
 
         // Assert completion is called
         AssertAsync.willBeTrue(completionCalled)

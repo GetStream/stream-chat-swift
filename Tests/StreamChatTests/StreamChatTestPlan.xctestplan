@@ -29,7 +29,13 @@
       "skippedTests" : [
         "APIClient_Tests\/test_runningARequestAndSwitchingToRecoveryMode()",
         "APIClient_Tests\/test_startingMultipleRequestsAtTheSameTimeShouldResultInParallelRequests()",
+<<<<<<< HEAD
         "AttachmentQueueUploader_Tests\/test_uploader_whenHasFailedAttachments_doNotMarkMessagePendingSend()",
+=======
+        "AttachmentQueueUploader_Tests",
+        "AttachmentQueueUploader_Tests\/test_attachmentsAreCopiedToSandbox_beforeBeingSent()",
+        "AttachmentQueueUploader_Tests\/test_uploader_whenAllAttachmentsFinishUploading_whenMessageNotSendingFailed_doNotMarkMessagePendingSend()",
+>>>>>>> 67156b31adcc60e03f2f86eef7d3d204429e886f
         "ChannelController_Tests\/test_createCall_propagatesResultFromUpdater()",
         "ChannelListPayload_Tests\/test_decode_bigChannelListPayload()",
         "ChannelListPayload_Tests\/test_hugeChannelListQuery_save()",
@@ -52,6 +58,10 @@
         "MessageUpdater_Tests\/test_deleteMessage_updatesMessageStateCorrectly()",
         "MessageUpdater_Tests\/test_flagMessage_happyPath()",
         "MessageUpdater_Tests\/test_unpinMessage_propogatesMessageEditingError_ifLocalStateIsInvalidForUnpinning()",
+<<<<<<< HEAD
+=======
+        "SyncOperations_Tests\/test_DeleteUnwantedChannelsOperation_unwantedChannels_failure()",
+>>>>>>> 67156b31adcc60e03f2f86eef7d3d204429e886f
         "SyncRepository_Tests\/test_cancelRecoveryFlow_cancelsAllOperations()",
         "SyncRepository_Tests\/test_syncExistingChannelsEvents_someChannels_apiSuccess_shouldStoreEvents()",
         "WebSocketClient_Tests\/test_changingConnectEndpointAndReconnecting()",

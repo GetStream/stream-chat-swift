@@ -7,7 +7,6 @@ import Foundation
 enum EndpointPath: Codable {
     case connect
     case uploadAttachment(channelId: String, type: String)
-
     var value: String {
         switch self {
         case .connect: return "api/v2/connect"
