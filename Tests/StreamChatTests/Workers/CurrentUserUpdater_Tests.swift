@@ -436,7 +436,7 @@ final class CurrentUserUpdater_Tests: XCTestCase {
 //        let expectedEndpoint: Endpoint<DeviceListPayload> = .devices(userId: userPayload.id)
 //        XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(expectedEndpoint))
 //    }
-
+    
     func test_fetchDevices_forwardsNetworkError() throws {
         let userPayload: OwnUser = .dummy(userId: .unique, role: .user)
 
@@ -448,7 +448,7 @@ final class CurrentUserUpdater_Tests: XCTestCase {
         // Call updateDevices
         var completionCalledError: Error?
         currentUserUpdater.fetchDevices(currentUserId: .unique) {
-            completionCalledError = $0
+            completionCalledError = $0.error
         }
 
         // Keep a weak ref so we can check if it's actually deallocated
@@ -484,7 +484,7 @@ final class CurrentUserUpdater_Tests: XCTestCase {
         // Call updateDevices
         var completionCalledError: Error?
         currentUserUpdater.fetchDevices(currentUserId: .unique) {
-            completionCalledError = $0
+            completionCalledError = $0.error
         }
 
         // Simulate successful API response
@@ -515,12 +515,14 @@ final class CurrentUserUpdater_Tests: XCTestCase {
             // Simulate 4 devices exist in the DB
             try $0.saveCurrentUserDevices([.dummy, .dummy, .dummy, .dummy], clearExisting: true)
         }
+        
+        let dummyDevices = DeviceListPayload.dummy
+        let apiDevices = dummyDevices.devices.map { Device(id: $0.id, createdAt: $0.createdAt) }
 
         // Call updateDevices
         var callbackCalled = false
-        currentUserUpdater.fetchDevices(currentUserId: .unique) {
-            // No error should be returned
-            XCTAssertNil($0)
+        currentUserUpdater.fetchDevices(currentUserId: .unique) { result in
+            XCTAssertEqual(result, success: apiDevices)
             callbackCalled = true
         }
 

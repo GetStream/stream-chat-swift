@@ -14,6 +14,7 @@ final class SyncRepository_Tests: XCTestCase {
     var database: DatabaseContainer_Spy!
     var apiClient: APIClient_Spy!
     var api: API!
+    var channelListUpdater: ChannelListUpdater_Spy!
 
     var repository: SyncRepository!
 
@@ -39,7 +40,10 @@ final class SyncRepository_Tests: XCTestCase {
             database: client.databaseContainer,
             apiClient: client.apiClient
         )
-        
+        database = client.mockDatabaseContainer
+        apiClient = client.mockAPIClient
+        channelListUpdater = client.mockChannelListUpdater
+
         repository = SyncRepository(
             config: client.config,
             activeChannelControllers: _activeChannelControllers,
@@ -47,7 +51,8 @@ final class SyncRepository_Tests: XCTestCase {
             offlineRequestsRepository: offlineRequestsRepository,
             eventNotificationCenter: client.eventNotificationCenter,
             database: database,
-            api: api
+            api: api,
+            channelListUpdater: channelListUpdater
         )
     }
 
@@ -62,6 +67,8 @@ final class SyncRepository_Tests: XCTestCase {
         database = nil
         apiClient.cleanUp()
         apiClient = nil
+        channelListUpdater.cleanUp()
+        channelListUpdater = nil
         repository = nil
     }
 
@@ -96,7 +103,8 @@ final class SyncRepository_Tests: XCTestCase {
             offlineRequestsRepository: offlineRequestsRepository,
             eventNotificationCenter: repository.eventNotificationCenter,
             database: database,
-            api: api
+            api: api,
+            channelListUpdater: channelListUpdater
         )
 
         try prepareForSyncLocalStorage(
@@ -129,7 +137,8 @@ final class SyncRepository_Tests: XCTestCase {
             offlineRequestsRepository: offlineRequestsRepository,
             eventNotificationCenter: repository.eventNotificationCenter,
             database: database,
-            api: api
+            api: api,
+            channelListUpdater: channelListUpdater
         )
 
         try prepareForSyncLocalStorage(
@@ -576,8 +585,8 @@ final class SyncRepository_Tests: XCTestCase {
 //
 //        XCTAssertCall("queueOfflineRequest(endpoint:completion:)", on: offlineRequestsRepository, times: 1)
 //    }
-
-    // MARL: - cancelRecoveryFlow
+    
+    // MARK: - cancelRecoveryFlow
 
     func test_cancelRecoveryFlow_existsRecoveryMode() throws {
         // GIVEN
@@ -599,7 +608,8 @@ final class SyncRepository_Tests: XCTestCase {
             offlineRequestsRepository: offlineRequestsRepository,
             eventNotificationCenter: repository.eventNotificationCenter,
             database: database,
-            api: api
+            api: api,
+            channelListUpdater: channelListUpdater
         )
 
         var cancelRecoveryFlowCalled = false
@@ -623,7 +633,8 @@ final class SyncRepository_Tests: XCTestCase {
             offlineRequestsRepository: offlineRequestsRepository,
             eventNotificationCenter: repository.eventNotificationCenter,
             database: database,
-            api: api
+            api: api,
+            channelListUpdater: channelListUpdater
         )
 
         let expectation = expectation(description: "cancelRecoveryFlow completion")

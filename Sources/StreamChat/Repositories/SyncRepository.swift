@@ -36,10 +36,14 @@ class SyncRepository {
     private let database: DatabaseContainer
     private let apiClient: APIClient
     private let api: API
+    private let channelListUpdater: ChannelListUpdater
     let activeChannelControllers: ThreadSafeWeakCollection<ChatChannelController>
     let activeChannelListControllers: ThreadSafeWeakCollection<ChatChannelListController>
     let offlineRequestsRepository: OfflineRequestsRepository
     let eventNotificationCenter: EventNotificationCenter
+    
+    private var _activeChannelListQueryProviders = [() -> ChannelListQuery?]()
+    private let syncQueue = DispatchQueue(label: "io.getstream.sync-repository-queue")
 
     private lazy var operationQueue: OperationQueue = {
         let operationQueue = OperationQueue()
@@ -55,12 +59,14 @@ class SyncRepository {
         offlineRequestsRepository: OfflineRequestsRepository,
         eventNotificationCenter: EventNotificationCenter,
         database: DatabaseContainer,
-        api: API
+        api: API,
+        channelListUpdater: ChannelListUpdater
     ) {
         self.config = config
         self.activeChannelControllers = activeChannelControllers
         self.activeChannelListControllers = activeChannelListControllers
         self.offlineRequestsRepository = offlineRequestsRepository
+        self.channelListUpdater = channelListUpdater
         self.eventNotificationCenter = eventNotificationCenter
         self.database = database
         self.api = api
@@ -70,6 +76,22 @@ class SyncRepository {
     deinit {
         cancelRecoveryFlow()
     }
+    
+    // MARK: - Tracking Active
+    
+    func trackChannelListQuery(_ provider: @escaping () -> ChannelListQuery?) {
+        syncQueue.sync {
+            _activeChannelListQueryProviders.append(provider)
+        }
+    }
+    
+    func removeAllTracked() {
+        syncQueue.sync {
+            _activeChannelListQueryProviders.removeAll()
+        }
+    }
+    
+    // MARK: -
 
     func syncLocalState(completion: @escaping () -> Void) {
         cancelRecoveryFlow()
@@ -136,6 +158,20 @@ class SyncRepository {
                 )
             }
         operations.append(contentsOf: refetchChannelListQueryOperations)
+        
+        let channelListQueries = syncQueue.sync {
+            var queries = _activeChannelListQueryProviders.compactMap { $0() }
+            _activeChannelListQueryProviders.removeAll()
+            return queries
+        }
+        operations.append(contentsOf: channelListQueries
+            .map { channelListQuery in
+                RefetchChannelListQueryOperation(
+                    query: channelListQuery,
+                    channelListUpdater: channelListUpdater,
+                    context: context
+                )
+            })
 
         // 4. Clean up unwanted channels
         operations.append(DeleteUnwantedChannelsOperation(database: database, context: context))

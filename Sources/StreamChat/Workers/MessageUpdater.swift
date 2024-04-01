@@ -24,10 +24,6 @@ class MessageUpdater: Worker {
         super.init(database: database, api: api)
     }
 
-    var paginationState: MessagesPaginationState {
-        paginationStateHandler.state
-    }
-
     /// Fetches the message from the backend and saves it into the database
     /// - Parameters:
     ///   - cid: The channel identifier the message relates to.
@@ -254,6 +250,7 @@ class MessageUpdater: Worker {
         cid: ChannelId,
         messageId: MessageId,
         pagination: MessagesPagination,
+        paginationStateHandler: MessagesPaginationStateHandling,
         completion: ((Result<GetRepliesResponse, Error>) -> Void)? = nil
     ) {
         paginationStateHandler.begin(pagination: pagination)
@@ -277,7 +274,6 @@ class MessageUpdater: Worker {
         ) { [weak self] in
             guard let self else { return }
             self.paginationStateHandler.end(pagination: pagination, with: $0.map(\.messages))
-
             switch $0 {
             case let .success(payload):
                 self.database.write({ session in
@@ -289,7 +285,7 @@ class MessageUpdater: Worker {
                             }
                         }
 
-                        parentMessage.newestReplyAt = self.paginationState.newestMessageAt?.bridgeDate
+                        parentMessage.newestReplyAt = paginationStateHandler.state.newestMessageAt?.bridgeDate
                     }
 
                     let replies = session.saveMessages(messagesPayload: payload, for: cid, syncOwnReactions: true)
@@ -602,6 +598,7 @@ class MessageUpdater: Worker {
                 // For ephemeral messages we don't change `state` to `.deleted`
                 messageDTO.deletedAt = DBDate()
                 messageDTO.previewOfChannel?.previewMessage = session.preview(for: cid)
+                completion?(nil)
                 return
             }
 
@@ -623,7 +620,7 @@ class MessageUpdater: Worker {
         })
     }
 
-    func search(query: MessageSearchQuery, policy: UpdatePolicy = .merge, completion: ((Result<SearchResponse, Error>) -> Void)? = nil) {
+    func search(query: MessageSearchQuery, policy: UpdatePolicy = .merge, completion: ((Result<MessageSearchResults, Error>) -> Void)? = nil) {
         var channelFilter = [String: RawJSON]()
         if let data = try? JSONEncoder.default.encode(query.channelFilter),
            let filter = try? JSONDecoder.default.decode([String: RawJSON].self, from: data) {
@@ -650,18 +647,22 @@ class MessageUpdater: Worker {
             guard let self else { return }
             switch result {
             case let .success(payload):
+                var messages = [ChatMessage]()
                 self.database.write { session in
                     if case .replace = policy {
                         let dto = session.saveQuery(query: query)
                         dto.messages.removeAll()
                     }
 
-                    session.saveMessageSearch(payload: payload, for: query)
+                    let dtos = session.saveMessageSearch(payload: payload, for: query)
+                    if completion != nil {
+                        messages = try dtos.map { try $0.asModel() }
+                    }
                 } completion: { error in
                     if let error = error {
                         completion?(.failure(error))
                     } else {
-                        completion?(.success(payload))
+                        completion?(.success(MessageSearchResults(payload: payload, models: messages)))
                     }
                 }
             case let .failure(error):
@@ -679,28 +680,47 @@ class MessageUpdater: Worker {
         }
     }
 
-    func translate(messageId: MessageId, to language: TranslationLanguage, completion: ((Error?) -> Void)? = nil) {
+    func translate(messageId: MessageId, to language: TranslationLanguage, completion: ((Result<ChatMessage, Error>) -> Void)? = nil) {
         let request = TranslateMessageRequest(language: language.languageCode)
         api.translateMessage(id: messageId, translateMessageRequest: request) { [weak self] result in
             guard let self else { return }
             switch result {
             case let .success(boxedMessage):
+                var translatedMessage: ChatMessage?
                 guard let cid = try? ChannelId(cid: boxedMessage.cid) else {
-                    completion?(ClientError.Unexpected())
+                    completion?(.failure(ClientError.Unexpected()))
                     return
                 }
                 self.database.write { session in
-                    try session.saveMessage(
+                    let messageDTO = try session.saveMessage(
                         payload: boxedMessage.toMessage,
                         for: cid,
                         syncOwnReactions: false,
                         cache: nil
                     )
-                } completion: { completion?($0) }
+                    if completion != nil {
+                        translatedMessage = try messageDTO.asModel()
+                    }
+                } completion: { error in
+                    if let translatedMessage, error == nil {
+                        completion?(.success(translatedMessage))
+                    } else {
+                        completion?(.failure(error ?? ClientError.Unknown()))
+                    }
+                }
             case let .failure(error):
-                completion?(error)
+                completion?(.failure(error))
             }
         }
+    }
+}
+
+extension MessageUpdater {
+    struct MessageSearchResults {
+        let payload: SearchResponse
+        let models: [ChatMessage]
+        
+        var next: String? { payload.next }
     }
 }
 
@@ -758,5 +778,220 @@ private extension DatabaseSession {
         }
 
         return messageDTO
+    }
+}
+
+@available(iOS 13.0, *)
+extension MessageUpdater {
+    func addReaction(_ type: MessageReactionType, score: Int, enforceUnique: Bool, extraData: [String: RawJSON], messageId: MessageId) async throws {
+        try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
+            addReaction(type, score: score, enforceUnique: enforceUnique, skipPush: nil, extraData: extraData, messageId: messageId) { error in
+                continuation.resume(with: error)
+            }
+        }
+    }
+    
+    func clearSearchResults(for query: MessageSearchQuery) async throws {
+        try await withCheckedThrowingContinuation { continuation in
+            clearSearchResults(for: query) { error in
+                continuation.resume(with: error)
+            }
+        }
+    }
+    
+    func createNewReply(
+        in cid: ChannelId,
+        messageId: MessageId?,
+        text: String,
+        pinning: MessagePinning?,
+        command: String?,
+        arguments: String?,
+        parentMessageId: MessageId,
+        attachments: [AnyAttachmentPayload],
+        mentionedUserIds: [UserId],
+        showReplyInChannel: Bool,
+        isSilent: Bool,
+        quotedMessageId: MessageId?,
+        skipPush: Bool,
+        skipEnrichUrl: Bool,
+        extraData: [String: RawJSON]
+    ) async throws -> ChatMessage {
+        try await withCheckedThrowingContinuation { continuation in
+            createNewReply(
+                in: cid,
+                messageId: messageId,
+                text: text,
+                pinning: pinning,
+                command: command,
+                arguments: arguments,
+                parentMessageId: parentMessageId,
+                attachments: attachments,
+                mentionedUserIds: mentionedUserIds,
+                showReplyInChannel: showReplyInChannel,
+                isSilent: isSilent,
+                quotedMessageId: quotedMessageId,
+                skipPush: skipPush,
+                skipEnrichUrl: skipEnrichUrl,
+                extraData: extraData
+            ) { result in
+                continuation.resume(with: result)
+            }
+        }
+    }
+    
+    func deleteMessage(messageId: MessageId, hard: Bool) async throws {
+        try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
+            deleteMessage(messageId: messageId, hard: hard) { error in
+                continuation.resume(with: error)
+            }
+        }
+    }
+    
+    func deleteReaction(_ type: MessageReactionType, messageId: MessageId) async throws {
+        try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
+            // TODO: this.
+            deleteReaction(type, messageId: messageId, currentUserId: nil) { error in
+                continuation.resume(with: error)
+            }
+        }
+    }
+    
+    func dispatchEphemeralMessageAction(cid: ChannelId, messageId: MessageId, action: AttachmentAction) async throws {
+        try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
+            dispatchEphemeralMessageAction(cid: cid, messageId: messageId, action: action) { error in
+                continuation.resume(with: error)
+            }
+        }
+    }
+    
+    func editMessage(messageId: MessageId, text: String, skipEnrichUrl: Bool, attachments: [AnyAttachmentPayload] = [], extraData: [String: RawJSON]? = nil) async throws {
+        try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
+            editMessage(messageId: messageId, text: text, skipEnrichUrl: skipEnrichUrl, attachments: attachments, extraData: extraData) { error in
+                continuation.resume(with: error)
+            }
+        }
+    }
+    
+    func flagMessage(_ flag: Bool, with messageId: MessageId, in cid: ChannelId) async throws {
+        try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
+            flagMessage(flag, with: messageId, in: cid) { error in
+                continuation.resume(with: error)
+            }
+        }
+    }
+    
+    func getMessage(cid: ChannelId, messageId: MessageId) async throws -> ChatMessage {
+        try await withCheckedThrowingContinuation { continuation in
+            getMessage(cid: cid, messageId: messageId) { result in
+                continuation.resume(with: result)
+            }
+        }
+    }
+    
+    func loadReactions(cid: ChannelId, messageId: MessageId, pagination: Pagination) async throws -> [ChatMessageReaction] {
+        try await withCheckedThrowingContinuation { continuation in
+            loadReactions(messageId: messageId, pagination: pagination) { result in
+                continuation.resume(with: result)
+            }
+        }
+    }
+    
+    @discardableResult func loadReplies(cid: ChannelId, messageId: MessageId, pagination: MessagesPagination, paginationStateHandler: MessagesPaginationStateHandling) async throws -> GetRepliesResponse {
+        try await withCheckedThrowingContinuation { continuation in
+            loadReplies(cid: cid, messageId: messageId, pagination: pagination, paginationStateHandler: paginationStateHandler) { result in
+                continuation.resume(with: result)
+            }
+        }
+    }
+    
+    func pinMessage(messageId: MessageId, pinning: MessagePinning) async throws {
+        try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
+            pinMessage(messageId: messageId, pinning: pinning) { error in
+                continuation.resume(with: error)
+            }
+        }
+    }
+    
+    func resendAttachment(with id: AttachmentId) async throws {
+        try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
+            restartFailedAttachmentUploading(with: id) { error in
+                continuation.resume(with: error)
+            }
+        }
+    }
+    
+    func resendMessage(with messageId: MessageId) async throws {
+        try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
+            resendMessage(with: messageId) { error in
+                continuation.resume(with: error)
+            }
+        }
+    }
+    
+    func search(query: MessageSearchQuery, policy: UpdatePolicy) async throws -> MessageSearchResults {
+        try await withCheckedThrowingContinuation { continuation in
+            search(query: query, policy: policy) { result in
+                continuation.resume(with: result)
+            }
+        }
+    }
+    
+    func translate(messageId: MessageId, to language: TranslationLanguage) async throws -> ChatMessage {
+        try await withCheckedThrowingContinuation { continuation in
+            translate(messageId: messageId, to: language) { result in
+                continuation.resume(with: result)
+            }
+        }
+    }
+    
+    func unpinMessage(messageId: MessageId) async throws {
+        try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
+            unpinMessage(messageId: messageId) { error in
+                continuation.resume(with: error)
+            }
+        }
+    }
+    
+    // MARK: -
+    
+    func loadReplies(of messageId: MessageId, pagination: MessagesPagination, cid: ChannelId, paginationStateHandler: MessagesPaginationStateHandling) async throws -> [ChatMessage] {
+        let payload = try await loadReplies(cid: cid, messageId: messageId, pagination: pagination, paginationStateHandler: paginationStateHandler)
+        guard let fromDate = payload.messages.first?.createdAt else { return [] }
+        guard let toDate = payload.messages.last?.createdAt else { return [] }
+        return try await repository.replies(from: fromDate, to: toDate, in: messageId)
+    }
+    
+    func loadRepliesFirstPage(of messageId: MessageId, limit: Int?, cid: ChannelId, paginationStateHandler: MessagesPaginationStateHandling) async throws {
+        let pageSize = limit ?? .messagesPageSize
+        try await loadReplies(cid: cid, messageId: messageId, pagination: MessagesPagination(pageSize: pageSize), paginationStateHandler: paginationStateHandler)
+    }
+    
+    func loadReplies(of messageId: MessageId, before replyId: MessageId?, limit: Int?, cid: ChannelId, paginationStateHandler: MessagesPaginationStateHandling) async throws {
+        guard !paginationStateHandler.state.hasLoadedAllPreviousMessages else { return }
+        guard !paginationStateHandler.state.isLoadingPreviousMessages else { return }
+        guard let replyId = replyId ?? paginationStateHandler.state.oldestFetchedMessage?.id else {
+            throw ClientError.MessageEmptyReplies()
+        }
+        let pageSize = limit ?? .messagesPageSize
+        let pagination = MessagesPagination(pageSize: pageSize, parameter: .lessThan(replyId))
+        try await loadReplies(cid: cid, messageId: messageId, pagination: pagination, paginationStateHandler: paginationStateHandler)
+    }
+    
+    func loadReplies(of messageId: MessageId, after replyId: MessageId?, limit: Int?, cid: ChannelId, paginationStateHandler: MessagesPaginationStateHandling) async throws {
+        guard !paginationStateHandler.state.hasLoadedAllNextMessages else { return }
+        guard !paginationStateHandler.state.isLoadingNextMessages else { return }
+        guard let replyId = replyId ?? paginationStateHandler.state.newestFetchedMessage?.id else {
+            throw ClientError.MessageEmptyReplies()
+        }
+        let pageSize = limit ?? .messagesPageSize
+        let pagination = MessagesPagination(pageSize: pageSize, parameter: .greaterThan(replyId))
+        try await loadReplies(cid: cid, messageId: messageId, pagination: pagination, paginationStateHandler: paginationStateHandler)
+    }
+    
+    func loadReplies(of messageId: MessageId, around replyId: MessageId, limit: Int?, cid: ChannelId, paginationStateHandler: MessagesPaginationStateHandling) async throws {
+        guard !paginationStateHandler.state.isLoadingMiddleMessages else { return }
+        let pageSize = limit ?? .messagesPageSize
+        let pagination = MessagesPagination(pageSize: pageSize, parameter: .around(replyId))
+        try await loadReplies(cid: cid, messageId: messageId, pagination: pagination, paginationStateHandler: paginationStateHandler)
     }
 }

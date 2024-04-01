@@ -125,7 +125,8 @@ extension ChatClient {
             _ offlineRequestsRepository: OfflineRequestsRepository,
             _ eventNotificationCenter: EventNotificationCenter,
             _ database: DatabaseContainer,
-            _ api: API
+            _ api: API,
+            _ channelListUpater: ChannelListUpdater
         ) -> SyncRepository = {
             SyncRepository(
                 config: $0,
@@ -134,7 +135,8 @@ extension ChatClient {
                 offlineRequestsRepository: $3,
                 eventNotificationCenter: $4,
                 database: $5,
-                api: $6
+                api: $6,
+                channelListUpdater: $7
             )
         }
 
@@ -149,6 +151,13 @@ extension ChatClient {
             _ api: API
         ) -> ChannelRepository = {
             ChannelRepository(database: $0, api: $1)
+        }
+        
+        var channelListUpdaterBuilder: (
+            _ database: DatabaseContainer,
+            _ api: API
+        ) -> ChannelListUpdater = {
+            ChannelListUpdater(database: $0, api: $1)
         }
 
         var messageRepositoryBuilder: (

@@ -59,8 +59,8 @@ final class UserListUpdater_Tests: XCTestCase {
         // Simulate `update` call
         let query = UserListQuery(filter: .equal(.id, to: "Luke"))
         let completionCalled = expectation(description: "completion called")
-        listUpdater.update(userListQuery: query, completion: { error in
-            XCTAssertNil(error)
+        listUpdater.update(userListQuery: query, completion: { result in
+            XCTAssertNil(result.error)
             completionCalled.fulfill()
         })
 
@@ -82,7 +82,7 @@ final class UserListUpdater_Tests: XCTestCase {
         // Simulate `update` call
         let query = UserListQuery(filter: .equal(.id, to: "Luke"))
         var completionCalledError: Error?
-        listUpdater.update(userListQuery: query, completion: { completionCalledError = $0 })
+        listUpdater.update(userListQuery: query, completion: { completionCalledError = $0.error })
 
         // Simualte API response with failure
         let error = TestError()

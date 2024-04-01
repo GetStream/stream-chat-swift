@@ -23,6 +23,10 @@ class MessageEditor: Worker {
 
     private let observer: ListDatabaseObserver<MessageDTO, MessageDTO>
     private let messageRepository: MessageRepository
+    
+    // Any because CheckedContinuation<Void, Error> requires iOS 13
+    private var continuations = [MessageId: Any]()
+    private let continuationsQueue = DispatchQueue(label: "co.getStream.ChatClient.MessageEditor")
 
     init(messageRepository: MessageRepository, database: DatabaseContainer, api: API) {
         observer = .init(
@@ -71,7 +75,7 @@ class MessageEditor: Worker {
                 let dto = session.message(id: messageId),
                 dto.localMessageState == .pendingSync
             else {
-                self?.removeMessageIDAndContinue(messageId)
+                self?.removeMessageIDAndContinue(messageId, error: ClientError.MessageDoesNotExist(messageId: messageId))
                 return
             }
 
@@ -81,22 +85,25 @@ class MessageEditor: Worker {
                     message: requestBody,
                     skipEnrichUrl: dto.skipEnrichUrl
                 )
-                self?.api.updateMessage(id: messageId, updateMessageRequest: request) {
-                    let newMessageState: LocalMessageState? = $0.error == nil ? nil : .syncingFailed
+                self?.api.updateMessage(id: messageId, updateMessageRequest: request) { result in
+                    let newMessageState: LocalMessageState? = result.error == nil ? nil : .syncingFailed
 
                     messageRepository?.updateMessage(
                         withID: messageId,
                         localState: newMessageState
                     ) {
-                        self?.removeMessageIDAndContinue(messageId)
+                        self?.removeMessageIDAndContinue(messageId, error: result.error)
                     }
                 }
             }
         }
     }
 
-    private func removeMessageIDAndContinue(_ messageId: MessageId) {
+    private func removeMessageIDAndContinue(_ messageId: MessageId, error: Error?) {
         _pendingMessageIDs.mutate { $0.remove(messageId) }
+        if #available(iOS 13.0, *) {
+            notifyAPIRequestFinished(for: messageId, error: error)
+        }
         processNextMessage()
     }
 }
@@ -109,6 +116,34 @@ private extension Array where Element == ListChange<MessageDTO> {
                 return dto.id
             case .move, .remove:
                 return nil
+            }
+        }
+    }
+}
+
+// MARK: - Chat State Layer
+
+@available(iOS 13.0, *)
+extension MessageEditor {
+    func waitForAPIRequest(messageId: MessageId) async throws {
+        try await withCheckedThrowingContinuation { continuation in
+            registerContinuation(forMessage: messageId, continuation: continuation)
+        }
+    }
+    
+    private func registerContinuation(forMessage messageId: MessageId, continuation: CheckedContinuation<Void, Error>) {
+        continuationsQueue.async {
+            self.continuations[messageId] = continuation
+        }
+    }
+    
+    private func notifyAPIRequestFinished(for messageId: MessageId, error: Error?) {
+        continuationsQueue.async {
+            guard let continuation = self.continuations.removeValue(forKey: messageId) as? CheckedContinuation<Void, Error> else { return }
+            if let error {
+                continuation.resume(throwing: error)
+            } else {
+                continuation.resume(returning: ())
             }
         }
     }

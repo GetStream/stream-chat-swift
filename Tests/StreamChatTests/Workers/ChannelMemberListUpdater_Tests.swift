@@ -49,8 +49,8 @@ final class ChannelMemberListUpdater_Tests: XCTestCase {
 
         // Simulate `load` call.
         var completionCalled = false
-        listUpdater.load(query) { error in
-            XCTAssertNil(error)
+        listUpdater.load(query) { result in
+            XCTAssertNil(result.error)
             completionCalled = true
         }
         
@@ -86,8 +86,8 @@ final class ChannelMemberListUpdater_Tests: XCTestCase {
     func test_load_happyPath_whenChannelDoesNotExistsLocally() {
         // Simulate `load` call.
         var completionCalled = false
-        listUpdater.load(query) { error in
-            XCTAssertNil(error)
+        listUpdater.load(query) { result in
+            XCTAssertNil(result.error)
             completionCalled = true
         }
 
@@ -146,7 +146,7 @@ final class ChannelMemberListUpdater_Tests: XCTestCase {
         // Simulate `load` call and catch the error.
         var completionCalledError: Error?
         listUpdater.load(query) {
-            completionCalledError = $0
+            completionCalledError = $0.error
         }
         
         AssertAsync.willBeTrue(apiClient.request_endpoint != nil)
@@ -167,7 +167,7 @@ final class ChannelMemberListUpdater_Tests: XCTestCase {
         // Simulate `load` call and catch the error.
         var completionCalledError: Error?
         listUpdater.load(query) {
-            completionCalledError = $0
+            completionCalledError = $0.error
         }
 
         // Simulate channel response with  success.
@@ -184,7 +184,7 @@ final class ChannelMemberListUpdater_Tests: XCTestCase {
         // Simulate `load` call and catch the error.
         var completionCalledError: Error?
         listUpdater.load(query) {
-            completionCalledError = $0
+            completionCalledError = $0.error
         }
         
         AssertAsync.willBeTrue(apiClient.request_endpoint != nil)
@@ -204,7 +204,7 @@ final class ChannelMemberListUpdater_Tests: XCTestCase {
         // Simulate `load` call and catch the error.
         var completionCalledError: Error?
         listUpdater.load(query) {
-            completionCalledError = $0
+            completionCalledError = $0.error
         }
         
         AssertAsync.willBeTrue(apiClient.request_endpoint != nil)

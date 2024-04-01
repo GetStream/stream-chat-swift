@@ -14,6 +14,7 @@ final class SyncRepository_Mock: SyncRepository, Spy {
     var syncMissingEventsResult: Result<[ChannelId], SyncError>?
 
     convenience init() {
+        let apiClient = APIClient_Spy()
         let database = DatabaseContainer_Spy()
         let apiKey = APIKey.init("")
         let api = API.mock(with: APIClient_Spy())

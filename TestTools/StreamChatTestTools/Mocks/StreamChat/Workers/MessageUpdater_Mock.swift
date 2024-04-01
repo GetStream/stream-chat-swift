@@ -43,6 +43,7 @@ final class MessageUpdater_Mock: MessageUpdater {
     @Atomic var loadReplies_messageId: MessageId?
     @Atomic var loadReplies_pagination: MessagesPagination?
     @Atomic var loadReplies_completion: ((Result<GetRepliesResponse, Error>) -> Void)?
+    @Atomic var loadReplies_paginationStateHandler: MessagesPaginationStateHandling?
 
     @Atomic var loadReactions_cid: ChannelId?
     @Atomic var loadReactions_messageId: MessageId?
@@ -93,12 +94,7 @@ final class MessageUpdater_Mock: MessageUpdater {
 
     @Atomic var translate_messageId: MessageId?
     @Atomic var translate_language: TranslationLanguage?
-    @Atomic var translate_completion: ((Error?) -> Void)?
-
-    var mockPaginationState: MessagesPaginationState = .initial
-    override var paginationState: MessagesPaginationState {
-        mockPaginationState
-    }
+    @Atomic var translate_completion: ((Result<ChatMessage, Error>) -> Void)?
 
     // Cleans up all recorded values
     func cleanUp() {
@@ -256,12 +252,14 @@ final class MessageUpdater_Mock: MessageUpdater {
         cid: ChannelId,
         messageId: MessageId,
         pagination: MessagesPagination,
+        paginationStateHandler: MessagesPaginationStateHandling,
         completion: ((Result<GetRepliesResponse, Error>) -> Void)? = nil
     ) {
         loadReplies_callCount += 1
         loadReplies_cid = cid
         loadReplies_messageId = messageId
         loadReplies_pagination = pagination
+        loadReplies_paginationStateHandler = paginationStateHandler
         loadReplies_completion = completion
     }
 
@@ -343,7 +341,7 @@ final class MessageUpdater_Mock: MessageUpdater {
         dispatchEphemeralMessageAction_action = action
         dispatchEphemeralMessageAction_completion = completion
     }
-
+    
     override func search(
         query: MessageSearchQuery,
         policy: UpdatePolicy = .merge,
@@ -365,10 +363,20 @@ final class MessageUpdater_Mock: MessageUpdater {
     override func translate(
         messageId: MessageId,
         to language: TranslationLanguage,
-        completion: ((Error?) -> Void)? = nil
+        completion: ((Result<ChatMessage, Error>) -> Void)? = nil
     ) {
         translate_messageId = messageId
         translate_language = language
         translate_completion = completion
+    }
+}
+
+extension MessageUpdater.MessageSearchResults {
+    static func empty() -> Self {
+        .make(api: [], next: nil, models: [])
+    }
+    
+    static func make(api apiMessages: [MessagePayload.Boxed], next: String?, models: [ChatMessage]) -> Self {
+        MessageUpdater.MessageSearchResults(payload: MessageSearchResultsPayload(results: apiMessages, next: next), models: models)
     }
 }
