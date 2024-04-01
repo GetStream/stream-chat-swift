@@ -14,6 +14,9 @@ enum EndpointPath: Codable {
     case devices
     case og
 
+    case threads
+    case thread(messageId: String)
+
     case channels
     case createChannel(String)
     case updateChannel(String)
@@ -64,6 +67,9 @@ enum EndpointPath: Codable {
         case .search: return "search"
         case .devices: return "devices"
         case .og: return "og"
+
+        case .threads: return "threads"
+        case let .thread(messageId): return "threads/\(messageId)"
 
         case .channels: return "channels"
         case let .createChannel(queryString): return "channels/\(queryString)/query"
