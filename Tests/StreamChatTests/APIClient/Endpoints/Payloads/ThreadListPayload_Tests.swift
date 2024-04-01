@@ -12,9 +12,9 @@ final class ThreadListPayload_Tests: XCTestCase {
     func test_threadList_decoding() throws {
         let url = XCTestCase.mockData(fromJSONFile: "ThreadList")
         let payload = try JSONDecoder.default.decode(ThreadListPayload.self, from: url)
-        // The JSON Payload actually has 10 threads, but 2 have invalid `parentMessage`.
+        // The JSON Payload actually has 3 threads, but 1 has an invalid `parentMessage`.
         // The goal is to also test that if there are invalid threads, we still parse the remaining ones.
-        XCTAssertEqual(payload.threads.count, 8)
+        XCTAssertEqual(payload.threads.count, 2)
     }
 
     func test_thread_decoding() throws {
