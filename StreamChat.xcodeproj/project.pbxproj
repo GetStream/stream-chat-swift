@@ -1282,6 +1282,8 @@
 		AD6E329C2BBB14F20073831B /* ThreadList.json in Resources */ = {isa = PBXBuildFile; fileRef = AD6E32992BBB139D0073831B /* ThreadList.json */; };
 		AD6E32A12BBC50110073831B /* ThreadListQuery.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD6E32A02BBC50110073831B /* ThreadListQuery.swift */; };
 		AD6E32A22BBC50110073831B /* ThreadListQuery.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD6E32A02BBC50110073831B /* ThreadListQuery.swift */; };
+		AD6E32A42BBC502D0073831B /* ThreadQuery.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD6E32A32BBC502D0073831B /* ThreadQuery.swift */; };
+		AD6E32A52BBC502D0073831B /* ThreadQuery.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD6E32A32BBC502D0073831B /* ThreadQuery.swift */; };
 		AD6F531927175FDB00D428B4 /* ChatMessageGiphyView+GiphyBadge.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD6F531827175FDB00D428B4 /* ChatMessageGiphyView+GiphyBadge.swift */; };
 		AD70DC362ADEC0F600CFC3B7 /* MessageModerationDetailsPayload.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD70DC352ADEC0F600CFC3B7 /* MessageModerationDetailsPayload.swift */; };
 		AD70DC372ADEC0F600CFC3B7 /* MessageModerationDetailsPayload.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD70DC352ADEC0F600CFC3B7 /* MessageModerationDetailsPayload.swift */; };
@@ -3843,6 +3845,7 @@
 		AD6E32972BBB13650073831B /* Thread.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = Thread.json; sourceTree = "<group>"; };
 		AD6E32992BBB139D0073831B /* ThreadList.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = ThreadList.json; sourceTree = "<group>"; };
 		AD6E32A02BBC50110073831B /* ThreadListQuery.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThreadListQuery.swift; sourceTree = "<group>"; };
+		AD6E32A32BBC502D0073831B /* ThreadQuery.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThreadQuery.swift; sourceTree = "<group>"; };
 		AD6F531827175FDB00D428B4 /* ChatMessageGiphyView+GiphyBadge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ChatMessageGiphyView+GiphyBadge.swift"; sourceTree = "<group>"; };
 		AD70DC352ADEC0F600CFC3B7 /* MessageModerationDetailsPayload.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageModerationDetailsPayload.swift; sourceTree = "<group>"; };
 		AD70DC382ADEC3C400CFC3B7 /* MessageModerationDetailsDTO.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageModerationDetailsDTO.swift; sourceTree = "<group>"; };
@@ -5110,6 +5113,7 @@
 				792A4F422480107A00EAF71D /* ChannelQuery.swift */,
 				79C5CBF025F66E9700D98001 /* ChannelWatcherListQuery.swift */,
 				AD6E32A02BBC50110073831B /* ThreadListQuery.swift */,
+				AD6E32A32BBC502D0073831B /* ThreadQuery.swift */,
 				792A4F432480107A00EAF71D /* Filter.swift */,
 				C1FFD9F827ECC7C7008A6848 /* Filter+ChatChannel.swift */,
 				7978FBB926E15A58002CA2DF /* MessageSearchQuery.swift */,
@@ -10869,6 +10873,7 @@
 				7991D83D24F7E93900D21BA3 /* ChannelListController+SwiftUI.swift in Sources */,
 				225D7FE225D191400094E555 /* ChatMessageImageAttachment.swift in Sources */,
 				8A0D64A724E57A520017A3C0 /* GuestUserTokenRequestPayload.swift in Sources */,
+				AD6E32A42BBC502D0073831B /* ThreadQuery.swift in Sources */,
 				888E8C39252B2ABB00195E03 /* UserController+Combine.swift in Sources */,
 				792FCB4524A33B5B000290C7 /* EventDataProcessorMiddleware.swift in Sources */,
 				79A0E9BE2498C33100E9BD50 /* TypingEvent.swift in Sources */,
@@ -11515,6 +11520,7 @@
 				4042969929FE92320089126D /* AudioAnalysisEngine_Tests.swift in Sources */,
 				AD84377C2BB482CF000F3826 /* ThreadEndpoints.swift in Sources */,
 				C121E877274544AF00023E4C /* MemberModelDTO.swift in Sources */,
+				AD6E32A52BBC502D0073831B /* ThreadQuery.swift in Sources */,
 				C121E878274544AF00023E4C /* ChannelDTO.swift in Sources */,
 				40C20EB329F69E1D00702EEE /* ChatMessageVoiceRecordingAttachment.swift in Sources */,
 				C189D7792AEBC6CD00D4B966 /* BackgroundDatabaseObserver.swift in Sources */,

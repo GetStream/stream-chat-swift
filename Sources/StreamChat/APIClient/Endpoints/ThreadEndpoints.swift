@@ -16,4 +16,22 @@ extension Endpoint {
             body: query
         )
     }
+
+    // MARK: - Fetch Thread
+
+    static func thread(query: ThreadQuery) -> Endpoint<ThreadPayloadResponse> {
+        .init(
+            path: .thread(messageId: query.messageId),
+            method: .get,
+            queryItems: query,
+            requiresConnectionId: query.watch == true,
+            body: nil
+        )
+    }
+
+    // MARK: - Helper data structures
+
+    struct ThreadPayloadResponse: Decodable {
+        var thread: ThreadPayload
+    }
 }
