@@ -11,7 +11,7 @@ public final class ChannelListState: ObservableObject {
     let query: ChannelListQuery
     
     init(
-        channels: [ChatChannel],
+        initialChannels: [ChatChannel]?,
         query: ChannelListQuery,
         dynamicFilter: ((ChatChannel) -> Bool)?,
         clientConfig: ChatClientConfig,
@@ -19,7 +19,7 @@ public final class ChannelListState: ObservableObject {
         database: DatabaseContainer,
         eventNotificationCenter: EventNotificationCenter
     ) {
-        self.channels = StreamCollection<ChatChannel>(channels)
+        channels = StreamCollection<ChatChannel>(initialChannels ?? [])
         self.query = query
         observer = Observer(
             query: query,
@@ -32,6 +32,9 @@ public final class ChannelListState: ObservableObject {
         observer.start(
             with: .init(channelsDidChange: { [weak self] channels in await self?.setValue(channels, for: \.channels) })
         )
+        if initialChannels == nil {
+            channels = observer.channelListObserver.items
+        }
     }
     
     /// An array of channels for the specified ``ChannelListQuery``.
