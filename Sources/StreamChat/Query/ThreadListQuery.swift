@@ -22,7 +22,7 @@ internal struct ThreadListQuery: Encodable {
     internal var participantLimit: Int?
     /// The amount of threads fetched per page. Default is 10.
     internal var limit: Int?
-    /// The pagination token taken from the previous response to fetch the next page.
+    /// The pagination token from the previous response to fetch the next page.
     internal var next: String?
 
     internal init() {}
