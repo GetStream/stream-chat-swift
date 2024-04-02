@@ -33,7 +33,7 @@ public final class ChannelListState: ObservableObject {
             with: .init(channelsDidChange: { [weak self] channels in await self?.setValue(channels, for: \.channels) })
         )
         if initialChannels == nil {
-            channels = observer.channelListObserver.items
+            channels = observer.channelListObserver.currentItems()
         }
     }
     

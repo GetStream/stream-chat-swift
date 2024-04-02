@@ -12,7 +12,6 @@ import Foundation
 final class StateLayerListDatabaseObserver<Item, DTO: NSManagedObject> {
     private let frc: NSFetchedResultsController<DTO>
     private(set) var resultsDelegate: FetchedResultsDelegate?
-    private let queue = DispatchQueue(label: "io.getstream.streamchat.statelayerdatabaseobserver")
 
     let itemCreator: (DTO) throws -> Item
     let sorting: [SortValue<Item>]
@@ -54,37 +53,28 @@ final class StateLayerListDatabaseObserver<Item, DTO: NSManagedObject> {
         )
     }
     
-    var items: StreamCollection<Item> {
-        queue.sync { _items }
+    func currentItems() -> StreamCollection<Item> {
+        var collection: StreamCollection<Item>!
+        context.performAndWait {
+            collection = Self.makeCollection(frc: frc, context: context, itemCreator: itemCreator, sorting: sorting)
+        }
+        return collection
     }
-
-    private var _items = StreamCollection<Item>([])
     
-    func startObserving(didChange: ((StreamCollection<Item>) async -> Void)? = nil) throws {
+    func startObserving(didChange: @escaping (StreamCollection<Item>) async -> Void) throws {
         resultsDelegate = FetchedResultsDelegate(onDidChange: { [weak self] in
             guard let self else { return }
-            // Runs on the NSManagedObjectContext's queue
+            // Runs on the NSManagedObjectContext's queue, therefore skip performAndWait
             let collection = Self.makeCollection(
                 frc: self.frc,
                 context: self.context,
                 itemCreator: self.itemCreator,
                 sorting: self.sorting
             )
-            queue.sync {
-                self._items = collection
-            }
-            Task { await didChange?(collection) }
+            Task { await didChange(collection) }
         })
         frc.delegate = resultsDelegate
         try frc.performFetch()
-        // Set initial state on the calling thread, which requires to use performAndWait
-        queue.async { [frc, context, itemCreator, sorting, weak self] in
-            var collection: StreamCollection<Item>!
-            context.performAndWait {
-                collection = Self.makeCollection(frc: frc, context: context, itemCreator: itemCreator, sorting: sorting)
-            }
-            self?._items = collection
-        }
     }
     
     static func makeCollection(
