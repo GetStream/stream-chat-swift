@@ -6,44 +6,49 @@
 import XCTest
 
 final class EndpointPathTests: XCTestCase {
-    func sendMessage_shouldBeQueuedOffline() throws {
-        try XCTAssertTrue(EndpointPath.sendMessage(ChannelId(cid: "")).shouldBeQueuedOffline)
+    func test_sendMessage_shouldBeQueuedOffline() throws {
+        XCTAssertTrue(EndpointPath.sendMessage(.unique).shouldBeQueuedOffline)
     }
 
-    func editMessage_shouldBeQueuedOffline() {
+    func test_editMessage_shouldBeQueuedOffline() {
         XCTAssertTrue(EndpointPath.editMessage("").shouldBeQueuedOffline)
     }
 
-    func deleteMessage_shouldBeQueuedOffline() {
+    func test_deleteMessage_shouldBeQueuedOffline() {
         XCTAssertTrue(EndpointPath.deleteMessage("").shouldBeQueuedOffline)
     }
 
-    func addReaction_shouldBeQueuedOffline() {
+    func test_addReaction_shouldBeQueuedOffline() {
         XCTAssertTrue(EndpointPath.addReaction("").shouldBeQueuedOffline)
     }
 
-    func deleteReaction_shouldBeQueuedOffline() {
+    func test_deleteReaction_shouldBeQueuedOffline() {
         XCTAssertTrue(EndpointPath.deleteReaction("", "").shouldBeQueuedOffline)
     }
 
-    func createChannel_shouldNOTBeQueuedOffline() {
+    func test_createChannel_shouldNOTBeQueuedOffline() {
         XCTAssertFalse(EndpointPath.createChannel("").shouldBeQueuedOffline)
     }
 
-    func updateChannel_shouldNOTBeQueuedOffline() {
+    func test_updateChannel_shouldNOTBeQueuedOffline() {
         XCTAssertFalse(EndpointPath.updateChannel("").shouldBeQueuedOffline)
     }
 
-    func deleteChannel_shouldNOTBeQueuedOffline() {
+    func test_deleteChannel_shouldNOTBeQueuedOffline() {
         XCTAssertFalse(EndpointPath.deleteChannel("").shouldBeQueuedOffline)
     }
 
-    func banMember_shouldNOTBeQueuedOffline() {
+    func test_banMember_shouldNOTBeQueuedOffline() {
         XCTAssertFalse(EndpointPath.banMember.shouldBeQueuedOffline)
     }
 
-    func og_shouldNOTBeQueuedOffline() {
+    func test_og_shouldNOTBeQueuedOffline() {
         XCTAssertFalse(EndpointPath.og.shouldBeQueuedOffline)
+    }
+
+    func test_threads_shouldNOTBeQueuedOffline() {
+        XCTAssertFalse(EndpointPath.threads.shouldBeQueuedOffline)
+        XCTAssertFalse(EndpointPath.thread(messageId: "1").shouldBeQueuedOffline)
     }
 
     // MARK: - Codable
@@ -56,6 +61,9 @@ final class EndpointPathTests: XCTestCase {
         assertResultEncodingAndDecoding(.members)
         assertResultEncodingAndDecoding(.search)
         assertResultEncodingAndDecoding(.devices)
+        assertResultEncodingAndDecoding(.threads)
+        assertResultEncodingAndDecoding(.thread(messageId: "1"))
+        assertResultEncodingAndDecoding(.appSettings)
 
         assertResultEncodingAndDecoding(.channels)
         assertResultEncodingAndDecoding(.createChannel("channel_idc"))
@@ -94,7 +102,7 @@ extension EndpointPathTests {
         do {
             let encoded = try JSONEncoder.stream.encode(value)
             let result = try JSONDecoder.stream.decode(EndpointPath.self, from: encoded)
-            XCTAssertEqual(result, value, file: file, line: line)
+            XCTAssertEqual(result.value, value.value, file: file, line: line)
         } catch {
             XCTFail("Should not fail encoding/decoding", file: file, line: line)
         }

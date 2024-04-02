@@ -160,6 +160,21 @@ public func AssertJSONEqual(
     }
 }
 
+public func AssertDictionary(
+    _ expression1: @autoclosure () throws -> [String: Any],
+    _ expression2: @autoclosure () throws -> [String: Any],
+    file: StaticString = #filePath,
+    line: UInt = #line
+) {
+    do {
+        let expr1 = try NSDictionary(dictionary: expression1())
+        let expr2 = try NSDictionary(dictionary: expression2())
+        XCTAssertEqual(expr1, expr2, file: file, line: line)
+    } catch {
+        XCTFail("Error: \(error)", file: file, line: line)
+    }
+}
+
 /// A helper function that converts Bool values to their string representations "true"/"false". Needed to unify the way
 /// JSON is represented in Objective-C and Swift. Objective-C represents true as `1` while Swift doest it like `true`.
 private func preprocessBoolValues(_ json: inout [String: Any]) {
