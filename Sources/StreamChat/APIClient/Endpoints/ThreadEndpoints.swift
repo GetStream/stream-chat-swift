@@ -29,9 +29,34 @@ extension Endpoint {
         )
     }
 
-    // MARK: - Helper data structures
+    // MARK: - Partial Update Thread
 
-    struct ThreadPayloadResponse: Decodable {
-        var thread: ThreadPayload
+    static func partialThreadUpdate(
+        messageId: MessageId,
+        request: ThreadPartialUpdateRequest
+    ) -> Endpoint<ThreadPayloadResponse> {
+        .init(
+            path: .thread(messageId: messageId),
+            method: .patch,
+            queryItems: nil,
+            requiresConnectionId: false,
+            body: request
+        )
+    }
+}
+
+// MARK: - Helper data structures
+
+struct ThreadPayloadResponse: Decodable {
+    var thread: ThreadPayload
+}
+
+struct ThreadPartialUpdateRequest: Encodable {
+    var set: SetProperties
+    var unset: [String]?
+
+    /// The available thread properties that can be updated.
+    struct SetProperties: Encodable {
+        var title: String?
     }
 }
