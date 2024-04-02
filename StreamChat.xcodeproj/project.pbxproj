@@ -247,13 +247,13 @@
 		4F14F1242BBA9CEF00B1074E /* Result+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F14F1232BBA9CEF00B1074E /* Result+Extensions.swift */; };
 		4F14F1262BBBDD7400B1074E /* StateLayerListDatabaseObserver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F14F1252BBBDD7400B1074E /* StateLayerListDatabaseObserver.swift */; };
 		4F14F1272BBBDD7400B1074E /* StateLayerListDatabaseObserver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F14F1252BBBDD7400B1074E /* StateLayerListDatabaseObserver.swift */; };
+		4F14F1282BBD2D8700B1074E /* ChannelList_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F5758F02BB45B2F00D89A94 /* ChannelList_Tests.swift */; };
 		4F427F662BA2F43200D92238 /* ConnectedUser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F427F652BA2F43200D92238 /* ConnectedUser.swift */; };
 		4F427F672BA2F43200D92238 /* ConnectedUser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F427F652BA2F43200D92238 /* ConnectedUser.swift */; };
 		4F427F692BA2F52100D92238 /* ConnectedUserState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F427F682BA2F52100D92238 /* ConnectedUserState.swift */; };
 		4F427F6A2BA2F52100D92238 /* ConnectedUserState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F427F682BA2F52100D92238 /* ConnectedUserState.swift */; };
 		4F427F6C2BA2F53200D92238 /* ConnectedUserState+Observer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F427F6B2BA2F53200D92238 /* ConnectedUserState+Observer.swift */; };
 		4F427F6D2BA2F53200D92238 /* ConnectedUserState+Observer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F427F6B2BA2F53200D92238 /* ConnectedUserState+Observer.swift */; };
-		4F5758F12BB45B2F00D89A94 /* ChannelList_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F5758F02BB45B2F00D89A94 /* ChannelList_Tests.swift */; };
 		4F73F3982B91BD3000563CD9 /* MessageState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F73F3972B91BD3000563CD9 /* MessageState.swift */; };
 		4F73F3992B91BD3000563CD9 /* MessageState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F73F3972B91BD3000563CD9 /* MessageState.swift */; };
 		4F73F39E2B91C7BF00563CD9 /* MessageState+Observer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F73F39D2B91C7BF00563CD9 /* MessageState+Observer.swift */; };
@@ -11112,7 +11112,7 @@
 				797EEA4824FFB4C200C81203 /* DataStore_Tests.swift in Sources */,
 				882C574E252C76A400E60C44 /* ChannelMemberListPayload_Tests.swift in Sources */,
 				4042966929FA6B4B0089126D /* StreamAudioRecorder_Tests.swift in Sources */,
-				4F5758F12BB45B2F00D89A94 /* ChannelList_Tests.swift in Sources */,
+				4F14F1282BBD2D8700B1074E /* ChannelList_Tests.swift in Sources */,
 				88D85D9D252F16A300AE1030 /* MemberController+SwiftUI_Tests.swift in Sources */,
 				88BEBCDC2536FDF200D9E8B7 /* MemberListController+SwiftUI_Tests.swift in Sources */,
 				430156DC26B1862C0006E7EA /* CustomDataHashMap_Tests.swift in Sources */,

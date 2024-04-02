@@ -7,13 +7,13 @@ import Foundation
 
 /// A CoreDate store observer which immediately reports changes as soon as the store has been changed.
 ///
-/// Skips granual list changes what would require to convert DTO to a model object. It reports only when the list has changed and returns a lazy loaded collection.
+/// List changes are reported using item ids to reduce the burden of converting DTOs to models.
 @available(iOS 13.0, *)
-final class StateLayerListDatabaseObserver<Item, DTO: NSManagedObject> {
+final class StateLayerListDatabaseObserver<Item, ItemID, DTO: NSManagedObject> {
     private let frc: NSFetchedResultsController<DTO>
-    private(set) var resultsDelegate: FetchedResultsDelegate?
 
     let itemCreator: (DTO) throws -> Item
+    let itemIdCreator: (DTO) throws -> ItemID
     let sorting: [SortValue<Item>]
     let request: NSFetchRequest<DTO>
     let context: NSManagedObjectContext
@@ -22,12 +22,14 @@ final class StateLayerListDatabaseObserver<Item, DTO: NSManagedObject> {
         context: NSManagedObjectContext,
         fetchRequest: NSFetchRequest<DTO>,
         itemCreator: @escaping (DTO) throws -> Item,
+        itemIdCreator: @escaping (DTO) throws -> ItemID,
         sorting: [SortValue<Item>] = [],
         fetchedResultsControllerType: NSFetchedResultsController<DTO>.Type = NSFetchedResultsController<DTO>.self
     ) {
         self.context = context
         request = fetchRequest
         self.itemCreator = itemCreator
+        self.itemIdCreator = itemIdCreator
         self.sorting = sorting
         frc = fetchedResultsControllerType.init(
             fetchRequest: request,
@@ -37,10 +39,13 @@ final class StateLayerListDatabaseObserver<Item, DTO: NSManagedObject> {
         )
     }
     
+    private(set) lazy var changeAggregator = ListChangeAggregator<DTO, ItemID>(itemCreator: self.itemIdCreator)
+    
     convenience init(
         databaseContainer: DatabaseContainer,
         fetchRequest: NSFetchRequest<DTO>,
         itemCreator: @escaping (DTO) throws -> Item,
+        itemIdCreator: @escaping (DTO) throws -> ItemID,
         sorting: [SortValue<Item>]
     ) {
         // We must use the writableContext since state layer needs to react to the change immediately.
@@ -49,6 +54,7 @@ final class StateLayerListDatabaseObserver<Item, DTO: NSManagedObject> {
             context: databaseContainer.writableContext,
             fetchRequest: fetchRequest,
             itemCreator: itemCreator,
+            itemIdCreator: itemIdCreator,
             sorting: sorting
         )
     }
@@ -61,8 +67,8 @@ final class StateLayerListDatabaseObserver<Item, DTO: NSManagedObject> {
         return collection
     }
     
-    func startObserving(didChange: @escaping (StreamCollection<Item>) async -> Void) throws {
-        resultsDelegate = FetchedResultsDelegate(onDidChange: { [weak self] in
+    func startObserving(didChange: @escaping (StreamCollection<Item>, [ListChange<ItemID>]) async -> Void) throws {
+        changeAggregator.onDidChange = { [weak self] changes in
             guard let self else { return }
             // Runs on the NSManagedObjectContext's queue, therefore skip performAndWait
             let collection = Self.makeCollection(
@@ -71,9 +77,9 @@ final class StateLayerListDatabaseObserver<Item, DTO: NSManagedObject> {
                 itemCreator: self.itemCreator,
                 sorting: self.sorting
             )
-            Task { await didChange(collection) }
-        })
-        frc.delegate = resultsDelegate
+            Task { await didChange(collection, changes) }
+        }
+        frc.delegate = changeAggregator
         try frc.performFetch()
     }
     
@@ -101,20 +107,5 @@ final class StateLayerListDatabaseObserver<Item, DTO: NSManagedObject> {
             result = LazyCachedMapCollection(source: sorted, map: { $0 }, context: context)
         }
         return StreamCollection(result)
-    }
-}
-
-@available(iOS 13.0, *)
-extension StateLayerListDatabaseObserver {
-    final class FetchedResultsDelegate: NSObject, NSFetchedResultsControllerDelegate {
-        let onDidChange: (() -> Void)?
-        
-        init(onDidChange: (() -> Void)?) {
-            self.onDidChange = onDidChange
-        }
-        
-        func controllerDidChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
-            onDidChange?()
-        }
     }
 }

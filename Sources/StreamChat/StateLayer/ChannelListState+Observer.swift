@@ -7,7 +7,7 @@ import Foundation
 @available(iOS 13.0, *)
 extension ChannelListState {
     final class Observer {
-        let channelListObserver: StateLayerListDatabaseObserver<ChatChannel, ChannelDTO>
+        let channelListObserver: StateLayerListDatabaseObserver<ChatChannel, ChannelId, ChannelDTO>
         private let clientConfig: ChatClientConfig
         private let channelListUpdater: ChannelListUpdater
         private let database: DatabaseContainer
@@ -38,12 +38,13 @@ extension ChannelListState {
                     chatClientConfig: clientConfig
                 ),
                 itemCreator: { try $0.asModel() as ChatChannel },
+                itemIdCreator: { try ChannelId(cid: $0.cid) },
                 sorting: query.sort.runtimeSorting
             )
         }
         
         struct Handlers {
-            let channelsDidChange: (StreamCollection<ChatChannel>) async -> Void
+            let channelsDidChange: (StreamCollection<ChatChannel>, [ListChange<ChannelId>]) async -> Void
         }
         
         func start(with handlers: Handlers) {
@@ -81,8 +82,8 @@ extension ChannelListState {
             ]
             
             do {
-                try channelListObserver.startObserving(didChange: { items in
-                    await handlers.channelsDidChange(items)
+                try channelListObserver.startObserving(didChange: { channels, changes in
+                    await handlers.channelsDidChange(channels, changes)
                 })
             } catch {
                 log.error("Failed to start the channel list observer for query: \(query)")

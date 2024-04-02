@@ -30,7 +30,9 @@ public final class ChannelListState: ObservableObject {
             eventNotificationCenter: eventNotificationCenter
         )
         observer.start(
-            with: .init(channelsDidChange: { [weak self] channels in await self?.setValue(channels, for: \.channels) })
+            with: .init(channelsDidChange: { [weak self] channels, changes in
+                await self?.noteChannelsDidChange(channels, changes)
+            })
         )
         if initialChannels == nil {
             channels = observer.channelListObserver.currentItems()
@@ -40,13 +42,19 @@ public final class ChannelListState: ObservableObject {
     /// An array of channels for the specified ``ChannelListQuery``.
     @Published public private(set) var channels = StreamCollection<ChatChannel>([])
     
+    /// An array of latest channel list changes.
+    ///
+    /// - Note: The ``channels`` property changes before the ``channelListChanges`` property.
+    @Published public private(set) var channelListChanges: [ListChange<ChannelId>] = []
+    
     // MARK: - Mutating the State
     
     @MainActor func value<Value>(forKeyPath keyPath: KeyPath<ChannelListState, Value>) -> Value {
         self[keyPath: keyPath]
     }
     
-    @MainActor func setValue<Value>(_ value: Value, for keyPath: ReferenceWritableKeyPath<ChannelListState, Value>) {
-        self[keyPath: keyPath] = value
+    @MainActor func noteChannelsDidChange(_ channels: StreamCollection<ChatChannel>, _ changes: [ListChange<ChannelId>]) {
+        self.channels = channels
+        channelListChanges = changes
     }
 }
