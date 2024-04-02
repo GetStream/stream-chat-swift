@@ -53,7 +53,7 @@ public final class ChatState: ObservableObject {
     // MARK: - Represented Channel
     
     /// The represented ``ChatChannel``.
-    @Published public private(set) var channel: ChatChannel?
+    @Published public internal(set) var channel: ChatChannel?
     
     // MARK: - Members
     
@@ -72,7 +72,7 @@ public final class ChatState: ObservableObject {
     /// Messages are ordered by timestamp and ``messageOrder`` (In case of ``MessageOrdering/bottomToTop`` the list is sorted in ascending order).
     ///
     /// Use load messages in ``Chat`` for loading more messages.
-    @Published public private(set) var messages = StreamCollection<ChatMessage>([])
+    @Published public internal(set) var messages = StreamCollection<ChatMessage>([])
     
     /// Access a message which is available locally by its id.
     ///
@@ -160,7 +160,7 @@ public final class ChatState: ObservableObject {
     // MARK: - Typing Users
     
     /// A list of users who are currently typing.
-    @Published public private(set) var typingUsers = Set<ChatUser>()
+    @Published public internal(set) var typingUsers = Set<ChatUser>()
     
     // MARK: - Watchers
     
