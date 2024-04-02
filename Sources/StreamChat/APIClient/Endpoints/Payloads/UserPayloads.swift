@@ -80,9 +80,8 @@ class UserPayload: Decodable {
 
     required init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: UserPayloadsCodingKeys.self)
-        let userId = try container.decode(String.self, forKey: .id)
-
-        id = userId
+        
+        id = try container.decodeIfPresent(String.self, forKey: .id) ?? ""
         name = try container.decodeIfPresent(String.self, forKey: .name)
         imageURL = try container.decodeIfPresent(String.self, forKey: .imageURL).flatMap(URL.init(string:))
         role = try container.decode(UserRole.self, forKey: .role)
@@ -102,7 +101,7 @@ class UserPayload: Decodable {
             extraData = payload
         } catch {
             log.error(
-                "Failed to decode extra data for User with id: <\(userId)>, using default value instead. "
+                "Failed to decode extra data for User with id: <\(id)>, using default value instead. "
                     + "Error: \(error)"
             )
             extraData = [:]
