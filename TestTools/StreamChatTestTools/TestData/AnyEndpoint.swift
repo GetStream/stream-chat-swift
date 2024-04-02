@@ -32,6 +32,14 @@ public struct AnyEndpoint: Equatable {
             && lhs.payloadType == rhs.payloadType
     }
 
+    func queryItemsAsDictionary() throws -> [String: Any] {
+        let data = try JSONEncoder().encode(queryItems)
+        guard let requestQueryItems = try JSONSerialization.jsonObject(with: data) as? [String: Any] else {
+            throw NSError(domain: "com.getstream.io.any-endpoint", code: 2)
+        }
+        return requestQueryItems
+    }
+
     func bodyAsDictionary() throws -> [String: Any] {
         let data = try JSONEncoder().encode(body)
         guard let requestBody = try JSONSerialization.jsonObject(with: data) as? [String: Any] else {

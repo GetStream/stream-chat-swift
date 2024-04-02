@@ -52,7 +52,7 @@ struct ThreadPayloadResponse: Decodable {
 }
 
 struct ThreadPartialUpdateRequest: Encodable {
-    var set: SetProperties
+    var set: SetProperties?
     var unset: [String]?
 
     /// The available thread properties that can be updated.
