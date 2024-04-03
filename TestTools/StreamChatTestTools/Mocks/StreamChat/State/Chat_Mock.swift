@@ -10,23 +10,45 @@ public class Chat_Mock: Chat {
 
     static let cid = try! ChannelId(cid: "mock:channel")
     
-    /// Creates a new mock instance of `ChatChannelController`.
-    public static func mock(chatClientConfig: ChatClientConfig? = nil) -> Chat_Mock {
-        let chatClient = ChatClient.mock(config: chatClientConfig)
-        return chatClient.makeChat(for: cid) as! Chat_Mock
+    init(
+        chatClient: ChatClient,
+        channelQuery: ChannelQuery,
+        channelListQuery: ChannelListQuery?
+    ) {
+        super.init(
+            cid: Self.cid,
+            channelQuery: channelQuery,
+            channelListQuery: channelListQuery,
+            memberSorting: [.init(key: .createdAt)], 
+            channelUpdater: chatClient.makeChannelUpdater(),
+            client: chatClient,
+            environment: .init()
+        )
     }
-
+    
     /// Creates a new mock instance of `ChatChannelController`.
-    static func mock(chatClient: ChatClient_Mock) -> Chat_Mock {
-        return chatClient.makeChat(for: cid) as! Chat_Mock
+    public static func mock(
+        chatClientConfig: ChatClientConfig? = nil,
+        bundle: Bundle? = nil
+    ) -> Chat_Mock {
+        let chatClient = ChatClient.mock(config: chatClientConfig, bundle: bundle)
+        return Chat_Mock(
+            chatClient: chatClient,
+            channelQuery: .init(cid: cid, channelQuery: .init(cid: cid)),
+            channelListQuery: nil
+        )
     }
 
     public static func mock(
         channelQuery: ChannelQuery,
         channelListQuery: ChannelListQuery?,
         client: ChatClient
-    ) async throws -> Chat_Mock {
-        try await client.makeChat(with: channelQuery, channelListQuery: channelListQuery) as! Chat_Mock
+    ) -> Chat_Mock {
+        Chat_Mock(
+            chatClient: client,
+            channelQuery: channelQuery,
+            channelListQuery: channelListQuery
+        )
     }
 
     var createNewMessageCallCount = 0
@@ -55,6 +77,13 @@ public class Chat_Mock: Chat {
     public var messages: StreamCollection<ChatMessage> {
         messages_mock.map { StreamCollection($0) } ?? super.state.messages
     }
+    
+    public override func loadMessagesFirstPage() async throws {}
+    
+    public var loadPageAroundMessageIdCallCount = 0
+    public override func loadMessages(around messageId: MessageId, limit: Int? = nil) async throws {
+        loadPageAroundMessageIdCallCount += 1
+    }
 }
 
 @available(iOS 13.0, *)
@@ -63,6 +92,8 @@ public extension Chat_Mock {
     func simulateInitial(channel: ChatChannel, messages: [ChatMessage]) {
         channel_mock = channel
         messages_mock = messages
+        self.state.messages = StreamCollection(messages)
+        self.state.channel = channel
     }
 
     /// Simulates a change of the `channel` value. Observers are notified with the provided `change` value. If `typingUsers`

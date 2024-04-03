@@ -117,7 +117,7 @@ extension ChatClient {
     }
 
     /// Create a new instance of mock `ChatClient`
-    static func mock(config: ChatClientConfig? = nil) -> ChatClient {
+    static func mock(config: ChatClientConfig? = nil, bundle: Bundle? = nil) -> ChatClient {
         .init(
             config: config ?? defaultMockedConfig,
             environment: .init(
@@ -135,6 +135,7 @@ extension ChatClient {
                         kind: $0,
                         shouldFlushOnStart: $1,
                         shouldResetEphemeralValuesOnStart: $2,
+                        bundle: bundle,
                         localCachingSettings: $3,
                         deletedMessagesVisibility: $4,
                         shouldShowShadowedMessages: $5
