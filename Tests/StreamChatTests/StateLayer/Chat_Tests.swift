@@ -27,30 +27,6 @@ final class Chat_Tests: XCTestCase {
         expectedTestError = nil
     }
     
-    /// Configures chat for testing.
-    ///
-    /// - Parameter usesMockedChannelUpdater: Set it for false for tests which need to update the local DB and simulate API requests.
-    private func setUpChat(usesMockedChannelUpdater: Bool) {
-        chat = Chat(
-            cid: channelId,
-            channelQuery: ChannelQuery(cid: channelId),
-            channelListQuery: nil,
-            messageOrdering: .topToBottom,
-            memberSorting: [Sorting(key: .createdAt)],
-            channelUpdater: usesMockedChannelUpdater ? env.channelUpdaterMock : env.channelUpdater,
-            client: env.client,
-            environment: env.chatEnvironment
-        )
-    }
-    
-    private func makeChannelPayload(messageCount: Int, messageIdOffset: Int) -> ChannelPayload {
-        // Note that message pagination relies on createdAt and cid
-        let messages: [MessagePayload] = (0..<messageCount)
-            .map { $0 + messageIdOffset }
-            .map { .dummy(messageId: "\($0)", createdAt: Date(timeIntervalSinceReferenceDate: TimeInterval($0)), cid: chat.cid) }
-        return ChannelPayload.dummy(channel: .dummy(cid: chat.cid), messages: messages)
-    }
-    
     // MARK: - Deleting the Channel
     
     func test_delete_whenChannelUpdaterSucceeds_thenDeleteSucceeds() async throws {
@@ -146,12 +122,12 @@ final class Chat_Tests: XCTestCase {
     func test_loadMessages_whenAPIRequestSucceeds_thenStateUpdates() async throws {
         setUpChat(usesMockedChannelUpdater: false)
         let pageSize = 2
-        let channelPayload = makeChannelPayload(messageCount: pageSize, messageIdOffset: 0)
+        let channelPayload = makeChannelPayload(messageCount: pageSize, createdAtOffset: 0)
         env.client.mockAPIClient.test_mockResponseResult(.success(channelPayload))
         
         let result = try await chat.loadMessages(with: MessagesPagination(pageSize: pageSize))
-        XCTAssertEqualIgnoringOrder(channelPayload.messages.map(\.id), result.map(\.id))
-        XCTAssertEqualIgnoringOrder(channelPayload.messages.map(\.id), chat.state.messages.map(\.id))
+        XCTAssertEqual(channelPayload.messages.map(\.id), result.map(\.id))
+        XCTAssertEqual(channelPayload.messages.map(\.id), chat.state.messages.map(\.id))
         XCTAssertEqual(false, chat.state.hasLoadedAllPreviousMessages)
         // TODO: Should it be false?
         XCTAssertEqual(true, chat.state.hasLoadedAllNextMessages, "Although it sounds like it should be false since we got the requested amount of messages and there can be more")
@@ -166,15 +142,15 @@ final class Chat_Tests: XCTestCase {
         
         // DB has some older messages loaded
         try await env.client.mockDatabaseContainer.write { session in
-            try session.saveChannel(payload: self.makeChannelPayload(messageCount: 5, messageIdOffset: 0))
+            try session.saveChannel(payload: self.makeChannelPayload(messageCount: 5, createdAtOffset: 0))
         }
         
         // Load the first page which should reset the state
-        let channelPayload = makeChannelPayload(messageCount: 3, messageIdOffset: 5)
+        let channelPayload = makeChannelPayload(messageCount: 3, createdAtOffset: 5)
         env.client.mockAPIClient.test_mockResponseResult(.success(channelPayload))
         try await chat.loadMessagesFirstPage()
         
-        XCTAssertEqualIgnoringOrder(channelPayload.messages.map(\.id), chat.state.messages.map(\.id))
+        XCTAssertEqual(channelPayload.messages.map(\.id), chat.state.messages.map(\.id))
         XCTAssertEqual(true, chat.state.hasLoadedAllPreviousMessages)
         XCTAssertEqual(true, chat.state.hasLoadedAllNextMessages)
         XCTAssertEqual(false, chat.state.isJumpingToMessage)
@@ -184,8 +160,8 @@ final class Chat_Tests: XCTestCase {
     }
     
     func test_loadPreviousMessages_whenAPIRequestSucceeds_thenStateUpdates() async throws {
-        // DB has some older messages loaded
-        let initialChannelPayload = makeChannelPayload(messageCount: 5, messageIdOffset: 5)
+        // DB has some messages loaded
+        let initialChannelPayload = makeChannelPayload(messageCount: 5, createdAtOffset: 5)
         try await env.client.mockDatabaseContainer.write { session in
             try session.saveChannel(payload: initialChannelPayload)
         }
@@ -193,12 +169,12 @@ final class Chat_Tests: XCTestCase {
         setUpChat(usesMockedChannelUpdater: false)
 
         // Load older
-        let channelPayload = makeChannelPayload(messageCount: 5, messageIdOffset: 0)
+        let channelPayload = makeChannelPayload(messageCount: 5, createdAtOffset: 0)
         env.client.mockAPIClient.test_mockResponseResult(.success(channelPayload))
         try await chat.loadPreviousMessages()
         
-        let expectedIds = (initialChannelPayload.messages + channelPayload.messages).map(\.id)
-        XCTAssertEqualIgnoringOrder(expectedIds, chat.state.messages.map(\.id))
+        let expectedIds = (channelPayload.messages + initialChannelPayload.messages).map(\.id)
+        XCTAssertEqual(expectedIds, chat.state.messages.map(\.id))
         XCTAssertEqual(true, chat.state.hasLoadedAllPreviousMessages)
         XCTAssertEqual(true, chat.state.hasLoadedAllNextMessages)
         XCTAssertEqual(false, chat.state.isJumpingToMessage)
@@ -211,17 +187,17 @@ final class Chat_Tests: XCTestCase {
         setUpChat(usesMockedChannelUpdater: false)
         
         // Reset has loaded state since we always load newest messages
-        let initialChannelPayload = makeChannelPayload(messageCount: 3, messageIdOffset: 0)
+        let initialChannelPayload = makeChannelPayload(messageCount: 3, createdAtOffset: 0)
         env.client.mockAPIClient.test_mockResponseResult(.success(initialChannelPayload))
         try await chat.loadMessages(around: initialChannelPayload.messages[1].id, limit: 2)
         
         // Load newer
-        let channelPayload = makeChannelPayload(messageCount: 3, messageIdOffset: 5)
+        let channelPayload = makeChannelPayload(messageCount: 3, createdAtOffset: 5)
         env.client.mockAPIClient.test_mockResponseResult(.success(channelPayload))
         try await chat.loadNextMessages()
         
         let expectedIds = (initialChannelPayload.messages + channelPayload.messages).map(\.id)
-        XCTAssertEqualIgnoringOrder(expectedIds, chat.state.messages.map(\.id))
+        XCTAssertEqual(expectedIds, chat.state.messages.map(\.id))
         XCTAssertEqual(false, chat.state.hasLoadedAllPreviousMessages)
         XCTAssertEqual(true, chat.state.hasLoadedAllNextMessages)
         XCTAssertEqual(false, chat.state.isJumpingToMessage)
@@ -232,7 +208,7 @@ final class Chat_Tests: XCTestCase {
     
     func test_loadMessagesAround_whenAPIRequestSucceeds_thenStateUpdates() async throws {
         // DB has some older messages loaded
-        let initialChannelPayload = makeChannelPayload(messageCount: 5, messageIdOffset: 0)
+        let initialChannelPayload = makeChannelPayload(messageCount: 5, createdAtOffset: 0)
         try await env.client.mockDatabaseContainer.write { session in
             try session.saveChannel(payload: initialChannelPayload)
         }
@@ -240,17 +216,48 @@ final class Chat_Tests: XCTestCase {
         setUpChat(usesMockedChannelUpdater: false)
  
         // Jump to a message
-        let channelPayload = makeChannelPayload(messageCount: 3, messageIdOffset: 10)
+        let channelPayload = makeChannelPayload(messageCount: 3, createdAtOffset: 10)
         env.client.mockAPIClient.test_mockResponseResult(.success(channelPayload))
         try await chat.loadMessages(around: channelPayload.messages[1].id, limit: 2)
         
-        XCTAssertEqualIgnoringOrder(channelPayload.messages.map(\.id), chat.state.messages.map(\.id))
+        XCTAssertEqual(channelPayload.messages.map(\.id), chat.state.messages.map(\.id))
         XCTAssertEqual(false, chat.state.hasLoadedAllPreviousMessages)
         XCTAssertEqual(false, chat.state.hasLoadedAllNextMessages)
         XCTAssertEqual(true, chat.state.isJumpingToMessage)
         XCTAssertEqual(false, chat.state.isLoadingPreviousMessages)
         XCTAssertEqual(false, chat.state.isLoadingMiddleMessages)
         XCTAssertEqual(false, chat.state.isLoadingNextMessages)
+    }
+    
+    // MARK: -
+    
+    /// Configures chat for testing.
+    ///
+    /// - Parameter usesMockedChannelUpdater: Set it for false for tests which need to update the local DB and simulate API requests.
+    private func setUpChat(usesMockedChannelUpdater: Bool) {
+        chat = Chat(
+            cid: channelId,
+            channelQuery: ChannelQuery(cid: channelId),
+            channelListQuery: nil,
+            messageOrdering: .bottomToTop,
+            memberSorting: [Sorting(key: .createdAt)],
+            channelUpdater: usesMockedChannelUpdater ? env.channelUpdaterMock : env.channelUpdater,
+            client: env.client,
+            environment: env.chatEnvironment
+        )
+    }
+    
+    private func makeChannelPayload(messageCount: Int, createdAtOffset: Int) -> ChannelPayload {
+        // Note that message pagination relies on createdAt and cid
+        let messages: [MessagePayload] = (0..<messageCount)
+            .map {
+                .dummy(
+                    messageId: "\($0 + createdAtOffset)",
+                    createdAt: Date(timeIntervalSinceReferenceDate: TimeInterval($0 + createdAtOffset)),
+                    cid: chat.cid
+                )
+            }
+        return ChannelPayload.dummy(channel: .dummy(cid: chat.cid), messages: messages)
     }
 }
 
