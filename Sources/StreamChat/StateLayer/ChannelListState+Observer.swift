@@ -44,7 +44,7 @@ extension ChannelListState {
         }
         
         struct Handlers {
-            let channelsDidChange: (StreamCollection<ChatChannel>, [ListChange<ChannelId>]) async -> Void
+            let channelsDidChange: (StreamCollection<ChatChannel>) async -> Void
         }
         
         func start(with handlers: Handlers) {
@@ -82,8 +82,8 @@ extension ChannelListState {
             ]
             
             do {
-                try channelListObserver.startObserving(didChange: { channels, changes in
-                    await handlers.channelsDidChange(channels, changes)
+                try channelListObserver.startObserving(didChange: { channels, _ in
+                    await handlers.channelsDidChange(channels)
                 })
             } catch {
                 log.error("Failed to start the channel list observer for query: \(query)")
