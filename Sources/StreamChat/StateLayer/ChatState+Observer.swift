@@ -13,7 +13,7 @@ extension ChatState {
         private let eventNotificationCenter: EventNotificationCenter
         private let memberListState: MemberListState
         private var memberListObserver: AnyCancellable?
-        private let messagesObserver: StateLayerListDatabaseObserver<ChatMessage, MessageId, MessageDTO>
+        let messagesObserver: StateLayerListDatabaseObserver<ChatMessage, MessageId, MessageDTO>
         private let watchersObserver: BackgroundListDatabaseObserver<ChatUser, UserDTO>
         
         init(
