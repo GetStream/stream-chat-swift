@@ -43,7 +43,7 @@ public final class ChatState: ObservableObject {
             with: .init(
                 channelDidChange: { [weak self] in await self?.setValue($0, for: \.channel) },
                 membersDidChange: { [weak self] in await self?.setValue($0, for: \.members) },
-                messagesDidChange: { [weak self] in await self?.setValue($0, for: \.messages) },
+                messagesDidChange: { [weak self] in await self?.setMessagesDidChange($0, $1) },
                 typingUsersDidChange: { [weak self] in await self?.setValue($0, for: \.typingUsers) },
                 watchersDidChange: { [weak self] in await self?.setValue($0, for: \.watchers) }
             )
@@ -73,6 +73,11 @@ public final class ChatState: ObservableObject {
     ///
     /// Use load messages in ``Chat`` for loading more messages.
     @Published public private(set) var messages = StreamCollection<ChatMessage>([])
+    
+    /// An array of latest message list changes.
+    ///
+    /// - Note: The ``messageListChanges`` property is updated just before ``messages`` property changes.
+    public private(set) var messageListChanges: [ListChange<MessageId>] = []
     
     /// Access a message which is available locally by its id.
     ///
@@ -179,5 +184,10 @@ public final class ChatState: ObservableObject {
     // Force mutations on main actor since ChatState is meant to be used by UI.
     @MainActor func setValue<Value>(_ value: Value, for keyPath: ReferenceWritableKeyPath<ChatState, Value>) {
         self[keyPath: keyPath] = value
+    }
+    
+    @MainActor private func setMessagesDidChange(_ messages: StreamCollection<ChatMessage>, _ changes: [ListChange<MessageId>]) {
+        messageListChanges = changes
+        self.messages = messages
     }
 }

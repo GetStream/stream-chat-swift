@@ -13,7 +13,7 @@ extension ChatState {
         private let eventNotificationCenter: EventNotificationCenter
         private let memberListState: MemberListState
         private var memberListObserver: AnyCancellable?
-        private let messagesObserver: BackgroundListDatabaseObserver<ChatMessage, MessageDTO>
+        private let messagesObserver: StateLayerListDatabaseObserver<ChatMessage, MessageId, MessageDTO>
         private let watchersObserver: BackgroundListDatabaseObserver<ChatUser, UserDTO>
         
         init(
@@ -33,8 +33,8 @@ extension ChatState {
                 fetchRequest: ChannelDTO.fetchRequest(for: cid),
                 itemCreator: { try $0.asModel() as ChatChannel }
             )
-            messagesObserver = BackgroundListDatabaseObserver(
-                context: database.backgroundReadOnlyContext,
+            messagesObserver = StateLayerListDatabaseObserver(
+                databaseContainer: database,
                 fetchRequest: MessageDTO.messagesFetchRequest(
                     for: cid,
                     pageSize: channelQuery.pagination?.pageSize ?? .messagesPageSize,
@@ -43,6 +43,7 @@ extension ChatState {
                     shouldShowShadowedMessages: clientConfig.shouldShowShadowedMessages
                 ),
                 itemCreator: { try $0.asModel() as ChatMessage },
+                itemIdCreator: { $0.id as MessageId },
                 sorting: []
             )
             watchersObserver = BackgroundListDatabaseObserver(
@@ -57,7 +58,7 @@ extension ChatState {
         struct Handlers {
             let channelDidChange: (ChatChannel) async -> Void
             let membersDidChange: (StreamCollection<ChatChannelMember>) async -> Void
-            let messagesDidChange: (StreamCollection<ChatMessage>) async -> Void
+            let messagesDidChange: (StreamCollection<ChatMessage>, [ListChange<MessageId>]) async -> Void
             let typingUsersDidChange: (Set<ChatUser>) async -> Void
             let watchersDidChange: (StreamCollection<ChatUser>) async -> Void
         }
@@ -66,11 +67,6 @@ extension ChatState {
             channelObserver.onChange(do: { change in Task { await handlers.channelDidChange(change.item) } })
             channelObserver.onFieldChange(\.currentlyTypingUsers, do: { change in Task { await handlers.typingUsersDidChange(change.item) } })
             memberListObserver = memberListState.$members.sink(receiveValue: { change in Task { await handlers.membersDidChange(change) } })
-            messagesObserver.onDidChange = { [weak messagesObserver] _ in
-                guard let items = messagesObserver?.items else { return }
-                let collection = StreamCollection(items)
-                Task { await handlers.messagesDidChange(collection) }
-            }
             watchersObserver.onDidChange = { [weak watchersObserver] _ in
                 guard let items = watchersObserver?.items else { return }
                 let collection = StreamCollection(items)
@@ -83,7 +79,7 @@ extension ChatState {
                 log.error("Failed to start the channel observer for cid: \(cid)")
             }
             do {
-                try messagesObserver.startObserving()
+                try messagesObserver.startObserving(didChange: handlers.messagesDidChange)
             } catch {
                 log.error("Failed to start the messages observer for cid: \(cid)")
             }
