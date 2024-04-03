@@ -44,8 +44,8 @@ public final class ChannelListState: ObservableObject {
     
     /// An array of latest channel list changes.
     ///
-    /// - Note: The ``channels`` property changes before the ``channelListChanges`` property.
-    @Published public private(set) var channelListChanges: [ListChange<ChannelId>] = []
+    /// - Note: The ``channelListChanges`` property is updated just before ``channels`` property changes.
+    public private(set) var channelListChanges: [ListChange<ChannelId>] = []
     
     // MARK: - Mutating the State
     
@@ -53,8 +53,8 @@ public final class ChannelListState: ObservableObject {
         self[keyPath: keyPath]
     }
     
-    @MainActor func noteChannelsDidChange(_ channels: StreamCollection<ChatChannel>, _ changes: [ListChange<ChannelId>]) {
-        self.channels = channels
+    @MainActor private func noteChannelsDidChange(_ channels: StreamCollection<ChatChannel>, _ changes: [ListChange<ChannelId>]) {
         channelListChanges = changes
+        self.channels = channels
     }
 }
