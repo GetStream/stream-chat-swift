@@ -13,7 +13,7 @@ public class ChannelList {
     private let channelListUpdater: ChannelListUpdater
     
     init(
-        initialChannels: [ChatChannel]?,
+        initialChannels: [ChatChannel],
         query: ChannelListQuery,
         dynamicFilter: ((ChatChannel) -> Bool)?,
         channelListUpdater: ChannelListUpdater,
@@ -66,7 +66,7 @@ public class ChannelList {
 extension ChannelList {
     struct Environment {
         var stateBuilder: (
-            _ initialChannels: [ChatChannel]?,
+            _ initialChannels: [ChatChannel],
             _ query: ChannelListQuery,
             _ dynamicFilter: ((ChatChannel) -> Bool)?,
             _ clientConfig: ChatClientConfig,

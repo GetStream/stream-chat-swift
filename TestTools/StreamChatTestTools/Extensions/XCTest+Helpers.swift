@@ -23,14 +23,6 @@ public func XCTAssertEqual<T: Equatable>(_ expected: T,
     }
 }
 
-/// Asserts diff between the expected and received collections after sorting both collections
-public func XCTAssertEqualIgnoringOrder<T: RandomAccessCollection>(_ expected: T,
-                                                      _ received: T,
-                                                      file: StaticString = #filePath,
-                                                      line: UInt = #line) where T.Element: Comparable {
-    XCTAssertEqual(expected.sorted(), received.sorted(), file: file, line: line)
-}
-
 // MARK: Errors
 
 /// Asserts when two given errors are not equal

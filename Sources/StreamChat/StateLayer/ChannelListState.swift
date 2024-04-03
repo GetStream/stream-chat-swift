@@ -11,7 +11,7 @@ public final class ChannelListState: ObservableObject {
     let query: ChannelListQuery
     
     init(
-        initialChannels: [ChatChannel]?,
+        initialChannels: [ChatChannel],
         query: ChannelListQuery,
         dynamicFilter: ((ChatChannel) -> Bool)?,
         clientConfig: ChatClientConfig,
@@ -19,7 +19,7 @@ public final class ChannelListState: ObservableObject {
         database: DatabaseContainer,
         eventNotificationCenter: EventNotificationCenter
     ) {
-        channels = StreamCollection<ChatChannel>(initialChannels ?? [])
+        channels = StreamCollection<ChatChannel>(initialChannels)
         self.query = query
         observer = Observer(
             query: query,
@@ -31,10 +31,10 @@ public final class ChannelListState: ObservableObject {
         )
         observer.start(
             with: .init(channelsDidChange: { [weak self] channels, changes in
-                await self?.noteChannelsDidChange(channels, changes)
+                await self?.handleChannelsDidChange(channels, changes)
             })
         )
-        if initialChannels == nil {
+        if initialChannels.isEmpty {
             channels = observer.channelListObserver.currentItems()
         }
     }
@@ -53,7 +53,7 @@ public final class ChannelListState: ObservableObject {
         self[keyPath: keyPath]
     }
     
-    @MainActor private func noteChannelsDidChange(_ channels: StreamCollection<ChatChannel>, _ changes: [ListChange<ChannelId>]) {
+    @MainActor private func handleChannelsDidChange(_ channels: StreamCollection<ChatChannel>, _ changes: [ListChange<ChannelId>]) {
         channelListChanges = changes
         self.channels = channels
     }
