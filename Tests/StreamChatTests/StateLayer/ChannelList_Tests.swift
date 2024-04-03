@@ -173,7 +173,11 @@ final class ChannelList_Tests: XCTestCase {
         try await env.client.mockDatabaseContainer.write { session in
             session.saveChannelList(payload: incomingChannelListPayload, query: self.channelList.query)
         }
+        #if swift(>=5.8)
         await fulfillment(of: [expectation], timeout: defaultTimeout)
+        #else
+        wait(for: [expectation], timeout: defaultTimeout)
+        #endif
         cancellable.cancel()
     }
     
@@ -214,7 +218,11 @@ final class ChannelList_Tests: XCTestCase {
         // Processing the event is picked up by the state
         let eventExpectation = XCTestExpectation(description: "Event processed")
         env.client.eventNotificationCenter.process([event], completion: { eventExpectation.fulfill() })
+        #if swift(>=5.8)
         await fulfillment(of: [eventExpectation, stateExpectation], timeout: defaultTimeout)
+        #else
+        wait(for: [eventExpectation, stateExpectation], timeout: defaultTimeout)
+        #endif
         cancellable.cancel()
     }
     
@@ -238,8 +246,11 @@ final class ChannelList_Tests: XCTestCase {
         )
         let eventExpectation = XCTestExpectation(description: "Event processed")
         env.client.eventNotificationCenter.process([event], completion: { eventExpectation.fulfill() })
+        #if swift(>=5.8)
         await fulfillment(of: [eventExpectation], timeout: defaultTimeout)
-        
+        #else
+        wait(for: [eventExpectation], timeout: defaultTimeout)
+        #endif
         // Ensure the unlinking removed it from the state
         XCTAssertEqual([], channelList.state.channels.map(\.cid))
     }
