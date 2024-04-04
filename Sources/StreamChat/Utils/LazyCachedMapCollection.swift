@@ -62,12 +62,17 @@ public struct LazyCachedMapCollection<Element>: RandomAccessCollection {
     private var cache: Cache<Element>
 
     public subscript(position: Index) -> Element {
-        if let cached = cache.values[position] {
-            return cached
-        } else {
-            let value = generator(position)
-            defer { cache.values[position] = value }
-            return value
+        get {
+            if let cached = cache.values[position] {
+                return cached
+            } else {
+                let value = generator(position)
+                defer { cache.values[position] = value }
+                return value
+            }
+        }
+        set {
+            cache.values[position] = newValue
         }
     }
 
