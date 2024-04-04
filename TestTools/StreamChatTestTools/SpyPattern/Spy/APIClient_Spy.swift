@@ -16,6 +16,7 @@ final class APIClient_Spy: APIClient, Spy {
     /// The last endpoint `request` function was called with.
     @Atomic var request_endpoint: AnyEndpoint?
     @Atomic var request_completion: Any?
+    @Atomic var request_completion_result: Result<Any, Error>?
     @Atomic private var request_result: Any?
     @Atomic var request_allRecordedCalls: [(endpoint: AnyEndpoint, completion: Any?)] = []
 
