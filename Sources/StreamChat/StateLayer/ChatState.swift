@@ -167,7 +167,7 @@ public final class ChatState: ObservableObject {
     /// An array of users who are currently watching the channel.
     ///
     /// Use load watchers method in ``Chat`` for populating this array.
-    @Published public private(set) var watchers = StreamCollection<ChatUser>([])
+    @Published public internal(set) var watchers = StreamCollection<ChatUser>([])
     
     // MARK: - Mutating the State
     

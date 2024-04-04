@@ -713,6 +713,7 @@
 		84EB4E76276A012900E47E73 /* ClientError_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84EB4E75276A012900E47E73 /* ClientError_Tests.swift */; };
 		84EB4E78276A03DE00E47E73 /* ErrorPayload_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84EB4E77276A03DE00E47E73 /* ErrorPayload_Tests.swift */; };
 		84EE53B12BBC32AD00FD2A13 /* Chat_Mock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84EE53B02BBC32AD00FD2A13 /* Chat_Mock.swift */; };
+		84EE53B52BBDAC1D00FD2A13 /* UserSearch_Mock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84EE53B42BBDAC1D00FD2A13 /* UserSearch_Mock.swift */; };
 		84F373EC280D803E0081E8BA /* TestChannelObserver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84F373EB280D803E0081E8BA /* TestChannelObserver.swift */; };
 		84F373EE280D95690081E8BA /* ChatMessageDeliveryStatusCheckmarkView_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84F373ED280D95690081E8BA /* ChatMessageDeliveryStatusCheckmarkView_Tests.swift */; };
 		84F373F0280D95990081E8BA /* ChatMessageDeliveryStatusView_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84F373EF280D95990081E8BA /* ChatMessageDeliveryStatusView_Tests.swift */; };
@@ -3416,6 +3417,7 @@
 		84EB4E75276A012900E47E73 /* ClientError_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClientError_Tests.swift; sourceTree = "<group>"; };
 		84EB4E77276A03DE00E47E73 /* ErrorPayload_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ErrorPayload_Tests.swift; sourceTree = "<group>"; };
 		84EE53B02BBC32AD00FD2A13 /* Chat_Mock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Chat_Mock.swift; sourceTree = "<group>"; };
+		84EE53B42BBDAC1D00FD2A13 /* UserSearch_Mock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserSearch_Mock.swift; sourceTree = "<group>"; };
 		84F373EB280D803E0081E8BA /* TestChannelObserver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestChannelObserver.swift; sourceTree = "<group>"; };
 		84F373ED280D95690081E8BA /* ChatMessageDeliveryStatusCheckmarkView_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessageDeliveryStatusCheckmarkView_Tests.swift; sourceTree = "<group>"; };
 		84F373EF280D95990081E8BA /* ChatMessageDeliveryStatusView_Tests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChatMessageDeliveryStatusView_Tests.swift; sourceTree = "<group>"; };
@@ -5809,6 +5811,7 @@
 			isa = PBXGroup;
 			children = (
 				84EE53B02BBC32AD00FD2A13 /* Chat_Mock.swift */,
+				84EE53B42BBDAC1D00FD2A13 /* UserSearch_Mock.swift */,
 			);
 			path = State;
 			sourceTree = "<group>";
@@ -10602,6 +10605,7 @@
 				A3C3BC8427E8AB6200224761 /* Calendar+GMT.swift in Sources */,
 				A344077A27D753530044F150 /* ChatMessageFileAttachment_Mock.swift in Sources */,
 				A3C3BC2227E87F1200224761 /* CurrentUserController_Mock.swift in Sources */,
+				84EE53B52BBDAC1D00FD2A13 /* UserSearch_Mock.swift in Sources */,
 				40D4840C2A1264F1009E4134 /* MockAppStateObserver.swift in Sources */,
 				A344078D27D753530044F150 /* ChatUserSearchController_Mock.swift in Sources */,
 				82E655372B06756A00D64906 /* AssertTestQueue.swift in Sources */,
