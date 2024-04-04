@@ -4,6 +4,12 @@
 
 import Foundation
 
+/*
+ The naming for methods here follow rules:
+ - `make`: creates an instance which represents a local state (server state needs to be explicitly fetched)
+ - `retrieve`: creates an instance which syncs with server and returns the latest state while also creating an entity on the server if needed
+ */
+
 // MARK: - Factory Methods for Currently Logged In User
 
 @available(iOS 13.0, *)
@@ -11,8 +17,8 @@ extension ChatClient {
     /// Creates an instance of ``ConnectedUser`` which represents the logged-in user state and its actions.
     ///
     /// - Throws: An error if no user is currently logged-in.
-    public func makeConnectedUser() async throws -> ConnectedUser {
-        let user = try await databaseContainer.read { try CurrentUserDTO.load(context: $0) }
+    @MainActor public func makeConnectedUser() throws -> ConnectedUser {
+        let user = try CurrentUserDTO.load(context: databaseContainer.viewContext)
         return ConnectedUser(user: user, client: self)
     }
 }
@@ -27,6 +33,7 @@ extension ChatClient {
     /// Refer to [querying channels in Stream documentation](https://getstream.io/chat/docs/ios-swift/query_channels/?language=swift) for additional details.
     ///
     /// - Note: Only channels that the user can read are returned, therefore, make sure that the query uses a filter that includes such logic. It is recommended to include a members filter which includes the currently logged in user (e.g. `.containMembers(userIds: ["thierry"])`).
+    /// - Important: This returns a channel list with the latest state from the server.
     ///
     /// - Parameters:
     ///   - query: The query specifies which channels are part of the list and how channels are sorted.
@@ -34,9 +41,28 @@ extension ChatClient {
     ///
     /// - Throws: An error while communicating with the Stream API.
     /// - Returns: An instance of ``ChannelList`` which represents actions and the current state of the list.
-    public func makeChannelList(with query: ChannelListQuery, dynamicFilter: ((ChatChannel) -> Bool)? = nil) async throws -> ChannelList {
+    public func retrieveChannelList(with query: ChannelListQuery, dynamicFilter: ((ChatChannel) -> Bool)? = nil) async throws -> ChannelList {
         let channels = try await channelListUpdater.update(channelListQuery: query)
         let channelList = ChannelList(initialChannels: channels, query: query, dynamicFilter: dynamicFilter, channelListUpdater: channelListUpdater, client: self)
+        syncRepository.trackChannelListQuery { [weak channelList] in channelList?.state.query }
+        return channelList
+    }
+    
+    /// Creates an instance of ``ChannelList`` which represents an array of channels matching to the specified ``ChannelListQuery``.
+    ///
+    /// Loaded channels are stored in ``ChannelListState/channels``. Use pagination methods in ``ChannelList`` for loading more matching channels to the observable state.
+    /// Refer to [querying channels in Stream documentation](https://getstream.io/chat/docs/ios-swift/query_channels/?language=swift) for additional details.
+    ///
+    /// - Note: Only channels that the user can read are returned, therefore, make sure that the query uses a filter that includes such logic. It is recommended to include a members filter which includes the currently logged in user (e.g. `.containMembers(userIds: ["thierry"])`).
+    /// - Important: This returns a channel list with the local state (the state in the local database). It is caller's responsibility to fetch the latest server state using pagination methods.
+    ///
+    /// - Parameters:
+    ///   - query: The query specifies which channels are part of the list and how channels are sorted.
+    ///   - dynamicFilter: A filter block for filtering by channel's extra data fields or as a manual filter when ``ChatClientConfig/isChannelAutomaticFilteringEnabled`` is false ([read more](https://getstream.io/chat/docs/sdk/ios/client/controllers/channels/)).
+    ///
+    /// - Returns: An instance of ``ChannelList`` which represents actions and the current state of the list.
+    public func makeChannelList(with query: ChannelListQuery, dynamicFilter: ((ChatChannel) -> Bool)? = nil) -> ChannelList {
+        let channelList = ChannelList(initialChannels: [], query: query, dynamicFilter: dynamicFilter, channelListUpdater: channelListUpdater, client: self)
         syncRepository.trackChannelListQuery { [weak channelList] in channelList?.state.query }
         return channelList
     }
@@ -88,7 +114,6 @@ extension ChatClient {
     ) -> Chat {
         let channelUpdater = makeChannelUpdater()
         let channelQuery = ChannelQuery(cid: cid)
-        // TODO: Review pagination state since watch and channel updater's update are slightly different
         return Chat(
             cid: cid,
             channelQuery: channelQuery,
@@ -114,7 +139,7 @@ extension ChatClient {
     ///
     /// - Throws: An error while communicating with the Stream API.
     /// - Returns: An instance of `Chat` representing the channel.
-    public func makeChat(
+    public func retrieveChat(
         with channelQuery: ChannelQuery,
         channelListQuery: ChannelListQuery? = nil,
         messageOrdering: MessageOrdering = .topToBottom,
@@ -158,7 +183,7 @@ extension ChatClient {
     ///
     /// - Throws: An error while communicating with the Stream API.
     /// - Returns: An instance of `Chat` representing the channel.
-    public func makeChat(
+    public func retrieveChat(
         with cid: ChannelId,
         name: String? = nil,
         imageURL: URL? = nil,
@@ -218,7 +243,7 @@ extension ChatClient {
     ///
     /// - Throws: An error while communicating with the Stream API.
     /// - Returns: An instance of `Chat` representing the channel.
-    public func makeDirectMessageChat(
+    public func retrieveDirectMessageChat(
         with members: [UserId],
         type: ChannelType = .messaging,
         isCurrentUserMember: Bool = true,
