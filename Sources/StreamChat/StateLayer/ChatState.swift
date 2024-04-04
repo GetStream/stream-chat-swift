@@ -43,7 +43,7 @@ public final class ChatState: ObservableObject {
             with: .init(
                 channelDidChange: { [weak self] in await self?.setValue($0, for: \.channel) },
                 membersDidChange: { [weak self] in await self?.setValue($0, for: \.members) },
-                messagesDidChange: { [weak self] in await self?.handleMessagesDidChange($0, $1) },
+                messagesDidChange: { [weak self] in await self?.setValue($0, for: \.messages) },
                 typingUsersDidChange: { [weak self] in await self?.setValue($0, for: \.typingUsers) },
                 watchersDidChange: { [weak self] in await self?.setValue($0, for: \.watchers) }
             )
@@ -185,10 +185,5 @@ public final class ChatState: ObservableObject {
     // Force mutations on main actor since ChatState is meant to be used by UI.
     @MainActor func setValue<Value>(_ value: Value, for keyPath: ReferenceWritableKeyPath<ChatState, Value>) {
         self[keyPath: keyPath] = value
-    }
-    
-    @MainActor private func handleMessagesDidChange(_ messages: StreamCollection<ChatMessage>, _ changes: [ListChange<MessageId>]) {
-        messageListChanges = changes
-        self.messages = messages
     }
 }

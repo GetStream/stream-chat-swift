@@ -13,7 +13,7 @@ extension ChatState {
         private let eventNotificationCenter: EventNotificationCenter
         private let memberListState: MemberListState
         private var memberListObserver: AnyCancellable?
-        let messagesObserver: StateLayerListDatabaseObserver<ChatMessage, MessageId, MessageDTO>
+        let messagesObserver: StateLayerListDatabaseObserver<ChatMessage, MessageDTO>
         private let watchersObserver: BackgroundListDatabaseObserver<ChatUser, UserDTO>
         
         init(
@@ -43,7 +43,6 @@ extension ChatState {
                     shouldShowShadowedMessages: clientConfig.shouldShowShadowedMessages
                 ),
                 itemCreator: { try $0.asModel() as ChatMessage },
-                itemIdCreator: { $0.id as MessageId },
                 sorting: []
             )
             watchersObserver = BackgroundListDatabaseObserver(
@@ -58,7 +57,7 @@ extension ChatState {
         struct Handlers {
             let channelDidChange: (ChatChannel) async -> Void
             let membersDidChange: (StreamCollection<ChatChannelMember>) async -> Void
-            let messagesDidChange: (StreamCollection<ChatMessage>, [ListChange<MessageId>]) async -> Void
+            let messagesDidChange: (StreamCollection<ChatMessage>) async -> Void
             let typingUsersDidChange: (Set<ChatUser>) async -> Void
             let watchersDidChange: (StreamCollection<ChatUser>) async -> Void
         }
