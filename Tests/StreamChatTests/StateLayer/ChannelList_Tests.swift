@@ -189,6 +189,7 @@ final class ChannelList_Tests: XCTestCase {
         // Processing the event is picked up by the state
         let eventExpectation = XCTestExpectation(description: "Event processed")
         env.client.eventNotificationCenter.process([event], completion: { eventExpectation.fulfill() })
+
         #if swift(>=5.8)
         await fulfillment(of: [eventExpectation, stateExpectation], timeout: defaultTimeout)
         #else
