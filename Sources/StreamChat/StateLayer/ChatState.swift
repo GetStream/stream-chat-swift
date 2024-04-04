@@ -11,7 +11,7 @@ public final class ChatState: ObservableObject {
     private let cid: ChannelId
     private var channelObserver: EntityDatabaseObserverWrapper<ChatChannel, ChannelDTO>?
     private let dataStore: DataStore
-    private let paginationState: MessagesPaginationState
+    private let paginationStateHandler: MessagesPaginationStateHandling
     private let observer: Observer
     
     init(
@@ -23,13 +23,13 @@ public final class ChatState: ObservableObject {
         authenticationRepository: AuthenticationRepository,
         database: DatabaseContainer,
         eventNotificationCenter: EventNotificationCenter,
-        paginationState: MessagesPaginationState
+        paginationStateHandler: MessagesPaginationStateHandling
     ) {
         self.authenticationRepository = authenticationRepository
         self.cid = cid
         dataStore = DataStore(database: database)
         self.messageOrder = messageOrder
-        self.paginationState = paginationState
+        self.paginationStateHandler = paginationStateHandler
         observer = Observer(
             cid: cid,
             channelQuery: channelQuery,
@@ -48,6 +48,7 @@ public final class ChatState: ObservableObject {
                 watchersDidChange: { [weak self] in await self?.setValue($0, for: \.watchers) }
             )
         )
+        messages = observer.messagesObserver.currentItems()
     }
     
     // MARK: - Represented Channel
@@ -74,6 +75,11 @@ public final class ChatState: ObservableObject {
     /// Use load messages in ``Chat`` for loading more messages.
     @Published public private(set) var messages = StreamCollection<ChatMessage>([])
     
+    /// An array of latest message list changes.
+    ///
+    /// - Note: The ``messageListChanges`` property is updated just before ``messages`` property changes.
+    public private(set) var messageListChanges: [ListChange<MessageId>] = []
+    
     /// Access a message which is available locally by its id.
     ///
     /// - Note: This method does a local lookup of the message and returns a message present in ``ChatState/messages``.
@@ -90,34 +96,34 @@ public final class ChatState: ObservableObject {
     
     /// A Boolean value that returns whether the oldest messages have all been loaded or not.
     public var hasLoadedAllPreviousMessages: Bool {
-        paginationState.hasLoadedAllPreviousMessages
+        paginationStateHandler.state.hasLoadedAllPreviousMessages
     }
     
     /// A Boolean value that returns whether the newest messages have all been loaded or not.
     public var hasLoadedAllNextMessages: Bool {
-        paginationState.hasLoadedAllNextMessages || messages.isEmpty
+        paginationStateHandler.state.hasLoadedAllNextMessages || messages.isEmpty
     }
 
     /// A Boolean value that returns whether the channel is currently in a mid-page.
     /// The value is false if the channel has the first page loaded.
     /// The value is true if the channel is in a mid fragment and didn't load the first page yet.
     public var isJumpingToMessage: Bool {
-        paginationState.isJumpingToMessage
+        paginationStateHandler.state.isJumpingToMessage
     }
 
     /// A Boolean value that returns whether the channel is currently loading a page around a message.
     public var isLoadingMiddleMessages: Bool {
-        paginationState.isLoadingMiddleMessages
+        paginationStateHandler.state.isLoadingMiddleMessages
     }
 
     /// A Boolean value that returns whether the channel is currently loading next (new) messages.
     public var isLoadingNextMessages: Bool {
-        paginationState.isLoadingNextMessages
+        paginationStateHandler.state.isLoadingNextMessages
     }
 
     /// A Boolean value that returns whether the channel is currently loading previous (old) messages.
     public var isLoadingPreviousMessages: Bool {
-        paginationState.isLoadingPreviousMessages
+        paginationStateHandler.state.isLoadingPreviousMessages
     }
     
     // MARK: - Message Reading
