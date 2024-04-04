@@ -7,7 +7,7 @@ import Foundation
 @available(iOS 13.0, *)
 extension ChannelListState {
     final class Observer {
-        private let channelListObserver: BackgroundListDatabaseObserver<ChatChannel, ChannelDTO>
+        let channelListObserver: StateLayerListDatabaseObserver<ChatChannel, ChannelId, ChannelDTO>
         private let clientConfig: ChatClientConfig
         private let channelListUpdater: ChannelListUpdater
         private let database: DatabaseContainer
@@ -31,16 +31,14 @@ extension ChannelListState {
             self.query = query
             self.eventNotificationCenter = eventNotificationCenter
             
-            // Note that for channel list we sort outside of NSFetchRequest because ChannelListQuery defines its own sorting (see runtimeSorting)
-            channelListObserver = BackgroundListDatabaseObserver(
-                context: database.backgroundReadOnlyContext,
+            channelListObserver = StateLayerListDatabaseObserver(
+                databaseContainer: database,
                 fetchRequest: ChannelDTO.channelListFetchRequest(
                     query: query,
                     chatClientConfig: clientConfig
                 ),
-                itemCreator: {
-                    try $0.asModel() as ChatChannel
-                },
+                itemCreator: { try $0.asModel() as ChatChannel },
+                itemIdCreator: { try ChannelId(cid: $0.cid) },
                 sorting: query.sort.runtimeSorting
             )
         }
@@ -83,14 +81,10 @@ extension ChannelListState {
                 }
             ]
             
-            channelListObserver.onDidChange = { [weak channelListObserver] _ in
-                guard let items = channelListObserver?.items else { return }
-                let collection = StreamCollection(items)
-                Task { await handlers.channelsDidChange(collection) }
-            }
-            
             do {
-                try channelListObserver.startObserving()
+                try channelListObserver.startObserving(didChange: { channels, _ in
+                    await handlers.channelsDidChange(channels)
+                })
             } catch {
                 log.error("Failed to start the channel list observer for query: \(query)")
             }
