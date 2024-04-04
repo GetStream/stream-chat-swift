@@ -39,7 +39,7 @@ public final class MessageSearchState: ObservableObject {
         self[keyPath: keyPath] = value
     }
     
-    @MainActor func set(query: MessageSearchQuery, cursor: String?) {
+    @MainActor func set(query: MessageSearchQuery?, cursor: String?) {
         self.query = query
         nextPageCursor = cursor
     }
