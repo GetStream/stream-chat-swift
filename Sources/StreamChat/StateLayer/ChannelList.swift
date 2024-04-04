@@ -13,7 +13,7 @@ public class ChannelList {
     private let channelListUpdater: ChannelListUpdater
     
     init(
-        channels: [ChatChannel],
+        initialChannels: [ChatChannel],
         query: ChannelListQuery,
         dynamicFilter: ((ChatChannel) -> Bool)?,
         channelListUpdater: ChannelListUpdater,
@@ -23,7 +23,7 @@ public class ChannelList {
         self.channelListUpdater = channelListUpdater
         self.query = query
         state = environment.stateBuilder(
-            channels,
+            initialChannels,
             query,
             dynamicFilter,
             client.config,
@@ -51,8 +51,7 @@ public class ChannelList {
     
     /// Loads more channels and updates ``ChannelListState/channels``.
     ///
-    /// - Parameters
-    ///   - limit: The limit for the page size. The default limit is 20.
+    /// - Parameter limit: The limit for the page size. The default limit is 20.
     ///
     /// - Throws: An error while communicating with the Stream API.
     /// - Returns: An array of loaded channels.
@@ -67,7 +66,7 @@ public class ChannelList {
 extension ChannelList {
     struct Environment {
         var stateBuilder: (
-            _ channels: [ChatChannel],
+            _ initialChannels: [ChatChannel],
             _ query: ChannelListQuery,
             _ dynamicFilter: ((ChatChannel) -> Bool)?,
             _ clientConfig: ChatClientConfig,
