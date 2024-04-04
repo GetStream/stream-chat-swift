@@ -236,8 +236,8 @@ class DatabaseContainer: NSPersistentContainer {
     }
     
     @available(iOS 13.0, *)
-    func backgroundRead<T>(_ actions: @escaping (NSManagedObjectContext) throws -> T) async throws -> T {
-        let context = backgroundReadOnlyContext
+    func backgroundRead<T>(from context: NSManagedObjectContext? = nil, _ actions: @escaping (NSManagedObjectContext) throws -> T) async throws -> T {
+        let context = context ?? backgroundReadOnlyContext
         return try await withCheckedThrowingContinuation { continuation in
             context.perform {
                 do {
