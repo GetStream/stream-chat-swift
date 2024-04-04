@@ -325,15 +325,15 @@ public func XCTAssertResultFailure<Value, U: Error, ErrorType: Error>(_ result: 
 ///   - file: The file where the failure occurs. The default is the filename of the test case where you call this function.
 ///   - line: The line number where the failure occurs. The default is the line number where you call this function.
 @available(iOS 13.0, *)
-func XCTAssertAsyncFailure<Failure>(
-    _ expression: @autoclosure () async throws -> Void,
+func XCTAssertAsyncFailure<Success, Failure>(
+    _ expression: @autoclosure () async throws -> Success,
     _ expectedError: @autoclosure () -> Failure,
     _ message: @autoclosure () -> String = "",
     file: StaticString = #filePath,
     line: UInt = #line
 ) async where Failure: Error {
     do {
-        try await expression()
+        _ = try await expression()
         XCTFail("Expected to fail with error \(expectedError())", file: file, line: line)
     } catch {
         guard let receivedError = error as? Failure else {
