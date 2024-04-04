@@ -11,7 +11,7 @@ public final class ChannelListState: ObservableObject {
     let query: ChannelListQuery
     
     init(
-        channels: [ChatChannel],
+        initialChannels: [ChatChannel],
         query: ChannelListQuery,
         dynamicFilter: ((ChatChannel) -> Bool)?,
         clientConfig: ChatClientConfig,
@@ -19,7 +19,7 @@ public final class ChannelListState: ObservableObject {
         database: DatabaseContainer,
         eventNotificationCenter: EventNotificationCenter
     ) {
-        self.channels = StreamCollection<ChatChannel>(channels)
+        channels = StreamCollection<ChatChannel>(initialChannels)
         self.query = query
         observer = Observer(
             query: query,
@@ -30,8 +30,13 @@ public final class ChannelListState: ObservableObject {
             eventNotificationCenter: eventNotificationCenter
         )
         observer.start(
-            with: .init(channelsDidChange: { [weak self] channels in await self?.setValue(channels, for: \.channels) })
+            with: .init(channelsDidChange: { [weak self] channels in
+                await self?.handleChannelsDidChange(channels)
+            })
         )
+        if initialChannels.isEmpty {
+            channels = observer.channelListObserver.currentItems()
+        }
     }
     
     /// An array of channels for the specified ``ChannelListQuery``.
@@ -43,7 +48,7 @@ public final class ChannelListState: ObservableObject {
         self[keyPath: keyPath]
     }
     
-    @MainActor func setValue<Value>(_ value: Value, for keyPath: ReferenceWritableKeyPath<ChannelListState, Value>) {
-        self[keyPath: keyPath] = value
+    @MainActor private func handleChannelsDidChange(_ channels: StreamCollection<ChatChannel>) {
+        self.channels = channels
     }
 }
