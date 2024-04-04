@@ -458,9 +458,3 @@ final class ChannelUpdater_Mock: ChannelUpdater {
         enrichUrl_completion = completion
     }
 }
-
-private extension Result where Success == Void {
-    func invoke(with completion: ((Error?) -> Void)? = nil) {
-        completion?(error)
-    }
-}
