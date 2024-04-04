@@ -85,7 +85,7 @@ public final class Chat {
             client.authenticationRepository,
             client.databaseContainer,
             client.eventNotificationCenter,
-            channelUpdater.paginationState
+            channelUpdater.paginationStateHandler
         )
     }
     
@@ -396,7 +396,7 @@ public final class Chat {
     ///   - limit: The limit for the page size. The default limit is 25.
     ///
     /// - Throws: An error while communicating with the Stream API.
-    public func loadMessages(before messageId: MessageId? = nil, limit: Int? = nil) async throws {
+    public func loadPreviousMessages(before messageId: MessageId? = nil, limit: Int? = nil) async throws {
         try await channelUpdater.loadMessages(before: messageId, limit: limit, channelQuery: channelQuery, loaded: state.messages)
     }
     
@@ -407,7 +407,7 @@ public final class Chat {
     ///   - limit: The limit for the page size. The default limit is 25.
     ///
     /// - Throws: An error while communicating with the Stream API.
-    public func loadMessages(after messageId: MessageId? = nil, limit: Int? = nil) async throws {
+    public func loadNextMessages(_ messageId: MessageId? = nil, limit: Int? = nil) async throws {
         try await channelUpdater.loadMessages(after: messageId, limit: limit, channelQuery: channelQuery, loaded: state.messages)
     }
     
@@ -1105,7 +1105,7 @@ extension Chat {
             _ authenticationRepository: AuthenticationRepository,
             _ database: DatabaseContainer,
             _ eventNotificationCenter: EventNotificationCenter,
-            _ paginationState: MessagesPaginationState
+            _ paginationStateHandler: MessagesPaginationStateHandling
         ) -> ChatState = ChatState.init
 
         var eventSenderBuilder: (
