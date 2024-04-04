@@ -9,7 +9,7 @@ class ChannelUpdater: Worker {
     private let channelRepository: ChannelRepository
     private let callRepository: CallRepository
     private let messageRepository: MessageRepository
-    private let paginationStateHandler: MessagesPaginationStateHandling
+    let paginationStateHandler: MessagesPaginationStateHandling
 
     init(
         channelRepository: ChannelRepository,
@@ -943,7 +943,7 @@ extension ChannelUpdater {
 
     func loadMessages(after messageId: MessageId?, limit: Int?, channelQuery: ChannelQuery, loaded: StreamCollection<ChatMessage>) async throws {
         guard !paginationState.isLoadingNextMessages else { return }
-        guard !(paginationState.hasLoadedAllNextMessages || loaded.isEmpty) else { return }
+        guard !paginationState.hasLoadedAllNextMessages else { return }
         guard let messageId = messageId ?? paginationState.newestFetchedMessage?.id ?? loaded.first?.id else {
             throw ClientError.ChannelEmptyMessages()
         }
