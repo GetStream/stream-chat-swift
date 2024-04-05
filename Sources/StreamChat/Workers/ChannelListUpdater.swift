@@ -213,7 +213,7 @@ private extension ChannelListUpdater {
 @available(iOS 13.0, *)
 extension ChannelListUpdater {
     func link(channel: ChatChannel, with query: ChannelListQuery) async throws {
-        try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
+        try await withCheckedThrowingContinuation { continuation in
             link(channel: channel, with: query) { error in
                 continuation.resume(with: error)
             }
@@ -221,7 +221,7 @@ extension ChannelListUpdater {
     }
 
     func startWatchingChannels(withIds ids: [ChannelId]) async throws {
-        try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
+        try await withCheckedThrowingContinuation { continuation in
             startWatchingChannels(withIds: ids) { error in
                 continuation.resume(with: error)
             }
@@ -229,7 +229,7 @@ extension ChannelListUpdater {
     }
 
     func unlink(channel: ChatChannel, with query: ChannelListQuery) async throws {
-        try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
+        try await withCheckedThrowingContinuation { continuation in
             unlink(channel: channel, with: query) { error in
                 continuation.resume(with: error)
             }
