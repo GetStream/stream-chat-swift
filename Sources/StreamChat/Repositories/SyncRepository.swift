@@ -158,7 +158,7 @@ class SyncRepository {
         operations.append(contentsOf: refetchChannelListQueryOperations)
         
         let channelListQueries = syncQueue.sync {
-            var queries = _activeChannelListQueryProviders.compactMap { $0() }
+            let queries = _activeChannelListQueryProviders.compactMap { $0() }
             _activeChannelListQueryProviders.removeAll()
             return queries
         }
