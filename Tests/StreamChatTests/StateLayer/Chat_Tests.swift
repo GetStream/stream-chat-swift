@@ -326,12 +326,12 @@ final class Chat_Tests: XCTestCase {
         XCTAssertEqual(currentUserId, env.channelUpdaterMock.removeMembers_currentUserId)
     }
     
-    // TODO
+    // TODO: not done
     func test_loadMembers_whenAPIRequestSucceeds_thenLoadMembersSucceeds() async throws {
         // loadMembers(with pagination: Pagination)
     }
     
-    // TODO
+    // TODO: not done
     func test_loadMembers_whenAPIRequestFails_thenLoadMembersSucceeds() async throws {
         // loadMembers(with pagination: Pagination)
     }
@@ -527,72 +527,72 @@ final class Chat_Tests: XCTestCase {
 //        XCTAssertEqual(text, env.channelUpdaterMock.createNewMessage_text)
     }
     
-    // TODO
+    // TODO: not done
     public func test_updateMessage_whenAPIRequestSucceeds_thenUpdateMessageSucceeds() async throws {
         // updateMessage(_ messageId: MessageId, with text: String, attachments: [AnyAttachmentPayload] = [], extraData: [String: RawJSON]? = nil, skipEnrichURL: Bool = false)
     }
     
-    // TODO
+    // TODO: not done
     public func test_updateMessage_whenAPIRequestFails_thenUpdateMessageSucceeds() async throws {
         // updateMessage(_ messageId: MessageId, with text: String, attachments: [AnyAttachmentPayload] = [], extraData: [String: RawJSON]? = nil, skipEnrichURL: Bool = false)
     }
     
-    // TODO
+    // TODO: not done
     public func test_loadMessages_whenAPIRequestSucceeds_thenLoadMessagesSucceeds() async throws {
         // loadMessages(with pagination: MessagesPagination)
     }
     
-    // TODO
+    // TODO: not done
     public func test_loadMessages_whenAPIRequestFails_thenLoadMessagesSucceeds() async throws {
         // loadMessages(with pagination: MessagesPagination)
     }
     
-    // TODO
+    // TODO: not done
     public func test_loadMessagesFirstPage_whenAPIRequestSucceeds_thenLoadMessagesFirstPageSucceeds() async throws {
         // loadMessagesFirstPage()
     }
     
-    // TODO
+    // TODO: not done
     public func test_loadMessagesFirstPage_whenAPIRequestFails_thenLoadMessagesFirstPageSucceeds() async throws {
         // loadMessagesFirstPage()
     }
     
-    // TODO
+    // TODO: not done
     public func test_loadMessagesBeforeMessageId_whenAPIRequestSucceeds_thenLoadMessagesBeforeMessageIdSucceeds() async throws {
         // loadMessages(before messageId: MessageId? = nil, limit: Int? = nil)
     }
     
-    // TODO
+    // TODO: not done
     public func test_loadMessagesBeforeMessageId_whenAPIRequestFails_thenLoadMessagesBeforeMessageIdSucceeds() async throws {
         // loadMessages(before messageId: MessageId? = nil, limit: Int? = nil)
     }
     
-    // TODO
+    // TODO: not done
     public func test_loadMessagesAfterMessageId_whenAPIRequestSucceeds_thenLoadMessagesAfterMessageIdSucceeds() async throws {
         // loadMessages(after messageId: MessageId? = nil, limit: Int? = nil)
     }
     
-    // TODO
+    // TODO: not done
     public func test_loadMessagesAfterMessageId_whenAPIRequestFails_thenLoadMessagesAfterMessageIdSucceeds() async throws {
         // loadMessages(after messageId: MessageId? = nil, limit: Int? = nil)
     }
     
-    // TODO
+    // TODO: not done
     public func test_loadMessagesAroundMessageId_whenAPIRequestSucceeds_thenLoadMessagesAroundMessageIdSucceeds() async throws {
         // loadMessages(around messageId: MessageId? = nil, limit: Int? = nil)
     }
     
-    // TODO
+    // TODO: not done
     public func test_loadMessagesAroundMessageId_whenAPIRequestFails_thenLoadMessagesAroundMessageIdSucceeds() async throws {
         // loadMessages(around messageId: MessageId? = nil, limit: Int? = nil)
     }
     
-    // TODO
+    // TODO: not done
     public func test_sendMessageAction_whenAPIRequestSucceeds_thenSendMessageActionSucceeds() async throws {
         // sendMessageAction(in messageId: MessageId, action: AttachmentAction)
     }
     
-    // TODO
+    // TODO: not done
     public func test_sendMessageAction_whenAPIRequestFails_thenSendMessageActionSucceeds() async throws {
         // sendMessageAction(in messageId: MessageId, action: AttachmentAction)
     }
@@ -717,12 +717,12 @@ final class Chat_Tests: XCTestCase {
 //        XCTAssertEqual(messageId, env.messageUpdater.pinMessage_messageId)
     }
     
-    // TODO
+    // TODO: not done
     public func test_loadPinnedMessagesAction_whenAPIRequestSucceeds_thenLoadPinnedMessagesActionSucceeds() async throws {
         // loadPinnedMessages(for pagination: PinnedMessagesPagination? = nil, sort: [Sorting<PinnedMessagesSortingKey>] = [], limit: Int = .messagesPageSize)
     }
     
-    // TODO
+    // TODO: not done
     public func test_loadPinnedMessagesAction_whenAPIRequestFails_thenLoadPinnedMessagesActionSucceeds() async throws {
         // loadPinnedMessages(for pagination: PinnedMessagesPagination? = nil, sort: [Sorting<PinnedMessagesSortingKey>] = [], limit: Int = .messagesPageSize)
     }
@@ -754,32 +754,32 @@ final class Chat_Tests: XCTestCase {
         XCTAssertEqual(reactionType, env.messageUpdater.deleteReaction_type)
     }
     
-    // TODO
+    // TODO: not done
     public func test_sendReactionAction_whenAPIRequestSucceeds_thenSendReactionActionSucceeds() async throws {
 //        sendReaction(to messageId: MessageId, with type: MessageReactionType, score: Int = 1, enforceUnique: Bool = false, extraData: [String: RawJSON] = [:])
     }
     
-    // TODO
+    // TODO: not done
     public func test_sendReactionAction_whenAPIRequestFails_thenSendReactionActionSucceeds() async throws {
 //        sendReaction(to messageId: MessageId, with type: MessageReactionType, score: Int = 1, enforceUnique: Bool = false, extraData: [String: RawJSON] = [:])
     }
     
-    // TODO
+    // TODO: not done
     public func test_loadReactionsAction_whenAPIRequestSucceeds_thenLoadReactionsActionSucceeds() async throws {
         // loadReactions(of messageId: MessageId, pagination: Pagination)
     }
     
-    // TODO
+    // TODO: not done
     public func test_loadReactionsAction_whenAPIRequestFails_thenLoadReactionsActionSucceeds() async throws {
         // loadReactions(of messageId: MessageId, pagination: Pagination)
     }
     
-    // TODO
+    // TODO: not done
     public func test_loadNextReactionsAction_whenAPIRequestSucceeds_thenLoadNextReactionsActionSucceeds() async throws {
         // loadNextReactions(of messageId: MessageId, limit: Int? = nil)
     }
     
-    // TODO
+    // TODO: not done
     public func test_loadNextReactionsAction_whenAPIRequestFails_thenLoadNextReactionsActionSucceeds() async throws {
         // loadNextReactions(of messageId: MessageId, limit: Int? = nil)
     }
@@ -817,7 +817,7 @@ final class Chat_Tests: XCTestCase {
 //        XCTAssertEqual(channelId, env.channelUpdaterMock.markUnread_cid)
 //        XCTAssertEqual(currentUserId, env.channelUpdaterMock.markUnread_userId)
 //        XCTAssertEqual(messageId, env.channelUpdaterMock.markUnread_messageId)
-//        XCTAssertEqual(messageId, env.channelUpdaterMock.markUnread_lastReadMessageId) // TODO
+//        XCTAssertEqual(messageId, env.channelUpdaterMock.markUnread_lastReadMessageId) // TODO: not done
     }
     
     // TODO: ChannelDoesNotExist and lastReadMessageId assertion
@@ -830,12 +830,12 @@ final class Chat_Tests: XCTestCase {
 //        XCTAssertEqual(channelId, env.channelUpdaterMock.markUnread_cid)
 //        XCTAssertEqual(currentUserId, env.channelUpdaterMock.markUnread_userId)
 //        XCTAssertEqual(messageId, env.channelUpdaterMock.markUnread_messageId)
-//        XCTAssertEqual(messageId, env.channelUpdaterMock.markUnread_lastReadMessageId) // TODO
+//        XCTAssertEqual(messageId, env.channelUpdaterMock.markUnread_lastReadMessageId) // TODO: not done
     }
     
     // MARK: - Message Replies
     
-    // TODO
+    // TODO: not done
     public func test_replyAction_whenAPIRequestSucceeds_thenReplyActionSucceeds() async throws {
 //        reply(
 //            to parentMessageId: MessageId,
@@ -853,7 +853,7 @@ final class Chat_Tests: XCTestCase {
 //        )
     }
     
-    // TODO
+    // TODO: not done
     public func test_replyAction_whenAPIRequestFails_thenReplyActionSucceeds() async throws {
 //        reply(
 //            to parentMessageId: MessageId,
@@ -871,64 +871,64 @@ final class Chat_Tests: XCTestCase {
 //        )
     }
     
-    // TODO
+    // TODO: not done
     public func test_loadRepliesAction_whenAPIRequestSucceeds_thenLoadRepliesActionSucceeds() async throws {
         // loadReplies(of messageId: MessageId, pagination: MessagesPagination)
     }
     
-    // TODO
+    // TODO: not done
     public func test_loadRepliesAction_whenAPIRequestFails_thenLoadRepliesActionSucceeds() async throws {
         // loadReplies(of messageId: MessageId, pagination: MessagesPagination)
     }
     
-    // TODO
+    // TODO: not done
     public func test_loadRepliesFirstPageAction_whenAPIRequestSucceeds_thenLoadRepliesFirstPageActionSucceeds() async throws {
         // loadRepliesFirstPage(of messageId: MessageId, limit: Int? = nil)
     }
     
-    // TODO
+    // TODO: not done
     public func test_loadRepliesFirstPageAction_whenAPIRequestFails_thenLoadRepliesFirstPageActionSucceeds() async throws {
         // loadRepliesFirstPage(of messageId: MessageId, limit: Int? = nil)
     }
     
-    // TODO
+    // TODO: not done
     public func test_loadRepliesBeforeAction_whenAPIRequestSucceeds_thenLoadRepliesBeforeActionSucceeds() async throws {
         // loadReplies(before replyId: MessageId? = nil, of messageId: MessageId, limit: Int? = nil)
     }
     
-    // TODO
+    // TODO: not done
     public func test_loadRepliesBeforeAction_whenAPIRequestFails_thenLoadRepliesBeforeActionSucceeds() async throws {
         // loadReplies(before replyId: MessageId? = nil, of messageId: MessageId, limit: Int? = nil)
     }
     
-    // TODO
+    // TODO: not done
     public func test_loadRepliesAfterAction_whenAPIRequestSucceeds_thenLoadRepliesAfterActionSucceeds() async throws {
         // loadReplies(after replyId: MessageId? = nil, of messageId: MessageId, limit: Int? = nil)
     }
     
-    // TODO
+    // TODO: not done
     public func test_loadRepliesAfterAction_whenAPIRequestFails_thenLoadRepliesAfterActionSucceeds() async throws {
         // loadReplies(after replyId: MessageId? = nil, of messageId: MessageId, limit: Int? = nil)
     }
     
-    // TODO
+    // TODO: not done
     public func test_loadRepliesAroundAction_whenAPIRequestSucceeds_thenLoadRepliesAroundActionSucceeds() async throws {
         // loadReplies(around replyId: MessageId, of messageId: MessageId, limit: Int? = nil)
     }
     
-    // TODO
+    // TODO: not done
     public func test_loadRepliesAroundAction_whenAPIRequestFails_thenLoadRepliesAroundActionSucceeds() async throws {
         // loadReplies(around replyId: MessageId, of messageId: MessageId, limit: Int? = nil)
     }
     
     // MARK: - Message State Observing
     
-    // TODO
+    // TODO: not done
     public func test_makeMessageStateAction_whenAPIRequestSucceeds_thenMakeMessageStateActionSucceeds() async throws {
         // makeMessageState(for messageId: MessageId)
     }
     
-    // TODO
+    // TODO: not done
     public func test_makeMessageStateAction_whenAPIRequestFails_thenMakeMessageStateActionSucceeds() async throws {
         // makeMessageState(for messageId: MessageId)
     }
@@ -1083,7 +1083,7 @@ final class Chat_Tests: XCTestCase {
         env.client.mockAuthenticationRepository.mockedCurrentUserId = currentUserId
         env.channelUpdaterMock.truncateChannel_completion_result = .success(())
         
-        var systemMessage: String? = nil
+        var systemMessage: String?
         var hardDelete = true
         var skipPush = true
         try await chat.truncate(systemMessage: systemMessage, hardDelete: hardDelete, skipPush: skipPush)
@@ -1125,7 +1125,7 @@ final class Chat_Tests: XCTestCase {
         env.client.mockAuthenticationRepository.mockedCurrentUserId = currentUserId
         env.channelUpdaterMock.truncateChannel_completion_result = .failure(expectedTestError)
         
-        var systemMessage: String? = nil
+        var systemMessage: String?
         var hardDelete = true
         var skipPush = true
         await XCTAssertAsyncFailure(try await chat.truncate(systemMessage: systemMessage, hardDelete: hardDelete, skipPush: skipPush), expectedTestError)
@@ -1164,29 +1164,29 @@ final class Chat_Tests: XCTestCase {
     
     // MARK: - Typing Indicator
     
-    // TODO
+    // TODO: not done
     public func test_keystrokeAction_whenAPIRequestSucceeds_thenKeystrokeActionSucceeds() async throws {
         // keystroke(parentMessageId: MessageId? = nil)
     }
     
-    // TODO
+    // TODO: not done
     public func test_keystrokeAction_whenAPIRequestFails_thenKeystrokeActionSucceeds() async throws {
         // keystroke(parentMessageId: MessageId? = nil)
     }
     
-    // TODO
+    // TODO: not done
     public func test_stopTypingAction_whenAPIRequestSucceeds_thenStopTypingActionSucceeds() async throws {
         // stopTyping(parentMessageId: MessageId? = nil)
     }
     
-    // TODO
+    // TODO: not done
     public func test_stopTypingAction_whenAPIRequestFails_thenStopTypingActionSucceeds() async throws {
         // stopTyping(parentMessageId: MessageId? = nil)
     }
     
     // MARK: - Updating the Channel
     
-    // TODO
+    // TODO: not done
     public func test_updateAction_whenAPIRequestSucceeds_thenUpdateActionSucceeds() async throws {
 //        update(
 //            name: String?,
@@ -1198,7 +1198,7 @@ final class Chat_Tests: XCTestCase {
 //        )
     }
     
-    // TODO
+    // TODO: not done
     public func test_updateAction_whenAPIRequestFails_thenUpdateActionSucceeds() async throws {
 //        update(
 //            name: String?,
@@ -1210,7 +1210,7 @@ final class Chat_Tests: XCTestCase {
 //        )
     }
     
-    // TODO
+    // TODO: not done
     public func test_updatePartialAction_whenAPIRequestSucceeds_thenUpdatePartialActionSucceeds() async throws {
 //         updatePartial(
 //            name: String? = nil,
@@ -1223,7 +1223,7 @@ final class Chat_Tests: XCTestCase {
 //        )
     }
     
-    // TODO
+    // TODO: not done
     public func test_updatePartialAction_whenAPIRequestFails_thenUpdatePartialActionSucceeds() async throws {
 //         updatePartial(
 //            name: String? = nil,
@@ -1238,32 +1238,32 @@ final class Chat_Tests: XCTestCase {
     
     // MARK: - Uploading and Deleting Files
     
-    // TODO
+    // TODO: not done
     public func test_deleteFileAction_whenAPIRequestSucceeds_thenDeleteFileActionSucceeds() async throws {
         // deleteFile(at url: URL)
     }
     
-    // TODO
+    // TODO: not done
     public func test_deleteFileAction_whenAPIRequestFails_thenDeleteFileActionSucceeds() async throws {
         // deleteFile(at url: URL)
     }
     
-    // TODO
+    // TODO: not done
     public func test_deleteImageAction_whenAPIRequestSucceeds_thenDeleteImageActionSucceeds() async throws {
         // deleteImage(at url: URL)
     }
     
-    // TODO
+    // TODO: not done
     public func test_deleteImageAction_whenAPIRequestFails_thenDeleteImageActionSucceeds() async throws {
         // deleteImage(at url: URL)
     }
     
-    // TODO
+    // TODO: not done
     public func test_uploadAttachmentAction_whenAPIRequestSucceeds_thenUploadAttachmentActionSucceeds() async throws {
         // uploadAttachment(with localFileURL: URL, type: AttachmentType, progress: ((Double) -> Void)? = nil)
     }
     
-    // TODO
+    // TODO: not done
     public func test_uploadAttachmentAction_whenAPIRequestFails_thenUploadAttachmentActionSucceeds() async throws {
         // uploadAttachment(with localFileURL: URL, type: AttachmentType, progress: ((Double) -> Void)? = nil)
     }
@@ -1302,52 +1302,52 @@ final class Chat_Tests: XCTestCase {
         XCTAssertEqual(channelId, env.channelUpdaterMock.stopWatching_cid)
     }
     
-    // TODO
+    // TODO: not done
     public func test_subscribeAction_whenAPIRequestSucceeds_thenSubscribeActionSucceeds() async throws {
         // subscribe(_ handler: @escaping (Event) -> Void)
     }
     
-    // TODO
+    // TODO: not done
     public func test_subscribeAction_whenAPIRequestFails_thenSubscribeActionSucceeds() async throws {
         // subscribe(_ handler: @escaping (Event) -> Void)
     }
     
-    // TODO
+    // TODO: not done
     public func test_subscribeToEventAction_whenAPIRequestSucceeds_thenSubscribeToEventActionSucceeds() async throws {
         // subscribe<E>(toEvent event: E.Type, handler: @escaping (E) -> Void)
     }
     
-    // TODO
+    // TODO: not done
     public func test_subscribeToEventAction_whenAPIRequestFails_thenSubscribeToEventActionSucceeds() async throws {
         // subscribe<E>(toEvent event: E.Type, handler: @escaping (E) -> Void)
     }
     
-    // TODO
+    // TODO: not done
     public func test_sendEventAction_whenAPIRequestSucceeds_thenSendEventActionSucceeds() async throws {
         // sendEvent<EventPayload>(_ payload: EventPayload)
     }
     
-    // TODO
+    // TODO: not done
     public func test_sendEventAction_whenAPIRequestFails_thenSendEventActionSucceeds() async throws {
         // sendEvent<EventPayload>(_ payload: EventPayload)
     }
     
-    // TODO
+    // TODO: not done
     public func test_loadWatchersAction_whenAPIRequestSucceeds_thenLoadWatchersActionSucceeds() async throws {
         // loadWatchers(with pagination: Pagination)
     }
     
-    // TODO
+    // TODO: not done
     public func test_loadWatchersAction_whenAPIRequestFails_thenLoadWatchersActionSucceeds() async throws {
         // loadWatchers(with pagination: Pagination)
     }
     
-    // TODO
+    // TODO: not done
     public func test_loadNextWatchersAction_whenAPIRequestSucceeds_thenLoadNextWatchersActionSucceeds() async throws {
         // loadNextWatchers(limit: Int? = nil)
     }
     
-    // TODO
+    // TODO: not done
     public func test_loadNextWatchersAction_whenAPIRequestFails_thenLoadNextWatchersActionSucceeds() async throws {
         // loadNextWatchers(limit: Int? = nil)
     }
