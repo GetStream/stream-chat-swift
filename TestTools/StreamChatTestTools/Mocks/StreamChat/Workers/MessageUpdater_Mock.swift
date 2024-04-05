@@ -89,6 +89,7 @@ final class MessageUpdater_Mock: MessageUpdater {
     @Atomic var search_query: MessageSearchQuery?
     @Atomic var search_policy: UpdatePolicy?
     @Atomic var search_completion: ((Result<MessageSearchResults, Error>) -> Void)?
+    @Atomic var search_completion_result: Result<MessageSearchResults, Error>?
 
     @Atomic var clearSearchResults_query: MessageSearchQuery?
     @Atomic var clearSearchResults_completion: ((Error?) -> Void)?
@@ -172,6 +173,7 @@ final class MessageUpdater_Mock: MessageUpdater {
         search_query = nil
         search_policy = nil
         search_completion = nil
+        search_completion_result = nil
 
         clearSearchResults_query = nil
         clearSearchResults_completion = nil
@@ -359,6 +361,7 @@ final class MessageUpdater_Mock: MessageUpdater {
         search_query = query
         search_policy = policy
         search_completion = completion
+        search_completion_result?.invoke(with: completion)
     }
 
     override func clearSearchResults(
@@ -385,7 +388,7 @@ extension MessageUpdater.MessageSearchResults {
         .make(api: [], next: nil, models: [])
     }
     
-    static func make(api apiMessages: [MessagePayload.Boxed], next: String?, models: [ChatMessage]) -> Self {
+    static func make(api apiMessages: [MessagePayload.Boxed] = [], next: String? = nil, models: [ChatMessage] = []) -> Self {
         MessageUpdater.MessageSearchResults(payload: MessageSearchResultsPayload(results: apiMessages, next: next), models: models)
     }
 }
