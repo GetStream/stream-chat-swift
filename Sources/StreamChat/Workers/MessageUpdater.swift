@@ -746,7 +746,7 @@ private extension DatabaseSession {
 @available(iOS 13.0, *)
 extension MessageUpdater {
     func addReaction(_ type: MessageReactionType, score: Int, enforceUnique: Bool, extraData: [String: RawJSON], messageId: MessageId) async throws {
-        try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
+        try await withCheckedThrowingContinuation { continuation in
             addReaction(type, score: score, enforceUnique: enforceUnique, extraData: extraData, messageId: messageId) { error in
                 continuation.resume(with: error)
             }
@@ -802,7 +802,7 @@ extension MessageUpdater {
     }
     
     func deleteMessage(messageId: MessageId, hard: Bool) async throws {
-        try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
+        try await withCheckedThrowingContinuation { continuation in
             deleteMessage(messageId: messageId, hard: hard) { error in
                 continuation.resume(with: error)
             }
@@ -810,7 +810,7 @@ extension MessageUpdater {
     }
     
     func deleteReaction(_ type: MessageReactionType, messageId: MessageId) async throws {
-        try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
+        try await withCheckedThrowingContinuation { continuation in
             deleteReaction(type, messageId: messageId) { error in
                 continuation.resume(with: error)
             }
@@ -818,7 +818,7 @@ extension MessageUpdater {
     }
     
     func dispatchEphemeralMessageAction(cid: ChannelId, messageId: MessageId, action: AttachmentAction) async throws {
-        try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
+        try await withCheckedThrowingContinuation { continuation in
             dispatchEphemeralMessageAction(cid: cid, messageId: messageId, action: action) { error in
                 continuation.resume(with: error)
             }
@@ -826,7 +826,7 @@ extension MessageUpdater {
     }
     
     func editMessage(messageId: MessageId, text: String, skipEnrichUrl: Bool, attachments: [AnyAttachmentPayload] = [], extraData: [String: RawJSON]? = nil) async throws {
-        try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
+        try await withCheckedThrowingContinuation { continuation in
             editMessage(messageId: messageId, text: text, skipEnrichUrl: skipEnrichUrl, attachments: attachments, extraData: extraData) { error in
                 continuation.resume(with: error)
             }
@@ -834,7 +834,7 @@ extension MessageUpdater {
     }
     
     func flagMessage(_ flag: Bool, with messageId: MessageId, in cid: ChannelId) async throws {
-        try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
+        try await withCheckedThrowingContinuation { continuation in
             flagMessage(flag, with: messageId, in: cid) { error in
                 continuation.resume(with: error)
             }
@@ -866,7 +866,7 @@ extension MessageUpdater {
     }
     
     func pinMessage(messageId: MessageId, pinning: MessagePinning) async throws {
-        try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
+        try await withCheckedThrowingContinuation { continuation in
             pinMessage(messageId: messageId, pinning: pinning) { error in
                 continuation.resume(with: error)
             }
@@ -874,7 +874,7 @@ extension MessageUpdater {
     }
     
     func resendAttachment(with id: AttachmentId) async throws {
-        try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
+        try await withCheckedThrowingContinuation { continuation in
             restartFailedAttachmentUploading(with: id) { error in
                 continuation.resume(with: error)
             }
@@ -882,7 +882,7 @@ extension MessageUpdater {
     }
     
     func resendMessage(with messageId: MessageId) async throws {
-        try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
+        try await withCheckedThrowingContinuation { continuation in
             resendMessage(with: messageId) { error in
                 continuation.resume(with: error)
             }
@@ -906,7 +906,7 @@ extension MessageUpdater {
     }
     
     func unpinMessage(messageId: MessageId) async throws {
-        try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
+        try await withCheckedThrowingContinuation { continuation in
             unpinMessage(messageId: messageId) { error in
                 continuation.resume(with: error)
             }
