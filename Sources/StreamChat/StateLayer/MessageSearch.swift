@@ -34,6 +34,8 @@ public final class MessageSearch {
         // Clear results when there is no text
         if text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty, let query = state.query {
             try await messageUpdater.clearSearchResults(for: query)
+            await state.set(query: nil, cursor: nil)
+            return []
         }
         
         let currentUserId = try currentUserId()
