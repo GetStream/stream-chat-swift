@@ -61,7 +61,7 @@ final class StateLayerListDatabaseObserver<Item, DTO: NSManagedObject> {
         return collection
     }
     
-    func startObserving(didChange: @escaping (StreamCollection<Item>) async -> Void) throws {
+    func startObserving(initial: Bool = false, didChange: @escaping (StreamCollection<Item>) async -> Void) throws {
         resultsDelegate = FetchedResultsDelegate(onDidChange: { [weak self] in
             guard let self else { return }
             // Runs on the NSManagedObjectContext's queue, therefore skip performAndWait
@@ -75,6 +75,9 @@ final class StateLayerListDatabaseObserver<Item, DTO: NSManagedObject> {
         })
         frc.delegate = resultsDelegate
         try frc.performFetch()
+        if initial {
+            Task { await didChange(currentItems()) }
+        }
     }
     
     static func makeCollection(
