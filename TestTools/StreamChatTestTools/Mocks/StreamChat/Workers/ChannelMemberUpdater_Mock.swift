@@ -13,21 +13,26 @@ final class ChannelMemberUpdater_Mock: ChannelMemberUpdater {
     @Atomic var banMember_timeoutInMinutes: Int??
     @Atomic var banMember_reason: String??
     @Atomic var banMember_completion: ((Error?) -> Void)?
+    @Atomic var banMember_completion_result: Result<Void, Error>?
 
     @Atomic var unbanMember_userId: UserId?
     @Atomic var unbanMember_cid: ChannelId?
     @Atomic var unbanMember_completion: ((Error?) -> Void)?
+    @Atomic var unbanMember_completion_result: Result<Void, Error>?
 
     func cleanUp() {
         banMember_userId = nil
         banMember_cid = nil
+        banMember_shadow = nil
         banMember_timeoutInMinutes = nil
         banMember_reason = nil
         banMember_completion = nil
+        banMember_completion_result = nil
 
         unbanMember_userId = nil
         unbanMember_cid = nil
         unbanMember_completion = nil
+        unbanMember_completion_result = nil
     }
 
     override func banMember(
@@ -44,6 +49,7 @@ final class ChannelMemberUpdater_Mock: ChannelMemberUpdater {
         banMember_timeoutInMinutes = timeoutInMinutes
         banMember_reason = reason
         banMember_completion = completion
+        banMember_completion_result?.invoke(with: completion)
     }
 
     override func unbanMember(
@@ -53,5 +59,6 @@ final class ChannelMemberUpdater_Mock: ChannelMemberUpdater {
         unbanMember_userId = userId
         unbanMember_cid = cid
         unbanMember_completion = completion
+        unbanMember_completion_result?.invoke(with: completion)
     }
 }
