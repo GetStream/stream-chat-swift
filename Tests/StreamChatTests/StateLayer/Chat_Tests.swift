@@ -259,6 +259,1098 @@ final class Chat_Tests: XCTestCase {
             }
         return ChannelPayload.dummy(channel: .dummy(cid: chat.cid), messages: messages)
     }
+    
+    // MARK: - Members
+    
+    func test_addMembers_whenAPIRequestSucceeds_thenAddMembersSucceeds() async throws {
+        for hideHistory in [true, false] {
+            let currentUserId = String.unique
+            env.client.mockAuthenticationRepository.mockedCurrentUserId = currentUserId
+            env.channelUpdaterMock.addMembers_completion_result = .success(())
+            let memberIds: [UserId] = [.unique, .unique]
+            try await chat.addMembers(memberIds, systemMessage: "My system message", hideHistory: hideHistory)
+            XCTAssertEqual(channelId, env.channelUpdaterMock.addMembers_cid)
+            XCTAssertEqual(memberIds.sorted(), env.channelUpdaterMock.addMembers_userIds?.sorted())
+            XCTAssertEqual("My system message", env.channelUpdaterMock.addMembers_message)
+            XCTAssertEqual(hideHistory, env.channelUpdaterMock.addMembers_hideHistory)
+            XCTAssertEqual(currentUserId, env.channelUpdaterMock.addMembers_currentUserId)
+        }
+    }
+    
+    func test_addMembers_whenAPIRequestFails_thenAddMembersSucceeds() async throws {
+        for hideHistory in [true, false] {
+            let currentUserId = String.unique
+            env.client.mockAuthenticationRepository.mockedCurrentUserId = currentUserId
+            env.channelUpdaterMock.addMembers_completion_result = .failure(expectedTestError)
+            let memberIds: [UserId] = [.unique, .unique]
+            
+            await XCTAssertAsyncFailure(
+                try await chat.addMembers(memberIds, systemMessage: "My system message", hideHistory: hideHistory),
+                expectedTestError
+            )
+            
+            XCTAssertEqual(channelId, env.channelUpdaterMock.addMembers_cid)
+            XCTAssertEqual(memberIds.sorted(), env.channelUpdaterMock.addMembers_userIds?.sorted())
+            XCTAssertEqual("My system message", env.channelUpdaterMock.addMembers_message)
+            XCTAssertEqual(hideHistory, env.channelUpdaterMock.addMembers_hideHistory)
+            XCTAssertEqual(currentUserId, env.channelUpdaterMock.addMembers_currentUserId)
+        }
+    }
+    
+    func test_removeMembers_whenAPIRequestSucceeds_thenRemoveMembersSucceeds() async throws {
+        let currentUserId = String.unique
+        env.client.mockAuthenticationRepository.mockedCurrentUserId = currentUserId
+        env.channelUpdaterMock.removeMembers_completion_result = .success(())
+        let memberIds: [UserId] = [.unique, .unique]
+        try await chat.removeMembers(memberIds, systemMessage: "My system message")
+        XCTAssertEqual(channelId, env.channelUpdaterMock.removeMembers_cid)
+        XCTAssertEqual(memberIds.sorted(), env.channelUpdaterMock.removeMembers_userIds?.sorted())
+        XCTAssertEqual("My system message", env.channelUpdaterMock.removeMembers_message)
+        XCTAssertEqual(currentUserId, env.channelUpdaterMock.removeMembers_currentUserId)
+    }
+    
+    func test_removeMembers_whenAPIRequestFails_thenRemoveMembersSucceeds() async throws {
+        let currentUserId = String.unique
+        env.client.mockAuthenticationRepository.mockedCurrentUserId = currentUserId
+        env.channelUpdaterMock.removeMembers_completion_result = .failure(expectedTestError)
+        let memberIds: [UserId] = [.unique, .unique]
+        
+        await XCTAssertAsyncFailure(
+            try await chat.removeMembers(memberIds, systemMessage: "My system message"),
+            expectedTestError
+        )
+        
+        XCTAssertEqual(channelId, env.channelUpdaterMock.removeMembers_cid)
+        XCTAssertEqual(memberIds.sorted(), env.channelUpdaterMock.removeMembers_userIds?.sorted())
+        XCTAssertEqual("My system message", env.channelUpdaterMock.removeMembers_message)
+        XCTAssertEqual(currentUserId, env.channelUpdaterMock.removeMembers_currentUserId)
+    }
+    
+    // TODO: not done
+    func test_loadMembers_whenAPIRequestSucceeds_thenLoadMembersSucceeds() async throws {
+        // loadMembers(with pagination: Pagination)
+    }
+    
+    // TODO: not done
+    func test_loadMembers_whenAPIRequestFails_thenLoadMembersSucceeds() async throws {
+        // loadMembers(with pagination: Pagination)
+    }
+    
+    // MARK: - Member Moderation
+    
+    public func test_banMember_whenAPIRequestSucceeds_thenBanMemberSucceeds() async throws {
+        let currentUserId = String.unique
+        env.client.mockAuthenticationRepository.mockedCurrentUserId = currentUserId
+        env.memberUpdater.banMember_completion_result = .success(())
+        let reason = "Test reason"
+        let timeout = 5
+        let memberId: UserId = .unique
+        try await chat.banMember(memberId, reason: reason, timeout: timeout)
+        XCTAssertEqual(channelId, env.memberUpdater.banMember_cid)
+        XCTAssertEqual(memberId, env.memberUpdater.banMember_userId)
+        XCTAssertEqual(reason, env.memberUpdater.banMember_reason)
+        XCTAssertEqual(timeout, env.memberUpdater.banMember_timeoutInMinutes)
+        XCTAssertEqual(false, env.memberUpdater.banMember_shadow)
+    }
+    
+    public func test_banMember_whenAPIRequestFails_thenBanMemberSucceeds() async throws {
+        let currentUserId = String.unique
+        env.client.mockAuthenticationRepository.mockedCurrentUserId = currentUserId
+        env.memberUpdater.banMember_completion_result = .failure(expectedTestError)
+        let reason = "Test reason"
+        let timeout = 5
+        let memberId: UserId = .unique
+        
+        await XCTAssertAsyncFailure(
+            try await chat.banMember(memberId, reason: reason, timeout: timeout),
+            expectedTestError
+        )
+        
+        XCTAssertEqual(channelId, env.memberUpdater.banMember_cid)
+        XCTAssertEqual(memberId, env.memberUpdater.banMember_userId)
+        XCTAssertEqual(reason, env.memberUpdater.banMember_reason)
+        XCTAssertEqual(timeout, env.memberUpdater.banMember_timeoutInMinutes)
+        XCTAssertEqual(false, env.memberUpdater.banMember_shadow)
+    }
+    
+    public func test_shadowBanMember_whenAPIRequestSucceeds_thenShadowBanMemberSucceeds() async throws {
+        let currentUserId = String.unique
+        env.client.mockAuthenticationRepository.mockedCurrentUserId = currentUserId
+        env.memberUpdater.banMember_completion_result = .success(())
+        let reason = "Test reason"
+        let timeout = 5
+        let memberId: UserId = .unique
+        try await chat.shadowBanMember(memberId, reason: reason, timeout: timeout)
+        XCTAssertEqual(channelId, env.memberUpdater.banMember_cid)
+        XCTAssertEqual(memberId, env.memberUpdater.banMember_userId)
+        XCTAssertEqual(reason, env.memberUpdater.banMember_reason)
+        XCTAssertEqual(timeout, env.memberUpdater.banMember_timeoutInMinutes)
+        XCTAssertEqual(true, env.memberUpdater.banMember_shadow)
+    }
+    
+    public func test_shadowBanMember_whenAPIRequestFails_thenShadowBanMemberSucceeds() async throws {
+        let currentUserId = String.unique
+        env.client.mockAuthenticationRepository.mockedCurrentUserId = currentUserId
+        env.memberUpdater.banMember_completion_result = .failure(expectedTestError)
+        let reason = "Test reason"
+        let timeout = 5
+        let memberId: UserId = .unique
+        
+        await XCTAssertAsyncFailure(
+            try await chat.shadowBanMember(memberId, reason: reason, timeout: timeout),
+            expectedTestError
+        )
+        
+        XCTAssertEqual(channelId, env.memberUpdater.banMember_cid)
+        XCTAssertEqual(memberId, env.memberUpdater.banMember_userId)
+        XCTAssertEqual(reason, env.memberUpdater.banMember_reason)
+        XCTAssertEqual(timeout, env.memberUpdater.banMember_timeoutInMinutes)
+        XCTAssertEqual(true, env.memberUpdater.banMember_shadow)
+    }
+    
+    public func test_unbanMember_whenAPIRequestSucceeds_thenUnbanMemberSucceeds() async throws {
+        let currentUserId = String.unique
+        env.client.mockAuthenticationRepository.mockedCurrentUserId = currentUserId
+        env.memberUpdater.unbanMember_completion_result = .success(())
+        let memberId: UserId = .unique
+        try await chat.unbanMember(memberId)
+        XCTAssertEqual(channelId, env.memberUpdater.unbanMember_cid)
+        XCTAssertEqual(memberId, env.memberUpdater.unbanMember_userId)
+    }
+    
+    public func test_unbanMember_whenAPIRequestFails_thenUnbanMemberSucceeds() async throws {
+        let currentUserId = String.unique
+        env.client.mockAuthenticationRepository.mockedCurrentUserId = currentUserId
+        env.memberUpdater.unbanMember_completion_result = .failure(expectedTestError)
+        let memberId: UserId = .unique
+        await XCTAssertAsyncFailure(try await chat.unbanMember(memberId), expectedTestError)
+        XCTAssertEqual(channelId, env.memberUpdater.unbanMember_cid)
+        XCTAssertEqual(memberId, env.memberUpdater.unbanMember_userId)
+    }
+    
+    // MARK: - Messages
+    
+    public func test_deleteMessage_whenAPIRequestSucceeds_thenDeleteMessageSucceeds() async throws {
+        for hard in [true, false] {
+            let currentUserId = String.unique
+            env.client.mockAuthenticationRepository.mockedCurrentUserId = currentUserId
+            env.messageUpdater.deleteMessage_completion_result = .success(())
+            let messageId: MessageId = .unique
+            try await chat.deleteMessage(messageId, hard: hard)
+            XCTAssertEqual(messageId, env.messageUpdater.deleteMessage_messageId)
+            XCTAssertEqual(hard, env.messageUpdater.deleteMessage_hard)
+        }
+    }
+    
+    public func test_deleteMessage_whenAPIRequestFails_thenDeleteMessageSucceeds() async throws {
+        for hard in [true, false] {
+            let currentUserId = String.unique
+            env.client.mockAuthenticationRepository.mockedCurrentUserId = currentUserId
+            env.messageUpdater.deleteMessage_completion_result = .failure(expectedTestError)
+            let messageId: MessageId = .unique
+            await XCTAssertAsyncFailure(try await chat.deleteMessage(messageId, hard: hard), expectedTestError)
+            XCTAssertEqual(messageId, env.messageUpdater.deleteMessage_messageId)
+            XCTAssertEqual(hard, env.messageUpdater.deleteMessage_hard)
+        }
+    }
+    
+    // TODO: fails due to backgroundWorker
+    public func test_resendMessage_whenAPIRequestSucceeds_thenResendMessageSucceeds() async throws {
+//        let currentUserId = String.unique
+//        env.client.mockAuthenticationRepository.mockedCurrentUserId = currentUserId
+//        env.messageUpdater.resendMessage_completion_result = .success(())
+//        let messageId: MessageId = .unique
+//        try await chat.resendMessage(messageId)
+//        XCTAssertEqual(messageId, env.messageUpdater.resendMessage_messageId)
+    }
+    
+    // TODO: fails due to backgroundWorker
+    public func test_resendMessage_whenAPIRequestFails_thenResendMessageSucceeds() async throws {
+//        let currentUserId = String.unique
+//        env.client.mockAuthenticationRepository.mockedCurrentUserId = currentUserId
+//        env.messageUpdater.resendMessage_completion_result = .failure(expectedTestError)
+//        let messageId: MessageId = .unique
+//        await XCTAssertAsyncFailure(try await chat.resendMessage(messageId), expectedTestError)
+//        XCTAssertEqual(messageId, env.messageUpdater.resendMessage_messageId)
+    }
+    
+    // TODO: fails due to backgroundWorker
+    public func test_resendAttachment_whenAPIRequestSucceeds_thenResendAttachmentSucceeds() async throws {
+//        let currentUserId = String.unique
+//        env.client.mockAuthenticationRepository.mockedCurrentUserId = currentUserId
+//        env.messageUpdater.restartFailedAttachmentUploading_completion_result = .success(())
+//        let attachmentId: AttachmentId = .unique
+//        try await chat.resendAttachment(attachmentId)
+//        XCTAssertEqual(attachmentId, env.messageUpdater.restartFailedAttachmentUploading_id)
+    }
+    
+    // TODO: fails due to backgroundWorker
+    public func test_resendAttachment_whenAPIRequestFails_thenResendAttachmentSucceeds() async throws {
+//        let currentUserId = String.unique
+//        env.client.mockAuthenticationRepository.mockedCurrentUserId = currentUserId
+//        env.messageUpdater.restartFailedAttachmentUploading_completion_result = .failure(expectedTestError)
+//        let attachmentId: AttachmentId = .unique
+//        await XCTAssertAsyncFailure(try await chat.resendAttachment(attachmentId), expectedTestError)
+//        XCTAssertEqual(attachmentId, env.messageUpdater.restartFailedAttachmentUploading_id)
+    }
+    
+    // TODO: fails due to backgroundWorker
+    public func test_sendMessage_whenAPIRequestSucceeds_thenSendMessageSucceeds() async throws {
+//        let currentUserId = String.unique
+//        let messageId: MessageId = .unique
+//        let text: String = "Test message"
+//        let createdAt: Date = .unique
+//        let message: ChatMessage = .mock(
+//            id: messageId,
+//            cid: channelId,
+//            text: text,
+//            author: .mock(id: currentUserId),
+//            createdAt: createdAt,
+//            isSentByCurrentUser: true
+//        )
+//        env.client.mockAuthenticationRepository.mockedCurrentUserId = currentUserId
+//        env.channelUpdaterMock.createNewMessage_completion_result = .success(message)
+//        try await chat.sendMessage(with: text, messageId: messageId)
+//        XCTAssertEqual(channelId, env.channelUpdaterMock.createNewMessage_cid)
+//        XCTAssertEqual(text, env.channelUpdaterMock.createNewMessage_text)
+    }
+    
+    // TODO: fails due to backgroundWorker
+    public func test_sendMessage_whenAPIRequestFails_thenSendMessageSucceeds() async throws {
+//        let currentUserId = String.unique
+//        let messageId: MessageId = .unique
+//        let text: String = "Test message"
+//        env.client.mockAuthenticationRepository.mockedCurrentUserId = currentUserId
+//        env.channelUpdaterMock.createNewMessage_completion_result = .failure(expectedTestError)
+//        await XCTAssertAsyncFailure(_ = try await chat.sendMessage(with: text, messageId: messageId), expectedTestError)
+//        XCTAssertEqual(channelId, env.channelUpdaterMock.createNewMessage_cid)
+//        XCTAssertEqual(text, env.channelUpdaterMock.createNewMessage_text)
+    }
+    
+    // TODO: not done
+    public func test_updateMessage_whenAPIRequestSucceeds_thenUpdateMessageSucceeds() async throws {
+        // updateMessage(_ messageId: MessageId, with text: String, attachments: [AnyAttachmentPayload] = [], extraData: [String: RawJSON]? = nil, skipEnrichURL: Bool = false)
+    }
+    
+    // TODO: not done
+    public func test_updateMessage_whenAPIRequestFails_thenUpdateMessageSucceeds() async throws {
+        // updateMessage(_ messageId: MessageId, with text: String, attachments: [AnyAttachmentPayload] = [], extraData: [String: RawJSON]? = nil, skipEnrichURL: Bool = false)
+    }
+    
+    // TODO: not done
+    public func test_loadMessages_whenAPIRequestSucceeds_thenLoadMessagesSucceeds() async throws {
+        // loadMessages(with pagination: MessagesPagination)
+    }
+    
+    // TODO: not done
+    public func test_loadMessages_whenAPIRequestFails_thenLoadMessagesSucceeds() async throws {
+        // loadMessages(with pagination: MessagesPagination)
+    }
+    
+    // TODO: not done
+    public func test_loadMessagesFirstPage_whenAPIRequestSucceeds_thenLoadMessagesFirstPageSucceeds() async throws {
+        // loadMessagesFirstPage()
+    }
+    
+    // TODO: not done
+    public func test_loadMessagesFirstPage_whenAPIRequestFails_thenLoadMessagesFirstPageSucceeds() async throws {
+        // loadMessagesFirstPage()
+    }
+    
+    // TODO: not done
+    public func test_loadMessagesBeforeMessageId_whenAPIRequestSucceeds_thenLoadMessagesBeforeMessageIdSucceeds() async throws {
+        // loadMessages(before messageId: MessageId? = nil, limit: Int? = nil)
+    }
+    
+    // TODO: not done
+    public func test_loadMessagesBeforeMessageId_whenAPIRequestFails_thenLoadMessagesBeforeMessageIdSucceeds() async throws {
+        // loadMessages(before messageId: MessageId? = nil, limit: Int? = nil)
+    }
+    
+    // TODO: not done
+    public func test_loadMessagesAfterMessageId_whenAPIRequestSucceeds_thenLoadMessagesAfterMessageIdSucceeds() async throws {
+        // loadMessages(after messageId: MessageId? = nil, limit: Int? = nil)
+    }
+    
+    // TODO: not done
+    public func test_loadMessagesAfterMessageId_whenAPIRequestFails_thenLoadMessagesAfterMessageIdSucceeds() async throws {
+        // loadMessages(after messageId: MessageId? = nil, limit: Int? = nil)
+    }
+    
+    // TODO: not done
+    public func test_loadMessagesAroundMessageId_whenAPIRequestSucceeds_thenLoadMessagesAroundMessageIdSucceeds() async throws {
+        // loadMessages(around messageId: MessageId? = nil, limit: Int? = nil)
+    }
+    
+    // TODO: not done
+    public func test_loadMessagesAroundMessageId_whenAPIRequestFails_thenLoadMessagesAroundMessageIdSucceeds() async throws {
+        // loadMessages(around messageId: MessageId? = nil, limit: Int? = nil)
+    }
+    
+    // TODO: not done
+    public func test_sendMessageAction_whenAPIRequestSucceeds_thenSendMessageActionSucceeds() async throws {
+        // sendMessageAction(in messageId: MessageId, action: AttachmentAction)
+    }
+    
+    // TODO: not done
+    public func test_sendMessageAction_whenAPIRequestFails_thenSendMessageActionSucceeds() async throws {
+        // sendMessageAction(in messageId: MessageId, action: AttachmentAction)
+    }
+    
+    // MARK: - Message Flagging
+    
+    public func test_flagMessageAction_whenAPIRequestSucceeds_thenFlagMessageActionSucceeds() async throws {
+        let currentUserId = String.unique
+        let messageId: MessageId = .unique
+        env.client.mockAuthenticationRepository.mockedCurrentUserId = currentUserId
+        env.messageUpdater.flagMessage_completion_result = .success(())
+        try await chat.flagMessage(messageId)
+        XCTAssertEqual(channelId, env.messageUpdater.flagMessage_cid)
+        XCTAssertEqual(messageId, env.messageUpdater.flagMessage_messageId)
+        XCTAssertEqual(true, env.messageUpdater.flagMessage_flag)
+    }
+    
+    public func test_flagMessageAction_whenAPIRequestFails_thenFlagMessageActionSucceeds() async throws {
+        let currentUserId = String.unique
+        let messageId: MessageId = .unique
+        env.client.mockAuthenticationRepository.mockedCurrentUserId = currentUserId
+        env.messageUpdater.flagMessage_completion_result = .failure(expectedTestError)
+        await XCTAssertAsyncFailure(try await chat.flagMessage(messageId), expectedTestError)
+        XCTAssertEqual(channelId, env.messageUpdater.flagMessage_cid)
+        XCTAssertEqual(messageId, env.messageUpdater.flagMessage_messageId)
+        XCTAssertEqual(true, env.messageUpdater.flagMessage_flag)
+    }
+    
+    public func test_unflagMessageAction_whenAPIRequestSucceeds_thenUnflagMessageActionSucceeds() async throws {
+        let currentUserId = String.unique
+        let messageId: MessageId = .unique
+        env.client.mockAuthenticationRepository.mockedCurrentUserId = currentUserId
+        env.messageUpdater.flagMessage_completion_result = .success(())
+        try await chat.unflagMessage(messageId)
+        XCTAssertEqual(channelId, env.messageUpdater.flagMessage_cid)
+        XCTAssertEqual(messageId, env.messageUpdater.flagMessage_messageId)
+        XCTAssertEqual(false, env.messageUpdater.flagMessage_flag)
+    }
+    
+    public func test_unflagMessageAction_whenAPIRequestFails_thenUnflagMessageActionSucceeds() async throws {
+        let currentUserId = String.unique
+        let messageId: MessageId = .unique
+        env.client.mockAuthenticationRepository.mockedCurrentUserId = currentUserId
+        env.messageUpdater.flagMessage_completion_result = .failure(expectedTestError)
+        await XCTAssertAsyncFailure(try await chat.unflagMessage(messageId), expectedTestError)
+        XCTAssertEqual(channelId, env.messageUpdater.flagMessage_cid)
+        XCTAssertEqual(messageId, env.messageUpdater.flagMessage_messageId)
+        XCTAssertEqual(false, env.messageUpdater.flagMessage_flag)
+    }
+    
+    // MARK: - Message Rich Content
+    
+    public func test_enrichURLAction_whenAPIRequestSucceeds_thenEnrichURLActionSucceeds() async throws {
+        let currentUserId = String.unique
+        let url: URL = .unique()
+        let expectedLinkAttachmentPayload = LinkAttachmentPayload(
+            originalURL: url,
+            title: "Chat API Documentation",
+            text: "Stream, scalable news feeds and activity streams as a service.",
+            author: "Stream",
+            previewURL: TestImages.r2.url
+        )
+        env.client.mockAuthenticationRepository.mockedCurrentUserId = currentUserId
+        env.channelUpdaterMock.enrichUrl_completion_result = .success(expectedLinkAttachmentPayload)
+        let actualLinkAttachmentPayload = try await chat.enrichURL(url)
+        XCTAssertEqual(url, env.channelUpdaterMock.enrichUrl_url)
+        XCTAssertEqual(actualLinkAttachmentPayload, expectedLinkAttachmentPayload)
+    }
+    
+    public func test_enrichURLAction_whenAPIRequestFails_thenEnrichURLActionSucceeds() async throws {
+        let currentUserId = String.unique
+        let url: URL = .unique()
+        env.client.mockAuthenticationRepository.mockedCurrentUserId = currentUserId
+        env.channelUpdaterMock.enrichUrl_completion_result = .failure(expectedTestError)
+        await XCTAssertAsyncFailure(_ = try await chat.enrichURL(url), expectedTestError)
+        XCTAssertEqual(url, env.channelUpdaterMock.enrichUrl_url)
+    }
+    
+    // MARK: - Message Pinning
+    
+    // TODO: fails due to backgroundWorker
+    public func test_pinMessageAction_whenAPIRequestSucceeds_thenPinMessageActionSucceeds() async throws {
+//        let currentUserId = String.unique
+//        let messageId: MessageId = .unique
+//        let pinning = MessagePinning(expirationDate: .unique)
+//        env.client.mockAuthenticationRepository.mockedCurrentUserId = currentUserId
+//        env.messageUpdater.pinMessage_completion_result = .success(())
+//        try await chat.pinMessage(messageId, pinning: pinning)
+//        XCTAssertEqual(messageId, env.messageUpdater.pinMessage_messageId)
+//        XCTAssertEqual(pinning, env.messageUpdater.pinMessage_pinning)
+    }
+    
+    // TODO: fails due to backgroundWorker
+    public func test_pinMessageAction_whenAPIRequestFails_thenPinMessageActionSucceeds() async throws {
+//        let currentUserId = String.unique
+//        let messageId: MessageId = .unique
+//        let pinning = MessagePinning(expirationDate: .unique)
+//        env.client.mockAuthenticationRepository.mockedCurrentUserId = currentUserId
+//        env.messageUpdater.pinMessage_completion_result = .failure(expectedTestError)
+//        await XCTAssertAsyncFailure(try await chat.pinMessage(messageId, pinning: pinning), expectedTestError)
+//        XCTAssertEqual(messageId, env.messageUpdater.pinMessage_messageId)
+//        XCTAssertEqual(pinning, env.messageUpdater.pinMessage_pinning)
+    }
+    
+    // TODO: fails due to backgroundWorker
+    public func test_unpinMessageAction_whenAPIRequestSucceeds_thenUnpinMessageActionSucceeds() async throws {
+//        let currentUserId = String.unique
+//        let messageId: MessageId = .unique
+//        env.client.mockAuthenticationRepository.mockedCurrentUserId = currentUserId
+//        env.messageUpdater.unpinMessage_completion_result = .success(())
+//        try await chat.unpinMessage(messageId)
+//        XCTAssertEqual(messageId, env.messageUpdater.pinMessage_messageId)
+    }
+    
+    // TODO: fails due to backgroundWorker
+    public func test_unpinMessageAction_whenAPIRequestFails_thenUnpinMessageActionSucceeds() async throws {
+//        let currentUserId = String.unique
+//        let messageId: MessageId = .unique
+//        env.client.mockAuthenticationRepository.mockedCurrentUserId = currentUserId
+//        env.messageUpdater.unpinMessage_completion_result = .failure(expectedTestError)
+//        await XCTAssertAsyncFailure(try await chat.unpinMessage(messageId), expectedTestError)
+//        XCTAssertEqual(messageId, env.messageUpdater.pinMessage_messageId)
+    }
+    
+    // TODO: not done
+    public func test_loadPinnedMessagesAction_whenAPIRequestSucceeds_thenLoadPinnedMessagesActionSucceeds() async throws {
+        // loadPinnedMessages(for pagination: PinnedMessagesPagination? = nil, sort: [Sorting<PinnedMessagesSortingKey>] = [], limit: Int = .messagesPageSize)
+    }
+    
+    // TODO: not done
+    public func test_loadPinnedMessagesAction_whenAPIRequestFails_thenLoadPinnedMessagesActionSucceeds() async throws {
+        // loadPinnedMessages(for pagination: PinnedMessagesPagination? = nil, sort: [Sorting<PinnedMessagesSortingKey>] = [], limit: Int = .messagesPageSize)
+    }
+    
+    // MARK: - Message Reactions
+    
+    public func test_deleteReactionAction_whenAPIRequestSucceeds_thenDeleteReactionActionSucceeds() async throws {
+        let currentUserId = String.unique
+        let messageId: MessageId = .unique
+        let reactionType: MessageReactionType = .init(rawValue: "like")
+        env.client.mockAuthenticationRepository.mockedCurrentUserId = currentUserId
+        env.messageUpdater.deleteReaction_completion_result = .success(())
+        try await chat.deleteReaction(from: messageId, with: .init(rawValue: "like"))
+        XCTAssertEqual(messageId, env.messageUpdater.deleteReaction_messageId)
+        XCTAssertEqual(reactionType, env.messageUpdater.deleteReaction_type)
+    }
+    
+    public func test_deleteReactionAction_whenAPIRequestFails_thenDeleteReactionActionSucceeds() async throws {
+        let currentUserId = String.unique
+        let messageId: MessageId = .unique
+        let reactionType: MessageReactionType = .init(rawValue: "like")
+        env.client.mockAuthenticationRepository.mockedCurrentUserId = currentUserId
+        env.messageUpdater.deleteReaction_completion_result = .failure(expectedTestError)
+        await XCTAssertAsyncFailure(
+            try await chat.deleteReaction(from: messageId, with: .init(rawValue: "like")),
+            expectedTestError
+        )
+        XCTAssertEqual(messageId, env.messageUpdater.deleteReaction_messageId)
+        XCTAssertEqual(reactionType, env.messageUpdater.deleteReaction_type)
+    }
+    
+    // TODO: not done
+    public func test_sendReactionAction_whenAPIRequestSucceeds_thenSendReactionActionSucceeds() async throws {
+//        sendReaction(to messageId: MessageId, with type: MessageReactionType, score: Int = 1, enforceUnique: Bool = false, extraData: [String: RawJSON] = [:])
+    }
+    
+    // TODO: not done
+    public func test_sendReactionAction_whenAPIRequestFails_thenSendReactionActionSucceeds() async throws {
+//        sendReaction(to messageId: MessageId, with type: MessageReactionType, score: Int = 1, enforceUnique: Bool = false, extraData: [String: RawJSON] = [:])
+    }
+    
+    // TODO: not done
+    public func test_loadReactionsAction_whenAPIRequestSucceeds_thenLoadReactionsActionSucceeds() async throws {
+        // loadReactions(of messageId: MessageId, pagination: Pagination)
+    }
+    
+    // TODO: not done
+    public func test_loadReactionsAction_whenAPIRequestFails_thenLoadReactionsActionSucceeds() async throws {
+        // loadReactions(of messageId: MessageId, pagination: Pagination)
+    }
+    
+    // TODO: not done
+    public func test_loadNextReactionsAction_whenAPIRequestSucceeds_thenLoadNextReactionsActionSucceeds() async throws {
+        // loadNextReactions(of messageId: MessageId, limit: Int? = nil)
+    }
+    
+    // TODO: not done
+    public func test_loadNextReactionsAction_whenAPIRequestFails_thenLoadNextReactionsActionSucceeds() async throws {
+        // loadNextReactions(of messageId: MessageId, limit: Int? = nil)
+    }
+    
+    // MARK: - Message Reading
+    
+    // TODO: ChannelDoesNotExist
+    public func test_markReadAction_whenAPIRequestSucceeds_thenMarkReadActionSucceeds() async throws {
+//        let currentUserId = String.unique
+//        env.client.mockAuthenticationRepository.mockedCurrentUserId = currentUserId
+//        env.channelUpdaterMock.markRead_completion_result = .success(())
+//        try await chat.markRead()
+//        XCTAssertEqual(channelId, env.channelUpdaterMock.markRead_cid)
+//        XCTAssertEqual(currentUserId, env.channelUpdaterMock.markRead_userId)
+    }
+    
+    // TODO: ChannelDoesNotExist
+    public func test_markReadAction_whenAPIRequestFails_thenMarkReadActionSucceeds() async throws {
+//        let currentUserId = String.unique
+//        env.client.mockAuthenticationRepository.mockedCurrentUserId = currentUserId
+//        env.channelUpdaterMock.markRead_completion_result = .failure(expectedTestError)
+//        await XCTAssertAsyncFailure(try await chat.markRead(), expectedTestError)
+//        XCTAssertEqual(channelId, env.channelUpdaterMock.markRead_cid)
+//        XCTAssertEqual(currentUserId, env.channelUpdaterMock.markRead_userId)
+    }
+    
+    // TODO: ChannelDoesNotExist and lastReadMessageId assertion
+    public func test_markUnreadAction_whenAPIRequestSucceeds_thenMarkUnreadActionSucceeds() async throws {
+//        let currentUserId = String.unique
+//        let messageId: MessageId = .unique
+//        let channel: ChatChannel = .mock(cid: channelId, name: .unique, imageURL: .unique(), extraData: [:])
+//        env.client.mockAuthenticationRepository.mockedCurrentUserId = currentUserId
+//        env.channelUpdaterMock.markUnread_completion_result = .success(channel)
+//        try await chat.markUnread(from: messageId)
+//        XCTAssertEqual(channelId, env.channelUpdaterMock.markUnread_cid)
+//        XCTAssertEqual(currentUserId, env.channelUpdaterMock.markUnread_userId)
+//        XCTAssertEqual(messageId, env.channelUpdaterMock.markUnread_messageId)
+//        XCTAssertEqual(messageId, env.channelUpdaterMock.markUnread_lastReadMessageId) // TODO: not done
+    }
+    
+    // TODO: ChannelDoesNotExist and lastReadMessageId assertion
+    public func test_markUnreadAction_whenAPIRequestFails_thenMarkUnreadActionSucceeds() async throws {
+//        let currentUserId = String.unique
+//        let messageId: MessageId = .unique
+//        env.client.mockAuthenticationRepository.mockedCurrentUserId = currentUserId
+//        env.channelUpdaterMock.markUnread_completion_result = .failure(expectedTestError)
+//        await XCTAssertAsyncFailure(try await chat.markUnread(from: messageId), expectedTestError)
+//        XCTAssertEqual(channelId, env.channelUpdaterMock.markUnread_cid)
+//        XCTAssertEqual(currentUserId, env.channelUpdaterMock.markUnread_userId)
+//        XCTAssertEqual(messageId, env.channelUpdaterMock.markUnread_messageId)
+//        XCTAssertEqual(messageId, env.channelUpdaterMock.markUnread_lastReadMessageId) // TODO: not done
+    }
+    
+    // MARK: - Message Replies
+    
+    // TODO: not done
+    public func test_replyAction_whenAPIRequestSucceeds_thenReplyActionSucceeds() async throws {
+//        reply(
+//            to parentMessageId: MessageId,
+//            text: String,
+//            showReplyInChannel: Bool = false,
+//            attachments: [AnyAttachmentPayload] = [],
+//            quote quotedMessageId: MessageId? = nil,
+//            mentions: [UserId] = [],
+//            pinning: MessagePinning? = nil,
+//            extraData: [String: RawJSON] = [:],
+//            silent: Bool = false,
+//            skipPushNotification: Bool = false,
+//            skipEnrichURL: Bool = false,
+//            messageId: MessageId? = nil
+//        )
+    }
+    
+    // TODO: not done
+    public func test_replyAction_whenAPIRequestFails_thenReplyActionSucceeds() async throws {
+//        reply(
+//            to parentMessageId: MessageId,
+//            text: String,
+//            showReplyInChannel: Bool = false,
+//            attachments: [AnyAttachmentPayload] = [],
+//            quote quotedMessageId: MessageId? = nil,
+//            mentions: [UserId] = [],
+//            pinning: MessagePinning? = nil,
+//            extraData: [String: RawJSON] = [:],
+//            silent: Bool = false,
+//            skipPushNotification: Bool = false,
+//            skipEnrichURL: Bool = false,
+//            messageId: MessageId? = nil
+//        )
+    }
+    
+    // TODO: not done
+    public func test_loadRepliesAction_whenAPIRequestSucceeds_thenLoadRepliesActionSucceeds() async throws {
+        // loadReplies(of messageId: MessageId, pagination: MessagesPagination)
+    }
+    
+    // TODO: not done
+    public func test_loadRepliesAction_whenAPIRequestFails_thenLoadRepliesActionSucceeds() async throws {
+        // loadReplies(of messageId: MessageId, pagination: MessagesPagination)
+    }
+    
+    // TODO: not done
+    public func test_loadRepliesFirstPageAction_whenAPIRequestSucceeds_thenLoadRepliesFirstPageActionSucceeds() async throws {
+        // loadRepliesFirstPage(of messageId: MessageId, limit: Int? = nil)
+    }
+    
+    // TODO: not done
+    public func test_loadRepliesFirstPageAction_whenAPIRequestFails_thenLoadRepliesFirstPageActionSucceeds() async throws {
+        // loadRepliesFirstPage(of messageId: MessageId, limit: Int? = nil)
+    }
+    
+    // TODO: not done
+    public func test_loadRepliesBeforeAction_whenAPIRequestSucceeds_thenLoadRepliesBeforeActionSucceeds() async throws {
+        // loadReplies(before replyId: MessageId? = nil, of messageId: MessageId, limit: Int? = nil)
+    }
+    
+    // TODO: not done
+    public func test_loadRepliesBeforeAction_whenAPIRequestFails_thenLoadRepliesBeforeActionSucceeds() async throws {
+        // loadReplies(before replyId: MessageId? = nil, of messageId: MessageId, limit: Int? = nil)
+    }
+    
+    // TODO: not done
+    public func test_loadRepliesAfterAction_whenAPIRequestSucceeds_thenLoadRepliesAfterActionSucceeds() async throws {
+        // loadReplies(after replyId: MessageId? = nil, of messageId: MessageId, limit: Int? = nil)
+    }
+    
+    // TODO: not done
+    public func test_loadRepliesAfterAction_whenAPIRequestFails_thenLoadRepliesAfterActionSucceeds() async throws {
+        // loadReplies(after replyId: MessageId? = nil, of messageId: MessageId, limit: Int? = nil)
+    }
+    
+    // TODO: not done
+    public func test_loadRepliesAroundAction_whenAPIRequestSucceeds_thenLoadRepliesAroundActionSucceeds() async throws {
+        // loadReplies(around replyId: MessageId, of messageId: MessageId, limit: Int? = nil)
+    }
+    
+    // TODO: not done
+    public func test_loadRepliesAroundAction_whenAPIRequestFails_thenLoadRepliesAroundActionSucceeds() async throws {
+        // loadReplies(around replyId: MessageId, of messageId: MessageId, limit: Int? = nil)
+    }
+    
+    // MARK: - Message State Observing
+    
+    // TODO: not done
+    public func test_makeMessageStateAction_whenAPIRequestSucceeds_thenMakeMessageStateActionSucceeds() async throws {
+        // makeMessageState(for messageId: MessageId)
+    }
+    
+    // TODO: not done
+    public func test_makeMessageStateAction_whenAPIRequestFails_thenMakeMessageStateActionSucceeds() async throws {
+        // makeMessageState(for messageId: MessageId)
+    }
+    
+    // MARK: - Message Translations
+    
+    public func test_translateMessageStateAction_whenAPIRequestSucceeds_thenTranslateMessageActionSucceeds() async throws {
+        let currentUserId = String.unique
+        let messageId: MessageId = .unique
+        let text: String = "Test message"
+        let createdAt: Date = .unique
+        let language: TranslationLanguage = .turkish
+        let message: ChatMessage = .mock(
+            id: messageId,
+            cid: channelId,
+            text: text,
+            author: .mock(id: currentUserId),
+            createdAt: createdAt,
+            isSentByCurrentUser: true
+        )
+        env.client.mockAuthenticationRepository.mockedCurrentUserId = currentUserId
+        env.messageUpdater.translate_completion_result = .success(message)
+        try await chat.translateMessage(messageId, to: language)
+        XCTAssertEqual(messageId, env.messageUpdater.translate_messageId)
+        XCTAssertEqual(language, env.messageUpdater.translate_language)
+    }
+    
+    public func test_translateMessageStateAction_whenAPIRequestFails_thenTranslateMessageActionSucceeds() async throws {
+        let currentUserId = String.unique
+        let messageId: MessageId = .unique
+        let text: String = "Test message"
+        let createdAt: Date = .unique
+        let language: TranslationLanguage = .turkish
+        env.client.mockAuthenticationRepository.mockedCurrentUserId = currentUserId
+        env.messageUpdater.translate_completion_result = .failure(expectedTestError)
+        await XCTAssertAsyncFailure(
+            _ = try await chat.translateMessage(messageId, to: language),
+            expectedTestError
+        )
+        XCTAssertEqual(messageId, env.messageUpdater.translate_messageId)
+        XCTAssertEqual(language, env.messageUpdater.translate_language)
+    }
+    
+    // MARK: - Muting or Hiding the Channel
+    
+    public func test_muteAction_whenAPIRequestSucceeds_thenMuteActionSucceeds() async throws {
+        for expiration in [nil, 10] {
+            let currentUserId = String.unique
+            env.client.mockAuthenticationRepository.mockedCurrentUserId = currentUserId
+            env.channelUpdaterMock.muteChannel_completion_result = .success(())
+            try await chat.mute(expiration: expiration)
+            XCTAssertEqual(channelId, env.channelUpdaterMock.muteChannel_cid)
+            XCTAssertEqual(expiration, env.channelUpdaterMock.muteChannel_expiration)
+            XCTAssertEqual(true, env.channelUpdaterMock.muteChannel_mute)
+        }
+    }
+    
+    public func test_muteAction_whenAPIRequestFails_thenMuteActionSucceeds() async throws {
+        for expiration in [nil, 10] {
+            let currentUserId = String.unique
+            env.client.mockAuthenticationRepository.mockedCurrentUserId = currentUserId
+            env.channelUpdaterMock.muteChannel_completion_result = .failure(expectedTestError)
+            await XCTAssertAsyncFailure(try await chat.mute(expiration: expiration), expectedTestError)
+            XCTAssertEqual(channelId, env.channelUpdaterMock.muteChannel_cid)
+            XCTAssertEqual(expiration, env.channelUpdaterMock.muteChannel_expiration)
+            XCTAssertEqual(true, env.channelUpdaterMock.muteChannel_mute)
+        }
+    }
+    
+    public func test_hideAction_whenAPIRequestSucceeds_thenHideActionSucceeds() async throws {
+        for clearHistory in [true, false] {
+            let currentUserId = String.unique
+            env.client.mockAuthenticationRepository.mockedCurrentUserId = currentUserId
+            env.channelUpdaterMock.hideChannel_completion_result = .success(())
+            try await chat.hide(clearHistory: clearHistory)
+            XCTAssertEqual(channelId, env.channelUpdaterMock.hideChannel_cid)
+            XCTAssertEqual(clearHistory, env.channelUpdaterMock.hideChannel_clearHistory)
+        }
+    }
+    
+    public func test_hideAction_whenAPIRequestFails_thenHideActionSucceeds() async throws {
+        for clearHistory in [true, false] {
+            let currentUserId = String.unique
+            env.client.mockAuthenticationRepository.mockedCurrentUserId = currentUserId
+            env.channelUpdaterMock.hideChannel_completion_result = .failure(expectedTestError)
+            await XCTAssertAsyncFailure(try await chat.hide(clearHistory: clearHistory), expectedTestError)
+            XCTAssertEqual(channelId, env.channelUpdaterMock.hideChannel_cid)
+            XCTAssertEqual(clearHistory, env.channelUpdaterMock.hideChannel_clearHistory)
+        }
+    }
+    
+    public func test_showAction_whenAPIRequestSucceeds_thenShowActionSucceeds() async throws {
+        let currentUserId = String.unique
+        env.client.mockAuthenticationRepository.mockedCurrentUserId = currentUserId
+        env.channelUpdaterMock.showChannel_completion_result = .success(())
+        try await chat.show()
+        XCTAssertEqual(channelId, env.channelUpdaterMock.showChannel_cid)
+    }
+    
+    public func test_hideAction_whenAPIRequestFails_thenShowActionSucceeds() async throws {
+        let currentUserId = String.unique
+        env.client.mockAuthenticationRepository.mockedCurrentUserId = currentUserId
+        env.channelUpdaterMock.showChannel_completion_result = .failure(expectedTestError)
+        await XCTAssertAsyncFailure(try await chat.show(), expectedTestError)
+        XCTAssertEqual(channelId, env.channelUpdaterMock.showChannel_cid)
+    }
+    
+    // MARK: - Throttling and Slow Mode
+    
+    public func test_enableSlowModeAction_whenAPIRequestSucceeds_thenEnableSlowModeActionSucceeds() async throws {
+        let currentUserId = String.unique
+        let cooldownDuration = 10
+        env.client.mockAuthenticationRepository.mockedCurrentUserId = currentUserId
+        env.channelUpdaterMock.enableSlowMode_completion_result = .success(())
+        try await chat.enableSlowMode(cooldownDuration: cooldownDuration)
+        XCTAssertEqual(channelId, env.channelUpdaterMock.enableSlowMode_cid)
+        XCTAssertEqual(cooldownDuration, env.channelUpdaterMock.enableSlowMode_cooldownDuration)
+    }
+    
+    public func test_enableSlowModeAction_whenAPIRequestFails_thenEnableSlowModeActionSucceeds() async throws {
+        let currentUserId = String.unique
+        let cooldownDuration = 10
+        env.client.mockAuthenticationRepository.mockedCurrentUserId = currentUserId
+        env.channelUpdaterMock.enableSlowMode_completion_result = .failure(expectedTestError)
+        await XCTAssertAsyncFailure(try await chat.enableSlowMode(cooldownDuration: cooldownDuration), expectedTestError)
+        XCTAssertEqual(channelId, env.channelUpdaterMock.enableSlowMode_cid)
+        XCTAssertEqual(cooldownDuration, env.channelUpdaterMock.enableSlowMode_cooldownDuration)
+    }
+    
+    public func test_disableSlowModeAction_whenAPIRequestSucceeds_thenDisableSlowModeActionSucceeds() async throws {
+        let currentUserId = String.unique
+        env.client.mockAuthenticationRepository.mockedCurrentUserId = currentUserId
+        env.channelUpdaterMock.enableSlowMode_completion_result = .success(())
+        try await chat.disableSlowMode()
+        XCTAssertEqual(channelId, env.channelUpdaterMock.enableSlowMode_cid)
+        XCTAssertEqual(0, env.channelUpdaterMock.enableSlowMode_cooldownDuration)
+    }
+    
+    public func test_disableSlowModeAction_whenAPIRequestFails_thenDisableSlowModeActionSucceeds() async throws {
+        let currentUserId = String.unique
+        env.client.mockAuthenticationRepository.mockedCurrentUserId = currentUserId
+        env.channelUpdaterMock.enableSlowMode_completion_result = .failure(expectedTestError)
+        await XCTAssertAsyncFailure(try await chat.disableSlowMode(), expectedTestError)
+        XCTAssertEqual(channelId, env.channelUpdaterMock.enableSlowMode_cid)
+        XCTAssertEqual(0, env.channelUpdaterMock.enableSlowMode_cooldownDuration)
+    }
+    
+    // MARK: - Truncating the Channel
+    
+    public func test_truncateAction_whenAPIRequestSucceeds_thenTruncateActionSucceeds() async throws {
+        let currentUserId = String.unique
+        env.client.mockAuthenticationRepository.mockedCurrentUserId = currentUserId
+        env.channelUpdaterMock.truncateChannel_completion_result = .success(())
+        
+        var systemMessage: String?
+        var hardDelete = true
+        var skipPush = true
+        try await chat.truncate(systemMessage: systemMessage, hardDelete: hardDelete, skipPush: skipPush)
+        XCTAssertEqual(channelId, env.channelUpdaterMock.truncateChannel_cid)
+        XCTAssertEqual(skipPush, env.channelUpdaterMock.truncateChannel_skipPush)
+        XCTAssertEqual(hardDelete, env.channelUpdaterMock.truncateChannel_hardDelete)
+        XCTAssertEqual(systemMessage, env.channelUpdaterMock.truncateChannel_systemMessage)
+        
+        systemMessage = "Test message"
+        hardDelete = true
+        skipPush = true
+        try await chat.truncate(systemMessage: systemMessage, hardDelete: hardDelete, skipPush: skipPush)
+        XCTAssertEqual(channelId, env.channelUpdaterMock.truncateChannel_cid)
+        XCTAssertEqual(skipPush, env.channelUpdaterMock.truncateChannel_skipPush)
+        XCTAssertEqual(hardDelete, env.channelUpdaterMock.truncateChannel_hardDelete)
+        XCTAssertEqual(systemMessage, env.channelUpdaterMock.truncateChannel_systemMessage)
+        
+        systemMessage = nil
+        hardDelete = false
+        skipPush = false
+        try await chat.truncate(systemMessage: systemMessage, hardDelete: hardDelete, skipPush: skipPush)
+        XCTAssertEqual(channelId, env.channelUpdaterMock.truncateChannel_cid)
+        XCTAssertEqual(skipPush, env.channelUpdaterMock.truncateChannel_skipPush)
+        XCTAssertEqual(hardDelete, env.channelUpdaterMock.truncateChannel_hardDelete)
+        XCTAssertEqual(systemMessage, env.channelUpdaterMock.truncateChannel_systemMessage)
+        
+        systemMessage = "Test message"
+        hardDelete = false
+        skipPush = false
+        try await chat.truncate(systemMessage: systemMessage, hardDelete: hardDelete, skipPush: skipPush)
+        XCTAssertEqual(channelId, env.channelUpdaterMock.truncateChannel_cid)
+        XCTAssertEqual(skipPush, env.channelUpdaterMock.truncateChannel_skipPush)
+        XCTAssertEqual(hardDelete, env.channelUpdaterMock.truncateChannel_hardDelete)
+        XCTAssertEqual(systemMessage, env.channelUpdaterMock.truncateChannel_systemMessage)
+    }
+    
+    public func test_truncateAction_whenAPIRequestFails_thenTruncateActionSucceeds() async throws {
+        let currentUserId = String.unique
+        env.client.mockAuthenticationRepository.mockedCurrentUserId = currentUserId
+        env.channelUpdaterMock.truncateChannel_completion_result = .failure(expectedTestError)
+        
+        var systemMessage: String?
+        var hardDelete = true
+        var skipPush = true
+        await XCTAssertAsyncFailure(try await chat.truncate(systemMessage: systemMessage, hardDelete: hardDelete, skipPush: skipPush), expectedTestError)
+        XCTAssertEqual(channelId, env.channelUpdaterMock.truncateChannel_cid)
+        XCTAssertEqual(skipPush, env.channelUpdaterMock.truncateChannel_skipPush)
+        XCTAssertEqual(hardDelete, env.channelUpdaterMock.truncateChannel_hardDelete)
+        XCTAssertEqual(systemMessage, env.channelUpdaterMock.truncateChannel_systemMessage)
+        
+        systemMessage = "Test message"
+        hardDelete = true
+        skipPush = true
+        await XCTAssertAsyncFailure(try await chat.truncate(systemMessage: systemMessage, hardDelete: hardDelete, skipPush: skipPush), expectedTestError)
+        XCTAssertEqual(channelId, env.channelUpdaterMock.truncateChannel_cid)
+        XCTAssertEqual(skipPush, env.channelUpdaterMock.truncateChannel_skipPush)
+        XCTAssertEqual(hardDelete, env.channelUpdaterMock.truncateChannel_hardDelete)
+        XCTAssertEqual(systemMessage, env.channelUpdaterMock.truncateChannel_systemMessage)
+        
+        systemMessage = nil
+        hardDelete = false
+        skipPush = false
+        await XCTAssertAsyncFailure(try await chat.truncate(systemMessage: systemMessage, hardDelete: hardDelete, skipPush: skipPush), expectedTestError)
+        XCTAssertEqual(channelId, env.channelUpdaterMock.truncateChannel_cid)
+        XCTAssertEqual(skipPush, env.channelUpdaterMock.truncateChannel_skipPush)
+        XCTAssertEqual(hardDelete, env.channelUpdaterMock.truncateChannel_hardDelete)
+        XCTAssertEqual(systemMessage, env.channelUpdaterMock.truncateChannel_systemMessage)
+        
+        systemMessage = "Test message"
+        hardDelete = false
+        skipPush = false
+        await XCTAssertAsyncFailure(try await chat.truncate(systemMessage: systemMessage, hardDelete: hardDelete, skipPush: skipPush), expectedTestError)
+        XCTAssertEqual(channelId, env.channelUpdaterMock.truncateChannel_cid)
+        XCTAssertEqual(skipPush, env.channelUpdaterMock.truncateChannel_skipPush)
+        XCTAssertEqual(hardDelete, env.channelUpdaterMock.truncateChannel_hardDelete)
+        XCTAssertEqual(systemMessage, env.channelUpdaterMock.truncateChannel_systemMessage)
+    }
+    
+    // MARK: - Typing Indicator
+    
+    // TODO: not done
+    public func test_keystrokeAction_whenAPIRequestSucceeds_thenKeystrokeActionSucceeds() async throws {
+        // keystroke(parentMessageId: MessageId? = nil)
+    }
+    
+    // TODO: not done
+    public func test_keystrokeAction_whenAPIRequestFails_thenKeystrokeActionSucceeds() async throws {
+        // keystroke(parentMessageId: MessageId? = nil)
+    }
+    
+    // TODO: not done
+    public func test_stopTypingAction_whenAPIRequestSucceeds_thenStopTypingActionSucceeds() async throws {
+        // stopTyping(parentMessageId: MessageId? = nil)
+    }
+    
+    // TODO: not done
+    public func test_stopTypingAction_whenAPIRequestFails_thenStopTypingActionSucceeds() async throws {
+        // stopTyping(parentMessageId: MessageId? = nil)
+    }
+    
+    // MARK: - Updating the Channel
+    
+    // TODO: not done
+    public func test_updateAction_whenAPIRequestSucceeds_thenUpdateActionSucceeds() async throws {
+//        update(
+//            name: String?,
+//            imageURL: URL?,
+//            team: String?,
+//            members: Set<UserId> = [],
+//            invites: Set<UserId> = [],
+//            extraData: [String: RawJSON] = [:]
+//        )
+    }
+    
+    // TODO: not done
+    public func test_updateAction_whenAPIRequestFails_thenUpdateActionSucceeds() async throws {
+//        update(
+//            name: String?,
+//            imageURL: URL?,
+//            team: String?,
+//            members: Set<UserId> = [],
+//            invites: Set<UserId> = [],
+//            extraData: [String: RawJSON] = [:]
+//        )
+    }
+    
+    // TODO: not done
+    public func test_updatePartialAction_whenAPIRequestSucceeds_thenUpdatePartialActionSucceeds() async throws {
+//         updatePartial(
+//            name: String? = nil,
+//            imageURL: URL? = nil,
+//            team: String? = nil,
+//            members: [UserId] = [],
+//            invites: [UserId] = [],
+//            extraData: [String: RawJSON] = [:],
+//            unsetProperties: [String] = []
+//        )
+    }
+    
+    // TODO: not done
+    public func test_updatePartialAction_whenAPIRequestFails_thenUpdatePartialActionSucceeds() async throws {
+//         updatePartial(
+//            name: String? = nil,
+//            imageURL: URL? = nil,
+//            team: String? = nil,
+//            members: [UserId] = [],
+//            invites: [UserId] = [],
+//            extraData: [String: RawJSON] = [:],
+//            unsetProperties: [String] = []
+//        )
+    }
+    
+    // MARK: - Uploading and Deleting Files
+    
+    // TODO: not done
+    public func test_deleteFileAction_whenAPIRequestSucceeds_thenDeleteFileActionSucceeds() async throws {
+        // deleteFile(at url: URL)
+    }
+    
+    // TODO: not done
+    public func test_deleteFileAction_whenAPIRequestFails_thenDeleteFileActionSucceeds() async throws {
+        // deleteFile(at url: URL)
+    }
+    
+    // TODO: not done
+    public func test_deleteImageAction_whenAPIRequestSucceeds_thenDeleteImageActionSucceeds() async throws {
+        // deleteImage(at url: URL)
+    }
+    
+    // TODO: not done
+    public func test_deleteImageAction_whenAPIRequestFails_thenDeleteImageActionSucceeds() async throws {
+        // deleteImage(at url: URL)
+    }
+    
+    // TODO: not done
+    public func test_uploadAttachmentAction_whenAPIRequestSucceeds_thenUploadAttachmentActionSucceeds() async throws {
+        // uploadAttachment(with localFileURL: URL, type: AttachmentType, progress: ((Double) -> Void)? = nil)
+    }
+    
+    // TODO: not done
+    public func test_uploadAttachmentAction_whenAPIRequestFails_thenUploadAttachmentActionSucceeds() async throws {
+        // uploadAttachment(with localFileURL: URL, type: AttachmentType, progress: ((Double) -> Void)? = nil)
+    }
+    
+    // MARK: - Watching the Channel
+    
+    public func test_startWatchingAction_whenAPIRequestSucceeds_thenStartWatchingActionSucceeds() async throws {
+        let currentUserId = String.unique
+        env.client.mockAuthenticationRepository.mockedCurrentUserId = currentUserId
+        env.channelUpdaterMock.startWatching_completion_result = .success(())
+        try await chat.watch()
+        XCTAssertEqual(channelId, env.channelUpdaterMock.startWatching_cid)
+    }
+    
+    public func test_startWatchingAction_whenAPIRequestFails_thenStartWatchingActionSucceeds() async throws {
+        let currentUserId = String.unique
+        env.client.mockAuthenticationRepository.mockedCurrentUserId = currentUserId
+        env.channelUpdaterMock.startWatching_completion_result = .failure(expectedTestError)
+        await XCTAssertAsyncFailure(try await chat.watch(), expectedTestError)
+        XCTAssertEqual(channelId, env.channelUpdaterMock.startWatching_cid)
+    }
+    
+    public func test_stopWatchingAction_whenAPIRequestSucceeds_thenStopWatchingActionSucceeds() async throws {
+        let currentUserId = String.unique
+        env.client.mockAuthenticationRepository.mockedCurrentUserId = currentUserId
+        env.channelUpdaterMock.stopWatching_completion_result = .success(())
+        try await chat.stopWatching()
+        XCTAssertEqual(channelId, env.channelUpdaterMock.stopWatching_cid)
+    }
+    
+    public func test_stopWatchingAction_whenAPIRequestFails_thenStopWatchingActionSucceeds() async throws {
+        let currentUserId = String.unique
+        env.client.mockAuthenticationRepository.mockedCurrentUserId = currentUserId
+        env.channelUpdaterMock.stopWatching_completion_result = .failure(expectedTestError)
+        await XCTAssertAsyncFailure(try await chat.stopWatching(), expectedTestError)
+        XCTAssertEqual(channelId, env.channelUpdaterMock.stopWatching_cid)
+    }
+    
+    // TODO: not done
+    public func test_subscribeAction_whenAPIRequestSucceeds_thenSubscribeActionSucceeds() async throws {
+        // subscribe(_ handler: @escaping (Event) -> Void)
+    }
+    
+    // TODO: not done
+    public func test_subscribeAction_whenAPIRequestFails_thenSubscribeActionSucceeds() async throws {
+        // subscribe(_ handler: @escaping (Event) -> Void)
+    }
+    
+    // TODO: not done
+    public func test_subscribeToEventAction_whenAPIRequestSucceeds_thenSubscribeToEventActionSucceeds() async throws {
+        // subscribe<E>(toEvent event: E.Type, handler: @escaping (E) -> Void)
+    }
+    
+    // TODO: not done
+    public func test_subscribeToEventAction_whenAPIRequestFails_thenSubscribeToEventActionSucceeds() async throws {
+        // subscribe<E>(toEvent event: E.Type, handler: @escaping (E) -> Void)
+    }
+    
+    // TODO: not done
+    public func test_sendEventAction_whenAPIRequestSucceeds_thenSendEventActionSucceeds() async throws {
+        // sendEvent<EventPayload>(_ payload: EventPayload)
+    }
+    
+    // TODO: not done
+    public func test_sendEventAction_whenAPIRequestFails_thenSendEventActionSucceeds() async throws {
+        // sendEvent<EventPayload>(_ payload: EventPayload)
+    }
+    
+    // TODO: not done
+    public func test_loadWatchersAction_whenAPIRequestSucceeds_thenLoadWatchersActionSucceeds() async throws {
+        // loadWatchers(with pagination: Pagination)
+    }
+    
+    // TODO: not done
+    public func test_loadWatchersAction_whenAPIRequestFails_thenLoadWatchersActionSucceeds() async throws {
+        // loadWatchers(with pagination: Pagination)
+    }
+    
+    // TODO: not done
+    public func test_loadNextWatchersAction_whenAPIRequestSucceeds_thenLoadNextWatchersActionSucceeds() async throws {
+        // loadNextWatchers(limit: Int? = nil)
+    }
+    
+    // TODO: not done
+    public func test_loadNextWatchersAction_whenAPIRequestFails_thenLoadNextWatchersActionSucceeds() async throws {
+        // loadNextWatchers(limit: Int? = nil)
+    }
 }
 
 @available(iOS 13.0, *)
