@@ -25,6 +25,17 @@ public struct LazyCachedMapCollection<Element>: RandomAccessCollection {
 
     public var count: Index { cache.values.count }
 
+    // Create a copy of a given lazy cached map collection.
+    // It reuses the same generator and the cache.
+    public init(_ collection: LazyCachedMapCollection) {
+        // Reuse the generator
+        generator = collection.generator
+        // Create a new cache instance
+        cache = .init(capacity: collection.count)
+        // After creating the new cache, refill the existing cached values
+        cache.values = collection.cache.values
+    }
+
     public init<Collection: RandomAccessCollection, SourceElement>(
         source: Collection,
         map: @escaping (SourceElement) -> Element,
@@ -58,25 +69,24 @@ public struct LazyCachedMapCollection<Element>: RandomAccessCollection {
         }
     }
 
-    private var generator: (Index) -> Element
-    private var cache: Cache<Element>
+    internal var generator: (Index) -> Element
+    internal var cache: Cache<Element>
 
     public subscript(position: Index) -> Element {
-        get {
-            if let cached = cache.values[position] {
-                return cached
-            } else {
-                let value = generator(position)
-                defer { cache.values[position] = value }
-                return value
-            }
-        }
-        set {
-            cache.values[position] = newValue
+        if let cached = cache.values[position] {
+            return cached
+        } else {
+            let value = generator(position)
+            defer { cache.values[position] = value }
+            return value
         }
     }
 
-    public func append(_ element: Element) {
+    public mutating func append(_ element: Element) {
+        // Even though `LazyCachedMapCollection` is a value type,
+        // the `cache` is not, so whenever we append a new value,
+        // we need to make sure we are creating a copy.
+        self = LazyCachedMapCollection(self)
         cache.values.append(element)
     }
 }
@@ -108,14 +118,16 @@ extension RandomAccessCollection where Index == Int {
 }
 
 // Must be class so it can be mutable while the collection isn't
-private class Cache<Element> {
-    init(capacity: Int) {
-        values = ContiguousArray(repeating: nil, count: capacity)
-    }
+extension LazyCachedMapCollection {
+    class Cache<Value> {
+        init(capacity: Int) {
+            values = ContiguousArray(repeating: nil, count: capacity)
+        }
 
-    init(elements: [Element]) {
-        values = ContiguousArray(elements)
-    }
+        init(elements: [Value]) {
+            values = ContiguousArray(elements)
+        }
 
-    var values: ContiguousArray<Element?>
+        var values: ContiguousArray<Value?>
+    }
 }
