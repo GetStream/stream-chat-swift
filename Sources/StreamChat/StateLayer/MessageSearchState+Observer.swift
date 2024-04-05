@@ -8,7 +8,7 @@ import Foundation
 extension MessageSearchState {
     final class Observer {
         private let database: DatabaseContainer
-        private var messagesObserver: BackgroundListDatabaseObserver<ChatMessage, MessageDTO>?
+        private var messagesObserver: StateLayerListDatabaseObserver<ChatMessage, MessageDTO>?
 
         init(database: DatabaseContainer) {
             self.database = database
@@ -36,21 +36,16 @@ extension MessageSearchState {
         }
         
         private func reset(to query: MessageSearchQuery?) {
+            guard let handlers else { return }
             if let query {
-                messagesObserver = BackgroundListDatabaseObserver(
-                    context: database.backgroundReadOnlyContext,
+                messagesObserver = StateLayerListDatabaseObserver(
+                    databaseContainer: database,
                     fetchRequest: MessageDTO.messagesFetchRequest(for: query),
                     itemCreator: { try $0.asModel() as ChatMessage },
                     sorting: []
                 )
-                messagesObserver?.onDidChange = { [messagesObserver, handlers] _ in
-                    guard let handlers else { return }
-                    guard let items = messagesObserver?.items else { return }
-                    let collection = StreamCollection(items)
-                    Task { await handlers.messagesDidChange(collection) }
-                }
                 do {
-                    try messagesObserver?.startObserving()
+                    try messagesObserver?.startObserving(initial: true, didChange: handlers.messagesDidChange)
                 } catch {
                     log.error("Failed to start the message result observer for query (\(query) with error \(error)")
                 }
