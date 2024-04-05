@@ -248,6 +248,7 @@
 		4F14F1262BBBDD7400B1074E /* StateLayerListDatabaseObserver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F14F1252BBBDD7400B1074E /* StateLayerListDatabaseObserver.swift */; };
 		4F14F1272BBBDD7400B1074E /* StateLayerListDatabaseObserver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F14F1252BBBDD7400B1074E /* StateLayerListDatabaseObserver.swift */; };
 		4F14F1282BBD2D8700B1074E /* ChannelList_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F5758F02BB45B2F00D89A94 /* ChannelList_Tests.swift */; };
+		4F14F12A2BBE8C1900B1074E /* MessageSearch_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F14F1292BBE8C1900B1074E /* MessageSearch_Tests.swift */; };
 		4F427F662BA2F43200D92238 /* ConnectedUser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F427F652BA2F43200D92238 /* ConnectedUser.swift */; };
 		4F427F672BA2F43200D92238 /* ConnectedUser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F427F652BA2F43200D92238 /* ConnectedUser.swift */; };
 		4F427F692BA2F52100D92238 /* ConnectedUserState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F427F682BA2F52100D92238 /* ConnectedUserState.swift */; };
@@ -3020,6 +3021,7 @@
 		4F12DC912B73801D009E48CC /* NukeImageLoader_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NukeImageLoader_Tests.swift; sourceTree = "<group>"; };
 		4F14F1232BBA9CEF00B1074E /* Result+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Result+Extensions.swift"; sourceTree = "<group>"; };
 		4F14F1252BBBDD7400B1074E /* StateLayerListDatabaseObserver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StateLayerListDatabaseObserver.swift; sourceTree = "<group>"; };
+		4F14F1292BBE8C1900B1074E /* MessageSearch_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageSearch_Tests.swift; sourceTree = "<group>"; };
 		4F427F652BA2F43200D92238 /* ConnectedUser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectedUser.swift; sourceTree = "<group>"; };
 		4F427F682BA2F52100D92238 /* ConnectedUserState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectedUserState.swift; sourceTree = "<group>"; };
 		4F427F6B2BA2F53200D92238 /* ConnectedUserState+Observer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ConnectedUserState+Observer.swift"; sourceTree = "<group>"; };
@@ -5037,6 +5039,7 @@
 			children = (
 				4F5758F02BB45B2F00D89A94 /* ChannelList_Tests.swift */,
 				4FB4AB9E2BAD6DBD00712C4E /* Chat_Tests.swift */,
+				4F14F1292BBE8C1900B1074E /* MessageSearch_Tests.swift */,
 			);
 			path = StateLayer;
 			sourceTree = "<group>";
@@ -11457,6 +11460,7 @@
 				A32D55142860B40B00E66AF9 /* ChatMessageLinkAttachment_Tests.swift in Sources */,
 				ADA9DB8B2BCF2B1F00C4AE3B /* ThreadParticipantDTO_Tests.swift in Sources */,
 				792B805224D95D4300C2963E /* Cached_StressTests.swift in Sources */,
+				4F14F12A2BBE8C1900B1074E /* MessageSearch_Tests.swift in Sources */,
 				A34ECB4A27F5CA1B00A804C1 /* TypingEvents_IntegrationTests.swift in Sources */,
 				8A62705C24BE2BC00040BFD6 /* TypingEvent_Tests.swift in Sources */,
 				84A1D2EA26AAFB1D00014712 /* EventSender_Tests.swift in Sources */,
