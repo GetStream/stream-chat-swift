@@ -8,7 +8,7 @@ import Foundation
 extension MessageSearchState {
     final class Observer {
         private let database: DatabaseContainer
-        private var messagesObserver: StateLayerListDatabaseObserver<ChatMessage, MessageDTO>?
+        private var messagesObserver: StateLayerDatabaseObserver<ListResult, ChatMessage, MessageDTO>?
 
         init(database: DatabaseContainer) {
             self.database = database
@@ -38,7 +38,7 @@ extension MessageSearchState {
         private func reset(to query: MessageSearchQuery?) {
             guard let handlers else { return }
             if let query {
-                messagesObserver = StateLayerListDatabaseObserver(
+                messagesObserver = StateLayerDatabaseObserver(
                     databaseContainer: database,
                     fetchRequest: MessageDTO.messagesFetchRequest(for: query),
                     itemCreator: { try $0.asModel() as ChatMessage },

@@ -13,7 +13,7 @@ extension ChatState {
         private let eventNotificationCenter: EventNotificationCenter
         private let memberListState: MemberListState
         private var memberListObserver: AnyCancellable?
-        let messagesObserver: StateLayerListDatabaseObserver<ChatMessage, MessageDTO>
+        let messagesObserver: StateLayerDatabaseObserver<ListResult, ChatMessage, MessageDTO>
         private let watchersObserver: BackgroundListDatabaseObserver<ChatUser, UserDTO>
         
         init(
@@ -33,7 +33,7 @@ extension ChatState {
                 fetchRequest: ChannelDTO.fetchRequest(for: cid),
                 itemCreator: { try $0.asModel() as ChatChannel }
             )
-            messagesObserver = StateLayerListDatabaseObserver(
+            messagesObserver = StateLayerDatabaseObserver(
                 databaseContainer: database,
                 fetchRequest: MessageDTO.messagesFetchRequest(
                     for: cid,
