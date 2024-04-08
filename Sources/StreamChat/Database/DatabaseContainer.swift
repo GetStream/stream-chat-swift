@@ -70,29 +70,10 @@ class DatabaseContainer: NSPersistentContainer {
             context.deletedMessagesVisibility = deletedMessageVisibility
             context.shouldShowShadowedMessages = shouldShowShadowedMessages
         }
-        let viewObserver = NotificationCenter.default
-            .addObserver(
-                forName: Notification.Name.NSManagedObjectContextDidSave,
-                object: viewContext,
-                queue: nil
-            ) { [weak context] notification in
-                guard let context else { return }
-                context.performAndWait {
-                    context.mergeChanges(fromContextDidSave: notification)
-                }
-            }
-        let writableObserver = NotificationCenter.default
-            .addObserver(
-                forName: Notification.Name.NSManagedObjectContextDidSave,
-                object: writableContext,
-                queue: nil
-            ) { [weak context] notification in
-                guard let context else { return }
-                context.performAndWait {
-                    context.mergeChanges(fromContextDidSave: notification)
-                }
-            }
-        stateLayerContextRefreshObservers = [viewObserver, writableObserver]
+        stateLayerContextRefreshObservers = [
+            context.observeChanges(in: writableContext),
+            context.observeChanges(in: viewContext)
+        ]
         return context
     }()
 
@@ -437,5 +418,22 @@ extension NSManagedObjectContext {
         insertedObjects.forEach { discardChanges(for: $0) }
         updatedObjects.forEach { discardChanges(for: $0) }
         deletedObjects.forEach { discardChanges(for: $0) }
+    }
+    
+    func observeChanges(in otherContext: NSManagedObjectContext) -> NSObjectProtocol {
+        if automaticallyMergesChangesFromParent {
+            assertionFailure("Duplicate change handling")
+        }
+        return NotificationCenter.default
+            .addObserver(
+                forName: Notification.Name.NSManagedObjectContextDidSave,
+                object: otherContext,
+                queue: nil
+            ) { [weak self] notification in
+                guard let self else { return }
+                self.performAndWait {
+                    self.mergeChanges(fromContextDidSave: notification)
+                }
+            }
     }
 }
