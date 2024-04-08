@@ -7,6 +7,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### 🐞 Fixed
 - Fix pinning messages with attachments stuck in sending state [#3116](https://github.com/GetStream/stream-chat-swift/pull/3116)
 
+## StreamChatUI
+### 🐞 Fixed
+- Fix thread parent message not updating in the Thread View [#3127](https://github.com/GetStream/stream-chat-swift/pull/3127)
+
 # [4.51.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.51.0)
 _March 26, 2024_
 
