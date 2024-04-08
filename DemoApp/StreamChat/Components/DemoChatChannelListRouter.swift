@@ -434,7 +434,7 @@ final class DemoChatChannelListRouter: ChatChannelListRouter {
                 let client = channelController.client
                 self.rootViewController.present(MembersViewController(
                     membersController: client.memberListController(
-                        query: .init(cid: cid, filter: .equal(.isModerator, to: true), pageSize: 105)
+                        query: .init(cid: cid, filter: .equal(.isModerator, to: true))
                     )
                 ), animated: true)
             }),
