@@ -60,6 +60,7 @@ public final class UserSearch {
     // MARK: - Private
     
     private func search(query: UserListQuery, pagination: Pagination) async throws -> [ChatUser] {
+        let query = query.withPagination(pagination)
         let task = Task {
             let users = try await userListUpdater.fetch(userListQuery: query, pagination: pagination)
             try Task.checkCancellation()
