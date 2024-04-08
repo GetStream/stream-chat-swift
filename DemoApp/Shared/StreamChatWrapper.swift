@@ -108,6 +108,7 @@ extension StreamChatWrapper {
             return
         }
         let currentUserController = client.currentUserController()
+        currentUserController.synchronize()
         if let deviceId = currentUserController.currentUser?.currentDevice?.id {
             currentUserController.removeDevice(id: deviceId) { error in
                 if let error = error {
