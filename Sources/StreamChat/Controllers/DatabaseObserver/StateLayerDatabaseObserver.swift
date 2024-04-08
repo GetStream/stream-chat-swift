@@ -61,7 +61,7 @@ extension StateLayerDatabaseObserver where ResultType == EntityResult {
     }
     
     func startObserving(initial: Bool = false, didChange: @escaping (Item?) async -> Void) throws {
-        try startObserving(didChange: { item in Task { await didChange(item) } })
+        try startObserving(didChange: { item in Task(priority: .high) { await didChange(item) } })
     }
     
     func startObserving(initial: Bool = false, didChange: @escaping (Item?) -> Void) throws {
@@ -111,7 +111,7 @@ extension StateLayerDatabaseObserver where ResultType == ListResult {
     }
     
     func startObserving(initial: Bool = false, didChange: @escaping (StreamCollection<Item>) async -> Void) throws {
-        try startObserving(initial: initial, didChange: { items in Task { await didChange(items) } })
+        try startObserving(initial: initial, didChange: { items in Task(priority: .high) { await didChange(items) } })
     }
     
     func startObserving(initial: Bool = false, didChange: @escaping (StreamCollection<Item>) -> Void) throws {
