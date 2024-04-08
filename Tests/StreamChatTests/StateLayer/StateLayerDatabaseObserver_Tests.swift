@@ -43,8 +43,8 @@ final class StateLayerDatabaseObserver_Tests: XCTestCase {
             try session.saveChannel(payload: firstPayload)
         }
         
-        // Wait a bit for allowing duplicate callbacks to come in if there are any
-        try await Task.sleep(nanoseconds: 100_000)
+        try await waitForDuplicateCallbacks()
+        
         #if swift(>=5.8)
         await fulfillment(of: [expectation], timeout: defaultTimeout)
         #else
@@ -76,8 +76,9 @@ final class StateLayerDatabaseObserver_Tests: XCTestCase {
             session.removeChannels(cids: Set([self.channelId]))
             try session.saveChannel(payload: secondPayload)
         }
-        // Wait a bit for allowing duplicate callbacks to come in if there are any
-        try await Task.sleep(nanoseconds: 100_000)
+        
+        try await waitForDuplicateCallbacks()
+        
         #if swift(>=5.8)
         await fulfillment(of: [expectation], timeout: defaultTimeout)
         #else
@@ -110,8 +111,8 @@ final class StateLayerDatabaseObserver_Tests: XCTestCase {
             try session.save()
         }
         
-        // Wait a bit for allowing duplicate callbacks to come in if there are any
-        try await Task.sleep(nanoseconds: 100_000)
+        try await waitForDuplicateCallbacks()
+        
         #if swift(>=5.8)
         await fulfillment(of: [expectation], timeout: defaultTimeout)
         #else
@@ -146,8 +147,8 @@ final class StateLayerDatabaseObserver_Tests: XCTestCase {
             try session.saveChannel(payload: secondPayload)
         }
         
-        // Wait a bit for allowing duplicate callbacks to come in if there are any
-        try await Task.sleep(nanoseconds: 100_000)
+        try await waitForDuplicateCallbacks()
+        
         #if swift(>=5.8)
         await fulfillment(of: [expectation], timeout: defaultTimeout)
         #else
@@ -184,8 +185,9 @@ final class StateLayerDatabaseObserver_Tests: XCTestCase {
             }
             try session.saveChannel(payload: secondPayload)
         }
-        // Wait a bit for allowing duplicate callbacks to come in if there are any
-        try await Task.sleep(nanoseconds: 100_000)
+        
+        try await waitForDuplicateCallbacks()
+        
         #if swift(>=5.8)
         await fulfillment(of: [expectation], timeout: defaultTimeout)
         #else
@@ -224,8 +226,8 @@ final class StateLayerDatabaseObserver_Tests: XCTestCase {
             try session.save()
         }
         
-        // Wait a bit for allowing duplicate callbacks to come in if there are any
-        try await Task.sleep(nanoseconds: 100_000)
+        try await waitForDuplicateCallbacks()
+        
         #if swift(>=5.8)
         await fulfillment(of: [expectation], timeout: defaultTimeout)
         #else
@@ -275,5 +277,12 @@ final class StateLayerDatabaseObserver_Tests: XCTestCase {
                 )
             }
         return ChannelPayload.dummy(channel: .dummy(cid: channelId), messages: messages)
+    }
+}
+
+@available(iOS 13.0, *)
+private extension XCTestCase {
+    func waitForDuplicateCallbacks(nanoseconds: UInt64 = 50000) async throws {
+        try await Task.sleep(nanoseconds: nanoseconds)
     }
 }
