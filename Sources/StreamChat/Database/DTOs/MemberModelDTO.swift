@@ -151,6 +151,14 @@ extension NSManagedObjectContext {
     }
 
     func saveMembers(payload: ChannelMemberListPayload, channelId: ChannelId, query: ChannelMemberListQuery?) -> [MemberDTO] {
+        // If it is the first page of the members list, make sure to clear the members from local cache
+        // which are not in the remote response anymore.
+        let isFirstPage = query?.pagination.offset == 0
+        if let queryHash = query?.queryHash, isFirstPage {
+            let queryDTO = ChannelMemberListQueryDTO.load(queryHash: queryHash, context: self)
+            queryDTO?.members = []
+        }
+
         let cache = payload.getPayloadToModelIdMappings(context: self)
         return payload.members.compactMapLoggingError {
             try saveMember(payload: $0, channelId: channelId, query: query, cache: cache)

@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## StreamChat
 ### 🐞 Fixed
 - Fix pinning messages with attachments stuck in sending state [#3116](https://github.com/GetStream/stream-chat-swift/pull/3116)
+- Fix member list not updated after moderator is demoted [#3132](https://github.com/GetStream/stream-chat-swift/pull/3132)
 
 ## StreamChatUI
 ### 🐞 Fixed
