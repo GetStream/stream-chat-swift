@@ -50,7 +50,53 @@ class DatabaseContainer: NSPersistentContainer {
         }
         return context
     }()
+    
+    /// An immediately reacting NSManagedObjectContext for the chat state layer.
+    ///
+    /// Chat state layer requires that the context is refreshed when a write happens. Otherwise database observers are too slow to react.
+    ///
+    /// For example, here the state.messages needs to react before loadMessages finishes.
+    /// ```swift
+    /// try await chat.loadMessages()
+    /// let messages = chat.state.messages
+    /// ```
+    private(set) lazy var stateLayerContext: NSManagedObjectContext = {
+        let context = newBackgroundContext()
+        // Context is merged manually since automatically is too slow for reacting to changes needed by the state layer
+        context.automaticallyMergesChangesFromParent = false
+        context.mergePolicy = NSMergeByPropertyObjectTrumpMergePolicy
+        context.perform { [localCachingSettings, deletedMessageVisibility, shouldShowShadowedMessages] in
+            context.localCachingSettings = localCachingSettings
+            context.deletedMessagesVisibility = deletedMessageVisibility
+            context.shouldShowShadowedMessages = shouldShowShadowedMessages
+        }
+        let viewObserver = NotificationCenter.default
+            .addObserver(
+                forName: Notification.Name.NSManagedObjectContextDidSave,
+                object: viewContext,
+                queue: nil
+            ) { [weak context] notification in
+                guard let context else { return }
+                context.performAndWait {
+                    context.mergeChanges(fromContextDidSave: notification)
+                }
+            }
+        let writableObserver = NotificationCenter.default
+            .addObserver(
+                forName: Notification.Name.NSManagedObjectContextDidSave,
+                object: writableContext,
+                queue: nil
+            ) { [weak context] notification in
+                guard let context else { return }
+                context.performAndWait {
+                    context.mergeChanges(fromContextDidSave: notification)
+                }
+            }
+        stateLayerContextRefreshObservers = [viewObserver, writableObserver]
+        return context
+    }()
 
+    private var stateLayerContextRefreshObservers = [NSObjectProtocol]()
     private var loggerNotificationObserver: NSObjectProtocol?
     private let localCachingSettings: ChatClientConfig.LocalCaching?
     private let deletedMessageVisibility: ChatClientConfig.DeletedMessageVisibility?
@@ -59,7 +105,7 @@ class DatabaseContainer: NSPersistentContainer {
     static var cachedModel: NSManagedObjectModel?
 
     /// All `NSManagedObjectContext`s this container owns.
-    private(set) lazy var allContext: [NSManagedObjectContext] = [viewContext, backgroundReadOnlyContext, writableContext]
+    private(set) lazy var allContext: [NSManagedObjectContext] = [viewContext, backgroundReadOnlyContext, stateLayerContext, writableContext]
 
     /// Creates a new `DatabaseContainer` instance.
     ///
@@ -150,6 +196,9 @@ class DatabaseContainer: NSPersistentContainer {
     }
 
     deinit {
+        stateLayerContextRefreshObservers.forEach { observer in
+            NotificationCenter.default.removeObserver(observer)
+        }
         if let observer = loggerNotificationObserver {
             NotificationCenter.default.removeObserver(observer)
         }
