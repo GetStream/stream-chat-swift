@@ -35,7 +35,7 @@ public final class ChannelListState: ObservableObject {
             })
         )
         if initialChannels.isEmpty {
-            channels = observer.channelListObserver.currentItems()
+            channels = observer.channelListObserver.items()
         }
     }
     

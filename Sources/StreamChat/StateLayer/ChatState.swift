@@ -48,7 +48,7 @@ public final class ChatState: ObservableObject {
                 watchersDidChange: { [weak self] in await self?.setValue($0, for: \.watchers) }
             )
         )
-        messages = observer.messagesObserver.currentItems()
+        messages = observer.messagesObserver.items()
     }
     
     // MARK: - Represented Channel
