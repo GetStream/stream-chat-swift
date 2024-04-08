@@ -151,12 +151,10 @@ extension NSManagedObjectContext {
     }
 
     func saveMembers(payload: ChannelMemberListPayload, channelId: ChannelId, query: ChannelMemberListQuery?) -> [MemberDTO] {
-        // If it is the first page of a member moderators query, erase the initial cache.
-        // Currently we do not receive any event when the member role is updated. So there is
-        // no way to remove it from the local DB, so for now we always clear the cache for this type of query.
+        // If it is the first page of the members list, make sure to clear the members from local cache
+        // which are not in the remote response anymore.
         let isFirstPage = query?.pagination.offset == 0
-        let isModeratorQuery = query?.filter?.key == FilterKey<MemberListFilterScope, Bool>.isModerator.rawValue
-        if let queryHash = query?.queryHash, isFirstPage && isModeratorQuery {
+        if let queryHash = query?.queryHash, isFirstPage {
             let queryDTO = ChannelMemberListQueryDTO.load(queryHash: queryHash, context: self)
             queryDTO?.members = []
         }

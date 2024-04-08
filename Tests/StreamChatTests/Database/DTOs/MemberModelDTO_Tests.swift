@@ -144,13 +144,7 @@ final class MemberModelDTO_Tests: XCTestCase {
         XCTAssertTrue(loadedQuery.members.contains(loadedMember))
     }
 
-    // MARK: - Clear members when is moderator filter query
-
-    // This should be temporary until we have websocket events whenever a moderator has been added/removed.
-    // Currently we do not receive any event when the member role is updated. So there is
-    // no way to remove it from the local DB, so for now we always clear the cache for this type of query.
-
-    func test_saveMembers_whenFilterIsModerator_whenFirstPage_clearPreviousMembersFromQuery() throws {
+    func test_saveMembers_whenFirstPage_clearPreviousMembersFromQuery() throws {
         let userId: UserId = .unique
         let cid: ChannelId = .unique
         let members: ChannelMemberListPayload = .init(members: [.dummy(), .dummy()])
@@ -172,36 +166,12 @@ final class MemberModelDTO_Tests: XCTestCase {
         XCTAssertEqual(Set(loadedQuery.members.map(\.user.id)), Set(newMembers.map(\.id)))
     }
 
-    func test_saveMembers_whenFilterIsModerator_whenAnotherPage_doesNotClearPreviousMembersFromQuery() throws {
+    func test_saveMembers_whenAnotherPage_doesNotClearPreviousMembersFromQuery() throws {
         let userId: UserId = .unique
         let cid: ChannelId = .unique
         let members: ChannelMemberListPayload = .init(members: [.dummy(), .dummy()])
-        var query = ChannelMemberListQuery(cid: cid, filter: .equal(.isModerator, to: true))
+        var query = ChannelMemberListQuery(cid: cid)
         query.pagination = .init(pageSize: 20, offset: 25)
-
-        // Save previous members
-        let previousMembers = try saveDummyMembers(toQuery: query, cid: cid)
-        XCTAssertEqual(previousMembers.count, 4)
-
-        // Save new members
-        var newMembers: [ChatChannelMember] = []
-        try database.writeSynchronously { session in
-            newMembers = try session.saveMembers(payload: members, channelId: cid, query: query)
-                .map { try $0.asModel() }
-        }
-
-        // Assert the members in the DB contain the old and new members
-        let loadedQuery = try XCTUnwrap(database.viewContext.channelMemberListQuery(queryHash: query.queryHash))
-        let allMembers = previousMembers + newMembers
-        XCTAssertEqual(Set(loadedQuery.members.map(\.user.id)), Set(allMembers.map(\.id)))
-    }
-
-    func test_saveMembers_whenFilterNotModerator_whenFirstPage_doestNotClearPreviousMembersFromQuery() throws {
-        let userId: UserId = .unique
-        let cid: ChannelId = .unique
-        let members: ChannelMemberListPayload = .init(members: [.dummy(), .dummy()])
-        var query = ChannelMemberListQuery(cid: cid, filter: .equal(.banned, to: false))
-        query.pagination = .init(pageSize: 20, offset: 0)
 
         // Save previous members
         let previousMembers = try saveDummyMembers(toQuery: query, cid: cid)
