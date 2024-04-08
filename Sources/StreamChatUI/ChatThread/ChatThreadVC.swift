@@ -128,7 +128,7 @@ open class ChatThreadVC: _ViewController,
         }
 
         // Set the initial data
-        messages = Array(getReplies(from: messageController))
+        messages = Array(getMessages(from: messageController))
 
         if messageController.message != nil {
             didFinishSynchronizing(with: nil)
@@ -435,23 +435,22 @@ open class ChatThreadVC: _ViewController,
 
     private func updateMessages(with changes: [ListChange<ChatMessage>]) {
         messageListVC.setPreviousMessagesSnapshot(self.messages)
-        let messages = getReplies(from: messageController)
+        let messages = getMessages(from: messageController)
         messageListVC.setNewMessagesSnapshot(messages)
         messageListVC.updateMessages(with: changes)
         viewPaginationHandler.updateElementsCount(with: messages.count)
     }
 
-    private func getReplies(from messageController: ChatMessageController) -> LazyCachedMapCollection<ChatMessage> {
+    /// Gets the replies of the thread, plus the parent message if needed.
+    private func getMessages(from messageController: ChatMessageController) -> LazyCachedMapCollection<ChatMessage> {
         guard shouldRenderParentMessage else {
             return messageController.replies
         }
-        let messages = messageController.replies
+        var messages = messageController.replies
         let isFirstPage = messages.count < messageController.repliesPageSize
         let shouldAddRootMessageAtTheTop = isFirstPage || messageController.hasLoadedAllPreviousReplies
         if shouldAddRootMessageAtTheTop, let threadRootMessage = messageController.message {
-            if messages.last?.id != threadRootMessage.id {
-                messages.append(threadRootMessage)
-            }
+            messages.append(threadRootMessage)
         }
         return messages
     }
