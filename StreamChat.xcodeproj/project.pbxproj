@@ -242,11 +242,12 @@
 		4A4E184728D06F260062378D /* Documentation.docc in Sources */ = {isa = PBXBuildFile; fileRef = 4A4E184528D06CA30062378D /* Documentation.docc */; };
 		4F05ECB82B6CCA4900641820 /* DifferenceKit+Stream.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F05ECB72B6CCA4900641820 /* DifferenceKit+Stream.swift */; };
 		4F05ECB92B6CCA4900641820 /* DifferenceKit+Stream.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F05ECB72B6CCA4900641820 /* DifferenceKit+Stream.swift */; };
+		4F072F032BC008D9006A66CA /* StateLayerDatabaseObserver_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F072F022BC008D9006A66CA /* StateLayerDatabaseObserver_Tests.swift */; };
 		4F12DC8C2B70DE82009E48CC /* DifferenceKit+Stream_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F12DC8A2B70DE4C009E48CC /* DifferenceKit+Stream_Tests.swift */; };
 		4F12DC922B73801D009E48CC /* NukeImageLoader_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F12DC912B73801D009E48CC /* NukeImageLoader_Tests.swift */; };
 		4F14F1242BBA9CEF00B1074E /* Result+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F14F1232BBA9CEF00B1074E /* Result+Extensions.swift */; };
-		4F14F1262BBBDD7400B1074E /* StateLayerListDatabaseObserver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F14F1252BBBDD7400B1074E /* StateLayerListDatabaseObserver.swift */; };
-		4F14F1272BBBDD7400B1074E /* StateLayerListDatabaseObserver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F14F1252BBBDD7400B1074E /* StateLayerListDatabaseObserver.swift */; };
+		4F14F1262BBBDD7400B1074E /* StateLayerDatabaseObserver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F14F1252BBBDD7400B1074E /* StateLayerDatabaseObserver.swift */; };
+		4F14F1272BBBDD7400B1074E /* StateLayerDatabaseObserver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F14F1252BBBDD7400B1074E /* StateLayerDatabaseObserver.swift */; };
 		4F14F1282BBD2D8700B1074E /* ChannelList_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F5758F02BB45B2F00D89A94 /* ChannelList_Tests.swift */; };
 		4F14F12A2BBE8C1900B1074E /* MessageSearch_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F14F1292BBE8C1900B1074E /* MessageSearch_Tests.swift */; };
 		4F427F662BA2F43200D92238 /* ConnectedUser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F427F652BA2F43200D92238 /* ConnectedUser.swift */; };
@@ -3017,10 +3018,11 @@
 		4A4E184528D06CA30062378D /* Documentation.docc */ = {isa = PBXFileReference; lastKnownFileType = folder.documentationcatalog; path = Documentation.docc; sourceTree = "<group>"; };
 		4A51230029D3170C005CEA9B /* docusaurus */ = {isa = PBXFileReference; lastKnownFileType = folder; path = docusaurus; sourceTree = "<group>"; };
 		4F05ECB72B6CCA4900641820 /* DifferenceKit+Stream.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DifferenceKit+Stream.swift"; sourceTree = "<group>"; };
+		4F072F022BC008D9006A66CA /* StateLayerDatabaseObserver_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StateLayerDatabaseObserver_Tests.swift; sourceTree = "<group>"; };
 		4F12DC8A2B70DE4C009E48CC /* DifferenceKit+Stream_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DifferenceKit+Stream_Tests.swift"; sourceTree = "<group>"; };
 		4F12DC912B73801D009E48CC /* NukeImageLoader_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NukeImageLoader_Tests.swift; sourceTree = "<group>"; };
 		4F14F1232BBA9CEF00B1074E /* Result+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Result+Extensions.swift"; sourceTree = "<group>"; };
-		4F14F1252BBBDD7400B1074E /* StateLayerListDatabaseObserver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StateLayerListDatabaseObserver.swift; sourceTree = "<group>"; };
+		4F14F1252BBBDD7400B1074E /* StateLayerDatabaseObserver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StateLayerDatabaseObserver.swift; sourceTree = "<group>"; };
 		4F14F1292BBE8C1900B1074E /* MessageSearch_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageSearch_Tests.swift; sourceTree = "<group>"; };
 		4F427F652BA2F43200D92238 /* ConnectedUser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectedUser.swift; sourceTree = "<group>"; };
 		4F427F682BA2F52100D92238 /* ConnectedUserState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectedUserState.swift; sourceTree = "<group>"; };
@@ -5040,6 +5042,7 @@
 				4F5758F02BB45B2F00D89A94 /* ChannelList_Tests.swift */,
 				4FB4AB9E2BAD6DBD00712C4E /* Chat_Tests.swift */,
 				4F14F1292BBE8C1900B1074E /* MessageSearch_Tests.swift */,
+				4F072F022BC008D9006A66CA /* StateLayerDatabaseObserver_Tests.swift */,
 			);
 			path = StateLayer;
 			sourceTree = "<group>";
@@ -8659,7 +8662,7 @@
 				C15C8837286C7BF300E6A72C /* BackgroundListDatabaseObserver.swift */,
 				C189D7772AEBC6CD00D4B966 /* BackgroundDatabaseObserver.swift */,
 				79E2B83F24CAC8D60024752F /* ListDatabaseObserver.swift */,
-				4F14F1252BBBDD7400B1074E /* StateLayerListDatabaseObserver.swift */,
+				4F14F1252BBBDD7400B1074E /* StateLayerDatabaseObserver.swift */,
 			);
 			path = DatabaseObserver;
 			sourceTree = "<group>";
@@ -10984,7 +10987,7 @@
 				79A0E9B02498C09900E9BD50 /* ConnectionStatus.swift in Sources */,
 				799C9439247D2FB9001F1104 /* ChannelDTO.swift in Sources */,
 				799C9443247D3DA7001F1104 /* APIClient.swift in Sources */,
-				4F14F1262BBBDD7400B1074E /* StateLayerListDatabaseObserver.swift in Sources */,
+				4F14F1262BBBDD7400B1074E /* StateLayerDatabaseObserver.swift in Sources */,
 				79200D4C25025B81002F4EB1 /* Error+InternetNotAvailable.swift in Sources */,
 				841BA9FB2BCE8468000C73E4 /* CastPollVoteRequestBody.swift in Sources */,
 				C12DBE5F2A67DFE80045D9F0 /* SortValue.swift in Sources */,
@@ -11468,6 +11471,7 @@
 				A3F65E3827EB716A003F6256 /* TypingStartCleanupMiddleware_Tests.swift in Sources */,
 				888E8C41252B2ADC00195E03 /* UserController+SwiftUI_Tests.swift in Sources */,
 				C174E0F9284DFD660040B936 /* IdentifiablePayload_Tests.swift in Sources */,
+				4F072F032BC008D9006A66CA /* StateLayerDatabaseObserver_Tests.swift in Sources */,
 				8A08C6A624D437DF00DEF995 /* WebSocketPingController_Tests.swift in Sources */,
 				4042968C29FAD03B0089126D /* AudioSamplesPercentageTransformer_Tests.swift in Sources */,
 				8A62706C24BF3DBC0040BFD6 /* ChannelEvents_Tests.swift in Sources */,
@@ -12077,7 +12081,7 @@
 				40789D2029F6AC500018C2BB /* AudioPlaying.swift in Sources */,
 				C121E8E9274544B200023E4C /* Cached.swift in Sources */,
 				4042968129FAC9F80089126D /* AudioAnalysing.swift in Sources */,
-				4F14F1272BBBDD7400B1074E /* StateLayerListDatabaseObserver.swift in Sources */,
+				4F14F1272BBBDD7400B1074E /* StateLayerDatabaseObserver.swift in Sources */,
 				4F427F6A2BA2F52100D92238 /* ConnectedUserState.swift in Sources */,
 				C121E8EA274544B200023E4C /* CoreDataLazy.swift in Sources */,
 				C121E8EB274544B200023E4C /* Result+Extensions.swift in Sources */,

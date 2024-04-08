@@ -7,7 +7,7 @@ import Foundation
 @available(iOS 13.0, *)
 extension ChannelListState {
     final class Observer {
-        let channelListObserver: StateLayerListDatabaseObserver<ChatChannel, ChannelDTO>
+        let channelListObserver: StateLayerDatabaseObserver<ListResult, ChatChannel, ChannelDTO>
         private let clientConfig: ChatClientConfig
         private let channelListUpdater: ChannelListUpdater
         private let database: DatabaseContainer
@@ -31,7 +31,7 @@ extension ChannelListState {
             self.query = query
             self.eventNotificationCenter = eventNotificationCenter
             
-            channelListObserver = StateLayerListDatabaseObserver(
+            channelListObserver = StateLayerDatabaseObserver(
                 databaseContainer: database,
                 fetchRequest: ChannelDTO.channelListFetchRequest(
                     query: query,
