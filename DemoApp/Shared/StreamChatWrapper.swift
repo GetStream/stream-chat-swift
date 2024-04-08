@@ -112,11 +112,14 @@ extension StreamChatWrapper {
         if let deviceId = currentUserController.currentUser?.currentDevice?.id {
             currentUserController.removeDevice(id: deviceId) { error in
                 if let error = error {
-                    log.warning("removing the device failed with an error \(error)")
+                    log.error("Removing the device failed with an error \(error)")
                 }
 
                 client.logout(completion: completion)
             }
+        } else {
+            log.error("No deviceId has been found from the current user.")
+            client.logout(completion: completion)
         }
     }
 }
