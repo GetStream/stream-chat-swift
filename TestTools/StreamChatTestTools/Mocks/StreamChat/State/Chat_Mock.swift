@@ -113,6 +113,11 @@ public extension Chat_Mock {
     /// Simulates changes in the `messages` array. Observers are notified with the provided `changes` value.
     func simulate(messages: [ChatMessage], changes: [ListChange<ChatMessage>]) {
         messages_mock = messages
-        self.state.messages = StreamCollection(messages)
+        var newMessages = messages
+        for message in state.messages {
+            newMessages.append(message)
+        }
+        
+        self.state.messages = StreamCollection(newMessages)
     }
 }

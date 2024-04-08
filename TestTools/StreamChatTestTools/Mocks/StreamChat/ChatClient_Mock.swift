@@ -58,6 +58,10 @@ final class ChatClient_Mock: ChatClient {
             _backgroundWorkers = workerBuilders.map { $0(databaseContainer, apiClient) }
         }
     }
+    
+    override var currentUserId: UserId? {
+        return currentUserId_mock
+    }
 
     public var currentUserId_mock: UserId? {
         get {
