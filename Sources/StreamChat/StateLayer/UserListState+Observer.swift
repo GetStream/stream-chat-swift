@@ -8,15 +8,14 @@ import Foundation
 extension UserListState {
     struct Observer {
         private let query: UserListQuery
-        private let usersObserver: BackgroundListDatabaseObserver<ChatUser, UserDTO>
+        let usersObserver: StateLayerDatabaseObserver<ListResult, ChatUser, UserDTO>
         
         init(query: UserListQuery, database: DatabaseContainer) {
             self.query = query
-            usersObserver = BackgroundListDatabaseObserver(
-                context: database.backgroundReadOnlyContext,
+            usersObserver = StateLayerDatabaseObserver(
+                databaseContainer: database,
                 fetchRequest: UserDTO.userListFetchRequest(query: query),
-                itemCreator: { try $0.asModel() },
-                sorting: []
+                itemCreator: { try $0.asModel() }
             )
         }
         
@@ -25,13 +24,8 @@ extension UserListState {
         }
         
         func start(with handlers: Handlers) {
-            usersObserver.onDidChange = { [weak usersObserver] _ in
-                guard let items = usersObserver?.items else { return }
-                let collection = StreamCollection(items)
-                Task { await handlers.usersDidChange(collection) }
-            }
             do {
-                try usersObserver.startObserving()
+                try usersObserver.startObserving(didChange: handlers.usersDidChange)
             } catch {
                 log.error("Failed to start the user list observer for query: \(query)")
             }

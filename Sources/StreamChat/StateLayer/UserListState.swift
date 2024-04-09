@@ -15,6 +15,9 @@ public final class UserListState: ObservableObject {
         observer.start(
             with: .init(usersDidChange: { [weak self] change in await self?.setValue(change, for: \.users) })
         )
+        if users.isEmpty {
+            self.users = observer.usersObserver.items()
+        }
     }
     
     /// An array of users for the specified ``UserListQuery``.
