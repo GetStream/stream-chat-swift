@@ -462,30 +462,39 @@ private_lane :xcmetrics_log_parser do |options|
 
   ['testMessageListScrollTime', 'testChannelListScrollTime'].each do |test_name|
     hitches_total_duration = log.match(/#{test_name}\]' measured \[Hitches Total Duration \(#{method}\), ms\] average: (\d+\.\d+)/)
+    UI.user_error!("Hitches Total Duration not found for #{test_name}") if hitches_total_duration.nil?
+
     duration = log.match(/#{test_name}\]' measured \[Duration \(#{method}\), s\] average: (\d+\.\d+)/)
+    UI.user_error!("Duration not found for #{test_name}") if duration.nil?
+
     hitch_time_ratio = log.match(/#{test_name}\]' measured \[Hitch Time Ratio \(#{method}\), ms per s\] average: (\d+\.\d+)/)
+    UI.user_error!("Hitch Time Ratio not found for #{test_name}") if hitch_time_ratio.nil?
+
     frame_rate = log.match(/#{test_name}\]' measured \[Frame Rate \(#{method}\), fps\] average: (\d+\.\d+)/)
+    UI.user_error!("Frame Rate not found for #{test_name}") if frame_rate.nil?
+
     number_of_hitches = log.match(/#{test_name}\]' measured \[Number of Hitches \(#{method}\), hitches\] average: (\d+\.\d+)/)
+    UI.user_error!("Number of Hitches not found for #{test_name}") if number_of_hitches.nil?
 
     metrics[test_name] = {
       'hitches_total_duration' => {
-        'value' => hitches_total_duration ? hitches_total_duration[1].to_f.round(2) : '?',
+        'value' => hitches_total_duration[1].to_f.round(2),
         'ext' => 'ms'
       },
       'duration' => {
-        'value' => duration ? duration[1].to_f.round(2) : '?',
+        'value' => duration[1].to_f.round(2),
         'ext' => 's'
       },
       'hitch_time_ratio' => {
-        'value' => hitch_time_ratio ? hitch_time_ratio[1].to_f.round(2) : '?',
+        'value' => hitch_time_ratio[1].to_f.round(2),
         'ext' => 'ms per s'
       },
       'frame_rate' => {
-        'value' => frame_rate ? frame_rate[1].to_f.round(2) : '?',
+        'value' => frame_rate[1].to_f.round(2),
         'ext' => 'fps'
       },
       'number_of_hitches' => {
-        'value' => number_of_hitches ? number_of_hitches[1].to_f.round(2) : '?',
+        'value' => number_of_hitches[1].to_f.round(2),
         'ext' => ''
       }
     }
