@@ -23,6 +23,7 @@ _March 26, 2024_
 - Expose `notificationsMuted` in `ChatChannelMember` [#3111](https://github.com/GetStream/stream-chat-swift/pull/3111)
 ### 🐞 Fixed
 - Fix saving reaction counts for messages [#3109](https://github.com/GetStream/stream-chat-swift/pull/3109)
+- Fix a crash in channel list when reconfiguring cells [#3136](https://github.com/GetStream/stream-chat-swift/pull/3136)
 ### 🔄 Changed
 - Deprecates `ChatClientConfig.maxAttachmentSize` in favour of defining the value from Stream's Dashboard [#3105](https://github.com/GetStream/stream-chat-swift/pull/3105)
 
