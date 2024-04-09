@@ -16,7 +16,7 @@ public final class UserListState: ObservableObject {
             with: .init(usersDidChange: { [weak self] change in await self?.setValue(change, for: \.users) })
         )
         if users.isEmpty {
-            self.users = observer.usersObserver.items()
+            self.users = observer.usersObserver.items
         }
     }
     

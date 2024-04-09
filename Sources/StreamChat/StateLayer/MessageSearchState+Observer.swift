@@ -41,11 +41,14 @@ extension MessageSearchState {
                 messagesObserver = StateLayerDatabaseObserver(
                     databaseContainer: database,
                     fetchRequest: MessageDTO.messagesFetchRequest(for: query),
-                    itemCreator: { try $0.asModel() as ChatMessage },
-                    sorting: []
+                    itemCreator: { try $0.asModel() as ChatMessage }
                 )
                 do {
-                    try messagesObserver?.startObserving(initial: true, didChange: handlers.messagesDidChange)
+                    if let messagesObserver {
+                        try messagesObserver.startObserving(didChange: handlers.messagesDidChange)
+                        // Sending the initial value since we keep recreating the observer
+                        Task { await handlers.messagesDidChange(messagesObserver.items) }
+                    }
                 } catch {
                     log.error("Failed to start the message result observer for query (\(query) with error \(error)")
                 }
