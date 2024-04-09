@@ -15,7 +15,7 @@ _April 09, 2024_
 
 ## StreamChatUI
 ### 🐞 Fixed
-- Fix thread parent message not updating in the Thread View [#3127](https://github.com/GetStream/stream-chat-swift/pull/3127)
+- Fix thread parent message not updating in the Thread View [#3129](https://github.com/GetStream/stream-chat-swift/pull/3129)
 - Fix a crash in channel list when reconfiguring cells [#3136](https://github.com/GetStream/stream-chat-swift/pull/3136)
 
 # [4.51.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.51.0)
