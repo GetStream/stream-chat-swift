@@ -71,16 +71,6 @@ public class Chat_Mock: Chat {
         return ChatMessage.mock()
     }
 
-    public var channel_mock: ChatChannel?
-    public var channel: ChatChannel? {
-        channel_mock ?? super.state.channel
-    }
-
-    public var messages_mock: [ChatMessage]?
-    public var messages: StreamCollection<ChatMessage> {
-        messages_mock.map { StreamCollection($0) } ?? super.state.messages
-    }
-    
     public override func loadMessagesFirstPage() async throws {}
     
     public var loadPageAroundMessageIdCallCount = 0
@@ -93,20 +83,16 @@ public class Chat_Mock: Chat {
 public extension Chat_Mock {
     /// Simulates the initial conditions. Setting these values doesn't trigger any observer callback.
     func simulateInitial(channel: ChatChannel, messages: [ChatMessage]) {
-        channel_mock = channel
-        messages_mock = messages
         self.state.channel = channel
         self.state.messages = StreamCollection(messages)
     }
 
-    /// Simulates a change of the `channel` value. Observers are notified with the provided `change` value. If `typingUsers`
-    /// value is explicitly provided, `didChangeTypingUsers` is called, too.
+    /// Simulates a change of the `channel` value. Observers are notified with the provided `change` value.
     func simulate(
         channel: ChatChannel?,
         change: EntityChange<ChatChannel>,
         typingUsers: Set<ChatChannelMember>?
     ) {
-        channel_mock = channel
         self.state.channel = channel
         if let typingUsers {
             self.state.typingUsers = typingUsers
@@ -115,7 +101,6 @@ public extension Chat_Mock {
 
     /// Simulates changes in the `messages` array. Observers are notified with the provided `changes` value.
     func simulate(messages: [ChatMessage], changes: [ListChange<ChatMessage>]) {
-        messages_mock = messages
         var newMessages = messages
         for message in state.messages {
             newMessages.append(message)
