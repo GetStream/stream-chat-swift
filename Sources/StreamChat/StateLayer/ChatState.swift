@@ -79,11 +79,6 @@ public final class ChatState: ObservableObject {
     /// Use load messages in ``Chat`` for loading more messages.
     @Published public internal(set) var messages = StreamCollection<ChatMessage>([])
     
-    /// An array of latest message list changes.
-    ///
-    /// - Note: The ``messageListChanges`` property is updated just before ``messages`` property changes.
-    public private(set) var messageListChanges: [ListChange<MessageId>] = []
-    
     /// Access a message which is available locally by its id.
     ///
     /// - Note: This method does a local lookup of the message and returns a message present in ``ChatState/messages``.
