@@ -13,12 +13,12 @@ public final class MessageState: ObservableObject {
 
     let replyPaginationHandler: MessagesPaginationStateHandling
     
-    init(message: ChatMessage, chat: Chat, messageOrder: MessageOrdering, database: DatabaseContainer, replyPaginationHandler: MessagesPaginationStateHandling) {
+    init(message: ChatMessage, chat: Chat, messageOrder: MessageOrdering, database: DatabaseContainer, clientConfig: ChatClientConfig, replyPaginationHandler: MessagesPaginationStateHandling) {
         self.chat = chat
         self.message = message
         self.messageOrder = messageOrder
         self.replyPaginationHandler = replyPaginationHandler
-        observer = Observer(messageId: message.id, messageOrder: messageOrder, database: database)
+        observer = Observer(messageId: message.id, messageOrder: messageOrder, database: database, clientConfig: clientConfig)
         observer.start(
             with: .init(
                 messageDidChange: { [weak self] in await self?.setValue($0, for: \.message) },
@@ -26,6 +26,8 @@ public final class MessageState: ObservableObject {
                 repliesDidChange: { [weak self] in await self?.setValue($0, for: \.replies) }
             )
         )
+        reactions = message.latestReactions.sorted(by: { $0.updatedAt > $1.updatedAt })
+        replies = observer.repliesObserver.items
     }
     
     var messageId: MessageId { message.id }
