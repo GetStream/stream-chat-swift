@@ -8,25 +8,24 @@ import Foundation
 extension MessageState {
     struct Observer {
         private let messageId: MessageId
-        private let messageObserver: BackgroundEntityDatabaseObserver<ChatMessage, MessageDTO>
-        private let repliesObserver: BackgroundListDatabaseObserver<ChatMessage, MessageDTO>
+        let messageObserver: StateLayerDatabaseObserver<EntityResult, ChatMessage, MessageDTO>
+        let repliesObserver: StateLayerDatabaseObserver<ListResult, ChatMessage, MessageDTO>
         
-        init(messageId: MessageId, messageOrder: MessageOrdering, database: DatabaseContainer) {
+        init(messageId: MessageId, messageOrder: MessageOrdering, database: DatabaseContainer, clientConfig: ChatClientConfig) {
             self.messageId = messageId
-            let context = database.backgroundReadOnlyContext
-            messageObserver = BackgroundEntityDatabaseObserver(
-                context: context,
+            messageObserver = StateLayerDatabaseObserver(
+                databaseContainer: database,
                 fetchRequest: MessageDTO.message(withID: messageId),
                 itemCreator: { try $0.asModel() as ChatMessage }
             )
-            repliesObserver = BackgroundListDatabaseObserver(
-                context: context,
+            repliesObserver = StateLayerDatabaseObserver(
+                databaseContainer: database,
                 fetchRequest: MessageDTO.repliesFetchRequest(
                     for: messageId,
                     pageSize: .messagesPageSize,
                     sortAscending: messageOrder.isAscending,
-                    deletedMessagesVisibility: context.deletedMessagesVisibility ?? .visibleForCurrentUser,
-                    shouldShowShadowedMessages: context.shouldShowShadowedMessages ?? false
+                    deletedMessagesVisibility: clientConfig.deletedMessagesVisibility,
+                    shouldShowShadowedMessages: clientConfig.shouldShowShadowedMessages
                 ),
                 itemCreator: { try $0.asModel() as ChatMessage },
                 sorting: []
@@ -40,24 +39,23 @@ extension MessageState {
         }
         
         func start(with handlers: Handlers) {
-            messageObserver.onChange(do: { change in Task { await handlers.messageDidChange(change.item) } })
-            messageObserver.onFieldChange(\.latestReactions, do: { change in
-                let sortedReactions = change.item.sorted(by: { $0.updatedAt > $1.updatedAt })
-                Task { await handlers.reactionsDidChange(sortedReactions) }
-            })
-            repliesObserver.onDidChange = { [weak repliesObserver] _ in
-                guard let items = repliesObserver?.items else { return }
-                let collection = StreamCollection(items)
-                Task { await handlers.repliesDidChange(collection) }
-            }
-            
             do {
-                try messageObserver.startObserving()
+                var lastReactions: Set<ChatMessageReaction>?
+                try messageObserver.startObserving(didChange: { message in
+                    guard let message else { return }
+                    let currentReactions = message.latestReactions
+                    if lastReactions != currentReactions {
+                        lastReactions = currentReactions
+                        let sortedReactions = currentReactions.sorted(by: { $0.updatedAt > $1.updatedAt })
+                        await handlers.reactionsDidChange(sortedReactions)
+                    }
+                    await handlers.messageDidChange(message)
+                })
             } catch {
                 log.error("Failed to start the messages observer for message: \(messageId)")
             }
             do {
-                try repliesObserver.startObserving()
+                try repliesObserver.startObserving(didChange: handlers.repliesDidChange)
             } catch {
                 log.error("Failed to start the replies observer for message: \(messageId)")
             }
