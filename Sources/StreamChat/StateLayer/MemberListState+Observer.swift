@@ -7,14 +7,13 @@ import Foundation
 @available(iOS 13.0, *)
 extension MemberListState {
     struct Observer {
-        private let memberListObserver: BackgroundListDatabaseObserver<ChatChannelMember, MemberDTO>
+        let memberListObserver: StateLayerDatabaseObserver<ListResult, ChatChannelMember, MemberDTO>
         
         init(query: ChannelMemberListQuery, database: DatabaseContainer) {
-            memberListObserver = BackgroundListDatabaseObserver(
-                context: database.backgroundReadOnlyContext,
+            memberListObserver = StateLayerDatabaseObserver(
+                databaseContainer: database,
                 fetchRequest: MemberDTO.members(matching: query),
-                itemCreator: { try $0.asModel() as ChatChannelMember },
-                sorting: []
+                itemCreator: { try $0.asModel() as ChatChannelMember }
             )
         }
         
@@ -23,13 +22,8 @@ extension MemberListState {
         }
         
         func start(with handlers: Handlers) {
-            memberListObserver.onDidChange = { [weak memberListObserver] _ in
-                guard let items = memberListObserver?.items else { return }
-                let collection = StreamCollection(items)
-                Task { await handlers.membersDidChange(collection) }
-            }
             do {
-                try memberListObserver.startObserving()
+                try memberListObserver.startObserving(didChange: handlers.membersDidChange)
             } catch {
                 log.error("Failed to start the member list observer with error \(error)")
             }

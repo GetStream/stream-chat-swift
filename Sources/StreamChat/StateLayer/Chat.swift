@@ -743,6 +743,7 @@ public class Chat {
                 chat: self,
                 messageOrder: state.messageOrder,
                 database: databaseContainer,
+                clientConfig: client.config,
                 replyPaginationHandler: MessagesPaginationStateHandler()
             )
             messageStates.setObject(state, forKey: messageId as NSString)

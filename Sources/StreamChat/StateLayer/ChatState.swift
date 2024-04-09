@@ -48,7 +48,11 @@ public final class ChatState: ObservableObject {
                 watchersDidChange: { [weak self] in await self?.setValue($0, for: \.watchers) }
             )
         )
-        messages = observer.messagesObserver.items()
+        channel = observer.channelObserver.item
+        members = observer.memberListState.members
+        messages = observer.messagesObserver.items
+        typingUsers = channel?.currentlyTypingUsers ?? Set()
+        watchers = observer.watchersObserver.items
     }
     
     // MARK: - Represented Channel
@@ -74,11 +78,6 @@ public final class ChatState: ObservableObject {
     ///
     /// Use load messages in ``Chat`` for loading more messages.
     @Published public internal(set) var messages = StreamCollection<ChatMessage>([])
-    
-    /// An array of latest message list changes.
-    ///
-    /// - Note: The ``messageListChanges`` property is updated just before ``messages`` property changes.
-    public private(set) var messageListChanges: [ListChange<MessageId>] = []
     
     /// Access a message which is available locally by its id.
     ///
