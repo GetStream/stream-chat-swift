@@ -15,6 +15,9 @@ public final class MemberListState: ObservableObject {
         observer.start(
             with: .init(membersDidChange: { [weak self] members in await self?.setValue(members, for: \.members) })
         )
+        if members.isEmpty {
+            self.members = observer.memberListObserver.items
+        }
     }
     
     /// An array of members for the specified ``ChannelMemberListQuery``.
