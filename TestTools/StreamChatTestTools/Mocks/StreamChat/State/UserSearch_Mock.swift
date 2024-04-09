@@ -22,10 +22,14 @@ public class UserSearch_Mock: UserSearch {
         Array(state.users)
     }
 
-    override public func search(term: String) async throws -> [ChatUser] {
+    override public func search(term: String?) async throws -> [ChatUser] {
         searchCallCount += 1
         let users = state.users.filter { user in
-            user.name?.contains(term) ?? true
+            if let term {
+                return user.name?.contains(term) ?? true
+            } else {
+                return true
+            }
         }
         setUsers(users)
         return users
