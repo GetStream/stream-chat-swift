@@ -24,6 +24,7 @@ final class Chat_Tests: XCTestCase {
         env.cleanUp()
         channelId = nil
         chat = nil
+        env = nil
         expectedTestError = nil
     }
     
