@@ -7,7 +7,7 @@ import Foundation
 
 /// An object which represents a `ChatChannel`.
 @available(iOS 13.0, *)
-public final class Chat {
+public class Chat {
     private let authenticationRepository: AuthenticationRepository
     private let channelUpdater: ChannelUpdater
     private let databaseContainer: DatabaseContainer
