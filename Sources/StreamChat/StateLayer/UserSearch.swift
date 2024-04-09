@@ -22,11 +22,11 @@ public final class UserSearch {
     
     /// Searches for users with the specified search term and updates ``UserSearchState/users``.
     ///
-    /// - Parameter term: The search term for searching users.
+    /// - Parameter term: The search term for searching users. If `nil` or empty, all users are returned.
     ///
     /// - Throws: An error while communicating with the Stream API.
     /// - Returns: An array of users for the search term.
-    @discardableResult public func search(term: String) async throws -> [ChatUser] {
+    @discardableResult public func search(term: String?) async throws -> [ChatUser] {
         try await search(query: .search(term: term))
     }
     
@@ -60,6 +60,7 @@ public final class UserSearch {
     // MARK: - Private
     
     private func search(query: UserListQuery, pagination: Pagination) async throws -> [ChatUser] {
+        let query = query.withPagination(pagination)
         let task = Task {
             let users = try await userListUpdater.fetch(userListQuery: query, pagination: pagination)
             try Task.checkCancellation()
