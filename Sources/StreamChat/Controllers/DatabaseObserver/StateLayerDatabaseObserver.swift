@@ -52,7 +52,7 @@ final class StateLayerDatabaseObserver<ResultType: DatabaseObserverType, Item, D
 
 @available(iOS 13.0, *)
 extension StateLayerDatabaseObserver where ResultType == EntityResult {
-    func item() -> Item? {
+    var item: Item? {
         var item: Item?
         context.performAndWait {
             item = Self.makeEntity(frc: frc, context: context, itemCreator: itemCreator, sorting: sorting)
@@ -60,11 +60,11 @@ extension StateLayerDatabaseObserver where ResultType == EntityResult {
         return item
     }
     
-    func startObserving(initial: Bool = false, didChange: @escaping (Item?) async -> Void) throws {
+    func startObserving(didChange: @escaping (Item?) async -> Void) throws {
         try startObserving(didChange: { item in Task(priority: .high) { await didChange(item) } })
     }
     
-    func startObserving(initial: Bool = false, didChange: @escaping (Item?) -> Void) throws {
+    func startObserving(didChange: @escaping (Item?) -> Void) throws {
         resultsDelegate = FetchedResultsDelegate(onDidChange: { [weak self] in
             guard let self else { return }
             // Runs on the NSManagedObjectContext's queue, therefore skip performAndWait
@@ -73,9 +73,6 @@ extension StateLayerDatabaseObserver where ResultType == EntityResult {
         })
         frc.delegate = resultsDelegate
         try frc.performFetch()
-        if initial {
-            didChange(item())
-        }
     }
     
     static func makeEntity(
@@ -102,7 +99,7 @@ extension StateLayerDatabaseObserver where ResultType == EntityResult {
 
 @available(iOS 13.0, *)
 extension StateLayerDatabaseObserver where ResultType == ListResult {
-    func items() -> StreamCollection<Item> {
+    var items: StreamCollection<Item> {
         var collection: StreamCollection<Item>!
         context.performAndWait {
             collection = Self.makeCollection(frc: frc, context: context, itemCreator: itemCreator, sorting: sorting)
@@ -110,11 +107,11 @@ extension StateLayerDatabaseObserver where ResultType == ListResult {
         return collection
     }
     
-    func startObserving(initial: Bool = false, didChange: @escaping (StreamCollection<Item>) async -> Void) throws {
-        try startObserving(initial: initial, didChange: { items in Task(priority: .high) { await didChange(items) } })
+    func startObserving(didChange: @escaping (StreamCollection<Item>) async -> Void) throws {
+        try startObserving(didChange: { items in Task(priority: .high) { await didChange(items) } })
     }
     
-    func startObserving(initial: Bool = false, didChange: @escaping (StreamCollection<Item>) -> Void) throws {
+    func startObserving(didChange: @escaping (StreamCollection<Item>) -> Void) throws {
         resultsDelegate = FetchedResultsDelegate(onDidChange: { [weak self] in
             guard let self else { return }
             // Runs on the NSManagedObjectContext's queue, therefore skip performAndWait
@@ -123,9 +120,6 @@ extension StateLayerDatabaseObserver where ResultType == ListResult {
         })
         frc.delegate = resultsDelegate
         try frc.performFetch()
-        if initial {
-            didChange(items())
-        }
     }
     
     static func makeCollection(
