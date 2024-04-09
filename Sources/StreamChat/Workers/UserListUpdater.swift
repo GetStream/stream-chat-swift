@@ -95,7 +95,7 @@ extension UserListUpdater {
     }
 }
 
-private extension UserListQuery {
+extension UserListQuery {
     func withPagination(_ pagination: Pagination) -> Self {
         var query = self
         query.pagination = pagination
