@@ -19,8 +19,8 @@ final class StateLayerDatabaseObserver_Tests: XCTestCase {
     }
 
     override func tearDownWithError() throws {
-        channelId = nil
         client.cleanUp()
+        channelId = nil
         client = nil
     }
 
@@ -31,7 +31,6 @@ final class StateLayerDatabaseObserver_Tests: XCTestCase {
         var changeCount = 0
         let observer = makeChannelObserver()
         try observer.startObserving(
-            initial: false,
             didChange: { _ in
                 changeCount += 1
                 expectation.fulfill()
@@ -50,7 +49,7 @@ final class StateLayerDatabaseObserver_Tests: XCTestCase {
         #else
         wait(for: [expectation], timeout: defaultTimeout)
         #endif
-        XCTAssertEqual("first", observer.item()?.name)
+        XCTAssertEqual("first", observer.item?.name)
         XCTAssertEqual(1, changeCount)
     }
     
@@ -64,7 +63,6 @@ final class StateLayerDatabaseObserver_Tests: XCTestCase {
         var changeCount = 0
         let observer = makeChannelObserver()
         try observer.startObserving(
-            initial: false,
             didChange: { _ in
                 changeCount += 1
                 expectation.fulfill()
@@ -84,7 +82,7 @@ final class StateLayerDatabaseObserver_Tests: XCTestCase {
         #else
         wait(for: [expectation], timeout: defaultTimeout)
         #endif
-        XCTAssertEqual("second", observer.item()?.name)
+        XCTAssertEqual("second", observer.item?.name)
         XCTAssertEqual(1, changeCount)
     }
     
@@ -93,7 +91,6 @@ final class StateLayerDatabaseObserver_Tests: XCTestCase {
         var changeCount = 0
         let observer = makeChannelObserver()
         try observer.startObserving(
-            initial: false,
             didChange: { _ in
                 changeCount += 1
                 expectation.fulfill()
@@ -118,8 +115,8 @@ final class StateLayerDatabaseObserver_Tests: XCTestCase {
         #else
         wait(for: [expectation], timeout: defaultTimeout)
         #endif
-        XCTAssertEqual("second", observer.item()?.name)
-        XCTAssertEqual("team2", observer.item()?.team)
+        XCTAssertEqual("second", observer.item?.name)
+        XCTAssertEqual("team2", observer.item?.team)
         XCTAssertEqual(2, changeCount)
     }
     
@@ -135,7 +132,6 @@ final class StateLayerDatabaseObserver_Tests: XCTestCase {
         var changeCount = 0
         let observer = makeMessagesListObserver()
         try observer.startObserving(
-            initial: false,
             didChange: { _ in
                 changeCount += 1
                 expectation.fulfill()
@@ -154,9 +150,9 @@ final class StateLayerDatabaseObserver_Tests: XCTestCase {
         #else
         wait(for: [expectation], timeout: defaultTimeout)
         #endif
-        XCTAssertEqual(8, observer.items().count)
+        XCTAssertEqual(8, observer.items.count)
         let expectedIds = (firstPayload.messages + secondPayload.messages).map(\.id)
-        XCTAssertEqual(expectedIds, observer.items().map(\.id))
+        XCTAssertEqual(expectedIds, observer.items.map(\.id))
         XCTAssertEqual(1, changeCount)
     }
     
@@ -169,12 +165,10 @@ final class StateLayerDatabaseObserver_Tests: XCTestCase {
         let expectation = XCTestExpectation()
         var changeCount = 0
         let observer = makeMessagesListObserver()
-        try observer.startObserving(
-            initial: false,
-            didChange: { _ in
-                changeCount += 1
-                expectation.fulfill()
-            }
+        try observer.startObserving(didChange: { _ in
+            changeCount += 1
+            expectation.fulfill()
+        }
         )
         
         let secondPayload = makeChannelPayload(messageCount: 3, createdAtOffset: 5)
@@ -193,8 +187,8 @@ final class StateLayerDatabaseObserver_Tests: XCTestCase {
         #else
         wait(for: [expectation], timeout: defaultTimeout)
         #endif
-        XCTAssertEqual(3, observer.items().count)
-        XCTAssertEqual(secondPayload.messages.map(\.id), observer.items().map(\.id))
+        XCTAssertEqual(3, observer.items.count)
+        XCTAssertEqual(secondPayload.messages.map(\.id), observer.items.map(\.id))
         XCTAssertEqual(1, changeCount)
     }
     
@@ -208,7 +202,6 @@ final class StateLayerDatabaseObserver_Tests: XCTestCase {
         var changeCount = 0
         let observer = makeMessagesListObserver()
         try observer.startObserving(
-            initial: false,
             didChange: { _ in
                 changeCount += 1
                 expectation.fulfill()
@@ -233,9 +226,9 @@ final class StateLayerDatabaseObserver_Tests: XCTestCase {
         #else
         wait(for: [expectation], timeout: defaultTimeout)
         #endif
-        XCTAssertEqual(11, observer.items().count)
+        XCTAssertEqual(11, observer.items.count)
         let expectedIds = (firstPayload.messages + secondPayload.messages + thirdPayload.messages).map(\.id)
-        XCTAssertEqual(expectedIds, observer.items().map(\.id))
+        XCTAssertEqual(expectedIds, observer.items.map(\.id))
         XCTAssertEqual(2, changeCount)
     }
     

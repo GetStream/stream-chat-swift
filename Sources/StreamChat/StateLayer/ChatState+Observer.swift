@@ -9,12 +9,13 @@ import Foundation
 extension ChatState {
     final class Observer {
         private let cid: ChannelId
-        private let channelObserver: BackgroundEntityDatabaseObserver<ChatChannel, ChannelDTO>
         private let eventNotificationCenter: EventNotificationCenter
-        private let memberListState: MemberListState
         private var memberListObserver: AnyCancellable?
+        
+        let channelObserver: StateLayerDatabaseObserver<EntityResult, ChatChannel, ChannelDTO>
+        let memberListState: MemberListState
         let messagesObserver: StateLayerDatabaseObserver<ListResult, ChatMessage, MessageDTO>
-        private let watchersObserver: BackgroundListDatabaseObserver<ChatUser, UserDTO>
+        let watchersObserver: StateLayerDatabaseObserver<ListResult, ChatUser, UserDTO>
         
         init(
             cid: ChannelId,
@@ -27,9 +28,8 @@ extension ChatState {
         ) {
             self.cid = cid
             self.memberListState = memberListState
-            let context = database.backgroundReadOnlyContext
-            channelObserver = BackgroundEntityDatabaseObserver(
-                context: context,
+            channelObserver = StateLayerDatabaseObserver(
+                databaseContainer: database,
                 fetchRequest: ChannelDTO.fetchRequest(for: cid),
                 itemCreator: { try $0.asModel() as ChatChannel }
             )
@@ -45,8 +45,8 @@ extension ChatState {
                 itemCreator: { try $0.asModel() as ChatMessage },
                 sorting: []
             )
-            watchersObserver = BackgroundListDatabaseObserver(
-                context: context,
+            watchersObserver = StateLayerDatabaseObserver(
+                databaseContainer: database,
                 fetchRequest: UserDTO.watcherFetchRequest(cid: cid),
                 itemCreator: { try $0.asModel() as ChatUser },
                 sorting: []
@@ -55,7 +55,7 @@ extension ChatState {
         }
         
         struct Handlers {
-            let channelDidChange: (ChatChannel) async -> Void
+            let channelDidChange: (ChatChannel?) async -> Void
             let membersDidChange: (StreamCollection<ChatChannelMember>) async -> Void
             let messagesDidChange: (StreamCollection<ChatMessage>) async -> Void
             let typingUsersDidChange: (Set<ChatUser>) async -> Void
@@ -63,17 +63,20 @@ extension ChatState {
         }
         
         func start(with handlers: Handlers) {
-            channelObserver.onChange(do: { change in Task { await handlers.channelDidChange(change.item) } })
-            channelObserver.onFieldChange(\.currentlyTypingUsers, do: { change in Task { await handlers.typingUsersDidChange(change.item) } })
-            memberListObserver = memberListState.$members.sink(receiveValue: { change in Task { await handlers.membersDidChange(change) } })
-            watchersObserver.onDidChange = { [weak watchersObserver] _ in
-                guard let items = watchersObserver?.items else { return }
-                let collection = StreamCollection(items)
-                Task { await handlers.watchersDidChange(collection) }
-            }
+            memberListObserver = memberListState.$members
+                .dropFirst() // skip initial
+                .sink(receiveValue: { change in Task { await handlers.membersDidChange(change) } })
             
             do {
-                try channelObserver.startObserving()
+                var lastTypingUsers: Set<ChatUser>?
+                try channelObserver.startObserving(didChange: { channel in
+                    let currentlyTypingUsers: Set<ChatUser> = channel?.currentlyTypingUsers ?? Set()
+                    if lastTypingUsers != currentlyTypingUsers {
+                        lastTypingUsers = currentlyTypingUsers
+                        await handlers.typingUsersDidChange(currentlyTypingUsers)
+                    }
+                    await handlers.channelDidChange(channel)
+                })
             } catch {
                 log.error("Failed to start the channel observer for cid: \(cid)")
             }
@@ -83,7 +86,7 @@ extension ChatState {
                 log.error("Failed to start the messages observer for cid: \(cid)")
             }
             do {
-                try watchersObserver.startObserving()
+                try watchersObserver.startObserving(didChange: handlers.watchersDidChange)
             } catch {
                 log.error("Failed to start the watchers observer for cid: \(cid)")
             }
