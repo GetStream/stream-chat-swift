@@ -254,7 +254,7 @@ open class ChatChannelListVC: _ViewController,
         let previousChannels = channels
         let newChannels = Array(controller.channels)
         let stagedChangeset = StagedChangeset(source: previousChannels, target: newChannels)
-        collectionView.reload(using: stagedChangeset, reconfigure: { _ in true }) { [weak self] newChannels in
+        collectionView.reload(using: stagedChangeset, reconfigure: { _ in false }) { [weak self] newChannels in
             self?.channels = newChannels
         }
     }

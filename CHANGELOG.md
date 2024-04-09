@@ -3,6 +3,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 # Upcoming
 
+### 🔄 Changed
+
+# [4.52.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.52.0)
+_April 09, 2024_
+
 ## StreamChat
 ### 🐞 Fixed
 - Fix pinning messages with attachments stuck in sending state [#3116](https://github.com/GetStream/stream-chat-swift/pull/3116)
@@ -10,7 +15,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## StreamChatUI
 ### 🐞 Fixed
-- Fix thread parent message not updating in the Thread View [#3127](https://github.com/GetStream/stream-chat-swift/pull/3127)
+- Fix thread parent message not updating in the Thread View [#3129](https://github.com/GetStream/stream-chat-swift/pull/3129)
+- Fix a crash in channel list when reconfiguring cells [#3136](https://github.com/GetStream/stream-chat-swift/pull/3136)
 
 # [4.51.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.51.0)
 _March 26, 2024_
