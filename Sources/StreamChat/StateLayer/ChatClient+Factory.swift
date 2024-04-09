@@ -255,7 +255,7 @@ extension ChatClient {
         )
     }
     
-    private func makeChannelUpdater() -> ChannelUpdater {
+    internal func makeChannelUpdater() -> ChannelUpdater {
         ChannelUpdater(
             channelRepository: channelRepository,
             callRepository: callRepository,
