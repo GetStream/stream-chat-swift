@@ -13,7 +13,7 @@ public final class UserSearchState: ObservableObject {
     @Published public private(set) var query: UserListQuery?
     
     /// An array of search results for the specified query and pagination state.
-    @Published public private(set) var users = StreamCollection<ChatUser>([])
+    @Published public internal(set) var users = StreamCollection<ChatUser>([])
     
     // MARK: - Private
     
