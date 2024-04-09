@@ -15,12 +15,14 @@ public class Chat_Mock: Chat {
         channelQuery: ChannelQuery,
         channelListQuery: ChannelListQuery?
     ) {
+        let channelUpdater = chatClient.makeChannelUpdater()
+        channelUpdater.paginationStateHandler.end(pagination: .init(pageSize: 25), with: .success([]))
         super.init(
             cid: Self.cid,
             channelQuery: channelQuery,
             channelListQuery: channelListQuery,
             memberSorting: [.init(key: .createdAt)], 
-            channelUpdater: chatClient.makeChannelUpdater(),
+            channelUpdater: channelUpdater,
             client: chatClient,
             environment: .init()
         )
@@ -28,10 +30,11 @@ public class Chat_Mock: Chat {
     
     /// Creates a new mock instance of `ChatChannelController`.
     public static func mock(
+        chatClient: ChatClient? = nil,
         chatClientConfig: ChatClientConfig? = nil,
         bundle: Bundle? = nil
     ) -> Chat_Mock {
-        let chatClient = ChatClient.mock(config: chatClientConfig, bundle: bundle)
+        let chatClient = chatClient ?? ChatClient.mock(config: chatClientConfig, bundle: bundle)
         return Chat_Mock(
             chatClient: chatClient,
             channelQuery: .init(cid: cid, channelQuery: .init(cid: cid)),
@@ -92,8 +95,8 @@ public extension Chat_Mock {
     func simulateInitial(channel: ChatChannel, messages: [ChatMessage]) {
         channel_mock = channel
         messages_mock = messages
-        self.state.messages = StreamCollection(messages)
         self.state.channel = channel
+        self.state.messages = StreamCollection(messages)
     }
 
     /// Simulates a change of the `channel` value. Observers are notified with the provided `change` value. If `typingUsers`
