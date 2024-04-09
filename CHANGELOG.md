@@ -16,6 +16,7 @@ _April 09, 2024_
 ## StreamChatUI
 ### 🐞 Fixed
 - Fix thread parent message not updating in the Thread View [#3127](https://github.com/GetStream/stream-chat-swift/pull/3127)
+- Fix a crash in channel list when reconfiguring cells [#3136](https://github.com/GetStream/stream-chat-swift/pull/3136)
 
 # [4.51.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.51.0)
 _March 26, 2024_
@@ -28,7 +29,6 @@ _March 26, 2024_
 - Expose `notificationsMuted` in `ChatChannelMember` [#3111](https://github.com/GetStream/stream-chat-swift/pull/3111)
 ### 🐞 Fixed
 - Fix saving reaction counts for messages [#3109](https://github.com/GetStream/stream-chat-swift/pull/3109)
-- Fix a crash in channel list when reconfiguring cells [#3136](https://github.com/GetStream/stream-chat-swift/pull/3136)
 ### 🔄 Changed
 - Deprecates `ChatClientConfig.maxAttachmentSize` in favour of defining the value from Stream's Dashboard [#3105](https://github.com/GetStream/stream-chat-swift/pull/3105)
 
