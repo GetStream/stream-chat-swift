@@ -40,7 +40,7 @@ public final class ChannelListState: ObservableObject {
     }
     
     /// An array of channels for the specified ``ChannelListQuery``.
-    @Published public private(set) var channels = StreamCollection<ChatChannel>([])
+    @Published public internal(set) var channels = StreamCollection<ChatChannel>([])
     
     // MARK: - Mutating the State
     
