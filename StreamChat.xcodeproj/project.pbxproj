@@ -256,11 +256,8 @@
 		4F427F6A2BA2F52100D92238 /* ConnectedUserState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F427F682BA2F52100D92238 /* ConnectedUserState.swift */; };
 		4F427F6C2BA2F53200D92238 /* ConnectedUserState+Observer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F427F6B2BA2F53200D92238 /* ConnectedUserState+Observer.swift */; };
 		4F427F6D2BA2F53200D92238 /* ConnectedUserState+Observer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F427F6B2BA2F53200D92238 /* ConnectedUserState+Observer.swift */; };
-<<<<<<< HEAD
 		4F5151982BC407ED001B7152 /* UserList_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F5151972BC407ED001B7152 /* UserList_Tests.swift */; };
-=======
 		4F5151962BC3DEA1001B7152 /* UserSearch_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F5151952BC3DEA1001B7152 /* UserSearch_Tests.swift */; };
->>>>>>> edd81290c (Basic tests for UserSearch covering pagination, cancellation, and searching)
 		4F73F3982B91BD3000563CD9 /* MessageState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F73F3972B91BD3000563CD9 /* MessageState.swift */; };
 		4F73F3992B91BD3000563CD9 /* MessageState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F73F3972B91BD3000563CD9 /* MessageState.swift */; };
 		4F73F39E2B91C7BF00563CD9 /* MessageState+Observer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F73F39D2B91C7BF00563CD9 /* MessageState+Observer.swift */; };
