@@ -45,7 +45,10 @@ extension MessageSearchState {
                     sorting: []
                 )
                 do {
-                    try messagesObserver?.startObserving(initial: true, didChange: handlers.messagesDidChange)
+                    if let messagesObserver {
+                        try messagesObserver.startObserving(didChange: handlers.messagesDidChange)
+                        Task { await handlers.messagesDidChange(messagesObserver.items) }
+                    }
                 } catch {
                     log.error("Failed to start the message result observer for query (\(query) with error \(error)")
                 }
