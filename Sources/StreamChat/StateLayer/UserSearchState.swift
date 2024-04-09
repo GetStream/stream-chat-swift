@@ -7,7 +7,9 @@ import Foundation
 /// Represents a list of user search results.
 @available(iOS 13.0, *)
 public final class UserSearchState: ObservableObject {
-    /// The search query the results corresponds to.
+    /// The last initiated search query.
+    ///
+    /// - Note: If searching fails, this property points to the failing query.
     @Published public private(set) var query: UserListQuery?
     
     /// An array of search results for the specified query and pagination state.
