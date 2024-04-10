@@ -15,12 +15,14 @@ class CurrentUserUpdater: Worker {
     ///   - currentUserId: The current user identifier.
     ///   - name: Optionally provide a new name to be updated.
     ///   - imageURL: Optionally provide a new image to be updated.
+    ///   - privateSettings: The private settings of the user. Example: If the user does not want to expose typing events or read events.
     ///   - userExtraData: Optionally provide new user extra data to be updated.
     ///   - completion: Called when user is successfuly updated, or with error.
     func updateUserData(
         currentUserId: UserId,
         name: String? = nil,
         imageURL: URL? = nil,
+        privateSettings: UserPrivateSettings? = nil,
         userExtraData: [String: RawJSON]? = nil,
         completion: ((Error?) -> Void)? = nil
     ) {
@@ -34,6 +36,7 @@ class CurrentUserUpdater: Worker {
         let payload = UserUpdateRequestBody(
             name: name,
             imageURL: imageURL,
+            privateSettings: privateSettings.map { UserPrivateSettingsPayload(settings: $0) },
             extraData: userExtraData
         )
 
