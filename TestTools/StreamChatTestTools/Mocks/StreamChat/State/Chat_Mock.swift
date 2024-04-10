@@ -90,13 +90,9 @@ public extension Chat_Mock {
     /// Simulates a change of the `channel` value. Observers are notified with the provided `change` value.
     func simulate(
         channel: ChatChannel?,
-        change: EntityChange<ChatChannel>,
-        typingUsers: Set<ChatChannelMember>?
+        change: EntityChange<ChatChannel>
     ) {
         self.state.channel = channel
-        if let typingUsers {
-            self.state.typingUsers = typingUsers
-        }
     }
 
     /// Simulates changes in the `messages` array. Observers are notified with the provided `changes` value.
