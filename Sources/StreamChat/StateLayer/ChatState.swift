@@ -44,14 +44,12 @@ public final class ChatState: ObservableObject {
                 channelDidChange: { [weak self] in await self?.setValue($0, for: \.channel) },
                 membersDidChange: { [weak self] in await self?.setValue($0, for: \.members) },
                 messagesDidChange: { [weak self] in await self?.setValue($0, for: \.messages) },
-                typingUsersDidChange: { [weak self] in await self?.setValue($0, for: \.typingUsers) },
                 watchersDidChange: { [weak self] in await self?.setValue($0, for: \.watchers) }
             )
         )
         channel = observer.channelObserver.item
         members = observer.memberListState.members
         messages = observer.messagesObserver.items
-        typingUsers = channel?.currentlyTypingUsers ?? Set()
         watchers = observer.watchersObserver.items
     }
     
@@ -161,11 +159,6 @@ public final class ChatState: ObservableObject {
         let currentTime = Date().timeIntervalSince(lastMessageTimestamp)
         return max(0, channel.cooldownDuration - Int(currentTime))
     }
-    
-    // MARK: - Typing Users
-    
-    /// A list of users who are currently typing.
-    @Published public internal(set) var typingUsers = Set<ChatUser>()
     
     // MARK: - Watchers
     
