@@ -30,12 +30,10 @@ final class StateLayerDatabaseObserver_Tests: XCTestCase {
         let expectation = XCTestExpectation()
         var changeCount = 0
         let observer = makeChannelObserver()
-        try observer.startObserving(
-            didChange: { _ in
-                changeCount += 1
-                expectation.fulfill()
-            }
-        )
+        try observer.startObserving(onContextDidChange: { _ in
+            changeCount += 1
+            expectation.fulfill()
+        })
         
         let firstPayload = makeChannelPayload(name: "first")
         try await client.mockDatabaseContainer.write { session in
@@ -62,12 +60,10 @@ final class StateLayerDatabaseObserver_Tests: XCTestCase {
         let expectation = XCTestExpectation()
         var changeCount = 0
         let observer = makeChannelObserver()
-        try observer.startObserving(
-            didChange: { _ in
-                changeCount += 1
-                expectation.fulfill()
-            }
-        )
+        try observer.startObserving(onContextDidChange: { _ in
+            changeCount += 1
+            expectation.fulfill()
+        })
         
         let secondPayload = makeChannelPayload(name: "second")
         try await client.mockDatabaseContainer.write { session in
@@ -90,12 +86,10 @@ final class StateLayerDatabaseObserver_Tests: XCTestCase {
         let expectation = XCTestExpectation()
         var changeCount = 0
         let observer = makeChannelObserver()
-        try observer.startObserving(
-            didChange: { _ in
-                changeCount += 1
-                expectation.fulfill()
-            }
-        )
+        try observer.startObserving(onContextDidChange: { _ in
+            changeCount += 1
+            expectation.fulfill()
+        })
         
         let firstPayload = makeChannelPayload(name: "first", team: "team1")
         try await client.mockDatabaseContainer.write { session in
@@ -131,12 +125,10 @@ final class StateLayerDatabaseObserver_Tests: XCTestCase {
         let expectation = XCTestExpectation()
         var changeCount = 0
         let observer = makeMessagesListObserver()
-        try observer.startObserving(
-            didChange: { _ in
-                changeCount += 1
-                expectation.fulfill()
-            }
-        )
+        try observer.startObserving(onContextDidChange: { _ in
+            changeCount += 1
+            expectation.fulfill()
+        })
         
         let secondPayload = makeChannelPayload(messageCount: 3, createdAtOffset: 5)
         try await client.mockDatabaseContainer.write { session in
@@ -165,11 +157,10 @@ final class StateLayerDatabaseObserver_Tests: XCTestCase {
         let expectation = XCTestExpectation()
         var changeCount = 0
         let observer = makeMessagesListObserver()
-        try observer.startObserving(didChange: { _ in
+        try observer.startObserving(onContextDidChange: { _ in
             changeCount += 1
             expectation.fulfill()
-        }
-        )
+        })
         
         let secondPayload = makeChannelPayload(messageCount: 3, createdAtOffset: 5)
         try await client.mockDatabaseContainer.write { session in
@@ -201,12 +192,10 @@ final class StateLayerDatabaseObserver_Tests: XCTestCase {
         let expectation = XCTestExpectation()
         var changeCount = 0
         let observer = makeMessagesListObserver()
-        try observer.startObserving(
-            didChange: { _ in
-                changeCount += 1
-                expectation.fulfill()
-            }
-        )
+        try observer.startObserving(onContextDidChange: { _ in
+            changeCount += 1
+            expectation.fulfill()
+        })
         
         let secondPayload = makeChannelPayload(messageCount: 3, createdAtOffset: 5)
         try await client.mockDatabaseContainer.write { session in

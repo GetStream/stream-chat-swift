@@ -134,7 +134,7 @@ final class MessageState_Tests: XCTestCase {
             }
         }
         
-        let message = try await env.client.databaseContainer.backgroundRead { context in
+        let message = try await env.client.databaseContainer.read { context in
             guard let dto = context.message(id: self.messageId) else { throw ClientError.MessageDoesNotExist(messageId: self.messageId) }
             return try dto.asModel()
         }
