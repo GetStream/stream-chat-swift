@@ -27,29 +27,31 @@ extension MessageState {
                     deletedMessagesVisibility: clientConfig.deletedMessagesVisibility,
                     shouldShowShadowedMessages: clientConfig.shouldShowShadowedMessages
                 ),
-                itemCreator: { try $0.asModel() as ChatMessage },
-                sorting: []
+                itemCreator: { try $0.asModel() as ChatMessage }
             )
         }
         
         struct Handlers {
-            let messageDidChange: (ChatMessage) async -> Void
-            let reactionsDidChange: ([ChatMessageReaction]) async -> Void
+            let messageDidChange: ((message: ChatMessage, changedReactions: [ChatMessageReaction]?)) async -> Void
             let repliesDidChange: (StreamCollection<ChatMessage>) async -> Void
         }
         
         func start(with handlers: Handlers) {
             do {
-                var lastReactions: Set<ChatMessageReaction>?
-                try messageObserver.startObserving(didChange: { message in
+                var lastSortedReactions: [ChatMessageReaction]?
+                try messageObserver.startObserving(onContextDidChange: { message in
                     guard let message else { return }
-                    let currentReactions = message.latestReactions
-                    if lastReactions != currentReactions {
-                        lastReactions = currentReactions
-                        let sortedReactions = currentReactions.sorted(by: { $0.updatedAt > $1.updatedAt })
-                        await handlers.reactionsDidChange(sortedReactions)
+                    let changedReactions: [ChatMessageReaction]?
+                    let currentReactions = message.latestReactions.sorted(by: MessageState.reactionsSorting)
+                    if lastSortedReactions != currentReactions {
+                        lastSortedReactions = currentReactions
+                        changedReactions = currentReactions
+                    } else {
+                        changedReactions = nil
                     }
-                    await handlers.messageDidChange(message)
+                    Task.mainActor {
+                        await handlers.messageDidChange((message, changedReactions))
+                    }
                 })
             } catch {
                 log.error("Failed to start the messages observer for message: \(messageId)")
