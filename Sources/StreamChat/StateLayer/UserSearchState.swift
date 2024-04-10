@@ -14,10 +14,6 @@ public final class UserSearchState: ObservableObject {
     
     /// An array of search results for the specified query and pagination state.
     @Published public internal(set) var users = StreamCollection<ChatUser>([])
-    
-    // MARK: - Private
-    
-    private var activeTask: Task<[ChatUser], Error>?
 }
 
 // MARK: - Mutating the State on the Main Actor
@@ -27,23 +23,40 @@ extension UserSearchState {
     @MainActor func value<Value>(forKeyPath keyPath: KeyPath<UserSearchState, Value>) -> Value {
         self[keyPath: keyPath]
     }
+    
+    @MainActor private func setValue<Value>(_ value: Value, for keyPath: ReferenceWritableKeyPath<UserSearchState, Value>) {
+        self[keyPath: keyPath] = value
+    }
         
-    @MainActor func setActiveTask(_ task: Task<[ChatUser], Error>, query: UserListQuery) {
-        if let activeTask {
-            activeTask.cancel()
-        }
-        activeTask = task
+    @MainActor func handleStartingFetchingQuery(_ query: UserListQuery) {
         self.query = query
     }
-    
-    @MainActor func setUsers(_ newUsers: [ChatUser], for query: UserListQuery, pagination: Pagination) {
-        // When the query changes we set the pagination to 0, otherwise we are loading more results for the same query
-        if pagination.offset == 0 {
-            users = StreamCollection(newUsers)
-        } else {
-            var result = Array(users[..<pagination.offset])
-            result.append(contentsOf: newUsers)
-            users = StreamCollection(result)
+
+    func handleFinishedFetchingQuery(_ completedQuery: UserListQuery, users incomingUsers: [ChatUser]) async {
+        if let query = await value(forKeyPath: \.query), query.hasFilterOrSortingChanged(completedQuery) {
+            // Discard since filter or sorting has changed
+            return
         }
+        let result: StreamCollection<ChatUser>
+        if completedQuery.pagination?.offset == 0 {
+            // Reset to the first page
+            result = StreamCollection(incomingUsers)
+        } else {
+            // Filter and sorting are the same but incoming users might contain duplicates (depends how pagination is used)
+            let incomingIds = Set(incomingUsers.map(\.id))
+            let incomingRemovedUsers = users.filter { !incomingIds.contains($0.id) }
+            let sortValues = completedQuery.sort.map(\.sortValue)
+            result = StreamCollection((incomingRemovedUsers + incomingUsers).sort(using: sortValues))
+        }
+        await setValue(result, for: \.users)
+    }
+}
+
+@available(iOS 13.0, *)
+extension UserListQuery {
+    func hasFilterOrSortingChanged(_ otherQuery: UserListQuery) -> Bool {
+        guard filter?.filterHash == otherQuery.filter?.filterHash else { return true }
+        guard sort == otherQuery.sort else { return true }
+        return false
     }
 }
