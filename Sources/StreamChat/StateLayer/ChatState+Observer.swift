@@ -58,7 +58,6 @@ extension ChatState {
             let channelDidChange: (ChatChannel?) async -> Void
             let membersDidChange: (StreamCollection<ChatChannelMember>) async -> Void
             let messagesDidChange: (StreamCollection<ChatMessage>) async -> Void
-            let typingUsersDidChange: (Set<ChatUser>) async -> Void
             let watchersDidChange: (StreamCollection<ChatUser>) async -> Void
         }
         
@@ -68,15 +67,7 @@ extension ChatState {
                 .sink(receiveValue: { change in Task { await handlers.membersDidChange(change) } })
             
             do {
-                var lastTypingUsers: Set<ChatUser>?
-                try channelObserver.startObserving(didChange: { channel in
-                    let currentlyTypingUsers: Set<ChatUser> = channel?.currentlyTypingUsers ?? Set()
-                    if lastTypingUsers != currentlyTypingUsers {
-                        lastTypingUsers = currentlyTypingUsers
-                        await handlers.typingUsersDidChange(currentlyTypingUsers)
-                    }
-                    await handlers.channelDidChange(channel)
-                })
+                try channelObserver.startObserving(didChange: handlers.channelDidChange)
             } catch {
                 log.error("Failed to start the channel observer for cid: \(cid)")
             }
