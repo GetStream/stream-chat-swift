@@ -112,7 +112,9 @@ extension LazyCachedMapCollection {
         if !sorting.isEmpty {
             var sortedElements: [Element]!
             context.performAndWait {
-                sortedElements = source.map(transformDtoToModel)
+                sortedElements = source
+                    .map(transformDtoToModel)
+                    .sort(using: sorting)
             }
             self.init(
                 source: sortedElements,
