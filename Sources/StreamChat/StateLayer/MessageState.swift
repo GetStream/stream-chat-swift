@@ -6,7 +6,7 @@ import Foundation
 
 /// Represents a ``ChatMessage`` and its state.
 @available(iOS 13.0, *)
-public final class MessageState: ObservableObject {
+@MainActor public final class MessageState: ObservableObject {
     private let messageOrder: MessageOrdering
     private let observer: Observer
 
@@ -30,11 +30,16 @@ public final class MessageState: ObservableObject {
         )
         observer.start(
             with: .init(
-                messageDidChange: { [weak self] in await self?.handleMessageDidChange($0, changedReactions: $1) },
-                repliesDidChange: { [weak self] in await self?.setValue($0, for: \.replies) }
+                messageDidChange: { [weak self] message, changedReactions in
+                    self?.message = message
+                    if let changedReactions {
+                        self?.reactions = changedReactions
+                    }
+                },
+                repliesDidChange: { [weak self] in self?.replies = $0 }
             )
         )
-        reactions = message.latestReactions.sorted(by: MessageState.reactionsSorting)
+        reactions = message.latestReactions.sorted(by: ChatMessageReaction.defaultSorting)
         replies = observer.repliesObserver.items
     }
     
@@ -83,30 +88,11 @@ public final class MessageState: ObservableObject {
     public var isLoadingNextReplies: Bool {
         replyPaginationState.isLoadingNextMessages
     }
-    
-    // MARK: - Mutating the State
-    
-    // Force main actor when accessing the state.
-    @MainActor func value<Value>(forKeyPath keyPath: KeyPath<MessageState, Value>) -> Value {
-        self[keyPath: keyPath]
-    }
-    
-    // Force mutations on main actor since ChatState is meant to be used by UI.
-    @MainActor func setValue<Value>(_ value: Value, for keyPath: ReferenceWritableKeyPath<MessageState, Value>) {
-        self[keyPath: keyPath] = value
-    }
-    
-    @MainActor func handleMessageDidChange(_ message: ChatMessage, changedReactions: [ChatMessageReaction]?) {
-        if let changedReactions {
-            reactions = changedReactions
-        }
-        self.message = message
-    }
 }
 
 @available(iOS 13.0, *)
-extension MessageState {
-    static func reactionsSorting(_ first: ChatMessageReaction, _ second: ChatMessageReaction) -> Bool {
+extension ChatMessageReaction {
+    static func defaultSorting(_ first: ChatMessageReaction, _ second: ChatMessageReaction) -> Bool {
         first.updatedAt > second.updatedAt
     }
 }

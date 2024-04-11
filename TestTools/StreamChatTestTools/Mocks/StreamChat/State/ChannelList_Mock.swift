@@ -41,13 +41,15 @@ public class ChannelList_Mock: ChannelList {
         )
     }
     
-    public func simulate(channels: [ChatChannel]) async throws {
+    @MainActor public func simulate(channels: [ChatChannel]) async throws {
         state.channels = StreamCollection(channels)
     }
     
     public var loadNextChannelsIsCalled = false
     public override func loadNextChannels(limit: Int? = nil) async throws -> [ChatChannel] {
         loadNextChannelsIsCalled = true
-        return Array(state.channels)
+        return await MainActor.run {
+            Array(state.channels)
+        }
     }
 }
