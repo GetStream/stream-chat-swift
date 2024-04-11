@@ -26,6 +26,7 @@ struct ThreadListPayload: Decodable {
 struct ThreadPayload: Decodable {
     enum CodingKeys: String, CodingKey {
         case channel
+        case parentMessageId = "parent_message_id"
         case parentMessage = "parent_message"
         case createdBy = "created_by"
         case replyCount = "reply_count"
@@ -38,9 +39,10 @@ struct ThreadPayload: Decodable {
         case latestReplies = "latest_replies"
         case read
     }
-
-    let channel: ChannelDetailPayload
+    
+    let parentMessageId: MessageId
     let parentMessage: MessagePayload
+    let channel: ChannelDetailPayload
     let createdBy: UserPayload
     let replyCount: Int
     let participantCount: Int
@@ -56,6 +58,7 @@ struct ThreadPayload: Decodable {
         let container = try decoder.container(keyedBy: CodingKeys.self)
 
         channel = try container.decode(ChannelDetailPayload.self, forKey: .channel)
+        parentMessageId = try container.decode(String.self, forKey: .parentMessageId)
         parentMessage = try container.decode(MessagePayload.self, forKey: .parentMessage)
         createdBy = try container.decode(UserPayload.self, forKey: .createdBy)
         replyCount = try container.decode(Int.self, forKey: .replyCount)
