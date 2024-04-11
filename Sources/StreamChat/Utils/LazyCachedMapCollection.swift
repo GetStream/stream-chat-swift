@@ -117,7 +117,7 @@ extension LazyCachedMapCollection {
             self.init(
                 source: sortedElements,
                 map: { $0 },
-                context: context
+                context: nil // nil for skipping performAndWait later when accessing elements
             )
         } else {
             self.init(
