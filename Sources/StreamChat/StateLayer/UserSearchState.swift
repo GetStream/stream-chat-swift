@@ -27,12 +27,20 @@ extension UserSearchState {
     @MainActor private func setValue<Value>(_ value: Value, for keyPath: ReferenceWritableKeyPath<UserSearchState, Value>) {
         self[keyPath: keyPath] = value
     }
-        
-    @MainActor func handleStartingFetchingQuery(_ query: UserListQuery) {
+    
+    /// Updates the query to point to the last query the user started.
+    ///
+    /// When user is typing and triggers multiple queries, then that last initiated query is used for discarding results from already running queries.
+    @MainActor func setQuery(_ query: UserListQuery) {
         self.query = query
     }
 
-    func handleFinishedFetchingQuery(_ completedQuery: UserListQuery, users incomingUsers: [ChatUser]) async {
+    /// Updates the state to include query results if user has not already started a new query.
+    ///
+    /// * Case 1: User triggered a new search. Then we need to reset the state.
+    /// * Case 2: More results are loaded for the same query.
+    /// Then we need to merge results while keeping the sort order and handling possible duplicates (example: calling loadNextUsers multiple times).
+    func handleDidFetchQuery(_ completedQuery: UserListQuery, users incomingUsers: [ChatUser]) async {
         if let query = await value(forKeyPath: \.query), query.hasFilterOrSortingChanged(completedQuery) {
             // Discard since filter or sorting has changed
             return
