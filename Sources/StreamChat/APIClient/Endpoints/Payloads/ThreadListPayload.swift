@@ -50,7 +50,7 @@ struct ThreadPayload: Decodable {
     let updatedAt: Date?
     let title: String?
     let latestReplies: [MessagePayload]
-    let read: [ChannelReadPayload]
+    let read: [ThreadReadPayload]
 
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
@@ -69,7 +69,7 @@ struct ThreadPayload: Decodable {
         updatedAt = try container.decodeIfPresent(Date.self, forKey: .updatedAt)
         title = try container.decodeIfPresent(String.self, forKey: .title)
         latestReplies = try container.decodeArrayIgnoringFailures([MessagePayload].self, forKey: .latestReplies)
-        read = try container.decodeArrayIgnoringFailures([ChannelReadPayload].self, forKey: .read)
+        read = try container.decodeArrayIgnoringFailures([ThreadReadPayload].self, forKey: .read)
     }
 }
 
@@ -85,4 +85,16 @@ struct ThreadParticipant: Decodable {
     let threadId: String
     let createdAt: Date
     let lastReadAt: Date?
+}
+
+struct ThreadReadPayload: Decodable {
+    enum CodingKeys: String, CodingKey {
+        case user
+        case lastReadAt = "last_read"
+        case unreadMessagesCount = "unread_messages"
+    }
+
+    let user: UserPayload
+    let lastReadAt: Date
+    let unreadMessagesCount: Int
 }
