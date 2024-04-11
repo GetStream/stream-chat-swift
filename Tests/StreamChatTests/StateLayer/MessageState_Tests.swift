@@ -54,9 +54,19 @@ final class MessageState_Tests: XCTestCase {
     func test_restoringReactions_whenReactionsStored_thenInitialStateIsSet() async throws {
         let messagePayload = makeMessagePayload(reactionCount: 3, messageId: messageId)
         try await env.client.databaseContainer.write { session in
-            try session.saveMessage(payload: messagePayload, for: self.channelId, syncOwnReactions: true, cache: nil)
-            // Unrelated
-            try session.saveMessage(payload: self.makeMessagePayload(reactionCount: 3, messageId: self.unrelatedMessageId), for: self.channelId, syncOwnReactions: true, cache: nil)
+            try session.saveMessage(
+                payload: messagePayload,
+                for: self.channelId,
+                syncOwnReactions: true,
+                cache: nil
+            )
+            // Add reactions to other messages for ensuring MessageState does not pick them up
+            try session.saveMessage(
+                payload: self.makeMessagePayload(reactionCount: 3, messageId: self.unrelatedMessageId),
+                for: self.channelId,
+                syncOwnReactions: true,
+                cache: nil
+            )
         }
         
         try await setUpMessageState(writeMessages: false)
@@ -70,9 +80,19 @@ final class MessageState_Tests: XCTestCase {
         
         let messagePayload = makeMessagePayload(reactionCount: 3, messageId: messageId)
         try await env.client.databaseContainer.write { session in
-            try session.saveMessage(payload: messagePayload, for: self.channelId, syncOwnReactions: true, cache: nil)
-            // Unrelated
-            try session.saveMessage(payload: self.makeMessagePayload(reactionCount: 3, messageId: self.unrelatedMessageId), for: self.channelId, syncOwnReactions: true, cache: nil)
+            try session.saveMessage(
+                payload: messagePayload,
+                for: self.channelId,
+                syncOwnReactions: true,
+                cache: nil
+            )
+            // Add reactions to other messages for ensuring MessageState does not pick them up
+            try session.saveMessage(
+                payload: self.makeMessagePayload(reactionCount: 3, messageId: self.unrelatedMessageId),
+                for: self.channelId,
+                syncOwnReactions: true,
+                cache: nil
+            )
         }
         
         // Default sorting is updatedAt and ascending (generated payload is sorted like this)
@@ -85,13 +105,23 @@ final class MessageState_Tests: XCTestCase {
         let replyPayloads = makeMessageRepliesPayload(repliesCount: 3, parentMessageId: messageId)
         try await env.client.databaseContainer.write { session in
             for replyPayload in replyPayloads {
-                let message = try session.saveMessage(payload: replyPayload, for: self.channelId, syncOwnReactions: true, cache: nil)
+                let message = try session.saveMessage(
+                    payload: replyPayload,
+                    for: self.channelId,
+                    syncOwnReactions: true,
+                    cache: nil
+                )
                 message.showInsideThread = true
             }
             // Unrelated
             let unrelatedReplies = self.makeMessageRepliesPayload(repliesCount: 5, parentMessageId: self.unrelatedMessageId)
             for replyPayload in unrelatedReplies {
-                let message = try session.saveMessage(payload: replyPayload, for: self.channelId, syncOwnReactions: true, cache: nil)
+                let message = try session.saveMessage(
+                    payload: replyPayload,
+                    for: self.channelId,
+                    syncOwnReactions: true,
+                    cache: nil
+                )
                 message.showInsideThread = true
             }
         }
@@ -109,13 +139,23 @@ final class MessageState_Tests: XCTestCase {
         let replyPayloads = makeMessageRepliesPayload(repliesCount: 3, parentMessageId: messageId)
         try await env.client.databaseContainer.write { session in
             for replyPayload in replyPayloads {
-                let message = try session.saveMessage(payload: replyPayload, for: self.channelId, syncOwnReactions: true, cache: nil)
+                let message = try session.saveMessage(
+                    payload: replyPayload,
+                    for: self.channelId,
+                    syncOwnReactions: true,
+                    cache: nil
+                )
                 message.showInsideThread = true
             }
             // Unrelated
             let unrelatedReplies = self.makeMessageRepliesPayload(repliesCount: 5, parentMessageId: self.unrelatedMessageId)
             for replyPayload in unrelatedReplies {
-                let message = try session.saveMessage(payload: replyPayload, for: self.channelId, syncOwnReactions: true, cache: nil)
+                let message = try session.saveMessage(
+                    payload: replyPayload,
+                    for: self.channelId,
+                    syncOwnReactions: true,
+                    cache: nil
+                )
                 message.showInsideThread = true
             }
         }

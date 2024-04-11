@@ -12,11 +12,22 @@ public final class MessageState: ObservableObject {
 
     let replyPaginationHandler: MessagesPaginationStateHandling
     
-    init(message: ChatMessage, messageOrder: MessageOrdering, database: DatabaseContainer, clientConfig: ChatClientConfig, replyPaginationHandler: MessagesPaginationStateHandling) {
+    init(
+        message: ChatMessage,
+        messageOrder: MessageOrdering,
+        database: DatabaseContainer,
+        clientConfig: ChatClientConfig,
+        replyPaginationHandler: MessagesPaginationStateHandling
+    ) {
         self.message = message
         self.messageOrder = messageOrder
         self.replyPaginationHandler = replyPaginationHandler
-        observer = Observer(messageId: message.id, messageOrder: messageOrder, database: database, clientConfig: clientConfig)
+        observer = Observer(
+            messageId: message.id,
+            messageOrder: messageOrder,
+            database: database,
+            clientConfig: clientConfig
+        )
         observer.start(
             with: .init(
                 messageDidChange: { [weak self] in await self?.handleMessageDidChange($0, changedReactions: $1) },
