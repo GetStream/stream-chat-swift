@@ -35,20 +35,22 @@ final class UserSearch_Tests: XCTestCase {
         env.userListUpdaterMock.fetch_completion_result = .success(fetchResult)
         let result = try await userSearch.search(term: "name")
         XCTAssertEqual(fetchResult.users.map(\.id), result.map(\.id))
-        XCTAssertEqual(fetchResult.users.map(\.id), userSearch.state.users.map(\.id))
+        await XCTAssertEqual(fetchResult.users.map(\.id), userSearch.state.users.map(\.id))
         
         XCTAssertEqual(1, env.userListUpdaterMock.fetch_queries.count)
-        let query = try XCTUnwrap(userSearch.state.query)
-        XCTAssertEqual(env.userListUpdaterMock.fetch_queries.first, userSearch.state.query)
-        
-        XCTAssertEqual(Filter<UserListFilterScope>.or([
-            .autocomplete(.name, text: "name"),
-            .autocomplete(.id, text: "name")
-        ]), query.filter)
-        XCTAssertEqual(Pagination(pageSize: .usersPageSize), query.pagination)
-        XCTAssertEqual([Sorting(key: .name, isAscending: true)], query.sort)
-        XCTAssertEqual([QueryOptions.presence], query.options)
-        XCTAssertEqual(true, query.shouldBeUpdatedInBackground)
+        try await MainActor.run {
+            let query = try XCTUnwrap(userSearch.state.query)
+            XCTAssertEqual(env.userListUpdaterMock.fetch_queries.first, userSearch.state.query)
+            
+            XCTAssertEqual(Filter<UserListFilterScope>.or([
+                .autocomplete(.name, text: "name"),
+                .autocomplete(.id, text: "name")
+            ]), query.filter)
+            XCTAssertEqual(Pagination(pageSize: .usersPageSize), query.pagination)
+            XCTAssertEqual([Sorting(key: .name, isAscending: true)], query.sort)
+            XCTAssertEqual([QueryOptions.presence], query.options)
+            XCTAssertEqual(true, query.shouldBeUpdatedInBackground)
+        }
     }
     
     func test_searchText_whenRequestFails_thenResultsAndStateAreEmpty() async throws {
@@ -102,7 +104,7 @@ final class UserSearch_Tests: XCTestCase {
         _ = try await result1.count
         
         XCTAssertEqual(5, try await result2.count)
-        XCTAssertEqual(secondResult.users.map(\.id), userSearch.state.users.map(\.id))
+        await XCTAssertEqual(secondResult.users.map(\.id), userSearch.state.users.map(\.id))
     }
     
     // MARK: - Results Pagination
@@ -117,20 +119,22 @@ final class UserSearch_Tests: XCTestCase {
         try await userSearch.loadNextUsers(limit: 10)
         
         let expectedIds = (fetchResult1.users + fetchResult2.users).map(\.id)
-        XCTAssertEqual(expectedIds, userSearch.state.users.map(\.id))
+        await XCTAssertEqual(expectedIds, userSearch.state.users.map(\.id))
         
         XCTAssertEqual(2, env.userListUpdaterMock.fetch_queries.count)
-        let query = try XCTUnwrap(userSearch.state.query)
-        XCTAssertEqual(env.userListUpdaterMock.fetch_queries.last, userSearch.state.query)
-        
-        XCTAssertEqual(Filter<UserListFilterScope>.or([
-            .autocomplete(.name, text: "name"),
-            .autocomplete(.id, text: "name")
-        ]), query.filter)
-        XCTAssertEqual(Pagination(pageSize: 10, offset: .usersPageSize), query.pagination)
-        XCTAssertEqual([Sorting(key: .name, isAscending: true)], query.sort)
-        XCTAssertEqual([QueryOptions.presence], query.options)
-        XCTAssertEqual(true, query.shouldBeUpdatedInBackground)
+        try await MainActor.run {
+            let query = try XCTUnwrap(userSearch.state.query)
+            XCTAssertEqual(env.userListUpdaterMock.fetch_queries.last, userSearch.state.query)
+            
+            XCTAssertEqual(Filter<UserListFilterScope>.or([
+                .autocomplete(.name, text: "name"),
+                .autocomplete(.id, text: "name")
+            ]), query.filter)
+            XCTAssertEqual(Pagination(pageSize: 10, offset: .usersPageSize), query.pagination)
+            XCTAssertEqual([Sorting(key: .name, isAscending: true)], query.sort)
+            XCTAssertEqual([QueryOptions.presence], query.options)
+            XCTAssertEqual(true, query.shouldBeUpdatedInBackground)
+        }
     }
     
     // MARK: - Test Data

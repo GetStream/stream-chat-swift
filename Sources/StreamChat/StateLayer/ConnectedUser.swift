@@ -9,6 +9,7 @@ import Foundation
 public final class ConnectedUser {
     private let authenticationRepository: AuthenticationRepository
     private let currentUserUpdater: CurrentUserUpdater
+    private let stateBuilder: StateBuilder<ConnectedUserState>
     private let userUpdater: UserUpdater
     
     init(user: CurrentChatUser, client: ChatClient, environment: Environment = .init()) {
@@ -17,10 +18,12 @@ public final class ConnectedUser {
             client.databaseContainer,
             client.apiClient
         )
-        state = environment.stateBuilder(
-            user,
-            client.databaseContainer
-        )
+        stateBuilder = StateBuilder {
+            environment.stateBuilder(
+                user,
+                client.databaseContainer
+            )
+        }
         userUpdater = environment.userUpdaterBuilder(
             client.databaseContainer,
             client.apiClient
@@ -28,7 +31,7 @@ public final class ConnectedUser {
     }
     
     /// An observable object representing the current state of the user.
-    public let state: ConnectedUserState
+    @MainActor public lazy var state: ConnectedUserState = stateBuilder.build()
     
     /// Updates the currently logged-in user's data.
     ///
@@ -140,10 +143,12 @@ public final class ConnectedUser {
 @available(iOS 13.0, *)
 extension ConnectedUser {
     struct Environment {
-        var stateBuilder: (
+        var stateBuilder: @MainActor(
             _ user: CurrentChatUser,
             _ database: DatabaseContainer
-        ) -> ConnectedUserState = ConnectedUserState.init
+        ) -> ConnectedUserState = { @MainActor in
+            ConnectedUserState(user: $0, database: $1)
+        }
         
         var currentUserUpdaterBuilder = CurrentUserUpdater.init
         
