@@ -351,13 +351,13 @@ public class ChatClient {
         authenticationRepository.cancelTimers()
     }
 
-    /// Disconnects the chat client form the chat servers and removes all the local data related.
+    /// Disconnects the chat client from the chat servers and removes all the local data related.
     @available(*, deprecated, message: "Use the asynchronous version of `logout` for increased safety")
     public func logout() {
         logout {}
     }
 
-    /// Disconnects the chat client form the chat servers and removes all the local data related.
+    /// Disconnects the chat client from the chat servers and removes all the local data related.
     public func logout(completion: @escaping () -> Void) {
         authenticationRepository.logOutUser()
 
