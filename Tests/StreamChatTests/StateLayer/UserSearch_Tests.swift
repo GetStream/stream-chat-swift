@@ -56,7 +56,7 @@ final class UserSearch_Tests: XCTestCase {
         await XCTAssertAsyncFailure(try await userSearch.search(term: "name"), testError)
     }
     
-    func test_cancellation_whenSendingMultipleRequests_thenPreviousRequestsAreCancelled() async throws {
+    func test_searchOrder_whenSendingMultipleRequests_thenIrrelevantResultsAreIgnored() async throws {
         let expectation = XCTestExpectation()
         var counter = 0
         env.userListUpdaterMock.fetch_query_called = { _ in
@@ -99,12 +99,7 @@ final class UserSearch_Tests: XCTestCase {
         let firstResult = makeUsers(name: "nam", count: 10, offset: 0)
         env.userListUpdaterMock.fetch_completions[0](.success(firstResult))
         
-        do {
-            _ = try await result1.count
-            XCTFail("Expected to cancel but did not")
-        } catch {
-            XCTAssertEqual(error, CancellationError())
-        }
+        _ = try await result1.count
         
         XCTAssertEqual(5, try await result2.count)
         XCTAssertEqual(secondResult.users.map(\.id), userSearch.state.users.map(\.id))
@@ -143,7 +138,7 @@ final class UserSearch_Tests: XCTestCase {
     private func makeUsers(name: String, count: Int, offset: Int) -> UserListPayload {
         let users = (0..<count)
             .map { $0 + offset }
-            .map { UserPayload.dummy(userId: "\($0)", name: "name_\($0)") }
+            .map { UserPayload.dummy(userId: "\($0)", name: "name_\(String(format: "%03d", $0))") }
         return UserListPayload(users: users)
     }
 }
