@@ -48,3 +48,26 @@ extension UserListSortingKey {
         .init(key: rawValue, ascending: isAscending)
     }
 }
+
+private extension UserListSortingKey {
+    var keyPath: PartialKeyPath<ChatUser> {
+        switch self {
+        case .id:
+            return \ChatUser.id
+        case .name:
+            return \ChatUser.name
+        case .role:
+            return \ChatUser.userRole
+        case .isBanned:
+            return \ChatUser.isBanned
+        case .lastActivityAt:
+            return \ChatUser.lastActiveAt
+        }
+    }
+}
+
+extension Sorting where Key == UserListSortingKey {
+    var sortValue: SortValue<ChatUser> {
+        SortValue(keyPath: key.keyPath, isAscending: isAscending)
+    }
+}
