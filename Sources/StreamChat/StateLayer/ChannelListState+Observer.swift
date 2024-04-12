@@ -70,7 +70,7 @@ extension ChannelListState {
                 },
                 EventObserver(notificationCenter: nc, transform: { $0 as? ChannelVisibleEvent }) { [weak self] event in
                     guard let self else { return }
-                    let channel = try await self.database.backgroundRead { context in
+                    let channel = try await self.database.read { context in
                         guard let dto = ChannelDTO.load(cid: event.cid, context: context) else {
                             throw ClientError.ChannelDoesNotExist(cid: event.cid)
                         }
@@ -102,7 +102,7 @@ extension ChannelListState {
         }
         
         private func isChannelInList(_ cid: ChannelId) async throws -> Bool {
-            try await database.backgroundRead { [query] context in
+            try await database.read { [query] context in
                 guard let (channelDTO, queryDTO) = context.getChannelWithQuery(cid: cid, query: query) else { return false }
                 return queryDTO.channels.contains(channelDTO)
             }
