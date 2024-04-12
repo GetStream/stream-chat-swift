@@ -16,6 +16,7 @@ public class Chat {
     private let memberUpdater: ChannelMemberUpdater
     private let messageUpdater: MessageUpdater
     private let readStateSender: ReadStateSender
+    private let stateBuilder: StateBuilder<ChatState>
     private let typingEventsSender: TypingEventsSender
     
     private let memberList: MemberList
@@ -76,21 +77,23 @@ public class Chat {
             client.databaseContainer,
             client.apiClient
         )
-        state = environment.chatStateBuilder(
-            cid,
-            channelQuery,
-            client.config,
-            messageOrdering,
-            memberList.state,
-            client.authenticationRepository,
-            client.databaseContainer,
-            client.eventNotificationCenter,
-            channelUpdater.paginationStateHandler
-        )
+        stateBuilder = StateBuilder { [memberList] in
+            environment.chatStateBuilder(
+                cid,
+                channelQuery,
+                client.config,
+                messageOrdering,
+                memberList.state,
+                client.authenticationRepository,
+                client.databaseContainer,
+                client.eventNotificationCenter,
+                channelUpdater.paginationStateHandler
+            )
+        }
     }
     
     /// An observable object representing the current state of the channel.
-    public let state: ChatState
+    @MainActor public lazy var state: ChatState = stateBuilder.build()
     
     // MARK: - Deleting the Channel
     
@@ -564,7 +567,7 @@ public class Chat {
     /// - Throws: An error while communicating with the Stream API.
     /// - Returns: An array of reactions for the next page.
     @discardableResult public func loadNextReactions(of messageId: MessageId, limit: Int? = nil) async throws -> [ChatMessageReaction] {
-        let offset = try await makeMessageState(for: messageId).value(forKeyPath: \.reactions.count)
+        let offset = try await makeMessageState(for: messageId).reactions.count
         let pagination = Pagination(pageSize: limit ?? 25, offset: offset)
         return try await messageUpdater.loadReactions(cid: cid, messageId: messageId, pagination: pagination)
     }
@@ -575,7 +578,7 @@ public class Chat {
     ///
     /// - Throws: An error while communicating with the Stream API.
     public func markRead() async throws {
-        guard let channel = state.channel else { throw ClientError.ChannelDoesNotExist(cid: cid) }
+        guard let channel = await state.channel else { throw ClientError.ChannelDoesNotExist(cid: cid) }
         try await readStateSender.markRead(channel)
     }
     
@@ -585,7 +588,7 @@ public class Chat {
     ///
     /// - Throws: An error while communicating with the Stream API.
     public func markUnread(from messageId: MessageId) async throws {
-        guard let channel = state.channel else { throw ClientError.ChannelDoesNotExist(cid: cid) }
+        guard let channel = await state.channel else { throw ClientError.ChannelDoesNotExist(cid: cid) }
         try await readStateSender.markUnread(from: messageId, in: channel)
     }
     
@@ -1085,7 +1088,7 @@ public class Chat {
     /// - Throws: An error while communicating with the Stream API.
     /// - Returns: An array of loaded watchers.
     @discardableResult public func loadNextWatchers(limit: Int? = nil) async throws -> [ChatUser] {
-        let count = await state.value(forKeyPath: \.watchers.count)
+        let count = await state.watchers.count
         let pagination = Pagination(pageSize: limit ?? .channelWatchersPageSize, offset: count)
         return try await loadWatchers(with: pagination)
     }
@@ -1096,7 +1099,7 @@ public class Chat {
 @available(iOS 13.0, *)
 extension Chat {
     struct Environment {
-        var chatStateBuilder: (
+        var chatStateBuilder: @MainActor(
             _ cid: ChannelId,
             _ channelQuery: ChannelQuery,
             _ clientConfig: ChatClientConfig,
@@ -1106,7 +1109,19 @@ extension Chat {
             _ database: DatabaseContainer,
             _ eventNotificationCenter: EventNotificationCenter,
             _ paginationStateHandler: MessagesPaginationStateHandling
-        ) -> ChatState = ChatState.init
+        ) -> ChatState = { @MainActor in
+            ChatState(
+                cid: $0,
+                channelQuery: $1,
+                clientConfig: $2,
+                messageOrder: $3,
+                memberListState: $4,
+                authenticationRepository: $5,
+                database: $6,
+                eventNotificationCenter: $7,
+                paginationStateHandler: $8
+            )
+        }
 
         var eventSenderBuilder: (
             _ database: DatabaseContainer,

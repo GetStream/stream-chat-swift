@@ -7,16 +7,15 @@ import Foundation
 
 /// Represents a list of message search results.
 @available(iOS 13.0, *)
-public final class MessageSearchState: ObservableObject {
+@MainActor public final class MessageSearchState: ObservableObject {
     private var cancellables = Set<AnyCancellable>()
     private(set) var nextPageCursor: String?
     private let observer: Observer
-    let explicitFilterHash = UUID().uuidString
     
     init(database: DatabaseContainer) {
         observer = Observer(database: database)
         observer.start(
-            with: .init(messagesDidChange: { [weak self] in await self?.setValue($0, for: \.messages) })
+            with: .init(messagesDidChange: { [weak self] in self?.messages = $0 })
         )
         $query
             .assign(to: \.query, on: observer)
@@ -31,15 +30,7 @@ public final class MessageSearchState: ObservableObject {
     
     // MARK: - Mutating the State
     
-    @MainActor func value<Value>(forKeyPath keyPath: KeyPath<MessageSearchState, Value>) -> Value {
-        self[keyPath: keyPath]
-    }
-    
-    @MainActor func setValue<Value>(_ value: Value, for keyPath: ReferenceWritableKeyPath<MessageSearchState, Value>) {
-        self[keyPath: keyPath] = value
-    }
-    
-    @MainActor func set(query: MessageSearchQuery?, cursor: String?) {
+    func set(query: MessageSearchQuery?, cursor: String?) {
         self.query = query
         nextPageCursor = cursor
     }

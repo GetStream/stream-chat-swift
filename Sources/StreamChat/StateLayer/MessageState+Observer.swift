@@ -42,7 +42,7 @@ extension MessageState {
                 try messageObserver.startObserving(onContextDidChange: { message in
                     guard let message else { return }
                     let changedReactions: [ChatMessageReaction]?
-                    let currentReactions = message.latestReactions.sorted(by: MessageState.reactionsSorting)
+                    let currentReactions = message.latestReactions.sorted(by: ChatMessageReaction.defaultSorting)
                     if lastSortedReactions != currentReactions {
                         lastSortedReactions = currentReactions
                         changedReactions = currentReactions
