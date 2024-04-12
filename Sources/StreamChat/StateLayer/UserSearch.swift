@@ -7,6 +7,7 @@ import Foundation
 /// An object which represents a list of `ChatUser` for the specified search query.
 @available(iOS 13.0, *)
 public class UserSearch {
+    private let stateBuilder: StateBuilder<UserSearchState>
     private let userListUpdater: UserListUpdater
     
     init(client: ChatClient, environment: Environment = .init()) {
@@ -14,11 +15,11 @@ public class UserSearch {
             client.databaseContainer,
             client.apiClient
         )
-        state = UserSearchState()
+        stateBuilder = StateBuilder { UserSearchState() }
     }
     
     /// An observable object representing the current state of the search.
-    public let state: UserSearchState
+    @MainActor public lazy var state: UserSearchState = stateBuilder.build()
     
     /// Searches for users with the specified search term and updates ``UserSearchState/users``.
     ///
@@ -50,9 +51,9 @@ public class UserSearch {
     /// - Throws: An error while communicating with the Stream API.
     /// - Returns: An array of loaded channels.
     @discardableResult public func loadNextUsers(limit: Int? = nil) async throws -> [ChatUser] {
-        guard let query = await state.value(forKeyPath: \.query) else { throw ClientError("Call search() before calling for next page") }
+        guard let query = await state.query else { throw ClientError("Call search() before calling for next page") }
         let limit = (limit ?? query.pagination?.pageSize) ?? .usersPageSize
-        let offset = await state.value(forKeyPath: \.users.count)
+        let offset = await state.users.count
         let pagination = Pagination(pageSize: limit, offset: offset)
         return try await search(query: query, pagination: pagination)
     }

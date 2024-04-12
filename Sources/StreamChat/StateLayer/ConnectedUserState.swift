@@ -7,7 +7,7 @@ import Foundation
 /// Represents a ``CurrentChatUser`` and its state.
 @available(iOS 13.0, *)
 @dynamicMemberLookup
-public final class ConnectedUserState: ObservableObject {
+@MainActor public final class ConnectedUserState: ObservableObject {
     private let observer: Observer
     
     init(user: CurrentChatUser, database: DatabaseContainer) {
@@ -15,7 +15,7 @@ public final class ConnectedUserState: ObservableObject {
         self.user = user
         observer.start(
             with: .init(
-                userDidChange: { [weak self] user in await self?.setValue(user, for: \.user) })
+                userDidChange: { [weak self] in self?.user = $0 })
         )
     }
     
@@ -27,11 +27,5 @@ public final class ConnectedUserState: ObservableObject {
     /// Provides data about the represented user.
     public subscript<T>(dynamicMember keyPath: KeyPath<CurrentChatUser, T>) -> T {
         user[keyPath: keyPath]
-    }
-    
-    // MARK: - Mutating the State
-    
-    @MainActor func setValue<Value>(_ value: Value, for keyPath: ReferenceWritableKeyPath<ConnectedUserState, Value>) {
-        self[keyPath: keyPath] = value
     }
 }
