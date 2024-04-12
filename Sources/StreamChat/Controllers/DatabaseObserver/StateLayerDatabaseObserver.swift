@@ -128,24 +128,13 @@ extension StateLayerDatabaseObserver where ResultType == ListResult {
         itemCreator: @escaping (DTO) throws -> Item,
         sorting: [SortValue<Item>]
     ) -> StreamCollection<Item> {
-        var result = LazyCachedMapCollection<Item>(
+        let collection = LazyCachedMapCollection(
             source: frc.fetchedObjects ?? [],
-            map: { dto in
-                var resultItem: Item!
-                do {
-                    resultItem = try itemCreator(dto)
-                } catch {
-                    log.assertionFailure("Unable to convert a DB entity to model: \(error.localizedDescription)")
-                }
-                return resultItem
-            },
+            itemCreator: itemCreator,
+            sorting: sorting,
             context: context
         )
-        if !sorting.isEmpty {
-            let sorted = Array(result).sort(using: sorting)
-            result = LazyCachedMapCollection(source: sorted, map: { $0 }, context: context)
-        }
-        return StreamCollection(result)
+        return StreamCollection(collection)
     }
 }
 
