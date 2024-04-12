@@ -107,6 +107,45 @@ extension LazyCachedMapCollection: Equatable where Element: Equatable {
     }
 }
 
+extension LazyCachedMapCollection {
+    init<Collection: RandomAccessCollection, SourceElement: NSManagedObject>(
+        source: Collection,
+        itemCreator: @escaping (SourceElement) throws -> Element,
+        sorting: [SortValue<Element>] = [],
+        context: NSManagedObjectContext
+    ) where Collection.Element == SourceElement, Collection.Index == Index {
+        let transformDtoToModel: (SourceElement) -> Element = { dto in
+            var resultItem: Element!
+            do {
+                resultItem = try itemCreator(dto)
+            } catch {
+                log.assertionFailure("Unable to convert a DB entity to model: \(error.localizedDescription)")
+            }
+            return resultItem
+        }
+        // Since post FRC sorting is defined using mapped types, then we are required to map all the elements right now
+        if !sorting.isEmpty {
+            var sortedElements: [Element]!
+            context.performAndWait {
+                sortedElements = source
+                    .map(transformDtoToModel)
+                    .sort(using: sorting)
+            }
+            self.init(
+                source: sortedElements,
+                map: { $0 },
+                context: nil // nil for skipping performAndWait later when accessing elements
+            )
+        } else {
+            self.init(
+                source: source,
+                map: transformDtoToModel,
+                context: context
+            )
+        }
+    }
+}
+
 extension RandomAccessCollection where Index == Int {
     /// Lazily apply transformation to sequence
     public func lazyCachedMap<T>(
