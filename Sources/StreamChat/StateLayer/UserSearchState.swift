@@ -6,42 +6,32 @@ import Foundation
 
 /// Represents a list of user search results.
 @available(iOS 13.0, *)
-public final class UserSearchState: ObservableObject {
+@MainActor public final class UserSearchState: ObservableObject {
     /// The last initiated search query.
     ///
     /// - Note: If searching fails, this property points to the failing query.
-    @Published public private(set) var query: UserListQuery?
+    @Published public internal(set) var query: UserListQuery?
     
     /// An array of search results for the specified query and pagination state.
     @Published public internal(set) var users = StreamCollection<ChatUser>([])
 }
 
-// MARK: - Mutating the State on the Main Actor
-
 @available(iOS 13.0, *)
 extension UserSearchState {
-    @MainActor func value<Value>(forKeyPath keyPath: KeyPath<UserSearchState, Value>) -> Value {
-        self[keyPath: keyPath]
-    }
-    
-    @MainActor private func setValue<Value>(_ value: Value, for keyPath: ReferenceWritableKeyPath<UserSearchState, Value>) {
-        self[keyPath: keyPath] = value
-    }
-    
     /// Updates the query to point to the last query the user started.
     ///
     /// When user is typing and triggers multiple queries, then that last initiated query is used for discarding results from already running queries.
-    @MainActor func setQuery(_ query: UserListQuery) {
+    func setQuery(_ query: UserListQuery) {
         self.query = query
     }
-
+    
     /// Updates the state to include query results if user has not already started a new query.
     ///
     /// * Case 1: User triggered a new search. Then we need to reset the state.
     /// * Case 2: More results are loaded for the same query.
     /// Then we need to merge results while keeping the sort order and handling possible duplicates (example: calling loadNextUsers multiple times).
     func handleDidFetchQuery(_ completedQuery: UserListQuery, users incomingUsers: [ChatUser]) async {
-        if let query = await value(forKeyPath: \.query), query.hasFilterOrSortingChanged(completedQuery) {
+        if let query = self.query, query.hasFilterOrSortingChanged(completedQuery) {
             // Discard since filter or sorting has changed
             return
         }
@@ -56,7 +46,7 @@ extension UserSearchState {
             let sortValues = completedQuery.sort.map(\.sortValue)
             result = StreamCollection((incomingRemovedUsers + incomingUsers).sort(using: sortValues))
         }
-        await setValue(result, for: \.users)
+        self.users = result
     }
 }
 

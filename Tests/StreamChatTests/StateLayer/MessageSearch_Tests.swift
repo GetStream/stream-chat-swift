@@ -38,11 +38,13 @@ final class MessageSearch_Tests: XCTestCase {
         env.client.mockAPIClient.test_mockResponseResult(.success(apiResponse))
         let results = try await messageSearch.search(text: "text")
         XCTAssertEqual(apiResponse.results.map(\.message.id), results.map(\.id))
-        XCTAssertEqual(apiResponse.results.map(\.message.id), messageSearch.state.messages.map(\.id))
-        XCTAssertEqual(messageSearch.state.explicitFilterHash, messageSearch.state.query?.filterHash)
-        XCTAssertEqual([Sorting(key: .createdAt, isAscending: false)], messageSearch.state.query?.sort)
-        XCTAssertEqual(Filter.containMembers(userIds: [currentUserId]), messageSearch.state.query?.channelFilter)
-        XCTAssertEqual(Filter.autocomplete(.text, text: "text"), messageSearch.state.query?.messageFilter)
+        await MainActor.run {
+            XCTAssertEqual(apiResponse.results.map(\.message.id), messageSearch.state.messages.map(\.id))
+            XCTAssertEqual(messageSearch.explicitFilterHash, messageSearch.state.query?.filterHash)
+            XCTAssertEqual([Sorting(key: .createdAt, isAscending: false)], messageSearch.state.query?.sort)
+            XCTAssertEqual(Filter.containMembers(userIds: [currentUserId]), messageSearch.state.query?.channelFilter)
+            XCTAssertEqual(Filter.autocomplete(.text, text: "text"), messageSearch.state.query?.messageFilter)
+        }
     }
     
     func test_searchText_whenTextIsEmpty_thenResultsAndStateAreEmpty() async throws {
@@ -56,9 +58,11 @@ final class MessageSearch_Tests: XCTestCase {
         
         // Next search should clear existing results
         let results = try await messageSearch.search(text: "")
-        XCTAssertEqual(0, results.count)
-        XCTAssertEqual(0, messageSearch.state.messages.count)
-        XCTAssertNil(messageSearch.state.query)
+        await MainActor.run {
+            XCTAssertEqual(0, results.count)
+            XCTAssertEqual(0, messageSearch.state.messages.count)
+            XCTAssertNil(messageSearch.state.query)
+        }
     }
     
     func test_searchText_whenNotLoggedIn_thenSearchingFails() async throws {
@@ -76,15 +80,17 @@ final class MessageSearch_Tests: XCTestCase {
         env.client.mockAuthenticationRepository.mockedCurrentUserId = currentUserId
         env.client.mockAPIClient.test_mockResponseResult(.success(apiResponse))
         try await messageSearch.search(text: "text")
-        XCTAssertEqual(messageSearch.state.nextPageCursor, "A")
+        await XCTAssertEqual(messageSearch.state.nextPageCursor, "A")
         
         let apiResponse2 = makeMatchingResponse(messageCount: 25, createdAtOffset: 25, next: "B")
         env.client.mockAPIClient.test_mockResponseResult(.success(apiResponse2))
         let nextMessagesResult = try await messageSearch.loadNextMessages()
-        XCTAssertEqual(messageSearch.state.nextPageCursor, "B")
-        XCTAssertEqual(apiResponse2.results.map(\.message.id), nextMessagesResult.map(\.id))
-        let expected = apiResponse2.results + apiResponse.results
-        XCTAssertEqual(expected.map(\.message.id), messageSearch.state.messages.map(\.id))
+        await MainActor.run {
+            XCTAssertEqual(messageSearch.state.nextPageCursor, "B")
+            XCTAssertEqual(apiResponse2.results.map(\.message.id), nextMessagesResult.map(\.id))
+            let expected = apiResponse2.results + apiResponse.results
+            XCTAssertEqual(expected.map(\.message.id), messageSearch.state.messages.map(\.id))
+        }
     }
     
     // MARK: - Test Data
