@@ -23,9 +23,9 @@ extension ConnectedUserState {
         
         func start(with handlers: Handlers) {
             do {
-                try userObserver.startObserving(didChange: { user in
+                try userObserver.startObserving(onContextDidChange: { user in
                     guard let user else { return }
-                    await handlers.userDidChange(user)
+                    Task.mainActor { await handlers.userDidChange(user) }
                 })
             } catch {
                 log.error("Failed to start the current user observer")

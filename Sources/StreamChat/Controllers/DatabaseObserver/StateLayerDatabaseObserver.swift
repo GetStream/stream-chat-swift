@@ -60,16 +60,23 @@ extension StateLayerDatabaseObserver where ResultType == EntityResult {
         return item
     }
     
+    /// Starts observing the database and dispatches changes on the MainActor.
+    ///
+    /// - Important: Does not send the initial value, use the ``item`` for setting the initial value.
     func startObserving(didChange: @escaping (Item?) async -> Void) throws {
-        try startObserving(didChange: { item in Task(priority: .high) { await didChange(item) } })
+        try startObserving(onContextDidChange: { item in Task.mainActor { await didChange(item) } })
     }
     
-    func startObserving(didChange: @escaping (Item?) -> Void) throws {
+    /// Starts observing the database and dispatches changes on the NSManagedObjectContext's queue.
+    ///
+    /// - Note: Use it if we need to do additional processing on the context's queue.
+    /// - Important: Does not send the initial value, use the ``item`` for setting the initial value.
+    func startObserving(onContextDidChange: @escaping (Item?) -> Void) throws {
         resultsDelegate = FetchedResultsDelegate(onDidChange: { [weak self] in
             guard let self else { return }
             // Runs on the NSManagedObjectContext's queue, therefore skip performAndWait
             let item = Self.makeEntity(frc: self.frc, context: self.context, itemCreator: self.itemCreator, sorting: self.sorting)
-            didChange(item)
+            onContextDidChange(item)
         })
         frc.delegate = resultsDelegate
         try frc.performFetch()
@@ -107,16 +114,23 @@ extension StateLayerDatabaseObserver where ResultType == ListResult {
         return collection
     }
     
+    /// Starts observing the database and dispatches changes on the MainActor.
+    ///
+    /// - Important: Does not send the initial value, use the ``item`` for setting the initial value.
     func startObserving(didChange: @escaping (StreamCollection<Item>) async -> Void) throws {
-        try startObserving(didChange: { items in Task(priority: .high) { await didChange(items) } })
+        try startObserving(onContextDidChange: { items in Task.mainActor { await didChange(items) } })
     }
     
-    func startObserving(didChange: @escaping (StreamCollection<Item>) -> Void) throws {
+    /// Starts observing the database and dispatches changes on the NSManagedObjectContext's queue.
+    ///
+    /// - Note: Use it if we need to do additional processing on the context's queue.
+    /// - Important: Does not send the initial value, use the ``item`` for setting the initial value.
+    func startObserving(onContextDidChange: @escaping (StreamCollection<Item>) -> Void) throws {
         resultsDelegate = FetchedResultsDelegate(onDidChange: { [weak self] in
             guard let self else { return }
             // Runs on the NSManagedObjectContext's queue, therefore skip performAndWait
             let collection = Self.makeCollection(frc: self.frc, context: self.context, itemCreator: self.itemCreator, sorting: self.sorting)
-            didChange(collection)
+            onContextDidChange(collection)
         })
         frc.delegate = resultsDelegate
         try frc.performFetch()
