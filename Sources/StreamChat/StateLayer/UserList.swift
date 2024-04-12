@@ -7,23 +7,22 @@ import Foundation
 /// An object which represents a list of `ChatUser`.
 @available(iOS 13.0, *)
 public final class UserList {
+    private let stateBuilder: StateBuilder<UserListState>
     private let userListUpdater: UserListUpdater
     
-    /// The query specifying and filtering the list of users.
-    public let query: UserListQuery
-    
     init(users: [ChatUser], query: UserListQuery, userListUpdater: UserListUpdater, client: ChatClient, environment: Environment = .init()) {
-        self.query = query
         self.userListUpdater = userListUpdater
-        state = environment.stateBuilder(
-            users,
-            query,
-            client.databaseContainer
-        )
+        stateBuilder = StateBuilder {
+            environment.stateBuilder(
+                users,
+                query,
+                client.databaseContainer
+            )
+        }
     }
     
     /// An observable object representing the current state of the users list.
-    public let state: UserListState
+    @MainActor public lazy var state: UserListState = stateBuilder.build()
     
     // MARK: - User List Pagination
     
@@ -34,7 +33,7 @@ public final class UserList {
     /// - Throws: An error while communicating with the Stream API.
     /// - Returns: An array of users for the pagination.
     @discardableResult public func loadUsers(with pagination: Pagination) async throws -> [ChatUser] {
-        try await userListUpdater.loadUsers(query, pagination: pagination)
+        try await userListUpdater.loadUsers(state.query, pagination: pagination)
     }
     
     /// Loads more users and updates ``UserListState/users``.
@@ -45,19 +44,22 @@ public final class UserList {
     /// - Throws: An error while communicating with the Stream API.
     /// - Returns: An array of loaded channels.
     @discardableResult public func loadNextUsers(limit: Int? = nil) async throws -> [ChatUser] {
-        let limit = (limit ?? query.pagination?.pageSize) ?? Int.usersPageSize
-        let offset = state.users.count
-        return try await userListUpdater.loadNextUsers(query, limit: limit, offset: offset)
+        let state = await self.state
+        let limit = (limit ?? state.query.pagination?.pageSize) ?? Int.usersPageSize
+        let offset = await state.users.count
+        return try await userListUpdater.loadNextUsers(state.query, limit: limit, offset: offset)
     }
 }
 
 @available(iOS 13.0, *)
 extension UserList {
     struct Environment {
-        var stateBuilder: (
+        var stateBuilder: @MainActor(
             _ users: [ChatUser],
             _ query: UserListQuery,
             _ database: DatabaseContainer
-        ) -> UserListState = UserListState.init
+        ) -> UserListState = { @MainActor users, query, database in
+            UserListState(users: users, query: query, database: database)
+        }
     }
 }

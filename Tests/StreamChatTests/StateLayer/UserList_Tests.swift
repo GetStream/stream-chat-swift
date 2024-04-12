@@ -33,7 +33,7 @@ final class UserList_Tests: XCTestCase {
             session.saveUsers(payload: initialPayload, query: self.query)
         }
         setUpUserList(usesMockedUpdater: false)
-        XCTAssertEqual(initialPayload.users.map(\.id), userList.state.users.map(\.id))
+        await XCTAssertEqual(initialPayload.users.map(\.id), userList.state.users.map(\.id))
     }
 
     func test_loadUsers_whenAPIRequestSucceeds_thenResultsAreReturnedAndStateUpdates() async throws {
@@ -44,7 +44,7 @@ final class UserList_Tests: XCTestCase {
         let pagination = Pagination(pageSize: 10)
         let result = try await userList.loadUsers(with: pagination)
         XCTAssertEqual(apiResult.users.map(\.id), result.map(\.id))
-        XCTAssertEqual(apiResult.users.map(\.id), userList.state.users.map(\.id))
+        await XCTAssertEqual(apiResult.users.map(\.id), userList.state.users.map(\.id))
     }
     
     func test_loadNextUsers_whenAPIRequestSucceeds_thenResultsAreReturnedAndStateUpdates() async throws {
@@ -60,7 +60,7 @@ final class UserList_Tests: XCTestCase {
         let result = try await userList.loadNextUsers(limit: 3)
         XCTAssertEqual(apiResult.users.map(\.id), result.map(\.id))
         let allExpectedIds = (initialPayload.users + apiResult.users).map(\.id)
-        XCTAssertEqual(allExpectedIds, userList.state.users.map(\.id))
+        await XCTAssertEqual(allExpectedIds, userList.state.users.map(\.id))
     }
 
     // MARK: - Test Data
