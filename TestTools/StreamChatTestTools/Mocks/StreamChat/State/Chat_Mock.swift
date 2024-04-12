@@ -82,13 +82,13 @@ public class Chat_Mock: Chat {
 @available(iOS 13.0, *)
 public extension Chat_Mock {
     /// Simulates the initial conditions. Setting these values doesn't trigger any observer callback.
-    func simulateInitial(channel: ChatChannel, messages: [ChatMessage]) {
+    @MainActor func simulateInitial(channel: ChatChannel, messages: [ChatMessage]) {
         self.state.channel = channel
         self.state.messages = StreamCollection(messages)
     }
 
     /// Simulates a change of the `channel` value. Observers are notified with the provided `change` value.
-    func simulate(
+    @MainActor func simulate(
         channel: ChatChannel?,
         change: EntityChange<ChatChannel>
     ) {
@@ -96,7 +96,7 @@ public extension Chat_Mock {
     }
 
     /// Simulates changes in the `messages` array. Observers are notified with the provided `changes` value.
-    func simulate(messages: [ChatMessage], changes: [ListChange<ChatMessage>]) {
+    @MainActor func simulate(messages: [ChatMessage], changes: [ListChange<ChatMessage>]) {
         var newMessages = messages
         for message in state.messages {
             newMessages.append(message)
