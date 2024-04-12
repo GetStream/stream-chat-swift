@@ -61,14 +61,9 @@ public class UserSearch {
     
     private func search(query: UserListQuery, pagination: Pagination) async throws -> [ChatUser] {
         let query = query.withPagination(pagination)
-        let task = Task {
-            let users = try await userListUpdater.fetch(userListQuery: query, pagination: pagination)
-            try Task.checkCancellation()
-            return users
-        }
-        await state.setActiveTask(task, query: query)
-        let users = try await task.value
-        await state.setUsers(users, for: query, pagination: pagination)
+        await state.setQuery(query)
+        let users = try await userListUpdater.fetch(userListQuery: query, pagination: pagination)
+        await state.handleDidFetchQuery(query, users: users)
         return users
     }
 }
