@@ -7,10 +7,8 @@ import Foundation
 /// An object which represents a list of `ChatChannel`.
 @available(iOS 13.0, *)
 public class ChannelList {
-    /// The query specifying and filtering the list of channels.
-    public let query: ChannelListQuery
-    
     private let channelListUpdater: ChannelListUpdater
+    private let stateBuilder: StateBuilder<ChannelListState>
     
     init(
         initialChannels: [ChatChannel],
@@ -22,19 +20,24 @@ public class ChannelList {
     ) {
         self.channelListUpdater = channelListUpdater
         self.query = query
-        state = environment.stateBuilder(
-            initialChannels,
-            query,
-            dynamicFilter,
-            client.config,
-            channelListUpdater,
-            client.databaseContainer,
-            client.eventNotificationCenter
-        )
+        stateBuilder = StateBuilder {
+            environment.stateBuilder(
+                initialChannels,
+                query,
+                dynamicFilter,
+                client.config,
+                channelListUpdater,
+                client.databaseContainer,
+                client.eventNotificationCenter
+            )
+        }
     }
     
+    /// The query specifying and filtering the list of channels.
+    public let query: ChannelListQuery
+    
     /// An observable object representing the current state of the channel list.
-    public let state: ChannelListState
+    @MainActor public lazy var state: ChannelListState = stateBuilder.build()
     
     // MARK: - Channel List Pagination
     
@@ -57,7 +60,7 @@ public class ChannelList {
     /// - Returns: An array of loaded channels.
     @discardableResult public func loadNextChannels(limit: Int? = nil) async throws -> [ChatChannel] {
         let limit = limit ?? query.pagination.pageSize
-        let count = await state.value(forKeyPath: \.channels.count)
+        let count = await state.channels.count
         return try await channelListUpdater.loadNextChannels(query: query, limit: limit, loadedChannelsCount: count)
     }
 }
@@ -65,7 +68,7 @@ public class ChannelList {
 @available(iOS 13.0, *)
 extension ChannelList {
     struct Environment {
-        var stateBuilder: (
+        var stateBuilder: @MainActor(
             _ initialChannels: [ChatChannel],
             _ query: ChannelListQuery,
             _ dynamicFilter: ((ChatChannel) -> Bool)?,
@@ -73,6 +76,16 @@ extension ChannelList {
             _ channelListUpdater: ChannelListUpdater,
             _ database: DatabaseContainer,
             _ eventNotificationCenter: EventNotificationCenter
-        ) -> ChannelListState = ChannelListState.init
+        ) -> ChannelListState = { @MainActor in
+            ChannelListState(
+                initialChannels: $0,
+                query: $1,
+                dynamicFilter: $2,
+                clientConfig: $3,
+                channelListUpdater: $4,
+                database: $5,
+                eventNotificationCenter: $6
+            )
+        }
     }
 }

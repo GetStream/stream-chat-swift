@@ -9,6 +9,7 @@ import Foundation
 public final class MemberList {
     private let query: ChannelMemberListQuery
     private let memberListUpdater: ChannelMemberListUpdater
+    private let stateBuilder: StateBuilder<MemberListState>
     
     init(query: ChannelMemberListQuery, client: ChatClient, environment: Environment = .init()) {
         self.query = query
@@ -16,15 +17,17 @@ public final class MemberList {
             client.databaseContainer,
             client.apiClient
         )
-        state = environment.stateBuilder(
-            [],
-            query,
-            client.databaseContainer
-        )
+        stateBuilder = StateBuilder {
+            environment.stateBuilder(
+                [],
+                query,
+                client.databaseContainer
+            )
+        }
     }
     
     /// An observable object representing the current state of the member list.
-    public let state: MemberListState
+    @MainActor public lazy var state: MemberListState = stateBuilder.build()
     
     /// Loads channel members for the specified pagination parameters and updates ``MemberListState/members``.
     ///
@@ -45,7 +48,7 @@ public final class MemberList {
     /// - Returns: An array of channel members.
     @discardableResult public func loadNextMembers(limit: Int? = nil) async throws -> [ChatChannelMember] {
         let pageSize = limit ?? Int.channelMembersPageSize
-        let pagination = Pagination(pageSize: pageSize, offset: state.members.count)
+        let pagination = Pagination(pageSize: pageSize, offset: await state.members.count)
         return try await loadMembers(with: pagination)
     }
 }
@@ -58,11 +61,13 @@ extension MemberList {
             _ apiClient: APIClient
         ) -> ChannelMemberListUpdater = ChannelMemberListUpdater.init
         
-        var stateBuilder: (
-            _ members: [ChatChannelMember],
+        var stateBuilder: @MainActor(
+            _ initialMembers: [ChatChannelMember],
             _ query: ChannelMemberListQuery,
             _ database: DatabaseContainer
-        ) -> MemberListState = MemberListState.init
+        ) -> MemberListState = { @MainActor in
+            MemberListState(initialMembers: $0, query: $1, database: $2)
+        }
     }
 }
 
