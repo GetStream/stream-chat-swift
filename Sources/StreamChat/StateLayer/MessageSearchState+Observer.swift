@@ -35,7 +35,7 @@ extension MessageSearchState {
             }
         }
         
-        private func reset(to query: MessageSearchQuery?) {
+        func reset(to query: MessageSearchQuery?) {
             guard let handlers else { return }
             if let query {
                 messagesObserver = StateLayerDatabaseObserver(

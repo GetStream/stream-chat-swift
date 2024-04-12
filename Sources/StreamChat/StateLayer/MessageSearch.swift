@@ -9,6 +9,8 @@ import Foundation
 public class MessageSearch {
     private let authenticationRepository: AuthenticationRepository
     private let messageUpdater: MessageUpdater
+    private let stateBuilder: StateBuilder<MessageSearchState>
+    let explicitFilterHash = UUID().uuidString
     
     init(client: ChatClient, environment: Environment = .init()) {
         authenticationRepository = client.authenticationRepository
@@ -18,11 +20,11 @@ public class MessageSearch {
             client.databaseContainer,
             client.apiClient
         )
-        state = environment.stateBuilder(client.databaseContainer)
+        stateBuilder = StateBuilder { environment.stateBuilder(client.databaseContainer) }
     }
     
     /// An observable object representing the current state of the search.
-    public let state: MessageSearchState
+    @MainActor public lazy var state: MessageSearchState = stateBuilder.build()
     
     /// Searches for messages with the specified full text search text and updates ``MessageSearchState/messages``.
     ///
@@ -32,7 +34,7 @@ public class MessageSearch {
     /// - Returns: An array of paginated chat messages matching to the search term.
     @discardableResult public func search(text: String) async throws -> [ChatMessage] {
         // Clear results when there is no text
-        if text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty, let query = state.query {
+        if text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty, let query = await state.query {
             try await messageUpdater.clearSearchResults(for: query)
             await state.set(query: nil, cursor: nil)
             return []
@@ -55,7 +57,7 @@ public class MessageSearch {
     /// - Returns: An array of paginated chat messages matching to the query.
     @discardableResult public func search(query: MessageSearchQuery) async throws -> [ChatMessage] {
         var query = query
-        query.filterHash = state.explicitFilterHash
+        query.filterHash = explicitFilterHash
         let result = try await messageUpdater.search(query: query, policy: .replace)
         await state.set(query: query, cursor: result.payload.next)
         return result.models
@@ -68,13 +70,13 @@ public class MessageSearch {
     /// - Throws: An error while communicating with the Stream API.
     /// - Returns: A next page of chat messages matching to the last query.
     @discardableResult public func loadNextMessages(limit: Int? = nil) async throws -> [ChatMessage] {
-        guard let query = state.query else { throw ClientError("Call search() before calling for next page") }
+        guard let query = await state.query else { throw ClientError("Call search() before calling for next page") }
         let limit = (limit ?? query.pagination?.pageSize) ?? Int.messagesPageSize
         let pagination: Pagination = await {
-            if !query.sort.isEmpty, let nextPageCursor = await state.value(forKeyPath: \.nextPageCursor) {
+            if !query.sort.isEmpty, let nextPageCursor = await state.nextPageCursor {
                 return Pagination(pageSize: limit, cursor: nextPageCursor)
             } else {
-                return Pagination(pageSize: limit, offset: await state.value(forKeyPath: \.messages.count))
+                return Pagination(pageSize: limit, offset: await state.messages.count)
             }
         }()
         let result = try await messageUpdater.search(query: query.withPagination(pagination), policy: .merge)
@@ -100,9 +102,11 @@ extension MessageSearch {
             _ apiClient: APIClient
         ) -> MessageUpdater = MessageUpdater.init
         
-        var stateBuilder: (
+        var stateBuilder: @MainActor(
             _ database: DatabaseContainer
-        ) -> MessageSearchState = MessageSearchState.init
+        ) -> MessageSearchState = { @MainActor in
+            MessageSearchState(database: $0)
+        }
     }
 }
 
