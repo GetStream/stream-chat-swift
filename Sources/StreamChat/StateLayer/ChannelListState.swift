@@ -6,9 +6,9 @@ import Foundation
 
 /// Represents a list of channels matching to the specified query.
 @available(iOS 13.0, *)
-public final class ChannelListState: ObservableObject {
+@MainActor public final class ChannelListState: ObservableObject {
     private let observer: Observer
-    let query: ChannelListQuery
+    private let query: ChannelListQuery
     
     init(
         initialChannels: [ChatChannel],
@@ -19,8 +19,8 @@ public final class ChannelListState: ObservableObject {
         database: DatabaseContainer,
         eventNotificationCenter: EventNotificationCenter
     ) {
-        channels = StreamCollection<ChatChannel>(initialChannels)
         self.query = query
+        channels = StreamCollection<ChatChannel>(initialChannels)
         observer = Observer(
             query: query,
             dynamicFilter: dynamicFilter,
@@ -30,9 +30,7 @@ public final class ChannelListState: ObservableObject {
             eventNotificationCenter: eventNotificationCenter
         )
         observer.start(
-            with: .init(channelsDidChange: { [weak self] channels in
-                await self?.handleChannelsDidChange(channels)
-            })
+            with: .init(channelsDidChange: { [weak self] in self?.channels = $0 })
         )
         if initialChannels.isEmpty {
             channels = observer.channelListObserver.items
@@ -41,14 +39,4 @@ public final class ChannelListState: ObservableObject {
     
     /// An array of channels for the specified ``ChannelListQuery``.
     @Published public internal(set) var channels = StreamCollection<ChatChannel>([])
-    
-    // MARK: - Mutating the State
-    
-    @MainActor func value<Value>(forKeyPath keyPath: KeyPath<ChannelListState, Value>) -> Value {
-        self[keyPath: keyPath]
-    }
-    
-    @MainActor private func handleChannelsDidChange(_ channels: StreamCollection<ChatChannel>) {
-        self.channels = channels
-    }
 }

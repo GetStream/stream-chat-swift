@@ -36,7 +36,7 @@ final class ChannelList_Tests: XCTestCase {
             session.saveChannelList(payload: channelListPayload, query: self.channelList.query)
         }
         setUpChannelList(usesMockedChannelUpdater: true)
-        XCTAssertEqual(channelListPayload.channels.map(\.channel.cid.rawValue), channelList.state.channels.map(\.cid.rawValue))
+        XCTAssertEqual(channelListPayload.channels.map(\.channel.cid.rawValue), await channelList.state.channels.map(\.cid.rawValue))
     }
     
     func test_restoringState_whenDatabaseHasEntriesWhichShouldBeIgnored_thenStateOnlyIncludesQueryMatchingResults() async throws {
@@ -52,7 +52,7 @@ final class ChannelList_Tests: XCTestCase {
             try session.saveChannel(payload: self.dummyPayload(with: .unique))
         }
         setUpChannelList(usesMockedChannelUpdater: true)
-        XCTAssertEqual(matchingChannelListPayload.channels.map(\.channel.cid.rawValue), channelList.state.channels.map(\.cid.rawValue))
+        XCTAssertEqual(matchingChannelListPayload.channels.map(\.channel.cid.rawValue), await channelList.state.channels.map(\.cid.rawValue))
     }
     
     // MARK: - Pagination and Channel Updater Arguments
@@ -109,7 +109,7 @@ final class ChannelList_Tests: XCTestCase {
         let pagination = Pagination(pageSize: pageSize, offset: 0)
         let result = try await channelList.loadChannels(with: pagination)
         XCTAssertEqual(channelListPayload.channels.map(\.channel.cid.rawValue), result.map(\.cid.rawValue))
-        XCTAssertEqual(channelListPayload.channels.map(\.channel.cid.rawValue), channelList.state.channels.map(\.cid.rawValue))
+        XCTAssertEqual(channelListPayload.channels.map(\.channel.cid.rawValue), await channelList.state.channels.map(\.cid.rawValue))
     }
     
     func test_loadNextChannels_whenAPIRequestSucceeds_thenStateUpdates() async throws {
@@ -127,7 +127,7 @@ final class ChannelList_Tests: XCTestCase {
         XCTAssertEqual(nextChannelListPayload.channels.map(\.channel.cid), result.map(\.cid))
         // State should contain both the existing and next channels
         let expectedChannels = existingChannelListPayload.channels + nextChannelListPayload.channels
-        XCTAssertEqual(expectedChannels.map(\.channel.cid.rawValue), channelList.state.channels.map(\.cid.rawValue))
+        XCTAssertEqual(expectedChannels.map(\.channel.cid.rawValue), await channelList.state.channels.map(\.cid.rawValue))
     }
     
     // MARK: - Observing the Core Data Store
@@ -135,7 +135,7 @@ final class ChannelList_Tests: XCTestCase {
     func test_observingLocalStore_whenStoreChanges_thenStateChanges() async throws {
         let expectation = XCTestExpectation(description: "State changed")
         let incomingChannelListPayload = makeMatchingChannelListPayload(channelCount: 2, createdAtOffset: 0)
-        let cancellable = channelList.state.$channels
+        let cancellable = await channelList.state.$channels
             .dropFirst() // ignore initial
             .sink { channels in
                 XCTAssertEqual(incomingChannelListPayload.channels.map(\.channel.cid.rawValue), channels.map(\.cid.rawValue))
@@ -178,7 +178,7 @@ final class ChannelList_Tests: XCTestCase {
         }
         
         let stateExpectation = XCTestExpectation(description: "State changed")
-        let cancellable = channelList.state.$channels
+        let cancellable = await channelList.state.$channels
             .dropFirst() // ignore initial
             .sink { channels in
                 let expectedCids = existingChannelListPayload.channels.map(\.channel.cid.rawValue) + CollectionOfOne(incomingCid.rawValue)
@@ -208,7 +208,7 @@ final class ChannelList_Tests: XCTestCase {
             session.saveChannelList(payload: existingChannelListPayload, query: self.channelList.query)
         }
         // Ensure that the channel is in the state
-        XCTAssertEqual(existingChannelListPayload.channels.map(\.channel.cid.rawValue), channelList.state.channels.map(\.cid.rawValue))
+        XCTAssertEqual(existingChannelListPayload.channels.map(\.channel.cid.rawValue), await channelList.state.channels.map(\.cid.rawValue))
         
         let event = ChannelUpdatedEvent(
             channel: .mock(cid: existingCid, memberCount: 4),
@@ -224,7 +224,7 @@ final class ChannelList_Tests: XCTestCase {
         wait(for: [eventExpectation], timeout: defaultTimeout)
         #endif
         // Ensure the unlinking removed it from the state
-        XCTAssertEqual([], channelList.state.channels.map(\.cid))
+        await XCTAssertEqual([], channelList.state.channels.map(\.cid))
     }
     
     // MARK: - Test Data
