@@ -230,37 +230,6 @@ final class Chat_Tests: XCTestCase {
         XCTAssertEqual(false, chat.state.isLoadingNextMessages)
     }
     
-    // MARK: -
-    
-    /// Configures chat for testing.
-    ///
-    /// - Parameter usesMockedChannelUpdater: Set it for false for tests which need to update the local DB and simulate API requests.
-    private func setUpChat(usesMockedChannelUpdater: Bool) {
-        chat = Chat(
-            cid: channelId,
-            channelQuery: ChannelQuery(cid: channelId),
-            channelListQuery: nil,
-            messageOrdering: .bottomToTop,
-            memberSorting: [Sorting(key: .createdAt)],
-            channelUpdater: usesMockedChannelUpdater ? env.channelUpdaterMock : env.channelUpdater,
-            client: env.client,
-            environment: env.chatEnvironment
-        )
-    }
-    
-    private func makeChannelPayload(messageCount: Int, createdAtOffset: Int) -> ChannelPayload {
-        // Note that message pagination relies on createdAt and cid
-        let messages: [MessagePayload] = (0..<messageCount)
-            .map {
-                .dummy(
-                    messageId: "\($0 + createdAtOffset)",
-                    createdAt: Date(timeIntervalSinceReferenceDate: TimeInterval($0 + createdAtOffset)),
-                    cid: chat.cid
-                )
-            }
-        return ChannelPayload.dummy(channel: .dummy(cid: chat.cid), messages: messages)
-    }
-    
     // MARK: - Members
     
     func test_addMembers_whenAPIRequestSucceeds_thenAddMembersSucceeds() async throws {
@@ -1351,6 +1320,37 @@ final class Chat_Tests: XCTestCase {
     // TODO: not done
     public func test_loadNextWatchersAction_whenAPIRequestFails_thenLoadNextWatchersActionSucceeds() async throws {
         // loadNextWatchers(limit: Int? = nil)
+    }
+    
+    // MARK: - Test Data
+    
+    /// Configures chat for testing.
+    ///
+    /// - Parameter usesMockedChannelUpdater: Set it for false for tests which need to update the local DB and simulate API requests.
+    private func setUpChat(usesMockedChannelUpdater: Bool) {
+        chat = Chat(
+            cid: channelId,
+            channelQuery: ChannelQuery(cid: channelId),
+            channelListQuery: nil,
+            messageOrdering: .bottomToTop,
+            memberSorting: [Sorting(key: .createdAt)],
+            channelUpdater: usesMockedChannelUpdater ? env.channelUpdaterMock : env.channelUpdater,
+            client: env.client,
+            environment: env.chatEnvironment
+        )
+    }
+    
+    private func makeChannelPayload(messageCount: Int, createdAtOffset: Int) -> ChannelPayload {
+        // Note that message pagination relies on createdAt and cid
+        let messages: [MessagePayload] = (0..<messageCount)
+            .map {
+                .dummy(
+                    messageId: "\($0 + createdAtOffset)",
+                    createdAt: Date(timeIntervalSinceReferenceDate: TimeInterval($0 + createdAtOffset)),
+                    cid: chat.cid
+                )
+            }
+        return ChannelPayload.dummy(channel: .dummy(cid: chat.cid), messages: messages)
     }
 }
 
