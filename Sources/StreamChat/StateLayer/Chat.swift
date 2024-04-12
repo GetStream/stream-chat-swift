@@ -740,7 +740,6 @@ public class Chat {
             let message = try await messageUpdater.getMessage(cid: cid, messageId: messageId)
             let state = MessageState(
                 message: message,
-                chat: self,
                 messageOrder: state.messageOrder,
                 database: databaseContainer,
                 clientConfig: client.config,
