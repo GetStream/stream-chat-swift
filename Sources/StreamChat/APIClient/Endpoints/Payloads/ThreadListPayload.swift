@@ -46,7 +46,7 @@ struct ThreadPayload: Decodable {
     let createdBy: UserPayload
     let replyCount: Int
     let participantCount: Int
-    let threadParticipants: [ThreadParticipant]
+    let threadParticipants: [ThreadParticipantPayload]
     let lastMessageAt: Date?
     let createdAt: Date
     let updatedAt: Date?
@@ -64,7 +64,7 @@ struct ThreadPayload: Decodable {
         replyCount = try container.decode(Int.self, forKey: .replyCount)
         participantCount = try container.decode(Int.self, forKey: .participantCount)
         threadParticipants = try container.decode(
-            [ThreadParticipant].self,
+            [ThreadParticipantPayload].self,
             forKey: .threadParticipants
         )
         lastMessageAt = try container.decodeIfPresent(Date.self, forKey: .lastMessageAt)
@@ -76,7 +76,7 @@ struct ThreadPayload: Decodable {
     }
 }
 
-struct ThreadParticipant: Decodable {
+struct ThreadParticipantPayload: Decodable {
     enum CodingKeys: String, CodingKey {
         case user
         case threadId = "thread_id"
@@ -98,6 +98,6 @@ struct ThreadReadPayload: Decodable {
     }
 
     let user: UserPayload
-    let lastReadAt: Date
+    let lastReadAt: Date?
     let unreadMessagesCount: Int
 }
