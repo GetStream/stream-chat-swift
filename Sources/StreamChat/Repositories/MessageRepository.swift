@@ -264,7 +264,7 @@ class MessageRepository {
 extension MessageRepository {
     /// Fetches messages from the database with a date range.
     func messages(from fromDate: Date, to toDate: Date, in cid: ChannelId) async throws -> [ChatMessage] {
-        try await database.backgroundRead { context in
+        try await database.read { context in
             try MessageDTO.loadMessages(
                 from: fromDate,
                 to: toDate,
@@ -280,7 +280,7 @@ extension MessageRepository {
     
     /// Fetches a message id before the specified message when sorting by the creation date in the local database.
     func message(before id: MessageId, in cid: ChannelId) async throws -> MessageId? {
-        try await database.backgroundRead { context in
+        try await database.read { context in
             let deletedMessagesVisibility = context.deletedMessagesVisibility ?? .alwaysVisible
             let shouldShowShadowedMessages = context.shouldShowShadowedMessages ?? true
             return try MessageDTO.loadMessage(
@@ -295,7 +295,7 @@ extension MessageRepository {
     
     /// Fetches replies from the database with a date range.
     func replies(from fromDate: Date, to toDate: Date, in message: MessageId) async throws -> [ChatMessage] {
-        try await database.backgroundRead { context in
+        try await database.read { context in
             try MessageDTO.loadReplies(
                 from: fromDate,
                 to: toDate,
