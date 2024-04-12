@@ -7,30 +7,36 @@ import Foundation
 /// Represents a ``ChatMessage`` and its state.
 @available(iOS 13.0, *)
 public final class MessageState: ObservableObject {
-    private let chat: Chat
     private let messageOrder: MessageOrdering
     private let observer: Observer
 
     let replyPaginationHandler: MessagesPaginationStateHandling
     
-    init(message: ChatMessage, chat: Chat, messageOrder: MessageOrdering, database: DatabaseContainer, clientConfig: ChatClientConfig, replyPaginationHandler: MessagesPaginationStateHandling) {
-        self.chat = chat
+    init(
+        message: ChatMessage,
+        messageOrder: MessageOrdering,
+        database: DatabaseContainer,
+        clientConfig: ChatClientConfig,
+        replyPaginationHandler: MessagesPaginationStateHandling
+    ) {
         self.message = message
         self.messageOrder = messageOrder
         self.replyPaginationHandler = replyPaginationHandler
-        observer = Observer(messageId: message.id, messageOrder: messageOrder, database: database, clientConfig: clientConfig)
+        observer = Observer(
+            messageId: message.id,
+            messageOrder: messageOrder,
+            database: database,
+            clientConfig: clientConfig
+        )
         observer.start(
             with: .init(
-                messageDidChange: { [weak self] in await self?.setValue($0, for: \.message) },
-                reactionsDidChange: { [weak self] in await self?.setValue($0, for: \.reactions) },
+                messageDidChange: { [weak self] in await self?.handleMessageDidChange($0, changedReactions: $1) },
                 repliesDidChange: { [weak self] in await self?.setValue($0, for: \.replies) }
             )
         )
-        reactions = message.latestReactions.sorted(by: { $0.updatedAt > $1.updatedAt })
+        reactions = message.latestReactions.sorted(by: MessageState.reactionsSorting)
         replies = observer.repliesObserver.items
     }
-    
-    var messageId: MessageId { message.id }
     
     var replyPaginationState: MessagesPaginationState {
         replyPaginationHandler.state
@@ -88,5 +94,19 @@ public final class MessageState: ObservableObject {
     // Force mutations on main actor since ChatState is meant to be used by UI.
     @MainActor func setValue<Value>(_ value: Value, for keyPath: ReferenceWritableKeyPath<MessageState, Value>) {
         self[keyPath: keyPath] = value
+    }
+    
+    @MainActor func handleMessageDidChange(_ message: ChatMessage, changedReactions: [ChatMessageReaction]?) {
+        if let changedReactions {
+            reactions = changedReactions
+        }
+        self.message = message
+    }
+}
+
+@available(iOS 13.0, *)
+extension MessageState {
+    static func reactionsSorting(_ first: ChatMessageReaction, _ second: ChatMessageReaction) -> Bool {
+        first.updatedAt > second.updatedAt
     }
 }

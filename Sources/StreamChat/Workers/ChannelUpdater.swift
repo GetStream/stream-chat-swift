@@ -732,7 +732,7 @@ extension ChannelUpdater {
             }
         }
         guard let ids = payload.watchers?.map(\.id) else { return [] }
-        return try await database.backgroundRead { context in
+        return try await database.read { context in
             try ids.compactMap { try UserDTO.load(id: $0, context: context)?.asModel() }
         }
     }

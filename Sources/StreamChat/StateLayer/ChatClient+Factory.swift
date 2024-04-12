@@ -12,7 +12,7 @@ extension ChatClient {
     ///
     /// - Throws: An error if no user is currently logged-in.
     public func makeConnectedUser() async throws -> ConnectedUser {
-        let user = try await databaseContainer.backgroundRead { try CurrentUserDTO.load(context: $0) }
+        let user = try await databaseContainer.read { try CurrentUserDTO.load(context: $0) }
         return ConnectedUser(user: user, client: self)
     }
 }
