@@ -6,26 +6,24 @@ import Foundation
 
 /// Represents a list of users matching to the specified query.
 @available(iOS 13.0, *)
-public final class UserListState: ObservableObject {
+@MainActor public final class UserListState: ObservableObject {
     private let observer: Observer
     
     init(users: [ChatUser], query: UserListQuery, database: DatabaseContainer) {
         observer = Observer(query: query, database: database)
+        self.query = query
         self.users = StreamCollection(users)
         observer.start(
-            with: .init(usersDidChange: { [weak self] change in await self?.setValue(change, for: \.users) })
+            with: .init(usersDidChange: { [weak self] in self?.users = $0 })
         )
         if users.isEmpty {
             self.users = observer.usersObserver.items
         }
     }
     
+    /// The query specifying and filtering the list of users.
+    public let query: UserListQuery
+    
     /// An array of users for the specified ``UserListQuery``.
     @Published public private(set) var users = StreamCollection<ChatUser>([])
-    
-    // MARK: - Mutating the State
-    
-    @MainActor private func setValue<Value>(_ value: Value, for keyPath: ReferenceWritableKeyPath<UserListState, Value>) {
-        self[keyPath: keyPath] = value
-    }
 }

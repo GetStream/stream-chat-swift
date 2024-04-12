@@ -260,7 +260,6 @@
 		4F5151982BC407ED001B7152 /* UserList_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F5151972BC407ED001B7152 /* UserList_Tests.swift */; };
 		4F51519A2BC57C40001B7152 /* MessageState_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F5151992BC57C40001B7152 /* MessageState_Tests.swift */; };
 		4F51519C2BC66FBE001B7152 /* Task+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F51519B2BC66FBE001B7152 /* Task+Extensions.swift */; };
-		4F51519D2BC66FBE001B7152 /* Task+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F51519B2BC66FBE001B7152 /* Task+Extensions.swift */; };
 		4F73F3982B91BD3000563CD9 /* MessageState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F73F3972B91BD3000563CD9 /* MessageState.swift */; };
 		4F73F3992B91BD3000563CD9 /* MessageState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F73F3972B91BD3000563CD9 /* MessageState.swift */; };
 		4F73F39E2B91C7BF00563CD9 /* MessageState+Observer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F73F39D2B91C7BF00563CD9 /* MessageState+Observer.swift */; };
@@ -301,6 +300,8 @@
 		4FD2BE5A2B9AF8B600FFC6F2 /* ChannelListState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FD2BE582B9AF8B600FFC6F2 /* ChannelListState.swift */; };
 		4FD2BE5C2B9AF8C300FFC6F2 /* ChannelListState+Observer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FD2BE5B2B9AF8C300FFC6F2 /* ChannelListState+Observer.swift */; };
 		4FD2BE5D2B9AF8C300FFC6F2 /* ChannelListState+Observer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FD2BE5B2B9AF8C300FFC6F2 /* ChannelListState+Observer.swift */; };
+		4FDAD05E2BC8179E004048E8 /* StateBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FDAD05D2BC8179E004048E8 /* StateBuilder.swift */; };
+		4FDAD05F2BC8179E004048E8 /* StateBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FDAD05D2BC8179E004048E8 /* StateBuilder.swift */; };
 		4FE6E1AA2BAC79F400C80AF1 /* MemberListState+Observer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FE6E1A92BAC79F400C80AF1 /* MemberListState+Observer.swift */; };
 		4FE6E1AB2BAC79F400C80AF1 /* MemberListState+Observer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FE6E1A92BAC79F400C80AF1 /* MemberListState+Observer.swift */; };
 		4FE6E1AD2BAC7A1B00C80AF1 /* UserListState+Observer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FE6E1AC2BAC7A1B00C80AF1 /* UserListState+Observer.swift */; };
@@ -3063,6 +3064,7 @@
 		4FD2BE552B9AF8A300FFC6F2 /* ChannelList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelList.swift; sourceTree = "<group>"; };
 		4FD2BE582B9AF8B600FFC6F2 /* ChannelListState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelListState.swift; sourceTree = "<group>"; };
 		4FD2BE5B2B9AF8C300FFC6F2 /* ChannelListState+Observer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ChannelListState+Observer.swift"; sourceTree = "<group>"; };
+		4FDAD05D2BC8179E004048E8 /* StateBuilder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StateBuilder.swift; sourceTree = "<group>"; };
 		4FE6E1A92BAC79F400C80AF1 /* MemberListState+Observer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MemberListState+Observer.swift"; sourceTree = "<group>"; };
 		4FE6E1AC2BAC7A1B00C80AF1 /* UserListState+Observer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UserListState+Observer.swift"; sourceTree = "<group>"; };
 		4FF2A80C2B8E011000941A64 /* ChatState+Observer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ChatState+Observer.swift"; sourceTree = "<group>"; };
@@ -5354,6 +5356,7 @@
 				792FCB4824A3BF38000290C7 /* OptionSet+Extensions.swift */,
 				DA4AA3B92502731900FAAF6E /* Publisher+Extensions.swift */,
 				DAFAD6A024DC476A0043ED06 /* Result+Extensions.swift */,
+				4FDAD05D2BC8179E004048E8 /* StateBuilder.swift */,
 				4FD2BE522B9AEE3500FFC6F2 /* StreamCollection.swift */,
 				797A756524814EF8003CF16D /* SystemEnvironment.swift */,
 				CFA41B6527DA724400427602 /* SystemEnvironment+XStreamClient.swift */,
@@ -11002,6 +11005,7 @@
 				79280F49248520B300CDEB89 /* EventDecoder.swift in Sources */,
 				8A0D649B24E579E90017A3C0 /* GuestUserTokenPayload.swift in Sources */,
 				DA84071025250720005A0F62 /* UserListQueryDTO.swift in Sources */,
+				4FDAD05E2BC8179E004048E8 /* StateBuilder.swift in Sources */,
 				799C9449247D5211001F1104 /* MessageSender.swift in Sources */,
 				792A4F4D248011E500EAF71D /* ChannelListQuery.swift in Sources */,
 				882C5746252C6FDF00E60C44 /* ChannelMemberListQuery.swift in Sources */,
@@ -11985,6 +11989,7 @@
 				40789D4329F6B3250018C2BB /* VoiceRecordingAttachmentPayload_Tests.swift in Sources */,
 				C121E88C274544AF00023E4C /* Channel.swift in Sources */,
 				C121E88D274544AF00023E4C /* BanEnabling.swift in Sources */,
+				4FDAD05F2BC8179E004048E8 /* StateBuilder.swift in Sources */,
 				C121E88E274544AF00023E4C /* ChannelType.swift in Sources */,
 				AD0CC0352BDC4A6B005E2C66 /* ReactionListController+Combine.swift in Sources */,
 				C121E88F274544AF00023E4C /* CurrentUser.swift in Sources */,

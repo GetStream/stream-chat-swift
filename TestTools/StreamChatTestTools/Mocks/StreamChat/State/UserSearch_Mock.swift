@@ -14,29 +14,29 @@ public class UserSearch_Mock: UserSearch {
         .init(client: client ?? .mock(bundle: Bundle(for: Self.self)))
     }
     
-    public func setUsers(_ users: [ChatUser]) {
+    @MainActor public func setUsers(_ users: [ChatUser]) {
         self.state.users = StreamCollection(users)
     }
     
     public override func loadNextUsers(limit: Int? = nil) async throws -> [ChatUser] {
-        Array(state.users)
+        await Array(state.users)
     }
 
     override public func search(term: String?) async throws -> [ChatUser] {
         searchCallCount += 1
-        let users = state.users.filter { user in
+        let users = await state.users.filter { user in
             if let term {
                 return user.name?.contains(term) ?? true
             } else {
                 return true
             }
         }
-        setUsers(users)
+        await setUsers(users)
         return users
     }
 
     override public func search(query: UserListQuery) async throws -> [ChatUser] {
         searchCallCount += 1
-        return Array(state.users)
+        return await Array(state.users)
     }
 }

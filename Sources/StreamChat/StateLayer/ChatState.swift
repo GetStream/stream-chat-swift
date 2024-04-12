@@ -6,7 +6,7 @@ import Foundation
 
 /// Represents a ``ChatChannel`` and its state.
 @available(iOS 13.0, *)
-public final class ChatState: ObservableObject {
+@MainActor public final class ChatState: ObservableObject {
     private let authenticationRepository: AuthenticationRepository
     private let cid: ChannelId
     private var channelObserver: EntityDatabaseObserverWrapper<ChatChannel, ChannelDTO>?
@@ -41,10 +41,10 @@ public final class ChatState: ObservableObject {
         )
         observer.start(
             with: .init(
-                channelDidChange: { [weak self] in await self?.setValue($0, for: \.channel) },
-                membersDidChange: { [weak self] in await self?.setValue($0, for: \.members) },
-                messagesDidChange: { [weak self] in await self?.setValue($0, for: \.messages) },
-                watchersDidChange: { [weak self] in await self?.setValue($0, for: \.watchers) }
+                channelDidChange: { [weak self] in self?.channel = $0 },
+                membersDidChange: { [weak self] in self?.members = $0 },
+                messagesDidChange: { [weak self] in self?.messages = $0 },
+                watchersDidChange: { [weak self] in self?.watchers = $0 }
             )
         )
         channel = observer.channelObserver.item
@@ -166,16 +166,4 @@ public final class ChatState: ObservableObject {
     ///
     /// Use load watchers method in ``Chat`` for populating this array.
     @Published public internal(set) var watchers = StreamCollection<ChatUser>([])
-    
-    // MARK: - Mutating the State
-    
-    // Force main actor when accessing the state.
-    @MainActor func value<Value>(forKeyPath keyPath: KeyPath<ChatState, Value>) -> Value {
-        self[keyPath: keyPath]
-    }
-    
-    // Force mutations on main actor since ChatState is meant to be used by UI.
-    @MainActor func setValue<Value>(_ value: Value, for keyPath: ReferenceWritableKeyPath<ChatState, Value>) {
-        self[keyPath: keyPath] = value
-    }
 }

@@ -13,7 +13,7 @@ extension ChatState {
         let messages: StreamCollection<ChatMessage>
         let hasLoadedAllPreviousMessages: Bool
         
-        static func firstUnreadMessage(in state: ChatState, userId: UserId) -> MessageId? {
+        @MainActor static func firstUnreadMessage(in state: ChatState, userId: UserId) -> MessageId? {
             guard let channel = state.channel else { return nil }
             let lookup = UnreadMessageLookup(
                 userId: userId,

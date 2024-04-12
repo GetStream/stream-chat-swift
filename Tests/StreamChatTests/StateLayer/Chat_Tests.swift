@@ -128,14 +128,15 @@ final class Chat_Tests: XCTestCase {
         
         let result = try await chat.loadMessages(with: MessagesPagination(pageSize: pageSize))
         XCTAssertEqual(channelPayload.messages.map(\.id), result.map(\.id))
-        XCTAssertEqual(channelPayload.messages.map(\.id), chat.state.messages.map(\.id))
-        XCTAssertEqual(false, chat.state.hasLoadedAllPreviousMessages)
-        // TODO: Should it be false?
-        XCTAssertEqual(true, chat.state.hasLoadedAllNextMessages, "Although it sounds like it should be false since we got the requested amount of messages and there can be more")
-        XCTAssertEqual(false, chat.state.isJumpingToMessage)
-        XCTAssertEqual(false, chat.state.isLoadingPreviousMessages)
-        XCTAssertEqual(false, chat.state.isLoadingMiddleMessages)
-        XCTAssertEqual(false, chat.state.isLoadingNextMessages)
+        await MainActor.run {
+            XCTAssertEqual(channelPayload.messages.map(\.id), chat.state.messages.map(\.id))
+            XCTAssertEqual(false, chat.state.hasLoadedAllPreviousMessages)
+            XCTAssertEqual(true, chat.state.hasLoadedAllNextMessages)
+            XCTAssertEqual(false, chat.state.isJumpingToMessage)
+            XCTAssertEqual(false, chat.state.isLoadingPreviousMessages)
+            XCTAssertEqual(false, chat.state.isLoadingMiddleMessages)
+            XCTAssertEqual(false, chat.state.isLoadingNextMessages)
+        }
     }
     
     func test_loadMessagesFirstPage_whenAPIRequestSucceeds_thenStateIsReset() async throws {
@@ -151,13 +152,15 @@ final class Chat_Tests: XCTestCase {
         env.client.mockAPIClient.test_mockResponseResult(.success(channelPayload))
         try await chat.loadMessagesFirstPage()
         
-        XCTAssertEqual(channelPayload.messages.map(\.id), chat.state.messages.map(\.id))
-        XCTAssertEqual(true, chat.state.hasLoadedAllPreviousMessages)
-        XCTAssertEqual(true, chat.state.hasLoadedAllNextMessages)
-        XCTAssertEqual(false, chat.state.isJumpingToMessage)
-        XCTAssertEqual(false, chat.state.isLoadingPreviousMessages)
-        XCTAssertEqual(false, chat.state.isLoadingMiddleMessages)
-        XCTAssertEqual(false, chat.state.isLoadingNextMessages)
+        await MainActor.run {
+            XCTAssertEqual(channelPayload.messages.map(\.id), chat.state.messages.map(\.id))
+            XCTAssertEqual(true, chat.state.hasLoadedAllPreviousMessages)
+            XCTAssertEqual(true, chat.state.hasLoadedAllNextMessages)
+            XCTAssertEqual(false, chat.state.isJumpingToMessage)
+            XCTAssertEqual(false, chat.state.isLoadingPreviousMessages)
+            XCTAssertEqual(false, chat.state.isLoadingMiddleMessages)
+            XCTAssertEqual(false, chat.state.isLoadingNextMessages)
+        }
     }
     
     func test_loadPreviousMessages_whenAPIRequestSucceeds_thenStateUpdates() async throws {
@@ -175,13 +178,15 @@ final class Chat_Tests: XCTestCase {
         try await chat.loadPreviousMessages()
         
         let expectedIds = (channelPayload.messages + initialChannelPayload.messages).map(\.id)
-        XCTAssertEqual(expectedIds, chat.state.messages.map(\.id))
-        XCTAssertEqual(true, chat.state.hasLoadedAllPreviousMessages)
-        XCTAssertEqual(true, chat.state.hasLoadedAllNextMessages)
-        XCTAssertEqual(false, chat.state.isJumpingToMessage)
-        XCTAssertEqual(false, chat.state.isLoadingPreviousMessages)
-        XCTAssertEqual(false, chat.state.isLoadingMiddleMessages)
-        XCTAssertEqual(false, chat.state.isLoadingNextMessages)
+        await MainActor.run {
+            XCTAssertEqual(expectedIds, chat.state.messages.map(\.id))
+            XCTAssertEqual(true, chat.state.hasLoadedAllPreviousMessages)
+            XCTAssertEqual(true, chat.state.hasLoadedAllNextMessages)
+            XCTAssertEqual(false, chat.state.isJumpingToMessage)
+            XCTAssertEqual(false, chat.state.isLoadingPreviousMessages)
+            XCTAssertEqual(false, chat.state.isLoadingMiddleMessages)
+            XCTAssertEqual(false, chat.state.isLoadingNextMessages)
+        }
     }
     
     func test_loadNextMessages_whenAPIRequestSucceeds_thenStateUpdates() async throws {
@@ -198,13 +203,15 @@ final class Chat_Tests: XCTestCase {
         try await chat.loadNextMessages()
         
         let expectedIds = (initialChannelPayload.messages + channelPayload.messages).map(\.id)
-        XCTAssertEqual(expectedIds, chat.state.messages.map(\.id))
-        XCTAssertEqual(false, chat.state.hasLoadedAllPreviousMessages)
-        XCTAssertEqual(true, chat.state.hasLoadedAllNextMessages)
-        XCTAssertEqual(false, chat.state.isJumpingToMessage)
-        XCTAssertEqual(false, chat.state.isLoadingPreviousMessages)
-        XCTAssertEqual(false, chat.state.isLoadingMiddleMessages)
-        XCTAssertEqual(false, chat.state.isLoadingNextMessages)
+        await MainActor.run {
+            XCTAssertEqual(expectedIds, chat.state.messages.map(\.id))
+            XCTAssertEqual(false, chat.state.hasLoadedAllPreviousMessages)
+            XCTAssertEqual(true, chat.state.hasLoadedAllNextMessages)
+            XCTAssertEqual(false, chat.state.isJumpingToMessage)
+            XCTAssertEqual(false, chat.state.isLoadingPreviousMessages)
+            XCTAssertEqual(false, chat.state.isLoadingMiddleMessages)
+            XCTAssertEqual(false, chat.state.isLoadingNextMessages)
+        }
     }
     
     func test_loadMessagesAround_whenAPIRequestSucceeds_thenStateUpdates() async throws {
@@ -221,13 +228,15 @@ final class Chat_Tests: XCTestCase {
         env.client.mockAPIClient.test_mockResponseResult(.success(channelPayload))
         try await chat.loadMessages(around: channelPayload.messages[1].id, limit: 2)
         
-        XCTAssertEqual(channelPayload.messages.map(\.id), chat.state.messages.map(\.id))
-        XCTAssertEqual(false, chat.state.hasLoadedAllPreviousMessages)
-        XCTAssertEqual(false, chat.state.hasLoadedAllNextMessages)
-        XCTAssertEqual(true, chat.state.isJumpingToMessage)
-        XCTAssertEqual(false, chat.state.isLoadingPreviousMessages)
-        XCTAssertEqual(false, chat.state.isLoadingMiddleMessages)
-        XCTAssertEqual(false, chat.state.isLoadingNextMessages)
+        XCTAssertEqual(channelPayload.messages.map(\.id), await chat.state.messages.map(\.id))
+        await MainActor.run {
+            XCTAssertEqual(false, chat.state.hasLoadedAllPreviousMessages)
+            XCTAssertEqual(false, chat.state.hasLoadedAllNextMessages)
+            XCTAssertEqual(true, chat.state.isJumpingToMessage)
+            XCTAssertEqual(false, chat.state.isLoadingPreviousMessages)
+            XCTAssertEqual(false, chat.state.isLoadingMiddleMessages)
+            XCTAssertEqual(false, chat.state.isLoadingNextMessages)
+        }
     }
     
     // MARK: - Members
@@ -929,8 +938,8 @@ final class Chat_Tests: XCTestCase {
     public func test_translateMessageStateAction_whenAPIRequestFails_thenTranslateMessageActionSucceeds() async throws {
         let currentUserId = String.unique
         let messageId: MessageId = .unique
-        let text: String = "Test message"
-        let createdAt: Date = .unique
+        let _: String = "Test message"
+        let _: Date = .unique
         let language: TranslationLanguage = .turkish
         env.client.mockAuthenticationRepository.mockedCurrentUserId = currentUserId
         env.messageUpdater.translate_completion_result = .failure(expectedTestError)
