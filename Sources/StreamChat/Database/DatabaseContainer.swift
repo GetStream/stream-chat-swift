@@ -273,7 +273,7 @@ class DatabaseContainer: NSPersistentContainer {
                 do {
                     let results = try actions(context)
                     if context.hasChanges {
-                        assertionFailure("Background context is read only but there are changes")
+                        assertionFailure("State layer context is read only, but calling actions() created changes")
                     }
                     continuation.resume(returning: results)
                 } catch {
@@ -433,6 +433,15 @@ extension NSManagedObjectContext {
                 guard let self else { return }
                 self.performAndWait {
                     self.mergeChanges(fromContextDidSave: notification)
+                    // Keep the state clean after merging changes
+                    guard self.hasChanges else { return }
+                    self.perform {
+                        do {
+                            try self.save()
+                        } catch {
+                            log.debug("Failed to save merged changes", subsystems: .database)
+                        }
+                    }
                 }
             }
     }
