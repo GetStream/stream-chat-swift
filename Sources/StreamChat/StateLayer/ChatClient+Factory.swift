@@ -11,8 +11,8 @@ extension ChatClient {
     /// Creates an instance of ``ConnectedUser`` which represents the logged-in user state and its actions.
     ///
     /// - Throws: An error if no user is currently logged-in.
-    public func makeConnectedUser() async throws -> ConnectedUser {
-        let user = try await databaseContainer.read { try CurrentUserDTO.load(context: $0) }
+    @MainActor public func makeConnectedUser() throws -> ConnectedUser {
+        let user = try CurrentUserDTO.load(context: databaseContainer.viewContext)
         return ConnectedUser(user: user, client: self)
     }
 }
