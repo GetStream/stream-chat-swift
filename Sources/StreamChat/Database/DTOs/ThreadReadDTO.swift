@@ -11,3 +11,13 @@ class ThreadReadDTO: NSManagedObject {
     @NSManaged var lastReadAt: DBDate?
     @NSManaged var unreadMessagesCount: Int64
 }
+
+extension ThreadReadDTO {
+    func asModel() throws -> ThreadRead {
+        try .init(
+            user: user.asModel(),
+            lastReadAt: lastReadAt?.bridgeDate,
+            unreadMessagesCount: Int(unreadMessagesCount)
+        )
+    }
+}

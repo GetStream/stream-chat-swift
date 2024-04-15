@@ -21,3 +21,23 @@ class ThreadDTO: NSManagedObject {
     @NSManaged var createdBy: UserDTO
     @NSManaged var channel: ChannelDTO
 }
+
+extension ThreadDTO {
+    func asModel() throws -> ChatThread {
+        try .init(
+            parentMessageId: parentMessageId,
+            parentMessage: parentMessage.asModel(),
+            channel: channel.asModel(),
+            createdBy: createdBy.asModel(),
+            replyCount: Int(replyCount),
+            participantCount: Int(participantCount),
+            threadParticipants: threadParticipants.map { try $0.asModel() },
+            lastMessageAt: lastMessageAt?.bridgeDate,
+            createdAt: createdAt.bridgeDate,
+            updatedAt: updatedAt?.bridgeDate,
+            title: title,
+            latestReplies: latestReplies.map { try $0.asModel() },
+            reads: read.map { try $0.asModel() }
+        )
+    }
+}

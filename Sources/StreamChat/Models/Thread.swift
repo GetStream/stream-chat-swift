@@ -27,7 +27,7 @@ internal struct ChatThread {
     /// The last date when the thread was updated.
     internal let updatedAt: Date?
     /// The title of the thread.
-    internal let title: String
+    internal let title: String?
     /// The latest replies of the thread.
     internal let latestReplies: [ChatMessage]
     /// The reads information of the thread.

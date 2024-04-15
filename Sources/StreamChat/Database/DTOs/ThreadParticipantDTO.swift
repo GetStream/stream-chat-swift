@@ -12,3 +12,14 @@ class ThreadParticipantDTO: NSManagedObject {
     @NSManaged var threadId: String
     @NSManaged var user: UserDTO
 }
+
+extension ThreadParticipantDTO {
+    func asModel() throws -> ThreadParticipant {
+        try .init(
+            user: user.asModel(),
+            threadId: threadId,
+            createdAt: createdAt.bridgeDate,
+            lastReadAt: lastReadAt?.bridgeDate
+        )
+    }
+}
