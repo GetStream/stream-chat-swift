@@ -301,6 +301,7 @@ public class Chat {
     ///
     /// - Note: If sending a message fails, the message is not discarded. Failed messages are kept locally and can be retried.
     /// - SeeAlso: Replying to an existing message: ``reply(to:text:showReplyInChannel:attachments:quote:mentions:pinning:extraData:silent:skipPushNotification:skipEnrichURL:messageId:)``.
+    /// - SeeAlso: Editing an existing message: ``updateMessage(_:with:attachments:extraData:skipEnrichURL:)``.
     ///
     /// - Parameters:
     ///   - text: Text of the message.
@@ -331,6 +332,7 @@ public class Chat {
         skipEnrichURL: Bool = false,
         messageId: MessageId? = nil
     ) async throws -> ChatMessage {
+        Task { try await stopTyping() } // errors explicitly ignored
         let messageSender = try client.backgroundWorker(of: MessageSender.self)
         let message = try await channelUpdater.createNewMessage(
             in: cid,
@@ -347,8 +349,10 @@ public class Chat {
             skipEnrichUrl: skipEnrichURL,
             extraData: extraData
         )
+        // Important to set up the waiter immediately
+        async let sentMessage = try await messageSender.waitForAPIRequest(messageId: message.id)
         eventNotificationCenter.process(NewMessagePendingEvent(message: message))
-        return try await messageSender.waitForAPIRequest(messageId: message.id)
+        return try await sentMessage
     }
     
     /// Edits the specified message in the channel.
@@ -362,6 +366,7 @@ public class Chat {
     ///
     /// - Throws: An error while communicating with the Stream API.
     public func updateMessage(_ messageId: MessageId, with text: String, attachments: [AnyAttachmentPayload] = [], extraData: [String: RawJSON]? = nil, skipEnrichURL: Bool = false) async throws {
+        Task { try await stopTyping() } // errors explicitly ignored
         let messageEditor = try client.backgroundWorker(of: MessageEditor.self)
         try await messageUpdater.editMessage(messageId: messageId, text: text, skipEnrichUrl: skipEnrichURL, attachments: attachments, extraData: extraData)
         try await messageEditor.waitForAPIRequest(messageId: messageId)
