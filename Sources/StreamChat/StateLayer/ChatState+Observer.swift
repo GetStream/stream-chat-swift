@@ -72,7 +72,7 @@ extension ChatState {
                 let watchers = try watchersObserver.startObserving(didChange: handlers.watchersDidChange)
                 return (channel, memberListState.members, messages, watchers)
             } catch {
-                log.error("Failed to start the sobserver for cid: \(cid) with error \(error)")
+                log.error("Failed to start the observers for cid: \(cid) with error \(error)")
                 return (nil, StreamCollection([]), StreamCollection([]), StreamCollection([]))
             }
         }

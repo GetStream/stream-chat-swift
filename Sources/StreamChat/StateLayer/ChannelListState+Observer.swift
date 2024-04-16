@@ -46,7 +46,7 @@ extension ChannelListState {
             let channelsDidChange: (StreamCollection<ChatChannel>) async -> Void
         }
         
-        @MainActor func start(with handlers: Handlers) -> StreamCollection<ChatChannel> {
+        func start(with handlers: Handlers) -> StreamCollection<ChatChannel> {
             /// When we receive events, we need to check if a channel should be added or removed from
             /// the current query depending on the following events:
             /// - Channel created: We analyse if the channel should be added to the current query.
