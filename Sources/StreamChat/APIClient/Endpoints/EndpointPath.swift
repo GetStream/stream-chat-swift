@@ -56,6 +56,15 @@ enum EndpointPath: Codable {
     case deleteImage(String)
 
     case appSettings
+    
+    case polls
+    case pollsQuery
+    case poll(pollId: String)
+    case pollOption(pollId: String, optionId: String)
+    case pollOptions(pollId: String)
+    case pollVotes(pollId: String)
+    case pollInMessage(messageId: MessageId, pollId: String)
+    case pollVote(messageId: MessageId, pollId: String, voteId: String)
 
     var value: String {
         switch self {
@@ -107,6 +116,14 @@ enum EndpointPath: Codable {
         case let .deleteFile(channelId): return "channels/\(channelId)/file"
         case let .deleteImage(channelId): return "channels/\(channelId)/image"
         case .appSettings: return "app"
+        case .polls: return "polls"
+        case .pollsQuery: return "polls/query"
+        case let .poll(pollId: pollId): return "polls/\(pollId)"
+        case let .pollOption(pollId: pollId, optionId: optionId): return "polls/\(pollId)/options/\(optionId)"
+        case let .pollOptions(pollId: pollId): return "polls/\(pollId)/options"
+        case let .pollInMessage(messageId: messageId, pollId: pollId): return "messages/\(messageId)/polls/\(pollId)"
+        case let .pollVote(messageId: messageId, pollId: pollId, voteId: voteId): return "messages/\(messageId)/polls/\(pollId)/\(voteId)"
+        case let .pollVotes(pollId: pollId): return "polls/\(pollId)/votes"
         }
     }
 }
