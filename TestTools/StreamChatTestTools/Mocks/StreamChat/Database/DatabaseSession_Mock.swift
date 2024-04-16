@@ -364,6 +364,22 @@ class DatabaseSession_Mock: DatabaseSession {
     ) -> StreamChat.ChannelReadDTO? {
         underlyingSession.loadChannelRead(cid: cid, userId: userId)
     }
+
+    func saveThreadList(payload: ThreadListPayload, query: ThreadListQuery?) -> [ThreadDTO] {
+        underlyingSession.saveThreadList(payload: payload, query: query)
+    }
+
+    func saveThreadParticipant(payload: ThreadParticipantPayload, threadId: String, cache: PreWarmedCache?) throws -> ThreadParticipantDTO {
+        try underlyingSession.saveThreadParticipant(payload: payload, threadId: threadId, cache: cache)
+    }
+
+    func saveThread(payload: ThreadPayload, query: ThreadListQuery?, cache: PreWarmedCache?) throws -> ThreadDTO {
+        try underlyingSession.saveThread(payload: payload, query: query, cache: cache)
+    }
+
+    func saveThreadRead(payload: ThreadReadPayload, parentMessageId: String, cache: PreWarmedCache?) throws -> ThreadReadDTO {
+        try underlyingSession.saveThreadRead(payload: payload, parentMessageId: parentMessageId, cache: cache)
+    }
 }
 
 private extension DatabaseSession_Mock {

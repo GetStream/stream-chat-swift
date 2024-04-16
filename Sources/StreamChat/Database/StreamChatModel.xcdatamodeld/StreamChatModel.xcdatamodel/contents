@@ -305,7 +305,7 @@
         <attribute name="createdAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="lastMessageAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="parentMessageId" optional="YES" attributeType="String"/>
-        <attribute name="participantCount1" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="participantCount" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="replyCount" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="title" optional="YES" attributeType="String"/>
         <attribute name="updatedAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
@@ -313,7 +313,7 @@
         <relationship name="createdBy" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="UserDTO" inverseName="createdThreads" inverseEntity="UserDTO"/>
         <relationship name="latestReplies" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="MessageDTO" inverseName="childOfThread" inverseEntity="MessageDTO"/>
         <relationship name="parentMessage" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="MessageDTO" inverseName="parentOfThread" inverseEntity="MessageDTO"/>
-        <relationship name="read" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="ThreadReadDTO" inverseName="thread" inverseEntity="ThreadReadDTO"/>
+        <relationship name="read" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="ThreadReadDTO" inverseName="thread" inverseEntity="ThreadReadDTO"/>
         <relationship name="threadParticipants" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="ThreadParticipantDTO" inverseName="thread" inverseEntity="ThreadParticipantDTO"/>
         <fetchIndex name="parentMessageId">
             <fetchIndexElement property="parentMessageId" type="Binary" order="ascending"/>

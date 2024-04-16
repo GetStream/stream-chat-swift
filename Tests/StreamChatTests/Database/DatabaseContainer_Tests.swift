@@ -86,6 +86,19 @@ final class DatabaseContainer_Tests: XCTestCase {
                 createdAt: .unique,
                 updatedAt: .unique
             ))
+            session.saveThreadList(
+                payload: ThreadListPayload(
+                    threads: [
+                        self.dummyThreadPayload(
+                            threadParticipants: [self.dummyThreadParticipantPayload(), self.dummyThreadParticipantPayload()],
+                            read: [self.dummyThreadReadPayload(), self.dummyThreadReadPayload()]
+                        ),
+                        self.dummyThreadPayload()
+                    ],
+                    next: nil
+                ),
+                query: nil
+            )
             try session.saveUser(payload: .dummy(userId: .unique), query: .user(withID: currentUserId), cache: nil)
             try session.saveUser(payload: .dummy(userId: .unique))
             let messages: [MessagePayload] = [

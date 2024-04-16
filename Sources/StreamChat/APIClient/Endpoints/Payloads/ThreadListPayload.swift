@@ -13,6 +13,11 @@ struct ThreadListPayload: Decodable {
     let threads: [ThreadPayload]
     let next: String?
 
+    init(threads: [ThreadPayload], next: String?) {
+        self.threads = threads
+        self.next = next
+    }
+
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         let threads = try container.decodeArrayIgnoringFailures([ThreadPayload].self, forKey: .threads)
@@ -53,6 +58,36 @@ struct ThreadPayload: Decodable {
     let title: String?
     let latestReplies: [MessagePayload]
     let read: [ThreadReadPayload]
+
+    init(
+        parentMessageId: MessageId,
+        parentMessage: MessagePayload,
+        channel: ChannelDetailPayload,
+        createdBy: UserPayload,
+        replyCount: Int,
+        participantCount: Int,
+        threadParticipants: [ThreadParticipantPayload],
+        lastMessageAt: Date?,
+        createdAt: Date,
+        updatedAt: Date?,
+        title: String?,
+        latestReplies: [MessagePayload],
+        read: [ThreadReadPayload]
+    ) {
+        self.parentMessageId = parentMessageId
+        self.parentMessage = parentMessage
+        self.channel = channel
+        self.createdBy = createdBy
+        self.replyCount = replyCount
+        self.participantCount = participantCount
+        self.threadParticipants = threadParticipants
+        self.lastMessageAt = lastMessageAt
+        self.createdAt = createdAt
+        self.updatedAt = updatedAt
+        self.title = title
+        self.latestReplies = latestReplies
+        self.read = read
+    }
 
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
