@@ -7,7 +7,7 @@ import Foundation
 @available(iOS 13.0, *)
 extension ConnectedUserState {
     struct Observer {
-        private let userObserver: StateLayerDatabaseObserver<EntityResult, CurrentChatUser, CurrentUserDTO>
+        let userObserver: StateLayerDatabaseObserver<EntityResult, CurrentChatUser, CurrentUserDTO>
         
         init(database: DatabaseContainer) {
             userObserver = StateLayerDatabaseObserver(

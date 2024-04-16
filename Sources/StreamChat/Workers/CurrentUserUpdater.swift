@@ -68,28 +68,32 @@ class CurrentUserUpdater: Worker {
         currentUserId: UserId,
         completion: ((Error?) -> Void)? = nil
     ) {
-        database.write { (session) in
+        database.write({ session in
             try session.saveCurrentDevice(deviceId)
-        }
-
-        apiClient
-            .request(
-                endpoint: .addDevice(
-                    userId: currentUserId,
-                    deviceId: deviceId,
-                    pushProvider: pushProvider,
-                    providerName: providerName
-                ),
-                completion: { result in
-                    if let error = result.error {
-                        log.debug("Device token \(deviceId) failed to be registered on Stream's backend.\n Reason: \(error.localizedDescription)")
-                        completion?(error)
-                        return
+        }, completion: { databaseError in
+            if let databaseError {
+                completion?(databaseError)
+                return
+            }
+            self.apiClient
+                .request(
+                    endpoint: .addDevice(
+                        userId: currentUserId,
+                        deviceId: deviceId,
+                        pushProvider: pushProvider,
+                        providerName: providerName
+                    ),
+                    completion: { result in
+                        if let error = result.error {
+                            log.debug("Device token \(deviceId) failed to be registered on Stream's backend.\n Reason: \(error.localizedDescription)")
+                            completion?(error)
+                            return
+                        }
+                        log.debug("Device token \(deviceId) was successfully registered on Stream's backend.")
+                        completion?(nil)
                     }
-                    log.debug("Device token \(deviceId) was successfully registered on Stream's backend.")
-                    completion?(nil)
-                }
-            )
+                )
+        })
     }
 
     /// Removes a registered device from the current user.
@@ -100,20 +104,24 @@ class CurrentUserUpdater: Worker {
     ///   If `currentUser.devices` is not up-to-date, please make an `fetchDevices` call.
     ///   - completion: Called when device is successfully deregistered, or with error.
     func removeDevice(id: DeviceId, currentUserId: UserId, completion: ((Error?) -> Void)? = nil) {
-        database.write { (session) in
+        database.write({ session in
             session.deleteDevice(id: id)
-        }
-
-        apiClient
-            .request(
-                endpoint: .removeDevice(
-                    userId: currentUserId,
-                    deviceId: id
-                ),
-                completion: { result in
-                    completion?(result.error)
-                }
-            )
+        }, completion: { databaseError in
+            if let databaseError {
+                completion?(databaseError)
+                return
+            }
+            self.apiClient
+                .request(
+                    endpoint: .removeDevice(
+                        userId: currentUserId,
+                        deviceId: id
+                    ),
+                    completion: { result in
+                        completion?(result.error)
+                    }
+                )
+        })
     }
 
     /// Updates the registered devices for the current user from backend.
