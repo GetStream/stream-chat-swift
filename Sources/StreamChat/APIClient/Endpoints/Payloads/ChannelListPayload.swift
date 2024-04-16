@@ -210,6 +210,7 @@ public class ChannelConfig: Codable {
         case quotesEnabled = "quotes"
         case searchEnabled = "search"
         case mutesEnabled = "mutes"
+        case pollsEnabled = "polls"
         case urlEnrichmentEnabled = "url_enrichment"
         case messageRetention = "message_retention"
         case maxMessageLength = "max_message_length"
@@ -248,6 +249,8 @@ public class ChannelConfig: Codable {
     public let createdAt: Date
     /// A channel updated date.
     public let updatedAt: Date
+    /// Determines if polls are enabled.
+    public let pollsEnabled: Bool
 
     public required init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
@@ -271,6 +274,7 @@ public class ChannelConfig: Codable {
 
         createdAt = try container.decode(Date.self, forKey: .createdAt)
         updatedAt = try container.decode(Date.self, forKey: .updatedAt)
+        pollsEnabled = try container.decodeIfPresent(Bool.self, forKey: .pollsEnabled) ?? false
     }
 
     internal required init(
@@ -283,6 +287,7 @@ public class ChannelConfig: Codable {
         quotesEnabled: Bool = false,
         searchEnabled: Bool = false,
         mutesEnabled: Bool = false,
+        pollsEnabled: Bool = false,
         urlEnrichmentEnabled: Bool = false,
         messageRetention: String = "",
         maxMessageLength: Int = 0,
@@ -305,5 +310,6 @@ public class ChannelConfig: Codable {
         self.commands = commands
         self.createdAt = createdAt
         self.updatedAt = updatedAt
+        self.pollsEnabled = pollsEnabled
     }
 }

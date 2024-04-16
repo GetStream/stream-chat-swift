@@ -41,6 +41,8 @@ enum MessagePayloadsCodingKeys: String, CodingKey, CaseIterable {
     case shadowed
     case moderationDetails = "moderation_details"
     case messageTextUpdatedAt = "message_text_updated_at"
+    case poll
+    case pollId = "poll_id"
 }
 
 extension MessagePayload {
@@ -94,6 +96,8 @@ class MessagePayload: Decodable {
     var pinnedBy: UserPayload?
     var pinnedAt: Date?
     var pinExpires: Date?
+    
+    var poll: PollDTO?
 
     /// Only message payload from `getMessage` endpoint contains channel data. It's a convenience workaround for having to
     /// make an extra call do get channel details.
@@ -155,6 +159,7 @@ class MessagePayload: Decodable {
         originalLanguage = i18n?.originalLanguage
         moderationDetails = try container.decodeIfPresent(MessageModerationDetailsPayload.self, forKey: .moderationDetails)
         messageTextUpdatedAt = try container.decodeIfPresent(Date.self, forKey: .messageTextUpdatedAt)
+        poll = try container.decodeIfPresent(PollDTO.self, forKey: .poll)
     }
 
     init(
@@ -191,7 +196,8 @@ class MessagePayload: Decodable {
         translations: [TranslationLanguage: String]? = nil,
         originalLanguage: String? = nil,
         moderationDetails: MessageModerationDetailsPayload? = nil,
-        messageTextUpdatedAt: Date? = nil
+        messageTextUpdatedAt: Date? = nil,
+        poll: PollDTO?
     ) {
         self.id = id
         self.cid = cid
@@ -227,6 +233,7 @@ class MessagePayload: Decodable {
         self.originalLanguage = originalLanguage
         self.moderationDetails = moderationDetails
         self.messageTextUpdatedAt = messageTextUpdatedAt
+        self.poll = poll
     }
 }
 
@@ -245,6 +252,7 @@ struct MessageRequestBody: Encodable {
     let mentionedUserIds: [UserId]
     var pinned: Bool
     var pinExpires: Date?
+    var pollId: String?
     let extraData: [String: RawJSON]
 
     init(
@@ -261,6 +269,7 @@ struct MessageRequestBody: Encodable {
         mentionedUserIds: [UserId] = [],
         pinned: Bool = false,
         pinExpires: Date? = nil,
+        pollId: String? = nil,
         extraData: [String: RawJSON]
     ) {
         self.id = id
@@ -276,6 +285,7 @@ struct MessageRequestBody: Encodable {
         self.mentionedUserIds = mentionedUserIds
         self.pinned = pinned
         self.pinExpires = pinExpires
+        self.pollId = pollId
         self.extraData = extraData
     }
 
@@ -291,6 +301,7 @@ struct MessageRequestBody: Encodable {
         try container.encode(pinned, forKey: .pinned)
         try container.encodeIfPresent(pinExpires, forKey: .pinExpires)
         try container.encode(isSilent, forKey: .isSilent)
+        try container.encodeIfPresent(pollId, forKey: .pollId)
 
         if !attachments.isEmpty {
             try container.encode(attachments, forKey: .attachments)
