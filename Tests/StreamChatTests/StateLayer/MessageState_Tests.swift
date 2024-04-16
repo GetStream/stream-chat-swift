@@ -11,10 +11,9 @@ final class MessageState_Tests: XCTestCase {
     private var channelId: ChannelId!
     private var env: TestEnvironment!
     private var messageId: MessageId!
+    private var messageState: MessageState!
     private var testError: TestError!
     private var unrelatedMessageId: MessageId!
-    // Main actor since message state mutates on the main actor and we want to read results on the main actor
-    @MainActor private var messageState: MessageState!
     
     override func setUpWithError() throws {
         channelId = .unique
@@ -28,7 +27,7 @@ final class MessageState_Tests: XCTestCase {
         }
     }
 
-    @MainActor override func tearDownWithError() throws {
+    override func tearDownWithError() throws {
         env.cleanUp()
         channelId = nil
         env = nil

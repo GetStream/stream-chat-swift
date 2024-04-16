@@ -39,7 +39,7 @@ import Foundation
             database: database,
             eventNotificationCenter: eventNotificationCenter
         )
-        observer.start(
+        let initial = observer.start(
             with: .init(
                 channelDidChange: { [weak self] in self?.channel = $0 },
                 membersDidChange: { [weak self] in self?.members = $0 },
@@ -47,10 +47,10 @@ import Foundation
                 watchersDidChange: { [weak self] in self?.watchers = $0 }
             )
         )
-        channel = observer.channelObserver.item
-        members = observer.memberListState.members
-        messages = observer.messagesObserver.items
-        watchers = observer.watchersObserver.items
+        channel = initial.channel
+        members = initial.members
+        messages = initial.messages
+        watchers = initial.watchers
     }
     
     // MARK: - Represented Channel

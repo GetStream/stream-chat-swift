@@ -28,7 +28,7 @@ import Foundation
             database: database,
             clientConfig: clientConfig
         )
-        observer.start(
+        let initial = observer.start(
             with: .init(
                 messageDidChange: { [weak self] message, changedReactions in
                     self?.message = message
@@ -39,8 +39,11 @@ import Foundation
                 repliesDidChange: { [weak self] in self?.replies = $0 }
             )
         )
-        reactions = message.latestReactions.sorted(by: ChatMessageReaction.defaultSorting)
-        replies = observer.repliesObserver.items
+        if let message = initial.message {
+            self.message = message
+        }
+        reactions = initial.reactions
+        replies = initial.replies
     }
     
     var replyPaginationState: MessagesPaginationState {
