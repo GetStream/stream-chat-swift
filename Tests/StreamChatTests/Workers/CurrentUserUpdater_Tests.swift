@@ -383,12 +383,18 @@ final class CurrentUserUpdater_Tests: XCTestCase {
             try $0.saveCurrentUser(payload: userPayload)
         }
 
+        apiClient.test_mockResponseResult(.success(EmptyResponse()))
+        let expectation = XCTestExpectation()
+        
         // Call removeDevice
         currentUserUpdater.removeDevice(id: "01", currentUserId: userPayload.id) {
             // No error should be returned
             XCTAssertNil($0)
+            expectation.fulfill()
         }
 
+        wait(for: [expectation], timeout: defaultTimeout)
+        
         // Assert that request is made to the correct endpoint
         let expectedEndpoint: Endpoint<EmptyResponse> = .removeDevice(userId: userPayload.id, deviceId: "01")
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(expectedEndpoint))
@@ -401,13 +407,19 @@ final class CurrentUserUpdater_Tests: XCTestCase {
         try database.writeSynchronously {
             try $0.saveCurrentUser(payload: userPayload)
         }
+        
+        apiClient.test_mockResponseResult(.success(EmptyResponse()))
+        let expectation = XCTestExpectation()
 
         // Call removeDevice
         var completionCalledError: Error?
         currentUserUpdater.removeDevice(id: "", currentUserId: .unique) {
             completionCalledError = $0
+            expectation.fulfill()
         }
 
+        wait(for: [expectation], timeout: defaultTimeout)
+        
         // Simulate API error
         let error = TestError()
         apiClient.test_simulateResponse(Result<EmptyResponse, Error>.failure(error))
