@@ -17,6 +17,9 @@ import Foundation
             with: .init(
                 userDidChange: { [weak self] in self?.user = $0 })
         )
+        if let user = observer.userObserver.item {
+            self.user = user
+        }
     }
     
     /// The represented user.
