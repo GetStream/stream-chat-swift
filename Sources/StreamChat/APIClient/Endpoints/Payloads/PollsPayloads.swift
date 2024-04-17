@@ -167,12 +167,12 @@ struct PollVotePayload: Decodable {
     var duration: String
     var vote: PollVoteResponseData?
 
-    public init(duration: String, vote: PollVoteResponseData? = nil) {
+    init(duration: String, vote: PollVoteResponseData? = nil) {
         self.duration = duration
         self.vote = vote
     }
     
-    public enum CodingKeys: String, CodingKey, CaseIterable {
+    enum CodingKeys: String, CodingKey, CaseIterable {
         case duration
         case vote
     }
@@ -237,7 +237,7 @@ struct PollVoteResponseData: Decodable {
         self.user = user
     }
     
-    public enum CodingKeys: String, CodingKey, CaseIterable {
+    enum CodingKeys: String, CodingKey, CaseIterable {
         case createdAt = "created_at"
         case id
         case optionId = "option_id"
