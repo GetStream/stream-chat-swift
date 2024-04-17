@@ -63,7 +63,7 @@ enum EndpointPath: Codable {
     case pollOption(pollId: String, optionId: String)
     case pollOptions(pollId: String)
     case pollVotes(pollId: String)
-    case pollInMessage(messageId: MessageId, pollId: String)
+    case pollVoteInMessage(messageId: MessageId, pollId: String)
     case pollVote(messageId: MessageId, pollId: String, voteId: String)
 
     var value: String {
@@ -121,7 +121,7 @@ enum EndpointPath: Codable {
         case let .poll(pollId: pollId): return "polls/\(pollId)"
         case let .pollOption(pollId: pollId, optionId: optionId): return "polls/\(pollId)/options/\(optionId)"
         case let .pollOptions(pollId: pollId): return "polls/\(pollId)/options"
-        case let .pollInMessage(messageId: messageId, pollId: pollId): return "messages/\(messageId)/polls/\(pollId)"
+        case let .pollVoteInMessage(messageId: messageId, pollId: pollId): return "messages/\(messageId)/polls/\(pollId)/vote"
         case let .pollVote(messageId: messageId, pollId: pollId, voteId: voteId): return "messages/\(messageId)/polls/\(pollId)/\(voteId)"
         case let .pollVotes(pollId: pollId): return "polls/\(pollId)/votes"
         }

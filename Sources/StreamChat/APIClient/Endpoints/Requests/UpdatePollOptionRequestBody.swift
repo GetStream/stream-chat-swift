@@ -21,6 +21,6 @@ struct UpdatePollOptionRequest: Encodable {
         case id
         case pollId = "poll_id"
         case text
-        case custom = "Custom"
+        case custom
     }
 }

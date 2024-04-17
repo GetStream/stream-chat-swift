@@ -55,11 +55,11 @@ struct PollResponseData: Decodable {
     let votingVisibility: String
     let options: [PollOptionResponseData?]
     let ownVotes: [PollVoteResponseData?]
-    let custom: [String: RawJSON]
+    var custom: [String: RawJSON]?
     let latestVotesByOption: [String: [PollVoteResponseData?]]
-    let voteCountsByOption: [String: Int]
+    var voteCountsByOption: [String: Int]?
     var isClosed: Bool?
-    var maxVotesAllowed: Int? = nil
+    var maxVotesAllowed: Int?
     var createdBy: UserPayload?
 
     init(
@@ -77,7 +77,7 @@ struct PollResponseData: Decodable {
         votingVisibility: String,
         options: [PollOptionResponseData?],
         ownVotes: [PollVoteResponseData?],
-        custom: [String: RawJSON],
+        custom: [String: RawJSON]?,
         latestVotesByOption: [String: [PollVoteResponseData?]],
         voteCountsByOption: [String: Int],
         isClosed: Bool? = nil,
@@ -121,7 +121,7 @@ struct PollResponseData: Decodable {
         case votingVisibility = "voting_visibility"
         case options
         case ownVotes = "own_votes"
-        case custom = "Custom"
+        case custom
         case latestVotesByOption = "latest_votes_by_option"
         case voteCountsByOption = "vote_counts_by_option"
         case isClosed = "is_closed"
@@ -148,9 +148,9 @@ struct PollOptionResponse: Decodable {
 struct PollOptionResponseData: Decodable {
     let id: String
     let text: String
-    let custom: [String: RawJSON]
+    let custom: [String: RawJSON]?
 
-    init(id: String, text: String, custom: [String: RawJSON]) {
+    init(id: String, text: String, custom: [String: RawJSON]?) {
         self.id = id
         self.text = text
         self.custom = custom
@@ -165,7 +165,7 @@ struct PollOptionResponseData: Decodable {
 
 struct PollVotePayload: Decodable {
     var duration: String
-    var vote: PollVoteResponseData? = nil
+    var vote: PollVoteResponseData?
 
     public init(duration: String, vote: PollVoteResponseData? = nil) {
         self.duration = duration

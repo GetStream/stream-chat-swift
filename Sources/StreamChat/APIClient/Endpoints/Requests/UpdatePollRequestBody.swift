@@ -54,6 +54,6 @@ struct UpdatePollRequestBody: Encodable {
         case maxVotesAllowed = "max_votes_allowed"
         case votingVisibility = "voting_visibility"
         case options
-        case custom = "Custom"
+        case custom
     }
 }

@@ -21,6 +21,6 @@ struct CreatePollOptionRequestBody: Codable, Hashable {
         case pollId = "poll_id"
         case text
         case position
-        case custom = "Custom"
+        case custom
     }
 }

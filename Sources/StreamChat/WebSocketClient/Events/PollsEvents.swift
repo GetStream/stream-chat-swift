@@ -89,13 +89,13 @@ struct PollDTO: Decodable {
     var latestAnswers: [PollVoteDTO?]
     var options: [PollOptionDTO?]
     var ownVotes: [PollVoteDTO?]
-    var custom: [String: RawJSON]
+    var custom: [String: RawJSON]?
     var latestVotesByOption: [String: [PollVoteDTO?]]
     var voteCountsByOption: [String: Int]
-    var isClosed: Bool? = nil
-    var maxVotesAllowed: Int? = nil
-    var votingVisibility: String? = nil
-    var createdBy: UserPayload? = nil
+    var isClosed: Bool?
+    var maxVotesAllowed: Int?
+    var votingVisibility: String?
+    var createdBy: UserPayload?
 
     init(
         allowAnswers: Bool,
@@ -158,7 +158,7 @@ struct PollDTO: Decodable {
         case latestAnswers = "latest_answers"
         case options
         case ownVotes = "own_votes"
-        case custom = "Custom"
+        case custom
         case latestVotesByOption = "latest_votes_by_option"
         case voteCountsByOption = "vote_counts_by_option"
         case isClosed = "is_closed"
@@ -174,10 +174,10 @@ struct PollVoteDTO: Decodable {
     var optionId: String
     var pollId: String
     var updatedAt: Date
-    var answerText: String? = nil
-    var isAnswer: Bool? = nil
-    var userId: String? = nil
-    var user: UserPayload? = nil
+    var answerText: String?
+    var isAnswer: Bool?
+    var userId: String?
+    var user: UserPayload?
 
     init(
         createdAt: Date,
@@ -217,9 +217,9 @@ struct PollVoteDTO: Decodable {
 struct PollOptionDTO: Codable, Hashable {
     let id: String
     let text: String
-    var custom: [String: RawJSON]
+    var custom: [String: RawJSON]?
 
-    init(id: String, text: String, custom: [String: RawJSON]) {
+    init(id: String, text: String, custom: [String: RawJSON]?) {
         self.id = id
         self.text = text
         self.custom = custom

@@ -144,7 +144,7 @@ extension Endpoint {
         vote: CastPollVoteRequestBody
     ) -> Endpoint<PollVotePayload> {
         .init(
-            path: .pollInMessage(messageId: messageId, pollId: pollId),
+            path: .pollVoteInMessage(messageId: messageId, pollId: pollId),
             method: .post,
             queryItems: nil,
             requiresConnectionId: false,
