@@ -36,7 +36,13 @@ extension MessageState {
             let repliesDidChange: (StreamCollection<ChatMessage>) async -> Void
         }
         
-        func start(with handlers: Handlers) -> (message: ChatMessage?, reactions: [ChatMessageReaction], replies: StreamCollection<ChatMessage>) {
+        func start(
+            with handlers: Handlers
+        ) -> (
+            message: ChatMessage?,
+            reactions: [ChatMessageReaction],
+            replies: StreamCollection<ChatMessage>
+        ) {
             do {
                 var lastSortedReactions: [ChatMessageReaction]?
                 let message = try messageObserver.startObserving(onContextDidChange: { message in
