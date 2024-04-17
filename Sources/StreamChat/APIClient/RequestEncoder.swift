@@ -232,7 +232,7 @@ class DefaultRequestEncoder: RequestEncoder {
         case .get, .delete:
             guard let body = endpoint.body else { return }
             try encodeJSONToQueryItems(request: &request, data: body)
-        case .post, .patch:
+        case .post, .patch, .put:
             if let data = endpoint.body as? Data {
                 request.httpBody = data
             } else {

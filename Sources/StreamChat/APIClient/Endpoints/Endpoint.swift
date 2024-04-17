@@ -75,6 +75,7 @@ enum EndpointMethod: String, Codable, Equatable {
     case post = "POST"
     case patch = "PATCH"
     case delete = "DELETE"
+    case put = "PUT"
 }
 
 /// A type representing empty response of an Endpoint.
