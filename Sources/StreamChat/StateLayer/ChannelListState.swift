@@ -11,7 +11,6 @@ import Foundation
     private let query: ChannelListQuery
     
     init(
-        initialChannels: [ChatChannel],
         query: ChannelListQuery,
         dynamicFilter: ((ChatChannel) -> Bool)?,
         clientConfig: ChatClientConfig,
@@ -20,7 +19,6 @@ import Foundation
         eventNotificationCenter: EventNotificationCenter
     ) {
         self.query = query
-        channels = StreamCollection<ChatChannel>(initialChannels)
         observer = Observer(
             query: query,
             dynamicFilter: dynamicFilter,
@@ -29,12 +27,9 @@ import Foundation
             database: database,
             eventNotificationCenter: eventNotificationCenter
         )
-        observer.start(
+        channels = observer.start(
             with: .init(channelsDidChange: { [weak self] in self?.channels = $0 })
         )
-        if initialChannels.isEmpty {
-            channels = observer.channelListObserver.items
-        }
     }
     
     /// An array of channels for the specified ``ChannelListQuery``.

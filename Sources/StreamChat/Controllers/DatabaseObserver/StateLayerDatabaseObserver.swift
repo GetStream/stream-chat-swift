@@ -60,18 +60,23 @@ extension StateLayerDatabaseObserver where ResultType == EntityResult {
         return item
     }
     
-    /// Starts observing the database and dispatches changes on the MainActor.
+    /// Starts observing the database and dispatches changes on the ``MainActor``.
     ///
-    /// - Important: Does not send the initial value, use the ``item`` for setting the initial value.
-    func startObserving(didChange: @escaping (Item?) async -> Void) throws {
+    /// - Parameter didChange: The callback which is triggered when the observed item changes. Runs on the ``MainActor``.
+    ///
+    /// - Returns: Returns the current state of the item in the local database.
+    func startObserving(didChange: @escaping (Item?) async -> Void) throws -> Item? {
         try startObserving(onContextDidChange: { item in Task.mainActor { await didChange(item) } })
     }
     
     /// Starts observing the database and dispatches changes on the NSManagedObjectContext's queue.
     ///
-    /// - Note: Use it if we need to do additional processing on the context's queue.
-    /// - Important: Does not send the initial value, use the ``item`` for setting the initial value.
-    func startObserving(onContextDidChange: @escaping (Item?) -> Void) throws {
+    /// - Parameter onContextDidChange: The callback which is triggered when the observed item changes. Runs on the ``NSManagedObjectContext``'s queue.
+    ///
+    /// - Note: Use it if you need to do additional processing on the context's queue.
+    ///
+    /// - Returns: Returns the current state of the item in the local database.
+    func startObserving(onContextDidChange: @escaping (Item?) -> Void) throws -> Item? {
         resultsDelegate = FetchedResultsDelegate(onDidChange: { [weak self] in
             guard let self else { return }
             // Runs on the NSManagedObjectContext's queue, therefore skip performAndWait
@@ -80,6 +85,7 @@ extension StateLayerDatabaseObserver where ResultType == EntityResult {
         })
         frc.delegate = resultsDelegate
         try frc.performFetch()
+        return item
     }
     
     static func makeEntity(
@@ -116,16 +122,21 @@ extension StateLayerDatabaseObserver where ResultType == ListResult {
     
     /// Starts observing the database and dispatches changes on the MainActor.
     ///
-    /// - Important: Does not send the initial value, use the ``item`` for setting the initial value.
-    func startObserving(didChange: @escaping (StreamCollection<Item>) async -> Void) throws {
+    /// - Parameter didChange: The callback which is triggered when the observed item changes. Runs on the ``MainActor``.
+    ///
+    /// - Returns: Returns the current state of items in the local database.
+    func startObserving(didChange: @escaping (StreamCollection<Item>) async -> Void) throws -> StreamCollection<Item> {
         try startObserving(onContextDidChange: { items in Task.mainActor { await didChange(items) } })
     }
     
     /// Starts observing the database and dispatches changes on the NSManagedObjectContext's queue.
     ///
-    /// - Note: Use it if we need to do additional processing on the context's queue.
-    /// - Important: Does not send the initial value, use the ``item`` for setting the initial value.
-    func startObserving(onContextDidChange: @escaping (StreamCollection<Item>) -> Void) throws {
+    /// - Parameter onContextDidChange: The callback which is triggered when the observed item changes. Runs on the ``NSManagedObjectContext``'s queue.
+    ///
+    /// - Note: Use it if you need to do additional processing on the context's queue.
+    ///
+    /// - Returns: Returns the current state of items in the local database.
+    func startObserving(onContextDidChange: @escaping (StreamCollection<Item>) -> Void) throws -> StreamCollection<Item> {
         resultsDelegate = FetchedResultsDelegate(onDidChange: { [weak self] in
             guard let self else { return }
             // Runs on the NSManagedObjectContext's queue, therefore skip performAndWait
@@ -134,6 +145,7 @@ extension StateLayerDatabaseObserver where ResultType == ListResult {
         })
         frc.delegate = resultsDelegate
         try frc.performFetch()
+        return items
     }
     
     static func makeCollection(

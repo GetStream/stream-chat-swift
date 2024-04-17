@@ -78,12 +78,15 @@ final class MemberList_Tests: XCTestCase {
 
     // MARK: - Test Data
     
-    @MainActor private func setUpMemberList(usesMockedUpdater: Bool) async throws {
+    @MainActor private func setUpMemberList(usesMockedUpdater: Bool, loadState: Bool = true) async throws {
         memberList = MemberList(
             query: query,
             client: env.client,
             environment: env.memberListEnvironment(usesMockedUpdater: usesMockedUpdater)
         )
+        if loadState {
+            _ = memberList.state
+        }
     }
     
     private func createChannel() async throws {

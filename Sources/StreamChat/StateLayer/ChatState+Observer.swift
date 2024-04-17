@@ -61,25 +61,26 @@ extension ChatState {
             let watchersDidChange: (StreamCollection<ChatUser>) async -> Void
         }
         
-        @MainActor func start(with handlers: Handlers) {
+        @MainActor func start(
+            with handlers: Handlers
+        ) -> (
+            channel: ChatChannel?,
+            members: StreamCollection<ChatChannelMember>,
+            messages: StreamCollection<ChatMessage>,
+            watchers: StreamCollection<ChatUser>
+        ) {
             memberListObserver = memberListState.$members
-                .dropFirst() // skip initial
-                .sink(receiveValue: { change in Task { await handlers.membersDidChange(change) } })
+                .dropFirst()
+                .sink(receiveValue: { change in Task.mainActor { await handlers.membersDidChange(change) } })
             
             do {
-                try channelObserver.startObserving(didChange: handlers.channelDidChange)
+                let channel = try channelObserver.startObserving(didChange: handlers.channelDidChange)
+                let messages = try messagesObserver.startObserving(didChange: handlers.messagesDidChange)
+                let watchers = try watchersObserver.startObserving(didChange: handlers.watchersDidChange)
+                return (channel, memberListState.members, messages, watchers)
             } catch {
-                log.error("Failed to start the channel observer for cid: \(cid)")
-            }
-            do {
-                try messagesObserver.startObserving(didChange: handlers.messagesDidChange)
-            } catch {
-                log.error("Failed to start the messages observer for cid: \(cid)")
-            }
-            do {
-                try watchersObserver.startObserving(didChange: handlers.watchersDidChange)
-            } catch {
-                log.error("Failed to start the watchers observer for cid: \(cid)")
+                log.error("Failed to start the observers for cid: \(cid) with error \(error)")
+                return (nil, StreamCollection([]), StreamCollection([]), StreamCollection([]))
             }
         }
     }
