@@ -66,82 +66,62 @@ extension ChatClient {
 
 @available(iOS 13.0, *)
 extension ChatClient {
-    // MARK: - Find Locally Available Chat by ID
+    // MARK: - Create a Chat with Channel ID
     
-    /// An instance of `Chat` which represents a channel with the specified id.
+    /// An instance of `Chat` which represents a channel with the specified channel id.
     ///
-    /// - Note: Provides a quick lookup of a chat. It is caller's responsibility to call ``Chat/watch()`` for receiving the most recent state from the server.
+    /// - Note: It is caller's responsibility to call ``Chat/get(watch:)`` for receiving the most recent state from the server.
     ///
     /// - Parameters:
     ///   - cid: The id of the channel.
-    ///   - channelListQuery: The channel list query the channel belongs to.
     ///   - messageOrdering: Describes the ordering the messages are presented.
-    ///   - memberSorting: The sorting order for channel members (the default sorting by created at in ascending order).
+    ///   - memberSorting: The sorting order for channel members (the default sorting is by created at in ascending order).
     ///
     /// - Returns: An instance of Chat representing the channel.
-    ///
     public func makeChat(
         for cid: ChannelId,
-        channelListQuery: ChannelListQuery? = nil,
         messageOrdering: MessageOrdering = .topToBottom,
         memberSorting: [Sorting<ChannelMemberListSortingKey>] = []
     ) -> Chat {
-        let channelUpdater = makeChannelUpdater()
-        let channelQuery = ChannelQuery(cid: cid)
-        // TODO: Review pagination state since watch and channel updater's update are slightly different
-        return Chat(
-            cid: cid,
-            channelQuery: channelQuery,
-            channelListQuery: channelListQuery,
+        makeChat(
+            with: ChannelQuery(cid: cid),
             messageOrdering: messageOrdering,
-            memberSorting: memberSorting,
-            channelUpdater: channelUpdater,
-            client: self
+            memberSorting: memberSorting
         )
     }
     
-    // MARK: - Create a Chat with a Query
+    // MARK: - Create a Chat with a Channel Query
     
     /// An instance of `Chat` which represents a channel with the channel query.
     ///
-    /// - Note: The method syncs the state before returning the instance and starts watching for changes.
+    /// - Note: It is caller's responsibility to call ``Chat/get(watch:)`` for receiving the most recent state from the server.
     ///
     /// - Parameters:
     ///   - channelQuery: The channel query used for looking up a channel.
-    ///   - channelListQuery: The channel list query the channel belongs to.
     ///   - messageOrdering: Describes the ordering the messages are presented.
-    ///   - memberSorting: The sorting order for channel members (the default sorting by created at in ascending order).
+    ///   - memberSorting: The sorting order for channel members (the default sorting is by created at in ascending order).
     ///
-    /// - Throws: An error while communicating with the Stream API.
     /// - Returns: An instance of `Chat` representing the channel.
     public func makeChat(
         with channelQuery: ChannelQuery,
-        channelListQuery: ChannelListQuery? = nil,
         messageOrdering: MessageOrdering = .topToBottom,
         memberSorting: [Sorting<ChannelMemberListSortingKey>] = []
-    ) async throws -> Chat {
-        // Always update although the cid could be provided through channel query
-        let channelUpdater = makeChannelUpdater()
-        let response = try await channelUpdater.update(channelQuery: channelQuery, isInRecoveryMode: false)
-        let cid = response.channel.cid
-        return Chat(
-            cid: cid,
+    ) -> Chat {
+        Chat(
             channelQuery: channelQuery,
-            channelListQuery: channelListQuery,
             messageOrdering: messageOrdering,
             memberSorting: memberSorting,
-            channelUpdater: channelUpdater,
             client: self
         )
     }
     
-    // MARK: - Topic Based Chat
+    // MARK: - Create a Chat with Specified Configuration
     
     /// An instance of `Chat` which represents a channel with specified configuration.
     ///
     /// Creates a new channel or returns an existing channel by modifying its configuration if needed.
     ///
-    /// - Note: The method syncs the state before returning the instance and starts watching for changes.
+    /// - Note: It is caller's responsibility to call ``Chat/get(watch:)`` for receiving the most recent state from the server.
     ///
     /// - Parameters:
     ///   - cid: The id of the channel.
@@ -152,7 +132,7 @@ extension ChatClient {
     ///   - isCurrentUserMember: If `true`, the current user is added as member.
     ///   - invites: A list of users who will get invites.
     ///   - messageOrdering: Describes the ordering the messages are presented.
-    ///   - memberSorting: The sorting order for channel members (the default sorting by created at in ascending order).
+    ///   - memberSorting: The sorting order for channel members (the default sorting is by created at in ascending order).
     ///   - channelListQuery: The channel list query the channel belongs to.
     ///   - extraData: Extra data for the new channel.
     ///
@@ -170,7 +150,7 @@ extension ChatClient {
         memberSorting: [Sorting<ChannelMemberListSortingKey>] = [],
         channelListQuery: ChannelListQuery? = nil,
         extraData: [String: RawJSON] = [:]
-    ) async throws -> Chat {
+    ) throws -> Chat {
         guard let currentUserId = currentUserId else { throw ClientError.CurrentUserDoesNotExist() }
         let payload = ChannelEditDetailPayload(
             cid: cid,
@@ -182,27 +162,21 @@ extension ChatClient {
             extraData: extraData
         )
         let channelQuery = ChannelQuery(channelPayload: payload)
-        let channelUpdater = makeChannelUpdater()
-        let response = try await channelUpdater.update(channelQuery: channelQuery, isInRecoveryMode: false)
-        return Chat(
-            cid: response.channel.cid,
-            channelQuery: channelQuery,
-            channelListQuery: channelListQuery,
+        return makeChat(
+            with: channelQuery,
             messageOrdering: messageOrdering,
-            memberSorting: memberSorting,
-            channelUpdater: channelUpdater,
-            client: self
+            memberSorting: memberSorting
         )
     }
     
-    // MARK: - Direct Messages
+    // MARK: - Create a Chat for Direct Messages
     
     /// An instance of `Chat` which represents a channel with specified members.
     ///
     /// Use this for direct message channels because the channel is uniquely identified by
     /// its members. Creates a new channel or returns an existing channel by modifying its configuration if needed.
     ///
-    /// - Note: The method syncs the state before returning the instance and starts watching for changes.
+    /// - Note: It is caller's responsibility to call ``Chat/get(watch:)`` for receiving the most recent state from the server.
     ///
     /// - Parameters:
     ///   - members: An array of user ids.
@@ -212,7 +186,7 @@ extension ChatClient {
     ///   - imageURL: The channel avatar URL.
     ///   - team: The team for the channel.
     ///   - messageOrdering: Describes the ordering the messages are presented.
-    ///   - memberSorting: The sorting order for channel members (the default sorting by created at in ascending order).
+    ///   - memberSorting: The sorting order for channel members (the default sorting is by created at in ascending order).
     ///   - channelListQuery: The channel list query the channel belongs to.
     ///   - extraData: Extra data for the new channel.
     ///
@@ -229,7 +203,7 @@ extension ChatClient {
         memberSorting: [Sorting<ChannelMemberListSortingKey>] = [],
         channelListQuery: ChannelListQuery? = nil,
         extraData: [String: RawJSON]
-    ) async throws -> Chat {
+    ) throws -> Chat {
         guard let currentUserId = authenticationRepository.currentUserId else { throw ClientError.CurrentUserDoesNotExist() }
         guard !members.isEmpty else { throw ClientError.ChannelEmptyMembers() }
         let payload = ChannelEditDetailPayload(
@@ -242,27 +216,10 @@ extension ChatClient {
             extraData: extraData
         )
         let channelQuery = ChannelQuery(channelPayload: payload)
-        let channelUpdater = makeChannelUpdater()
-        let response = try await channelUpdater.update(channelQuery: channelQuery, isInRecoveryMode: false)
-        return Chat(
-            cid: response.channel.cid,
-            channelQuery: channelQuery,
-            channelListQuery: channelListQuery,
+        return makeChat(
+            with: channelQuery,
             messageOrdering: messageOrdering,
-            memberSorting: memberSorting,
-            channelUpdater: channelUpdater,
-            client: self
-        )
-    }
-    
-    internal func makeChannelUpdater() -> ChannelUpdater {
-        ChannelUpdater(
-            channelRepository: channelRepository,
-            callRepository: callRepository,
-            messageRepository: messageRepository,
-            paginationStateHandler: makeMessagesPaginationStateHandler(),
-            database: databaseContainer,
-            apiClient: apiClient
+            memberSorting: memberSorting
         )
     }
 }

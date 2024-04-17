@@ -8,50 +8,35 @@ import Foundation
 /// An object which represents a `ChatChannel`.
 @available(iOS 13.0, *)
 public class Chat {
-    private let authenticationRepository: AuthenticationRepository
     private let channelUpdater: ChannelUpdater
+    private let client: ChatClient
     private let databaseContainer: DatabaseContainer
     private let eventNotificationCenter: EventNotificationCenter
     private let eventSender: EventSender
     private let memberUpdater: ChannelMemberUpdater
     private let messageUpdater: MessageUpdater
-    private let readStateSender: ReadStateSender
     private let stateBuilder: StateBuilder<ChatState>
     private let typingEventsSender: TypingEventsSender
     
-    private let memberList: MemberList
     private var messageStates = NSMapTable<NSString, MessageState>(valueOptions: .weakMemory)
     
-    /// The id of the channel represented by the Chat.
-    public let cid: ChannelId
-    /// The channel list query the current channel belongs to.
-    public let channelListQuery: ChannelListQuery?
-    /// The channel query used for looking up the channel.
-    public let channelQuery: ChannelQuery
-    /// The client instance the ``Chat`` was created with.
-    public let client: ChatClient
-    
     init(
-        cid: ChannelId,
         channelQuery: ChannelQuery,
-        channelListQuery: ChannelListQuery?,
         messageOrdering: MessageOrdering = .topToBottom,
         memberSorting: [Sorting<ChannelMemberListSortingKey>],
-        channelUpdater: ChannelUpdater,
         client: ChatClient,
         environment: Environment = .init()
     ) {
-        authenticationRepository = client.authenticationRepository
-        self.channelQuery = ChannelQuery(cid: cid, channelQuery: channelQuery)
-        self.channelListQuery = channelListQuery
-        self.cid = cid
-        self.channelUpdater = channelUpdater
         self.client = client
         eventNotificationCenter = client.eventNotificationCenter
         databaseContainer = client.databaseContainer
-        memberList = MemberList(
-            query: ChannelMemberListQuery(cid: cid, sort: memberSorting),
-            client: client
+        channelUpdater = environment.channelUpdaterBuilder(
+            client.channelRepository,
+            client.callRepository,
+            client.messageRepository,
+            client.makeMessagesPaginationStateHandler(),
+            client.databaseContainer,
+            client.apiClient
         )
         memberUpdater = environment.memberUpdaterBuilder(
             client.databaseContainer,
@@ -67,33 +52,37 @@ public class Chat {
             client.databaseContainer,
             client.apiClient
         )
-        readStateSender = environment.readStateSenderBuilder(
-            cid,
-            channelUpdater,
-            client.authenticationRepository,
-            client.messageRepository
-        )
         typingEventsSender = environment.typingEventsSenderBuilder(
             client.databaseContainer,
             client.apiClient
         )
-        stateBuilder = StateBuilder { [memberList] in
+        stateBuilder = StateBuilder { [channelUpdater] in
             environment.chatStateBuilder(
-                cid,
                 channelQuery,
-                client.config,
                 messageOrdering,
-                memberList.state,
-                client.authenticationRepository,
-                client.databaseContainer,
-                client.eventNotificationCenter,
-                channelUpdater.paginationStateHandler
+                memberSorting,
+                channelUpdater,
+                client,
+                environment
             )
         }
     }
     
     /// An observable object representing the current state of the channel.
     @MainActor public lazy var state: ChatState = stateBuilder.build()
+    
+    /// Fetches the state from the server and updates the local store.
+    ///
+    /// - Parameter watch: True, if server-side events should be enabled in addition
+    /// to fetching state from the server. See ``watch()`` for more information
+    ///
+    /// - Throws: An error while communicating with the Stream API.
+    public func get(watch: Bool) async throws {
+        let query = await state.channelQuery.withOptions(forWatching: watch)
+        let payload = try await channelUpdater.update(channelQuery: query)
+        guard query.cid != payload.channel.cid else { return }
+        await state.setChannelId(payload.channel.cid)
+    }
     
     // MARK: - Deleting the Channel
     
@@ -176,7 +165,7 @@ public class Chat {
     ///
     /// - Throws: An error while communicating with the Stream API.
     public func addMembers(_ members: [UserId], systemMessage: String? = nil, hideHistory: Bool = false) async throws {
-        let currentUserId = authenticationRepository.currentUserId
+        let currentUserId = client.authenticationRepository.currentUserId
         try await channelUpdater.addMembers(currentUserId: currentUserId, cid: cid, userIds: Set(members), message: systemMessage, hideHistory: hideHistory)
     }
     
@@ -188,7 +177,7 @@ public class Chat {
     ///
     /// - Throws: An error while communicating with the Stream API.
     public func removeMembers(_ members: [UserId], systemMessage: String? = nil) async throws {
-        let currentUserId = authenticationRepository.currentUserId
+        let currentUserId = client.authenticationRepository.currentUserId
         try await channelUpdater.removeMembers(currentUserId: currentUserId, cid: cid, userIds: Set(members), message: systemMessage)
     }
     
@@ -383,7 +372,7 @@ public class Chat {
     /// - Throws: An error while communicating with the Stream API.
     /// - Returns: An array of messages for the pagination.
     public func loadMessages(with pagination: MessagesPagination) async throws -> [ChatMessage] {
-        try await channelUpdater.loadMessages(with: channelQuery, pagination: pagination)
+        try await channelUpdater.loadMessages(with: state.channelQuery, pagination: pagination)
     }
     
     // MARK: -
@@ -394,7 +383,7 @@ public class Chat {
     ///
     /// - Throws: An error while communicating with the Stream API.
     public func loadMessagesFirstPage() async throws {
-        try await channelUpdater.loadMessagesFirstPage(with: channelQuery)
+        try await channelUpdater.loadMessagesFirstPage(with: state.channelQuery)
     }
     
     /// Loads more messages before the specified message to ``ChatState/messages``.
@@ -405,7 +394,12 @@ public class Chat {
     ///
     /// - Throws: An error while communicating with the Stream API.
     public func loadPreviousMessages(before messageId: MessageId? = nil, limit: Int? = nil) async throws {
-        try await channelUpdater.loadMessages(before: messageId, limit: limit, channelQuery: channelQuery, loaded: state.messages)
+        try await channelUpdater.loadMessages(
+            before: messageId,
+            limit: limit,
+            channelQuery: state.channelQuery,
+            loaded: state.messages
+        )
     }
     
     /// Loads more messages after the specified message to ``ChatState/messages``.
@@ -416,7 +410,12 @@ public class Chat {
     ///
     /// - Throws: An error while communicating with the Stream API.
     public func loadNextMessages(_ messageId: MessageId? = nil, limit: Int? = nil) async throws {
-        try await channelUpdater.loadMessages(after: messageId, limit: limit, channelQuery: channelQuery, loaded: state.messages)
+        try await channelUpdater.loadMessages(
+            after: messageId,
+            limit: limit,
+            channelQuery: state.channelQuery,
+            loaded: state.messages
+        )
     }
     
     /// Loads messages around the given message id to ``ChatState/messages``.
@@ -431,7 +430,12 @@ public class Chat {
     ///
     /// - Throws: An error while communicating with the Stream API.
     public func loadMessages(around messageId: MessageId, limit: Int? = nil) async throws {
-        try await channelUpdater.loadMessages(around: messageId, limit: limit, channelQuery: channelQuery, loaded: state.messages)
+        try await channelUpdater.loadMessages(
+            around: messageId,
+            limit: limit,
+            channelQuery: state.channelQuery,
+            loaded: state.messages
+        )
     }
     
     // MARK: - Message Attachment Actions
@@ -583,7 +587,7 @@ public class Chat {
     ///
     /// - Throws: An error while communicating with the Stream API.
     public func markRead() async throws {
-        guard let channel = await state.channel else { throw ClientError.ChannelDoesNotExist(cid: cid) }
+        guard let channel = await state.channel else { throw ClientError.ChannelNotCreatedYet() }
         try await readStateSender.markRead(channel)
     }
     
@@ -593,7 +597,7 @@ public class Chat {
     ///
     /// - Throws: An error while communicating with the Stream API.
     public func markUnread(from messageId: MessageId) async throws {
-        guard let channel = await state.channel else { throw ClientError.ChannelDoesNotExist(cid: cid) }
+        guard let channel = await state.channel else { throw ClientError.ChannelNotCreatedYet() }
         try await readStateSender.markUnread(from: messageId, in: channel)
     }
     
@@ -744,13 +748,12 @@ public class Chat {
         if let state = messageStates.object(forKey: messageId as NSString) {
             return state
         } else {
-            // Chat references MessageState weakly but MessageState references Chat strongly
             let message = try await messageUpdater.getMessage(cid: cid, messageId: messageId)
             let state = MessageState(
                 message: message,
                 messageOrder: state.messageOrder,
                 database: databaseContainer,
-                clientConfig: client.config,
+                clientConfig: state.client.config,
                 replyPaginationHandler: MessagesPaginationStateHandler()
             )
             messageStates.setObject(state, forKey: messageId as NSString)
@@ -1039,8 +1042,9 @@ public class Chat {
     ///   - handler: The handler closure which is called when the event happens.
     ///
     /// - Returns: A cancellable instance, which you use when you end the subscription. Deallocation of the result will tear down the subscription stream.
-    public func subscribe<E>(toEvent event: E.Type, handler: @escaping (E) -> Void) -> AnyCancellable where E: Event {
-        eventNotificationCenter.subscribe(
+    @MainActor public func subscribe<E>(toEvent event: E.Type, handler: @escaping (E) -> Void) throws -> AnyCancellable where E: Event {
+        let cid = try self.cid
+        return eventNotificationCenter.subscribe(
             to: event,
             filter: { [cid] in
                 EventNotificationCenter.channelFilter(cid: cid, event: $0)
@@ -1056,8 +1060,9 @@ public class Chat {
     /// - Parameter handler: The handler closure which is called when the event happens.
     ///
     /// - Returns: A cancellable instance, which you use when you end the subscription. Deallocation of the result will tear down the subscription stream.
-    public func subscribe(_ handler: @escaping (Event) -> Void) -> AnyCancellable {
-        eventNotificationCenter.subscribe(
+    @MainActor public func subscribe(_ handler: @escaping (Event) -> Void) throws -> AnyCancellable {
+        let cid = try self.cid
+        return eventNotificationCenter.subscribe(
             filter: { [cid] in
                 EventNotificationCenter.channelFilter(cid: cid, event: $0)
             },
@@ -1099,34 +1104,57 @@ public class Chat {
     }
 }
 
+// MARK: - Internal
+
+@available(iOS 13.0, *)
+extension Chat {
+    @MainActor var cid: ChannelId {
+        guard let cid = state.channelQuery.cid else { throw ClientError.ChannelNotCreatedYet() }
+        return cid
+    }
+    
+    var memberList: MemberList {
+        guard let memberList = await state.memberList else { throw ClientError.ChannelNotCreatedYet() }
+        return memberList
+    }
+    
+    var readStateSender: ReadStateSender {
+        guard let sender = await state.readStateSender else { throw ClientError.ChannelNotCreatedYet() }
+        return sender
+    }
+}
+
 // MARK: - Environment
 
 @available(iOS 13.0, *)
 extension Chat {
     struct Environment {
         var chatStateBuilder: @MainActor(
-            _ cid: ChannelId,
             _ channelQuery: ChannelQuery,
-            _ clientConfig: ChatClientConfig,
             _ messageOrder: MessageOrdering,
-            _ memberListState: MemberListState,
-            _ authenticationRepository: AuthenticationRepository,
-            _ database: DatabaseContainer,
-            _ eventNotificationCenter: EventNotificationCenter,
-            _ paginationStateHandler: MessagesPaginationStateHandling
+            _ memberSorting: [Sorting<ChannelMemberListSortingKey>],
+            _ channelUpdater: ChannelUpdater,
+            _ client: ChatClient,
+            _ environment: Chat.Environment
         ) -> ChatState = { @MainActor in
             ChatState(
-                cid: $0,
-                channelQuery: $1,
-                clientConfig: $2,
-                messageOrder: $3,
-                memberListState: $4,
-                authenticationRepository: $5,
-                database: $6,
-                eventNotificationCenter: $7,
-                paginationStateHandler: $8
+                channelQuery: $0,
+                messageOrder: $1,
+                memberSorting: $2,
+                channelUpdater: $3,
+                client: $4,
+                environment: $5
             )
         }
+        
+        var channelUpdaterBuilder: (
+            _ channelRepository: ChannelRepository,
+            _ callRepository: CallRepository,
+            _ messageRepository: MessageRepository,
+            _ paginationStateHandler: MessagesPaginationStateHandling,
+            _ database: DatabaseContainer,
+            _ apiClient: APIClient
+        ) -> ChannelUpdater = ChannelUpdater.init
 
         var eventSenderBuilder: (
             _ database: DatabaseContainer,
