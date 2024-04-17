@@ -7,7 +7,7 @@ import Foundation
 @available(iOS 13.0, *)
 extension ConnectedUserState {
     struct Observer {
-        let userObserver: StateLayerDatabaseObserver<EntityResult, CurrentChatUser, CurrentUserDTO>
+        private let userObserver: StateLayerDatabaseObserver<EntityResult, CurrentChatUser, CurrentUserDTO>
         
         init(database: DatabaseContainer) {
             userObserver = StateLayerDatabaseObserver(
@@ -21,14 +21,16 @@ extension ConnectedUserState {
             let userDidChange: (CurrentChatUser) async -> Void
         }
         
-        func start(with handlers: Handlers) {
+        func start(with handlers: Handlers) -> CurrentChatUser? {
             do {
-                try userObserver.startObserving(onContextDidChange: { user in
+                let user = try userObserver.startObserving(didChange: { user in
                     guard let user else { return }
-                    Task.mainActor { await handlers.userDidChange(user) }
+                    await handlers.userDidChange(user)
                 })
+                return user
             } catch {
                 log.error("Failed to start the current user observer")
+                return nil
             }
         }
     }

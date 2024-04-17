@@ -8,7 +8,7 @@ import Foundation
 extension UserListState {
     struct Observer {
         private let query: UserListQuery
-        let usersObserver: StateLayerDatabaseObserver<ListResult, ChatUser, UserDTO>
+        private let usersObserver: StateLayerDatabaseObserver<ListResult, ChatUser, UserDTO>
         
         init(query: UserListQuery, database: DatabaseContainer) {
             self.query = query
@@ -23,11 +23,12 @@ extension UserListState {
             let usersDidChange: (StreamCollection<ChatUser>) async -> Void
         }
         
-        func start(with handlers: Handlers) {
+        func start(with handlers: Handlers) -> StreamCollection<ChatUser> {
             do {
-                try usersObserver.startObserving(didChange: handlers.usersDidChange)
+                return try usersObserver.startObserving(didChange: handlers.usersDidChange)
             } catch {
                 log.error("Failed to start the user list observer for query: \(query)")
+                return StreamCollection([])
             }
         }
     }

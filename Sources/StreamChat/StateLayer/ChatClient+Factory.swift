@@ -35,8 +35,8 @@ extension ChatClient {
     /// - Throws: An error while communicating with the Stream API.
     /// - Returns: An instance of ``ChannelList`` which represents actions and the current state of the list.
     public func makeChannelList(with query: ChannelListQuery, dynamicFilter: ((ChatChannel) -> Bool)? = nil) async throws -> ChannelList {
-        let channels = try await channelListUpdater.update(channelListQuery: query)
-        let channelList = ChannelList(initialChannels: channels, query: query, dynamicFilter: dynamicFilter, channelListUpdater: channelListUpdater, client: self)
+        try await channelListUpdater.update(channelListQuery: query)
+        let channelList = ChannelList(query: query, dynamicFilter: dynamicFilter, channelListUpdater: channelListUpdater, client: self)
         syncRepository.trackChannelListQuery { [weak channelList] in channelList?.query }
         return channelList
     }
@@ -57,8 +57,8 @@ extension ChatClient {
     /// - Returns: An instance of ``UserList`` which represents actions and the current state of the list.
     public func makeUserList(with query: UserListQuery) async throws -> UserList {
         let userListUpdater = UserListUpdater(database: databaseContainer, apiClient: apiClient)
-        let users = try await userListUpdater.update(userListQuery: query)
-        return UserList(users: users, query: query, userListUpdater: userListUpdater, client: self)
+        try await userListUpdater.update(userListQuery: query)
+        return UserList(query: query, userListUpdater: userListUpdater, client: self)
     }
 }
 

@@ -19,7 +19,6 @@ public final class MemberList {
         )
         stateBuilder = StateBuilder {
             environment.stateBuilder(
-                [],
                 query,
                 client.databaseContainer
             )
@@ -62,11 +61,10 @@ extension MemberList {
         ) -> ChannelMemberListUpdater = ChannelMemberListUpdater.init
         
         var stateBuilder: @MainActor(
-            _ initialMembers: [ChatChannelMember],
             _ query: ChannelMemberListQuery,
             _ database: DatabaseContainer
         ) -> MemberListState = { @MainActor in
-            MemberListState(initialMembers: $0, query: $1, database: $2)
+            MemberListState(query: $0, database: $1)
         }
     }
 }
