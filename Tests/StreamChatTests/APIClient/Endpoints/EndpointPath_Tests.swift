@@ -50,6 +50,17 @@ final class EndpointPathTests: XCTestCase {
         XCTAssertFalse(EndpointPath.threads.shouldBeQueuedOffline)
         XCTAssertFalse(EndpointPath.thread(messageId: "1").shouldBeQueuedOffline)
     }
+    
+    func test_polls_shouldNOTBeQueuedOffline() {
+        XCTAssertFalse(EndpointPath.polls.shouldBeQueuedOffline)
+        XCTAssertFalse(EndpointPath.pollsQuery.shouldBeQueuedOffline)
+        XCTAssertFalse(EndpointPath.poll(pollId: "test_poll").shouldBeQueuedOffline)
+        XCTAssertFalse(EndpointPath.pollVotes(pollId: "test_poll").shouldBeQueuedOffline)
+        XCTAssertFalse(EndpointPath.pollOptions(pollId: "test_poll").shouldBeQueuedOffline)
+        XCTAssertFalse(EndpointPath.pollOption(pollId: "test_poll", optionId: "option_id").shouldBeQueuedOffline)
+        XCTAssertFalse(EndpointPath.pollVoteInMessage(messageId: "test_message", pollId: "test_poll").shouldBeQueuedOffline)
+        XCTAssertFalse(EndpointPath.pollVote(messageId: "test_message", pollId: "test_poll", voteId: "test_vote").shouldBeQueuedOffline)
+    }
 
     // MARK: - Codable
 
@@ -94,6 +105,15 @@ final class EndpointPathTests: XCTestCase {
         assertResultEncodingAndDecoding(.flagUser(false))
         assertResultEncodingAndDecoding(.flagMessage(false))
         assertResultEncodingAndDecoding(.muteUser(false))
+        
+        assertResultEncodingAndDecoding(.polls)
+        assertResultEncodingAndDecoding(.pollsQuery)
+        assertResultEncodingAndDecoding(.poll(pollId: "test_poll"))
+        assertResultEncodingAndDecoding(.pollVotes(pollId: "test_poll"))
+        assertResultEncodingAndDecoding(.pollOptions(pollId: "test_poll"))
+        assertResultEncodingAndDecoding(.pollOption(pollId: "test_poll", optionId: "option_id"))
+        assertResultEncodingAndDecoding(.pollVoteInMessage(messageId: "test_message", pollId: "test_poll"))
+        assertResultEncodingAndDecoding(.pollVote(messageId: "test_message", pollId: "test_poll", voteId: "test_vote"))
     }
 }
 

@@ -591,6 +591,7 @@
 		841BAA0E2BCE9F44000C73E4 /* UpdatePollOptionRequestBody.swift in Sources */ = {isa = PBXBuildFile; fileRef = 841BAA0C2BCE9F44000C73E4 /* UpdatePollOptionRequestBody.swift */; };
 		841BAA102BCEADAC000C73E4 /* PollsEvents.swift in Sources */ = {isa = PBXBuildFile; fileRef = 841BAA0F2BCEADAC000C73E4 /* PollsEvents.swift */; };
 		841BAA112BCEADAC000C73E4 /* PollsEvents.swift in Sources */ = {isa = PBXBuildFile; fileRef = 841BAA0F2BCEADAC000C73E4 /* PollsEvents.swift */; };
+		841BAA132BCFEB2C000C73E4 /* PollsEndpoints_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 841BAA122BCFEB2C000C73E4 /* PollsEndpoints_Tests.swift */; };
 		842F9745277A09B10060A489 /* PinnedMessagesQuery.swift in Sources */ = {isa = PBXBuildFile; fileRef = 842F9744277A09B10060A489 /* PinnedMessagesQuery.swift */; };
 		842F9746277A09B10060A489 /* PinnedMessagesQuery.swift in Sources */ = {isa = PBXBuildFile; fileRef = 842F9744277A09B10060A489 /* PinnedMessagesQuery.swift */; };
 		842F9749277A1CCF0060A489 /* PinnedMessagesPagination.swift in Sources */ = {isa = PBXBuildFile; fileRef = 842F9748277A1CCF0060A489 /* PinnedMessagesPagination.swift */; };
@@ -3296,6 +3297,7 @@
 		841BAA092BCE9B57000C73E4 /* CreatePollOptionRequestBody.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreatePollOptionRequestBody.swift; sourceTree = "<group>"; };
 		841BAA0C2BCE9F44000C73E4 /* UpdatePollOptionRequestBody.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdatePollOptionRequestBody.swift; sourceTree = "<group>"; };
 		841BAA0F2BCEADAC000C73E4 /* PollsEvents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PollsEvents.swift; sourceTree = "<group>"; };
+		841BAA122BCFEB2C000C73E4 /* PollsEndpoints_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PollsEndpoints_Tests.swift; sourceTree = "<group>"; };
 		842F9744277A09B10060A489 /* PinnedMessagesQuery.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PinnedMessagesQuery.swift; sourceTree = "<group>"; };
 		842F9748277A1CCF0060A489 /* PinnedMessagesPagination.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PinnedMessagesPagination.swift; sourceTree = "<group>"; };
 		8431843A26FB53B400B5B25E /* NotificationMessageNew+MissingFields.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = "NotificationMessageNew+MissingFields.json"; sourceTree = "<group>"; };
@@ -6500,6 +6502,7 @@
 				DA84072C2525EF8D005A0F62 /* UserEndpoints_Tests.swift */,
 				F65D9092250A5CD4000B8CEB /* WebSocketConnectEndpoint_Tests.swift */,
 				84355D8A2AB3440E00FD5838 /* FileEndpoints_Tests.swift */,
+				841BAA122BCFEB2C000C73E4 /* PollsEndpoints_Tests.swift */,
 				A364D09427D0BF3A0029857A /* Payloads */,
 				A364D09527D0C4C40029857A /* Requests */,
 			);
@@ -11049,6 +11052,7 @@
 				AD8C7C662BA46A4A00260715 /* AppEndpoints_Tests.swift in Sources */,
 				791D3D9026776BE400E3A0F9 /* ChannelMemberListSortingKey_Tests.swift in Sources */,
 				A382131E2805C8AC0068D30E /* TestsEnvironmentSetup.swift in Sources */,
+				841BAA132BCFEB2C000C73E4 /* PollsEndpoints_Tests.swift in Sources */,
 				A34ECB4C27F5CA5E00A804C1 /* ReactionEvents_IntegrationTests.swift in Sources */,
 				882C5766252C7F7000E60C44 /* ChannelMemberListUpdater_Tests.swift in Sources */,
 				C1CEF90C2A1CF8A900414931 /* UserUpdateMiddleware_Tests.swift in Sources */,

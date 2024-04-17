@@ -197,7 +197,7 @@ class MessagePayload: Decodable {
         originalLanguage: String? = nil,
         moderationDetails: MessageModerationDetailsPayload? = nil,
         messageTextUpdatedAt: Date? = nil,
-        poll: PollDTO?
+        poll: PollDTO? = nil
     ) {
         self.id = id
         self.cid = cid
