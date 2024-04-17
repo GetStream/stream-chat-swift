@@ -61,7 +61,14 @@ extension ChatState {
             let watchersDidChange: (StreamCollection<ChatUser>) async -> Void
         }
         
-        @MainActor func start(with handlers: Handlers) -> (channel: ChatChannel?, members: StreamCollection<ChatChannelMember>, messages: StreamCollection<ChatMessage>, watchers: StreamCollection<ChatUser>) {
+        @MainActor func start(
+            with handlers: Handlers
+        ) -> (
+            channel: ChatChannel?,
+            members: StreamCollection<ChatChannelMember>,
+            messages: StreamCollection<ChatMessage>,
+            watchers: StreamCollection<ChatUser>
+        ) {
             memberListObserver = memberListState.$members
                 .dropFirst()
                 .sink(receiveValue: { change in Task.mainActor { await handlers.membersDidChange(change) } })
