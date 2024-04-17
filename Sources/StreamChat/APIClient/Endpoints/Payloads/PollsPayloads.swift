@@ -88,7 +88,7 @@ struct PollVotePayloadResponse: Decodable {
     }
 }
 
-struct PollVotesResponse: Decodable {
+struct PollVoteListResponse: Decodable {
     let duration: String
     var votes: [PollVotePayload?]
     var next: String?

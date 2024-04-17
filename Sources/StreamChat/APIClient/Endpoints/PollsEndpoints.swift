@@ -127,7 +127,7 @@ extension Endpoint {
     static func queryPollVotes(
         pollId: String,
         queryPollVotesRequest: QueryPollVotesRequestBody
-    ) -> Endpoint<PollVotesResponse> {
+    ) -> Endpoint<PollVoteListResponse> {
         .init(
             path: .pollVotes(pollId: pollId),
             method: .post,

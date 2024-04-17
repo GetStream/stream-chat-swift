@@ -14,7 +14,7 @@ struct UpdatePollRequestBody: Encodable {
     var isClosed: Bool?
     var maxVotesAllowed: Int?
     var votingVisibility: String?
-    var options: [PollOptionRequest?]?
+    var options: [PollVoteOptionRequestBody?]?
     var custom: [String: RawJSON]?
 
     init(
@@ -27,7 +27,7 @@ struct UpdatePollRequestBody: Encodable {
         isClosed: Bool? = nil,
         maxVotesAllowed: Int? = nil,
         votingVisibility: String? = nil,
-        options: [PollOptionRequest?]? = nil,
+        options: [PollVoteOptionRequestBody?]? = nil,
         custom: [String: RawJSON]? = nil
     ) {
         self.id = id

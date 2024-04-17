@@ -197,7 +197,7 @@ final class PollsEndpoints_Tests: XCTestCase {
     
     func test_queryPollVotes() throws {
         let request = QueryPollVotesRequestBody(pollId: "test", limit: 30, prev: "10")
-        let endpoint = Endpoint<PollVotesResponse>.queryPollVotes(pollId: "test", queryPollVotesRequest: request)
+        let endpoint = Endpoint<PollVoteListResponse>.queryPollVotes(pollId: "test", queryPollVotesRequest: request)
         
         let expectedBody: [String: Any] = ["poll_id": "test", "limit": 30, "prev": "10"]
         let body = try AnyEndpoint(endpoint).bodyAsDictionary()

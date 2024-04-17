@@ -22,12 +22,12 @@ struct CastPollVoteRequestBody: Encodable {
 struct VoteDataRequestBody: Encodable {
     var answerText: String?
     var optionId: String?
-    var option: PollOptionRequestBody?
+    var option: PollVoteOptionRequestBody?
 
     init(
         answerText: String? = nil,
         optionId: String? = nil,
-        option: PollOptionRequestBody? = nil
+        option: PollVoteOptionRequestBody? = nil
     ) {
         self.answerText = answerText
         self.optionId = optionId
@@ -41,7 +41,7 @@ struct VoteDataRequestBody: Encodable {
     }
 }
 
-struct PollOptionRequestBody: Encodable {
+struct PollVoteOptionRequestBody: Encodable {
     let id: String
     var text: String?
     let custom: [String: RawJSON]?
