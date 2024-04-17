@@ -13,7 +13,7 @@ final class MessageSearch_Tests: XCTestCase {
     private var env: TestEnvironment!
     private var testError: TestError!
     
-    override func setUpWithError() throws {
+    @MainActor override func setUpWithError() throws {
         currentUserId = UserId.unique
         testError = TestError()
         env = TestEnvironment()
@@ -31,7 +31,7 @@ final class MessageSearch_Tests: XCTestCase {
     // MARK: - Searching Messages
     
     func test_searchText_whenTextMatchesAndLoggedIn_thenResultsAreReturnedAndStateUpdates() async throws {
-        setUpMessageSearch(usesMockedMessageUpdater: false)
+        await setUpMessageSearch(usesMockedMessageUpdater: false)
         
         let apiResponse = makeMatchingResponse(messageCount: 1, createdAtOffset: 0)
         env.client.mockAuthenticationRepository.mockedCurrentUserId = currentUserId
@@ -48,7 +48,7 @@ final class MessageSearch_Tests: XCTestCase {
     }
     
     func test_searchText_whenTextIsEmpty_thenResultsAndStateAreEmpty() async throws {
-        setUpMessageSearch(usesMockedMessageUpdater: false)
+        await setUpMessageSearch(usesMockedMessageUpdater: false)
         
         // Initial search
         let apiResponse = makeMatchingResponse(messageCount: 1, createdAtOffset: 0)
@@ -75,7 +75,7 @@ final class MessageSearch_Tests: XCTestCase {
     // MARK: - Results Pagination
     
     func test_loadNextMessages_whenMoreResultsAreAvailable_thenResultsAndStateAreUpdated() async throws {
-        setUpMessageSearch(usesMockedMessageUpdater: false)
+        await setUpMessageSearch(usesMockedMessageUpdater: false)
         let apiResponse = makeMatchingResponse(messageCount: 25, createdAtOffset: 0, next: "A")
         env.client.mockAuthenticationRepository.mockedCurrentUserId = currentUserId
         env.client.mockAPIClient.test_mockResponseResult(.success(apiResponse))
@@ -95,11 +95,14 @@ final class MessageSearch_Tests: XCTestCase {
     
     // MARK: - Test Data
     
-    private func setUpMessageSearch(usesMockedMessageUpdater: Bool) {
+    @MainActor private func setUpMessageSearch(usesMockedMessageUpdater: Bool, loadState: Bool = true) {
         messageSearch = MessageSearch(
             client: env.client,
             environment: env.messageSearchEnvironment(usesMockedMessageUpdater: usesMockedMessageUpdater)
         )
+        if loadState {
+            _ = messageSearch.state
+        }
     }
     
     private func makeMatchingResponse(messageCount: Int, createdAtOffset: Int, next: String? = nil) -> MessageSearchResultsPayload {

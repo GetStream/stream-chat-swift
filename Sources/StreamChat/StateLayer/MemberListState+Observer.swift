@@ -7,7 +7,7 @@ import Foundation
 @available(iOS 13.0, *)
 extension MemberListState {
     struct Observer {
-        let memberListObserver: StateLayerDatabaseObserver<ListResult, ChatChannelMember, MemberDTO>
+        private let memberListObserver: StateLayerDatabaseObserver<ListResult, ChatChannelMember, MemberDTO>
         
         init(query: ChannelMemberListQuery, database: DatabaseContainer) {
             memberListObserver = StateLayerDatabaseObserver(
@@ -21,11 +21,12 @@ extension MemberListState {
             let membersDidChange: (StreamCollection<ChatChannelMember>) async -> Void
         }
         
-        func start(with handlers: Handlers) {
+        func start(with handlers: Handlers) -> StreamCollection<ChatChannelMember> {
             do {
-                try memberListObserver.startObserving(didChange: handlers.membersDidChange)
+                return try memberListObserver.startObserving(didChange: handlers.membersDidChange)
             } catch {
                 log.error("Failed to start the member list observer with error \(error)")
+                return StreamCollection([])
             }
         }
     }
