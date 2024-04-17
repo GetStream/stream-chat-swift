@@ -13,7 +13,7 @@ final class ChannelList_Tests: XCTestCase {
     private var memberId: UserId!
     private var testError: TestError!
     
-    override func setUpWithError() throws {
+    @MainActor override func setUpWithError() throws {
         memberId = .unique
         testError = TestError()
         env = TestEnvironment()
@@ -35,7 +35,7 @@ final class ChannelList_Tests: XCTestCase {
         try await env.client.mockDatabaseContainer.write { session in
             session.saveChannelList(payload: channelListPayload, query: self.channelList.query)
         }
-        setUpChannelList(usesMockedChannelUpdater: true)
+        await setUpChannelList(usesMockedChannelUpdater: true)
         XCTAssertEqual(channelListPayload.channels.map(\.channel.cid.rawValue), await channelList.state.channels.map(\.cid.rawValue))
     }
     
@@ -51,7 +51,7 @@ final class ChannelList_Tests: XCTestCase {
             // Unrelated channel to the query
             try session.saveChannel(payload: self.dummyPayload(with: .unique))
         }
-        setUpChannelList(usesMockedChannelUpdater: true)
+        await setUpChannelList(usesMockedChannelUpdater: true)
         XCTAssertEqual(matchingChannelListPayload.channels.map(\.channel.cid.rawValue), await channelList.state.channels.map(\.cid.rawValue))
     }
     
@@ -101,7 +101,7 @@ final class ChannelList_Tests: XCTestCase {
     // MARK: - Pagination and State
     
     func test_loadChannels_whenAPIRequestSucceeds_thenStateUpdates() async throws {
-        setUpChannelList(usesMockedChannelUpdater: false)
+        await setUpChannelList(usesMockedChannelUpdater: false)
         let pageSize = 2
         let channelListPayload = makeMatchingChannelListPayload(channelCount: pageSize, createdAtOffset: 0)
         env.client.mockAPIClient.test_mockResponseResult(.success(channelListPayload))
@@ -118,7 +118,7 @@ final class ChannelList_Tests: XCTestCase {
         try await env.client.mockDatabaseContainer.write { session in
             session.saveChannelList(payload: existingChannelListPayload, query: self.channelList.query)
         }
-        setUpChannelList(usesMockedChannelUpdater: false)
+        await setUpChannelList(usesMockedChannelUpdater: false)
         
         // Load more channels
         let nextChannelListPayload = makeMatchingChannelListPayload(channelCount: 3, createdAtOffset: 2)
@@ -156,7 +156,7 @@ final class ChannelList_Tests: XCTestCase {
     
     func test_observingEvents_whenAddedToChannelEventReceived_thenChannelIsLinkedAndStateUpdates() async throws {
         // Allow any channel to be linked by returning true
-        setUpChannelList(usesMockedChannelUpdater: false, dynamicFilter: { _ in true })
+        await setUpChannelList(usesMockedChannelUpdater: false, dynamicFilter: { _ in true })
         // Create channel list
         let existingChannelListPayload = makeMatchingChannelListPayload(channelCount: 1, createdAtOffset: 0)
         try await env.client.mockDatabaseContainer.write { session in
@@ -200,7 +200,7 @@ final class ChannelList_Tests: XCTestCase {
     
     func test_observingEvents_whenChannelUpdatedEventReceived_thenChannelIsUnlinkedAndStateUpdates() async throws {
         // Allow unlink a channel
-        setUpChannelList(usesMockedChannelUpdater: false, dynamicFilter: { _ in false })
+        await setUpChannelList(usesMockedChannelUpdater: false, dynamicFilter: { _ in false })
         // Create channel list
         let existingChannelListPayload = makeMatchingChannelListPayload(channelCount: 1, createdAtOffset: 0)
         let existingCid = try XCTUnwrap(existingChannelListPayload.channels.first?.channel.cid)
@@ -230,15 +230,17 @@ final class ChannelList_Tests: XCTestCase {
     // MARK: - Test Data
     
     /// For tests which rely on the channel updater to update the local database.
-    private func setUpChannelList(usesMockedChannelUpdater: Bool, dynamicFilter: ((ChatChannel) -> Bool)? = nil) {
+    @MainActor private func setUpChannelList(usesMockedChannelUpdater: Bool, loadState: Bool = true, dynamicFilter: ((ChatChannel) -> Bool)? = nil) {
         channelList = ChannelList(
-            initialChannels: [],
             query: ChannelListQuery(filter: .in(.members, values: [memberId]), sort: [.init(key: .createdAt, isAscending: true)]),
             dynamicFilter: dynamicFilter,
             channelListUpdater: usesMockedChannelUpdater ? env.channelListUpdaterMock : env.channelListUpdater,
             client: env.client,
             environment: env.channelListEnvironment
         )
+        if loadState {
+            _ = channelList.state
+        }
     }
     
     private func makeChannels(count: Int, createdAtOffset: Int) -> [ChatChannel] {
@@ -292,8 +294,16 @@ extension ChannelList_Tests {
         }
         
         lazy var channelListEnvironment: ChannelList.Environment = .init(
-            stateBuilder: { [unowned self] in
-                self.channelListState = ChannelListState(initialChannels: $0, query: $1, dynamicFilter: $2, clientConfig: $3, channelListUpdater: $4, database: $5, eventNotificationCenter: $6)
+            stateBuilder: {
+                [unowned self] in
+                self.channelListState = ChannelListState(
+                    query: $0,
+                    dynamicFilter: $1,
+                    clientConfig: $2,
+                    channelListUpdater: $3,
+                    database: $4,
+                    eventNotificationCenter: $5
+                )
                 return channelListState
             }
         )

@@ -236,7 +236,7 @@ extension ChannelListUpdater {
         }
     }
 
-    func update(channelListQuery: ChannelListQuery) async throws -> [ChatChannel] {
+    @discardableResult func update(channelListQuery: ChannelListQuery) async throws -> [ChatChannel] {
         try await withCheckedThrowingContinuation { continuation in
             update(channelListQuery: channelListQuery) { result in
                 continuation.resume(with: result)

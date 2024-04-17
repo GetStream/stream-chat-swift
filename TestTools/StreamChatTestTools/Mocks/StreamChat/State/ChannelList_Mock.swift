@@ -9,19 +9,16 @@ import Foundation
 public class ChannelList_Mock: ChannelList {
     
     public static func mock(
-        channels: [ChatChannel] = [],
         query: ChannelListQuery? = nil,
         client: ChatClient? = nil
     ) -> ChannelList_Mock {
         ChannelList_Mock(
-            channels: channels,
             query: query ?? .init(filter: .nonEmpty),
             client: client ?? .mock(bundle: Bundle(for: Self.self))
         )
     }
     
     init(
-        channels: [ChatChannel],
         query: ChannelListQuery,
         dynamicFilter: ((ChatChannel) -> Bool)? = nil,
         client: ChatClient,
@@ -32,7 +29,6 @@ public class ChannelList_Mock: ChannelList {
             apiClient: APIClient_Spy()
         )
         super.init(
-            initialChannels: channels,
             query: query,
             dynamicFilter: dynamicFilter,
             channelListUpdater: channelListUpdater,
