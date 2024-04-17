@@ -13,7 +13,7 @@ final class Chat_Tests: XCTestCase {
     private var channelId: ChannelId!
     private var expectedTestError: TestError!
     
-    override func setUpWithError() throws {
+    @MainActor override func setUpWithError() throws {
         channelId = ChannelId.unique
         env = TestEnvironment()
         expectedTestError = TestError()
@@ -120,8 +120,21 @@ final class Chat_Tests: XCTestCase {
     
     // MARK: - Message Loading and State
     
+    func test_restoreMessages_whenExistingMessages_thenStateUpdates() async throws {
+        // DB has some older messages loaded
+        let initialChannelPayload = makeChannelPayload(messageCount: 3, createdAtOffset: 0)
+        try await env.client.mockDatabaseContainer.write { session in
+            try session.saveChannel(payload: initialChannelPayload)
+        }
+        
+        await setUpChat(usesMockedChannelUpdater: false, loadState: false)
+        
+        // Accessing the state triggers loading the inital states
+        await XCTAssertEqual(initialChannelPayload.messages.map(\.id), chat.state.messages.map(\.id))
+    }
+    
     func test_loadMessages_whenAPIRequestSucceeds_thenStateUpdates() async throws {
-        setUpChat(usesMockedChannelUpdater: false)
+        await setUpChat(usesMockedChannelUpdater: false)
         let pageSize = 2
         let channelPayload = makeChannelPayload(messageCount: pageSize, createdAtOffset: 0)
         env.client.mockAPIClient.test_mockResponseResult(.success(channelPayload))
@@ -140,7 +153,7 @@ final class Chat_Tests: XCTestCase {
     }
     
     func test_loadMessagesFirstPage_whenAPIRequestSucceeds_thenStateIsReset() async throws {
-        setUpChat(usesMockedChannelUpdater: false)
+        await setUpChat(usesMockedChannelUpdater: false)
         
         // DB has some older messages loaded
         try await env.client.mockDatabaseContainer.write { session in
@@ -170,7 +183,7 @@ final class Chat_Tests: XCTestCase {
             try session.saveChannel(payload: initialChannelPayload)
         }
         
-        setUpChat(usesMockedChannelUpdater: false)
+        await setUpChat(usesMockedChannelUpdater: false)
 
         // Load older
         let channelPayload = makeChannelPayload(messageCount: 5, createdAtOffset: 0)
@@ -190,7 +203,7 @@ final class Chat_Tests: XCTestCase {
     }
     
     func test_loadNextMessages_whenAPIRequestSucceeds_thenStateUpdates() async throws {
-        setUpChat(usesMockedChannelUpdater: false)
+        await setUpChat(usesMockedChannelUpdater: false)
         
         // Reset has loaded state since we always load newest messages
         let initialChannelPayload = makeChannelPayload(messageCount: 3, createdAtOffset: 0)
@@ -221,7 +234,7 @@ final class Chat_Tests: XCTestCase {
             try session.saveChannel(payload: initialChannelPayload)
         }
         
-        setUpChat(usesMockedChannelUpdater: false)
+        await setUpChat(usesMockedChannelUpdater: false)
  
         // Jump to a message
         let channelPayload = makeChannelPayload(messageCount: 3, createdAtOffset: 10)
@@ -1336,7 +1349,7 @@ final class Chat_Tests: XCTestCase {
     /// Configures chat for testing.
     ///
     /// - Parameter usesMockedChannelUpdater: Set it for false for tests which need to update the local DB and simulate API requests.
-    private func setUpChat(usesMockedChannelUpdater: Bool) {
+    @MainActor private func setUpChat(usesMockedChannelUpdater: Bool, loadState: Bool = true) {
         chat = Chat(
             cid: channelId,
             channelQuery: ChannelQuery(cid: channelId),
@@ -1347,6 +1360,9 @@ final class Chat_Tests: XCTestCase {
             client: env.client,
             environment: env.chatEnvironment
         )
+        if loadState {
+            _ = chat.state
+        }
     }
     
     private func makeChannelPayload(messageCount: Int, createdAtOffset: Int) -> ChannelPayload {

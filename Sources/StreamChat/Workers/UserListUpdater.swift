@@ -69,7 +69,7 @@ enum UpdatePolicy {
 
 @available(iOS 13.0, *)
 extension UserListUpdater {
-    func update(userListQuery: UserListQuery, policy: UpdatePolicy = .merge) async throws -> [ChatUser] {
+    @discardableResult func update(userListQuery: UserListQuery, policy: UpdatePolicy = .merge) async throws -> [ChatUser] {
         try await withCheckedThrowingContinuation { continuation in
             update(userListQuery: userListQuery) { result in
                 continuation.resume(with: result)
