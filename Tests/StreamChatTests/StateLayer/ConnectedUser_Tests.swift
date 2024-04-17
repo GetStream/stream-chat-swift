@@ -133,7 +133,7 @@ final class ConnectedUser_Tests: XCTestCase {
     
     // MARK: - Test Data
     
-    private func setUpConnectedUser(usesMockedUpdaters: Bool, initialDeviceCount: Int = 0) async throws {
+    @MainActor private func setUpConnectedUser(usesMockedUpdaters: Bool, loadState: Bool = true, initialDeviceCount: Int = 0) async throws {
         var user: CurrentChatUser!
         try await env.client.databaseContainer.write { session in
             user = try session.saveCurrentUser(payload: self.currentUserPayload(deviceCount: initialDeviceCount)).asModel()
@@ -146,6 +146,9 @@ final class ConnectedUser_Tests: XCTestCase {
                 usesMockedUpdaters: usesMockedUpdaters
             )
         )
+        if loadState {
+            _ = connectedUser.state
+        }
     }
     
     private func currentUserPayload(name: String = "InitialName", deviceCount: Int = 0) -> CurrentUserPayload {
