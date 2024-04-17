@@ -45,9 +45,8 @@ extension MessageSearchState {
                 )
                 do {
                     if let messagesObserver {
-                        try messagesObserver.startObserving(didChange: handlers.messagesDidChange)
-                        // Sending the initial value since we keep recreating the observer
-                        Task { await handlers.messagesDidChange(messagesObserver.items) }
+                        let messages = try messagesObserver.startObserving(didChange: handlers.messagesDidChange)
+                        Task.mainActor { await handlers.messagesDidChange(messages) }
                     }
                 } catch {
                     log.error("Failed to start the message result observer for query (\(query) with error \(error)")

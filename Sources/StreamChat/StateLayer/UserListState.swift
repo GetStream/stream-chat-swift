@@ -9,16 +9,13 @@ import Foundation
 @MainActor public final class UserListState: ObservableObject {
     private let observer: Observer
     
-    init(users: [ChatUser], query: UserListQuery, database: DatabaseContainer) {
+    init(query: UserListQuery, database: DatabaseContainer) {
         observer = Observer(query: query, database: database)
         self.query = query
-        self.users = StreamCollection(users)
-        observer.start(
+        
+        users = observer.start(
             with: .init(usersDidChange: { [weak self] in self?.users = $0 })
         )
-        if users.isEmpty {
-            self.users = observer.usersObserver.items
-        }
     }
     
     /// The query specifying and filtering the list of users.

@@ -12,7 +12,7 @@ final class UserList_Tests: XCTestCase {
     private var query: UserListQuery!
     private var userList: UserList!
 
-    override func setUpWithError() throws {
+    @MainActor override func setUpWithError() throws {
         env = TestEnvironment()
         query = UserListQuery(
             filter: .query(.id, text: .unique),
@@ -32,12 +32,12 @@ final class UserList_Tests: XCTestCase {
         try await env.client.databaseContainer.write { session in
             session.saveUsers(payload: initialPayload, query: self.query)
         }
-        setUpUserList(usesMockedUpdater: false)
+        await setUpUserList(usesMockedUpdater: false)
         await XCTAssertEqual(initialPayload.users.map(\.id), userList.state.users.map(\.id))
     }
 
     func test_loadUsers_whenAPIRequestSucceeds_thenResultsAreReturnedAndStateUpdates() async throws {
-        setUpUserList(usesMockedUpdater: false)
+        await setUpUserList(usesMockedUpdater: false)
         
         let apiResult = makeUserListPayload(count: 10, offset: 0)
         env.client.mockAPIClient.test_mockResponseResult(.success(apiResult))
@@ -48,7 +48,7 @@ final class UserList_Tests: XCTestCase {
     }
     
     func test_loadNextUsers_whenAPIRequestSucceeds_thenResultsAreReturnedAndStateUpdates() async throws {
-        setUpUserList(usesMockedUpdater: false)
+        await setUpUserList(usesMockedUpdater: false)
         
         let initialPayload = makeUserListPayload(count: 5, offset: 0)
         try await env.client.databaseContainer.write { session in
@@ -65,13 +65,15 @@ final class UserList_Tests: XCTestCase {
 
     // MARK: - Test Data
     
-    private func setUpUserList(usesMockedUpdater: Bool) {
+    @MainActor private func setUpUserList(usesMockedUpdater: Bool, loadState: Bool = true) {
         userList = UserList(
-            users: [],
             query: query,
             userListUpdater: usesMockedUpdater ? env.userListUpdaterMock : env.userListUpdater,
             client: env.client
         )
+        if loadState {
+            _ = userList.state
+        }
     }
     
     private func makeUserListPayload(count: Int, offset: Int) -> UserListPayload {
@@ -111,7 +113,7 @@ extension UserList_Tests {
         
         lazy var userListEnvironment: UserList.Environment = .init(
             stateBuilder: { [unowned self] in
-                self.state = UserListState(users: $0, query: $1, database: $2)
+                self.state = UserListState(query: $0, database: $1)
                 return self.state
             }
         )

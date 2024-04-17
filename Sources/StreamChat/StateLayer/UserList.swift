@@ -10,11 +10,10 @@ public final class UserList {
     private let stateBuilder: StateBuilder<UserListState>
     private let userListUpdater: UserListUpdater
     
-    init(users: [ChatUser], query: UserListQuery, userListUpdater: UserListUpdater, client: ChatClient, environment: Environment = .init()) {
+    init(query: UserListQuery, userListUpdater: UserListUpdater, client: ChatClient, environment: Environment = .init()) {
         self.userListUpdater = userListUpdater
         stateBuilder = StateBuilder {
             environment.stateBuilder(
-                users,
                 query,
                 client.databaseContainer
             )
@@ -55,11 +54,10 @@ public final class UserList {
 extension UserList {
     struct Environment {
         var stateBuilder: @MainActor(
-            _ users: [ChatUser],
             _ query: UserListQuery,
             _ database: DatabaseContainer
-        ) -> UserListState = { @MainActor users, query, database in
-            UserListState(users: users, query: query, database: database)
+        ) -> UserListState = { @MainActor in
+            UserListState(query: $0, database: $1)
         }
     }
 }

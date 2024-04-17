@@ -12,13 +12,15 @@ final class UserSearch_Tests: XCTestCase {
     private var testError: TestError!
     private var userSearch: UserSearch!
     
-    override func setUpWithError() throws {
+    @MainActor override func setUpWithError() throws {
         env = TestEnvironment()
         testError = TestError()
         userSearch = UserSearch(
             client: env.client,
             environment: env.userListEnvironment
         )
+        // Explicitly load the state
+        _ = userSearch.state
     }
 
     override func tearDownWithError() throws {
