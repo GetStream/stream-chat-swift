@@ -7,7 +7,7 @@ import Foundation
 @available(iOS 13.0, *)
 extension ChannelListState {
     final class Observer {
-        let channelListObserver: StateLayerDatabaseObserver<ListResult, ChatChannel, ChannelDTO>
+        private let channelListObserver: StateLayerDatabaseObserver<ListResult, ChatChannel, ChannelDTO>
         private let clientConfig: ChatClientConfig
         private let channelListUpdater: ChannelListUpdater
         private let database: DatabaseContainer
@@ -46,7 +46,7 @@ extension ChannelListState {
             let channelsDidChange: (StreamCollection<ChatChannel>) async -> Void
         }
         
-        func start(with handlers: Handlers) {
+        func start(with handlers: Handlers) -> StreamCollection<ChatChannel> {
             /// When we receive events, we need to check if a channel should be added or removed from
             /// the current query depending on the following events:
             /// - Channel created: We analyse if the channel should be added to the current query.
@@ -81,9 +81,10 @@ extension ChannelListState {
             ]
             
             do {
-                try channelListObserver.startObserving(didChange: handlers.channelsDidChange)
+                return try channelListObserver.startObserving(didChange: handlers.channelsDidChange)
             } catch {
                 log.error("Failed to start the channel list observer for query: \(query)")
+                return StreamCollection([])
             }
         }
         

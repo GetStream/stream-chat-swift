@@ -9,15 +9,11 @@ import Foundation
 @MainActor public final class MemberListState: ObservableObject {
     private let observer: Observer
     
-    init(initialMembers: [ChatChannelMember], query: ChannelMemberListQuery, database: DatabaseContainer) {
-        members = StreamCollection(initialMembers)
+    init(query: ChannelMemberListQuery, database: DatabaseContainer) {
         observer = Observer(query: query, database: database)
-        observer.start(
+        members = observer.start(
             with: .init(membersDidChange: { [weak self] in self?.members = $0 })
         )
-        if initialMembers.isEmpty {
-            members = observer.memberListObserver.items
-        }
     }
     
     /// An array of members for the specified ``ChannelMemberListQuery``.

@@ -8,8 +8,8 @@ import Foundation
 extension MessageState {
     struct Observer {
         private let messageId: MessageId
-        let messageObserver: StateLayerDatabaseObserver<EntityResult, ChatMessage, MessageDTO>
-        let repliesObserver: StateLayerDatabaseObserver<ListResult, ChatMessage, MessageDTO>
+        private let messageObserver: StateLayerDatabaseObserver<EntityResult, ChatMessage, MessageDTO>
+        private let repliesObserver: StateLayerDatabaseObserver<ListResult, ChatMessage, MessageDTO>
         
         init(messageId: MessageId, messageOrder: MessageOrdering, database: DatabaseContainer, clientConfig: ChatClientConfig) {
             self.messageId = messageId
@@ -36,10 +36,16 @@ extension MessageState {
             let repliesDidChange: (StreamCollection<ChatMessage>) async -> Void
         }
         
-        func start(with handlers: Handlers) {
+        func start(
+            with handlers: Handlers
+        ) -> (
+            message: ChatMessage?,
+            reactions: [ChatMessageReaction],
+            replies: StreamCollection<ChatMessage>
+        ) {
             do {
                 var lastSortedReactions: [ChatMessageReaction]?
-                try messageObserver.startObserving(onContextDidChange: { message in
+                let message = try messageObserver.startObserving(onContextDidChange: { message in
                     guard let message else { return }
                     let changedReactions: [ChatMessageReaction]?
                     let currentReactions = message.latestReactions.sorted(by: ChatMessageReaction.defaultSorting)
@@ -53,13 +59,12 @@ extension MessageState {
                         await handlers.messageDidChange((message, changedReactions))
                     }
                 })
+                let reactions = message?.latestReactions.sorted(by: ChatMessageReaction.defaultSorting) ?? []
+                let replies = try repliesObserver.startObserving(didChange: handlers.repliesDidChange)
+                return (message, reactions, replies)
             } catch {
-                log.error("Failed to start the messages observer for message: \(messageId)")
-            }
-            do {
-                try repliesObserver.startObserving(didChange: handlers.repliesDidChange)
-            } catch {
-                log.error("Failed to start the replies observer for message: \(messageId)")
+                log.error("Failed to start the observers for message: \(messageId) with error \(error)")
+                return (nil, [], StreamCollection([]))
             }
         }
     }
