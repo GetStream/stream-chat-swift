@@ -30,7 +30,7 @@ final class StateLayerDatabaseObserver_Tests: XCTestCase {
         let expectation = XCTestExpectation()
         var changeCount = 0
         let observer = makeChannelObserver()
-        try observer.startObserving(onContextDidChange: { _ in
+        _ = try observer.startObserving(onContextDidChange: { _ in
             changeCount += 1
             expectation.fulfill()
         })
@@ -60,7 +60,7 @@ final class StateLayerDatabaseObserver_Tests: XCTestCase {
         let expectation = XCTestExpectation()
         var changeCount = 0
         let observer = makeChannelObserver()
-        try observer.startObserving(onContextDidChange: { _ in
+        _ = try observer.startObserving(onContextDidChange: { _ in
             changeCount += 1
             expectation.fulfill()
         })
@@ -86,7 +86,7 @@ final class StateLayerDatabaseObserver_Tests: XCTestCase {
         let expectation = XCTestExpectation()
         var changeCount = 0
         let observer = makeChannelObserver()
-        try observer.startObserving(onContextDidChange: { _ in
+        _ = try observer.startObserving(onContextDidChange: { _ in
             changeCount += 1
             expectation.fulfill()
         })
@@ -125,7 +125,7 @@ final class StateLayerDatabaseObserver_Tests: XCTestCase {
         let expectation = XCTestExpectation()
         var changeCount = 0
         let observer = makeMessagesListObserver()
-        try observer.startObserving(onContextDidChange: { _ in
+        _ = try observer.startObserving(onContextDidChange: { _ in
             changeCount += 1
             expectation.fulfill()
         })
@@ -157,7 +157,7 @@ final class StateLayerDatabaseObserver_Tests: XCTestCase {
         let expectation = XCTestExpectation()
         var changeCount = 0
         let observer = makeMessagesListObserver()
-        try observer.startObserving(onContextDidChange: { _ in
+        _ = try observer.startObserving(onContextDidChange: { _ in
             changeCount += 1
             expectation.fulfill()
         })
@@ -192,7 +192,7 @@ final class StateLayerDatabaseObserver_Tests: XCTestCase {
         let expectation = XCTestExpectation()
         var changeCount = 0
         let observer = makeMessagesListObserver()
-        try observer.startObserving(onContextDidChange: { _ in
+        _ = try observer.startObserving(onContextDidChange: { _ in
             changeCount += 1
             expectation.fulfill()
         })

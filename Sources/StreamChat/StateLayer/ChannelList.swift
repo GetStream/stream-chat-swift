@@ -11,7 +11,6 @@ public class ChannelList {
     private let stateBuilder: StateBuilder<ChannelListState>
     
     init(
-        initialChannels: [ChatChannel],
         query: ChannelListQuery,
         dynamicFilter: ((ChatChannel) -> Bool)?,
         channelListUpdater: ChannelListUpdater,
@@ -22,7 +21,6 @@ public class ChannelList {
         self.query = query
         stateBuilder = StateBuilder {
             environment.stateBuilder(
-                initialChannels,
                 query,
                 dynamicFilter,
                 client.config,
@@ -69,7 +67,6 @@ public class ChannelList {
 extension ChannelList {
     struct Environment {
         var stateBuilder: @MainActor(
-            _ initialChannels: [ChatChannel],
             _ query: ChannelListQuery,
             _ dynamicFilter: ((ChatChannel) -> Bool)?,
             _ clientConfig: ChatClientConfig,
@@ -78,13 +75,12 @@ extension ChannelList {
             _ eventNotificationCenter: EventNotificationCenter
         ) -> ChannelListState = { @MainActor in
             ChannelListState(
-                initialChannels: $0,
-                query: $1,
-                dynamicFilter: $2,
-                clientConfig: $3,
-                channelListUpdater: $4,
-                database: $5,
-                eventNotificationCenter: $6
+                query: $0,
+                dynamicFilter: $1,
+                clientConfig: $2,
+                channelListUpdater: $3,
+                database: $4,
+                eventNotificationCenter: $5
             )
         }
     }
