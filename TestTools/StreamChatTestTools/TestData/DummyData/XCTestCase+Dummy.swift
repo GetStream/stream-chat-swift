@@ -313,6 +313,64 @@ extension XCTestCase {
 
         return payload
     }
+
+    func dummyThreadPayload(
+        parentMessageId: MessageId = .unique,
+        parentMessage: MessagePayload = .dummy(),
+        channel: ChannelDetailPayload = .dummy(),
+        createdBy: UserPayload = .dummy(userId: .newUniqueId),
+        replyCount: Int = 0,
+        participantCount: Int = 0,
+        threadParticipants: [ThreadParticipantPayload] = [],
+        lastMessageAt: Date? = .unique,
+        createdAt: Date = .unique,
+        updatedAt: Date? = .unique,
+        title: String? = .unique,
+        latestReplies: [MessagePayload] = [],
+        read: [ThreadReadPayload] = []
+    ) -> ThreadPayload {
+        .init(
+            parentMessageId: parentMessageId,
+            parentMessage: parentMessage,
+            channel: channel,
+            createdBy: createdBy,
+            replyCount: replyCount,
+            participantCount: participantCount,
+            threadParticipants: threadParticipants,
+            lastMessageAt: lastMessageAt,
+            createdAt: createdAt,
+            updatedAt: updatedAt,
+            title: title,
+            latestReplies: latestReplies,
+            read: read
+        )
+    }
+
+    func dummyThreadReadPayload(
+        user: UserPayload = .dummy(userId: .unique),
+        lastReadAt: Date? = .unique,
+        unreadMessagesCount: Int = 0
+    ) -> ThreadReadPayload {
+        .init(
+            user: user,
+            lastReadAt: lastReadAt,
+            unreadMessagesCount: unreadMessagesCount
+        )
+    }
+
+    func dummyThreadParticipantPayload(
+        user: UserPayload = .dummy(userId: .unique),
+        threadId: String = .unique,
+        createdAt: Date = .unique,
+        lastReadAt: Date? = .unique
+    ) -> ThreadParticipantPayload {
+        .init(
+            user: user,
+            threadId: threadId,
+            createdAt: createdAt,
+            lastReadAt: lastReadAt
+        )
+    }
 }
 
 private extension MemberPayload {

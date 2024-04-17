@@ -21,6 +21,7 @@ final class ThreadListPayload_Tests: XCTestCase {
         let url = XCTestCase.mockData(fromJSONFile: "Thread")
         let payload = try JSONDecoder.default.decode(ThreadPayload.self, from: url)
         XCTAssertEqual(payload.channel.cid.rawValue, "messaging:4AB11F2F-4")
+        XCTAssertEqual(payload.parentMessageId, "488bba2a-193d-48d2-95ae-3aa4b8e34960")
         XCTAssertEqual(payload.parentMessage.id, "488bba2a-193d-48d2-95ae-3aa4b8e34960")
         XCTAssertEqual(payload.parentMessage.text, "msg: 24")
         XCTAssertEqual(payload.createdBy.id, "han_solo")

@@ -386,6 +386,36 @@ protocol QueuedRequestDatabaseSession {
     func deleteQueuedRequest(id: String)
 }
 
+protocol ThreadDatabaseSession {
+    /// Creates `ThreadDTO` objects for the given thread payloads.
+    @discardableResult
+    func saveThreadList(payload: ThreadListPayload, query: ThreadListQuery?) -> [ThreadDTO]
+    
+    /// Creates a new `ThreadDTO` object in the database with the given `payload`.
+    @discardableResult
+    func saveThread(
+        payload: ThreadPayload,
+        query: ThreadListQuery?,
+        cache: PreWarmedCache?
+    ) throws -> ThreadDTO
+
+    /// Creates a new `ThreadParticipantDTO` object in the database with the given `payload`.
+    @discardableResult
+    func saveThreadParticipant(
+        payload: ThreadParticipantPayload,
+        threadId: String,
+        cache: PreWarmedCache?
+    ) throws -> ThreadParticipantDTO
+
+    /// Creates a new `ThreadReadDTO` object in the database with the given `payload`.
+    @discardableResult
+    func saveThreadRead(
+        payload: ThreadReadPayload,
+        parentMessageId: String,
+        cache: PreWarmedCache?
+    ) throws -> ThreadReadDTO
+}
+
 protocol DatabaseSession: UserDatabaseSession,
     CurrentUserDatabaseSession,
     MessageDatabaseSession,
@@ -396,7 +426,8 @@ protocol DatabaseSession: UserDatabaseSession,
     MemberListQueryDatabaseSession,
     AttachmentDatabaseSession,
     ChannelMuteDatabaseSession,
-    QueuedRequestDatabaseSession {}
+    QueuedRequestDatabaseSession,
+    ThreadDatabaseSession {}
 
 extension DatabaseSession {
     @discardableResult

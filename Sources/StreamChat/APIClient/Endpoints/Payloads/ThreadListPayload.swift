@@ -13,6 +13,11 @@ struct ThreadListPayload: Decodable {
     let threads: [ThreadPayload]
     let next: String?
 
+    init(threads: [ThreadPayload], next: String?) {
+        self.threads = threads
+        self.next = next
+    }
+
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         let threads = try container.decodeArrayIgnoringFailures([ThreadPayload].self, forKey: .threads)
@@ -26,6 +31,7 @@ struct ThreadListPayload: Decodable {
 struct ThreadPayload: Decodable {
     enum CodingKeys: String, CodingKey {
         case channel
+        case parentMessageId = "parent_message_id"
         case parentMessage = "parent_message"
         case createdBy = "created_by"
         case replyCount = "reply_count"
@@ -38,30 +44,62 @@ struct ThreadPayload: Decodable {
         case latestReplies = "latest_replies"
         case read
     }
-
-    let channel: ChannelDetailPayload
+    
+    let parentMessageId: MessageId
     let parentMessage: MessagePayload
+    let channel: ChannelDetailPayload
     let createdBy: UserPayload
     let replyCount: Int
     let participantCount: Int
-    let threadParticipants: [ThreadParticipant]
+    let threadParticipants: [ThreadParticipantPayload]
     let lastMessageAt: Date?
     let createdAt: Date
     let updatedAt: Date?
     let title: String?
     let latestReplies: [MessagePayload]
-    let read: [ChannelReadPayload]
+    let read: [ThreadReadPayload]
+
+    init(
+        parentMessageId: MessageId,
+        parentMessage: MessagePayload,
+        channel: ChannelDetailPayload,
+        createdBy: UserPayload,
+        replyCount: Int,
+        participantCount: Int,
+        threadParticipants: [ThreadParticipantPayload],
+        lastMessageAt: Date?,
+        createdAt: Date,
+        updatedAt: Date?,
+        title: String?,
+        latestReplies: [MessagePayload],
+        read: [ThreadReadPayload]
+    ) {
+        self.parentMessageId = parentMessageId
+        self.parentMessage = parentMessage
+        self.channel = channel
+        self.createdBy = createdBy
+        self.replyCount = replyCount
+        self.participantCount = participantCount
+        self.threadParticipants = threadParticipants
+        self.lastMessageAt = lastMessageAt
+        self.createdAt = createdAt
+        self.updatedAt = updatedAt
+        self.title = title
+        self.latestReplies = latestReplies
+        self.read = read
+    }
 
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
 
         channel = try container.decode(ChannelDetailPayload.self, forKey: .channel)
+        parentMessageId = try container.decode(String.self, forKey: .parentMessageId)
         parentMessage = try container.decode(MessagePayload.self, forKey: .parentMessage)
         createdBy = try container.decode(UserPayload.self, forKey: .createdBy)
         replyCount = try container.decode(Int.self, forKey: .replyCount)
         participantCount = try container.decode(Int.self, forKey: .participantCount)
         threadParticipants = try container.decode(
-            [ThreadParticipant].self,
+            [ThreadParticipantPayload].self,
             forKey: .threadParticipants
         )
         lastMessageAt = try container.decodeIfPresent(Date.self, forKey: .lastMessageAt)
@@ -69,11 +107,11 @@ struct ThreadPayload: Decodable {
         updatedAt = try container.decodeIfPresent(Date.self, forKey: .updatedAt)
         title = try container.decodeIfPresent(String.self, forKey: .title)
         latestReplies = try container.decodeArrayIgnoringFailures([MessagePayload].self, forKey: .latestReplies)
-        read = try container.decodeArrayIgnoringFailures([ChannelReadPayload].self, forKey: .read)
+        read = try container.decodeArrayIgnoringFailures([ThreadReadPayload].self, forKey: .read)
     }
 }
 
-struct ThreadParticipant: Decodable {
+struct ThreadParticipantPayload: Decodable {
     enum CodingKeys: String, CodingKey {
         case user
         case threadId = "thread_id"
@@ -85,4 +123,16 @@ struct ThreadParticipant: Decodable {
     let threadId: String
     let createdAt: Date
     let lastReadAt: Date?
+}
+
+struct ThreadReadPayload: Decodable {
+    enum CodingKeys: String, CodingKey {
+        case user
+        case lastReadAt = "last_read"
+        case unreadMessagesCount = "unread_messages"
+    }
+
+    let user: UserPayload
+    let lastReadAt: Date?
+    let unreadMessagesCount: Int
 }
