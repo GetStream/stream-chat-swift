@@ -44,6 +44,12 @@ extension IdentifiablePayload {
                     return MemberDTO.self
                 case ChannelReadDTO.className:
                     return ChannelReadDTO.self
+                case ThreadDTO.className:
+                    return ThreadDTO.self
+                case ThreadParticipantDTO.className:
+                    return ThreadParticipantDTO.self
+                case ThreadReadDTO.className:
+                    return ThreadReadDTO.self
                 default:
                     return nil
                 }
@@ -152,6 +158,38 @@ extension ChannelDetailPayload: IdentifiablePayload {
         createdBy?.fillIds(cache: &cache)
         members?.fillIds(cache: &cache)
         invitedMembers.fillIds(cache: &cache)
+    }
+}
+
+extension ThreadListPayload: IdentifiablePayloadProxy {
+    func fillIds(cache: inout [DatabaseType: Set<DatabaseId>]) {
+        threads.fillIds(cache: &cache)
+    }
+}
+
+extension ThreadPayload: IdentifiablePayloadProxy {
+    func fillIds(cache: inout [DatabaseType: Set<DatabaseId>]) {
+        addId(cache: &cache)
+        parentMessage.fillIds(cache: &cache)
+        channel.fillIds(cache: &cache)
+        createdBy.fillIds(cache: &cache)
+        latestReplies.fillIds(cache: &cache)
+        threadParticipants.fillIds(cache: &cache)
+        read.fillIds(cache: &cache)
+    }
+}
+
+extension ThreadReadPayload: IdentifiablePayloadProxy {
+    func fillIds(cache: inout [DatabaseType: Set<DatabaseId>]) {
+        addId(cache: &cache)
+        user.fillIds(cache: &cache)
+    }
+}
+
+extension ThreadParticipantPayload: IdentifiablePayloadProxy {
+    func fillIds(cache: inout [DatabaseType: Set<DatabaseId>]) {
+        addId(cache: &cache)
+        user.fillIds(cache: &cache)
     }
 }
 

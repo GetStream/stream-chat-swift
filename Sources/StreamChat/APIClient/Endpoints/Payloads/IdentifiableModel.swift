@@ -62,3 +62,21 @@ extension ChannelReadDTO: IdentifiableModel {
     static let idKeyPath: String? = nil
     static func id(for model: NSManagedObject) -> DatabaseId? { nil } // Does not have id
 }
+
+extension ThreadDTO: IdentifiableModel {
+    static var className: DatabaseType { _className }
+    static var idKeyPath: String? { #keyPath(ThreadDTO.parentMessageId) }
+    static func id(for model: NSManagedObject) -> DatabaseId? { (model as? Self)?.parentMessageId }
+}
+
+extension ThreadReadDTO: IdentifiableModel {
+    static let className: DatabaseType = _className
+    static let idKeyPath: String? = nil
+    static func id(for model: NSManagedObject) -> DatabaseId? { nil }
+}
+
+extension ThreadParticipantDTO: IdentifiableModel {
+    static let className: DatabaseType = _className
+    static let idKeyPath: String? = #keyPath(MemberDTO.id)
+    static func id(for model: NSManagedObject) -> DatabaseId? { (model as? Self)?.user.id }
+}
