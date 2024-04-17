@@ -19,7 +19,7 @@ final class PollsEndpoints_Tests: XCTestCase {
             isClosed: false,
             maxVotesAllowed: 1
         )
-        let endpoint = Endpoint<PollPayload>.createPoll(createPollRequest: request)
+        let endpoint = Endpoint<PollPayloadResponse>.createPoll(createPollRequest: request)
         
         let expectedBody: [String: Any] = [
             "name": "test",
@@ -52,7 +52,7 @@ final class PollsEndpoints_Tests: XCTestCase {
             isClosed: false,
             maxVotesAllowed: 1
         )
-        let endpoint = Endpoint<PollPayload>.updatePoll(updatePollRequest: request)
+        let endpoint = Endpoint<PollPayloadResponse>.updatePoll(updatePollRequest: request)
         
         let expectedBody: [String: Any] = [
             "name": "test",
@@ -76,7 +76,7 @@ final class PollsEndpoints_Tests: XCTestCase {
     
     func test_queryPolls() throws {
         let request = QueryPollsRequestBody(limit: 30, prev: "10")
-        let endpoint = Endpoint<QueryPollsPayload>.queryPolls(queryPollsRequest: request)
+        let endpoint = Endpoint<QueryPollsPayloadResponse>.queryPolls(queryPollsRequest: request)
         
         let expectedBody: [String: Any] = ["limit": 30, "prev": "10"]
         let body = try AnyEndpoint(endpoint).bodyAsDictionary()
@@ -100,7 +100,7 @@ final class PollsEndpoints_Tests: XCTestCase {
     }
     
     func test_getPoll() throws {
-        let endpoint = Endpoint<PollPayload>.getPoll(pollId: "test")
+        let endpoint = Endpoint<PollPayloadResponse>.getPoll(pollId: "test")
         
         XCTAssertEqual(endpoint.method, .get)
         XCTAssertEqual(endpoint.path.value, "polls/test")
@@ -111,7 +111,7 @@ final class PollsEndpoints_Tests: XCTestCase {
     
     func test_updatePollPartial() throws {
         let request = UpdatePollPartialRequestBody(pollId: "test", set: ["name": "test_updated"])
-        let endpoint = Endpoint<PollPayload>.updatePollPartial(
+        let endpoint = Endpoint<PollPayloadResponse>.updatePollPartial(
             pollId: "test",
             updatePollPartialRequest: request
         )
@@ -215,7 +215,7 @@ final class PollsEndpoints_Tests: XCTestCase {
             pollId: "test",
             vote: .init(answerText: "test", optionId: "option")
         )
-        let endpoint = Endpoint<PollVotePayload>.castPollVote(
+        let endpoint = Endpoint<PollVotePayloadResponse>.castPollVote(
             messageId: "message_id",
             pollId: "test",
             vote: request

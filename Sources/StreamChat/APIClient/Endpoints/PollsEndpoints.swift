@@ -5,7 +5,7 @@
 import Foundation
 
 extension Endpoint {
-    static func createPoll(createPollRequest: CreatePollRequestBody) -> Endpoint<PollPayload> {
+    static func createPoll(createPollRequest: CreatePollRequestBody) -> Endpoint<PollPayloadResponse> {
         .init(
             path: .polls,
             method: .post,
@@ -16,7 +16,7 @@ extension Endpoint {
         )
     }
     
-    static func updatePoll(updatePollRequest: UpdatePollRequestBody) -> Endpoint<PollPayload> {
+    static func updatePoll(updatePollRequest: UpdatePollRequestBody) -> Endpoint<PollPayloadResponse> {
         .init(
             path: .polls,
             method: .put,
@@ -27,7 +27,7 @@ extension Endpoint {
         )
     }
     
-    static func queryPolls(queryPollsRequest: QueryPollsRequestBody) -> Endpoint<QueryPollsPayload> {
+    static func queryPolls(queryPollsRequest: QueryPollsRequestBody) -> Endpoint<QueryPollsPayloadResponse> {
         .init(
             path: .pollsQuery,
             method: .post,
@@ -49,7 +49,7 @@ extension Endpoint {
         )
     }
     
-    static func getPoll(pollId: String) -> Endpoint<PollPayload> {
+    static func getPoll(pollId: String) -> Endpoint<PollPayloadResponse> {
         .init(
             path: .poll(pollId: pollId),
             method: .get,
@@ -63,7 +63,7 @@ extension Endpoint {
     static func updatePollPartial(
         pollId: String,
         updatePollPartialRequest: UpdatePollPartialRequestBody
-    ) -> Endpoint<PollPayload> {
+    ) -> Endpoint<PollPayloadResponse> {
         .init(
             path: .poll(pollId: pollId),
             method: .patch,
@@ -142,7 +142,7 @@ extension Endpoint {
         messageId: MessageId,
         pollId: String,
         vote: CastPollVoteRequestBody
-    ) -> Endpoint<PollVotePayload> {
+    ) -> Endpoint<PollVotePayloadResponse> {
         .init(
             path: .pollVoteInMessage(messageId: messageId, pollId: pollId),
             method: .post,
@@ -157,7 +157,7 @@ extension Endpoint {
         messageId: String,
         pollId: String,
         voteId: String
-    ) -> Endpoint<PollVotePayload> {
+    ) -> Endpoint<PollVotePayloadResponse> {
         .init(
             path: .pollVote(messageId: messageId, pollId: pollId, voteId: voteId),
             method: .delete,

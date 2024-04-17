@@ -97,7 +97,7 @@ class MessagePayload: Decodable {
     var pinnedAt: Date?
     var pinExpires: Date?
     
-    var poll: PollDTO?
+    var poll: PollPayload?
 
     /// Only message payload from `getMessage` endpoint contains channel data. It's a convenience workaround for having to
     /// make an extra call do get channel details.
@@ -159,7 +159,7 @@ class MessagePayload: Decodable {
         originalLanguage = i18n?.originalLanguage
         moderationDetails = try container.decodeIfPresent(MessageModerationDetailsPayload.self, forKey: .moderationDetails)
         messageTextUpdatedAt = try container.decodeIfPresent(Date.self, forKey: .messageTextUpdatedAt)
-        poll = try container.decodeIfPresent(PollDTO.self, forKey: .poll)
+        poll = try container.decodeIfPresent(PollPayload.self, forKey: .poll)
     }
 
     init(
@@ -197,7 +197,7 @@ class MessagePayload: Decodable {
         originalLanguage: String? = nil,
         moderationDetails: MessageModerationDetailsPayload? = nil,
         messageTextUpdatedAt: Date? = nil,
-        poll: PollDTO? = nil
+        poll: PollPayload? = nil
     ) {
         self.id = id
         self.cid = cid

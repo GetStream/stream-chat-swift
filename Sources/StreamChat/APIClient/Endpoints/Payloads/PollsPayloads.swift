@@ -4,11 +4,11 @@
 
 import Foundation
 
-struct PollPayload: Decodable {
+struct PollPayloadResponse: Decodable {
     let duration: String
-    let poll: PollResponseData
+    let poll: PollPayload
 
-    init(duration: String, poll: PollResponseData) {
+    init(duration: String, poll: PollPayload) {
         self.duration = duration
         self.poll = poll
     }
@@ -19,13 +19,13 @@ struct PollPayload: Decodable {
     }
 }
 
-struct QueryPollsPayload: Decodable {
+struct QueryPollsPayloadResponse: Decodable {
     let duration: String
-    let polls: [PollResponseData]
+    let polls: [PollPayload]
     var next: String?
     var prev: String?
 
-    init(duration: String, polls: [PollResponseData], next: String? = nil, prev: String? = nil) {
+    init(duration: String, polls: [PollPayload], next: String? = nil, prev: String? = nil) {
         self.duration = duration
         self.polls = polls
         self.next = next
@@ -40,101 +40,11 @@ struct QueryPollsPayload: Decodable {
     }
 }
 
-struct PollResponseData: Decodable {
-    let allowAnswers: Bool
-    let allowUserSuggestedOptions: Bool
-    let answersCount: Int
-    let createdAt: Date
-    let createdById: String
-    let description: String
-    let enforceUniqueVote: Bool
-    let id: String
-    let name: String
-    let updatedAt: Date
-    let voteCount: Int
-    let votingVisibility: String
-    let options: [PollOptionResponseData?]
-    let ownVotes: [PollVoteResponseData?]
-    var custom: [String: RawJSON]?
-    let latestVotesByOption: [String: [PollVoteResponseData?]]
-    var voteCountsByOption: [String: Int]?
-    var isClosed: Bool?
-    var maxVotesAllowed: Int?
-    var createdBy: UserPayload?
-
-    init(
-        allowAnswers: Bool,
-        allowUserSuggestedOptions: Bool,
-        answersCount: Int,
-        createdAt: Date,
-        createdById: String,
-        description: String,
-        enforceUniqueVote: Bool,
-        id: String,
-        name: String,
-        updatedAt: Date,
-        voteCount: Int,
-        votingVisibility: String,
-        options: [PollOptionResponseData?],
-        ownVotes: [PollVoteResponseData?],
-        custom: [String: RawJSON]?,
-        latestVotesByOption: [String: [PollVoteResponseData?]],
-        voteCountsByOption: [String: Int],
-        isClosed: Bool? = nil,
-        maxVotesAllowed: Int? = nil,
-        createdBy: UserPayload? = nil
-    ) {
-        self.allowAnswers = allowAnswers
-        self.allowUserSuggestedOptions = allowUserSuggestedOptions
-        self.answersCount = answersCount
-        self.createdAt = createdAt
-        self.createdById = createdById
-        self.description = description
-        self.enforceUniqueVote = enforceUniqueVote
-        self.id = id
-        self.name = name
-        self.updatedAt = updatedAt
-        self.voteCount = voteCount
-        self.votingVisibility = votingVisibility
-        self.options = options
-        self.ownVotes = ownVotes
-        self.custom = custom
-        self.latestVotesByOption = latestVotesByOption
-        self.voteCountsByOption = voteCountsByOption
-        self.isClosed = isClosed
-        self.maxVotesAllowed = maxVotesAllowed
-        self.createdBy = createdBy
-    }
-    
-    enum CodingKeys: String, CodingKey, CaseIterable {
-        case allowAnswers = "allow_answers"
-        case allowUserSuggestedOptions = "allow_user_suggested_options"
-        case answersCount = "answers_count"
-        case createdAt = "created_at"
-        case createdById = "created_by_id"
-        case description
-        case enforceUniqueVote = "enforce_unique_vote"
-        case id
-        case name
-        case updatedAt = "updated_at"
-        case voteCount = "vote_count"
-        case votingVisibility = "voting_visibility"
-        case options
-        case ownVotes = "own_votes"
-        case custom
-        case latestVotesByOption = "latest_votes_by_option"
-        case voteCountsByOption = "vote_counts_by_option"
-        case isClosed = "is_closed"
-        case maxVotesAllowed = "max_votes_allowed"
-        case createdBy = "created_by"
-    }
-}
-
 struct PollOptionResponse: Decodable {
     let duration: String
-    let pollOption: PollOptionResponseData
+    let pollOption: PollOptionPayload
 
-    init(duration: String, pollOption: PollOptionResponseData) {
+    init(duration: String, pollOption: PollOptionPayload) {
         self.duration = duration
         self.pollOption = pollOption
     }
@@ -145,7 +55,7 @@ struct PollOptionResponse: Decodable {
     }
 }
 
-struct PollOptionResponseData: Decodable {
+struct PollOptionPayload: Decodable {
     let id: String
     let text: String
     let custom: [String: RawJSON]?
@@ -163,11 +73,11 @@ struct PollOptionResponseData: Decodable {
     }
 }
 
-struct PollVotePayload: Decodable {
+struct PollVotePayloadResponse: Decodable {
     var duration: String
-    var vote: PollVoteResponseData?
+    var vote: PollVotePayload?
 
-    init(duration: String, vote: PollVoteResponseData? = nil) {
+    init(duration: String, vote: PollVotePayload? = nil) {
         self.duration = duration
         self.vote = vote
     }
@@ -180,13 +90,13 @@ struct PollVotePayload: Decodable {
 
 struct PollVotesResponse: Decodable {
     let duration: String
-    var votes: [PollVoteResponseData?]
+    var votes: [PollVotePayload?]
     var next: String?
     var prev: String?
 
     init(
         duration: String,
-        votes: [PollVoteResponseData?],
+        votes: [PollVotePayload?],
         next: String? = nil,
         prev: String? = nil
     ) {
@@ -204,7 +114,7 @@ struct PollVotesResponse: Decodable {
     }
 }
 
-struct PollVoteResponseData: Decodable {
+struct PollVotePayload: Decodable {
     let createdAt: Date
     let id: String
     let optionId: String
