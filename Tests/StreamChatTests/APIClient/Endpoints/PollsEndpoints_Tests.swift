@@ -76,7 +76,7 @@ final class PollsEndpoints_Tests: XCTestCase {
     
     func test_queryPolls() throws {
         let request = QueryPollsRequestBody(limit: 30, prev: "10")
-        let endpoint = Endpoint<QueryPollsPayloadResponse>.queryPolls(queryPollsRequest: request)
+        let endpoint = Endpoint<PollsListPayloadResponse>.queryPolls(queryPollsRequest: request)
         
         let expectedBody: [String: Any] = ["limit": 30, "prev": "10"]
         let body = try AnyEndpoint(endpoint).bodyAsDictionary()

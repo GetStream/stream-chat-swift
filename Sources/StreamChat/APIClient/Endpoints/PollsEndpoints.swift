@@ -27,7 +27,7 @@ extension Endpoint {
         )
     }
     
-    static func queryPolls(queryPollsRequest: QueryPollsRequestBody) -> Endpoint<QueryPollsPayloadResponse> {
+    static func queryPolls(queryPollsRequest: QueryPollsRequestBody) -> Endpoint<PollsListPayloadResponse> {
         .init(
             path: .pollsQuery,
             method: .post,
