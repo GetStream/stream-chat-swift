@@ -13,12 +13,12 @@ import Foundation
     init(user: CurrentChatUser, database: DatabaseContainer) {
         self.observer = Observer(database: database)
         self.user = user
-        observer.start(
+        let initialUser = observer.start(
             with: .init(
                 userDidChange: { [weak self] in self?.user = $0 })
         )
-        if let user = observer.userObserver.item {
-            self.user = user
+        if let initialUser {
+            self.user = initialUser
         }
     }
     
