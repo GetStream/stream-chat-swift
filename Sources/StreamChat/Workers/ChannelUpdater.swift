@@ -981,7 +981,7 @@ extension ChannelQuery {
     
     func withOptions(forWatching watch: Bool) -> Self {
         var result = self
-        result.options = options
+        result.options = watch ? .all : .state
         return result
     }
 }
