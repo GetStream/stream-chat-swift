@@ -79,11 +79,11 @@ final class ChannelList_Tests: XCTestCase {
         await XCTAssertAsyncFailure(try await channelList.loadChannels(with: pagination), testError)
     }
     
-    func test_loadNextChannels_whenChannelUpdaterSucceeds_thenLoadSucceeds() async throws {
+    func test_loadMoreChannels_whenChannelUpdaterSucceeds_thenLoadSucceeds() async throws {
         let pageSize = 2
         let responseChannels = makeChannels(count: pageSize, createdAtOffset: 0)
         env.channelListUpdaterMock.update_completion_result = .success(responseChannels)
-        let result = try await channelList.loadNextChannels(limit: pageSize)
+        let result = try await channelList.loadMoreChannels(limit: pageSize)
         
         XCTAssertEqual(env.channelListUpdaterMock.update_queries.count, 1)
         XCTAssertEqual(env.channelListUpdaterMock.update_queries.first?.filter, channelList.query.filter)
@@ -93,9 +93,9 @@ final class ChannelList_Tests: XCTestCase {
         XCTAssertEqual(responseChannels, result)
     }
     
-    func test_loadNextChannels_whenChannelUpdaterFails_thenLoadFails() async throws {
+    func test_loadMoreChannels_whenChannelUpdaterFails_thenLoadFails() async throws {
         env.channelListUpdaterMock.update_completion_result = .failure(testError)
-        await XCTAssertAsyncFailure(try await channelList.loadNextChannels(), testError)
+        await XCTAssertAsyncFailure(try await channelList.loadMoreChannels(), testError)
     }
     
     // MARK: - Pagination and State
@@ -112,7 +112,7 @@ final class ChannelList_Tests: XCTestCase {
         XCTAssertEqual(channelListPayload.channels.map(\.channel.cid.rawValue), await channelList.state.channels.map(\.cid.rawValue))
     }
     
-    func test_loadNextChannels_whenAPIRequestSucceeds_thenStateUpdates() async throws {
+    func test_loadMoreChannels_whenAPIRequestSucceeds_thenStateUpdates() async throws {
         // Initial DB state
         let existingChannelListPayload = makeMatchingChannelListPayload(channelCount: 2, createdAtOffset: 0)
         try await env.client.mockDatabaseContainer.write { session in
@@ -123,7 +123,7 @@ final class ChannelList_Tests: XCTestCase {
         // Load more channels
         let nextChannelListPayload = makeMatchingChannelListPayload(channelCount: 3, createdAtOffset: 2)
         env.client.mockAPIClient.test_mockResponseResult(.success(nextChannelListPayload))
-        let result = try await channelList.loadNextChannels()
+        let result = try await channelList.loadMoreChannels()
         XCTAssertEqual(nextChannelListPayload.channels.map(\.channel.cid), result.map(\.cid))
         // State should contain both the existing and next channels
         let expectedChannels = existingChannelListPayload.channels + nextChannelListPayload.channels
