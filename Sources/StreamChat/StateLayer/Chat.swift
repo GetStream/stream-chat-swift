@@ -71,6 +71,8 @@ public class Chat {
     
     /// Fetches the state from the server and updates the local store.
     ///
+    /// - Important: Loaded messages in ``ChatState.messages`` is reset to a batch of most recent messages.
+    ///
     /// - Parameter watch: True, if server-side events should be enabled in addition
     /// to fetching state from the server. See ``watch()`` for more information
     ///
@@ -373,7 +375,7 @@ public class Chat {
     
     /// Loads messages for the specified pagination parameters and updates ``ChatState/messages``.
     ///
-    /// - Important: Loading messages for the pagination with parameter nil resets ``ChatState/messages``. Example `chat.loadMessages(with: MessagesPagination(pageSize: 30, parameter: nil))`.
+    /// - Important: Calling ``get(watch:)`` resets ``ChatState/messages``.
     ///
     /// - Parameters:
     ///   - message: The parent message id which has replies.
