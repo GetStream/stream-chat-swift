@@ -1501,6 +1501,8 @@
 		ADEE652029BF720900186129 /* ChatMessageListVCDataSource_Mock.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADEE651A29BF714300186129 /* ChatMessageListVCDataSource_Mock.swift */; };
 		ADEE888D289C3CC0007DF3F8 /* ChatMessageListView+DiffKit.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADEE888C289C3CC0007DF3F8 /* ChatMessageListView+DiffKit.swift */; };
 		ADEE888E289C3CC0007DF3F8 /* ChatMessageListView+DiffKit.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADEE888C289C3CC0007DF3F8 /* ChatMessageListView+DiffKit.swift */; };
+		ADEEB7F22BD1368900C76602 /* MessageReactionGroupPayload.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADEEB7F12BD1368900C76602 /* MessageReactionGroupPayload.swift */; };
+		ADEEB7F32BD1368900C76602 /* MessageReactionGroupPayload.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADEEB7F12BD1368900C76602 /* MessageReactionGroupPayload.swift */; };
 		ADEED08127F202C100A42B52 /* yoda_with_long_file_name.txt in Resources */ = {isa = PBXBuildFile; fileRef = ADEED08027F202C100A42B52 /* yoda_with_long_file_name.txt */; };
 		ADF2BBE82B9B61E30069D467 /* AppEndpoints.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADF2BBE72B9B61E30069D467 /* AppEndpoints.swift */; };
 		ADF2BBE92B9B61E30069D467 /* AppEndpoints.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADF2BBE72B9B61E30069D467 /* AppEndpoints.swift */; };
@@ -4024,6 +4026,7 @@
 		ADEE651A29BF714300186129 /* ChatMessageListVCDataSource_Mock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessageListVCDataSource_Mock.swift; sourceTree = "<group>"; };
 		ADEE651C29BF715300186129 /* ChatMessageListVCDelegate_Mock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessageListVCDelegate_Mock.swift; sourceTree = "<group>"; };
 		ADEE888C289C3CC0007DF3F8 /* ChatMessageListView+DiffKit.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ChatMessageListView+DiffKit.swift"; sourceTree = "<group>"; };
+		ADEEB7F12BD1368900C76602 /* MessageReactionGroupPayload.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageReactionGroupPayload.swift; sourceTree = "<group>"; };
 		ADEED08027F202C100A42B52 /* yoda_with_long_file_name.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = yoda_with_long_file_name.txt; sourceTree = "<group>"; };
 		ADF2BBE72B9B61E30069D467 /* AppEndpoints.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppEndpoints.swift; sourceTree = "<group>"; };
 		ADF2BBEA2B9B622B0069D467 /* AppSettingsPayload.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppSettingsPayload.swift; sourceTree = "<group>"; };
@@ -5290,6 +5293,7 @@
 				DABC6ABB2546FD0100A8FC78 /* MessageAttachmentPayload.swift */,
 				79682C4824BF37650071578E /* MessagePayloads.swift */,
 				8899BC3E2542FFA1003CB98B /* MessageReactionPayload.swift */,
+				ADEEB7F12BD1368900C76602 /* MessageReactionGroupPayload.swift */,
 				79D5CDD327EA1BE300BE7D8B /* MessageTranslationsPayload.swift */,
 				AD70DC352ADEC0F600CFC3B7 /* MessageModerationDetailsPayload.swift */,
 				F6ED5F792502791F005D7327 /* MissingEventsPayload.swift */,
@@ -10686,6 +10690,7 @@
 				7985BDAA252B1E53002B8C30 /* MainQueue+Synchronous.swift in Sources */,
 				ADF9E1F72A03E7E400109108 /* MessagesPaginationState.swift in Sources */,
 				79983C8126663436000995F6 /* ChatMessageVideoAttachment.swift in Sources */,
+				ADEEB7F22BD1368900C76602 /* MessageReactionGroupPayload.swift in Sources */,
 				79877A0A2498E4BC00015F8B /* Device.swift in Sources */,
 				841BAA0D2BCE9F44000C73E4 /* UpdatePollOptionRequestBody.swift in Sources */,
 				841BA9F82BCE80FF000C73E4 /* PollsPayloads.swift in Sources */,
@@ -11569,6 +11574,7 @@
 				C121E845274544AE00023E4C /* GuestUserTokenRequestPayload.swift in Sources */,
 				C121E846274544AE00023E4C /* MissingEventsRequestBody.swift in Sources */,
 				C121E847274544AE00023E4C /* ChannelMemberBanRequestPayload.swift in Sources */,
+				ADEEB7F32BD1368900C76602 /* MessageReactionGroupPayload.swift in Sources */,
 				AD78F9F128EC724300BC0FCE /* UnknownUserEvent.swift in Sources */,
 				C121E848274544AE00023E4C /* MessageReactionRequestPayload.swift in Sources */,
 				C121E849274544AE00023E4C /* AttachmentActionRequestBody.swift in Sources */,

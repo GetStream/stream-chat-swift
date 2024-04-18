@@ -35,6 +35,14 @@ final class MessagePayload_Tests: XCTestCase {
         XCTAssertEqual(payload.ownReactions.count, 1)
         XCTAssertEqual(payload.reactionScores, ["love": 1])
         XCTAssertEqual(payload.reactionCounts, ["love": 1])
+        XCTAssertEqual(payload.reactionGroups, [
+            "love": MessageReactionGroupPayload(
+                sumScores: 1,
+                count: 1,
+                firstReactionAt: "2024-04-17T13:14:53.643826Z".toDate(),
+                lastReactionAt: "2024-04-17T13:15:53.643826Z".toDate()
+            )
+        ])
         XCTAssertEqual(payload.isSilent, true)
         XCTAssertEqual(payload.isShadowed, true)
         XCTAssertEqual(payload.channel?.cid.rawValue, "messaging:channel-ex7-63")

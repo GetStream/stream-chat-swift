@@ -28,6 +28,7 @@ enum MessagePayloadsCodingKeys: String, CodingKey, CaseIterable {
     case ownReactions = "own_reactions"
     case reactionScores = "reaction_scores"
     case reactionCounts = "reaction_counts"
+    case reactionGroups = "reaction_groups"
     case isSilent = "silent"
     case channel
     case pinned
@@ -85,6 +86,7 @@ class MessagePayload: Decodable {
     let ownReactions: [MessageReactionPayload]
     let reactionScores: [MessageReactionType: Int]
     let reactionCounts: [MessageReactionType: Int]
+    let reactionGroups: [MessageReactionType: MessageReactionGroupPayload]
     let attachments: [MessageAttachmentPayload]
     let isSilent: Bool
     let isShadowed: Bool
@@ -130,9 +132,11 @@ class MessagePayload: Decodable {
         reactionScores = try container
             .decodeIfPresent([String: Int].self, forKey: .reactionScores)?
             .mapKeys { MessageReactionType(rawValue: $0) } ?? [:]
-
         reactionCounts = try container
             .decodeIfPresent([String: Int].self, forKey: .reactionCounts)?
+            .mapKeys { MessageReactionType(rawValue: $0) } ?? [:]
+        reactionGroups = try container
+            .decodeIfPresent([String: MessageReactionGroupPayload].self, forKey: .reactionGroups)?
             .mapKeys { MessageReactionType(rawValue: $0) } ?? [:]
 
         // Because attachment objects can be malformed, we wrap those into `OptionalDecodable`
@@ -185,6 +189,7 @@ class MessagePayload: Decodable {
         ownReactions: [MessageReactionPayload] = [],
         reactionScores: [MessageReactionType: Int],
         reactionCounts: [MessageReactionType: Int],
+        reactionGroups: [MessageReactionType: MessageReactionGroupPayload] = [:],
         isSilent: Bool,
         isShadowed: Bool,
         attachments: [MessageAttachmentPayload],
@@ -220,6 +225,7 @@ class MessagePayload: Decodable {
         self.ownReactions = ownReactions
         self.reactionScores = reactionScores
         self.reactionCounts = reactionCounts
+        self.reactionGroups = reactionGroups
         self.isSilent = isSilent
         self.isShadowed = isShadowed
         self.attachments = attachments
