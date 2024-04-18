@@ -9,16 +9,20 @@ import Foundation
 public class ChannelList {
     private let channelListUpdater: ChannelListUpdater
     private let stateBuilder: StateBuilder<ChannelListState>
+    let query: ChannelListQuery
     
     init(
         query: ChannelListQuery,
         dynamicFilter: ((ChatChannel) -> Bool)?,
-        channelListUpdater: ChannelListUpdater,
         client: ChatClient,
         environment: Environment = .init()
     ) {
-        self.channelListUpdater = channelListUpdater
         self.query = query
+        let channelListUpdater = environment.channelListUpdater(
+            client.databaseContainer,
+            client.apiClient
+        )
+        self.channelListUpdater = channelListUpdater
         stateBuilder = StateBuilder {
             environment.stateBuilder(
                 query,
@@ -31,15 +35,14 @@ public class ChannelList {
         }
     }
     
-    /// The query specifying and filtering the list of channels.
-    public let query: ChannelListQuery
-    
     /// An observable object representing the current state of the channel list.
     @MainActor public lazy var state: ChannelListState = stateBuilder.build()
     
     // MARK: - Channel List Pagination
     
     /// Loads channels for the specified pagination parameters and updates ``ChannelListState/channels``.
+    ///
+    /// - Important: If pagination offset is 0 and cursor is nil, the list of loaded channels is reset.
     ///
     /// - Parameter pagination: The pagination configuration which includes limit and cursor.
     ///
@@ -66,6 +69,11 @@ public class ChannelList {
 @available(iOS 13.0, *)
 extension ChannelList {
     struct Environment {
+        var channelListUpdater: (
+            _ database: DatabaseContainer,
+            _ apiClient: APIClient
+        ) -> ChannelListUpdater = ChannelListUpdater.init
+        
         var stateBuilder: @MainActor(
             _ query: ChannelListQuery,
             _ dynamicFilter: ((ChatChannel) -> Bool)?,
