@@ -1118,7 +1118,7 @@ public class Chat {
 extension Chat {
     @MainActor var cid: ChannelId {
         get throws {
-            guard let cid = state.channelQuery.cid else { throw ClientError.ChannelNotCreatedYet() }
+            guard let cid = state.cid else { throw ClientError.ChannelNotCreatedYet() }
             return cid
         }
     }
