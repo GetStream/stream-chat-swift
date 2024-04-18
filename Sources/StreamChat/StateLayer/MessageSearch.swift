@@ -69,7 +69,7 @@ public class MessageSearch {
     ///
     /// - Throws: An error while communicating with the Stream API.
     /// - Returns: A next page of chat messages matching to the last query.
-    @discardableResult public func loadNextMessages(limit: Int? = nil) async throws -> [ChatMessage] {
+    @discardableResult public func loadMoreMessages(limit: Int? = nil) async throws -> [ChatMessage] {
         guard let query = await state.query else { throw ClientError("Call search() before calling for next page") }
         let limit = (limit ?? query.pagination?.pageSize) ?? Int.messagesPageSize
         let pagination: Pagination = await {

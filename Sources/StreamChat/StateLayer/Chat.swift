@@ -71,6 +71,8 @@ public class Chat {
     
     /// Fetches the state from the server and updates the local store.
     ///
+    /// - Important: Loaded messages in ``ChatState.messages`` is reset to a batch of most recent messages.
+    ///
     /// - Parameter watch: True, if server-side events should be enabled in addition
     /// to fetching state from the server. See ``watch()`` for more information
     ///
@@ -179,7 +181,7 @@ public class Chat {
         try await channelUpdater.removeMembers(currentUserId: currentUserId, cid: cid, userIds: Set(members), message: systemMessage)
     }
     
-    /// Loads an array of members for the specified query and updates ``ChatState/members``.
+    /// Loads channel members for the specified pagination parameters and updates ``ChatState/members``.
     ///
     /// - Note: Channel member sorting keys are set when creating the ``Chat`` instance.
     /// It is also possible to create separate ``MemberList`` objects if needed with different filtering options. See ``ChatClient/makeMemberList(with:)``.
@@ -187,9 +189,19 @@ public class Chat {
     /// - Parameter pagination: The pagination configuration which includes a limit and an offset or a cursor.
     ///
     /// - Throws: An error while communicating with the Stream API.
-    /// - Returns: An array of paginated channel members for the query.
+    /// - Returns: An array of channel members for the pagination request.
     @discardableResult public func loadMembers(with pagination: Pagination) async throws -> [ChatChannelMember] {
         try await memberList.loadMembers(with: pagination)
+    }
+    
+    /// Loads more channel members and updates ``ChatState/members``.
+    ///
+    /// - Parameter limit: The limit for the page size. The default limit is 30.
+    ///
+    /// - Throws: An error while communicating with the Stream API.
+    /// - Returns: An array of channel members for the pagination request.
+    @discardableResult public func loadMoreMembers(limit: Int? = nil) async throws -> [ChatChannelMember] {
+        try await memberList.loadMoreMembers(limit: limit)
     }
     
     // MARK: - Member Moderation
@@ -363,64 +375,47 @@ public class Chat {
     
     /// Loads messages for the specified pagination parameters and updates ``ChatState/messages``.
     ///
+    /// - Important: Calling ``get(watch:)`` resets ``ChatState/messages``.
+    ///
     /// - Parameters:
     ///   - message: The parent message id which has replies.
     ///   - pagination: The pagination configuration which includes a limit and a cursor.
     ///
     /// - Throws: An error while communicating with the Stream API.
     /// - Returns: An array of messages for the pagination.
-    public func loadMessages(with pagination: MessagesPagination) async throws -> [ChatMessage] {
+    @discardableResult public func loadMessages(with pagination: MessagesPagination) async throws -> [ChatMessage] {
         try await channelUpdater.loadMessages(with: state.channelQuery, pagination: pagination)
     }
     
     // MARK: -
     
-    /// Loads messages for the first page and updates ``ChatState/messages``.
-    ///
-    /// - Note: Loading the first page resets the ``ChatState/messages``.
-    ///
-    /// - Throws: An error while communicating with the Stream API.
-    public func loadMessagesFirstPage() async throws {
-        try await channelUpdater.loadMessagesFirstPage(with: state.channelQuery)
-    }
-    
-    /// Loads more messages before the specified message to ``ChatState/messages``.
+    /// Loads older messages before the specified message to ``ChatState/messages``.
     ///
     /// - Parameters:
-    ///   - messageId: The message id of the message from which older messages are loaded.
+    ///   - messageId: The message id of the message from which older messages are loaded. If nil, the id of the oldest loaded message in ``ChatState/messages`` is used.
     ///   - limit: The limit for the page size. The default limit is 25.
     ///
     /// - Throws: An error while communicating with the Stream API.
-    public func loadPreviousMessages(before messageId: MessageId? = nil, limit: Int? = nil) async throws {
-        try await channelUpdater.loadMessages(
-            before: messageId,
-            limit: limit,
-            channelQuery: state.channelQuery,
-            loaded: state.messages
-        )
+    public func loadMessages(before messageId: MessageId?, limit: Int? = nil) async throws {
+        try await channelUpdater.loadMessages(before: messageId, limit: limit, channelQuery: state.channelQuery, loaded: state.messages)
     }
     
-    /// Loads more messages after the specified message to ``ChatState/messages``.
+    /// Loads newer messages after the specified message to ``ChatState/messages``.
     ///
     /// - Parameters:
-    ///   - messageId: The message id of the message from which newer messages are loaded.
+    ///   - messageId: The message id of the message from which newer messages are loaded.  If nil, the id of the newest loaded message in ``ChatState/messages`` is used.
     ///   - limit: The limit for the page size. The default limit is 25.
     ///
     /// - Throws: An error while communicating with the Stream API.
-    public func loadNextMessages(_ messageId: MessageId? = nil, limit: Int? = nil) async throws {
-        try await channelUpdater.loadMessages(
-            after: messageId,
-            limit: limit,
-            channelQuery: state.channelQuery,
-            loaded: state.messages
-        )
+    public func loadMessages(after messageId: MessageId?, limit: Int? = nil) async throws {
+        try await channelUpdater.loadMessages(after: messageId, limit: limit, channelQuery: state.channelQuery, loaded: state.messages)
     }
     
     /// Loads messages around the given message id to ``ChatState/messages``.
     ///
     /// Useful for jumping to a message which hasn't been loaded yet.
     ///
-    /// - Note: Jumping to a messages resets the ``ChatState/messages``.
+    /// - Important: Jumping to a message resets the ``ChatState/messages``.
     ///
     /// - Parameters:
     ///   - messageId: The message id of the middle message in the loaded list of messages.
@@ -434,6 +429,24 @@ public class Chat {
             channelQuery: state.channelQuery,
             loaded: state.messages
         )
+    }
+    
+    /// Loads more older messages and updates ``ChatState/messages``.
+    ///
+    /// - Parameter limit: The limit for the page size. The default limit is 25.
+    ///
+    /// - Throws: An error while communicating with the Stream API.
+    public func loadOlderMessages(limit: Int? = nil) async throws {
+        try await loadMessages(before: nil, limit: limit)
+    }
+    
+    /// Loads more newer messages and updates ``ChatState/messages``.
+    ///
+    /// - Parameter limit: The limit for the page size. The default limit is 25.
+    ///
+    /// - Throws: An error while communicating with the Stream API.
+    public func loadNewerMessages(limit: Int? = nil) async throws {
+        try await loadMessages(after: nil, limit: limit)
     }
     
     // MARK: - Message Attachment Actions
@@ -520,7 +533,11 @@ public class Chat {
     ///
     /// - Throws: An error while communicating with the Stream API.
     /// - Returns: An array of pinned messages for the specified pagination.
-    public func loadPinnedMessages(for pagination: PinnedMessagesPagination? = nil, sort: [Sorting<PinnedMessagesSortingKey>] = [], limit: Int = .messagesPageSize) async throws -> [ChatMessage] {
+    public func loadPinnedMessages(
+        with pagination: PinnedMessagesPagination? = nil,
+        sort: [Sorting<PinnedMessagesSortingKey>] = [],
+        limit: Int = .messagesPageSize
+    ) async throws -> [ChatMessage] {
         let query = PinnedMessagesQuery(pageSize: limit, sorting: sort, pagination: pagination)
         return try await channelUpdater.loadPinnedMessages(in: cid, query: query)
     }
@@ -573,7 +590,7 @@ public class Chat {
     ///
     /// - Throws: An error while communicating with the Stream API.
     /// - Returns: An array of reactions for the next page.
-    @discardableResult public func loadNextReactions(of messageId: MessageId, limit: Int? = nil) async throws -> [ChatMessageReaction] {
+    @discardableResult public func loadMoreReactions(of messageId: MessageId, limit: Int? = nil) async throws -> [ChatMessageReaction] {
         let offset = try await messageState(for: messageId).reactions.count
         let pagination = Pagination(pageSize: limit ?? 25, offset: offset)
         return try await messageUpdater.loadReactions(cid: cid, messageId: messageId, pagination: pagination)
@@ -662,7 +679,7 @@ public class Chat {
         return try await messageSender.waitForAPIRequest(messageId: message.id)
     }
     
-    /// Loads replies for the specified message and pagination parameters and updates ``MessageState/replies``.
+    /// Loads replies of the specified message and pagination parameters and updates ``MessageState/replies``.
     ///
     /// - Parameters:
     ///   - messageId: The parent message id which has replies.
@@ -670,64 +687,74 @@ public class Chat {
     ///
     /// - Throws: An error while communicating with the Stream API.
     /// - Returns: An array of messages for the pagination.
-    @discardableResult public func loadReplies(of messageId: MessageId, pagination: MessagesPagination) async throws -> [ChatMessage] {
+    @discardableResult public func loadReplies(for messageId: MessageId, pagination: MessagesPagination) async throws -> [ChatMessage] {
         let messageState = try await messageState(for: messageId)
-        return try await messageUpdater.loadReplies(of: messageId, pagination: pagination, cid: cid, paginationStateHandler: messageState.replyPaginationHandler)
+        return try await messageUpdater.loadReplies(for: messageId, pagination: pagination, cid: cid, paginationStateHandler: messageState.replyPaginationHandler)
     }
 
     // MARK: -
     
-    /// Loads replies for the first page of the specified message and updates ``MessageState/replies``.
-    ///
-    /// - Note: Loading the first page resets the ``MessageState/replies``.
-    ///
-    /// - Parameters:
-    ///   - message: The parent message id which has replies.
-    ///   - limit: The limit for the page size. The default limit is 25.
-    ///
-    /// - Throws: An error while communicating with the Stream API.
-    public func loadRepliesFirstPage(of messageId: MessageId, limit: Int? = nil) async throws {
-        let messageState = try await messageState(for: messageId)
-        return try await messageUpdater.loadRepliesFirstPage(of: messageId, limit: limit, cid: cid, paginationStateHandler: messageState.replyPaginationHandler)
-    }
-    
-    /// Loads more replies before the specified reply id to ``MessageState/replies``.
+    /// Loads more replies before the specified reply id and updates ``MessageState/replies``.
     ///
     /// - Parameters:
     ///   - replyId: The message id of the reply from which older messages are loaded. If nil, the oldest currently loaded message id in ``MessageState/replies`` is used.
-    ///   - messageId: The parent message id which has replies.
+    ///   - parentMessageId: The parent message id which has replies.
     ///   - limit: The limit for the page size. The default limit is 25.
     ///
     /// - Throws: An error while communicating with the Stream API.
-    public func loadReplies(before replyId: MessageId? = nil, of messageId: MessageId, limit: Int? = nil) async throws {
-        let messageState = try await messageState(for: messageId)
-        return try await messageUpdater.loadReplies(of: messageId, before: replyId, limit: limit, cid: cid, paginationStateHandler: messageState.replyPaginationHandler)
+    public func loadReplies(before replyId: MessageId?, for parentMessageId: MessageId, limit: Int? = nil) async throws {
+        let messageState = try await messageState(for: parentMessageId)
+        return try await messageUpdater.loadReplies(for: parentMessageId, before: replyId, limit: limit, cid: cid, paginationStateHandler: messageState.replyPaginationHandler)
     }
     
-    /// Loads more replies after the specified reply id to ``MessageState/replies``.
+    /// Loads more replies after the specified reply id and updates ``MessageState/replies``.
     ///
     /// - Parameters:
     ///   - replyId: The message id of the reply from which newer messages are loaded. If nil, the newest currently loaded message id in ``MessageState/replies`` is used.
-    ///   - messageId: The parent message id which has replies.
+    ///   - parentMessageId: The parent message id which has replies.
     ///   - limit: The limit for the page size. The default limit is 25.
     ///
     /// - Throws: An error while communicating with the Stream API.
-    public func loadReplies(after replyId: MessageId? = nil, of messageId: MessageId, limit: Int? = nil) async throws {
-        let messageState = try await messageState(for: messageId)
-        return try await messageUpdater.loadReplies(of: messageId, after: replyId, limit: limit, cid: cid, paginationStateHandler: messageState.replyPaginationHandler)
+    public func loadReplies(after replyId: MessageId?, for parentMessageId: MessageId, limit: Int? = nil) async throws {
+        let messageState = try await messageState(for: parentMessageId)
+        return try await messageUpdater.loadReplies(for: parentMessageId, after: replyId, limit: limit, cid: cid, paginationStateHandler: messageState.replyPaginationHandler)
     }
     
     /// Loads replies around the specified reply id to ``MessageState/replies``.
     ///
+    /// - Note: Passing in the parent message id as replyId loads oldest replies.
+    ///
     /// - Parameters:
     ///   - replyId: The message id of the reply around which older and newer messages are loaded.
-    ///   - messageId: The parent message id which has replies.
+    ///   - parentMessageId: The parent message id which has replies.
     ///   - limit: The limit for the page size. The default limit is 25.
     ///
     /// - Throws: An error while communicating with the Stream API.
-    public func loadReplies(around replyId: MessageId, of messageId: MessageId, limit: Int? = nil) async throws {
-        let messageState = try await messageState(for: messageId)
-        return try await messageUpdater.loadReplies(of: messageId, around: replyId, limit: limit, cid: cid, paginationStateHandler: messageState.replyPaginationHandler)
+    public func loadReplies(around replyId: MessageId, for parentMessageId: MessageId, limit: Int? = nil) async throws {
+        let messageState = try await messageState(for: parentMessageId)
+        return try await messageUpdater.loadReplies(for: parentMessageId, around: replyId, limit: limit, cid: cid, paginationStateHandler: messageState.replyPaginationHandler)
+    }
+    
+    /// Loads more older replies and updates ``MessageState/replies``.
+    ///
+    /// - Parameters:
+    ///   - parentMessageId: The parent message id which has replies.
+    ///   - limit: The limit for the page size. The default limit is 25.
+    ///
+    /// - Throws: An error while communicating with the Stream API.
+    public func loadOlderReplies(for parentMessageId: MessageId, limit: Int? = nil) async throws {
+        try await loadReplies(before: nil, for: parentMessageId, limit: limit)
+    }
+    
+    /// Loads more newer replies and updates ``MessageState/replies``.
+    ///
+    /// - Parameters:
+    ///   - parentMessageId: The parent message id which has replies.
+    ///   - limit: The limit for the page size. The default limit is 25.
+    ///
+    /// - Throws: An error while communicating with the Stream API.
+    public func loadNewerReplies(for parentMessageId: MessageId, limit: Int? = nil) async throws {
+        try await loadReplies(after: nil, for: parentMessageId, limit: limit)
     }
     
     // MARK: - Message State Observing
@@ -1078,7 +1105,7 @@ public class Chat {
     ///
     /// - Throws: An error while communicating with the Stream API.
     /// - Returns: An array of loaded watchers.
-    @discardableResult public func loadNextWatchers(limit: Int? = nil) async throws -> [ChatUser] {
+    @discardableResult public func loadMoreWatchers(limit: Int? = nil) async throws -> [ChatUser] {
         let count = await state.watchers.count
         let pagination = Pagination(pageSize: limit ?? .channelWatchersPageSize, offset: count)
         return try await loadWatchers(with: pagination)
