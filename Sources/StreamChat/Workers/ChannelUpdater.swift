@@ -925,11 +925,6 @@ extension ChannelUpdater {
         return try await messageRepository.messages(from: fromDate, to: toDate, in: cid)
     }
     
-    func loadMessagesFirstPage(with channelQuery: ChannelQuery) async throws {
-        let pagination = MessagesPagination(pageSize: channelQuery.pagination?.pageSize ?? .messagesPageSize)
-        try await update(channelQuery: channelQuery.withPagination(pagination))
-    }
-    
     func loadMessages(before messageId: MessageId?, limit: Int?, channelQuery: ChannelQuery, loaded: StreamCollection<ChatMessage>) async throws {
         guard !paginationState.isLoadingPreviousMessages else { return }
         guard !paginationState.hasLoadedAllPreviousMessages else { return }
