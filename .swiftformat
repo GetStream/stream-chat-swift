@@ -8,6 +8,8 @@
 --disable andOperator
 --disable hoistPatternLet
 
+--disable redundantGet # it removes get async throws from getters
+
 # Rules inferred from Swift Standard Library:
 --disable anyObjectProtocol, wrapMultilineStatementBraces
 --indent 4
