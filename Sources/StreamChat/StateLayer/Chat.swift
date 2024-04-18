@@ -1109,18 +1109,24 @@ public class Chat {
 @available(iOS 13.0, *)
 extension Chat {
     @MainActor var cid: ChannelId {
-        guard let cid = state.channelQuery.cid else { throw ClientError.ChannelNotCreatedYet() }
-        return cid
+        get throws {
+            guard let cid = state.channelQuery.cid else { throw ClientError.ChannelNotCreatedYet() }
+            return cid
+        }
     }
     
     var memberList: MemberList {
-        guard let memberList = await state.memberList else { throw ClientError.ChannelNotCreatedYet() }
-        return memberList
+        get async throws {
+            guard let memberList = await state.memberList else { throw ClientError.ChannelNotCreatedYet() }
+            return memberList
+        }
     }
     
     var readStateSender: ReadStateSender {
-        guard let sender = await state.readStateSender else { throw ClientError.ChannelNotCreatedYet() }
-        return sender
+        get async throws {
+            guard let sender = await state.readStateSender else { throw ClientError.ChannelNotCreatedYet() }
+            return sender
+        }
     }
 }
 
