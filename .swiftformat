@@ -7,6 +7,8 @@
 --disable extensionAccessControl
 --disable andOperator
 
+--disable redundantGet # it removes get async throws from getters
+
 # Rules inferred from Swift Standard Library:
 --disable anyObjectProtocol, wrapMultilineStatementBraces
 --indent 4

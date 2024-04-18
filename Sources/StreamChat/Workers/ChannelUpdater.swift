@@ -882,9 +882,10 @@ extension ChannelUpdater {
         }
     }
 
-    @discardableResult func update(channelQuery: ChannelQuery, isInRecoveryMode: Bool) async throws -> ChannelPayload {
-        try await withCheckedThrowingContinuation { continuation in
-            update(channelQuery: channelQuery, isInRecoveryMode: isInRecoveryMode, onChannelCreated: nil) { result in
+    @discardableResult func update(channelQuery: ChannelQuery) async throws -> ChannelPayload {
+        let useCreateEndpoint: ((ChannelId) -> Void)? = channelQuery.cid == nil ? { _ in } : nil
+        return try await withCheckedThrowingContinuation { continuation in
+            update(channelQuery: channelQuery, isInRecoveryMode: false, onChannelCreated: useCreateEndpoint) { result in
                 continuation.resume(with: result)
             }
         }
@@ -917,7 +918,7 @@ extension ChannelUpdater {
     // MARK: -
     
     func loadMessages(with channelQuery: ChannelQuery, pagination: MessagesPagination) async throws -> [ChatMessage] {
-        let payload = try await update(channelQuery: channelQuery.withPagination(pagination), isInRecoveryMode: false)
+        let payload = try await update(channelQuery: channelQuery.withPagination(pagination))
         guard let cid = channelQuery.cid else { return [] }
         guard let fromDate = payload.messages.first?.createdAt else { return [] }
         guard let toDate = payload.messages.last?.createdAt else { return [] }
@@ -926,7 +927,7 @@ extension ChannelUpdater {
     
     func loadMessagesFirstPage(with channelQuery: ChannelQuery) async throws {
         let pagination = MessagesPagination(pageSize: channelQuery.pagination?.pageSize ?? .messagesPageSize)
-        try await update(channelQuery: channelQuery.withPagination(pagination), isInRecoveryMode: false)
+        try await update(channelQuery: channelQuery.withPagination(pagination))
     }
     
     func loadMessages(before messageId: MessageId?, limit: Int?, channelQuery: ChannelQuery, loaded: StreamCollection<ChatMessage>) async throws {
@@ -938,7 +939,7 @@ extension ChannelUpdater {
         }
         let limit = limit ?? channelQuery.pagination?.pageSize ?? .messagesPageSize
         let pagination = MessagesPagination(pageSize: limit, parameter: .lessThan(messageId))
-        try await update(channelQuery: channelQuery.withPagination(pagination), isInRecoveryMode: false)
+        try await update(channelQuery: channelQuery.withPagination(pagination))
     }
 
     func loadMessages(after messageId: MessageId?, limit: Int?, channelQuery: ChannelQuery, loaded: StreamCollection<ChatMessage>) async throws {
@@ -949,14 +950,14 @@ extension ChannelUpdater {
         }
         let limit = limit ?? channelQuery.pagination?.pageSize ?? .messagesPageSize
         let pagination = MessagesPagination(pageSize: limit, parameter: .greaterThan(messageId))
-        try await update(channelQuery: channelQuery.withPagination(pagination), isInRecoveryMode: false)
+        try await update(channelQuery: channelQuery.withPagination(pagination))
     }
         
     func loadMessages(around messageId: MessageId, limit: Int?, channelQuery: ChannelQuery, loaded: StreamCollection<ChatMessage>) async throws {
         guard !paginationState.isLoadingMiddleMessages else { return }
         let limit = limit ?? channelQuery.pagination?.pageSize ?? .messagesPageSize
         let pagination = MessagesPagination(pageSize: limit, parameter: .around(messageId))
-        try await update(channelQuery: channelQuery.withPagination(pagination), isInRecoveryMode: false)
+        try await update(channelQuery: channelQuery.withPagination(pagination))
     }
 }
 
@@ -971,10 +972,16 @@ extension CheckedContinuation where T == Void, E == Error {
     }
 }
 
-private extension ChannelQuery {
+extension ChannelQuery {
     func withPagination(_ pagination: MessagesPagination) -> Self {
         var result = self
         result.pagination = pagination
+        return result
+    }
+    
+    func withOptions(forWatching watch: Bool) -> Self {
+        var result = self
+        result.options = watch ? .all : .state
         return result
     }
 }

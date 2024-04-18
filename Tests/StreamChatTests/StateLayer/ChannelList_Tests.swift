@@ -234,9 +234,8 @@ final class ChannelList_Tests: XCTestCase {
         channelList = ChannelList(
             query: ChannelListQuery(filter: .in(.members, values: [memberId]), sort: [.init(key: .createdAt, isAscending: true)]),
             dynamicFilter: dynamicFilter,
-            channelListUpdater: usesMockedChannelUpdater ? env.channelListUpdaterMock : env.channelListUpdater,
             client: env.client,
-            environment: env.channelListEnvironment
+            environment: env.channelListEnvironment(usesMockedUpdater: usesMockedChannelUpdater)
         )
         if loadState {
             _ = channelList.state
@@ -270,7 +269,6 @@ final class ChannelList_Tests: XCTestCase {
 extension ChannelList_Tests {
     final class TestEnvironment {
         let client: ChatClient_Mock
-        private(set) var channelListState: ChannelListState!
         private(set) var channelListUpdater: ChannelListUpdater!
         private(set) var channelListUpdaterMock: ChannelListUpdater_Spy!
         
@@ -283,29 +281,22 @@ extension ChannelList_Tests {
             client = ChatClient_Mock(
                 config: ChatClient_Mock.defaultMockedConfig
             )
-            channelListUpdater = ChannelListUpdater(
-                database: client.mockDatabaseContainer,
-                apiClient: client.mockAPIClient
-            )
-            channelListUpdaterMock = ChannelListUpdater_Spy(
-                database: client.mockDatabaseContainer,
-                apiClient: client.mockAPIClient
-            )
         }
         
-        lazy var channelListEnvironment: ChannelList.Environment = .init(
-            stateBuilder: {
-                [unowned self] in
-                self.channelListState = ChannelListState(
-                    query: $0,
-                    dynamicFilter: $1,
-                    clientConfig: $2,
-                    channelListUpdater: $3,
-                    database: $4,
-                    eventNotificationCenter: $5
-                )
-                return channelListState
-            }
-        )
+        func channelListEnvironment(usesMockedUpdater: Bool) -> ChannelList.Environment {
+            ChannelList.Environment(
+                channelListUpdater: { [unowned self] in
+                    channelListUpdater = ChannelListUpdater(
+                        database: $0,
+                        apiClient: $1
+                    )
+                    channelListUpdaterMock = ChannelListUpdater_Spy(
+                        database: $0,
+                        apiClient: $1
+                    )
+                    return usesMockedUpdater ? channelListUpdaterMock : channelListUpdater
+                }
+            )
+        }
     }
 }

@@ -15,16 +15,10 @@ public class Chat_Mock: Chat {
         channelQuery: ChannelQuery,
         channelListQuery: ChannelListQuery?
     ) {
-        let channelUpdater = chatClient.makeChannelUpdater()
-        channelUpdater.paginationStateHandler.end(pagination: .init(pageSize: 25), with: .success([]))
         super.init(
-            cid: Self.cid,
             channelQuery: channelQuery,
-            channelListQuery: channelListQuery,
-            memberSorting: [.init(key: .createdAt)], 
-            channelUpdater: channelUpdater,
-            client: chatClient,
-            environment: .init()
+            memberSorting: [.init(key: .createdAt)],
+            client: chatClient
         )
     }
     
