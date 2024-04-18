@@ -111,14 +111,14 @@ final class UserSearch_Tests: XCTestCase {
     
     // MARK: - Results Pagination
     
-    func test_loadNextUsers_whenMoreResultsAreAvailable_thenResultsAndStateAreUpdated() async throws {
+    func test_loadMoreUsers_whenMoreResultsAreAvailable_thenResultsAndStateAreUpdated() async throws {
         let fetchResult1 = makeUsers(name: "name", count: Int.usersPageSize, offset: 0)
         env.userListUpdaterMock.fetch_completion_result = .success(fetchResult1)
         try await userSearch.search(term: "name")
         
         let fetchResult2 = makeUsers(name: "name", count: 5, offset: Int.usersPageSize)
         env.userListUpdaterMock.fetch_completion_result = .success(fetchResult2)
-        try await userSearch.loadNextUsers(limit: 10)
+        try await userSearch.loadMoreUsers(limit: 10)
         
         let expectedIds = (fetchResult1.users + fetchResult2.users).map(\.id)
         await XCTAssertEqual(expectedIds, userSearch.state.users.map(\.id))
