@@ -131,7 +131,7 @@ extension ChatClient {
     ///   - channelListQuery: The channel list query the channel belongs to.
     ///   - extraData: Extra data for the new channel.
     ///
-    /// - Throws: An error while communicating with the Stream API.
+    /// - Throws: An error if no user is currently logged-in.
     /// - Returns: An instance of `Chat` representing the channel.
     public func makeChat(
         with cid: ChannelId,
@@ -185,7 +185,7 @@ extension ChatClient {
     ///   - channelListQuery: The channel list query the channel belongs to.
     ///   - extraData: Extra data for the new channel.
     ///
-    /// - Throws: An error while communicating with the Stream API.
+    /// - Throws: An error if no user is currently logged-in.
     /// - Returns: An instance of `Chat` representing the channel.
     public func makeDirectMessageChat(
         with members: [UserId],
