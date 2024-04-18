@@ -18,7 +18,7 @@ public class UserSearch_Mock: UserSearch {
         self.state.users = StreamCollection(users)
     }
     
-    public override func loadNextUsers(limit: Int? = nil) async throws -> [ChatUser] {
+    public override func loadMoreUsers(limit: Int? = nil) async throws -> [ChatUser] {
         await Array(state.users)
     }
 
