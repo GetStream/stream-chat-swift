@@ -8,7 +8,6 @@ import Foundation
 @available(iOS 13.0, *)
 @MainActor public final class ChannelListState: ObservableObject {
     private let observer: Observer
-    private let query: ChannelListQuery
     
     init(
         query: ChannelListQuery,
@@ -31,6 +30,9 @@ import Foundation
             with: .init(channelsDidChange: { [weak self] in self?.channels = $0 })
         )
     }
+    
+    /// The query specifying and filtering the list of channels.
+    public let query: ChannelListQuery
     
     /// An array of channels for the specified ``ChannelListQuery``.
     @Published public internal(set) var channels = StreamCollection<ChatChannel>([])

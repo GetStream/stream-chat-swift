@@ -68,8 +68,8 @@ final class UserList_Tests: XCTestCase {
     @MainActor private func setUpUserList(usesMockedUpdater: Bool, loadState: Bool = true) {
         userList = UserList(
             query: query,
-            userListUpdater: usesMockedUpdater ? env.userListUpdaterMock : env.userListUpdater,
-            client: env.client
+            client: env.client,
+            environment: env.userListEnvironment(usesMockedUpdater: usesMockedUpdater)
         )
         if loadState {
             _ = userList.state
@@ -101,21 +101,22 @@ extension UserList_Tests {
             client = ChatClient_Mock(
                 config: ChatClient_Mock.defaultMockedConfig
             )
-            userListUpdater = UserListUpdater(
-                database: client.databaseContainer,
-                apiClient: client.apiClient
-            )
-            userListUpdaterMock = UserListUpdater_Mock(
-                database: client.databaseContainer,
-                apiClient: client.apiClient
-            )
         }
         
-        lazy var userListEnvironment: UserList.Environment = .init(
-            stateBuilder: { [unowned self] in
-                self.state = UserListState(query: $0, database: $1)
-                return self.state
-            }
-        )
+        func userListEnvironment(usesMockedUpdater: Bool) -> UserList.Environment {
+            UserList.Environment(
+                userListUpdater: { [unowned self] in
+                    userListUpdater = UserListUpdater(
+                        database: $0,
+                        apiClient: $1
+                    )
+                    userListUpdaterMock = UserListUpdater_Mock(
+                        database: $0,
+                        apiClient: $1
+                    )
+                    return usesMockedUpdater ? userListUpdaterMock : userListUpdater
+                }
+            )
+        }
     }
 }
