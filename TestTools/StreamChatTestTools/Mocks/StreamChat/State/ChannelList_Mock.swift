@@ -37,7 +37,7 @@ public class ChannelList_Mock: ChannelList {
     }
     
     public var loadNextChannelsIsCalled = false
-    public override func loadNextChannels(limit: Int? = nil) async throws -> [ChatChannel] {
+    public override func loadMoreChannels(limit: Int? = nil) async throws -> [ChatChannel] {
         loadNextChannelsIsCalled = true
         return await MainActor.run {
             Array(state.channels)
