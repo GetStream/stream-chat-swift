@@ -43,6 +43,7 @@ class MessageDTO: NSManagedObject {
     @NSManaged var isShadowed: Bool
     @NSManaged var reactionScores: [String: Int]
     @NSManaged var reactionCounts: [String: Int]
+    @NSManaged var reactionGroups: Set<MessageReactionGroupDTO>
 
     @NSManaged var latestReactions: [ReactionString]
     @NSManaged var ownReactions: [ReactionString]
@@ -609,6 +610,7 @@ extension NSManagedObjectContext: MessageDatabaseSession {
         message.skipEnrichUrl = skipEnrichUrl
         message.reactionScores = [:]
         message.reactionCounts = [:]
+        message.reactionGroups = []
 
         message.attachments = Set(
             try attachments.enumerated().map { index, attachment in
@@ -725,6 +727,13 @@ extension NSManagedObjectContext: MessageDatabaseSession {
 
         dto.reactionScores = payload.reactionScores.mapKeys { $0.rawValue }
         dto.reactionCounts = payload.reactionCounts.mapKeys { $0.rawValue }
+        dto.reactionGroups = Set(payload.reactionGroups.map { (type, groupPayload) in
+            MessageReactionGroupDTO(
+                type: type,
+                payload: groupPayload,
+                context: self
+            )
+        })
 
         // If user edited their message to remove mentioned users, we need to get rid of it
         // as backend does

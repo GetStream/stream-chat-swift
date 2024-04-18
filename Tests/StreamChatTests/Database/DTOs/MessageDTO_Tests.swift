@@ -508,6 +508,20 @@ final class MessageDTO_Tests: XCTestCase {
             pinnedAt: .unique,
             pinExpires: .unique,
             isShadowed: true,
+            reactionGroups: [
+                "love": .init(
+                    sumScores: 2,
+                    count: 2,
+                    firstReactionAt: .unique,
+                    lastReactionAt: .unique
+                ),
+                "like": .init(
+                    sumScores: 1,
+                    count: 1,
+                    firstReactionAt: .unique,
+                    lastReactionAt: .unique
+                )
+            ],
             translations: [.english: .unique],
             originalLanguage: "es",
             moderationDetails: .init(
@@ -623,6 +637,21 @@ final class MessageDTO_Tests: XCTestCase {
         XCTAssertEqual("es", loadedMessage?.originalLanguage)
         XCTAssertEqual("Original", loadedMessage?.moderationDetails?.originalText)
         XCTAssertEqual("BOUNCE", loadedMessage?.moderationDetails?.action)
+        
+        // Reaction Groups
+        let loadedMessageReactionGroup = try XCTUnwrap(loadedMessage?.reactionGroups)
+        let loadedLoveReactionGroup = try XCTUnwrap(loadedMessageReactionGroup.first(where: { $0.type == "love" }))
+        let loadedLikeReactionGroup = try XCTUnwrap(loadedMessageReactionGroup.first(where: { $0.type == "like" }))
+        XCTAssertEqual(loadedLoveReactionGroup.type, "love")
+        XCTAssertEqual(messagePayload.reactionGroups["love"]?.count, Int(loadedLoveReactionGroup.count))
+        XCTAssertEqual(messagePayload.reactionGroups["love"]?.sumCores, Int(loadedLoveReactionGroup.sumScores))
+        XCTAssertEqual(messagePayload.reactionGroups["love"]?.firstReactionAt, loadedLoveReactionGroup.firstReactionAt.bridgeDate)
+        XCTAssertEqual(messagePayload.reactionGroups["love"]?.lastReactionAt, loadedLoveReactionGroup.lastReactionAt.bridgeDate)
+        XCTAssertEqual(loadedLikeReactionGroup.type, "like")
+        XCTAssertEqual(messagePayload.reactionGroups["like"]?.count, Int(loadedLikeReactionGroup.count))
+        XCTAssertEqual(messagePayload.reactionGroups["like"]?.sumCores, Int(loadedLikeReactionGroup.sumScores))
+        XCTAssertEqual(messagePayload.reactionGroups["like"]?.firstReactionAt, loadedLikeReactionGroup.firstReactionAt.bridgeDate)
+        XCTAssertEqual(messagePayload.reactionGroups["like"]?.lastReactionAt, loadedLikeReactionGroup.lastReactionAt.bridgeDate)
     }
 
     func test_message_isNotOverwrittenWhenAlreadyInDatabase_andIsPending() throws {

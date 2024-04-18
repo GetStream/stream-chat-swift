@@ -1503,6 +1503,8 @@
 		ADEE888E289C3CC0007DF3F8 /* ChatMessageListView+DiffKit.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADEE888C289C3CC0007DF3F8 /* ChatMessageListView+DiffKit.swift */; };
 		ADEEB7F22BD1368900C76602 /* MessageReactionGroupPayload.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADEEB7F12BD1368900C76602 /* MessageReactionGroupPayload.swift */; };
 		ADEEB7F32BD1368900C76602 /* MessageReactionGroupPayload.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADEEB7F12BD1368900C76602 /* MessageReactionGroupPayload.swift */; };
+		ADEEB7F52BD168D500C76602 /* MessageReactionGroupDTO.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADEEB7F42BD168D500C76602 /* MessageReactionGroupDTO.swift */; };
+		ADEEB7F62BD168D500C76602 /* MessageReactionGroupDTO.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADEEB7F42BD168D500C76602 /* MessageReactionGroupDTO.swift */; };
 		ADEED08127F202C100A42B52 /* yoda_with_long_file_name.txt in Resources */ = {isa = PBXBuildFile; fileRef = ADEED08027F202C100A42B52 /* yoda_with_long_file_name.txt */; };
 		ADF2BBE82B9B61E30069D467 /* AppEndpoints.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADF2BBE72B9B61E30069D467 /* AppEndpoints.swift */; };
 		ADF2BBE92B9B61E30069D467 /* AppEndpoints.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADF2BBE72B9B61E30069D467 /* AppEndpoints.swift */; };
@@ -4027,6 +4029,7 @@
 		ADEE651C29BF715300186129 /* ChatMessageListVCDelegate_Mock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessageListVCDelegate_Mock.swift; sourceTree = "<group>"; };
 		ADEE888C289C3CC0007DF3F8 /* ChatMessageListView+DiffKit.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ChatMessageListView+DiffKit.swift"; sourceTree = "<group>"; };
 		ADEEB7F12BD1368900C76602 /* MessageReactionGroupPayload.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageReactionGroupPayload.swift; sourceTree = "<group>"; };
+		ADEEB7F42BD168D500C76602 /* MessageReactionGroupDTO.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageReactionGroupDTO.swift; sourceTree = "<group>"; };
 		ADEED08027F202C100A42B52 /* yoda_with_long_file_name.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = yoda_with_long_file_name.txt; sourceTree = "<group>"; };
 		ADF2BBE72B9B61E30069D467 /* AppEndpoints.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppEndpoints.swift; sourceTree = "<group>"; };
 		ADF2BBEA2B9B622B0069D467 /* AppSettingsPayload.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppSettingsPayload.swift; sourceTree = "<group>"; };
@@ -5123,6 +5126,7 @@
 				79877A212498E50D00015F8B /* MemberModelDTO.swift */,
 				799C942D247D2FB9001F1104 /* MessageDTO.swift */,
 				8899BC4C25430E40003CB98B /* MessageReactionDTO.swift */,
+				ADEEB7F42BD168D500C76602 /* MessageReactionGroupDTO.swift */,
 				AD70DC382ADEC3C400CFC3B7 /* MessageModerationDetailsDTO.swift */,
 				7978FBBB26E16295002CA2DF /* MessageSearchQueryDTO.swift */,
 				C1B49B3F2822C01C00F4E89E /* NSManagedObject+Validation.swift */,
@@ -10663,6 +10667,7 @@
 				C1B49B3D2822A7AD00F4E89E /* StreamRuntimeCheck.swift in Sources */,
 				40789D1529F6AC500018C2BB /* AudioPlaybackRate.swift in Sources */,
 				C1B0B38627BFE8AB00C8207D /* MessageRepository.swift in Sources */,
+				ADEEB7F52BD168D500C76602 /* MessageReactionGroupDTO.swift in Sources */,
 				847E946E269C687300E31D0C /* EventsController.swift in Sources */,
 				79DDF80E249CB920002F4412 /* RequestDecoder.swift in Sources */,
 				40789D2929F6AC500018C2BB /* AudioRecordingContextAccessor.swift in Sources */,
@@ -11657,6 +11662,7 @@
 				C1E8AD5F278EF5F40041B775 /* AsyncOperation.swift in Sources */,
 				AD78F9EE28EC718700BC0FCE /* URL+EnrichedURL.swift in Sources */,
 				C121E87C274544AF00023E4C /* EphemeralValuesContainer.swift in Sources */,
+				ADEEB7F62BD168D500C76602 /* MessageReactionGroupDTO.swift in Sources */,
 				C121E87D274544AF00023E4C /* ChannelMemberListQueryDTO.swift in Sources */,
 				C121E87E274544AF00023E4C /* DeviceDTO.swift in Sources */,
 				C121E87F274544AF00023E4C /* ChannelMuteDTO.swift in Sources */,
