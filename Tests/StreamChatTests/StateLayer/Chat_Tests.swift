@@ -1351,14 +1351,11 @@ final class Chat_Tests: XCTestCase {
     /// - Parameter usesMockedChannelUpdater: Set it for false for tests which need to update the local DB and simulate API requests.
     @MainActor private func setUpChat(usesMockedChannelUpdater: Bool, loadState: Bool = true) {
         chat = Chat(
-            cid: channelId,
             channelQuery: ChannelQuery(cid: channelId),
-            channelListQuery: nil,
             messageOrdering: .bottomToTop,
             memberSorting: [Sorting(key: .createdAt)],
-            channelUpdater: usesMockedChannelUpdater ? env.channelUpdaterMock : env.channelUpdater,
             client: env.client,
-            environment: env.chatEnvironment
+            environment: env.chatEnvironment(usesMockedUpdater: usesMockedChannelUpdater)
         )
         if loadState {
             _ = chat.state
@@ -1372,10 +1369,10 @@ final class Chat_Tests: XCTestCase {
                 .dummy(
                     messageId: "\($0 + createdAtOffset)",
                     createdAt: Date(timeIntervalSinceReferenceDate: TimeInterval($0 + createdAtOffset)),
-                    cid: chat.cid
+                    cid: channelId
                 )
             }
-        return ChannelPayload.dummy(channel: .dummy(cid: chat.cid), messages: messages)
+        return ChannelPayload.dummy(channel: .dummy(cid: channelId), messages: messages)
     }
 }
 
@@ -1403,45 +1400,50 @@ extension Chat_Tests {
             client = ChatClient_Mock(
                 config: ChatClient_Mock.defaultMockedConfig
             )
-            channelUpdater = ChannelUpdater(
-                channelRepository: client.channelRepository,
-                callRepository: client.callRepository,
-                messageRepository: client.messageRepository,
-                paginationStateHandler: client.makeMessagesPaginationStateHandler(),
-                database: client.databaseContainer,
-                apiClient: client.apiClient
-            )
-            channelUpdaterMock = ChannelUpdater_Mock(
-                channelRepository: client.channelRepository,
-                callRepository: client.callRepository,
-                messageRepository: client.messageRepository,
-                paginationStateHandler: client.makeMessagesPaginationStateHandler(),
-                database: client.databaseContainer,
-                apiClient: client.apiClient
-            )
         }
         
-        lazy var chatEnvironment: Chat.Environment = .init(
-            chatStateBuilder: { [unowned self] in
-                self.chatState = ChatState(cid: $0, channelQuery: $1, clientConfig: $2, messageOrder: $3, memberListState: $4, authenticationRepository: $5, database: $6, eventNotificationCenter: $7, paginationStateHandler: $8)
-                return self.chatState!
-            },
-            memberUpdaterBuilder: { [unowned self] in
-                self.memberUpdater = ChannelMemberUpdater_Mock(database: $0, apiClient: $1)
-                return self.memberUpdater!
-            },
-            messageUpdaterBuilder: { [unowned self] in
-                self.messageUpdater = MessageUpdater_Mock(isLocalStorageEnabled: $0, messageRepository: $1, database: $2, apiClient: $3)
-                return self.messageUpdater!
-            },
-            readStateSenderBuilder: { [unowned self] in
-                self.readStateSender = Chat.ReadStateSender(cid: $0, channelUpdater: $1, authenticationRepository: $2, messageRepository: $3)
-                return self.readStateSender!
-            },
-            typingEventsSenderBuilder: { [unowned self] in
-                self.typingEventsSender = TypingEventsSender_Mock(database: $0, apiClient: $1)
-                return self.typingEventsSender!
-            }
-        )
+        func chatEnvironment(usesMockedUpdater: Bool) -> Chat.Environment {
+            Chat.Environment(
+                chatStateBuilder: { [unowned self] in
+                    self.chatState = ChatState(channelQuery: $0, messageOrder: $1, memberSorting: $2, channelUpdater: $3, client: $4, environment: $5)
+                    return self.chatState!
+                },
+                channelUpdaterBuilder: { [unowned self] in
+                    self.channelUpdater = ChannelUpdater(
+                        channelRepository: $0,
+                        callRepository: $1,
+                        messageRepository: $2,
+                        paginationStateHandler: $3,
+                        database: $4,
+                        apiClient: $5
+                    )
+                    self.channelUpdaterMock = ChannelUpdater_Mock(
+                        channelRepository: $0,
+                        callRepository: $1,
+                        messageRepository: $2,
+                        paginationStateHandler: $3,
+                        database: $4,
+                        apiClient: $5
+                    )
+                    return usesMockedUpdater ? self.channelUpdaterMock : self.channelUpdater
+                },
+                memberUpdaterBuilder: { [unowned self] in
+                    self.memberUpdater = ChannelMemberUpdater_Mock(database: $0, apiClient: $1)
+                    return self.memberUpdater!
+                },
+                messageUpdaterBuilder: { [unowned self] in
+                    self.messageUpdater = MessageUpdater_Mock(isLocalStorageEnabled: $0, messageRepository: $1, database: $2, apiClient: $3)
+                    return self.messageUpdater!
+                },
+                readStateSenderBuilder: { [unowned self] in
+                    self.readStateSender = Chat.ReadStateSender(cid: $0, channelUpdater: $1, authenticationRepository: $2, messageRepository: $3)
+                    return self.readStateSender!
+                },
+                typingEventsSenderBuilder: { [unowned self] in
+                    self.typingEventsSender = TypingEventsSender_Mock(database: $0, apiClient: $1)
+                    return self.typingEventsSender!
+                }
+            )
+        }
     }
 }

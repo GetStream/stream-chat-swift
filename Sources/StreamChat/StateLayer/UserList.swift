@@ -10,8 +10,11 @@ public final class UserList {
     private let stateBuilder: StateBuilder<UserListState>
     private let userListUpdater: UserListUpdater
     
-    init(query: UserListQuery, userListUpdater: UserListUpdater, client: ChatClient, environment: Environment = .init()) {
-        self.userListUpdater = userListUpdater
+    init(query: UserListQuery, client: ChatClient, environment: Environment = .init()) {
+        userListUpdater = environment.userListUpdater(
+            client.databaseContainer,
+            client.apiClient
+        )
         stateBuilder = StateBuilder {
             environment.stateBuilder(
                 query,
@@ -53,6 +56,11 @@ public final class UserList {
 @available(iOS 13.0, *)
 extension UserList {
     struct Environment {
+        var userListUpdater: (
+            _ database: DatabaseContainer,
+            _ apiClient: APIClient
+        ) -> UserListUpdater = UserListUpdater.init
+        
         var stateBuilder: @MainActor(
             _ query: UserListQuery,
             _ database: DatabaseContainer
