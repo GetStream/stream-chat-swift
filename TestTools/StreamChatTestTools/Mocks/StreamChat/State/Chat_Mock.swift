@@ -64,8 +64,6 @@ public class Chat_Mock: Chat {
         createNewMessageCallCount += 1
         return ChatMessage.mock()
     }
-
-    public override func loadMessagesFirstPage() async throws {}
     
     public var loadPageAroundMessageIdCallCount = 0
     public override func loadMessages(around messageId: MessageId, limit: Int? = nil) async throws {
