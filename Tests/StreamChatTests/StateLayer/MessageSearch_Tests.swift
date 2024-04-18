@@ -74,7 +74,7 @@ final class MessageSearch_Tests: XCTestCase {
     
     // MARK: - Results Pagination
     
-    func test_loadNextMessages_whenMoreResultsAreAvailable_thenResultsAndStateAreUpdated() async throws {
+    func test_loadMoreMessages_whenMoreResultsAreAvailable_thenResultsAndStateAreUpdated() async throws {
         await setUpMessageSearch(usesMockedMessageUpdater: false)
         let apiResponse = makeMatchingResponse(messageCount: 25, createdAtOffset: 0, next: "A")
         env.client.mockAuthenticationRepository.mockedCurrentUserId = currentUserId
@@ -84,7 +84,7 @@ final class MessageSearch_Tests: XCTestCase {
         
         let apiResponse2 = makeMatchingResponse(messageCount: 25, createdAtOffset: 25, next: "B")
         env.client.mockAPIClient.test_mockResponseResult(.success(apiResponse2))
-        let nextMessagesResult = try await messageSearch.loadNextMessages()
+        let nextMessagesResult = try await messageSearch.loadMoreMessages()
         await MainActor.run {
             XCTAssertEqual(messageSearch.state.nextPageCursor, "B")
             XCTAssertEqual(apiResponse2.results.map(\.message.id), nextMessagesResult.map(\.id))

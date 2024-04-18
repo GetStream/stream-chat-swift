@@ -55,7 +55,7 @@ final class MemberList_Tests: XCTestCase {
         await XCTAssertEqual(apiResult.members.map(\.user?.id), memberList.state.members.map(\.id))
     }
     
-    func test_loadNextMembers_whenAPIRequestSucceeds_thenResultsAreReturnedAndStateUpdates() async throws {
+    func test_loadMoreMembers_whenAPIRequestSucceeds_thenResultsAreReturnedAndStateUpdates() async throws {
         try await createChannel()
         try await setUpMemberList(usesMockedUpdater: false)
         
@@ -70,7 +70,7 @@ final class MemberList_Tests: XCTestCase {
         
         let apiResult = makeMemberListPayload(count: 3, offset: 5)
         env.client.mockAPIClient.test_mockResponseResult(.success(apiResult))
-        let result = try await memberList.loadNextMembers(limit: 3)
+        let result = try await memberList.loadMoreMembers(limit: 3)
         XCTAssertEqual(apiResult.members.map(\.user?.id), result.map(\.id))
         let allExpectedIds = (initialPayload.members + apiResult.members).map(\.user?.id)
         await XCTAssertEqual(allExpectedIds, memberList.state.members.map(\.id))
