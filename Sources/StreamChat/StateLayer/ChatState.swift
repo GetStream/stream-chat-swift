@@ -12,6 +12,7 @@ import Foundation
     private let environment: Chat.Environment
     private var observer: Observer?
     private(set) var memberList: MemberList?
+    private(set) var messageStates = NSMapTable<NSString, MessageState>(valueOptions: .weakMemory)
     private(set) var readStateSender: Chat.ReadStateSender?
     
     init(
@@ -205,6 +206,29 @@ extension ChatState {
             members = initial.members
             messages = initial.messages
             watchers = initial.watchers
+        }
+    }
+    
+    func messageState(for messageId: MessageId, messageUpdater: MessageUpdater) async throws -> MessageState {
+        if let state = messageStates.object(forKey: messageId as NSString) {
+            return state
+        } else {
+            let message: ChatMessage
+            if let localMessage = localMessage(for: messageId) {
+                message = localMessage
+            } else {
+                guard let cid = channelQuery.cid else { throw ClientError.ChannelNotCreatedYet() }
+                message = try await messageUpdater.getMessage(cid: cid, messageId: messageId)
+            }
+            let state = MessageState(
+                message: message,
+                messageOrder: messageOrder,
+                database: client.databaseContainer,
+                clientConfig: client.config,
+                replyPaginationHandler: MessagesPaginationStateHandler()
+            )
+            messageStates.setObject(state, forKey: messageId as NSString)
+            return state
         }
     }
 }

@@ -18,8 +18,6 @@ public class Chat {
     private let stateBuilder: StateBuilder<ChatState>
     private let typingEventsSender: TypingEventsSender
     
-    private var messageStates = NSMapTable<NSString, MessageState>(valueOptions: .weakMemory)
-    
     init(
         channelQuery: ChannelQuery,
         messageOrdering: MessageOrdering = .topToBottom,
@@ -576,7 +574,7 @@ public class Chat {
     /// - Throws: An error while communicating with the Stream API.
     /// - Returns: An array of reactions for the next page.
     @discardableResult public func loadNextReactions(of messageId: MessageId, limit: Int? = nil) async throws -> [ChatMessageReaction] {
-        let offset = try await makeMessageState(for: messageId).reactions.count
+        let offset = try await messageState(for: messageId).reactions.count
         let pagination = Pagination(pageSize: limit ?? 25, offset: offset)
         return try await messageUpdater.loadReactions(cid: cid, messageId: messageId, pagination: pagination)
     }
@@ -673,7 +671,7 @@ public class Chat {
     /// - Throws: An error while communicating with the Stream API.
     /// - Returns: An array of messages for the pagination.
     @discardableResult public func loadReplies(of messageId: MessageId, pagination: MessagesPagination) async throws -> [ChatMessage] {
-        let messageState = try await makeMessageState(for: messageId)
+        let messageState = try await messageState(for: messageId)
         return try await messageUpdater.loadReplies(of: messageId, pagination: pagination, cid: cid, paginationStateHandler: messageState.replyPaginationHandler)
     }
 
@@ -689,7 +687,7 @@ public class Chat {
     ///
     /// - Throws: An error while communicating with the Stream API.
     public func loadRepliesFirstPage(of messageId: MessageId, limit: Int? = nil) async throws {
-        let messageState = try await makeMessageState(for: messageId)
+        let messageState = try await messageState(for: messageId)
         return try await messageUpdater.loadRepliesFirstPage(of: messageId, limit: limit, cid: cid, paginationStateHandler: messageState.replyPaginationHandler)
     }
     
@@ -702,7 +700,7 @@ public class Chat {
     ///
     /// - Throws: An error while communicating with the Stream API.
     public func loadReplies(before replyId: MessageId? = nil, of messageId: MessageId, limit: Int? = nil) async throws {
-        let messageState = try await makeMessageState(for: messageId)
+        let messageState = try await messageState(for: messageId)
         return try await messageUpdater.loadReplies(of: messageId, before: replyId, limit: limit, cid: cid, paginationStateHandler: messageState.replyPaginationHandler)
     }
     
@@ -715,7 +713,7 @@ public class Chat {
     ///
     /// - Throws: An error while communicating with the Stream API.
     public func loadReplies(after replyId: MessageId? = nil, of messageId: MessageId, limit: Int? = nil) async throws {
-        let messageState = try await makeMessageState(for: messageId)
+        let messageState = try await messageState(for: messageId)
         return try await messageUpdater.loadReplies(of: messageId, after: replyId, limit: limit, cid: cid, paginationStateHandler: messageState.replyPaginationHandler)
     }
     
@@ -728,7 +726,7 @@ public class Chat {
     ///
     /// - Throws: An error while communicating with the Stream API.
     public func loadReplies(around replyId: MessageId, of messageId: MessageId, limit: Int? = nil) async throws {
-        let messageState = try await makeMessageState(for: messageId)
+        let messageState = try await messageState(for: messageId)
         return try await messageUpdater.loadReplies(of: messageId, around: replyId, limit: limit, cid: cid, paginationStateHandler: messageState.replyPaginationHandler)
     }
     
@@ -736,7 +734,7 @@ public class Chat {
     
     /// Returns an observable message state for the specified message.
     ///
-    /// The message state is refreshed before returning the observable state.
+    /// If the message is not available locally then a request is made for retrieving the message. Otherwise it returns the message state for the local message state.
     ///
     /// - Note: Chat keeps a weak reference to the returned object. Calling the function multiple times
     /// with the same messageId might return the same instance of the ``MessageState``.
@@ -744,21 +742,8 @@ public class Chat {
     /// - Parameter messageId: The message id for observing the state.
     ///
     /// - Returns: An instance of `MessageState` which conforms to the `ObservableObject`.
-    @MainActor public func makeMessageState(for messageId: MessageId) async throws -> MessageState {
-        if let state = messageStates.object(forKey: messageId as NSString) {
-            return state
-        } else {
-            let message = try await messageUpdater.getMessage(cid: cid, messageId: messageId)
-            let state = MessageState(
-                message: message,
-                messageOrder: state.messageOrder,
-                database: databaseContainer,
-                clientConfig: state.client.config,
-                replyPaginationHandler: MessagesPaginationStateHandler()
-            )
-            messageStates.setObject(state, forKey: messageId as NSString)
-            return state
-        }
+    public func messageState(for messageId: MessageId) async throws -> MessageState {
+        try await state.messageState(for: messageId, messageUpdater: messageUpdater)
     }
     
     // MARK: - Message Translations
