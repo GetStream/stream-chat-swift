@@ -1027,14 +1027,12 @@ public class Chat {
     ///   - handler: The handler closure which is called when the event happens.
     ///
     /// - Returns: A cancellable instance, which you use when you end the subscription. Deallocation of the result will tear down the subscription stream.
-    @MainActor public func subscribe<E>(toEvent event: E.Type, handler: @escaping (E) -> Void) throws -> AnyCancellable where E: Event {
-        let cid = try self.cid
-        return eventNotificationCenter.subscribe(
+    public func subscribe<E>(toEvent event: E.Type, handler: @escaping (E) -> Void) -> AnyCancellable where E: Event {
+        eventNotificationCenter.subscribe(
             to: event,
-            filter: { [cid] in
-                EventNotificationCenter.channelFilter(cid: cid, event: $0)
-            },
-            handler: handler
+            handler: { [weak self] event in
+                self?.dispatchSubscribeHandler(event, callback: handler)
+            }
         )
     }
     
@@ -1045,13 +1043,11 @@ public class Chat {
     /// - Parameter handler: The handler closure which is called when the event happens.
     ///
     /// - Returns: A cancellable instance, which you use when you end the subscription. Deallocation of the result will tear down the subscription stream.
-    @MainActor public func subscribe(_ handler: @escaping (Event) -> Void) throws -> AnyCancellable {
-        let cid = try self.cid
-        return eventNotificationCenter.subscribe(
-            filter: { [cid] in
-                EventNotificationCenter.channelFilter(cid: cid, event: $0)
-            },
-            handler: handler
+    public func subscribe(_ handler: @escaping (Event) -> Void) -> AnyCancellable {
+        eventNotificationCenter.subscribe(
+            handler: { [weak self] event in
+                self?.dispatchSubscribeHandler(event, callback: handler)
+            }
         )
     }
     
@@ -1097,6 +1093,14 @@ extension Chat {
         get throws {
             guard let cid = state.channelQuery.cid else { throw ClientError.ChannelNotCreatedYet() }
             return cid
+        }
+    }
+    
+    func dispatchSubscribeHandler<E>(_ event: E, callback: @escaping (E) -> Void) where E: Event {
+        Task.mainActor {
+            guard let cid = try? self.cid else { return }
+            guard EventNotificationCenter.channelFilter(cid: cid, event: event) else { return }
+            callback(event)
         }
     }
     
