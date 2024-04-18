@@ -18,20 +18,15 @@ public class ChannelList_Mock: ChannelList {
         )
     }
     
-    init(
+    override init(
         query: ChannelListQuery,
         dynamicFilter: ((ChatChannel) -> Bool)? = nil,
         client: ChatClient,
         environment: ChannelList.Environment = .init()
     ) {
-        let channelListUpdater = ChannelListUpdater(
-            database: .init(kind: .inMemory, bundle: Bundle(for: Self.self)),
-            apiClient: APIClient_Spy()
-        )
         super.init(
             query: query,
             dynamicFilter: dynamicFilter,
-            channelListUpdater: channelListUpdater,
             client: client,
             environment: environment
         )
