@@ -47,7 +47,7 @@ final class UserList_Tests: XCTestCase {
         await XCTAssertEqual(apiResult.users.map(\.id), userList.state.users.map(\.id))
     }
     
-    func test_loadNextUsers_whenAPIRequestSucceeds_thenResultsAreReturnedAndStateUpdates() async throws {
+    func test_loadMoreUsers_whenAPIRequestSucceeds_thenResultsAreReturnedAndStateUpdates() async throws {
         await setUpUserList(usesMockedUpdater: false)
         
         let initialPayload = makeUserListPayload(count: 5, offset: 0)
@@ -57,7 +57,7 @@ final class UserList_Tests: XCTestCase {
         
         let apiResult = makeUserListPayload(count: 3, offset: 5)
         env.client.mockAPIClient.test_mockResponseResult(.success(apiResult))
-        let result = try await userList.loadNextUsers(limit: 3)
+        let result = try await userList.loadMoreUsers(limit: 3)
         XCTAssertEqual(apiResult.users.map(\.id), result.map(\.id))
         let allExpectedIds = (initialPayload.users + apiResult.users).map(\.id)
         await XCTAssertEqual(allExpectedIds, userList.state.users.map(\.id))

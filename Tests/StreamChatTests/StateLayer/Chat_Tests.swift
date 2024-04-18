@@ -163,7 +163,7 @@ final class Chat_Tests: XCTestCase {
         // Load the first page which should reset the state
         let channelPayload = makeChannelPayload(messageCount: 3, createdAtOffset: 5)
         env.client.mockAPIClient.test_mockResponseResult(.success(channelPayload))
-        try await chat.loadMessagesFirstPage()
+        try await chat.loadMessages(with: MessagesPagination(pageSize: 3, parameter: nil))
         
         await MainActor.run {
             XCTAssertEqual(channelPayload.messages.map(\.id), chat.state.messages.map(\.id))
@@ -176,7 +176,7 @@ final class Chat_Tests: XCTestCase {
         }
     }
     
-    func test_loadPreviousMessages_whenAPIRequestSucceeds_thenStateUpdates() async throws {
+    func test_loadOlderMessages_whenAPIRequestSucceeds_thenStateUpdates() async throws {
         // DB has some messages loaded
         let initialChannelPayload = makeChannelPayload(messageCount: 5, createdAtOffset: 5)
         try await env.client.mockDatabaseContainer.write { session in
@@ -188,7 +188,7 @@ final class Chat_Tests: XCTestCase {
         // Load older
         let channelPayload = makeChannelPayload(messageCount: 5, createdAtOffset: 0)
         env.client.mockAPIClient.test_mockResponseResult(.success(channelPayload))
-        try await chat.loadPreviousMessages()
+        try await chat.loadOlderMessages()
         
         let expectedIds = (channelPayload.messages + initialChannelPayload.messages).map(\.id)
         await MainActor.run {
@@ -202,7 +202,7 @@ final class Chat_Tests: XCTestCase {
         }
     }
     
-    func test_loadNextMessages_whenAPIRequestSucceeds_thenStateUpdates() async throws {
+    func test_loadNewerMessages_whenAPIRequestSucceeds_thenStateUpdates() async throws {
         await setUpChat(usesMockedChannelUpdater: false)
         
         // Reset has loaded state since we always load newest messages
@@ -213,7 +213,7 @@ final class Chat_Tests: XCTestCase {
         // Load newer
         let channelPayload = makeChannelPayload(messageCount: 3, createdAtOffset: 5)
         env.client.mockAPIClient.test_mockResponseResult(.success(channelPayload))
-        try await chat.loadNextMessages()
+        try await chat.loadNewerMessages()
         
         let expectedIds = (initialChannelPayload.messages + channelPayload.messages).map(\.id)
         await MainActor.run {
@@ -1335,12 +1335,12 @@ final class Chat_Tests: XCTestCase {
     }
     
     // TODO: not done
-    public func test_loadNextWatchersAction_whenAPIRequestSucceeds_thenLoadNextWatchersActionSucceeds() async throws {
+    public func test_loadMoreWatchersAction_whenAPIRequestSucceeds_thenLoadNextWatchersActionSucceeds() async throws {
         // loadNextWatchers(limit: Int? = nil)
     }
     
     // TODO: not done
-    public func test_loadNextWatchersAction_whenAPIRequestFails_thenLoadNextWatchersActionSucceeds() async throws {
+    public func test_loadMoreWatchersAction_whenAPIRequestFails_thenLoadNextWatchersActionSucceeds() async throws {
         // loadNextWatchers(limit: Int? = nil)
     }
     
