@@ -41,7 +41,14 @@ import Foundation
     
     // MARK: - Represented Channel and Query
     
+    /// The channel id of the represented channel.
+    ///
+    /// - Important: It is nil, if channel is not locally available. Call ``Chat/get(watch:)`` for fetching the latest state.
+    public var cid: ChannelId? { channelQuery.cid }
+    
     /// The represented ``ChatChannel``.
+    ///
+    /// - Important: It is nil, if channel is not locally available. Call ``Chat/get(watch:)`` for fetching the latest state.
     @Published public internal(set) var channel: ChatChannel?
     
     /// The channel query used for looking up the channel.
@@ -77,7 +84,7 @@ import Foundation
     ///
     /// - Returns: An instance of the locally available chat message
     public func localMessage(for messageId: MessageId) -> ChatMessage? {
-        if let message = dataStore.message(id: messageId), message.cid == channelQuery.cid {
+        if let message = dataStore.message(id: messageId), message.cid == cid {
             return message
         }
         return nil
@@ -217,7 +224,7 @@ extension ChatState {
             if let localMessage = localMessage(for: messageId) {
                 message = localMessage
             } else {
-                guard let cid = channelQuery.cid else { throw ClientError.ChannelNotCreatedYet() }
+                guard let cid else { throw ClientError.ChannelNotCreatedYet() }
                 message = try await messageUpdater.getMessage(cid: cid, messageId: messageId)
             }
             let state = MessageState(
