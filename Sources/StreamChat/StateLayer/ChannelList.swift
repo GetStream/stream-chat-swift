@@ -9,6 +9,7 @@ import Foundation
 public class ChannelList {
     private let channelListUpdater: ChannelListUpdater
     private let stateBuilder: StateBuilder<ChannelListState>
+    let query: ChannelListQuery
     
     init(
         query: ChannelListQuery,
@@ -30,9 +31,6 @@ public class ChannelList {
             )
         }
     }
-    
-    /// The query specifying and filtering the list of channels.
-    public let query: ChannelListQuery
     
     /// An observable object representing the current state of the channel list.
     @MainActor public lazy var state: ChannelListState = stateBuilder.build()
