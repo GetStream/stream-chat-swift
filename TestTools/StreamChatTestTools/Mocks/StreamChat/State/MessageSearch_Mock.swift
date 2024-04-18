@@ -22,7 +22,7 @@ public class MessageSearch_Mock: MessageSearch {
     }
 
     var loadNextMessagesCallCount = 0
-    public override func loadNextMessages(limit: Int? = nil) async throws -> [ChatMessage] {
+    public override func loadMoreMessages(limit: Int? = nil) async throws -> [ChatMessage] {
         loadNextMessagesCallCount += 1
         return await Array(state.messages)
     }
