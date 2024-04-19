@@ -37,6 +37,7 @@ class ChannelUpdater: Worker {
     ///   - isInRecoveryMode: Determines whether the SDK is in offline recovery mode
     ///   - onChannelCreated: For some type of channels we need to obtain id from backend.
     ///     This callback is called with the obtained `cid` before the channel payload is saved to the DB.
+    ///   - actions: Additional operations to run while saving the channel payload.
     ///   - completion: Called when the API call is finished. Called with `Error` if the remote update fails.
     ///
     /// **Note**: If query messages pagination parameter is `nil` AKA updater is asked to fetch the first page of messages,
@@ -46,6 +47,7 @@ class ChannelUpdater: Worker {
         channelQuery: ChannelQuery,
         isInRecoveryMode: Bool,
         onChannelCreated: ((ChannelId) -> Void)? = nil,
+        actions: ChannelUpdateActions? = nil,
         completion: ((Result<ChannelPayload, Error>) -> Void)? = nil
     ) {
         if let pagination = channelQuery.pagination {
@@ -71,12 +73,24 @@ class ChannelUpdater: Worker {
                         if didJumpToMessage || didLoadFirstPage {
                             channelDTO.cleanAllMessagesExcludingLocalOnly()
                         }
+                        if let actions, actions.resetMembers {
+                            channelDTO.members.removeAll()
+                        }
+                        if let actions, actions.resetWatchers {
+                            channelDTO.watchers.removeAll()
+                        }
                     }
-
+                    
                     let updatedChannel = try session.saveChannel(payload: payload)
                     updatedChannel.oldestMessageAt = self.paginationState.oldestMessageAt?.bridgeDate
                     updatedChannel.newestMessageAt = self.paginationState.newestMessageAt?.bridgeDate
-
+                    
+                    if let memberListSorting = actions?.memberListSorting {
+                        let memberListQuery = ChannelMemberListQuery(cid: payload.channel.cid, sort: memberListSorting)
+                        let queryDTO = try session.saveQuery(memberListQuery)
+                        queryDTO.members = updatedChannel.members
+                    }
+                    
                 } completion: { error in
                     if let error = error {
                         completion?(.failure(error))
@@ -882,12 +896,25 @@ extension ChannelUpdater {
         }
     }
 
-    @discardableResult func update(channelQuery: ChannelQuery) async throws -> ChannelPayload {
+    @discardableResult func update(
+        channelQuery: ChannelQuery,
+        memberSorting: [Sorting<ChannelMemberListSortingKey>] = []
+    ) async throws -> ChannelPayload {
+        // Just populate the closure since we select the endpoint based on it.
         let useCreateEndpoint: ((ChannelId) -> Void)? = channelQuery.cid == nil ? { _ in } : nil
+        let actions = ChannelUpdateActions(
+            memberListSorting: memberSorting,
+            resetMembers: true,
+            resetWatchers: true
+        )
         return try await withCheckedThrowingContinuation { continuation in
-            update(channelQuery: channelQuery, isInRecoveryMode: false, onChannelCreated: useCreateEndpoint) { result in
-                continuation.resume(with: result)
-            }
+            update(
+                channelQuery: channelQuery,
+                isInRecoveryMode: false,
+                onChannelCreated: useCreateEndpoint,
+                actions: actions,
+                completion: continuation.resume(with:)
+            )
         }
     }
     
@@ -953,6 +980,18 @@ extension ChannelUpdater {
         let limit = limit ?? channelQuery.pagination?.pageSize ?? .messagesPageSize
         let pagination = MessagesPagination(pageSize: limit, parameter: .around(messageId))
         try await update(channelQuery: channelQuery.withPagination(pagination))
+    }
+}
+
+extension ChannelUpdater {
+    /// Additional operations while updating the channel.
+    struct ChannelUpdateActions {
+        /// Used for associating members with a default member list query consisting of cid and sorting.
+        let memberListSorting: [Sorting<ChannelMemberListSortingKey>]
+        /// Reset members before saving channel payload.
+        let resetMembers: Bool
+        /// Reset watchers before saving channel payload.
+        let resetWatchers: Bool
     }
 }
 
