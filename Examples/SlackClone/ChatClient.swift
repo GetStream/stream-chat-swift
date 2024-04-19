@@ -25,6 +25,12 @@ extension ChatClient {
         components.galleryAttachmentInjector = SlackGalleryAttachmentViewInjector.self
         components.messagePopupVC = SlackReactionsMessagePopupVC.self
         components.messageActionsTransitionController = SlackReactionsMessageActionsTransitionController.self
+        components.reactionsSorting = { lhs, rhs in
+            guard let lhsFirstReactionAt = lhs.firstReactionAt, let rhsFirstReactionAt = rhs.firstReactionAt else {
+                return lhs.type.rawValue < rhs.type.rawValue
+            }
+            return lhsFirstReactionAt < rhsFirstReactionAt
+        }
 
         Appearance.default = appearance
         Components.default = components
