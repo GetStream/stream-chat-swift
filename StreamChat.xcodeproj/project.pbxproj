@@ -594,6 +594,18 @@
 		841BAA132BCFEB2C000C73E4 /* PollsEndpoints_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 841BAA122BCFEB2C000C73E4 /* PollsEndpoints_Tests.swift */; };
 		841BAA152BD01901000C73E4 /* PollPayload_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 841BAA142BD01901000C73E4 /* PollPayload_Tests.swift */; };
 		841BAA172BD01930000C73E4 /* Poll.json in Resources */ = {isa = PBXBuildFile; fileRef = 841BAA162BD01930000C73E4 /* Poll.json */; };
+		841BAA4B2BD1CCC0000C73E4 /* PollVoteDTO.swift in Sources */ = {isa = PBXBuildFile; fileRef = 841BAA4A2BD1CCC0000C73E4 /* PollVoteDTO.swift */; };
+		841BAA4C2BD1CCC0000C73E4 /* PollVoteDTO.swift in Sources */ = {isa = PBXBuildFile; fileRef = 841BAA4A2BD1CCC0000C73E4 /* PollVoteDTO.swift */; };
+		841BAA4E2BD1CD76000C73E4 /* PollOptionDTO.swift in Sources */ = {isa = PBXBuildFile; fileRef = 841BAA4D2BD1CD76000C73E4 /* PollOptionDTO.swift */; };
+		841BAA4F2BD1CD76000C73E4 /* PollOptionDTO.swift in Sources */ = {isa = PBXBuildFile; fileRef = 841BAA4D2BD1CD76000C73E4 /* PollOptionDTO.swift */; };
+		841BAA512BD1CD81000C73E4 /* PollDTO.swift in Sources */ = {isa = PBXBuildFile; fileRef = 841BAA502BD1CD81000C73E4 /* PollDTO.swift */; };
+		841BAA522BD1CD81000C73E4 /* PollDTO.swift in Sources */ = {isa = PBXBuildFile; fileRef = 841BAA502BD1CD81000C73E4 /* PollDTO.swift */; };
+		841BAA542BD26136000C73E4 /* PollOption.swift in Sources */ = {isa = PBXBuildFile; fileRef = 841BAA532BD26136000C73E4 /* PollOption.swift */; };
+		841BAA552BD26136000C73E4 /* PollOption.swift in Sources */ = {isa = PBXBuildFile; fileRef = 841BAA532BD26136000C73E4 /* PollOption.swift */; };
+		841BAA572BD29DA5000C73E4 /* PollVote.swift in Sources */ = {isa = PBXBuildFile; fileRef = 841BAA562BD29DA5000C73E4 /* PollVote.swift */; };
+		841BAA582BD29DA5000C73E4 /* PollVote.swift in Sources */ = {isa = PBXBuildFile; fileRef = 841BAA562BD29DA5000C73E4 /* PollVote.swift */; };
+		841BAA5A2BD2B39A000C73E4 /* Poll.swift in Sources */ = {isa = PBXBuildFile; fileRef = 841BAA592BD2B39A000C73E4 /* Poll.swift */; };
+		841BAA5B2BD2B39A000C73E4 /* Poll.swift in Sources */ = {isa = PBXBuildFile; fileRef = 841BAA592BD2B39A000C73E4 /* Poll.swift */; };
 		842F9745277A09B10060A489 /* PinnedMessagesQuery.swift in Sources */ = {isa = PBXBuildFile; fileRef = 842F9744277A09B10060A489 /* PinnedMessagesQuery.swift */; };
 		842F9746277A09B10060A489 /* PinnedMessagesQuery.swift in Sources */ = {isa = PBXBuildFile; fileRef = 842F9744277A09B10060A489 /* PinnedMessagesQuery.swift */; };
 		842F9749277A1CCF0060A489 /* PinnedMessagesPagination.swift in Sources */ = {isa = PBXBuildFile; fileRef = 842F9748277A1CCF0060A489 /* PinnedMessagesPagination.swift */; };
@@ -3317,6 +3329,12 @@
 		841BAA122BCFEB2C000C73E4 /* PollsEndpoints_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PollsEndpoints_Tests.swift; sourceTree = "<group>"; };
 		841BAA142BD01901000C73E4 /* PollPayload_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PollPayload_Tests.swift; sourceTree = "<group>"; };
 		841BAA162BD01930000C73E4 /* Poll.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = Poll.json; sourceTree = "<group>"; };
+		841BAA4A2BD1CCC0000C73E4 /* PollVoteDTO.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PollVoteDTO.swift; sourceTree = "<group>"; };
+		841BAA4D2BD1CD76000C73E4 /* PollOptionDTO.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PollOptionDTO.swift; sourceTree = "<group>"; };
+		841BAA502BD1CD81000C73E4 /* PollDTO.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PollDTO.swift; sourceTree = "<group>"; };
+		841BAA532BD26136000C73E4 /* PollOption.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PollOption.swift; sourceTree = "<group>"; };
+		841BAA562BD29DA5000C73E4 /* PollVote.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PollVote.swift; sourceTree = "<group>"; };
+		841BAA592BD2B39A000C73E4 /* Poll.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Poll.swift; sourceTree = "<group>"; };
 		842F9744277A09B10060A489 /* PinnedMessagesQuery.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PinnedMessagesQuery.swift; sourceTree = "<group>"; };
 		842F9748277A1CCF0060A489 /* PinnedMessagesPagination.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PinnedMessagesPagination.swift; sourceTree = "<group>"; };
 		8431843A26FB53B400B5B25E /* NotificationMessageNew+MissingFields.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = "NotificationMessageNew+MissingFields.json"; sourceTree = "<group>"; };
@@ -5125,6 +5143,9 @@
 				C1B49B3F2822C01C00F4E89E /* NSManagedObject+Validation.swift */,
 				79877A222498E50D00015F8B /* UserDTO.swift */,
 				DA84070F25250720005A0F62 /* UserListQueryDTO.swift */,
+				841BAA4A2BD1CCC0000C73E4 /* PollVoteDTO.swift */,
+				841BAA4D2BD1CD76000C73E4 /* PollOptionDTO.swift */,
+				841BAA502BD1CD81000C73E4 /* PollDTO.swift */,
 			);
 			path = DTOs;
 			sourceTree = "<group>";
@@ -5441,6 +5462,9 @@
 				79877A012498E4BB00015F8B /* User.swift */,
 				7900452525374CA20096ECA1 /* User+SwiftUI.swift */,
 				64C8C86D26934C6100329F82 /* UserInfo.swift */,
+				841BAA532BD26136000C73E4 /* PollOption.swift */,
+				841BAA562BD29DA5000C73E4 /* PollVote.swift */,
+				841BAA592BD2B39A000C73E4 /* Poll.swift */,
 				225D807625D316B10094E555 /* Attachments */,
 			);
 			path = Models;
@@ -10670,6 +10694,7 @@
 				40789D2B29F6AC500018C2BB /* AudioRecordingContext.swift in Sources */,
 				84DCB853269F569A006CDF32 /* EventsController+SwiftUI.swift in Sources */,
 				40789D3129F6AC500018C2BB /* AudioRecording.swift in Sources */,
+				841BAA4B2BD1CCC0000C73E4 /* PollVoteDTO.swift in Sources */,
 				88381E65258258C20047A6A3 /* FileUploadPayload.swift in Sources */,
 				7978FBBF26E1667C002CA2DF /* MessageSearchController.swift in Sources */,
 				DAF1BED1250660F8003CEDC0 /* MessageController+SwiftUI.swift in Sources */,
@@ -10749,6 +10774,7 @@
 				792A4F4B248010A600EAF71D /* QueryOptions.swift in Sources */,
 				792FCB4B24A3D52A000290C7 /* DatabaseSession.swift in Sources */,
 				792A4F1D247FEA2200EAF71D /* ChannelListController.swift in Sources */,
+				841BAA572BD29DA5000C73E4 /* PollVote.swift in Sources */,
 				8899BC4D25430E40003CB98B /* MessageReactionDTO.swift in Sources */,
 				79280F49248520B300CDEB89 /* EventDecoder.swift in Sources */,
 				8A0D649B24E579E90017A3C0 /* GuestUserTokenPayload.swift in Sources */,
@@ -10771,6 +10797,7 @@
 				7964F3B6249A314D002A09EC /* PrefixLogFormatter.swift in Sources */,
 				84A1D2E626AACDBE00014712 /* ChannelEventsController.swift in Sources */,
 				88BDCA8A2642B02D0099AD74 /* ChatMessageAttachment.swift in Sources */,
+				841BAA4E2BD1CD76000C73E4 /* PollOptionDTO.swift in Sources */,
 				88E26D6E2580F34B00F55AB5 /* AttachmentQueueUploader.swift in Sources */,
 				43D3F0FF28410B4800B74921 /* Call.swift in Sources */,
 				88A00DD02525F08000259AB4 /* ModerationEndpoints.swift in Sources */,
@@ -10827,6 +10854,7 @@
 				DAD539DB250B8A9C00CFC649 /* Controller.swift in Sources */,
 				F6ED5F76250278D7005D7327 /* SyncEndpoint.swift in Sources */,
 				AD8FEE582AA8E1A100273F88 /* ChatClient+Environment.swift in Sources */,
+				841BAA512BD1CD81000C73E4 /* PollDTO.swift in Sources */,
 				AD52A2192804850700D0157E /* ChannelConfigDTO.swift in Sources */,
 				797A756824814F0D003CF16D /* Bundle+Extensions.swift in Sources */,
 				792B805024D95B5D00C2963E /* Cached.swift in Sources */,
@@ -10897,6 +10925,7 @@
 				79877A0D2498E4BC00015F8B /* CurrentUser.swift in Sources */,
 				4042967D29FAC9DA0089126D /* AudioAnalysisContext.swift in Sources */,
 				AD8C7C5D2BA3BE1E00260715 /* AppSettings.swift in Sources */,
+				841BAA5A2BD2B39A000C73E4 /* Poll.swift in Sources */,
 				AD8FEE5B2AA8E1E400273F88 /* ChatClientFactory.swift in Sources */,
 				88D85D9A252F168B00AE1030 /* MemberController+Combine.swift in Sources */,
 				792A4F462480107A00EAF71D /* ChannelQuery.swift in Sources */,
@@ -10993,6 +11022,7 @@
 				AD37D7CA2BC98A5300800D8C /* ThreadReadDTO.swift in Sources */,
 				ADE40043291B1A510000C98B /* AttachmentUploader.swift in Sources */,
 				AD37D7D32BC9938E00800D8C /* ThreadRead.swift in Sources */,
+				841BAA542BD26136000C73E4 /* PollOption.swift in Sources */,
 				8836FFBB2540741D009FDF73 /* FlagUserPayload.swift in Sources */,
 				C1FC2F9F2742579D0062530F /* WebSocket.swift in Sources */,
 				ADF2BBEB2B9B622B0069D467 /* AppSettingsPayload.swift in Sources */,
@@ -11515,6 +11545,7 @@
 				C121E820274544AD00023E4C /* ReactionEvents.swift in Sources */,
 				C121E821274544AD00023E4C /* NotificationEvents.swift in Sources */,
 				4042968729FACA420089126D /* AudioSamplesExtractor.swift in Sources */,
+				841BAA4F2BD1CD76000C73E4 /* PollOptionDTO.swift in Sources */,
 				C121E822274544AD00023E4C /* WebSocketEngine.swift in Sources */,
 				C1B0B38427BFC08900C8207D /* EndpointPath+OfflineRequest.swift in Sources */,
 				C121E823274544AD00023E4C /* URLSessionWebSocketEngine.swift in Sources */,
@@ -11565,6 +11596,7 @@
 				C121E843274544AE00023E4C /* RawJSON.swift in Sources */,
 				AD52A21A2804850700D0157E /* ChannelConfigDTO.swift in Sources */,
 				40789D2229F6AC500018C2BB /* AppStateObserving.swift in Sources */,
+				841BAA5B2BD2B39A000C73E4 /* Poll.swift in Sources */,
 				C121E844274544AE00023E4C /* UnknownChannelEvent.swift in Sources */,
 				C121E845274544AE00023E4C /* GuestUserTokenRequestPayload.swift in Sources */,
 				C121E846274544AE00023E4C /* MissingEventsRequestBody.swift in Sources */,
@@ -11603,6 +11635,7 @@
 				C121E861274544AE00023E4C /* ChannelMemberUpdater.swift in Sources */,
 				AD70DC3D2ADEF09C00CFC3B7 /* MessageModerationDetails.swift in Sources */,
 				C121E862274544AE00023E4C /* ConnectionRepository.swift in Sources */,
+				841BAA4C2BD1CCC0000C73E4 /* PollVoteDTO.swift in Sources */,
 				C121E863274544AE00023E4C /* EventSender.swift in Sources */,
 				C121E864274544AE00023E4C /* EventObserver.swift in Sources */,
 				C121E865274544AE00023E4C /* MemberEventObserver.swift in Sources */,
@@ -11613,6 +11646,7 @@
 				AD78F9F028EC719200BC0FCE /* ChannelTruncateRequestPayload.swift in Sources */,
 				C121E869274544AF00023E4C /* ConnectionRecoveryHandler.swift in Sources */,
 				C121E86B274544AF00023E4C /* AttachmentQueueUploader.swift in Sources */,
+				841BAA552BD26136000C73E4 /* PollOption.swift in Sources */,
 				4042968A29FACA6A0089126D /* AudioValuePercentageNormaliser.swift in Sources */,
 				841BAA112BCEADAC000C73E4 /* PollsEvents.swift in Sources */,
 				C121E86D274544AF00023E4C /* DatabaseContainer.swift in Sources */,
@@ -11645,6 +11679,7 @@
 				C121E879274544AF00023E4C /* ChannelReadDTO.swift in Sources */,
 				CFA41B6827DA952300427602 /* SystemEnvironment+XStreamClient.swift in Sources */,
 				C121E87A274544AF00023E4C /* ChannelListQueryDTO.swift in Sources */,
+				841BAA522BD1CD81000C73E4 /* PollDTO.swift in Sources */,
 				C121E87B274544AF00023E4C /* MessageSearchQueryDTO.swift in Sources */,
 				4042967E29FAC9DA0089126D /* AudioAnalysisContext.swift in Sources */,
 				40789D4929F6C1DC0018C2BB /* StreamAppStateObserver_Tests.swift in Sources */,
@@ -11775,6 +11810,7 @@
 				C121E8D1274544B100023E4C /* ChannelMemberListSortingKey.swift in Sources */,
 				C121E8D2274544B100023E4C /* ClientError.swift in Sources */,
 				C143789127BC03EE00E23965 /* EndpointPath.swift in Sources */,
+				841BAA582BD29DA5000C73E4 /* PollVote.swift in Sources */,
 				C121E8D3274544B100023E4C /* ErrorPayload.swift in Sources */,
 				C121E8D4274544B100023E4C /* NSManagedObject+Extensions.swift in Sources */,
 				C121E8D5274544B100023E4C /* NSManagedObjectContext+Extensions.swift in Sources */,
