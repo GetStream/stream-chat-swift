@@ -939,22 +939,46 @@ extension NSManagedObjectContext: MessageDatabaseSession {
             previousOwnReactionTypes.forEach { type in
                 message.reactionScores[type]? -= score
                 message.reactionCounts[type]? -= 1
+                let reactionGroup = message.reactionGroups.first(where: { $0.type == type })
+                reactionGroup?.sumScores -= Int64(score)
+                reactionGroup?.count -= 1
             }
 
             message.ownReactions = []
             message.latestReactions.removeAll { $0.reactionUserId == currentUserDTO.user.id }
         }
 
-        // make sure we update the reactionScores for the message in a way that works for new or updated reactions
-        let scoreDiff = Int64(score) - dto.score
-        let newScore = max(0, message.reactionScores[type.rawValue] ?? Int(dto.score) + Int(scoreDiff))
-        message.reactionScores[type.rawValue] = newScore
+        // Update reaction scores
+        if let reactionScore = message.reactionScores[type.rawValue] {
+            message.reactionScores[type.rawValue]? += reactionScore
+        } else {
+            message.reactionScores[type.rawValue] = score
+        }
 
         // Update reaction counts
         if let reactionCount = message.reactionCounts[type.rawValue] {
             message.reactionCounts[type.rawValue] = reactionCount + 1
         } else {
             message.reactionCounts[type.rawValue] = 1
+        }
+
+        // Update grouped reactions
+        if let existingReactionGroup = message.reactionGroups.first(where: { $0.type == type.rawValue }),
+           let reactionCount = message.reactionCounts[type.rawValue],
+           let reactionScore = message.reactionScores[type.rawValue] {
+            existingReactionGroup.count = Int64(reactionCount)
+            existingReactionGroup.sumScores = Int64(reactionScore)
+            existingReactionGroup.lastReactionAt = DBDate()
+        } else {
+            let newReactionGroup = MessageReactionGroupDTO(
+                type: type,
+                sumScores: score,
+                count: 1,
+                firstReactionAt: Date(),
+                lastReactionAt: Date(),
+                context: self
+            )
+            message.reactionGroups.insert(newReactionGroup)
         }
 
         dto.score = Int64(score)
@@ -995,6 +1019,8 @@ extension NSManagedObjectContext: MessageDatabaseSession {
             return nil
         }
 
+        delete(reaction)
+
         // if the reaction on the database does not match the version, do nothing
         guard version == nil || version == reaction.version else {
             return nil
@@ -1003,11 +1029,33 @@ extension NSManagedObjectContext: MessageDatabaseSession {
         message.latestReactions = message.latestReactions.filter { $0 != reaction.id }
         message.ownReactions = message.ownReactions.filter { $0 != reaction.id }
 
-        guard let reactionScore = message.reactionScores.removeValue(forKey: type.rawValue), reactionScore > 1 else {
+        guard let reactionScore = message.reactionScores[type.rawValue] else {
             return reaction
         }
 
-        message.reactionScores[type.rawValue] = max(reactionScore - Int(reaction.score), 0)
+        let newScore = max(reactionScore - Int(reaction.score), 0)
+        message.reactionScores[type.rawValue] = newScore
+        message.reactionCounts[type.rawValue]? -= 1
+
+        let reactionGroup = message.reactionGroups.first(where: { $0.type == type.rawValue })
+        reactionGroup?.sumScores = Int64(newScore)
+        reactionGroup?.count -= 1
+        
+        let scoreIsZero = newScore == 0
+        let countIsZero = message.reactionCounts[type.rawValue] == 0
+
+        if scoreIsZero {
+            message.reactionScores[type.rawValue] = nil
+        }
+
+        if countIsZero {
+            message.reactionCounts[type.rawValue] = nil
+        }
+
+        if scoreIsZero && countIsZero, let reactionGroup = reactionGroup {
+            message.reactionGroups.remove(reactionGroup)
+        }
+
         return reaction
     }
 
