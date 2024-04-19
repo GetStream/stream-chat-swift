@@ -30,33 +30,62 @@ final class Chat_Tests: XCTestCase {
     
     // MARK: - Get
     
-    func test_get_whenLocalStoreHasMessages_thenGetResetsMessages() async throws {
+    func test_get_whenLocalStoreHasState_thenGetResetsState() async throws {
         // Existing state
-        let initialChannelPayload = makeChannelPayload(messageCount: 10, createdAtOffset: 0)
-        try await env.client.mockDatabaseContainer.write { session in
-            try session.saveChannel(payload: initialChannelPayload)
-        }
-        
+        let initialChannelPayload = makeChannelPayload(
+            messageCount: 10,
+            memberCount: 9,
+            watcherCount: 8,
+            createdAtOffset: 0
+        )
+        env.client.mockAPIClient.test_mockResponseResult(.success(initialChannelPayload))
         await setUpChat(usesMockedChannelUpdater: false)
+        try await chat.get(watch: true)
         
-        let nextPayload = makeChannelPayload(messageCount: 3, createdAtOffset: 0)
+        // Recreate the chat which simulates a new session and loading the state from the store
+        await setUpChat(usesMockedChannelUpdater: false)
+        await XCTAssertEqual(10, chat.state.messages.count)
+        await XCTAssertEqual(9, chat.state.members.count)
+        await XCTAssertEqual(8, chat.state.watchers.count)
+        
+        let nextPayload = makeChannelPayload(
+            messageCount: 3,
+            memberCount: 2,
+            watcherCount: 1,
+            createdAtOffset: 0
+        )
         env.client.mockAPIClient.test_mockResponseResult(.success(nextPayload))
         try await chat.get(watch: true)
         
         await XCTAssertEqual(3, chat.state.messages.count)
+        await XCTAssertEqual(2, chat.state.members.count)
+        await XCTAssertEqual(1, chat.state.watchers.count)
         await XCTAssertEqual(nextPayload.messages.map(\.id), chat.state.messages.map(\.id))
+        await XCTAssertEqual(nextPayload.members.map(\.user?.id), chat.state.members.map(\.id))
+        await XCTAssertEqual(nextPayload.watchers?.map(\.id), chat.state.watchers.map(\.id))
     }
     
-    func test_get_whenLocalStoreHasNoMessages_thenGetFetchesFirstPageOfMessages() async throws {
+    func test_get_whenLocalStoreHasNoState_thenGetFetchesState() async throws {
         await setUpChat(usesMockedChannelUpdater: false)
         await XCTAssertEqual(0, chat.state.messages.count)
+        await XCTAssertEqual(0, chat.state.members.count)
+        await XCTAssertEqual(0, chat.state.watchers.count)
         
-        let nextPayload = makeChannelPayload(messageCount: 3, createdAtOffset: 0)
+        let nextPayload = makeChannelPayload(
+            messageCount: 3,
+            memberCount: 2,
+            watcherCount: 1,
+            createdAtOffset: 0
+        )
         env.client.mockAPIClient.test_mockResponseResult(.success(nextPayload))
         try await chat.get(watch: true)
         
         await XCTAssertEqual(3, chat.state.messages.count)
+        await XCTAssertEqual(2, chat.state.members.count)
+        await XCTAssertEqual(1, chat.state.watchers.count)
         await XCTAssertEqual(nextPayload.messages.map(\.id), chat.state.messages.map(\.id))
+        await XCTAssertEqual(nextPayload.members.map(\.user?.id), chat.state.members.map(\.id))
+        await XCTAssertEqual(nextPayload.watchers?.map(\.id), chat.state.watchers.map(\.id))
     }
     
     // MARK: - Deleting the Channel
@@ -1384,7 +1413,7 @@ final class Chat_Tests: XCTestCase {
         chat = Chat(
             channelQuery: ChannelQuery(cid: channelId),
             messageOrdering: .bottomToTop,
-            memberSorting: [Sorting(key: .createdAt)],
+            memberSorting: [Sorting(key: .createdAt, isAscending: true)],
             client: env.client,
             environment: env.chatEnvironment(usesMockedUpdater: usesMockedChannelUpdater)
         )
@@ -1393,7 +1422,12 @@ final class Chat_Tests: XCTestCase {
         }
     }
     
-    private func makeChannelPayload(messageCount: Int, createdAtOffset: Int) -> ChannelPayload {
+    private func makeChannelPayload(
+        messageCount: Int,
+        memberCount: Int = 0,
+        watcherCount: Int = 0,
+        createdAtOffset: Int
+    ) -> ChannelPayload {
         // Note that message pagination relies on createdAt and cid
         let messages: [MessagePayload] = (0..<messageCount)
             .map {
@@ -1403,7 +1437,25 @@ final class Chat_Tests: XCTestCase {
                     cid: channelId
                 )
             }
-        return ChannelPayload.dummy(channel: .dummy(cid: channelId), messages: messages)
+        let members: [MemberPayload] = (0..<memberCount)
+            .map {
+                .dummy(
+                    user: .dummy(
+                        userId: "\($0 + createdAtOffset)"
+                    ),
+                    createdAt: Date(timeIntervalSinceReferenceDate: TimeInterval($0 + createdAtOffset))
+                )
+            }
+        let watchers: [UserPayload] = (0..<watcherCount)
+            .map {
+                .dummy(userId: "\($0 + createdAtOffset)")
+            }
+        return ChannelPayload.dummy(
+            channel: .dummy(cid: channelId),
+            watchers: watchers,
+            members: members,
+            messages: messages
+        )
     }
 }
 
