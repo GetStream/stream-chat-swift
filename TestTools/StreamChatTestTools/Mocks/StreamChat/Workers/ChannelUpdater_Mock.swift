@@ -271,11 +271,11 @@ final class ChannelUpdater_Mock: ChannelUpdater {
     override var paginationState: MessagesPaginationState {
         mockPaginationState
     }
-
     override func update(
         channelQuery: ChannelQuery,
         isInRecoveryMode: Bool,
         onChannelCreated: ((ChannelId) -> Void)? = nil,
+        actions: ChannelUpdateActions? = nil,
         completion: ((Result<ChannelPayload, Error>) -> Void)? = nil
     ) {
         update_channelQuery = channelQuery
