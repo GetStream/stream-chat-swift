@@ -69,9 +69,12 @@ public class Chat {
     /// An observable object representing the current state of the channel.
     @MainActor public lazy var state: ChatState = stateBuilder.build()
     
-    /// Fetches the state from the server and updates the local store.
+    /// Fetches the most recent state from the server and updates the local store.
     ///
-    /// - Important: Loaded messages in ``ChatState.messages`` is reset to a batch of most recent messages.
+    /// - Important: Loaded messages in ``ChatState.messages`` are reset.
+    /// - Note: When watching is enabled for the channel, then channel updates are delivered
+    ///  through websocket events and there is no need to call ``get(watch:)`` for fetching
+    ///  the latest state multiple times during the app's lifetime.
     ///
     /// - Parameter watch: True, if server-side events should be enabled in addition
     /// to fetching state from the server. See ``watch()`` for more information
@@ -375,6 +378,7 @@ public class Chat {
     
     /// Loads messages for the specified pagination parameters and updates ``ChatState/messages``.
     ///
+    /// - Important: If `pagination.parameter` is nil, then loaded messages are reset.
     /// - Important: Calling ``get(watch:)`` resets ``ChatState/messages``.
     ///
     /// - Parameters:
