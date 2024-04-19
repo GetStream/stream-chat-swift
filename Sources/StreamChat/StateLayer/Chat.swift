@@ -717,8 +717,9 @@ public class Chat {
             skipEnrichUrl: skipEnrichURL,
             extraData: extraData
         )
+        async let sentMessage = try await messageSender.waitForAPIRequest(messageId: message.id)
         eventNotificationCenter.process(NewMessagePendingEvent(message: message))
-        return try await messageSender.waitForAPIRequest(messageId: message.id)
+        return try await sentMessage
     }
     
     /// Loads replies of the specified message and pagination parameters and updates ``MessageState/replies``.
