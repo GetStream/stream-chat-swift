@@ -38,11 +38,21 @@ public class ChannelList {
     /// An observable object representing the current state of the channel list.
     @MainActor public lazy var state: ChannelListState = stateBuilder.build()
     
+    /// Fetches the most recent state from the server and updates the local store.
+    ///
+    /// - Important: Loaded channels in ``ChannelListState/channels`` are reset.
+    ///
+    /// - Throws: An error while communicating with the Stream API.
+    public func get() async throws {
+        let pagination = Pagination(pageSize: .channelsPageSize)
+        try await loadChannels(with: pagination)
+    }
+    
     // MARK: - Channel List Pagination
     
     /// Loads channels for the specified pagination parameters and updates ``ChannelListState/channels``.
     ///
-    /// - Important: If pagination offset is 0 and cursor is nil, the list of loaded channels is reset.
+    /// - Important: If pagination offset is 0 and cursor is nil, then loaded channels are reset.
     ///
     /// - Parameter pagination: The pagination configuration which includes limit and cursor.
     ///
