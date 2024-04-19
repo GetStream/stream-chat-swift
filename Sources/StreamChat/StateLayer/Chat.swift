@@ -71,7 +71,8 @@ public class Chat {
     
     /// Fetches the most recent state from the server and updates the local store.
     ///
-    /// - Important: Loaded messages in ``ChatState.messages`` are reset.
+    /// - Important: Resets ``ChatState/messages``, ``ChatState/members``, and ``ChatState/watchers`` in ``ChatState``.
+    ///
     /// - Note: When watching is enabled for the channel, then channel updates are delivered
     ///  through websocket events and there is no need to call ``get(watch:)`` for fetching
     ///  the latest state multiple times during the app's lifetime.
@@ -82,7 +83,8 @@ public class Chat {
     /// - Throws: An error while communicating with the Stream API.
     public func get(watch: Bool) async throws {
         let query = await state.channelQuery.withOptions(forWatching: watch)
-        let payload = try await channelUpdater.update(channelQuery: query)
+        let payload = try await channelUpdater.update(channelQuery: query, memberSorting: state.memberSorting)
+        // cid is retrieved from the server when we are creating new channels or there is no local state present
         guard query.cid != payload.channel.cid else { return }
         await state.setChannelId(payload.channel.cid)
     }
