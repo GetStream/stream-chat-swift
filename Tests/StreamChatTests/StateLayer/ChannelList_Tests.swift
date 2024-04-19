@@ -55,8 +55,40 @@ final class ChannelList_Tests: XCTestCase {
         XCTAssertEqual(matchingChannelListPayload.channels.map(\.channel.cid.rawValue), await channelList.state.channels.map(\.cid.rawValue))
     }
     
+    // MARK: - Get
+    
+    func test_get_whenLocalStoreHasChannels_thenGetResetsChannels() async throws {
+        // Existing state
+        let channelListPayload = makeMatchingChannelListPayload(channelCount: 10, createdAtOffset: 0)
+        try await env.client.mockDatabaseContainer.write { session in
+            session.saveChannelList(payload: channelListPayload, query: self.channelList.query)
+        }
+        
+        await setUpChannelList(usesMockedChannelUpdater: false)
+        await XCTAssertEqual(10, channelList.state.channels.count)
+        
+        let nextChannelListPayload = makeMatchingChannelListPayload(channelCount: 3, createdAtOffset: 0)
+        env.client.mockAPIClient.test_mockResponseResult(.success(nextChannelListPayload))
+        try await channelList.get()
+        
+        await XCTAssertEqual(3, channelList.state.channels.count)
+        await XCTAssertEqual(nextChannelListPayload.channels.map(\.channel.cid.rawValue), channelList.state.channels.map(\.cid.rawValue))
+    }
+    
+    func test_get_whenLocalStoreHasNoChannels_thenGetFetchesFirstPageOfChannels() async throws {
+        await setUpChannelList(usesMockedChannelUpdater: false)
+        await XCTAssertEqual(0, channelList.state.channels.count)
+        
+        let nextChannelListPayload = makeMatchingChannelListPayload(channelCount: 3, createdAtOffset: 0)
+        env.client.mockAPIClient.test_mockResponseResult(.success(nextChannelListPayload))
+        try await channelList.get()
+        
+        await XCTAssertEqual(3, channelList.state.channels.count)
+        await XCTAssertEqual(nextChannelListPayload.channels.map(\.channel.cid.rawValue), channelList.state.channels.map(\.cid.rawValue))
+    }
+    
     // MARK: - Pagination and Channel Updater Arguments
-
+    
     func test_loadChannels_whenChannelUpdaterSucceeds_thenLoadSucceeds() async throws {
         let pageSize = 5
         let responseChannels = makeChannels(count: pageSize, createdAtOffset: 0)
