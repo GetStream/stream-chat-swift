@@ -1063,11 +1063,13 @@ open class ChatMessageContentView: _View, ThemeProvider, UITextViewDelegate {
 private extension ChatMessage {
     var reactionsData: [ChatMessageReactionData] {
         let userReactionIDs = Set(currentUserReactions.map(\.type))
-        return reactionScores
+        return reactionGroups.values
             .map { ChatMessageReactionData(
-                type: $0.key,
-                score: $0.value,
-                isChosenByCurrentUser: userReactionIDs.contains($0.key)
+                type: $0.type,
+                score: $0.sumScores,
+                isChosenByCurrentUser: userReactionIDs.contains($0.type),
+                firstReactionAt: $0.firstReactionAt,
+                lastReactionAt: $0.lastReactionAt
             ) }
     }
 }
