@@ -79,13 +79,7 @@ final class SlackReactionsView: _View, ThemeProvider, UICollectionViewDataSource
 
         reactions = content.reactionGroups.values.map {
             let userReactionIDs = Set(content.currentUserReactions.map(\.type))
-            return ChatMessageReactionData(
-                type: $0.type,
-                score: $0.sumScores,
-                isChosenByCurrentUser: userReactionIDs.contains($0.type),
-                firstReactionAt: $0.firstReactionAt,
-                lastReactionAt: $0.lastReactionAt
-            )
+            return ChatMessageReactionData(reactionGroup: $0, isChosenByCurrentUser: userReactionIDs.contains($0.type))
         }
         .sorted(by: components.reactionsSorting)
 
