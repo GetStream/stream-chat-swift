@@ -76,20 +76,6 @@ import Foundation
     /// Use load messages in ``Chat`` for loading more messages.
     @Published public internal(set) var messages = StreamCollection<ChatMessage>([])
     
-    /// Access a message which is available locally by its id.
-    ///
-    /// - Note: This method does a local lookup of the message and returns a message present in ``ChatState/messages``.
-    ///
-    /// - Parameter messageId: The id of the message which is available locally.
-    ///
-    /// - Returns: An instance of the locally available chat message
-    public func localMessage(for messageId: MessageId) -> ChatMessage? {
-        if let message = dataStore.message(id: messageId), message.cid == cid {
-            return message
-        }
-        return nil
-    }
-    
     /// A Boolean value that returns whether the oldest messages have all been loaded or not.
     public var hasLoadedAllPreviousMessages: Bool {
         channelUpdater.paginationStateHandler.state.hasLoadedAllPreviousMessages
@@ -216,17 +202,11 @@ extension ChatState {
         }
     }
     
-    func messageState(for messageId: MessageId, messageUpdater: MessageUpdater) async throws -> MessageState {
+    func messageState(for messageId: MessageId, provider: (MessageId) async throws -> ChatMessage) async throws -> MessageState {
         if let state = messageStates.object(forKey: messageId as NSString) {
             return state
         } else {
-            let message: ChatMessage
-            if let localMessage = localMessage(for: messageId) {
-                message = localMessage
-            } else {
-                guard let cid else { throw ClientError.ChannelNotCreatedYet() }
-                message = try await messageUpdater.getMessage(cid: cid, messageId: messageId)
-            }
+            let message = try await provider(messageId)
             let state = MessageState(
                 message: message,
                 messageOrder: messageOrder,
