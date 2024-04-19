@@ -26,9 +26,19 @@ public final class UserList {
     /// An observable object representing the current state of the users list.
     @MainActor public lazy var state: UserListState = stateBuilder.build()
     
-    // MARK: - User List Pagination
+    /// Fetches the most recent state from the server and updates the local store.
+    ///
+    /// - Important: Loaded users in ``UserListState/users`` are reset.
+    ///
+    /// - Throws: An error while communicating with the Stream API.
+    public func get() async throws {
+        let pagination = Pagination(pageSize: .usersPageSize)
+        try await loadUsers(with: pagination)
+    }
     
     /// Loads users for the specified pagination parameters and updates ``UserListState/users``.
+    ///
+    /// - Important: If pagination offset is 0 and cursor is nil, then loaded users are reset.
     ///
     /// - Parameter pagination: The pagination configuration which includes a limit and an offset or a cursor.
     ///
