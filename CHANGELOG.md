@@ -3,7 +3,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 # Upcoming
 
-### 🔄 Changed
+## StreamChat
+### ✅ Added
+- Adds `reactionGroups` to `ChatMessage` so that reactions can be sorted by date in the message list [#3158](https://github.com/GetStream/stream-chat-swift/pull/3158)
+
+## StreamChatUI
+### ✅ Added
+- Adds `firstReactionAt` and `lastReactionAt` to `ChatMessageReactionData` to be able to sort by dates in `Components.reactionsSorting` [#3158](https://github.com/GetStream/stream-chat-swift/pull/3158)
 
 # [4.52.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.52.0)
 _April 09, 2024_
