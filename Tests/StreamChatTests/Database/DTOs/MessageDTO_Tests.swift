@@ -644,12 +644,12 @@ final class MessageDTO_Tests: XCTestCase {
         let loadedLikeReactionGroup = try XCTUnwrap(loadedMessageReactionGroup.first(where: { $0.type == "like" }))
         XCTAssertEqual(loadedLoveReactionGroup.type, "love")
         XCTAssertEqual(messagePayload.reactionGroups["love"]?.count, Int(loadedLoveReactionGroup.count))
-        XCTAssertEqual(messagePayload.reactionGroups["love"]?.sumCores, Int(loadedLoveReactionGroup.sumScores))
+        XCTAssertEqual(messagePayload.reactionGroups["love"]?.sumScores, Int(loadedLoveReactionGroup.sumScores))
         XCTAssertEqual(messagePayload.reactionGroups["love"]?.firstReactionAt, loadedLoveReactionGroup.firstReactionAt.bridgeDate)
         XCTAssertEqual(messagePayload.reactionGroups["love"]?.lastReactionAt, loadedLoveReactionGroup.lastReactionAt.bridgeDate)
         XCTAssertEqual(loadedLikeReactionGroup.type, "like")
         XCTAssertEqual(messagePayload.reactionGroups["like"]?.count, Int(loadedLikeReactionGroup.count))
-        XCTAssertEqual(messagePayload.reactionGroups["like"]?.sumCores, Int(loadedLikeReactionGroup.sumScores))
+        XCTAssertEqual(messagePayload.reactionGroups["like"]?.sumScores, Int(loadedLikeReactionGroup.sumScores))
         XCTAssertEqual(messagePayload.reactionGroups["like"]?.firstReactionAt, loadedLikeReactionGroup.firstReactionAt.bridgeDate)
         XCTAssertEqual(messagePayload.reactionGroups["like"]?.lastReactionAt, loadedLikeReactionGroup.lastReactionAt.bridgeDate)
     }
@@ -1012,6 +1012,20 @@ final class MessageDTO_Tests: XCTestCase {
             pinnedByUserId: .unique,
             pinnedAt: .unique,
             pinExpires: .unique,
+            reactionGroups: [
+                "love": .init(
+                    sumScores: 2,
+                    count: 2,
+                    firstReactionAt: .unique,
+                    lastReactionAt: .unique
+                ),
+                "like": .init(
+                    sumScores: 1,
+                    count: 1,
+                    firstReactionAt: .unique,
+                    lastReactionAt: .unique
+                )
+            ],
             moderationDetails: .init(
                 originalText: "Original", action: "MESSAGE_RESPONSE_ACTION_BOUNCE"
             )
@@ -1090,6 +1104,20 @@ final class MessageDTO_Tests: XCTestCase {
                 scores[attachment.type, default: 0] += 1
             }
         )
+        // Reaction Groups
+        let loadedMessageReactionGroup = try XCTUnwrap(loadedMessage.reactionGroups)
+        let loadedLoveReactionGroup = try XCTUnwrap(loadedMessageReactionGroup["love"])
+        let loadedLikeReactionGroup = try XCTUnwrap(loadedMessageReactionGroup["like"])
+        XCTAssertEqual(loadedLoveReactionGroup.type, "love")
+        XCTAssertEqual(messagePayload.reactionGroups["love"]?.count, loadedLoveReactionGroup.count)
+        XCTAssertEqual(messagePayload.reactionGroups["love"]?.sumScores, loadedLoveReactionGroup.sumScores)
+        XCTAssertEqual(messagePayload.reactionGroups["love"]?.firstReactionAt, loadedLoveReactionGroup.firstReactionAt)
+        XCTAssertEqual(messagePayload.reactionGroups["love"]?.lastReactionAt, loadedLoveReactionGroup.lastReactionAt)
+        XCTAssertEqual(loadedLikeReactionGroup.type, "like")
+        XCTAssertEqual(messagePayload.reactionGroups["like"]?.count, loadedLikeReactionGroup.count)
+        XCTAssertEqual(messagePayload.reactionGroups["like"]?.sumScores, loadedLikeReactionGroup.sumScores)
+        XCTAssertEqual(messagePayload.reactionGroups["like"]?.firstReactionAt, loadedLikeReactionGroup.firstReactionAt)
+        XCTAssertEqual(messagePayload.reactionGroups["like"]?.lastReactionAt, loadedLikeReactionGroup.lastReactionAt)
     }
 
     func test_newMessage_asRequestBody() throws {

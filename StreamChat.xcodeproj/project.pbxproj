@@ -1370,6 +1370,8 @@
 		AD7DFC3625D2FA8100DD9DA3 /* CurrentUserUpdater.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD7DFC3525D2FA8100DD9DA3 /* CurrentUserUpdater.swift */; };
 		AD81AF0525ED141800F17F8F /* CellSeparatorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD81AEEC25ED135100F17F8F /* CellSeparatorView.swift */; };
 		AD81AF0D25ED141A00F17F8F /* ListCollectionViewLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD81AEF525ED13D900F17F8F /* ListCollectionViewLayout.swift */; };
+		AD8258A32BD2939500B9ED74 /* MessageReactionGroup.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD8258A22BD2939500B9ED74 /* MessageReactionGroup.swift */; };
+		AD8258A42BD2939500B9ED74 /* MessageReactionGroup.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD8258A22BD2939500B9ED74 /* MessageReactionGroup.swift */; };
 		AD82903D2A7C5A8F00396782 /* DemoChatChannelListItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD82903C2A7C5A8F00396782 /* DemoChatChannelListItemView.swift */; };
 		AD84377B2BB482CF000F3826 /* ThreadEndpoints.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD84377A2BB482CF000F3826 /* ThreadEndpoints.swift */; };
 		AD84377C2BB482CF000F3826 /* ThreadEndpoints.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD84377A2BB482CF000F3826 /* ThreadEndpoints.swift */; };
@@ -3935,6 +3937,7 @@
 		AD7DFC3525D2FA8100DD9DA3 /* CurrentUserUpdater.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrentUserUpdater.swift; sourceTree = "<group>"; };
 		AD81AEEC25ED135100F17F8F /* CellSeparatorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CellSeparatorView.swift; sourceTree = "<group>"; };
 		AD81AEF525ED13D900F17F8F /* ListCollectionViewLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListCollectionViewLayout.swift; sourceTree = "<group>"; };
+		AD8258A22BD2939500B9ED74 /* MessageReactionGroup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageReactionGroup.swift; sourceTree = "<group>"; };
 		AD82903C2A7C5A8F00396782 /* DemoChatChannelListItemView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DemoChatChannelListItemView.swift; sourceTree = "<group>"; };
 		AD84377A2BB482CF000F3826 /* ThreadEndpoints.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThreadEndpoints.swift; sourceTree = "<group>"; };
 		AD84377D2BB48603000F3826 /* ThreadListPayload.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThreadListPayload.swift; sourceTree = "<group>"; };
@@ -5442,6 +5445,7 @@
 				79877A032498E4BB00015F8B /* Member.swift */,
 				AD7AC98B260A94C6004AADA5 /* MessagePinning.swift */,
 				8899BC52254318CC003CB98B /* MessageReaction.swift */,
+				AD8258A22BD2939500B9ED74 /* MessageReactionGroup.swift */,
 				88EA9AED254721C0007EE76B /* MessageReactionType.swift */,
 				88DA57632631CF1F00FA8C53 /* MuteDetails.swift */,
 				AD70DC3B2ADEF09C00CFC3B7 /* MessageModerationDetails.swift */,
@@ -10769,6 +10773,7 @@
 				7964F3B8249A314D002A09EC /* ConsoleLogDestination.swift in Sources */,
 				799C9445247D3DD2001F1104 /* WebSocketClient.swift in Sources */,
 				AD6E32A12BBC50110073831B /* ThreadListQuery.swift in Sources */,
+				AD8258A32BD2939500B9ED74 /* MessageReactionGroup.swift in Sources */,
 				43D3F0F9284106EE00B74921 /* CallEndpoints.swift in Sources */,
 				6971257E260CA503003C7B47 /* NSManagedObjectContext+Extensions.swift in Sources */,
 				C15C8838286C7BF300E6A72C /* BackgroundListDatabaseObserver.swift in Sources */,
@@ -11797,6 +11802,7 @@
 				C121E8D9274544B100023E4C /* LogFormatter.swift in Sources */,
 				C121E8DA274544B100023E4C /* PrefixLogFormatter.swift in Sources */,
 				C1B0B38727BFE8AB00C8207D /* MessageRepository.swift in Sources */,
+				AD8258A42BD2939500B9ED74 /* MessageReactionGroup.swift in Sources */,
 				CFE616BA28348A6100AE2ABF /* CountdownTracker.swift in Sources */,
 				C121E8DB274544B100023E4C /* ConsoleLogDestination.swift in Sources */,
 				C121E8DC274544B100023E4C /* BaseLogDestination.swift in Sources */,

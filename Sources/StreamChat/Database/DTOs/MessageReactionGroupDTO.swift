@@ -27,15 +27,22 @@ final class MessageReactionGroupDTO: NSManagedObject {
     }
 }
 
-// extension MessageReactionGroupDTO {
-//    func asModel() throws -> ChatMessageReaction {
-//        return try .init(
-//            type: .init(rawValue: type),
-//            score: Int(score),
-//            createdAt: createdAt?.bridgeDate ?? .init(),
-//            updatedAt: updatedAt?.bridgeDate ?? .init(),
-//            author: user.asModel(),
-//            extraData: decodedExtraData
-//        )
-//    }
-// }
+extension Set where Element == MessageReactionGroupDTO {
+    func asModel() -> [MessageReactionType: ChatMessageReactionGroup] {
+        reduce(into: [:]) { partialResult, groupDTO in
+            partialResult[MessageReactionType(rawValue: groupDTO.type)] = groupDTO.asModel()
+        }
+    }
+}
+
+extension MessageReactionGroupDTO {
+    func asModel() -> ChatMessageReactionGroup {
+        .init(
+            type: MessageReactionType(rawValue: type),
+            sumScores: Int(sumScores),
+            count: Int(count),
+            firstReactionAt: firstReactionAt.bridgeDate,
+            lastReactionAt: lastReactionAt.bridgeDate
+        )
+    }
+}

@@ -1135,6 +1135,7 @@ private extension ChatMessage {
         isShadowed = dto.isShadowed
         reactionScores = dto.reactionScores.mapKeys { MessageReactionType(rawValue: $0) }
         reactionCounts = dto.reactionCounts.mapKeys { MessageReactionType(rawValue: $0) }
+        reactionGroups = dto.reactionGroups.asModel()
         translations = dto.translations?.mapKeys { TranslationLanguage(languageCode: $0) }
         originalLanguage = dto.originalLanguage.map(TranslationLanguage.init)
         moderationDetails = dto.moderationDetails.map {

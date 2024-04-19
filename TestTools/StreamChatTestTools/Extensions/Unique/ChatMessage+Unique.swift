@@ -28,6 +28,14 @@ extension ChatMessage {
             isShadowed: false,
             reactionScores: ["like": 1],
             reactionCounts: ["like": 1],
+            reactionGroups: [
+                "like": .init(
+                    type: "like",
+                    sumScores: 1, count: 1,
+                    firstReactionAt: .unique,
+                    lastReactionAt: .unique
+                )
+            ],
             author: { .mock(id: .unique) },
             mentionedUsers: { [] },
             threadParticipants: { [] },
