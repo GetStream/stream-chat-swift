@@ -21,7 +21,7 @@ final class MessageReactionGroupDTO: NSManagedObject {
         self.init(context: context)
         self.type = type.rawValue
         count = Int64(payload.count)
-        sumScores = Int64(payload.sumCores)
+        sumScores = Int64(payload.sumScores)
         firstReactionAt = payload.firstReactionAt.bridgeDate
         lastReactionAt = payload.lastReactionAt.bridgeDate
     }

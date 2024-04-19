@@ -13,7 +13,7 @@ struct MessageReactionGroupPayload: Decodable, Equatable {
         case lastReactionAt = "last_reaction_at"
     }
 
-    let sumCores: Int
+    let sumScores: Int
     let count: Int
     let firstReactionAt: Date
     let lastReactionAt: Date
@@ -24,7 +24,7 @@ struct MessageReactionGroupPayload: Decodable, Equatable {
         firstReactionAt: Date,
         lastReactionAt: Date
     ) {
-        sumCores = sumScores
+        self.sumScores = sumScores
         self.count = count
         self.firstReactionAt = firstReactionAt
         self.lastReactionAt = lastReactionAt
@@ -32,7 +32,7 @@ struct MessageReactionGroupPayload: Decodable, Equatable {
 
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
-        sumCores = try container.decode(Int.self, forKey: .sumScores)
+        sumScores = try container.decode(Int.self, forKey: .sumScores)
         count = try container.decode(Int.self, forKey: .count)
         firstReactionAt = try container.decode(Date.self, forKey: .firstReactionAt)
         lastReactionAt = try container.decode(Date.self, forKey: .lastReactionAt)
