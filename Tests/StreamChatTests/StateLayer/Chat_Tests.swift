@@ -28,6 +28,37 @@ final class Chat_Tests: XCTestCase {
         expectedTestError = nil
     }
     
+    // MARK: - Get
+    
+    func test_get_whenLocalStoreHasMessages_thenGetResetsMessages() async throws {
+        // Existing state
+        let initialChannelPayload = makeChannelPayload(messageCount: 10, createdAtOffset: 0)
+        try await env.client.mockDatabaseContainer.write { session in
+            try session.saveChannel(payload: initialChannelPayload)
+        }
+        
+        await setUpChat(usesMockedChannelUpdater: false)
+        
+        let nextPayload = makeChannelPayload(messageCount: 3, createdAtOffset: 0)
+        env.client.mockAPIClient.test_mockResponseResult(.success(nextPayload))
+        try await chat.get(watch: true)
+        
+        await XCTAssertEqual(3, chat.state.messages.count)
+        await XCTAssertEqual(nextPayload.messages.map(\.id), chat.state.messages.map(\.id))
+    }
+    
+    func test_get_whenLocalStoreHasNoMessages_thenGetFetchesFirstPageOfMessages() async throws {
+        await setUpChat(usesMockedChannelUpdater: false)
+        await XCTAssertEqual(0, chat.state.messages.count)
+        
+        let nextPayload = makeChannelPayload(messageCount: 3, createdAtOffset: 0)
+        env.client.mockAPIClient.test_mockResponseResult(.success(nextPayload))
+        try await chat.get(watch: true)
+        
+        await XCTAssertEqual(3, chat.state.messages.count)
+        await XCTAssertEqual(nextPayload.messages.map(\.id), chat.state.messages.map(\.id))
+    }
+    
     // MARK: - Deleting the Channel
     
     func test_delete_whenChannelUpdaterSucceeds_thenDeleteSucceeds() async throws {
