@@ -71,7 +71,7 @@ enum UpdatePolicy {
 extension UserListUpdater {
     @discardableResult func update(userListQuery: UserListQuery, policy: UpdatePolicy = .merge) async throws -> [ChatUser] {
         try await withCheckedThrowingContinuation { continuation in
-            update(userListQuery: userListQuery) { result in
+            update(userListQuery: userListQuery, policy: policy) { result in
                 continuation.resume(with: result)
             }
         }
@@ -87,7 +87,8 @@ extension UserListUpdater {
     }
     
     func loadUsers(_ userListQuery: UserListQuery, pagination: Pagination) async throws -> [ChatUser] {
-        try await update(userListQuery: userListQuery.withPagination(pagination), policy: .merge)
+        let policy: UpdatePolicy = pagination.offset == 0 && pagination.cursor == nil ? .replace : .merge
+        return try await update(userListQuery: userListQuery.withPagination(pagination), policy: policy)
     }
     
     func loadNextUsers(_ userListQuery: UserListQuery, limit: Int, offset: Int) async throws -> [ChatUser] {
