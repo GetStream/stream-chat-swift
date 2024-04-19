@@ -28,6 +28,8 @@ final class MemberList_Tests: XCTestCase {
         memberList = nil
         query = nil
     }
+    
+    // MARK: - Restoring State
 
     func test_restoreState_whenDatabaseHasItems_thenStateIsUpToDate() async throws {
         try await createChannel()
@@ -43,6 +45,46 @@ final class MemberList_Tests: XCTestCase {
         await XCTAssertEqual(initialPayload.members.map(\.user?.id), memberList.state.members.map(\.id))
     }
 
+    // MARK: - Get
+    
+    func test_get_whenLocalStoreHasMembers_thenGetResetsMembers() async throws {
+        // Existing state
+        try await createChannel()
+        let initialPayload = makeMemberListPayload(count: 10, offset: 0)
+        try await env.client.mockDatabaseContainer.write { session in
+            session.saveMembers(
+                payload: initialPayload,
+                channelId: self.channelId,
+                query: self.query
+            )
+        }
+        
+        try await setUpMemberList(usesMockedUpdater: false)
+        await XCTAssertEqual(10, memberList.state.members.count)
+        
+        let nextPayload = makeMemberListPayload(count: 3, offset: 0)
+        env.client.mockAPIClient.test_mockResponseResult(.success(nextPayload))
+        try await memberList.get()
+        
+        await XCTAssertEqual(3, memberList.state.members.count)
+        await XCTAssertEqual(nextPayload.members.map(\.user?.id), memberList.state.members.map(\.id))
+    }
+    
+    func test_get_whenLocalStoreHasNoMembers_thenGetFetchesFirstPageOfMembers() async throws {
+        try await createChannel()
+        try await setUpMemberList(usesMockedUpdater: false)
+        await XCTAssertEqual(0, memberList.state.members.count)
+        
+        let nextPayload = makeMemberListPayload(count: 3, offset: 0)
+        env.client.mockAPIClient.test_mockResponseResult(.success(nextPayload))
+        try await memberList.get()
+        
+        await XCTAssertEqual(3, memberList.state.members.count)
+        await XCTAssertEqual(nextPayload.members.map(\.user?.id), memberList.state.members.map(\.id))
+    }
+    
+    // MARK: - Pagination
+    
     func test_loadMembers_whenAPIRequestSucceeds_thenResultsAreReturnedAndStateUpdates() async throws {
         try await createChannel()
         try await setUpMemberList(usesMockedUpdater: false)
