@@ -27,6 +27,40 @@ final class UserList_Tests: XCTestCase {
         userList = nil
     }
     
+    // MARK: - Get
+    
+    func test_get_whenLocalStoreHasMembers_thenGetResetsMembers() async throws {
+        // Existing state
+        let initialPayload = makeUserListPayload(count: 10, offset: 0)
+        try await env.client.databaseContainer.write { session in
+            session.saveUsers(payload: initialPayload, query: self.query)
+        }
+        
+        await setUpUserList(usesMockedUpdater: false)
+        await XCTAssertEqual(10, userList.state.users.count)
+        
+        let nextPayload = makeUserListPayload(count: 3, offset: 0)
+        env.client.mockAPIClient.test_mockResponseResult(.success(nextPayload))
+        try await userList.get()
+        
+        await XCTAssertEqual(3, userList.state.users.count)
+        await XCTAssertEqual(nextPayload.users.map(\.id), userList.state.users.map(\.id))
+    }
+    
+    func test_get_whenLocalStoreHasNoMembers_thenGetFetchesFirstPageOfMembers() async throws {
+        await setUpUserList(usesMockedUpdater: false)
+        await XCTAssertEqual(0, userList.state.users.count)
+        
+        let nextPayload = makeUserListPayload(count: 3, offset: 0)
+        env.client.mockAPIClient.test_mockResponseResult(.success(nextPayload))
+        try await userList.get()
+        
+        await XCTAssertEqual(3, userList.state.users.count)
+        await XCTAssertEqual(nextPayload.users.map(\.id), userList.state.users.map(\.id))
+    }
+    
+    // MARK: - Restoring State
+    
     func test_restoreState_whenDatabaseHasItems_thenStateIsUpToDate() async throws {
         let initialPayload = makeUserListPayload(count: 5, offset: 0)
         try await env.client.databaseContainer.write { session in
@@ -35,6 +69,8 @@ final class UserList_Tests: XCTestCase {
         await setUpUserList(usesMockedUpdater: false)
         await XCTAssertEqual(initialPayload.users.map(\.id), userList.state.users.map(\.id))
     }
+    
+    // MARK: - Pagination
 
     func test_loadUsers_whenAPIRequestSucceeds_thenResultsAreReturnedAndStateUpdates() async throws {
         await setUpUserList(usesMockedUpdater: false)
