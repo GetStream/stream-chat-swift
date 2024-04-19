@@ -453,6 +453,44 @@ public class Chat {
         try await loadMessages(after: nil, limit: limit)
     }
     
+    // MARK: - Message State Observing
+    
+    /// Returns an observable message state for the specified message.
+    ///
+    /// If the message is not available locally then a request is made for retrieving the message. Otherwise it returns the message state for the local message state.
+    ///
+    /// - Note: Chat keeps a weak reference to the returned object. Calling the function multiple times
+    /// with the same messageId might return the same instance of the ``MessageState``.
+    ///
+    /// - Parameter messageId: The message id for observing the state.
+    ///
+    /// - Returns: An instance of `MessageState` which conforms to the `ObservableObject`.
+    public func messageState(for messageId: MessageId) async throws -> MessageState {
+        try await state.messageState(
+            for: messageId,
+            provider: { messageId in
+                if let localMessage = await localMessage(for: messageId) {
+                    return localMessage
+                } else {
+                    return try await messageUpdater.getMessage(cid: cid, messageId: messageId)
+                }
+            }
+        )
+    }
+    
+    /// Access a message which is available locally by its id.
+    ///
+    /// - Note: This method does a local lookup of the message and returns a message present in ``ChatState/messages``.
+    ///
+    /// - Parameter messageId: The id of the message which is available locally.
+    ///
+    /// - Returns: An instance of the locally available chat message
+    @MainActor public func localMessage(for messageId: MessageId) -> ChatMessage? {
+        let dataStore = DataStore(client: client)
+        let message = dataStore.message(id: messageId)
+        return message?.cid == state.cid ? message : nil
+    }
+    
     // MARK: - Message Attachment Actions
     
     /// Invokes the ephermal action specified by the attachment.
@@ -679,8 +717,9 @@ public class Chat {
             skipEnrichUrl: skipEnrichURL,
             extraData: extraData
         )
+        async let sentMessage = try await messageSender.waitForAPIRequest(messageId: message.id)
         eventNotificationCenter.process(NewMessagePendingEvent(message: message))
-        return try await messageSender.waitForAPIRequest(messageId: message.id)
+        return try await sentMessage
     }
     
     /// Loads replies of the specified message and pagination parameters and updates ``MessageState/replies``.
@@ -759,22 +798,6 @@ public class Chat {
     /// - Throws: An error while communicating with the Stream API.
     public func loadNewerReplies(for parentMessageId: MessageId, limit: Int? = nil) async throws {
         try await loadReplies(after: nil, for: parentMessageId, limit: limit)
-    }
-    
-    // MARK: - Message State Observing
-    
-    /// Returns an observable message state for the specified message.
-    ///
-    /// If the message is not available locally then a request is made for retrieving the message. Otherwise it returns the message state for the local message state.
-    ///
-    /// - Note: Chat keeps a weak reference to the returned object. Calling the function multiple times
-    /// with the same messageId might return the same instance of the ``MessageState``.
-    ///
-    /// - Parameter messageId: The message id for observing the state.
-    ///
-    /// - Returns: An instance of `MessageState` which conforms to the `ObservableObject`.
-    public func messageState(for messageId: MessageId) async throws -> MessageState {
-        try await state.messageState(for: messageId, messageUpdater: messageUpdater)
     }
     
     // MARK: - Message Translations
