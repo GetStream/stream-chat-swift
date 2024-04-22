@@ -102,7 +102,17 @@ final class DatabaseContainer_Tests: XCTestCase {
             try session.saveUser(payload: .dummy(userId: .unique), query: .user(withID: currentUserId), cache: nil)
             try session.saveUser(payload: .dummy(userId: .unique))
             let messages: [MessagePayload] = [
-                .dummy(moderationDetails: .init(originalText: "yo", action: "spam")),
+                .dummy(
+                    reactionGroups: [
+                        "like": MessageReactionGroupPayload(
+                            sumScores: 1,
+                            count: 1,
+                            firstReactionAt: .unique,
+                            lastReactionAt: .unique
+                        )
+                    ],
+                    moderationDetails: .init(originalText: "yo", action: "spam")
+                ),
                 .dummy(),
                 .dummy(),
                 .dummy(),
