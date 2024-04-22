@@ -203,12 +203,12 @@ final class Chat_Tests: XCTestCase {
         XCTAssertEqual(channelPayload.messages.map(\.id), result.map(\.id))
         await MainActor.run {
             XCTAssertEqual(channelPayload.messages.map(\.id), chat.state.messages.map(\.id))
-            XCTAssertEqual(false, chat.state.hasLoadedAllPreviousMessages)
-            XCTAssertEqual(true, chat.state.hasLoadedAllNextMessages)
+            XCTAssertEqual(false, chat.state.hasLoadedAllOlderMessages)
+            XCTAssertEqual(true, chat.state.hasLoadedAllNewerMessages)
             XCTAssertEqual(false, chat.state.isJumpingToMessage)
-            XCTAssertEqual(false, chat.state.isLoadingPreviousMessages)
+            XCTAssertEqual(false, chat.state.isLoadingOlderMessages)
             XCTAssertEqual(false, chat.state.isLoadingMiddleMessages)
-            XCTAssertEqual(false, chat.state.isLoadingNextMessages)
+            XCTAssertEqual(false, chat.state.isLoadingNewerMessages)
         }
     }
     
@@ -227,12 +227,12 @@ final class Chat_Tests: XCTestCase {
         
         await MainActor.run {
             XCTAssertEqual(channelPayload.messages.map(\.id), chat.state.messages.map(\.id))
-            XCTAssertEqual(false, chat.state.hasLoadedAllPreviousMessages)
-            XCTAssertEqual(true, chat.state.hasLoadedAllNextMessages)
+            XCTAssertEqual(false, chat.state.hasLoadedAllOlderMessages)
+            XCTAssertEqual(true, chat.state.hasLoadedAllNewerMessages)
             XCTAssertEqual(false, chat.state.isJumpingToMessage)
-            XCTAssertEqual(false, chat.state.isLoadingPreviousMessages)
+            XCTAssertEqual(false, chat.state.isLoadingOlderMessages)
             XCTAssertEqual(false, chat.state.isLoadingMiddleMessages)
-            XCTAssertEqual(false, chat.state.isLoadingNextMessages)
+            XCTAssertEqual(false, chat.state.isLoadingNewerMessages)
         }
     }
     
@@ -253,12 +253,12 @@ final class Chat_Tests: XCTestCase {
         let expectedIds = (channelPayload.messages + initialChannelPayload.messages).map(\.id)
         await MainActor.run {
             XCTAssertEqual(expectedIds, chat.state.messages.map(\.id))
-            XCTAssertEqual(true, chat.state.hasLoadedAllPreviousMessages)
-            XCTAssertEqual(true, chat.state.hasLoadedAllNextMessages)
+            XCTAssertEqual(true, chat.state.hasLoadedAllOlderMessages)
+            XCTAssertEqual(true, chat.state.hasLoadedAllNewerMessages)
             XCTAssertEqual(false, chat.state.isJumpingToMessage)
-            XCTAssertEqual(false, chat.state.isLoadingPreviousMessages)
+            XCTAssertEqual(false, chat.state.isLoadingOlderMessages)
             XCTAssertEqual(false, chat.state.isLoadingMiddleMessages)
-            XCTAssertEqual(false, chat.state.isLoadingNextMessages)
+            XCTAssertEqual(false, chat.state.isLoadingNewerMessages)
         }
     }
     
@@ -278,12 +278,12 @@ final class Chat_Tests: XCTestCase {
         let expectedIds = (initialChannelPayload.messages + channelPayload.messages).map(\.id)
         await MainActor.run {
             XCTAssertEqual(expectedIds, chat.state.messages.map(\.id))
-            XCTAssertEqual(false, chat.state.hasLoadedAllPreviousMessages)
-            XCTAssertEqual(true, chat.state.hasLoadedAllNextMessages)
+            XCTAssertEqual(false, chat.state.hasLoadedAllOlderMessages)
+            XCTAssertEqual(true, chat.state.hasLoadedAllNewerMessages)
             XCTAssertEqual(false, chat.state.isJumpingToMessage)
-            XCTAssertEqual(false, chat.state.isLoadingPreviousMessages)
+            XCTAssertEqual(false, chat.state.isLoadingOlderMessages)
             XCTAssertEqual(false, chat.state.isLoadingMiddleMessages)
-            XCTAssertEqual(false, chat.state.isLoadingNextMessages)
+            XCTAssertEqual(false, chat.state.isLoadingNewerMessages)
         }
     }
     
@@ -303,12 +303,12 @@ final class Chat_Tests: XCTestCase {
         
         XCTAssertEqual(channelPayload.messages.map(\.id), await chat.state.messages.map(\.id))
         await MainActor.run {
-            XCTAssertEqual(false, chat.state.hasLoadedAllPreviousMessages)
-            XCTAssertEqual(false, chat.state.hasLoadedAllNextMessages)
+            XCTAssertEqual(false, chat.state.hasLoadedAllOlderMessages)
+            XCTAssertEqual(false, chat.state.hasLoadedAllNewerMessages)
             XCTAssertEqual(true, chat.state.isJumpingToMessage)
-            XCTAssertEqual(false, chat.state.isLoadingPreviousMessages)
+            XCTAssertEqual(false, chat.state.isLoadingOlderMessages)
             XCTAssertEqual(false, chat.state.isLoadingMiddleMessages)
-            XCTAssertEqual(false, chat.state.isLoadingNextMessages)
+            XCTAssertEqual(false, chat.state.isLoadingNewerMessages)
         }
     }
     
