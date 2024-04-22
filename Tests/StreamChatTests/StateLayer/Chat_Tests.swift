@@ -314,7 +314,7 @@ final class Chat_Tests: XCTestCase {
     
     // MARK: - Members
     
-    func test_addMembers_whenAPIRequestSucceeds_thenAddMembersSucceeds() async throws {
+    func test_addMembers_whenChannelUpdaterSucceeds_thenAddMembersSucceeds() async throws {
         for hideHistory in [true, false] {
             let currentUserId = String.unique
             env.client.mockAuthenticationRepository.mockedCurrentUserId = currentUserId
@@ -329,7 +329,7 @@ final class Chat_Tests: XCTestCase {
         }
     }
     
-    func test_addMembers_whenAPIRequestFails_thenAddMembersSucceeds() async throws {
+    func test_addMembers_whenChannelUpdaterFails_thenAddMembersSucceeds() async throws {
         for hideHistory in [true, false] {
             let currentUserId = String.unique
             env.client.mockAuthenticationRepository.mockedCurrentUserId = currentUserId
@@ -349,7 +349,7 @@ final class Chat_Tests: XCTestCase {
         }
     }
     
-    func test_removeMembers_whenAPIRequestSucceeds_thenRemoveMembersSucceeds() async throws {
+    func test_removeMembers_whenChannelUpdaterSucceeds_thenRemoveMembersSucceeds() async throws {
         let currentUserId = String.unique
         env.client.mockAuthenticationRepository.mockedCurrentUserId = currentUserId
         env.channelUpdaterMock.removeMembers_completion_result = .success(())
@@ -361,7 +361,7 @@ final class Chat_Tests: XCTestCase {
         XCTAssertEqual(currentUserId, env.channelUpdaterMock.removeMembers_currentUserId)
     }
     
-    func test_removeMembers_whenAPIRequestFails_thenRemoveMembersSucceeds() async throws {
+    func test_removeMembers_whenChannelUpdaterFails_thenRemoveMembersSucceeds() async throws {
         let currentUserId = String.unique
         env.client.mockAuthenticationRepository.mockedCurrentUserId = currentUserId
         env.channelUpdaterMock.removeMembers_completion_result = .failure(expectedTestError)
@@ -390,7 +390,7 @@ final class Chat_Tests: XCTestCase {
     
     // MARK: - Member Moderation
     
-    func test_banMember_whenAPIRequestSucceeds_thenBanMemberSucceeds() async throws {
+    func test_banMember_whenMemberUpdaterSucceeds_thenBanMemberSucceeds() async throws {
         let currentUserId = String.unique
         env.client.mockAuthenticationRepository.mockedCurrentUserId = currentUserId
         env.memberUpdater.banMember_completion_result = .success(())
@@ -405,7 +405,7 @@ final class Chat_Tests: XCTestCase {
         XCTAssertEqual(false, env.memberUpdater.banMember_shadow)
     }
     
-    func test_banMember_whenAPIRequestFails_thenBanMemberSucceeds() async throws {
+    func test_banMember_whenMemberUpdaterFails_thenBanMemberSucceeds() async throws {
         let currentUserId = String.unique
         env.client.mockAuthenticationRepository.mockedCurrentUserId = currentUserId
         env.memberUpdater.banMember_completion_result = .failure(expectedTestError)
@@ -425,7 +425,7 @@ final class Chat_Tests: XCTestCase {
         XCTAssertEqual(false, env.memberUpdater.banMember_shadow)
     }
     
-    func test_shadowBanMember_whenAPIRequestSucceeds_thenShadowBanMemberSucceeds() async throws {
+    func test_shadowBanMember_whenMemberUpdaterSucceeds_thenShadowBanMemberSucceeds() async throws {
         let currentUserId = String.unique
         env.client.mockAuthenticationRepository.mockedCurrentUserId = currentUserId
         env.memberUpdater.banMember_completion_result = .success(())
@@ -440,7 +440,7 @@ final class Chat_Tests: XCTestCase {
         XCTAssertEqual(true, env.memberUpdater.banMember_shadow)
     }
     
-    func test_shadowBanMember_whenAPIRequestFails_thenShadowBanMemberSucceeds() async throws {
+    func test_shadowBanMember_whenMemberUpdaterFails_thenShadowBanMemberSucceeds() async throws {
         let currentUserId = String.unique
         env.client.mockAuthenticationRepository.mockedCurrentUserId = currentUserId
         env.memberUpdater.banMember_completion_result = .failure(expectedTestError)
@@ -460,7 +460,7 @@ final class Chat_Tests: XCTestCase {
         XCTAssertEqual(true, env.memberUpdater.banMember_shadow)
     }
     
-    func test_unbanMember_whenAPIRequestSucceeds_thenUnbanMemberSucceeds() async throws {
+    func test_unbanMember_whenMemberUpdaterSucceeds_thenUnbanMemberSucceeds() async throws {
         let currentUserId = String.unique
         env.client.mockAuthenticationRepository.mockedCurrentUserId = currentUserId
         env.memberUpdater.unbanMember_completion_result = .success(())
@@ -470,7 +470,7 @@ final class Chat_Tests: XCTestCase {
         XCTAssertEqual(memberId, env.memberUpdater.unbanMember_userId)
     }
     
-    func test_unbanMember_whenAPIRequestFails_thenUnbanMemberSucceeds() async throws {
+    func test_unbanMember_whenMemberUpdaterFails_thenUnbanMemberSucceeds() async throws {
         let currentUserId = String.unique
         env.client.mockAuthenticationRepository.mockedCurrentUserId = currentUserId
         env.memberUpdater.unbanMember_completion_result = .failure(expectedTestError)
@@ -482,7 +482,7 @@ final class Chat_Tests: XCTestCase {
     
     // MARK: - Messages
     
-    func test_deleteMessage_whenAPIRequestSucceeds_thenDeleteMessageSucceeds() async throws {
+    func test_deleteMessage_whenMessageUpdaterSucceeds_thenDeleteMessageSucceeds() async throws {
         for hard in [true, false] {
             let currentUserId = String.unique
             env.client.mockAuthenticationRepository.mockedCurrentUserId = currentUserId
@@ -494,7 +494,7 @@ final class Chat_Tests: XCTestCase {
         }
     }
     
-    func test_deleteMessage_whenAPIRequestFails_thenDeleteMessageSucceeds() async throws {
+    func test_deleteMessage_whenMessageUpdaterFails_thenDeleteMessageSucceeds() async throws {
         for hard in [true, false] {
             let currentUserId = String.unique
             env.client.mockAuthenticationRepository.mockedCurrentUserId = currentUserId
@@ -651,7 +651,7 @@ final class Chat_Tests: XCTestCase {
     
     // MARK: - Message Flagging
     
-    func test_flagMessageAction_whenAPIRequestSucceeds_thenFlagMessageActionSucceeds() async throws {
+    func test_flagMessageAction_whenMessageUpdaterSucceeds_thenFlagMessageActionSucceeds() async throws {
         let currentUserId = String.unique
         let messageId: MessageId = .unique
         env.client.mockAuthenticationRepository.mockedCurrentUserId = currentUserId
@@ -662,7 +662,7 @@ final class Chat_Tests: XCTestCase {
         XCTAssertEqual(true, env.messageUpdater.flagMessage_flag)
     }
     
-    func test_flagMessageAction_whenAPIRequestFails_thenFlagMessageActionSucceeds() async throws {
+    func test_flagMessageAction_whenMessageUpdaterFails_thenFlagMessageActionSucceeds() async throws {
         let currentUserId = String.unique
         let messageId: MessageId = .unique
         env.client.mockAuthenticationRepository.mockedCurrentUserId = currentUserId
@@ -673,7 +673,7 @@ final class Chat_Tests: XCTestCase {
         XCTAssertEqual(true, env.messageUpdater.flagMessage_flag)
     }
     
-    func test_unflagMessageAction_whenAPIRequestSucceeds_thenUnflagMessageActionSucceeds() async throws {
+    func test_unflagMessageAction_whenMessageUpdaterSucceeds_thenUnflagMessageActionSucceeds() async throws {
         let currentUserId = String.unique
         let messageId: MessageId = .unique
         env.client.mockAuthenticationRepository.mockedCurrentUserId = currentUserId
@@ -684,7 +684,7 @@ final class Chat_Tests: XCTestCase {
         XCTAssertEqual(false, env.messageUpdater.flagMessage_flag)
     }
     
-    func test_unflagMessageAction_whenAPIRequestFails_thenUnflagMessageActionSucceeds() async throws {
+    func test_unflagMessageAction_whenMessageUpdaterFails_thenUnflagMessageActionSucceeds() async throws {
         let currentUserId = String.unique
         let messageId: MessageId = .unique
         env.client.mockAuthenticationRepository.mockedCurrentUserId = currentUserId
@@ -697,7 +697,7 @@ final class Chat_Tests: XCTestCase {
     
     // MARK: - Message Rich Content
     
-    func test_enrichURLAction_whenAPIRequestSucceeds_thenEnrichURLActionSucceeds() async throws {
+    func test_enrichURLAction_whenChannelUpdaterSucceeds_thenEnrichURLActionSucceeds() async throws {
         let currentUserId = String.unique
         let url: URL = .unique()
         let expectedLinkAttachmentPayload = LinkAttachmentPayload(
@@ -714,7 +714,7 @@ final class Chat_Tests: XCTestCase {
         XCTAssertEqual(actualLinkAttachmentPayload, expectedLinkAttachmentPayload)
     }
     
-    func test_enrichURLAction_whenAPIRequestFails_thenEnrichURLActionSucceeds() async throws {
+    func test_enrichURLAction_whenChannelUpdaterFails_thenEnrichURLActionSucceeds() async throws {
         let currentUserId = String.unique
         let url: URL = .unique()
         env.client.mockAuthenticationRepository.mockedCurrentUserId = currentUserId
@@ -781,7 +781,7 @@ final class Chat_Tests: XCTestCase {
     
     // MARK: - Message Reactions
     
-    func test_deleteReactionAction_whenAPIRequestSucceeds_thenDeleteReactionActionSucceeds() async throws {
+    func test_deleteReactionAction_whenMessageUpdaterSucceeds_thenDeleteReactionActionSucceeds() async throws {
         let currentUserId = String.unique
         let messageId: MessageId = .unique
         let reactionType: MessageReactionType = .init(rawValue: "like")
@@ -792,7 +792,7 @@ final class Chat_Tests: XCTestCase {
         XCTAssertEqual(reactionType, env.messageUpdater.deleteReaction_type)
     }
     
-    func test_deleteReactionAction_whenAPIRequestFails_thenDeleteReactionActionSucceeds() async throws {
+    func test_deleteReactionAction_whenMessageUpdaterFails_thenDeleteReactionActionSucceeds() async throws {
         let currentUserId = String.unique
         let messageId: MessageId = .unique
         let reactionType: MessageReactionType = .init(rawValue: "like")
@@ -987,7 +987,7 @@ final class Chat_Tests: XCTestCase {
     
     // MARK: - Message Translations
     
-    func test_translateMessageStateAction_whenAPIRequestSucceeds_thenTranslateMessageActionSucceeds() async throws {
+    func test_translateMessageStateAction_whenMessageUpdaterSucceeds_thenTranslateMessageActionSucceeds() async throws {
         let currentUserId = String.unique
         let messageId: MessageId = .unique
         let text: String = "Test message"
@@ -1008,7 +1008,7 @@ final class Chat_Tests: XCTestCase {
         XCTAssertEqual(language, env.messageUpdater.translate_language)
     }
     
-    func test_translateMessageStateAction_whenAPIRequestFails_thenTranslateMessageActionSucceeds() async throws {
+    func test_translateMessageStateAction_whenMessageUpdaterFails_thenTranslateMessageActionSucceeds() async throws {
         let currentUserId = String.unique
         let messageId: MessageId = .unique
         let _: String = "Test message"
@@ -1026,7 +1026,7 @@ final class Chat_Tests: XCTestCase {
     
     // MARK: - Muting or Hiding the Channel
     
-    func test_muteAction_whenAPIRequestSucceeds_thenMuteActionSucceeds() async throws {
+    func test_muteAction_whenChannelUpdaterSucceeds_thenMuteActionSucceeds() async throws {
         for expiration in [nil, 10] {
             let currentUserId = String.unique
             env.client.mockAuthenticationRepository.mockedCurrentUserId = currentUserId
@@ -1038,7 +1038,7 @@ final class Chat_Tests: XCTestCase {
         }
     }
     
-    func test_muteAction_whenAPIRequestFails_thenMuteActionSucceeds() async throws {
+    func test_muteAction_whenChannelUpdaterFails_thenMuteActionSucceeds() async throws {
         for expiration in [nil, 10] {
             let currentUserId = String.unique
             env.client.mockAuthenticationRepository.mockedCurrentUserId = currentUserId
@@ -1050,7 +1050,7 @@ final class Chat_Tests: XCTestCase {
         }
     }
     
-    func test_hideAction_whenAPIRequestSucceeds_thenHideActionSucceeds() async throws {
+    func test_hideAction_whenChannelUpdaterSucceeds_thenHideActionSucceeds() async throws {
         for clearHistory in [true, false] {
             let currentUserId = String.unique
             env.client.mockAuthenticationRepository.mockedCurrentUserId = currentUserId
@@ -1061,7 +1061,7 @@ final class Chat_Tests: XCTestCase {
         }
     }
     
-    func test_hideAction_whenAPIRequestFails_thenHideActionSucceeds() async throws {
+    func test_hideAction_whenChannelUpdaterFails_thenHideActionSucceeds() async throws {
         for clearHistory in [true, false] {
             let currentUserId = String.unique
             env.client.mockAuthenticationRepository.mockedCurrentUserId = currentUserId
@@ -1072,7 +1072,7 @@ final class Chat_Tests: XCTestCase {
         }
     }
     
-    func test_showAction_whenAPIRequestSucceeds_thenShowActionSucceeds() async throws {
+    func test_showAction_whenChannelUpdaterSucceeds_thenShowActionSucceeds() async throws {
         let currentUserId = String.unique
         env.client.mockAuthenticationRepository.mockedCurrentUserId = currentUserId
         env.channelUpdaterMock.showChannel_completion_result = .success(())
@@ -1080,7 +1080,7 @@ final class Chat_Tests: XCTestCase {
         XCTAssertEqual(channelId, env.channelUpdaterMock.showChannel_cid)
     }
     
-    func test_hideAction_whenAPIRequestFails_thenShowActionSucceeds() async throws {
+    func test_hideAction_whenChannelUpdaterFails_thenShowActionSucceeds() async throws {
         let currentUserId = String.unique
         env.client.mockAuthenticationRepository.mockedCurrentUserId = currentUserId
         env.channelUpdaterMock.showChannel_completion_result = .failure(expectedTestError)
@@ -1090,7 +1090,7 @@ final class Chat_Tests: XCTestCase {
     
     // MARK: - Throttling and Slow Mode
     
-    func test_enableSlowModeAction_whenAPIRequestSucceeds_thenEnableSlowModeActionSucceeds() async throws {
+    func test_enableSlowModeAction_whenChannelUpdaterSucceeds_thenEnableSlowModeActionSucceeds() async throws {
         let currentUserId = String.unique
         let cooldownDuration = 10
         env.client.mockAuthenticationRepository.mockedCurrentUserId = currentUserId
@@ -1100,7 +1100,7 @@ final class Chat_Tests: XCTestCase {
         XCTAssertEqual(cooldownDuration, env.channelUpdaterMock.enableSlowMode_cooldownDuration)
     }
     
-    func test_enableSlowModeAction_whenAPIRequestFails_thenEnableSlowModeActionSucceeds() async throws {
+    func test_enableSlowModeAction_whenChannelUpdaterFails_thenEnableSlowModeActionSucceeds() async throws {
         let currentUserId = String.unique
         let cooldownDuration = 10
         env.client.mockAuthenticationRepository.mockedCurrentUserId = currentUserId
@@ -1110,7 +1110,7 @@ final class Chat_Tests: XCTestCase {
         XCTAssertEqual(cooldownDuration, env.channelUpdaterMock.enableSlowMode_cooldownDuration)
     }
     
-    func test_disableSlowModeAction_whenAPIRequestSucceeds_thenDisableSlowModeActionSucceeds() async throws {
+    func test_disableSlowModeAction_whenChannelUpdaterSucceeds_thenDisableSlowModeActionSucceeds() async throws {
         let currentUserId = String.unique
         env.client.mockAuthenticationRepository.mockedCurrentUserId = currentUserId
         env.channelUpdaterMock.enableSlowMode_completion_result = .success(())
@@ -1119,7 +1119,7 @@ final class Chat_Tests: XCTestCase {
         XCTAssertEqual(0, env.channelUpdaterMock.enableSlowMode_cooldownDuration)
     }
     
-    func test_disableSlowModeAction_whenAPIRequestFails_thenDisableSlowModeActionSucceeds() async throws {
+    func test_disableSlowModeAction_whenChannelUpdaterFails_thenDisableSlowModeActionSucceeds() async throws {
         let currentUserId = String.unique
         env.client.mockAuthenticationRepository.mockedCurrentUserId = currentUserId
         env.channelUpdaterMock.enableSlowMode_completion_result = .failure(expectedTestError)
@@ -1130,7 +1130,7 @@ final class Chat_Tests: XCTestCase {
     
     // MARK: - Truncating the Channel
     
-    func test_truncateAction_whenAPIRequestSucceeds_thenTruncateActionSucceeds() async throws {
+    func test_truncateAction_whenChannelUpdaterSucceeds_thenTruncateActionSucceeds() async throws {
         let currentUserId = String.unique
         env.client.mockAuthenticationRepository.mockedCurrentUserId = currentUserId
         env.channelUpdaterMock.truncateChannel_completion_result = .success(())
@@ -1172,7 +1172,7 @@ final class Chat_Tests: XCTestCase {
         XCTAssertEqual(systemMessage, env.channelUpdaterMock.truncateChannel_systemMessage)
     }
     
-    func test_truncateAction_whenAPIRequestFails_thenTruncateActionSucceeds() async throws {
+    func test_truncateAction_whenChannelUpdaterFails_thenTruncateActionSucceeds() async throws {
         let currentUserId = String.unique
         env.client.mockAuthenticationRepository.mockedCurrentUserId = currentUserId
         env.channelUpdaterMock.truncateChannel_completion_result = .failure(expectedTestError)
@@ -1322,7 +1322,7 @@ final class Chat_Tests: XCTestCase {
     
     // MARK: - Watching the Channel
     
-    func test_startWatchingAction_whenAPIRequestSucceeds_thenStartWatchingActionSucceeds() async throws {
+    func test_startWatchingAction_whenChannelUpdaterSucceeds_thenStartWatchingActionSucceeds() async throws {
         let currentUserId = String.unique
         env.client.mockAuthenticationRepository.mockedCurrentUserId = currentUserId
         env.channelUpdaterMock.startWatching_completion_result = .success(())
@@ -1330,7 +1330,7 @@ final class Chat_Tests: XCTestCase {
         XCTAssertEqual(channelId, env.channelUpdaterMock.startWatching_cid)
     }
     
-    func test_startWatchingAction_whenAPIRequestFails_thenStartWatchingActionSucceeds() async throws {
+    func test_startWatchingAction_whenChannelUpdaterFails_thenStartWatchingActionSucceeds() async throws {
         let currentUserId = String.unique
         env.client.mockAuthenticationRepository.mockedCurrentUserId = currentUserId
         env.channelUpdaterMock.startWatching_completion_result = .failure(expectedTestError)
@@ -1338,7 +1338,7 @@ final class Chat_Tests: XCTestCase {
         XCTAssertEqual(channelId, env.channelUpdaterMock.startWatching_cid)
     }
     
-    func test_stopWatchingAction_whenAPIRequestSucceeds_thenStopWatchingActionSucceeds() async throws {
+    func test_stopWatchingAction_whenChannelUpdaterSucceeds_thenStopWatchingActionSucceeds() async throws {
         let currentUserId = String.unique
         env.client.mockAuthenticationRepository.mockedCurrentUserId = currentUserId
         env.channelUpdaterMock.stopWatching_completion_result = .success(())
@@ -1346,7 +1346,7 @@ final class Chat_Tests: XCTestCase {
         XCTAssertEqual(channelId, env.channelUpdaterMock.stopWatching_cid)
     }
     
-    func test_stopWatchingAction_whenAPIRequestFails_thenStopWatchingActionSucceeds() async throws {
+    func test_stopWatchingAction_whenChannelUpdaterFails_thenStopWatchingActionSucceeds() async throws {
         let currentUserId = String.unique
         env.client.mockAuthenticationRepository.mockedCurrentUserId = currentUserId
         env.channelUpdaterMock.stopWatching_completion_result = .failure(expectedTestError)
