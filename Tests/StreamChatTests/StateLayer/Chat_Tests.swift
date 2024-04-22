@@ -211,10 +211,8 @@ final class Chat_Tests: XCTestCase {
             )
         )
         env.client.mockAPIClient.test_mockResponseResult(.success(apiResponse))
-        try await chat.resendMessage(messageId)
-        let message = try await MainActor.run {
-            try XCTUnwrap(chat.localMessage(for: messageId))
-        }
+        let message = try await chat.resendMessage(messageId)
+        
         XCTAssertEqual(text, message.text)
         await XCTAssertEqual(1, chat.state.messages.count)
         let messages = await chat.state.messages

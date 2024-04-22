@@ -282,10 +282,10 @@ public class Chat {
     /// - Parameter messageId: The id of the message to resend.
     ///
     /// - Throws: An error while sending a message to the Stream API.
-    public func resendMessage(_ messageId: MessageId) async throws {
+    @discardableResult public func resendMessage(_ messageId: MessageId) async throws -> ChatMessage {
         let messageSender = try client.backgroundWorker(of: MessageSender.self)
         try await messageUpdater.resendMessage(with: messageId)
-        _ = try await messageSender.waitForAPIRequest(messageId: messageId)
+        return try await messageSender.waitForAPIRequest(messageId: messageId)
     }
     
     /// Resends a failed attachment.
