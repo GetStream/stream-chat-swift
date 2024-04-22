@@ -30,8 +30,8 @@ public struct ChatMessageReactionData {
         self.type = type
         self.score = score
         self.isChosenByCurrentUser = isChosenByCurrentUser
-        self.firstReactionAt = nil
-        self.lastReactionAt = nil
+        self.firstReactionAt = firstReactionAt
+        self.lastReactionAt = lastReactionAt
     }
 
     public init(
