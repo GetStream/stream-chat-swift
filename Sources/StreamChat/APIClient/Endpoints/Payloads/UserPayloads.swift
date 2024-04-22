@@ -25,7 +25,7 @@ enum UserPayloadsCodingKeys: String, CodingKey, CaseIterable {
     case devices
     case unreadCount = "unread_count"
     case language
-    case privateSettings = "private_settings"
+    case privacySettings = "privacy_settings"
 }
 
 // MARK: - GET users
@@ -163,18 +163,18 @@ struct UserUpdateResponse: Decodable {
 struct UserUpdateRequestBody: Encodable {
     let name: String?
     let imageURL: URL?
-    let privateSettings: UserPrivateSettingsPayload?
+    let privacySettings: UserPrivacySettingsPayload?
     let extraData: [String: RawJSON]?
 
     init(
         name: String?,
         imageURL: URL?,
-        privateSettings: UserPrivateSettingsPayload?,
+        privacySettings: UserPrivacySettingsPayload?,
         extraData: [String: RawJSON]?
     ) {
         self.name = name
         self.imageURL = imageURL
-        self.privateSettings = privateSettings
+        self.privacySettings = privacySettings
         self.extraData = extraData
     }
 
@@ -182,7 +182,7 @@ struct UserUpdateRequestBody: Encodable {
         var container = encoder.container(keyedBy: UserPayloadsCodingKeys.self)
         try container.encodeIfPresent(name, forKey: .name)
         try container.encodeIfPresent(imageURL, forKey: .imageURL)
-        try container.encodeIfPresent(privateSettings, forKey: .privateSettings)
+        try container.encodeIfPresent(privacySettings, forKey: .privacySettings)
         try extraData?.encode(to: encoder)
     }
 }

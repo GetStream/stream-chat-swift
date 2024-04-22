@@ -16,8 +16,8 @@ public struct UserInfo {
     public let isInvisible: Bool?
     /// The language of the user. This is required for the auto translation feature.
     public let language: TranslationLanguage?
-    /// The private settings of the user. Example: If the user does not want to expose typing events or read events.
-    public let privateSettings: UserPrivateSettings?
+    /// The privacy settings of the user. Example: If the user does not want to expose typing events or read events.
+    public let privacySettings: UserPrivacySettings?
     /// Custom extra data of the user.
     public let extraData: [String: RawJSON]
 
@@ -27,7 +27,7 @@ public struct UserInfo {
         imageURL: URL? = nil,
         isInvisible: Bool? = nil,
         language: TranslationLanguage? = nil,
-        privateSettings: UserPrivateSettings? = nil,
+        privacySettings: UserPrivacySettings? = nil,
         extraData: [String: RawJSON] = [:]
     ) {
         self.id = id
@@ -35,21 +35,21 @@ public struct UserInfo {
         self.imageURL = imageURL
         self.isInvisible = isInvisible
         self.language = language
-        self.privateSettings = privateSettings
+        self.privacySettings = privacySettings
         self.extraData = extraData
     }
 }
 
-/// The private settings of the user.
-public struct UserPrivateSettings {
+/// The privacy settings of the user.
+public struct UserPrivacySettings {
     /// The settings for typing indicator events.
-    public var typingIndicators: TypingIndicatorPrivateSettings?
+    public var typingIndicators: TypingIndicatorPrivacySettings?
     /// The settings for the read receipt events.
-    public var readReceipts: ReadReceiptsPrivateSettings?
+    public var readReceipts: ReadReceiptsPrivacySettings?
 
     public init(
-        typingIndicators: TypingIndicatorPrivateSettings? = nil,
-        readReceipts: ReadReceiptsPrivateSettings? = nil
+        typingIndicators: TypingIndicatorPrivacySettings? = nil,
+        readReceipts: ReadReceiptsPrivacySettings? = nil
     ) {
         self.typingIndicators = typingIndicators
         self.readReceipts = readReceipts
@@ -57,7 +57,7 @@ public struct UserPrivateSettings {
 }
 
 /// The settings for typing indicator events.
-public struct TypingIndicatorPrivateSettings {
+public struct TypingIndicatorPrivacySettings {
     public var enabled: Bool
 
     public init(enabled: Bool = true) {
@@ -66,7 +66,7 @@ public struct TypingIndicatorPrivateSettings {
 }
 
 /// The settings for the read receipt events.
-public struct ReadReceiptsPrivateSettings {
+public struct ReadReceiptsPrivacySettings {
     public var enabled: Bool
 
     public init(enabled: Bool = true) {
