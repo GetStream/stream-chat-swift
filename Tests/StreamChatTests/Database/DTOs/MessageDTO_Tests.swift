@@ -2888,7 +2888,6 @@ final class MessageDTO_Tests: XCTestCase {
         XCTAssertEqual(message?.reactionGroups["other-id-1"]?.sumScores, 1)
         XCTAssertEqual(message?.reactionGroups["other-id-2"]?.sumScores, 1)
         XCTAssertEqual(message?.reactionGroups["reaction-type"]?.sumScores, nil)
-        XCTAssertNil(database.viewContext.reaction(messageId: messageId, userId: userId, type: reactionType))
     }
 
     func test_removeReaction_whenMultipleReactionsExist() {
@@ -2929,7 +2928,6 @@ final class MessageDTO_Tests: XCTestCase {
 
         XCTAssertEqual(message?.reactionGroups["reaction-type"]?.count, 1)
         XCTAssertEqual(message?.reactionGroups["reaction-type"]?.sumScores, 1)
-        XCTAssertNil(database.viewContext.reaction(messageId: messageId, userId: userId, type: reactionType))
     }
 
     // MARK: - ReactionString

@@ -1019,8 +1019,6 @@ extension NSManagedObjectContext: MessageDatabaseSession {
             return nil
         }
 
-        delete(reaction)
-
         // if the reaction on the database does not match the version, do nothing
         guard version == nil || version == reaction.version else {
             return nil
