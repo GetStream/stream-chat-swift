@@ -83,6 +83,7 @@ protocol MessageDatabaseSession {
         createdAt: Date?,
         skipPush: Bool,
         skipEnrichUrl: Bool,
+        poll: PollPayload?,
         extraData: [String: RawJSON]
     ) throws -> MessageDTO
 
@@ -202,6 +203,7 @@ extension MessageDatabaseSession {
         skipEnrichUrl: Bool,
         attachments: [AnyAttachmentPayload] = [],
         mentionedUserIds: [UserId] = [],
+        pollPayload: PollPayload?,
         extraData: [String: RawJSON] = [:]
     ) throws -> MessageDTO {
         try createNewMessage(
@@ -220,6 +222,7 @@ extension MessageDatabaseSession {
             createdAt: nil,
             skipPush: skipPush,
             skipEnrichUrl: skipEnrichUrl,
+            poll: pollPayload,
             extraData: extraData
         )
     }
@@ -416,6 +419,11 @@ protocol ThreadDatabaseSession {
     ) throws -> ThreadReadDTO
 }
 
+protocol PollDatabaseSession {
+    @discardableResult
+    func savePoll(payload: PollPayload, cache: PreWarmedCache?) throws -> PollDTO
+}
+
 protocol DatabaseSession: UserDatabaseSession,
     CurrentUserDatabaseSession,
     MessageDatabaseSession,
@@ -427,7 +435,8 @@ protocol DatabaseSession: UserDatabaseSession,
     AttachmentDatabaseSession,
     ChannelMuteDatabaseSession,
     QueuedRequestDatabaseSession,
-    ThreadDatabaseSession {}
+    ThreadDatabaseSession,
+    PollDatabaseSession {}
 
 extension DatabaseSession {
     @discardableResult

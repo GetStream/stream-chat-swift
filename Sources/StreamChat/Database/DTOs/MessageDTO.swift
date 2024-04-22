@@ -75,6 +75,7 @@ class MessageDTO: NSManagedObject {
     @NSManaged var replies: Set<MessageDTO>
     @NSManaged var flaggedBy: CurrentUserDTO?
     @NSManaged var attachments: Set<AttachmentDTO>
+    @NSManaged var poll: PollDTO?
     @NSManaged var quotedMessage: MessageDTO?
     @NSManaged var quotedBy: Set<MessageDTO>
     @NSManaged var searches: Set<MessageSearchQueryDTO>
@@ -570,6 +571,7 @@ extension NSManagedObjectContext: MessageDatabaseSession {
         createdAt: Date?,
         skipPush: Bool,
         skipEnrichUrl: Bool,
+        poll: PollPayload?,
         extraData: [String: RawJSON]
     ) throws -> MessageDTO {
         guard let currentUserDTO = currentUser else {
@@ -609,6 +611,10 @@ extension NSManagedObjectContext: MessageDatabaseSession {
         message.skipEnrichUrl = skipEnrichUrl
         message.reactionScores = [:]
         message.reactionCounts = [:]
+        
+        if let poll {
+            message.poll = try? savePoll(payload: poll, cache: nil)
+        }
 
         message.attachments = Set(
             try attachments.enumerated().map { index, attachment in
@@ -763,6 +769,11 @@ extension NSManagedObjectContext: MessageDatabaseSession {
             }
         )
         dto.attachments = attachments
+        
+        if let poll = payload.poll {
+            let pollDto = try savePoll(payload: poll, cache: cache)
+            dto.poll = pollDto
+        }
 
         // Only insert message into Parent's replies if not already present.
         // This in theory would not be needed since replies is a Set, but
@@ -1083,6 +1094,7 @@ extension MessageDTO {
             mentionedUserIds: mentionedUserIds,
             pinned: pinned,
             pinExpires: pinExpires?.bridgeDate,
+            pollId: poll?.id,
             extraData: decodedExtraData
         )
     }
@@ -1164,6 +1176,8 @@ private extension ChatMessage {
         } else {
             pinDetails = nil
         }
+        
+        poll = try? dto.poll?.asModel()
 
         if let currentUser = context.currentUser {
             isSentByCurrentUser = currentUser.user.id == dto.user.id

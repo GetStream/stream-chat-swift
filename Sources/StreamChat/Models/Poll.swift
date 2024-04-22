@@ -9,7 +9,6 @@ public struct Poll {
     public let allowUserSuggestedOptions: Bool
     public let answersCount: Int
     public let createdAt: Date
-    public let createdById: String
     public let pollDescription: String
     public let enforceUniqueVote: Bool
     public let id: String

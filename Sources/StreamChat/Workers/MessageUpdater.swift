@@ -227,6 +227,7 @@ class MessageUpdater: Worker {
                 createdAt: nil,
                 skipPush: skipPush,
                 skipEnrichUrl: skipEnrichUrl,
+                poll: nil,
                 extraData: extraData
             )
 

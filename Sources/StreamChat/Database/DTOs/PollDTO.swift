@@ -11,7 +11,6 @@ class PollDTO: NSManagedObject {
     @NSManaged var allowUserSuggestedOptions: Bool
     @NSManaged var answersCount: Int
     @NSManaged var createdAt: DBDate
-    @NSManaged var createdById: String
     @NSManaged var pollDescription: String
     @NSManaged var enforceUniqueVote: Bool
     @NSManaged var id: String
@@ -72,7 +71,6 @@ extension PollDTO {
             allowUserSuggestedOptions: allowUserSuggestedOptions,
             answersCount: answersCount,
             createdAt: createdAt.bridgeDate,
-            createdById: createdById,
             pollDescription: pollDescription,
             enforceUniqueVote: enforceUniqueVote,
             id: id,
@@ -147,7 +145,6 @@ extension NSManagedObjectContext {
         pollDto.allowUserSuggestedOptions = payload.allowUserSuggestedOptions
         pollDto.answersCount = payload.answersCount
         pollDto.createdAt = payload.createdAt.bridgeDate
-        pollDto.createdById = payload.createdById
         pollDto.pollDescription = payload.description
         pollDto.enforceUniqueVote = payload.enforceUniqueVote
         pollDto.id = payload.id
