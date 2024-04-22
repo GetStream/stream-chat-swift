@@ -17,7 +17,7 @@ final class APIClient_Spy: APIClient, Spy {
     @Atomic var request_endpoint: AnyEndpoint?
     @Atomic var request_completion: Any?
     @Atomic var request_completion_result: Result<Any, Error>?
-    @Atomic private var request_result: Any?
+    @Atomic private var request_results: [Any] = []
     @Atomic var request_allRecordedCalls: [(endpoint: AnyEndpoint, completion: Any?)] = []
 
     /// The last endpoint `recoveryRequest` function was called with.
@@ -50,6 +50,7 @@ final class APIClient_Spy: APIClient, Spy {
         request_allRecordedCalls = []
         request_endpoint = nil
         request_completion = nil
+        request_results = []
         request_expectation = .init()
         recoveryRequest_expectation = .init()
         uploadRequest_expectation = .init()
@@ -99,7 +100,7 @@ final class APIClient_Spy: APIClient, Spy {
     }
 
     func test_mockResponseResult<Response: Decodable>(_ responseResult: Result<Response, Error>) {
-        request_result = responseResult
+        request_results.append(responseResult)
     }
 
     func test_mockUnmanagedResponseResult<Response: Decodable>(_ responseResult: Result<Response, Error>) {
@@ -111,8 +112,9 @@ final class APIClient_Spy: APIClient, Spy {
         completion: @escaping (Result<Response, Error>) -> Void
     ) where Response: Decodable {
         request_endpoint = AnyEndpoint(endpoint)
-        if let result = request_result as? Result<Response, Error> {
-            completion(result)
+        if let resultIndex = request_results.firstIndex(where: { $0 is Result<Response, Error> }) {
+            let result = request_results.remove(at: resultIndex)
+            completion(result as! Result<Response, Error>)
         }
         request_completion = completion
         _request_allRecordedCalls.mutate { $0.append((request_endpoint!, request_completion!)) }
