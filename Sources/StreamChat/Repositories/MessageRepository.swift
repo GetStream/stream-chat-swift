@@ -94,18 +94,19 @@ class MessageRepository {
         message: MessagePayload,
         completion: @escaping (Result<ChatMessage, Error>) -> Void
     ) {
+        var messageModel: ChatMessage!
         database.write({
             let messageDTO = try $0.saveMessage(payload: message, for: cid, syncOwnReactions: false, cache: nil)
             if messageDTO.localMessageState == .sending || messageDTO.localMessageState == .sendingFailed {
                 messageDTO.markMessageAsSent()
             }
-
-            let messageModel = try messageDTO.asModel()
-            completion(.success(messageModel))
+            messageModel = try messageDTO.asModel()
         }, completion: {
             if let error = $0 {
                 log.error("Error saving sent message with id \(message.id): \(error)", subsystems: .offlineSupport)
                 completion(.failure(error))
+            } else {
+                completion(.success(messageModel))
             }
         })
     }
