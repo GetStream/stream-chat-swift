@@ -283,9 +283,9 @@ public class Chat {
     ///
     /// - Throws: An error while sending a message to the Stream API.
     public func resendMessage(_ messageId: MessageId) async throws {
-        let messageEditor = try client.backgroundWorker(of: MessageEditor.self)
+        let messageSender = try client.backgroundWorker(of: MessageSender.self)
         try await messageUpdater.resendMessage(with: messageId)
-        try await messageEditor.waitForAPIRequest(messageId: messageId)
+        _ = try await messageSender.waitForAPIRequest(messageId: messageId)
     }
     
     /// Resends a failed attachment.
