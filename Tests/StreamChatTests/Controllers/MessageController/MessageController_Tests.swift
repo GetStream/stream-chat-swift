@@ -902,7 +902,7 @@ final class MessageController_Tests: XCTestCase {
 
         // Simulate network response with the error
         let networkError = TestError()
-        env.messageUpdater.editMessage_completion?(networkError)
+        env.messageUpdater.editMessage_completion?(.failure(networkError))
 
         // Assert error is propagated
         AssertAsync.willBeEqual(completionError as? TestError, networkError)
@@ -925,7 +925,7 @@ final class MessageController_Tests: XCTestCase {
         controller = nil
 
         // Simulate successful network response
-        env.messageUpdater.editMessage_completion?(nil)
+        env.messageUpdater.editMessage_completion?(.success(.mock()))
         // Release reference of completion so we can deallocate stuff
         env.messageUpdater.editMessage_completion = nil
 

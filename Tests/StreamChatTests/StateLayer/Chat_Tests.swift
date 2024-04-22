@@ -290,6 +290,25 @@ final class Chat_Tests: XCTestCase {
         XCTAssertEqual(LocalMessageState.sendingFailed, stateMessage.localState)
     }
     
+    func test_updateMessage_whenAPIRequestSucceeds_thenUpdateMessageSucceeds() async throws {
+        try await env.client.databaseContainer.write { session in
+            try session.saveChannel(payload: self.makeChannelPayload(messageCount: 1, createdAtOffset: 0))
+        }
+        
+        try await setUpChat(usesMockedUpdaters: false)
+        await XCTAssertEqual(1, chat.state.messages.count)
+        let messages = await chat.state.messages
+        let messageId = try XCTUnwrap(messages.first?.id)
+        
+        // Typing indicator and edit message
+        env.client.mockAPIClient.test_mockResponseResult(.success(EmptyResponse()))
+        env.client.mockAPIClient.test_mockResponseResult(.success(EmptyResponse()))
+        
+        let message = try await chat.updateMessage(messageId, text: "New Text")
+        XCTAssertEqual("New Text", message.text)
+        XCTAssertEqual(nil, message.localState)
+    }
+    
     // MARK: - Message Loading and State
     
     func test_restoreMessages_whenExistingMessages_thenStateUpdates() async throws {
@@ -624,11 +643,6 @@ final class Chat_Tests: XCTestCase {
 //        let attachmentId: AttachmentId = .unique
 //        await XCTAssertAsyncFailure(try await chat.resendAttachment(attachmentId), expectedTestError)
 //        XCTAssertEqual(attachmentId, env.messageUpdater.restartFailedAttachmentUploading_id)
-    }
-    
-    // TODO: not done
-    func test_updateMessage_whenAPIRequestSucceeds_thenUpdateMessageSucceeds() async throws {
-        // updateMessage(_ messageId: MessageId, with text: String, attachments: [AnyAttachmentPayload] = [], extraData: [String: RawJSON]? = nil, skipEnrichURL: Bool = false)
     }
     
     // TODO: not done

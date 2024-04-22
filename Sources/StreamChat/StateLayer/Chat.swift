@@ -369,11 +369,31 @@ public class Chat {
     ///   - skipEnrichURL: If true, the url preview won't be attached to the message.
     ///
     /// - Throws: An error while communicating with the Stream API.
-    public func updateMessage(_ messageId: MessageId, with text: String, attachments: [AnyAttachmentPayload] = [], extraData: [String: RawJSON]? = nil, skipEnrichURL: Bool = false) async throws {
+    @discardableResult public func updateMessage(
+        _ messageId: MessageId,
+        text: String,
+        attachments: [AnyAttachmentPayload] = [],
+        extraData: [String: RawJSON]? = nil,
+        skipEnrichURL: Bool = false
+    ) async throws -> ChatMessage {
         Task { try await stopTyping() } // errors explicitly ignored
-        let messageEditor = try client.backgroundWorker(of: MessageEditor.self)
-        try await messageUpdater.editMessage(messageId: messageId, text: text, skipEnrichUrl: skipEnrichURL, attachments: attachments, extraData: extraData)
-        try await messageEditor.waitForAPIRequest(messageId: messageId)
+        let message = try await messageUpdater.editMessage(
+            messageId: messageId,
+            text: text,
+            skipEnrichUrl: skipEnrichURL,
+            attachments: attachments,
+            extraData: extraData
+        )
+        switch message.localState {
+        case .pendingSend:
+            let messageSender = try client.backgroundWorker(of: MessageSender.self)
+            return try await messageSender.waitForAPIRequest(messageId: messageId)
+        case .pendingSync:
+            let messageEditor = try client.backgroundWorker(of: MessageEditor.self)
+            return try await messageEditor.waitForAPIRequest(messageId: messageId)
+        default:
+            return message
+        }
     }
     
     // MARK: - Message Loading
