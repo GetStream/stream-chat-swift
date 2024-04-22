@@ -34,10 +34,14 @@ final class ChatClient_Mock: ChatClient {
     }
 
     override var backgroundWorkers: [Worker] {
-        _backgroundWorkers ?? super.backgroundWorkers
+        _backgroundWorkers.isEmpty ? super.backgroundWorkers : _backgroundWorkers
+    }
+    
+    func addBackgroundWorker(_ worker: Worker) {
+        _backgroundWorkers.append(worker)
     }
 
-    private var _backgroundWorkers: [Worker]?
+    private var _backgroundWorkers = [Worker]()
 
     // MARK: - Overrides
 
@@ -107,7 +111,7 @@ final class ChatClient_Mock: ChatClient {
         completeTokenWaiters_called = false
         completeTokenWaiters_token = nil
 
-        _backgroundWorkers?.removeAll()
+        _backgroundWorkers.removeAll()
         init_completion = nil
     }
 }
