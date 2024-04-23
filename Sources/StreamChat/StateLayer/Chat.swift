@@ -282,10 +282,11 @@ public class Chat {
     /// - Parameter messageId: The id of the message to resend.
     ///
     /// - Throws: An error while sending a message to the Stream API.
-    public func resendMessage(_ messageId: MessageId) async throws {
-        let messageEditor = try client.backgroundWorker(of: MessageEditor.self)
+    /// - Returns: An instance of `ChatMessage` which was resent.
+    @discardableResult public func resendMessage(_ messageId: MessageId) async throws -> ChatMessage {
+        let messageSender = try client.backgroundWorker(of: MessageSender.self)
         try await messageUpdater.resendMessage(with: messageId)
-        try await messageEditor.waitForAPIRequest(messageId: messageId)
+        return try await messageSender.waitForAPIRequest(messageId: messageId)
     }
     
     /// Resends a failed attachment.
@@ -293,10 +294,11 @@ public class Chat {
     /// - Parameter attachment: The id of the attachment.
     ///
     /// - Throws: An error while sending a message to the Stream API.
-    public func resendAttachment(_ attachment: AttachmentId) async throws {
+    /// - Returns: The uploaded attachment with additional information like remote and thumbnail URLs.
+    @discardableResult public func resendAttachment(_ attachment: AttachmentId) async throws -> UploadedAttachment {
         let attachmentQueueUploader = try client.backgroundWorker(of: AttachmentQueueUploader.self)
         try await messageUpdater.resendAttachment(with: attachment)
-        try await attachmentQueueUploader.waitForAPIRequest(attachmentId: attachment)
+        return try await attachmentQueueUploader.waitForAPIRequest(attachmentId: attachment)
     }
     
     /// Sends a message to channel.
@@ -369,11 +371,32 @@ public class Chat {
     ///   - skipEnrichURL: If true, the url preview won't be attached to the message.
     ///
     /// - Throws: An error while communicating with the Stream API.
-    public func updateMessage(_ messageId: MessageId, with text: String, attachments: [AnyAttachmentPayload] = [], extraData: [String: RawJSON]? = nil, skipEnrichURL: Bool = false) async throws {
+    /// - Returns: An instance of `ChatMessage` which was updated.
+    @discardableResult public func updateMessage(
+        _ messageId: MessageId,
+        text: String,
+        attachments: [AnyAttachmentPayload] = [],
+        extraData: [String: RawJSON]? = nil,
+        skipEnrichURL: Bool = false
+    ) async throws -> ChatMessage {
         Task { try await stopTyping() } // errors explicitly ignored
-        let messageEditor = try client.backgroundWorker(of: MessageEditor.self)
-        try await messageUpdater.editMessage(messageId: messageId, text: text, skipEnrichUrl: skipEnrichURL, attachments: attachments, extraData: extraData)
-        try await messageEditor.waitForAPIRequest(messageId: messageId)
+        let message = try await messageUpdater.editMessage(
+            messageId: messageId,
+            text: text,
+            skipEnrichUrl: skipEnrichURL,
+            attachments: attachments,
+            extraData: extraData
+        )
+        switch message.localState {
+        case .pendingSend:
+            let messageSender = try client.backgroundWorker(of: MessageSender.self)
+            return try await messageSender.waitForAPIRequest(messageId: messageId)
+        case .pendingSync:
+            let messageEditor = try client.backgroundWorker(of: MessageEditor.self)
+            return try await messageEditor.waitForAPIRequest(messageId: messageId)
+        default:
+            return message
+        }
     }
     
     // MARK: - Message Loading
@@ -549,10 +572,11 @@ public class Chat {
     ///   - pinning: The pinning expiration information. Supports an infinite expiration, setting a date, or the amount of time a message is pinned.
     ///
     /// - Throws: An error while communicating with the Stream API.
-    public func pinMessage(_ messageId: MessageId, pinning: MessagePinning) async throws {
+    /// - Returns: An instance of `ChatMessage` which was pinned.
+    @discardableResult public func pinMessage(_ messageId: MessageId, pinning: MessagePinning) async throws -> ChatMessage {
         let messageEditor = try client.backgroundWorker(of: MessageEditor.self)
         try await messageUpdater.pinMessage(messageId: messageId, pinning: pinning)
-        try await messageEditor.waitForAPIRequest(messageId: messageId)
+        return try await messageEditor.waitForAPIRequest(messageId: messageId)
     }
     
     /// Removes the message from the channel's pinned messages.
@@ -562,10 +586,11 @@ public class Chat {
     /// - Parameter messageId: The id of the message to unpin.
     ///
     /// - Throws: An error while communicating with the Stream API.
-    public func unpinMessage(_ messageId: MessageId) async throws {
+    /// - Returns: An instance of `ChatMessage` which was unpinned.
+    @discardableResult public func unpinMessage(_ messageId: MessageId) async throws -> ChatMessage {
         let messageEditor = try client.backgroundWorker(of: MessageEditor.self)
         try await messageUpdater.unpinMessage(messageId: messageId)
-        try await messageEditor.waitForAPIRequest(messageId: messageId)
+        return try await messageEditor.waitForAPIRequest(messageId: messageId)
     }
     
     /// Loads pinned messages for the specified pagination options, sorting order, and limit.
