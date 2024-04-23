@@ -1061,10 +1061,23 @@ open class ChatMessageContentView: _View, ThemeProvider, UITextViewDelegate {
 }
 
 private extension ChatMessage {
+    /// The message reaction data ready to be presented in a view.
     var reactionsData: [ChatMessageReactionData] {
         let userReactionIDs = Set(currentUserReactions.map(\.type))
-        return reactionGroups.values
-            .map { ChatMessageReactionData(reactionGroup: $0, isChosenByCurrentUser: userReactionIDs.contains($0.type)) }
+        if !reactionGroups.isEmpty {
+            return reactionGroups.values
+                .map { ChatMessageReactionData(
+                    reactionGroup: $0,
+                    isChosenByCurrentUser: userReactionIDs.contains($0.type)
+                ) }
+        }
+        // Fallback in case reaction groups is not present.
+        return reactionScores
+            .map { ChatMessageReactionData(
+                type: $0.key,
+                score: $0.value,
+                isChosenByCurrentUser: userReactionIDs.contains($0.key)
+            ) }
     }
 }
 

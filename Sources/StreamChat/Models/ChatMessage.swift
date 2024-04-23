@@ -85,7 +85,7 @@ public struct ChatMessage {
     /// The number of reactions per reaction type.
     public let reactionCounts: [MessageReactionType: Int]
 
-    /// The reaction information grouped by type.
+    /// The reaction information grouped by type. Only available if reactions v2 is supported.
     public let reactionGroups: [MessageReactionType: ChatMessageReactionGroup]
 
     /// The user which is the author of the message.
