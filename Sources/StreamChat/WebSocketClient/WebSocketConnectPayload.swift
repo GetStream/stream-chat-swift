@@ -62,14 +62,22 @@ struct UserWebSocketPayload: Encodable {
     }
 }
 
-struct UserPrivacySettingsPayload: Encodable {
+struct UserPrivacySettingsPayload: Codable {
     enum CodingKeys: String, CodingKey {
-        case typingIndicators
-        case readReceipts
+        case typingIndicators = "typing_indicators"
+        case readReceipts = "read_receipts"
     }
 
     let typingIndicators: TypingIndicatorPrivacySettingsPayload?
     let readReceipts: ReadReceiptsPrivacySettingsPayload?
+
+    init(
+        typingIndicators: TypingIndicatorPrivacySettingsPayload?,
+        readReceipts: ReadReceiptsPrivacySettingsPayload?
+    ) {
+        self.typingIndicators = typingIndicators
+        self.readReceipts = readReceipts
+    }
 
     init(settings: UserPrivacySettings) {
         typingIndicators = settings.typingIndicators.map { .init(enabled: $0.enabled) }
@@ -83,10 +91,10 @@ struct UserPrivacySettingsPayload: Encodable {
     }
 }
 
-struct TypingIndicatorPrivacySettingsPayload: Encodable {
+struct TypingIndicatorPrivacySettingsPayload: Codable {
     var enabled: Bool
 }
 
-struct ReadReceiptsPrivacySettingsPayload: Encodable {
+struct ReadReceiptsPrivacySettingsPayload: Codable {
     var enabled: Bool
 }

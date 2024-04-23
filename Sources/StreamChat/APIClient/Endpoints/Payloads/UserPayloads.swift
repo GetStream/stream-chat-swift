@@ -136,8 +136,8 @@ class UserRequestBody: Encodable {
 // MARK: - PATCH users
 
 /// An object describing the incoming user JSON payload.
-struct UserUpdateResponse: Decodable {
-    let user: UserPayload
+struct CurrentUserUpdateResponse: Decodable {
+    let user: CurrentUserPayload
 
     enum CodingKeys: String, CodingKey {
         case users
@@ -145,7 +145,7 @@ struct UserUpdateResponse: Decodable {
 
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
-        let users = try container.decode([String: UserPayload].self, forKey: .users)
+        let users = try container.decode([String: CurrentUserPayload].self, forKey: .users)
         guard let user = users.first?.value else {
             throw DecodingError.dataCorrupted(
                 .init(codingPath: [CodingKeys.users], debugDescription: "Missing updated user.")
@@ -154,7 +154,7 @@ struct UserUpdateResponse: Decodable {
         self.user = user
     }
 
-    init(user: UserPayload) {
+    init(user: CurrentUserPayload) {
         self.user = user
     }
 }

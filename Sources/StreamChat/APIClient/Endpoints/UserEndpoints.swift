@@ -19,7 +19,7 @@ extension Endpoint {
     static func updateUser(
         id: UserId,
         payload: UserUpdateRequestBody
-    ) -> Endpoint<UserUpdateResponse> {
+    ) -> Endpoint<CurrentUserUpdateResponse> {
         let users: [String: AnyEncodable] = [
             "id": AnyEncodable(id),
             "set": AnyEncodable(payload)
@@ -27,7 +27,7 @@ extension Endpoint {
         let body: [String: AnyEncodable] = [
             "users": AnyEncodable([users])
         ]
-        return Endpoint<UserUpdateResponse>(
+        return Endpoint<CurrentUserUpdateResponse>(
             path: .users,
             method: .patch,
             queryItems: nil,
