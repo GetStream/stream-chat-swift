@@ -726,6 +726,7 @@ public class Chat {
         skipEnrichURL: Bool = false,
         messageId: MessageId? = nil
     ) async throws -> ChatMessage {
+        Task { try await stopTyping() } // errors explicitly ignored
         let messageSender = try client.backgroundWorker(of: MessageSender.self)
         let message = try await messageUpdater.createNewReply(
             in: cid,
