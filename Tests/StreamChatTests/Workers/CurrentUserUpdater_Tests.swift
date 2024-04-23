@@ -61,25 +61,41 @@ final class CurrentUserUpdater_Tests: XCTestCase {
             currentUserId: expectedId,
             name: expectedName,
             imageURL: expectedImageUrl,
+            privacySettings: .init(
+                typingIndicators: .init(enabled: true),
+                readReceipts: .init(enabled: true)
+            ),
             completion: { error in
                 XCTAssertNil(error)
             }
         )
 
         // Simulate API response
-        let currentUserUpdateResponse = UserUpdateResponse(
-            user: UserPayload.dummy(
+        let currentUserUpdateResponse = CurrentUserUpdateResponse(
+            user: CurrentUserPayload.dummy(
                 userId: userPayload.id,
                 name: expectedName,
-                imageUrl: expectedImageUrl
+                imageUrl: expectedImageUrl,
+                privacySettings: .init(
+                    typingIndicators: .init(enabled: true),
+                    readReceipts: .init(enabled: true)
+                )
             )
         )
         apiClient.test_simulateResponse(.success(currentUserUpdateResponse))
 
         // Assert that request is made to the correct endpoint
-        let expectedEndpoint: Endpoint<UserUpdateResponse> = .updateUser(
+        let expectedEndpoint: Endpoint<CurrentUserUpdateResponse> = .updateUser(
             id: expectedId,
-            payload: .init(name: expectedName, imageURL: expectedImageUrl)
+            payload: .init(
+                name: expectedName,
+                imageURL: expectedImageUrl,
+                privacySettings: .init(
+                    typingIndicators: .init(enabled: true),
+                    readReceipts: .init(enabled: true)
+                ),
+                extraData: [:]
+            )
         )
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(expectedEndpoint))
     }
@@ -108,8 +124,8 @@ final class CurrentUserUpdater_Tests: XCTestCase {
         )
 
         // Simulate API response
-        let currentUserUpdateResponse = UserUpdateResponse(
-            user: UserPayload.dummy(
+        let currentUserUpdateResponse = CurrentUserUpdateResponse(
+            user: CurrentUserPayload.dummy(
                 userId: userPayload.id,
                 name: expectedName,
                 imageUrl: expectedImageUrl
@@ -152,7 +168,7 @@ final class CurrentUserUpdater_Tests: XCTestCase {
         let error = TestError()
         apiClient
             .test_simulateResponse(
-                Result<UserUpdateResponse, Error>.failure(error)
+                Result<CurrentUserUpdateResponse, Error>.failure(error)
             )
         apiClient
             .cleanUp()
@@ -204,7 +220,7 @@ final class CurrentUserUpdater_Tests: XCTestCase {
         )
 
         // Simulate API response
-        let currentUserUpdateResponse = UserUpdateResponse(
+        let currentUserUpdateResponse = CurrentUserUpdateResponse(
             user: userPayload
         )
         apiClient.test_simulateResponse(.success(currentUserUpdateResponse))

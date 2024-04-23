@@ -32,7 +32,13 @@ final class UserEndpoints_Tests: XCTestCase {
     func test_updateCurrentUser_buildsCorrectly() {
         let userId = UserId.unique
         let payload: UserUpdateRequestBody = .init(
-            name: .unique, imageURL: .unique(), extraData: ["company": .string(.unique)]
+            name: .unique,
+            imageURL: .unique(),
+            privacySettings: .init(
+                typingIndicators: .init(enabled: true),
+                readReceipts: .init(enabled: true)
+            ),
+            extraData: ["company": .string(.unique)]
         )
 
         let users: [String: AnyEncodable] = [
@@ -43,7 +49,7 @@ final class UserEndpoints_Tests: XCTestCase {
             "users": AnyEncodable([users])
         ]
 
-        let expectedEndpoint = Endpoint<UserUpdateResponse>(
+        let expectedEndpoint = Endpoint<CurrentUserUpdateResponse>(
             path: .users,
             method: .patch,
             queryItems: nil,
@@ -51,7 +57,7 @@ final class UserEndpoints_Tests: XCTestCase {
             body: body
         )
 
-        let endpoint: Endpoint<UserUpdateResponse> = .updateUser(id: userId, payload: payload)
+        let endpoint: Endpoint<CurrentUserUpdateResponse> = .updateUser(id: userId, payload: payload)
 
         XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
         XCTAssertEqual("users", endpoint.path.value)
