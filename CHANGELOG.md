@@ -6,7 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## StreamChat
 ### ✅ Added
 - Add user privacy settings to control user events [#3142](https://github.com/GetStream/stream-chat-swift/pull/3142)
-- Add `privacySettings` parameter to `connectUser()` and `CurrentUserController` [#3142](https://github.com/GetStream/stream-chat-swift/pull/3142)
+- Add `privacySettings` parameter to `connectUser()` and `CurrentUserController.updateUserData()` [#3142](https://github.com/GetStream/stream-chat-swift/pull/3142)
 - Expose `ChatCurrentUser.privacySettings` [#3142](https://github.com/GetStream/stream-chat-swift/pull/3142)
 
 # [4.52.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.52.0)
