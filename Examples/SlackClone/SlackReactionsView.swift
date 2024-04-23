@@ -77,11 +77,8 @@ final class SlackReactionsView: _View, ThemeProvider, UICollectionViewDataSource
 
         guard let content = self.content else { return }
 
-        reactions = content.reactionGroups.values.map {
-            let userReactionIDs = Set(content.currentUserReactions.map(\.type))
-            return ChatMessageReactionData(reactionGroup: $0, isChosenByCurrentUser: userReactionIDs.contains($0.type))
-        }
-        .sorted(by: components.reactionsSorting)
+        reactions = content.reactionsData
+            .sorted(by: components.reactionsSorting)
 
         collectionView.reloadData()
 

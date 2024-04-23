@@ -1060,7 +1060,7 @@ open class ChatMessageContentView: _View, ThemeProvider, UITextViewDelegate {
     }
 }
 
-private extension ChatMessage {
+public extension ChatMessage {
     /// The message reaction data ready to be presented in a view.
     var reactionsData: [ChatMessageReactionData] {
         let userReactionIDs = Set(currentUserReactions.map(\.type))
