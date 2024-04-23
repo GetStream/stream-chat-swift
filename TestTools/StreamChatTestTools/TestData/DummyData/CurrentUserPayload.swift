@@ -55,7 +55,8 @@ extension CurrentUserPayload {
         unreadCount: UnreadCount? = .dummy,
         devices: [DevicePayload] = [],
         mutedUsers: [MutedUserPayload] = [],
-        mutedChannels: [MutedChannelPayload] = []
+        mutedChannels: [MutedChannelPayload] = [],
+        privacySettings: UserPrivacySettingsPayload? = nil
     ) -> CurrentUserPayload {
         .init(
             id: userPayload.id,
@@ -75,7 +76,8 @@ extension CurrentUserPayload {
             devices: devices,
             mutedUsers: mutedUsers,
             mutedChannels: mutedChannels,
-            unreadCount: unreadCount
+            unreadCount: unreadCount,
+            privacySettings: privacySettings
         )
     }
 }
