@@ -263,9 +263,9 @@ public class ChatMessageController: DataController, DelegateCallable, DataStoreP
             skipEnrichUrl: skipEnrichUrl,
             attachments: attachments,
             extraData: extraData
-        ) { error in
+        ) { result in
             self.callback {
-                completion?(error)
+                completion?(result.error)
             }
         }
     }

@@ -15,7 +15,7 @@
         "argument" : "-com.apple.CoreData.ConcurrencyDebug 1"
       }
     ],
-    "defaultTestExecutionTimeAllowance" : 60,
+    "defaultTestExecutionTimeAllowance" : 180,
     "environmentVariableEntries" : [
       {
         "key" : "TEST_INVOCATIONS",

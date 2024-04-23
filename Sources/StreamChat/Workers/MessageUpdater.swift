@@ -104,15 +104,16 @@ class MessageUpdater: Worker {
     ///   - skipEnrichUrl: If true, the url preview won't be attached to the message.
     ///   - attachments: An array of the attachments for the message.
     ///   - extraData: Extra Data for the message.
-    ///   - completion: The completion. Will be called with an error if smth goes wrong, otherwise - will be called with `nil`.
+    ///   - completion: The completion handler with the local updated message.
     func editMessage(
         messageId: MessageId,
         text: String,
         skipEnrichUrl: Bool,
         attachments: [AnyAttachmentPayload] = [],
         extraData: [String: RawJSON]? = nil,
-        completion: ((Error?) -> Void)? = nil
+        completion: ((Result<ChatMessage, Error>) -> Void)? = nil
     ) {
+        var message: ChatMessage?
         database.write({ session in
             let messageDTO = try session.messageEditableByCurrentUser(messageId)
 
@@ -148,6 +149,7 @@ class MessageUpdater: Worker {
 
             if messageDTO.isBounced {
                 try updateMessage(localState: .pendingSend)
+                message = try messageDTO.asModel()
                 return
             }
 
@@ -162,8 +164,15 @@ class MessageUpdater: Worker {
                     reason: "message is in `\(messageDTO.localMessageState!)` state"
                 )
             }
-        }, completion: {
-            completion?($0)
+            message = try messageDTO.asModel()
+        }, completion: { error in
+            if let error {
+                completion?(.failure(error))
+            } else if let message {
+                completion?(.success(message))
+            } else {
+                completion?(.failure(ClientError.MessageDoesNotExist(messageId: messageId)))
+            }
         })
     }
 
@@ -872,10 +881,10 @@ extension MessageUpdater {
         }
     }
     
-    func editMessage(messageId: MessageId, text: String, skipEnrichUrl: Bool, attachments: [AnyAttachmentPayload] = [], extraData: [String: RawJSON]? = nil) async throws {
+    func editMessage(messageId: MessageId, text: String, skipEnrichUrl: Bool, attachments: [AnyAttachmentPayload] = [], extraData: [String: RawJSON]? = nil) async throws -> ChatMessage {
         try await withCheckedThrowingContinuation { continuation in
-            editMessage(messageId: messageId, text: text, skipEnrichUrl: skipEnrichUrl, attachments: attachments, extraData: extraData) { error in
-                continuation.resume(with: error)
+            editMessage(messageId: messageId, text: text, skipEnrichUrl: skipEnrichUrl, attachments: attachments, extraData: extraData) { result in
+                continuation.resume(with: result)
             }
         }
     }
