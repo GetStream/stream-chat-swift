@@ -59,7 +59,7 @@ extension StreamChatWrapper {
         Components.default.messageContentView = DemoChatMessageContentView.self
         Components.default.messageActionsVC = DemoChatMessageActionsVC.self
         Components.default.messageLayoutOptionsResolver = DemoChatMessageLayoutOptionsResolver()
-        Components.default.reactionsSorting = ReactionSorting.byFirstReactionAtAndCount()
+        Components.default.reactionsSorting = ReactionSorting.byFirstReactionAtAndCount
 
         // Customize MarkdownFormatter
         let defaultFormatter = DefaultMarkdownFormatter()
@@ -72,5 +72,36 @@ extension StreamChatWrapper {
         defaultFormatter.styles.h5Font.color = .systemBrown
         defaultFormatter.styles.h6Font.color = .systemPink
         Appearance.default.formatters.markdownFormatter = defaultFormatter
+    }
+}
+
+/// Examples of some reactions sorting.
+enum ReactionSorting {
+    /// Sorting by score.
+    static func byScore(_ lhs: ChatMessageReactionData, _ rhs: ChatMessageReactionData) -> Bool {
+        lhs.score > rhs.score
+    }
+
+    /// Sorting by count.
+    static func byCount(_ lhs: ChatMessageReactionData, _ rhs: ChatMessageReactionData) -> Bool {
+        lhs.count > rhs.count
+    }
+
+    /// Sorting by firstReactionAt.
+    static func byFirstReactionAt(_ lhs: ChatMessageReactionData, _ rhs: ChatMessageReactionData) -> Bool {
+        guard let lhsFirstReactionAt = lhs.firstReactionAt, let rhsFirstReactionAt = rhs.firstReactionAt else {
+            return false
+        }
+
+        return lhsFirstReactionAt < rhsFirstReactionAt
+    }
+
+    /// Sorting by firstReactionAt and count.
+    static func byFirstReactionAtAndCount(_ lhs: ChatMessageReactionData, _ rhs: ChatMessageReactionData) -> Bool {
+        if lhs.count == rhs.count {
+            return ReactionSorting.byFirstReactionAt(lhs, rhs)
+        }
+
+        return lhs.count > rhs.count
     }
 }
