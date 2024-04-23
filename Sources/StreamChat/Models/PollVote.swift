@@ -11,6 +11,5 @@ public struct PollVote {
     public let pollId: String
     public let isAnswer: Bool
     public let answerText: String?
-    public let option: PollOption?
     public let user: ChatUser?
 }

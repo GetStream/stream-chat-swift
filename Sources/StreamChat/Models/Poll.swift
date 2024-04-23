@@ -9,11 +9,11 @@ public struct Poll {
     public let allowUserSuggestedOptions: Bool
     public let answersCount: Int
     public let createdAt: Date
-    public let pollDescription: String
+    public let pollDescription: String?
     public let enforceUniqueVote: Bool
     public let id: String
     public let name: String
-    public let updatedAt: Date
+    public let updatedAt: Date?
     public let voteCount: Int
     public let custom: [String: RawJSON]
     public let voteCountsByOption: [String: Int]?

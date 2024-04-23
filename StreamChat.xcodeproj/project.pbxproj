@@ -631,6 +631,7 @@
 		8451C48E2BD671A400849955 /* PollsRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8451C48C2BD671A400849955 /* PollsRepository.swift */; };
 		845CEE53270F032A002C7EBD /* MessageSearchQuery_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845CEE52270F032A002C7EBD /* MessageSearchQuery_Tests.swift */; };
 		845CEE5A270F2A06002C7EBD /* ChatReactionsBubbleView_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845CEE59270F2A06002C7EBD /* ChatReactionsBubbleView_Tests.swift */; };
+		845CFD702BD7B8310058F691 /* PollController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845CFD6F2BD7B8310058F691 /* PollController.swift */; };
 		84748F892AC37F40007E3285 /* StreamChat.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 799C941B247D2F80001F1104 /* StreamChat.framework */; };
 		84748F8D2AC37F40007E3285 /* StreamChatUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 790881FD25432B7200896F03 /* StreamChatUI.framework */; };
 		84748F922AC38276007E3285 /* ChatUser+CustomFields.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43016E1526B734410054E805 /* ChatUser+CustomFields.swift */; };
@@ -3355,6 +3356,7 @@
 		8451C48C2BD671A400849955 /* PollsRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PollsRepository.swift; sourceTree = "<group>"; };
 		845CEE52270F032A002C7EBD /* MessageSearchQuery_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageSearchQuery_Tests.swift; sourceTree = "<group>"; };
 		845CEE59270F2A06002C7EBD /* ChatReactionsBubbleView_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatReactionsBubbleView_Tests.swift; sourceTree = "<group>"; };
+		845CFD6F2BD7B8310058F691 /* PollController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PollController.swift; sourceTree = "<group>"; };
 		84698637274FE79200B22258 /* ConnectionRecoveryHandler_Mock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectionRecoveryHandler_Mock.swift; sourceTree = "<group>"; };
 		846C633B26FC834800F7518B /* MessageDeleted+MissingUser.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = "MessageDeleted+MissingUser.json"; sourceTree = "<group>"; };
 		84790E952AC1D346003AFF1C /* DemoShare.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = DemoShare.appex; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -5506,6 +5508,7 @@
 				F649B23F250125C9008F98C8 /* MessageController */,
 				795296FA2582648F00435B2E /* SearchControllers */,
 				8819DFD32525F48800FD1A50 /* UserController */,
+				845CFD6E2BD7B7FD0058F691 /* PollController */,
 				DA8406FE2524F761005A0F62 /* UserListController */,
 			);
 			path = Controllers;
@@ -5753,6 +5756,14 @@
 				792DDA5F256FB69E001DB91B /* Main.storyboard */,
 			);
 			path = Resources;
+			sourceTree = "<group>";
+		};
+		845CFD6E2BD7B7FD0058F691 /* PollController */ = {
+			isa = PBXGroup;
+			children = (
+				845CFD6F2BD7B8310058F691 /* PollController.swift */,
+			);
+			path = PollController;
 			sourceTree = "<group>";
 		};
 		84790E962AC1D346003AFF1C /* DemoShare */ = {
@@ -10819,6 +10830,7 @@
 				AD78568F298B273900C2FEAD /* ChatClient+ChannelController.swift in Sources */,
 				792A4F492480107A00EAF71D /* Sorting.swift in Sources */,
 				7937282A2498FFD300E13FE5 /* MemberPayload.swift in Sources */,
+				845CFD702BD7B8310058F691 /* PollController.swift in Sources */,
 				AD6A248A280DA890003BA1E4 /* PushDevice.swift in Sources */,
 				799C944C247D5766001F1104 /* ChannelController.swift in Sources */,
 				842F9749277A1CCF0060A489 /* PinnedMessagesPagination.swift in Sources */,

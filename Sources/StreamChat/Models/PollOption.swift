@@ -6,6 +6,19 @@ import Foundation
 
 public struct PollOption {
     public let id: String
-    public var text: String?
+    public var text: String
+    public var latestVotes: [PollVote]
     public var custom: [String: RawJSON]?
+    
+    public init(
+        id: String = UUID().uuidString,
+        text: String,
+        latestVotes: [PollVote] = [],
+        custom: [String: RawJSON]? = nil
+    ) {
+        self.id = id
+        self.text = text
+        self.latestVotes = latestVotes
+        self.custom = custom
+    }
 }

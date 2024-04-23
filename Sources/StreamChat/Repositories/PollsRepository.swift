@@ -46,4 +46,47 @@ class PollsRepository {
             }
         }
     }
+    
+    func castPollVote(
+        messageId: MessageId,
+        pollId: String,
+        answerText: String?,
+        optionId: String?,
+        completion: ((Error?) -> Void)? = nil
+    ) {
+        let request = CastPollVoteRequestBody(
+            pollId: pollId,
+            vote: .init(
+                answerText: answerText,
+                optionId: optionId,
+                option: nil // TODO: handle this.
+            )
+        )
+        apiClient.request(
+            endpoint: .castPollVote(
+                messageId: messageId,
+                pollId: pollId,
+                vote: request
+            )
+        ) {
+            completion?($0.error)
+        }
+    }
+    
+    func removePollVote(
+        messageId: MessageId,
+        pollId: String,
+        voteId: String,
+        completion: ((Error?) -> Void)? = nil
+    ) {
+        apiClient.request(
+            endpoint: .removePollVote(
+                messageId: messageId,
+                pollId: pollId,
+                voteId: voteId
+            )
+        ) {
+            completion?($0.error)
+        }
+    }
 }

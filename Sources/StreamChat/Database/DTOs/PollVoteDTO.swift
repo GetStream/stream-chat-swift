@@ -37,7 +37,6 @@ class PollVoteDTO: NSManagedObject {
             context: context,
             cache: cache
         )
-        new.poll = PollDTO.loadOrCreate(pollId: pollId, context: context, cache: cache)
         new.user = UserDTO.loadOrCreate(id: userId, context: context, cache: cache)
         return new
     }
@@ -58,7 +57,6 @@ extension PollVoteDTO {
             pollId: pollId,
             isAnswer: isAnswer,
             answerText: answerText,
-            option: option?.asModel(),
             user: user?.asModel()
         )
     }
