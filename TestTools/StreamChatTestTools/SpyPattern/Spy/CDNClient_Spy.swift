@@ -6,7 +6,7 @@ import StreamChat
 import Foundation
 
 final class CDNClient_Spy: CDNClient, Spy {
-    var recordedFunctions: [String] = []
+    let spyState = SpyState()
 
     static var maxAttachmentSize: Int64 { .max }
     var uploadAttachmentProgress: Double?

@@ -6,7 +6,7 @@ import Foundation
 @testable import StreamChat
 
 public class ChatChannelListController_Mock: ChatChannelListController, Spy {
-    public var recordedFunctions: [String] = []
+    public let spyState = SpyState()
     public var loadNextChannelsIsCalled = false
     public var loadNextChannelsCallCount = 0
     public var resetChannelsQueryResult: Result<(synchedAndWatched: [ChatChannel], unwanted: Set<ChannelId>), Error>?

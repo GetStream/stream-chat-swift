@@ -7,7 +7,7 @@ import Foundation
 
 // A concrete `ConnectionDetailsProviderDelegate` implementation allowing capturing the delegate calls
 final class ConnectionDetailsProviderDelegate_Spy: ConnectionDetailsProviderDelegate, Spy {
-    var recordedFunctions: [String] = []
+    let spyState = SpyState()
 
     var provideTokenResult: Result<Token, Error>?
     @Atomic var tokenWaiters: [String: (Token?) -> Void] = [:]
@@ -16,7 +16,7 @@ final class ConnectionDetailsProviderDelegate_Spy: ConnectionDetailsProviderDele
     @Atomic var connectionWaiters: [String: (ConnectionId?) -> Void] = [:]
 
     func clear() {
-        recordedFunctions.removeAll()
+        spyState.clear()
         tokenWaiters.removeAll()
     }
 
