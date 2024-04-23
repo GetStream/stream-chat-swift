@@ -80,7 +80,7 @@ class AttachmentQueueUploader: Worker {
     private func uploadAttachment(with id: AttachmentId) {
         prepareAttachmentForUpload(with: id) { [weak self] attachment in
             guard let attachment = attachment else {
-                self?.removePendingAttachment(with: id, error: ClientError.AttachmentDoesNotExist(id: id))
+                self?.removePendingAttachment(with: id, result: .failure(ClientError.AttachmentDoesNotExist(id: id)))
                 return
             }
 
@@ -100,7 +100,7 @@ class AttachmentQueueUploader: Worker {
                         uploadedAttachment: result.value,
                         newState: result.error == nil ? .uploaded : .uploadingFailed,
                         completion: {
-                            self?.removePendingAttachment(with: id, error: result.error)
+                            self?.removePendingAttachment(with: id, result: result)
                         }
                     )
                 }
@@ -133,10 +133,10 @@ class AttachmentQueueUploader: Worker {
         }
     }
 
-    private func removePendingAttachment(with id: AttachmentId, error: Error?) {
+    private func removePendingAttachment(with id: AttachmentId, result: Result<UploadedAttachment, Error>) {
         _pendingAttachmentIDs.mutate { $0.remove(id) }
         if #available(iOS 13.0, *) {
-            notifyAPIRequestFinished(for: id, error: error)
+            notifyAPIRequestFinished(for: id, result: result)
         }
     }
 
@@ -306,26 +306,22 @@ private class AttachmentStorage {
 
 @available(iOS 13.0, *)
 extension AttachmentQueueUploader {
-    func waitForAPIRequest(attachmentId: AttachmentId) async throws {
+    func waitForAPIRequest(attachmentId: AttachmentId) async throws -> UploadedAttachment {
         try await withCheckedThrowingContinuation { continuation in
             registerContinuation(for: attachmentId, continuation: continuation)
         }
     }
     
-    private func registerContinuation(for attachmentId: AttachmentId, continuation: CheckedContinuation<Void, Error>) {
+    private func registerContinuation(for attachmentId: AttachmentId, continuation: CheckedContinuation<UploadedAttachment, Error>) {
         continuationsQueue.async {
             self.continuations[attachmentId] = continuation
         }
     }
     
-    private func notifyAPIRequestFinished(for attachmentId: AttachmentId, error: Error?) {
+    private func notifyAPIRequestFinished(for attachmentId: AttachmentId, result: Result<UploadedAttachment, Error>) {
         continuationsQueue.async {
-            guard let continuation = self.continuations.removeValue(forKey: attachmentId) as? CheckedContinuation<Void, Error> else { return }
-            if let error {
-                continuation.resume(throwing: error)
-            } else {
-                continuation.resume(returning: ())
-            }
+            guard let continuation = self.continuations.removeValue(forKey: attachmentId) as? CheckedContinuation<UploadedAttachment, Error> else { return }
+            continuation.resume(with: result)
         }
     }
 }

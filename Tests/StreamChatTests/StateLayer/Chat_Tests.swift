@@ -183,6 +183,55 @@ final class Chat_Tests: XCTestCase {
     
     // MARK: - Messages
     
+    func test_resendAttachment_whenAPIRequestSucceeds_thenResendAttachmentSucceeds() async throws {
+        try await setUpChat(usesMockedUpdaters: false)
+        
+        try await env.client.mockDatabaseContainer.write { session in
+            let dto = try session.saveChannel(payload: self.makeChannelPayload(messageCount: 1, createdAtOffset: 0))
+            let messageId = try XCTUnwrap(dto.messages.first?.id)
+            let attachmentId = AttachmentId(cid: self.channelId, messageId: messageId, index: 0)
+            let attachment = AnyAttachmentPayload.mockImage
+            let attachmentDto = try session.createNewAttachment(attachment: attachment, id: attachmentId)
+            attachmentDto.localState = .uploadingFailed
+        }
+        
+        let attachmentMessage = try await MainActor.run { try XCTUnwrap(chat.state.messages.first) }
+        let attachmentId = AttachmentId(cid: channelId, messageId: attachmentMessage.id, index: 0)
+        var uploadingState = try XCTUnwrap(attachmentMessage.attachment(with: attachmentId)?.uploadingState)
+        XCTAssertEqual(LocalAttachmentState.uploadingFailed, uploadingState.state)
+        
+        env.client.mockAPIClient.uploadFile_completion_result = .success(.dummy())
+        let result = try await chat.resendAttachment(attachmentId)
+        XCTAssertEqual(nil, result.attachment.uploadingState?.state)
+    }
+    
+    func test_resendAttachment_whenAPIRequestFails_thenResendAttachmentFails() async throws {
+        try await setUpChat(usesMockedUpdaters: false)
+        
+        try await env.client.mockDatabaseContainer.write { session in
+            let dto = try session.saveChannel(payload: self.makeChannelPayload(messageCount: 1, createdAtOffset: 0))
+            let messageId = try XCTUnwrap(dto.messages.first?.id)
+            let attachmentId = AttachmentId(cid: self.channelId, messageId: messageId, index: 0)
+            let attachment = AnyAttachmentPayload.mockImage
+            let attachmentDto = try session.createNewAttachment(attachment: attachment, id: attachmentId)
+            attachmentDto.localState = .uploadingFailed
+        }
+        
+        let attachmentMessage = try await MainActor.run { try XCTUnwrap(chat.state.messages.first) }
+        let attachmentId = AttachmentId(cid: channelId, messageId: attachmentMessage.id, index: 0)
+        var uploadingState = try XCTUnwrap(attachmentMessage.attachment(with: attachmentId)?.uploadingState)
+        XCTAssertEqual(LocalAttachmentState.uploadingFailed, uploadingState.state)
+        
+        env.client.mockAPIClient.uploadFile_completion_result = .failure(expectedTestError)
+        await XCTAssertAsyncFailure(
+            try await chat.resendAttachment(attachmentId),
+            expectedTestError
+        )
+        
+        uploadingState = try XCTUnwrap(attachmentMessage.attachment(with: attachmentId)?.uploadingState)
+        XCTAssertEqual(LocalAttachmentState.uploadingFailed, uploadingState.state)
+    }
+    
     func test_resendMessage_whenAPIRequestSucceeds_thenSendMessageSucceeds() async throws {
         try await setUpChat(usesMockedUpdaters: false)
         await XCTAssertEqual(0, chat.state.messages.count)
@@ -627,14 +676,6 @@ final class Chat_Tests: XCTestCase {
 //        let messageId: MessageId = .unique
 //        await XCTAssertAsyncFailure(try await chat.resendMessage(messageId), expectedTestError)
 //        XCTAssertEqual(messageId, env.messageUpdater.resendMessage_messageId)
-    }
-    
-    // TODO: fails due to backgroundWorker
-    func test_resendAttachment_whenAPIRequestSucceeds_thenResendAttachmentSucceeds() async throws {
-//        env.messageUpdater.restartFailedAttachmentUploading_completion_result = .success(())
-//        let attachmentId: AttachmentId = .unique
-//        try await chat.resendAttachment(attachmentId)
-//        XCTAssertEqual(attachmentId, env.messageUpdater.restartFailedAttachmentUploading_id)
     }
     
     // TODO: fails due to backgroundWorker
@@ -1512,6 +1553,13 @@ extension Chat_Tests {
                     eventsNotificationCenter: client.eventNotificationCenter,
                     database: client.databaseContainer,
                     apiClient: client.apiClient
+                )
+            )
+            client.addBackgroundWorker(
+                AttachmentQueueUploader(
+                    database: client.databaseContainer,
+                    apiClient: client.apiClient,
+                    attachmentPostProcessor: nil
                 )
             )
         }
