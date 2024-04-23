@@ -118,6 +118,10 @@ final class CurrentUserUpdater_Tests: XCTestCase {
             currentUserId: expectedId,
             name: expectedName,
             imageURL: expectedImageUrl,
+            privacySettings: .init(
+                typingIndicators: .init(enabled: false),
+                readReceipts: .init(enabled: false)
+            ),
             completion: { _ in
                 completionCalled = true
             }
@@ -143,6 +147,8 @@ final class CurrentUserUpdater_Tests: XCTestCase {
             Assert.willBeEqual(currentUser?.id, expectedId)
             Assert.willBeEqual(currentUser?.name, expectedName)
             Assert.willBeEqual(currentUser?.imageURL, expectedImageUrl)
+            Assert.willBeEqual(currentUser?.privacySettings.readReceipts?.enabled, false)
+            Assert.willBeEqual(currentUser?.privacySettings.typingIndicators?.enabled, false)
         }
     }
 

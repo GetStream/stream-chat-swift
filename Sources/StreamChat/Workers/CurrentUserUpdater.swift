@@ -45,8 +45,7 @@ class CurrentUserUpdater: Worker {
                 switch $0 {
                 case let .success(response):
                     self?.database.write({ (session) in
-                        let userDTO = try session.saveUser(payload: response.user)
-                        session.currentUser?.user = userDTO
+                        try session.saveCurrentUser(payload: response.user)
                     }) { completion?($0) }
                 case let .failure(error):
                     completion?(error)
