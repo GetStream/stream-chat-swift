@@ -132,7 +132,11 @@ final class CurrentUserUpdater_Tests: XCTestCase {
             user: CurrentUserPayload.dummy(
                 userId: userPayload.id,
                 name: expectedName,
-                imageUrl: expectedImageUrl
+                imageUrl: expectedImageUrl,
+                privacySettings: .init(
+                    typingIndicators: .init(enabled: false),
+                    readReceipts: .init(enabled: false)
+                )
             )
         )
         apiClient.test_simulateResponse(.success(currentUserUpdateResponse))
