@@ -101,8 +101,8 @@ final class CurrentUserModelDTO_Tests: XCTestCase {
         XCTAssertEqual(Set(payload.teams), loadedCurrentUser.teams)
         XCTAssertEqual(mutedChannelIDs, Set(loadedCurrentUser.mutedChannels.map(\.cid)))
         XCTAssertEqual(payload.language, loadedCurrentUser.language?.languageCode)
-        XCTAssertEqual(false, loadedCurrentUser.privacySettings?.readReceipts?.enabled)
-        XCTAssertEqual(false, loadedCurrentUser.privacySettings?.typingIndicators?.enabled)
+        XCTAssertEqual(false, loadedCurrentUser.privacySettings.readReceipts?.enabled)
+        XCTAssertEqual(false, loadedCurrentUser.privacySettings.typingIndicators?.enabled)
     }
 
     func test_savingCurrentUser_removesCurrentDevice() throws {
@@ -253,7 +253,7 @@ final class CurrentUserModelDTO_Tests: XCTestCase {
         )
 
         // By default, the values should be true if not set.
-        XCTAssertEqual(true, loadedCurrentUser.privacySettings?.readReceipts?.enabled)
-        XCTAssertEqual(true, loadedCurrentUser.privacySettings?.typingIndicators?.enabled)
+        XCTAssertEqual(true, loadedCurrentUser.privacySettings.readReceipts?.enabled)
+        XCTAssertEqual(true, loadedCurrentUser.privacySettings.typingIndicators?.enabled)
     }
 }
