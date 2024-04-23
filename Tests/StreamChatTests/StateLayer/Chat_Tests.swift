@@ -181,6 +181,183 @@ final class Chat_Tests: XCTestCase {
         XCTAssertEqual(channelId, env.channelUpdaterMock.rejectInvite_cid)
     }
     
+    // MARK: - Messages
+    
+    func test_resendAttachment_whenAPIRequestSucceeds_thenResendAttachmentSucceeds() async throws {
+        try await setUpChat(usesMockedUpdaters: false)
+        
+        try await env.client.mockDatabaseContainer.write { session in
+            let dto = try session.saveChannel(payload: self.makeChannelPayload(messageCount: 1, createdAtOffset: 0))
+            let messageId = try XCTUnwrap(dto.messages.first?.id)
+            let attachmentId = AttachmentId(cid: self.channelId, messageId: messageId, index: 0)
+            let attachment = AnyAttachmentPayload.mockImage
+            let attachmentDto = try session.createNewAttachment(attachment: attachment, id: attachmentId)
+            attachmentDto.localState = .uploadingFailed
+        }
+        
+        let attachmentMessage = try await MainActor.run { try XCTUnwrap(chat.state.messages.first) }
+        let attachmentId = AttachmentId(cid: channelId, messageId: attachmentMessage.id, index: 0)
+        let uploadingState = try XCTUnwrap(attachmentMessage.attachment(with: attachmentId)?.uploadingState)
+        XCTAssertEqual(LocalAttachmentState.uploadingFailed, uploadingState.state)
+        
+        env.client.mockAPIClient.uploadFile_completion_result = .success(.dummy())
+        let result = try await chat.resendAttachment(attachmentId)
+        XCTAssertEqual(nil, result.attachment.uploadingState?.state)
+    }
+    
+    func test_resendAttachment_whenAPIRequestFails_thenResendAttachmentFails() async throws {
+        try await setUpChat(usesMockedUpdaters: false)
+        
+        try await env.client.mockDatabaseContainer.write { session in
+            let dto = try session.saveChannel(payload: self.makeChannelPayload(messageCount: 1, createdAtOffset: 0))
+            let messageId = try XCTUnwrap(dto.messages.first?.id)
+            let attachmentId = AttachmentId(cid: self.channelId, messageId: messageId, index: 0)
+            let attachment = AnyAttachmentPayload.mockImage
+            let attachmentDto = try session.createNewAttachment(attachment: attachment, id: attachmentId)
+            attachmentDto.localState = .uploadingFailed
+        }
+        
+        let attachmentMessage = try await MainActor.run { try XCTUnwrap(chat.state.messages.first) }
+        let attachmentId = AttachmentId(cid: channelId, messageId: attachmentMessage.id, index: 0)
+        var uploadingState = try XCTUnwrap(attachmentMessage.attachment(with: attachmentId)?.uploadingState)
+        XCTAssertEqual(LocalAttachmentState.uploadingFailed, uploadingState.state)
+        
+        env.client.mockAPIClient.uploadFile_completion_result = .failure(expectedTestError)
+        await XCTAssertAsyncFailure(
+            try await chat.resendAttachment(attachmentId),
+            expectedTestError
+        )
+        
+        uploadingState = try XCTUnwrap(attachmentMessage.attachment(with: attachmentId)?.uploadingState)
+        XCTAssertEqual(LocalAttachmentState.uploadingFailed, uploadingState.state)
+    }
+    
+    func test_resendMessage_whenAPIRequestSucceeds_thenSendMessageSucceeds() async throws {
+        try await setUpChat(usesMockedUpdaters: false)
+        await XCTAssertEqual(0, chat.state.messages.count)
+
+        let typingIndicatorResponse = EmptyResponse()
+        env.client.mockAPIClient.test_mockResponseResult(.success(typingIndicatorResponse))
+        // Fail the send message call
+        env.client.mockAPIClient.test_mockResponseResult(Result<MessagePayload.Boxed, Error>.failure(expectedTestError))
+        let text = "Text"
+        let messageId: MessageId = "abc"
+        await XCTAssertAsyncFailure(
+            try await chat.sendMessage(
+                with: text,
+                messageId: messageId
+            ),
+            MessageRepositoryError.failedToSendMessage(expectedTestError)
+        )
+        await XCTAssertEqual(1, chat.state.messages.count)
+        await XCTAssertEqual(LocalMessageState.sendingFailed, chat.state.messages.first?.localState)
+        
+        // Resend and sending succeeds
+        let apiResponse = MessagePayload.Boxed(
+            message: .dummy(
+                messageId: messageId,
+                text: text
+            )
+        )
+        env.client.mockAPIClient.test_mockResponseResult(.success(apiResponse))
+        let message = try await chat.resendMessage(messageId)
+        
+        XCTAssertEqual(text, message.text)
+        await XCTAssertEqual(1, chat.state.messages.count)
+        let messages = await chat.state.messages
+        let stateMessage = try XCTUnwrap(messages.first)
+        XCTAssertEqual(text, stateMessage.text)
+        XCTAssertEqual(nil, stateMessage.localState)
+    }
+    
+    func test_sendMessage_whenAPIRequestSucceeds_thenSendMessageSucceeds() async throws {
+        try await setUpChat(usesMockedUpdaters: false)
+        await XCTAssertEqual(0, chat.state.messages.count)
+
+        let notificationExpectation = expectation(
+            forNotification: .NewEventReceived,
+            object: nil,
+            notificationCenter: env.client.eventNotificationCenter
+        )
+        
+        let typingIndicatorResponse = EmptyResponse()
+        env.client.mockAPIClient.test_mockResponseResult(.success(typingIndicatorResponse))
+        
+        let text = "Text"
+        let apiResponse = MessagePayload.Boxed(
+            message: .dummy(
+                messageId: "0",
+                text: text
+            )
+        )
+        env.client.mockAPIClient.test_mockResponseResult(.success(apiResponse))
+        let message = try await chat.sendMessage(
+            with: apiResponse.message.text,
+            messageId: apiResponse.message.id
+        )
+        
+        #if swift(>=5.8)
+        await fulfillment(of: [notificationExpectation], timeout: defaultTimeout)
+        #else
+        wait(for: [notificationExpectation], timeout: defaultTimeout)
+        #endif
+        
+        XCTAssertEqual(text, message.text)
+        await XCTAssertEqual(1, chat.state.messages.count)
+        let messages = await chat.state.messages
+        let stateMessage = try XCTUnwrap(messages.first)
+        XCTAssertEqual(text, stateMessage.text)
+        XCTAssertEqual(nil, stateMessage.localState)
+    }
+    
+    func test_sendMessage_whenAPIRequestFails_thenSendMessageFails() async throws {
+        try await setUpChat(usesMockedUpdaters: false)
+        await XCTAssertEqual(0, chat.state.messages.count)
+        
+        let typingIndicatorResponse = EmptyResponse()
+        env.client.mockAPIClient.test_mockResponseResult(.success(typingIndicatorResponse))
+        
+        let text = "Text"
+        let apiResponse = MessagePayload.Boxed(
+            message: .dummy(
+                messageId: "0",
+                text: text
+            )
+        )
+        env.client.mockAPIClient.test_mockResponseResult(Result<MessagePayload.Boxed, Error>.failure(expectedTestError))
+        await XCTAssertAsyncFailure(
+            try await chat.sendMessage(
+                with: apiResponse.message.text,
+                messageId: apiResponse.message.id
+            ),
+            MessageRepositoryError.failedToSendMessage(expectedTestError)
+        )
+        let messages = await chat.state.messages
+        XCTAssertEqual(1, messages.count)
+        let stateMessage = try XCTUnwrap(messages.first)
+        XCTAssertEqual(text, stateMessage.text)
+        XCTAssertEqual(LocalMessageState.sendingFailed, stateMessage.localState)
+    }
+    
+    func test_updateMessage_whenAPIRequestSucceeds_thenUpdateMessageSucceeds() async throws {
+        try await env.client.databaseContainer.write { session in
+            try session.saveChannel(payload: self.makeChannelPayload(messageCount: 1, createdAtOffset: 0))
+        }
+        
+        try await setUpChat(usesMockedUpdaters: false)
+        await XCTAssertEqual(1, chat.state.messages.count)
+        let messages = await chat.state.messages
+        let messageId = try XCTUnwrap(messages.first?.id)
+        
+        // Typing indicator and edit message
+        env.client.mockAPIClient.test_mockResponseResult(.success(EmptyResponse()))
+        env.client.mockAPIClient.test_mockResponseResult(.success(EmptyResponse()))
+        
+        let message = try await chat.updateMessage(messageId, text: "New Text")
+        XCTAssertEqual("New Text", message.text)
+        XCTAssertEqual(nil, message.localState)
+    }
+    
     // MARK: - Message Loading and State
     
     func test_restoreMessages_whenExistingMessages_thenStateUpdates() async throws {
@@ -502,76 +679,11 @@ final class Chat_Tests: XCTestCase {
     }
     
     // TODO: fails due to backgroundWorker
-    func test_resendAttachment_whenAPIRequestSucceeds_thenResendAttachmentSucceeds() async throws {
-//        env.messageUpdater.restartFailedAttachmentUploading_completion_result = .success(())
-//        let attachmentId: AttachmentId = .unique
-//        try await chat.resendAttachment(attachmentId)
-//        XCTAssertEqual(attachmentId, env.messageUpdater.restartFailedAttachmentUploading_id)
-    }
-    
-    // TODO: fails due to backgroundWorker
     func test_resendAttachment_whenAPIRequestFails_thenResendAttachmentSucceeds() async throws {
 //        env.messageUpdater.restartFailedAttachmentUploading_completion_result = .failure(expectedTestError)
 //        let attachmentId: AttachmentId = .unique
 //        await XCTAssertAsyncFailure(try await chat.resendAttachment(attachmentId), expectedTestError)
 //        XCTAssertEqual(attachmentId, env.messageUpdater.restartFailedAttachmentUploading_id)
-    }
-    
-    func test_sendMessage_whenAPIRequestSucceeds_thenSendMessageSucceeds() async throws {
-        env.client.mockAuthenticationRepository.mockedCurrentUserId = .unique
-        try await setUpChat(usesMockedUpdaters: false)
-        await XCTAssertEqual(0, chat.state.messages.count)
-
-        let notificationExpectation = expectation(
-            forNotification: .NewEventReceived,
-            object: nil,
-            notificationCenter: env.client.eventNotificationCenter
-        )
-        
-        let typingIndicatorRespoinse = EmptyResponse()
-        env.client.mockAPIClient.test_mockResponseResult(.success(typingIndicatorRespoinse))
-        
-        let text = "Text"
-        let apiResponse = MessagePayload.Boxed(
-            message: .dummy(
-                messageId: "0",
-                text: text
-            )
-        )
-        env.client.mockAPIClient.test_mockResponseResult(.success(apiResponse))
-        let message = try await chat.sendMessage(
-            with: apiResponse.message.text,
-            messageId: apiResponse.message.id
-        )
-        
-        #if swift(>=5.8)
-        await fulfillment(of: [notificationExpectation], timeout: defaultTimeout)
-        #else
-        wait(for: [notificationExpectation], timeout: defaultTimeout)
-        #endif
-        
-        XCTAssertEqual(text, message.text)
-        await XCTAssertEqual(1, chat.state.messages.count)
-        let messages = await chat.state.messages
-        let stateMessage = try XCTUnwrap(messages.first)
-        XCTAssertEqual(text, stateMessage.text)
-        XCTAssertEqual(nil, stateMessage.localState)
-    }
-    
-    // TODO: fails due to backgroundWorker
-    func test_sendMessage_whenAPIRequestFails_thenSendMessageSucceeds() async throws {
-//        let currentUserId = String.unique
-//        let messageId: MessageId = .unique
-//        let text: String = "Test message"
-//        env.channelUpdaterMock.createNewMessage_completion_result = .failure(expectedTestError)
-//        await XCTAssertAsyncFailure(_ = try await chat.sendMessage(with: text, messageId: messageId), expectedTestError)
-//        XCTAssertEqual(channelId, env.channelUpdaterMock.createNewMessage_cid)
-//        XCTAssertEqual(text, env.channelUpdaterMock.createNewMessage_text)
-    }
-    
-    // TODO: not done
-    func test_updateMessage_whenAPIRequestSucceeds_thenUpdateMessageSucceeds() async throws {
-        // updateMessage(_ messageId: MessageId, with text: String, attachments: [AnyAttachmentPayload] = [], extraData: [String: RawJSON]? = nil, skipEnrichURL: Bool = false)
     }
     
     // TODO: not done
@@ -1422,9 +1534,18 @@ extension Chat_Tests {
         }
         
         init() {
+            var config = ChatClient_Mock.defaultMockedConfig
+            config.isClientInActiveMode = true
             client = ChatClient_Mock(
-                config: ChatClient_Mock.defaultMockedConfig,
+                config: config,
                 environment: Self.chatClientEnvironment()
+            )
+            client.addBackgroundWorker(
+                MessageEditor(
+                    messageRepository: client.messageRepository,
+                    database: client.databaseContainer,
+                    apiClient: client.apiClient
+                )
             )
             client.addBackgroundWorker(
                 MessageSender(
@@ -1432,6 +1553,13 @@ extension Chat_Tests {
                     eventsNotificationCenter: client.eventNotificationCenter,
                     database: client.databaseContainer,
                     apiClient: client.apiClient
+                )
+            )
+            client.addBackgroundWorker(
+                AttachmentQueueUploader(
+                    database: client.databaseContainer,
+                    apiClient: client.apiClient,
+                    attachmentPostProcessor: nil
                 )
             )
         }

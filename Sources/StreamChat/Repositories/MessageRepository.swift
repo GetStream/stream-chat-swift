@@ -158,7 +158,7 @@ class MessageRepository {
     }
 
     func saveSuccessfullyEditedMessage(for id: MessageId, completion: @escaping () -> Void) {
-        updateMessage(withID: id, localState: nil, completion: completion)
+        updateMessage(withID: id, localState: nil, completion: { _ in completion() })
     }
 
     func saveSuccessfullyDeletedMessage(message: MessagePayload, completion: ((Error?) -> Void)? = nil) {
@@ -213,18 +213,18 @@ class MessageRepository {
         }
     }
 
-    func updateMessage(withID id: MessageId, localState: LocalMessageState?, completion: @escaping () -> Void) {
+    func updateMessage(withID id: MessageId, localState: LocalMessageState?, completion: @escaping (Result<ChatMessage, Error>) -> Void) {
+        var message: ChatMessage?
         database.write({
             let dto = $0.message(id: id)
             dto?.localMessageState = localState
+            message = try dto?.asModel()
         }, completion: { error in
             if let error = error {
-                log
-                    .error(
-                        "Error changing localMessageState for message with id \(id) to `\(String(describing: localState))`: \(error)"
-                    )
+                completion(.failure(error))
+            } else {
+                completion(.success(message!))
             }
-            completion()
         })
     }
 

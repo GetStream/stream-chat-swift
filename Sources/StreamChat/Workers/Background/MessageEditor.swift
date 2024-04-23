@@ -75,30 +75,35 @@ class MessageEditor: Worker {
                 let dto = session.message(id: messageId),
                 dto.localMessageState == .pendingSync
             else {
-                self?.removeMessageIDAndContinue(messageId, error: ClientError.MessageDoesNotExist(messageId: messageId))
+                self?.removeMessageIDAndContinue(messageId, result: .failure(ClientError.MessageDoesNotExist(messageId: messageId)))
                 return
             }
 
             let requestBody = dto.asRequestBody() as MessageRequestBody
-            messageRepository?.updateMessage(withID: messageId, localState: .syncing) {
-                self?.apiClient.request(endpoint: .editMessage(payload: requestBody, skipEnrichUrl: dto.skipEnrichUrl)) { result in
-                    let newMessageState: LocalMessageState? = result.error == nil ? nil : .syncingFailed
+            messageRepository?.updateMessage(withID: messageId, localState: .syncing) { _ in
+                self?.apiClient.request(endpoint: .editMessage(payload: requestBody, skipEnrichUrl: dto.skipEnrichUrl)) { apiResult in
+                    let newMessageState: LocalMessageState? = apiResult.error == nil ? nil : .syncingFailed
 
                     messageRepository?.updateMessage(
                         withID: messageId,
                         localState: newMessageState
-                    ) {
-                        self?.removeMessageIDAndContinue(messageId, error: result.error)
+                    ) { updateResult in
+                        switch apiResult {
+                        case .success:
+                            self?.removeMessageIDAndContinue(messageId, result: updateResult)
+                        case let .failure(apiError):
+                            self?.removeMessageIDAndContinue(messageId, result: .failure(apiError))
+                        }
                     }
                 }
             }
         }
     }
 
-    private func removeMessageIDAndContinue(_ messageId: MessageId, error: Error?) {
+    private func removeMessageIDAndContinue(_ messageId: MessageId, result: Result<ChatMessage, Error>) {
         _pendingMessageIDs.mutate { $0.remove(messageId) }
         if #available(iOS 13.0, *) {
-            notifyAPIRequestFinished(for: messageId, error: error)
+            notifyAPIRequestFinished(for: messageId, result: result)
         }
         processNextMessage()
     }
@@ -121,26 +126,22 @@ private extension Array where Element == ListChange<MessageDTO> {
 
 @available(iOS 13.0, *)
 extension MessageEditor {
-    func waitForAPIRequest(messageId: MessageId) async throws {
+    func waitForAPIRequest(messageId: MessageId) async throws -> ChatMessage {
         try await withCheckedThrowingContinuation { continuation in
             registerContinuation(forMessage: messageId, continuation: continuation)
         }
     }
     
-    private func registerContinuation(forMessage messageId: MessageId, continuation: CheckedContinuation<Void, Error>) {
+    private func registerContinuation(forMessage messageId: MessageId, continuation: CheckedContinuation<ChatMessage, Error>) {
         continuationsQueue.async {
             self.continuations[messageId] = continuation
         }
     }
     
-    private func notifyAPIRequestFinished(for messageId: MessageId, error: Error?) {
+    private func notifyAPIRequestFinished(for messageId: MessageId, result: Result<ChatMessage, Error>) {
         continuationsQueue.async {
-            guard let continuation = self.continuations.removeValue(forKey: messageId) as? CheckedContinuation<Void, Error> else { return }
-            if let error {
-                continuation.resume(throwing: error)
-            } else {
-                continuation.resume(returning: ())
-            }
+            guard let continuation = self.continuations.removeValue(forKey: messageId) as? CheckedContinuation<ChatMessage, Error> else { return }
+            continuation.resume(with: result)
         }
     }
 }
