@@ -35,6 +35,7 @@ final class APIClient_Spy: APIClient, Spy {
     @Atomic var uploadFile_attachment: AnyChatMessageAttachment?
     @Atomic var uploadFile_progress: ((Double) -> Void)?
     @Atomic var uploadFile_completion: ((Result<UploadedAttachment, Error>) -> Void)?
+    @Atomic var uploadFile_completion_result: Result<UploadedAttachment, Error>?
     @Atomic var uploadFile_callCount = 0
 
     @Atomic var init_sessionConfiguration: URLSessionConfiguration
@@ -62,6 +63,7 @@ final class APIClient_Spy: APIClient, Spy {
         uploadFile_attachment = nil
         uploadFile_progress = nil
         uploadFile_completion = nil
+        uploadFile_completion_result = nil
 
         flushRequestsQueue()
     }
@@ -151,6 +153,7 @@ final class APIClient_Spy: APIClient, Spy {
         uploadFile_attachment = attachment
         uploadFile_progress = progress
         uploadFile_completion = completion
+        uploadFile_completion_result?.invoke(with: completion)
         uploadFile_callCount += 1
         uploadRequest_expectation.fulfill()
     }
