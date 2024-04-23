@@ -61,12 +61,12 @@ final class MessageUpdater_Tests: XCTestCase {
 
     func test_editMessage_propagates_CurrentUserDoesNotExist_Error() throws {
         // Simulate `editMessage(messageId:, text:)` call
-        let completionError = try waitFor {
+        let completionResult = try waitFor {
             messageUpdater.editMessage(messageId: .unique, text: .unique, skipEnrichUrl: false, completion: $0)
         }
 
         // Assert `CurrentUserDoesNotExist` is received
-        XCTAssertTrue(completionError is ClientError.CurrentUserDoesNotExist)
+        XCTAssertTrue(completionResult.error is ClientError.CurrentUserDoesNotExist)
     }
 
     func test_editMessage_propagates_MessageDoesNotExist_Error() throws {
@@ -74,12 +74,12 @@ final class MessageUpdater_Tests: XCTestCase {
         try database.createCurrentUser()
 
         // Simulate `editMessage(messageId:, text:)` call
-        let completionError = try waitFor {
+        let completionResult = try waitFor {
             messageUpdater.editMessage(messageId: .unique, text: .unique, skipEnrichUrl: false, completion: $0)
         }
 
         // Assert `MessageDoesNotExist` is received
-        XCTAssertTrue(completionError is ClientError.MessageDoesNotExist)
+        XCTAssertTrue(completionResult.error is ClientError.MessageDoesNotExist)
     }
 
     func test_editMessage_updatesLocalMessageCorrectly() throws {
@@ -127,7 +127,7 @@ final class MessageUpdater_Tests: XCTestCase {
             try database.createMessage(id: quotingMessageId, authorId: currentUserId, quotedMessageId: messageId)
 
             // Edit created message with new text
-            let completionError = try waitFor {
+            let completionResult = try waitFor {
                 messageUpdater.editMessage(messageId: messageId, text: updatedText, skipEnrichUrl: true, completion: $0)
             }
 
@@ -138,7 +138,7 @@ final class MessageUpdater_Tests: XCTestCase {
             let quotingMessage = try XCTUnwrap(database.viewContext.message(id: quotingMessageId))
 
             // Assert completion is called without any error
-            XCTAssertNil(completionError)
+            XCTAssertNil(completionResult.error)
             // Assert message still has expected local state
             XCTAssertEqual(message.localMessageState, expectedState)
             // Assert message text is updated correctly
@@ -192,15 +192,15 @@ final class MessageUpdater_Tests: XCTestCase {
         let message = try XCTUnwrap(database.viewContext.message(id: messageId))
 
         // Edit created message with new text
-        let completionError = try waitFor {
+        let completionResult = try waitFor {
             messageUpdater.editMessage(messageId: messageId, text: updatedText, skipEnrichUrl: false, completion: $0)
         }
 
         // Load the edited message
-        let editedMessage = try XCTUnwrap(database.viewContext.message(id: messageId))
+        _ = try XCTUnwrap(database.viewContext.message(id: messageId))
 
         // Assert completion is called without any error
-        XCTAssertNil(completionError)
+        XCTAssertNil(completionResult.error)
         // Assert message still has expected local state
         XCTAssertEqual(message.localMessageState, .pendingSend)
         // Assert message text is updated correctly
@@ -237,7 +237,7 @@ final class MessageUpdater_Tests: XCTestCase {
             try database.createMessage(id: messageId, authorId: currentUserId, text: initialText, localState: state)
 
             // Edit created message with new text
-            let completionError = try waitFor {
+            let completionResult = try waitFor {
                 messageUpdater.editMessage(messageId: messageId, text: updatedText, skipEnrichUrl: false, completion: $0)
             }
 
@@ -249,7 +249,7 @@ final class MessageUpdater_Tests: XCTestCase {
             )
 
             // Assert `MessageEditing` error is received
-            XCTAssertTrue(completionError is ClientError.MessageEditing)
+            XCTAssertTrue(completionResult.error is ClientError.MessageEditing)
             // Assert message stays in the same state
             XCTAssertEqual(message.localMessageState, state)
             // Assert message's text stays the same
@@ -281,7 +281,7 @@ final class MessageUpdater_Tests: XCTestCase {
         XCTAssertEqual(encodedCreatedExtraData, extraData)
 
         // Edit created message with new text
-        let completionError = try waitFor {
+        let completionResult = try waitFor {
             messageUpdater.editMessage(
                 messageId: messageId,
                 text: updatedText,
@@ -299,7 +299,7 @@ final class MessageUpdater_Tests: XCTestCase {
         )
 
         // Assert completion is called without any error
-        XCTAssertNil(completionError)
+        XCTAssertNil(completionResult.error)
         // Assert message's extra data is updated
         XCTAssertEqual(encodedExtraData, updatedExtraData)
     }
@@ -325,7 +325,7 @@ final class MessageUpdater_Tests: XCTestCase {
         XCTAssertEqual(encodedCreatedExtraData, extraData)
 
         // Edit created message with new text
-        let completionError = try waitFor {
+        let completionResult = try waitFor {
             messageUpdater.editMessage(
                 messageId: messageId,
                 text: updatedText,
@@ -343,7 +343,7 @@ final class MessageUpdater_Tests: XCTestCase {
         )
 
         // Assert completion is called without any error
-        XCTAssertNil(completionError)
+        XCTAssertNil(completionResult.error)
         // Assert message's extra data is updated
         XCTAssertEqual(encodedExtraData, extraData)
     }
@@ -370,7 +370,7 @@ final class MessageUpdater_Tests: XCTestCase {
         XCTAssertEqual(databaseAttachmentTypes.sorted { $0.rawValue < $1.rawValue }, originalAttachmentTypes.sorted { $0.rawValue < $1.rawValue })
 
         // Edit created message with new attaachments
-        let completionError = try waitFor {
+        let completionResult = try waitFor {
             messageUpdater.editMessage(
                 messageId: messageId,
                 text: updatedText,
@@ -385,7 +385,7 @@ final class MessageUpdater_Tests: XCTestCase {
         let updatedDatabaseAttachmentTypes = message.attachments.map(\.attachmentType)
 
         // Assert completion is called without any error
-        XCTAssertNil(completionError)
+        XCTAssertNil(completionResult.error)
         // Assert message's attachments are updated
         XCTAssertEqual(updatedDatabaseAttachmentTypes.sorted { $0.rawValue < $1.rawValue }, updatedAttachmentsTypes.sorted { $0.rawValue < $1.rawValue })
     }
@@ -782,7 +782,7 @@ final class MessageUpdater_Tests: XCTestCase {
         }
 
         // Load the message
-        let message = try XCTUnwrap(database.viewContext.message(id: secondMessageId))
+        _ = try XCTUnwrap(database.viewContext.message(id: secondMessageId))
 
         // Delete second message
         let expectation = expectation(description: "deleteMessage completes")
