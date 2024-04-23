@@ -197,7 +197,7 @@ final class Chat_Tests: XCTestCase {
         
         let attachmentMessage = try await MainActor.run { try XCTUnwrap(chat.state.messages.first) }
         let attachmentId = AttachmentId(cid: channelId, messageId: attachmentMessage.id, index: 0)
-        var uploadingState = try XCTUnwrap(attachmentMessage.attachment(with: attachmentId)?.uploadingState)
+        let uploadingState = try XCTUnwrap(attachmentMessage.attachment(with: attachmentId)?.uploadingState)
         XCTAssertEqual(LocalAttachmentState.uploadingFailed, uploadingState.state)
         
         env.client.mockAPIClient.uploadFile_completion_result = .success(.dummy())
