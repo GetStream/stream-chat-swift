@@ -20,7 +20,7 @@ final class MessageUpdater_Mock: MessageUpdater {
     @Atomic var editMessage_text: String?
     @Atomic var editMessage_skipEnrichUrl: Bool?
     @Atomic var editMessage_attachments: [AnyAttachmentPayload]?
-    @Atomic var editMessage_completion: ((Error?) -> Void)?
+    @Atomic var editMessage_completion: ((Result<ChatMessage, Error>) -> Void)?
     @Atomic var editMessage_extraData: [String: RawJSON]?
 
     @Atomic var createNewReply_cid: ChannelId?
@@ -213,14 +213,14 @@ final class MessageUpdater_Mock: MessageUpdater {
         deleteMessage_completion = completion
         deleteMessage_completion_result?.invoke(with: completion)
     }
-
+    
     override func editMessage(
         messageId: MessageId,
         text: String,
         skipEnrichUrl: Bool,
         attachments: [AnyAttachmentPayload] = [],
         extraData: [String: RawJSON]? = nil,
-        completion: ((Error?) -> Void)? = nil
+        completion: ((Result<ChatMessage, Error>) -> Void)? = nil
     ) {
         editMessage_messageId = messageId
         editMessage_text = text
