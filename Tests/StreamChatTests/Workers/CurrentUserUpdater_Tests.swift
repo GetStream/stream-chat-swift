@@ -273,8 +273,6 @@ final class CurrentUserUpdater_Tests: XCTestCase {
             completionCalledError = $0
         }
 
-        apiClient.cleanUp()
-
         // Assert the completion is called with the error
         AssertAsync.willBeEqual(completionCalledError as? TestError, error)
     }

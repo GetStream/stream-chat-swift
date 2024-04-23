@@ -63,7 +63,7 @@ final class MessageRepository_Mock: MessageRepository, Spy {
     override func updateMessage(
         withID id: MessageId,
         localState: LocalMessageState?,
-        completion: @escaping (Result<ChatMessage, any Error>) -> Void
+        completion: @escaping (Result<ChatMessage, Error>) -> Void
     ) {
         record()
         updatedMessageLocalState = localState

@@ -81,14 +81,19 @@ class MessageEditor: Worker {
 
             let requestBody = dto.asRequestBody() as MessageRequestBody
             messageRepository?.updateMessage(withID: messageId, localState: .syncing) { _ in
-                self?.apiClient.request(endpoint: .editMessage(payload: requestBody, skipEnrichUrl: dto.skipEnrichUrl)) { result in
-                    let newMessageState: LocalMessageState? = result.error == nil ? nil : .syncingFailed
+                self?.apiClient.request(endpoint: .editMessage(payload: requestBody, skipEnrichUrl: dto.skipEnrichUrl)) { apiResult in
+                    let newMessageState: LocalMessageState? = apiResult.error == nil ? nil : .syncingFailed
 
                     messageRepository?.updateMessage(
                         withID: messageId,
                         localState: newMessageState
                     ) { updateResult in
-                        self?.removeMessageIDAndContinue(messageId, result: updateResult)
+                        switch apiResult {
+                        case .success:
+                            self?.removeMessageIDAndContinue(messageId, result: updateResult)
+                        case let .failure(apiError):
+                            self?.removeMessageIDAndContinue(messageId, result: .failure(apiError))
+                        }
                     }
                 }
             }

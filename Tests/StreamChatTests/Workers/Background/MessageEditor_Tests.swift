@@ -22,6 +22,7 @@ final class MessageEditor_Tests: XCTestCase {
         apiClient = APIClient_Spy()
         database = DatabaseContainer_Spy()
         messageRepository = MessageRepository_Mock(database: database, apiClient: apiClient)
+        messageRepository.updateMessageResult = .success(.mock())
         editor = MessageEditor(messageRepository: messageRepository, database: database, apiClient: apiClient)
     }
 
