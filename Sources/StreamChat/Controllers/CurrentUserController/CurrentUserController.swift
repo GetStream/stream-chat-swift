@@ -159,11 +159,13 @@ public extension CurrentChatUserController {
     /// - Parameters:
     ///   - name: Optionally provide a new name to be updated.
     ///   - imageURL: Optionally provide a new image to be updated.
+    ///   - privacySettings: The privacy settings of the user. Example: If the user does not want to expose typing events or read events.
     ///   - userExtraData: Optionally provide new user extra data to be updated.
     ///   - completion: Called when user is successfuly updated, or with error.
     func updateUserData(
         name: String? = nil,
         imageURL: URL? = nil,
+        privacySettings: UserPrivacySettings? = nil,
         userExtraData: [String: RawJSON] = [:],
         completion: ((Error?) -> Void)? = nil
     ) {
@@ -176,6 +178,7 @@ public extension CurrentChatUserController {
             currentUserId: currentUserId,
             name: name,
             imageURL: imageURL,
+            privacySettings: privacySettings,
             userExtraData: userExtraData
         ) { error in
             self.callback {
