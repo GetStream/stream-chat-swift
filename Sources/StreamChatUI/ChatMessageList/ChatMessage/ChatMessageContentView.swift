@@ -1064,7 +1064,7 @@ public extension ChatMessage {
     /// The message reaction data ready to be presented in a view.
     var reactionsData: [ChatMessageReactionData] {
         let userReactionIDs = Set(currentUserReactions.map(\.type))
-        if !reactionGroups.isEmpty {
+        if reactionGroups.count == reactionScores.count {
             return reactionGroups.values
                 .map { ChatMessageReactionData(
                     reactionGroup: $0,
