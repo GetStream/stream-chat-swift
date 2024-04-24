@@ -11,7 +11,12 @@ extension MessageState {
         private let messageObserver: StateLayerDatabaseObserver<EntityResult, ChatMessage, MessageDTO>
         private let repliesObserver: StateLayerDatabaseObserver<ListResult, ChatMessage, MessageDTO>
         
-        init(messageId: MessageId, messageOrder: MessageOrdering, database: DatabaseContainer, clientConfig: ChatClientConfig) {
+        init(
+            messageId: MessageId,
+            messageOrder: MessageOrdering,
+            database: DatabaseContainer,
+            clientConfig: ChatClientConfig
+        ) {
             self.messageId = messageId
             messageObserver = StateLayerDatabaseObserver(
                 databaseContainer: database,
@@ -48,7 +53,8 @@ extension MessageState {
                 let message = try messageObserver.startObserving(onContextDidChange: { message in
                     guard let message else { return }
                     let changedReactions: [ChatMessageReaction]?
-                    let currentReactions = message.latestReactions.sorted(by: ChatMessageReaction.defaultSorting)
+                    let currentReactions = message.latestReactions
+                        .sorted(by: ChatMessageReaction.defaultSorting)
                     if lastSortedReactions != currentReactions {
                         lastSortedReactions = currentReactions
                         changedReactions = currentReactions
@@ -59,8 +65,10 @@ extension MessageState {
                         await handlers.messageDidChange((message, changedReactions))
                     }
                 })
-                let reactions = message?.latestReactions.sorted(by: ChatMessageReaction.defaultSorting) ?? []
-                let replies = try repliesObserver.startObserving(didChange: handlers.repliesDidChange)
+                let reactions = message?.latestReactions
+                    .sorted(by: ChatMessageReaction.defaultSorting) ?? []
+                let replies = try repliesObserver
+                    .startObserving(didChange: handlers.repliesDidChange)
                 return (message, reactions, replies)
             } catch {
                 log.error("Failed to start the observers for message: \(messageId) with error \(error)")

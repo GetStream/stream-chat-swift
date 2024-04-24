@@ -55,7 +55,12 @@ extension StateLayerDatabaseObserver where ResultType == EntityResult {
     var item: Item? {
         var item: Item?
         context.performAndWait {
-            item = Self.makeEntity(frc: frc, context: context, itemCreator: itemCreator, sorting: sorting)
+            item = Self.makeEntity(
+                frc: frc,
+                context: context,
+                itemCreator: itemCreator,
+                sorting: sorting
+            )
         }
         return item
     }
@@ -80,7 +85,12 @@ extension StateLayerDatabaseObserver where ResultType == EntityResult {
         resultsDelegate = FetchedResultsDelegate(onDidChange: { [weak self] in
             guard let self else { return }
             // Runs on the NSManagedObjectContext's queue, therefore skip performAndWait
-            let item = Self.makeEntity(frc: self.frc, context: self.context, itemCreator: self.itemCreator, sorting: self.sorting)
+            let item = Self.makeEntity(
+                frc: self.frc,
+                context: self.context,
+                itemCreator: self.itemCreator,
+                sorting: self.sorting
+            )
             onContextDidChange(item)
         })
         frc.delegate = resultsDelegate
@@ -115,7 +125,12 @@ extension StateLayerDatabaseObserver where ResultType == ListResult {
     var items: StreamCollection<Item> {
         var collection: StreamCollection<Item>!
         context.performAndWait {
-            collection = Self.makeCollection(frc: frc, context: context, itemCreator: itemCreator, sorting: sorting)
+            collection = Self.makeCollection(
+                frc: frc,
+                context: context,
+                itemCreator: itemCreator,
+                sorting: sorting
+            )
         }
         return collection
     }
@@ -126,7 +141,9 @@ extension StateLayerDatabaseObserver where ResultType == ListResult {
     ///
     /// - Returns: Returns the current state of items in the local database.
     func startObserving(didChange: @escaping (StreamCollection<Item>) async -> Void) throws -> StreamCollection<Item> {
-        try startObserving(onContextDidChange: { items in Task.mainActor { await didChange(items) } })
+        try startObserving(onContextDidChange: { items in
+            Task.mainActor { await didChange(items) }
+        })
     }
     
     /// Starts observing the database and dispatches changes on the NSManagedObjectContext's queue.
@@ -140,7 +157,12 @@ extension StateLayerDatabaseObserver where ResultType == ListResult {
         resultsDelegate = FetchedResultsDelegate(onDidChange: { [weak self] in
             guard let self else { return }
             // Runs on the NSManagedObjectContext's queue, therefore skip performAndWait
-            let collection = Self.makeCollection(frc: self.frc, context: self.context, itemCreator: self.itemCreator, sorting: self.sorting)
+            let collection = Self.makeCollection(
+                frc: self.frc,
+                context: self.context,
+                itemCreator: self.itemCreator,
+                sorting: self.sorting
+            )
             onContextDidChange(collection)
         })
         frc.delegate = resultsDelegate
