@@ -7,7 +7,7 @@ import AVFoundation
 @dynamicMemberLookup
 public final class MockAVURLAsset: AVURLAsset, Spy, Stub {
 
-    public var recordedFunctions: [String] = []
+    public let spyState = SpyState()
     public var stubbedProperties: [String: Any] = [:]
 
     public var statusOfValueResultMap: [String: AVKeyValueStatus] = [:]
@@ -23,7 +23,7 @@ public final class MockAVURLAsset: AVURLAsset, Spy, Stub {
         forKey key: String,
         error outError: NSErrorPointer
     ) -> AVKeyValueStatus {
-        recordedFunctions.append("statusOfValue(\(key))")
+        spyState.record("statusOfValue(\(key))")
         outError?.pointee = statusOfValueErrorMap[key] as? NSError
         return statusOfValueResultMap[key] ?? super.statusOfValue(forKey: key, error: outError)
     }

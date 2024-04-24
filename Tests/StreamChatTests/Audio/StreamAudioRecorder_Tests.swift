@@ -179,7 +179,7 @@ final class StreamAudioRecorder_Tests: XCTestCase {
 
     func test_resumeRecording_audioRecorderIsRecording_doesNotDoAnything() {
         simulateIsRecording()
-        audioSessionConfigurator.recordedFunctions = []
+        audioSessionConfigurator.clear()
         stubAVAudioRecorder.recordWasCalled = false
 
         subject.resumeRecording()
@@ -191,7 +191,7 @@ final class StreamAudioRecorder_Tests: XCTestCase {
     func test_resumeRecording_audioRecorderIsNotRecording_callsActivateRecordingSessionWhichFails_callsDidFailOnDelegate() {
         simulateIsRecording()
         subject.pauseRecording()
-        audioSessionConfigurator.recordedFunctions = []
+        audioSessionConfigurator.clear()
         stubAVAudioRecorder.recordWasCalled = false
         stubAVAudioRecorder.stubProperty(\.isRecording, with: false)
         audioSessionConfigurator.activateRecordingSessionThrowsError = genericError
@@ -205,7 +205,7 @@ final class StreamAudioRecorder_Tests: XCTestCase {
     func test_resumeRecording_audioRecorderIsNotRecording_failsToStartRecording_callsDidFailOnDelegate() {
         simulateIsRecording()
         subject.pauseRecording()
-        audioSessionConfigurator.recordedFunctions = []
+        audioSessionConfigurator.clear()
         stubAVAudioRecorder.recordWasCalled = false
         stubAVAudioRecorder.stubProperty(\.isRecording, with: false)
         stubAVAudioRecorder.recordResult = false

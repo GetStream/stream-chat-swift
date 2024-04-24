@@ -6,8 +6,8 @@ import Foundation
 @testable import StreamChat
 
 final class Logger_Spy: Logger, Spy {
+    let spyState = SpyState()
     var originalLogger: Logger?
-    var recordedFunctions: [String] = []
     var failedAsserts: Int = 0
 
     func injectMock() {

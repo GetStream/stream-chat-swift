@@ -6,7 +6,7 @@ import Foundation
 @testable import StreamChat
 
 final class OfflineRequestsRepository_Mock: OfflineRequestsRepository, Spy {
-    var recordedFunctions: [String] = []
+    let spyState = SpyState()
 
     convenience init() {
         let apiClient = APIClient_Spy()
