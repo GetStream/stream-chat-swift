@@ -172,7 +172,7 @@ final class StreamAudioSessionFeedbackGenerator_Tests: XCTestCase {
 }
 
 private final class SpyUIImpactFeedbackGenerator: UIImpactFeedbackGenerator, Spy {
-    var recordedFunctions: [String] = []
+    let spyState = SpyState()
 
     override func impactOccurred() {
         record()
@@ -180,7 +180,7 @@ private final class SpyUIImpactFeedbackGenerator: UIImpactFeedbackGenerator, Spy
 }
 
 private final class SpyUISelectionFeedbackGenerator: UISelectionFeedbackGenerator, Spy {
-    var recordedFunctions: [String] = []
+    let spyState = SpyState()
 
     override func selectionChanged() {
         record()
