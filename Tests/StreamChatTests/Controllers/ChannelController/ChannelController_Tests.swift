@@ -5102,7 +5102,7 @@ final class ChannelController_Tests: XCTestCase {
         completion(.failure(testError))
 
         // Error is propagated to completion
-        wait(for: [expectation])
+        wait(for: [expectation], timeout: defaultTimeout)
         XCTAssertEqual(completionError as? TestError, testError)
     }
 
