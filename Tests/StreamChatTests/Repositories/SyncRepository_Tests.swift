@@ -734,7 +734,7 @@ extension SyncRepository_Tests {
 
     private func waitForSyncLocalStateRun(requestResult: Result<MissingEventsPayload, Error>? = nil) {
         database.writeSessionCounter = 0
-        apiClient.recordedFunctions.removeAll()
+        apiClient.clear()
 
         let expectation = self.expectation(description: "syncLocalState completion")
         repository.syncLocalState {

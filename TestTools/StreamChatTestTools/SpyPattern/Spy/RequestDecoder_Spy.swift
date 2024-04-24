@@ -7,7 +7,7 @@ import Foundation
 import XCTest
 
 final class RequestDecoder_Spy: RequestDecoder, Spy {
-    var recordedFunctions: [String] = []
+    let spyState = SpyState()
     var decodeRequestResponse: Result<Any, Error>?
     var decodeRequestDelay: TimeInterval?
 

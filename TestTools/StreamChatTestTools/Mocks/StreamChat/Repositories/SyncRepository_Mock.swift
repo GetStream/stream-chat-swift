@@ -10,7 +10,7 @@ final class SyncRepository_Mock: SyncRepository, Spy {
         static let cancelRecoveryFlow = "cancelRecoveryFlow()"
     }
 
-    var recordedFunctions: [String] = []
+    let spyState = SpyState()
     var syncMissingEventsResult: Result<[ChannelId], SyncError>?
 
     convenience init() {

@@ -6,7 +6,7 @@ import Foundation
 @testable import StreamChat
 
 public class MockAppStateObserver: AppStateObserving, Spy {
-    public var recordedFunctions: [String] = []
+    public let spyState = SpyState()
 
     public private(set) var subscribeWasCalledWithSubscriber: AppStateObserverDelegate?
     public private(set) var unsubscribeWasCalledWithSubscriber: AppStateObserverDelegate?
