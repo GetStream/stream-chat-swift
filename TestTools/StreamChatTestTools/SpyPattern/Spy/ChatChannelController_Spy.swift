@@ -7,7 +7,7 @@ import Foundation
 
 final class ChatChannelController_Spy: ChatChannelController, Spy {
     var watchActiveChannelError: Error?
-    var recordedFunctions: [String] = []
+    let spyState = SpyState()
 
     init(client: ChatClient_Mock) {
         super.init(channelQuery: .init(cid: .unique), channelListQuery: nil, client: client)

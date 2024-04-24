@@ -11,7 +11,7 @@ final class APIClient_Spy: APIClient, Spy {
     enum Signature {
         static let flushRequestsQueue = "flushRequestsQueue()"
     }
-    var recordedFunctions: [String] = []
+    let spyState = SpyState()
 
     /// The last endpoint `request` function was called with.
     @Atomic var request_endpoint: AnyEndpoint?
