@@ -1987,14 +1987,14 @@ final class MessageUpdater_Tests: XCTestCase {
             )
 
             // Edit created message with new text
-            let completionError = try waitFor {
+            let completionResult = try waitFor {
                 messageUpdater.unpinMessage(messageId: messageId, completion: $0)
             }
 
             // Load the message
             let message = try XCTUnwrap(database.viewContext.message(id: messageId))
 
-            XCTAssertTrue(completionError is ClientError.MessageEditing)
+            XCTAssertTrue(completionResult.error is ClientError.MessageEditing)
             XCTAssertEqual(message.localMessageState, state)
             XCTAssertEqual(message.pinned, true)
             XCTAssertNotNil(message.pinExpires)
