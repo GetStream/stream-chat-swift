@@ -33,7 +33,10 @@ extension ChatClient {
     ///   - dynamicFilter: A filter block for filtering by channel's extra data fields or as a manual filter when ``ChatClientConfig/isChannelAutomaticFilteringEnabled`` is false ([read more](https://getstream.io/chat/docs/sdk/ios/client/controllers/channels/)).
     ///
     /// - Returns: An instance of ``ChannelList`` which represents actions and the state of the list.
-    public func makeChannelList(with query: ChannelListQuery, dynamicFilter: ((ChatChannel) -> Bool)? = nil) -> ChannelList {
+    public func makeChannelList(
+        with query: ChannelListQuery,
+        dynamicFilter: ((ChatChannel) -> Bool)? = nil
+    ) -> ChannelList {
         let channelList = ChannelList(query: query, dynamicFilter: dynamicFilter, client: self)
         syncRepository.trackChannelListQuery { [weak channelList] in channelList?.query }
         return channelList

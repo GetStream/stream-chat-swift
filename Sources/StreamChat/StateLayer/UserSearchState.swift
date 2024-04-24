@@ -30,7 +30,10 @@ extension UserSearchState {
     /// * Case 1: User triggered a new search. Then we need to reset the state.
     /// * Case 2: More results are loaded for the same query.
     /// Then we need to merge results while keeping the sort order and handling possible duplicates (example: calling loadNextUsers multiple times).
-    func handleDidFetchQuery(_ completedQuery: UserListQuery, users incomingUsers: [ChatUser]) async {
+    func handleDidFetchQuery(
+        _ completedQuery: UserListQuery,
+        users incomingUsers: [ChatUser]
+    ) async {
         if let query = self.query, query.hasFilterOrSortingChanged(completedQuery) {
             // Discard since filter or sorting has changed
             return
