@@ -18,7 +18,7 @@ class AuthenticationRepository_Mock: AuthenticationRepository, Spy {
         static let provideToken = "provideToken(timeout:completion:)"
     }
 
-    var recordedFunctions: [String] = []
+    let spyState = SpyState()
     var mockedToken: Token?
     var mockedCurrentUserId: UserId?
 

@@ -18,7 +18,7 @@ final class ConnectionRepository_Mock: ConnectionRepository, Spy {
         static let handleConnectionUpdate = "handleConnectionUpdate(state:onExpiredToken:)"
     }
 
-    var recordedFunctions: [String] = []
+    let spyState = SpyState()
     var connectResult: Result<Void, Error>?
 
     var disconnectSource: WebSocketConnectionState.DisconnectionSource?

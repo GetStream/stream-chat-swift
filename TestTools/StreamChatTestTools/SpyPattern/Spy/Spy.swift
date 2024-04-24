@@ -6,20 +6,43 @@ import Foundation
 import XCTest
 
 public protocol Spy: AnyObject {
-    var recordedFunctions: [String] { get set }
+    var spyState: SpyState { get }
 }
 
 public extension Spy {
     func clear() {
-        recordedFunctions.removeAll()
+        spyState.clear()
     }
-
+    
     func record(function: String = #function) {
-        recordedFunctions.append(function)
+        spyState.record(function)
     }
 
     func numberOfCalls(on function: String) -> Int {
-        recordedFunctions.reduce(0) { $0 + ($1 == function ? 1 : 0) }
+        spyState.recordedFunctions.reduce(0) { $0 + ($1 == function ? 1 : 0) }
+    }
+    
+    var recordedFunctions: [String] {
+        spyState.recordedFunctions
+    }
+}
+
+public final class SpyState {
+    private let queue = DispatchQueue(label: "io.getstream.testtools.spystate")
+    private var _recordedFunctions: [String] = []
+    
+    public init() {}
+    
+    func clear() {
+        queue.sync { _recordedFunctions.removeAll() }
+    }
+    
+    func record(_ function: String) {
+        queue.sync { _recordedFunctions.append(function) }
+    }
+    
+    var recordedFunctions: [String] {
+        queue.sync { _recordedFunctions }
     }
 }
 
