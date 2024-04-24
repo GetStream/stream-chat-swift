@@ -71,7 +71,9 @@ extension ChatState {
         ) {
             memberListObserver = memberListState.$members
                 .dropFirst()
-                .sink(receiveValue: { change in Task.mainActor { await handlers.membersDidChange(change) } })
+                .sink(receiveValue: { change in
+                    Task.mainActor { await handlers.membersDidChange(change) }
+                })
             
             do {
                 let channel = try channelObserver.startObserving(didChange: handlers.channelDidChange)

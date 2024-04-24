@@ -202,7 +202,10 @@ extension ChatState {
         }
     }
     
-    func messageState(for messageId: MessageId, provider: (MessageId) async throws -> ChatMessage) async throws -> MessageState {
+    func messageState(
+        for messageId: MessageId,
+        provider: (MessageId) async throws -> ChatMessage
+    ) async throws -> MessageState {
         if let state = messageStates.object(forKey: messageId as NSString) {
             return state
         } else {
