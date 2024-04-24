@@ -7,7 +7,7 @@ import XCTest
 
 /// Mock implementation of ChannelListUpdater
 final class ChannelListUpdater_Spy: ChannelListUpdater, Spy {
-    var recordedFunctions: [String] = []
+    let spyState = SpyState()
 
     @Atomic var update_queries: [ChannelListQuery] = []
     @Atomic var update_completion: ((Result<[ChatChannel], Error>) -> Void)?

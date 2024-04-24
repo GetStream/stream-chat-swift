@@ -120,7 +120,7 @@ private final class StubNotificationCenter: NotificationCenter {
 }
 
 private final class SpyAppStateObserverDelegate: AppStateObserverDelegate, Spy {
-    var recordedFunctions: [String] = []
+    let spyState = SpyState()
 
     func applicationDidMoveToBackground() {
         record()
