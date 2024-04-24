@@ -141,7 +141,7 @@ final class ChatMessageCell_DecorationTests: XCTestCase {
 // MARK: - Private Helpers
 
 private final class SpyUIView: UIView, Spy {
-    var recordedFunctions: [String] = []
+    let spyState = SpyState()
     var embedWasCalledWith: (subView: UIView, insets: NSDirectionalEdgeInsets)?
 
     override func embed(
