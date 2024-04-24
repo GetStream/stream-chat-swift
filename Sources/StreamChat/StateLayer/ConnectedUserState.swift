@@ -15,7 +15,8 @@ import Foundation
         self.user = user
         let initialUser = observer.start(
             with: .init(
-                userDidChange: { [weak self] in self?.user = $0 })
+                userDidChange: { [weak self] in self?.user = $0 }
+            )
         )
         if let initialUser {
             self.user = initialUser
