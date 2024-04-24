@@ -9,7 +9,7 @@ public final class MockAudioSessionConfigurator: Stub, Spy, AudioSessionConfigur
 
     // MARK: - Stub & Spy requirements
     public var stubbedProperties: [String : Any] = [:]
-    public var recordedFunctions: [String] = []
+    public let spyState = SpyState()
 
     // MARK: - Recorded function parameters
     public private(set) var requestRecordPermissionCompletionHandler: ((Bool) -> Void)?

@@ -7,7 +7,7 @@ import Foundation
 import XCTest
 
 final class RequestEncoder_Spy: RequestEncoder, Spy {
-    var recordedFunctions: [String] = []
+    let spyState = SpyState()
     let init_baseURL: URL
     let init_apiKey: APIKey
 
