@@ -83,7 +83,10 @@ public class Chat {
     /// - Throws: An error while communicating with the Stream API.
     public func get(watch: Bool) async throws {
         let query = await state.channelQuery.withOptions(forWatching: watch)
-        let payload = try await channelUpdater.update(channelQuery: query, memberSorting: state.memberSorting)
+        let payload = try await channelUpdater.update(
+            channelQuery: query,
+            memberSorting: state.memberSorting
+        )
         // cid is retrieved from the server when we are creating new channels or there is no local state present
         guard query.cid != payload.channel.cid else { return }
         await state.setChannelId(payload.channel.cid)
@@ -169,9 +172,19 @@ public class Chat {
     ///   - hideHistory: If true, the previous history is available for added members, otherwise they do not see the history. The default value is false.
     ///
     /// - Throws: An error while communicating with the Stream API.
-    public func addMembers(_ members: [UserId], systemMessage: String? = nil, hideHistory: Bool = false) async throws {
+    public func addMembers(
+        _ members: [UserId],
+        systemMessage: String? = nil,
+        hideHistory: Bool = false
+    ) async throws {
         let currentUserId = client.authenticationRepository.currentUserId
-        try await channelUpdater.addMembers(currentUserId: currentUserId, cid: cid, userIds: Set(members), message: systemMessage, hideHistory: hideHistory)
+        try await channelUpdater.addMembers(
+            currentUserId: currentUserId,
+            cid: cid,
+            userIds: Set(members),
+            message: systemMessage,
+            hideHistory: hideHistory
+        )
     }
     
     /// Removes the given users from the channel members.
@@ -183,7 +196,12 @@ public class Chat {
     /// - Throws: An error while communicating with the Stream API.
     public func removeMembers(_ members: [UserId], systemMessage: String? = nil) async throws {
         let currentUserId = client.authenticationRepository.currentUserId
-        try await channelUpdater.removeMembers(currentUserId: currentUserId, cid: cid, userIds: Set(members), message: systemMessage)
+        try await channelUpdater.removeMembers(
+            currentUserId: currentUserId,
+            cid: cid,
+            userIds: Set(members),
+            message: systemMessage
+        )
     }
     
     /// Loads channel members for the specified pagination parameters and updates ``ChatState/members``.
@@ -227,8 +245,18 @@ public class Chat {
     ///   - timeoutInMinutes: The number of minutes the user should be banned for. Nil means that the user is banned forever or until the user is unbanned explicitly.
     ///
     /// - Throws: An error while communicating with the Stream API.
-    public func banMember(_ userId: UserId, reason: String? = nil, timeout timeoutInMinutes: Int? = nil) async throws {
-        try await memberUpdater.banMember(userId, in: cid, shadow: false, for: timeoutInMinutes, reason: reason)
+    public func banMember(
+        _ userId: UserId,
+        reason: String? = nil,
+        timeout timeoutInMinutes: Int? = nil
+    ) async throws {
+        try await memberUpdater.banMember(
+            userId,
+            in: cid,
+            shadow: false,
+            for: timeoutInMinutes,
+            reason: reason
+        )
     }
     
     /// Shadow bans the specified member from the channel.
@@ -244,8 +272,18 @@ public class Chat {
     ///   - timeoutInMinutes: The number of minutes the user should be banned for. Nil means that the user is banned forever or until the user is unbanned explicitly.
     ///
     /// - Throws: An error while communicating with the Stream API.
-    public func shadowBanMember(_ userId: UserId, reason: String? = nil, timeout timeoutInMinutes: Int? = nil) async throws {
-        try await memberUpdater.banMember(userId, in: cid, shadow: true, for: timeoutInMinutes, reason: reason)
+    public func shadowBanMember(
+        _ userId: UserId,
+        reason: String? = nil,
+        timeout timeoutInMinutes: Int? = nil
+    ) async throws {
+        try await memberUpdater.banMember(
+            userId,
+            in: cid,
+            shadow: true,
+            for: timeoutInMinutes,
+            reason: reason
+        )
     }
     
     /// Removes the channel member from the ban list.
@@ -426,7 +464,12 @@ public class Chat {
     ///
     /// - Throws: An error while communicating with the Stream API.
     public func loadMessages(before messageId: MessageId?, limit: Int? = nil) async throws {
-        try await channelUpdater.loadMessages(before: messageId, limit: limit, channelQuery: state.channelQuery, loaded: state.messages)
+        try await channelUpdater.loadMessages(
+            before: messageId,
+            limit: limit,
+            channelQuery: state.channelQuery,
+            loaded: state.messages
+        )
     }
     
     /// Loads newer messages after the specified message to ``ChatState/messages``.
@@ -437,7 +480,12 @@ public class Chat {
     ///
     /// - Throws: An error while communicating with the Stream API.
     public func loadMessages(after messageId: MessageId?, limit: Int? = nil) async throws {
-        try await channelUpdater.loadMessages(after: messageId, limit: limit, channelQuery: state.channelQuery, loaded: state.messages)
+        try await channelUpdater.loadMessages(
+            after: messageId,
+            limit: limit,
+            channelQuery: state.channelQuery,
+            loaded: state.messages
+        )
     }
     
     /// Loads messages around the given message id to ``ChatState/messages``.
@@ -526,7 +574,11 @@ public class Chat {
     ///
     /// - Throws: An error while communicating with the Stream API.
     public func sendMessageAction(in messageId: MessageId, action: AttachmentAction) async throws {
-        try await messageUpdater.dispatchEphemeralMessageAction(cid: cid, messageId: messageId, action: action)
+        try await messageUpdater.dispatchEphemeralMessageAction(
+            cid: cid,
+            messageId: messageId,
+            action: action
+        )
     }
     
     // MARK: - Message Flagging
@@ -573,7 +625,10 @@ public class Chat {
     ///
     /// - Throws: An error while communicating with the Stream API.
     /// - Returns: An instance of `ChatMessage` which was pinned.
-    @discardableResult public func pinMessage(_ messageId: MessageId, pinning: MessagePinning) async throws -> ChatMessage {
+    @discardableResult public func pinMessage(
+        _ messageId: MessageId,
+        pinning: MessagePinning
+    ) async throws -> ChatMessage {
         let messageEditor = try client.backgroundWorker(of: MessageEditor.self)
         try await messageUpdater.pinMessage(messageId: messageId, pinning: pinning)
         return try await messageEditor.waitForAPIRequest(messageId: messageId)
@@ -617,7 +672,10 @@ public class Chat {
     /// - Parameters:
     ///   - messageId: The id of the message to remove the reaction from.
     ///   - type: The type that describes a message reaction. Common examples are: “like”, “love”, “smile”, etc. An user can have only 1 reaction of each type per message.
-    public func deleteReaction(from messageId: MessageId, with type: MessageReactionType) async throws {
+    public func deleteReaction(
+        from messageId: MessageId,
+        with type: MessageReactionType
+    ) async throws {
         try await messageUpdater.deleteReaction(type, messageId: messageId)
     }
     
@@ -633,8 +691,20 @@ public class Chat {
     ///   - extraData: The reaction's extra data.
     ///
     /// - Throws: An error while communicating with the Stream API.
-    public func sendReaction(to messageId: MessageId, with type: MessageReactionType, score: Int = 1, enforceUnique: Bool = false, extraData: [String: RawJSON] = [:]) async throws {
-        try await messageUpdater.addReaction(type, score: score, enforceUnique: enforceUnique, extraData: extraData, messageId: messageId)
+    public func sendReaction(
+        to messageId: MessageId,
+        with type: MessageReactionType,
+        score: Int = 1,
+        enforceUnique: Bool = false,
+        extraData: [String: RawJSON] = [:]
+    ) async throws {
+        try await messageUpdater.addReaction(
+            type,
+            score: score,
+            enforceUnique: enforceUnique,
+            extraData: extraData,
+            messageId: messageId
+        )
     }
     
     /// Loads reactions for the specified message and pagination parameters.
@@ -647,8 +717,15 @@ public class Chat {
     ///
     /// - Throws: An error while communicating with the Stream API.
     /// - Returns: An array of reactions for given limit and offset.
-    @discardableResult public func loadReactions(of messageId: MessageId, pagination: Pagination) async throws -> [ChatMessageReaction] {
-        try await messageUpdater.loadReactions(cid: cid, messageId: messageId, pagination: pagination)
+    @discardableResult public func loadReactions(
+        of messageId: MessageId,
+        pagination: Pagination
+    ) async throws -> [ChatMessageReaction] {
+        try await messageUpdater.loadReactions(
+            cid: cid,
+            messageId: messageId,
+            pagination: pagination
+        )
     }
     
     /// Loads more reactions and updates ``MessageState/reactions``.
@@ -659,10 +736,17 @@ public class Chat {
     ///
     /// - Throws: An error while communicating with the Stream API.
     /// - Returns: An array of reactions for the next page.
-    @discardableResult public func loadMoreReactions(of messageId: MessageId, limit: Int? = nil) async throws -> [ChatMessageReaction] {
+    @discardableResult public func loadMoreReactions(
+        of messageId: MessageId,
+        limit: Int? = nil
+    ) async throws -> [ChatMessageReaction] {
         let offset = try await messageState(for: messageId).reactions.count
         let pagination = Pagination(pageSize: limit ?? 25, offset: offset)
-        return try await messageUpdater.loadReactions(cid: cid, messageId: messageId, pagination: pagination)
+        return try await messageUpdater.loadReactions(
+            cid: cid,
+            messageId: messageId,
+            pagination: pagination
+        )
     }
     
     // MARK: - Message Reading
@@ -758,9 +842,17 @@ public class Chat {
     ///
     /// - Throws: An error while communicating with the Stream API.
     /// - Returns: An array of messages for the pagination.
-    @discardableResult public func loadReplies(for messageId: MessageId, pagination: MessagesPagination) async throws -> [ChatMessage] {
+    @discardableResult public func loadReplies(
+        for messageId: MessageId,
+        pagination: MessagesPagination
+    ) async throws -> [ChatMessage] {
         let messageState = try await messageState(for: messageId)
-        return try await messageUpdater.loadReplies(for: messageId, pagination: pagination, cid: cid, paginationStateHandler: messageState.replyPaginationHandler)
+        return try await messageUpdater.loadReplies(
+            for: messageId,
+            pagination: pagination,
+            cid: cid,
+            paginationStateHandler: messageState.replyPaginationHandler
+        )
     }
 
     // MARK: -
@@ -773,9 +865,19 @@ public class Chat {
     ///   - limit: The limit for the page size. The default limit is 25.
     ///
     /// - Throws: An error while communicating with the Stream API.
-    public func loadReplies(before replyId: MessageId?, for parentMessageId: MessageId, limit: Int? = nil) async throws {
+    public func loadReplies(
+        before replyId: MessageId?,
+        for parentMessageId: MessageId,
+        limit: Int? = nil
+    ) async throws {
         let messageState = try await messageState(for: parentMessageId)
-        return try await messageUpdater.loadReplies(for: parentMessageId, before: replyId, limit: limit, cid: cid, paginationStateHandler: messageState.replyPaginationHandler)
+        return try await messageUpdater.loadReplies(
+            for: parentMessageId,
+            before: replyId,
+            limit: limit,
+            cid: cid,
+            paginationStateHandler: messageState.replyPaginationHandler
+        )
     }
     
     /// Loads more replies after the specified reply id and updates ``MessageState/replies``.
@@ -786,9 +888,19 @@ public class Chat {
     ///   - limit: The limit for the page size. The default limit is 25.
     ///
     /// - Throws: An error while communicating with the Stream API.
-    public func loadReplies(after replyId: MessageId?, for parentMessageId: MessageId, limit: Int? = nil) async throws {
+    public func loadReplies(
+        after replyId: MessageId?,
+        for parentMessageId: MessageId,
+        limit: Int? = nil
+    ) async throws {
         let messageState = try await messageState(for: parentMessageId)
-        return try await messageUpdater.loadReplies(for: parentMessageId, after: replyId, limit: limit, cid: cid, paginationStateHandler: messageState.replyPaginationHandler)
+        return try await messageUpdater.loadReplies(
+            for: parentMessageId,
+            after: replyId,
+            limit: limit,
+            cid: cid,
+            paginationStateHandler: messageState.replyPaginationHandler
+        )
     }
     
     /// Loads replies around the specified reply id to ``MessageState/replies``.
@@ -801,9 +913,19 @@ public class Chat {
     ///   - limit: The limit for the page size. The default limit is 25.
     ///
     /// - Throws: An error while communicating with the Stream API.
-    public func loadReplies(around replyId: MessageId, for parentMessageId: MessageId, limit: Int? = nil) async throws {
+    public func loadReplies(
+        around replyId: MessageId,
+        for parentMessageId: MessageId,
+        limit: Int? = nil
+    ) async throws {
         let messageState = try await messageState(for: parentMessageId)
-        return try await messageUpdater.loadReplies(for: parentMessageId, around: replyId, limit: limit, cid: cid, paginationStateHandler: messageState.replyPaginationHandler)
+        return try await messageUpdater.loadReplies(
+            for: parentMessageId,
+            around: replyId,
+            limit: limit,
+            cid: cid,
+            paginationStateHandler: messageState.replyPaginationHandler
+        )
     }
     
     /// Loads more older replies and updates ``MessageState/replies``.
@@ -841,7 +963,10 @@ public class Chat {
     ///   - language: The language message text should be translated to.
     ///
     /// - Throws: An error while communicating with the Stream API
-    @discardableResult public func translateMessage(_ messageId: MessageId, to language: TranslationLanguage) async throws -> ChatMessage {
+    @discardableResult public func translateMessage(
+        _ messageId: MessageId,
+        to language: TranslationLanguage
+    ) async throws -> ChatMessage {
         try await messageUpdater.translate(messageId: messageId, to: language)
     }
     
@@ -935,8 +1060,17 @@ public class Chat {
     ///   - skipPush: If true, push notification is not sent to channel members, otherwise push notification is sent. The default value is set to false.
     ///
     /// - Throws: An error while communicating with the Stream API.
-    public func truncate(systemMessage: String? = nil, hardDelete: Bool = true, skipPush: Bool = false) async throws {
-        try await channelUpdater.truncateChannel(cid: cid, skipPush: skipPush, hardDelete: hardDelete, systemMessage: systemMessage)
+    public func truncate(
+        systemMessage: String? = nil,
+        hardDelete: Bool = true,
+        skipPush: Bool = false
+    ) async throws {
+        try await channelUpdater.truncateChannel(
+            cid: cid,
+            skipPush: skipPush,
+            hardDelete: hardDelete,
+            systemMessage: systemMessage
+        )
     }
     
     // MARK: - Typing Indicator
@@ -1069,8 +1203,17 @@ public class Chat {
     ///
     /// - Throws: An error while communicating with the Stream API.
     /// - Returns: Returns an uploaded attachment containing the remote url and the attachment metadata.
-    public func uploadAttachment(with localFileURL: URL, type: AttachmentType, progress: ((Double) -> Void)? = nil) async throws -> UploadedAttachment {
-        try await channelUpdater.uploadFile(type: type, localFileURL: localFileURL, cid: cid, progress: progress)
+    public func uploadAttachment(
+        with localFileURL: URL,
+        type: AttachmentType,
+        progress: ((Double) -> Void)? = nil
+    ) async throws -> UploadedAttachment {
+        try await channelUpdater.uploadFile(
+            type: type,
+            localFileURL: localFileURL,
+            cid: cid,
+            progress: progress
+        )
     }
     
     // MARK: - Watching the Channel
@@ -1109,7 +1252,10 @@ public class Chat {
     ///   - handler: The handler closure which is called when the event happens.
     ///
     /// - Returns: A cancellable instance, which you use when you end the subscription. Deallocation of the result will tear down the subscription stream.
-    public func subscribe<E>(toEvent event: E.Type, handler: @escaping (E) -> Void) -> AnyCancellable where E: Event {
+    public func subscribe<E>(
+        toEvent event: E.Type,
+        handler: @escaping (E) -> Void
+    ) -> AnyCancellable where E: Event {
         eventNotificationCenter.subscribe(
             to: event,
             handler: { [weak self] event in

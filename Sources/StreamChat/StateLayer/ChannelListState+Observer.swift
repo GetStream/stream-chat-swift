@@ -56,28 +56,47 @@ extension ChannelListState {
             ///   We don't try to add it to the current query to not mess with pagination.
             let nc = eventNotificationCenter
             eventObservers = [
-                EventObserver(notificationCenter: nc, transform: { $0 as? NotificationAddedToChannelEvent }) { [weak self] event in
+                EventObserver(
+                    notificationCenter: nc,
+                    transform: { $0 as? NotificationAddedToChannelEvent }
+                ) { [weak self] event in
                     try await self?.linkChannelIfNeeded(event.channel)
                 },
-                EventObserver(notificationCenter: nc, transform: { $0 as? MessageNewEvent }) { [weak self] event in
-                    try await self?.linkChannelIfNeeded(event.channel)
-                },
-                EventObserver(notificationCenter: nc, transform: { $0 as? NotificationMessageNewEvent }) { [weak self] event in
-                    try await self?.linkChannelIfNeeded(event.channel)
-                },
-                EventObserver(notificationCenter: nc, transform: { $0 as? ChannelUpdatedEvent }) { [weak self] event in
-                    try await self?.unlinkChannelIfNeeded(event.channel)
-                },
-                EventObserver(notificationCenter: nc, transform: { $0 as? ChannelVisibleEvent }) { [weak self] event in
-                    guard let self else { return }
-                    let channel = try await self.database.read { context in
-                        guard let dto = ChannelDTO.load(cid: event.cid, context: context) else {
-                            throw ClientError.ChannelDoesNotExist(cid: event.cid)
-                        }
-                        return try dto.asModel()
+                EventObserver(
+                    notificationCenter: nc,
+                    transform: { $0 as? MessageNewEvent },
+                    callback: { [weak self] event in
+                        try await self?.linkChannelIfNeeded(event.channel)
                     }
-                    try await self.linkChannelIfNeeded(channel)
-                }
+                ),
+                EventObserver(
+                    notificationCenter: nc,
+                    transform: { $0 as? NotificationMessageNewEvent },
+                    callback: { [weak self] event in
+                        try await self?.linkChannelIfNeeded(event.channel)
+                    }
+                ),
+                EventObserver(
+                    notificationCenter: nc,
+                    transform: { $0 as? ChannelUpdatedEvent },
+                    callback: { [weak self] event in
+                        try await self?.unlinkChannelIfNeeded(event.channel)
+                    }
+                ),
+                EventObserver(
+                    notificationCenter: nc,
+                    transform: { $0 as? ChannelVisibleEvent },
+                    callback: { [weak self] event in
+                        guard let self else { return }
+                        let channel = try await self.database.read { context in
+                            guard let dto = ChannelDTO.load(cid: event.cid, context: context) else {
+                                throw ClientError.ChannelDoesNotExist(cid: event.cid)
+                            }
+                            return try dto.asModel()
+                        }
+                        try await self.linkChannelIfNeeded(channel)
+                    }
+                )
             ]
             
             do {
