@@ -72,7 +72,11 @@ public class ChannelList {
     @discardableResult public func loadMoreChannels(limit: Int? = nil) async throws -> [ChatChannel] {
         let limit = limit ?? query.pagination.pageSize
         let count = await state.channels.count
-        return try await channelListUpdater.loadNextChannels(query: query, limit: limit, loadedChannelsCount: count)
+        return try await channelListUpdater.loadNextChannels(
+            query: query,
+            limit: limit,
+            loadedChannelsCount: count
+        )
     }
 }
 
