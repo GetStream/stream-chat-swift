@@ -289,6 +289,7 @@ class DatabaseContainer: NSPersistentContainer {
         allContext.forEach { context in
             context.perform {
                 context.invalidateCurrentUserCache()
+                context.reset()
             }
         }
 
