@@ -635,32 +635,33 @@ class MessageUpdater: Worker {
                 )
             }
 
-            guard action.isCancel == false else {
-                // For ephemeral messages we don't change `state` to `.deleted`
-                messageDTO.deletedAt = DBDate()
-                messageDTO.previewOfChannel?.previewMessage = session.preview(for: cid)
-                completion?(nil)
-                return
-            }
+            guard action.isCancel else { return }
+            // For ephemeral messages we don't change `state` to `.deleted`
+            messageDTO.deletedAt = DBDate()
+            messageDTO.previewOfChannel?.previewMessage = session.preview(for: cid)
         }, completion: { error in
             if let error {
                 completion?(error)
             } else {
-                let endpoint: Endpoint<MessagePayload.Boxed> = .dispatchEphemeralMessageAction(
-                    cid: cid,
-                    messageId: messageId,
-                    action: action
-                )
-                self.apiClient.request(endpoint: endpoint) {
-                    switch $0 {
-                    case let .success(payload):
-                        self.database.write({ session in
-                            try session.saveMessage(payload: payload.message, for: cid, syncOwnReactions: true, cache: nil)
-                        }, completion: { error in
+                if action.isCancel {
+                    completion?(nil)
+                } else {
+                    let endpoint: Endpoint<MessagePayload.Boxed> = .dispatchEphemeralMessageAction(
+                        cid: cid,
+                        messageId: messageId,
+                        action: action
+                    )
+                    self.apiClient.request(endpoint: endpoint) {
+                        switch $0 {
+                        case let .success(payload):
+                            self.database.write({ session in
+                                try session.saveMessage(payload: payload.message, for: cid, syncOwnReactions: true, cache: nil)
+                            }, completion: { error in
+                                completion?(error)
+                            })
+                        case let .failure(error):
                             completion?(error)
-                        })
-                    case let .failure(error):
-                        completion?(error)
+                        }
                     }
                 }
             }
