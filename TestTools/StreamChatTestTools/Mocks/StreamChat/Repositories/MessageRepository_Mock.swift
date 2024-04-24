@@ -6,7 +6,7 @@ import Foundation
 @testable import StreamChat
 
 final class MessageRepository_Mock: MessageRepository, Spy {
-    var recordedFunctions: [String] = []
+    let spyState = SpyState()
     var sendMessageIds: [MessageId] {
         Array(sendMessageCalls.keys)
     }
@@ -71,7 +71,7 @@ final class MessageRepository_Mock: MessageRepository, Spy {
     }
 
     func clear() {
-        recordedFunctions.removeAll()
+        spyState.clear()
         sendMessageCalls.removeAll()
         sendMessageResult = nil
     }

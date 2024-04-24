@@ -12,7 +12,7 @@ final class RetryStrategy_Spy: RetryStrategy, Spy {
         static let resetConsecutiveFailures = "resetConsecutiveFailures()"
     }
 
-    var recordedFunctions: [String] = []
+    let spyState = SpyState()
     var consecutiveFailuresCount: Int = 0
 
     lazy var mock_incrementConsecutiveFailures = MockFunc.mock(for: incrementConsecutiveFailures)
