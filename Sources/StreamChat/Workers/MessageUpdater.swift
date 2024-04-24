@@ -465,21 +465,18 @@ class MessageUpdater: Worker {
                 throw ClientError.MessageDoesNotExist(messageId: messageId)
             }
 
-            switch messageDTO.localMessageState {
-            case nil, .pendingSync, .syncingFailed, .deletingFailed:
+            do {
                 try session.pin(message: messageDTO, pinning: pinning)
-                messageDTO.localMessageState = .pendingSync
-            case .pendingSend, .sendingFailed:
-                try session.pin(message: messageDTO, pinning: pinning)
-                messageDTO.localMessageState = .pendingSend
-            case .sending, .syncing, .deleting:
-                throw ClientError.MessageEditing(
-                    messageId: messageId,
-                    reason: "message is in `\(messageDTO.localMessageState!)` state"
-                )
+            } catch {
+                log.warning("Failed to optimistically add the message pinning to the database: \(error)")
             }
-        }, completion: {
-            completion?($0)
+        }, completion: { error in
+            let endpoint: Endpoint<EmptyResponse> = .pinMessage(messageId: messageId, request: .init(set: .init(pinned: true)))
+            self.apiClient.request(endpoint: endpoint) { result in
+                guard let error = result.error else { return }
+                completion?(error)
+            }
+            completion?(error)
         })
     }
 
@@ -493,21 +490,14 @@ class MessageUpdater: Worker {
                 throw ClientError.MessageDoesNotExist(messageId: messageId)
             }
 
-            switch messageDTO.localMessageState {
-            case nil, .pendingSync, .syncingFailed, .deletingFailed:
-                session.unpin(message: messageDTO)
-                messageDTO.localMessageState = .pendingSync
-            case .pendingSend, .sendingFailed:
-                session.unpin(message: messageDTO)
-                messageDTO.localMessageState = .pendingSend
-            case .sending, .syncing, .deleting:
-                throw ClientError.MessageEditing(
-                    messageId: messageId,
-                    reason: "message is in `\(messageDTO.localMessageState!)` state"
-                )
+            session.unpin(message: messageDTO)
+        }, completion: { error in
+            let endpoint: Endpoint<EmptyResponse> = .pinMessage(messageId: messageId, request: .init(set: .init(pinned: false)))
+            self.apiClient.request(endpoint: endpoint) { result in
+                guard let error = result.error else { return }
+                completion?(error)
             }
-        }, completion: {
-            completion?($0)
+            completion?(error)
         })
     }
 

@@ -38,6 +38,17 @@ extension Endpoint {
             ]
         )
     }
+    
+    static func pinMessage(messageId: MessageId, request: MessagePartialUpdateRequest)
+        -> Endpoint<EmptyResponse> {
+        .init(
+            path: .pinMessage(messageId),
+            method: .put,
+            queryItems: nil,
+            requiresConnectionId: false,
+            body: request
+        )
+    }
 
     static func loadReplies(messageId: MessageId, pagination: MessagesPagination)
         -> Endpoint<MessageRepliesPayload> {
@@ -80,5 +91,29 @@ extension Endpoint {
             requiresConnectionId: false,
             body: ["language": language.languageCode]
         )
+    }
+}
+
+// MARK: - Helper data structures
+
+struct MessagePartialUpdateRequest: Encodable {
+    var set: SetProperties?
+    var unset: [String]? = []
+    var skipEnrichUrl: Bool?
+    var userId: String?
+    var user: UserRequestBody?
+
+    /// The available message properties that can be updated.
+    struct SetProperties: Encodable {
+        var pinned: Bool?
+    }
+    
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: MessagePayloadsCodingKeys.self)
+        try container.encodeIfPresent(skipEnrichUrl, forKey: .skipEnrichUrl)
+        try container.encodeIfPresent(userId, forKey: .userId)
+        try container.encodeIfPresent(user, forKey: .user)
+        try container.encodeIfPresent(set, forKey: .set)
+        try container.encodeIfPresent(unset, forKey: .unset)
     }
 }
