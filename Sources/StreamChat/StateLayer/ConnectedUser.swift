@@ -43,8 +43,17 @@ public final class ConnectedUser {
     ///   - extraData: Additional data associated with the user.
     ///
     /// - Throws: An error while communicating with the Stream API or when user is not logged in.
-    public func update(name: String? = nil, imageURL: URL? = nil, extraData: [String: RawJSON] = [:]) async throws {
-        try await currentUserUpdater.updateUserData(currentUserId: try currentUserId(), name: name, imageURL: imageURL, userExtraData: extraData)
+    public func update(
+        name: String? = nil,
+        imageURL: URL? = nil,
+        extraData: [String: RawJSON] = [:]
+    ) async throws {
+        try await currentUserUpdater.updateUserData(
+            currentUserId: try currentUserId(),
+            name: name,
+            imageURL: imageURL,
+            userExtraData: extraData
+        )
     }
     
     // MARK: - Managing Channels

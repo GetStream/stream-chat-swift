@@ -5028,9 +5028,18 @@
 			path = DemoAppPush;
 			sourceTree = "<group>";
 		};
+		4F6597522BD92BF800F49DA6 /* DatabaseObserver */ = {
+			isa = PBXGroup;
+			children = (
+				4F14F1252BBBDD7400B1074E /* StateLayerDatabaseObserver.swift */,
+			);
+			path = DatabaseObserver;
+			sourceTree = "<group>";
+		};
 		4F8E53042B7CCFA7008C0F9F /* StateLayer */ = {
 			isa = PBXGroup;
 			children = (
+				4F6597522BD92BF800F49DA6 /* DatabaseObserver */,
 				4FD2BE552B9AF8A300FFC6F2 /* ChannelList.swift */,
 				4FD2BE582B9AF8B600FFC6F2 /* ChannelListState.swift */,
 				4FD2BE5B2B9AF8C300FFC6F2 /* ChannelListState+Observer.swift */,
@@ -8704,7 +8713,6 @@
 				C15C8837286C7BF300E6A72C /* BackgroundListDatabaseObserver.swift */,
 				C189D7772AEBC6CD00D4B966 /* BackgroundDatabaseObserver.swift */,
 				79E2B83F24CAC8D60024752F /* ListDatabaseObserver.swift */,
-				4F14F1252BBBDD7400B1074E /* StateLayerDatabaseObserver.swift */,
 			);
 			path = DatabaseObserver;
 			sourceTree = "<group>";

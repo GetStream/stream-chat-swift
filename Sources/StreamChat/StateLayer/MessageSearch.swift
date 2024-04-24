@@ -34,7 +34,8 @@ public class MessageSearch {
     /// - Returns: An array of paginated chat messages matching to the search term.
     @discardableResult public func search(text: String) async throws -> [ChatMessage] {
         // Clear results when there is no text
-        if text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty, let query = await state.query {
+        if text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty,
+           let query = await state.query {
             try await messageUpdater.clearSearchResults(for: query)
             await state.set(query: nil, cursor: nil)
             return []
@@ -79,7 +80,10 @@ public class MessageSearch {
                 return Pagination(pageSize: limit, offset: await state.messages.count)
             }
         }()
-        let result = try await messageUpdater.search(query: query.withPagination(pagination), policy: .merge)
+        let result = try await messageUpdater.search(
+            query: query.withPagination(pagination),
+            policy: .merge
+        )
         await state.set(query: query, cursor: result.payload.next)
         return result.models
     }
