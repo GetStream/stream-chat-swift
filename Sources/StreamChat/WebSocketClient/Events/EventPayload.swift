@@ -33,6 +33,8 @@ class EventPayload: Decodable {
         case lastReadMessageId = "last_read_message_id"
         case unreadMessagesCount = "unread_messages"
         case shadow
+        case vote = "poll_vote"
+        case poll
     }
 
     let eventType: EventType
@@ -59,6 +61,8 @@ class EventPayload: Decodable {
     let lastReadMessageId: MessageId?
     let lastReadAt: Date?
     let unreadMessagesCount: Int?
+    var poll: PollPayload?
+    var vote: PollVotePayload?
 
     init(
         eventType: EventType,
@@ -137,6 +141,8 @@ class EventPayload: Decodable {
         lastReadAt = try container.decodeIfPresent(Date.self, forKey: .lastReadAt)
         lastReadMessageId = try container.decodeIfPresent(MessageId.self, forKey: .lastReadMessageId)
         unreadMessagesCount = try container.decodeIfPresent(Int.self, forKey: .unreadMessagesCount)
+        vote = try container.decodeIfPresent(PollVotePayload.self, forKey: .vote)
+        poll = try container.decodeIfPresent(PollPayload.self, forKey: .poll)
     }
 
     func event() throws -> Event {

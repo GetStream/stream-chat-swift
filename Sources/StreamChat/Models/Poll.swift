@@ -4,7 +4,7 @@
 
 import Foundation
 
-public struct Poll {
+public struct Poll: Equatable {
     public let allowAnswers: Bool
     public let allowUserSuggestedOptions: Bool
     public let answersCount: Int

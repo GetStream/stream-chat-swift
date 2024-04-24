@@ -46,8 +46,14 @@ class PollDTO: NSManagedObject {
         return new
     }
     
+    static func load(pollId: String, context: NSManagedObjectContext) -> PollDTO? {
+        let request = fetchRequest(for: pollId)
+        return load(by: request, context: context).first
+    }
+    
     static func fetchRequest(for pollId: String) -> NSFetchRequest<PollDTO> {
         let request = NSFetchRequest<PollDTO>(entityName: PollDTO.entityName)
+        request.sortDescriptors = [NSSortDescriptor(keyPath: \PollDTO.updatedAt, ascending: false)]
         request.predicate = NSPredicate(format: "id == %@", pollId)
         return request
     }
@@ -87,6 +93,7 @@ extension PollDTO {
 }
 
 extension NSManagedObjectContext {
+    @discardableResult
     func savePoll(payload: PollPayload, cache: PreWarmedCache?) throws -> PollDTO {
         let pollDto = PollDTO.loadOrCreate(pollId: payload.id, context: self, cache: cache)
         
@@ -159,5 +166,9 @@ extension NSManagedObjectContext {
         )
         
         return pollDto
+    }
+    
+    func poll(id: String) throws -> PollDTO? {
+        PollDTO.load(pollId: id, context: self)
     }
 }

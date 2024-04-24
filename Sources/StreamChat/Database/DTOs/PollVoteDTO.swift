@@ -63,6 +63,7 @@ extension PollVoteDTO {
 }
 
 extension NSManagedObjectContext {
+    @discardableResult
     func savePollVote(
         payload: PollVotePayload,
         cache: PreWarmedCache?

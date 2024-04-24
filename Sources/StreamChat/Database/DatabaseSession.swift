@@ -422,6 +422,11 @@ protocol ThreadDatabaseSession {
 protocol PollDatabaseSession {
     @discardableResult
     func savePoll(payload: PollPayload, cache: PreWarmedCache?) throws -> PollDTO
+    
+    @discardableResult
+    func savePollVote(payload: PollVotePayload, cache: PreWarmedCache?) throws -> PollVoteDTO
+    
+    func poll(id: String) throws -> PollDTO?
 }
 
 protocol DatabaseSession: UserDatabaseSession,
@@ -509,6 +514,14 @@ extension DatabaseSession {
             } catch {
                 log.warning("Failed to update message reaction in the database, error: \(error)")
             }
+        }
+        
+        if let vote = payload.vote {
+            try savePollVote(payload: vote, cache: nil)
+        }
+        
+        if let poll = payload.poll {
+            try savePoll(payload: poll, cache: nil)
         }
 
         updateChannelPreview(from: payload)

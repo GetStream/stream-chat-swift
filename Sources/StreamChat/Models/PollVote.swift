@@ -4,7 +4,7 @@
 
 import Foundation
 
-public struct PollVote {
+public struct PollVote: Equatable {
     public let id: String
     public let createdAt: Date
     public let updatedAt: Date

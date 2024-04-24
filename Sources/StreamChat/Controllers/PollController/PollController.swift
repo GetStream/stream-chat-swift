@@ -11,8 +11,7 @@ public extension ChatClient {
     }
 }
 
-// TODO: DelegateCallable
-public class PollController: DataController, DataStoreProvider {
+public class PollController: DataController, DelegateCallable, DataStoreProvider {
     /// The `ChatClient` instance this controller belongs to.
     public let client: ChatClient
 
@@ -24,6 +23,22 @@ public class PollController: DataController, DataStoreProvider {
     
     private let pollsRepository: PollsRepository
     
+    /// Set the delegate of `ChannelController` to observe the changes in the system.
+    public var delegate: PollControllerDelegate? {
+        get { multicastDelegate.mainDelegate }
+        set { multicastDelegate.set(mainDelegate: newValue) }
+    }
+
+    /// A type-erased delegate.
+    internal var multicastDelegate: MulticastDelegate<PollControllerDelegate> = .init() {
+        didSet {
+            stateMulticastDelegate.set(mainDelegate: multicastDelegate.mainDelegate)
+            stateMulticastDelegate.set(additionalDelegates: multicastDelegate.additionalDelegates)
+        }
+    }
+    
+    private var pollObserver: EntityDatabaseObserverWrapper<Poll, PollDTO>?
+    
     // TODO: environment
     // TODO: reuse poll repository
     init(client: ChatClient, messageId: MessageId, pollId: String) {
@@ -34,6 +49,10 @@ public class PollController: DataController, DataStoreProvider {
             database: client.databaseContainer,
             apiClient: client.apiClient
         )
+        
+        super.init()
+        
+        setupPollObserver()
     }
     
     public func castPollVote(
@@ -64,5 +83,33 @@ public class PollController: DataController, DataStoreProvider {
             voteId: voteId,
             completion: completion
         )
+    }
+    
+    private func setupPollObserver() {
+        pollObserver = { [weak self] in
+            guard let self = self else {
+                log.warning("Callback called while self is nil")
+                return nil
+            }
+            
+            let observer = EntityDatabaseObserverWrapper(
+                isBackground: StreamRuntimeCheck._isBackgroundMappingEnabled,
+                database: self.client.databaseContainer,
+                fetchRequest: PollDTO.fetchRequest(for: pollId),
+                itemCreator: { try $0.asModel() as Poll },
+                fetchedResultsControllerType: NSFetchedResultsController<PollDTO>.self
+            ).onChange { [weak self] change in
+                self?.delegateCallback { [weak self] in
+                    guard let self = self else {
+                        log.warning("Callback called while self is nil")
+                        return
+                    }
+                    $0.pollController(self, didUpdatePoll: change)
+                }
+            }
+
+            return observer
+        }()
+        try? pollObserver?.startObserving()
     }
 }
