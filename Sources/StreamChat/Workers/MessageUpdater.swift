@@ -461,8 +461,9 @@ class MessageUpdater: Worker {
     ///  - Parameters:
     ///   - messageId: The message identifier.
     ///   - pinning: The pinning expiration information. It supports setting an infinite expiration, setting a date, or the amount of time a message is pinned.
-    ///   - completion: The completion. Will be called with an error if smth goes wrong, otherwise - will be called with `nil`.
-    func pinMessage(messageId: MessageId, pinning: MessagePinning, completion: ((Error?) -> Void)? = nil) {
+    ///   - completion: The completion handler with the result.
+    func pinMessage(messageId: MessageId, pinning: MessagePinning, completion: ((Result<ChatMessage, Error>) -> Void)? = nil) {
+        var message: ChatMessage!
         database.write({ session in
             guard let messageDTO = session.message(id: messageId) else {
                 throw ClientError.MessageDoesNotExist(messageId: messageId)
@@ -481,16 +482,22 @@ class MessageUpdater: Worker {
                     reason: "message is in `\(messageDTO.localMessageState!)` state"
                 )
             }
-        }, completion: {
-            completion?($0)
+            message = try messageDTO.asModel()
+        }, completion: { error in
+            if let error {
+                completion?(.failure(error))
+            } else {
+                completion?(.success(message))
+            }
         })
     }
 
     /// Unpin the message with the provided message id.
     ///  - Parameters:
     ///   - messageId: The message identifier.
-    ///   - completion: The completion. Will be called with an error if smth goes wrong, otherwise - will be called with `nil`.
-    func unpinMessage(messageId: MessageId, completion: ((Error?) -> Void)? = nil) {
+    ///   - completion: The completion handler with the result.
+    func unpinMessage(messageId: MessageId, completion: ((Result<ChatMessage, Error>) -> Void)? = nil) {
+        var message: ChatMessage!
         database.write({ session in
             guard let messageDTO = session.message(id: messageId) else {
                 throw ClientError.MessageDoesNotExist(messageId: messageId)
@@ -509,8 +516,13 @@ class MessageUpdater: Worker {
                     reason: "message is in `\(messageDTO.localMessageState!)` state"
                 )
             }
-        }, completion: {
-            completion?($0)
+            message = try messageDTO.asModel()
+        }, completion: { error in
+            if let error {
+                completion?(.failure(error))
+            } else {
+                completion?(.success(message))
+            }
         })
     }
 
@@ -875,10 +887,10 @@ extension MessageUpdater {
         }
     }
     
-    func pinMessage(messageId: MessageId, pinning: MessagePinning) async throws {
+    func pinMessage(messageId: MessageId, pinning: MessagePinning) async throws -> ChatMessage {
         try await withCheckedThrowingContinuation { continuation in
-            pinMessage(messageId: messageId, pinning: pinning) { error in
-                continuation.resume(with: error)
+            pinMessage(messageId: messageId, pinning: pinning) { result in
+                continuation.resume(with: result)
             }
         }
     }
@@ -915,10 +927,10 @@ extension MessageUpdater {
         }
     }
     
-    func unpinMessage(messageId: MessageId) async throws {
+    func unpinMessage(messageId: MessageId) async throws -> ChatMessage {
         try await withCheckedThrowingContinuation { continuation in
-            unpinMessage(messageId: messageId) { error in
-                continuation.resume(with: error)
+            unpinMessage(messageId: messageId) { result in
+                continuation.resume(with: result)
             }
         }
     }
