@@ -650,7 +650,11 @@ public class Chat {
         sort: [Sorting<PinnedMessagesSortingKey>] = [],
         limit: Int = .messagesPageSize
     ) async throws -> [ChatMessage] {
-        let query = PinnedMessagesQuery(pageSize: limit, sorting: sort, pagination: pagination)
+        let query = PinnedMessagesQuery(
+            pageSize: limit,
+            sorting: sort,
+            pagination: pagination
+        )
         return try await channelUpdater.loadPinnedMessages(in: cid, query: query)
     }
     

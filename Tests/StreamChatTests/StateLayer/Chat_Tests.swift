@@ -938,9 +938,28 @@ final class Chat_Tests: XCTestCase {
         XCTAssertEqual(nil, unpinnedMessage.localState)
     }
     
+    func test_loadPinnedMessages_whenAPIRequestSucceeds_thenLoadPinnedMessagesSucceeds() async throws {
+        let responseMessages: [ChatMessage] = [
+            .mock(id: "0"),
+            .mock(id: "1")
+        ]
+        env.channelUpdaterMock.loadPinnedMessages_completion_result = .success(responseMessages)
+        
+        let pagination = PinnedMessagesPagination.after(.unique, inclusive: true)
+        let paginatedMessages = try await chat.loadPinnedMessages(
+            with: pagination,
+            sort: [Sorting(key: .pinnedAt)],
+            limit: 5
+        )
+        XCTAssertEqual(channelId, env.channelUpdaterMock.loadPinnedMessages_cid)
+        XCTAssertEqual(5, env.channelUpdaterMock.loadPinnedMessages_query?.pageSize)
+        XCTAssertEqual([Sorting(key: PinnedMessagesSortingKey.pinnedAt)], env.channelUpdaterMock.loadPinnedMessages_query?.sorting)
+        XCTAssertEqual(pagination, env.channelUpdaterMock.loadPinnedMessages_query?.pagination)
+    }
+    
     // MARK: - Message Reactions
     
-    func test_deleteReactionAction_whenMessageUpdaterSucceeds_thenDeleteReactionActionSucceeds() async throws {
+    func test_deleteReaction_whenMessageUpdaterSucceeds_thenDeleteReactionActionSucceeds() async throws {
         let messageId: MessageId = .unique
         let reactionType: MessageReactionType = .init(rawValue: "like")
         env.messageUpdaterMock.deleteReaction_completion_result = .success(())
@@ -949,7 +968,7 @@ final class Chat_Tests: XCTestCase {
         XCTAssertEqual(reactionType, env.messageUpdaterMock.deleteReaction_type)
     }
     
-    func test_deleteReactionAction_whenMessageUpdaterFails_thenDeleteReactionActionSucceeds() async throws {
+    func test_deleteReaction_whenMessageUpdaterFails_thenDeleteReactionActionSucceeds() async throws {
         let messageId: MessageId = .unique
         let reactionType: MessageReactionType = .init(rawValue: "like")
         env.messageUpdaterMock.deleteReaction_completion_result = .failure(expectedTestError)
