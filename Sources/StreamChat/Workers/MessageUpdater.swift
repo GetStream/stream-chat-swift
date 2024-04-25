@@ -465,16 +465,22 @@ class MessageUpdater: Worker {
                 throw ClientError.MessageDoesNotExist(messageId: messageId)
             }
 
-            do {
-                try session.pin(message: messageDTO, pinning: pinning)
-            } catch {
-                log.warning("Failed to optimistically add the message pinning to the database: \(error)")
-            }
-        }, completion: { error in
-            let endpoint: Endpoint<EmptyResponse> = .pinMessage(messageId: messageId, request: .init(set: .init(pinned: true)))
-            self.apiClient.request(endpoint: endpoint) { result in
+            try session.pin(message: messageDTO, pinning: pinning)
+        }, completion: { [weak self] error in
+            let endpoint: Endpoint<EmptyResponse> = .pinMessage(
+                messageId: messageId,
+                request: .init(set: .init(pinned: true))
+            )
+
+            self?.apiClient.request(endpoint: endpoint) { result in
                 guard let error = result.error else { return }
-                completion?(error)
+                
+                self?.database.write { session in
+                    if let messageDTO = session.message(id: messageId) {
+                        session.unpin(message: messageDTO)
+                    }
+                    completion?(error)
+                }
             }
             completion?(error)
         })
@@ -491,11 +497,22 @@ class MessageUpdater: Worker {
             }
 
             session.unpin(message: messageDTO)
-        }, completion: { error in
-            let endpoint: Endpoint<EmptyResponse> = .pinMessage(messageId: messageId, request: .init(set: .init(pinned: false)))
-            self.apiClient.request(endpoint: endpoint) { result in
+        }, completion: { [weak self] error in
+            let endpoint: Endpoint<EmptyResponse> = .pinMessage(
+                messageId: messageId,
+                request: .init(set: .init(pinned: false))
+            )
+
+            self?.apiClient.request(endpoint: endpoint) { result in
                 guard let error = result.error else { return }
-                completion?(error)
+
+                self?.database.write { session in
+                    if let messageDTO = session.message(id: messageId) {
+                        let pinning: MessagePinning = .init(expirationDate: messageDTO.pinExpires?.bridgeDate)
+                        try session.pin(message: messageDTO, pinning: pinning)
+                    }
+                    completion?(error)
+                }
             }
             completion?(error)
         })
