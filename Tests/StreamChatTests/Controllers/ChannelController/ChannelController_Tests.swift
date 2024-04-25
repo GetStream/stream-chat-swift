@@ -5119,22 +5119,26 @@ final class ChannelController_Tests: XCTestCase {
         AssertAsync.willBeTrue(completionError != nil)
     }
 
-    func test_createCall_propagatesErrorFromUpdater() {
+    func test_createCall_propagatesErrorFromUpdater() throws {
         let id: String = .unique
         let type: String = "video"
         var completionError: Error?
 
         // Set completion handler
+        let expectation = XCTestExpectation()
         controller.createCall(id: id, type: type) { result in
             completionError = result.error
+            expectation.fulfill()
         }
 
         // Simulate failed update
         let testError = TestError()
-        env.channelUpdater!.createCall_completion!(.failure(testError))
+        let completion = try XCTUnwrap(env.channelUpdater?.createCall_completion)
+        completion(.failure(testError))
 
         // Error is propagated to completion
-        AssertAsync.willBeEqual(completionError as? TestError, testError)
+        wait(for: [expectation], timeout: defaultTimeout)
+        XCTAssertEqual(completionError as? TestError, testError)
     }
 
     func test_createCall_propagatesResultFromUpdater() {
