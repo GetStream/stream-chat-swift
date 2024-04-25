@@ -710,7 +710,7 @@ public class Chat {
     /// - Throws: An error while communicating with the Stream API.
     /// - Returns: An array of reactions for given limit and offset.
     @discardableResult public func loadReactions(
-        of messageId: MessageId,
+        for messageId: MessageId,
         pagination: Pagination
     ) async throws -> [ChatMessageReaction] {
         try await messageUpdater.loadReactions(
@@ -729,7 +729,7 @@ public class Chat {
     /// - Throws: An error while communicating with the Stream API.
     /// - Returns: An array of reactions for the next page.
     @discardableResult public func loadMoreReactions(
-        of messageId: MessageId,
+        for messageId: MessageId,
         limit: Int? = nil
     ) async throws -> [ChatMessageReaction] {
         let offset = try await messageState(for: messageId).reactions.count

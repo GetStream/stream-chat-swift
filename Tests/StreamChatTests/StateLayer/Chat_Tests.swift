@@ -955,6 +955,7 @@ final class Chat_Tests: XCTestCase {
         XCTAssertEqual(5, env.channelUpdaterMock.loadPinnedMessages_query?.pageSize)
         XCTAssertEqual([Sorting(key: PinnedMessagesSortingKey.pinnedAt)], env.channelUpdaterMock.loadPinnedMessages_query?.sorting)
         XCTAssertEqual(pagination, env.channelUpdaterMock.loadPinnedMessages_query?.pagination)
+        XCTAssertEqual(responseMessages.map(\.id), paginatedMessages.map(\.id))
     }
     
     // MARK: - Message Reactions
@@ -978,6 +979,64 @@ final class Chat_Tests: XCTestCase {
         )
         XCTAssertEqual(messageId, env.messageUpdaterMock.deleteReaction_messageId)
         XCTAssertEqual(reactionType, env.messageUpdaterMock.deleteReaction_type)
+    }
+    
+    func test_sendReaction_whenAPIRequestSucceeds_thenMessageStateUpdates() async throws {
+        try await setUpChat(usesMockedUpdaters: false)
+        try await env.client.databaseContainer.write { session in
+            try session.saveChannel(payload: self.makeChannelPayload(messageCount: 1, createdAtOffset: 0))
+        }
+        let messageId = try await MainActor.run { try XCTUnwrap(chat.state.messages.first?.id) }
+        let messageState = try await chat.messageState(for: messageId)
+        await XCTAssertEqual(0, messageState.reactions.count)
+        env.client.mockAPIClient.test_mockResponseResult(.success(EmptyResponse()))
+        try await chat.sendReaction(to: messageId, with: "like")
+        await XCTAssertEqual(1, messageState.reactions.count)
+    }
+    
+    func test_loadReactions_whenAPIRequestSucceeds_thenMessageStateUpdates() async throws {
+        try await setUpChat(
+            usesMockedUpdaters: false,
+            messageCount: 1
+        )
+        let messageId = try await MainActor.run { try XCTUnwrap(chat.state.messages.first?.id) }
+        let messageState = try await chat.messageState(for: messageId)
+        
+        let apiResponse = makeReactionsPayload(messageId: messageId, count: 5, offset: 0)
+        env.client.mockAPIClient.test_mockResponseResult(.success(apiResponse))
+        let paginatedReactions = try await chat.loadReactions(
+            for: messageId,
+            pagination: Pagination(pageSize: apiResponse.reactions.count)
+        )
+        XCTAssertEqual(apiResponse.reactions.map(\.user.id), paginatedReactions.map(\.author.id))
+        await XCTAssertEqual(apiResponse.reactions.map(\.user.id), messageState.reactions.map(\.author.id))
+    }
+    
+    func test_loadMoreReactions_whenAPIRequestSucceeds_thenMessageStateUpdates() async throws {
+        try await setUpChat(
+            usesMockedUpdaters: false,
+            messageCount: 1
+        )
+        let messageId = try await MainActor.run { try XCTUnwrap(chat.state.messages.first?.id) }
+        let messageState = try await chat.messageState(for: messageId)
+        
+        let initialApiResponse = makeReactionsPayload(messageId: messageId, count: 5, offset: 0)
+        env.client.mockAPIClient.test_mockResponseResult(.success(initialApiResponse))
+        try await chat.loadReactions(
+            for: messageId,
+            pagination: Pagination(pageSize: initialApiResponse.reactions.count)
+        )
+        
+        let apiResponse = makeReactionsPayload(messageId: messageId, count: 10, offset: 5)
+        env.client.mockAPIClient.test_mockResponseResult(.success(apiResponse))
+        let paginatedReactions = try await chat.loadMoreReactions(
+            for: messageId,
+            limit: apiResponse.reactions.count
+        )
+
+        XCTAssertEqual(apiResponse.reactions.map(\.user.id), paginatedReactions.map(\.author.id))
+        let all = initialApiResponse.reactions + apiResponse.reactions
+        await XCTAssertEqual(all.map(\.user.id), messageState.reactions.map(\.author.id))
     }
     
     // MARK: - Message Translations
@@ -1215,7 +1274,8 @@ final class Chat_Tests: XCTestCase {
     @MainActor private func setUpChat(
         usesMockedUpdaters: Bool,
         loadState: Bool = true,
-        loggedIn: Bool = true
+        loggedIn: Bool = true,
+        messageCount: Int = 0
     ) async throws {
         chat = Chat(
             channelQuery: ChannelQuery(cid: channelId),
@@ -1237,8 +1297,7 @@ final class Chat_Tests: XCTestCase {
             }
         }
         try await env.client.databaseContainer.write { session in
-            guard session.channel(cid: self.channelId) == nil else { return }
-            try session.saveChannel(payload: self.makeChannelPayload(messageCount: 0, createdAtOffset: 0))
+            try session.saveChannel(payload: self.makeChannelPayload(messageCount: messageCount, createdAtOffset: 0))
         }
     }
     
@@ -1293,6 +1352,19 @@ final class Chat_Tests: XCTestCase {
                 )
             }
         return ChannelMemberListPayload(members: members)
+    }
+    
+    private func makeReactionsPayload(messageId: MessageId, count: Int, offset: Int) -> MessageReactionsPayload {
+        let reactions = (0..<count)
+            .map { $0 + offset }
+            .map {
+                MessageReactionPayload.dummy(
+                    messageId: messageId,
+                    updatedAt: Date(timeIntervalSinceReferenceDate: TimeInterval(-$0)), // last updated first
+                    user: .dummy(userId: .unique)
+                )
+            }
+        return MessageReactionsPayload(reactions: reactions)
     }
 }
 
