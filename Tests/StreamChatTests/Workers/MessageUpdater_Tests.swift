@@ -545,16 +545,20 @@ final class MessageUpdater_Tests: XCTestCase {
             try database.createMessage(id: messageId, authorId: currentUserId)
 
             // Simulate `deleteMessage(messageId:)` call
-            messageUpdater.deleteMessage(messageId: messageId, hard: false)
-
+            let expectation = XCTestExpectation()
+            messageUpdater.deleteMessage(messageId: messageId, hard: false) { _ in
+                expectation.fulfill()
+            }
+            // Assert message's local state becomes `deleting` after waiting the first DB call to finish
+            AssertAsync.willBeTrue(apiClient.request_completion != nil)
+            
             // Load the message
-            let message = try XCTUnwrap(database.viewContext.message(id: messageId))
-
-            // Assert message's local state becomes `deleting`
-            AssertAsync.willBeEqual(message.localMessageState, .deleting)
-
+            AssertAsync.willBeEqual(.deleting, database.writableContext.message(id: messageId)?.localMessageState)
+            
             // Simulate API response
             apiClient.test_simulateResponse(networkResult)
+
+            wait(for: [expectation], timeout: defaultTimeout)
 
             // Assert message's local state becomes expected
             if expectedState == nil {
@@ -1794,11 +1798,11 @@ final class MessageUpdater_Tests: XCTestCase {
     func test_pinMessage_propagates_MessageDoesNotExist_Error() throws {
         try database.createCurrentUser()
 
-        let completionError = try waitFor {
+        let completionResult = try waitFor {
             messageUpdater.pinMessage(messageId: .unique, pinning: .expirationDate(.unique), completion: $0)
         }
 
-        XCTAssertTrue(completionError is ClientError.MessageDoesNotExist)
+        XCTAssertTrue(completionResult.error is ClientError.MessageDoesNotExist)
     }
 
     func test_pinMessage_updatesLocalMessageCorrectly() throws {
@@ -1829,14 +1833,14 @@ final class MessageUpdater_Tests: XCTestCase {
             // Create a new message in the database
             try database.createMessage(id: messageId, authorId: currentUserId, localState: initialState)
 
-            let completionError = try waitFor {
+            let completionResult = try waitFor {
                 messageUpdater.pinMessage(messageId: messageId, pinning: pin, completion: $0)
             }
 
             // Load the message
             let message = try XCTUnwrap(database.viewContext.message(id: messageId))
 
-            XCTAssertNil(completionError)
+            XCTAssertNil(completionResult.error)
             XCTAssertEqual(message.localMessageState, expectedState)
             XCTAssertEqual(message.pinned, true)
             XCTAssertEqual(message.pinExpires?.bridgeDate, pin.expirationDate)
@@ -1873,14 +1877,14 @@ final class MessageUpdater_Tests: XCTestCase {
             // Create a new message in the database
             try database.createMessage(id: messageId, authorId: currentUserId, text: initialText, localState: state)
 
-            let completionError = try waitFor {
+            let completionResult = try waitFor {
                 messageUpdater.pinMessage(messageId: messageId, pinning: MessagePinning(expirationDate: .unique), completion: $0)
             }
 
             // Load the message
             let message = try XCTUnwrap(database.viewContext.message(id: messageId))
 
-            XCTAssertTrue(completionError is ClientError.MessageEditing)
+            XCTAssertTrue(completionResult.error is ClientError.MessageEditing)
             XCTAssertEqual(message.localMessageState, state)
             XCTAssertEqual(message.text, initialText)
             XCTAssertEqual(message.pinned, false)
@@ -1893,11 +1897,11 @@ final class MessageUpdater_Tests: XCTestCase {
     func test_unpinMessage_propogates_MessageDoesNotExist_Error() throws {
         try database.createCurrentUser()
 
-        let completionError = try waitFor {
+        let completionResult = try waitFor {
             messageUpdater.unpinMessage(messageId: .unique, completion: $0)
         }
 
-        XCTAssertTrue(completionError is ClientError.MessageDoesNotExist)
+        XCTAssertTrue(completionResult.error is ClientError.MessageDoesNotExist)
     }
 
     func test_unpinMessage_updatesLocalMessageCorrectly() throws {
@@ -1935,14 +1939,14 @@ final class MessageUpdater_Tests: XCTestCase {
                 localState: initialState
             )
 
-            let completionError = try waitFor {
+            let completionResult = try waitFor {
                 messageUpdater.unpinMessage(messageId: messageId, completion: $0)
             }
 
             // Load the message
             let message = try XCTUnwrap(database.viewContext.message(id: messageId))
 
-            XCTAssertNil(completionError)
+            XCTAssertNil(completionResult.error)
             XCTAssertEqual(message.localMessageState, expectedState)
             XCTAssertEqual(message.pinned, false)
             XCTAssertNil(message.pinExpires)
@@ -1987,14 +1991,14 @@ final class MessageUpdater_Tests: XCTestCase {
             )
 
             // Edit created message with new text
-            let completionError = try waitFor {
+            let completionResult = try waitFor {
                 messageUpdater.unpinMessage(messageId: messageId, completion: $0)
             }
 
             // Load the message
             let message = try XCTUnwrap(database.viewContext.message(id: messageId))
 
-            XCTAssertTrue(completionError is ClientError.MessageEditing)
+            XCTAssertTrue(completionResult.error is ClientError.MessageEditing)
             XCTAssertEqual(message.localMessageState, state)
             XCTAssertEqual(message.pinned, true)
             XCTAssertNotNil(message.pinExpires)

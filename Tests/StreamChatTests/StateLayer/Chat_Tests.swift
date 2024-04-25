@@ -769,6 +769,100 @@ final class Chat_Tests: XCTestCase {
         XCTAssertEqual(url, env.channelUpdaterMock.enrichUrl_url)
     }
     
+    // MARK: - Message Pinning
+    
+    func test_pinMessage_whenSendingFailedAndAPIRequestSucceeds_thenPinMessageSucceeds() async throws {
+        // Waiting after MessageSender
+        try await setUpChat(usesMockedUpdaters: false)
+        try await env.client.databaseContainer.write { session in
+            let dto = try session.saveChannel(payload: self.makeChannelPayload(messageCount: 1, createdAtOffset: 0))
+            dto.messages.first?.localMessageState = .sendingFailed
+        }
+        
+        let messageId = try await MainActor.run { try XCTUnwrap(chat.state.messages.first?.id) }
+        let apiResponse = MessagePayload.Boxed(
+            message: .dummy(
+                messageId: messageId,
+                pinned: true,
+                pinnedAt: Date(timeIntervalSinceReferenceDate: 0),
+                pinExpires: nil
+            )
+        )
+        env.client.mockAPIClient.test_mockResponseResult(.success(apiResponse))
+        let pinnedMessage = try await chat.pinMessage(messageId, pinning: .noExpiration)
+        XCTAssertEqual(apiResponse.message.id, pinnedMessage.id)
+        XCTAssertEqual(true, pinnedMessage.isPinned)
+        XCTAssertEqual(apiResponse.message.pinnedAt, pinnedMessage.pinDetails?.pinnedAt)
+        XCTAssertEqual(nil, pinnedMessage.pinDetails?.expiresAt)
+        XCTAssertEqual(nil, pinnedMessage.localState)
+    }
+    
+    func test_pinMessage_whenSyncingFailedAndAPIRequestSucceeds_thenPinMessageSucceeds() async throws {
+        // Waiting after MessageEditor
+        try await setUpChat(usesMockedUpdaters: false)
+        try await env.client.databaseContainer.write { session in
+            let dto = try session.saveChannel(payload: self.makeChannelPayload(messageCount: 1, createdAtOffset: 0))
+            dto.messages.first?.localMessageState = .syncingFailed
+        }
+        
+        let messageId = try await MainActor.run { try XCTUnwrap(chat.state.messages.first?.id) }
+        env.client.mockAPIClient.test_mockResponseResult(.success(EmptyResponse()))
+        let pinnedMessage = try await chat.pinMessage(messageId, pinning: .noExpiration)
+        XCTAssertEqual(messageId, pinnedMessage.id)
+        XCTAssertEqual(true, pinnedMessage.isPinned)
+        XCTAssertEqual(nil, pinnedMessage.localState)
+    }
+    
+    func test_unpinMessage_whenSendingFailedAndAPIRequestSucceeds_thenPinMessageSucceeds() async throws {
+        // Waiting after MessageSender
+        try await setUpChat(usesMockedUpdaters: false)
+        try await env.client.databaseContainer.write { session in
+            let dto = try session.saveChannel(payload: self.makeChannelPayload(messageCount: 1, createdAtOffset: 0))
+            dto.messages.first?.localMessageState = .sendingFailed
+            dto.messages.first?.pinned = true
+        }
+        
+        let messageId = try await MainActor.run { try XCTUnwrap(chat.state.messages.first?.id) }
+        let apiResponse = MessagePayload.Boxed(
+            message: .dummy(
+                messageId: messageId,
+                pinned: false
+            )
+        )
+        env.client.mockAPIClient.test_mockResponseResult(.success(apiResponse))
+        let unpinnedMessage = try await chat.unpinMessage(messageId)
+        XCTAssertEqual(messageId, unpinnedMessage.id)
+        XCTAssertEqual(false, unpinnedMessage.isPinned)
+        XCTAssertEqual(nil, unpinnedMessage.localState)
+    }
+    
+    func test_unpinMessage_whenSyncingFailedAndAPIRequestSucceeds_thenPinMessageSucceeds() async throws {
+        // Waiting after MessageEditor
+        try await setUpChat(usesMockedUpdaters: false)
+        try await env.client.databaseContainer.write { session in
+            let dto = try session.saveChannel(payload: self.makeChannelPayload(messageCount: 1, createdAtOffset: 0))
+            dto.messages.first?.localMessageState = .syncingFailed
+            dto.messages.first?.pinned = true
+        }
+        
+        let messageId = try await MainActor.run { try XCTUnwrap(chat.state.messages.first?.id) }
+        env.client.mockAPIClient.test_mockResponseResult(.success(EmptyResponse()))
+        let unpinnedMessage = try await chat.unpinMessage(messageId)
+        XCTAssertEqual(messageId, unpinnedMessage.id)
+        XCTAssertEqual(false, unpinnedMessage.isPinned)
+        XCTAssertEqual(nil, unpinnedMessage.localState)
+    }
+    
+    // TODO: not done
+    func test_loadPinnedMessagesAction_whenAPIRequestSucceeds_thenLoadPinnedMessagesActionSucceeds() async throws {
+        // loadPinnedMessages(for pagination: PinnedMessagesPagination? = nil, sort: [Sorting<PinnedMessagesSortingKey>] = [], limit: Int = .messagesPageSize)
+    }
+    
+    // TODO: not done
+    func test_loadPinnedMessagesAction_whenAPIRequestFails_thenLoadPinnedMessagesActionSucceeds() async throws {
+        // loadPinnedMessages(for pagination: PinnedMessagesPagination? = nil, sort: [Sorting<PinnedMessagesSortingKey>] = [], limit: Int = .messagesPageSize)
+    }
+    
     // MARK: - Message Reactions
     
     func test_deleteReactionAction_whenMessageUpdaterSucceeds_thenDeleteReactionActionSucceeds() async throws {
