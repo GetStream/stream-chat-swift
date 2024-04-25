@@ -74,12 +74,12 @@ final class MessageUpdater_Mock: MessageUpdater {
 
     @Atomic var pinMessage_messageId: MessageId?
     @Atomic var pinMessage_pinning: MessagePinning?
-    @Atomic var pinMessage_completion: ((Error?) -> Void)?
-    @Atomic var pinMessage_completion_result: Result<Void, Error>?
+    @Atomic var pinMessage_completion: ((Result<ChatMessage, Error>) -> Void)?
+    @Atomic var pinMessage_completion_result: Result<ChatMessage, Error>?
 
     @Atomic var unpinMessage_messageId: MessageId?
-    @Atomic var unpinMessage_completion: ((Error?) -> Void)?
-    @Atomic var unpinMessage_completion_result: Result<Void, Error>?
+    @Atomic var unpinMessage_completion: ((Result<ChatMessage, Error>) -> Void)?
+    @Atomic var unpinMessage_completion_result: Result<ChatMessage, Error>?
 
     @Atomic var restartFailedAttachmentUploading_id: AttachmentId?
     @Atomic var restartFailedAttachmentUploading_completion: ((Error?) -> Void)?
@@ -343,15 +343,14 @@ final class MessageUpdater_Mock: MessageUpdater {
         deleteReaction_completion = completion
         deleteReaction_completion_result?.invoke(with: completion)
     }
-
-    override func pinMessage(messageId: MessageId, pinning: MessagePinning, completion: ((Error?) -> Void)? = nil) {
+    override func pinMessage(messageId: MessageId, pinning: MessagePinning, completion: ((Result<ChatMessage, any Error>) -> Void)? = nil) {
         pinMessage_messageId = messageId
         pinMessage_pinning = pinning
         pinMessage_completion = completion
         pinMessage_completion_result?.invoke(with: completion)
     }
 
-    override func unpinMessage(messageId: MessageId, completion: ((Error?) -> Void)? = nil) {
+    override func unpinMessage(messageId: MessageId, completion: ((Result<ChatMessage, any Error>) -> Void)? = nil) {
         unpinMessage_messageId = messageId
         unpinMessage_completion = completion
         unpinMessage_completion_result?.invoke(with: completion)
