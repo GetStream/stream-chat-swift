@@ -677,6 +677,37 @@ final class Chat_Tests: XCTestCase {
         }
     }
     
+    // MARK: - Message State Observing
+    
+    func test_messageState_whenMessageIsLocallyAvailable_thenAPIRequestIsSkipped() async throws {
+        try await env.client.databaseContainer.write { session in
+            try session.saveChannel(payload: self.makeChannelPayload(messageCount: 3, createdAtOffset: 0))
+        }
+        try await setUpChat(usesMockedUpdaters: false)
+        let messageId = try await MainActor.run { try XCTUnwrap(chat.state.messages.first?.id) }
+        
+        // Set dummy response for failing the API call if it is mistakenly made
+        env.client.mockAPIClient.test_mockResponseResult(Result<MessagePayload.Boxed, Error>.failure(expectedTestError))
+        let messageState = try await chat.messageState(for: messageId)
+        
+        XCTAssertEqual(nil, env.client.mockAPIClient.request_endpoint)
+        await XCTAssertEqual(messageId, messageState.message.id)
+    }
+    
+    func test_messageState_whenMessageIsNotLocallyAvailable_thenAPIRequestIsTriggeredAndMessageIsReturned() async throws {
+        try await setUpChat(usesMockedUpdaters: false)
+        
+        let messageId = String.unique
+        let messagePayload = try XCTUnwrap(makeChannelPayload(messageCount: 1, createdAtOffset: 0).messages.first)
+        let apiResponse = MessagePayload.Boxed(message: messagePayload)
+        env.client.mockAPIClient.test_mockResponseResult(.success(apiResponse))
+        let messageState = try await chat.messageState(for: messageId)
+        
+        XCTAssertNotNil(env.client.mockAPIClient.request_endpoint)
+        await XCTAssertEqual(messagePayload.id, messageState.message.id)
+        await XCTAssertEqual(messagePayload.createdAt, messageState.message.createdAt)
+    }
+    
     // MARK: - Message Attachment Actions
     
     func test_sendMessageAction_whenTappingCancel_thenSendMessageActionSucceedsWithoutAPIRequest() async throws {
