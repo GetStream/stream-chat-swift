@@ -377,8 +377,7 @@ public class Chat {
         messageId: MessageId? = nil
     ) async throws -> ChatMessage {
         Task { try await stopTyping() } // errors explicitly ignored
-        let messageSender = try client.backgroundWorker(of: MessageSender.self)
-        let message = try await channelUpdater.createNewMessage(
+        let localMessage = try await channelUpdater.createNewMessage(
             in: cid,
             messageId: messageId,
             text: text,
@@ -394,8 +393,8 @@ public class Chat {
             extraData: extraData
         )
         // Important to set up the waiter immediately
-        async let sentMessage = try await messageSender.waitForAPIRequest(messageId: message.id)
-        eventNotificationCenter.process(NewMessagePendingEvent(message: message))
+        async let sentMessage = try await waitForAPIRequest(localMessage: localMessage)
+        eventNotificationCenter.process(NewMessagePendingEvent(message: localMessage))
         return try await sentMessage
     }
     
@@ -418,23 +417,14 @@ public class Chat {
         skipEnrichURL: Bool = false
     ) async throws -> ChatMessage {
         Task { try await stopTyping() } // errors explicitly ignored
-        let message = try await messageUpdater.editMessage(
+        let localMessage = try await messageUpdater.editMessage(
             messageId: messageId,
             text: text,
             skipEnrichUrl: skipEnrichURL,
             attachments: attachments,
             extraData: extraData
         )
-        switch message.localState {
-        case .pendingSend:
-            let messageSender = try client.backgroundWorker(of: MessageSender.self)
-            return try await messageSender.waitForAPIRequest(messageId: messageId)
-        case .pendingSync:
-            let messageEditor = try client.backgroundWorker(of: MessageEditor.self)
-            return try await messageEditor.waitForAPIRequest(messageId: messageId)
-        default:
-            return message
-        }
+        return try await waitForAPIRequest(localMessage: localMessage)
     }
     
     // MARK: - Message Loading
@@ -629,9 +619,8 @@ public class Chat {
         _ messageId: MessageId,
         pinning: MessagePinning
     ) async throws -> ChatMessage {
-        let messageEditor = try client.backgroundWorker(of: MessageEditor.self)
-        try await messageUpdater.pinMessage(messageId: messageId, pinning: pinning)
-        return try await messageEditor.waitForAPIRequest(messageId: messageId)
+        let localMessage = try await messageUpdater.pinMessage(messageId: messageId, pinning: pinning)
+        return try await waitForAPIRequest(localMessage: localMessage)
     }
     
     /// Removes the message from the channel's pinned messages.
@@ -643,9 +632,8 @@ public class Chat {
     /// - Throws: An error while communicating with the Stream API.
     /// - Returns: An instance of `ChatMessage` which was unpinned.
     @discardableResult public func unpinMessage(_ messageId: MessageId) async throws -> ChatMessage {
-        let messageEditor = try client.backgroundWorker(of: MessageEditor.self)
-        try await messageUpdater.unpinMessage(messageId: messageId)
-        return try await messageEditor.waitForAPIRequest(messageId: messageId)
+        let localMessage = try await messageUpdater.unpinMessage(messageId: messageId)
+        return try await waitForAPIRequest(localMessage: localMessage)
     }
     
     /// Loads pinned messages for the specified pagination options, sorting order, and limit.
@@ -811,8 +799,7 @@ public class Chat {
         messageId: MessageId? = nil
     ) async throws -> ChatMessage {
         Task { try await stopTyping() } // errors explicitly ignored
-        let messageSender = try client.backgroundWorker(of: MessageSender.self)
-        let message = try await messageUpdater.createNewReply(
+        let localMessage = try await messageUpdater.createNewReply(
             in: cid,
             messageId: messageId,
             text: text,
@@ -829,8 +816,8 @@ public class Chat {
             skipEnrichUrl: skipEnrichURL,
             extraData: extraData
         )
-        async let sentMessage = try await messageSender.waitForAPIRequest(messageId: message.id)
-        eventNotificationCenter.process(NewMessagePendingEvent(message: message))
+        async let sentMessage = try await waitForAPIRequest(localMessage: localMessage)
+        eventNotificationCenter.process(NewMessagePendingEvent(message: localMessage))
         return try await sentMessage
     }
     
@@ -1343,6 +1330,20 @@ extension Chat {
         get async throws {
             guard let sender = await state.readStateSender else { throw ClientError.ChannelNotCreatedYet() }
             return sender
+        }
+    }
+    
+    /// Depending on the local state we use different workers.
+    func waitForAPIRequest(localMessage: ChatMessage) async throws -> ChatMessage {
+        switch localMessage.localState {
+        case .pendingSend:
+            let messageSender = try client.backgroundWorker(of: MessageSender.self)
+            return try await messageSender.waitForAPIRequest(messageId: localMessage.id)
+        case .pendingSync:
+            let messageEditor = try client.backgroundWorker(of: MessageEditor.self)
+            return try await messageEditor.waitForAPIRequest(messageId: localMessage.id)
+        default:
+            return localMessage
         }
     }
 }

@@ -648,7 +648,7 @@ public class ChatMessageController: DataController, DelegateCallable, DataStoreP
     public func pin(_ pinning: MessagePinning, completion: ((Error?) -> Void)? = nil) {
         messageUpdater.pinMessage(messageId: messageId, pinning: pinning) { result in
             self.callback {
-                completion?(result)
+                completion?(result.error)
             }
         }
     }
@@ -659,7 +659,7 @@ public class ChatMessageController: DataController, DelegateCallable, DataStoreP
     public func unpin(completion: ((Error?) -> Void)? = nil) {
         messageUpdater.unpinMessage(messageId: messageId) { result in
             self.callback {
-                completion?(result)
+                completion?(result.error)
             }
         }
     }
