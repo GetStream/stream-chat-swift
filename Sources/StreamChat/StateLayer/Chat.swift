@@ -516,7 +516,20 @@ public class Chat {
         try await loadMessages(after: nil, limit: limit)
     }
     
-    // MARK: - Message State Observing
+    // MARK: - Message State
+    
+    /// Access a message which is available locally by its id.
+    ///
+    /// - Note: This method does a local lookup of the message and returns a message present in ``ChatState/messages``.
+    ///
+    /// - Parameter messageId: The id of the message which is available locally.
+    ///
+    /// - Returns: An instance of the locally available chat message
+    @MainActor public func localMessage(for messageId: MessageId) -> ChatMessage? {
+        let dataStore = DataStore(client: client)
+        let message = dataStore.message(id: messageId)
+        return message?.cid == state.cid ? message : nil
+    }
     
     /// Returns an observable message state for the specified message.
     ///
@@ -539,19 +552,6 @@ public class Chat {
                 }
             }
         )
-    }
-    
-    /// Access a message which is available locally by its id.
-    ///
-    /// - Note: This method does a local lookup of the message and returns a message present in ``ChatState/messages``.
-    ///
-    /// - Parameter messageId: The id of the message which is available locally.
-    ///
-    /// - Returns: An instance of the locally available chat message
-    @MainActor public func localMessage(for messageId: MessageId) -> ChatMessage? {
-        let dataStore = DataStore(client: client)
-        let message = dataStore.message(id: messageId)
-        return message?.cid == state.cid ? message : nil
     }
     
     // MARK: - Message Attachment Actions

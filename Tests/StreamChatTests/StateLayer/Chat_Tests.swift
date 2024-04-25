@@ -677,7 +677,34 @@ final class Chat_Tests: XCTestCase {
         }
     }
     
-    // MARK: - Message State Observing
+    // MARK: - Message State
+    
+    func test_localMessage_whenMessageIsLocallyAvailable_thenMessageIsReturned() async throws {
+        let initialPayload = makeChannelPayload(messageCount: 3, createdAtOffset: 0)
+        try await env.client.databaseContainer.write { session in
+            try session.saveChannel(payload: initialPayload)
+        }
+        try await setUpChat(usesMockedUpdaters: false)
+        for messageId in initialPayload.messages.map(\.id) {
+            let message = await chat.localMessage(for: messageId)
+            XCTAssertNotNil(message)
+        }
+    }
+    
+    func test_localMessage_whenMessageIdIsForDifferentChannel_thenMessageIsNotReturned() async throws {
+        let otherChannelPayload = makeChannelPayload(
+            cid: .unique,
+            messageCount: 1,
+            createdAtOffset: 0
+        )
+        try await env.client.databaseContainer.write { session in
+            try session.saveChannel(payload: otherChannelPayload)
+        }
+        try await setUpChat(usesMockedUpdaters: false)
+        let messageId = try XCTUnwrap(otherChannelPayload.messages.first?.id)
+        let message = await chat.localMessage(for: messageId)
+        XCTAssertNil(message)
+    }
     
     func test_messageState_whenMessageIsLocallyAvailable_thenAPIRequestIsSkipped() async throws {
         try await env.client.databaseContainer.write { session in
@@ -1197,11 +1224,13 @@ final class Chat_Tests: XCTestCase {
     }
     
     private func makeChannelPayload(
+        cid: ChannelId? = nil,
         messageCount: Int,
         memberCount: Int = 0,
         watcherCount: Int = 0,
         createdAtOffset: Int
     ) -> ChannelPayload {
+        let channelId = cid ?? self.channelId!
         // Note that message pagination relies on createdAt and cid
         let messages: [MessagePayload] = (0..<messageCount)
             .map {
