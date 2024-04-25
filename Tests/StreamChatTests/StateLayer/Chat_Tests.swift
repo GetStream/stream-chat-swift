@@ -181,7 +181,165 @@ final class Chat_Tests: XCTestCase {
         XCTAssertEqual(channelId, env.channelUpdaterMock.rejectInvite_cid)
     }
     
+    // MARK: - Members
+    
+    func test_addMembers_whenChannelUpdaterSucceeds_thenAddMembersSucceeds() async throws {
+        for hideHistory in [true, false] {
+            env.channelUpdaterMock.addMembers_completion_result = .success(())
+            let memberIds: [UserId] = [.unique, .unique]
+            try await chat.addMembers(memberIds, systemMessage: "My system message", hideHistory: hideHistory)
+            XCTAssertEqual(channelId, env.channelUpdaterMock.addMembers_cid)
+            XCTAssertEqual(memberIds.sorted(), env.channelUpdaterMock.addMembers_userIds?.sorted())
+            XCTAssertEqual("My system message", env.channelUpdaterMock.addMembers_message)
+            XCTAssertEqual(hideHistory, env.channelUpdaterMock.addMembers_hideHistory)
+            XCTAssertEqual(currentUserId, env.channelUpdaterMock.addMembers_currentUserId)
+        }
+    }
+    
+    func test_addMembers_whenChannelUpdaterFails_thenAddMembersSucceeds() async throws {
+        for hideHistory in [true, false] {
+            env.channelUpdaterMock.addMembers_completion_result = .failure(expectedTestError)
+            let memberIds: [UserId] = [.unique, .unique]
+            
+            await XCTAssertAsyncFailure(
+                try await chat.addMembers(memberIds, systemMessage: "My system message", hideHistory: hideHistory),
+                expectedTestError
+            )
+            
+            XCTAssertEqual(channelId, env.channelUpdaterMock.addMembers_cid)
+            XCTAssertEqual(memberIds.sorted(), env.channelUpdaterMock.addMembers_userIds?.sorted())
+            XCTAssertEqual("My system message", env.channelUpdaterMock.addMembers_message)
+            XCTAssertEqual(hideHistory, env.channelUpdaterMock.addMembers_hideHistory)
+            XCTAssertEqual(currentUserId, env.channelUpdaterMock.addMembers_currentUserId)
+        }
+    }
+    
+    func test_removeMembers_whenChannelUpdaterSucceeds_thenRemoveMembersSucceeds() async throws {
+        env.channelUpdaterMock.removeMembers_completion_result = .success(())
+        let memberIds: [UserId] = [.unique, .unique]
+        try await chat.removeMembers(memberIds, systemMessage: "My system message")
+        XCTAssertEqual(channelId, env.channelUpdaterMock.removeMembers_cid)
+        XCTAssertEqual(memberIds.sorted(), env.channelUpdaterMock.removeMembers_userIds?.sorted())
+        XCTAssertEqual("My system message", env.channelUpdaterMock.removeMembers_message)
+        XCTAssertEqual(currentUserId, env.channelUpdaterMock.removeMembers_currentUserId)
+    }
+    
+    func test_removeMembers_whenChannelUpdaterFails_thenRemoveMembersSucceeds() async throws {
+        env.channelUpdaterMock.removeMembers_completion_result = .failure(expectedTestError)
+        let memberIds: [UserId] = [.unique, .unique]
+        
+        await XCTAssertAsyncFailure(
+            try await chat.removeMembers(memberIds, systemMessage: "My system message"),
+            expectedTestError
+        )
+        
+        XCTAssertEqual(channelId, env.channelUpdaterMock.removeMembers_cid)
+        XCTAssertEqual(memberIds.sorted(), env.channelUpdaterMock.removeMembers_userIds?.sorted())
+        XCTAssertEqual("My system message", env.channelUpdaterMock.removeMembers_message)
+        XCTAssertEqual(currentUserId, env.channelUpdaterMock.removeMembers_currentUserId)
+    }
+    
+    // MARK: - Member Moderation
+    
+    func test_banMember_whenMemberUpdaterSucceeds_thenBanMemberSucceeds() async throws {
+        env.memberUpdaterMock.banMember_completion_result = .success(())
+        let reason = "Test reason"
+        let timeout = 5
+        let memberId: UserId = .unique
+        try await chat.banMember(memberId, reason: reason, timeout: timeout)
+        XCTAssertEqual(channelId, env.memberUpdaterMock.banMember_cid)
+        XCTAssertEqual(memberId, env.memberUpdaterMock.banMember_userId)
+        XCTAssertEqual(reason, env.memberUpdaterMock.banMember_reason)
+        XCTAssertEqual(timeout, env.memberUpdaterMock.banMember_timeoutInMinutes)
+        XCTAssertEqual(false, env.memberUpdaterMock.banMember_shadow)
+    }
+    
+    func test_banMember_whenMemberUpdaterFails_thenBanMemberSucceeds() async throws {
+        env.memberUpdaterMock.banMember_completion_result = .failure(expectedTestError)
+        let reason = "Test reason"
+        let timeout = 5
+        let memberId: UserId = .unique
+        
+        await XCTAssertAsyncFailure(
+            try await chat.banMember(memberId, reason: reason, timeout: timeout),
+            expectedTestError
+        )
+        
+        XCTAssertEqual(channelId, env.memberUpdaterMock.banMember_cid)
+        XCTAssertEqual(memberId, env.memberUpdaterMock.banMember_userId)
+        XCTAssertEqual(reason, env.memberUpdaterMock.banMember_reason)
+        XCTAssertEqual(timeout, env.memberUpdaterMock.banMember_timeoutInMinutes)
+        XCTAssertEqual(false, env.memberUpdaterMock.banMember_shadow)
+    }
+    
+    func test_shadowBanMember_whenMemberUpdaterSucceeds_thenShadowBanMemberSucceeds() async throws {
+        env.memberUpdaterMock.banMember_completion_result = .success(())
+        let reason = "Test reason"
+        let timeout = 5
+        let memberId: UserId = .unique
+        try await chat.shadowBanMember(memberId, reason: reason, timeout: timeout)
+        XCTAssertEqual(channelId, env.memberUpdaterMock.banMember_cid)
+        XCTAssertEqual(memberId, env.memberUpdaterMock.banMember_userId)
+        XCTAssertEqual(reason, env.memberUpdaterMock.banMember_reason)
+        XCTAssertEqual(timeout, env.memberUpdaterMock.banMember_timeoutInMinutes)
+        XCTAssertEqual(true, env.memberUpdaterMock.banMember_shadow)
+    }
+    
+    func test_shadowBanMember_whenMemberUpdaterFails_thenShadowBanMemberSucceeds() async throws {
+        env.memberUpdaterMock.banMember_completion_result = .failure(expectedTestError)
+        let reason = "Test reason"
+        let timeout = 5
+        let memberId: UserId = .unique
+        
+        await XCTAssertAsyncFailure(
+            try await chat.shadowBanMember(memberId, reason: reason, timeout: timeout),
+            expectedTestError
+        )
+        
+        XCTAssertEqual(channelId, env.memberUpdaterMock.banMember_cid)
+        XCTAssertEqual(memberId, env.memberUpdaterMock.banMember_userId)
+        XCTAssertEqual(reason, env.memberUpdaterMock.banMember_reason)
+        XCTAssertEqual(timeout, env.memberUpdaterMock.banMember_timeoutInMinutes)
+        XCTAssertEqual(true, env.memberUpdaterMock.banMember_shadow)
+    }
+    
+    func test_unbanMember_whenMemberUpdaterSucceeds_thenUnbanMemberSucceeds() async throws {
+        env.memberUpdaterMock.unbanMember_completion_result = .success(())
+        let memberId: UserId = .unique
+        try await chat.unbanMember(memberId)
+        XCTAssertEqual(channelId, env.memberUpdaterMock.unbanMember_cid)
+        XCTAssertEqual(memberId, env.memberUpdaterMock.unbanMember_userId)
+    }
+    
+    func test_unbanMember_whenMemberUpdaterFails_thenUnbanMemberSucceeds() async throws {
+        env.memberUpdaterMock.unbanMember_completion_result = .failure(expectedTestError)
+        let memberId: UserId = .unique
+        await XCTAssertAsyncFailure(try await chat.unbanMember(memberId), expectedTestError)
+        XCTAssertEqual(channelId, env.memberUpdaterMock.unbanMember_cid)
+        XCTAssertEqual(memberId, env.memberUpdaterMock.unbanMember_userId)
+    }
+    
     // MARK: - Messages
+    
+    func test_deleteMessage_whenMessageUpdaterSucceeds_thenDeleteMessageSucceeds() async throws {
+        for hard in [true, false] {
+            env.messageUpdaterMock.deleteMessage_completion_result = .success(())
+            let messageId: MessageId = .unique
+            try await chat.deleteMessage(messageId, hard: hard)
+            XCTAssertEqual(messageId, env.messageUpdaterMock.deleteMessage_messageId)
+            XCTAssertEqual(hard, env.messageUpdaterMock.deleteMessage_hard)
+        }
+    }
+    
+    func test_deleteMessage_whenMessageUpdaterFails_thenDeleteMessageSucceeds() async throws {
+        for hard in [true, false] {
+            env.messageUpdaterMock.deleteMessage_completion_result = .failure(expectedTestError)
+            let messageId: MessageId = .unique
+            await XCTAssertAsyncFailure(try await chat.deleteMessage(messageId, hard: hard), expectedTestError)
+            XCTAssertEqual(messageId, env.messageUpdaterMock.deleteMessage_messageId)
+            XCTAssertEqual(hard, env.messageUpdaterMock.deleteMessage_hard)
+        }
+    }
     
     func test_resendAttachment_whenAPIRequestSucceeds_thenResendAttachmentSucceeds() async throws {
         try await setUpChat(usesMockedUpdaters: false)
@@ -547,166 +705,6 @@ final class Chat_Tests: XCTestCase {
         let message = try await MainActor.run { try XCTUnwrap(chat.localMessage(for: messageId)) }
         XCTAssertEqual(nil, message.deletedAt)
         XCTAssertEqual(initialMessage.text, message.text)
-    }
-    
-    // MARK: - Members
-    
-    func test_addMembers_whenChannelUpdaterSucceeds_thenAddMembersSucceeds() async throws {
-        for hideHistory in [true, false] {
-            env.channelUpdaterMock.addMembers_completion_result = .success(())
-            let memberIds: [UserId] = [.unique, .unique]
-            try await chat.addMembers(memberIds, systemMessage: "My system message", hideHistory: hideHistory)
-            XCTAssertEqual(channelId, env.channelUpdaterMock.addMembers_cid)
-            XCTAssertEqual(memberIds.sorted(), env.channelUpdaterMock.addMembers_userIds?.sorted())
-            XCTAssertEqual("My system message", env.channelUpdaterMock.addMembers_message)
-            XCTAssertEqual(hideHistory, env.channelUpdaterMock.addMembers_hideHistory)
-            XCTAssertEqual(currentUserId, env.channelUpdaterMock.addMembers_currentUserId)
-        }
-    }
-    
-    func test_addMembers_whenChannelUpdaterFails_thenAddMembersSucceeds() async throws {
-        for hideHistory in [true, false] {
-            env.channelUpdaterMock.addMembers_completion_result = .failure(expectedTestError)
-            let memberIds: [UserId] = [.unique, .unique]
-            
-            await XCTAssertAsyncFailure(
-                try await chat.addMembers(memberIds, systemMessage: "My system message", hideHistory: hideHistory),
-                expectedTestError
-            )
-            
-            XCTAssertEqual(channelId, env.channelUpdaterMock.addMembers_cid)
-            XCTAssertEqual(memberIds.sorted(), env.channelUpdaterMock.addMembers_userIds?.sorted())
-            XCTAssertEqual("My system message", env.channelUpdaterMock.addMembers_message)
-            XCTAssertEqual(hideHistory, env.channelUpdaterMock.addMembers_hideHistory)
-            XCTAssertEqual(currentUserId, env.channelUpdaterMock.addMembers_currentUserId)
-        }
-    }
-    
-    func test_removeMembers_whenChannelUpdaterSucceeds_thenRemoveMembersSucceeds() async throws {
-        env.channelUpdaterMock.removeMembers_completion_result = .success(())
-        let memberIds: [UserId] = [.unique, .unique]
-        try await chat.removeMembers(memberIds, systemMessage: "My system message")
-        XCTAssertEqual(channelId, env.channelUpdaterMock.removeMembers_cid)
-        XCTAssertEqual(memberIds.sorted(), env.channelUpdaterMock.removeMembers_userIds?.sorted())
-        XCTAssertEqual("My system message", env.channelUpdaterMock.removeMembers_message)
-        XCTAssertEqual(currentUserId, env.channelUpdaterMock.removeMembers_currentUserId)
-    }
-    
-    func test_removeMembers_whenChannelUpdaterFails_thenRemoveMembersSucceeds() async throws {
-        env.channelUpdaterMock.removeMembers_completion_result = .failure(expectedTestError)
-        let memberIds: [UserId] = [.unique, .unique]
-        
-        await XCTAssertAsyncFailure(
-            try await chat.removeMembers(memberIds, systemMessage: "My system message"),
-            expectedTestError
-        )
-        
-        XCTAssertEqual(channelId, env.channelUpdaterMock.removeMembers_cid)
-        XCTAssertEqual(memberIds.sorted(), env.channelUpdaterMock.removeMembers_userIds?.sorted())
-        XCTAssertEqual("My system message", env.channelUpdaterMock.removeMembers_message)
-        XCTAssertEqual(currentUserId, env.channelUpdaterMock.removeMembers_currentUserId)
-    }
-    
-    // MARK: - Member Moderation
-    
-    func test_banMember_whenMemberUpdaterSucceeds_thenBanMemberSucceeds() async throws {
-        env.memberUpdaterMock.banMember_completion_result = .success(())
-        let reason = "Test reason"
-        let timeout = 5
-        let memberId: UserId = .unique
-        try await chat.banMember(memberId, reason: reason, timeout: timeout)
-        XCTAssertEqual(channelId, env.memberUpdaterMock.banMember_cid)
-        XCTAssertEqual(memberId, env.memberUpdaterMock.banMember_userId)
-        XCTAssertEqual(reason, env.memberUpdaterMock.banMember_reason)
-        XCTAssertEqual(timeout, env.memberUpdaterMock.banMember_timeoutInMinutes)
-        XCTAssertEqual(false, env.memberUpdaterMock.banMember_shadow)
-    }
-    
-    func test_banMember_whenMemberUpdaterFails_thenBanMemberSucceeds() async throws {
-        env.memberUpdaterMock.banMember_completion_result = .failure(expectedTestError)
-        let reason = "Test reason"
-        let timeout = 5
-        let memberId: UserId = .unique
-        
-        await XCTAssertAsyncFailure(
-            try await chat.banMember(memberId, reason: reason, timeout: timeout),
-            expectedTestError
-        )
-        
-        XCTAssertEqual(channelId, env.memberUpdaterMock.banMember_cid)
-        XCTAssertEqual(memberId, env.memberUpdaterMock.banMember_userId)
-        XCTAssertEqual(reason, env.memberUpdaterMock.banMember_reason)
-        XCTAssertEqual(timeout, env.memberUpdaterMock.banMember_timeoutInMinutes)
-        XCTAssertEqual(false, env.memberUpdaterMock.banMember_shadow)
-    }
-    
-    func test_shadowBanMember_whenMemberUpdaterSucceeds_thenShadowBanMemberSucceeds() async throws {
-        env.memberUpdaterMock.banMember_completion_result = .success(())
-        let reason = "Test reason"
-        let timeout = 5
-        let memberId: UserId = .unique
-        try await chat.shadowBanMember(memberId, reason: reason, timeout: timeout)
-        XCTAssertEqual(channelId, env.memberUpdaterMock.banMember_cid)
-        XCTAssertEqual(memberId, env.memberUpdaterMock.banMember_userId)
-        XCTAssertEqual(reason, env.memberUpdaterMock.banMember_reason)
-        XCTAssertEqual(timeout, env.memberUpdaterMock.banMember_timeoutInMinutes)
-        XCTAssertEqual(true, env.memberUpdaterMock.banMember_shadow)
-    }
-    
-    func test_shadowBanMember_whenMemberUpdaterFails_thenShadowBanMemberSucceeds() async throws {
-        env.memberUpdaterMock.banMember_completion_result = .failure(expectedTestError)
-        let reason = "Test reason"
-        let timeout = 5
-        let memberId: UserId = .unique
-        
-        await XCTAssertAsyncFailure(
-            try await chat.shadowBanMember(memberId, reason: reason, timeout: timeout),
-            expectedTestError
-        )
-        
-        XCTAssertEqual(channelId, env.memberUpdaterMock.banMember_cid)
-        XCTAssertEqual(memberId, env.memberUpdaterMock.banMember_userId)
-        XCTAssertEqual(reason, env.memberUpdaterMock.banMember_reason)
-        XCTAssertEqual(timeout, env.memberUpdaterMock.banMember_timeoutInMinutes)
-        XCTAssertEqual(true, env.memberUpdaterMock.banMember_shadow)
-    }
-    
-    func test_unbanMember_whenMemberUpdaterSucceeds_thenUnbanMemberSucceeds() async throws {
-        env.memberUpdaterMock.unbanMember_completion_result = .success(())
-        let memberId: UserId = .unique
-        try await chat.unbanMember(memberId)
-        XCTAssertEqual(channelId, env.memberUpdaterMock.unbanMember_cid)
-        XCTAssertEqual(memberId, env.memberUpdaterMock.unbanMember_userId)
-    }
-    
-    func test_unbanMember_whenMemberUpdaterFails_thenUnbanMemberSucceeds() async throws {
-        env.memberUpdaterMock.unbanMember_completion_result = .failure(expectedTestError)
-        let memberId: UserId = .unique
-        await XCTAssertAsyncFailure(try await chat.unbanMember(memberId), expectedTestError)
-        XCTAssertEqual(channelId, env.memberUpdaterMock.unbanMember_cid)
-        XCTAssertEqual(memberId, env.memberUpdaterMock.unbanMember_userId)
-    }
-    
-    // MARK: - Messages
-    
-    func test_deleteMessage_whenMessageUpdaterSucceeds_thenDeleteMessageSucceeds() async throws {
-        for hard in [true, false] {
-            env.messageUpdaterMock.deleteMessage_completion_result = .success(())
-            let messageId: MessageId = .unique
-            try await chat.deleteMessage(messageId, hard: hard)
-            XCTAssertEqual(messageId, env.messageUpdaterMock.deleteMessage_messageId)
-            XCTAssertEqual(hard, env.messageUpdaterMock.deleteMessage_hard)
-        }
-    }
-    
-    func test_deleteMessage_whenMessageUpdaterFails_thenDeleteMessageSucceeds() async throws {
-        for hard in [true, false] {
-            env.messageUpdaterMock.deleteMessage_completion_result = .failure(expectedTestError)
-            let messageId: MessageId = .unique
-            await XCTAssertAsyncFailure(try await chat.deleteMessage(messageId, hard: hard), expectedTestError)
-            XCTAssertEqual(messageId, env.messageUpdaterMock.deleteMessage_messageId)
-            XCTAssertEqual(hard, env.messageUpdaterMock.deleteMessage_hard)
-        }
     }
     
     // MARK: - Message Flagging
