@@ -239,6 +239,33 @@ final class Chat_Tests: XCTestCase {
         XCTAssertEqual(currentUserId, env.channelUpdaterMock.removeMembers_currentUserId)
     }
     
+    func test_loadMembers_whenAPIRequestSucceeds_thenStateUpdates() async throws {
+        try await setUpChat(usesMockedUpdaters: false)
+        
+        let apiResponse = makeMemberListPayload(count: 5, offset: 0)
+        env.client.mockAPIClient.test_mockResponseResult(.success(apiResponse))
+        let paginationMembers = try await chat.loadMembers(with: Pagination(pageSize: 5))
+        XCTAssertEqual(apiResponse.members.map(\.user?.id), paginationMembers.map(\.id))
+        await XCTAssertEqual(apiResponse.members.map(\.user?.id), chat.state.members.map(\.id))
+    }
+    
+    func test_loadMoreMembers_whenAPIRequestSucceeds_thenStateUpdates() async throws {
+        try await setUpChat(usesMockedUpdaters: false)
+        
+        // Initial load
+        let initialResponse = makeMemberListPayload(count: 3, offset: 0)
+        env.client.mockAPIClient.test_mockResponseResult(.success(initialResponse))
+        try await chat.loadMembers(with: Pagination(pageSize: 5))
+        
+        // More
+        let moreResponse = makeMemberListPayload(count: 5, offset: 3)
+        env.client.mockAPIClient.test_mockResponseResult(.success(moreResponse))
+        let paginationMembers = try await chat.loadMoreMembers(limit: 5)
+        XCTAssertEqual(moreResponse.members.map(\.user?.id), paginationMembers.map(\.id))
+        let all = initialResponse.members + moreResponse.members
+        await XCTAssertEqual(all.map(\.user?.id), chat.state.members.map(\.id))
+    }
+    
     // MARK: - Member Moderation
     
     func test_banMember_whenMemberUpdaterSucceeds_thenBanMemberSucceeds() async throws {
@@ -853,16 +880,6 @@ final class Chat_Tests: XCTestCase {
         XCTAssertEqual(nil, unpinnedMessage.localState)
     }
     
-    // TODO: not done
-    func test_loadPinnedMessagesAction_whenAPIRequestSucceeds_thenLoadPinnedMessagesActionSucceeds() async throws {
-        // loadPinnedMessages(for pagination: PinnedMessagesPagination? = nil, sort: [Sorting<PinnedMessagesSortingKey>] = [], limit: Int = .messagesPageSize)
-    }
-    
-    // TODO: not done
-    func test_loadPinnedMessagesAction_whenAPIRequestFails_thenLoadPinnedMessagesActionSucceeds() async throws {
-        // loadPinnedMessages(for pagination: PinnedMessagesPagination? = nil, sort: [Sorting<PinnedMessagesSortingKey>] = [], limit: Int = .messagesPageSize)
-    }
-    
     // MARK: - Message Reactions
     
     func test_deleteReactionAction_whenMessageUpdaterSucceeds_thenDeleteReactionActionSucceeds() async throws {
@@ -1158,7 +1175,7 @@ final class Chat_Tests: XCTestCase {
         let messages: [MessagePayload] = (0..<messageCount)
             .map {
                 .dummy(
-                    messageId: "\($0 + createdAtOffset)",
+                    messageId: String(format: "%03d", $0 + createdAtOffset),
                     createdAt: Date(timeIntervalSinceReferenceDate: TimeInterval($0 + createdAtOffset)),
                     cid: channelId
                 )
@@ -1167,14 +1184,14 @@ final class Chat_Tests: XCTestCase {
             .map {
                 .dummy(
                     user: .dummy(
-                        userId: "\($0 + createdAtOffset)"
+                        userId: String(format: "%03d", $0 + createdAtOffset)
                     ),
                     createdAt: Date(timeIntervalSinceReferenceDate: TimeInterval($0 + createdAtOffset))
                 )
             }
         let watchers: [UserPayload] = (0..<watcherCount)
             .map {
-                .dummy(userId: "\($0 + createdAtOffset)")
+                .dummy(userId: String(format: "%03d", $0 + createdAtOffset))
             }
         return ChannelPayload.dummy(
             channel: .dummy(cid: channelId),
@@ -1182,6 +1199,21 @@ final class Chat_Tests: XCTestCase {
             members: members,
             messages: messages
         )
+    }
+    
+    private func makeMemberListPayload(count: Int, offset: Int) -> ChannelMemberListPayload {
+        let members = (0..<count)
+            .map { $0 + offset }
+            .map {
+                MemberPayload.dummy(
+                    user: .dummy(
+                        userId: String(format: "%03d", $0),
+                        name: String(format: "%03d", $0)
+                    ),
+                    createdAt: Date(timeIntervalSinceReferenceDate: TimeInterval($0))
+                )
+            }
+        return ChannelMemberListPayload(members: members)
     }
 }
 
