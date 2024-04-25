@@ -304,7 +304,10 @@ public class ChatClient {
     /// - Throws: An error while communicating with the Stream API.
     /// - Returns: A type representing the connected user and its state.
     @available(iOS 13.0, *)
-    @discardableResult public func connectUser(userInfo: UserInfo, tokenProvider: @escaping TokenProvider) async throws -> ConnectedUser {
+    @discardableResult public func connectUser(
+        userInfo: UserInfo,
+        tokenProvider: @escaping TokenProvider
+    ) async throws -> ConnectedUser {
         try await withCheckedThrowingContinuation { continuation in
             connectUser(userInfo: userInfo, tokenProvider: tokenProvider) { error in
                 continuation.resume(with: error)
@@ -354,7 +357,10 @@ public class ChatClient {
     /// - Throws: An error while communicating with the Stream API.
     /// - Returns: A type representing the connected user and its state.
     @available(iOS 13.0, *)
-    @discardableResult public func connectUser(userInfo: UserInfo, token: Token) async throws -> ConnectedUser {
+    @discardableResult public func connectUser(
+        userInfo: UserInfo,
+        token: Token
+    ) async throws -> ConnectedUser {
         try await withCheckedThrowingContinuation { continuation in
             connectUser(userInfo: userInfo, token: token) { error in
                 continuation.resume(with: error)
@@ -539,7 +545,7 @@ public class ChatClient {
     
     // MARK: -
 
-    /// Fetches the app settings and updates the `ChatClient.appSettings`.
+    /// Fetches the app settings and updates the ``ChatClient/appSettings``.
     /// - Parameter completion: The completion block once the app settings has finished fetching.
     public func loadAppSettings(
         completion: ((Result<AppSettings, Error>) -> Void)? = nil
@@ -553,6 +559,16 @@ public class ChatClient {
             case let .failure(error):
                 completion?(.failure(error))
             }
+        }
+    }
+    
+    /// Fetches the app settings and updates the ``ChatClient/appSettings``.
+    ///
+    /// - Returns: The latest state of app settings.
+    @available(iOS 13.0, *)
+    public func loadAppSettings() async throws -> AppSettings {
+        try await withCheckedThrowingContinuation { continuation in
+            loadAppSettings(completion: continuation.resume(with:))
         }
     }
 
