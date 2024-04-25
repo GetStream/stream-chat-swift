@@ -1039,6 +1039,80 @@ final class Chat_Tests: XCTestCase {
         await XCTAssertEqual(all.map(\.user.id), messageState.reactions.map(\.author.id))
     }
     
+    // MARK: - Message Reading
+    
+    func test_markRead_whenAPIRequestSucceeds_thenReadStateUpdates() async throws {
+        try await setUpChat(
+            usesMockedUpdaters: false,
+            messageCount: 3
+        )
+        let messages = await chat.state.messages
+        
+        // Modify the read state for allowing markRead to trigger an API request
+        try await env.client.databaseContainer.write { session in
+            let payload = ChannelPayload.dummy(
+                channel: .dummy(
+                    cid: self.channelId,
+                    lastMessageAt: messages.last?.createdAt
+                ),
+                channelReads: [
+                    ChannelReadPayload(
+                        user: .dummy(userId: self.currentUserId),
+                        lastReadAt: messages.first?.createdAt ?? .distantPast,
+                        lastReadMessageId: nil,
+                        unreadMessagesCount: 2
+                    )
+                ]
+            )
+            try session.saveChannel(payload: payload)
+        }
+        await XCTAssertEqual(1, chat.state.channel?.reads.count)
+        await XCTAssertEqual(2, chat.state.channel?.reads.first?.unreadMessagesCount)
+        
+        env.client.mockAPIClient.test_mockResponseResult(.success(EmptyResponse()))
+        try await chat.markRead()
+        XCTAssertNotNil(env.client.mockAPIClient.request_endpoint)
+        
+        await XCTAssertEqual(1, chat.state.channel?.reads.count)
+        await XCTAssertEqual(0, chat.state.channel?.reads.first?.unreadMessagesCount)
+    }
+    
+    func test_markUnread_whenAPIRequestSucceeds_thenReadStateUpdates() async throws {
+        try await setUpChat(
+            usesMockedUpdaters: false,
+            messageCount: 3
+        )
+        let messages = await chat.state.messages
+        let firstMessage = try XCTUnwrap(messages.first)
+        let lastMessage = try XCTUnwrap(messages.first)
+        
+        // Create a read state for the current user
+        try await env.client.databaseContainer.write { session in
+            let payload = ChannelPayload.dummy(
+                channel: .dummy(
+                    cid: self.channelId,
+                    lastMessageAt: lastMessage.createdAt
+                ),
+                channelReads: [
+                    ChannelReadPayload(
+                        user: .dummy(userId: self.currentUserId),
+                        lastReadAt: lastMessage.createdAt,
+                        lastReadMessageId: nil,
+                        unreadMessagesCount: 0
+                    )
+                ]
+            )
+            try session.saveChannel(payload: payload)
+        }
+        
+        env.client.mockAPIClient.test_mockResponseResult(.success(EmptyResponse()))
+        try await chat.markUnread(from: firstMessage.id)
+        XCTAssertNotNil(env.client.mockAPIClient.request_endpoint)
+        
+        await XCTAssertEqual(1, chat.state.channel?.reads.count)
+        await XCTAssertEqual(3, chat.state.channel?.reads.first?.unreadMessagesCount)
+    }
+    
     // MARK: - Message Translations
     
     func test_translateMessageStateAction_whenMessageUpdaterSucceeds_thenTranslateMessageActionSucceeds() async throws {
