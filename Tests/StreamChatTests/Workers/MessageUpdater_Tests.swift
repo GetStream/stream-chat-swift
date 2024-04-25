@@ -1833,14 +1833,14 @@ final class MessageUpdater_Tests: XCTestCase {
             // Create a new message in the database
             try database.createMessage(id: messageId, authorId: currentUserId, localState: initialState)
 
-            let completionError = try waitFor {
+            let completionResult = try waitFor {
                 messageUpdater.pinMessage(messageId: messageId, pinning: pin, completion: $0)
             }
 
             // Load the message
             let message = try XCTUnwrap(database.viewContext.message(id: messageId))
 
-            XCTAssertNil(completionError)
+            XCTAssertNil(completionResult.error)
             XCTAssertEqual(message.localMessageState, expectedState)
             XCTAssertEqual(message.pinned, true)
             XCTAssertEqual(message.pinExpires?.bridgeDate, pin.expirationDate)
@@ -1939,14 +1939,14 @@ final class MessageUpdater_Tests: XCTestCase {
                 localState: initialState
             )
 
-            let completionError = try waitFor {
+            let completionResult = try waitFor {
                 messageUpdater.unpinMessage(messageId: messageId, completion: $0)
             }
 
             // Load the message
             let message = try XCTUnwrap(database.viewContext.message(id: messageId))
 
-            XCTAssertNil(completionError)
+            XCTAssertNil(completionResult.error)
             XCTAssertEqual(message.localMessageState, expectedState)
             XCTAssertEqual(message.pinned, false)
             XCTAssertNil(message.pinExpires)
