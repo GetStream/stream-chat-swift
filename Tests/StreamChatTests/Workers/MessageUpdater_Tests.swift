@@ -545,16 +545,20 @@ final class MessageUpdater_Tests: XCTestCase {
             try database.createMessage(id: messageId, authorId: currentUserId)
 
             // Simulate `deleteMessage(messageId:)` call
-            messageUpdater.deleteMessage(messageId: messageId, hard: false)
-
+            let expectation = XCTestExpectation()
+            messageUpdater.deleteMessage(messageId: messageId, hard: false) { _ in
+                expectation.fulfill()
+            }
+            // Assert message's local state becomes `deleting` after waiting the first DB call to finish
+            AssertAsync.willBeTrue(apiClient.request_completion != nil)
+            
             // Load the message
-            let message = try XCTUnwrap(database.viewContext.message(id: messageId))
-
-            // Assert message's local state becomes `deleting`
-            AssertAsync.willBeEqual(message.localMessageState, .deleting)
-
+            AssertAsync.willBeEqual(.deleting, database.writableContext.message(id: messageId)?.localMessageState)
+            
             // Simulate API response
             apiClient.test_simulateResponse(networkResult)
+
+            wait(for: [expectation], timeout: defaultTimeout)
 
             // Assert message's local state becomes expected
             if expectedState == nil {
@@ -1794,11 +1798,11 @@ final class MessageUpdater_Tests: XCTestCase {
     func test_pinMessage_propagates_MessageDoesNotExist_Error() throws {
         try database.createCurrentUser()
 
-        let completionError = try waitFor {
+        let completionResult = try waitFor {
             messageUpdater.pinMessage(messageId: .unique, pinning: .expirationDate(.unique), completion: $0)
         }
 
-        XCTAssertTrue(completionError is ClientError.MessageDoesNotExist)
+        XCTAssertTrue(completionResult.error is ClientError.MessageDoesNotExist)
     }
     
     func test_pinMessage_propagatesSuccessfulResponse() throws {
@@ -1814,7 +1818,7 @@ final class MessageUpdater_Tests: XCTestCase {
             messageUpdater.pinMessage(messageId: messageId, pinning: expiration, completion: $0)
         }
 
-        XCTAssertNil(result)
+        XCTAssertNil(result.error)
         
         let message = try XCTUnwrap(database.viewContext.message(id: messageId)?.asModel())
         XCTAssertTrue(message.isPinned)
@@ -1830,11 +1834,11 @@ final class MessageUpdater_Tests: XCTestCase {
         let expectedError = TestError()
         apiClient.test_mockResponseResult(Result<EmptyResponse, Error>.failure(expectedError))
 
-        let completionError = try waitFor {
+        let completionResult = try waitFor {
             messageUpdater.pinMessage(messageId: messageId, pinning: .expirationDate(.unique), completion: $0)
         }
 
-        XCTAssertEqual(completionError, expectedError)
+        XCTAssertEqual(completionResult.error, expectedError)
         
         let message = try XCTUnwrap(database.viewContext.message(id: messageId)?.asModel())
         XCTAssertFalse(message.isPinned)
@@ -1848,11 +1852,11 @@ final class MessageUpdater_Tests: XCTestCase {
     func test_unpinMessage_propogates_MessageDoesNotExist_Error() throws {
         try database.createCurrentUser()
 
-        let completionError = try waitFor {
+        let completionResult = try waitFor {
             messageUpdater.unpinMessage(messageId: .unique, completion: $0)
         }
 
-        XCTAssertTrue(completionError is ClientError.MessageDoesNotExist)
+        XCTAssertTrue(completionResult.error is ClientError.MessageDoesNotExist)
     }
     
     func test_unpinMessage_propagatesSuccessfulResponse() throws {
@@ -1868,7 +1872,7 @@ final class MessageUpdater_Tests: XCTestCase {
             messageUpdater.unpinMessage(messageId: messageId, completion: $0)
         }
 
-        XCTAssertNil(result)
+        XCTAssertNil(result.error)
         
         let message = try XCTUnwrap(database.viewContext.message(id: messageId)?.asModel())
         XCTAssertFalse(message.isPinned)
@@ -1892,11 +1896,11 @@ final class MessageUpdater_Tests: XCTestCase {
         let expectedError = TestError()
         apiClient.test_mockResponseResult(Result<EmptyResponse, Error>.failure(expectedError))
 
-        let completionError = try waitFor {
+        let completionResult = try waitFor {
             messageUpdater.unpinMessage(messageId: messageId, completion: $0)
         }
 
-        XCTAssertEqual(completionError, expectedError)
+        XCTAssertEqual(completionResult.error, expectedError)
         
         let message = try XCTUnwrap(database.viewContext.message(id: messageId)?.asModel())
         XCTAssertTrue(message.isPinned)

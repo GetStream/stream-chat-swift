@@ -1982,7 +1982,7 @@ final class MessageController_Tests: XCTestCase {
         XCTAssertEqual(env.messageUpdater?.pinMessage_pinning, pinning)
 
         // Simulate successful update
-        env.messageUpdater?.pinMessage_completion?(nil)
+        env.messageUpdater?.pinMessage_completion?(.success(.mock()))
         // Release reference of completion so we can deallocate stuff
         env.messageUpdater!.pinMessage_completion = nil
 
@@ -2002,7 +2002,7 @@ final class MessageController_Tests: XCTestCase {
 
         // Simulate failed update
         let testError = TestError()
-        env.messageUpdater!.pinMessage_completion?(testError)
+        env.messageUpdater!.pinMessage_completion?(.failure(testError))
 
         // Completion should be called with the error
         AssertAsync.willBeEqual(completionCalledError as? TestError, testError)
@@ -2029,7 +2029,7 @@ final class MessageController_Tests: XCTestCase {
         XCTAssertEqual(env.messageUpdater?.unpinMessage_messageId, messageId)
 
         // Simulate successful update
-        env.messageUpdater?.unpinMessage_completion?(nil)
+        env.messageUpdater?.unpinMessage_completion?(.success(.mock()))
         // Release reference of completion so we can deallocate stuff
         env.messageUpdater!.unpinMessage_completion = nil
 
@@ -2049,7 +2049,7 @@ final class MessageController_Tests: XCTestCase {
 
         // Simulate failed update
         let testError = TestError()
-        env.messageUpdater!.unpinMessage_completion?(testError)
+        env.messageUpdater!.unpinMessage_completion?(.failure(testError))
 
         // Completion should be called with the error
         AssertAsync.willBeEqual(completionCalledError as? TestError, testError)
