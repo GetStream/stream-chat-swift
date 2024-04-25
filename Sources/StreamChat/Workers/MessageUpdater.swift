@@ -469,26 +469,25 @@ class MessageUpdater: Worker {
     ///  - Parameters:
     ///   - messageId: The message identifier.
     ///   - pinning: The pinning expiration information. It supports setting an infinite expiration, setting a date, or the amount of time a message is pinned.
-    ///   - completion: The completion. Will be called with an error if smth goes wrong, otherwise - will be called with `nil`.
-    func pinMessage(messageId: MessageId, pinning: MessagePinning, completion: ((Error?) -> Void)? = nil) {
-        pinLocalMessage(on: messageId, pinning: pinning) { [weak self] error in
-            if let error {
-                completion?(error)
-                return
-            }
-            
-            let endpoint: Endpoint<EmptyResponse> = .pinMessage(
-                messageId: messageId,
-                request: .init(set: .init(pinned: true))
-            )
-            
-            self?.apiClient.request(endpoint: endpoint) { result in
-                switch result {
-                case .success:
-                    completion?(nil)
-                case .failure(let apiError):
-                    self?.unpinLocalMessage(on: messageId) { _, _ in
-                        completion?(apiError)
+    func pinMessage(messageId: MessageId, pinning: MessagePinning, completion: ((Result<ChatMessage, Error>) -> Void)? = nil) {
+        pinLocalMessage(on: messageId, pinning: pinning) { [weak self] pinResult in
+            switch pinResult {
+            case .failure(let pinError):
+                completion?(.failure(pinError))
+            case .success(let message):
+                let endpoint: Endpoint<EmptyResponse> = .pinMessage(
+                    messageId: messageId,
+                    request: .init(set: .init(pinned: true))
+                )
+                
+                self?.apiClient.request(endpoint: endpoint) { result in
+                    switch result {
+                    case .success:
+                        completion?(.success(message))
+                    case .failure(let apiError):
+                        self?.unpinLocalMessage(on: messageId) { _, _ in
+                            completion?(.failure(apiError))
+                        }
                     }
                 }
             }
@@ -498,26 +497,26 @@ class MessageUpdater: Worker {
     /// Unpin the message with the provided message id.
     ///  - Parameters:
     ///   - messageId: The message identifier.
-    ///   - completion: The completion. Will be called with an error if smth goes wrong, otherwise - will be called with `nil`.
-    func unpinMessage(messageId: MessageId, completion: ((Error?) -> Void)? = nil) {
-        unpinLocalMessage(on: messageId) { [weak self] error, pinning in
-            if let error {
-                completion?(error)
-                return
-            }
-            
-            let endpoint: Endpoint<EmptyResponse> = .pinMessage(
-                messageId: messageId,
-                request: .init(set: .init(pinned: false))
-            )
-            
-            self?.apiClient.request(endpoint: endpoint) { result in
-                switch result {
-                case .success:
-                    completion?(nil)
-                case .failure(let apiError):
-                    self?.pinLocalMessage(on: messageId, pinning: pinning) { _ in
-                        completion?(apiError)
+    ///   - completion: The completion handler with the result.
+    func unpinMessage(messageId: MessageId, completion: ((Result<ChatMessage, Error>) -> Void)? = nil) {
+        unpinLocalMessage(on: messageId) { [weak self] unpinResult, pinning in
+            switch unpinResult {
+            case .failure(let unpinError):
+                completion?(.failure(unpinError))
+            case .success(let message):
+                let endpoint: Endpoint<EmptyResponse> = .pinMessage(
+                    messageId: messageId,
+                    request: .init(set: .init(pinned: false))
+                )
+                
+                self?.apiClient.request(endpoint: endpoint) { result in
+                    switch result {
+                    case .success:
+                        completion?(.success(message))
+                    case .failure(let apiError):
+                        self?.pinLocalMessage(on: messageId, pinning: pinning) { _ in
+                            completion?(.failure(apiError))
+                        }
                     }
                 }
             }
@@ -527,25 +526,30 @@ class MessageUpdater: Worker {
     private func pinLocalMessage(
         on messageId: MessageId,
         pinning: MessagePinning,
-        completion: ((Error?) -> Void)? = nil
+        completion: ((Result<ChatMessage, Error>) -> Void)? = nil
     ) {
+        var message: ChatMessage!
         database.write { session in
             guard let messageDTO = session.message(id: messageId) else {
                 throw ClientError.MessageDoesNotExist(messageId: messageId)
             }
             try session.pin(message: messageDTO, pinning: pinning)
+            message = try messageDTO.asModel()
         } completion: { error in
             if let error = error {
                 log.error("Error pinning the message with id \(messageId): \(error)")
+                completion?(.failure(error))
+            } else {
+                completion?(.success(message))
             }
-            completion?(error)
         }
     }
     
     private func unpinLocalMessage(
         on messageId: MessageId,
-        completion: ((Error?, MessagePinning) -> Void)? = nil
+        completion: ((Result<ChatMessage, Error>, MessagePinning) -> Void)? = nil
     ) {
+        var message: ChatMessage!
         var pinning: MessagePinning = .noExpiration
         database.write { session in
             guard let messageDTO = session.message(id: messageId) else {
@@ -553,11 +557,14 @@ class MessageUpdater: Worker {
             }
             pinning = .init(expirationDate: messageDTO.pinExpires?.bridgeDate)
             session.unpin(message: messageDTO)
+            message = try messageDTO.asModel()
         } completion: { error in
             if let error = error {
                 log.error("Error unpinning the message with id \(messageId): \(error)")
+                completion?(.failure(error), pinning)
+            } else {
+                completion?(.success(message), pinning)
             }
-            completion?(error, pinning)
         }
     }
 
@@ -922,10 +929,10 @@ extension MessageUpdater {
         }
     }
     
-    func pinMessage(messageId: MessageId, pinning: MessagePinning) async throws {
+    func pinMessage(messageId: MessageId, pinning: MessagePinning) async throws -> ChatMessage {
         try await withCheckedThrowingContinuation { continuation in
-            pinMessage(messageId: messageId, pinning: pinning) { error in
-                continuation.resume(with: error)
+            pinMessage(messageId: messageId, pinning: pinning) { result in
+                continuation.resume(with: result)
             }
         }
     }
@@ -962,10 +969,10 @@ extension MessageUpdater {
         }
     }
     
-    func unpinMessage(messageId: MessageId) async throws {
+    func unpinMessage(messageId: MessageId) async throws -> ChatMessage {
         try await withCheckedThrowingContinuation { continuation in
-            unpinMessage(messageId: messageId) { error in
-                continuation.resume(with: error)
+            unpinMessage(messageId: messageId) { result in
+                continuation.resume(with: result)
             }
         }
     }
