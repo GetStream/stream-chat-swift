@@ -516,7 +516,20 @@ public class Chat {
         try await loadMessages(after: nil, limit: limit)
     }
     
-    // MARK: - Message State Observing
+    // MARK: - Message State
+    
+    /// Access a message which is available locally by its id.
+    ///
+    /// - Note: This method does a local lookup of the message and returns a message present in ``ChatState/messages``.
+    ///
+    /// - Parameter messageId: The id of the message which is available locally.
+    ///
+    /// - Returns: An instance of the locally available chat message
+    @MainActor public func localMessage(for messageId: MessageId) -> ChatMessage? {
+        let dataStore = DataStore(client: client)
+        let message = dataStore.message(id: messageId)
+        return message?.cid == state.cid ? message : nil
+    }
     
     /// Returns an observable message state for the specified message.
     ///
@@ -539,19 +552,6 @@ public class Chat {
                 }
             }
         )
-    }
-    
-    /// Access a message which is available locally by its id.
-    ///
-    /// - Note: This method does a local lookup of the message and returns a message present in ``ChatState/messages``.
-    ///
-    /// - Parameter messageId: The id of the message which is available locally.
-    ///
-    /// - Returns: An instance of the locally available chat message
-    @MainActor public func localMessage(for messageId: MessageId) -> ChatMessage? {
-        let dataStore = DataStore(client: client)
-        let message = dataStore.message(id: messageId)
-        return message?.cid == state.cid ? message : nil
     }
     
     // MARK: - Message Attachment Actions
@@ -650,7 +650,11 @@ public class Chat {
         sort: [Sorting<PinnedMessagesSortingKey>] = [],
         limit: Int = .messagesPageSize
     ) async throws -> [ChatMessage] {
-        let query = PinnedMessagesQuery(pageSize: limit, sorting: sort, pagination: pagination)
+        let query = PinnedMessagesQuery(
+            pageSize: limit,
+            sorting: sort,
+            pagination: pagination
+        )
         return try await channelUpdater.loadPinnedMessages(in: cid, query: query)
     }
     
@@ -706,7 +710,7 @@ public class Chat {
     /// - Throws: An error while communicating with the Stream API.
     /// - Returns: An array of reactions for given limit and offset.
     @discardableResult public func loadReactions(
-        of messageId: MessageId,
+        for messageId: MessageId,
         pagination: Pagination
     ) async throws -> [ChatMessageReaction] {
         try await messageUpdater.loadReactions(
@@ -725,7 +729,7 @@ public class Chat {
     /// - Throws: An error while communicating with the Stream API.
     /// - Returns: An array of reactions for the next page.
     @discardableResult public func loadMoreReactions(
-        of messageId: MessageId,
+        for messageId: MessageId,
         limit: Int? = nil
     ) async throws -> [ChatMessageReaction] {
         let offset = try await messageState(for: messageId).reactions.count
