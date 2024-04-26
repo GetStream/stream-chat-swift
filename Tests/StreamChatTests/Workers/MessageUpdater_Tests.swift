@@ -550,12 +550,10 @@ final class MessageUpdater_Tests: XCTestCase {
                 expectation.fulfill()
             }
             // Assert message's local state becomes `deleting` after waiting the first DB call to finish
-            AssertAsync.willBeTrue(apiClient.request_completion != nil)
-            
-            // Load the message
-            AssertAsync.willBeEqual(.deleting, database.writableContext.message(id: messageId)?.localMessageState)
-            
+            AssertAsync.willBeEqual(.deleting, database.viewContext.message(id: messageId)?.localMessageState)
+
             // Simulate API response
+            AssertAsync.willBeTrue(apiClient.request_completion != nil)
             apiClient.test_simulateResponse(networkResult)
 
             wait(for: [expectation], timeout: defaultTimeout)

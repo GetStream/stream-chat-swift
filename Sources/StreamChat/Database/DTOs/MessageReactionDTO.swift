@@ -114,6 +114,17 @@ extension MessageReactionDTO {
         new.user = user
         return new
     }
+    
+    static func reactionsFetchRequest(
+        for messageId: MessageId,
+        sort: [NSSortDescriptor]
+    ) -> NSFetchRequest<MessageReactionDTO> {
+        let request = NSFetchRequest<MessageReactionDTO>(entityName: MessageReactionDTO.entityName)
+        request.sortDescriptors = sort
+        request.predicate = NSPredicate(format: "message.id == %@", messageId)
+        request.fetchBatchSize = 30
+        return request
+    }
 }
 
 extension NSManagedObjectContext {
