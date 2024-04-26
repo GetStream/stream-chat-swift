@@ -1234,6 +1234,9 @@
 		AD053BAB2B33638B003612B6 /* LocationAttachmentSnapshotView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD053BAA2B33638B003612B6 /* LocationAttachmentSnapshotView.swift */; };
 		AD053BAD2B336493003612B6 /* DemoChatMessageListVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD053BAC2B336493003612B6 /* DemoChatMessageListVC.swift */; };
 		AD0AD6C02A25140A00CB96CB /* MessagesPaginationState_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD0AD6BF2A25140A00CB96CB /* MessagesPaginationState_Tests.swift */; };
+		AD0CC0122BDBC1BF005E2C66 /* ReactionListQuery.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD0CC0112BDBC1BF005E2C66 /* ReactionListQuery.swift */; };
+		AD0CC0132BDBC1BF005E2C66 /* ReactionListQuery.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD0CC0112BDBC1BF005E2C66 /* ReactionListQuery.swift */; };
+		AD0CC0172BDBC71C005E2C66 /* ReactionListQuery_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD0CC0142BDBC68E005E2C66 /* ReactionListQuery_Tests.swift */; };
 		AD0EC6D52A45AAAF005220B1 /* ChatMessageListVC_Mock.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD0EC6D42A45AAAF005220B1 /* ChatMessageListVC_Mock.swift */; };
 		AD0F7F132B5ED64600914C4C /* ComposerLinkPreviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD0F7F122B5ED64600914C4C /* ComposerLinkPreviewView.swift */; };
 		AD0F7F142B5ED64600914C4C /* ComposerLinkPreviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD0F7F122B5ED64600914C4C /* ComposerLinkPreviewView.swift */; };
@@ -3844,6 +3847,8 @@
 		AD053BAA2B33638B003612B6 /* LocationAttachmentSnapshotView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationAttachmentSnapshotView.swift; sourceTree = "<group>"; };
 		AD053BAC2B336493003612B6 /* DemoChatMessageListVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DemoChatMessageListVC.swift; sourceTree = "<group>"; };
 		AD0AD6BF2A25140A00CB96CB /* MessagesPaginationState_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessagesPaginationState_Tests.swift; sourceTree = "<group>"; };
+		AD0CC0112BDBC1BF005E2C66 /* ReactionListQuery.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReactionListQuery.swift; sourceTree = "<group>"; };
+		AD0CC0142BDBC68E005E2C66 /* ReactionListQuery_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReactionListQuery_Tests.swift; sourceTree = "<group>"; };
 		AD0EC6D42A45AAAF005220B1 /* ChatMessageListVC_Mock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessageListVC_Mock.swift; sourceTree = "<group>"; };
 		AD0F7F122B5ED64600914C4C /* ComposerLinkPreviewView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ComposerLinkPreviewView.swift; sourceTree = "<group>"; };
 		AD0F7F162B6139D500914C4C /* TextLinkDetector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextLinkDetector.swift; sourceTree = "<group>"; };
@@ -5174,14 +5179,15 @@
 		792A4F412480103A00EAF71D /* Query */ = {
 			isa = PBXGroup;
 			children = (
+				792A4F432480107A00EAF71D /* Filter.swift */,
+				C1FFD9F827ECC7C7008A6848 /* Filter+ChatChannel.swift */,
 				792A4F4C248011E500EAF71D /* ChannelListQuery.swift */,
 				882C5745252C6FDF00E60C44 /* ChannelMemberListQuery.swift */,
 				792A4F422480107A00EAF71D /* ChannelQuery.swift */,
 				79C5CBF025F66E9700D98001 /* ChannelWatcherListQuery.swift */,
 				AD6E32A02BBC50110073831B /* ThreadListQuery.swift */,
 				AD6E32A32BBC502D0073831B /* ThreadQuery.swift */,
-				792A4F432480107A00EAF71D /* Filter.swift */,
-				C1FFD9F827ECC7C7008A6848 /* Filter+ChatChannel.swift */,
+				AD0CC0112BDBC1BF005E2C66 /* ReactionListQuery.swift */,
 				7978FBB926E15A58002CA2DF /* MessageSearchQuery.swift */,
 				792A4F442480107A00EAF71D /* Pagination.swift */,
 				792A4F4A248010A600EAF71D /* QueryOptions.swift */,
@@ -6958,6 +6964,7 @@
 			children = (
 				A3C7BAD027E4E02700BBF4FA /* ChannelListFilterScope_Tests.swift */,
 				799F611A2530B62C007F218C /* ChannelListQuery_Tests.swift */,
+				AD0CC0142BDBC68E005E2C66 /* ReactionListQuery_Tests.swift */,
 				889B00E4252C972C007709A8 /* ChannelMemberListQuery_Tests.swift */,
 				DA15A20224DF256F00BE2423 /* ChannelQuery_Tests.swift */,
 				79D6CE1625F7C02400BE2EEC /* ChannelWatcherListQuery_Tests.swift */,
@@ -10785,6 +10792,7 @@
 				79877A0F2498E4BC00015F8B /* ChannelId.swift in Sources */,
 				882C5760252C7CC400E60C44 /* ChannelMemberListQueryDTO.swift in Sources */,
 				88DA57E02631E80D00FA8C53 /* MutedChannelPayload.swift in Sources */,
+				AD0CC0122BDBC1BF005E2C66 /* ReactionListQuery.swift in Sources */,
 				AD78568F298B273900C2FEAD /* ChatClient+ChannelController.swift in Sources */,
 				792A4F492480107A00EAF71D /* Sorting.swift in Sources */,
 				7937282A2498FFD300E13FE5 /* MemberPayload.swift in Sources */,
@@ -11117,6 +11125,7 @@
 				84DCB855269F56A7006CDF32 /* EventsController+SwiftUI_Tests.swift in Sources */,
 				79B5517724E595DA00CE9FEC /* CurrentUserPayloads_Tests.swift in Sources */,
 				40B345F829C46AE500B96027 /* AudioPlaybackRate_Tests.swift in Sources */,
+				AD0CC0172BDBC71C005E2C66 /* ReactionListQuery_Tests.swift in Sources */,
 				7937282C249900CB00E13FE5 /* MemberPayload_Tests.swift in Sources */,
 				DAF1BED82506612B003CEDC0 /* MessageController+Combine_Tests.swift in Sources */,
 				AD45333A25D153CF00CD9D47 /* ConnectionController+SwiftUI_Tests.swift in Sources */,
@@ -11826,6 +11835,7 @@
 				404296DB2A0112D00089126D /* AudioQueuePlayer.swift in Sources */,
 				43D3F0FA284106EE00B74921 /* CallEndpoints.swift in Sources */,
 				40A458EE2A03AC7C00C198F7 /* AVAsset+TotalAudioSamples.swift in Sources */,
+				AD0CC0132BDBC1BF005E2C66 /* ReactionListQuery.swift in Sources */,
 				C121E8F7274544B200023E4C /* FoundationSecurity.swift in Sources */,
 				C121E8F8274544B200023E4C /* Data+Extensions.swift in Sources */,
 				C121E8F9274544B200023E4C /* Server.swift in Sources */,
