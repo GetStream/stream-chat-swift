@@ -30,12 +30,8 @@ import Foundation
         )
         let initial = observer.start(
             with: .init(
-                messageDidChange: { [weak self] message, changedReactions in
-                    self?.message = message
-                    if let changedReactions {
-                        self?.reactions = changedReactions
-                    }
-                },
+                messageDidChange: { [weak self] in self?.message = $0 },
+                reactionsDidChange: { [weak self] in self?.reactions = $0 },
                 repliesDidChange: { [weak self] in self?.replies = $0 }
             )
         )
@@ -60,7 +56,7 @@ import Foundation
     /// An array of loaded message reactions sorted by ``ChatMessageReaction/updatedAt`` with descending order.
     ///
     /// Use ``Chat/loadReactions(of:pagination:)`` for loading more reaactions.
-    @Published public private(set) var reactions = [ChatMessageReaction]()
+    @Published public private(set) var reactions = StreamCollection<ChatMessageReaction>([])
     
     // MARK: - Replies
     
@@ -68,17 +64,17 @@ import Foundation
     @Published public internal(set) var replies = StreamCollection<ChatMessage>([])
     
     /// A Boolean value that returns whether the oldest replies have all been loaded or not.
-    public var hasLoadedAllPreviousReplies: Bool {
+    public var hasLoadedAllOlderReplies: Bool {
         replyPaginationState.hasLoadedAllPreviousMessages
     }
     
     /// A Boolean value that returns whether the newest replies have all been loaded or not.
-    public var hasLoadedAllNextReplies: Bool {
+    public var hasLoadedAllNewerReplies: Bool {
         replyPaginationState.hasLoadedAllNextMessages
     }
 
-    /// A Boolean value that returns whether the channel is currently loading previous (old) replies.
-    public var isLoadingPreviousReplies: Bool {
+    /// A Boolean value that returns whether the channel is currently loading older replies.
+    public var isLoadingOlderReplies: Bool {
         replyPaginationState.isLoadingPreviousMessages
     }
 
@@ -87,15 +83,8 @@ import Foundation
         replyPaginationState.isLoadingMiddleMessages
     }
 
-    /// A Boolean value that returns whether the channel is currently loading next (new) replies.
-    public var isLoadingNextReplies: Bool {
+    /// A Boolean value that returns whether the channel is currently loading newer replies.
+    public var isLoadingNewerReplies: Bool {
         replyPaginationState.isLoadingNextMessages
-    }
-}
-
-@available(iOS 13.0, *)
-extension ChatMessageReaction {
-    static func defaultSorting(_ first: ChatMessageReaction, _ second: ChatMessageReaction) -> Bool {
-        first.updatedAt > second.updatedAt
     }
 }
