@@ -1249,6 +1249,10 @@
 		AD0CC02F2BDC08E9005E2C66 /* ChatClient+ReactionListController.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD0CC02D2BDC08E9005E2C66 /* ChatClient+ReactionListController.swift */; };
 		AD0CC0312BDC1964005E2C66 /* ReactionListQueryDTO.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD0CC0302BDC1964005E2C66 /* ReactionListQueryDTO.swift */; };
 		AD0CC0322BDC1964005E2C66 /* ReactionListQueryDTO.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD0CC0302BDC1964005E2C66 /* ReactionListQueryDTO.swift */; };
+		AD0CC0342BDC4A6B005E2C66 /* ReactionListController+Combine.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD0CC0332BDC4A6B005E2C66 /* ReactionListController+Combine.swift */; };
+		AD0CC0352BDC4A6B005E2C66 /* ReactionListController+Combine.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD0CC0332BDC4A6B005E2C66 /* ReactionListController+Combine.swift */; };
+		AD0CC0372BDC4B5A005E2C66 /* ReactionListController+SwiftUI.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD0CC0362BDC4B5A005E2C66 /* ReactionListController+SwiftUI.swift */; };
+		AD0CC0382BDC4B5A005E2C66 /* ReactionListController+SwiftUI.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD0CC0362BDC4B5A005E2C66 /* ReactionListController+SwiftUI.swift */; };
 		AD0EC6D52A45AAAF005220B1 /* ChatMessageListVC_Mock.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD0EC6D42A45AAAF005220B1 /* ChatMessageListVC_Mock.swift */; };
 		AD0F7F132B5ED64600914C4C /* ComposerLinkPreviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD0F7F122B5ED64600914C4C /* ComposerLinkPreviewView.swift */; };
 		AD0F7F142B5ED64600914C4C /* ComposerLinkPreviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD0F7F122B5ED64600914C4C /* ComposerLinkPreviewView.swift */; };
@@ -3868,6 +3872,8 @@
 		AD0CC02A2BDC01A2005E2C66 /* ReactionListController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReactionListController.swift; sourceTree = "<group>"; };
 		AD0CC02D2BDC08E9005E2C66 /* ChatClient+ReactionListController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ChatClient+ReactionListController.swift"; sourceTree = "<group>"; };
 		AD0CC0302BDC1964005E2C66 /* ReactionListQueryDTO.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReactionListQueryDTO.swift; sourceTree = "<group>"; };
+		AD0CC0332BDC4A6B005E2C66 /* ReactionListController+Combine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ReactionListController+Combine.swift"; sourceTree = "<group>"; };
+		AD0CC0362BDC4B5A005E2C66 /* ReactionListController+SwiftUI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ReactionListController+SwiftUI.swift"; sourceTree = "<group>"; };
 		AD0EC6D42A45AAAF005220B1 /* ChatMessageListVC_Mock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessageListVC_Mock.swift; sourceTree = "<group>"; };
 		AD0F7F122B5ED64600914C4C /* ComposerLinkPreviewView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ComposerLinkPreviewView.swift; sourceTree = "<group>"; };
 		AD0F7F162B6139D500914C4C /* TextLinkDetector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextLinkDetector.swift; sourceTree = "<group>"; };
@@ -7937,6 +7943,8 @@
 			children = (
 				AD0CC02D2BDC08E9005E2C66 /* ChatClient+ReactionListController.swift */,
 				AD0CC02A2BDC01A2005E2C66 /* ReactionListController.swift */,
+				AD0CC0362BDC4B5A005E2C66 /* ReactionListController+SwiftUI.swift */,
+				AD0CC0332BDC4A6B005E2C66 /* ReactionListController+Combine.swift */,
 			);
 			path = ReactionListController;
 			sourceTree = "<group>";
@@ -10976,6 +10984,7 @@
 				40789D1929F6AC500018C2BB /* AudioPlayerObserving.swift in Sources */,
 				84A43CAF26A9A25000302763 /* UnknownChannelEvent.swift in Sources */,
 				C1B0B38327BFC08900C8207D /* EndpointPath+OfflineRequest.swift in Sources */,
+				AD0CC0372BDC4B5A005E2C66 /* ReactionListController+SwiftUI.swift in Sources */,
 				841BAA042BCE94F8000C73E4 /* QueryPollsRequestBody.swift in Sources */,
 				C1EFF3F3285E459C0057B91B /* IdentifiableModel.swift in Sources */,
 				DAFAD6A124DC476A0043ED06 /* Result+Extensions.swift in Sources */,
@@ -10984,6 +10993,7 @@
 				AD37D7D02BC9937F00800D8C /* ThreadParticipant.swift in Sources */,
 				C1EE5AA328B63CA300DD5D27 /* CallRepository.swift in Sources */,
 				AD7DFC3625D2FA8100DD9DA3 /* CurrentUserUpdater.swift in Sources */,
+				AD0CC0342BDC4A6B005E2C66 /* ReactionListController+Combine.swift in Sources */,
 				88206FC425B18C88009D086A /* ConnectionRepository.swift in Sources */,
 				7991D83B24F5427E00D21BA3 /* EphemeralValuesContainer.swift in Sources */,
 				79682C4B24BF37CB0071578E /* ChannelListPayload.swift in Sources */,
@@ -11731,6 +11741,7 @@
 				C121E88C274544AF00023E4C /* Channel.swift in Sources */,
 				C121E88D274544AF00023E4C /* BanEnabling.swift in Sources */,
 				C121E88E274544AF00023E4C /* ChannelType.swift in Sources */,
+				AD0CC0352BDC4A6B005E2C66 /* ReactionListController+Combine.swift in Sources */,
 				C121E88F274544AF00023E4C /* CurrentUser.swift in Sources */,
 				40789D1629F6AC500018C2BB /* AudioPlaybackRate.swift in Sources */,
 				C121E890274544AF00023E4C /* Device.swift in Sources */,
@@ -11781,6 +11792,7 @@
 				C121E8B2274544B000023E4C /* ChannelListController+Combine.swift in Sources */,
 				C121E8B3274544B000023E4C /* CurrentUserController.swift in Sources */,
 				C174E0F7284DFA5A0040B936 /* IdentifiablePayload.swift in Sources */,
+				AD0CC0382BDC4B5A005E2C66 /* ReactionListController+SwiftUI.swift in Sources */,
 				841BAA052BCE94F8000C73E4 /* QueryPollsRequestBody.swift in Sources */,
 				C121E8B4274544B000023E4C /* CurrentUserController+SwiftUI.swift in Sources */,
 				40789D1E29F6AC500018C2BB /* AudioPlayingDelegate.swift in Sources */,
