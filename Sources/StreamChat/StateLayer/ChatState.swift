@@ -63,7 +63,7 @@ import Foundation
     @Published public private(set) var members = StreamCollection<ChatChannelMember>([])
     
     /// The sorting order for channel members (the default sorting is by created at in ascending order).
-    let memberSorting: [Sorting<ChannelMemberListSortingKey>]
+    public let memberSorting: [Sorting<ChannelMemberListSortingKey>]
     
     // MARK: - Messages
     
@@ -78,12 +78,12 @@ import Foundation
     @Published public internal(set) var messages = StreamCollection<ChatMessage>([])
     
     /// A Boolean value that returns whether the oldest messages have all been loaded or not.
-    public var hasLoadedAllOlderMessages: Bool {
+    public var hasLoadedAllOldestMessages: Bool {
         channelUpdater.paginationStateHandler.state.hasLoadedAllPreviousMessages
     }
     
     /// A Boolean value that returns whether the newest messages have all been loaded or not.
-    public var hasLoadedAllNewerMessages: Bool {
+    public var hasLoadedAllNewestMessages: Bool {
         channelUpdater.paginationStateHandler.state.hasLoadedAllNextMessages || messages.isEmpty
     }
 
@@ -136,7 +136,7 @@ import Foundation
     /// The duration until the current user can't send new messages when the channel has slow mode enabled.
     ///
     /// - SeeAlso: ``Chat/enableSlowMode(cooldownDuration:)``
-    /// - Returns: 0, if slow mode is not enabled, otherwise the remining cooldown duration in seconds.
+    /// - Returns: 0, if slow mode is not enabled, otherwise the remaining cooldown duration in seconds.
     public var remainingCooldownDuration: Int {
         guard let channel else { return 0 }
         guard channel.cooldownDuration > 0 else { return 0 }
@@ -208,7 +208,7 @@ extension ChatState {
     /// Having many MessageState objects alive at the same time can get expensive due to
     /// DB observing. Therefore, ChatState only keeps weak references for quick lookups.
     /// Reply pagination state must be persisted for consistent pagination state even
-    /// when MessageState itself is deinited meanwhile.
+    /// when MessageState itself is de-initialized meanwhile.
     func messageState(
         for messageId: MessageId,
         provider: (MessageId) async throws -> ChatMessage
