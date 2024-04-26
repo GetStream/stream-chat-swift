@@ -467,18 +467,27 @@ class MessageUpdater: Worker {
 
             try session.pin(message: messageDTO, pinning: pinning)
         }, completion: { [weak self, weak repository] error in
+            if let error {
+               completion?(error)
+               return
+            }
+            
             let endpoint: Endpoint<EmptyResponse> = .pinMessage(
                 messageId: messageId,
                 request: .init(set: .init(pinned: true))
             )
-
+            
             self?.apiClient.request(endpoint: endpoint) { result in
-                guard let error = result.error else { return }
-                
-                repository?.undoMessagePinning(on: messageId)
+                switch result {
+                case .success:
+                    completion?(nil)
+                case .failure(let apiError):
+                    repository?.undoMessagePinning(on: messageId) { apiError in
+                        completion?(apiError)
+                    }
+                }
             }
-            completion?(error)
-        })
+         })
     }
 
     /// Unpin the message with the provided message id.
@@ -486,25 +495,37 @@ class MessageUpdater: Worker {
     ///   - messageId: The message identifier.
     ///   - completion: The completion. Will be called with an error if smth goes wrong, otherwise - will be called with `nil`.
     func unpinMessage(messageId: MessageId, completion: ((Error?) -> Void)? = nil) {
+        var pinning: MessagePinning = .noExpiration
+        
         database.write({ session in
             guard let messageDTO = session.message(id: messageId) else {
                 throw ClientError.MessageDoesNotExist(messageId: messageId)
             }
 
+            pinning = .init(expirationDate: messageDTO.pinExpires?.bridgeDate)
             session.unpin(message: messageDTO)
         }, completion: { [weak self, weak repository] error in
+            if let error {
+               completion?(error)
+               return
+            }
+            
             let endpoint: Endpoint<EmptyResponse> = .pinMessage(
                 messageId: messageId,
                 request: .init(set: .init(pinned: false))
             )
-
+            
             self?.apiClient.request(endpoint: endpoint) { result in
-                guard let error = result.error else { return }
-
-                repository?.undoMessageUnpinning(on: messageId)
+                switch result {
+                case .success:
+                    completion?(nil)
+                case .failure(let apiError):
+                    repository?.undoMessageUnpinning(on: messageId, pinning: pinning) { apiError in
+                        completion?(apiError)
+                    }
+                }
             }
-            completion?(error)
-        })
+         })
     }
 
     /// Updates local state of attachment with provided `id` to be enqueued by attachment uploader.

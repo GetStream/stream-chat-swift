@@ -260,7 +260,7 @@ class MessageRepository {
     
     func undoMessagePinning(
         on messageId: MessageId,
-        completion: (() -> Void)? = nil
+        completion: ((Error?) -> Void)? = nil
     ) {
         database.write { session in
             if let messageDTO = session.message(id: messageId) {
@@ -270,24 +270,24 @@ class MessageRepository {
             if let error = error {
                 log.error("Error unpinning the message with id \(messageId): \(error)")
             }
-            completion?()
+            completion?(error)
         }
     }
     
     func undoMessageUnpinning(
         on messageId: MessageId,
-        completion: (() -> Void)? = nil
+        pinning: MessagePinning,
+        completion: ((Error?) -> Void)? = nil
     ) {
         database.write { session in
             if let messageDTO = session.message(id: messageId) {
-                let pinning: MessagePinning = .init(expirationDate: messageDTO.pinExpires?.bridgeDate)
                 try session.pin(message: messageDTO, pinning: pinning)
             }
         } completion: { error in
             if let error = error {
                 log.error("Error pinning the message with id \(messageId): \(error)")
             }
-            completion?()
+            completion?(error)
         }
     }
 }
