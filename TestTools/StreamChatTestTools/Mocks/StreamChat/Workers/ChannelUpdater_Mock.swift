@@ -131,6 +131,7 @@ final class ChannelUpdater_Mock: ChannelUpdater {
     @Atomic var loadPinnedMessages_cid: ChannelId?
     @Atomic var loadPinnedMessages_query: PinnedMessagesQuery?
     @Atomic var loadPinnedMessages_completion: ((Result<[ChatMessage], Error>) -> Void)?
+    @Atomic var loadPinnedMessages_completion_result: Result<[ChatMessage], Error>?
 
     @Atomic var createCall_cid: ChannelId?
     @Atomic var createCall_completion: ((Result<CallWithToken, Error>) -> Void)?
@@ -258,6 +259,7 @@ final class ChannelUpdater_Mock: ChannelUpdater {
         loadPinnedMessages_cid = nil
         loadPinnedMessages_query = nil
         loadPinnedMessages_completion = nil
+        loadPinnedMessages_completion_result = nil
 
         createCall_cid = nil
         createCall_completion = nil
@@ -501,6 +503,7 @@ final class ChannelUpdater_Mock: ChannelUpdater {
         loadPinnedMessages_cid = cid
         loadPinnedMessages_query = query
         loadPinnedMessages_completion = completion
+        loadPinnedMessages_completion_result?.invoke(with: completion)
     }
 
     override func createCall(
