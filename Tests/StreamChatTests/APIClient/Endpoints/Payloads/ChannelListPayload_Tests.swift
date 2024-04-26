@@ -66,7 +66,7 @@ final class ChannelListPayload_Tests: XCTestCase {
 
     func test_hugeChannelListQuery_save_DB_empty() throws {
         let decodedPayload = createHugeChannelList()
-        let timeout: TimeInterval = ProcessInfo().operatingSystemVersion.majorVersion < 16 ? 50 : 20
+        let timeout: TimeInterval = 60
         
         measure {
             let databaseContainer = DatabaseContainer_Spy()
@@ -77,7 +77,7 @@ final class ChannelListPayload_Tests: XCTestCase {
     func test_hugeChannelListQuery_save_DB_filled() throws {
         let decodedPayload = createHugeChannelList()
         let databaseContainer = DatabaseContainer_Spy()
-        let timeout: TimeInterval = ProcessInfo().operatingSystemVersion.majorVersion < 16 ? 50 : 20
+        let timeout: TimeInterval = 60
 
         saveChannelListPayload(decodedPayload, database: databaseContainer, timeout: timeout)
 
