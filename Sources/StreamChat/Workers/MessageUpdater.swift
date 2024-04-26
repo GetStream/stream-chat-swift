@@ -468,8 +468,8 @@ class MessageUpdater: Worker {
             try session.pin(message: messageDTO, pinning: pinning)
         }, completion: { [weak self, weak repository] error in
             if let error {
-               completion?(error)
-               return
+                completion?(error)
+                return
             }
             
             let endpoint: Endpoint<EmptyResponse> = .pinMessage(
@@ -482,12 +482,12 @@ class MessageUpdater: Worker {
                 case .success:
                     completion?(nil)
                 case .failure(let apiError):
-                    repository?.undoMessagePinning(on: messageId) { apiError in
+                    repository?.undoMessagePinning(on: messageId) { _ in
                         completion?(apiError)
                     }
                 }
             }
-         })
+        })
     }
 
     /// Unpin the message with the provided message id.
@@ -506,8 +506,8 @@ class MessageUpdater: Worker {
             session.unpin(message: messageDTO)
         }, completion: { [weak self, weak repository] error in
             if let error {
-               completion?(error)
-               return
+                completion?(error)
+                return
             }
             
             let endpoint: Endpoint<EmptyResponse> = .pinMessage(
@@ -520,12 +520,12 @@ class MessageUpdater: Worker {
                 case .success:
                     completion?(nil)
                 case .failure(let apiError):
-                    repository?.undoMessageUnpinning(on: messageId, pinning: pinning) { apiError in
+                    repository?.undoMessageUnpinning(on: messageId, pinning: pinning) { _ in
                         completion?(apiError)
                     }
                 }
             }
-         })
+        })
     }
 
     /// Updates local state of attachment with provided `id` to be enqueued by attachment uploader.
