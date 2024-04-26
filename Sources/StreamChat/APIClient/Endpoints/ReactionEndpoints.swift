@@ -15,9 +15,9 @@ extension Endpoint {
         )
     }
 
-    static func loadReactionsV2(messageId: MessageId, query: ReactionListQuery) -> Endpoint<MessageReactionsPayload> {
+    static func loadReactionsV2(query: ReactionListQuery) -> Endpoint<MessageReactionsPayload> {
         .init(
-            path: .reactions(messageId),
+            path: .reactions(query.messageId),
             method: .post,
             queryItems: nil,
             requiresConnectionId: false,

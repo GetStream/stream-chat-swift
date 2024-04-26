@@ -1243,6 +1243,12 @@
 		AD0CC0232BDBF715005E2C66 /* ReactionListUpdater.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD0CC0222BDBF715005E2C66 /* ReactionListUpdater.swift */; };
 		AD0CC0242BDBF715005E2C66 /* ReactionListUpdater.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD0CC0222BDBF715005E2C66 /* ReactionListUpdater.swift */; };
 		AD0CC0282BDBF9DD005E2C66 /* ReactionListUpdater_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD0CC0252BDBF9D1005E2C66 /* ReactionListUpdater_Tests.swift */; };
+		AD0CC02B2BDC01A2005E2C66 /* ReactionListController.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD0CC02A2BDC01A2005E2C66 /* ReactionListController.swift */; };
+		AD0CC02C2BDC01A2005E2C66 /* ReactionListController.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD0CC02A2BDC01A2005E2C66 /* ReactionListController.swift */; };
+		AD0CC02E2BDC08E9005E2C66 /* ChatClient+ReactionListController.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD0CC02D2BDC08E9005E2C66 /* ChatClient+ReactionListController.swift */; };
+		AD0CC02F2BDC08E9005E2C66 /* ChatClient+ReactionListController.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD0CC02D2BDC08E9005E2C66 /* ChatClient+ReactionListController.swift */; };
+		AD0CC0312BDC1964005E2C66 /* ReactionListQueryDTO.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD0CC0302BDC1964005E2C66 /* ReactionListQueryDTO.swift */; };
+		AD0CC0322BDC1964005E2C66 /* ReactionListQueryDTO.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD0CC0302BDC1964005E2C66 /* ReactionListQueryDTO.swift */; };
 		AD0EC6D52A45AAAF005220B1 /* ChatMessageListVC_Mock.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD0EC6D42A45AAAF005220B1 /* ChatMessageListVC_Mock.swift */; };
 		AD0F7F132B5ED64600914C4C /* ComposerLinkPreviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD0F7F122B5ED64600914C4C /* ComposerLinkPreviewView.swift */; };
 		AD0F7F142B5ED64600914C4C /* ComposerLinkPreviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD0F7F122B5ED64600914C4C /* ComposerLinkPreviewView.swift */; };
@@ -3859,6 +3865,9 @@
 		AD0CC01E2BDBD2EB005E2C66 /* ReactionEndpoint_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReactionEndpoint_Tests.swift; sourceTree = "<group>"; };
 		AD0CC0222BDBF715005E2C66 /* ReactionListUpdater.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReactionListUpdater.swift; sourceTree = "<group>"; };
 		AD0CC0252BDBF9D1005E2C66 /* ReactionListUpdater_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReactionListUpdater_Tests.swift; sourceTree = "<group>"; };
+		AD0CC02A2BDC01A2005E2C66 /* ReactionListController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReactionListController.swift; sourceTree = "<group>"; };
+		AD0CC02D2BDC08E9005E2C66 /* ChatClient+ReactionListController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ChatClient+ReactionListController.swift"; sourceTree = "<group>"; };
+		AD0CC0302BDC1964005E2C66 /* ReactionListQueryDTO.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReactionListQueryDTO.swift; sourceTree = "<group>"; };
 		AD0EC6D42A45AAAF005220B1 /* ChatMessageListVC_Mock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessageListVC_Mock.swift; sourceTree = "<group>"; };
 		AD0F7F122B5ED64600914C4C /* ComposerLinkPreviewView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ComposerLinkPreviewView.swift; sourceTree = "<group>"; };
 		AD0F7F162B6139D500914C4C /* TextLinkDetector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextLinkDetector.swift; sourceTree = "<group>"; };
@@ -5135,6 +5144,7 @@
 				79877A212498E50D00015F8B /* MemberModelDTO.swift */,
 				799C942D247D2FB9001F1104 /* MessageDTO.swift */,
 				8899BC4C25430E40003CB98B /* MessageReactionDTO.swift */,
+				AD0CC0302BDC1964005E2C66 /* ReactionListQueryDTO.swift */,
 				AD70DC382ADEC3C400CFC3B7 /* MessageModerationDetailsDTO.swift */,
 				7978FBBB26E16295002CA2DF /* MessageSearchQueryDTO.swift */,
 				C1B49B3F2822C01C00F4E89E /* NSManagedObject+Validation.swift */,
@@ -5495,6 +5505,7 @@
 				888E8C53252B522F00195E03 /* MemberController */,
 				88D85DA5252F3C0900AE1030 /* MemberListController */,
 				F649B23F250125C9008F98C8 /* MessageController */,
+				AD0CC0292BDC017F005E2C66 /* ReactionListController */,
 				795296FA2582648F00435B2E /* SearchControllers */,
 				8819DFD32525F48800FD1A50 /* UserController */,
 				DA8406FE2524F761005A0F62 /* UserListController */,
@@ -7919,6 +7930,15 @@
 				AD053BA82B336331003612B6 /* LocationDetailViewController.swift */,
 			);
 			path = LocationAttachment;
+			sourceTree = "<group>";
+		};
+		AD0CC0292BDC017F005E2C66 /* ReactionListController */ = {
+			isa = PBXGroup;
+			children = (
+				AD0CC02D2BDC08E9005E2C66 /* ChatClient+ReactionListController.swift */,
+				AD0CC02A2BDC01A2005E2C66 /* ReactionListController.swift */,
+			);
+			path = ReactionListController;
 			sourceTree = "<group>";
 		};
 		AD4473DD263AC2B80030E583 /* ChatCommandSuggestionView */ = {
@@ -10805,6 +10825,7 @@
 				8A0CC9F124C606EF00705CF9 /* ReactionEvents.swift in Sources */,
 				C143788D27BBEBB700E23965 /* OfflineRequestsRepository.swift in Sources */,
 				79877A0F2498E4BC00015F8B /* ChannelId.swift in Sources */,
+				AD0CC0312BDC1964005E2C66 /* ReactionListQueryDTO.swift in Sources */,
 				882C5760252C7CC400E60C44 /* ChannelMemberListQueryDTO.swift in Sources */,
 				88DA57E02631E80D00FA8C53 /* MutedChannelPayload.swift in Sources */,
 				AD0CC0122BDBC1BF005E2C66 /* ReactionListQuery.swift in Sources */,
@@ -10834,6 +10855,7 @@
 				840B4FCF26A9E53100D5EFAB /* CustomEventRequestBody.swift in Sources */,
 				79CD959224F9380B00E87377 /* MulticastDelegate.swift in Sources */,
 				7964F3BC249A5E60002A09EC /* RequestEncoder.swift in Sources */,
+				AD0CC02B2BDC01A2005E2C66 /* ReactionListController.swift in Sources */,
 				79896D64250A63A200BA8F1C /* ChannelReadUpdaterMiddleware.swift in Sources */,
 				88E26D7D2580F95300F55AB5 /* AttachmentEndpoints.swift in Sources */,
 				F6D61D9B2510B3FC00EB0624 /* NSManagedObject+Extensions.swift in Sources */,
@@ -10939,6 +10961,7 @@
 				DA4EE5B2252B67F500CB26D4 /* UserListController+SwiftUI.swift in Sources */,
 				C18F5B522840BD2C00527915 /* DBDate.swift in Sources */,
 				AD483B962A2658970004B406 /* ChannelMemberUnbanRequestPayload.swift in Sources */,
+				AD0CC02E2BDC08E9005E2C66 /* ChatClient+ReactionListController.swift in Sources */,
 				841BA9F52BCE8089000C73E4 /* PollsEndpoints.swift in Sources */,
 				43D3F0F62841052600B74921 /* CallPayloads.swift in Sources */,
 				A30C3F20276B428F00DA5968 /* UnknownUserEvent.swift in Sources */,
@@ -11560,6 +11583,7 @@
 				40789D2E29F6AC500018C2BB /* AudioRecordingState.swift in Sources */,
 				C14D27B72869EEE40063F6F2 /* Array+CompactMapLoggingError.swift in Sources */,
 				C121E82C274544AD00023E4C /* APIClient.swift in Sources */,
+				AD0CC0322BDC1964005E2C66 /* ReactionListQueryDTO.swift in Sources */,
 				C121E82D274544AD00023E4C /* CDNClient.swift in Sources */,
 				AD84377F2BB48603000F3826 /* ThreadListPayload.swift in Sources */,
 				C121E82E274544AD00023E4C /* RequestEncoder.swift in Sources */,
@@ -11626,6 +11650,7 @@
 				CFE616BE28348AD000AE2ABF /* ScheduledStreamTimer.swift in Sources */,
 				C121E85E274544AE00023E4C /* UserListUpdater.swift in Sources */,
 				C121E85F274544AE00023E4C /* UserUpdater.swift in Sources */,
+				AD0CC02C2BDC01A2005E2C66 /* ReactionListController.swift in Sources */,
 				C121E860274544AE00023E4C /* ChannelMemberListUpdater.swift in Sources */,
 				4042969029FBCE1D0089126D /* AudioSamplesExtractor_Tests.swift in Sources */,
 				C121E861274544AE00023E4C /* ChannelMemberUpdater.swift in Sources */,
@@ -11660,6 +11685,7 @@
 				C121E876274544AF00023E4C /* CurrentUserDTO.swift in Sources */,
 				841BA9F62BCE8089000C73E4 /* PollsEndpoints.swift in Sources */,
 				AD57979F2978C4F7006CC435 /* UploadedAttachmentPostProcessor.swift in Sources */,
+				AD0CC02F2BDC08E9005E2C66 /* ChatClient+ReactionListController.swift in Sources */,
 				4042969929FE92320089126D /* AudioAnalysisEngine_Tests.swift in Sources */,
 				AD84377C2BB482CF000F3826 /* ThreadEndpoints.swift in Sources */,
 				C121E877274544AF00023E4C /* MemberModelDTO.swift in Sources */,

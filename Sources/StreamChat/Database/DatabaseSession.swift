@@ -166,12 +166,19 @@ protocol MessageDatabaseSession {
     /// Saves the provided reactions payload to the DB. Ignores reactions that cannot be saved
     /// returns saved `MessageReactionDTO` entities.
     @discardableResult
-    func saveReactions(payload: MessageReactionsPayload) -> [MessageReactionDTO]
+    func saveReactions(payload: MessageReactionsPayload, query: ReactionListQuery?) -> [MessageReactionDTO]
 
     /// Saves the provided reaction payload to the DB. Throws an error if the save fails
     /// else returns saved `MessageReactionDTO` entity.
     @discardableResult
-    func saveReaction(payload: MessageReactionPayload, cache: PreWarmedCache?) throws -> MessageReactionDTO
+    func saveReaction(
+        payload: MessageReactionPayload,
+        query: ReactionListQuery?,
+        cache: PreWarmedCache?
+    ) throws -> MessageReactionDTO
+
+    @discardableResult
+    func saveQuery(query: ReactionListQuery) throws -> ReactionListQueryDTO?
 
     /// Deletes the provided dto from a database
     /// - Parameter reaction: The DTO to be deleted
@@ -479,12 +486,12 @@ extension DatabaseSession {
             do {
                 switch try? payload.event() {
                 case let event as ReactionNewEventDTO:
-                    let reaction = try saveReaction(payload: event.reaction, cache: nil)
+                    let reaction = try saveReaction(payload: event.reaction, query: nil, cache: nil)
                     if !reaction.message.ownReactions.contains(reaction.id) {
                         reaction.message.ownReactions.append(reaction.id)
                     }
                 case let event as ReactionUpdatedEventDTO:
-                    try saveReaction(payload: event.reaction, cache: nil)
+                    try saveReaction(payload: event.reaction, query: nil, cache: nil)
                 case let event as ReactionDeletedEventDTO:
                     if let dto = reaction(
                         messageId: event.message.id,

@@ -48,12 +48,13 @@ final class ReactionListUpdater_Tests: XCTestCase {
             .dummy(messageId: messageId, user: .dummy(userId: .unique))
         ])
         let query = ReactionListQuery(
+            messageId: messageId,
             pagination: .init(pageSize: 10, offset: 0),
             filter: .equal(.reactionType, to: "like")
         )
 
         let completionCalled = expectation(description: "completion called")
-        reactionListUpdater.loadReactions(query: query, for: messageId) { result in
+        reactionListUpdater.loadReactions(query: query) { result in
             XCTAssertNil(result.error)
             XCTAssertEqual(result.value?.count, 3)
             completionCalled.fulfill()
@@ -64,7 +65,6 @@ final class ReactionListUpdater_Tests: XCTestCase {
         wait(for: [completionCalled], timeout: defaultTimeout)
 
         let referenceEndpoint: Endpoint<MessageReactionsPayload> = .loadReactionsV2(
-            messageId: messageId,
             query: query
         )
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(referenceEndpoint))
@@ -78,11 +78,12 @@ final class ReactionListUpdater_Tests: XCTestCase {
     func test_loadReactions_whenFailure() throws {
         let messageId = MessageId.unique
         let query = ReactionListQuery(
+            messageId: messageId,
             pagination: .init(pageSize: 10, offset: 0),
             filter: .equal(.reactionType, to: "like")
         )
         let completionCalled = expectation(description: "completion called")
-        reactionListUpdater.loadReactions(query: query, for: messageId) { result in
+        reactionListUpdater.loadReactions(query: query) { result in
             XCTAssertNotNil(result.error)
             completionCalled.fulfill()
         }
@@ -93,7 +94,6 @@ final class ReactionListUpdater_Tests: XCTestCase {
         wait(for: [completionCalled], timeout: defaultTimeout)
 
         let referenceEndpoint: Endpoint<MessageReactionsPayload> = .loadReactionsV2(
-            messageId: messageId,
             query: query
         )
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(referenceEndpoint))
