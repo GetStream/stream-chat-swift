@@ -29,6 +29,11 @@ class PollOptionDTO: NSManagedObject {
         return new
     }
     
+    static func load(optionId: String, context: NSManagedObjectContext) -> PollOptionDTO? {
+        let request = fetchRequest(for: optionId)
+        return load(by: request, context: context).first
+    }
+    
     static func fetchRequest(for optionId: String) -> NSFetchRequest<PollOptionDTO> {
         let request = NSFetchRequest<PollOptionDTO>(entityName: PollOptionDTO.entityName)
         request.predicate = NSPredicate(format: "id == %@", optionId)
@@ -68,5 +73,9 @@ extension NSManagedObjectContext {
         dto.text = payload.text
         dto.custom = try JSONEncoder.default.encode(payload.custom)
         return dto
+    }
+    
+    func option(id: String, pollId: String) throws -> PollOptionDTO? {
+        PollOptionDTO.load(optionId: id, context: self)
     }
 }

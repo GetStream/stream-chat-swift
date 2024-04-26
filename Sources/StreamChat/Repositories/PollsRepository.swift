@@ -89,4 +89,79 @@ class PollsRepository {
             completion?($0.error)
         }
     }
+    
+    func closePoll(
+        pollId: String,
+        completion: ((Error?) -> Void)? = nil
+    ) {
+        let request = UpdatePollPartialRequestBody(
+            pollId: pollId,
+            set: ["is_closed": .bool(true)]
+        )
+        apiClient.request(
+            endpoint: .updatePollPartial(pollId: pollId, updatePollPartialRequest: request)
+        ) {
+            completion?($0.error)
+        }
+    }
+    
+    func suggestPollOption(
+        pollId: String,
+        text: String,
+        position: Int? = nil,
+        custom: [String: RawJSON]? = nil,
+        completion: ((Error?) -> Void)? = nil
+    ) {
+        let request = CreatePollOptionRequestBody(
+            pollId: pollId,
+            text: text,
+            position: position,
+            custom: custom
+        )
+        apiClient.request(
+            endpoint: .createPollOption(pollId: pollId, createPollOptionRequest: request),
+            completion: {
+                completion?($0.error)
+            }
+        )
+    }
+    
+    func queryPollVotes(
+        pollId: String,
+        limit: Int?,
+        next: String?,
+        prev: String?,
+        sort: [SortParamRequest?],
+        filter: [String: RawJSON]?,
+        completion: ((Result<PollVoteListResponse, Error>) -> Void)? = nil
+    ) {
+        let request = QueryPollVotesRequestBody(
+            pollId: pollId,
+            limit: limit,
+            next: next,
+            prev: prev,
+            sort: sort,
+            filter: filter
+        )
+        apiClient.request(
+            endpoint: .queryPollVotes(pollId: pollId, queryPollVotesRequest: request),
+            completion: { [weak self] result in
+                guard let self else { return }
+                switch result {
+                case let .success(response):
+                    database.write { session in
+                        for payload in response.votes {
+                            if let payload {
+                                try session.savePollVote(payload: payload, cache: nil)
+                            }
+                        }
+                    } completion: { _ in
+                        completion?(result)
+                    }
+                case let .failure(error):
+                    completion?(.failure(error))
+                }
+            }
+        )
+    }
 }

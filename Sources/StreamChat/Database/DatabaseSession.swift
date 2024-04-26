@@ -427,6 +427,8 @@ protocol PollDatabaseSession {
     func savePollVote(payload: PollVotePayload, cache: PreWarmedCache?) throws -> PollVoteDTO
     
     func poll(id: String) throws -> PollDTO?
+    
+    func option(id: String, pollId: String) throws -> PollOptionDTO?
 }
 
 protocol DatabaseSession: UserDatabaseSession,

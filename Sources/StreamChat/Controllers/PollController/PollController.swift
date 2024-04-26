@@ -56,8 +56,6 @@ public class PollController: DataController, DelegateCallable, DataStoreProvider
     }
     
     public func castPollVote(
-        messageId: MessageId,
-        pollId: String,
         answerText: String?,
         optionId: String?,
         completion: ((Error?) -> Void)? = nil
@@ -72,8 +70,6 @@ public class PollController: DataController, DelegateCallable, DataStoreProvider
     }
     
     public func removePollVote(
-        messageId: MessageId,
-        pollId: String,
         voteId: String,
         completion: ((Error?) -> Void)? = nil
     ) {
@@ -83,6 +79,47 @@ public class PollController: DataController, DelegateCallable, DataStoreProvider
             voteId: voteId,
             completion: completion
         )
+    }
+    
+    public func closePoll(completion: ((Error?) -> Void)? = nil) {
+        pollsRepository.closePoll(pollId: pollId, completion: completion)
+    }
+    
+    public func suggestPollOption(
+        text: String,
+        position: Int? = nil,
+        custom: [String: RawJSON]? = nil,
+        completion: ((Error?) -> Void)? = nil
+    ) {
+        pollsRepository.suggestPollOption(
+            pollId: pollId,
+            text: text,
+            position: position,
+            custom: custom,
+            completion: completion
+        )
+    }
+    
+    private var next: String?
+    private var prev: String?
+    
+    public func loadVotes(
+        for optionId: String,
+        completion: ((Error?) -> Void)? = nil
+    ) {
+        pollsRepository.queryPollVotes(
+            pollId: pollId,
+            limit: 10,
+            next: next,
+            prev: prev,
+            sort: [.init(direction: -1, field: "created_at")],
+            filter: ["option_id": .dictionary(["$in": [.string(optionId)]])]
+        ) {
+            // TODO: fix.
+            self.next = $0.value?.next
+            self.prev = $0.value?.prev
+            completion?($0.error)
+        }
     }
     
     private func setupPollObserver() {

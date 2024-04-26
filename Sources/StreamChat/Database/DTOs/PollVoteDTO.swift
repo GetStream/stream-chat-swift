@@ -19,25 +19,22 @@ class PollVoteDTO: NSManagedObject {
     
     static func loadOrCreate(
         voteId: String,
-        pollId: String,
-        optionId: String,
-        userId: String,
+        poll: PollDTO,
+        option: PollOptionDTO,
+        user: UserDTO,
         context: NSManagedObjectContext,
         cache: PreWarmedCache?
     ) -> PollVoteDTO {
-        let request = fetchRequest(for: voteId, pollId: pollId)
+        let request = fetchRequest(for: voteId, pollId: poll.id)
         if let existing = load(by: request, context: context).first {
             return existing
         }
 
         let new = NSEntityDescription.insertNewObject(into: context, for: request)
-        new.option = PollOptionDTO.loadOrCreate(
-            pollId: pollId,
-            optionId: optionId,
-            context: context,
-            cache: cache
-        )
-        new.user = UserDTO.loadOrCreate(id: userId, context: context, cache: cache)
+        new.id = voteId
+        new.option = option
+        new.poll = poll
+        new.user = user
         return new
     }
     
@@ -68,16 +65,20 @@ extension NSManagedObjectContext {
         payload: PollVotePayload,
         cache: PreWarmedCache?
     ) throws -> PollVoteDTO {
-        guard let userId = payload.userId else { throw ClientError.UserDoesNotExist(userId: "") }
+        guard let user = payload.user else { throw ClientError.UserDoesNotExist(userId: "") }
+        guard let poll = try poll(id: payload.pollId),
+              let option = try option(id: payload.optionId, pollId: payload.pollId) else {
+            throw ClientError.Unexpected()
+        }
+        
         let dto = PollVoteDTO.loadOrCreate(
             voteId: payload.id,
-            pollId: payload.pollId,
-            optionId: payload.optionId,
-            userId: userId,
+            poll: poll,
+            option: option,
+            user: try saveUser(payload: user, query: nil, cache: cache),
             context: self,
             cache: cache
         )
-        dto.id = payload.id
         dto.createdAt = payload.createdAt.bridgeDate
         dto.updatedAt = payload.updatedAt.bridgeDate
         dto.pollId = payload.pollId
