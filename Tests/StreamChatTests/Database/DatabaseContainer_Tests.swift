@@ -111,7 +111,9 @@ final class DatabaseContainer_Tests: XCTestCase {
             try messages.forEach {
                 let message = try session.saveMessage(payload: $0, for: cid, syncOwnReactions: true, cache: nil)
                 try session.saveReaction(
-                    payload: .dummy(messageId: message.id, user: .dummy(userId: currentUserId)), query: nil, cache: nil
+                    payload: .dummy(messageId: message.id, user: .dummy(userId: currentUserId)),
+                    query: .init(messageId: message.id, filter: .equal(.authorId, to: currentUserId)),
+                    cache: nil
                 )
             }
             try session.saveMessage(
