@@ -6,6 +6,19 @@ import StreamChat
 import StreamChatUI
 import UIKit
 
+extension MessageReactionType {
+    func toEmoji() -> String {
+        let emojis: [String: String] = [
+            "love": "❤️",
+            "haha": "😂",
+            "like": "👍",
+            "sad": "😔",
+            "wow": "🤯"
+        ]
+        return emojis[rawValue] ?? "❓"
+    }
+}
+
 final class SlackReactionsView: _View, ThemeProvider, UICollectionViewDataSource, UICollectionViewDelegate {
     var content: ChatMessage? {
         didSet { updateContent() }
@@ -26,7 +39,7 @@ final class SlackReactionsView: _View, ThemeProvider, UICollectionViewDataSource
     let reactionWidth: CGFloat = 40
     let reactionRowHeight: CGFloat = 30
 
-    private lazy var collectionView: UICollectionView = {
+    lazy var collectionView: UICollectionView = {
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: collectionViewLayout)
         collectionView.translatesAutoresizingMaskIntoConstraints = false
         collectionView.dataSource = self
