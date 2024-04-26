@@ -26,14 +26,14 @@ final class ConnectedUser_Tests: XCTestCase {
 
     func test_updateUser_whenAPIRequestSucceeds_thenStateUpdates() async throws {
         try await setUpConnectedUser(usesMockedUpdaters: false)
-        await XCTAssertEqual("InitialName", connectedUser.state.name)
+        await XCTAssertEqual("InitialName", connectedUser.state.user.name)
         
         let changedName = "Name"
         let apiResult = CurrentUserUpdateResponse(user: currentUserPayload(name: changedName))
         env.client.mockAPIClient.test_mockResponseResult(.success(apiResult))
         try await connectedUser.update(name: changedName)
 
-        await XCTAssertEqual(changedName, connectedUser.state.name)
+        await XCTAssertEqual(changedName, connectedUser.state.user.name)
     }
     
     func test_markAllChannelsRead_whenAPIRequestSucceeds_thenMarkAllSucceeds() async throws {
@@ -51,7 +51,7 @@ final class ConnectedUser_Tests: XCTestCase {
         let devices = try await connectedUser.loadDevices()
         // There is no sorting for devices, therefore force the order when comparing (stored as Set in DB)
         XCTAssertEqual(apiResult.devices.map(\.id).sorted(), devices.map(\.id).sorted())
-        await XCTAssertEqual(apiResult.devices.map(\.id).sorted(), connectedUser.state.devices.map(\.id).sorted())
+        await XCTAssertEqual(apiResult.devices.map(\.id).sorted(), connectedUser.state.user.devices.map(\.id).sorted())
     }
     
     func test_loadDevices_whenExistingFetchedDevices_thenDatabaseIsResetToFetchedDevices() async throws {
@@ -67,30 +67,30 @@ final class ConnectedUser_Tests: XCTestCase {
         let devices = try await connectedUser.loadDevices()
         
         XCTAssertEqual(apiResult.devices.map(\.id).sorted(), devices.map(\.id).sorted())
-        await XCTAssertEqual(apiResult.devices.map(\.id).sorted(), connectedUser.state.devices.map(\.id).sorted())
+        await XCTAssertEqual(apiResult.devices.map(\.id).sorted(), connectedUser.state.user.devices.map(\.id).sorted())
     }
     
     func test_addDevices_whenAPIRequestSucceeds_thenStateUpdates() async throws {
         try await setUpConnectedUser(usesMockedUpdaters: false)
-        await XCTAssertEqual(0, connectedUser.state.devices.count)
+        await XCTAssertEqual(0, connectedUser.state.user.devices.count)
         
         env.client.mockAPIClient.test_mockResponseResult(.success(EmptyResponse()))
         try await connectedUser.addDevice(.apn(token: Data("test123".utf8)))
         
         // Converted to hex (test123 > 74657374313233)
-        await XCTAssertEqual(["74657374313233"], connectedUser.state.devices.map(\.id))
+        await XCTAssertEqual(["74657374313233"], connectedUser.state.user.devices.map(\.id))
     }
     
     func test_removeDevice_whenAPIRequestSucceeds_thenStateUpdates() async throws {
         try await setUpConnectedUser(usesMockedUpdaters: false, initialDeviceCount: 2)
         
         env.client.mockAPIClient.test_mockResponseResult(.success(EmptyResponse()))
-        var devices = await connectedUser.state.devices
+        var devices = await connectedUser.state.user.devices
         let deviceToRemove = try XCTUnwrap(devices.popLast()?.id)
         try await connectedUser.removeDevice(deviceToRemove)
         
-        await XCTAssertEqual(false, connectedUser.state.devices.contains(where: { $0.id == deviceToRemove }))
-        await XCTAssertEqual(devices.map(\.id).sorted(), connectedUser.state.devices.map(\.id))
+        await XCTAssertEqual(false, connectedUser.state.user.devices.contains(where: { $0.id == deviceToRemove }))
+        await XCTAssertEqual(devices.map(\.id).sorted(), connectedUser.state.user.devices.map(\.id))
     }
     
     func test_muteUser_whenUpdatedSucceeds_thenMuteUserSucceeds() async throws {
