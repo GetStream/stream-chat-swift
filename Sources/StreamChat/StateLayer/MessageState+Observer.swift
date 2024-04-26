@@ -9,6 +9,7 @@ extension MessageState {
     struct Observer {
         private let messageId: MessageId
         private let messageObserver: StateLayerDatabaseObserver<EntityResult, ChatMessage, MessageDTO>
+        private let reactionsObserver: StateLayerDatabaseObserver<ListResult, ChatMessageReaction, MessageReactionDTO>
         private let repliesObserver: StateLayerDatabaseObserver<ListResult, ChatMessage, MessageDTO>
         
         init(
@@ -22,6 +23,14 @@ extension MessageState {
                 databaseContainer: database,
                 fetchRequest: MessageDTO.message(withID: messageId),
                 itemCreator: { try $0.asModel() as ChatMessage }
+            )
+            reactionsObserver = StateLayerDatabaseObserver(
+                databaseContainer: database,
+                fetchRequest: MessageReactionDTO.reactionsFetchRequest(
+                    for: messageId,
+                    sort: ChatMessageReaction.defaultSortingDescriptors()
+                ),
+                itemCreator: { try $0.asModel() as ChatMessageReaction }
             )
             repliesObserver = StateLayerDatabaseObserver(
                 databaseContainer: database,
@@ -37,7 +46,8 @@ extension MessageState {
         }
         
         struct Handlers {
-            let messageDidChange: ((message: ChatMessage, changedReactions: [ChatMessageReaction]?)) async -> Void
+            let messageDidChange: (ChatMessage) async -> Void
+            let reactionsDidChange: (StreamCollection<ChatMessageReaction>) async -> Void
             let repliesDidChange: (StreamCollection<ChatMessage>) async -> Void
         }
         
@@ -45,35 +55,32 @@ extension MessageState {
             with handlers: Handlers
         ) -> (
             message: ChatMessage?,
-            reactions: [ChatMessageReaction],
+            reactions: StreamCollection<ChatMessageReaction>,
             replies: StreamCollection<ChatMessage>
         ) {
             do {
-                var lastSortedReactions: [ChatMessageReaction]?
                 let message = try messageObserver.startObserving(onContextDidChange: { message in
                     guard let message else { return }
-                    let changedReactions: [ChatMessageReaction]?
-                    let currentReactions = message.latestReactions
-                        .sorted(by: ChatMessageReaction.defaultSorting)
-                    if lastSortedReactions != currentReactions {
-                        lastSortedReactions = currentReactions
-                        changedReactions = currentReactions
-                    } else {
-                        changedReactions = nil
-                    }
-                    Task.mainActor {
-                        await handlers.messageDidChange((message, changedReactions))
-                    }
+                    Task.mainActor { await handlers.messageDidChange(message) }
                 })
-                let reactions = message?.latestReactions
-                    .sorted(by: ChatMessageReaction.defaultSorting) ?? []
-                let replies = try repliesObserver
-                    .startObserving(didChange: handlers.repliesDidChange)
+                let reactions = try reactionsObserver.startObserving(didChange: handlers.reactionsDidChange)
+                let replies = try repliesObserver.startObserving(didChange: handlers.repliesDidChange)
                 return (message, reactions, replies)
             } catch {
                 log.error("Failed to start the observers for message: \(messageId) with error \(error)")
-                return (nil, [], StreamCollection([]))
+                return (nil, StreamCollection([]), StreamCollection([]))
             }
         }
+    }
+}
+
+@available(iOS 13.0, *)
+extension ChatMessageReaction {
+    static func defaultSorting(_ first: ChatMessageReaction, _ second: ChatMessageReaction) -> Bool {
+        first.updatedAt > second.updatedAt
+    }
+    
+    static func defaultSortingDescriptors() -> [NSSortDescriptor] {
+        [NSSortDescriptor(keyPath: \MessageReactionDTO.updatedAt, ascending: false)]
     }
 }
