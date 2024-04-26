@@ -38,6 +38,8 @@ final class SlackReactionsView: _View, ThemeProvider, UICollectionViewDataSource
 
     let reactionWidth: CGFloat = 40
     let reactionRowHeight: CGFloat = 30
+    let reactionsMarginLeft: CGFloat = 40
+    let reactionInterSpacing: CGFloat = 4
 
     lazy var collectionView: UICollectionView = {
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: collectionViewLayout)
@@ -61,9 +63,9 @@ final class SlackReactionsView: _View, ThemeProvider, UICollectionViewDataSource
             ),
             subitems: [item]
         )
-        group.interItemSpacing = .fixed(4)
+        group.interItemSpacing = .fixed(reactionInterSpacing)
         let section = NSCollectionLayoutSection(group: group)
-        section.interGroupSpacing = 4
+        section.interGroupSpacing = reactionInterSpacing
 
         return UICollectionViewCompositionalLayout(section: section)
     }
@@ -75,8 +77,8 @@ final class SlackReactionsView: _View, ThemeProvider, UICollectionViewDataSource
 
         addSubview(collectionView)
         NSLayoutConstraint.activate([
-            collectionView.topAnchor.constraint(equalTo: topAnchor),
-            collectionView.leadingAnchor.constraint(equalTo: leadingAnchor),
+            collectionView.topAnchor.constraint(equalTo: topAnchor, constant: -4),
+            collectionView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: reactionsMarginLeft),
             collectionView.trailingAnchor.constraint(equalTo: trailingAnchor),
             collectionView.bottomAnchor.constraint(equalTo: bottomAnchor)
         ])
@@ -102,7 +104,8 @@ final class SlackReactionsView: _View, ThemeProvider, UICollectionViewDataSource
 
         collectionView.reloadData()
 
-        let numberOfRows = Double(reactions.count) * reactionWidth / UIScreen.main.bounds.width
+        let screenWidth = UIScreen.main.bounds.width
+        let numberOfRows = Double(reactions.count) * (reactionWidth + reactionInterSpacing) / (screenWidth - reactionsMarginLeft)
         heightConstraint?.constant = ceil(numberOfRows) * reactionRowHeight
     }
 
