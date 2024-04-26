@@ -12,6 +12,7 @@ import Foundation
     private let environment: Chat.Environment
     private var observer: Observer?
     private(set) var memberList: MemberList?
+    private(set) var messageReplyStates = [MessageId: MessagesPaginationStateHandler]()
     private(set) var messageStates = NSMapTable<NSString, MessageState>(valueOptions: .weakMemory)
     private(set) var readStateSender: Chat.ReadStateSender?
     
@@ -202,6 +203,12 @@ extension ChatState {
         }
     }
     
+    /// Returns an existing state or creates a new one.
+    ///
+    /// Having many MessageState objects alive at the same time can get expensive due to
+    /// DB observing. Therefore, ChatState only keeps weak references for quick lookups.
+    /// Reply pagination state must be persisted for consistent pagination state even
+    /// when MessageState itself is deinited meanwhile.
     func messageState(
         for messageId: MessageId,
         provider: (MessageId) async throws -> ChatMessage
@@ -210,12 +217,20 @@ extension ChatState {
             return state
         } else {
             let message = try await provider(messageId)
+            let replyPaginationHandler: MessagesPaginationStateHandler = {
+                if let handler = messageReplyStates[messageId] {
+                    return handler
+                }
+                let handler = MessagesPaginationStateHandler()
+                messageReplyStates[messageId] = handler
+                return handler
+            }()
             let state = MessageState(
                 message: message,
                 messageOrder: messageOrder,
                 database: client.databaseContainer,
                 clientConfig: client.config,
-                replyPaginationHandler: MessagesPaginationStateHandler()
+                replyPaginationHandler: replyPaginationHandler
             )
             messageStates.setObject(state, forKey: messageId as NSString)
             return state
