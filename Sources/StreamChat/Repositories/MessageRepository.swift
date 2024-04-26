@@ -257,4 +257,37 @@ class MessageRepository {
             completion?()
         }
     }
+    
+    func undoMessagePinning(
+        on messageId: MessageId,
+        completion: (() -> Void)? = nil
+    ) {
+        database.write { session in
+            if let messageDTO = session.message(id: messageId) {
+                session.unpin(message: messageDTO)
+            }
+        } completion: { error in
+            if let error = error {
+                log.error("Error unpinning the message with id \(messageId): \(error)")
+            }
+            completion?()
+        }
+    }
+    
+    func undoMessageUnpinning(
+        on messageId: MessageId,
+        completion: (() -> Void)? = nil
+    ) {
+        database.write { session in
+            if let messageDTO = session.message(id: messageId) {
+                let pinning: MessagePinning = .init(expirationDate: messageDTO.pinExpires?.bridgeDate)
+                try session.pin(message: messageDTO, pinning: pinning)
+            }
+        } completion: { error in
+            if let error = error {
+                log.error("Error pinning the message with id \(messageId): \(error)")
+            }
+            completion?()
+        }
+    }
 }

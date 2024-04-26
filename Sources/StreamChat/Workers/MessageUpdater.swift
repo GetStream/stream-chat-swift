@@ -466,7 +466,7 @@ class MessageUpdater: Worker {
             }
 
             try session.pin(message: messageDTO, pinning: pinning)
-        }, completion: { [weak self] error in
+        }, completion: { [weak self, weak repository] error in
             let endpoint: Endpoint<EmptyResponse> = .pinMessage(
                 messageId: messageId,
                 request: .init(set: .init(pinned: true))
@@ -475,12 +475,7 @@ class MessageUpdater: Worker {
             self?.apiClient.request(endpoint: endpoint) { result in
                 guard let error = result.error else { return }
                 
-                self?.database.write { session in
-                    if let messageDTO = session.message(id: messageId) {
-                        session.unpin(message: messageDTO)
-                    }
-                    completion?(error)
-                }
+                repository?.undoMessagePinning(on: messageId)
             }
             completion?(error)
         })
@@ -497,7 +492,7 @@ class MessageUpdater: Worker {
             }
 
             session.unpin(message: messageDTO)
-        }, completion: { [weak self] error in
+        }, completion: { [weak self, weak repository] error in
             let endpoint: Endpoint<EmptyResponse> = .pinMessage(
                 messageId: messageId,
                 request: .init(set: .init(pinned: false))
@@ -506,13 +501,7 @@ class MessageUpdater: Worker {
             self?.apiClient.request(endpoint: endpoint) { result in
                 guard let error = result.error else { return }
 
-                self?.database.write { session in
-                    if let messageDTO = session.message(id: messageId) {
-                        let pinning: MessagePinning = .init(expirationDate: messageDTO.pinExpires?.bridgeDate)
-                        try session.pin(message: messageDTO, pinning: pinning)
-                    }
-                    completion?(error)
-                }
+                repository?.undoMessageUnpinning(on: messageId)
             }
             completion?(error)
         })
