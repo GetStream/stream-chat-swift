@@ -57,7 +57,11 @@ class DatabaseSession_Mock: DatabaseSession {
     func saveChannelList(payload: ChannelListPayload, query: ChannelListQuery?) -> [ChannelDTO] {
         return underlyingSession.saveChannelList(payload: payload, query: query)
     }
-    
+
+    func saveQuery(query: ReactionListQuery) throws -> ReactionListQueryDTO? {
+        return try underlyingSession.saveQuery(query: query)
+    }
+
     func saveChannel(
         payload: ChannelDetailPayload,
         query: ChannelListQuery?,
@@ -213,13 +217,13 @@ class DatabaseSession_Mock: DatabaseSession {
         underlyingSession.reaction(messageId: messageId, userId: userId, type: type)
     }
 
-    func saveReaction(payload: MessageReactionPayload, cache: PreWarmedCache?) throws -> MessageReactionDTO {
+    func saveReaction(payload: MessageReactionPayload, query: ReactionListQuery?, cache: PreWarmedCache?) throws -> MessageReactionDTO {
         try throwErrorIfNeeded()
-        return try underlyingSession.saveReaction(payload: payload, cache: cache)
+        return try underlyingSession.saveReaction(payload: payload, query: query, cache: cache)
     }
 
-    func saveReactions(payload: MessageReactionsPayload) -> [MessageReactionDTO] {
-        return underlyingSession.saveReactions(payload: payload)
+    func saveReactions(payload: MessageReactionsPayload, query: ReactionListQuery?) -> [MessageReactionDTO] {
+        return underlyingSession.saveReactions(payload: payload, query: query)
     }
 
     func delete(reaction: MessageReactionDTO) {

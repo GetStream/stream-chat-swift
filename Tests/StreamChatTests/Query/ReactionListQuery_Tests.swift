@@ -9,6 +9,7 @@ import XCTest
 final class ReactionListQuery_Tests: XCTestCase {
     func test_encode() throws {
         let query = ReactionListQuery(
+            messageId: "123",
             pagination: .init(pageSize: 20, offset: 10),
             filter: .and([
                 .equal(.authorId, to: "123"),

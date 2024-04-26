@@ -168,7 +168,7 @@ final class ReactionEvents_IntegrationTests: XCTestCase {
         try session.saveUser(payload: user)
         _ = try session.saveChannel(payload: channel, query: nil, cache: nil)
         _ = try session.saveMessage(payload: message, for: channel.cid, cache: nil)
-        try session.saveReaction(payload: reaction, cache: nil)
+        try session.saveReaction(payload: reaction, query: nil, cache: nil)
 
         // Assert event can be created and has correct fields
         let event = try XCTUnwrap(dto.toDomainEvent(session: session) as? ReactionNewEvent)
@@ -210,7 +210,7 @@ final class ReactionEvents_IntegrationTests: XCTestCase {
         try session.saveUser(payload: user)
         _ = try session.saveChannel(payload: channel, query: nil, cache: nil)
         _ = try session.saveMessage(payload: message, for: channel.cid, cache: nil)
-        try session.saveReaction(payload: reaction, cache: nil)
+        try session.saveReaction(payload: reaction, query: nil, cache: nil)
 
         // Assert event can be created and has correct fields
         let event = try XCTUnwrap(dto.toDomainEvent(session: session) as? ReactionUpdatedEvent)
@@ -252,7 +252,7 @@ final class ReactionEvents_IntegrationTests: XCTestCase {
         try session.saveUser(payload: user)
         _ = try session.saveChannel(payload: channel, query: nil, cache: nil)
         _ = try session.saveMessage(payload: message, for: channel.cid, cache: nil)
-        try session.saveReaction(payload: reaction, cache: nil)
+        try session.saveReaction(payload: reaction, query: nil, cache: nil)
 
         // Assert event can be created and has correct fields
         let event = try XCTUnwrap(dto.toDomainEvent(session: session) as? ReactionDeletedEvent)

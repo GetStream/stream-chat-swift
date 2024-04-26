@@ -26,12 +26,12 @@ final class ReactionEndpoints_Tests: XCTestCase {
     func test_loadReactionsV2_buildsCorrectly() {
         let messageId: MessageId = "ID"
         let query: ReactionListQuery = .init(
+            messageId: messageId,
             pagination: .init(pageSize: 20, offset: 0),
             filter: .equal(.reactionType, to: "like")
         )
 
         let endpoint: Endpoint<MessageReactionsPayload> = .loadReactionsV2(
-            messageId: messageId,
             query: query
         )
 
