@@ -794,7 +794,7 @@ final class Chat_Tests: XCTestCase {
     
     // MARK: - Message Flagging
     
-    func test_flagMessageAction_whenMessageUpdaterSucceeds_thenFlagMessageActionSucceeds() async throws {
+    func test_flagMessage_whenMessageUpdaterSucceeds_thenFlagMessageActionSucceeds() async throws {
         let messageId: MessageId = .unique
         env.messageUpdaterMock.flagMessage_completion_result = .success(())
         try await chat.flagMessage(messageId)
@@ -803,7 +803,7 @@ final class Chat_Tests: XCTestCase {
         XCTAssertEqual(true, env.messageUpdaterMock.flagMessage_flag)
     }
     
-    func test_flagMessageAction_whenMessageUpdaterFails_thenFlagMessageActionSucceeds() async throws {
+    func test_flagMessage_whenMessageUpdaterFails_thenFlagMessageActionSucceeds() async throws {
         let messageId: MessageId = .unique
         env.messageUpdaterMock.flagMessage_completion_result = .failure(expectedTestError)
         await XCTAssertAsyncFailure(try await chat.flagMessage(messageId), expectedTestError)
@@ -812,7 +812,7 @@ final class Chat_Tests: XCTestCase {
         XCTAssertEqual(true, env.messageUpdaterMock.flagMessage_flag)
     }
     
-    func test_unflagMessageAction_whenMessageUpdaterSucceeds_thenUnflagMessageActionSucceeds() async throws {
+    func test_unflagMessage_whenMessageUpdaterSucceeds_thenUnflagMessageActionSucceeds() async throws {
         let messageId: MessageId = .unique
         env.messageUpdaterMock.flagMessage_completion_result = .success(())
         try await chat.unflagMessage(messageId)
@@ -821,7 +821,7 @@ final class Chat_Tests: XCTestCase {
         XCTAssertEqual(false, env.messageUpdaterMock.flagMessage_flag)
     }
     
-    func test_unflagMessageAction_whenMessageUpdaterFails_thenUnflagMessageActionSucceeds() async throws {
+    func test_unflagMessage_whenMessageUpdaterFails_thenUnflagMessageActionSucceeds() async throws {
         let messageId: MessageId = .unique
         env.messageUpdaterMock.flagMessage_completion_result = .failure(expectedTestError)
         await XCTAssertAsyncFailure(try await chat.unflagMessage(messageId), expectedTestError)
@@ -832,7 +832,7 @@ final class Chat_Tests: XCTestCase {
     
     // MARK: - Message Rich Content
     
-    func test_enrichURLAction_whenChannelUpdaterSucceeds_thenEnrichURLActionSucceeds() async throws {
+    func test_enrichURL_whenChannelUpdaterSucceeds_thenEnrichURLActionSucceeds() async throws {
         let url: URL = .unique()
         let expectedLinkAttachmentPayload = LinkAttachmentPayload(
             originalURL: url,
@@ -847,7 +847,7 @@ final class Chat_Tests: XCTestCase {
         XCTAssertEqual(actualLinkAttachmentPayload, expectedLinkAttachmentPayload)
     }
     
-    func test_enrichURLAction_whenChannelUpdaterFails_thenEnrichURLActionSucceeds() async throws {
+    func test_enrichURL_whenChannelUpdaterFails_thenEnrichURLActionSucceeds() async throws {
         let url: URL = .unique()
         env.channelUpdaterMock.enrichUrl_completion_result = .failure(expectedTestError)
         await XCTAssertAsyncFailure(_ = try await chat.enrichURL(url), expectedTestError)
@@ -1113,9 +1113,158 @@ final class Chat_Tests: XCTestCase {
         await XCTAssertEqual(3, chat.state.channel?.reads.first?.unreadMessagesCount)
     }
     
+    // MARK: - Message Replies
+    
+    func test_reply_whenAPIRequestSucceeds_thenStateUpdates() async throws {
+        try await setUpChat(
+            usesMockedUpdaters: false,
+            messageCount: 3
+        )
+        
+        let messages = await chat.state.messages
+        let lastMessageId = try XCTUnwrap(messages.last?.id)
+        
+        let typingIndicatorResponse = EmptyResponse()
+        env.client.mockAPIClient.test_mockResponseResult(.success(typingIndicatorResponse))
+        let apiResponse = MessagePayload.Boxed(
+            message: .dummy(
+                messageId: "reply_0",
+                parentId: lastMessageId
+            )
+        )
+        env.client.mockAPIClient.test_mockResponseResult(.success(apiResponse))
+        
+        let notificationExpectation = expectation(
+            forNotification: .NewEventReceived,
+            object: nil,
+            notificationCenter: env.client.eventNotificationCenter
+        )
+        
+        let replyMessage = try await chat.reply(
+            to: lastMessageId,
+            text: "My Reply",
+            messageId: apiResponse.message.id
+        )
+        XCTAssertEqual(apiResponse.message.id, replyMessage.id)
+        
+        #if swift(>=5.8)
+        await fulfillment(of: [notificationExpectation], timeout: defaultTimeout)
+        #else
+        wait(for: [notificationExpectation], timeout: defaultTimeout)
+        #endif
+        
+        let messageState = try await chat.messageState(for: lastMessageId)
+        await XCTAssertEqual(lastMessageId, messageState.message.id)
+        await XCTAssertEqual(apiResponse.message.id, messageState.replies.last?.id)
+    }
+    
+    func test_loadReplies_whenAPIRequestSucceeds_thenStateUpdates() async throws {
+        try await setUpChat(
+            usesMockedUpdaters: false,
+            messageCount: 3
+        )
+        
+        let messages = await chat.state.messages
+        let lastMessageId = try XCTUnwrap(messages.last?.id)
+        
+        let apiResponse = makeRepliesPayload(parentMessageId: lastMessageId, count: 5, offset: 0)
+        env.client.mockAPIClient.test_mockResponseResult(.success(apiResponse))
+        
+        let paginatedReplies = try await chat.loadReplies(
+            for: lastMessageId,
+            pagination: MessagesPagination(
+                pageSize: apiResponse.messages.count
+            )
+        )
+        XCTAssertEqual(apiResponse.messages.map(\.id), paginatedReplies.map(\.id))
+        
+        let messageState = try await chat.messageState(for: lastMessageId)
+        await XCTAssertEqual(lastMessageId, messageState.message.id)
+        await XCTAssertEqual(apiResponse.messages.map(\.id), messageState.replies.map(\.id))
+        
+        await XCTAssertEqual(false, messageState.hasLoadedAllOlderReplies)
+        await XCTAssertEqual(true, messageState.hasLoadedAllNewerReplies)
+        await XCTAssertEqual(false, messageState.isLoadingOlderReplies)
+        await XCTAssertEqual(false, messageState.isLoadingMiddleReplies)
+        await XCTAssertEqual(false, messageState.isLoadingNewerReplies)
+    }
+    
+    func test_loadOlderReplies_whenAPIRequestSucceeds_thenStateUpdates() async throws {
+        try await setUpChat(
+            usesMockedUpdaters: false,
+            messageCount: 3
+        )
+        
+        let messages = await chat.state.messages
+        let lastMessageId = try XCTUnwrap(messages.last?.id)
+        let initialApiResponse = makeRepliesPayload(parentMessageId: lastMessageId, count: 5, offset: 0)
+        env.client.mockAPIClient.test_mockResponseResult(.success(initialApiResponse))
+        try await chat.loadReplies(
+            for: lastMessageId,
+            pagination: MessagesPagination(
+                pageSize: initialApiResponse.messages.count
+            )
+        )
+        
+        let apiResponse = makeRepliesPayload(parentMessageId: lastMessageId, count: 5, offset: 5)
+        env.client.mockAPIClient.test_mockResponseResult(.success(apiResponse))
+        try await chat.loadOlderReplies(
+            for: lastMessageId,
+            limit: apiResponse.messages.count
+        )
+        
+        let messageState = try await chat.messageState(for: lastMessageId)
+        let all = initialApiResponse.messages + apiResponse.messages
+        await XCTAssertEqual(lastMessageId, messageState.message.id)
+        await XCTAssertEqual(all.map(\.id), messageState.replies.map(\.id))
+        
+        await XCTAssertEqual(false, messageState.hasLoadedAllOlderReplies)
+        await XCTAssertEqual(true, messageState.hasLoadedAllNewerReplies)
+        await XCTAssertEqual(false, messageState.isLoadingOlderReplies)
+        await XCTAssertEqual(false, messageState.isLoadingMiddleReplies)
+        await XCTAssertEqual(false, messageState.isLoadingNewerReplies)
+    }
+    
+    func test_loadNewerReplies_whenAPIRequestSucceeds_thenStateUpdates() async throws {
+        try await setUpChat(
+            usesMockedUpdaters: false,
+            messageCount: 3
+        )
+        
+        let messages = await chat.state.messages
+        let lastMessageId = try XCTUnwrap(messages.last?.id)
+        let initialApiResponse = makeRepliesPayload(parentMessageId: lastMessageId, count: 5, offset: 5)
+        env.client.mockAPIClient.test_mockResponseResult(.success(initialApiResponse))
+        try await chat.loadReplies(
+            around: initialApiResponse.messages[2].id,
+            for: lastMessageId,
+            limit: initialApiResponse.messages.count
+        )
+        let messageState = try await chat.messageState(for: lastMessageId)
+        await XCTAssertEqual(false, messageState.hasLoadedAllNewerReplies)
+        await XCTAssertEqual(false, messageState.isLoadingNewerReplies)
+        
+        let apiResponse = makeRepliesPayload(parentMessageId: lastMessageId, count: 5, offset: 0)
+        env.client.mockAPIClient.test_mockResponseResult(.success(apiResponse))
+        try await chat.loadNewerReplies(
+            for: lastMessageId,
+            limit: apiResponse.messages.count
+        )
+        
+        let all = apiResponse.messages + initialApiResponse.messages
+        await XCTAssertEqual(lastMessageId, messageState.message.id)
+        await XCTAssertEqual(all.map(\.id), messageState.replies.map(\.id))
+        
+        await XCTAssertEqual(false, messageState.hasLoadedAllOlderReplies)
+        await XCTAssertEqual(false, messageState.hasLoadedAllNewerReplies)
+        await XCTAssertEqual(false, messageState.isLoadingOlderReplies)
+        await XCTAssertEqual(false, messageState.isLoadingMiddleReplies)
+        await XCTAssertEqual(false, messageState.isLoadingNewerReplies)
+    }
+    
     // MARK: - Message Translations
     
-    func test_translateMessageStateAction_whenMessageUpdaterSucceeds_thenTranslateMessageActionSucceeds() async throws {
+    func test_translateMessageState_whenMessageUpdaterSucceeds_thenTranslateMessageActionSucceeds() async throws {
         let messageId: MessageId = .unique
         let text: String = "Test message"
         let createdAt: Date = .unique
@@ -1134,7 +1283,7 @@ final class Chat_Tests: XCTestCase {
         XCTAssertEqual(language, env.messageUpdaterMock.translate_language)
     }
     
-    func test_translateMessageStateAction_whenMessageUpdaterFails_thenTranslateMessageActionSucceeds() async throws {
+    func test_translateMessageState_whenMessageUpdaterFails_thenTranslateMessageActionSucceeds() async throws {
         let messageId: MessageId = .unique
         let _: String = "Test message"
         let _: Date = .unique
@@ -1150,7 +1299,7 @@ final class Chat_Tests: XCTestCase {
     
     // MARK: - Muting or Hiding the Channel
     
-    func test_muteAction_whenChannelUpdaterSucceeds_thenMuteActionSucceeds() async throws {
+    func test_mute_whenChannelUpdaterSucceeds_thenMuteActionSucceeds() async throws {
         for expiration in [nil, 10] {
             env.channelUpdaterMock.muteChannel_completion_result = .success(())
             try await chat.mute(expiration: expiration)
@@ -1160,7 +1309,7 @@ final class Chat_Tests: XCTestCase {
         }
     }
     
-    func test_muteAction_whenChannelUpdaterFails_thenMuteActionSucceeds() async throws {
+    func test_mute_whenChannelUpdaterFails_thenMuteActionSucceeds() async throws {
         for expiration in [nil, 10] {
             env.channelUpdaterMock.muteChannel_completion_result = .failure(expectedTestError)
             await XCTAssertAsyncFailure(try await chat.mute(expiration: expiration), expectedTestError)
@@ -1170,7 +1319,7 @@ final class Chat_Tests: XCTestCase {
         }
     }
     
-    func test_hideAction_whenChannelUpdaterSucceeds_thenHideActionSucceeds() async throws {
+    func test_hide_whenChannelUpdaterSucceeds_thenHideActionSucceeds() async throws {
         for clearHistory in [true, false] {
             env.channelUpdaterMock.hideChannel_completion_result = .success(())
             try await chat.hide(clearHistory: clearHistory)
@@ -1179,7 +1328,7 @@ final class Chat_Tests: XCTestCase {
         }
     }
     
-    func test_hideAction_whenChannelUpdaterFails_thenHideActionSucceeds() async throws {
+    func test_hide_whenChannelUpdaterFails_thenHideActionSucceeds() async throws {
         for clearHistory in [true, false] {
             env.channelUpdaterMock.hideChannel_completion_result = .failure(expectedTestError)
             await XCTAssertAsyncFailure(try await chat.hide(clearHistory: clearHistory), expectedTestError)
@@ -1188,13 +1337,13 @@ final class Chat_Tests: XCTestCase {
         }
     }
     
-    func test_showAction_whenChannelUpdaterSucceeds_thenShowActionSucceeds() async throws {
+    func test_show_whenChannelUpdaterSucceeds_thenShowActionSucceeds() async throws {
         env.channelUpdaterMock.showChannel_completion_result = .success(())
         try await chat.show()
         XCTAssertEqual(channelId, env.channelUpdaterMock.showChannel_cid)
     }
     
-    func test_hideAction_whenChannelUpdaterFails_thenShowActionSucceeds() async throws {
+    func test_hide_whenChannelUpdaterFails_thenShowActionSucceeds() async throws {
         env.channelUpdaterMock.showChannel_completion_result = .failure(expectedTestError)
         await XCTAssertAsyncFailure(try await chat.show(), expectedTestError)
         XCTAssertEqual(channelId, env.channelUpdaterMock.showChannel_cid)
@@ -1202,7 +1351,7 @@ final class Chat_Tests: XCTestCase {
     
     // MARK: - Throttling and Slow Mode
     
-    func test_enableSlowModeAction_whenChannelUpdaterSucceeds_thenEnableSlowModeActionSucceeds() async throws {
+    func test_enableSlowMode_whenChannelUpdaterSucceeds_thenEnableSlowModeActionSucceeds() async throws {
         let cooldownDuration = 10
         env.channelUpdaterMock.enableSlowMode_completion_result = .success(())
         try await chat.enableSlowMode(cooldownDuration: cooldownDuration)
@@ -1210,7 +1359,7 @@ final class Chat_Tests: XCTestCase {
         XCTAssertEqual(cooldownDuration, env.channelUpdaterMock.enableSlowMode_cooldownDuration)
     }
     
-    func test_enableSlowModeAction_whenChannelUpdaterFails_thenEnableSlowModeActionSucceeds() async throws {
+    func test_enableSlowMode_whenChannelUpdaterFails_thenEnableSlowModeActionSucceeds() async throws {
         let cooldownDuration = 10
         env.channelUpdaterMock.enableSlowMode_completion_result = .failure(expectedTestError)
         await XCTAssertAsyncFailure(try await chat.enableSlowMode(cooldownDuration: cooldownDuration), expectedTestError)
@@ -1218,14 +1367,14 @@ final class Chat_Tests: XCTestCase {
         XCTAssertEqual(cooldownDuration, env.channelUpdaterMock.enableSlowMode_cooldownDuration)
     }
     
-    func test_disableSlowModeAction_whenChannelUpdaterSucceeds_thenDisableSlowModeActionSucceeds() async throws {
+    func test_disableSlowMode_whenChannelUpdaterSucceeds_thenDisableSlowModeActionSucceeds() async throws {
         env.channelUpdaterMock.enableSlowMode_completion_result = .success(())
         try await chat.disableSlowMode()
         XCTAssertEqual(channelId, env.channelUpdaterMock.enableSlowMode_cid)
         XCTAssertEqual(0, env.channelUpdaterMock.enableSlowMode_cooldownDuration)
     }
     
-    func test_disableSlowModeAction_whenChannelUpdaterFails_thenDisableSlowModeActionSucceeds() async throws {
+    func test_disableSlowMode_whenChannelUpdaterFails_thenDisableSlowModeActionSucceeds() async throws {
         env.channelUpdaterMock.enableSlowMode_completion_result = .failure(expectedTestError)
         await XCTAssertAsyncFailure(try await chat.disableSlowMode(), expectedTestError)
         XCTAssertEqual(channelId, env.channelUpdaterMock.enableSlowMode_cid)
@@ -1234,7 +1383,7 @@ final class Chat_Tests: XCTestCase {
     
     // MARK: - Truncating the Channel
     
-    func test_truncateAction_whenChannelUpdaterSucceeds_thenTruncateActionSucceeds() async throws {
+    func test_truncate_whenChannelUpdaterSucceeds_thenTruncateActionSucceeds() async throws {
         env.channelUpdaterMock.truncateChannel_completion_result = .success(())
         
         var systemMessage: String?
@@ -1274,7 +1423,7 @@ final class Chat_Tests: XCTestCase {
         XCTAssertEqual(systemMessage, env.channelUpdaterMock.truncateChannel_systemMessage)
     }
     
-    func test_truncateAction_whenChannelUpdaterFails_thenTruncateActionSucceeds() async throws {
+    func test_truncate_whenChannelUpdaterFails_thenTruncateActionSucceeds() async throws {
         env.channelUpdaterMock.truncateChannel_completion_result = .failure(expectedTestError)
         
         var systemMessage: String?
@@ -1316,25 +1465,25 @@ final class Chat_Tests: XCTestCase {
     
     // MARK: - Watching the Channel
     
-    func test_startWatchingAction_whenChannelUpdaterSucceeds_thenStartWatchingActionSucceeds() async throws {
+    func test_startWatching_whenChannelUpdaterSucceeds_thenStartWatchingActionSucceeds() async throws {
         env.channelUpdaterMock.startWatching_completion_result = .success(())
         try await chat.watch()
         XCTAssertEqual(channelId, env.channelUpdaterMock.startWatching_cid)
     }
     
-    func test_startWatchingAction_whenChannelUpdaterFails_thenStartWatchingActionSucceeds() async throws {
+    func test_startWatching_whenChannelUpdaterFails_thenStartWatchingActionSucceeds() async throws {
         env.channelUpdaterMock.startWatching_completion_result = .failure(expectedTestError)
         await XCTAssertAsyncFailure(try await chat.watch(), expectedTestError)
         XCTAssertEqual(channelId, env.channelUpdaterMock.startWatching_cid)
     }
     
-    func test_stopWatchingAction_whenChannelUpdaterSucceeds_thenStopWatchingActionSucceeds() async throws {
+    func test_stopWatching_whenChannelUpdaterSucceeds_thenStopWatchingActionSucceeds() async throws {
         env.channelUpdaterMock.stopWatching_completion_result = .success(())
         try await chat.stopWatching()
         XCTAssertEqual(channelId, env.channelUpdaterMock.stopWatching_cid)
     }
     
-    func test_stopWatchingAction_whenChannelUpdaterFails_thenStopWatchingActionSucceeds() async throws {
+    func test_stopWatching_whenChannelUpdaterFails_thenStopWatchingActionSucceeds() async throws {
         env.channelUpdaterMock.stopWatching_completion_result = .failure(expectedTestError)
         await XCTAssertAsyncFailure(try await chat.stopWatching(), expectedTestError)
         XCTAssertEqual(channelId, env.channelUpdaterMock.stopWatching_cid)
@@ -1439,6 +1588,20 @@ final class Chat_Tests: XCTestCase {
                 )
             }
         return MessageReactionsPayload(reactions: reactions)
+    }
+    
+    private func makeRepliesPayload(parentMessageId: MessageId, count: Int, offset: Int) -> MessageRepliesPayload {
+        let messages: [MessagePayload] = (0..<count)
+            .map { $0 + offset }
+            .map {
+                .dummy(
+                    messageId: String(format: "%03d", $0),
+                    parentId: parentMessageId,
+                    createdAt: Date(timeIntervalSinceReferenceDate: TimeInterval($0)),
+                    cid: channelId
+                )
+            }
+        return MessageRepliesPayload(messages: messages)
     }
 }
 
