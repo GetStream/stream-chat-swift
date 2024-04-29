@@ -22,6 +22,6 @@ public struct Poll: Equatable {
     public let votingVisibility: String?
     public let createdBy: ChatUser?
     public let latestAnswers: [PollVote]
-    public let options: [PollOption]
+    public var options: [PollOption]
     public let latestVotesByOption: [PollOption]
 }

@@ -330,7 +330,13 @@
         <attribute name="updatedAt" attributeType="Date" usesScalarValueType="NO"/>
         <relationship name="option" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="PollOptionDTO" inverseName="latestVotes" inverseEntity="PollOptionDTO"/>
         <relationship name="poll" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="PollDTO" inverseName="latestAnswers" inverseEntity="PollDTO"/>
+        <relationship name="queries" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="PollVoteListQueryDTO" inverseName="votes" inverseEntity="PollVoteListQueryDTO"/>
         <relationship name="user" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="UserDTO" inverseName="votes" inverseEntity="UserDTO"/>
+    </entity>
+    <entity name="PollVoteListQueryDTO" representedClassName="PollVoteListQueryDTO" syncable="YES">
+        <attribute name="filterHash" optional="YES" attributeType="String"/>
+        <attribute name="filterJSONData" optional="YES" attributeType="Binary"/>
+        <relationship name="votes" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="PollVoteDTO" inverseName="queries" inverseEntity="PollVoteDTO"/>
     </entity>
     <entity name="QueuedRequestDTO" representedClassName="QueuedRequestDTO" syncable="YES">
         <attribute name="date" attributeType="Date" usesScalarValueType="NO"/>

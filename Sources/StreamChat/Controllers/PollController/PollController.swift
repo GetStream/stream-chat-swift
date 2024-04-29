@@ -38,7 +38,7 @@ public class PollController: DataController, DelegateCallable, DataStoreProvider
     }
     
     private var pollObserver: EntityDatabaseObserverWrapper<Poll, PollDTO>?
-    
+        
     // TODO: environment
     // TODO: reuse poll repository
     init(client: ChatClient, messageId: MessageId, pollId: String) {
@@ -100,28 +100,6 @@ public class PollController: DataController, DelegateCallable, DataStoreProvider
         )
     }
     
-    private var next: String?
-    private var prev: String?
-    
-    public func loadVotes(
-        for optionId: String,
-        completion: ((Error?) -> Void)? = nil
-    ) {
-        pollsRepository.queryPollVotes(
-            pollId: pollId,
-            limit: 10,
-            next: next,
-            prev: prev,
-            sort: [.init(direction: -1, field: "created_at")],
-            filter: ["option_id": .dictionary(["$in": [.string(optionId)]])]
-        ) {
-            // TODO: fix.
-            self.next = $0.value?.next
-            self.prev = $0.value?.prev
-            completion?($0.error)
-        }
-    }
-    
     private func setupPollObserver() {
         pollObserver = { [weak self] in
             guard let self = self else {
@@ -136,12 +114,21 @@ public class PollController: DataController, DelegateCallable, DataStoreProvider
                 itemCreator: { try $0.asModel() as Poll },
                 fetchedResultsControllerType: NSFetchedResultsController<PollDTO>.self
             ).onChange { [weak self] change in
-                self?.delegateCallback { [weak self] in
+                self?.delegateCallback { [weak self] delegate in
                     guard let self = self else {
                         log.warning("Callback called while self is nil")
                         return
                     }
-                    $0.pollController(self, didUpdatePoll: change)
+                    delegate.pollController(self, didUpdatePoll: change)
+                }
+            }
+            .onFieldChange(\.options) { [weak self] change in
+                self?.delegateCallback { [weak self] delegate in
+                    guard let self = self else {
+                        log.warning("Callback called while self is nil")
+                        return
+                    }
+                    delegate.pollController(self, didUpdateOptions: change)
                 }
             }
 

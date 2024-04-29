@@ -127,6 +127,31 @@ class PollsRepository {
     }
     
     func queryPollVotes(
+        query: PollVoteListQuery,
+        completion: ((Result<[PollVote], Error>) -> Void)? = nil
+    ) {
+        apiClient.request(
+            endpoint: .queryPollVotes(pollId: query.pollId, query: query)
+        ) { [weak self] (result: Result<PollVoteListResponse, Error>) in
+            switch result {
+            case let .success(payload):
+                var votes: [PollVote] = []
+                self?.database.write({ session in
+                    votes = try session.savePollVotes(payload: payload, query: query, cache: nil).map { try $0.asModel() }
+                }, completion: { error in
+                    if let error = error {
+                        completion?(.failure(error))
+                    } else {
+                        completion?(.success(votes))
+                    }
+                })
+            case let .failure(error):
+                completion?(.failure(error))
+            }
+        }
+    }
+    
+    func queryPollVotes(
         pollId: String,
         limit: Int?,
         next: String?,
@@ -152,7 +177,7 @@ class PollsRepository {
                     database.write { session in
                         for payload in response.votes {
                             if let payload {
-                                try session.savePollVote(payload: payload, cache: nil)
+                                try session.savePollVote(payload: payload, query: nil, cache: nil)
                             }
                         }
                     } completion: { _ in

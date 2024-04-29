@@ -140,7 +140,7 @@ extension NSManagedObjectContext {
                 optionDto.latestVotes = Set(
                     try votesByOption.compactMap { vote in
                         if let vote {
-                            let voteDto = try savePollVote(payload: vote, cache: cache)
+                            let voteDto = try savePollVote(payload: vote, query: nil, cache: cache)
                             voteDto.option = optionDto
                             voteDto.poll = pollDto
                             return voteDto
@@ -156,7 +156,7 @@ extension NSManagedObjectContext {
         pollDto.latestAnswers = try Set(
             payload.latestAnswers?.compactMap { payload in
                 if let payload {
-                    let answerDto = try savePollVote(payload: payload, cache: cache)
+                    let answerDto = try savePollVote(payload: payload, query: nil, cache: cache)
                     answerDto.poll = pollDto
                     return answerDto
                 } else {

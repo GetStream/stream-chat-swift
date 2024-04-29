@@ -9,6 +9,7 @@ public struct PollVote: Equatable {
     public let createdAt: Date
     public let updatedAt: Date
     public let pollId: String
+    public let optionId: String
     public let isAnswer: Bool
     public let answerText: String?
     public let user: ChatUser?

@@ -424,7 +424,18 @@ protocol PollDatabaseSession {
     func savePoll(payload: PollPayload, cache: PreWarmedCache?) throws -> PollDTO
     
     @discardableResult
-    func savePollVote(payload: PollVotePayload, cache: PreWarmedCache?) throws -> PollVoteDTO
+    func savePollVotes(
+        payload: PollVoteListResponse,
+        query: PollVoteListQuery?,
+        cache: PreWarmedCache?
+    ) throws -> [PollVoteDTO]
+    
+    @discardableResult
+    func savePollVote(
+        payload: PollVotePayload,
+        query: PollVoteListQuery?,
+        cache: PreWarmedCache?
+    ) throws -> PollVoteDTO
     
     func poll(id: String) throws -> PollDTO?
     
@@ -519,7 +530,7 @@ extension DatabaseSession {
         }
         
         if let vote = payload.vote {
-            try savePollVote(payload: vote, cache: nil)
+            try savePollVote(payload: vote, query: nil, cache: nil)
         }
         
         if let poll = payload.poll {
