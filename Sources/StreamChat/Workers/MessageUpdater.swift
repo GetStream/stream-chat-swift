@@ -460,13 +460,7 @@ class MessageUpdater: Worker {
     ///   - pinning: The pinning expiration information. It supports setting an infinite expiration, setting a date, or the amount of time a message is pinned.
     ///   - completion: The completion. Will be called with an error if smth goes wrong, otherwise - will be called with `nil`.
     func pinMessage(messageId: MessageId, pinning: MessagePinning, completion: ((Error?) -> Void)? = nil) {
-        database.write({ session in
-            guard let messageDTO = session.message(id: messageId) else {
-                throw ClientError.MessageDoesNotExist(messageId: messageId)
-            }
-
-            try session.pin(message: messageDTO, pinning: pinning)
-        }, completion: { [weak self, weak repository] error in
+        pinLocalMessage(on: messageId, pinning: pinning) { [weak self] error in
             if let error {
                 completion?(error)
                 return
@@ -482,12 +476,12 @@ class MessageUpdater: Worker {
                 case .success:
                     completion?(nil)
                 case .failure(let apiError):
-                    repository?.undoMessagePinning(on: messageId) { _ in
+                    self?.unpinLocalMessage(on: messageId) { _, _ in
                         completion?(apiError)
                     }
                 }
             }
-        })
+        }
     }
 
     /// Unpin the message with the provided message id.
@@ -495,16 +489,7 @@ class MessageUpdater: Worker {
     ///   - messageId: The message identifier.
     ///   - completion: The completion. Will be called with an error if smth goes wrong, otherwise - will be called with `nil`.
     func unpinMessage(messageId: MessageId, completion: ((Error?) -> Void)? = nil) {
-        var pinning: MessagePinning = .noExpiration
-        
-        database.write({ session in
-            guard let messageDTO = session.message(id: messageId) else {
-                throw ClientError.MessageDoesNotExist(messageId: messageId)
-            }
-
-            pinning = .init(expirationDate: messageDTO.pinExpires?.bridgeDate)
-            session.unpin(message: messageDTO)
-        }, completion: { [weak self, weak repository] error in
+        unpinLocalMessage(on: messageId) { [weak self] error, pinning in
             if let error {
                 completion?(error)
                 return
@@ -520,12 +505,49 @@ class MessageUpdater: Worker {
                 case .success:
                     completion?(nil)
                 case .failure(let apiError):
-                    repository?.undoMessageUnpinning(on: messageId, pinning: pinning) { _ in
+                    self?.pinLocalMessage(on: messageId, pinning: pinning) { _ in
                         completion?(apiError)
                     }
                 }
             }
-        })
+        }
+    }
+    
+    private func pinLocalMessage(
+        on messageId: MessageId,
+        pinning: MessagePinning,
+        completion: ((Error?) -> Void)? = nil
+    ) {
+        database.write { session in
+            guard let messageDTO = session.message(id: messageId) else {
+                throw ClientError.MessageDoesNotExist(messageId: messageId)
+            }
+            try session.pin(message: messageDTO, pinning: pinning)
+        } completion: { error in
+            if let error = error {
+                log.error("Error pinning the message with id \(messageId): \(error)")
+            }
+            completion?(error)
+        }
+    }
+    
+    private func unpinLocalMessage(
+        on messageId: MessageId,
+        completion: ((Error?, MessagePinning) -> Void)? = nil
+    ) {
+        var pinning: MessagePinning = .noExpiration
+        database.write { session in
+            guard let messageDTO = session.message(id: messageId) else {
+                throw ClientError.MessageDoesNotExist(messageId: messageId)
+            }
+            pinning = .init(expirationDate: messageDTO.pinExpires?.bridgeDate)
+            session.unpin(message: messageDTO)
+        } completion: { error in
+            if let error = error {
+                log.error("Error unpinning the message with id \(messageId): \(error)")
+            }
+            completion?(error, pinning)
+        }
     }
 
     /// Updates local state of attachment with provided `id` to be enqueued by attachment uploader.
