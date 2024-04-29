@@ -39,11 +39,17 @@ extension MessageReactionDTO {
         // Fetch results controller requires at least one sorting descriptor.
         // At the moment, we do not allow changing the query sorting.
         request.sortDescriptors = [.init(key: #keyPath(MessageReactionDTO.createdAt), ascending: false)]
-
+        
+        let messageIdPredicate = NSPredicate(format: "message.id == %@", query.messageId)
+        var subpredicates = [messageIdPredicate]
+                
         // If a filter exists, use is for the predicate. Otherwise, `nil` filter matches all reactions.
         if let filterHash = query.filter?.filterHash {
-            request.predicate = NSPredicate(format: "ANY queries.filterHash == %@", filterHash)
+            let filterPredicate = NSPredicate(format: "ANY queries.filterHash == %@", filterHash)
+            subpredicates.append(filterPredicate)
         }
+        
+        request.predicate = NSCompoundPredicate(type: .and, subpredicates: subpredicates)
 
         return request
     }
