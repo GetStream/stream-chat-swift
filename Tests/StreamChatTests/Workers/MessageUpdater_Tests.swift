@@ -1801,6 +1801,50 @@ final class MessageUpdater_Tests: XCTestCase {
 
         XCTAssertTrue(completionError is ClientError.MessageDoesNotExist)
     }
+    
+    func test_pinMessage_propagatesSuccessfulResponse() throws {
+        let messageId: MessageId = .unique
+        let userId: UserId = .unique
+        try database.createCurrentUser(id: userId)
+        try database.createMessage(id: messageId, authorId: userId)
+        
+        apiClient.test_mockResponseResult(.success(EmptyResponse()))
+
+        let expiration: MessagePinning = .expirationDate(.unique)
+        let result = try waitFor {
+            messageUpdater.pinMessage(messageId: messageId, pinning: expiration, completion: $0)
+        }
+
+        XCTAssertNil(result)
+        
+        let message = try XCTUnwrap(database.viewContext.message(id: messageId)?.asModel())
+        XCTAssertTrue(message.isPinned)
+        XCTAssertEqual(expiration.expirationDate, message.pinDetails?.expiresAt)
+    }
+    
+    func test_pinMessage_propagatesFailedResponse() throws {
+        let messageId: MessageId = .unique
+        let userId: UserId = .unique
+        try database.createCurrentUser(id: userId)
+        try database.createMessage(id: messageId, authorId: userId)
+        
+        let expectedError = TestError()
+        apiClient.test_mockResponseResult(Result<EmptyResponse, Error>.failure(expectedError))
+
+        let completionError = try waitFor {
+            messageUpdater.pinMessage(messageId: messageId, pinning: .expirationDate(.unique), completion: $0)
+        }
+
+        XCTAssertEqual(completionError, expectedError)
+        
+        let message = try XCTUnwrap(database.viewContext.message(id: messageId)?.asModel())
+        XCTAssertFalse(message.isPinned)
+        XCTAssertEqual(nil, message.pinDetails?.pinnedAt)
+        XCTAssertEqual(nil, message.pinDetails?.pinnedBy)
+        XCTAssertEqual(nil, message.pinDetails?.expiresAt)
+    }
+
+    // MARK: - Unpinning message
 
     func test_unpinMessage_propogates_MessageDoesNotExist_Error() throws {
         try database.createCurrentUser()
@@ -1810,6 +1854,54 @@ final class MessageUpdater_Tests: XCTestCase {
         }
 
         XCTAssertTrue(completionError is ClientError.MessageDoesNotExist)
+    }
+    
+    func test_unpinMessage_propagatesSuccessfulResponse() throws {
+        let messageId: MessageId = .unique
+        let userId: UserId = .unique
+        try database.createCurrentUser(id: userId)
+        try database.createMessage(id: messageId, authorId: userId)
+        
+        apiClient.test_mockResponseResult(.success(EmptyResponse()))
+
+        let expiration: MessagePinning = .expirationDate(.unique)
+        let result = try waitFor {
+            messageUpdater.unpinMessage(messageId: messageId, completion: $0)
+        }
+
+        XCTAssertNil(result)
+        
+        let message = try XCTUnwrap(database.viewContext.message(id: messageId)?.asModel())
+        XCTAssertFalse(message.isPinned)
+        XCTAssertEqual(nil, message.pinDetails?.pinnedAt)
+        XCTAssertEqual(nil, message.pinDetails?.pinnedBy)
+        XCTAssertEqual(nil, message.pinDetails?.expiresAt)
+    }
+    
+    func test_unpinMessage_propagatesFailedResponse() throws {
+        let pinExpires: Date = .unique
+        let messageId: MessageId = .unique
+        let userId: UserId = .unique
+        try database.createCurrentUser(id: userId)
+        try database.createMessage(
+            id: messageId,
+            authorId: userId,
+            pinned: true,
+            pinExpires: pinExpires
+        )
+        
+        let expectedError = TestError()
+        apiClient.test_mockResponseResult(Result<EmptyResponse, Error>.failure(expectedError))
+
+        let completionError = try waitFor {
+            messageUpdater.unpinMessage(messageId: messageId, completion: $0)
+        }
+
+        XCTAssertEqual(completionError, expectedError)
+        
+        let message = try XCTUnwrap(database.viewContext.message(id: messageId)?.asModel())
+        XCTAssertTrue(message.isPinned)
+        XCTAssertEqual(pinExpires, message.pinDetails?.expiresAt)
     }
 
     // MARK: - Restart failed attachment uploading
