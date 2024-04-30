@@ -55,7 +55,7 @@ import Foundation
     
     /// An array of loaded message reactions sorted by ``ChatMessageReaction/updatedAt`` with descending order.
     ///
-    /// Use ``Chat/loadReactions(of:pagination:)`` for loading more reaactions.
+    /// Use ``Chat/loadReactions(of:pagination:)`` for loading more reactions.
     @Published public private(set) var reactions = StreamCollection<ChatMessageReaction>([])
     
     // MARK: - Replies

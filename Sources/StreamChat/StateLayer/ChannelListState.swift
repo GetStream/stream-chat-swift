@@ -31,7 +31,7 @@ import Foundation
         )
     }
     
-    /// The query specifying and filtering the list of channels.
+    /// The query used for filtering the list of channels.
     public let query: ChannelListQuery
     
     /// An array of channels for the specified ``ChannelListQuery``.
