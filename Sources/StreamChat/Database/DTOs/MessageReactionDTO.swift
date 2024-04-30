@@ -33,6 +33,27 @@ final class MessageReactionDTO: NSManagedObject {
 }
 
 extension MessageReactionDTO {
+    static func reactionListFetchRequest(query: ReactionListQuery) -> NSFetchRequest<MessageReactionDTO> {
+        let request = NSFetchRequest<MessageReactionDTO>(entityName: MessageReactionDTO.entityName)
+
+        // Fetch results controller requires at least one sorting descriptor.
+        // At the moment, we do not allow changing the query sorting.
+        request.sortDescriptors = [.init(key: #keyPath(MessageReactionDTO.createdAt), ascending: false)]
+        
+        let messageIdPredicate = NSPredicate(format: "message.id == %@", query.messageId)
+        var subpredicates = [messageIdPredicate]
+                
+        // If a filter exists, use is for the predicate. Otherwise, `nil` filter matches all reactions.
+        if let filterHash = query.filter?.filterHash {
+            let filterPredicate = NSPredicate(format: "ANY queries.filterHash == %@", filterHash)
+            subpredicates.append(filterPredicate)
+        }
+        
+        request.predicate = NSCompoundPredicate(type: .and, subpredicates: subpredicates)
+
+        return request
+    }
+
     static func load(
         userId: String,
         messageId: MessageId,
@@ -101,16 +122,23 @@ extension NSManagedObjectContext {
     }
 
     @discardableResult
-    func saveReactions(payload: MessageReactionsPayload) -> [MessageReactionDTO] {
+    func saveReactions(payload: MessageReactionsPayload, query: ReactionListQuery?) -> [MessageReactionDTO] {
+        let isFirstPage = query?.pagination.offset == 0
+        if let filterHash = query?.queryHash, isFirstPage {
+            let queryDTO = ReactionListQueryDTO.load(filterHash: filterHash, context: self)
+            queryDTO?.reactions = []
+        }
+
         let cache = payload.getPayloadToModelIdMappings(context: self)
         return payload.reactions.compactMapLoggingError {
-            try saveReaction(payload: $0, cache: cache)
+            try saveReaction(payload: $0, query: query, cache: cache)
         }
     }
 
     @discardableResult
     func saveReaction(
         payload: MessageReactionPayload,
+        query: ReactionListQuery?,
         cache: PreWarmedCache?
     ) throws -> MessageReactionDTO {
         guard let messageDTO = message(id: payload.messageId) else {
@@ -131,6 +159,11 @@ extension NSManagedObjectContext {
         dto.extraData = try JSONEncoder.default.encode(payload.extraData)
         dto.localState = nil
         dto.version = nil
+
+        if let query = query {
+            let queryDTO = try saveQuery(query: query)
+            queryDTO?.reactions.insert(dto)
+        }
 
         return dto
     }
