@@ -63,7 +63,7 @@ import Foundation
     @Published public private(set) var members = StreamCollection<ChatChannelMember>([])
     
     /// The sorting order for channel members (the default sorting is by created at in ascending order).
-    let memberSorting: [Sorting<ChannelMemberListSortingKey>]
+    public let memberSorting: [Sorting<ChannelMemberListSortingKey>]
     
     // MARK: - Messages
     
