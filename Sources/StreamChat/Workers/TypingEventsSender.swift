@@ -24,7 +24,7 @@ class TypingEventsSender: Worker {
     /// A timer type.
     var timer: Timer.Type = DefaultTimer.self
     /// `TypingInfo` for channel (and parent message) that typing has occurred in. Stored to stop typing when `TypingEventsSender` is deallocated
-    private var typingInfo: TypingInfo?
+    @Atomic private var typingInfo: TypingInfo?
 
     @Atomic private var currentUserTypingTimerControl: TimerControl?
     @Atomic private var currentUserLastTypingDate: Date?
