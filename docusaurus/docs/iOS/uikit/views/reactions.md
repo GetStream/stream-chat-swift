@@ -63,6 +63,24 @@ extension MessageReactionType {
 Components.default.reactionsSorting = { $0.type.position < $1.type.position }
 ```
 
+Additionally, since version 4.53.0 and above, you can use additional reaction information for sorting, available in the `ChatMessageReactionData` provided in the sorting closure:
+- `count` - The number of reactions.
+- `score` - The score value of the reaction. By default it is the same value as `count`.
+- `firstReactionAt` - The date of the first reaction from this type of reaction.
+- `lastReactionAt` - The date of the last reaction from this type of reaction.
+
+For example, you can sort by the date of the first reaction, with the following code:
+
+```swift
+static func byFirstReactionAt(_ lhs: ChatMessageReactionData, _ rhs: ChatMessageReactionData) -> Bool {
+    guard let lhsFirstReactionAt = lhs.firstReactionAt, let rhsFirstReactionAt = rhs.firstReactionAt else {
+        return false
+    }
+
+    return lhsFirstReactionAt < rhsFirstReactionAt
+}
+```
+
 ### Querying reactions
 
 You can query reactions by their type or the author id, to provide an experience similar to Slack (for example, show all users who reacted with "like").

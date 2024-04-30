@@ -1060,9 +1060,18 @@ open class ChatMessageContentView: _View, ThemeProvider, UITextViewDelegate {
     }
 }
 
-private extension ChatMessage {
+public extension ChatMessage {
+    /// The message reaction data ready to be presented in a view.
     var reactionsData: [ChatMessageReactionData] {
         let userReactionIDs = Set(currentUserReactions.map(\.type))
+        if reactionGroups.count == reactionScores.count {
+            return reactionGroups.values
+                .map { ChatMessageReactionData(
+                    reactionGroup: $0,
+                    isChosenByCurrentUser: userReactionIDs.contains($0.type)
+                ) }
+        }
+        // Fallback in case reaction groups is not present.
         return reactionScores
             .map { ChatMessageReactionData(
                 type: $0.key,

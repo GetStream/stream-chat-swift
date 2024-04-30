@@ -60,6 +60,14 @@
         "reaction_scores" : {
             "like" : 1
         },
+        "reaction_groups": {
+            "like" : {
+                "sum_scores": 1,
+                "count": 1,
+                "first_reaction_at": "2024-04-17T13:14:53.643826Z",
+                "last_reaction_at": "2024-04-17T13:15:53.643826Z"
+            }
+        },
         "type" : "regular",
         "latest_reactions" : [
             {

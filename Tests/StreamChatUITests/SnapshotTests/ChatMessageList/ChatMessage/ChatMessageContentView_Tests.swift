@@ -1030,6 +1030,10 @@ private extension ChatMessageContentView_Tests {
                     "like": 5,
                     "love": 2
                 ],
+                reactionGroups: [
+                    "like": .init(type: "like", sumScores: 5, count: 5, firstReactionAt: .unique, lastReactionAt: .unique),
+                    "love": .init(type: "love", sumScores: 2, count: 2, firstReactionAt: .unique, lastReactionAt: .unique)
+                ],
                 isSentByCurrentUser: true
             ),
             // [.text, .quotedMessage]
@@ -1054,6 +1058,10 @@ private extension ChatMessageContentView_Tests {
                     "like": 5,
                     "love": 2
                 ],
+                reactionGroups: [
+                    "like": .init(type: "like", sumScores: 5, count: 5, firstReactionAt: .unique, lastReactionAt: .unique),
+                    "love": .init(type: "love", sumScores: 2, count: 2, firstReactionAt: .unique, lastReactionAt: .unique)
+                ],
                 isSentByCurrentUser: true
             ),
             // [.text, .reactions, .quotedMessage, .replies]
@@ -1068,6 +1076,10 @@ private extension ChatMessageContentView_Tests {
                 reactionScores: [
                     "like": 5,
                     "love": 2
+                ],
+                reactionGroups: [
+                    "like": .init(type: "like", sumScores: 5, count: 5, firstReactionAt: .unique, lastReactionAt: .unique),
+                    "love": .init(type: "love", sumScores: 2, count: 2, firstReactionAt: .unique, lastReactionAt: .unique)
                 ],
                 threadParticipants: [myFriend],
                 latestReplies: [
@@ -1087,6 +1099,10 @@ private extension ChatMessageContentView_Tests {
                 reactionScores: [
                     "like": 5,
                     "love": 2
+                ],
+                reactionGroups: [
+                    "like": .init(type: "like", sumScores: 5, count: 5, firstReactionAt: .unique, lastReactionAt: .unique),
+                    "love": .init(type: "love", sumScores: 2, count: 2, firstReactionAt: .unique, lastReactionAt: .unique)
                 ],
                 threadParticipants: [myFriend],
                 latestReplies: [
@@ -1116,6 +1132,10 @@ private extension ChatMessageContentView_Tests {
                 reactionScores: [
                     "like": 5,
                     "love": 2
+                ],
+                reactionGroups: [
+                    "like": .init(type: "like", sumScores: 5, count: 5, firstReactionAt: .unique, lastReactionAt: .unique),
+                    "love": .init(type: "love", sumScores: 2, count: 2, firstReactionAt: .unique, lastReactionAt: .unique)
                 ]
             ),
             // [.text, .quotedMessage]
@@ -1138,6 +1158,10 @@ private extension ChatMessageContentView_Tests {
                 reactionScores: [
                     "like": 5,
                     "love": 2
+                ],
+                reactionGroups: [
+                    "like": .init(type: "like", sumScores: 5, count: 5, firstReactionAt: .unique, lastReactionAt: .unique),
+                    "love": .init(type: "love", sumScores: 2, count: 2, firstReactionAt: .unique, lastReactionAt: .unique)
                 ]
             ),
             // [.text, .reactions, .quotedMessage, .replies]
@@ -1152,6 +1176,10 @@ private extension ChatMessageContentView_Tests {
                 reactionScores: [
                     "like": 5,
                     "love": 2
+                ],
+                reactionGroups: [
+                    "like": .init(type: "like", sumScores: 5, count: 5, firstReactionAt: .unique, lastReactionAt: .unique),
+                    "love": .init(type: "love", sumScores: 2, count: 2, firstReactionAt: .unique, lastReactionAt: .unique)
                 ],
                 threadParticipants: [myFriend],
                 latestReplies: [

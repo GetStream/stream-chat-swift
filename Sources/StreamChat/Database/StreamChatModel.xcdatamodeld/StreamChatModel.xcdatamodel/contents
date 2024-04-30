@@ -235,6 +235,7 @@
         <relationship name="previewOfChannel" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="ChannelDTO" inverseName="previewMessage" inverseEntity="ChannelDTO"/>
         <relationship name="quotedBy" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="MessageDTO" inverseName="quotedMessage" inverseEntity="MessageDTO"/>
         <relationship name="quotedMessage" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="MessageDTO" inverseName="quotedBy" inverseEntity="MessageDTO"/>
+        <relationship name="reactionGroups" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="MessageReactionGroupDTO" inverseName="message" inverseEntity="MessageReactionGroupDTO"/>
         <relationship name="reactions" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="MessageReactionDTO" inverseName="message" inverseEntity="MessageReactionDTO"/>
         <relationship name="reads" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="ChannelReadDTO" inverseName="readMessagesFromCurrentUser" inverseEntity="ChannelReadDTO"/>
         <relationship name="replies" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="MessageDTO" inverseName="parentMessage" inverseEntity="MessageDTO"/>
@@ -278,6 +279,17 @@
                 <constraint value="id"/>
             </uniquenessConstraint>
         </uniquenessConstraints>
+    </entity>
+    <entity name="MessageReactionGroupDTO" representedClassName="MessageReactionGroupDTO" syncable="YES">
+        <attribute name="count" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="firstReactionAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="lastReactionAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="sumScores" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="type" attributeType="String"/>
+        <relationship name="message" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="MessageDTO" inverseName="reactionGroups" inverseEntity="MessageDTO"/>
+        <fetchIndex name="type">
+            <fetchIndexElement property="type" type="Binary" order="ascending"/>
+        </fetchIndex>
     </entity>
     <entity name="MessageSearchQueryDTO" representedClassName="MessageSearchQueryDTO" syncable="YES">
         <attribute name="filterHash" optional="YES" attributeType="String"/>
