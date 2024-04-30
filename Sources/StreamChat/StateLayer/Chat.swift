@@ -74,7 +74,7 @@ public class Chat {
     /// - Important: Resets ``ChatState/messages``, ``ChatState/members``, and ``ChatState/watchers`` in ``ChatState``.
     ///
     /// - Note: When watching is enabled for the channel, then channel updates are delivered
-    ///  through websocket events and there is no need to call ``get(watch:)`` for fetching
+    ///  through web-socket events and there is no need to call ``get(watch:)`` for fetching
     ///  the latest state multiple times during the app's lifetime.
     ///
     /// - Parameter watch: True, if server-side events should be enabled in addition
@@ -128,7 +128,7 @@ public class Chat {
     
     // MARK: - Invites
     
-    /// Accepts a pending invite and adds the current user as a member of the channel.
+    /// Accepts a pending invite and adds the current user as a member to the channel.
     ///
     /// - Note: Unread counts are not incremented for the channel for which the user is a member of but has a pending invite.
     /// - Note: Pending invites can be queried by setting the ``Filter`` to `.equal("invite", to: "pending")`.
@@ -162,7 +162,7 @@ public class Chat {
     
     // MARK: - Members
     
-    /// Adds the given users as members.
+    /// Adds given users as members.
     ///
     /// - Note: You can only add up to 100 members at once.
     ///
@@ -187,7 +187,7 @@ public class Chat {
         )
     }
     
-    /// Removes the given users from the channel members.
+    /// Removes given users from the channel.
     ///
     /// - Parameters:
     ///   - members: An array of user ids that will be removed from the channel.
@@ -556,11 +556,11 @@ public class Chat {
     
     // MARK: - Message Attachment Actions
     
-    /// Invokes the ephermal action specified by the attachment.
+    /// Invokes the ephemeral action specified by the attachment.
     ///
     /// - Parameters:
     ///   - messageId: The id of the message with the action.
-    ///   - action: The ephermal action to be invoked.
+    ///   - action: The ephemeral action to be invoked.
     ///
     /// - Throws: An error while communicating with the Stream API.
     public func sendMessageAction(in messageId: MessageId, action: AttachmentAction) async throws {
