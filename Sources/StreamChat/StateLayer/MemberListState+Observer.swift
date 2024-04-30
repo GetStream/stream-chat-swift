@@ -13,7 +13,7 @@ extension MemberListState {
             memberListObserver = StateLayerDatabaseObserver(
                 databaseContainer: database,
                 fetchRequest: MemberDTO.members(matching: query),
-                itemCreator: { try $0.asModel() as ChatChannelMember }
+                itemCreator: { try $0.asModel() }
             )
         }
         
