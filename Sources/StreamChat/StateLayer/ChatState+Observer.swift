@@ -31,7 +31,7 @@ extension ChatState {
             channelObserver = StateLayerDatabaseObserver(
                 databaseContainer: database,
                 fetchRequest: ChannelDTO.fetchRequest(for: cid),
-                itemCreator: { try $0.asModel() as ChatChannel }
+                itemCreator: { try $0.asModel() }
             )
             messagesObserver = StateLayerDatabaseObserver(
                 databaseContainer: database,
@@ -42,13 +42,13 @@ extension ChatState {
                     deletedMessagesVisibility: clientConfig.deletedMessagesVisibility,
                     shouldShowShadowedMessages: clientConfig.shouldShowShadowedMessages
                 ),
-                itemCreator: { try $0.asModel() as ChatMessage },
+                itemCreator: { try $0.asModel() },
                 sorting: []
             )
             watchersObserver = StateLayerDatabaseObserver(
                 databaseContainer: database,
                 fetchRequest: UserDTO.watcherFetchRequest(cid: cid),
-                itemCreator: { try $0.asModel() as ChatUser },
+                itemCreator: { try $0.asModel() },
                 sorting: []
             )
             self.eventNotificationCenter = eventNotificationCenter

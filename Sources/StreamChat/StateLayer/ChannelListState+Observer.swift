@@ -37,7 +37,7 @@ extension ChannelListState {
                     query: query,
                     chatClientConfig: clientConfig
                 ),
-                itemCreator: { try $0.asModel() as ChatChannel },
+                itemCreator: { try $0.asModel() },
                 sorting: query.sort.runtimeSorting
             )
         }
