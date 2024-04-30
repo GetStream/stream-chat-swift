@@ -11,7 +11,7 @@ extension ChatState {
         let readStates: [ChatChannelRead]
         let messageOrder: MessageOrdering
         let messages: StreamCollection<ChatMessage>
-        let hasLoadedAllOlderMessages: Bool
+        let hasLoadedAllOldestMessages: Bool
         
         @MainActor static func firstUnreadMessage(
             in state: ChatState,
@@ -23,7 +23,7 @@ extension ChatState {
                 readStates: channel.reads,
                 messageOrder: state.messageOrder,
                 messages: state.messages,
-                hasLoadedAllOlderMessages: state.hasLoadedAllOlderMessages
+                hasLoadedAllOldestMessages: state.hasLoadedAllOldestMessages
             )
             return lookup.firstUnreadMessageId
         }
@@ -31,12 +31,12 @@ extension ChatState {
         private var firstUnreadMessageId: MessageId? {
             guard let readInfo = readStates.first(where: { $0.user.id == userId }) else {
                 // Read state is unavailable
-                return hasLoadedAllOlderMessages ? oldestRegularMessageId : nil
+                return hasLoadedAllOldestMessages ? oldestRegularMessageId : nil
             }
             guard readInfo.unreadMessagesCount > 0 else { return nil }
             guard let lastReadMessageId = readInfo.lastReadMessageId else {
                 // Everything is unread if read state is there but there is no lastReadMessageId
-                return hasLoadedAllOlderMessages ? oldestRegularMessageId : nil
+                return hasLoadedAllOldestMessages ? oldestRegularMessageId : nil
             }
             if let lastReadIndex = indexOfMessageId(lastReadMessageId) {
                 if isMostRecent(at: lastReadIndex) {
@@ -47,7 +47,7 @@ extension ChatState {
                 }
             } else {
                 // Can't reach the last read message (if all have been loaded then the channel might have been truncated or hidden, in that case, use the oldest message)
-                return hasLoadedAllOlderMessages ? oldestRegularMessageId : nil
+                return hasLoadedAllOldestMessages ? oldestRegularMessageId : nil
             }
         }
         
