@@ -3928,11 +3928,15 @@ final class MessageDTO_Tests: XCTestCase {
 
     private func addReactionToMessage(userId: UserId, messageId: MessageId, reactionId: ReactionString) {
         try? database.writeSynchronously { session in
-            try session.saveReaction(payload: .dummy(
-                type: .init(rawValue: reactionId.reactionType),
-                messageId: messageId,
-                user: .dummy(userId: userId)
-            ), cache: nil)
+            try session.saveReaction(
+                payload: .dummy(
+                    type: .init(rawValue: reactionId.reactionType),
+                    messageId: messageId,
+                    user: .dummy(userId: userId)
+                ),
+                query: nil,
+                cache: nil
+            )
 
             let message = session.message(id: messageId)
             message?.latestReactions = [reactionId, "other-id-1"]
