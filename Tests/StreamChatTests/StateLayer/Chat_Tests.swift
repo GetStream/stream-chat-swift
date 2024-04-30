@@ -568,8 +568,8 @@ final class Chat_Tests: XCTestCase {
         XCTAssertEqual(channelPayload.messages.map(\.id), result.map(\.id))
         await MainActor.run {
             XCTAssertEqual(channelPayload.messages.map(\.id), chat.state.messages.map(\.id))
-            XCTAssertEqual(false, chat.state.hasLoadedAllOlderMessages)
-            XCTAssertEqual(true, chat.state.hasLoadedAllNewerMessages)
+            XCTAssertEqual(false, chat.state.hasLoadedAllOldestMessages)
+            XCTAssertEqual(true, chat.state.hasLoadedAllNewestMessages)
             XCTAssertEqual(false, chat.state.isJumpingToMessage)
             XCTAssertEqual(false, chat.state.isLoadingOlderMessages)
             XCTAssertEqual(false, chat.state.isLoadingMiddleMessages)
@@ -592,8 +592,8 @@ final class Chat_Tests: XCTestCase {
         
         await MainActor.run {
             XCTAssertEqual(channelPayload.messages.map(\.id), chat.state.messages.map(\.id))
-            XCTAssertEqual(false, chat.state.hasLoadedAllOlderMessages)
-            XCTAssertEqual(true, chat.state.hasLoadedAllNewerMessages)
+            XCTAssertEqual(false, chat.state.hasLoadedAllOldestMessages)
+            XCTAssertEqual(true, chat.state.hasLoadedAllNewestMessages)
             XCTAssertEqual(false, chat.state.isJumpingToMessage)
             XCTAssertEqual(false, chat.state.isLoadingOlderMessages)
             XCTAssertEqual(false, chat.state.isLoadingMiddleMessages)
@@ -618,8 +618,8 @@ final class Chat_Tests: XCTestCase {
         let expectedIds = (channelPayload.messages + initialChannelPayload.messages).map(\.id)
         await MainActor.run {
             XCTAssertEqual(expectedIds, chat.state.messages.map(\.id))
-            XCTAssertEqual(true, chat.state.hasLoadedAllOlderMessages)
-            XCTAssertEqual(true, chat.state.hasLoadedAllNewerMessages)
+            XCTAssertEqual(true, chat.state.hasLoadedAllOldestMessages)
+            XCTAssertEqual(true, chat.state.hasLoadedAllNewestMessages)
             XCTAssertEqual(false, chat.state.isJumpingToMessage)
             XCTAssertEqual(false, chat.state.isLoadingOlderMessages)
             XCTAssertEqual(false, chat.state.isLoadingMiddleMessages)
@@ -643,8 +643,8 @@ final class Chat_Tests: XCTestCase {
         let expectedIds = (initialChannelPayload.messages + channelPayload.messages).map(\.id)
         await MainActor.run {
             XCTAssertEqual(expectedIds, chat.state.messages.map(\.id))
-            XCTAssertEqual(false, chat.state.hasLoadedAllOlderMessages)
-            XCTAssertEqual(true, chat.state.hasLoadedAllNewerMessages)
+            XCTAssertEqual(false, chat.state.hasLoadedAllOldestMessages)
+            XCTAssertEqual(true, chat.state.hasLoadedAllNewestMessages)
             XCTAssertEqual(false, chat.state.isJumpingToMessage)
             XCTAssertEqual(false, chat.state.isLoadingOlderMessages)
             XCTAssertEqual(false, chat.state.isLoadingMiddleMessages)
@@ -668,8 +668,8 @@ final class Chat_Tests: XCTestCase {
         
         XCTAssertEqual(channelPayload.messages.map(\.id), await chat.state.messages.map(\.id))
         await MainActor.run {
-            XCTAssertEqual(false, chat.state.hasLoadedAllOlderMessages)
-            XCTAssertEqual(false, chat.state.hasLoadedAllNewerMessages)
+            XCTAssertEqual(false, chat.state.hasLoadedAllOldestMessages)
+            XCTAssertEqual(false, chat.state.hasLoadedAllNewestMessages)
             XCTAssertEqual(true, chat.state.isJumpingToMessage)
             XCTAssertEqual(false, chat.state.isLoadingOlderMessages)
             XCTAssertEqual(false, chat.state.isLoadingMiddleMessages)
@@ -1182,8 +1182,8 @@ final class Chat_Tests: XCTestCase {
         await XCTAssertEqual(lastMessageId, messageState.message.id)
         await XCTAssertEqual(apiResponse.messages.map(\.id), messageState.replies.map(\.id))
         
-        await XCTAssertEqual(false, messageState.hasLoadedAllOlderReplies)
-        await XCTAssertEqual(true, messageState.hasLoadedAllNewerReplies)
+        await XCTAssertEqual(false, messageState.hasLoadedAllOldestReplies)
+        await XCTAssertEqual(true, messageState.hasLoadedAllNewestReplies)
         await XCTAssertEqual(false, messageState.isLoadingOlderReplies)
         await XCTAssertEqual(false, messageState.isLoadingMiddleReplies)
         await XCTAssertEqual(false, messageState.isLoadingNewerReplies)
@@ -1218,8 +1218,8 @@ final class Chat_Tests: XCTestCase {
         await XCTAssertEqual(lastMessageId, messageState.message.id)
         await XCTAssertEqual(all.map(\.id), messageState.replies.map(\.id))
         
-        await XCTAssertEqual(false, messageState.hasLoadedAllOlderReplies)
-        await XCTAssertEqual(true, messageState.hasLoadedAllNewerReplies)
+        await XCTAssertEqual(false, messageState.hasLoadedAllOldestReplies)
+        await XCTAssertEqual(true, messageState.hasLoadedAllNewestReplies)
         await XCTAssertEqual(false, messageState.isLoadingOlderReplies)
         await XCTAssertEqual(false, messageState.isLoadingMiddleReplies)
         await XCTAssertEqual(false, messageState.isLoadingNewerReplies)
@@ -1241,7 +1241,7 @@ final class Chat_Tests: XCTestCase {
             limit: initialApiResponse.messages.count
         )
         let messageState = try await chat.messageState(for: lastMessageId)
-        await XCTAssertEqual(false, messageState.hasLoadedAllNewerReplies)
+        await XCTAssertEqual(false, messageState.hasLoadedAllNewestReplies)
         await XCTAssertEqual(false, messageState.isLoadingNewerReplies)
         
         let apiResponse = makeRepliesPayload(parentMessageId: lastMessageId, count: 5, offset: 0)
@@ -1255,8 +1255,8 @@ final class Chat_Tests: XCTestCase {
         await XCTAssertEqual(lastMessageId, messageState.message.id)
         await XCTAssertEqual(all.map(\.id), messageState.replies.map(\.id))
         
-        await XCTAssertEqual(false, messageState.hasLoadedAllOlderReplies)
-        await XCTAssertEqual(false, messageState.hasLoadedAllNewerReplies)
+        await XCTAssertEqual(false, messageState.hasLoadedAllOldestReplies)
+        await XCTAssertEqual(false, messageState.hasLoadedAllNewestReplies)
         await XCTAssertEqual(false, messageState.isLoadingOlderReplies)
         await XCTAssertEqual(false, messageState.isLoadingMiddleReplies)
         await XCTAssertEqual(false, messageState.isLoadingNewerReplies)
