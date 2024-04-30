@@ -65,11 +65,10 @@ public extension StreamMockServer {
             mockedMessage?[messageKey.reactionCounts.rawValue] = [:]
             mockedMessage?[messageKey.reactionScores.rawValue] = [:]
         } else {
-            guard var latest_reactions = mockedMessage?[messageKey.latestReactions.rawValue] as? [[String: Any]],
-               var reaction_counts = mockedMessage?[messageKey.reactionCounts.rawValue] as? [String: Any],
-               var reaction_scores = mockedMessage?[messageKey.reactionScores.rawValue] as? [String: Any] else {
-                   return mockedMessage
-               }
+            var latest_reactions = mockedMessage?[messageKey.latestReactions.rawValue] as? [[String: Any]]
+            var reaction_counts = mockedMessage?[messageKey.reactionCounts.rawValue] as? [String: Any] ?? [:]
+            var reaction_scores = mockedMessage?[messageKey.reactionScores.rawValue] as? [String: Any] ?? [:]
+            var reaction_groups = mockedMessage?[messageKey.reactionGroups.rawValue] as? [String: Any] ?? [:]
 
             var isCurrentUser = false
             var newReaction: [String: Any] = [:]
@@ -83,6 +82,12 @@ public extension StreamMockServer {
                 newReaction[reactionKey.type.rawValue] = reactionType
                 reaction_counts[reactionType] = 1
                 reaction_scores[reactionType] = 1
+                reaction_groups[reactionType] = [
+                    "sum_scores": 1,
+                    "count": 1,
+                    "first_reaction_at": timestamp,
+                    "last_reaction_at": timestamp
+                ]
             }
 
             if let userId = user?[userKey.id.rawValue] as? String {
@@ -91,12 +96,13 @@ public extension StreamMockServer {
                 isCurrentUser = (userId == UserDetails.lukeSkywalker[userKey.id.rawValue])
             }
 
-            latest_reactions.append(newReaction)
+            latest_reactions?.append(newReaction)
 
             mockedMessage?[messageKey.ownReactions.rawValue] = isCurrentUser ? latest_reactions : []
             mockedMessage?[messageKey.latestReactions.rawValue] = latest_reactions
             mockedMessage?[messageKey.reactionCounts.rawValue] = reaction_counts
             mockedMessage?[messageKey.reactionScores.rawValue] = reaction_scores
+            mockedMessage?[messageKey.reactionGroups.rawValue] = reaction_groups
         }
 
         return mockedMessage

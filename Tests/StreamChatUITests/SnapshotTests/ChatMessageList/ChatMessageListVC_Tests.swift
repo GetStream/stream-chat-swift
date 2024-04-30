@@ -287,6 +287,53 @@ final class ChatMessageListVC_Tests: XCTestCase {
         XCTAssertFalse(messageDiff1.isContentEqual(to: messageDiff2))
     }
 
+    func test_messageIsContentEqual_whenReactionGroupsAreDifferent() throws {
+        let sameUser = ChatUser.mock(id: .unique, name: "Leia Organa")
+
+        // When reaction groups are the same, should be equal
+        let sameDate = Date.unique
+        let messageSame1 = ChatMessage.mock(id: "1", text: "same", author: sameUser, reactionGroups: [
+            "like": .init(
+                type: "like",
+                sumScores: 1,
+                count: 1,
+                firstReactionAt: sameDate,
+                lastReactionAt: sameDate
+            )
+        ])
+        let messageSame2 = ChatMessage.mock(id: "1", text: "same", author: sameUser, reactionGroups: [
+            "like": .init(
+                type: "like",
+                sumScores: 1,
+                count: 1,
+                firstReactionAt: sameDate,
+                lastReactionAt: sameDate
+            )
+        ])
+        XCTAssert(messageSame1.isContentEqual(to: messageSame2))
+
+        // When reaction groups are different, should not be equal
+        let messageDiff1 = ChatMessage.mock(id: "1", text: "same", author: sameUser, reactionGroups: [
+            "like": .init(
+                type: "like",
+                sumScores: 1,
+                count: 1,
+                firstReactionAt: sameDate,
+                lastReactionAt: sameDate
+            )
+        ])
+        let messageDiff2 = ChatMessage.mock(id: "1", text: "same", author: sameUser, reactionGroups: [
+            "like": .init(
+                type: "like",
+                sumScores: 2,
+                count: 2,
+                firstReactionAt: sameDate,
+                lastReactionAt: sameDate
+            )
+        ])
+        XCTAssertFalse(messageDiff1.isContentEqual(to: messageDiff2))
+    }
+
     // MARK: - isScrollToBottomButtonVisible
 
     func test_isScrollToBottomButtonVisible_whenLastCellNotVisible_whenMoreContentThanOnePage_whenFirstPageIsLoaded_returnsTrue() {

@@ -508,6 +508,20 @@ final class MessageDTO_Tests: XCTestCase {
             pinnedAt: .unique,
             pinExpires: .unique,
             isShadowed: true,
+            reactionGroups: [
+                "love": .init(
+                    sumScores: 2,
+                    count: 2,
+                    firstReactionAt: .unique,
+                    lastReactionAt: .unique
+                ),
+                "like": .init(
+                    sumScores: 1,
+                    count: 1,
+                    firstReactionAt: .unique,
+                    lastReactionAt: .unique
+                )
+            ],
             translations: [.english: .unique],
             originalLanguage: "es",
             moderationDetails: .init(
@@ -623,6 +637,21 @@ final class MessageDTO_Tests: XCTestCase {
         XCTAssertEqual("es", loadedMessage?.originalLanguage)
         XCTAssertEqual("Original", loadedMessage?.moderationDetails?.originalText)
         XCTAssertEqual("BOUNCE", loadedMessage?.moderationDetails?.action)
+        
+        // Reaction Groups
+        let loadedMessageReactionGroup = try XCTUnwrap(loadedMessage?.reactionGroups)
+        let loadedLoveReactionGroup = try XCTUnwrap(loadedMessageReactionGroup.first(where: { $0.type == "love" }))
+        let loadedLikeReactionGroup = try XCTUnwrap(loadedMessageReactionGroup.first(where: { $0.type == "like" }))
+        XCTAssertEqual(loadedLoveReactionGroup.type, "love")
+        XCTAssertEqual(messagePayload.reactionGroups["love"]?.count, Int(loadedLoveReactionGroup.count))
+        XCTAssertEqual(messagePayload.reactionGroups["love"]?.sumScores, Int(loadedLoveReactionGroup.sumScores))
+        XCTAssertEqual(messagePayload.reactionGroups["love"]?.firstReactionAt, loadedLoveReactionGroup.firstReactionAt.bridgeDate)
+        XCTAssertEqual(messagePayload.reactionGroups["love"]?.lastReactionAt, loadedLoveReactionGroup.lastReactionAt.bridgeDate)
+        XCTAssertEqual(loadedLikeReactionGroup.type, "like")
+        XCTAssertEqual(messagePayload.reactionGroups["like"]?.count, Int(loadedLikeReactionGroup.count))
+        XCTAssertEqual(messagePayload.reactionGroups["like"]?.sumScores, Int(loadedLikeReactionGroup.sumScores))
+        XCTAssertEqual(messagePayload.reactionGroups["like"]?.firstReactionAt, loadedLikeReactionGroup.firstReactionAt.bridgeDate)
+        XCTAssertEqual(messagePayload.reactionGroups["like"]?.lastReactionAt, loadedLikeReactionGroup.lastReactionAt.bridgeDate)
     }
 
     func test_message_isNotOverwrittenWhenAlreadyInDatabase_andIsPending() throws {
@@ -983,6 +1012,20 @@ final class MessageDTO_Tests: XCTestCase {
             pinnedByUserId: .unique,
             pinnedAt: .unique,
             pinExpires: .unique,
+            reactionGroups: [
+                "love": .init(
+                    sumScores: 2,
+                    count: 2,
+                    firstReactionAt: .unique,
+                    lastReactionAt: .unique
+                ),
+                "like": .init(
+                    sumScores: 1,
+                    count: 1,
+                    firstReactionAt: .unique,
+                    lastReactionAt: .unique
+                )
+            ],
             moderationDetails: .init(
                 originalText: "Original", action: "MESSAGE_RESPONSE_ACTION_BOUNCE"
             )
@@ -1061,6 +1104,20 @@ final class MessageDTO_Tests: XCTestCase {
                 scores[attachment.type, default: 0] += 1
             }
         )
+        // Reaction Groups
+        let loadedMessageReactionGroup = try XCTUnwrap(loadedMessage.reactionGroups)
+        let loadedLoveReactionGroup = try XCTUnwrap(loadedMessageReactionGroup["love"])
+        let loadedLikeReactionGroup = try XCTUnwrap(loadedMessageReactionGroup["like"])
+        XCTAssertEqual(loadedLoveReactionGroup.type, "love")
+        XCTAssertEqual(messagePayload.reactionGroups["love"]?.count, loadedLoveReactionGroup.count)
+        XCTAssertEqual(messagePayload.reactionGroups["love"]?.sumScores, loadedLoveReactionGroup.sumScores)
+        XCTAssertEqual(messagePayload.reactionGroups["love"]?.firstReactionAt, loadedLoveReactionGroup.firstReactionAt)
+        XCTAssertEqual(messagePayload.reactionGroups["love"]?.lastReactionAt, loadedLoveReactionGroup.lastReactionAt)
+        XCTAssertEqual(loadedLikeReactionGroup.type, "like")
+        XCTAssertEqual(messagePayload.reactionGroups["like"]?.count, loadedLikeReactionGroup.count)
+        XCTAssertEqual(messagePayload.reactionGroups["like"]?.sumScores, loadedLikeReactionGroup.sumScores)
+        XCTAssertEqual(messagePayload.reactionGroups["like"]?.firstReactionAt, loadedLikeReactionGroup.firstReactionAt)
+        XCTAssertEqual(messagePayload.reactionGroups["like"]?.lastReactionAt, loadedLikeReactionGroup.lastReactionAt)
     }
 
     func test_newMessage_asRequestBody() throws {
@@ -2532,7 +2589,7 @@ final class MessageDTO_Tests: XCTestCase {
         XCTAssertEqual(count, 2)
     }
 
-    // MARK: Add Reaction
+    // MARK: - Add Reaction
 
     func test_addReaction_noCurrentUser() {
         prepareEnvironment(createdUserId: nil, createdMessageId: nil)
@@ -2550,12 +2607,12 @@ final class MessageDTO_Tests: XCTestCase {
         let userId = "user_id"
         let messageId = "message_id"
         let reactionType: MessageReactionType = "reaction-type"
-        // We create user and messsage
+        // We create user and message
         prepareEnvironment(createdUserId: userId, createdMessageId: messageId)
 
         // We add the reaction to the message so that it already contains it
         let reactionId = makeReactionId(userId: userId, messageId: messageId, type: reactionType)
-        addReactionToMessage(messageId: messageId, reactionId: reactionId)
+        addReactionToMessage(userId: userId, messageId: messageId, reactionId: reactionId)
 
         let result = runAddReaction(messageId: messageId, type: reactionType)
         XCTAssertNil(result.error)
@@ -2566,18 +2623,36 @@ final class MessageDTO_Tests: XCTestCase {
         let message = self.message(with: messageId)
         XCTAssertTrue(message?.latestReactions.contains { $0.type.rawValue == reactionType.rawValue } == true)
         XCTAssertTrue(message?.currentUserReactions.contains { $0.type.rawValue == reactionType.rawValue } == true)
+        
+        // Updates count, scores and groups optimistically
+        XCTAssertEqual(message?.reactionCounts, [
+            "other-id-1": 1,
+            "other-id-2": 1,
+            "reaction-type": 2
+        ])
+        XCTAssertEqual(message?.reactionScores, [
+            "other-id-1": 1,
+            "other-id-2": 1,
+            "reaction-type": 2
+        ])
+        XCTAssertEqual(message?.reactionGroups["other-id-1"]?.count, 1)
+        XCTAssertEqual(message?.reactionGroups["other-id-2"]?.count, 1)
+        XCTAssertEqual(message?.reactionGroups["reaction-type"]?.count, 2)
+        XCTAssertEqual(message?.reactionGroups["other-id-1"]?.sumScores, 1)
+        XCTAssertEqual(message?.reactionGroups["other-id-2"]?.sumScores, 1)
+        XCTAssertEqual(message?.reactionGroups["reaction-type"]?.sumScores, 2)
     }
 
     func test_addReaction_messageContainsReaction_updatesLocalState_pendingDelete() {
         let userId = "user_id"
         let messageId = "message_id"
         let reactionType: MessageReactionType = "reaction-type"
-        // We create user and messsage
+        // We create user and message
         prepareEnvironment(createdUserId: userId, createdMessageId: messageId)
 
         // We add the reaction to the message so that it already contains it
         let reactionId = makeReactionId(userId: userId, messageId: messageId, type: reactionType)
-        addReactionToMessage(messageId: messageId, reactionId: reactionId)
+        addReactionToMessage(userId: userId, messageId: messageId, reactionId: reactionId)
 
         let result = runAddReaction(messageId: messageId, type: reactionType, localState: .pendingDelete)
         XCTAssertNil(result.error)
@@ -2601,7 +2676,7 @@ final class MessageDTO_Tests: XCTestCase {
 
         // We add the reaction to the message so that it already contains it
         let reactionId = makeReactionId(userId: userId, messageId: messageId, type: reactionType)
-        addReactionToMessage(messageId: messageId, reactionId: reactionId)
+        addReactionToMessage(userId: userId, messageId: messageId, reactionId: reactionId)
 
         let result = runAddReaction(messageId: messageId, type: reactionType, localState: .sending)
         XCTAssertNil(result.error)
@@ -2632,6 +2707,18 @@ final class MessageDTO_Tests: XCTestCase {
         let message = self.message(with: messageId)
         XCTAssertTrue(message?.latestReactions.contains { $0.type.rawValue == reactionType.rawValue } == true)
         XCTAssertTrue(message?.currentUserReactions.contains { $0.type.rawValue == reactionType.rawValue } == true)
+
+        // Updates count, scores and groups optimistically
+        XCTAssertEqual(message?.reactionCounts, [
+            "reaction-type": 1
+        ])
+        XCTAssertEqual(message?.reactionScores, [
+            "reaction-type": 1
+        ])
+        XCTAssertEqual(message?.reactionGroups["reaction-type"]?.count, 1)
+        XCTAssertEqual(message?.reactionGroups["reaction-type"]?.sumScores, 1)
+        XCTAssertNotNil(message?.reactionGroups["reaction-type"]?.firstReactionAt)
+        XCTAssertNotNil(message?.reactionGroups["reaction-type"]?.lastReactionAt)
     }
 
     func test_addReaction_reactionDoesNotExistYet_updatesLocalState_pendingDelete() {
@@ -2679,7 +2766,7 @@ final class MessageDTO_Tests: XCTestCase {
         let userId = "user_id"
         let messageId = "message_id"
         prepareEnvironment(createdUserId: userId, createdMessageId: messageId)
-
+        
         // Mock own reactions
         let ownReactions = [1, 2, 3]
         ownReactions.forEach {
@@ -2691,7 +2778,7 @@ final class MessageDTO_Tests: XCTestCase {
                 message?.latestReactions.append(reactionId)
             }
         }
-
+        
         // Mock other user reactions
         let otherUserReactions = ["other1", "other2"]
         otherUserReactions.forEach { reactionId in
@@ -2700,7 +2787,7 @@ final class MessageDTO_Tests: XCTestCase {
                 message?.latestReactions.append(reactionId)
             }
         }
-
+        
         // Mock reaction scores and counts
         try? database.writeSynchronously { session in
             let message = session.message(id: messageId)
@@ -2716,18 +2803,25 @@ final class MessageDTO_Tests: XCTestCase {
                 "reaction-type-2": 4,
                 "reaction-type-3": 4
             ]
+            let context = self.database.writableContext
+            message?.reactionGroups = [
+                .init(type: "other-type", sumScores: 3, count: 3, firstReactionAt: .unique, lastReactionAt: .unique, context: context),
+                .init(type: "reaction-type-1", sumScores: 3, count: 4, firstReactionAt: .unique, lastReactionAt: .unique, context: context),
+                .init(type: "reaction-type-2", sumScores: 3, count: 4, firstReactionAt: .unique, lastReactionAt: .unique, context: context),
+                .init(type: "reaction-type-3", sumScores: 3, count: 4, firstReactionAt: .unique, lastReactionAt: .unique, context: context)
+            ]
         }
-
+        
         var message: MessageDTO? { self.database.viewContext.message(id: messageId) }
-
+        
         XCTAssertEqual(message?.ownReactions.count, 3)
         XCTAssertEqual(message?.latestReactions.count, 5)
-
+        
         let reactionType: MessageReactionType = "reaction-type-4"
         let result = runAddReaction(messageId: messageId, type: reactionType, localState: .sending, enforceUnique: true)
         XCTAssertNil(result.error)
         let reactionAdded = try XCTUnwrap(result.value)
-
+        
         XCTAssertEqual(message?.ownReactions, [reactionAdded])
         XCTAssertEqual(Set(message?.latestReactions ?? []), Set([reactionAdded, "other1", "other2"]))
         XCTAssertEqual(message?.reactionScores, [
@@ -2744,7 +2838,99 @@ final class MessageDTO_Tests: XCTestCase {
             "reaction-type-3": 3,
             "reaction-type-4": 1
         ])
+
+        XCTAssertEqual(message?.reactionGroups["other-type"]?.sumScores, 3)
+        XCTAssertEqual(message?.reactionGroups["reaction-type-1"]?.sumScores, 2)
+        XCTAssertEqual(message?.reactionGroups["reaction-type-2"]?.sumScores, 2)
+        XCTAssertEqual(message?.reactionGroups["reaction-type-3"]?.sumScores, 2)
+        XCTAssertEqual(message?.reactionGroups["reaction-type-4"]?.sumScores, 1)
+
+        XCTAssertEqual(message?.reactionGroups["other-type"]?.count, 3)
+        XCTAssertEqual(message?.reactionGroups["reaction-type-1"]?.count, 3)
+        XCTAssertEqual(message?.reactionGroups["reaction-type-2"]?.count, 3)
+        XCTAssertEqual(message?.reactionGroups["reaction-type-3"]?.count, 3)
+        XCTAssertEqual(message?.reactionGroups["reaction-type-4"]?.count, 1)
     }
+
+    // MARK: - removeReaction
+
+    func test_removeReaction_whenOnlyOneReactionExists() {
+        let userId = "user_id"
+        let messageId = "message_id"
+        let reactionType: MessageReactionType = "reaction-type"
+        // We create user and messsage
+        prepareEnvironment(createdUserId: userId, createdMessageId: messageId)
+
+        // We add the reaction to the message so that it already contains it
+        let reactionId = makeReactionId(userId: userId, messageId: messageId, type: reactionType)
+        addReactionToMessage(userId: userId, messageId: messageId, reactionId: reactionId)
+
+        let error = runRemoveReaction(messageId: messageId, type: reactionType)
+        XCTAssertNil(error)
+
+        // The message should not contain those reactions
+        let message = self.message(with: messageId)
+        XCTAssertTrue(message?.latestReactions.contains { $0.type.rawValue == reactionType.rawValue } == false)
+        XCTAssertTrue(message?.currentUserReactions.contains { $0.type.rawValue == reactionType.rawValue } == false)
+
+        // Updates count, scores and groups optimistically
+        XCTAssertEqual(message?.reactionCounts, [
+            "other-id-1": 1,
+            "other-id-2": 1
+        ])
+        XCTAssertEqual(message?.reactionScores, [
+            "other-id-1": 1,
+            "other-id-2": 1
+        ])
+        XCTAssertEqual(message?.reactionGroups["other-id-1"]?.count, 1)
+        XCTAssertEqual(message?.reactionGroups["other-id-2"]?.count, 1)
+        XCTAssertEqual(message?.reactionGroups["reaction-type"]?.count, nil)
+        XCTAssertEqual(message?.reactionGroups["other-id-1"]?.sumScores, 1)
+        XCTAssertEqual(message?.reactionGroups["other-id-2"]?.sumScores, 1)
+        XCTAssertEqual(message?.reactionGroups["reaction-type"]?.sumScores, nil)
+    }
+
+    func test_removeReaction_whenMultipleReactionsExist() {
+        let userId = "user_id"
+        let messageId = "message_id"
+        let reactionType: MessageReactionType = "reaction-type"
+        // We create user and messsage
+        prepareEnvironment(createdUserId: userId, createdMessageId: messageId)
+
+        // We add the reaction to the message so that it already contains it
+        let reactionId = makeReactionId(userId: userId, messageId: messageId, type: reactionType)
+        _ = runAddReaction(messageId: messageId, type: reactionType)
+        // Add reaction twice
+        _ = runAddReaction(messageId: messageId, type: reactionType)
+
+        XCTAssertEqual(self.message(with: messageId)?.reactionCounts, [
+            "reaction-type": 2
+        ])
+        XCTAssertEqual(self.message(with: messageId)?.reactionScores, [
+            "reaction-type": 2
+        ])
+
+        let error = runRemoveReaction(messageId: messageId, type: reactionType)
+        XCTAssertNil(error)
+
+        // The message should not contain those reactions
+        let message = self.message(with: messageId)
+        XCTAssertTrue(message?.latestReactions.contains { $0.type.rawValue == reactionType.rawValue } == false)
+        XCTAssertTrue(message?.currentUserReactions.contains { $0.type.rawValue == reactionType.rawValue } == false)
+
+        // Updates count, scores and groups optimistically
+        XCTAssertEqual(message?.reactionCounts, [
+            "reaction-type": 1
+        ])
+        XCTAssertEqual(message?.reactionScores, [
+            "reaction-type": 1
+        ])
+
+        XCTAssertEqual(message?.reactionGroups["reaction-type"]?.count, 1)
+        XCTAssertEqual(message?.reactionGroups["reaction-type"]?.sumScores, 1)
+    }
+
+    // MARK: - ReactionString
 
     func test_reactionStringExtensions_reactionType_reactionUserId() {
         let userId = "user_id"
@@ -2756,73 +2942,6 @@ final class MessageDTO_Tests: XCTestCase {
 
         XCTAssertEqual(result.value?.reactionType, "fake")
         XCTAssertEqual(result.value?.reactionUserId, "user_id")
-    }
-
-    private func message(with id: MessageId) -> ChatMessage? {
-        var message: ChatMessage?
-        try? database.writeSynchronously { session in
-            message = try session.message(id: id)?.asModel()
-        }
-        return message
-    }
-
-    private func reactionState(with messageId: String, userId: UserId, type: MessageReactionType) -> LocalReactionState? {
-        var reactionState: LocalReactionState?
-        try? database.writeSynchronously { session in
-            reactionState = session.reaction(messageId: messageId, userId: userId, type: type)?.localState
-        }
-        return reactionState
-    }
-
-    private func makeReactionId(userId: String, messageId: String, type: MessageReactionType) -> String {
-        [userId, messageId, type.rawValue].joined(separator: "/")
-    }
-
-    private func addReactionToMessage(messageId: MessageId, reactionId: String) {
-        try? database.writeSynchronously { session in
-            let message = session.message(id: messageId)
-            message?.latestReactions = [reactionId, "other-id-1"]
-            message?.ownReactions = [reactionId, "other-id-2"]
-            XCTAssertNil(message?.localMessageState)
-        }
-    }
-
-    private func prepareEnvironment(createdUserId: String?, createdMessageId: MessageId?) {
-        if let userId = createdUserId {
-            try? database.createCurrentUser(id: userId)
-        }
-        if let messageId = createdMessageId {
-            try? database.createMessage(id: messageId)
-        }
-    }
-
-    private func runAddReaction(
-        messageId: MessageId,
-        type: MessageReactionType,
-        localState: LocalReactionState? = nil,
-        enforceUnique: Bool = false
-    ) -> Result<String, ClientError> {
-        do {
-            var reactionId: String!
-            try database.writeSynchronously { database in
-                let reaction = try database.addReaction(
-                    to: messageId,
-                    type: type,
-                    score: 1,
-                    enforceUnique: enforceUnique,
-                    extraData: [:],
-                    localState: localState
-                )
-                reactionId = reaction.id
-            }
-            return .success(reactionId)
-        } catch {
-            guard let error = error as? ClientError else {
-                XCTFail("Should receive a ClientError")
-                return .failure(ClientError())
-            }
-            return .failure(error)
-        }
     }
 
     // MARK: - loadCurrentUserMessages
@@ -3786,6 +3905,135 @@ final class MessageDTO_Tests: XCTestCase {
     }
 
     // MARK: - Helpers:
+
+    private func message(with id: MessageId) -> ChatMessage? {
+        var message: ChatMessage?
+        try? database.writeSynchronously { session in
+            message = try session.message(id: id)?.asModel()
+        }
+        return message
+    }
+
+    private func reactionState(with messageId: String, userId: UserId, type: MessageReactionType) -> LocalReactionState? {
+        var reactionState: LocalReactionState?
+        try? database.writeSynchronously { session in
+            reactionState = session.reaction(messageId: messageId, userId: userId, type: type)?.localState
+        }
+        return reactionState
+    }
+
+    private func makeReactionId(userId: String, messageId: String, type: MessageReactionType) -> String {
+        [userId, messageId, type.rawValue].joined(separator: "/")
+    }
+
+    private func addReactionToMessage(userId: UserId, messageId: MessageId, reactionId: ReactionString) {
+        try? database.writeSynchronously { session in
+            try session.saveReaction(
+                payload: .dummy(
+                    type: .init(rawValue: reactionId.reactionType),
+                    messageId: messageId,
+                    user: .dummy(userId: userId)
+                ),
+                query: nil,
+                cache: nil
+            )
+
+            let message = session.message(id: messageId)
+            message?.latestReactions = [reactionId, "other-id-1"]
+            message?.ownReactions = [reactionId, "other-id-2"]
+            message?.reactionScores = [reactionId.reactionType: 1, "other-id-1": 1, "other-id-2": 1]
+            message?.reactionCounts = [reactionId.reactionType: 1, "other-id-1": 1, "other-id-2": 1]
+            message?.reactionGroups = Set([
+                .init(
+                    type: .init(rawValue: reactionId.reactionType),
+                    sumScores: 1,
+                    count: 1,
+                    firstReactionAt: .unique,
+                    lastReactionAt: .unique,
+                    context: self.database.writableContext
+                ),
+                .init(
+                    type: "other-id-1",
+                    sumScores: 1,
+                    count: 1,
+                    firstReactionAt: .unique,
+                    lastReactionAt: .unique,
+                    context: self.database.writableContext
+                ),
+                .init(
+                    type: "other-id-2",
+                    sumScores: 1,
+                    count: 1,
+                    firstReactionAt: .unique,
+                    lastReactionAt: .unique,
+                    context: self.database.writableContext
+                )
+            ])
+            XCTAssertNil(message?.localMessageState)
+        }
+    }
+
+    private func prepareEnvironment(createdUserId: String?, createdMessageId: MessageId?) {
+        if let userId = createdUserId {
+            try? database.createCurrentUser(id: userId)
+        }
+        if let messageId = createdMessageId {
+            try? database.createMessage(id: messageId)
+        }
+    }
+
+    private func runAddReaction(
+        messageId: MessageId,
+        type: MessageReactionType,
+        localState: LocalReactionState? = nil,
+        enforceUnique: Bool = false
+    ) -> Result<String, ClientError> {
+        do {
+            var reactionId: String!
+            try database.writeSynchronously { database in
+                let reaction = try database.addReaction(
+                    to: messageId,
+                    type: type,
+                    score: 1,
+                    enforceUnique: enforceUnique,
+                    extraData: [:],
+                    localState: localState
+                )
+                reactionId = reaction.id
+            }
+            return .success(reactionId)
+        } catch {
+            guard let error = error as? ClientError else {
+                XCTFail("Should receive a ClientError")
+                return .failure(ClientError())
+            }
+            return .failure(error)
+        }
+    }
+
+    private func runRemoveReaction(
+        messageId: MessageId,
+        type: MessageReactionType,
+        localState: LocalReactionState? = nil,
+        enforceUnique: Bool = false
+    ) -> ClientError? {
+        do {
+            try database.writeSynchronously { database in
+                _ = try database.removeReaction(
+                    from: messageId,
+                    type: type,
+                    on: nil
+                )
+            }
+            return nil
+        } catch {
+            guard let error = error as? ClientError else {
+                XCTFail("Should receive a ClientError")
+                return ClientError()
+            }
+            return error
+        }
+    }
 
     private func createMessage(with message: MessagePayload) throws -> MessageDTO {
         let context = database.viewContext

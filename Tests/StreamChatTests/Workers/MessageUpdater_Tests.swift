@@ -1650,7 +1650,7 @@ final class MessageUpdater_Tests: XCTestCase {
                     messageId: messageId,
                     user: .dummy(userId: userId),
                     extraData: [:]
-                ), cache: nil)
+                ), query: nil, cache: nil)
         }
 
         // Simulate `deleteReaction` call.
@@ -1699,7 +1699,7 @@ final class MessageUpdater_Tests: XCTestCase {
                     messageId: messageId,
                     user: .dummy(userId: userId),
                     extraData: [:]
-                ), cache: nil)
+                ), query: nil, cache: nil)
         }
 
         recreateUpdater(isLocalStorageEnabled: true)
@@ -1751,7 +1751,7 @@ final class MessageUpdater_Tests: XCTestCase {
                     messageId: messageId,
                     user: .dummy(userId: userId),
                     extraData: [:]
-                ), cache: nil)
+                ), query: nil, cache: nil)
         }
 
         recreateUpdater(isLocalStorageEnabled: false)
