@@ -23,6 +23,11 @@ class CurrentUserDTO: NSManagedObject {
     @NSManaged var channelMutes: Set<ChannelMuteDTO>
     @NSManaged var isInvisible: Bool
 
+    // UserPrivacySettings. For now, these booleans are enough for the DTO to make it simpler.
+    // But if new properties are added, we might need to create new DTOs specific to each setting.
+    @NSManaged var isTypingIndicatorsEnabled: Bool
+    @NSManaged var isReadReceiptsEnabled: Bool
+
     /// Returns a default fetch request for the current user.
     static var defaultFetchRequest: NSFetchRequest<CurrentUserDTO> {
         let request = NSFetchRequest<CurrentUserDTO>(entityName: CurrentUserDTO.entityName)
@@ -75,6 +80,8 @@ extension NSManagedObjectContext: CurrentUserDatabaseSession {
         let dto = CurrentUserDTO.loadOrCreate(context: self)
         dto.user = try saveUser(payload: payload)
         dto.isInvisible = payload.isInvisible
+        dto.isReadReceiptsEnabled = payload.privacySettings?.readReceipts?.enabled ?? true
+        dto.isTypingIndicatorsEnabled = payload.privacySettings?.typingIndicators?.enabled ?? true
 
         let mutedUsers = try payload.mutedUsers.map { try saveUser(payload: $0.mutedUser) }
         dto.mutedUsers = Set(mutedUsers)
@@ -227,6 +234,10 @@ extension CurrentChatUser {
                 messages: Int(dto.unreadMessagesCount)
             ),
             mutedChannels: fetchMutedChannels,
+            privacySettings: .init(
+                typingIndicators: .init(enabled: dto.isTypingIndicatorsEnabled),
+                readReceipts: .init(enabled: dto.isReadReceiptsEnabled)
+            ),
             underlyingContext: context
         )
     }

@@ -37,3 +37,37 @@ extension UserPayload {
         )
     }
 }
+
+extension CurrentUserPayload {
+    static func dummy(
+        userId: UserId,
+        name: String = .unique,
+        imageUrl: URL? = .unique(),
+        role: UserRole = .admin,
+        extraData: [String: RawJSON] = [:],
+        teams: [TeamId] = [.unique, .unique, .unique],
+        language: String? = nil,
+        isBanned: Bool = false,
+        updatedAt: Date = .unique,
+        deactivatedAt: Date? = nil,
+        privacySettings: UserPrivacySettingsPayload? = nil
+    ) -> CurrentUserPayload {
+        .init(
+            id: userId,
+            name: name,
+            imageURL: imageUrl,
+            role: role,
+            createdAt: .unique,
+            updatedAt: updatedAt,
+            deactivatedAt: deactivatedAt,
+            lastActiveAt: .unique,
+            isOnline: true,
+            isInvisible: true,
+            isBanned: isBanned,
+            teams: teams,
+            language: language,
+            extraData: extraData,
+            privacySettings: privacySettings
+        )
+    }
+}

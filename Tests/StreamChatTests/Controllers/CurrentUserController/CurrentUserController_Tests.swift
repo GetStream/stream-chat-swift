@@ -293,12 +293,17 @@ final class CurrentUserController_Tests: XCTestCase {
         controller.updateUserData(
             name: expectedName,
             imageURL: expectedImageUrl,
+            privacySettings: .init(
+                typingIndicators: .init(enabled: true), readReceipts: .init(enabled: true)
+            ),
             userExtraData: [:]
         )
 
         // Assert udpater is called with correct data
         XCTAssertEqual(env.currentUserUpdater.updateUserData_name, expectedName)
         XCTAssertEqual(env.currentUserUpdater.updateUserData_imageURL, expectedImageUrl)
+        XCTAssertEqual(env.currentUserUpdater.updateUserData_privacySettings?.typingIndicators?.enabled, true)
+        XCTAssertEqual(env.currentUserUpdater.updateUserData_privacySettings?.readReceipts?.enabled, true)
         XCTAssertNotNil(env.currentUserUpdater.updateUserData_completion)
     }
 

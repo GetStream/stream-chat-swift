@@ -67,6 +67,8 @@ class AppConfig {
 class UserConfig {
     var isInvisible = false
     var language: TranslationLanguage?
+    var typingIndicatorsEnabled: Bool?
+    var readReceiptsEnabled: Bool?
 
     static var shared = UserConfig()
 
@@ -194,6 +196,8 @@ class AppConfigViewController: UITableViewController {
     enum UserConfigOption: String, CaseIterable {
         case isInvisible
         case language
+        case typingIndicatorsEnabled
+        case readReceiptsEnabled
     }
 
     let options: [ConfigOption] = [
@@ -382,6 +386,14 @@ class AppConfigViewController: UITableViewController {
         case .isInvisible:
             cell.accessoryView = makeSwitchButton(UserConfig.shared.isInvisible) { newValue in
                 UserConfig.shared.isInvisible = newValue
+            }
+        case .readReceiptsEnabled:
+            cell.accessoryView = makeSwitchButton(UserConfig.shared.readReceiptsEnabled ?? true) { newValue in
+                UserConfig.shared.readReceiptsEnabled = newValue
+            }
+        case .typingIndicatorsEnabled:
+            cell.accessoryView = makeSwitchButton(UserConfig.shared.typingIndicatorsEnabled ?? true) { newValue in
+                UserConfig.shared.typingIndicatorsEnabled = newValue
             }
         case .language:
             cell.detailTextLabel?.text = UserConfig.shared.language?.languageCode

@@ -25,6 +25,7 @@ enum UserPayloadsCodingKeys: String, CodingKey, CaseIterable {
     case devices
     case unreadCount = "unread_count"
     case language
+    case privacySettings = "privacy_settings"
 }
 
 // MARK: - GET users
@@ -135,8 +136,8 @@ class UserRequestBody: Encodable {
 // MARK: - PATCH users
 
 /// An object describing the incoming user JSON payload.
-struct UserUpdateResponse: Decodable {
-    let user: UserPayload
+struct CurrentUserUpdateResponse: Decodable {
+    let user: CurrentUserPayload
 
     enum CodingKeys: String, CodingKey {
         case users
@@ -144,7 +145,7 @@ struct UserUpdateResponse: Decodable {
 
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
-        let users = try container.decode([String: UserPayload].self, forKey: .users)
+        let users = try container.decode([String: CurrentUserPayload].self, forKey: .users)
         guard let user = users.first?.value else {
             throw DecodingError.dataCorrupted(
                 .init(codingPath: [CodingKeys.users], debugDescription: "Missing updated user.")
@@ -153,7 +154,7 @@ struct UserUpdateResponse: Decodable {
         self.user = user
     }
 
-    init(user: UserPayload) {
+    init(user: CurrentUserPayload) {
         self.user = user
     }
 }
@@ -162,11 +163,18 @@ struct UserUpdateResponse: Decodable {
 struct UserUpdateRequestBody: Encodable {
     let name: String?
     let imageURL: URL?
+    let privacySettings: UserPrivacySettingsPayload?
     let extraData: [String: RawJSON]?
 
-    init(name: String? = nil, imageURL: URL? = nil, extraData: [String: RawJSON]? = nil) {
+    init(
+        name: String?,
+        imageURL: URL?,
+        privacySettings: UserPrivacySettingsPayload?,
+        extraData: [String: RawJSON]?
+    ) {
         self.name = name
         self.imageURL = imageURL
+        self.privacySettings = privacySettings
         self.extraData = extraData
     }
 
@@ -174,6 +182,7 @@ struct UserUpdateRequestBody: Encodable {
         var container = encoder.container(keyedBy: UserPayloadsCodingKeys.self)
         try container.encodeIfPresent(name, forKey: .name)
         try container.encodeIfPresent(imageURL, forKey: .imageURL)
+        try container.encodeIfPresent(privacySettings, forKey: .privacySettings)
         try extraData?.encode(to: encoder)
     }
 }

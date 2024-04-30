@@ -82,6 +82,10 @@ final class WebSocketConnectPayload_Tests: XCTestCase {
             name: "tommaso",
             imageURL: nil,
             isInvisible: nil,
+            privacySettings: .init(
+                typingIndicators: .init(enabled: true),
+                readReceipts: .init(enabled: true)
+            ),
             extraData: custom
         ))
 
@@ -92,7 +96,11 @@ final class WebSocketConnectPayload_Tests: XCTestCase {
             "user_details": [
                 "id": payload.userDetails.id,
                 "name": payload.userDetails.name!,
-                "color": "blue"
+                "color": "blue",
+                "privacy_settings": [
+                    "typing_indicators": ["enabled": true],
+                    "read_receipts": ["enabled": true]
+                ]
             ] as [String: Any]
         ]
         AssertJSONEqual(serialized, expected)

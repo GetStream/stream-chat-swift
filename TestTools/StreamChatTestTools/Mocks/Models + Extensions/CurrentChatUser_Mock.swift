@@ -28,7 +28,8 @@ public extension CurrentChatUser {
         flaggedUsers: Set<ChatUser> = [],
         flaggedMessageIDs: Set<MessageId> = [],
         unreadCount: UnreadCount = .noUnread,
-        mutedChannels: Set<ChatChannel> = []
+        mutedChannels: Set<ChatChannel> = [],
+        privacySettings: UserPrivacySettings = .init()
     ) -> CurrentChatUser {
         .init(
             id: id,
@@ -51,7 +52,8 @@ public extension CurrentChatUser {
             flaggedUsers: flaggedUsers,
             flaggedMessageIDs: flaggedMessageIDs,
             unreadCount: unreadCount,
-            mutedChannels: { mutedChannels },
+            mutedChannels: { mutedChannels }, 
+            privacySettings: privacySettings,
             underlyingContext: nil
         )
     }

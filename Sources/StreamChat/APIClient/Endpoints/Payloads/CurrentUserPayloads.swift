@@ -14,6 +14,8 @@ class CurrentUserPayload: UserPayload {
     let mutedChannels: [MutedChannelPayload]
     /// Unread channel and message counts
     let unreadCount: UnreadCount?
+    /// The current privacy settings of the user.
+    let privacySettings: UserPrivacySettingsPayload?
 
     init(
         id: String,
@@ -33,12 +35,14 @@ class CurrentUserPayload: UserPayload {
         devices: [DevicePayload] = [],
         mutedUsers: [MutedUserPayload] = [],
         mutedChannels: [MutedChannelPayload] = [],
-        unreadCount: UnreadCount? = nil
+        unreadCount: UnreadCount? = nil,
+        privacySettings: UserPrivacySettingsPayload? = nil
     ) {
         self.devices = devices
         self.mutedUsers = mutedUsers
         self.mutedChannels = mutedChannels
         self.unreadCount = unreadCount
+        self.privacySettings = privacySettings
 
         super.init(
             id: id,
@@ -64,6 +68,7 @@ class CurrentUserPayload: UserPayload {
         mutedUsers = try container.decodeIfPresent([MutedUserPayload].self, forKey: .mutedUsers) ?? []
         mutedChannels = try container.decodeIfPresent([MutedChannelPayload].self, forKey: .mutedChannels) ?? []
         unreadCount = try? UnreadCount(from: decoder)
+        privacySettings = try container.decodeIfPresent(UserPrivacySettingsPayload.self, forKey: .privacySettings)
 
         try super.init(from: decoder)
     }
