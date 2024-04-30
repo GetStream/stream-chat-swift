@@ -22,7 +22,7 @@ extension MessageState {
             messageObserver = StateLayerDatabaseObserver(
                 databaseContainer: database,
                 fetchRequest: MessageDTO.message(withID: messageId),
-                itemCreator: { try $0.asModel() as ChatMessage }
+                itemCreator: { try $0.asModel() }
             )
             reactionsObserver = StateLayerDatabaseObserver(
                 databaseContainer: database,
@@ -30,7 +30,7 @@ extension MessageState {
                     for: messageId,
                     sort: ChatMessageReaction.defaultSortingDescriptors()
                 ),
-                itemCreator: { try $0.asModel() as ChatMessageReaction }
+                itemCreator: { try $0.asModel() }
             )
             repliesObserver = StateLayerDatabaseObserver(
                 databaseContainer: database,
@@ -41,7 +41,7 @@ extension MessageState {
                     deletedMessagesVisibility: clientConfig.deletedMessagesVisibility,
                     shouldShowShadowedMessages: clientConfig.shouldShowShadowedMessages
                 ),
-                itemCreator: { try $0.asModel() as ChatMessage }
+                itemCreator: { try $0.asModel() }
             )
         }
         
