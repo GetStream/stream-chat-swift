@@ -78,12 +78,12 @@ import Foundation
     @Published public internal(set) var messages = StreamCollection<ChatMessage>([])
     
     /// A Boolean value that returns whether the oldest messages have all been loaded or not.
-    public var hasLoadedAllOlderMessages: Bool {
+    public var hasLoadedAllOldestMessages: Bool {
         channelUpdater.paginationStateHandler.state.hasLoadedAllPreviousMessages
     }
     
     /// A Boolean value that returns whether the newest messages have all been loaded or not.
-    public var hasLoadedAllNewerMessages: Bool {
+    public var hasLoadedAllNewestMessages: Bool {
         channelUpdater.paginationStateHandler.state.hasLoadedAllNextMessages || messages.isEmpty
     }
 
