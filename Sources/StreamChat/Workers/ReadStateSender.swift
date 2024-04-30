@@ -12,7 +12,12 @@ extension Chat {
         private let messageRepository: MessageRepository
         private let channelUpdater: ChannelUpdater
         
-        init(cid: ChannelId, channelUpdater: ChannelUpdater, authenticationRepository: AuthenticationRepository, messageRepository: MessageRepository) {
+        init(
+            cid: ChannelId,
+            channelUpdater: ChannelUpdater,
+            authenticationRepository: AuthenticationRepository,
+            messageRepository: MessageRepository
+        ) {
             self.authenticationRepository = authenticationRepository
             self.cid = cid
             self.channelUpdater = channelUpdater
