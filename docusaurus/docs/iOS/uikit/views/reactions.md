@@ -63,6 +63,37 @@ extension MessageReactionType {
 Components.default.reactionsSorting = { $0.type.position < $1.type.position }
 ```
 
+### Querying reactions
+
+You can query reactions by their type or the author id, to provide an experience similar to Slack (for example, show all users who reacted with "like").
+
+To do this, you need to create a `ChatReactionListController`:
+
+```swift
+let reactionListController = client.reactionListController(
+    query: .init(
+        messageId: message.id,
+        filter: .equal(.reactionType, to: reactionType)
+    )
+)
+```
+
+The reactions are available via the property `reactionListController.reactions`. You can listen to updates by implementing the delegate method `controller(_ controller:, didChangeReactions:)`
+
+```swift
+func controller(_ controller: ChatReactionListController, didChangeReactions changes: [ListChange<ChatMessageReaction>]) {
+    reactions = controller.reactions
+}
+```
+
+In order to load more reactions while paginating, you should call the method `loadMoreReactions`:
+
+```swift
+reactionListController.loadMoreReactions { [weak self] _ in
+    // handle reactions.
+}
+```
+
 ## Message Reactions
 
 By default, the message reactions are displayed inline as a bubble view on top of the messages.
