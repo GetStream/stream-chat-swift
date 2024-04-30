@@ -4,7 +4,7 @@
 
 import Foundation
 
-/// An object which represents a list of `ChatChannel`.
+/// An object which represents a list of `ChatChannel`s for the specified  channel query.
 @available(iOS 13.0, *)
 public class ChannelList {
     private let channelListUpdater: ChannelListUpdater
@@ -52,9 +52,9 @@ public class ChannelList {
     
     /// Loads channels for the specified pagination parameters and updates ``ChannelListState/channels``.
     ///
-    /// - Important: If pagination offset is 0 and cursor is nil, then loaded channels are reset.
+    /// - Important: If the pagination offset is 0 and cursor is nil, then loaded channels are reset.
     ///
-    /// - Parameter pagination: The pagination configuration which includes limit and cursor.
+    /// - Parameter pagination: The pagination configuration which includes a limit and a cursor or an offset.
     ///
     /// - Throws: An error while communicating with the Stream API.
     /// - Returns: An array of channels for the pagination.
