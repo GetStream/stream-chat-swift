@@ -1207,6 +1207,7 @@ final class MessageUpdater_Tests: XCTestCase {
         let currentUserId: UserId = .unique
         let messageId: MessageId = .unique
         let cid: ChannelId = .unique
+        let reason = "Test"
 
         // Create current user in the database
         try database.createCurrentUser(id: currentUserId)
@@ -1222,13 +1223,13 @@ final class MessageUpdater_Tests: XCTestCase {
 
         // Simulate `flagMessage` call.
         let expectation = self.expectation(description: "Flag message completion")
-        messageUpdater.flagMessage(true, with: messageId, in: cid) { error in
+        messageUpdater.flagMessage(true, with: messageId, in: cid, reason: reason) { error in
             XCTAssertNil(error)
             expectation.fulfill()
         }
 
         // Assert flag endpoint is called.
-        let flagEndpoint: Endpoint<FlagMessagePayload> = .flagMessage(true, with: messageId)
+        let flagEndpoint: Endpoint<FlagMessagePayload> = .flagMessage(true, with: messageId, reason: reason)
         AssertAsync.willBeEqual(apiClient.request_endpoint, AnyEndpoint(flagEndpoint))
 
         // Add it to DB as it is as expected after a successful getMessage call
@@ -1290,13 +1291,14 @@ final class MessageUpdater_Tests: XCTestCase {
     func test_flagMessage_propagatesError() {
         let messageId: MessageId = .unique
         let cid: ChannelId = .unique
+        let reason = "Test"
 
         let networkError = TestError()
         messageRepository.getMessageResult = .failure(networkError)
 
         // Simulate `flagMessage` call and catch the error.
         var completionCalledError: Error?
-        messageUpdater.flagMessage(true, with: messageId, in: cid) {
+        messageUpdater.flagMessage(true, with: messageId, in: cid, reason: reason) {
             completionCalledError = $0
         }
 
@@ -1307,18 +1309,19 @@ final class MessageUpdater_Tests: XCTestCase {
     func test_flagMessage_propagatesFlagNetworkError() throws {
         let messageId: MessageId = .unique
         let cid: ChannelId = .unique
+        let reason = "Test"
 
         // Save message to the database.
         try database.createMessage(id: messageId)
 
         // Simulate `flagMessage` call and catch the error.
         var completionCalledError: Error?
-        messageUpdater.flagMessage(true, with: messageId, in: cid) {
+        messageUpdater.flagMessage(true, with: messageId, in: cid, reason: reason) {
             completionCalledError = $0
         }
 
         // Assert flag endpoint is called.
-        let flagEndpoint: Endpoint<FlagMessagePayload> = .flagMessage(true, with: messageId)
+        let flagEndpoint: Endpoint<FlagMessagePayload> = .flagMessage(true, with: messageId, reason: reason)
         AssertAsync.willBeEqual(apiClient.request_endpoint, AnyEndpoint(flagEndpoint))
 
         // Simulate flag API response with failure.
@@ -1333,6 +1336,7 @@ final class MessageUpdater_Tests: XCTestCase {
         let currentUserId: UserId = .unique
         let messageId: MessageId = .unique
         let cid: ChannelId = .unique
+        let reason = "Test"
 
         // Save message to the database.
         try database.createMessage(id: messageId)
@@ -1343,12 +1347,12 @@ final class MessageUpdater_Tests: XCTestCase {
 
         // Simulate `flagMessage` call and catch the error.
         var completionCalledError: Error?
-        messageUpdater.flagMessage(true, with: messageId, in: cid) {
+        messageUpdater.flagMessage(true, with: messageId, in: cid, reason: reason) {
             completionCalledError = $0
         }
 
         // Assert flag endpoint is called.
-        let flagEndpoint: Endpoint<FlagMessagePayload> = .flagMessage(true, with: messageId)
+        let flagEndpoint: Endpoint<FlagMessagePayload> = .flagMessage(true, with: messageId, reason: reason)
         AssertAsync.willBeEqual(apiClient.request_endpoint, AnyEndpoint(flagEndpoint))
 
         // Simulate flag API response with success.
@@ -1366,18 +1370,19 @@ final class MessageUpdater_Tests: XCTestCase {
         let currentUserId: UserId = .unique
         let messageId: MessageId = .unique
         let cid: ChannelId = .unique
+        let reason = "Test"
 
         // Save message to the database.
         try database.createMessage(id: messageId)
 
         // Simulate `flagMessage` call and catch the error.
         var completionCalledError: Error?
-        messageUpdater.flagMessage(true, with: messageId, in: cid) {
+        messageUpdater.flagMessage(true, with: messageId, in: cid, reason: reason) {
             completionCalledError = $0
         }
 
         // Assert flag endpoint is called.
-        let flagEndpoint: Endpoint<FlagMessagePayload> = .flagMessage(true, with: messageId)
+        let flagEndpoint: Endpoint<FlagMessagePayload> = .flagMessage(true, with: messageId, reason: reason)
         AssertAsync.willBeEqual(apiClient.request_endpoint, AnyEndpoint(flagEndpoint))
 
         // Delete the message from the database.

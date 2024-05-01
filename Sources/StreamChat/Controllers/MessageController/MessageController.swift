@@ -569,10 +569,12 @@ public class ChatMessageController: DataController, DelegateCallable, DataStoreP
 
     /// Flags the message this controller manages.
     ///
-    /// - Parameter completion: The completion. Will be called on a **callbackQueue** when the network request is finished.
+    /// - Parameters:
+    ///   - reason: The flag reason.
+    ///   - completion: The completion. Will be called on a **callbackQueue** when the network request is finished.
     ///
-    public func flag(completion: ((Error?) -> Void)? = nil) {
-        messageUpdater.flagMessage(true, with: messageId, in: cid) { error in
+    public func flag(reason: String? = nil, completion: ((Error?) -> Void)? = nil) {
+        messageUpdater.flagMessage(true, with: messageId, in: cid, reason: reason) { error in
             self.callback {
                 completion?(error)
             }
