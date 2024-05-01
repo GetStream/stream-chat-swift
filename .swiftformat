@@ -6,6 +6,7 @@
 --disable redundantType
 --disable extensionAccessControl
 --disable andOperator
+--disable hoistPatternLet
 
 # Rules inferred from Swift Standard Library:
 --disable anyObjectProtocol, wrapMultilineStatementBraces

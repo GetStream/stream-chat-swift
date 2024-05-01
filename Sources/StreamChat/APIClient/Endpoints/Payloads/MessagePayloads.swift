@@ -10,6 +10,7 @@ enum MessagePayloadsCodingKeys: String, CodingKey, CaseIterable {
     case cid
     case type
     case user
+    case userId = "user_id"
     case createdAt = "created_at"
     case updatedAt = "updated_at"
     case deletedAt = "deleted_at"
@@ -44,6 +45,9 @@ enum MessagePayloadsCodingKeys: String, CodingKey, CaseIterable {
     case messageTextUpdatedAt = "message_text_updated_at"
     case poll
     case pollId = "poll_id"
+    case set
+    case unset
+    case skipEnrichUrl = "skip_enrich_url"
 }
 
 extension MessagePayload {

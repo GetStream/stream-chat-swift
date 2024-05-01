@@ -42,8 +42,8 @@ final class DemoChatMessageContentView: ChatMessageContentView {
         if content?.isPinned == true, let pinInfoLabel = pinInfoLabel {
             pinInfoLabel.text = "📌 Pinned"
             if let pinDetails = content?.pinDetails {
-                let pinnedByName = content?.isSentByCurrentUser == true
-                    ? (content?.author.id == pinDetails.pinnedBy.id ? "You" : pinDetails.pinnedBy.name ?? pinDetails.pinnedBy.id)
+                let pinnedByName = pinDetails.pinnedBy.id == UserDefaults.shared.currentUserId
+                    ? "You"
                     : pinDetails.pinnedBy.name ?? pinDetails.pinnedBy.id
                 pinInfoLabel.text?.append(" by \(pinnedByName)")
             }

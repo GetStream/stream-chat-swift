@@ -94,6 +94,26 @@ final class MessageEndpoints_Tests: XCTestCase {
         XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
         XCTAssertEqual("messages/\(payload.id)", endpoint.path.value)
     }
+    
+    func test_pinMessage_buildsCorrectly() {
+        let messageId: MessageId = .unique
+        let payload: MessagePartialUpdateRequest = .init(set: .init(pinned: true))
+
+        let expectedEndpoint = Endpoint<EmptyResponse>(
+            path: .pinMessage(messageId),
+            method: .put,
+            queryItems: nil,
+            requiresConnectionId: false,
+            body: payload
+        )
+
+        // Build endpoint
+        let endpoint: Endpoint<EmptyResponse> = .pinMessage(messageId: messageId, request: payload)
+
+        // Assert endpoint is built correctly
+        XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
+        XCTAssertEqual("messages/\(messageId)", endpoint.path.value)
+    }
 
     func test_loadReplies_buildsCorrectly() {
         let messageId: MessageId = .unique
