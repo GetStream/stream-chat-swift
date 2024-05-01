@@ -9,4 +9,9 @@ public protocol PollControllerDelegate: DataControllerStateDelegate {
         _ pollController: PollController,
         didUpdatePoll poll: EntityChange<Poll>
     )
+    
+    func pollController(
+        _ pollController: PollController,
+        didUpdateCurrentUserVotes votes: [ListChange<PollVote>]
+    )
 }

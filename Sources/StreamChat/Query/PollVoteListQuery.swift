@@ -7,7 +7,7 @@ import Foundation
 /// A query used for querying specific reactions from a message.
 public struct PollVoteListQuery: Encodable {
     public var pollId: String
-    public var optionId: String
+    public var optionId: String?
     /// The pagination information to query the reactions.
     public var pagination: Pagination
     /// The filter details to query the reactions.
@@ -15,7 +15,7 @@ public struct PollVoteListQuery: Encodable {
 
     public init(
         pollId: String,
-        optionId: String,
+        optionId: String?,
         pagination: Pagination = .init(pageSize: 10, offset: 0),
         filter: Filter<VoteListFilterScope>? = nil
     ) {
@@ -50,11 +50,14 @@ public extension FilterKey where Scope: AnyVoteListFilterScope {
 
     /// A filter key for matching the user id of the reaction's author.
     static var userId: FilterKey<Scope, UserId> { "user_id" }
+    
+    static var pollId: FilterKey<Scope, String> { "poll_id" }
 }
 
 extension PollVoteListQuery {
     var queryHash: String {
         [
+            pollId,
             optionId,
             filter?.filterHash
         ].compactMap { $0 }.joined(separator: "-")
