@@ -122,15 +122,6 @@ public class PollController: DataController, DelegateCallable, DataStoreProvider
                     delegate.pollController(self, didUpdatePoll: change)
                 }
             }
-            .onFieldChange(\.options) { [weak self] change in
-                self?.delegateCallback { [weak self] delegate in
-                    guard let self = self else {
-                        log.warning("Callback called while self is nil")
-                        return
-                    }
-                    delegate.pollController(self, didUpdateOptions: change)
-                }
-            }
 
             return observer
         }()

@@ -11,6 +11,7 @@ class PollVoteDTO: NSManagedObject {
     @NSManaged var createdAt: DBDate
     @NSManaged var updatedAt: DBDate
     @NSManaged var pollId: String
+    @NSManaged var optionId: String
     @NSManaged var isAnswer: Bool
     @NSManaged var answerText: String?
     @NSManaged var option: PollOptionDTO?
@@ -47,13 +48,12 @@ class PollVoteDTO: NSManagedObject {
 
 extension PollVoteDTO {
     func asModel() throws -> PollVote {
-        guard let option else { throw ClientError.Unknown() }
-        return try PollVote(
+        try PollVote(
             id: id,
             createdAt: createdAt.bridgeDate,
             updatedAt: updatedAt.bridgeDate,
             pollId: pollId,
-            optionId: option.id,
+            optionId: optionId,
             isAnswer: isAnswer,
             answerText: answerText,
             user: user?.asModel()
@@ -104,6 +104,7 @@ extension NSManagedObjectContext {
         dto.pollId = payload.pollId
         dto.isAnswer = payload.isAnswer ?? false
         dto.answerText = payload.answerText
+        dto.optionId = payload.optionId
         
         if let query = query {
             let queryDTO = try saveQuery(query: query)

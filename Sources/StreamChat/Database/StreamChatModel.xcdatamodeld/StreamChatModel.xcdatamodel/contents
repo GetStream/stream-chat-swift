@@ -341,11 +341,12 @@
         <attribute name="createdAt" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="id" attributeType="String"/>
         <attribute name="isAnswer" attributeType="Boolean" usesScalarValueType="YES"/>
+        <attribute name="optionId" optional="YES" attributeType="String"/>
         <attribute name="pollId" attributeType="String"/>
         <attribute name="updatedAt" attributeType="Date" usesScalarValueType="NO"/>
         <relationship name="option" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="PollOptionDTO" inverseName="latestVotes" inverseEntity="PollOptionDTO"/>
         <relationship name="poll" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="PollDTO" inverseName="latestAnswers" inverseEntity="PollDTO"/>
-        <relationship name="queries" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="PollVoteListQueryDTO" inverseName="votes" inverseEntity="PollVoteListQueryDTO"/>
+        <relationship name="queries" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="PollVoteListQueryDTO" inverseName="votes" inverseEntity="PollVoteListQueryDTO"/>
         <relationship name="user" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="UserDTO" inverseName="votes" inverseEntity="UserDTO"/>
     </entity>
     <entity name="PollVoteListQueryDTO" representedClassName="PollVoteListQueryDTO" syncable="YES">
@@ -439,7 +440,7 @@
         <relationship name="threadReads" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="ThreadReadDTO" inverseName="user" inverseEntity="ThreadReadDTO"/>
         <relationship name="threads" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="ThreadParticipantDTO" inverseName="user" inverseEntity="ThreadParticipantDTO"/>
         <relationship name="typingIn" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="ChannelDTO" inverseName="currentlyTypingUsers" inverseEntity="ChannelDTO"/>
-        <relationship name="votes" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="PollVoteDTO" inverseName="user" inverseEntity="PollVoteDTO"/>
+        <relationship name="votes" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="PollVoteDTO" inverseName="user" inverseEntity="PollVoteDTO"/>
         <relationship name="watchedChannels" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="ChannelDTO" inverseName="watchers" inverseEntity="ChannelDTO"/>
         <fetchIndex name="id">
             <fetchIndexElement property="id" type="Binary" order="ascending"/>
