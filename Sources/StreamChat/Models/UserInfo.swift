@@ -16,6 +16,8 @@ public struct UserInfo {
     public let isInvisible: Bool?
     /// The language of the user. This is required for the auto translation feature.
     public let language: TranslationLanguage?
+    /// The privacy settings of the user. Example: If the user does not want to expose typing events or read events.
+    public let privacySettings: UserPrivacySettings?
     /// Custom extra data of the user.
     public let extraData: [String: RawJSON]
 
@@ -25,6 +27,7 @@ public struct UserInfo {
         imageURL: URL? = nil,
         isInvisible: Bool? = nil,
         language: TranslationLanguage? = nil,
+        privacySettings: UserPrivacySettings? = nil,
         extraData: [String: RawJSON] = [:]
     ) {
         self.id = id
@@ -32,6 +35,41 @@ public struct UserInfo {
         self.imageURL = imageURL
         self.isInvisible = isInvisible
         self.language = language
+        self.privacySettings = privacySettings
         self.extraData = extraData
+    }
+}
+
+/// The privacy settings of the user.
+public struct UserPrivacySettings {
+    /// The settings for typing indicator events.
+    public var typingIndicators: TypingIndicatorPrivacySettings?
+    /// The settings for the read receipt events.
+    public var readReceipts: ReadReceiptsPrivacySettings?
+
+    public init(
+        typingIndicators: TypingIndicatorPrivacySettings? = nil,
+        readReceipts: ReadReceiptsPrivacySettings? = nil
+    ) {
+        self.typingIndicators = typingIndicators
+        self.readReceipts = readReceipts
+    }
+}
+
+/// The settings for typing indicator events.
+public struct TypingIndicatorPrivacySettings {
+    public var enabled: Bool
+
+    public init(enabled: Bool = true) {
+        self.enabled = enabled
+    }
+}
+
+/// The settings for the read receipt events.
+public struct ReadReceiptsPrivacySettings {
+    public var enabled: Bool
+
+    public init(enabled: Bool = true) {
+        self.enabled = enabled
     }
 }

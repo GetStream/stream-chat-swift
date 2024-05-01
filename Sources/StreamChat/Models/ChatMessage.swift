@@ -85,6 +85,9 @@ public struct ChatMessage {
     /// The number of reactions per reaction type.
     public let reactionCounts: [MessageReactionType: Int]
 
+    /// The reaction information grouped by type. Only available if reactions v2 is supported.
+    public let reactionGroups: [MessageReactionType: ChatMessageReactionGroup]
+
     /// The user which is the author of the message.
     ///
     /// - Important: The `author` property is loaded and evaluated lazily to maintain high performance.
@@ -223,6 +226,7 @@ public struct ChatMessage {
         isShadowed: Bool,
         reactionScores: [MessageReactionType: Int],
         reactionCounts: [MessageReactionType: Int],
+        reactionGroups: [MessageReactionType: ChatMessageReactionGroup],
         author: @escaping () -> ChatUser,
         mentionedUsers: @escaping () -> Set<ChatUser>,
         threadParticipants: @escaping () -> [ChatUser],
@@ -264,6 +268,7 @@ public struct ChatMessage {
         self.isShadowed = isShadowed
         self.reactionScores = reactionScores
         self.reactionCounts = reactionCounts
+        self.reactionGroups = reactionGroups
         self.localState = localState
         self.isFlaggedByCurrentUser = isFlaggedByCurrentUser
         self.isSentByCurrentUser = isSentByCurrentUser

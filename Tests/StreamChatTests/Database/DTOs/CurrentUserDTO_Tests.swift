@@ -65,7 +65,11 @@ final class CurrentUserModelDTO_Tests: XCTestCase {
                     createdAt: .unique,
                     updatedAt: .unique
                 )
-            ]
+            ],
+            privacySettings: .init(settings: .init(
+                typingIndicators: .init(enabled: false),
+                readReceipts: .init(enabled: false)
+            ))
         )
 
         let mutedUserIDs = Set(payload.mutedUsers.map(\.mutedUser.id))
@@ -97,6 +101,8 @@ final class CurrentUserModelDTO_Tests: XCTestCase {
         XCTAssertEqual(Set(payload.teams), loadedCurrentUser.teams)
         XCTAssertEqual(mutedChannelIDs, Set(loadedCurrentUser.mutedChannels.map(\.cid)))
         XCTAssertEqual(payload.language, loadedCurrentUser.language?.languageCode)
+        XCTAssertEqual(false, loadedCurrentUser.privacySettings.readReceipts?.enabled)
+        XCTAssertEqual(false, loadedCurrentUser.privacySettings.typingIndicators?.enabled)
     }
 
     func test_savingCurrentUser_removesCurrentDevice() throws {
@@ -226,5 +232,28 @@ final class CurrentUserModelDTO_Tests: XCTestCase {
         }
 
         AssertAsync.canBeReleased(&context)
+    }
+
+    func test_currentUserPayload_defaultPrivacySettingsValues() throws {
+        let userPayload: UserPayload = .dummy(
+            userId: .unique,
+            extraData: ["k": .string("v")],
+            language: "pt"
+        )
+        let payload: CurrentUserPayload = .dummy(
+            userPayload: userPayload,
+            privacySettings: nil
+        )
+        try database.writeSynchronously { session in
+            try session.saveCurrentUser(payload: payload)
+        }
+
+        let loadedCurrentUser: CurrentChatUser = try XCTUnwrap(
+            database.viewContext.currentUser?.asModel()
+        )
+
+        // By default, the values should be true if not set.
+        XCTAssertEqual(true, loadedCurrentUser.privacySettings.readReceipts?.enabled)
+        XCTAssertEqual(true, loadedCurrentUser.privacySettings.typingIndicators?.enabled)
     }
 }

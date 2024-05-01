@@ -5130,6 +5130,97 @@ final class ChannelController_Tests: XCTestCase {
         AssertAsync.willBeEqual(resultingCallWithToken, mockCallWithToken)
     }
 
+    // MARK: shouldSendTypingEvents
+
+    func test_shouldSendTypingEvents_default() throws {
+        let userId = UserId.unique
+        try client.databaseContainer.writeSynchronously {
+            try $0.saveCurrentUser(payload: .dummy(userId: userId, privacySettings: nil))
+        }
+
+        XCTAssertEqual(controller.shouldSendTypingEvents, true)
+    }
+
+    func test_shouldSendTypingEvents_whenChannelEnabled_whenUserEnabled() throws {
+        let userId = UserId.unique
+        try client.databaseContainer.writeSynchronously {
+            try $0.saveCurrentUser(payload: .dummy(
+                userId: userId,
+                privacySettings: .init(
+                    typingIndicators: .init(enabled: true), readReceipts: nil
+                )
+            ))
+        }
+
+        try client.databaseContainer.writeSynchronously { session in
+            try session.saveChannel(payload: .dummy(channel: .dummy(
+                cid: self.channelId, ownCapabilities: [ChannelCapability.sendTypingEvents.rawValue]
+            )))
+        }
+
+        XCTAssertEqual(controller.shouldSendTypingEvents, true)
+    }
+
+    func test_shouldSendTypingEvents_whenChannelDisabled_whenUserEnabled() throws {
+        let userId = UserId.unique
+        try client.databaseContainer.writeSynchronously {
+            try $0.saveCurrentUser(payload: .dummy(
+                userId: userId,
+                privacySettings: .init(
+                    typingIndicators: .init(enabled: true), readReceipts: nil
+                )
+            ))
+        }
+
+        try client.databaseContainer.writeSynchronously { session in
+            try session.saveChannel(payload: .dummy(channel: .dummy(
+                cid: self.channelId, ownCapabilities: []
+            )))
+        }
+
+        XCTAssertEqual(controller.shouldSendTypingEvents, false)
+    }
+
+    func test_shouldSendTypingEvents_whenChannelEnabled_whenUserDisabled() throws {
+        let userId = UserId.unique
+        try client.databaseContainer.writeSynchronously {
+            try $0.saveCurrentUser(payload: .dummy(
+                userId: userId,
+                privacySettings: .init(
+                    typingIndicators: .init(enabled: false), readReceipts: nil
+                )
+            ))
+        }
+
+        try client.databaseContainer.writeSynchronously { session in
+            try session.saveChannel(payload: .dummy(channel: .dummy(
+                cid: self.channelId, ownCapabilities: [ChannelCapability.sendTypingEvents.rawValue]
+            )))
+        }
+
+        XCTAssertEqual(controller.shouldSendTypingEvents, false)
+    }
+
+    func test_shouldSendTypingEvents_whenChannelDisabled_whenUserDisabled() throws {
+        let userId = UserId.unique
+        try client.databaseContainer.writeSynchronously {
+            try $0.saveCurrentUser(payload: .dummy(
+                userId: userId,
+                privacySettings: .init(
+                    typingIndicators: .init(enabled: false), readReceipts: nil
+                )
+            ))
+        }
+
+        try client.databaseContainer.writeSynchronously { session in
+            try session.saveChannel(payload: .dummy(channel: .dummy(
+                cid: self.channelId, ownCapabilities: []
+            )))
+        }
+
+        XCTAssertEqual(controller.shouldSendTypingEvents, false)
+    }
+
     // MARK: deinit
 
     func test_deinit_whenIsJumpingToMessage_deletesAllMessages() throws {

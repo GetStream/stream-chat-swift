@@ -287,6 +287,9 @@ final class ChatChannelVC_Tests: XCTestCase {
                     text: "One",
                     reactionScores: ["love": 1],
                     reactionCounts: ["love": 1],
+                    reactionGroups: [
+                        "love": .init(type: "love", sumScores: 1, count: 1, firstReactionAt: .unique, lastReactionAt: .unique)
+                    ],
                     latestReactions: [.mock(type: "love")]
                 )
             ],
@@ -311,6 +314,9 @@ final class ChatChannelVC_Tests: XCTestCase {
                 text: "One",
                 reactionScores: ["love": 2],
                 reactionCounts: ["love": 2],
+                reactionGroups: [
+                    "love": .init(type: "love", sumScores: 2, count: 2, firstReactionAt: .unique, lastReactionAt: .unique)
+                ],
                 latestReactions: [.mock(type: "love"), .mock(type: "love")],
                 currentUserReactions: [.mock(type: "love")]
             )

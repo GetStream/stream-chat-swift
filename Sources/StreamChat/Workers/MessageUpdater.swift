@@ -314,7 +314,7 @@ class MessageUpdater: Worker {
             case let .success(payload):
                 var reactions: [ChatMessageReaction] = []
                 self.database.write({ session in
-                    reactions = try session.saveReactions(payload: payload).map { try $0.asModel() }
+                    reactions = try session.saveReactions(payload: payload, query: nil).map { try $0.asModel() }
                 }, completion: { error in
                     if let error = error {
                         completion?(.failure(error))

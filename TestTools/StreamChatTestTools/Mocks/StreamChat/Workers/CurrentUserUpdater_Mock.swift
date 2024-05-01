@@ -11,6 +11,7 @@ final class CurrentUserUpdater_Mock: CurrentUserUpdater {
     @Atomic var updateUserData_name: String?
     @Atomic var updateUserData_imageURL: URL?
     @Atomic var updateUserData_userExtraData: [String: RawJSON]?
+    @Atomic var updateUserData_privacySettings: UserPrivacySettings?
     @Atomic var updateUserData_completion: ((Error?) -> Void)?
 
     @Atomic var addDevice_id: DeviceId?
@@ -32,6 +33,7 @@ final class CurrentUserUpdater_Mock: CurrentUserUpdater {
         currentUserId: UserId,
         name: String? = nil,
         imageURL: URL? = nil,
+        privacySettings: UserPrivacySettings? = nil,
         userExtraData: [String: RawJSON]? = nil,
         completion: ((Error?) -> Void)? = nil
     ) {
@@ -39,6 +41,7 @@ final class CurrentUserUpdater_Mock: CurrentUserUpdater {
         updateUserData_name = name
         updateUserData_imageURL = imageURL
         updateUserData_userExtraData = userExtraData
+        updateUserData_privacySettings = privacySettings
         updateUserData_completion = completion
     }
 

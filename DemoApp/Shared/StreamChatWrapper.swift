@@ -50,12 +50,25 @@ extension StreamChatWrapper {
     func connect(user: DemoUserType, completion: @escaping (Error?) -> Void) {
         switch user {
         case let .credentials(userCredentials):
+            var privacySettings: UserPrivacySettings?
+            
+            if UserConfig.shared.readReceiptsEnabled != nil || UserConfig.shared.typingIndicatorsEnabled != nil {
+                privacySettings = .init()
+            }
+            if let readReceiptsEnabled = UserConfig.shared.readReceiptsEnabled {
+                privacySettings?.readReceipts = .init(enabled: readReceiptsEnabled)
+            }
+            if let typingIndicatorsEnabled = UserConfig.shared.typingIndicatorsEnabled {
+                privacySettings?.typingIndicators = .init(enabled: typingIndicatorsEnabled)
+            }
+
             let userInfo = UserInfo(
                 id: userCredentials.userInfo.id,
                 name: userCredentials.userInfo.name,
                 imageURL: userCredentials.userInfo.imageURL,
                 isInvisible: UserConfig.shared.isInvisible,
                 language: UserConfig.shared.language,
+                privacySettings: privacySettings,
                 extraData: userCredentials.userInfo.extraData
             )
 

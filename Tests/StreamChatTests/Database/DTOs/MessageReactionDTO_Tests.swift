@@ -58,7 +58,7 @@ final class MessageReactionDTO_Tests: XCTestCase {
         // Assert saving message reaction with the message throws `MessageDoesNotExist` error.
         XCTAssertThrowsError(
             try database.writeSynchronously { session in
-                try session.saveReaction(payload: payload, cache: nil)
+                try session.saveReaction(payload: payload, query: nil, cache: nil)
             }
         ) { error in
             XCTAssertTrue(error is ClientError.MessageDoesNotExist)
@@ -80,7 +80,7 @@ final class MessageReactionDTO_Tests: XCTestCase {
 
         // Save message reaction to the database and corrupt extra data.
         try database.writeSynchronously { session in
-            try session.saveReaction(payload: payload, cache: nil)
+            try session.saveReaction(payload: payload, query: nil, cache: nil)
         }
 
         // Load saved message reaction and build the model.
@@ -113,7 +113,7 @@ final class MessageReactionDTO_Tests: XCTestCase {
 
         try database.writeSynchronously { session in
             // Save message reaction to the database.
-            let dto = try session.saveReaction(payload: payload, cache: nil)
+            let dto = try session.saveReaction(payload: payload, query: nil, cache: nil)
             // Corrupt extra data.
             dto.extraData = #"{"invalid": json}"#.data(using: .utf8)!
         }
@@ -151,7 +151,7 @@ final class MessageReactionDTO_Tests: XCTestCase {
 
         // Save message reaction to the database.
         try database.writeSynchronously { session in
-            try session.saveReaction(payload: payload, cache: nil)
+            try session.saveReaction(payload: payload, query: nil, cache: nil)
         }
 
         // Delete message reaction from the database.
@@ -246,6 +246,7 @@ final class MessageReactionDTO_Tests: XCTestCase {
                     user: .dummy(userId: userId),
                     extraData: [:]
                 ),
+                query: nil,
                 cache: nil
             )
             reaction.localState = state
@@ -267,7 +268,7 @@ final class MessageReactionDTO_Tests: XCTestCase {
 
         // Save message reaction to the database.
         try database.writeSynchronously { session in
-            try session.saveReaction(payload: payload, cache: nil)
+            try session.saveReaction(payload: payload, query: nil, cache: nil)
         }
 
         // Load saved message reaction.

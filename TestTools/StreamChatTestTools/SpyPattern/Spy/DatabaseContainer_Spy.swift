@@ -252,6 +252,7 @@ extension DatabaseContainer {
         attachments: [MessageAttachmentPayload] = [],
         reactionScores: [MessageReactionType: Int] = [:],
         reactionCounts: [MessageReactionType: Int] = [:],
+        reactionGroups: [MessageReactionType: MessageReactionGroupPayload] = [:],
         localState: LocalMessageState? = nil,
         type: MessageType? = nil,
         numberOfReplies: Int = 0,
@@ -287,6 +288,9 @@ extension DatabaseContainer {
             messageDTO.localMessageState = localState
             messageDTO.reactionCounts = reactionCounts.mapKeys(\.rawValue)
             messageDTO.reactionScores = reactionScores.mapKeys(\.rawValue)
+            messageDTO.reactionGroups = Set(reactionGroups.map { type, groupPayload in
+                MessageReactionGroupDTO(type: type, payload: groupPayload, context: self.viewContext)
+            })
 
             for idx in 0..<numberOfReplies {
                 let reply: MessagePayload = .dummy(

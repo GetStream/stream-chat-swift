@@ -138,6 +138,7 @@ final class ChatMessage_Equatable_Tests: XCTestCase {
                 let reactions = try (1...numberOfReactions).map { index in
                     try session.saveReaction(
                         payload: .dummy(type: .init(rawValue: "reaction-\(index)"), messageId: message.id, user: self.userPayload(id: index)),
+                        query: nil,
                         cache: nil
                     )
                 }

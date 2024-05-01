@@ -394,7 +394,7 @@ private extension MemberPayload {
                 isInvisible: true,
                 isBanned: true,
                 teams: [],
-                language: nil,
+                language: nil, 
                 extraData: [:]
             ),
             userId: userId,

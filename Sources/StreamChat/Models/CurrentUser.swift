@@ -56,6 +56,9 @@ public class CurrentChatUser: ChatUser {
     /// A Boolean value indicating if the user has opted to hide their online status.
     public let isInvisible: Bool
 
+    /// The current privacy settings of the user.
+    public let privacySettings: UserPrivacySettings
+
     init(
         id: String,
         name: String?,
@@ -78,6 +81,7 @@ public class CurrentChatUser: ChatUser {
         flaggedMessageIDs: Set<MessageId>,
         unreadCount: UnreadCount,
         mutedChannels: @escaping () -> Set<ChatChannel>,
+        privacySettings: UserPrivacySettings,
         underlyingContext: NSManagedObjectContext?
     ) {
         self.devices = devices
@@ -87,6 +91,7 @@ public class CurrentChatUser: ChatUser {
         self.flaggedMessageIDs = flaggedMessageIDs
         self.unreadCount = unreadCount
         self.isInvisible = isInvisible
+        self.privacySettings = privacySettings
 
         super.init(
             id: id,

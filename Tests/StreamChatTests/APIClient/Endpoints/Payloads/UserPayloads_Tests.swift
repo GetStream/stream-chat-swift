@@ -113,12 +113,20 @@ final class UserUpdateRequestBody_Tests: XCTestCase {
         let payload: UserUpdateRequestBody = .init(
             name: .unique,
             imageURL: .unique(),
+            privacySettings: .init(
+                typingIndicators: .init(enabled: true),
+                readReceipts: .init(enabled: true)
+            ),
             extraData: ["secret_note": .string(value)]
         )
 
         let expected: [String: Any] = [
             "name": payload.name!,
             "image": payload.imageURL!.absoluteString,
+            "privacy_settings": [
+                "typing_indicators": ["enabled": true],
+                "read_receipts": ["enabled": true]
+            ],
             "secret_note": value
         ]
 
@@ -133,7 +141,7 @@ final class UserUpdateResponse_Tests: XCTestCase {
     func test_currentUserUpdateResponseJSON_isSerialized() throws {
         let currentUserUpdateResponseJSON = XCTestCase.mockData(fromJSONFile: "UserUpdateResponse")
         let payload = try JSONDecoder.default.decode(
-            UserUpdateResponse.self, from: currentUserUpdateResponseJSON
+            CurrentUserUpdateResponse.self, from: currentUserUpdateResponseJSON
         )
         let user = payload.user
         XCTAssertEqual(user.id, "luke_skywalker")
@@ -153,7 +161,7 @@ final class UserUpdateResponse_Tests: XCTestCase {
     func test_currentUserUpdateResponseJSON_whenMissingUser_failsSerialization() {
         let currentUserUpdateResponseJSON = XCTestCase.mockData(fromJSONFile: "UserUpdateResponse+MissingUser")
         XCTAssertThrowsError(try JSONDecoder.default.decode(
-            UserUpdateResponse.self, from: currentUserUpdateResponseJSON
+            CurrentUserUpdateResponse.self, from: currentUserUpdateResponseJSON
         ))
     }
 }
