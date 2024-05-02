@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## StreamChat
 ### 🔄 Changed
 - Replace message update request to partial update on message pinning [#3166](https://github.com/GetStream/stream-chat-swift/pull/3166)
+### 🐞 Fixed
+- Reset managed object contexts before removing all the data on logout [#3170](https://github.com/GetStream/stream-chat-swift/pull/3170)
 
 # [4.53.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.53.0)
 _April 30, 2024_
@@ -22,8 +24,6 @@ _April 30, 2024_
 - Adds `firstReactionAt` and `lastReactionAt` to `ChatMessageReactionData` to be able to sort by dates in `Components.reactionsSorting` [#3158](https://github.com/GetStream/stream-chat-swift/pull/3158)
 - Add `ChatReactionListController` to query and filter reactions from a message [#3167](https://github.com/GetStream/stream-chat-swift/pull/3167)
 - Add `ChatClient.reactionListController()`  to create an instance of `ChatReactionListController` [#3167](https://github.com/GetStream/stream-chat-swift/pull/3167)
-### 🐞 Fixed
-- Reset managed object contexts before removing all the data on logout [#3170](https://github.com/GetStream/stream-chat-swift/pull/3170)
 
 # [4.52.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.52.0)
 _April 09, 2024_
