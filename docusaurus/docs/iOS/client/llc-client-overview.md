@@ -13,6 +13,8 @@ The `StreamChat` framework comes with controllers and delegates that you can use
 
 Each controller exposes API functionality and supports delegation. Controllers and their delegates are documented here based on the kind of data they control and allow you to observe. You can find examples on how to build your own view as well.
 
+In addition to controllers, we provide a modern [state layer](state-layer/state-layer-overview.md) with async-await and observable state objects.
+
 ## Using Controllers
 
 Controllers expose functionality via event subscriptions and API calls. In most cases you need to call the `synchronize` method on your controller instance. This is done to avoid side-effects from initialization and to make sure that the controller is ready to be used.
