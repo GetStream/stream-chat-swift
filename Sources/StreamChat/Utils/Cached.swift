@@ -13,23 +13,21 @@ class Cached<T> {
     /// When the cached value is reset, this closure is used to lazily get a new value which is then cached again.
     @Atomic var computeValue: (() -> T)!
 
+    /// Returns the cached value if it is set, otherwise uses the `computeValue` closure to refetch the value.
+    ///
+    /// Since `computeValue` can trigger side-effects like CoreData to save a context which triggers database
+    /// observers then it is important to run the `computeValue` closure outside of the locked region (e.g. `_cached.mutate(_:).
+    /// Otherwise we might reenter the same instance while the `_cached` lock has not released the lock yet.
+    /// Only downside is that we might need to execute `computeValue` multiple times if there are multiple threads
+    /// accessing the `wrappedValue` at the same time while `_cached` is nil.
     var wrappedValue: T {
-        var returnValue: T!
-
-        // We need to make the changes inside the `mutate` block to ensure `Cached` is thread-safe.
-        __cached.mutate { value in
-            if let value = value {
-                returnValue = value
-                return
-            }
-
-            log.assert(computeValue != nil, "You must set the `computeValue` closure before accessing the cached value.")
-
-            value = computeValue()
-            returnValue = value
+        if let _cached {
+            return _cached
         }
-
-        return returnValue
+        log.assert(computeValue != nil, "You must set the `computeValue` closure before accessing the cached value.")
+        let newValue = computeValue()
+        _cached = newValue
+        return newValue
     }
 
     var projectedValue: (() -> T) {
