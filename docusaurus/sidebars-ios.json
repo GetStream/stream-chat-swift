@@ -104,6 +104,7 @@
     {
       "State & Offline": [
         "client/llc-client-overview",
+        "client/state-layer/state-layer-overview",
         "client/offline-support",
         "client/controllers/channels",
         "client/extra-data"
