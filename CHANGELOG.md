@@ -9,6 +9,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### 🐞 Fixed
 - Reset managed object contexts before removing all the data on logout [#3170](https://github.com/GetStream/stream-chat-swift/pull/3170)
 
+## StreamChatUI
+### ✅ Added
+- Make `ChatMessageContentView.prepareForReuse()` open [#3176](https://github.com/GetStream/stream-chat-swift/pull/3176)
+
 # [4.53.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.53.0)
 _April 30, 2024_
 
