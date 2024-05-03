@@ -619,8 +619,7 @@ public class Chat {
         _ messageId: MessageId,
         pinning: MessagePinning
     ) async throws -> ChatMessage {
-        let localMessage = try await messageUpdater.pinMessage(messageId: messageId, pinning: pinning)
-        return try await waitForAPIRequest(localMessage: localMessage)
+        try await messageUpdater.pinMessage(messageId: messageId, pinning: pinning)
     }
     
     /// Removes the message from the channel's pinned messages.
@@ -632,8 +631,7 @@ public class Chat {
     /// - Throws: An error while communicating with the Stream API.
     /// - Returns: An instance of `ChatMessage` which was unpinned.
     @discardableResult public func unpinMessage(_ messageId: MessageId) async throws -> ChatMessage {
-        let localMessage = try await messageUpdater.unpinMessage(messageId: messageId)
-        return try await waitForAPIRequest(localMessage: localMessage)
+        try await messageUpdater.unpinMessage(messageId: messageId)
     }
     
     /// Loads pinned messages for the specified pagination options, sorting order, and limit.
