@@ -160,7 +160,6 @@ final class MemberList_Tests: XCTestCase {
 extension MemberList_Tests {
     final class TestEnvironment {
         let client: ChatClient_Mock
-        private(set) var state: UserListState!
         private(set) var memberListUpdater: ChannelMemberListUpdater!
         private(set) var memberListUpdaterMock: ChannelMemberListUpdater_Mock!
         

@@ -250,6 +250,13 @@
 		4F14F1272BBBDD7400B1074E /* StateLayerDatabaseObserver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F14F1252BBBDD7400B1074E /* StateLayerDatabaseObserver.swift */; };
 		4F14F1282BBD2D8700B1074E /* ChannelList_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F5758F02BB45B2F00D89A94 /* ChannelList_Tests.swift */; };
 		4F14F12A2BBE8C1900B1074E /* MessageSearch_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F14F1292BBE8C1900B1074E /* MessageSearch_Tests.swift */; };
+		4F1BEE762BE384ED00B6685C /* ReactionList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F1BEE752BE384ED00B6685C /* ReactionList.swift */; };
+		4F1BEE772BE384ED00B6685C /* ReactionList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F1BEE752BE384ED00B6685C /* ReactionList.swift */; };
+		4F1BEE792BE384FE00B6685C /* ReactionListState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F1BEE782BE384FE00B6685C /* ReactionListState.swift */; };
+		4F1BEE7A2BE384FE00B6685C /* ReactionListState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F1BEE782BE384FE00B6685C /* ReactionListState.swift */; };
+		4F1BEE7C2BE3851200B6685C /* ReactionListState+Observer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F1BEE7B2BE3851200B6685C /* ReactionListState+Observer.swift */; };
+		4F1BEE7D2BE3851200B6685C /* ReactionListState+Observer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F1BEE7B2BE3851200B6685C /* ReactionListState+Observer.swift */; };
+		4F1BEE7F2BE38B5500B6685C /* ReactionList_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F1BEE7E2BE38B5500B6685C /* ReactionList_Tests.swift */; };
 		4F427F662BA2F43200D92238 /* ConnectedUser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F427F652BA2F43200D92238 /* ConnectedUser.swift */; };
 		4F427F672BA2F43200D92238 /* ConnectedUser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F427F652BA2F43200D92238 /* ConnectedUser.swift */; };
 		4F427F692BA2F52100D92238 /* ConnectedUserState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F427F682BA2F52100D92238 /* ConnectedUserState.swift */; };
@@ -3036,6 +3043,10 @@
 		4F14F1232BBA9CEF00B1074E /* Result+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Result+Extensions.swift"; sourceTree = "<group>"; };
 		4F14F1252BBBDD7400B1074E /* StateLayerDatabaseObserver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StateLayerDatabaseObserver.swift; sourceTree = "<group>"; };
 		4F14F1292BBE8C1900B1074E /* MessageSearch_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageSearch_Tests.swift; sourceTree = "<group>"; };
+		4F1BEE752BE384ED00B6685C /* ReactionList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReactionList.swift; sourceTree = "<group>"; };
+		4F1BEE782BE384FE00B6685C /* ReactionListState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReactionListState.swift; sourceTree = "<group>"; };
+		4F1BEE7B2BE3851200B6685C /* ReactionListState+Observer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ReactionListState+Observer.swift"; sourceTree = "<group>"; };
+		4F1BEE7E2BE38B5500B6685C /* ReactionList_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReactionList_Tests.swift; sourceTree = "<group>"; };
 		4F427F652BA2F43200D92238 /* ConnectedUser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectedUser.swift; sourceTree = "<group>"; };
 		4F427F682BA2F52100D92238 /* ConnectedUserState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectedUserState.swift; sourceTree = "<group>"; };
 		4F427F6B2BA2F53200D92238 /* ConnectedUserState+Observer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ConnectedUserState+Observer.swift"; sourceTree = "<group>"; };
@@ -5059,6 +5070,9 @@
 				4F97F2792BA88936001C4D66 /* MessageSearchState+Observer.swift */,
 				4F73F3972B91BD3000563CD9 /* MessageState.swift */,
 				4F73F39D2B91C7BF00563CD9 /* MessageState+Observer.swift */,
+				4F1BEE752BE384ED00B6685C /* ReactionList.swift */,
+				4F1BEE782BE384FE00B6685C /* ReactionListState.swift */,
+				4F1BEE7B2BE3851200B6685C /* ReactionListState+Observer.swift */,
 				4F97F2662BA83146001C4D66 /* UserList.swift */,
 				4F97F2692BA83150001C4D66 /* UserListState.swift */,
 				4FE6E1AC2BAC7A1B00C80AF1 /* UserListState+Observer.swift */,
@@ -5077,6 +5091,7 @@
 				4FCCACE32BC939EB009D23E1 /* MemberList_Tests.swift */,
 				4F14F1292BBE8C1900B1074E /* MessageSearch_Tests.swift */,
 				4F5151992BC57C40001B7152 /* MessageState_Tests.swift */,
+				4F1BEE7E2BE38B5500B6685C /* ReactionList_Tests.swift */,
 				4F072F022BC008D9006A66CA /* StateLayerDatabaseObserver_Tests.swift */,
 				4F5151972BC407ED001B7152 /* UserList_Tests.swift */,
 				4F5151952BC3DEA1001B7152 /* UserSearch_Tests.swift */,
@@ -10939,6 +10954,7 @@
 				40789D2F29F6AC500018C2BB /* AudioRecordingDelegate.swift in Sources */,
 				4FE6E1AA2BAC79F400C80AF1 /* MemberListState+Observer.swift in Sources */,
 				790A4C55252F25DA001F4A23 /* DeviceDTO.swift in Sources */,
+				4F1BEE792BE384FE00B6685C /* ReactionListState.swift in Sources */,
 				79C5CBE825F66DBD00D98001 /* ChatChannelWatcherListController.swift in Sources */,
 				8A62706E24BF45360040BFD6 /* BanEnabling.swift in Sources */,
 				7985BDAA252B1E53002B8C30 /* MainQueue+Synchronous.swift in Sources */,
@@ -11104,6 +11120,7 @@
 				DA0BB1612513B5F200CAEFBD /* StringInterpolation+Extensions.swift in Sources */,
 				64C8C86E26934C6100329F82 /* UserInfo.swift in Sources */,
 				C1FFD9F927ECC7C7008A6848 /* Filter+ChatChannel.swift in Sources */,
+				4F1BEE7C2BE3851200B6685C /* ReactionListState+Observer.swift in Sources */,
 				C1FC2F962742579D0062530F /* Transport.swift in Sources */,
 				C1FC2F9A2742579D0062530F /* WSEngine.swift in Sources */,
 				799C9479247E3DEA001F1104 /* StreamChatModel.xcdatamodeld in Sources */,
@@ -11262,6 +11279,7 @@
 				8A0D64A724E57A520017A3C0 /* GuestUserTokenRequestPayload.swift in Sources */,
 				AD6E32A42BBC502D0073831B /* ThreadQuery.swift in Sources */,
 				888E8C39252B2ABB00195E03 /* UserController+Combine.swift in Sources */,
+				4F1BEE762BE384ED00B6685C /* ReactionList.swift in Sources */,
 				792FCB4524A33B5B000290C7 /* EventDataProcessorMiddleware.swift in Sources */,
 				79A0E9BE2498C33100E9BD50 /* TypingEvent.swift in Sources */,
 				AD78568C298B268F00C2FEAD /* ChannelControllerDelegate.swift in Sources */,
@@ -11545,6 +11563,7 @@
 				4042968F29FBCE1D0089126D /* AudioSamplesExtractor_Tests.swift in Sources */,
 				40789D3F29F6AFC40018C2BB /* Debouncer_Tests.swift in Sources */,
 				796610BB248E687000761629 /* EventMiddleware_Tests.swift in Sources */,
+				4F1BEE7F2BE38B5500B6685C /* ReactionList_Tests.swift in Sources */,
 				40B345F729C46AE500B96027 /* StreamPlayerObserver_Tests.swift in Sources */,
 				796CBC1C25F7CD58003299B0 /* UserChannelBanEventsMiddleware_Tests.swift in Sources */,
 				DA15A20424DF257500BE2423 /* ChannelQuery_Tests.swift in Sources */,
@@ -11776,6 +11795,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4F1BEE7D2BE3851200B6685C /* ReactionListState+Observer.swift in Sources */,
 				40789D1C29F6AC500018C2BB /* AudioPlaybackState.swift in Sources */,
 				AD8C7C612BA3DF2800260715 /* AppSettings.json in Sources */,
 				C121E804274544AC00023E4C /* ChatClient.swift in Sources */,
@@ -11890,12 +11910,14 @@
 				C121E84B274544AE00023E4C /* Endpoint.swift in Sources */,
 				C121E84C274544AE00023E4C /* GuestEndpoints.swift in Sources */,
 				C121E84D274544AE00023E4C /* DeviceEndpoints.swift in Sources */,
+				4F1BEE7A2BE384FE00B6685C /* ReactionListState.swift in Sources */,
 				C121E84E274544AE00023E4C /* ChannelEndpoints.swift in Sources */,
 				C121E84F274544AE00023E4C /* UserEndpoints.swift in Sources */,
 				C121E850274544AE00023E4C /* SyncEndpoint.swift in Sources */,
 				4F97F26B2BA83150001C4D66 /* UserListState.swift in Sources */,
 				84D5BC70277B61A000A65C75 /* PinnedMessagesSortingKey.swift in Sources */,
 				C121E851274544AE00023E4C /* MessageEndpoints.swift in Sources */,
+				4F1BEE772BE384ED00B6685C /* ReactionList.swift in Sources */,
 				C121E852274544AE00023E4C /* ModerationEndpoints.swift in Sources */,
 				C121E853274544AE00023E4C /* WebSocketConnectEndpoint.swift in Sources */,
 				4F73F39F2B91C7BF00563CD9 /* MessageState+Observer.swift in Sources */,
