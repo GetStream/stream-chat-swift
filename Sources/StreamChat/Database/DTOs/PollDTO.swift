@@ -129,7 +129,7 @@ extension NSManagedObjectContext {
             }
         )
         pollDto.latestVotesByOption = try Set(
-            payload.latestVotesByOption.compactMap { optionId, votesByOption in
+            payload.latestVotesByOption?.compactMap { optionId, votesByOption in
                 let optionDto = PollOptionDTO.loadOrCreate(
                     pollId: payload.id,
                     optionId: optionId,
@@ -151,7 +151,7 @@ extension NSManagedObjectContext {
                 )
                 
                 return optionDto
-            }
+            } ?? []
         )
         pollDto.latestAnswers = try Set(
             payload.latestAnswers?.compactMap { payload in

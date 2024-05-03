@@ -449,7 +449,7 @@ protocol PollDatabaseSession {
         pollId: String,
         optionId: String,
         answerText: String?,
-        userId: String,
+        userId: String?,
         query: PollVoteListQuery?
     ) throws -> PollVoteDTO
     
@@ -558,7 +558,8 @@ extension DatabaseSession {
                 }
             } else {
                 var voteUpdated = false
-                if payload.eventType == .pollVoteCasted, let userId = vote.userId {
+                if payload.eventType == .pollVoteCasted {
+                    let userId = vote.userId ?? "anon"
                     let id = "\(vote.optionId)-\(vote.pollId)-\(userId)"
                     if let dto = try pollVote(id: id, pollId: vote.pollId) {
                         // TODO: other data.

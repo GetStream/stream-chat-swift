@@ -739,7 +739,7 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
         description: String? = nil,
         enforceUniqueVote: Bool? = nil,
         maxVotesAllowed: Int? = nil,
-        votingVisibility: String? = nil,
+        votingVisibility: VotingVisibility? = nil,
         options: [PollOption]? = nil,
         custom: [String: RawJSON]? = nil,
         completion: @escaping (Result<MessageId, Error>) -> Void
@@ -751,7 +751,7 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
             description: description,
             enforceUniqueVote: enforceUniqueVote,
             maxVotesAllowed: maxVotesAllowed,
-            votingVisibility: votingVisibility,
+            votingVisibility: votingVisibility?.rawValue,
             options: options,
             custom: custom
         ) { [weak self] result in

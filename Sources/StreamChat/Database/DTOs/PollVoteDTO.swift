@@ -22,7 +22,7 @@ class PollVoteDTO: NSManagedObject {
         voteId: String,
         poll: PollDTO,
         option: PollOptionDTO,
-        user: UserDTO,
+        user: UserDTO?,
         context: NSManagedObjectContext,
         cache: PreWarmedCache?
     ) -> PollVoteDTO {
@@ -90,17 +90,20 @@ extension NSManagedObjectContext {
         query: PollVoteListQuery?,
         cache: PreWarmedCache?
     ) throws -> PollVoteDTO {
-        guard let user = payload.user else { throw ClientError.UserDoesNotExist(userId: "") }
         guard let poll = try poll(id: payload.pollId),
               let option = try option(id: payload.optionId, pollId: payload.pollId) else {
             throw ClientError.Unexpected()
         }
         
+        var user: UserDTO?
+        if let payloadUser = payload.user {
+            user = try saveUser(payload: payloadUser, query: nil, cache: cache)
+        }
         let dto = PollVoteDTO.loadOrCreate(
             voteId: payload.id,
             poll: poll,
             option: option,
-            user: try saveUser(payload: user, query: nil, cache: cache),
+            user: user,
             context: self,
             cache: cache
         )
@@ -124,20 +127,24 @@ extension NSManagedObjectContext {
         pollId: String,
         optionId: String,
         answerText: String?,
-        userId: String,
+        userId: String?,
         query: PollVoteListQuery?
     ) throws -> PollVoteDTO {
         guard let poll = try poll(id: pollId),
-              let option = try option(id: optionId, pollId: pollId),
-              let user = user(id: userId) else {
+              let option = try option(id: optionId, pollId: pollId) else {
             throw ClientError.Unknown()
         }
-        let voteId = "\(optionId)-\(pollId)-\(userId)"
+        var userDto: UserDTO?
+        if let userId {
+            userDto = user(id: userId)
+        }
+        let userSuffix = poll.votingVisibility == VotingVisibility.anonymous.rawValue ? nil : userId
+        let voteId = "\(optionId)-\(pollId)-\(userSuffix ?? "anon")"
         let dto = PollVoteDTO.loadOrCreate(
             voteId: voteId,
             poll: poll,
             option: option,
-            user: user,
+            user: userDto,
             context: self,
             cache: nil
         )

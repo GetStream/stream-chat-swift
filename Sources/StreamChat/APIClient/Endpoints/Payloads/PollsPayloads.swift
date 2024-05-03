@@ -176,7 +176,7 @@ struct PollPayload: Decodable {
     var options: [PollOptionPayload?]
     var ownVotes: [PollVotePayload?]
     var custom: [String: RawJSON]?
-    var latestVotesByOption: [String: [PollVotePayload?]]
+    var latestVotesByOption: [String: [PollVotePayload?]]?
     var voteCountsByOption: [String: Int]?
     var isClosed: Bool?
     var maxVotesAllowed: Int?

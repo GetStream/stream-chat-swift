@@ -113,16 +113,12 @@ public class PollController: DataController, DelegateCallable, DataStoreProvider
         optionId: String?,
         completion: ((Error?) -> Void)? = nil
     ) {
-        guard let currentUserId = client.currentUserId else {
-            completion?(ClientError.CurrentUserDoesNotExist())
-            return
-        }
         pollsRepository.castPollVote(
             messageId: messageId,
             pollId: pollId,
             answerText: answerText,
             optionId: optionId,
-            currentUserId: currentUserId,
+            currentUserId: client.currentUserId,
             query: ownVotesQuery,
             completion: completion
         )
@@ -186,4 +182,9 @@ public class PollController: DataController, DelegateCallable, DataStoreProvider
         }()
         try? pollObserver?.startObserving()
     }
+}
+
+public enum VotingVisibility: String {
+    case `public`
+    case anonymous
 }

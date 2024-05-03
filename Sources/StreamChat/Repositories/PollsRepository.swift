@@ -52,7 +52,7 @@ class PollsRepository {
         pollId: String,
         answerText: String?,
         optionId: String?,
-        currentUserId: String,
+        currentUserId: String?,
         query: PollVoteListQuery?,
         completion: ((Error?) -> Void)? = nil
     ) {
