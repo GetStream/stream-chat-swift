@@ -444,9 +444,24 @@ protocol PollDatabaseSession {
         cache: PreWarmedCache?
     ) throws -> PollVoteDTO
     
+    @discardableResult
+    func savePollVote(
+        pollId: String,
+        optionId: String,
+        answerText: String?,
+        userId: String,
+        query: PollVoteListQuery?
+    ) throws -> PollVoteDTO
+    
     func poll(id: String) throws -> PollDTO?
     
     func option(id: String, pollId: String) throws -> PollOptionDTO?
+    
+    func pollVote(id: String, pollId: String) throws -> PollVoteDTO?
+    
+    func removePollVote(with id: String, pollId: String) throws
+    
+    func delete(pollVote: PollVoteDTO)
 }
 
 protocol DatabaseSession: UserDatabaseSession,
@@ -537,7 +552,24 @@ extension DatabaseSession {
         }
         
         if let vote = payload.vote {
-            try savePollVote(payload: vote, query: nil, cache: nil)
+            if payload.eventType == .pollVoteRemoved {
+                if let dto = try? pollVote(id: vote.id, pollId: vote.pollId) {
+                    delete(pollVote: dto)
+                }
+            } else {
+                var voteUpdated = false
+                if payload.eventType == .pollVoteCasted, let userId = vote.userId {
+                    let id = "\(vote.optionId)-\(vote.pollId)-\(userId)"
+                    if let dto = try pollVote(id: id, pollId: vote.pollId) {
+                        // TODO: other data.
+                        dto.id = vote.id
+                        voteUpdated = true
+                    }
+                }
+                if !voteUpdated {
+                    try savePollVote(payload: vote, query: nil, cache: nil)
+                }
+            }
         }
         
         if let poll = payload.poll {

@@ -39,6 +39,11 @@ class PollVoteDTO: NSManagedObject {
         return new
     }
     
+    static func load(voteId: String, pollId: String, context: NSManagedObjectContext) -> PollVoteDTO? {
+        let request = fetchRequest(for: voteId, pollId: pollId)
+        return load(by: request, context: context).first
+    }
+    
     static func fetchRequest(for voteId: String, pollId: String) -> NSFetchRequest<PollVoteDTO> {
         let request = NSFetchRequest<PollVoteDTO>(entityName: PollVoteDTO.entityName)
         request.predicate = NSPredicate(format: "id == %@ && pollId == %@", voteId, pollId)
@@ -112,6 +117,70 @@ extension NSManagedObjectContext {
         }
         
         return dto
+    }
+    
+    @discardableResult
+    func savePollVote(
+        pollId: String,
+        optionId: String,
+        answerText: String?,
+        userId: String,
+        query: PollVoteListQuery?
+    ) throws -> PollVoteDTO {
+        guard let poll = try poll(id: pollId),
+              let option = try option(id: optionId, pollId: pollId),
+              let user = user(id: userId) else {
+            throw ClientError.Unknown()
+        }
+        let voteId = "\(optionId)-\(pollId)-\(userId)"
+        let dto = PollVoteDTO.loadOrCreate(
+            voteId: voteId,
+            poll: poll,
+            option: option,
+            user: user,
+            context: self,
+            cache: nil
+        )
+        
+        dto.createdAt = Date().bridgeDate
+        dto.updatedAt = Date().bridgeDate
+        dto.pollId = pollId
+        dto.isAnswer = true // TODO: fix
+        dto.answerText = answerText
+        dto.optionId = optionId
+        
+        let currentVoteCount = poll.voteCountsByOption?[optionId] ?? 0
+        poll.voteCountsByOption?[optionId] = currentVoteCount + 1
+        
+        if let query = query {
+            let queryDTO = try saveQuery(query: query)
+            queryDTO?.votes.insert(dto)
+        }
+        
+        return dto
+    }
+    
+    func pollVote(id: String, pollId: String) throws -> PollVoteDTO? {
+        PollVoteDTO.load(voteId: id, pollId: pollId, context: self)
+    }
+    
+    func removePollVote(with id: String, pollId: String) throws {
+        guard let dto = try pollVote(id: id, pollId: pollId) else {
+            // TODO: error
+            throw ClientError.Unknown()
+        }
+        
+        let poll = try? poll(id: pollId)
+        let votes = (poll?.voteCountsByOption?[dto.optionId] ?? 0) - 1
+        if votes > 0 {
+            poll?.voteCountsByOption?[dto.optionId] = votes
+        }
+
+        delete(pollVote: dto)
+    }
+    
+    func delete(pollVote: PollVoteDTO) {
+        delete(pollVote)
     }
 }
 

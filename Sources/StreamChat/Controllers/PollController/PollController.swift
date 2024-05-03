@@ -113,11 +113,17 @@ public class PollController: DataController, DelegateCallable, DataStoreProvider
         optionId: String?,
         completion: ((Error?) -> Void)? = nil
     ) {
+        guard let currentUserId = client.currentUserId else {
+            completion?(ClientError.CurrentUserDoesNotExist())
+            return
+        }
         pollsRepository.castPollVote(
             messageId: messageId,
             pollId: pollId,
             answerText: answerText,
             optionId: optionId,
+            currentUserId: currentUserId,
+            query: ownVotesQuery,
             completion: completion
         )
     }

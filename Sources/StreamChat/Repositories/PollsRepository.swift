@@ -52,24 +52,64 @@ class PollsRepository {
         pollId: String,
         answerText: String?,
         optionId: String?,
+        currentUserId: String,
+        query: PollVoteListQuery?,
         completion: ((Error?) -> Void)? = nil
     ) {
-        let request = CastPollVoteRequestBody(
-            pollId: pollId,
-            vote: .init(
-                answerText: answerText,
-                optionId: optionId,
-                option: nil // TODO: handle this.
-            )
-        )
-        apiClient.request(
-            endpoint: .castPollVote(
-                messageId: messageId,
+        guard let optionId else {
+            // No optimistic updates for answers.
+            let request = CastPollVoteRequestBody(
                 pollId: pollId,
-                vote: request
+                vote: .init(
+                    answerText: answerText,
+                    optionId: optionId,
+                    option: nil // TODO: handle this.
+                )
             )
-        ) {
-            completion?($0.error)
+            apiClient.request(
+                endpoint: .castPollVote(
+                    messageId: messageId,
+                    pollId: pollId,
+                    vote: request
+                )
+            ) {
+                completion?($0.error)
+            }
+            return
+        }
+        
+        var pollVote: PollVoteDTO?
+        database.write { session in
+            pollVote = try session.savePollVote(
+                pollId: pollId,
+                optionId: optionId,
+                answerText: answerText,
+                userId: currentUserId,
+                query: query
+            )
+        } completion: { [weak self] _ in
+            let request = CastPollVoteRequestBody(
+                pollId: pollId,
+                vote: .init(
+                    answerText: answerText,
+                    optionId: optionId,
+                    option: nil // TODO: handle this.
+                )
+            )
+            self?.apiClient.request(
+                endpoint: .castPollVote(
+                    messageId: messageId,
+                    pollId: pollId,
+                    vote: request
+                )
+            ) {
+                if $0.isError, let pollVote {
+                    self?.database.write { session in
+                        session.delete(pollVote: pollVote)
+                    }
+                }
+                completion?($0.error)
+            }
         }
     }
     
@@ -79,14 +119,22 @@ class PollsRepository {
         voteId: String,
         completion: ((Error?) -> Void)? = nil
     ) {
-        apiClient.request(
-            endpoint: .removePollVote(
-                messageId: messageId,
-                pollId: pollId,
-                voteId: voteId
-            )
-        ) {
-            completion?($0.error)
+        database.write { session in
+            try session.removePollVote(with: voteId, pollId: pollId)
+        } completion: { [weak self] error in
+            if error == nil {
+                self?.apiClient.request(
+                    endpoint: .removePollVote(
+                        messageId: messageId,
+                        pollId: pollId,
+                        voteId: voteId
+                    )
+                ) {
+                    completion?($0.error)
+                }
+            } else {
+                completion?(error)
+            }
         }
     }
     
