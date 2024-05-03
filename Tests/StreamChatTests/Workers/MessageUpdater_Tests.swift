@@ -1870,7 +1870,6 @@ final class MessageUpdater_Tests: XCTestCase {
         
         apiClient.test_mockResponseResult(.success(EmptyResponse()))
 
-        let expiration: MessagePinning = .expirationDate(.unique)
         let result = try waitFor {
             messageUpdater.unpinMessage(messageId: messageId, completion: $0)
         }
