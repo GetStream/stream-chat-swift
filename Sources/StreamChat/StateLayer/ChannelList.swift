@@ -59,8 +59,7 @@ public class ChannelList {
     /// - Throws: An error while communicating with the Stream API.
     /// - Returns: An array of channels for the pagination.
     @discardableResult public func loadChannels(with pagination: Pagination) async throws -> [ChatChannel] {
-        guard pagination.pageSize > 0 else { return [] }
-        return try await channelListUpdater.loadChannels(query: query, pagination: pagination)
+        try await channelListUpdater.loadChannels(query: query, pagination: pagination)
     }
     
     /// Loads more channels and updates ``ChannelListState/channels``.

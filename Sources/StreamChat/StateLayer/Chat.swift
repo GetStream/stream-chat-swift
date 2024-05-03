@@ -339,6 +339,21 @@ public class Chat {
         return try await attachmentQueueUploader.waitForAPIRequest(attachmentId: attachment)
     }
     
+    /// Invokes the ephemeral action specified by the attachment.
+    ///
+    /// - Parameters:
+    ///   - messageId: The id of the message with the action.
+    ///   - action: The ephemeral action to be invoked.
+    ///
+    /// - Throws: An error while communicating with the Stream API.
+    public func sendMessageAction(in messageId: MessageId, action: AttachmentAction) async throws {
+        try await messageUpdater.dispatchEphemeralMessageAction(
+            cid: cid,
+            messageId: messageId,
+            action: action
+        )
+    }
+    
     /// Sends a message to channel.
     ///
     /// The send message method waits until the network request has finished to Stream API.
@@ -516,7 +531,7 @@ public class Chat {
         try await loadMessages(after: nil, limit: limit)
     }
     
-    // MARK: - Message State
+    // MARK: - Message Local State
     
     /// Access a message which is available locally by its id.
     ///
@@ -551,23 +566,6 @@ public class Chat {
                     return try await messageUpdater.getMessage(cid: cid, messageId: messageId)
                 }
             }
-        )
-    }
-    
-    // MARK: - Message Attachment Actions
-    
-    /// Invokes the ephemeral action specified by the attachment.
-    ///
-    /// - Parameters:
-    ///   - messageId: The id of the message with the action.
-    ///   - action: The ephemeral action to be invoked.
-    ///
-    /// - Throws: An error while communicating with the Stream API.
-    public func sendMessageAction(in messageId: MessageId, action: AttachmentAction) async throws {
-        try await messageUpdater.dispatchEphemeralMessageAction(
-            cid: cid,
-            messageId: messageId,
-            action: action
         )
     }
     
@@ -619,8 +617,7 @@ public class Chat {
         _ messageId: MessageId,
         pinning: MessagePinning
     ) async throws -> ChatMessage {
-        let localMessage = try await messageUpdater.pinMessage(messageId: messageId, pinning: pinning)
-        return try await waitForAPIRequest(localMessage: localMessage)
+        try await messageUpdater.pinMessage(messageId: messageId, pinning: pinning)
     }
     
     /// Removes the message from the channel's pinned messages.
@@ -632,8 +629,7 @@ public class Chat {
     /// - Throws: An error while communicating with the Stream API.
     /// - Returns: An instance of `ChatMessage` which was unpinned.
     @discardableResult public func unpinMessage(_ messageId: MessageId) async throws -> ChatMessage {
-        let localMessage = try await messageUpdater.unpinMessage(messageId: messageId)
-        return try await waitForAPIRequest(localMessage: localMessage)
+        try await messageUpdater.unpinMessage(messageId: messageId)
     }
     
     /// Loads pinned messages for the specified pagination options, sorting order, and limit.
