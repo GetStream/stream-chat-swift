@@ -43,23 +43,6 @@ extension ChatClient {
     }
 }
 
-// MARK: - Factory Methods for Creating User Lists
-
-@available(iOS 13.0, *)
-extension ChatClient {
-    /// Creates an instance of ``UserList`` which represents an array of users matching to the specified ``UserListQuery``.
-    ///
-    /// Loaded users are stored in ``UserListState/users``. Use pagination methods in ``UserList`` for refreshing or loading more matching users to the observable state.
-    /// Refer to [querying users in Stream documentation](https://getstream.io/chat/docs/ios-swift/query_users/?language=swift) for additional details.
-    ///
-    /// - Parameter query: The query specifies which users are part of the list and how users are sorted.
-    ///
-    /// - Returns: An instance of ``UserList`` which represents actions and the state of the list.
-    public func makeUserList(with query: UserListQuery) -> UserList {
-        UserList(query: query, client: self)
-    }
-}
-
 // MARK: - Factory Methods for Creating Chats
 
 @available(iOS 13.0, *)
@@ -254,6 +237,23 @@ extension ChatClient {
     }
 }
 
+// MARK: - Factory Methods for Creating User Lists
+
+@available(iOS 13.0, *)
+extension ChatClient {
+    /// Creates an instance of ``UserList`` which represents an array of users matching to the specified ``UserListQuery``.
+    ///
+    /// Loaded users are stored in ``UserListState/users``. Use pagination methods in ``UserList`` for refreshing or loading more matching users to the observable state.
+    /// Refer to [querying users in Stream documentation](https://getstream.io/chat/docs/ios-swift/query_users/?language=swift) for additional details.
+    ///
+    /// - Parameter query: The query specifies which users are part of the list and how users are sorted.
+    ///
+    /// - Returns: An instance of ``UserList`` which represents actions and the state of the list.
+    public func makeUserList(with query: UserListQuery) -> UserList {
+        UserList(query: query, client: self)
+    }
+}
+
 // MARK: - Factory Methods for Searching Messages
 
 @available(iOS 13.0, *)
@@ -268,7 +268,7 @@ extension ChatClient {
     }
 }
 
-// MARK: - Factory Methods for Searching User
+// MARK: - Factory Methods for Searching Users
 
 @available(iOS 13.0, *)
 extension ChatClient {
