@@ -185,8 +185,10 @@ final class AttachmentQueueUploader_Tests: XCTestCase {
         XCTAssertEqual(attachment.localState, .pendingUpload)
 
         // Wait attachment uploading begins.
+        wait(for: [apiClient.uploadRequest_expectation], timeout: defaultTimeout)
+        
         let attachmentModelId = try XCTUnwrap(attachment.asAnyModel()).id
-        AssertAsync.willBeEqual(
+        XCTAssertEqual(
             apiClient.uploadFile_attachment?.id,
             attachmentModelId
         )
@@ -241,8 +243,10 @@ final class AttachmentQueueUploader_Tests: XCTestCase {
         XCTAssertEqual(attachment.localState, .pendingUpload)
 
         // Wait attachment uploading begins.
+        wait(for: [apiClient.uploadRequest_expectation], timeout: defaultTimeout)
+        
         let attachmentModelId = try XCTUnwrap(attachment.asAnyModel()).id
-        AssertAsync.willBeEqual(
+        XCTAssertEqual(
             apiClient.uploadFile_attachment?.id,
             attachmentModelId
         )
@@ -594,8 +598,8 @@ final class AttachmentQueueUploader_Tests: XCTestCase {
 
         AssertAsync.willBeTrue(attachmentDTO1.localState == .uploadingFailed)
         AssertAsync.willBeTrue(attachmentDTO2.localState == .uploaded)
-
-        XCTAssertEqual(locallyStoredAttachments.count, 1)
+        // wait until local files have been deleted after DTO's state changes
+        AssertAsync.willBeEqual(locallyStoredAttachments.count, 1)
         XCTAssertEqual(
             locallyStoredAttachments.first?.lastPathComponent,
             "messaging:dummy-fake-0.txt"
