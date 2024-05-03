@@ -971,39 +971,59 @@ extension MessageUpdater {
     
     // MARK: -
     
-    func loadReplies(for parentMessageId: MessageId, pagination: MessagesPagination, cid: ChannelId, paginationStateHandler: MessagesPaginationStateHandling) async throws -> [ChatMessage] {
+    func loadReplies(
+        for parentMessageId: MessageId,
+        pagination: MessagesPagination,
+        cid: ChannelId,
+        paginationStateHandler: MessagesPaginationStateHandling
+    ) async throws -> [ChatMessage] {
         let payload = try await loadReplies(cid: cid, messageId: parentMessageId, pagination: pagination, paginationStateHandler: paginationStateHandler)
         guard let fromDate = payload.messages.first?.createdAt else { return [] }
         guard let toDate = payload.messages.last?.createdAt else { return [] }
         return try await repository.replies(from: fromDate, to: toDate, in: parentMessageId)
     }
     
-    func loadReplies(for parentMessageId: MessageId, before replyId: MessageId?, limit: Int?, cid: ChannelId, paginationStateHandler: MessagesPaginationStateHandling) async throws {
+    func loadReplies(
+        for parentMessageId: MessageId,
+        before replyId: MessageId?,
+        limit: Int,
+        cid: ChannelId,
+        paginationStateHandler: MessagesPaginationStateHandling
+    ) async throws {
         guard !paginationStateHandler.state.hasLoadedAllPreviousMessages else { return }
         guard !paginationStateHandler.state.isLoadingPreviousMessages else { return }
         guard let replyId = replyId ?? paginationStateHandler.state.oldestFetchedMessage?.id else {
             throw ClientError.MessageEmptyReplies()
         }
-        let pageSize = limit ?? .messagesPageSize
-        let pagination = MessagesPagination(pageSize: pageSize, parameter: .lessThan(replyId))
+        let pagination = MessagesPagination(pageSize: limit, parameter: .lessThan(replyId))
         try await loadReplies(cid: cid, messageId: parentMessageId, pagination: pagination, paginationStateHandler: paginationStateHandler)
     }
     
-    func loadReplies(for parentMessageId: MessageId, after replyId: MessageId?, limit: Int?, cid: ChannelId, paginationStateHandler: MessagesPaginationStateHandling) async throws {
+    func loadReplies(
+        for parentMessageId: MessageId,
+        after replyId: MessageId?,
+        limit: Int,
+        cid: ChannelId,
+        paginationStateHandler: MessagesPaginationStateHandling
+    ) async throws {
         guard !paginationStateHandler.state.hasLoadedAllNextMessages else { return }
         guard !paginationStateHandler.state.isLoadingNextMessages else { return }
         guard let replyId = replyId ?? paginationStateHandler.state.newestFetchedMessage?.id else {
             throw ClientError.MessageEmptyReplies()
         }
-        let pageSize = limit ?? .messagesPageSize
-        let pagination = MessagesPagination(pageSize: pageSize, parameter: .greaterThan(replyId))
+        let pagination = MessagesPagination(pageSize: limit, parameter: .greaterThan(replyId))
         try await loadReplies(cid: cid, messageId: parentMessageId, pagination: pagination, paginationStateHandler: paginationStateHandler)
     }
     
-    func loadReplies(for parentMessageId: MessageId, around replyId: MessageId, limit: Int?, cid: ChannelId, paginationStateHandler: MessagesPaginationStateHandling) async throws {
+    func loadReplies(
+        for parentMessageId: MessageId,
+        around replyId: MessageId,
+        limit: Int,
+        cid: ChannelId,
+        paginationStateHandler: MessagesPaginationStateHandling
+    ) async throws {
         guard !paginationStateHandler.state.isLoadingMiddleMessages else { return }
-        let pageSize = limit ?? .messagesPageSize
-        let pagination = MessagesPagination(pageSize: pageSize, parameter: .around(replyId))
+        let pagination = MessagesPagination(pageSize: limit, parameter: .around(replyId))
         try await loadReplies(cid: cid, messageId: parentMessageId, pagination: pagination, paginationStateHandler: paginationStateHandler)
     }
 }

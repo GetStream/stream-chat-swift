@@ -55,11 +55,14 @@ public final class UserList {
     ///
     /// - Throws: An error while communicating with the Stream API.
     /// - Returns: An array of loaded channels.
-    @discardableResult public func loadMoreUsers(limit: Int? = nil) async throws -> [ChatUser] {
+    @discardableResult public func loadMoreUsers(limit: Int = 30) async throws -> [ChatUser] {
         let state = await self.state
-        let limit = (limit ?? state.query.pagination?.pageSize) ?? Int.usersPageSize
         let offset = await state.users.count
-        return try await userListUpdater.loadNextUsers(state.query, limit: limit, offset: offset)
+        return try await userListUpdater.loadNextUsers(
+            state.query,
+            limit: limit,
+            offset: offset
+        )
     }
 }
 

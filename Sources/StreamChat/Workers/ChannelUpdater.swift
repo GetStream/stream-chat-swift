@@ -952,32 +952,29 @@ extension ChannelUpdater {
         return try await messageRepository.messages(from: fromDate, to: toDate, in: cid)
     }
     
-    func loadMessages(before messageId: MessageId?, limit: Int?, channelQuery: ChannelQuery, loaded: StreamCollection<ChatMessage>) async throws {
+    func loadMessages(before messageId: MessageId?, limit: Int, channelQuery: ChannelQuery, loaded: StreamCollection<ChatMessage>) async throws {
         guard !paginationState.isLoadingPreviousMessages else { return }
         guard !paginationState.hasLoadedAllPreviousMessages else { return }
         let lastLocalMessageId: () -> MessageId? = { loaded.last { !$0.isLocalOnly }?.id }
         guard let messageId = messageId ?? paginationState.oldestFetchedMessage?.id ?? lastLocalMessageId() else {
             throw ClientError.ChannelEmptyMessages()
         }
-        let limit = limit ?? channelQuery.pagination?.pageSize ?? .messagesPageSize
         let pagination = MessagesPagination(pageSize: limit, parameter: .lessThan(messageId))
         try await update(channelQuery: channelQuery.withPagination(pagination))
     }
 
-    func loadMessages(after messageId: MessageId?, limit: Int?, channelQuery: ChannelQuery, loaded: StreamCollection<ChatMessage>) async throws {
+    func loadMessages(after messageId: MessageId?, limit: Int, channelQuery: ChannelQuery, loaded: StreamCollection<ChatMessage>) async throws {
         guard !paginationState.isLoadingNextMessages else { return }
         guard !paginationState.hasLoadedAllNextMessages else { return }
         guard let messageId = messageId ?? paginationState.newestFetchedMessage?.id ?? loaded.first?.id else {
             throw ClientError.ChannelEmptyMessages()
         }
-        let limit = limit ?? channelQuery.pagination?.pageSize ?? .messagesPageSize
         let pagination = MessagesPagination(pageSize: limit, parameter: .greaterThan(messageId))
         try await update(channelQuery: channelQuery.withPagination(pagination))
     }
         
-    func loadMessages(around messageId: MessageId, limit: Int?, channelQuery: ChannelQuery, loaded: StreamCollection<ChatMessage>) async throws {
+    func loadMessages(around messageId: MessageId, limit: Int, channelQuery: ChannelQuery, loaded: StreamCollection<ChatMessage>) async throws {
         guard !paginationState.isLoadingMiddleMessages else { return }
-        let limit = limit ?? channelQuery.pagination?.pageSize ?? .messagesPageSize
         let pagination = MessagesPagination(pageSize: limit, parameter: .around(messageId))
         try await update(channelQuery: channelQuery.withPagination(pagination))
     }

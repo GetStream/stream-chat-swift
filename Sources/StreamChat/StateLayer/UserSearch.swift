@@ -50,9 +50,8 @@ public class UserSearch {
     ///
     /// - Throws: An error while communicating with the Stream API.
     /// - Returns: An array of loaded channels.
-    @discardableResult public func loadMoreUsers(limit: Int? = nil) async throws -> [ChatUser] {
+    @discardableResult public func loadMoreUsers(limit: Int = 30) async throws -> [ChatUser] {
         guard let query = await state.query else { throw ClientError("Call search() before calling for next page") }
-        let limit = (limit ?? query.pagination?.pageSize) ?? .usersPageSize
         let offset = await state.users.count
         let pagination = Pagination(pageSize: limit, offset: offset)
         return try await search(query: query, pagination: pagination)
