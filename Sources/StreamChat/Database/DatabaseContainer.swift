@@ -422,9 +422,7 @@ extension NSManagedObjectContext {
     }
     
     func observeChanges(in otherContext: NSManagedObjectContext) -> NSObjectProtocol {
-        if automaticallyMergesChangesFromParent {
-            assertionFailure("Duplicate change handling")
-        }
+        assert(!automaticallyMergesChangesFromParent, "Duplicate change handling")
         return NotificationCenter.default
             .addObserver(
                 forName: Notification.Name.NSManagedObjectContextDidSave,
