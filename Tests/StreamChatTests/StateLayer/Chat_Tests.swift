@@ -455,6 +455,61 @@ final class Chat_Tests: XCTestCase {
         XCTAssertEqual(nil, stateMessage.localState)
     }
     
+    func test_sendMessageAction_whenTappingCancel_thenSendMessageActionSucceedsWithoutAPIRequest() async throws {
+        try await setUpChat(usesMockedUpdaters: false)
+        try await env.client.databaseContainer.write { session in
+            let dto = try session.saveChannel(payload: self.makeChannelPayload(messageCount: 1, createdAtOffset: 0))
+            dto.messages.first?.type = MessageType.ephemeral.rawValue
+        }
+        
+        let messageId = try await MainActor.run { try XCTUnwrap(chat.state.messages.first?.id) }
+        let action = AttachmentAction(name: "name", value: "cancel", style: .default, type: .button, text: "text")
+        
+        try await chat.sendMessageAction(in: messageId, action: action)
+        let message = try await MainActor.run { try XCTUnwrap(chat.localMessage(for: messageId)) }
+        XCTAssertNotNil(message.deletedAt)
+        XCTAssertEqual(nil, env.client.mockAPIClient.request_endpoint, "Cancel should not make any API requests")
+    }
+    
+    func test_sendMessageAction_whenAPIRequestSucceds_thenSendMessageActionSucceeds() async throws {
+        try await setUpChat(usesMockedUpdaters: false)
+        try await env.client.databaseContainer.write { session in
+            let dto = try session.saveChannel(payload: self.makeChannelPayload(messageCount: 1, createdAtOffset: 0))
+            dto.messages.first?.type = MessageType.ephemeral.rawValue
+        }
+        
+        let messageId = try await MainActor.run { try XCTUnwrap(chat.state.messages.first?.id) }
+        let action = AttachmentAction(name: "name", value: "value", style: .default, type: .button, text: "text")
+        
+        let apiResponse = MessagePayload.Boxed(message: .dummy(type: .ephemeral, messageId: messageId, text: "TextChanged"))
+        env.client.mockAPIClient.test_mockResponseResult(.success(apiResponse))
+        try await chat.sendMessageAction(in: messageId, action: action)
+        let message = try await MainActor.run { try XCTUnwrap(chat.localMessage(for: messageId)) }
+        XCTAssertEqual(nil, message.deletedAt)
+        XCTAssertEqual("TextChanged", message.text)
+    }
+    
+    func test_sendMessageAction_whenAPIRequestFails_thenSendMessageActionFails() async throws {
+        try await setUpChat(usesMockedUpdaters: false)
+        try await env.client.databaseContainer.write { session in
+            let dto = try session.saveChannel(payload: self.makeChannelPayload(messageCount: 1, createdAtOffset: 0))
+            dto.messages.first?.type = MessageType.ephemeral.rawValue
+        }
+        
+        let initialMessage = try await MainActor.run { try XCTUnwrap(chat.state.messages.first) }
+        let messageId = initialMessage.id
+        let action = AttachmentAction(name: "name", value: "value", style: .default, type: .button, text: "text")
+        
+        env.client.mockAPIClient.test_mockResponseResult(Result<MessagePayload.Boxed, Error>.failure(expectedTestError))
+        await XCTAssertAsyncFailure(
+            try await chat.sendMessageAction(in: messageId, action: action),
+            expectedTestError
+        )
+        let message = try await MainActor.run { try XCTUnwrap(chat.localMessage(for: messageId)) }
+        XCTAssertEqual(nil, message.deletedAt)
+        XCTAssertEqual(initialMessage.text, message.text)
+    }
+    
     func test_sendMessage_whenAPIRequestSucceeds_thenSendMessageSucceeds() async throws {
         try await setUpChat(usesMockedUpdaters: false)
         await XCTAssertEqual(0, chat.state.messages.count)
@@ -677,7 +732,7 @@ final class Chat_Tests: XCTestCase {
         }
     }
     
-    // MARK: - Message State
+    // MARK: - Message Local State
     
     func test_localMessage_whenMessageIsLocallyAvailable_thenMessageIsReturned() async throws {
         let initialPayload = makeChannelPayload(messageCount: 3, createdAtOffset: 0)
@@ -733,63 +788,6 @@ final class Chat_Tests: XCTestCase {
         XCTAssertNotNil(env.client.mockAPIClient.request_endpoint)
         await XCTAssertEqual(messagePayload.id, messageState.message.id)
         await XCTAssertEqual(messagePayload.createdAt, messageState.message.createdAt)
-    }
-    
-    // MARK: - Message Attachment Actions
-    
-    func test_sendMessageAction_whenTappingCancel_thenSendMessageActionSucceedsWithoutAPIRequest() async throws {
-        try await setUpChat(usesMockedUpdaters: false)
-        try await env.client.databaseContainer.write { session in
-            let dto = try session.saveChannel(payload: self.makeChannelPayload(messageCount: 1, createdAtOffset: 0))
-            dto.messages.first?.type = MessageType.ephemeral.rawValue
-        }
-        
-        let messageId = try await MainActor.run { try XCTUnwrap(chat.state.messages.first?.id) }
-        let action = AttachmentAction(name: "name", value: "cancel", style: .default, type: .button, text: "text")
-        
-        try await chat.sendMessageAction(in: messageId, action: action)
-        let message = try await MainActor.run { try XCTUnwrap(chat.localMessage(for: messageId)) }
-        XCTAssertNotNil(message.deletedAt)
-        XCTAssertEqual(nil, env.client.mockAPIClient.request_endpoint, "Cancel should not make any API requests")
-    }
-    
-    func test_sendMessageAction_whenAPIRequestSucceds_thenSendMessageActionSucceeds() async throws {
-        try await setUpChat(usesMockedUpdaters: false)
-        try await env.client.databaseContainer.write { session in
-            let dto = try session.saveChannel(payload: self.makeChannelPayload(messageCount: 1, createdAtOffset: 0))
-            dto.messages.first?.type = MessageType.ephemeral.rawValue
-        }
-        
-        let messageId = try await MainActor.run { try XCTUnwrap(chat.state.messages.first?.id) }
-        let action = AttachmentAction(name: "name", value: "value", style: .default, type: .button, text: "text")
-        
-        let apiResponse = MessagePayload.Boxed(message: .dummy(type: .ephemeral, messageId: messageId, text: "TextChanged"))
-        env.client.mockAPIClient.test_mockResponseResult(.success(apiResponse))
-        try await chat.sendMessageAction(in: messageId, action: action)
-        let message = try await MainActor.run { try XCTUnwrap(chat.localMessage(for: messageId)) }
-        XCTAssertEqual(nil, message.deletedAt)
-        XCTAssertEqual("TextChanged", message.text)
-    }
-    
-    func test_sendMessageAction_whenAPIRequestFails_thenSendMessageActionFails() async throws {
-        try await setUpChat(usesMockedUpdaters: false)
-        try await env.client.databaseContainer.write { session in
-            let dto = try session.saveChannel(payload: self.makeChannelPayload(messageCount: 1, createdAtOffset: 0))
-            dto.messages.first?.type = MessageType.ephemeral.rawValue
-        }
-        
-        let initialMessage = try await MainActor.run { try XCTUnwrap(chat.state.messages.first) }
-        let messageId = initialMessage.id
-        let action = AttachmentAction(name: "name", value: "value", style: .default, type: .button, text: "text")
-        
-        env.client.mockAPIClient.test_mockResponseResult(Result<MessagePayload.Boxed, Error>.failure(expectedTestError))
-        await XCTAssertAsyncFailure(
-            try await chat.sendMessageAction(in: messageId, action: action),
-            expectedTestError
-        )
-        let message = try await MainActor.run { try XCTUnwrap(chat.localMessage(for: messageId)) }
-        XCTAssertEqual(nil, message.deletedAt)
-        XCTAssertEqual(initialMessage.text, message.text)
     }
     
     // MARK: - Message Flagging
