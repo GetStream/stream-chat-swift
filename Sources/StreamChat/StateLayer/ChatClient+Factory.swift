@@ -238,6 +238,22 @@ extension ChatClient {
     }
 }
 
+// MARK: - Factory Methods for Creating Message Reaction Lists
+
+@available(iOS 13.0, *)
+extension ChatClient {
+    /// Creates an instance of ``ReactionList`` which represents an array of message reactions matching to the specified ``ReactionListQuery``.
+    ///
+    /// - Note: Call the paginated load methods for loading the list of message reactions.
+    ///
+    /// - Parameter query: The query which defines a message and filter.
+    ///
+    /// - Returns: An instance of ``ReactionList`` which represents actions and the current state of the list.
+    public func makeReactionList(with query: ReactionListQuery) -> ReactionList {
+        ReactionList(query: query, client: self)
+    }
+}
+
 // MARK: - Factory Methods for Searching Messages
 
 @available(iOS 13.0, *)
