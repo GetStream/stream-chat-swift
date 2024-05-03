@@ -4,10 +4,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 # Upcoming
 
 ## StreamChat
-### 🔄 Changed
-- Replace message update request to partial update on message pinning [#3166](https://github.com/GetStream/stream-chat-swift/pull/3166)
+### ✅ Added
+- Add `reason` parameter to `flagMessage()` [#3173](https://github.com/GetStream/stream-chat-swift/issues/3173)
 ### 🐞 Fixed
 - Reset managed object contexts before removing all the data on logout [#3170](https://github.com/GetStream/stream-chat-swift/pull/3170)
+### 🔄 Changed
+- Replace message update request to partial update on message pinning [#3166](https://github.com/GetStream/stream-chat-swift/pull/3166)
 
 ## StreamChatUI
 ### ✅ Added

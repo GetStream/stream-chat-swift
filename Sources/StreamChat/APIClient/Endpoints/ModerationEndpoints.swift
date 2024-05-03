@@ -71,14 +71,21 @@ extension Endpoint {
 extension Endpoint {
     static func flagMessage(
         _ flag: Bool,
-        with messageId: MessageId
+        with messageId: MessageId,
+        reason: String? = nil
     ) -> Endpoint<FlagMessagePayload> {
-        .init(
+        var body: [String: AnyEncodable] = ["target_message_id": AnyEncodable(messageId)]
+        
+        if let reason = reason {
+            body["reason"] = AnyEncodable(reason)
+        }
+            
+        return .init(
             path: .flagMessage(flag),
             method: .post,
             queryItems: nil,
             requiresConnectionId: false,
-            body: ["target_message_id": messageId]
+            body: body
         )
     }
 }

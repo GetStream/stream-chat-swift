@@ -331,18 +331,26 @@ class MessageUpdater: Worker {
     /// If the message doesn't exist locally it will be fetched and saved locally first first.
     ///
     /// - Parameters:
-    ///   - flag: The indicator saying whether the messageId should be flagged or unflagged.
-    ///   - messageId: The identifier of a messageId that should be flagged or unflagged.
+    ///   - flag: The indicator saying whether the message should be flagged or unflagged.
+    ///   - messageId: The identifier of a message that should be flagged or unflagged.
+    ///   - cid: The identifier of the channel the message belongs to.
+    ///   - reason: The flag reason.
     ///   - completion: Called when the API call is finished. Called with `Error` if the remote update fails.
     ///
-    func flagMessage(_ flag: Bool, with messageId: MessageId, in cid: ChannelId, completion: ((Error?) -> Void)? = nil) {
+    func flagMessage(
+        _ flag: Bool,
+        with messageId: MessageId,
+        in cid: ChannelId,
+        reason: String? = nil,
+        completion: ((Error?) -> Void)? = nil
+    ) {
         fetchAndSaveMessageIfNeeded(messageId, cid: cid) { error in
             guard error == nil else {
                 completion?(error)
                 return
             }
 
-            let endpoint: Endpoint<FlagMessagePayload> = .flagMessage(flag, with: messageId)
+            let endpoint: Endpoint<FlagMessagePayload> = .flagMessage(flag, with: messageId, reason: reason)
             self.apiClient.request(endpoint: endpoint) { result in
                 switch result {
                 case let .success(payload):
