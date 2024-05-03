@@ -30,8 +30,6 @@ public final class MemberList {
     
     /// Fetches the most recent state from the server and updates the local store.
     ///
-    /// - Important: Loaded members in ``MemberListState/members`` are reset.
-    ///
     /// - Throws: An error while communicating with the Stream API.
     public func get() async throws {
         let pagination = Pagination(pageSize: .channelMembersPageSize)
@@ -39,8 +37,6 @@ public final class MemberList {
     }
     
     /// Loads channel members for the specified pagination parameters and updates ``MemberListState/members``.
-    ///
-    /// - Important: If pagination offset is 0 and cursor is nil, then loaded members are reset.
     ///
     /// - Parameter pagination: The pagination configuration which includes a limit and an offset or a cursor.
     ///
