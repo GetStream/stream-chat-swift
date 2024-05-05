@@ -459,6 +459,8 @@ protocol PollDatabaseSession {
     
     func pollVote(id: String, pollId: String) throws -> PollVoteDTO?
     
+    func pollVotes(for userId: String, pollId: String) throws -> [PollVoteDTO]
+    
     func removePollVote(with id: String, pollId: String) throws
     
     func delete(pollVote: PollVoteDTO)
@@ -555,6 +557,26 @@ extension DatabaseSession {
             if payload.eventType == .pollVoteRemoved {
                 if let dto = try? pollVote(id: vote.id, pollId: vote.pollId) {
                     delete(pollVote: dto)
+                }
+            } else if payload.eventType == .pollVoteChanged {
+                var voteUpdated = false
+                let userId = vote.userId ?? "anon"
+                let id = "\(vote.optionId)-\(vote.pollId)-\(userId)"
+                if let dto = try pollVote(id: id, pollId: vote.pollId) {
+                    // TODO: other data.
+                    dto.id = vote.id
+                    voteUpdated = true
+                }
+
+                let votes = try pollVotes(for: userId, pollId: vote.pollId)
+                for existing in votes {
+                    if vote.id != existing.id {
+                        delete(pollVote: existing)
+                    }
+                }
+                
+                if !voteUpdated {
+                    try savePollVote(payload: vote, query: nil, cache: nil)
                 }
             } else {
                 var voteUpdated = false

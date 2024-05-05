@@ -167,6 +167,12 @@ extension NSManagedObjectContext {
         return dto
     }
     
+    func pollVotes(for userId: String, pollId: String) throws -> [PollVoteDTO] {
+        let request = NSFetchRequest<PollVoteDTO>(entityName: PollVoteDTO.entityName)
+        request.predicate = NSPredicate(format: "user.id == %@ && pollId == %@", userId, pollId)
+        return PollVoteDTO.load(by: request, context: self)
+    }
+    
     func pollVote(id: String, pollId: String) throws -> PollVoteDTO? {
         PollVoteDTO.load(voteId: id, pollId: pollId, context: self)
     }
