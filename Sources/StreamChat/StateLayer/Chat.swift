@@ -575,11 +575,21 @@ public class Chat {
     ///
     /// - Note: Any user is allowed to flag a message.
     ///
-    /// - Parameter messageId: The id of the message to be flagged.
+    /// - Parameters:
+    /// - messageId: The id of the message to be flagged.
+    /// - reason: A reason why the user was flagged.
     ///
     /// - Throws: An error while communicating with the Stream API.
-    public func flagMessage(_ messageId: MessageId) async throws {
-        try await messageUpdater.flagMessage(true, with: messageId, in: cid)
+    public func flagMessage(
+        _ messageId: MessageId,
+        reason: String? = nil
+    ) async throws {
+        try await messageUpdater.flagMessage(
+            true,
+            with: messageId,
+            in: cid,
+            reason: reason
+        )
     }
     
     /// Removes the flag from the specified message.
