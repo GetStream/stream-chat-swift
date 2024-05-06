@@ -215,11 +215,7 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
             client.databaseContainer,
             client.apiClient
         )
-        // TODO: environment.
-        pollsRepository = PollsRepository(
-            database: client.databaseContainer,
-            apiClient: client.apiClient
-        )
+        pollsRepository = client.pollsRepository
         
         super.init()
 
@@ -732,6 +728,19 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
         )
     }
     
+    /// Creates a new poll.
+    ///
+    /// - Parameters:
+    ///   - name: The name of the poll.
+    ///   - allowAnswers: Whether to allow users to provide their own answers.
+    ///   - allowUserSuggestedOptions: Whether to allow users to suggest options.
+    ///   - description: Optional description for the poll.
+    ///   - enforceUniqueVote: Whether to enforce unique votes per user.
+    ///   - maxVotesAllowed: The maximum number of votes allowed per user.
+    ///   - votingVisibility: The visibility setting for the poll.
+    ///   - options: Optional array of predefined poll options.
+    ///   - custom: Optional dictionary for any custom data associated with the poll.
+    ///   - completion: A closure to be executed once the poll is created, returning either a `MessageId` on success or an `Error` on failure.
     public func createPoll(
         name: String,
         allowAnswers: Bool? = nil,

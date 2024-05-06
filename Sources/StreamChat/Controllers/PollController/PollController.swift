@@ -52,12 +52,11 @@ public class PollController: DataController, DelegateCallable, DataStoreProvider
     private(set) lazy var ownVotesObserver: ListDatabaseObserverWrapper<PollVote, PollVoteDTO> = {
         let request = PollVoteDTO.pollVoteListFetchRequest(query: self.ownVotesQuery)
 
-        // TODO: environment
-        let observer = ListDatabaseObserverWrapper(
-            isBackground: StreamRuntimeCheck._isBackgroundMappingEnabled,
-            database: self.client.databaseContainer,
-            fetchRequest: request,
-            itemCreator: { try $0.asModel() }
+        let observer = environment.ownVotesObserverBuilder(
+            StreamRuntimeCheck._isBackgroundMappingEnabled,
+            self.client.databaseContainer,
+            request,
+            { try $0.asModel() }
         )
         
         observer.onDidChange = { [weak self] changes in
@@ -86,13 +85,14 @@ public class PollController: DataController, DelegateCallable, DataStoreProvider
         _basePublishers = BasePublishers(controller: self)
         return _basePublishers as? BasePublishers ?? .init(controller: self)
     }
+    
+    private let environment: Environment
         
-    // TODO: environment
-    // TODO: reuse poll repository
-    init(client: ChatClient, messageId: MessageId, pollId: String) {
+    init(client: ChatClient, messageId: MessageId, pollId: String, environment: Environment = .init()) {
         self.client = client
         self.messageId = messageId
         self.pollId = pollId
+        self.environment = environment
         ownVotesQuery = PollVoteListQuery(
             pollId: pollId,
             optionId: nil,
@@ -101,19 +101,15 @@ public class PollController: DataController, DelegateCallable, DataStoreProvider
                 [.equal(.userId, to: client.currentUserId ?? ""), .equal(.pollId, to: pollId)]
             )
         )
-        pollsRepository = PollsRepository(
-            database: client.databaseContainer,
-            apiClient: client.apiClient
-        )
+        pollsRepository = client.pollsRepository
         
         super.init()
         
         setupPollObserver()
-        try? ownVotesObserver.startObserving()
     }
     
     override public func synchronize(_ completion: ((_ error: Error?) -> Void)? = nil) {
-//        startPollVotesListObserverIfNeeded()
+        startObserversIfNeeded()
 
         pollsRepository.queryPollVotes(query: ownVotesQuery) { result in
             if let error = result.error {
@@ -172,6 +168,18 @@ public class PollController: DataController, DelegateCallable, DataStoreProvider
         )
     }
     
+    private func startObserversIfNeeded() {
+        guard state == .initialized else { return }
+        do {
+            try pollObserver?.startObserving()
+            try ownVotesObserver.startObserving()
+            state = .localDataFetched
+        } catch {
+            state = .localDataFetchFailed(ClientError(with: error))
+            log.error("Failed to perform fetch request with error: \(error). This is an internal error.")
+        }
+    }
+    
     private func setupPollObserver() {
         pollObserver = { [weak self] in
             guard let self = self else {
@@ -179,13 +187,14 @@ public class PollController: DataController, DelegateCallable, DataStoreProvider
                 return nil
             }
             
-            let observer = EntityDatabaseObserverWrapper(
-                isBackground: StreamRuntimeCheck._isBackgroundMappingEnabled,
-                database: self.client.databaseContainer,
-                fetchRequest: PollDTO.fetchRequest(for: pollId),
-                itemCreator: { try $0.asModel() as Poll },
-                fetchedResultsControllerType: NSFetchedResultsController<PollDTO>.self
-            ).onChange { [weak self] change in
+            let observer = environment.pollObserverBuilder(
+                StreamRuntimeCheck._isBackgroundMappingEnabled,
+                self.client.databaseContainer,
+                PollDTO.fetchRequest(for: pollId),
+                { try $0.asModel() as Poll },
+                NSFetchedResultsController<PollDTO>.self
+            )
+            .onChange { [weak self] change in
                 self?.delegateCallback { [weak self] delegate in
                     guard let self = self else {
                         log.warning("Callback called while self is nil")
@@ -197,11 +206,44 @@ public class PollController: DataController, DelegateCallable, DataStoreProvider
 
             return observer
         }()
-        try? pollObserver?.startObserving()
     }
 }
 
 public enum VotingVisibility: String {
     case `public`
     case anonymous
+}
+
+extension PollController {
+    struct Environment {
+        var pollObserverBuilder: (
+            _ isBackgroundMappingEnabled: Bool,
+            _ database: DatabaseContainer,
+            _ fetchRequest: NSFetchRequest<PollDTO>,
+            _ itemCreator: @escaping (PollDTO) throws -> Poll,
+            _ fetchedResultsControllerType: NSFetchedResultsController<PollDTO>.Type
+        ) -> EntityDatabaseObserverWrapper<Poll, PollDTO> = {
+            EntityDatabaseObserverWrapper(
+                isBackground: $0,
+                database: $1,
+                fetchRequest: $2,
+                itemCreator: $3,
+                fetchedResultsControllerType: $4
+            )
+        }
+        
+        var ownVotesObserverBuilder: (
+            _ isBackgroundMappingEnabled: Bool,
+            _ database: DatabaseContainer,
+            _ fetchRequest: NSFetchRequest<PollVoteDTO>,
+            _ itemCreator: @escaping (PollVoteDTO) throws -> PollVote
+        ) -> ListDatabaseObserverWrapper<PollVote, PollVoteDTO> = {
+            ListDatabaseObserverWrapper(
+                isBackground: $0,
+                database: $1,
+                fetchRequest: $2,
+                itemCreator: $3
+            )
+        }
+    }
 }
