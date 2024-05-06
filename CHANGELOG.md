@@ -3,6 +3,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 # Upcoming
 
+### 🔄 Changed
+
+# [4.54.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.54.0)
+_May 06, 2024_
+
 ## StreamChat
 ### ✅ Added
 - Add `reason` parameter to `flagMessage()` [#3173](https://github.com/GetStream/stream-chat-swift/issues/3173)
