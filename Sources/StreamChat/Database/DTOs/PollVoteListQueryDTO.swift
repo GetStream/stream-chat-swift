@@ -40,6 +40,14 @@ class PollVoteListQueryDTO: NSManagedObject {
 }
 
 extension NSManagedObjectContext {
+    func linkVote(with id: String, in pollId: String, to filterHash: String?) throws {
+        guard let filterHash else { throw ClientError.Unexpected() }
+        let queryDto = pollVoteListQuery(filterHash: filterHash)
+        if let vote = try pollVote(id: id, pollId: pollId) {
+            queryDto?.votes.insert(vote)
+        }
+    }
+    
     func pollVoteListQuery(filterHash: String) -> PollVoteListQueryDTO? {
         PollVoteListQueryDTO.load(filterHash: filterHash, context: self)
     }

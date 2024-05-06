@@ -463,6 +463,8 @@ protocol PollDatabaseSession {
     
     func removePollVote(with id: String, pollId: String) throws
     
+    func linkVote(with id: String, in pollId: String, to filterHash: String?) throws
+    
     func delete(pollVote: PollVoteDTO)
 }
 
@@ -583,13 +585,22 @@ extension DatabaseSession {
             } else {
                 var voteUpdated = false
                 if payload.eventType == .pollVoteCasted {
-                    let userId = vote.userId ?? "anon"
-                    if let optionId = vote.optionId, !optionId.isEmpty {
-                        let id = "\(optionId)-\(vote.pollId)-\(userId)"
-                        if let dto = try pollVote(id: id, pollId: vote.pollId) {
-                            // TODO: other data.
-                            dto.id = vote.id
-                            voteUpdated = true
+                    if vote.isAnswer == true, let userId = vote.userId {
+                        let votes = try pollVotes(for: userId, pollId: vote.pollId)
+                        for existing in votes {
+                            if (existing.optionId == nil || existing.optionId?.isEmpty == true) {
+                                delete(pollVote: existing)
+                            }
+                        }
+                    } else {
+                        let userId = vote.userId ?? "anon"
+                        if let optionId = vote.optionId, !optionId.isEmpty {
+                            let id = "\(optionId)-\(vote.pollId)-\(userId)"
+                            if let dto = try pollVote(id: id, pollId: vote.pollId) {
+                                // TODO: other data.
+                                dto.id = vote.id
+                                voteUpdated = true
+                            }
                         }
                     }
                 }

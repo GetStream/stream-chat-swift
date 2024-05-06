@@ -4,6 +4,11 @@
 
 import Foundation
 
+protocol PollVoteEventDTO: EventDTO {
+    var poll: PollPayload? { get }
+    var vote: PollVotePayload? { get }
+}
+
 struct PollClosedEventDTO: EventDTO {
     var poll: PollPayload?
     var payload: EventPayload
@@ -44,6 +49,11 @@ struct PollUpdatedEventDTO: EventDTO {
     }
 }
 
+public struct PollVoteCastedEvent: Event {
+    public let vote: PollVote
+    public let poll: Poll
+}
+
 struct PollVoteCastedEventDTO: EventDTO {
     var vote: PollVotePayload?
     var poll: PollPayload?
@@ -53,6 +63,20 @@ struct PollVoteCastedEventDTO: EventDTO {
         payload = response
         vote = response.vote
         poll = response.poll
+    }
+    
+    func toDomainEvent(session: DatabaseSession) -> Event? {
+        guard let vote,
+              let voteDto = try? session.pollVote(id: vote.id, pollId: vote.pollId),
+              let voteModel = try? voteDto.asModel(),
+              let pollDto = try? session.poll(id: vote.pollId),
+              let pollModel = try? pollDto.asModel() else {
+            return nil
+        }
+        return PollVoteCastedEvent(
+            vote: voteModel,
+            poll: pollModel
+        )
     }
 }
 

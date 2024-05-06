@@ -17,6 +17,7 @@ class PollVoteDTO: NSManagedObject {
     @NSManaged var option: PollOptionDTO?
     @NSManaged var poll: PollDTO?
     @NSManaged var user: UserDTO?
+    @NSManaged var queries: [PollVoteListQueryDTO]?
     
     static func loadOrCreate(
         voteId: String,

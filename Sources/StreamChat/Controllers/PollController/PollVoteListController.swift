@@ -101,7 +101,9 @@ public class PollVoteListController: DataController, DelegateCallable, DataStore
         _basePublishers = BasePublishers(controller: self)
         return _basePublishers as? BasePublishers ?? .init(controller: self)
     }
-
+    
+    private let eventsController: EventsController
+    private let pollsRepository: PollsRepository
     private let environment: Environment
 
     /// Creates a new `UserListController`.
@@ -113,6 +115,10 @@ public class PollVoteListController: DataController, DelegateCallable, DataStore
         self.client = client
         self.query = query
         self.environment = environment
+        eventsController = client.eventsController()
+        pollsRepository = client.pollsRepository
+        super.init()
+        eventsController.delegate = self
     }
 
     override public func synchronize(_ completion: ((_ error: Error?) -> Void)? = nil) {
@@ -179,5 +185,16 @@ extension PollVoteListController {
             -> ListDatabaseObserverWrapper<PollVote, PollVoteDTO> = {
                 ListDatabaseObserverWrapper(isBackground: $0, database: $1, fetchRequest: $2, itemCreator: $3)
             }
+    }
+}
+
+extension PollVoteListController: EventsControllerDelegate {
+    public func eventsController(_ controller: EventsController, didReceiveEvent event: any Event) {
+        if let event = event as? PollVoteCastedEvent {
+            let vote = event.vote
+            if vote.isAnswer == true && query.pollId == vote.pollId && query.optionId == nil {
+                pollsRepository.link(pollVote: vote, to: query)
+            }
+        }
     }
 }
