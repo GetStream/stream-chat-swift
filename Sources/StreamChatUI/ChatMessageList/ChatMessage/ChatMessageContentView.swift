@@ -748,7 +748,7 @@ open class ChatMessageContentView: _View, ThemeProvider, UITextViewDelegate {
 
     /// Cleans up the view so it is ready to display another message.
     /// We don't need to reset `content` because all subviews are always updated.
-    func prepareForReuse() {
+    open func prepareForReuse() {
         defer { attachmentViewInjector?.contentViewDidPrepareForReuse() }
 
         delegate = nil

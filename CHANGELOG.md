@@ -5,6 +5,22 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### 🔄 Changed
 
+# [4.54.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.54.0)
+_May 06, 2024_
+
+## StreamChat
+### ✅ Added
+- Add `reason` parameter to `flagMessage()` [#3173](https://github.com/GetStream/stream-chat-swift/issues/3173)
+### 🐞 Fixed
+- Reset managed object contexts before removing all the data on logout [#3170](https://github.com/GetStream/stream-chat-swift/pull/3170)
+- Rare crash when `@Cached` property triggered fetching a new value with `computeValue` closure [#3174](https://github.com/GetStream/stream-chat-swift/pull/3174)
+### 🔄 Changed
+- Replace message update request to partial update on message pinning [#3166](https://github.com/GetStream/stream-chat-swift/pull/3166)
+
+## StreamChatUI
+### ✅ Added
+- Make `ChatMessageContentView.prepareForReuse()` open [#3176](https://github.com/GetStream/stream-chat-swift/pull/3176)
+
 # [4.53.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.53.0)
 _April 30, 2024_
 

@@ -1011,7 +1011,8 @@ final class MessageController_Tests: XCTestCase {
 
     func test_flag_callsUpdater_withCorrectValues() {
         // Simulate `flag` call.
-        controller.flag()
+        let reason = "Test"
+        controller.flag(reason: reason)
 
         // Assert updater is called with correct `flag`.
         XCTAssertEqual(env.messageUpdater.flagMessage_flag, true)
@@ -1019,6 +1020,8 @@ final class MessageController_Tests: XCTestCase {
         XCTAssertEqual(env.messageUpdater.flagMessage_messageId, controller.messageId)
         // Assert updater is called with correct `cid`.
         XCTAssertEqual(env.messageUpdater.flagMessage_cid, controller.cid)
+        // Assert updater is called with correct `reason`.
+        XCTAssertEqual(env.messageUpdater.flagMessage_reason, reason)
     }
 
     func test_flag_keepsControllerAlive() {
@@ -1090,6 +1093,8 @@ final class MessageController_Tests: XCTestCase {
         XCTAssertEqual(env.messageUpdater.flagMessage_messageId, controller.messageId)
         // Assert updater is called with correct `cid`.
         XCTAssertEqual(env.messageUpdater.flagMessage_cid, controller.cid)
+        // Assert updater is called with correct `reason`.
+        XCTAssertEqual(env.messageUpdater.flagMessage_reason, nil)
     }
 
     // MARK: - Create new reply

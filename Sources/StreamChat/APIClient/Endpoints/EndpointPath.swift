@@ -37,6 +37,8 @@ enum EndpointPath: Codable {
     case message(MessageId)
     case editMessage(MessageId)
     case deleteMessage(MessageId)
+    case pinMessage(MessageId)
+    case unpinMessage(MessageId)
     case replies(MessageId)
     case reactions(MessageId)
     case addReaction(MessageId)
@@ -100,6 +102,8 @@ enum EndpointPath: Codable {
         case let .message(messageId): return "messages/\(messageId)"
         case let .editMessage(messageId): return "messages/\(messageId)"
         case let .deleteMessage(messageId): return "messages/\(messageId)"
+        case let .pinMessage(messageId): return "messages/\(messageId)"
+        case let .unpinMessage(messageId): return "messages/\(messageId)"
         case let .replies(messageId): return "messages/\(messageId)/replies"
         case let .reactions(messageId): return "messages/\(messageId)/reactions"
         case let .addReaction(messageId): return "messages/\(messageId)/reaction"
