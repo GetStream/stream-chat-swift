@@ -21,6 +21,10 @@ public class PollController: DataController, DelegateCallable, DataStoreProvider
     /// The identifier of the poll this controllers represents.
     public let pollId: String
     
+    public var poll: Poll? {
+        pollObserver?.item
+    }
+    
     public var ownVotes: LazyCachedMapCollection<PollVote> {
         ownVotesObserver.items
     }
@@ -69,6 +73,19 @@ public class PollController: DataController, DelegateCallable, DataStoreProvider
 
         return observer
     }()
+    
+    var _basePublishers: Any?
+    /// An internal backing object for all publicly available Combine publishers. We use it to simplify the way we expose
+    /// publishers. Instead of creating custom `Publisher` types, we use `CurrentValueSubject` and `PassthroughSubject` internally,
+    /// and expose the published values by mapping them to a read-only `AnyPublisher` type.
+    @available(iOS 13, *)
+    var basePublishers: BasePublishers {
+        if let value = _basePublishers as? BasePublishers {
+            return value
+        }
+        _basePublishers = BasePublishers(controller: self)
+        return _basePublishers as? BasePublishers ?? .init(controller: self)
+    }
         
     // TODO: environment
     // TODO: reuse poll repository

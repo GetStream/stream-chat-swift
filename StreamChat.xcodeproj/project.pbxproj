@@ -685,6 +685,10 @@
 		84AD17DF28F857A5008C69BF /* StreamChatWrapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = A3227E64284A4A5C00EBE6CC /* StreamChatWrapper.swift */; };
 		84AD17E028F8582C008C69BF /* DemoUsers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7933064825712C8B00FBB586 /* DemoUsers.swift */; };
 		84AD17E128F85870008C69BF /* ChatUser+CustomFields.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43016E1526B734410054E805 /* ChatUser+CustomFields.swift */; };
+		84B7383A2BE8BF8E00EC66EC /* PollController+Combine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84B738392BE8BF8E00EC66EC /* PollController+Combine.swift */; };
+		84B7383B2BE8BF8E00EC66EC /* PollController+Combine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84B738392BE8BF8E00EC66EC /* PollController+Combine.swift */; };
+		84B7383D2BE8C13A00EC66EC /* PollController+SwiftUI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84B7383C2BE8C13A00EC66EC /* PollController+SwiftUI.swift */; };
+		84B7383E2BE8C13A00EC66EC /* PollController+SwiftUI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84B7383C2BE8C13A00EC66EC /* PollController+SwiftUI.swift */; };
 		84B8779E2AC30F0E009EF76A /* DemoShareViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84B8779D2AC30F0E009EF76A /* DemoShareViewModel.swift */; };
 		84B877A02AC31AB8009EF76A /* StreamChat+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84B8779F2AC31AB8009EF76A /* StreamChat+Extensions.swift */; };
 		84BE85DA2AC30E88007DD47C /* DemoShareView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84BE85D92AC30E88007DD47C /* DemoShareView.swift */; };
@@ -3438,6 +3442,8 @@
 		84ABB014269F0A84003A4585 /* EventsController+Combine.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "EventsController+Combine.swift"; sourceTree = "<group>"; };
 		84ABF699274E570600EDDA68 /* EventBatcher_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventBatcher_Tests.swift; sourceTree = "<group>"; };
 		84ABF69B274E66AA00EDDA68 /* EventBatcher_Mock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventBatcher_Mock.swift; sourceTree = "<group>"; };
+		84B738392BE8BF8E00EC66EC /* PollController+Combine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PollController+Combine.swift"; sourceTree = "<group>"; };
+		84B7383C2BE8C13A00EC66EC /* PollController+SwiftUI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PollController+SwiftUI.swift"; sourceTree = "<group>"; };
 		84B8779D2AC30F0E009EF76A /* DemoShareViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DemoShareViewModel.swift; sourceTree = "<group>"; };
 		84B8779F2AC31AB8009EF76A /* StreamChat+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "StreamChat+Extensions.swift"; sourceTree = "<group>"; };
 		84BE85D92AC30E88007DD47C /* DemoShareView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DemoShareView.swift; sourceTree = "<group>"; };
@@ -5828,6 +5834,8 @@
 			isa = PBXGroup;
 			children = (
 				845CFD6F2BD7B8310058F691 /* PollController.swift */,
+				84B738392BE8BF8E00EC66EC /* PollController+Combine.swift */,
+				84B7383C2BE8C13A00EC66EC /* PollController+SwiftUI.swift */,
 				845CFD732BD7FA010058F691 /* PollControllerDelegate.swift */,
 				8413D2EE2BDD9429005ADA4E /* PollVoteListController.swift */,
 				8413D2F12BDDAAEE005ADA4E /* PollVoteListController+Combine.swift */,
@@ -10829,6 +10837,7 @@
 				84CF9C73274D473D00BCDE2D /* EventBatcher.swift in Sources */,
 				40789D1B29F6AC500018C2BB /* AudioPlaybackState.swift in Sources */,
 				C1E8AD57278C8A6E0041B775 /* SyncRepository.swift in Sources */,
+				84B7383D2BE8C13A00EC66EC /* PollController+SwiftUI.swift in Sources */,
 				F63CC36F24E591840052844D /* EventObserver.swift in Sources */,
 				DA84070925250528005A0F62 /* UserEndpoints.swift in Sources */,
 				AD70DC392ADEC3C400CFC3B7 /* MessageModerationDetailsDTO.swift in Sources */,
@@ -10920,6 +10929,7 @@
 				88DA57E02631E80D00FA8C53 /* MutedChannelPayload.swift in Sources */,
 				AD0CC0122BDBC1BF005E2C66 /* ReactionListQuery.swift in Sources */,
 				AD78568F298B273900C2FEAD /* ChatClient+ChannelController.swift in Sources */,
+				84B7383A2BE8BF8E00EC66EC /* PollController+Combine.swift in Sources */,
 				792A4F492480107A00EAF71D /* Sorting.swift in Sources */,
 				7937282A2498FFD300E13FE5 /* MemberPayload.swift in Sources */,
 				845CFD702BD7B8310058F691 /* PollController.swift in Sources */,
@@ -11860,6 +11870,7 @@
 				C121E897274544B000023E4C /* User+SwiftUI.swift in Sources */,
 				C121E898274544B000023E4C /* MessageReaction.swift in Sources */,
 				C121E899274544B000023E4C /* MessageReactionType.swift in Sources */,
+				84B7383E2BE8C13A00EC66EC /* PollController+SwiftUI.swift in Sources */,
 				C121E89A274544B000023E4C /* MuteDetails.swift in Sources */,
 				C121E89B274544B000023E4C /* Controller.swift in Sources */,
 				404296DE2A0114900089126D /* StreamAudioQueuePlayer_Tests.swift in Sources */,
@@ -11958,6 +11969,7 @@
 				C121E8DA274544B100023E4C /* PrefixLogFormatter.swift in Sources */,
 				C1B0B38727BFE8AB00C8207D /* MessageRepository.swift in Sources */,
 				AD8258A42BD2939500B9ED74 /* MessageReactionGroup.swift in Sources */,
+				84B7383B2BE8BF8E00EC66EC /* PollController+Combine.swift in Sources */,
 				CFE616BA28348A6100AE2ABF /* CountdownTracker.swift in Sources */,
 				C121E8DB274544B100023E4C /* ConsoleLogDestination.swift in Sources */,
 				C121E8DC274544B100023E4C /* BaseLogDestination.swift in Sources */,
