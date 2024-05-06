@@ -2,9 +2,11 @@
 title: State Layer
 ---
 
-## Introduction
+:::note
+Since `StreamChat` version 4.55.0.
+:::
 
-The `StreamChat` framework represents the Stream API with [controllers](../controllers/controllers-overview.md) which use completion handlers and delegates for communicating about state changes. In addition to controllers, we provide an additional way of interacting with the Stream API. It follows an architecture where we have objects interacting with the Stream API through async functions. These objects are accompanied with state objects that hold the current state. This architecture follows similar patterns as our [Video SDK for iOS](https://getstream.io/video/sdk/ios/).
+The `StreamChat` framework represents the Stream API with [controllers](../controllers/controllers-overview.md) which use completion handlers and delegates for communicating about state changes. In addition to controllers, we provide a new and modern way of interacting with the Stream API. It follows an architecture where we have objects interacting with the Stream API through async functions. These objects are accompanied with state objects that hold the current state. This architecture follows similar patterns as our [Video SDK for iOS](https://getstream.io/video/sdk/ios/).
 
 While controllers use delegates, the state layer provides a way of observing data changes through `@Published` properties. Observable properties are part of state objects which conform to the `ObservableObject` protocol.
 
