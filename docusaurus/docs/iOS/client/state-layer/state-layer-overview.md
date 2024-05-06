@@ -81,13 +81,17 @@ let cancellable = channelList.state
 
 `Chat` and its `ChatState` represent the state of a channel. In addition, `Chat` has a method for retrieving an observable `MessageState` type which represents a single message and its observable state like reactions and replies.
 
+:::note
+Use `Chat` for loading all the reactions per message and `ReactionList` if you need to load reactions using a filter.
+:::
+
 ```swift
 let channelId = ChannelId(type: .messaging, id: "general")
 let chat = chatClient.makeChat(for: channelId)
 // local state of the channel (state from previous sessions)
 var messages = chat.state.messages
 var members = chat.state.members
-// fetch the latest state from the Stream API and subscribe to server-side events
+// fetch the latest state from the Stream API and subscribe to data changes
 try await chat.get(watch: true)
 // access all the fetched messages and members
 messages = chat.state.messages
@@ -98,20 +102,18 @@ try await chat.loadOlderMessages()
 messages = chat.state.messages
 ```
 
-:::tip Call get with watch true once per app lifetime
-
-The get method fetches the latest state from the Stream API and if we set watch to true, server-side events will keep your local state up to state.
-
-:::
-
 If we would like to observe a single message's state we can use the `MessageState` observable object.
 
 ```swift
 let messageState = try await chat.messageState(for: messageId)
-try await chat.loadMoreReactions(for: messageId)
-// access all the fetched reactions
-let reactions = messageState.reactions 
+try await chat.loadMoreReplies(for: messageId)
+// access all the fetched replies
+let replies = messageState.replies 
 ```
+
+:::tip Call get with watch true once per app lifetime
+The get method fetches the latest state from the Stream API and if we set watch to true, server-side events will keep your local state up to state.
+:::
 
 ### ConnectedUser
 
