@@ -56,7 +56,7 @@ class PollsRepository {
         query: PollVoteListQuery?,
         completion: ((Error?) -> Void)? = nil
     ) {
-        guard let optionId else {
+        guard let optionId, !optionId.isEmpty else {
             // No optimistic updates for answers.
             let request = CastPollVoteRequestBody(
                 pollId: pollId,

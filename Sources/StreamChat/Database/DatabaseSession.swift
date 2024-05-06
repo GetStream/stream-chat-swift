@@ -561,20 +561,22 @@ extension DatabaseSession {
             } else if payload.eventType == .pollVoteChanged {
                 var voteUpdated = false
                 let userId = vote.userId ?? "anon"
-                let id = "\(vote.optionId)-\(vote.pollId)-\(userId)"
-                if let dto = try pollVote(id: id, pollId: vote.pollId) {
-                    // TODO: other data.
-                    dto.id = vote.id
-                    voteUpdated = true
-                }
+                if let optionId = vote.optionId, !optionId.isEmpty {
+                    let id = "\(optionId)-\(vote.pollId)-\(userId)"
+                    if let dto = try pollVote(id: id, pollId: vote.pollId) {
+                        // TODO: other data.
+                        dto.id = vote.id
+                        voteUpdated = true
+                    }
 
-                let votes = try pollVotes(for: userId, pollId: vote.pollId)
-                for existing in votes {
-                    if vote.id != existing.id {
-                        delete(pollVote: existing)
+                    let votes = try pollVotes(for: userId, pollId: vote.pollId)
+                    for existing in votes {
+                        if vote.id != existing.id {
+                            delete(pollVote: existing)
+                        }
                     }
                 }
-                
+
                 if !voteUpdated {
                     try savePollVote(payload: vote, query: nil, cache: nil)
                 }
@@ -582,13 +584,16 @@ extension DatabaseSession {
                 var voteUpdated = false
                 if payload.eventType == .pollVoteCasted {
                     let userId = vote.userId ?? "anon"
-                    let id = "\(vote.optionId)-\(vote.pollId)-\(userId)"
-                    if let dto = try pollVote(id: id, pollId: vote.pollId) {
-                        // TODO: other data.
-                        dto.id = vote.id
-                        voteUpdated = true
+                    if let optionId = vote.optionId, !optionId.isEmpty {
+                        let id = "\(optionId)-\(vote.pollId)-\(userId)"
+                        if let dto = try pollVote(id: id, pollId: vote.pollId) {
+                            // TODO: other data.
+                            dto.id = vote.id
+                            voteUpdated = true
+                        }
                     }
                 }
+                
                 if !voteUpdated {
                     try savePollVote(payload: vote, query: nil, cache: nil)
                 }

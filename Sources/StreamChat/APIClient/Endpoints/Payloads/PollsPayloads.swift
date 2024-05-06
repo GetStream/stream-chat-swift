@@ -117,7 +117,7 @@ struct PollVoteListResponse: Decodable {
 struct PollVotePayload: Decodable {
     let createdAt: Date
     let id: String
-    let optionId: String
+    let optionId: String?
     let pollId: String
     let updatedAt: Date
     var answerText: String?
@@ -128,7 +128,7 @@ struct PollVotePayload: Decodable {
     init(
         createdAt: Date,
         id: String,
-        optionId: String,
+        optionId: String?,
         pollId: String,
         updatedAt: Date,
         answerText: String? = nil,

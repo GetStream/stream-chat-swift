@@ -11,7 +11,7 @@ class PollVoteDTO: NSManagedObject {
     @NSManaged var createdAt: DBDate
     @NSManaged var updatedAt: DBDate
     @NSManaged var pollId: String
-    @NSManaged var optionId: String
+    @NSManaged var optionId: String?
     @NSManaged var isAnswer: Bool
     @NSManaged var answerText: String?
     @NSManaged var option: PollOptionDTO?
@@ -21,7 +21,7 @@ class PollVoteDTO: NSManagedObject {
     static func loadOrCreate(
         voteId: String,
         poll: PollDTO,
-        option: PollOptionDTO,
+        option: PollOptionDTO?,
         user: UserDTO?,
         context: NSManagedObjectContext,
         cache: PreWarmedCache?
@@ -90,9 +90,13 @@ extension NSManagedObjectContext {
         query: PollVoteListQuery?,
         cache: PreWarmedCache?
     ) throws -> PollVoteDTO {
-        guard let poll = try poll(id: payload.pollId),
-              let option = try option(id: payload.optionId, pollId: payload.pollId) else {
+        guard let poll = try poll(id: payload.pollId) else {
             throw ClientError.Unexpected()
+        }
+        
+        var option: PollOptionDTO?
+        if let optionId = payload.optionId, !optionId.isEmpty {
+            option = try? self.option(id: optionId, pollId: payload.pollId)
         }
         
         var user: UserDTO?
@@ -112,7 +116,7 @@ extension NSManagedObjectContext {
         dto.pollId = payload.pollId
         dto.isAnswer = payload.isAnswer ?? false
         dto.answerText = payload.answerText
-        dto.optionId = payload.optionId
+        dto.optionId = option?.id
         
         if let query = query {
             let queryDTO = try saveQuery(query: query)
@@ -184,9 +188,11 @@ extension NSManagedObjectContext {
         }
         
         let poll = try? poll(id: pollId)
-        let votes = (poll?.voteCountsByOption?[dto.optionId] ?? 0) - 1
-        if votes > 0 {
-            poll?.voteCountsByOption?[dto.optionId] = votes
+        if let optionId = dto.optionId {
+            let votes = (poll?.voteCountsByOption?[optionId] ?? 0) - 1
+            if votes > 0 {
+                poll?.voteCountsByOption?[optionId] = votes
+            }
         }
 
         delete(pollVote: dto)
