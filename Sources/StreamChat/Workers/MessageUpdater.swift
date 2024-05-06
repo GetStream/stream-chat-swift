@@ -897,9 +897,9 @@ extension MessageUpdater {
         }
     }
     
-    func flagMessage(_ flag: Bool, with messageId: MessageId, in cid: ChannelId) async throws {
+    func flagMessage(_ flag: Bool, with messageId: MessageId, in cid: ChannelId, reason: String?) async throws {
         try await withCheckedThrowingContinuation { continuation in
-            flagMessage(flag, with: messageId, in: cid) { error in
+            flagMessage(flag, with: messageId, in: cid, reason: reason) { error in
                 continuation.resume(with: error)
             }
         }
