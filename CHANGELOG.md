@@ -8,6 +8,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Fix triggering user query calls whenever a new user was added in `UserListController` #[3184](https://github.com/GetStream/stream-chat-swift/pull/3184)
 ### 🔄 Changed
 - Do not retry rate-limited requests [#3182](https://github.com/GetStream/stream-chat-swift/pull/3182)
+- `UserListController` won't update automatically when a new user is added #[3184](https://github.com/GetStream/stream-chat-swift/pull/3184)
 
 # [4.54.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.54.0)
 _May 06, 2024_
