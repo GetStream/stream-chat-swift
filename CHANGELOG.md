@@ -1,13 +1,11 @@
 # StreamChat iOS SDK CHANGELOG
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+# Upcoming
+
 ## StreamChat
 ### ✅ Added
 - Add a new state layer with async-await and observable state objects ([learn more](https://getstream.io/chat/docs/sdk/ios/state-layer/state-layer-overview/)) [#3177](https://github.com/GetStream/stream-chat-swift/pull/3177)
-
-# Upcoming
-
-### 🔄 Changed
 
 # [4.54.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.54.0)
 _May 06, 2024_
