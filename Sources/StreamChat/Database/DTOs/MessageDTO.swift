@@ -18,10 +18,10 @@ extension ReactionString {
 }
 
 @objc(MessageDTO)
-class MessageDTO: NSManagedObject {
+package class MessageDTO: NSManagedObject {
     @NSManaged fileprivate var localMessageStateRaw: String?
 
-    @NSManaged var id: String
+    @NSManaged package var id: String
     @NSManaged var cid: String?
     @NSManaged var text: String
     @NSManaged var type: String
@@ -103,7 +103,7 @@ class MessageDTO: NSManagedObject {
     // it in the `willSave` phase, which happens after the validation.
     @NSManaged var defaultSortingKey: DBDate!
 
-    override func willSave() {
+    package override func willSave() {
         super.willSave()
 
         guard !isDeleted else {
@@ -344,7 +344,7 @@ class MessageDTO: NSManagedObject {
     }
 
     /// Returns a fetch request for messages from the channel with the provided `cid`.
-    static func messagesFetchRequest(
+    package static func messagesFetchRequest(
         for cid: ChannelId,
         pageSize: Int,
         sortAscending: Bool = false,
@@ -364,7 +364,7 @@ class MessageDTO: NSManagedObject {
     }
 
     /// Returns a fetch request for replies for the specified `parentMessageId`.
-    static func repliesFetchRequest(
+    package static func repliesFetchRequest(
         for messageId: MessageId,
         pageSize: Int,
         sortAscending: Bool = false,
@@ -383,7 +383,7 @@ class MessageDTO: NSManagedObject {
         return request
     }
 
-    static func messagesFetchRequest(for query: MessageSearchQuery) -> NSFetchRequest<MessageDTO> {
+    package static func messagesFetchRequest(for query: MessageSearchQuery) -> NSFetchRequest<MessageDTO> {
         let request = NSFetchRequest<MessageDTO>(entityName: MessageDTO.entityName)
         request.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [
             NSPredicate(format: "ANY searches.filterHash == %@", query.filterHash),
@@ -395,7 +395,7 @@ class MessageDTO: NSManagedObject {
     }
 
     /// Returns a fetch request for the dto with a specific `messageId`.
-    static func message(withID messageId: MessageId) -> NSFetchRequest<MessageDTO> {
+    package static func message(withID messageId: MessageId) -> NSFetchRequest<MessageDTO> {
         let request = NSFetchRequest<MessageDTO>(entityName: MessageDTO.entityName)
         request.sortDescriptors = [NSSortDescriptor(keyPath: \MessageDTO.defaultSortingKey, ascending: false)]
         request.predicate = NSPredicate(format: "id == %@", messageId)
@@ -535,7 +535,7 @@ class MessageDTO: NSManagedObject {
         return load(by: request, context: context)
     }
     
-    static func loadMessage(
+    package static func loadMessage(
         before id: MessageId,
         cid: String,
         deletedMessagesVisibility: ChatClientConfig.DeletedMessageVisibility,
@@ -555,7 +555,7 @@ class MessageDTO: NSManagedObject {
         return try context.fetch(request).first
     }
     
-    static func loadMessages(
+    package static func loadMessages(
         from fromIncludingDate: Date,
         to toIncludingDate: Date,
         in cid: ChannelId,
@@ -578,7 +578,7 @@ class MessageDTO: NSManagedObject {
         return try load(request, context: context)
     }
     
-    static func loadReplies(
+    package static func loadReplies(
         from fromIncludingDate: Date,
         to toIncludingDate: Date,
         in messageId: MessageId,
@@ -621,7 +621,7 @@ extension MessageDTO {
 }
 
 extension NSManagedObjectContext: MessageDatabaseSession {
-    func createNewMessage(
+    package func createNewMessage(
         in cid: ChannelId,
         messageId: MessageId?,
         text: String,
@@ -712,7 +712,7 @@ extension NSManagedObjectContext: MessageDatabaseSession {
         return message
     }
 
-    func saveMessage(
+    package func saveMessage(
         payload: MessagePayload,
         channelDTO: ChannelDTO,
         syncOwnReactions: Bool,
@@ -881,14 +881,14 @@ extension NSManagedObjectContext: MessageDatabaseSession {
         return dto
     }
 
-    func saveMessages(messagesPayload: MessageListPayload, for cid: ChannelId?, syncOwnReactions: Bool = true) -> [MessageDTO] {
+    package func saveMessages(messagesPayload: MessageListPayload, for cid: ChannelId?, syncOwnReactions: Bool = true) -> [MessageDTO] {
         let cache = messagesPayload.getPayloadToModelIdMappings(context: self)
         return messagesPayload.messages.compactMapLoggingError {
             try saveMessage(payload: $0, for: cid, syncOwnReactions: syncOwnReactions, cache: cache)
         }
     }
 
-    func saveMessage(
+    package func saveMessage(
         payload: MessagePayload,
         for cid: ChannelId?,
         syncOwnReactions: Bool = true,
@@ -927,15 +927,15 @@ extension NSManagedObjectContext: MessageDatabaseSession {
         return try saveMessage(payload: payload, channelDTO: channel, syncOwnReactions: syncOwnReactions, cache: cache)
     }
 
-    func saveMessage(payload: MessagePayload, for query: MessageSearchQuery, cache: PreWarmedCache?) throws -> MessageDTO {
+    package func saveMessage(payload: MessagePayload, for query: MessageSearchQuery, cache: PreWarmedCache?) throws -> MessageDTO {
         let messageDTO = try saveMessage(payload: payload, for: nil, cache: cache)
         messageDTO.searches.insert(saveQuery(query: query))
         return messageDTO
     }
 
-    func message(id: MessageId) -> MessageDTO? { .load(id: id, context: self) }
+    package func message(id: MessageId) -> MessageDTO? { .load(id: id, context: self) }
 
-    func messageExists(id: MessageId) -> Bool {
+    package func messageExists(id: MessageId) -> Bool {
         let request = NSFetchRequest<MessageDTO>(entityName: MessageDTO.entityName)
         request.predicate = NSPredicate(format: "id == %@", id)
         do {
@@ -946,11 +946,11 @@ extension NSManagedObjectContext: MessageDatabaseSession {
         }
     }
 
-    func delete(message: MessageDTO) {
+    package func delete(message: MessageDTO) {
         delete(message)
     }
 
-    func pin(message: MessageDTO, pinning: MessagePinning) throws {
+    package func pin(message: MessageDTO, pinning: MessagePinning) throws {
         guard let currentUserDTO = currentUser else {
             throw ClientError.CurrentUserDoesNotExist()
         }
@@ -961,7 +961,7 @@ extension NSManagedObjectContext: MessageDatabaseSession {
         message.pinExpires = pinning.expirationDate?.bridgeDate
     }
 
-    func unpin(message: MessageDTO) {
+    package func unpin(message: MessageDTO) {
         message.pinned = false
         message.pinnedAt = nil
         message.pinnedBy = nil
@@ -975,7 +975,7 @@ extension NSManagedObjectContext: MessageDatabaseSession {
     /// - This method will throw if there is no current user set
     /// - If the message is not found, there will be no side effect and the method will return `nil`
     /// - If a reaction for the same user, type and message exists
-    func addReaction(
+    package func addReaction(
         to messageId: MessageId,
         type: MessageReactionType,
         score: Int,
@@ -1071,7 +1071,7 @@ extension NSManagedObjectContext: MessageDatabaseSession {
     /// - This method will throw if there is no current user set
     /// - If the message is not found, there will be no side effect and the method will return `nil`
     /// - If there is no reaction found in the database, this method returns `nil`
-    func removeReaction(from messageId: MessageId, type: MessageReactionType, on version: String?) throws -> MessageReactionDTO? {
+    package func removeReaction(from messageId: MessageId, type: MessageReactionType, on version: String?) throws -> MessageReactionDTO? {
         guard let currentUserDTO = currentUser else {
             throw ClientError.CurrentUserDoesNotExist()
         }
@@ -1123,11 +1123,11 @@ extension NSManagedObjectContext: MessageDatabaseSession {
         return reaction
     }
 
-    func preview(for cid: ChannelId) -> MessageDTO? {
+    package func preview(for cid: ChannelId) -> MessageDTO? {
         MessageDTO.preview(for: cid.rawValue, context: self)
     }
 
-    func saveMessageSearch(payload: MessageSearchResultsPayload, for query: MessageSearchQuery) -> [MessageDTO] {
+    package func saveMessageSearch(payload: MessageSearchResultsPayload, for query: MessageSearchQuery) -> [MessageDTO] {
         let cache = payload.getPayloadToModelIdMappings(context: self)
         return payload.results.compactMapLoggingError {
             try saveMessage(payload: $0.message, for: query, cache: cache)
@@ -1137,7 +1137,7 @@ extension NSManagedObjectContext: MessageDatabaseSession {
     /// Changes the state to `.pendingSend` for all messages in `.sending` state. This method is expected to be used at the beginning of the session
     /// to avoid those from being stuck there in limbo.
     /// Messages can get stuck in `.sending` state if the network request to send them takes to much, and the app is backgrounded or killed.
-    func rescueMessagesStuckInSending() {
+    package func rescueMessagesStuckInSending() {
         // Restart messages in sending state.
         let messages = MessageDTO.loadSendingMessages(context: self)
         messages.forEach {
@@ -1154,7 +1154,7 @@ extension NSManagedObjectContext: MessageDatabaseSession {
 
 extension MessageDTO {
     /// Snapshots the current state of `MessageDTO` and returns an immutable model object from it.
-    func asModel() throws -> ChatMessage { try .init(fromDTO: self, depth: 0) }
+    package func asModel() throws -> ChatMessage { try .init(fromDTO: self, depth: 0) }
 
     /// Snapshots the current state of `MessageDTO` and returns an immutable model object from it if the dependency depth
     /// limit has not been reached
@@ -1359,8 +1359,8 @@ private extension ChatMessage {
 }
 
 extension ClientError {
-    class CurrentUserDoesNotExist: ClientError {
-        override var localizedDescription: String {
+    package class CurrentUserDoesNotExist: ClientError {
+        package override var localizedDescription: String {
             "There is no `CurrentUserDTO` instance in the DB."
                 + "Make sure to call `client.currentUserController.reloadUserIfNeeded()`"
         }
@@ -1368,8 +1368,8 @@ extension ClientError {
 
     class MessagePayloadSavingFailure: ClientError {}
 
-    class ChannelDoesNotExist: ClientError {
-        init(cid: ChannelId) {
+    package class ChannelDoesNotExist: ClientError {
+        package init(cid: ChannelId) {
             super.init("There is no `ChannelDTO` instance in the DB matching cid: \(cid).")
         }
     }

@@ -6,7 +6,7 @@ import CoreData
 import Foundation
 
 /// Convenience subclass of `NSPersistentContainer` allowing easier setup of the database stack.
-class DatabaseContainer: NSPersistentContainer {
+package class DatabaseContainer: NSPersistentContainer {
     enum Kind: Equatable {
         /// The database lives only in memory. This option is used typically for anonymous users, when the local
         /// persistence is not enabled, or in tests.
@@ -60,7 +60,7 @@ class DatabaseContainer: NSPersistentContainer {
     /// try await chat.loadMessages()
     /// let messages = chat.state.messages
     /// ```
-    private(set) lazy var stateLayerContext: NSManagedObjectContext = {
+    package private(set) lazy var stateLayerContext: NSManagedObjectContext = {
         let context = newBackgroundContext()
         // Context is merged manually since automatically is too slow for reacting to changes needed by the state layer
         context.automaticallyMergesChangesFromParent = false
@@ -208,7 +208,7 @@ class DatabaseContainer: NSPersistentContainer {
     /// Use this method to safely mutate the content of the database. This method is asynchronous.
     ///
     /// - Parameter actions: A block that performs the actual mutation.
-    func write(_ actions: @escaping (DatabaseSession) throws -> Void) {
+    package func write(_ actions: @escaping (DatabaseSession) throws -> Void) {
         write(actions, completion: { _ in })
     }
 
@@ -220,7 +220,7 @@ class DatabaseContainer: NSPersistentContainer {
     /// - Parameters:
     ///   - actions: A block that performs the actual mutation.
     ///   - completion: Called when the changes are saved to the DB. If the changes can't be saved, called with an error.
-    func write(_ actions: @escaping (DatabaseSession) throws -> Void, completion: @escaping (Error?) -> Void) {
+    package func write(_ actions: @escaping (DatabaseSession) throws -> Void, completion: @escaping (Error?) -> Void) {
         writableContext.perform {
             log.debug("Starting a database session.", subsystems: .database)
             do {
@@ -248,37 +248,6 @@ class DatabaseContainer: NSPersistentContainer {
                 log.error("Failed to save data to DB. Error: \(error)", subsystems: .database)
                 FetchCache.clear()
                 completion(error)
-            }
-        }
-    }
-    
-    @available(iOS 13.0, *)
-    func write(_ actions: @escaping (DatabaseSession) throws -> Void) async throws {
-        try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
-            write(actions) { error in
-                if let error {
-                    continuation.resume(throwing: error)
-                } else {
-                    continuation.resume(returning: ())
-                }
-            }
-        }
-    }
-    
-    @available(iOS 13.0, *)
-    func read<T>(_ actions: @escaping (NSManagedObjectContext) throws -> T) async throws -> T {
-        let context = stateLayerContext
-        return try await withCheckedThrowingContinuation { continuation in
-            context.perform {
-                do {
-                    let results = try actions(context)
-                    if context.hasChanges {
-                        assertionFailure("State layer context is read only, but calling actions() created changes")
-                    }
-                    continuation.resume(returning: results)
-                } catch {
-                    continuation.resume(throwing: error)
-                }
             }
         }
     }

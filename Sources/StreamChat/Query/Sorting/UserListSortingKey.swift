@@ -66,7 +66,7 @@ private extension UserListSortingKey {
     }
 }
 
-extension Sorting where Key == UserListSortingKey {
+package extension Sorting where Key == UserListSortingKey {
     var sortValue: SortValue<ChatUser> {
         SortValue(keyPath: key.keyPath, isAscending: isAscending)
     }

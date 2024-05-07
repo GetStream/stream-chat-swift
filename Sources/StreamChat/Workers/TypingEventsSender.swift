@@ -20,7 +20,7 @@ private struct TypingInfo {
 }
 
 /// Sends typing events.
-class TypingEventsSender: Worker {
+package class TypingEventsSender: Worker {
     /// A timer type.
     var timer: Timer.Type = DefaultTimer.self
     /// `TypingInfo` for channel (and parent message) that typing has occurred in. Stored to stop typing when `TypingEventsSender` is deallocated
@@ -42,7 +42,7 @@ class TypingEventsSender: Worker {
 
     // MARK: Typing events
 
-    func keystroke(in cid: ChannelId, parentMessageId: MessageId?, completion: ((Error?) -> Void)? = nil) {
+    package func keystroke(in cid: ChannelId, parentMessageId: MessageId?, completion: ((Error?) -> Void)? = nil) {
         cancelScheduledTypingTimerControl()
 
         currentUserTypingTimerControl = timer.schedule(timeInterval: .startTypingEventTimeout, queue: .main) { [weak self] in
@@ -60,7 +60,7 @@ class TypingEventsSender: Worker {
         startTyping(in: cid, parentMessageId: parentMessageId, completion: completion)
     }
 
-    func startTyping(in cid: ChannelId, parentMessageId: MessageId?, completion: ((Error?) -> Void)? = nil) {
+    package func startTyping(in cid: ChannelId, parentMessageId: MessageId?, completion: ((Error?) -> Void)? = nil) {
         typingInfo = .init(channelId: cid, parentMessageId: parentMessageId)
         currentUserLastTypingDate = timer.currentTime()
 
@@ -71,7 +71,7 @@ class TypingEventsSender: Worker {
         }
     }
 
-    func stopTyping(in cid: ChannelId, parentMessageId: MessageId?, completion: ((Error?) -> Void)? = nil) {
+    package func stopTyping(in cid: ChannelId, parentMessageId: MessageId?, completion: ((Error?) -> Void)? = nil) {
         // If there's a timer set, we clear it
         if currentUserLastTypingDate != nil {
             cancelScheduledTypingTimerControl()
@@ -90,32 +90,5 @@ class TypingEventsSender: Worker {
     private func cancelScheduledTypingTimerControl() {
         currentUserTypingTimerControl?.cancel()
         currentUserTypingTimerControl = nil
-    }
-}
-
-@available(iOS 13.0, *)
-extension TypingEventsSender {
-    func keystroke(in cid: ChannelId, parentMessageId: MessageId?) async throws {
-        try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
-            keystroke(in: cid, parentMessageId: parentMessageId) { error in
-                if let error {
-                    continuation.resume(throwing: error)
-                } else {
-                    continuation.resume()
-                }
-            }
-        }
-    }
-    
-    func stopTyping(in cid: ChannelId, parentMessageId: MessageId?) async throws {
-        try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
-            stopTyping(in: cid, parentMessageId: parentMessageId) { error in
-                if let error {
-                    continuation.resume(throwing: error)
-                } else {
-                    continuation.resume()
-                }
-            }
-        }
     }
 }

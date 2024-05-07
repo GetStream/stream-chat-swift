@@ -6,7 +6,7 @@ import CoreData
 import Foundation
 
 @objc(ChannelDTO)
-class ChannelDTO: NSManagedObject {
+package class ChannelDTO: NSManagedObject {
     @NSManaged var cid: String
     @NSManaged var name: String?
     @NSManaged var imageURL: URL?
@@ -65,7 +65,7 @@ class ChannelDTO: NSManagedObject {
     /// If the current channel is muted by the current user, `mute` contains details.
     @NSManaged var mute: ChannelMuteDTO?
 
-    override func willSave() {
+    package override func willSave() {
         super.willSave()
 
         guard !isDeleted else {
@@ -110,14 +110,14 @@ class ChannelDTO: NSManagedObject {
         return request
     }
 
-    static func fetchRequest(for cid: ChannelId) -> NSFetchRequest<ChannelDTO> {
+    package static func fetchRequest(for cid: ChannelId) -> NSFetchRequest<ChannelDTO> {
         let request = NSFetchRequest<ChannelDTO>(entityName: ChannelDTO.entityName)
         request.sortDescriptors = [NSSortDescriptor(keyPath: \ChannelDTO.updatedAt, ascending: false)]
         request.predicate = NSPredicate(format: "cid == %@", cid.rawValue)
         return request
     }
 
-    static func load(cid: ChannelId, context: NSManagedObjectContext) -> ChannelDTO? {
+    package static func load(cid: ChannelId, context: NSManagedObjectContext) -> ChannelDTO? {
         let request = fetchRequest(for: cid)
         return load(by: request, context: context).first
     }
@@ -158,7 +158,7 @@ extension ChannelDTO: EphemeralValuesContainer {
 // MARK: Saving and loading the data
 
 extension NSManagedObjectContext {
-    func saveChannelList(
+    package func saveChannelList(
         payload: ChannelListPayload,
         query: ChannelListQuery?
     ) -> [ChannelDTO] {
@@ -177,7 +177,7 @@ extension NSManagedObjectContext {
         }
     }
 
-    func saveChannel(
+    package func saveChannel(
         payload: ChannelDetailPayload,
         query: ChannelListQuery?,
         cache: PreWarmedCache?
@@ -252,7 +252,7 @@ extension NSManagedObjectContext {
         return dto
     }
 
-    func saveChannel(
+    package func saveChannel(
         payload: ChannelPayload,
         query: ChannelListQuery?,
         cache: PreWarmedCache?
@@ -309,17 +309,17 @@ extension NSManagedObjectContext {
         return dto
     }
 
-    func channel(cid: ChannelId) -> ChannelDTO? {
+    package func channel(cid: ChannelId) -> ChannelDTO? {
         ChannelDTO.load(cid: cid, context: self)
     }
 
-    func delete(query: ChannelListQuery) {
+    package func delete(query: ChannelListQuery) {
         guard let dto = channelListQuery(filterHash: query.filter.filterHash) else { return }
 
         delete(dto)
     }
 
-    func cleanChannels(cids: Set<ChannelId>) {
+    package func cleanChannels(cids: Set<ChannelId>) {
         let channels = ChannelDTO.load(cids: Array(cids), context: self)
         for channelDTO in channels {
             channelDTO.resetEphemeralValues()
@@ -331,7 +331,7 @@ extension NSManagedObjectContext {
         }
     }
 
-    func removeChannels(cids: Set<ChannelId>) {
+    package func removeChannels(cids: Set<ChannelId>) {
         let channels = ChannelDTO.load(cids: Array(cids), context: self)
         channels.forEach(delete)
     }
@@ -340,7 +340,7 @@ extension NSManagedObjectContext {
 // To get the data from the DB
 
 extension ChannelDTO {
-    static func channelListFetchRequest(
+    package static func channelListFetchRequest(
         query: ChannelListQuery,
         chatClientConfig: ChatClientConfig
     ) -> NSFetchRequest<ChannelDTO> {
@@ -376,7 +376,7 @@ extension ChannelDTO {
 
 extension ChannelDTO {
     /// Snapshots the current state of `ChannelDTO` and returns an immutable model object from it.
-    func asModel() throws -> ChatChannel { try .create(fromDTO: self, depth: 0) }
+    package func asModel() throws -> ChatChannel { try .create(fromDTO: self, depth: 0) }
 
     /// Snapshots the current state of `ChannelDTO` and returns an immutable model object from it if the dependency depth
     /// limit has not been reached

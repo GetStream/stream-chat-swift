@@ -5,17 +5,17 @@
 import Foundation
 
 /// The current state of the messages pagination.
-struct MessagesPaginationState {
+package struct MessagesPaginationState {
     // MARK: State
 
     /// The oldest fetched message while paginating.
-    var oldestFetchedMessage: MessagePayload?
+    package var oldestFetchedMessage: MessagePayload?
     /// The newest fetched message while paginating.
-    var newestFetchedMessage: MessagePayload?
+    package var newestFetchedMessage: MessagePayload?
 
     /// A Boolean value that returns whether the newest messages have all been loaded or not.
     /// If false, it means that the channel is currently in a mid-page.
-    var hasLoadedAllNextMessages: Bool {
+    package var hasLoadedAllNextMessages: Bool {
         didSet {
             if hasLoadedAllNextMessages {
                 newestFetchedMessage = nil
@@ -24,34 +24,34 @@ struct MessagesPaginationState {
     }
 
     /// A Boolean value that returns whether the oldest messages have all been loaded or not.
-    var hasLoadedAllPreviousMessages: Bool
+    package var hasLoadedAllPreviousMessages: Bool
 
     /// A Boolean value that returns whether the channel is currently loading next (new) messages.
-    var isLoadingNextMessages: Bool
+    package var isLoadingNextMessages: Bool
     /// A Boolean value that returns whether the channel is currently loading previous (old) messages.
-    var isLoadingPreviousMessages: Bool
+    package var isLoadingPreviousMessages: Bool
     /// A Boolean value that returns whether the channel is currently loading a page around a message.
-    var isLoadingMiddleMessages: Bool
+    package var isLoadingMiddleMessages: Bool
 
     // MARK: Computed Properties
 
     /// A Boolean value that returns whether the channel is currently loading messages on either previous, mid or next pages.
-    var isLoadingMessages: Bool {
+    package var isLoadingMessages: Bool {
         isLoadingNextMessages || isLoadingPreviousMessages || isLoadingMiddleMessages
     }
 
     /// A Boolean value that returns whether the channel is currently in a mid-page.
-    var isJumpingToMessage: Bool {
+    package var isJumpingToMessage: Bool {
         !hasLoadedAllNextMessages
     }
 
     /// The oldest fetched message createdAt date while paginating.
-    var oldestMessageAt: Date? {
+    package var oldestMessageAt: Date? {
         oldestFetchedMessage?.createdAt
     }
 
     /// The newest fetched message createdAt date while paginating.
-    var newestMessageAt: Date? {
+    package var newestMessageAt: Date? {
         newestFetchedMessage?.createdAt
     }
 

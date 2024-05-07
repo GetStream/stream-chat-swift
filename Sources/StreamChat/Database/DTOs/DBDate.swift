@@ -42,7 +42,7 @@ import Foundation
 /// dump(aFalseDate)                                 // Will crash - Internally calls `swift_dynamicCast`
 ///
 
-typealias DBDate = NSDate
+package typealias DBDate = NSDate
 extension DBDate {
     var bridgeDate: Date {
         Date(timeIntervalSince1970: timeIntervalSince1970)

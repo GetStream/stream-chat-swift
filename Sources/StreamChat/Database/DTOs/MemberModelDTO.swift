@@ -5,7 +5,7 @@
 import CoreData
 
 @objc(MemberDTO)
-class MemberDTO: NSManagedObject {
+package class MemberDTO: NSManagedObject {
     // Because we need to have a unique identifier of a member in the db, we use the combination of the related
     // user' id and the channel the member belongs to.
     @NSManaged fileprivate(set) var id: String
@@ -39,7 +39,7 @@ class MemberDTO: NSManagedObject {
 
 extension MemberDTO {
     /// Returns a fetch request for the dto with the provided `userId`.
-    static func member(_ userId: UserId, in cid: ChannelId) -> NSFetchRequest<MemberDTO> {
+    package static func member(_ userId: UserId, in cid: ChannelId) -> NSFetchRequest<MemberDTO> {
         let request = NSFetchRequest<MemberDTO>(entityName: MemberDTO.entityName)
         request.sortDescriptors = [NSSortDescriptor(keyPath: \MemberDTO.memberCreatedAt, ascending: false)]
         request.predicate = NSPredicate(format: "id == %@", Self.createId(userId: userId, channeldId: cid))
@@ -47,7 +47,7 @@ extension MemberDTO {
     }
 
     /// Returns a fetch request for the DTOs matching the provided `query`.
-    static func members(matching query: ChannelMemberListQuery) -> NSFetchRequest<MemberDTO> {
+    package static func members(matching query: ChannelMemberListQuery) -> NSFetchRequest<MemberDTO> {
         let request = NSFetchRequest<MemberDTO>(entityName: MemberDTO.entityName)
         request.predicate = NSPredicate(format: "ANY queries.queryHash == %@", query.queryHash)
         request.sortDescriptors = query.sortDescriptors
@@ -56,12 +56,12 @@ extension MemberDTO {
 }
 
 extension MemberDTO {
-    static func load(userId: String, channelId: ChannelId, context: NSManagedObjectContext) -> MemberDTO? {
+    package static func load(userId: String, channelId: ChannelId, context: NSManagedObjectContext) -> MemberDTO? {
         let memberId = MemberDTO.createId(userId: userId, channeldId: channelId)
         return load(memberId: memberId, context: context)
     }
 
-    static func load(memberId: String, context: NSManagedObjectContext) -> MemberDTO? {
+    package static func load(memberId: String, context: NSManagedObjectContext) -> MemberDTO? {
         load(by: memberId, context: context).first
     }
 
@@ -106,7 +106,7 @@ extension MemberDTO {
 }
 
 extension NSManagedObjectContext {
-    func saveMember(
+    package func saveMember(
         payload: MemberPayload,
         channelId: ChannelId,
         query: ChannelMemberListQuery?,
@@ -146,11 +146,11 @@ extension NSManagedObjectContext {
         return dto
     }
 
-    func member(userId: UserId, cid: ChannelId) -> MemberDTO? {
+    package func member(userId: UserId, cid: ChannelId) -> MemberDTO? {
         MemberDTO.load(userId: userId, channelId: cid, context: self)
     }
 
-    func saveMembers(payload: ChannelMemberListPayload, channelId: ChannelId, query: ChannelMemberListQuery?) -> [MemberDTO] {
+    package func saveMembers(payload: ChannelMemberListPayload, channelId: ChannelId, query: ChannelMemberListQuery?) -> [MemberDTO] {
         // If it is the first page of the members list, make sure to clear the members from local cache
         // which are not in the remote response anymore.
         let isFirstPage = query?.pagination.offset == 0
@@ -167,7 +167,7 @@ extension NSManagedObjectContext {
 }
 
 extension MemberDTO {
-    func asModel() throws -> ChatChannelMember { try .create(fromDTO: self) }
+    package func asModel() throws -> ChatChannelMember { try .create(fromDTO: self) }
 }
 
 extension ChatChannelMember {

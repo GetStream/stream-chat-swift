@@ -60,7 +60,7 @@ public struct ChannelQuery: Encodable {
     /// Init a channel query.
     /// - Parameters:
     ///   - channelPayload: a payload that has data needed for channel creation.
-    init(channelPayload: ChannelEditDetailPayload) {
+    package init(channelPayload: ChannelEditDetailPayload) {
         id = channelPayload.id
         type = channelPayload.type
         self.channelPayload = channelPayload
@@ -73,7 +73,7 @@ public struct ChannelQuery: Encodable {
     /// - Parameters:
     ///   - cid: New `ChannelId` for channel query..
     ///   - channelQuery: ChannelQuery with old cid.
-    init(cid: ChannelId, channelQuery: Self) {
+    package init(cid: ChannelId, channelQuery: Self) {
         self.init(
             cid: cid,
             pageSize: channelQuery.pagination?.pageSize,

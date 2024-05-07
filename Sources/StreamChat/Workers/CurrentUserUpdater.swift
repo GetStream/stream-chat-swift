@@ -6,7 +6,7 @@ import CoreData
 import Foundation
 
 /// Updates current user data to the backend and updates local storage.
-class CurrentUserUpdater: Worker {
+package class CurrentUserUpdater: Worker {
     /// Updates the current user data.
     ///
     /// By default all data is `nil`, and it won't be updated unless a value is provided.
@@ -18,7 +18,7 @@ class CurrentUserUpdater: Worker {
     ///   - privacySettings: The privacy settings of the user. Example: If the user does not want to expose typing events or read events.
     ///   - userExtraData: Optionally provide new user extra data to be updated.
     ///   - completion: Called when user is successfuly updated, or with error.
-    func updateUserData(
+    package func updateUserData(
         currentUserId: UserId,
         name: String? = nil,
         imageURL: URL? = nil,
@@ -61,7 +61,7 @@ class CurrentUserUpdater: Worker {
     ///   - providerName: Name of the push configuration in dashboard. If nil, default configuration will be used.
     ///   - currentUserId: The current user identifier.
     ///   - completion: Called when device is successfully registered, or with error.
-    func addDevice(
+    package func addDevice(
         deviceId: DeviceId,
         pushProvider: PushProvider,
         providerName: String? = nil,
@@ -103,7 +103,7 @@ class CurrentUserUpdater: Worker {
     ///   - currentUserId: The current user identifier.
     ///   If `currentUser.devices` is not up-to-date, please make an `fetchDevices` call.
     ///   - completion: Called when device is successfully deregistered, or with error.
-    func removeDevice(id: DeviceId, currentUserId: UserId, completion: ((Error?) -> Void)? = nil) {
+    package func removeDevice(id: DeviceId, currentUserId: UserId, completion: ((Error?) -> Void)? = nil) {
         database.write({ session in
             session.deleteDevice(id: id)
         }, completion: { databaseError in
@@ -128,7 +128,7 @@ class CurrentUserUpdater: Worker {
     /// - Parameters:
     ///     - currentUserId: The current user identifier.
     ///     - completion: Called when request is successfully completed, or with error.
-    func fetchDevices(currentUserId: UserId, completion: ((Result<[Device], Error>) -> Void)? = nil) {
+    package func fetchDevices(currentUserId: UserId, completion: ((Result<[Device], Error>) -> Void)? = nil) {
         apiClient.request(endpoint: .devices(userId: currentUserId)) { [weak self] result in
             do {
                 var devices = [Device]()
@@ -156,52 +156,9 @@ class CurrentUserUpdater: Worker {
 
     /// Marks all channels for a user as read.
     /// - Parameter completion: Called when the API call is finished. Called with `Error` if the remote update fails.
-    func markAllRead(completion: ((Error?) -> Void)? = nil) {
+    package func markAllRead(completion: ((Error?) -> Void)? = nil) {
         apiClient.request(endpoint: .markAllRead()) {
             completion?($0.error)
-        }
-    }
-}
-
-@available(iOS 13.0, *)
-extension CurrentUserUpdater {
-    func addDevice(_ device: PushDevice, currentUserId: UserId) async throws {
-        try await withCheckedThrowingContinuation { continuation in
-            addDevice(deviceId: device.deviceId, pushProvider: device.pushProvider, providerName: device.providerName, currentUserId: currentUserId) { error in
-                continuation.resume(with: error)
-            }
-        }
-    }
-    
-    func removeDevice(id: DeviceId, currentUserId: UserId) async throws {
-        try await withCheckedThrowingContinuation { continuation in
-            removeDevice(id: id, currentUserId: currentUserId) { error in
-                continuation.resume(with: error)
-            }
-        }
-    }
-    
-    func fetchDevices(currentUserId: UserId) async throws -> [Device] {
-        try await withCheckedThrowingContinuation { continuation in
-            fetchDevices(currentUserId: currentUserId) { result in
-                continuation.resume(with: result)
-            }
-        }
-    }
-    
-    func markAllRead(currentUserId: UserId) async throws {
-        try await withCheckedThrowingContinuation { continuation in
-            markAllRead { error in
-                continuation.resume(with: error)
-            }
-        }
-    }
-    
-    func updateUserData(currentUserId: UserId, name: String?, imageURL: URL?, userExtraData: [String: RawJSON]?) async throws {
-        try await withCheckedThrowingContinuation { continuation in
-            updateUserData(currentUserId: currentUserId, name: name, imageURL: imageURL, userExtraData: userExtraData) { error in
-                continuation.resume(with: error)
-            }
         }
     }
 }

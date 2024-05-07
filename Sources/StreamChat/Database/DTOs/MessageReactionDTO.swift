@@ -6,7 +6,7 @@ import CoreData
 import Foundation
 
 @objc(MessageReactionDTO)
-final class MessageReactionDTO: NSManagedObject {
+package final class MessageReactionDTO: NSManagedObject {
     @NSManaged private(set) var id: String
 
     // holds the rawValue of LocalReactionState
@@ -14,7 +14,7 @@ final class MessageReactionDTO: NSManagedObject {
     @NSManaged var type: String
     @NSManaged var score: Int64
     @NSManaged var createdAt: DBDate?
-    @NSManaged var updatedAt: DBDate?
+    @NSManaged package var updatedAt: DBDate?
     @NSManaged var extraData: Data?
 
     @NSManaged var message: MessageDTO
@@ -33,7 +33,7 @@ final class MessageReactionDTO: NSManagedObject {
 }
 
 extension MessageReactionDTO {
-    static func reactionListFetchRequest(query: ReactionListQuery) -> NSFetchRequest<MessageReactionDTO> {
+    package static func reactionListFetchRequest(query: ReactionListQuery) -> NSFetchRequest<MessageReactionDTO> {
         let request = NSFetchRequest<MessageReactionDTO>(entityName: MessageReactionDTO.entityName)
 
         // Fetch results controller requires at least one sorting descriptor.
@@ -115,7 +115,7 @@ extension MessageReactionDTO {
         return new
     }
     
-    static func reactionsFetchRequest(
+    package static func reactionsFetchRequest(
         for messageId: MessageId,
         sort: [NSSortDescriptor]
     ) -> NSFetchRequest<MessageReactionDTO> {
@@ -128,12 +128,12 @@ extension MessageReactionDTO {
 }
 
 extension NSManagedObjectContext {
-    func reaction(messageId: MessageId, userId: UserId, type: MessageReactionType) -> MessageReactionDTO? {
+    package func reaction(messageId: MessageId, userId: UserId, type: MessageReactionType) -> MessageReactionDTO? {
         MessageReactionDTO.load(userId: userId, messageId: messageId, type: type, context: self)
     }
 
     @discardableResult
-    func saveReactions(payload: MessageReactionsPayload, query: ReactionListQuery?) -> [MessageReactionDTO] {
+    package func saveReactions(payload: MessageReactionsPayload, query: ReactionListQuery?) -> [MessageReactionDTO] {
         let isFirstPage = query?.pagination.offset == 0
         if let filterHash = query?.queryHash, isFirstPage {
             let queryDTO = ReactionListQueryDTO.load(filterHash: filterHash, context: self)
@@ -147,7 +147,7 @@ extension NSManagedObjectContext {
     }
 
     @discardableResult
-    func saveReaction(
+    package func saveReaction(
         payload: MessageReactionPayload,
         query: ReactionListQuery?,
         cache: PreWarmedCache?
@@ -179,7 +179,7 @@ extension NSManagedObjectContext {
         return dto
     }
 
-    func delete(reaction: MessageReactionDTO) {
+    package func delete(reaction: MessageReactionDTO) {
         delete(reaction)
     }
 }
@@ -195,7 +195,7 @@ extension MessageReactionDTO {
     }
 
     /// Snapshots the current state of `MessageReactionDTO` and returns an immutable model object from it.
-    func asModel() throws -> ChatMessageReaction {
+    package func asModel() throws -> ChatMessageReaction {
         let decodedExtraData: [String: RawJSON]
 
         if let extraData = self.extraData, !extraData.isEmpty {

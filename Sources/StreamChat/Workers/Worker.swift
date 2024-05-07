@@ -10,11 +10,11 @@ typealias WorkerBuilder = (
     _ apiClient: APIClient
 ) -> Worker
 
-class Worker {
-    let database: DatabaseContainer
-    let apiClient: APIClient
+package class Worker {
+    package let database: DatabaseContainer
+    package let apiClient: APIClient
 
-    public init(database: DatabaseContainer, apiClient: APIClient) {
+    package init(database: DatabaseContainer, apiClient: APIClient) {
         self.database = database
         self.apiClient = apiClient
     }

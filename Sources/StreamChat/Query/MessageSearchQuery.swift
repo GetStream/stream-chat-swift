@@ -99,7 +99,7 @@ public struct MessageSearchQuery: Encodable {
 
     public var pagination: Pagination?
 
-    var filterHash: String
+    package var filterHash: String
 
     public init(
         channelFilter: Filter<ChannelListFilterScope>,

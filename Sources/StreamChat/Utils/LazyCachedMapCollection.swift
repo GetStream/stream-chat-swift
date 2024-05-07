@@ -108,7 +108,7 @@ extension LazyCachedMapCollection: Equatable where Element: Equatable {
 }
 
 extension LazyCachedMapCollection {
-    init<Collection: RandomAccessCollection, SourceElement: NSManagedObject>(
+    package init<Collection: RandomAccessCollection, SourceElement: NSManagedObject>(
         source: Collection,
         itemCreator: @escaping (SourceElement) throws -> Element,
         sorting: [SortValue<Element>] = [],

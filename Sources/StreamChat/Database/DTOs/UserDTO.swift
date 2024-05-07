@@ -6,7 +6,7 @@ import CoreData
 import Foundation
 
 @objc(UserDTO)
-class UserDTO: NSManagedObject {
+package class UserDTO: NSManagedObject {
     @NSManaged var extraData: Data
     @NSManaged var id: String
     @NSManaged var name: String?
@@ -36,7 +36,7 @@ class UserDTO: NSManagedObject {
         return request
     }
 
-    override func willSave() {
+    package override func willSave() {
         super.willSave()
 
         // We need to propagate fake changes to other models so that it triggers FRC
@@ -89,7 +89,7 @@ extension UserDTO {
     ///   - id: The id of the user to fetch
     ///   - context: The context used to fetch `UserDTO`
     ///
-    static func load(id: String, context: NSManagedObjectContext) -> UserDTO? {
+    package static func load(id: String, context: NSManagedObjectContext) -> UserDTO? {
         load(by: id, context: context).first
     }
 
@@ -129,11 +129,11 @@ extension UserDTO {
 }
 
 extension NSManagedObjectContext: UserDatabaseSession {
-    func user(id: UserId) -> UserDTO? {
+    package func user(id: UserId) -> UserDTO? {
         UserDTO.load(id: id, context: self)
     }
 
-    func saveUser(
+    package func saveUser(
         payload: UserPayload,
         query: UserListQuery?,
         cache: PreWarmedCache?
@@ -171,7 +171,7 @@ extension NSManagedObjectContext: UserDatabaseSession {
     }
 
     @discardableResult
-    func saveUsers(payload: UserListPayload, query: UserListQuery?) -> [UserDTO] {
+    package func saveUsers(payload: UserListPayload, query: UserListQuery?) -> [UserDTO] {
         let cache = payload.getPayloadToModelIdMappings(context: self)
         return payload.users.compactMapLoggingError {
             try saveUser(payload: $0, query: query, cache: cache)
@@ -181,7 +181,7 @@ extension NSManagedObjectContext: UserDatabaseSession {
 
 extension UserDTO {
     /// Snapshots the current state of `UserDTO` and returns an immutable model object from it.
-    func asModel() throws -> ChatUser { try .create(fromDTO: self) }
+    package func asModel() throws -> ChatUser { try .create(fromDTO: self) }
 
     /// Snapshots the current state of `UserDTO` and returns its representation for used in API calls.
     func asRequestBody() -> UserRequestBody {
@@ -200,7 +200,7 @@ extension UserDTO {
 }
 
 extension UserDTO {
-    static func userListFetchRequest(query: UserListQuery) -> NSFetchRequest<UserDTO> {
+    package static func userListFetchRequest(query: UserListQuery) -> NSFetchRequest<UserDTO> {
         let request = NSFetchRequest<UserDTO>(entityName: UserDTO.entityName)
 
         // Fetch results controller requires at least one sorting descriptor.
@@ -222,7 +222,7 @@ extension UserDTO {
         return request
     }
 
-    static func watcherFetchRequest(cid: ChannelId) -> NSFetchRequest<UserDTO> {
+    package static func watcherFetchRequest(cid: ChannelId) -> NSFetchRequest<UserDTO> {
         let request = NSFetchRequest<UserDTO>(entityName: UserDTO.entityName)
         request.sortDescriptors = [UserListSortingKey.defaultSortDescriptor]
         request.predicate = NSPredicate(format: "ANY watchedChannels.cid == %@", cid.rawValue)

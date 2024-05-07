@@ -8,7 +8,7 @@ extension Collection {
     /// Returns an element if the index is valid.
     ///
     /// - Note: Checks if the index is part of indices.
-    subscript(safe index: Index) -> Element? {
+    package subscript(safe index: Index) -> Element? {
         indices.contains(index) ? self[index] : nil
     }
 }

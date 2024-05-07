@@ -4,6 +4,7 @@
 
 import Foundation
 @testable import StreamChat
+@testable import StreamChatStateLayer
 
 @available(iOS 13.0, *)
 public class MessageSearch_Mock: MessageSearch {

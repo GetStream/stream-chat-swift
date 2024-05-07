@@ -5,7 +5,7 @@
 import Foundation
 
 /// An object allowing making request to Stream Chat servers.
-class APIClient {
+package class APIClient {
     /// The URL session used for all requests.
     let session: URLSession
 

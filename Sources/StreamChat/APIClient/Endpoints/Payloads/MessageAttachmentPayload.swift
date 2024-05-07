@@ -5,7 +5,7 @@
 import Foundation
 
 /// A type that describes attachment JSON payload.
-struct MessageAttachmentPayload {
+package struct MessageAttachmentPayload {
     private enum CodingKeys: String, CodingKey {
         case type
         case ogURL = "og_scrape_url"
@@ -20,7 +20,7 @@ struct MessageAttachmentPayload {
 }
 
 extension MessageAttachmentPayload: Encodable {
-    func encode(to encoder: Encoder) throws {
+    package func encode(to encoder: Encoder) throws {
         var payload = self.payload
         payload[AttachmentCodingKeys.type.rawValue] = .string(type.rawValue)
         try payload.encode(to: encoder)
@@ -28,7 +28,7 @@ extension MessageAttachmentPayload: Encodable {
 }
 
 extension MessageAttachmentPayload: Decodable {
-    init(from decoder: Decoder) throws {
+    package init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
 
         let attachmentType: AttachmentType = try {

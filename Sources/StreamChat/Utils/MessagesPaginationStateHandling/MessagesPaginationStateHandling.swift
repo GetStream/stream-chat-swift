@@ -5,7 +5,7 @@
 import Foundation
 
 /// A component responsible for handling the messages pagination state.
-protocol MessagesPaginationStateHandling {
+package protocol MessagesPaginationStateHandling {
     /// The current state of the messages pagination.
     var state: MessagesPaginationState { get }
 
@@ -17,11 +17,13 @@ protocol MessagesPaginationStateHandling {
 }
 
 /// A component responsible for handling the messages pagination state.
-class MessagesPaginationStateHandler: MessagesPaginationStateHandling {
+package class MessagesPaginationStateHandler: MessagesPaginationStateHandling {
     private let queue = DispatchQueue(label: "io.getstream.messages-pagination-state-handler")
     private var _state: MessagesPaginationState = .initial
 
-    var state: MessagesPaginationState {
+    package init() {}
+    
+    package var state: MessagesPaginationState {
         get {
             queue.sync {
                 _state
@@ -34,7 +36,7 @@ class MessagesPaginationStateHandler: MessagesPaginationStateHandling {
         }
     }
 
-    func begin(pagination: MessagesPagination) {
+    package func begin(pagination: MessagesPagination) {
         // When loading a page around a message it means we jumped to a mid-page,
         // so now the newest page is not loaded.
         if pagination.parameter?.isJumpingToMessage == true {
@@ -56,7 +58,7 @@ class MessagesPaginationStateHandler: MessagesPaginationStateHandling {
         }
     }
 
-    func end(pagination: MessagesPagination, with result: Result<[MessagePayload], Error>) {
+    package func end(pagination: MessagesPagination, with result: Result<[MessagePayload], Error>) {
         state.isLoadingNextMessages = false
         state.isLoadingMiddleMessages = false
         state.isLoadingPreviousMessages = false

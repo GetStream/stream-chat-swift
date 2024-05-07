@@ -223,6 +223,10 @@ class MessageReadEventDTO: EventDTO {
 // Triggered when the current user creates a new message and is pending to be sent.
 public struct NewMessagePendingEvent: Event {
     public var message: ChatMessage
+    
+    package init(message: ChatMessage) {
+        self.message = message
+    }
 }
 
 // Triggered when a message failed being sent.

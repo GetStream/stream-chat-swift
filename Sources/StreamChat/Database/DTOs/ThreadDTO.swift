@@ -6,7 +6,7 @@ import CoreData
 import Foundation
 
 @objc(ThreadDTO)
-class ThreadDTO: NSManagedObject {
+package class ThreadDTO: NSManagedObject {
     @NSManaged var parentMessageId: String
     @NSManaged var parentMessage: MessageDTO
     @NSManaged var title: String?
@@ -98,14 +98,14 @@ extension ThreadDTO {
 }
 
 extension NSManagedObjectContext {
-    func saveThreadList(payload: ThreadListPayload, query: ThreadListQuery?) -> [ThreadDTO] {
+    package func saveThreadList(payload: ThreadListPayload, query: ThreadListQuery?) -> [ThreadDTO] {
         let cache = payload.getPayloadToModelIdMappings(context: self)
         return payload.threads.compactMapLoggingError { threadPayload in
             try saveThread(payload: threadPayload, query: query, cache: cache)
         }
     }
 
-    func saveThread(
+    package func saveThread(
         payload: ThreadPayload,
         query: ThreadListQuery?,
         cache: PreWarmedCache?

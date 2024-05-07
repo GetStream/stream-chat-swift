@@ -5,7 +5,7 @@
 import CoreData
 
 @objc(ChannelMemberListQueryDTO)
-final class ChannelMemberListQueryDTO: NSManagedObject {
+package final class ChannelMemberListQueryDTO: NSManagedObject {
     /// Unique identifier of the query.
     @NSManaged var queryHash: String
 
@@ -42,11 +42,11 @@ final class ChannelMemberListQueryDTO: NSManagedObject {
 }
 
 extension NSManagedObjectContext: MemberListQueryDatabaseSession {
-    func channelMemberListQuery(queryHash: String) -> ChannelMemberListQueryDTO? {
+    package func channelMemberListQuery(queryHash: String) -> ChannelMemberListQueryDTO? {
         ChannelMemberListQueryDTO.load(queryHash: queryHash, context: self)
     }
 
-    func saveQuery(_ query: ChannelMemberListQuery) throws -> ChannelMemberListQueryDTO {
+    package func saveQuery(_ query: ChannelMemberListQuery) throws -> ChannelMemberListQueryDTO {
         guard let channelDTO = channel(cid: query.cid) else {
             throw ClientError.ChannelDoesNotExist(cid: query.cid)
         }

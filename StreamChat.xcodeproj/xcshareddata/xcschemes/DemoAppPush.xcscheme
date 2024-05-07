@@ -53,6 +53,17 @@
                ReferencedContainer = "container:StreamChat.xcodeproj">
             </BuildableReference>
          </TestableReference>
+         <TestableReference
+            skipped = "NO"
+            parallelizable = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "4F71433C2BEA169E00E4D345"
+               BuildableName = "StreamChatStateLayerTests.xctest"
+               BlueprintName = "StreamChatStateLayerTests"
+               ReferencedContainer = "container:StreamChat.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
       </Testables>
    </TestAction>
    <LaunchAction

@@ -5,7 +5,7 @@
 import Foundation
 
 /// The details of a participant in a thread.
-internal struct ThreadParticipant {
+package struct ThreadParticipant {
     /// The user information of the participant.
     internal let user: ChatUser
     /// The id of the thread, which is also the id of the parent message.

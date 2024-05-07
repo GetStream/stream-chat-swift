@@ -19,11 +19,11 @@ public struct DataStore {
     let database: DatabaseContainer
 
     // Technically, we need only `database` but we use a `Client` instance to get the extra data types from it.
-    init(client: ChatClient) {
+    package init(client: ChatClient) {
         database = client.databaseContainer
     }
     
-    init(database: DatabaseContainer) {
+    package init(database: DatabaseContainer) {
         self.database = database
     }
 

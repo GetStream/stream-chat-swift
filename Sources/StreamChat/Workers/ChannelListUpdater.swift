@@ -5,14 +5,14 @@
 import CoreData
 
 /// Makes a channels query call to the backend and updates the local storage with the results.
-class ChannelListUpdater: Worker {
+package class ChannelListUpdater: Worker {
     /// Makes a channels query call to the backend and updates the local storage with the results.
     ///
     /// - Parameters:
     ///   - channelListQuery: The channels query used in the request
     ///   - completion: Called when the API call is finished. Called with `Error` if the remote update fails.
     ///
-    func update(
+    package func update(
         channelListQuery: ChannelListQuery,
         completion: ((Result<[ChatChannel], Error>) -> Void)? = nil
     ) {
@@ -106,7 +106,7 @@ class ChannelListUpdater: Worker {
     /// - Parameters:
     ///   - ids: The channel ids.
     ///   - completion: The callback once the request is complete.
-    func startWatchingChannels(withIds ids: [ChannelId], completion: ((Error?) -> Void)? = nil) {
+    package func startWatchingChannels(withIds ids: [ChannelId], completion: ((Error?) -> Void)? = nil) {
         var query = ChannelListQuery(filter: .in(.cid, values: ids))
         query.options = .all
 
@@ -148,7 +148,7 @@ class ChannelListUpdater: Worker {
     }
 
     /// Links a channel to the given query.
-    func link(channel: ChatChannel, with query: ChannelListQuery, completion: ((Error?) -> Void)? = nil) {
+    package func link(channel: ChatChannel, with query: ChannelListQuery, completion: ((Error?) -> Void)? = nil) {
         database.write { session in
             guard let (channelDTO, queryDTO) = session.getChannelWithQuery(cid: channel.cid, query: query) else {
                 return
@@ -160,7 +160,7 @@ class ChannelListUpdater: Worker {
     }
 
     /// Unlinks a channel to the given query.
-    func unlink(channel: ChatChannel, with query: ChannelListQuery, completion: ((Error?) -> Void)? = nil) {
+    package func unlink(channel: ChatChannel, with query: ChannelListQuery, completion: ((Error?) -> Void)? = nil) {
         database.write { session in
             guard let (channelDTO, queryDTO) = session.getChannelWithQuery(cid: channel.cid, query: query) else {
                 return
@@ -173,7 +173,7 @@ class ChannelListUpdater: Worker {
 }
 
 extension DatabaseSession {
-    func getChannelWithQuery(cid: ChannelId, query: ChannelListQuery) -> (ChannelDTO, ChannelListQueryDTO)? {
+    package func getChannelWithQuery(cid: ChannelId, query: ChannelListQuery) -> (ChannelDTO, ChannelListQueryDTO)? {
         guard let queryDTO = channelListQuery(filterHash: query.filter.filterHash) else {
             log.debug("Channel list query has not yet created \(query)")
             return nil
@@ -207,59 +207,5 @@ private extension ChannelListUpdater {
                 completion?(.success(channels))
             }
         }
-    }
-}
-
-@available(iOS 13.0, *)
-extension ChannelListUpdater {
-    func link(channel: ChatChannel, with query: ChannelListQuery) async throws {
-        try await withCheckedThrowingContinuation { continuation in
-            link(channel: channel, with: query) { error in
-                continuation.resume(with: error)
-            }
-        }
-    }
-
-    func startWatchingChannels(withIds ids: [ChannelId]) async throws {
-        try await withCheckedThrowingContinuation { continuation in
-            startWatchingChannels(withIds: ids) { error in
-                continuation.resume(with: error)
-            }
-        }
-    }
-
-    func unlink(channel: ChatChannel, with query: ChannelListQuery) async throws {
-        try await withCheckedThrowingContinuation { continuation in
-            unlink(channel: channel, with: query) { error in
-                continuation.resume(with: error)
-            }
-        }
-    }
-
-    @discardableResult func update(channelListQuery: ChannelListQuery) async throws -> [ChatChannel] {
-        try await withCheckedThrowingContinuation { continuation in
-            update(channelListQuery: channelListQuery) { result in
-                continuation.resume(with: result)
-            }
-        }
-    }
-    
-    // MARK: -
-    
-    func loadChannels(query: ChannelListQuery, pagination: Pagination) async throws -> [ChatChannel] {
-        try await update(channelListQuery: query.withPagination(pagination))
-    }
-    
-    func loadNextChannels(query: ChannelListQuery, limit: Int, loadedChannelsCount: Int) async throws -> [ChatChannel] {
-        let pagination = Pagination(pageSize: limit, offset: loadedChannelsCount)
-        return try await update(channelListQuery: query.withPagination(pagination))
-    }
-}
-
-private extension ChannelListQuery {
-    func withPagination(_ pagination: Pagination) -> Self {
-        var query = self
-        query.pagination = pagination
-        return query
     }
 }

@@ -26,7 +26,7 @@ struct MemberContainerPayload: Decodable {
     }
 }
 
-struct MemberPayload: Decodable {
+package struct MemberPayload: Decodable {
     private enum CodingKeys: String, CodingKey {
         case user
         case userId = "user_id"
@@ -95,7 +95,7 @@ struct MemberPayload: Decodable {
         self.notificationsMuted = notificationsMuted
     }
 
-    init(from decoder: Decoder) throws {
+    package init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         user = try container.decodeIfPresent(UserPayload.self, forKey: .user)
         role = try container.decodeIfPresent(MemberRole.self, forKey: .role)

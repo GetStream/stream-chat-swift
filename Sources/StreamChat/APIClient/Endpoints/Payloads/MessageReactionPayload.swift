@@ -5,7 +5,7 @@
 import Foundation
 
 /// The type describes the incoming message-reaction JSON.
-struct MessageReactionPayload: Decodable {
+package struct MessageReactionPayload: Decodable {
     enum CodingKeys: String, CodingKey, CaseIterable {
         case type
         case score
@@ -42,7 +42,7 @@ struct MessageReactionPayload: Decodable {
         self.extraData = extraData
     }
 
-    init(from decoder: Decoder) throws {
+    package init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         let extraData: [String: RawJSON]
 

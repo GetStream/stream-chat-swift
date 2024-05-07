@@ -27,7 +27,7 @@ protocol AuthenticationRepositoryDelegate: AnyObject {
     func logOutUser(completion: @escaping () -> Void)
 }
 
-class AuthenticationRepository {
+package class AuthenticationRepository {
     private enum Constants {
         /// Maximum amount of consecutive token refresh attempts before failing
         static let maximumTokenRefreshAttempts = 10
@@ -60,7 +60,7 @@ class AuthenticationRepository {
         tokenQueue.sync { _consecutiveRefreshFailures }
     }
 
-    private(set) var currentUserId: UserId? {
+    package private(set) var currentUserId: UserId? {
         get { tokenQueue.sync { _currentUserId } }
         set { tokenQueue.async(flags: .barrier) { self._currentUserId = newValue }}
     }

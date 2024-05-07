@@ -6,7 +6,7 @@ import CoreData
 
 extension NSManagedObjectContext: DatabaseSession {}
 
-protocol UserDatabaseSession {
+package protocol UserDatabaseSession {
     /// Saves the provided payload to the DB. Return's the matching `UserDTO` if the save was successful. Throws an error
     /// if the save fails.
     @discardableResult
@@ -32,7 +32,7 @@ protocol UserDatabaseSession {
     func deleteQuery(_ query: UserListQuery)
 }
 
-protocol CurrentUserDatabaseSession {
+package protocol CurrentUserDatabaseSession {
     /// Saves the provided payload to the DB. Return's a `CurrentUserDTO` if the save was successful. Throws an error
     /// if the save fails.
     @discardableResult
@@ -64,7 +64,7 @@ extension CurrentUserDatabaseSession {
     }
 }
 
-protocol MessageDatabaseSession {
+package protocol MessageDatabaseSession {
     /// Creates a new `MessageDTO` object in the database. Throws an error if the message fails to be created.
     @discardableResult
     func createNewMessage(
@@ -232,13 +232,13 @@ extension MessageDatabaseSession {
     }
 }
 
-protocol MessageSearchDatabaseSession {
+package protocol MessageSearchDatabaseSession {
     func saveQuery(query: MessageSearchQuery) -> MessageSearchQueryDTO
 
     func deleteQuery(_ query: MessageSearchQuery)
 }
 
-protocol ChannelDatabaseSession {
+package protocol ChannelDatabaseSession {
     /// Creates `ChannelDTO` objects for the given channel payloads and `query`. ignores items that could not be saved
     @discardableResult
     func saveChannelList(
@@ -286,7 +286,7 @@ protocol ChannelDatabaseSession {
     func removeChannels(cids: Set<ChannelId>)
 }
 
-protocol ChannelReadDatabaseSession {
+package protocol ChannelReadDatabaseSession {
     /// Creates a new `ChannelReadDTO` object in the database. Throws an error if the ChannelRead fails to be created.
     @discardableResult
     func saveChannelRead(
@@ -327,13 +327,13 @@ protocol ChannelReadDatabaseSession {
     func markChannelAsUnread(cid: ChannelId, by userId: UserId)
 }
 
-protocol ChannelMuteDatabaseSession {
+package protocol ChannelMuteDatabaseSession {
     /// Creates a new `ChannelMuteDTO` object in the database. Throws an error if the `ChannelMuteDTO` fails to be created.
     @discardableResult
     func saveChannelMute(payload: MutedChannelPayload) throws -> ChannelMuteDTO
 }
 
-protocol MemberDatabaseSession {
+package protocol MemberDatabaseSession {
     /// Creates a new `MemberDTO` object in the database with the given `payload` in the channel with `channelId`.
     @discardableResult
     func saveMember(
@@ -355,7 +355,7 @@ protocol MemberDatabaseSession {
     func member(userId: UserId, cid: ChannelId) -> MemberDTO?
 }
 
-protocol MemberListQueryDatabaseSession {
+package protocol MemberListQueryDatabaseSession {
     /// Fetches `MemberListQueryDatabaseSession` entity for the given `filterHash`.
     func channelMemberListQuery(queryHash: String) -> ChannelMemberListQueryDTO?
 
@@ -364,7 +364,7 @@ protocol MemberListQueryDatabaseSession {
     func saveQuery(_ query: ChannelMemberListQuery) throws -> ChannelMemberListQueryDTO
 }
 
-protocol AttachmentDatabaseSession {
+package protocol AttachmentDatabaseSession {
     /// Fetches `AttachmentDTO`entity for the given `id`.
     func attachment(id: AttachmentId) -> AttachmentDTO?
 
@@ -389,11 +389,11 @@ protocol AttachmentDatabaseSession {
     func delete(attachment: AttachmentDTO)
 }
 
-protocol QueuedRequestDatabaseSession {
+package protocol QueuedRequestDatabaseSession {
     func deleteQueuedRequest(id: String)
 }
 
-protocol ThreadDatabaseSession {
+package protocol ThreadDatabaseSession {
     /// Creates `ThreadDTO` objects for the given thread payloads.
     @discardableResult
     func saveThreadList(payload: ThreadListPayload, query: ThreadListQuery?) -> [ThreadDTO]
@@ -423,7 +423,7 @@ protocol ThreadDatabaseSession {
     ) throws -> ThreadReadDTO
 }
 
-protocol DatabaseSession: UserDatabaseSession,
+package protocol DatabaseSession: UserDatabaseSession,
     CurrentUserDatabaseSession,
     MessageDatabaseSession,
     MessageSearchDatabaseSession,

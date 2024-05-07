@@ -5,12 +5,12 @@
 import CoreData
 
 /// Makes a channel members query call to the backend and updates the local storage with the results.
-class ChannelMemberListUpdater: Worker {
+package class ChannelMemberListUpdater: Worker {
     /// Makes a channel members query call to the backend and updates the local storage with the results.
     /// - Parameters:
     ///   - query: The query used in the request.
     ///   - completion: Called when the API call is finished. Called with `Error` if the remote update fails.
-    func load(_ query: ChannelMemberListQuery, completion: ((Result<[ChatChannelMember], Error>) -> Void)? = nil) {
+    package func load(_ query: ChannelMemberListQuery, completion: ((Result<[ChatChannelMember], Error>) -> Void)? = nil) {
         fetchAndSaveChannelIfNeeded(query.cid) { [weak self] error in
             if let error {
                 completion?(.failure(error))
@@ -42,23 +42,6 @@ class ChannelMemberListUpdater: Worker {
                 }
             }
         }
-    }
-}
-
-@available(iOS 13.0, *)
-extension ChannelMemberListUpdater {
-    func load(_ query: ChannelMemberListQuery) async throws -> [ChatChannelMember] {
-        try await withCheckedThrowingContinuation { continuation in
-            load(query) { result in
-                continuation.resume(with: result)
-            }
-        }
-    }
-    
-    func member(with userId: UserId, cid: ChannelId) async throws -> ChatChannelMember {
-        let members = try await load(.channelMember(userId: userId, cid: cid))
-        guard let member = members.first else { throw ClientError.MemberDoesNotExist(userId: userId, cid: cid) }
-        return member
     }
 }
 

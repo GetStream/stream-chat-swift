@@ -23,7 +23,7 @@ enum SyncError: Error {
 
 /// This class is in charge of the synchronization of our local storage with the remote.
 /// When executing a sync, it will remove outdated elements, and will refresh the content to always show the latest data.
-class SyncRepository {
+package class SyncRepository {
     private enum Constants {
         static let maximumDaysSinceLastSync = 30
     }
@@ -77,7 +77,7 @@ class SyncRepository {
     
     // MARK: - Tracking Active
     
-    func trackChannelListQuery(_ provider: @escaping () -> ChannelListQuery?) {
+    package func trackChannelListQuery(_ provider: @escaping () -> ChannelListQuery?) {
         syncQueue.sync {
             _activeChannelListQueryProviders.append(provider)
         }

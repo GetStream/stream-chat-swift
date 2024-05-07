@@ -1,4 +1,4 @@
-// swift-tools-version:5.6
+// swift-tools-version:5.9
 
 import Foundation
 import PackageDescription
@@ -13,6 +13,10 @@ let package = Package(
         .library(
             name: "StreamChat",
             targets: ["StreamChat"]
+        ),
+        .library(
+            name: "StreamChatStateLayer",
+            targets: ["StreamChatStateLayer"]
         ),
         .library(
             name: "StreamChatUI",
@@ -32,6 +36,9 @@ let package = Package(
             name: "StreamChat",
             exclude: ["Info.plist"],
             resources: [.copy("Database/StreamChatModel.xcdatamodeld")]
+        ),
+        .target(
+            name: "StreamChatStateLayer"
         ),
         .target(
             name: "StreamChatUI",

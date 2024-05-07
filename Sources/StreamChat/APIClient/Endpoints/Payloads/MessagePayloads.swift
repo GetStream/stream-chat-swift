@@ -58,19 +58,19 @@ extension MessagePayload {
     }
 }
 
-struct MessageSearchResultsPayload: Decodable {
+package struct MessageSearchResultsPayload: Decodable {
     let results: [MessagePayload.Boxed]
-    let next: String?
+    package let next: String?
 }
 
 /// An object describing the incoming message JSON payload.
-class MessagePayload: Decodable {
-    let id: String
+package class MessagePayload: Decodable {
+    package let id: String
     /// Only messages from `translate` endpoint contain `cid`
     let cid: ChannelId?
     let type: MessageType
     let user: UserPayload
-    let createdAt: Date
+    package let createdAt: Date
     let updatedAt: Date
     let deletedAt: Date?
     let messageTextUpdatedAt: Date?
@@ -109,7 +109,7 @@ class MessagePayload: Decodable {
     /// make an extra call do get channel details.
     let channel: ChannelDetailPayload?
 
-    required init(from decoder: Decoder) throws {
+    required package init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: MessagePayloadsCodingKeys.self)
         id = try container.decode(String.self, forKey: .id)
         cid = try container.decodeIfPresent(ChannelId.self, forKey: .cid)
@@ -329,13 +329,13 @@ struct MessageRequestBody: Encodable {
 typealias PinnedMessagesPayload = MessageListPayload
 
 /// An object describing the message list JSON payload.
-typealias MessageRepliesPayload = MessageListPayload
+package typealias MessageRepliesPayload = MessageListPayload
 
-struct MessageListPayload: Decodable {
-    let messages: [MessagePayload]
+package struct MessageListPayload: Decodable {
+    package let messages: [MessagePayload]
 }
 
-struct MessageReactionsPayload: Decodable {
+package struct MessageReactionsPayload: Decodable {
     let reactions: [MessageReactionPayload]
 }
 

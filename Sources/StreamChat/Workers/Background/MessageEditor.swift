@@ -18,7 +18,7 @@ import Foundation
 /// - Message edit retry
 /// - Start editing messages when connection status changes (offline -> online)
 ///
-class MessageEditor: Worker {
+package class MessageEditor: Worker {
     @Atomic private var pendingMessageIDs: Set<MessageId> = []
 
     private let observer: ListDatabaseObserver<MessageDTO, MessageDTO>
@@ -126,7 +126,7 @@ private extension Array where Element == ListChange<MessageDTO> {
 
 @available(iOS 13.0, *)
 extension MessageEditor {
-    func waitForAPIRequest(messageId: MessageId) async throws -> ChatMessage {
+    package func waitForAPIRequest(messageId: MessageId) async throws -> ChatMessage {
         try await withCheckedThrowingContinuation { continuation in
             registerContinuation(forMessage: messageId, continuation: continuation)
         }

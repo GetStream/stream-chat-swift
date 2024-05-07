@@ -19,7 +19,7 @@ import Foundation
 /// - Message send retry
 /// - Start sending messages when connection status changes (offline -> online)
 ///
-class MessageSender: Worker {
+package class MessageSender: Worker {
     /// Because we need to be sure messages for every channel are sent in the correct order, we create a sending queue for
     /// every cid. These queues can send messages in parallel.
     @Atomic private var sendingQueueByCid: [ChannelId: MessageSendingQueue] = [:]
@@ -126,7 +126,7 @@ class MessageSender: Worker {
 
 @available(iOS 13.0, *)
 extension MessageSender: MessageSendingQueueDelegate {
-    func waitForAPIRequest(messageId: MessageId) async throws -> ChatMessage {
+    package func waitForAPIRequest(messageId: MessageId) async throws -> ChatMessage {
         try await withCheckedThrowingContinuation { continuation in
             registerContinuation(forMessage: messageId, continuation: continuation)
         }

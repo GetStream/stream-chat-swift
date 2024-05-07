@@ -4,13 +4,13 @@
 
 import Foundation
 
-struct SortValue<T> {
+package struct SortValue<T> {
     let keyPath: PartialKeyPath<T>
     let isAscending: Bool
 }
 
 extension Array {
-    func sort(using sorting: [SortValue<Element>]) -> [Element] {
+    package func sort(using sorting: [SortValue<Element>]) -> [Element] {
         var result = self
 
         for sort in sorting.reversed() {

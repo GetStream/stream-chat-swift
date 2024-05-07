@@ -4,7 +4,7 @@
 
 import Foundation
 
-class CallRepository {
+package class CallRepository {
     private let apiClient: APIClient
 
     init(apiClient: APIClient) {

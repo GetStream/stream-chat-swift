@@ -4,7 +4,7 @@
 
 import Foundation
 
-struct ChannelEditDetailPayload: Encodable {
+package struct ChannelEditDetailPayload: Encodable {
     let id: String?
     let name: String?
     let imageURL: URL?
@@ -14,7 +14,7 @@ struct ChannelEditDetailPayload: Encodable {
     let invites: Set<UserId>
     let extraData: [String: RawJSON]
 
-    init(
+    package init(
         cid: ChannelId,
         name: String?,
         imageURL: URL?,
@@ -33,7 +33,7 @@ struct ChannelEditDetailPayload: Encodable {
         self.extraData = extraData
     }
 
-    init(
+    package init(
         type: ChannelType,
         name: String?,
         imageURL: URL?,
@@ -52,7 +52,7 @@ struct ChannelEditDetailPayload: Encodable {
         self.extraData = extraData
     }
 
-    func encode(to encoder: Encoder) throws {
+    package func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: ChannelCodingKeys.self)
 
         try container.encodeIfPresent(team, forKey: .team)

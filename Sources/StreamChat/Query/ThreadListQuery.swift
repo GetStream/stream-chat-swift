@@ -5,7 +5,7 @@
 import Foundation
 
 /// A query to fetch the list of threads the current belongs to.
-internal struct ThreadListQuery: Encodable {
+package struct ThreadListQuery: Encodable {
     private enum CodingKeys: String, CodingKey {
         case watch
         case replyLimit = "reply_limit"

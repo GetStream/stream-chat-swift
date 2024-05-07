@@ -6,7 +6,7 @@ import CoreData
 import Foundation
 
 @objc(DeviceDTO)
-class DeviceDTO: NSManagedObject {
+package class DeviceDTO: NSManagedObject {
     @NSManaged var id: String
     @NSManaged var createdAt: DBDate?
 

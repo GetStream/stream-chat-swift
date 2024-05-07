@@ -845,7 +845,7 @@ public extension ChatMessageController {
 }
 
 extension ClientError {
-    class MessageEmptyReplies: ClientError {
+    package class MessageEmptyReplies: ClientError {
         override public var localizedDescription: String {
             "You can't load previous replies when there is no replies for the message."
         }

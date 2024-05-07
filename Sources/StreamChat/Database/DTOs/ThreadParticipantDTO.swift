@@ -6,7 +6,7 @@ import CoreData
 import Foundation
 
 @objc(ThreadParticipantDTO)
-class ThreadParticipantDTO: NSManagedObject {
+package class ThreadParticipantDTO: NSManagedObject {
     @NSManaged var createdAt: DBDate
     @NSManaged var lastReadAt: DBDate?
     @NSManaged var threadId: String
@@ -38,7 +38,7 @@ class ThreadParticipantDTO: NSManagedObject {
 }
 
 extension ThreadParticipantDTO {
-    func asModel() throws -> ThreadParticipant {
+    package func asModel() throws -> ThreadParticipant {
         try .init(
             user: user.asModel(),
             threadId: threadId,
@@ -49,7 +49,7 @@ extension ThreadParticipantDTO {
 }
 
 extension NSManagedObjectContext {
-    func saveThreadParticipant(
+    package func saveThreadParticipant(
         payload: ThreadParticipantPayload,
         threadId: String,
         cache: PreWarmedCache?

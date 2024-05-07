@@ -8,7 +8,7 @@ import 'Allurefile'
 
 xcode_version = ENV['XCODE_VERSION'] || '15.2'
 xcode_project = 'StreamChat.xcodeproj'
-sdk_names = ['StreamChat', 'StreamChatUI']
+sdk_names = ['StreamChat', 'StreamChatStateLayer', 'StreamChatUI']
 github_repo = ENV['GITHUB_REPOSITORY'] || 'GetStream/stream-chat-swift'
 stress_tests_cycles = 50
 derived_data_path = 'derived_data'
@@ -75,7 +75,7 @@ lane :release do |options|
     version: options[:version],
     bump_type: options[:type],
     sdk_names: sdk_names,
-    podspec_names: ['StreamChat', 'StreamChat-XCFramework', 'StreamChatUI', 'StreamChatUI-XCFramework'],
+    podspec_names: ['StreamChat', 'StreamChat-XCFramework', 'StreamChatStateLayer', 'StreamChatStateLayer-XCFramework' 'StreamChatUI', 'StreamChatUI-XCFramework'],
     github_repo: github_repo,
     extra_changes: extra_changes,
     create_pull_request: true
@@ -95,9 +95,9 @@ lane :publish_release do |options|
     skip_git_status_check: false,
     version: options[:version],
     sdk_names: sdk_names,
-    podspec_names: ['StreamChat', 'StreamChat-XCFramework', 'StreamChatUI', 'StreamChatUI-XCFramework'],
+    podspec_names: ['StreamChat', 'StreamChat-XCFramework', 'StreamChatStateLayer', 'StreamChatStateLayer-XCFramework', 'StreamChatUI', 'StreamChatUI-XCFramework'],
     github_repo: github_repo,
-    upload_assets: ['Products/StreamChat.zip', 'Products/StreamChatUI.zip', 'Products/StreamChat-All.zip']
+    upload_assets: ['Products/StreamChat.zip', 'Products/StreamChatStateLayer.zip', 'Products/StreamChatUI.zip', 'Products/StreamChat-All.zip']
   )
 
   update_spm(version: options[:version])
@@ -134,7 +134,7 @@ lane :compress_frameworks do
   Dir.chdir('..') do
     FileUtils.cp('LICENSE', 'Products/LICENSE')
     Dir.chdir('Products') do
-      ['StreamChat', 'StreamChatUI'].each do |framework|
+      sdk_names.each do |framework|
         sh("zip -r #{framework} ./#{framework}.xcframework ./LICENSE")
         sh("swift package compute-checksum #{framework}.zip")
       end
@@ -159,6 +159,7 @@ private_lane :update_spm do |options|
 
   # Generate Checksums
   stream_chat_checksum = sh('swift package compute-checksum ../Products/StreamChat.zip').strip
+  stream_chat_state_layer_checksum = sh('swift package compute-checksum ../Products/StreamChatStateLayer.zip').strip
   stream_chat_ui_checksum = sh('swift package compute-checksum ../Products/StreamChatUI.zip').strip
 
   initial_directory = Dir.pwd
@@ -181,6 +182,8 @@ private_lane :update_spm do |options|
       case previous_module
       when 'StreamChat'
         line.gsub(/(checksum: ")[a-z0-9]+(")/, "\\1#{stream_chat_checksum}\\2")
+      when 'StreamChatStateLayer'
+        line.gsub(/(checksum: ")[a-z0-9]+(")/, "\\1#{stream_chat_state_layer_checksum}\\2")
       when "StreamChatUI"
         line.gsub(/(checksum: ")[a-z0-9]+(")/, "\\1#{stream_chat_ui_checksum}\\2")
       else
@@ -317,6 +320,20 @@ lane :test do |options|
     project: xcode_project,
     scheme: 'StreamChat',
     testplan: 'StreamChatTestPlan',
+    derived_data_path: derived_data_path,
+    cloned_source_packages_path: source_packages_path,
+    devices: options[:device],
+    skip_build: true,
+    xcargs: buildcache_xcargs,
+    number_of_retries: options[:cron] ? 3 : nil
+  )
+
+  update_testplan_on_ci(path: 'Tests/StreamChatStateLayerTests/StreamChatStateLayerTestPlan.xctestplan')
+
+  scan(
+    project: xcode_project,
+    scheme: 'StreamChatStateLayer',
+    testplan: 'StreamChatStateLayerTestPlan',
     derived_data_path: derived_data_path,
     cloned_source_packages_path: source_packages_path,
     devices: options[:device],

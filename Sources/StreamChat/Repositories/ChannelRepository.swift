@@ -2,7 +2,7 @@
 // Copyright © 2024 Stream.io Inc. All rights reserved.
 //
 
-class ChannelRepository {
+package class ChannelRepository {
     let database: DatabaseContainer
     let apiClient: APIClient
 

@@ -5,7 +5,7 @@
 import Foundation
 
 /// An object describing the incoming muted-channel JSON payload.
-struct MutedChannelPayload: Decodable {
+package struct MutedChannelPayload: Decodable {
     private enum CodingKeys: String, CodingKey {
         case mutedChannel = "channel"
         case user
@@ -34,7 +34,7 @@ struct MutedChannelPayload: Decodable {
         self.expiresAt = expiresAt
     }
 
-    init(from decoder: Decoder) throws {
+    package init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         mutedChannel = try container.decode(ChannelDetailPayload.self, forKey: .mutedChannel)
         user = try container.decode(UserPayload.self, forKey: .user)

@@ -5,7 +5,7 @@
 import CoreData
 
 @objc(UserListQueryDTO)
-class UserListQueryDTO: NSManagedObject {
+package class UserListQueryDTO: NSManagedObject {
     /// Unique identifier of the query.
     @NSManaged var filterHash: String
 
@@ -37,11 +37,11 @@ class UserListQueryDTO: NSManagedObject {
 }
 
 extension NSManagedObjectContext {
-    func userListQuery(filterHash: String) -> UserListQueryDTO? {
+    package func userListQuery(filterHash: String) -> UserListQueryDTO? {
         UserListQueryDTO.load(filterHash: filterHash, context: self)
     }
 
-    func saveQuery(query: UserListQuery) throws -> UserListQueryDTO? {
+    package func saveQuery(query: UserListQuery) throws -> UserListQueryDTO? {
         guard let filterHash = query.filter?.filterHash else {
             // A query without a filter doesn't have to be saved to the DB because it matches all users by default.
             return nil
@@ -68,7 +68,7 @@ extension NSManagedObjectContext {
         return newDTO
     }
 
-    func deleteQuery(_ query: UserListQuery) {
+    package func deleteQuery(_ query: UserListQuery) {
         guard let filterHash = query.filter?.filterHash else {
             // A query without a filter is not saved in DB.
             return

@@ -427,7 +427,7 @@ public extension Filter {
 
 extension Filter {
     /// Filter hash that can be used to uniquely identify a filter.
-    var filterHash: String {
+    package var filterHash: String {
         String(describing: self)
     }
 }

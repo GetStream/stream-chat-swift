@@ -4,8 +4,8 @@
 
 import CoreData
 
-class ReactionListUpdater: Worker {
-    func loadReactions(
+package class ReactionListUpdater: Worker {
+    package func loadReactions(
         query: ReactionListQuery,
         completion: @escaping (Result<[ChatMessageReaction], Error>) -> Void
     ) {
@@ -26,15 +26,6 @@ class ReactionListUpdater: Worker {
                 })
             case let .failure(error):
                 completion(.failure(error))
-            }
-        }
-    }
-    
-    @available(iOS 13.0, *)
-    func loadReactions(query: ReactionListQuery) async throws -> [ChatMessageReaction] {
-        try await withCheckedThrowingContinuation { continuation in
-            loadReactions(query: query) { completion in
-                continuation.resume(with: completion)
             }
         }
     }

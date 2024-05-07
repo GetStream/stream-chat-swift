@@ -39,7 +39,7 @@ class QueuedRequestDTO: NSManagedObject {
 }
 
 extension NSManagedObjectContext: QueuedRequestDatabaseSession {
-    func deleteQueuedRequest(id: String) {
+    package func deleteQueuedRequest(id: String) {
         guard let request = QueuedRequestDTO.load(id: id, context: self) else { return }
         delete(request)
     }

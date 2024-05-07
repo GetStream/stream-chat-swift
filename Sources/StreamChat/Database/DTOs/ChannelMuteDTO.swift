@@ -6,7 +6,7 @@ import CoreData
 import Foundation
 
 @objc(ChannelMuteDTO)
-final class ChannelMuteDTO: NSManagedObject {
+package final class ChannelMuteDTO: NSManagedObject {
     @NSManaged var createdAt: DBDate
     @NSManaged var updatedAt: DBDate
     @NSManaged var expiresAt: DBDate?
@@ -39,7 +39,7 @@ final class ChannelMuteDTO: NSManagedObject {
 
 extension NSManagedObjectContext {
     @discardableResult
-    func saveChannelMute(payload: MutedChannelPayload) throws -> ChannelMuteDTO {
+    package func saveChannelMute(payload: MutedChannelPayload) throws -> ChannelMuteDTO {
         guard let currentUser = currentUser else {
             throw ClientError.CurrentUserDoesNotExist()
         }

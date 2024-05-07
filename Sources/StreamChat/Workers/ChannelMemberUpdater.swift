@@ -5,7 +5,7 @@
 import Foundation
 
 /// Makes channel member related calls to the backend.
-class ChannelMemberUpdater: Worker {
+package class ChannelMemberUpdater: Worker {
     /// Bans the user in the channel.
     /// - Parameters:
     ///   - userId: The user identifier to ban.
@@ -14,7 +14,7 @@ class ChannelMemberUpdater: Worker {
     ///   - timeoutInMinutes: The # of minutes the user should be banned for.
     ///   - reason: The ban reason.
     ///   - completion: Called when the API call is finished. Called with `Error` if the remote update fails.
-    func banMember(
+    package func banMember(
         _ userId: UserId,
         in cid: ChannelId,
         shadow: Bool,
@@ -34,32 +34,13 @@ class ChannelMemberUpdater: Worker {
     ///   - userId: The user identifier to unban.
     ///   - cid: The channel identifier to unban in.
     ///   - completion: Called when the API call is finished. Called with `Error` if the remote update fails.
-    func unbanMember(
+    package func unbanMember(
         _ userId: UserId,
         in cid: ChannelId,
         completion: ((Error?) -> Void)? = nil
     ) {
         apiClient.request(endpoint: .unbanMember(userId, cid: cid)) {
             completion?($0.error)
-        }
-    }
-}
-
-@available(iOS 13.0, *)
-extension ChannelMemberUpdater {
-    func banMember(_ userId: UserId, in cid: ChannelId, shadow: Bool, for timeoutInMinutes: Int?, reason: String?) async throws {
-        try await withCheckedThrowingContinuation { continuation in
-            banMember(userId, in: cid, shadow: shadow, for: timeoutInMinutes, reason: reason) { error in
-                continuation.resume(with: error)
-            }
-        }
-    }
-    
-    func unbanMember(_ userId: UserId, in cid: ChannelId) async throws {
-        try await withCheckedThrowingContinuation { continuation in
-            unbanMember(userId, in: cid) { error in
-                continuation.resume(with: error)
-            }
         }
     }
 }

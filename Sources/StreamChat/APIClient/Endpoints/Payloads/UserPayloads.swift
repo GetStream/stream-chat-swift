@@ -31,8 +31,8 @@ enum UserPayloadsCodingKeys: String, CodingKey, CaseIterable {
 // MARK: - GET users
 
 /// An object describing the incoming user JSON payload.
-class UserPayload: Decodable {
-    let id: String
+package class UserPayload: Decodable {
+    package let id: String
     let name: String?
     let imageURL: URL?
     let role: UserRole
@@ -79,7 +79,7 @@ class UserPayload: Decodable {
         self.extraData = extraData
     }
 
-    required init(from decoder: Decoder) throws {
+    required package init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: UserPayloadsCodingKeys.self)
         
         id = try container.decodeIfPresent(String.self, forKey: .id) ?? ""

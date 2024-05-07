@@ -6,7 +6,7 @@ import CoreData
 import Foundation
 
 @objc(CurrentUserDTO)
-class CurrentUserDTO: NSManagedObject {
+package class CurrentUserDTO: NSManagedObject {
     @NSManaged var unreadChannelsCount: Int64
     @NSManaged var unreadMessagesCount: Int64
 
@@ -29,7 +29,7 @@ class CurrentUserDTO: NSManagedObject {
     @NSManaged var isReadReceiptsEnabled: Bool
 
     /// Returns a default fetch request for the current user.
-    static var defaultFetchRequest: NSFetchRequest<CurrentUserDTO> {
+    package static var defaultFetchRequest: NSFetchRequest<CurrentUserDTO> {
         let request = NSFetchRequest<CurrentUserDTO>(entityName: CurrentUserDTO.entityName)
         // Sorting doesn't matter here as soon as we have a single current-user in a database.
         // It's here to make the request safe for FRC
@@ -42,7 +42,7 @@ extension CurrentUserDTO {
     /// Returns an existing `CurrentUserDTO`. Returns `nil` of no `CurrentUserDTO` exists in the DB.
     ///
     /// - Parameter context: The context used to fetch `CurrentUserDTO`
-    fileprivate static func load(context: NSManagedObjectContext) -> CurrentUserDTO? {
+    static func load(context: NSManagedObjectContext) -> CurrentUserDTO? {
         let request = NSFetchRequest<CurrentUserDTO>(entityName: CurrentUserDTO.entityName)
         let result = load(by: request, context: context)
 
@@ -72,14 +72,14 @@ extension CurrentUserDTO {
         return new
     }
     
-    static func load(context: NSManagedObjectContext) throws -> CurrentChatUser {
+    package static func load(context: NSManagedObjectContext) throws -> CurrentChatUser {
         guard let dto = load(context: context) else { throw ClientError.CurrentUserDoesNotExist() }
         return try dto.asModel()
     }
 }
 
 extension NSManagedObjectContext: CurrentUserDatabaseSession {
-    func saveCurrentUser(payload: CurrentUserPayload) throws -> CurrentUserDTO {
+    package func saveCurrentUser(payload: CurrentUserPayload) throws -> CurrentUserDTO {
         invalidateCurrentUserCache()
         
         let dto = CurrentUserDTO.loadOrCreate(context: self)
@@ -106,7 +106,7 @@ extension NSManagedObjectContext: CurrentUserDatabaseSession {
         return dto
     }
 
-    func saveCurrentUserUnreadCount(count: UnreadCount) throws {
+    package func saveCurrentUserUnreadCount(count: UnreadCount) throws {
         invalidateCurrentUserCache()
 
         guard let dto = currentUser else {
@@ -117,7 +117,7 @@ extension NSManagedObjectContext: CurrentUserDatabaseSession {
         dto.unreadMessagesCount = Int64(clamping: count.messages)
     }
 
-    func saveCurrentUserDevices(_ devices: [DevicePayload], clearExisting: Bool) throws -> [DeviceDTO] {
+    package func saveCurrentUserDevices(_ devices: [DevicePayload], clearExisting: Bool) throws -> [DeviceDTO] {
         invalidateCurrentUserCache()
 
         guard let currentUser = currentUser else {
@@ -141,7 +141,7 @@ extension NSManagedObjectContext: CurrentUserDatabaseSession {
         return deviceDTOs
     }
 
-    func saveCurrentDevice(_ deviceId: String) throws {
+    package func saveCurrentDevice(_ deviceId: String) throws {
         invalidateCurrentUserCache()
 
         guard let currentUser = currentUser else {
@@ -153,14 +153,14 @@ extension NSManagedObjectContext: CurrentUserDatabaseSession {
         currentUser.currentDevice = dto
     }
 
-    func deleteDevice(id: String) {
+    package func deleteDevice(id: String) {
         if let dto = DeviceDTO.load(id: id, context: self) {
             delete(dto)
         }
     }
 
     private static let currentUserKey = "io.getStream.chat.core.context.current_user_key"
-    var currentUser: CurrentUserDTO? {
+    package var currentUser: CurrentUserDTO? {
         // we already have cached value in `userInfo` so all setup is complete
         // so we can just return cached value
         if let currentUser = userInfo[Self.currentUserKey] as? CurrentUserDTO {
@@ -185,7 +185,7 @@ extension NSManagedObjectContext: CurrentUserDatabaseSession {
 
 extension CurrentUserDTO {
     /// Snapshots the current state of `CurrentUserDTO` and returns an immutable model object from it.
-    func asModel() throws -> CurrentChatUser { try .create(fromDTO: self) }
+    package func asModel() throws -> CurrentChatUser { try .create(fromDTO: self) }
 }
 
 extension CurrentChatUser {

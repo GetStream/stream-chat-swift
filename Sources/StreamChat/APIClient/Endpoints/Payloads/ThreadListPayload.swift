@@ -4,7 +4,7 @@
 
 import Foundation
 
-struct ThreadListPayload: Decodable {
+package struct ThreadListPayload: Decodable {
     enum CodingKeys: String, CodingKey {
         case threads
         case next
@@ -18,7 +18,7 @@ struct ThreadListPayload: Decodable {
         self.next = next
     }
 
-    init(from decoder: Decoder) throws {
+    package init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         let threads = try container.decodeArrayIgnoringFailures([ThreadPayload].self, forKey: .threads)
         let next = try container.decodeIfPresent(String.self, forKey: .next)
@@ -28,7 +28,7 @@ struct ThreadListPayload: Decodable {
     }
 }
 
-struct ThreadPayload: Decodable {
+package struct ThreadPayload: Decodable {
     enum CodingKeys: String, CodingKey {
         case channel
         case parentMessageId = "parent_message_id"
@@ -89,7 +89,7 @@ struct ThreadPayload: Decodable {
         self.read = read
     }
 
-    init(from decoder: Decoder) throws {
+    package init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
 
         channel = try container.decode(ChannelDetailPayload.self, forKey: .channel)
@@ -111,7 +111,7 @@ struct ThreadPayload: Decodable {
     }
 }
 
-struct ThreadParticipantPayload: Decodable {
+package struct ThreadParticipantPayload: Decodable {
     enum CodingKeys: String, CodingKey {
         case user
         case threadId = "thread_id"
@@ -125,7 +125,7 @@ struct ThreadParticipantPayload: Decodable {
     let lastReadAt: Date?
 }
 
-struct ThreadReadPayload: Decodable {
+package struct ThreadReadPayload: Decodable {
     enum CodingKeys: String, CodingKey {
         case user
         case lastReadAt = "last_read"

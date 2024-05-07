@@ -6,7 +6,7 @@ import CoreData
 import Foundation
 
 @objc(ChannelReadDTO)
-class ChannelReadDTO: NSManagedObject {
+package class ChannelReadDTO: NSManagedObject {
     @NSManaged var lastReadAt: DBDate
     @NSManaged var lastReadMessageId: MessageId?
     @NSManaged var unreadMessageCount: Int32
@@ -16,7 +16,7 @@ class ChannelReadDTO: NSManagedObject {
     @NSManaged var channel: ChannelDTO
     @NSManaged var user: UserDTO
 
-    override func willSave() {
+    package override func willSave() {
         super.willSave()
 
         // When the read is updated, we need to propagate this change up to holding channel
@@ -70,7 +70,7 @@ class ChannelReadDTO: NSManagedObject {
 // MARK: Saving and loading the data
 
 extension NSManagedObjectContext {
-    func saveChannelRead(
+    package func saveChannelRead(
         payload: ChannelReadPayload,
         for cid: ChannelId,
         cache: PreWarmedCache?
@@ -86,7 +86,7 @@ extension NSManagedObjectContext {
         return dto
     }
 
-    func markChannelAsRead(cid: ChannelId, userId: UserId, at: Date) {
+    package func markChannelAsRead(cid: ChannelId, userId: UserId, at: Date) {
         if let read = loadChannelRead(cid: cid, userId: userId) {
             let previousLastReadAt = read.lastReadAt
 
@@ -126,7 +126,7 @@ extension NSManagedObjectContext {
         }
     }
 
-    func markChannelAsUnread(
+    package func markChannelAsUnread(
         for cid: ChannelId,
         userId: UserId,
         from messageId: MessageId,
@@ -151,21 +151,21 @@ extension NSManagedObjectContext {
         read.unreadMessageCount = Int32(messagesCount)
     }
 
-    func markChannelAsUnread(cid: ChannelId, by userId: UserId) {
+    package func markChannelAsUnread(cid: ChannelId, by userId: UserId) {
         guard let read = loadChannelRead(cid: cid, userId: userId) else { return }
 
         delete(read)
     }
 
-    func loadOrCreateChannelRead(cid: ChannelId, userId: String) -> ChannelReadDTO? {
+    package func loadOrCreateChannelRead(cid: ChannelId, userId: String) -> ChannelReadDTO? {
         ChannelReadDTO.loadOrCreate(cid: cid, userId: userId, context: self, cache: nil)
     }
 
-    func loadChannelRead(cid: ChannelId, userId: String) -> ChannelReadDTO? {
+    package func loadChannelRead(cid: ChannelId, userId: String) -> ChannelReadDTO? {
         ChannelReadDTO.load(cid: cid, userId: userId, context: self)
     }
 
-    func loadChannelReads(for userId: UserId) -> [ChannelReadDTO] {
+    package func loadChannelReads(for userId: UserId) -> [ChannelReadDTO] {
         ChannelReadDTO.load(userId: userId, context: self)
     }
 

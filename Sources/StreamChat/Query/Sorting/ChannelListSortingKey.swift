@@ -107,7 +107,7 @@ extension ChannelListSortingKey {
     }
 }
 
-extension Array where Element == Sorting<ChannelListSortingKey> {
+package extension Array where Element == Sorting<ChannelListSortingKey> {
     var runtimeSorting: [SortValue<ChatChannel>] {
         var requiresRuntime = false
         let sortValues: [SortValue<ChatChannel>] = compactMap {

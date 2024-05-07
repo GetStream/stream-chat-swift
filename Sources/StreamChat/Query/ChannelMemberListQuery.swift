@@ -119,7 +119,7 @@ extension ChannelMemberListQuery {
     ///   - userId: The user identifier.
     ///   - cid: The channel identifier.
     /// - Returns: `ChannelMemberListQuery` for a specific user in a specific channel
-    static func channelMember(userId: UserId, cid: ChannelId) -> Self {
+    package static func channelMember(userId: UserId, cid: ChannelId) -> Self {
         .init(cid: cid, filter: .equal("id", to: userId))
     }
 }

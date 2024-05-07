@@ -32,7 +32,7 @@ extension EventDTO {
 }
 
 /// A protocol for any `ChannelEvent` where it has a  `channel` payload.
-protocol ChannelSpecificEvent: Event {
+package protocol ChannelSpecificEvent: Event {
     var cid: ChannelId { get }
 }
 

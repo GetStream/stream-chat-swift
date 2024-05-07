@@ -254,7 +254,7 @@ extension WebSocketClient: WebSocketPingControllerDelegate {
 
 extension Notification.Name {
     /// The name of the notification posted when a new event is published/
-    static let NewEventReceived = Notification.Name("io.getStream.chat.core.new_event_received")
+    package static let NewEventReceived = Notification.Name("io.getStream.chat.core.new_event_received")
 }
 
 extension Notification {
@@ -264,7 +264,7 @@ extension Notification {
         self.init(name: .NewEventReceived, object: sender, userInfo: [Self.eventKey: event])
     }
 
-    var event: Event? {
+    package var event: Event? {
         userInfo?[Self.eventKey] as? Event
     }
 }

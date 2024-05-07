@@ -5,7 +5,7 @@
 import CoreData
 
 @objc(ReactionListQueryDTO)
-class ReactionListQueryDTO: NSManagedObject {
+package class ReactionListQueryDTO: NSManagedObject {
     /// Unique identifier of the query.
     @NSManaged var filterHash: String
 
@@ -40,11 +40,11 @@ class ReactionListQueryDTO: NSManagedObject {
 }
 
 extension NSManagedObjectContext {
-    func reactionListQuery(filterHash: String) -> ReactionListQueryDTO? {
+    package func reactionListQuery(filterHash: String) -> ReactionListQueryDTO? {
         ReactionListQueryDTO.load(filterHash: filterHash, context: self)
     }
 
-    func saveQuery(query: ReactionListQuery) throws -> ReactionListQueryDTO? {
+    package func saveQuery(query: ReactionListQuery) throws -> ReactionListQueryDTO? {
         guard let filterHash = query.filter?.filterHash else {
             // A query without a filter doesn't have to be saved to the DB because it matches all users by default.
             return nil

@@ -6,7 +6,7 @@ import CoreData
 import Foundation
 
 @objc(AttachmentDTO)
-class AttachmentDTO: NSManagedObject {
+package class AttachmentDTO: NSManagedObject {
     /// An attachment id.
     @NSManaged private var id: String?
     var attachmentID: AttachmentId? {
@@ -47,7 +47,7 @@ class AttachmentDTO: NSManagedObject {
 
     @NSManaged var message: MessageDTO
 
-    override func willSave() {
+    package override func willSave() {
         super.willSave()
 
         guard !isDeleted && !message.isDeleted else {
@@ -92,11 +92,11 @@ class AttachmentDTO: NSManagedObject {
 }
 
 extension NSManagedObjectContext: AttachmentDatabaseSession {
-    func attachment(id: AttachmentId) -> AttachmentDTO? {
+    package func attachment(id: AttachmentId) -> AttachmentDTO? {
         AttachmentDTO.load(id: id, context: self)
     }
 
-    func saveAttachment(
+    package func saveAttachment(
         payload: MessageAttachmentPayload,
         id: AttachmentId
     ) throws -> AttachmentDTO {
@@ -116,7 +116,7 @@ extension NSManagedObjectContext: AttachmentDatabaseSession {
         return dto
     }
 
-    func createNewAttachment(
+    package func createNewAttachment(
         attachment: AnyAttachmentPayload,
         id: AttachmentId
     ) throws -> AttachmentDTO {
@@ -137,7 +137,7 @@ extension NSManagedObjectContext: AttachmentDatabaseSession {
         return dto
     }
 
-    func delete(attachment: AttachmentDTO) {
+    package func delete(attachment: AttachmentDTO) {
         delete(attachment)
     }
 }

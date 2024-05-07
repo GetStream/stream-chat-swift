@@ -5,7 +5,7 @@
 import CoreData
 
 @objc(MessageSearchQueryDTO)
-class MessageSearchQueryDTO: NSManagedObject {
+package class MessageSearchQueryDTO: NSManagedObject {
     /// Unique identifier of the query/
     @NSManaged var filterHash: String?
 
@@ -21,11 +21,11 @@ class MessageSearchQueryDTO: NSManagedObject {
 }
 
 extension NSManagedObjectContext: MessageSearchDatabaseSession {
-    func messageSearchQuery(filterHash: String) -> MessageSearchQueryDTO? {
+    package func messageSearchQuery(filterHash: String) -> MessageSearchQueryDTO? {
         MessageSearchQueryDTO.load(filterHash: filterHash, context: self)
     }
 
-    func saveQuery(query: MessageSearchQuery) -> MessageSearchQueryDTO {
+    package func saveQuery(query: MessageSearchQuery) -> MessageSearchQueryDTO {
         if let existingDTO = MessageSearchQueryDTO.load(filterHash: query.filterHash, context: self) {
             return existingDTO
         }
@@ -40,7 +40,7 @@ extension NSManagedObjectContext: MessageSearchDatabaseSession {
         return newDTO
     }
 
-    func deleteQuery(_ query: MessageSearchQuery) {
+    package func deleteQuery(_ query: MessageSearchQuery) {
         guard let existingDTO = MessageSearchQueryDTO.load(filterHash: query.filterHash, context: self) else {
             // This query doesn't exist in DB.
             return

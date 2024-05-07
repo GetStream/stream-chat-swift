@@ -5,7 +5,7 @@
 import Foundation
 
 /// The query used to paginate pinned messages.
-struct PinnedMessagesQuery: Hashable {
+package struct PinnedMessagesQuery: Hashable {
     /// The page size.
     let pageSize: Int
 
@@ -15,7 +15,7 @@ struct PinnedMessagesQuery: Hashable {
     /// The pagination parameter. When `nil` messages pinned most recently are returned.
     let pagination: PinnedMessagesPagination?
 
-    init(
+    package init(
         pageSize: Int,
         sorting: [Sorting<PinnedMessagesSortingKey>] = [],
         pagination: PinnedMessagesPagination? = nil
@@ -34,7 +34,7 @@ extension PinnedMessagesQuery: Encodable {
         case sort
     }
 
-    func encode(to encoder: Encoder) throws {
+    package func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
 
         try container.encode(pageSize, forKey: .pageSize)

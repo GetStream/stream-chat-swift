@@ -1,0 +1,39 @@
+{
+  "configurations" : [
+    {
+      "id" : "25F2868A-7955-4C88-ABC3-89BCC4A49E78",
+      "name" : "Configuration 1",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+    "codeCoverage" : {
+      "targets" : [
+        {
+          "containerPath" : "container:StreamChat.xcodeproj",
+          "identifier" : "4F7143352BEA169D00E4D345",
+          "name" : "StreamChatStateLayer"
+        }
+      ]
+    },
+    "commandLineArgumentEntries" : [
+      {
+        "argument" : "-com.apple.CoreData.ConcurrencyDebug 1"
+      }
+    ],
+    "defaultTestExecutionTimeAllowance" : 180,
+    "testTimeoutsEnabled" : true
+  },
+  "testTargets" : [
+    {
+      "target" : {
+        "containerPath" : "container:StreamChat.xcodeproj",
+        "identifier" : "4F71433C2BEA169E00E4D345",
+        "name" : "StreamChatStateLayerTests"
+      }
+    }
+  ],
+  "version" : 1
+}

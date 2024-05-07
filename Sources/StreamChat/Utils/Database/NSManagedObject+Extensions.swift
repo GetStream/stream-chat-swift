@@ -41,17 +41,17 @@ extension NSFetchRequestGettable where Self: NSManagedObject {
 extension NSManagedObject: NSFetchRequestGettable {}
 
 extension NSManagedObject {
-    static func load<T: NSManagedObject>(by id: String, context: NSManagedObjectContext) -> [T] {
+    package static func load<T: NSManagedObject>(by id: String, context: NSManagedObjectContext) -> [T] {
         load(keyPath: idKey, equalTo: id, context: context)
     }
 
-    static func load<T: NSManagedObject>(keyPath: String, equalTo value: String, context: NSManagedObjectContext) -> [T] {
+    package static func load<T: NSManagedObject>(keyPath: String, equalTo value: String, context: NSManagedObjectContext) -> [T] {
         let request = NSFetchRequest<T>(entityName: entityName)
         request.predicate = NSPredicate(format: "%K == %@", keyPath, value)
         return load(by: request, context: context)
     }
 
-    static func load<T: NSManagedObject>(by request: NSFetchRequest<T>, context: NSManagedObjectContext) -> [T] {
+    package static func load<T: NSManagedObject>(by request: NSFetchRequest<T>, context: NSManagedObjectContext) -> [T] {
         request.entity = NSEntityDescription.entity(forEntityName: T.entityName, in: context)!
         do {
             return try context.fetch(request, using: FetchCache.shared)
@@ -61,7 +61,7 @@ extension NSManagedObject {
         }
     }
     
-    static func load<T: NSManagedObject>(_ request: NSFetchRequest<T>, context: NSManagedObjectContext) throws -> [T] {
+    package static func load<T: NSManagedObject>(_ request: NSFetchRequest<T>, context: NSManagedObjectContext) throws -> [T] {
         request.entity = NSEntityDescription.entity(forEntityName: T.entityName, in: context)!
         return try context.fetch(request, using: FetchCache.shared)
     }

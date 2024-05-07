@@ -5,13 +5,13 @@
 import Foundation
 
 /// Makes user-related calls to the backend and updates the local storage with the results.
-class UserUpdater: Worker {
+package class UserUpdater: Worker {
     /// Mutes the user with the provided `userId`.
     /// - Parameters:
     ///   - userId: The user identifier.
     ///   - completion: Called when the API call is finished. Called with `Error` if the remote update fails.
     ///
-    func muteUser(_ userId: UserId, completion: ((Error?) -> Void)? = nil) {
+    package func muteUser(_ userId: UserId, completion: ((Error?) -> Void)? = nil) {
         apiClient.request(endpoint: .muteUser(userId)) {
             completion?($0.error)
         }
@@ -22,7 +22,7 @@ class UserUpdater: Worker {
     ///   - userId: The user identifier.
     ///   - completion: Called when the API call is finished. Called with `Error` if the remote update fails.
     ///
-    func unmuteUser(_ userId: UserId, completion: ((Error?) -> Void)? = nil) {
+    package func unmuteUser(_ userId: UserId, completion: ((Error?) -> Void)? = nil) {
         apiClient.request(endpoint: .unmuteUser(userId)) {
             completion?($0.error)
         }
@@ -71,7 +71,7 @@ class UserUpdater: Worker {
     ///   - userId: The identifier of a user that should be flagged or unflagged.
     ///   - completion: Called when the API call is finished. Called with `Error` if the remote update fails.
     ///
-    func flagUser(_ flag: Bool, with userId: UserId, completion: ((Error?) -> Void)? = nil) {
+    package func flagUser(_ flag: Bool, with userId: UserId, completion: ((Error?) -> Void)? = nil) {
         let endpoint: Endpoint<FlagUserPayload> = .flagUser(flag, with: userId)
         apiClient.request(endpoint: endpoint) {
             switch $0 {
@@ -102,41 +102,6 @@ extension ClientError {
     class UserDoesNotExist: ClientError {
         init(userId: UserId) {
             super.init("There is no user with id: <\(userId)>.")
-        }
-    }
-}
-
-@available(iOS 13.0, *)
-extension UserUpdater {
-    func muteUser(_ userId: UserId) async throws {
-        try await withCheckedThrowingContinuation { continuation in
-            muteUser(userId) { error in
-                continuation.resume(with: error)
-            }
-        }
-    }
-    
-    func unmuteUser(_ userId: UserId) async throws {
-        try await withCheckedThrowingContinuation { continuation in
-            unmuteUser(userId) { error in
-                continuation.resume(with: error)
-            }
-        }
-    }
-    
-    func flag(_ userId: UserId) async throws {
-        try await withCheckedThrowingContinuation { continuation in
-            flagUser(true, with: userId) { error in
-                continuation.resume(with: error)
-            }
-        }
-    }
-    
-    func unflag(_ userId: UserId) async throws {
-        try await withCheckedThrowingContinuation { continuation in
-            flagUser(false, with: userId) { error in
-                continuation.resume(with: error)
-            }
         }
     }
 }

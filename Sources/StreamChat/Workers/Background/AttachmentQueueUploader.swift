@@ -19,7 +19,7 @@ import Foundation
 /// - Upload attachments in order declared by `locallyCreatedAt`
 /// - Start uploading attachments when connection status changes (offline -> online)
 ///
-class AttachmentQueueUploader: Worker {
+package class AttachmentQueueUploader: Worker {
     @Atomic private var pendingAttachmentIDs: Set<AttachmentId> = []
 
     private let observer: ListDatabaseObserver<AttachmentDTO, AttachmentDTO>
@@ -306,7 +306,7 @@ private class AttachmentStorage {
 
 @available(iOS 13.0, *)
 extension AttachmentQueueUploader {
-    func waitForAPIRequest(attachmentId: AttachmentId) async throws -> UploadedAttachment {
+    package func waitForAPIRequest(attachmentId: AttachmentId) async throws -> UploadedAttachment {
         try await withCheckedThrowingContinuation { continuation in
             registerContinuation(for: attachmentId, continuation: continuation)
         }

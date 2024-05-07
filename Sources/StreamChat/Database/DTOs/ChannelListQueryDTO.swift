@@ -5,7 +5,7 @@
 import CoreData
 
 @objc(ChannelListQueryDTO)
-class ChannelListQueryDTO: NSManagedObject {
+package class ChannelListQueryDTO: NSManagedObject {
     /// Unique identifier of the query/
     @NSManaged var filterHash: String
 
@@ -14,7 +14,7 @@ class ChannelListQueryDTO: NSManagedObject {
 
     // MARK: - Relationships
 
-    @NSManaged var channels: Set<ChannelDTO>
+    @NSManaged package var channels: Set<ChannelDTO>
 
     static func load(filterHash: String, context: NSManagedObjectContext) -> ChannelListQueryDTO? {
         load(
@@ -35,11 +35,11 @@ class ChannelListQueryDTO: NSManagedObject {
 }
 
 extension NSManagedObjectContext {
-    func channelListQuery(filterHash: String) -> ChannelListQueryDTO? {
+    package func channelListQuery(filterHash: String) -> ChannelListQueryDTO? {
         ChannelListQueryDTO.load(filterHash: filterHash, context: self)
     }
 
-    func saveQuery(query: ChannelListQuery) -> ChannelListQueryDTO {
+    package func saveQuery(query: ChannelListQuery) -> ChannelListQueryDTO {
         if let existingDTO = channelListQuery(filterHash: query.filter.filterHash) {
             return existingDTO
         }
@@ -64,7 +64,7 @@ extension NSManagedObjectContext {
         return newDTO
     }
 
-    func loadAllChannelListQueries() -> [ChannelListQueryDTO] {
+    package func loadAllChannelListQueries() -> [ChannelListQueryDTO] {
         let queries: [ChannelListQueryDTO]
 
         do {

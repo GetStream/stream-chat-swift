@@ -5,7 +5,7 @@
 import Foundation
 
 /// The information about a thread read.
-internal struct ThreadRead {
+package struct ThreadRead {
     /// The user which the read belongs to.
     internal let user: ChatUser
     /// The date when the user last read the thread.

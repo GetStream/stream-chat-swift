@@ -6,7 +6,7 @@ import CoreData
 import Foundation
 
 @objc(ThreadReadDTO)
-class ThreadReadDTO: NSManagedObject {
+package class ThreadReadDTO: NSManagedObject {
     @NSManaged var user: UserDTO
     @NSManaged var lastReadAt: DBDate?
     @NSManaged var unreadMessagesCount: Int64
@@ -37,7 +37,7 @@ class ThreadReadDTO: NSManagedObject {
 }
 
 extension ThreadReadDTO {
-    func asModel() throws -> ThreadRead {
+    package func asModel() throws -> ThreadRead {
         try .init(
             user: user.asModel(),
             lastReadAt: lastReadAt?.bridgeDate,
@@ -47,7 +47,7 @@ extension ThreadReadDTO {
 }
 
 extension NSManagedObjectContext {
-    func saveThreadRead(
+    package func saveThreadRead(
         payload: ThreadReadPayload,
         parentMessageId: String,
         cache: PreWarmedCache?

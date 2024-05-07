@@ -4,7 +4,7 @@
 
 import Foundation
 
-struct ChannelListPayload {
+package struct ChannelListPayload {
     /// A list of channels response (see `ChannelQuery`).
     let channels: [ChannelPayload]
 }
@@ -14,7 +14,7 @@ extension ChannelListPayload: Decodable {
         case channels
     }
 
-    init(from decoder: Decoder) throws {
+    package init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         let channels = try container
             .decodeArrayIgnoringFailures([ChannelPayload].self, forKey: .channels)
@@ -25,18 +25,18 @@ extension ChannelListPayload: Decodable {
     }
 }
 
-struct ChannelPayload {
-    let channel: ChannelDetailPayload
+package struct ChannelPayload {
+    package let channel: ChannelDetailPayload
 
     let watcherCount: Int?
 
-    let watchers: [UserPayload]?
+    package let watchers: [UserPayload]?
 
     let members: [MemberPayload]
 
     let membership: MemberPayload?
 
-    let messages: [MessagePayload]
+    package let messages: [MessagePayload]
 
     let pinnedMessages: [MessagePayload]
 
@@ -67,7 +67,7 @@ extension ChannelPayload: Decodable {
         case hidden
     }
 
-    init(from decoder: Decoder) throws {
+    package init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
 
         self.init(
@@ -84,8 +84,8 @@ extension ChannelPayload: Decodable {
     }
 }
 
-struct ChannelDetailPayload {
-    let cid: ChannelId
+package struct ChannelDetailPayload {
+    package let cid: ChannelId
 
     let name: String?
 
@@ -140,7 +140,7 @@ struct ChannelDetailPayload {
 }
 
 extension ChannelDetailPayload: Decodable {
-    init(from decoder: Decoder) throws {
+    package init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: ChannelCodingKeys.self)
 
         let extraData: [String: RawJSON]
@@ -180,7 +180,7 @@ extension ChannelDetailPayload: Decodable {
     }
 }
 
-struct ChannelReadPayload: Decodable {
+package struct ChannelReadPayload: Decodable {
     private enum CodingKeys: String, CodingKey {
         case user
         case lastReadAt = "last_read"

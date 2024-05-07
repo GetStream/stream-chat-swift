@@ -5,31 +5,20 @@
 import Foundation
 
 /// A worker used for sending custom events to the backend.
-class EventSender: Worker {
+package class EventSender: Worker {
     /// Sends a custom event with the given payload to the channel with `cid`.
     ///
     /// - Parameters:
     ///   - payload: A custom event payload.
     ///   - cid: An identifier of a destination channel.
     ///   - completion: Called when the API call is finished. Called with non-nil `Error` if API call fails.
-    func sendEvent<Payload: CustomEventPayload>(
+    package func sendEvent<Payload: CustomEventPayload>(
         _ payload: Payload,
         to cid: ChannelId,
         completion: ((Error?) -> Void)? = nil
     ) {
         apiClient.request(endpoint: .sendEvent(payload, cid: cid)) {
             completion?($0.error)
-        }
-    }
-}
-
-@available(iOS 13.0, *)
-extension EventSender {
-    func sendEvent<Payload: CustomEventPayload>(_ payload: Payload, to cid: ChannelId) async throws {
-        try await withCheckedThrowingContinuation { continuation in
-            sendEvent(payload, to: cid) { error in
-                continuation.resume(with: error)
-            }
         }
     }
 }
