@@ -3,7 +3,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 # Upcoming
 
+## StreamChat
 ### 🔄 Changed
+- Do not retry rate-limited requests [#3182](https://github.com/GetStream/stream-chat-swift/pull/3182)
 
 # [4.54.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.54.0)
 _May 06, 2024_
