@@ -31,7 +31,7 @@ final class Chat_Tests: XCTestCase {
         expectedTestError = nil
     }
     
-    // MARK: - Get
+    // MARK: - Accessing the State
     
     func test_get_whenLocalStoreHasState_thenGetResetsState() async throws {
         // Existing state
@@ -89,6 +89,30 @@ final class Chat_Tests: XCTestCase {
         await XCTAssertEqual(nextPayload.messages.map(\.id), chat.state.messages.map(\.id))
         await XCTAssertEqual(nextPayload.members.map(\.user?.id), chat.state.members.map(\.id))
         await XCTAssertEqual(nextPayload.watchers?.map(\.id), chat.state.watchers.map(\.id))
+    }
+    
+    func test_startWatching_whenChannelUpdaterSucceeds_thenStartWatchingActionSucceeds() async throws {
+        env.channelUpdaterMock.startWatching_completion_result = .success(())
+        try await chat.watch()
+        XCTAssertEqual(channelId, env.channelUpdaterMock.startWatching_cid)
+    }
+    
+    func test_startWatching_whenChannelUpdaterFails_thenStartWatchingActionSucceeds() async throws {
+        env.channelUpdaterMock.startWatching_completion_result = .failure(expectedTestError)
+        await XCTAssertAsyncFailure(try await chat.watch(), expectedTestError)
+        XCTAssertEqual(channelId, env.channelUpdaterMock.startWatching_cid)
+    }
+    
+    func test_stopWatching_whenChannelUpdaterSucceeds_thenStopWatchingActionSucceeds() async throws {
+        env.channelUpdaterMock.stopWatching_completion_result = .success(())
+        try await chat.stopWatching()
+        XCTAssertEqual(channelId, env.channelUpdaterMock.stopWatching_cid)
+    }
+    
+    func test_stopWatching_whenChannelUpdaterFails_thenStopWatchingActionSucceeds() async throws {
+        env.channelUpdaterMock.stopWatching_completion_result = .failure(expectedTestError)
+        await XCTAssertAsyncFailure(try await chat.stopWatching(), expectedTestError)
+        XCTAssertEqual(channelId, env.channelUpdaterMock.stopWatching_cid)
     }
     
     // MARK: - Deleting the Channel
@@ -598,7 +622,7 @@ final class Chat_Tests: XCTestCase {
         XCTAssertEqual(nil, message.localState)
     }
     
-    // MARK: - Message Loading and State
+    // MARK: - Message Pagination and State
     
     func test_restoreMessages_whenExistingMessages_thenStateUpdates() async throws {
         // DB has some older messages loaded
@@ -1405,32 +1429,6 @@ final class Chat_Tests: XCTestCase {
         XCTAssertEqual(skipPush, env.channelUpdaterMock.truncateChannel_skipPush)
         XCTAssertEqual(hardDelete, env.channelUpdaterMock.truncateChannel_hardDelete)
         XCTAssertEqual(systemMessage, env.channelUpdaterMock.truncateChannel_systemMessage)
-    }
-    
-    // MARK: - Watching the Channel
-    
-    func test_startWatching_whenChannelUpdaterSucceeds_thenStartWatchingActionSucceeds() async throws {
-        env.channelUpdaterMock.startWatching_completion_result = .success(())
-        try await chat.watch()
-        XCTAssertEqual(channelId, env.channelUpdaterMock.startWatching_cid)
-    }
-    
-    func test_startWatching_whenChannelUpdaterFails_thenStartWatchingActionSucceeds() async throws {
-        env.channelUpdaterMock.startWatching_completion_result = .failure(expectedTestError)
-        await XCTAssertAsyncFailure(try await chat.watch(), expectedTestError)
-        XCTAssertEqual(channelId, env.channelUpdaterMock.startWatching_cid)
-    }
-    
-    func test_stopWatching_whenChannelUpdaterSucceeds_thenStopWatchingActionSucceeds() async throws {
-        env.channelUpdaterMock.stopWatching_completion_result = .success(())
-        try await chat.stopWatching()
-        XCTAssertEqual(channelId, env.channelUpdaterMock.stopWatching_cid)
-    }
-    
-    func test_stopWatching_whenChannelUpdaterFails_thenStopWatchingActionSucceeds() async throws {
-        env.channelUpdaterMock.stopWatching_completion_result = .failure(expectedTestError)
-        await XCTAssertAsyncFailure(try await chat.stopWatching(), expectedTestError)
-        XCTAssertEqual(channelId, env.channelUpdaterMock.stopWatching_cid)
     }
     
     // MARK: - Test Data

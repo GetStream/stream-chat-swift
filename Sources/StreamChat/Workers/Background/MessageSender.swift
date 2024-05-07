@@ -138,7 +138,11 @@ extension MessageSender: MessageSendingQueueDelegate {
         }
     }
     
-    fileprivate func messageSendingQueue(_ queue: MessageSendingQueue, didProcess messageId: MessageId, result: Result<ChatMessage, MessageRepositoryError>) {
+    fileprivate func messageSendingQueue(
+        _ queue: MessageSendingQueue,
+        didProcess messageId: MessageId,
+        result: Result<ChatMessage, MessageRepositoryError>
+    ) {
         sendingDispatchQueue.async(flags: .barrier) {
             guard let continuation = self.continuations.removeValue(forKey: messageId) as? CheckedContinuation<ChatMessage, Error> else { return }
             continuation.resume(with: result)

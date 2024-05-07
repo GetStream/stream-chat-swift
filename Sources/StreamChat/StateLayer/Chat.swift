@@ -66,6 +66,8 @@ public class Chat {
         }
     }
     
+    // MARK: - Accessing the State
+    
     /// An observable object representing the current state of the channel.
     @MainActor public lazy var state: ChatState = stateBuilder.build()
     
@@ -90,6 +92,29 @@ public class Chat {
         // cid is retrieved from the server when we are creating new channels or there is no local state present
         guard query.cid != payload.channel.cid else { return }
         await state.setChannelId(payload.channel.cid)
+    }
+    
+    /// Start watching the channel which enables server-side events.
+    ///
+    /// Watching queries the channel state and returns members, watchers and messages, and notifies the server to start sending events when anything in this channel changes.
+    ///
+    /// Please refer to [Watching a Channel](https://getstream.io/chat/docs/ios-swift/watch_channel/?language=swift) for additional information.
+    ///
+    /// - Note: Creating an instance of `Chat` starts watching the channel automatically.
+    ///
+    /// - Throws: An error while communicating with the Stream API.
+    public func watch() async throws {
+        // Note that watching is started in ChatClient+Chat when channel updater's update is called.
+        try await channelUpdater.startWatching(cid: cid, isInRecoveryMode: false)
+    }
+    
+    /// Stop watching the channel which disables server-side events.
+    ///
+    /// Please refer to [Watching a Channel](https://getstream.io/chat/docs/ios-swift/watch_channel/?language=swift) for additional information.
+    ///
+    /// - Throws: An error while communicating with the Stream API.
+    public func stopWatching() async throws {
+        try await channelUpdater.stopWatching(cid: cid)
     }
     
     // MARK: - Deleting the Channel
@@ -442,7 +467,7 @@ public class Chat {
         return try await waitForAPIRequest(localMessage: localMessage)
     }
     
-    // MARK: - Message Loading
+    // MARK: - Message Pagination
     
     /// Loads messages for the specified pagination parameters and updates ``ChatState/messages``.
     ///
@@ -598,7 +623,7 @@ public class Chat {
     ///
     /// - Throws: An error while communicating with the Stream API.
     public func unflagMessage(_ messageId: MessageId) async throws {
-        try await messageUpdater.flagMessage(false, with: messageId, in: cid)
+        try await messageUpdater.flagMessage(false, with: messageId, in: cid, reason: nil)
     }
     
     // MARK: - Message Rich Content
@@ -664,7 +689,7 @@ public class Chat {
         return try await channelUpdater.loadPinnedMessages(in: cid, query: query)
     }
     
-    // MARK: - Message Reactions
+    // MARK: - Message Reactions and Pagination
     
     /// Removes a reaction with a specified type from a message.
     /// - Parameters:
@@ -767,7 +792,7 @@ public class Chat {
         try await readStateSender.markUnread(from: messageId, in: channel)
     }
     
-    // MARK: - Message Replies
+    // MARK: - Message Replies and Pagination
     
     /// Sends a message as reply to an existing message.
     ///
@@ -1013,6 +1038,55 @@ public class Chat {
         try await channelUpdater.showChannel(cid: cid)
     }
     
+    // MARK: - Sending and Listening to Events
+    
+    /// Subscribes to web-socket events of a single type which is a channel specific event in this channel.
+    ///
+    /// - Note: The handler is always called on the main thread.
+    /// - Important: Subscribing to events not related to this channel, like ``ConnectionStatusUpdated``, does not trigger the handler.
+    /// - SeeAlso: ``ChatClient.subscribe(toEvent:handler:)`` for subscribing to client events.
+    ///
+    /// - Parameters:
+    ///   - event: The event type to subscribe to (e.g. ``MessageNewEvent``).
+    ///   - handler: The handler closure which is called when the event happens.
+    ///
+    /// - Returns: A cancellable instance, which you use when you end the subscription. Deallocation of the result will tear down the subscription stream.
+    public func subscribe<E>(
+        toEvent event: E.Type,
+        handler: @escaping (E) -> Void
+    ) -> AnyCancellable where E: Event {
+        eventNotificationCenter.subscribe(
+            to: event,
+            handler: { [weak self] event in
+                self?.dispatchSubscribeHandler(event, callback: handler)
+            }
+        )
+    }
+    
+    /// Subscribes to all the web-socket events of this channel.
+    ///
+    /// - SeeAlso: ``ChatClient.subscribe(handler:)`` for subscribing to client events.
+    ///
+    /// - Parameter handler: The handler closure which is called when the event happens.
+    ///
+    /// - Returns: A cancellable instance, which you use when you end the subscription. Deallocation of the result will tear down the subscription stream.
+    public func subscribe(_ handler: @escaping (Event) -> Void) -> AnyCancellable {
+        eventNotificationCenter.subscribe(
+            handler: { [weak self] event in
+                self?.dispatchSubscribeHandler(event, callback: handler)
+            }
+        )
+    }
+    
+    /// Sends a custom event to the channel.
+    ///
+    /// Please refer to [Custom Events](https://getstream.io/chat/docs/ios-swift/custom_events/?language=swift) for additional details.
+    ///
+    /// - Parameter payload: The custom event payload to be sent.
+    public func sendEvent<EventPayload>(_ payload: EventPayload) async throws where EventPayload: CustomEventPayload {
+        try await eventSender.sendEvent(payload, to: cid)
+    }
+    
     // MARK: - Throttling and Slow Mode
     
     /// Enables slow mode which limits how often members can post new messages to the channel.
@@ -1213,79 +1287,7 @@ public class Chat {
         )
     }
     
-    // MARK: - Watching the Channel
-    
-    /// Start watching the channel which enables server-side events.
-    ///
-    /// Watching queries the channel state and returns members, watchers and messages, and notifies the server to start sending events when anything in this channel changes.
-    ///
-    /// Please refer to [Watching a Channel](https://getstream.io/chat/docs/ios-swift/watch_channel/?language=swift) for additional information.
-    ///
-    /// - Note: Creating an instance of `Chat` starts watching the channel automatically.
-    ///
-    /// - Throws: An error while communicating with the Stream API.
-    public func watch() async throws {
-        // Note that watching is started in ChatClient+Chat when channel updater's update is called.
-        try await channelUpdater.startWatching(cid: cid, isInRecoveryMode: false)
-    }
-    
-    /// Stop watching the channel which disables server-side events.
-    ///
-    /// Please refer to [Watching a Channel](https://getstream.io/chat/docs/ios-swift/watch_channel/?language=swift) for additional information.
-    ///
-    /// - Throws: An error while communicating with the Stream API.
-    public func stopWatching() async throws {
-        try await channelUpdater.stopWatching(cid: cid)
-    }
-    
-    /// Subscribes to web-socket events of a single type which is a channel specific event in this channel.
-    ///
-    /// - Note: The handler is always called on the main thread.
-    /// - Important: Subscribing to events not related to this channel, like ``ConnectionStatusUpdated``, does not trigger the handler.
-    /// - SeeAlso: ``ChatClient.subscribe(toEvent:handler:)`` for subscribing to client events.
-    ///
-    /// - Parameters:
-    ///   - event: The event type to subscribe to (e.g. ``MessageNewEvent``).
-    ///   - handler: The handler closure which is called when the event happens.
-    ///
-    /// - Returns: A cancellable instance, which you use when you end the subscription. Deallocation of the result will tear down the subscription stream.
-    public func subscribe<E>(
-        toEvent event: E.Type,
-        handler: @escaping (E) -> Void
-    ) -> AnyCancellable where E: Event {
-        eventNotificationCenter.subscribe(
-            to: event,
-            handler: { [weak self] event in
-                self?.dispatchSubscribeHandler(event, callback: handler)
-            }
-        )
-    }
-    
-    /// Subscribes to all the web-socket events of this channel.
-    ///
-    /// - SeeAlso: ``ChatClient.subscribe(handler:)`` for subscribing to client events.
-    ///
-    /// - Parameter handler: The handler closure which is called when the event happens.
-    ///
-    /// - Returns: A cancellable instance, which you use when you end the subscription. Deallocation of the result will tear down the subscription stream.
-    public func subscribe(_ handler: @escaping (Event) -> Void) -> AnyCancellable {
-        eventNotificationCenter.subscribe(
-            handler: { [weak self] event in
-                self?.dispatchSubscribeHandler(event, callback: handler)
-            }
-        )
-    }
-    
-    /// Sends a custom event to the channel.
-    ///
-    /// Please refer to [Custom Events](https://getstream.io/chat/docs/ios-swift/custom_events/?language=swift) for additional details.
-    ///
-    /// - Parameter payload: The custom event payload to be sent.
-    public func sendEvent<EventPayload>(_ payload: EventPayload) async throws where EventPayload: CustomEventPayload {
-        try await eventSender.sendEvent(payload, to: cid)
-    }
-    
-    // MARK: -
+    // MARK: - Watcher Pagination
     
     /// Loads watchers for the specified pagination parameters and updates ``ChatState/watchers``.
     ///

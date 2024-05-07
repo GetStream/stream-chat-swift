@@ -167,7 +167,12 @@ class CurrentUserUpdater: Worker {
 extension CurrentUserUpdater {
     func addDevice(_ device: PushDevice, currentUserId: UserId) async throws {
         try await withCheckedThrowingContinuation { continuation in
-            addDevice(deviceId: device.deviceId, pushProvider: device.pushProvider, providerName: device.providerName, currentUserId: currentUserId) { error in
+            addDevice(
+                deviceId: device.deviceId,
+                pushProvider: device.pushProvider,
+                providerName: device.providerName,
+                currentUserId: currentUserId
+            ) { error in
                 continuation.resume(with: error)
             }
         }
@@ -197,9 +202,19 @@ extension CurrentUserUpdater {
         }
     }
     
-    func updateUserData(currentUserId: UserId, name: String?, imageURL: URL?, userExtraData: [String: RawJSON]?) async throws {
+    func updateUserData(
+        currentUserId: UserId,
+        name: String?,
+        imageURL: URL?,
+        userExtraData: [String: RawJSON]?
+    ) async throws {
         try await withCheckedThrowingContinuation { continuation in
-            updateUserData(currentUserId: currentUserId, name: name, imageURL: imageURL, userExtraData: userExtraData) { error in
+            updateUserData(
+                currentUserId: currentUserId,
+                name: name,
+                imageURL: imageURL,
+                userExtraData: userExtraData
+            ) { error in
                 continuation.resume(with: error)
             }
         }

@@ -98,11 +98,7 @@ extension TypingEventsSender {
     func keystroke(in cid: ChannelId, parentMessageId: MessageId?) async throws {
         try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
             keystroke(in: cid, parentMessageId: parentMessageId) { error in
-                if let error {
-                    continuation.resume(throwing: error)
-                } else {
-                    continuation.resume()
-                }
+                continuation.resume(with: error)
             }
         }
     }
@@ -110,11 +106,7 @@ extension TypingEventsSender {
     func stopTyping(in cid: ChannelId, parentMessageId: MessageId?) async throws {
         try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
             stopTyping(in: cid, parentMessageId: parentMessageId) { error in
-                if let error {
-                    continuation.resume(throwing: error)
-                } else {
-                    continuation.resume()
-                }
+                continuation.resume(with: error)
             }
         }
     }

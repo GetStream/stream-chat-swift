@@ -809,9 +809,21 @@ private extension DatabaseSession {
 
 @available(iOS 13.0, *)
 extension MessageUpdater {
-    func addReaction(_ type: MessageReactionType, score: Int, enforceUnique: Bool, extraData: [String: RawJSON], messageId: MessageId) async throws {
+    func addReaction(
+        _ type: MessageReactionType,
+        score: Int,
+        enforceUnique: Bool,
+        extraData: [String: RawJSON],
+        messageId: MessageId
+    ) async throws {
         try await withCheckedThrowingContinuation { continuation in
-            addReaction(type, score: score, enforceUnique: enforceUnique, extraData: extraData, messageId: messageId) { error in
+            addReaction(
+                type,
+                score: score,
+                enforceUnique: enforceUnique,
+                extraData: extraData,
+                messageId: messageId
+            ) { error in
                 continuation.resume(with: error)
             }
         }
@@ -881,25 +893,55 @@ extension MessageUpdater {
         }
     }
     
-    func dispatchEphemeralMessageAction(cid: ChannelId, messageId: MessageId, action: AttachmentAction) async throws {
+    func dispatchEphemeralMessageAction(
+        cid: ChannelId,
+        messageId: MessageId,
+        action: AttachmentAction
+    ) async throws {
         try await withCheckedThrowingContinuation { continuation in
-            dispatchEphemeralMessageAction(cid: cid, messageId: messageId, action: action) { error in
+            dispatchEphemeralMessageAction(
+                cid: cid,
+                messageId: messageId,
+                action: action
+            ) { error in
                 continuation.resume(with: error)
             }
         }
     }
     
-    func editMessage(messageId: MessageId, text: String, skipEnrichUrl: Bool, attachments: [AnyAttachmentPayload] = [], extraData: [String: RawJSON]? = nil) async throws -> ChatMessage {
+    func editMessage(
+        messageId: MessageId,
+        text: String,
+        skipEnrichUrl: Bool,
+        attachments: [AnyAttachmentPayload] = [],
+        extraData: [String: RawJSON]? = nil
+    ) async throws -> ChatMessage {
         try await withCheckedThrowingContinuation { continuation in
-            editMessage(messageId: messageId, text: text, skipEnrichUrl: skipEnrichUrl, attachments: attachments, extraData: extraData) { result in
+            editMessage(
+                messageId: messageId,
+                text: text,
+                skipEnrichUrl: skipEnrichUrl,
+                attachments: attachments,
+                extraData: extraData
+            ) { result in
                 continuation.resume(with: result)
             }
         }
     }
     
-    func flagMessage(_ flag: Bool, with messageId: MessageId, in cid: ChannelId, reason: String?) async throws {
+    func flagMessage(
+        _ flag: Bool,
+        with messageId: MessageId,
+        in cid: ChannelId,
+        reason: String?
+    ) async throws {
         try await withCheckedThrowingContinuation { continuation in
-            flagMessage(flag, with: messageId, in: cid, reason: reason) { error in
+            flagMessage(
+                flag,
+                with: messageId,
+                in: cid,
+                reason: reason
+            ) { error in
                 continuation.resume(with: error)
             }
         }
@@ -913,17 +955,35 @@ extension MessageUpdater {
         }
     }
     
-    func loadReactions(cid: ChannelId, messageId: MessageId, pagination: Pagination) async throws -> [ChatMessageReaction] {
+    func loadReactions(
+        cid: ChannelId,
+        messageId: MessageId,
+        pagination: Pagination
+    ) async throws -> [ChatMessageReaction] {
         try await withCheckedThrowingContinuation { continuation in
-            loadReactions(cid: cid, messageId: messageId, pagination: pagination) { result in
+            loadReactions(
+                cid: cid,
+                messageId: messageId,
+                pagination: pagination
+            ) { result in
                 continuation.resume(with: result)
             }
         }
     }
     
-    @discardableResult func loadReplies(cid: ChannelId, messageId: MessageId, pagination: MessagesPagination, paginationStateHandler: MessagesPaginationStateHandling) async throws -> MessageRepliesPayload {
+    @discardableResult func loadReplies(
+        cid: ChannelId,
+        messageId: MessageId,
+        pagination: MessagesPagination,
+        paginationStateHandler: MessagesPaginationStateHandling
+    ) async throws -> MessageRepliesPayload {
         try await withCheckedThrowingContinuation { continuation in
-            loadReplies(cid: cid, messageId: messageId, pagination: pagination, paginationStateHandler: paginationStateHandler) { result in
+            loadReplies(
+                cid: cid,
+                messageId: messageId,
+                pagination: pagination,
+                paginationStateHandler: paginationStateHandler
+            ) { result in
                 continuation.resume(with: result)
             }
         }
@@ -979,14 +1039,30 @@ extension MessageUpdater {
     
     // MARK: -
     
-    func loadReplies(for parentMessageId: MessageId, pagination: MessagesPagination, cid: ChannelId, paginationStateHandler: MessagesPaginationStateHandling) async throws -> [ChatMessage] {
-        let payload = try await loadReplies(cid: cid, messageId: parentMessageId, pagination: pagination, paginationStateHandler: paginationStateHandler)
+    func loadReplies(
+        for parentMessageId: MessageId,
+        pagination: MessagesPagination,
+        cid: ChannelId,
+        paginationStateHandler: MessagesPaginationStateHandling
+    ) async throws -> [ChatMessage] {
+        let payload = try await loadReplies(
+            cid: cid,
+            messageId: parentMessageId,
+            pagination: pagination,
+            paginationStateHandler: paginationStateHandler
+        )
         guard let fromDate = payload.messages.first?.createdAt else { return [] }
         guard let toDate = payload.messages.last?.createdAt else { return [] }
         return try await repository.replies(from: fromDate, to: toDate, in: parentMessageId)
     }
     
-    func loadReplies(for parentMessageId: MessageId, before replyId: MessageId?, limit: Int?, cid: ChannelId, paginationStateHandler: MessagesPaginationStateHandling) async throws {
+    func loadReplies(
+        for parentMessageId: MessageId,
+        before replyId: MessageId?,
+        limit: Int?,
+        cid: ChannelId,
+        paginationStateHandler: MessagesPaginationStateHandling
+    ) async throws {
         guard !paginationStateHandler.state.hasLoadedAllPreviousMessages else { return }
         guard !paginationStateHandler.state.isLoadingPreviousMessages else { return }
         guard let replyId = replyId ?? paginationStateHandler.state.oldestFetchedMessage?.id else {
@@ -994,10 +1070,21 @@ extension MessageUpdater {
         }
         let pageSize = limit ?? .messagesPageSize
         let pagination = MessagesPagination(pageSize: pageSize, parameter: .lessThan(replyId))
-        try await loadReplies(cid: cid, messageId: parentMessageId, pagination: pagination, paginationStateHandler: paginationStateHandler)
+        try await loadReplies(
+            cid: cid,
+            messageId: parentMessageId,
+            pagination: pagination,
+            paginationStateHandler: paginationStateHandler
+        )
     }
     
-    func loadReplies(for parentMessageId: MessageId, after replyId: MessageId?, limit: Int?, cid: ChannelId, paginationStateHandler: MessagesPaginationStateHandling) async throws {
+    func loadReplies(
+        for parentMessageId: MessageId,
+        after replyId: MessageId?,
+        limit: Int?,
+        cid: ChannelId,
+        paginationStateHandler: MessagesPaginationStateHandling
+    ) async throws {
         guard !paginationStateHandler.state.hasLoadedAllNextMessages else { return }
         guard !paginationStateHandler.state.isLoadingNextMessages else { return }
         guard let replyId = replyId ?? paginationStateHandler.state.newestFetchedMessage?.id else {
@@ -1005,13 +1092,29 @@ extension MessageUpdater {
         }
         let pageSize = limit ?? .messagesPageSize
         let pagination = MessagesPagination(pageSize: pageSize, parameter: .greaterThan(replyId))
-        try await loadReplies(cid: cid, messageId: parentMessageId, pagination: pagination, paginationStateHandler: paginationStateHandler)
+        try await loadReplies(
+            cid: cid,
+            messageId: parentMessageId,
+            pagination: pagination,
+            paginationStateHandler: paginationStateHandler
+        )
     }
     
-    func loadReplies(for parentMessageId: MessageId, around replyId: MessageId, limit: Int?, cid: ChannelId, paginationStateHandler: MessagesPaginationStateHandling) async throws {
+    func loadReplies(
+        for parentMessageId: MessageId,
+        around replyId: MessageId,
+        limit: Int?,
+        cid: ChannelId,
+        paginationStateHandler: MessagesPaginationStateHandling
+    ) async throws {
         guard !paginationStateHandler.state.isLoadingMiddleMessages else { return }
         let pageSize = limit ?? .messagesPageSize
         let pagination = MessagesPagination(pageSize: pageSize, parameter: .around(replyId))
-        try await loadReplies(cid: cid, messageId: parentMessageId, pagination: pagination, paginationStateHandler: paginationStateHandler)
+        try await loadReplies(
+            cid: cid,
+            messageId: parentMessageId,
+            pagination: pagination,
+            paginationStateHandler: paginationStateHandler
+        )
     }
 }

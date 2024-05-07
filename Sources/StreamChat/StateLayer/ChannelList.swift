@@ -35,6 +35,8 @@ public class ChannelList {
         }
     }
     
+    // MARK: - Accessing the State
+    
     /// An observable object representing the current state of the channel list.
     @MainActor public lazy var state: ChannelListState = stateBuilder.build()
     
@@ -44,7 +46,7 @@ public class ChannelList {
     ///
     /// - Throws: An error while communicating with the Stream API.
     public func get() async throws {
-        let pagination = Pagination(pageSize: .channelsPageSize)
+        let pagination = Pagination(pageSize: query.pagination.pageSize)
         try await loadChannels(with: pagination)
     }
     

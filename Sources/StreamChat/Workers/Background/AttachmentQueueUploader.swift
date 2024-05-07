@@ -312,13 +312,19 @@ extension AttachmentQueueUploader {
         }
     }
     
-    private func registerContinuation(for attachmentId: AttachmentId, continuation: CheckedContinuation<UploadedAttachment, Error>) {
+    private func registerContinuation(
+        for attachmentId: AttachmentId,
+        continuation: CheckedContinuation<UploadedAttachment, Error>
+    ) {
         continuationsQueue.async {
             self.continuations[attachmentId] = continuation
         }
     }
     
-    private func notifyAPIRequestFinished(for attachmentId: AttachmentId, result: Result<UploadedAttachment, Error>) {
+    private func notifyAPIRequestFinished(
+        for attachmentId: AttachmentId,
+        result: Result<UploadedAttachment, Error>
+    ) {
         continuationsQueue.async {
             guard let continuation = self.continuations.removeValue(forKey: attachmentId) as? CheckedContinuation<UploadedAttachment, Error> else { return }
             continuation.resume(with: result)
