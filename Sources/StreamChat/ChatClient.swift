@@ -414,7 +414,6 @@ public class ChatClient {
                 database: databaseContainer,
                 apiClient: apiClient
             ),
-            NewUserQueryUpdater(database: databaseContainer, apiClient: apiClient),
             MessageEditor(messageRepository: messageRepository, database: databaseContainer, apiClient: apiClient),
             AttachmentQueueUploader(
                 database: databaseContainer,

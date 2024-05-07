@@ -46,10 +46,6 @@ final class ChatClient_Tests: XCTestCase {
         super.tearDown()
     }
 
-    var workerBuilders: [WorkerBuilder] = [
-        NewUserQueryUpdater.init
-    ]
-
     var expectedIdentifier: String {
         #if canImport(StreamChatSwiftUI)
         "swiftui"
@@ -362,7 +358,6 @@ final class ChatClient_Tests: XCTestCase {
 
         // Check all the mandatory background workers are initialized
         XCTAssert(client.backgroundWorkers.contains { $0 is MessageSender })
-        XCTAssert(client.backgroundWorkers.contains { $0 is NewUserQueryUpdater })
         XCTAssert(client.backgroundWorkers.contains { $0 is MessageEditor })
         XCTAssert(client.backgroundWorkers.contains { $0 is AttachmentQueueUploader })
         XCTAssertNotNil(client.connectionRecoveryHandler)
