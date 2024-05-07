@@ -20,7 +20,7 @@ public protocol ChatReactionListControllerDelegate: DataControllerStateDelegate 
 
 /// A controller which allows querying and filtering the reactions of a message.
 public class ChatReactionListController: DataController, DelegateCallable, DataStoreProvider {
-    /// The query specifying and filtering the list of users.
+    /// The query specifying and filtering the list of reactions.
     public let query: ReactionListQuery
 
     /// The `ChatClient` instance this controller belongs to.
@@ -99,7 +99,7 @@ public class ChatReactionListController: DataController, DelegateCallable, DataS
 
     private let environment: Environment
 
-    /// Creates a new `UserListController`.
+    /// Creates a new `ChatReactionListController`.
     ///
     /// - Parameters:
     ///   - query: The query used for filtering the reactions.
