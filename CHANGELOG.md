@@ -1,13 +1,11 @@
 # StreamChat iOS SDK CHANGELOG
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## StreamChat
-### ✅ Added
-- Add a new state layer with async-await and observable state objects ([learn more](https://getstream.io/chat/docs/sdk/ios/state-layer/state-layer-overview/)) [#3177](https://github.com/GetStream/stream-chat-swift/pull/3177)
-
 # Upcoming
 
 ## StreamChat
+### ✅ Added
+- Add a new state layer with async-await and observable state objects ([learn more](https://getstream.io/chat/docs/sdk/ios/state-layer/state-layer-overview/)) [#3177](https://github.com/GetStream/stream-chat-swift/pull/3177)
 ### 🐞 Fixed
 - Fix triggering user query calls whenever a new user was added in `UserListController` [#3184](https://github.com/GetStream/stream-chat-swift/pull/3184)
 - Fix duplicated watching channel calls when reconnecting [#3187](https://github.com/GetStream/stream-chat-swift/pull/3187)
