@@ -43,7 +43,7 @@ extension ChannelListState {
         }
         
         struct Handlers {
-            let channelsDidChange: (StreamCollection<ChatChannel>) async -> Void
+            let channelsDidChange: @MainActor(StreamCollection<ChatChannel>) async -> Void
         }
         
         func start(with handlers: Handlers) -> StreamCollection<ChatChannel> {
