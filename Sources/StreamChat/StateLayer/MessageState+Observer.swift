@@ -46,9 +46,9 @@ extension MessageState {
         }
         
         struct Handlers {
-            let messageDidChange: (ChatMessage) async -> Void
-            let reactionsDidChange: (StreamCollection<ChatMessageReaction>) async -> Void
-            let repliesDidChange: (StreamCollection<ChatMessage>) async -> Void
+            let messageDidChange: @MainActor(ChatMessage) async -> Void
+            let reactionsDidChange: @MainActor(StreamCollection<ChatMessageReaction>) async -> Void
+            let repliesDidChange: @MainActor(StreamCollection<ChatMessage>) async -> Void
         }
         
         func start(
