@@ -598,7 +598,7 @@ public class Chat {
     ///
     /// - Throws: An error while communicating with the Stream API.
     public func unflagMessage(_ messageId: MessageId) async throws {
-        try await messageUpdater.flagMessage(false, with: messageId, in: cid)
+        try await messageUpdater.flagMessage(false, with: messageId, in: cid, reason: nil)
     }
     
     // MARK: - Message Rich Content
