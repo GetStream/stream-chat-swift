@@ -307,8 +307,8 @@ final class ChatClient_Tests: XCTestCase {
         )
         let connectionRepository = try XCTUnwrap(client.connectionRepository as? ConnectionRepository_Mock)
         connectionRepository.disconnectResult = .success(())
-        client.trackChannelController(ChannelControllerSpy())
-        client.trackChannelListController(ChatChannelListController_Mock.mock())
+        client.startTrackingChannelController(ChannelControllerSpy())
+        client.startTrackingChannelListController(ChatChannelListController_Mock.mock())
 
         XCTAssertEqual(client.activeChannelControllers.count, 1)
         XCTAssertEqual(client.activeChannelListControllers.count, 1)
@@ -823,6 +823,70 @@ final class ChatClient_Tests: XCTestCase {
         }
 
         XCTAssertEqual(streamHeader, SystemEnvironment.xStreamClientHeader)
+    }
+
+    // MARK: - Active Controller
+
+    func test_startTrackingChannelController() {
+        let client = ChatClient(config: .init())
+
+        let controller = ChatChannelController_Mock.mock()
+        client.startTrackingChannelController(controller)
+
+        XCTAssertTrue(client.activeChannelControllers.allObjects.first === controller)
+    }
+
+    func test_startTrackingChannelController_whenAlreadyExists_thenDoNotDuplicate() {
+        let client = ChatClient(config: .init())
+
+        let controller = ChatChannelController_Mock.mock()
+        client.startTrackingChannelController(controller)
+        client.startTrackingChannelController(controller)
+
+        XCTAssertTrue(client.activeChannelControllers.allObjects.first === controller)
+        XCTAssertEqual(client.activeChannelControllers.allObjects.count, 1)
+    }
+
+    func test_stopTrackingChannelController() {
+        let client = ChatClient(config: .init())
+        let controller = ChatChannelController_Mock.mock()
+        client.startTrackingChannelController(controller)
+        XCTAssertEqual(client.activeChannelControllers.allObjects.count, 1)
+
+        client.stopTrackingChannelController(controller)
+
+        XCTAssertTrue(client.activeChannelControllers.allObjects.isEmpty)
+    }
+
+    func test_startTrackingChannelListController() {
+        let client = ChatClient(config: .init())
+
+        let controller = ChatChannelListController_Mock.mock()
+        client.startTrackingChannelListController(controller)
+
+        XCTAssertTrue(client.activeChannelListControllers.allObjects.first === controller)
+    }
+
+    func test_startTrackingChannelListController_whenAlreadyExists_thenDoNotDuplicate() {
+        let client = ChatClient(config: .init())
+
+        let controller = ChatChannelListController_Mock.mock()
+        client.startTrackingChannelListController(controller)
+        client.startTrackingChannelListController(controller)
+
+        XCTAssertTrue(client.activeChannelListControllers.allObjects.first === controller)
+        XCTAssertEqual(client.activeChannelListControllers.allObjects.count, 1)
+    }
+
+    func test_stopTrackingChannelListController() {
+        let client = ChatClient(config: .init())
+        let controller = ChatChannelListController_Mock.mock()
+        client.startTrackingChannelListController(controller)
+        XCTAssertEqual(client.activeChannelListControllers.allObjects.count, 1)
+
+        client.stopTrackingChannelListController(controller)
+
+        XCTAssertTrue(client.activeChannelListControllers.allObjects.isEmpty)
     }
 }
 
