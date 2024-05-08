@@ -4545,6 +4545,23 @@ final class ChannelController_Tests: XCTestCase {
         }
     }
 
+    func test_startWatching_tracksActiveChannelController() {
+        let client = ChatClient.mock
+        let channelQuery = ChannelQuery(cid: channelId)
+        let channelListQuery = ChannelListQuery(filter: .containMembers(userIds: [.unique]))
+        let controller = ChatChannelController(
+            channelQuery: channelQuery,
+            channelListQuery: channelListQuery,
+            client: client
+        )
+        XCTAssert(client.activeChannelControllers.allObjects.isEmpty)
+
+        controller.startWatching(isInRecoveryMode: false)
+        XCTAssert(controller.client === client)
+        XCTAssert(client.activeChannelControllers.count == 1)
+        XCTAssert(client.activeChannelControllers.allObjects.first === controller)
+    }
+
     func test_startWatching_propagatesErrorFromUpdater() {
         // Simulate `startWatching` call and catch the completion
         var completionCalledError: Error?
@@ -4711,6 +4728,22 @@ final class ChannelController_Tests: XCTestCase {
 
         // Completion should be called with the error
         AssertAsync.willBeEqual(completionCalledError as? TestError, testError)
+    }
+
+    func test_stopWatching_removesActiveChannelController() {
+        let client = ChatClient.mock
+        let channelQuery = ChannelQuery(cid: channelId)
+        let channelListQuery = ChannelListQuery(filter: .containMembers(userIds: [.unique]))
+        let controller = ChatChannelController(
+            channelQuery: channelQuery,
+            channelListQuery: channelListQuery,
+            client: client
+        )
+        controller.synchronize()
+        XCTAssert(client.activeChannelControllers.count == 1)
+
+        controller.stopWatching()
+        XCTAssert(client.activeChannelControllers.allObjects.isEmpty == true)
     }
 
     // MARK: - Freeze channel
