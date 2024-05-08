@@ -218,11 +218,10 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
 
         setChannelObserver()
         setMessagesObserver()
-
-        client.trackChannelController(self)
     }
 
     override public func synchronize(_ completion: ((_ error: Error?) -> Void)? = nil) {
+        client.startTrackingChannelController(self)
         synchronize(isInRecoveryMode: false, completion)
     }
 
