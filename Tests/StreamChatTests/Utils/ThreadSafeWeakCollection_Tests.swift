@@ -14,7 +14,9 @@ final class ThreadSafeWeakCollection_Tests: XCTestCase {
             _ = collection.allObjects
         }
         DispatchQueue.concurrentPerform(iterations: 100) { _ in
-            collection.add(NSObject())
+            let object = NSObject()
+            collection.add(object)
+            collection.remove(object)
         }
         DispatchQueue.concurrentPerform(iterations: 100) { _ in
             collection.removeAllObjects()

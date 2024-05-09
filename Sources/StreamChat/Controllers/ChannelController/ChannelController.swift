@@ -218,11 +218,10 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
 
         setChannelObserver()
         setMessagesObserver()
-
-        client.trackChannelController(self)
     }
 
     override public func synchronize(_ completion: ((_ error: Error?) -> Void)? = nil) {
+        client.startTrackingChannelController(self)
         synchronize(isInRecoveryMode: false, completion)
     }
 
@@ -1021,6 +1020,9 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
             channelModificationFailed(completion)
             return
         }
+
+        client.startTrackingChannelController(self)
+
         updater.startWatching(cid: cid, isInRecoveryMode: isInRecoveryMode) { error in
             self.state = error.map { .remoteDataFetchFailed(ClientError(with: $0)) } ?? .remoteDataFetched
             self.callback {
@@ -1052,6 +1054,9 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
             channelModificationFailed(completion)
             return
         }
+
+        client.stopTrackingChannelController(self)
+
         updater.stopWatching(cid: cid) { error in
             self.state = error.map { .remoteDataFetchFailed(ClientError(with: $0)) } ?? .localDataFetched
             self.callback {
