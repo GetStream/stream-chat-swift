@@ -25,6 +25,8 @@ public final class UserList {
         }
     }
     
+    // MARK: - Accessing the State
+    
     /// An observable object representing the current state of the users list.
     @MainActor public lazy var state: UserListState = stateBuilder.build()
     
@@ -37,6 +39,8 @@ public final class UserList {
         let pagination = Pagination(pageSize: query.pagination?.pageSize ?? .usersPageSize)
         try await loadUsers(with: pagination)
     }
+    
+    // MARK: - Users Pagination
     
     /// Loads users for the specified pagination parameters and updates ``UserListState/users``.
     ///

@@ -23,8 +23,12 @@ public class MessageSearch {
         stateBuilder = StateBuilder { environment.stateBuilder(client.databaseContainer) }
     }
     
+    // MARK: - Accessing the State
+    
     /// An observable object representing the current state of the search.
     @MainActor public lazy var state: MessageSearchState = stateBuilder.build()
+    
+    // MARK: - Search Results and Pagination
     
     /// Searches for messages with the specified full text search text and updates ``MessageSearchState/messages``.
     ///
