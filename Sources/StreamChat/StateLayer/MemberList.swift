@@ -25,6 +25,8 @@ public final class MemberList {
         }
     }
     
+    // MARK: - Accessing the State
+    
     /// An observable object representing the current state of the member list.
     @MainActor public lazy var state: MemberListState = stateBuilder.build()
     
@@ -35,6 +37,8 @@ public final class MemberList {
         let pagination = Pagination(pageSize: query.pagination.pageSize)
         try await loadMembers(with: pagination)
     }
+    
+    // MARK: - Member Pagination
     
     /// Loads channel members for the specified pagination parameters and updates ``MemberListState/members``.
     ///

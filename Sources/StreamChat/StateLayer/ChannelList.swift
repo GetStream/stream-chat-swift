@@ -35,6 +35,8 @@ public class ChannelList {
         }
     }
     
+    // MARK: - Accessing the State
+    
     /// An observable object representing the current state of the channel list.
     @MainActor public lazy var state: ChannelListState = stateBuilder.build()
     

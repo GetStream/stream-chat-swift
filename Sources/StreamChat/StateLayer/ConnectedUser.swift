@@ -30,8 +30,12 @@ public final class ConnectedUser {
         )
     }
     
+    // MARK: - Accessing the State
+    
     /// An observable object representing the current state of the user.
     @MainActor public lazy var state: ConnectedUserState = stateBuilder.build()
+    
+    // MARK: - Connected User Data
     
     /// Updates the currently logged-in user's data.
     ///
