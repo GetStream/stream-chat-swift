@@ -7,10 +7,12 @@ import Foundation
 /// An object which represents a list of `ChatUser`.
 @available(iOS 13.0, *)
 public final class UserList {
+    private let query: UserListQuery
     private let stateBuilder: StateBuilder<UserListState>
     private let userListUpdater: UserListUpdater
     
     init(query: UserListQuery, client: ChatClient, environment: Environment = .init()) {
+        self.query = query
         userListUpdater = environment.userListUpdater(
             client.databaseContainer,
             client.apiClient
@@ -32,7 +34,7 @@ public final class UserList {
     ///
     /// - Throws: An error while communicating with the Stream API.
     public func get() async throws {
-        let pagination = Pagination(pageSize: .usersPageSize)
+        let pagination = Pagination(pageSize: query.pagination?.pageSize ?? .usersPageSize)
         try await loadUsers(with: pagination)
     }
     
