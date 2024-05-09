@@ -782,9 +782,8 @@ lane :get_frameworks_size do
   stream_chat_size = File.size('../Build/DemoApp.xcarchive/Products/Library/Frameworks/ChatSample.app/Frameworks/StreamChat.framework/StreamChat')
   stream_chat_ui_size = File.size('../Build/DemoApp.xcarchive/Products/Library/Frameworks/ChatSample.app/Frameworks/StreamChatUI.framework/StreamChatUI')
 
-  # Converting to MB, not MiB (1024 bytes), since macOS finder uses MB
-  stream_chat_size_in_mb = (stream_chat_size.to_f / 1000 / 1000).round(2)
-  stream_chat_ui_size_in_mb = (stream_chat_ui_size.to_f / 1000 / 1000).round(2)
+  stream_chat_size_in_mb = (stream_chat_size.to_f / 1024 / 1024).round(2)
+  stream_chat_ui_size_in_mb = (stream_chat_ui_size.to_f / 1024 / 1024).round(2)
   
   UI.success("StreamChat: #{stream_chat_size_in_mb}MB")
   UI.success("StreamChatUI: #{stream_chat_ui_size_in_mb}MB")
