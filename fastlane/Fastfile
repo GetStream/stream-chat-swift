@@ -773,20 +773,40 @@ end
 
 desc 'Get frameworks size'
 lane :get_frameworks_size do
+  root_dir = "Build/SDKSize"
+  archive_dir = "#{root_dir}/DemoApp.xcarchive"
+
+  # Archive the demo app
   xcodebuild(
     archive: true,
-    archive_path: "Build/DemoApp.xcarchive",
+    archive_path: archive_dir,
     scheme: "DemoApp"
   )
 
-  stream_chat_size = File.size('../Build/DemoApp.xcarchive/Products/Library/Frameworks/ChatSample.app/Frameworks/StreamChat.framework/StreamChat')
-  stream_chat_ui_size = File.size('../Build/DemoApp.xcarchive/Products/Library/Frameworks/ChatSample.app/Frameworks/StreamChatUI.framework/StreamChatUI')
+  # Export with ad-hoc and thinning support to be able
+  # to get the correct thinned size of Assets.car
+  xcodebuild(
+    archive_path: archive_dir,
+    export_options_plist: "Scripts/SDKSizeExportOptions.plist",
+    export_archive: "#{root_dir}/Export",
+    export_path: "#{root_dir}/Export"
+  )
 
-  stream_chat_size_in_mb = (stream_chat_size.to_f / 1024 / 1024).round(2)
-  stream_chat_ui_size_in_mb = (stream_chat_ui_size.to_f / 1024 / 1024).round(2)
+  packaging_url = "../#{root_dir}/Export/Packaging.log"
+  packaging_file_content = File.read(packaging_url)
+  match = packaging_file_content.match(/\b(\d+)\sbytes\sfor\s\.\/Payload\/ChatSample\.app\/Frameworks\/StreamChatUI\.framework\/Assets\.car\b/)
+  assets_thinned_size = match[1].to_i
+
+  stream_chat_size = File.size("../#{archive_dir}/Products/Library/Frameworks/ChatSample.app/Frameworks/StreamChat.framework/StreamChat")
+  stream_chat_ui_size = File.size("../#{archive_dir}/Products/Library/Frameworks/ChatSample.app/Frameworks/StreamChatUI.framework/StreamChatUI")
+
+  stream_chat_size_mb = (stream_chat_size.to_f / 1024 / 1024).round(2)
+  stream_chat_ui_size_mb = ((stream_chat_ui_size + assets_thinned_size).to_f / 1024 / 1024).round(2)
+  total_size_mb = (stream_chat_size_mb + stream_chat_ui_size_mb).round(2)
   
-  UI.success("StreamChat: #{stream_chat_size_in_mb}MB")
-  UI.success("StreamChatUI: #{stream_chat_ui_size_in_mb}MB")
+  UI.success("StreamChat: #{stream_chat_size_mb}MB")
+  UI.success("StreamChatUI: #{stream_chat_ui_size_mb}MB")
+  UI.success("Total Size: #{total_size_mb}MB")
 end
 
 private_lane :create_pr do |options|
