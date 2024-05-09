@@ -32,7 +32,7 @@ public final class ReactionList {
     ///
     /// - Throws: An error while communicating with the Stream API.
     public func get() async throws {
-        let pagination = Pagination(pageSize: 25)
+        let pagination = Pagination(pageSize: query.pagination.pageSize)
         try await loadReactions(with: pagination)
     }
     
@@ -55,8 +55,11 @@ public final class ReactionList {
     /// - Throws: An error while communicating with the Stream API.
     /// - Returns: An array of message reactions.
     @discardableResult public func loadMoreReactions(limit: Int? = nil) async throws -> [ChatMessageReaction] {
-        let pageSize = limit ?? 25
-        let pagination = Pagination(pageSize: pageSize, offset: await state.reactions.count)
+        let pageSize = limit ?? query.pagination.pageSize
+        let pagination = Pagination(
+            pageSize: pageSize,
+            offset: await state.reactions.count
+        )
         return try await loadReactions(with: pagination)
     }
 }

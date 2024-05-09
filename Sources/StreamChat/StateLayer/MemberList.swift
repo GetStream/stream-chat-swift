@@ -32,7 +32,7 @@ public final class MemberList {
     ///
     /// - Throws: An error while communicating with the Stream API.
     public func get() async throws {
-        let pagination = Pagination(pageSize: .channelMembersPageSize)
+        let pagination = Pagination(pageSize: query.pagination.pageSize)
         try await loadMembers(with: pagination)
     }
     
@@ -54,7 +54,7 @@ public final class MemberList {
     /// - Throws: An error while communicating with the Stream API.
     /// - Returns: An array of channel members.
     @discardableResult public func loadMoreMembers(limit: Int? = nil) async throws -> [ChatChannelMember] {
-        let pageSize = limit ?? Int.channelMembersPageSize
+        let pageSize = limit ?? query.pagination.pageSize
         let pagination = Pagination(pageSize: pageSize, offset: await state.members.count)
         return try await loadMembers(with: pagination)
     }
