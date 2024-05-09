@@ -18,8 +18,12 @@ public class UserSearch {
         stateBuilder = StateBuilder { UserSearchState() }
     }
     
+    // MARK: - Accessing the State
+    
     /// An observable object representing the current state of the search.
     @MainActor public lazy var state: UserSearchState = stateBuilder.build()
+    
+    // MARK: - Search Results and Pagination
     
     /// Searches for users with the specified search term and updates ``UserSearchState/users``.
     ///

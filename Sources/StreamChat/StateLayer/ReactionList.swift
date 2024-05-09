@@ -25,6 +25,8 @@ public final class ReactionList {
         }
     }
     
+    // MARK: - Accessing the State
+    
     /// An observable object representing the current state of the reaction list.
     @MainActor public lazy var state: ReactionListState = stateBuilder.build()
     
@@ -35,6 +37,8 @@ public final class ReactionList {
         let pagination = Pagination(pageSize: query.pagination.pageSize)
         try await loadReactions(with: pagination)
     }
+    
+    // MARK: - Reactions Pagination
     
     /// Loads reactions for the specified pagination parameters and updates ``ReactionListState/reactions``.
     ///
