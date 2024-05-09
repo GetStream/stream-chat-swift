@@ -44,7 +44,7 @@ public class ChannelList {
     ///
     /// - Throws: An error while communicating with the Stream API.
     public func get() async throws {
-        let pagination = Pagination(pageSize: .channelsPageSize)
+        let pagination = Pagination(pageSize: query.pagination.pageSize)
         try await loadChannels(with: pagination)
     }
     
