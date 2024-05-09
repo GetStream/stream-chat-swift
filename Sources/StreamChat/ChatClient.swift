@@ -423,12 +423,27 @@ public class ChatClient {
         ]
     }
 
-    func trackChannelController(_ channelController: ChatChannelController) {
+    func startTrackingChannelController(_ channelController: ChatChannelController) {
+        // If it is already tracking, do nothing.
+        guard !activeChannelControllers.contains(channelController) else {
+            return
+        }
         activeChannelControllers.add(channelController)
     }
 
-    func trackChannelListController(_ channelListController: ChatChannelListController) {
+    func stopTrackingChannelController(_ channelController: ChatChannelController) {
+        activeChannelControllers.remove(channelController)
+    }
+
+    func startTrackingChannelListController(_ channelListController: ChatChannelListController) {
+        guard !activeChannelListControllers.contains(channelListController) else {
+            return
+        }
         activeChannelListControllers.add(channelListController)
+    }
+
+    func stopTrackingChannelListController(_ channelListController: ChatChannelListController) {
+        activeChannelListControllers.remove(channelListController)
     }
 
     func completeConnectionIdWaiters(connectionId: String?) {

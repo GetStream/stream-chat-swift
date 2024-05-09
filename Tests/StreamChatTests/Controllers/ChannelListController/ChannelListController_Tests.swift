@@ -1060,12 +1060,13 @@ final class ChannelListController_Tests: XCTestCase {
         )
     }
 
-    // MARK: Init registers active controller
+    // MARK: Synchronize registers active controller
 
-    func test_initRegistersActiveController() {
+    func test_synchronize_shouldRegistersActiveController() {
         let client = ChatClient.mock
         let query = ChannelListQuery(filter: .in(.members, values: [.unique]))
         let controller = ChatChannelListController(query: query, client: client, environment: env.environment)
+        controller.synchronize()
 
         XCTAssert(controller.client === client)
         XCTAssert(client.activeChannelListControllers.count == 1)

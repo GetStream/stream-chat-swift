@@ -140,12 +140,12 @@ public class ChatChannelListController: DataController, DelegateCallable, DataSt
         self.environment = environment
         eventsController = client.eventsController()
         super.init()
-        client.trackChannelListController(self)
         eventsController.delegate = self
     }
 
     override public func synchronize(_ completion: ((_ error: Error?) -> Void)? = nil) {
         startChannelListObserverIfNeeded()
+        client.startTrackingChannelListController(self)
         updateChannelList(completion)
     }
 
