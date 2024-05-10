@@ -20,7 +20,7 @@ class PollDTO: NSManagedObject {
     @NSManaged var custom: Data?
     @NSManaged var voteCountsByOption: [String: Int]?
     @NSManaged var isClosed: Bool
-    @NSManaged var maxVotesAllowed: Int
+    @NSManaged var maxVotesAllowed: NSNumber?
     @NSManaged var votingVisibility: String?
     @NSManaged var createdBy: UserDTO?
     @NSManaged var latestAnswers: Set<PollVoteDTO>
@@ -82,7 +82,7 @@ extension PollDTO {
             custom: customData,
             voteCountsByOption: voteCountsByOption,
             isClosed: isClosed,
-            maxVotesAllowed: maxVotesAllowed,
+            maxVotesAllowed: maxVotesAllowed?.intValue,
             votingVisibility: votingVisibility,
             createdBy: createdBy?.asModel(),
             latestAnswers: latestAnswers.map { try $0.asModel() },
@@ -109,7 +109,9 @@ extension NSManagedObjectContext {
         pollDto.custom = try JSONEncoder.default.encode(payload.custom)
         pollDto.voteCountsByOption = payload.voteCountsByOption
         pollDto.isClosed = payload.isClosed ?? false
-        pollDto.maxVotesAllowed = payload.maxVotesAllowed ?? 1
+        if let maxVotesAllowed = payload.maxVotesAllowed {
+            pollDto.maxVotesAllowed = NSNumber(integerLiteral: maxVotesAllowed)
+        }
         pollDto.votingVisibility = payload.votingVisibility
         
         pollDto.createdBy = UserDTO.loadOrCreate(id: payload.createdById, context: self, cache: cache)

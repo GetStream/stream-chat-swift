@@ -18,7 +18,7 @@ public struct Poll: Equatable {
     public let custom: [String: RawJSON]
     public let voteCountsByOption: [String: Int]?
     public let isClosed: Bool
-    public let maxVotesAllowed: Int
+    public let maxVotesAllowed: Int?
     public let votingVisibility: String?
     public let createdBy: ChatUser?
     public let latestAnswers: [PollVote]
