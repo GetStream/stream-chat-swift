@@ -792,9 +792,10 @@ lane :get_frameworks_size do
     export_path: "#{root_dir}/Export"
   )
 
-  packaging_url = "../#{root_dir}/Export/Packaging.log"
-  packaging_file_content = File.read(packaging_url)
-  match = packaging_file_content.match(/\b(\d+)\sbytes\sfor\s\.\/Payload\/ChatSample\.app\/Frameworks\/StreamChatUI\.framework\/Assets\.car\b/)
+  # Parse the thinned size of Assets.car from Packaging.log
+  packaging_log_content = File.read("../#{root_dir}/Export/Packaging.log")
+  assets_size_regex = %r{\b(\d+)\sbytes\sfor\s./Payload/ChatSample.app/Frameworks/StreamChatUI.framework/Assets.car\b}
+  match = packaging_log_content.match(assets_size_regex)
   assets_thinned_size = match[1].to_i
 
   stream_chat_size = File.size("../#{archive_dir}/Products/Library/Frameworks/ChatSample.app/Frameworks/StreamChat.framework/StreamChat")
@@ -803,7 +804,7 @@ lane :get_frameworks_size do
   stream_chat_size_mb = (stream_chat_size.to_f / 1024 / 1024).round(2)
   stream_chat_ui_size_mb = ((stream_chat_ui_size + assets_thinned_size).to_f / 1024 / 1024).round(2)
   total_size_mb = (stream_chat_size_mb + stream_chat_ui_size_mb).round(2)
-  
+
   UI.success("StreamChat: #{stream_chat_size_mb}MB")
   UI.success("StreamChatUI: #{stream_chat_ui_size_mb}MB")
   UI.success("Total Size: #{total_size_mb}MB")
