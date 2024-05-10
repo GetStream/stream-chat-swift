@@ -772,12 +772,34 @@ lane :copyright do
 end
 
 desc 'Show current frameworks size'
-lane :show_frameworks_size do
-  sizes = get_frameworks_size
+lane :show_frameworks_sizes do
+  sizes = frameworks_sizes
 
   UI.success("StreamChat: #{sizes[:stream_chat]}MB")
   UI.success("StreamChatUI: #{sizes[:stream_chat_ui]}MB")
   UI.success("Total Size: #{sizes[:total]}MB")
+end
+
+desc 'Update img shields SDK size labels'
+lane :update_img_shields_sdk_sizes do
+  sizes = frameworks_sizes
+
+  # Read the file into a string
+  content = File.read('../README.md')
+
+  # Define the new value for the badge
+  stream_chat_size = "#{sizes[:stream_chat]}MB"
+  stream_chat_ui_size = "#{sizes[:stream_chat_ui]}MB"
+
+  # Replace the value in the badge URL
+  content.gsub!(%r{(https://img.shields.io/badge/StreamChat-)(.*?)(-blue)}, "\\1#{stream_chat_size}\\3")
+  content.gsub!(%r{(https://img.shields.io/badge/StreamChatUI-)(.*?)(-blue)}, "\\1#{stream_chat_ui_size}\\3")
+
+  # Write the updated content back to the file
+  File.write('../README.md', content)
+
+  # Notify success
+  UI.success('Successfully updated the SDK size labels in README.md!')
 end
 
 private_lane :create_pr do |options|
@@ -844,7 +866,7 @@ def select_files_from(files:, with_extension:, that_start_with:)
   end
 end
 
-def get_frameworks_size
+def frameworks_sizes
   root_dir = "Build/SDKSize"
   archive_dir = "#{root_dir}/DemoApp.xcarchive"
 
@@ -876,13 +898,13 @@ def get_frameworks_size
   stream_chat_size = File.size("../#{archive_dir}/Products/Library/Frameworks/ChatSample.app/Frameworks/StreamChat.framework/StreamChat")
   stream_chat_ui_size = File.size("../#{archive_dir}/Products/Library/Frameworks/ChatSample.app/Frameworks/StreamChatUI.framework/StreamChatUI")
 
-  stream_chat_size_mb = (stream_chat_size.to_f / 1024 / 1024).round(2)
-  stream_chat_ui_size_mb = ((stream_chat_ui_size + assets_thinned_size).to_f / 1024 / 1024).round(2)
-  total_size_mb = (stream_chat_size_mb + stream_chat_ui_size_mb).round(2)
+  stream_chat_size_mb = (stream_chat_size.to_f / 1024 / 1024).round(1)
+  stream_chat_ui_size_mb = ((stream_chat_ui_size + assets_thinned_size).to_f / 1024 / 1024).round(1)
+  total_size_mb = (stream_chat_size_mb + stream_chat_ui_size_mb).round(1)
 
-  { 
-    stream_chat: stream_chat_size_mb, 
-    stream_chat_ui: stream_chat_ui_size_mb, 
+  {
+    stream_chat: stream_chat_size_mb,
+    stream_chat_ui: stream_chat_ui_size_mb,
     total: total_size_mb
   }
 end
