@@ -771,6 +771,37 @@ lane :copyright do
   )
 end
 
+desc 'Show current frameworks size'
+lane :show_frameworks_sizes do
+  sizes = frameworks_sizes
+
+  UI.success("StreamChat: #{sizes[:stream_chat]}MB")
+  UI.success("StreamChatUI: #{sizes[:stream_chat_ui]}MB")
+  UI.success("Total Size: #{sizes[:total]}MB")
+end
+
+desc 'Update img shields SDK size labels'
+lane :update_img_shields_sdk_sizes do
+  sizes = frameworks_sizes
+
+  # Read the file into a string
+  content = File.read('../README.md')
+
+  # Define the new value for the badge
+  stream_chat_size = "#{sizes[:stream_chat]}MB"
+  stream_chat_ui_size = "#{sizes[:stream_chat_ui]}MB"
+
+  # Replace the value in the badge URL
+  content.gsub!(%r{(https://img.shields.io/badge/StreamChat-)(.*?)(-blue)}, "\\1#{stream_chat_size}\\3")
+  content.gsub!(%r{(https://img.shields.io/badge/StreamChatUI-)(.*?)(-blue)}, "\\1#{stream_chat_ui_size}\\3")
+
+  # Write the updated content back to the file
+  File.write('../README.md', content)
+
+  # Notify success
+  UI.success('Successfully updated the SDK size labels in README.md!')
+end
+
 private_lane :create_pr do |options|
   options[:base_branch] ||= 'develop'
   sh("git checkout -b #{options[:head_branch]}")
@@ -833,4 +864,47 @@ def select_files_from(files:, with_extension:, that_start_with:)
   end.select do |f|
     f.gsub(/['"]/, '').end_with?(with_extension)
   end
+end
+
+def frameworks_sizes
+  root_dir = "Build/SDKSize"
+  archive_dir = "#{root_dir}/DemoApp.xcarchive"
+
+  # Cleanup the previous builds
+  FileUtils.rm_rf("../#{root_dir}/Export/")
+
+  # Archive the demo app
+  xcodebuild(
+    archive: true,
+    archive_path: archive_dir,
+    scheme: "DemoApp"
+  )
+
+  # Export with ad-hoc and thinning support to be able
+  # to get the correct thinned size of Assets.car
+  xcodebuild(
+    archive_path: archive_dir,
+    export_options_plist: "Scripts/SDKSizeExportOptions.plist",
+    export_archive: "#{root_dir}/Export",
+    export_path: "#{root_dir}/Export"
+  )
+
+  # Parse the thinned size of Assets.car from Packaging.log
+  assets_size_regex = %r{\b(\d+)\sbytes\sfor\s./Payload/ChatSample.app/Frameworks/StreamChatUI.framework/Assets.car\b}
+  packaging_log_content = File.read("../#{root_dir}/Export/Packaging.log")
+  match = packaging_log_content.match(assets_size_regex)
+  assets_thinned_size = match[1].to_i
+
+  stream_chat_size = File.size("../#{archive_dir}/Products/Library/Frameworks/ChatSample.app/Frameworks/StreamChat.framework/StreamChat")
+  stream_chat_ui_size = File.size("../#{archive_dir}/Products/Library/Frameworks/ChatSample.app/Frameworks/StreamChatUI.framework/StreamChatUI")
+
+  stream_chat_size_mb = (stream_chat_size.to_f / 1024 / 1024).round(1)
+  stream_chat_ui_size_mb = ((stream_chat_ui_size + assets_thinned_size).to_f / 1024 / 1024).round(1)
+  total_size_mb = (stream_chat_size_mb + stream_chat_ui_size_mb).round(1)
+
+  {
+    stream_chat: stream_chat_size_mb,
+    stream_chat_ui: stream_chat_ui_size_mb,
+    total: total_size_mb
+  }
 end
