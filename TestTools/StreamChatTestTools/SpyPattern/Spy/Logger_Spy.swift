@@ -12,7 +12,7 @@ final class Logger_Spy: Logger, Spy {
 
     func injectMock() {
         let logger = LogConfig.logger
-        if logger.self === Logger.self {
+        if type(of: logger) == Logger.self {
             originalLogger = logger
         }
         LogConfig.logger = self
