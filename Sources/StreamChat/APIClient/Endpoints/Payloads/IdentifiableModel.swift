@@ -80,3 +80,21 @@ extension ThreadParticipantDTO: IdentifiableModel {
     static let idKeyPath: String? = #keyPath(MemberDTO.id)
     static func id(for model: NSManagedObject) -> DatabaseId? { (model as? Self)?.user.id }
 }
+
+extension PollDTO: IdentifiableModel {
+    static var className: DatabaseType { _className }
+    static var idKeyPath: String? { #keyPath(PollDTO.id) }
+    static func id(for model: NSManagedObject) -> DatabaseId? { (model as? Self)?.id }
+}
+
+extension PollOptionDTO: IdentifiableModel {
+    static var className: DatabaseType { _className }
+    static var idKeyPath: String? { #keyPath(PollOptionDTO.id) }
+    static func id(for model: NSManagedObject) -> DatabaseId? { (model as? Self)?.id }
+}
+
+extension PollVoteDTO: IdentifiableModel {
+    static var className: DatabaseType { _className }
+    static var idKeyPath: String? { #keyPath(PollVoteDTO.id) }
+    static func id(for model: NSManagedObject) -> DatabaseId? { (model as? Self)?.id }
+}

@@ -6,7 +6,7 @@ import Foundation
 @testable import StreamChat
 
 /// This class allows you to wrap an existing `DatabaseSession` and adjust the behavior of its methods.
-class DatabaseSession_Mock: DatabaseSession {
+class DatabaseSession_Mock: DatabaseSession {    
     /// The wrapped session
     let underlyingSession: DatabaseSession
 
@@ -137,6 +137,7 @@ class DatabaseSession_Mock: DatabaseSession {
         createdAt: Date?,
         skipPush: Bool,
         skipEnrichUrl: Bool,
+        poll: PollPayload?,
         extraData: [String: RawJSON]
     ) throws -> MessageDTO {
         try throwErrorIfNeeded()
@@ -156,7 +157,8 @@ class DatabaseSession_Mock: DatabaseSession {
             quotedMessageId: quotedMessageId,
             createdAt: createdAt,
             skipPush: skipPush,
-            skipEnrichUrl: skipEnrichUrl,
+            skipEnrichUrl: skipEnrichUrl, 
+            poll: poll,
             extraData: extraData
         )
     }
@@ -383,6 +385,71 @@ class DatabaseSession_Mock: DatabaseSession {
 
     func saveThreadRead(payload: ThreadReadPayload, parentMessageId: String, cache: PreWarmedCache?) throws -> ThreadReadDTO {
         try underlyingSession.saveThreadRead(payload: payload, parentMessageId: parentMessageId, cache: cache)
+    }
+    
+    
+    func savePoll(payload: PollPayload, cache: PreWarmedCache?) throws -> PollDTO {
+        try underlyingSession.savePoll(payload: payload, cache: cache)
+    }
+    
+    func savePollVotes(
+        payload: PollVoteListResponse,
+        query: PollVoteListQuery?,
+        cache: PreWarmedCache?
+    ) throws -> [PollVoteDTO] {
+        try underlyingSession.savePollVotes(payload: payload, query: query, cache: cache)
+    }
+    
+    func savePollVote(
+        payload: PollVotePayload,
+        query: PollVoteListQuery?,
+        cache: PreWarmedCache?
+    ) throws -> PollVoteDTO {
+        try underlyingSession.savePollVote(payload: payload, query: query, cache: cache)
+    }
+    
+    func savePollVote(
+        pollId: String,
+        optionId: String,
+        answerText: String?,
+        userId: String?,
+        query: PollVoteListQuery?
+    ) throws -> PollVoteDTO {
+        try underlyingSession.savePollVote(
+            pollId: pollId,
+            optionId: optionId,
+            answerText: answerText,
+            userId: userId,
+            query: query
+        )
+    }
+    
+    func poll(id: String) throws -> PollDTO? {
+        try underlyingSession.poll(id: id)
+    }
+    
+    func option(id: String, pollId: String) throws -> PollOptionDTO? {
+        try underlyingSession.option(id: id, pollId: pollId)
+    }
+    
+    func pollVote(id: String, pollId: String) throws -> PollVoteDTO? {
+        try underlyingSession.pollVote(id: id, pollId: pollId)
+    }
+    
+    func pollVotes(for userId: String, pollId: String) throws -> [PollVoteDTO] {
+        try underlyingSession.pollVotes(for: userId, pollId: pollId)
+    }
+    
+    func removePollVote(with id: String, pollId: String) throws {
+        try underlyingSession.removePollVote(with: id, pollId: pollId)
+    }
+    
+    func linkVote(with id: String, in pollId: String, to filterHash: String?) throws {
+        try underlyingSession.linkVote(with: id, in: pollId, to: filterHash)
+    }
+    
+    func delete(pollVote: PollVoteDTO) {
+        underlyingSession.delete(pollVote: pollVote)
     }
 }
 

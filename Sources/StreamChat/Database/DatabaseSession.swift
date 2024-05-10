@@ -210,7 +210,7 @@ extension MessageDatabaseSession {
         skipEnrichUrl: Bool,
         attachments: [AnyAttachmentPayload] = [],
         mentionedUserIds: [UserId] = [],
-        pollPayload: PollPayload?,
+        pollPayload: PollPayload? = nil,
         extraData: [String: RawJSON] = [:]
     ) throws -> MessageDTO {
         try createNewMessage(

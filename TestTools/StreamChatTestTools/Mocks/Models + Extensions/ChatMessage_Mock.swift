@@ -89,7 +89,8 @@ public extension ChatMessage {
             originalLanguage: originalLanguage,
             moderationDetails: moderationsDetails,
             readBy: { readBy },
-            readByCount: { readBy.count },
+            readByCount: { readBy.count }, 
+            poll: nil,
             underlyingContext: underlyingContext,
             textUpdatedAt: textUpdatedAt
         )

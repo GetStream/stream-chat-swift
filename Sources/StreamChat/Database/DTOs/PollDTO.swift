@@ -33,9 +33,10 @@ class PollDTO: NSManagedObject {
         context: NSManagedObjectContext,
         cache: PreWarmedCache?
     ) -> PollDTO {
-//        if let cachedObject = cache?.model(for: pollId, context: context, type: PollDTO.self) {
-//            return cachedObject
-//        }
+        if let cachedObject = cache?.model(for: pollId, context: context, type: PollDTO.self) {
+            return cachedObject
+        }
+        
         let request = fetchRequest(for: pollId)
         if let existing = load(by: request, context: context).first {
             return existing

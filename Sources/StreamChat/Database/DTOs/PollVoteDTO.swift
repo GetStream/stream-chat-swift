@@ -27,6 +27,10 @@ class PollVoteDTO: NSManagedObject {
         context: NSManagedObjectContext,
         cache: PreWarmedCache?
     ) -> PollVoteDTO {
+        if let cachedObject = cache?.model(for: voteId, context: context, type: PollVoteDTO.self) {
+            return cachedObject
+        }
+        
         let request = fetchRequest(for: voteId, pollId: poll.id)
         if let existing = load(by: request, context: context).first {
             return existing

@@ -288,7 +288,7 @@ class ChannelUpdater: Worker {
         quotedMessageId: MessageId?,
         skipPush: Bool,
         skipEnrichUrl: Bool,
-        poll: PollPayload?,
+        poll: PollPayload? = nil,
         extraData: [String: RawJSON],
         completion: ((Result<ChatMessage, Error>) -> Void)? = nil
     ) {
