@@ -191,7 +191,7 @@ class SyncRepository {
     private func getChannelIds(completion: @escaping ([ChannelId]) -> Void) {
         database.backgroundReadOnlyContext.perform {
             let request = ChannelDTO.allChannelsFetchRequest
-            request.fetchLimit = 1000
+            request.fetchLimit = 250
             request.propertiesToFetch = ["cid"]
             let channels = (try? self.database.backgroundReadOnlyContext.fetch(request)) ?? []
             completion(channels.compactMap { try? ChannelId(cid: $0.cid) })
