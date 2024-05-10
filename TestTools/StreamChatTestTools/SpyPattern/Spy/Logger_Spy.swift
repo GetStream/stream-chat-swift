@@ -7,12 +7,12 @@ import Foundation
 
 final class Logger_Spy: Logger, Spy {
     var originalLogger: Logger?
-    var recordedFunctions: [String] = []
-    var failedAsserts: Int = 0
+    @Atomic var recordedFunctions: [String] = []
+    @Atomic var failedAsserts: Int = 0
 
     func injectMock() {
         let logger = LogConfig.logger
-        if logger.self === Logger.self {
+        if type(of: logger) == Logger.self {
             originalLogger = logger
         }
         LogConfig.logger = self

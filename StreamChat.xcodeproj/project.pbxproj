@@ -1707,7 +1707,6 @@
 		C121E864274544AE00023E4C /* EventObserver.swift in Sources */ = {isa = PBXBuildFile; fileRef = F63CC36E24E591840052844D /* EventObserver.swift */; };
 		C121E865274544AE00023E4C /* MemberEventObserver.swift in Sources */ = {isa = PBXBuildFile; fileRef = F63CC37224E592D30052844D /* MemberEventObserver.swift */; };
 		C121E866274544AE00023E4C /* MessageSender.swift in Sources */ = {isa = PBXBuildFile; fileRef = 799C9448247D5211001F1104 /* MessageSender.swift */; };
-		C121E867274544AE00023E4C /* NewUserQueryUpdater.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA4EE59D252B43B700CB26D4 /* NewUserQueryUpdater.swift */; };
 		C121E868274544AF00023E4C /* MessageEditor.swift in Sources */ = {isa = PBXBuildFile; fileRef = F670B50E24FE6EA900003B1A /* MessageEditor.swift */; };
 		C121E869274544AF00023E4C /* ConnectionRecoveryHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6ED5F7325023EB4005D7327 /* ConnectionRecoveryHandler.swift */; };
 		C121E86B274544AF00023E4C /* AttachmentQueueUploader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88E26D6D2580F34B00F55AB5 /* AttachmentQueueUploader.swift */; };
@@ -2290,8 +2289,6 @@
 		DA4AA3B22502718600FAAF6E /* ChannelController+Combine.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA4AA3B12502718600FAAF6E /* ChannelController+Combine.swift */; };
 		DA4AA3B8250271BD00FAAF6E /* CurrentUserController+Combine.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA4AA3B7250271BD00FAAF6E /* CurrentUserController+Combine.swift */; };
 		DA4AA3BA2502731900FAAF6E /* Publisher+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA4AA3B92502731900FAAF6E /* Publisher+Extensions.swift */; };
-		DA4EE59E252B43B700CB26D4 /* NewUserQueryUpdater.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA4EE59D252B43B700CB26D4 /* NewUserQueryUpdater.swift */; };
-		DA4EE5A1252B443400CB26D4 /* NewUserQueryUpdater_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA4EE5A0252B443400CB26D4 /* NewUserQueryUpdater_Tests.swift */; };
 		DA4EE5B2252B67F500CB26D4 /* UserListController+SwiftUI.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA4EE5B1252B67F500CB26D4 /* UserListController+SwiftUI.swift */; };
 		DA4EE5B5252B680700CB26D4 /* UserListController+SwiftUI_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA4EE5B4252B680700CB26D4 /* UserListController+SwiftUI_Tests.swift */; };
 		DA4EE5B8252B69E300CB26D4 /* UserListController+Combine.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA4EE5B7252B69E300CB26D4 /* UserListController+Combine.swift */; };
@@ -4319,8 +4316,6 @@
 		DA4AA3B5250271B100FAAF6E /* CurrentUserController+Combine_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CurrentUserController+Combine_Tests.swift"; sourceTree = "<group>"; };
 		DA4AA3B7250271BD00FAAF6E /* CurrentUserController+Combine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CurrentUserController+Combine.swift"; sourceTree = "<group>"; };
 		DA4AA3B92502731900FAAF6E /* Publisher+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Publisher+Extensions.swift"; sourceTree = "<group>"; };
-		DA4EE59D252B43B700CB26D4 /* NewUserQueryUpdater.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewUserQueryUpdater.swift; sourceTree = "<group>"; };
-		DA4EE5A0252B443400CB26D4 /* NewUserQueryUpdater_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewUserQueryUpdater_Tests.swift; sourceTree = "<group>"; };
 		DA4EE5B1252B67F500CB26D4 /* UserListController+SwiftUI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UserListController+SwiftUI.swift"; sourceTree = "<group>"; };
 		DA4EE5B4252B680700CB26D4 /* UserListController+SwiftUI_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UserListController+SwiftUI_Tests.swift"; sourceTree = "<group>"; };
 		DA4EE5B7252B69E300CB26D4 /* UserListController+Combine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UserListController+Combine.swift"; sourceTree = "<group>"; };
@@ -5168,7 +5163,6 @@
 				F6ED5F7325023EB4005D7327 /* ConnectionRecoveryHandler.swift */,
 				F670B50E24FE6EA900003B1A /* MessageEditor.swift */,
 				799C9448247D5211001F1104 /* MessageSender.swift */,
-				DA4EE59D252B43B700CB26D4 /* NewUserQueryUpdater.swift */,
 			);
 			path = Background;
 			sourceTree = "<group>";
@@ -6766,7 +6760,6 @@
 				A3960E0C27DA5973003AB2B0 /* ConnectionRecoveryHandler_Tests.swift */,
 				F61D7C3624FFE17200188A0E /* MessageEditor_Tests.swift */,
 				791C0B6224EEBDF40013CA2F /* MessageSender_Tests.swift */,
-				DA4EE5A0252B443400CB26D4 /* NewUserQueryUpdater_Tests.swift */,
 			);
 			path = Background;
 			sourceTree = "<group>";
@@ -10988,7 +10981,6 @@
 				799C9479247E3DEA001F1104 /* StreamChatModel.xcdatamodeld in Sources */,
 				888E8C55252B525300195E03 /* MemberController.swift in Sources */,
 				79877A1C2498E4EE00015F8B /* Endpoint.swift in Sources */,
-				DA4EE59E252B43B700CB26D4 /* NewUserQueryUpdater.swift in Sources */,
 				882C5759252C794900E60C44 /* MemberEndpoints.swift in Sources */,
 				DA640FC12535CFA100D32944 /* ChannelMemberListSortingKey.swift in Sources */,
 				7900452625374CA20096ECA1 /* User+SwiftUI.swift in Sources */,
@@ -11261,7 +11253,6 @@
 				A34ECB4C27F5CA5E00A804C1 /* ReactionEvents_IntegrationTests.swift in Sources */,
 				882C5766252C7F7000E60C44 /* ChannelMemberListUpdater_Tests.swift in Sources */,
 				C1CEF90C2A1CF8A900414931 /* UserUpdateMiddleware_Tests.swift in Sources */,
-				DA4EE5A1252B443400CB26D4 /* NewUserQueryUpdater_Tests.swift in Sources */,
 				C1EFF3F828633B5D0057B91B /* IdentifiableModel_Tests.swift in Sources */,
 				40789D4829F6C1DC0018C2BB /* StreamAppStateObserver_Tests.swift in Sources */,
 				C143789727BE6D4800E23965 /* OfflineRequestsRepository_Tests.swift in Sources */,
@@ -11777,7 +11768,6 @@
 				C121E865274544AE00023E4C /* MemberEventObserver.swift in Sources */,
 				43D3F10028410B4800B74921 /* Call.swift in Sources */,
 				C121E866274544AE00023E4C /* MessageSender.swift in Sources */,
-				C121E867274544AE00023E4C /* NewUserQueryUpdater.swift in Sources */,
 				C121E868274544AF00023E4C /* MessageEditor.swift in Sources */,
 				AD78F9F028EC719200BC0FCE /* ChannelTruncateRequestPayload.swift in Sources */,
 				C121E869274544AF00023E4C /* ConnectionRecoveryHandler.swift in Sources */,

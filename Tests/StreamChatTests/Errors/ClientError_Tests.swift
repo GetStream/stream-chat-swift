@@ -43,7 +43,7 @@ final class ClientError_Tests: XCTestCase {
         XCTAssertFalse(clientError.isInvalidTokenError)
     }
 
-    func test_rateLimitError_isEphemeralError() {
+    func test_rateLimitError_isNotEphemeralError() {
         let errorPayload = ErrorPayload(
             code: 9,
             message: .unique,
@@ -52,9 +52,8 @@ final class ClientError_Tests: XCTestCase {
 
         let error = ClientError(with: errorPayload)
 
-        // Assert `isRateLimitError` returns true
         XCTAssertTrue(error.isRateLimitError)
-        XCTAssertTrue(ClientError.isEphemeral(error: error))
+        XCTAssertFalse(ClientError.isEphemeral(error: error))
     }
 
     func test_temporaryErrors_areEphemeralError() {

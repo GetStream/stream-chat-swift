@@ -116,10 +116,6 @@ extension ClientError {
             return true
         }
 
-        if error.isRateLimitError {
-            return true
-        }
-
         return false
     }
 }
