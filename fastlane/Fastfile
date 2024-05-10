@@ -771,46 +771,13 @@ lane :copyright do
   )
 end
 
-desc 'Get frameworks size'
-lane :get_frameworks_size do
-  root_dir = "Build/SDKSize"
-  archive_dir = "#{root_dir}/DemoApp.xcarchive"
+desc 'Show current frameworks size'
+lane :show_frameworks_size do
+  sizes = get_frameworks_size
 
-  # Cleanup the previous builds
-  FileUtils.rm_rf("../#{root_dir}/Export/")
-
-  # Archive the demo app
-  xcodebuild(
-    archive: true,
-    archive_path: archive_dir,
-    scheme: "DemoApp"
-  )
-
-  # Export with ad-hoc and thinning support to be able
-  # to get the correct thinned size of Assets.car
-  xcodebuild(
-    archive_path: archive_dir,
-    export_options_plist: "Scripts/SDKSizeExportOptions.plist",
-    export_archive: "#{root_dir}/Export",
-    export_path: "#{root_dir}/Export"
-  )
-
-  # Parse the thinned size of Assets.car from Packaging.log
-  packaging_log_content = File.read("../#{root_dir}/Export/Packaging.log")
-  assets_size_regex = %r{\b(\d+)\sbytes\sfor\s./Payload/ChatSample.app/Frameworks/StreamChatUI.framework/Assets.car\b}
-  match = packaging_log_content.match(assets_size_regex)
-  assets_thinned_size = match[1].to_i
-
-  stream_chat_size = File.size("../#{archive_dir}/Products/Library/Frameworks/ChatSample.app/Frameworks/StreamChat.framework/StreamChat")
-  stream_chat_ui_size = File.size("../#{archive_dir}/Products/Library/Frameworks/ChatSample.app/Frameworks/StreamChatUI.framework/StreamChatUI")
-
-  stream_chat_size_mb = (stream_chat_size.to_f / 1024 / 1024).round(2)
-  stream_chat_ui_size_mb = ((stream_chat_ui_size + assets_thinned_size).to_f / 1024 / 1024).round(2)
-  total_size_mb = (stream_chat_size_mb + stream_chat_ui_size_mb).round(2)
-
-  UI.success("StreamChat: #{stream_chat_size_mb}MB")
-  UI.success("StreamChatUI: #{stream_chat_ui_size_mb}MB")
-  UI.success("Total Size: #{total_size_mb}MB")
+  UI.success("StreamChat: #{sizes[:stream_chat]}MB")
+  UI.success("StreamChatUI: #{sizes[:stream_chat_ui]}MB")
+  UI.success("Total Size: #{sizes[:total]}MB")
 end
 
 private_lane :create_pr do |options|
@@ -875,4 +842,47 @@ def select_files_from(files:, with_extension:, that_start_with:)
   end.select do |f|
     f.gsub(/['"]/, '').end_with?(with_extension)
   end
+end
+
+def get_frameworks_size
+  root_dir = "Build/SDKSize"
+  archive_dir = "#{root_dir}/DemoApp.xcarchive"
+
+  # Cleanup the previous builds
+  FileUtils.rm_rf("../#{root_dir}/Export/")
+
+  # Archive the demo app
+  xcodebuild(
+    archive: true,
+    archive_path: archive_dir,
+    scheme: "DemoApp"
+  )
+
+  # Export with ad-hoc and thinning support to be able
+  # to get the correct thinned size of Assets.car
+  xcodebuild(
+    archive_path: archive_dir,
+    export_options_plist: "Scripts/SDKSizeExportOptions.plist",
+    export_archive: "#{root_dir}/Export",
+    export_path: "#{root_dir}/Export"
+  )
+
+  # Parse the thinned size of Assets.car from Packaging.log
+  assets_size_regex = %r{\b(\d+)\sbytes\sfor\s./Payload/ChatSample.app/Frameworks/StreamChatUI.framework/Assets.car\b}
+  packaging_log_content = File.read("../#{root_dir}/Export/Packaging.log")
+  match = packaging_log_content.match(assets_size_regex)
+  assets_thinned_size = match[1].to_i
+
+  stream_chat_size = File.size("../#{archive_dir}/Products/Library/Frameworks/ChatSample.app/Frameworks/StreamChat.framework/StreamChat")
+  stream_chat_ui_size = File.size("../#{archive_dir}/Products/Library/Frameworks/ChatSample.app/Frameworks/StreamChatUI.framework/StreamChatUI")
+
+  stream_chat_size_mb = (stream_chat_size.to_f / 1024 / 1024).round(2)
+  stream_chat_ui_size_mb = ((stream_chat_ui_size + assets_thinned_size).to_f / 1024 / 1024).round(2)
+  total_size_mb = (stream_chat_size_mb + stream_chat_ui_size_mb).round(2)
+
+  { 
+    stream_chat: stream_chat_size_mb, 
+    stream_chat_ui: stream_chat_ui_size_mb, 
+    total: total_size_mb
+  }
 end
