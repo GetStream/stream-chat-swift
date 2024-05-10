@@ -121,6 +121,10 @@ public class ChatChannelListController: DataController, DelegateCallable, DataSt
 
     private let filter: ((ChatChannel) -> Bool)?
     private let environment: Environment
+    private lazy var channelListLinker: ChannelListLinker = self.environment
+        .channelListLinkerBuilder(
+            query, filter, client.config, client.databaseContainer, worker
+        )
 
     /// Creates a new `ChannelListController`.
     ///
@@ -145,6 +149,7 @@ public class ChatChannelListController: DataController, DelegateCallable, DataSt
 
     override public func synchronize(_ completion: ((_ error: Error?) -> Void)? = nil) {
         startChannelListObserverIfNeeded()
+        channelListLinker.start(with: client.eventNotificationCenter)
         client.startTrackingChannelListController(self)
         updateChannelList(completion)
     }
@@ -255,78 +260,8 @@ public class ChatChannelListController: DataController, DelegateCallable, DataSt
     }
 }
 
-/// When we receive events, we need to check if a channel should be added or removed from
-/// the current query depending on the following events:
-/// - Channel created: We analyse if the channel should be added to the current query.
-/// - New message sent: This means the channel will reorder and appear on first position,
-///   so we also analyse if it should be added to the current query.
-/// - Channel is updated: We only check if we should remove it from the current query.
-///   We don't try to add it to the current query to not mess with pagination.
 extension ChatChannelListController: EventsControllerDelegate {
-    public func eventsController(_ controller: EventsController, didReceiveEvent event: Event) {
-        if let channelAddedEvent = event as? NotificationAddedToChannelEvent {
-            linkChannelIfNeeded(channelAddedEvent.channel)
-        } else if let messageNewEvent = event as? MessageNewEvent {
-            linkChannelIfNeeded(messageNewEvent.channel)
-        } else if let messageNewEvent = event as? NotificationMessageNewEvent {
-            linkChannelIfNeeded(messageNewEvent.channel)
-        } else if let updatedChannelEvent = event as? ChannelUpdatedEvent {
-            unlinkChannelIfNeeded(updatedChannelEvent.channel)
-        } else if let channelVisibleEvent = event as? ChannelVisibleEvent, let channel = dataStore.channel(cid: channelVisibleEvent.cid) {
-            linkChannelIfNeeded(channel)
-        }
-    }
-
-    /// Handles if a channel should be linked to the current query or not.
-    private func linkChannelIfNeeded(_ channel: ChatChannel) {
-        guard !channels.contains(channel) else { return }
-        guard shouldChannelBelongToCurrentQuery(channel) else { return }
-        link(channel: channel)
-    }
-
-    /// Handles if a channel should be unlinked from the current query or not.
-    private func unlinkChannelIfNeeded(_ channel: ChatChannel) {
-        guard channels.contains(channel) else { return }
-        guard !shouldChannelBelongToCurrentQuery(channel) else { return }
-        worker.unlink(channel: channel, with: query)
-    }
-
-    /// Checks if the given channel should belong to the current query or not.
-    private func shouldChannelBelongToCurrentQuery(_ channel: ChatChannel) -> Bool {
-        if let filter = filter {
-            return filter(channel)
-        }
-
-        guard !client.config.isChannelAutomaticFilteringEnabled else {
-            // When auto-filtering is enabled the channel will appear or not automatically if the
-            // query matches the DB Predicate. So here we default to saying it always belong to the current query.
-            return true
-        }
-
-        // Fallback to legacy of checking if a channel should be linked to the current channel list query.
-        let deprecatedFallback: () -> Bool? = {
-            self.delegate?.controller(self, shouldAddNewChannelToList: channel)
-        }
-
-        return deprecatedFallback() ?? true
-    }
-
-    /// Links the channel to the current channel list query and starts watching it.
-    private func link(channel: ChatChannel) {
-        worker.link(channel: channel, with: query) { [weak self] error in
-            if let error = error {
-                log.error(error)
-                return
-            }
-
-            self?.worker.startWatchingChannels(withIds: [channel.cid]) { error in
-                guard let error = error else { return }
-                log.warning(
-                    "Failed to start watching linked channel: \(channel.cid), error: \(error.localizedDescription)"
-                )
-            }
-        }
-    }
+    public func eventsController(_ controller: EventsController, didReceiveEvent event: Event) {}
 }
 
 extension ChatChannelListController {
@@ -336,6 +271,14 @@ extension ChatChannelListController {
             _ apiClient: APIClient
         ) -> ChannelListUpdater = ChannelListUpdater.init
 
+        var channelListLinkerBuilder: (
+            _ query: ChannelListQuery,
+            _ filter: ((ChatChannel) -> Bool)?,
+            _ clientConfig: ChatClientConfig,
+            _ databaseContainer: DatabaseContainer,
+            _ worker: ChannelListUpdater
+        ) -> ChannelListLinker = ChannelListLinker.init
+        
         var createChannelListDatabaseObserver: (
             _ isBackground: Bool,
             _ database: DatabaseContainer,
