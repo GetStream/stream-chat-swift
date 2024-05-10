@@ -776,6 +776,9 @@ lane :get_frameworks_size do
   root_dir = "Build/SDKSize"
   archive_dir = "#{root_dir}/DemoApp.xcarchive"
 
+  # Cleanup the previous builds
+  FileUtils.rm_rf("../#{root_dir}/Export/")
+
   # Archive the demo app
   xcodebuild(
     archive: true,
