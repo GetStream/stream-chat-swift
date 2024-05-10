@@ -84,6 +84,9 @@ open class ChatChannelListVC: _ViewController,
     /// updates when the channel list is not visible in the window.
     private(set) var skippedRendering = false
     private(set) var skipChannelUpdates = true
+    
+    /// Loading cells can trigger persistent store changes which leads to reloadChannels re-entrancy.
+    private var isApplyingChangesets = false
 
     /// A component responsible to handle when to load new channels.
     private lazy var viewPaginationHandler: ViewPaginationHandling = {
@@ -248,15 +251,24 @@ open class ChatChannelListVC: _ViewController,
         self.controller.synchronize()
         reloadChannels()
     }
-
+    
     /// Updates the list view with the most updated channels.
     public func reloadChannels() {
+        if isApplyingChangesets {
+            DispatchQueue.main.async {
+                self.reloadChannels()
+            }
+            return
+        }
+        
+        isApplyingChangesets = true
         let previousChannels = channels
         let newChannels = Array(controller.channels)
         let stagedChangeset = StagedChangeset(source: previousChannels, target: newChannels)
-        collectionView.reload(using: stagedChangeset, reconfigure: { _ in false }) { [weak self] newChannels in
+        collectionView.reload(using: stagedChangeset, reconfigure: { _ in true }) { [weak self] newChannels in
             self?.channels = newChannels
         }
+        isApplyingChangesets = false
     }
 
     /// Loads the next page of channels.

@@ -6,6 +6,7 @@ import Foundation
 
 import Foundation
 @testable import StreamChat
+@testable import StreamChatTestTools
 import XCTest
 
 final class Logger_Tests: XCTestCase {
@@ -27,5 +28,15 @@ final class Logger_Tests: XCTestCase {
         DispatchQueue.concurrentPerform(iterations: 1000) { _ in
             log.info("should not crash")
         }
+    }
+    
+    func test_restoringInjectedLogger() {
+        let initialLogger = LogConfig.logger
+        XCTAssertTrue(type(of: LogConfig.logger) == Logger.self)
+        let spyLogger = Logger_Spy()
+        spyLogger.injectMock()
+        XCTAssertTrue(type(of: LogConfig.logger) == Logger_Spy.self)
+        spyLogger.restoreLogger()
+        XCTAssertTrue(type(of: LogConfig.logger) == Logger.self)
     }
 }
