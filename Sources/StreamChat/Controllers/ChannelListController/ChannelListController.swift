@@ -38,8 +38,6 @@ public class ChatChannelListController: DataController, DelegateCallable, DataSt
     /// The `ChatClient` instance this controller belongs to.
     public let client: ChatClient
 
-    let eventsController: EventsController
-
     /// The channels matching the query of this controller.
     ///
     /// To observe changes of the channels, set your class as a delegate of this controller or use the provided
@@ -142,9 +140,7 @@ public class ChatChannelListController: DataController, DelegateCallable, DataSt
         self.query = query
         self.filter = filter
         self.environment = environment
-        eventsController = client.eventsController()
         super.init()
-        eventsController.delegate = self
     }
 
     override public func synchronize(_ completion: ((_ error: Error?) -> Void)? = nil) {
@@ -258,10 +254,6 @@ public class ChatChannelListController: DataController, DelegateCallable, DataSt
             log.error("Failed to perform fetch request with error: \(error). This is an internal error.")
         }
     }
-}
-
-extension ChatChannelListController: EventsControllerDelegate {
-    public func eventsController(_ controller: EventsController, didReceiveEvent event: Event) {}
 }
 
 extension ChatChannelListController {
