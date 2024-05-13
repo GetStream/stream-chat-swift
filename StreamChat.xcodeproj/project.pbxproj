@@ -279,6 +279,8 @@
 		4F8E53172B7F58C1008C0F9F /* ChatClient+Factory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F8E530A2B7CEBFB008C0F9F /* ChatClient+Factory.swift */; };
 		4F8E531C2B833D6C008C0F9F /* ChatState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F8E531B2B833D6C008C0F9F /* ChatState.swift */; };
 		4F8E531D2B833D6C008C0F9F /* ChatState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F8E531B2B833D6C008C0F9F /* ChatState.swift */; };
+		4F910C6C2BEE1BDC00214EB9 /* UnreadMessageLookup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F910C6B2BEE1BDC00214EB9 /* UnreadMessageLookup.swift */; };
+		4F910C6D2BEE1BDC00214EB9 /* UnreadMessageLookup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F910C6B2BEE1BDC00214EB9 /* UnreadMessageLookup.swift */; };
 		4F94B0E02BA1C4220045216B /* MemberListState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F94B0DF2BA1C4220045216B /* MemberListState.swift */; };
 		4F94B0E12BA1C4220045216B /* MemberListState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F94B0DF2BA1C4220045216B /* MemberListState.swift */; };
 		4F97F2672BA83146001C4D66 /* UserList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F97F2662BA83146001C4D66 /* UserList.swift */; };
@@ -318,8 +320,6 @@
 		4FF2A80E2B8E011000941A64 /* ChatState+Observer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FF2A80C2B8E011000941A64 /* ChatState+Observer.swift */; };
 		4FFB5EA02BA0507900F0454F /* Collection+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FFB5E9F2BA0507900F0454F /* Collection+Extensions.swift */; };
 		4FFB5EA12BA0507900F0454F /* Collection+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FFB5E9F2BA0507900F0454F /* Collection+Extensions.swift */; };
-		4FFB5EA32BA0524600F0454F /* ChatState+Internal.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FFB5EA22BA0524600F0454F /* ChatState+Internal.swift */; };
-		4FFB5EA42BA0524600F0454F /* ChatState+Internal.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FFB5EA22BA0524600F0454F /* ChatState+Internal.swift */; };
 		6428DD5526201DCC0065DA1D /* BannerShowingConnectionDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6428DD5426201DCC0065DA1D /* BannerShowingConnectionDelegate.swift */; };
 		647F66D5261E22C200111B19 /* BannerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 647F66D4261E22C200111B19 /* BannerView.swift */; };
 		648EC576261EF9D400B8F05F /* DemoAppCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 648EC575261EF9D400B8F05F /* DemoAppCoordinator.swift */; };
@@ -3061,6 +3061,7 @@
 		4F8E53052B7CD01D008C0F9F /* Chat.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Chat.swift; sourceTree = "<group>"; };
 		4F8E530A2B7CEBFB008C0F9F /* ChatClient+Factory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ChatClient+Factory.swift"; sourceTree = "<group>"; };
 		4F8E531B2B833D6C008C0F9F /* ChatState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatState.swift; sourceTree = "<group>"; };
+		4F910C6B2BEE1BDC00214EB9 /* UnreadMessageLookup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UnreadMessageLookup.swift; sourceTree = "<group>"; };
 		4F94B0DF2BA1C4220045216B /* MemberListState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemberListState.swift; sourceTree = "<group>"; };
 		4F97F2662BA83146001C4D66 /* UserList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserList.swift; sourceTree = "<group>"; };
 		4F97F2692BA83150001C4D66 /* UserListState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserListState.swift; sourceTree = "<group>"; };
@@ -3082,7 +3083,6 @@
 		4FE6E1AC2BAC7A1B00C80AF1 /* UserListState+Observer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UserListState+Observer.swift"; sourceTree = "<group>"; };
 		4FF2A80C2B8E011000941A64 /* ChatState+Observer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ChatState+Observer.swift"; sourceTree = "<group>"; };
 		4FFB5E9F2BA0507900F0454F /* Collection+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Collection+Extensions.swift"; sourceTree = "<group>"; };
-		4FFB5EA22BA0524600F0454F /* ChatState+Internal.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ChatState+Internal.swift"; sourceTree = "<group>"; };
 		6428DD5426201DCC0065DA1D /* BannerShowingConnectionDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BannerShowingConnectionDelegate.swift; sourceTree = "<group>"; };
 		647F66D4261E22C200111B19 /* BannerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BannerView.swift; sourceTree = "<group>"; };
 		648EC575261EF9D400B8F05F /* DemoAppCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DemoAppCoordinator.swift; sourceTree = "<group>"; };
@@ -5057,7 +5057,6 @@
 				4F8E53052B7CD01D008C0F9F /* Chat.swift */,
 				4F8E530A2B7CEBFB008C0F9F /* ChatClient+Factory.swift */,
 				4F8E531B2B833D6C008C0F9F /* ChatState.swift */,
-				4FFB5EA22BA0524600F0454F /* ChatState+Internal.swift */,
 				4FF2A80C2B8E011000941A64 /* ChatState+Observer.swift */,
 				4F427F652BA2F43200D92238 /* ConnectedUser.swift */,
 				4F427F682BA2F52100D92238 /* ConnectedUserState.swift */,
@@ -5390,6 +5389,7 @@
 				C14A46522845043300EF498E /* ThreadSafeWeakCollection.swift */,
 				792A4F3B247FFBB400EAF71D /* Timers.swift */,
 				797E10A724EAF6DE00353791 /* UniqueId.swift */,
+				4F910C6B2BEE1BDC00214EB9 /* UnreadMessageLookup.swift */,
 				C173538D27D9F804008AC412 /* KeyedDecodingContainer+Array.swift */,
 				79D5CDD027EA1BA100BE7D8B /* TranslationLanguage.swift */,
 				C14D27B52869EEE40063F6F2 /* Array+CompactMapLoggingError.swift */,
@@ -11139,7 +11139,6 @@
 				888E8C36252B2AAF00195E03 /* UserController+SwiftUI.swift in Sources */,
 				AD0CC01C2BDBD22D005E2C66 /* ReactionEndpoints.swift in Sources */,
 				C143789027BC03EE00E23965 /* EndpointPath.swift in Sources */,
-				4FFB5EA32BA0524600F0454F /* ChatState+Internal.swift in Sources */,
 				C10C7552299D1D67008C8F78 /* ChannelRepository.swift in Sources */,
 				790A4C45252DD4F1001F4A23 /* DevicePayloads.swift in Sources */,
 				C1FC2F902742579D0062530F /* NativeEngine.swift in Sources */,
@@ -11249,6 +11248,7 @@
 				DA9985EE24E175AA000E9885 /* ChannelCodingKeys.swift in Sources */,
 				22B54C4C25C80FA90041B357 /* RawJSON.swift in Sources */,
 				841BA9FE2BCE8E6D000C73E4 /* CreatePollRequestBody.swift in Sources */,
+				4F910C6C2BEE1BDC00214EB9 /* UnreadMessageLookup.swift in Sources */,
 				888E8C4E252B4B1C00195E03 /* ChannelMemberBanRequestPayload.swift in Sources */,
 				CFE616B928348A5D00AE2ABF /* CountdownTracker.swift in Sources */,
 				40789D1F29F6AC500018C2BB /* AudioPlaying.swift in Sources */,
@@ -12043,6 +12043,7 @@
 				C121E899274544B000023E4C /* MessageReactionType.swift in Sources */,
 				C121E89A274544B000023E4C /* MuteDetails.swift in Sources */,
 				C121E89B274544B000023E4C /* Controller.swift in Sources */,
+				4F910C6D2BEE1BDC00214EB9 /* UnreadMessageLookup.swift in Sources */,
 				404296DE2A0114900089126D /* StreamAudioQueuePlayer_Tests.swift in Sources */,
 				C121E89C274544B000023E4C /* DataController.swift in Sources */,
 				AD17CDFA27E4DB2700E0D092 /* PushProvider.swift in Sources */,
@@ -12175,7 +12176,6 @@
 				C121E8EF274544B200023E4C /* MainQueue+Synchronous.swift in Sources */,
 				C121E8F0274544B200023E4C /* Dictionary+Extensions.swift in Sources */,
 				C121E8F1274544B200023E4C /* MultipartFormData.swift in Sources */,
-				4FFB5EA42BA0524600F0454F /* ChatState+Internal.swift in Sources */,
 				C121E8F2274544B200023E4C /* SystemEnvironment+Version.swift in Sources */,
 				AD78F9EF28EC718D00BC0FCE /* EventBatcher.swift in Sources */,
 				4F8E53162B7F58BE008C0F9F /* Chat.swift in Sources */,
