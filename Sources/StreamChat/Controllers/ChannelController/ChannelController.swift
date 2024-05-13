@@ -1247,57 +1247,12 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
     }
 
     public func getFirstUnreadMessageId(for channel: ChatChannel) -> MessageId? {
-        // Return the oldest regular message if all messages are unread in the message list.
-        let oldestRegularMessage: () -> MessageId? = { [weak self] in
-            guard self?.hasLoadedAllPreviousMessages == true else {
-                return nil
-            }
-            return self?.messages.last(where: { $0.type == .regular || $0.type == .reply })?.id
-        }
-
-        guard let currentUserRead = channel.reads.first(where: {
-            $0.user.id == client.currentUserId
-        }) else {
-            return oldestRegularMessage()
-        }
-
-        // If there are no unreads, then return nil.
-        guard currentUserRead.unreadMessagesCount > 0 else {
-            return nil
-        }
-
-        // If there unreads but no `lastReadMessageId`, it means the whole message list is unread.
-        // So the top message (oldest one) is the first unread message id.
-        guard let lastReadMessageId = currentUserRead.lastReadMessageId else {
-            return oldestRegularMessage()
-        }
-
-        guard lastReadMessageId != messages.first?.id else {
-            return nil
-        }
-
-        guard let lastReadIndex = messages.firstIndex(where: { $0.id == lastReadMessageId }), lastReadIndex != 0 else {
-            // If there is a lastReadMessageId, and we loaded all messages, but can't find firstUnreadMessageId,
-            // then it means the lastReadMessageId is not reachable because the channel was truncated or hidden.
-            // So we return the oldest regular message already fetched.
-            if hasLoadedAllPreviousMessages {
-                return oldestRegularMessage()
-            }
-
-            return nil
-        }
-
-        let lookUpStartIndex = messages.index(before: lastReadIndex)
-
-        var id: MessageId?
-        for index in (0...lookUpStartIndex).reversed() {
-            let message = message(at: index)
-            guard message?.author.id != client.currentUserId, message?.deletedAt == nil else { continue }
-            id = message?.id
-            break
-        }
-
-        return id
+        UnreadMessageLookup.firstUnreadMessageId(
+            in: channel,
+            messages: StreamCollection(messages),
+            hasLoadedAllPreviousMessages: hasLoadedAllPreviousMessages,
+            currentUserId: client.currentUserId
+        )
     }
 
     // MARK: - Internal
