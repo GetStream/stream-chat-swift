@@ -107,7 +107,8 @@ open class ChatChannelVC: _ViewController,
         InvertedScrollViewPaginationHandler.make(scrollView: messageListVC.listView)
     }()
 
-    var throttler: Throttler = Throttler(interval: 3, queue: .main)
+    /// The throttler to make sure that the marking read is not spammed.
+    var markReadThrottler: Throttler = Throttler(interval: 3, queue: .main)
 
     /// Determines if a messaged had been marked as unread in the current session
     private var hasMarkedMessageAsUnread: Bool {
@@ -232,6 +233,8 @@ open class ChatChannelVC: _ViewController,
 
     override open func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
+
+        markReadThrottler.cancel()
 
         keyboardHandler.stop()
 
@@ -424,7 +427,7 @@ open class ChatChannelVC: _ViewController,
             hasSeenLastMessage = true
         }
         if shouldMarkChannelRead {
-            throttler.execute { [weak self] in
+            markReadThrottler.execute { [weak self] in
                 self?.markRead()
             }
         }
@@ -486,7 +489,7 @@ open class ChatChannelVC: _ViewController,
 
             self.updateJumpToUnreadRelatedComponents()
             if self.shouldMarkChannelRead {
-                self.throttler.execute {
+                self.markReadThrottler.execute {
                     self.markRead()
                 }
             } else if !self.hasSeenFirstUnreadMessage {

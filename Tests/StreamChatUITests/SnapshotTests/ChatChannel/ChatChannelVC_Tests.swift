@@ -23,7 +23,7 @@ final class ChatChannelVC_Tests: XCTestCase {
         vc = ChatChannelVC()
         vc.isViewVisible = { _ in true }
         vc.components = components
-        vc.throttler = ThrottlerMock()
+        vc.markReadThrottler = ThrottlerMock()
         cid = .unique
         channelControllerMock = ChatChannelController_Mock.mock()
         channelControllerMock.mockCid = cid
@@ -1052,7 +1052,17 @@ final class ChatChannelVC_Tests: XCTestCase {
         mockedListView.updateMessagesCompletion?()
         XCTAssertEqual(channelControllerMock.markReadCallCount, 0)
     }
-    
+
+    func test_viewWillDisappear_shouldCancelMarkReadThrottler() {
+        let mock = ThrottlerMock()
+        vc = ChatChannelVC()
+        vc.markReadThrottler = mock
+
+        vc.viewWillDisappear(false)
+
+        XCTAssertEqual(mock.cancelCallCount, 1)
+    }
+
     // MARK: - chatMessageListVC(_:headerViewForMessage:at)
 
     func test_headerViewForMessage_whenMessageShouldShowDateSeparator() throws {
@@ -1559,5 +1569,11 @@ class ThrottlerMock: Throttler {
 
     override func execute(_ action: @escaping () -> Void) {
         action()
+    }
+
+    var cancelCallCount = 0
+    override func cancel() {
+        super.cancel()
+        cancelCallCount += 1
     }
 }
