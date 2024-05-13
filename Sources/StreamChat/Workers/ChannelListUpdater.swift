@@ -250,7 +250,11 @@ extension ChannelListUpdater {
         try await update(channelListQuery: query.withPagination(pagination))
     }
     
-    func loadNextChannels(query: ChannelListQuery, limit: Int, loadedChannelsCount: Int) async throws -> [ChatChannel] {
+    func loadNextChannels(
+        query: ChannelListQuery,
+        limit: Int,
+        loadedChannelsCount: Int
+    ) async throws -> [ChatChannel] {
         let pagination = Pagination(pageSize: limit, offset: loadedChannelsCount)
         return try await update(channelListQuery: query.withPagination(pagination))
     }

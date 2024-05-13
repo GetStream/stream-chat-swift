@@ -132,13 +132,19 @@ extension MessageEditor {
         }
     }
     
-    private func registerContinuation(forMessage messageId: MessageId, continuation: CheckedContinuation<ChatMessage, Error>) {
+    private func registerContinuation(
+        forMessage messageId: MessageId,
+        continuation: CheckedContinuation<ChatMessage, Error>
+    ) {
         continuationsQueue.async {
             self.continuations[messageId] = continuation
         }
     }
     
-    private func notifyAPIRequestFinished(for messageId: MessageId, result: Result<ChatMessage, Error>) {
+    private func notifyAPIRequestFinished(
+        for messageId: MessageId,
+        result: Result<ChatMessage, Error>
+    ) {
         continuationsQueue.async {
             guard let continuation = self.continuations.removeValue(forKey: messageId) as? CheckedContinuation<ChatMessage, Error> else { return }
             continuation.resume(with: result)

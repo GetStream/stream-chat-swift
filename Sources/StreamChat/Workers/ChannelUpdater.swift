@@ -341,43 +341,6 @@ class ChannelUpdater: Worker {
             }
         }
     }
-    
-    @available(iOS 13.0.0, *)
-    func createNewMessage(
-        in cid: ChannelId,
-        messageId: MessageId?,
-        text: String,
-        pinning: MessagePinning? = nil,
-        isSilent: Bool,
-        command: String?,
-        arguments: String?,
-        attachments: [AnyAttachmentPayload] = [],
-        mentionedUserIds: [UserId],
-        quotedMessageId: MessageId?,
-        skipPush: Bool,
-        skipEnrichUrl: Bool,
-        extraData: [String: RawJSON]
-    ) async throws -> ChatMessage {
-        try await withCheckedThrowingContinuation { continuation in
-            createNewMessage(
-                in: cid,
-                messageId: messageId,
-                text: text,
-                pinning: pinning,
-                isSilent: isSilent,
-                command: command,
-                arguments: arguments,
-                attachments: attachments,
-                mentionedUserIds: mentionedUserIds,
-                quotedMessageId: quotedMessageId,
-                skipPush: skipPush,
-                skipEnrichUrl: skipEnrichUrl,
-                extraData: extraData
-            ) { result in
-                continuation.resume(with: result)
-            }
-        }
-    }
 
     /// Add users to the channel as members.
     /// - Parameters:
@@ -731,9 +694,21 @@ extension ChannelUpdater {
         }
     }
     
-    func addMembers(currentUserId: UserId? = nil, cid: ChannelId, userIds: Set<UserId>, message: String? = nil, hideHistory: Bool) async throws {
+    func addMembers(
+        currentUserId: UserId? = nil,
+        cid: ChannelId,
+        userIds: Set<UserId>,
+        message: String? = nil,
+        hideHistory: Bool
+    ) async throws {
         try await withCheckedThrowingContinuation { continuation in
-            addMembers(currentUserId: currentUserId, cid: cid, userIds: userIds, message: message, hideHistory: hideHistory) { error in
+            addMembers(
+                currentUserId: currentUserId,
+                cid: cid,
+                userIds: userIds,
+                message: message,
+                hideHistory: hideHistory
+            ) { error in
                 continuation.resume(with: error)
             }
         }
@@ -748,6 +723,42 @@ extension ChannelUpdater {
         guard let ids = payload.watchers?.map(\.id) else { return [] }
         return try await database.read { context in
             try ids.compactMap { try UserDTO.load(id: $0, context: context)?.asModel() }
+        }
+    }
+    
+    func createNewMessage(
+        in cid: ChannelId,
+        messageId: MessageId?,
+        text: String,
+        pinning: MessagePinning? = nil,
+        isSilent: Bool,
+        command: String?,
+        arguments: String?,
+        attachments: [AnyAttachmentPayload] = [],
+        mentionedUserIds: [UserId],
+        quotedMessageId: MessageId?,
+        skipPush: Bool,
+        skipEnrichUrl: Bool,
+        extraData: [String: RawJSON]
+    ) async throws -> ChatMessage {
+        try await withCheckedThrowingContinuation { continuation in
+            createNewMessage(
+                in: cid,
+                messageId: messageId,
+                text: text,
+                pinning: pinning,
+                isSilent: isSilent,
+                command: command,
+                arguments: arguments,
+                attachments: attachments,
+                mentionedUserIds: mentionedUserIds,
+                quotedMessageId: quotedMessageId,
+                skipPush: skipPush,
+                skipEnrichUrl: skipEnrichUrl,
+                extraData: extraData
+            ) { result in
+                continuation.resume(with: result)
+            }
         }
     }
     
@@ -856,9 +867,19 @@ extension ChannelUpdater {
         }
     }
     
-    func removeMembers(currentUserId: UserId? = nil, cid: ChannelId, userIds: Set<UserId>, message: String? = nil) async throws {
+    func removeMembers(
+        currentUserId: UserId? = nil,
+        cid: ChannelId,
+        userIds: Set<UserId>,
+        message: String? = nil
+    ) async throws {
         try await withCheckedThrowingContinuation { continuation in
-            removeMembers(currentUserId: currentUserId, cid: cid, userIds: userIds, message: message) { error in
+            removeMembers(
+                currentUserId: currentUserId,
+                cid: cid,
+                userIds: userIds,
+                message: message
+            ) { error in
                 continuation.resume(with: error)
             }
         }
@@ -888,9 +909,19 @@ extension ChannelUpdater {
         }
     }
     
-    func truncateChannel(cid: ChannelId, skipPush: Bool, hardDelete: Bool, systemMessage: String?) async throws {
+    func truncateChannel(
+        cid: ChannelId,
+        skipPush: Bool,
+        hardDelete: Bool,
+        systemMessage: String?
+    ) async throws {
         try await withCheckedThrowingContinuation { continuation in
-            truncateChannel(cid: cid, skipPush: skipPush, hardDelete: hardDelete, systemMessage: systemMessage) { error in
+            truncateChannel(
+                cid: cid,
+                skipPush: skipPush,
+                hardDelete: hardDelete,
+                systemMessage: systemMessage
+            ) { error in
                 continuation.resume(with: error)
             }
         }
@@ -934,9 +965,19 @@ extension ChannelUpdater {
         }
     }
     
-    func uploadFile(type: AttachmentType, localFileURL: URL, cid: ChannelId, progress: ((Double) -> Void)? = nil) async throws -> UploadedAttachment {
+    func uploadFile(
+        type: AttachmentType,
+        localFileURL: URL,
+        cid: ChannelId,
+        progress: ((Double) -> Void)? = nil
+    ) async throws -> UploadedAttachment {
         try await withCheckedThrowingContinuation { continuation in
-            uploadFile(type: type, localFileURL: localFileURL, cid: cid, progress: progress) { result in
+            uploadFile(
+                type: type,
+                localFileURL: localFileURL,
+                cid: cid,
+                progress: progress
+            ) { result in
                 continuation.resume(with: result)
             }
         }
@@ -952,7 +993,12 @@ extension ChannelUpdater {
         return try await messageRepository.messages(from: fromDate, to: toDate, in: cid)
     }
     
-    func loadMessages(before messageId: MessageId?, limit: Int?, channelQuery: ChannelQuery, loaded: StreamCollection<ChatMessage>) async throws {
+    func loadMessages(
+        before messageId: MessageId?,
+        limit: Int?,
+        channelQuery: ChannelQuery,
+        loaded: StreamCollection<ChatMessage>
+    ) async throws {
         guard !paginationState.isLoadingPreviousMessages else { return }
         guard !paginationState.hasLoadedAllPreviousMessages else { return }
         let lastLocalMessageId: () -> MessageId? = { loaded.last { !$0.isLocalOnly }?.id }
@@ -964,7 +1010,12 @@ extension ChannelUpdater {
         try await update(channelQuery: channelQuery.withPagination(pagination))
     }
 
-    func loadMessages(after messageId: MessageId?, limit: Int?, channelQuery: ChannelQuery, loaded: StreamCollection<ChatMessage>) async throws {
+    func loadMessages(
+        after messageId: MessageId?,
+        limit: Int?,
+        channelQuery: ChannelQuery,
+        loaded: StreamCollection<ChatMessage>
+    ) async throws {
         guard !paginationState.isLoadingNextMessages else { return }
         guard !paginationState.hasLoadedAllNextMessages else { return }
         guard let messageId = messageId ?? paginationState.newestFetchedMessage?.id ?? loaded.first?.id else {
@@ -975,7 +1026,12 @@ extension ChannelUpdater {
         try await update(channelQuery: channelQuery.withPagination(pagination))
     }
         
-    func loadMessages(around messageId: MessageId, limit: Int?, channelQuery: ChannelQuery, loaded: StreamCollection<ChatMessage>) async throws {
+    func loadMessages(
+        around messageId: MessageId,
+        limit: Int?,
+        channelQuery: ChannelQuery,
+        loaded: StreamCollection<ChatMessage>
+    ) async throws {
         guard !paginationState.isLoadingMiddleMessages else { return }
         let limit = limit ?? channelQuery.pagination?.pageSize ?? .messagesPageSize
         let pagination = MessagesPagination(pageSize: limit, parameter: .around(messageId))
