@@ -22,7 +22,8 @@ public class PollController: DataController, DelegateCallable, DataStoreProvider
     public let pollId: String
     
     public var poll: Poll? {
-        pollObserver?.item
+        startObserversIfNeeded()
+        return pollObserver?.item
     }
     
     public var ownVotes: LazyCachedMapCollection<PollVote> {
@@ -45,7 +46,7 @@ public class PollController: DataController, DelegateCallable, DataStoreProvider
         }
     }
     
-    private let ownVotesQuery: PollVoteListQuery
+    let ownVotesQuery: PollVoteListQuery
     
     private var pollObserver: EntityDatabaseObserverWrapper<Poll, PollDTO>?
     

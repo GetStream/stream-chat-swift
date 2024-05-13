@@ -36,8 +36,7 @@ class PollsRepository {
             options: options?.compactMap { PollOptionRequestBody(text: $0.text, custom: $0.custom) },
             custom: custom
         )
-        apiClient.request(endpoint: .createPoll(createPollRequest: request)) {
-            (result: Result<PollPayloadResponse, Error>) in
+        apiClient.request(endpoint: .createPoll(createPollRequest: request)) { (result: Result<PollPayloadResponse, Error>) in
             switch result {
             case let .success(response):
                 completion(.success(response.poll))
