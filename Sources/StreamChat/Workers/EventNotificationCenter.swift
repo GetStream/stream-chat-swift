@@ -77,7 +77,11 @@ extension EventNotificationCenter {
 
 @available(iOS 13.0, *)
 extension EventNotificationCenter {
-    func subscribe<E>(to event: E.Type, filter: @escaping (E) -> Bool = { _ in true }, handler: @escaping (E) -> Void) -> AnyCancellable where E: Event {
+    func subscribe<E>(
+        to event: E.Type,
+        filter: @escaping (E) -> Bool = { _ in true },
+        handler: @escaping (E) -> Void
+    ) -> AnyCancellable where E: Event {
         publisher(for: .NewEventReceived)
             .compactMap { $0.event as? E }
             .filter(filter)
@@ -85,7 +89,10 @@ extension EventNotificationCenter {
             .sink(receiveValue: handler)
     }
     
-    func subscribe(filter: @escaping (Event) -> Bool = { _ in true }, handler: @escaping (Event) -> Void) -> AnyCancellable {
+    func subscribe(
+        filter: @escaping (Event) -> Bool = { _ in true },
+        handler: @escaping (Event) -> Void
+    ) -> AnyCancellable {
         publisher(for: .NewEventReceived)
             .compactMap(\.event)
             .filter(filter)
