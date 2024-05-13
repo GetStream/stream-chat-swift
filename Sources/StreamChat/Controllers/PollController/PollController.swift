@@ -122,6 +122,12 @@ public class PollController: DataController, DelegateCallable, DataStoreProvider
         }
     }
     
+    /// Casts a vote for a poll.
+    ///
+    /// - Parameters:
+    ///   - answerText: An optional text answer for the poll.
+    ///   - optionId: An optional identifier for the poll option.
+    ///   - completion: A closure to be called upon completion, with an optional `Error` if something went wrong.
     public func castPollVote(
         answerText: String?,
         optionId: String?,
@@ -137,7 +143,12 @@ public class PollController: DataController, DelegateCallable, DataStoreProvider
             completion: completion
         )
     }
-    
+
+    /// Removes a vote from a poll.
+    ///
+    /// - Parameters:
+    ///   - voteId: The identifier of the vote to be removed.
+    ///   - completion: A closure to be called upon completion, with an optional `Error` if something went wrong.
     public func removePollVote(
         voteId: String,
         completion: ((Error?) -> Void)? = nil
@@ -149,11 +160,22 @@ public class PollController: DataController, DelegateCallable, DataStoreProvider
             completion: completion
         )
     }
-    
+
+    /// Closes the poll.
+    ///
+    /// - Parameters:
+    ///   - completion: A closure to be called upon completion, with an optional `Error` if something went wrong.
     public func closePoll(completion: ((Error?) -> Void)? = nil) {
         pollsRepository.closePoll(pollId: pollId, completion: completion)
     }
-    
+
+    /// Suggests a new option for the poll.
+    ///
+    /// - Parameters:
+    ///   - text: The text of the suggested poll option.
+    ///   - position: An optional position for the suggested option.
+    ///   - custom: An optional dictionary of custom data for the suggested option.
+    ///   - completion: A closure to be called upon completion, with an optional `Error` if something went wrong.
     public func suggestPollOption(
         text: String,
         position: Int? = nil,
@@ -169,6 +191,8 @@ public class PollController: DataController, DelegateCallable, DataStoreProvider
         )
     }
     
+    // MARK: - private
+    
     private func startObserversIfNeeded() {
         guard state == .initialized else { return }
         do {
@@ -180,7 +204,7 @@ public class PollController: DataController, DelegateCallable, DataStoreProvider
             log.error("Failed to perform fetch request with error: \(error). This is an internal error.")
         }
     }
-    
+        
     private func setupPollObserver() {
         pollObserver = { [weak self] in
             guard let self = self else {
@@ -210,8 +234,11 @@ public class PollController: DataController, DelegateCallable, DataStoreProvider
     }
 }
 
+/// Represents the visibility of votes in a poll.
 public enum VotingVisibility: String {
+    /// Votes are public and can be seen by everyone.
     case `public`
+    /// Votes are anonymous and cannot be attributed to individual users.
     case anonymous
 }
 
