@@ -14,7 +14,7 @@ import Foundation
     private(set) var memberList: MemberList?
     private(set) var messageReplyStates = [MessageId: MessagesPaginationStateHandler]()
     private(set) var messageStates = NSMapTable<NSString, MessageState>(valueOptions: .weakMemory)
-    private(set) var readStateSender: Chat.ReadStateSender?
+    private(set) var readStateSender: ReadStateSender?
     
     init(
         channelQuery: ChannelQuery,
@@ -136,6 +136,11 @@ import Foundation
             currentUserId: userId
         )
     }
+    
+    /// A boolean indicating if the user marked the channel as unread in the current session.
+    public var isMarkedAsUnread: Bool {
+        readStateSender?.isMarkedAsUnread ?? false
+    }
 
     // MARK: - Throttling and Slow Mode
     
@@ -179,9 +184,8 @@ extension ChatState {
         )
         self.memberList = memberList
         readStateSender = environment.readStateSenderBuilder(
-            channelId,
-            channelUpdater,
             client.authenticationRepository,
+            channelUpdater,
             client.messageRepository
         )
         observer = Observer(

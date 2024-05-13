@@ -1410,9 +1410,8 @@ extension Chat {
         ) -> MessageUpdater = MessageUpdater.init
         
         var readStateSenderBuilder: (
-            _ cid: ChannelId,
-            _ channelUpdater: ChannelUpdater,
             _ authenticationRepository: AuthenticationRepository,
+            _ channelUpdater: ChannelUpdater,
             _ messageRepository: MessageRepository
         ) -> ReadStateSender = ReadStateSender.init
         

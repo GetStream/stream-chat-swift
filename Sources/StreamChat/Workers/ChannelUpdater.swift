@@ -823,23 +823,6 @@ extension ChannelUpdater {
         }
     }
     
-    func markRead(cid: ChannelId, userId: UserId) async throws {
-        try await withCheckedThrowingContinuation { continuation in
-            markRead(cid: cid, userId: userId) { error in
-                continuation.resume(with: error)
-            }
-        }
-    }
-    
-    @discardableResult
-    func markUnread(cid: ChannelId, userId: UserId, from messageId: MessageId, lastReadMessageId: MessageId?) async throws -> ChatChannel {
-        try await withCheckedThrowingContinuation { continuation in
-            markUnread(cid: cid, userId: userId, from: messageId, lastReadMessageId: lastReadMessageId) { result in
-                continuation.resume(with: result)
-            }
-        }
-    }
-    
     func muteChannel(_ mute: Bool, cid: ChannelId, expiration: Int? = nil) async throws {
         try await withCheckedThrowingContinuation { continuation in
             muteChannel(cid: cid, mute: mute, expiration: expiration) { error in

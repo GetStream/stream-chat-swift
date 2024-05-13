@@ -4,74 +4,96 @@
 
 import Foundation
 
-@available(iOS 13.0, *)
-extension Chat {
-    actor ReadStateSender {
-        private let cid: ChannelId
-        private let authenticationRepository: AuthenticationRepository
-        private let messageRepository: MessageRepository
-        private let channelUpdater: ChannelUpdater
-        
-        init(
-            cid: ChannelId,
-            channelUpdater: ChannelUpdater,
-            authenticationRepository: AuthenticationRepository,
-            messageRepository: MessageRepository
-        ) {
-            self.authenticationRepository = authenticationRepository
-            self.cid = cid
-            self.channelUpdater = channelUpdater
-            self.messageRepository = messageRepository
+final class ReadStateSender {
+    private let authenticationRepository: AuthenticationRepository
+    private let channelUpdater: ChannelUpdater
+    private let messageRepository: MessageRepository
+    @Atomic private var markingRead = false
+    @Atomic private(set) var isMarkedAsUnread = false
+    
+    init(
+        authenticationRepository: AuthenticationRepository,
+        channelUpdater: ChannelUpdater,
+        messageRepository: MessageRepository
+    ) {
+        self.authenticationRepository = authenticationRepository
+        self.channelUpdater = channelUpdater
+        self.messageRepository = messageRepository
+    }
+    
+    func markRead(_ channel: ChatChannel, completion: @escaping (Error?) -> Void) {
+        guard
+            !markingRead,
+            let currentUserId = authenticationRepository.currentUserId,
+            let currentUserRead = channel.reads.first(where: { $0.user.id == currentUserId }),
+            let lastMessageAt = channel.lastMessageAt,
+            currentUserRead.lastReadAt < lastMessageAt
+        else {
+            completion(nil)
+            return
         }
-        
-        private var markingReadTask: Task<Void, Error>?
-        private var markingUnreadTask: Task<Void, Error>?
-        
-        func markRead(_ channel: ChatChannel) async throws {
-            // Wait for marking unread
-            if let task = markingUnreadTask {
-                _ = try? await task.value
-            }
-            
-            if let active = markingReadTask {
-                try await active.value
-            } else {
-                guard let currentUserId = authenticationRepository.currentUserId else { throw ClientError.CurrentUserDoesNotExist() }
-                guard let lastMessageAt = channel.lastMessageAt else { return }
-                guard let userRead = channel.reads.first(where: { $0.user.id == currentUserId }) else { return }
-                guard userRead.lastReadAt < lastMessageAt else { return }
-                
-                markingReadTask = Task {
-                    defer { markingReadTask = nil }
-                    try await channelUpdater.markRead(cid: cid, userId: currentUserId)
-                }
-                try await markingReadTask?.value
+        markingRead = true
+        channelUpdater.markRead(cid: channel.cid, userId: currentUserId) { error in
+            self.markingRead = false
+            self.isMarkedAsUnread = false
+            completion(error)
+        }
+    }
+    
+    @available(iOS 13.0, *)
+    func markRead(_ channel: ChatChannel) async throws {
+        try await withCheckedThrowingContinuation { continuation in
+            markRead(channel) { error in
+                continuation.resume(with: error)
             }
         }
-        
-        func markUnread(from message: MessageId, in channel: ChatChannel) async throws {
-            // Wait for marking read
-            if let task = markingReadTask {
-                _ = try? await task.value
-            }
-            
-            if let active = markingUnreadTask {
-                try await active.value
-            } else {
-                guard let currentUserId = authenticationRepository.currentUserId else { throw ClientError.CurrentUserDoesNotExist() }
-                markingUnreadTask = Task<Void, Error> {
-                    defer { markingUnreadTask = nil }
-                    let newReadMessageId: MessageId? = await {
-                        do {
-                            return try await messageRepository.message(before: message, in: cid)
-                        } catch {
-                            log.debug("Failed to fetch a message before \(message) in channel with \(cid)")
-                            return nil
-                        }
-                    }()
-                    try await channelUpdater.markUnread(cid: cid, userId: currentUserId, from: message, lastReadMessageId: newReadMessageId)
+    }
+    
+    func markUnread(
+        from messageId: MessageId,
+        in channel: ChatChannel,
+        completion: @escaping (Result<ChatChannel, Error>) -> Void
+    ) {
+        guard !markingRead,
+              let currentUserId = authenticationRepository.currentUserId
+        else {
+            completion(.success(channel))
+            return
+        }
+        markingRead = true
+        messageRepository.getMessage(before: messageId, in: channel.cid) { [weak self] result in
+            switch result {
+            case .success(let lastReadMessageId):
+                self?.channelUpdater.markUnread(
+                    cid: channel.cid,
+                    userId: currentUserId,
+                    from: messageId,
+                    lastReadMessageId: lastReadMessageId
+                ) { [weak self] result in
+                    if case .success = result {
+                        self?.isMarkedAsUnread = true
+                    }
+                    self?.markingRead = false
+                    completion(result)
                 }
-                try await markingUnreadTask?.value
+            case .failure(let error):
+                self?.markingRead = false
+                completion(.failure(error))
+            }
+        }
+    }
+    
+    @available(iOS 13.0, *)
+    func markUnread(
+        from messageId: MessageId,
+        in channel: ChatChannel
+    ) async throws {
+        try await withCheckedThrowingContinuation { continuation in
+            markUnread(
+                from: messageId,
+                in: channel
+            ) { result in
+                continuation.resume(with: result.error)
             }
         }
     }
