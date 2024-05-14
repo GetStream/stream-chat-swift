@@ -122,8 +122,8 @@ end
 
 lane :merge_main_to_develop do
   ensure_git_status_clean
-  sh('git checkout develop')
-  sh('git pull')
+  sh('git checkout main && git pull')
+  sh('git checkout develop && git pull')
   sh('git merge main')
   UI.user_error!('Not pushing changes') unless prompt(text: 'Will push changes. All looking good?', boolean: true)
   sh('git push')
