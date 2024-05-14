@@ -161,7 +161,6 @@ class SyncRepository {
             let queries = _activeChannelListQueryProviders
                 .compactMap { $0() }
                 .map { ($0.filter.filterHash, $0) }
-            _activeChannelListQueryProviders.removeAll()
             let uniqueQueries = Dictionary(queries, uniquingKeysWith: { _, last in last })
             return Array(uniqueQueries.values)
         }

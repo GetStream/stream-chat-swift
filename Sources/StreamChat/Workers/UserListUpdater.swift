@@ -131,7 +131,7 @@ private extension UserPayload {
             imageURL: imageURL,
             isOnline: isOnline,
             isBanned: isBanned,
-            isFlaggedByCurrentUser: false, // TODO: isFlaggedByCurrentUser is not set
+            isFlaggedByCurrentUser: false,
             userRole: role,
             createdAt: createdAt,
             updatedAt: updatedAt,
