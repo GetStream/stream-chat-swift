@@ -779,7 +779,7 @@ public class Chat {
     /// - Throws: An error while communicating with the Stream API.
     public func markRead() async throws {
         guard let channel = await state.channel else { throw ClientError.ChannelNotCreatedYet() }
-        try await readStateSender.markRead(channel)
+        try await readStateHandler.markRead(channel)
     }
     
     /// Marks all the messages after and including the specified message as unread.
@@ -789,7 +789,7 @@ public class Chat {
     /// - Throws: An error while communicating with the Stream API.
     public func markUnread(from messageId: MessageId) async throws {
         guard let channel = await state.channel else { throw ClientError.ChannelNotCreatedYet() }
-        try await readStateSender.markUnread(from: messageId, in: channel)
+        try await readStateHandler.markUnread(from: messageId, in: channel)
     }
     
     // MARK: - Message Replies and Pagination
@@ -1338,10 +1338,10 @@ extension Chat {
         }
     }
     
-    var readStateSender: ReadStateSender {
+    var readStateHandler: ReadStateHandler {
         get async throws {
-            guard let sender = await state.readStateSender else { throw ClientError.ChannelNotCreatedYet() }
-            return sender
+            guard let handler = await state.readStateHandler else { throw ClientError.ChannelNotCreatedYet() }
+            return handler
         }
     }
     
@@ -1409,12 +1409,11 @@ extension Chat {
             _ apiClient: APIClient
         ) -> MessageUpdater = MessageUpdater.init
         
-        var readStateSenderBuilder: (
-            _ cid: ChannelId,
-            _ channelUpdater: ChannelUpdater,
+        var readStateHandlerBuilder: (
             _ authenticationRepository: AuthenticationRepository,
+            _ channelUpdater: ChannelUpdater,
             _ messageRepository: MessageRepository
-        ) -> ReadStateSender = ReadStateSender.init
+        ) -> ReadStateHandler = ReadStateHandler.init
         
         var typingEventsSenderBuilder: (
             _ database: DatabaseContainer,
