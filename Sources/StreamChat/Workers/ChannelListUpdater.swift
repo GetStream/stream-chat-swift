@@ -212,30 +212,6 @@ private extension ChannelListUpdater {
 
 @available(iOS 13.0, *)
 extension ChannelListUpdater {
-    func link(channel: ChatChannel, with query: ChannelListQuery) async throws {
-        try await withCheckedThrowingContinuation { continuation in
-            link(channel: channel, with: query) { error in
-                continuation.resume(with: error)
-            }
-        }
-    }
-
-    func startWatchingChannels(withIds ids: [ChannelId]) async throws {
-        try await withCheckedThrowingContinuation { continuation in
-            startWatchingChannels(withIds: ids) { error in
-                continuation.resume(with: error)
-            }
-        }
-    }
-
-    func unlink(channel: ChatChannel, with query: ChannelListQuery) async throws {
-        try await withCheckedThrowingContinuation { continuation in
-            unlink(channel: channel, with: query) { error in
-                continuation.resume(with: error)
-            }
-        }
-    }
-
     @discardableResult func update(channelListQuery: ChannelListQuery) async throws -> [ChatChannel] {
         try await withCheckedThrowingContinuation { continuation in
             update(channelListQuery: channelListQuery) { result in
