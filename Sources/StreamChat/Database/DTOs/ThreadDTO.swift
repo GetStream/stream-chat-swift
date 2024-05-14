@@ -47,6 +47,19 @@ class ThreadDTO: NSManagedObject {
         return request
     }
 
+    static func threadListFetchRequest() -> NSFetchRequest<ThreadDTO> {
+        let request = NSFetchRequest<ThreadDTO>(entityName: ThreadDTO.entityName)
+
+        // Fetch results controller requires at least one sorting descriptor.
+        // For now, it is not possible to change the thread sorting.
+        let sortDescriptors: [NSSortDescriptor] = [
+            .init(keyPath: \ThreadDTO.updatedAt, ascending: false)
+        ]
+
+        request.sortDescriptors = sortDescriptors
+        return request
+    }
+
     /// Populate the DTO.
     func fill(
         parentMessage: MessageDTO,
@@ -98,16 +111,15 @@ extension ThreadDTO {
 }
 
 extension NSManagedObjectContext {
-    func saveThreadList(payload: ThreadListPayload, query: ThreadListQuery?) -> [ThreadDTO] {
+    func saveThreadList(payload: ThreadListPayload) -> [ThreadDTO] {
         let cache = payload.getPayloadToModelIdMappings(context: self)
         return payload.threads.compactMapLoggingError { threadPayload in
-            try saveThread(payload: threadPayload, query: query, cache: cache)
+            try saveThread(payload: threadPayload, cache: cache)
         }
     }
 
     func saveThread(
         payload: ThreadPayload,
-        query: ThreadListQuery?,
         cache: PreWarmedCache?
     ) throws -> ThreadDTO {
         let threadDTO = ThreadDTO.loadOrCreate(
@@ -173,5 +185,11 @@ extension NSManagedObjectContext {
         )
 
         return threadDTO
+    }
+
+    func deleteAllThreads() throws {
+        let fetchRequest: NSFetchRequest<NSFetchRequestResult> = NSFetchRequest(entityName: ThreadDTO.entityName)
+        let deleteRequest = NSBatchDeleteRequest(fetchRequest: fetchRequest)
+        try persistentStoreCoordinator?.execute(deleteRequest, with: self)
     }
 }

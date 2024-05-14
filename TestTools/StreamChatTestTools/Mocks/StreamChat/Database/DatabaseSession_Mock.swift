@@ -369,16 +369,16 @@ class DatabaseSession_Mock: DatabaseSession {
         underlyingSession.loadChannelRead(cid: cid, userId: userId)
     }
 
-    func saveThreadList(payload: ThreadListPayload, query: ThreadListQuery?) -> [ThreadDTO] {
-        underlyingSession.saveThreadList(payload: payload, query: query)
+    func saveThreadList(payload: ThreadListPayload) -> [ThreadDTO] {
+        underlyingSession.saveThreadList(payload: payload)
     }
 
     func saveThreadParticipant(payload: ThreadParticipantPayload, threadId: String, cache: PreWarmedCache?) throws -> ThreadParticipantDTO {
         try underlyingSession.saveThreadParticipant(payload: payload, threadId: threadId, cache: cache)
     }
 
-    func saveThread(payload: ThreadPayload, query: ThreadListQuery?, cache: PreWarmedCache?) throws -> ThreadDTO {
-        try underlyingSession.saveThread(payload: payload, query: query, cache: cache)
+    func saveThread(payload: ThreadPayload, cache: PreWarmedCache?) throws -> ThreadDTO {
+        try underlyingSession.saveThread(payload: payload, cache: cache)
     }
 
     func saveThreadRead(payload: ThreadReadPayload, parentMessageId: String, cache: PreWarmedCache?) throws -> ThreadReadDTO {
