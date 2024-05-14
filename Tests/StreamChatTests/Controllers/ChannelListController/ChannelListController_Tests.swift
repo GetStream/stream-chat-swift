@@ -327,10 +327,16 @@ final class ChannelListController_Tests: XCTestCase {
     // MARK: - Linking and Unlinking Channels when channels are updated/inserted
 
     func test_didReceiveEvent_whenNotificationAddedToChannelEvent_shouldLinkChannelToQuery() {
+        controller.synchronize()
+        
         let event = makeAddedChannelEvent(with: .mock(cid: .unique))
+        let eventExpectation = XCTestExpectation(description: "Event processed")
+        controller.client.eventNotificationCenter.process(event) {
+            eventExpectation.fulfill()
+        }
+        wait(for: [eventExpectation], timeout: defaultTimeout)
 
-        controller.eventsController(controller.eventsController, didReceiveEvent: event)
-
+        AssertAsync.willBeTrue(env.channelListUpdater?.link_completion != nil)
         env.channelListUpdater?.link_completion?(nil)
 
         XCTAssertEqual(env.channelListUpdater?.link_callCount, 1)
@@ -338,10 +344,16 @@ final class ChannelListController_Tests: XCTestCase {
     }
 
     func test_didReceiveEvent_whenMessageNewEvent_shouldLinkChannelToQuery() {
+        controller.synchronize()
+        
         let event = makeMessageNewEvent(with: .mock(cid: .unique))
+        let eventExpectation = XCTestExpectation(description: "Event processed")
+        controller.client.eventNotificationCenter.process(event) {
+            eventExpectation.fulfill()
+        }
+        wait(for: [eventExpectation], timeout: defaultTimeout)
 
-        controller.eventsController(controller.eventsController, didReceiveEvent: event)
-
+        AssertAsync.willBeTrue(env.channelListUpdater?.link_completion != nil)
         env.channelListUpdater?.link_completion?(nil)
 
         XCTAssertEqual(env.channelListUpdater?.link_callCount, 1)
@@ -349,12 +361,18 @@ final class ChannelListController_Tests: XCTestCase {
     }
     
     func test_didReceiveEvent_whenChannelVisibleEvent_shouldLinkChannelToQuery() {
+        controller.synchronize()
+        
         let channel = ChatChannel.mock(cid: .unique)
         try? database.createChannel(cid: channel.cid, channelReads: [])
         let event = makeChannelVisibleEvent(with: channel)
+        let eventExpectation = XCTestExpectation(description: "Event processed")
+        controller.client.eventNotificationCenter.process(event) {
+            eventExpectation.fulfill()
+        }
+        wait(for: [eventExpectation], timeout: defaultTimeout)
 
-        controller.eventsController(controller.eventsController, didReceiveEvent: event)
-
+        AssertAsync.willBeTrue(env.channelListUpdater?.link_completion != nil)
         env.channelListUpdater?.link_completion?(nil)
 
         XCTAssertEqual(env.channelListUpdater?.link_callCount, 1)
@@ -362,10 +380,16 @@ final class ChannelListController_Tests: XCTestCase {
     }
 
     func test_didReceiveEvent_whenNotificationMessageNewEvent_shouldLinkChannelToQuery() {
+        controller.synchronize()
+        
         let event = makeNotificationMessageNewEvent(with: .mock(cid: .unique))
+        let eventExpectation = XCTestExpectation(description: "Event processed")
+        controller.client.eventNotificationCenter.process(event) {
+            eventExpectation.fulfill()
+        }
+        wait(for: [eventExpectation], timeout: defaultTimeout)
 
-        controller.eventsController(controller.eventsController, didReceiveEvent: event)
-
+        AssertAsync.willBeTrue(env.channelListUpdater?.link_completion != nil)
         env.channelListUpdater?.link_completion?(nil)
 
         XCTAssertEqual(env.channelListUpdater?.link_callCount, 1)
@@ -390,10 +414,11 @@ final class ChannelListController_Tests: XCTestCase {
         }
 
         let event = makeAddedChannelEvent(with: .mock(cid: cid))
-
-        controller.eventsController(controller.eventsController, didReceiveEvent: event)
-
-        env.channelListUpdater?.link_completion?(nil)
+        let eventExpectation = XCTestExpectation(description: "Event processed")
+        controller.client.eventNotificationCenter.process(event) {
+            eventExpectation.fulfill()
+        }
+        wait(for: [eventExpectation], timeout: defaultTimeout)
 
         XCTAssertEqual(env.channelListUpdater?.link_callCount, 0)
         XCTAssertEqual(env.channelListUpdater?.startWatchingChannels_callCount, 0)
@@ -417,10 +442,11 @@ final class ChannelListController_Tests: XCTestCase {
         }
 
         let event = makeMessageNewEvent(with: .mock(cid: cid))
-
-        controller.eventsController(controller.eventsController, didReceiveEvent: event)
-
-        env.channelListUpdater?.link_completion?(nil)
+        let eventExpectation = XCTestExpectation(description: "Event processed")
+        controller.client.eventNotificationCenter.process(event) {
+            eventExpectation.fulfill()
+        }
+        wait(for: [eventExpectation], timeout: defaultTimeout)
 
         XCTAssertEqual(env.channelListUpdater?.link_callCount, 0)
         XCTAssertEqual(env.channelListUpdater?.startWatchingChannels_callCount, 0)
@@ -444,10 +470,11 @@ final class ChannelListController_Tests: XCTestCase {
         }
 
         let event = makeNotificationMessageNewEvent(with: .mock(cid: cid))
-
-        controller.eventsController(controller.eventsController, didReceiveEvent: event)
-
-        env.channelListUpdater?.link_completion?(nil)
+        let eventExpectation = XCTestExpectation(description: "Event processed")
+        controller.client.eventNotificationCenter.process(event) {
+            eventExpectation.fulfill()
+        }
+        wait(for: [eventExpectation], timeout: defaultTimeout)
 
         XCTAssertEqual(env.channelListUpdater?.link_callCount, 0)
         XCTAssertEqual(env.channelListUpdater?.startWatchingChannels_callCount, 0)
@@ -461,8 +488,13 @@ final class ChannelListController_Tests: XCTestCase {
 
         let event = makeAddedChannelEvent(with: .mock(cid: .unique, memberCount: 4))
 
-        controller.eventsController(controller.eventsController, didReceiveEvent: event)
+        let eventExpectation = XCTestExpectation(description: "Event processed")
+        controller.client.eventNotificationCenter.process(event) {
+            eventExpectation.fulfill()
+        }
+        wait(for: [eventExpectation], timeout: defaultTimeout)
 
+        AssertAsync.willBeTrue(env.channelListUpdater?.link_completion != nil)
         env.channelListUpdater?.link_completion?(nil)
 
         XCTAssertEqual(env.channelListUpdater?.link_callCount, 1)
@@ -489,10 +521,11 @@ final class ChannelListController_Tests: XCTestCase {
         }
 
         let event = makeAddedChannelEvent(with: .mock(cid: cid, memberCount: 4))
-
-        controller.eventsController(controller.eventsController, didReceiveEvent: event)
-
-        env.channelListUpdater?.link_completion?(nil)
+        let eventExpectation = XCTestExpectation(description: "Event processed")
+        controller.client.eventNotificationCenter.process(event) {
+            eventExpectation.fulfill()
+        }
+        wait(for: [eventExpectation], timeout: defaultTimeout)
 
         XCTAssertEqual(env.channelListUpdater?.link_callCount, 0)
         XCTAssertEqual(env.channelListUpdater?.startWatchingChannels_callCount, 0)
@@ -505,10 +538,11 @@ final class ChannelListController_Tests: XCTestCase {
         setupControllerWithFilter(filter)
 
         let event = makeAddedChannelEvent(with: .mock(cid: .unique, memberCount: 4))
-
-        controller.eventsController(controller.eventsController, didReceiveEvent: event)
-
-        env.channelListUpdater?.link_completion?(nil)
+        let eventExpectation = XCTestExpectation(description: "Event processed")
+        controller.client.eventNotificationCenter.process(event) {
+            eventExpectation.fulfill()
+        }
+        wait(for: [eventExpectation], timeout: defaultTimeout)
 
         XCTAssertEqual(env.channelListUpdater?.link_callCount, 0)
         XCTAssertEqual(env.channelListUpdater?.startWatchingChannels_callCount, 0)
@@ -534,10 +568,13 @@ final class ChannelListController_Tests: XCTestCase {
         }
 
         let event = makeChannelUpdatedEvent(with: .mock(cid: cid, memberCount: 4))
+        let eventExpectation = XCTestExpectation(description: "Event processed")
+        controller.client.eventNotificationCenter.process(event) {
+            eventExpectation.fulfill()
+        }
+        wait(for: [eventExpectation], timeout: defaultTimeout)
 
-        controller.eventsController(controller.eventsController, didReceiveEvent: event)
-
-        XCTAssertEqual(env.channelListUpdater?.unlink_callCount, 1)
+        AssertAsync.willBeEqual(env.channelListUpdater?.unlink_callCount, 1)
     }
 
     func test_didReceiveEvent_whenChannelUpdatedEvent__whenFilterMatches_shouldNotUnlinkChannelFromQuery() throws {
@@ -559,8 +596,11 @@ final class ChannelListController_Tests: XCTestCase {
         }
 
         let event = makeChannelUpdatedEvent(with: .mock(cid: cid, memberCount: 4))
-
-        controller.eventsController(controller.eventsController, didReceiveEvent: event)
+        let eventExpectation = XCTestExpectation(description: "Event processed")
+        controller.client.eventNotificationCenter.process(event) {
+            eventExpectation.fulfill()
+        }
+        wait(for: [eventExpectation], timeout: defaultTimeout)
 
         XCTAssertEqual(env.channelListUpdater?.unlink_callCount, 0)
     }
@@ -572,8 +612,11 @@ final class ChannelListController_Tests: XCTestCase {
         setupControllerWithFilter(filter)
 
         let event = makeChannelUpdatedEvent(with: .mock(cid: .unique, memberCount: 4))
-
-        controller.eventsController(controller.eventsController, didReceiveEvent: event)
+        let eventExpectation = XCTestExpectation(description: "Event processed")
+        controller.client.eventNotificationCenter.process(event) {
+            eventExpectation.fulfill()
+        }
+        wait(for: [eventExpectation], timeout: defaultTimeout)
 
         XCTAssertEqual(env.channelListUpdater?.unlink_callCount, 0)
     }
