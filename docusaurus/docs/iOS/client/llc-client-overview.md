@@ -14,7 +14,7 @@ The low-level client provides two ways for managing the state and interacting wi
 The [state layer](state-layer/state-layer-overview.md) is a new and modern way for managing the state. It follows an architecture where we have objects interacting with the Stream API through async functions. These objects are accompanied with state objects that hold the current state.
 
 :::note
-This functionality was added in `StreamChat` version 4.55.0.
+This functionality was added in `StreamChat` version 4.56.0.
 :::
 
 ## Accessing State with Controllers
