@@ -108,7 +108,6 @@ struct MemberEventMiddleware: EventMiddleware {
         // the new Member should be linked to them too
         // so `MemberListController` works as expected
         // To make it work with queries with filters, we need to mirror `ChannelListController` logic
-        // `shouldListUpdatedChannel` and such
         channel.memberListQueries.filter { $0.filterJSONData == nil }.forEach {
             $0.members.insert(member)
         }
