@@ -71,6 +71,12 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
         client.databaseContainer,
         client.apiClient
     )
+    
+    private lazy var readStateHandler: ReadStateHandler = self.environment.readStateHandlerBuilder(
+        client.authenticationRepository,
+        updater,
+        client.messageRepository
+    )
 
     /// A Boolean value that returns whether the oldest messages have all been loaded or not.
     public var hasLoadedAllPreviousMessages: Bool {
@@ -129,13 +135,13 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
     }
 
     /// A boolean indicating if the user marked the channel as unread in the current session
-    public private(set) var isMarkedAsUnread: Bool = false
+    public var isMarkedAsUnread: Bool {
+        readStateHandler.isMarkedAsUnread
+    }
 
     internal var lastNewestMessageId: MessageId? {
         updater.paginationState.newestFetchedMessage?.id
     }
-
-    private var markingRead: Bool = false
 
     /// A boolean value indicating if it should send typing events.
     /// It is `true` if the channel typing events are enabled as well as the user privacy settings.
@@ -882,25 +888,8 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
             return
         }
 
-        guard
-            !markingRead,
-            let currentUserId = client.currentUserId,
-            let currentUserRead = channel.reads.first(where: { $0.user.id == currentUserId }),
-            let lastMessageAt = channel.lastMessageAt,
-            currentUserRead.lastReadAt < lastMessageAt
-        else {
-            callback {
-                completion?(nil)
-            }
-            return
-        }
-
-        markingRead = true
-
-        updater.markRead(cid: channel.cid, userId: currentUserId) { error in
+        readStateHandler.markRead(channel) { error in
             self.callback {
-                self.markingRead = false
-                self.isMarkedAsUnread = false
                 completion?(error)
             }
         }
@@ -932,26 +921,11 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
             return
         }
 
-        guard !markingRead, let currentUserId = client.currentUserId else {
-            callback {
-                completion?(.success(channel))
-            }
-            return
-        }
-
-        markingRead = true
-
-        updater.markUnread(
-            cid: channel.cid,
-            userId: currentUserId,
+        readStateHandler.markUnread(
             from: messageId,
-            lastReadMessageId: getLastReadMessageId(firstUnreadMessageId: messageId)
+            in: channel
         ) { [weak self] result in
             self?.callback {
-                if case .success = result {
-                    self?.isMarkedAsUnread = true
-                }
-                self?.markingRead = false
                 completion?(result)
             }
         }
@@ -1291,6 +1265,12 @@ extension ChatChannelController {
             _ database: DatabaseContainer,
             _ apiClient: APIClient
         ) -> TypingEventsSender = TypingEventsSender.init
+        
+        var readStateHandlerBuilder: (
+            _ authenticationRepository: AuthenticationRepository,
+            _ channelUpdater: ChannelUpdater,
+            _ messageRepository: MessageRepository
+        ) -> ReadStateHandler = ReadStateHandler.init
     }
 }
 

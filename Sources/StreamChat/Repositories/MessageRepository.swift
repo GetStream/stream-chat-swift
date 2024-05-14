@@ -213,6 +213,31 @@ class MessageRepository {
         }
     }
 
+    /// Fetches a message id before the specified message when sorting by the creation date in the local database.
+    func getMessage(
+        before messageId: MessageId,
+        in cid: ChannelId,
+        completion: @escaping (Result<MessageId?, Error>) -> Void
+    ) {
+        let context = database.backgroundReadOnlyContext
+        context.perform {
+            let deletedMessagesVisibility = context.deletedMessagesVisibility ?? .alwaysVisible
+            let shouldShowShadowedMessages = context.shouldShowShadowedMessages ?? true
+            do {
+                let resultId = try MessageDTO.loadMessage(
+                    before: messageId,
+                    cid: cid.rawValue,
+                    deletedMessagesVisibility: deletedMessagesVisibility,
+                    shouldShowShadowedMessages: shouldShowShadowedMessages,
+                    context: context
+                )?.id
+                completion(.success(resultId))
+            } catch {
+                completion(.failure(error))
+            }
+        }
+    }
+    
     func updateMessage(withID id: MessageId, localState: LocalMessageState?, completion: @escaping (Result<ChatMessage, Error>) -> Void) {
         var message: ChatMessage?
         database.write({
@@ -276,21 +301,6 @@ extension MessageRepository {
                 context: context
             )
             .map { try $0.asModel() }
-        }
-    }
-    
-    /// Fetches a message id before the specified message when sorting by the creation date in the local database.
-    func message(before id: MessageId, in cid: ChannelId) async throws -> MessageId? {
-        try await database.read { context in
-            let deletedMessagesVisibility = context.deletedMessagesVisibility ?? .alwaysVisible
-            let shouldShowShadowedMessages = context.shouldShowShadowedMessages ?? true
-            return try MessageDTO.loadMessage(
-                before: id,
-                cid: cid.rawValue,
-                deletedMessagesVisibility: deletedMessagesVisibility,
-                shouldShowShadowedMessages: shouldShowShadowedMessages,
-                context: context
-            )?.id
         }
     }
     

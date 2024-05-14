@@ -1558,7 +1558,6 @@ extension Chat_Tests {
         private(set) var memberUpdaterMock: ChannelMemberUpdater_Mock!
         private(set) var messageUpdater: MessageUpdater!
         private(set) var messageUpdaterMock: MessageUpdater_Mock!
-        private(set) var readStateSender: Chat.ReadStateSender!
         private(set) var typingEventsSender: TypingEventsSender!
         private(set) var typingEventsSenderMock: TypingEventsSender_Mock!
         
@@ -1603,7 +1602,8 @@ extension Chat_Tests {
         
         func chatEnvironment(usesMockedUpdaters: Bool) -> Chat.Environment {
             Chat.Environment(
-                chatStateBuilder: { [unowned self] in
+                chatStateBuilder: {
+                    [unowned self] in
                     self.chatState = ChatState(channelQuery: $0, messageOrder: $1, memberSorting: $2, channelUpdater: $3, client: $4, environment: $5)
                     return self.chatState!
                 },
@@ -1635,10 +1635,6 @@ extension Chat_Tests {
                     self.messageUpdater = MessageUpdater(isLocalStorageEnabled: $0, messageRepository: $1, database: $2, apiClient: $3)
                     self.messageUpdaterMock = MessageUpdater_Mock(isLocalStorageEnabled: $0, messageRepository: $1, database: $2, apiClient: $3)
                     return usesMockedUpdaters ? self.messageUpdaterMock : self.messageUpdater
-                },
-                readStateSenderBuilder: { [unowned self] in
-                    self.readStateSender = Chat.ReadStateSender(cid: $0, channelUpdater: $1, authenticationRepository: $2, messageRepository: $3)
-                    return self.readStateSender!
                 },
                 typingEventsSenderBuilder: { [unowned self] in
                     self.typingEventsSender = TypingEventsSender(database: $0, apiClient: $1)

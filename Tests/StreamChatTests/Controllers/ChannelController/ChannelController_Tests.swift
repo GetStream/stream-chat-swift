@@ -4159,17 +4159,17 @@ final class ChannelController_Tests: XCTestCase {
         }
         client.setToken(token: .unique(userId: .unique))
 
+        let mockedError = TestError()
+        env.channelUpdater?.markUnread_completion_result = .failure(mockedError)
         var receivedError: Error?
         let expectation = self.expectation(description: "Mark Unread completes")
         controller.markUnread(from: .unique) { result in
             receivedError = result.error
             expectation.fulfill()
         }
-        let mockedError = TestError()
-        env.channelUpdater?.markUnread_completion?(.failure(mockedError))
-
+        
         waitForExpectations(timeout: defaultTimeout)
-
+        
         XCTAssertNotNil(receivedError)
     }
 
@@ -4182,6 +4182,9 @@ final class ChannelController_Tests: XCTestCase {
         }
         client.setToken(token: .unique(userId: .unique))
 
+        let updater = try XCTUnwrap(env.channelUpdater)
+        updater.markUnread_completion_result = .success(ChatChannel.mock(cid: .unique))
+        
         var receivedError: Error?
         let messageId = MessageId.unique
         let expectation = self.expectation(description: "Mark Unread completes")
@@ -4189,9 +4192,6 @@ final class ChannelController_Tests: XCTestCase {
             receivedError = result.error
             expectation.fulfill()
         }
-        let updater = try XCTUnwrap(env.channelUpdater)
-
-        updater.markUnread_completion?(.success(ChatChannel.mock(cid: .unique)))
 
         waitForExpectations(timeout: defaultTimeout)
 
@@ -4213,15 +4213,15 @@ final class ChannelController_Tests: XCTestCase {
         }
         client.setToken(token: .unique(userId: .unique))
 
+        let updater = try XCTUnwrap(env.channelUpdater)
+        updater.markUnread_completion_result = .success(ChatChannel.mock(cid: .unique))
+        
         var receivedError: Error?
         let expectation = self.expectation(description: "Mark Unread completes")
         controller.markUnread(from: messageId) { result in
             receivedError = result.error
             expectation.fulfill()
         }
-        let updater = try XCTUnwrap(env.channelUpdater)
-
-        updater.markUnread_completion?(.success(ChatChannel.mock(cid: .unique)))
 
         waitForExpectations(timeout: defaultTimeout)
 
