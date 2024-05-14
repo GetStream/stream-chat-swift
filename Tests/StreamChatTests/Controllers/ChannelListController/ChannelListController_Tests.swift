@@ -621,96 +621,6 @@ final class ChannelListController_Tests: XCTestCase {
         XCTAssertEqual(env.channelListUpdater?.unlink_callCount, 0)
     }
 
-    // MARK: - Change propagation tests with auto-filtering
-
-    func test_linkChannel_whenAutoFilteringEnabled_doesNotTriggerLinkChannelOnDelegate() throws {
-        let shouldListNewChannelWasNotCalledExpectation = expectation(description: "shouldListNewChannel won't be called")
-        let shouldListUpdatedChannelWasNotCalledExpectation = expectation(description: "shouldListUpdatedChannel won't be called")
-        [shouldListNewChannelWasNotCalledExpectation, shouldListUpdatedChannelWasNotCalledExpectation].forEach { $0.isInverted = true }
-
-        let testLinkDelegate = TestLinkDelegate(
-            shouldListNewChannel: { _ in
-                shouldListNewChannelWasNotCalledExpectation.fulfill()
-                return false
-            },
-            shouldListUpdatedChannel: { _ in
-                shouldListUpdatedChannelWasNotCalledExpectation.fulfill()
-                return false
-            }
-        )
-        controller.delegate = testLinkDelegate
-
-        // Save a channel linked to the current query
-        let cid: ChannelId = .unique
-        try database.writeSynchronously { session in
-            try session.saveChannel(
-                payload: self.dummyPayload(
-                    with: cid,
-                    members: [.dummy(user: .dummy(userId: self.memberId))]
-                ),
-                query: self.query,
-                cache: nil
-            )
-        }
-
-        // Assert channel is linked
-        AssertAsync.willBeEqual(controller.channels.map(\.cid), [cid])
-
-        // Update a channel linked to the current query
-        try database.writeSynchronously { session in
-            let dto = try XCTUnwrap(session.channel(cid: cid))
-            dto.updatedAt = .unique
-        }
-
-        // Assert linked channel is unlisted
-        AssertAsync.willBeEqual(controller.channels.map(\.cid), [cid])
-        waitForExpectations(timeout: defaultTimeoutForInversedExpecations)
-    }
-
-    func test_unlinkChannel_whenAutoFilteringEnabled_doesNotTriggerUnLinkChannelOnDelegate() throws {
-        let shouldListNewChannelWasNotCalledExpectation = expectation(description: "shouldListNewChannel won't be called")
-        let shouldListUpdatedChannelWasNotCalledExpectation = expectation(description: "shouldListUpdatedChannel won't be called")
-        [shouldListNewChannelWasNotCalledExpectation, shouldListUpdatedChannelWasNotCalledExpectation].forEach { $0.isInverted = true }
-
-        let testLinkDelegate = TestLinkDelegate(
-            shouldListNewChannel: { _ in
-                shouldListNewChannelWasNotCalledExpectation.fulfill()
-                return false
-            },
-            shouldListUpdatedChannel: { _ in
-                shouldListUpdatedChannelWasNotCalledExpectation.fulfill()
-                return false
-            }
-        )
-        controller.delegate = testLinkDelegate
-
-        // Save a channel linked to the current query
-        let cid: ChannelId = .unique
-        try database.writeSynchronously { session in
-            try session.saveChannel(
-                payload: self.dummyPayload(
-                    with: cid,
-                    members: [.dummy(user: .dummy(userId: self.memberId))]
-                ),
-                query: self.query,
-                cache: nil
-            )
-        }
-
-        // Assert channel is linked
-        AssertAsync.willBeEqual(controller.channels.map(\.cid), [cid])
-
-        // Update a channel linked to the current query
-        try database.writeSynchronously { session in
-            let dto = try XCTUnwrap(session.channel(cid: cid))
-            dto.members = .init()
-        }
-
-        // Assert linked channel is unlisted
-        AssertAsync.willBeEqual(controller.channels.map(\.cid), [])
-        waitForExpectations(timeout: defaultTimeoutForInversedExpecations)
-    }
-
     // MARK: - Delegate tests
 
     func test_settingDelegate_leadsToFetchingLocalData() {
@@ -794,14 +704,6 @@ final class ChannelListController_Tests: XCTestCase {
                 // Assert the "will" callback has been called
                 XCTAssertTrue(willChangeCallbackCalled)
                 didChangeCallbackCalled = true
-            }
-
-            func controller(_ controller: ChatChannelListController, shouldListUpdatedChannel channel: ChatChannel) -> Bool {
-                true
-            }
-
-            func controller(_ controller: ChatChannelListController, shouldAddNewChannelToList channel: ChatChannel) -> Bool {
-                true
             }
         }
 

@@ -310,38 +310,6 @@ public protocol ChatChannelListControllerDelegate: DataControllerStateDelegate {
         _ controller: ChatChannelListController,
         didChangeChannels changes: [ListChange<ChatChannel>]
     )
-
-    /// **⚠️ This method is deprecated:** Please use `filter` when initializing a `ChatChannelListController`
-    ///
-    /// (We are not using @available annotations because they do not get emitted in protocol conformances)
-    ///
-    /// The controller asks the delegate if the newly inserted `ChatChannel` should be linked to this Controller's query.
-    /// Defaults to `true`
-    /// - Parameters:
-    ///   - controller: The controller,
-    ///   - shouldAddNewChannelToList: The newly inserted `ChatChannel` instance. This instance is not linked to the controller's query.
-    /// - Returns:
-    ///     `true` if channel should be added to the list of observed channels, `false` if channel doesn't exists in this list.
-    func controller(
-        _ controller: ChatChannelListController,
-        shouldAddNewChannelToList channel: ChatChannel
-    ) -> Bool
-
-    /// **⚠️ This method is deprecated:** Please use `filter` when initializing a `ChatChannelListController`
-    ///
-    /// (We are not using @available annotations because they do not get emitted in protocol conformances)
-    ///
-    /// The controller asks the delegate if the newly updated `ChatChannel` should be linked to this Controller's query.
-    /// Defaults to `true`
-    /// - Parameters:
-    ///   - controller: The controller,
-    ///   - shouldListUpdatedChannel: The newly updated `ChatChannel` instance.
-    /// - Returns:
-    ///     `true` if channel should be added to the list of observed channels, `false` if channel doesn't exists in this list.
-    func controller(
-        _ controller: ChatChannelListController,
-        shouldListUpdatedChannel channel: ChatChannel
-    ) -> Bool
 }
 
 public extension ChatChannelListControllerDelegate {
@@ -351,16 +319,6 @@ public extension ChatChannelListControllerDelegate {
         _ controller: ChatChannelListController,
         didChangeChannels changes: [ListChange<ChatChannel>]
     ) {}
-
-    @available(*, deprecated, message: "Please use `filter` when initializing a `ChatChannelListController`")
-    func controller(_ controller: ChatChannelListController, shouldAddNewChannelToList channel: ChatChannel) -> Bool {
-        channel.membership != nil
-    }
-
-    @available(*, deprecated, message: "Please use `filter` when initializing a `ChatChannelListController`")
-    func controller(_ controller: ChatChannelListController, shouldListUpdatedChannel channel: ChatChannel) -> Bool {
-        channel.membership != nil
-    }
 }
 
 extension ClientError {

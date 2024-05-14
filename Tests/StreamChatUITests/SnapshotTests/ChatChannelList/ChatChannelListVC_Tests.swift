@@ -254,38 +254,6 @@ final class ChatChannelListVC_Tests: XCTestCase {
         XCTAssertEqual(vc.chatChannelListLoadingView.isHidden, false)
     }
 
-    func test_shouldAddNewChannelToList_whenCurrentUserIsMember_shouldReturnTrue() {
-        let channelListVC = FakeChatChannelListVC()
-        channelListVC.controller = mockedChannelListController
-
-        let channel = ChatChannel.mock(cid: .unique, membership: .mock(id: .unique))
-        XCTAssertTrue(channelListVC.controller(mockedChannelListController, shouldAddNewChannelToList: channel))
-    }
-
-    func test_shouldAddNewChannelToList_whenCurrentUserIsNotMember_shouldReturnFalse() {
-        let channelListVC = FakeChatChannelListVC()
-        channelListVC.controller = mockedChannelListController
-
-        let channel = ChatChannel.mock(cid: .unique, membership: nil)
-        XCTAssertFalse(channelListVC.controller(mockedChannelListController, shouldAddNewChannelToList: channel))
-    }
-
-    func test_shouldListUpdatedChannel_whenCurrentUserIsMember_shouldReturnTrue() {
-        let channelListVC = FakeChatChannelListVC()
-        channelListVC.controller = mockedChannelListController
-
-        let channel = ChatChannel.mock(cid: .unique, membership: .mock(id: .unique))
-        XCTAssertTrue(channelListVC.controller(mockedChannelListController, shouldListUpdatedChannel: channel))
-    }
-
-    func test_shouldListUpdatedChannel_whenCurrentUserIsNotMember_shouldReturnFalse() {
-        let channelListVC = FakeChatChannelListVC()
-        channelListVC.controller = mockedChannelListController
-
-        let channel = ChatChannel.mock(cid: .unique, membership: nil)
-        XCTAssertFalse(channelListVC.controller(mockedChannelListController, shouldListUpdatedChannel: channel))
-    }
-
     func test_didChangeChannels_whenIsNotVisible_dontUpdateData_setSkippedRendering() {
         let channelListVC = FakeChatChannelListVC()
         channelListVC.controller = mockedChannelListController
