@@ -113,13 +113,14 @@ final class APIClient_Spy: APIClient, Spy {
         endpoint: Endpoint<Response>,
         completion: @escaping (Result<Response, Error>) -> Void
     ) where Response: Decodable {
-        request_endpoint = AnyEndpoint(endpoint)
+        let anyEndpoint = AnyEndpoint(endpoint)
+        request_endpoint = anyEndpoint
         if let resultIndex = request_results.firstIndex(where: { $0 is Result<Response, Error> }) {
             let result = request_results.remove(at: resultIndex)
             completion(result as! Result<Response, Error>)
         }
         request_completion = completion
-        _request_allRecordedCalls.mutate { $0.append((request_endpoint!, request_completion!)) }
+        _request_allRecordedCalls.mutate { $0.append((anyEndpoint, completion)) }
         request_expectation.fulfill()
     }
 
