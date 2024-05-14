@@ -72,7 +72,7 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
         client.apiClient
     )
     
-    private lazy var readStateSender: ReadStateSender = self.environment.readStateSenderBuilder(
+    private lazy var readStateHandler: ReadStateHandler = self.environment.readStateHandlerBuilder(
         client.authenticationRepository,
         updater,
         client.messageRepository
@@ -136,7 +136,7 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
 
     /// A boolean indicating if the user marked the channel as unread in the current session
     public var isMarkedAsUnread: Bool {
-        readStateSender.isMarkedAsUnread
+        readStateHandler.isMarkedAsUnread
     }
 
     internal var lastNewestMessageId: MessageId? {
@@ -888,7 +888,7 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
             return
         }
 
-        readStateSender.markRead(channel) { error in
+        readStateHandler.markRead(channel) { error in
             self.callback {
                 completion?(error)
             }
@@ -921,7 +921,7 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
             return
         }
 
-        readStateSender.markUnread(
+        readStateHandler.markUnread(
             from: messageId,
             in: channel
         ) { [weak self] result in
@@ -1266,11 +1266,11 @@ extension ChatChannelController {
             _ apiClient: APIClient
         ) -> TypingEventsSender = TypingEventsSender.init
         
-        var readStateSenderBuilder: (
+        var readStateHandlerBuilder: (
             _ authenticationRepository: AuthenticationRepository,
             _ channelUpdater: ChannelUpdater,
             _ messageRepository: MessageRepository
-        ) -> ReadStateSender = ReadStateSender.init
+        ) -> ReadStateHandler = ReadStateHandler.init
     }
 }
 

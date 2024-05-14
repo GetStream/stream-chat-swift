@@ -4,7 +4,10 @@
 
 import Foundation
 
-final class ReadStateSender {
+/// A handler which enables marking channels read and unread.
+///
+/// Only one mark read or unread request is allowed to be active.
+final class ReadStateHandler {
     private let authenticationRepository: AuthenticationRepository
     private let channelUpdater: ChannelUpdater
     private let messageRepository: MessageRepository
