@@ -126,11 +126,12 @@ jobs:
     - uses: actions/upload-artifact@v3
       if: failure()
       with:
-        name: Test Data
+        name: Test Data E2E (iOS ${{ matrix.ios }})
         path: |
           fastlane/recordings
           fastlane/sinatra_log.txt
-          fastlane/test_output/logs/*/Diagnostics/StreamChatUITestsAppUITests-*/*/*.txt
+          fastlane/test_output/logs/*/Diagnostics/**/*.txt
+          fastlane/test_output/logs/*/Diagnostics/simctl_diagnostics/DiagnosticReports/*
 
   build-and-test-debug:
     name: Test LLC (Debug)
@@ -196,6 +197,18 @@ jobs:
         SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
         MATRIX_CONTEXT: ${{ toJson(matrix) }}
       if: failure() && github.event_name == 'schedule'
+    - name: Parse xcresult
+      if: failure()
+      run: |
+        brew install chargepoint/xcparse/xcparse
+        xcparse logs fastlane/test_output/StreamChat.xcresult fastlane/test_output/logs/
+    - uses: actions/upload-artifact@v3
+      if: failure()
+      with:
+        name: Test Data LLC (iOS ${{ matrix.ios }})
+        path: |
+          fastlane/test_output/logs/*/Diagnostics/**/*.txt
+          fastlane/test_output/logs/*/Diagnostics/simctl_diagnostics/DiagnosticReports/*
 
   build-xcode14:
     name: Build LLC + UI (Xcode 14)
