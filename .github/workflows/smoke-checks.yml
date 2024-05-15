@@ -85,6 +85,18 @@ jobs:
         SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
         MATRIX_CONTEXT: ${{ toJson(matrix) }}
       if: ${{ github.event_name == 'push' && failure() }}
+    - name: Parse xcresult
+      if: failure()
+      run: |
+        brew install chargepoint/xcparse/xcparse
+        xcparse logs fastlane/test_output/StreamChat.xcresult fastlane/test_output/logs/
+    - uses: actions/upload-artifact@v3
+      if: failure()
+      with:
+        name: Test Data LLC
+        path: |
+          fastlane/test_output/logs/*/Diagnostics/**/*.txt
+          fastlane/test_output/logs/*/Diagnostics/simctl_diagnostics/DiagnosticReports/*
 
   test-ui-debug:
     name: Test UI (Debug)
@@ -169,11 +181,12 @@ jobs:
     - uses: actions/upload-artifact@v3
       if: failure()
       with:
-        name: Test Data
+        name: Test Data E2E
         path: |
           fastlane/recordings
           fastlane/sinatra_log.txt
-          fastlane/test_output/logs/*/Diagnostics/StreamChatUITestsAppUITests-*/*/*.txt
+          fastlane/test_output/logs/*/Diagnostics/**/*.txt
+          fastlane/test_output/logs/*/Diagnostics/simctl_diagnostics/DiagnosticReports/*
 
   allure_testops_launch:
     name: Launch Allure TestOps
