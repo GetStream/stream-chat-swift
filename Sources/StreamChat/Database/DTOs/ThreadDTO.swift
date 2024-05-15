@@ -188,8 +188,8 @@ extension NSManagedObjectContext {
     }
 
     func deleteAllThreads() throws {
-        let fetchRequest: NSFetchRequest<NSFetchRequestResult> = NSFetchRequest(entityName: ThreadDTO.entityName)
-        let deleteRequest = NSBatchDeleteRequest(fetchRequest: fetchRequest)
-        try persistentStoreCoordinator?.execute(deleteRequest, with: self)
+        let fetchRequest: NSFetchRequest<ThreadDTO> = NSFetchRequest(entityName: ThreadDTO.entityName)
+        let results = try fetch(fetchRequest)
+        results.forEach { delete($0) }
     }
 }
