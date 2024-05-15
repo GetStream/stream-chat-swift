@@ -9,10 +9,14 @@ import XCTest
 final class UserListUpdater_Mock: UserListUpdater {
     @Atomic var update_queries: [UserListQuery] = []
     @Atomic var update_policy: UpdatePolicy?
-    @Atomic var update_completion: ((Error?) -> Void)?
+    @Atomic var update_completion: ((Result<[ChatUser], Error>) -> Void)?
 
     @Atomic var fetch_queries: [UserListQuery] = []
+    @Atomic var fetch_completions: [(Result<UserListPayload, Error>) -> Void] = []
+    @Atomic var fetch_query_called: (UserListQuery) -> Void = { _ in }
+    
     @Atomic var fetch_completion: ((Result<UserListPayload, Error>) -> Void)?
+    @Atomic var fetch_completion_result: Result<UserListPayload, Error>?
 
     func cleanUp() {
         update_queries.removeAll()
@@ -20,13 +24,15 @@ final class UserListUpdater_Mock: UserListUpdater {
         update_completion = nil
 
         fetch_queries.removeAll()
+        fetch_completions.removeAll()
         fetch_completion = nil
+        fetch_completion_result = nil
     }
 
     override func update(
         userListQuery: UserListQuery,
         policy: UpdatePolicy = .merge,
-        completion: ((Error?) -> Void)? = nil
+        completion: ((Result<[ChatUser], Error>) -> Void)? = nil
     ) {
         _update_queries.mutate { $0.append(userListQuery) }
         update_policy = policy
@@ -38,6 +44,9 @@ final class UserListUpdater_Mock: UserListUpdater {
         completion: @escaping (Result<UserListPayload, Error>) -> Void
     ) {
         _fetch_queries.mutate { $0.append(userListQuery) }
+        _fetch_completions.mutate { $0.append(completion) }
+        fetch_query_called(userListQuery)
         fetch_completion = completion
+        fetch_completion_result?.invoke(with: completion)
     }
 }

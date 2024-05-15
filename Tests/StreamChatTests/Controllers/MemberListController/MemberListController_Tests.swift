@@ -97,7 +97,7 @@ final class MemberListController_Tests: XCTestCase {
         controller = nil
 
         // Simulate successful network call.
-        env.memberListUpdater!.load_completion!(nil)
+        env.memberListUpdater!.load_completion!(.success([]))
         // Release reference of completion so we can deallocate stuff
         env.memberListUpdater!.load_completion = nil
 
@@ -136,7 +136,7 @@ final class MemberListController_Tests: XCTestCase {
 
         // Simulate failed network call.
         let updaterError = TestError()
-        env.memberListUpdater!.load_completion?(updaterError)
+        env.memberListUpdater!.load_completion?(.failure(updaterError))
 
         AssertAsync {
             // Assert controller is in `remoteDataFetchFailed` state.
@@ -183,7 +183,7 @@ final class MemberListController_Tests: XCTestCase {
         )
 
         // Simulate updater callback
-        env.memberListUpdater?.load_completion?(nil)
+        env.memberListUpdater?.load_completion?(.success([]))
 
         // Assert the user is loaded
         XCTAssertEqual(controller.members.map(\.id), [userId])
@@ -268,7 +268,7 @@ final class MemberListController_Tests: XCTestCase {
         AssertAsync.willBeEqual(delegate.state, .localDataFetched)
 
         // Simulate network call response
-        env.memberListUpdater!.load_completion!(nil)
+        env.memberListUpdater!.load_completion!(.success([]))
 
         // Assert delegate is notified about state changes
         AssertAsync.willBeEqual(delegate.state, .remoteDataFetched)
@@ -341,7 +341,7 @@ final class MemberListController_Tests: XCTestCase {
                 try session.saveMember(payload: member, channelId: self.query.cid, query: self.query, cache: nil)
             }
         }
-        env.memberListUpdater!.load_completion!(nil)
+        env.memberListUpdater!.load_completion!(.success([]))
 
         // Assert `update` changes are received by the delegate.
         AssertAsync {
@@ -386,7 +386,7 @@ final class MemberListController_Tests: XCTestCase {
 
         // Simulate network response with the error.
         let networkError = TestError()
-        env.memberListUpdater!.load_completion!(networkError)
+        env.memberListUpdater!.load_completion!(.failure(networkError))
 
         // Assert error is propogated.
         AssertAsync.willBeEqual(completionError as? TestError, networkError)
@@ -411,7 +411,7 @@ final class MemberListController_Tests: XCTestCase {
         controller = nil
 
         // Simulate successful network response.
-        env.memberListUpdater!.load_completion!(nil)
+        env.memberListUpdater!.load_completion!(.success([]))
         // Release reference of completion so we can deallocate stuff
         env.memberListUpdater!.load_completion = nil
 
@@ -435,7 +435,7 @@ final class MemberListController_Tests: XCTestCase {
         XCTAssertEqual(controller.query.pagination, oldPagination)
 
         // Simulate successful network response.
-        env.memberListUpdater!.load_completion!(nil)
+        env.memberListUpdater!.load_completion!(.success([]))
 
         // Assert controller's query is updated with the new pagination.
         AssertAsync.willBeEqual(controller.query.pagination, newPagination)

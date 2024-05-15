@@ -34,10 +34,14 @@ final class ChatClient_Mock: ChatClient {
     }
 
     override var backgroundWorkers: [Worker] {
-        _backgroundWorkers ?? super.backgroundWorkers
+        _backgroundWorkers.isEmpty ? super.backgroundWorkers : _backgroundWorkers
+    }
+    
+    func addBackgroundWorker(_ worker: Worker) {
+        _backgroundWorkers.append(worker)
     }
 
-    private var _backgroundWorkers: [Worker]?
+    private var _backgroundWorkers = [Worker]()
 
     // MARK: - Overrides
 
@@ -57,6 +61,10 @@ final class ChatClient_Mock: ChatClient {
         if !workerBuilders.isEmpty {
             _backgroundWorkers = workerBuilders.map { $0(databaseContainer, apiClient) }
         }
+    }
+    
+    override var currentUserId: UserId? {
+        return currentUserId_mock
     }
 
     public var currentUserId_mock: UserId? {
@@ -103,7 +111,7 @@ final class ChatClient_Mock: ChatClient {
         completeTokenWaiters_called = false
         completeTokenWaiters_token = nil
 
-        _backgroundWorkers?.removeAll()
+        _backgroundWorkers.removeAll()
         init_completion = nil
     }
 }
@@ -117,7 +125,7 @@ extension ChatClient {
     }
 
     /// Create a new instance of mock `ChatClient`
-    static func mock(config: ChatClientConfig? = nil) -> ChatClient {
+    static func mock(config: ChatClientConfig? = nil, bundle: Bundle? = nil) -> ChatClient {
         .init(
             config: config ?? defaultMockedConfig,
             environment: .init(
@@ -135,6 +143,7 @@ extension ChatClient {
                         kind: $0,
                         shouldFlushOnStart: $1,
                         shouldResetEphemeralValuesOnStart: $2,
+                        bundle: bundle,
                         localCachingSettings: $3,
                         deletedMessagesVisibility: $4,
                         shouldShowShadowedMessages: $5
@@ -157,6 +166,10 @@ extension ChatClient {
 
     var mockAPIClient: APIClient_Spy {
         apiClient as! APIClient_Spy
+    }
+    
+    var mockChannelListUpdater: ChannelListUpdater_Spy {
+        channelListUpdater as! ChannelListUpdater_Spy
     }
 
     var mockWebSocketClient: WebSocketClient_Mock {
@@ -228,6 +241,7 @@ extension ChatClient.Environment {
             notificationCenterBuilder: EventNotificationCenter.init,
             authenticationRepositoryBuilder: AuthenticationRepository_Mock.init,
             syncRepositoryBuilder: SyncRepository_Mock.init,
+            channelListUpdaterBuilder: ChannelListUpdater_Spy.init, 
             messageRepositoryBuilder: MessageRepository_Mock.init,
             offlineRequestsRepositoryBuilder: OfflineRequestsRepository_Mock.init
         )

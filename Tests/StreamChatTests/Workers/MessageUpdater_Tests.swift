@@ -28,7 +28,6 @@ final class MessageUpdater_Tests: XCTestCase {
         messageUpdater = MessageUpdater(
             isLocalStorageEnabled: true,
             messageRepository: messageRepository,
-            paginationStateHandler: paginationStateHandler,
             database: database,
             apiClient: apiClient
         )
@@ -45,6 +44,7 @@ final class MessageUpdater_Tests: XCTestCase {
             Assert.canBeReleased(&webSocketClient)
             Assert.canBeReleased(&apiClient)
             Assert.canBeReleased(&database)
+            Assert.canBeReleased(&paginationStateHandler)
         }
     }
 
@@ -52,7 +52,6 @@ final class MessageUpdater_Tests: XCTestCase {
         messageUpdater = MessageUpdater(
             isLocalStorageEnabled: isLocalStorageEnabled,
             messageRepository: messageRepository,
-            paginationStateHandler: paginationStateHandler,
             database: database,
             apiClient: apiClient
         )
@@ -62,12 +61,12 @@ final class MessageUpdater_Tests: XCTestCase {
 
     func test_editMessage_propagates_CurrentUserDoesNotExist_Error() throws {
         // Simulate `editMessage(messageId:, text:)` call
-        let completionError = try waitFor {
+        let completionResult = try waitFor {
             messageUpdater.editMessage(messageId: .unique, text: .unique, skipEnrichUrl: false, completion: $0)
         }
 
         // Assert `CurrentUserDoesNotExist` is received
-        XCTAssertTrue(completionError is ClientError.CurrentUserDoesNotExist)
+        XCTAssertTrue(completionResult.error is ClientError.CurrentUserDoesNotExist)
     }
 
     func test_editMessage_propagates_MessageDoesNotExist_Error() throws {
@@ -75,12 +74,12 @@ final class MessageUpdater_Tests: XCTestCase {
         try database.createCurrentUser()
 
         // Simulate `editMessage(messageId:, text:)` call
-        let completionError = try waitFor {
+        let completionResult = try waitFor {
             messageUpdater.editMessage(messageId: .unique, text: .unique, skipEnrichUrl: false, completion: $0)
         }
 
         // Assert `MessageDoesNotExist` is received
-        XCTAssertTrue(completionError is ClientError.MessageDoesNotExist)
+        XCTAssertTrue(completionResult.error is ClientError.MessageDoesNotExist)
     }
 
     func test_editMessage_updatesLocalMessageCorrectly() throws {
@@ -128,7 +127,7 @@ final class MessageUpdater_Tests: XCTestCase {
             try database.createMessage(id: quotingMessageId, authorId: currentUserId, quotedMessageId: messageId)
 
             // Edit created message with new text
-            let completionError = try waitFor {
+            let completionResult = try waitFor {
                 messageUpdater.editMessage(messageId: messageId, text: updatedText, skipEnrichUrl: true, completion: $0)
             }
 
@@ -139,7 +138,7 @@ final class MessageUpdater_Tests: XCTestCase {
             let quotingMessage = try XCTUnwrap(database.viewContext.message(id: quotingMessageId))
 
             // Assert completion is called without any error
-            XCTAssertNil(completionError)
+            XCTAssertNil(completionResult.error)
             // Assert message still has expected local state
             XCTAssertEqual(message.localMessageState, expectedState)
             // Assert message text is updated correctly
@@ -193,15 +192,15 @@ final class MessageUpdater_Tests: XCTestCase {
         let message = try XCTUnwrap(database.viewContext.message(id: messageId))
 
         // Edit created message with new text
-        let completionError = try waitFor {
+        let completionResult = try waitFor {
             messageUpdater.editMessage(messageId: messageId, text: updatedText, skipEnrichUrl: false, completion: $0)
         }
 
         // Load the edited message
-        let editedMessage = try XCTUnwrap(database.viewContext.message(id: messageId))
+        _ = try XCTUnwrap(database.viewContext.message(id: messageId))
 
         // Assert completion is called without any error
-        XCTAssertNil(completionError)
+        XCTAssertNil(completionResult.error)
         // Assert message still has expected local state
         XCTAssertEqual(message.localMessageState, .pendingSend)
         // Assert message text is updated correctly
@@ -238,7 +237,7 @@ final class MessageUpdater_Tests: XCTestCase {
             try database.createMessage(id: messageId, authorId: currentUserId, text: initialText, localState: state)
 
             // Edit created message with new text
-            let completionError = try waitFor {
+            let completionResult = try waitFor {
                 messageUpdater.editMessage(messageId: messageId, text: updatedText, skipEnrichUrl: false, completion: $0)
             }
 
@@ -250,7 +249,7 @@ final class MessageUpdater_Tests: XCTestCase {
             )
 
             // Assert `MessageEditing` error is received
-            XCTAssertTrue(completionError is ClientError.MessageEditing)
+            XCTAssertTrue(completionResult.error is ClientError.MessageEditing)
             // Assert message stays in the same state
             XCTAssertEqual(message.localMessageState, state)
             // Assert message's text stays the same
@@ -282,7 +281,7 @@ final class MessageUpdater_Tests: XCTestCase {
         XCTAssertEqual(encodedCreatedExtraData, extraData)
 
         // Edit created message with new text
-        let completionError = try waitFor {
+        let completionResult = try waitFor {
             messageUpdater.editMessage(
                 messageId: messageId,
                 text: updatedText,
@@ -300,7 +299,7 @@ final class MessageUpdater_Tests: XCTestCase {
         )
 
         // Assert completion is called without any error
-        XCTAssertNil(completionError)
+        XCTAssertNil(completionResult.error)
         // Assert message's extra data is updated
         XCTAssertEqual(encodedExtraData, updatedExtraData)
     }
@@ -326,7 +325,7 @@ final class MessageUpdater_Tests: XCTestCase {
         XCTAssertEqual(encodedCreatedExtraData, extraData)
 
         // Edit created message with new text
-        let completionError = try waitFor {
+        let completionResult = try waitFor {
             messageUpdater.editMessage(
                 messageId: messageId,
                 text: updatedText,
@@ -344,7 +343,7 @@ final class MessageUpdater_Tests: XCTestCase {
         )
 
         // Assert completion is called without any error
-        XCTAssertNil(completionError)
+        XCTAssertNil(completionResult.error)
         // Assert message's extra data is updated
         XCTAssertEqual(encodedExtraData, extraData)
     }
@@ -371,7 +370,7 @@ final class MessageUpdater_Tests: XCTestCase {
         XCTAssertEqual(databaseAttachmentTypes.sorted { $0.rawValue < $1.rawValue }, originalAttachmentTypes.sorted { $0.rawValue < $1.rawValue })
 
         // Edit created message with new attaachments
-        let completionError = try waitFor {
+        let completionResult = try waitFor {
             messageUpdater.editMessage(
                 messageId: messageId,
                 text: updatedText,
@@ -386,7 +385,7 @@ final class MessageUpdater_Tests: XCTestCase {
         let updatedDatabaseAttachmentTypes = message.attachments.map(\.attachmentType)
 
         // Assert completion is called without any error
-        XCTAssertNil(completionError)
+        XCTAssertNil(completionResult.error)
         // Assert message's attachments are updated
         XCTAssertEqual(updatedDatabaseAttachmentTypes.sorted { $0.rawValue < $1.rawValue }, updatedAttachmentsTypes.sorted { $0.rawValue < $1.rawValue })
     }
@@ -546,16 +545,18 @@ final class MessageUpdater_Tests: XCTestCase {
             try database.createMessage(id: messageId, authorId: currentUserId)
 
             // Simulate `deleteMessage(messageId:)` call
-            messageUpdater.deleteMessage(messageId: messageId, hard: false)
-
-            // Load the message
-            let message = try XCTUnwrap(database.viewContext.message(id: messageId))
-
-            // Assert message's local state becomes `deleting`
-            AssertAsync.willBeEqual(message.localMessageState, .deleting)
+            let expectation = XCTestExpectation()
+            messageUpdater.deleteMessage(messageId: messageId, hard: false) { _ in
+                expectation.fulfill()
+            }
+            // Assert message's local state becomes `deleting` after waiting the first DB call to finish
+            AssertAsync.willBeEqual(.deleting, database.viewContext.message(id: messageId)?.localMessageState)
 
             // Simulate API response
+            AssertAsync.willBeTrue(apiClient.request_completion != nil)
             apiClient.test_simulateResponse(networkResult)
+
+            wait(for: [expectation], timeout: defaultTimeout)
 
             // Assert message's local state becomes expected
             if expectedState == nil {
@@ -783,7 +784,7 @@ final class MessageUpdater_Tests: XCTestCase {
         }
 
         // Load the message
-        let message = try XCTUnwrap(database.viewContext.message(id: secondMessageId))
+        _ = try XCTUnwrap(database.viewContext.message(id: secondMessageId))
 
         // Delete second message
         let expectation = expectation(description: "deleteMessage completes")
@@ -967,7 +968,7 @@ final class MessageUpdater_Tests: XCTestCase {
 
         // Simulate `loadReplies` call
         let exp = expectation(description: "load replies should complete")
-        messageUpdater.loadReplies(cid: .unique, messageId: messageId, pagination: pagination) { _ in
+        messageUpdater.loadReplies(cid: .unique, messageId: messageId, pagination: pagination, paginationStateHandler: paginationStateHandler) { _ in
             exp.fulfill()
         }
 
@@ -995,7 +996,7 @@ final class MessageUpdater_Tests: XCTestCase {
     func test_loadReplies_propagatesRequestError() {
         // Simulate `loadReplies` call
         var completionCalledError: Error?
-        messageUpdater.loadReplies(cid: .unique, messageId: .unique, pagination: .init(pageSize: 25)) {
+        messageUpdater.loadReplies(cid: .unique, messageId: .unique, pagination: .init(pageSize: 25), paginationStateHandler: paginationStateHandler) {
             completionCalledError = $0.error
         }
 
@@ -1022,7 +1023,7 @@ final class MessageUpdater_Tests: XCTestCase {
 
         // Simulate `loadReplies` call
         var completionCalledError: Error?
-        messageUpdater.loadReplies(cid: cid, messageId: .unique, pagination: .init(pageSize: 25)) {
+        messageUpdater.loadReplies(cid: cid, messageId: .unique, pagination: .init(pageSize: 25), paginationStateHandler: paginationStateHandler) {
             completionCalledError = $0.error
         }
 
@@ -1046,7 +1047,7 @@ final class MessageUpdater_Tests: XCTestCase {
 
         // Simulate `loadReplies` call
         var completionCalled = false
-        messageUpdater.loadReplies(cid: cid, messageId: .unique, pagination: .init(pageSize: 25)) { _ in
+        messageUpdater.loadReplies(cid: cid, messageId: .unique, pagination: .init(pageSize: 25), paginationStateHandler: paginationStateHandler) { _ in
             completionCalled = true
         }
 
@@ -1800,11 +1801,11 @@ final class MessageUpdater_Tests: XCTestCase {
     func test_pinMessage_propagates_MessageDoesNotExist_Error() throws {
         try database.createCurrentUser()
 
-        let completionError = try waitFor {
+        let completionResult = try waitFor {
             messageUpdater.pinMessage(messageId: .unique, pinning: .expirationDate(.unique), completion: $0)
         }
 
-        XCTAssertTrue(completionError is ClientError.MessageDoesNotExist)
+        XCTAssertTrue(completionResult.error is ClientError.MessageDoesNotExist)
     }
     
     func test_pinMessage_propagatesSuccessfulResponse() throws {
@@ -1820,7 +1821,7 @@ final class MessageUpdater_Tests: XCTestCase {
             messageUpdater.pinMessage(messageId: messageId, pinning: expiration, completion: $0)
         }
 
-        XCTAssertNil(result)
+        XCTAssertNil(result.error)
         
         let message = try XCTUnwrap(database.viewContext.message(id: messageId)?.asModel())
         XCTAssertTrue(message.isPinned)
@@ -1836,11 +1837,11 @@ final class MessageUpdater_Tests: XCTestCase {
         let expectedError = TestError()
         apiClient.test_mockResponseResult(Result<EmptyResponse, Error>.failure(expectedError))
 
-        let completionError = try waitFor {
+        let completionResult = try waitFor {
             messageUpdater.pinMessage(messageId: messageId, pinning: .expirationDate(.unique), completion: $0)
         }
 
-        XCTAssertEqual(completionError, expectedError)
+        XCTAssertEqual(completionResult.error, expectedError)
         
         let message = try XCTUnwrap(database.viewContext.message(id: messageId)?.asModel())
         XCTAssertFalse(message.isPinned)
@@ -1854,11 +1855,11 @@ final class MessageUpdater_Tests: XCTestCase {
     func test_unpinMessage_propogates_MessageDoesNotExist_Error() throws {
         try database.createCurrentUser()
 
-        let completionError = try waitFor {
+        let completionResult = try waitFor {
             messageUpdater.unpinMessage(messageId: .unique, completion: $0)
         }
 
-        XCTAssertTrue(completionError is ClientError.MessageDoesNotExist)
+        XCTAssertTrue(completionResult.error is ClientError.MessageDoesNotExist)
     }
     
     func test_unpinMessage_propagatesSuccessfulResponse() throws {
@@ -1869,12 +1870,11 @@ final class MessageUpdater_Tests: XCTestCase {
         
         apiClient.test_mockResponseResult(.success(EmptyResponse()))
 
-        let expiration: MessagePinning = .expirationDate(.unique)
         let result = try waitFor {
             messageUpdater.unpinMessage(messageId: messageId, completion: $0)
         }
 
-        XCTAssertNil(result)
+        XCTAssertNil(result.error)
         
         let message = try XCTUnwrap(database.viewContext.message(id: messageId)?.asModel())
         XCTAssertFalse(message.isPinned)
@@ -1898,11 +1898,11 @@ final class MessageUpdater_Tests: XCTestCase {
         let expectedError = TestError()
         apiClient.test_mockResponseResult(Result<EmptyResponse, Error>.failure(expectedError))
 
-        let completionError = try waitFor {
+        let completionResult = try waitFor {
             messageUpdater.unpinMessage(messageId: messageId, completion: $0)
         }
 
-        XCTAssertEqual(completionError, expectedError)
+        XCTAssertEqual(completionResult.error, expectedError)
         
         let message = try XCTUnwrap(database.viewContext.message(id: messageId)?.asModel())
         XCTAssertTrue(message.isPinned)
@@ -2591,9 +2591,9 @@ final class MessageUpdater_Tests: XCTestCase {
 
         // Make translate call
         var completionCalled = false
-        messageUpdater.translate(messageId: messageId, to: language) { error in
+        messageUpdater.translate(messageId: messageId, to: language) { result in
             completionCalled = true
-            XCTAssertNil(error)
+            XCTAssertNil(result.error)
         }
 
         // Simulate successful response
@@ -2619,9 +2619,9 @@ final class MessageUpdater_Tests: XCTestCase {
         // Make translate call
         var completionCalled = false
         let testError = TestError()
-        messageUpdater.translate(messageId: messageId, to: language) { error in
+        messageUpdater.translate(messageId: messageId, to: language) { result in
             completionCalled = true
-            XCTAssertEqual(error as? TestError, testError)
+            XCTAssertEqual(result.error as? TestError, testError)
         }
 
         // Simulate failure response
@@ -2645,9 +2645,9 @@ final class MessageUpdater_Tests: XCTestCase {
 
         // Make translate call
         var completionCalled = false
-        messageUpdater.translate(messageId: messageId, to: language) { error in
+        messageUpdater.translate(messageId: messageId, to: language) { result in
             completionCalled = true
-            XCTAssertEqual(error as? TestError, testError)
+            XCTAssertEqual(result.error as? TestError, testError)
         }
 
         // Simulate successful response
@@ -2692,7 +2692,7 @@ extension MessageUpdater_Tests {
 
         // WHEN
         let exp = expectation(description: "load replies completes")
-        messageUpdater.loadReplies(cid: cid, messageId: parentMessageId, pagination: pagination) { _ in
+        messageUpdater.loadReplies(cid: cid, messageId: parentMessageId, pagination: pagination, paginationStateHandler: paginationStateHandler) { _ in
             exp.fulfill()
         }
         apiClient.test_simulateResponse(Result<MessageRepliesPayload, Error>.success(repliesPayload))
@@ -2745,7 +2745,7 @@ extension MessageUpdater_Tests {
 
         // Simulate `loadReplies` call
         let exp = expectation(description: "should load replies")
-        messageUpdater.loadReplies(cid: cid, messageId: parentMessageId, pagination: pagination) { _ in
+        messageUpdater.loadReplies(cid: cid, messageId: parentMessageId, pagination: pagination, paginationStateHandler: paginationStateHandler) { _ in
             exp.fulfill()
         }
 

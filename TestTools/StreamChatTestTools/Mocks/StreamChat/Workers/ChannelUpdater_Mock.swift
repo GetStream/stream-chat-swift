@@ -23,42 +23,56 @@ final class ChannelUpdater_Mock: ChannelUpdater {
     @Atomic var muteChannel_mute: Bool?
     @Atomic var muteChannel_expiration: Int?
     @Atomic var muteChannel_completion: ((Error?) -> Void)?
+    @Atomic var muteChannel_completion_result: Result<Void, Error>?
 
     @Atomic var deleteChannel_cid: ChannelId?
     @Atomic var deleteChannel_completion: ((Error?) -> Void)?
+    @Atomic var deleteChannel_completion_result: Result<Void, Error>?
 
     @Atomic var truncateChannel_cid: ChannelId?
-    @Atomic var truncateChannel_completion: ((Error?) -> Void)?
     @Atomic var truncateChannel_skipPush: Bool?
     @Atomic var truncateChannel_hardDelete: Bool?
     @Atomic var truncateChannel_systemMessage: String?
+    @Atomic var truncateChannel_completion: ((Error?) -> Void)?
+    @Atomic var truncateChannel_completion_result: Result<Void, Error>?
 
     @Atomic var hideChannel_cid: ChannelId?
     @Atomic var hideChannel_clearHistory: Bool?
     @Atomic var hideChannel_completion: ((Error?) -> Void)?
+    @Atomic var hideChannel_completion_result: Result<Void, Error>?
 
     @Atomic var showChannel_cid: ChannelId?
     @Atomic var showChannel_completion: ((Error?) -> Void)?
-
+    @Atomic var showChannel_completion_result: Result<Void, Error>?
+    
+    @Atomic var addMembers_currentUserId: UserId?
     @Atomic var addMembers_cid: ChannelId?
     @Atomic var addMembers_userIds: Set<UserId>?
+    @Atomic var addMembers_message: String?
     @Atomic var addMembers_hideHistory: Bool?
     @Atomic var addMembers_completion: ((Error?) -> Void)?
+    @Atomic var addMembers_completion_result: Result<Void, Error>?
 
     @Atomic var inviteMembers_cid: ChannelId?
     @Atomic var inviteMembers_userIds: Set<UserId>?
     @Atomic var inviteMembers_completion: ((Error?) -> Void)?
+    @Atomic var inviteMembers_completion_result: Result<Void, Error>?
 
     @Atomic var acceptInvite_cid: ChannelId?
     @Atomic var acceptInvite_message: String?
     @Atomic var acceptInvite_completion: ((Error?) -> Void)?
+    @Atomic var acceptInvite_completion_result: Result<Void, Error>?
 
     @Atomic var rejectInvite_cid: ChannelId?
     @Atomic var rejectInvite_completion: ((Error?) -> Void)?
-
+    @Atomic var rejectInvite_completion_result: Result<Void, Error>?
+    
+    @Atomic var removeMembers_currentUserId: UserId?
     @Atomic var removeMembers_cid: ChannelId?
     @Atomic var removeMembers_userIds: Set<UserId>?
+    @Atomic var removeMembers_message: String?
     @Atomic var removeMembers_completion: ((Error?) -> Void)?
+    @Atomic var removeMembers_completion_result: Result<Void, Error>?
 
     @Atomic var createNewMessage_cid: ChannelId?
     @Atomic var createNewMessage_text: String?
@@ -73,33 +87,40 @@ final class ChannelUpdater_Mock: ChannelUpdater {
     @Atomic var createNewMessage_pinning: MessagePinning?
     @Atomic var createNewMessage_extraData: [String: RawJSON]?
     @Atomic var createNewMessage_completion: ((Result<ChatMessage, Error>) -> Void)?
+    @Atomic var createNewMessage_completion_result: Result<ChatMessage, Error>?
 
     @Atomic var markRead_cid: ChannelId?
     @Atomic var markRead_userId: UserId?
     @Atomic var markRead_completion: ((Error?) -> Void)?
+    @Atomic var markRead_completion_result: Result<Void, Error>?
 
     @Atomic var markUnread_cid: ChannelId?
     @Atomic var markUnread_userId: UserId?
     @Atomic var markUnread_messageId: MessageId?
     @Atomic var markUnread_lastReadMessageId: MessageId?
     @Atomic var markUnread_completion: ((Result<ChatChannel, Error>) -> Void)?
+    @Atomic var markUnread_completion_result: Result<ChatChannel, Error>?
 
     @Atomic var enableSlowMode_cid: ChannelId?
     @Atomic var enableSlowMode_cooldownDuration: Int?
     @Atomic var enableSlowMode_completion: ((Error?) -> Void)?
+    @Atomic var enableSlowMode_completion_result: Result<Void, Error>?
 
     @Atomic var startWatching_cid: ChannelId?
     @Atomic var startWatching_completion: ((Error?) -> Void)?
+    @Atomic var startWatching_completion_result: Result<Void, Error>?
 
     @Atomic var stopWatching_cid: ChannelId?
     @Atomic var stopWatching_completion: ((Error?) -> Void)?
+    @Atomic var stopWatching_completion_result: Result<Void, Error>?
 
     @Atomic var channelWatchers_query: ChannelWatcherListQuery?
-    @Atomic var channelWatchers_completion: ((Error?) -> Void)?
+    @Atomic var channelWatchers_completion: ((Result<ChannelPayload, any Error>) -> Void)?
 
     @Atomic var freezeChannel_freeze: Bool?
     @Atomic var freezeChannel_cid: ChannelId?
     @Atomic var freezeChannel_completion: ((Error?) -> Void)?
+    @Atomic var freezeChannel_completion_result: Result<Void, Error>?
 
     @Atomic var uploadFile_type: AttachmentType?
     @Atomic var uploadFile_localFileURL: URL?
@@ -110,6 +131,7 @@ final class ChannelUpdater_Mock: ChannelUpdater {
     @Atomic var loadPinnedMessages_cid: ChannelId?
     @Atomic var loadPinnedMessages_query: PinnedMessagesQuery?
     @Atomic var loadPinnedMessages_completion: ((Result<[ChatMessage], Error>) -> Void)?
+    @Atomic var loadPinnedMessages_completion_result: Result<[ChatMessage], Error>?
 
     @Atomic var createCall_cid: ChannelId?
     @Atomic var createCall_completion: ((Result<CallWithToken, Error>) -> Void)?
@@ -117,6 +139,7 @@ final class ChannelUpdater_Mock: ChannelUpdater {
     @Atomic var enrichUrl_url: URL?
     @Atomic var enrichUrl_callCount = 0
     @Atomic var enrichUrl_completion: ((Result<LinkAttachmentPayload, Error>) -> Void)?
+    @Atomic var enrichUrl_completion_result: Result<LinkAttachmentPayload, Error>?
 
     // Cleans up all recorded values
     func cleanUp() {
@@ -130,38 +153,56 @@ final class ChannelUpdater_Mock: ChannelUpdater {
         muteChannel_cid = nil
         muteChannel_mute = nil
         muteChannel_completion = nil
+        muteChannel_completion_result = nil
 
         deleteChannel_cid = nil
         deleteChannel_completion = nil
+        deleteChannel_completion_result = nil
 
         truncateChannel_cid = nil
+        truncateChannel_skipPush = nil
+        truncateChannel_hardDelete = nil
+        truncateChannel_systemMessage = nil
         truncateChannel_completion = nil
+        truncateChannel_completion_result = nil
 
         hideChannel_cid = nil
         hideChannel_clearHistory = nil
         hideChannel_completion = nil
+        hideChannel_completion_result = nil
 
         showChannel_cid = nil
         showChannel_completion = nil
+        showChannel_completion_result = nil
 
+        addMembers_currentUserId = nil
         addMembers_cid = nil
+        addMembers_message = nil
         addMembers_userIds = nil
+        addMembers_hideHistory = nil
         addMembers_completion = nil
+        addMembers_completion_result = nil
 
         inviteMembers_cid = nil
         inviteMembers_userIds = nil
         inviteMembers_completion = nil
+        inviteMembers_completion_result = nil
 
         acceptInvite_cid = nil
         acceptInvite_message = nil
         acceptInvite_completion = nil
+        acceptInvite_completion_result = nil
 
         rejectInvite_cid = nil
         rejectInvite_completion = nil
+        rejectInvite_completion_result = nil
 
+        removeMembers_currentUserId = nil
         removeMembers_cid = nil
+        removeMembers_message = nil
         removeMembers_userIds = nil
         removeMembers_completion = nil
+        removeMembers_completion_result = nil
 
         createNewMessage_cid = nil
         createNewMessage_text = nil
@@ -174,19 +215,32 @@ final class ChannelUpdater_Mock: ChannelUpdater {
         createNewMessage_mentionedUserIds = nil
         createNewMessage_extraData = nil
         createNewMessage_completion = nil
+        createNewMessage_completion_result = nil
 
         markRead_cid = nil
+        markRead_userId = nil
         markRead_completion = nil
+        markRead_completion_result = nil
+        
+        markUnread_cid = nil
+        markUnread_userId = nil
+        markUnread_messageId = nil
+        markUnread_lastReadMessageId = nil
+        markUnread_completion = nil
+        markUnread_completion_result = nil
 
         enableSlowMode_cid = nil
         enableSlowMode_cooldownDuration = nil
         enableSlowMode_completion = nil
+        enableSlowMode_completion_result = nil
 
         startWatching_cid = nil
         startWatching_completion = nil
+        startWatching_completion_result = nil
 
         stopWatching_cid = nil
         stopWatching_completion = nil
+        stopWatching_completion_result = nil
 
         channelWatchers_query = nil
         channelWatchers_completion = nil
@@ -194,6 +248,7 @@ final class ChannelUpdater_Mock: ChannelUpdater {
         freezeChannel_freeze = nil
         freezeChannel_cid = nil
         freezeChannel_completion = nil
+        freezeChannel_completion_result = nil
 
         uploadFile_type = nil
         uploadFile_localFileURL = nil
@@ -204,23 +259,25 @@ final class ChannelUpdater_Mock: ChannelUpdater {
         loadPinnedMessages_cid = nil
         loadPinnedMessages_query = nil
         loadPinnedMessages_completion = nil
+        loadPinnedMessages_completion_result = nil
 
         createCall_cid = nil
         createCall_completion = nil
 
         enrichUrl_url = nil
         enrichUrl_completion = nil
+        enrichUrl_completion_result = nil
     }
 
     var mockPaginationState: MessagesPaginationState = .initial
     override var paginationState: MessagesPaginationState {
         mockPaginationState
     }
-
     override func update(
         channelQuery: ChannelQuery,
         isInRecoveryMode: Bool,
         onChannelCreated: ((ChannelId) -> Void)? = nil,
+        actions: ChannelUpdateActions? = nil,
         completion: ((Result<ChannelPayload, Error>) -> Void)? = nil
     ) {
         update_channelQuery = channelQuery
@@ -245,11 +302,13 @@ final class ChannelUpdater_Mock: ChannelUpdater {
         muteChannel_mute = mute
         muteChannel_expiration = expiration
         muteChannel_completion = completion
+        muteChannel_completion_result?.invoke(with: completion)
     }
 
     override func deleteChannel(cid: ChannelId, completion: ((Error?) -> Void)? = nil) {
         deleteChannel_cid = cid
         deleteChannel_completion = completion
+        deleteChannel_completion_result?.invoke(with: completion)
     }
 
     override func truncateChannel(
@@ -264,17 +323,20 @@ final class ChannelUpdater_Mock: ChannelUpdater {
         truncateChannel_hardDelete = hardDelete
         truncateChannel_systemMessage = systemMessage
         truncateChannel_completion = completion
+        truncateChannel_completion_result?.invoke(with: completion)
     }
 
     override func hideChannel(cid: ChannelId, clearHistory: Bool, completion: ((Error?) -> Void)? = nil) {
         hideChannel_cid = cid
         hideChannel_clearHistory = clearHistory
         hideChannel_completion = completion
+        hideChannel_completion_result?.invoke(with: completion)
     }
 
     override func showChannel(cid: ChannelId, completion: ((Error?) -> Void)? = nil) {
         showChannel_cid = cid
         showChannel_completion = completion
+        showChannel_completion_result?.invoke(with: completion)
     }
 
     override func createNewMessage(
@@ -306,6 +368,7 @@ final class ChannelUpdater_Mock: ChannelUpdater {
         createNewMessage_pinning = pinning
         createNewMessage_extraData = extraData
         createNewMessage_completion = completion
+        createNewMessage_completion_result?.invoke(with: completion)
     }
 
     override func addMembers(
@@ -316,12 +379,15 @@ final class ChannelUpdater_Mock: ChannelUpdater {
         hideHistory: Bool,
         completion: ((Error?) -> Void)? = nil
     ) {
+        addMembers_currentUserId = currentUserId
         addMembers_cid = cid
         addMembers_userIds = userIds
+        addMembers_message = message
         addMembers_hideHistory = hideHistory
         addMembers_completion = completion
+        addMembers_completion_result?.invoke(with: completion)
     }
-
+    
     override func inviteMembers(
         cid: ChannelId,
         userIds: Set<UserId>,
@@ -330,6 +396,7 @@ final class ChannelUpdater_Mock: ChannelUpdater {
         inviteMembers_cid = cid
         inviteMembers_userIds = userIds
         inviteMembers_completion = completion
+        inviteMembers_completion_result?.invoke(with: completion)
     }
 
     override func acceptInvite(
@@ -340,6 +407,7 @@ final class ChannelUpdater_Mock: ChannelUpdater {
         acceptInvite_cid = cid
         acceptInvite_message = message
         acceptInvite_completion = completion
+        acceptInvite_completion_result?.invoke(with: completion)
     }
 
     override func rejectInvite(
@@ -348,6 +416,7 @@ final class ChannelUpdater_Mock: ChannelUpdater {
     ) {
         rejectInvite_cid = cid
         rejectInvite_completion = completion
+        rejectInvite_completion_result?.invoke(with: completion)
     }
 
     override func removeMembers(
@@ -357,15 +426,19 @@ final class ChannelUpdater_Mock: ChannelUpdater {
         message: String?,
         completion: ((Error?) -> Void)? = nil
     ) {
+        removeMembers_currentUserId = currentUserId
         removeMembers_cid = cid
         removeMembers_userIds = userIds
+        removeMembers_message = message
         removeMembers_completion = completion
+        removeMembers_completion_result?.invoke(with: completion)
     }
 
     override func markRead(cid: ChannelId, userId: UserId, completion: ((Error?) -> Void)? = nil) {
         markRead_cid = cid
         markRead_userId = userId
         markRead_completion = completion
+        markRead_completion_result?.invoke(with: completion)
     }
 
     override func markUnread(cid: ChannelId, userId: UserId, from messageId: MessageId, lastReadMessageId: MessageId?, completion: ((Result<ChatChannel, Error>) -> Void)? = nil) {
@@ -374,25 +447,29 @@ final class ChannelUpdater_Mock: ChannelUpdater {
         markUnread_messageId = messageId
         markUnread_lastReadMessageId = lastReadMessageId
         markUnread_completion = completion
+        markUnread_completion_result?.invoke(with: completion)
     }
 
     override func enableSlowMode(cid: ChannelId, cooldownDuration: Int, completion: ((Error?) -> Void)? = nil) {
         enableSlowMode_cid = cid
         enableSlowMode_cooldownDuration = cooldownDuration
         enableSlowMode_completion = completion
+        enableSlowMode_completion_result?.invoke(with: completion)
     }
 
     override func startWatching(cid: ChannelId, isInRecoveryMode: Bool, completion: ((Error?) -> Void)? = nil) {
         startWatching_cid = cid
         startWatching_completion = completion
+        startWatching_completion_result?.invoke(with: completion)
     }
 
     override func stopWatching(cid: ChannelId, completion: ((Error?) -> Void)? = nil) {
         stopWatching_cid = cid
         stopWatching_completion = completion
+        stopWatching_completion_result?.invoke(with: completion)
     }
 
-    override func channelWatchers(query: ChannelWatcherListQuery, completion: ((Error?) -> Void)? = nil) {
+    override func channelWatchers(query: ChannelWatcherListQuery, completion: ((Result<ChannelPayload, any Error>) -> Void)? = nil) {
         channelWatchers_query = query
         channelWatchers_completion = completion
     }
@@ -401,6 +478,7 @@ final class ChannelUpdater_Mock: ChannelUpdater {
         freezeChannel_freeze = freeze
         freezeChannel_cid = cid
         freezeChannel_completion = completion
+        freezeChannel_completion_result?.invoke(with: completion)
     }
 
     override func uploadFile(
@@ -425,6 +503,7 @@ final class ChannelUpdater_Mock: ChannelUpdater {
         loadPinnedMessages_cid = cid
         loadPinnedMessages_query = query
         loadPinnedMessages_completion = completion
+        loadPinnedMessages_completion_result?.invoke(with: completion)
     }
 
     override func createCall(
@@ -441,5 +520,6 @@ final class ChannelUpdater_Mock: ChannelUpdater {
         enrichUrl_callCount += 1
         enrichUrl_url = url
         enrichUrl_completion = completion
+        enrichUrl_completion_result?.invoke(with: completion)
     }
 }

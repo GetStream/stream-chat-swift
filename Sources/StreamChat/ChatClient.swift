@@ -2,6 +2,7 @@
 // Copyright © 2024 Stream.io Inc. All rights reserved.
 //
 
+import Combine
 import CoreData
 import Foundation
 
@@ -78,6 +79,8 @@ public class ChatClient {
     let callRepository: CallRepository
 
     let channelRepository: ChannelRepository
+    
+    let channelListUpdater: ChannelListUpdater
 
     func makeMessagesPaginationStateHandler() -> MessagesPaginationStateHandling {
         MessagesPaginationStateHandler()
@@ -158,6 +161,10 @@ public class ChatClient {
             apiClient,
             config.queuedActionsMaxHoursThreshold
         )
+        let channelListUpdater = environment.channelListUpdaterBuilder(
+            databaseContainer,
+            apiClient
+        )
         let syncRepository = environment.syncRepositoryBuilder(
             config,
             activeChannelControllers,
@@ -165,7 +172,8 @@ public class ChatClient {
             offlineRequestsRepository,
             eventNotificationCenter,
             databaseContainer,
-            apiClient
+            apiClient,
+            channelListUpdater
         )
         let webSocketClient = factory.makeWebSocketClient(
             requestEncoder: webSocketEncoder,
@@ -187,6 +195,7 @@ public class ChatClient {
             environment.timerType
         )
 
+        self.channelListUpdater = channelListUpdater
         self.databaseContainer = databaseContainer
         self.apiClient = apiClient
         self.webSocketClient = webSocketClient
@@ -261,6 +270,8 @@ public class ChatClient {
         Self.attachmentTypesRegistry[Payload.type] = payloadType
     }
 
+    // MARK: - Connecting to the Client
+    
     /// Connects the client with the given user.
     ///
     /// - Parameters:
@@ -282,6 +293,27 @@ public class ChatClient {
 
         // Whenever the user is connected, we trigger an app settings configuration refetch.
         loadAppSettings()
+    }
+    
+    /// Connects the client with the given user.
+    ///
+    /// - Parameters:
+    ///   - userInfo: The user info passed to `connect` endpoint.
+    ///   - tokenProvider: The closure used to retreive a token. Token provider will be used to establish the initial connection and also to obtain the new token when the previous one expires.
+    ///
+    /// - Throws: An error while communicating with the Stream API.
+    /// - Returns: A type representing the connected user and its state.
+    @available(iOS 13.0, *)
+    @discardableResult public func connectUser(
+        userInfo: UserInfo,
+        tokenProvider: @escaping TokenProvider
+    ) async throws -> ConnectedUser {
+        try await withCheckedThrowingContinuation { continuation in
+            connectUser(userInfo: userInfo, tokenProvider: tokenProvider) { error in
+                continuation.resume(with: error)
+            }
+        }
+        return try await makeConnectedUser()
     }
 
     /// Connects the client with the given user.
@@ -312,8 +344,32 @@ public class ChatClient {
             completion: completion
         )
     }
+    
+    /// Connects the client with the given user.
+    ///
+    /// - Note: Connect endpoint uses an upsert mechanism. If the user does not exist, it will be created with the given `userInfo`. If user already exists, it will get updated with non-nil fields from the `userInfo`.
+    /// - Important: This method can only be used when `token` does not expire. If the token expires, the `connect` API with token provider has to be used.
+    ///
+    /// - Parameters:
+    ///   - userInfo: User info that is passed to the `connect` endpoint for user creation
+    ///   - token: Authorization token for the user.
+    ///
+    /// - Throws: An error while communicating with the Stream API.
+    /// - Returns: A type representing the connected user and its state.
+    @available(iOS 13.0, *)
+    @discardableResult public func connectUser(
+        userInfo: UserInfo,
+        token: Token
+    ) async throws -> ConnectedUser {
+        try await withCheckedThrowingContinuation { continuation in
+            connectUser(userInfo: userInfo, token: token) { error in
+                continuation.resume(with: error)
+            }
+        }
+        return try await makeConnectedUser()
+    }
 
-    /// Connects a guest user
+    /// Connects a guest user.
     /// - Parameters:
     ///   - userInfo: User info that is passed to the `connect` endpoint for user creation
     ///   - extraData: Extra data for user that is passed to the `connect` endpoint for user creation.
@@ -324,13 +380,52 @@ public class ChatClient {
     ) {
         authenticationRepository.connectGuestUser(userInfo: userInfo, completion: { completion?($0) })
     }
+    
+    /// Connects a guest user.
+    ///
+    /// - Parameters:
+    ///   - userInfo: User info that is passed to the `connect` endpoint for user creation
+    ///   - extraData: Extra data for user that is passed to the `connect` endpoint for user creation.
+    ///
+    /// - Throws: An error while communicating with the Stream API.
+    /// - Returns: A type representing the connected user and its state.
+    @available(iOS 13.0, *)
+    @discardableResult public func connectGuestUser(userInfo: UserInfo) async throws -> ConnectedUser {
+        try await withCheckedThrowingContinuation { continuation in
+            connectGuestUser(userInfo: userInfo) { error in
+                continuation.resume(with: error)
+            }
+        }
+        return try await makeConnectedUser()
+    }
 
-    /// Connects anonymous user
+    /// Connects an anonymous user
     /// - Parameter completion: The completion that will be called once the **first** user session for the given token is setup.
     public func connectAnonymousUser(completion: ((Error?) -> Void)? = nil) {
         authenticationRepository.connectAnonymousUser(
             completion: { completion?($0) }
         )
+    }
+    
+    /// Connects an anonymous user.
+    ///
+    /// - Throws: An error while communicating with the Stream API.
+    /// - Returns: A type representing the connected user and its state.
+    @available(iOS 13.0, *)
+    @discardableResult public func connectAnonymousUser() async throws -> ConnectedUser {
+        try await withCheckedThrowingContinuation { continuation in
+            connectAnonymousUser { error in
+                continuation.resume(with: error)
+            }
+        }
+        return try await makeConnectedUser()
+    }
+    
+    /// Sets the user token to the client, this method is only needed to perform API calls
+    /// without connecting as a user.
+    /// You should only use this in special cases like a notification service or other background process
+    public func setToken(token: Token) {
+        authenticationRepository.setToken(token: token, completeTokenWaiters: true)
     }
 
     /// Disconnects the chat client from the chat servers. No further updates from the servers
@@ -351,7 +446,18 @@ public class ChatClient {
         authenticationRepository.cancelTimers()
     }
 
-    /// Disconnects the chat client from the chat servers and removes all the local data related.
+    /// Disconnects the chat client from the chat servers. No further updates from the servers
+    /// are received.
+    @available(iOS 13.0, *)
+    public func disconnect() async {
+        await withCheckedContinuation { continuation in
+            disconnect {
+                continuation.resume()
+            }
+        }
+    }
+    
+    /// Disconnects the chat client form the chat servers and removes all the local data related.
     @available(*, deprecated, message: "Use the asynchronous version of `logout` for increased safety")
     public func logout() {
         logout {}
@@ -364,6 +470,7 @@ public class ChatClient {
         // Stop tracking active components
         activeChannelControllers.removeAllObjects()
         activeChannelListControllers.removeAllObjects()
+        syncRepository.removeAllTracked()
 
         let group = DispatchGroup()
         group.enter()
@@ -385,8 +492,60 @@ public class ChatClient {
             completion()
         }
     }
+    
+    /// Disconnects the chat client form the chat servers and removes all the local data related.
+    @available(iOS 13.0, *)
+    public func logout() async {
+        await withCheckedContinuation { continuation in
+            logout {
+                continuation.resume()
+            }
+        }
+    }
+    
+    // MARK: - Listening for Client Events
+    
+    /// Subscribes to web-socket events of the specified event type.
+    ///
+    /// - Note: The handler is always called on the main thread.
+    ///
+    /// An example of observing connection status changes:
+    /// ```swift
+    /// client.subscribe(toEvent: ConnectionStatusUpdated.self) { connectionEvent in
+    ///     switch connectionEvent.connectionStatus {
+    ///         case .connected:
+    ///           …
+    ///     }
+    /// }
+    /// ```
+    ///
+    /// - SeeAlso: ``Chat.subscribe(toEvent:handler:)`` for subscribing to channel specific events.
+    ///
+    /// - Parameters:
+    ///   - event: The event type to subscribe to (e.g. ``ConnectionStatusUpdated``).
+    ///   - handler: The handler closure which is called when the event happens.
+    ///
+    /// - Returns: A cancellable instance, which you use when you end the subscription. Deallocation of the result will tear down the subscription stream.
+    @available(iOS 13.0, *)
+    public func subscribe<E>(toEvent event: E.Type, handler: @escaping (E) -> Void) -> AnyCancellable where E: Event {
+        eventNotificationCenter.subscribe(to: E.self, handler: handler)
+    }
 
-    /// Fetches the app settings and updates the `ChatClient.appSettings`.
+    /// Subscribes to all the web-socket events.
+    ///
+    /// - SeeAlso: ``Chat.subscribe(handler:)`` for subscribing to channel specific events.
+    ///
+    /// - Parameter handler: The handler closure which is called when the event happens.
+    ///
+    /// - Returns: A cancellable instance, which you use when you end the subscription. Deallocation of the result will tear down the subscription stream.
+    @available(iOS 13.0, *)
+    public func subscribe(_ handler: @escaping (Event) -> Void) -> AnyCancellable {
+        eventNotificationCenter.subscribe(handler: handler)
+    }
+    
+    // MARK: -
+
+    /// Fetches the app settings and updates the ``ChatClient/appSettings``.
     /// - Parameter completion: The completion block once the app settings has finished fetching.
     public func loadAppSettings(
         completion: ((Result<AppSettings, Error>) -> Void)? = nil
@@ -402,6 +561,18 @@ public class ChatClient {
             }
         }
     }
+    
+    /// Fetches the app settings and updates the ``ChatClient/appSettings``.
+    ///
+    /// - Returns: The latest state of app settings.
+    @available(iOS 13.0, *)
+    public func loadAppSettings() async throws -> AppSettings {
+        try await withCheckedThrowingContinuation { continuation in
+            loadAppSettings(completion: continuation.resume(with:))
+        }
+    }
+
+    // MARK: - Internal
 
     func createBackgroundWorkers() {
         guard config.isClientInActiveMode else { return }
@@ -452,13 +623,6 @@ public class ChatClient {
 
     func completeTokenWaiters(token: Token?) {
         authenticationRepository.completeTokenWaiters(token: token)
-    }
-
-    /// Sets the user token to the client, this method is only needed to perform API calls
-    /// without connecting as a user.
-    /// You should only use this in special cases like a notification service or other background process
-    public func setToken(token: Token) {
-        authenticationRepository.setToken(token: token, completeTokenWaiters: true)
     }
 
     /// Starts the process to  refresh the token

@@ -2159,6 +2159,7 @@ final class ChannelController_Tests: XCTestCase {
 
         // Simulate `deleteChannel` call and assert no error is returned
         error = try waitFor { [callbackQueueID] completion in
+            env.channelUpdater?.deleteChannel_completion_result = .success(())
             controller.deleteChannel { error in
                 AssertTestQueue(withId: callbackQueueID)
                 completion(error)
@@ -4158,17 +4159,17 @@ final class ChannelController_Tests: XCTestCase {
         }
         client.setToken(token: .unique(userId: .unique))
 
+        let mockedError = TestError()
+        env.channelUpdater?.markUnread_completion_result = .failure(mockedError)
         var receivedError: Error?
         let expectation = self.expectation(description: "Mark Unread completes")
         controller.markUnread(from: .unique) { result in
             receivedError = result.error
             expectation.fulfill()
         }
-        let mockedError = TestError()
-        env.channelUpdater?.markUnread_completion?(.failure(mockedError))
-
+        
         waitForExpectations(timeout: defaultTimeout)
-
+        
         XCTAssertNotNil(receivedError)
     }
 
@@ -4181,6 +4182,9 @@ final class ChannelController_Tests: XCTestCase {
         }
         client.setToken(token: .unique(userId: .unique))
 
+        let updater = try XCTUnwrap(env.channelUpdater)
+        updater.markUnread_completion_result = .success(ChatChannel.mock(cid: .unique))
+        
         var receivedError: Error?
         let messageId = MessageId.unique
         let expectation = self.expectation(description: "Mark Unread completes")
@@ -4188,9 +4192,6 @@ final class ChannelController_Tests: XCTestCase {
             receivedError = result.error
             expectation.fulfill()
         }
-        let updater = try XCTUnwrap(env.channelUpdater)
-
-        updater.markUnread_completion?(.success(ChatChannel.mock(cid: .unique)))
 
         waitForExpectations(timeout: defaultTimeout)
 
@@ -4212,15 +4213,15 @@ final class ChannelController_Tests: XCTestCase {
         }
         client.setToken(token: .unique(userId: .unique))
 
+        let updater = try XCTUnwrap(env.channelUpdater)
+        updater.markUnread_completion_result = .success(ChatChannel.mock(cid: .unique))
+        
         var receivedError: Error?
         let expectation = self.expectation(description: "Mark Unread completes")
         controller.markUnread(from: messageId) { result in
             receivedError = result.error
             expectation.fulfill()
         }
-        let updater = try XCTUnwrap(env.channelUpdater)
-
-        updater.markUnread_completion?(.success(ChatChannel.mock(cid: .unique)))
 
         waitForExpectations(timeout: defaultTimeout)
 
@@ -5118,22 +5119,26 @@ final class ChannelController_Tests: XCTestCase {
         AssertAsync.willBeTrue(completionError != nil)
     }
 
-    func test_createCall_propagatesErrorFromUpdater() {
+    func test_createCall_propagatesErrorFromUpdater() throws {
         let id: String = .unique
         let type: String = "video"
         var completionError: Error?
 
         // Set completion handler
+        let expectation = XCTestExpectation()
         controller.createCall(id: id, type: type) { result in
             completionError = result.error
+            expectation.fulfill()
         }
 
         // Simulate failed update
         let testError = TestError()
-        env.channelUpdater!.createCall_completion!(.failure(testError))
+        let completion = try XCTUnwrap(env.channelUpdater?.createCall_completion)
+        completion(.failure(testError))
 
         // Error is propagated to completion
-        AssertAsync.willBeEqual(completionError as? TestError, testError)
+        wait(for: [expectation], timeout: defaultTimeout)
+        XCTAssertEqual(completionError as? TestError, testError)
     }
 
     func test_createCall_propagatesResultFromUpdater() {
@@ -5557,9 +5562,10 @@ private class TestEnvironment {
             self.channelUpdater = ChannelUpdater_Mock(
                 channelRepository: $0,
                 callRepository: $1,
-                paginationStateHandler: $2,
-                database: $3,
-                apiClient: $4
+                messageRepository: $2,
+                paginationStateHandler: $3,
+                database: $4,
+                apiClient: $5
             )
             return self.channelUpdater!
         },
