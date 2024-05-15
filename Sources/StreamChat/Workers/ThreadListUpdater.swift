@@ -20,6 +20,9 @@ class ThreadListUpdater: Worker {
                 var threads: [ChatThread] = []
                 self?.database.write({ session in
                     if query.next == nil {
+                        /// For now, there is no `ThreadListQuery.filter` support.
+                        /// So we only have 1  thread list, which is all threads.
+                        /// So when fetching the first page, we need to cleanup all threads.
                         try session.deleteAllThreads()
                     }
                     threads = try session.saveThreadList(payload: threadListPayload).map {
