@@ -176,11 +176,7 @@ final class ChannelList_Tests: XCTestCase {
         try await env.client.mockDatabaseContainer.write { session in
             session.saveChannelList(payload: incomingChannelListPayload, query: self.channelList.query)
         }
-        #if swift(>=5.8)
-        await fulfillment(of: [expectation], timeout: defaultTimeout)
-        #else
-        wait(for: [expectation], timeout: defaultTimeout)
-        #endif
+        await fulfillmentCompatibility(of: [expectation], timeout: defaultTimeout)
         cancellable.cancel()
     }
     
@@ -194,6 +190,11 @@ final class ChannelList_Tests: XCTestCase {
         try await env.client.mockDatabaseContainer.write { session in
             session.saveChannelList(payload: existingChannelListPayload, query: self.channelList.query)
         }
+        // Ensure that the channel is in the state
+        await XCTAssertEqual(
+            existingChannelListPayload.channels.map(\.channel.cid.rawValue),
+            channelList.state.channels.map(\.cid.rawValue)
+        )
         
         // New channel event
         let incomingChannelPayload = makeMatchingChannelPayload(createdAtOffset: 1)
@@ -221,12 +222,7 @@ final class ChannelList_Tests: XCTestCase {
         // Processing the event is picked up by the state
         let eventExpectation = XCTestExpectation(description: "Event processed")
         env.client.eventNotificationCenter.process([event], completion: { eventExpectation.fulfill() })
-
-        #if swift(>=5.8)
-        await fulfillment(of: [eventExpectation, stateExpectation], timeout: defaultTimeout)
-        #else
-        wait(for: [eventExpectation, stateExpectation], timeout: defaultTimeout)
-        #endif
+        await fulfillmentCompatibility(of: [eventExpectation, stateExpectation], timeout: defaultTimeout)
         cancellable.cancel()
     }
     
@@ -242,6 +238,16 @@ final class ChannelList_Tests: XCTestCase {
         // Ensure that the channel is in the state
         XCTAssertEqual(existingChannelListPayload.channels.map(\.channel.cid.rawValue), await channelList.state.channels.map(\.cid.rawValue))
         
+        // Unlinking changes the channel list (change happens after `process(_:postNotifications:completion:)` completion call)
+        let stateExpectation = XCTestExpectation(description: "State changed")
+        let cancellable = await channelList.state.$channels
+            .dropFirst() // ignore initial
+            .sink { channels in
+                // Ensure the unlinking removed it from the state
+                XCTAssertEqual([], channels.map(\.cid))
+                stateExpectation.fulfill()
+            }
+        
         let event = ChannelUpdatedEvent(
             channel: .mock(cid: existingCid, memberCount: 4),
             user: .unique,
@@ -250,13 +256,8 @@ final class ChannelList_Tests: XCTestCase {
         )
         let eventExpectation = XCTestExpectation(description: "Event processed")
         env.client.eventNotificationCenter.process([event], completion: { eventExpectation.fulfill() })
-        #if swift(>=5.8)
-        await fulfillment(of: [eventExpectation], timeout: defaultTimeout)
-        #else
-        wait(for: [eventExpectation], timeout: defaultTimeout)
-        #endif
-        // Ensure the unlinking removed it from the state
-        await XCTAssertEqual([], channelList.state.channels.map(\.cid))
+        await fulfillmentCompatibility(of: [eventExpectation, stateExpectation], timeout: defaultTimeout, enforceOrder: true)
+        cancellable.cancel()
     }
     
     // MARK: - Test Data
@@ -330,5 +331,21 @@ extension ChannelList_Tests {
                 }
             )
         }
+    }
+}
+
+@available(iOS 13.0, *)
+extension XCTestCase {
+    func fulfillmentCompatibility(of expectations: [XCTestExpectation], timeout seconds: TimeInterval, enforceOrder enforceOrderOfFulfillment: Bool = false) async {
+        #if swift(>=5.8)
+        await fulfillment(of: expectations, timeout: seconds, enforceOrder: enforceOrderOfFulfillment)
+        #else
+        await withCheckedContinuation { continuation in
+            Thread.detachNewThread { [self] in
+                wait(for: expectations, timeout: seconds, enforceOrder: enforceOrderOfFulfillment)
+                continuation.resume()
+            }
+        }
+        #endif
     }
 }

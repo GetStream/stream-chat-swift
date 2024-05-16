@@ -29,7 +29,7 @@ class AttachmentQueueUploader: Worker {
     
     // Any because CheckedContinuation<Void, Error> requires iOS 13
     private var continuations = [AttachmentId: Any]()
-    private let continuationsQueue = DispatchQueue(label: "co.getStream.ChatClient.AttachmentQueueUploader")
+    private let continuationsQueue = DispatchQueue(label: "io.getstream.attachment-queue-uploader-continuations")
 
     var minSignificantUploadingProgressChange: Double = 0.05
 
@@ -326,6 +326,7 @@ extension AttachmentQueueUploader {
         result: Result<UploadedAttachment, Error>
     ) {
         continuationsQueue.async {
+            guard !self.continuations.isEmpty else { return }
             guard let continuation = self.continuations.removeValue(forKey: attachmentId) as? CheckedContinuation<UploadedAttachment, Error> else { return }
             continuation.resume(with: result)
         }

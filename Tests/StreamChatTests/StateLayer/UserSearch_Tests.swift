@@ -75,11 +75,7 @@ final class UserSearch_Tests: XCTestCase {
         env.userListUpdaterMock.fetch_query_called = { _ in
             expectation1.fulfill()
         }
-        #if swift(>=5.8)
-        await fulfillment(of: [expectation1], timeout: defaultTimeout)
-        #else
-        wait(for: [expectation1], timeout: defaultTimeout)
-        #endif
+        await fulfillmentCompatibility(of: [expectation1], timeout: defaultTimeout)
         
         // Search for "name"
         async let result2 = try await userSearch.search(term: "name")
@@ -87,11 +83,7 @@ final class UserSearch_Tests: XCTestCase {
         env.userListUpdaterMock.fetch_query_called = { _ in
             expectation2.fulfill()
         }
-        #if swift(>=5.8)
-        await fulfillment(of: [expectation2], timeout: defaultTimeout)
-        #else
-        wait(for: [expectation2], timeout: defaultTimeout)
-        #endif
+        await fulfillmentCompatibility(of: [expectation2], timeout: defaultTimeout)
         
         XCTAssertEqual(2, env.userListUpdaterMock.fetch_completions.count)
         

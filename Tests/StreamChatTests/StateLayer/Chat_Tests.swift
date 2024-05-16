@@ -559,13 +559,7 @@ final class Chat_Tests: XCTestCase {
             with: apiResponse.message.text,
             messageId: apiResponse.message.id
         )
-        
-        #if swift(>=5.8)
-        await fulfillment(of: [notificationExpectation], timeout: defaultTimeout)
-        #else
-        wait(for: [notificationExpectation], timeout: defaultTimeout)
-        #endif
-        
+        await fulfillmentCompatibility(of: [notificationExpectation], timeout: defaultTimeout)
         XCTAssertEqual(text, message.text)
         await XCTAssertEqual(1, chat.state.messages.count)
         let messages = await chat.state.messages
@@ -745,8 +739,8 @@ final class Chat_Tests: XCTestCase {
         env.client.mockAPIClient.test_mockResponseResult(.success(channelPayload))
         try await chat.loadMessages(around: channelPayload.messages[1].id, limit: 2)
         
-        XCTAssertEqual(channelPayload.messages.map(\.id), await chat.state.messages.map(\.id))
         await MainActor.run {
+            XCTAssertEqual(channelPayload.messages.map(\.id), chat.state.messages.map(\.id))
             XCTAssertEqual(false, chat.state.hasLoadedAllOldestMessages)
             XCTAssertEqual(false, chat.state.hasLoadedAllNewestMessages)
             XCTAssertEqual(true, chat.state.isJumpingToMessage)
@@ -1114,13 +1108,7 @@ final class Chat_Tests: XCTestCase {
             messageId: apiResponse.message.id
         )
         XCTAssertEqual(apiResponse.message.id, replyMessage.id)
-        
-        #if swift(>=5.8)
-        await fulfillment(of: [notificationExpectation], timeout: defaultTimeout)
-        #else
-        wait(for: [notificationExpectation], timeout: defaultTimeout)
-        #endif
-        
+        await fulfillmentCompatibility(of: [notificationExpectation], timeout: defaultTimeout)
         let messageState = try await chat.messageState(for: lastMessageId)
         await XCTAssertEqual(lastMessageId, messageState.message.id)
         await XCTAssertEqual(apiResponse.message.id, messageState.replies.last?.id)

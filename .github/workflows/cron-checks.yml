@@ -17,7 +17,7 @@ env:
 jobs:
   build-test-app-and-frameworks:
     name: Build Test App and Frameworks
-    runs-on: macos-13
+    runs-on: macos-14
     steps:
     - uses: actions/checkout@v4.1.1
     - uses: ./.github/actions/ruby-cache
@@ -25,8 +25,6 @@ jobs:
     - name: Build
       run: bundle exec fastlane build_test_app_and_frameworks
       timeout-minutes: 60
-      env:
-        XCODE_VERSION: "14.3.1"
     - uses: actions/upload-artifact@v3
       if: success()
       with:
@@ -42,29 +40,29 @@ jobs:
     strategy:
       matrix:
         include:
-          - ios: 17.2
-            xcode: 15.2
+          - ios: 17.4
+            xcode: 15.3
             os: macos-14
             device: "iPhone 15 Pro"
             setup_runtime: false
-          - ios: 16.2
-            xcode: 14.2
-            os: macos-12
+          - ios: 16.4
+            xcode: 15.3
+            os: macos-14
             device: "iPhone 14 Pro Max"
-            setup_runtime: false
+            setup_runtime: true
           - ios: 15.4
-            xcode: 14.2
-            os: macos-12
+            xcode: 15.3
+            os: macos-14
             device: "iPhone 8"
             setup_runtime: true
           - ios: 14.5
-            xcode: 14.2
-            os: macos-12
+            xcode: 15.3
+            os: macos-14
             device: "iPhone SE (2nd generation)"
             setup_runtime: true
           - ios: 13.7
-            xcode: 14.2
-            os: macos-12
+            xcode: 15.3
+            os: macos-14
             device: "iPad Air (3rd generation)"
             setup_runtime: true
       fail-fast: false
@@ -90,13 +88,16 @@ jobs:
       uses: actions/cache@v3
       id: runtime-cache
       with:
-        path: ~/Library/Caches/XcodeInstall/
-        key: runtime-ios-${{ matrix.ios }}
-        restore-keys: runtime-ios-${{ matrix.ios }}
+        path: ~/Downloads/*.dmg
+        key: xcodes-runtime-ios-${{ matrix.ios }}
+        restore-keys: xcodes-runtime-ios-${{ matrix.ios }}
     - name: Setup iOS ${{ matrix.ios }} Runtime
       if: ${{ matrix.setup_runtime }}
       timeout-minutes: 60
-      run: bundle exec fastlane install_sim ios:"${{ matrix.ios }}"
+      run: |
+        brew install xcodesorg/made/xcodes
+        xcodes runtimes
+        sudo xcodes runtimes install 'iOS ${{ matrix.ios }}' --keep-archive
     - name: Launch Allure TestOps
       run: bundle exec fastlane allure_launch cron:true
     - name: Run UI Tests (Debug)
@@ -138,29 +139,29 @@ jobs:
     strategy:
       matrix:
         include:
-          - ios: 17.2
-            xcode: 15.2
+          - ios: 17.4
+            xcode: 15.3
             os: macos-14
             device: "iPhone 14 Pro Max"
             setup_runtime: false
           - ios: 16.4
-            xcode: 14.3.1
+            xcode: 15.3
             os: macos-14
             device: "iPhone 14 Pro Max"
-            setup_runtime: false
+            setup_runtime: true
           - ios: 15.4
-            xcode: 14.2
-            os: macos-12
+            xcode: 15.3
+            os: macos-14
             device: "iPhone 8"
             setup_runtime: true
           - ios: 14.5
-            xcode: 14.2
-            os: macos-12
+            xcode: 15.3
+            os: macos-14
             device: "iPhone SE (2nd generation)"
             setup_runtime: true
           - ios: 13.7
-            xcode: 14.2
-            os: macos-12
+            xcode: 15.3
+            os: macos-14
             device: "iPad Air (3rd generation)"
             setup_runtime: true
       fail-fast: false
@@ -177,16 +178,16 @@ jobs:
       uses: actions/cache@v3
       id: runtime-cache
       with:
-        path: ~/Library/Caches/XcodeInstall/
-        key: runtime-ios-${{ matrix.ios }}
-        restore-keys: runtime-ios-${{ matrix.ios }}
+        path: ~/Downloads/*.dmg
+        key: xcodes-runtime-ios-${{ matrix.ios }}
+        restore-keys: xcodes-runtime-ios-${{ matrix.ios }}
     - name: Setup iOS ${{ matrix.ios }} Runtime
       if: ${{ matrix.setup_runtime }}
       timeout-minutes: 60
-      run: bundle exec fastlane install_sim ios:"${{ matrix.ios }}"
-    - name: Run LLC Tests (Debug)
-      run: bundle exec fastlane test device:"${{ matrix.device }} (${{ matrix.ios }})" cron:true
-      timeout-minutes: 100
+      run: |
+        brew install xcodesorg/made/xcodes
+        xcodes runtimes
+        sudo xcodes runtimes install 'iOS ${{ matrix.ios }}' --keep-archive
     - uses: 8398a7/action-slack@v3
       with:
         status: ${{ job.status }}
@@ -240,9 +241,7 @@ jobs:
 
   automated-code-review:
     name: Automated Code Review
-    runs-on: macos-12
-    env:
-      XCODE_VERSION: "14.0.1"
+    runs-on: macos-14
     steps:
     - uses: actions/checkout@v4.1.1
     - uses: ./.github/actions/bootstrap

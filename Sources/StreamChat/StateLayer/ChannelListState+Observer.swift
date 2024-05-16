@@ -44,7 +44,7 @@ extension ChannelListState {
                 query: query,
                 filter: dynamicFilter,
                 clientConfig: clientConfig,
-                databaseContainer: database,
+                context: database.stateLayerContext,
                 worker: channelListUpdater
             )
         }

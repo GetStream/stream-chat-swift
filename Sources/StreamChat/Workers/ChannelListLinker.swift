@@ -2,6 +2,7 @@
 // Copyright © 2024 Stream.io Inc. All rights reserved.
 //
 
+import CoreData
 import Foundation
 
 /// When we receive events, we need to check if a channel should be added or removed from
@@ -13,7 +14,7 @@ import Foundation
 ///   We don't try to add it to the current query to not mess with pagination.
 final class ChannelListLinker {
     private let clientConfig: ChatClientConfig
-    private let databaseContainer: DatabaseContainer
+    private let context: NSManagedObjectContext
     private var eventObservers = [EventObserver]()
     private let filter: ((ChatChannel) -> Bool)?
     private let query: ChannelListQuery
@@ -23,11 +24,11 @@ final class ChannelListLinker {
         query: ChannelListQuery,
         filter: ((ChatChannel) -> Bool)?,
         clientConfig: ChatClientConfig,
-        databaseContainer: DatabaseContainer,
+        context: NSManagedObjectContext,
         worker: ChannelListUpdater
     ) {
         self.clientConfig = clientConfig
-        self.databaseContainer = databaseContainer
+        self.context = context
         self.filter = filter
         self.query = query
         self.worker = worker
@@ -58,8 +59,7 @@ final class ChannelListLinker {
             EventObserver(
                 notificationCenter: nc,
                 transform: { $0 as? ChannelVisibleEvent },
-                callback: { [weak self, databaseContainer] event in
-                    let context = databaseContainer.backgroundReadOnlyContext
+                callback: { [weak self, context] event in
                     context.perform {
                         guard let channel = try? context.channel(cid: event.cid)?.asModel() else { return }
                         self?.linkChannelIfNeeded(channel)
@@ -70,9 +70,7 @@ final class ChannelListLinker {
     }
 
     private func isInChannelList(_ channel: ChatChannel, completion: @escaping (Bool) -> Void) {
-        let context = databaseContainer.backgroundReadOnlyContext
-        context.performAndWait { [weak self] in
-            guard let self else { return }
+        context.perform { [context] in
             if let (channelDTO, queryDTO) = context.getChannelWithQuery(cid: channel.cid, query: self.query) {
                 let isPresent = queryDTO.channels.contains(channelDTO)
                 completion(isPresent)

@@ -41,12 +41,7 @@ final class StateLayerDatabaseObserver_Tests: XCTestCase {
         }
         
         try await waitForDuplicateCallbacks()
-        
-        #if swift(>=5.8)
-        await fulfillment(of: [expectation], timeout: defaultTimeout)
-        #else
-        wait(for: [expectation], timeout: defaultTimeout)
-        #endif
+        await fulfillmentCompatibility(of: [expectation], timeout: defaultTimeout)
         XCTAssertEqual("first", observer.item?.name)
         XCTAssertEqual(1, changeCount)
     }
@@ -72,12 +67,7 @@ final class StateLayerDatabaseObserver_Tests: XCTestCase {
         }
         
         try await waitForDuplicateCallbacks()
-        
-        #if swift(>=5.8)
-        await fulfillment(of: [expectation], timeout: defaultTimeout)
-        #else
-        wait(for: [expectation], timeout: defaultTimeout)
-        #endif
+        await fulfillmentCompatibility(of: [expectation], timeout: defaultTimeout)
         XCTAssertEqual("second", observer.item?.name)
         XCTAssertEqual(1, changeCount)
     }
@@ -104,11 +94,7 @@ final class StateLayerDatabaseObserver_Tests: XCTestCase {
         
         try await waitForDuplicateCallbacks()
         
-        #if swift(>=5.8)
-        await fulfillment(of: [expectation], timeout: defaultTimeout)
-        #else
-        wait(for: [expectation], timeout: defaultTimeout)
-        #endif
+        await fulfillmentCompatibility(of: [expectation], timeout: defaultTimeout)
         XCTAssertEqual("second", observer.item?.name)
         XCTAssertEqual("team2", observer.item?.team)
         XCTAssertEqual(2, changeCount)
@@ -136,12 +122,7 @@ final class StateLayerDatabaseObserver_Tests: XCTestCase {
         }
         
         try await waitForDuplicateCallbacks()
-        
-        #if swift(>=5.8)
-        await fulfillment(of: [expectation], timeout: defaultTimeout)
-        #else
-        wait(for: [expectation], timeout: defaultTimeout)
-        #endif
+        await fulfillmentCompatibility(of: [expectation], timeout: defaultTimeout)
         XCTAssertEqual(8, observer.items.count)
         let expectedIds = (firstPayload.messages + secondPayload.messages).map(\.id)
         XCTAssertEqual(expectedIds, observer.items.map(\.id))
@@ -172,12 +153,7 @@ final class StateLayerDatabaseObserver_Tests: XCTestCase {
         }
         
         try await waitForDuplicateCallbacks()
-        
-        #if swift(>=5.8)
-        await fulfillment(of: [expectation], timeout: defaultTimeout)
-        #else
-        wait(for: [expectation], timeout: defaultTimeout)
-        #endif
+        await fulfillmentCompatibility(of: [expectation], timeout: defaultTimeout)
         XCTAssertEqual(3, observer.items.count)
         XCTAssertEqual(secondPayload.messages.map(\.id), observer.items.map(\.id))
         XCTAssertEqual(1, changeCount)
@@ -209,12 +185,7 @@ final class StateLayerDatabaseObserver_Tests: XCTestCase {
         }
         
         try await waitForDuplicateCallbacks()
-        
-        #if swift(>=5.8)
-        await fulfillment(of: [expectation], timeout: defaultTimeout)
-        #else
-        wait(for: [expectation], timeout: defaultTimeout)
-        #endif
+        await fulfillmentCompatibility(of: [expectation], timeout: defaultTimeout)
         XCTAssertEqual(11, observer.items.count)
         let expectedIds = (firstPayload.messages + secondPayload.messages + thirdPayload.messages).map(\.id)
         XCTAssertEqual(expectedIds, observer.items.map(\.id))
