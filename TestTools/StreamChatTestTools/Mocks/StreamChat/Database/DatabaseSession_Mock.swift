@@ -369,6 +369,10 @@ class DatabaseSession_Mock: DatabaseSession {
         underlyingSession.loadChannelRead(cid: cid, userId: userId)
     }
 
+    func thread(parentMessageId: MessageId, cache: PreWarmedCache?) -> ThreadDTO? {
+        underlyingSession.thread(parentMessageId: parentMessageId, cache: cache)
+    }
+
     func saveThreadList(payload: ThreadListPayload) -> [ThreadDTO] {
         underlyingSession.saveThreadList(payload: payload)
     }
@@ -383,6 +387,10 @@ class DatabaseSession_Mock: DatabaseSession {
 
     func saveThreadRead(payload: ThreadReadPayload, parentMessageId: String, cache: PreWarmedCache?) throws -> ThreadReadDTO {
         try underlyingSession.saveThreadRead(payload: payload, parentMessageId: parentMessageId, cache: cache)
+    }
+
+    func deleteAllThreads() throws {
+        try underlyingSession.deleteAllThreads()
     }
 }
 

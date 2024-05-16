@@ -1421,6 +1421,8 @@
 		AD94904D2BF392DB00E69224 /* ThreadListUpdater.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD94904C2BF392DB00E69224 /* ThreadListUpdater.swift */; };
 		AD94904E2BF392DB00E69224 /* ThreadListUpdater.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD94904C2BF392DB00E69224 /* ThreadListUpdater.swift */; };
 		AD9490572BF3BA9600E69224 /* ThreadListController.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD9490562BF3BA9600E69224 /* ThreadListController.swift */; };
+		AD94905A2BF5702700E69224 /* ThreadListUpdater_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD9490582BF5701D00E69224 /* ThreadListUpdater_Tests.swift */; };
+		AD94905D2BF630D900E69224 /* ThreadPayload.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD94905B2BF630D200E69224 /* ThreadPayload.swift */; };
 		AD95FD0D28F991ED00DBDF41 /* ImageResize.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD95FD0C28F991ED00DBDF41 /* ImageResize.swift */; };
 		AD95FD0E28F991ED00DBDF41 /* ImageResize.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD95FD0C28F991ED00DBDF41 /* ImageResize.swift */; };
 		AD95FD1128FA038900DBDF41 /* ImageDownloadOptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD95FD1028FA038900DBDF41 /* ImageDownloadOptions.swift */; };
@@ -3990,6 +3992,8 @@
 		AD91C35328A5550C004D1E45 /* ChatMessageListVC+DiffKit.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ChatMessageListVC+DiffKit.swift"; sourceTree = "<group>"; };
 		AD94904C2BF392DB00E69224 /* ThreadListUpdater.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThreadListUpdater.swift; sourceTree = "<group>"; };
 		AD9490562BF3BA9600E69224 /* ThreadListController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThreadListController.swift; sourceTree = "<group>"; };
+		AD9490582BF5701D00E69224 /* ThreadListUpdater_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThreadListUpdater_Tests.swift; sourceTree = "<group>"; };
+		AD94905B2BF630D200E69224 /* ThreadPayload.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThreadPayload.swift; sourceTree = "<group>"; };
 		AD95FD0C28F991ED00DBDF41 /* ImageResize.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageResize.swift; sourceTree = "<group>"; };
 		AD95FD1028FA038900DBDF41 /* ImageDownloadOptions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageDownloadOptions.swift; sourceTree = "<group>"; };
 		AD99A7CD28EF17CA005185DF /* SlackReactonsItemView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SlackReactonsItemView.swift; sourceTree = "<group>"; };
@@ -6347,6 +6351,7 @@
 		A344076127D753530044F150 /* DummyData */ = {
 			isa = PBXGroup;
 			children = (
+				AD94905B2BF630D200E69224 /* ThreadPayload.swift */,
 				84C11BDE27FB2B4600000A9E /* ChannelPayload.swift */,
 				79D7A1CD2593A40900D3C2BF /* ChannelDetailPayload.swift */,
 				A3D9D68227EDE35100725066 /* ChatChannel.swift */,
@@ -6646,6 +6651,7 @@
 		A364D09627D0C56C0029857A /* Workers */ = {
 			isa = PBXGroup;
 			children = (
+				AD9490582BF5701D00E69224 /* ThreadListUpdater_Tests.swift */,
 				792921C424C0479700116BBB /* ChannelListUpdater_Tests.swift */,
 				882C5765252C7F7000E60C44 /* ChannelMemberListUpdater_Tests.swift */,
 				88F6DF93252C8866009A8AF0 /* ChannelMemberUpdater_Tests.swift */,
@@ -10524,6 +10530,7 @@
 				A311B43627E8BC8400CFCF6D /* ChannelMemberController_Delegate.swift in Sources */,
 				A3C3BC7827E8AA9400224761 /* ChannelListQuery+Equatable.swift in Sources */,
 				82E6553B2B0677EA00D64906 /* TestRunnerEnvironment.swift in Sources */,
+				AD94905D2BF630D900E69224 /* ThreadPayload.swift in Sources */,
 				A3C3BC3B27E87F5100224761 /* EventMiddleware_Mock.swift in Sources */,
 				A311B43727E8BC8400CFCF6D /* ChannelController_Delegate.swift in Sources */,
 				A344077427D753530044F150 /* ChannelUnreadCount_Mock.swift in Sources */,
@@ -11122,6 +11129,7 @@
 				AD6E32962BBB10890073831B /* ThreadListPayload_Tests.swift in Sources */,
 				8A0175F425013B6400570345 /* TypingEventSender_Tests.swift in Sources */,
 				C149B744282A61FF00F25BED /* NSManagedObject+Validation_Tests.swift in Sources */,
+				AD94905A2BF5702700E69224 /* ThreadListUpdater_Tests.swift in Sources */,
 				8875CF9B2587A89F00BBA6AC /* AttachmentId_Tests.swift in Sources */,
 				79D6CF2125FA6ACF00BE2EEC /* MemberEventMiddleware_Tests.swift in Sources */,
 				40B345F429C46AE500B96027 /* AudioPlaybackState_Tests.swift in Sources */,
