@@ -373,6 +373,61 @@ final class MessageSender_Tests: XCTestCase {
             $0.value(.success(message))
         }
     }
+    
+    func test_sender_sendsThreeMessagesWhereTheMiddleFailsOnce_thenOrderIsCorrect() throws {
+        var failsSecondMessage = true
+        messageRepository.sendMessageResultHandler = { messageId, resultProvider in
+            if messageId == "2", failsSecondMessage {
+                failsSecondMessage = false
+                resultProvider(.failure(.failedToSendMessage(TestError())))
+            } else {
+                resultProvider(
+                    .success(
+                        .mock(
+                            id: messageId,
+                            cid: self.cid,
+                            text: "Message sent",
+                            author: .unique,
+                            createdAt: Date()
+                        )
+                    )
+                )
+            }
+        }
+        
+        let pendingMessageIds = ["1", "2", "3"]
+        let sendFailureExpectations = pendingMessageIds[1...].map { XCTestExpectation(description: $0) }
+        let sendSuccessExpectations = pendingMessageIds.map { XCTestExpectation(description: $0) }
+        sender.didProcessMessage = { messageId, result in
+            switch result {
+            case .success:
+                sendSuccessExpectations.first(where: { $0.description == messageId })?.fulfill()
+            case .failure:
+                sendFailureExpectations.first(where: { $0.description == messageId })?.fulfill()
+            }
+        }
+        
+        try database.writeSynchronously { session in
+            try self.createMessage(id: "1", in: session)
+            try self.createMessage(id: "2", in: session)
+            try self.createMessage(id: "3", in: session)
+        }
+        
+        // Since the second failed, the third one must fail as well
+        wait(for: sendFailureExpectations, timeout: defaultTimeout, enforceOrder: true)
+        
+        // Messages are in the failed state, simulate user manually resending them
+        // The order depends on if user tries to resend the 2 or 3
+        try database.writeSynchronously { session in
+            session.message(id: "2")?.localMessageState = .pendingSend
+        }
+        try database.writeSynchronously { session in
+            session.message(id: "3")?.localMessageState = .pendingSend
+        }
+        
+        // Message sender should pick up changes and try to send both
+        wait(for: sendSuccessExpectations, timeout: defaultTimeout, enforceOrder: true)
+    }
 
     func test_sender_sendsMessage_whenError_sendsEvent() throws {
         var messageId: MessageId!
@@ -455,6 +510,22 @@ final class MessageSender_Tests: XCTestCase {
 
         // Then
         wait(for: [sessionMock.rescueMessagesExpectation], timeout: defaultTimeout)
+    }
+    
+    // MARK: -
+    
+    @discardableResult func createMessage(id: MessageId, in session: DatabaseSession) throws -> MessageId {
+        let dto = try session.createNewMessage(
+            in: cid,
+            messageId: id,
+            text: "",
+            pinning: nil,
+            quotedMessageId: nil,
+            skipPush: false,
+            skipEnrichUrl: false
+        )
+        dto.localMessageState = .pendingSend
+        return dto.id
     }
 }
 

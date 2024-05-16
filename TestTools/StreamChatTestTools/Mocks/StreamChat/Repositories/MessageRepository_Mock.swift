@@ -13,6 +13,7 @@ final class MessageRepository_Mock: MessageRepository, Spy {
 
     var sendMessageResult: Result<ChatMessage, MessageRepositoryError>?
     @Atomic var sendMessageCalls: [MessageId: (Result<ChatMessage, MessageRepositoryError>) -> Void] = [:]
+    var sendMessageResultHandler: ((MessageId, (Result<ChatMessage, MessageRepositoryError>) -> Void) -> Void)?
     var getMessageResult: Result<ChatMessage, Error>?
     var receivedGetMessageStore: Bool?
     var saveSuccessfullyDeletedMessageError: Error?
@@ -30,6 +31,10 @@ final class MessageRepository_Mock: MessageRepository, Spy {
             }
         }
 
+        if let sendMessageResultHandler {
+            sendMessageResultHandler(messageId, completion)
+        }
+        
         if let sendMessageResult = sendMessageResult {
             completion(sendMessageResult)
         }
@@ -74,5 +79,6 @@ final class MessageRepository_Mock: MessageRepository, Spy {
         spyState.clear()
         sendMessageCalls.removeAll()
         sendMessageResult = nil
+        sendMessageResultHandler = nil
     }
 }

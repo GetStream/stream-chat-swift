@@ -38,6 +38,9 @@ class MessageSender: Worker {
         qos: .userInitiated,
         attributes: [.concurrent]
     )
+    
+    /// Notifies when the message queue has finished processing the message.
+    var didProcessMessage: ((MessageId, Result<ChatMessage, MessageRepositoryError>) -> Void)?
 
     let messageRepository: MessageRepository
     let eventsNotificationCenter: EventNotificationCenter
@@ -125,7 +128,7 @@ class MessageSender: Worker {
 // MARK: - Chat State Layer
 
 @available(iOS 13.0, *)
-extension MessageSender: MessageSendingQueueDelegate {
+extension MessageSender {
     func waitForAPIRequest(messageId: MessageId) async throws -> ChatMessage {
         try await withCheckedThrowingContinuation { continuation in
             registerContinuation(forMessage: messageId, continuation: continuation)
@@ -138,15 +141,24 @@ extension MessageSender: MessageSendingQueueDelegate {
         }
     }
     
+    func completeContinuation(for messageId: MessageId, with result: Result<ChatMessage, MessageRepositoryError>) {
+        sendingDispatchQueue.async(flags: .barrier) {
+            guard let continuation = self.continuations.removeValue(forKey: messageId) as? CheckedContinuation<ChatMessage, Error> else { return }
+            continuation.resume(with: result)
+        }
+    }
+}
+
+extension MessageSender: MessageSendingQueueDelegate {
     fileprivate func messageSendingQueue(
         _ queue: MessageSendingQueue,
         didProcess messageId: MessageId,
         result: Result<ChatMessage, MessageRepositoryError>
     ) {
-        sendingDispatchQueue.async(flags: .barrier) {
-            guard let continuation = self.continuations.removeValue(forKey: messageId) as? CheckedContinuation<ChatMessage, Error> else { return }
-            continuation.resume(with: result)
+        if #available(iOS 13.0, *) {
+            completeContinuation(for: messageId, with: result)
         }
+        didProcessMessage?(messageId, result)
     }
 }
 
@@ -195,31 +207,36 @@ private class MessageSendingQueue {
             // Sort the messages and send the oldest one
             // If this proves to be a bottleneck in the future, we might
             // switch to using a custom `OrderedSet`
-            guard let request = self?.requests.sorted(by: { $0.createdLocallyAt < $1.createdLocallyAt }).first else { return }
+            guard let sortedRequests = self?.requests.sorted(by: { $0.createdLocallyAt < $1.createdLocallyAt }) else { return }
+            guard let request = sortedRequests.first else { return }
 
             self?.messageRepository.sendMessage(with: request.messageId) { [weak self] result in
-                guard let self else { return }
-                self.removeRequestAndContinue(request)
-                if let error = result.error {
-                    switch error {
-                    case .messageDoesNotExist,
-                         .messageNotPendingSend,
-                         .messageDoesNotHaveValidChannel:
-                        let event = NewMessageErrorEvent(messageId: request.messageId, error: error)
-                        self.eventsNotificationCenter.process(event)
-                    case let .failedToSendMessage(error):
-                        let event = NewMessageErrorEvent(messageId: request.messageId, error: error)
-                        self.eventsNotificationCenter.process(event)
-                    }
+                // If we failed to send a message we must fail all the next messages as well for preserving the message order
+                if let error = result.error, case .failedToSendMessage = error {
+                    sortedRequests.forEach { self?.handleSendRequestResult(request: $0, result: result) }
+                } else {
+                    self?.handleSendRequestResult(request: request, result: result)
                 }
-                self.delegate?.messageSendingQueue(self, didProcess: request.messageId, result: result)
+                self?.sendNextMessage()
             }
         }
     }
 
-    private func removeRequestAndContinue(_ request: SendRequest) {
+    private func handleSendRequestResult(request: MessageSendingQueue.SendRequest, result: Result<ChatMessage, MessageRepositoryError>) {
         _requests.mutate { $0.remove(request) }
-        sendNextMessage()
+        if let error = result.error {
+            switch error {
+            case .messageDoesNotExist,
+                 .messageNotPendingSend,
+                 .messageDoesNotHaveValidChannel:
+                let event = NewMessageErrorEvent(messageId: request.messageId, error: error)
+                eventsNotificationCenter.process(event)
+            case let .failedToSendMessage(error):
+                let event = NewMessageErrorEvent(messageId: request.messageId, error: error)
+                eventsNotificationCenter.process(event)
+            }
+        }
+        delegate?.messageSendingQueue(self, didProcess: request.messageId, result: result)
     }
 }
 
