@@ -110,9 +110,9 @@ internal class ChatThreadListController: DataController, DelegateCallable, DataS
             case let .success(threads):
                 self?.threadListObserver.refreshItems { [weak self] in
                     self?.state = .remoteDataFetched
+                    self?.hasLoadedAllOlderThreads = threads.count < limit
+                    self?.callback { completion?(nil) }
                 }
-                self?.hasLoadedAllOlderThreads = threads.count < limit
-                self?.callback { completion?(nil) }
             case let .failure(error):
                 self?.state = .remoteDataFetchFailed(ClientError(with: error))
                 self?.callback { completion?(error) }
@@ -201,6 +201,6 @@ internal protocol ChatThreadListControllerDelegate: DataControllerStateDelegate 
     ///   - changes: The change to the list of threads.
     func controller(
         _ controller: ChatThreadListController,
-        didChangeThreads threads: [ListChange<ChatThread>]
+        didChangeThreads changes: [ListChange<ChatThread>]
     )
 }

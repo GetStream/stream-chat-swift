@@ -1423,6 +1423,9 @@
 		AD9490572BF3BA9600E69224 /* ThreadListController.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD9490562BF3BA9600E69224 /* ThreadListController.swift */; };
 		AD94905A2BF5702700E69224 /* ThreadListUpdater_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD9490582BF5701D00E69224 /* ThreadListUpdater_Tests.swift */; };
 		AD94905D2BF630D900E69224 /* ThreadPayload.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD94905B2BF630D200E69224 /* ThreadPayload.swift */; };
+		AD9490602BF65DE400E69224 /* ChatThreadListController_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD94905F2BF65DE400E69224 /* ChatThreadListController_Tests.swift */; };
+		AD9490622BF66D1E00E69224 /* ThreadListUpdater_Mock.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD9490612BF66D1E00E69224 /* ThreadListUpdater_Mock.swift */; };
+		AD9490662BF6756200E69224 /* ChatThread_Mock.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD9490652BF6756200E69224 /* ChatThread_Mock.swift */; };
 		AD95FD0D28F991ED00DBDF41 /* ImageResize.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD95FD0C28F991ED00DBDF41 /* ImageResize.swift */; };
 		AD95FD0E28F991ED00DBDF41 /* ImageResize.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD95FD0C28F991ED00DBDF41 /* ImageResize.swift */; };
 		AD95FD1128FA038900DBDF41 /* ImageDownloadOptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD95FD1028FA038900DBDF41 /* ImageDownloadOptions.swift */; };
@@ -3994,6 +3997,9 @@
 		AD9490562BF3BA9600E69224 /* ThreadListController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThreadListController.swift; sourceTree = "<group>"; };
 		AD9490582BF5701D00E69224 /* ThreadListUpdater_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThreadListUpdater_Tests.swift; sourceTree = "<group>"; };
 		AD94905B2BF630D200E69224 /* ThreadPayload.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThreadPayload.swift; sourceTree = "<group>"; };
+		AD94905F2BF65DE400E69224 /* ChatThreadListController_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatThreadListController_Tests.swift; sourceTree = "<group>"; };
+		AD9490612BF66D1E00E69224 /* ThreadListUpdater_Mock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThreadListUpdater_Mock.swift; sourceTree = "<group>"; };
+		AD9490652BF6756200E69224 /* ChatThread_Mock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatThread_Mock.swift; sourceTree = "<group>"; };
 		AD95FD0C28F991ED00DBDF41 /* ImageResize.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageResize.swift; sourceTree = "<group>"; };
 		AD95FD1028FA038900DBDF41 /* ImageDownloadOptions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageDownloadOptions.swift; sourceTree = "<group>"; };
 		AD99A7CD28EF17CA005185DF /* SlackReactonsItemView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SlackReactonsItemView.swift; sourceTree = "<group>"; };
@@ -6330,6 +6336,7 @@
 				A344075227D753530044F150 /* ChatMessageReaction_Mock.swift */,
 				A344075E27D753530044F150 /* ChatUser_Mock.swift */,
 				A344075427D753530044F150 /* CurrentChatUser_Mock.swift */,
+				AD9490652BF6756200E69224 /* ChatThread_Mock.swift */,
 				A344075527D753530044F150 /* Attachments */,
 			);
 			path = "Models + Extensions";
@@ -6683,6 +6690,7 @@
 				8ACFBF642507AA440093C6FD /* TypingEventsSender_Mock.swift */,
 				DA84072F2526002D005A0F62 /* UserListUpdater_Mock.swift */,
 				8819DFE825262EBA00FD1A50 /* UserUpdater_Mock.swift */,
+				AD9490612BF66D1E00E69224 /* ThreadListUpdater_Mock.swift */,
 				A364D09A27D0C5FD0029857A /* Background */,
 			);
 			path = Workers;
@@ -6833,6 +6841,7 @@
 		A364D0A527D127E00029857A /* Controllers */ = {
 			isa = PBXGroup;
 			children = (
+				AD94905E2BF65CC500E69224 /* ThreadListController */,
 				A364D0A827D128650029857A /* ChannelController */,
 				A364D0A927D128830029857A /* ChannelListController */,
 				A364D0AA27D128BB0029857A /* ChannelWatcherListController */,
@@ -8183,6 +8192,14 @@
 			isa = PBXGroup;
 			children = (
 				AD9490562BF3BA9600E69224 /* ThreadListController.swift */,
+			);
+			path = ThreadListController;
+			sourceTree = "<group>";
+		};
+		AD94905E2BF65CC500E69224 /* ThreadListController */ = {
+			isa = PBXGroup;
+			children = (
+				AD94905F2BF65DE400E69224 /* ChatThreadListController_Tests.swift */,
 			);
 			path = ThreadListController;
 			sourceTree = "<group>";
@@ -10556,6 +10573,7 @@
 				A3C3BC1B27E87EFE00224761 /* ChatClient_Mock.swift in Sources */,
 				A3C3BC6727E8AA0A00224761 /* ChatMessage+Unique.swift in Sources */,
 				A3C3BC3427E87F2900224761 /* SyncRepository_Mock.swift in Sources */,
+				AD9490662BF6756200E69224 /* ChatThread_Mock.swift in Sources */,
 				A3C3BC7B27E8AA9400224761 /* EndpoinPath+Equatable.swift in Sources */,
 				A344078727D753530044F150 /* CurrentUserPayload.swift in Sources */,
 				A3C3BC2927E87F2000224761 /* ChannelDetailPayload.swift in Sources */,
@@ -11335,6 +11353,7 @@
 				4042968F29FBCE1D0089126D /* AudioSamplesExtractor_Tests.swift in Sources */,
 				40789D3F29F6AFC40018C2BB /* Debouncer_Tests.swift in Sources */,
 				796610BB248E687000761629 /* EventMiddleware_Tests.swift in Sources */,
+				AD9490602BF65DE400E69224 /* ChatThreadListController_Tests.swift in Sources */,
 				40B345F729C46AE500B96027 /* StreamPlayerObserver_Tests.swift in Sources */,
 				796CBC1C25F7CD58003299B0 /* UserChannelBanEventsMiddleware_Tests.swift in Sources */,
 				DA15A20424DF257500BE2423 /* ChannelQuery_Tests.swift in Sources */,
@@ -11368,6 +11387,7 @@
 				C111B5B628CF3B1200C79D53 /* BackgroundListDatabaseObserver_Tests.swift in Sources */,
 				A3C7BAD327E4E05300BBF4FA /* MemberListFilterScope_Tests.swift in Sources */,
 				8A0D649D24E579F70017A3C0 /* GuestUserTokenPayload_Tests.swift in Sources */,
+				AD9490622BF66D1E00E69224 /* ThreadListUpdater_Mock.swift in Sources */,
 				8A0C3BE224C1F74200CAFD19 /* MessageEvents_Tests.swift in Sources */,
 				7990503224CEEAA600689CDC /* MessageDTO_Tests.swift in Sources */,
 				88D85DAB252F3C2A00AE1030 /* MemberListController_Tests.swift in Sources */,
