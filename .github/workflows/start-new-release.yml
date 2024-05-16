@@ -1,0 +1,30 @@
+name: "Start new release"
+
+on:
+  workflow_dispatch:
+    inputs:
+      branch:
+        description: 'Start release from this branch'
+        default: 'develop'
+        required: true
+      version:
+        description: 'Release version'
+        type: string
+        required: true
+
+jobs:
+  test-release:
+    name: Start new release
+    runs-on: macos-14
+    steps:
+    - uses: actions/checkout@v4.1.1
+      with:
+          ref: ${{ github.event.inputs.branch }}
+    - uses: ./.github/actions/ruby-cache
+    - uses: ./.github/actions/xcode-cache
+    - name: Create Release PR
+      run: bundle exec fastlane release version:"${{ github.event.inputs.version }}" --verbose
+      env:
+        GITHUB_TOKEN: ${{ secrets.DANGER_GITHUB_API_TOKEN }}
+        MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
+        APPSTORE_API_KEY: ${{ secrets.APPSTORE_API_KEY }}
