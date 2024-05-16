@@ -1508,6 +1508,9 @@
 		AD9490602BF65DE400E69224 /* ChatThreadListController_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD94905F2BF65DE400E69224 /* ChatThreadListController_Tests.swift */; };
 		AD9490622BF66D1E00E69224 /* ThreadListUpdater_Mock.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD9490612BF66D1E00E69224 /* ThreadListUpdater_Mock.swift */; };
 		AD9490662BF6756200E69224 /* ChatThread_Mock.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD9490652BF6756200E69224 /* ChatThread_Mock.swift */; };
+		AD94906D2BF68BA800E69224 /* ChatClient+ThreadListController.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD9490672BF68A8800E69224 /* ChatClient+ThreadListController.swift */; };
+		AD94906E2BF68BAE00E69224 /* ThreadListController+SwiftUI.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD9490692BF68A9900E69224 /* ThreadListController+SwiftUI.swift */; };
+		AD94906F2BF68BB200E69224 /* ThreadListController+Combine.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD94906B2BF68AB000E69224 /* ThreadListController+Combine.swift */; };
 		AD95FD0D28F991ED00DBDF41 /* ImageResize.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD95FD0C28F991ED00DBDF41 /* ImageResize.swift */; };
 		AD95FD0E28F991ED00DBDF41 /* ImageResize.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD95FD0C28F991ED00DBDF41 /* ImageResize.swift */; };
 		AD95FD1128FA038900DBDF41 /* ImageDownloadOptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD95FD1028FA038900DBDF41 /* ImageDownloadOptions.swift */; };
@@ -4131,6 +4134,9 @@
 		AD94905F2BF65DE400E69224 /* ChatThreadListController_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatThreadListController_Tests.swift; sourceTree = "<group>"; };
 		AD9490612BF66D1E00E69224 /* ThreadListUpdater_Mock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThreadListUpdater_Mock.swift; sourceTree = "<group>"; };
 		AD9490652BF6756200E69224 /* ChatThread_Mock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatThread_Mock.swift; sourceTree = "<group>"; };
+		AD9490672BF68A8800E69224 /* ChatClient+ThreadListController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ChatClient+ThreadListController.swift"; sourceTree = "<group>"; };
+		AD9490692BF68A9900E69224 /* ThreadListController+SwiftUI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ThreadListController+SwiftUI.swift"; sourceTree = "<group>"; };
+		AD94906B2BF68AB000E69224 /* ThreadListController+Combine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ThreadListController+Combine.swift"; sourceTree = "<group>"; };
 		AD95FD0C28F991ED00DBDF41 /* ImageResize.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageResize.swift; sourceTree = "<group>"; };
 		AD95FD1028FA038900DBDF41 /* ImageDownloadOptions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageDownloadOptions.swift; sourceTree = "<group>"; };
 		AD99A7CD28EF17CA005185DF /* SlackReactonsItemView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SlackReactonsItemView.swift; sourceTree = "<group>"; };
@@ -8403,7 +8409,10 @@
 		AD9490552BF3BA8000E69224 /* ThreadListController */ = {
 			isa = PBXGroup;
 			children = (
+				AD9490672BF68A8800E69224 /* ChatClient+ThreadListController.swift */,
 				AD9490562BF3BA9600E69224 /* ThreadListController.swift */,
+				AD9490692BF68A9900E69224 /* ThreadListController+SwiftUI.swift */,
+				AD94906B2BF68AB000E69224 /* ThreadListController+Combine.swift */,
 			);
 			path = ThreadListController;
 			sourceTree = "<group>";
@@ -11244,6 +11253,7 @@
 				792A4F462480107A00EAF71D /* ChannelQuery.swift in Sources */,
 				AD37D7C42BC979B000800D8C /* ThreadDTO.swift in Sources */,
 				88E26D5E2580E92000F55AB5 /* AttachmentId.swift in Sources */,
+				AD94906F2BF68BB200E69224 /* ThreadListController+Combine.swift in Sources */,
 				799C9447247D50F3001F1104 /* Worker.swift in Sources */,
 				79280F782489181200CDEB89 /* URLSessionWebSocketEngine.swift in Sources */,
 				792A4F3C247FFBB400EAF71D /* Timers.swift in Sources */,
@@ -11329,6 +11339,7 @@
 				4F1BEE762BE384ED00B6685C /* ReactionList.swift in Sources */,
 				792FCB4524A33B5B000290C7 /* EventDataProcessorMiddleware.swift in Sources */,
 				79A0E9BE2498C33100E9BD50 /* TypingEvent.swift in Sources */,
+				AD94906E2BF68BAE00E69224 /* ThreadListController+SwiftUI.swift in Sources */,
 				AD78568C298B268F00C2FEAD /* ChannelControllerDelegate.swift in Sources */,
 				841BAA072BCE9A49000C73E4 /* UpdatePartialRequestBody.swift in Sources */,
 				79896D5C2506593E00BA8F1C /* ChannelReadDTO.swift in Sources */,
@@ -11342,7 +11353,11 @@
 				C135A1CB28F45F6B0058EFB6 /* AuthenticationRepository.swift in Sources */,
 				CFE616BB28348AC500AE2ABF /* StreamTimer.swift in Sources */,
 				F65D9091250A5989000B8CEB /* WebSocketConnectEndpoint.swift in Sources */,
+<<<<<<< HEAD
 				4F97F2772BA87E30001C4D66 /* MessageSearchState.swift in Sources */,
+=======
+				AD94906D2BF68BA800E69224 /* ChatClient+ThreadListController.swift in Sources */,
+>>>>>>> ef5535279 (Add SwiftUI and Combine Helpers)
 				4A4E184728D06F260062378D /* Documentation.docc in Sources */,
 				842F9745277A09B10060A489 /* PinnedMessagesQuery.swift in Sources */,
 				DAE566EB24FFD26C00E39431 /* CurrentUserController+SwiftUI.swift in Sources */,
