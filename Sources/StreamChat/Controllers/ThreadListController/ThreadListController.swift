@@ -5,12 +5,17 @@
 import CoreData
 import Foundation
 
-extension ChatClient {
-    /// Creates a new `ThreadListController` with the provided thread query.
-    /// - Returns: A new instance of `ChatThreadListController`.
-    internal func threadListController(query: ThreadListQuery) -> ChatThreadListController {
-        .init(query: query, client: self)
-    }
+/// `ChatThreadListController` uses this protocol to communicate changes to its delegate.
+internal protocol ChatThreadListControllerDelegate: DataControllerStateDelegate {
+    /// The controller changed the list of observed threads.
+    ///
+    /// - Parameters:
+    ///   - controller: The controller emitting the change callback.
+    ///   - changes: The change to the list of threads.
+    func controller(
+        _ controller: ChatThreadListController,
+        didChangeThreads changes: [ListChange<ChatThread>]
+    )
 }
 
 /// `ChatThreadListController` is a controller class which allows querying and
@@ -73,18 +78,18 @@ internal class ChatThreadListController: DataController, DelegateCallable, DataS
         return observer
     }()
 
-//    var _basePublishers: Any?
-//    /// An internal backing object for all publicly available Combine publishers. We use it to simplify the way we expose
-//    /// publishers. Instead of creating custom `Publisher` types, we use `CurrentValueSubject` and `PassthroughSubject` internally,
-//    /// and expose the published values by mapping them to a read-only `AnyPublisher` type.
-//    @available(iOS 13, *)
-//    var basePublishers: BasePublishers {
-//        if let value = _basePublishers as? BasePublishers {
-//            return value
-//        }
-//        _basePublishers = BasePublishers(controller: self)
-//        return _basePublishers as? BasePublishers ?? .init(controller: self)
-//    }
+    var _basePublishers: Any?
+    /// An internal backing object for all publicly available Combine publishers. We use it to simplify the way we expose
+    /// publishers. Instead of creating custom `Publisher` types, we use `CurrentValueSubject` and `PassthroughSubject` internally,
+    /// and expose the published values by mapping them to a read-only `AnyPublisher` type.
+    @available(iOS 13, *)
+    var basePublishers: BasePublishers {
+        if let value = _basePublishers as? BasePublishers {
+            return value
+        }
+        _basePublishers = BasePublishers(controller: self)
+        return _basePublishers as? BasePublishers ?? .init(controller: self)
+    }
 
     private let environment: Environment
 
@@ -164,6 +169,14 @@ internal class ChatThreadListController: DataController, DelegateCallable, DataS
 }
 
 extension ChatThreadListController {
+    /// Set the delegate of `ThreadListController` to observe thread changes.
+    internal weak var delegate: ChatThreadListControllerDelegate? {
+        get { multicastDelegate.mainDelegate }
+        set { multicastDelegate.set(mainDelegate: newValue) }
+    }
+}
+
+extension ChatThreadListController {
     struct Environment {
         var threadListUpdaterBuilder: (
             _ database: DatabaseContainer,
@@ -182,25 +195,4 @@ extension ChatThreadListController {
                 )
             }
     }
-}
-
-extension ChatThreadListController {
-    /// Set the delegate of `ThreadListController` to observe thread changes.
-    internal weak var delegate: ChatThreadListControllerDelegate? {
-        get { multicastDelegate.mainDelegate }
-        set { multicastDelegate.set(mainDelegate: newValue) }
-    }
-}
-
-/// `ChatThreadListController` uses this protocol to communicate changes to its delegate.
-internal protocol ChatThreadListControllerDelegate: DataControllerStateDelegate {
-    /// The controller changed the list of observed threads.
-    ///
-    /// - Parameters:
-    ///   - controller: The controller emitting the change callback.
-    ///   - changes: The change to the list of threads.
-    func controller(
-        _ controller: ChatThreadListController,
-        didChangeThreads changes: [ListChange<ChatThread>]
-    )
 }
