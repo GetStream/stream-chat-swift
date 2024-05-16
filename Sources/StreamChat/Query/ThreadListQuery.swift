@@ -15,7 +15,7 @@ internal struct ThreadListQuery: Encodable {
     }
 
     /// A boolean indicating whether to watch for changes in the thread or not.
-    internal var watch: Bool = false
+    internal var watch: Bool
     /// The amount of replies fetched per thread. Default is 2.
     internal var replyLimit: Int = 2
     /// The amount of participants fetched per thread. Default is 100.
@@ -25,5 +25,9 @@ internal struct ThreadListQuery: Encodable {
     /// The pagination token from the previous response to fetch the next page.
     internal var next: String?
 
-    internal init() {}
+    internal init(
+        watch: Bool
+    ) {
+        self.watch = watch
+    }
 }
