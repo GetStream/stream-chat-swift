@@ -11353,11 +11353,8 @@
 				C135A1CB28F45F6B0058EFB6 /* AuthenticationRepository.swift in Sources */,
 				CFE616BB28348AC500AE2ABF /* StreamTimer.swift in Sources */,
 				F65D9091250A5989000B8CEB /* WebSocketConnectEndpoint.swift in Sources */,
-<<<<<<< HEAD
 				4F97F2772BA87E30001C4D66 /* MessageSearchState.swift in Sources */,
-=======
 				AD94906D2BF68BA800E69224 /* ChatClient+ThreadListController.swift in Sources */,
->>>>>>> ef5535279 (Add SwiftUI and Combine Helpers)
 				4A4E184728D06F260062378D /* Documentation.docc in Sources */,
 				842F9745277A09B10060A489 /* PinnedMessagesQuery.swift in Sources */,
 				DAE566EB24FFD26C00E39431 /* CurrentUserController+SwiftUI.swift in Sources */,
