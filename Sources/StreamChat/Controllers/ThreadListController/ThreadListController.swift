@@ -19,7 +19,7 @@ internal protocol ChatThreadListControllerDelegate: DataControllerStateDelegate 
 }
 
 /// `ChatThreadListController` is a controller class which allows querying and
-/// observing the thread replies of the current user.
+/// observing the threads that the current user is participating.
 internal class ChatThreadListController: DataController, DelegateCallable, DataStoreProvider {
     /// The query of the thread list.
     internal let query: ThreadListQuery
