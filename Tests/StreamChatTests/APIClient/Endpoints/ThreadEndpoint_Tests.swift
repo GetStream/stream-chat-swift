@@ -10,12 +10,11 @@ import XCTest
 
 final class ThreadEndpoints_Tests: XCTestCase {
     func test_threads() throws {
-        var query = ThreadListQuery()
+        var query = ThreadListQuery(watch: false)
         query.limit = 10
         query.next = "test"
         query.participantLimit = 10
         query.replyLimit = 10
-        query.watch = false
 
         let endpoint = Endpoint<ThreadListPayload>.threads(query: query)
         let body = try AnyEndpoint(endpoint).bodyAsDictionary()
@@ -35,12 +34,11 @@ final class ThreadEndpoints_Tests: XCTestCase {
     }
 
     func test_threads_whenWatchIsTrue_thenRequiresConnectionIsTrue() throws {
-        var query = ThreadListQuery()
+        var query = ThreadListQuery(watch: true)
         query.limit = 10
         query.next = "test"
         query.participantLimit = 10
         query.replyLimit = 10
-        query.watch = true
 
         let endpoint = Endpoint<ThreadListPayload>.threads(query: query)
         let body = try AnyEndpoint(endpoint).bodyAsDictionary()

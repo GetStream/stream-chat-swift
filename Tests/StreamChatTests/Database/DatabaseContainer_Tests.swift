@@ -96,8 +96,7 @@ final class DatabaseContainer_Tests: XCTestCase {
                         self.dummyThreadPayload()
                     ],
                     next: nil
-                ),
-                query: nil
+                )
             )
             try session.saveUser(payload: .dummy(userId: .unique), query: .user(withID: currentUserId), cache: nil)
             try session.saveUser(payload: .dummy(userId: .unique))

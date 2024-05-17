@@ -32,8 +32,7 @@ final class ThreadDTO_Tests: XCTestCase {
         )
 
         let dto = database.viewContext.saveThreadList(
-            payload: payload,
-            query: nil
+            payload: payload
         )
 
         XCTAssertEqual(dto.count, 2)
@@ -58,7 +57,6 @@ final class ThreadDTO_Tests: XCTestCase {
 
         let dto = try database.viewContext.saveThread(
             payload: payload,
-            query: nil,
             cache: nil
         )
 
@@ -96,7 +94,6 @@ final class ThreadDTO_Tests: XCTestCase {
 
         let dto = try database.viewContext.saveThread(
             payload: payload,
-            query: nil,
             cache: nil
         )
 
