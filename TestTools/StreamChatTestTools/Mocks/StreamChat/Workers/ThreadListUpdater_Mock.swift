@@ -8,11 +8,6 @@ import XCTest
 
 final class ThreadListUpdater_Mock: ThreadListUpdater {
     init() {
-        let requestEncoder = DefaultRequestEncoder(
-            baseURL: .unique(),
-            apiKey: .init(.unique)
-        )
-        let requestDecoder = DefaultRequestDecoder()
         super.init(
             database: DatabaseContainer_Spy(),
             apiClient: APIClient_Spy()
@@ -25,11 +20,11 @@ final class ThreadListUpdater_Mock: ThreadListUpdater {
 
     var loadThreadsCallCount = 0
     var loadThreadsCalledWith: ThreadListQuery?
-    var loadThreadsCompletion: ((Result<[ChatThread], any Error>) -> Void)?
+    var loadThreadsCompletion: ((Result<ThreadListResponse, any Error>) -> Void)?
 
     override func loadThreads(
         query: ThreadListQuery,
-        completion: @escaping (Result<[ChatThread], any Error>) -> Void
+        completion: @escaping (Result<ThreadListResponse, any Error>) -> Void
     ) {
         loadThreadsCallCount += 1
         loadThreadsCalledWith = query

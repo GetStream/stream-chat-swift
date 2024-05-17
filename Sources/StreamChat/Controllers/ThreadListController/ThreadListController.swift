@@ -27,6 +27,9 @@ internal class ChatThreadListController: DataController, DelegateCallable, DataS
     /// The `ChatClient` instance this controller belongs to.
     internal let client: ChatClient
 
+    /// The cursor of the next page in case there is more data.
+    private var nextCursor: String?
+
     /// The threads matching the query of this controller.
     ///
     /// To observe changes of the threads, set your class as a delegate of this controller
@@ -112,11 +115,15 @@ internal class ChatThreadListController: DataController, DelegateCallable, DataS
             query: query
         ) { [weak self] result in
             switch result {
-            case let .success(threads):
+            case let .success(threadListResponse):
                 self?.threadListObserver.refreshItems { [weak self] in
-                    self?.state = .remoteDataFetched
-                    self?.hasLoadedAllOlderThreads = threads.count < limit
-                    self?.callback { completion?(nil) }
+                    self?.callback {
+                        let threads = threadListResponse.threads
+                        self?.nextCursor = threadListResponse.next
+                        self?.state = .remoteDataFetched
+                        self?.hasLoadedAllOlderThreads = threads.count < limit
+                        completion?(nil)
+                    }
                 }
             case let .failure(error):
                 self?.state = .remoteDataFetchFailed(ClientError(with: error))
@@ -139,14 +146,20 @@ internal class ChatThreadListController: DataController, DelegateCallable, DataS
         let limit = limit ?? query.limit
         var updatedQuery = query
         updatedQuery.limit = limit
-        updatedQuery.next = updater.nextCursor
-        updater.loadThreads(query: updatedQuery) { result in
+        updatedQuery.next = nextCursor
+        updater.loadThreads(query: updatedQuery) { [weak self] result in
             switch result {
-            case let .success(threads):
-                self.hasLoadedAllOlderThreads = threads.count < limit
-                self.callback { completion?(.success(threads)) }
+            case let .success(threadListResponse):
+                self?.callback {
+                    let threads = threadListResponse.threads
+                    self?.nextCursor = threadListResponse.next
+                    self?.hasLoadedAllOlderThreads = threads.count < limit
+                    completion?(.success(threads))
+                }
             case let .failure(error):
-                self.callback { completion?(.failure(error)) }
+                self?.callback {
+                    completion?(.failure(error))
+                }
             }
         }
     }

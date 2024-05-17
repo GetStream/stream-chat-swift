@@ -71,7 +71,7 @@ final class ThreadListUpdater_Tests: XCTestCase {
         let completionCalled = expectation(description: "completion called")
         updater.loadThreads(query: query) { result in
             XCTAssertNil(result.error)
-            XCTAssertEqual(result.value?.count, 3)
+            XCTAssertEqual(result.value?.threads.count, 3)
             completionCalled.fulfill()
         }
 
@@ -88,7 +88,6 @@ final class ThreadListUpdater_Tests: XCTestCase {
             database.viewContext.thread(parentMessageId: $0.parentMessageId, cache: nil)
         }
         XCTAssertEqual(loadedThreads.count, 3)
-        XCTAssertEqual(updater.nextCursor, payload.next)
     }
 
     func test_loadThreads_whenFirstPage_deletesPreviousThreads() throws {
@@ -130,7 +129,7 @@ final class ThreadListUpdater_Tests: XCTestCase {
         var completionCalled = expectation(description: "completion called")
         updater.loadThreads(query: query) { result in
             XCTAssertNil(result.error)
-            XCTAssertEqual(result.value?.count, 3)
+            XCTAssertEqual(result.value?.threads.count, 3)
             completionCalled.fulfill()
         }
 

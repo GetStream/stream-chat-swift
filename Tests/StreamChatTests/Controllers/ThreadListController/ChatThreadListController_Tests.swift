@@ -23,17 +23,16 @@ final class ChatThreadListController_Tests: XCTestCase {
 
     func test_synchronize_whenSuccess() {
         let exp = expectation(description: "synchronize completion")
-        controller = makeController()
         controller.synchronize { error in
             XCTAssertNil(error)
             exp.fulfill()
         }
         XCTAssertEqual(updaterMock.loadThreadsCalledWith?.limit, controller.query.limit)
 
-        updaterMock.loadThreadsCompletion?(.success([
+        updaterMock.loadThreadsCompletion?(.success(.init(threads: [
             .mock(),
             .mock()
-        ]))
+        ])))
 
         wait(for: [exp], timeout: defaultTimeout)
         XCTAssertEqual(controller.state, .remoteDataFetched)
@@ -50,12 +49,12 @@ final class ChatThreadListController_Tests: XCTestCase {
             exp.fulfill()
         }
 
-        updaterMock.loadThreadsCompletion?(.success([
+        updaterMock.loadThreadsCompletion?(.success(.init(threads: [
             .mock(),
             .mock(),
             .mock(),
             .mock()
-        ]))
+        ])))
 
         wait(for: [exp], timeout: defaultTimeout)
         XCTAssertFalse(controller.hasLoadedAllOlderThreads)
@@ -63,7 +62,6 @@ final class ChatThreadListController_Tests: XCTestCase {
 
     func test_synchronize_whenFailure() {
         let exp = expectation(description: "synchronize completion")
-        controller = makeController()
         controller.synchronize { error in
             XCTAssertNotNil(error)
             exp.fulfill()
@@ -82,7 +80,6 @@ final class ChatThreadListController_Tests: XCTestCase {
     
     func test_loadOlderThreads_whenSuccess() {
         let exp = expectation(description: "loadOlderThreads completion")
-        controller = makeController()
         controller.loadOlderThreads() { result in
             let threads = try? result.get()
             XCTAssertNotNil(threads)
@@ -90,10 +87,10 @@ final class ChatThreadListController_Tests: XCTestCase {
         }
         XCTAssertEqual(updaterMock.loadThreadsCalledWith?.limit, controller.query.limit)
 
-        updaterMock.loadThreadsCompletion?(.success([
+        updaterMock.loadThreadsCompletion?(.success(.init(threads: [
             .mock(),
             .mock()
-        ]))
+        ])))
 
         wait(for: [exp], timeout: defaultTimeout)
         XCTAssertTrue(controller.hasLoadedAllOlderThreads)
@@ -101,7 +98,6 @@ final class ChatThreadListController_Tests: XCTestCase {
 
     func test_loadOlderThreads_whenSuccess_whenMoreThreadsThanLimit() {
         let exp = expectation(description: "loadOlderThreads completion")
-        controller = makeController()
         controller.loadOlderThreads(limit: 2) { result in
             let threads = try? result.get()
             XCTAssertNotNil(threads)
@@ -109,11 +105,11 @@ final class ChatThreadListController_Tests: XCTestCase {
         }
         XCTAssertEqual(updaterMock.loadThreadsCalledWith?.limit, 2)
 
-        updaterMock.loadThreadsCompletion?(.success([
+        updaterMock.loadThreadsCompletion?(.success(.init(threads: [
             .mock(),
             .mock(),
             .mock()
-        ]))
+        ])))
 
         wait(for: [exp], timeout: defaultTimeout)
         XCTAssertFalse(controller.hasLoadedAllOlderThreads)
@@ -121,7 +117,6 @@ final class ChatThreadListController_Tests: XCTestCase {
 
     func test_loadOlderThreads_whenFailure() {
         let exp = expectation(description: "synchronize completion")
-        controller = makeController()
         controller.loadOlderThreads() { error in
             XCTAssertNotNil(error)
             exp.fulfill()
@@ -129,6 +124,37 @@ final class ChatThreadListController_Tests: XCTestCase {
         updaterMock.loadThreadsCompletion?(.failure(ClientError()))
 
         wait(for: [exp], timeout: defaultTimeout)
+    }
+
+    func test_loadOlderThreads_shouldUseNextCursorWhenMorePagesAvailable() {
+        let exp = expectation(description: "synchronize completion")
+        controller.synchronize { error in
+            XCTAssertNil(error)
+            exp.fulfill()
+        }
+        let nextCursor1 = "cursor1"
+        updaterMock.loadThreadsCompletion?(.success(
+            .init(threads: [.mock(), .mock()], next: nextCursor1))
+        )
+        wait(for: [exp], timeout: defaultTimeout)
+
+        let expOlderThreads = expectation(description: "loadOlderThreads1 completion")
+        controller.loadOlderThreads() { result in
+            let threads = try? result.get()
+            XCTAssertNotNil(threads)
+            expOlderThreads.fulfill()
+        }
+        XCTAssertEqual(updaterMock.loadThreadsCalledWith?.next, nextCursor1)
+
+        let nextCursor2 = "cursor2"
+        updaterMock.loadThreadsCompletion?(.success(.init(
+            threads: [.mock(), .mock()], next: nextCursor2
+        ))
+        )
+        wait(for: [expOlderThreads], timeout: defaultTimeout)
+
+        controller.loadOlderThreads()
+        XCTAssertEqual(updaterMock.loadThreadsCalledWith?.next, nextCursor2)
     }
 
     func test_observer_triggerDidChangeThreads_threadsHaveCorrectOrder() throws {
