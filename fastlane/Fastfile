@@ -70,7 +70,7 @@ lane :release do |options|
     File.open(swift_environment_path, 'w') { |f| f.puts(new_content) }
 
     # Update sdk sizes
-    update_img_shields_sdk_sizes
+    Dir.chdir('fastlane') { update_img_shields_sdk_sizes }
   end
 
   pod_lint
