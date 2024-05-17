@@ -3,10 +3,6 @@ name: "Start new release"
 on:
   workflow_dispatch:
     inputs:
-      branch:
-        description: 'Start release from this branch'
-        default: 'develop'
-        required: true
       version:
         description: 'Release version'
         type: string
@@ -19,7 +15,7 @@ jobs:
     steps:
     - uses: actions/checkout@v4.1.1
       with:
-          ref: ${{ github.event.inputs.branch }}
+        fetch-depth: 0 # to fetch git tags
     - uses: ./.github/actions/ruby-cache
     - uses: ./.github/actions/xcode-cache
     - name: Create Release PR
