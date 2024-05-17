@@ -9,8 +9,15 @@ struct ThreadListResponse {
     var next: String?
 }
 
-/// Makes a thread list query call to the backend and updates the local storage with the results.
-class ThreadListUpdater: Worker {
+class ThreadsRepository {
+    let database: DatabaseContainer
+    let apiClient: APIClient
+
+    init(database: DatabaseContainer, apiClient: APIClient) {
+        self.database = database
+        self.apiClient = apiClient
+    }
+
     func loadThreads(
         query: ThreadListQuery,
         completion: @escaping (Result<ThreadListResponse, Error>) -> Void

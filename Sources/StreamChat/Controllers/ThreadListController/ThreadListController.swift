@@ -39,9 +39,9 @@ internal class ChatThreadListController: DataController, DelegateCallable, DataS
         return threadListObserver.items
     }
 
-    /// The updater used to fetch the remote data and communicate with servers.
-    private lazy var updater: ThreadListUpdater = self.environment
-        .threadListUpdaterBuilder(
+    /// The repository used to fetch the data from remote and local cache.
+    private lazy var threadsRepository: ThreadsRepository = self.environment
+        .threadsRepositoryBuilder(
             client.databaseContainer,
             client.apiClient
         )
@@ -111,7 +111,7 @@ internal class ChatThreadListController: DataController, DelegateCallable, DataS
         startThreadListObserverIfNeeded()
 
         let limit = query.limit
-        updater.loadThreads(
+        threadsRepository.loadThreads(
             query: query
         ) { [weak self] result in
             switch result {
@@ -147,7 +147,7 @@ internal class ChatThreadListController: DataController, DelegateCallable, DataS
         var updatedQuery = query
         updatedQuery.limit = limit
         updatedQuery.next = nextCursor
-        updater.loadThreads(query: updatedQuery) { [weak self] result in
+        threadsRepository.loadThreads(query: updatedQuery) { [weak self] result in
             switch result {
             case let .success(threadListResponse):
                 self?.callback {
@@ -191,10 +191,10 @@ extension ChatThreadListController {
 
 extension ChatThreadListController {
     struct Environment {
-        var threadListUpdaterBuilder: (
+        var threadsRepositoryBuilder: (
             _ database: DatabaseContainer,
             _ apiClient: APIClient
-        ) -> ThreadListUpdater = ThreadListUpdater.init
+        ) -> ThreadsRepository = ThreadsRepository.init
 
         var createThreadListDatabaseObserver: (
             _ isBackground: Bool,

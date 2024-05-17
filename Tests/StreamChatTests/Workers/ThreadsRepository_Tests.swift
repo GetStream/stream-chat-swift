@@ -6,24 +6,24 @@
 @testable import StreamChatTestTools
 import XCTest
 
-final class ThreadListUpdater_Tests: XCTestCase {
+final class ThreadsRepository_Tests: XCTestCase {
     var apiClient: APIClient_Spy!
     var database: DatabaseContainer!
-    var updater: ThreadListUpdater!
+    var repository: ThreadsRepository!
 
     override func setUp() {
         super.setUp()
 
         apiClient = APIClient_Spy()
         database = DatabaseContainer_Spy()
-        updater = ThreadListUpdater(database: database, apiClient: apiClient)
+        repository = ThreadsRepository(database: database, apiClient: apiClient)
     }
 
     override func tearDown() {
         apiClient.cleanUp()
 
         apiClient = nil
-        updater = nil
+        repository = nil
         database = nil
 
         super.tearDown()
@@ -69,7 +69,7 @@ final class ThreadListUpdater_Tests: XCTestCase {
 
         let query = ThreadListQuery(watch: true)
         let completionCalled = expectation(description: "completion called")
-        updater.loadThreads(query: query) { result in
+        repository.loadThreads(query: query) { result in
             XCTAssertNil(result.error)
             XCTAssertEqual(result.value?.threads.count, 3)
             completionCalled.fulfill()
@@ -127,7 +127,7 @@ final class ThreadListUpdater_Tests: XCTestCase {
 
         let query = ThreadListQuery(watch: true)
         var completionCalled = expectation(description: "completion called")
-        updater.loadThreads(query: query) { result in
+        repository.loadThreads(query: query) { result in
             XCTAssertNil(result.error)
             XCTAssertEqual(result.value?.threads.count, 3)
             completionCalled.fulfill()
@@ -151,7 +151,7 @@ final class ThreadListUpdater_Tests: XCTestCase {
     func test_loadThreads_whenFailure() throws {
         let query = ThreadListQuery(watch: true)
         let completionCalled = expectation(description: "completion called")
-        updater.loadThreads(query: query) { result in
+        repository.loadThreads(query: query) { result in
             XCTAssertNotNil(result.error)
             completionCalled.fulfill()
         }

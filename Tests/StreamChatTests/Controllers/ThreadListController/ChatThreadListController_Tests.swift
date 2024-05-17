@@ -11,14 +11,14 @@ final class ChatThreadListController_Tests: XCTestCase {
     var client: ChatClient_Mock!
     var channelId: ChannelId!
     var controller: ChatThreadListController!
-    var updaterMock: ThreadListUpdater_Mock!
+    var repositoryMock: ThreadsRepository_Mock!
 
     override func setUp() {
         super.setUp()
         client = ChatClient.mock
         channelId = .unique
-        updaterMock = ThreadListUpdater_Mock()
-        controller = makeController(updater: updaterMock)
+        repositoryMock = ThreadsRepository_Mock()
+        controller = makeController()
     }
 
     func test_synchronize_whenSuccess() {
@@ -27,9 +27,9 @@ final class ChatThreadListController_Tests: XCTestCase {
             XCTAssertNil(error)
             exp.fulfill()
         }
-        XCTAssertEqual(updaterMock.loadThreadsCalledWith?.limit, controller.query.limit)
+        XCTAssertEqual(repositoryMock.loadThreadsCalledWith?.limit, controller.query.limit)
 
-        updaterMock.loadThreadsCompletion?(.success(.init(threads: [
+        repositoryMock.loadThreadsCompletion?(.success(.init(threads: [
             .mock(),
             .mock()
         ])))
@@ -49,7 +49,7 @@ final class ChatThreadListController_Tests: XCTestCase {
             exp.fulfill()
         }
 
-        updaterMock.loadThreadsCompletion?(.success(.init(threads: [
+        repositoryMock.loadThreadsCompletion?(.success(.init(threads: [
             .mock(),
             .mock(),
             .mock(),
@@ -66,7 +66,7 @@ final class ChatThreadListController_Tests: XCTestCase {
             XCTAssertNotNil(error)
             exp.fulfill()
         }
-        updaterMock.loadThreadsCompletion?(.failure(ClientError()))
+        repositoryMock.loadThreadsCompletion?(.failure(ClientError()))
 
         wait(for: [exp], timeout: defaultTimeout)
         XCTAssertFalse(controller.hasLoadedAllOlderThreads)
@@ -85,9 +85,9 @@ final class ChatThreadListController_Tests: XCTestCase {
             XCTAssertNotNil(threads)
             exp.fulfill()
         }
-        XCTAssertEqual(updaterMock.loadThreadsCalledWith?.limit, controller.query.limit)
+        XCTAssertEqual(repositoryMock.loadThreadsCalledWith?.limit, controller.query.limit)
 
-        updaterMock.loadThreadsCompletion?(.success(.init(threads: [
+        repositoryMock.loadThreadsCompletion?(.success(.init(threads: [
             .mock(),
             .mock()
         ])))
@@ -103,9 +103,9 @@ final class ChatThreadListController_Tests: XCTestCase {
             XCTAssertNotNil(threads)
             exp.fulfill()
         }
-        XCTAssertEqual(updaterMock.loadThreadsCalledWith?.limit, 2)
+        XCTAssertEqual(repositoryMock.loadThreadsCalledWith?.limit, 2)
 
-        updaterMock.loadThreadsCompletion?(.success(.init(threads: [
+        repositoryMock.loadThreadsCompletion?(.success(.init(threads: [
             .mock(),
             .mock(),
             .mock()
@@ -121,7 +121,7 @@ final class ChatThreadListController_Tests: XCTestCase {
             XCTAssertNotNil(error)
             exp.fulfill()
         }
-        updaterMock.loadThreadsCompletion?(.failure(ClientError()))
+        repositoryMock.loadThreadsCompletion?(.failure(ClientError()))
 
         wait(for: [exp], timeout: defaultTimeout)
     }
@@ -133,7 +133,7 @@ final class ChatThreadListController_Tests: XCTestCase {
             exp.fulfill()
         }
         let nextCursor1 = "cursor1"
-        updaterMock.loadThreadsCompletion?(.success(
+        repositoryMock.loadThreadsCompletion?(.success(
             .init(threads: [.mock(), .mock()], next: nextCursor1))
         )
         wait(for: [exp], timeout: defaultTimeout)
@@ -144,17 +144,17 @@ final class ChatThreadListController_Tests: XCTestCase {
             XCTAssertNotNil(threads)
             expOlderThreads.fulfill()
         }
-        XCTAssertEqual(updaterMock.loadThreadsCalledWith?.next, nextCursor1)
+        XCTAssertEqual(repositoryMock.loadThreadsCalledWith?.next, nextCursor1)
 
         let nextCursor2 = "cursor2"
-        updaterMock.loadThreadsCompletion?(.success(.init(
+        repositoryMock.loadThreadsCompletion?(.success(.init(
             threads: [.mock(), .mock()], next: nextCursor2
         ))
         )
         wait(for: [expOlderThreads], timeout: defaultTimeout)
 
         controller.loadOlderThreads()
-        XCTAssertEqual(updaterMock.loadThreadsCalledWith?.next, nextCursor2)
+        XCTAssertEqual(repositoryMock.loadThreadsCalledWith?.next, nextCursor2)
     }
 
     func test_observer_triggerDidChangeThreads_threadsHaveCorrectOrder() throws {
@@ -206,15 +206,15 @@ final class ChatThreadListController_Tests: XCTestCase {
 extension ChatThreadListController_Tests {
     func makeController(
         query: ThreadListQuery = .init(watch: true),
-        updater: ThreadListUpdater? = nil,
+        repository: ThreadsRepository? = nil,
         observer: ListDatabaseObserverWrapper<ChatThread, ThreadDTO>? = nil
     ) -> ChatThreadListController {
         ChatThreadListController(
             query: query,
             client: client,
             environment: .init(
-                threadListUpdaterBuilder: { _, _ in
-                    updater ?? self.updaterMock
+                threadsRepositoryBuilder: { _, _ in
+                    self.repositoryMock
                 },
                 createThreadListDatabaseObserver: { _, database, fetchRequest, itemCreator in
                     observer ?? .init(

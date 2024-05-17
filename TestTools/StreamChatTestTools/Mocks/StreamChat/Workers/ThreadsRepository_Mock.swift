@@ -6,7 +6,7 @@
 @testable import StreamChatTestTools
 import XCTest
 
-final class ThreadListUpdater_Mock: ThreadListUpdater {
+final class ThreadsRepository_Mock: ThreadsRepository {
     init() {
         super.init(
             database: DatabaseContainer_Spy(),
