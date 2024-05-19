@@ -30,3 +30,18 @@ extension Poll {
         )
     }
 }
+
+extension PollVote {
+    static var unique: PollVote {
+        .init(
+            id: .unique,
+            createdAt: Date(),
+            updatedAt: Date(),
+            pollId: .unique,
+            optionId: nil,
+            isAnswer: false,
+            answerText: nil,
+            user: .mock(id: .unique)
+        )
+    }
+}
