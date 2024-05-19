@@ -62,6 +62,7 @@ public class ChatChannelWatcherListController: DataController, DelegateCallable,
     private lazy var updater: ChannelUpdater = self.environment.channelUpdaterBuilder(
         client.channelRepository,
         client.callRepository,
+        client.messageRepository,
         client.makeMessagesPaginationStateHandler(),
         client.databaseContainer,
         client.apiClient
@@ -91,7 +92,8 @@ public class ChatChannelWatcherListController: DataController, DelegateCallable,
             return
         }
 
-        updater.channelWatchers(query: query) { error in
+        updater.channelWatchers(query: query) { result in
+            let error = result.error
             self.state = error == nil ? .remoteDataFetched : .remoteDataFetchFailed(ClientError(with: error))
             self.callback { completion?(error) }
         }
@@ -137,6 +139,7 @@ extension ChatChannelWatcherListController {
         var channelUpdaterBuilder: (
             _ channelRepository: ChannelRepository,
             _ callRepository: CallRepository,
+            _ messageRepository: MessageRepository,
             _ paginationStateHandler: MessagesPaginationStateHandling,
             _ database: DatabaseContainer,
             _ apiClient: APIClient
@@ -179,9 +182,9 @@ public extension ChatChannelWatcherListController {
     func loadNextWatchers(limit: Int = .channelWatchersPageSize, completion: ((Error?) -> Void)? = nil) {
         var updatedQuery = query
         updatedQuery.pagination = .init(pageSize: limit, offset: watchers.count)
-        updater.channelWatchers(query: updatedQuery) { error in
+        updater.channelWatchers(query: updatedQuery) { result in
             self.query = updatedQuery
-            self.callback { completion?(error) }
+            self.callback { completion?(result.error) }
         }
     }
 }

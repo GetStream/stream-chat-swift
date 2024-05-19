@@ -8,7 +8,7 @@ import XCTest
 
 /// A testable subclass of DatabaseContainer allowing response simulation.
 public final class DatabaseContainer_Spy: DatabaseContainer, Spy {
-    @Atomic public var recordedFunctions: [String] = []
+    public let spyState = SpyState()
 
     /// If set, the `write` completion block is called with this value.
     @Atomic var write_errorResponse: Error?

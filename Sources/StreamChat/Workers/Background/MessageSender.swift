@@ -23,7 +23,9 @@ class MessageSender: Worker {
     /// Because we need to be sure messages for every channel are sent in the correct order, we create a sending queue for
     /// every cid. These queues can send messages in parallel.
     @Atomic private var sendingQueueByCid: [ChannelId: MessageSendingQueue] = [:]
-
+    // Any because CheckedContinuation<Void, Error> requires iOS 13
+    private var continuations = [MessageId: Any]()
+    
     private lazy var observer = ListDatabaseObserver<MessageDTO, MessageDTO>(
         context: self.database.backgroundReadOnlyContext,
         fetchRequest: MessageDTO
@@ -102,11 +104,16 @@ class MessageSender: Worker {
         _sendingQueueByCid.mutate { sendingQueueByCid in
             newRequests.forEach { cid, requests in
                 if sendingQueueByCid[cid] == nil {
-                    sendingQueueByCid[cid] = MessageSendingQueue(
+                    let messageSendingQueue = MessageSendingQueue(
                         messageRepository: self.messageRepository,
                         eventsNotificationCenter: self.eventsNotificationCenter,
                         dispatchQueue: sendingDispatchQueue
                     )
+                    sendingQueueByCid[cid] = messageSendingQueue
+                    
+                    if #available(iOS 13.0, *) {
+                        messageSendingQueue.delegate = self
+                    }
                 }
 
                 sendingQueueByCid[cid]?.scheduleSend(requests: requests)
@@ -115,11 +122,44 @@ class MessageSender: Worker {
     }
 }
 
+// MARK: - Chat State Layer
+
+@available(iOS 13.0, *)
+extension MessageSender: MessageSendingQueueDelegate {
+    func waitForAPIRequest(messageId: MessageId) async throws -> ChatMessage {
+        try await withCheckedThrowingContinuation { continuation in
+            registerContinuation(forMessage: messageId, continuation: continuation)
+        }
+    }
+    
+    func registerContinuation(forMessage messageId: MessageId, continuation: CheckedContinuation<ChatMessage, Error>) {
+        sendingDispatchQueue.async(flags: .barrier) {
+            self.continuations[messageId] = continuation
+        }
+    }
+    
+    fileprivate func messageSendingQueue(
+        _ queue: MessageSendingQueue,
+        didProcess messageId: MessageId,
+        result: Result<ChatMessage, MessageRepositoryError>
+    ) {
+        sendingDispatchQueue.async(flags: .barrier) {
+            guard let continuation = self.continuations.removeValue(forKey: messageId) as? CheckedContinuation<ChatMessage, Error> else { return }
+            continuation.resume(with: result)
+        }
+    }
+}
+
+private protocol MessageSendingQueueDelegate: AnyObject {
+    func messageSendingQueue(_ queue: MessageSendingQueue, didProcess messageId: MessageId, result: Result<ChatMessage, MessageRepositoryError>)
+}
+
 /// This objects takes care of sending messages to the server in the order they have been enqueued.
 private class MessageSendingQueue {
     let messageRepository: MessageRepository
     let eventsNotificationCenter: EventNotificationCenter
     let dispatchQueue: DispatchQueue
+    weak var delegate: MessageSendingQueueDelegate?
 
     init(
         messageRepository: MessageRepository,
@@ -158,19 +198,21 @@ private class MessageSendingQueue {
             guard let request = self?.requests.sorted(by: { $0.createdLocallyAt < $1.createdLocallyAt }).first else { return }
 
             self?.messageRepository.sendMessage(with: request.messageId) { [weak self] result in
-                self?.removeRequestAndContinue(request)
+                guard let self else { return }
+                self.removeRequestAndContinue(request)
                 if let error = result.error {
                     switch error {
                     case .messageDoesNotExist,
                          .messageNotPendingSend,
                          .messageDoesNotHaveValidChannel:
                         let event = NewMessageErrorEvent(messageId: request.messageId, error: error)
-                        self?.eventsNotificationCenter.process(event)
+                        self.eventsNotificationCenter.process(event)
                     case let .failedToSendMessage(error):
                         let event = NewMessageErrorEvent(messageId: request.messageId, error: error)
-                        self?.eventsNotificationCenter.process(event)
+                        self.eventsNotificationCenter.process(event)
                     }
                 }
+                self.delegate?.messageSendingQueue(self, didProcess: request.messageId, result: result)
             }
         }
     }

@@ -90,6 +90,8 @@ derived_data/
 spm_cache/
 .buildcache
 buildcache
+App Thinning Size Report.txt
+app-thinning.plist
 
 # gcloud
 google-cloud-sdk

@@ -14,6 +14,7 @@ final class MessageController_Tests: XCTestCase {
     private var currentUserId: UserId!
     private var messageId: MessageId!
     private var cid: ChannelId!
+    private var replyPaginationHandler: MessagesPaginationStateHandler_Mock!
 
     private var controller: ChatMessageController!
     private var controllerCallbackQueueID: UUID!
@@ -30,9 +31,10 @@ final class MessageController_Tests: XCTestCase {
         currentUserId = .unique
         messageId = .unique
         cid = .unique
+        replyPaginationHandler = MessagesPaginationStateHandler_Mock()
 
         controllerCallbackQueueID = UUID()
-        controller = ChatMessageController(client: client, cid: cid, messageId: messageId, environment: env.controllerEnvironment)
+        controller = ChatMessageController(client: client, cid: cid, messageId: messageId, replyPaginationHandler: replyPaginationHandler, environment: env.controllerEnvironment)
         controller.callbackQueue = .testQueue(withId: controllerCallbackQueueID)
     }
 
@@ -43,6 +45,7 @@ final class MessageController_Tests: XCTestCase {
         currentUserId = nil
         messageId = nil
         cid = nil
+        replyPaginationHandler = nil
 
         AssertAsync {
             Assert.canBeReleased(&controller)
@@ -80,7 +83,7 @@ final class MessageController_Tests: XCTestCase {
 
     func test_hasLoadedAllPreviousReplies_whenPaginationStateHasLoadedAllPreviousMessages_thenReturnsTrue() {
         // Given
-        env.messageUpdater.mockPaginationState.hasLoadedAllPreviousMessages = true
+        replyPaginationHandler.mockState.hasLoadedAllPreviousMessages = true
 
         // When
         let result = controller.hasLoadedAllPreviousReplies
@@ -91,7 +94,7 @@ final class MessageController_Tests: XCTestCase {
 
     func test_hasLoadedAllPreviousReplies_whenPaginationStateHasNotLoadedAllPreviousMessages_thenReturnsFalse() {
         // Given
-        env.messageUpdater.mockPaginationState.hasLoadedAllPreviousMessages = false
+        replyPaginationHandler.mockState.hasLoadedAllPreviousMessages = false
 
         // When
         let result = controller.hasLoadedAllPreviousReplies
@@ -104,7 +107,7 @@ final class MessageController_Tests: XCTestCase {
 
     func test_hasLoadedAllNextReplies_whenPaginationStateHasLoadedAllNextMessagesOrRepliesAreEmpty_thenReturnsTrue() throws {
         // Given
-        env.messageUpdater.mockPaginationState.hasLoadedAllNextMessages = true
+        replyPaginationHandler.mockState.hasLoadedAllNextMessages = true
         try saveReplies(with: [MessageId]())
 
         // When
@@ -116,7 +119,7 @@ final class MessageController_Tests: XCTestCase {
 
     func test_hasLoadedAllNextReplies_whenPaginationStateHasNotLoadedAllNextMessagesAndRepliesAreNotEmpty_thenReturnsFalse() throws {
         // Given
-        env.messageUpdater.mockPaginationState.hasLoadedAllNextMessages = false
+        replyPaginationHandler.mockState.hasLoadedAllNextMessages = false
         try saveReplies(with: [.unique, .unique])
 
         // When
@@ -130,7 +133,7 @@ final class MessageController_Tests: XCTestCase {
 
     func test_isLoadingPreviousReplies_whenPaginationStateIsLoadingPreviousMessages_thenReturnsTrue() {
         // Given
-        env.messageUpdater.mockPaginationState.isLoadingPreviousMessages = true
+        replyPaginationHandler.mockState.isLoadingPreviousMessages = true
 
         // When
         let result = controller.isLoadingPreviousReplies
@@ -141,7 +144,7 @@ final class MessageController_Tests: XCTestCase {
 
     func test_isLoadingPreviousReplies_whenPaginationStateIsNotLoadingPreviousMessages_thenReturnsFalse() {
         // Given
-        env.messageUpdater.mockPaginationState.isLoadingPreviousMessages = false
+        replyPaginationHandler.mockState.isLoadingPreviousMessages = false
 
         // When
         let result = controller.isLoadingPreviousReplies
@@ -154,7 +157,7 @@ final class MessageController_Tests: XCTestCase {
 
     func test_isLoadingNextReplies_whenPaginationStateIsLoadingNextMessages_thenReturnsTrue() {
         // Given
-        env.messageUpdater.mockPaginationState.isLoadingNextMessages = true
+        replyPaginationHandler.mockState.isLoadingNextMessages = true
 
         // When
         let result = controller.isLoadingNextReplies
@@ -165,7 +168,7 @@ final class MessageController_Tests: XCTestCase {
 
     func test_isLoadingNextReplies_whenPaginationStateIsNotLoadingNextMessages_thenReturnsFalse() {
         // Given
-        env.messageUpdater.mockPaginationState.isLoadingNextMessages = false
+        replyPaginationHandler.mockState.isLoadingNextMessages = false
 
         // When
         let result = controller.isLoadingNextReplies
@@ -178,7 +181,7 @@ final class MessageController_Tests: XCTestCase {
 
     func test_isLoadingMiddleReplies_whenPaginationStateIsLoadingMiddleMessages_thenReturnsTrue() {
         // Given
-        env.messageUpdater.mockPaginationState.isLoadingMiddleMessages = true
+        replyPaginationHandler.mockState.isLoadingMiddleMessages = true
 
         // When
         let result = controller.isLoadingMiddleReplies
@@ -189,7 +192,7 @@ final class MessageController_Tests: XCTestCase {
 
     func test_isLoadingMiddleReplies_whenPaginationStateIsNotLoadingMiddleMessages_thenReturnsFalse() {
         // Given
-        env.messageUpdater.mockPaginationState.isLoadingMiddleMessages = false
+        replyPaginationHandler.mockState.isLoadingMiddleMessages = false
 
         // When
         let result = controller.isLoadingMiddleReplies
@@ -202,7 +205,7 @@ final class MessageController_Tests: XCTestCase {
 
     func test_isJumpingToMessage_whenPaginationStateIsJumpingToMessage_thenReturnsTrue() {
         // Given
-        env.messageUpdater.mockPaginationState.hasLoadedAllNextMessages = false
+        replyPaginationHandler.mockState.hasLoadedAllNextMessages = false
 
         // When
         let result = controller.isJumpingToMessage
@@ -213,7 +216,7 @@ final class MessageController_Tests: XCTestCase {
 
     func test_isJumpingToMessage_whenPaginationStateIsNotJumpingToMessage_thenReturnsFalse() {
         // Given
-        env.messageUpdater.mockPaginationState.hasLoadedAllNextMessages = true
+        replyPaginationHandler.mockState.hasLoadedAllNextMessages = true
 
         // When
         let result = controller.isJumpingToMessage
@@ -227,7 +230,7 @@ final class MessageController_Tests: XCTestCase {
     func test_lastOldestReplyId_whenPaginationStateHasOldestFetchedMessage_thenReturnsItsId() {
         // Given
         let oldestFetchedMessage = MessagePayload.dummy()
-        env.messageUpdater.mockPaginationState.oldestFetchedMessage = oldestFetchedMessage
+        replyPaginationHandler.mockState.oldestFetchedMessage = oldestFetchedMessage
 
         // When
         let result = controller.lastOldestReplyId
@@ -238,7 +241,7 @@ final class MessageController_Tests: XCTestCase {
 
     func test_lastOldestReplyId_whenPaginationStateHasNoOldestFetchedMessage_thenReturnsNil() {
         // Given
-        env.messageUpdater.mockPaginationState.oldestFetchedMessage = nil
+        replyPaginationHandler.mockState.oldestFetchedMessage = nil
 
         // When
         let result = controller.lastOldestReplyId
@@ -252,7 +255,7 @@ final class MessageController_Tests: XCTestCase {
     func test_lastNewestReplyId_whenPaginationStateHasNewestFetchedMessage_thenReturnsItsId() {
         // Given
         let newestFetchedMessage = MessagePayload.dummy()
-        env.messageUpdater.mockPaginationState.newestFetchedMessage = newestFetchedMessage
+        replyPaginationHandler.mockState.newestFetchedMessage = newestFetchedMessage
 
         // When
         let result = controller.lastNewestReplyId
@@ -263,7 +266,7 @@ final class MessageController_Tests: XCTestCase {
 
     func test_lastNewestReplyId_whenPaginationStateHasNoNewestFetchedMessage_thenReturnsNil() {
         // Given
-        env.messageUpdater.mockPaginationState.newestFetchedMessage = nil
+        replyPaginationHandler.mockState.newestFetchedMessage = nil
 
         // When
         let result = controller.lastNewestReplyId
@@ -424,7 +427,7 @@ final class MessageController_Tests: XCTestCase {
         var config = ChatClient.defaultMockedConfig
         config.deletedMessagesVisibility = .alwaysHidden
         client = ChatClient_Mock(config: config)
-        controller = ChatMessageController(client: client, cid: cid, messageId: messageId, environment: env.controllerEnvironment)
+        controller = ChatMessageController(client: client, cid: cid, messageId: messageId, replyPaginationHandler: replyPaginationHandler, environment: env.controllerEnvironment)
 
         let reply1: MessagePayload = .dummy(
             messageId: .unique,
@@ -467,7 +470,7 @@ final class MessageController_Tests: XCTestCase {
 
         try client.databaseContainer.createCurrentUser(id: currentUserId)
         client.databaseContainer.viewContext.deletedMessagesVisibility = .visibleForCurrentUser
-        controller = ChatMessageController(client: client, cid: cid, messageId: messageId, environment: env.controllerEnvironment)
+        controller = ChatMessageController(client: client, cid: cid, messageId: messageId, replyPaginationHandler: replyPaginationHandler, environment: env.controllerEnvironment)
 
         // Insert own deleted reply
         let ownReply: MessagePayload = .dummy(
@@ -503,7 +506,7 @@ final class MessageController_Tests: XCTestCase {
 
         try client.databaseContainer.createCurrentUser(id: currentUserId)
         client.databaseContainer.viewContext.deletedMessagesVisibility = .alwaysHidden
-        controller = ChatMessageController(client: client, cid: cid, messageId: messageId, environment: env.controllerEnvironment)
+        controller = ChatMessageController(client: client, cid: cid, messageId: messageId, replyPaginationHandler: replyPaginationHandler, environment: env.controllerEnvironment)
 
         // Save channel
         try client.databaseContainer.writeSynchronously {
@@ -548,7 +551,7 @@ final class MessageController_Tests: XCTestCase {
 
         try client.databaseContainer.createCurrentUser(id: currentUserId)
         client.databaseContainer.viewContext.deletedMessagesVisibility = .alwaysVisible
-        controller = ChatMessageController(client: client, cid: cid, messageId: messageId, environment: env.controllerEnvironment)
+        controller = ChatMessageController(client: client, cid: cid, messageId: messageId, replyPaginationHandler: replyPaginationHandler, environment: env.controllerEnvironment)
 
         // Save channel
         try client.databaseContainer.writeSynchronously {
@@ -594,7 +597,7 @@ final class MessageController_Tests: XCTestCase {
 
         try client.databaseContainer.createCurrentUser(id: currentUserId)
         client.databaseContainer.viewContext.shouldShowShadowedMessages = true
-        controller = ChatMessageController(client: client, cid: cid, messageId: messageId, environment: env.controllerEnvironment)
+        controller = ChatMessageController(client: client, cid: cid, messageId: messageId, replyPaginationHandler: replyPaginationHandler, environment: env.controllerEnvironment)
 
         // Save channel
         try client.databaseContainer.writeSynchronously {
@@ -899,7 +902,7 @@ final class MessageController_Tests: XCTestCase {
 
         // Simulate network response with the error
         let networkError = TestError()
-        env.messageUpdater.editMessage_completion?(networkError)
+        env.messageUpdater.editMessage_completion?(.failure(networkError))
 
         // Assert error is propagated
         AssertAsync.willBeEqual(completionError as? TestError, networkError)
@@ -922,7 +925,7 @@ final class MessageController_Tests: XCTestCase {
         controller = nil
 
         // Simulate successful network response
-        env.messageUpdater.editMessage_completion?(nil)
+        env.messageUpdater.editMessage_completion?(.success(.mock()))
         // Release reference of completion so we can deallocate stuff
         env.messageUpdater.editMessage_completion = nil
 
@@ -1265,7 +1268,7 @@ final class MessageController_Tests: XCTestCase {
 
     func test_loadPreviousReplies_noMessageIdPassed_usesLastFetchedId() {
         let lastFetchedId = MessageId.unique
-        env.messageUpdater.mockPaginationState.oldestFetchedMessage = .dummy(messageId: lastFetchedId)
+        replyPaginationHandler.mockState.oldestFetchedMessage = .dummy(messageId: lastFetchedId)
 
         controller.loadPreviousReplies(
             limit: 21,
@@ -1292,7 +1295,7 @@ final class MessageController_Tests: XCTestCase {
     }
 
     func test_loadPreviousReplies_whenHasLoadedAllPreviousReplies_doesNotCallUpdater() throws {
-        env.messageUpdater.mockPaginationState.hasLoadedAllPreviousMessages = true
+        replyPaginationHandler.mockState.hasLoadedAllPreviousMessages = true
 
         let exp = expectation(description: "load replies completes")
         controller.loadPreviousReplies(before: "last message", limit: 2) { _ in
@@ -1306,7 +1309,7 @@ final class MessageController_Tests: XCTestCase {
     }
 
     func test_loadPreviousReplies_whenIsLoadingPreviousReplies_doesNotCallUpdater() throws {
-        env.messageUpdater.mockPaginationState.isLoadingPreviousMessages = true
+        replyPaginationHandler.mockState.isLoadingPreviousMessages = true
 
         let exp = expectation(description: "load replies completes")
         controller.loadPreviousReplies(before: "last message", limit: 2) { _ in
@@ -1349,7 +1352,7 @@ final class MessageController_Tests: XCTestCase {
     func test_loadNextReplies_propagatesError() throws {
         // Simulate controller is in mid-page
         try saveReplies(with: [.unique, .unique])
-        env.messageUpdater.mockPaginationState.hasLoadedAllNextMessages = false
+        replyPaginationHandler.mockState.hasLoadedAllNextMessages = false
 
         // Simulate `loadNextReplies` call and catch the completion
         var completionError: Error?
@@ -1369,7 +1372,7 @@ final class MessageController_Tests: XCTestCase {
     func test_loadNextReplies_propagatesNilError() throws {
         // Simulate controller is in mid-page
         try saveReplies(with: [.unique, .unique])
-        env.messageUpdater.mockPaginationState.hasLoadedAllNextMessages = false
+        replyPaginationHandler.mockState.hasLoadedAllNextMessages = false
 
         // Simulate `loadNextReplies` call and catch the completion
         var completionCalled = false
@@ -1403,7 +1406,7 @@ final class MessageController_Tests: XCTestCase {
     func test_loadNextReplies_callsMessageUpdater_withCorrectValues() throws {
         // Simulate controller is in mid-page
         try saveReplies(with: [.unique, .unique])
-        env.messageUpdater.mockPaginationState.hasLoadedAllNextMessages = false
+        replyPaginationHandler.mockState.hasLoadedAllNextMessages = false
 
         // Simulate `loadNextReplies` call
         let afterMessageId: MessageId = .unique
@@ -1418,7 +1421,7 @@ final class MessageController_Tests: XCTestCase {
     func test_loadNextReplies_whenHasLoadedAllNextReplies_doesNotCallUpdater() throws {
         // Simulate controller has loaded all next replies
         try saveReplies(with: [.unique, .unique])
-        env.messageUpdater.mockPaginationState.hasLoadedAllNextMessages = true
+        replyPaginationHandler.mockState.hasLoadedAllNextMessages = true
 
         let exp = expectation(description: "load replies completes")
         controller.loadNextReplies(after: "last message", limit: 2) { _ in
@@ -1434,8 +1437,8 @@ final class MessageController_Tests: XCTestCase {
     func test_loadNextReplies_whenIsLoadingNextReplies_doesNotCallUpdater() throws {
         // Simulate controller is loading next replies
         try saveReplies(with: [.unique, .unique])
-        env.messageUpdater.mockPaginationState.hasLoadedAllNextMessages = false
-        env.messageUpdater.mockPaginationState.isLoadingNextMessages = true
+        replyPaginationHandler.mockState.hasLoadedAllNextMessages = false
+        replyPaginationHandler.mockState.isLoadingNextMessages = true
 
         let exp = expectation(description: "load replies completes")
         controller.loadNextReplies(after: "last message", limit: 2) { _ in
@@ -1486,7 +1489,7 @@ final class MessageController_Tests: XCTestCase {
 
     func test_loadPageAroundReplyId_whenIsLoadingMiddleMessages_shouldNotLoadMoreReplies() {
         // Simulate controller is loading middle messages
-        env.messageUpdater.mockPaginationState.isLoadingMiddleMessages = true
+        replyPaginationHandler.mockState.isLoadingMiddleMessages = true
 
         let exp = expectation(description: "should load page around reply id")
         let replyId = MessageId.unique
@@ -1984,7 +1987,7 @@ final class MessageController_Tests: XCTestCase {
         XCTAssertEqual(env.messageUpdater?.pinMessage_pinning, pinning)
 
         // Simulate successful update
-        env.messageUpdater?.pinMessage_completion?(nil)
+        env.messageUpdater?.pinMessage_completion?(.success(.mock()))
         // Release reference of completion so we can deallocate stuff
         env.messageUpdater!.pinMessage_completion = nil
 
@@ -2004,7 +2007,7 @@ final class MessageController_Tests: XCTestCase {
 
         // Simulate failed update
         let testError = TestError()
-        env.messageUpdater!.pinMessage_completion?(testError)
+        env.messageUpdater!.pinMessage_completion?(.failure(testError))
 
         // Completion should be called with the error
         AssertAsync.willBeEqual(completionCalledError as? TestError, testError)
@@ -2031,7 +2034,7 @@ final class MessageController_Tests: XCTestCase {
         XCTAssertEqual(env.messageUpdater?.unpinMessage_messageId, messageId)
 
         // Simulate successful update
-        env.messageUpdater?.unpinMessage_completion?(nil)
+        env.messageUpdater?.unpinMessage_completion?(.success(.mock()))
         // Release reference of completion so we can deallocate stuff
         env.messageUpdater!.unpinMessage_completion = nil
 
@@ -2051,7 +2054,7 @@ final class MessageController_Tests: XCTestCase {
 
         // Simulate failed update
         let testError = TestError()
-        env.messageUpdater!.unpinMessage_completion?(testError)
+        env.messageUpdater!.unpinMessage_completion?(.failure(testError))
 
         // Completion should be called with the error
         AssertAsync.willBeEqual(completionCalledError as? TestError, testError)
@@ -2236,7 +2239,7 @@ final class MessageController_Tests: XCTestCase {
 
         // Simulate network response with the error.
         let updaterError = TestError()
-        env.messageUpdater.translate_completion!(updaterError)
+        env.messageUpdater.translate_completion!(.failure(updaterError))
 
         // Assert error is propagated.
         AssertAsync.willBeEqual(completionError as? TestError, updaterError)
@@ -2254,7 +2257,14 @@ final class MessageController_Tests: XCTestCase {
         }
 
         // Simulate successful updater call.
-        env.messageUpdater.translate_completion!(nil)
+        let message = ChatMessage.mock(
+            id: .anonymous,
+            cid: .unique,
+            text: "Text",
+            author: ChatUser.mock(id: .anonymous),
+            pinDetails: nil
+        )
+        env.messageUpdater.translate_completion!(.success(message))
 
         // Assert completion is called.
         AssertAsync.willBeTrue(completionIsCalled)
@@ -2346,6 +2356,7 @@ private class TestDelegate: QueueAwareDelegate, ChatMessageControllerDelegate {
 }
 
 private class TestEnvironment {
+    var replyMessagesPaginationStateHandler: MessagesPaginationStateHandler_Mock!
     var messageUpdater: MessageUpdater_Mock!
     var messageObserver: EntityDatabaseObserver_Mock<ChatMessage, MessageDTO>!
     var repliesObserver: ListDatabaseObserverWrapper_Mock<ChatMessage, MessageDTO>!
@@ -2378,9 +2389,8 @@ private class TestEnvironment {
                 self.messageUpdater = MessageUpdater_Mock(
                     isLocalStorageEnabled: $0,
                     messageRepository: $1,
-                    paginationStateHandler: $2,
-                    database: $3,
-                    apiClient: $4
+                    database: $2,
+                    apiClient: $3
                 )
                 return self.messageUpdater
             }

@@ -2,6 +2,7 @@
 // Copyright © 2024 Stream.io Inc. All rights reserved.
 //
 
+import Combine
 import Foundation
 
 /// The type is designed to pre-process some incoming `Event` via middlewares before being published
@@ -71,5 +72,42 @@ class EventNotificationCenter: NotificationCenter {
 extension EventNotificationCenter {
     func process(_ event: Event, postNotification: Bool = true, completion: (() -> Void)? = nil) {
         process([event], postNotifications: postNotification, completion: completion)
+    }
+}
+
+@available(iOS 13.0, *)
+extension EventNotificationCenter {
+    func subscribe<E>(
+        to event: E.Type,
+        filter: @escaping (E) -> Bool = { _ in true },
+        handler: @escaping (E) -> Void
+    ) -> AnyCancellable where E: Event {
+        publisher(for: .NewEventReceived)
+            .compactMap { $0.event as? E }
+            .filter(filter)
+            .receive(on: DispatchQueue.main)
+            .sink(receiveValue: handler)
+    }
+    
+    func subscribe(
+        filter: @escaping (Event) -> Bool = { _ in true },
+        handler: @escaping (Event) -> Void
+    ) -> AnyCancellable {
+        publisher(for: .NewEventReceived)
+            .compactMap(\.event)
+            .filter(filter)
+            .receive(on: DispatchQueue.main)
+            .sink(receiveValue: handler)
+    }
+    
+    static func channelFilter(cid: ChannelId, event: Event) -> Bool {
+        switch event {
+        case let channelEvent as ChannelSpecificEvent:
+            return channelEvent.cid == cid
+        case let channelEvent as UnknownChannelEvent:
+            return channelEvent.cid == cid
+        default:
+            return false
+        }
     }
 }

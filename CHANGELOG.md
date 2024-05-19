@@ -4,6 +4,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 # Upcoming
 
 ## StreamChat
+### ✅ Added
+- Add a new state layer with async-await and observable state objects ([learn more](https://getstream.io/chat/docs/sdk/ios/state-layer/state-layer-overview/)) [#3177](https://github.com/GetStream/stream-chat-swift/pull/3177)
+
+# [4.55.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.55.0)
+_May 13, 2024_
+
+## StreamChat
 ### 🐞 Fixed
 - Fix triggering user query calls whenever a new user was added in `UserListController` [#3184](https://github.com/GetStream/stream-chat-swift/pull/3184)
 - Fix duplicated watching channel calls when reconnecting [#3187](https://github.com/GetStream/stream-chat-swift/pull/3187)
@@ -12,6 +19,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### 🔄 Changed
 - Do not retry rate-limited requests [#3182](https://github.com/GetStream/stream-chat-swift/pull/3182)
 - `UserListController` won't update automatically when a new user is added [#3184](https://github.com/GetStream/stream-chat-swift/pull/3184)
+
+## StreamChatUI
+### 🐞 Fixed
+- Fix marking channel read after leaving channel view [#3193](https://github.com/GetStream/stream-chat-swift/pull/3193)
 
 # [4.54.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.54.0)
 _May 06, 2024_

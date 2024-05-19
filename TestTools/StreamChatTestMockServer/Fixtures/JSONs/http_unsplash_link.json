@@ -1,23 +1,27 @@
 {
-    "duration": "537.27ms",
+    "duration": "757.02ms",
     "message": {
         "attachments": [
             {
-                "image_url": "https://images.unsplash.com/photo-1568574728383-06fca083883d?blend=000000&blend-alpha=10&blend-mode=normal&blend-w=1&crop=faces%2Cedges&h=630&mark=https%3A%2F%2Fimages.unsplash.com%2Fopengraph%2Flogo.png&mark-align=top%2Cleft&mark-pad=50&mark-w=64&w=1200&auto=format&fit=crop&q=60&ixid=M3wxMjA3fDB8MXxhbGx8fHx8fHx8fHwxNzExOTMwODUzfA&ixlib=rb-4.0.3",
+                "image_url": "https://images.unsplash.com/photo-1568574728383-06fca083883d?blend=000000&blend-alpha=10&blend-mode=normal&blend-w=1&crop=faces%2Cedges&h=630&mark=https%3A%2F%2Fimages.unsplash.com%2Fopengraph%2Flogo.png&mark-align=top%2Cleft&mark-pad=50&mark-w=64&w=1200&auto=format&fit=crop&q=60&ixid=M3wxMjA3fDB8MXxhbGx8fHx8fHx8fHwxNzE1NzMxOTI4fA&ixlib=rb-4.0.3",
                 "og_scrape_url": "https://unsplash.com/photos/1_2d3MRbI9c",
                 "text": "Download this photo by Joao Branco on Unsplash",
-                "thumb_url": "https://images.unsplash.com/photo-1568574728383-06fca083883d?blend=000000&blend-alpha=10&blend-mode=normal&blend-w=1&crop=faces%2Cedges&h=630&mark=https%3A%2F%2Fimages.unsplash.com%2Fopengraph%2Flogo.png&mark-align=top%2Cleft&mark-pad=50&mark-w=64&w=1200&auto=format&fit=crop&q=60&ixid=M3wxMjA3fDB8MXxhbGx8fHx8fHx8fHwxNzExOTMwODUzfA&ixlib=rb-4.0.3",
+                "thumb_url": "https://images.unsplash.com/photo-1568574728383-06fca083883d?blend=000000&blend-alpha=10&blend-mode=normal&blend-w=1&crop=faces%2Cedges&h=630&mark=https%3A%2F%2Fimages.unsplash.com%2Fopengraph%2Flogo.png&mark-align=top%2Cleft&mark-pad=50&mark-w=64&w=1200&auto=format&fit=crop&q=60&ixid=M3wxMjA3fDB8MXxhbGx8fHx8fHx8fHwxNzE1NzMxOTI4fA&ixlib=rb-4.0.3",
                 "title": "Photo by Joao Branco on Unsplash",
                 "title_link": "https://unsplash.com/photos/green-pine-tree-mountain-slope-scenery-1_2d3MRbI9c",
                 "type": "image"
             }
         ],
-        "before_message_send_failed": true,
-        "cid": "messaging:b27947a8-efbd-11ee-a23a-9ecacb0fb7e6",
-        "created_at": "2024-04-01T00:20:54.120935Z",
+        "cid": "messaging:c0cd66ea-124f-11ef-be47-3afd52d517ad",
+        "created_at": "2024-05-15T00:12:08.37509Z",
         "deleted_reply_count": 0,
         "html": "<p><a href=\"https://unsplash.com/photos/1_2d3MRbI9c\" rel=\"nofollow\">https://unsplash.com/photos/1_2d3MRbI9c</a></p>\n",
-        "id": "b39796a8-efbd-11ee-a23a-9ecacb0fb7e6",
+        "i18n": {
+            "de_text": "https://unsplash.com/photos/1_2d3MRbI9c",
+            "en_text": "https://unsplash.com/photos/1_2d3MRbI9c",
+            "language": "en"
+        },
+        "id": "c436e63a-124f-11ef-be47-3afd52d517ad",
         "latest_reactions": [],
         "mentioned_users": [],
         "own_reactions": [],
@@ -32,21 +36,28 @@
         "silent": false,
         "text": "https://unsplash.com/photos/1_2d3MRbI9c",
         "type": "regular",
-        "updated_at": "2024-04-01T00:20:54.120935Z",
+        "updated_at": "2024-05-15T00:12:08.37509Z",
         "user": {
             "banned": false,
             "birthland": "Tatooine",
-            "created_at": "2020-12-07T11:36:47.059906Z",
-            "dashboard_user": true,
+            "created_at": "2024-04-04T09:26:11.805899Z",
             "id": "luke_skywalker",
             "image": "https://vignette.wikia.nocookie.net/starwars/images/2/20/LukeTLJ.jpg",
-            "image_url": "https://vignette.wikia.nocookie.net/starwars/images/2/20/LukeTLJ.jpg",
             "language": "en",
-            "last_active": "2024-04-01T00:20:51.584901117Z",
+            "last_active": "2024-05-15T00:12:01.712949233Z",
             "name": "Luke Skywalker",
             "online": true,
+            "privacy_settings": {
+                "read_receipts": {
+                    "enabled": false
+                },
+                "typing_indicators": {
+                    "enabled": false
+                }
+            },
             "role": "user",
-            "updated_at": "2024-03-19T02:23:11.060424Z"
+            "teams": [],
+            "updated_at": "2024-05-14T19:25:41.524994Z"
         }
     }
 }

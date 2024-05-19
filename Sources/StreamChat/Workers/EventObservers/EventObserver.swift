@@ -22,7 +22,7 @@ class EventObserver {
             notificationCenter?.removeObserver(observer)
         }
     }
-
+    
     deinit {
         stopObserving()
     }

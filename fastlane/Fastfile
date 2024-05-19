@@ -68,6 +68,9 @@ lane :release do |options|
     # Set the framework version in SystemEnvironment+Version.swift
     new_content = File.read(swift_environment_path).gsub!(previous_version_number, release_version)
     File.open(swift_environment_path, 'w') { |f| f.puts(new_content) }
+
+    # Update sdk sizes
+    update_img_shields_sdk_sizes
   end
 
   pod_lint
@@ -122,8 +125,8 @@ end
 
 lane :merge_main_to_develop do
   ensure_git_status_clean
-  sh('git checkout develop')
-  sh('git pull')
+  sh('git checkout main && git pull')
+  sh('git checkout develop && git pull')
   sh('git merge main')
   UI.user_error!('Not pushing changes') unless prompt(text: 'Will push changes. All looking good?', boolean: true)
   sh('git push')
@@ -771,6 +774,39 @@ lane :copyright do
   )
 end
 
+desc 'Show current frameworks size'
+lane :show_frameworks_sizes do |options|
+  options[:sizes] ||= frameworks_sizes
+
+  UI.success("StreamChat: #{options[:sizes][:stream_chat]}MB")
+  UI.success("StreamChatUI: #{options[:sizes][:stream_chat_ui]}MB")
+  UI.success("Total Size: #{options[:sizes][:total]}MB")
+end
+
+desc 'Update img shields SDK size labels'
+lane :update_img_shields_sdk_sizes do
+  sizes = frameworks_sizes
+  show_frameworks_sizes(sizes: sizes)
+
+  # Read the file into a string
+  readme_path = '../README.md'
+  readme_content = File.read(readme_path)
+
+  # Define the new value for the badge
+  stream_chat_size = "#{sizes[:stream_chat]}MB"
+  stream_chat_ui_size = "#{sizes[:stream_chat_ui]}MB"
+
+  # Replace the value in the badge URL
+  readme_content.gsub!(%r{(https://img.shields.io/badge/StreamChat-)(.*?)(-blue)}, "\\1#{stream_chat_size}\\3")
+  readme_content.gsub!(%r{(https://img.shields.io/badge/StreamChatUI-)(.*?)(-blue)}, "\\1#{stream_chat_ui_size}\\3")
+
+  # Write the updated content back to the file
+  File.write(readme_path, readme_content)
+
+  # Notify success
+  UI.success('Successfully updated the SDK size labels in README.md!')
+end
+
 private_lane :create_pr do |options|
   options[:base_branch] ||= 'develop'
   sh("git checkout -b #{options[:head_branch]}")
@@ -833,4 +869,39 @@ def select_files_from(files:, with_extension:, that_start_with:)
   end.select do |f|
     f.gsub(/['"]/, '').end_with?(with_extension)
   end
+end
+
+def frameworks_sizes
+  root_dir = 'Build/SDKSize'
+  archive_dir = "#{root_dir}/DemoApp.xcarchive"
+
+  # Cleanup the previous builds
+  FileUtils.rm_rf("../#{root_dir}/")
+
+  gym(
+    scheme: 'DemoApp',
+    archive_path: archive_dir,
+    export_method: 'ad-hoc',
+    export_options: 'fastlane/sdk_size_export_options.plist'
+  )
+
+  # Parse the thinned size of Assets.car from Packaging.log
+  assets_size_regex = %r{\b(\d+)\sbytes\sfor\s./Payload/ChatSample.app/Frameworks/StreamChatUI.framework/Assets.car\b}
+  packaging_log_content = File.read("#{Gym.cache[:temporary_output_path]}/Packaging.log")
+  match = packaging_log_content.match(assets_size_regex)
+  assets_thinned_size = match[1].to_i
+
+  frameworks_path = "../#{archive_dir}/Products/Library/Frameworks/ChatSample.app/Frameworks"
+  stream_chat_size = File.size("#{frameworks_path}/StreamChat.framework/StreamChat")
+  stream_chat_ui_size = File.size("#{frameworks_path}/StreamChatUI.framework/StreamChatUI")
+
+  stream_chat_size_mb = (stream_chat_size.to_f / 1024 / 1024).round(1)
+  stream_chat_ui_size_mb = ((stream_chat_ui_size + assets_thinned_size).to_f / 1024 / 1024).round(1)
+  total_size_mb = (stream_chat_size_mb + stream_chat_ui_size_mb).round(1)
+
+  {
+    stream_chat: stream_chat_size_mb,
+    stream_chat_ui: stream_chat_ui_size_mb,
+    total: total_size_mb
+  }
 end

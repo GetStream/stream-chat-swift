@@ -71,7 +71,7 @@ trailing_whitespace:
   ignores_empty_lines: true
 
 function_body_length:
-  warning: 120
+  warning: 150
   error: 200
 
 file_name_no_space:

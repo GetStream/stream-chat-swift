@@ -397,15 +397,20 @@ protocol QueuedRequestDatabaseSession {
 }
 
 protocol ThreadDatabaseSession {
+    /// Loads the thread with the given parentMessageId in case it is available locally.
+    func thread(
+        parentMessageId: MessageId,
+        cache: PreWarmedCache?
+    ) -> ThreadDTO?
+
     /// Creates `ThreadDTO` objects for the given thread payloads.
     @discardableResult
-    func saveThreadList(payload: ThreadListPayload, query: ThreadListQuery?) -> [ThreadDTO]
+    func saveThreadList(payload: ThreadListPayload) -> [ThreadDTO]
     
     /// Creates a new `ThreadDTO` object in the database with the given `payload`.
     @discardableResult
     func saveThread(
         payload: ThreadPayload,
-        query: ThreadListQuery?,
         cache: PreWarmedCache?
     ) throws -> ThreadDTO
 
@@ -424,6 +429,9 @@ protocol ThreadDatabaseSession {
         parentMessageId: String,
         cache: PreWarmedCache?
     ) throws -> ThreadReadDTO
+
+    /// Cleans all the threads in the database.
+    func deleteAllThreads() throws
 }
 
 protocol PollDatabaseSession {

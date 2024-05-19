@@ -50,7 +50,34 @@ class DatabaseContainer: NSPersistentContainer {
         }
         return context
     }()
+    
+    /// An immediately reacting NSManagedObjectContext for the chat state layer.
+    ///
+    /// Chat state layer requires that the context is refreshed when a write happens. Otherwise database observers are too slow to react.
+    ///
+    /// For example, here the state.messages needs to react before loadMessages finishes.
+    /// ```swift
+    /// try await chat.loadMessages()
+    /// let messages = chat.state.messages
+    /// ```
+    private(set) lazy var stateLayerContext: NSManagedObjectContext = {
+        let context = newBackgroundContext()
+        // Context is merged manually since automatically is too slow for reacting to changes needed by the state layer
+        context.automaticallyMergesChangesFromParent = false
+        context.mergePolicy = NSMergeByPropertyObjectTrumpMergePolicy
+        context.perform { [localCachingSettings, deletedMessageVisibility, shouldShowShadowedMessages] in
+            context.localCachingSettings = localCachingSettings
+            context.deletedMessagesVisibility = deletedMessageVisibility
+            context.shouldShowShadowedMessages = shouldShowShadowedMessages
+        }
+        stateLayerContextRefreshObservers = [
+            context.observeChanges(in: writableContext),
+            context.observeChanges(in: viewContext)
+        ]
+        return context
+    }()
 
+    private var stateLayerContextRefreshObservers = [NSObjectProtocol]()
     private var loggerNotificationObserver: NSObjectProtocol?
     private let localCachingSettings: ChatClientConfig.LocalCaching?
     private let deletedMessageVisibility: ChatClientConfig.DeletedMessageVisibility?
@@ -59,7 +86,7 @@ class DatabaseContainer: NSPersistentContainer {
     static var cachedModel: NSManagedObjectModel?
 
     /// All `NSManagedObjectContext`s this container owns.
-    private(set) lazy var allContext: [NSManagedObjectContext] = [viewContext, backgroundReadOnlyContext, writableContext]
+    private(set) lazy var allContext: [NSManagedObjectContext] = [viewContext, backgroundReadOnlyContext, stateLayerContext, writableContext]
 
     /// Creates a new `DatabaseContainer` instance.
     ///
@@ -150,6 +177,9 @@ class DatabaseContainer: NSPersistentContainer {
     }
 
     deinit {
+        stateLayerContextRefreshObservers.forEach { observer in
+            NotificationCenter.default.removeObserver(observer)
+        }
         if let observer = loggerNotificationObserver {
             NotificationCenter.default.removeObserver(observer)
         }
@@ -218,6 +248,37 @@ class DatabaseContainer: NSPersistentContainer {
                 log.error("Failed to save data to DB. Error: \(error)", subsystems: .database)
                 FetchCache.clear()
                 completion(error)
+            }
+        }
+    }
+    
+    @available(iOS 13.0, *)
+    func write(_ actions: @escaping (DatabaseSession) throws -> Void) async throws {
+        try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
+            write(actions) { error in
+                if let error {
+                    continuation.resume(throwing: error)
+                } else {
+                    continuation.resume(returning: ())
+                }
+            }
+        }
+    }
+    
+    @available(iOS 13.0, *)
+    func read<T>(_ actions: @escaping (NSManagedObjectContext) throws -> T) async throws -> T {
+        let context = stateLayerContext
+        return try await withCheckedThrowingContinuation { continuation in
+            context.perform {
+                do {
+                    let results = try actions(context)
+                    if context.hasChanges {
+                        assertionFailure("State layer context is read only, but calling actions() created changes")
+                    }
+                    continuation.resume(returning: results)
+                } catch {
+                    continuation.resume(throwing: error)
+                }
             }
         }
     }
@@ -358,5 +419,29 @@ extension NSManagedObjectContext {
         insertedObjects.forEach { discardChanges(for: $0) }
         updatedObjects.forEach { discardChanges(for: $0) }
         deletedObjects.forEach { discardChanges(for: $0) }
+    }
+    
+    func observeChanges(in otherContext: NSManagedObjectContext) -> NSObjectProtocol {
+        assert(!automaticallyMergesChangesFromParent, "Duplicate change handling")
+        return NotificationCenter.default
+            .addObserver(
+                forName: Notification.Name.NSManagedObjectContextDidSave,
+                object: otherContext,
+                queue: nil
+            ) { [weak self] notification in
+                guard let self else { return }
+                self.performAndWait {
+                    self.mergeChanges(fromContextDidSave: notification)
+                    // Keep the state clean after merging changes
+                    guard self.hasChanges else { return }
+                    self.perform {
+                        do {
+                            try self.save()
+                        } catch {
+                            log.debug("Failed to save merged changes", subsystems: .database)
+                        }
+                    }
+                }
+            }
     }
 }
