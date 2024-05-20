@@ -7,6 +7,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### ✅ Added
 - Add a new state layer with async-await and observable state objects ([learn more](https://getstream.io/chat/docs/sdk/ios/state-layer/state-layer-overview/)) [#3177](https://github.com/GetStream/stream-chat-swift/pull/3177)
 
+## StreamChatUI
+### 🐞 Fixed
+- Do not re-displaying suggestion view on each character change [#3215](https://github.com/GetStream/stream-chat-swift/pull/3215)
+- Reduce suggestion view height updates while scrolling it [#3215](https://github.com/GetStream/stream-chat-swift/pull/3215)
+
 # [4.55.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.55.0)
 _May 13, 2024_
 

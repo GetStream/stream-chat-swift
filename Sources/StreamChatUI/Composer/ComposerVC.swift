@@ -534,7 +534,6 @@ open class ComposerVC: _ViewController,
         updateCommandSuggestions()
         updateMentionSuggestions()
         updatePlaceholderLabel()
-        dismissSuggestions()
     }
 
     open func updateText() {
@@ -710,6 +709,8 @@ open class ComposerVC: _ViewController,
                 self?.showMentionSuggestions(for: typingMention, mentionRange: mentionRange)
             }
             return
+        } else {
+            dismissSuggestions()
         }
     }
 
