@@ -9,7 +9,8 @@
     }
   ],
   "defaultOptions" : {
-
+    "defaultTestExecutionTimeAllowance" : 180,
+    "testTimeoutsEnabled" : true
   },
   "testTargets" : [
     {
@@ -27,7 +28,6 @@
         "AttachmentQueueUploader_Tests\/test_uploader_whenHasFailedAttachments_doNotMarkMessagePendingSend()",
         "AttachmentQueueUploader_Tests\/test_uploader_whenPostProcessorAvailable_shouldChangeTheAttachmentPayload()",
         "AttachmentQueueUploader_Tests\/test_uploader_whenUploadFails_markMessageAsFailed()",
-        "DatabaseContainer_Tests\/test_removingAllData()",
         "ChannelController_Tests\/test_createCall_propagatesResultFromUpdater()",
         "ChannelListPayload_Tests\/test_decode_bigChannelListPayload()",
         "ChannelListPayload_Tests\/test_hugeChannelListQuery_save()",
@@ -35,6 +35,7 @@
         "ChannelListPayload_Tests\/test_hugeChannelListQuery_save_DB_filled()",
         "ChannelUpdater_Tests\/test_hideChannel_successfulResponse_isPropagatedToCompletion()",
         "ChannelUpdater_Tests\/test_updateChannelQuery_successfulResponseData_areSavedToDB()",
+        "DatabaseContainer_Tests\/test_removingAllData()",
         "EventNotificationCenter_Tests\/test_measure_processMultipleNewMessageEvents()",
         "MessageSender_Tests\/test_senderSendsMessage_inTheOrderTheyWereCreatedLocally()",
         "MessageSender_Tests\/test_senderSendsMessage_withPendingSendLocalState_and_uploadedOrEmptyAttachments()",

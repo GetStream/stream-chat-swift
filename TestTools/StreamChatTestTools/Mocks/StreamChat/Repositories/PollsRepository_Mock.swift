@@ -13,7 +13,8 @@ final class PollsRepository_Mock: PollsRepository, Spy {
     @Atomic var suggestPollOption_completion: ((Error?) -> Void)?
     
     var recordedFunctions: [String] = []
-    
+    var spyState: SpyState = .init()
+
     override func queryPollVotes(
         query: PollVoteListQuery,
         completion: ((Result<[PollVote], Error>) -> Void)? = nil

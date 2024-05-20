@@ -29,4 +29,13 @@ class ReactionListUpdater: Worker {
             }
         }
     }
+    
+    @available(iOS 13.0, *)
+    func loadReactions(query: ReactionListQuery) async throws -> [ChatMessageReaction] {
+        try await withCheckedThrowingContinuation { continuation in
+            loadReactions(query: query) { completion in
+                continuation.resume(with: completion)
+            }
+        }
+    }
 }

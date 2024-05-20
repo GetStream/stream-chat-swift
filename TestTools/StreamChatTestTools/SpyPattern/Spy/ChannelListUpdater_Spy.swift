@@ -7,10 +7,11 @@ import XCTest
 
 /// Mock implementation of ChannelListUpdater
 final class ChannelListUpdater_Spy: ChannelListUpdater, Spy {
-    var recordedFunctions: [String] = []
+    let spyState = SpyState()
 
     @Atomic var update_queries: [ChannelListQuery] = []
     @Atomic var update_completion: ((Result<[ChatChannel], Error>) -> Void)?
+    @Atomic var update_completion_result: Result<[ChatChannel], Error>?
 
     @Atomic var fetch_queries: [ChannelListQuery] = []
     @Atomic var fetch_completion: ((Result<ChannelListPayload, Error>) -> Void)?
@@ -31,6 +32,7 @@ final class ChannelListUpdater_Spy: ChannelListUpdater, Spy {
     func cleanUp() {
         update_queries.removeAll()
         update_completion = nil
+        update_completion_result = nil
 
         fetch_queries.removeAll()
         fetch_completion = nil
@@ -47,6 +49,7 @@ final class ChannelListUpdater_Spy: ChannelListUpdater, Spy {
     ) {
         _update_queries.mutate { $0.append(channelListQuery) }
         update_completion = completion
+        update_completion_result?.invoke(with: completion)
     }
 
     override func markAllRead(completion: ((Error?) -> Void)? = nil) {

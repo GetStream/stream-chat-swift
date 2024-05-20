@@ -68,7 +68,6 @@ public class ChatMessageSearchController: DataController, DelegateCallable, Data
         .messageUpdaterBuilder(
             client.config.isLocalStorageEnabled,
             client.messageRepository,
-            client.makeMessagesPaginationStateHandler(),
             client.databaseContainer,
             client.apiClient
         )
@@ -201,8 +200,8 @@ public class ChatMessageSearchController: DataController, DelegateCallable, Data
         resetMessagesObserver()
 
         messageUpdater.search(query: query, policy: .replace) { result in
-            if case let .success(payload) = result {
-                self.updateNextPageCursor(with: payload)
+            if case let .success(response) = result {
+                self.updateNextPageCursor(with: response.payload)
             }
 
             let error = result.error
@@ -237,8 +236,8 @@ public class ChatMessageSearchController: DataController, DelegateCallable, Data
         }
 
         messageUpdater.search(query: updatedQuery) { result in
-            if case let .success(payload) = result {
-                self.updateNextPageCursor(with: payload)
+            if case let .success(response) = result {
+                self.updateNextPageCursor(with: response.payload)
             }
             self.callback { completion?(result.error) }
         }
@@ -254,7 +253,6 @@ extension ChatMessageSearchController {
         var messageUpdaterBuilder: (
             _ isLocalStorageEnabled: Bool,
             _ messageRepository: MessageRepository,
-            _ paginationStateHandler: MessagesPaginationStateHandling,
             _ database: DatabaseContainer,
             _ apiClient: APIClient
         ) -> MessageUpdater = MessageUpdater.init

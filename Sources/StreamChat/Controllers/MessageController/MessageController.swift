@@ -11,7 +11,7 @@ public extension ChatClient {
     /// - Parameter messageId: The message identifier.
     /// - Returns: A new instance of `MessageController`.
     func messageController(cid: ChannelId, messageId: MessageId) -> ChatMessageController {
-        .init(client: self, cid: cid, messageId: messageId)
+        .init(client: self, cid: cid, messageId: messageId, replyPaginationHandler: makeMessagesPaginationStateHandler())
     }
 }
 
@@ -99,44 +99,44 @@ public class ChatMessageController: DataController, DelegateCallable, DataStoreP
 
     /// A Boolean value that returns whether the oldest replies have all been loaded or not.
     public var hasLoadedAllPreviousReplies: Bool {
-        messageUpdater.paginationState.hasLoadedAllPreviousMessages
+        replyPaginationState.hasLoadedAllPreviousMessages
     }
 
     /// A Boolean value that returns whether the newest replies have all been loaded or not.
     public var hasLoadedAllNextReplies: Bool {
-        messageUpdater.paginationState.hasLoadedAllNextMessages || replies.isEmpty
+        replyPaginationState.hasLoadedAllNextMessages || replies.isEmpty
     }
 
     /// A Boolean value that returns whether the thread is currently loading previous (old) replies.
     public var isLoadingPreviousReplies: Bool {
-        messageUpdater.paginationState.isLoadingPreviousMessages
+        replyPaginationState.isLoadingPreviousMessages
     }
 
     /// A Boolean value that returns whether the thread is currently loading next (new) replies.
     public var isLoadingNextReplies: Bool {
-        messageUpdater.paginationState.isLoadingNextMessages
+        replyPaginationState.isLoadingNextMessages
     }
 
     /// A Boolean value that returns whether the thread is currently loading a page around a reply.
     public var isLoadingMiddleReplies: Bool {
-        messageUpdater.paginationState.isLoadingMiddleMessages
+        replyPaginationState.isLoadingMiddleMessages
     }
 
     /// A Boolean value that returns whether the thread is currently in a mid-page.
     /// The value is false if the thread has the first page loaded.
     /// The value is true if the thread is in a mid fragment and didn't load the first page yet.
     public var isJumpingToMessage: Bool {
-        messageUpdater.paginationState.isJumpingToMessage
+        replyPaginationState.isJumpingToMessage
     }
 
     /// The pagination cursor for loading previous (old) replies.
     internal var lastOldestReplyId: MessageId? {
-        messageUpdater.paginationState.oldestFetchedMessage?.id
+        replyPaginationState.oldestFetchedMessage?.id
     }
 
     /// The pagination cursor for loading next (new) replies.
     internal var lastNewestReplyId: MessageId? {
-        messageUpdater.paginationState.newestFetchedMessage?.id
+        replyPaginationState.newestFetchedMessage?.id
     }
 
     private let environment: Environment
@@ -183,6 +183,8 @@ public class ChatMessageController: DataController, DelegateCallable, DataStoreP
 
     /// The worker used to fetch the remote data and communicate with servers.
     private let messageUpdater: MessageUpdater
+    private let replyPaginationHandler: MessagesPaginationStateHandling
+    private var replyPaginationState: MessagesPaginationState { replyPaginationHandler.state }
 
     /// Creates a new `MessageControllerGeneric`.
     /// - Parameters:
@@ -190,15 +192,15 @@ public class ChatMessageController: DataController, DelegateCallable, DataStoreP
     ///   - cid: The channel identifier the message belongs to.
     ///   - messageId: The message identifier.
     ///   - environment: The source of internal dependencies.
-    init(client: ChatClient, cid: ChannelId, messageId: MessageId, environment: Environment = .init()) {
+    init(client: ChatClient, cid: ChannelId, messageId: MessageId, replyPaginationHandler: MessagesPaginationStateHandling, environment: Environment = .init()) {
         self.client = client
         self.cid = cid
         self.messageId = messageId
+        self.replyPaginationHandler = replyPaginationHandler
         self.environment = environment
         messageUpdater = environment.messageUpdaterBuilder(
             client.config.isLocalStorageEnabled,
             client.messageRepository,
-            client.makeMessagesPaginationStateHandler(),
             client.databaseContainer,
             client.apiClient
         )
@@ -261,9 +263,9 @@ public class ChatMessageController: DataController, DelegateCallable, DataStoreP
             skipEnrichUrl: skipEnrichUrl,
             attachments: attachments,
             extraData: extraData
-        ) { error in
+        ) { result in
             self.callback {
-                completion?(error)
+                completion?(result.error)
             }
         }
     }
@@ -378,7 +380,8 @@ public class ChatMessageController: DataController, DelegateCallable, DataStoreP
         messageUpdater.loadReplies(
             cid: cid,
             messageId: messageId,
-            pagination: pagination
+            pagination: pagination,
+            paginationStateHandler: replyPaginationHandler
         ) { result in
             switch result {
             case let .success(payload):
@@ -429,7 +432,8 @@ public class ChatMessageController: DataController, DelegateCallable, DataStoreP
         messageUpdater.loadReplies(
             cid: cid,
             messageId: messageId,
-            pagination: pagination
+            pagination: pagination,
+            paginationStateHandler: replyPaginationHandler
         ) { result in
             switch result {
             case .success:
@@ -469,7 +473,8 @@ public class ChatMessageController: DataController, DelegateCallable, DataStoreP
         messageUpdater.loadReplies(
             cid: cid,
             messageId: messageId,
-            pagination: MessagesPagination(pageSize: pageSize, parameter: .greaterThan(replyId))
+            pagination: MessagesPagination(pageSize: pageSize, parameter: .greaterThan(replyId)),
+            paginationStateHandler: replyPaginationHandler
         ) { result in
             switch result {
             case .success:
@@ -488,7 +493,8 @@ public class ChatMessageController: DataController, DelegateCallable, DataStoreP
         messageUpdater.loadReplies(
             cid: cid,
             messageId: messageId,
-            pagination: MessagesPagination(pageSize: pageSize)
+            pagination: MessagesPagination(pageSize: pageSize),
+            paginationStateHandler: replyPaginationHandler
         ) { result in
             self.callback { completion?(result.error) }
         }
@@ -642,7 +648,7 @@ public class ChatMessageController: DataController, DelegateCallable, DataStoreP
     public func pin(_ pinning: MessagePinning, completion: ((Error?) -> Void)? = nil) {
         messageUpdater.pinMessage(messageId: messageId, pinning: pinning) { result in
             self.callback {
-                completion?(result)
+                completion?(result.error)
             }
         }
     }
@@ -653,7 +659,7 @@ public class ChatMessageController: DataController, DelegateCallable, DataStoreP
     public func unpin(completion: ((Error?) -> Void)? = nil) {
         messageUpdater.unpinMessage(messageId: messageId) { result in
             self.callback {
-                completion?(result)
+                completion?(result.error)
             }
         }
     }
@@ -706,9 +712,9 @@ public class ChatMessageController: DataController, DelegateCallable, DataStoreP
     ///   - completion: The completion. Will be called on a **callbackQueue** when the operation is finished.
     ///                 If operation fails, the completion is called with the error.
     public func translate(to language: TranslationLanguage, completion: ((Error?) -> Void)? = nil) {
-        messageUpdater.translate(messageId: messageId, to: language) { error in
+        messageUpdater.translate(messageId: messageId, to: language) { result in
             self.callback {
-                completion?(error)
+                completion?(result.error)
             }
         }
     }
@@ -738,7 +744,6 @@ extension ChatMessageController {
         var messageUpdaterBuilder: (
             _ isLocalStorageEnabled: Bool,
             _ messageRepository: MessageRepository,
-            _ paginationStateHandler: MessagesPaginationStateHandling,
             _ database: DatabaseContainer,
             _ apiClient: APIClient
         ) -> MessageUpdater = MessageUpdater.init

@@ -2,6 +2,7 @@
 // Copyright © 2024 Stream.io Inc. All rights reserved.
 //
 
+import CoreData
 import Foundation
 
 enum MessageRepositoryError: LocalizedError {
@@ -93,18 +94,19 @@ class MessageRepository {
         message: MessagePayload,
         completion: @escaping (Result<ChatMessage, Error>) -> Void
     ) {
+        var messageModel: ChatMessage!
         database.write({
             let messageDTO = try $0.saveMessage(payload: message, for: cid, syncOwnReactions: false, cache: nil)
             if messageDTO.localMessageState == .sending || messageDTO.localMessageState == .sendingFailed {
                 messageDTO.markMessageAsSent()
             }
-
-            let messageModel = try messageDTO.asModel()
-            completion(.success(messageModel))
+            messageModel = try messageDTO.asModel()
         }, completion: {
             if let error = $0 {
                 log.error("Error saving sent message with id \(message.id): \(error)", subsystems: .offlineSupport)
                 completion(.failure(error))
+            } else {
+                completion(.success(messageModel))
             }
         })
     }
@@ -156,7 +158,7 @@ class MessageRepository {
     }
 
     func saveSuccessfullyEditedMessage(for id: MessageId, completion: @escaping () -> Void) {
-        updateMessage(withID: id, localState: nil, completion: completion)
+        updateMessage(withID: id, localState: nil, completion: { _ in completion() })
     }
 
     func saveSuccessfullyDeletedMessage(message: MessagePayload, completion: ((Error?) -> Void)? = nil) {
@@ -211,18 +213,43 @@ class MessageRepository {
         }
     }
 
-    func updateMessage(withID id: MessageId, localState: LocalMessageState?, completion: @escaping () -> Void) {
+    /// Fetches a message id before the specified message when sorting by the creation date in the local database.
+    func getMessage(
+        before messageId: MessageId,
+        in cid: ChannelId,
+        completion: @escaping (Result<MessageId?, Error>) -> Void
+    ) {
+        let context = database.backgroundReadOnlyContext
+        context.perform {
+            let deletedMessagesVisibility = context.deletedMessagesVisibility ?? .alwaysVisible
+            let shouldShowShadowedMessages = context.shouldShowShadowedMessages ?? true
+            do {
+                let resultId = try MessageDTO.loadMessage(
+                    before: messageId,
+                    cid: cid.rawValue,
+                    deletedMessagesVisibility: deletedMessagesVisibility,
+                    shouldShowShadowedMessages: shouldShowShadowedMessages,
+                    context: context
+                )?.id
+                completion(.success(resultId))
+            } catch {
+                completion(.failure(error))
+            }
+        }
+    }
+    
+    func updateMessage(withID id: MessageId, localState: LocalMessageState?, completion: @escaping (Result<ChatMessage, Error>) -> Void) {
+        var message: ChatMessage?
         database.write({
             let dto = $0.message(id: id)
             dto?.localMessageState = localState
+            message = try dto?.asModel()
         }, completion: { error in
             if let error = error {
-                log
-                    .error(
-                        "Error changing localMessageState for message with id \(id) to `\(String(describing: localState))`: \(error)"
-                    )
+                completion(.failure(error))
+            } else {
+                completion(.success(message!))
             }
-            completion()
         })
     }
 
@@ -255,6 +282,41 @@ class MessageRepository {
                 log.error("Error adding reaction for message with id \(messageId): \(error)")
             }
             completion?()
+        }
+    }
+}
+
+@available(iOS 13.0.0, *)
+extension MessageRepository {
+    /// Fetches messages from the database with a date range.
+    func messages(from fromDate: Date, to toDate: Date, in cid: ChannelId) async throws -> [ChatMessage] {
+        try await database.read { context in
+            try MessageDTO.loadMessages(
+                from: fromDate,
+                to: toDate,
+                in: cid,
+                sortAscending: true,
+                deletedMessagesVisibility: context.deletedMessagesVisibility ?? .alwaysVisible,
+                shouldShowShadowedMessages: context.shouldShowShadowedMessages ?? true,
+                context: context
+            )
+            .map { try $0.asModel() }
+        }
+    }
+    
+    /// Fetches replies from the database with a date range.
+    func replies(from fromDate: Date, to toDate: Date, in message: MessageId) async throws -> [ChatMessage] {
+        try await database.read { context in
+            try MessageDTO.loadReplies(
+                from: fromDate,
+                to: toDate,
+                in: message,
+                sortAscending: true,
+                deletedMessagesVisibility: context.deletedMessagesVisibility ?? .alwaysVisible,
+                shouldShowShadowedMessages: context.shouldShowShadowedMessages ?? true,
+                context: context
+            )
+            .map { try $0.asModel() }
         }
     }
 }

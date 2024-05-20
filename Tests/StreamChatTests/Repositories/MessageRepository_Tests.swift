@@ -445,7 +445,7 @@ final class MessageRepositoryTests: XCTestCase {
 
     private func runUpdateMessageLocalStateAndWait(id: MessageId, to state: LocalMessageState?) {
         let expectation = self.expectation(description: "Mark Message completes")
-        repository.updateMessage(withID: id, localState: state) {
+        repository.updateMessage(withID: id, localState: state) { _ in
             expectation.fulfill()
         }
         waitForExpectations(timeout: defaultTimeout, handler: nil)

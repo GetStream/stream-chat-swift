@@ -9,23 +9,16 @@ import Foundation
 class MessageUpdater: Worker {
     private let repository: MessageRepository
     private let isLocalStorageEnabled: Bool
-    private let paginationStateHandler: MessagesPaginationStateHandling
 
     init(
         isLocalStorageEnabled: Bool,
         messageRepository: MessageRepository,
-        paginationStateHandler: MessagesPaginationStateHandling,
         database: DatabaseContainer,
         apiClient: APIClient
     ) {
         self.isLocalStorageEnabled = isLocalStorageEnabled
         repository = messageRepository
-        self.paginationStateHandler = paginationStateHandler
         super.init(database: database, apiClient: apiClient)
-    }
-
-    var paginationState: MessagesPaginationState {
-        paginationStateHandler.state
     }
 
     /// Fetches the message from the backend and saves it into the database
@@ -111,15 +104,16 @@ class MessageUpdater: Worker {
     ///   - skipEnrichUrl: If true, the url preview won't be attached to the message.
     ///   - attachments: An array of the attachments for the message.
     ///   - extraData: Extra Data for the message.
-    ///   - completion: The completion. Will be called with an error if smth goes wrong, otherwise - will be called with `nil`.
+    ///   - completion: The completion handler with the local updated message.
     func editMessage(
         messageId: MessageId,
         text: String,
         skipEnrichUrl: Bool,
         attachments: [AnyAttachmentPayload] = [],
         extraData: [String: RawJSON]? = nil,
-        completion: ((Error?) -> Void)? = nil
+        completion: ((Result<ChatMessage, Error>) -> Void)? = nil
     ) {
+        var message: ChatMessage?
         database.write({ session in
             let messageDTO = try session.messageEditableByCurrentUser(messageId)
 
@@ -155,6 +149,7 @@ class MessageUpdater: Worker {
 
             if messageDTO.isBounced {
                 try updateMessage(localState: .pendingSend)
+                message = try messageDTO.asModel()
                 return
             }
 
@@ -169,8 +164,15 @@ class MessageUpdater: Worker {
                     reason: "message is in `\(messageDTO.localMessageState!)` state"
                 )
             }
-        }, completion: {
-            completion?($0)
+            message = try messageDTO.asModel()
+        }, completion: { error in
+            if let error {
+                completion?(.failure(error))
+            } else if let message {
+                completion?(.success(message))
+            } else {
+                completion?(.failure(ClientError.MessageDoesNotExist(messageId: messageId)))
+            }
         })
     }
 
@@ -255,6 +257,7 @@ class MessageUpdater: Worker {
         cid: ChannelId,
         messageId: MessageId,
         pagination: MessagesPagination,
+        paginationStateHandler: MessagesPaginationStateHandling,
         completion: ((Result<MessageRepliesPayload, Error>) -> Void)? = nil
     ) {
         paginationStateHandler.begin(pagination: pagination)
@@ -264,7 +267,7 @@ class MessageUpdater: Worker {
         let endpoint: Endpoint<MessageRepliesPayload> = .loadReplies(messageId: messageId, pagination: pagination)
 
         apiClient.request(endpoint: endpoint) {
-            self.paginationStateHandler.end(pagination: pagination, with: $0.map(\.messages))
+            paginationStateHandler.end(pagination: pagination, with: $0.map(\.messages))
 
             switch $0 {
             case let .success(payload):
@@ -277,7 +280,7 @@ class MessageUpdater: Worker {
                             }
                         }
 
-                        parentMessage.newestReplyAt = self.paginationState.newestMessageAt?.bridgeDate
+                        parentMessage.newestReplyAt = paginationStateHandler.state.newestMessageAt?.bridgeDate
                     }
 
                     let replies = session.saveMessages(messagesPayload: payload, for: cid, syncOwnReactions: true)
@@ -467,26 +470,25 @@ class MessageUpdater: Worker {
     ///  - Parameters:
     ///   - messageId: The message identifier.
     ///   - pinning: The pinning expiration information. It supports setting an infinite expiration, setting a date, or the amount of time a message is pinned.
-    ///   - completion: The completion. Will be called with an error if smth goes wrong, otherwise - will be called with `nil`.
-    func pinMessage(messageId: MessageId, pinning: MessagePinning, completion: ((Error?) -> Void)? = nil) {
-        pinLocalMessage(on: messageId, pinning: pinning) { [weak self] error in
-            if let error {
-                completion?(error)
-                return
-            }
-            
-            let endpoint: Endpoint<EmptyResponse> = .pinMessage(
-                messageId: messageId,
-                request: .init(set: .init(pinned: true))
-            )
-            
-            self?.apiClient.request(endpoint: endpoint) { result in
-                switch result {
-                case .success:
-                    completion?(nil)
-                case .failure(let apiError):
-                    self?.unpinLocalMessage(on: messageId) { _, _ in
-                        completion?(apiError)
+    func pinMessage(messageId: MessageId, pinning: MessagePinning, completion: ((Result<ChatMessage, Error>) -> Void)? = nil) {
+        pinLocalMessage(on: messageId, pinning: pinning) { [weak self] pinResult in
+            switch pinResult {
+            case .failure(let pinError):
+                completion?(.failure(pinError))
+            case .success(let message):
+                let endpoint: Endpoint<EmptyResponse> = .pinMessage(
+                    messageId: messageId,
+                    request: .init(set: .init(pinned: true))
+                )
+                
+                self?.apiClient.request(endpoint: endpoint) { result in
+                    switch result {
+                    case .success:
+                        completion?(.success(message))
+                    case .failure(let apiError):
+                        self?.unpinLocalMessage(on: messageId) { _, _ in
+                            completion?(.failure(apiError))
+                        }
                     }
                 }
             }
@@ -496,26 +498,26 @@ class MessageUpdater: Worker {
     /// Unpin the message with the provided message id.
     ///  - Parameters:
     ///   - messageId: The message identifier.
-    ///   - completion: The completion. Will be called with an error if smth goes wrong, otherwise - will be called with `nil`.
-    func unpinMessage(messageId: MessageId, completion: ((Error?) -> Void)? = nil) {
-        unpinLocalMessage(on: messageId) { [weak self] error, pinning in
-            if let error {
-                completion?(error)
-                return
-            }
-            
-            let endpoint: Endpoint<EmptyResponse> = .pinMessage(
-                messageId: messageId,
-                request: .init(set: .init(pinned: false))
-            )
-            
-            self?.apiClient.request(endpoint: endpoint) { result in
-                switch result {
-                case .success:
-                    completion?(nil)
-                case .failure(let apiError):
-                    self?.pinLocalMessage(on: messageId, pinning: pinning) { _ in
-                        completion?(apiError)
+    ///   - completion: The completion handler with the result.
+    func unpinMessage(messageId: MessageId, completion: ((Result<ChatMessage, Error>) -> Void)? = nil) {
+        unpinLocalMessage(on: messageId) { [weak self] unpinResult, pinning in
+            switch unpinResult {
+            case .failure(let unpinError):
+                completion?(.failure(unpinError))
+            case .success(let message):
+                let endpoint: Endpoint<EmptyResponse> = .pinMessage(
+                    messageId: messageId,
+                    request: .init(set: .init(pinned: false))
+                )
+                
+                self?.apiClient.request(endpoint: endpoint) { result in
+                    switch result {
+                    case .success:
+                        completion?(.success(message))
+                    case .failure(let apiError):
+                        self?.pinLocalMessage(on: messageId, pinning: pinning) { _ in
+                            completion?(.failure(apiError))
+                        }
                     }
                 }
             }
@@ -525,25 +527,30 @@ class MessageUpdater: Worker {
     private func pinLocalMessage(
         on messageId: MessageId,
         pinning: MessagePinning,
-        completion: ((Error?) -> Void)? = nil
+        completion: ((Result<ChatMessage, Error>) -> Void)? = nil
     ) {
+        var message: ChatMessage!
         database.write { session in
             guard let messageDTO = session.message(id: messageId) else {
                 throw ClientError.MessageDoesNotExist(messageId: messageId)
             }
             try session.pin(message: messageDTO, pinning: pinning)
+            message = try messageDTO.asModel()
         } completion: { error in
             if let error = error {
                 log.error("Error pinning the message with id \(messageId): \(error)")
+                completion?(.failure(error))
+            } else {
+                completion?(.success(message))
             }
-            completion?(error)
         }
     }
     
     private func unpinLocalMessage(
         on messageId: MessageId,
-        completion: ((Error?, MessagePinning) -> Void)? = nil
+        completion: ((Result<ChatMessage, Error>, MessagePinning) -> Void)? = nil
     ) {
+        var message: ChatMessage!
         var pinning: MessagePinning = .noExpiration
         database.write { session in
             guard let messageDTO = session.message(id: messageId) else {
@@ -551,11 +558,14 @@ class MessageUpdater: Worker {
             }
             pinning = .init(expirationDate: messageDTO.pinExpires?.bridgeDate)
             session.unpin(message: messageDTO)
+            message = try messageDTO.asModel()
         } completion: { error in
             if let error = error {
                 log.error("Error unpinning the message with id \(messageId): \(error)")
+                completion?(.failure(error), pinning)
+            } else {
+                completion?(.success(message), pinning)
             }
-            completion?(error, pinning)
         }
     }
 
@@ -633,52 +643,59 @@ class MessageUpdater: Worker {
                 )
             }
 
-            guard action.isCancel == false else {
-                // For ephemeral messages we don't change `state` to `.deleted`
-                messageDTO.deletedAt = DBDate()
-                messageDTO.previewOfChannel?.previewMessage = session.preview(for: cid)
-                return
-            }
-
-            let endpoint: Endpoint<MessagePayload.Boxed> = .dispatchEphemeralMessageAction(
-                cid: cid,
-                messageId: messageId,
-                action: action
-            )
-
-            self.apiClient.request(endpoint: endpoint) {
-                switch $0 {
-                case let .success(payload):
-                    self.database.write({ session in
-                        try session.saveMessage(payload: payload.message, for: cid, syncOwnReactions: true, cache: nil)
-                    }, completion: { error in
-                        completion?(error)
-                    })
-                case let .failure(error):
-                    completion?(error)
+            guard action.isCancel else { return }
+            // For ephemeral messages we don't change `state` to `.deleted`
+            messageDTO.deletedAt = DBDate()
+            messageDTO.previewOfChannel?.previewMessage = session.preview(for: cid)
+        }, completion: { error in
+            if let error {
+                completion?(error)
+            } else {
+                if action.isCancel {
+                    completion?(nil)
+                } else {
+                    let endpoint: Endpoint<MessagePayload.Boxed> = .dispatchEphemeralMessageAction(
+                        cid: cid,
+                        messageId: messageId,
+                        action: action
+                    )
+                    self.apiClient.request(endpoint: endpoint) {
+                        switch $0 {
+                        case let .success(payload):
+                            self.database.write({ session in
+                                try session.saveMessage(payload: payload.message, for: cid, syncOwnReactions: true, cache: nil)
+                            }, completion: { error in
+                                completion?(error)
+                            })
+                        case let .failure(error):
+                            completion?(error)
+                        }
+                    }
                 }
             }
-        }, completion: { error in
-            completion?(error)
         })
     }
 
-    func search(query: MessageSearchQuery, policy: UpdatePolicy = .merge, completion: ((Result<MessageSearchResultsPayload, Error>) -> Void)? = nil) {
+    func search(query: MessageSearchQuery, policy: UpdatePolicy = .merge, completion: ((Result<MessageSearchResults, Error>) -> Void)? = nil) {
         apiClient.request(endpoint: .search(query: query)) { result in
             switch result {
             case let .success(payload):
+                var messages = [ChatMessage]()
                 self.database.write { session in
                     if case .replace = policy {
                         let dto = session.saveQuery(query: query)
                         dto.messages.removeAll()
                     }
 
-                    session.saveMessageSearch(payload: payload, for: query)
+                    let dtos = session.saveMessageSearch(payload: payload, for: query)
+                    if completion != nil {
+                        messages = try dtos.map { try $0.asModel() }
+                    }
                 } completion: { error in
                     if let error = error {
                         completion?(.failure(error))
                     } else {
-                        completion?(.success(payload))
+                        completion?(.success(MessageSearchResults(payload: payload, models: messages)))
                     }
                 }
             case let .failure(error):
@@ -695,23 +712,42 @@ class MessageUpdater: Worker {
             completion?(error)
         }
     }
-
-    func translate(messageId: MessageId, to language: TranslationLanguage, completion: ((Error?) -> Void)? = nil) {
+    
+    func translate(messageId: MessageId, to language: TranslationLanguage, completion: ((Result<ChatMessage, Error>) -> Void)? = nil) {
         apiClient.request(endpoint: .translate(messageId: messageId, to: language), completion: { result in
             switch result {
             case let .success(boxedMessage):
+                var translatedMessage: ChatMessage?
                 self.database.write { session in
-                    try session.saveMessage(
+                    let messageDTO = try session.saveMessage(
                         payload: boxedMessage.message,
                         for: boxedMessage.message.cid,
                         syncOwnReactions: false,
                         cache: nil
                     )
-                } completion: { completion?($0) }
+                    if completion != nil {
+                        translatedMessage = try messageDTO.asModel()
+                    }
+                } completion: { error in
+                    if let translatedMessage, error == nil {
+                        completion?(.success(translatedMessage))
+                    } else {
+                        completion?(.failure(error ?? ClientError.Unknown()))
+                    }
+                }
             case let .failure(error):
-                completion?(error)
+                completion?(.failure(error))
             }
         })
+    }
+}
+
+extension MessageUpdater {
+    struct MessageSearchResults {
+        let payload: MessageSearchResultsPayload
+        let models: [ChatMessage]
+        
+        var next: String? { payload.next }
     }
 }
 
@@ -769,5 +805,317 @@ private extension DatabaseSession {
         }
 
         return messageDTO
+    }
+}
+
+@available(iOS 13.0, *)
+extension MessageUpdater {
+    func addReaction(
+        _ type: MessageReactionType,
+        score: Int,
+        enforceUnique: Bool,
+        extraData: [String: RawJSON],
+        messageId: MessageId
+    ) async throws {
+        try await withCheckedThrowingContinuation { continuation in
+            addReaction(
+                type,
+                score: score,
+                enforceUnique: enforceUnique,
+                extraData: extraData,
+                messageId: messageId
+            ) { error in
+                continuation.resume(with: error)
+            }
+        }
+    }
+    
+    func clearSearchResults(for query: MessageSearchQuery) async throws {
+        try await withCheckedThrowingContinuation { continuation in
+            clearSearchResults(for: query) { error in
+                continuation.resume(with: error)
+            }
+        }
+    }
+    
+    func createNewReply(
+        in cid: ChannelId,
+        messageId: MessageId?,
+        text: String,
+        pinning: MessagePinning?,
+        command: String?,
+        arguments: String?,
+        parentMessageId: MessageId,
+        attachments: [AnyAttachmentPayload],
+        mentionedUserIds: [UserId],
+        showReplyInChannel: Bool,
+        isSilent: Bool,
+        quotedMessageId: MessageId?,
+        skipPush: Bool,
+        skipEnrichUrl: Bool,
+        extraData: [String: RawJSON]
+    ) async throws -> ChatMessage {
+        try await withCheckedThrowingContinuation { continuation in
+            createNewReply(
+                in: cid,
+                messageId: messageId,
+                text: text,
+                pinning: pinning,
+                command: command,
+                arguments: arguments,
+                parentMessageId: parentMessageId,
+                attachments: attachments,
+                mentionedUserIds: mentionedUserIds,
+                showReplyInChannel: showReplyInChannel,
+                isSilent: isSilent,
+                quotedMessageId: quotedMessageId,
+                skipPush: skipPush,
+                skipEnrichUrl: skipEnrichUrl,
+                extraData: extraData
+            ) { result in
+                continuation.resume(with: result)
+            }
+        }
+    }
+    
+    func deleteMessage(messageId: MessageId, hard: Bool) async throws {
+        try await withCheckedThrowingContinuation { continuation in
+            deleteMessage(messageId: messageId, hard: hard) { error in
+                continuation.resume(with: error)
+            }
+        }
+    }
+    
+    func deleteReaction(_ type: MessageReactionType, messageId: MessageId) async throws {
+        try await withCheckedThrowingContinuation { continuation in
+            deleteReaction(type, messageId: messageId) { error in
+                continuation.resume(with: error)
+            }
+        }
+    }
+    
+    func dispatchEphemeralMessageAction(
+        cid: ChannelId,
+        messageId: MessageId,
+        action: AttachmentAction
+    ) async throws {
+        try await withCheckedThrowingContinuation { continuation in
+            dispatchEphemeralMessageAction(
+                cid: cid,
+                messageId: messageId,
+                action: action
+            ) { error in
+                continuation.resume(with: error)
+            }
+        }
+    }
+    
+    func editMessage(
+        messageId: MessageId,
+        text: String,
+        skipEnrichUrl: Bool,
+        attachments: [AnyAttachmentPayload] = [],
+        extraData: [String: RawJSON]? = nil
+    ) async throws -> ChatMessage {
+        try await withCheckedThrowingContinuation { continuation in
+            editMessage(
+                messageId: messageId,
+                text: text,
+                skipEnrichUrl: skipEnrichUrl,
+                attachments: attachments,
+                extraData: extraData
+            ) { result in
+                continuation.resume(with: result)
+            }
+        }
+    }
+    
+    func flagMessage(
+        _ flag: Bool,
+        with messageId: MessageId,
+        in cid: ChannelId,
+        reason: String?
+    ) async throws {
+        try await withCheckedThrowingContinuation { continuation in
+            flagMessage(
+                flag,
+                with: messageId,
+                in: cid,
+                reason: reason
+            ) { error in
+                continuation.resume(with: error)
+            }
+        }
+    }
+    
+    func getMessage(cid: ChannelId, messageId: MessageId) async throws -> ChatMessage {
+        try await withCheckedThrowingContinuation { continuation in
+            getMessage(cid: cid, messageId: messageId) { result in
+                continuation.resume(with: result)
+            }
+        }
+    }
+    
+    func loadReactions(
+        cid: ChannelId,
+        messageId: MessageId,
+        pagination: Pagination
+    ) async throws -> [ChatMessageReaction] {
+        try await withCheckedThrowingContinuation { continuation in
+            loadReactions(
+                cid: cid,
+                messageId: messageId,
+                pagination: pagination
+            ) { result in
+                continuation.resume(with: result)
+            }
+        }
+    }
+    
+    @discardableResult func loadReplies(
+        cid: ChannelId,
+        messageId: MessageId,
+        pagination: MessagesPagination,
+        paginationStateHandler: MessagesPaginationStateHandling
+    ) async throws -> MessageRepliesPayload {
+        try await withCheckedThrowingContinuation { continuation in
+            loadReplies(
+                cid: cid,
+                messageId: messageId,
+                pagination: pagination,
+                paginationStateHandler: paginationStateHandler
+            ) { result in
+                continuation.resume(with: result)
+            }
+        }
+    }
+    
+    func pinMessage(messageId: MessageId, pinning: MessagePinning) async throws -> ChatMessage {
+        try await withCheckedThrowingContinuation { continuation in
+            pinMessage(messageId: messageId, pinning: pinning) { result in
+                continuation.resume(with: result)
+            }
+        }
+    }
+    
+    func resendAttachment(with id: AttachmentId) async throws {
+        try await withCheckedThrowingContinuation { continuation in
+            restartFailedAttachmentUploading(with: id) { error in
+                continuation.resume(with: error)
+            }
+        }
+    }
+    
+    func resendMessage(with messageId: MessageId) async throws {
+        try await withCheckedThrowingContinuation { continuation in
+            resendMessage(with: messageId) { error in
+                continuation.resume(with: error)
+            }
+        }
+    }
+    
+    func search(query: MessageSearchQuery, policy: UpdatePolicy) async throws -> MessageSearchResults {
+        try await withCheckedThrowingContinuation { continuation in
+            search(query: query, policy: policy) { result in
+                continuation.resume(with: result)
+            }
+        }
+    }
+    
+    func translate(messageId: MessageId, to language: TranslationLanguage) async throws -> ChatMessage {
+        try await withCheckedThrowingContinuation { continuation in
+            translate(messageId: messageId, to: language) { result in
+                continuation.resume(with: result)
+            }
+        }
+    }
+    
+    func unpinMessage(messageId: MessageId) async throws -> ChatMessage {
+        try await withCheckedThrowingContinuation { continuation in
+            unpinMessage(messageId: messageId) { result in
+                continuation.resume(with: result)
+            }
+        }
+    }
+    
+    // MARK: -
+    
+    func loadReplies(
+        for parentMessageId: MessageId,
+        pagination: MessagesPagination,
+        cid: ChannelId,
+        paginationStateHandler: MessagesPaginationStateHandling
+    ) async throws -> [ChatMessage] {
+        let payload = try await loadReplies(
+            cid: cid,
+            messageId: parentMessageId,
+            pagination: pagination,
+            paginationStateHandler: paginationStateHandler
+        )
+        guard let fromDate = payload.messages.first?.createdAt else { return [] }
+        guard let toDate = payload.messages.last?.createdAt else { return [] }
+        return try await repository.replies(from: fromDate, to: toDate, in: parentMessageId)
+    }
+    
+    func loadReplies(
+        for parentMessageId: MessageId,
+        before replyId: MessageId?,
+        limit: Int?,
+        cid: ChannelId,
+        paginationStateHandler: MessagesPaginationStateHandling
+    ) async throws {
+        guard !paginationStateHandler.state.hasLoadedAllPreviousMessages else { return }
+        guard !paginationStateHandler.state.isLoadingPreviousMessages else { return }
+        guard let replyId = replyId ?? paginationStateHandler.state.oldestFetchedMessage?.id else {
+            throw ClientError.MessageEmptyReplies()
+        }
+        let pageSize = limit ?? .messagesPageSize
+        let pagination = MessagesPagination(pageSize: pageSize, parameter: .lessThan(replyId))
+        try await loadReplies(
+            cid: cid,
+            messageId: parentMessageId,
+            pagination: pagination,
+            paginationStateHandler: paginationStateHandler
+        )
+    }
+    
+    func loadReplies(
+        for parentMessageId: MessageId,
+        after replyId: MessageId?,
+        limit: Int?,
+        cid: ChannelId,
+        paginationStateHandler: MessagesPaginationStateHandling
+    ) async throws {
+        guard !paginationStateHandler.state.hasLoadedAllNextMessages else { return }
+        guard !paginationStateHandler.state.isLoadingNextMessages else { return }
+        guard let replyId = replyId ?? paginationStateHandler.state.newestFetchedMessage?.id else {
+            throw ClientError.MessageEmptyReplies()
+        }
+        let pageSize = limit ?? .messagesPageSize
+        let pagination = MessagesPagination(pageSize: pageSize, parameter: .greaterThan(replyId))
+        try await loadReplies(
+            cid: cid,
+            messageId: parentMessageId,
+            pagination: pagination,
+            paginationStateHandler: paginationStateHandler
+        )
+    }
+    
+    func loadReplies(
+        for parentMessageId: MessageId,
+        around replyId: MessageId,
+        limit: Int?,
+        cid: ChannelId,
+        paginationStateHandler: MessagesPaginationStateHandling
+    ) async throws {
+        guard !paginationStateHandler.state.isLoadingMiddleMessages else { return }
+        let pageSize = limit ?? .messagesPageSize
+        let pagination = MessagesPagination(pageSize: pageSize, parameter: .around(replyId))
+        try await loadReplies(
+            cid: cid,
+            messageId: parentMessageId,
+            pagination: pagination,
+            paginationStateHandler: paginationStateHandler
+        )
     }
 }

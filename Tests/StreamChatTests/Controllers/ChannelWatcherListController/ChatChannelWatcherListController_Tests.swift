@@ -72,7 +72,7 @@ final class ChatChannelWatcherListController_Tests: XCTestCase {
 
     // MARK: - Synchronize tests
 
-    func test_synchronize_changesState_and_callsCompletionOnCallbackQueue() {
+    func test_synchronize_changesState_and_callsCompletionOnCallbackQueue() throws {
         // Simulate `synchronize` call.
         var completionIsCalled = false
         controller.synchronize { [callbackQueueID] error in
@@ -94,7 +94,7 @@ final class ChatChannelWatcherListController_Tests: XCTestCase {
         controller = nil
 
         // Simulate successful network call.
-        env.watcherListUpdater!.channelWatchers_completion!(nil)
+        env.watcherListUpdater!.channelWatchers_completion!(.success(try ChannelPayload.channelJSONFile()))
         // Release reference of completion so we can deallocate stuff
         env.watcherListUpdater!.channelWatchers_completion = nil
 
@@ -133,7 +133,7 @@ final class ChatChannelWatcherListController_Tests: XCTestCase {
 
         // Simulate failed network call.
         let updaterError = TestError()
-        env.watcherListUpdater!.channelWatchers_completion?(updaterError)
+        env.watcherListUpdater!.channelWatchers_completion?(.failure(updaterError))
 
         AssertAsync {
             // Assert controller is in `remoteDataFetchFailed` state.
@@ -181,7 +181,7 @@ final class ChatChannelWatcherListController_Tests: XCTestCase {
         }
 
         // Simulate the updater callback
-        env.watcherListUpdater?.channelWatchers_completion?(nil)
+        env.watcherListUpdater?.channelWatchers_completion?(.success(try ChannelPayload.channelJSONFile()))
 
         XCTAssertEqual(controller.watchers.map(\.id), [watcherId])
     }
@@ -265,7 +265,7 @@ final class ChatChannelWatcherListController_Tests: XCTestCase {
         AssertAsync.willBeEqual(delegate.state, .localDataFetched)
 
         // Simulate network call response
-        env.watcherListUpdater!.channelWatchers_completion!(nil)
+        env.watcherListUpdater!.channelWatchers_completion!(.success(try ChannelPayload.channelJSONFile()))
 
         // Assert delegate is notified about state changes
         AssertAsync.willBeEqual(delegate.state, .remoteDataFetched)
@@ -343,7 +343,7 @@ final class ChatChannelWatcherListController_Tests: XCTestCase {
                 channel?.watchers.insert(try session.saveUser(payload: watcher))
             }
         }
-        env.watcherListUpdater!.channelWatchers_completion!(nil)
+        env.watcherListUpdater!.channelWatchers_completion!(.success(try ChannelPayload.channelJSONFile()))
 
         // Assert `update` changes are received by the delegate.
         AssertAsync {
@@ -416,13 +416,13 @@ final class ChatChannelWatcherListController_Tests: XCTestCase {
 
         // Simulate network response with the error.
         let networkError = TestError()
-        env.watcherListUpdater!.channelWatchers_completion!(networkError)
+        env.watcherListUpdater!.channelWatchers_completion!(.failure(networkError))
 
         // Assert error is propagated.
         AssertAsync.willBeEqual(completionError as? TestError, networkError)
     }
 
-    func test_loadNextWatchers_propagatesNilError() {
+    func test_loadNextWatchers_propagatesNilError() throws {
         // Simulate `loadNextWatchers` call and catch the completion.
         var completionIsCalled = false
         controller.loadNextWatchers { [callbackQueueID] error in
@@ -441,7 +441,7 @@ final class ChatChannelWatcherListController_Tests: XCTestCase {
         controller = nil
 
         // Simulate successful network response.
-        env.watcherListUpdater!.channelWatchers_completion!(nil)
+        env.watcherListUpdater!.channelWatchers_completion!(.success(try ChannelPayload.channelJSONFile()))
         // Release reference of completion so we can deallocate stuff
         env.watcherListUpdater!.channelWatchers_completion = nil
 
@@ -451,7 +451,7 @@ final class ChatChannelWatcherListController_Tests: XCTestCase {
         AssertAsync.canBeReleased(&weakController)
     }
 
-    func test_loadNextWatchers_callsUserUpdaterWithCorrectValues_and_updatesQuery() {
+    func test_loadNextWatchers_callsUserUpdaterWithCorrectValues_and_updatesQuery() throws {
         let limit = 10
         let oldPagination = controller.query.pagination
         let newPagination: Pagination = .init(pageSize: limit, offset: controller.watchers.count)
@@ -465,7 +465,7 @@ final class ChatChannelWatcherListController_Tests: XCTestCase {
         XCTAssertEqual(controller.query.pagination, oldPagination)
 
         // Simulate successful network response.
-        env.watcherListUpdater!.channelWatchers_completion!(nil)
+        env.watcherListUpdater!.channelWatchers_completion!(.success(try ChannelPayload.channelJSONFile()))
 
         // Assert controller's query is updated with the new pagination.
         AssertAsync.willBeEqual(controller.query.pagination, newPagination)
@@ -482,9 +482,10 @@ private class TestEnvironment {
             self.watcherListUpdater = ChannelUpdater_Mock(
                 channelRepository: $0,
                 callRepository: $1,
-                paginationStateHandler: $2,
-                database: $3,
-                apiClient: $4
+                messageRepository: $2,
+                paginationStateHandler: $3,
+                database: $4,
+                apiClient: $5
             )
             return self.watcherListUpdater!
         },
@@ -500,4 +501,11 @@ private class TestEnvironment {
             return self.watcherListObserver!
         }
     )
+}
+
+private extension ChannelPayload {
+    static func channelJSONFile() throws -> Self {
+        let url = XCTestCase.mockData(fromJSONFile: "Channel")
+        return try JSONDecoder.default.decode(ChannelPayload.self, from: url)
+    }
 }

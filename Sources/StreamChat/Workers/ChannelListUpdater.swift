@@ -172,7 +172,7 @@ class ChannelListUpdater: Worker {
     }
 }
 
-private extension DatabaseSession {
+extension DatabaseSession {
     func getChannelWithQuery(cid: ChannelId, query: ChannelListQuery) -> (ChannelDTO, ChannelListQueryDTO)? {
         guard let queryDTO = channelListQuery(filterHash: query.filter.filterHash) else {
             log.debug("Channel list query has not yet created \(query)")
@@ -207,5 +207,39 @@ private extension ChannelListUpdater {
                 completion?(.success(channels))
             }
         }
+    }
+}
+
+@available(iOS 13.0, *)
+extension ChannelListUpdater {
+    @discardableResult func update(channelListQuery: ChannelListQuery) async throws -> [ChatChannel] {
+        try await withCheckedThrowingContinuation { continuation in
+            update(channelListQuery: channelListQuery) { result in
+                continuation.resume(with: result)
+            }
+        }
+    }
+    
+    // MARK: -
+    
+    func loadChannels(query: ChannelListQuery, pagination: Pagination) async throws -> [ChatChannel] {
+        try await update(channelListQuery: query.withPagination(pagination))
+    }
+    
+    func loadNextChannels(
+        query: ChannelListQuery,
+        limit: Int,
+        loadedChannelsCount: Int
+    ) async throws -> [ChatChannel] {
+        let pagination = Pagination(pageSize: limit, offset: loadedChannelsCount)
+        return try await update(channelListQuery: query.withPagination(pagination))
+    }
+}
+
+private extension ChannelListQuery {
+    func withPagination(_ pagination: Pagination) -> Self {
+        var query = self
+        query.pagination = pagination
+        return query
     }
 }

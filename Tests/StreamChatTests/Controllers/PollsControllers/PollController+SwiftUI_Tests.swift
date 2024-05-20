@@ -8,7 +8,7 @@ import XCTest
 
 @available(iOS 13, *)
 final class PollController_SwiftUI_Tests: iOS13TestCase {
-    var pollController: PollController!
+    var pollController: PollController_Mock!
 
     var client: ChatClient_Mock!
     var messageId: MessageId!
@@ -19,7 +19,7 @@ final class PollController_SwiftUI_Tests: iOS13TestCase {
         messageId = .unique
         pollId = .unique
         client = ChatClient_Mock.mock
-        pollController = PollController(client: client, messageId: messageId, pollId: pollId)
+        pollController = PollController_Mock(client: client, messageId: messageId, pollId: pollId)
     }
 
     override func tearDown() {
@@ -31,75 +31,53 @@ final class PollController_SwiftUI_Tests: iOS13TestCase {
     func test_controllerInitialValuesAreLoaded() {
         let observableObject = pollController.observableObject
 
-        XCTAssertEqual(observableObject.state, .localDataFetched)
+        XCTAssertEqual(observableObject.state, .initialized)
         XCTAssertEqual(observableObject.poll, nil)
         XCTAssertEqual(observableObject.ownVotes, [])
     }
 
-//    func test_observableObject_reactsToDelegateMessageChangeCallback() {
-//        let observableObject = pollController.observableObject
-//
-//        // Simulate poll creation
-//        let newPoll: Poll = .unique
-//
-//        pollController.delegateCallback {
-//            $0.pollController(self.pollController, didUpdatePoll: .create(newPoll))
-//        }
-//
-//        AssertAsync.willBeEqual(observableObject.poll, newPoll)
-//    }
+    func test_observableObject_reactsToDelegateUpdatePollCallback() {
+        let observableObject = pollController.observableObject
 
-//    func test_observableObject_reactsToDelegateRepliesChangesCallback() {
-//        let observableObject = messageController.observableObject
-//
-//        // Simulate replies changes
-//        let newReply: ChatMessage = .unique
-//        messageController.replies_mock = [newReply]
-//        messageController.delegateCallback {
-//            $0.messageController(
-//                self.messageController,
-//                didChangeReplies: [.insert(newReply, index: .init())]
-//            )
-//        }
-//
-//        AssertAsync.willBeEqual(Array(observableObject.replies), [newReply])
-//    }
-//
-//    func test_observableObject_reactsToDelegateReactionsChangesCallback() {
-//        let observableObject = messageController.observableObject
-//
-//        let newReaction: ChatMessageReaction = .init(
-//            type: "likes",
-//            score: 3,
-//            createdAt: .unique,
-//            updatedAt: .unique,
-//            author: .unique,
-//            extraData: [:]
-//        )
-//
-//        messageController.reactions = [newReaction]
-//        messageController.delegateCallback {
-//            $0.messageController(
-//                self.messageController,
-//                didChangeReactions: [newReaction]
-//            )
-//        }
-//
-//        AssertAsync.willBeEqual(Array(observableObject.reactions), [newReaction])
-//    }
-//
-//    func test_observableObject_reactsToDelegateStateChangesCallback() {
-//        let observableObject = messageController.observableObject
-//        // Simulate state change
-//        let newState: DataController.State = .remoteDataFetchFailed(ClientError(with: TestError()))
-//        messageController.state_mock = newState
-//        messageController.delegateCallback {
-//            $0.controller(
-//                self.messageController,
-//                didChangeState: newState
-//            )
-//        }
-//
-//        AssertAsync.willBeEqual(observableObject.state, newState)
-//    }
+        // Simulate poll creation
+        let newPoll: Poll = .unique
+        pollController.poll_simulated = newPoll
+
+        pollController.delegateCallback {
+            $0.pollController(self.pollController, didUpdatePoll: .create(newPoll))
+        }
+
+        AssertAsync.willBeEqual(observableObject.poll, newPoll)
+    }
+
+    func test_observableObject_reactsToDelegateOwnVotesChangesCallback() {
+        let observableObject = pollController.observableObject
+
+        // Simulate own vote.
+        let ownVote: PollVote = .unique
+        pollController.ownVotes_simulated = [ownVote]
+        pollController.delegateCallback {
+            $0.pollController(
+                self.pollController,
+                didUpdateCurrentUserVotes: [.insert(ownVote, index: .init())]
+            )
+        }
+
+        AssertAsync.willBeEqual(Array(observableObject.ownVotes), [ownVote])
+    }
+
+    func test_observableObject_reactsToDelegateStateChangesCallback() {
+        let observableObject = pollController.observableObject
+        // Simulate state change
+        let newState: DataController.State = .remoteDataFetchFailed(ClientError(with: TestError()))
+        pollController.state_simulated = newState
+        pollController.delegateCallback {
+            $0.controller(
+                self.pollController,
+                didChangeState: newState
+            )
+        }
+
+        AssertAsync.willBeEqual(observableObject.state, newState)
+    }
 }
