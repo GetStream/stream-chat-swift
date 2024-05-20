@@ -341,6 +341,9 @@ open class ComposerVC: _ViewController,
         linkDetector.hasLinks(in: content.text)
     }
 
+    /// A boolean value to control wether the suggestions view should be dismissed or not.
+    public var shouldDismissSuggestions = true
+
     /// When enabled mentions search users across the entire app instead of searching
     open private(set) lazy var mentionAllAppUsers: Bool = components.mentionAllAppUsers
 
@@ -509,6 +512,9 @@ open class ComposerVC: _ViewController,
 
     override open func updateContent() {
         super.updateContent()
+        
+        // Reset the suggestions state
+        shouldDismissSuggestions = true
 
         // Note: The order of the calls is important.
         updateText()
@@ -534,6 +540,11 @@ open class ComposerVC: _ViewController,
         updateCommandSuggestions()
         updateMentionSuggestions()
         updatePlaceholderLabel()
+
+        // In case no suggestions should be shown, dismiss the suggestions view.
+        if shouldDismissSuggestions {
+            dismissSuggestions()
+        }
     }
 
     open func updateText() {
@@ -699,7 +710,7 @@ open class ComposerVC: _ViewController,
     open func updateCommandSuggestions() {
         if isCommandsEnabled, let typingCommand = typingCommand(in: composerView.inputMessageView.textView) {
             showCommandSuggestions(for: typingCommand)
-            return
+            shouldDismissSuggestions = false
         }
     }
 
@@ -708,9 +719,7 @@ open class ComposerVC: _ViewController,
             userMentionsDebouncer.execute { [weak self] in
                 self?.showMentionSuggestions(for: typingMention, mentionRange: mentionRange)
             }
-            return
-        } else {
-            dismissSuggestions()
+            shouldDismissSuggestions = false
         }
     }
 
