@@ -512,10 +512,6 @@ open class ComposerVC: _ViewController,
 
     override open func updateContent() {
         super.updateContent()
-        
-        // Reset the suggestions state
-        shouldDismissSuggestions = true
-
         // Note: The order of the calls is important.
         updateText()
         updateKeystrokeEvents()
@@ -537,14 +533,8 @@ open class ComposerVC: _ViewController,
         updateCheckbox()
         updateBottomContainerVisibility()
         updateLeadingContainerVisibility()
-        updateCommandSuggestions()
-        updateMentionSuggestions()
+        updateSuggestions()
         updatePlaceholderLabel()
-
-        // In case no suggestions should be shown, dismiss the suggestions view.
-        if shouldDismissSuggestions {
-            dismissSuggestions()
-        }
     }
 
     open func updateText() {
@@ -704,6 +694,19 @@ open class ComposerVC: _ViewController,
     open func updateLeadingContainerVisibility() {
         Animate {
             self.composerView.leadingContainer.isHidden = self.content.isVoiceRecording
+        }
+    }
+
+    open func updateSuggestions() {
+        // Reset the suggestions state
+        shouldDismissSuggestions = true
+
+        updateCommandSuggestions()
+        updateMentionSuggestions()
+
+        // In case no suggestions should be shown, dismiss the suggestions view.
+        if shouldDismissSuggestions {
+            dismissSuggestions()
         }
     }
 
