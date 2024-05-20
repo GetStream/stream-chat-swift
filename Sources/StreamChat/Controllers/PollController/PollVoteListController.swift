@@ -40,12 +40,8 @@ public class PollVoteListController: DataController, DelegateCallable, DataStore
         startPollVotesListObserverIfNeeded()
         return pollVotesObserver.items
     }
-
-    /// The worker used to fetch the remote data and communicate with servers.
-    private lazy var worker: PollsRepository = environment.pollsRepositoryBuilder(
-        client.databaseContainer,
-        client.apiClient
-    )
+    
+    public private(set) var hasLoadedAllVotes: Bool = false
 
     /// Set the delegate of `ReactionListController` to observe the changes in the system.
     public weak var delegate: PollVoteListControllerDelegate? {
@@ -124,7 +120,7 @@ public class PollVoteListController: DataController, DelegateCallable, DataStore
     override public func synchronize(_ completion: ((_ error: Error?) -> Void)? = nil) {
         startPollVotesListObserverIfNeeded()
 
-        worker.queryPollVotes(query: query) { result in
+        pollsRepository.queryPollVotes(query: query) { result in
             if let error = result.error {
                 self.state = .remoteDataFetchFailed(ClientError(with: error))
             } else {
@@ -158,12 +154,15 @@ public extension PollVoteListController {
     ///   - limit: Limit for the page size.
     ///   - completion: The completion callback.
     func loadMoreVotes(
-        limit: Int = 25,
+        limit: Int? = nil,
         completion: ((Error?) -> Void)? = nil
     ) {
+        let limit = limit ?? query.pagination.pageSize
         var updatedQuery = query
         updatedQuery.pagination = Pagination(pageSize: limit, offset: votes.count)
-        worker.queryPollVotes(query: updatedQuery) { result in
+        pollsRepository.queryPollVotes(query: updatedQuery) { [weak self] result in
+            guard let self else { return }
+            self.hasLoadedAllVotes = (result.value?.count ?? 0) < limit
             self.callback { completion?(result.error) }
         }
     }
