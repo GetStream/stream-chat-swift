@@ -420,6 +420,18 @@ extension XCTestCase {
         )
     }
     
+    func dummyPollOptionPayload(
+        id: String = .unique,
+        text: String = "Test Option",
+        custom: [String: RawJSON] = [:]
+    ) -> PollOptionPayload {
+        .init(
+            id: id,
+            text: text,
+            custom: custom
+        )
+    }
+    
     func dummyPollVotePayload(
         createdAt: Date = Date(),
         id: String = .unique,

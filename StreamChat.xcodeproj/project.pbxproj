@@ -722,6 +722,7 @@
 		8459C9EE2BFB673E00F0D235 /* PollVoteListController+Combine_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8459C9ED2BFB673E00F0D235 /* PollVoteListController+Combine_Tests.swift */; };
 		8459C9F02BFB6CD000F0D235 /* PollVoteListController+SwiftUI_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8459C9EF2BFB6CD000F0D235 /* PollVoteListController+SwiftUI_Tests.swift */; };
 		8459C9F22BFB6D3200F0D235 /* PollVoteListController_Mock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8459C9F12BFB6D3200F0D235 /* PollVoteListController_Mock.swift */; };
+		8459C9F42BFB929600F0D235 /* PollsRepository_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8459C9F32BFB929600F0D235 /* PollsRepository_Tests.swift */; };
 		845CEE53270F032A002C7EBD /* MessageSearchQuery_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845CEE52270F032A002C7EBD /* MessageSearchQuery_Tests.swift */; };
 		845CEE5A270F2A06002C7EBD /* ChatReactionsBubbleView_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845CEE59270F2A06002C7EBD /* ChatReactionsBubbleView_Tests.swift */; };
 		845CFD702BD7B8310058F691 /* PollController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845CFD6F2BD7B8310058F691 /* PollController.swift */; };
@@ -3549,6 +3550,7 @@
 		8459C9ED2BFB673E00F0D235 /* PollVoteListController+Combine_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PollVoteListController+Combine_Tests.swift"; sourceTree = "<group>"; };
 		8459C9EF2BFB6CD000F0D235 /* PollVoteListController+SwiftUI_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PollVoteListController+SwiftUI_Tests.swift"; sourceTree = "<group>"; };
 		8459C9F12BFB6D3200F0D235 /* PollVoteListController_Mock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PollVoteListController_Mock.swift; sourceTree = "<group>"; };
+		8459C9F32BFB929600F0D235 /* PollsRepository_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PollsRepository_Tests.swift; sourceTree = "<group>"; };
 		845CEE52270F032A002C7EBD /* MessageSearchQuery_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageSearchQuery_Tests.swift; sourceTree = "<group>"; };
 		845CEE59270F2A06002C7EBD /* ChatReactionsBubbleView_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatReactionsBubbleView_Tests.swift; sourceTree = "<group>"; };
 		845CFD6F2BD7B8310058F691 /* PollController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PollController.swift; sourceTree = "<group>"; };
@@ -7152,6 +7154,7 @@
 				C143789627BE6D4800E23965 /* OfflineRequestsRepository_Tests.swift */,
 				C186BFB527AAFDAB0099CCA6 /* SyncOperations_Tests.swift */,
 				C186BFA927AA979B0099CCA6 /* SyncRepository_Tests.swift */,
+				8459C9F32BFB929600F0D235 /* PollsRepository_Tests.swift */,
 			);
 			path = Repositories;
 			sourceTree = "<group>";
@@ -11798,6 +11801,7 @@
 				7990503224CEEAA600689CDC /* MessageDTO_Tests.swift in Sources */,
 				88D85DAB252F3C2A00AE1030 /* MemberListController_Tests.swift in Sources */,
 				88DA577E2631D73800FA8C53 /* ChannelMuteDTO_Tests.swift in Sources */,
+				8459C9F42BFB929600F0D235 /* PollsRepository_Tests.swift in Sources */,
 				4F5151982BC407ED001B7152 /* UserList_Tests.swift in Sources */,
 				84CC56EC267B3F6B00DF2784 /* AnyAttachmentPayload_Tests.swift in Sources */,
 				88F7692B25837EE600BD36B0 /* AttachmentQueueUploader_Tests.swift in Sources */,

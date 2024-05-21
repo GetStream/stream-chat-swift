@@ -62,7 +62,7 @@ class PollsRepository {
                 vote: .init(
                     answerText: answerText,
                     optionId: optionId,
-                    option: nil // TODO: handle this.
+                    option: nil
                 )
             )
             apiClient.request(
@@ -92,7 +92,7 @@ class PollsRepository {
                 vote: .init(
                     answerText: answerText,
                     optionId: optionId,
-                    option: nil // TODO: handle this.
+                    option: nil
                 )
             )
             self?.apiClient.request(
