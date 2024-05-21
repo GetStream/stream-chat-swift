@@ -127,6 +127,28 @@ public final class ConnectedUser {
         try await userUpdater.unmuteUser(userId)
     }
     
+    /// Blocks the user in all the channels.
+    ///
+    /// - Note: Messages from muted users are not delivered via push notifications.
+    ///
+    /// - Parameters:
+    ///   - userId: The id of the user to mute.
+    ///   - keepChannelsVisible: A Boolean value that  determines if the channels should be kept visible.
+    ///
+    /// - Throws: An error while communicating with the Stream API.
+    public func blockUser(_ userId: UserId, keepChannelsVisible: Bool = false) async throws {
+        try await userUpdater.blockUser(userId, keepChannelsVisible: keepChannelsVisible)
+    }
+    
+    /// Unblocks the user in all the channels.
+    ///
+    /// - Parameter userId: The id of the user to unmute.
+    ///
+    /// - Throws: An error while communicating with the Stream API.
+    public func unblockUser(_ userId: UserId) async throws {
+        try await userUpdater.unblockUser(userId)
+    }
+    
     /// Flags the specified user.
     ///
     /// - Parameter userId: The id of the user to flag.

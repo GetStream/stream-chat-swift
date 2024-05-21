@@ -160,6 +160,28 @@ public extension ChatUserController {
             }
         }
     }
+    
+    /// Blocks the user this controller manages.
+    /// - Parameter completion: The completion. Will be called on a **callbackQueue** when the network request is finished.
+    ///                         If request fails, the completion will be called with an error.
+    func block(completion: ((Error?) -> Void)? = nil) {
+        userUpdater.blockUser(userId) { error in
+            self.callback {
+                completion?(error)
+            }
+        }
+    }
+
+    /// Unblocks the user this controller manages.
+    /// - Parameter completion: The completion. Will be called on a **callbackQueue** when the network request is finished.
+    ///
+    func unblock(completion: ((Error?) -> Void)? = nil) {
+        userUpdater.unblockUser(userId) { error in
+            self.callback {
+                completion?(error)
+            }
+        }
+    }
 
     /// Flags the user this controller manages.
     /// - Parameter completion: The completion. Will be called on a **callbackQueue** when the network request is finished.

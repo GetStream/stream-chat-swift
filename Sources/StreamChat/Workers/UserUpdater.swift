@@ -27,6 +27,60 @@ class UserUpdater: Worker {
             completion?($0.error)
         }
     }
+    
+    /// Blocks the user with the provided `userId`.
+    /// - Parameters:
+    ///   - userId: The user identifier.
+    ///   - keepChannelsVisible: A Boolean value that  determines if the channels should be kept visible.
+    ///   - completion: Called when the API call is finished. Called with `Error` if the remote update fails.
+    ///
+    func blockUser(_ userId: UserId, keepChannelsVisible: Bool = false, completion: ((Error?) -> Void)? = nil) {
+        apiClient.request(endpoint: .blockUser(userId, keepChannelsVisible: keepChannelsVisible)) {
+            switch $0 {
+            case let .success(payload):
+                self.database.write({ session in
+                    var blockedUsers: Set<BlockedUserDTO> = []
+                    for blockedUser in payload.blockedUsers {
+                        blockedUsers.insert(blockedUser.asDTO(context: self.database.writableContext))
+                    }
+                    session.currentUser?.blockedUsers = blockedUsers
+                }, completion: {
+                    if let error = $0 {
+                        log.error("Failed to save blocked user with id: <\(userId)> to the database. Error: \(error)")
+                    }
+                    completion?($0)
+                })
+            case let .failure(error):
+                completion?(error)
+            }
+        }
+    }
+
+    /// Unblocks the user with the provided `userId`.
+    /// - Parameters:
+    ///   - userId: The user identifier.
+    ///   - completion: Called when the API call is finished. Called with `Error` if the remote update fails.
+    ///
+    func unblockUser(_ userId: UserId, completion: ((Error?) -> Void)? = nil) {
+        apiClient.request(endpoint: .unblockUser(userId)) {
+            switch $0 {
+            case .success:
+                self.database.write({ session in
+                    let currentUserDTO = session.currentUser
+                    if let userDTO = currentUserDTO?.blockedUsers.first(where: { $0.blockedUserId == userId }) {
+                        currentUserDTO?.blockedUsers.remove(userDTO)
+                    }
+                }, completion: {
+                    if let error = $0 {
+                        log.error("Failed to remove blocked user with id: <\(userId)> from the database. Error: \(error)")
+                    }
+                    completion?($0)
+                })
+            case let .failure(error):
+                completion?(error)
+            }
+        }
+    }
 
     /// Makes a single user query call to the backend and updates the local storage with the results.
     ///
@@ -119,6 +173,21 @@ extension UserUpdater {
     func unmuteUser(_ userId: UserId) async throws {
         try await withCheckedThrowingContinuation { continuation in
             unmuteUser(userId) { error in
+                continuation.resume(with: error)
+            }
+        }
+    }
+    func blockUser(_ userId: UserId, keepChannelsVisible: Bool = false) async throws {
+        try await withCheckedThrowingContinuation { continuation in
+            blockUser(userId, keepChannelsVisible: keepChannelsVisible) { error in
+                continuation.resume(with: error)
+            }
+        }
+    }
+    
+    func unblockUser(_ userId: UserId) async throws {
+        try await withCheckedThrowingContinuation { continuation in
+            unblockUser(userId) { error in
                 continuation.resume(with: error)
             }
         }

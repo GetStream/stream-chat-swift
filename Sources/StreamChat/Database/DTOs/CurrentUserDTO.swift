@@ -17,6 +17,7 @@ class CurrentUserDTO: NSManagedObject {
     @NSManaged var flaggedUsers: Set<UserDTO>
     @NSManaged var flaggedMessages: Set<MessageDTO>
     @NSManaged var mutedUsers: Set<UserDTO>
+    @NSManaged var blockedUsers: Set<BlockedUserDTO>
     @NSManaged var user: UserDTO
     @NSManaged var devices: Set<DeviceDTO>
     @NSManaged var currentDevice: DeviceDTO?
@@ -90,6 +91,8 @@ extension NSManagedObjectContext: CurrentUserDatabaseSession {
 
         let mutedUsers = try payload.mutedUsers.map { try saveUser(payload: $0.mutedUser) }
         dto.mutedUsers = Set(mutedUsers)
+        
+        dto.blockedUsers = Set(try saveCurrentUserBlockedUsers(payload.blockedUsers))
 
         let channelMutes = Set(
             try payload.mutedChannels.map { try saveChannelMute(payload: $0) }
@@ -104,6 +107,19 @@ extension NSManagedObjectContext: CurrentUserDatabaseSession {
         _ = try saveCurrentUserDevices(payload.devices, clearExisting: true)
 
         return dto
+    }
+    
+    func saveCurrentUserBlockedUsers(_ blockedUsers: [BlockedUserPayload]) throws -> [BlockedUserDTO] {
+        invalidateCurrentUserCache()
+
+        let blockedUsersDTOs = blockedUsers.map { blockedUser -> BlockedUserDTO in
+            let dto = BlockedUserDTO()
+            dto.blockedAt = blockedUser.createdAt.bridgeDate
+            dto.blockedUserId = blockedUser.blockedUserId
+            return dto
+        }
+
+        return blockedUsersDTOs
     }
 
     func saveCurrentUserUnreadCount(count: UnreadCount) throws {
@@ -205,6 +221,7 @@ extension CurrentChatUser {
         }
 
         let mutedUsers: [ChatUser] = try dto.mutedUsers.map { try $0.asModel() }
+        let blockedUsers: [BlockedUser] = try dto.blockedUsers.map { try $0.asModel() }
         let flaggedUsers: [ChatUser] = try dto.flaggedUsers.map { try $0.asModel() }
         let flaggedMessagesIDs: [MessageId] = dto.flaggedMessages.map(\.id)
 
@@ -232,6 +249,7 @@ extension CurrentChatUser {
             devices: dto.devices.map { try $0.asModel() },
             currentDevice: dto.currentDevice?.asModel(),
             mutedUsers: Set(mutedUsers),
+            blockedUsers: Set(blockedUsers),
             flaggedUsers: Set(flaggedUsers),
             flaggedMessageIDs: Set(flaggedMessagesIDs),
             unreadCount: UnreadCount(

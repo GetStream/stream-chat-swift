@@ -50,6 +50,8 @@ enum EndpointPath: Codable {
     case flagUser(Bool)
     case flagMessage(Bool)
     case muteUser(Bool)
+    case blockUser
+    case unblockUser
 
     case callToken(String)
     case createCall(String)
@@ -115,6 +117,8 @@ enum EndpointPath: Codable {
         case let .flagUser(flag): return "moderation/\(flag ? "flag" : "unflag")"
         case let .flagMessage(flag): return "moderation/\(flag ? "flag" : "unflag")"
         case let .muteUser(mute): return "moderation/\(mute ? "mute" : "unmute")"
+        case .blockUser: return "user/block"
+        case .unblockUser: return "user/unblock"
         case let .callToken(callId): return "calls/\(callId)"
         case let .createCall(queryString): return "channels/\(queryString)/call"
         case let .deleteFile(channelId): return "channels/\(channelId)/file"

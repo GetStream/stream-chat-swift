@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="22757" systemVersion="23E224" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="22758" systemVersion="23A339" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
     <entity name="AttachmentDTO" representedClassName="AttachmentDTO" syncable="YES">
         <attribute name="data" attributeType="Binary"/>
         <attribute name="id" attributeType="String"/>
@@ -13,6 +13,11 @@
                 <constraint value="id"/>
             </uniquenessConstraint>
         </uniquenessConstraints>
+    </entity>
+    <entity name="BlockedUserDTO" representedClassName="BlockedUserDTO" syncable="YES">
+        <attribute name="blockedAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="blockedUserId" optional="YES" attributeType="String"/>
+        <relationship name="currentUser" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="CurrentUserDTO" inverseName="blockedUsers" inverseEntity="CurrentUserDTO"/>
     </entity>
     <entity name="ChannelConfigDTO" representedClassName="ChannelConfigDTO" syncable="YES">
         <attribute name="connectEventsEnabled" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
@@ -139,6 +144,7 @@
         <attribute name="uniquenessKey" attributeType="String" defaultValueString="this is an immmutable arbitrary key which makes sure we have only once instance of CurrentUserDTO in the db"/>
         <attribute name="unreadChannelsCount" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="unreadMessagesCount" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
+        <relationship name="blockedUsers" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="BlockedUserDTO" inverseName="currentUser" inverseEntity="BlockedUserDTO"/>
         <relationship name="channelMutes" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="ChannelMuteDTO" inverseName="currentUser" inverseEntity="ChannelMuteDTO"/>
         <relationship name="currentDevice" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="DeviceDTO" inverseName="relationship" inverseEntity="DeviceDTO"/>
         <relationship name="devices" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="DeviceDTO" inverseName="user" inverseEntity="DeviceDTO"/>

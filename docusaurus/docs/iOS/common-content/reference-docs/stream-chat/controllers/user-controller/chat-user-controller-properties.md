@@ -101,6 +101,30 @@ func unmute(completion: ((Error?) -> Void)? = nil)
 #### Parameters
 
   - `completion`: The completion. Will be called on a **`callbackQueue`** when the network request is finished.
+  
+### `block(completion:)`
+
+Blocks the user this controller manages.
+
+``` swift
+func block(completion: ((Error?) -> Void)? = nil) 
+```
+
+#### Parameters
+
+  - `completion`: The completion. Will be called on a **`callbackQueue`** when the network request is finished. If request fails, the completion will be called with an error.
+
+### `unblock(completion:)`
+
+Un-blocks the user this controller manages.
+
+``` swift
+func unblock(completion: ((Error?) -> Void)? = nil) 
+```
+
+#### Parameters
+
+  - `completion`: The completion. Will be called on a **`callbackQueue`** when the network request is finished.
 
 ### `flag(completion:)`
 

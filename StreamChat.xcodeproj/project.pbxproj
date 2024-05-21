@@ -621,6 +621,10 @@
 		829CD5CC2848C8D6003C3877 /* BackendRobot.swift in Sources */ = {isa = PBXBuildFile; fileRef = 829CD5CB2848C8D6003C3877 /* BackendRobot.swift */; };
 		82A6F5C027E2031000F4A2F6 /* Reactions_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82A6F5BF27E2031000F4A2F6 /* Reactions_Tests.swift */; };
 		82BA52EF27E1EF7B00951B87 /* MessageList_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82BA52EE27E1EF7B00951B87 /* MessageList_Tests.swift */; };
+		82BE0ACA2BFFA2FE008DA9DC /* BlockedUserDTO.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82BE0AC92BFFA2FE008DA9DC /* BlockedUserDTO.swift */; };
+		82BE0ACB2BFFA2FE008DA9DC /* BlockedUserDTO.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82BE0AC92BFFA2FE008DA9DC /* BlockedUserDTO.swift */; };
+		82BE0ACD2C009A17008DA9DC /* BlockedUser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82BE0ACC2C009A17008DA9DC /* BlockedUser.swift */; };
+		82BE0ACE2C009A17008DA9DC /* BlockedUser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82BE0ACC2C009A17008DA9DC /* BlockedUser.swift */; };
 		82CBE5682861BF300039C35C /* AttachmentResponses.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82CBE5672861BF300039C35C /* AttachmentResponses.swift */; };
 		82CED1C827DF492F006E967A /* ThreadPage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82CED1C727DF492F006E967A /* ThreadPage.swift */; };
 		82DCB3A92A4AE8FB00738933 /* StreamChat.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 799C941B247D2F80001F1104 /* StreamChat.framework */; };
@@ -3437,6 +3441,8 @@
 		82B350FC27EA2A3900FEB6A0 /* MessageResponses.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageResponses.swift; sourceTree = "<group>"; };
 		82B3510027EA2B1400FEB6A0 /* EventResponses.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventResponses.swift; sourceTree = "<group>"; };
 		82BA52EE27E1EF7B00951B87 /* MessageList_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageList_Tests.swift; sourceTree = "<group>"; };
+		82BE0AC92BFFA2FE008DA9DC /* BlockedUserDTO.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlockedUserDTO.swift; sourceTree = "<group>"; };
+		82BE0ACC2C009A17008DA9DC /* BlockedUser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlockedUser.swift; sourceTree = "<group>"; };
 		82CBE5672861BF300039C35C /* AttachmentResponses.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AttachmentResponses.swift; sourceTree = "<group>"; };
 		82CED1C727DF492F006E967A /* ThreadPage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThreadPage.swift; sourceTree = "<group>"; };
 		82D2E81E27D10F4300169ADA /* StreamMockServer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StreamMockServer.swift; sourceTree = "<group>"; };
@@ -5373,6 +5379,7 @@
 				C1B49B3F2822C01C00F4E89E /* NSManagedObject+Validation.swift */,
 				79877A222498E50D00015F8B /* UserDTO.swift */,
 				DA84070F25250720005A0F62 /* UserListQueryDTO.swift */,
+				82BE0AC92BFFA2FE008DA9DC /* BlockedUserDTO.swift */,
 			);
 			path = DTOs;
 			sourceTree = "<group>";
@@ -5699,6 +5706,7 @@
 				79877A012498E4BB00015F8B /* User.swift */,
 				7900452525374CA20096ECA1 /* User+SwiftUI.swift */,
 				64C8C86D26934C6100329F82 /* UserInfo.swift */,
+				82BE0ACC2C009A17008DA9DC /* BlockedUser.swift */,
 				225D807625D316B10094E555 /* Attachments */,
 			);
 			path = Models;
@@ -10966,6 +10974,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				4F97F2672BA83146001C4D66 /* UserList.swift in Sources */,
+				82BE0ACD2C009A17008DA9DC /* BlockedUser.swift in Sources */,
 				DA8407032524F7E6005A0F62 /* UserListUpdater.swift in Sources */,
 				4F8E53062B7CD01D008C0F9F /* Chat.swift in Sources */,
 				DAE566E724FFD22300E39431 /* ChannelController+SwiftUI.swift in Sources */,
@@ -11113,6 +11122,7 @@
 				799C9439247D2FB9001F1104 /* ChannelDTO.swift in Sources */,
 				799C9443247D3DA7001F1104 /* APIClient.swift in Sources */,
 				4F14F1262BBBDD7400B1074E /* StateLayerDatabaseObserver.swift in Sources */,
+				82BE0ACA2BFFA2FE008DA9DC /* BlockedUserDTO.swift in Sources */,
 				79200D4C25025B81002F4EB1 /* Error+InternetNotAvailable.swift in Sources */,
 				841BA9FB2BCE8468000C73E4 /* CastPollVoteRequestBody.swift in Sources */,
 				C12DBE5F2A67DFE80045D9F0 /* SortValue.swift in Sources */,
@@ -11858,6 +11868,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				4F1BEE7D2BE3851200B6685C /* ReactionListState+Observer.swift in Sources */,
+				82BE0ACE2C009A17008DA9DC /* BlockedUser.swift in Sources */,
 				40789D1C29F6AC500018C2BB /* AudioPlaybackState.swift in Sources */,
 				AD8C7C612BA3DF2800260715 /* AppSettings.json in Sources */,
 				C121E804274544AC00023E4C /* ChatClient.swift in Sources */,
@@ -12005,6 +12016,7 @@
 				4042969029FBCE1D0089126D /* AudioSamplesExtractor_Tests.swift in Sources */,
 				C121E861274544AE00023E4C /* ChannelMemberUpdater.swift in Sources */,
 				4F427F6D2BA2F53200D92238 /* ConnectedUserState+Observer.swift in Sources */,
+				82BE0ACB2BFFA2FE008DA9DC /* BlockedUserDTO.swift in Sources */,
 				AD70DC3D2ADEF09C00CFC3B7 /* MessageModerationDetails.swift in Sources */,
 				4F94B0E12BA1C4220045216B /* MemberListState.swift in Sources */,
 				C121E862274544AE00023E4C /* ConnectionRepository.swift in Sources */,

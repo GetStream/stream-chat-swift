@@ -12,6 +12,8 @@ class CurrentUserPayload: UserPayload {
     let mutedUsers: [MutedUserPayload]
     /// Muted channels.
     let mutedChannels: [MutedChannelPayload]
+    /// Blocked users.
+    let blockedUsers: [BlockedUserPayload]
     /// Unread channel and message counts
     let unreadCount: UnreadCount?
     /// The current privacy settings of the user.
@@ -35,12 +37,14 @@ class CurrentUserPayload: UserPayload {
         devices: [DevicePayload] = [],
         mutedUsers: [MutedUserPayload] = [],
         mutedChannels: [MutedChannelPayload] = [],
+        blockedUsers: [BlockedUserPayload] = [],
         unreadCount: UnreadCount? = nil,
         privacySettings: UserPrivacySettingsPayload? = nil
     ) {
         self.devices = devices
         self.mutedUsers = mutedUsers
         self.mutedChannels = mutedChannels
+        self.blockedUsers = blockedUsers
         self.unreadCount = unreadCount
         self.privacySettings = privacySettings
 
@@ -67,6 +71,7 @@ class CurrentUserPayload: UserPayload {
         devices = try container.decodeIfPresent([DevicePayload].self, forKey: .devices) ?? []
         mutedUsers = try container.decodeIfPresent([MutedUserPayload].self, forKey: .mutedUsers) ?? []
         mutedChannels = try container.decodeIfPresent([MutedChannelPayload].self, forKey: .mutedChannels) ?? []
+        blockedUsers = try container.decodeIfPresent([BlockedUserPayload].self, forKey: .blockedUsers) ?? []
         unreadCount = try? UnreadCount(from: decoder)
         privacySettings = try container.decodeIfPresent(UserPrivacySettingsPayload.self, forKey: .privacySettings)
 
@@ -104,4 +109,33 @@ struct MutedUsersResponse: Decodable {
     public let mutedUser: MutedUserPayload
     /// The current user.
     public let currentUser: CurrentUserPayload
+}
+
+/// A blocked users response.
+struct BlockedUsersResponse: Decodable {
+    private enum CodingKeys: String, CodingKey {
+        case blockedUsers = "blocked_users"
+    }
+
+    /// The blocked users.
+    public let blockedUsers: [BlockedUserPayload]
+}
+
+/// An object describing the incoming blocked-user JSON payload.
+struct BlockedUserPayload: Decodable {
+    private enum CodingKeys: String, CodingKey {
+        case blockedUserId = "blocked_user_id"
+        case blockedByUserId = "blocked_by_user_id"
+        case createdAt = "created_at"
+    }
+
+    let blockedUserId: String
+    let blockedByUserId: String
+    let createdAt: Date
+}
+
+extension BlockedUserPayload: Equatable {
+    static func == (lhs: BlockedUserPayload, rhs: BlockedUserPayload) -> Bool {
+        lhs.blockedUserId == rhs.blockedUserId && lhs.createdAt == rhs.createdAt
+    }
 }

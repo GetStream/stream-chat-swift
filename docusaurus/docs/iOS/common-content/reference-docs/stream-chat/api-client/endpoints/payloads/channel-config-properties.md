@@ -118,10 +118,3 @@ A channel updated date.
 ``` swift
 public let updatedAt: Date
 ```
-
-### `flagsEnabled`
-
-Determines if users are able to flag messages. Enabled by default.
-
-``` swift
-public var flagsEnabled: Bool 

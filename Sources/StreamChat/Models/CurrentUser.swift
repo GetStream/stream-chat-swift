@@ -31,6 +31,9 @@ public class CurrentChatUser: ChatUser {
 
     /// A set of users muted by the user.
     public let mutedUsers: Set<ChatUser>
+    
+    /// A set of users blocked by the user.
+    public let blockedUsers: Set<BlockedUser>
 
     /// A set of users flagged by the user.
     ///
@@ -77,6 +80,7 @@ public class CurrentChatUser: ChatUser {
         devices: [Device],
         currentDevice: Device?,
         mutedUsers: Set<ChatUser>,
+        blockedUsers: Set<BlockedUser>,
         flaggedUsers: Set<ChatUser>,
         flaggedMessageIDs: Set<MessageId>,
         unreadCount: UnreadCount,
@@ -87,6 +91,7 @@ public class CurrentChatUser: ChatUser {
         self.devices = devices
         self.currentDevice = currentDevice
         self.mutedUsers = mutedUsers
+        self.blockedUsers = blockedUsers
         self.flaggedUsers = flaggedUsers
         self.flaggedMessageIDs = flaggedMessageIDs
         self.unreadCount = unreadCount
