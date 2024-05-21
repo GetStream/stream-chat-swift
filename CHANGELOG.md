@@ -3,7 +3,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 # Upcoming
 
+## StreamChatUI
+### 🐞 Fixed
+- Do not re-display suggestion view on each character change [#3215](https://github.com/GetStream/stream-chat-swift/pull/3215)
+- Fix command suggestions not appearing [#3215](https://github.com/GetStream/stream-chat-swift/pull/3215)
+- Reduce suggestion view height updates while scrolling [#3215](https://github.com/GetStream/stream-chat-swift/pull/3215)
 ### 🔄 Changed
+- Replace `updateCommandSuggestions()` and `updateMentionSuggestions()` with `updateSuggestions()` in `ChatSuggestionVC` [#3215](https://github.com/GetStream/stream-chat-swift/pull/3215)
 
 # [4.56.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.56.0)
 _May 20, 2024_

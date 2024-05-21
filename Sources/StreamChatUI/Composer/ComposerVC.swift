@@ -509,7 +509,6 @@ open class ComposerVC: _ViewController,
 
     override open func updateContent() {
         super.updateContent()
-
         // Note: The order of the calls is important.
         updateText()
         updateKeystrokeEvents()
@@ -531,10 +530,8 @@ open class ComposerVC: _ViewController,
         updateCheckbox()
         updateBottomContainerVisibility()
         updateLeadingContainerVisibility()
-        updateCommandSuggestions()
-        updateMentionSuggestions()
+        updateSuggestions()
         updatePlaceholderLabel()
-        dismissSuggestions()
     }
 
     open func updateText() {
@@ -697,20 +694,22 @@ open class ComposerVC: _ViewController,
         }
     }
 
-    open func updateCommandSuggestions() {
+    /// Controls whether the suggestions view should be shown or not.
+    /// By default there are 2 types of suggestions: Commands and Mentions.
+    open func updateSuggestions() {
         if isCommandsEnabled, let typingCommand = typingCommand(in: composerView.inputMessageView.textView) {
             showCommandSuggestions(for: typingCommand)
             return
         }
-    }
-
-    open func updateMentionSuggestions() {
+        
         if isMentionsEnabled, let (typingMention, mentionRange) = typingMention(in: composerView.inputMessageView.textView) {
             userMentionsDebouncer.execute { [weak self] in
                 self?.showMentionSuggestions(for: typingMention, mentionRange: mentionRange)
             }
             return
         }
+
+        dismissSuggestions()
     }
 
     open func updatePlaceholderLabel() {
