@@ -228,4 +228,252 @@ final class PollsRepository_Tests: XCTestCase {
         )
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(referenceEndpoint))
     }
+    
+    func test_castPollAnswer_whenSuccess() {
+        let completionCalled = expectation(description: "completion called")
+        let pollId = "123"
+        let messageId: String = .unique
+        let answer = "Answer"
+        
+        repository.castPollVote(
+            messageId: messageId,
+            pollId: pollId,
+            answerText: answer,
+            optionId: nil,
+            currentUserId: .unique,
+            query: nil
+        ) { error in
+            XCTAssertNil(error)
+            completionCalled.fulfill()
+        }
+        
+        wait(for: [apiClient.request_expectation], timeout: defaultTimeout)
+        
+        let payload = XCTestCase().dummyPollVotePayload(optionId: nil, pollId: pollId, answerText: answer)
+        let response = PollVotePayloadResponse(duration: "", vote: payload)
+        apiClient.test_simulateResponse(.success(response))
+        
+        wait(for: [completionCalled], timeout: defaultTimeout)
+        let referenceEndpoint: Endpoint<PollVotePayloadResponse> = .castPollVote(
+            messageId: messageId,
+            pollId: pollId,
+            vote: .init(pollId: pollId, vote: .init(answerText: answer))
+        )
+        XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(referenceEndpoint))
+        XCTAssertEqual(payload.optionId, nil)
+        XCTAssertEqual(payload.answerText, answer)
+    }
+    
+    func test_castPollAnswer_whenFailure() {
+        let completionCalled = expectation(description: "completion called")
+        let pollId = "123"
+        let messageId: String = .unique
+        let answer = "Answer"
+
+        repository.castPollVote(
+            messageId: messageId,
+            pollId: pollId,
+            answerText: answer,
+            optionId: nil,
+            currentUserId: .unique,
+            query: nil
+        ) { error in
+            XCTAssertNotNil(error)
+            completionCalled.fulfill()
+        }
+        
+        wait(for: [apiClient.request_expectation], timeout: defaultTimeout)
+        
+        let error = TestError()
+        apiClient.test_simulateResponse(Result<PollVotePayloadResponse, Error>.failure(error))
+        
+        wait(for: [completionCalled], timeout: defaultTimeout)
+        let referenceEndpoint: Endpoint<PollVotePayloadResponse> = .castPollVote(
+            messageId: messageId,
+            pollId: pollId,
+            vote: .init(pollId: pollId, vote: .init(answerText: answer))
+        )
+        XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(referenceEndpoint))
+    }
+    
+    // MARK: - Removing votes
+    
+    func test_removePollVote_whenSuccess() throws {
+        let completionCalled = expectation(description: "completion called")
+        let pollOptionId = "345"
+        let pollId = "123"
+        let messageId: String = .unique
+        var voteId: String!
+        let currentUserId = String.unique
+        
+        let payload = XCTestCase().dummyPollVotePayload(optionId: pollOptionId, pollId: pollId)
+        
+        try database.createCurrentUser(id: currentUserId)
+        
+        try database.writeSynchronously { session in
+            let poll = XCTestCase().dummyPollPayload(id: pollId, user: .dummy(userId: currentUserId))
+            try session.savePoll(payload: poll, cache: nil)
+        }
+        
+        try database.writeSynchronously { session in
+            let dto = try session.savePollVote(payload: payload, query: nil, cache: nil)
+            voteId = dto.id
+        }
+        
+        repository.removePollVote(messageId: messageId, pollId: pollId, voteId: voteId) { error in
+            XCTAssertNil(error)
+            completionCalled.fulfill()
+        }
+        
+        wait(for: [apiClient.request_expectation], timeout: defaultTimeout)
+        
+        let response = PollVotePayloadResponse(duration: "", vote: payload)
+        apiClient.test_simulateResponse(.success(response))
+        
+        wait(for: [completionCalled], timeout: defaultTimeout)
+        let referenceEndpoint: Endpoint<PollVotePayloadResponse> = .removePollVote(
+            messageId: messageId,
+            pollId: pollId,
+            voteId: voteId
+        )
+        XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(referenceEndpoint))
+        XCTAssertEqual(payload.optionId, pollOptionId)
+    }
+    
+    func test_removePollVote_whenFailure() throws {
+        let completionCalled = expectation(description: "completion called")
+        let pollOptionId = "345"
+        let pollId = "123"
+        let messageId: String = .unique
+        var voteId: String!
+        let currentUserId = String.unique
+        
+        let payload = XCTestCase().dummyPollVotePayload(optionId: pollOptionId, pollId: pollId)
+        
+        try database.createCurrentUser(id: currentUserId)
+        
+        try database.writeSynchronously { session in
+            let poll = XCTestCase().dummyPollPayload(id: pollId, user: .dummy(userId: currentUserId))
+            try session.savePoll(payload: poll, cache: nil)
+        }
+        
+        try database.writeSynchronously { session in
+            let dto = try session.savePollVote(payload: payload, query: nil, cache: nil)
+            voteId = dto.id
+        }
+        
+        repository.removePollVote(messageId: messageId, pollId: pollId, voteId: voteId) { error in
+            XCTAssertNotNil(error)
+            completionCalled.fulfill()
+        }
+        
+        wait(for: [apiClient.request_expectation], timeout: defaultTimeout)
+        
+        let error = TestError()
+        apiClient.test_simulateResponse(Result<PollVotePayloadResponse, Error>.failure(error))
+        
+        wait(for: [completionCalled], timeout: defaultTimeout)
+        let referenceEndpoint: Endpoint<PollVotePayloadResponse> = .removePollVote(
+            messageId: messageId,
+            pollId: pollId,
+            voteId: voteId
+        )
+        XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(referenceEndpoint))
+    }
+    
+    // MARK: - Querying votes
+    
+    func test_queryPollVotes_whenSuccess() {
+        let completionCalled = expectation(description: "completion called")
+        let pollId = String.unique
+        let optionId = String.unique
+        let query = PollVoteListQuery(pollId: pollId, optionId: optionId)
+        
+        repository.queryPollVotes(query: query) { result in
+            XCTAssertNil(result.error)
+            completionCalled.fulfill()
+        }
+        
+        let vote = XCTestCase().dummyPollVotePayload()
+        let response = PollVoteListResponse(duration: "", votes: [vote])
+        apiClient.test_simulateResponse(.success(response))
+        
+        wait(for: [completionCalled], timeout: defaultTimeout)
+        let referenceEndpoint: Endpoint<PollVoteListResponse> = .queryPollVotes(pollId: pollId, query: query)
+        XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(referenceEndpoint))
+        XCTAssertEqual(response.votes.count, 1)
+    }
+    
+    func test_queryPollVotes_whenFailure() {
+        let completionCalled = expectation(description: "completion called")
+        let pollId = String.unique
+        let optionId = String.unique
+        let query = PollVoteListQuery(pollId: pollId, optionId: optionId)
+        
+        repository.queryPollVotes(query: query) { result in
+            XCTAssertNotNil(result.error)
+            completionCalled.fulfill()
+        }
+        
+        let error = TestError()
+        apiClient.test_simulateResponse(Result<PollVoteListResponse, Error>.failure(error))
+        
+        wait(for: [completionCalled], timeout: defaultTimeout)
+        let referenceEndpoint: Endpoint<PollVoteListResponse> = .queryPollVotes(pollId: pollId, query: query)
+        XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(referenceEndpoint))
+    }
+    
+    func test_queryPollVotesById_whenSuccess() {
+        let completionCalled = expectation(description: "completion called")
+        let pollId = String.unique
+        
+        repository.queryPollVotes(
+            pollId: pollId,
+            limit: nil,
+            next: nil,
+            prev: nil,
+            sort: [nil],
+            filter: nil
+        ) { result in
+            XCTAssertNil(result.error)
+            completionCalled.fulfill()
+        }
+        
+        let vote = XCTestCase().dummyPollVotePayload()
+        let response = PollVoteListResponse(duration: "", votes: [vote])
+        apiClient.test_simulateResponse(.success(response))
+        
+        wait(for: [completionCalled], timeout: defaultTimeout)
+        let referenceEndpoint: Endpoint<PollVoteListResponse> = .queryPollVotes(
+            pollId: pollId, queryPollVotesRequest: .init(pollId: pollId, sort: [nil])
+        )
+        XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(referenceEndpoint))
+        XCTAssertEqual(response.votes.count, 1)
+    }
+    
+    func test_queryPollVotesById_whenFailure() {
+        let completionCalled = expectation(description: "completion called")
+        let pollId = String.unique
+        
+        repository.queryPollVotes(
+            pollId: pollId,
+            limit: nil,
+            next: nil,
+            prev: nil,
+            sort: [nil],
+            filter: nil
+        ) { result in
+            XCTAssertNotNil(result.error)
+            completionCalled.fulfill()
+        }
+        
+        let error = TestError()
+        apiClient.test_simulateResponse(Result<PollVoteListResponse, Error>.failure(error))
+        
+        wait(for: [completionCalled], timeout: defaultTimeout)
+        let referenceEndpoint: Endpoint<PollVoteListResponse> = .queryPollVotes(
+            pollId: pollId, queryPollVotesRequest: .init(pollId: pollId, sort: [nil])
+        )
+        XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(referenceEndpoint))
+    }
 }
