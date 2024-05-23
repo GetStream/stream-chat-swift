@@ -6,6 +6,10 @@ import CoreData
 import Foundation
 
 public extension ChatClient {
+    /// Creates and returns a `PollVoteListController` for the specified query.
+    ///
+    /// - Parameter query: The query object defining the criteria for retrieving the list of poll votes.
+    /// - Returns: A `PollVoteListController` initialized with the provided query and client.
     func pollVoteListController(query: PollVoteListQuery) -> PollVoteListController {
         .init(query: query, client: self)
     }

@@ -6,6 +6,12 @@ import CoreData
 import Foundation
 
 public extension ChatClient {
+    /// Creates and returns a `PollController` for the specified message and poll.
+    ///
+    /// - Parameters:
+    ///   - messageId: The unique identifier of the message associated with the poll.
+    ///   - pollId: The unique identifier of the poll.
+    /// - Returns: A `PollController` initialized with the provided client, message ID, and poll ID.
     func pollController(messageId: MessageId, pollId: String) -> PollController {
         .init(client: self, messageId: messageId, pollId: pollId)
     }
