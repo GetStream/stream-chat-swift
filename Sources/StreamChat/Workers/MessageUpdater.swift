@@ -739,6 +739,30 @@ class MessageUpdater: Worker {
             }
         })
     }
+
+    func markRead(
+        cid: ChannelId,
+        threadId: MessageId,
+        completion: @escaping ((Error?) -> Void)
+    ) {
+        apiClient.request(
+            endpoint: .markThreadRead(cid: cid, threadId: threadId)
+        ) { result in
+            completion(result.error)
+        }
+    }
+
+    func markUnread(
+        cid: ChannelId,
+        threadId: MessageId,
+        completion: @escaping ((Error?) -> Void)
+    ) {
+        apiClient.request(
+            endpoint: .markThreadUnread(cid: cid, threadId: threadId)
+        ) { result in
+            completion(result.error)
+        }
+    }
 }
 
 extension MessageUpdater {

@@ -718,6 +718,23 @@ public class ChatMessageController: DataController, DelegateCallable, DataStoreP
             }
         }
     }
+
+    /// Marks the thread read if this message is the root of a thread.
+    public func markThreadRead(completion: ((Error?) -> Void)? = nil) {
+        messageUpdater.markRead(cid: cid, threadId: messageId) { error in
+            completion?(error)
+        }
+    }
+
+    /// Marks the thread unread if this message is the root of a thread.
+    public func markThreadUnread(completion: ((Error?) -> Void)? = nil) {
+        messageUpdater.markUnread(
+            cid: cid,
+            threadId: messageId
+        ) { error in
+            completion?(error)
+        }
+    }
 }
 
 // MARK: - Environment
