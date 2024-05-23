@@ -11,10 +11,11 @@ public struct UnreadCount: Decodable, Equatable {
         case userUnreadCount = "user"
         case channels = "unread_channels"
         case messages = "total_unread_count"
+        case threads = "unread_threads"
     }
 
-    /// The default value representing no unread channels and messages.
-    public static let noUnread = UnreadCount(channels: 0, messages: 0)
+    /// The default value representing no unread channels, messages and threads.
+    public static let noUnread = UnreadCount(channels: 0, messages: 0, threads: 0)
 
     /// The number of channels with unread messages.
     public let channels: Int
@@ -22,24 +23,32 @@ public struct UnreadCount: Decodable, Equatable {
     /// The number of unread messages across all channels.
     public let messages: Int
 
-    init(channels: Int, messages: Int) {
+    /// The number of threads with unread replies.
+    internal let threads: Int
+
+    init(channels: Int, messages: Int, threads: Int) {
         self.channels = channels
         self.messages = messages
+        self.threads = threads
     }
 
     public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
 
         if let channels = try container.decodeIfPresent(Int.self, forKey: .channels),
-           let messages = try container.decodeIfPresent(Int.self, forKey: .messages) {
+           let messages = try container.decodeIfPresent(Int.self, forKey: .messages),
+           let threads = try container.decodeIfPresent(Int.self, forKey: .threads) {
             self.channels = channels
             self.messages = messages
+            self.threads = threads
         } else if let currentUserUnreadCount = try container.decodeIfPresent(UnreadCount.self, forKey: .currentUserUnreadCount) {
             channels = currentUserUnreadCount.channels
             messages = currentUserUnreadCount.messages
+            threads = currentUserUnreadCount.threads
         } else if let userUnreadCount = try container.decodeIfPresent(UnreadCount.self, forKey: .userUnreadCount) {
             channels = userUnreadCount.channels
             messages = userUnreadCount.messages
+            threads = userUnreadCount.threads
         } else {
             throw ClientError.EventDecoding(missingValue: "unread_channels, total_unread_count", for: Self.self)
         }
