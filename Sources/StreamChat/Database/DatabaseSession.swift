@@ -574,7 +574,6 @@ extension DatabaseSession {
                 if let optionId = vote.optionId, !optionId.isEmpty {
                     let id = "\(optionId)-\(vote.pollId)-\(userId)"
                     if let dto = try pollVote(id: id, pollId: vote.pollId) {
-                        // TODO: other data.
                         dto.id = vote.id
                         voteUpdated = true
                     }
@@ -596,7 +595,7 @@ extension DatabaseSession {
                     if vote.isAnswer == true, let userId = vote.userId {
                         let votes = try pollVotes(for: userId, pollId: vote.pollId)
                         for existing in votes {
-                            if (existing.optionId == nil || existing.optionId?.isEmpty == true) {
+                            if existing.optionId == nil || existing.optionId?.isEmpty == true {
                                 delete(pollVote: existing)
                             }
                         }
@@ -605,7 +604,6 @@ extension DatabaseSession {
                         if let optionId = vote.optionId, !optionId.isEmpty {
                             let id = "\(optionId)-\(vote.pollId)-\(userId)"
                             if let dto = try pollVote(id: id, pollId: vote.pollId) {
-                                // TODO: other data.
                                 dto.id = vote.id
                                 voteUpdated = true
                             }

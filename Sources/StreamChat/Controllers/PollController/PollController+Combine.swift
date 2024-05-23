@@ -12,7 +12,7 @@ extension PollController {
         basePublishers.state.keepAlive(self)
     }
 
-    /// A publisher emitting a new value every time the reactions change.
+    /// A publisher emitting a new value every time the poll changes.
     public var pollChangesPublisher: AnyPublisher<EntityChange<Poll>, Never> {
         basePublishers.pollChanges.keepAlive(self)
     }
@@ -31,7 +31,7 @@ extension PollController {
         /// A backing subject for `statePublisher`.
         let state: CurrentValueSubject<DataController.State, Never>
 
-        /// A backing subject for `reactionsChangesPublisher`.
+        /// A backing subject for `pollChangesPublisher`.
         let pollChanges: PassthroughSubject<EntityChange<Poll>, Never> = .init()
         
         let currentUserVotesChanges: PassthroughSubject<[ListChange<PollVote>], Never> = .init()

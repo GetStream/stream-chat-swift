@@ -769,4 +769,216 @@ final class DatabaseSession_Tests: XCTestCase {
         let channelDTO = try XCTUnwrap(database.viewContext.channel(cid: channel.channel.cid))
         XCTAssertNil(channelDTO.previewMessage)
     }
+    
+    func test_saveEvent_whenPollVoteRemoved_deletesTheVote() throws {
+        // GIVEN
+        let pollOptionId = "345"
+        let pollId = "123"
+        var voteId: String!
+        let currentUserId = String.unique
+        
+        let payload = XCTestCase().dummyPollVotePayload(optionId: pollOptionId, pollId: pollId)
+        
+        try database.createCurrentUser(id: currentUserId)
+        
+        try database.writeSynchronously { session in
+            let poll = XCTestCase().dummyPollPayload(id: pollId, user: .dummy(userId: currentUserId))
+            try session.savePoll(payload: poll, cache: nil)
+        }
+        
+        try database.writeSynchronously { session in
+            let dto = try session.savePollVote(payload: payload, query: nil, cache: nil)
+            voteId = dto.id
+        }
+        
+        // THEN
+        XCTAssertNotNil(try database.viewContext.pollVote(id: voteId, pollId: pollId))
+        
+        // WHEN
+        let votePayload = XCTestCase().dummyPollVotePayload(id: voteId, optionId: pollOptionId, pollId: pollId)
+        let event = EventPayload(eventType: .pollVoteRemoved, vote: votePayload)
+        
+        try database.writeSynchronously { session in
+            try session.saveEvent(payload: event)
+        }
+        
+        // THEN
+        XCTAssertNil(try database.viewContext.pollVote(id: voteId, pollId: pollId))
+    }
+    
+    func test_saveEvent_whenVoteChanged_updatesTheVote() throws {
+        // GIVEN
+        let pollOptionId = "345"
+        let pollId = "123"
+        var voteId: String!
+        let currentUserId = String.unique
+        let secondOptionId = "789"
+        let firstOption = PollOptionPayload(id: pollOptionId, text: "First", custom: [:])
+        let secondOption = PollOptionPayload(id: secondOptionId, text: "Second", custom: [:])
+        
+        let payload = XCTestCase().dummyPollVotePayload(optionId: pollOptionId, pollId: pollId)
+        
+        try database.createCurrentUser(id: currentUserId)
+        
+        try database.writeSynchronously { session in
+            let poll = XCTestCase().dummyPollPayload(
+                id: pollId,
+                options: [firstOption, secondOption],
+                user: .dummy(userId: currentUserId)
+            )
+            try session.savePoll(payload: poll, cache: nil)
+        }
+        
+        try database.writeSynchronously { session in
+            let dto = try session.savePollVote(payload: payload, query: nil, cache: nil)
+            voteId = dto.id
+        }
+        
+        // THEN
+        let initialVote = try database.viewContext.pollVote(id: voteId, pollId: pollId)
+        XCTAssertNotNil(initialVote)
+        XCTAssertEqual(initialVote?.optionId, pollOptionId)
+        
+        // WHEN
+        let votePayload = XCTestCase().dummyPollVotePayload(
+            id: voteId,
+            optionId: secondOptionId,
+            pollId: pollId,
+            userId: currentUserId
+        )
+        let event = EventPayload(eventType: .pollVoteChanged, vote: votePayload)
+        
+        try database.writeSynchronously { session in
+            try session.saveEvent(payload: event)
+        }
+        
+        // THEN
+        let vote = try database.viewContext.pollVote(id: voteId, pollId: pollId)
+        XCTAssertNotNil(vote)
+        XCTAssertEqual(vote?.optionId, secondOptionId)
+    }
+    
+    func test_saveEvent_whenVoteCasted_savesTheVote() throws {
+        // GIVEN
+        let pollOptionId = "345"
+        let pollId = "123"
+        let currentUserId = String.unique
+        let firstOption = PollOptionPayload(id: pollOptionId, text: "First", custom: [:])
+                
+        try database.createCurrentUser(id: currentUserId)
+        
+        try database.writeSynchronously { session in
+            let poll = XCTestCase().dummyPollPayload(
+                id: pollId,
+                options: [firstOption],
+                user: .dummy(userId: currentUserId)
+            )
+            try session.savePoll(payload: poll, cache: nil)
+        }
+        
+        // WHEN
+        let voteId = String.unique
+        let votePayload = XCTestCase().dummyPollVotePayload(
+            id: voteId,
+            optionId: pollOptionId,
+            pollId: pollId,
+            userId: currentUserId
+        )
+        let event = EventPayload(eventType: .pollVoteCasted, vote: votePayload)
+        
+        try database.writeSynchronously { session in
+            try session.saveEvent(payload: event)
+        }
+        
+        // THEN
+        let vote = try database.viewContext.pollVote(id: voteId, pollId: pollId)
+        XCTAssertNotNil(vote)
+        XCTAssertEqual(vote?.id, voteId)
+        XCTAssertEqual(vote?.optionId, pollOptionId)
+    }
+    
+    func test_saveEvent_whenAnswerCasted_updatesTheAnswer() throws {
+        // GIVEN
+        let pollId = "123"
+        let currentUserId = String.unique
+        let firstAnswer = "First"
+        let secondAnswer = "Second"
+                
+        try database.createCurrentUser(id: currentUserId)
+        
+        try database.writeSynchronously { session in
+            let poll = XCTestCase().dummyPollPayload(
+                id: pollId,
+                user: .dummy(userId: currentUserId)
+            )
+            try session.savePoll(payload: poll, cache: nil)
+        }
+        
+        // WHEN
+        let voteId = String.unique
+        let votePayload = XCTestCase().dummyPollVotePayload(
+            id: voteId,
+            optionId: nil,
+            pollId: pollId,
+            answerText: firstAnswer,
+            isAnswer: true,
+            userId: currentUserId
+        )
+        let event = EventPayload(eventType: .pollVoteCasted, vote: votePayload)
+        
+        try database.writeSynchronously { session in
+            try session.saveEvent(payload: event)
+        }
+        
+        // THEN
+        var vote = try database.viewContext.pollVote(id: voteId, pollId: pollId)
+        XCTAssertNotNil(vote)
+        XCTAssertEqual(vote?.id, voteId)
+        XCTAssertEqual(vote?.answerText, firstAnswer)
+        
+        // WHEN
+        let updatedVotePayload = XCTestCase().dummyPollVotePayload(
+            id: voteId,
+            optionId: nil,
+            pollId: pollId,
+            answerText: secondAnswer,
+            isAnswer: true,
+            userId: currentUserId
+        )
+        let updatedEvent = EventPayload(eventType: .pollVoteCasted, vote: updatedVotePayload)
+        
+        try database.writeSynchronously { session in
+            try session.saveEvent(payload: updatedEvent)
+        }
+        
+        // THEN
+        vote = try database.viewContext.pollVote(id: voteId, pollId: pollId)
+        XCTAssertNotNil(vote)
+        XCTAssertEqual(vote?.id, voteId)
+        XCTAssertEqual(vote?.answerText, secondAnswer)
+    }
+    
+    func test_saveEvent_whenPollCreated_addThePoll() throws {
+        // GIVEN
+        let pollId = "123"
+        let currentUserId = String.unique
+                
+        try database.createCurrentUser(id: currentUserId)
+        
+        // WHEN
+        let poll = XCTestCase().dummyPollPayload(
+            id: pollId,
+            user: .dummy(userId: currentUserId)
+        )
+        let event = EventPayload(eventType: .pollCreated, poll: poll)
+        
+        try database.writeSynchronously { session in
+            try session.saveEvent(payload: event)
+        }
+        
+        // THEN
+        let pollDto = try database.viewContext.poll(id: pollId)
+        XCTAssertNotNil(pollDto)
+        XCTAssertEqual(pollDto?.id, pollId)
+    }
 }

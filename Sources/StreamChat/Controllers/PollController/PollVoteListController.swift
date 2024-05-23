@@ -11,20 +11,20 @@ public extension ChatClient {
     }
 }
 
-/// `ChatReactionListController` uses this protocol to communicate changes to its delegate.
+/// `PollVoteListController` uses this protocol to communicate changes to its delegate.
 public protocol PollVoteListControllerDelegate: DataControllerStateDelegate {
-    /// The controller changed the list of observed reactions.
+    /// The controller changed the list of observed votes.
     ///
     /// - Parameters:
     ///   - controller: The controller emitting the change callback.
-    ///   - changes: The change to the list of reactions.
+    ///   - changes: The change to the list of votes.
     func controller(
         _ controller: PollVoteListController,
         didChangeVotes changes: [ListChange<PollVote>]
     )
 }
 
-/// A controller which allows querying and filtering the reactions of a message.
+/// A controller which allows querying and filtering the votes of a poll.
 public class PollVoteListController: DataController, DelegateCallable, DataStoreProvider {
     /// The query specifying and filtering the list of users.
     public let query: PollVoteListQuery
@@ -32,9 +32,9 @@ public class PollVoteListController: DataController, DelegateCallable, DataStore
     /// The `ChatClient` instance this controller belongs to.
     public let client: ChatClient
 
-    /// The total reactions of the message the controller represents.
+    /// The votes of the poll the controller represents.
     ///
-    /// To observe changes of the reactions, set your class as a delegate of this controller or use the provided
+    /// To observe changes of the votes, set your class as a delegate of this controller or use the provided
     /// `Combine` publishers.
     public var votes: LazyCachedMapCollection<PollVote> {
         startPollVotesListObserverIfNeeded()
@@ -43,7 +43,7 @@ public class PollVoteListController: DataController, DelegateCallable, DataStore
     
     public private(set) var hasLoadedAllVotes: Bool = false
 
-    /// Set the delegate of `ReactionListController` to observe the changes in the system.
+    /// Set the delegate of `PollVoteListController` to observe the changes in the system.
     public weak var delegate: PollVoteListControllerDelegate? {
         get { multicastDelegate.mainDelegate }
         set { multicastDelegate.set(mainDelegate: newValue) }
@@ -105,7 +105,7 @@ public class PollVoteListController: DataController, DelegateCallable, DataStore
     /// Creates a new `UserListController`.
     ///
     /// - Parameters:
-    ///   - query: The query used for filtering the reactions.
+    ///   - query: The query used for filtering the votes.
     ///   - client: The `Client` instance this controller belongs to.
     init(query: PollVoteListQuery, client: ChatClient, environment: Environment = .init()) {
         self.client = client
@@ -131,7 +131,7 @@ public class PollVoteListController: DataController, DelegateCallable, DataStore
     }
 
     /// If the `state` of the controller is `initialized`, this method calls `startObserving` on the
-    /// `reactionListObserver` to fetch the local data and start observing the changes. It also changes
+    /// `pollVotesObserver` to fetch the local data and start observing the changes. It also changes
     /// `state` based on the result.
     private func startPollVotesListObserverIfNeeded() {
         guard state == .initialized else { return }
@@ -148,7 +148,7 @@ public class PollVoteListController: DataController, DelegateCallable, DataStore
 // MARK: - Actions
 
 public extension PollVoteListController {
-    /// Loads more reactions.
+    /// Loads more votes.
     ///
     /// - Parameters:
     ///   - limit: Limit for the page size.

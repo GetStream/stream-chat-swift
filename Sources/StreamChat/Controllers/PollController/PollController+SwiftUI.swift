@@ -10,7 +10,7 @@ extension PollController {
     /// A wrapper object that exposes the controller variables in the form of `ObservableObject` to be used in SwiftUI.
     public var observableObject: ObservableObject { .init(controller: self) }
 
-    /// A wrapper object for `ChatReactionListController` type which makes it possible to use the controller
+    /// A wrapper object for `PollController` type which makes it possible to use the controller
     /// comfortably in SwiftUI.
     public class ObservableObject: SwiftUI.ObservableObject {
         /// The underlying controller. You can still access it and call methods on it.
@@ -18,7 +18,7 @@ extension PollController {
         
         @Published public private(set) var poll: Poll?
 
-        /// The message reactions.
+        /// The current user's votes.
         @Published public private(set) var ownVotes: LazyCachedMapCollection<PollVote> = []
 
         /// The current state of the controller.

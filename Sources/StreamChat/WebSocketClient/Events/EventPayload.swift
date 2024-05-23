@@ -87,7 +87,9 @@ class EventPayload: Decodable {
         firstUnreadMessageId: MessageId? = nil,
         lastReadAt: Date? = nil,
         lastReadMessageId: MessageId? = nil,
-        unreadMessagesCount: Int? = nil
+        unreadMessagesCount: Int? = nil,
+        poll: PollPayload? = nil,
+        vote: PollVotePayload? = nil
     ) {
         self.eventType = eventType
         self.connectionId = connectionId
@@ -112,6 +114,8 @@ class EventPayload: Decodable {
         self.lastReadAt = lastReadAt
         self.lastReadMessageId = lastReadMessageId
         self.unreadMessagesCount = unreadMessagesCount
+        self.poll = poll
+        self.vote = vote
     }
 
     required init(from decoder: Decoder) throws {
