@@ -47,8 +47,13 @@ extension PollEventDTO {
     }
 }
 
+/// A model representing an event where a poll was closed.
 public struct PollClosedEvent: Event {
+    /// The poll that was closed.
     public let poll: Poll
+    
+    /// The date and time when the event was created.
+    /// This property is optional and may be `nil`.
     public let createdAt: Date?
 }
 
@@ -66,8 +71,13 @@ struct PollClosedEventDTO: PollEventDTO {
     }
 }
 
+/// A model representing an event where a poll was created.
 public struct PollCreatedEvent: Event {
+    /// The poll that was created.
     public let poll: Poll
+    
+    /// The date and time when the event was created.
+    /// This property is optional and may be `nil`.
     public let createdAt: Date?
 }
 
@@ -85,8 +95,13 @@ struct PollCreatedEventDTO: PollEventDTO {
     }
 }
 
+/// A model representing an event where a poll was deleted.
 public struct PollDeletedEvent: Event {
+    /// The poll that was deleted.
     public let poll: Poll
+    
+    /// The date and time when the event was created.
+    /// This property is optional and may be `nil`.
     public let createdAt: Date?
 }
 
@@ -104,8 +119,13 @@ struct PollDeletedEventDTO: PollEventDTO {
     }
 }
 
+/// A model representing an event where a poll was updated.
 public struct PollUpdatedEvent: Event {
+    /// The poll that was updated.
     public let poll: Poll
+    
+    /// The date and time when the event was created.
+    /// This property is optional and may be `nil`.
     public let createdAt: Date?
 }
 
@@ -123,9 +143,16 @@ struct PollUpdatedEventDTO: PollEventDTO {
     }
 }
 
+/// A model representing an event where a vote was casted in a poll.
 public struct PollVoteCastedEvent: Event {
+    /// The vote that was casted.
     public let vote: PollVote
+    
+    /// The poll in which the vote was casted.
     public let poll: Poll
+    
+    /// The date and time when the event was created.
+    /// This property is optional and may be `nil`.
     public let createdAt: Date?
 }
 
@@ -145,9 +172,16 @@ struct PollVoteCastedEventDTO: PollVoteEventDTO {
     }
 }
 
+/// A model representing an event where a vote was changed in a poll.
 public struct PollVoteChangedEvent: Event {
+    /// The vote that was changed.
     public let vote: PollVote
+    
+    /// The poll in which the vote was changed.
     public let poll: Poll
+    
+    /// The date and time when the event was created.
+    /// This property is optional and may be `nil`.
     public let createdAt: Date?
 }
 
@@ -167,9 +201,16 @@ struct PollVoteChangedEventDTO: PollVoteEventDTO {
     }
 }
 
+/// A model representing an event where a vote was removed from a poll.
 public struct PollVoteRemovedEvent: Event {
+    /// The vote that was removed.
     public let vote: PollVote
+    
+    /// The poll from which the vote was removed.
     public let poll: Poll
+    
+    /// The date and time when the event was created.
+    /// This property is optional and may be `nil`.
     public let createdAt: Date?
 }
 

@@ -115,18 +115,25 @@ public extension EventType {
     
     // MARK: - polls
     
+    /// When a poll was created.
     static let pollCreated: Self = "poll.created"
-    
+
+    /// When a poll was closed.
     static let pollClosed: Self = "poll.closed"
-    
+
+    /// When a poll was deleted.
     static let pollDeleted: Self = "poll.deleted"
-    
+
+    /// When a poll was updated.
     static let pollUpdated: Self = "poll.updated"
-    
+
+    /// When a vote was casted in a poll.
     static let pollVoteCasted: Self = "poll.vote_casted"
-    
+
+    /// When a vote was changed in a poll.
     static let pollVoteChanged: Self = "poll.vote_changed"
-    
+
+    /// When a vote was removed from a poll.
     static let pollVoteRemoved: Self = "poll.vote_removed"
 }
 
