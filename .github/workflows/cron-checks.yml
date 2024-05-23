@@ -53,7 +53,7 @@ jobs:
           - ios: 15.4
             xcode: 15.3
             os: macos-14
-            device: "iPhone 8"
+            device: "iPhone 13"
             setup_runtime: true
           - ios: 14.5
             xcode: 15.3
@@ -152,7 +152,7 @@ jobs:
           - ios: 15.4
             xcode: 15.3
             os: macos-14
-            device: "iPhone 8"
+            device: "iPhone 13"
             setup_runtime: true
           - ios: 14.5
             xcode: 15.3
@@ -188,6 +188,9 @@ jobs:
         brew install xcodesorg/made/xcodes
         xcodes runtimes
         sudo xcodes runtimes install 'iOS ${{ matrix.ios }}' --keep-archive
+    - name: Run LLC Tests (Debug)
+      run: bundle exec fastlane test device:"${{ matrix.device }} (${{ matrix.ios }})" cron:true
+      timeout-minutes: 100
     - uses: 8398a7/action-slack@v3
       with:
         status: ${{ job.status }}

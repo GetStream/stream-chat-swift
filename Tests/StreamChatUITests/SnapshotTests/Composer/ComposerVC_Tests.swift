@@ -150,7 +150,41 @@ final class ComposerVC_Tests: XCTestCase {
         XCTAssertEqual(searchUsers([user], by: "françois"), [user])
         XCTAssertEqual(searchUsers([user], by: "franc"), [user])
     }
-    
+
+    // MARK: - suggestions view
+
+    func test_showCommandSuggestionsView() {
+        let containerView = UIViewController()
+        containerView.addChildViewController(composerVC, embedIn: containerView.view)
+        let channel = ChatChannel.mock(
+            cid: .unique,
+            config: .mock(commands: [.init(name: "giphy")])
+        )
+        mockedChatChannelController.channel_mock = channel
+        composerVC.content = .initial()
+        composerVC.content.text = "/"
+        composerVC.updateContent()
+        AssertSnapshot(containerView.view, variants: [.defaultLight], size: .init(width: 400, height: 150))
+    }
+
+    func test_showMentionSuggestionsView() {
+        let containerView = UIViewController()
+        containerView.addChildViewController(composerVC, embedIn: containerView.view)
+        let channel = ChatChannel.mock(
+            cid: .unique,
+            config: .mock(commands: [.init(name: "giphy")]),
+            lastActiveMembers: [.mock(id: "leia_organa", name: "Leia Organa")]
+        )
+        mockedChatChannelController.channel_mock = channel
+        composerVC.userSearchController = .init(client: mockedChatChannelController.client)
+        composerVC.userMentionsDebouncer = .init(0, queue: .main)
+        composerVC.content = .initial()
+        composerVC.content.text = "Hello @Le"
+        composerVC.content.mentionedUsers = [.mock(id: "leia_organa", name: "Leia Organa")]
+        composerVC.updateContent()
+        AssertSnapshot(containerView.view, variants: [.defaultLight], size: .init(width: 400, height: 130))
+    }
+
     // MARK: - attachmentsPreview
     
     func test_attachmentsPreview_withFourAttachments_addedSameTime() {

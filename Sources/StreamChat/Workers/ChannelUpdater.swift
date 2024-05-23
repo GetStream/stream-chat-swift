@@ -918,10 +918,12 @@ extension ChannelUpdater {
     ) async throws -> ChannelPayload {
         // Just populate the closure since we select the endpoint based on it.
         let useCreateEndpoint: ((ChannelId) -> Void)? = channelQuery.cid == nil ? { _ in } : nil
+        let parameter = channelQuery.pagination?.parameter
+        let reset = parameter == nil || parameter?.isJumpingToMessage == true
         let actions = ChannelUpdateActions(
             memberListSorting: memberSorting,
-            resetMembers: true,
-            resetWatchers: true
+            resetMembers: reset,
+            resetWatchers: reset
         )
         return try await withCheckedThrowingContinuation { continuation in
             update(
