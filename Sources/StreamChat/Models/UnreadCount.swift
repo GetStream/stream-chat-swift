@@ -15,7 +15,7 @@ public struct UnreadCount: Decodable, Equatable {
     }
 
     /// The default value representing no unread channels, messages and threads.
-    public static let noUnread = UnreadCount(channels: 0, messages: 0, threads: 0)
+    public static let noUnread = UnreadCount(channels: 0, messages: 0, threads: nil)
 
     /// The number of channels with unread messages.
     public let channels: Int
