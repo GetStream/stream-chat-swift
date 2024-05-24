@@ -146,7 +146,7 @@ final class MessageEvents_IntegrationTests: XCTestCase {
             user: .dummy(userId: .unique),
             message: .dummy(messageId: .unique, authorUserId: .unique),
             watcherCount: 10,
-            unreadCount: .init(channels: 14, messages: 12),
+            unreadCount: .init(channels: 14, messages: 12, threads: 10),
             createdAt: .unique
         )
 
@@ -252,7 +252,7 @@ final class MessageEvents_IntegrationTests: XCTestCase {
             eventType: .messageRead,
             cid: .unique,
             user: .dummy(userId: .unique),
-            unreadCount: .init(channels: 12, messages: 44),
+            unreadCount: .init(channels: 12, messages: 44, threads: 10),
             createdAt: .unique
         )
 

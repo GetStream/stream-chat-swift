@@ -116,7 +116,7 @@ extension NSManagedObjectContext: CurrentUserDatabaseSession {
 
         dto.unreadChannelsCount = Int64(clamping: count.channels)
         dto.unreadMessagesCount = Int64(clamping: count.messages)
-        dto.unreadThreadsCount = Int64(clamping: count.threads)
+        dto.unreadThreadsCount = Int64(clamping: count.threads ?? 0)
     }
 
     func saveCurrentUserDevices(_ devices: [DevicePayload], clearExisting: Bool) throws -> [DeviceDTO] {

@@ -29,7 +29,7 @@ final class MessageEvents_Tests: XCTestCase {
         XCTAssertEqual(event?.message.id, messageId)
         XCTAssertEqual(event?.createdAt.description, "2020-07-17 13:42:21 +0000")
         XCTAssertEqual(event?.watcherCount, 7)
-        XCTAssertEqual(event?.unreadCount, .init(channels: 1, messages: 1))
+        XCTAssertEqual(event?.unreadCount, .init(channels: 1, messages: 1, threads: nil))
     }
 
     func test_new_withMissingFields() throws {
@@ -88,7 +88,7 @@ final class MessageEvents_Tests: XCTestCase {
         XCTAssertEqual(event?.user.id, "steep-moon-9")
         XCTAssertEqual(event?.cid, ChannelId(type: .messaging, id: "general"))
         XCTAssertEqual(event?.createdAt.description, "2020-07-17 13:55:56 +0000")
-        XCTAssertEqual(event?.unreadCount, .init(channels: 3, messages: 21))
+        XCTAssertEqual(event?.unreadCount, .init(channels: 3, messages: 21, threads: 10))
     }
 
     func test_read_withoutUnreadCount() throws {

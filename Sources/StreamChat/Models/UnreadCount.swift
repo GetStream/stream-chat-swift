@@ -23,10 +23,10 @@ public struct UnreadCount: Decodable, Equatable {
     /// The number of unread messages across all channels.
     public let messages: Int
 
-    /// The number of threads with unread replies.
-    internal let threads: Int
+    /// The number of threads with unread replies if available.
+    internal let threads: Int?
 
-    init(channels: Int, messages: Int, threads: Int) {
+    init(channels: Int, messages: Int, threads: Int?) {
         self.channels = channels
         self.messages = messages
         self.threads = threads
@@ -36,11 +36,10 @@ public struct UnreadCount: Decodable, Equatable {
         let container = try decoder.container(keyedBy: CodingKeys.self)
 
         if let channels = try container.decodeIfPresent(Int.self, forKey: .channels),
-           let messages = try container.decodeIfPresent(Int.self, forKey: .messages),
-           let threads = try container.decodeIfPresent(Int.self, forKey: .threads) {
+           let messages = try container.decodeIfPresent(Int.self, forKey: .messages) {
             self.channels = channels
             self.messages = messages
-            self.threads = threads
+            threads = try container.decodeIfPresent(Int.self, forKey: .threads)
         } else if let currentUserUnreadCount = try container.decodeIfPresent(UnreadCount.self, forKey: .currentUserUnreadCount) {
             channels = currentUserUnreadCount.channels
             messages = currentUserUnreadCount.messages
