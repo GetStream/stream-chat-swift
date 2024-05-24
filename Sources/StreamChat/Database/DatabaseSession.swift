@@ -435,9 +435,22 @@ protocol ThreadDatabaseSession {
 }
 
 protocol PollDatabaseSession {
+    /// Saves a poll with the provided payload.
+    /// - Parameters:
+    ///   - payload: The `PollPayload` containing the details of the poll to be saved.
+    ///   - cache: An optional `PreWarmedCache` to optimize the save operation.
+    /// - Returns: A `PollDTO` representing the saved poll.
+    /// - Throws: An error if the save operation fails.
     @discardableResult
     func savePoll(payload: PollPayload, cache: PreWarmedCache?) throws -> PollDTO
     
+    /// Saves a list of poll votes with the provided payload.
+    /// - Parameters:
+    ///   - payload: The `PollVoteListResponse` containing the details of the poll votes to be saved.
+    ///   - query: An optional `PollVoteListQuery` to specify the query parameters.
+    ///   - cache: An optional `PreWarmedCache` to optimize the save operation.
+    /// - Returns: An array of `PollVoteDTO` representing the saved poll votes.
+    /// - Throws: An error if the save operation fails.
     @discardableResult
     func savePollVotes(
         payload: PollVoteListResponse,
@@ -445,6 +458,13 @@ protocol PollDatabaseSession {
         cache: PreWarmedCache?
     ) throws -> [PollVoteDTO]
     
+    /// Saves a poll vote with the provided payload.
+    /// - Parameters:
+    ///   - payload: The `PollVotePayload` containing the details of the poll vote to be saved.
+    ///   - query: An optional `PollVoteListQuery` to specify the query parameters.
+    ///   - cache: An optional `PreWarmedCache` to optimize the save operation.
+    /// - Returns: A `PollVoteDTO` representing the saved poll vote.
+    /// - Throws: An error if the save operation fails.
     @discardableResult
     func savePollVote(
         payload: PollVotePayload,
@@ -452,6 +472,15 @@ protocol PollDatabaseSession {
         cache: PreWarmedCache?
     ) throws -> PollVoteDTO
     
+    /// Saves a poll vote with the specified parameters.
+    /// - Parameters:
+    ///   - pollId: The ID of the poll.
+    ///   - optionId: The ID of the poll option.
+    ///   - answerText: An optional text answer for the poll vote.
+    ///   - userId: An optional ID of the user.
+    ///   - query: An optional `PollVoteListQuery` to specify the query parameters.
+    /// - Returns: A `PollVoteDTO` representing the saved poll vote.
+    /// - Throws: An error if the save operation fails.
     @discardableResult
     func savePollVote(
         pollId: String,
@@ -461,18 +490,53 @@ protocol PollDatabaseSession {
         query: PollVoteListQuery?
     ) throws -> PollVoteDTO
     
+    /// Retrieves a poll by its ID.
+    /// - Parameter id: The ID of the poll to retrieve.
+    /// - Returns: A `PollDTO` representing the poll, or `nil` if the poll is not found.
+    /// - Throws: An error if the retrieval operation fails.
     func poll(id: String) throws -> PollDTO?
     
+    /// Retrieves a poll option by its ID and poll ID.
+    /// - Parameters:
+    ///   - id: The ID of the poll option to retrieve.
+    ///   - pollId: The ID of the poll containing the option.
+    /// - Returns: A `PollOptionDTO` representing the poll option, or `nil` if the option is not found.
+    /// - Throws: An error if the retrieval operation fails.
     func option(id: String, pollId: String) throws -> PollOptionDTO?
     
+    /// Retrieves a poll vote by its ID and poll ID.
+    /// - Parameters:
+    ///   - id: The ID of the poll vote to retrieve.
+    ///   - pollId: The ID of the poll containing the vote.
+    /// - Returns: A `PollVoteDTO` representing the poll vote, or `nil` if the vote is not found.
+    /// - Throws: An error if the retrieval operation fails.
     func pollVote(id: String, pollId: String) throws -> PollVoteDTO?
     
+    /// Retrieves all poll votes for a specific user and poll.
+    /// - Parameters:
+    ///   - userId: The ID of the user whose votes are to be retrieved.
+    ///   - pollId: The ID of the poll containing the votes.
+    /// - Returns: An array of `PollVoteDTO` representing the user's poll votes.
+    /// - Throws: An error if the retrieval operation fails.
     func pollVotes(for userId: String, pollId: String) throws -> [PollVoteDTO]
     
+    /// Removes a poll vote by its ID and poll ID.
+    /// - Parameters:
+    ///   - id: The ID of the poll vote to remove.
+    ///   - pollId: The ID of the poll containing the vote.
+    /// - Throws: An error if the removal operation fails.
     func removePollVote(with id: String, pollId: String) throws
     
+    /// Links a vote with a specific filter hash within a poll.
+    /// - Parameters:
+    ///   - id: The ID of the vote to link.
+    ///   - pollId: The ID of the poll containing the vote.
+    ///   - filterHash: An optional filter hash to link the vote to.
+    /// - Throws: An error if the linking operation fails.
     func linkVote(with id: String, in pollId: String, to filterHash: String?) throws
     
+    /// Deletes a poll vote.
+    /// - Parameter pollVote: The `PollVoteDTO` representing the poll vote to delete.
     func delete(pollVote: PollVoteDTO)
 }
 
@@ -572,7 +636,11 @@ extension DatabaseSession {
                 var voteUpdated = false
                 let userId = vote.userId ?? "anon"
                 if let optionId = vote.optionId, !optionId.isEmpty {
-                    let id = "\(optionId)-\(vote.pollId)-\(userId)"
+                    let id = PollVoteDTO.localVoteId(
+                        optionId: optionId,
+                        pollId: vote.pollId,
+                        userId: vote.userId
+                    )
                     if let dto = try pollVote(id: id, pollId: vote.pollId) {
                         dto.id = vote.id
                         voteUpdated = true
@@ -600,9 +668,12 @@ extension DatabaseSession {
                             }
                         }
                     } else {
-                        let userId = vote.userId ?? "anon"
                         if let optionId = vote.optionId, !optionId.isEmpty {
-                            let id = "\(optionId)-\(vote.pollId)-\(userId)"
+                            let id = PollVoteDTO.localVoteId(
+                                optionId: optionId,
+                                pollId: vote.pollId,
+                                userId: vote.userId
+                            )
                             if let dto = try pollVote(id: id, pollId: vote.pollId) {
                                 dto.id = vote.id
                                 voteUpdated = true

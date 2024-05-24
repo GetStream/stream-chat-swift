@@ -203,6 +203,7 @@ public struct ChatMessage {
 
     @CoreDataLazy internal var _readByCount: Int
     
+    /// Optional poll that is part of the message.
     public let poll: Poll?
 
     internal init(

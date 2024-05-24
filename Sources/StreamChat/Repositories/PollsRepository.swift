@@ -247,3 +247,23 @@ class PollsRepository {
         }
     }
 }
+
+extension ClientError {
+    class PollDoesNotExist: ClientError {
+        init(pollId: String) {
+            super.init("There is no `PollDTO` instance in the DB matching id: \(pollId).")
+        }
+    }
+    
+    class PollOptionDoesNotExist: ClientError {
+        init(optionId: String) {
+            super.init("There is no `PollOptionDTO` instance in the DB matching id: \(optionId).")
+        }
+    }
+    
+    class PollVoteDoesNotExist: ClientError {
+        init(voteId: String) {
+            super.init("There is no `PollVoteDTO` instance in the DB matching id: \(voteId).")
+        }
+    }
+}

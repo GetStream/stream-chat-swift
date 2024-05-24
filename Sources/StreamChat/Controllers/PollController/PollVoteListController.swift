@@ -106,7 +106,7 @@ public class PollVoteListController: DataController, DelegateCallable, DataStore
     private let pollsRepository: PollsRepository
     private let environment: Environment
 
-    /// Creates a new `UserListController`.
+    /// Creates a new `PollVoteListController`.
     ///
     /// - Parameters:
     ///   - query: The query used for filtering the votes.

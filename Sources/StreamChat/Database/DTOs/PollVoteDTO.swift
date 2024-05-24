@@ -96,7 +96,7 @@ extension NSManagedObjectContext {
         cache: PreWarmedCache?
     ) throws -> PollVoteDTO {
         guard let poll = try poll(id: payload.pollId) else {
-            throw ClientError.Unexpected()
+            throw ClientError.PollDoesNotExist(pollId: payload.pollId)
         }
         
         var option: PollOptionDTO?
@@ -139,16 +139,20 @@ extension NSManagedObjectContext {
         userId: String?,
         query: PollVoteListQuery?
     ) throws -> PollVoteDTO {
-        guard let poll = try poll(id: pollId),
-              let option = try option(id: optionId, pollId: pollId) else {
-            throw ClientError.Unknown()
+        guard let poll = try poll(id: pollId) else {
+            throw ClientError.PollDoesNotExist(pollId: pollId)
         }
+        guard let option = try option(id: optionId, pollId: pollId) else {
+            throw ClientError.PollOptionDoesNotExist(optionId: optionId)
+        }
+        
         var userDto: UserDTO?
         if let userId {
             userDto = user(id: userId)
         }
         let userSuffix = poll.votingVisibility == VotingVisibility.anonymous.rawValue ? nil : userId
-        let voteId = "\(optionId)-\(pollId)-\(userSuffix ?? "anon")"
+        let userId = userSuffix ?? "anon"
+        let voteId = PollVoteDTO.localVoteId(optionId: optionId, pollId: pollId, userId: userId)
         let dto = PollVoteDTO.loadOrCreate(
             voteId: voteId,
             poll: poll,
@@ -161,7 +165,7 @@ extension NSManagedObjectContext {
         dto.createdAt = Date().bridgeDate
         dto.updatedAt = Date().bridgeDate
         dto.pollId = pollId
-        dto.isAnswer = true // TODO: fix
+        dto.isAnswer = answerText != nil
         dto.answerText = answerText
         dto.optionId = optionId
         
@@ -188,8 +192,7 @@ extension NSManagedObjectContext {
     
     func removePollVote(with id: String, pollId: String) throws {
         guard let dto = try pollVote(id: id, pollId: pollId) else {
-            // TODO: error
-            throw ClientError.Unknown()
+            throw ClientError.PollVoteDoesNotExist(voteId: id)
         }
         
         let poll = try? poll(id: pollId)
@@ -222,5 +225,11 @@ extension PollVoteDTO {
         }
             
         return request
+    }
+}
+
+extension PollVoteDTO {
+    static func localVoteId(optionId: String, pollId: String, userId: String?) -> String {
+        "\(optionId)-\(pollId)-\(userId ?? "anon")"
     }
 }

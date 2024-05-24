@@ -111,7 +111,7 @@ extension NSManagedObjectContext {
         pollDto.voteCountsByOption = payload.voteCountsByOption
         pollDto.isClosed = payload.isClosed ?? false
         if let maxVotesAllowed = payload.maxVotesAllowed {
-            pollDto.maxVotesAllowed = NSNumber(integerLiteral: maxVotesAllowed)
+            pollDto.maxVotesAllowed = NSNumber(value: maxVotesAllowed)
         }
         pollDto.votingVisibility = payload.votingVisibility
         

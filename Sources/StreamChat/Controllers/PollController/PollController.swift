@@ -54,7 +54,31 @@ public class PollController: DataController, DelegateCallable, DataStoreProvider
     
     let ownVotesQuery: PollVoteListQuery
     
-    private var pollObserver: EntityDatabaseObserverWrapper<Poll, PollDTO>?
+    private lazy var pollObserver: EntityDatabaseObserverWrapper<Poll, PollDTO>? = { [weak self] in
+        guard let self = self else {
+            log.warning("Callback called while self is nil")
+            return nil
+        }
+        
+        let observer = environment.pollObserverBuilder(
+            StreamRuntimeCheck._isBackgroundMappingEnabled,
+            self.client.databaseContainer,
+            PollDTO.fetchRequest(for: pollId),
+            { try $0.asModel() as Poll },
+            NSFetchedResultsController<PollDTO>.self
+        )
+        .onChange { [weak self] change in
+            self?.delegateCallback { [weak self] delegate in
+                guard let self = self else {
+                    log.warning("Callback called while self is nil")
+                    return
+                }
+                delegate.pollController(self, didUpdatePoll: change)
+            }
+        }
+
+        return observer
+    }()
     
     private(set) lazy var ownVotesObserver: ListDatabaseObserverWrapper<PollVote, PollVoteDTO> = {
         let request = PollVoteDTO.pollVoteListFetchRequest(query: self.ownVotesQuery)
@@ -111,8 +135,6 @@ public class PollController: DataController, DelegateCallable, DataStoreProvider
         pollsRepository = client.pollsRepository
         
         super.init()
-        
-        setupPollObserver()
     }
     
     override public func synchronize(_ completion: ((_ error: Error?) -> Void)? = nil) {
@@ -209,34 +231,6 @@ public class PollController: DataController, DelegateCallable, DataStoreProvider
             state = .localDataFetchFailed(ClientError(with: error))
             log.error("Failed to perform fetch request with error: \(error). This is an internal error.")
         }
-    }
-        
-    private func setupPollObserver() {
-        pollObserver = { [weak self] in
-            guard let self = self else {
-                log.warning("Callback called while self is nil")
-                return nil
-            }
-            
-            let observer = environment.pollObserverBuilder(
-                StreamRuntimeCheck._isBackgroundMappingEnabled,
-                self.client.databaseContainer,
-                PollDTO.fetchRequest(for: pollId),
-                { try $0.asModel() as Poll },
-                NSFetchedResultsController<PollDTO>.self
-            )
-            .onChange { [weak self] change in
-                self?.delegateCallback { [weak self] delegate in
-                    guard let self = self else {
-                        log.warning("Callback called while self is nil")
-                        return
-                    }
-                    delegate.pollController(self, didUpdatePoll: change)
-                }
-            }
-
-            return observer
-        }()
     }
 }
 
