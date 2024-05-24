@@ -65,6 +65,17 @@ final class NotificationsEvents_Tests: XCTestCase {
         XCTAssertEqual(event?.unreadMessagesCount, 19)
     }
 
+    func test_markUnread_withMissingFields() throws {
+        let json = XCTestCase.mockData(fromJSONFile: "NotificationMarkUnread+MissingFields")
+        let event = try eventDecoder.decode(from: json) as? NotificationMarkUnreadEventDTO
+        XCTAssertEqual(event?.cid, ChannelId(type: .messaging, id: "A9643A22-A"))
+        XCTAssertEqual(event?.user.id, "luke_skywalker")
+        XCTAssertEqual(event?.firstUnreadMessageId, "leia_organa-1f9b7fe0-989f-4fa6-87e8-9c9e788fb2c3")
+        XCTAssertEqual(event?.lastReadAt.description, "2023-03-08 10:00:26 +0000")
+        XCTAssertNil(event?.lastReadMessageId)
+        XCTAssertEqual(event?.unreadMessagesCount, 19)
+    }
+
     func test_channelSomeMutedChannels() throws {
         let json = XCTestCase.mockData(fromJSONFile: "NotificationChannelMutesUpdatedWithSomeMutedChannels")
         let event = try eventDecoder.decode(from: json) as? NotificationChannelMutesUpdatedEventDTO
