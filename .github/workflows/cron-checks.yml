@@ -50,7 +50,7 @@ jobs:
             os: macos-14
             device: "iPhone 14 Pro Max"
             setup_runtime: true
-          - ios: 15.4
+          - ios: 15.5
             xcode: 15.3
             os: macos-14
             device: "iPhone 13"
@@ -149,7 +149,7 @@ jobs:
             os: macos-14
             device: "iPhone 14 Pro Max"
             setup_runtime: true
-          - ios: 15.4
+          - ios: 15.5
             xcode: 15.3
             os: macos-14
             device: "iPhone 13"
