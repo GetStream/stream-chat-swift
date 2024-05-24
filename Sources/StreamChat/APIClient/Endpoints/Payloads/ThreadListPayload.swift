@@ -136,3 +136,26 @@ struct ThreadReadPayload: Decodable {
     let lastReadAt: Date?
     let unreadMessagesCount: Int
 }
+
+// A lighter version of the Thread Payload, used for events.
+struct ThreadEventPayload: Decodable {
+    enum CodingKeys: String, CodingKey {
+        case cid = "channel_cid"
+        case parentMessageId = "parent_message_id"
+        case replyCount = "reply_count"
+        case participantCount = "participant_count"
+        case lastMessageAt = "last_message_at"
+        case createdAt = "created_at"
+        case updatedAt = "updated_at"
+        case title
+    }
+
+    let cid: ChannelId
+    let parentMessageId: MessageId
+    let replyCount: Int
+    let participantCount: Int
+    let lastMessageAt: Date?
+    let createdAt: Date
+    let updatedAt: Date
+    let title: String?
+}

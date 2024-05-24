@@ -167,6 +167,7 @@ class NotificationMarkUnreadEventDTO: EventDTO {
     let firstUnreadMessageId: MessageId
     let lastReadMessageId: MessageId?
     let lastReadAt: Date
+    let unreadCount: UnreadCount
     let unreadMessagesCount: Int
     let payload: EventPayload
 
@@ -178,6 +179,7 @@ class NotificationMarkUnreadEventDTO: EventDTO {
         lastReadMessageId = try response.value(at: \.lastReadMessageId)
         lastReadAt = try response.value(at: \.lastReadAt)
         unreadMessagesCount = try response.value(at: \.unreadMessagesCount)
+        unreadCount = try response.value(at: \.unreadCount)
         payload = response
     }
 
