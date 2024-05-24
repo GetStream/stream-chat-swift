@@ -740,7 +740,7 @@ class MessageUpdater: Worker {
         })
     }
 
-    func markRead(
+    func markThreadRead(
         cid: ChannelId,
         threadId: MessageId,
         completion: @escaping ((Error?) -> Void)
@@ -752,7 +752,7 @@ class MessageUpdater: Worker {
         }
     }
 
-    func markUnread(
+    func markThreadUnread(
         cid: ChannelId,
         threadId: MessageId,
         completion: @escaping ((Error?) -> Void)
