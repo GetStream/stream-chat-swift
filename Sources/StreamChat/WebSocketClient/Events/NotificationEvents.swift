@@ -176,7 +176,7 @@ class NotificationMarkUnreadEventDTO: EventDTO {
         cid = try response.value(at: \.cid)
         createdAt = try response.value(at: \.createdAt)
         firstUnreadMessageId = try response.value(at: \.firstUnreadMessageId)
-        lastReadMessageId = try response.value(at: \.lastReadMessageId)
+        lastReadMessageId = try? response.value(at: \.lastReadMessageId)
         lastReadAt = try response.value(at: \.lastReadAt)
         unreadMessagesCount = try response.value(at: \.unreadMessagesCount)
         unreadCount = try response.value(at: \.unreadCount)
