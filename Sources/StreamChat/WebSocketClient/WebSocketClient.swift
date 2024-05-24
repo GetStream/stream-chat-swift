@@ -205,6 +205,8 @@ extension WebSocketClient: WebSocketEngineDelegate {
         } catch is ClientError.IgnoredEventType {
             log.info("Skipping unsupported event type with payload: \(message)", subsystems: .webSocket)
         } catch {
+            log.error(error)
+
             // Check if the message contains an error object from the server
             let webSocketError = message
                 .data(using: .utf8)
