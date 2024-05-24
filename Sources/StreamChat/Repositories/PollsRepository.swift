@@ -15,14 +15,14 @@ class PollsRepository {
     
     func createPoll(
         name: String,
-        allowAnswers: Bool? = nil,
-        allowUserSuggestedOptions: Bool? = nil,
-        description: String? = nil,
-        enforceUniqueVote: Bool? = nil,
-        maxVotesAllowed: Int? = nil,
-        votingVisibility: String? = nil,
-        options: [PollOption]? = nil,
-        custom: [String: RawJSON]? = nil,
+        allowAnswers: Bool?,
+        allowUserSuggestedOptions: Bool?,
+        description: String?,
+        enforceUniqueVote: Bool?,
+        maxVotesAllowed: Int?,
+        votingVisibility: String?,
+        options: [PollOption]?,
+        custom: [String: RawJSON]?,
         completion: @escaping (Result<PollPayload, Error>) -> Void
     ) {
         let request = CreatePollRequestBody(
@@ -33,7 +33,7 @@ class PollsRepository {
             enforceUniqueVote: enforceUniqueVote,
             maxVotesAllowed: maxVotesAllowed,
             votingVisibility: votingVisibility,
-            options: options?.compactMap { PollOptionRequestBody(text: $0.text, custom: $0.custom) },
+            options: options?.compactMap { PollOptionRequestBody(text: $0.text, custom: $0.extraData) },
             custom: custom
         )
         apiClient.request(endpoint: .createPoll(createPollRequest: request)) { (result: Result<PollPayloadResponse, Error>) in
@@ -221,7 +221,7 @@ class PollsRepository {
                 guard let self else { return }
                 switch result {
                 case let .success(response):
-                    database.write { session in
+                    self.database.write { session in
                         for payload in response.votes {
                             if let payload {
                                 try session.savePollVote(payload: payload, query: nil, cache: nil)
@@ -264,6 +264,12 @@ extension ClientError {
     class PollVoteDoesNotExist: ClientError {
         init(voteId: String) {
             super.init("There is no `PollVoteDTO` instance in the DB matching id: \(voteId).")
+        }
+    }
+    
+    class InvalidInput: ClientError {
+        init() {
+            super.init("Invalid input provided to the method")
         }
     }
 }

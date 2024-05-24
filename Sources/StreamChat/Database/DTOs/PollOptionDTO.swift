@@ -47,17 +47,17 @@ class PollOptionDTO: NSManagedObject {
 
 extension PollOptionDTO {
     func asModel() throws -> PollOption {
-        var customData: [String: RawJSON] = [:]
+        var extraData: [String: RawJSON] = [:]
         if let custom,
            !custom.isEmpty,
            let decoded = try? JSONDecoder.default.decode([String: RawJSON].self, from: custom) {
-            customData = decoded
+            extraData = decoded
         }
         return PollOption(
             id: id,
             text: text,
             latestVotes: try latestVotes.map { try $0.asModel() },
-            custom: customData
+            extraData: extraData
         )
     }
 }

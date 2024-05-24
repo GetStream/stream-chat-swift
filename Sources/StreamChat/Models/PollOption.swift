@@ -17,7 +17,7 @@ public struct PollOption: Equatable {
     
     /// A dictionary containing custom fields associated with the poll option.
     /// This property is optional and may be `nil`.
-    public var custom: [String: RawJSON]?
+    public var extraData: [String: RawJSON]?
     
     /// Initializes a new instance of `PollOption`.
     ///
@@ -30,11 +30,11 @@ public struct PollOption: Equatable {
         id: String = UUID().uuidString,
         text: String,
         latestVotes: [PollVote] = [],
-        custom: [String: RawJSON]? = nil
+        extraData: [String: RawJSON]? = nil
     ) {
         self.id = id
         self.text = text
         self.latestVotes = latestVotes
-        self.custom = custom
+        self.extraData = extraData
     }
 }

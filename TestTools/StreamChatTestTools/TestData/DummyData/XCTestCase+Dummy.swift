@@ -388,7 +388,7 @@ extension XCTestCase {
         options: [PollOptionPayload?] = [],
         ownVotes: [PollVotePayload?] = [],
         custom: [String : RawJSON] = [:],
-        latestVotesByOption: [String : [PollVotePayload?]] = [:],
+        latestVotesByOption: [String : [PollVotePayload]] = [:],
         voteCountsByOption: [String : Int] = [:],
         isClosed: Bool? = nil,
         maxVotesAllowed: Int? = nil,

@@ -62,11 +62,11 @@ class PollDTO: NSManagedObject {
 
 extension PollDTO {
     func asModel() throws -> Poll {
-        var customData: [String: RawJSON] = [:]
+        var extraData: [String: RawJSON] = [:]
         if let custom,
            !custom.isEmpty,
            let decoded = try? JSONDecoder.default.decode([String: RawJSON].self, from: custom) {
-            customData = decoded
+            extraData = decoded
         }
         
         return try Poll(
@@ -80,16 +80,21 @@ extension PollDTO {
             name: name,
             updatedAt: updatedAt?.bridgeDate,
             voteCount: voteCount,
-            custom: customData,
+            extraData: extraData,
             voteCountsByOption: voteCountsByOption,
             isClosed: isClosed,
             maxVotesAllowed: maxVotesAllowed?.intValue,
-            votingVisibility: votingVisibility,
+            votingVisibility: votingVisibility(from: votingVisibility),
             createdBy: createdBy?.asModel(),
             latestAnswers: latestAnswers.map { try $0.asModel() },
             options: options.map { try $0.asModel() },
             latestVotesByOption: latestVotesByOption.map { try $0.asModel() }
         )
+    }
+    
+    private func votingVisibility(from string: String?) -> VotingVisibility? {
+        guard let string else { return nil }
+        return VotingVisibility(rawValue: string)
     }
 }
 
@@ -142,14 +147,10 @@ extension NSManagedObjectContext {
                 optionDto.poll = pollDto
                 optionDto.latestVotes = Set(
                     try votesByOption.compactMap { vote in
-                        if let vote {
-                            let voteDto = try savePollVote(payload: vote, query: nil, cache: cache)
-                            voteDto.option = optionDto
-                            voteDto.poll = pollDto
-                            return voteDto
-                        } else {
-                            return nil
-                        }
+                        let voteDto = try savePollVote(payload: vote, query: nil, cache: cache)
+                        voteDto.option = optionDto
+                        voteDto.poll = pollDto
+                        return voteDto
                     }
                 )
                 

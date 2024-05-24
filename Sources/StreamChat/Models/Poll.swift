@@ -39,7 +39,7 @@ public struct Poll: Equatable {
     public let voteCount: Int
     
     /// A dictionary containing custom fields associated with the poll.
-    public let custom: [String: RawJSON]
+    public let extraData: [String: RawJSON]
     
     /// A dictionary mapping option IDs to the count of votes each option has received.
     /// This property is optional and may be `nil`.
@@ -52,9 +52,9 @@ public struct Poll: Equatable {
     /// This property is optional and may be `nil`.
     public let maxVotesAllowed: Int?
     
-    /// A string representing the visibility of the voting process.
+    /// Represents the visibility of the voting process.
     /// This property is optional and may be `nil`.
-    public let votingVisibility: String?
+    public let votingVisibility: VotingVisibility?
     
     /// The user who created the poll.
     /// This property is optional and may be `nil`.

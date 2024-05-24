@@ -27,18 +27,20 @@ public class PollController: DataController, DelegateCallable, DataStoreProvider
     /// The identifier of the poll this controllers represents.
     public let pollId: String
     
+    /// Returns the poll that this controllers represents.
     public var poll: Poll? {
         startObserversIfNeeded()
         return pollObserver?.item
     }
     
+    /// Returns the current user's votes.
     public var ownVotes: LazyCachedMapCollection<PollVote> {
         ownVotesObserver.items
     }
     
     private let pollsRepository: PollsRepository
     
-    /// Set the delegate of `ChannelController` to observe the changes in the system.
+    /// Set the delegate of `PollController` to observe the changes in the system.
     public var delegate: PollControllerDelegate? {
         get { multicastDelegate.mainDelegate }
         set { multicastDelegate.set(mainDelegate: newValue) }
@@ -161,6 +163,11 @@ public class PollController: DataController, DelegateCallable, DataStoreProvider
         optionId: String?,
         completion: ((Error?) -> Void)? = nil
     ) {
+        if answerText == nil && optionId == nil {
+            completion?(ClientError.InvalidInput())
+            return
+        }
+        
         pollsRepository.castPollVote(
             messageId: messageId,
             pollId: pollId,
@@ -207,14 +214,14 @@ public class PollController: DataController, DelegateCallable, DataStoreProvider
     public func suggestPollOption(
         text: String,
         position: Int? = nil,
-        custom: [String: RawJSON]? = nil,
+        extraData: [String: RawJSON]? = nil,
         completion: ((Error?) -> Void)? = nil
     ) {
         pollsRepository.suggestPollOption(
             pollId: pollId,
             text: text,
             position: position,
-            custom: custom,
+            custom: extraData,
             completion: completion
         )
     }
@@ -235,11 +242,17 @@ public class PollController: DataController, DelegateCallable, DataStoreProvider
 }
 
 /// Represents the visibility of votes in a poll.
-public enum VotingVisibility: String {
+public struct VotingVisibility: RawRepresentable, Equatable {
+    public let rawValue: String
+
+    public init(rawValue: String) {
+        self.rawValue = rawValue
+    }
+    
     /// Votes are public and can be seen by everyone.
-    case `public`
+    public static let `public` = Self(rawValue: "public")
     /// Votes are anonymous and cannot be attributed to individual users.
-    case anonymous
+    public static let anonymous = Self(rawValue: "anonymous")
 }
 
 extension PollController {

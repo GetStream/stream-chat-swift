@@ -756,7 +756,7 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
         maxVotesAllowed: Int? = nil,
         votingVisibility: VotingVisibility? = nil,
         options: [PollOption]? = nil,
-        custom: [String: RawJSON]? = nil,
+        extraData: [String: RawJSON]? = nil,
         completion: @escaping (Result<MessageId, Error>) -> Void
     ) {
         pollsRepository.createPoll(
@@ -768,7 +768,7 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
             maxVotesAllowed: maxVotesAllowed,
             votingVisibility: votingVisibility?.rawValue,
             options: options,
-            custom: custom
+            custom: extraData
         ) { [weak self] result in
             guard let self else { return }
             switch result {

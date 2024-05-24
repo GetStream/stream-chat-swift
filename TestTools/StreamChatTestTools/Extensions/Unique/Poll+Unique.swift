@@ -18,7 +18,7 @@ extension Poll {
             name: "Poll",
             updatedAt: Date(),
             voteCount: 0,
-            custom: [:],
+            extraData: [:],
             voteCountsByOption: nil,
             isClosed: false,
             maxVotesAllowed: nil,

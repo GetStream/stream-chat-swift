@@ -35,7 +35,17 @@ final class PollsRepository_Tests: XCTestCase {
         let completionCalled = expectation(description: "completion called")
         let pollName = "Test Poll"
         
-        repository.createPoll(name: pollName) { result in
+        repository.createPoll(
+            name: pollName,
+            allowAnswers: nil,
+            allowUserSuggestedOptions: nil,
+            description: nil,
+            enforceUniqueVote: nil,
+            maxVotesAllowed: nil,
+            votingVisibility: nil,
+            options: nil,
+            custom: nil
+        ) { result in
             XCTAssertNil(result.error)
             completionCalled.fulfill()
         }
@@ -56,7 +66,17 @@ final class PollsRepository_Tests: XCTestCase {
         let completionCalled = expectation(description: "completion called")
         let pollName = "Test Poll"
         
-        repository.createPoll(name: pollName) { result in
+        repository.createPoll(
+            name: pollName,
+            allowAnswers: nil,
+            allowUserSuggestedOptions: nil,
+            description: nil,
+            enforceUniqueVote: nil,
+            maxVotesAllowed: nil,
+            votingVisibility: nil,
+            options: nil,
+            custom: nil
+        ) { result in
             XCTAssertNotNil(result.error)
             completionCalled.fulfill()
         }
