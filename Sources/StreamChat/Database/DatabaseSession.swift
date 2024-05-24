@@ -633,58 +633,9 @@ extension DatabaseSession {
                     delete(pollVote: dto)
                 }
             } else if payload.eventType == .pollVoteChanged {
-                var voteUpdated = false
-                let userId = vote.userId ?? "anon"
-                if let optionId = vote.optionId, !optionId.isEmpty {
-                    let id = PollVoteDTO.localVoteId(
-                        optionId: optionId,
-                        pollId: vote.pollId,
-                        userId: vote.userId
-                    )
-                    if let dto = try pollVote(id: id, pollId: vote.pollId) {
-                        dto.id = vote.id
-                        voteUpdated = true
-                    }
-
-                    let votes = try pollVotes(for: userId, pollId: vote.pollId)
-                    for existing in votes {
-                        if vote.id != existing.id {
-                            delete(pollVote: existing)
-                        }
-                    }
-                }
-
-                if !voteUpdated {
-                    try savePollVote(payload: vote, query: nil, cache: nil)
-                }
+                try handlePollVoteChangedEvent(vote: vote)
             } else {
-                var voteUpdated = false
-                if payload.eventType == .pollVoteCasted {
-                    if vote.isAnswer == true, let userId = vote.userId {
-                        let votes = try pollVotes(for: userId, pollId: vote.pollId)
-                        for existing in votes {
-                            if existing.optionId == nil || existing.optionId?.isEmpty == true {
-                                delete(pollVote: existing)
-                            }
-                        }
-                    } else {
-                        if let optionId = vote.optionId, !optionId.isEmpty {
-                            let id = PollVoteDTO.localVoteId(
-                                optionId: optionId,
-                                pollId: vote.pollId,
-                                userId: vote.userId
-                            )
-                            if let dto = try pollVote(id: id, pollId: vote.pollId) {
-                                dto.id = vote.id
-                                voteUpdated = true
-                            }
-                        }
-                    }
-                }
-                
-                if !voteUpdated {
-                    try savePollVote(payload: vote, query: nil, cache: nil)
-                }
+                try handlePollVoteEvent(vote: vote, payload: payload)
             }
         }
         
@@ -774,6 +725,63 @@ extension DatabaseSession {
 
         default:
             break
+        }
+    }
+    
+    func handlePollVoteChangedEvent(vote: PollVotePayload) throws {
+        var voteUpdated = false
+        let userId = vote.userId ?? "anon"
+        if let optionId = vote.optionId, !optionId.isEmpty {
+            let id = PollVoteDTO.localVoteId(
+                optionId: optionId,
+                pollId: vote.pollId,
+                userId: vote.userId
+            )
+            if let dto = try pollVote(id: id, pollId: vote.pollId) {
+                dto.id = vote.id
+                voteUpdated = true
+            }
+
+            let votes = try pollVotes(for: userId, pollId: vote.pollId)
+            for existing in votes {
+                if vote.id != existing.id {
+                    delete(pollVote: existing)
+                }
+            }
+        }
+
+        if !voteUpdated {
+            try savePollVote(payload: vote, query: nil, cache: nil)
+        }
+    }
+    
+    func handlePollVoteEvent(vote: PollVotePayload, payload: EventPayload) throws {
+        var voteUpdated = false
+        if payload.eventType == .pollVoteCasted {
+            if vote.isAnswer == true, let userId = vote.userId {
+                let votes = try pollVotes(for: userId, pollId: vote.pollId)
+                for existing in votes {
+                    if existing.optionId == nil || existing.optionId?.isEmpty == true {
+                        delete(pollVote: existing)
+                    }
+                }
+            } else {
+                if let optionId = vote.optionId, !optionId.isEmpty {
+                    let id = PollVoteDTO.localVoteId(
+                        optionId: optionId,
+                        pollId: vote.pollId,
+                        userId: vote.userId
+                    )
+                    if let dto = try pollVote(id: id, pollId: vote.pollId) {
+                        dto.id = vote.id
+                        voteUpdated = true
+                    }
+                }
+            }
+        }
+        
+        if !voteUpdated {
+            try savePollVote(payload: vote, query: nil, cache: nil)
         }
     }
 }
