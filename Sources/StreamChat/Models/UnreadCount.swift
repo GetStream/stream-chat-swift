@@ -24,7 +24,7 @@ public struct UnreadCount: Decodable, Equatable {
     public let messages: Int
 
     /// The number of threads with unread replies if available.
-    internal let threads: Int?
+    public let threads: Int?
 
     init(channels: Int, messages: Int, threads: Int?) {
         self.channels = channels

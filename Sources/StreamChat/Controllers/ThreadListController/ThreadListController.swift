@@ -6,7 +6,7 @@ import CoreData
 import Foundation
 
 /// `ChatThreadListController` uses this protocol to communicate changes to its delegate.
-internal protocol ChatThreadListControllerDelegate: DataControllerStateDelegate {
+public protocol ChatThreadListControllerDelegate: DataControllerStateDelegate {
     /// The controller changed the list of observed threads.
     ///
     /// - Parameters:
@@ -20,12 +20,12 @@ internal protocol ChatThreadListControllerDelegate: DataControllerStateDelegate 
 
 /// `ChatThreadListController` is a controller class which allows querying and
 /// observing the threads that the current user is participating.
-internal class ChatThreadListController: DataController, DelegateCallable, DataStoreProvider {
+public class ChatThreadListController: DataController, DelegateCallable, DataStoreProvider {
     /// The query of the thread list.
-    internal let query: ThreadListQuery
+    public let query: ThreadListQuery
 
     /// The `ChatClient` instance this controller belongs to.
-    internal let client: ChatClient
+    public let client: ChatClient
 
     /// The cursor of the next page in case there is more data.
     private var nextCursor: String?
@@ -34,7 +34,7 @@ internal class ChatThreadListController: DataController, DelegateCallable, DataS
     ///
     /// To observe changes of the threads, set your class as a delegate of this controller
     /// or use the provided combine publishers.
-    internal var threads: LazyCachedMapCollection<ChatThread> {
+    public var threads: LazyCachedMapCollection<ChatThread> {
         startThreadListObserverIfNeeded()
         return threadListObserver.items
     }
@@ -47,7 +47,7 @@ internal class ChatThreadListController: DataController, DelegateCallable, DataS
         )
 
     /// A Boolean value that returns whether pagination is finished.
-    internal private(set) var hasLoadedAllOlderThreads: Bool = false
+    public private(set) var hasLoadedAllOlderThreads: Bool = false
 
     /// A type-erased delegate.
     var multicastDelegate: MulticastDelegate<ChatThreadListControllerDelegate> = .init() {
@@ -107,7 +107,7 @@ internal class ChatThreadListController: DataController, DelegateCallable, DataS
         self.environment = environment
     }
 
-    override internal func synchronize(_ completion: ((_ error: Error?) -> Void)? = nil) {
+    override public func synchronize(_ completion: ((_ error: Error?) -> Void)? = nil) {
         startThreadListObserverIfNeeded()
 
         let limit = query.limit
@@ -139,7 +139,7 @@ internal class ChatThreadListController: DataController, DelegateCallable, DataS
     /// - Parameters:
     ///   - limit: The size of the new page of threads.
     ///   - completion: The completion.
-    internal func loadOlderThreads(
+    public func loadOlderThreads(
         limit: Int? = nil,
         completion: ((Result<[ChatThread], Error>) -> Void)? = nil
     ) {
@@ -183,7 +183,7 @@ internal class ChatThreadListController: DataController, DelegateCallable, DataS
 
 extension ChatThreadListController {
     /// Set the delegate of `ThreadListController` to observe thread changes.
-    internal weak var delegate: ChatThreadListControllerDelegate? {
+    public weak var delegate: ChatThreadListControllerDelegate? {
         get { multicastDelegate.mainDelegate }
         set { multicastDelegate.set(mainDelegate: newValue) }
     }
