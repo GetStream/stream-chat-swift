@@ -2290,6 +2290,66 @@ final class MessageController_Tests: XCTestCase {
         AssertAsync.staysTrue(weakController != nil)
     }
 
+    // MARK: - Mark thread read
+
+    func test_markThreadRead_whenSuccess() {
+        let exp = expectation(description: "mark read completion")
+        controller.markThreadRead() { error in
+            XCTAssertNil(error)
+            exp.fulfill()
+        }
+
+        env.messageUpdater.markThreadRead_completion?(nil)
+
+        wait(for: [exp], timeout: defaultTimeout)
+
+        XCTAssertEqual(env.messageUpdater.markThreadRead_callCount, 1)
+    }
+
+    func test_markThreadRead_whenFailure() {
+        let exp = expectation(description: "mark read completion")
+        controller.markThreadRead() { error in
+            XCTAssertNotNil(error)
+            exp.fulfill()
+        }
+
+        env.messageUpdater.markThreadRead_completion?(TestError())
+
+        wait(for: [exp], timeout: defaultTimeout)
+
+        XCTAssertEqual(env.messageUpdater.markThreadRead_callCount, 1)
+    }
+
+    // MARK: - Mark thread unread
+
+    func test_markThreadUnread_whenSuccess() {
+        let exp = expectation(description: "mark read completion")
+        controller.markThreadUnread() { error in
+            XCTAssertNil(error)
+            exp.fulfill()
+        }
+
+        env.messageUpdater.markThreadUnread_completion?(nil)
+
+        wait(for: [exp], timeout: defaultTimeout)
+
+        XCTAssertEqual(env.messageUpdater.markThreadUnread_callCount, 1)
+    }
+
+    func test_markThreadUnread_whenFailure() {
+        let exp = expectation(description: "mark read completion")
+        controller.markThreadUnread() { error in
+            XCTAssertNotNil(error)
+            exp.fulfill()
+        }
+
+        env.messageUpdater.markThreadUnread_completion?(TestError())
+
+        wait(for: [exp], timeout: defaultTimeout)
+
+        XCTAssertEqual(env.messageUpdater.markThreadUnread_callCount, 1)
+    }
+
     @discardableResult
     private func saveReplies(with ids: [MessageId], channelPayload: ChannelPayload? = nil) throws -> [MessageDTO] {
         let payloads: [MessagePayload] = ids.map {

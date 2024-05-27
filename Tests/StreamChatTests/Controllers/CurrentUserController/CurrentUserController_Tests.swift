@@ -49,7 +49,7 @@ final class CurrentUserController_Tests: XCTestCase {
 
     func test_currentUser_startsObserving_returnsCurrentUserObserverItem() {
         let expectedId = UserId.unique
-        let expectedUnreadCount = UnreadCount(channels: .unique, messages: .unique)
+        let expectedUnreadCount = UnreadCount(channels: .unique, messages: .unique, threads: .unique)
 
         env.currentUserObserverItem = .mock(id: expectedId, unreadCount: expectedUnreadCount)
 
@@ -61,7 +61,7 @@ final class CurrentUserController_Tests: XCTestCase {
 
     func test_synchronize_localDataIsAvailable() {
         let expectedId = UserId.unique
-        let expectedUnreadCount = UnreadCount(channels: .unique, messages: .unique)
+        let expectedUnreadCount = UnreadCount(channels: .unique, messages: .unique, threads: .unique)
 
         env.currentUserObserverItem = .mock(id: expectedId, unreadCount: expectedUnreadCount)
 
@@ -261,7 +261,7 @@ final class CurrentUserController_Tests: XCTestCase {
         // Call synchronize to get updates from DB
         controller.synchronize()
 
-        let unreadCount = UnreadCount(channels: 10, messages: 15)
+        let unreadCount = UnreadCount(channels: 10, messages: 15, threads: 10)
 
         // Set the delegate
         let delegate = UserController_Delegate(expectedQueueId: callbackQueueID)

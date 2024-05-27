@@ -33,6 +33,7 @@ class EventPayload: Decodable {
         case lastReadMessageId = "last_read_message_id"
         case unreadMessagesCount = "unread_messages"
         case shadow
+        case thread
     }
 
     let eventType: EventType
@@ -43,6 +44,7 @@ class EventPayload: Decodable {
     let createdBy: UserPayload?
     let memberContainer: MemberContainerPayload?
     let channel: ChannelDetailPayload?
+    let thread: ThreadEventPayload?
     let message: MessagePayload?
     let reaction: MessageReactionPayload?
     let watcherCount: Int?
@@ -83,7 +85,8 @@ class EventPayload: Decodable {
         firstUnreadMessageId: MessageId? = nil,
         lastReadAt: Date? = nil,
         lastReadMessageId: MessageId? = nil,
-        unreadMessagesCount: Int? = nil
+        unreadMessagesCount: Int? = nil,
+        thread: ThreadEventPayload? = nil
     ) {
         self.eventType = eventType
         self.connectionId = connectionId
@@ -108,6 +111,7 @@ class EventPayload: Decodable {
         self.lastReadAt = lastReadAt
         self.lastReadMessageId = lastReadMessageId
         self.unreadMessagesCount = unreadMessagesCount
+        self.thread = thread
     }
 
     required init(from decoder: Decoder) throws {
@@ -137,6 +141,7 @@ class EventPayload: Decodable {
         lastReadAt = try container.decodeIfPresent(Date.self, forKey: .lastReadAt)
         lastReadMessageId = try container.decodeIfPresent(MessageId.self, forKey: .lastReadMessageId)
         unreadMessagesCount = try container.decodeIfPresent(Int.self, forKey: .unreadMessagesCount)
+        thread = try container.decodeIfPresent(ThreadEventPayload.self, forKey: .thread)
     }
 
     func event() throws -> Event {
@@ -175,6 +180,7 @@ private extension PartialKeyPath where Root == EventPayload {
         case \EventPayload.parentId: return "parentId"
         case \EventPayload.hardDelete: return "hardDelete"
         case \EventPayload.shadow: return "shadow"
+        case \EventPayload.thread: return "thread"
         default: return String(describing: self)
         }
     }

@@ -211,6 +211,23 @@ extension NSManagedObjectContext {
         return threadDTO
     }
 
+    @discardableResult
+    func saveThread(eventPayload: ThreadEventPayload) throws -> ThreadDTO {
+        let threadDTO = ThreadDTO.loadOrCreate(
+            parentMessageId: eventPayload.parentMessageId,
+            context: self,
+            cache: nil
+        )
+        
+        threadDTO.replyCount = Int64(eventPayload.replyCount)
+        threadDTO.participantCount = Int64(eventPayload.replyCount)
+        threadDTO.lastMessageAt = eventPayload.lastMessageAt?.bridgeDate
+        threadDTO.updatedAt = eventPayload.updatedAt.bridgeDate
+        threadDTO.title = eventPayload.title
+
+        return threadDTO
+    }
+
     func deleteAllThreads() throws {
         let fetchRequest: NSFetchRequest<ThreadDTO> = NSFetchRequest(entityName: ThreadDTO.entityName)
         let results = try fetch(fetchRequest)

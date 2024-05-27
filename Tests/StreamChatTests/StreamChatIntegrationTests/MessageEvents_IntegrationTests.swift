@@ -146,7 +146,7 @@ final class MessageEvents_IntegrationTests: XCTestCase {
             user: .dummy(userId: .unique),
             message: .dummy(messageId: .unique, authorUserId: .unique),
             watcherCount: 10,
-            unreadCount: .init(channels: 14, messages: 12),
+            unreadCount: .init(channels: 14, messages: 12, threads: 10),
             createdAt: .unique
         )
 
@@ -248,12 +248,24 @@ final class MessageEvents_IntegrationTests: XCTestCase {
         let session = DatabaseContainer_Spy(kind: .inMemory).viewContext
 
         // Create event payload
+        let cid = ChannelId.unique
+        let parentMessageId = MessageId.unique
         let eventPayload = EventPayload(
             eventType: .messageRead,
-            cid: .unique,
+            cid: cid,
             user: .dummy(userId: .unique),
-            unreadCount: .init(channels: 12, messages: 44),
-            createdAt: .unique
+            unreadCount: .init(channels: 12, messages: 44, threads: 10),
+            createdAt: .unique,
+            thread: .init(
+                cid: cid,
+                parentMessageId: parentMessageId,
+                replyCount: 3,
+                participantCount: 3,
+                lastMessageAt: .unique,
+                createdAt: .unique,
+                updatedAt: .unique,
+                title: "Test"
+            )
         )
 
         // Create event DTO
@@ -265,6 +277,9 @@ final class MessageEvents_IntegrationTests: XCTestCase {
         // Save channel to database since it must exist when we get this event
         _ = try session.saveChannel(payload: .dummy(cid: eventPayload.cid!), query: nil, cache: nil)
 
+        // Save the thread to the database
+        _ = try session.saveThread(payload: .dummy(parentMessageId: parentMessageId, channel: .dummy(cid: cid)), cache: nil)
+
         // Save event to database
         try session.saveUser(payload: eventPayload.user!)
 
@@ -274,5 +289,6 @@ final class MessageEvents_IntegrationTests: XCTestCase {
         XCTAssertEqual(event.user.id, eventPayload.user?.id)
         XCTAssertEqual(event.unreadCount, eventPayload.unreadCount)
         XCTAssertEqual(event.createdAt, eventPayload.createdAt)
+        XCTAssertNotNil(event.thread)
     }
 }

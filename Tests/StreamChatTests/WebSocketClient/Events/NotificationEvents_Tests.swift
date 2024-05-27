@@ -26,7 +26,7 @@ final class NotificationsEvents_Tests: XCTestCase {
         XCTAssertEqual(event?.channel.cid, ChannelId(type: .messaging, id: "general"))
         XCTAssertEqual(event?.message.id, "042772db-4af2-460d-beaa-1e49d1b8e3b9")
         XCTAssertEqual(event?.createdAt.description, "2020-07-21 14:47:57 +0000")
-        XCTAssertEqual(event?.unreadCount, .init(channels: 3, messages: 3))
+        XCTAssertEqual(event?.unreadCount, .init(channels: 3, messages: 3, threads: nil))
     }
 
     func test_notificationMessageNew_withMissingFields() throws {
@@ -43,7 +43,7 @@ final class NotificationsEvents_Tests: XCTestCase {
         let json = XCTestCase.mockData(fromJSONFile: "NotificationMarkAllRead")
         let event = try eventDecoder.decode(from: json) as? NotificationMarkAllReadEventDTO
         XCTAssertEqual(event?.user.id, "steep-moon-9")
-        XCTAssertEqual(event?.unreadCount, .init(channels: 3, messages: 21))
+        XCTAssertEqual(event?.unreadCount, .init(channels: 3, messages: 21, threads: 10))
     }
 
     func test_markRead() throws {
@@ -51,7 +51,7 @@ final class NotificationsEvents_Tests: XCTestCase {
         let event = try eventDecoder.decode(from: json) as? NotificationMarkReadEventDTO
         XCTAssertEqual(event?.cid, ChannelId(type: .messaging, id: "general"))
         XCTAssertEqual(event?.user.id, "steep-moon-9")
-        XCTAssertEqual(event?.unreadCount, .init(channels: 8, messages: 55))
+        XCTAssertEqual(event?.unreadCount, .init(channels: 8, messages: 55, threads: 10))
     }
 
     func test_markUnread() throws {
@@ -62,6 +62,17 @@ final class NotificationsEvents_Tests: XCTestCase {
         XCTAssertEqual(event?.firstUnreadMessageId, "leia_organa-1f9b7fe0-989f-4fa6-87e8-9c9e788fb2c3")
         XCTAssertEqual(event?.lastReadAt.description, "2023-03-08 10:00:26 +0000")
         XCTAssertEqual(event?.lastReadMessageId, "another-894bj4by4b84-1f9b7fe0-989f")
+        XCTAssertEqual(event?.unreadMessagesCount, 19)
+    }
+
+    func test_markUnread_withMissingFields() throws {
+        let json = XCTestCase.mockData(fromJSONFile: "NotificationMarkUnread+MissingFields")
+        let event = try eventDecoder.decode(from: json) as? NotificationMarkUnreadEventDTO
+        XCTAssertEqual(event?.cid, ChannelId(type: .messaging, id: "A9643A22-A"))
+        XCTAssertEqual(event?.user.id, "luke_skywalker")
+        XCTAssertEqual(event?.firstUnreadMessageId, "leia_organa-1f9b7fe0-989f-4fa6-87e8-9c9e788fb2c3")
+        XCTAssertEqual(event?.lastReadAt.description, "2023-03-08 10:00:26 +0000")
+        XCTAssertNil(event?.lastReadMessageId)
         XCTAssertEqual(event?.unreadMessagesCount, 19)
     }
 
@@ -88,7 +99,7 @@ final class NotificationsEvents_Tests: XCTestCase {
             event?.payload.channel?.cid,
             ChannelId(type: .messaging, id: "!members-hu_6SE2Rniuu3O709FqAEEtVcJxW3tWr97l_hV33a-E")
         )
-        XCTAssertEqual(event?.unreadCount, .init(channels: 9, messages: 790))
+        XCTAssertEqual(event?.unreadCount, .init(channels: 9, messages: 790, threads: nil))
     }
 
     func test_notificationAddedToChannelEventDTO_withMissingFields() throws {
@@ -131,7 +142,7 @@ final class NotificationsEvents_Tests: XCTestCase {
             user: .dummy(userId: .unique),
             channel: .dummy(cid: cid),
             message: .dummy(messageId: .unique, authorUserId: .unique),
-            unreadCount: .init(channels: .unique, messages: .unique),
+            unreadCount: .init(channels: .unique, messages: .unique, threads: .unique),
             createdAt: .unique
         )
 
@@ -162,7 +173,7 @@ final class NotificationsEvents_Tests: XCTestCase {
         let eventPayload = EventPayload(
             eventType: .notificationMarkRead,
             user: .dummy(userId: .unique),
-            unreadCount: .init(channels: 12, messages: 34),
+            unreadCount: .init(channels: 12, messages: 34, threads: 10),
             createdAt: .unique
         )
 
@@ -191,7 +202,7 @@ final class NotificationsEvents_Tests: XCTestCase {
             eventType: .notificationMarkRead,
             cid: .unique,
             user: .dummy(userId: .unique),
-            unreadCount: .init(channels: .unique, messages: .unique),
+            unreadCount: .init(channels: .unique, messages: .unique, threads: .unique),
             createdAt: .unique,
             lastReadMessageId: "lastRead"
         )
@@ -224,7 +235,7 @@ final class NotificationsEvents_Tests: XCTestCase {
             eventType: .notificationMarkRead,
             cid: .unique,
             user: .dummy(userId: .unique),
-            unreadCount: .init(channels: .unique, messages: .unique),
+            unreadCount: .init(channels: .unique, messages: .unique, threads: .unique),
             createdAt: .unique,
             firstUnreadMessageId: "Hello",
             lastReadAt: lastReadAt,
@@ -287,7 +298,7 @@ final class NotificationsEvents_Tests: XCTestCase {
             eventType: .notificationAddedToChannel,
             memberContainer: .dummy(userId: .unique),
             channel: .dummy(cid: .unique),
-            unreadCount: .init(channels: 13, messages: 53),
+            unreadCount: .init(channels: 13, messages: 53, threads: 10),
             createdAt: .unique
         )
 

@@ -19,6 +19,7 @@ enum UserPayloadsCodingKeys: String, CodingKey, CaseIterable {
     case teams
     case unreadChannelsCount = "unread_channels"
     case unreadMessagesCount = "total_unread_count"
+    case unreadThreads = "unread_threads"
     case mutedUsers = "mutes"
     case mutedChannels = "channel_mutes"
     case blockedUsers = "blocked_users"

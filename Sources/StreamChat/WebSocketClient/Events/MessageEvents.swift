@@ -183,6 +183,9 @@ public struct MessageReadEvent: ChannelSpecificEvent {
     /// The read channel.
     public let channel: ChatChannel
 
+    /// The thread if a thread was read.
+    internal let thread: ChatThread?
+
     /// The event timestamp.
     public let createdAt: Date
 
@@ -211,9 +214,15 @@ class MessageReadEventDTO: EventDTO {
             let channelDTO = session.channel(cid: cid)
         else { return nil }
 
+        var threadDTO: ThreadDTO?
+        if let threadId = payload.thread?.parentMessageId {
+            threadDTO = session.thread(parentMessageId: threadId, cache: nil)
+        }
+
         return try? MessageReadEvent(
             user: userDTO.asModel(),
             channel: channelDTO.asModel(),
+            thread: threadDTO?.asModel(),
             createdAt: createdAt,
             unreadCount: unreadCount
         )
