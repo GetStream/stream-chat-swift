@@ -9,7 +9,7 @@ public struct ChatThread {
     /// The id of the message which created the thread. It is also the id of the thread.
     public let parentMessageId: MessageId
     /// The parent message which is the root of this thread.
-    public let parentMessage: ChatMessage?
+    public let parentMessage: ChatMessage
     /// The channel which this thread belongs to.
     public let channel: ChatChannel
     /// The user who created the thread.
