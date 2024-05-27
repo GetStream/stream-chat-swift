@@ -203,7 +203,7 @@ extension NSManagedObjectContext {
         let poll = try? poll(id: pollId)
         if let optionId = dto.optionId {
             let votes = (poll?.voteCountsByOption?[optionId] ?? 0) - 1
-            if votes > 0 {
+            if votes >= 0 {
                 poll?.voteCountsByOption?[optionId] = votes
             }
         }
