@@ -416,13 +416,15 @@ class DatabaseSession_Mock: DatabaseSession {
     }
     
     func savePollVote(
+        voteId: String?,
         pollId: String,
-        optionId: String,
+        optionId: String?,
         answerText: String?,
         userId: String?,
         query: PollVoteListQuery?
     ) throws -> PollVoteDTO {
         try underlyingSession.savePollVote(
+            voteId: voteId,
             pollId: pollId,
             optionId: optionId,
             answerText: answerText,
@@ -447,7 +449,7 @@ class DatabaseSession_Mock: DatabaseSession {
         try underlyingSession.pollVotes(for: userId, pollId: pollId)
     }
     
-    func removePollVote(with id: String, pollId: String) throws {
+    func removePollVote(with id: String, pollId: String) throws -> PollVoteDTO? {
         try underlyingSession.removePollVote(with: id, pollId: pollId)
     }
     

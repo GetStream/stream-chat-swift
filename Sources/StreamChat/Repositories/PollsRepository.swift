@@ -80,6 +80,7 @@ class PollsRepository {
         var pollVote: PollVoteDTO?
         database.write { session in
             pollVote = try session.savePollVote(
+                voteId: nil,
                 pollId: pollId,
                 optionId: optionId,
                 answerText: answerText,
@@ -118,8 +119,9 @@ class PollsRepository {
         voteId: String,
         completion: ((Error?) -> Void)? = nil
     ) {
+        var pollVote: PollVoteDTO?
         database.write { session in
-            try session.removePollVote(with: voteId, pollId: pollId)
+            pollVote = try session.removePollVote(with: voteId, pollId: pollId)
         } completion: { [weak self] error in
             if error == nil {
                 self?.apiClient.request(
@@ -129,6 +131,19 @@ class PollsRepository {
                         voteId: voteId
                     )
                 ) {
+                    if $0.error != nil, let pollVote {
+                        self?.database.write { session in
+                            let vote = try session.savePollVote(
+                                voteId: voteId,
+                                pollId: pollId,
+                                optionId: pollVote.optionId,
+                                answerText: pollVote.answerText,
+                                userId: pollVote.user?.id,
+                                query: nil
+                            )
+                            vote.queries = pollVote.queries
+                        }
+                    }
                     completion?($0.error)
                 }
             } else {

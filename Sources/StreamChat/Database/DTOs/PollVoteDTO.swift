@@ -133,8 +133,9 @@ extension NSManagedObjectContext {
     
     @discardableResult
     func savePollVote(
+        voteId: String?,
         pollId: String,
-        optionId: String,
+        optionId: String?,
         answerText: String?,
         userId: String?,
         query: PollVoteListQuery?
@@ -142,8 +143,10 @@ extension NSManagedObjectContext {
         guard let poll = try poll(id: pollId) else {
             throw ClientError.PollDoesNotExist(pollId: pollId)
         }
-        guard let option = try option(id: optionId, pollId: pollId) else {
-            throw ClientError.PollOptionDoesNotExist(optionId: optionId)
+        
+        var option: PollOptionDTO?
+        if let optionId {
+            option = try? self.option(id: optionId, pollId: pollId)
         }
         
         var userDto: UserDTO?
@@ -152,7 +155,7 @@ extension NSManagedObjectContext {
         }
         let userSuffix = poll.votingVisibility == VotingVisibility.anonymous.rawValue ? nil : userId
         let userId = userSuffix ?? "anon"
-        let voteId = PollVoteDTO.localVoteId(optionId: optionId, pollId: pollId, userId: userId)
+        let voteId = voteId ?? PollVoteDTO.localVoteId(optionId: optionId, pollId: pollId, userId: userId)
         let dto = PollVoteDTO.loadOrCreate(
             voteId: voteId,
             poll: poll,
@@ -169,8 +172,10 @@ extension NSManagedObjectContext {
         dto.answerText = answerText
         dto.optionId = optionId
         
-        let currentVoteCount = poll.voteCountsByOption?[optionId] ?? 0
-        poll.voteCountsByOption?[optionId] = currentVoteCount + 1
+        if let optionId {
+            let currentVoteCount = poll.voteCountsByOption?[optionId] ?? 0
+            poll.voteCountsByOption?[optionId] = currentVoteCount + 1
+        }
         
         if let query = query {
             let queryDTO = try saveQuery(query: query)
@@ -190,7 +195,7 @@ extension NSManagedObjectContext {
         PollVoteDTO.load(voteId: id, pollId: pollId, context: self)
     }
     
-    func removePollVote(with id: String, pollId: String) throws {
+    func removePollVote(with id: String, pollId: String) throws -> PollVoteDTO? {
         guard let dto = try pollVote(id: id, pollId: pollId) else {
             throw ClientError.PollVoteDoesNotExist(voteId: id)
         }
@@ -204,6 +209,7 @@ extension NSManagedObjectContext {
         }
 
         delete(pollVote: dto)
+        return dto
     }
     
     func delete(pollVote: PollVoteDTO) {
@@ -229,7 +235,11 @@ extension PollVoteDTO {
 }
 
 extension PollVoteDTO {
-    static func localVoteId(optionId: String, pollId: String, userId: String?) -> String {
-        "\(optionId)-\(pollId)-\(userId ?? "anon")"
+    static func localVoteId(optionId: String?, pollId: String, userId: String?) -> String {
+        if let optionId {
+            return "\(optionId)-\(pollId)-\(userId ?? "anon")"
+        } else {
+            return "\(pollId)-\(userId ?? "anon")"
+        }
     }
 }

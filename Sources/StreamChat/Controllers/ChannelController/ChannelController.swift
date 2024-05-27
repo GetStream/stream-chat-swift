@@ -738,12 +738,12 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
     ///
     /// - Parameters:
     ///   - name: The name of the poll.
-    ///   - allowAnswers: Whether to allow users to provide their own answers.
-    ///   - allowUserSuggestedOptions: Whether to allow users to suggest options.
+    ///   - allowAnswers: Whether to allow users to provide their own answers. Answers won't be allowed if `nil` is passed.
+    ///   - allowUserSuggestedOptions: Whether to allow users to suggest options. User suggested options won't be allowed if `nil` is passed.
     ///   - description: Optional description for the poll.
-    ///   - enforceUniqueVote: Whether to enforce unique votes per user.
-    ///   - maxVotesAllowed: The maximum number of votes allowed per user.
-    ///   - votingVisibility: The visibility setting for the poll.
+    ///   - enforceUniqueVote: Whether to enforce unique votes per user. Unique votes won't be allowed if `nil` is passed.
+    ///   - maxVotesAllowed: The maximum number of votes allowed per user. Up to 10 max votes if `nil` is passed.
+    ///   - votingVisibility: The visibility setting for the poll. Voting visibility would be public if `nil` is passed.
     ///   - options: Optional array of predefined poll options.
     ///   - custom: Optional dictionary for any custom data associated with the poll.
     ///   - completion: A closure to be executed once the poll is created, returning either a `MessageId` on success or an `Error` on failure.

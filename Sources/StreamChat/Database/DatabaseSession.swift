@@ -483,8 +483,9 @@ protocol PollDatabaseSession {
     /// - Throws: An error if the save operation fails.
     @discardableResult
     func savePollVote(
+        voteId: String?,
         pollId: String,
-        optionId: String,
+        optionId: String?,
         answerText: String?,
         userId: String?,
         query: PollVoteListQuery?
@@ -524,8 +525,9 @@ protocol PollDatabaseSession {
     /// - Parameters:
     ///   - id: The ID of the poll vote to remove.
     ///   - pollId: The ID of the poll containing the vote.
+    /// - Returns: The deleted vote.
     /// - Throws: An error if the removal operation fails.
-    func removePollVote(with id: String, pollId: String) throws
+    func removePollVote(with id: String, pollId: String) throws -> PollVoteDTO?
     
     /// Links a vote with a specific filter hash within a poll.
     /// - Parameters:
