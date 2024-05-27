@@ -3,6 +3,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 # Upcoming
 
+### 🔄 Changed
+
+# [4.56.1](https://github.com/GetStream/stream-chat-swift/releases/tag/4.56.1)
+_May 23, 2024_
+
 ## StreamChatUI
 ### 🐞 Fixed
 - Do not re-display suggestion view on each character change [#3215](https://github.com/GetStream/stream-chat-swift/pull/3215)
