@@ -773,7 +773,7 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
             guard let self else { return }
             switch result {
             case let .success(poll):
-                createNewMessage(text: "", poll: poll, completion: completion)
+                self.createNewMessage(text: "", poll: poll, completion: completion)
             case let .failure(error):
                 completion(.failure(error))
             }

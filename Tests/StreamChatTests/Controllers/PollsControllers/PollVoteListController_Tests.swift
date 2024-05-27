@@ -85,8 +85,10 @@ final class PollVoteListController_Tests: XCTestCase {
     func test_synchronize_forwardsUpdaterError() throws {
         // Simulate `synchronize` call
         var completionError: Error?
+        let expectation = expectation(description: "synchronize")
         controller.synchronize {
             completionError = $0
+            expectation.fulfill()
         }
 
         // Simulate network response with the error
@@ -94,46 +96,35 @@ final class PollVoteListController_Tests: XCTestCase {
         client.mockPollsRepository.getQueryPollVotes_completion?(.failure(networkError))
         client.mockPollsRepository.getQueryPollVotes_completion = nil
 
-        AssertAsync {
-            // Assert network error is propagated
-            Assert.willBeEqual(completionError as? TestError, networkError)
-            // Assert network error is propagated
-            Assert.willBeEqual(self.controller.state, .remoteDataFetchFailed(ClientError(with: networkError)))
-        }
+        wait(for: [expectation], timeout: defaultTimeout)
+        
+        XCTAssertEqual(completionError as? TestError, networkError)
+        XCTAssertEqual(controller.state, .remoteDataFetchFailed(ClientError(with: networkError)))
     }
 
     func test_synchronize_changesStateCorrectly_ifNoErrorsHappen() throws {
         // Simulate `synchronize` call
         var completionError: Error?
         var completionCalled = false
+        let expectation = expectation(description: "synchronize")
         controller.synchronize {
             completionError = $0
             completionCalled = true
+            expectation.fulfill()
         }
 
         // Assert controller is in `localDataFetched` state
         XCTAssertEqual(controller.state, .localDataFetched)
-
-        // Keep a weak ref so we can check if it's actually deallocated
-        weak var weakController = controller
-
-        // (Try to) deallocate the controller
-        // by not keeping any references to it
-        controller = nil
 
         // Simulate network response with the error
         client.mockPollsRepository.getQueryPollVotes_completion?(.success([]))
         // Release reference of completion so we can deallocate stuff
         client.mockPollsRepository.getQueryPollVotes_completion = nil
 
-        AssertAsync {
-            // Assert completion is called
-            Assert.willBeTrue(completionCalled)
-            // Assert completion is called without any error
-            Assert.staysTrue(completionError == nil)
-        }
-        // `weakController` should be deallocated too
-        AssertAsync.canBeReleased(&weakController)
+        wait(for: [expectation], timeout: defaultTimeout)
+        
+        XCTAssertTrue(completionCalled)
+        XCTAssertNil(completionError)
     }
     
     func test_votesAreFetched_afterCallingSynchronize() throws {
@@ -159,9 +150,6 @@ final class PollVoteListController_Tests: XCTestCase {
         }
 
         XCTAssertEqual(controller.votes.count, votes.count)
-        
-        controller = nil
-        client = nil
     }
     
     // MARK: - Loading votes

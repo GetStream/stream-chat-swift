@@ -112,7 +112,15 @@ final class DatabaseContainer_Tests: XCTestCase {
                     ],
                     moderationDetails: .init(originalText: "yo", action: "spam")
                 ),
-                .dummy(),
+                .dummy(
+                    poll: self.dummyPollPayload(
+                        createdById: currentUserId,
+                        id: "pollId",
+                        options: [self.dummyPollOptionPayload(id: "test")],
+                        latestVotesByOption: ["test": [self.dummyPollVotePayload(pollId: "pollId")]],
+                        user: .dummy(userId: currentUserId)
+                    )
+                ),
                 .dummy(),
                 .dummy(),
                 .dummy()
@@ -128,6 +136,11 @@ final class DatabaseContainer_Tests: XCTestCase {
             try session.saveMessage(
                 payload: .dummy(channel: .dummy(cid: cid)),
                 for: MessageSearchQuery(channelFilter: .noTeam, messageFilter: .withoutAttachments),
+                cache: nil
+            )
+            try session.savePollVote(
+                payload: self.dummyPollVotePayload(pollId: "pollId"),
+                query: .init(pollId: "pollId", optionId: "test", filter: .contains(.pollId, value: "pollId")),
                 cache: nil
             )
             

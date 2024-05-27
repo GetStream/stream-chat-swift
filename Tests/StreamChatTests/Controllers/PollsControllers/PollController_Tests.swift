@@ -102,36 +102,27 @@ final class PollController_Tests: XCTestCase {
 
     func test_synchronize_changesStateCorrectly_ifNoErrorsHappen() throws {
         // Simulate `synchronize` call
+        let expectation = expectation(description: "syncrhonize")
         var completionError: Error?
         var completionCalled = false
         controller.synchronize {
             completionError = $0
             completionCalled = true
+            expectation.fulfill()
         }
 
         // Assert controller is in `localDataFetched` state
         XCTAssertEqual(controller.state, .localDataFetched)
-
-        // Keep a weak ref so we can check if it's actually deallocated
-        weak var weakController = controller
-
-        // (Try to) deallocate the controller
-        // by not keeping any references to it
-        controller = nil
 
         // Simulate network response with the error
         client.mockPollsRepository.getQueryPollVotes_completion?(.success([]))
         // Release reference of completion so we can deallocate stuff
         client.mockPollsRepository.getQueryPollVotes_completion = nil
 
-        AssertAsync {
-            // Assert completion is called
-            Assert.willBeTrue(completionCalled)
-            // Assert completion is called without any error
-            Assert.staysTrue(completionError == nil)
-        }
-        // `weakController` should be deallocated too
-        AssertAsync.canBeReleased(&weakController)
+        wait(for: [expectation], timeout: defaultTimeout)
+        
+        XCTAssertTrue(completionCalled)
+        XCTAssertNil(completionError)
     }
 
     func test_pollIsUpToDate_withoutSynchronizeCall() throws {
@@ -175,6 +166,8 @@ final class PollController_Tests: XCTestCase {
         
         let user = UserPayload.dummy(userId: currentUserId)
         try client.databaseContainer.createPoll(id: pollId, createdBy: user)
+        
+        client.mockPollsRepository.getQueryPollVotes_completion?(.success([]))
 
         // Create own votes.
         var ownVotes = [PollVotePayload]()
@@ -187,12 +180,9 @@ final class PollController_Tests: XCTestCase {
         try client.databaseContainer.writeSynchronously { session in
             try session.savePollVotes(payload: response, query: query, cache: nil)
         }
-
+        
         XCTAssertEqual(controller.poll?.id, pollId)
         XCTAssertEqual(controller.ownVotes.count, ownVotes.count)
-        
-        controller = nil
-        client = nil
     }
     
     // MARK: - Casting votes
@@ -200,170 +190,166 @@ final class PollController_Tests: XCTestCase {
     func test_addVote_propagatesError() {
         // Simulate `castPollVote` call and catch the completion.
         var completionError: Error?
+        let expectation = expectation(description: "casting-vote")
         controller.castPollVote(answerText: nil, optionId: "123") {
             completionError = $0
+            expectation.fulfill()
         }
 
         // Simulate network response with the error.
         let networkError = TestError()
         client.mockPollsRepository.castPollVote_completion?(networkError)
 
+        wait(for: [expectation], timeout: defaultTimeout)
+        
         // Assert error is propagated.
-        AssertAsync.willBeEqual(completionError as? TestError, networkError)
+        XCTAssertEqual(completionError as? TestError, networkError)
     }
     
     func test_addVote_propagatesSuccess() {
         // Simulate `addVote` call and catch the completion.
         var completionIsCalled = false
+        let expectation = expectation(description: "casting-vote")
         controller.castPollVote(answerText: nil, optionId: "123") { error in
             XCTAssertNil(error)
             completionIsCalled = true
+            expectation.fulfill()
         }
-
-        // Keep a weak ref so we can check if it's actually deallocated
-        weak var weakController = controller
-
-        // (Try to) deallocate the controller
-        // by not keeping any references to it
-        controller = nil
 
         // Simulate successful network response.
         client.mockPollsRepository.castPollVote_completion?(nil)
         // Release reference of completion so we can deallocate stuff
         client.mockPollsRepository.castPollVote_completion = nil
+        
+        wait(for: [expectation], timeout: defaultTimeout)
 
         // Assert completion is called.
-        AssertAsync.willBeTrue(completionIsCalled)
-        // `weakController` should be deallocated too
-        AssertAsync.canBeReleased(&weakController)
+        XCTAssertTrue(completionIsCalled)
     }
     
     // MARK: - Removing votes
     
     func test_removeVote_propagatesError() {
         // Simulate `removePollVote` call and catch the completion.
+        let expectation = expectation(description: "casting-vote")
         var completionError: Error?
         controller.removePollVote(voteId: "123") {
             completionError = $0
+            expectation.fulfill()
         }
 
         // Simulate network response with the error.
         let networkError = TestError()
         client.mockPollsRepository.removePollVote_completion?(networkError)
 
+        wait(for: [expectation], timeout: defaultTimeout)
+        
         // Assert error is propagated.
-        AssertAsync.willBeEqual(completionError as? TestError, networkError)
+        XCTAssertEqual(completionError as? TestError, networkError)
     }
     
     func test_removePollVote_propagatesSuccess() {
         // Simulate `removePollVote` call and catch the completion.
         var completionIsCalled = false
+        let expectation = expectation(description: "remove-vote")
         controller.removePollVote(voteId: "123") {
             XCTAssertNil($0)
             completionIsCalled = true
+            expectation.fulfill()
         }
-
-        // Keep a weak ref so we can check if it's actually deallocated
-        weak var weakController = controller
-
-        // (Try to) deallocate the controller
-        // by not keeping any references to it
-        controller = nil
 
         // Simulate successful network response.
         client.mockPollsRepository.removePollVote_completion?(nil)
         // Release reference of completion so we can deallocate stuff
         client.mockPollsRepository.removePollVote_completion = nil
 
+        wait(for: [expectation], timeout: defaultTimeout)
+        
         // Assert completion is called.
-        AssertAsync.willBeTrue(completionIsCalled)
-        // `weakController` should be deallocated too
-        AssertAsync.canBeReleased(&weakController)
+        XCTAssertTrue(completionIsCalled)
     }
     
     // MARK: - Closing poll
     
     func test_closePoll_propagatesError() {
         // Simulate `closePoll` call and catch the completion.
+        let expectation = expectation(description: "close-poll")
         var completionError: Error?
         controller.closePoll {
             completionError = $0
+            expectation.fulfill()
         }
 
         // Simulate network response with the error.
         let networkError = TestError()
         client.mockPollsRepository.closePoll_completion?(networkError)
+        
+        wait(for: [expectation], timeout: defaultTimeout)
 
         // Assert error is propagated.
-        AssertAsync.willBeEqual(completionError as? TestError, networkError)
+        XCTAssertEqual(completionError as? TestError, networkError)
     }
     
     func test_closePoll_propagatesSuccess() {
         // Simulate `closePoll` call and catch the completion.
+        let expectation = expectation(description: "close-poll")
         var completionIsCalled = false
         controller.closePoll {
             XCTAssertNil($0)
             completionIsCalled = true
+            expectation.fulfill()
         }
-
-        // Keep a weak ref so we can check if it's actually deallocated
-        weak var weakController = controller
-
-        // (Try to) deallocate the controller
-        // by not keeping any references to it
-        controller = nil
 
         // Simulate successful network response.
         client.mockPollsRepository.closePoll_completion?(nil)
         // Release reference of completion so we can deallocate stuff
         client.mockPollsRepository.closePoll_completion = nil
+        
+        wait(for: [expectation], timeout: defaultTimeout)
 
         // Assert completion is called.
-        AssertAsync.willBeTrue(completionIsCalled)
-        // `weakController` should be deallocated too
-        AssertAsync.canBeReleased(&weakController)
+        XCTAssertTrue(completionIsCalled)
     }
     
     // MARK: - Suggest poll options
     
     func test_suggestPollOption_propagatesError() {
         // Simulate `suggestPollOption` call and catch the completion.
+        let expectation = expectation(description: "poll-option")
         var completionError: Error?
         controller.suggestPollOption(text: "test") {
             completionError = $0
+            expectation.fulfill()
         }
 
         // Simulate network response with the error.
         let networkError = TestError()
         client.mockPollsRepository.suggestPollOption_completion?(networkError)
+        
+        wait(for: [expectation], timeout: defaultTimeout)
 
         // Assert error is propagated.
-        AssertAsync.willBeEqual(completionError as? TestError, networkError)
+        XCTAssertEqual(completionError as? TestError, networkError)
     }
     
     func test_suggestPollOption_propagatesSuccess() {
         // Simulate `suggestPollOption` call and catch the completion.
         var completionIsCalled = false
+        let expectation = expectation(description: "poll-option")
         controller.suggestPollOption(text: "test") {
             XCTAssertNil($0)
             completionIsCalled = true
+            expectation.fulfill()
         }
-
-        // Keep a weak ref so we can check if it's actually deallocated
-        weak var weakController = controller
-
-        // (Try to) deallocate the controller
-        // by not keeping any references to it
-        controller = nil
 
         // Simulate successful network response.
         client.mockPollsRepository.suggestPollOption_completion?(nil)
         // Release reference of completion so we can deallocate stuff
         client.mockPollsRepository.suggestPollOption_completion = nil
 
+        wait(for: [expectation], timeout: defaultTimeout)
+        
         // Assert completion is called.
-        AssertAsync.willBeTrue(completionIsCalled)
-        // `weakController` should be deallocated too
-        AssertAsync.canBeReleased(&weakController)
+        XCTAssertTrue(completionIsCalled)
     }
 }

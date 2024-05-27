@@ -124,7 +124,8 @@ public class PollVoteListController: DataController, DelegateCallable, DataStore
     override public func synchronize(_ completion: ((_ error: Error?) -> Void)? = nil) {
         startPollVotesListObserverIfNeeded()
 
-        pollsRepository.queryPollVotes(query: query) { result in
+        pollsRepository.queryPollVotes(query: query) { [weak self] result in
+            guard let self else { return }
             if let error = result.error {
                 self.state = .remoteDataFetchFailed(ClientError(with: error))
             } else {
