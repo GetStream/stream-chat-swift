@@ -13,6 +13,7 @@
         "updated_at" : "2020-07-17T13:49:51.603704Z",
         "role" : "user",
         "total_unread_count" : 21,
+        "unread_threads": 10,
         "online" : true,
         "name" : "steep-moon-9"
     },

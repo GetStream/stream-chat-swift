@@ -29,7 +29,7 @@ final class MessageEvents_Tests: XCTestCase {
         XCTAssertEqual(event?.message.id, messageId)
         XCTAssertEqual(event?.createdAt.description, "2020-07-17 13:42:21 +0000")
         XCTAssertEqual(event?.watcherCount, 7)
-        XCTAssertEqual(event?.unreadCount, .init(channels: 1, messages: 1))
+        XCTAssertEqual(event?.unreadCount, .init(channels: 1, messages: 1, threads: nil))
     }
 
     func test_new_withMissingFields() throws {
@@ -88,7 +88,15 @@ final class MessageEvents_Tests: XCTestCase {
         XCTAssertEqual(event?.user.id, "steep-moon-9")
         XCTAssertEqual(event?.cid, ChannelId(type: .messaging, id: "general"))
         XCTAssertEqual(event?.createdAt.description, "2020-07-17 13:55:56 +0000")
-        XCTAssertEqual(event?.unreadCount, .init(channels: 3, messages: 21))
+        XCTAssertEqual(event?.unreadCount, .init(channels: 3, messages: 21, threads: 10))
+        XCTAssertEqual(event?.payload.thread?.cid.rawValue, "messaging:general")
+        XCTAssertEqual(event?.payload.thread?.parentMessageId, "5b444e0d-a132-41a0-bf99-72dfdba0a053")
+        XCTAssertEqual(event?.payload.thread?.replyCount, 4)
+        XCTAssertEqual(event?.payload.thread?.participantCount, 2)
+        XCTAssertEqual(event?.payload.thread?.createdAt, "2024-05-17T12:44:30.223755Z".toDate())
+        XCTAssertEqual(event?.payload.thread?.updatedAt, "2024-05-17T12:44:30.223755Z".toDate())
+        XCTAssertEqual(event?.payload.thread?.lastMessageAt, "2024-05-23T17:37:12.519085Z".toDate())
+        XCTAssertEqual(event?.payload.thread?.title, "Test")
     }
 
     func test_read_withoutUnreadCount() throws {

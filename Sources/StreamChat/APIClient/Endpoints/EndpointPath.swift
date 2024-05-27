@@ -15,7 +15,9 @@ enum EndpointPath: Codable {
     case og
 
     case threads
-    case thread(messageId: String)
+    case thread(messageId: MessageId)
+    case markThreadRead(cid: ChannelId)
+    case markThreadUnread(cid: ChannelId)
 
     case channels
     case createChannel(String)
@@ -79,8 +81,14 @@ enum EndpointPath: Codable {
         case .devices: return "devices"
         case .og: return "og"
 
-        case .threads: return "threads"
-        case let .thread(messageId): return "threads/\(messageId)"
+        case .threads:
+            return "threads"
+        case let .thread(threadId):
+            return "threads/\(threadId)"
+        case let .markThreadRead(cid):
+            return "channels/\(cid.apiPath)/read"
+        case let .markThreadUnread(cid):
+            return "channels/\(cid.apiPath)/unread"
 
         case .channels: return "channels"
         case let .createChannel(queryString): return "channels/\(queryString)/query"

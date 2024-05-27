@@ -1668,6 +1668,7 @@
 		ADF34F8A25CDC58900AD637C /* ConnectionController.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADF34F6A25CD6A1D00AD637C /* ConnectionController.swift */; };
 		ADF34F9E25CDD8E600AD637C /* ConnectionController+SwiftUI.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADF34F9D25CDD8E600AD637C /* ConnectionController+SwiftUI.swift */; };
 		ADF34FA625CDD8F600AD637C /* ConnectionController+Combine.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADF34FA525CDD8F600AD637C /* ConnectionController+Combine.swift */; };
+		ADF3EEF62C00FC7B00DB36D6 /* NotificationMarkUnread+MissingFields.json in Resources */ = {isa = PBXBuildFile; fileRef = ADF3EEF52C00FC7B00DB36D6 /* NotificationMarkUnread+MissingFields.json */; };
 		ADF617692A09927000E70307 /* MessagesPaginationStateHandler_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADF617672A09926900E70307 /* MessagesPaginationStateHandler_Tests.swift */; };
 		ADF9E1F72A03E7E400109108 /* MessagesPaginationState.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADF9E1F62A03E7E400109108 /* MessagesPaginationState.swift */; };
 		ADFA09C926A99E0A002A6EFA /* ChatThreadHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADFA09C726A99C71002A6EFA /* ChatThreadHeaderView.swift */; };
@@ -4286,6 +4287,7 @@
 		ADF34F6A25CD6A1D00AD637C /* ConnectionController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectionController.swift; sourceTree = "<group>"; };
 		ADF34F9D25CDD8E600AD637C /* ConnectionController+SwiftUI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ConnectionController+SwiftUI.swift"; sourceTree = "<group>"; };
 		ADF34FA525CDD8F600AD637C /* ConnectionController+Combine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ConnectionController+Combine.swift"; sourceTree = "<group>"; };
+		ADF3EEF52C00FC7B00DB36D6 /* NotificationMarkUnread+MissingFields.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "NotificationMarkUnread+MissingFields.json"; sourceTree = "<group>"; };
 		ADF617672A09926900E70307 /* MessagesPaginationStateHandler_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessagesPaginationStateHandler_Tests.swift; sourceTree = "<group>"; };
 		ADF9E1F62A03E7E400109108 /* MessagesPaginationState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessagesPaginationState.swift; sourceTree = "<group>"; };
 		ADFA09C726A99C71002A6EFA /* ChatThreadHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatThreadHeaderView.swift; sourceTree = "<group>"; };
@@ -6397,6 +6399,7 @@
 				8AC9CBD724C737AF006E236C /* NotificationMessageNew.json */,
 				8431843A26FB53B400B5B25E /* NotificationMessageNew+MissingFields.json */,
 				8AC9CBD924C73AAA006E236C /* NotificationRemovedFromChannel.json */,
+				ADF3EEF52C00FC7B00DB36D6 /* NotificationMarkUnread+MissingFields.json */,
 			);
 			path = Notification;
 			sourceTree = "<group>";
@@ -10120,6 +10123,7 @@
 				A311B3FE27E8B9A800CFCF6D /* MessageDeleted.json in Resources */,
 				A311B3D927E8B98C00CFCF6D /* ChannelPayloadWithCustom.json in Resources */,
 				A311B42027E8B9C400CFCF6D /* FlagUserPayload+NoExtraData.json in Resources */,
+				ADF3EEF62C00FC7B00DB36D6 /* NotificationMarkUnread+MissingFields.json in Resources */,
 				A311B3E627E8B99200CFCF6D /* AttachmentPayloadImage.json in Resources */,
 				A311B3FA27E8B9A800CFCF6D /* MessageDeletedHard.json in Resources */,
 				A311B3F727E8B9A200CFCF6D /* MemberUpdated.json in Resources */,

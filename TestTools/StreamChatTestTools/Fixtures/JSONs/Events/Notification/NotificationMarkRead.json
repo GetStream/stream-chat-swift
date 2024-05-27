@@ -63,6 +63,7 @@
     "total_unread_count" : 55,
     "unread_count" : 55,
     "unread_channels" : 8,
+    "unread_threads": 10,
     "type" : "notification.mark_read",
     "cid" : "messaging:general"
 }

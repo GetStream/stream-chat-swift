@@ -33,6 +33,7 @@ class EventPayload: Decodable {
         case lastReadMessageId = "last_read_message_id"
         case unreadMessagesCount = "unread_messages"
         case shadow
+        case thread
         case vote = "poll_vote"
         case poll
     }
@@ -45,6 +46,7 @@ class EventPayload: Decodable {
     let createdBy: UserPayload?
     let memberContainer: MemberContainerPayload?
     let channel: ChannelDetailPayload?
+    let thread: ThreadEventPayload?
     let message: MessagePayload?
     let reaction: MessageReactionPayload?
     let watcherCount: Int?
@@ -88,6 +90,7 @@ class EventPayload: Decodable {
         lastReadAt: Date? = nil,
         lastReadMessageId: MessageId? = nil,
         unreadMessagesCount: Int? = nil,
+        thread: ThreadEventPayload? = nil,
         poll: PollPayload? = nil,
         vote: PollVotePayload? = nil
     ) {
@@ -114,6 +117,7 @@ class EventPayload: Decodable {
         self.lastReadAt = lastReadAt
         self.lastReadMessageId = lastReadMessageId
         self.unreadMessagesCount = unreadMessagesCount
+        self.thread = thread
         self.poll = poll
         self.vote = vote
     }
@@ -145,6 +149,7 @@ class EventPayload: Decodable {
         lastReadAt = try container.decodeIfPresent(Date.self, forKey: .lastReadAt)
         lastReadMessageId = try container.decodeIfPresent(MessageId.self, forKey: .lastReadMessageId)
         unreadMessagesCount = try container.decodeIfPresent(Int.self, forKey: .unreadMessagesCount)
+        thread = try container.decodeIfPresent(ThreadEventPayload.self, forKey: .thread)
         vote = try container.decodeIfPresent(PollVotePayload.self, forKey: .vote)
         poll = try container.decodeIfPresent(PollPayload.self, forKey: .poll)
     }
@@ -185,6 +190,7 @@ private extension PartialKeyPath where Root == EventPayload {
         case \EventPayload.parentId: return "parentId"
         case \EventPayload.hardDelete: return "hardDelete"
         case \EventPayload.shadow: return "shadow"
+        case \EventPayload.thread: return "thread"
         default: return String(describing: self)
         }
     }

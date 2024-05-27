@@ -387,6 +387,10 @@ class DatabaseSession_Mock: DatabaseSession {
         try underlyingSession.saveThread(payload: payload, cache: cache)
     }
 
+    func saveThread(eventPayload: ThreadEventPayload) throws -> ThreadDTO {
+        try underlyingSession.saveThread(eventPayload: eventPayload)
+    }
+
     func saveThreadRead(payload: ThreadReadPayload, parentMessageId: String, cache: PreWarmedCache?) throws -> ThreadReadDTO {
         try underlyingSession.saveThreadRead(payload: payload, parentMessageId: parentMessageId, cache: cache)
     }

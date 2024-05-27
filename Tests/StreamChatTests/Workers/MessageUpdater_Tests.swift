@@ -2665,6 +2665,80 @@ final class MessageUpdater_Tests: XCTestCase {
 
         AssertAsync.willBeTrue(completionCalled)
     }
+
+    // MARK: - Mark read
+
+    func test_markThreadRead_whenSuccess() throws {
+        let exp = expectation(description: "mark thread completion")
+        let threadId = MessageId.unique
+        let cid = ChannelId.unique
+
+        messageUpdater.markThreadRead(cid: cid, threadId: threadId) { error in
+            XCTAssertNil(error)
+            exp.fulfill()
+        }
+
+        apiClient.test_simulateResponse(.success(EmptyResponse()))
+
+        wait(for: [exp], timeout: defaultTimeout)
+
+        XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(.markThreadRead(cid: cid, threadId: threadId)))
+    }
+
+    func test_markThreadRead_whenFailure() throws {
+        let exp = expectation(description: "mark thread completion")
+        let threadId = MessageId.unique
+        let cid = ChannelId.unique
+
+        messageUpdater.markThreadRead(cid: cid, threadId: threadId) { error in
+            XCTAssertNotNil(error)
+            exp.fulfill()
+        }
+
+        let response = Result<EmptyResponse, Error>.failure(TestError())
+        apiClient.test_simulateResponse(response)
+
+        wait(for: [exp], timeout: defaultTimeout)
+
+        XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(.markThreadRead(cid: cid, threadId: threadId)))
+    }
+
+    // MARK: Mark unread
+
+    func test_markThreadUnread_whenSuccess() throws {
+        let exp = expectation(description: "mark thread completion")
+        let threadId = MessageId.unique
+        let cid = ChannelId.unique
+
+        messageUpdater.markThreadUnread(cid: cid, threadId: threadId) { error in
+            XCTAssertNil(error)
+            exp.fulfill()
+        }
+
+        apiClient.test_simulateResponse(.success(EmptyResponse()))
+
+        wait(for: [exp], timeout: defaultTimeout)
+
+        XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(.markThreadUnread(cid: cid, threadId: threadId)))
+    }
+
+    func test_markThreadUnread_whenFailure() throws {
+        let exp = expectation(description: "mark thread completion")
+        let threadId = MessageId.unique
+        let cid = ChannelId.unique
+
+        messageUpdater.markThreadUnread(cid: cid, threadId: threadId) { error in
+            XCTAssertNotNil(error)
+            exp.fulfill()
+        }
+
+        let response = Result<EmptyResponse, Error>.failure(TestError())
+        apiClient.test_simulateResponse(response)
+
+        wait(for: [exp], timeout: defaultTimeout)
+
+        XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(.markThreadUnread(cid: cid, threadId: threadId)))
+    }
 }
 
 // MARK: - Helpers
