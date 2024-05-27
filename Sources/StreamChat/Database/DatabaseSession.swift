@@ -411,7 +411,7 @@ protocol ThreadDatabaseSession {
         cache: PreWarmedCache?
     ) throws -> ThreadDTO
 
-    /// Updates the a thread with details from a thread event.
+    /// Updates the thread with details from a thread event.
     @discardableResult
     func saveThread(eventPayload: ThreadEventPayload) throws -> ThreadDTO
 
