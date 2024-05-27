@@ -107,6 +107,16 @@ final class MessageUpdater_Mock: MessageUpdater {
     @Atomic var translate_completion: ((Result<ChatMessage, Error>) -> Void)?
     @Atomic var translate_completion_result: Result<ChatMessage, Error>?
 
+    var markThreadRead_threadId: MessageId?
+    var markThreadRead_cid: ChannelId?
+    var markThreadRead_callCount = 0
+    var markThreadRead_completion: ((Error?) -> Void)? = nil
+
+    var markThreadUnread_threadId: MessageId?
+    var markThreadUnread_cid: ChannelId?
+    var markThreadUnread_callCount = 0
+    var markThreadUnread_completion: ((Error?) -> Void)? = nil
+
     // Cleans up all recorded values
     func cleanUp() {
         getMessage_cid = nil
@@ -405,6 +415,20 @@ final class MessageUpdater_Mock: MessageUpdater {
         translate_language = language
         translate_completion = completion
         translate_completion_result?.invoke(with: completion)
+    }
+
+    override func markThreadRead(cid: ChannelId, threadId: MessageId, completion: @escaping (((any Error)?) -> Void)) {
+        markThreadRead_cid = cid
+        markThreadRead_threadId = threadId
+        markThreadRead_callCount += 1
+        markThreadRead_completion = completion
+    }
+
+    override func markThreadUnread(cid: ChannelId, threadId: MessageId, completion: @escaping (((any Error)?) -> Void)) {
+        markThreadUnread_cid = cid
+        markThreadUnread_threadId = threadId
+        markThreadUnread_callCount += 1
+        markThreadUnread_completion = completion
     }
 }
 

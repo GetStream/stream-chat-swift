@@ -126,6 +126,9 @@ public struct NotificationMarkUnreadEvent: ChannelSpecificEvent {
     /// The timestamp of the last read message
     public let lastReadAt: Date
 
+    /// The unread counts of the current user.
+    public let unreadCount: UnreadCount
+
     /// The number of unread messages for the channel
     public let unreadMessagesCount: Int
 }
@@ -167,6 +170,7 @@ class NotificationMarkUnreadEventDTO: EventDTO {
     let firstUnreadMessageId: MessageId
     let lastReadMessageId: MessageId?
     let lastReadAt: Date
+    let unreadCount: UnreadCount
     let unreadMessagesCount: Int
     let payload: EventPayload
 
@@ -175,9 +179,10 @@ class NotificationMarkUnreadEventDTO: EventDTO {
         cid = try response.value(at: \.cid)
         createdAt = try response.value(at: \.createdAt)
         firstUnreadMessageId = try response.value(at: \.firstUnreadMessageId)
-        lastReadMessageId = try response.value(at: \.lastReadMessageId)
+        lastReadMessageId = try? response.value(at: \.lastReadMessageId)
         lastReadAt = try response.value(at: \.lastReadAt)
         unreadMessagesCount = try response.value(at: \.unreadMessagesCount)
+        unreadCount = try response.value(at: \.unreadCount)
         payload = response
     }
 
@@ -191,6 +196,7 @@ class NotificationMarkUnreadEventDTO: EventDTO {
             firstUnreadMessageId: firstUnreadMessageId,
             lastReadMessageId: lastReadMessageId,
             lastReadAt: lastReadAt,
+            unreadCount: unreadCount,
             unreadMessagesCount: unreadMessagesCount
         )
     }

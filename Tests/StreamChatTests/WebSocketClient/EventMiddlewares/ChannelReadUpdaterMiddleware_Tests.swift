@@ -1044,7 +1044,7 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
         let eventPayload = EventPayload(
             eventType: .notificationMarkRead,
             user: dummyCurrentUser,
-            unreadCount: .init(channels: 19, messages: 124),
+            unreadCount: .init(channels: 19, messages: 124, threads: 20),
             createdAt: newReadDate
         )
         let notificationMarkAllReadEvent = try NotificationMarkAllReadEventDTO(from: eventPayload)

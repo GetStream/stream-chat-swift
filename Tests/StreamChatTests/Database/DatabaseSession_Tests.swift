@@ -263,6 +263,7 @@ final class DatabaseSession_Tests: XCTestCase {
         // Assert unread count is taken from event payload
         XCTAssertEqual(Int64(eventPayload.unreadCount!.messages), currentUser?.unreadMessagesCount)
         XCTAssertEqual(Int64(eventPayload.unreadCount!.channels), currentUser?.unreadChannelsCount)
+        XCTAssertEqual(Int64(eventPayload.unreadCount!.threads!), currentUser?.unreadThreadsCount)
     }
 
     func test_saveCurrentUserUnreadCount_failsIfThereIsNoCurrentUser() throws {

@@ -13,7 +13,7 @@ final class CurrentUserController_Combine_Tests: iOS13TestCase {
     var currentUserController: CurrentUserController_Mock!
     var cancellables: Set<AnyCancellable>!
 
-    let initialUnreadCount = UnreadCount(channels: 2, messages: 2)
+    let initialUnreadCount = UnreadCount(channels: 2, messages: 2, threads: 0)
 
     override func setUp() {
         super.setUp()

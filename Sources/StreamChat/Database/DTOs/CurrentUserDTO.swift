@@ -9,6 +9,7 @@ import Foundation
 class CurrentUserDTO: NSManagedObject {
     @NSManaged var unreadChannelsCount: Int64
     @NSManaged var unreadMessagesCount: Int64
+    @NSManaged var unreadThreadsCount: Int64
 
     /// Contains the timestamp when last sync process was finished.
     /// The date later serves as reference date for the last event synced using `/sync` endpoint
@@ -115,6 +116,7 @@ extension NSManagedObjectContext: CurrentUserDatabaseSession {
 
         dto.unreadChannelsCount = Int64(clamping: count.channels)
         dto.unreadMessagesCount = Int64(clamping: count.messages)
+        dto.unreadThreadsCount = Int64(clamping: count.threads ?? 0)
     }
 
     func saveCurrentUserDevices(_ devices: [DevicePayload], clearExisting: Bool) throws -> [DeviceDTO] {
@@ -236,7 +238,8 @@ extension CurrentChatUser {
             flaggedMessageIDs: Set(flaggedMessagesIDs),
             unreadCount: UnreadCount(
                 channels: Int(dto.unreadChannelsCount),
-                messages: Int(dto.unreadMessagesCount)
+                messages: Int(dto.unreadMessagesCount),
+                threads: Int(dto.unreadThreadsCount)
             ),
             mutedChannels: fetchMutedChannels,
             privacySettings: .init(

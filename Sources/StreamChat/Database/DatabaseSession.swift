@@ -411,6 +411,10 @@ protocol ThreadDatabaseSession {
         cache: PreWarmedCache?
     ) throws -> ThreadDTO
 
+    /// Updates the thread with details from a thread event.
+    @discardableResult
+    func saveThread(eventPayload: ThreadEventPayload) throws -> ThreadDTO
+
     /// Creates a new `ThreadParticipantDTO` object in the database with the given `payload`.
     @discardableResult
     func saveThreadParticipant(
@@ -471,8 +475,6 @@ extension DatabaseSession {
             try saveUser(payload: userPayload)
         }
 
-        // Member events are handled in `MemberEventMiddleware`
-
         // Save a channel detail data.
         if let channelDetailPayload = payload.channel {
             try saveChannel(payload: channelDetailPayload, query: nil, cache: nil)
@@ -484,6 +486,10 @@ extension DatabaseSession {
 
         if let unreadCount = payload.unreadCount {
             try saveCurrentUserUnreadCount(count: unreadCount)
+        }
+
+        if let payload = payload.thread {
+            try saveThread(eventPayload: payload)
         }
 
         try saveMessageIfNeeded(from: payload)
