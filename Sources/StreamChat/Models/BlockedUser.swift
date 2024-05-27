@@ -6,7 +6,7 @@ import Foundation
 
 /// A type representing a blocked user. `BlockedUser` is an immutable snapshot of a blocked user entity at the given time.
 ///
-public class BlockedUser {
+public struct BlockedUser {
     /// The unique identifier of the blocked user.
     public let blockedUserId: UserId
 
@@ -25,12 +25,5 @@ public class BlockedUser {
 extension BlockedUser: Hashable {
     public func hash(into hasher: inout Hasher) {
         hasher.combine(blockedUserId)
-    }
-}
-
-extension BlockedUser: Equatable {
-    public static func == (lhs: BlockedUser, rhs: BlockedUser) -> Bool {
-        lhs.blockedUserId == rhs.blockedUserId
-            && lhs.blockedAt == rhs.blockedAt
     }
 }

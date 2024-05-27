@@ -19,7 +19,7 @@ extension Endpoint {
 // MARK: - User blocking
 
 extension Endpoint {
-    static func blockUser(_ userId: UserId, keepChannelsVisible: Bool = false) -> Endpoint<BlockedUsersResponse> {
+    static func blockUser(_ userId: UserId, keepChannelsVisible: Bool) -> Endpoint<BlockedUsersResponse> {
         let body: [String: AnyEncodable] = [
             "blocked_user_id": AnyEncodable(userId),
             "keep_channels_visible": AnyEncodable(keepChannelsVisible)
