@@ -31,13 +31,14 @@ extension DemoAppCoordinator {
             }
         )
 
-        let threadListQuery = ThreadListQuery(watch: true)
+        let threadListQuery = ThreadListQuery(
+            watch: true
+        )
         let threadListController = StreamChatWrapper.shared.client!.threadListController(query: threadListQuery)
-        let threadListVC = ExampleThreadListViewController(controller: threadListController)
-
+        let threadListVC = DemoChatThreadListVC(threadListController: threadListController)
         let tabBarViewController = DemoAppTabBarController(
             channelListVC: chatVC,
-            threadListVC: threadListVC
+            threadListVC: UINavigationController(rootViewController: threadListVC)
         )
         set(rootViewController: tabBarViewController, animated: animated)
         DemoAppConfiguration.showPerformanceTracker()
