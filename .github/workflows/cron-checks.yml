@@ -40,8 +40,8 @@ jobs:
     strategy:
       matrix:
         include:
-          - ios: 17.4
-            xcode: 15.3
+          - ios: 17.5
+            xcode: 15.4
             os: macos-14
             device: "iPhone 15 Pro"
             setup_runtime: false
@@ -139,8 +139,8 @@ jobs:
     strategy:
       matrix:
         include:
-          - ios: 17.4
-            xcode: 15.3
+          - ios: 17.5
+            xcode: 15.4
             os: macos-14
             device: "iPhone 14 Pro Max"
             setup_runtime: false
