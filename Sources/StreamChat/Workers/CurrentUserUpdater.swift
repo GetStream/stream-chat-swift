@@ -161,6 +161,33 @@ class CurrentUserUpdater: Worker {
             completion?($0.error)
         }
     }
+    
+    /// Get all blocked users.
+    ///
+    /// - Parameter completion: Called when the API call is finished. Called with `Error` if the remote update fails.
+    ///
+    func getBlockedUsers(completion: @escaping (Result<[BlockedUser], Error>) -> Void) {
+        apiClient.request(endpoint: .loadBlockedUsers()) {
+            switch $0 {
+            case let .success(payload):
+                var blockedUsers: Set<BlockedUserDTO> = []
+                self.database.write({ session in
+                    for blockedUser in payload.blockedUsers {
+                        blockedUsers.insert(blockedUser.asDTO(context: self.database.writableContext))
+                    }
+                    session.currentUser?.blockedUsers = blockedUsers
+                    session.currentUser?.user.blockedUserIds = blockedUsers.map { $0.blockedUserId }
+                }, completion: {
+                    if let error = $0 {
+                        log.error("Failed to save blocked users to the database. Error: \(error)")
+                    }
+                    completion(.success(blockedUsers.compactMap { try? $0.asModel() }))
+                })
+            case let .failure(error):
+                completion(.failure(error))
+            }
+        }
+    }
 }
 
 @available(iOS 13.0, *)
