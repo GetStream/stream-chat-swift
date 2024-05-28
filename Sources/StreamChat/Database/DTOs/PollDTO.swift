@@ -25,7 +25,7 @@ class PollDTO: NSManagedObject {
     @NSManaged var createdBy: UserDTO?
     @NSManaged var latestAnswers: Set<PollVoteDTO>
     @NSManaged var message: MessageDTO?
-    @NSManaged var options: Set<PollOptionDTO>
+    @NSManaged var options: NSOrderedSet
     @NSManaged var latestVotesByOption: Set<PollOptionDTO>
     
     static func loadOrCreate(
@@ -69,6 +69,8 @@ extension PollDTO {
             extraData = decoded
         }
         
+        let optionsArray = (options.array as? [PollOptionDTO]) ?? []
+        
         return try Poll(
             allowAnswers: allowAnswers,
             allowUserSuggestedOptions: allowUserSuggestedOptions,
@@ -87,7 +89,7 @@ extension PollDTO {
             votingVisibility: votingVisibility(from: votingVisibility),
             createdBy: createdBy?.asModel(),
             latestAnswers: latestAnswers.map { try $0.asModel() },
-            options: options.map { try $0.asModel() },
+            options: optionsArray.map { try $0.asModel() },
             latestVotesByOption: latestVotesByOption.map { try $0.asModel() }
         )
     }
@@ -121,8 +123,8 @@ extension NSManagedObjectContext {
         pollDto.votingVisibility = payload.votingVisibility
         
         pollDto.createdBy = UserDTO.loadOrCreate(id: payload.createdById, context: self, cache: cache)
-        pollDto.options = try Set(
-            payload.options.compactMap { payload in
+        pollDto.options = try NSOrderedSet(
+            array: payload.options.compactMap { payload in
                 if let payload {
                     let optionDto = try savePollOption(
                         payload: payload,

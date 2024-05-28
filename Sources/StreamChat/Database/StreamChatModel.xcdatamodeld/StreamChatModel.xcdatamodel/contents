@@ -328,7 +328,7 @@
         <relationship name="latestAnswers" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="PollVoteDTO" inverseName="poll" inverseEntity="PollVoteDTO"/>
         <relationship name="latestVotesByOption" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="PollOptionDTO" inverseName="pollLatestVotes" inverseEntity="PollOptionDTO"/>
         <relationship name="message" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="MessageDTO" inverseName="poll" inverseEntity="MessageDTO"/>
-        <relationship name="options" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="PollOptionDTO" inverseName="poll" inverseEntity="PollOptionDTO"/>
+        <relationship name="options" optional="YES" toMany="YES" deletionRule="Nullify" ordered="YES" destinationEntity="PollOptionDTO" inverseName="poll" inverseEntity="PollOptionDTO"/>
     </entity>
     <entity name="PollOptionDTO" representedClassName="PollOptionDTO" syncable="YES">
         <attribute name="custom" optional="YES" attributeType="Binary"/>
