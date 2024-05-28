@@ -36,7 +36,7 @@ final class ChatThreadListController_Tests: XCTestCase {
 
         wait(for: [exp], timeout: defaultTimeout)
         XCTAssertEqual(controller.state, .remoteDataFetched)
-        XCTAssertTrue(controller.hasLoadedAllOlderThreads)
+        XCTAssertTrue(controller.hasLoadedAllThreads)
     }
 
     func test_synchronize_whenSuccess_whenMoreThreadsThanLimit() {
@@ -57,7 +57,7 @@ final class ChatThreadListController_Tests: XCTestCase {
         ])))
 
         wait(for: [exp], timeout: defaultTimeout)
-        XCTAssertFalse(controller.hasLoadedAllOlderThreads)
+        XCTAssertFalse(controller.hasLoadedAllThreads)
     }
 
     func test_synchronize_whenFailure() {
@@ -69,7 +69,7 @@ final class ChatThreadListController_Tests: XCTestCase {
         repositoryMock.loadThreadsCompletion?(.failure(ClientError()))
 
         wait(for: [exp], timeout: defaultTimeout)
-        XCTAssertFalse(controller.hasLoadedAllOlderThreads)
+        XCTAssertFalse(controller.hasLoadedAllThreads)
         switch controller.state {
         case .remoteDataFetchFailed:
             break
@@ -93,7 +93,7 @@ final class ChatThreadListController_Tests: XCTestCase {
         ])))
 
         wait(for: [exp], timeout: defaultTimeout)
-        XCTAssertTrue(controller.hasLoadedAllOlderThreads)
+        XCTAssertTrue(controller.hasLoadedAllThreads)
     }
 
     func test_loadOlderThreads_whenSuccess_whenMoreThreadsThanLimit() {
@@ -112,7 +112,7 @@ final class ChatThreadListController_Tests: XCTestCase {
         ])))
 
         wait(for: [exp], timeout: defaultTimeout)
-        XCTAssertFalse(controller.hasLoadedAllOlderThreads)
+        XCTAssertFalse(controller.hasLoadedAllThreads)
     }
 
     func test_loadOlderThreads_whenFailure() {

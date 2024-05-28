@@ -47,7 +47,7 @@ public class ChatThreadListController: DataController, DelegateCallable, DataSto
         )
 
     /// A Boolean value that returns whether pagination is finished.
-    public private(set) var hasLoadedAllOlderThreads: Bool = false
+    public private(set) var hasLoadedAllThreads: Bool = false
 
     /// A type-erased delegate.
     var multicastDelegate: MulticastDelegate<ChatThreadListControllerDelegate> = .init() {
@@ -109,7 +109,6 @@ public class ChatThreadListController: DataController, DelegateCallable, DataSto
 
     override public func synchronize(_ completion: ((_ error: Error?) -> Void)? = nil) {
         startThreadListObserverIfNeeded()
-
         let limit = query.limit
         threadsRepository.loadThreads(
             query: query
@@ -121,7 +120,7 @@ public class ChatThreadListController: DataController, DelegateCallable, DataSto
                         let threads = threadListResponse.threads
                         self?.nextCursor = threadListResponse.next
                         self?.state = .remoteDataFetched
-                        self?.hasLoadedAllOlderThreads = threads.count < limit
+                        self?.hasLoadedAllThreads = threadListResponse.next == nil
                         completion?(nil)
                     }
                 }
@@ -134,12 +133,12 @@ public class ChatThreadListController: DataController, DelegateCallable, DataSto
 
     // MARK: - Actions
 
-    /// Loads older threads.
+    /// Loads more threads.
     ///
     /// - Parameters:
     ///   - limit: The size of the new page of threads.
     ///   - completion: The completion.
-    public func loadOlderThreads(
+    public func loadMoreThreads(
         limit: Int? = nil,
         completion: ((Result<[ChatThread], Error>) -> Void)? = nil
     ) {
@@ -153,7 +152,7 @@ public class ChatThreadListController: DataController, DelegateCallable, DataSto
                 self?.callback {
                     let threads = threadListResponse.threads
                     self?.nextCursor = threadListResponse.next
-                    self?.hasLoadedAllOlderThreads = threads.count < limit
+                    self?.hasLoadedAllThreads = threadListResponse.next == nil
                     completion?(.success(threads))
                 }
             case let .failure(error):
