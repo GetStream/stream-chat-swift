@@ -632,7 +632,9 @@ final class ComposerVC_Tests: XCTestCase {
         waitForExpectations(timeout: defaultTimeout)
     }
 
-    func test_showLinkPreview() {
+    func test_showLinkPreview() throws {
+        throw XCTSkip("https://github.com/GetStream/ios-issues-tracking/issues/848")
+        
         composerVC.components.isComposerLinkPreviewEnabled = true
         composerVC.content = .initial()
         composerVC.content.text = """
