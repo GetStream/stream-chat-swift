@@ -59,6 +59,7 @@ public class ChatChannelMember: ChatUser {
         lastActiveAt: Date?,
         teams: Set<TeamId>,
         language: TranslationLanguage?,
+        blockedUserIds: [UserId],
         extraData: [String: RawJSON],
         memberRole: MemberRole,
         memberCreatedAt: Date,
@@ -96,6 +97,7 @@ public class ChatChannelMember: ChatUser {
             lastActiveAt: lastActiveAt,
             teams: teams,
             language: language,
+            blockedUserIds: blockedUserIds,
             extraData: extraData
         )
     }

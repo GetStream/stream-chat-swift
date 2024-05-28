@@ -37,6 +37,7 @@ public extension ChatUser {
             lastActiveAt: lastActiveAt,
             teams: teams,
             language: language,
+            blockedUserIds: [],
             extraData: extraData
         )
     }

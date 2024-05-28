@@ -200,6 +200,7 @@ extension ChatChannelMember {
             lastActiveAt: dto.user.lastActivityAt?.bridgeDate,
             teams: Set(dto.user.teams),
             language: language,
+            blockedUserIds: dto.user.blockedUserIds,
             extraData: extraData,
             memberRole: role,
             memberCreatedAt: dto.memberCreatedAt.bridgeDate,

@@ -139,6 +139,7 @@ private extension UserPayload {
             lastActiveAt: lastActiveAt,
             teams: Set(teams),
             language: language.map(TranslationLanguage.init),
+            blockedUserIds: blockedUserIds,
             extraData: extraData
         )
     }

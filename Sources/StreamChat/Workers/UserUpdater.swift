@@ -44,6 +44,7 @@ class UserUpdater: Worker {
                         blockedUsers.insert(blockedUser.asDTO(context: self.database.writableContext))
                     }
                     session.currentUser?.blockedUsers = blockedUsers
+                    session.currentUser?.user.blockedUserIds = blockedUsers.map { $0.blockedUserId }
                 }, completion: {
                     if let error = $0 {
                         log.error("Failed to save blocked user with id: <\(userId)> to the database. Error: \(error)")
@@ -69,6 +70,7 @@ class UserUpdater: Worker {
                     let currentUserDTO = session.currentUser
                     if let userDTO = currentUserDTO?.blockedUsers.first(where: { $0.blockedUserId == userId }) {
                         currentUserDTO?.blockedUsers.remove(userDTO)
+                        currentUserDTO?.user.blockedUserIds.removeAll { $0 == userId }
                     }
                 }, completion: {
                     if let error = $0 {

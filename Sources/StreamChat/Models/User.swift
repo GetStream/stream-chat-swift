@@ -62,6 +62,9 @@ public class ChatUser {
 
     /// The language code of the user.
     public let language: TranslationLanguage?
+    
+    /// A list of blocked user ids
+    public let blockedUserIds: [UserId]
 
     public let extraData: [String: RawJSON]
 
@@ -79,6 +82,7 @@ public class ChatUser {
         lastActiveAt: Date?,
         teams: Set<TeamId>,
         language: TranslationLanguage?,
+        blockedUserIds: [UserId],
         extraData: [String: RawJSON]
     ) {
         self.id = id
@@ -94,6 +98,7 @@ public class ChatUser {
         self.lastActiveAt = lastActiveAt
         self.teams = teams
         self.language = language
+        self.blockedUserIds = blockedUserIds
         self.extraData = extraData
     }
 }

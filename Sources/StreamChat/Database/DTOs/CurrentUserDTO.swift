@@ -247,6 +247,7 @@ extension CurrentChatUser {
             lastActiveAt: user.lastActivityAt?.bridgeDate,
             teams: Set(user.teams),
             language: language,
+            blockedUserIds: user.blockedUserIds,
             extraData: extraData,
             devices: dto.devices.map { try $0.asModel() },
             currentDevice: dto.currentDevice?.asModel(),

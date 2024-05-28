@@ -76,6 +76,7 @@ public class CurrentChatUser: ChatUser {
         lastActiveAt: Date?,
         teams: Set<TeamId>,
         language: TranslationLanguage?,
+        blockedUserIds: [UserId],
         extraData: [String: RawJSON],
         devices: [Device],
         currentDevice: Device?,
@@ -112,6 +113,7 @@ public class CurrentChatUser: ChatUser {
             lastActiveAt: lastActiveAt,
             teams: teams,
             language: language,
+            blockedUserIds: blockedUserIds,
             extraData: extraData
         )
 
