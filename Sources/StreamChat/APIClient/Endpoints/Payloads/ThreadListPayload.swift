@@ -98,16 +98,22 @@ struct ThreadPayload: Decodable {
         createdBy = try container.decode(UserPayload.self, forKey: .createdBy)
         replyCount = try container.decode(Int.self, forKey: .replyCount)
         participantCount = try container.decode(Int.self, forKey: .participantCount)
-        threadParticipants = try container.decode(
+        threadParticipants = try container.decodeArrayIfPresentIgnoringFailures(
             [ThreadParticipantPayload].self,
             forKey: .threadParticipants
-        )
+        ) ?? []
         lastMessageAt = try container.decodeIfPresent(Date.self, forKey: .lastMessageAt)
         createdAt = try container.decode(Date.self, forKey: .createdAt)
         updatedAt = try container.decodeIfPresent(Date.self, forKey: .updatedAt)
         title = try container.decodeIfPresent(String.self, forKey: .title)
-        latestReplies = try container.decodeArrayIgnoringFailures([MessagePayload].self, forKey: .latestReplies)
-        read = try container.decodeArrayIgnoringFailures([ThreadReadPayload].self, forKey: .read)
+        latestReplies = try container.decodeArrayIfPresentIgnoringFailures(
+            [MessagePayload].self,
+            forKey: .latestReplies
+        ) ?? []
+        read = try container.decodeArrayIfPresentIgnoringFailures(
+            [ThreadReadPayload].self,
+            forKey: .read
+        ) ?? []
     }
 }
 
