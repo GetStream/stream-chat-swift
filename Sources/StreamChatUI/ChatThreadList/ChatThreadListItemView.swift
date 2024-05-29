@@ -101,8 +101,8 @@ open class ChatThreadListItemView: _View, ThemeProvider {
         .withAccessibilityIdentifier(identifier: "threadDescriptionLabel")
 
     /// The view showing number of unread replies in the thread.
-    open private(set) lazy var threadUnreadCountView: ChatUnreadCountView = components
-        .unreadCountView.init()
+    open private(set) lazy var threadUnreadCountView: ChatThreadUnreadCountView = components
+        .threadUnreadCountView.init()
         .withoutAutoresizingMaskConstraints
         .withAccessibilityIdentifier(identifier: "threadUnreadCountView")
 
@@ -258,7 +258,7 @@ open class ChatThreadListItemView: _View, ThemeProvider {
         replyAuthorAvatarView.content = latestReply?.author
         replyTitleLabel.text = latestReply?.author.name
         let unreads = thread.reads.first(where: { $0.user.id == content.currentUserId })?.unreadMessagesCount ?? 1
-        threadUnreadCountView.content = .init(messages: unreads, mentions: 0) // TODO: Make 2 types of unread counts
+        threadUnreadCountView.content = unreads
         threadUnreadCountView.invalidateIntrinsicContentSize()
     }
 }

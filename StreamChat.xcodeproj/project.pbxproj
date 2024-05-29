@@ -14,7 +14,7 @@
 		224165A825910A2C00ED7F78 /* CheckboxControl.swift in Sources */ = {isa = PBXBuildFile; fileRef = 224165A725910A2C00ED7F78 /* CheckboxControl.swift */; };
 		2245B2B625602465006A612D /* ChatChannelAvatarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2245B2B525602465006A612D /* ChatChannelAvatarView.swift */; };
 		224FF67B2562F1EA00725DD1 /* ChatMessageDeliveryStatusCheckmarkView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 224FF67A2562F1EA00725DD1 /* ChatMessageDeliveryStatusCheckmarkView.swift */; };
-		224FF6812562F2E900725DD1 /* ChatUnreadCountView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 224FF6802562F2E900725DD1 /* ChatUnreadCountView.swift */; };
+		224FF6812562F2E900725DD1 /* ChatChannelUnreadCountView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 224FF6802562F2E900725DD1 /* ChatChannelUnreadCountView.swift */; };
 		224FF6912562F58F00725DD1 /* UIColor+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 224FF6902562F58F00725DD1 /* UIColor+Extensions.swift */; };
 		224FF6972562F5AE00725DD1 /* Bundle+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 224FF6962562F5AE00725DD1 /* Bundle+Extensions.swift */; };
 		224FF69D2562F5D100725DD1 /* UIImage+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 224FF69C2562F5D100725DD1 /* UIImage+Extensions.swift */; };
@@ -343,7 +343,7 @@
 		7849AE7C25F22FA8007817D4 /* ChatChannelListVC+SwiftUI_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 780DFD0B25EF80AB00A39A6E /* ChatChannelListVC+SwiftUI_Tests.swift */; };
 		7849AF6725F243C8007817D4 /* ChatChannelListItemView+SwiftUI_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7849AF6625F243C8007817D4 /* ChatChannelListItemView+SwiftUI_Tests.swift */; };
 		7865705825FB6DF300974045 /* UIViewController+Extensions_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7865705725FB6DF300974045 /* UIViewController+Extensions_Tests.swift */; };
-		78C8473825FA0EF000A5D1D0 /* ChatUnreadCountView+SwiftUI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78C8473725FA0EF000A5D1D0 /* ChatUnreadCountView+SwiftUI.swift */; };
+		78C8473825FA0EF000A5D1D0 /* ChatChannelUnreadCountView+SwiftUI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78C8473725FA0EF000A5D1D0 /* ChatChannelUnreadCountView+SwiftUI.swift */; };
 		78C8474125FA0F2900A5D1D0 /* ChatChannelUnreadCountView+SwiftUI_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78C8474025FA0F2900A5D1D0 /* ChatChannelUnreadCountView+SwiftUI_Tests.swift */; };
 		7900452625374CA20096ECA1 /* User+SwiftUI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7900452525374CA20096ECA1 /* User+SwiftUI.swift */; };
 		7908820625432B7200896F03 /* StreamChatUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 790881FD25432B7200896F03 /* StreamChatUI.framework */; };
@@ -1600,6 +1600,10 @@
 		ADD328672C06B3A900BAD0E9 /* ChatThreadListItemCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADD328642C06B39F00BAD0E9 /* ChatThreadListItemCell.swift */; };
 		ADD328682C06B3AD00BAD0E9 /* ChatThreadListItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADD328622C06B2F700BAD0E9 /* ChatThreadListItemView.swift */; };
 		ADD328692C06B3AE00BAD0E9 /* ChatThreadListItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADD328622C06B2F700BAD0E9 /* ChatThreadListItemView.swift */; };
+		ADD3286D2C07CCC900BAD0E9 /* BadgeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADD3286B2C07CC7100BAD0E9 /* BadgeView.swift */; };
+		ADD3286E2C07CCCA00BAD0E9 /* BadgeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADD3286B2C07CC7100BAD0E9 /* BadgeView.swift */; };
+		ADD328712C07CD7000BAD0E9 /* ChatThreadUnreadCountView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADD3286F2C07CD5300BAD0E9 /* ChatThreadUnreadCountView.swift */; };
+		ADD328722C07CD7200BAD0E9 /* ChatThreadUnreadCountView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADD3286F2C07CD5300BAD0E9 /* ChatThreadUnreadCountView.swift */; };
 		ADD4C0E12B30A98300F230FF /* UnsupportedAttachmentViewInjector.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADD4C0DE2B30A95200F230FF /* UnsupportedAttachmentViewInjector.swift */; };
 		ADD4C0E22B30A98400F230FF /* UnsupportedAttachmentViewInjector.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADD4C0DE2B30A95200F230FF /* UnsupportedAttachmentViewInjector.swift */; };
 		ADD738472A8D312B0011FE81 /* ChannelListMessageTimestampFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADD738462A8D312B0011FE81 /* ChannelListMessageTimestampFormatter.swift */; };
@@ -2041,8 +2045,8 @@
 		C121EBC82746A1E900023E4C /* SwipeableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E798D6D125FF69120002C3B9 /* SwipeableView.swift */; };
 		C121EBC92746A1E900023E4C /* CellActionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7734D0C25F946FF004F76B0 /* CellActionView.swift */; };
 		C121EBCA2746A1E900023E4C /* ChatMessageDeliveryStatusCheckmarkView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 224FF67A2562F1EA00725DD1 /* ChatMessageDeliveryStatusCheckmarkView.swift */; };
-		C121EBCB2746A1E900023E4C /* ChatUnreadCountView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 224FF6802562F2E900725DD1 /* ChatUnreadCountView.swift */; };
-		C121EBCC2746A1E900023E4C /* ChatUnreadCountView+SwiftUI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78C8473725FA0EF000A5D1D0 /* ChatUnreadCountView+SwiftUI.swift */; };
+		C121EBCB2746A1E900023E4C /* ChatChannelUnreadCountView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 224FF6802562F2E900725DD1 /* ChatChannelUnreadCountView.swift */; };
+		C121EBCC2746A1E900023E4C /* ChatChannelUnreadCountView+SwiftUI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78C8473725FA0EF000A5D1D0 /* ChatChannelUnreadCountView+SwiftUI.swift */; };
 		C121EBCD2746A1EA00023E4C /* ChatChannelVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD1D7A8326A212D000494CA5 /* ChatChannelVC.swift */; };
 		C121EBCE2746A1EA00023E4C /* ChatChannelVC+SwiftUI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 64B059E12670EFFE0024CE90 /* ChatChannelVC+SwiftUI.swift */; };
 		C121EBCF2746A1EA00023E4C /* ChatChannelHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADA3572D269C562A004AD8E9 /* ChatChannelHeaderView.swift */; };
@@ -2877,7 +2881,7 @@
 		224165A725910A2C00ED7F78 /* CheckboxControl.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CheckboxControl.swift; sourceTree = "<group>"; };
 		2245B2B525602465006A612D /* ChatChannelAvatarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatChannelAvatarView.swift; sourceTree = "<group>"; };
 		224FF67A2562F1EA00725DD1 /* ChatMessageDeliveryStatusCheckmarkView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessageDeliveryStatusCheckmarkView.swift; sourceTree = "<group>"; };
-		224FF6802562F2E900725DD1 /* ChatUnreadCountView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatUnreadCountView.swift; sourceTree = "<group>"; };
+		224FF6802562F2E900725DD1 /* ChatChannelUnreadCountView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatChannelUnreadCountView.swift; sourceTree = "<group>"; };
 		224FF6902562F58F00725DD1 /* UIColor+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIColor+Extensions.swift"; sourceTree = "<group>"; };
 		224FF6962562F5AE00725DD1 /* Bundle+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Bundle+Extensions.swift"; sourceTree = "<group>"; };
 		224FF69C2562F5D100725DD1 /* UIImage+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIImage+Extensions.swift"; sourceTree = "<group>"; };
@@ -3132,7 +3136,7 @@
 		7849AF6625F243C8007817D4 /* ChatChannelListItemView+SwiftUI_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ChatChannelListItemView+SwiftUI_Tests.swift"; sourceTree = "<group>"; };
 		7849AF9225F2479A007817D4 /* UITestsEnvironmentSetup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UITestsEnvironmentSetup.swift; sourceTree = "<group>"; };
 		7865705725FB6DF300974045 /* UIViewController+Extensions_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIViewController+Extensions_Tests.swift"; sourceTree = "<group>"; };
-		78C8473725FA0EF000A5D1D0 /* ChatUnreadCountView+SwiftUI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ChatUnreadCountView+SwiftUI.swift"; sourceTree = "<group>"; };
+		78C8473725FA0EF000A5D1D0 /* ChatChannelUnreadCountView+SwiftUI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ChatChannelUnreadCountView+SwiftUI.swift"; sourceTree = "<group>"; };
 		78C8474025FA0F2900A5D1D0 /* ChatChannelUnreadCountView+SwiftUI_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ChatChannelUnreadCountView+SwiftUI_Tests.swift"; sourceTree = "<group>"; };
 		7900452525374CA20096ECA1 /* User+SwiftUI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "User+SwiftUI.swift"; sourceTree = "<group>"; };
 		790881FD25432B7200896F03 /* StreamChatUI.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = StreamChatUI.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -4206,6 +4210,8 @@
 		ADD328602C06463600BAD0E9 /* DemoChatThreadListVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DemoChatThreadListVC.swift; sourceTree = "<group>"; };
 		ADD328622C06B2F700BAD0E9 /* ChatThreadListItemView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatThreadListItemView.swift; sourceTree = "<group>"; };
 		ADD328642C06B39F00BAD0E9 /* ChatThreadListItemCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatThreadListItemCell.swift; sourceTree = "<group>"; };
+		ADD3286B2C07CC7100BAD0E9 /* BadgeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BadgeView.swift; sourceTree = "<group>"; };
+		ADD3286F2C07CD5300BAD0E9 /* ChatThreadUnreadCountView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatThreadUnreadCountView.swift; sourceTree = "<group>"; };
 		ADD4C0DE2B30A95200F230FF /* UnsupportedAttachmentViewInjector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UnsupportedAttachmentViewInjector.swift; sourceTree = "<group>"; };
 		ADD5A9E725DE8AF6006DC88A /* ChatSuggestionsVC_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatSuggestionsVC_Tests.swift; sourceTree = "<group>"; };
 		ADD738462A8D312B0011FE81 /* ChannelListMessageTimestampFormatter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelListMessageTimestampFormatter.swift; sourceTree = "<group>"; };
@@ -5275,6 +5281,8 @@
 				790882BF25486ADB00896F03 /* ChatChannelListVC.swift */,
 				780DFCFB25EF7DA500A39A6E /* ChatChannelListVC+SwiftUI.swift */,
 				E798D6D125FF69120002C3B9 /* SwipeableView.swift */,
+				224FF6802562F2E900725DD1 /* ChatChannelUnreadCountView.swift */,
+				78C8473725FA0EF000A5D1D0 /* ChatChannelUnreadCountView+SwiftUI.swift */,
 				CFE5F85A2874A9330099A6A1 /* ChatChannelListEmptyView.swift */,
 				CF38F5AE287DB53E00E24D10 /* ChatChannelListErrorView.swift */,
 				CF14397C2886374900898ECA /* ChatChannelListLoadingViewCell.swift */,
@@ -6116,6 +6124,7 @@
 		888123E5255D51BD00070D5A /* CommonViews */ = {
 			isa = PBXGroup;
 			children = (
+				ADD3286B2C07CC7100BAD0E9 /* BadgeView.swift */,
 				40824D182A1271B9003B61FD /* ClampedView.swift */,
 				40824D172A1271B9003B61FD /* PillButton.swift */,
 				4067764E2A14CB550079B05C /* MediaButton.swift */,
@@ -6129,7 +6138,6 @@
 				F80BCA1326304F7800F2107B /* ShareButton.swift */,
 				F87A4865260B3516001653A8 /* SwiftUIViewRepresentable.swift */,
 				CF62AD9828944D4700392893 /* SkeletonLoadable.swift */,
-				ADD3286A2C0778FB00BAD0E9 /* ChatUnreadCountView */,
 				40824D1B2A1271B9003B61FD /* PlayPauseButton */,
 				40824D192A1271B9003B61FD /* RecordButton */,
 				843F0BCB2677666B00B342CB /* AttachmentActionButton */,
@@ -8605,17 +8613,9 @@
 				ADD3285C2C05442F00BAD0E9 /* ChatThreadListVC.swift */,
 				ADD328622C06B2F700BAD0E9 /* ChatThreadListItemView.swift */,
 				ADD328642C06B39F00BAD0E9 /* ChatThreadListItemCell.swift */,
+				ADD3286F2C07CD5300BAD0E9 /* ChatThreadUnreadCountView.swift */,
 			);
 			path = ChatThreadList;
-			sourceTree = "<group>";
-		};
-		ADD3286A2C0778FB00BAD0E9 /* ChatUnreadCountView */ = {
-			isa = PBXGroup;
-			children = (
-				224FF6802562F2E900725DD1 /* ChatUnreadCountView.swift */,
-				78C8473725FA0EF000A5D1D0 /* ChatUnreadCountView+SwiftUI.swift */,
-			);
-			path = ChatUnreadCountView;
 			sourceTree = "<group>";
 		};
 		ADD4C0D82B30A6E100F230FF /* Giphy */ = {
@@ -10435,6 +10435,7 @@
 				A3C50225284F9CF70048753E /* SwiftyLineProcessor.swift in Sources */,
 				ADB4166C26208F1C00E623E3 /* AttachmentPreviewProvider.swift in Sources */,
 				792DD9FB256E67C6001DB91B /* ComponentsProvider.swift in Sources */,
+				ADD328712C07CD7000BAD0E9 /* ChatThreadUnreadCountView.swift in Sources */,
 				84DA54DF2680C66A003A26CD /* PlayerView.swift in Sources */,
 				AD81AF0525ED141800F17F8F /* CellSeparatorView.swift in Sources */,
 				790882FD25486BFD00896F03 /* ChatChannelListCollectionViewCell.swift in Sources */,
@@ -10456,7 +10457,7 @@
 				AD470C9C26C6D8C60090759A /* ChatMessageListVCDataSource.swift in Sources */,
 				C1788F5F29C33A1000149883 /* ChatThreadRepliesCountDecorationView.swift in Sources */,
 				40824D092A1270BF003B61FD /* VoiceRecordingAttachmentViewInjector.swift in Sources */,
-				224FF6812562F2E900725DD1 /* ChatUnreadCountView.swift in Sources */,
+				224FF6812562F2E900725DD1 /* ChatChannelUnreadCountView.swift in Sources */,
 				A3C50224284F9CF70048753E /* PerfomanceLog.swift in Sources */,
 				C1FC2F7827416E150062530F /* ImageDecoding.swift in Sources */,
 				CFBF8D512847C57700EEB7D3 /* MarkdownFormatter.swift in Sources */,
@@ -10530,7 +10531,7 @@
 				F880DEA32628528B0025AD64 /* GalleryVC.swift in Sources */,
 				ADCB577728A42D7700B81AE8 /* ArraySection.swift in Sources */,
 				C1FC2F8727416E150062530F /* OperationTask.swift in Sources */,
-				78C8473825FA0EF000A5D1D0 /* ChatUnreadCountView+SwiftUI.swift in Sources */,
+				78C8473825FA0EF000A5D1D0 /* ChatChannelUnreadCountView+SwiftUI.swift in Sources */,
 				ACCA772A26C40C96007AE2ED /* ImageLoading.swift in Sources */,
 				DB3CCF3F258CF7ED009D5E99 /* ChatMessageLinkPreviewView.swift in Sources */,
 				43F4750E26FB247C0009487D /* ChatReactionPickerReactionsView.swift in Sources */,
@@ -10561,6 +10562,7 @@
 				ACD502A926BC0C670029FB7D /* ImageMerger.swift in Sources */,
 				E3C7A0E02858BA9B006133C3 /* Reusable+Extensions.swift in Sources */,
 				408599962A1FB90400FD6E26 /* AudioSessionFeedbackGenerator.swift in Sources */,
+				ADD3286D2C07CCC900BAD0E9 /* BadgeView.swift in Sources */,
 				AD447398263ABD530030E583 /* ChatCommandSuggestionCollectionViewCell.swift in Sources */,
 				847D602D2679EF8A00FB701D /* VideoPlaybackControlView.swift in Sources */,
 				40FA4DD52A12A0C300DA21D2 /* RecordingTipView.swift in Sources */,
@@ -12370,6 +12372,7 @@
 				C121EB822746A1E700023E4C /* CGPoint+Extensions.swift in Sources */,
 				40FA4DEB2A12A46D00DA21D2 /* VoiceRecordingAttachmentComposerPreview_Tests.swift in Sources */,
 				C121EB832746A1E700023E4C /* NavigationVC.swift in Sources */,
+				ADD3286E2C07CCCA00BAD0E9 /* BadgeView.swift in Sources */,
 				C121EB842746A1E700023E4C /* Cache.swift in Sources */,
 				C121EB852746A1E700023E4C /* VideoLoading.swift in Sources */,
 				ADCB577C28A42D7700B81AE8 /* AppKitExtension.swift in Sources */,
@@ -12418,6 +12421,7 @@
 				40FA4DE82A12A45400DA21D2 /* VoiceRecordingAttachmentQuotedPreview.swift in Sources */,
 				ADDB2F632954D48D00BF80DA /* InvertedScrollViewPaginationHandler.swift in Sources */,
 				C121EBA62746A1E800023E4C /* ChatPresenceAvatarView.swift in Sources */,
+				ADD328722C07CD7200BAD0E9 /* ChatThreadUnreadCountView.swift in Sources */,
 				C121EBA72746A1E800023E4C /* ChatAvatarView.swift in Sources */,
 				AD552E0228F46CE700199A6F /* ImageLoaderOptions.swift in Sources */,
 				ADD3285F2C05447500BAD0E9 /* ChatThreadListVC.swift in Sources */,
@@ -12473,8 +12477,8 @@
 				C121EBC92746A1E900023E4C /* CellActionView.swift in Sources */,
 				C121EBCA2746A1E900023E4C /* ChatMessageDeliveryStatusCheckmarkView.swift in Sources */,
 				ADC4AAB12788C8850004BB35 /* Appearance+Formatters.swift in Sources */,
-				C121EBCB2746A1E900023E4C /* ChatUnreadCountView.swift in Sources */,
-				C121EBCC2746A1E900023E4C /* ChatUnreadCountView+SwiftUI.swift in Sources */,
+				C121EBCB2746A1E900023E4C /* ChatChannelUnreadCountView.swift in Sources */,
+				C121EBCC2746A1E900023E4C /* ChatChannelUnreadCountView+SwiftUI.swift in Sources */,
 				C121EBCD2746A1EA00023E4C /* ChatChannelVC.swift in Sources */,
 				C121EBCE2746A1EA00023E4C /* ChatChannelVC+SwiftUI.swift in Sources */,
 				C121EBCF2746A1EA00023E4C /* ChatChannelHeaderView.swift in Sources */,

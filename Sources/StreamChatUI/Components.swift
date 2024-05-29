@@ -106,6 +106,9 @@ public struct Components {
     // The view that displays a banner to show the count of messages
     public var messagesCountDecorationView: ChatMessagesCountDecorationView.Type = ChatMessagesCountDecorationView.self
 
+    // A view that displays a badge with text. Usually to display unread counts in a red badge.
+    public var badgeView: BadgeView.Type = BadgeView.self
+
     // MARK: - Message List components
 
     /// The view controller responsible for rendering a list of messages.
@@ -351,6 +354,9 @@ public struct Components {
     /// The view that displays the thread information in the Thread List.
     public var threadListItemView: ChatThreadListItemView.Type = ChatThreadListItemView.self
 
+    /// The view that shows the number of unreads in the Thread List.
+    public var threadUnreadCountView: ChatThreadUnreadCountView.Type = ChatThreadUnreadCountView.self
+
     /// The view controller used to display the detail of a message thread.
     public var threadVC: ChatThreadVC.Type = ChatThreadVC.self
 
@@ -396,8 +402,8 @@ public struct Components {
     /// The view that shows the channel avatar including an indicator of the user presence (online/offline).
     public var channelAvatarView: ChatChannelAvatarView.Type = ChatChannelAvatarView.self
 
-    /// A view that shows a number of unreads.
-    public var unreadCountView: ChatUnreadCountView.Type = ChatUnreadCountView.self
+    /// The view that shows the number of unreads in the channel list.
+    public var channelUnreadCountView: ChatChannelUnreadCountView.Type = ChatChannelUnreadCountView.self
 
     /// The view that is displayed when there are no channels on the list, i.e. when is on empty state.
     public var channelListEmptyView: ChatChannelListEmptyView.Type = ChatChannelListEmptyView.self
@@ -606,16 +612,6 @@ public extension Components {
         }
         set {
             channelListLoadingView = newValue
-        }
-    }
-
-    @available(*, deprecated, renamed: "unreadCountView")
-    var channelUnreadCountView: ChatChannelUnreadCountView.Type {
-        get {
-            unreadCountView
-        }
-        set {
-            unreadCountView = newValue
         }
     }
 }
