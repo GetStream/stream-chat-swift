@@ -47,12 +47,6 @@ class PollVoteDTO: NSManagedObject {
     static func load(voteId: String, pollId: String, context: NSManagedObjectContext) -> PollVoteDTO? {
         let request = fetchRequest(for: voteId, pollId: pollId)
         let results = load(by: request, context: context)
-        if results.count > 1 {
-            for i in 1..<results.count {
-                let dto = results[i]
-                context.delete(dto)
-            }
-        }
         return results.first
     }
     
