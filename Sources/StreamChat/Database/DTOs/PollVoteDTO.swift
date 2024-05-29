@@ -46,7 +46,14 @@ class PollVoteDTO: NSManagedObject {
     
     static func load(voteId: String, pollId: String, context: NSManagedObjectContext) -> PollVoteDTO? {
         let request = fetchRequest(for: voteId, pollId: pollId)
-        return load(by: request, context: context).first
+        let results = load(by: request, context: context)
+        if results.count > 1 {
+            for i in 1..<results.count {
+                let dto = results[i]
+                context.delete(dto)
+            }
+        }
+        return results.first
     }
     
     static func fetchRequest(for voteId: String, pollId: String) -> NSFetchRequest<PollVoteDTO> {

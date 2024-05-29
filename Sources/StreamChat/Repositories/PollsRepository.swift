@@ -79,15 +79,25 @@ class PollsRepository {
         
         var pollVote: PollVoteDTO?
         database.write { session in
-            pollVote = try session.savePollVote(
-                voteId: nil,
-                pollId: pollId,
-                optionId: optionId,
-                answerText: answerText,
-                userId: currentUserId,
-                query: query
-            )
-        } completion: { [weak self] _ in
+            let voteId = PollVoteDTO.localVoteId(optionId: optionId, pollId: pollId, userId: currentUserId)
+            let existing = try? session.pollVote(id: voteId, pollId: pollId)
+            if existing == nil {
+                pollVote = try session.savePollVote(
+                    voteId: nil,
+                    pollId: pollId,
+                    optionId: optionId,
+                    answerText: answerText,
+                    userId: currentUserId,
+                    query: query
+                )
+            } else {
+                throw ClientError.PollVoteAlreadyExists()
+            }
+        } completion: { [weak self] error in
+            if let error {
+                completion?(error)
+                return
+            }
             let request = CastPollVoteRequestBody(
                 pollId: pollId,
                 vote: .init(
@@ -103,7 +113,7 @@ class PollsRepository {
                     vote: request
                 )
             ) {
-                if $0.isError, let pollVote {
+                if $0.isError, $0.error?.isBackendErrorWith400StatusCode == false, let pollVote {
                     self?.database.write { session in
                         session.delete(pollVote: pollVote)
                     }
@@ -131,7 +141,7 @@ class PollsRepository {
                         voteId: voteId
                     )
                 ) {
-                    if $0.error != nil, let pollVote {
+                    if $0.error != nil, $0.error?.isBackendNotFound404StatusCode == false, let pollVote {
                         self?.database.write { session in
                             let vote = try session.savePollVote(
                                 voteId: voteId,
@@ -279,6 +289,12 @@ extension ClientError {
     class PollVoteDoesNotExist: ClientError {
         init(voteId: String) {
             super.init("There is no `PollVoteDTO` instance in the DB matching id: \(voteId).")
+        }
+    }
+    
+    public class PollVoteAlreadyExists: ClientError {
+        public init() {
+            super.init("There is already `PollVoteDTO` instance in the DB.")
         }
     }
     
