@@ -5,9 +5,7 @@
 import StreamChat
 import UIKit
 
-// TODO: Make sure the ThreadListQuery used is efficient and only the necessary data is fetched.
-
-/// A `UIViewController` subclass  that shows the list of threads which the current user is participating.
+/// The view controller used to display the list of threads the current user is participating.
 @available(iOSApplicationExtension, unavailable)
 open class ChatThreadListVC:
     _ViewController,
@@ -51,6 +49,7 @@ open class ChatThreadListVC:
         threadListController.delegate = self
         threadListController.synchronize()
 
+        tableView.register(ChatThreadListItemCell.self)
         tableView.delegate = self
         tableView.dataSource = self
 
@@ -110,13 +109,18 @@ open class ChatThreadListVC:
 
     open func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let thread = threads[indexPath.row]
-        let cell = UITableViewCell(style: .value1, reuseIdentifier: "thread-cell")
-        cell.textLabel?.text = thread.parentMessageId
-        cell.detailTextLabel?.text = "\(thread.reads.first(where: { $0.user.id == threadListController.client.currentUserId })?.unreadMessagesCount ?? 0)"
+        let cell = tableView.dequeueReusableCell(with: ChatThreadListItemCell.self, for: indexPath)
+        cell.components = components
+        cell.itemView.content = .init(
+            thread: thread,
+            currentUserId: threadListController.client.currentUserId
+        )
         return cell
     }
 
     open func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        tableView.deselectRow(at: indexPath, animated: false)
+        // TODO: Move to router
         let thread = threads[indexPath.row]
         let client = threadListController.client
         let threadVC = components.threadVC.init()

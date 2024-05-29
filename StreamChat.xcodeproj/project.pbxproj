@@ -1596,6 +1596,10 @@
 		ADD3285E2C05447200BAD0E9 /* ChatThreadListVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADD3285C2C05442F00BAD0E9 /* ChatThreadListVC.swift */; };
 		ADD3285F2C05447500BAD0E9 /* ChatThreadListVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADD3285C2C05442F00BAD0E9 /* ChatThreadListVC.swift */; };
 		ADD328612C06463600BAD0E9 /* DemoChatThreadListVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADD328602C06463600BAD0E9 /* DemoChatThreadListVC.swift */; };
+		ADD328662C06B3A700BAD0E9 /* ChatThreadListItemCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADD328642C06B39F00BAD0E9 /* ChatThreadListItemCell.swift */; };
+		ADD328672C06B3A900BAD0E9 /* ChatThreadListItemCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADD328642C06B39F00BAD0E9 /* ChatThreadListItemCell.swift */; };
+		ADD328682C06B3AD00BAD0E9 /* ChatThreadListItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADD328622C06B2F700BAD0E9 /* ChatThreadListItemView.swift */; };
+		ADD328692C06B3AE00BAD0E9 /* ChatThreadListItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADD328622C06B2F700BAD0E9 /* ChatThreadListItemView.swift */; };
 		ADD4C0E12B30A98300F230FF /* UnsupportedAttachmentViewInjector.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADD4C0DE2B30A95200F230FF /* UnsupportedAttachmentViewInjector.swift */; };
 		ADD4C0E22B30A98400F230FF /* UnsupportedAttachmentViewInjector.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADD4C0DE2B30A95200F230FF /* UnsupportedAttachmentViewInjector.swift */; };
 		ADD738472A8D312B0011FE81 /* ChannelListMessageTimestampFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADD738462A8D312B0011FE81 /* ChannelListMessageTimestampFormatter.swift */; };
@@ -4200,6 +4204,8 @@
 		ADD328592C04DD8300BAD0E9 /* DemoAppTabBarController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DemoAppTabBarController.swift; sourceTree = "<group>"; };
 		ADD3285C2C05442F00BAD0E9 /* ChatThreadListVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatThreadListVC.swift; sourceTree = "<group>"; };
 		ADD328602C06463600BAD0E9 /* DemoChatThreadListVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DemoChatThreadListVC.swift; sourceTree = "<group>"; };
+		ADD328622C06B2F700BAD0E9 /* ChatThreadListItemView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatThreadListItemView.swift; sourceTree = "<group>"; };
+		ADD328642C06B39F00BAD0E9 /* ChatThreadListItemCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatThreadListItemCell.swift; sourceTree = "<group>"; };
 		ADD4C0DE2B30A95200F230FF /* UnsupportedAttachmentViewInjector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UnsupportedAttachmentViewInjector.swift; sourceTree = "<group>"; };
 		ADD5A9E725DE8AF6006DC88A /* ChatSuggestionsVC_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatSuggestionsVC_Tests.swift; sourceTree = "<group>"; };
 		ADD738462A8D312B0011FE81 /* ChannelListMessageTimestampFormatter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelListMessageTimestampFormatter.swift; sourceTree = "<group>"; };
@@ -8597,6 +8603,8 @@
 			isa = PBXGroup;
 			children = (
 				ADD3285C2C05442F00BAD0E9 /* ChatThreadListVC.swift */,
+				ADD328622C06B2F700BAD0E9 /* ChatThreadListItemView.swift */,
+				ADD328642C06B39F00BAD0E9 /* ChatThreadListItemCell.swift */,
 			);
 			path = ChatThreadList;
 			sourceTree = "<group>";
@@ -10313,6 +10321,7 @@
 				AD87D0A1263C7823008B466C /* AttachmentButton.swift in Sources */,
 				22753599257C442300D1FDB6 /* SendButton.swift in Sources */,
 				88F836502578D16D0039AEC8 /* ChatMessageActionControl.swift in Sources */,
+				ADD328682C06B3AD00BAD0E9 /* ChatThreadListItemView.swift in Sources */,
 				88BA7F5D258B6953006CE0C5 /* ChatLoadingIndicator.swift in Sources */,
 				40FA4DD42A12A0C300DA21D2 /* SlideToCancelView.swift in Sources */,
 				ADCB578B28A42D7700B81AE8 /* Differentiable.swift in Sources */,
@@ -10398,6 +10407,7 @@
 				64B059E22670EFFE0024CE90 /* ChatChannelVC+SwiftUI.swift in Sources */,
 				BDDD1EA32632C50200BA007B /* Appearance.swift in Sources */,
 				88CABC4425933EE70061BB67 /* ChatMessageDefaultReactionsBubbleView.swift in Sources */,
+				ADD328662C06B3A700BAD0E9 /* ChatThreadListItemCell.swift in Sources */,
 				C1788F5829B8C1B400149883 /* ChatMessageHeaderDecoratorView.swift in Sources */,
 				AD91C35428A5550C004D1E45 /* ChatMessageListVC+DiffKit.swift in Sources */,
 				79CCB66E259CBC4F0082F172 /* ChatChannelNamer.swift in Sources */,
@@ -12447,6 +12457,7 @@
 				C121EBBF2746A1E900023E4C /* ZoomTransitionController.swift in Sources */,
 				C121EBC02746A1E900023E4C /* ZoomAnimator.swift in Sources */,
 				40824D362A1271D7003B61FD /* PillButton_Tests.swift in Sources */,
+				ADD328692C06B3AE00BAD0E9 /* ChatThreadListItemView.swift in Sources */,
 				40824D1E2A1271B9003B61FD /* PillButton.swift in Sources */,
 				AD78F9FD28EC735700BC0FCE /* SwiftyScanner.swift in Sources */,
 				C121EBC12746A1E900023E4C /* VideoPlaybackControlView.swift in Sources */,
@@ -12623,6 +12634,7 @@
 				C121EC312746A1ED00023E4C /* Operation.swift in Sources */,
 				C121EC322746A1ED00023E4C /* ImageRequestKeys.swift in Sources */,
 				C121EC332746A1ED00023E4C /* LinkedList.swift in Sources */,
+				ADD328672C06B3A900BAD0E9 /* ChatThreadListItemCell.swift in Sources */,
 				C121EC342746A1ED00023E4C /* UIImageView+SwiftyGif.swift in Sources */,
 				C121EC352746A1ED00023E4C /* NSImage+SwiftyGif.swift in Sources */,
 				C121EC362746A1ED00023E4C /* UIImage+SwiftyGif.swift in Sources */,

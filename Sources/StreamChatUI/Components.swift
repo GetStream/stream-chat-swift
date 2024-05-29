@@ -345,6 +345,12 @@ public struct Components {
 
     // MARK: - Thread components
 
+    /// A subclass of `UITableViewCell` that contains the `ChatThreadListItemView`.
+    public var threadListItemCell: ChatThreadListItemCell.Type = ChatThreadListItemCell.self
+
+    /// The view that displays the thread information in the Thread List.
+    public var threadListItemView: ChatThreadListItemView.Type = ChatThreadListItemView.self
+
     /// The view controller used to display the detail of a message thread.
     public var threadVC: ChatThreadVC.Type = ChatThreadVC.self
 
