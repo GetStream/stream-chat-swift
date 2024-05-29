@@ -169,6 +169,11 @@ public class PollController: DataController, DelegateCallable, DataStoreProvider
             return
         }
         
+        var deleteExistingVotes = [PollVote]()
+        if poll?.enforceUniqueVote == true && !ownVotes.isEmpty {
+            deleteExistingVotes = Array(ownVotes)
+        }
+        
         pollsRepository.castPollVote(
             messageId: messageId,
             pollId: pollId,
@@ -176,6 +181,7 @@ public class PollController: DataController, DelegateCallable, DataStoreProvider
             optionId: optionId,
             currentUserId: client.currentUserId,
             query: ownVotesQuery,
+            deleteExistingVotes: deleteExistingVotes,
             completion: completion
         )
     }

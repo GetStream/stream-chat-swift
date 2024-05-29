@@ -53,6 +53,7 @@ class PollsRepository {
         optionId: String?,
         currentUserId: String?,
         query: PollVoteListQuery?,
+        deleteExistingVotes: [PollVote],
         completion: ((Error?) -> Void)? = nil
     ) {
         guard let optionId, !optionId.isEmpty else {
@@ -93,6 +94,9 @@ class PollsRepository {
             } else {
                 throw ClientError.PollVoteAlreadyExists()
             }
+            for toDelete in deleteExistingVotes {
+                _ = try? session.removePollVote(with: toDelete.id, pollId: toDelete.pollId)
+            }
         } completion: { [weak self] error in
             if let error {
                 completion?(error)
@@ -116,6 +120,16 @@ class PollsRepository {
                 if $0.isError, $0.error?.isBackendErrorWith400StatusCode == false, let pollVote {
                     self?.database.write { session in
                         session.delete(pollVote: pollVote)
+                        for vote in deleteExistingVotes {
+                            _ = try? session.savePollVote(
+                                voteId: vote.id,
+                                pollId: vote.pollId,
+                                optionId: vote.optionId,
+                                answerText: vote.answerText,
+                                userId: vote.user?.id,
+                                query: query
+                            )
+                        }
                     }
                 }
                 completion?($0.error)

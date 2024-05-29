@@ -29,6 +29,7 @@ final class PollsRepository_Mock: PollsRepository, Spy {
         optionId: String?,
         currentUserId: String?,
         query: PollVoteListQuery?,
+        deleteExistingVotes: [PollVote] = [],
         completion: ((Error?) -> Void)? = nil
     ) {
         castPollVote_completion = completion
