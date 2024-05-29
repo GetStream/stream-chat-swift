@@ -757,7 +757,7 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
         votingVisibility: VotingVisibility? = nil,
         options: [PollOption]? = nil,
         extraData: [String: RawJSON]? = nil,
-        completion: @escaping (Result<MessageId, Error>) -> Void
+        completion: ((Result<MessageId, Error>) -> Void)?
     ) {
         pollsRepository.createPoll(
             name: name,
@@ -773,9 +773,15 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
             guard let self else { return }
             switch result {
             case let .success(poll):
-                self.createNewMessage(text: "", poll: poll, completion: completion)
+                self.createNewMessage(text: "", poll: poll, completion: { result in
+                    self.callback {
+                        completion?(result)
+                    }
+                })
             case let .failure(error):
-                completion(.failure(error))
+                self.callback {
+                    completion?(.failure(error))
+                }
             }
         }
     }

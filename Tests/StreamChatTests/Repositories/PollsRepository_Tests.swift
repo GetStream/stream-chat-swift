@@ -183,11 +183,21 @@ final class PollsRepository_Tests: XCTestCase {
     
     // MARK: - Casting votes
     
-    func test_castPollVote_whenSuccess() {
+    func test_castPollVote_whenSuccess() throws {
         let completionCalled = expectation(description: "completion called")
         let pollOptionId = "345"
         let pollId = "123"
         let messageId: String = .unique
+        
+        try database.writeSynchronously { session in
+            try session.savePoll(
+                payload: self.dummyPollPayload(
+                    id: pollId,
+                    options: [self.dummyPollOptionPayload(id: pollOptionId)]
+                ),
+                cache: nil
+            )
+        }
                 
         repository.castPollVote(
             messageId: messageId,
@@ -195,7 +205,8 @@ final class PollsRepository_Tests: XCTestCase {
             answerText: nil,
             optionId: pollOptionId,
             currentUserId: .unique,
-            query: nil
+            query: nil,
+            deleteExistingVotes: []
         ) { error in
             XCTAssertNil(error)
             completionCalled.fulfill()
@@ -217,11 +228,21 @@ final class PollsRepository_Tests: XCTestCase {
         XCTAssertEqual(payload.optionId, pollOptionId)
     }
     
-    func test_castPollVote_whenFailure() {
+    func test_castPollVote_whenFailure() throws {
         let completionCalled = expectation(description: "completion called")
         let pollId = "123"
         let messageId: String = .unique
         let pollOptionId = "345"
+        
+        try database.writeSynchronously { session in
+            try session.savePoll(
+                payload: self.dummyPollPayload(
+                    id: pollId,
+                    options: [self.dummyPollOptionPayload(id: pollOptionId)]
+                ),
+                cache: nil
+            )
+        }
 
         repository.castPollVote(
             messageId: messageId,
@@ -229,7 +250,8 @@ final class PollsRepository_Tests: XCTestCase {
             answerText: nil,
             optionId: pollOptionId,
             currentUserId: .unique,
-            query: nil
+            query: nil,
+            deleteExistingVotes: []
         ) { error in
             XCTAssertNotNil(error)
             completionCalled.fulfill()
@@ -261,7 +283,8 @@ final class PollsRepository_Tests: XCTestCase {
             answerText: answer,
             optionId: nil,
             currentUserId: .unique,
-            query: nil
+            query: nil,
+            deleteExistingVotes: []
         ) { error in
             XCTAssertNil(error)
             completionCalled.fulfill()
@@ -296,7 +319,8 @@ final class PollsRepository_Tests: XCTestCase {
             answerText: answer,
             optionId: nil,
             currentUserId: .unique,
-            query: nil
+            query: nil,
+            deleteExistingVotes: []
         ) { error in
             XCTAssertNotNil(error)
             completionCalled.fulfill()

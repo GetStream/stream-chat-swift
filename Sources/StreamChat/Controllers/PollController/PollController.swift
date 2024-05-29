@@ -182,8 +182,8 @@ public class PollController: DataController, DelegateCallable, DataStoreProvider
             currentUserId: client.currentUserId,
             query: ownVotesQuery,
             deleteExistingVotes: deleteExistingVotes,
-            completion: { result in
-                self.callback {
+            completion: { [weak self] result in
+                self?.callback {
                     completion?(result)
                 }
             }
@@ -203,8 +203,8 @@ public class PollController: DataController, DelegateCallable, DataStoreProvider
             messageId: messageId,
             pollId: pollId,
             voteId: voteId,
-            completion: { result in
-                self.callback {
+            completion: { [weak self] result in
+                self?.callback {
                     completion?(result)
                 }
             }
@@ -216,8 +216,8 @@ public class PollController: DataController, DelegateCallable, DataStoreProvider
     /// - Parameters:
     ///   - completion: A closure to be called upon completion, with an optional `Error` if something went wrong.
     public func closePoll(completion: ((Error?) -> Void)? = nil) {
-        pollsRepository.closePoll(pollId: pollId, completion: { result in
-            self.callback {
+        pollsRepository.closePoll(pollId: pollId, completion: { [weak self] result in
+            self?.callback {
                 completion?(result)
             }
         })
@@ -241,8 +241,8 @@ public class PollController: DataController, DelegateCallable, DataStoreProvider
             text: text,
             position: position,
             custom: extraData,
-            completion: { result in
-                self.callback {
+            completion: { [weak self] result in
+                self?.callback {
                     completion?(result)
                 }
             }
