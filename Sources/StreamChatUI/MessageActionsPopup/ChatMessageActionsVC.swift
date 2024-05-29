@@ -145,7 +145,7 @@ open class ChatMessageActionsVC: _ViewController, ThemeProvider {
             }
             
             if !isSentByCurrentUser {
-                let isBlocked = currentUser.blockedUsers.map(\.blockedUserId).contains(message.author.id)
+                let isBlocked = currentUser.blockedUsers.map(\.userId).contains(message.author.id)
                 actions.append(isBlocked ? unblockActionItem() : blockActionItem())
             }
 

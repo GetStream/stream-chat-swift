@@ -118,7 +118,7 @@ struct BlockedUsersResponse: Decodable {
     }
 
     /// The blocked users.
-    public let blockedUsers: [BlockedUserPayload]
+    let blockedUsers: [BlockedUserPayload]
 }
 
 /// An object describing the incoming blocked-user JSON payload.

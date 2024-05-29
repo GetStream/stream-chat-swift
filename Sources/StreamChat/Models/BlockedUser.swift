@@ -8,22 +8,22 @@ import Foundation
 ///
 public struct BlockedUser {
     /// The unique identifier of the blocked user.
-    public let blockedUserId: UserId
+    public let userId: UserId
 
     /// The date the user was blocked.
     public let blockedAt: Date?
 
     init(
-        blockedUserId: UserId,
+        userId: UserId,
         blockedAt: Date?
     ) {
-        self.blockedUserId = blockedUserId
+        self.userId = userId
         self.blockedAt = blockedAt
     }
 }
 
 extension BlockedUser: Hashable {
     public func hash(into hasher: inout Hasher) {
-        hasher.combine(blockedUserId)
+        hasher.combine(userId)
     }
 }

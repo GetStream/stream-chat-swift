@@ -5,7 +5,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## StreamChat
 ### ✅ Added
-- Add a user block feature) [#3223](https://github.com/GetStream/stream-chat-swift/pull/3223)
+- Add a user block feature [#3223](https://github.com/GetStream/stream-chat-swift/pull/3223)
 
 ### 🔄 Changed
 
