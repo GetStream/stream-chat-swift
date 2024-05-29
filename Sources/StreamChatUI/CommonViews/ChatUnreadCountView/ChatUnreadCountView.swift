@@ -5,8 +5,11 @@
 import StreamChat
 import UIKit
 
+@available(*, deprecated, renamed: "ChatUnreadCountView")
+public typealias ChatChannelUnreadCountView = ChatUnreadCountView
+
 /// A view that shows a number of unread messages in channel.
-open class ChatChannelUnreadCountView: _View, ThemeProvider, SwiftUIRepresentable {
+open class ChatUnreadCountView: _View, ThemeProvider, SwiftUIRepresentable {
     /// The `UILabel` instance that holds number of unread messages.
     open private(set) lazy var unreadCountLabel = UILabel()
         .withoutAutoresizingMaskConstraints

@@ -390,8 +390,8 @@ public struct Components {
     /// The view that shows the channel avatar including an indicator of the user presence (online/offline).
     public var channelAvatarView: ChatChannelAvatarView.Type = ChatChannelAvatarView.self
 
-    /// The view that shows a number of unread messages in channel.
-    public var channelUnreadCountView: ChatChannelUnreadCountView.Type = ChatChannelUnreadCountView.self
+    /// A view that shows a number of unreads.
+    public var unreadCountView: ChatUnreadCountView.Type = ChatUnreadCountView.self
 
     /// The view that is displayed when there are no channels on the list, i.e. when is on empty state.
     public var channelListEmptyView: ChatChannelListEmptyView.Type = ChatChannelListEmptyView.self
@@ -600,6 +600,16 @@ public extension Components {
         }
         set {
             channelListLoadingView = newValue
+        }
+    }
+
+    @available(*, deprecated, renamed: "unreadCountView")
+    var channelUnreadCountView: ChatChannelUnreadCountView.Type {
+        get {
+            unreadCountView
+        }
+        set {
+            unreadCountView = newValue
         }
     }
 }

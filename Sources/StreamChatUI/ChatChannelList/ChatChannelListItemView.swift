@@ -119,8 +119,8 @@ open class ChatChannelListItemView: _View, ThemeProvider, SwiftUIRepresentable {
         .withAccessibilityIdentifier(identifier: "userAvatarView")
 
     /// The view showing number of unread messages in channel if any.
-    open private(set) lazy var unreadCountView: ChatChannelUnreadCountView = components
-        .channelUnreadCountView.init()
+    open private(set) lazy var unreadCountView: ChatUnreadCountView = components
+        .unreadCountView.init()
         .withoutAutoresizingMaskConstraints
         .withAccessibilityIdentifier(identifier: "unreadCountView")
 
