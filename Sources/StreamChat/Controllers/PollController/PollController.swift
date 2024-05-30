@@ -56,6 +56,8 @@ public class PollController: DataController, DelegateCallable, DataStoreProvider
     
     let ownVotesQuery: PollVoteListQuery
     
+    private let eventsController: EventsController
+    
     private lazy var pollObserver: EntityDatabaseObserverWrapper<Poll, PollDTO>? = { [weak self] in
         guard let self = self else {
             log.warning("Callback called while self is nil")
@@ -126,6 +128,7 @@ public class PollController: DataController, DelegateCallable, DataStoreProvider
         self.messageId = messageId
         self.pollId = pollId
         self.environment = environment
+        eventsController = client.eventsController()
         ownVotesQuery = PollVoteListQuery(
             pollId: pollId,
             optionId: nil,
@@ -135,8 +138,8 @@ public class PollController: DataController, DelegateCallable, DataStoreProvider
             )
         )
         pollsRepository = client.pollsRepository
-        
         super.init()
+        eventsController.delegate = self
     }
     
     override public func synchronize(_ completion: ((_ error: Error?) -> Void)? = nil) {
@@ -308,6 +311,17 @@ extension PollController {
                 fetchRequest: $2,
                 itemCreator: $3
             )
+        }
+    }
+}
+
+extension PollController: EventsControllerDelegate {
+    public func eventsController(_ controller: EventsController, didReceiveEvent event: Event) {
+        if let event = event as? PollVoteChangedEvent {
+            let vote = event.vote
+            if vote.user?.id == client.currentUserId {
+                pollsRepository.link(pollVote: vote, to: ownVotesQuery)
+            }
         }
     }
 }

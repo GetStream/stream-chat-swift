@@ -183,6 +183,8 @@ extension NSManagedObjectContext {
             queryDTO?.votes.insert(dto)
         }
         
+        option?.latestVotes.insert(dto)
+        
         return dto
     }
     
@@ -207,6 +209,7 @@ extension NSManagedObjectContext {
             if votes >= 0 {
                 poll?.voteCountsByOption?[optionId] = votes
             }
+            dto.option?.latestVotes.remove(dto)
         }
 
         delete(pollVote: dto)
