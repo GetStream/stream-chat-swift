@@ -119,7 +119,7 @@ class PollsRepository {
             ) {
                 if $0.isError, $0.error?.isBackendErrorWith400StatusCode == false, let pollVote {
                     self?.database.write { session in
-                        session.delete(pollVote: pollVote)
+                        _ = try? session.removePollVote(with: pollVote.id, pollId: pollVote.pollId)
                         for vote in deleteExistingVotes {
                             _ = try? session.savePollVote(
                                 voteId: vote.id,

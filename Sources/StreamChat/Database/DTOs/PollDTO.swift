@@ -125,7 +125,7 @@ extension NSManagedObjectContext {
         if let userPayload = payload.createdBy {
             pollDto.createdBy = try saveUser(payload: userPayload, query: nil, cache: cache)
         } else {
-            pollDto.createdBy = nil
+            pollDto.createdBy = UserDTO.loadOrCreate(id: payload.createdById, context: self, cache: cache)
         }
         pollDto.options = try NSOrderedSet(
             array: payload.options.compactMap { payload in
