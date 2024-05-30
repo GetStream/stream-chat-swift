@@ -17,7 +17,7 @@ class PollVoteDTO: NSManagedObject {
     @NSManaged var option: PollOptionDTO?
     @NSManaged var poll: PollDTO?
     @NSManaged var user: UserDTO?
-    @NSManaged var queries: [PollVoteListQueryDTO]?
+    @NSManaged var queries: Set<PollVoteListQueryDTO>?
     
     static func loadOrCreate(
         voteId: String,
@@ -117,6 +117,9 @@ extension NSManagedObjectContext {
             context: self,
             cache: cache
         )
+        dto.option = option
+        dto.poll = poll
+        dto.user = user
         dto.createdAt = payload.createdAt.bridgeDate
         dto.updatedAt = payload.updatedAt.bridgeDate
         dto.pollId = payload.pollId
