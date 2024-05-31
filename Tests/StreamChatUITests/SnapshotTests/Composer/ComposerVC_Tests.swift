@@ -633,8 +633,6 @@ final class ComposerVC_Tests: XCTestCase {
     }
 
     func test_showLinkPreview() throws {
-        throw XCTSkip("https://github.com/GetStream/ios-issues-tracking/issues/848")
-        
         composerVC.components.isComposerLinkPreviewEnabled = true
         composerVC.content = .initial()
         composerVC.content.text = """
@@ -649,7 +647,11 @@ final class ComposerVC_Tests: XCTestCase {
             previewURL: .localYodaImage
         ))
 
-        AssertSnapshot(composerVC.view, size: .init(width: 400, height: 140))
+        AssertSnapshot(
+           composerVC.view,
+           variants: [.smallDark, .defaultLight, .rightToLeftLayout],
+           size: .init(width: 400, height: 140)
+       )
         XCTAssertEqual(composerVC.content.skipEnrichUrl, false)
     }
 
