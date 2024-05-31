@@ -648,10 +648,10 @@ final class ComposerVC_Tests: XCTestCase {
         ))
 
         AssertSnapshot(
-           composerVC.view,
-           variants: [.smallDark, .defaultLight, .rightToLeftLayout],
-           size: .init(width: 400, height: 140)
-       )
+            composerVC.view,
+            variants: [.smallDark, .defaultLight, .rightToLeftLayout],
+            size: .init(width: 400, height: 140)
+        )
         XCTAssertEqual(composerVC.content.skipEnrichUrl, false)
     }
 
