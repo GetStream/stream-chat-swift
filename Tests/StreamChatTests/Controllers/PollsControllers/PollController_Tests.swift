@@ -115,7 +115,7 @@ final class PollController_Tests: XCTestCase {
         XCTAssertEqual(controller.state, .localDataFetched)
 
         // Simulate network response with the error
-        client.mockPollsRepository.getQueryPollVotes_completion?(.success([]))
+        client.mockPollsRepository.getQueryPollVotes_completion?(.success(.init(votes: [])))
         // Release reference of completion so we can deallocate stuff
         client.mockPollsRepository.getQueryPollVotes_completion = nil
 
@@ -167,7 +167,7 @@ final class PollController_Tests: XCTestCase {
         let user = UserPayload.dummy(userId: currentUserId)
         try client.databaseContainer.createPoll(id: pollId, createdBy: user)
         
-        client.mockPollsRepository.getQueryPollVotes_completion?(.success([]))
+        client.mockPollsRepository.getQueryPollVotes_completion?(.success(.init(votes: [])))
 
         // Create own votes.
         var ownVotes = [PollVotePayload]()

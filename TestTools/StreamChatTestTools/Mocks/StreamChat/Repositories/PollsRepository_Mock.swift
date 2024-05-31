@@ -6,7 +6,7 @@ import Foundation
 @testable import StreamChat
 
 final class PollsRepository_Mock: PollsRepository, Spy {
-    @Atomic var getQueryPollVotes_completion: ((Result<[PollVote], Error>) -> Void)?
+    @Atomic var getQueryPollVotes_completion: ((Result<VotePaginationResponse, Error>) -> Void)?
     @Atomic var castPollVote_completion: ((Error?) -> Void)?
     @Atomic var removePollVote_completion: ((Error?) -> Void)?
     @Atomic var closePoll_completion: ((Error?) -> Void)?
@@ -17,7 +17,7 @@ final class PollsRepository_Mock: PollsRepository, Spy {
 
     override func queryPollVotes(
         query: PollVoteListQuery,
-        completion: ((Result<[PollVote], Error>) -> Void)? = nil
+        completion: ((Result<VotePaginationResponse, Error>) -> Void)? = nil
     ) {
         getQueryPollVotes_completion = completion
     }

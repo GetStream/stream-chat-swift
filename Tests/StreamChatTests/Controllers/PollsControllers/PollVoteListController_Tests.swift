@@ -117,7 +117,7 @@ final class PollVoteListController_Tests: XCTestCase {
         XCTAssertEqual(controller.state, .localDataFetched)
 
         // Simulate network response with the error
-        client.mockPollsRepository.getQueryPollVotes_completion?(.success([]))
+        client.mockPollsRepository.getQueryPollVotes_completion?(.success(.init(votes: [])))
         // Release reference of completion so we can deallocate stuff
         client.mockPollsRepository.getQueryPollVotes_completion = nil
 
@@ -168,7 +168,7 @@ final class PollVoteListController_Tests: XCTestCase {
         client = nil
     }
     
-    func test_loadMoreVotes_whenSuccess_whenMoreVotesThanLimit() {
+    func test_loadMoreVotes_whenSuccess_whenPaginationNextNotNil() {
         let exp = expectation(description: "loadVotes completion")
         controller.loadMoreVotes(limit: 2) { [weak self] _ in
             let votes = self?.controller.votes
@@ -176,16 +176,23 @@ final class PollVoteListController_Tests: XCTestCase {
             exp.fulfill()
         }
         
-        client.mockPollsRepository.getQueryPollVotes_completion?(.success([
-            .unique,
-            .unique
-        ]))
+        client.mockPollsRepository.getQueryPollVotes_completion?(
+            .success(
+                .init(
+                    votes: [
+                        .unique,
+                        .unique
+                    ],
+                    next: "A"
+                )
+            )
+        )
 
         wait(for: [exp], timeout: defaultTimeout)
         XCTAssertFalse(controller.hasLoadedAllVotes)
     }
     
-    func test_loadMoreVotes_whenSuccess_whenLessVotesThanLimit() {
+    func test_loadMoreVotes_whenSuccess_whenPaginationNextNil() {
         let exp = expectation(description: "loadVotes completion")
         controller.loadMoreVotes(limit: 5) { [weak self] _ in
             let votes = self?.controller.votes
@@ -193,10 +200,10 @@ final class PollVoteListController_Tests: XCTestCase {
             exp.fulfill()
         }
         
-        client.mockPollsRepository.getQueryPollVotes_completion?(.success([
+        client.mockPollsRepository.getQueryPollVotes_completion?(.success(.init(votes: [
             .unique,
             .unique
-        ]))
+        ])))
 
         wait(for: [exp], timeout: defaultTimeout)
         XCTAssertTrue(controller.hasLoadedAllVotes)

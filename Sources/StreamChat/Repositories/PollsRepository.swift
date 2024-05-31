@@ -217,7 +217,7 @@ class PollsRepository {
     
     func queryPollVotes(
         query: PollVoteListQuery,
-        completion: ((Result<[PollVote], Error>) -> Void)? = nil
+        completion: ((Result<VotePaginationResponse, Error>) -> Void)? = nil
     ) {
         apiClient.request(
             endpoint: .queryPollVotes(pollId: query.pollId, query: query)
@@ -231,7 +231,7 @@ class PollsRepository {
                     if let error = error {
                         completion?(.failure(error))
                     } else {
-                        completion?(.success(votes))
+                        completion?(.success(.init(votes: votes, next: payload.next)))
                     }
                 })
             case let .failure(error):
@@ -287,6 +287,11 @@ class PollsRepository {
                 to: query.filter?.filterHash
             )
         }
+    }
+    
+    struct VotePaginationResponse {
+        var votes: [PollVote]
+        var next: String?
     }
 }
 
