@@ -78,7 +78,7 @@ class PollsRepository {
             return
         }
         
-        var pollVote: PollVoteDTO?
+        var pollVote: PollVote?
         database.write { session in
             let voteId = PollVoteDTO.localVoteId(optionId: optionId, pollId: pollId, userId: currentUserId)
             let existing = try? session.pollVote(id: voteId, pollId: pollId)
@@ -90,7 +90,7 @@ class PollsRepository {
                     answerText: answerText,
                     userId: currentUserId,
                     query: query
-                )
+                ).asModel()
             } else {
                 throw ClientError.PollVoteAlreadyExists()
             }
