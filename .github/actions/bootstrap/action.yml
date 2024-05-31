@@ -8,14 +8,14 @@ runs:
     - run: echo "$HOME/.mint/bin" >> $GITHUB_PATH
       shell: bash
     - name: Cache Mint
-      uses: actions/cache@v3
+      uses: actions/cache@v4
       id: mint-cache
       with:
         path: ~/.mint
         key: ${{ env.IMAGE }}-mint-${{ hashFiles('**/Mintfile') }}
         restore-keys: ${{ env.IMAGE }}-mint-
     - name: Cache brew
-      uses: actions/cache@v3
+      uses: actions/cache@v4
       id: brew-cache
       with:
         path: |
