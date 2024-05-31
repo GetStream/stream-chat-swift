@@ -216,3 +216,7 @@
 
 /// The rate of the player, where the placeholder is the actual rate (e.g. x2).
 "audio.player.rate" = "x%@";
+
+// MARK: - Threads
+
+"thread.replied-to" = "replied to: %@";

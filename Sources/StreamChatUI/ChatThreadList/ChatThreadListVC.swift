@@ -119,7 +119,9 @@ open class ChatThreadListVC:
     }
 
     open func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        tableView.deselectRow(at: indexPath, animated: false)
+        defer {
+            tableView.deselectRow(at: indexPath, animated: true)
+        }
         // TODO: Move to router
         let thread = threads[indexPath.row]
         let client = threadListController.client

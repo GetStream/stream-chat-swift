@@ -171,16 +171,11 @@ open class ChatThreadListItemView: _View, ThemeProvider {
 
         replyTimestampLabel.textColor = appearance.colorPalette.subtitleText
         replyTimestampLabel.font = appearance.fonts.footnote
-
-        threadUnreadCountView.layoutMargins = .init(top: 3, left: 4, bottom: 3, right: 4)
         
         threadIconView.tintColor = appearance.colorPalette.text
-        // TODO:
-        if #available(iOS 13.0, *) {
-            threadIconView.image = UIImage(systemName: "text.bubble")
-        } else {
-            // Fallback on earlier versions
-        }
+        threadIconView.image = appearance.images.threadListItemIcon
+
+        threadUnreadCountView.layoutMargins = .init(top: 3, left: 4, bottom: 3, right: 4)
     }
 
     override open func setUpLayout() {
@@ -247,18 +242,23 @@ open class ChatThreadListItemView: _View, ThemeProvider {
         let channel = thread.channel
         let latestReply = thread.latestReplies.last
 
-        let channelName = appearance.formatters.channelName.format(
+        let parentMessageText = thread.parentMessage?.text ?? ""
+        let channelNameText = appearance.formatters.channelName.format(
             channel: channel,
             forCurrentUserId: content.currentUserId
         )
-        threadTitleLabel.text = channelName
-        threadDescriptionLabel.text = "replied to: \(thread.parentMessage?.text ?? "")"
+        let replyTimestampLabelText = latestReply.map {
+            appearance.formatters.messageTimestamp.format($0.createdAt)
+        }
+        let unreadReplies = thread.reads.first(where: { $0.user.id == content.currentUserId })?.unreadMessagesCount ?? 0
+
+        threadTitleLabel.text = channelNameText
+        threadDescriptionLabel.text = L10n.Thread.repliedTo(parentMessageText)
         replyDescriptionLabel.text = latestReply?.text
-        replyTimestampLabel.text = latestReply.map { appearance.formatters.messageTimestamp.format($0.createdAt) }
+        replyTimestampLabel.text = replyTimestampLabelText
         replyAuthorAvatarView.content = latestReply?.author
         replyTitleLabel.text = latestReply?.author.name
-        let unreads = thread.reads.first(where: { $0.user.id == content.currentUserId })?.unreadMessagesCount ?? 1
-        threadUnreadCountView.content = unreads
+        threadUnreadCountView.content = unreadReplies
         threadUnreadCountView.invalidateIntrinsicContentSize()
     }
 }

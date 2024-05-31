@@ -83,6 +83,10 @@ public extension Appearance {
         public var messageDeliveryStatusRead: UIImage = loadImageSafely(with: "message_receipt_read")
         public var messageDeliveryStatusFailed: UIImage = loadImageSafely(with: "message_receipt_failed")
 
+        // MARK: - Threads
+
+        public var threadListItemIcon: UIImage = loadSafely(systemName: "text.bubble", assetsFallback: "text_bubble")
+
         // MARK: - Reactions
 
         public var reactionLoveSmall: UIImage = loadImageSafely(with: "reaction_love_small")

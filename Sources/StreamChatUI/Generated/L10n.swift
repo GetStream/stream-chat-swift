@@ -343,6 +343,13 @@ internal enum L10n {
       }
     }
   }
+
+  internal enum Thread {
+    /// replied to: %@
+    internal static func repliedTo(_ p1: Any) -> String {
+      return L10n.tr("Localizable", "thread.replied-to", String(describing: p1))
+    }
+  }
 }
 
 // MARK: - Implementation Details
