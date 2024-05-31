@@ -348,6 +348,10 @@ public struct Components {
 
     // MARK: - Thread components
 
+    /// The router responsible for navigation on thread list screen.
+    @available(iOSApplicationExtension, unavailable)
+    public var threadListRouter: ChatThreadListRouter.Type = ChatThreadListRouter.self
+
     /// A subclass of `UITableViewCell` that contains the `ChatThreadListItemView`.
     public var threadListItemCell: ChatThreadListItemCell.Type = ChatThreadListItemCell.self
 

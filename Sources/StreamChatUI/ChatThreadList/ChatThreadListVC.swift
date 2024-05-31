@@ -43,6 +43,11 @@ open class ChatThreadListVC:
         .withoutAutoresizingMaskConstraints
         .withAccessibilityIdentifier(identifier: "tableView")
 
+    /// A router object responsible for handling navigation actions of this view controller.
+    open lazy var router: ChatThreadListRouter = components
+        .threadListRouter
+        .init(rootViewController: self)
+
     override open func setUp() {
         super.setUp()
 
@@ -97,10 +102,6 @@ open class ChatThreadListVC:
         tableView.reloadData()
     }
 
-    open func controller(_ controller: DataController, didChangeState state: DataController.State) {
-        // TODO:
-    }
-
     // MARK: - UITableViewDataSource & UITableViewDelegate
 
     open func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -119,18 +120,8 @@ open class ChatThreadListVC:
     }
 
     open func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        defer {
-            tableView.deselectRow(at: indexPath, animated: true)
-        }
-        // TODO: Move to router
+        tableView.deselectRow(at: indexPath, animated: true)
         let thread = threads[indexPath.row]
-        let client = threadListController.client
-        let threadVC = components.threadVC.init()
-        threadVC.channelController = client.channelController(for: thread.channel.cid)
-        threadVC.messageController = client.messageController(
-            cid: thread.channel.cid,
-            messageId: thread.parentMessageId
-        )
-        navigationController?.show(threadVC, sender: self)
+        router.showThread(thread)
     }
 }
