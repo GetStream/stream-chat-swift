@@ -53,6 +53,9 @@ public extension FilterKey where Scope: AnyVoteListFilterScope {
     
     /// A filter key for matching the poll id.
     static var pollId: FilterKey<Scope, String> { "poll_id" }
+    
+    /// A filter that determines whether a vote is an answer.
+    static var isAnswer: FilterKey<Scope, Bool> { "is_answer" }
 }
 
 extension PollVoteListQuery {
