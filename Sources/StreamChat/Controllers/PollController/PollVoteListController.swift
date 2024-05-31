@@ -45,7 +45,8 @@ public class PollVoteListController: DataController, DelegateCallable, DataStore
         return pollVotesObserver.items
     }
     
-    public var hasLoadedAllVotes: Bool { votesCursor == nil }
+    /// A Boolean value that returns whether pagination is finished.
+    public private(set) var hasLoadedAllVotes: Bool = false
 
     /// Set the delegate of `PollVoteListController` to observe the changes in the system.
     public weak var delegate: PollVoteListControllerDelegate? {
@@ -105,7 +106,7 @@ public class PollVoteListController: DataController, DelegateCallable, DataStore
     private let eventsController: EventsController
     private let pollsRepository: PollsRepository
     private let environment: Environment
-    private var votesCursor: String?
+    private var nextCursor: String?
 
     /// Creates a new `PollVoteListController`.
     ///
@@ -127,7 +128,10 @@ public class PollVoteListController: DataController, DelegateCallable, DataStore
 
         pollsRepository.queryPollVotes(query: query) { [weak self] result in
             guard let self else { return }
-            self.votesCursor = result.value?.next
+            if let value = result.value {
+                self.nextCursor = value.next
+                self.hasLoadedAllVotes = value.votes.count < self.query.pagination.pageSize
+            }
             if let error = result.error {
                 self.state = .remoteDataFetchFailed(ClientError(with: error))
             } else {
@@ -166,10 +170,13 @@ public extension PollVoteListController {
     ) {
         let limit = limit ?? query.pagination.pageSize
         var updatedQuery = query
-        updatedQuery.pagination = Pagination(pageSize: limit, cursor: votesCursor)
+        updatedQuery.pagination = Pagination(pageSize: limit, cursor: nextCursor)
         pollsRepository.queryPollVotes(query: updatedQuery) { [weak self] result in
             guard let self else { return }
-            self.votesCursor = result.value?.next
+            if let value = result.value {
+                self.nextCursor = value.next
+                self.hasLoadedAllVotes = value.votes.count < limit
+            }
             self.callback { completion?(result.error) }
         }
     }
