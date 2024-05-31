@@ -134,7 +134,7 @@ enum EndpointPath: Codable {
         case let .pollOption(pollId: pollId, optionId: optionId): return "polls/\(pollId)/options/\(optionId)"
         case let .pollOptions(pollId: pollId): return "polls/\(pollId)/options"
         case let .pollVoteInMessage(messageId: messageId, pollId: pollId): return "messages/\(messageId)/polls/\(pollId)/vote"
-        case let .pollVote(messageId: messageId, pollId: pollId, voteId: voteId): return "messages/\(messageId)/polls/\(pollId)/\(voteId)"
+        case let .pollVote(messageId: messageId, pollId: pollId, voteId: voteId): return "messages/\(messageId)/polls/\(pollId)/vote/\(voteId)"
         case let .pollVotes(pollId: pollId): return "polls/\(pollId)/votes"
         }
     }

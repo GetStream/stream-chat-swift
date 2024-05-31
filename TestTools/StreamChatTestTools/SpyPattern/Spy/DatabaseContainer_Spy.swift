@@ -386,4 +386,10 @@ extension DatabaseContainer {
             )
         }
     }
+    
+    func createPoll(id: String = .unique, createdBy: UserPayload? = nil) throws {
+        try writeSynchronously { session in
+            try session.savePoll(payload: XCTestCase().dummyPollPayload(id: id, user: createdBy), cache: nil)
+        }
+    }
 }

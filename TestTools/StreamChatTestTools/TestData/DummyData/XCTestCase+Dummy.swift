@@ -371,6 +371,90 @@ extension XCTestCase {
             lastReadAt: lastReadAt
         )
     }
+    
+    func dummyPollPayload(
+        allowAnswers: Bool = false,
+        allowUserSuggestedOptions: Bool = true,
+        answersCount: Int = 0,
+        createdAt: Date = Date(),
+        createdById: String = .unique,
+        description: String = "",
+        enforceUniqueVote: Bool = false,
+        id: String = .unique,
+        name: String = "Test Poll",
+        updatedAt: Date = Date(),
+        voteCount: Int = 0,
+        latestAnswers: [PollVotePayload?]? = nil,
+        options: [PollOptionPayload?] = [],
+        ownVotes: [PollVotePayload?] = [],
+        custom: [String : RawJSON] = [:],
+        latestVotesByOption: [String : [PollVotePayload]] = [:],
+        voteCountsByOption: [String : Int] = [:],
+        isClosed: Bool? = nil,
+        maxVotesAllowed: Int? = nil,
+        votingVisibility: String? = nil,
+        user: UserPayload? = .dummy(userId: .unique)
+    ) -> PollPayload {
+        .init(
+            allowAnswers: allowAnswers,
+            allowUserSuggestedOptions: allowUserSuggestedOptions,
+            answersCount: answersCount,
+            createdAt: createdAt,
+            createdById: user?.id ?? createdById,
+            description: description,
+            enforceUniqueVote: enforceUniqueVote,
+            id: id,
+            name: name,
+            updatedAt: updatedAt,
+            voteCount: voteCount,
+            latestAnswers: latestAnswers,
+            options: options,
+            ownVotes: ownVotes,
+            custom: custom,
+            latestVotesByOption: latestVotesByOption,
+            voteCountsByOption: voteCountsByOption,
+            isClosed: isClosed,
+            maxVotesAllowed: maxVotesAllowed,
+            votingVisibility: votingVisibility,
+            createdBy: user
+        )
+    }
+    
+    func dummyPollOptionPayload(
+        id: String = .unique,
+        text: String = "Test Option",
+        custom: [String: RawJSON] = [:]
+    ) -> PollOptionPayload {
+        .init(
+            id: id,
+            text: text,
+            custom: custom
+        )
+    }
+    
+    func dummyPollVotePayload(
+        createdAt: Date = Date(),
+        id: String = .unique,
+        optionId: String? = nil,
+        pollId: String = .unique,
+        updatedAt: Date = Date(),
+        answerText: String? = nil,
+        isAnswer: Bool? = false,
+        userId: String? = .unique,
+        user: UserPayload? = .dummy(userId: .unique)
+    ) -> PollVotePayload {
+        .init(
+            createdAt: createdAt,
+            id: id,
+            optionId: optionId,
+            pollId: pollId,
+            updatedAt: updatedAt,
+            answerText: answerText,
+            isAnswer: isAnswer,
+            userId: userId,
+            user: user
+        )
+    }
 }
 
 private extension MemberPayload {

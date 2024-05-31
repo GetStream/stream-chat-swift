@@ -32,6 +32,14 @@ extension Error {
         }
         return false
     }
+    
+    var isBackendNotFound404StatusCode: Bool {
+        if let error = (self as? ClientError)?.underlyingError as? ErrorPayload,
+           error.statusCode == 404 {
+            return true
+        }
+        return false
+    }
 
     var isRateLimitError: Bool {
         if let error = (self as? ClientError)?.underlyingError as? ErrorPayload,

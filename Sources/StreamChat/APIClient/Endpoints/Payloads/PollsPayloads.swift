@@ -117,7 +117,7 @@ struct PollVoteListResponse: Decodable {
 struct PollVotePayload: Decodable {
     let createdAt: Date
     let id: String
-    let optionId: String
+    let optionId: String?
     let pollId: String
     let updatedAt: Date
     var answerText: String?
@@ -128,7 +128,7 @@ struct PollVotePayload: Decodable {
     init(
         createdAt: Date,
         id: String,
-        optionId: String,
+        optionId: String?,
         pollId: String,
         updatedAt: Date,
         answerText: String? = nil,
@@ -176,7 +176,7 @@ struct PollPayload: Decodable {
     var options: [PollOptionPayload?]
     var ownVotes: [PollVotePayload?]
     var custom: [String: RawJSON]?
-    var latestVotesByOption: [String: [PollVotePayload?]]
+    var latestVotesByOption: [String: [PollVotePayload]]?
     var voteCountsByOption: [String: Int]?
     var isClosed: Bool?
     var maxVotesAllowed: Int?
@@ -199,7 +199,7 @@ struct PollPayload: Decodable {
         options: [PollOptionPayload?],
         ownVotes: [PollVotePayload?],
         custom: [String: RawJSON],
-        latestVotesByOption: [String: [PollVotePayload?]],
+        latestVotesByOption: [String: [PollVotePayload]]?,
         voteCountsByOption: [String: Int],
         isClosed: Bool? = nil,
         maxVotesAllowed: Int? = nil,

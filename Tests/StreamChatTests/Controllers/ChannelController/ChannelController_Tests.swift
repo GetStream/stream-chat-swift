@@ -926,6 +926,7 @@ final class ChannelController_Tests: XCTestCase {
                 createdAt: oldMessageCreatedAt,
                 skipPush: false,
                 skipEnrichUrl: false,
+                poll: nil,
                 extraData: [:]
             )
             // Simulate sending failed for this message
