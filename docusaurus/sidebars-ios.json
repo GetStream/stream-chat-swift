@@ -86,7 +86,8 @@
         },
         "swiftui/localization",
         "swiftui/dependency-injection",
-        "swiftui/voice-recording"        
+        "swiftui/voice-recording",
+        "swiftui/polls"        
       ]
     },
     {
