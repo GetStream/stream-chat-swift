@@ -314,6 +314,10 @@ open class ChatThreadVC: _ViewController,
             dismiss(animated: true) { [weak self] in
                 self?.messageComposerVC.content.quoteMessage(message)
             }
+        case is MarkUnreadActionItem:
+            dismiss(animated: true) { [weak self] in
+                self?.messageController.markThreadUnread()
+            }
         default:
             return
         }
