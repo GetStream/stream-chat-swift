@@ -36,6 +36,12 @@ extension DemoAppCoordinator {
         )
         let threadListController = StreamChatWrapper.shared.client!.threadListController(query: threadListQuery)
         let threadListVC = DemoChatThreadListVC(threadListController: threadListController)
+        threadListVC.onLogout = { [weak self] in
+            self?.logOut()
+        }
+        threadListVC.onDisconnect = { [weak self] in
+            self?.disconnect()
+        }
         let tabBarViewController = DemoAppTabBarController(
             channelListVC: chatVC,
             threadListVC: UINavigationController(rootViewController: threadListVC)

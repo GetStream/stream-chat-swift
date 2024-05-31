@@ -8,6 +8,9 @@ import StreamChatUI
 import UIKit
 
 final class DemoChatThreadListVC: ChatThreadListVC {
+    var onLogout: (() -> Void)?
+    var onDisconnect: (() -> Void)?
+
     lazy var userAvatarView: CurrentChatUserAvatarView = components
         .currentUserAvatarView.init()
 
@@ -34,20 +37,10 @@ final class DemoChatThreadListVC: ChatThreadListVC {
     }
 
     @objc public func didTapOnCurrentUserAvatar(_ sender: Any) {
-        // TODO: Reuse
-//        presentAlert(title: nil, actions: [
-//            .init(title: "Show Profile", style: .default, handler: { [weak self] _ in
-//                guard let self = self else { return }
-//                let client = self.rootViewController.controller.client
-//                let viewController = UserProfileViewController(currentUserController: client.currentUserController())
-//                self.rootNavigationController?.pushViewController(viewController, animated: true)
-//            }),
-//            .init(title: "Logout", style: .destructive, handler: { [weak self] _ in
-//                self?.onLogout?()
-//            }),
-//            .init(title: "Disconnect", style: .destructive, handler: { [weak self] _ in
-//                self?.onDisconnect?()
-//            })
-//        ])
+        presentUserOptionsAlert(
+            onLogout: onLogout,
+            onDisconnect: onDisconnect,
+            client: threadListController.client
+        )
     }
 }

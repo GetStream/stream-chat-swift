@@ -3,6 +3,7 @@
 //
 
 import Foundation
+import StreamChat
 import UIKit
 
 extension UIViewController {
@@ -80,5 +81,26 @@ extension UIViewController {
         }))
 
         present(alert, animated: true, completion: nil)
+    }
+
+    func presentUserOptionsAlert(
+        onLogout: (() -> Void)?,
+        onDisconnect: (() -> Void)?,
+        client: ChatClient
+    ) {
+        presentAlert(title: nil, actions: [
+            .init(title: "Show Profile", style: .default, handler: { [weak self] _ in
+                let viewController = UserProfileViewController(
+                    currentUserController: client.currentUserController()
+                )
+                self?.navigationController?.pushViewController(viewController, animated: true)
+            }),
+            .init(title: "Logout", style: .destructive, handler: { _ in
+                onLogout?()
+            }),
+            .init(title: "Disconnect", style: .destructive, handler: { _ in
+                onDisconnect?()
+            })
+        ])
     }
 }
