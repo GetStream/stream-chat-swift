@@ -12,6 +12,24 @@ class ThreadReadDTO: NSManagedObject {
     @NSManaged var unreadMessagesCount: Int64
     @NSManaged var thread: ThreadDTO
 
+    override func willSave() {
+        super.willSave()
+
+        // When the read is updated, we need to propagate this change up to holding thread
+        if hasPersistentChangedValues, !thread.hasChanges, !thread.isDeleted {
+            // this will not change object, but mark it as dirty, triggering updates
+            thread.parentMessageId = thread.parentMessageId
+        }
+    }
+
+    static func load(userId: String, context: NSManagedObjectContext) -> [ThreadReadDTO] {
+        load(by: fetchRequest(userId: userId), context: context)
+    }
+
+    static func load(parentMessageId: MessageId, userId: String, context: NSManagedObjectContext) -> ThreadReadDTO? {
+        load(by: fetchRequest(for: parentMessageId, userId: userId), context: context).first
+    }
+
     static func loadOrCreate(
         parentMessageId: MessageId,
         userId: String,
@@ -27,6 +45,12 @@ class ThreadReadDTO: NSManagedObject {
         new.thread = ThreadDTO.loadOrCreate(parentMessageId: parentMessageId, context: context, cache: cache)
         new.user = UserDTO.loadOrCreate(id: userId, context: context, cache: cache)
         return new
+    }
+
+    static func fetchRequest(userId: String) -> NSFetchRequest<ThreadReadDTO> {
+        let request = NSFetchRequest<ThreadReadDTO>(entityName: ThreadReadDTO.entityName)
+        request.predicate = NSPredicate(format: "user.id == %@", userId)
+        return request
     }
 
     static func fetchRequest(for parentMessageId: MessageId, userId: String) -> NSFetchRequest<ThreadReadDTO> {
@@ -62,5 +86,46 @@ extension NSManagedObjectContext {
         dto.lastReadAt = payload.lastReadAt?.bridgeDate
         dto.unreadMessagesCount = Int64(payload.unreadMessagesCount)
         return dto
+    }
+
+    func loadThreadRead(parentMessageId: MessageId, userId: String) -> ThreadReadDTO? {
+        ThreadReadDTO.load(parentMessageId: parentMessageId, userId: userId, context: self)
+    }
+
+    func loadThreadReads(for userId: UserId) -> [ThreadReadDTO] {
+        ThreadReadDTO.load(userId: userId, context: self)
+    }
+
+    func markThreadAsRead(parentMessageId: MessageId, userId: UserId, at: Date) {
+        if let read = loadThreadRead(parentMessageId: parentMessageId, userId: userId) {
+            read.lastReadAt = at.bridgeDate
+            read.unreadMessagesCount = 0
+        } else if let thread = thread(parentMessageId: parentMessageId, cache: nil),
+                  let participant = thread.threadParticipants.first(where: { $0.user.id == userId }) {
+            // We don't have a read object, but the user is a member.
+            // We can safely create a read object for the user
+            let read = ThreadReadDTO.loadOrCreate(
+                parentMessageId: parentMessageId,
+                userId: userId,
+                context: self,
+                cache: nil
+            )
+            read.thread = thread
+            read.user = participant.user
+            read.lastReadAt = at.bridgeDate
+            read.unreadMessagesCount = 0
+        }
+    }
+
+    func markThreadAsUnread(
+        for parentMessageId: MessageId,
+        userId: UserId
+    ) {
+        guard let read = loadThreadRead(parentMessageId: parentMessageId, userId: userId) else {
+            return
+        }
+
+        read.lastReadAt = nil
+        read.unreadMessagesCount = read.thread.replyCount
     }
 }

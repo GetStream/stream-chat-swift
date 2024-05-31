@@ -1518,6 +1518,8 @@
 		AD9632DC2C09E0350073B814 /* ChatThreadListRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD9632DB2C09E0350073B814 /* ChatThreadListRouter.swift */; };
 		AD9632DD2C09E0350073B814 /* ChatThreadListRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD9632DB2C09E0350073B814 /* ChatThreadListRouter.swift */; };
 		AD9632DF2C09F1900073B814 /* DemoChatThreadVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD9632DE2C09F1900073B814 /* DemoChatThreadVC.swift */; };
+		AD9632E12C0A43630073B814 /* ThreadReadUpdaterMiddleware.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD9632E02C0A43630073B814 /* ThreadReadUpdaterMiddleware.swift */; };
+		AD9632E22C0A436C0073B814 /* ThreadReadUpdaterMiddleware.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD9632E02C0A43630073B814 /* ThreadReadUpdaterMiddleware.swift */; };
 		AD99A7CE28EF17CA005185DF /* SlackReactonsItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD99A7CD28EF17CA005185DF /* SlackReactonsItemView.swift */; };
 		AD99A7D028EF17ED005185DF /* SlackReactionsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD99A7CF28EF17ED005185DF /* SlackReactionsView.swift */; };
 		AD99A7D228EF180C005185DF /* SlackReactionsMessagePopupVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD99A7D128EF180C005185DF /* SlackReactionsMessagePopupVC.swift */; };
@@ -4157,6 +4159,7 @@
 		AD95FD1028FA038900DBDF41 /* ImageDownloadOptions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageDownloadOptions.swift; sourceTree = "<group>"; };
 		AD9632DB2C09E0350073B814 /* ChatThreadListRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatThreadListRouter.swift; sourceTree = "<group>"; };
 		AD9632DE2C09F1900073B814 /* DemoChatThreadVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DemoChatThreadVC.swift; sourceTree = "<group>"; };
+		AD9632E02C0A43630073B814 /* ThreadReadUpdaterMiddleware.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThreadReadUpdaterMiddleware.swift; sourceTree = "<group>"; };
 		AD99A7CD28EF17CA005185DF /* SlackReactonsItemView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SlackReactonsItemView.swift; sourceTree = "<group>"; };
 		AD99A7CF28EF17ED005185DF /* SlackReactionsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SlackReactionsView.swift; sourceTree = "<group>"; };
 		AD99A7D128EF180C005185DF /* SlackReactionsMessagePopupVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SlackReactionsMessagePopupVC.swift; sourceTree = "<group>"; };
@@ -5532,6 +5535,7 @@
 			isa = PBXGroup;
 			children = (
 				79896D63250A62EE00BA8F1C /* ChannelReadUpdaterMiddleware.swift */,
+				AD9632E02C0A43630073B814 /* ThreadReadUpdaterMiddleware.swift */,
 				79158CF325F133FB00186102 /* ChannelTruncatedEventMiddleware.swift */,
 				79AF43B32632AF1B00E75CDA /* ChannelVisibilityEventMiddleware.swift */,
 				792FCB4424A33B5B000290C7 /* EventDataProcessorMiddleware.swift */,
@@ -11230,6 +11234,7 @@
 				64C8C86E26934C6100329F82 /* UserInfo.swift in Sources */,
 				C1FFD9F927ECC7C7008A6848 /* Filter+ChatChannel.swift in Sources */,
 				4F1BEE7C2BE3851200B6685C /* ReactionListState+Observer.swift in Sources */,
+				AD9632E12C0A43630073B814 /* ThreadReadUpdaterMiddleware.swift in Sources */,
 				C1FC2F962742579D0062530F /* Transport.swift in Sources */,
 				C1FC2F9A2742579D0062530F /* WSEngine.swift in Sources */,
 				799C9479247E3DEA001F1104 /* StreamChatModel.xcdatamodeld in Sources */,
@@ -12122,6 +12127,7 @@
 				4F97F26E2BA858E9001C4D66 /* UserSearch.swift in Sources */,
 				C121E881274544AF00023E4C /* AttachmentTypes.swift in Sources */,
 				C121E882274544AF00023E4C /* ChatMessageLinkAttachment.swift in Sources */,
+				AD9632E22C0A436C0073B814 /* ThreadReadUpdaterMiddleware.swift in Sources */,
 				C18F5B532840BD2C00527915 /* DBDate.swift in Sources */,
 				ADF2BBE92B9B61E30069D467 /* AppEndpoints.swift in Sources */,
 				C121E883274544AF00023E4C /* ChatMessageGiphyAttachment.swift in Sources */,

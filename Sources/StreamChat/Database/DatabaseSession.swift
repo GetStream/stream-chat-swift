@@ -423,6 +423,11 @@ protocol ThreadDatabaseSession {
         cache: PreWarmedCache?
     ) throws -> ThreadParticipantDTO
 
+    /// Cleans all the threads in the database.
+    func deleteAllThreads() throws
+}
+
+protocol ThreadReadDatabaseSession {
     /// Creates a new `ThreadReadDTO` object in the database with the given `payload`.
     @discardableResult
     func saveThreadRead(
@@ -431,8 +436,20 @@ protocol ThreadDatabaseSession {
         cache: PreWarmedCache?
     ) throws -> ThreadReadDTO
 
-    /// Cleans all the threads in the database.
-    func deleteAllThreads() throws
+    /// Fetches `ThreadReadDTO` with the given `parentMessageId` and `userId` from the DB.
+    func loadThreadRead(parentMessageId: MessageId, userId: String) -> ThreadReadDTO?
+
+    /// Fetches `ThreadReadDTO`entities for the given `userId` from the DB.
+    func loadThreadReads(for userId: UserId) -> [ThreadReadDTO]
+
+    /// Sets the thread with `parentMessageId` as read for `userId`
+    func markThreadAsRead(parentMessageId: MessageId, userId: UserId, at: Date)
+
+    /// Marks the whole thread as unread.
+    func markThreadAsUnread(
+        for parentMessageId: MessageId,
+        userId: UserId
+    )
 }
 
 protocol DatabaseSession: UserDatabaseSession,
@@ -446,7 +463,8 @@ protocol DatabaseSession: UserDatabaseSession,
     AttachmentDatabaseSession,
     ChannelMuteDatabaseSession,
     QueuedRequestDatabaseSession,
-    ThreadDatabaseSession {}
+    ThreadDatabaseSession,
+    ThreadReadDatabaseSession {}
 
 extension DatabaseSession {
     @discardableResult
