@@ -130,7 +130,7 @@ public class PollVoteListController: DataController, DelegateCallable, DataStore
             guard let self else { return }
             if let value = result.value {
                 self.nextCursor = value.next
-                self.hasLoadedAllVotes = value.votes.count < self.query.pagination.pageSize
+                self.hasLoadedAllVotes = value.next == nil
             }
             if let error = result.error {
                 self.state = .remoteDataFetchFailed(ClientError(with: error))
@@ -175,7 +175,7 @@ public extension PollVoteListController {
             guard let self else { return }
             if let value = result.value {
                 self.nextCursor = value.next
-                self.hasLoadedAllVotes = value.votes.count < limit
+                self.hasLoadedAllVotes = value.next == nil
             }
             self.callback { completion?(result.error) }
         }
