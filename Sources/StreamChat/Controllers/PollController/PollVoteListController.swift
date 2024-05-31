@@ -45,7 +45,7 @@ public class PollVoteListController: DataController, DelegateCallable, DataStore
         return pollVotesObserver.items
     }
     
-    public private(set) var hasLoadedAllVotes: Bool = false
+    public var hasLoadedAllVotes: Bool { votesCursor == nil }
 
     /// Set the delegate of `PollVoteListController` to observe the changes in the system.
     public weak var delegate: PollVoteListControllerDelegate? {
@@ -105,6 +105,7 @@ public class PollVoteListController: DataController, DelegateCallable, DataStore
     private let eventsController: EventsController
     private let pollsRepository: PollsRepository
     private let environment: Environment
+    private var votesCursor: String?
 
     /// Creates a new `PollVoteListController`.
     ///
@@ -126,6 +127,7 @@ public class PollVoteListController: DataController, DelegateCallable, DataStore
 
         pollsRepository.queryPollVotes(query: query) { [weak self] result in
             guard let self else { return }
+            self.votesCursor = result.value?.next
             if let error = result.error {
                 self.state = .remoteDataFetchFailed(ClientError(with: error))
             } else {
@@ -164,10 +166,10 @@ public extension PollVoteListController {
     ) {
         let limit = limit ?? query.pagination.pageSize
         var updatedQuery = query
-        updatedQuery.pagination = Pagination(pageSize: limit, offset: votes.count)
+        updatedQuery.pagination = Pagination(pageSize: limit, cursor: votesCursor)
         pollsRepository.queryPollVotes(query: updatedQuery) { [weak self] result in
             guard let self else { return }
-            self.hasLoadedAllVotes = (result.value?.count ?? 0) < limit
+            self.votesCursor = result.value?.next
             self.callback { completion?(result.error) }
         }
     }

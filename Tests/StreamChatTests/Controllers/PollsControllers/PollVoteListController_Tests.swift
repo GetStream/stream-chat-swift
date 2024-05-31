@@ -117,7 +117,7 @@ final class PollVoteListController_Tests: XCTestCase {
         XCTAssertEqual(controller.state, .localDataFetched)
 
         // Simulate network response with the error
-        client.mockPollsRepository.getQueryPollVotes_completion?(.success([]))
+        client.mockPollsRepository.getQueryPollVotes_completion?(.success(.init(votes: [])))
         // Release reference of completion so we can deallocate stuff
         client.mockPollsRepository.getQueryPollVotes_completion = nil
 
@@ -176,10 +176,10 @@ final class PollVoteListController_Tests: XCTestCase {
             exp.fulfill()
         }
         
-        client.mockPollsRepository.getQueryPollVotes_completion?(.success([
+        client.mockPollsRepository.getQueryPollVotes_completion?(.success(.init(votes: [
             .unique,
             .unique
-        ]))
+        ])))
 
         wait(for: [exp], timeout: defaultTimeout)
         XCTAssertFalse(controller.hasLoadedAllVotes)
@@ -193,10 +193,10 @@ final class PollVoteListController_Tests: XCTestCase {
             exp.fulfill()
         }
         
-        client.mockPollsRepository.getQueryPollVotes_completion?(.success([
+        client.mockPollsRepository.getQueryPollVotes_completion?(.success(.init(votes: [
             .unique,
             .unique
-        ]))
+        ])))
 
         wait(for: [exp], timeout: defaultTimeout)
         XCTAssertTrue(controller.hasLoadedAllVotes)
