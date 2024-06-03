@@ -179,6 +179,7 @@ extension NSManagedObjectContext {
         if let optionId {
             let currentVoteCount = poll.voteCountsByOption?[optionId] ?? 0
             poll.voteCountsByOption?[optionId] = currentVoteCount + 1
+            poll.latestAnswers.remove(dto)
         }
         
         if let query = query {
