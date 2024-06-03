@@ -12,11 +12,11 @@ Polls are disabled by default. In order to enable this feature, you need to go t
 
 ![Screenshot showing how to enable polls](../assets/polls-dashboard.png)
 
-As soon as you do that, an additional "Polls" icon would be shown in the attachment picker in the SDK's default composer implementation.
+As soon as you do that, an additional "Polls" icon would be shown in the attachment picker in the default composer implementation in the SDK.
 
 ![Screenshot showing polls icon in the composer](../assets/polls-composer.png)
 
-### Polls config
+### Polls configuration
 
 When you tap the "Polls" icon, a new screen for creating polls would be shown. On this screen, you can configure the poll title, the options, as well as several other settings, such as the maximum number of votes, whether the poll is anonymous and if it allows comments.
 
@@ -24,7 +24,7 @@ When you tap the "Polls" icon, a new screen for creating polls would be shown. O
 
 You can setup which of these options are going to be configurable for the users creating the poll. In order to do that, you need to provide your own `PollsConfig`.
 
-For example, let's create a new config which will hide the "Comments" option, and it will allow multiple votes by default.
+For example, let's create a new configuration which will hide the "Comments" option, and it will allow multiple votes by default.
 
 ```swift
 let pollsConfig = PollsConfig(
