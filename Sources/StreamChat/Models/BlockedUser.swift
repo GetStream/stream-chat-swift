@@ -4,7 +4,7 @@
 
 import Foundation
 
-/// A type representing a blocked user. `BlockedUser` is an immutable snapshot of a blocked user entity at the given time.
+/// A type representing a blocked user.
 ///
 public struct BlockedUser {
     /// The unique identifier of the blocked user.

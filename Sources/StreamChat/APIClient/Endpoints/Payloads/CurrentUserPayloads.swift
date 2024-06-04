@@ -136,6 +136,8 @@ struct BlockedUserPayload: Decodable {
 
 extension BlockedUserPayload: Equatable {
     static func == (lhs: BlockedUserPayload, rhs: BlockedUserPayload) -> Bool {
-        lhs.blockedUserId == rhs.blockedUserId && lhs.createdAt == rhs.createdAt
+        lhs.blockedUserId == rhs.blockedUserId &&
+        lhs.blockedByUserId == rhs.blockedByUserId &&
+        lhs.createdAt == rhs.createdAt
     }
 }

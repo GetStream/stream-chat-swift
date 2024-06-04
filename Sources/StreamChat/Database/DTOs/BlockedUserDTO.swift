@@ -13,7 +13,7 @@ class BlockedUserDTO: NSManagedObject {
     func asModel() throws -> BlockedUser {
         .init(
             userId: blockedUserId,
-            blockedAt: blockedAt?.bridgeDate ?? .init()
+            blockedAt: blockedAt?.bridgeDate
         )
     }
 }

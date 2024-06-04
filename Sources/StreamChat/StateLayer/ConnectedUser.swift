@@ -129,8 +129,6 @@ public final class ConnectedUser {
     
     /// Blocks the user in all the channels.
     ///
-    /// - Note: Messages from muted users are not delivered via push notifications.
-    ///
     /// - Parameters:
     ///   - userId: The id of the user to mute.
     ///   - keepChannelsVisible: A Boolean value that  determines if the channels should be kept visible.
