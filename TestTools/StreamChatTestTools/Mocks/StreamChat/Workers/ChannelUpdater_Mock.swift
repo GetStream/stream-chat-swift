@@ -352,6 +352,7 @@ final class ChannelUpdater_Mock: ChannelUpdater {
         quotedMessageId: MessageId?,
         skipPush: Bool,
         skipEnrichUrl: Bool,
+        poll: PollPayload?,
         extraData: [String: RawJSON] = [:],
         completion: ((Result<ChatMessage, Error>) -> Void)? = nil
     ) {

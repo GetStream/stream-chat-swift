@@ -53,7 +53,8 @@ extension ChatMessage {
             originalLanguage: nil,
             moderationDetails: nil,
             readBy: { [] },
-            readByCount: { 0 },
+            readByCount: { 0 }, 
+            poll: nil,
             underlyingContext: nil,
             textUpdatedAt: nil
         )

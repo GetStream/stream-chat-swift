@@ -202,6 +202,9 @@ public struct ChatMessage {
     public var readByCount: Int { _readByCount }
 
     @CoreDataLazy internal var _readByCount: Int
+    
+    /// Optional poll that is part of the message.
+    public let poll: Poll?
 
     internal init(
         id: MessageId,
@@ -243,6 +246,7 @@ public struct ChatMessage {
         moderationDetails: MessageModerationDetails?,
         readBy: @escaping () -> Set<ChatUser>,
         readByCount: @escaping () -> Int,
+        poll: Poll?,
         underlyingContext: NSManagedObjectContext?,
         textUpdatedAt: Date?
     ) {
@@ -274,6 +278,7 @@ public struct ChatMessage {
         self.originalLanguage = originalLanguage
         self.moderationDetails = moderationDetails
         self.textUpdatedAt = textUpdatedAt
+        self.poll = poll
 
         $_author = (author, underlyingContext)
         $_mentionedUsers = (mentionedUsers, underlyingContext)

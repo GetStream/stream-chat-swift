@@ -80,6 +80,8 @@ public class ChatClient {
 
     let channelRepository: ChannelRepository
     
+    let pollsRepository: PollsRepository
+
     let channelListUpdater: ChannelListUpdater
 
     func makeMessagesPaginationStateHandler() -> MessagesPaginationStateHandling {
@@ -211,6 +213,7 @@ public class ChatClient {
             databaseContainer,
             apiClient
         )
+        pollsRepository = environment.pollsRepositoryBuilder(databaseContainer, apiClient)
 
         authRepository.delegate = self
         apiClientEncoder.connectionDetailsProviderDelegate = self

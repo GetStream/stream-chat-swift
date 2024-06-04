@@ -23,7 +23,7 @@ final class PollPayload_Tests: XCTestCase {
         XCTAssertEqual(payload.options[0]?.text, "option1 text")
         XCTAssertEqual(payload.answersCount, 0)
         XCTAssertNil(payload.voteCountsByOption)
-        XCTAssertTrue(payload.latestVotesByOption.isEmpty)
+        XCTAssertTrue(payload.latestVotesByOption?.isEmpty == true)
         XCTAssertEqual(payload.ownVotes.count, 1)
         XCTAssertEqual(payload.createdById, "luke_skywalker")
         XCTAssertNotNil(payload.createdBy)

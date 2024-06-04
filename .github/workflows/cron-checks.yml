@@ -41,7 +41,7 @@ jobs:
       matrix:
         include:
           - ios: 17.4
-            xcode: 15.3
+            xcode: 15.4
             os: macos-14
             device: "iPhone 15 Pro"
             setup_runtime: false
@@ -85,7 +85,7 @@ jobs:
         INSTALL_ALLURE: true
         INSTALL_YEETD: true
     - name: Cache iOS Simulator Runtime
-      uses: actions/cache@v3
+      uses: actions/cache@v4
       id: runtime-cache
       with:
         path: ~/Downloads/*.dmg
@@ -140,7 +140,7 @@ jobs:
       matrix:
         include:
           - ios: 17.4
-            xcode: 15.3
+            xcode: 15.4
             os: macos-14
             device: "iPhone 14 Pro Max"
             setup_runtime: false
@@ -175,7 +175,7 @@ jobs:
       env:
         INSTALL_YEETD: true
     - name: Cache iOS Simulator Runtime
-      uses: actions/cache@v3
+      uses: actions/cache@v4
       id: runtime-cache
       with:
         path: ~/Downloads/*.dmg

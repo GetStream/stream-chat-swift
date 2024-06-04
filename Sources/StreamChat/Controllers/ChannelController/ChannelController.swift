@@ -177,6 +177,8 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
 
     private var eventObservers: [EventObserver] = []
     private let environment: Environment
+    
+    private let pollsRepository: PollsRepository
 
     var _basePublishers: Any?
     /// An internal backing object for all publicly available Combine publishers. We use it to simplify the way we expose
@@ -220,6 +222,7 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
             client.databaseContainer,
             client.apiClient
         )
+        pollsRepository = client.pollsRepository
         
         super.init()
 
@@ -715,37 +718,70 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
         extraData: [String: RawJSON] = [:],
         completion: ((Result<MessageId, Error>) -> Void)? = nil
     ) {
-        /// Perform action only if channel is already created on backend side and have a valid `cid`.
-        guard let cid = cid, isChannelAlreadyCreated else {
-            channelModificationFailed { error in
-                completion?(.failure(error ?? ClientError.Unknown()))
-            }
-            return
-        }
-
-        /// Send stop typing event.
-        eventSender.stopTyping(in: cid, parentMessageId: nil)
-
-        updater.createNewMessage(
-            in: cid,
+        createNewMessage(
             messageId: messageId,
             text: text,
             pinning: pinning,
             isSilent: isSilent,
-            command: nil,
-            arguments: nil,
             attachments: attachments,
             mentionedUserIds: mentionedUserIds,
             quotedMessageId: quotedMessageId,
             skipPush: skipPush,
             skipEnrichUrl: skipEnrichUrl,
-            extraData: extraData
-        ) { result in
-            if let newMessage = try? result.get() {
-                self.client.eventNotificationCenter.process(NewMessagePendingEvent(message: newMessage))
-            }
-            self.callback {
-                completion?(result.map(\.id))
+            extraData: extraData,
+            poll: nil,
+            completion: completion
+        )
+    }
+    
+    /// Creates a new poll.
+    ///
+    /// - Parameters:
+    ///   - name: The name of the poll.
+    ///   - allowAnswers: Whether to allow users to provide their own answers. Answers won't be allowed if `nil` is passed.
+    ///   - allowUserSuggestedOptions: Whether to allow users to suggest options. User suggested options won't be allowed if `nil` is passed.
+    ///   - description: Optional description for the poll.
+    ///   - enforceUniqueVote: Whether to enforce unique votes per user. Unique votes won't be allowed if `nil` is passed.
+    ///   - maxVotesAllowed: The maximum number of votes allowed per user. Up to 10 max votes if `nil` is passed.
+    ///   - votingVisibility: The visibility setting for the poll. Voting visibility would be public if `nil` is passed.
+    ///   - options: Optional array of predefined poll options.
+    ///   - custom: Optional dictionary for any custom data associated with the poll.
+    ///   - completion: A closure to be executed once the poll is created, returning either a `MessageId` on success or an `Error` on failure.
+    public func createPoll(
+        name: String,
+        allowAnswers: Bool? = nil,
+        allowUserSuggestedOptions: Bool? = nil,
+        description: String? = nil,
+        enforceUniqueVote: Bool? = nil,
+        maxVotesAllowed: Int? = nil,
+        votingVisibility: VotingVisibility? = nil,
+        options: [PollOption]? = nil,
+        extraData: [String: RawJSON]? = nil,
+        completion: ((Result<MessageId, Error>) -> Void)?
+    ) {
+        pollsRepository.createPoll(
+            name: name,
+            allowAnswers: allowAnswers,
+            allowUserSuggestedOptions: allowUserSuggestedOptions,
+            description: description,
+            enforceUniqueVote: enforceUniqueVote,
+            maxVotesAllowed: maxVotesAllowed,
+            votingVisibility: votingVisibility?.rawValue,
+            options: options,
+            custom: extraData
+        ) { [weak self] result in
+            guard let self else { return }
+            switch result {
+            case let .success(poll):
+                self.createNewMessage(text: "", poll: poll, completion: { result in
+                    self.callback {
+                        completion?(result)
+                    }
+                })
+            case let .failure(error):
+                self.callback {
+                    completion?(.failure(error))
+                }
             }
         }
     }
@@ -1236,6 +1272,56 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
             startWatching(isInRecoveryMode: true, completion: completion)
         } else {
             synchronize(isInRecoveryMode: true, completion)
+        }
+    }
+    
+    func createNewMessage(
+        messageId: MessageId? = nil,
+        text: String,
+        pinning: MessagePinning? = nil,
+        isSilent: Bool = false,
+        attachments: [AnyAttachmentPayload] = [],
+        mentionedUserIds: [UserId] = [],
+        quotedMessageId: MessageId? = nil,
+        skipPush: Bool = false,
+        skipEnrichUrl: Bool = false,
+        extraData: [String: RawJSON] = [:],
+        poll: PollPayload?,
+        completion: ((Result<MessageId, Error>) -> Void)? = nil
+    ) {
+        /// Perform action only if channel is already created on backend side and have a valid `cid`.
+        guard let cid = cid, isChannelAlreadyCreated else {
+            channelModificationFailed { error in
+                completion?(.failure(error ?? ClientError.Unknown()))
+            }
+            return
+        }
+
+        /// Send stop typing event.
+        eventSender.stopTyping(in: cid, parentMessageId: nil)
+
+        updater.createNewMessage(
+            in: cid,
+            messageId: messageId,
+            text: text,
+            pinning: pinning,
+            isSilent: isSilent,
+            command: nil,
+            arguments: nil,
+            attachments: attachments,
+            mentionedUserIds: mentionedUserIds,
+            quotedMessageId: quotedMessageId,
+            skipPush: skipPush,
+            skipEnrichUrl: skipEnrichUrl,
+            poll: poll,
+            extraData: extraData
+        ) { result in
+            if let newMessage = try? result.get() {
+                self.client.eventNotificationCenter.process(NewMessagePendingEvent(message: newMessage))
+            }
+            self.callback {
+                completion?(result.map(\.id))
+            }
         }
     }
 

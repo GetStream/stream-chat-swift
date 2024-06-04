@@ -243,7 +243,7 @@ final class PollsEndpoints_Tests: XCTestCase {
         )
 
         XCTAssertEqual(endpoint.method, .delete)
-        XCTAssertEqual(endpoint.path.value, "messages/message_id/polls/test/vote")
+        XCTAssertEqual(endpoint.path.value, "messages/message_id/polls/test/vote/vote")
         XCTAssertEqual(endpoint.requiresConnectionId, false)
         XCTAssertEqual(endpoint.requiresToken, true)
         XCTAssertNil(endpoint.queryItems)
