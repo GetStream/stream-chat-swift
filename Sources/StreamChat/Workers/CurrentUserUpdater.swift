@@ -177,6 +177,7 @@ class CurrentUserUpdater: Worker {
                     }
                     session.currentUser?.blockedUsers = blockedUsers
                     session.currentUser?.user.blockedUserIds = blockedUsers.map { $0.blockedUserId }
+                    blockedUsers = blockedUsers.compactMap { try? $0.asModel() }
                 }, completion: {
                     if let error = $0 {
                         log.error("Failed to save blocked users to the database. Error: \(error)")
