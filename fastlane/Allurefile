@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 
 allure_project_id = '1'
-allure_url = 'https://streamio.testops.cloud'
+allure_url = 'https://streamio.testops.cloud/api'
 allure_regression_testplan = 'Regression Testing'
 allure_results_path = 'allure-results'
 
@@ -25,12 +25,12 @@ lane :allure_launch do |options|
     github_run_details: github_run_details,
     cron: options[:cron]
   )
-  sh("echo 'LAUNCH_ID=#{launch_id}' >> $GITHUB_ENV")
+  sh("echo 'LAUNCH_ID=#{launch_id}' >> $GITHUB_ENV") if is_ci
 end
 
 desc 'Remove launch on Allure TestOps'
 lane :allure_launch_removal do |options|
-  allure_api(url: allure_url, path: "/launch/#{options[:launch_id]}", http_method: 'DELETE')
+  allure_api(url: allure_url, path: "launch/#{options[:launch_id]}", http_method: 'DELETE')
 end
 
 desc 'Create test-case in Allure TestOps and get its id'
@@ -50,6 +50,8 @@ lane :allure_start_regression do |options|
 end
 
 def github_run_details
+  return nil unless is_ci
+
   github_path = "#{ENV.fetch('GITHUB_API_URL', nil)}/repos/#{ENV.fetch('GITHUB_REPOSITORY', nil)}/actions/runs/#{ENV.fetch('GITHUB_RUN_ID', nil)}"
   output = sh(command: "curl -s -H 'authorization: Bearer #{ENV.fetch('GITHUB_TOKEN', nil)}' -X GET -G #{github_path}", log: false)
   JSON.parse(output)
