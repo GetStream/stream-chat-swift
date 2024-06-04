@@ -48,6 +48,14 @@ class UserUpdater: Worker {
                 }, completion: {
                     if let error = $0 {
                         log.error("Failed to save blocked user with id: <\(userId)> to the database. Error: \(error)")
+                        
+                        self.database.write({ session in
+                            let currentUserDTO = session.currentUser
+                            if let userDTO = currentUserDTO?.blockedUsers.first(where: { $0.blockedUserId == userId }) {
+                                currentUserDTO?.blockedUsers.remove(userDTO)
+                                currentUserDTO?.user.blockedUserIds.removeAll { $0 == userId }
+                            }
+                        })
                     }
                     completion?($0)
                 })
@@ -66,15 +74,24 @@ class UserUpdater: Worker {
         apiClient.request(endpoint: .unblockUser(userId)) {
             switch $0 {
             case .success:
+                var blockedUserDTO: BlockedUserDTO?
                 self.database.write({ session in
                     let currentUserDTO = session.currentUser
                     if let userDTO = currentUserDTO?.blockedUsers.first(where: { $0.blockedUserId == userId }) {
+                        blockedUserDTO = userDTO
                         currentUserDTO?.blockedUsers.remove(userDTO)
                         currentUserDTO?.user.blockedUserIds.removeAll { $0 == userId }
                     }
                 }, completion: {
                     if let error = $0 {
                         log.error("Failed to remove blocked user with id: <\(userId)> from the database. Error: \(error)")
+                        
+                        if let userDTO = blockedUserDTO {
+                            self.database.write({ session in
+                                session.currentUser?.blockedUsers.insert(userDTO)
+                                session.currentUser?.user.blockedUserIds.append(userId)
+                            })
+                        }
                     }
                     completion?($0)
                 })
