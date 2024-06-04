@@ -722,6 +722,13 @@ When true the suggestionsVC will search users from the entire application instea
 public var mentionAllAppUsers: Bool = false
 ```
 
+### `isBlockingUsersEnabled`
+
+Determines if users are able to block other users. Disabled by default.
+``` swift
+public var isBlockingUsersEnabled = false
+```
+
 ### `suggestionsCollectionView`
 
 The collection view of the suggestions view controller.
