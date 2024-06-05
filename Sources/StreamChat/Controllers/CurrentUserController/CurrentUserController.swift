@@ -252,6 +252,25 @@ public extension CurrentChatUserController {
             }
         }
     }
+    
+    /// Get all blocked users.
+    ///
+    /// - Parameter completion: Called when the API call is finished. Called with `Error` if the remote update fails.
+    ///
+    func getBlockedUsers(completion: @escaping (Result<[BlockedUser], Error>) -> Void) {
+        currentUserUpdater.getBlockedUsers {
+            switch $0 {
+            case let .success(blockedUsers):
+                self.callback {
+                    completion(.success(blockedUsers))
+                }
+            case let .failure(error):
+                self.callback {
+                    completion(.failure(error))
+                }
+            }
+        }
+    }
 }
 
 // MARK: - Environment

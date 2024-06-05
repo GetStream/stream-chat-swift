@@ -147,6 +147,14 @@ public final class ConnectedUser {
         try await userUpdater.unblockUser(userId)
     }
     
+    /// Get all blocked users.
+    ///
+    /// - Parameter completion: Called when the API call is finished. Called with `Error` if the remote update fails.
+    ///
+    func getBlockedUsers() async throws -> [BlockedUser] {
+        try await currentUserUpdater.getBlockedUsers()
+    }
+    
     /// Flags the specified user.
     ///
     /// - Parameter userId: The id of the user to flag.

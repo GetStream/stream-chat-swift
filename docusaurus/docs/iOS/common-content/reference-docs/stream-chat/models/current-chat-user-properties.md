@@ -23,12 +23,12 @@ A set of users muted by the user.
 public let mutedUsers: Set<ChatUser>
 ```
 
-### `blockedUsers`
+### `blocks`
 
 A set of users blocked by the user.
 
 ``` swift
-public let blockedUsers: Set<ChatUser>
+public let blockedUsers: Set<BlockedUser>
 ```
 
 ### `flaggedUsers`

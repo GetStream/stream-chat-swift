@@ -26,7 +26,7 @@ enum UserPayloadsCodingKeys: String, CodingKey, CaseIterable {
     case devices
     case unreadCount = "unread_count"
     case language
-    case blockedUsers = "blocked_users"
+    case blockedUsers = "blocks"
     case blockedUserIds = "blocked_user_ids"
     case privacySettings = "privacy_settings"
 }

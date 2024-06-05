@@ -5,7 +5,6 @@
 import Foundation
 
 /// A type representing a blocked user.
-///
 public struct BlockedUser {
     /// The unique identifier of the blocked user.
     public let userId: UserId

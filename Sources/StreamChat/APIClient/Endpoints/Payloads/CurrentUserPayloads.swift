@@ -114,7 +114,7 @@ struct MutedUsersResponse: Decodable {
 /// A blocked users response.
 struct BlockedUsersResponse: Decodable {
     private enum CodingKeys: String, CodingKey {
-        case blockedUsers = "blocked_users"
+        case blockedUsers = "blocks"
     }
 
     /// The blocked users.

@@ -231,6 +231,14 @@ extension CurrentUserUpdater {
         }
     }
     
+    func getBlockedUsers() async throws -> [BlockedUser] {
+        try await withCheckedThrowingContinuation { continuation in
+            getBlockedUsers { error in
+                continuation.resume(with: error)
+            }
+        }
+    }
+    
     func updateUserData(
         currentUserId: UserId,
         name: String?,
