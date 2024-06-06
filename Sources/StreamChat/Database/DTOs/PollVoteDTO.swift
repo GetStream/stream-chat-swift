@@ -157,8 +157,7 @@ extension NSManagedObjectContext {
         if let userId {
             userDto = user(id: userId)
         }
-        let userSuffix = poll.votingVisibility == VotingVisibility.anonymous.rawValue ? nil : userId
-        let userId = userSuffix ?? "anon"
+        let userId = userId ?? "anon"
         let voteId = voteId ?? PollVoteDTO.localVoteId(optionId: optionId, pollId: pollId, userId: userId)
         let dto = PollVoteDTO.loadOrCreate(
             voteId: voteId,
