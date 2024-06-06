@@ -756,6 +756,13 @@ extension DatabaseSession {
                     delete(pollVote: existing)
                 }
             }
+        } else if vote.isAnswer == true {
+            let votes = try pollVotes(for: userId, pollId: vote.pollId)
+            for existing in votes {
+                if vote.id != existing.id && existing.isAnswer {
+                    delete(pollVote: existing)
+                }
+            }
         }
 
         if !voteUpdated {

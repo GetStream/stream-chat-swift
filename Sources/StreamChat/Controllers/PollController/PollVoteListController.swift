@@ -203,11 +203,15 @@ extension PollVoteListController {
 
 extension PollVoteListController: EventsControllerDelegate {
     public func eventsController(_ controller: EventsController, didReceiveEvent event: any Event) {
+        var vote: PollVote?
         if let event = event as? PollVoteCastedEvent {
-            let vote = event.vote
-            if vote.isAnswer == true && query.pollId == vote.pollId && query.optionId == nil {
-                pollsRepository.link(pollVote: vote, to: query)
-            }
+            vote = event.vote
+        } else if let event = event as? PollVoteChangedEvent {
+            vote = event.vote
+        }
+        guard let vote else { return }
+        if vote.isAnswer == true && query.pollId == vote.pollId && query.optionId == nil {
+            pollsRepository.link(pollVote: vote, to: query)
         }
     }
 }
