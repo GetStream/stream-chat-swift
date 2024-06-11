@@ -32,8 +32,8 @@ public class CurrentChatUser: ChatUser {
     /// A set of users muted by the user.
     public let mutedUsers: Set<ChatUser>
     
-    /// A set of users blocked by the user.
-    public let blockedUsers: Set<BlockedUser>
+    /// A list of blocked user ids
+    public let blockedUserIds: [UserId]
 
     /// A set of users flagged by the user.
     ///
@@ -76,12 +76,11 @@ public class CurrentChatUser: ChatUser {
         lastActiveAt: Date?,
         teams: Set<TeamId>,
         language: TranslationLanguage?,
-        blockedUserIds: [UserId],
         extraData: [String: RawJSON],
         devices: [Device],
         currentDevice: Device?,
+        blockedUserIds: [UserId],
         mutedUsers: Set<ChatUser>,
-        blockedUsers: Set<BlockedUser>,
         flaggedUsers: Set<ChatUser>,
         flaggedMessageIDs: Set<MessageId>,
         unreadCount: UnreadCount,
@@ -91,8 +90,8 @@ public class CurrentChatUser: ChatUser {
     ) {
         self.devices = devices
         self.currentDevice = currentDevice
+        self.blockedUserIds = blockedUserIds
         self.mutedUsers = mutedUsers
-        self.blockedUsers = blockedUsers
         self.flaggedUsers = flaggedUsers
         self.flaggedMessageIDs = flaggedMessageIDs
         self.unreadCount = unreadCount
@@ -113,7 +112,6 @@ public class CurrentChatUser: ChatUser {
             lastActiveAt: lastActiveAt,
             teams: teams,
             language: language,
-            blockedUserIds: blockedUserIds,
             extraData: extraData
         )
 

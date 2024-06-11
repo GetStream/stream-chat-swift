@@ -26,8 +26,6 @@ enum UserPayloadsCodingKeys: String, CodingKey, CaseIterable {
     case devices
     case unreadCount = "unread_count"
     case language
-    case blockedUsers = "blocks"
-    case blockedUserIds = "blocked_user_ids"
     case privacySettings = "privacy_settings"
 }
 
@@ -48,7 +46,6 @@ class UserPayload: Decodable {
     let isBanned: Bool
     let teams: [TeamId]
     let language: String?
-    let blockedUserIds: [UserId]
     let extraData: [String: RawJSON]
 
     init(
@@ -65,7 +62,6 @@ class UserPayload: Decodable {
         isBanned: Bool,
         teams: [TeamId] = [],
         language: String?,
-        blockedUserIds: [UserId] = [],
         extraData: [String: RawJSON]
     ) {
         self.id = id
@@ -81,7 +77,6 @@ class UserPayload: Decodable {
         self.isBanned = isBanned
         self.teams = teams
         self.language = language
-        self.blockedUserIds = blockedUserIds
         self.extraData = extraData
     }
 
@@ -101,7 +96,6 @@ class UserPayload: Decodable {
         isBanned = try container.decodeIfPresent(Bool.self, forKey: .isBanned) ?? false
         teams = try container.decodeIfPresent([String].self, forKey: .teams) ?? []
         language = try container.decodeIfPresent(String.self, forKey: .language)
-        blockedUserIds = try container.decodeIfPresent([String].self, forKey: .blockedUserIds) ?? []
 
         do {
             var payload = try [String: RawJSON](from: decoder)

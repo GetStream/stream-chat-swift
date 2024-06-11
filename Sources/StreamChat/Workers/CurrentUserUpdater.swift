@@ -170,18 +170,14 @@ class CurrentUserUpdater: Worker {
         apiClient.request(endpoint: .loadBlockedUsers()) {
             switch $0 {
             case let .success(payload):
-                var blockedUsers: [BlockedUser] = []
-                var blockedUsersDTOs: Set<BlockedUserDTO> = []
                 self.database.write({ session in
-                    for blockedUser in payload.blockedUsers {
-                        blockedUsersDTOs.insert(blockedUser.asDTO(context: self.database.writableContext))
-                    }
-                    session.currentUser?.blockedUsers = blockedUsersDTOs
-                    session.currentUser?.user.blockedUserIds = blockedUsersDTOs.map { $0.blockedUserId }
-                    blockedUsers = blockedUsersDTOs.compactMap { try? $0.asModel() }
+                    session.currentUser?.blockedUserIds = payload.blockedUsers.map { $0.blockedUserId }
                 }, completion: {
                     if let error = $0 {
                         log.error("Failed to save blocked users to the database. Error: \(error)")
+                    }
+                    let blockedUsers = payload.blockedUsers.map {
+                        BlockedUser(userId: $0.blockedUserId, blockedAt: $0.createdAt)
                     }
                     completion(.success(blockedUsers))
                 })
