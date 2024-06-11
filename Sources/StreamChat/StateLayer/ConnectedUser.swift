@@ -129,13 +129,11 @@ public final class ConnectedUser {
     
     /// Blocks the user in all the channels.
     ///
-    /// - Parameters:
-    ///   - userId: The id of the user to mute.
-    ///   - keepChannelsVisible: A Boolean value that  determines if the channels should be kept visible.
+    /// - Parameter userId: The id of the user to mute.
     ///
     /// - Throws: An error while communicating with the Stream API.
-    public func blockUser(_ userId: UserId, keepChannelsVisible: Bool = false) async throws {
-        try await userUpdater.blockUser(userId, keepChannelsVisible: keepChannelsVisible)
+    public func blockUser(_ userId: UserId) async throws {
+        try await userUpdater.blockUser(userId)
     }
     
     /// Unblocks the user in all the channels.

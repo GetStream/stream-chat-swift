@@ -110,7 +110,7 @@ extension NSManagedObjectContext: CurrentUserDatabaseSession {
         return dto
     }
     
-    func saveCurrentUserBlockedUsers(_ blockedUsers: [BlockedUserPayload]) throws -> [BlockedUserDTO] {
+    func saveCurrentUserBlockedUsers(_ blockedUsers: [BlockingUserPayload]) throws -> [BlockedUserDTO] {
         invalidateCurrentUserCache()
 
         let blockedUsersDTOs = blockedUsers.map { blockedUser -> BlockedUserDTO in

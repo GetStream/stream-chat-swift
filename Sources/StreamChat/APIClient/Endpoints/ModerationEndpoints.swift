@@ -19,18 +19,13 @@ extension Endpoint {
 // MARK: - User blocking
 
 extension Endpoint {
-    static func blockUser(_ userId: UserId, keepChannelsVisible: Bool) -> Endpoint<BlockedUsersResponse> {
-        let body: [String: AnyEncodable] = [
-            "blocked_user_id": AnyEncodable(userId),
-            "keep_channels_visible": AnyEncodable(keepChannelsVisible)
-        ]
-        
-        return .init(
+    static func blockUser(_ userId: UserId) -> Endpoint<BlockingUserPayload> {
+        .init(
             path: .blockUser,
             method: .post,
             queryItems: nil,
             requiresConnectionId: false,
-            body: body
+            body: ["blocked_user_id": userId]
         )
     }
 
@@ -44,7 +39,7 @@ extension Endpoint {
         )
     }
     
-    static func loadBlockedUsers() -> Endpoint<BlockedUsersResponse> {
+    static func loadBlockedUsers() -> Endpoint<BlocksPayload> {
         .init(
             path: .blockUser,
             method: .get,

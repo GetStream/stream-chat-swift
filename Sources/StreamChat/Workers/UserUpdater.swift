@@ -31,20 +31,16 @@ class UserUpdater: Worker {
     /// Blocks the user with the provided `userId`.
     /// - Parameters:
     ///   - userId: The user identifier.
-    ///   - keepChannelsVisible: A Boolean value that  determines if the channels should be kept visible.
     ///   - completion: Called when the API call is finished. Called with `Error` if the remote update fails.
     ///
-    func blockUser(_ userId: UserId, keepChannelsVisible: Bool = false, completion: ((Error?) -> Void)? = nil) {
-        apiClient.request(endpoint: .blockUser(userId, keepChannelsVisible: keepChannelsVisible)) {
+    func blockUser(_ userId: UserId, completion: ((Error?) -> Void)? = nil) {
+        apiClient.request(endpoint: .blockUser(userId)) {
             switch $0 {
             case let .success(payload):
                 self.database.write({ session in
-                    var blockedUsers: Set<BlockedUserDTO> = []
-                    for blockedUser in payload.blockedUsers {
-                        blockedUsers.insert(blockedUser.asDTO(context: self.database.writableContext))
-                    }
-                    session.currentUser?.blockedUsers = blockedUsers
-                    session.currentUser?.user.blockedUserIds = blockedUsers.map { $0.blockedUserId }
+                    let blockedUserDTO = payload.asDTO(context: self.database.writableContext)
+                    session.currentUser?.blockedUsers.insert(blockedUserDTO)
+                    session.currentUser?.user.blockedUserIds.append(blockedUserDTO.blockedUserId)
                 }, completion: {
                     if let error = $0 {
                         log.error("Failed to save blocked user with id: <\(userId)> to the database. Error: \(error)")
@@ -196,9 +192,9 @@ extension UserUpdater {
             }
         }
     }
-    func blockUser(_ userId: UserId, keepChannelsVisible: Bool = false) async throws {
+    func blockUser(_ userId: UserId) async throws {
         try await withCheckedThrowingContinuation { continuation in
-            blockUser(userId, keepChannelsVisible: keepChannelsVisible) { error in
+            blockUser(userId) { error in
                 continuation.resume(with: error)
             }
         }

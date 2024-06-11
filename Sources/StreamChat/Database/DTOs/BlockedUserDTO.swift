@@ -18,7 +18,16 @@ class BlockedUserDTO: NSManagedObject {
     }
 }
 
-extension BlockedUserPayload {
+extension BlockingUserPayload {
+    func asDTO(context: NSManagedObjectContext) -> BlockedUserDTO {
+        let dto = BlockedUserDTO(context: context)
+        dto.blockedUserId = blockedUserId
+        dto.blockedAt = createdAt.bridgeDate
+        return dto
+    }
+}
+
+extension BlockPayload {
     func asDTO(context: NSManagedObjectContext) -> BlockedUserDTO {
         let dto = BlockedUserDTO(context: context)
         dto.blockedUserId = blockedUserId

@@ -625,6 +625,8 @@
 		82BE0ACB2BFFA2FE008DA9DC /* BlockedUserDTO.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82BE0AC92BFFA2FE008DA9DC /* BlockedUserDTO.swift */; };
 		82BE0ACD2C009A17008DA9DC /* BlockedUser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82BE0ACC2C009A17008DA9DC /* BlockedUser.swift */; };
 		82BE0ACE2C009A17008DA9DC /* BlockedUser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82BE0ACC2C009A17008DA9DC /* BlockedUser.swift */; };
+		82C18FDC2C10C8E600C5283C /* BlockedUserPayload.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82C18FDB2C10C8E600C5283C /* BlockedUserPayload.swift */; };
+		82C18FDD2C10C8E600C5283C /* BlockedUserPayload.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82C18FDB2C10C8E600C5283C /* BlockedUserPayload.swift */; };
 		82CBE5682861BF300039C35C /* AttachmentResponses.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82CBE5672861BF300039C35C /* AttachmentResponses.swift */; };
 		82CED1C827DF492F006E967A /* ThreadPage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82CED1C727DF492F006E967A /* ThreadPage.swift */; };
 		82DCB3A92A4AE8FB00738933 /* StreamChat.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 799C941B247D2F80001F1104 /* StreamChat.framework */; };
@@ -3485,6 +3487,7 @@
 		82BA52EE27E1EF7B00951B87 /* MessageList_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageList_Tests.swift; sourceTree = "<group>"; };
 		82BE0AC92BFFA2FE008DA9DC /* BlockedUserDTO.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlockedUserDTO.swift; sourceTree = "<group>"; };
 		82BE0ACC2C009A17008DA9DC /* BlockedUser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlockedUser.swift; sourceTree = "<group>"; };
+		82C18FDB2C10C8E600C5283C /* BlockedUserPayload.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlockedUserPayload.swift; sourceTree = "<group>"; };
 		82CBE5672861BF300039C35C /* AttachmentResponses.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AttachmentResponses.swift; sourceTree = "<group>"; };
 		82CED1C727DF492F006E967A /* ThreadPage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThreadPage.swift; sourceTree = "<group>"; };
 		82D2E81E27D10F4300169ADA /* StreamMockServer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StreamMockServer.swift; sourceTree = "<group>"; };
@@ -5665,6 +5668,7 @@
 			isa = PBXGroup;
 			children = (
 				88E26D7C2580F95300F55AB5 /* AttachmentEndpoints.swift */,
+				82C18FDB2C10C8E600C5283C /* BlockedUserPayload.swift */,
 				43D3F0F8284106EE00B74921 /* CallEndpoints.swift */,
 				79877A132498E4EE00015F8B /* ChannelEndpoints.swift */,
 				F6FF1DA924FD23D300151735 /* MessageEndpoints.swift */,
@@ -11324,6 +11328,7 @@
 				882C5759252C794900E60C44 /* MemberEndpoints.swift in Sources */,
 				DA640FC12535CFA100D32944 /* ChannelMemberListSortingKey.swift in Sources */,
 				7900452625374CA20096ECA1 /* User+SwiftUI.swift in Sources */,
+				82C18FDC2C10C8E600C5283C /* BlockedUserPayload.swift in Sources */,
 				404296DA2A0112D00089126D /* AudioQueuePlayer.swift in Sources */,
 				4F51519C2BC66FBE001B7152 /* Task+Extensions.swift in Sources */,
 				792FCB4924A3BF38000290C7 /* OptionSet+Extensions.swift in Sources */,
@@ -12303,6 +12308,7 @@
 				841BA9FC2BCE8468000C73E4 /* CastPollVoteRequestBody.swift in Sources */,
 				C121E8AE274544B000023E4C /* ChannelController+SwiftUI.swift in Sources */,
 				C121E8AF274544B000023E4C /* ChannelController+Combine.swift in Sources */,
+				82C18FDD2C10C8E600C5283C /* BlockedUserPayload.swift in Sources */,
 				C121E8B0274544B000023E4C /* ChannelListController.swift in Sources */,
 				C121E8B1274544B000023E4C /* ChannelListController+SwiftUI.swift in Sources */,
 				C121E8B2274544B000023E4C /* ChannelListController+Combine.swift in Sources */,
