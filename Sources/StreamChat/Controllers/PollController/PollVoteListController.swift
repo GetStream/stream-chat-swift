@@ -154,17 +154,15 @@ public class PollVoteListController: DataController, DelegateCallable, DataStore
             log.error("Failed to perform fetch request with error: \(error). This is an internal error.")
         }
     }
-}
 
-// MARK: - Actions
+    // MARK: - Actions
 
-public extension PollVoteListController {
     /// Loads more votes.
     ///
     /// - Parameters:
     ///   - limit: Limit for the page size.
     ///   - completion: The completion callback.
-    func loadMoreVotes(
+    public func loadMoreVotes(
         limit: Int? = nil,
         completion: ((Error?) -> Void)? = nil
     ) {
