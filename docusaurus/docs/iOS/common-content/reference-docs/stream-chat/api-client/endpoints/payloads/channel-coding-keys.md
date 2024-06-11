@@ -148,3 +148,11 @@ This value will be 0 if the channel is not in slow mode.
 ``` swift
 case cooldownDuration = "cooldown"
 ```
+
+### `blocked`
+
+A blocked flag.
+
+``` swift
+case blocked
+```

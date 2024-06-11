@@ -116,6 +116,8 @@ struct ChannelDetailPayload {
     let ownCapabilities: [String]?
     /// Checks if the channel is frozen.
     let isFrozen: Bool
+    /// Checks if the channel is blocked.
+    let isBlocked: Bool?
 
     /// Checks if the channel is hidden.
     /// Backend only sends this field for `QueryChannel` and `QueryChannels` API calls,
@@ -168,6 +170,7 @@ extension ChannelDetailPayload: Decodable {
             config: try container.decode(ChannelConfig.self, forKey: .config),
             ownCapabilities: try container.decodeIfPresent([String].self, forKey: .ownCapabilities),
             isFrozen: try container.decode(Bool.self, forKey: .frozen),
+            isBlocked: try container.decodeIfPresent(Bool.self, forKey: .blocked),
             // For `hidden`, we don't fallback to `false`
             // since this field is not sent for all API calls and for events
             // We can't assume anything regarding this flag when it's absent

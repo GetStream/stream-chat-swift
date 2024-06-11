@@ -41,6 +41,8 @@ class ChannelDTO: NSManagedObject {
     @NSManaged var isFrozen: Bool
     @NSManaged var cooldownDuration: Int
     @NSManaged var team: String?
+    
+    @NSManaged var isBlocked: Bool
 
     // MARK: - Queries
 
@@ -224,6 +226,13 @@ extension NSManagedObjectContext {
         }
 
         dto.isFrozen = payload.isFrozen
+        
+
+        // Backend only returns a boolean for blocked 1:1 channels
+        // on channel list query
+        if let isBlocked = payload.isBlocked {
+            dto.isBlocked = isBlocked
+        }
 
         // Backend only returns a boolean for hidden state
         // on channel query and channel list query
@@ -513,6 +522,7 @@ extension ChatChannel {
             config: dto.config.asModel(),
             ownCapabilities: Set(dto.ownCapabilities.compactMap(ChannelCapability.init(rawValue:))),
             isFrozen: dto.isFrozen,
+            isBlocked: dto.isBlocked,
             lastActiveMembers: { fetchMembers() },
             membership: dto.membership.map { try $0.asModel() },
             currentlyTypingUsers: { Set(dto.currentlyTypingUsers.compactMap { try? $0.asModel() }) },
