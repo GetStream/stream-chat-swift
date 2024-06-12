@@ -3,7 +3,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 # Upcoming
 
-### 🔄 Changed
+## StreamChat
+### 🐞 Fixed
+- Reset channel members and watchers state when fetching the initial state of the channel [#3245](https://github.com/GetStream/stream-chat-swift/pull/3245)
 
 # [4.57.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.57.0)
 _June 06, 2024_
