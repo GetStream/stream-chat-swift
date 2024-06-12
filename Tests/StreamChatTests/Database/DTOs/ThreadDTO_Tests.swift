@@ -52,7 +52,8 @@ final class ThreadDTO_Tests: XCTestCase {
             updatedAt: .unique,
             title: "Test",
             latestReplies: [.dummy(), .dummy()],
-            read: [dummyThreadReadPayload()]
+            read: [dummyThreadReadPayload()],
+            extraData: [:]
         )
 
         let dto = try database.viewContext.saveThread(
@@ -89,7 +90,8 @@ final class ThreadDTO_Tests: XCTestCase {
             updatedAt: .unique,
             title: "Test",
             latestReplies: [.dummy(), .dummy()],
-            read: [dummyThreadReadPayload()]
+            read: [dummyThreadReadPayload()],
+            extraData: [:]
         )
 
         let dto = try database.viewContext.saveThread(

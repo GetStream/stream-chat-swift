@@ -396,6 +396,22 @@ class DatabaseSession_Mock: DatabaseSession {
     func deleteAllThreads() throws {
         try underlyingSession.deleteAllThreads()
     }
+
+    func loadThreadRead(parentMessageId: MessageId, userId: String) -> StreamChat.ThreadReadDTO? {
+        underlyingSession.loadThreadRead(parentMessageId: parentMessageId, userId: userId)
+    }
+
+    func loadThreadReads(for userId: UserId) -> [ThreadReadDTO] {
+        underlyingSession.loadThreadReads(for: userId)
+    }
+
+    func markThreadAsRead(parentMessageId: MessageId, userId: UserId, at: Date) {
+        underlyingSession.markThreadAsRead(parentMessageId: parentMessageId, userId: userId, at: at)
+    }
+
+    func markThreadAsUnread(for parentMessageId: MessageId, userId: UserId) {
+        underlyingSession.markThreadAsUnread(for: parentMessageId, userId: userId)
+    }
 }
 
 private extension DatabaseSession_Mock {

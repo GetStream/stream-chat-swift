@@ -18,7 +18,8 @@ extension ChatThread {
         updatedAt: Date? = .unique,
         title: String? = nil,
         latestReplies: [ChatMessage] = [],
-        reads: [ThreadRead] = []
+        reads: [ThreadRead] = [],
+        extraData: [String: RawJSON] = [:]
     ) -> ChatThread {
         .init(
             parentMessageId: parentMessage.id,
@@ -33,7 +34,8 @@ extension ChatThread {
             updatedAt: updatedAt,
             title: title,
             latestReplies: latestReplies,
-            reads: reads
+            reads: reads,
+            extraData: extraData
         )
     }
 }

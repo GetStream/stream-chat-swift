@@ -21,7 +21,8 @@ extension ThreadPayload {
         updatedAt: Date? = .unique,
         title: String? = nil,
         latestReplies: [MessagePayload] = [],
-        read: [ThreadReadPayload] = []
+        read: [ThreadReadPayload] = [],
+        extraData: [String: RawJSON] = [:]
     ) -> Self {
         .init(
             parentMessageId: parentMessageId,
@@ -36,7 +37,8 @@ extension ThreadPayload {
             updatedAt: updatedAt,
             title: title,
             latestReplies: latestReplies,
-            read: read
+            read: read,
+            extraData: extraData
         )
     }
 }
