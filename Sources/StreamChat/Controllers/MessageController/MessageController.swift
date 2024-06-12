@@ -722,7 +722,9 @@ public class ChatMessageController: DataController, DelegateCallable, DataStoreP
     /// Marks the thread read if this message is the root of a thread.
     public func markThreadRead(completion: ((Error?) -> Void)? = nil) {
         messageUpdater.markThreadRead(cid: cid, threadId: messageId) { error in
-            completion?(error)
+            self.callback {
+                completion?(error)
+            }
         }
     }
 
@@ -732,7 +734,9 @@ public class ChatMessageController: DataController, DelegateCallable, DataStoreP
             cid: cid,
             threadId: messageId
         ) { error in
-            completion?(error)
+            self.callback {
+                completion?(error)
+            }
         }
     }
 }
