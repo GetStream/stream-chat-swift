@@ -766,6 +766,33 @@ public class ChatMessageController: DataController, DelegateCallable, DataStoreP
             }
         }
     }
+
+    /// Updates the thread information of the threat root message this controller manages.
+    /// - Parameters:
+    ///   - title: The title of the thread.
+    ///   - extraData: Custom data to populate the thread.
+    ///   - unsetProperties: Properties from the thread to be cleared/unset.
+    public func updateThread(
+        title: String?,
+        extraData: [String: RawJSON]? = nil,
+        unsetProperties: [String]? = nil,
+        completion: @escaping ((Result<ChatThread, Error>) -> Void)
+    ) {
+        messageUpdater.updateThread(
+            for: messageId,
+            request: .init(
+                set: .init(
+                    title: title,
+                    extraData: extraData
+                ),
+                unset: unsetProperties
+            )
+        ) { result in
+            self.callback {
+                completion(result)
+            }
+        }
+    }
 }
 
 // MARK: - Environment
