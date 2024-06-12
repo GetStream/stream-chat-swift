@@ -32,7 +32,7 @@ public class CurrentChatUser: ChatUser {
     /// A set of users muted by the user.
     public let mutedUsers: Set<ChatUser>
     
-    /// A list of blocked user ids
+    /// A list of blocked user ids.
     public let blockedUserIds: Set<UserId>
 
     /// A set of users flagged by the user.

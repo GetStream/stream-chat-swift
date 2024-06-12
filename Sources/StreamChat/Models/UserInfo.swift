@@ -18,7 +18,7 @@ public struct UserInfo {
     public let language: TranslationLanguage?
     /// The privacy settings of the user. Example: If the user does not want to expose typing events or read events.
     public let privacySettings: UserPrivacySettings?
-    /// The privacy settings of the user. Example: If the user does not want to expose typing events or read events.
+    /// A list of blocked user ids.
     public let blockedUserIds: [UserId]?
     /// Custom extra data of the user.
     public let extraData: [String: RawJSON]
