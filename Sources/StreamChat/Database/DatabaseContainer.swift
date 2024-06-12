@@ -83,7 +83,7 @@ class DatabaseContainer: NSPersistentContainer {
     private let deletedMessageVisibility: ChatClientConfig.DeletedMessageVisibility?
     private let shouldShowShadowedMessages: Bool?
 
-    static var cachedModel: NSManagedObjectModel?
+    static var cachedModels = [String: NSManagedObjectModel]()
 
     /// All `NSManagedObjectContext`s this container owns.
     private(set) lazy var allContext: [NSManagedObjectContext] = [viewContext, backgroundReadOnlyContext, stateLayerContext, writableContext]
@@ -111,7 +111,7 @@ class DatabaseContainer: NSPersistentContainer {
         shouldShowShadowedMessages: Bool? = nil
     ) {
         let managedObjectModel: NSManagedObjectModel
-        if let cachedModel = Self.cachedModel {
+        if let cachedModel = Self.cachedModels[modelName] {
             managedObjectModel = cachedModel
         } else {
             // It's safe to unwrap the following values because this is not settable by users and it's always a programmer error.
@@ -119,7 +119,7 @@ class DatabaseContainer: NSPersistentContainer {
             let modelURL = bundle.url(forResource: modelName, withExtension: "momd")!
             let model = NSManagedObjectModel(contentsOf: modelURL)!
             managedObjectModel = model
-            Self.cachedModel = model
+            Self.cachedModels[modelName] = model
         }
 
         self.localCachingSettings = localCachingSettings
