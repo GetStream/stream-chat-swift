@@ -29,7 +29,7 @@ struct ThreadListPayload: Decodable {
 }
 
 struct ThreadPayload: Decodable {
-    enum CodingKeys: String, CodingKey {
+    enum CodingKeys: String, CodingKey, CaseIterable {
         case channel
         case parentMessageId = "parent_message_id"
         case parentMessage = "parent_message"
@@ -58,6 +58,7 @@ struct ThreadPayload: Decodable {
     let title: String?
     let latestReplies: [MessagePayload]
     let read: [ThreadReadPayload]
+    let extraData: [String: RawJSON]
 
     init(
         parentMessageId: MessageId,
@@ -72,7 +73,8 @@ struct ThreadPayload: Decodable {
         updatedAt: Date?,
         title: String?,
         latestReplies: [MessagePayload],
-        read: [ThreadReadPayload]
+        read: [ThreadReadPayload],
+        extraData: [String: RawJSON]
     ) {
         self.parentMessageId = parentMessageId
         self.parentMessage = parentMessage
@@ -87,6 +89,7 @@ struct ThreadPayload: Decodable {
         self.title = title
         self.latestReplies = latestReplies
         self.read = read
+        self.extraData = extraData
     }
 
     init(from decoder: Decoder) throws {
@@ -114,6 +117,13 @@ struct ThreadPayload: Decodable {
             [ThreadReadPayload].self,
             forKey: .read
         ) ?? []
+
+        if var payload = try? [String: RawJSON](from: decoder) {
+            payload.removeValues(forKeys: ThreadPayload.CodingKeys.allCases.map(\.rawValue))
+            extraData = payload
+        } else {
+            extraData = [:]
+        }
     }
 }
 

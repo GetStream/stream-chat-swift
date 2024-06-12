@@ -32,4 +32,6 @@ public struct ChatThread {
     public let latestReplies: [ChatMessage]
     /// The reads information of the thread.
     public let reads: [ThreadRead]
+    /// The custom data of the thread.
+    public let extraData: [String: RawJSON]
 }

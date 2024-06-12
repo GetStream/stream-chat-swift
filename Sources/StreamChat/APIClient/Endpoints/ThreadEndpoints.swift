@@ -86,5 +86,17 @@ struct ThreadPartialUpdateRequest: Encodable {
     /// The available thread properties that can be updated.
     struct SetProperties: Encodable {
         var title: String?
+        var extraData: [String: RawJSON]?
+
+        enum CodingKeys: CodingKey {
+            case title
+            case extraData
+        }
+
+        func encode(to encoder: any Encoder) throws {
+            var container = encoder.container(keyedBy: CodingKeys.self)
+            try container.encodeIfPresent(title, forKey: .title)
+            try extraData.encode(to: encoder)
+        }
     }
 }

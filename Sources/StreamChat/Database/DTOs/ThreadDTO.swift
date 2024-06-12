@@ -20,6 +20,7 @@ class ThreadDTO: NSManagedObject {
     @NSManaged var read: Set<ThreadReadDTO>
     @NSManaged var createdBy: UserDTO
     @NSManaged var channel: ChannelDTO
+    @NSManaged var extraData: Data
 
     static func loadOrCreate(
         parentMessageId: MessageId,
@@ -86,7 +87,8 @@ class ThreadDTO: NSManagedObject {
         threadParticipants: Set<ThreadParticipantDTO>,
         read: Set<ThreadReadDTO>,
         createdBy: UserDTO,
-        channel: ChannelDTO
+        channel: ChannelDTO,
+        extraData: Data
     ) {
         self.parentMessage = parentMessage
         self.title = title
@@ -100,12 +102,20 @@ class ThreadDTO: NSManagedObject {
         self.read = read
         self.createdBy = createdBy
         self.channel = channel
+        self.extraData = extraData
     }
 }
 
 extension ThreadDTO {
     func asModel() throws -> ChatThread {
-        try .init(
+        let extraData: [String: RawJSON]
+        do {
+            extraData = try JSONDecoder.default.decode([String: RawJSON].self, from: self.extraData)
+        } catch {
+            extraData = [:]
+        }
+
+        return try .init(
             parentMessageId: parentMessageId,
             parentMessage: parentMessage.asModel(),
             channel: channel.asModel(),
@@ -118,7 +128,8 @@ extension ThreadDTO {
             updatedAt: updatedAt?.bridgeDate,
             title: title,
             latestReplies: latestReplies.map { try $0.asModel() },
-            reads: read.map { try $0.asModel() }
+            reads: read.map { try $0.asModel() },
+            extraData: extraData
         )
     }
 }
@@ -193,6 +204,13 @@ extension NSManagedObjectContext {
 
         let createdByUserDTO = try saveUser(payload: payload.createdBy)
 
+        let extraData: Data
+        do {
+            extraData = try JSONEncoder.default.encode(payload.extraData)
+        } catch {
+            extraData = Data()
+        }
+
         threadDTO.fill(
             parentMessage: parentMessageDTO,
             title: payload.title,
@@ -205,7 +223,8 @@ extension NSManagedObjectContext {
             threadParticipants: Set(threadParticipantsDTO),
             read: Set(readsDTO),
             createdBy: createdByUserDTO,
-            channel: channelDTO
+            channel: channelDTO,
+            extraData: extraData
         )
 
         return threadDTO
