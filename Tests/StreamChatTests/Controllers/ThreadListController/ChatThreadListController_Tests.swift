@@ -78,9 +78,9 @@ final class ChatThreadListController_Tests: XCTestCase {
         }
     }
     
-    func test_loadOlderThreads_whenSuccess() {
+    func test_loadMoreThreads_whenSuccess() {
         let exp = expectation(description: "loadOlderThreads completion")
-        controller.loadOlderThreads() { result in
+        controller.loadMoreThreads() { result in
             let threads = try? result.get()
             XCTAssertNotNil(threads)
             exp.fulfill()
@@ -96,9 +96,9 @@ final class ChatThreadListController_Tests: XCTestCase {
         XCTAssertTrue(controller.hasLoadedAllThreads)
     }
 
-    func test_loadOlderThreads_whenSuccess_whenMoreThreadsThanLimit() {
+    func test_loadMoreThreads_whenSuccess_whenMoreThreadsThanLimit() {
         let exp = expectation(description: "loadOlderThreads completion")
-        controller.loadOlderThreads(limit: 2) { result in
+        controller.loadMoreThreads(limit: 2) { result in
             let threads = try? result.get()
             XCTAssertNotNil(threads)
             exp.fulfill()
@@ -115,9 +115,9 @@ final class ChatThreadListController_Tests: XCTestCase {
         XCTAssertFalse(controller.hasLoadedAllThreads)
     }
 
-    func test_loadOlderThreads_whenFailure() {
+    func test_loadMoreThreads_whenFailure() {
         let exp = expectation(description: "synchronize completion")
-        controller.loadOlderThreads() { error in
+        controller.loadMoreThreads() { error in
             XCTAssertNotNil(error)
             exp.fulfill()
         }
@@ -126,7 +126,7 @@ final class ChatThreadListController_Tests: XCTestCase {
         wait(for: [exp], timeout: defaultTimeout)
     }
 
-    func test_loadOlderThreads_shouldUseNextCursorWhenMorePagesAvailable() {
+    func test_loadMoreThreads_shouldUseNextCursorWhenMorePagesAvailable() {
         let exp = expectation(description: "synchronize completion")
         controller.synchronize { error in
             XCTAssertNil(error)
@@ -139,7 +139,7 @@ final class ChatThreadListController_Tests: XCTestCase {
         wait(for: [exp], timeout: defaultTimeout)
 
         let expOlderThreads = expectation(description: "loadOlderThreads1 completion")
-        controller.loadOlderThreads() { result in
+        controller.loadMoreThreads() { result in
             let threads = try? result.get()
             XCTAssertNotNil(threads)
             expOlderThreads.fulfill()
@@ -153,7 +153,7 @@ final class ChatThreadListController_Tests: XCTestCase {
         )
         wait(for: [expOlderThreads], timeout: defaultTimeout)
 
-        controller.loadOlderThreads()
+        controller.loadMoreThreads()
         XCTAssertEqual(repositoryMock.loadThreadsCalledWith?.next, nextCursor2)
     }
 
