@@ -451,16 +451,15 @@ final class DemoChatChannelListRouter: ChatChannelListRouter {
                 guard let cid = channelController.channel?.cid else { return }
                 let client = channelController.client
                 client.currentUserController().getBlockedUsers { result in
-                    if let blockedUsers = try? result.get() {
-                        self.rootViewController.present(MembersViewController(
-                            membersController: client.memberListController(
-                                query: .init(
-                                    cid: cid,
-                                    filter: .in(.id, values: blockedUsers.map({ $0.userId }))
-                                )
+                    guard let blockedUsers = try? result.get() else { return }
+                    self.rootViewController.present(MembersViewController(
+                        membersController: client.memberListController(
+                            query: .init(
+                                cid: cid,
+                                filter: .in(.id, values: blockedUsers.map({ $0.userId }))
                             )
-                        ), animated: true)
-                    }
+                        )
+                    ), animated: true)
                 }
             }),
             .init(title: "Truncate channel w/o message", isEnabled: canUpdateChannel, handler: { _ in
