@@ -5,7 +5,7 @@
 import Foundation
 
 /// A type representing a blocked user.
-public struct BlockedUser {
+public struct BlockedUserDetails {
     /// The unique identifier of the blocked user.
     public let userId: UserId
 
@@ -21,7 +21,7 @@ public struct BlockedUser {
     }
 }
 
-extension BlockedUser: Hashable {
+extension BlockedUserDetails: Hashable {
     public func hash(into hasher: inout Hasher) {
         hasher.combine(userId)
     }

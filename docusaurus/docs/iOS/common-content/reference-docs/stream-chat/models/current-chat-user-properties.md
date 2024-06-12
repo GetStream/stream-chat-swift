@@ -28,7 +28,7 @@ public let mutedUsers: Set<ChatUser>
 A set of users blocked by the user.
 
 ``` swift
-public let blockedUsers: Set<BlockedUser>
+public let blockedUsers: Set<BlockedUserDetails>
 ```
 
 ### `flaggedUsers`

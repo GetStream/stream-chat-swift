@@ -166,7 +166,7 @@ class CurrentUserUpdater: Worker {
     ///
     /// - Parameter completion: Called when the API call is finished. Called with `Error` if the remote update fails.
     ///
-    func getBlockedUsers(completion: @escaping (Result<[BlockedUser], Error>) -> Void) {
+    func loadBlockedUsers(completion: @escaping (Result<[BlockedUserDetails], Error>) -> Void) {
         apiClient.request(endpoint: .loadBlockedUsers()) {
             switch $0 {
             case let .success(payload):
@@ -177,7 +177,7 @@ class CurrentUserUpdater: Worker {
                         log.error("Failed to save blocked users to the database. Error: \(error)")
                     }
                     let blockedUsers = payload.blockedUsers.map {
-                        BlockedUser(userId: $0.blockedUserId, blockedAt: $0.blockedAt)
+                        BlockedUserDetails(userId: $0.blockedUserId, blockedAt: $0.blockedAt)
                     }
                     completion(.success(blockedUsers))
                 })
@@ -227,9 +227,9 @@ extension CurrentUserUpdater {
         }
     }
     
-    func getBlockedUsers() async throws -> [BlockedUser] {
+    func loadBlockedUsers() async throws -> [BlockedUserDetails] {
         try await withCheckedThrowingContinuation { continuation in
-            getBlockedUsers { error in
+            loadBlockedUsers { error in
                 continuation.resume(with: error)
             }
         }

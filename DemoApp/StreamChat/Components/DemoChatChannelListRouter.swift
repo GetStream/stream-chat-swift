@@ -450,7 +450,7 @@ final class DemoChatChannelListRouter: ChatChannelListRouter {
             .init(title: "Show Blocked Users", handler: { [unowned self] _ in
                 guard let cid = channelController.channel?.cid else { return }
                 let client = channelController.client
-                client.currentUserController().getBlockedUsers { result in
+                client.currentUserController().loadBlockedUsers { result in
                     guard let blockedUsers = try? result.get() else { return }
                     self.rootViewController.present(MembersViewController(
                         membersController: client.memberListController(

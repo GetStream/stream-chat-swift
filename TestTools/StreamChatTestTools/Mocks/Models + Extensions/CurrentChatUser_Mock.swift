@@ -26,7 +26,7 @@ public extension CurrentChatUser {
         devices: [Device] = [],
         currentDevice: Device? = nil,
         mutedUsers: Set<ChatUser> = [],
-        blockedUsers: Set<BlockedUser> = [],
+        blockedUsers: Set<BlockedUserDetails> = [],
         flaggedUsers: Set<ChatUser> = [],
         flaggedMessageIDs: Set<MessageId> = [],
         unreadCount: UnreadCount = .noUnread,
