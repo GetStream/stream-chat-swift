@@ -15,7 +15,7 @@ class CurrentUserDTO: NSManagedObject {
     /// The date later serves as reference date for the last event synced using `/sync` endpoint
     @NSManaged var lastSynchedEventDate: DBDate?
     
-    @NSManaged var blockedUserIds: [String]
+    @NSManaged var blockedUserIds: Set<String>
     @NSManaged var flaggedUsers: Set<UserDTO>
     @NSManaged var flaggedMessages: Set<MessageDTO>
     @NSManaged var mutedUsers: Set<UserDTO>

@@ -171,7 +171,7 @@ class CurrentUserUpdater: Worker {
             switch $0 {
             case let .success(payload):
                 self.database.write({ session in
-                    session.currentUser?.blockedUserIds = payload.blockedUsers.map { $0.blockedUserId }
+                    session.currentUser?.blockedUserIds = Set(payload.blockedUsers.map(\.blockedUserId))
                 }, completion: {
                     if let error = $0 {
                         log.error("Failed to save blocked users to the database. Error: \(error)")

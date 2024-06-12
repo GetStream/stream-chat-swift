@@ -54,7 +54,7 @@ public struct ChatChannel {
     ///
     /// It's not possible to send new messages to a blocked channel.
     ///
-    public let isBlocked: Bool?
+    public let isBlocked: Bool
 
     /// The total number of members in the channel.
     public let memberCount: Int
@@ -196,7 +196,7 @@ public struct ChatChannel {
         config: ChannelConfig = .init(),
         ownCapabilities: Set<ChannelCapability> = [],
         isFrozen: Bool = false,
-        isBlocked: Bool? = nil,
+        isBlocked: Bool = false,
         lastActiveMembers: @escaping (() -> [ChatChannelMember]) = { [] },
         membership: ChatChannelMember? = nil,
         currentlyTypingUsers: @escaping () -> Set<ChatUser> = { [] },

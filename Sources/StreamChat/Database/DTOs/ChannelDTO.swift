@@ -227,11 +227,12 @@ extension NSManagedObjectContext {
 
         dto.isFrozen = payload.isFrozen
         
-
-        // Backend only returns a boolean for blocked 1:1 channels
-        // on channel list query
+        // Backend only returns a boolean
+        // for blocked 1:1 channels on channel list query
         if let isBlocked = payload.isBlocked {
             dto.isBlocked = isBlocked
+        } else {
+            dto.isBlocked = false
         }
 
         // Backend only returns a boolean for hidden state

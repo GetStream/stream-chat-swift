@@ -98,7 +98,6 @@ final class ChannelController_SwiftUI_Tests: iOS13TestCase {
             lastActiveAt: .unique,
             teams: [],
             language: nil,
-            blockedUserIds: [],
             extraData: [:]
         )
 

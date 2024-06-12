@@ -144,7 +144,7 @@ final class ChannelListPayload_Tests: XCTestCase {
                     "delete-channel"
                 ],
                 isFrozen: true,
-                isBlocked: nil,
+                isBlocked: false,
                 isHidden: false,
                 members: channelUsers.map {
                     MemberPayload.dummy(

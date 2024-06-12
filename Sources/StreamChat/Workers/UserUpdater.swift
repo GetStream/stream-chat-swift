@@ -36,15 +36,15 @@ class UserUpdater: Worker {
     func blockUser(_ userId: UserId, completion: ((Error?) -> Void)? = nil) {
         apiClient.request(endpoint: .blockUser(userId)) {
             switch $0 {
-            case let .success(payload):
+            case .success:
                 self.database.write({ session in
-                    session.currentUser?.blockedUserIds.append(payload.blockedUserId)
+                    session.currentUser?.blockedUserIds.insert(userId)
                 }, completion: {
                     if let error = $0 {
                         log.error("Failed to save blocked user with id: <\(userId)> to the database. Error: \(error)")
                         
                         self.database.write({ session in
-                            session.currentUser?.blockedUserIds.removeAll { $0 == userId }
+                            session.currentUser?.blockedUserIds.remove(userId)
                         })
                     }
                     completion?($0)
@@ -65,13 +65,13 @@ class UserUpdater: Worker {
             switch $0 {
             case .success:
                 self.database.write({ session in
-                    session.currentUser?.blockedUserIds.removeAll { $0 == userId }
+                    session.currentUser?.blockedUserIds.remove(userId)
                 }, completion: {
                     if let error = $0 {
                         log.error("Failed to remove blocked user with id: <\(userId)> from the database. Error: \(error)")
                         
                         self.database.write({ session in
-                            session.currentUser?.blockedUserIds.append(userId)
+                            session.currentUser?.blockedUserIds.insert(userId)
                         })
                     }
                     completion?($0)

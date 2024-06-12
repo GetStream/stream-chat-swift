@@ -17,7 +17,7 @@ class CurrentUserPayload: UserPayload {
     /// The current privacy settings of the user.
     let privacySettings: UserPrivacySettingsPayload?
     /// Blocked user ids.
-    let blockedUserIds: [UserId]
+    let blockedUserIds: Set<UserId>
 
     init(
         id: String,
@@ -39,7 +39,7 @@ class CurrentUserPayload: UserPayload {
         mutedChannels: [MutedChannelPayload] = [],
         unreadCount: UnreadCount? = nil,
         privacySettings: UserPrivacySettingsPayload? = nil,
-        blockedUserIds: [UserId] = []
+        blockedUserIds: Set<UserId> = []
     ) {
         self.devices = devices
         self.mutedUsers = mutedUsers
@@ -73,7 +73,7 @@ class CurrentUserPayload: UserPayload {
         mutedChannels = try container.decodeIfPresent([MutedChannelPayload].self, forKey: .mutedChannels) ?? []
         unreadCount = try? UnreadCount(from: decoder)
         privacySettings = try container.decodeIfPresent(UserPrivacySettingsPayload.self, forKey: .privacySettings)
-        blockedUserIds = try container.decodeIfPresent([UserId].self, forKey: .blockedUserIds) ?? []
+        blockedUserIds = try container.decodeIfPresent(Set<UserId>.self, forKey: .blockedUserIds) ?? []
 
         try super.init(from: decoder)
     }

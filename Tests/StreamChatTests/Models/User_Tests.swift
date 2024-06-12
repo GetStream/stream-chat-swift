@@ -22,7 +22,6 @@ final class User_Tests: XCTestCase {
             lastActiveAt: .unique,
             teams: [],
             language: nil,
-            blockedUserIds: [],
             extraData: [:]
         )
 
@@ -44,7 +43,6 @@ final class User_Tests: XCTestCase {
             lastActiveAt: .unique,
             teams: [],
             language: nil,
-            blockedUserIds: [],
             extraData: [:]
         )
 
