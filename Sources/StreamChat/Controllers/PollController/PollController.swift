@@ -174,7 +174,11 @@ public class PollController: DataController, DelegateCallable, DataStoreProvider
         
         var deleteExistingVotes = [PollVote]()
         if poll?.enforceUniqueVote == true && !ownVotes.isEmpty {
-            deleteExistingVotes = Array(ownVotes)
+            if optionId != nil {
+                deleteExistingVotes = Array(ownVotes.filter { !$0.isAnswer })
+            } else {
+                deleteExistingVotes = Array(ownVotes.filter { $0.isAnswer })
+            }
         }
         
         pollsRepository.castPollVote(
