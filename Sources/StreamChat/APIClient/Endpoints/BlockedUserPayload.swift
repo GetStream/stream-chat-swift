@@ -40,13 +40,13 @@ struct BlockPayload: Decodable {
     private enum CodingKeys: String, CodingKey {
         case blockedUserId = "blocked_user_id"
         case userId = "user_id"
-        case createdAt = "created_at"
+        case blockedAt = "blocked_at"
         case blockedUser = "blocked_user"
     }
 
     let blockedUserId: String
     let userId: String
-    let createdAt: Date
+    let blockedAt: Date
     let blockedUser: BlockedUserPayload
 }
 
@@ -54,37 +54,25 @@ extension BlockPayload: Equatable {
     static func == (lhs: BlockPayload, rhs: BlockPayload) -> Bool {
         lhs.blockedUserId == rhs.blockedUserId &&
         lhs.userId == rhs.userId &&
-        lhs.createdAt == rhs.createdAt
+        lhs.blockedAt == rhs.blockedAt
     }
 }
 
 /// An object describing the incoming blocked-user JSON payload.
 struct BlockedUserPayload: Decodable {
     private enum CodingKeys: String, CodingKey {
-        case id = "id"
-        case name = "name"
-        case createdAt = "created_at"
-        case updatedAt = "updated_at"
-        case isBanned = "banned"
-        case lastActiveAt = "last_active"
-        case privacySettings = "privacy_settings"
-        case imageURL = "image"
-        case language = "language"
-        case role = "role"
-        case teams = "teams"
-        case isOnline = "online"
+        case id
+        case anon
+        case name
+        case role
+        case teams
+        case username
     }
 
     let id: String
+    let anon: Bool
     let name: String?
-    let createdAt: Date
-    let updatedAt: Date
-    let isBanned: Bool
-    let lastActiveAt: Date?
-    let privacySettings: UserPrivacySettingsPayload?
-    let imageURL: URL?
-    let language: String?
     let role: UserRole
     let teams: [TeamId]
-    let isOnline: Bool
+    let username: String?
 }
