@@ -42,14 +42,13 @@ class UserUpdater: Worker {
                 }, completion: {
                     if let error = $0 {
                         log.error("Failed to save blocked user with id: <\(userId)> to the database. Error: \(error)")
-                        
-                        self.database.write({ session in
-                            session.currentUser?.blockedUserIds.remove(userId)
-                        })
                     }
                     completion?($0)
                 })
             case let .failure(error):
+                self.database.write({ session in
+                    session.currentUser?.blockedUserIds.remove(userId)
+                })
                 completion?(error)
             }
         }
@@ -69,14 +68,13 @@ class UserUpdater: Worker {
                 }, completion: {
                     if let error = $0 {
                         log.error("Failed to remove blocked user with id: <\(userId)> from the database. Error: \(error)")
-                        
-                        self.database.write({ session in
-                            session.currentUser?.blockedUserIds.insert(userId)
-                        })
                     }
                     completion?($0)
                 })
             case let .failure(error):
+                self.database.write({ session in
+                    session.currentUser?.blockedUserIds.insert(userId)
+                })
                 completion?(error)
             }
         }
