@@ -763,6 +763,20 @@ class MessageUpdater: Worker {
             completion(result.error)
         }
     }
+
+    func loadThread(query: ThreadQuery, completion: @escaping ((Result<ChatThread, Error>) -> Void)) {
+        apiClient.request(endpoint: .thread(query: query)) { result in
+            switch result {
+            case .success(let response):
+                self.database.write { session in
+                    let thread = try session.saveThread(payload: response.thread, cache: nil).asModel()
+                    completion(.success(thread))
+                }
+            case .failure(let error):
+                completion(.failure(error))
+            }
+        }
+    }
 }
 
 extension MessageUpdater {

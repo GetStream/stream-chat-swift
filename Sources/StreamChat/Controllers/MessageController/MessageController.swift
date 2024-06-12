@@ -739,6 +739,33 @@ public class ChatMessageController: DataController, DelegateCallable, DataStoreP
             }
         }
     }
+
+    /// Fetches the thread information of the message this controller manages.
+    /// Returns an error in case the message is not the root of a thread.
+    /// - Parameters:
+    ///   - replyLimit: The number of replies fetched.
+    ///   - participantLimit: The number of participants fetches.
+    public func loadThread(
+        replyLimit: Int? = nil,
+        participantLimit: Int? = nil,
+        completion: @escaping ((Result<ChatThread, Error>) -> Void)
+    ) {
+        var query = ThreadQuery(
+            messageId: messageId,
+            watch: false
+        )
+        if let replyLimit {
+            query.replyLimit = replyLimit
+        }
+        if let participantLimit {
+            query.participantLimit = participantLimit
+        }
+        messageUpdater.loadThread(query: query) { result in
+            self.callback {
+                completion(result)
+            }
+        }
+    }
 }
 
 // MARK: - Environment
