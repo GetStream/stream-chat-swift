@@ -21,6 +21,10 @@ open class ChatMessageListVC: _ViewController,
     UIGestureRecognizerDelegate,
     VoiceRecordingAttachmentPresentationViewDelegate
 {
+    open var dataSourceDecorator: (([ChatMessage]) -> [ChatMessage])? = {
+        $0.filter { $0.isPinned == false }
+    }
+
     /// The object that acts as the data source of the message list.
     public weak var dataSource: ChatMessageListVCDataSource? {
         didSet {
