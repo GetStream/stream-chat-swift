@@ -88,10 +88,3 @@ struct BlockedUserPayload: Decodable {
     let teams: [TeamId]
     let isOnline: Bool
 }
-
-extension BlockedUserPayload: Equatable {
-    static func == (lhs: BlockedUserPayload, rhs: BlockedUserPayload) -> Bool {
-        lhs.id == rhs.id &&
-        lhs.createdAt == rhs.createdAt
-    }
-}
