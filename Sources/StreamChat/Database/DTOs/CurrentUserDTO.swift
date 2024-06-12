@@ -93,7 +93,7 @@ extension NSManagedObjectContext: CurrentUserDatabaseSession {
         let mutedUsers = try payload.mutedUsers.map { try saveUser(payload: $0.mutedUser) }
         dto.mutedUsers = Set(mutedUsers)
         
-        dto.blockedUserIds = currentUser?.blockedUserIds ?? []
+        dto.blockedUserIds = payload.blockedUserIds
 
         let channelMutes = Set(
             try payload.mutedChannels.map { try saveChannelMute(payload: $0) }
