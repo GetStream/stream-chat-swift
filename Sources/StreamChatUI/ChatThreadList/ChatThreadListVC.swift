@@ -98,8 +98,16 @@ open class ChatThreadListVC:
     // MARK: - ChatThreadListControllerDelegate
 
     open func controller(_ controller: ChatThreadListController, didChangeThreads changes: [ListChange<ChatThread>]) {
-        threads = Array(controller.threads)
-        tableView.reloadData()
+        let previousThreads = threads
+        let newThreads = Array(controller.threads)
+        let stagedChangeset = StagedChangeset(source: previousThreads, target: newThreads)
+        tableView.reload(
+            using: stagedChangeset,
+            with: .none,
+            reconfigure: { _ in true }
+        ) { [weak self] newThreads in
+            self?.threads = newThreads
+        }
     }
 
     // MARK: - UITableViewDataSource & UITableViewDelegate
@@ -123,5 +131,30 @@ open class ChatThreadListVC:
         tableView.deselectRow(at: indexPath, animated: true)
         let thread = threads[indexPath.row]
         router.showThread(thread)
+    }
+}
+
+extension ChatThread: Differentiable, Hashable {
+    public static func == (lhs: ChatThread, rhs: ChatThread) -> Bool {
+        lhs.parentMessageId == rhs.parentMessageId
+    }
+    
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(parentMessageId)
+    }
+
+    public func isContentEqual(to source: ChatThread) -> Bool {
+        parentMessageId == source.parentMessageId &&
+            updatedAt == source.updatedAt &&
+            parentMessage == source.parentMessage &&
+            title == source.title &&
+            reads == source.reads &&
+            latestReplies == source.latestReplies &&
+            lastMessageAt == source.lastMessageAt &&
+            channel == source.channel &&
+            participantCount == source.participantCount &&
+            replyCount == source.replyCount &&
+            threadParticipants == source.threadParticipants &&
+            extraData == source.extraData
     }
 }

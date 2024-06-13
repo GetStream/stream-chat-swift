@@ -5,7 +5,7 @@
 import Foundation
 
 /// The information about a thread read.
-public struct ThreadRead {
+public struct ThreadRead: Equatable {
     /// The user which the read belongs to.
     public let user: ChatUser
     /// The date when the user last read the thread.
