@@ -3,7 +3,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 # Upcoming
 
-### 🔄 Changed
+## StreamChat
+### 🐞 Fixed
+- Fix notifications muted state for the current user in channel members [#3236](https://github.com/GetStream/stream-chat-swift/pull/3236)
 
 # [4.57.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.57.0)
 _June 06, 2024_
