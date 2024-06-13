@@ -27,7 +27,7 @@ class BackgroundDatabaseObserver<Item, DTO: NSManagedObject> {
     /// When called, notification observers are released
     var releaseNotificationObservers: (() -> Void)?
 
-    private let queue = DispatchQueue(label: "io.getstream.list-database-observer", qos: .userInitiated, attributes: .concurrent)
+    private let queue = DispatchQueue(label: "io.getstream.list-database-observer", qos: .userInteractive, attributes: .concurrent)
     private let processingQueue: OperationQueue
 
     private var _items: [Item] = []
@@ -88,6 +88,7 @@ class BackgroundDatabaseObserver<Item, DTO: NSManagedObject> {
         operationQueue.underlyingQueue = queue
         operationQueue.name = "com.stream.database-observer"
         operationQueue.maxConcurrentOperationCount = 1
+        operationQueue.qualityOfService = .userInteractive
         processingQueue = operationQueue
 
         changeAggregator.onWillChange = { [weak self] in
