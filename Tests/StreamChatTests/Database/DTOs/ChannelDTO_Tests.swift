@@ -1127,6 +1127,51 @@ final class ChannelDTO_Tests: XCTestCase {
         XCTAssertEqual(unreadCount.messages, unreadMessages)
         XCTAssertEqual(unreadCount.mentions, 1)
     }
+    
+    func test_channelMembersIsUsedOverMembership_whenNotificationsMutedIsIncorrect() throws {
+        // Issue where membership.notificationsMuted is incorrect
+        let cid = ChannelId.unique
+        let userId: UserId = .unique
+        let user = UserPayload.dummy(userId: userId)
+        let memberPayload = MemberPayload(
+            user: user,
+            userId: user.id,
+            role: nil,
+            createdAt: .unique,
+            updatedAt: .unique,
+            notificationsMuted: true
+        )
+        let membershipPayload = MemberPayload(
+            user: user,
+            userId: user.id,
+            role: nil,
+            createdAt: .unique,
+            updatedAt: .unique,
+            notificationsMuted: false // incorrectly false
+        )
+        let channelPayload = ChannelPayload(
+            channel: .dummy(cid: cid),
+            watcherCount: nil,
+            watchers: nil,
+            members: [memberPayload],
+            membership: membershipPayload,
+            messages: [],
+            pinnedMessages: [],
+            channelReads: [],
+            isHidden: nil
+        )
+        try database.writeSynchronously { session in
+            try session.saveChannel(payload: channelPayload)
+        }
+        
+        var channelMember: ChatChannelMember?
+        let session = database.backgroundReadOnlyContext
+        session.performAndWait {
+            channelMember = try? session.member(userId: userId, cid: cid)?.asModel()
+        }
+        let member = try XCTUnwrap(channelMember)
+        XCTAssertEqual(true, member.notificationsMuted)
+    }
 
     func test_typingUsers_areCleared_onResetEphemeralValues() throws {
         let cid: ChannelId = .unique

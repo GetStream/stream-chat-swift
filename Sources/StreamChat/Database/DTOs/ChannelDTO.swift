@@ -289,17 +289,18 @@ extension NSManagedObjectContext {
             _ = try saveMessage(payload: $0, channelDTO: dto, syncOwnReactions: true, cache: cache)
         }
 
-        // Sometimes, `members` are not part of `ChannelDetailPayload` so they need to be saved here too.
-        try payload.members.forEach {
-            let member = try saveMember(payload: $0, channelId: payload.channel.cid, query: nil, cache: cache)
-            dto.members.insert(member)
-        }
-
+        // Note: membership payload should be saved before all the members
         if let membership = payload.membership {
             let membership = try saveMember(payload: membership, channelId: payload.channel.cid, query: nil, cache: cache)
             dto.membership = membership
         } else {
             dto.membership = nil
+        }
+        
+        // Sometimes, `members` are not part of `ChannelDetailPayload` so they need to be saved here too.
+        try payload.members.forEach {
+            let member = try saveMember(payload: $0, channelId: payload.channel.cid, query: nil, cache: cache)
+            dto.members.insert(member)
         }
 
         dto.watcherCount = Int64(clamping: payload.watcherCount ?? 0)
