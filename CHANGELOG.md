@@ -3,7 +3,17 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 # Upcoming
 
-### 🔄 Changed
+## StreamChat
+### 🐞 Fixed
+- Fix `channel.pinnedMessages` with missing messages [#3244](https://github.com/GetStream/stream-chat-swift/pull/3244)
+- Fix notifications muted state for the current user in channel members [#3236](https://github.com/GetStream/stream-chat-swift/pull/3236)
+
+# [4.57.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.57.0)
+_June 06, 2024_
+
+## StreamChat
+### ✅ Added
+- Low-level client support for Polls - creating different types of polls, adding and removing votes, comments, and more [#3220](https://github.com/GetStream/stream-chat-swift/pull/3220)
 
 # [4.56.1](https://github.com/GetStream/stream-chat-swift/releases/tag/4.56.1)
 _May 23, 2024_

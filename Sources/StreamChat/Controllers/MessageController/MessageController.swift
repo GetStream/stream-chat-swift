@@ -183,6 +183,7 @@ public class ChatMessageController: DataController, DelegateCallable, DataStoreP
 
     /// The worker used to fetch the remote data and communicate with servers.
     private let messageUpdater: MessageUpdater
+    private let pollsRepository: PollsRepository
     private let replyPaginationHandler: MessagesPaginationStateHandling
     private var replyPaginationState: MessagesPaginationState { replyPaginationHandler.state }
 
@@ -197,6 +198,7 @@ public class ChatMessageController: DataController, DelegateCallable, DataStoreP
         self.cid = cid
         self.messageId = messageId
         self.replyPaginationHandler = replyPaginationHandler
+        pollsRepository = client.pollsRepository
         self.environment = environment
         messageUpdater = environment.messageUpdaterBuilder(
             client.config.isLocalStorageEnabled,

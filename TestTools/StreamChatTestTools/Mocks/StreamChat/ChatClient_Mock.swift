@@ -199,6 +199,10 @@ extension ChatClient {
     var mockAuthenticationRepository: AuthenticationRepository_Mock {
         authenticationRepository as! AuthenticationRepository_Mock
     }
+    
+    var mockPollsRepository: PollsRepository_Mock {
+        pollsRepository as! PollsRepository_Mock
+    }
 
     func simulateProvidedConnectionId(connectionId: ConnectionId?) {
         guard let connectionId = connectionId else {
@@ -241,7 +245,8 @@ extension ChatClient.Environment {
             notificationCenterBuilder: EventNotificationCenter.init,
             authenticationRepositoryBuilder: AuthenticationRepository_Mock.init,
             syncRepositoryBuilder: SyncRepository_Mock.init,
-            channelListUpdaterBuilder: ChannelListUpdater_Spy.init, 
+            pollsRepositoryBuilder: PollsRepository_Mock.init,
+            channelListUpdaterBuilder: ChannelListUpdater_Spy.init,
             messageRepositoryBuilder: MessageRepository_Mock.init,
             offlineRequestsRepositoryBuilder: OfflineRequestsRepository_Mock.init
         )

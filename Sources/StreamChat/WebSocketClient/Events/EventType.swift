@@ -112,6 +112,29 @@ public extension EventType {
 
     /// When a channel was deleted
     static let notificationChannelDeleted: Self = "notification.channel_deleted"
+    
+    // MARK: - polls
+    
+    /// When a poll was created.
+    static let pollCreated: Self = "poll.created"
+
+    /// When a poll was closed.
+    static let pollClosed: Self = "poll.closed"
+
+    /// When a poll was deleted.
+    static let pollDeleted: Self = "poll.deleted"
+
+    /// When a poll was updated.
+    static let pollUpdated: Self = "poll.updated"
+
+    /// When a vote was casted in a poll.
+    static let pollVoteCasted: Self = "poll.vote_casted"
+
+    /// When a vote was changed in a poll.
+    static let pollVoteChanged: Self = "poll.vote_changed"
+
+    /// When a vote was removed from a poll.
+    static let pollVoteRemoved: Self = "poll.vote_removed"
 }
 
 extension EventType {
@@ -168,6 +191,13 @@ extension EventType {
         case .notificationInviteRejected:
             return try NotificationInviteRejectedEventDTO(from: response)
         case .notificationChannelDeleted: return try NotificationChannelDeletedEventDTO(from: response)
+        case .pollCreated: return try PollCreatedEventDTO(from: response)
+        case .pollClosed: return try PollClosedEventDTO(from: response)
+        case .pollDeleted: return try PollDeletedEventDTO(from: response)
+        case .pollUpdated: return try PollUpdatedEventDTO(from: response)
+        case .pollVoteCasted: return try PollVoteCastedEventDTO(from: response)
+        case .pollVoteChanged: return try PollVoteChangedEventDTO(from: response)
+        case .pollVoteRemoved: return try PollVoteRemovedEventDTO(from: response)
         default:
             if response.cid == nil {
                 throw ClientError.UnknownUserEvent(response.eventType)

@@ -48,7 +48,8 @@ public extension ChatMessage {
         pinDetails: MessagePinDetails? = nil,
         readBy: Set<ChatUser> = [],
         underlyingContext: NSManagedObjectContext? = nil,
-        textUpdatedAt: Date? = nil
+        textUpdatedAt: Date? = nil,
+        poll: Poll? = nil
     ) -> Self {
         .init(
             id: id,
@@ -89,7 +90,8 @@ public extension ChatMessage {
             originalLanguage: originalLanguage,
             moderationDetails: moderationsDetails,
             readBy: { readBy },
-            readByCount: { readBy.count },
+            readByCount: { readBy.count }, 
+            poll: poll,
             underlyingContext: underlyingContext,
             textUpdatedAt: textUpdatedAt
         )

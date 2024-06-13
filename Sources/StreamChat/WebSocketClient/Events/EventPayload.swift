@@ -34,6 +34,8 @@ class EventPayload: Decodable {
         case unreadMessagesCount = "unread_messages"
         case shadow
         case thread
+        case vote = "poll_vote"
+        case poll
     }
 
     let eventType: EventType
@@ -61,6 +63,8 @@ class EventPayload: Decodable {
     let lastReadMessageId: MessageId?
     let lastReadAt: Date?
     let unreadMessagesCount: Int?
+    var poll: PollPayload?
+    var vote: PollVotePayload?
 
     init(
         eventType: EventType,
@@ -86,7 +90,9 @@ class EventPayload: Decodable {
         lastReadAt: Date? = nil,
         lastReadMessageId: MessageId? = nil,
         unreadMessagesCount: Int? = nil,
-        thread: ThreadEventPayload? = nil
+        thread: ThreadEventPayload? = nil,
+        poll: PollPayload? = nil,
+        vote: PollVotePayload? = nil
     ) {
         self.eventType = eventType
         self.connectionId = connectionId
@@ -112,6 +118,8 @@ class EventPayload: Decodable {
         self.lastReadMessageId = lastReadMessageId
         self.unreadMessagesCount = unreadMessagesCount
         self.thread = thread
+        self.poll = poll
+        self.vote = vote
     }
 
     required init(from decoder: Decoder) throws {
@@ -142,6 +150,8 @@ class EventPayload: Decodable {
         lastReadMessageId = try container.decodeIfPresent(MessageId.self, forKey: .lastReadMessageId)
         unreadMessagesCount = try container.decodeIfPresent(Int.self, forKey: .unreadMessagesCount)
         thread = try container.decodeIfPresent(ThreadEventPayload.self, forKey: .thread)
+        vote = try container.decodeIfPresent(PollVotePayload.self, forKey: .vote)
+        poll = try container.decodeIfPresent(PollPayload.self, forKey: .poll)
     }
 
     func event() throws -> Event {

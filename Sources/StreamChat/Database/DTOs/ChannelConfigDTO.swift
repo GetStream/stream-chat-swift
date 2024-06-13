@@ -16,6 +16,7 @@ final class ChannelConfigDTO: NSManagedObject {
     @NSManaged var quotesEnabled: Bool
     @NSManaged var searchEnabled: Bool
     @NSManaged var mutesEnabled: Bool
+    @NSManaged var pollsEnabled: Bool
     @NSManaged var urlEnrichmentEnabled: Bool
     @NSManaged var messageRetention: String
     @NSManaged var maxMessageLength: Int32
@@ -34,6 +35,7 @@ final class ChannelConfigDTO: NSManagedObject {
             quotesEnabled: quotesEnabled,
             searchEnabled: searchEnabled,
             mutesEnabled: mutesEnabled,
+            pollsEnabled: pollsEnabled,
             urlEnrichmentEnabled: urlEnrichmentEnabled,
             messageRetention: messageRetention,
             maxMessageLength: Int(maxMessageLength),
@@ -73,6 +75,7 @@ extension ChannelConfig {
         dto.createdAt = createdAt.bridgeDate
         dto.updatedAt = updatedAt.bridgeDate
         dto.commands = NSOrderedSet(array: commands.map { $0.asDTO(context: context) })
+        dto.pollsEnabled = pollsEnabled
         return dto
     }
 }

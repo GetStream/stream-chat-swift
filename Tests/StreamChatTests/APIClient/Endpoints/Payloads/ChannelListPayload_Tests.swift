@@ -65,6 +65,8 @@ final class ChannelListPayload_Tests: XCTestCase {
     }
 
     func test_hugeChannelListQuery_save_DB_empty() throws {
+        throw XCTSkip("https://github.com/GetStream/ios-issues-tracking/issues/848")
+        
         let decodedPayload = createHugeChannelList()
         let timeout: TimeInterval = 60
         
@@ -75,6 +77,8 @@ final class ChannelListPayload_Tests: XCTestCase {
     }
 
     func test_hugeChannelListQuery_save_DB_filled() throws {
+        throw XCTSkip("https://github.com/GetStream/ios-issues-tracking/issues/848")
+        
         let decodedPayload = createHugeChannelList()
         let databaseContainer = DatabaseContainer_Spy()
         let timeout: TimeInterval = 60

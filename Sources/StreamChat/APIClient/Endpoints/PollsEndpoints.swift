@@ -138,6 +138,20 @@ extension Endpoint {
         )
     }
     
+    static func queryPollVotes(
+        pollId: String,
+        query: PollVoteListQuery
+    ) -> Endpoint<PollVoteListResponse> {
+        .init(
+            path: .pollVotes(pollId: pollId),
+            method: .post,
+            queryItems: nil,
+            requiresConnectionId: false,
+            requiresToken: true,
+            body: query
+        )
+    }
+    
     static func castPollVote(
         messageId: MessageId,
         pollId: String,
