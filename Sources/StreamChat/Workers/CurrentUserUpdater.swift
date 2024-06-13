@@ -229,8 +229,8 @@ extension CurrentUserUpdater {
     
     func loadBlockedUsers() async throws -> [BlockedUserDetails] {
         try await withCheckedThrowingContinuation { continuation in
-            loadBlockedUsers { error in
-                continuation.resume(with: error)
+            loadBlockedUsers { result in
+                continuation.resume(with: result)
             }
         }
     }
