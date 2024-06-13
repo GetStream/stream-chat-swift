@@ -161,6 +161,18 @@ class CurrentUserUpdater: Worker {
             completion?($0.error)
         }
     }
+
+    func loadAllUnreads(completion: @escaping ((Result<CurrentUserUnreads, Error>) -> Void)) {
+        apiClient.request(endpoint: .unreads()) { result in
+            switch result {
+            case .success(let response):
+                let unreads = response.asModel()
+                completion(.success(unreads))
+            case .failure(let error):
+                completion(.failure(error))
+            }
+        }
+    }
 }
 
 @available(iOS 13.0, *)

@@ -13,6 +13,7 @@ enum EndpointPath: Codable {
     case search
     case devices
     case og
+    case unread
 
     case threads
     case thread(messageId: MessageId)
@@ -80,6 +81,7 @@ enum EndpointPath: Codable {
         case .search: return "search"
         case .devices: return "devices"
         case .og: return "og"
+        case .unread: return "unread"
 
         case .threads:
             return "threads"

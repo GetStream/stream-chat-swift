@@ -252,6 +252,17 @@ public extension CurrentChatUserController {
             }
         }
     }
+
+    /// Fetches all the unread information from the current user.
+    ///
+    /// Note: This is an ad-hoc request, it is not observable.
+    func loadAllUnreads(completion: @escaping ((Result<CurrentUserUnreads, Error>) -> Void)) {
+        currentUserUpdater.loadAllUnreads { result in
+            self.callback {
+                completion(result)
+            }
+        }
+    }
 }
 
 // MARK: - Environment

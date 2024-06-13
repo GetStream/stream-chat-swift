@@ -187,3 +187,59 @@ struct UserUpdateRequestBody: Encodable {
         try extraData?.encode(to: encoder)
     }
 }
+
+// MARK: - Current User Unreads
+
+struct CurrentUserUnreadsPayload: Decodable {
+    enum CodingKeys: String, CodingKey {
+        case totalUnreadCount = "total_unread_count"
+        case totalUnreadThreadsCount = "total_unread_threads_count"
+        case channels
+        case channelType = "channel_type"
+        case threads
+    }
+
+    var totalUnreadCount: Int
+    var totalUnreadThreadsCount: Int
+    var channels: [CurrentUserChannelUnreadPayload]
+    var channelType: [ChannelUnreadByTypePayload]
+    var threads: [CurrentUserThreadUnreadPayload]
+}
+
+struct CurrentUserChannelUnreadPayload: Decodable {
+    enum CodingKeys: String, CodingKey {
+        case channelId = "channel_id"
+        case unreadCount = "unread_count"
+        case lastRead = "last_read"
+    }
+
+    var channelId: ChannelId
+    var unreadCount: Int
+    var lastRead: Date?
+}
+
+struct CurrentUserThreadUnreadPayload: Decodable {
+    enum CodingKeys: String, CodingKey {
+        case parentMessageId = "parent_message_id"
+        case lastRead = "last_read"
+        case lastReadMessageId = "last_read_message_id"
+        case unreadCount = "unread_count"
+    }
+
+    var parentMessageId: MessageId
+    var lastRead: Date?
+    var lastReadMessageId: MessageId?
+    var unreadCount: Int
+}
+
+struct ChannelUnreadByTypePayload: Decodable {
+    enum CodingKeys: String, CodingKey {
+        case channelType = "channel_type"
+        case channelCount = "channel_count"
+        case unreadCount = "unread_count"
+    }
+
+    var channelType: ChannelType
+    var channelCount: Int
+    var unreadCount: Int
+}

@@ -113,3 +113,76 @@ public class CurrentChatUser: ChatUser {
         $_mutedChannels = (mutedChannels, underlyingContext)
     }
 }
+
+/// The total unread information from the current user.
+public struct CurrentUserUnreads {
+    /// The total number of unread channels.
+    public var totalUnreadChannelsCount: Int
+    /// The total number of unread threads.
+    public var totalUnreadThreadsCount: Int
+    /// The unread information per channel.
+    public var unreadChannels: [CurrentUserUnreadChannel]
+    /// The unread information per thread.
+    public var unreadThreads: [CurrentUserUnreadThread]
+    /// The unread information per channel type.
+    public var unreadChannelsByType: [CurrentUserUnreadChannelByType]
+}
+
+/// The unread information of a channel.
+public struct CurrentUserUnreadChannel {
+    /// The channel id.
+    public var channelId: ChannelId
+    /// The number of unread messages inside the channel.
+    public var unreadMessagesCount: Int
+    /// The date which the current user last read the channel.
+    public var lastRead: Date?
+}
+
+/// The unread information from channels with a specific type.
+public struct CurrentUserUnreadChannelByType {
+    /// The channel type.
+    public var channelType: ChannelType
+    /// The number of unread channels of this channel type.
+    public var unreadChannelCount: Int
+    /// The number of unread messages of all the channels with this type.
+    public var unreadMessagesCount: Int
+}
+
+/// The unread information of a thread.
+public struct CurrentUserUnreadThread {
+    /// The message id of the root of the thread.
+    public var parentMessageId: MessageId
+    /// The number of unread replies inside the thread.
+    public var unreadRepliesCount: Int
+    /// The date which the current user last read the thread.
+    public var lastRead: Date?
+    /// The id of the last reply which the current user read in the thread.
+    public var lastReadMessageId: MessageId?
+}
+
+extension CurrentUserUnreadsPayload {
+    func asModel() -> CurrentUserUnreads {
+        CurrentUserUnreads(
+            totalUnreadChannelsCount: totalUnreadCount,
+            totalUnreadThreadsCount: totalUnreadThreadsCount,
+            unreadChannels: channels.map { .init(
+                channelId: $0.channelId,
+                unreadMessagesCount: $0.unreadCount,
+                lastRead: $0.lastRead
+            ) },
+            unreadThreads: threads.map { .init(
+                parentMessageId: $0.parentMessageId,
+                unreadRepliesCount: $0.unreadCount,
+                lastRead: $0.lastRead,
+                lastReadMessageId: $0.lastReadMessageId
+            ) },
+            unreadChannelsByType: channelType.map {
+                .init(
+                    channelType: $0.channelType,
+                    unreadChannelCount: $0.channelCount,
+                    unreadMessagesCount: $0.unreadCount
+                )
+            }
+        )
+    }
+}
