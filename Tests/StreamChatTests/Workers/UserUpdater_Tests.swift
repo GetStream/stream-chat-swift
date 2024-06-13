@@ -352,4 +352,95 @@ final class UserUpdater_Tests: XCTestCase {
         // Assert database error is propogated.
         AssertAsync.willBeEqual(completionCalledError as? TestError, databaseError)
     }
+    
+    // MARK: - Block user
+
+    func test_blockUser_makesCorrectAPICall() {
+        let userId: UserId = .unique
+
+        // Simulate `blockUser` call
+        userUpdater.blockUser(userId)
+
+        // Assert correct endpoint is called
+        XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(.blockUser(userId)))
+    }
+
+    func test_blockUser_propagatesSuccessfulResponse() {
+        // Simulate `blockUser` call
+        var completionCalled = false
+        userUpdater.blockUser(.unique) { error in
+            XCTAssertNil(error)
+            completionCalled = true
+        }
+        
+        // Assert completion is not called yet
+        XCTAssertFalse(completionCalled)
+        
+        // Simulate API response with success
+        let payload: BlockingUserPayload = .init(blockedUserId: .unique, blockedByUserId: .unique, createdAt: .unique)
+        apiClient.test_simulateResponse(Result<BlockingUserPayload, Error>.success(payload))
+
+        // Assert completion is called
+        AssertAsync.willBeTrue(completionCalled)
+    }
+
+    func test_blockUser_propagatesError() {
+        // Simulate `blockUser` call
+        var completionCalledError: Error?
+        userUpdater.blockUser(.unique) {
+            completionCalledError = $0
+        }
+
+        // Simulate API response with failure
+        let error = TestError()
+        apiClient.test_simulateResponse(Result<BlockingUserPayload, Error>.failure(error))
+
+        // Assert the completion is called with the error
+        AssertAsync.willBeEqual(completionCalledError as? TestError, error)
+    }
+
+    // MARK: - Unblock user
+
+    func test_unblockUser_makesCorrectAPICall() {
+        let userId: UserId = .unique
+
+        // Simulate `unblockUser` call
+        userUpdater.unblockUser(userId)
+
+        // Assert correct endpoint is called
+        XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(.unblockUser(userId)))
+    }
+
+    func test_unblockUser_propagatesSuccessfulResponse() {
+        // Simulate `blockUser` call
+        var completionCalled = false
+        userUpdater.unblockUser(.unique) { error in
+            XCTAssertNil(error)
+            completionCalled = true
+        }
+
+        // Assert completion is not called yet
+        XCTAssertFalse(completionCalled)
+
+        // Simulate API response with success
+        apiClient.test_simulateResponse(Result<EmptyResponse, Error>.success(.init()))
+
+        // Assert completion is called
+        AssertAsync.willBeTrue(completionCalled)
+    }
+
+    func test_unblockUser_propagatesError() {
+        // Simulate `blockUser` call
+        var completionCalledError: Error?
+        userUpdater.unblockUser(.unique) {
+            completionCalledError = $0
+        }
+
+        // Simulate API response with failure
+        let error = TestError()
+        apiClient.test_simulateResponse(Result<EmptyResponse, Error>.failure(error))
+
+        // Assert the completion is called with the error
+        AssertAsync.willBeEqual(completionCalledError as? TestError, error)
+    }
 }

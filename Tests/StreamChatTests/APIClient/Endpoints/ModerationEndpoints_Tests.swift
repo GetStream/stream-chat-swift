@@ -157,4 +157,42 @@ final class ModerationEndpoints_Tests: XCTestCase {
             XCTAssertEqual(flag ? "moderation/flag" : "moderation/unflag", endpoint.path.value)
         }
     }
+    
+    func test_blockUser_buildsCorrectly() {
+        let userId: UserId = .unique
+
+        let expectedEndpoint = Endpoint<BlockingUserPayload>(
+            path: .blockUser,
+            method: .post,
+            queryItems: nil,
+            requiresConnectionId: false,
+            body: ["blocked_user_id": userId]
+        )
+
+        // Build endpoint
+        let endpoint: Endpoint<BlockingUserPayload> = .blockUser(userId)
+
+        // Assert endpoint is built correctly
+        XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
+        XCTAssertEqual("users/block", endpoint.path.value)
+    }
+
+    func test_unblockUser_buildsCorrectly() {
+        let userId: UserId = .unique
+
+        let expectedEndpoint = Endpoint<EmptyResponse>(
+            path: .unblockUser,
+            method: .post,
+            queryItems: nil,
+            requiresConnectionId: false,
+            body: ["blocked_user_id": userId]
+        )
+
+        // Build endpoint
+        let endpoint: Endpoint<EmptyResponse> = .unblockUser(userId)
+
+        // Assert endpoint is built correctly
+        XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
+        XCTAssertEqual("users/unblock", endpoint.path.value)
+    }
 }

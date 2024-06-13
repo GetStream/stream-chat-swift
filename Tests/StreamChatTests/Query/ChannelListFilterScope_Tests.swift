@@ -44,6 +44,7 @@ final class ChannelListFilterScope_Tests: XCTestCase {
         XCTAssertEqual(Key<UserId>.createdBy.keyPathString, "createdBy.id")
         XCTAssertEqual(Key<Date>.updatedAt.keyPathString, "updatedAt")
         XCTAssertEqual(Key<Date>.deletedAt.keyPathString, "deletedAt")
+        XCTAssertEqual(Key<Bool>.blocked.keyPathString, "isBlocked")
         XCTAssertEqual(Key<Bool>.hidden.keyPathString, "isHidden")
         XCTAssertEqual(Key<Bool>.frozen.keyPathString, "isFrozen")
         XCTAssertEqual(Key<Int>.memberCount.keyPathString, "memberCount")
