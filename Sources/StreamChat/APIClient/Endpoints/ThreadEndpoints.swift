@@ -96,7 +96,7 @@ struct ThreadPartialUpdateRequest: Encodable {
         func encode(to encoder: any Encoder) throws {
             var container = encoder.container(keyedBy: CodingKeys.self)
             try container.encodeIfPresent(title, forKey: .title)
-            try extraData.encode(to: encoder)
+            try extraData?.encode(to: encoder)
         }
     }
 }
