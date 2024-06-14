@@ -490,6 +490,75 @@ final class UserController_Tests: XCTestCase {
         // Assert controller is kept alive
         AssertAsync.staysTrue(weakController != nil)
     }
+    
+    // MARK: - Unlag user
+
+    func test_unflagUser_propagatesError() {
+        // Simulate `unflag` call and catch the completion.
+        var completionError: Error?
+        controller.unflag { [callbackQueueID] in
+            AssertTestQueue(withId: callbackQueueID)
+            completionError = $0
+        }
+
+        // Simulate network response with the error.
+        let networkError = TestError()
+        env.userUpdater!.flagUser_completion!(networkError)
+
+        // Assert error is propogated.
+        AssertAsync.willBeEqual(completionError as? TestError, networkError)
+    }
+
+    func test_unflagUser_propagatesNilError() {
+        // Simulate `unflag` call and catch the completion.
+        var completionIsCalled = false
+        controller.unflag { [callbackQueueID] error in
+            // Assert callback queue is correct.
+            AssertTestQueue(withId: callbackQueueID)
+            // Assert there is no error.
+            XCTAssertNil(error)
+            completionIsCalled = true
+        }
+
+        // Keep a weak ref so we can check if it's actually deallocated
+        weak var weakController = controller
+
+        // (Try to) deallocate the controller
+        // by not keeping any references to it
+        controller = nil
+
+        // Simulate successful network response.
+        env.userUpdater!.flagUser_completion!(nil)
+        // Release reference of completion so we can deallocate stuff
+        env.userUpdater!.flagUser_completion = nil
+
+        // Assert completion is called.
+        AssertAsync.willBeTrue(completionIsCalled)
+        // `weakController` should be deallocated too
+        AssertAsync.canBeReleased(&weakController)
+    }
+
+    func test_unflagUser_callsUserUpdater_withCorrectValues() {
+        // Simulate `unflag` call.
+        controller.unflag()
+
+        // Assert updater is called with correct `flag`
+        XCTAssertEqual(env.userUpdater!.flagUser_flag, false)
+        // Assert updater is called with correct `userId`
+        XCTAssertEqual(env.userUpdater!.flagUser_userId, controller.userId)
+    }
+
+    func test_unflagUser_keepsControllerAlive() {
+        // Simulate `unflag` call.
+        controller.unflag()
+
+        // Create a weak ref and release a controller.
+        weak var weakController = controller
+        controller = nil
+
+        // Assert controller is kept alive
+        AssertAsync.staysTrue(weakController != nil)
+    }
 
     // MARK: - Block user
 
