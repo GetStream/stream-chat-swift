@@ -5,6 +5,7 @@
 import Foundation
 import UIKit
 
+/// A debug view that recursively inspects an object.
 class DebugObjectViewController: UITableViewController {
     let object: Any?
 
@@ -36,26 +37,36 @@ class DebugObjectViewController: UITableViewController {
         data = Mirror(reflecting: object)
             .children
             .filter {
+                // - ignore private methods (label starting with "_")
+                // - do NOT ignore arrays or dictionaries (no labels)
                 $0.label?.hasPrefix("_") == false || $0.label == nil
             }
             .map {
                 var value: DebugValue
+                
+                /// Dates are by default present as Integers, so we format them.
                 if let dateValue = $0.value as? Date {
                     if #available(iOS 15.0, *) {
                         value = .raw(dateValue.formatted())
                     } else {
                         value = .raw(dateValue.description)
                     }
+                    /// If a value is raw representable it won't be convertible
+                    /// to string so we first get the rawValue.
                 } else if let rawRepresentable = $0.value as? any RawRepresentable,
                           let stringValue = rawRepresentable.rawValue as? LosslessStringConvertible {
                     value = .raw(String(stringValue))
+                    /// All values that are LosslessStringConvertible are usually raw values.
                 } else if let stringValue = $0.value as? LosslessStringConvertible {
                     value = .raw(String(stringValue))
+                    /// We need to know if `Any` from `Mirror` is Optional or not.
                 } else if case Optional<Any>.none = $0.value {
                     value = .object(nil)
+                    /// Otherwise, it is an object that needs to inspected.
                 } else {
                     value = .object($0.value)
                 }
+
                 return ($0.label, value)
             }
     }
