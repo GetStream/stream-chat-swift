@@ -242,7 +242,7 @@ open class ChatThreadListItemView: _View, ThemeProvider {
         let channel = thread.channel
         let latestReply = thread.latestReplies.last
 
-        let parentMessageText = thread.parentMessage.text
+        let parentMessageText = thread.title ?? thread.parentMessage.text
         let channelNameText = appearance.formatters.channelName.format(
             channel: channel,
             forCurrentUserId: content.currentUserId
