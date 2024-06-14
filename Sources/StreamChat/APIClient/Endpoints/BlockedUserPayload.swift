@@ -40,13 +40,13 @@ struct BlockPayload: Decodable {
     private enum CodingKeys: String, CodingKey {
         case blockedUserId = "blocked_user_id"
         case userId = "user_id"
-        case blockedAt = "blocked_at"
+        case createdAt = "created_at"
         case blockedUser = "blocked_user"
     }
 
     let blockedUserId: String
     let userId: String
-    let blockedAt: Date
+    let createdAt: Date
     let blockedUser: BlockedUserPayload
 }
 
@@ -54,7 +54,7 @@ extension BlockPayload: Equatable {
     static func == (lhs: BlockPayload, rhs: BlockPayload) -> Bool {
         lhs.blockedUserId == rhs.blockedUserId &&
         lhs.userId == rhs.userId &&
-        lhs.blockedAt == rhs.blockedAt
+        lhs.createdAt == rhs.createdAt
     }
 }
 
@@ -70,7 +70,7 @@ struct BlockedUserPayload: Decodable {
     }
 
     let id: String
-    let anon: Bool
+    let anon: Bool?
     let name: String?
     let role: UserRole
     let teams: [TeamId]
