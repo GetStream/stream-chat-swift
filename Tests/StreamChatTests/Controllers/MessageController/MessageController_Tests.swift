@@ -2350,6 +2350,90 @@ final class MessageController_Tests: XCTestCase {
         XCTAssertEqual(env.messageUpdater.markThreadUnread_callCount, 1)
     }
 
+    // MARK: update thread
+
+    func test_updateThread_whenSuccess() {
+        let exp = expectation(description: "update thread completion")
+        controller.updateThread(
+            title: "New Title",
+            extraData: ["custom": "test"],
+            unsetProperties: ["prop"]
+        ) { result in
+            XCTAssertEqual(result.value?.title, "New Title")
+            exp.fulfill()
+        }
+
+        env.messageUpdater.updateThread_completion?(.success(.mock(title: "New Title")))
+
+        wait(for: [exp], timeout: defaultTimeout)
+
+        XCTAssertEqual(env.messageUpdater.updateThread_callCount, 1)
+        XCTAssertEqual(env.messageUpdater.updateThread_messageId, messageId)
+        XCTAssertEqual(env.messageUpdater.updateThread_request?.set?.title, "New Title")
+        XCTAssertEqual(env.messageUpdater.updateThread_request?.set?.extraData, ["custom": "test"])
+        XCTAssertEqual(env.messageUpdater.updateThread_request?.unset, ["prop"])
+    }
+
+    func test_updateThread_whenFailure() {
+        let exp = expectation(description: "update thread completion")
+        controller.updateThread(
+            title: "New Title",
+            extraData: ["custom": "test"],
+            unsetProperties: ["prop"]
+        ) { result in
+            XCTAssertNotNil(result.error)
+            exp.fulfill()
+        }
+
+        env.messageUpdater.updateThread_completion?(.failure(TestError()))
+
+        wait(for: [exp], timeout: defaultTimeout)
+
+        XCTAssertEqual(env.messageUpdater.updateThread_callCount, 1)
+    }
+
+    // MARK: load thread
+
+    func test_loadThread_whenSuccess() {
+        let exp = expectation(description: "load thread completion")
+        controller.loadThread(
+            replyLimit: 2,
+            participantLimit: 5
+        ) { result in
+            XCTAssertEqual(result.value?.parentMessageId, self.messageId)
+            exp.fulfill()
+        }
+
+        env.messageUpdater.loadThread_completion?(.success(.mock(parentMessage: .mock(id: messageId))))
+
+        wait(for: [exp], timeout: defaultTimeout)
+
+        XCTAssertEqual(env.messageUpdater.loadThread_callCount, 1)
+        XCTAssertEqual(env.messageUpdater.loadThread_query?.messageId, messageId)
+        XCTAssertEqual(env.messageUpdater.loadThread_query?.watch, false)
+        XCTAssertEqual(env.messageUpdater.loadThread_query?.replyLimit, 2)
+        XCTAssertEqual(env.messageUpdater.loadThread_query?.participantLimit, 5)
+    }
+
+    func test_loadThread_whenFailure() {
+        let exp = expectation(description: "load thread completion")
+        controller.loadThread(
+            replyLimit: 2,
+            participantLimit: 5
+        ) { result in
+            XCTAssertNotNil(result.error)
+            exp.fulfill()
+        }
+
+        env.messageUpdater.loadThread_completion?(.failure(TestError()))
+
+        wait(for: [exp], timeout: defaultTimeout)
+
+        XCTAssertEqual(env.messageUpdater.loadThread_callCount, 1)
+    }
+
+    // MARK: Helpers
+
     @discardableResult
     private func saveReplies(with ids: [MessageId], channelPayload: ChannelPayload? = nil) throws -> [MessageDTO] {
         let payloads: [MessagePayload] = ids.map {

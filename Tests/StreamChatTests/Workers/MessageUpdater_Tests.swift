@@ -2739,6 +2739,77 @@ final class MessageUpdater_Tests: XCTestCase {
 
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(.markThreadUnread(cid: cid, threadId: threadId)))
     }
+
+    // MARK: updateThread
+
+    func test_updateThread_whenSuccess() throws {
+        let exp = expectation(description: "update thread completion")
+        let threadId = MessageId.unique
+
+        messageUpdater.updateThread(
+            for: threadId,
+            request: ThreadPartialUpdateRequest(set: .init(title: "test"))
+        ) { result in
+            XCTAssertNil(result.error)
+            XCTAssertEqual(result.value?.parentMessageId, threadId)
+            exp.fulfill()
+        }
+
+        apiClient.test_simulateResponse(.success(ThreadPayloadResponse(thread: .dummy(parentMessageId: threadId))))
+
+        wait(for: [exp], timeout: defaultTimeout)
+    }
+
+    func test_updateThread_whenFailure() throws {
+        let exp = expectation(description: "update thread completion")
+        let threadId = MessageId.unique
+
+        messageUpdater.updateThread(
+            for: threadId,
+            request: ThreadPartialUpdateRequest(set: .init(title: "test"))
+        ) { result in
+            XCTAssertNotNil(result.error)
+            exp.fulfill()
+        }
+
+        let response = Result<ThreadPayloadResponse, Error>.failure(TestError())
+        apiClient.test_simulateResponse(response)
+
+        wait(for: [exp], timeout: defaultTimeout)
+    }
+
+    // MARK: loadThread
+
+    func test_loadThread_whenSuccess() throws {
+        let exp = expectation(description: "load thread completion")
+        let threadId = MessageId.unique
+
+        messageUpdater.loadThread(query: .init(messageId: threadId)) { result in
+            XCTAssertNil(result.error)
+            XCTAssertEqual(result.value?.parentMessageId, threadId)
+            XCTAssertEqual(result.value?.title, "TEST")
+            exp.fulfill()
+        }
+
+        apiClient.test_simulateResponse(.success(ThreadPayloadResponse(thread: .dummy(parentMessageId: threadId, title: "TEST"))))
+
+        wait(for: [exp], timeout: defaultTimeout)
+    }
+
+    func test_loadThread_whenFailure() throws {
+        let exp = expectation(description: "load thread completion")
+        let threadId = MessageId.unique
+
+        messageUpdater.loadThread(query: .init(messageId: threadId)) { result in
+            XCTAssertNotNil(result.error)
+            exp.fulfill()
+        }
+
+        let response = Result<ThreadPayloadResponse, Error>.failure(TestError())
+        apiClient.test_simulateResponse(response)
+
+        wait(for: [exp], timeout: defaultTimeout)
+    }
 }
 
 // MARK: - Helpers
