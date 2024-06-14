@@ -44,26 +44,29 @@ class DebugObjectViewController: UITableViewController {
             .map {
                 var value: DebugValue
                 
-                /// Dates are by default present as Integers, so we format them.
-                if let dateValue = $0.value as? Date {
+                if let url = $0.value as? URL {
+                    /// URLs are not easily lossless convertible, so we need to treat this special case.
+                    value = .raw(url.absoluteString)
+                } else if let dateValue = $0.value as? Date {
+                    /// Dates are by default present as Integers, so we format them.
                     if #available(iOS 15.0, *) {
                         value = .raw(dateValue.formatted())
                     } else {
                         value = .raw(dateValue.description)
                     }
-                    /// If a value is raw representable it won't be convertible
-                    /// to string so we first get the rawValue.
                 } else if let rawRepresentable = $0.value as? any RawRepresentable,
                           let stringValue = rawRepresentable.rawValue as? LosslessStringConvertible {
+                    /// If a value is raw representable it won't be convertible
+                    /// to string so we first get the rawValue.
                     value = .raw(String(stringValue))
-                    /// All values that are LosslessStringConvertible are usually raw values.
                 } else if let stringValue = $0.value as? LosslessStringConvertible {
+                    /// All values that are LosslessStringConvertible are usually raw values.
                     value = .raw(String(stringValue))
-                    /// We need to know if `Any` from `Mirror` is Optional or not.
                 } else if case Optional<Any>.none = $0.value {
+                    /// We need to know if `Any` from `Mirror` is Optional or not.
                     value = .object(nil)
-                    /// Otherwise, it is an object that needs to inspected.
                 } else {
+                    /// Otherwise, it is an object that needs to inspected.
                     value = .object($0.value)
                 }
 
