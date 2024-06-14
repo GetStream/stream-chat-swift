@@ -1511,6 +1511,7 @@
 		AD7BBFCB2901AF3F004E8B76 /* ImageResultsMapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD7BBFCA2901AF3F004E8B76 /* ImageResultsMapper.swift */; };
 		AD7BBFCC2901AF3F004E8B76 /* ImageResultsMapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD7BBFCA2901AF3F004E8B76 /* ImageResultsMapper.swift */; };
 		AD7BBFD02901B1B7004E8B76 /* ImageResultsMapper_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD7BBFCD2901B1AE004E8B76 /* ImageResultsMapper_Tests.swift */; };
+		AD7BE1682C1CB183000A5756 /* DebugObjectViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD7BE1672C1CB183000A5756 /* DebugObjectViewController.swift */; };
 		AD7CF1712694ABCE00F3101D /* ComposerVC_Documentation_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD7CF16F2694ABC500F3101D /* ComposerVC_Documentation_Tests.swift */; };
 		AD7DFC3625D2FA8100DD9DA3 /* CurrentUserUpdater.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD7DFC3525D2FA8100DD9DA3 /* CurrentUserUpdater.swift */; };
 		AD81AF0525ED141800F17F8F /* CellSeparatorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD81AEEC25ED135100F17F8F /* CellSeparatorView.swift */; };
@@ -4189,6 +4190,7 @@
 		AD7B51D227EDECA80068CBD1 /* MixedAttachmentViewInjector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MixedAttachmentViewInjector.swift; sourceTree = "<group>"; };
 		AD7BBFCA2901AF3F004E8B76 /* ImageResultsMapper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageResultsMapper.swift; sourceTree = "<group>"; };
 		AD7BBFCD2901B1AE004E8B76 /* ImageResultsMapper_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageResultsMapper_Tests.swift; sourceTree = "<group>"; };
+		AD7BE1672C1CB183000A5756 /* DebugObjectViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DebugObjectViewController.swift; sourceTree = "<group>"; };
 		AD7CF16F2694ABC500F3101D /* ComposerVC_Documentation_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ComposerVC_Documentation_Tests.swift; sourceTree = "<group>"; };
 		AD7D633225AF577E0051219B /* UserUpdateResponse+MissingUser.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "UserUpdateResponse+MissingUser.json"; sourceTree = "<group>"; };
 		AD7DFBEB25D2AE7400DD9DA3 /* TestDataModel2.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = TestDataModel2.xcdatamodel; sourceTree = "<group>"; };
@@ -6653,6 +6655,7 @@
 				ADD328592C04DD8300BAD0E9 /* DemoAppTabBarController.swift */,
 				C10B5C712A1F794A006A5BCB /* MembersViewController.swift */,
 				C1CEF9062A1BC4E800414931 /* UserProfileViewController.swift */,
+				AD7BE1672C1CB183000A5756 /* DebugObjectViewController.swift */,
 				AD6BEFF42786474A00E184B4 /* AppConfigViewController */,
 				A3227E5D284A494000EBE6CC /* Create Chat */,
 				A3227E6A284A4B0D00EBE6CC /* LoginViewController */,
@@ -10882,6 +10885,7 @@
 				C10B5C722A1F794A006A5BCB /* MembersViewController.swift in Sources */,
 				AD6BEFF02786070800E184B4 /* SwitchButton.swift in Sources */,
 				A3227E60284A497300EBE6CC /* GroupUserCell.swift in Sources */,
+				AD7BE1682C1CB183000A5756 /* DebugObjectViewController.swift in Sources */,
 				ADD328612C06463600BAD0E9 /* DemoChatThreadListVC.swift in Sources */,
 				ADD3285A2C04DD8300BAD0E9 /* DemoAppTabBarController.swift in Sources */,
 				8440860D28FBFE520027849C /* DemoAppCoordinator+DemoApp.swift in Sources */,
