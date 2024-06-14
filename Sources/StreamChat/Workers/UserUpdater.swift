@@ -46,9 +46,9 @@ class UserUpdater: Worker {
                     completion?($0)
                 })
             case let .failure(error):
-                self.database.write({ session in
+                self.database.write { session in
                     session.currentUser?.blockedUserIds.remove(userId)
-                })
+                }
                 completion?(error)
             }
         }
@@ -72,9 +72,9 @@ class UserUpdater: Worker {
                     completion?($0)
                 })
             case let .failure(error):
-                self.database.write({ session in
+                self.database.write { session in
                     session.currentUser?.blockedUserIds.insert(userId)
-                })
+                }
                 completion?(error)
             }
         }

@@ -456,7 +456,7 @@ final class DemoChatChannelListRouter: ChatChannelListRouter {
                         membersController: client.memberListController(
                             query: .init(
                                 cid: cid,
-                                filter: .in(.id, values: blockedUsers.map({ $0.userId }))
+                                filter: .in(.id, values: blockedUsers.map(\.userId))
                             )
                         )
                     ), animated: true)
