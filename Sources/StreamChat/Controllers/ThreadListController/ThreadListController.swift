@@ -109,7 +109,6 @@ public class ChatThreadListController: DataController, DelegateCallable, DataSto
 
     override public func synchronize(_ completion: ((_ error: Error?) -> Void)? = nil) {
         startThreadListObserverIfNeeded()
-        let limit = query.limit
         threadsRepository.loadThreads(
             query: query
         ) { [weak self] result in
@@ -117,7 +116,6 @@ public class ChatThreadListController: DataController, DelegateCallable, DataSto
             case let .success(threadListResponse):
                 self?.threadListObserver.refreshItems { [weak self] in
                     self?.callback {
-                        let threads = threadListResponse.threads
                         self?.nextCursor = threadListResponse.next
                         self?.state = .remoteDataFetched
                         self?.hasLoadedAllThreads = threadListResponse.next == nil
