@@ -9,12 +9,12 @@ class ChannelListScrollTime: StreamTestCase {
     
     override func setUpWithError() throws {
         mockServerEnabled = false
+        switchApiKey = true
         try super.setUpWithError()
     }
     
     func testChannelListScrollTime() {
         WHEN("user opens the channel list") {
-            backendRobot.generateChannels(count: 100, messagesCount: 1)
             userRobot.login().waitForChannelListToLoad()
         }
         THEN("user scrolls the channel list") {

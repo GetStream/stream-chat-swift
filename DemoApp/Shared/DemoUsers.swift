@@ -5,7 +5,7 @@
 import Foundation
 import StreamChat
 
-let apiKeyString = "8br4watad788"
+let apiKeyString = ProcessInfo.processInfo.arguments.contains("SWIFTUI_API_KEY") ? "zcgvnykxsfm8" : "8br4watad788"
 let applicationGroupIdentifier = "group.io.getstream.iOS.ChatDemoApp"
 
 enum DemoUserType {

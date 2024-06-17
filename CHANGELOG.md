@@ -9,6 +9,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Fix notifications muted state for the current user in channel members [#3236](https://github.com/GetStream/stream-chat-swift/pull/3236)
 - Fix inconsistent message text when extremely quickly updating it [#3242](https://github.com/GetStream/stream-chat-swift/pull/3242)
 
+## StreamChatUI
+### 🐞 Fixed
+- Fix an issue with markdown ordered list processing [#3234](https://github.com/GetStream/stream-chat-swift/issues/3234)
+
 # [4.57.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.57.0)
 _June 06, 2024_
 
