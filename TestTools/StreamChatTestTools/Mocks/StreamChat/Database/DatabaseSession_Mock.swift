@@ -388,7 +388,7 @@ class DatabaseSession_Mock: DatabaseSession {
     }
 
     func saveThread(detailsPayload: ThreadDetailsPayload) throws -> ThreadDTO {
-        try underlyingSession.saveThread(eventPayload: eventPayload)
+        try underlyingSession.saveThread(detailsPayload: detailsPayload)
     }
 
     func saveThreadRead(payload: ThreadReadPayload, parentMessageId: String, cache: PreWarmedCache?) throws -> ThreadReadDTO {
@@ -407,11 +407,21 @@ class DatabaseSession_Mock: DatabaseSession {
         underlyingSession.loadThreadReads(for: userId)
     }
 
+    var markThreadAsReadCallCount = 0
+    var markThreadAsReadCalledWith: (MessageId, UserId, Date)?
+
     func markThreadAsRead(parentMessageId: MessageId, userId: UserId, at: Date) {
+        markThreadAsReadCallCount += 1
+        markThreadAsReadCalledWith = (parentMessageId, userId, at)
         underlyingSession.markThreadAsRead(parentMessageId: parentMessageId, userId: userId, at: at)
     }
 
+    var markThreadAsUnreadCallCount = 0
+    var markThreadAsUnreadCalledWith: (MessageId, UserId)?
+
     func markThreadAsUnread(for parentMessageId: MessageId, userId: UserId) {
+        markThreadAsUnreadCallCount += 1
+        markThreadAsUnreadCalledWith = (parentMessageId, userId)
         underlyingSession.markThreadAsUnread(for: parentMessageId, userId: userId)
     }
     

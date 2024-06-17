@@ -1514,6 +1514,7 @@
 		AD7BE1682C1CB183000A5756 /* DebugObjectViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD7BE1672C1CB183000A5756 /* DebugObjectViewController.swift */; };
 		AD7BE16A2C209888000A5756 /* ThreadEvents.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD7BE1692C209888000A5756 /* ThreadEvents.swift */; };
 		AD7BE16B2C209888000A5756 /* ThreadEvents.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD7BE1692C209888000A5756 /* ThreadEvents.swift */; };
+		AD7BE16D2C20CC02000A5756 /* ThreadReadUpdaterMiddlware_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD7BE16C2C20CC02000A5756 /* ThreadReadUpdaterMiddlware_Tests.swift */; };
 		AD7CF1712694ABCE00F3101D /* ComposerVC_Documentation_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD7CF16F2694ABC500F3101D /* ComposerVC_Documentation_Tests.swift */; };
 		AD7DFC3625D2FA8100DD9DA3 /* CurrentUserUpdater.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD7DFC3525D2FA8100DD9DA3 /* CurrentUserUpdater.swift */; };
 		AD81AF0525ED141800F17F8F /* CellSeparatorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD81AEEC25ED135100F17F8F /* CellSeparatorView.swift */; };
@@ -4194,6 +4195,7 @@
 		AD7BBFCD2901B1AE004E8B76 /* ImageResultsMapper_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageResultsMapper_Tests.swift; sourceTree = "<group>"; };
 		AD7BE1672C1CB183000A5756 /* DebugObjectViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DebugObjectViewController.swift; sourceTree = "<group>"; };
 		AD7BE1692C209888000A5756 /* ThreadEvents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThreadEvents.swift; sourceTree = "<group>"; };
+		AD7BE16C2C20CC02000A5756 /* ThreadReadUpdaterMiddlware_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThreadReadUpdaterMiddlware_Tests.swift; sourceTree = "<group>"; };
 		AD7CF16F2694ABC500F3101D /* ComposerVC_Documentation_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ComposerVC_Documentation_Tests.swift; sourceTree = "<group>"; };
 		AD7D633225AF577E0051219B /* UserUpdateResponse+MissingUser.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "UserUpdateResponse+MissingUser.json"; sourceTree = "<group>"; };
 		AD7DFBEB25D2AE7400DD9DA3 /* TestDataModel2.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = TestDataModel2.xcdatamodel; sourceTree = "<group>"; };
@@ -6878,6 +6880,7 @@
 			isa = PBXGroup;
 			children = (
 				79896D65250A6D1500BA8F1C /* ChannelReadUpdaterMiddleware_Tests.swift */,
+				AD7BE16C2C20CC02000A5756 /* ThreadReadUpdaterMiddlware_Tests.swift */,
 				79158CEA25F0EADF00186102 /* ChannelTruncatedEventMiddleware_Tests.swift */,
 				79342EEB2632C7770018F0F7 /* ChannelVisibilityEventMiddleware_Tests.swift */,
 				792FCB4624A33CC2000290C7 /* EventDataProcessorMiddleware_Tests.swift */,
@@ -11791,6 +11794,7 @@
 				C19B9C3227D0FB0800D308C0 /* EndpointPath_Tests.swift in Sources */,
 				843C53AB269370A900C7D8EA /* ImageAttachmentPayload_Tests.swift in Sources */,
 				792FCB4D24A3D56D000290C7 /* DatabaseSession_Tests.swift in Sources */,
+				AD7BE16D2C20CC02000A5756 /* ThreadReadUpdaterMiddlware_Tests.swift in Sources */,
 				A34ECB5227F5CB9B00A804C1 /* ListChange_Tests.swift in Sources */,
 				AD8C7C632BA464E600260715 /* AppSettingsPayload_Tests.swift in Sources */,
 				430156F226B4523A0006E7EA /* WebSocketConnectPayload_Tests.swift in Sources */,
