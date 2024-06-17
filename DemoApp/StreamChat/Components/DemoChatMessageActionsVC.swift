@@ -88,8 +88,8 @@ final class DemoChatMessageActionsVC: ChatMessageActionsVC {
             guard let message = self?.message else { return }
             debugPrint("Debug message", message)
 
-            let vc = MessageDebuggerViewController(message: message)
-            self?.present(UINavigationController(rootViewController: vc), animated: true)
+            let vc = DebugObjectViewController(object: message)
+            self?.present(vc, animated: true)
         }
     }
 
@@ -143,68 +143,6 @@ final class DemoChatMessageActionsVC: ChatMessageActionsVC {
     struct MessageDebugActionItem: ChatMessageActionItem {
         var title: String { "Message Info" }
         var icon: UIImage { UIImage(systemName: "ladybug")! }
-        var action: (StreamChatUI.ChatMessageActionItem) -> Void
-    }
-}
-
-class MessageDebuggerViewController: UITableViewController {
-    let message: ChatMessage
-
-    struct MessageDebugInfo {
-        var label: String
-        var value: String
-    }
-
-    var messageDebugInfo: [MessageDebugInfo] = []
-
-    init(message: ChatMessage) {
-        self.message = message
-        super.init(style: .plain)
-        makeMessageDebugInfo()
-    }
-
-    @available(*, unavailable)
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-
-    func makeMessageDebugInfo() {
-        messageDebugInfo = [
-            .init(label: "id", value: message.id),
-            .init(label: "cid", value: message.cid?.rawValue ?? ""),
-            .init(label: "text", value: message.text),
-            .init(label: "type", value: message.type.rawValue)
-        ]
-    }
-
-    override func viewDidLoad() {
-        super.viewDidLoad()
-
-        title = "Message Debugger"
-        tableView.reloadData()
-    }
-
-    override func numberOfSections(in tableView: UITableView) -> Int {
-        1
-    }
-
-    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        messageDebugInfo.count
-    }
-
-    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = UITableViewCell(style: .subtitle, reuseIdentifier: nil)
-        let info = messageDebugInfo[indexPath.row]
-        cell.textLabel?.text = info.value
-        cell.detailTextLabel?.text = info.label
-        cell.accessoryView = UIImageView(image: UIImage(systemName: "doc.on.doc")!)
-        return cell
-    }
-
-    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        tableView.deselectRow(at: indexPath, animated: false)
-        let value = messageDebugInfo[indexPath.row].value
-        UIPasteboard.general.string = value
-        presentAlert(title: "Saved to Clipboard!", message: value)
+        var action: (ChatMessageActionItem) -> Void
     }
 }
