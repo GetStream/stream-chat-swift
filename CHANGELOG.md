@@ -5,7 +5,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## StreamChat
 ### 🐞 Fixed
+- Fix `channel.pinnedMessages` with missing messages [#3244](https://github.com/GetStream/stream-chat-swift/pull/3244)
+- Fix notifications muted state for the current user in channel members [#3236](https://github.com/GetStream/stream-chat-swift/pull/3236)
 - Reset channel members and watchers state when fetching the initial state of the channel [#3245](https://github.com/GetStream/stream-chat-swift/pull/3245)
+
+## StreamChatUI
+### 🐞 Fixed
+- Fix an issue with markdown ordered list processing [#3234](https://github.com/GetStream/stream-chat-swift/issues/3234)
 
 # [4.57.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.57.0)
 _June 06, 2024_

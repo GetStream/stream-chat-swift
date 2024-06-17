@@ -24,6 +24,7 @@ public enum EnvironmentVariable: String {
 
 public enum LaunchArgument: String {
     case useMockServer = "USE_MOCK_SERVER"
+    case switchApiKey = "SWIFTUI_API_KEY"
     case jwt = "MOCK_JWT"
 }
 

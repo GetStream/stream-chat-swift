@@ -252,6 +252,21 @@ class DatabaseContainer: NSPersistentContainer {
         }
     }
     
+    func read<T>(_ actions: @escaping (DatabaseSession) throws -> T, completion: @escaping (Result<T, Error>) -> Void) {
+        let context = backgroundReadOnlyContext
+        context.perform {
+            do {
+                let results = try actions(context)
+                if context.hasChanges {
+                    assertionFailure("Background context is read only, but calling actions() created changes")
+                }
+                completion(.success(results))
+            } catch {
+                completion(.failure(error))
+            }
+        }
+    }
+    
     @available(iOS 13.0, *)
     func write(_ actions: @escaping (DatabaseSession) throws -> Void) async throws {
         try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in

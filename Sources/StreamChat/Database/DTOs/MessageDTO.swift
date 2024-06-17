@@ -774,7 +774,7 @@ extension NSManagedObjectContext: MessageDatabaseSession {
 
         if dto.pinned && !channelDTO.pinnedMessages.contains(dto) {
             channelDTO.pinnedMessages.insert(dto)
-        } else {
+        } else if !dto.pinned {
             channelDTO.pinnedMessages.remove(dto)
         }
 
