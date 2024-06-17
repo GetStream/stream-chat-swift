@@ -130,6 +130,19 @@ public final class DatabaseContainer_Spy: DatabaseContainer, Spy {
 }
 
 extension DatabaseContainer {
+    /// Reads changes from the DB synchronously. Only for test purposes!
+    func readSynchronously<T>(_ actions: @escaping (DatabaseSession) throws -> T) throws -> T {
+        let result = try waitFor { completion in
+            self.read(actions, completion: completion)
+        }
+        switch result {
+        case .success(let values):
+            return values
+        case .failure(let error):
+            throw error
+        }
+    }
+    
     /// Writes changes to the DB synchronously. Only for test purposes!
     func writeSynchronously(_ actions: @escaping (DatabaseSession) throws -> Void) throws {
         let error = try waitFor { completion in
