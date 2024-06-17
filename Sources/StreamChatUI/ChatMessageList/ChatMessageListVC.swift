@@ -22,7 +22,7 @@ open class ChatMessageListVC: _ViewController,
     VoiceRecordingAttachmentPresentationViewDelegate
 {
     open var dataSourceDecorator: (([ChatMessage]) -> [ChatMessage])? = {
-        $0.filter { $0.isPinned == false }
+        $0.filter { $0.type != .system }
     }
 
     /// The object that acts as the data source of the message list.
