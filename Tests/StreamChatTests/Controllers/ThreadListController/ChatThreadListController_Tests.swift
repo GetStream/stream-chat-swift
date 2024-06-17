@@ -39,7 +39,7 @@ final class ChatThreadListController_Tests: XCTestCase {
         XCTAssertTrue(controller.hasLoadedAllThreads)
     }
 
-    func test_synchronize_whenSuccess_whenMoreThreadsThanLimit() {
+    func test_synchronize_whenSuccess_whenMoreThreads() {
         let exp = expectation(description: "synchronize completion")
         var query = ThreadListQuery(watch: true)
         query.limit = 2
@@ -54,7 +54,7 @@ final class ChatThreadListController_Tests: XCTestCase {
             .mock(),
             .mock(),
             .mock()
-        ])))
+        ], next: .unique)))
 
         wait(for: [exp], timeout: defaultTimeout)
         XCTAssertFalse(controller.hasLoadedAllThreads)
@@ -96,7 +96,7 @@ final class ChatThreadListController_Tests: XCTestCase {
         XCTAssertTrue(controller.hasLoadedAllThreads)
     }
 
-    func test_loadMoreThreads_whenSuccess_whenMoreThreadsThanLimit() {
+    func test_loadMoreThreads_whenSuccess_whenMoreThreads() {
         let exp = expectation(description: "loadOlderThreads completion")
         controller.loadMoreThreads(limit: 2) { result in
             let threads = try? result.get()
@@ -109,7 +109,7 @@ final class ChatThreadListController_Tests: XCTestCase {
             .mock(),
             .mock(),
             .mock()
-        ])))
+        ], next: .unique)))
 
         wait(for: [exp], timeout: defaultTimeout)
         XCTAssertFalse(controller.hasLoadedAllThreads)
