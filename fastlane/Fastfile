@@ -509,7 +509,7 @@ end
 
 desc 'Runs e2e ui tests using mock server in Debug config'
 lane :test_e2e_mock do |options|
-  # next unless is_check_required(sources: sources_matrix[:e2e], force_check: @force_check) # TESTING NOW
+  next unless is_check_required(sources: sources_matrix[:e2e], force_check: @force_check)
 
   start_sinatra
 
