@@ -714,6 +714,44 @@ final class ChannelUpdater_Tests: XCTestCase {
         // Assert the completion is called with the error
         AssertAsync.willBeEqual(completionCalledError as? TestError, error)
     }
+    
+    func test_updateChannel_noPagination_clearsMembers() throws {
+        let context = database.backgroundReadOnlyContext
+        let cid = ChannelId.unique
+        try database.createChannel(cid: cid)
+        try database.createMember(cid: cid)
+        // Initially 2 members (one is created with the channel)
+        context.performAndWait {
+            let members = context.channel(cid: cid)?.members
+            XCTAssertEqual(2, members?.count)
+        }
+        
+        // Response has 1 member
+        let members = [MemberPayload.dummy()]
+        apiClient.test_mockResponseResult(
+            .success(
+                ChannelPayload.dummy(
+                    channel: .dummy(
+                        cid: cid,
+                        members: members
+                    ),
+                    members: members
+                )
+            )
+        )
+        
+        let query = ChannelQuery(cid: .unique)
+        let expectation = XCTestExpectation()
+        channelUpdater.update(channelQuery: query, isInRecoveryMode: false, completion: { _ in
+            expectation.fulfill()
+        })
+        wait(for: [expectation], timeout: defaultTimeout)
+        
+        context.performAndWait {
+            let dto = context.channel(cid: cid)
+            XCTAssertEqual(1, dto?.members.count)
+        }
+    }
 
     // MARK: - Partial channel update
 
