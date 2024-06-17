@@ -231,18 +231,18 @@ extension NSManagedObjectContext {
     }
 
     @discardableResult
-    func saveThread(eventPayload: ThreadEventPayload) throws -> ThreadDTO {
+    func saveThread(detailsPayload: ThreadDetailsPayload) throws -> ThreadDTO {
         let threadDTO = ThreadDTO.loadOrCreate(
-            parentMessageId: eventPayload.parentMessageId,
+            parentMessageId: detailsPayload.parentMessageId,
             context: self,
             cache: nil
         )
         
-        threadDTO.replyCount = Int64(eventPayload.replyCount)
-        threadDTO.participantCount = Int64(eventPayload.replyCount)
-        threadDTO.lastMessageAt = eventPayload.lastMessageAt?.bridgeDate
-        threadDTO.updatedAt = eventPayload.updatedAt.bridgeDate
-        threadDTO.title = eventPayload.title
+        threadDTO.replyCount = Int64(detailsPayload.replyCount)
+        threadDTO.participantCount = Int64(detailsPayload.replyCount)
+        threadDTO.lastMessageAt = detailsPayload.lastMessageAt?.bridgeDate
+        threadDTO.updatedAt = detailsPayload.updatedAt.bridgeDate
+        threadDTO.title = detailsPayload.title
 
         return threadDTO
     }

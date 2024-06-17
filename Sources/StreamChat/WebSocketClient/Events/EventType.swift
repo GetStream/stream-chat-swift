@@ -135,6 +135,10 @@ public extension EventType {
 
     /// When a vote was removed from a poll.
     static let pollVoteRemoved: Self = "poll.vote_removed"
+
+    // MARK: - threads
+
+    static let threadUpdated: Self = "thread.updated"
 }
 
 extension EventType {
@@ -198,6 +202,7 @@ extension EventType {
         case .pollVoteCasted: return try PollVoteCastedEventDTO(from: response)
         case .pollVoteChanged: return try PollVoteChangedEventDTO(from: response)
         case .pollVoteRemoved: return try PollVoteRemovedEventDTO(from: response)
+        case .threadUpdated: return try ThreadUpdatedEventDTO(from: response)
         default:
             if response.cid == nil {
                 throw ClientError.UnknownUserEvent(response.eventType)

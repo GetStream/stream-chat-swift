@@ -416,7 +416,7 @@ protocol ThreadDatabaseSession {
 
     /// Updates the thread with details from a thread event.
     @discardableResult
-    func saveThread(eventPayload: ThreadEventPayload) throws -> ThreadDTO
+    func saveThread(detailsPayload: ThreadDetailsPayload) throws -> ThreadDTO
 
     /// Creates a new `ThreadParticipantDTO` object in the database with the given `payload`.
     @discardableResult
@@ -618,8 +618,12 @@ extension DatabaseSession {
             try saveCurrentUserUnreadCount(count: unreadCount)
         }
 
-        if let payload = payload.thread {
-            try saveThread(eventPayload: payload)
+        if let threadDetailsPayload = payload.threadDetails {
+            try saveThread(detailsPayload: threadDetailsPayload)
+        }
+
+        if let threadPayload = payload.thread {
+            try saveThread(payload: threadPayload, cache: nil)
         }
 
         try saveMessageIfNeeded(from: payload)
