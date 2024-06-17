@@ -83,7 +83,7 @@ class DatabaseContainer: NSPersistentContainer {
     private let deletedMessageVisibility: ChatClientConfig.DeletedMessageVisibility?
     private let shouldShowShadowedMessages: Bool?
 
-    static var cachedModel: NSManagedObjectModel?
+    static var cachedModels = [String: NSManagedObjectModel]()
 
     /// All `NSManagedObjectContext`s this container owns.
     private(set) lazy var allContext: [NSManagedObjectContext] = [viewContext, backgroundReadOnlyContext, stateLayerContext, writableContext]
@@ -111,7 +111,7 @@ class DatabaseContainer: NSPersistentContainer {
         shouldShowShadowedMessages: Bool? = nil
     ) {
         let managedObjectModel: NSManagedObjectModel
-        if let cachedModel = Self.cachedModel {
+        if let cachedModel = Self.cachedModels[modelName] {
             managedObjectModel = cachedModel
         } else {
             // It's safe to unwrap the following values because this is not settable by users and it's always a programmer error.
@@ -119,7 +119,7 @@ class DatabaseContainer: NSPersistentContainer {
             let modelURL = bundle.url(forResource: modelName, withExtension: "momd")!
             let model = NSManagedObjectModel(contentsOf: modelURL)!
             managedObjectModel = model
-            Self.cachedModel = model
+            Self.cachedModels[modelName] = model
         }
 
         self.localCachingSettings = localCachingSettings
@@ -248,6 +248,21 @@ class DatabaseContainer: NSPersistentContainer {
                 log.error("Failed to save data to DB. Error: \(error)", subsystems: .database)
                 FetchCache.clear()
                 completion(error)
+            }
+        }
+    }
+    
+    func read<T>(_ actions: @escaping (DatabaseSession) throws -> T, completion: @escaping (Result<T, Error>) -> Void) {
+        let context = backgroundReadOnlyContext
+        context.perform {
+            do {
+                let results = try actions(context)
+                if context.hasChanges {
+                    assertionFailure("Background context is read only, but calling actions() created changes")
+                }
+                completion(.success(results))
+            } catch {
+                completion(.failure(error))
             }
         }
     }

@@ -31,7 +31,6 @@ public final class DatabaseContainer_Spy: DatabaseContainer, Spy {
     private(set) var sessionMock: DatabaseSession_Mock?
 
     public convenience init(localCachingSettings: ChatClientConfig.LocalCaching? = nil) {
-        Self.cachedModel = nil
         self.init(kind: .onDisk(databaseFileURL: .newTemporaryFileURL()), localCachingSettings: localCachingSettings)
         shouldCleanUpTempDBFiles = true
     }
@@ -46,7 +45,6 @@ public final class DatabaseContainer_Spy: DatabaseContainer, Spy {
         deletedMessagesVisibility: ChatClientConfig.DeletedMessageVisibility? = nil,
         shouldShowShadowedMessages: Bool? = nil
     ) {
-        Self.cachedModel = nil
         init_kind = kind
         super.init(
             kind: kind,
@@ -61,7 +59,6 @@ public final class DatabaseContainer_Spy: DatabaseContainer, Spy {
     }
 
     convenience init(sessionMock: DatabaseSession_Mock) {
-        Self.cachedModel = nil
         self.init(kind: .inMemory)
         self.sessionMock = sessionMock
     }
@@ -133,6 +130,19 @@ public final class DatabaseContainer_Spy: DatabaseContainer, Spy {
 }
 
 extension DatabaseContainer {
+    /// Reads changes from the DB synchronously. Only for test purposes!
+    func readSynchronously<T>(_ actions: @escaping (DatabaseSession) throws -> T) throws -> T {
+        let result = try waitFor { completion in
+            self.read(actions, completion: completion)
+        }
+        switch result {
+        case .success(let values):
+            return values
+        case .failure(let error):
+            throw error
+        }
+    }
+    
     /// Writes changes to the DB synchronously. Only for test purposes!
     func writeSynchronously(_ actions: @escaping (DatabaseSession) throws -> Void) throws {
         let error = try waitFor { completion in
