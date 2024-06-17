@@ -37,7 +37,6 @@ class StreamTestCase: XCTestCase {
         stopVideo()
         app.terminate()
         server.stop()
-        server = nil
         backendRobot.delayServerResponse(byTimeInterval: 0.0)
 
         try super.tearDownWithError()
@@ -84,18 +83,22 @@ extension StreamTestCase {
     }
 
     private func startMockServer() {
-        server = StreamMockServer()
-        server.configure()
-        
-        for _ in 0...3 {
+        for i in 0...3 {
+            server = StreamMockServer()
+            server.configure()
+            
             let serverHasStarted = server.start(port: in_port_t(MockServerConfiguration.port))
             if serverHasStarted {
                 return
             }
+            
             server.stop()
+            server = nil
+            
+            if i == 3 {
+                XCTAssertTrue(serverHasStarted, "Mock server failed on start")
+            }
         }
-        
-        XCTFail("Mock server failed on start")
     }
 
     private func startVideo() {

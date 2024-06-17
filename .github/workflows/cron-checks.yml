@@ -25,7 +25,7 @@ jobs:
     - name: Build
       run: bundle exec fastlane build_test_app_and_frameworks
       timeout-minutes: 60
-    - uses: actions/upload-artifact@v3
+    - uses: actions/upload-artifact@v4
       if: success()
       with:
         name: cache-derived-data
@@ -76,7 +76,7 @@ jobs:
       IOS_SIMULATOR_DEVICE: "${{ matrix.device }} (${{ matrix.ios }})" # For the Allure report
     steps:
     - uses: actions/checkout@v4.1.1
-    - uses: actions/download-artifact@v3
+    - uses: actions/download-artifact@v4
       with:
         name: cache-derived-data
         path: derived_data/Build/
@@ -124,7 +124,7 @@ jobs:
       run: |
         brew install chargepoint/xcparse/xcparse
         xcparse logs fastlane/test_output/StreamChatUITestsApp.xcresult fastlane/test_output/logs/
-    - uses: actions/upload-artifact@v3
+    - uses: actions/upload-artifact@v4
       if: failure()
       with:
         name: Test Data E2E (iOS ${{ matrix.ios }})
@@ -206,7 +206,7 @@ jobs:
       run: |
         brew install chargepoint/xcparse/xcparse
         xcparse logs fastlane/test_output/StreamChat.xcresult fastlane/test_output/logs/
-    - uses: actions/upload-artifact@v3
+    - uses: actions/upload-artifact@v4
       if: failure()
       with:
         name: Test Data LLC (iOS ${{ matrix.ios }})

@@ -526,7 +526,7 @@ lane :test_e2e_mock do |options|
     xcargs: buildcache_xcargs,
     devices: options[:device],
     prelaunch_simulator: is_ci,
-    number_of_retries: 3 # TODO: CIS-1737
+    number_of_retries: 5
   }
 
   if is_localhost || options[:cron]

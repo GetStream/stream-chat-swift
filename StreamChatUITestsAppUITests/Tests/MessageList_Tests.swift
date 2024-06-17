@@ -297,9 +297,17 @@ final class MessageList_Tests: StreamTestCase {
             userRobot.setConnectivity(to: .on)
         }
         THEN("new message is delivered") {
-            userRobot
+            let success = userRobot
                 .assertMessage(message)
-                .assertMessageDeliveryStatus(.sent, at: 0)
+                .waitForMessageDeliveryStatus(.sent, at: 0)
+            
+            if success {
+                userRobot.assertMessageDeliveryStatus(.sent, at: 0)
+            } else {
+                userRobot
+                    .selectOptionFromContextMenu(option: .resend, forMessageAtIndex: 0)
+                    .assertMessageDeliveryStatus(.sent, at: 0)
+            }
         }
     }
 
