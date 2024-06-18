@@ -33,6 +33,9 @@ open class ChatThreadVC: _ViewController,
         channelController.client
     }
 
+    /// The throttler to make sure that the marking read is not spammed.
+    var markReadThrottler: Throttler = Throttler(interval: 1, queue: .main)
+
     /// Component responsible for setting the correct offset when keyboard frame is changed
     open lazy var keyboardHandler: KeyboardHandler = ComposerKeyboardHandler(
         composerParentVC: self,
@@ -179,6 +182,8 @@ open class ChatThreadVC: _ViewController,
 
     override open func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
+
+        markReadThrottler.cancel()
 
         resignFirstResponder()
 
@@ -348,7 +353,9 @@ open class ChatThreadVC: _ViewController,
         scrollViewDidScroll scrollView: UIScrollView
     ) {
         if shouldMarkThreadRead {
-            messageController.markThreadRead()
+            markReadThrottler.execute { [weak self] in
+                self?.messageController.markThreadRead()
+            }
         }
     }
 
