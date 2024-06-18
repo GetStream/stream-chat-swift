@@ -109,6 +109,7 @@
         "client/controllers/controllers-overview",
         "client/offline-support",
         "client/controllers/channels",
+        "client/controllers/events",        
         "client/extra-data"
       ]
     },
