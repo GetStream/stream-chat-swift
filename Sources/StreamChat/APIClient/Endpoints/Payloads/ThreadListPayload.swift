@@ -4,6 +4,22 @@
 
 import Foundation
 
+enum ThreadCodingKeys: String, CodingKey, CaseIterable {
+    case channel
+    case parentMessageId = "parent_message_id"
+    case parentMessage = "parent_message"
+    case createdBy = "created_by"
+    case replyCount = "reply_count"
+    case participantCount = "participant_count"
+    case threadParticipants = "thread_participants"
+    case lastMessageAt = "last_message_at"
+    case createdAt = "created_at"
+    case updatedAt = "updated_at"
+    case title
+    case latestReplies = "latest_replies"
+    case read
+}
+
 struct ThreadListPayload: Decodable {
     enum CodingKeys: String, CodingKey {
         case threads
@@ -29,35 +45,19 @@ struct ThreadListPayload: Decodable {
 }
 
 struct ThreadPayload: Decodable {
-    enum CodingKeys: String, CodingKey, CaseIterable {
-        case channel
-        case parentMessageId = "parent_message_id"
-        case parentMessage = "parent_message"
-        case createdBy = "created_by"
-        case replyCount = "reply_count"
-        case participantCount = "participant_count"
-        case threadParticipants = "thread_participants"
-        case lastMessageAt = "last_message_at"
-        case createdAt = "created_at"
-        case updatedAt = "updated_at"
-        case title
-        case latestReplies = "latest_replies"
-        case read
-    }
-    
     let parentMessageId: MessageId
     let parentMessage: MessagePayload
     let channel: ChannelDetailPayload
     let createdBy: UserPayload
     let replyCount: Int
     let participantCount: Int
-    let threadParticipants: [ThreadParticipantPayload]?
+    let threadParticipants: [ThreadParticipantPayload]
     let lastMessageAt: Date?
     let createdAt: Date
     let updatedAt: Date?
     let title: String?
-    let latestReplies: [MessagePayload]? // For partial update, the latestReplies are not returned
-    let read: [ThreadReadPayload] // Create PartialThreadPayload
+    let latestReplies: [MessagePayload]
+    let read: [ThreadReadPayload]
     let extraData: [String: RawJSON]
 
     init(
@@ -93,33 +93,96 @@ struct ThreadPayload: Decodable {
     }
 
     init(from decoder: Decoder) throws {
-        let container = try decoder.container(keyedBy: CodingKeys.self)
+        let container = try decoder.container(keyedBy: ThreadCodingKeys.self)
 
-        channel = try container.decode(ChannelDetailPayload.self, forKey: .channel)
-        parentMessageId = try container.decode(String.self, forKey: .parentMessageId)
-        parentMessage = try container.decode(MessagePayload.self, forKey: .parentMessage)
-        createdBy = try container.decode(UserPayload.self, forKey: .createdBy)
-        replyCount = try container.decode(Int.self, forKey: .replyCount)
-        participantCount = try container.decode(Int.self, forKey: .participantCount)
+        channel = try container.decode(ChannelDetailPayload.self, forKey: ThreadCodingKeys.channel)
+        parentMessageId = try container.decode(String.self, forKey: ThreadCodingKeys.parentMessageId)
+        parentMessage = try container.decode(MessagePayload.self, forKey: ThreadCodingKeys.parentMessage)
+        createdBy = try container.decode(UserPayload.self, forKey: ThreadCodingKeys.createdBy)
+        replyCount = try container.decode(Int.self, forKey: ThreadCodingKeys.replyCount)
+        participantCount = try container.decode(Int.self, forKey: ThreadCodingKeys.participantCount)
         threadParticipants = try container.decodeArrayIfPresentIgnoringFailures(
             [ThreadParticipantPayload].self,
-            forKey: .threadParticipants
-        )
-        lastMessageAt = try container.decodeIfPresent(Date.self, forKey: .lastMessageAt)
-        createdAt = try container.decode(Date.self, forKey: .createdAt)
-        updatedAt = try container.decodeIfPresent(Date.self, forKey: .updatedAt)
-        title = try container.decodeIfPresent(String.self, forKey: .title)
+            forKey: ThreadCodingKeys.threadParticipants
+        ) ?? []
+        lastMessageAt = try container.decodeIfPresent(Date.self, forKey: ThreadCodingKeys.lastMessageAt)
+        createdAt = try container.decode(Date.self, forKey: ThreadCodingKeys.createdAt)
+        updatedAt = try container.decodeIfPresent(Date.self, forKey: ThreadCodingKeys.updatedAt)
+        title = try container.decodeIfPresent(String.self, forKey: ThreadCodingKeys.title)
         latestReplies = try container.decodeArrayIfPresentIgnoringFailures(
             [MessagePayload].self,
-            forKey: .latestReplies
-        )
+            forKey: ThreadCodingKeys.latestReplies
+        ) ?? []
         read = try container.decodeArrayIfPresentIgnoringFailures(
             [ThreadReadPayload].self,
-            forKey: .read
+            forKey: ThreadCodingKeys.read
         ) ?? []
 
         if var payload = try? [String: RawJSON](from: decoder) {
-            payload.removeValues(forKeys: ThreadPayload.CodingKeys.allCases.map(\.rawValue))
+            payload.removeValues(forKeys: ThreadCodingKeys.allCases.map(\.rawValue))
+            extraData = payload
+        } else {
+            extraData = [:]
+        }
+    }
+}
+
+// Payload return in partial update response or thread.updated event.
+struct ThreadPartialPayload: Decodable {
+    let parentMessageId: MessageId
+    let parentMessage: MessagePayload
+    let channel: ChannelDetailPayload
+    let createdBy: UserPayload
+    let replyCount: Int
+    let participantCount: Int
+    let lastMessageAt: Date?
+    let createdAt: Date
+    let updatedAt: Date?
+    let title: String?
+    let extraData: [String: RawJSON]
+
+    init(
+        parentMessageId: MessageId,
+        parentMessage: MessagePayload,
+        channel: ChannelDetailPayload,
+        createdBy: UserPayload,
+        replyCount: Int,
+        participantCount: Int,
+        lastMessageAt: Date?,
+        createdAt: Date,
+        updatedAt: Date?,
+        title: String?,
+        extraData: [String: RawJSON]
+    ) {
+        self.parentMessageId = parentMessageId
+        self.parentMessage = parentMessage
+        self.channel = channel
+        self.createdBy = createdBy
+        self.replyCount = replyCount
+        self.participantCount = participantCount
+        self.lastMessageAt = lastMessageAt
+        self.createdAt = createdAt
+        self.updatedAt = updatedAt
+        self.title = title
+        self.extraData = extraData
+    }
+
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: ThreadCodingKeys.self)
+
+        channel = try container.decode(ChannelDetailPayload.self, forKey: ThreadCodingKeys.channel)
+        parentMessageId = try container.decode(String.self, forKey: ThreadCodingKeys.parentMessageId)
+        parentMessage = try container.decode(MessagePayload.self, forKey: ThreadCodingKeys.parentMessage)
+        createdBy = try container.decode(UserPayload.self, forKey: ThreadCodingKeys.createdBy)
+        replyCount = try container.decode(Int.self, forKey: ThreadCodingKeys.replyCount)
+        participantCount = try container.decode(Int.self, forKey: ThreadCodingKeys.participantCount)
+        lastMessageAt = try container.decodeIfPresent(Date.self, forKey: ThreadCodingKeys.lastMessageAt)
+        createdAt = try container.decode(Date.self, forKey: ThreadCodingKeys.createdAt)
+        updatedAt = try container.decodeIfPresent(Date.self, forKey: ThreadCodingKeys.updatedAt)
+        title = try container.decodeIfPresent(String.self, forKey: ThreadCodingKeys.title)
+
+        if var payload = try? [String: RawJSON](from: decoder) {
+            payload.removeValues(forKeys: ThreadCodingKeys.allCases.map(\.rawValue))
             extraData = payload
         } else {
             extraData = [:]

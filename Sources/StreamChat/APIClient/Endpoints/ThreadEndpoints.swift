@@ -34,7 +34,7 @@ extension Endpoint {
     static func partialThreadUpdate(
         messageId: MessageId,
         request: ThreadPartialUpdateRequest
-    ) -> Endpoint<ThreadPayloadResponse> {
+    ) -> Endpoint<ThreadPartialUpdateResponse> {
         .init(
             path: .thread(messageId: messageId),
             method: .patch,
@@ -77,6 +77,10 @@ extension Endpoint {
 
 struct ThreadPayloadResponse: Decodable {
     var thread: ThreadPayload
+}
+
+struct ThreadPartialUpdateResponse: Decodable {
+    var thread: ThreadPartialPayload
 }
 
 struct ThreadPartialUpdateRequest: Encodable {

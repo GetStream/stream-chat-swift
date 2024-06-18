@@ -47,7 +47,7 @@ class EventPayload: Decodable {
     let memberContainer: MemberContainerPayload?
     let channel: ChannelDetailPayload?
     let threadDetails: ThreadDetailsPayload?
-    let thread: ThreadPayload?
+    let threadPartial: ThreadPartialPayload?
     let message: MessagePayload?
     let reaction: MessageReactionPayload?
     let watcherCount: Int?
@@ -92,7 +92,7 @@ class EventPayload: Decodable {
         lastReadMessageId: MessageId? = nil,
         unreadMessagesCount: Int? = nil,
         threadDetails: ThreadDetailsPayload? = nil,
-        thread: ThreadPayload? = nil,
+        threadPartial: ThreadPartialPayload? = nil,
         poll: PollPayload? = nil,
         vote: PollVotePayload? = nil
     ) {
@@ -119,7 +119,7 @@ class EventPayload: Decodable {
         self.lastReadAt = lastReadAt
         self.lastReadMessageId = lastReadMessageId
         self.unreadMessagesCount = unreadMessagesCount
-        self.thread = thread
+        self.threadPartial = threadPartial
         self.threadDetails = threadDetails
         self.poll = poll
         self.vote = vote
@@ -153,7 +153,7 @@ class EventPayload: Decodable {
         lastReadMessageId = try container.decodeIfPresent(MessageId.self, forKey: .lastReadMessageId)
         unreadMessagesCount = try container.decodeIfPresent(Int.self, forKey: .unreadMessagesCount)
         threadDetails = try? container.decodeIfPresent(ThreadDetailsPayload.self, forKey: .thread)
-        thread = try? container.decodeIfPresent(ThreadPayload.self, forKey: .thread)
+        threadPartial = try? container.decodeIfPresent(ThreadPartialPayload.self, forKey: .thread)
         vote = try container.decodeIfPresent(PollVotePayload.self, forKey: .vote)
         poll = try container.decodeIfPresent(PollPayload.self, forKey: .poll)
     }
@@ -194,7 +194,7 @@ private extension PartialKeyPath where Root == EventPayload {
         case \EventPayload.parentId: return "parentId"
         case \EventPayload.hardDelete: return "hardDelete"
         case \EventPayload.shadow: return "shadow"
-        case \EventPayload.thread: return "thread"
+        case \EventPayload.threadPartial: return "thread"
         case \EventPayload.threadDetails: return "thread"
         default: return String(describing: self)
         }

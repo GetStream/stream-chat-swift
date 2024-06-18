@@ -792,7 +792,7 @@ class MessageUpdater: Worker {
             switch result {
             case .success(let response):
                 self.database.write { session in
-                    let thread = try session.saveThread(payload: response.thread, cache: nil).asModel()
+                    let thread = try session.saveThread(partialPayload: response.thread).asModel()
                     completion(.success(thread))
                 }
             case .failure(let error):

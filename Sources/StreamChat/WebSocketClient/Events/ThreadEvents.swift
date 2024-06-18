@@ -14,12 +14,12 @@ public struct ThreadUpdatedEvent: Event {
 }
 
 class ThreadUpdatedEventDTO: EventDTO {
-    let thread: ThreadPayload
+    let thread: ThreadPartialPayload
     let createdAt: Date
     let payload: EventPayload
 
     init(from response: EventPayload) throws {
-        thread = try response.value(at: \.thread)
+        thread = try response.value(at: \.threadPartial)
         createdAt = try response.value(at: \.createdAt)
         payload = response
     }

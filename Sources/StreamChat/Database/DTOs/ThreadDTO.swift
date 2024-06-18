@@ -85,7 +85,7 @@ class ThreadDTO: NSManagedObject {
         updatedAt: DBDate?,
         latestReplies: Set<MessageDTO>?,
         threadParticipants: Set<ThreadParticipantDTO>?,
-        read: Set<ThreadReadDTO>,
+        read: Set<ThreadReadDTO>?,
         createdBy: UserDTO,
         channel: ChannelDTO,
         extraData: Data
@@ -97,20 +97,20 @@ class ThreadDTO: NSManagedObject {
         self.createdAt = createdAt
         self.lastMessageAt = lastMessageAt
         self.updatedAt = updatedAt
-        self.read = read
         self.createdBy = createdBy
         self.channel = channel
         self.extraData = extraData
 
-        // Only set latest replies if they come from the payload.
-        // Otherwise do not set it, to not reset the current replies.
+        /// For partial thread response, the properties below won't be returned.
+        /// We need to make sure we don't reset this values from the current state.
         if let latestReplies {
             self.latestReplies = latestReplies
         }
-
-        // Same for thread participants
         if let threadParticipants {
             self.threadParticipants = threadParticipants
+        }
+        if let read {
+            self.read = read
         }
     }
 }
@@ -183,7 +183,7 @@ extension NSManagedObjectContext {
             cache: cache
         )
 
-        let latestRepliesDTO: [MessageDTO]? = try payload.latestReplies?.map { replyPayload in
+        let latestRepliesDTO: [MessageDTO] = try payload.latestReplies.map { replyPayload in
             let replyDTO = try saveMessage(
                 payload: replyPayload,
                 channelDTO: channelDTO,
@@ -193,7 +193,7 @@ extension NSManagedObjectContext {
             return replyDTO
         }
 
-        let threadParticipantsDTO: [ThreadParticipantDTO]? = try payload.threadParticipants?.map { participantPayload in
+        let threadParticipantsDTO: [ThreadParticipantDTO] = try payload.threadParticipants.map { participantPayload in
             let participantDTO = try saveThreadParticipant(
                 payload: participantPayload,
                 threadId: payload.parentMessageId,
@@ -228,9 +228,56 @@ extension NSManagedObjectContext {
             createdAt: payload.createdAt.bridgeDate,
             lastMessageAt: payload.lastMessageAt?.bridgeDate,
             updatedAt: payload.updatedAt?.bridgeDate,
-            latestReplies: latestRepliesDTO.map { Set($0) },
-            threadParticipants: threadParticipantsDTO.map { Set($0) },
+            latestReplies: Set(latestRepliesDTO),
+            threadParticipants: Set(threadParticipantsDTO),
             read: Set(readsDTO),
+            createdBy: createdByUserDTO,
+            channel: channelDTO,
+            extraData: extraData
+        )
+
+        return threadDTO
+    }
+
+    @discardableResult
+    func saveThread(partialPayload: ThreadPartialPayload) throws -> ThreadDTO {
+        let threadDTO = ThreadDTO.loadOrCreate(
+            parentMessageId: partialPayload.parentMessageId,
+            context: self,
+            cache: nil
+        )
+        let channelDTO = try saveChannel(
+            payload: partialPayload.channel,
+            query: nil,
+            cache: nil
+        )
+        let parentMessageDTO = try saveMessage(
+            payload: partialPayload.parentMessage,
+            channelDTO: channelDTO,
+            syncOwnReactions: false,
+            cache: nil
+        )
+
+        let createdByUserDTO = try saveUser(payload: partialPayload.createdBy)
+
+        let extraData: Data
+        do {
+            extraData = try JSONEncoder.default.encode(partialPayload.extraData)
+        } catch {
+            extraData = Data()
+        }
+
+        threadDTO.fill(
+            parentMessage: parentMessageDTO,
+            title: partialPayload.title,
+            replyCount: Int64(partialPayload.replyCount),
+            participantCount: Int64(partialPayload.participantCount),
+            createdAt: partialPayload.createdAt.bridgeDate,
+            lastMessageAt: partialPayload.lastMessageAt?.bridgeDate,
+            updatedAt: partialPayload.updatedAt?.bridgeDate,
+            latestReplies: nil,
+            threadParticipants: nil,
+            read: nil,
             createdBy: createdByUserDTO,
             channel: channelDTO,
             extraData: extraData

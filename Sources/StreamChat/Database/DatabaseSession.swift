@@ -418,6 +418,10 @@ protocol ThreadDatabaseSession {
     @discardableResult
     func saveThread(detailsPayload: ThreadDetailsPayload) throws -> ThreadDTO
 
+    /// Updates the thread with partial thread information.
+    @discardableResult
+    func saveThread(partialPayload: ThreadPartialPayload) throws -> ThreadDTO
+
     /// Creates a new `ThreadParticipantDTO` object in the database with the given `payload`.
     @discardableResult
     func saveThreadParticipant(
@@ -622,8 +626,8 @@ extension DatabaseSession {
             try saveThread(detailsPayload: threadDetailsPayload)
         }
 
-        if let threadPayload = payload.thread {
-            try saveThread(payload: threadPayload, cache: nil)
+        if let threadPartialPayload = payload.threadPartial {
+            try saveThread(partialPayload: threadPartialPayload)
         }
 
         try saveMessageIfNeeded(from: payload)
