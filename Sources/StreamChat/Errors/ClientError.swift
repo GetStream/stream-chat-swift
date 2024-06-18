@@ -27,6 +27,7 @@ public class ClientError: Error, CustomStringConvertible {
     /// Retrieve the localized description for this error.
     public var localizedDescription: String { message ?? errorDescription ?? "" }
 
+    /// Trying out selective testing
     public private(set) lazy var description = "Error \(type(of: self)) in \(location?.file ?? ""):\(location?.line ?? 0)"
         + (localizedDescription.isEmpty ? "" : " -> ")
         + localizedDescription
