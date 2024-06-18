@@ -92,7 +92,7 @@ class DebugObjectViewController: UITableViewController {
                 cell.detailTextLabel?.text = "nil"
             } else {
                 cell.textLabel?.text = item.label ?? object.debugDescription
-                cell.accessoryView = UIImageView(image: UIImage(resource: .iconArrowRight))
+                cell.accessoryView = UIImageView(image: UIImage(systemName: "chevron.right")!)
             }
         }
         return cell
