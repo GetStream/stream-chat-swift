@@ -9,6 +9,7 @@ final class MessageList_Tests: StreamTestCase {
     override func setUpWithError() throws {
         try super.setUpWithError()
         addTags([.coreFeatures])
+        assertMockServer()
     }
 
     func test_messageListUpdates_whenUserSendsMessage() {

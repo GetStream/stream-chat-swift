@@ -16,6 +16,7 @@ class StreamTestCase: XCTestCase {
     var server: StreamMockServer!
     var recordVideo = false
     var mockServerEnabled = true
+    var mockServerCrashed = false
     var switchApiKey = false
 
     override func setUpWithError() throws {
@@ -46,6 +47,10 @@ class StreamTestCase: XCTestCase {
 }
 
 extension StreamTestCase {
+    
+    func assertMockServer() {
+        XCTAssertFalse(mockServerCrashed, "Mock server failed on start")
+    }
 
     private func useMockServer() {
         if mockServerEnabled {
@@ -83,22 +88,18 @@ extension StreamTestCase {
     }
 
     private func startMockServer() {
-        for i in 0...3 {
-            server = StreamMockServer()
-            server.configure()
-            
+        server = StreamMockServer()
+        server.configure()
+        
+        for _ in 0...3 {
             let serverHasStarted = server.start(port: in_port_t(MockServerConfiguration.port))
             if serverHasStarted {
                 return
             }
-            
             server.stop()
-            server = nil
-            
-            if i == 3 {
-                XCTAssertTrue(serverHasStarted, "Mock server failed on start")
-            }
         }
+        
+        mockServerCrashed = true
     }
 
     private func startVideo() {
