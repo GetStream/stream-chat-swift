@@ -34,6 +34,8 @@ class DebugObjectViewController: UITableViewController {
             return
         }
 
+        // swiftlint:disable syntactic_sugar
+
         data = Mirror(reflecting: object)
             .children
             .filter {
@@ -63,8 +65,11 @@ class DebugObjectViewController: UITableViewController {
                     /// All values that are LosslessStringConvertible are usually raw values.
                     value = .raw(String(stringValue))
                 } else if case Optional<Any>.none = $0.value {
-                    /// We need to know if `Any` from `Mirror` is Optional or not.
+                    /// We need extract the Optional type from `Any` to check if it is nil or not.
                     value = .object(nil)
+                } else if case Optional<Any>.some = $0.value {
+                    /// Unwrap the value from Optional type from `Any`.
+                    value = .object($0.value)
                 } else {
                     /// Otherwise, it is an object that needs to inspected.
                     value = .object($0.value)
@@ -72,6 +77,8 @@ class DebugObjectViewController: UITableViewController {
 
                 return ($0.label, value)
             }
+
+        // swiftlint:enable syntactic_sugar
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
