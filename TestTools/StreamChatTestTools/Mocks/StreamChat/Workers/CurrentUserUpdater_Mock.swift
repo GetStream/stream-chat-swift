@@ -32,10 +32,11 @@ final class CurrentUserUpdater_Mock: CurrentUserUpdater {
 
     override func updateUserData(
         currentUserId: UserId,
-        name: String? = nil,
-        imageURL: URL? = nil,
-        privacySettings: UserPrivacySettings? = nil,
-        userExtraData: [String: RawJSON]? = nil,
+        name: String?,
+        imageURL: URL?,
+        privacySettings: UserPrivacySettings?,
+        role: UserRole?,
+        userExtraData: [String: RawJSON]?,
         completion: ((Error?) -> Void)? = nil
     ) {
         updateUserData_currentUserId = currentUserId

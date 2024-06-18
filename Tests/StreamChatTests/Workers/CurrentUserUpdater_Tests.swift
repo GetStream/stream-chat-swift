@@ -55,6 +55,7 @@ final class CurrentUserUpdater_Tests: XCTestCase {
         let expectedId = userPayload.id
         let expectedName = String.unique
         let expectedImageUrl = URL.unique()
+        let expectedRole = UserRole.guest
 
         // Call update user
         currentUserUpdater.updateUserData(
@@ -65,6 +66,8 @@ final class CurrentUserUpdater_Tests: XCTestCase {
                 typingIndicators: .init(enabled: true),
                 readReceipts: .init(enabled: true)
             ),
+            role: expectedRole,
+            userExtraData: nil,
             completion: { error in
                 XCTAssertNil(error)
             }
@@ -76,6 +79,7 @@ final class CurrentUserUpdater_Tests: XCTestCase {
                 userId: userPayload.id,
                 name: expectedName,
                 imageUrl: expectedImageUrl,
+                role: expectedRole,
                 privacySettings: .init(
                     typingIndicators: .init(enabled: true),
                     readReceipts: .init(enabled: true)
@@ -94,6 +98,7 @@ final class CurrentUserUpdater_Tests: XCTestCase {
                     typingIndicators: .init(enabled: true),
                     readReceipts: .init(enabled: true)
                 ),
+                role: expectedRole,
                 extraData: [:]
             )
         )
@@ -111,6 +116,7 @@ final class CurrentUserUpdater_Tests: XCTestCase {
         let expectedId = userPayload.id
         let expectedName = String.unique
         let expectedImageUrl = URL.unique()
+        let expectedRole = UserRole.anonymous
 
         // Call update user
         var completionCalled = false
@@ -122,6 +128,8 @@ final class CurrentUserUpdater_Tests: XCTestCase {
                 typingIndicators: .init(enabled: false),
                 readReceipts: .init(enabled: false)
             ),
+            role: expectedRole,
+            userExtraData: nil,
             completion: { _ in
                 completionCalled = true
             }
@@ -133,6 +141,7 @@ final class CurrentUserUpdater_Tests: XCTestCase {
                 userId: userPayload.id,
                 name: expectedName,
                 imageUrl: expectedImageUrl,
+                role: expectedRole,
                 privacySettings: .init(
                     typingIndicators: .init(enabled: false),
                     readReceipts: .init(enabled: false)
@@ -169,6 +178,9 @@ final class CurrentUserUpdater_Tests: XCTestCase {
             currentUserId: userPayload.id,
             name: .unique,
             imageURL: nil,
+            privacySettings: nil,
+            role: nil,
+            userExtraData: [:],
             completion: { error in
                 completionError = error
             }
@@ -199,6 +211,9 @@ final class CurrentUserUpdater_Tests: XCTestCase {
                 currentUserId: .unique,
                 name: nil,
                 imageURL: nil,
+                privacySettings: nil,
+                role: nil,
+                userExtraData: nil,
                 completion: $0
             )
         }
@@ -224,6 +239,9 @@ final class CurrentUserUpdater_Tests: XCTestCase {
             currentUserId: .unique,
             name: .unique,
             imageURL: nil,
+            privacySettings: nil,
+            role: nil,
+            userExtraData: nil,
             completion: { error in
                 completionError = error
             }
