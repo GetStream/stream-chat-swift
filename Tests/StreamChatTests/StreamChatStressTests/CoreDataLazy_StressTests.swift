@@ -36,7 +36,9 @@ final class CoreDataLazy_Tests: StressTestCase {
         }, nil)
 
         // Assert the value hasn't been evaluated yet
-        XCTAssertEqual(counter, 0)
+        if !StreamRuntimeCheck._isBackgroundMappingEnabled {
+            XCTAssertEqual(counter, 0)
+        }
 
         // Evaluate the value and check the result is correct a couple of times
         XCTAssertEqual(value, result)
@@ -48,7 +50,10 @@ final class CoreDataLazy_Tests: StressTestCase {
         XCTAssertEqual(counter, 1)
     }
 
-    func test_theClosureIsEvaluatedOnTheContextQueue() {
+    func test_theClosureIsEvaluatedOnTheContextQueue() throws {
+        if StreamRuntimeCheck._isBackgroundMappingEnabled {
+            throw XCTSkip("Does not apply to background mapping")
+        }
         var context: SpyContext! = SpyContext(persistenStore: database.persistentStoreCoordinator)
         let result = Int.random(in: Int.min...Int.max)
 

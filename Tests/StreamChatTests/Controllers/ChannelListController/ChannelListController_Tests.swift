@@ -63,7 +63,7 @@ final class ChannelListController_Tests: XCTestCase {
         env.channelListUpdater?.update_completion?(.success([]))
 
         // Check if state changed after successful network call.
-        XCTAssertEqual(controller.state, .remoteDataFetched)
+        AssertAsync.willBeEqual(controller.state, .remoteDataFetched)
     }
 
     func test_channelsAccess_changesControllerState() {
