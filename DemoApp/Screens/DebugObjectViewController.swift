@@ -98,7 +98,11 @@ class DebugObjectViewController: UITableViewController {
                 cell.textLabel?.text = item.label
                 cell.detailTextLabel?.text = "nil"
             } else {
-                cell.textLabel?.text = item.label ?? object.debugDescription
+                if let labelText = item.label {
+                    cell.textLabel?.text = labelText
+                } else if let objectValue = object {
+                    cell.textLabel?.text = String(describing: objectValue)
+                }
                 cell.accessoryView = UIImageView(image: UIImage(systemName: "chevron.right")!)
             }
         }
