@@ -300,6 +300,13 @@ lane :test do |options|
 
   update_testplan_on_ci(path: 'Tests/StreamChatTests/StreamChatFlakyTests.xctestplan')
 
+  if is_ci && ENV['GITHUB_PR_NUM']
+    enable_selective_testing(
+      directory: 'Tests/StreamChatTests',
+      testplan: 'Tests/StreamChatTests/StreamChatTestPlan.xctestplan'
+    )
+  end
+
   scan(
     project: xcode_project,
     scheme: 'StreamChat',
@@ -534,6 +541,54 @@ lane :test_e2e_mock do |options|
   else
     parallelize_tests_on_ci(scan: scan_options, batch: options[:batch])
   end
+end
+
+lane :enable_selective_testing do |options|
+  edited_files = sh("gh pr view #{ENV['GITHUB_PR_NUM']} --json files -q '.files[].path'").split("\n")
+  next if edited_files.size == 100 # GitHub limitation
+
+  Dir.chdir('..') do
+    all_tests = collect_swift_files_with_classes(directory: options[:directory], exlude_tests_in_root: true)
+
+    exluded_test_classes = []
+    edited_files.each do |edited_file|
+      all_tests.each do |component, class_names|
+        exluded_test_classes += class_names unless edited_file.include?(component)
+      end
+    end
+    puts exluded_test_classes.uniq
+    sh("xctestplanner skip #{exluded_test_classes.uniq.join(' ')} -f #{options[:testplan]}")
+  end
+end
+
+def extract_classes_from_file(file_path)
+  class_names = []
+  File.open(file_path, 'r') do |file|
+    file.each_line do |line|
+      class_names << $1 if line =~ /^*class\s+(\w+)/
+    end
+  end
+  class_names
+end
+
+def collect_swift_files_with_classes(directory:, exlude_tests_in_root:)
+  swift_files_with_classes = {}
+
+  Find.find(directory) do |path|
+    next unless path.end_with?('.swift') && path.include?('Tests')
+
+    class_names = extract_classes_from_file(path).select { |class_name| class_name.end_with?('Tests') }
+    component = "#{path.split(directory).last.split('/').tap(&:pop).join('/')}/"
+    next if class_names.empty? || (exlude_tests_in_root && component.delete('/').empty?)
+
+    if swift_files_with_classes[component].nil?
+      swift_files_with_classes[component] = class_names
+    else
+      swift_files_with_classes[component] += class_names
+    end
+  end
+
+  swift_files_with_classes
 end
 
 private_lane :parallelize_tests_on_ci do |options|
