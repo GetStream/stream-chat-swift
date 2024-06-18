@@ -204,6 +204,7 @@ private_lane :update_spm do |options|
   File.open('./Package.swift', 'w') { |file| file << file_data }
 
   # Update the repo
+  sh('git config --global user.name "Stream Bot"')
   sh('git add -A')
   sh("git commit -m 'Bump #{version}'")
   sh('git push')
