@@ -100,20 +100,8 @@ extension NSManagedObjectContext {
         if let read = loadThreadRead(parentMessageId: parentMessageId, userId: userId) {
             read.lastReadAt = at.bridgeDate
             read.unreadMessagesCount = 0
-        } else if let thread = thread(parentMessageId: parentMessageId, cache: nil),
-                  let participant = thread.threadParticipants.first(where: { $0.user.id == userId }) {
-            // We don't have a read object, but the user is a member.
-            // We can safely create a read object for the user
-            let read = ThreadReadDTO.loadOrCreate(
-                parentMessageId: parentMessageId,
-                userId: userId,
-                context: self,
-                cache: nil
-            )
-            read.thread = thread
-            read.user = participant.user
-            read.lastReadAt = at.bridgeDate
-            read.unreadMessagesCount = 0
+        } else {
+            makeEmptyRead(parentMessageId: parentMessageId, userId: userId, readAt: at)
         }
     }
 
@@ -121,11 +109,28 @@ extension NSManagedObjectContext {
         for parentMessageId: MessageId,
         userId: UserId
     ) {
-        guard let read = loadThreadRead(parentMessageId: parentMessageId, userId: userId) else {
-            return
+        let read = loadThreadRead(parentMessageId: parentMessageId, userId: userId)
+            ?? makeEmptyRead(parentMessageId: parentMessageId, userId: userId, readAt: nil)
+
+        read?.unreadMessagesCount = read?.thread.replyCount ?? 0
+    }
+
+    private func makeEmptyRead(parentMessageId: MessageId, userId: UserId, readAt: Date?) -> ThreadReadDTO? {
+        guard let thread = thread(parentMessageId: parentMessageId, cache: nil),
+              let participant = thread.threadParticipants.first(where: { $0.user.id == userId }) else {
+            return nil
         }
 
-        read.lastReadAt = nil
-        read.unreadMessagesCount = read.thread.replyCount
+        let read = ThreadReadDTO.loadOrCreate(
+            parentMessageId: parentMessageId,
+            userId: userId,
+            context: self,
+            cache: nil
+        )
+        read.thread = thread
+        read.user = participant.user
+        read.lastReadAt = readAt?.bridgeDate
+        read.unreadMessagesCount = 0
+        return read
     }
 }

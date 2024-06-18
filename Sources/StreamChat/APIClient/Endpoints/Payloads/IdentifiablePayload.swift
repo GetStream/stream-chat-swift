@@ -173,8 +173,8 @@ extension ThreadPayload: IdentifiablePayloadProxy {
         parentMessage.fillIds(cache: &cache)
         channel.fillIds(cache: &cache)
         createdBy.fillIds(cache: &cache)
-        latestReplies.fillIds(cache: &cache)
-        threadParticipants.fillIds(cache: &cache)
+        latestReplies?.fillIds(cache: &cache)
+        threadParticipants?.fillIds(cache: &cache)
         read.fillIds(cache: &cache)
     }
 }

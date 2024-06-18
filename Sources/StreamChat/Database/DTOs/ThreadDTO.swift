@@ -83,8 +83,8 @@ class ThreadDTO: NSManagedObject {
         createdAt: DBDate,
         lastMessageAt: DBDate?,
         updatedAt: DBDate?,
-        latestReplies: Set<MessageDTO>,
-        threadParticipants: Set<ThreadParticipantDTO>,
+        latestReplies: Set<MessageDTO>?,
+        threadParticipants: Set<ThreadParticipantDTO>?,
         read: Set<ThreadReadDTO>,
         createdBy: UserDTO,
         channel: ChannelDTO,
@@ -97,12 +97,21 @@ class ThreadDTO: NSManagedObject {
         self.createdAt = createdAt
         self.lastMessageAt = lastMessageAt
         self.updatedAt = updatedAt
-        self.latestReplies = latestReplies
-        self.threadParticipants = threadParticipants
         self.read = read
         self.createdBy = createdBy
         self.channel = channel
         self.extraData = extraData
+
+        // Only set latest replies if they come from the payload.
+        // Otherwise do not set it, to not reset the current replies.
+        if let latestReplies {
+            self.latestReplies = latestReplies
+        }
+
+        // Same for thread participants
+        if let threadParticipants {
+            self.threadParticipants = threadParticipants
+        }
     }
 }
 
@@ -174,7 +183,7 @@ extension NSManagedObjectContext {
             cache: cache
         )
 
-        let latestRepliesDTO: [MessageDTO] = try payload.latestReplies.map { replyPayload in
+        let latestRepliesDTO: [MessageDTO]? = try payload.latestReplies?.map { replyPayload in
             let replyDTO = try saveMessage(
                 payload: replyPayload,
                 channelDTO: channelDTO,
@@ -184,7 +193,7 @@ extension NSManagedObjectContext {
             return replyDTO
         }
 
-        let threadParticipantsDTO: [ThreadParticipantDTO] = try payload.threadParticipants.map { participantPayload in
+        let threadParticipantsDTO: [ThreadParticipantDTO]? = try payload.threadParticipants?.map { participantPayload in
             let participantDTO = try saveThreadParticipant(
                 payload: participantPayload,
                 threadId: payload.parentMessageId,
@@ -219,8 +228,8 @@ extension NSManagedObjectContext {
             createdAt: payload.createdAt.bridgeDate,
             lastMessageAt: payload.lastMessageAt?.bridgeDate,
             updatedAt: payload.updatedAt?.bridgeDate,
-            latestReplies: Set(latestRepliesDTO),
-            threadParticipants: Set(threadParticipantsDTO),
+            latestReplies: latestRepliesDTO.map { Set($0) },
+            threadParticipants: threadParticipantsDTO.map { Set($0) },
             read: Set(readsDTO),
             createdBy: createdByUserDTO,
             channel: channelDTO,

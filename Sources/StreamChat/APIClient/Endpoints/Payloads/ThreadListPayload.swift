@@ -51,13 +51,13 @@ struct ThreadPayload: Decodable {
     let createdBy: UserPayload
     let replyCount: Int
     let participantCount: Int
-    let threadParticipants: [ThreadParticipantPayload]
+    let threadParticipants: [ThreadParticipantPayload]?
     let lastMessageAt: Date?
     let createdAt: Date
     let updatedAt: Date?
     let title: String?
-    let latestReplies: [MessagePayload]
-    let read: [ThreadReadPayload]
+    let latestReplies: [MessagePayload]? // For partial update, the latestReplies are not returned
+    let read: [ThreadReadPayload] // Create PartialThreadPayload
     let extraData: [String: RawJSON]
 
     init(
@@ -104,7 +104,7 @@ struct ThreadPayload: Decodable {
         threadParticipants = try container.decodeArrayIfPresentIgnoringFailures(
             [ThreadParticipantPayload].self,
             forKey: .threadParticipants
-        ) ?? []
+        )
         lastMessageAt = try container.decodeIfPresent(Date.self, forKey: .lastMessageAt)
         createdAt = try container.decode(Date.self, forKey: .createdAt)
         updatedAt = try container.decodeIfPresent(Date.self, forKey: .updatedAt)
@@ -112,7 +112,7 @@ struct ThreadPayload: Decodable {
         latestReplies = try container.decodeArrayIfPresentIgnoringFailures(
             [MessagePayload].self,
             forKey: .latestReplies
-        ) ?? []
+        )
         read = try container.decodeArrayIfPresentIgnoringFailures(
             [ThreadReadPayload].self,
             forKey: .read
