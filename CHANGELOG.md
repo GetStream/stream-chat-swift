@@ -4,6 +4,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 # Upcoming
 
 ## StreamChat
+### ✅ Added
+- Add `role` argument to partial user updates [#3253](https://github.com/GetStream/stream-chat-swift/pull/3253)
 ### 🐞 Fixed
 - Fix `channel.pinnedMessages` with missing messages [#3244](https://github.com/GetStream/stream-chat-swift/pull/3244)
 - Fix notifications muted state for the current user in channel members [#3236](https://github.com/GetStream/stream-chat-swift/pull/3236)
