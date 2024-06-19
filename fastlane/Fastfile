@@ -526,7 +526,7 @@ lane :test_e2e_mock do |options|
     xcargs: buildcache_xcargs,
     devices: options[:device],
     prelaunch_simulator: is_ci,
-    number_of_retries: 5
+    number_of_retries: options[:cron] ? 3 : 2
   }
 
   if is_localhost || options[:cron]
@@ -545,8 +545,38 @@ private_lane :parallelize_tests_on_ci do |options|
   tests.each_slice(slice_size) { |test| only_testing << test }
   only_testing_batch = only_testing[options[:batch].to_i]
 
-  UI.success("Tests in total: #{only_testing.flatten.size}. Running #{only_testing_batch.size} of them ⌛️")
-  scan(options[:scan].merge(only_testing: only_testing_batch))
+  begin
+    UI.success("Tests in total: #{only_testing.flatten.size}. Running #{only_testing_batch.size} of them ⌛️")
+    scan(options[:scan].merge(only_testing: only_testing_batch))
+  rescue StandardError
+    failed_tests = retreive_failed_e2e_tests
+    UI.important("Re-running #{failed_tests.size} failed tests ⌛️")
+    scan(options[:scan].merge(only_testing: failed_tests))
+  end
+end
+
+private_lane :retreive_failed_e2e_tests do
+  only_testing = []
+  parse_e2e_xcresult_report['issues']['testFailureSummaries']['_values'].each do |failed_test|
+    test_path = failed_test['testCaseName']['_value']
+    begin
+      test_class = test_path.split('.').first
+      test_name = test_path.split('.')[1].split('(').first
+    rescue StandardError
+      test_class = test_path.split('[')[1].split.first
+      test_name = test_path.split[1].split(']').first
+    end
+    only_testing << "StreamChatUITestsAppUITests/#{test_class}/#{test_name}"
+  end
+  only_testing.uniq
+end
+
+private_lane :parse_e2e_xcresult_report do
+  xcresult_report_files = Dir["test_output/StreamChatUITestsApp.xcresult"]
+  raise UI.user_error!('There is no xcresult report to parse') if xcresult_report_files.empty?
+
+  UI.message("Parsing xcresult report at path: '#{xcresult_report_files.first}'")
+  JSON.parse(`xcrun xcresulttool get --format json --path #{xcresult_report_files.first}`)
 end
 
 desc 'Runs ui tests in Debug config'
