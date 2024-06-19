@@ -13,7 +13,7 @@ public enum StreamRuntimeCheck {
     /// For *internal use* only
     ///
     ///  Enables background mapping of DB models
-    public static var _isBackgroundMappingEnabled = false
+    public static var _isBackgroundMappingEnabled = true
 
     /// For *internal use* only
     ///
