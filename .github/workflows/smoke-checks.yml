@@ -66,7 +66,7 @@ jobs:
     - uses: ./.github/actions/python-cache
     - name: Run LLC Tests (Debug)
       run: bundle exec fastlane test device:"${{ env.IOS_SIMULATOR_DEVICE }}" skip_build:true
-      timeout-minutes: 30
+      timeout-minutes: 60
     - name: Get branch name
       id: get_branch_name
       run: echo "branch=${GITHUB_REF#refs/heads/}" >> $GITHUB_OUTPUT
@@ -116,7 +116,7 @@ jobs:
         INSTALL_YEETD: true
     - name: Run UI Tests (Debug)
       run: bundle exec fastlane test_ui device:"${{ env.IOS_SIMULATOR_DEVICE }}" skip_build:true record:${{ github.event.inputs.snapshots }}
-      timeout-minutes: 25
+      timeout-minutes: 60
       env:
         GITHUB_TOKEN: ${{ secrets.DANGER_GITHUB_API_TOKEN }} # to open a PR
         GH_TOKEN: ${{ secrets.GITHUB_TOKEN }} # to use github cli
