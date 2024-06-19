@@ -33,8 +33,6 @@ jobs:
     - name: Build
       run: bundle exec fastlane build_test_app_and_frameworks
       timeout-minutes: 60
-      env:
-        XCODE_VERSION: "15.2"
     - uses: actions/upload-artifact@v4
       if: success()
       with:
@@ -160,8 +158,8 @@ jobs:
       run: bundle exec fastlane test_e2e_mock device:"${{ env.IOS_SIMULATOR_DEVICE }}" batch:'${{ matrix.batch }}' test_without_building:true
       timeout-minutes: 60
       env:
-        XCODE_VERSION: "15.2" # the most stable pair of Xcode and iOS
-        IOS_SIMULATOR_DEVICE: "iPhone 15 Pro (17.2)"
+        XCODE_VERSION: "15.4" # the most stable pair of Xcode and iOS
+        IOS_SIMULATOR_DEVICE: "iPhone 15 Pro (17.5)"
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         GITHUB_PR_NUM: ${{ github.event.number }}
         MATRIX_SIZE: ${{ strategy.job-total }}
