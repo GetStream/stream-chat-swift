@@ -4,11 +4,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 # Upcoming
 
 ## StreamChat
+### ✅ Added
+- Add `role` argument to partial user updates [#3253](https://github.com/GetStream/stream-chat-swift/pull/3253)
 ### 🐞 Fixed
 - Fix `channel.pinnedMessages` with missing messages [#3244](https://github.com/GetStream/stream-chat-swift/pull/3244)
 - Fix notifications muted state for the current user in channel members [#3236](https://github.com/GetStream/stream-chat-swift/pull/3236)
 - Reset channel members and watchers state when fetching the initial state of the channel [#3245](https://github.com/GetStream/stream-chat-swift/pull/3245)
 - Fix inconsistent message text when extremely quickly updating it [#3242](https://github.com/GetStream/stream-chat-swift/pull/3242)
+### 🔄 Changed
+- Enable background mapping by default, which improves performance overall [#3250](https://github.com/GetStream/stream-chat-swift/pull/3250)
 
 ## StreamChatUI
 ### 🐞 Fixed

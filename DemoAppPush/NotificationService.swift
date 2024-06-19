@@ -28,7 +28,11 @@ class NotificationService: UNNotificationServiceExtension {
                 return
             }
 
-            let localURL = URL(fileURLWithPath: path).appendingPathComponent(url.lastPathComponent)
+            // UNNotificationAttachment requires path extension to be set (fallback to jpeg if not set)
+            var localURL = URL(fileURLWithPath: path).appendingPathComponent(UUID().uuidString + url.lastPathComponent)
+            if localURL.pathExtension.isEmpty {
+                localURL.appendPathExtension("jpeg")
+            }
 
             do {
                 try FileManager.default.moveItem(at: downloadedUrl, to: localURL)

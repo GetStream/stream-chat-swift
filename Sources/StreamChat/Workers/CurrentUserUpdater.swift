@@ -20,10 +20,11 @@ class CurrentUserUpdater: Worker {
     ///   - completion: Called when user is successfuly updated, or with error.
     func updateUserData(
         currentUserId: UserId,
-        name: String? = nil,
-        imageURL: URL? = nil,
-        privacySettings: UserPrivacySettings? = nil,
-        userExtraData: [String: RawJSON]? = nil,
+        name: String?,
+        imageURL: URL?,
+        privacySettings: UserPrivacySettings?,
+        role: UserRole?,
+        userExtraData: [String: RawJSON]?,
         completion: ((Error?) -> Void)? = nil
     ) {
         let params: [Any?] = [name, imageURL, userExtraData]
@@ -37,6 +38,7 @@ class CurrentUserUpdater: Worker {
             name: name,
             imageURL: imageURL,
             privacySettings: privacySettings.map { UserPrivacySettingsPayload(settings: $0) },
+            role: role,
             extraData: userExtraData
         )
 
@@ -206,6 +208,8 @@ extension CurrentUserUpdater {
         currentUserId: UserId,
         name: String?,
         imageURL: URL?,
+        privacySettings: UserPrivacySettings?,
+        role: UserRole?,
         userExtraData: [String: RawJSON]?
     ) async throws {
         try await withCheckedThrowingContinuation { continuation in
@@ -213,6 +217,8 @@ extension CurrentUserUpdater {
                 currentUserId: currentUserId,
                 name: name,
                 imageURL: imageURL,
+                privacySettings: privacySettings,
+                role: role,
                 userExtraData: userExtraData
             ) { error in
                 continuation.resume(with: error)
