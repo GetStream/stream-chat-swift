@@ -17,7 +17,7 @@ performance_path = "performance/#{github_repo.split('/').last}.json"
 buildcache_xcargs = 'CC=clang CPLUSPLUS=clang++ LD=clang LDPLUSPLUS=clang++'
 testlab_bucket = 'gs://test-lab-af3rt9m4yh360-mqm1zzm767nhc'
 is_localhost = !is_ci
-@force_check = false
+@force_check = true # TESTING THIS NOW
 
 before_all do |lane|
   if is_ci
@@ -556,14 +556,14 @@ private_lane :parallelize_tests_on_ci do |options|
 end
 
 private_lane :retreive_failed_e2e_tests do
-  xml_file = 'test_output/report.junit'
-  raise UI.user_error!('There is no junit report to parse') unless File.file?(xml_file)
+  report_path = 'test_output/report.junit'
+  raise UI.user_error!('There is no junit report to parse') unless File.file?(report_path)
 
-  result = Nokogiri::XML(File.read(xml_file))
+  junit_report = Nokogiri::XML(File.read(report_path))
   failed_tests = []
   passed_tests = []
 
-  result.xpath('//testcase').each do |testcase|
+  junit_report.xpath('//testcase').each do |testcase|
     suite_name = testcase['classname'].split('.').join('/')
     test_name = testcase['name']
 
