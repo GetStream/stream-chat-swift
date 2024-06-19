@@ -556,27 +556,25 @@ private_lane :parallelize_tests_on_ci do |options|
 end
 
 private_lane :retreive_failed_e2e_tests do
-  only_testing = []
-  parse_e2e_xcresult_report['issues']['testFailureSummaries']['_values'].each do |failed_test|
-    test_path = failed_test['testCaseName']['_value']
-    begin
-      test_class = test_path.split('.').first
-      test_name = test_path.split('.')[1].split('(').first
-    rescue StandardError
-      test_class = test_path.split('[')[1].split.first
-      test_name = test_path.split[1].split(']').first
+  xml_file = 'test_output/report.junit'
+  raise UI.user_error!('There is no junit report to parse') unless File.file?(xml_file)
+
+  result = Nokogiri::XML(File.read(xml_file))
+  failed_tests = []
+  passed_tests = []
+
+  result.xpath('//testcase').each do |testcase|
+    suite_name = testcase['classname'].split('.').join('/')
+    test_name = testcase['name']
+
+    if testcase.at_xpath('failure')
+      failed_tests << "#{suite_name}/#{test_name}"
+    else
+      passed_tests << "#{suite_name}/#{test_name}"
     end
-    only_testing << "StreamChatUITestsAppUITests/#{test_class}/#{test_name}"
   end
-  only_testing.uniq
-end
 
-private_lane :parse_e2e_xcresult_report do
-  xcresult_report_files = Dir["test_output/StreamChatUITestsApp.xcresult"]
-  raise UI.user_error!('There is no xcresult report to parse') if xcresult_report_files.empty?
-
-  UI.message("Parsing xcresult report at path: '#{xcresult_report_files.first}'")
-  JSON.parse(`xcrun xcresulttool get --format json --path #{xcresult_report_files.first}`)
+  (failed_tests - passed_tests).uniq
 end
 
 desc 'Runs ui tests in Debug config'
