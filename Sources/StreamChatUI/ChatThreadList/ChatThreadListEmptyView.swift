@@ -7,7 +7,7 @@ import UIKit
 
 /// The view shown when the thread list is empty.
 open class ChatThreadListEmptyView: _View, ThemeProvider {
-    /// The stack view that olds the icon and description view.
+    /// The stack view that holds the icon and description view.
     open private(set) lazy var container = UIStackView()
         .withoutAutoresizingMaskConstraints
     /// The icon view that shows the thread icon.
@@ -16,8 +16,6 @@ open class ChatThreadListEmptyView: _View, ThemeProvider {
     /// The description view that says that there are no threads fetched.
     open private(set) lazy var descriptionLabel = UILabel()
         .withoutAutoresizingMaskConstraints
-
-    public var actionButtonPressed: (() -> Void)?
 
     override open func setUp() {
         super.setUp()

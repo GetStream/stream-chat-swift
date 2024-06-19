@@ -6,7 +6,6 @@ import Foundation
 import UIKit
 
 /// The view shown when the thread list is loading threads.
-/// It is only shown on the first time since after that it will always load the cached threads.
 open class ChatThreadListLoadingView: _View, ThemeProvider {
     /// The loading indicator view.
     open private(set) lazy var loadingIndicator: UIActivityIndicatorView = {
