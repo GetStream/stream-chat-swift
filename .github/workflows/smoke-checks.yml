@@ -156,6 +156,7 @@ jobs:
       env:
         INSTALL_ALLURE: true
         INSTALL_YEETD: true
+        SKIP_MINT_BOOTSTRAP: true
     - name: Run UI Tests (Debug)
       run: bundle exec fastlane test_e2e_mock device:"${{ env.IOS_SIMULATOR_DEVICE }}" batch:'${{ matrix.batch }}' test_without_building:true
       timeout-minutes: 60
