@@ -24,7 +24,7 @@ env:
 jobs:
   build-test-app-and-frameworks:
     name: Build Test App and Frameworks
-    runs-on: macos-13
+    runs-on: macos-14
     if: ${{ github.event_name != 'push' }}
     steps:
     - uses: actions/checkout@v4.1.1
@@ -34,7 +34,7 @@ jobs:
       run: bundle exec fastlane build_test_app_and_frameworks
       timeout-minutes: 60
       env:
-        XCODE_VERSION: "15.2"
+        XCODE_VERSION: "15.0.1"
     - uses: actions/upload-artifact@v4
       if: success()
       with:
@@ -135,7 +135,7 @@ jobs:
 
   test-e2e-debug:
     name: Test E2E UI (Debug)
-    runs-on: macos-13
+    runs-on: macos-14
     if: ${{ github.event_name != 'push' && github.event.inputs.snapshots != 'true' }}
     needs:
       - allure_testops_launch
@@ -161,8 +161,8 @@ jobs:
       run: bundle exec fastlane test_e2e_mock device:"${{ env.IOS_SIMULATOR_DEVICE }}" batch:'${{ matrix.batch }}' test_without_building:true
       timeout-minutes: 100
       env:
-        XCODE_VERSION: "15.2" # the most stable pair of Xcode and iOS
-        IOS_SIMULATOR_DEVICE: "iPhone 15 Pro (17.2)"
+        XCODE_VERSION: "15.0.1" # the most stable pair of Xcode and iOS
+        IOS_SIMULATOR_DEVICE: "iPhone 15 Pro (17.0)"
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         GITHUB_PR_NUM: ${{ github.event.number }}
         MATRIX_SIZE: ${{ strategy.job-total }}
