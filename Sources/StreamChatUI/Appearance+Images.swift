@@ -85,7 +85,7 @@ public extension Appearance {
 
         // MARK: - Threads
 
-        public var threadListItemIcon: UIImage = loadSafely(systemName: "text.bubble", assetsFallback: "text_bubble")
+        public var threadIcon: UIImage = loadSafely(systemName: "text.bubble", assetsFallback: "text_bubble")
 
         // MARK: - Reactions
 

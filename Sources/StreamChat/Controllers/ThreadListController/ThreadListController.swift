@@ -116,8 +116,10 @@ public class ChatThreadListController: DataController, DelegateCallable, DataSto
             case let .success(threadListResponse):
                 self?.threadListObserver.refreshItems { [weak self] in
                     self?.callback {
+                        self?.threadListObserver.refreshItems {
+                            self?.state = .remoteDataFetched
+                        }
                         self?.nextCursor = threadListResponse.next
-                        self?.state = .remoteDataFetched
                         self?.hasLoadedAllThreads = threadListResponse.next == nil
                         completion?(nil)
                     }

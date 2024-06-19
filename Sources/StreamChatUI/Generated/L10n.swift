@@ -344,10 +344,17 @@ internal enum L10n {
     }
   }
 
-  internal enum Thread {
+  internal enum ThreadList {
+    internal enum Empty {
+      /// No threads here yet...
+      internal static var description: String { L10n.tr("Localizable", "threadList.empty.description") }
+    }
+  }
+
+  internal enum ThreadListItem {
     /// replied to: %@
     internal static func repliedTo(_ p1: Any) -> String {
-      return L10n.tr("Localizable", "thread.replied-to", String(describing: p1))
+      return L10n.tr("Localizable", "threadListItem.replied-to", String(describing: p1))
     }
   }
 }

@@ -219,4 +219,7 @@
 
 // MARK: - Threads
 
-"thread.replied-to" = "replied to: %@";
+/// The prefix text when showing which parent message was the reply to.
+"threadListItem.replied-to" = "replied to: %@";
+/// Description shown when the thread list is empty.
+"threadList.empty.description" = "No threads here yet...";

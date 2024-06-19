@@ -48,11 +48,25 @@ open class ChatThreadListVC:
         .threadListRouter
         .init(rootViewController: self)
 
+    /// The thread list loading view.
+    open private(set) lazy var loadingView: ChatThreadListLoadingView = components
+        .threadListLoadingView
+        .init()
+        .withoutAutoresizingMaskConstraints
+        .withAccessibilityIdentifier(identifier: "loadingView")
+
+    /// The empty view when there are no threads.
+    open lazy var emptyView: ChatThreadListEmptyView = components
+        .threadListEmptyView
+        .init()
+        .withoutAutoresizingMaskConstraints
+        .withAccessibilityIdentifier(identifier: "emptyView")
+
     override open func setUp() {
         super.setUp()
 
-        threadListController.delegate = self
         threadListController.synchronize()
+        threadListController.delegate = self
 
         tableView.register(ChatThreadListItemCell.self)
         tableView.delegate = self
@@ -72,8 +86,12 @@ open class ChatThreadListVC:
 
     override open func setUpLayout() {
         super.setUpLayout()
-        
+
         view.embed(tableView)
+        view.embed(loadingView)
+        view.embed(emptyView)
+        loadingView.isHidden = true
+        emptyView.isHidden = true
     }
 
     // MARK: - Actions
@@ -97,16 +115,40 @@ open class ChatThreadListVC:
 
     // MARK: - ChatThreadListControllerDelegate
 
-    open func controller(_ controller: ChatThreadListController, didChangeThreads changes: [ListChange<ChatThread>]) {
+    public func controller(_ controller: DataController, didChangeState state: DataController.State) {
+        handleStateChanges(state)
+    }
+
+    open func controller(
+        _ controller: ChatThreadListController,
+        didChangeThreads changes: [ListChange<ChatThread>]
+    ) {
+        handleStateChanges(controller.state)
+        
         let previousThreads = threads
         let newThreads = Array(controller.threads)
         let stagedChangeset = StagedChangeset(source: previousThreads, target: newThreads)
         tableView.reload(
             using: stagedChangeset,
-            with: .none,
+            with: .fade,
             reconfigure: { _ in true }
         ) { [weak self] newThreads in
             self?.threads = newThreads
+        }
+    }
+
+    /// Called whenever the threads data changes or the controller.state changes.
+    open func handleStateChanges(_ newState: DataController.State) {
+        switch newState {
+        case .initialized, .localDataFetched:
+            loadingView.isHidden = !threadListController.threads.isEmpty
+        case .remoteDataFetched:
+            loadingView.isHidden = true
+            emptyView.isHidden = !threadListController.threads.isEmpty
+        case .remoteDataFetchFailed:
+            loadingView.isHidden = true
+        case .localDataFetchFailed:
+            break
         }
     }
 

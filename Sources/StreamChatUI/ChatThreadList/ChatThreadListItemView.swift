@@ -173,7 +173,7 @@ open class ChatThreadListItemView: _View, ThemeProvider {
         replyTimestampLabel.font = appearance.fonts.footnote
         
         threadIconView.tintColor = appearance.colorPalette.text
-        threadIconView.image = appearance.images.threadListItemIcon
+        threadIconView.image = appearance.images.threadIcon
 
         threadUnreadCountView.layoutMargins = .init(top: 3, left: 4, bottom: 3, right: 4)
     }
@@ -253,7 +253,7 @@ open class ChatThreadListItemView: _View, ThemeProvider {
         let unreadReplies = thread.reads.first(where: { $0.user.id == content.currentUserId })?.unreadMessagesCount ?? 0
 
         threadTitleLabel.text = channelNameText
-        threadDescriptionLabel.text = L10n.Thread.repliedTo(parentMessageText)
+        threadDescriptionLabel.text = L10n.ThreadListItem.repliedTo(parentMessageText)
         replyDescriptionLabel.text = latestReply?.text
         replyTimestampLabel.text = replyTimestampLabelText
         replyAuthorAvatarView.content = latestReply?.author
