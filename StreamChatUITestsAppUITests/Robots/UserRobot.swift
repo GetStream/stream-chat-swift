@@ -32,16 +32,20 @@ final class UserRobot: Robot {
     
     @discardableResult
     func waitForChannelListToLoad() -> Self {
-        let cells = ChannelListPage.cells.waitCount(1, timeout: 7)
+        let timeout = 10.0
+        let cells = ChannelListPage.cells.waitCount(1, timeout: timeout)
 
         // TODO: CIS-1737
         if !cells.firstMatch.exists {
             for _ in 0...10 {
                 app.terminate()
+                server.stop()
+                sleep(1)
+                _ = server.start(port: MockServerConfiguration.port)
                 sleep(1)
                 app.launch()
                 login()
-                cells.waitCount(1)
+                cells.waitCount(1, timeout: timeout)
                 if cells.firstMatch.exists { break }
             }
         }

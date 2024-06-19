@@ -92,12 +92,12 @@ extension StreamTestCase {
         server.configure()
         
         for _ in 0...3 {
-            let serverHasStarted = server.start(port: in_port_t(MockServerConfiguration.port))
+            let serverHasStarted = server.start(port: MockServerConfiguration.port)
             if serverHasStarted {
                 return
             }
             server.stop()
-            MockServerConfiguration.port = Int.random(in: 61000..<62000)
+            MockServerConfiguration.port = UInt16(Int.random(in: 61000..<62000))
         }
         
         mockServerCrashed = true

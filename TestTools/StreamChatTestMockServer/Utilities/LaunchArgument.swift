@@ -6,7 +6,7 @@ import Foundation
 import XCTest
 
 public enum MockServerConfiguration {
-    public static var port = Int.random(in: 61000..<62000)
+    public static var port: UInt16 = UInt16(Int.random(in: 61000..<62000))
     public static var websocketHost = "ws://localhost"
     public static var httpHost = "http://localhost"
 }
