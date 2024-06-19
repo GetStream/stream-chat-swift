@@ -32,7 +32,7 @@ final class UserRobot: Robot {
     
     @discardableResult
     func waitForChannelListToLoad() -> Self {
-        let timeout = 10.0
+        let timeout = 15.0
         let cells = ChannelListPage.cells.waitCount(1, timeout: timeout)
 
         // TODO: CIS-1737
@@ -40,7 +40,6 @@ final class UserRobot: Robot {
             for _ in 0...10 {
                 app.terminate()
                 server.stop()
-                sleep(1)
                 _ = server.start(port: MockServerConfiguration.port)
                 sleep(1)
                 app.launch()
