@@ -33,7 +33,10 @@ final class LazyCachedMapCollection_Tests: XCTestCase {
         XCTAssertEqual(transformationCount, 2)
     }
 
-    func test_creatingCollection_doesntEvaluateSourceLazyCollection() {
+    func test_creatingCollection_doesntEvaluateSourceLazyCollection() throws {
+        if StreamRuntimeCheck._isBackgroundMappingEnabled {
+            throw XCTSkip("Does not apply to background mapping")
+        }
         // Create source collection that is lazy and record when it's evaluated
         let source = [0, 1, 2]
         var lazyMappedEvaluatedValues: [Int] = []
