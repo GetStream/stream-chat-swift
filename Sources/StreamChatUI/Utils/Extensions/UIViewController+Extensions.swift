@@ -111,9 +111,4 @@ extension UIViewController {
             parentNavItem.titleView = navigationItem.titleView
         }
     }
-
-    var isViewVisible: Bool {
-        guard UIApplication.shared.applicationState == .active else { return false }
-        return viewIfLoaded?.window != nil
-    }
 }

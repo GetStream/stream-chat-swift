@@ -407,6 +407,23 @@ open class _ViewController: UIViewController, Customizable {
         TraitCollectionReloadStack.executePendingUpdates()
         super.viewWillLayoutSubviews()
     }
+
+    var viewVisibilityChecker: ViewVisibilityChecker = DefaultViewVisibilityChecker()
+
+    var isViewVisible: Bool {
+        viewVisibilityChecker.isViewVisible(for: self)
+    }
+}
+
+protocol ViewVisibilityChecker {
+    func isViewVisible(for viewController: UIViewController) -> Bool
+}
+
+struct DefaultViewVisibilityChecker: ViewVisibilityChecker {
+    func isViewVisible(for viewController: UIViewController) -> Bool {
+        guard UIApplication.shared.applicationState == .active else { return false }
+        return viewController.viewIfLoaded?.window != nil
+    }
 }
 
 /// Closure stack, used to reverse order of appearance reloads on trait collection changes
