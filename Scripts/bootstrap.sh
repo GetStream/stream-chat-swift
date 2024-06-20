@@ -40,7 +40,7 @@ chmod +x ./hooks/git-format-staged
 puts "Install brew dependencies"
 brew bundle -d
 
-if [ "$SKIP_MINT_BOOTSTRAP" != true ]; then
+if [ "${SKIP_MINT_BOOTSTRAP:-}" != true ]; then
   puts "Bootstrap Mint dependencies"
   mint bootstrap --link
 fi
