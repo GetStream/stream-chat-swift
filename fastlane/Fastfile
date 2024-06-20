@@ -529,10 +529,10 @@ lane :test_e2e_mock do |options|
     number_of_retries: 3
   }
 
-  if is_localhost || options[:cron]
+  if is_localhost
     scan(scan_options)
   else
-    parallelize_tests_on_ci(scan: scan_options, batch: options[:batch])
+    parallelize_tests_on_ci(scan: scan_options, batch: options[:batch], cron: options[:cron])
   end
 end
 
@@ -540,7 +540,7 @@ private_lane :parallelize_tests_on_ci do |options|
   products_dir = File.expand_path("../#{derived_data_path}/Build/Products")
   xctestrun = Dir.glob(File.expand_path("#{products_dir}/*.xctestrun")).first
   tests = retrieve_xctest_names(xctestrun: xctestrun).values.flatten
-  slice_size = (tests.size / ENV['MATRIX_SIZE'].to_f).ceil
+  slice_size = options[:cron] ? tests.size : (tests.size / ENV['MATRIX_SIZE'].to_f).ceil
   only_testing = []
   tests.each_slice(slice_size) { |test| only_testing << test }
   only_testing_batch = only_testing[options[:batch].to_i]
