@@ -167,7 +167,13 @@ extension ChatUserListController {
             _ itemCreator: @escaping (UserDTO) throws -> ChatUser
         )
             -> ListDatabaseObserverWrapper<ChatUser, UserDTO> = {
-                ListDatabaseObserverWrapper(isBackground: $0, database: $1, fetchRequest: $2, itemCreator: $3)
+                ListDatabaseObserverWrapper(
+                    isBackground: $0,
+                    database: $1,
+                    fetchRequest: $2,
+                    itemCreator: $3,
+                    itemReuseKeyPaths: (\ChatUser.id, \UserDTO.id)
+                )
             }
     }
 }

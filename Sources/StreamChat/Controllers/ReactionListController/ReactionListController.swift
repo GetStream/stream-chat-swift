@@ -172,7 +172,13 @@ extension ChatReactionListController {
             _ itemCreator: @escaping (MessageReactionDTO) throws -> ChatMessageReaction
         )
             -> ListDatabaseObserverWrapper<ChatMessageReaction, MessageReactionDTO> = {
-                ListDatabaseObserverWrapper(isBackground: $0, database: $1, fetchRequest: $2, itemCreator: $3)
+                ListDatabaseObserverWrapper(
+                    isBackground: $0,
+                    database: $1,
+                    fetchRequest: $2,
+                    itemCreator: $3,
+                    itemReuseKeyPaths: nil // no id
+                )
             }
     }
 }

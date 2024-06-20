@@ -1550,7 +1550,8 @@ private extension ChatChannelController {
                     deletedMessagesVisibility: deletedMessageVisibility ?? .visibleForCurrentUser,
                     shouldShowShadowedMessages: shouldShowShadowedMessages ?? false
                 ),
-                itemCreator: { try $0.asModel() as ChatMessage }
+                itemCreator: { try $0.asModel() as ChatMessage },
+                itemReuseKeyPaths: (\ChatMessage.id, \MessageDTO.id)
             )
             observer.onDidChange = { [weak self] changes in
                 self?.delegateCallback {

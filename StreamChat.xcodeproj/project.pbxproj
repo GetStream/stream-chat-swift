@@ -263,6 +263,8 @@
 		4F427F6A2BA2F52100D92238 /* ConnectedUserState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F427F682BA2F52100D92238 /* ConnectedUserState.swift */; };
 		4F427F6C2BA2F53200D92238 /* ConnectedUserState+Observer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F427F6B2BA2F53200D92238 /* ConnectedUserState+Observer.swift */; };
 		4F427F6D2BA2F53200D92238 /* ConnectedUserState+Observer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F427F6B2BA2F53200D92238 /* ConnectedUserState+Observer.swift */; };
+		4F4562F62C240FD200675C7F /* DatabaseItemConverter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F4562F52C240FD200675C7F /* DatabaseItemConverter.swift */; };
+		4F4562F72C240FD200675C7F /* DatabaseItemConverter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F4562F52C240FD200675C7F /* DatabaseItemConverter.swift */; };
 		4F45802E2BEE0B4B0099F540 /* ChannelListLinker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F45802D2BEE0B4B0099F540 /* ChannelListLinker.swift */; };
 		4F45802F2BEE0B4B0099F540 /* ChannelListLinker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F45802D2BEE0B4B0099F540 /* ChannelListLinker.swift */; };
 		4F5151962BC3DEA1001B7152 /* UserSearch_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F5151952BC3DEA1001B7152 /* UserSearch_Tests.swift */; };
@@ -3105,6 +3107,7 @@
 		4F427F652BA2F43200D92238 /* ConnectedUser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectedUser.swift; sourceTree = "<group>"; };
 		4F427F682BA2F52100D92238 /* ConnectedUserState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectedUserState.swift; sourceTree = "<group>"; };
 		4F427F6B2BA2F53200D92238 /* ConnectedUserState+Observer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ConnectedUserState+Observer.swift"; sourceTree = "<group>"; };
+		4F4562F52C240FD200675C7F /* DatabaseItemConverter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DatabaseItemConverter.swift; sourceTree = "<group>"; };
 		4F45802D2BEE0B4B0099F540 /* ChannelListLinker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelListLinker.swift; sourceTree = "<group>"; };
 		4F5151952BC3DEA1001B7152 /* UserSearch_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserSearch_Tests.swift; sourceTree = "<group>"; };
 		4F5151972BC407ED001B7152 /* UserList_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserList_Tests.swift; sourceTree = "<group>"; };
@@ -9321,6 +9324,7 @@
 		F6D61D992510B3E300EB0624 /* Database */ = {
 			isa = PBXGroup;
 			children = (
+				4F4562F52C240FD200675C7F /* DatabaseItemConverter.swift */,
 				F6D61D9A2510B3FC00EB0624 /* NSManagedObject+Extensions.swift */,
 				6971256C260CA4CB003C7B47 /* NSManagedObjectContext+Extensions.swift */,
 			);
@@ -11444,6 +11448,7 @@
 				CFE616B928348A5D00AE2ABF /* CountdownTracker.swift in Sources */,
 				40789D1F29F6AC500018C2BB /* AudioPlaying.swift in Sources */,
 				79FC85E724ACCBC500A665ED /* Token.swift in Sources */,
+				4F4562F62C240FD200675C7F /* DatabaseItemConverter.swift in Sources */,
 				79877A0E2498E4BC00015F8B /* Channel.swift in Sources */,
 				DA4AA3B22502718600FAAF6E /* ChannelController+Combine.swift in Sources */,
 				40789D1D29F6AC500018C2BB /* AudioPlayingDelegate.swift in Sources */,
@@ -12289,6 +12294,7 @@
 				4FD2BE572B9AF8A300FFC6F2 /* ChannelList.swift in Sources */,
 				C1E8AD58278C8A6F0041B775 /* SyncRepository.swift in Sources */,
 				841BA9FC2BCE8468000C73E4 /* CastPollVoteRequestBody.swift in Sources */,
+				4F4562F72C240FD200675C7F /* DatabaseItemConverter.swift in Sources */,
 				C121E8AE274544B000023E4C /* ChannelController+SwiftUI.swift in Sources */,
 				C121E8AF274544B000023E4C /* ChannelController+Combine.swift in Sources */,
 				C121E8B0274544B000023E4C /* ChannelListController.swift in Sources */,

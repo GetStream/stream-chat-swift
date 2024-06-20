@@ -2441,6 +2441,7 @@ private class TestEnvironment {
                     database: $1,
                     fetchRequest: $2,
                     itemCreator: $3,
+                    itemReuseKeyPaths: (\ChatMessage.id, \MessageDTO.id),
                     fetchedResultsControllerType: $4
                 )
                 return self.repliesObserver!

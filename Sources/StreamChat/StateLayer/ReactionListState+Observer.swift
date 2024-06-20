@@ -13,7 +13,8 @@ extension ReactionListState {
             reactionListObserver = StateLayerDatabaseObserver(
                 databaseContainer: database,
                 fetchRequest: MessageReactionDTO.reactionListFetchRequest(query: query),
-                itemCreator: { try $0.asModel() }
+                itemCreator: { try $0.asModel() },
+                itemReuseKeyPaths: nil // no id
             )
         }
         

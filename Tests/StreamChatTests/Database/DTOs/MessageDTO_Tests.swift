@@ -4153,7 +4153,8 @@ final class MessageDTO_Tests: XCTestCase {
                 deletedMessagesVisibility: .visibleForCurrentUser,
                 shouldShowShadowedMessages: false
             ),
-            itemCreator: { try $0.asModel() as ChatMessage }
+            itemCreator: { try $0.asModel() as ChatMessage },
+            itemReuseKeyPaths: (\ChatMessage.id, \MessageDTO.id)
         )
         try observer.startObserving()
         return observer

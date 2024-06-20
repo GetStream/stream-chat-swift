@@ -182,6 +182,7 @@ class ListDatabaseObserver<Item, DTO: NSManagedObject> {
     private(set) var frc: NSFetchedResultsController<DTO>!
 
     let itemCreator: (DTO) throws -> Item
+    let itemReuseKeyPaths: (item: KeyPath<Item, String>, dto: KeyPath<DTO, String>)?
     let sorting: [SortValue<Item>]
     let request: NSFetchRequest<DTO>
     let context: NSManagedObjectContext
@@ -206,12 +207,14 @@ class ListDatabaseObserver<Item, DTO: NSManagedObject> {
         context: NSManagedObjectContext,
         fetchRequest: NSFetchRequest<DTO>,
         itemCreator: @escaping (DTO) throws -> Item,
+        itemReuseKeyPaths: (item: KeyPath<Item, String>, dto: KeyPath<DTO, String>)? = nil,
         sorting: [SortValue<Item>],
         fetchedResultsControllerType: NSFetchedResultsController<DTO>.Type = NSFetchedResultsController<DTO>.self
     ) {
         self.context = context
         request = fetchRequest
         self.itemCreator = itemCreator
+        self.itemReuseKeyPaths = itemReuseKeyPaths
         self.sorting = sorting
         frc = fetchedResultsControllerType.init(
             fetchRequest: request,

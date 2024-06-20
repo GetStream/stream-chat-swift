@@ -10,6 +10,7 @@ import XCTest
 final class StateLayerDatabaseObserver_Tests: XCTestCase {
     private var client: ChatClient_Mock!
     private var channelId: ChannelId!
+    @Atomic private var messageItemCreatorCounter = 0
 
     override func setUpWithError() throws {
         client = ChatClient_Mock(
@@ -203,6 +204,35 @@ final class StateLayerDatabaseObserver_Tests: XCTestCase {
         XCTAssertEqual(2, changeCount)
     }
     
+    // MARK: - Reusing Existing Items
+    
+    func test_reuseItems_whenSomeItemsChange_thenOthersAreReused() async throws {
+        let firstPayload = makeChannelPayload(messageCount: 10, createdAtOffset: 0)
+        try await client.mockDatabaseContainer.write { session in
+            try session.saveChannel(payload: firstPayload)
+        }
+        
+        let expectation = XCTestExpectation()
+        var changeCount = 0
+        let observer = makeMessagesListObserver()
+        _ = try observer.startObserving(onContextDidChange: { _ in
+            changeCount += 1
+            expectation.fulfill()
+        })
+        XCTAssertEqual(10, messageItemCreatorCounter)
+        
+        // Change 5 existing messages
+        let secondPayload = makeChannelPayload(messageCount: 5, createdAtOffset: 0)
+        try await client.mockDatabaseContainer.write { session in
+            try session.saveChannel(payload: secondPayload)
+        }
+        
+        await fulfillmentCompatibility(of: [expectation], timeout: defaultTimeout)
+
+        // 5 are reused, 5 are created
+        XCTAssertEqual(15, messageItemCreatorCounter)
+    }
+    
     // MARK: -
     
     private func makeChannelObserver() -> StateLayerDatabaseObserver<EntityResult, ChatChannel, ChannelDTO> {
@@ -223,7 +253,11 @@ final class StateLayerDatabaseObserver_Tests: XCTestCase {
                 deletedMessagesVisibility: .alwaysVisible,
                 shouldShowShadowedMessages: true
             ),
-            itemCreator: { try $0.asModel() }
+            itemCreator: { [weak self] in
+                self?._messageItemCreatorCounter.mutate { $0 += 1 }
+                return try $0.asModel()
+            },
+            itemReuseKeyPaths: (\ChatMessage.id, \MessageDTO.id)
         )
     }
     
