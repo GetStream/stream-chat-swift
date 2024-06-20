@@ -136,7 +136,9 @@ extension ThreadDTO {
             createdAt: createdAt.bridgeDate,
             updatedAt: updatedAt?.bridgeDate,
             title: title,
-            latestReplies: latestReplies.map { try $0.asModel() },
+            latestReplies: latestReplies
+                .sorted(by: { $0.createdAt.bridgeDate < $1.createdAt.bridgeDate })
+                .map { try $0.asModel() },
             reads: read.map { try $0.asModel() },
             extraData: extraData
         )
