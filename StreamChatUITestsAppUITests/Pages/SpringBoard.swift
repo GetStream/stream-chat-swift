@@ -15,8 +15,7 @@ enum SpringBoard {
     static var notificationBanner: XCUIElement {
         app.otherElements["Notification"]
            .descendants(matching: .any)
-           .matching(NSPredicate(format: "identifier LIKE 'NotificationShortLookView'"))
-                          // previously: "label CONTAINS[c] ', now,'"
+           .matching(NSPredicate(format: "label CONTAINS[c] ', now,'"))
            .firstMatch
     }
 
