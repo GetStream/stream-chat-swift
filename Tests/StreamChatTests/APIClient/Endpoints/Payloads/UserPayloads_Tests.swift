@@ -117,6 +117,7 @@ final class UserUpdateRequestBody_Tests: XCTestCase {
                 typingIndicators: .init(enabled: true),
                 readReceipts: .init(enabled: true)
             ),
+            role: .admin,
             extraData: ["secret_note": .string(value)]
         )
 
@@ -127,6 +128,7 @@ final class UserUpdateRequestBody_Tests: XCTestCase {
                 "typing_indicators": ["enabled": true],
                 "read_receipts": ["enabled": true]
             ],
+            "role": UserRole.admin.rawValue,
             "secret_note": value
         ]
 

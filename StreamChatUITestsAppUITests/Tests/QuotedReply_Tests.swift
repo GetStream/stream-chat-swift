@@ -11,6 +11,11 @@ final class QuotedReply_Tests: StreamTestCase {
     let quotedText = "1"
     let parentText = "test"
     let replyText = "quoted reply"
+    
+    override func setUpWithError() throws {
+        try super.setUpWithError()
+        assertMockServer()
+    }
 
     func test_whenSwipingMessage_thenMessageIsQuotedReply() {
         linkToScenario(withId: 2096)
