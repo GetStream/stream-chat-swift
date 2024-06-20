@@ -1583,7 +1583,7 @@ final class Chat_Tests: XCTestCase {
             .map { $0 + offset }
             .map {
                 .dummy(
-                    messageId: String(format: "%03d", $0),
+                    messageId: String(format: "reply_%03d", $0),
                     parentId: parentMessageId,
                     createdAt: Date(timeIntervalSinceReferenceDate: TimeInterval($0)),
                     cid: channelId

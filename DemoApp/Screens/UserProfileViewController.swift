@@ -14,6 +14,7 @@ class UserProfileViewController: UITableViewController, CurrentChatUserControlle
 
     enum UserProperty: CaseIterable {
         case name
+        case role
         case typingIndicatorsEnabled
         case readReceiptsEnabled
     }
@@ -86,6 +87,14 @@ class UserProfileViewController: UITableViewController, CurrentChatUserControlle
             }))
             button.setImage(.init(systemName: "pencil"), for: .normal)
             cell.accessoryView = button
+        case .role:
+            let role = currentUserController.currentUser?.userRole
+            let isAdmin = role == UserRole.admin
+            cell.textLabel?.text = "User Role"
+            cell.detailTextLabel?.text = role?.rawValue ?? "<unknown>"
+            cell.accessoryView = makeButton(title: isAdmin ? "Downgrade" : "Upgrade", action: { [weak currentUserController] in
+                currentUserController?.updateUserData(role: isAdmin ? .user : .admin)
+            })
         case .readReceiptsEnabled:
             cell.textLabel?.text = "Read Receipts Enabled"
             cell.accessoryView = makeSwitchButton(UserConfig.shared.readReceiptsEnabled ?? true) { newValue in
@@ -144,5 +153,13 @@ class UserProfileViewController: UITableViewController, CurrentChatUserControlle
         switchButton.isOn = initialValue
         switchButton.didChangeValue = didChangeValue
         return switchButton
+    }
+
+    private func makeButton(title: String, action: @escaping () -> Void) -> UIButton {
+        let button = UIButton(type: .system)
+        button.setTitle(title, for: .normal)
+        button.addAction(UIAction(handler: { _ in action() }), for: .touchUpInside)
+        button.sizeToFit()
+        return button
     }
 }

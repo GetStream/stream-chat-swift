@@ -6,6 +6,11 @@ import XCTest
 
 final class UserDetails_Tests: StreamTestCase {
     
+    override func setUpWithError() throws {
+        try super.setUpWithError()
+        assertMockServer()
+    }
+    
     func test_userDetails() throws {
         linkToScenario(withId: 1043)
         

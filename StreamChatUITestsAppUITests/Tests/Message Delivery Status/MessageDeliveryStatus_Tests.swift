@@ -17,6 +17,7 @@ final class MessageDeliveryStatus_Tests: StreamTestCase {
     override func setUpWithError() throws {
         try super.setUpWithError()
         addTags([.messageDeliveryStatus])
+        assertMockServer()
     }
 
     // MARK: Message List
