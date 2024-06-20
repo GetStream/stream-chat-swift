@@ -130,7 +130,7 @@ class ChatClientFactory {
             ChannelReadUpdaterMiddleware(
                 newProcessedMessageIds: { [weak center] in center?.newMessageIds ?? [] }
             ),
-            ThreadReadUpdaterMiddleware(),
+            ThreadUpdaterMiddleware(),
             UserTypingStateUpdaterMiddleware(),
             ChannelTruncatedEventMiddleware(),
             MemberEventMiddleware(),

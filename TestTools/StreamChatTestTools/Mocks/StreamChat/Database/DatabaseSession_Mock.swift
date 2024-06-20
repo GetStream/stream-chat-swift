@@ -6,7 +6,8 @@ import Foundation
 @testable import StreamChat
 
 /// This class allows you to wrap an existing `DatabaseSession` and adjust the behavior of its methods.
-class DatabaseSession_Mock: DatabaseSession {    
+class DatabaseSession_Mock: DatabaseSession {
+    
     /// The wrapped session
     let underlyingSession: DatabaseSession
 
@@ -389,6 +390,10 @@ class DatabaseSession_Mock: DatabaseSession {
 
     func saveThread(detailsPayload: ThreadDetailsPayload) throws -> ThreadDTO {
         try underlyingSession.saveThread(detailsPayload: detailsPayload)
+    }
+
+    func saveThread(partialPayload: ThreadPartialPayload) throws -> ThreadDTO {
+        try underlyingSession.saveThread(partialPayload: partialPayload)
     }
 
     func saveThreadRead(payload: ThreadReadPayload, parentMessageId: String, cache: PreWarmedCache?) throws -> ThreadReadDTO {

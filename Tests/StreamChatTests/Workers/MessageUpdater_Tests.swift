@@ -2755,7 +2755,7 @@ final class MessageUpdater_Tests: XCTestCase {
             exp.fulfill()
         }
 
-        apiClient.test_simulateResponse(.success(ThreadPayloadResponse(thread: .dummy(parentMessageId: threadId))))
+        apiClient.test_simulateResponse(.success(ThreadPartialUpdateResponse(thread: .dummy(parentMessageId: threadId))))
 
         wait(for: [exp], timeout: defaultTimeout)
     }
@@ -2772,7 +2772,7 @@ final class MessageUpdater_Tests: XCTestCase {
             exp.fulfill()
         }
 
-        let response = Result<ThreadPayloadResponse, Error>.failure(TestError())
+        let response = Result<ThreadPartialUpdateResponse, Error>.failure(TestError())
         apiClient.test_simulateResponse(response)
 
         wait(for: [exp], timeout: defaultTimeout)

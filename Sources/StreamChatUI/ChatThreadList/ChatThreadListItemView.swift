@@ -259,6 +259,5 @@ open class ChatThreadListItemView: _View, ThemeProvider {
         replyAuthorAvatarView.content = latestReply?.author
         replyTitleLabel.text = latestReply?.author.name
         threadUnreadCountView.content = unreadReplies
-        threadUnreadCountView.invalidateIntrinsicContentSize()
     }
 }

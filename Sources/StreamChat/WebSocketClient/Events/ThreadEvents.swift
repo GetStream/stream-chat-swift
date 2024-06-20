@@ -4,6 +4,50 @@
 
 import Foundation
 
+/// Triggered when a new message is sent to a thread.
+public struct ThreadMessageNewEvent: Event {
+    /// The reply that was sent.
+    public let message: ChatMessage
+
+    /// The channel identifier the message was sent to.
+    public var cid: ChannelId { channel.cid }
+
+    /// The channel a message was sent to.
+    public let channel: ChatChannel
+
+    /// The event timestamp.
+    public let createdAt: Date
+}
+
+class ThreadMessageNewEventDTO: EventDTO {
+    let cid: ChannelId
+    let message: MessagePayload
+    let channel: ChannelDetailPayload
+    let createdAt: Date
+    let payload: EventPayload
+
+    init(from response: EventPayload) throws {
+        cid = try response.value(at: \.cid)
+        message = try response.value(at: \.message)
+        createdAt = try response.value(at: \.createdAt)
+        channel = try response.value(at: \.channel)
+        payload = response
+    }
+
+    func toDomainEvent(session: DatabaseSession) -> Event? {
+        guard
+            let messageDTO = session.message(id: message.id),
+            let channelDTO = session.channel(cid: cid)
+        else { return nil }
+
+        return try? ThreadMessageNewEvent(
+            message: messageDTO.asModel(),
+            channel: channelDTO.asModel(),
+            createdAt: createdAt
+        )
+    }
+}
+
 /// Triggered when a thread is updated
 public struct ThreadUpdatedEvent: Event {
     /// The updated user

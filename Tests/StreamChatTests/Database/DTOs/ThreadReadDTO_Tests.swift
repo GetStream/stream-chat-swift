@@ -90,7 +90,6 @@ final class ThreadReadDTO_Tests: XCTestCase {
     func test_markThreadAsUnRead() throws {
         let messageId = MessageId.unique
         let userId = UserId.unique
-        let readDate = Date.unique
         let replyCount = 10
 
         try database.writeSynchronously { session in

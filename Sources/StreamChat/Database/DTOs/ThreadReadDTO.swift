@@ -113,8 +113,10 @@ extension NSManagedObjectContext {
             ?? makeEmptyRead(parentMessageId: parentMessageId, userId: userId, readAt: nil)
 
         read?.unreadMessagesCount = read?.thread.replyCount ?? 0
+        read?.lastReadAt = nil
     }
 
+    @discardableResult
     private func makeEmptyRead(parentMessageId: MessageId, userId: UserId, readAt: Date?) -> ThreadReadDTO? {
         guard let thread = thread(parentMessageId: parentMessageId, cache: nil),
               let participant = thread.threadParticipants.first(where: { $0.user.id == userId }) else {

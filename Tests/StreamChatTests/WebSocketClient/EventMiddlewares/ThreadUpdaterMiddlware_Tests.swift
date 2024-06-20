@@ -6,8 +6,8 @@
 @testable import StreamChatTestTools
 import XCTest
 
-final class ThreadReadUpdaterMiddleware_Tests: XCTestCase {
-    var middleware: ThreadReadUpdaterMiddleware!
+final class ThreadUpdaterMiddleware_Tests: XCTestCase {
+    var middleware: ThreadUpdaterMiddleware!
     var center: EventNotificationCenter_Mock!
     var database: DatabaseContainer_Spy!
 
@@ -15,7 +15,7 @@ final class ThreadReadUpdaterMiddleware_Tests: XCTestCase {
         super.setUp()
         database = DatabaseContainer_Spy()
         center = EventNotificationCenter_Mock(database: database)
-        middleware = ThreadReadUpdaterMiddleware()
+        middleware = ThreadUpdaterMiddleware()
     }
 
     override func tearDown() {
@@ -35,7 +35,7 @@ final class ThreadReadUpdaterMiddleware_Tests: XCTestCase {
             channel: .dummy(),
             unreadCount: .noUnread,
             createdAt: .unique,
-            thread: .dummy(parentMessageId: .unique)
+            threadDetails: .dummy(parentMessageId: .unique)
         )
 
         let event = try MessageReadEventDTO(from: eventPayload)
@@ -65,5 +65,47 @@ final class ThreadReadUpdaterMiddleware_Tests: XCTestCase {
         _ = middleware.handle(event: event, session: mockSession)
 
         XCTAssertEqual(mockSession.markThreadAsUnreadCallCount, 1)
+    }
+
+    func test_threadMessageNewEvent_addsMessageToThreadReplies_increasesUnreadCount() throws {
+        let parentMessageId = MessageId.unique
+        let cid = ChannelId.unique
+        let eventPayload = EventPayload(
+            eventType: .threadMessageNew,
+            cid: cid,
+            channel: .dummy(cid: cid),
+            message: .dummy(messageId: .unique, parentId: parentMessageId, cid: cid),
+            createdAt: .unique
+        )
+
+        let event = try ThreadMessageNewEventDTO(from: eventPayload)
+
+        try database.writeSynchronously { session in
+            let currentUserId = UserId.unique
+            try session.saveCurrentUser(payload: .dummy(userId: currentUserId, role: .user))
+            try session.saveChannel(payload: .dummy(channel: .dummy(cid: cid)))
+            try session.saveThread(
+                payload: .dummy(
+                    parentMessageId: parentMessageId,
+                    latestReplies: [.dummy(), .dummy()]
+                ),
+                cache: nil
+            )
+            try session.saveThreadRead(
+                payload: .init(
+                    user: .dummy(userId: currentUserId),
+                    lastReadAt: .unique,
+                    unreadMessagesCount: 1
+                ),
+                parentMessageId: parentMessageId,
+                cache: nil
+            )
+
+            _ = self.middleware.handle(event: event, session: session)
+        }
+
+        let thread = database.viewContext.thread(parentMessageId: parentMessageId, cache: nil)
+        XCTAssertEqual(thread?.latestReplies.count, 3)
+        XCTAssertEqual(thread?.read.first?.unreadMessagesCount, 2)
     }
 }

@@ -42,3 +42,57 @@ extension ThreadPayload {
         )
     }
 }
+
+extension ThreadPartialPayload {
+    static func dummy(
+        parentMessageId: MessageId,
+        parentMessage: MessagePayload? = nil,
+        channel: ChannelDetailPayload = .dummy(),
+        createdBy: UserPayload = .dummy(userId: .newUniqueId),
+        replyCount: Int = 0,
+        participantCount: Int = 0,
+        lastMessageAt: Date? = nil,
+        createdAt: Date = .unique,
+        updatedAt: Date? = .unique,
+        title: String? = nil,
+        extraData: [String: RawJSON] = [:]
+    ) -> ThreadPartialPayload {
+        .init(
+            parentMessageId: parentMessageId,
+            parentMessage: parentMessage ?? .dummy(messageId: parentMessageId),
+            channel: channel,
+            createdBy: createdBy,
+            replyCount: replyCount,
+            participantCount: participantCount,
+            lastMessageAt: lastMessageAt,
+            createdAt: createdAt,
+            updatedAt: updatedAt,
+            title: title,
+            extraData: extraData
+        )
+    }
+}
+
+extension ThreadDetailsPayload {
+    static func dummy(
+        parentMessageId: MessageId,
+        cid: ChannelId = .unique,
+        replyCount: Int = 0,
+        participantCount: Int = 0,
+        lastMessageAt: Date? = nil,
+        createdAt: Date = .unique,
+        updatedAt: Date = .unique,
+        title: String? = nil
+    ) -> ThreadDetailsPayload {
+        .init(
+            cid: cid,
+            parentMessageId: parentMessageId,
+            replyCount: replyCount,
+            participantCount: participantCount,
+            lastMessageAt: lastMessageAt,
+            createdAt: createdAt,
+            updatedAt: updatedAt,
+            title: title
+        )
+    }
+}

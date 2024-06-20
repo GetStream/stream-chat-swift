@@ -138,7 +138,11 @@ public extension EventType {
 
     // MARK: - threads
 
+    /// When a thread is updated.
     static let threadUpdated: Self = "thread.updated"
+
+    /// When a thread has a new reply.
+    static let threadMessageNew: Self = "notification.thread_message_new"
 }
 
 extension EventType {
@@ -203,6 +207,7 @@ extension EventType {
         case .pollVoteChanged: return try PollVoteChangedEventDTO(from: response)
         case .pollVoteRemoved: return try PollVoteRemovedEventDTO(from: response)
         case .threadUpdated: return try ThreadUpdatedEventDTO(from: response)
+        case .threadMessageNew: return try ThreadMessageNewEventDTO(from: response)
         default:
             if response.cid == nil {
                 throw ClientError.UnknownUserEvent(response.eventType)
