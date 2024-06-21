@@ -562,15 +562,15 @@ private_lane :retreive_failed_e2e_tests do
   junit_report = Nokogiri::XML(File.read(report_path))
   failed_tests = []
   passed_tests = []
-
+  suite_name = junit_report.xpath('//testsuite').first['name'].split('.').first
   junit_report.xpath('//testcase').each do |testcase|
-    suite_name = testcase['classname'].split('.').join('/')
-    test_name = testcase['name']
+    class_name = testcase['classname'].split('.').last
+    test_name = testcase['name'].delete('()')
 
     if testcase.at_xpath('failure')
-      failed_tests << "#{suite_name}/#{test_name}"
+      failed_tests << "#{suite_name}/#{class_name}/#{test_name}"
     else
-      passed_tests << "#{suite_name}/#{test_name}"
+      passed_tests << "#{suite_name}/#{class_name}/#{test_name}"
     end
   end
 

@@ -500,7 +500,7 @@ extension UserRobot {
         if deliveryStatus == .failed || deliveryStatus == nil {
             return !checkmark.exists
         } else {
-            return checkmark.wait(timeout: 1).exists
+            return checkmark.wait(timeout: 10).exists
         }
     }
 
