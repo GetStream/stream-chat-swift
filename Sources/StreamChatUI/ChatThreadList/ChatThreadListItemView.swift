@@ -158,10 +158,10 @@ open class ChatThreadListItemView: _View, ThemeProvider {
         backgroundColor = contentBackgroundColor
 
         threadTitleLabel.textColor = appearance.colorPalette.text
-        threadTitleLabel.font = appearance.fonts.bodyBold
+        threadTitleLabel.font = appearance.fonts.subheadlineBold
 
         replyTitleLabel.textColor = appearance.colorPalette.text
-        replyTitleLabel.font = appearance.fonts.bodyBold
+        replyTitleLabel.font = appearance.fonts.subheadlineBold
 
         threadDescriptionLabel.textColor = appearance.colorPalette.subtitleText
         threadDescriptionLabel.font = appearance.fonts.footnote
@@ -180,7 +180,14 @@ open class ChatThreadListItemView: _View, ThemeProvider {
 
     override open func setUpLayout() {
         super.setUpLayout()
-        
+
+        directionalLayoutMargins = .init(
+            top: 12,
+            leading: 8,
+            bottom: 12,
+            trailing: 8
+        )
+
         addSubview(mainContainer)
         mainContainer.pin(to: layoutMarginsGuide)
         mainContainer.axis = .vertical
@@ -219,7 +226,7 @@ open class ChatThreadListItemView: _View, ThemeProvider {
         ])
 
         NSLayoutConstraint.activate([
-            replyAuthorAvatarView.heightAnchor.pin(equalToConstant: 48),
+            replyAuthorAvatarView.heightAnchor.pin(equalToConstant: 40),
             replyAuthorAvatarView.widthAnchor.pin(equalTo: replyAuthorAvatarView.heightAnchor)
         ])
 

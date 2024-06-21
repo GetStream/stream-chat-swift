@@ -82,6 +82,7 @@ open class ChatThreadListVC:
         super.setUpAppearance()
         
         tableView.backgroundColor = appearance.colorPalette.background
+        tableView.separatorStyle = .singleLine
     }
 
     override open func setUpLayout() {
