@@ -205,7 +205,8 @@ open class ChatThreadListItemView: _View, ThemeProvider {
         threadTitleContainer.addArrangedSubview(threadTitleLabel)
         threadDescriptionContainer.axis = .horizontal
         threadDescriptionContainer.alignment = .center
-        threadDescriptionContainer.addArrangedSubview(threadDescriptionLabel.flexible(axis: .horizontal))
+        threadDescriptionContainer.addArrangedSubview(threadDescriptionLabel)
+        threadDescriptionContainer.addArrangedSubview(UIView())
         threadDescriptionContainer.addArrangedSubview(threadUnreadCountView)
 
         // Bottom container that holds the latest thread reply information.
@@ -218,12 +219,9 @@ open class ChatThreadListItemView: _View, ThemeProvider {
         replyInfoContainer.addArrangedSubview(replyTitleLabel)
         replyInfoContainer.addArrangedSubview(replyDescriptionContainer)
         replyDescriptionContainer.axis = .horizontal
-        replyDescriptionContainer.addArrangedSubview(replyDescriptionLabel.flexible(axis: .horizontal))
+        replyDescriptionContainer.addArrangedSubview(replyDescriptionLabel)
+        replyDescriptionContainer.addArrangedSubview(UIView())
         replyDescriptionContainer.addArrangedSubview(replyTimestampLabel)
-
-        NSLayoutConstraint.activate([
-            threadDescriptionLabel.heightAnchor.pin(greaterThanOrEqualToConstant: 15)
-        ])
 
         NSLayoutConstraint.activate([
             replyAuthorAvatarView.heightAnchor.pin(equalToConstant: 40),
@@ -234,8 +232,6 @@ open class ChatThreadListItemView: _View, ThemeProvider {
             threadIconView.heightAnchor.pin(equalToConstant: 15),
             threadIconView.widthAnchor.pin(equalTo: threadIconView.heightAnchor)
         ])
-
-        replyTimestampLabel.setContentCompressionResistancePriority(.required, for: .horizontal)
     }
 
     override open func updateContent() {

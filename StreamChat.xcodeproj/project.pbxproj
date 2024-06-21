@@ -4103,6 +4103,7 @@
 		AD053BAA2B33638B003612B6 /* LocationAttachmentSnapshotView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationAttachmentSnapshotView.swift; sourceTree = "<group>"; };
 		AD053BAC2B336493003612B6 /* DemoChatMessageListVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DemoChatMessageListVC.swift; sourceTree = "<group>"; };
 		AD0AD6BF2A25140A00CB96CB /* MessagesPaginationState_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessagesPaginationState_Tests.swift; sourceTree = "<group>"; };
+		AD0CB4A72C24EDC7006285E8 /* ChatThreadListItemView_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatThreadListItemView_Tests.swift; sourceTree = "<group>"; };
 		AD0CC0112BDBC1BF005E2C66 /* ReactionListQuery.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReactionListQuery.swift; sourceTree = "<group>"; };
 		AD0CC0142BDBC68E005E2C66 /* ReactionListQuery_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReactionListQuery_Tests.swift; sourceTree = "<group>"; };
 		AD0CC01B2BDBD22D005E2C66 /* ReactionEndpoints.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReactionEndpoints.swift; sourceTree = "<group>"; };
@@ -8347,6 +8348,14 @@
 			path = LocationAttachment;
 			sourceTree = "<group>";
 		};
+		AD0CB4A62C24ECBB006285E8 /* ChatThreadList */ = {
+			isa = PBXGroup;
+			children = (
+				AD0CB4A72C24EDC7006285E8 /* ChatThreadListItemView_Tests.swift */,
+			);
+			path = ChatThreadList;
+			sourceTree = "<group>";
+		};
 		AD0CC0292BDC017F005E2C66 /* ReactionListController */ = {
 			isa = PBXGroup;
 			children = (
@@ -10760,6 +10769,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				AD0CB4AB2C24EE54006285E8 /* ChatThreadListItemView_Tests.swift in Sources */,
 				43ABF8B526C2CD900034BD62 /* ComposerVC_Tests.swift in Sources */,
 				ACA3C98826CA23F900EB8B07 /* DateUtils_Tests.swift in Sources */,
 				AD158B6626C1876800C104CD /* ChatChannelVC+SwiftUI_Tests.swift in Sources */,

@@ -38,6 +38,39 @@ extension ChatThread {
             extraData: extraData
         )
     }
+
+    // Make a clone from existing thread and change it with the provided properties.
+    func with(
+        parentMessage: ChatMessage? = nil,
+        channel: ChatChannel? = nil,
+        createdBy: ChatUser? = nil,
+        replyCount: Int? = nil,
+        participantCount: Int? = nil,
+        threadParticipants: [ThreadParticipant]? = nil,
+        lastMessageAt: Date? = nil,
+        createdAt: Date? = nil,
+        updatedAt: Date? = nil,
+        title: String? = nil,
+        latestReplies: [ChatMessage]? = nil,
+        reads: [ThreadRead]? = nil,
+        extraData: [String: RawJSON]? = nil
+    ) -> ChatThread {
+        .mock(
+            parentMessage: parentMessage ?? self.parentMessage,
+            channel: channel ?? self.channel,
+            createdBy: createdBy ?? self.createdBy,
+            replyCount: replyCount ?? self.replyCount,
+            participantCount: participantCount ?? self.replyCount,
+            threadParticipants: threadParticipants ?? self.threadParticipants,
+            lastMessageAt: lastMessageAt ?? self.lastMessageAt,
+            createdAt: createdAt ?? self.createdAt,
+            updatedAt: updatedAt ?? self.updatedAt,
+            title: title ?? self.title,
+            latestReplies: latestReplies ?? self.latestReplies,
+            reads: reads ?? self.reads,
+            extraData: extraData ?? self.extraData
+        )
+    }
 }
 
 extension ThreadParticipant {
