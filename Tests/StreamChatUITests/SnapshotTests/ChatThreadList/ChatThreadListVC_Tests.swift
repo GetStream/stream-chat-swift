@@ -2,29 +2,153 @@
 // Copyright © 2024 Stream.io Inc. All rights reserved.
 //
 
+import StreamChat
+@testable import StreamChatTestTools
+@testable import StreamChatUI
+import StreamSwiftTestHelpers
 import XCTest
 
 final class ChatThreadListVC_Tests: XCTestCase {
-    override func setUpWithError() throws {
-        // Put setup code here. This method is called before the invocation of each test method in the class.
+    var vc: ChatThreadListVC!
+    var mockedThreadListController: ChatThreadListController_Mock!
+
+    var mockYoda = ChatUser.mock(id: .unique, name: "Yoda", imageURL: .localYodaImage)
+    var mockVader = ChatUser.mock(id: .unique, name: "Vader", imageURL: TestImages.vader.url)
+    var mockThreads: [ChatThread] = []
+
+    override func setUp() {
+        super.setUp()
+
+        mockThreads = [
+            .mock(
+                parentMessage: .mock(text: "Parent Message", author: mockYoda),
+                channel: .mock(cid: .unique, name: "Star Wars Channel"),
+                createdBy: mockVader,
+                replyCount: 3,
+                participantCount: 2,
+                threadParticipants: [
+                    .mock(user: mockYoda),
+                    .mock(user: mockVader)
+                ],
+                lastMessageAt: .unique,
+                createdAt: .unique,
+                updatedAt: .unique,
+                title: nil,
+                latestReplies: [
+                    .mock(text: "First Message", author: mockYoda),
+                    .mock(text: "Second Message", author: mockVader),
+                    .mock(text: "Third Message", author: mockYoda)
+                ],
+                reads: [
+                    .mock(user: mockYoda, unreadMessagesCount: 6)
+                ],
+                extraData: [:]
+            ),
+            .mock(
+                parentMessage: .mock(text: "Parent Message 2", author: mockYoda),
+                channel: .mock(cid: .unique, name: "Marvel Channel"),
+                createdBy: mockVader,
+                replyCount: 3,
+                participantCount: 2,
+                threadParticipants: [
+                    .mock(user: mockYoda),
+                    .mock(user: mockVader)
+                ],
+                lastMessageAt: .unique,
+                createdAt: .unique,
+                updatedAt: .unique,
+                title: nil,
+                latestReplies: [
+                    .mock(text: "First Message", author: mockVader)
+                ],
+                reads: [],
+                extraData: [:]
+            )
+        ]
+
+        let clientMock = ChatClient.mock
+        clientMock.currentUserId_mock = mockYoda.id
+        mockedThreadListController = .mock(
+            query: .init(watch: true),
+            client: clientMock
+        )
+        vc = ChatThreadListVC(threadListController: mockedThreadListController)
+        vc.setUpLayout()
     }
 
-    override func tearDownWithError() throws {
-        // Put teardown code here. This method is called after the invocation of each test method in the class.
+    override func tearDown() {
+        super.tearDown()
+
+        vc = nil
+        mockedThreadListController = nil
     }
 
-    func testExample() throws {
-        // This is an example of a functional test case.
-        // Use XCTAssert and related functions to verify your tests produce the correct results.
-        // Any test you write for XCTest can be annotated as throws and async.
-        // Mark your test throws to produce an unexpected failure when your test encounters an uncaught error.
-        // Mark your test async to allow awaiting for asynchronous code to complete. Check the results with assertions afterwards.
+    // MARK: Snapshot Tests
+
+    func test_emptyAppearance() {
+        mockedThreadListController.state = .remoteDataFetched
+        mockedThreadListController.threads_mock = []
+        vc.controller(mockedThreadListController, didChangeState: .remoteDataFetched)
+        AssertSnapshot(vc)
     }
 
-    func testPerformanceExample() throws {
-        // This is an example of a performance test case.
-        measure {
-            // Put the code you want to measure the time of here.
-        }
+    func test_loadingAppearance() {
+        mockedThreadListController.state = .initialized
+        mockedThreadListController.threads_mock = []
+        vc.controller(mockedThreadListController, didChangeState: .initialized)
+        AssertSnapshot(vc)
+    }
+
+    func test_defaultAppearance() {
+        mockedThreadListController.state = .remoteDataFetched
+        mockedThreadListController.threads_mock = mockThreads
+        vc.controller(mockedThreadListController, didChangeState: .initialized)
+        vc.controller(mockedThreadListController, didChangeThreads: [])
+        vc.setUpLayout()
+        AssertSnapshot(vc)
+    }
+
+    // MARK: Logic
+
+    func test_handleStateChanges_whenInitialized_whenThreadAreEmpty() {
+        mockedThreadListController.threads_mock = []
+        vc.handleStateChanges(.initialized)
+        XCTAssertEqual(vc.loadingView.isHidden, false)
+        XCTAssertEqual(vc.emptyView.isHidden, true)
+    }
+
+    func test_handleStateChanges_whenInitialized_whenThreadNotEmpty() {
+        mockedThreadListController.threads_mock = mockThreads
+        vc.handleStateChanges(.initialized)
+        XCTAssertEqual(vc.loadingView.isHidden, true)
+        XCTAssertEqual(vc.emptyView.isHidden, true)
+    }
+
+    func test_handleStateChanges_whenLocalDataFetched_whenThreadAreEmpty() {
+        mockedThreadListController.threads_mock = []
+        vc.handleStateChanges(.localDataFetched)
+        XCTAssertEqual(vc.loadingView.isHidden, false)
+        XCTAssertEqual(vc.emptyView.isHidden, true)
+    }
+
+    func test_handleStateChanges_whenLocalDataFetch_whenThreadNotEmpty() {
+        mockedThreadListController.threads_mock = mockThreads
+        vc.handleStateChanges(.localDataFetched)
+        XCTAssertEqual(vc.loadingView.isHidden, true)
+        XCTAssertEqual(vc.emptyView.isHidden, true)
+    }
+
+    func test_handleStateChanges_whenRemoteDataFetched_whenThreadAreEmpty() {
+        mockedThreadListController.threads_mock = []
+        vc.handleStateChanges(.remoteDataFetched)
+        XCTAssertEqual(vc.loadingView.isHidden, true)
+        XCTAssertEqual(vc.emptyView.isHidden, false)
+    }
+
+    func test_handleStateChanges_whenRemoteDataFetched_whenThreadNotEmpty() {
+        mockedThreadListController.threads_mock = mockThreads
+        vc.handleStateChanges(.remoteDataFetched)
+        XCTAssertEqual(vc.loadingView.isHidden, true)
+        XCTAssertEqual(vc.emptyView.isHidden, true)
     }
 }

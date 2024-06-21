@@ -1357,6 +1357,9 @@
 		AD053BAB2B33638B003612B6 /* LocationAttachmentSnapshotView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD053BAA2B33638B003612B6 /* LocationAttachmentSnapshotView.swift */; };
 		AD053BAD2B336493003612B6 /* DemoChatMessageListVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD053BAC2B336493003612B6 /* DemoChatMessageListVC.swift */; };
 		AD0AD6C02A25140A00CB96CB /* MessagesPaginationState_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD0AD6BF2A25140A00CB96CB /* MessagesPaginationState_Tests.swift */; };
+		AD0CB4AB2C24EE54006285E8 /* ChatThreadListItemView_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD0CB4A72C24EDC7006285E8 /* ChatThreadListItemView_Tests.swift */; };
+		AD0CB4AC2C24EE57006285E8 /* ChatThreadListVC_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD0CB4A92C24EE4D006285E8 /* ChatThreadListVC_Tests.swift */; };
+		AD0CB4AE2C25DAE3006285E8 /* ChatThreadListController_Mock.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD0CB4AD2C25DAE3006285E8 /* ChatThreadListController_Mock.swift */; };
 		AD0CC0122BDBC1BF005E2C66 /* ReactionListQuery.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD0CC0112BDBC1BF005E2C66 /* ReactionListQuery.swift */; };
 		AD0CC0132BDBC1BF005E2C66 /* ReactionListQuery.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD0CC0112BDBC1BF005E2C66 /* ReactionListQuery.swift */; };
 		AD0CC0172BDBC71C005E2C66 /* ReactionListQuery_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD0CC0142BDBC68E005E2C66 /* ReactionListQuery_Tests.swift */; };
@@ -4104,6 +4107,8 @@
 		AD053BAC2B336493003612B6 /* DemoChatMessageListVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DemoChatMessageListVC.swift; sourceTree = "<group>"; };
 		AD0AD6BF2A25140A00CB96CB /* MessagesPaginationState_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessagesPaginationState_Tests.swift; sourceTree = "<group>"; };
 		AD0CB4A72C24EDC7006285E8 /* ChatThreadListItemView_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatThreadListItemView_Tests.swift; sourceTree = "<group>"; };
+		AD0CB4A92C24EE4D006285E8 /* ChatThreadListVC_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatThreadListVC_Tests.swift; sourceTree = "<group>"; };
+		AD0CB4AD2C25DAE3006285E8 /* ChatThreadListController_Mock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatThreadListController_Mock.swift; sourceTree = "<group>"; };
 		AD0CC0112BDBC1BF005E2C66 /* ReactionListQuery.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReactionListQuery.swift; sourceTree = "<group>"; };
 		AD0CC0142BDBC68E005E2C66 /* ReactionListQuery_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReactionListQuery_Tests.swift; sourceTree = "<group>"; };
 		AD0CC01B2BDBD22D005E2C66 /* ReactionEndpoints.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReactionEndpoints.swift; sourceTree = "<group>"; };
@@ -6754,21 +6759,6 @@
 			path = DummyData;
 			sourceTree = "<group>";
 		};
-		A344076A27D753530044F150 /* Controllers */ = {
-			isa = PBXGroup;
-			children = (
-				A344076B27D753530044F150 /* ChatChannelController_Mock.swift */,
-				A344076E27D753530044F150 /* ChatChannelListController_Mock.swift */,
-				A344076F27D753530044F150 /* ChatMessageController_Mock.swift */,
-				A344076C27D753530044F150 /* ChatUserSearchController_Mock.swift */,
-				A344076D27D753530044F150 /* CurrentChatUserController_Mock.swift */,
-				84A40366284A2F72006DBA52 /* ChatMessageSearchController_Mock.swift */,
-				8459C9E92BFB39DC00F0D235 /* PollController_Mock.swift */,
-				8459C9F12BFB6D3200F0D235 /* PollVoteListController_Mock.swift */,
-			);
-			path = Controllers;
-			sourceTree = "<group>";
-		};
 		A34407BB27D8C33F0044F150 /* StreamChatUITestsApp */ = {
 			isa = PBXGroup;
 			children = (
@@ -7237,14 +7227,22 @@
 		A364D0A627D128220029857A /* Controllers */ = {
 			isa = PBXGroup;
 			children = (
+				A344076B27D753530044F150 /* ChatChannelController_Mock.swift */,
+				A3C7BAB427E4D81A00BBF4FA /* ChannelListController_Mock.swift */,
+				A344076E27D753530044F150 /* ChatChannelListController_Mock.swift */,
+				79D6CE6125F7D6C700BE2EEC /* ChatChannelWatcherListController_Mock.swift */,
+				A344076F27D753530044F150 /* ChatMessageController_Mock.swift */,
+				A344076C27D753530044F150 /* ChatUserSearchController_Mock.swift */,
+				A344076D27D753530044F150 /* CurrentChatUserController_Mock.swift */,
+				84A40366284A2F72006DBA52 /* ChatMessageSearchController_Mock.swift */,
+				8459C9E92BFB39DC00F0D235 /* PollController_Mock.swift */,
+				8459C9F12BFB6D3200F0D235 /* PollVoteListController_Mock.swift */,
 				F649B2382500FD56008F98C8 /* EntityDatabaseObserver_Mock.swift */,
 				C10AB8D32AD7DFFB001A4644 /* EntityDatabaseObserverWrapper_Mock.swift */,
 				88D85DAD252F468B00AE1030 /* ListDatabaseObserver_Mock.swift */,
 				C17E0AF62B04D190007188F1 /* ListDatabaseObserverWrapper_Mock.swift */,
-				A3C7BAB327E4D80200BBF4FA /* ChannelListController */,
-				A364D0AB27D128DB0029857A /* ChannelWatcherListController */,
-				A344076A27D753530044F150 /* Controllers */,
-				A3C7BABE27E4D9C400BBF4FA /* CurrentUserController */,
+				A3C7BABC27E4D9B500BBF4FA /* CurrentUserController_Mock.swift */,
+				AD0CB4AD2C25DAE3006285E8 /* ChatThreadListController_Mock.swift */,
 			);
 			path = Controllers;
 			sourceTree = "<group>";
@@ -7275,14 +7273,6 @@
 				79D6CE5825F7D6B300BE2EEC /* ChatChannelWatcherListController_Tests.swift */,
 				79D6CE4625F7D6AE00BE2EEC /* ChatChannelWatcherListController+Combine_Tests.swift */,
 				79D6CE4F25F7D6B100BE2EEC /* ChatChannelWatcherListController+SwiftUI_Tests.swift */,
-			);
-			path = ChannelWatcherListController;
-			sourceTree = "<group>";
-		};
-		A364D0AB27D128DB0029857A /* ChannelWatcherListController */ = {
-			isa = PBXGroup;
-			children = (
-				79D6CE6125F7D6C700BE2EEC /* ChatChannelWatcherListController_Mock.swift */,
 			);
 			path = ChannelWatcherListController;
 			sourceTree = "<group>";
@@ -7555,6 +7545,7 @@
 				A3960DEC27DA2CBB003AB2B0 /* ChatChannelList */,
 				A3960DED27DA2CF9003AB2B0 /* ChatMessageList */,
 				A3960DF227DA2DA4003AB2B0 /* ChatThread */,
+				AD0CB4A62C24ECBB006285E8 /* ChatThreadList */,
 				A3960DF327DA2DC2003AB2B0 /* CommonViews */,
 				A3960E0027DA4F9B003AB2B0 /* Composer */,
 				A3960E0127DA4FC9003AB2B0 /* Gallery */,
@@ -8156,22 +8147,6 @@
 			path = Events;
 			sourceTree = "<group>";
 		};
-		A3C7BAB327E4D80200BBF4FA /* ChannelListController */ = {
-			isa = PBXGroup;
-			children = (
-				A3C7BAB427E4D81A00BBF4FA /* ChannelListController_Mock.swift */,
-			);
-			path = ChannelListController;
-			sourceTree = "<group>";
-		};
-		A3C7BABE27E4D9C400BBF4FA /* CurrentUserController */ = {
-			isa = PBXGroup;
-			children = (
-				A3C7BABC27E4D9B500BBF4FA /* CurrentUserController_Mock.swift */,
-			);
-			path = CurrentUserController;
-			sourceTree = "<group>";
-		};
 		A3D15D8227E9D4B5006B34D7 /* VirtualTime */ = {
 			isa = PBXGroup;
 			children = (
@@ -8352,6 +8327,7 @@
 			isa = PBXGroup;
 			children = (
 				AD0CB4A72C24EDC7006285E8 /* ChatThreadListItemView_Tests.swift */,
+				AD0CB4A92C24EE4D006285E8 /* ChatThreadListVC_Tests.swift */,
 			);
 			path = ChatThreadList;
 			sourceTree = "<group>";
@@ -10825,6 +10801,7 @@
 				4F12DC8C2B70DE82009E48CC /* DifferenceKit+Stream_Tests.swift in Sources */,
 				4F12DC922B73801D009E48CC /* NukeImageLoader_Tests.swift in Sources */,
 				64B75B002631700500A466D1 /* ChatMessage_Tests.swift in Sources */,
+				AD0CB4AC2C24EE57006285E8 /* ChatThreadListVC_Tests.swift in Sources */,
 				ADAA377125E43C3700C31528 /* ChatSuggestionsVC_Tests.swift in Sources */,
 				E73262E025ED64AB008CB152 /* ChatChannelNamer_Tests.swift in Sources */,
 				40FA4E092A12A86800DA21D2 /* LiveRecordingView_Tests.swift in Sources */,
@@ -11021,6 +10998,7 @@
 				A311B43227E8BC8400CFCF6D /* TestChannelListObserver.swift in Sources */,
 				A3C3BC7927E8AA9400224761 /* AnyEncodable+Equatable.swift in Sources */,
 				82E6553F2B06798100D64906 /* AssertJSONEqual.swift in Sources */,
+				AD0CB4AE2C25DAE3006285E8 /* ChatThreadListController_Mock.swift in Sources */,
 				A344078C27D753530044F150 /* ChatChannelController_Mock.swift in Sources */,
 				A3C3BC4927E87F5C00224761 /* ChannelMemberUpdater_Mock.swift in Sources */,
 				A3C3BC4427E87F5C00224761 /* UserUpdater_Mock.swift in Sources */,
