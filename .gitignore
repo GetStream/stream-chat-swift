@@ -1,6 +1,9 @@
 # OS X
 .DS_Store
 
+# Environment Variables
+.env
+
 # Xcode
 #
 # gitignore contributors: remember to update Global/Xcode.gitignore, Objective-C.gitignore & Swift.gitignore
@@ -64,6 +67,7 @@ Carthage/
 # For more information about the recommended setup visit:
 # https://docs.fastlane.tools/best-practices/source-control/#source-control
 
+!fastlane/.env
 fastlane/fastlane.log
 fastlane/report.xml
 fastlane/Preview.html
@@ -92,6 +96,7 @@ spm_cache/
 buildcache
 App Thinning Size Report.txt
 app-thinning.plist
+*.dmg
 
 # gcloud
 google-cloud-sdk
@@ -103,9 +108,6 @@ Products/
 
 # Ignore Dependencies folder
 Dependencies/
-
-# Environment Variables
-.env
 
 # Ignore internal scheme
 StreamChat.xcodeproj/xcshareddata/xcschemes/DemoApp-StreamDevelopers.xcscheme

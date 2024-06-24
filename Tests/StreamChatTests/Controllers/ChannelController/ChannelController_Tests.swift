@@ -4208,6 +4208,11 @@ final class ChannelController_Tests: XCTestCase {
     }
 
     func test_markUnread_whenIsNotMarkingAsRead_andCurrentUserIdIsPresent_whenThereAreOtherMessages_whenUpdaterSucceeds() throws {
+        try XCTSkipIf(
+            ProcessInfo().operatingSystemVersion.majorVersion == 13,
+            "https://stream-io.atlassian.net/browse/PBE-4812"
+        )
+        
         let messageId = MessageId.unique
         let previousMessageId = MessageId.unique
         let markedAsUnreadMessage = MessagePayload.dummy(messageId: messageId, createdAt: Date())

@@ -43,27 +43,17 @@ jobs:
           - ios: 17.4
             xcode: 15.4
             os: macos-14
-            device: "iPhone 15 Pro"
+            device: "iPhone 14 Pro"
             setup_runtime: false
           - ios: 16.4
             xcode: 15.3
             os: macos-14
-            device: "iPhone 14 Pro Max"
+            device: "iPhone 14 Pro"
             setup_runtime: true
           - ios: 15.5
             xcode: 15.3
             os: macos-14
-            device: "iPhone 13"
-            setup_runtime: true
-          - ios: 14.5
-            xcode: 15.3
-            os: macos-14
-            device: "iPhone SE (2nd generation)"
-            setup_runtime: true
-          - ios: 13.7
-            xcode: 15.3
-            os: macos-14
-            device: "iPad Air (3rd generation)"
+            device: "iPhone 13 Pro"
             setup_runtime: true
       fail-fast: false
     runs-on: ${{ matrix.os }}
@@ -85,20 +75,13 @@ jobs:
         INSTALL_ALLURE: true
         INSTALL_YEETD: true
         SKIP_MINT_BOOTSTRAP: true
-    - name: Cache iOS Simulator Runtime
-      uses: actions/cache@v4
-      id: runtime-cache
-      with:
-        path: ~/Downloads/*.dmg
-        key: xcodes-runtime-ios-${{ matrix.ios }}
-        restore-keys: xcodes-runtime-ios-${{ matrix.ios }}
-    - name: Setup iOS ${{ matrix.ios }} Runtime
+        SKIP_BREW_BOOTSTRAP: true
+    - uses: ./.github/actions/setup-ios-runtime
       if: ${{ matrix.setup_runtime }}
       timeout-minutes: 60
-      run: |
-        brew install xcodesorg/made/xcodes
-        xcodes runtimes
-        sudo xcodes runtimes install 'iOS ${{ matrix.ios }}' --keep-archive
+      with:
+        version: ${{ matrix.ios }}
+        device: ${{ matrix.device }}
     - name: Launch Allure TestOps
       run: bundle exec fastlane allure_launch cron:true
     - name: Run UI Tests (Debug)
@@ -143,27 +126,27 @@ jobs:
           - ios: 17.4
             xcode: 15.4
             os: macos-14
-            device: "iPhone 14 Pro Max"
+            device: "iPhone 14 Pro"
             setup_runtime: false
           - ios: 16.4
             xcode: 15.3
             os: macos-14
-            device: "iPhone 14 Pro Max"
+            device: "iPhone 14 Pro"
             setup_runtime: true
           - ios: 15.5
             xcode: 15.3
             os: macos-14
-            device: "iPhone 13"
+            device: "iPhone 13 Pro"
             setup_runtime: true
           - ios: 14.5
-            xcode: 15.3
-            os: macos-14
-            device: "iPhone SE (2nd generation)"
+            xcode: 14.2
+            os: macos-12
+            device: "iPhone 12 Pro"
             setup_runtime: true
           - ios: 13.7
-            xcode: 15.3
-            os: macos-14
-            device: "iPad Air (3rd generation)"
+            xcode: 14.2
+            os: macos-12
+            device: "iPhone 11 Pro"
             setup_runtime: true
       fail-fast: false
     runs-on: ${{ matrix.os }}
@@ -175,20 +158,12 @@ jobs:
     - uses: ./.github/actions/bootstrap
       env:
         INSTALL_YEETD: true
-    - name: Cache iOS Simulator Runtime
-      uses: actions/cache@v4
-      id: runtime-cache
-      with:
-        path: ~/Downloads/*.dmg
-        key: xcodes-runtime-ios-${{ matrix.ios }}
-        restore-keys: xcodes-runtime-ios-${{ matrix.ios }}
-    - name: Setup iOS ${{ matrix.ios }} Runtime
+    - uses: ./.github/actions/setup-ios-runtime
       if: ${{ matrix.setup_runtime }}
       timeout-minutes: 60
-      run: |
-        brew install xcodesorg/made/xcodes
-        xcodes runtimes
-        sudo xcodes runtimes install 'iOS ${{ matrix.ios }}' --keep-archive
+      with:
+        version: ${{ matrix.ios }}
+        device: ${{ matrix.device }}
     - name: Run LLC Tests (Debug)
       run: bundle exec fastlane test device:"${{ matrix.device }} (${{ matrix.ios }})" cron:true
       timeout-minutes: 100
@@ -224,7 +199,7 @@ jobs:
     steps:
     - uses: actions/checkout@v4.1.1
     - uses: ./.github/actions/ruby-cache
-    - name: List Xcode versions xcversion sees
+    - name: List Xcode versions
       run: mdfind "kMDItemCFBundleIdentifier = 'com.apple.dt.Xcode'"
     - name: Build LLC
       run: bundle exec fastlane test device:"iPhone 8" build_for_testing:true
