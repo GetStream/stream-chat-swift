@@ -121,15 +121,15 @@ public struct CurrentUserUnreads {
     /// The total number of unread threads.
     public var totalUnreadThreadsCount: Int
     /// The unread information per channel.
-    public var unreadChannels: [CurrentUserUnreadChannel]
+    public var unreadChannels: [UnreadChannel]
     /// The unread information per thread.
-    public var unreadThreads: [CurrentUserUnreadThread]
+    public var unreadThreads: [UnreadThread]
     /// The unread information per channel type.
-    public var unreadChannelsByType: [CurrentUserUnreadChannelByType]
+    public var unreadChannelsByType: [UnreadChannelByType]
 }
 
 /// The unread information of a channel.
-public struct CurrentUserUnreadChannel {
+public struct UnreadChannel {
     /// The channel id.
     public var channelId: ChannelId
     /// The number of unread messages inside the channel.
@@ -139,7 +139,7 @@ public struct CurrentUserUnreadChannel {
 }
 
 /// The unread information from channels with a specific type.
-public struct CurrentUserUnreadChannelByType {
+public struct UnreadChannelByType {
     /// The channel type.
     public var channelType: ChannelType
     /// The number of unread channels of this channel type.
@@ -149,7 +149,7 @@ public struct CurrentUserUnreadChannelByType {
 }
 
 /// The unread information of a thread.
-public struct CurrentUserUnreadThread {
+public struct UnreadThread {
     /// The message id of the root of the thread.
     public var parentMessageId: MessageId
     /// The number of unread replies inside the thread.

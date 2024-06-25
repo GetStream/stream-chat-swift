@@ -255,7 +255,10 @@ public extension CurrentChatUserController {
 
     /// Fetches all the unread information from the current user.
     ///
-    /// Note: This is an ad-hoc request, it is not observable.
+    ///  - Parameter completion: Called when the API call is finished.
+    ///  Returns the current user unreads or an error if the API call fails.
+    ///
+    /// Note: This is a one-time request, it is not observable.
     func loadAllUnreads(completion: @escaping ((Result<CurrentUserUnreads, Error>) -> Void)) {
         currentUserUpdater.loadAllUnreads { result in
             self.callback {

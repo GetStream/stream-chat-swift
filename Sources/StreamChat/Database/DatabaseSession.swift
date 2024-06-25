@@ -450,7 +450,7 @@ protocol ThreadReadDatabaseSession {
     func loadThreadReads(for userId: UserId) -> [ThreadReadDTO]
 
     /// Sets the thread with `parentMessageId` as read for `userId`
-    func markThreadAsRead(parentMessageId: MessageId, userId: UserId, at: Date)
+    func markThreadAsRead(parentMessageId: MessageId, userId: UserId, at readAt: Date)
 
     /// Marks the whole thread as unread.
     func markThreadAsUnread(

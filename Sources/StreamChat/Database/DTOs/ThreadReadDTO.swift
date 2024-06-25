@@ -96,12 +96,12 @@ extension NSManagedObjectContext {
         ThreadReadDTO.load(userId: userId, context: self)
     }
 
-    func markThreadAsRead(parentMessageId: MessageId, userId: UserId, at: Date) {
+    func markThreadAsRead(parentMessageId: MessageId, userId: UserId, at readAt: Date) {
         if let read = loadThreadRead(parentMessageId: parentMessageId, userId: userId) {
-            read.lastReadAt = at.bridgeDate
+            read.lastReadAt = readAt.bridgeDate
             read.unreadMessagesCount = 0
         } else {
-            makeEmptyRead(parentMessageId: parentMessageId, userId: userId, readAt: at)
+            makeEmptyRead(parentMessageId: parentMessageId, userId: userId, readAt: readAt)
         }
     }
 

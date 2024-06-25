@@ -747,6 +747,7 @@ public class ChatMessageController: DataController, DelegateCallable, DataStoreP
     /// - Parameters:
     ///   - replyLimit: The number of replies fetched.
     ///   - participantLimit: The number of participants fetches.
+    ///   - completion: Returns the thread information if the message is the root of a thread.
     public func loadThread(
         replyLimit: Int? = nil,
         participantLimit: Int? = nil,

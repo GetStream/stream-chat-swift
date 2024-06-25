@@ -12,9 +12,10 @@ struct ThreadUpdaterMiddleware: EventMiddleware {
                 session.markThreadAsRead(parentMessageId: threadDetails.parentMessageId, userId: event.user.id, at: event.createdAt)
             }
         case let event as NotificationMarkUnreadEventDTO:
-            // TODO: At the moment, the thread is not returned in the event,
-            // and I found that if lastReadMessageId is not present, it means it is a thread
-            if event.lastReadMessageId == nil {
+            // At the moment, this event does not return the thread id, so
+            // this is the only way to identify that this event is related to a thread
+            let isUnreadThread = event.lastReadMessageId == nil
+            if isUnreadThread {
                 session.markThreadAsUnread(for: event.firstUnreadMessageId, userId: event.user.id)
             }
         case let event as ThreadMessageNewEventDTO:

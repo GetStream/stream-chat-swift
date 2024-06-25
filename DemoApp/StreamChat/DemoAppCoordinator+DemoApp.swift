@@ -44,7 +44,8 @@ extension DemoAppCoordinator {
         }
         let tabBarViewController = DemoAppTabBarController(
             channelListVC: chatVC,
-            threadListVC: UINavigationController(rootViewController: threadListVC)
+            threadListVC: UINavigationController(rootViewController: threadListVC),
+            currentUserController: StreamChatWrapper.shared.client!.currentUserController()
         )
         set(rootViewController: tabBarViewController, animated: animated)
         DemoAppConfiguration.showPerformanceTracker()

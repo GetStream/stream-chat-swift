@@ -415,10 +415,10 @@ class DatabaseSession_Mock: DatabaseSession {
     var markThreadAsReadCallCount = 0
     var markThreadAsReadCalledWith: (MessageId, UserId, Date)?
 
-    func markThreadAsRead(parentMessageId: MessageId, userId: UserId, at: Date) {
+    func markThreadAsRead(parentMessageId: MessageId, userId: UserId, at readAt: Date) {
         markThreadAsReadCallCount += 1
-        markThreadAsReadCalledWith = (parentMessageId, userId, at)
-        underlyingSession.markThreadAsRead(parentMessageId: parentMessageId, userId: userId, at: at)
+        markThreadAsReadCalledWith = (parentMessageId, userId, readAt)
+        underlyingSession.markThreadAsRead(parentMessageId: parentMessageId, userId: userId, at: readAt)
     }
 
     var markThreadAsUnreadCallCount = 0

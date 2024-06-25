@@ -21,9 +21,6 @@ final class StreamChatWrapper {
     // Chat client
     var client: ChatClient?
 
-    // Current logged-in user controller.
-    var currentUserController: CurrentChatUserController?
-
     // ChatClient config
     var config: ChatClientConfig = {
         var config = ChatClientConfig(apiKeyString: apiKeyString)
@@ -113,10 +110,6 @@ extension StreamChatWrapper {
             } else {
                 self?.onRemotePushRegistration?()
             }
-            
-            self?.currentUserController = self?.client?.currentUserController()
-            self?.currentUserController?.delegate = self
-            self?.currentUserController?.synchronize()
 
             DispatchQueue.main.async {
                 completion(error)
@@ -129,8 +122,6 @@ extension StreamChatWrapper {
             logClientNotInstantiated()
             return
         }
-
-        self.currentUserController = nil
 
         let currentUserController = client.currentUserController()
         currentUserController.synchronize()
@@ -182,13 +173,5 @@ extension StreamChatWrapper {
 
     func notificationInfo(for response: UNNotificationResponse) -> ChatPushNotificationInfo? {
         try? ChatPushNotificationInfo(content: response.notification.request.content)
-    }
-}
-
-extension StreamChatWrapper: CurrentChatUserControllerDelegate {
-    func currentUserController(_ controller: CurrentChatUserController, didChangeCurrentUserUnreadCount: UnreadCount) {
-        let unreadCount = didChangeCurrentUserUnreadCount
-        let totalUnreadBadge = unreadCount.channels + (unreadCount.threads ?? 0)
-        UIApplication.shared.applicationIconBadgeNumber = totalUnreadBadge
     }
 }

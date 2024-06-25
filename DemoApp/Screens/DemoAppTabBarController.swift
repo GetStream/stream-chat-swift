@@ -11,10 +11,14 @@ class DemoAppTabBarController: UITabBarController, CurrentChatUserControllerDele
     let threadListVC: UIViewController
     let currentUserController: CurrentChatUserController
 
-    init(channelListVC: UIViewController, threadListVC: UIViewController) {
+    init(
+        channelListVC: UIViewController,
+        threadListVC: UIViewController,
+        currentUserController: CurrentChatUserController
+    ) {
         self.channelListVC = channelListVC
         self.threadListVC = threadListVC
-        currentUserController = StreamChatWrapper.shared.client!.currentUserController()
+        self.currentUserController = currentUserController
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -60,6 +64,9 @@ class DemoAppTabBarController: UITabBarController, CurrentChatUserControllerDele
     }
 
     func currentUserController(_ controller: CurrentChatUserController, didChangeCurrentUserUnreadCount: UnreadCount) {
-        unreadCount = didChangeCurrentUserUnreadCount
+        let unreadCount = didChangeCurrentUserUnreadCount
+        self.unreadCount = unreadCount
+        let totalUnreadBadge = unreadCount.channels + (unreadCount.threads ?? 0)
+        UIApplication.shared.applicationIconBadgeNumber = totalUnreadBadge
     }
 }
