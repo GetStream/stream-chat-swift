@@ -251,7 +251,7 @@ open class ChatThreadListItemView: _View, ThemeProvider {
             forCurrentUserId: content.currentUserId
         )
         let replyTimestampLabelText = latestReply.map {
-            appearance.formatters.messageTimestamp.format($0.createdAt)
+            appearance.formatters.threadListMessageTimestamp.format($0.createdAt)
         }
         let unreadReplies = thread.reads.first(where: { $0.user.id == content.currentUserId })?.unreadMessagesCount ?? 0
 

@@ -92,6 +92,7 @@ final class ChatThreadListItemView_Tests: XCTestCase {
         let view = ChatThreadListItemView().withoutAutoresizingMaskConstraints
         view.components = components
         view.appearance = appearance
+        view.appearance.formatters.threadListMessageTimestamp = DefaultMessageTimestampFormatter()
         view.content = content
         view.addSizeConstraints()
         return view

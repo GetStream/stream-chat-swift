@@ -13,6 +13,9 @@ public extension Appearance {
         /// A formatter that converts the message to textual representation in the channel list.
         public var channelListMessageTimestamp: MessageTimestampFormatter = ChannelListMessageTimestampFormatter()
 
+        /// A formatter that converts the message to textual representation in the thread list. By default, it uses the same format of the channel list.
+        public var threadListMessageTimestamp: MessageTimestampFormatter = ChannelListMessageTimestampFormatter()
+
         /// A formatter that converts the message date separator to textual representation.
         /// This formatter is used to display the message date between each group of messages
         /// and the top date overlay in the message list.
