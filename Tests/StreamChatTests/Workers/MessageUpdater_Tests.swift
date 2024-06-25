@@ -2854,6 +2854,14 @@ extension MessageUpdater_Tests {
         line: UInt = #line,
         file: StaticString = #filePath
     ) throws {
+        func showsInsideThread(messageIds: [MessageId]) throws -> [Bool] {
+            try database.readSynchronously { session in
+                messageIds
+                    .compactMap { session.message(id: $0) }
+                    .map(\.showInsideThread)
+            }
+        }
+        
         let parentMessageId = MessageId.unique
         let currentUserId: UserId = .unique
         let currentMessageIds: [MessageId] = [.unique, .unique, .unique]
@@ -2882,11 +2890,7 @@ extension MessageUpdater_Tests {
             }
         }
 
-        var currentMessageDTOs: [MessageDTO] {
-            currentMessageIds.compactMap { database.viewContext.message(id: $0) }
-        }
-
-        XCTAssertEqual(currentMessageDTOs.map(\.showInsideThread), [true, true, true])
+        try XCTAssertEqual(showsInsideThread(messageIds: currentMessageIds), [true, true, true])
 
         // Simulate `loadReplies` call
         let exp = expectation(description: "should load replies")
@@ -2902,19 +2906,30 @@ extension MessageUpdater_Tests {
 
         waitForExpectations(timeout: defaultTimeout)
 
-        var newMessageDTOs: [MessageDTO] {
-            messageIds.compactMap { database.viewContext.message(id: $0) }
-        }
-
         if shouldClear {
             // Previous current messages are not shown (excluding local messages).
-            XCTAssertEqual(currentMessageDTOs.filter { $0.showInsideThread }.count, 1, file: file, line: line)
+            try XCTAssertEqual(
+                showsInsideThread(messageIds: currentMessageIds).filter { $0 }.count,
+                1,
+                file: file,
+                line: line
+            )
         } else {
             // Previous current messages are not discarded.
-            XCTAssertEqual(currentMessageDTOs.map(\.showInsideThread), [true, true, true], file: file, line: line)
+            try XCTAssertEqual(
+                showsInsideThread(messageIds: currentMessageIds),
+                [true, true, true],
+                file: file,
+                line: line
+            )
         }
 
         // Newly fetched messages are shown.
-        XCTAssertEqual(newMessageDTOs.map(\.showInsideThread), [true, true, true], file: file, line: line)
+        try XCTAssertEqual(
+            showsInsideThread(messageIds: messageIds),
+            [true, true, true],
+            file: file,
+            line: line
+        )
     }
 }

@@ -9,6 +9,7 @@ final class Attachments_Tests: StreamTestCase {
     override func setUpWithError() throws {
         try super.setUpWithError()
         addTags([.coreFeatures])
+        assertMockServer()
     }
 
     func test_uploadImage() throws {

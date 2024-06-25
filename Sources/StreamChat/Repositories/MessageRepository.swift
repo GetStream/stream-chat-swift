@@ -195,6 +195,8 @@ class MessageRepository {
                 self.database.write({ session in
                     message = try session.saveMessage(payload: boxed.message, for: cid, syncOwnReactions: true, cache: nil).asModel()
                     if !store {
+                        // Force load attachments before discarding changes
+                        _ = message?.attachmentCounts
                         self.database.writableContext.discardCurrentChanges()
                     }
                 }, completion: { error in

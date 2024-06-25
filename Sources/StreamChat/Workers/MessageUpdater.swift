@@ -118,13 +118,18 @@ class MessageUpdater: Worker {
             let messageDTO = try session.messageEditableByCurrentUser(messageId)
 
             func updateMessage(localState: LocalMessageState) throws {
+                let newUpdatedAt = DBDate()
+                
+                if messageDTO.text != text {
+                    messageDTO.textUpdatedAt = newUpdatedAt
+                }
+                messageDTO.updatedAt = newUpdatedAt
+                
                 messageDTO.text = text
                 let encodedExtraData = extraData.map { try? JSONEncoder.default.encode($0) } ?? messageDTO.extraData
                 messageDTO.extraData = encodedExtraData
 
                 messageDTO.localMessageState = localState
-
-                messageDTO.updatedAt = DBDate()
 
                 messageDTO.skipEnrichUrl = skipEnrichUrl
 

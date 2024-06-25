@@ -38,6 +38,7 @@ final class UserEndpoints_Tests: XCTestCase {
                 typingIndicators: .init(enabled: true),
                 readReceipts: .init(enabled: true)
             ),
+            role: .anonymous,
             extraData: ["company": .string(.unique)]
         )
 

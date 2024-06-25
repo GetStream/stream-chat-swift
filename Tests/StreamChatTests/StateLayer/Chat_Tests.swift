@@ -618,6 +618,60 @@ final class Chat_Tests: XCTestCase {
         XCTAssertEqual(nil, message.localState)
     }
     
+    func test_updateMessage_whenTwoConsequtiveTextUpdates_thenWebSocketEventDoesNotResetTextToTheFirstEdit() async throws {
+        try await env.client.databaseContainer.write { session in
+            try session.saveChannel(payload: self.makeChannelPayload(messageCount: 1, createdAtOffset: 0))
+        }
+        try await setUpChat(usesMockedUpdaters: false)
+        await XCTAssertEqual(1, chat.state.messages.count)
+        let messages = await chat.state.messages
+        let messageId = try XCTUnwrap(messages.first?.id)
+        
+        // Edit the message twice before web-socket event comes for these edits
+        let textUpdate1 = "Editted text 1"
+        env.client.mockAPIClient.test_mockResponseResult(.success(EmptyResponse())) // typing indicator
+        env.client.mockAPIClient.test_mockResponseResult(.success(EmptyResponse())) // update message
+        try await chat.updateMessage(messageId, text: textUpdate1)
+        let queuedWSEventPayload1 = EventPayload(
+            eventType: .messageUpdated,
+            cid: channelId,
+            message: .dummy(
+                messageId: messageId,
+                text: textUpdate1,
+                cid: channelId,
+                messageTextUpdatedAt: Date()
+            )
+        )
+
+        env.client.mockAPIClient.test_mockResponseResult(.success(EmptyResponse())) // typing indicator
+        env.client.mockAPIClient.test_mockResponseResult(.success(EmptyResponse())) // update message
+        let textUpdate2 = "Editted text 2"
+        try await chat.updateMessage(messageId, text: textUpdate2)
+        let queuedWSEventPayload2 = EventPayload(
+            eventType: .messageUpdated,
+            cid: channelId,
+            message: .dummy(
+                messageId: messageId,
+                text: textUpdate2,
+                cid: channelId,
+                messageTextUpdatedAt: Date()
+            )
+        )
+        
+        // Web-socket events coming in with a delay
+        try await env.client.databaseContainer.write { session in
+            try session.saveEvent(payload: queuedWSEventPayload1)
+        }
+        let currentTextAfterEvent1 = try await MainActor.run { try XCTUnwrap(chat.localMessage(for: messageId)).text }
+        XCTAssertEqual(textUpdate2, currentTextAfterEvent1, "Latest edit should persist")
+        
+        try await env.client.databaseContainer.write { session in
+            try session.saveEvent(payload: queuedWSEventPayload2)
+        }
+        let currentTextAfterEvent2 = try await MainActor.run { try XCTUnwrap(chat.localMessage(for: messageId)).text }
+        XCTAssertEqual(textUpdate2, currentTextAfterEvent2, "Latest edit should persist")
+    }
+    
     // MARK: - Message Pagination and State
     
     func test_restoreMessages_whenExistingMessages_thenStateUpdates() async throws {
@@ -1529,7 +1583,7 @@ final class Chat_Tests: XCTestCase {
             .map { $0 + offset }
             .map {
                 .dummy(
-                    messageId: String(format: "%03d", $0),
+                    messageId: String(format: "reply_%03d", $0),
                     parentId: parentMessageId,
                     createdAt: Date(timeIntervalSinceReferenceDate: TimeInterval($0)),
                     cid: channelId

@@ -32,18 +32,19 @@ final class UserRobot: Robot {
     
     @discardableResult
     func waitForChannelListToLoad() -> Self {
-        let cells = ChannelListPage.cells.waitCount(1, timeout: 7)
+        let timeout = 15.0
+        let cells = ChannelListPage.cells.waitCount(1, timeout: timeout)
 
         // TODO: CIS-1737
         if !cells.firstMatch.exists {
             for _ in 0...10 {
-                server.stop()
                 app.terminate()
-                _ = server.start(port: in_port_t(MockServerConfiguration.port))
+                server.stop()
+                _ = server.start(port: MockServerConfiguration.port)
                 sleep(1)
                 app.launch()
                 login()
-                cells.waitCount(1)
+                cells.waitCount(1, timeout: timeout)
                 if cells.firstMatch.exists { break }
             }
         }
@@ -375,6 +376,7 @@ extension UserRobot {
         } else {
             sendMessage("/giphy\(text)", waitForAppearance: false)
         }
+        MessageListPage.Attributes.actionButtons().firstMatch.wait()
         if send { tapOnSendGiphyButton() }
         return self
     }

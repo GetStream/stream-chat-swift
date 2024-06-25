@@ -16,6 +16,7 @@ final class MessageDeliveryStatus_ChannelList_Tests: StreamTestCase {
     override func setUpWithError() throws {
         try super.setUpWithError()
         addTags([.messageDeliveryStatus])
+        assertMockServer()
     }
 
     func test_deliveryStatusClocksShownInPreview_whenTheLastMessageIsInPendingState() {

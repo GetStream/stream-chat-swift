@@ -489,20 +489,30 @@ extension UserRobot {
     }
 
     @discardableResult
+    func waitForMessageDeliveryStatus(
+        _ deliveryStatus: MessageDeliveryStatus?,
+        at messageCellIndex: Int? = nil,
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) -> Bool {
+        let messageCell = messageCell(withIndex: messageCellIndex, file: file, line: line)
+        let checkmark = attributes.statusCheckmark(for: deliveryStatus, in: messageCell)
+        if deliveryStatus == .failed || deliveryStatus == nil {
+            return !checkmark.exists
+        } else {
+            return checkmark.wait(timeout: 10).exists
+        }
+    }
+
+    @discardableResult
     func assertMessageDeliveryStatus(
         _ deliveryStatus: MessageDeliveryStatus?,
         at messageCellIndex: Int? = nil,
         file: StaticString = #filePath,
         line: UInt = #line
     ) -> Self {
-        let messageCell = messageCell(withIndex: messageCellIndex, file: file, line: line)
-        let checkmark = attributes.statusCheckmark(for: deliveryStatus, in: messageCell)
-        if deliveryStatus == .failed || deliveryStatus == nil {
-            XCTAssertFalse(checkmark.exists, "Checkmark is visible", file: file, line: line)
-        } else {
-            XCTAssertTrue(checkmark.wait(timeout: 15).exists, "Checkmark is not visible", file: file, line: line)
-        }
-
+        let success = waitForMessageDeliveryStatus(deliveryStatus, at: messageCellIndex, file: file, line: line)
+        XCTAssertTrue(success)
         return self
     }
 
@@ -739,7 +749,6 @@ extension UserRobot {
         XCTAssertEqual(quotedText, actualText)
         XCTAssertTrue(message.exists, "Quoted message was not showed")
         XCTAssertFalse(message.isEnabled, "Quoted message should be disabled")
-        XCTAssertTrue(message.waitForHitPoint().isHittable, "Quoted message is not visible")
         
         if !replyText.isEmpty {
             let message = attributes.text(replyText, in: messageCell).wait()

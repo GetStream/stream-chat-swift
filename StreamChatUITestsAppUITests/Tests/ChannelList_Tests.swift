@@ -11,6 +11,7 @@ final class ChannelList_Tests: StreamTestCase {
     override func setUpWithError() throws {
         try super.setUpWithError()
         addTags([.coreFeatures])
+        assertMockServer()
     }
 
     func test_newMessageShownInChannelPreview_whenComingBackFromChannel() {

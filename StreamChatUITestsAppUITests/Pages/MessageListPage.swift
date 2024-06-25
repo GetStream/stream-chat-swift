@@ -217,6 +217,10 @@ class MessageListPage {
             }
             return messageCell.images[identifier]
         }
+        
+        static func actionButtons() -> XCUIElementQuery {
+            app.buttons.matching(NSPredicate(format: "identifier LIKE 'ActionButton'"))
+        }
 
         static func giphyButtons(in messageCell: XCUIElement) -> XCUIElementQuery {
             messageCell.buttons.matching(NSPredicate(format: "identifier LIKE 'ActionButton'"))
