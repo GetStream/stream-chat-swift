@@ -257,10 +257,24 @@ open class ChatThreadListItemView: _View, ThemeProvider {
 
         threadTitleLabel.text = channelNameText
         threadDescriptionLabel.text = L10n.ThreadListItem.repliedTo(parentMessageText)
-        replyDescriptionLabel.text = latestReply?.text
+        replyDescriptionLabel.text = replyPreviewText()
         replyTimestampLabel.text = replyTimestampLabelText
         replyAuthorAvatarView.content = latestReply?.author
         replyTitleLabel.text = latestReply?.author.name
         threadUnreadCountView.content = unreadReplies
+    }
+
+    /// The reply preview text.
+    open func replyPreviewText() -> String? {
+        // TODO: On v5 the logic in ChatChannelItemView.subtitleText should be extracted to `Appearance.formatters` and shared with the `ChatThreadListItemView`
+        guard let latestReply = content?.thread.latestReplies.last else {
+            return nil
+        }
+        
+        if latestReply.text.isEmpty {
+            return latestReply.allAttachments.first?.type.rawValue
+        }
+
+        return latestReply.text
     }
 }
