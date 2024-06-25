@@ -232,6 +232,8 @@ open class ChatThreadListItemView: _View, ThemeProvider {
             threadIconView.heightAnchor.pin(equalToConstant: 15),
             threadIconView.widthAnchor.pin(equalTo: threadIconView.heightAnchor)
         ])
+
+        replyTimestampLabel.setContentCompressionResistancePriority(.required, for: .horizontal)
     }
 
     override open func updateContent() {
