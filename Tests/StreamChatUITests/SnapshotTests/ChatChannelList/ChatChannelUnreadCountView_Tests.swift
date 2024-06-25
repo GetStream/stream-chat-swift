@@ -39,7 +39,7 @@ final class ChatChannelUnreadCountView_Tests: XCTestCase {
         class TestView: ChatChannelUnreadCountView {
             override func setUpAppearance() {
                 super.setUpAppearance()
-                backgroundColor = .blue
+                badgeView.backgroundColor = .blue
             }
 
             override func setUpLayout() {
