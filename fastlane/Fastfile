@@ -767,7 +767,9 @@ end
 lane :install_runtime do |options|
   runtimes = `xcrun simctl runtime list -j`
   UI.message("👉 Runtime list:\n#{runtimes}")
-  simulators = JSON.parse(runtimes).select { |_, r|x sim['version'] == options[:ios] && r['state'] == 'Ready' }
+  simulators = JSON.parse(runtimes).select do |_, sim|
+    sim['platformIdentifier'].end_with?('iphonesimulator') && sim['version'] == options[:ios] && sim['state'] == 'Ready'
+  end
 
   if simulators.empty?
     Dir.chdir('..') do
