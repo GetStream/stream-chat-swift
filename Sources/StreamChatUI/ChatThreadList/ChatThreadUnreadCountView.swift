@@ -12,10 +12,6 @@ open class ChatThreadUnreadCountView: _View, ThemeProvider {
         .withoutAutoresizingMaskConstraints
         .withAccessibilityIdentifier(identifier: "badgeView")
 
-    /// The `UILabel` instance that holds number of unread messages.
-    open private(set) lazy var unreadCountLabel = badgeView.textLabel
-        .withAccessibilityIdentifier(identifier: "unreadCountLabel")
-
     /// The number of unreads.
     open var content: Int = 0 {
         didSet { updateContentIfNeeded() }
@@ -28,7 +24,9 @@ open class ChatThreadUnreadCountView: _View, ThemeProvider {
     }
 
     override open func updateContent() {
-        isHidden = content == 0
-        unreadCountLabel.text = String(content)
+        UIView.performWithoutAnimation {
+            isHidden = content == 0
+            badgeView.textLabel.text = String(content)
+        }
     }
 }
