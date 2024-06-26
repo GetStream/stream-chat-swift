@@ -15,8 +15,8 @@ enum DatabaseItemConverter {
     ///   - itemCreator: A closure which converts database models.
     ///   - itemReuseKeyPaths: A pair of keypaths used for matching database models to existing items.
     ///   - sorting: A list of sort values for sorting items outside of NSFetchedResultsController.
-    ///   - checkCancellation: A closure called before each invocation fo the `itemCreator`. If true, no more models are converted.
-    /// - Returns: <#description#>
+    ///   - checkCancellation: A closure called before each invocation of the `itemCreator`. If true, no more models are converted.
+    /// - Returns: Returns a list of immutable models by reusing existing unchanged models.
     static func convert<Item, DTO>(
         dtos: [DTO],
         existing: [Item],
