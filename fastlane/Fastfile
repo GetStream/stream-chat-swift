@@ -765,11 +765,11 @@ lane :rubocop do
 end
 
 lane :install_runtime do |options|
-  available_simulators = JSON.parse(`xcrun simctl runtime list -j`).select do |_, sim|
-    sim['version'] == options[:ios] && sim['state'] == 'Ready'
-  end
+  runtimes = `xcrun simctl runtime list -j`
+  UI.message("👉 Runtime list:\n#{runtimes}")
+  simulators = JSON.parse(runtimes).select { |_, r|x sim['version'] == options[:ios] && r['state'] == 'Ready' }
 
-  if available_simulators.empty?
+  if simulators.empty?
     Dir.chdir('..') do
       sh("echo 'iOS #{options[:ios]} Simulator' | ipsw download xcode --sim") if Dir['*.dmg'].first.nil?
       sh("./Scripts/install_ios_runtime.sh #{Dir['*.dmg'].first}")
