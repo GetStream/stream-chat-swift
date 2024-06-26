@@ -234,3 +234,15 @@ extension NSManagedObjectContext {
         results.forEach { delete($0) }
     }
 }
+
+extension ThreadDTO {
+    var reuseId: String {
+        channel.cid + parentMessageId
+    }
+}
+
+extension ChatThread {
+    var reuseId: String {
+        channel.cid.rawValue + parentMessageId
+    }
+}

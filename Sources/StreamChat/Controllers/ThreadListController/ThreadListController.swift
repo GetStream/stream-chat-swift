@@ -208,7 +208,7 @@ extension ChatThreadListController {
                     database: $1,
                     fetchRequest: $2,
                     itemCreator: $3,
-                    itemReuseKeyPaths: nil // no id
+                    itemReuseKeyPaths: (\ChatThread.reuseId, \ThreadDTO.reuseId)
                 )
             }
     }
