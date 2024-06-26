@@ -14,7 +14,7 @@ runs:
       shell: bash
       run: |
         brew install blacktop/tap/ipsw
-        bundle exec fastlane install_sim ios:${{ inputs.version }}
+        bundle exec fastlane install_runtime ios:${{ inputs.version }}
         xcrun simctl list runtimes
     - name: Create Custom iOS Simulator
       shell: bash

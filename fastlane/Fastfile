@@ -764,7 +764,7 @@ lane :rubocop do
   sh('bundle exec rubocop')
 end
 
-lane :install_sim do |options|
+lane :install_runtime do |options|
   available_simulators = JSON.parse(`xcrun simctl runtime list -j`).select do |_, sim|
     sim['version'] == options[:ios] && sim['state'] == 'Ready'
   end
