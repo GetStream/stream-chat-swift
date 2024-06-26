@@ -29,7 +29,7 @@ enum DatabaseItemConverter {
         let items: [Item]
         
         // Reuse converted items by id
-        if StreamRuntimeCheck.isDatabaseObserverItemReusingEnabled, let itemReuseKeyPaths, !existing.isEmpty {
+        if StreamRuntimeCheck._isDatabaseObserverItemReusingEnabled, let itemReuseKeyPaths, !existing.isEmpty {
             let existingItems = existing.map { ($0[keyPath: itemReuseKeyPaths.item], $0) }
             var lookup = Dictionary(existingItems, uniquingKeysWith: { _, second in second })
             // Changes contains newly converted items, add them to the lookup
