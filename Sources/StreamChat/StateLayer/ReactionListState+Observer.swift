@@ -14,7 +14,7 @@ extension ReactionListState {
                 databaseContainer: database,
                 fetchRequest: MessageReactionDTO.reactionListFetchRequest(query: query),
                 itemCreator: { try $0.asModel() },
-                itemReuseKeyPaths: nil // no id
+                itemReuseKeyPaths: (\ChatMessageReaction.id, \MessageReactionDTO.id)
             )
         }
         

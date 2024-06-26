@@ -31,7 +31,7 @@ extension MessageState {
                     sort: ChatMessageReaction.defaultSortingDescriptors()
                 ),
                 itemCreator: { try $0.asModel() },
-                itemReuseKeyPaths: nil // no id
+                itemReuseKeyPaths: (\ChatMessageReaction.id, \MessageReactionDTO.id)
             )
             repliesObserver = StateLayerDatabaseObserver(
                 databaseContainer: database,

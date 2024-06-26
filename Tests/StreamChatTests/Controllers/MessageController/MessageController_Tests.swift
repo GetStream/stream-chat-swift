@@ -1689,6 +1689,7 @@ final class MessageController_Tests: XCTestCase {
 
         let mockedReactions = repeatElement(
             ChatMessageReaction(
+                id: .unique,
                 type: "likes",
                 score: 1,
                 createdAt: .unique,

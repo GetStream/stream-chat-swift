@@ -210,6 +210,7 @@ extension MessageReactionDTO {
         }
 
         return try .init(
+            id: id,
             type: .init(rawValue: type),
             score: Int(score),
             createdAt: createdAt?.bridgeDate ?? .init(),

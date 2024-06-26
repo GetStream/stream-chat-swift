@@ -15,6 +15,7 @@ extension ChatMessageReaction {
         extraData: [String: RawJSON] = [:]
     ) -> ChatMessageReaction {
         .init(
+            id: .unique,
             type: type,
             score: score,
             createdAt: createdAt,

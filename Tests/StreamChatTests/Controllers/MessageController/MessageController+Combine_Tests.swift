@@ -107,6 +107,7 @@ final class MessageController_Combine_Tests: iOS13TestCase {
         messageController = nil
 
         let newReaction: ChatMessageReaction = .init(
+            id: .unique,
             type: "like",
             score: 1,
             createdAt: .unique,

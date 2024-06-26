@@ -177,7 +177,7 @@ extension ChatReactionListController {
                     database: $1,
                     fetchRequest: $2,
                     itemCreator: $3,
-                    itemReuseKeyPaths: nil // no id
+                    itemReuseKeyPaths: (\ChatMessageReaction.id, \MessageReactionDTO.id)
                 )
             }
     }
