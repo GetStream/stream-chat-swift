@@ -21,23 +21,28 @@ class ListResult: DatabaseObserverType {}
 /// - Note: Requires the ``DatabaseContainer/stateLayerContext`` which is immediately synchronized.
 @available(iOS 13.0, *)
 final class StateLayerDatabaseObserver<ResultType: DatabaseObserverType, Item, DTO: NSManagedObject> {
+    private let changeAggregator: ListChangeAggregator<DTO, Item>
     private let frc: NSFetchedResultsController<DTO>
-    fileprivate private(set) var resultsDelegate: FetchedResultsDelegate?
     let itemCreator: (DTO) throws -> Item
+    let itemReuseKeyPaths: (item: KeyPath<Item, String>, dto: KeyPath<DTO, String>)?
     let sorting: [SortValue<Item>]
     let request: NSFetchRequest<DTO>
     let context: NSManagedObjectContext
+    // Keep track of last items for reuse
+    private var reuseItems: [Item]?
     
-    init(
-        databaseContainer: DatabaseContainer,
+    private init(
+        context: NSManagedObjectContext,
         fetchRequest: NSFetchRequest<DTO>,
         itemCreator: @escaping (DTO) throws -> Item,
+        itemReuseKeyPaths: (item: KeyPath<Item, String>, dto: KeyPath<DTO, String>)?,
         sorting: [SortValue<Item>] = []
     ) {
-        let context = databaseContainer.stateLayerContext
         self.context = context
+        changeAggregator = ListChangeAggregator<DTO, Item>(itemCreator: itemCreator)
         request = fetchRequest
         self.itemCreator = itemCreator
+        self.itemReuseKeyPaths = itemReuseKeyPaths
         self.sorting = sorting
         frc = NSFetchedResultsController<DTO>(
             fetchRequest: request,
@@ -52,14 +57,27 @@ final class StateLayerDatabaseObserver<ResultType: DatabaseObserverType, Item, D
 
 @available(iOS 13.0, *)
 extension StateLayerDatabaseObserver where ResultType == EntityResult {
+    convenience init(
+        databaseContainer: DatabaseContainer,
+        fetchRequest: NSFetchRequest<DTO>,
+        itemCreator: @escaping (DTO) throws -> Item
+    ) {
+        self.init(
+            context: databaseContainer.stateLayerContext,
+            fetchRequest: fetchRequest,
+            itemCreator: itemCreator,
+            itemReuseKeyPaths: nil,
+            sorting: []
+        )
+    }
+    
     var item: Item? {
         var item: Item?
         context.performAndWait {
             item = Self.makeEntity(
                 frc: frc,
-                context: context,
-                itemCreator: itemCreator,
-                sorting: sorting
+                change: nil,
+                itemCreator: itemCreator
             )
         }
         return item
@@ -82,27 +100,25 @@ extension StateLayerDatabaseObserver where ResultType == EntityResult {
     ///
     /// - Returns: Returns the current state of the item in the local database.
     func startObserving(onContextDidChange: @escaping (Item?) -> Void) throws -> Item? {
-        resultsDelegate = FetchedResultsDelegate(onDidChange: { [weak self] in
+        changeAggregator.onDidChange = { [weak self] changes in
             guard let self else { return }
             // Runs on the NSManagedObjectContext's queue, therefore skip performAndWait
             let item = Self.makeEntity(
                 frc: self.frc,
-                context: self.context,
-                itemCreator: self.itemCreator,
-                sorting: self.sorting
+                change: changes.first,
+                itemCreator: self.itemCreator
             )
             onContextDidChange(item)
-        })
-        frc.delegate = resultsDelegate
+        }
+        frc.delegate = changeAggregator
         try frc.performFetch()
         return item
     }
     
     static func makeEntity(
         frc: NSFetchedResultsController<DTO>,
-        context: NSManagedObjectContext,
-        itemCreator: @escaping (DTO) throws -> Item,
-        sorting: [SortValue<Item>]
+        change: ListChange<Item>?,
+        itemCreator: @escaping (DTO) throws -> Item
     ) -> Item? {
         do {
             guard let dtos = frc.fetchedObjects else { return nil }
@@ -110,6 +126,9 @@ extension StateLayerDatabaseObserver where ResultType == EntityResult {
                 dtos.count <= 1,
                 "StateLayerDatabaseObserver predicate must match exactly 0 or 1 entities. Matched: \(dtos)"
             )
+            if let item = change?.item {
+                return item
+            }
             return try dtos.first.flatMap(itemCreator)
         } catch {
             log.debug("Failed to convert DTO (\(DTO.self) to \(Item.self)")
@@ -122,15 +141,28 @@ extension StateLayerDatabaseObserver where ResultType == EntityResult {
 
 @available(iOS 13.0, *)
 extension StateLayerDatabaseObserver where ResultType == ListResult {
+    convenience init(
+        databaseContainer: DatabaseContainer,
+        fetchRequest: NSFetchRequest<DTO>,
+        itemCreator: @escaping (DTO) throws -> Item,
+        itemReuseKeyPaths: (item: KeyPath<Item, String>, dto: KeyPath<DTO, String>)?,
+        sorting: [SortValue<Item>] = []
+    ) {
+        self.init(
+            context: databaseContainer.stateLayerContext,
+            fetchRequest: fetchRequest,
+            itemCreator: itemCreator,
+            itemReuseKeyPaths: itemReuseKeyPaths,
+            sorting: sorting
+        )
+    }
+    
     var items: StreamCollection<Item> {
         var collection: StreamCollection<Item>!
         context.performAndWait {
-            collection = Self.makeCollection(
-                frc: frc,
-                context: context,
-                itemCreator: itemCreator,
-                sorting: sorting
-            )
+            // When we already have loaded items, reuse them, otherwise refetch all
+            let items = reuseItems ?? updateItems(nil)
+            collection = StreamCollection(items)
         }
         return collection
     }
@@ -154,51 +186,28 @@ extension StateLayerDatabaseObserver where ResultType == ListResult {
     ///
     /// - Returns: Returns the current state of items in the local database.
     func startObserving(onContextDidChange: @escaping (StreamCollection<Item>) -> Void) throws -> StreamCollection<Item> {
-        resultsDelegate = FetchedResultsDelegate(onDidChange: { [weak self] in
+        changeAggregator.onDidChange = { [weak self] changes in
             guard let self else { return }
             // Runs on the NSManagedObjectContext's queue, therefore skip performAndWait
-            let collection = Self.makeCollection(
-                frc: self.frc,
-                context: self.context,
-                itemCreator: self.itemCreator,
-                sorting: self.sorting
-            )
-            onContextDidChange(collection)
-        })
-        frc.delegate = resultsDelegate
+            let items = self.updateItems(changes)
+            onContextDidChange(StreamCollection(items))
+        }
+        frc.delegate = changeAggregator
         try frc.performFetch()
         return items
     }
     
-    static func makeCollection(
-        frc: NSFetchedResultsController<DTO>,
-        context: NSManagedObjectContext,
-        itemCreator: @escaping (DTO) throws -> Item,
-        sorting: [SortValue<Item>]
-    ) -> StreamCollection<Item> {
-        let collection = LazyCachedMapCollection(
-            source: frc.fetchedObjects ?? [],
+    private func updateItems(_ changes: [ListChange<Item>]?) -> [Item] {
+        let items = DatabaseItemConverter.convert(
+            dtos: frc.fetchedObjects ?? [],
+            existing: reuseItems ?? [],
+            changes: changes,
             itemCreator: itemCreator,
+            itemReuseKeyPaths: itemReuseKeyPaths,
             sorting: sorting,
-            context: context
+            checkCancellation: { false }
         )
-        return StreamCollection(collection)
-    }
-}
-
-// MARK: - Fetched Results Controller Delegate
-
-@available(iOS 13.0, *)
-private extension StateLayerDatabaseObserver {
-    final class FetchedResultsDelegate: NSObject, NSFetchedResultsControllerDelegate {
-        let onDidChange: (() -> Void)?
-
-        init(onDidChange: (() -> Void)?) {
-            self.onDidChange = onDidChange
-        }
-
-        func controllerDidChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
-            onDidChange?()
-        }
+        reuseItems = items
+        return items
     }
 }

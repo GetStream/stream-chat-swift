@@ -61,6 +61,7 @@ class ListDatabaseObserverWrapper<Item, DTO: NSManagedObject> {
         database: DatabaseContainer,
         fetchRequest: NSFetchRequest<DTO>,
         itemCreator: @escaping (DTO) throws -> Item,
+        itemReuseKeyPaths: (item: KeyPath<Item, String>, dto: KeyPath<DTO, String>)?,
         sorting: [SortValue<Item>] = [],
         fetchedResultsControllerType: NSFetchedResultsController<DTO>.Type = NSFetchedResultsController<DTO>.self
     ) {
@@ -70,6 +71,7 @@ class ListDatabaseObserverWrapper<Item, DTO: NSManagedObject> {
                 context: database.backgroundReadOnlyContext,
                 fetchRequest: fetchRequest,
                 itemCreator: itemCreator,
+                itemReuseKeyPaths: itemReuseKeyPaths,
                 sorting: sorting,
                 fetchedResultsControllerType: fetchedResultsControllerType
             )
@@ -78,6 +80,7 @@ class ListDatabaseObserverWrapper<Item, DTO: NSManagedObject> {
                 context: database.viewContext,
                 fetchRequest: fetchRequest,
                 itemCreator: itemCreator,
+                itemReuseKeyPaths: itemReuseKeyPaths,
                 sorting: sorting,
                 fetchedResultsControllerType: fetchedResultsControllerType
             )
@@ -104,6 +107,7 @@ class BackgroundListDatabaseObserver<Item, DTO: NSManagedObject>: BackgroundData
         context: NSManagedObjectContext,
         fetchRequest: NSFetchRequest<DTO>,
         itemCreator: @escaping (DTO) throws -> Item,
+        itemReuseKeyPaths: (item: KeyPath<Item, String>, dto: KeyPath<DTO, String>)? = nil,
         sorting: [SortValue<Item>],
         fetchedResultsControllerType: NSFetchedResultsController<DTO>.Type = NSFetchedResultsController<DTO>.self
     ) {
@@ -111,6 +115,7 @@ class BackgroundListDatabaseObserver<Item, DTO: NSManagedObject>: BackgroundData
             context: context,
             fetchRequest: fetchRequest,
             itemCreator: itemCreator,
+            itemReuseKeyPaths: itemReuseKeyPaths,
             sorting: sorting,
             fetchedResultsControllerType: fetchedResultsControllerType
         )

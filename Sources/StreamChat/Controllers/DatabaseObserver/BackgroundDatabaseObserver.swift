@@ -16,6 +16,7 @@ class BackgroundDatabaseObserver<Item, DTO: NSManagedObject> {
 
     /// Used to convert the `DTO`s to the resulting `Item`s.
     private let itemCreator: (DTO) throws -> Item
+    private let itemReuseKeyPaths: (item: KeyPath<Item, String>, dto: KeyPath<DTO, String>)?
     private let sorting: [SortValue<Item>]
 
     /// Used to observe the changes in the DB.
@@ -64,6 +65,7 @@ class BackgroundDatabaseObserver<Item, DTO: NSManagedObject> {
     ///   - fetchRequest: The `NSFetchRequest` that specifies the elements of the list.
     ///   - context: The `NSManagedObjectContext` the observer observes.
     ///   - itemCreator: A closure the observer uses to convert DTO objects into Model objects.
+    ///   - itemReuseKeyPaths: A pair of keypaths used for reusing existing items if they have not changed
     ///   - sorting: An array of SortValue that define the order of the elements in the list.
     ///   - fetchedResultsControllerType: The `NSFetchedResultsController` subclass the observer uses to create its FRC. You can
     ///    inject your custom subclass if needed, i.e. when testing.
@@ -71,10 +73,12 @@ class BackgroundDatabaseObserver<Item, DTO: NSManagedObject> {
         context: NSManagedObjectContext,
         fetchRequest: NSFetchRequest<DTO>,
         itemCreator: @escaping (DTO) throws -> Item,
+        itemReuseKeyPaths: (item: KeyPath<Item, String>, dto: KeyPath<DTO, String>)? = nil,
         sorting: [SortValue<Item>],
         fetchedResultsControllerType: NSFetchedResultsController<DTO>.Type
     ) {
         self.itemCreator = itemCreator
+        self.itemReuseKeyPaths = itemReuseKeyPaths
         self.sorting = sorting
         changeAggregator = ListChangeAggregator<DTO, Item>(itemCreator: itemCreator)
         frc = fetchedResultsControllerType.init(
@@ -166,7 +170,7 @@ class BackgroundDatabaseObserver<Item, DTO: NSManagedObject> {
     /// When the process is done, it also updates the `_items`, which is the locally cached list of mapped items
     /// This method will be called through an operation on `processingQueue`, which will serialize the execution until `onCompletion` is called.
     private func processItems(_ changes: [ListChange<Item>]?, onCompletion: @escaping () -> Void) {
-        mapItems { [weak self] items in
+        mapItems(changes) { [weak self] items in
             guard let self = self else {
                 onCompletion()
                 return
@@ -186,22 +190,17 @@ class BackgroundDatabaseObserver<Item, DTO: NSManagedObject> {
     /// This method is intended to be called from the `managedObjectContext` that is publishing the changes (The one linked to the `NSFetchedResultsController`
     /// in this case).
     /// Once the objects are mapped, those are sorted based on `sorting`
-    private func mapItems(completion: @escaping ([Item]) -> Void) {
+    private func mapItems(_ changes: [ListChange<Item>]?, completion: @escaping ([Item]) -> Void) {
         let objects = frc.fetchedObjects ?? []
-
-        var items: [Item?] = []
-        items = objects.map { [weak self] in
-            guard self?.isDeletingDatabase == false else { return nil }
-            return try? self?.itemCreator($0)
-        }
-
-        let sorting = self.sorting
-        queue.async {
-            var result = items.compactMap { $0 }
-            if !sorting.isEmpty {
-                result = result.sort(using: sorting)
-            }
-            completion(result)
-        }
+        let items = DatabaseItemConverter.convert(
+            dtos: objects,
+            existing: rawItems,
+            changes: changes,
+            itemCreator: itemCreator,
+            itemReuseKeyPaths: itemReuseKeyPaths,
+            sorting: sorting,
+            checkCancellation: { [weak self] in self?.isDeletingDatabase == true }
+        )
+        completion(items)
     }
 }

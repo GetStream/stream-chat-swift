@@ -30,7 +30,8 @@ extension MessageState {
                     for: messageId,
                     sort: ChatMessageReaction.defaultSortingDescriptors()
                 ),
-                itemCreator: { try $0.asModel() }
+                itemCreator: { try $0.asModel() },
+                itemReuseKeyPaths: (\ChatMessageReaction.id, \MessageReactionDTO.id)
             )
             repliesObserver = StateLayerDatabaseObserver(
                 databaseContainer: database,
@@ -41,7 +42,8 @@ extension MessageState {
                     deletedMessagesVisibility: clientConfig.deletedMessagesVisibility,
                     shouldShowShadowedMessages: clientConfig.shouldShowShadowedMessages
                 ),
-                itemCreator: { try $0.asModel() }
+                itemCreator: { try $0.asModel() },
+                itemReuseKeyPaths: (\ChatMessage.id, \MessageDTO.id)
             )
         }
         
