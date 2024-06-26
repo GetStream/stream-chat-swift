@@ -766,7 +766,7 @@ end
 
 lane :install_sim do |options|
   available_simulators = JSON.parse(`xcrun simctl runtime list -j`).select do |_, sim|
-    sim["version"] == options[:ios] && sim["state"] == "Ready"
+    sim['version'] == options[:ios] && sim['state'] == 'Ready'
   end
 
   if available_simulators.empty?
