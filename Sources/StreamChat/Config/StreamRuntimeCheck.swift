@@ -38,4 +38,7 @@ public enum StreamRuntimeCheck {
     ///
     ///  Enables using our legacy web socket connection.
     public static var _useLegacyWebSocketConnection = false
+    
+    /// Enables reusing unchanged converted items in database observers.
+    public static var isDatabaseObserverItemReusingEnabled = true
 }
