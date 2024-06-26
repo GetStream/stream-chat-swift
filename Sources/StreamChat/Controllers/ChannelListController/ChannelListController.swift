@@ -279,7 +279,14 @@ extension ChatChannelListController {
             _ sorting: [SortValue<ChatChannel>]
         )
             -> ListDatabaseObserverWrapper<ChatChannel, ChannelDTO> = {
-                ListDatabaseObserverWrapper(isBackground: $0, database: $1, fetchRequest: $2, itemCreator: $3, sorting: $4)
+                ListDatabaseObserverWrapper(
+                    isBackground: $0,
+                    database: $1,
+                    fetchRequest: $2,
+                    itemCreator: $3,
+                    itemReuseKeyPaths: (\ChatChannel.cid.rawValue, \ChannelDTO.cid),
+                    sorting: $4
+                )
             }
     }
 }

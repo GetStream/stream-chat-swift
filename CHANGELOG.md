@@ -12,6 +12,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Reset channel members and watchers state when fetching the initial state of the channel [#3245](https://github.com/GetStream/stream-chat-swift/pull/3245)
 - Fix inconsistent message text when extremely quickly updating it [#3242](https://github.com/GetStream/stream-chat-swift/pull/3242)
 - Fix message attachments returning nil sometimes in push notification extensions [#3261](https://github.com/GetStream/stream-chat-swift/pull/3261)
+- Significantly improve performance of database observers [#3260](https://github.com/GetStream/stream-chat-swift/pull/3260)
 ### 🔄 Changed
 - Enable background mapping by default, which improves performance overall [#3250](https://github.com/GetStream/stream-chat-swift/pull/3250)
 

@@ -7,6 +7,9 @@ import Foundation
 /// A type representing a message reaction. `ChatMessageReaction` is an immutable snapshot
 /// of a message reaction entity at the given time.
 public struct ChatMessageReaction: Hashable {
+    /// The id of the reaction.
+    let id: String
+    
     /// The reaction type.
     public let type: MessageReactionType
 

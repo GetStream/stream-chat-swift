@@ -157,6 +157,7 @@ extension ChatChannelWatcherListController {
                 database: $1,
                 fetchRequest: $2,
                 itemCreator: $3,
+                itemReuseKeyPaths: (\ChatUser.id, \UserDTO.id),
                 fetchedResultsControllerType: $4
             )
         }

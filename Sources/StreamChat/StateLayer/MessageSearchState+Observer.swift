@@ -41,7 +41,8 @@ extension MessageSearchState {
                 messagesObserver = StateLayerDatabaseObserver(
                     databaseContainer: database,
                     fetchRequest: MessageDTO.messagesFetchRequest(for: query),
-                    itemCreator: { try $0.asModel() }
+                    itemCreator: { try $0.asModel() },
+                    itemReuseKeyPaths: (\ChatMessage.id, \MessageDTO.id)
                 )
                 do {
                     if let messagesObserver {
