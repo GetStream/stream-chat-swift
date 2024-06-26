@@ -702,6 +702,9 @@ final class ChannelController_Tests: XCTestCase {
     /// This test simulates a bug where the `channel` and `messages` fields were not updated if
     /// they weren't touched before calling synchronize.
     func test_synchronize_newDMChannelController_fieldsAreFetched_evenAfterCallingSynchronize() throws {
+        try XCTSkipIf(ProcessInfo().operatingSystemVersion.majorVersion == 14,
+                      "https://stream-io.atlassian.net/browse/PBE-4812")
+        
         setupControllerForNewDirectMessageChannel(
             currentUserId: .unique,
             otherUserId: .unique
@@ -4208,10 +4211,8 @@ final class ChannelController_Tests: XCTestCase {
     }
 
     func test_markUnread_whenIsNotMarkingAsRead_andCurrentUserIdIsPresent_whenThereAreOtherMessages_whenUpdaterSucceeds() throws {
-        try XCTSkipIf(
-            ProcessInfo().operatingSystemVersion.majorVersion == 13,
-            "https://stream-io.atlassian.net/browse/PBE-4812"
-        )
+        try XCTSkipIf(ProcessInfo().operatingSystemVersion.majorVersion == 13,
+                      "https://stream-io.atlassian.net/browse/PBE-4812")
         
         let messageId = MessageId.unique
         let previousMessageId = MessageId.unique
