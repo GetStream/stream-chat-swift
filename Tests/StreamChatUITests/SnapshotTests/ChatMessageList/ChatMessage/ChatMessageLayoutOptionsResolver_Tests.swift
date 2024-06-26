@@ -1058,6 +1058,7 @@ final class ChatMessageLayoutOptionsResolver_Tests: XCTestCase {
             reactionScores: ["like": 1],
             latestReactions: [
                 .init(
+                    id: .unique,
                     type: "like",
                     score: 1,
                     createdAt: .unique,
@@ -1098,6 +1099,7 @@ final class ChatMessageLayoutOptionsResolver_Tests: XCTestCase {
             reactionScores: ["like": 1],
             latestReactions: [
                 .init(
+                    id: .unique,
                     type: "surfing",
                     score: 1,
                     createdAt: .unique,
@@ -1138,6 +1140,7 @@ final class ChatMessageLayoutOptionsResolver_Tests: XCTestCase {
             reactionScores: ["like": 1],
             latestReactions: [
                 .init(
+                    id: .unique,
                     type: "like",
                     score: 1,
                     createdAt: .unique,
@@ -1178,6 +1181,7 @@ final class ChatMessageLayoutOptionsResolver_Tests: XCTestCase {
             reactionScores: ["like": 1],
             latestReactions: [
                 .init(
+                    id: .unique,
                     type: "like",
                     score: 1,
                     createdAt: .unique,
@@ -2051,6 +2055,7 @@ private extension Array where Element == (ChatMessage, Bool) {
             reactionScores: ["like": 1],
             latestReactions: [
                 .init(
+                    id: .unique,
                     type: "like",
                     score: 1,
                     createdAt: .unique,
