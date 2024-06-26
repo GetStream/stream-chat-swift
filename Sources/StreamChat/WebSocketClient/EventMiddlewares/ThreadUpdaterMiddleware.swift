@@ -48,8 +48,8 @@ struct ThreadUpdaterMiddleware: EventMiddleware {
             guard message.user.id != currentUserId else {
                 break
             }
-            let read = session.loadThreadRead(parentMessageId: parentMessageId, userId: currentUserId)
-            read?.unreadMessagesCount += 1
+
+            session.incrementThreadUnreadCount(parentMessageId: parentMessageId, for: currentUserId)
         default:
             break
         }

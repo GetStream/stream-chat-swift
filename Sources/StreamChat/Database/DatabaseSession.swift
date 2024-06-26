@@ -449,6 +449,10 @@ protocol ThreadReadDatabaseSession {
     /// Fetches `ThreadReadDTO`entities for the given `userId` from the DB.
     func loadThreadReads(for userId: UserId) -> [ThreadReadDTO]
 
+    /// Increments the thread unread count for the given user id.
+    @discardableResult
+    func incrementThreadUnreadCount(parentMessageId: MessageId, for userId: String) -> ThreadReadDTO?
+
     /// Sets the thread with `parentMessageId` as read for `userId`
     func markThreadAsRead(parentMessageId: MessageId, userId: UserId, at readAt: Date)
 

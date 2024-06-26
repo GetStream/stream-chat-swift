@@ -116,10 +116,17 @@ extension NSManagedObjectContext {
         read?.lastReadAt = nil
     }
 
+    func incrementThreadUnreadCount(parentMessageId: MessageId, for userId: String) -> ThreadReadDTO? {
+        let read = loadThreadRead(parentMessageId: parentMessageId, userId: userId)
+            ?? makeEmptyRead(parentMessageId: parentMessageId, userId: userId, readAt: Date())
+        read?.unreadMessagesCount += 1
+        return read
+    }
+
     @discardableResult
     private func makeEmptyRead(parentMessageId: MessageId, userId: UserId, readAt: Date?) -> ThreadReadDTO? {
         guard let thread = thread(parentMessageId: parentMessageId, cache: nil),
-              let participant = thread.threadParticipants.first(where: { $0.user.id == userId }) else {
+              let user = user(id: userId) else {
             return nil
         }
 
@@ -130,7 +137,7 @@ extension NSManagedObjectContext {
             cache: nil
         )
         read.thread = thread
-        read.user = participant.user
+        read.user = user
         read.lastReadAt = readAt?.bridgeDate
         read.unreadMessagesCount = 0
         return read

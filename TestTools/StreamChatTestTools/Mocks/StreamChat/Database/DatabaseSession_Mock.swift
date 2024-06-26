@@ -412,6 +412,10 @@ class DatabaseSession_Mock: DatabaseSession {
         underlyingSession.loadThreadReads(for: userId)
     }
 
+    func incrementThreadUnreadCount(parentMessageId: MessageId, for userId: String) -> ThreadReadDTO? {
+        underlyingSession.incrementThreadUnreadCount(parentMessageId: parentMessageId, for: userId)
+    }
+
     var markThreadAsReadCallCount = 0
     var markThreadAsReadCalledWith: (MessageId, UserId, Date)?
 

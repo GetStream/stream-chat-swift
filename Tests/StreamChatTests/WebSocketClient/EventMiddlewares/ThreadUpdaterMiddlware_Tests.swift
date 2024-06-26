@@ -110,6 +110,40 @@ final class ThreadUpdaterMiddleware_Tests: XCTestCase {
         XCTAssertEqual(thread?.read.first?.unreadMessagesCount, 2)
     }
 
+    func test_threadMessageNewEvent_whenThreadReadDoesNotExist_stillIncreasesUnreadCount() throws {
+        let currentUserId = UserId.unique
+        let parentMessageId = MessageId.unique
+        let cid = ChannelId.unique
+        let eventPayload = EventPayload(
+            eventType: .threadMessageNew,
+            cid: cid,
+            channel: .dummy(cid: cid),
+            message: .dummy(messageId: .unique, parentId: parentMessageId, cid: cid),
+            createdAt: .unique
+        )
+
+        let event = try ThreadMessageNewEventDTO(from: eventPayload)
+
+        try database.writeSynchronously { session in
+            let currentUserId = UserId.unique
+            try session.saveCurrentUser(payload: .dummy(userId: currentUserId, role: .user))
+            try session.saveChannel(payload: .dummy(channel: .dummy(cid: cid)))
+            try session.saveThread(
+                payload: .dummy(
+                    parentMessageId: parentMessageId,
+                    latestReplies: [.dummy(), .dummy()]
+                ),
+                cache: nil
+            )
+
+            _ = self.middleware.handle(event: event, session: session)
+        }
+
+        let thread = database.viewContext.thread(parentMessageId: parentMessageId, cache: nil)
+        XCTAssertEqual(thread?.latestReplies.count, 3)
+        XCTAssertEqual(thread?.read.first?.unreadMessagesCount, 1)
+    }
+
     func test_threadMessageNewEvent_whenCurrentUserReply_doesNotIncreaseUnreadCount() throws {
         let currentUserId = UserId.unique
         let parentMessageId = MessageId.unique
