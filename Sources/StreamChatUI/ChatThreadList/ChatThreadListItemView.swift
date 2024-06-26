@@ -247,7 +247,6 @@ open class ChatThreadListItemView: _View, ThemeProvider {
         let channel = thread.channel
         let latestReply = thread.latestReplies.last
 
-        let parentMessageText = thread.title ?? thread.parentMessage.text
         let channelNameText = appearance.formatters.channelName.format(
             channel: channel,
             forCurrentUserId: content.currentUserId
@@ -258,12 +257,24 @@ open class ChatThreadListItemView: _View, ThemeProvider {
         let unreadReplies = thread.reads.first(where: { $0.user.id == content.currentUserId })?.unreadMessagesCount ?? 0
 
         threadTitleLabel.text = channelNameText
-        threadDescriptionLabel.text = L10n.ThreadListItem.repliedTo(parentMessageText)
+        threadDescriptionLabel.text = parentMessagePreviewText()
         replyDescriptionLabel.text = replyPreviewText()
         replyTimestampLabel.text = replyTimestampLabelText
         replyAuthorAvatarView.content = latestReply?.author
         replyTitleLabel.text = latestReply?.author.name
         threadUnreadCountView.content = unreadReplies
+    }
+
+    /// The parent message preview text.
+    open func parentMessagePreviewText() -> String? {
+        guard let thread = content?.thread else { return nil }
+        let parentMessageText: String
+        if thread.parentMessage.isDeleted {
+            parentMessageText = L10n.Message.Item.deleted
+        } else {
+            parentMessageText = thread.title ?? thread.parentMessage.text
+        }
+        return L10n.ThreadListItem.repliedTo(parentMessageText)
     }
 
     /// The reply preview text.
@@ -275,6 +286,10 @@ open class ChatThreadListItemView: _View, ThemeProvider {
         
         if latestReply.text.isEmpty {
             return latestReply.allAttachments.first?.type.rawValue
+        }
+
+        if latestReply.isDeleted {
+            return L10n.Message.Item.deleted
         }
 
         return latestReply.text

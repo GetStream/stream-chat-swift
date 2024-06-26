@@ -253,6 +253,10 @@ internal enum L10n {
         internal static var confirmationTitle: String { L10n.tr("Localizable", "message.actions.flag.confirmation-title") }
       }
     }
+    internal enum Item {
+      /// This message was deleted.
+      internal static var deleted: String { L10n.tr("Localizable", "message.item.deleted") }
+    }
     internal enum Moderation {
       /// Delete Message
       internal static var delete: String { L10n.tr("Localizable", "message.moderation.delete") }

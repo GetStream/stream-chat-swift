@@ -56,12 +56,12 @@ final class ChatThreadListItemView_Tests: XCTestCase {
 
     func test_defaultAppearance_withUnreads() {
         let currentUser = mockVader
-        let unreadThread = mockThread
+        let thread = mockThread
             .with(reads: [.mock(user: currentUser, lastReadAt: .unique, unreadMessagesCount: 4)])
 
         let view = threadItemView(
             content: .init(
-                thread: unreadThread,
+                thread: thread,
                 currentUserId: currentUser.id
             )
         )
@@ -71,12 +71,46 @@ final class ChatThreadListItemView_Tests: XCTestCase {
 
     func test_defaultAppearance_withThreadTitle() {
         let currentUser = mockVader
-        let unreadThread = mockThread
+        let thread = mockThread
             .with(title: "Thread Title")
 
         let view = threadItemView(
             content: .init(
-                thread: unreadThread,
+                thread: thread,
+                currentUserId: currentUser.id
+            )
+        )
+
+        AssertSnapshot(view, variants: [.defaultLight])
+    }
+
+    func test_defaultAppearance_withParentMessageDeleted() {
+        let currentUser = mockVader
+        let thread = mockThread
+            .with(parentMessage: .mock(text: "Parent Message", deletedAt: .unique))
+
+        let view = threadItemView(
+            content: .init(
+                thread: thread,
+                currentUserId: currentUser.id
+            )
+        )
+
+        AssertSnapshot(view, variants: [.defaultLight])
+    }
+
+    func test_defaultAppearance_withLastReplyDeleted() {
+        let currentUser = mockVader
+        let thread = mockThread
+            .with(latestReplies: [
+                .mock(text: "First Message", author: mockYoda),
+                .mock(text: "Second Message", author: mockVader),
+                .mock(text: "Third Message", author: mockYoda, deletedAt: .unique)
+            ])
+
+        let view = threadItemView(
+            content: .init(
+                thread: thread,
                 currentUserId: currentUser.id
             )
         )
