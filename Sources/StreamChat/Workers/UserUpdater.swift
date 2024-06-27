@@ -2,8 +2,8 @@
 // Copyright © 2024 Stream.io Inc. All rights reserved.
 //
 
-import Foundation
 import CoreData
+import Foundation
 
 /// Makes user-related calls to the backend and updates the local storage with the results.
 class UserUpdater: Worker {
