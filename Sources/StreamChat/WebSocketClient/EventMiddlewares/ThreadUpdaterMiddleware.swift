@@ -58,7 +58,9 @@ struct ThreadUpdaterMiddleware: EventMiddleware {
             /// Add message to thread replies
             let thread = session.thread(parentMessageId: parentMessageId, cache: nil)
             thread?.latestReplies.insert(message)
-            thread?.updatedAt = Date().bridgeDate
+            /// Trigger a thread update, but do not update the order of the thread list.
+            /// This is why we don't change the `updatedAt` value.
+            thread?.updatedAt = thread?.updatedAt
 
             guard let currentUserId = session.currentUser?.user.id else {
                 break
