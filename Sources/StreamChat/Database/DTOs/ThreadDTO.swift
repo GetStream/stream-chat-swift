@@ -310,4 +310,8 @@ extension NSManagedObjectContext {
         let results = try fetch(fetchRequest)
         results.forEach { delete($0) }
     }
+
+    func delete(thread: ThreadDTO) {
+        delete(thread)
+    }
 }

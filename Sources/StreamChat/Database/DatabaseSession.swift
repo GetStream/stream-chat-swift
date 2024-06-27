@@ -432,6 +432,9 @@ protocol ThreadDatabaseSession {
 
     /// Cleans all the threads in the database.
     func deleteAllThreads() throws
+
+    /// Deletes a thread.
+    func delete(thread: ThreadDTO)
 }
 
 protocol ThreadReadDatabaseSession {

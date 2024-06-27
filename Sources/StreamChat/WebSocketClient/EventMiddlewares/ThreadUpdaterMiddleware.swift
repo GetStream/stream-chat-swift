@@ -18,6 +18,12 @@ struct ThreadUpdaterMiddleware: EventMiddleware {
             if isUnreadThread {
                 session.markThreadAsUnread(for: event.firstUnreadMessageId, userId: event.user.id)
             }
+        case let event as ChannelDeletedEventDTO:
+            // Delete threads belonging to this deleted channel
+            guard let channel = session.channel(cid: event.channel.cid) else { break }
+            channel.threads.forEach {
+                session.delete(thread: $0)
+            }
         case let event as ThreadMessageNewEventDTO:
             let messagePayload = event.message
             guard let channelId = event.message.cid,

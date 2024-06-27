@@ -185,4 +185,47 @@ final class ThreadUpdaterMiddleware_Tests: XCTestCase {
         XCTAssertEqual(thread?.latestReplies.count, 3)
         XCTAssertEqual(thread?.read.first?.unreadMessagesCount, 1)
     }
+
+    func test_channelDeletedEvent_shouldDeleteAllThreadsBelongingToTheDeletedChannel() throws {
+        let currentUserId = UserId.unique
+        let parentMessageId = MessageId.unique
+        let cid = ChannelId.unique
+        let eventPayload = EventPayload(
+            eventType: .channelDeleted,
+            cid: cid,
+            user: .dummy(userId: .unique),
+            channel: .dummy(cid: cid),
+            createdAt: .unique
+        )
+
+        let event = try ChannelDeletedEventDTO(from: eventPayload)
+
+        try database.writeSynchronously { session in
+            try session.saveCurrentUser(payload: .dummy(userId: currentUserId, role: .user))
+            let channelDTO = try session.saveChannel(payload: .dummy(channel: .dummy(cid: cid)))
+            try session.saveThread(
+                payload: .dummy(
+                    parentMessageId: .unique,
+                    channel: .dummy(cid: cid),
+                    latestReplies: [.dummy(), .dummy()]
+                ),
+                cache: nil
+            )
+            try session.saveThread(
+                payload: .dummy(
+                    parentMessageId: .unique,
+                    channel: .dummy(cid: cid),
+                    latestReplies: [.dummy(), .dummy()]
+                ),
+                cache: nil
+            )
+
+            XCTAssertEqual(channelDTO.threads.count, 2)
+
+            _ = self.middleware.handle(event: event, session: session)
+        }
+
+        let channel = database.viewContext.channel(cid: cid)
+        XCTAssertEqual(channel?.threads.count, 0)
+    }
 }

@@ -404,6 +404,10 @@ class DatabaseSession_Mock: DatabaseSession {
         try underlyingSession.deleteAllThreads()
     }
 
+    func delete(thread: ThreadDTO) {
+        underlyingSession.delete(thread: thread)
+    }
+
     func loadThreadRead(parentMessageId: MessageId, userId: String) -> StreamChat.ThreadReadDTO? {
         underlyingSession.loadThreadRead(parentMessageId: parentMessageId, userId: userId)
     }

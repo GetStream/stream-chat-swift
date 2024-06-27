@@ -51,6 +51,7 @@ class ChannelDTO: NSManagedObject {
 
     @NSManaged var createdBy: UserDTO?
     @NSManaged var members: Set<MemberDTO>
+    @NSManaged var threads: Set<ThreadDTO>
 
     /// If the current user is a member of the channel, this is their MemberDTO
     @NSManaged var membership: MemberDTO?
