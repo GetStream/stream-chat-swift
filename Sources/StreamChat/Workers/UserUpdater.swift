@@ -3,6 +3,7 @@
 //
 
 import Foundation
+import CoreData
 
 /// Makes user-related calls to the backend and updates the local storage with the results.
 class UserUpdater: Worker {
@@ -39,6 +40,12 @@ class UserUpdater: Worker {
             case .success:
                 self.database.write({ session in
                     session.currentUser?.blockedUserIds.insert(userId)
+                    if let channel = ChannelDTO.directMessageChannel(
+                        participantId: userId,
+                        context: self.database.writableContext
+                    ) {
+                        try session.channel(cid: .init(cid: channel.cid))?.isHidden = true
+                    }
                 }, completion: {
                     if let error = $0 {
                         log.error("Failed to save blocked user with id: <\(userId)> to the database. Error: \(error)")
@@ -65,6 +72,12 @@ class UserUpdater: Worker {
             case .success:
                 self.database.write({ session in
                     session.currentUser?.blockedUserIds.remove(userId)
+                    if let channel = ChannelDTO.directMessageChannel(
+                        participantId: userId,
+                        context: self.database.writableContext
+                    ) {
+                        try session.channel(cid: .init(cid: channel.cid))?.isHidden = false
+                    }
                 }, completion: {
                     if let error = $0 {
                         log.error("Failed to remove blocked user with id: <\(userId)> from the database. Error: \(error)")

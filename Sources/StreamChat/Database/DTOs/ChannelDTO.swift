@@ -383,6 +383,18 @@ extension ChannelDTO {
         request.fetchBatchSize = query.pagination.pageSize
         return request
     }
+    
+    static func directMessageChannel(participantId: UserId, context: NSManagedObjectContext) -> ChannelDTO? {
+        let request = NSFetchRequest<ChannelDTO>(entityName: ChannelDTO.entityName)
+        request.sortDescriptors = [NSSortDescriptor(keyPath: \ChannelDTO.updatedAt, ascending: false)]
+        request.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [
+            NSPredicate(format: "cid CONTAINS ':!members'"),
+            NSPredicate(format: "members.@count == 2"),
+            NSPredicate(format: "ANY members.user.id == %@", participantId)
+        ])
+        request.fetchLimit = 1
+        return try? context.fetch(request).first
+    }
 }
 
 extension ChannelDTO {
