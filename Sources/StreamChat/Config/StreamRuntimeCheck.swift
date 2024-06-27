@@ -13,7 +13,7 @@ public enum StreamRuntimeCheck {
     /// For *internal use* only
     ///
     ///  Enables background mapping of DB models
-    public static var _isBackgroundMappingEnabled = false
+    public static var _isBackgroundMappingEnabled = true
 
     /// For *internal use* only
     ///
@@ -38,4 +38,9 @@ public enum StreamRuntimeCheck {
     ///
     ///  Enables using our legacy web socket connection.
     public static var _useLegacyWebSocketConnection = false
+    
+    /// For *internal use* only
+    ///
+    /// Enables reusing unchanged converted items in database observers.
+    public static var _isDatabaseObserverItemReusingEnabled = true
 }

@@ -27,13 +27,23 @@ final class ConnectedUser_Tests: XCTestCase {
     func test_updateUser_whenAPIRequestSucceeds_thenStateUpdates() async throws {
         try await setUpConnectedUser(usesMockedUpdaters: false)
         await XCTAssertEqual("InitialName", connectedUser.state.user.name)
+        await XCTAssertEqual(UserRole.admin, connectedUser.state.user.userRole)
         
         let changedName = "Name"
-        let apiResult = CurrentUserUpdateResponse(user: currentUserPayload(name: changedName))
+        let apiResult = CurrentUserUpdateResponse(
+            user: currentUserPayload(
+                name: changedName,
+                role: .user
+            )
+        )
         env.client.mockAPIClient.test_mockResponseResult(.success(apiResult))
-        try await connectedUser.update(name: changedName)
+        try await connectedUser.update(
+            name: changedName,
+            role: .user
+        )
 
         await XCTAssertEqual(changedName, connectedUser.state.user.name)
+        await XCTAssertEqual(UserRole.user, connectedUser.state.user.userRole)
     }
     
     func test_markAllChannelsRead_whenAPIRequestSucceeds_thenMarkAllSucceeds() async throws {
@@ -169,12 +179,12 @@ final class ConnectedUser_Tests: XCTestCase {
         }
     }
     
-    private func currentUserPayload(name: String = "InitialName", deviceCount: Int = 0) -> CurrentUserPayload {
+    private func currentUserPayload(name: String = "InitialName", deviceCount: Int = 0, role: UserRole = .admin) -> CurrentUserPayload {
         let devices = (0..<deviceCount).map { _ in DevicePayload.dummy }
         return CurrentUserPayload.dummy(
             userId: connectedUserId,
             name: name,
-            role: .admin,
+            role: role,
             devices: devices
         )
     }

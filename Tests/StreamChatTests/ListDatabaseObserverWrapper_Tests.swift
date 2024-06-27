@@ -143,7 +143,8 @@ final class ListDatabaseObserverWrapper_Tests: XCTestCase {
             isBackground: isBackground,
             database: database,
             fetchRequest: fetchRequest,
-            itemCreator: { $0.testId }
+            itemCreator: { $0.testId },
+            itemReuseKeyPaths: nil
         )
 
         // Call startObserving to set everything up
@@ -196,6 +197,7 @@ extension ListDatabaseObserverWrapper_Tests {
             database: database,
             fetchRequest: fetchRequest,
             itemCreator: { $0.uniqueValue },
+            itemReuseKeyPaths: nil,
             fetchedResultsControllerType: FRC.self
         )
     }

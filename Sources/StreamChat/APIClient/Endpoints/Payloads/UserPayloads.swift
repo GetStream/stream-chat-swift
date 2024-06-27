@@ -166,17 +166,20 @@ struct UserUpdateRequestBody: Encodable {
     let name: String?
     let imageURL: URL?
     let privacySettings: UserPrivacySettingsPayload?
+    let role: UserRole?
     let extraData: [String: RawJSON]?
 
     init(
         name: String?,
         imageURL: URL?,
         privacySettings: UserPrivacySettingsPayload?,
+        role: UserRole?,
         extraData: [String: RawJSON]?
     ) {
         self.name = name
         self.imageURL = imageURL
         self.privacySettings = privacySettings
+        self.role = role
         self.extraData = extraData
     }
 
@@ -185,6 +188,7 @@ struct UserUpdateRequestBody: Encodable {
         try container.encodeIfPresent(name, forKey: .name)
         try container.encodeIfPresent(imageURL, forKey: .imageURL)
         try container.encodeIfPresent(privacySettings, forKey: .privacySettings)
+        try container.encodeIfPresent(role, forKey: .role)
         try extraData?.encode(to: encoder)
     }
 }

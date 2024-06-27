@@ -14,6 +14,7 @@ final class PushNotification_Tests: StreamTestCase {
         try XCTSkipIf(ProcessInfo().operatingSystemVersion.majorVersion < 14,
                       "Push notifications infra does not work on iOS < 14")
         try super.setUpWithError()
+        assertMockServer()
     }
 
     override func tearDownWithError() throws {

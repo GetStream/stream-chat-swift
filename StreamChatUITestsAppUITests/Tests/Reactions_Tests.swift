@@ -9,6 +9,7 @@ final class Reactions_Tests: StreamTestCase {
     override func setUpWithError() throws {
         try super.setUpWithError()
         addTags([.coreFeatures])
+        assertMockServer()
     }
 
     func test_addsReaction() throws {

@@ -278,6 +278,39 @@ final class ChatMessageContentView_Tests: XCTestCase {
         AssertSnapshot(view, variants: .onlyUserInterfaceStyles)
     }
     
+    func test_appearance_whenMessageWithoutMarkdownOrderedListFromTheCurrentUserIsSent() {
+        let channelWithReadsEnabled: ChatChannel = .mock(
+            cid: .unique,
+            config: .mock(readEventsEnabled: true)
+        )
+
+        let messageWithMarkdownOrderedList = """
+           The UPS Store
+
+           123 S Beverly st
+
+           Beverly Hills CA 1233210.
+        """
+
+        let sentMessageFromCurrentUser: ChatMessage = .mock(
+            id: .unique,
+            cid: channelWithReadsEnabled.cid,
+            text: messageWithMarkdownOrderedList,
+            author: me,
+            createdAt: createdAt,
+            localState: nil,
+            isSentByCurrentUser: true,
+            readBy: []
+        )
+
+        let view = contentView(
+            message: sentMessageFromCurrentUser,
+            channel: channelWithReadsEnabled
+        )
+
+        AssertSnapshot(view, variants: .onlyUserInterfaceStyles)
+    }
+    
     func test_appearance_whenMessageWithMarkdownItalicStyleFromTheCurrentUserIsSent() {
         let channelWithReadsEnabled: ChatChannel = .mock(
             cid: .unique,

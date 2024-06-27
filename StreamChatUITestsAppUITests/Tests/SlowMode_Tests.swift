@@ -15,6 +15,7 @@ final class SlowMode_Tests: StreamTestCase {
     override func setUpWithError() throws {
         try super.setUpWithError()
         addTags([.slowMode])
+        assertMockServer()
     }
 
     func test_slowModeIsActiveAndCooldownIsShown_whenNewMessageIsSent() {
