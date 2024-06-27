@@ -13,8 +13,8 @@ final class ChatThreadListVC_Tests: XCTestCase {
     var mockedThreadListController: ChatThreadListController_Mock!
     var mockedCurrentUserController: CurrentUserController_Mock!
 
-    var mockYoda = ChatUser.mock(id: .unique, name: "Yoda", imageURL: .localYodaImage)
-    var mockVader = ChatUser.mock(id: .unique, name: "Vader", imageURL: TestImages.vader.url)
+    var mockYoda = ChatUser.mock(id: .unique, name: "Yoda")
+    var mockVader = ChatUser.mock(id: .unique, name: "Vader")
     var mockThreads: [ChatThread] = []
 
     override func setUp() {
