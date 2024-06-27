@@ -323,7 +323,7 @@
 		4FFB5EA02BA0507900F0454F /* Collection+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FFB5E9F2BA0507900F0454F /* Collection+Extensions.swift */; };
 		4FFB5EA12BA0507900F0454F /* Collection+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FFB5E9F2BA0507900F0454F /* Collection+Extensions.swift */; };
 		6428DD5526201DCC0065DA1D /* BannerShowingConnectionDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6428DD5426201DCC0065DA1D /* BannerShowingConnectionDelegate.swift */; };
-		647F66D5261E22C200111B19 /* BannerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 647F66D4261E22C200111B19 /* BannerView.swift */; };
+		647F66D5261E22C200111B19 /* DemoConnectionBannerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 647F66D4261E22C200111B19 /* DemoConnectionBannerView.swift */; };
 		648EC576261EF9D400B8F05F /* DemoAppCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 648EC575261EF9D400B8F05F /* DemoAppCoordinator.swift */; };
 		649968D5264E66EB000515AB /* CDNClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 649968D3264E660B000515AB /* CDNClient.swift */; };
 		649968D7264E693E000515AB /* StreamCDNClient_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 649968D6264E693E000515AB /* StreamCDNClient_Tests.swift */; };
@@ -3169,7 +3169,7 @@
 		4FF2A80C2B8E011000941A64 /* ChatState+Observer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ChatState+Observer.swift"; sourceTree = "<group>"; };
 		4FFB5E9F2BA0507900F0454F /* Collection+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Collection+Extensions.swift"; sourceTree = "<group>"; };
 		6428DD5426201DCC0065DA1D /* BannerShowingConnectionDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BannerShowingConnectionDelegate.swift; sourceTree = "<group>"; };
-		647F66D4261E22C200111B19 /* BannerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BannerView.swift; sourceTree = "<group>"; };
+		647F66D4261E22C200111B19 /* DemoConnectionBannerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DemoConnectionBannerView.swift; sourceTree = "<group>"; };
 		648EC575261EF9D400B8F05F /* DemoAppCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DemoAppCoordinator.swift; sourceTree = "<group>"; };
 		649968D3264E660B000515AB /* CDNClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CDNClient.swift; sourceTree = "<group>"; };
 		649968D6264E693E000515AB /* StreamCDNClient_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StreamCDNClient_Tests.swift; sourceTree = "<group>"; };
@@ -6624,7 +6624,7 @@
 		A3227E67284A4AA400EBE6CC /* Banner */ = {
 			isa = PBXGroup;
 			children = (
-				647F66D4261E22C200111B19 /* BannerView.swift */,
+				647F66D4261E22C200111B19 /* DemoConnectionBannerView.swift */,
 				6428DD5426201DCC0065DA1D /* BannerShowingConnectionDelegate.swift */,
 			);
 			path = Banner;
@@ -10893,7 +10893,7 @@
 				ADD328612C06463600BAD0E9 /* DemoChatThreadListVC.swift in Sources */,
 				ADD3285A2C04DD8300BAD0E9 /* DemoAppTabBarController.swift in Sources */,
 				8440860D28FBFE520027849C /* DemoAppCoordinator+DemoApp.swift in Sources */,
-				647F66D5261E22C200111B19 /* BannerView.swift in Sources */,
+				647F66D5261E22C200111B19 /* DemoConnectionBannerView.swift in Sources */,
 				A31783DD285B79EB005009B9 /* Bundle+PushProvider.swift in Sources */,
 				A3227E72284A4BF700EBE6CC /* HiddenChannelListVC.swift in Sources */,
 				AD75CB6B27886746005F5FF7 /* OptionsSelectorViewController.swift in Sources */,
