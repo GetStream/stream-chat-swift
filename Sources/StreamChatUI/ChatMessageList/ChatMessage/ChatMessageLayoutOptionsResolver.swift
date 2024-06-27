@@ -157,7 +157,7 @@ open class ChatMessageLayoutOptionsResolver {
 
         // The message after the current one has different author so the current message
         // is either a standalone or last in sequence.
-        guard nextMessage.author == message.author else { return true }
+        guard nextMessage.author.id == message.author.id else { return true }
 
         // The current message should end the group when the next message has type:
         //  1. `error` (e.g. contains invalid command/didn't pass moderation)
