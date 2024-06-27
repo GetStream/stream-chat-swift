@@ -23,6 +23,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - [Threads v2] Fix marking a root of a thread as unread not doing anything [#3229](https://github.com/GetStream/stream-chat-swift/pull/3229)
 ### 🔄 Changed
 - `ChatChannelUnreadCountView` now shares a common view (`badgeView`) with `ChatThreadUnreadCountView` [#3229](https://github.com/GetStream/stream-chat-swift/pull/3229)
+### 🎭 New Localizations
+- `"message.item.deleted" = "This message was deleted."` [#3229](https://github.com/GetStream/stream-chat-swift/pull/3229)
+- `"threadListItem.replied-to" = "replied to: %@"` [#3229](https://github.com/GetStream/stream-chat-swift/pull/3229)
+- `"threadList.empty.description" = "No threads here yet..."` [#3229](https://github.com/GetStream/stream-chat-swift/pull/3229)
+- `"threadList.unread-threads" = "%d unread threads"` [#3229](https://github.com/GetStream/stream-chat-swift/pull/3229)
 
 # [4.58.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.58.0)
 _June 26, 2024_
