@@ -228,4 +228,112 @@ final class ThreadUpdaterMiddleware_Tests: XCTestCase {
         let channel = database.viewContext.channel(cid: cid)
         XCTAssertEqual(channel?.threads.count, 0)
     }
+
+    func test_messageDeletedEvent_whenIsReplyOfThread_shouldTriggerThreadUpdate() throws {
+        let currentUserId = UserId.unique
+        let parentMessageId = MessageId.unique
+        let cid = ChannelId.unique
+        let eventPayload = EventPayload(
+            eventType: .messageDeleted,
+            cid: cid,
+            user: .dummy(userId: .unique),
+            message: .dummy(messageId: .unique, parentId: parentMessageId),
+            createdAt: .unique,
+            hardDelete: false
+        )
+
+        let event = try MessageDeletedEventDTO(from: eventPayload)
+
+        try database.writeSynchronously { session in
+            try session.saveCurrentUser(payload: .dummy(userId: currentUserId, role: .user))
+            try session.saveChannel(payload: .dummy(channel: .dummy(cid: cid)))
+            try session.saveThread(
+                payload: .dummy(
+                    parentMessageId: parentMessageId,
+                    channel: .dummy(cid: cid),
+                    latestReplies: [.dummy(), .dummy()]
+                ),
+                cache: nil
+            )
+        }
+
+        try database.writeSynchronously { session in
+            _ = self.middleware.handle(event: event, session: session)
+
+            let thread = session.thread(parentMessageId: parentMessageId, cache: nil)
+            XCTAssertEqual(thread?.hasChanges, true)
+        }
+    }
+
+    func test_messageDeletedEvent_whenIsParentMessage_whenSoftDeleted_shouldTriggerThreadUpdate() throws {
+        let currentUserId = UserId.unique
+        let parentMessageId = MessageId.unique
+        let cid = ChannelId.unique
+        let eventPayload = EventPayload(
+            eventType: .messageDeleted,
+            cid: cid,
+            user: .dummy(userId: .unique),
+            message: .dummy(messageId: parentMessageId),
+            createdAt: .unique,
+            hardDelete: false
+        )
+
+        let event = try MessageDeletedEventDTO(from: eventPayload)
+
+        try database.writeSynchronously { session in
+            try session.saveCurrentUser(payload: .dummy(userId: currentUserId, role: .user))
+            try session.saveChannel(payload: .dummy(channel: .dummy(cid: cid)))
+            try session.saveThread(
+                payload: .dummy(
+                    parentMessageId: parentMessageId,
+                    channel: .dummy(cid: cid),
+                    latestReplies: [.dummy(), .dummy()]
+                ),
+                cache: nil
+            )
+        }
+
+        try database.writeSynchronously { session in
+            _ = self.middleware.handle(event: event, session: session)
+
+            let thread = session.thread(parentMessageId: parentMessageId, cache: nil)
+            XCTAssertEqual(thread?.hasChanges, true)
+        }
+    }
+
+    func test_messageDeletedEvent_whenIsParentMessage_whenHardDeleted_shouldDeleteThread() throws {
+        let currentUserId = UserId.unique
+        let parentMessageId = MessageId.unique
+        let cid = ChannelId.unique
+        let eventPayload = EventPayload(
+            eventType: .messageDeleted,
+            cid: cid,
+            user: .dummy(userId: .unique),
+            message: .dummy(messageId: parentMessageId),
+            createdAt: .unique,
+            hardDelete: true
+        )
+
+        let event = try MessageDeletedEventDTO(from: eventPayload)
+
+        try database.writeSynchronously { session in
+            try session.saveCurrentUser(payload: .dummy(userId: currentUserId, role: .user))
+            let channelDTO = try session.saveChannel(payload: .dummy(channel: .dummy(cid: cid)))
+            try session.saveThread(
+                payload: .dummy(
+                    parentMessageId: parentMessageId,
+                    channel: .dummy(cid: cid),
+                    latestReplies: [.dummy(), .dummy()]
+                ),
+                cache: nil
+            )
+
+            XCTAssertNotNil(session.thread(parentMessageId: parentMessageId, cache: nil))
+
+            _ = self.middleware.handle(event: event, session: session)
+        }
+
+        let deletedThread = database.viewContext.thread(parentMessageId: parentMessageId, cache: nil)
+        XCTAssertNil(deletedThread)
+    }
 }

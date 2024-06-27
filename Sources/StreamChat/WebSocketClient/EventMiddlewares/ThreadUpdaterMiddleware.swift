@@ -18,6 +18,20 @@ struct ThreadUpdaterMiddleware: EventMiddleware {
             if isUnreadThread {
                 session.markThreadAsUnread(for: event.firstUnreadMessageId, userId: event.user.id)
             }
+        case let event as MessageDeletedEventDTO:
+            if let thread = session.thread(parentMessageId: event.message.id, cache: nil) {
+                if event.hardDelete {
+                    // Delete the thread if parent message is hard deleted.
+                    session.delete(thread: thread)
+                } else {
+                    // Trigger a thread update when parent from thread is soft deleted.
+                    thread.updatedAt = thread.updatedAt
+                }
+            } else if let parentId = event.message.parentId,
+                      let thread = session.thread(parentMessageId: parentId, cache: nil) {
+                // Trigger a thread update when reply from thread is soft deleted.
+                thread.updatedAt = thread.updatedAt
+            }
         case let event as ChannelDeletedEventDTO:
             // Delete threads belonging to this deleted channel
             guard let channel = session.channel(cid: event.channel.cid) else { break }
