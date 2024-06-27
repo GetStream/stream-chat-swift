@@ -431,7 +431,14 @@ lane :xcmetrics do |options|
 
       benchmark_value_avoids_zero_division = benchmark_value == 0 ? 1 : benchmark_value
       diff = ((benchmark_value - branch_value) * 100.0 / benchmark_value_avoids_zero_division).round(2)
-      diff_emoji = (is_frame_rate && diff < 0) || (!is_frame_rate && diff > 0) ? '🔼' : '🔽'
+      diff_emoji =
+        if (is_frame_rate && diff < 0) || (!is_frame_rate && diff > 0)
+          '🔼'
+        elsif diff.zero?
+          '🟰'
+        else
+          '🔽'
+        end
 
       title = metric.to_s.gsub('_', ' ').capitalize
       target = index.zero? ? test_name.match(/(?<=test)(.*?)(?=ScrollTime)/).to_s : ''
