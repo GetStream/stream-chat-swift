@@ -313,7 +313,8 @@ extension PollController {
                 isBackground: $0,
                 database: $1,
                 fetchRequest: $2,
-                itemCreator: $3
+                itemCreator: $3,
+                itemReuseKeyPaths: (\PollVote.id, \PollVoteDTO.id)
             )
         }
     }

@@ -37,8 +37,11 @@ ln -sf ../../hooks/pre-commit.sh .git/hooks/pre-commit
 chmod +x .git/hooks/pre-commit
 chmod +x ./hooks/git-format-staged
 
-puts "Install brew dependencies"
-brew bundle -d
+
+if [ "${SKIP_BREW_BOOTSTRAP:-}" != true ]; then
+  puts "Install brew dependencies"
+  brew bundle -d
+fi
 
 if [ "${SKIP_MINT_BOOTSTRAP:-}" != true ]; then
   puts "Bootstrap Mint dependencies"

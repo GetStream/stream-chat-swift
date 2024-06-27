@@ -495,6 +495,7 @@ private class TestEnvironment {
                 database: $1,
                 fetchRequest: $2,
                 itemCreator: $3,
+                itemReuseKeyPaths: (\ChatUser.id, \UserDTO.id),
                 fetchedResultsControllerType: $4
             )
             self.watcherListObserver?.synchronizeError = self.watcherListObserverSynchronizeError

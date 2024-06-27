@@ -221,7 +221,8 @@ extension ChatThreadListController_Tests {
                         isBackground: false,
                         database: database,
                         fetchRequest: fetchRequest,
-                        itemCreator: itemCreator
+                        itemCreator: itemCreator,
+                        itemReuseKeyPaths: nil
                     )
                 }
             )

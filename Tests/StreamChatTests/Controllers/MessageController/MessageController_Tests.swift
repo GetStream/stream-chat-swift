@@ -1689,6 +1689,7 @@ final class MessageController_Tests: XCTestCase {
 
         let mockedReactions = repeatElement(
             ChatMessageReaction(
+                id: .unique,
                 type: "likes",
                 score: 1,
                 createdAt: .unique,
@@ -2525,6 +2526,7 @@ private class TestEnvironment {
                     database: $1,
                     fetchRequest: $2,
                     itemCreator: $3,
+                    itemReuseKeyPaths: (\ChatMessage.id, \MessageDTO.id),
                     fetchedResultsControllerType: $4
                 )
                 return self.repliesObserver!

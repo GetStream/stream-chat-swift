@@ -22,8 +22,6 @@ is_localhost = !is_ci
 before_all do |lane|
   if is_ci
     setup_ci
-    ENV['FASTLANE_XCODEBUILD_SETTINGS_TIMEOUT'] = '180'
-    ENV['FASTLANE_XCODEBUILD_SETTINGS_RETRIES'] = '10'
     xcversion(version: xcode_version) unless [:publish_release, :allure_launch, :allure_upload, :pod_lint, :sync_mock_server, :copyright].include?(lane)
   end
 end
@@ -318,7 +316,7 @@ lane :test do |options|
 
   update_testplan_on_ci(path: 'Tests/StreamChatTests/StreamChatTestPlan.xctestplan')
 
-  scan(
+  scan_options = {
     project: xcode_project,
     scheme: 'StreamChat',
     testplan: 'StreamChatTestPlan',
@@ -328,7 +326,17 @@ lane :test do |options|
     skip_build: true,
     xcargs: buildcache_xcargs,
     number_of_retries: options[:cron] ? 3 : nil
-  )
+  }
+
+  begin
+    scan(scan_options)
+  rescue StandardError => e
+    UI.user_error!(e) unless options[:cron]
+
+    failed_tests = retreive_failed_tests
+    UI.important("Re-running #{failed_tests.size} failed tests ⌛️")
+    scan(scan_options.merge(only_testing: failed_tests))
+  end
 end
 
 desc 'Starts Sinatra web server'
@@ -400,23 +408,45 @@ lane :xcmetrics do |options|
   ['testMessageListScrollTime', 'testChannelListScrollTime'].each do |test_name|
     index = 0
     ['hitches_total_duration', 'duration', 'hitch_time_ratio', 'frame_rate', 'number_of_hitches'].each do |metric|
+      is_frame_rate = metric == 'frame_rate'
       benchmark_value = expected_performance[test_name][metric]['value']
       branch_value = branch_performance[test_name][metric]['value']
       value_extension = branch_performance[test_name][metric]['ext']
 
-      max_stddev = 0.1 # Default Xcode Max STDDEV is 10%
+      max_stddev = benchmark_value * 0.1 # Default Xcode Max STDDEV is 10%
+      warning_status = '🟡' # Warning if a branch is 10% less performant than the benchmark
+      fail_status = '🔴' # Failure if a branch is more than 10% less performant than the benchmark
+      success_status = '🟢' # Success if a branch is more performant or equals to the benchmark
+
       status_emoji =
-        if branch_value > benchmark_value && branch_value < benchmark_value + (benchmark_value * max_stddev)
-          '🟡' # Warning if a branch is 10% less performant than the benchmark
-        elsif branch_value > benchmark_value
-          '🔴' # Failure if a branch is more than 10% less performant than the benchmark
+        if is_frame_rate
+          if branch_value < benchmark_value && branch_value > benchmark_value - max_stddev
+            warning_status
+          elsif branch_value < benchmark_value
+            fail_status
+          else
+            success_status
+          end
         else
-          '🟢' # Success if a branch is more performant or equals to the benchmark
+          if branch_value > benchmark_value && branch_value < benchmark_value + max_stddev
+            warning_status
+          elsif branch_value > benchmark_value
+            fail_status
+          else
+            success_status
+          end
         end
 
       benchmark_value_avoids_zero_division = benchmark_value == 0 ? 1 : benchmark_value
       diff = ((benchmark_value - branch_value) * 100.0 / benchmark_value_avoids_zero_division).round(2)
-      diff_emoji = diff > 0 ? '🔼' : '🔽'
+      diff_emoji =
+        if (is_frame_rate && diff < 0) || (!is_frame_rate && diff > 0)
+          '🔼'
+        elsif diff.zero?
+          '🟰'
+        else
+          '🔽'
+        end
 
       title = metric.to_s.gsub('_', ' ').capitalize
       target = index.zero? ? test_name.match(/(?<=test)(.*?)(?=ScrollTime)/).to_s : ''
@@ -549,13 +579,13 @@ private_lane :parallelize_tests_on_ci do |options|
     UI.success("Tests in total: #{only_testing.flatten.size}. Running #{only_testing_batch.size} of them ⌛️")
     scan(options[:scan].merge(only_testing: only_testing_batch))
   rescue StandardError
-    failed_tests = retreive_failed_e2e_tests
+    failed_tests = retreive_failed_tests
     UI.important("Re-running #{failed_tests.size} failed tests ⌛️")
     scan(options[:scan].merge(only_testing: failed_tests))
   end
 end
 
-private_lane :retreive_failed_e2e_tests do
+private_lane :retreive_failed_tests do
   report_path = 'test_output/report.junit'
   raise UI.user_error!('There is no junit report to parse') unless File.file?(report_path)
 
@@ -756,17 +786,21 @@ lane :rubocop do
   sh('bundle exec rubocop')
 end
 
-lane :install_sim do |options|
-  xcode_install_cache_dir = File.expand_path('~/Library/Caches/XcodeInstall')
-  sim_dmg_path = Dir["#{xcode_install_cache_dir}/*.dmg"].first
-  sim_pkg_path = Dir["#{xcode_install_cache_dir}/*.pkg"].first
-  if is_localhost || sim_dmg_path.nil? || sim_pkg_path.nil?
-    sh("bundle exec xcversion simulators --install='iOS #{options[:ios]}'")
+lane :install_runtime do |options|
+  runtimes = `xcrun simctl runtime list -j`
+  UI.message("👉 Runtime list:\n#{runtimes}")
+  simulators = JSON.parse(runtimes).select do |_, sim|
+    sim['platformIdentifier'].end_with?('iphonesimulator') && sim['version'] == options[:ios] && sim['state'] == 'Ready'
+  end
+
+  if simulators.empty?
+    Dir.chdir('..') do
+      sh("echo 'iOS #{options[:ios]} Simulator' | ipsw download xcode --sim") if Dir['*.dmg'].first.nil?
+      sh("./Scripts/install_ios_runtime.sh #{Dir['*.dmg'].first}")
+      UI.success("iOS #{options[:ios]} Runtime successfuly installed")
+    end
   else
-    sh("hdiutil attach '#{sim_dmg_path}'")
-    sh("sudo installer -pkg '#{sim_pkg_path}' -target /")
-    mount_point = sh("hdiutil attach '#{sim_dmg_path}' | grep Volumes | cut -f 3").strip
-    sh("hdiutil detach '#{mount_point}'")
+    UI.important("iOS #{options[:ios]} Runtime already exists")
   end
 end
 

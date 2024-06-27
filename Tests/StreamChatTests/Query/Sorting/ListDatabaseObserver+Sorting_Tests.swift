@@ -347,6 +347,7 @@ final class ListDatabaseObserver_Sorting_Tests: XCTestCase {
             database: database,
             fetchRequest: request,
             itemCreator: { try $0.asModel() },
+            itemReuseKeyPaths: (\ChatChannel.cid.rawValue, \ChannelDTO.cid),
             sorting: sorting.runtimeSorting
         )
 

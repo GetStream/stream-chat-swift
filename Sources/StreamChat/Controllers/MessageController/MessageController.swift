@@ -816,7 +816,14 @@ extension ChatMessageController {
             _ itemCreator: @escaping (MessageDTO) throws -> ChatMessage,
             _ fetchedResultsControllerType: NSFetchedResultsController<MessageDTO>.Type
         ) -> ListDatabaseObserverWrapper<ChatMessage, MessageDTO> = {
-            .init(isBackground: $0, database: $1, fetchRequest: $2, itemCreator: $3, fetchedResultsControllerType: $4)
+            .init(
+                isBackground: $0,
+                database: $1,
+                fetchRequest: $2,
+                itemCreator: $3,
+                itemReuseKeyPaths: (\ChatMessage.id, \MessageDTO.id),
+                fetchedResultsControllerType: $4
+            )
         }
 
         var messageUpdaterBuilder: (

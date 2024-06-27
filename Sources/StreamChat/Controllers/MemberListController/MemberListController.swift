@@ -169,7 +169,14 @@ extension ChatChannelMemberListController {
             _ itemCreator: @escaping (MemberDTO) throws -> ChatChannelMember,
             _ controllerType: NSFetchedResultsController<MemberDTO>.Type
         ) -> ListDatabaseObserverWrapper<ChatChannelMember, MemberDTO> = {
-            .init(isBackground: $0, database: $1, fetchRequest: $2, itemCreator: $3, fetchedResultsControllerType: $4)
+            .init(
+                isBackground: $0,
+                database: $1,
+                fetchRequest: $2,
+                itemCreator: $3,
+                itemReuseKeyPaths: (\ChatChannelMember.id, \MemberDTO.id),
+                fetchedResultsControllerType: $4
+            )
         }
     }
 }

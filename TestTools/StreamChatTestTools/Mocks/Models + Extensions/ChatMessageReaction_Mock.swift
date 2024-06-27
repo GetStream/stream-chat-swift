@@ -7,6 +7,7 @@ import Foundation
 
 extension ChatMessageReaction {
     public static func mock(
+        id: String = .unique,
         type: MessageReactionType,
         score: Int = 1,
         createdAt: Date = .distantPast,
@@ -15,6 +16,7 @@ extension ChatMessageReaction {
         extraData: [String: RawJSON] = [:]
     ) -> ChatMessageReaction {
         .init(
+            id: id,
             type: type,
             score: score,
             createdAt: createdAt,

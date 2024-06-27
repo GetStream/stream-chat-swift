@@ -203,7 +203,11 @@ extension ChatThreadListController {
         )
             -> ListDatabaseObserverWrapper<ChatThread, ThreadDTO> = {
                 ListDatabaseObserverWrapper(
-                    isBackground: $0, database: $1, fetchRequest: $2, itemCreator: $3
+                    isBackground: $0,
+                    database: $1,
+                    fetchRequest: $2,
+                    itemCreator: $3,
+                    itemReuseKeyPaths: (\ChatThread.reuseId, \ThreadDTO.reuseId)
                 )
             }
     }
