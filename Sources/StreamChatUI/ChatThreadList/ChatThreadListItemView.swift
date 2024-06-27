@@ -268,12 +268,18 @@ open class ChatThreadListItemView: _View, ThemeProvider {
     /// The parent message preview text.
     open func parentMessagePreviewText() -> String? {
         guard let thread = content?.thread else { return nil }
-        let parentMessageText: String
+        
+        var parentMessageText: String
         if thread.parentMessage.isDeleted {
             parentMessageText = L10n.Message.Item.deleted
         } else {
             parentMessageText = thread.title ?? thread.parentMessage.text
         }
+        
+        if parentMessageText.isEmpty {
+            parentMessageText = thread.parentMessage.allAttachments.first?.type.rawValue ?? ""
+        }
+
         return L10n.ThreadListItem.repliedTo(parentMessageText)
     }
 
