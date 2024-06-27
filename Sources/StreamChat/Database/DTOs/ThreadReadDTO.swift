@@ -112,7 +112,9 @@ extension NSManagedObjectContext {
         let read = loadThreadRead(parentMessageId: parentMessageId, userId: userId)
             ?? makeEmptyRead(parentMessageId: parentMessageId, userId: userId, readAt: nil)
 
-        read?.unreadMessagesCount = read?.thread.replyCount ?? 0
+        // At the moment, the backend sets the value to 1
+        // Although ideally it should be equal to the replyCount?
+        read?.unreadMessagesCount = 1
         read?.lastReadAt = nil
     }
 

@@ -115,7 +115,7 @@ final class ThreadReadDTO_Tests: XCTestCase {
             userId: userId
         )
 
-        XCTAssertEqual(threadReadDTO?.unreadMessagesCount, Int64(replyCount))
+        XCTAssertEqual(threadReadDTO?.unreadMessagesCount, 1)
         XCTAssertNil(threadReadDTO?.lastReadAt?.bridgeDate)
     }
 }
