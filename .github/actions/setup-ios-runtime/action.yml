@@ -1,0 +1,32 @@
+name: 'Setup iOS Runtime'
+description: 'Download and Install requested iOS Runtime'
+runs:
+  using: "composite"
+  steps:
+    - name: Cache iOS Simulator Runtime
+      uses: actions/cache@v4
+      id: runtime-cache
+      with:
+        path: ./*.dmg
+        key: ipsw-runtime-ios-${{ inputs.version }}
+        restore-keys: ipsw-runtime-ios-${{ inputs.version }}
+    - name: Setup iOS Simulator Runtime
+      shell: bash
+      run: |
+        brew install blacktop/tap/ipsw
+        bundle exec fastlane install_runtime ios:${{ inputs.version }}
+        xcrun simctl list runtimes
+    - name: Create Custom iOS Simulator
+      shell: bash
+      run: |
+        ios_version_dash=$(echo "${{ inputs.version }}" | tr '.' '-') # ex: 16.4 -> 16-4
+        xcrun simctl create custom-test-device "${{ inputs.device }}" "com.apple.CoreSimulator.SimRuntime.iOS-$ios_version_dash"
+        xcrun simctl list devices ${{ inputs.version }}
+
+inputs:
+  version:
+    description: "iOS Runtime Version"
+    required: true
+  device:
+    description: "iOS Simulator Model"
+    required: true
