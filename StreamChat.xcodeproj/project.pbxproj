@@ -1568,6 +1568,8 @@
 		AD95FD0E28F991ED00DBDF41 /* ImageResize.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD95FD0C28F991ED00DBDF41 /* ImageResize.swift */; };
 		AD95FD1128FA038900DBDF41 /* ImageDownloadOptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD95FD1028FA038900DBDF41 /* ImageDownloadOptions.swift */; };
 		AD95FD1228FA038900DBDF41 /* ImageDownloadOptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD95FD1028FA038900DBDF41 /* ImageDownloadOptions.swift */; };
+		AD96106F2C2DD874004F543C /* BannerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD96106E2C2DD874004F543C /* BannerView.swift */; };
+		AD9610702C2DD874004F543C /* BannerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD96106E2C2DD874004F543C /* BannerView.swift */; };
 		AD9632DC2C09E0350073B814 /* ChatThreadListRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD9632DB2C09E0350073B814 /* ChatThreadListRouter.swift */; };
 		AD9632DD2C09E0350073B814 /* ChatThreadListRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD9632DB2C09E0350073B814 /* ChatThreadListRouter.swift */; };
 		AD9632DF2C09F1900073B814 /* DemoChatThreadVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD9632DE2C09F1900073B814 /* DemoChatThreadVC.swift */; };
@@ -4246,6 +4248,7 @@
 		AD94906B2BF68AB000E69224 /* ThreadListController+Combine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ThreadListController+Combine.swift"; sourceTree = "<group>"; };
 		AD95FD0C28F991ED00DBDF41 /* ImageResize.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageResize.swift; sourceTree = "<group>"; };
 		AD95FD1028FA038900DBDF41 /* ImageDownloadOptions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageDownloadOptions.swift; sourceTree = "<group>"; };
+		AD96106E2C2DD874004F543C /* BannerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BannerView.swift; sourceTree = "<group>"; };
 		AD9632DB2C09E0350073B814 /* ChatThreadListRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatThreadListRouter.swift; sourceTree = "<group>"; };
 		AD9632DE2C09F1900073B814 /* DemoChatThreadVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DemoChatThreadVC.swift; sourceTree = "<group>"; };
 		AD9632E02C0A43630073B814 /* ThreadUpdaterMiddleware.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThreadUpdaterMiddleware.swift; sourceTree = "<group>"; };
@@ -6261,6 +6264,7 @@
 			isa = PBXGroup;
 			children = (
 				ADD3286B2C07CC7100BAD0E9 /* BadgeView.swift */,
+				AD96106E2C2DD874004F543C /* BannerView.swift */,
 				40824D182A1271B9003B61FD /* ClampedView.swift */,
 				40824D172A1271B9003B61FD /* PillButton.swift */,
 				4067764E2A14CB550079B05C /* MediaButton.swift */,
@@ -10483,6 +10487,7 @@
 				AD87D097263C7783008B466C /* CommandButton.swift in Sources */,
 				C1FC2F8127416E150062530F /* RateLimiter.swift in Sources */,
 				224165A825910A2C00ED7F78 /* CheckboxControl.swift in Sources */,
+				AD96106F2C2DD874004F543C /* BannerView.swift in Sources */,
 				79FA4A84263BFD1100EC33DA /* GalleryAttachmentViewInjector.swift in Sources */,
 				AD552E0128F46CE700199A6F /* ImageLoaderOptions.swift in Sources */,
 				88D88F86257F9AA700AFE2A2 /* NSLayoutConstraint+Extensions.swift in Sources */,
@@ -12775,6 +12780,7 @@
 				C121EC112746A1EC00023E4C /* ImageViewExtensions.swift in Sources */,
 				C121EC122746A1EC00023E4C /* FetchImage.swift in Sources */,
 				40824D202A1271B9003B61FD /* ClampedView.swift in Sources */,
+				AD9610702C2DD874004F543C /* BannerView.swift in Sources */,
 				C121EC132746A1EC00023E4C /* ImageCache.swift in Sources */,
 				C121EC142746A1EC00023E4C /* ImageTask.swift in Sources */,
 				C121EC152746A1EC00023E4C /* ImagePipeline.swift in Sources */,

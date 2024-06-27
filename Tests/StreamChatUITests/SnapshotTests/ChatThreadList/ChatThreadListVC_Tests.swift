@@ -2,7 +2,7 @@
 // Copyright © 2024 Stream.io Inc. All rights reserved.
 //
 
-import StreamChat
+@testable import StreamChat
 @testable import StreamChatTestTools
 @testable import StreamChatUI
 import StreamSwiftTestHelpers
@@ -11,6 +11,7 @@ import XCTest
 final class ChatThreadListVC_Tests: XCTestCase {
     var vc: ChatThreadListVC!
     var mockedThreadListController: ChatThreadListController_Mock!
+    var mockedCurrentUserController: CurrentUserController_Mock!
 
     var mockYoda = ChatUser.mock(id: .unique, name: "Yoda", imageURL: .localYodaImage)
     var mockVader = ChatUser.mock(id: .unique, name: "Vader", imageURL: TestImages.vader.url)
@@ -72,7 +73,12 @@ final class ChatThreadListVC_Tests: XCTestCase {
             query: .init(watch: true),
             client: clientMock
         )
-        vc = ChatThreadListVC(threadListController: mockedThreadListController)
+        mockedCurrentUserController = CurrentUserController_Mock()
+        vc = ChatThreadListVC(
+            threadListController: mockedThreadListController,
+            currentUserController: mockedCurrentUserController,
+            eventsController: mockedThreadListController.client.eventsController()
+        )
         vc.setUpLayout()
     }
 
@@ -108,7 +114,19 @@ final class ChatThreadListVC_Tests: XCTestCase {
         AssertSnapshot(vc)
     }
 
-    // MARK: Logic
+    func test_unreadThreadsAppearance() {
+        let unreadCount = UnreadCount(channels: 0, messages: 0, threads: 8)
+        mockedThreadListController.state = .remoteDataFetched
+        mockedThreadListController.threads_mock = mockThreads
+        vc.controller(mockedThreadListController, didChangeState: .initialized)
+        vc.controller(mockedThreadListController, didChangeThreads: [])
+        vc.currentUserController(mockedCurrentUserController, didChangeCurrentUserUnreadCount: unreadCount)
+        vc.showThreadsBannerView()
+        vc.setUpLayout()
+        AssertSnapshot(vc)
+    }
+
+    // MARK: - handleStateChanges
 
     func test_handleStateChanges_whenInitialized_whenThreadAreEmpty() {
         mockedThreadListController.threads_mock = []
@@ -150,5 +168,37 @@ final class ChatThreadListVC_Tests: XCTestCase {
         vc.handleStateChanges(.remoteDataFetched)
         XCTAssertEqual(vc.loadingView.isHidden, true)
         XCTAssertEqual(vc.emptyView.isHidden, true)
+    }
+
+    // MARK: - didReceiveEvent
+
+    func test_didReceiveEvent_whenNewThreadReply_thenShowThreadsBannerView() {
+        let newThreadMessageEvent = ThreadMessageNewEvent(
+            message: .mock(parentMessageId: .unique),
+            channel: .mock(cid: .unique),
+            createdAt: .unique
+        )
+        vc.eventsController(
+            mockedThreadListController.client.eventsController(),
+            didReceiveEvent: newThreadMessageEvent
+        )
+        XCTAssertEqual(vc.tableView.tableHeaderView, vc.threadsBannerView)
+    }
+
+    func test_didReceiveEvent_whenNewThreadReply_whenThreadAlreadyLocal_thenThreadsBannerViewHidden() throws {
+        let parentMessageId = MessageId.unique
+        let newThreadMessageEvent = ThreadMessageNewEvent(
+            message: .mock(parentMessageId: parentMessageId),
+            channel: .mock(cid: .unique),
+            createdAt: .unique
+        )
+        try mockedThreadListController.dataStore.database.writeSynchronously { session in
+            try session.saveThread(payload: .dummy(parentMessageId: parentMessageId), cache: nil)
+        }
+        vc.eventsController(
+            mockedThreadListController.client.eventsController(),
+            didReceiveEvent: newThreadMessageEvent
+        )
+        XCTAssertNil(vc.tableView.tableHeaderView)
     }
 }

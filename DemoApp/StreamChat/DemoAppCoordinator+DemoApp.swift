@@ -31,11 +31,15 @@ extension DemoAppCoordinator {
             }
         )
 
+        let client = StreamChatWrapper.shared.client!
         let threadListQuery = ThreadListQuery(
             watch: true
         )
-        let threadListController = StreamChatWrapper.shared.client!.threadListController(query: threadListQuery)
-        let threadListVC = DemoChatThreadListVC(threadListController: threadListController)
+        let threadListVC = DemoChatThreadListVC(
+            threadListController: client.threadListController(query: threadListQuery),
+            currentUserController: client.currentUserController(),
+            eventsController: client.eventsController()
+        )
         threadListVC.onLogout = { [weak self] in
             self?.logOut()
         }

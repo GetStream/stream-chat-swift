@@ -11,14 +11,28 @@ open class ChatThreadListVC:
     _ViewController,
     ThemeProvider,
     ChatThreadListControllerDelegate,
+    EventsControllerDelegate,
+    CurrentChatUserControllerDelegate,
     UITableViewDelegate,
     UITableViewDataSource
 {
     /// The `ChatThreadListController` instance that provides the threads data.
     public var threadListController: ChatThreadListController
 
-    public init(threadListController: ChatThreadListController) {
+    /// The `EventsController` instance that observes thread events.
+    public var eventsController: EventsController
+
+    /// The `CurrentChatUserController` instance that observes thread unread count.
+    public var currentUserController: CurrentChatUserController
+
+    public init(
+        threadListController: ChatThreadListController,
+        currentUserController: CurrentChatUserController,
+        eventsController: EventsController
+    ) {
         self.threadListController = threadListController
+        self.eventsController = eventsController
+        self.currentUserController = currentUserController
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -43,6 +57,14 @@ open class ChatThreadListVC:
         .withoutAutoresizingMaskConstraints
         .withAccessibilityIdentifier(identifier: "tableView")
 
+    /// The banner view shown by default as a table view header to fetch unread threads.
+    open private(set) lazy var threadsBannerView = BannerView()
+        .withoutAutoresizingMaskConstraints
+        .withAccessibilityIdentifier(identifier: "threadsBannerView")
+
+    /// The height of the threads banner view.
+    open var threadsBannerHeight: CGFloat { 56 }
+
     /// A router object responsible for handling navigation actions of this view controller.
     open lazy var router: ChatThreadListRouter = components
         .threadListRouter
@@ -65,12 +87,25 @@ open class ChatThreadListVC:
     override open func setUp() {
         super.setUp()
 
-        threadListController.synchronize()
+        threadListController.synchronize { [weak self] error in
+            self?.didFinishSynchronizingThreads(with: error)
+        }
         threadListController.delegate = self
+        eventsController.delegate = self
+        currentUserController.synchronize()
+        currentUserController.delegate = self
 
         tableView.register(ChatThreadListItemCell.self)
         tableView.delegate = self
         tableView.dataSource = self
+
+        threadsBannerView.onAction = { [weak self] in
+            self?.hideThreadsBannerView()
+            self?.showLoadingBannerView()
+            self?.threadListController.synchronize { error in
+                self?.didFinishSynchronizingThreads(with: error)
+            }
+        }
 
         viewPaginationHandler.bottomThreshold = 800
         viewPaginationHandler.onNewBottomPage = { [weak self] in
@@ -95,7 +130,49 @@ open class ChatThreadListVC:
         emptyView.isHidden = true
     }
 
+    // Called when the syncing of the `threadListController` is finished.
+    /// - Parameter error: An `error` if the syncing failed; `nil` if it was successful.
+    open func didFinishSynchronizingThreads(with error: Error?) {
+        hideLoadingBannerView()
+    }
+
     // MARK: - Actions
+
+    /// Displays the threads banner view when there are thread updates to be fetched.
+    open func showThreadsBannerView() {
+        Animate {
+            self.tableView.tableHeaderView = self.threadsBannerView
+            self.threadsBannerView.widthAnchor.pin(equalTo: self.tableView.widthAnchor).isActive = true
+            self.threadsBannerView.heightAnchor.pin(equalToConstant: self.threadsBannerHeight).isActive = true
+            self.threadsBannerView.layoutIfNeeded()
+        }
+    }
+
+    /// Hides the threads banner view.
+    open func hideThreadsBannerView() {
+        Animate {
+            self.tableView.tableHeaderView = nil
+            self.tableView.layoutIfNeeded()
+        }
+    }
+
+    /// Shows the loading banner view when fetching unread threads.
+    open func showLoadingBannerView() {
+        Animate {
+            let loadingIndicator = UIActivityIndicatorView(style: .gray)
+            loadingIndicator.startAnimating()
+            self.tableView.tableHeaderView = loadingIndicator
+            self.tableView.tableHeaderView?.layoutIfNeeded()
+        }
+    }
+
+    /// Hides the loading banner view.
+    open func hideLoadingBannerView() {
+        Animate {
+            self.tableView.tableHeaderView = nil
+            self.tableView.layoutIfNeeded()
+        }
+    }
 
     /// Loads the next page of threads. This action is triggered when reaching the bottom of the list view.
     open func loadMoreThreads() {
@@ -174,6 +251,32 @@ open class ChatThreadListVC:
         tableView.deselectRow(at: indexPath, animated: true)
         let thread = threads[indexPath.row]
         router.showThread(thread)
+    }
+
+    // MARK: - CurrentUserControllerDelegate
+
+    open func currentUserController(
+        _ controller: CurrentChatUserController,
+        didChangeCurrentUserUnreadCount: UnreadCount
+    ) {
+        let unreadCount = didChangeCurrentUserUnreadCount
+        let unreadThreads = unreadCount.threads ?? 0
+        threadsBannerView.textLabel.text = L10n.ThreadList.unreadThreads(unreadThreads)
+    }
+
+    // MARK: - EventsControllerDelegate
+
+    open func eventsController(_ controller: EventsController, didReceiveEvent event: any Event) {
+        switch event {
+        case let event as ThreadMessageNewEvent:
+            guard let parentId = event.message.parentMessageId else { break }
+            let isNewThread = threadListController.dataStore.thread(parentMessageId: parentId) == nil
+            if isNewThread {
+                showThreadsBannerView()
+            }
+        default:
+            break
+        }
     }
 }
 
