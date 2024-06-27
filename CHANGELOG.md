@@ -15,10 +15,10 @@ _June 26, 2024_
 - Add `role` argument to partial user updates [#3253](https://github.com/GetStream/stream-chat-swift/pull/3253)
 ### 🐞 Fixed
 - Fix `channel.pinnedMessages` with missing messages [#3244](https://github.com/GetStream/stream-chat-swift/pull/3244)
-- Fix notifications muted state for the current user in channel members [#3236](https://github.com/GetStream/stream-chat-swift/pull/3236)
+- Fix notifications muted state for the current user in channel members [#3239](https://github.com/GetStream/stream-chat-swift/pull/3239)
 - Reset channel members and watchers state when fetching the initial state of the channel [#3245](https://github.com/GetStream/stream-chat-swift/pull/3245)
 - Fix inconsistent message text when extremely quickly updating it [#3242](https://github.com/GetStream/stream-chat-swift/pull/3242)
-- Fix message attachments returning nil sometimes in push notification extensions [#3261](https://github.com/GetStream/stream-chat-swift/pull/3261)
+- Fix message attachments returning nil sometimes in push notification extensions [#3263](https://github.com/GetStream/stream-chat-swift/pull/3263)
 - Significantly improve performance of database observers [#3260](https://github.com/GetStream/stream-chat-swift/pull/3260)
 ### 🔄 Changed
 - Enable background mapping by default, which improves performance overall [#3250](https://github.com/GetStream/stream-chat-swift/pull/3250)
