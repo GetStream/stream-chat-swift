@@ -5,22 +5,19 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## StreamChat
 ### ✅ Added
-- [Threads v2] Add `ChatThreadListController` to fetch current user threads [#3229](https://github.com/GetStream/stream-chat-swift/pull/3229)
-- [Threads v2] Add `ChatMessageController.markThreadRead()` [#3229](https://github.com/GetStream/stream-chat-swift/pull/3229)
-- [Threads v2] Add `ChatMessageController.markThreadUnread()` [#3229](https://github.com/GetStream/stream-chat-swift/pull/3229)
-- [Threads v2] Add `ChatMessageController.updateThread()` [#3229](https://github.com/GetStream/stream-chat-swift/pull/3229)
-- [Threads v2] Add `ChatMessageController.loadThread()` [#3229](https://github.com/GetStream/stream-chat-swift/pull/3229)
-- Add `ChatCurrentUserController.loadAllUnreads()` [#3229](https://github.com/GetStream/stream-chat-swift/pull/3229)
+- [Threads v2] Add support for Threads v2 [#3229](https://github.com/GetStream/stream-chat-swift/pull/3229)
+   - Add `ChatThreadListController` to fetch current user threads
+   - Add `ChatMessageController.markThreadRead()` 
+   - Add `ChatMessageController.markThreadUnread()`
+   - Add `ChatMessageController.updateThread()`
+   - Add `ChatMessageController.loadThread()`
+   - Add `ChatCurrentUserController.loadAllUnreads()`
 
 ## StreamChatUI
 ### ✅ Added
 - [Threads v2] Add `ChatThreadListVC` UI Component [#3229](https://github.com/GetStream/stream-chat-swift/pull/3229)
-- [Threads v2] Add `ChatThreadUnreadCountView` [#3229](https://github.com/GetStream/stream-chat-swift/pull/3229)
-- [Threads v2] Add `ChatThreadListRouter` [#3229](https://github.com/GetStream/stream-chat-swift/pull/3229)
-- [Threads v2] Marks a thread read when reaching the bottom of the replies [#3229](https://github.com/GetStream/stream-chat-swift/pull/3229)
-- [Threads v2] Marking the parent message of a thread as unread will mark the thread as unread [#3229](https://github.com/GetStream/stream-chat-swift/pull/3229)
-### 🐞 Fixed
-- [Threads v2] Fix marking a root of a thread as unread not doing anything [#3229](https://github.com/GetStream/stream-chat-swift/pull/3229)
+   - Marks a thread read when reaching the bottom of the replies in `ChatThreadVC`
+   - Marking the parent message of a thread as unread in `ChatThreadVC` will mark the thread as unread
 ### 🔄 Changed
 - `ChatChannelUnreadCountView` now shares a common view (`badgeView`) with `ChatThreadUnreadCountView` [#3229](https://github.com/GetStream/stream-chat-swift/pull/3229)
 ### 🎭 New Localizations
