@@ -408,23 +408,45 @@ lane :xcmetrics do |options|
   ['testMessageListScrollTime', 'testChannelListScrollTime'].each do |test_name|
     index = 0
     ['hitches_total_duration', 'duration', 'hitch_time_ratio', 'frame_rate', 'number_of_hitches'].each do |metric|
+      is_frame_rate = metric == 'frame_rate'
       benchmark_value = expected_performance[test_name][metric]['value']
       branch_value = branch_performance[test_name][metric]['value']
       value_extension = branch_performance[test_name][metric]['ext']
 
-      max_stddev = 0.1 # Default Xcode Max STDDEV is 10%
+      max_stddev = benchmark_value * 0.1 # Default Xcode Max STDDEV is 10%
+      warning_status = '🟡' # Warning if a branch is 10% less performant than the benchmark
+      fail_status = '🔴' # Failure if a branch is more than 10% less performant than the benchmark
+      success_status = '🟢' # Success if a branch is more performant or equals to the benchmark
+
       status_emoji =
-        if branch_value > benchmark_value && branch_value < benchmark_value + (benchmark_value * max_stddev)
-          '🟡' # Warning if a branch is 10% less performant than the benchmark
-        elsif branch_value > benchmark_value
-          '🔴' # Failure if a branch is more than 10% less performant than the benchmark
+        if is_frame_rate
+          if branch_value < benchmark_value && branch_value > benchmark_value - max_stddev
+            warning_status
+          elsif branch_value < benchmark_value
+            fail_status
+          else
+            success_status
+          end
         else
-          '🟢' # Success if a branch is more performant or equals to the benchmark
+          if branch_value > benchmark_value && branch_value < benchmark_value + max_stddev
+            warning_status
+          elsif branch_value > benchmark_value
+            fail_status
+          else
+            success_status
+          end
         end
 
       benchmark_value_avoids_zero_division = benchmark_value == 0 ? 1 : benchmark_value
       diff = ((benchmark_value - branch_value) * 100.0 / benchmark_value_avoids_zero_division).round(2)
-      diff_emoji = diff > 0 ? '🔼' : '🔽'
+      diff_emoji =
+        if (is_frame_rate && diff < 0) || (!is_frame_rate && diff > 0)
+          '🔼'
+        elsif diff.zero?
+          '🟰'
+        else
+          '🔽'
+        end
 
       title = metric.to_s.gsub('_', ' ').capitalize
       target = index.zero? ? test_name.match(/(?<=test)(.*?)(?=ScrollTime)/).to_s : ''
