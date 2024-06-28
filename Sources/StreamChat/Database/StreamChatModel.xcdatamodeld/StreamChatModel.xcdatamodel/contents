@@ -377,6 +377,7 @@
     </entity>
     <entity name="ThreadDTO" representedClassName="ThreadDTO" syncable="YES">
         <attribute name="createdAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="currentUserUnreadCount" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="extraData" optional="YES" attributeType="Binary"/>
         <attribute name="lastMessageAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="parentMessageId" optional="YES" attributeType="String"/>

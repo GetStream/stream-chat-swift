@@ -22,6 +22,9 @@ class ThreadDTO: NSManagedObject {
     @NSManaged var channel: ChannelDTO
     @NSManaged var extraData: Data
 
+    // Only update this value when fetching thread lists, to avoid live updates
+    @NSManaged private var currentUserUnreadCount: Int64
+
     static func loadOrCreate(
         parentMessageId: MessageId,
         context: NSManagedObjectContext,
@@ -64,9 +67,10 @@ class ThreadDTO: NSManagedObject {
     static func threadListFetchRequest() -> NSFetchRequest<ThreadDTO> {
         let request = NSFetchRequest<ThreadDTO>(entityName: ThreadDTO.entityName)
 
-        // By default threads are sorted by updatedAt and
+        // By default threads are sorted by unread + updatedAt and
         // at the moment this is not customisable.
         let sortDescriptors: [NSSortDescriptor] = [
+            .init(keyPath: \ThreadDTO.currentUserUnreadCount, ascending: false),
             .init(keyPath: \ThreadDTO.updatedAt, ascending: false)
         ]
 
@@ -88,6 +92,7 @@ class ThreadDTO: NSManagedObject {
         read: Set<ThreadReadDTO>?,
         createdBy: UserDTO,
         channel: ChannelDTO,
+        currentUserUnreadCount: Int?,
         extraData: Data
     ) {
         self.parentMessage = parentMessage
@@ -111,6 +116,12 @@ class ThreadDTO: NSManagedObject {
         }
         if let read {
             self.read = read
+        }
+
+        // currentUserUnreadCount should only be updated when fetching thread list,
+        // not in events or when marking the thread read to avoid thread list live updates.
+        if let currentUserUnreadCount {
+            self.currentUserUnreadCount = Int64(currentUserUnreadCount)
         }
     }
 }
@@ -222,6 +233,12 @@ extension NSManagedObjectContext {
             extraData = Data()
         }
 
+        var currentUserUnreadCount = 0
+        if let currentUser = currentUser?.user.id {
+            let currentUserRead = payload.read.first(where: { $0.user.id == self.currentUser?.user.id })
+            currentUserUnreadCount = currentUserRead?.unreadMessagesCount ?? 0
+        }
+
         threadDTO.fill(
             parentMessage: parentMessageDTO,
             title: payload.title,
@@ -235,6 +252,7 @@ extension NSManagedObjectContext {
             read: Set(readsDTO),
             createdBy: createdByUserDTO,
             channel: channelDTO,
+            currentUserUnreadCount: currentUserUnreadCount,
             extraData: extraData
         )
 
@@ -282,6 +300,7 @@ extension NSManagedObjectContext {
             read: nil,
             createdBy: createdByUserDTO,
             channel: channelDTO,
+            currentUserUnreadCount: nil,
             extraData: extraData
         )
 
