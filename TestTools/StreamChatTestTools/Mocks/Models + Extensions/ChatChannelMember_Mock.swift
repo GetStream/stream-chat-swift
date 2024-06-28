@@ -21,6 +21,7 @@ public extension ChatChannelMember {
         lastActiveAt: Date? = nil,
         teams: Set<TeamId> = ["RED", "GREEN"],
         language: TranslationLanguage? = nil,
+        blockedUserIds: [UserId] = [],
         extraData: [String: RawJSON] = [:],
         memberRole: MemberRole = .member,
         memberCreatedAt: Date = .distantPast,

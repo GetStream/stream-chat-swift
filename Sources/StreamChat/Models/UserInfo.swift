@@ -18,6 +18,8 @@ public struct UserInfo {
     public let language: TranslationLanguage?
     /// The privacy settings of the user. Example: If the user does not want to expose typing events or read events.
     public let privacySettings: UserPrivacySettings?
+    /// A list of blocked user ids.
+    public let blockedUserIds: [UserId]?
     /// Custom extra data of the user.
     public let extraData: [String: RawJSON]
 
@@ -28,6 +30,7 @@ public struct UserInfo {
         isInvisible: Bool? = nil,
         language: TranslationLanguage? = nil,
         privacySettings: UserPrivacySettings? = nil,
+        blockedUserIds: [UserId]? = nil,
         extraData: [String: RawJSON] = [:]
     ) {
         self.id = id
@@ -36,6 +39,7 @@ public struct UserInfo {
         self.isInvisible = isInvisible
         self.language = language
         self.privacySettings = privacySettings
+        self.blockedUserIds = blockedUserIds
         self.extraData = extraData
     }
 }

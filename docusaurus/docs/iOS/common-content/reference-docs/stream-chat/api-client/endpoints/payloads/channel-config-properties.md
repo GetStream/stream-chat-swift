@@ -124,4 +124,5 @@ public let updatedAt: Date
 Determines if users are able to flag messages. Enabled by default.
 
 ``` swift
-public var flagsEnabled: Bool 
+public var flagsEnabled: Bool
+```

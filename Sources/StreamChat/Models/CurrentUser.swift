@@ -31,6 +31,9 @@ public class CurrentChatUser: ChatUser {
 
     /// A set of users muted by the user.
     public let mutedUsers: Set<ChatUser>
+    
+    /// A list of blocked user ids.
+    public let blockedUserIds: Set<UserId>
 
     /// A set of users flagged by the user.
     ///
@@ -76,6 +79,7 @@ public class CurrentChatUser: ChatUser {
         extraData: [String: RawJSON],
         devices: [Device],
         currentDevice: Device?,
+        blockedUserIds: Set<UserId>,
         mutedUsers: Set<ChatUser>,
         flaggedUsers: Set<ChatUser>,
         flaggedMessageIDs: Set<MessageId>,
@@ -86,6 +90,7 @@ public class CurrentChatUser: ChatUser {
     ) {
         self.devices = devices
         self.currentDevice = currentDevice
+        self.blockedUserIds = blockedUserIds
         self.mutedUsers = mutedUsers
         self.flaggedUsers = flaggedUsers
         self.flaggedMessageIDs = flaggedMessageIDs

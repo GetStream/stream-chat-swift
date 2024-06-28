@@ -623,6 +623,10 @@
 		829CD5CC2848C8D6003C3877 /* BackendRobot.swift in Sources */ = {isa = PBXBuildFile; fileRef = 829CD5CB2848C8D6003C3877 /* BackendRobot.swift */; };
 		82A6F5C027E2031000F4A2F6 /* Reactions_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82A6F5BF27E2031000F4A2F6 /* Reactions_Tests.swift */; };
 		82BA52EF27E1EF7B00951B87 /* MessageList_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82BA52EE27E1EF7B00951B87 /* MessageList_Tests.swift */; };
+		82BE0ACD2C009A17008DA9DC /* BlockedUserDetails.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82BE0ACC2C009A17008DA9DC /* BlockedUserDetails.swift */; };
+		82BE0ACE2C009A17008DA9DC /* BlockedUserDetails.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82BE0ACC2C009A17008DA9DC /* BlockedUserDetails.swift */; };
+		82C18FDC2C10C8E600C5283C /* BlockedUserPayload.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82C18FDB2C10C8E600C5283C /* BlockedUserPayload.swift */; };
+		82C18FDD2C10C8E600C5283C /* BlockedUserPayload.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82C18FDB2C10C8E600C5283C /* BlockedUserPayload.swift */; };
 		82CBE5682861BF300039C35C /* AttachmentResponses.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82CBE5672861BF300039C35C /* AttachmentResponses.swift */; };
 		82CED1C827DF492F006E967A /* ThreadPage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82CED1C727DF492F006E967A /* ThreadPage.swift */; };
 		82DCB3A92A4AE8FB00738933 /* StreamChat.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 799C941B247D2F80001F1104 /* StreamChat.framework */; };
@@ -3482,6 +3486,8 @@
 		82B350FC27EA2A3900FEB6A0 /* MessageResponses.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageResponses.swift; sourceTree = "<group>"; };
 		82B3510027EA2B1400FEB6A0 /* EventResponses.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventResponses.swift; sourceTree = "<group>"; };
 		82BA52EE27E1EF7B00951B87 /* MessageList_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageList_Tests.swift; sourceTree = "<group>"; };
+		82BE0ACC2C009A17008DA9DC /* BlockedUserDetails.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlockedUserDetails.swift; sourceTree = "<group>"; };
+		82C18FDB2C10C8E600C5283C /* BlockedUserPayload.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlockedUserPayload.swift; sourceTree = "<group>"; };
 		82CBE5672861BF300039C35C /* AttachmentResponses.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AttachmentResponses.swift; sourceTree = "<group>"; };
 		82CED1C727DF492F006E967A /* ThreadPage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThreadPage.swift; sourceTree = "<group>"; };
 		82D2E81E27D10F4300169ADA /* StreamMockServer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StreamMockServer.swift; sourceTree = "<group>"; };
@@ -5661,6 +5667,7 @@
 			isa = PBXGroup;
 			children = (
 				88E26D7C2580F95300F55AB5 /* AttachmentEndpoints.swift */,
+				82C18FDB2C10C8E600C5283C /* BlockedUserPayload.swift */,
 				43D3F0F8284106EE00B74921 /* CallEndpoints.swift */,
 				79877A132498E4EE00015F8B /* ChannelEndpoints.swift */,
 				F6FF1DA924FD23D300151735 /* MessageEndpoints.swift */,
@@ -5777,6 +5784,7 @@
 				79877A012498E4BB00015F8B /* User.swift */,
 				7900452525374CA20096ECA1 /* User+SwiftUI.swift */,
 				64C8C86D26934C6100329F82 /* UserInfo.swift */,
+				82BE0ACC2C009A17008DA9DC /* BlockedUserDetails.swift */,
 				841BAA532BD26136000C73E4 /* PollOption.swift */,
 				841BAA562BD29DA5000C73E4 /* PollVote.swift */,
 				841BAA592BD2B39A000C73E4 /* Poll.swift */,
@@ -11089,6 +11097,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				4F97F2672BA83146001C4D66 /* UserList.swift in Sources */,
+				82BE0ACD2C009A17008DA9DC /* BlockedUserDetails.swift in Sources */,
 				DA8407032524F7E6005A0F62 /* UserListUpdater.swift in Sources */,
 				8413D2F52BDDAAFF005ADA4E /* PollVoteListController+SwiftUI.swift in Sources */,
 				4F8E53062B7CD01D008C0F9F /* Chat.swift in Sources */,
@@ -11318,6 +11327,7 @@
 				882C5759252C794900E60C44 /* MemberEndpoints.swift in Sources */,
 				DA640FC12535CFA100D32944 /* ChannelMemberListSortingKey.swift in Sources */,
 				7900452625374CA20096ECA1 /* User+SwiftUI.swift in Sources */,
+				82C18FDC2C10C8E600C5283C /* BlockedUserPayload.swift in Sources */,
 				404296DA2A0112D00089126D /* AudioQueuePlayer.swift in Sources */,
 				4F51519C2BC66FBE001B7152 /* Task+Extensions.swift in Sources */,
 				792FCB4924A3BF38000290C7 /* OptionSet+Extensions.swift in Sources */,
@@ -12005,6 +12015,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				4F1BEE7D2BE3851200B6685C /* ReactionListState+Observer.swift in Sources */,
+				82BE0ACE2C009A17008DA9DC /* BlockedUserDetails.swift in Sources */,
 				40789D1C29F6AC500018C2BB /* AudioPlaybackState.swift in Sources */,
 				AD8C7C612BA3DF2800260715 /* AppSettings.json in Sources */,
 				C121E804274544AC00023E4C /* ChatClient.swift in Sources */,
@@ -12297,6 +12308,7 @@
 				4F4562F72C240FD200675C7F /* DatabaseItemConverter.swift in Sources */,
 				C121E8AE274544B000023E4C /* ChannelController+SwiftUI.swift in Sources */,
 				C121E8AF274544B000023E4C /* ChannelController+Combine.swift in Sources */,
+				82C18FDD2C10C8E600C5283C /* BlockedUserPayload.swift in Sources */,
 				C121E8B0274544B000023E4C /* ChannelListController.swift in Sources */,
 				C121E8B1274544B000023E4C /* ChannelListController+SwiftUI.swift in Sources */,
 				C121E8B2274544B000023E4C /* ChannelListController+Combine.swift in Sources */,

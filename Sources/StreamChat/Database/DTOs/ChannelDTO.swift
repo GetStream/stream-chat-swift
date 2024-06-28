@@ -41,6 +41,8 @@ class ChannelDTO: NSManagedObject {
     @NSManaged var isFrozen: Bool
     @NSManaged var cooldownDuration: Int
     @NSManaged var team: String?
+    
+    @NSManaged var isBlocked: Bool
 
     // MARK: - Queries
 
@@ -224,6 +226,14 @@ extension NSManagedObjectContext {
         }
 
         dto.isFrozen = payload.isFrozen
+        
+        // Backend only returns a boolean
+        // for blocked 1:1 channels on channel list query
+        if let isBlocked = payload.isBlocked {
+            dto.isBlocked = isBlocked
+        } else {
+            dto.isBlocked = false
+        }
 
         // Backend only returns a boolean for hidden state
         // on channel query and channel list query
@@ -373,6 +383,18 @@ extension ChannelDTO {
         request.fetchBatchSize = query.pagination.pageSize
         return request
     }
+    
+    static func directMessageChannel(participantId: UserId, context: NSManagedObjectContext) -> ChannelDTO? {
+        let request = NSFetchRequest<ChannelDTO>(entityName: ChannelDTO.entityName)
+        request.sortDescriptors = [NSSortDescriptor(keyPath: \ChannelDTO.updatedAt, ascending: false)]
+        request.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [
+            NSPredicate(format: "cid CONTAINS ':!members'"),
+            NSPredicate(format: "members.@count == 2"),
+            NSPredicate(format: "ANY members.user.id == %@", participantId)
+        ])
+        request.fetchLimit = 1
+        return try? context.fetch(request).first
+    }
 }
 
 extension ChannelDTO {
@@ -514,6 +536,7 @@ extension ChatChannel {
             config: dto.config.asModel(),
             ownCapabilities: Set(dto.ownCapabilities.compactMap(ChannelCapability.init(rawValue:))),
             isFrozen: dto.isFrozen,
+            isBlocked: dto.isBlocked,
             lastActiveMembers: { fetchMembers() },
             membership: dto.membership.map { try $0.asModel() },
             currentlyTypingUsers: { Set(dto.currentlyTypingUsers.compactMap { try? $0.asModel() }) },

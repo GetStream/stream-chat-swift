@@ -490,7 +490,7 @@ final class UserController_Tests: XCTestCase {
         // Assert controller is kept alive
         AssertAsync.staysTrue(weakController != nil)
     }
-
+    
     // MARK: - Unlag user
 
     func test_unflagUser_propagatesError() {
@@ -551,6 +551,140 @@ final class UserController_Tests: XCTestCase {
     func test_unflagUser_keepsControllerAlive() {
         // Simulate `unflag` call.
         controller.unflag()
+
+        // Create a weak ref and release a controller.
+        weak var weakController = controller
+        controller = nil
+
+        // Assert controller is kept alive
+        AssertAsync.staysTrue(weakController != nil)
+    }
+
+    // MARK: - Block user
+
+    func test_blockUser_propagatesError() {
+        // Simulate `block` call and catch the completion.
+        var completionError: Error?
+        controller.block { [callbackQueueID] in
+            AssertTestQueue(withId: callbackQueueID)
+            completionError = $0
+        }
+
+        // Simulate network response with the error.
+        let networkError = TestError()
+        env.userUpdater!.blockUser_completion!(networkError)
+
+        // Assert error is propogated.
+        AssertAsync.willBeEqual(completionError as? TestError, networkError)
+    }
+
+    func test_blockUser_propagatesNilError() {
+        // Simulate `block` call and catch the completion.
+        var completionIsCalled = false
+        controller.block { [callbackQueueID] error in
+            // Assert callback queue is correct.
+            AssertTestQueue(withId: callbackQueueID)
+            // Assert there is no error.
+            XCTAssertNil(error)
+            completionIsCalled = true
+        }
+
+        // Keep a weak ref so we can check if it's actually deallocated
+        weak var weakController = controller
+
+        // (Try to) deallocate the controller
+        // by not keeping any references to it
+        controller = nil
+
+        // Simulate successful network response.
+        env.userUpdater!.blockUser_completion!(nil)
+        // Release reference of completion so we can deallocate stuff
+        env.userUpdater!.blockUser_completion = nil
+
+        // Assert completion is called.
+        AssertAsync.willBeTrue(completionIsCalled)
+        // `weakController` should be deallocated too
+        AssertAsync.canBeReleased(&weakController)
+    }
+
+    func test_blockUser_callsUserUpdater_withCorrectValues() {
+        // Simulate `block` call.
+        controller.block()
+
+        // Assert updater is called with correct `userId`
+        XCTAssertEqual(env.userUpdater!.blockUser_userId, controller.userId)
+    }
+
+    func test_blockUser_keepsControllerAlive() {
+        // Simulate `block` call.
+        controller.block()
+
+        // Create a weak ref and release a controller.
+        weak var weakController = controller
+        controller = nil
+
+        // Assert controller is kept alive
+        AssertAsync.staysTrue(weakController != nil)
+    }
+
+    // MARK: - Unblock user
+
+    func test_unblockUser_propagatesError() {
+        // Simulate `unblock` call and catch the completion.
+        var completionError: Error?
+        controller.unblock { [callbackQueueID] in
+            AssertTestQueue(withId: callbackQueueID)
+            completionError = $0
+        }
+
+        // Simulate network response with the error.
+        let networkError = TestError()
+        env.userUpdater!.unblockUser_completion!(networkError)
+
+        // Assert error is propogated.
+        AssertAsync.willBeEqual(completionError as? TestError, networkError)
+    }
+
+    func test_unblockUser_propagatesNilError() {
+        // Simulate `unblock` call and catch the completion.
+        var completionIsCalled = false
+        controller.unblock { [callbackQueueID] error in
+            // Assert callback queue is correct.
+            AssertTestQueue(withId: callbackQueueID)
+            // Assert there is no error.
+            XCTAssertNil(error)
+            completionIsCalled = true
+        }
+
+        // Keep a weak ref so we can check if it's actually deallocated
+        weak var weakController = controller
+
+        // (Try to) deallocate the controller
+        // by not keeping any references to it
+        controller = nil
+
+        // Simulate successful network response.
+        env.userUpdater!.unblockUser_completion!(nil)
+        // Release reference of completion so we can deallocate stuff
+        env.userUpdater!.unblockUser_completion = nil
+
+        // Assert completion is called.
+        AssertAsync.willBeTrue(completionIsCalled)
+        // `weakController` should be deallocated too
+        AssertAsync.canBeReleased(&weakController)
+    }
+
+    func test_unblockUser_callsUserUpdater_withCorrectValues() {
+        // Simulate `unblock` call.
+        controller.unblock()
+
+        // Assert updater is called with correct `userId`
+        XCTAssertEqual(env.userUpdater!.unblockUser_userId, controller.userId)
+    }
+
+    func test_unblockUser_keepsControllerAlive() {
+        // Simulate `unblock` call.
+        controller.unblock()
 
         // Create a weak ref and release a controller.
         weak var weakController = controller

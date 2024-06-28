@@ -110,6 +110,19 @@ final class ChatMessageActionsVC_Tests: XCTestCase {
 
         XCTAssertTrue(vc.messageActions.contains(where: { $0 is UnmuteUserActionItem }))
     }
+    
+    func test_messageActions_whenBlockingEnabled_containsBlockAction() throws {
+        chatMessageController.simulateInitial(
+            message: ChatMessage.mock(isSentByCurrentUser: false),
+            replies: [],
+            state: .remoteDataFetched
+        )
+
+        vc.channel = .mock(cid: .unique, ownCapabilities: [])
+        vc.components.isBlockingUsersEnabled = true
+        
+        XCTAssertTrue(vc.messageActions.contains(where: { $0 is BlockUserActionItem }))
+    }
 
     func test_messageActions_whenQuotesEnabled_containsQuoteAction() {
         vc.channel = .mock(cid: .unique, ownCapabilities: [.quoteMessage])
