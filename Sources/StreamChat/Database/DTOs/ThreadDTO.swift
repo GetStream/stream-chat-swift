@@ -64,8 +64,8 @@ class ThreadDTO: NSManagedObject {
     static func threadListFetchRequest() -> NSFetchRequest<ThreadDTO> {
         let request = NSFetchRequest<ThreadDTO>(entityName: ThreadDTO.entityName)
 
-        // Fetch results controller requires at least one sorting descriptor.
-        // For now, it is not possible to change the thread sorting.
+        // By default threads are sorted by updatedAt and
+        // at the moment this is not customisable.
         let sortDescriptors: [NSSortDescriptor] = [
             .init(keyPath: \ThreadDTO.updatedAt, ascending: false)
         ]
