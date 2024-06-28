@@ -11,7 +11,6 @@ import XCTest
 final class ChatThreadListVC_Tests: XCTestCase {
     var vc: ChatThreadListVC!
     var mockedThreadListController: ChatThreadListController_Mock!
-    var mockedCurrentUserController: CurrentUserController_Mock!
 
     var mockYoda = ChatUser.mock(id: .unique, name: "Yoda")
     var mockVader = ChatUser.mock(id: .unique, name: "Vader")
@@ -73,10 +72,8 @@ final class ChatThreadListVC_Tests: XCTestCase {
             query: .init(watch: true),
             client: clientMock
         )
-        mockedCurrentUserController = CurrentUserController_Mock()
         vc = ChatThreadListVC(
             threadListController: mockedThreadListController,
-            currentUserController: mockedCurrentUserController,
             eventsController: mockedThreadListController.client.eventsController()
         )
         vc.setUpLayout()
@@ -114,14 +111,24 @@ final class ChatThreadListVC_Tests: XCTestCase {
         AssertSnapshot(vc)
     }
 
-    func test_unreadThreadsAppearance() {
+    func test_newThreadsAppearance() {
+        class MockVC: ChatThreadListVC {
+            override func viewWillAppear(_ animated: Bool) {
+                // no - op
+            }
+        }
+        vc = MockVC(
+            threadListController: mockedThreadListController,
+            eventsController: mockedThreadListController.client.eventsController()
+        )
+
         let unreadCount = UnreadCount(channels: 0, messages: 0, threads: 8)
         mockedThreadListController.state = .remoteDataFetched
         mockedThreadListController.threads_mock = mockThreads
         vc.controller(mockedThreadListController, didChangeState: .initialized)
         vc.controller(mockedThreadListController, didChangeThreads: [])
-        vc.currentUserController(mockedCurrentUserController, didChangeCurrentUserUnreadCount: unreadCount)
         vc.showThreadsBannerView()
+        vc.newAvailableThreadIds = [.unique, .unique]
         vc.setUpLayout()
         AssertSnapshot(vc)
     }
@@ -172,7 +179,9 @@ final class ChatThreadListVC_Tests: XCTestCase {
 
     // MARK: - didReceiveEvent
 
-    func test_didReceiveEvent_whenNewThreadReply_thenShowThreadsBannerView() {
+    func test_didReceiveEvent_whenNewThreadReply_whenViewIsVisible_thenShowThreadsBannerView() {
+        vc.mockIsViewVisible(true)
+
         let newThreadMessageEvent = ThreadMessageNewEvent(
             message: .mock(parentMessageId: .unique),
             channel: .mock(cid: .unique),
@@ -182,7 +191,26 @@ final class ChatThreadListVC_Tests: XCTestCase {
             mockedThreadListController.client.eventsController(),
             didReceiveEvent: newThreadMessageEvent
         )
+
         XCTAssertEqual(vc.tableView.tableHeaderView, vc.threadsBannerView)
+    }
+
+    func test_didReceiveEvent_whenNewThreadReply_whenViewNotVisible_thenOnlyInsertNewAvialbleThreadIds() {
+        vc.mockIsViewVisible(false)
+
+        let expectedParentMessageId = MessageId.unique
+        let newThreadMessageEvent = ThreadMessageNewEvent(
+            message: .mock(parentMessageId: expectedParentMessageId),
+            channel: .mock(cid: .unique),
+            createdAt: .unique
+        )
+        vc.eventsController(
+            mockedThreadListController.client.eventsController(),
+            didReceiveEvent: newThreadMessageEvent
+        )
+
+        XCTAssertNil(vc.tableView.tableHeaderView)
+        XCTAssertEqual(vc.newAvailableThreadIds, [expectedParentMessageId])
     }
 
     func test_didReceiveEvent_whenNewThreadReply_whenThreadAlreadyLocal_thenThreadsBannerViewHidden() throws {
@@ -200,5 +228,25 @@ final class ChatThreadListVC_Tests: XCTestCase {
             didReceiveEvent: newThreadMessageEvent
         )
         XCTAssertNil(vc.tableView.tableHeaderView)
+    }
+
+    // MARK: viewWillAppear
+
+    func test_viewWillAppear_whenNewAvailableThreads_shouldRefetchThreadList() {
+        mockedThreadListController.synchronize_callCount = 0
+        vc.newAvailableThreadIds = [.unique]
+
+        vc.viewWillAppear(false)
+
+        XCTAssertEqual(mockedThreadListController.synchronize_callCount, 1)
+    }
+
+    func test_viewWillAppear_whenNoNewThreads_shouldNotRefetchThreadList() {
+        mockedThreadListController.synchronize_callCount = 0
+        vc.newAvailableThreadIds = []
+
+        vc.viewWillAppear(false)
+
+        XCTAssertEqual(mockedThreadListController.synchronize_callCount, 0)
     }
 }

@@ -12,7 +12,6 @@ open class ChatThreadListVC:
     ThemeProvider,
     ChatThreadListControllerDelegate,
     EventsControllerDelegate,
-    CurrentChatUserControllerDelegate,
     UITableViewDelegate,
     UITableViewDataSource
 {
@@ -22,17 +21,12 @@ open class ChatThreadListVC:
     /// The `EventsController` instance that observes thread events.
     public var eventsController: EventsController
 
-    /// The `CurrentChatUserController` instance that observes thread unread count.
-    public var currentUserController: CurrentChatUserController
-
     public init(
         threadListController: ChatThreadListController,
-        currentUserController: CurrentChatUserController,
         eventsController: EventsController
     ) {
         self.threadListController = threadListController
         self.eventsController = eventsController
-        self.currentUserController = currentUserController
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -43,6 +37,13 @@ open class ChatThreadListVC:
     
     /// The current thread list data.
     public private(set) var threads: [ChatThread] = []
+
+    /// The number of new threads available to be fetched.
+    public var newAvailableThreadIds: Set<MessageId> = [] {
+        didSet {
+            updateThreadsBannerView()
+        }
+    }
 
     /// A boolean value that controls whether it is loading more threads at the moment or not.
     private var isPaginatingThreads = false
@@ -56,6 +57,15 @@ open class ChatThreadListVC:
     open private(set) lazy var tableView: UITableView = UITableView()
         .withoutAutoresizingMaskConstraints
         .withAccessibilityIdentifier(identifier: "tableView")
+
+    /// The loading indicator shown at the top when fetching new threads.
+    open private(set) lazy var loadingBannerIndicator: UIActivityIndicatorView = {
+        if #available(iOS 13.0, *) {
+            return UIActivityIndicatorView(style: .large).withoutAutoresizingMaskConstraints
+        } else {
+            return UIActivityIndicatorView(style: .whiteLarge).withoutAutoresizingMaskConstraints
+        }
+    }()
 
     /// The banner view shown by default as a table view header to fetch unread threads.
     open private(set) lazy var threadsBannerView = BannerView()
@@ -92,8 +102,6 @@ open class ChatThreadListVC:
         }
         threadListController.delegate = self
         eventsController.delegate = self
-        currentUserController.synchronize()
-        currentUserController.delegate = self
 
         tableView.register(ChatThreadListItemCell.self)
         tableView.delegate = self
@@ -130,22 +138,37 @@ open class ChatThreadListVC:
         emptyView.isHidden = true
     }
 
+    override open func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+
+        if !newAvailableThreadIds.isEmpty {
+            showLoadingBannerView()
+            threadListController.synchronize { [weak self] error in
+                self?.didFinishSynchronizingThreads(with: error)
+            }
+        }
+    }
+
     // Called when the syncing of the `threadListController` is finished.
     /// - Parameter error: An `error` if the syncing failed; `nil` if it was successful.
     open func didFinishSynchronizingThreads(with error: Error?) {
         hideLoadingBannerView()
+        newAvailableThreadIds = []
+    }
+
+    /// Updates the threads banner view content.
+    open func updateThreadsBannerView() {
+        threadsBannerView.textLabel.text = L10n.ThreadList.newThreads(newAvailableThreadIds.count)
     }
 
     // MARK: - Actions
 
     /// Displays the threads banner view when there are thread updates to be fetched.
     open func showThreadsBannerView() {
-        Animate {
-            self.tableView.tableHeaderView = self.threadsBannerView
-            self.threadsBannerView.widthAnchor.pin(equalTo: self.tableView.widthAnchor).isActive = true
-            self.threadsBannerView.heightAnchor.pin(equalToConstant: self.threadsBannerHeight).isActive = true
-            self.threadsBannerView.layoutIfNeeded()
-        }
+        tableView.tableHeaderView = threadsBannerView
+        threadsBannerView.widthAnchor.pin(equalTo: tableView.widthAnchor).isActive = true
+        threadsBannerView.heightAnchor.pin(equalToConstant: threadsBannerHeight).isActive = true
+        threadsBannerView.layoutIfNeeded()
     }
 
     /// Hides the threads banner view.
@@ -158,12 +181,8 @@ open class ChatThreadListVC:
 
     /// Shows the loading banner view when fetching unread threads.
     open func showLoadingBannerView() {
-        Animate {
-            let loadingIndicator = UIActivityIndicatorView(style: .gray)
-            loadingIndicator.startAnimating()
-            self.tableView.tableHeaderView = loadingIndicator
-            self.tableView.tableHeaderView?.layoutIfNeeded()
-        }
+        loadingBannerIndicator.startAnimating()
+        tableView.tableHeaderView = loadingBannerIndicator
     }
 
     /// Hides the loading banner view.
@@ -253,17 +272,6 @@ open class ChatThreadListVC:
         router.showThread(thread)
     }
 
-    // MARK: - CurrentUserControllerDelegate
-
-    open func currentUserController(
-        _ controller: CurrentChatUserController,
-        didChangeCurrentUserUnreadCount: UnreadCount
-    ) {
-        let unreadCount = didChangeCurrentUserUnreadCount
-        let unreadThreads = unreadCount.threads ?? 0
-        threadsBannerView.textLabel.text = L10n.ThreadList.unreadThreads(unreadThreads)
-    }
-
     // MARK: - EventsControllerDelegate
 
     open func eventsController(_ controller: EventsController, didReceiveEvent event: any Event) {
@@ -272,7 +280,10 @@ open class ChatThreadListVC:
             guard let parentId = event.message.parentMessageId else { break }
             let isNewThread = threadListController.dataStore.thread(parentMessageId: parentId) == nil
             if isNewThread {
-                showThreadsBannerView()
+                newAvailableThreadIds.insert(parentId)
+                if isViewVisible {
+                    showThreadsBannerView()
+                }
             }
         default:
             break

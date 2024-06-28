@@ -37,7 +37,6 @@ extension DemoAppCoordinator {
         )
         let threadListVC = DemoChatThreadListVC(
             threadListController: client.threadListController(query: threadListQuery),
-            currentUserController: client.currentUserController(),
             eventsController: client.eventsController()
         )
         threadListVC.onLogout = { [weak self] in

@@ -22,7 +22,9 @@ public class ChatThreadListController_Mock: ChatThreadListController {
     }
 
     public var synchronize_completion: (((any Error)?) -> Void)?
+    public var synchronize_callCount = 0
     public override func synchronize(_ completion: (((any Error)?) -> Void)? = nil) {
+        synchronize_callCount += 1
         synchronize_completion = completion
     }
 }
