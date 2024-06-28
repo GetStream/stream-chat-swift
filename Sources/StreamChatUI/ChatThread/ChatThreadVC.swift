@@ -99,6 +99,11 @@ open class ChatThreadVC: _ViewController,
             return false
         }
 
+        // If there are no replies, no thread is yet created.
+        if messageController.replies.isEmpty {
+            return false
+        }
+
         return messageListVC.listView.isLastCellFullyVisible && isFirstPageLoaded
     }
 
