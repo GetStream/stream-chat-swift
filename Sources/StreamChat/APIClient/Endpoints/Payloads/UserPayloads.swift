@@ -203,11 +203,11 @@ struct CurrentUserUnreadsPayload: Decodable {
         case threads
     }
 
-    var totalUnreadCount: Int
-    var totalUnreadThreadsCount: Int
-    var channels: [CurrentUserChannelUnreadPayload]
-    var channelType: [ChannelUnreadByTypePayload]
-    var threads: [CurrentUserThreadUnreadPayload]
+    let totalUnreadCount: Int
+    let totalUnreadThreadsCount: Int
+    let channels: [CurrentUserChannelUnreadPayload]
+    let channelType: [ChannelUnreadByTypePayload]
+    let threads: [CurrentUserThreadUnreadPayload]
 }
 
 struct CurrentUserChannelUnreadPayload: Decodable {
@@ -217,9 +217,9 @@ struct CurrentUserChannelUnreadPayload: Decodable {
         case lastRead = "last_read"
     }
 
-    var channelId: ChannelId
-    var unreadCount: Int
-    var lastRead: Date?
+    let channelId: ChannelId
+    let unreadCount: Int
+    let lastRead: Date?
 }
 
 struct CurrentUserThreadUnreadPayload: Decodable {
@@ -230,10 +230,10 @@ struct CurrentUserThreadUnreadPayload: Decodable {
         case unreadCount = "unread_count"
     }
 
-    var parentMessageId: MessageId
-    var lastRead: Date?
-    var lastReadMessageId: MessageId?
-    var unreadCount: Int
+    let parentMessageId: MessageId
+    let lastRead: Date?
+    let lastReadMessageId: MessageId?
+    let unreadCount: Int
 }
 
 struct ChannelUnreadByTypePayload: Decodable {
@@ -243,7 +243,7 @@ struct ChannelUnreadByTypePayload: Decodable {
         case unreadCount = "unread_count"
     }
 
-    var channelType: ChannelType
-    var channelCount: Int
-    var unreadCount: Int
+    let channelType: ChannelType
+    let channelCount: Int
+    let unreadCount: Int
 }
