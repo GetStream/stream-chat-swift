@@ -76,16 +76,16 @@ extension Endpoint {
 // MARK: - Helper data structures
 
 struct ThreadPayloadResponse: Decodable {
-    var thread: ThreadPayload
+    let thread: ThreadPayload
 }
 
 struct ThreadPartialUpdateResponse: Decodable {
-    var thread: ThreadPartialPayload
+    let thread: ThreadPartialPayload
 }
 
 struct ThreadPartialUpdateRequest: Encodable {
-    var set: SetProperties?
-    var unset: [String]?
+    let set: SetProperties?
+    let unset: [String]?
 
     /// The available thread properties that can be updated.
     struct SetProperties: Encodable {
