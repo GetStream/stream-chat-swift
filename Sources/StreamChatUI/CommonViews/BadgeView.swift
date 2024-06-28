@@ -29,7 +29,6 @@ open class BadgeView: _View, ThemeProvider {
     }
 
     override open func setUpLayout() {
-        // 2 and 3 are magic numbers that look visually good
         layoutMargins = .init(top: 2, left: 3, bottom: 2, right: 3)
 
         addSubview(textLabel)
