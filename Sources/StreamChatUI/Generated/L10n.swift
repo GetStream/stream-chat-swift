@@ -349,9 +349,9 @@ internal enum L10n {
   }
 
   internal enum ThreadList {
-    /// %d unread threads
-    internal static func unreadThreads(_ p1: Int) -> String {
-      return L10n.tr("Localizable", "threadList.unread-threads", p1)
+    /// %d new threads
+    internal static func newThreads(_ p1: Int) -> String {
+      return L10n.tr("Localizable", "threadList.new-threads", p1)
     }
     internal enum Empty {
       /// No threads here yet...

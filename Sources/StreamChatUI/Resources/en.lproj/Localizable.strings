@@ -225,5 +225,5 @@
 "threadListItem.replied-to" = "replied to: %@";
 /// Description shown when the thread list is empty.
 "threadList.empty.description" = "No threads here yet...";
-/// Text shown when threads unread banner is shown.
-"threadList.unread-threads" = "%d unread threads";
+/// Text shown when new threads banner is shown.
+"threadList.new-threads" = "%d new threads";
