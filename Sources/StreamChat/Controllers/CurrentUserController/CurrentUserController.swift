@@ -263,16 +263,9 @@ public extension CurrentChatUserController {
     /// - Parameter completion: Called when the API call is finished. Called with `Error` if the remote update fails.
     ///
     func loadBlockedUsers(completion: @escaping (Result<[BlockedUserDetails], Error>) -> Void) {
-        currentUserUpdater.loadBlockedUsers {
-            switch $0 {
-            case let .success(blockedUsers):
-                self.callback {
-                    completion(.success(blockedUsers))
-                }
-            case let .failure(error):
-                self.callback {
-                    completion(.failure(error))
-                }
+        currentUserUpdater.loadBlockedUsers { result in
+            self.callback {
+                completion(result)
             }
         }
     }

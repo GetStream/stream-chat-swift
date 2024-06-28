@@ -5,7 +5,7 @@
 import Foundation
 
 /// An object describing the incoming blocking user JSON payload.
-struct BlockingUserPayload: Decodable {
+struct BlockingUserPayload: Decodable, Equatable {
     private enum CodingKeys: String, CodingKey {
         case blockedUserId = "blocked_user_id"
         case blockedByUserId = "blocked_by_user_id"
@@ -15,14 +15,6 @@ struct BlockingUserPayload: Decodable {
     let blockedUserId: String
     let blockedByUserId: String
     let createdAt: Date
-}
-
-extension BlockingUserPayload: Equatable {
-    static func == (lhs: BlockingUserPayload, rhs: BlockingUserPayload) -> Bool {
-        lhs.blockedUserId == rhs.blockedUserId
-            && lhs.blockedByUserId == rhs.blockedByUserId
-            && lhs.createdAt == rhs.createdAt
-    }
 }
 
 /// An object describing the incoming blocked users JSON payload.
