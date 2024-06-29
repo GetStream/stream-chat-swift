@@ -87,6 +87,11 @@ struct ThreadPartialUpdateRequest: Encodable {
     let set: SetProperties?
     let unset: [String]?
 
+    init(set: SetProperties?, unset: [String]? = nil) {
+        self.set = set
+        self.unset = unset
+    }
+
     /// The available thread properties that can be updated.
     struct SetProperties: Encodable {
         var title: String?
