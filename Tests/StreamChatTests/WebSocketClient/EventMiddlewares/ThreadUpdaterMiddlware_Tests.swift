@@ -68,7 +68,6 @@ final class ThreadUpdaterMiddleware_Tests: XCTestCase {
     }
 
     func test_threadMessageNewEvent_addsMessageToThreadReplies_increasesUnreadCount() throws {
-        let currentUserId = UserId.unique
         let parentMessageId = MessageId.unique
         let cid = ChannelId.unique
         let eventPayload = EventPayload(
@@ -111,7 +110,6 @@ final class ThreadUpdaterMiddleware_Tests: XCTestCase {
     }
 
     func test_threadMessageNewEvent_whenThreadReadDoesNotExist_stillIncreasesUnreadCount() throws {
-        let currentUserId = UserId.unique
         let parentMessageId = MessageId.unique
         let cid = ChannelId.unique
         let eventPayload = EventPayload(
@@ -188,7 +186,6 @@ final class ThreadUpdaterMiddleware_Tests: XCTestCase {
 
     func test_channelDeletedEvent_shouldDeleteAllThreadsBelongingToTheDeletedChannel() throws {
         let currentUserId = UserId.unique
-        let parentMessageId = MessageId.unique
         let cid = ChannelId.unique
         let eventPayload = EventPayload(
             eventType: .channelDeleted,
@@ -318,7 +315,7 @@ final class ThreadUpdaterMiddleware_Tests: XCTestCase {
 
         try database.writeSynchronously { session in
             try session.saveCurrentUser(payload: .dummy(userId: currentUserId, role: .user))
-            let channelDTO = try session.saveChannel(payload: .dummy(channel: .dummy(cid: cid)))
+            try session.saveChannel(payload: .dummy(channel: .dummy(cid: cid)))
             try session.saveThread(
                 payload: .dummy(
                     parentMessageId: parentMessageId,

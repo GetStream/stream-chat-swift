@@ -31,7 +31,6 @@ final class Logger_Tests: XCTestCase {
     }
     
     func test_restoringInjectedLogger() {
-        let initialLogger = LogConfig.logger
         XCTAssertTrue(type(of: LogConfig.logger) == Logger.self)
         let spyLogger = Logger_Spy()
         spyLogger.injectMock()
