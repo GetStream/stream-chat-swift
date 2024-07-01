@@ -188,6 +188,7 @@ extension WebSocketClient: WebSocketEngineDelegate {
 
     func webSocketDidReceiveMessage(_ message: String) {
         do {
+            log.debug("Message received:\n\(message)", subsystems: .webSocket)
             let messageData = Data(message.utf8)
             log.debug("Event received:\n\(messageData.debugPrettyPrintedJSON)", subsystems: .webSocket)
 
