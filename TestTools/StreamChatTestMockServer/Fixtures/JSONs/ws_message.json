@@ -1,16 +1,16 @@
 {
-    "channel_id": "c0cd66ea-124f-11ef-be47-3afd52d517ad",
+    "channel_id": "b00b84c2-37bb-11ef-9974-9af4b4bba79c",
     "channel_type": "messaging",
-    "cid": "messaging:c0cd66ea-124f-11ef-be47-3afd52d517ad",
-    "created_at": "2024-05-15T00:12:05.481265621Z",
+    "cid": "messaging:b00b84c2-37bb-11ef-9974-9af4b4bba79c",
+    "created_at": "2024-07-01T15:07:54.623933645Z",
     "message": {
         "attachments": [],
         "before_message_send_failed": true,
-        "cid": "messaging:c0cd66ea-124f-11ef-be47-3afd52d517ad",
-        "created_at": "2024-05-15T00:12:05.449838Z",
+        "cid": "messaging:b00b84c2-37bb-11ef-9974-9af4b4bba79c",
+        "created_at": "2024-07-01T15:07:54.603614Z",
         "deleted_reply_count": 0,
         "html": "<p>Test</p>\n",
-        "id": "c1f2cc2c-124f-11ef-be47-3afd52d517ad",
+        "id": "b129b036-37bb-11ef-9974-9af4b4bba79c",
         "latest_reactions": [],
         "mentioned_users": [],
         "own_reactions": [],
@@ -26,19 +26,18 @@
         "silent": false,
         "text": "Test",
         "type": "regular",
-        "updated_at": "2024-05-15T00:12:05.449838Z",
+        "updated_at": "2024-07-01T15:07:54.603614Z",
         "user": {
             "banned": false,
             "birthland": "Tatooine",
             "created_at": "2024-04-04T09:26:11.805899Z",
             "id": "luke_skywalker",
             "image": "https://vignette.wikia.nocookie.net/starwars/images/2/20/LukeTLJ.jpg",
-            "language": "en",
-            "last_active": "2024-05-15T00:12:01.712949233Z",
+            "last_active": "2024-07-01T15:07:52.290985464Z",
             "name": "Luke Skywalker",
             "online": true,
             "role": "user",
-            "updated_at": "2024-05-14T19:25:41.524994Z"
+            "updated_at": "2024-07-01T13:30:51.295424Z"
         }
     },
     "total_unread_count": 0,
@@ -51,12 +50,11 @@
         "created_at": "2024-04-04T09:26:11.805899Z",
         "id": "luke_skywalker",
         "image": "https://vignette.wikia.nocookie.net/starwars/images/2/20/LukeTLJ.jpg",
-        "language": "en",
-        "last_active": "2024-05-15T00:12:01.712949233Z",
+        "last_active": "2024-07-01T15:07:52.290985464Z",
         "name": "Luke Skywalker",
         "online": true,
         "role": "user",
-        "updated_at": "2024-05-14T19:25:41.524994Z"
+        "updated_at": "2024-07-01T13:30:51.295424Z"
     },
     "watcher_count": 1
 }

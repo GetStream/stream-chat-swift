@@ -1,17 +1,17 @@
 {
-    "channel_id": "c0cd66ea-124f-11ef-be47-3afd52d517ad",
+    "channel_id": "b00b84c2-37bb-11ef-9974-9af4b4bba79c",
     "channel_type": "messaging",
-    "cid": "messaging:c0cd66ea-124f-11ef-be47-3afd52d517ad",
-    "created_at": "2024-05-15T00:12:05.924818627Z",
+    "cid": "messaging:b00b84c2-37bb-11ef-9974-9af4b4bba79c",
+    "created_at": "2024-07-01T15:07:55.065030864Z",
     "member": {
         "banned": false,
         "channel_role": "channel_member",
-        "created_at": "2024-05-15T00:12:05.917377Z",
+        "created_at": "2024-07-01T15:07:55.058427Z",
         "notifications_muted": false,
         "role": "admin",
         "shadow_banned": false,
         "status": "member",
-        "updated_at": "2024-05-15T00:12:05.917377Z",
+        "updated_at": "2024-07-01T15:07:55.058427Z",
         "user": {
             "banned": false,
             "birthland": "Polis Massa",
@@ -19,9 +19,9 @@
             "id": "leia_organa",
             "image": "https://vignette.wikia.nocookie.net/starwars/images/f/fc/Leia_Organa_TLJ.png",
             "language": "de",
-            "last_active": "2024-05-15T00:09:23.320777113Z",
+            "last_active": "2024-07-01T14:56:38.430623351Z",
             "name": "Leia Organa",
-            "online": false,
+            "online": true,
             "private_settings": {
                 "readReceipts": {
                     "enabled": false
@@ -31,7 +31,7 @@
                 }
             },
             "role": "admin",
-            "updated_at": "2024-05-07T07:28:56.465679Z"
+            "updated_at": "2024-06-13T18:15:03.769495Z"
         },
         "user_id": "leia_organa"
     },
@@ -43,9 +43,9 @@
         "id": "leia_organa",
         "image": "https://vignette.wikia.nocookie.net/starwars/images/f/fc/Leia_Organa_TLJ.png",
         "language": "de",
-        "last_active": "2024-05-15T00:09:23.320777113Z",
+        "last_active": "2024-07-01T14:56:38.430623351Z",
         "name": "Leia Organa",
-        "online": false,
+        "online": true,
         "private_settings": {
             "readReceipts": {
                 "enabled": false
@@ -55,6 +55,6 @@
             }
         },
         "role": "admin",
-        "updated_at": "2024-05-07T07:28:56.465679Z"
+        "updated_at": "2024-06-13T18:15:03.769495Z"
     }
 }
