@@ -303,7 +303,7 @@ extension ChatThread: Differentiable, Hashable {
     public func isContentEqual(to source: ChatThread) -> Bool {
         parentMessageId == source.parentMessageId &&
             updatedAt == source.updatedAt &&
-            parentMessage == source.parentMessage &&
+            parentMessage.isContentEqual(to: source.parentMessage) &&
             title == source.title &&
             reads == source.reads &&
             latestReplies == source.latestReplies &&
