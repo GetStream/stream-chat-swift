@@ -234,8 +234,8 @@ extension NSManagedObjectContext {
         }
 
         var currentUserUnreadCount = 0
-        if let currentUser = currentUser?.user.id {
-            let currentUserRead = payload.read.first(where: { $0.user.id == self.currentUser?.user.id })
+        if let currentUserId = currentUser?.user.id {
+            let currentUserRead = payload.read.first(where: { $0.user.id == currentUserId })
             currentUserUnreadCount = currentUserRead?.unreadMessagesCount ?? 0
         }
 

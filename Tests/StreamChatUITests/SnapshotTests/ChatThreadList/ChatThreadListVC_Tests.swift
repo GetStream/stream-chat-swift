@@ -122,7 +122,6 @@ final class ChatThreadListVC_Tests: XCTestCase {
             eventsController: mockedThreadListController.client.eventsController()
         )
 
-        let unreadCount = UnreadCount(channels: 0, messages: 0, threads: 8)
         mockedThreadListController.state = .remoteDataFetched
         mockedThreadListController.threads_mock = mockThreads
         vc.controller(mockedThreadListController, didChangeState: .initialized)
