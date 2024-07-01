@@ -133,6 +133,32 @@ public final class ConnectedUser {
         try await userUpdater.unmuteUser(userId)
     }
     
+    /// Blocks the user in all the channels.
+    ///
+    /// - Parameter userId: The id of the user to mute.
+    ///
+    /// - Throws: An error while communicating with the Stream API.
+    public func blockUser(_ userId: UserId) async throws {
+        try await userUpdater.blockUser(userId)
+    }
+    
+    /// Unblocks the user in all the channels.
+    ///
+    /// - Parameter userId: The id of the user to unmute.
+    ///
+    /// - Throws: An error while communicating with the Stream API.
+    public func unblockUser(_ userId: UserId) async throws {
+        try await userUpdater.unblockUser(userId)
+    }
+    
+    /// Get all blocked users.
+    ///
+    /// - Parameter completion: Called when the API call is finished. Called with `Error` if the remote update fails.
+    ///
+    func loadBlockedUsers() async throws -> [BlockedUserDetails] {
+        try await currentUserUpdater.loadBlockedUsers()
+    }
+    
     /// Flags the specified user.
     ///
     /// - Parameter userId: The id of the user to flag.

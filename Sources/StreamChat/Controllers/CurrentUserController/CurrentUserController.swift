@@ -266,6 +266,18 @@ public extension CurrentChatUserController {
     /// Note: This is a one-time request, it is not observable.
     func loadAllUnreads(completion: @escaping ((Result<CurrentUserUnreads, Error>) -> Void)) {
         currentUserUpdater.loadAllUnreads { result in
+             self.callback {
+                completion(result)
+            }
+        }
+    }
+    
+    /// Get all blocked users.
+    ///
+    /// - Parameter completion: Called when the API call is finished. Called with `Error` if the remote update fails.
+    ///
+    func loadBlockedUsers(completion: @escaping (Result<[BlockedUserDetails], Error>) -> Void) {
+        currentUserUpdater.loadBlockedUsers { result in
             self.callback {
                 completion(result)
             }

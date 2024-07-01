@@ -49,6 +49,12 @@ public struct ChatChannel {
     /// It's not possible to send new messages to a frozen channel.
     ///
     public let isFrozen: Bool
+    
+    /// Returns `true` if the channel is blocked.
+    ///
+    /// It's not possible to send new messages to a blocked channel.
+    ///
+    public let isBlocked: Bool
 
     /// The total number of members in the channel.
     public let memberCount: Int
@@ -190,6 +196,7 @@ public struct ChatChannel {
         config: ChannelConfig = .init(),
         ownCapabilities: Set<ChannelCapability> = [],
         isFrozen: Bool = false,
+        isBlocked: Bool = false,
         lastActiveMembers: @escaping (() -> [ChatChannelMember]) = { [] },
         membership: ChatChannelMember? = nil,
         currentlyTypingUsers: @escaping () -> Set<ChatUser> = { [] },
@@ -220,6 +227,7 @@ public struct ChatChannel {
         self.config = config
         self.ownCapabilities = ownCapabilities
         self.isFrozen = isFrozen
+        self.isBlocked = isBlocked
         self.membership = membership
         self.team = team
         self.watcherCount = watcherCount

@@ -5,6 +5,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## StreamChat
 ### ✅ Added
+- Add support for user blocking [#3223](https://github.com/GetStream/stream-chat-swift/pull/3223)
 - [Threads v2] Add support for Threads v2 [#3229](https://github.com/GetStream/stream-chat-swift/pull/3229)
    - Add `ChatThreadListController` to fetch current user threads
    - Add `ChatMessageController.markThreadRead()` 

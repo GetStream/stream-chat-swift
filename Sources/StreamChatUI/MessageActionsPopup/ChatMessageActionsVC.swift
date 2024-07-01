@@ -137,7 +137,7 @@ open class ChatMessageActionsVC: _ViewController, ThemeProvider {
 
             if canDeleteAnyMessage {
                 actions.append(deleteActionItem())
-            } else if canDeleteOwnMessage && message.isSentByCurrentUser {
+            } else if canDeleteOwnMessage && isSentByCurrentUser {
                 actions.append(deleteActionItem())
             }
 
@@ -145,9 +145,14 @@ open class ChatMessageActionsVC: _ViewController, ThemeProvider {
                 actions.append(flagActionItem())
             }
 
-            if channelConfig.mutesEnabled && !message.isSentByCurrentUser {
+            if channelConfig.mutesEnabled && !isSentByCurrentUser {
                 let isMuted = currentUser.mutedUsers.map(\.id).contains(message.author.id)
                 actions.append(isMuted ? unmuteActionItem() : muteActionItem())
+            }
+            
+            if components.isBlockingUsersEnabled && !isSentByCurrentUser {
+                let isBlocked = currentUser.blockedUserIds.contains(message.author.id)
+                actions.append(isBlocked ? unblockActionItem() : blockActionItem())
             }
 
             return actions
@@ -238,6 +243,40 @@ open class ChatMessageActionsVC: _ViewController, ThemeProvider {
                 self.messageController.client
                     .userController(userId: author.id)
                     .unmute { _ in self.delegate?.chatMessageActionsVCDidFinish(self) }
+            },
+            appearance: appearance
+        )
+    }
+    
+    /// Returns `ChatMessageActionItem` for block action.
+    open func blockActionItem() -> ChatMessageActionItem {
+        BlockUserActionItem(
+            action: { [weak self] _ in
+                guard
+                    let self = self,
+                    let author = self.message?.author
+                else { return }
+
+                self.messageController.client
+                    .userController(userId: author.id)
+                    .block { _ in self.delegate?.chatMessageActionsVCDidFinish(self) }
+            },
+            appearance: appearance
+        )
+    }
+
+    /// Returns `ChatMessageActionItem` for unblock action.
+    open func unblockActionItem() -> ChatMessageActionItem {
+        UnblockUserActionItem(
+            action: { [weak self] _ in
+                guard
+                    let self = self,
+                    let author = self.message?.author
+                else { return }
+
+                self.messageController.client
+                    .userController(userId: author.id)
+                    .unblock { _ in self.delegate?.chatMessageActionsVCDidFinish(self) }
             },
             appearance: appearance
         )

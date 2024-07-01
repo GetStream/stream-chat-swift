@@ -33,8 +33,8 @@ struct ChannelVisibilityEventMiddleware: EventMiddleware {
                 guard let channelDTO = session.channel(cid: event.cid) else {
                     throw ClientError.ChannelDoesNotExist(cid: event.cid)
                 }
-
-                if !event.message.isShadowed {
+                
+                if !event.message.isShadowed && !channelDTO.isBlocked {
                     channelDTO.isHidden = false
                 }
 
@@ -45,7 +45,7 @@ struct ChannelVisibilityEventMiddleware: EventMiddleware {
                     throw ClientError.ChannelDoesNotExist(cid: event.channel.cid)
                 }
 
-                if !event.message.isShadowed {
+                if !event.message.isShadowed && !channelDTO.isBlocked {
                     channelDTO.isHidden = false
                 }
 

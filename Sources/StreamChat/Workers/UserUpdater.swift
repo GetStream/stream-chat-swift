@@ -2,6 +2,7 @@
 // Copyright © 2024 Stream.io Inc. All rights reserved.
 //
 
+import CoreData
 import Foundation
 
 /// Makes user-related calls to the backend and updates the local storage with the results.
@@ -25,6 +26,68 @@ class UserUpdater: Worker {
     func unmuteUser(_ userId: UserId, completion: ((Error?) -> Void)? = nil) {
         apiClient.request(endpoint: .unmuteUser(userId)) {
             completion?($0.error)
+        }
+    }
+    
+    /// Blocks the user with the provided `userId`.
+    /// - Parameters:
+    ///   - userId: The user identifier.
+    ///   - completion: Called when the API call is finished. Called with `Error` if the remote update fails.
+    ///
+    func blockUser(_ userId: UserId, completion: ((Error?) -> Void)? = nil) {
+        apiClient.request(endpoint: .blockUser(userId)) {
+            switch $0 {
+            case .success:
+                self.database.write({ session in
+                    session.currentUser?.blockedUserIds.insert(userId)
+                    let channel = ChannelDTO.directMessageChannel(
+                        participantId: userId,
+                        context: self.database.writableContext
+                    )
+                    channel?.isHidden = true
+                }, completion: {
+                    if let error = $0 {
+                        log.error("Failed to save blocked user with id: <\(userId)> to the database. Error: \(error)")
+                    }
+                    completion?($0)
+                })
+            case let .failure(error):
+                self.database.write { session in
+                    session.currentUser?.blockedUserIds.remove(userId)
+                }
+                completion?(error)
+            }
+        }
+    }
+
+    /// Unblocks the user with the provided `userId`.
+    /// - Parameters:
+    ///   - userId: The user identifier.
+    ///   - completion: Called when the API call is finished. Called with `Error` if the remote update fails.
+    ///
+    func unblockUser(_ userId: UserId, completion: ((Error?) -> Void)? = nil) {
+        apiClient.request(endpoint: .unblockUser(userId)) {
+            switch $0 {
+            case .success:
+                self.database.write({ session in
+                    session.currentUser?.blockedUserIds.remove(userId)
+                    let channel = ChannelDTO.directMessageChannel(
+                        participantId: userId,
+                        context: self.database.writableContext
+                    )
+                    channel?.isHidden = false
+                }, completion: {
+                    if let error = $0 {
+                        log.error("Failed to remove blocked user with id: <\(userId)> from the database. Error: \(error)")
+                    }
+                    completion?($0)
+                })
+            case let .failure(error):
+                self.database.write { session in
+                    session.currentUser?.blockedUserIds.insert(userId)
+                }
+                completion?(error)
+            }
         }
     }
 
@@ -119,6 +182,22 @@ extension UserUpdater {
     func unmuteUser(_ userId: UserId) async throws {
         try await withCheckedThrowingContinuation { continuation in
             unmuteUser(userId) { error in
+                continuation.resume(with: error)
+            }
+        }
+    }
+    
+    func blockUser(_ userId: UserId) async throws {
+        try await withCheckedThrowingContinuation { continuation in
+            blockUser(userId) { error in
+                continuation.resume(with: error)
+            }
+        }
+    }
+    
+    func unblockUser(_ userId: UserId) async throws {
+        try await withCheckedThrowingContinuation { continuation in
+            unblockUser(userId) { error in
                 continuation.resume(with: error)
             }
         }

@@ -112,7 +112,7 @@ final class ConnectedUser_Tests: XCTestCase {
         XCTAssertEqual(id, env.userUpdaterMock.muteUser_userId)
     }
     
-    func test_unmuteUser_whenUpdatedSucceeds_thenMuteUserSucceeds() async throws {
+    func test_unmuteUser_whenUpdatedSucceeds_thenUnmuteUserSucceeds() async throws {
         try await setUpConnectedUser(usesMockedUpdaters: true)
         
         env.userUpdaterMock.unmuteUser_completion_result = .success(())
@@ -121,7 +121,7 @@ final class ConnectedUser_Tests: XCTestCase {
         XCTAssertEqual(id, env.userUpdaterMock.unmuteUser_userId)
     }
     
-    func test_flagUser_whenUpdatedSucceeds_thenMuteUserSucceeds() async throws {
+    func test_flagUser_whenUpdatedSucceeds_thenFlagUserSucceeds() async throws {
         try await setUpConnectedUser(usesMockedUpdaters: true)
         
         env.userUpdaterMock.flagUser_completion_result = .success(())
@@ -131,7 +131,7 @@ final class ConnectedUser_Tests: XCTestCase {
         XCTAssertEqual(id, env.userUpdaterMock.flagUser_userId)
     }
     
-    func test_unflagUser_whenUpdatedSucceeds_thenMuteUserSucceeds() async throws {
+    func test_unflagUser_whenUpdatedSucceeds_thenUnflagUserSucceeds() async throws {
         try await setUpConnectedUser(usesMockedUpdaters: true)
         
         env.userUpdaterMock.flagUser_completion_result = .success(())
@@ -139,6 +139,24 @@ final class ConnectedUser_Tests: XCTestCase {
         try await connectedUser.unflag(id)
         XCTAssertEqual(false, env.userUpdaterMock.flagUser_flag)
         XCTAssertEqual(id, env.userUpdaterMock.flagUser_userId)
+    }
+    
+    func test_blockUser_whenUpdatedSucceeds_thenBlockUserSucceeds() async throws {
+        try await setUpConnectedUser(usesMockedUpdaters: true)
+        
+        env.userUpdaterMock.blockUser_completion_result = .success(())
+        let id = UserId.unique
+        try await connectedUser.blockUser(id)
+        XCTAssertEqual(id, env.userUpdaterMock.blockUser_userId)
+    }
+    
+    func test_unblockUser_whenUpdatedSucceeds_thenUnblockUserSucceeds() async throws {
+        try await setUpConnectedUser(usesMockedUpdaters: true)
+        
+        env.userUpdaterMock.unblockUser_completion_result = .success(())
+        let id = UserId.unique
+        try await connectedUser.unblockUser(id)
+        XCTAssertEqual(id, env.userUpdaterMock.unblockUser_userId)
     }
     
     // MARK: - Test Data

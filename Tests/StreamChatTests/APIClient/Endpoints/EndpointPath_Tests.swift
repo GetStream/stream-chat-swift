@@ -114,6 +114,7 @@ final class EndpointPathTests: XCTestCase {
         assertResultEncodingAndDecoding(.flagUser(false))
         assertResultEncodingAndDecoding(.flagMessage(false))
         assertResultEncodingAndDecoding(.muteUser(false))
+        assertResultEncodingAndDecoding(.blockUser)
         
         assertResultEncodingAndDecoding(.polls)
         assertResultEncodingAndDecoding(.pollsQuery)

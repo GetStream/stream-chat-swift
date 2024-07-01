@@ -549,6 +549,11 @@ public struct Components {
 
     /// The view that shows current user avatar.
     public var currentUserAvatarView: CurrentChatUserAvatarView.Type = CurrentChatUserAvatarView.self
+    
+    // MARK: - User blocking components
+    
+    /// Determines if users are able to block other users. Disabled by default.
+    public var isBlockingUsersEnabled = false
 
     // MARK: - Navigation
 

@@ -103,6 +103,10 @@ public extension FilterKey where Scope: AnyChannelListFilterScope {
     /// A filter key for matching the `frozen` value.
     /// Supported operators: `equal`
     static var frozen: FilterKey<Scope, Bool> { .init(rawValue: "frozen", keyPathString: #keyPath(ChannelDTO.isFrozen)) }
+    
+    /// A filter key for matching the `blocked` value.
+    /// Supported operators: `equal`
+    static var blocked: FilterKey<Scope, Bool> { .init(rawValue: "blocked", keyPathString: #keyPath(ChannelDTO.isBlocked)) }
 
     /// A filter key for matching the `memberCount` value.
     /// Supported operators: `equal`, `greaterThan`, `lessThan`, `greaterOrEqual`, `lessOrEqual`, `notEqual`

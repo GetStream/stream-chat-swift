@@ -30,6 +30,7 @@ struct UserWebSocketPayload: Encodable {
         case imageURL = "image"
         case language
         case privacySettings = "privacy_settings"
+        case blockedUserIds = "blocked_user_ids"
     }
 
     let id: String
@@ -38,6 +39,7 @@ struct UserWebSocketPayload: Encodable {
     let isInvisible: Bool?
     let language: String?
     let privacySettings: UserPrivacySettingsPayload?
+    let blockedUserIds: [UserId]?
     let extraData: [String: RawJSON]
 
     init(userInfo: UserInfo) {
@@ -47,6 +49,7 @@ struct UserWebSocketPayload: Encodable {
         isInvisible = userInfo.isInvisible
         language = userInfo.language?.languageCode
         privacySettings = userInfo.privacySettings.map { .init(settings: $0) }
+        blockedUserIds = userInfo.blockedUserIds
         extraData = userInfo.extraData
     }
 
@@ -58,6 +61,7 @@ struct UserWebSocketPayload: Encodable {
         try container.encodeIfPresent(isInvisible, forKey: .isInvisible)
         try container.encodeIfPresent(language, forKey: .language)
         try container.encodeIfPresent(privacySettings, forKey: .privacySettings)
+        try container.encodeIfPresent(blockedUserIds, forKey: .blockedUserIds)
         try extraData.encode(to: encoder)
     }
 }

@@ -14,7 +14,8 @@ class CurrentUserDTO: NSManagedObject {
     /// Contains the timestamp when last sync process was finished.
     /// The date later serves as reference date for the last event synced using `/sync` endpoint
     @NSManaged var lastSynchedEventDate: DBDate?
-
+    
+    @NSManaged var blockedUserIds: Set<String>
     @NSManaged var flaggedUsers: Set<UserDTO>
     @NSManaged var flaggedMessages: Set<MessageDTO>
     @NSManaged var mutedUsers: Set<UserDTO>
@@ -91,6 +92,8 @@ extension NSManagedObjectContext: CurrentUserDatabaseSession {
 
         let mutedUsers = try payload.mutedUsers.map { try saveUser(payload: $0.mutedUser) }
         dto.mutedUsers = Set(mutedUsers)
+        
+        dto.blockedUserIds = payload.blockedUserIds
 
         let channelMutes = Set(
             try payload.mutedChannels.map { try saveChannelMute(payload: $0) }
@@ -207,7 +210,7 @@ extension CurrentChatUser {
             )
             extraData = [:]
         }
-
+        
         let mutedUsers: [ChatUser] = try dto.mutedUsers.map { try $0.asModel() }
         let flaggedUsers: [ChatUser] = try dto.flaggedUsers.map { try $0.asModel() }
         let flaggedMessagesIDs: [MessageId] = dto.flaggedMessages.map(\.id)
@@ -235,6 +238,7 @@ extension CurrentChatUser {
             extraData: extraData,
             devices: dto.devices.map { try $0.asModel() },
             currentDevice: dto.currentDevice?.asModel(),
+            blockedUserIds: dto.blockedUserIds,
             mutedUsers: Set(mutedUsers),
             flaggedUsers: Set(flaggedUsers),
             flaggedMessageIDs: Set(flaggedMessagesIDs),

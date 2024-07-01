@@ -438,6 +438,21 @@ final class DemoChatChannelListRouter: ChatChannelListRouter {
                     )
                 ), animated: true)
             }),
+            .init(title: "Show Blocked Users", handler: { [unowned self] _ in
+                guard let cid = channelController.channel?.cid else { return }
+                let client = channelController.client
+                client.currentUserController().loadBlockedUsers { result in
+                    guard let blockedUsers = try? result.get() else { return }
+                    self.rootViewController.present(MembersViewController(
+                        membersController: client.memberListController(
+                            query: .init(
+                                cid: cid,
+                                filter: .in(.id, values: blockedUsers.map(\.userId))
+                            )
+                        )
+                    ), animated: true)
+                }
+            }),
             .init(title: "Truncate channel w/o message", isEnabled: canUpdateChannel, handler: { _ in
                 channelController.truncateChannel { [unowned self] error in
                     if let error = error {
