@@ -10,6 +10,6 @@ open class ChatMessageListUnreadCountView: ChatChannelUnreadCountView {
     override open func setUpAppearance() {
         super.setUpAppearance()
 
-        backgroundColor = tintColor
+        backgroundColor = .clear
     }
 }

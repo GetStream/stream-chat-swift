@@ -66,6 +66,10 @@ final class EndpointPathTests: XCTestCase {
         XCTAssertFalse(EndpointPath.pollVote(messageId: "test_message", pollId: "test_poll", voteId: "test_vote").shouldBeQueuedOffline)
     }
 
+    func test_unread_shouldNOTBeQueuedOffline() {
+        XCTAssertFalse(EndpointPath.unread.shouldBeQueuedOffline)
+    }
+
     // MARK: - Codable
 
     func test_isProperlyEncodedAndDecoded() throws {

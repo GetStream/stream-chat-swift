@@ -140,6 +140,40 @@ final class CurrentUserModelDTO_Tests: XCTestCase {
         XCTAssertEqual(currentUser?.currentDevice, nil)
     }
 
+    func test_savingCurrentUser_whenUnreadThreadsCountNil_doesNotOverrideThreadsCount() throws {
+        let userId = UserId.unique
+        let previousUserPayload = CurrentUserPayload.dummy(userId: userId, role: .admin, unreadCount: .init(
+            channels: 3,
+            messages: 2,
+            threads: 3
+        ))
+        try database.writeSynchronously { session in
+            try session.saveCurrentUser(payload: previousUserPayload)
+        }
+
+        var currentUser: CurrentChatUser? {
+            try? database.viewContext.currentUser?.asModel()
+        }
+
+        XCTAssertEqual(currentUser?.unreadCount.channels, 3)
+        XCTAssertEqual(currentUser?.unreadCount.messages, 2)
+        XCTAssertEqual(currentUser?.unreadCount.threads, 3)
+
+        let newUserPayload = CurrentUserPayload.dummy(userId: userId, role: .admin, unreadCount: .init(
+            channels: 3,
+            messages: 2,
+            threads: nil
+        ))
+        try database.writeSynchronously { session in
+            try session.saveCurrentUser(payload: newUserPayload)
+        }
+
+        // Values remain the same even tho threads was nil
+        XCTAssertEqual(currentUser?.unreadCount.channels, 3)
+        XCTAssertEqual(currentUser?.unreadCount.messages, 2)
+        XCTAssertEqual(currentUser?.unreadCount.threads, 3)
+    }
+
     func test_saveCurrentUser_removesChannelMutesNotInPayload() throws {
         // GIVEN
         let userPayload: UserPayload = .dummy(userId: .unique)

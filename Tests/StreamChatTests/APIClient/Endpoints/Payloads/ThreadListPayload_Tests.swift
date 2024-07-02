@@ -34,5 +34,6 @@ final class ThreadListPayload_Tests: XCTestCase {
         XCTAssertEqual(payload.title, "msg: 24")
         XCTAssertEqual(payload.latestReplies.count, 2)
         XCTAssertEqual(payload.read.count, 3)
+        XCTAssertEqual(payload.extraData["custom_test"]?.numberValue, 10)
     }
 }

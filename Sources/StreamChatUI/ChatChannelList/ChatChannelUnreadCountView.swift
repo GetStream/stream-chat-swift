@@ -7,11 +7,13 @@ import UIKit
 
 /// A view that shows a number of unread messages in channel.
 open class ChatChannelUnreadCountView: _View, ThemeProvider, SwiftUIRepresentable {
-    /// The `UILabel` instance that holds number of unread messages.
-    open private(set) lazy var unreadCountLabel = UILabel()
+    /// The badge view that displays the unread count.
+    open private(set) lazy var badgeView = components.badgeView.init()
         .withoutAutoresizingMaskConstraints
-        .withAdjustingFontForContentSizeCategory
-        .withBidirectionalLanguagesSupport
+        .withAccessibilityIdentifier(identifier: "badgeView")
+
+    /// The `UILabel` instance that holds number of unread messages.
+    open private(set) lazy var unreadCountLabel = badgeView.textLabel
         .withAccessibilityIdentifier(identifier: "unreadCountLabel")
 
     /// The data this view component shows.
@@ -19,30 +21,10 @@ open class ChatChannelUnreadCountView: _View, ThemeProvider, SwiftUIRepresentabl
         didSet { updateContentIfNeeded() }
     }
 
-    override open func layoutSubviews() {
-        super.layoutSubviews()
-        layer.cornerRadius = bounds.height / 2
-    }
-
-    override open func setUpAppearance() {
-        super.setUpAppearance()
-        layer.masksToBounds = true
-        backgroundColor = appearance.colorPalette.alert
-
-        unreadCountLabel.textColor = appearance.colorPalette.staticColorText
-        unreadCountLabel.font = appearance.fonts.footnoteBold
-        unreadCountLabel.textAlignment = .center
-    }
-
     override open func setUpLayout() {
-        // 2 and 3 are magic numbers that look visually good
-        layoutMargins = .init(top: 2, left: 3, bottom: 2, right: 3)
+        super.setUpLayout()
 
-        addSubview(unreadCountLabel)
-        unreadCountLabel.pin(to: layoutMarginsGuide)
-
-        // The width shouldn't be smaller than height because we want to show it as a circle for small numbers
-        widthAnchor.pin(greaterThanOrEqualTo: heightAnchor, multiplier: 1).isActive = true
+        embed(badgeView)
     }
 
     override open func updateContent() {

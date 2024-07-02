@@ -2,6 +2,7 @@
 // Copyright © 2024 Stream.io Inc. All rights reserved.
 //
 
+@testable import StreamChatUI
 import UIKit
 
 extension UIView {
@@ -15,6 +16,22 @@ extension UIViewController {
     /// Trigger `viewDidLoad` to execute view lifecycle methods.
     func executeLifecycleMethods() {
         _ = view
+    }
+}
+
+extension _ViewController {
+    func mockIsViewVisible(_ value: Bool) {
+        var mocker = MockViewVisibilityChecker()
+        mocker.mockIsViewVisible = value
+        viewVisibilityChecker = mocker
+    }
+}
+
+struct MockViewVisibilityChecker: ViewVisibilityChecker {
+    var mockIsViewVisible: Bool = true
+
+    func isViewVisible(for viewController: UIViewController) -> Bool {
+        mockIsViewVisible
     }
 }
 

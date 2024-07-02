@@ -117,6 +117,15 @@ final class MessageUpdater_Mock: MessageUpdater {
     var markThreadUnread_callCount = 0
     var markThreadUnread_completion: ((Error?) -> Void)? = nil
 
+    var updateThread_callCount = 0
+    var updateThread_messageId: MessageId?
+    var updateThread_request: ThreadPartialUpdateRequest?
+    var updateThread_completion: ((Result<ChatThread, any Error>) -> Void)?
+
+    var loadThread_callCount = 0
+    var loadThread_query: ThreadQuery?
+    var loadThread_completion: ((Result<ChatThread, any Error>) -> Void)?
+
     // Cleans up all recorded values
     func cleanUp() {
         getMessage_cid = nil
@@ -209,6 +218,21 @@ final class MessageUpdater_Mock: MessageUpdater {
         translate_language = nil
         translate_completion = nil
         translate_completion_result = nil
+
+        markThreadRead_threadId = nil
+        markThreadRead_cid = nil
+        markThreadRead_completion = nil
+
+        markThreadUnread_threadId = nil
+        markThreadUnread_cid = nil
+        markThreadUnread_completion = nil
+
+        updateThread_messageId = nil
+        updateThread_request = nil
+        updateThread_completion = nil
+
+        loadThread_query = nil
+        loadThread_completion = nil
     }
 
     override func getMessage(cid: ChannelId, messageId: MessageId, completion: ((Result<ChatMessage, Error>) -> Void)? = nil) {
@@ -429,6 +453,26 @@ final class MessageUpdater_Mock: MessageUpdater {
         markThreadUnread_threadId = threadId
         markThreadUnread_callCount += 1
         markThreadUnread_completion = completion
+    }
+
+    override func updateThread(
+        for messageId: MessageId,
+        request: ThreadPartialUpdateRequest,
+        completion: @escaping ((Result<ChatThread, any Error>) -> Void)
+    ) {
+        updateThread_callCount += 1
+        updateThread_messageId = messageId
+        updateThread_request = request
+        updateThread_completion = completion
+    }
+
+    override func loadThread(
+        query: ThreadQuery,
+        completion: @escaping ((Result<ChatThread, any Error>) -> Void)
+    ) {
+        loadThread_callCount += 1
+        loadThread_query = query
+        loadThread_completion = completion
     }
 }
 

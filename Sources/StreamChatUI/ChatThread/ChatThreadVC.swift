@@ -33,6 +33,9 @@ open class ChatThreadVC: _ViewController,
         channelController.client
     }
 
+    /// The throttler to make sure that the marking read is not spammed.
+    var markReadThrottler: Throttler = Throttler(interval: 1, queue: .main)
+
     /// Component responsible for setting the correct offset when keyboard frame is changed
     open lazy var keyboardHandler: KeyboardHandler = ComposerKeyboardHandler(
         composerParentVC: self,
@@ -89,7 +92,21 @@ open class ChatThreadVC: _ViewController,
     open var shouldStartFromOldestReplies: Bool {
         components.threadRepliesStartFromOldest
     }
-    
+
+    /// A boolean value indicating whether it should mark the thread read.
+    public var shouldMarkThreadRead: Bool {
+        guard isViewVisible, case .remoteDataFetched = messageController.state else {
+            return false
+        }
+
+        // If there are no replies, no thread is yet created.
+        if messageController.replies.isEmpty {
+            return false
+        }
+
+        return messageListVC.listView.isLastCellFullyVisible && isFirstPageLoaded
+    }
+
     override open func setUp() {
         super.setUp()
 
@@ -130,11 +147,7 @@ open class ChatThreadVC: _ViewController,
         // Set the initial data
         messages = Array(getMessages(from: messageController))
 
-        if messageController.message != nil {
-            didFinishSynchronizing(with: nil)
-            return
-        }
-
+        // Load data from server
         messageController.synchronize { [weak self] error in
             self?.didFinishSynchronizing(with: error)
         }
@@ -166,10 +179,16 @@ open class ChatThreadVC: _ViewController,
         super.viewDidAppear(animated)
 
         keyboardHandler.start()
+
+        if shouldMarkThreadRead {
+            messageController.markThreadRead()
+        }
     }
 
     override open func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
+
+        markReadThrottler.cancel()
 
         resignFirstResponder()
 
@@ -314,6 +333,10 @@ open class ChatThreadVC: _ViewController,
             dismiss(animated: true) { [weak self] in
                 self?.messageComposerVC.content.quoteMessage(message)
             }
+        case is MarkUnreadActionItem:
+            dismiss(animated: true) { [weak self] in
+                self?.messageController.markThreadUnread()
+            }
         default:
             return
         }
@@ -334,8 +357,11 @@ open class ChatThreadVC: _ViewController,
         _ vc: ChatMessageListVC,
         scrollViewDidScroll scrollView: UIScrollView
     ) {
-        // No-op. By default the thread component is not interested in scrollView events,
-        // but you as customer can override this function and provide an implementation.
+        if shouldMarkThreadRead {
+            markReadThrottler.execute { [weak self] in
+                self?.messageController.markThreadRead()
+            }
+        }
     }
 
     open func chatMessageListVC(

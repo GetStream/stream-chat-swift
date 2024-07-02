@@ -1,0 +1,27 @@
+{
+  "total_unread_count": 1,
+  "total_unread_threads_count": 1,
+  "channels": [
+    {
+      "channel_id": "messaging:898be601-5f8b-40cc-919a-3f44e6b4fe64",
+      "unread_count": 1,
+      "last_read": "2024-03-11T23:00:55.941654Z"
+    }
+  ],
+  "channel_type": [
+    {
+      "channel_type": "messaging",
+      "channel_count": 2,
+      "unread_count": 3
+    }
+  ],
+  "threads": [
+    {
+      "unread_count": 5,
+      "last_read": "0001-01-01T00:00:00Z",
+      "last_read_message_id": "6e75266e-c8e9-49f9-be87-f8e745e94821",
+      "parent_message_id": "6e75266e-c8e9-49f9-be87-f8e745e94821"
+    }
+  ],
+  "duration": "12.48ms"
+}

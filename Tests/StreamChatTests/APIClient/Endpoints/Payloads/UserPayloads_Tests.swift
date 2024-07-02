@@ -84,6 +84,23 @@ final class UserPayload_Tests: XCTestCase {
         XCTAssertEqual(payload.role, .user)
         XCTAssertEqual(payload.isOnline, true)
     }
+
+    func test_unread_isSerialized() throws {
+        let json = XCTestCase.mockData(fromJSONFile: "Unread")
+        let payload = try JSONDecoder.default.decode(CurrentUserUnreadsPayload.self, from: json)
+        XCTAssertEqual(payload.totalUnreadCount, 1)
+        XCTAssertEqual(payload.totalUnreadThreadsCount, 1)
+        XCTAssertEqual(payload.channels[0].channelId.rawValue, "messaging:898be601-5f8b-40cc-919a-3f44e6b4fe64")
+        XCTAssertEqual(payload.channels[0].unreadCount, 1)
+        XCTAssertEqual(payload.channels[0].lastRead, "2024-03-11T23:00:55.941654Z".toDate())
+        XCTAssertEqual(payload.channelType[0].channelType.rawValue, "messaging")
+        XCTAssertEqual(payload.channelType[0].channelCount, 2)
+        XCTAssertEqual(payload.channelType[0].unreadCount, 3)
+        XCTAssertEqual(payload.threads[0].unreadCount, 5)
+        XCTAssertEqual(payload.threads[0].lastRead, "0001-01-01T00:00:00Z".toDate())
+        XCTAssertEqual(payload.threads[0].lastReadMessageId, "6e75266e-c8e9-49f9-be87-f8e745e94821")
+        XCTAssertEqual(payload.threads[0].parentMessageId, "6e75266e-c8e9-49f9-be87-f8e745e94821")
+    }
 }
 
 final class UserRequestBody_Tests: XCTestCase {

@@ -5,31 +5,33 @@
 import Foundation
 
 /// A type representing a thread.
-internal struct ChatThread {
+public struct ChatThread {
     /// The id of the message which created the thread. It is also the id of the thread.
-    internal let parentMessageId: MessageId
+    public let parentMessageId: MessageId
     /// The parent message which is the root of this thread.
-    internal let parentMessage: ChatMessage
+    public let parentMessage: ChatMessage
     /// The channel which this thread belongs to.
-    internal let channel: ChatChannel
+    public let channel: ChatChannel
     /// The user who created the thread.
-    internal let createdBy: ChatUser
+    public let createdBy: ChatUser
     /// The number of replies in the thread.
-    internal let replyCount: Int
+    public let replyCount: Int
     /// The number of participants in the thread.
-    internal let participantCount: Int
+    public let participantCount: Int
     /// The participants in the thread.
-    internal let threadParticipants: [ThreadParticipant]
+    public let threadParticipants: [ThreadParticipant]
     /// The date of the last (newest) message in the thread.
-    internal let lastMessageAt: Date?
+    public let lastMessageAt: Date?
     /// The date when the thread was created.
-    internal let createdAt: Date
+    public let createdAt: Date
     /// The last date when the thread was updated.
-    internal let updatedAt: Date?
+    public let updatedAt: Date?
     /// The title of the thread.
-    internal let title: String?
+    public let title: String?
     /// The latest replies of the thread.
-    internal let latestReplies: [ChatMessage]
+    public let latestReplies: [ChatMessage]
     /// The reads information of the thread.
-    internal let reads: [ThreadRead]
+    public let reads: [ThreadRead]
+    /// The custom data of the thread.
+    public let extraData: [String: RawJSON]
 }

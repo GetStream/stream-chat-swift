@@ -126,7 +126,7 @@ final class ThreadsRepository_Tests: XCTestCase {
         )
 
         let query = ThreadListQuery(watch: true)
-        var completionCalled = expectation(description: "completion called")
+        let completionCalled = expectation(description: "completion called")
         repository.loadThreads(query: query) { result in
             XCTAssertNil(result.error)
             XCTAssertEqual(result.value?.threads.count, 3)

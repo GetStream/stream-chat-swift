@@ -436,5 +436,6 @@
       "last_read": "0001-01-01T00:00:00Z",
       "unread_messages": 6
     }
-  ]
+  ],
+  "custom_test": 10
 }

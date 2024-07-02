@@ -21,7 +21,7 @@ final class ChatChannelVC_Tests: XCTestCase {
         components.messageComposerVC = ComposerVC_Mock.self
         components.messageListView = ChatMessageListView_Mock.self
         vc = ChatChannelVC()
-        vc.isViewVisible = { _ in true }
+        vc.mockIsViewVisible(true)
         vc.components = components
         vc.markReadThrottler = ThrottlerMock()
         cid = .unique
@@ -837,7 +837,7 @@ final class ChatChannelVC_Tests: XCTestCase {
 
     func test_shouldMarkChannelRead_jumpToUnreadDisabled_viewIsVisible_remoteDataFetched_lastMessageVisible_hasLoadedAllNextMessages_hasNotMarkedMessageAsUnread_shouldReturnTrue() {
         let mockedListView = makeMockMessageListView()
-        vc.isViewVisible = { _ in true }
+        vc.mockIsViewVisible(true)
         vc.components.isJumpToUnreadEnabled = false
         channelControllerMock.state_mock = .remoteDataFetched
         mockedListView.mockIsLastCellFullyVisible = true
@@ -849,7 +849,7 @@ final class ChatChannelVC_Tests: XCTestCase {
 
     func test_shouldMarkChannelRead_jumpToUnreadEnabled_viewIsVisible_remoteDataFetched_lastMessageVisible_hasLoadedAllNextMessages_hasNotMarkedMessageAsUnread_shouldReturnTrue() {
         let mockedListView = makeMockMessageListView()
-        vc.isViewVisible = { _ in true }
+        vc.mockIsViewVisible(true)
         vc.components.isJumpToUnreadEnabled = true
         channelControllerMock.state_mock = .remoteDataFetched
         mockedListView.mockIsLastCellFullyVisible = true
@@ -865,7 +865,7 @@ final class ChatChannelVC_Tests: XCTestCase {
 
     func test_shouldMarkChannelRead_jumpToUnreadEnabled_whenNotSeenLastMessage_whenNotSeenFirstUnreadMessage_shouldReturnFalse() {
         let mockedListView = makeMockMessageListView()
-        vc.isViewVisible = { _ in true }
+        vc.mockIsViewVisible(true)
         vc.components.isJumpToUnreadEnabled = true
         channelControllerMock.state_mock = .remoteDataFetched
         mockedListView.mockIsLastCellFullyVisible = true
@@ -877,7 +877,7 @@ final class ChatChannelVC_Tests: XCTestCase {
 
     func test_shouldMarkChannelRead_viewIsNotVisible_remoteDataNotFetched_lastMessageNotVisible_hasNotLoadedAllNextMessages_hasMarkedMessageAsUnread_shouldReturnFalse() {
         let mockedListView = makeMockMessageListView()
-        vc.isViewVisible = { _ in false }
+        vc.mockIsViewVisible(false)
         channelControllerMock.state_mock = .initialized
         mockedListView.mockIsLastCellFullyVisible = false
         channelControllerMock.hasLoadedAllNextMessages_mock = false
@@ -909,13 +909,13 @@ final class ChatChannelVC_Tests: XCTestCase {
         options.forEach { option in
             // We are recreating the vc so there is no shared state between the options
             let vc = ChatChannelVC()
-            vc.isViewVisible = { _ in true }
+            vc.mockIsViewVisible(true)
             vc.components = self.vc.components
             vc.components.isJumpToUnreadEnabled = true
             vc.channelController = self.vc.channelController
 
             let mockedListView = makeMockMessageListView(channelVC: vc)
-            vc.isViewVisible = { _ in option.isViewVisible }
+            vc.mockIsViewVisible(option.isViewVisible)
             channelControllerMock.state_mock = option.state
             mockedListView.mockIsLastCellFullyVisible = option.isLastCellFullyVisible
             channelControllerMock.hasLoadedAllNextMessages_mock = option.hasLoadedAllNextMessages
@@ -947,13 +947,13 @@ final class ChatChannelVC_Tests: XCTestCase {
 
         options.forEach { option in
             let vc = ChatChannelVC()
-            vc.isViewVisible = { _ in true }
+            vc.mockIsViewVisible(true)
             vc.components = self.vc.components
             vc.components.isJumpToUnreadEnabled = false
             vc.channelController = self.vc.channelController
 
             let mockedListView = makeMockMessageListView(channelVC: vc)
-            vc.isViewVisible = { _ in option.isViewVisible }
+            vc.mockIsViewVisible(option.isViewVisible)
             channelControllerMock.state_mock = option.state
             mockedListView.mockIsLastCellFullyVisible = option.isLastCellFullyVisible
             channelControllerMock.hasLoadedAllNextMessages_mock = option.hasLoadedAllNextMessages

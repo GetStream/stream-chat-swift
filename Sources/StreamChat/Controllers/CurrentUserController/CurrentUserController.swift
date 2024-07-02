@@ -257,7 +257,21 @@ public extension CurrentChatUserController {
             }
         }
     }
-    
+
+    /// Fetches all the unread information from the current user.
+    ///
+    ///  - Parameter completion: Called when the API call is finished.
+    ///  Returns the current user unreads or an error if the API call fails.
+    ///
+    /// Note: This is a one-time request, it is not observable.
+    func loadAllUnreads(completion: @escaping ((Result<CurrentUserUnreads, Error>) -> Void)) {
+        currentUserUpdater.loadAllUnreads { result in
+            self.callback {
+                completion(result)
+            }
+        }
+    }
+
     /// Get all blocked users.
     ///
     /// - Parameter completion: Called when the API call is finished. Called with `Error` if the remote update fails.

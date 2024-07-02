@@ -7,7 +7,7 @@ import Foundation
 extension ChatClient {
     /// Creates a new `ThreadListController` with the provided thread query.
     /// - Returns: A new instance of `ChatThreadListController`.
-    internal func threadListController(query: ThreadListQuery) -> ChatThreadListController {
+    public func threadListController(query: ThreadListQuery) -> ChatThreadListController {
         .init(query: query, client: self)
     }
 }

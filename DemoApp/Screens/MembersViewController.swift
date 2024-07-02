@@ -61,44 +61,11 @@ class MembersViewController: UITableViewController, ChatChannelMemberListControl
 
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let member = members[indexPath.row]
-        showDetailViewController(MemberDetailViewController(member: member), sender: self)
+        showDetailViewController(DebugObjectViewController(object: member), sender: self)
     }
 
     func memberListController(_ controller: ChatChannelMemberListController, didChangeMembers changes: [ListChange<ChatChannelMember>]) {
         members = Array(controller.members)
         updateData()
-    }
-}
-
-class MemberDetailViewController: UIViewController {
-    let member: ChatChannelMember
-
-    init(member: ChatChannelMember) {
-        self.member = member
-        super.init(nibName: nil, bundle: nil)
-    }
-    
-    @available(*, unavailable)
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-    
-    lazy var textView: UITextView = {
-        let view = UITextView()
-        view.isSelectable = true
-        view.isEditable = false
-        return view
-    }()
-
-    override func loadView() {
-        view = textView
-    }
-
-    override func viewDidLoad() {
-        super.viewDidLoad()
-
-        var debugMember: String = ""
-        dump(member, to: &debugMember)
-        textView.text = debugMember
     }
 }

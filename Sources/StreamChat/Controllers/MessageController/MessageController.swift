@@ -722,19 +722,78 @@ public class ChatMessageController: DataController, DelegateCallable, DataStoreP
     }
 
     /// Marks the thread read if this message is the root of a thread.
-    internal func markThreadRead(completion: ((Error?) -> Void)? = nil) {
+    public func markThreadRead(completion: ((Error?) -> Void)? = nil) {
         messageUpdater.markThreadRead(cid: cid, threadId: messageId) { error in
-            completion?(error)
+            self.callback {
+                completion?(error)
+            }
         }
     }
 
     /// Marks the thread unread if this message is the root of a thread.
-    internal func markThreadUnread(completion: ((Error?) -> Void)? = nil) {
+    public func markThreadUnread(completion: ((Error?) -> Void)? = nil) {
         messageUpdater.markThreadUnread(
             cid: cid,
             threadId: messageId
         ) { error in
-            completion?(error)
+            self.callback {
+                completion?(error)
+            }
+        }
+    }
+
+    /// Fetches the thread information of the message this controller manages.
+    /// Returns an error in case the message is not the root of a thread.
+    /// - Parameters:
+    ///   - replyLimit: The number of replies fetched.
+    ///   - participantLimit: The number of participants fetches.
+    ///   - completion: Returns the thread information if the message is the root of a thread.
+    public func loadThread(
+        replyLimit: Int? = nil,
+        participantLimit: Int? = nil,
+        completion: @escaping ((Result<ChatThread, Error>) -> Void)
+    ) {
+        var query = ThreadQuery(
+            messageId: messageId,
+            watch: false
+        )
+        if let replyLimit {
+            query.replyLimit = replyLimit
+        }
+        if let participantLimit {
+            query.participantLimit = participantLimit
+        }
+        messageUpdater.loadThread(query: query) { result in
+            self.callback {
+                completion(result)
+            }
+        }
+    }
+
+    /// Updates the thread information of the threat root message this controller manages.
+    /// - Parameters:
+    ///   - title: The title of the thread.
+    ///   - extraData: Custom data to populate the thread.
+    ///   - unsetProperties: Properties from the thread to be cleared/unset.
+    public func updateThread(
+        title: String?,
+        extraData: [String: RawJSON]? = nil,
+        unsetProperties: [String]? = nil,
+        completion: @escaping ((Result<ChatThread, Error>) -> Void)
+    ) {
+        messageUpdater.updateThread(
+            for: messageId,
+            request: .init(
+                set: .init(
+                    title: title,
+                    extraData: extraData
+                ),
+                unset: unsetProperties
+            )
+        ) { result in
+            self.callback {
+                completion(result)
+            }
         }
     }
 }

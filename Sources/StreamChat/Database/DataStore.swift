@@ -80,4 +80,17 @@ public struct DataStore {
     public func message(id: MessageId) -> ChatMessage? {
         try? database.viewContext.message(id: id)?.asModel()
     }
+
+    /// Loads a thread model with a matching `parentMessageId` from the **local data store**.
+    ///
+    /// If the thread doesn't exist locally, it's recommended to fetch it with `messageController.loadThread()`.
+    ///
+    /// **Warning**: Should be called on the `main` thread only.
+    ///
+    /// - Returns: Returns the Thread object.
+    ///
+    /// - Parameter parentMessageId: The message id which is the root of a trhead.
+    public func thread(parentMessageId: MessageId) -> ChatThread? {
+        try? database.viewContext.thread(parentMessageId: parentMessageId, cache: nil)?.asModel()
+    }
 }

@@ -9,7 +9,7 @@ final class BannerShowingConnectionDelegate {
     // MARK: - Private Properties
 
     private let view: UIView
-    private let bannerView = BannerView()
+    private let bannerView = DemoConnectionBannerView()
     private let bannerAppearanceDuration: TimeInterval = 0.5
 
     // MARK: -

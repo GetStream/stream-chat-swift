@@ -5,11 +5,11 @@
 import Foundation
 
 /// The information about a thread read.
-internal struct ThreadRead {
+public struct ThreadRead: Equatable {
     /// The user which the read belongs to.
-    internal let user: ChatUser
+    public let user: ChatUser
     /// The date when the user last read the thread.
-    internal let lastReadAt: Date?
+    public let lastReadAt: Date?
     /// The amount of messages unread.
-    internal let unreadMessagesCount: Int
+    public let unreadMessagesCount: Int
 }

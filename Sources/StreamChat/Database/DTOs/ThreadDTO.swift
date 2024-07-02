@@ -20,6 +20,10 @@ class ThreadDTO: NSManagedObject {
     @NSManaged var read: Set<ThreadReadDTO>
     @NSManaged var createdBy: UserDTO
     @NSManaged var channel: ChannelDTO
+    @NSManaged var extraData: Data
+
+    // Only update this value when fetching thread lists, to avoid live updates
+    @NSManaged private var currentUserUnreadCount: Int64
 
     static func loadOrCreate(
         parentMessageId: MessageId,
@@ -63,9 +67,10 @@ class ThreadDTO: NSManagedObject {
     static func threadListFetchRequest() -> NSFetchRequest<ThreadDTO> {
         let request = NSFetchRequest<ThreadDTO>(entityName: ThreadDTO.entityName)
 
-        // Fetch results controller requires at least one sorting descriptor.
-        // For now, it is not possible to change the thread sorting.
+        // By default threads are sorted by unread + updatedAt and
+        // at the moment this is not customisable.
         let sortDescriptors: [NSSortDescriptor] = [
+            .init(keyPath: \ThreadDTO.currentUserUnreadCount, ascending: false),
             .init(keyPath: \ThreadDTO.updatedAt, ascending: false)
         ]
 
@@ -82,11 +87,13 @@ class ThreadDTO: NSManagedObject {
         createdAt: DBDate,
         lastMessageAt: DBDate?,
         updatedAt: DBDate?,
-        latestReplies: Set<MessageDTO>,
-        threadParticipants: Set<ThreadParticipantDTO>,
-        read: Set<ThreadReadDTO>,
+        latestReplies: Set<MessageDTO>?,
+        threadParticipants: Set<ThreadParticipantDTO>?,
+        read: Set<ThreadReadDTO>?,
         createdBy: UserDTO,
-        channel: ChannelDTO
+        channel: ChannelDTO,
+        currentUserUnreadCount: Int?,
+        extraData: Data
     ) {
         self.parentMessage = parentMessage
         self.title = title
@@ -95,17 +102,40 @@ class ThreadDTO: NSManagedObject {
         self.createdAt = createdAt
         self.lastMessageAt = lastMessageAt
         self.updatedAt = updatedAt
-        self.latestReplies = latestReplies
-        self.threadParticipants = threadParticipants
-        self.read = read
         self.createdBy = createdBy
         self.channel = channel
+        self.extraData = extraData
+
+        /// For partial thread response, the properties below won't be returned.
+        /// We need to make sure we don't reset this values from the current state.
+        if let latestReplies {
+            self.latestReplies = latestReplies
+        }
+        if let threadParticipants {
+            self.threadParticipants = threadParticipants
+        }
+        if let read {
+            self.read = read
+        }
+
+        // currentUserUnreadCount should only be updated when fetching thread list,
+        // not in events or when marking the thread read to avoid thread list live updates.
+        if let currentUserUnreadCount {
+            self.currentUserUnreadCount = Int64(currentUserUnreadCount)
+        }
     }
 }
 
 extension ThreadDTO {
     func asModel() throws -> ChatThread {
-        try .init(
+        let extraData: [String: RawJSON]
+        do {
+            extraData = try JSONDecoder.default.decode([String: RawJSON].self, from: self.extraData)
+        } catch {
+            extraData = [:]
+        }
+
+        return try .init(
             parentMessageId: parentMessageId,
             parentMessage: parentMessage.asModel(),
             channel: channel.asModel(),
@@ -117,8 +147,11 @@ extension ThreadDTO {
             createdAt: createdAt.bridgeDate,
             updatedAt: updatedAt?.bridgeDate,
             title: title,
-            latestReplies: latestReplies.map { try $0.asModel() },
-            reads: read.map { try $0.asModel() }
+            latestReplies: latestReplies
+                .sorted(by: { $0.createdAt.bridgeDate < $1.createdAt.bridgeDate })
+                .map { try $0.asModel() },
+            reads: read.map { try $0.asModel() },
+            extraData: extraData
         )
     }
 }
@@ -193,6 +226,19 @@ extension NSManagedObjectContext {
 
         let createdByUserDTO = try saveUser(payload: payload.createdBy)
 
+        let extraData: Data
+        do {
+            extraData = try JSONEncoder.default.encode(payload.extraData)
+        } catch {
+            extraData = Data()
+        }
+
+        var currentUserUnreadCount = 0
+        if let currentUserId = currentUser?.user.id {
+            let currentUserRead = payload.read.first(where: { $0.user.id == currentUserId })
+            currentUserUnreadCount = currentUserRead?.unreadMessagesCount ?? 0
+        }
+
         threadDTO.fill(
             parentMessage: parentMessageDTO,
             title: payload.title,
@@ -205,25 +251,75 @@ extension NSManagedObjectContext {
             threadParticipants: Set(threadParticipantsDTO),
             read: Set(readsDTO),
             createdBy: createdByUserDTO,
-            channel: channelDTO
+            channel: channelDTO,
+            currentUserUnreadCount: currentUserUnreadCount,
+            extraData: extraData
         )
 
         return threadDTO
     }
 
     @discardableResult
-    func saveThread(eventPayload: ThreadEventPayload) throws -> ThreadDTO {
+    func saveThread(partialPayload: ThreadPartialPayload) throws -> ThreadDTO {
         let threadDTO = ThreadDTO.loadOrCreate(
-            parentMessageId: eventPayload.parentMessageId,
+            parentMessageId: partialPayload.parentMessageId,
+            context: self,
+            cache: nil
+        )
+        let channelDTO = try saveChannel(
+            payload: partialPayload.channel,
+            query: nil,
+            cache: nil
+        )
+        let parentMessageDTO = try saveMessage(
+            payload: partialPayload.parentMessage,
+            channelDTO: channelDTO,
+            syncOwnReactions: false,
+            cache: nil
+        )
+
+        let createdByUserDTO = try saveUser(payload: partialPayload.createdBy)
+
+        let extraData: Data
+        do {
+            extraData = try JSONEncoder.default.encode(partialPayload.extraData)
+        } catch {
+            extraData = Data()
+        }
+
+        threadDTO.fill(
+            parentMessage: parentMessageDTO,
+            title: partialPayload.title,
+            replyCount: Int64(partialPayload.replyCount),
+            participantCount: Int64(partialPayload.participantCount),
+            createdAt: partialPayload.createdAt.bridgeDate,
+            lastMessageAt: partialPayload.lastMessageAt?.bridgeDate,
+            updatedAt: partialPayload.updatedAt?.bridgeDate,
+            latestReplies: nil,
+            threadParticipants: nil,
+            read: nil,
+            createdBy: createdByUserDTO,
+            channel: channelDTO,
+            currentUserUnreadCount: nil,
+            extraData: extraData
+        )
+
+        return threadDTO
+    }
+
+    @discardableResult
+    func saveThread(detailsPayload: ThreadDetailsPayload) throws -> ThreadDTO {
+        let threadDTO = ThreadDTO.loadOrCreate(
+            parentMessageId: detailsPayload.parentMessageId,
             context: self,
             cache: nil
         )
         
-        threadDTO.replyCount = Int64(eventPayload.replyCount)
-        threadDTO.participantCount = Int64(eventPayload.replyCount)
-        threadDTO.lastMessageAt = eventPayload.lastMessageAt?.bridgeDate
-        threadDTO.updatedAt = eventPayload.updatedAt.bridgeDate
-        threadDTO.title = eventPayload.title
+        threadDTO.replyCount = Int64(detailsPayload.replyCount)
+        threadDTO.participantCount = Int64(detailsPayload.replyCount)
+        threadDTO.lastMessageAt = detailsPayload.lastMessageAt?.bridgeDate
+        threadDTO.updatedAt = detailsPayload.updatedAt.bridgeDate
+        threadDTO.title = detailsPayload.title
 
         return threadDTO
     }
@@ -232,6 +328,10 @@ extension NSManagedObjectContext {
         let fetchRequest: NSFetchRequest<ThreadDTO> = NSFetchRequest(entityName: ThreadDTO.entityName)
         let results = try fetch(fetchRequest)
         results.forEach { delete($0) }
+    }
+
+    func delete(thread: ThreadDTO) {
+        delete(thread)
     }
 }
 
