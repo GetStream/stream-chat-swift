@@ -196,7 +196,7 @@ open class ChatThreadListItemView: _View, ThemeProvider {
         // Top container that holds the thread information
         mainContainer.addArrangedSubview(threadContainer)
         threadContainer.axis = .vertical
-        threadContainer.spacing = 4
+        threadContainer.spacing = 2
         threadContainer.addArrangedSubview(threadTitleContainer)
         threadContainer.addArrangedSubview(threadDescriptionContainer)
         threadTitleContainer.axis = .horizontal
@@ -224,11 +224,9 @@ open class ChatThreadListItemView: _View, ThemeProvider {
         replyDescriptionContainer.addArrangedSubview(replyTimestampLabel)
 
         NSLayoutConstraint.activate([
+            threadDescriptionContainer.heightAnchor.pin(greaterThanOrEqualToConstant: 22),
             replyAuthorAvatarView.heightAnchor.pin(equalToConstant: 40),
-            replyAuthorAvatarView.widthAnchor.pin(equalTo: replyAuthorAvatarView.heightAnchor)
-        ])
-
-        NSLayoutConstraint.activate([
+            replyAuthorAvatarView.widthAnchor.pin(equalTo: replyAuthorAvatarView.heightAnchor),
             threadIconView.heightAnchor.pin(equalToConstant: 15),
             threadIconView.widthAnchor.pin(equalTo: threadIconView.heightAnchor)
         ])
