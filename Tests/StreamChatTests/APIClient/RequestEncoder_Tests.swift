@@ -467,6 +467,7 @@ final class RequestEncoder_Tests: XCTestCase {
     }
 
     func test_encodingRequestBody_GET() throws {
+        let testName = "Leia1234567890 (`!@£$%^&*_-+=\\|]}{['\";:/?.>,<£#¢§ˆ¶¨¡€@№`)+♥️;"
         // Prepare a GET endpoint with JSON body
         let endpoint = Endpoint<Data>(
             path: .guest,
@@ -477,7 +478,7 @@ final class RequestEncoder_Tests: XCTestCase {
             body: [
                 "user1": TestUser(name: "Luke", age: 22),
                 // Test non-alphanumeric characters, too
-                "user2": TestUser(name: "Leia is the best! + ♥️", age: 22)
+                "user2": TestUser(name: testName, age: 22)
             ]
         )
 
@@ -493,11 +494,15 @@ final class RequestEncoder_Tests: XCTestCase {
 
         let user2String = try XCTUnwrap(urlComponents.queryItems?["user2"])
         let user2JSON = try JSONDecoder.default.decode(TestUser.self, from: user2String.data(using: .utf8)!)
-        XCTAssertEqual(user2JSON, TestUser(name: "Leia is the best! + ♥️", age: 22))
+        XCTAssertEqual(user2JSON, TestUser(name: testName, age: 22))
 
         // Check the + sign is encoded properly in the query
         XCTAssertFalse(urlComponents.url!.query!.contains("+"))
         XCTAssertTrue(urlComponents.url!.query!.contains("%2B"))
+        
+        // Check the ; sign is encoded properly in the query
+        XCTAssertFalse(urlComponents.url!.query!.contains(";"))
+        XCTAssertTrue(urlComponents.url!.query!.contains("%3B"))
     }
 
     func test_encodingRequestBodyAsData_GET() throws {
