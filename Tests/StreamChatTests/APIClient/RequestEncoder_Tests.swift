@@ -467,7 +467,7 @@ final class RequestEncoder_Tests: XCTestCase {
     }
 
     func test_encodingRequestBody_GET() throws {
-        let testName = "Leia is the best! + ♥️;"
+        let testName = "Leia1234567890 (`!@£$%^&*_-+=\\|]}{['\";:/?.>,<£#¢§ˆ¶¨¡€@№`)+♥️;"
         // Prepare a GET endpoint with JSON body
         let endpoint = Endpoint<Data>(
             path: .guest,
