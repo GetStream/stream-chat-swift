@@ -19,6 +19,7 @@ struct ThreadUpdaterMiddleware: EventMiddleware {
                 session.markThreadAsUnread(for: event.firstUnreadMessageId, userId: event.user.id)
             }
         case let event as MessageDeletedEventDTO:
+            /// Parent message deleted
             if let thread = session.thread(parentMessageId: event.message.id, cache: nil) {
                 if event.hardDelete {
                     // Delete the thread if parent message is hard deleted.
@@ -27,9 +28,10 @@ struct ThreadUpdaterMiddleware: EventMiddleware {
                     // Trigger a thread update when parent from thread is soft deleted.
                     thread.updatedAt = thread.updatedAt
                 }
+                /// Thread reply deleted
             } else if let parentId = event.message.parentId,
                       let thread = session.thread(parentMessageId: parentId, cache: nil) {
-                // Trigger a thread update when reply from thread is soft deleted.
+                // Trigger a thread update when reply from thread is deleted.
                 thread.updatedAt = thread.updatedAt
             }
         case let event as ChannelDeletedEventDTO:
@@ -62,16 +64,21 @@ struct ThreadUpdaterMiddleware: EventMiddleware {
             /// This is why we don't change the `updatedAt` value.
             thread?.updatedAt = thread?.updatedAt
 
-            guard let currentUserId = session.currentUser?.user.id else {
+            guard let currentUser = session.currentUser else {
                 break
             }
 
-            /// Increase the unread count of the thread if the message is not from the current user
-            guard message.user.id != currentUserId else {
+            /// Do not increase the unread count of the thread if the message is from the current user
+            if message.user.id == currentUser.user.id {
                 break
             }
 
-            session.incrementThreadUnreadCount(parentMessageId: parentMessageId, for: currentUserId)
+            /// Do not increase the unread count if the message is from a muted user
+            if currentUser.mutedUsers.map(\.id).contains(message.user.id) {
+                break
+            }
+
+            session.incrementThreadUnreadCount(parentMessageId: parentMessageId, for: currentUser.user.id)
         default:
             break
         }
