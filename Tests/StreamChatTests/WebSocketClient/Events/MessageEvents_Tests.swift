@@ -89,14 +89,14 @@ final class MessageEvents_Tests: XCTestCase {
         XCTAssertEqual(event?.cid, ChannelId(type: .messaging, id: "general"))
         XCTAssertEqual(event?.createdAt.description, "2020-07-17 13:55:56 +0000")
         XCTAssertEqual(event?.unreadCount, .init(channels: 3, messages: 21, threads: 10))
-        XCTAssertEqual(event?.payload.threadDetails?.cid.rawValue, "messaging:general")
-        XCTAssertEqual(event?.payload.threadDetails?.parentMessageId, "5b444e0d-a132-41a0-bf99-72dfdba0a053")
-        XCTAssertEqual(event?.payload.threadDetails?.replyCount, 4)
-        XCTAssertEqual(event?.payload.threadDetails?.participantCount, 2)
-        XCTAssertEqual(event?.payload.threadDetails?.createdAt, "2024-05-17T12:44:30.223755Z".toDate())
-        XCTAssertEqual(event?.payload.threadDetails?.updatedAt, "2024-05-17T12:44:30.223755Z".toDate())
-        XCTAssertEqual(event?.payload.threadDetails?.lastMessageAt, "2024-05-23T17:37:12.519085Z".toDate())
-        XCTAssertEqual(event?.payload.threadDetails?.title, "Test")
+        XCTAssertEqual(event?.payload.threadDetails?.value?.cid.rawValue, "messaging:general")
+        XCTAssertEqual(event?.payload.threadDetails?.value?.parentMessageId, "5b444e0d-a132-41a0-bf99-72dfdba0a053")
+        XCTAssertEqual(event?.payload.threadDetails?.value?.replyCount, 4)
+        XCTAssertEqual(event?.payload.threadDetails?.value?.participantCount, 2)
+        XCTAssertEqual(event?.payload.threadDetails?.value?.createdAt, "2024-05-17T12:44:30.223755Z".toDate())
+        XCTAssertEqual(event?.payload.threadDetails?.value?.updatedAt, "2024-05-17T12:44:30.223755Z".toDate())
+        XCTAssertEqual(event?.payload.threadDetails?.value?.lastMessageAt, "2024-05-23T17:37:12.519085Z".toDate())
+        XCTAssertEqual(event?.payload.threadDetails?.value?.title, "Test")
     }
 
     func test_read_withoutUnreadCount() throws {

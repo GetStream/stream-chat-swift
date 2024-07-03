@@ -46,8 +46,6 @@ class EventPayload: Decodable {
     let createdBy: UserPayload?
     let memberContainer: MemberContainerPayload?
     let channel: ChannelDetailPayload?
-    let threadDetails: ThreadDetailsPayload?
-    let threadPartial: ThreadPartialPayload?
     let message: MessagePayload?
     let reaction: MessageReactionPayload?
     let watcherCount: Int?
@@ -66,6 +64,10 @@ class EventPayload: Decodable {
     let unreadMessagesCount: Int?
     var poll: PollPayload?
     var vote: PollVotePayload?
+
+    /// Thread Data, it is stored in Result, to be easier to debug decoding errors
+    let threadDetails: Result<ThreadDetailsPayload, Error>?
+    let threadPartial: Result<ThreadPartialPayload, Error>?
 
     init(
         eventType: EventType,
@@ -91,8 +93,8 @@ class EventPayload: Decodable {
         lastReadAt: Date? = nil,
         lastReadMessageId: MessageId? = nil,
         unreadMessagesCount: Int? = nil,
-        threadDetails: ThreadDetailsPayload? = nil,
-        threadPartial: ThreadPartialPayload? = nil,
+        threadDetails: Result<ThreadDetailsPayload, Error>? = nil,
+        threadPartial: Result<ThreadPartialPayload, Error>? = nil,
         poll: PollPayload? = nil,
         vote: PollVotePayload? = nil
     ) {
@@ -152,8 +154,8 @@ class EventPayload: Decodable {
         lastReadAt = try container.decodeIfPresent(Date.self, forKey: .lastReadAt)
         lastReadMessageId = try container.decodeIfPresent(MessageId.self, forKey: .lastReadMessageId)
         unreadMessagesCount = try container.decodeIfPresent(Int.self, forKey: .unreadMessagesCount)
-        threadDetails = try? container.decodeIfPresent(ThreadDetailsPayload.self, forKey: .thread)
-        threadPartial = try? container.decodeIfPresent(ThreadPartialPayload.self, forKey: .thread)
+        threadDetails = container.decodeAsResultIfPresent(ThreadDetailsPayload.self, forKey: .thread)
+        threadPartial = container.decodeAsResultIfPresent(ThreadPartialPayload.self, forKey: .thread)
         vote = try container.decodeIfPresent(PollVotePayload.self, forKey: .vote)
         poll = try container.decodeIfPresent(PollPayload.self, forKey: .poll)
     }
@@ -209,6 +211,19 @@ extension EventPayload {
         }
 
         return value
+    }
+
+    /// Get the value from the event payload and if it is a `Result` report the decoding error.
+    func value<Value>(at keyPath: KeyPath<EventPayload, Result<Value, Error>?>) throws -> Value {
+        guard let value = self[keyPath: keyPath] else {
+            throw ClientError.EventDecoding(missingValue: keyPath.stringValue, for: eventType)
+        }
+
+        if let error = value.error {
+            throw ClientError.EventDecoding(failedParsingValue: keyPath.stringValue, for: eventType, with: error)
+        }
+
+        return try value.get()
     }
 }
 

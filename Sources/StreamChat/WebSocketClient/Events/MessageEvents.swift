@@ -215,7 +215,7 @@ class MessageReadEventDTO: EventDTO {
         else { return nil }
 
         var threadDTO: ThreadDTO?
-        if let threadId = payload.threadDetails?.parentMessageId {
+        if let threadId = payload.threadDetails?.value?.parentMessageId {
             threadDTO = session.thread(parentMessageId: threadId, cache: nil)
         }
 

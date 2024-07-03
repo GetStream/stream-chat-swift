@@ -629,11 +629,11 @@ extension DatabaseSession {
             try saveCurrentUserUnreadCount(count: unreadCount)
         }
 
-        if let threadDetailsPayload = payload.threadDetails {
+        if let threadDetailsPayload = payload.threadDetails?.value {
             try saveThread(detailsPayload: threadDetailsPayload)
         }
 
-        if let threadPartialPayload = payload.threadPartial {
+        if let threadPartialPayload = payload.threadPartial?.value {
             try saveThread(partialPayload: threadPartialPayload)
         }
 

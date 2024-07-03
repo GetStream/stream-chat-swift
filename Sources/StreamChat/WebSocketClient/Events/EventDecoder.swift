@@ -38,6 +38,10 @@ extension ClientError {
         init(missingValue: String, for type: EventType, _ file: StaticString = #file, _ line: UInt = #line) {
             super.init("`\(missingValue)` field can't be `nil` for the `\(type.rawValue)` event.", file, line)
         }
+
+        init(failedParsingValue: String, for type: EventType, with error: Error, _ file: StaticString = #file, _ line: UInt = #line) {
+            super.init("`\(failedParsingValue)` failed to parse for the `\(type.rawValue)` event. Error: \(error)", file, line)
+        }
     }
 }
 
