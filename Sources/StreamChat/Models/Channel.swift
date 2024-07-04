@@ -274,7 +274,8 @@ extension ChatChannel: AnyChannel {}
 
 extension ChatChannel: Hashable {
     public static func == (lhs: ChatChannel, rhs: ChatChannel) -> Bool {
-        lhs.cid == rhs.cid
+        lhs.cid == rhs.cid &&
+            lhs.updatedAt == rhs.updatedAt
     }
 
     public func hash(into hasher: inout Hasher) {

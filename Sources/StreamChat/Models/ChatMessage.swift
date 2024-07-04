@@ -413,7 +413,12 @@ public extension ChatMessage {
 
 extension ChatMessage: Hashable {
     public static func == (lhs: Self, rhs: Self) -> Bool {
-        lhs.id == rhs.id
+        lhs.id == rhs.id &&
+            lhs.updatedAt == rhs.updatedAt &&
+            lhs.textUpdatedAt == rhs.textUpdatedAt &&
+            lhs.localState == rhs.localState &&
+            lhs.deletedAt == rhs.deletedAt &&
+            lhs.allAttachments == rhs.allAttachments
     }
 
     public func hash(into hasher: inout Hasher) {
