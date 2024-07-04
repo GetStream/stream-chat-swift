@@ -174,6 +174,7 @@ final class ChatThreadListVC_Tests: XCTestCase {
         vc.handleStateChanges(.remoteDataFetched)
         XCTAssertEqual(vc.loadingView.isHidden, true)
         XCTAssertEqual(vc.emptyView.isHidden, false)
+        XCTAssertEqual(vc.errorView.isHidden, true)
     }
 
     func test_handleStateChanges_whenRemoteDataFetched_whenThreadNotEmpty() {
@@ -181,6 +182,15 @@ final class ChatThreadListVC_Tests: XCTestCase {
         vc.handleStateChanges(.remoteDataFetched)
         XCTAssertEqual(vc.loadingView.isHidden, true)
         XCTAssertEqual(vc.emptyView.isHidden, true)
+        XCTAssertEqual(vc.errorView.isHidden, true)
+    }
+
+    func test_handleStateChanges_whenRemoteDataFetchedFailed() {
+        mockedThreadListController.threads_mock = mockThreads
+        vc.handleStateChanges(.remoteDataFetchFailed(ClientError()))
+        XCTAssertEqual(vc.loadingView.isHidden, true)
+        XCTAssertEqual(vc.emptyView.isHidden, true)
+        XCTAssertEqual(vc.errorView.isHidden, false)
     }
 
     // MARK: - didReceiveEvent

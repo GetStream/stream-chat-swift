@@ -293,6 +293,7 @@ open class ChatThreadListVC:
             }
         case .remoteDataFetched:
             hideLoadingView()
+            hideErrorView()
             if threadListController.threads.isEmpty {
                 showEmptyView()
             } else {
