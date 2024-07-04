@@ -32,9 +32,7 @@ extension DemoAppCoordinator {
         )
 
         let client = StreamChatWrapper.shared.client!
-        let threadListQuery = ThreadListQuery(
-            watch: true
-        )
+        let threadListQuery = ThreadListQuery(watch: true)
         let threadListVC = DemoChatThreadListVC(
             threadListController: client.threadListController(query: threadListQuery),
             eventsController: client.eventsController()

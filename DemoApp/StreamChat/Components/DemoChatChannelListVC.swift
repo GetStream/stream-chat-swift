@@ -78,6 +78,17 @@ final class DemoChatChannelListVC: ChatChannelListVC, EventsControllerDelegate {
         }
     }
 
+    override func setUpLayout() {
+        super.setUpLayout()
+
+        if isChatChannelListStatesEnabled {
+            NSLayoutConstraint.activate([
+                channelListErrorView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
+                channelListErrorView.heightAnchor.constraint(equalToConstant: 60)
+            ])
+        }
+    }
+
     @objc private func didTapCreateNewChannel(_ sender: Any) {
         demoRouter?.showCreateNewChannelFlow()
     }
