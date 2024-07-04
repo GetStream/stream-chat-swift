@@ -15,6 +15,9 @@ open class BannerView: _View, ThemeProvider {
         .withBidirectionalLanguagesSupport
         .withoutAutoresizingMaskConstraints
 
+    /// A spacer to make sure the label and the buttons are placed at the edges of the banner.
+    open private(set) lazy var spacer = UIView.spacer(axis: .horizontal)
+
     /// A button that performs an action.
     open private(set) lazy var actionButton = UIButton()
         .withoutAutoresizingMaskConstraints
@@ -44,7 +47,7 @@ open class BannerView: _View, ThemeProvider {
         container.pin(to: layoutMarginsGuide)
         container.axis = .horizontal
         container.alignment = .center
-        [textLabel, UIView.spacer(axis: .horizontal), actionButton].forEach {
+        [textLabel, spacer, actionButton].forEach {
             container.addArrangedSubview($0)
         }
     }
