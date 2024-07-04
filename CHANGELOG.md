@@ -8,7 +8,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Add support for user blocking [#3223](https://github.com/GetStream/stream-chat-swift/pull/3223)
 
 ### 🐞 Fixed
-- Fix an edge case with a semicolon in user name [#3275](https://github.com/GetStream/stream-chat-swift/pull/3275)
+- Fix user not able to connect when the user name contains a semicolon [#3275](https://github.com/GetStream/stream-chat-swift/pull/3275)
 
 # [4.58.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.58.0)
 _June 26, 2024_
