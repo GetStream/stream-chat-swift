@@ -41,7 +41,7 @@ open class ChatThreadListVC:
     /// The number of new threads available to be fetched.
     public var newAvailableThreadIds: Set<MessageId> = [] {
         didSet {
-            updateThreadsBannerView()
+            updateHeaderBannerViewContent()
         }
     }
 
@@ -68,31 +68,33 @@ open class ChatThreadListVC:
     }()
 
     /// The banner view shown by default as a table view header to fetch unread threads.
-    open private(set) lazy var threadsBannerView = BannerView()
+    open private(set) lazy var headerBannerView: ChatThreadListHeaderBannerView = components
+        .threadListHeaderBannerView.init()
         .withoutAutoresizingMaskConstraints
-        .withAccessibilityIdentifier(identifier: "threadsBannerView")
+        .withAccessibilityIdentifier(identifier: "headerBannerView")
 
-    /// The height of the threads banner view.
-    open var threadsBannerHeight: CGFloat { 56 }
+    /// The thread list error view that is shown when loading threads fails.
+    open private(set) lazy var errorView: ChatThreadListErrorView = components
+        .threadListErrorView.init()
+        .withoutAutoresizingMaskConstraints
+        .withAccessibilityIdentifier(identifier: "errorView")
+
+    /// The thread list loading view.
+    open private(set) lazy var loadingView: ChatThreadListLoadingView = components
+        .threadListLoadingView.init()
+        .withoutAutoresizingMaskConstraints
+        .withAccessibilityIdentifier(identifier: "loadingView")
+
+    /// The empty view when there are no threads.
+    open private(set) lazy var emptyView: ChatThreadListEmptyView = components
+        .threadListEmptyView.init()
+        .withoutAutoresizingMaskConstraints
+        .withAccessibilityIdentifier(identifier: "emptyView")
 
     /// A router object responsible for handling navigation actions of this view controller.
     open lazy var router: ChatThreadListRouter = components
         .threadListRouter
         .init(rootViewController: self)
-
-    /// The thread list loading view.
-    open private(set) lazy var loadingView: ChatThreadListLoadingView = components
-        .threadListLoadingView
-        .init()
-        .withoutAutoresizingMaskConstraints
-        .withAccessibilityIdentifier(identifier: "loadingView")
-
-    /// The empty view when there are no threads.
-    open lazy var emptyView: ChatThreadListEmptyView = components
-        .threadListEmptyView
-        .init()
-        .withoutAutoresizingMaskConstraints
-        .withAccessibilityIdentifier(identifier: "emptyView")
 
     override open func setUp() {
         super.setUp()
@@ -107,9 +109,17 @@ open class ChatThreadListVC:
         tableView.delegate = self
         tableView.dataSource = self
 
-        threadsBannerView.onAction = { [weak self] in
-            self?.hideThreadsBannerView()
+        headerBannerView.onAction = { [weak self] in
+            self?.hideHeaderBannerView()
             self?.showLoadingBannerView()
+            self?.threadListController.synchronize { error in
+                self?.didFinishSynchronizingThreads(with: error)
+            }
+        }
+
+        errorView.onAction = { [weak self] in
+            self?.hideErrorView()
+            self?.showLoadingView()
             self?.threadListController.synchronize { error in
                 self?.didFinishSynchronizingThreads(with: error)
             }
@@ -123,7 +133,7 @@ open class ChatThreadListVC:
 
     override open func setUpAppearance() {
         super.setUpAppearance()
-        
+
         tableView.backgroundColor = appearance.colorPalette.background
         tableView.separatorStyle = .singleLine
     }
@@ -134,8 +144,14 @@ open class ChatThreadListVC:
         view.embed(tableView)
         view.embed(loadingView)
         view.embed(emptyView)
-        loadingView.isHidden = true
-        emptyView.isHidden = true
+
+        view.addSubview(errorView)
+        errorView.pin(anchors: [.leading, .trailing], to: view)
+        errorView.bottomAnchor.pin(equalTo: view.safeAreaLayoutGuide.bottomAnchor).isActive = true
+
+        hideLoadingView()
+        hideEmptyView()
+        hideErrorView()
     }
 
     override open func viewWillAppear(_ animated: Bool) {
@@ -152,27 +168,27 @@ open class ChatThreadListVC:
     // Called when the syncing of the `threadListController` is finished.
     /// - Parameter error: An `error` if the syncing failed; `nil` if it was successful.
     open func didFinishSynchronizingThreads(with error: Error?) {
+        hideLoadingView()
         hideLoadingBannerView()
         newAvailableThreadIds = []
     }
 
-    /// Updates the threads banner view content.
-    open func updateThreadsBannerView() {
-        threadsBannerView.textLabel.text = L10n.ThreadList.newThreads(newAvailableThreadIds.count)
+    /// Updates the threads header banner view content.
+    open func updateHeaderBannerViewContent() {
+        headerBannerView.content = .init(newThreadsCount: newAvailableThreadIds.count)
     }
 
-    // MARK: - Actions
+    // MARK: - Show/Hide state views
 
-    /// Displays the threads banner view when there are thread updates to be fetched.
-    open func showThreadsBannerView() {
-        tableView.tableHeaderView = threadsBannerView
-        threadsBannerView.widthAnchor.pin(equalTo: tableView.widthAnchor).isActive = true
-        threadsBannerView.heightAnchor.pin(equalToConstant: threadsBannerHeight).isActive = true
-        threadsBannerView.layoutIfNeeded()
+    /// Displays the header banner view when there are thread updates to be fetched.
+    open func showHeaderBannerView() {
+        tableView.tableHeaderView = headerBannerView
+        headerBannerView.widthAnchor.pin(equalTo: tableView.widthAnchor).isActive = true
+        headerBannerView.layoutIfNeeded()
     }
 
-    /// Hides the threads banner view.
-    open func hideThreadsBannerView() {
+    /// Hides the header banner view.
+    open func hideHeaderBannerView() {
         Animate {
             self.tableView.tableHeaderView = nil
             self.tableView.layoutIfNeeded()
@@ -192,6 +208,38 @@ open class ChatThreadListVC:
             self.tableView.layoutIfNeeded()
         }
     }
+
+    /// Shows the loading view.
+    open func showLoadingView() {
+        loadingView.isHidden = false
+    }
+    
+    /// Hides the loading view.
+    open func hideLoadingView() {
+        loadingView.isHidden = true
+    }
+    
+    /// Shows the empty view.
+    open func showEmptyView() {
+        emptyView.isHidden = false
+    }
+    
+    /// Hides the empty view.
+    open func hideEmptyView() {
+        emptyView.isHidden = true
+    }
+    
+    /// Shows the error view.
+    open func showErrorView() {
+        errorView.isHidden = false
+    }
+    
+    /// Hides the error view.
+    open func hideErrorView() {
+        errorView.isHidden = true
+    }
+
+    // MARK: - Actions
 
     /// Loads the next page of threads. This action is triggered when reaching the bottom of the list view.
     open func loadMoreThreads() {
@@ -238,12 +286,22 @@ open class ChatThreadListVC:
     open func handleStateChanges(_ newState: DataController.State) {
         switch newState {
         case .initialized, .localDataFetched:
-            loadingView.isHidden = !threadListController.threads.isEmpty
+            if threadListController.threads.isEmpty {
+                showLoadingView()
+            } else {
+                hideLoadingView()
+            }
         case .remoteDataFetched:
-            loadingView.isHidden = true
-            emptyView.isHidden = !threadListController.threads.isEmpty
+            hideLoadingView()
+            if threadListController.threads.isEmpty {
+                showEmptyView()
+            } else {
+                hideEmptyView()
+            }
         case .remoteDataFetchFailed:
-            loadingView.isHidden = true
+            hideLoadingView()
+            hideEmptyView()
+            showErrorView()
         case .localDataFetchFailed:
             break
         }
@@ -282,7 +340,7 @@ open class ChatThreadListVC:
             if isNewThread {
                 newAvailableThreadIds.insert(parentId)
                 if isViewVisible {
-                    showThreadsBannerView()
+                    showHeaderBannerView()
                 }
             }
         default:

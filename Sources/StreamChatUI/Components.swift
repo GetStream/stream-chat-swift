@@ -361,11 +361,17 @@ public struct Components {
     /// The view that shows the number of unreads in the Thread List.
     public var threadUnreadCountView: ChatThreadUnreadCountView.Type = ChatThreadUnreadCountView.self
 
+    /// The view shown when new threads are available to fetch.
+    public var threadListHeaderBannerView: ChatThreadListHeaderBannerView.Type = ChatThreadListHeaderBannerView.self
+
     /// The view shown when the thread list is loading threads.
     public var threadListLoadingView: ChatThreadListLoadingView.Type = ChatThreadListLoadingView.self
 
     /// The view shown when the thread list is empty.
     public var threadListEmptyView: ChatThreadListEmptyView.Type = ChatThreadListEmptyView.self
+
+    /// The view shown when the thread list fails to load threads.
+    public var threadListErrorView: ChatThreadListErrorView.Type = ChatThreadListErrorView.self
 
     /// The view controller used to display the detail of a message thread.
     public var threadVC: ChatThreadVC.Type = ChatThreadVC.self

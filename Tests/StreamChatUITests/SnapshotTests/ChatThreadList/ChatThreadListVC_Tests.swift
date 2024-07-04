@@ -102,6 +102,13 @@ final class ChatThreadListVC_Tests: XCTestCase {
         AssertSnapshot(vc)
     }
 
+    func test_errorAppearance() {
+        mockedThreadListController.state = .initialized
+        mockedThreadListController.threads_mock = []
+        vc.controller(mockedThreadListController, didChangeState: .remoteDataFetchFailed(ClientError()))
+        AssertSnapshot(vc)
+    }
+
     func test_defaultAppearance() {
         mockedThreadListController.state = .remoteDataFetched
         mockedThreadListController.threads_mock = mockThreads
@@ -126,7 +133,7 @@ final class ChatThreadListVC_Tests: XCTestCase {
         mockedThreadListController.threads_mock = mockThreads
         vc.controller(mockedThreadListController, didChangeState: .initialized)
         vc.controller(mockedThreadListController, didChangeThreads: [])
-        vc.showThreadsBannerView()
+        vc.showHeaderBannerView()
         vc.newAvailableThreadIds = [.unique, .unique]
         vc.setUpLayout()
         AssertSnapshot(vc)
@@ -191,7 +198,7 @@ final class ChatThreadListVC_Tests: XCTestCase {
             didReceiveEvent: newThreadMessageEvent
         )
 
-        XCTAssertEqual(vc.tableView.tableHeaderView, vc.threadsBannerView)
+        XCTAssertEqual(vc.tableView.tableHeaderView, vc.headerBannerView)
     }
 
     func test_didReceiveEvent_whenNewThreadReply_whenViewNotVisible_thenOnlyInsertNewAvialbleThreadIds() {

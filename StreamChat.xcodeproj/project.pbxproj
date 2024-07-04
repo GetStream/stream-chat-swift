@@ -1684,6 +1684,10 @@
 		ADE2093D29FC022D007D0FF3 /* MessagesPaginationStateHandling.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADE2093C29FC022D007D0FF3 /* MessagesPaginationStateHandling.swift */; };
 		ADE40043291B1A510000C98B /* AttachmentUploader.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADE40042291B1A510000C98B /* AttachmentUploader.swift */; };
 		ADE40044291B1A510000C98B /* AttachmentUploader.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADE40042291B1A510000C98B /* AttachmentUploader.swift */; };
+		ADE57B792C36DB2000DD6B88 /* ChatThreadListErrorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADE57B782C36DB2000DD6B88 /* ChatThreadListErrorView.swift */; };
+		ADE57B7A2C36DB2000DD6B88 /* ChatThreadListErrorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADE57B782C36DB2000DD6B88 /* ChatThreadListErrorView.swift */; };
+		ADE57B7C2C36E71200DD6B88 /* ChatThreadListHeaderBannerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADE57B7B2C36E71200DD6B88 /* ChatThreadListHeaderBannerView.swift */; };
+		ADE57B7D2C36E71200DD6B88 /* ChatThreadListHeaderBannerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADE57B7B2C36E71200DD6B88 /* ChatThreadListHeaderBannerView.swift */; };
 		ADE595782B44A2B500727CC1 /* MixedAttachmentViewInjector_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADE595772B44A2B500727CC1 /* MixedAttachmentViewInjector_Tests.swift */; };
 		ADE88A142949453200C0F084 /* ChatMessageListRouter_Mock.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADE88A132949453200C0F084 /* ChatMessageListRouter_Mock.swift */; };
 		ADEDA1FA2B2BC46C00020460 /* RepeatingTimer_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADEDA1F92B2BC46C00020460 /* RepeatingTimer_Tests.swift */; };
@@ -4329,6 +4333,8 @@
 		ADDB2F5D2954CC1700BF80DA /* InvertedScrollViewPaginationHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InvertedScrollViewPaginationHandler.swift; sourceTree = "<group>"; };
 		ADE2093C29FC022D007D0FF3 /* MessagesPaginationStateHandling.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessagesPaginationStateHandling.swift; sourceTree = "<group>"; };
 		ADE40042291B1A510000C98B /* AttachmentUploader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AttachmentUploader.swift; sourceTree = "<group>"; };
+		ADE57B782C36DB2000DD6B88 /* ChatThreadListErrorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatThreadListErrorView.swift; sourceTree = "<group>"; };
+		ADE57B7B2C36E71200DD6B88 /* ChatThreadListHeaderBannerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatThreadListHeaderBannerView.swift; sourceTree = "<group>"; };
 		ADE595772B44A2B500727CC1 /* MixedAttachmentViewInjector_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MixedAttachmentViewInjector_Tests.swift; sourceTree = "<group>"; };
 		ADE88A132949453200C0F084 /* ChatMessageListRouter_Mock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessageListRouter_Mock.swift; sourceTree = "<group>"; };
 		ADEA7F21261D2F8C00CA2289 /* chewbacca.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = chewbacca.jpg; sourceTree = "<group>"; };
@@ -8753,8 +8759,10 @@
 				ADD328622C06B2F700BAD0E9 /* ChatThreadListItemView.swift */,
 				ADD328642C06B39F00BAD0E9 /* ChatThreadListItemCell.swift */,
 				ADD3286F2C07CD5300BAD0E9 /* ChatThreadUnreadCountView.swift */,
+				ADE57B7B2C36E71200DD6B88 /* ChatThreadListHeaderBannerView.swift */,
 				AD7BE16F2C234798000A5756 /* ChatThreadListLoadingView.swift */,
 				AD7BE1722C2347A3000A5756 /* ChatThreadListEmptyView.swift */,
+				ADE57B782C36DB2000DD6B88 /* ChatThreadListErrorView.swift */,
 			);
 			path = ChatThreadList;
 			sourceTree = "<group>";
@@ -10550,6 +10558,7 @@
 				F80BCA1426304F7800F2107B /* ShareButton.swift in Sources */,
 				CF38F5AF287DB53E00E24D10 /* ChatChannelListErrorView.swift in Sources */,
 				C1FC2F6F27416E150062530F /* ImagePipelineConfiguration.swift in Sources */,
+				ADE57B792C36DB2000DD6B88 /* ChatThreadListErrorView.swift in Sources */,
 				F838F6B32636D42B0025E1F5 /* ZoomAnimator.swift in Sources */,
 				ADCB578328A42D7700B81AE8 /* StagedChangeset.swift in Sources */,
 				64B059E22670EFFE0024CE90 /* ChatChannelVC+SwiftUI.swift in Sources */,
@@ -10701,6 +10710,7 @@
 				847F3CEA2689FDEB00D240E0 /* ChatMessageCell.swift in Sources */,
 				885B3D7725642B3D003E6BDF /* CurrentChatUserAvatarView.swift in Sources */,
 				C14A46582846636900EF498E /* SDKIdentifier.swift in Sources */,
+				ADE57B7C2C36E71200DD6B88 /* ChatThreadListHeaderBannerView.swift in Sources */,
 				224FF6912562F58F00725DD1 /* UIColor+Extensions.swift in Sources */,
 				CF7B2A2628BEAA93006BE124 /* TextViewMentionedUsersHandler.swift in Sources */,
 				22C2359A259CA87B00DC805A /* Animation.swift in Sources */,
@@ -12545,6 +12555,7 @@
 				C121EB662746A1E600023E4C /* Deprecations.swift in Sources */,
 				C121EB672746A1E600023E4C /* DateUtils.swift in Sources */,
 				C121EB682746A1E600023E4C /* Cancellable.swift in Sources */,
+				ADE57B7D2C36E71200DD6B88 /* ChatThreadListHeaderBannerView.swift in Sources */,
 				C121EB692746A1E600023E4C /* ImageLoading.swift in Sources */,
 				C121EB6A2746A1E600023E4C /* NukeImageLoader.swift in Sources */,
 				ADCB578228A42D7700B81AE8 /* AnyDifferentiable.swift in Sources */,
@@ -12561,6 +12572,7 @@
 				C121EB752746A1E700023E4C /* UIFont+Extensions.swift in Sources */,
 				AD99C909279B0E9D009DD9C5 /* MessageDateSeparatorFormatter.swift in Sources */,
 				C121EB762746A1E700023E4C /* Array+Extensions.swift in Sources */,
+				ADE57B7A2C36DB2000DD6B88 /* ChatThreadListErrorView.swift in Sources */,
 				C121EB772746A1E700023E4C /* UIViewController+Extensions.swift in Sources */,
 				40FA4DE62A12A45400DA21D2 /* VoiceRecordingAttachmentComposerPreview.swift in Sources */,
 				401105492A12735900F877C7 /* AudioVisualizationView_Tests.swift in Sources */,

@@ -357,6 +357,10 @@ internal enum L10n {
       /// No threads here yet...
       internal static var description: String { L10n.tr("Localizable", "threadList.empty.description") }
     }
+    internal enum Error {
+      /// Error loading threads
+      internal static var message: String { L10n.tr("Localizable", "threadList.error.message") }
+    }
   }
 
   internal enum ThreadListItem {

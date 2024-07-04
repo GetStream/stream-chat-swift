@@ -227,3 +227,5 @@
 "threadList.empty.description" = "No threads here yet...";
 /// Text shown when new threads banner is shown.
 "threadList.new-threads" = "%d new threads";
+/// Shown when there's an error when loading the threads.
+"threadList.error.message" = "Error loading threads";

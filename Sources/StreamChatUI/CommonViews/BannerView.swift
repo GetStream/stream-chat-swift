@@ -31,7 +31,6 @@ open class BannerView: _View, ThemeProvider {
     override open func setUpAppearance() {
         super.setUpAppearance()
 
-        actionButton.setImage(appearance.images.restart, for: .normal)
         backgroundColor = appearance.colorPalette.textLowEmphasis
         textLabel.textColor = appearance.colorPalette.staticColorText
         actionButton.tintColor = appearance.colorPalette.staticColorText
