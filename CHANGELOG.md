@@ -31,7 +31,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Fix user not able to connect when the user name contains a semicolon [#3275](https://github.com/GetStream/stream-chat-swift/pull/3275)
 
 ### 🔄 Changed
-- Add additional fields to `Equatable` conformance in `ChatChannel` and `ChatMessage` [#3277](https://github.com/GetStream/stream-chat-swift/issues/3277)
+- Add additional fields to the `Equatable` conformance in `ChatChannel` and `ChatMessage` [#3277](https://github.com/GetStream/stream-chat-swift/issues/3277)
 
 ## ⚠️ Important
 - This is the last SDK version that will support iOS 12 as the minimum deployment target.

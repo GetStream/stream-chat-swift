@@ -275,7 +275,26 @@ extension ChatChannel: AnyChannel {}
 extension ChatChannel: Hashable {
     public static func == (lhs: ChatChannel, rhs: ChatChannel) -> Bool {
         lhs.cid == rhs.cid &&
-            lhs.updatedAt == rhs.updatedAt
+            lhs.updatedAt == rhs.updatedAt &&
+            lhs.cooldownDuration == rhs.cooldownDuration &&
+            lhs.createdAt == rhs.createdAt &&
+            lhs.createdBy == rhs.createdBy &&
+            lhs.deletedAt == rhs.deletedAt &&
+            lhs.extraData == rhs.extraData &&
+            lhs.imageURL == rhs.imageURL &&
+            lhs.isFrozen == rhs.isFrozen &&
+            lhs.isHidden == rhs.isHidden &&
+            lhs.lastMessageAt == rhs.lastMessageAt &&
+            lhs.memberCount == rhs.memberCount &&
+            lhs.membership == rhs.membership &&
+            lhs.muteDetails == rhs.muteDetails &&
+            lhs.name == rhs.name &&
+            lhs.ownCapabilities == rhs.ownCapabilities &&
+            lhs.previewMessage == rhs.previewMessage &&
+            lhs.reads == rhs.reads &&
+            lhs.team == rhs.team &&
+            lhs.truncatedAt == rhs.truncatedAt &&
+            lhs.watcherCount == rhs.watcherCount
     }
 
     public func hash(into hasher: inout Hasher) {
