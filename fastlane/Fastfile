@@ -438,7 +438,9 @@ lane :xcmetrics do |options|
         end
 
       benchmark_value_avoids_zero_division = benchmark_value == 0 ? 1 : benchmark_value
-      diff = ((benchmark_value - branch_value) * 100.0 / benchmark_value_avoids_zero_division).round(2)
+      diff = is_frame_rate ? branch_value - benchmark_value : benchmark_value - branch_value
+      diff = (diff * 100.0 / benchmark_value_avoids_zero_division).round(2)
+
       diff_emoji =
         if (is_frame_rate && diff < 0) || (!is_frame_rate && diff > 0)
           '🔼'
