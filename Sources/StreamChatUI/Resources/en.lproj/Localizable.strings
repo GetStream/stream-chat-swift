@@ -107,8 +107,10 @@
 /// Shown when a message is visible only to the current user.
 /// Usually applies to deleted messages that can be visible to current users.
 "message.only-visible-to-you" = "Only visible to you";
-/// Shown when a message was deleted.
+/// Shown when a message was deleted in the message list.
 "message.deleted-message-placeholder" = "Message deleted";
+/// Shown when a message was deleted in the Channel List or Thread List.
+"message.item.deleted"= "This message was deleted.";
 /// Shown when uploading of an attachment failed.
 "message.sending.attachment-uploading-failed" = "UPLOADING FAILED";
 /// Shown when the message list contains an unknown attachment.
@@ -216,3 +218,14 @@
 
 /// The rate of the player, where the placeholder is the actual rate (e.g. x2).
 "audio.player.rate" = "x%@";
+
+// MARK: - Threads
+
+/// The prefix text when showing which parent message was the reply to.
+"threadListItem.replied-to" = "replied to: %@";
+/// Description shown when the thread list is empty.
+"threadList.empty.description" = "No threads here yet...";
+/// Text shown when new threads banner is shown.
+"threadList.new-threads" = "%d new threads";
+/// Shown when there's an error when loading the threads.
+"threadList.error.message" = "Error loading threads";

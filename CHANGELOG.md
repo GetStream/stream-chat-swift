@@ -6,6 +6,26 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## StreamChat
 ### ✅ Added
 - Add support for user blocking [#3223](https://github.com/GetStream/stream-chat-swift/pull/3223)
+- [Threads v2] Add support for Threads v2 [#3229](https://github.com/GetStream/stream-chat-swift/pull/3229)
+   - Add `ChatThreadListController` to fetch current user threads
+   - Add `ChatMessageController.markThreadRead()` 
+   - Add `ChatMessageController.markThreadUnread()`
+   - Add `ChatMessageController.updateThread()`
+   - Add `ChatMessageController.loadThread()`
+   - Add `ChatCurrentUserController.loadAllUnreads()`
+
+## StreamChatUI
+### ✅ Added
+- [Threads v2] Add `ChatThreadListVC` UI Component [#3229](https://github.com/GetStream/stream-chat-swift/pull/3229)
+   - Marks a thread read when reaching the bottom of the replies in `ChatThreadVC`
+   - Marking the parent message of a thread as unread in `ChatThreadVC` will mark the thread as unread
+### 🔄 Changed
+- `ChatChannelUnreadCountView` now shares a common view (`badgeView`) with `ChatThreadUnreadCountView` [#3229](https://github.com/GetStream/stream-chat-swift/pull/3229)
+### 🎭 New Localizations
+- `message.item.deleted`
+- `threadListItem.replied-to`
+- `threadList.empty.description`
+- `threadList.new-threads`
 
 ### 🐞 Fixed
 - Fix user not able to connect when the user name contains a semicolon [#3275](https://github.com/GetStream/stream-chat-swift/pull/3275)

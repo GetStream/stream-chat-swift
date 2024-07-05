@@ -416,7 +416,11 @@ protocol ThreadDatabaseSession {
 
     /// Updates the thread with details from a thread event.
     @discardableResult
-    func saveThread(eventPayload: ThreadEventPayload) throws -> ThreadDTO
+    func saveThread(detailsPayload: ThreadDetailsPayload) throws -> ThreadDTO
+
+    /// Updates the thread with partial thread information.
+    @discardableResult
+    func saveThread(partialPayload: ThreadPartialPayload) throws -> ThreadDTO
 
     /// Creates a new `ThreadParticipantDTO` object in the database with the given `payload`.
     @discardableResult
@@ -426,6 +430,14 @@ protocol ThreadDatabaseSession {
         cache: PreWarmedCache?
     ) throws -> ThreadParticipantDTO
 
+    /// Cleans all the threads in the database.
+    func deleteAllThreads() throws
+
+    /// Deletes a thread.
+    func delete(thread: ThreadDTO)
+}
+
+protocol ThreadReadDatabaseSession {
     /// Creates a new `ThreadReadDTO` object in the database with the given `payload`.
     @discardableResult
     func saveThreadRead(
@@ -434,8 +446,24 @@ protocol ThreadDatabaseSession {
         cache: PreWarmedCache?
     ) throws -> ThreadReadDTO
 
-    /// Cleans all the threads in the database.
-    func deleteAllThreads() throws
+    /// Fetches `ThreadReadDTO` with the given `parentMessageId` and `userId` from the DB.
+    func loadThreadRead(parentMessageId: MessageId, userId: String) -> ThreadReadDTO?
+
+    /// Fetches `ThreadReadDTO`entities for the given `userId` from the DB.
+    func loadThreadReads(for userId: UserId) -> [ThreadReadDTO]
+
+    /// Increments the thread unread count for the given user id.
+    @discardableResult
+    func incrementThreadUnreadCount(parentMessageId: MessageId, for userId: String) -> ThreadReadDTO?
+
+    /// Sets the thread with `parentMessageId` as read for `userId`
+    func markThreadAsRead(parentMessageId: MessageId, userId: UserId, at readAt: Date)
+
+    /// Marks the whole thread as unread.
+    func markThreadAsUnread(
+        for parentMessageId: MessageId,
+        userId: UserId
+    )
 }
 
 protocol PollDatabaseSession {
@@ -558,6 +586,7 @@ protocol DatabaseSession: UserDatabaseSession,
     ChannelMuteDatabaseSession,
     QueuedRequestDatabaseSession,
     ThreadDatabaseSession,
+    ThreadReadDatabaseSession,
     PollDatabaseSession {}
 
 extension DatabaseSession {
@@ -600,8 +629,12 @@ extension DatabaseSession {
             try saveCurrentUserUnreadCount(count: unreadCount)
         }
 
-        if let payload = payload.thread {
-            try saveThread(eventPayload: payload)
+        if let threadDetailsPayload = payload.threadDetails?.value {
+            try saveThread(detailsPayload: threadDetailsPayload)
+        }
+
+        if let threadPartialPayload = payload.threadPartial?.value {
+            try saveThread(partialPayload: threadPartialPayload)
         }
 
         try saveMessageIfNeeded(from: payload)

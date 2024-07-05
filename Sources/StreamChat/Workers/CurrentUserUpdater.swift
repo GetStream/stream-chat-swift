@@ -163,7 +163,19 @@ class CurrentUserUpdater: Worker {
             completion?($0.error)
         }
     }
-    
+
+    func loadAllUnreads(completion: @escaping ((Result<CurrentUserUnreads, Error>) -> Void)) {
+        apiClient.request(endpoint: .unreads()) { result in
+            switch result {
+            case .success(let response):
+                let unreads = response.asModel()
+                completion(.success(unreads))
+            case .failure(let error):
+                completion(.failure(error))
+            }
+        }
+    }
+
     /// Get all blocked users.
     ///
     /// - Parameter completion: Called when the API call is finished. Called with `Error` if the remote update fails.
@@ -204,7 +216,7 @@ extension CurrentUserUpdater {
             }
         }
     }
-    
+
     func removeDevice(id: DeviceId, currentUserId: UserId) async throws {
         try await withCheckedThrowingContinuation { continuation in
             removeDevice(id: id, currentUserId: currentUserId) { error in
@@ -212,7 +224,7 @@ extension CurrentUserUpdater {
             }
         }
     }
-    
+
     func fetchDevices(currentUserId: UserId) async throws -> [Device] {
         try await withCheckedThrowingContinuation { continuation in
             fetchDevices(currentUserId: currentUserId) { result in
@@ -220,7 +232,7 @@ extension CurrentUserUpdater {
             }
         }
     }
-    
+
     func markAllRead(currentUserId: UserId) async throws {
         try await withCheckedThrowingContinuation { continuation in
             markAllRead { error in
@@ -228,7 +240,7 @@ extension CurrentUserUpdater {
             }
         }
     }
-    
+
     func loadBlockedUsers() async throws -> [BlockedUserDetails] {
         try await withCheckedThrowingContinuation { continuation in
             loadBlockedUsers { result in
@@ -236,7 +248,7 @@ extension CurrentUserUpdater {
             }
         }
     }
-    
+
     func updateUserData(
         currentUserId: UserId,
         name: String?,

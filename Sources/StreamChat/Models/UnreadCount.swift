@@ -4,6 +4,10 @@
 
 import Foundation
 
+// TODO: v5: Because we mix the UnreadCount Domain model with Payload we have to set `threads` optional.
+// The reason is because when mapping the unread count from `CurrentUserDTO` we know `threads` can't be null, and will be at least be 0.
+// But since this structure is used to parse unread count from WSEvents, in those events `threads` can be null sometimes, so we have to set it null here.
+
 /// A struct containing information about unread counts of channels and messages.
 public struct UnreadCount: Decodable, Equatable {
     private enum CodingKeys: String, CodingKey {
@@ -24,7 +28,7 @@ public struct UnreadCount: Decodable, Equatable {
     public let messages: Int
 
     /// The number of threads with unread replies if available.
-    internal let threads: Int?
+    public let threads: Int?
 
     init(channels: Int, messages: Int, threads: Int?) {
         self.channels = channels

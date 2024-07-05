@@ -7,6 +7,7 @@
 --disable extensionAccessControl
 --disable andOperator
 --disable hoistPatternLet
+--disable typeSugar
 
 --disable redundantGet # it removes get async throws from getters
 

@@ -931,7 +931,7 @@ final class MessageDTO_Tests: XCTestCase {
             reactionScores: ["like": 10],
             reactionCounts: ["like": 2]
         )
-        let (channelDTO, messageDTO): (ChannelDTO, MessageDTO) = try waitFor { completion in
+        let (_, _): (ChannelDTO, MessageDTO) = try waitFor { completion in
             var channelDTO: ChannelDTO!
             var messageDTO: MessageDTO!
 
@@ -2940,7 +2940,6 @@ final class MessageDTO_Tests: XCTestCase {
         prepareEnvironment(createdUserId: userId, createdMessageId: messageId)
 
         // We add the reaction to the message so that it already contains it
-        let reactionId = makeReactionId(userId: userId, messageId: messageId, type: reactionType)
         _ = runAddReaction(messageId: messageId, type: reactionType)
         // Add reaction twice
         _ = runAddReaction(messageId: messageId, type: reactionType)

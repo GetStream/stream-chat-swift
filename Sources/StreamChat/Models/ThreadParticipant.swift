@@ -5,13 +5,13 @@
 import Foundation
 
 /// The details of a participant in a thread.
-internal struct ThreadParticipant {
+public struct ThreadParticipant: Equatable {
     /// The user information of the participant.
-    internal let user: ChatUser
+    public let user: ChatUser
     /// The id of the thread, which is also the id of the parent message.
-    internal let threadId: String
+    public let threadId: String
     /// The date when the participant joined.
-    internal let createdAt: Date
+    public let createdAt: Date
     /// The date when the participant last read the thread.
-    internal let lastReadAt: Date?
+    public let lastReadAt: Date?
 }

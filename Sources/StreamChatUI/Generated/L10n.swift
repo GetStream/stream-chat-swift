@@ -253,6 +253,10 @@ internal enum L10n {
         internal static var confirmationTitle: String { L10n.tr("Localizable", "message.actions.flag.confirmation-title") }
       }
     }
+    internal enum Item {
+      /// This message was deleted.
+      internal static var deleted: String { L10n.tr("Localizable", "message.item.deleted") }
+    }
     internal enum Moderation {
       /// Delete Message
       internal static var delete: String { L10n.tr("Localizable", "message.moderation.delete") }
@@ -341,6 +345,28 @@ internal enum L10n {
       internal static func name(_ p1: Int) -> String {
         return L10n.tr("Localizable", "recording.presentation.name", p1)
       }
+    }
+  }
+
+  internal enum ThreadList {
+    /// %d new threads
+    internal static func newThreads(_ p1: Int) -> String {
+      return L10n.tr("Localizable", "threadList.new-threads", p1)
+    }
+    internal enum Empty {
+      /// No threads here yet...
+      internal static var description: String { L10n.tr("Localizable", "threadList.empty.description") }
+    }
+    internal enum Error {
+      /// Error loading threads
+      internal static var message: String { L10n.tr("Localizable", "threadList.error.message") }
+    }
+  }
+
+  internal enum ThreadListItem {
+    /// replied to: %@
+    internal static func repliedTo(_ p1: Any) -> String {
+      return L10n.tr("Localizable", "threadListItem.replied-to", String(describing: p1))
     }
   }
 }

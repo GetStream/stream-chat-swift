@@ -28,20 +28,11 @@ final class DemoChatChannelListRouter: ChatChannelListRouter {
     }
 
     override func showCurrentUserProfile() {
-        rootViewController.presentAlert(title: nil, actions: [
-            .init(title: "Show Profile", style: .default, handler: { [weak self] _ in
-                guard let self = self else { return }
-                let client = self.rootViewController.controller.client
-                let viewController = UserProfileViewController(currentUserController: client.currentUserController())
-                self.rootNavigationController?.pushViewController(viewController, animated: true)
-            }),
-            .init(title: "Logout", style: .destructive, handler: { [weak self] _ in
-                self?.onLogout?()
-            }),
-            .init(title: "Disconnect", style: .destructive, handler: { [weak self] _ in
-                self?.onDisconnect?()
-            })
-        ])
+        rootViewController.presentUserOptionsAlert(
+            onLogout: onLogout,
+            onDisconnect: onDisconnect,
+            client: rootViewController.controller.client
+        )
     }
 
     override func showChannel(for cid: ChannelId) {

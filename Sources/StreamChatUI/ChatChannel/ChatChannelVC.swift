@@ -79,15 +79,10 @@ open class ChatChannelVC: _ViewController,
     open var isLastMessageFullyVisible: Bool {
         messageListVC.listView.isLastCellFullyVisible
     }
-
-    internal var isViewVisible: ((ChatChannelVC) -> Bool) = { channelVC in
-        guard UIApplication.shared.applicationState == .active else { return false }
-        return channelVC.viewIfLoaded?.window != nil
-    }
-
+    
     /// A boolean value indicating whether it should mark the channel read.
     public var shouldMarkChannelRead: Bool {
-        guard isViewVisible(self), case .remoteDataFetched = channelController.state else {
+        guard isViewVisible, case .remoteDataFetched = channelController.state else {
             return false
         }
 

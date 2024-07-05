@@ -52,7 +52,8 @@ final class ThreadDTO_Tests: XCTestCase {
             updatedAt: .unique,
             title: "Test",
             latestReplies: [.dummy(), .dummy()],
-            read: [dummyThreadReadPayload()]
+            read: [dummyThreadReadPayload()],
+            extraData: [:]
         )
 
         let dto = try database.viewContext.saveThread(
@@ -89,7 +90,8 @@ final class ThreadDTO_Tests: XCTestCase {
             updatedAt: .unique,
             title: "Test",
             latestReplies: [.dummy(), .dummy()],
-            read: [dummyThreadReadPayload()]
+            read: [dummyThreadReadPayload()],
+            extraData: [:]
         )
 
         let dto = try database.viewContext.saveThread(
@@ -112,5 +114,29 @@ final class ThreadDTO_Tests: XCTestCase {
         XCTAssertEqual(model.lastMessageAt, payload.lastMessageAt)
         XCTAssertEqual(model.createdAt, payload.createdAt)
         XCTAssertEqual(model.updatedAt, payload.updatedAt)
+    }
+
+    func test_asModel_sortsLatestRepliesByCreatedAt() throws {
+        let now = Date()
+        let payload = ThreadPayload.dummy(
+            parentMessageId: .unique,
+            latestReplies: [
+                .dummy(text: "3", createdAt: now.addingTimeInterval(20)),
+                .dummy(text: "2", createdAt: now.addingTimeInterval(10)),
+                .dummy(text: "1", createdAt: now)
+            ]
+        )
+
+        let dto = try database.viewContext.saveThread(
+            payload: payload,
+            cache: nil
+        )
+
+        let model = try dto.asModel()
+
+        XCTAssertEqual(
+            model.latestReplies.map(\.text),
+            ["1", "2", "3"]
+        )
     }
 }

@@ -256,7 +256,7 @@ final class MessageEvents_IntegrationTests: XCTestCase {
             user: .dummy(userId: .unique),
             unreadCount: .init(channels: 12, messages: 44, threads: 10),
             createdAt: .unique,
-            thread: .init(
+            threadDetails: .success(.init(
                 cid: cid,
                 parentMessageId: parentMessageId,
                 replyCount: 3,
@@ -265,7 +265,7 @@ final class MessageEvents_IntegrationTests: XCTestCase {
                 createdAt: .unique,
                 updatedAt: .unique,
                 title: "Test"
-            )
+            ))
         )
 
         // Create event DTO

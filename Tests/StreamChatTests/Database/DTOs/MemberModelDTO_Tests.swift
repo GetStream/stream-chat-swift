@@ -145,7 +145,6 @@ final class MemberModelDTO_Tests: XCTestCase {
     }
 
     func test_saveMembers_whenFirstPage_clearPreviousMembersFromQuery() throws {
-        let userId: UserId = .unique
         let cid: ChannelId = .unique
         let members: ChannelMemberListPayload = .init(members: [.dummy(), .dummy()])
         let query = ChannelMemberListQuery(cid: cid, filter: .equal(.isModerator, to: true))
@@ -167,7 +166,6 @@ final class MemberModelDTO_Tests: XCTestCase {
     }
 
     func test_saveMembers_whenAnotherPage_doesNotClearPreviousMembersFromQuery() throws {
-        let userId: UserId = .unique
         let cid: ChannelId = .unique
         let members: ChannelMemberListPayload = .init(members: [.dummy(), .dummy()])
         var query = ChannelMemberListQuery(cid: cid)

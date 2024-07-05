@@ -184,7 +184,7 @@ public struct MessageReadEvent: ChannelSpecificEvent {
     public let channel: ChatChannel
 
     /// The thread if a thread was read.
-    internal let thread: ChatThread?
+    public let thread: ChatThread?
 
     /// The event timestamp.
     public let createdAt: Date
@@ -215,7 +215,7 @@ class MessageReadEventDTO: EventDTO {
         else { return nil }
 
         var threadDTO: ThreadDTO?
-        if let threadId = payload.thread?.parentMessageId {
+        if let threadId = payload.threadDetails?.value?.parentMessageId {
             threadDTO = session.thread(parentMessageId: threadId, cache: nil)
         }
 

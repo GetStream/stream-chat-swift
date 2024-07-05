@@ -115,8 +115,14 @@ open class ChatMessageActionsVC: _ViewController, ThemeProvider {
                 actions.append(threadReplyActionItem())
             }
 
-            if canReceiveReadEvents && !isSentByCurrentUser && (!message.isPartOfThread || message.showReplyInChannel) {
-                actions.append(markUnreadActionItem())
+            if canReceiveReadEvents {
+                // If message is root of thread, it can be marked unread independent of other logic.
+                if message.isRootOfThread {
+                    actions.append(markUnreadActionItem())
+                    // If the message is in the channel view, only other user messages can be marked unread.
+                } else if !isSentByCurrentUser && (!message.isPartOfThread || message.showReplyInChannel) {
+                    actions.append(markUnreadActionItem())
+                }
             }
 
             if !message.text.isEmpty {

@@ -31,7 +31,24 @@ extension DemoAppCoordinator {
             }
         )
 
-        set(rootViewController: chatVC, animated: animated)
+        let client = StreamChatWrapper.shared.client!
+        let threadListQuery = ThreadListQuery(watch: true)
+        let threadListVC = DemoChatThreadListVC(
+            threadListController: client.threadListController(query: threadListQuery),
+            eventsController: client.eventsController()
+        )
+        threadListVC.onLogout = { [weak self] in
+            self?.logOut()
+        }
+        threadListVC.onDisconnect = { [weak self] in
+            self?.disconnect()
+        }
+        let tabBarViewController = DemoAppTabBarController(
+            channelListVC: chatVC,
+            threadListVC: UINavigationController(rootViewController: threadListVC),
+            currentUserController: StreamChatWrapper.shared.client!.currentUserController()
+        )
+        set(rootViewController: tabBarViewController, animated: animated)
         DemoAppConfiguration.showPerformanceTracker()
     }
 

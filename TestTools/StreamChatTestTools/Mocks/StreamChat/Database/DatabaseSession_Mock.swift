@@ -6,7 +6,8 @@ import Foundation
 @testable import StreamChat
 
 /// This class allows you to wrap an existing `DatabaseSession` and adjust the behavior of its methods.
-class DatabaseSession_Mock: DatabaseSession {    
+class DatabaseSession_Mock: DatabaseSession {
+    
     /// The wrapped session
     let underlyingSession: DatabaseSession
 
@@ -387,8 +388,12 @@ class DatabaseSession_Mock: DatabaseSession {
         try underlyingSession.saveThread(payload: payload, cache: cache)
     }
 
-    func saveThread(eventPayload: ThreadEventPayload) throws -> ThreadDTO {
-        try underlyingSession.saveThread(eventPayload: eventPayload)
+    func saveThread(detailsPayload: ThreadDetailsPayload) throws -> ThreadDTO {
+        try underlyingSession.saveThread(detailsPayload: detailsPayload)
+    }
+
+    func saveThread(partialPayload: ThreadPartialPayload) throws -> ThreadDTO {
+        try underlyingSession.saveThread(partialPayload: partialPayload)
     }
 
     func saveThreadRead(payload: ThreadReadPayload, parentMessageId: String, cache: PreWarmedCache?) throws -> ThreadReadDTO {
@@ -397,6 +402,40 @@ class DatabaseSession_Mock: DatabaseSession {
     
     func deleteAllThreads() throws {
         try underlyingSession.deleteAllThreads()
+    }
+
+    func delete(thread: ThreadDTO) {
+        underlyingSession.delete(thread: thread)
+    }
+
+    func loadThreadRead(parentMessageId: MessageId, userId: String) -> StreamChat.ThreadReadDTO? {
+        underlyingSession.loadThreadRead(parentMessageId: parentMessageId, userId: userId)
+    }
+
+    func loadThreadReads(for userId: UserId) -> [ThreadReadDTO] {
+        underlyingSession.loadThreadReads(for: userId)
+    }
+
+    func incrementThreadUnreadCount(parentMessageId: MessageId, for userId: String) -> ThreadReadDTO? {
+        underlyingSession.incrementThreadUnreadCount(parentMessageId: parentMessageId, for: userId)
+    }
+
+    var markThreadAsReadCallCount = 0
+    var markThreadAsReadCalledWith: (MessageId, UserId, Date)?
+
+    func markThreadAsRead(parentMessageId: MessageId, userId: UserId, at readAt: Date) {
+        markThreadAsReadCallCount += 1
+        markThreadAsReadCalledWith = (parentMessageId, userId, readAt)
+        underlyingSession.markThreadAsRead(parentMessageId: parentMessageId, userId: userId, at: readAt)
+    }
+
+    var markThreadAsUnreadCallCount = 0
+    var markThreadAsUnreadCalledWith: (MessageId, UserId)?
+
+    func markThreadAsUnread(for parentMessageId: MessageId, userId: UserId) {
+        markThreadAsUnreadCallCount += 1
+        markThreadAsUnreadCalledWith = (parentMessageId, userId)
+        underlyingSession.markThreadAsUnread(for: parentMessageId, userId: userId)
     }
     
     func savePoll(payload: PollPayload, cache: PreWarmedCache?) throws -> PollDTO {

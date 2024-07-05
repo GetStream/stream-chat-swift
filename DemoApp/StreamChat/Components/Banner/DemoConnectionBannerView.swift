@@ -5,7 +5,7 @@
 import StreamChatUI
 import UIKit
 
-final class BannerView: UIView {
+final class DemoConnectionBannerView: UIView {
     private let label = UILabel()
 
     override init(frame: CGRect) {

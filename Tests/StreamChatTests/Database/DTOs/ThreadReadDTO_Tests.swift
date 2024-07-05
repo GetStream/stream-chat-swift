@@ -54,4 +54,68 @@ final class ThreadReadDTO_Tests: XCTestCase {
         XCTAssertEqual(model.unreadMessagesCount, Int(dto.unreadMessagesCount))
         XCTAssertEqual(model.user.id, dto.user.id)
     }
+
+    func test_markThreadAsRead() throws {
+        let messageId = MessageId.unique
+        let userId = UserId.unique
+        let readDate = Date.unique
+
+        try database.writeSynchronously { session in
+            try session.saveThreadRead(
+                payload: .init(
+                    user: .dummy(userId: userId),
+                    lastReadAt: .unique,
+                    unreadMessagesCount: 10
+                ),
+                parentMessageId: messageId,
+                cache: nil
+            )
+
+            session.markThreadAsRead(
+                parentMessageId: messageId,
+                userId: userId,
+                at: readDate
+            )
+        }
+
+        let threadReadDTO = database.viewContext.loadThreadRead(
+            parentMessageId: messageId,
+            userId: userId
+        )
+
+        XCTAssertEqual(threadReadDTO?.unreadMessagesCount, 0)
+        XCTAssertEqual(threadReadDTO?.lastReadAt?.bridgeDate, readDate)
+    }
+
+    func test_markThreadAsUnRead() throws {
+        let messageId = MessageId.unique
+        let userId = UserId.unique
+        let replyCount = 10
+
+        try database.writeSynchronously { session in
+            try session.saveThread(
+                payload: .dummy(parentMessageId: messageId, replyCount: replyCount),
+                cache: nil
+            )
+            try session.saveThreadRead(
+                payload: .init(
+                    user: .dummy(userId: userId),
+                    lastReadAt: .unique,
+                    unreadMessagesCount: 0
+                ),
+                parentMessageId: messageId,
+                cache: nil
+            )
+
+            session.markThreadAsUnread(for: messageId, userId: userId)
+        }
+
+        let threadReadDTO = database.viewContext.loadThreadRead(
+            parentMessageId: messageId,
+            userId: userId
+        )
+
+        XCTAssertEqual(threadReadDTO?.unreadMessagesCount, 1)
+        XCTAssertNil(threadReadDTO?.lastReadAt?.bridgeDate)
+    }
 }

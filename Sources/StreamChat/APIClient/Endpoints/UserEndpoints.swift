@@ -35,4 +35,12 @@ extension Endpoint {
             body: body
         )
     }
+
+    static func unreads() -> Endpoint<CurrentUserUnreadsPayload> {
+        .init(
+            path: .unread,
+            method: .get,
+            body: nil
+        )
+    }
 }

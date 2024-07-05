@@ -329,7 +329,8 @@ extension XCTestCase {
         updatedAt: Date? = .unique,
         title: String? = .unique,
         latestReplies: [MessagePayload] = [],
-        read: [ThreadReadPayload] = []
+        read: [ThreadReadPayload] = [],
+        extraData: [String: RawJSON] = [:]
     ) -> ThreadPayload {
         .init(
             parentMessageId: parentMessageId,
@@ -344,7 +345,8 @@ extension XCTestCase {
             updatedAt: updatedAt,
             title: title,
             latestReplies: latestReplies,
-            read: read
+            read: read,
+            extraData: extraData
         )
     }
 

@@ -20,6 +20,33 @@ private struct ElementWrapper<T: Decodable>: Decodable {
     }
 }
 
+extension KeyedDecodingContainer {
+    func decodeAsResult<T: Decodable>(_ type: T.Type, forKey key: KeyedDecodingContainer<K>.Key) -> Result<T, Error> {
+        let result: Result<T, Error>
+        do {
+            let value = try decode(T.self, forKey: key)
+            result = .success(value)
+        } catch {
+            result = .failure(error)
+        }
+        return result
+    }
+
+    func decodeAsResultIfPresent<T: Decodable>(_ type: T.Type, forKey key: KeyedDecodingContainer<K>.Key) -> Result<T, Error>? {
+        let result: Result<T, Error>?
+        do {
+            if let value = try decodeIfPresent(T.self, forKey: key) {
+                result = .success(value)
+            } else {
+                result = nil
+            }
+        } catch {
+            result = .failure(error)
+        }
+        return result
+    }
+}
+
 // MARK: - Helpers to decode arrays and not discard the full array when there are parsing issues.
 
 extension KeyedDecodingContainer {

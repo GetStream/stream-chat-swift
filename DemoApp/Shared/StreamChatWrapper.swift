@@ -5,6 +5,7 @@
 import Foundation
 import StreamChat
 import StreamChatUI
+import UIKit
 import UserNotifications
 
 final class StreamChatWrapper {
@@ -109,6 +110,7 @@ extension StreamChatWrapper {
             } else {
                 self?.onRemotePushRegistration?()
             }
+
             DispatchQueue.main.async {
                 completion(error)
             }
@@ -120,6 +122,7 @@ extension StreamChatWrapper {
             logClientNotInstantiated()
             return
         }
+
         let currentUserController = client.currentUserController()
         currentUserController.synchronize()
         if let deviceId = currentUserController.currentUser?.currentDevice?.id {
