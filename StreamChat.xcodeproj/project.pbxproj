@@ -277,6 +277,7 @@
 		4F73F39F2B91C7BF00563CD9 /* MessageState+Observer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F73F39D2B91C7BF00563CD9 /* MessageState+Observer.swift */; };
 		4F83FA462BA43DC3008BD8CD /* MemberList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F83FA452BA43DC3008BD8CD /* MemberList.swift */; };
 		4F83FA472BA43DC3008BD8CD /* MemberList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F83FA452BA43DC3008BD8CD /* MemberList.swift */; };
+		4F862F9A2C38001000062502 /* FileManager+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F862F992C38001000062502 /* FileManager+Extensions.swift */; };
 		4F8E53062B7CD01D008C0F9F /* Chat.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F8E53052B7CD01D008C0F9F /* Chat.swift */; };
 		4F8E530B2B7CEBFB008C0F9F /* ChatClient+Factory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F8E530A2B7CEBFB008C0F9F /* ChatClient+Factory.swift */; };
 		4F8E53162B7F58BE008C0F9F /* Chat.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F8E53052B7CD01D008C0F9F /* Chat.swift */; };
@@ -3156,6 +3157,7 @@
 		4F73F3972B91BD3000563CD9 /* MessageState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageState.swift; sourceTree = "<group>"; };
 		4F73F39D2B91C7BF00563CD9 /* MessageState+Observer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MessageState+Observer.swift"; sourceTree = "<group>"; };
 		4F83FA452BA43DC3008BD8CD /* MemberList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemberList.swift; sourceTree = "<group>"; };
+		4F862F992C38001000062502 /* FileManager+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "FileManager+Extensions.swift"; sourceTree = "<group>"; };
 		4F8E53052B7CD01D008C0F9F /* Chat.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Chat.swift; sourceTree = "<group>"; };
 		4F8E530A2B7CEBFB008C0F9F /* ChatClient+Factory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ChatClient+Factory.swift"; sourceTree = "<group>"; };
 		4F8E531B2B833D6C008C0F9F /* ChatState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatState.swift; sourceTree = "<group>"; };
@@ -7989,6 +7991,7 @@
 				A3C7BAE127E4E95800BBF4FA /* CleanUpTypingEvent+Equatable.swift */,
 				A3C3BC5A27E8810000224761 /* DispatchQueue+Random.swift */,
 				A3C7BA9927E3849B00BBF4FA /* EndpoinPath+Equatable.swift */,
+				4F862F992C38001000062502 /* FileManager+Extensions.swift */,
 				A3C7BA8027E37BA200BBF4FA /* Endpoint+Mock.swift */,
 				DA84074A2526417B005A0F62 /* JSONEncoder+Extensions.swift */,
 				A344075F27D753530044F150 /* NSManagedObject+ContextChange.swift */,
@@ -11048,6 +11051,7 @@
 				A3C3BC7227E8AA4300224761 /* DecodableEntity.swift in Sources */,
 				40D484062A1264F1009E4134 /* MockAudioPlayer.swift in Sources */,
 				A3C3BC6527E8AA0A00224761 /* Int+Unique.swift in Sources */,
+				4F862F9A2C38001000062502 /* FileManager+Extensions.swift in Sources */,
 				A3C3BC6327E8AA0A00224761 /* AttachmentId+Unique.swift in Sources */,
 				A3C3BC3827E87F5100224761 /* BackgroundTaskScheduler_Mock.swift in Sources */,
 				84EE53B12BBC32AD00FD2A13 /* Chat_Mock.swift in Sources */,

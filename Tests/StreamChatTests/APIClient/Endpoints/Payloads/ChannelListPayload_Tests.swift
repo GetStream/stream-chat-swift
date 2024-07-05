@@ -9,6 +9,11 @@ import XCTest
 final class ChannelListPayload_Tests: XCTestCase {
     private var database: DatabaseContainer_Spy!
     
+    override func setUpWithError() throws {
+        // Clean up any db files left behind
+        FileManager.removeAllTemporaryFiles()
+    }
+    
     override func tearDownWithError() throws {
         database = nil
     }
