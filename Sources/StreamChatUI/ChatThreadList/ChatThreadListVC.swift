@@ -110,19 +110,11 @@ open class ChatThreadListVC:
         tableView.dataSource = self
 
         headerBannerView.onAction = { [weak self] in
-            self?.hideHeaderBannerView()
-            self?.showLoadingBannerView()
-            self?.threadListController.synchronize { error in
-                self?.didFinishSynchronizingThreads(with: error)
-            }
+            self?.didTapOnHeaderBannerView()
         }
 
         errorView.onAction = { [weak self] in
-            self?.hideErrorView()
-            self?.showLoadingView()
-            self?.threadListController.synchronize { error in
-                self?.didFinishSynchronizingThreads(with: error)
-            }
+            self?.didTapOnErrorView()
         }
 
         viewPaginationHandler.bottomThreshold = 800
@@ -165,12 +157,56 @@ open class ChatThreadListVC:
         }
     }
 
+    /// Loads the next page of threads. This action is triggered when reaching the bottom of the list view.
+    open func loadMoreThreads() {
+        guard !isPaginatingThreads && !threadListController.hasLoadedAllThreads else {
+            return
+        }
+
+        isPaginatingThreads = true
+        threadListController.loadMoreThreads { [weak self] result in
+            self?.didFinishLoadingMoreThreads(with: result)
+        }
+    }
+
+    /// The user tapped on the banner view to load new threads.
+    open func didTapOnHeaderBannerView() {
+        hideHeaderBannerView()
+        showLoadingBannerView()
+        threadListController.synchronize { [weak self] error in
+            self?.didFinishSynchronizingThreads(with: error)
+        }
+    }
+
+    /// The user tapped on the error view to refresh the data.
+    open func didTapOnErrorView() {
+        hideErrorView()
+
+        /// If the view already contains data, do not show the loading spinner
+        /// above it, but show the loading banner instead.
+        if threads.isEmpty {
+            showLoadingView()
+        } else {
+            hideHeaderBannerView()
+            showLoadingBannerView()
+        }
+
+        threadListController.synchronize { [weak self] error in
+            self?.didFinishSynchronizingThreads(with: error)
+        }
+    }
+
     // Called when the syncing of the `threadListController` is finished.
     /// - Parameter error: An `error` if the syncing failed; `nil` if it was successful.
     open func didFinishSynchronizingThreads(with error: Error?) {
         hideLoadingView()
         hideLoadingBannerView()
         newAvailableThreadIds = []
+    }
+
+    /// Called when loading a new page of threads is finished.
+    open func didFinishLoadingMoreThreads(with result: Result<[ChatThread], Error>) {
+        isPaginatingThreads = false
     }
 
     /// Updates the threads header banner view content.
@@ -237,25 +273,6 @@ open class ChatThreadListVC:
     /// Hides the error view.
     open func hideErrorView() {
         errorView.isHidden = true
-    }
-
-    // MARK: - Actions
-
-    /// Loads the next page of threads. This action is triggered when reaching the bottom of the list view.
-    open func loadMoreThreads() {
-        guard !isPaginatingThreads && !threadListController.hasLoadedAllThreads else {
-            return
-        }
-
-        isPaginatingThreads = true
-        threadListController.loadMoreThreads { [weak self] result in
-            self?.didFinishLoadingMoreThreads(with: result)
-        }
-    }
-
-    /// Called when loading a new page of threads is finished.
-    open func didFinishLoadingMoreThreads(with result: Result<[ChatThread], Error>) {
-        isPaginatingThreads = false
     }
 
     // MARK: - ChatThreadListControllerDelegate

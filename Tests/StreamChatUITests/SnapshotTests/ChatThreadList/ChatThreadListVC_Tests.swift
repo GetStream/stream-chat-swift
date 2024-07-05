@@ -77,6 +77,7 @@ final class ChatThreadListVC_Tests: XCTestCase {
             eventsController: mockedThreadListController.client.eventsController()
         )
         vc.setUpLayout()
+        mockedThreadListController.synchronize_callCount = 0
     }
 
     override func tearDown() {
@@ -249,7 +250,6 @@ final class ChatThreadListVC_Tests: XCTestCase {
     // MARK: viewWillAppear
 
     func test_viewWillAppear_whenNewAvailableThreads_shouldRefetchThreadList() {
-        mockedThreadListController.synchronize_callCount = 0
         vc.newAvailableThreadIds = [.unique]
 
         vc.viewWillAppear(false)
@@ -258,11 +258,44 @@ final class ChatThreadListVC_Tests: XCTestCase {
     }
 
     func test_viewWillAppear_whenNoNewThreads_shouldNotRefetchThreadList() {
-        mockedThreadListController.synchronize_callCount = 0
         vc.newAvailableThreadIds = []
 
         vc.viewWillAppear(false)
 
         XCTAssertEqual(mockedThreadListController.synchronize_callCount, 0)
+    }
+
+    // MARK: - didTapOnErrorView
+
+    func test_didTapOnErrorView_shouldShowLoadingView() {
+        mockedThreadListController.threads_mock = []
+        vc.controller(vc.threadListController, didChangeThreads: [])
+
+        vc.didTapOnErrorView()
+
+        XCTAssertEqual(mockedThreadListController.synchronize_callCount, 1)
+        AssertSnapshot(vc, variants: [.defaultLight, .defaultDark])
+    }
+
+    func test_didTapOnErrorView_whenThreadsNotEmpty_shouldShowLoadingHeaderBannerView() {
+        mockedThreadListController.threads_mock = [.mock(), .mock()]
+        vc.controller(vc.threadListController, didChangeThreads: [])
+
+        vc.didTapOnErrorView()
+
+        XCTAssertEqual(mockedThreadListController.synchronize_callCount, 1)
+        AssertSnapshot(vc, variants: [.defaultLight, .defaultDark])
+    }
+
+    // MARK: - didTapOnHeaderBannerView
+
+    func test_didTapOnHeaderBannerView_shouldShowLoadingHeaderBannerView() {
+        mockedThreadListController.threads_mock = mockThreads
+        vc.controller(vc.threadListController, didChangeThreads: [])
+
+        vc.didTapOnHeaderBannerView()
+
+        XCTAssertEqual(mockedThreadListController.synchronize_callCount, 1)
+        AssertSnapshot(vc, variants: [.defaultLight, .defaultDark])
     }
 }
