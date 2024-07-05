@@ -400,6 +400,7 @@ final class MessageController_Tests: XCTestCase {
 
         // Set top-to-bottom ordering
         controller.listOrdering = .topToBottom
+        waitForInitialRepliesCallback()
 
         // Check the order of replies is correct
         let topToBottomIds = [reply1, reply2].sorted { $0.createdAt > $1.createdAt }.map(\.id)
@@ -407,6 +408,7 @@ final class MessageController_Tests: XCTestCase {
 
         // Set bottom-to-top ordering
         controller.listOrdering = .bottomToTop
+        waitForInitialRepliesCallback()
 
         // Check the order of replies is correct
         let bottomToTopIds = [reply1, reply2].sorted { $0.createdAt < $1.createdAt }.map(\.id)
@@ -674,7 +676,8 @@ final class MessageController_Tests: XCTestCase {
         )
 
         try saveReplies(with: [nonShadowedReply, shadowedReply])
-
+        waitForInitialRepliesCallback()
+        
         // only non-shadowed reply should be visible
         XCTAssertEqual(Set(controller.replies.map(\.id)), Set([nonShadowedReply.id]))
     }
@@ -1323,6 +1326,8 @@ final class MessageController_Tests: XCTestCase {
     }
 
     func test_loadPreviousReplies_whenMessagesAreEmpty_callDelegateWithEmptyChanges() {
+        waitForInitialRepliesCallback()
+        
         let exp = expectation(description: "load replies completes")
         controller.loadPreviousReplies(before: "last message", limit: 2) { _ in
             exp.fulfill()
@@ -2471,6 +2476,16 @@ final class MessageController_Tests: XCTestCase {
 
         return replies
     }
+    
+    // MARK: - Background Mapping
+    
+    func waitForInitialRepliesCallback() {
+        guard StreamRuntimeCheck._isBackgroundMappingEnabled else { return }
+        let delegate = RepliesWaiterDelegate()
+        controller.delegate = delegate
+        wait(for: [delegate.expectation], timeout: defaultTimeout)
+        controller.delegate = nil
+    }
 }
 
 private class TestDelegate: QueueAwareDelegate, ChatMessageControllerDelegate {
@@ -2497,6 +2512,14 @@ private class TestDelegate: QueueAwareDelegate, ChatMessageControllerDelegate {
     func messageController(_ controller: ChatMessageController, didChangeReactions reactions: [ChatMessageReaction]) {
         didChangeReactions_reactions = reactions
         validateQueue()
+    }
+}
+
+private class RepliesWaiterDelegate: ChatMessageControllerDelegate {
+    let expectation = XCTestExpectation(description: "Initial observer callback")
+    
+    func messageController(_ controller: ChatMessageController, didChangeReplies changes: [ListChange<ChatMessage>]) {
+        expectation.fulfill()
     }
 }
 

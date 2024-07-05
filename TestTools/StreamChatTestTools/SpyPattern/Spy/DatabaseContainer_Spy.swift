@@ -31,8 +31,7 @@ public final class DatabaseContainer_Spy: DatabaseContainer, Spy {
     private(set) var sessionMock: DatabaseSession_Mock?
 
     public convenience init(localCachingSettings: ChatClientConfig.LocalCaching? = nil) {
-        self.init(kind: .onDisk(databaseFileURL: .newTemporaryFileURL()), localCachingSettings: localCachingSettings)
-        shouldCleanUpTempDBFiles = true
+        self.init(kind: .inMemory, localCachingSettings: localCachingSettings)
     }
 
     override public init(
