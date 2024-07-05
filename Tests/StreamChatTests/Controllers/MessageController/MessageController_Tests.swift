@@ -793,27 +793,28 @@ final class MessageController_Tests: XCTestCase {
     }
 
     func test_delegate_isNotifiedAboutRepliesChanges() throws {
+        // Simulate `synchronize` call
+        controller.synchronize()
+        waitForInitialRepliesCallback()
+        
         // Set the delegate
         let delegate = TestDelegate(expectedQueueId: callbackQueueID)
         controller.delegate = delegate
-
-        // Simulate `synchronize` call
-        controller.synchronize()
 
         // Add reply to DB
         let replyId = MessageId.unique
         try saveReplies(with: [replyId])
 
-        var replyModel: ChatMessage?
-        try client.databaseContainer.writeSynchronously { session in
-            guard let reply = session.message(id: replyId) else { return }
-            replyModel = try reply.asModel()
+        let model: ChatMessage? = try client.databaseContainer.readSynchronously { session in
+            guard let reply = session.message(id: replyId) else { return nil }
+            return try reply.asModel()
         }
+        let replyModel = try XCTUnwrap(model)
 
         // Assert `insert` entity change is received by the delegate
         AssertAsync.willBeEqual(
             delegate.didChangeReplies_changes,
-            [.insert(replyModel!, index: [0, 0])]
+            [.insert(replyModel, index: [0, 0])]
         )
     }
 
