@@ -117,6 +117,8 @@ final class UserListController_Tests: XCTestCase {
             // Insert a user not matching the query
             try session.saveUser(payload: self.dummyUser(id: idNotMatchingQuery), query: nil, cache: nil)
         }
+        
+        waitForDelegateCallback()
 
         // Assert the existing user is loaded
         XCTAssertEqual(controller.users.map(\.id), [idMatchingQuery])
@@ -317,6 +319,24 @@ final class UserListController_Tests: XCTestCase {
 
         // Completion should be called with the error
         AssertAsync.willBeEqual(completionCalledError as? TestError, testError)
+    }
+    
+    // MARK: -
+    
+    func waitForDelegateCallback() {
+        guard StreamRuntimeCheck._isBackgroundMappingEnabled else { return }
+        let delegate = DelegateWaiter()
+        controller.delegate = delegate
+        wait(for: [delegate.didUpdateUsersExpectation], timeout: defaultTimeout)
+        controller.delegate = nil
+    }
+    
+    private class DelegateWaiter: ChatUserListControllerDelegate {
+        let didUpdateUsersExpectation = XCTestExpectation(description: "DidChangeVotes")
+
+        func controller(_ controller: ChatUserListController, didChangeUsers changes: [ListChange<ChatUser>]) {
+            didUpdateUsersExpectation.fulfill()
+        }
     }
 }
 

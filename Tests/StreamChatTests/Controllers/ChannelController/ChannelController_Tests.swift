@@ -1731,11 +1731,15 @@ final class ChannelController_Tests: XCTestCase {
         // Create controller for the existing new DM channel
         setupControllerForNewMessageChannel(cid: channelId)
 
+        // Trigger DB observers for background mapping
+        _ = controller.messages
+        waitForInitialMessagesUpdate(count: 0)
+        
         // Unlike new DM ChannelController, this ChannelController knows it's final `cid` so it should be able to fetch initial values
         // from DB, without the `synchronize` call
         // Assert that initial reported values are correct
         XCTAssertEqual(controller.channel?.cid, dummyChannel.channel.cid)
-        AssertAsync.willBeTrue(controller.messages.count == dummyChannel.messages.count)
+        XCTAssertTrue(controller.messages.count == dummyChannel.messages.count)
     }
 
     // MARK: - Updating channel
