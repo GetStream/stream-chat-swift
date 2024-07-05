@@ -1733,7 +1733,7 @@ final class ChannelController_Tests: XCTestCase {
 
         // Trigger DB observers for background mapping
         _ = controller.messages
-        waitForInitialMessagesUpdate(count: 0)
+        waitForInitialMessagesUpdate(count: 10)
         
         // Unlike new DM ChannelController, this ChannelController knows it's final `cid` so it should be able to fetch initial values
         // from DB, without the `synchronize` call
