@@ -13,14 +13,14 @@ cleanup() {
     if [ -d "$staging" ]; then
         set +e
         log "Removing $staging..."
-        rm -r "$staging"
+        rm -r "$staging" || true
         log "Unmounting $mountpoint..."
-        hdiutil detach "$mountpoint" >&2
+        hdiutil detach "$mountpoint" >&2 || true
     fi
 
     if [ -d "$mountpoint" ]; then
         log "Removing $mountpoint..."
-        rmdir "$mountpoint"
+        rmdir "$mountpoint" || true
     fi
 }
 trap cleanup EXIT
