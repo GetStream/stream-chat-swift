@@ -545,7 +545,7 @@ final class ChannelListUpdater_Tests: XCTestCase {
             )?.channels.compactMap { try? $0.asModel() } ?? []
         }
 
-        XCTAssertTrue(channelsInQuery.contains(channel))
+        XCTAssertTrue(channelsInQuery.contains(where: { $0.cid == channel.cid }))
     }
 
     func test_unlink_shouldRemoveChannelFromQuery() throws {
@@ -567,7 +567,7 @@ final class ChannelListUpdater_Tests: XCTestCase {
             )?.channels.compactMap { try? $0.asModel() } ?? []
         }
 
-        XCTAssertTrue(channelsInQuery.contains(channel))
+        XCTAssertTrue(channelsInQuery.contains(where: { $0.cid == channel.cid }))
 
         listUpdater.unlink(channel: channel, with: query) { _ in
             exp.fulfill()

@@ -44,6 +44,49 @@ jobs:
           derived_data/Build/**/*.xctestrun
           derived_data/Build/**/*.framework
 
+  automated-code-review:
+    name: Automated Code Review
+    runs-on: macos-12
+    env:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      GITHUB_PR_NUM: ${{ github.event.number }}
+      XCODE_VERSION: "14.0.1"
+    if: ${{ github.event_name != 'push' && github.event.inputs.snapshots != 'true' }}
+    steps:
+      - uses: actions/checkout@v4.1.1
+        with:
+          fetch-depth: 100
+      - uses: ./.github/actions/bootstrap
+      - name: Run Danger
+        run: bundle exec danger
+      - name: Run Fastlane Linting
+        run: bundle exec fastlane rubocop
+      - name: Run SwiftFormat Linting
+        run: ./Scripts/run-linter.sh
+      - name: Run Podspec Linting
+        if: startsWith(github.event.pull_request.head.ref, 'release/')
+        run: bundle exec fastlane pod_lint
+
+  build-xcode14:
+    name: Build LLC + UI (Xcode 14)
+    runs-on: macos-12
+    if: ${{ github.event_name != 'push' && github.event.inputs.snapshots != 'true' }}
+    env:
+      XCODE_VERSION: "14.0.1"
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      GITHUB_PR_NUM: ${{ github.event.number }}
+    steps:
+    - uses: actions/checkout@v4.1.1
+    - uses: ./.github/actions/ruby-cache
+    - name: List Xcode versions
+      run: mdfind "kMDItemCFBundleIdentifier = 'com.apple.dt.Xcode'"
+    - name: Build LLC
+      run: bundle exec fastlane test device:"iPhone 13" build_for_testing:true
+      timeout-minutes: 25
+    - name: Build UI
+      run: bundle exec fastlane test_ui device:"iPhone 13" build_for_testing:true
+      timeout-minutes: 25
+
   test-llc-debug:
     name: Test LLC (Debug)
     runs-on: macos-14
@@ -135,11 +178,33 @@ jobs:
         path: |
           fastlane/test_output/snapshots
 
+  allure_testops_launch:
+    name: Launch Allure TestOps
+    runs-on: macos-13
+    if: ${{ github.event_name != 'push' && github.event.inputs.snapshots != 'true' }}
+    needs:
+      - test-llc-debug
+    outputs:
+      launch_id: ${{ steps.get_launch_id.outputs.launch_id }}
+    steps:
+    - uses: actions/checkout@v4.1.1
+    - uses: ./.github/actions/ruby-cache
+    - name: Launch Allure TestOps
+      run: bundle exec fastlane allure_launch
+      env:
+        ALLURE_TOKEN: ${{ secrets.ALLURE_TOKEN }}
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        GITHUB_EVENT: ${{ toJson(github.event) }}
+    - id: get_launch_id
+      run: echo "launch_id=${{env.LAUNCH_ID}}" >> $GITHUB_OUTPUT
+      if: env.LAUNCH_ID != ''
+
   test-e2e-debug:
     name: Test E2E UI (Debug)
     runs-on: macos-14
     if: ${{ github.event_name != 'push' && github.event.inputs.snapshots != 'true' }}
     needs:
+      - test-llc-debug
       - allure_testops_launch
       - build-test-app-and-frameworks
     env:
@@ -196,49 +261,12 @@ jobs:
           fastlane/test_output/logs/*/Diagnostics/**/*.txt
           fastlane/test_output/logs/*/Diagnostics/simctl_diagnostics/DiagnosticReports/*
 
-  allure_testops_launch:
-    name: Launch Allure TestOps
-    runs-on: macos-13
-    if: ${{ github.event_name != 'push' && github.event.inputs.snapshots != 'true' }}
-    outputs:
-      launch_id: ${{ steps.get_launch_id.outputs.launch_id }}
-    steps:
-    - uses: actions/checkout@v4.1.1
-    - uses: ./.github/actions/ruby-cache
-    - name: Launch Allure TestOps
-      run: bundle exec fastlane allure_launch
-      env:
-        ALLURE_TOKEN: ${{ secrets.ALLURE_TOKEN }}
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        GITHUB_EVENT: ${{ toJson(github.event) }}
-    - id: get_launch_id
-      run: echo "launch_id=${{env.LAUNCH_ID}}" >> $GITHUB_OUTPUT
-      if: env.LAUNCH_ID != ''
-
-  build-xcode14:
-    name: Build LLC + UI (Xcode 14)
-    runs-on: macos-12
-    if: ${{ github.event_name != 'push' && github.event.inputs.snapshots != 'true' }}
-    env:
-      XCODE_VERSION: "14.0.1"
-      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      GITHUB_PR_NUM: ${{ github.event.number }}
-    steps:
-    - uses: actions/checkout@v4.1.1
-    - uses: ./.github/actions/ruby-cache
-    - name: List Xcode versions
-      run: mdfind "kMDItemCFBundleIdentifier = 'com.apple.dt.Xcode'"
-    - name: Build LLC
-      run: bundle exec fastlane test device:"iPhone 13" build_for_testing:true
-      timeout-minutes: 25
-    - name: Build UI
-      run: bundle exec fastlane test_ui device:"iPhone 13" build_for_testing:true
-      timeout-minutes: 25
-
   build-apps:
     name: Build Demo App + Example Apps
     runs-on: macos-14
-    needs: build-test-app-and-frameworks
+    needs:
+      - test-llc-debug
+      - build-test-app-and-frameworks
     if: ${{ github.event_name != 'push' && github.event.inputs.snapshots != 'true' }}
     env:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -270,7 +298,9 @@ jobs:
   test-integration:
     name: Test Integration
     runs-on: macos-14
-    needs: build-test-app-and-frameworks
+    needs:
+      - test-llc-debug
+      - build-test-app-and-frameworks
     if: ${{ github.event_name != 'push' && github.event.inputs.snapshots != 'true' }}
     env:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -290,25 +320,3 @@ jobs:
       if: always()
       run: bundle exec fastlane cocoapods_integration
       timeout-minutes: 25
-
-  automated-code-review:
-    name: Automated Code Review
-    runs-on: macos-12
-    env:
-      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      GITHUB_PR_NUM: ${{ github.event.number }}
-      XCODE_VERSION: "14.0.1"
-    if: ${{ github.event_name != 'push' && github.event.inputs.snapshots != 'true' }}
-    steps:
-      - uses: actions/checkout@v4.1.1
-        with:
-          fetch-depth: 100
-      - uses: ./.github/actions/bootstrap
-      - name: Run Danger
-        run: bundle exec danger
-      - name: Run Fastlane Linting
-        run: bundle exec fastlane rubocop
-      - name: Run SwiftFormat Linting
-        run: ./Scripts/run-linter.sh
-      - name: Run Podspec Linting
-        run: bundle exec fastlane pod_lint

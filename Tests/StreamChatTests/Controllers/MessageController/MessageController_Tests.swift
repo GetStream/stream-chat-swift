@@ -383,6 +383,9 @@ final class MessageController_Tests: XCTestCase {
     // MARK: - Order
 
     func test_replies_haveCorrectOrder() throws {
+        let delegate = TestDelegate(expectedQueueId: callbackQueueID)
+        controller.delegate = delegate
+        
         let reply1: MessagePayload = .dummy(
             messageId: .unique,
             parentId: messageId,
@@ -397,16 +400,19 @@ final class MessageController_Tests: XCTestCase {
             authorUserId: .unique
         )
         try saveReplies(with: [reply1, reply2])
+        try waitForRepliesChange(count: 2)
 
         // Set top-to-bottom ordering
         controller.listOrdering = .topToBottom
-
+        try waitForRepliesChange(count: 2, requireDelegateChange: true)
+        
         // Check the order of replies is correct
         let topToBottomIds = [reply1, reply2].sorted { $0.createdAt > $1.createdAt }.map(\.id)
         XCTAssertEqual(controller.replies.map(\.id), topToBottomIds)
 
         // Set bottom-to-top ordering
         controller.listOrdering = .bottomToTop
+        try waitForRepliesChange(count: 2, requireDelegateChange: true)
 
         // Check the order of replies is correct
         let bottomToTopIds = [reply1, reply2].sorted { $0.createdAt < $1.createdAt }.map(\.id)
@@ -637,6 +643,12 @@ final class MessageController_Tests: XCTestCase {
     }
 
     func test_replies_withDefaultShadowedMessagesVisible() throws {
+        let delegate = TestDelegate(expectedQueueId: callbackQueueID)
+        controller.delegate = delegate
+        
+        // Initial observer callback
+        try waitForRepliesChange(count: 0)
+        
         // Create dummy channel
         let channel = dummyPayload(with: cid)
         let truncatedDate = Date.unique
@@ -674,7 +686,8 @@ final class MessageController_Tests: XCTestCase {
         )
 
         try saveReplies(with: [nonShadowedReply, shadowedReply])
-
+        try waitForRepliesChange(count: 1)
+        
         // only non-shadowed reply should be visible
         XCTAssertEqual(Set(controller.replies.map(\.id)), Set([nonShadowedReply.id]))
     }
@@ -796,21 +809,23 @@ final class MessageController_Tests: XCTestCase {
 
         // Simulate `synchronize` call
         controller.synchronize()
+        try waitForRepliesChange(count: 0)
 
         // Add reply to DB
         let replyId = MessageId.unique
         try saveReplies(with: [replyId])
+        try waitForRepliesChange(count: 1)
 
-        var replyModel: ChatMessage?
-        try client.databaseContainer.writeSynchronously { session in
-            guard let reply = session.message(id: replyId) else { return }
-            replyModel = try reply.asModel()
+        let model: ChatMessage? = try client.databaseContainer.readSynchronously { session in
+            guard let reply = session.message(id: replyId) else { return nil }
+            return try reply.asModel()
         }
+        let replyModel = try XCTUnwrap(model)
 
         // Assert `insert` entity change is received by the delegate
-        AssertAsync.willBeEqual(
+        XCTAssertEqual(
             delegate.didChangeReplies_changes,
-            [.insert(replyModel!, index: [0, 0])]
+            [.insert(replyModel, index: [0, 0])]
         )
     }
 
@@ -1322,21 +1337,18 @@ final class MessageController_Tests: XCTestCase {
         XCTAssertEqual(env.messageUpdater.loadReplies_callCount, 0)
     }
 
-    func test_loadPreviousReplies_whenMessagesAreEmpty_callDelegateWithEmptyChanges() {
+    func test_loadPreviousReplies_whenMessagesAreEmpty_callDelegateWithEmptyChanges() throws {
+        let delegate = TestDelegate(expectedQueueId: callbackQueueID)
+        controller.delegate = delegate
+        
+        _ = controller.replies
+        try waitForRepliesChange(count: 0)
+        delegate.didChangeRepliesCount = 0
+        
         let exp = expectation(description: "load replies completes")
         controller.loadPreviousReplies(before: "last message", limit: 2) { _ in
             exp.fulfill()
         }
-
-        class MockTestDelegate: ChatMessageControllerDelegate {
-            var callCount = 0
-            func messageController(_ controller: ChatMessageController, didChangeReplies changes: [ListChange<ChatMessage>]) {
-                callCount += 1
-            }
-        }
-
-        let testDelegate = MockTestDelegate()
-        controller.delegate = testDelegate
 
         env.messageUpdater.loadReplies_completion?(.success(.init(messages: [])))
         waitForExpectations(timeout: defaultTimeout)
@@ -1344,7 +1356,7 @@ final class MessageController_Tests: XCTestCase {
         XCTAssertEqual(env.messageUpdater.loadReplies_callCount, 1)
         // It should call the didChangeReplies with empty changes
         // in order to add the parent message to the list again.
-        XCTAssertEqual(testDelegate.callCount, 1)
+        XCTAssertEqual(delegate.didChangeRepliesCount, 1)
     }
 
     // MARK: - Load Next Replies
@@ -2471,14 +2483,30 @@ final class MessageController_Tests: XCTestCase {
 
         return replies
     }
+    
+    // MARK: -
+    
+    func waitForRepliesChange(count: Int, requireDelegateChange: Bool = false) throws {
+        let delegate = try XCTUnwrap(controller.delegate as? TestDelegate)
+        guard StreamRuntimeCheck._isBackgroundMappingEnabled else { return }
+        
+        guard requireDelegateChange || count != controller.replies.count else { return }
+        let expectation = XCTestExpectation(description: "RepliesChange")
+        delegate.didChangeRepliesExpectation = expectation
+        delegate.didChangeRepliesExpectedCount = count
+        wait(for: [expectation], timeout: defaultTimeout)
+    }
 }
 
 private class TestDelegate: QueueAwareDelegate, ChatMessageControllerDelegate {
     @Atomic var state: DataController.State?
     @Atomic var didChangeMessage_change: EntityChange<ChatMessage>?
     @Atomic var didChangeReplies_changes: [ListChange<ChatMessage>] = []
+    @Atomic var didChangeRepliesCount = 0
     @Atomic var didChangeReactions_reactions: [ChatMessageReaction] = []
-
+    @Atomic var didChangeRepliesExpectation: XCTestExpectation?
+    @Atomic var didChangeRepliesExpectedCount = 0
+    
     func controller(_ controller: DataController, didChangeState state: DataController.State) {
         self.state = state
         validateQueue()
@@ -2491,7 +2519,14 @@ private class TestDelegate: QueueAwareDelegate, ChatMessageControllerDelegate {
 
     func messageController(_ controller: ChatMessageController, didChangeReplies changes: [ListChange<ChatMessage>]) {
         didChangeReplies_changes = changes
+        _didChangeRepliesCount.mutate { $0 += 1 }
         validateQueue()
+        DispatchQueue.main.async {
+            guard let didChangeRepliesExpectation = self.didChangeRepliesExpectation else { return }
+            guard self.didChangeRepliesExpectedCount == controller.replies.count else { return }
+            didChangeRepliesExpectation.fulfill()
+            self.didChangeRepliesExpectation = nil
+        }
     }
 
     func messageController(_ controller: ChatMessageController, didChangeReactions reactions: [ChatMessageReaction]) {

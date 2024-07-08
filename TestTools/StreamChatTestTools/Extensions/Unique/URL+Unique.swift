@@ -12,15 +12,22 @@ public extension URL {
 
     /// Returns a unique URL that can be used for storing a temporary file.
     static func newTemporaryFileURL() -> URL {
-        newTemporaryDirectoryURL().appendingPathComponent("temp_file")
+        newTemporaryDirectoryURL().appendingPathComponent(temporaryFileName)
     }
 
     /// Creates a new temporary directory and returns its URL.
     static func newTemporaryDirectoryURL() -> URL {
         let directoryId = UUID().uuidString
-        let tempDirectoryURL = URL(fileURLWithPath: NSTemporaryDirectory(), isDirectory: true)
-        let newDirURL = tempDirectoryURL.appendingPathComponent(directoryId)
+        let newDirURL = URL.temporaryDirectoryRoot.appendingPathComponent(directoryId)
         try! FileManager.default.createDirectory(at: newDirURL, withIntermediateDirectories: true, attributes: nil)
         return newDirURL
     }
+}
+
+extension URL {
+    static var temporaryDirectoryRoot: URL {
+        URL(fileURLWithPath: NSTemporaryDirectory(), isDirectory: true)
+    }
+    
+    static let temporaryFileName = "temp_file"
 }

@@ -7,6 +7,17 @@
 import XCTest
 
 final class ChannelListPayload_Tests: XCTestCase {
+    private var database: DatabaseContainer_Spy!
+    
+    override func setUpWithError() throws {
+        // Clean up any db files left behind
+        FileManager.removeAllTemporaryFiles()
+    }
+    
+    override func tearDownWithError() throws {
+        database = nil
+    }
+    
     func test_channelQueryJSON_isSerialized_withDefaultExtraData() throws {
         // GIVEN
         let url = XCTestCase.mockData(fromJSONFile: "ChannelsQuery")
@@ -65,28 +76,23 @@ final class ChannelListPayload_Tests: XCTestCase {
     }
 
     func test_hugeChannelListQuery_save_DB_empty() throws {
-        throw XCTSkip("https://github.com/GetStream/ios-issues-tracking/issues/848")
-        
         let decodedPayload = createHugeChannelList()
-        let timeout: TimeInterval = 60
-        
+        let timeout: TimeInterval = 180
+        database = DatabaseContainer_Spy(kind: .onDisk(databaseFileURL: .newTemporaryFileURL()))
         measure {
-            let databaseContainer = DatabaseContainer_Spy()
-            saveChannelListPayload(decodedPayload, database: databaseContainer, timeout: timeout)
+            saveChannelListPayload(decodedPayload, database: database, timeout: timeout)
         }
     }
 
     func test_hugeChannelListQuery_save_DB_filled() throws {
-        throw XCTSkip("https://github.com/GetStream/ios-issues-tracking/issues/848")
-        
         let decodedPayload = createHugeChannelList()
-        let databaseContainer = DatabaseContainer_Spy()
-        let timeout: TimeInterval = 60
+        database = DatabaseContainer_Spy(kind: .onDisk(databaseFileURL: .newTemporaryFileURL()))
+        let timeout: TimeInterval = 180
 
-        saveChannelListPayload(decodedPayload, database: databaseContainer, timeout: timeout)
+        saveChannelListPayload(decodedPayload, database: database, timeout: timeout)
 
         measure {
-            saveChannelListPayload(decodedPayload, database: databaseContainer, timeout: timeout)
+            saveChannelListPayload(decodedPayload, database: database, timeout: timeout)
         }
     }
 

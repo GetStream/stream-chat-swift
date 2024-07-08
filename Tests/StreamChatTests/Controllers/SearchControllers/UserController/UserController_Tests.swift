@@ -174,6 +174,9 @@ final class UserController_Tests: XCTestCase {
         // Simulate updater callback
         env.userUpdater?.loadUser_completion?(nil)
 
+        // Wait for delegate callback
+        waitForUser()
+        
         // Assert the user is loaded
         XCTAssertEqual(controller.user?.id, userId)
     }
@@ -692,6 +695,25 @@ final class UserController_Tests: XCTestCase {
 
         // Assert controller is kept alive
         AssertAsync.staysTrue(weakController != nil)
+    }
+    
+    // MARK: -
+    
+    func waitForUser() {
+        guard StreamRuntimeCheck._isBackgroundMappingEnabled else { return }
+        guard controller.user == nil else { return }
+        let delegate = DelegateWaiter()
+        controller.delegate = delegate
+        wait(for: [delegate.didUpdateUserExpectation], timeout: defaultTimeout)
+        controller.delegate = nil
+    }
+    
+    private class DelegateWaiter: ChatUserControllerDelegate {
+        let didUpdateUserExpectation = XCTestExpectation(description: "DidChangeVotes")
+
+        func userController(_ controller: StreamChat.ChatUserController, didUpdateUser change: StreamChat.EntityChange<StreamChat.ChatUser>) {
+            didUpdateUserExpectation.fulfill()
+        }
     }
 }
 

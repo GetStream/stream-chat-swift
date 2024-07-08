@@ -32,28 +32,6 @@ extension ChatMessageListView {
 
 extension ChatMessage: Differentiable {
     public func isContentEqual(to source: ChatMessage) -> Bool {
-        id == source.id
-            && updatedAt == source.updatedAt
-            && replyCount == source.replyCount
-            && isShadowed == source.isShadowed
-            && showReplyInChannel == source.showReplyInChannel
-            && text == source.text
-            && localState == source.localState
-            && type == source.type
-            && command == source.command
-            && arguments == source.arguments
-            && parentMessageId == source.parentMessageId
-            && isFlaggedByCurrentUser == source.isFlaggedByCurrentUser
-            && reactionCounts == source.reactionCounts
-            && reactionScores == source.reactionScores
-            && reactionGroups == source.reactionGroups
-            && extraData == source.extraData
-            && translations == source.translations
-            && currentUserReactionsCount == source.currentUserReactionsCount
-            && threadParticipantsCount == source.threadParticipantsCount
-            && readByCount == source.readByCount
-            && quotedMessage == source.quotedMessage
-            && author == source.author
-            && allAttachments == source.allAttachments
+        self == source
     }
 }
