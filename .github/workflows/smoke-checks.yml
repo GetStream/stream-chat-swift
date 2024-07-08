@@ -64,6 +64,7 @@ jobs:
       - name: Run SwiftFormat Linting
         run: ./Scripts/run-linter.sh
       - name: Run Podspec Linting
+        if: startsWith(github.event.pull_request.head.ref, 'release/')
         run: bundle exec fastlane pod_lint
 
   build-xcode14:
