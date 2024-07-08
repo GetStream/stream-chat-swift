@@ -4,7 +4,6 @@
 
 import Foundation
 
-@available(iOS 13.0, *)
 extension MessageState {
     struct Observer {
         private let messageId: MessageId
@@ -76,7 +75,6 @@ extension MessageState {
     }
 }
 
-@available(iOS 13.0, *)
 extension ChatMessageReaction {
     static func defaultSorting(_ first: ChatMessageReaction, _ second: ChatMessageReaction) -> Bool {
         first.updatedAt > second.updatedAt

@@ -6,7 +6,6 @@
 @testable import StreamChatTestTools
 import XCTest
 
-@available(iOS 13.0, *)
 final class MessageSearch_Tests: XCTestCase {
     private var currentUserId: UserId!
     private var messageSearch: MessageSearch!
@@ -124,7 +123,6 @@ final class MessageSearch_Tests: XCTestCase {
     }
 }
 
-@available(iOS 13.0, *)
 extension MessageSearch_Tests {
     final class TestEnvironment {
         let client: ChatClient_Mock

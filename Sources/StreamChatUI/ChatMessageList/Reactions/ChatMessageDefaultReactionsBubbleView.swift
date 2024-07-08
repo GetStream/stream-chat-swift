@@ -145,10 +145,6 @@ open class DefaultChatReactionPickerBubbleView: ChatReactionPickerBubbleView {
     /// Returns color resolved with current `traitCollection`.
     /// This is needed when a `cgColor` is used which can not be resolved by the view itself.
     private func resolvedColor(_ color: UIColor) -> UIColor {
-        if #available(iOS 13.0, *) {
-            return color.resolvedColor(with: traitCollection)
-        } else {
-            return color
-        }
+        color.resolvedColor(with: traitCollection)
     }
 }

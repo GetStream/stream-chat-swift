@@ -75,7 +75,6 @@ extension EventNotificationCenter {
     }
 }
 
-@available(iOS 13.0, *)
 extension EventNotificationCenter {
     func subscribe<E>(
         to event: E.Type,

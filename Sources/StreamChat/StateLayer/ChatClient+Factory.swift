@@ -6,7 +6,6 @@ import Foundation
 
 // MARK: - Factory Methods for Currently Logged In User
 
-@available(iOS 13.0, *)
 extension ChatClient {
     /// Creates an instance of ``ConnectedUser`` which represents the logged-in user state and its actions.
     ///
@@ -19,7 +18,6 @@ extension ChatClient {
 
 // MARK: - Factory Methods for Creating Channel Lists
 
-@available(iOS 13.0, *)
 extension ChatClient {
     /// Creates an instance of ``ChannelList`` which represents an array of channels matching to the specified ``ChannelListQuery``.
     ///
@@ -45,7 +43,6 @@ extension ChatClient {
 
 // MARK: - Factory Methods for Creating Chats
 
-@available(iOS 13.0, *)
 extension ChatClient {
     // MARK: - Create a Chat with Channel ID
     
@@ -207,7 +204,6 @@ extension ChatClient {
 
 // MARK: - Factory Methods for Creating Channel Member Lists
 
-@available(iOS 13.0, *)
 extension ChatClient {
     /// Creates an instance of ``MemberList`` which represents an array of channel members matching to the specified ``ChannelMemberListQuery``.
     ///
@@ -223,7 +219,6 @@ extension ChatClient {
 
 // MARK: - Factory Methods for Creating Message Reaction Lists
 
-@available(iOS 13.0, *)
 extension ChatClient {
     /// Creates an instance of ``ReactionList`` which represents an array of message reactions matching to the specified ``ReactionListQuery``.
     ///
@@ -239,7 +234,6 @@ extension ChatClient {
 
 // MARK: - Factory Methods for Creating User Lists
 
-@available(iOS 13.0, *)
 extension ChatClient {
     /// Creates an instance of ``UserList`` which represents an array of users matching to the specified ``UserListQuery``.
     ///
@@ -256,7 +250,6 @@ extension ChatClient {
 
 // MARK: - Factory Methods for Searching Messages
 
-@available(iOS 13.0, *)
 extension ChatClient {
     /// Creates an instance of ``MessageSearch`` which represents an array of messages matching to the specified ``MessageSearchQuery``.
     ///
@@ -270,7 +263,6 @@ extension ChatClient {
 
 // MARK: - Factory Methods for Searching Users
 
-@available(iOS 13.0, *)
 extension ChatClient {
     /// Creates an instance of ``UserSearch`` which represents an array of users matching to the specified ``UserListQuery``.
     ///

@@ -8,7 +8,6 @@ import CoreData
 @testable import StreamChatTestTools
 import XCTest
 
-@available(iOS 13, *)
 final class MemberListController_Combine_Tests: iOS13TestCase {
     var memberListController: ChatChannelMemberListController!
     var cancellables: Set<AnyCancellable>!

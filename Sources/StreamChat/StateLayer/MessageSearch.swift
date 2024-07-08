@@ -5,7 +5,6 @@
 import Foundation
 
 /// An object which represents a list of ``ChatMessage`` for the specified search query.
-@available(iOS 13.0, *)
 public class MessageSearch {
     private let authenticationRepository: AuthenticationRepository
     private let messageUpdater: MessageUpdater
@@ -100,7 +99,6 @@ public class MessageSearch {
     }
 }
 
-@available(iOS 13.0, *)
 extension MessageSearch {
     struct Environment {
         var messageUpdaterBuilder: (

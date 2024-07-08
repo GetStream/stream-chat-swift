@@ -6,7 +6,6 @@
 @testable import StreamChatTestTools
 import XCTest
 
-@available(iOS 13.0, *)
 final class UserList_Tests: XCTestCase {
     private var env: TestEnvironment!
     private var query: UserListQuery!
@@ -120,7 +119,6 @@ final class UserList_Tests: XCTestCase {
     }
 }
 
-@available(iOS 13.0, *)
 extension UserList_Tests {
     final class TestEnvironment {
         let client: ChatClient_Mock

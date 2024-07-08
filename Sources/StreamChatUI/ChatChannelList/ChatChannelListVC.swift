@@ -27,11 +27,7 @@ open class ChatChannelListVC: _ViewController,
     }
 
     open private(set) lazy var loadingIndicator: UIActivityIndicatorView = {
-        if #available(iOS 13.0, *) {
-            return UIActivityIndicatorView(style: .large).withoutAutoresizingMaskConstraints
-        } else {
-            return UIActivityIndicatorView(style: .whiteLarge).withoutAutoresizingMaskConstraints
-        }
+        UIActivityIndicatorView(style: .large).withoutAutoresizingMaskConstraints
     }()
 
     /// A router object responsible for handling navigation actions of this view controller.
@@ -298,9 +294,7 @@ open class ChatChannelListVC: _ViewController,
             parent.isUIHostingController
         else { return }
 
-        if #available(iOS 13.0, *) {
-            setupParentNavigation(parent: parent)
-        }
+        setupParentNavigation(parent: parent)
     }
 
     // MARK: - Collection View

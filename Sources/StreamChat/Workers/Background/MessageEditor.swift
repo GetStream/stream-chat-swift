@@ -102,9 +102,7 @@ class MessageEditor: Worker {
 
     private func removeMessageIDAndContinue(_ messageId: MessageId, result: Result<ChatMessage, Error>) {
         _pendingMessageIDs.mutate { $0.remove(messageId) }
-        if #available(iOS 13.0, *) {
-            notifyAPIRequestFinished(for: messageId, result: result)
-        }
+        notifyAPIRequestFinished(for: messageId, result: result)
         processNextMessage()
     }
 }
@@ -124,7 +122,6 @@ private extension Array where Element == ListChange<MessageDTO> {
 
 // MARK: - Chat State Layer
 
-@available(iOS 13.0, *)
 extension MessageEditor {
     func waitForAPIRequest(messageId: MessageId) async throws -> ChatMessage {
         try await withCheckedThrowingContinuation { continuation in

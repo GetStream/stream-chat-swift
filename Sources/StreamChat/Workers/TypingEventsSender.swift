@@ -93,7 +93,6 @@ class TypingEventsSender: Worker {
     }
 }
 
-@available(iOS 13.0, *)
 extension TypingEventsSender {
     func keystroke(in cid: ChannelId, parentMessageId: MessageId?) async throws {
         try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in

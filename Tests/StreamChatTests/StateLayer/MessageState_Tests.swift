@@ -6,7 +6,6 @@
 @testable import StreamChatTestTools
 import XCTest
 
-@available(iOS 13.0, *)
 final class MessageState_Tests: XCTestCase {
     private var channelId: ChannelId!
     private var env: TestEnvironment!
@@ -236,7 +235,6 @@ final class MessageState_Tests: XCTestCase {
     }
 }
 
-@available(iOS 13.0, *)
 extension MessageState_Tests {
     final class TestEnvironment {
         let client: ChatClient_Mock

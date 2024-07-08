@@ -78,7 +78,7 @@ final class ChatSuggestionsVC_Tests: XCTestCase {
             override func setUpAppearance() {
                 super.setUpAppearance()
 
-                if #available(iOS 12.0, *), traitCollection.userInterfaceStyle == .dark {
+                if traitCollection.userInterfaceStyle == .dark {
                     headerLabel.textColor = .yellow
                 } else {
                     headerLabel.textColor = .green

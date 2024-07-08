@@ -5,7 +5,6 @@
 import Foundation
 import SwiftUI
 
-@available(iOS 13, *)
 extension EventsController {
     /// A wrapper object that exposes the controller variables in the form of `ObservableObject` to be used in SwiftUI.
     public var observableObject: ObservableObject { .init(controller: self) }
@@ -26,7 +25,6 @@ extension EventsController {
     }
 }
 
-@available(iOS 13, *)
 extension EventsController.ObservableObject: EventsControllerDelegate {
     public func eventsController(
         _ controller: EventsController,

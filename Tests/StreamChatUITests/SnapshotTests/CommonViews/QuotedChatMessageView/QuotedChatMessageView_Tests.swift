@@ -306,7 +306,6 @@ final class QuotedChatMessageView_Tests: XCTestCase {
         AssertSnapshot(view, variants: [.defaultLight])
     }
 
-    @available(iOS 13.0, *)
     func test_wrappedInSwiftUI() {
         struct CustomView: View {
             @EnvironmentObject var components: Components.ObservableObject

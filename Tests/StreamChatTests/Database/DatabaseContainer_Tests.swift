@@ -22,11 +22,7 @@ final class DatabaseContainer_Tests: XCTestCase {
         let dbURL = URL(fileURLWithPath: "/") // This URL is not writable
         let db = DatabaseContainer(kind: .onDisk(databaseFileURL: dbURL))
         // Assert that we've switched to in-memory type
-        if #available(iOS 13, *) {
-            XCTAssertEqual(db.persistentStoreDescriptions.first?.url, URL(fileURLWithPath: "/dev/null"))
-        } else {
-            XCTAssertEqual(db.persistentStoreDescriptions.first?.type, NSInMemoryStoreType)
-        }
+        XCTAssertEqual(db.persistentStoreDescriptions.first?.url, URL(fileURLWithPath: "/dev/null"))
     }
 
     func test_writeCompletionBlockIsCalled() throws {

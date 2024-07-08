@@ -288,7 +288,6 @@ class MessageRepository {
     }
 }
 
-@available(iOS 13.0.0, *)
 extension MessageRepository {
     /// Fetches messages from the database with a date range.
     func messages(from fromDate: Date, to toDate: Date, in cid: ChannelId) async throws -> [ChatMessage] {

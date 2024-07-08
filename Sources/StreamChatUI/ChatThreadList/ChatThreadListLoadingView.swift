@@ -9,11 +9,7 @@ import UIKit
 open class ChatThreadListLoadingView: _View, ThemeProvider {
     /// The loading indicator view.
     open private(set) lazy var loadingIndicator: UIActivityIndicatorView = {
-        if #available(iOS 13.0, *) {
-            return UIActivityIndicatorView(style: .large).withoutAutoresizingMaskConstraints
-        } else {
-            return UIActivityIndicatorView(style: .whiteLarge).withoutAutoresizingMaskConstraints
-        }
+        UIActivityIndicatorView(style: .large).withoutAutoresizingMaskConstraints
     }()
 
     override open func setUpLayout() {

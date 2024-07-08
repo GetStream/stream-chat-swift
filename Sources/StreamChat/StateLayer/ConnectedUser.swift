@@ -5,7 +5,6 @@
 import Foundation
 
 /// An object which represents the currently logged in user.
-@available(iOS 13.0, *)
 public final class ConnectedUser {
     private let authenticationRepository: AuthenticationRepository
     private let currentUserUpdater: CurrentUserUpdater
@@ -185,7 +184,6 @@ public final class ConnectedUser {
     }
 }
 
-@available(iOS 13.0, *)
 extension ConnectedUser {
     struct Environment {
         var stateBuilder: @MainActor(

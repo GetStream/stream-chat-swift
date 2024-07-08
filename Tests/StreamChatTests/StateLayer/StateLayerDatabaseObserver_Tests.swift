@@ -6,7 +6,6 @@
 @testable import StreamChatTestTools
 import XCTest
 
-@available(iOS 13.0, *)
 final class StateLayerDatabaseObserver_Tests: XCTestCase {
     private var client: ChatClient_Mock!
     private var channelId: ChannelId!
@@ -457,7 +456,6 @@ final class StateLayerDatabaseObserver_Tests: XCTestCase {
     }
 }
 
-@available(iOS 13.0, *)
 private extension XCTestCase {
     func waitForDuplicateCallbacks(nanoseconds: UInt64 = 50000) async throws {
         try await Task.sleep(nanoseconds: nanoseconds)

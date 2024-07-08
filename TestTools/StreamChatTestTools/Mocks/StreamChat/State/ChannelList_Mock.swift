@@ -5,7 +5,6 @@
 import Foundation
 @testable import StreamChat
 
-@available(iOS 13.0, *)
 public class ChannelList_Mock: ChannelList {
     
     public static func mock(

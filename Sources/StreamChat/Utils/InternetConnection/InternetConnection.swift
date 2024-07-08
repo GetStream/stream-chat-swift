@@ -194,12 +194,7 @@ extension InternetConnection {
             }
 
             let quality: InternetConnection.Quality
-
-            if #available(iOS 13.0, *) {
-                quality = path.isConstrained ? .constrained : (path.isExpensive ? .expensive : .great)
-            } else {
-                quality = path.isExpensive ? .expensive : .great
-            }
+            quality = path.isConstrained ? .constrained : (path.isExpensive ? .expensive : .great)
 
             return .available(quality)
         }

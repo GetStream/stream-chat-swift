@@ -6,7 +6,6 @@
 @testable import StreamChatTestTools
 import XCTest
 
-@available(iOS 13, *)
 final class MemberListController_SwiftUI_Tests: iOS13TestCase {
     var query: ChannelMemberListQuery!
     var memberListController: ChatChannelMemberListController_Mock!

@@ -169,7 +169,6 @@ extension ClientError {
     }
 }
 
-@available(iOS 13.0, *)
 extension UserUpdater {
     func muteUser(_ userId: UserId) async throws {
         try await withCheckedThrowingContinuation { continuation in

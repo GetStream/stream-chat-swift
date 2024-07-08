@@ -5,7 +5,6 @@
 import Foundation
 
 /// Represents a ``CurrentChatUser`` and its state.
-@available(iOS 13.0, *)
 @MainActor public final class ConnectedUserState: ObservableObject {
     private let observer: Observer
     

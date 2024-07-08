@@ -5,7 +5,6 @@
 import Combine
 import Foundation
 
-@available(iOS 13, *)
 extension PollController {
     /// A publisher emitting a new value every time the state of the controller changes.
     public var statePublisher: AnyPublisher<DataController.State, Never> {
@@ -45,7 +44,6 @@ extension PollController {
     }
 }
 
-@available(iOS 13, *)
 extension PollController.BasePublishers: PollControllerDelegate {
     func pollController(_ pollController: PollController, didUpdatePoll poll: EntityChange<Poll>) {
         pollChanges.send(poll)

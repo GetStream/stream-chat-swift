@@ -177,11 +177,6 @@ final class AsyncOperation_Tests: XCTestCase {
             operationBlockCalls = $0
         }
 
-        guard #available(iOS 13.0, *) else {
-            XCTFail("KVO Expectations require iOS 13.0+")
-            return
-        }
-
         operation.start()
         let operationCompletion = expectation(description: "operation concludes")
         let token = operation.observe(\.isExecuting) { _, change in
@@ -203,11 +198,6 @@ final class AsyncOperation_Tests: XCTestCase {
         var operationBlockCalls = 0
         let operation = retryLoopedOperation {
             operationBlockCalls = $0
-        }
-
-        guard #available(iOS 13.0, *) else {
-            XCTFail("KVO Expectations require iOS 13.0+")
-            return
         }
 
         operation.start()
@@ -251,15 +241,9 @@ extension AsyncOperation_Tests {
     }
 
     private func waitForOperationToFinish(_ operation: AsyncOperation) {
-        guard #available(iOS 13.0, *) else {
-            XCTFail()
-            return
-        }
-
         _waitForOperationToFinish(operation)
     }
 
-    @available(iOS 13.0, *)
     private func _waitForOperationToFinish(_ operation: AsyncOperation) {
         let expectation = expectation(description: "operation concludes")
         let token = operation.observe(\.isFinished) { _, change in

@@ -383,7 +383,6 @@
 		79280F712487CD2B00CDEB89 /* Atomic.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79280F6F2487CD2B00CDEB89 /* Atomic.swift */; };
 		79280F732487CD3100CDEB89 /* Atomic_StressTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79280F702487CD2B00CDEB89 /* Atomic_StressTests.swift */; };
 		79280F782489181200CDEB89 /* URLSessionWebSocketEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79280F772489181200CDEB89 /* URLSessionWebSocketEngine.swift */; };
-		79280F7A248918FD00CDEB89 /* StarscreamWebSocketEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79280F79248918FD00CDEB89 /* StarscreamWebSocketEngine.swift */; };
 		792921C524C0479700116BBB /* ChannelListUpdater_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 792921C424C0479700116BBB /* ChannelListUpdater_Tests.swift */; };
 		792921C924C056F400116BBB /* ChannelListController_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 792921C824C056F400116BBB /* ChannelListController_Tests.swift */; };
 		792A4F1D247FEA2200EAF71D /* ChannelListController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 792A4F1C247FEA2200EAF71D /* ChannelListController.swift */; };
@@ -1787,7 +1786,6 @@
 		C121E821274544AD00023E4C /* NotificationEvents.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AC9CBD524C73689006E236C /* NotificationEvents.swift */; };
 		C121E822274544AD00023E4C /* WebSocketEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 792A4F38247FFACB00EAF71D /* WebSocketEngine.swift */; };
 		C121E823274544AD00023E4C /* URLSessionWebSocketEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79280F772489181200CDEB89 /* URLSessionWebSocketEngine.swift */; };
-		C121E824274544AD00023E4C /* StarscreamWebSocketEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79280F79248918FD00CDEB89 /* StarscreamWebSocketEngine.swift */; };
 		C121E825274544AD00023E4C /* BackgroundTaskScheduler.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBF17AE725D48865004517B3 /* BackgroundTaskScheduler.swift */; };
 		C121E826274544AD00023E4C /* WebSocketClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 799C9444247D3DD2001F1104 /* WebSocketClient.swift */; };
 		C121E827274544AD00023E4C /* WebSocketPingController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A618E4424D19D510003D83C /* WebSocketPingController.swift */; };
@@ -1990,26 +1988,6 @@
 		C121E8F0274544B200023E4C /* Dictionary+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88EA9AD725470F6A007EE76B /* Dictionary+Extensions.swift */; };
 		C121E8F1274544B200023E4C /* MultipartFormData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 881506EB258212BF0013935B /* MultipartFormData.swift */; };
 		C121E8F2274544B200023E4C /* SystemEnvironment+Version.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7AD954E25D536AA00076DC3 /* SystemEnvironment+Version.swift */; };
-		C121E8F3274544B200023E4C /* Transport.swift in Sources */ = {isa = PBXBuildFile; fileRef = C13C74F0273936D900F93B34 /* Transport.swift */; };
-		C121E8F4274544B200023E4C /* FoundationTransport.swift in Sources */ = {isa = PBXBuildFile; fileRef = C13C74F1273936D900F93B34 /* FoundationTransport.swift */; };
-		C121E8F5274544B200023E4C /* TCPTransport.swift in Sources */ = {isa = PBXBuildFile; fileRef = C13C74F2273936D900F93B34 /* TCPTransport.swift */; };
-		C121E8F6274544B200023E4C /* Security.swift in Sources */ = {isa = PBXBuildFile; fileRef = C13C74F4273936D900F93B34 /* Security.swift */; };
-		C121E8F7274544B200023E4C /* FoundationSecurity.swift in Sources */ = {isa = PBXBuildFile; fileRef = C13C74F5273936D900F93B34 /* FoundationSecurity.swift */; };
-		C121E8F8274544B200023E4C /* Data+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = C13C74F7273936D900F93B34 /* Data+Extensions.swift */; };
-		C121E8F9274544B200023E4C /* Server.swift in Sources */ = {isa = PBXBuildFile; fileRef = C13C74F9273936D900F93B34 /* Server.swift */; };
-		C121E8FA274544B200023E4C /* WebSocketServer.swift in Sources */ = {isa = PBXBuildFile; fileRef = C13C74FA273936D900F93B34 /* WebSocketServer.swift */; };
-		C121E8FB274544B200023E4C /* FoundationHTTPHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = C13C74FC273936D900F93B34 /* FoundationHTTPHandler.swift */; };
-		C121E8FC274544B200023E4C /* HTTPHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = C13C74FD273936D900F93B34 /* HTTPHandler.swift */; };
-		C121E8FD274544B200023E4C /* FrameCollector.swift in Sources */ = {isa = PBXBuildFile; fileRef = C13C74FE273936D900F93B34 /* FrameCollector.swift */; };
-		C121E8FE274544B200023E4C /* StringHTTPHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = C13C74FF273936D900F93B34 /* StringHTTPHandler.swift */; };
-		C121E8FF274544B200023E4C /* FoundationHTTPServerHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = C13C7500273936D900F93B34 /* FoundationHTTPServerHandler.swift */; };
-		C121E900274544B200023E4C /* Framer.swift in Sources */ = {isa = PBXBuildFile; fileRef = C13C7501273936D900F93B34 /* Framer.swift */; };
-		C121E901274544B200023E4C /* Compression.swift in Sources */ = {isa = PBXBuildFile; fileRef = C13C7503273936D900F93B34 /* Compression.swift */; };
-		C121E902274544B200023E4C /* WSCompression.swift in Sources */ = {isa = PBXBuildFile; fileRef = C13C7504273936D900F93B34 /* WSCompression.swift */; };
-		C121E903274544B200023E4C /* WebSocket.swift in Sources */ = {isa = PBXBuildFile; fileRef = C13C7506273936D900F93B34 /* WebSocket.swift */; };
-		C121E904274544B200023E4C /* Engine.swift in Sources */ = {isa = PBXBuildFile; fileRef = C13C7508273936DA00F93B34 /* Engine.swift */; };
-		C121E905274544B200023E4C /* NativeEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = C13C7509273936DA00F93B34 /* NativeEngine.swift */; };
-		C121E906274544B200023E4C /* WSEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = C13C750A273936DA00F93B34 /* WSEngine.swift */; };
 		C121EB5F2746A1E600023E4C /* Appearance.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDDD1EA22632C50200BA007B /* Appearance.swift */; };
 		C121EB602746A1E600023E4C /* Components.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8850B929255C286B003AED69 /* Components.swift */; };
 		C121EB612746A1E600023E4C /* Appearance+ColorPalette.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7166CB125BED22B00B03B07 /* Appearance+ColorPalette.swift */; };
@@ -2373,26 +2351,6 @@
 		C1FC2F8C27416E1F0062530F /* UIImage+SwiftyGif.swift in Sources */ = {isa = PBXBuildFile; fileRef = C13C74D4273932D200F93B34 /* UIImage+SwiftyGif.swift */; };
 		C1FC2F8D27416E1F0062530F /* NSImageView+SwiftyGif.swift in Sources */ = {isa = PBXBuildFile; fileRef = C13C74D6273932D200F93B34 /* NSImageView+SwiftyGif.swift */; };
 		C1FC2F8E27416E1F0062530F /* NSImage+SwiftyGif.swift in Sources */ = {isa = PBXBuildFile; fileRef = C13C74D3273932D200F93B34 /* NSImage+SwiftyGif.swift */; };
-		C1FC2F8F2742579D0062530F /* Data+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = C13C74F7273936D900F93B34 /* Data+Extensions.swift */; };
-		C1FC2F902742579D0062530F /* NativeEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = C13C7509273936DA00F93B34 /* NativeEngine.swift */; };
-		C1FC2F912742579D0062530F /* FoundationHTTPServerHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = C13C7500273936D900F93B34 /* FoundationHTTPServerHandler.swift */; };
-		C1FC2F922742579D0062530F /* Server.swift in Sources */ = {isa = PBXBuildFile; fileRef = C13C74F9273936D900F93B34 /* Server.swift */; };
-		C1FC2F932742579D0062530F /* Framer.swift in Sources */ = {isa = PBXBuildFile; fileRef = C13C7501273936D900F93B34 /* Framer.swift */; };
-		C1FC2F942742579D0062530F /* Security.swift in Sources */ = {isa = PBXBuildFile; fileRef = C13C74F4273936D900F93B34 /* Security.swift */; };
-		C1FC2F952742579D0062530F /* WebSocketServer.swift in Sources */ = {isa = PBXBuildFile; fileRef = C13C74FA273936D900F93B34 /* WebSocketServer.swift */; };
-		C1FC2F962742579D0062530F /* Transport.swift in Sources */ = {isa = PBXBuildFile; fileRef = C13C74F0273936D900F93B34 /* Transport.swift */; };
-		C1FC2F972742579D0062530F /* Compression.swift in Sources */ = {isa = PBXBuildFile; fileRef = C13C7503273936D900F93B34 /* Compression.swift */; };
-		C1FC2F982742579D0062530F /* TCPTransport.swift in Sources */ = {isa = PBXBuildFile; fileRef = C13C74F2273936D900F93B34 /* TCPTransport.swift */; };
-		C1FC2F992742579D0062530F /* StringHTTPHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = C13C74FF273936D900F93B34 /* StringHTTPHandler.swift */; };
-		C1FC2F9A2742579D0062530F /* WSEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = C13C750A273936DA00F93B34 /* WSEngine.swift */; };
-		C1FC2F9B2742579D0062530F /* FrameCollector.swift in Sources */ = {isa = PBXBuildFile; fileRef = C13C74FE273936D900F93B34 /* FrameCollector.swift */; };
-		C1FC2F9C2742579D0062530F /* HTTPHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = C13C74FD273936D900F93B34 /* HTTPHandler.swift */; };
-		C1FC2F9D2742579D0062530F /* FoundationHTTPHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = C13C74FC273936D900F93B34 /* FoundationHTTPHandler.swift */; };
-		C1FC2F9E2742579D0062530F /* FoundationTransport.swift in Sources */ = {isa = PBXBuildFile; fileRef = C13C74F1273936D900F93B34 /* FoundationTransport.swift */; };
-		C1FC2F9F2742579D0062530F /* WebSocket.swift in Sources */ = {isa = PBXBuildFile; fileRef = C13C7506273936D900F93B34 /* WebSocket.swift */; };
-		C1FC2FA02742579D0062530F /* FoundationSecurity.swift in Sources */ = {isa = PBXBuildFile; fileRef = C13C74F5273936D900F93B34 /* FoundationSecurity.swift */; };
-		C1FC2FA12742579D0062530F /* Engine.swift in Sources */ = {isa = PBXBuildFile; fileRef = C13C7508273936DA00F93B34 /* Engine.swift */; };
-		C1FC2FA22742579D0062530F /* WSCompression.swift in Sources */ = {isa = PBXBuildFile; fileRef = C13C7504273936D900F93B34 /* WSCompression.swift */; };
 		C1FFD9F927ECC7C7008A6848 /* Filter+ChatChannel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1FFD9F827ECC7C7008A6848 /* Filter+ChatChannel.swift */; };
 		C1FFD9FA27ECC7C7008A6848 /* Filter+ChatChannel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1FFD9F827ECC7C7008A6848 /* Filter+ChatChannel.swift */; };
 		CF01EB7B288A2B7200B426B8 /* ChatChannelListLoadingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF01EB7A288A2B7200B426B8 /* ChatChannelListLoadingView.swift */; };
@@ -3250,7 +3208,6 @@
 		79280F6F2487CD2B00CDEB89 /* Atomic.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Atomic.swift; sourceTree = "<group>"; };
 		79280F702487CD2B00CDEB89 /* Atomic_StressTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Atomic_StressTests.swift; sourceTree = "<group>"; };
 		79280F772489181200CDEB89 /* URLSessionWebSocketEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = URLSessionWebSocketEngine.swift; sourceTree = "<group>"; };
-		79280F79248918FD00CDEB89 /* StarscreamWebSocketEngine.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StarscreamWebSocketEngine.swift; sourceTree = "<group>"; };
 		79280F7B24891B0F00CDEB89 /* WebSocketEngine_Mock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebSocketEngine_Mock.swift; sourceTree = "<group>"; };
 		792921C424C0479700116BBB /* ChannelListUpdater_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelListUpdater_Tests.swift; sourceTree = "<group>"; };
 		792921C624C047DD00116BBB /* APIClient_Spy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIClient_Spy.swift; sourceTree = "<group>"; };
@@ -4412,26 +4369,6 @@
 		C13C74D4273932D200F93B34 /* UIImage+SwiftyGif.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIImage+SwiftyGif.swift"; sourceTree = "<group>"; };
 		C13C74D5273932D200F93B34 /* SwiftyGifManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SwiftyGifManager.swift; sourceTree = "<group>"; };
 		C13C74D6273932D200F93B34 /* NSImageView+SwiftyGif.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "NSImageView+SwiftyGif.swift"; sourceTree = "<group>"; };
-		C13C74F0273936D900F93B34 /* Transport.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Transport.swift; sourceTree = "<group>"; };
-		C13C74F1273936D900F93B34 /* FoundationTransport.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FoundationTransport.swift; sourceTree = "<group>"; };
-		C13C74F2273936D900F93B34 /* TCPTransport.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TCPTransport.swift; sourceTree = "<group>"; };
-		C13C74F4273936D900F93B34 /* Security.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Security.swift; sourceTree = "<group>"; };
-		C13C74F5273936D900F93B34 /* FoundationSecurity.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FoundationSecurity.swift; sourceTree = "<group>"; };
-		C13C74F7273936D900F93B34 /* Data+Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Data+Extensions.swift"; sourceTree = "<group>"; };
-		C13C74F9273936D900F93B34 /* Server.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Server.swift; sourceTree = "<group>"; };
-		C13C74FA273936D900F93B34 /* WebSocketServer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WebSocketServer.swift; sourceTree = "<group>"; };
-		C13C74FC273936D900F93B34 /* FoundationHTTPHandler.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FoundationHTTPHandler.swift; sourceTree = "<group>"; };
-		C13C74FD273936D900F93B34 /* HTTPHandler.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HTTPHandler.swift; sourceTree = "<group>"; };
-		C13C74FE273936D900F93B34 /* FrameCollector.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FrameCollector.swift; sourceTree = "<group>"; };
-		C13C74FF273936D900F93B34 /* StringHTTPHandler.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StringHTTPHandler.swift; sourceTree = "<group>"; };
-		C13C7500273936D900F93B34 /* FoundationHTTPServerHandler.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FoundationHTTPServerHandler.swift; sourceTree = "<group>"; };
-		C13C7501273936D900F93B34 /* Framer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Framer.swift; sourceTree = "<group>"; };
-		C13C7503273936D900F93B34 /* Compression.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Compression.swift; sourceTree = "<group>"; };
-		C13C7504273936D900F93B34 /* WSCompression.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WSCompression.swift; sourceTree = "<group>"; };
-		C13C7506273936D900F93B34 /* WebSocket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WebSocket.swift; sourceTree = "<group>"; };
-		C13C7508273936DA00F93B34 /* Engine.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Engine.swift; sourceTree = "<group>"; };
-		C13C7509273936DA00F93B34 /* NativeEngine.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NativeEngine.swift; sourceTree = "<group>"; };
-		C13C750A273936DA00F93B34 /* WSEngine.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WSEngine.swift; sourceTree = "<group>"; };
 		C143788B27BBEBA000E23965 /* OfflineRequestsRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OfflineRequestsRepository.swift; sourceTree = "<group>"; };
 		C143788F27BC03EE00E23965 /* EndpointPath.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EndpointPath.swift; sourceTree = "<group>"; };
 		C143789227BD625800E23965 /* OfflineRequestsRepository_Mock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OfflineRequestsRepository_Mock.swift; sourceTree = "<group>"; };
@@ -5281,7 +5218,6 @@
 				792A4F412480103A00EAF71D /* Query */,
 				C1E8AD59278DDC500041B775 /* Repositories */,
 				4F8E53042B7CCFA7008C0F9F /* StateLayer */,
-				C13C74EE273936D900F93B34 /* StreamStarscream */,
 				792A4F3A247FFB7600EAF71D /* Utils */,
 				799C9426247D2FB9001F1104 /* WebSocketClient */,
 				799C9427247D2FB9001F1104 /* Workers */,
@@ -5477,7 +5413,6 @@
 		79280F76248917EB00CDEB89 /* Engine */ = {
 			isa = PBXGroup;
 			children = (
-				79280F79248918FD00CDEB89 /* StarscreamWebSocketEngine.swift */,
 				79280F772489181200CDEB89 /* URLSessionWebSocketEngine.swift */,
 				792A4F38247FFACB00EAF71D /* WebSocketEngine.swift */,
 			);
@@ -8985,97 +8920,6 @@
 			path = StreamSwiftyGif;
 			sourceTree = "<group>";
 		};
-		C13C74EE273936D900F93B34 /* StreamStarscream */ = {
-			isa = PBXGroup;
-			children = (
-				C13C7502273936D900F93B34 /* Compression */,
-				C13C74F6273936D900F93B34 /* DataBytes */,
-				C13C7507273936DA00F93B34 /* Engine */,
-				C13C74FB273936D900F93B34 /* Framer */,
-				C13C74F3273936D900F93B34 /* Security */,
-				C13C74F8273936D900F93B34 /* Server */,
-				C13C7505273936D900F93B34 /* Starscream */,
-				C13C74EF273936D900F93B34 /* Transport */,
-			);
-			path = StreamStarscream;
-			sourceTree = "<group>";
-		};
-		C13C74EF273936D900F93B34 /* Transport */ = {
-			isa = PBXGroup;
-			children = (
-				C13C74F0273936D900F93B34 /* Transport.swift */,
-				C13C74F1273936D900F93B34 /* FoundationTransport.swift */,
-				C13C74F2273936D900F93B34 /* TCPTransport.swift */,
-			);
-			path = Transport;
-			sourceTree = "<group>";
-		};
-		C13C74F3273936D900F93B34 /* Security */ = {
-			isa = PBXGroup;
-			children = (
-				C13C74F4273936D900F93B34 /* Security.swift */,
-				C13C74F5273936D900F93B34 /* FoundationSecurity.swift */,
-			);
-			path = Security;
-			sourceTree = "<group>";
-		};
-		C13C74F6273936D900F93B34 /* DataBytes */ = {
-			isa = PBXGroup;
-			children = (
-				C13C74F7273936D900F93B34 /* Data+Extensions.swift */,
-			);
-			path = DataBytes;
-			sourceTree = "<group>";
-		};
-		C13C74F8273936D900F93B34 /* Server */ = {
-			isa = PBXGroup;
-			children = (
-				C13C74F9273936D900F93B34 /* Server.swift */,
-				C13C74FA273936D900F93B34 /* WebSocketServer.swift */,
-			);
-			path = Server;
-			sourceTree = "<group>";
-		};
-		C13C74FB273936D900F93B34 /* Framer */ = {
-			isa = PBXGroup;
-			children = (
-				C13C74FC273936D900F93B34 /* FoundationHTTPHandler.swift */,
-				C13C74FD273936D900F93B34 /* HTTPHandler.swift */,
-				C13C74FE273936D900F93B34 /* FrameCollector.swift */,
-				C13C74FF273936D900F93B34 /* StringHTTPHandler.swift */,
-				C13C7500273936D900F93B34 /* FoundationHTTPServerHandler.swift */,
-				C13C7501273936D900F93B34 /* Framer.swift */,
-			);
-			path = Framer;
-			sourceTree = "<group>";
-		};
-		C13C7502273936D900F93B34 /* Compression */ = {
-			isa = PBXGroup;
-			children = (
-				C13C7503273936D900F93B34 /* Compression.swift */,
-				C13C7504273936D900F93B34 /* WSCompression.swift */,
-			);
-			path = Compression;
-			sourceTree = "<group>";
-		};
-		C13C7505273936D900F93B34 /* Starscream */ = {
-			isa = PBXGroup;
-			children = (
-				C13C7506273936D900F93B34 /* WebSocket.swift */,
-			);
-			path = Starscream;
-			sourceTree = "<group>";
-		};
-		C13C7507273936DA00F93B34 /* Engine */ = {
-			isa = PBXGroup;
-			children = (
-				C13C7508273936DA00F93B34 /* Engine.swift */,
-				C13C7509273936DA00F93B34 /* NativeEngine.swift */,
-				C13C750A273936DA00F93B34 /* WSEngine.swift */,
-			);
-			path = Engine;
-			sourceTree = "<group>";
-		};
 		C1788F5D29C339FC00149883 /* Decorators */ = {
 			isa = PBXGroup;
 			children = (
@@ -11189,14 +11033,12 @@
 				4F8E53062B7CD01D008C0F9F /* Chat.swift in Sources */,
 				DAE566E724FFD22300E39431 /* ChannelController+SwiftUI.swift in Sources */,
 				88DA57202631AC3100FA8C53 /* ChannelMuteDTO.swift in Sources */,
-				C1FC2F9E2742579D0062530F /* FoundationTransport.swift in Sources */,
 				C163ECFB299155D0006D6124 /* NotificationExtension+Lifecycle.swift in Sources */,
 				CFA41B6727DA952100427602 /* SystemEnvironment+XStreamClient.swift in Sources */,
 				792CA62624CEE93700D70A5E /* ChannelListUpdater.swift in Sources */,
 				882C5756252C791400E60C44 /* ChannelMemberListUpdater.swift in Sources */,
 				AD84377E2BB48603000F3826 /* ThreadListPayload.swift in Sources */,
 				79896D5E25065ECD00BA8F1C /* ChannelRead.swift in Sources */,
-				C1FC2F972742579D0062530F /* Compression.swift in Sources */,
 				C1B49B3D2822A7AD00F4E89E /* StreamRuntimeCheck.swift in Sources */,
 				40789D1529F6AC500018C2BB /* AudioPlaybackRate.swift in Sources */,
 				4FD2BE592B9AF8B600FFC6F2 /* ChannelListState.swift in Sources */,
@@ -11206,7 +11048,6 @@
 				79DDF80E249CB920002F4412 /* RequestDecoder.swift in Sources */,
 				40789D2929F6AC500018C2BB /* AudioRecordingContextAccessor.swift in Sources */,
 				84D5BC6F277B619D00A65C75 /* PinnedMessagesSortingKey.swift in Sources */,
-				C1FC2FA22742579D0062530F /* WSCompression.swift in Sources */,
 				CFE616BD28348ACD00AE2ABF /* ScheduledStreamTimer.swift in Sources */,
 				AD57979E2978C4F7006CC435 /* UploadedAttachmentPostProcessor.swift in Sources */,
 				841BAA0A2BCE9B57000C73E4 /* CreatePollOptionRequestBody.swift in Sources */,
@@ -11239,7 +11080,6 @@
 				841BA9F82BCE80FF000C73E4 /* PollsPayloads.swift in Sources */,
 				DABC6AC8254707CB00A8FC78 /* AttachmentDTO.swift in Sources */,
 				40789D1329F6AC500018C2BB /* AudioPlaybackContext.swift in Sources */,
-				C1FC2FA12742579D0062530F /* Engine.swift in Sources */,
 				22692C9725D1841E007C41D0 /* ChatMessageFileAttachment.swift in Sources */,
 				DA8407062524F84F005A0F62 /* UserListQuery.swift in Sources */,
 				4F97F2702BA86491001C4D66 /* UserSearchState.swift in Sources */,
@@ -11278,12 +11118,10 @@
 				4042968329FACA0E0089126D /* AudioSamplesProcessor.swift in Sources */,
 				84355D882AB2FCAC00FD5838 /* FilesEndpoints.swift in Sources */,
 				7964F3B9249A314D002A09EC /* BaseLogDestination.swift in Sources */,
-				C1FC2F942742579D0062530F /* Security.swift in Sources */,
 				ADF2BBE82B9B61E30069D467 /* AppEndpoints.swift in Sources */,
 				AD52A21C2804851600D0157E /* CommandDTO.swift in Sources */,
 				AD37D7CD2BC9937200800D8C /* Thread.swift in Sources */,
 				792AF91624D812440010097B /* EntityDatabaseObserver.swift in Sources */,
-				C1FC2F9D2742579D0062530F /* FoundationHTTPHandler.swift in Sources */,
 				AD84377B2BB482CF000F3826 /* ThreadEndpoints.swift in Sources */,
 				404296EB2A011B050089126D /* AudioSessionProtocol.swift in Sources */,
 				C186BFAF27AADB410099CCA6 /* SyncOperations.swift in Sources */,
@@ -11292,12 +11130,9 @@
 				8A0CC9E524C5FEA900705CF9 /* MemberEvents.swift in Sources */,
 				DA4AA3BA2502731900FAAF6E /* Publisher+Extensions.swift in Sources */,
 				881506EC258212BF0013935B /* MultipartFormData.swift in Sources */,
-				C1FC2F952742579D0062530F /* WebSocketServer.swift in Sources */,
-				C1FC2F9C2742579D0062530F /* HTTPHandler.swift in Sources */,
 				C14A46532845043300EF498E /* ThreadSafeWeakCollection.swift in Sources */,
 				4F97F2742BA87C41001C4D66 /* MessageSearch.swift in Sources */,
 				792A4F472480107A00EAF71D /* Filter.swift in Sources */,
-				C1FC2F912742579D0062530F /* FoundationHTTPServerHandler.swift in Sources */,
 				22692C8F25D18097007C41D0 /* ChatMessageGiphyAttachment.swift in Sources */,
 				4042968629FACA420089126D /* AudioSamplesExtractor.swift in Sources */,
 				792A4F4B248010A600EAF71D /* QueryOptions.swift in Sources */,
@@ -11320,11 +11155,9 @@
 				6971257E260CA503003C7B47 /* NSManagedObjectContext+Extensions.swift in Sources */,
 				C15C8838286C7BF300E6A72C /* BackgroundListDatabaseObserver.swift in Sources */,
 				DA640FBB2535CF8500D32944 /* ChannelListSortingKey.swift in Sources */,
-				C1FC2F8F2742579D0062530F /* Data+Extensions.swift in Sources */,
 				8899BC3F2542FFA1003CB98B /* MessageReactionPayload.swift in Sources */,
 				797A756624814EF8003CF16D /* SystemEnvironment.swift in Sources */,
 				799C9438247D2FB9001F1104 /* ChatClientConfig.swift in Sources */,
-				C1FC2F992742579D0062530F /* StringHTTPHandler.swift in Sources */,
 				7964F3B6249A314D002A09EC /* PrefixLogFormatter.swift in Sources */,
 				84A1D2E626AACDBE00014712 /* ChannelEventsController.swift in Sources */,
 				AD7BE16A2C209888000A5756 /* ThreadEvents.swift in Sources */,
@@ -11407,8 +11240,6 @@
 				C1FFD9F927ECC7C7008A6848 /* Filter+ChatChannel.swift in Sources */,
 				4F1BEE7C2BE3851200B6685C /* ReactionListState+Observer.swift in Sources */,
 				AD9632E12C0A43630073B814 /* ThreadUpdaterMiddleware.swift in Sources */,
-				C1FC2F962742579D0062530F /* Transport.swift in Sources */,
-				C1FC2F9A2742579D0062530F /* WSEngine.swift in Sources */,
 				799C9479247E3DEA001F1104 /* StreamChatModel.xcdatamodeld in Sources */,
 				888E8C55252B525300195E03 /* MemberController.swift in Sources */,
 				79877A1C2498E4EE00015F8B /* Endpoint.swift in Sources */,
@@ -11428,12 +11259,9 @@
 				C143789027BC03EE00E23965 /* EndpointPath.swift in Sources */,
 				C10C7552299D1D67008C8F78 /* ChannelRepository.swift in Sources */,
 				790A4C45252DD4F1001F4A23 /* DevicePayloads.swift in Sources */,
-				C1FC2F902742579D0062530F /* NativeEngine.swift in Sources */,
 				792A4F39247FFACB00EAF71D /* WebSocketEngine.swift in Sources */,
-				C1FC2F922742579D0062530F /* Server.swift in Sources */,
 				4F97F26D2BA858E9001C4D66 /* UserSearch.swift in Sources */,
 				79280F422484F4EC00CDEB89 /* Event.swift in Sources */,
-				C1FC2F932742579D0062530F /* Framer.swift in Sources */,
 				C14D27B62869EEE40063F6F2 /* Array+CompactMapLoggingError.swift in Sources */,
 				79682C4A24BF37C80071578E /* MessagePayloads.swift in Sources */,
 				8AAB1C6624CB39F2009B783F /* UnreadCount.swift in Sources */,
@@ -11460,7 +11288,6 @@
 				4F427F662BA2F43200D92238 /* ConnectedUser.swift in Sources */,
 				4F73F39E2B91C7BF00563CD9 /* MessageState+Observer.swift in Sources */,
 				C1E8AD5E278EF5F30041B775 /* AsyncOperation.swift in Sources */,
-				C1FC2FA02742579D0062530F /* FoundationSecurity.swift in Sources */,
 				88D85DA7252F3C1D00AE1030 /* MemberListController.swift in Sources */,
 				79280F4B248523C000CDEB89 /* ConnectionEvents.swift in Sources */,
 				79158CF425F133FB00186102 /* ChannelTruncatedEventMiddleware.swift in Sources */,
@@ -11497,7 +11324,6 @@
 				79AF43B42632AF1C00E75CDA /* ChannelVisibilityEventMiddleware.swift in Sources */,
 				DAF1BED525066114003CEDC0 /* MessageController+Combine.swift in Sources */,
 				A36C39F52860680A0004EB7E /* URL+EnrichedURL.swift in Sources */,
-				C1FC2F9B2742579D0062530F /* FrameCollector.swift in Sources */,
 				8A0C3BBC24C0947400CAFD19 /* UserEvents.swift in Sources */,
 				DA4EE5B2252B67F500CB26D4 /* UserListController+SwiftUI.swift in Sources */,
 				C18F5B522840BD2C00527915 /* DBDate.swift in Sources */,
@@ -11509,7 +11335,6 @@
 				43D3F0F62841052600B74921 /* CallPayloads.swift in Sources */,
 				A30C3F20276B428F00DA5968 /* UnknownUserEvent.swift in Sources */,
 				40789D2129F6AC500018C2BB /* AppStateObserving.swift in Sources */,
-				79280F7A248918FD00CDEB89 /* StarscreamWebSocketEngine.swift in Sources */,
 				4F427F6C2BA2F53200D92238 /* ConnectedUserState+Observer.swift in Sources */,
 				4F83FA462BA43DC3008BD8CD /* MemberList.swift in Sources */,
 				7963BD6926B0208900281F8C /* ChatMessageAudioAttachment.swift in Sources */,
@@ -11527,7 +11352,6 @@
 				C1EFF3F3285E459C0057B91B /* IdentifiableModel.swift in Sources */,
 				4F97F26A2BA83150001C4D66 /* UserListState.swift in Sources */,
 				DAFAD6A124DC476A0043ED06 /* Result+Extensions.swift in Sources */,
-				C1FC2F982742579D0062530F /* TCPTransport.swift in Sources */,
 				AD17CDF927E4DB2700E0D092 /* PushProvider.swift in Sources */,
 				AD37D7D02BC9937F00800D8C /* ThreadParticipant.swift in Sources */,
 				C1EE5AA328B63CA300DD5D27 /* CallRepository.swift in Sources */,
@@ -11600,7 +11424,6 @@
 				AD37D7D32BC9938E00800D8C /* ThreadRead.swift in Sources */,
 				841BAA542BD26136000C73E4 /* PollOption.swift in Sources */,
 				8836FFBB2540741D009FDF73 /* FlagUserPayload.swift in Sources */,
-				C1FC2F9F2742579D0062530F /* WebSocket.swift in Sources */,
 				ADF2BBEB2B9B622B0069D467 /* AppSettingsPayload.swift in Sources */,
 				C173538E27D9F804008AC412 /* KeyedDecodingContainer+Array.swift in Sources */,
 				84AA4E3626F264610056A684 /* EventDTOConverterMiddleware.swift in Sources */,
@@ -12157,7 +11980,6 @@
 				C121E822274544AD00023E4C /* WebSocketEngine.swift in Sources */,
 				C1B0B38427BFC08900C8207D /* EndpointPath+OfflineRequest.swift in Sources */,
 				C121E823274544AD00023E4C /* URLSessionWebSocketEngine.swift in Sources */,
-				C121E824274544AD00023E4C /* StarscreamWebSocketEngine.swift in Sources */,
 				79D5CDD527EA1BE300BE7D8B /* MessageTranslationsPayload.swift in Sources */,
 				C121E825274544AD00023E4C /* BackgroundTaskScheduler.swift in Sources */,
 				C121E826274544AD00023E4C /* WebSocketClient.swift in Sources */,
@@ -12508,37 +12330,17 @@
 				C121E8F2274544B200023E4C /* SystemEnvironment+Version.swift in Sources */,
 				AD78F9EF28EC718D00BC0FCE /* EventBatcher.swift in Sources */,
 				4F8E53162B7F58BE008C0F9F /* Chat.swift in Sources */,
-				C121E8F3274544B200023E4C /* Transport.swift in Sources */,
-				C121E8F4274544B200023E4C /* FoundationTransport.swift in Sources */,
-				C121E8F5274544B200023E4C /* TCPTransport.swift in Sources */,
-				C121E8F6274544B200023E4C /* Security.swift in Sources */,
 				404296DB2A0112D00089126D /* AudioQueuePlayer.swift in Sources */,
 				43D3F0FA284106EE00B74921 /* CallEndpoints.swift in Sources */,
 				40A458EE2A03AC7C00C198F7 /* AVAsset+TotalAudioSamples.swift in Sources */,
 				AD0CC0132BDBC1BF005E2C66 /* ReactionListQuery.swift in Sources */,
 				4F427F672BA2F43200D92238 /* ConnectedUser.swift in Sources */,
-				C121E8F7274544B200023E4C /* FoundationSecurity.swift in Sources */,
-				C121E8F8274544B200023E4C /* Data+Extensions.swift in Sources */,
-				C121E8F9274544B200023E4C /* Server.swift in Sources */,
-				C121E8FA274544B200023E4C /* WebSocketServer.swift in Sources */,
-				C121E8FB274544B200023E4C /* FoundationHTTPHandler.swift in Sources */,
-				C121E8FC274544B200023E4C /* HTTPHandler.swift in Sources */,
-				C121E8FD274544B200023E4C /* FrameCollector.swift in Sources */,
-				C121E8FE274544B200023E4C /* StringHTTPHandler.swift in Sources */,
-				C121E8FF274544B200023E4C /* FoundationHTTPServerHandler.swift in Sources */,
 				AD37D7C52BC979B000800D8C /* ThreadDTO.swift in Sources */,
-				C121E900274544B200023E4C /* Framer.swift in Sources */,
 				40789D1829F6AC500018C2BB /* AudioPlaybackContextAccessor.swift in Sources */,
 				C1FFD9FA27ECC7C7008A6848 /* Filter+ChatChannel.swift in Sources */,
-				C121E901274544B200023E4C /* Compression.swift in Sources */,
-				C121E902274544B200023E4C /* WSCompression.swift in Sources */,
-				C121E903274544B200023E4C /* WebSocket.swift in Sources */,
 				4FE6E1AE2BAC7A1B00C80AF1 /* UserListState+Observer.swift in Sources */,
-				C121E904274544B200023E4C /* Engine.swift in Sources */,
-				C121E905274544B200023E4C /* NativeEngine.swift in Sources */,
 				4FE6E1AB2BAC79F400C80AF1 /* MemberListState+Observer.swift in Sources */,
 				AD8FEE592AA8E1A100273F88 /* ChatClient+Environment.swift in Sources */,
-				C121E906274544B200023E4C /* WSEngine.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -13323,7 +13125,7 @@
 				INFOPLIST_FILE = "$(SRCROOT)/Sources/StreamChatUI/Info.plist";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2024 Stream.io Inc. All rights reserved.";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited)";
 				PRODUCT_BUNDLE_IDENTIFIER = io.stream.StreamChatUI;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
@@ -13351,7 +13153,7 @@
 				INFOPLIST_FILE = "$(SRCROOT)/Sources/StreamChatUI/Info.plist";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2024 Stream.io Inc. All rights reserved.";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited)";
 				PRODUCT_BUNDLE_IDENTIFIER = io.stream.StreamChatUI;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
@@ -13379,7 +13181,7 @@
 				INFOPLIST_FILE = "$(SRCROOT)/Sources/StreamChatUI/Info.plist";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2024 Stream.io Inc. All rights reserved.";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited)";
 				PRODUCT_BUNDLE_IDENTIFIER = io.stream.StreamChatUI;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
@@ -13399,7 +13201,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = EHV7XZLAHA;
 				INFOPLIST_FILE = Tests/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -13422,7 +13224,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = EHV7XZLAHA;
 				INFOPLIST_FILE = Tests/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -13444,7 +13246,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = EHV7XZLAHA;
 				INFOPLIST_FILE = Tests/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -13546,7 +13348,7 @@
 				ENABLE_TESTING_SEARCH_PATHS = YES;
 				INFOPLIST_FILE = "$(SRCROOT)/TestTools/StreamChatTestTools/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -13576,7 +13378,7 @@
 				ENABLE_TESTING_SEARCH_PATHS = YES;
 				INFOPLIST_FILE = "$(SRCROOT)/TestTools/StreamChatTestTools/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -13606,7 +13408,7 @@
 				ENABLE_TESTING_SEARCH_PATHS = YES;
 				INFOPLIST_FILE = "$(SRCROOT)/TestTools/StreamChatTestTools/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -13629,7 +13431,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = EHV7XZLAHA;
 				INFOPLIST_FILE = Tests/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -13651,7 +13453,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = EHV7XZLAHA;
 				INFOPLIST_FILE = Tests/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -13672,7 +13474,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = EHV7XZLAHA;
 				INFOPLIST_FILE = Tests/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -13702,7 +13504,7 @@
 				INFOPLIST_FILE = "$(SRCROOT)/Sources/StreamChat/Info.plist";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2024 Stream.io Inc. All rights reserved.";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited)";
 				MACOSX_DEPLOYMENT_TARGET = 10.15;
 				PRODUCT_BUNDLE_IDENTIFIER = io.getstream.StreamChat;
@@ -13732,7 +13534,7 @@
 				INFOPLIST_FILE = "$(SRCROOT)/Sources/StreamChat/Info.plist";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2024 Stream.io Inc. All rights reserved.";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited)";
 				MACOSX_DEPLOYMENT_TARGET = 10.15;
 				PRODUCT_BUNDLE_IDENTIFIER = io.getstream.StreamChat;
@@ -13754,7 +13556,7 @@
 				DEVELOPMENT_TEAM = EHV7XZLAHA;
 				INFOPLIST_FILE = "$(SRCROOT)/Tests/Info.plist";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2024 Stream.io Inc. All rights reserved.";
-				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -13780,7 +13582,7 @@
 				DEVELOPMENT_TEAM = EHV7XZLAHA;
 				INFOPLIST_FILE = "$(SRCROOT)/Tests/Info.plist";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2024 Stream.io Inc. All rights reserved.";
-				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -13963,7 +13765,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				INFOPLIST_FILE = Sources/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
@@ -14038,7 +13840,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				INFOPLIST_FILE = Sources/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
@@ -14076,7 +13878,7 @@
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -14112,7 +13914,7 @@
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -14146,7 +13948,7 @@
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -14175,7 +13977,7 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Tests/Info.plist;
 				INFOPLIST_KEY_NSPrincipalClass = "$(PRINCIPAL_CLASS)";
-				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				MARKETING_VERSION = 1.0;
 				PRINCIPAL_CLASS = "$(PRODUCT_NAME).TestsEnvironmentSetup";
 				PRODUCT_BUNDLE_IDENTIFIER = io.getstream.iOS.StreamChatUITestsAppUITests;
@@ -14207,7 +14009,7 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Tests/Info.plist;
 				INFOPLIST_KEY_NSPrincipalClass = "$(PRINCIPAL_CLASS)";
-				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				MARKETING_VERSION = 1.0;
 				PRINCIPAL_CLASS = "$(PRODUCT_NAME).TestsEnvironmentSetup";
 				PRODUCT_BUNDLE_IDENTIFIER = io.getstream.iOS.StreamChatUITestsAppUITests;
@@ -14237,7 +14039,7 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Tests/Info.plist;
 				INFOPLIST_KEY_NSPrincipalClass = "$(PRINCIPAL_CLASS)";
-				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				MARKETING_VERSION = 1.0;
 				PRINCIPAL_CLASS = "$(PRODUCT_NAME).TestsEnvironmentSetup";
 				PRODUCT_BUNDLE_IDENTIFIER = io.getstream.iOS.StreamChatUITestsAppUITests;
@@ -14271,7 +14073,7 @@
 				INFOPLIST_FILE = TestTools/StreamChatTestMockServer/Info.plist;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2024 Stream.io Inc. All rights reserved.";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -14306,7 +14108,7 @@
 				INFOPLIST_FILE = TestTools/StreamChatTestMockServer/Info.plist;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2024 Stream.io Inc. All rights reserved.";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -14340,7 +14142,7 @@
 				INFOPLIST_FILE = TestTools/StreamChatTestMockServer/Info.plist;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2024 Stream.io Inc. All rights reserved.";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -14413,7 +14215,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				INFOPLIST_FILE = Sources/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
@@ -14450,7 +14252,7 @@
 				INFOPLIST_FILE = "$(SRCROOT)/Sources/StreamChat/Info.plist";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2024 Stream.io Inc. All rights reserved.";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited)";
 				MACOSX_DEPLOYMENT_TARGET = 10.15;
 				PRODUCT_BUNDLE_IDENTIFIER = io.getstream.StreamChat;
@@ -14472,7 +14274,7 @@
 				DEVELOPMENT_TEAM = EHV7XZLAHA;
 				INFOPLIST_FILE = "$(SRCROOT)/Tests/Info.plist";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2024 Stream.io Inc. All rights reserved.";
-				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -14754,7 +14556,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = EHV7XZLAHA;
 				INFOPLIST_FILE = "UISDKdocumentation/UISDKDocumentation-info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -14777,7 +14579,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = EHV7XZLAHA;
 				INFOPLIST_FILE = "UISDKdocumentation/UISDKDocumentation-info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -14799,7 +14601,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = EHV7XZLAHA;
 				INFOPLIST_FILE = "UISDKdocumentation/UISDKDocumentation-info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",

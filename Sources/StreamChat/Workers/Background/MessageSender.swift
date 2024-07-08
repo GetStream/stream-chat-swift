@@ -111,9 +111,7 @@ class MessageSender: Worker {
                     )
                     sendingQueueByCid[cid] = messageSendingQueue
                     
-                    if #available(iOS 13.0, *) {
-                        messageSendingQueue.delegate = self
-                    }
+                    messageSendingQueue.delegate = self
                 }
 
                 sendingQueueByCid[cid]?.scheduleSend(requests: requests)
@@ -124,7 +122,6 @@ class MessageSender: Worker {
 
 // MARK: - Chat State Layer
 
-@available(iOS 13.0, *)
 extension MessageSender: MessageSendingQueueDelegate {
     func waitForAPIRequest(messageId: MessageId) async throws -> ChatMessage {
         try await withCheckedThrowingContinuation { continuation in

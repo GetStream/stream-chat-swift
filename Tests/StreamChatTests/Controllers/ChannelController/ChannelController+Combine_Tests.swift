@@ -8,7 +8,6 @@ import CoreData
 @testable import StreamChatTestTools
 import XCTest
 
-@available(iOS 13, *)
 final class ChannelController_Combine_Tests: iOS13TestCase {
     var channelController: ChannelControllerSpy!
     var cancellables: Set<AnyCancellable>!

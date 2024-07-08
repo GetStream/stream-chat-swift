@@ -5,7 +5,6 @@
 import Foundation
 
 /// An object which represents a list of `ChatUser`.
-@available(iOS 13.0, *)
 public final class UserList {
     private let query: UserListQuery
     private let stateBuilder: StateBuilder<UserListState>
@@ -69,7 +68,6 @@ public final class UserList {
     }
 }
 
-@available(iOS 13.0, *)
 extension UserList {
     struct Environment {
         var userListUpdater: (

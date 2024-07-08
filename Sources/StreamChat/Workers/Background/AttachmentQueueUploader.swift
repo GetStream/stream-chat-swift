@@ -135,9 +135,7 @@ class AttachmentQueueUploader: Worker {
 
     private func removePendingAttachment(with id: AttachmentId, result: Result<UploadedAttachment, Error>) {
         _pendingAttachmentIDs.mutate { $0.remove(id) }
-        if #available(iOS 13.0, *) {
-            notifyAPIRequestFinished(for: id, result: result)
-        }
+        notifyAPIRequestFinished(for: id, result: result)
     }
 
     private func updateAttachmentIfNeeded(
@@ -304,7 +302,6 @@ private class AttachmentStorage {
 
 // MARK: - Chat State Layer
 
-@available(iOS 13.0, *)
 extension AttachmentQueueUploader {
     func waitForAPIRequest(attachmentId: AttachmentId) async throws -> UploadedAttachment {
         try await withCheckedThrowingContinuation { continuation in

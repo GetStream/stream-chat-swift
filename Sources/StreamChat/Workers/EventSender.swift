@@ -23,7 +23,6 @@ class EventSender: Worker {
     }
 }
 
-@available(iOS 13.0, *)
 extension EventSender {
     func sendEvent<Payload: CustomEventPayload>(_ payload: Payload, to cid: ChannelId) async throws {
         try await withCheckedThrowingContinuation { continuation in

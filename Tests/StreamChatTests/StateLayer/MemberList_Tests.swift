@@ -6,7 +6,6 @@
 @testable import StreamChatTestTools
 import XCTest
 
-@available(iOS 13.0, *)
 final class MemberList_Tests: XCTestCase {
     private var channelId: ChannelId!
     @MainActor private var memberList: MemberList!
@@ -156,7 +155,6 @@ final class MemberList_Tests: XCTestCase {
     }
 }
 
-@available(iOS 13.0, *)
 extension MemberList_Tests {
     final class TestEnvironment {
         let client: ChatClient_Mock

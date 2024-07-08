@@ -5,7 +5,6 @@
 import Foundation
 @testable import StreamChat
 
-@available(iOS 13.0, *)
 public class Chat_Mock: Chat {
 
     static let cid = try! ChannelId(cid: "mock:channel")
@@ -71,7 +70,6 @@ public class Chat_Mock: Chat {
     }
 }
 
-@available(iOS 13.0, *)
 public extension Chat_Mock {
     /// Simulates the initial conditions. Setting these values doesn't trigger any observer callback.
     @MainActor func simulateInitial(channel: ChatChannel, messages: [ChatMessage]) {

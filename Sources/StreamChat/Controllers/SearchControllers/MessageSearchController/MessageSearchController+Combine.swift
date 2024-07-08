@@ -4,7 +4,6 @@
 
 import Combine
 
-@available(iOS 13, *)
 extension ChatMessageSearchController {
     /// A publisher emitting a new value every time the state of the controller changes.
     public var statePublisher: AnyPublisher<DataController.State, Never> {
@@ -38,7 +37,6 @@ extension ChatMessageSearchController {
     }
 }
 
-@available(iOS 13, *)
 extension ChatMessageSearchController.BasePublishers: ChatMessageSearchControllerDelegate {
     func controller(_ controller: DataController, didChangeState state: DataController.State) {
         self.state.send(state)

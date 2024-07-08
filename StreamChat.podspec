@@ -19,6 +19,6 @@ Pod::Spec.new do |spec|
 
   spec.module_name = "StreamChat"
   spec.source = { :git => "https://github.com/GetStream/stream-chat-swift.git", :tag => "#{spec.version}" }
-  spec.source_files  = ["Sources/StreamChat/**/*.swift", "Sources/StreamStarscream/**/*.swift"]
+  spec.source_files  = ["Sources/StreamChat/**/*.swift"]
   spec.resource_bundles = { "StreamChat" => ["Sources/StreamChat/**/*.xcdatamodeld"] }
 end

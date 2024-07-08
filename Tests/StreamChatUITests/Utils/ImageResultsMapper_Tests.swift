@@ -5,7 +5,6 @@
 @testable import StreamChatUI
 import XCTest
 
-@available(iOS 13.0, *)
 final class ImageResultsMapper_Tests: XCTestCase {
     lazy var fakePlaceholderImage1 = UIImage(systemName: "square.and.arrow.up.circle")!
     lazy var fakePlaceholderImage2 = UIImage(systemName: "square.and.arrow.up.circle.fill")!

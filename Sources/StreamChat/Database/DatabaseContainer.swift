@@ -190,13 +190,7 @@ class DatabaseContainer: NSPersistentContainer {
 
         switch kind {
         case .inMemory:
-            // So, it seems that on iOS 13, we have to use SQLite store with /dev/null URL, but on iOS 11 & 12
-            // we have to use `NSInMemoryStoreType`.
-            if #available(iOS 13, *) {
-                description.url = URL(fileURLWithPath: "/dev/null")
-            } else {
-                description.type = NSInMemoryStoreType
-            }
+            description.url = URL(fileURLWithPath: "/dev/null")
 
         case let .onDisk(databaseFileURL):
             description.url = databaseFileURL
@@ -267,7 +261,6 @@ class DatabaseContainer: NSPersistentContainer {
         }
     }
     
-    @available(iOS 13.0, *)
     func write(_ actions: @escaping (DatabaseSession) throws -> Void) async throws {
         try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
             write(actions) { error in
@@ -280,7 +273,6 @@ class DatabaseContainer: NSPersistentContainer {
         }
     }
     
-    @available(iOS 13.0, *)
     func read<T>(_ actions: @escaping (NSManagedObjectContext) throws -> T) async throws -> T {
         let context = stateLayerContext
         return try await withCheckedThrowingContinuation { continuation in

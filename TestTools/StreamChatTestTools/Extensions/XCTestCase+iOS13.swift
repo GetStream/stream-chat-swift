@@ -12,11 +12,6 @@ import XCTest
 /// Stack overflow: https://stackoverflow.com/questions/59645536/available-attribute-does-not-work-with-xctest-classes-or-methods
 open class iOS13TestCase: XCTestCase {
     override public func invokeTest() {
-        if #available(iOS 13, *) {
-            return super.invokeTest()
-        } else {
-            print("Skipping test because it's iOS13+ only.")
-            return
-        }
+        return super.invokeTest()
     }
 }

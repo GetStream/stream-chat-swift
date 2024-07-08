@@ -4,7 +4,6 @@
 
 import Foundation
 
-@available(iOS 13.0, *)
 extension UserListState {
     struct Observer {
         private let query: UserListQuery

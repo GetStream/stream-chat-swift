@@ -41,7 +41,6 @@ extension UIViewController {
     /// Helper method to correctly setup navigation of parent.
     /// Used when view is wrapped using `UIHostingController` and used in SwiftUI
     /// so all properties of `navigationItem` are propagated correctly.
-    @available(iOS 13.0, *)
     func setupParentNavigation(parent: UIViewController) {
         let parentNavItem = parent.navigationItem
 

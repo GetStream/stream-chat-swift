@@ -5,7 +5,6 @@
 import Combine
 import Foundation
 
-@available(iOS 13, *)
 extension ChatConnectionController {
     /// A publisher emitting a new value every time the connection status changes.
     public var connectionStatusPublisher: AnyPublisher<ConnectionStatus, Never> {
@@ -31,7 +30,6 @@ extension ChatConnectionController {
     }
 }
 
-@available(iOS 13, *)
 extension ChatConnectionController.BasePublishers: ChatConnectionControllerDelegate {
     func connectionController(
         _ controller: ChatConnectionController,

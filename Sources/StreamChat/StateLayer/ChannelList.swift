@@ -5,7 +5,6 @@
 import Foundation
 
 /// An object which represents a list of `ChatChannel`s for the specified  channel query.
-@available(iOS 13.0, *)
 public class ChannelList {
     private let channelListUpdater: ChannelListUpdater
     private let stateBuilder: StateBuilder<ChannelListState>
@@ -81,7 +80,6 @@ public class ChannelList {
     }
 }
 
-@available(iOS 13.0, *)
 extension ChannelList {
     struct Environment {
         var channelListUpdater: (

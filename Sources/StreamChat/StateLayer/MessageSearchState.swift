@@ -6,7 +6,6 @@ import Combine
 import Foundation
 
 /// Represents a list of message search results.
-@available(iOS 13.0, *)
 @MainActor public final class MessageSearchState: ObservableObject {
     private var cancellables = Set<AnyCancellable>()
     private(set) var nextPageCursor: String?

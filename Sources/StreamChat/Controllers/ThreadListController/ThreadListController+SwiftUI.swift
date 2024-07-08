@@ -5,7 +5,6 @@
 import Foundation
 import SwiftUI
 
-@available(iOS 13, *)
 extension ChatThreadListController {
     /// A wrapper object that exposes the controller variables in the form of `ObservableObject` to be used in SwiftUI.
     internal var observableObject: ObservableObject { .init(controller: self) }
@@ -33,7 +32,6 @@ extension ChatThreadListController {
     }
 }
 
-@available(iOS 13, *)
 extension ChatThreadListController.ObservableObject: ChatThreadListControllerDelegate {
     internal func controller(_ controller: ChatThreadListController, didChangeThreads changes: [ListChange<ChatThread>]) {
         threads = controller.threads

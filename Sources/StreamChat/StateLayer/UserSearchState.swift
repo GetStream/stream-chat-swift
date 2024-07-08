@@ -5,7 +5,6 @@
 import Foundation
 
 /// Represents a list of user search results.
-@available(iOS 13.0, *)
 @MainActor public final class UserSearchState: ObservableObject {
     /// The last initiated search query.
     ///
@@ -16,7 +15,6 @@ import Foundation
     @Published public internal(set) var users = StreamCollection<ChatUser>([])
 }
 
-@available(iOS 13.0, *)
 extension UserSearchState {
     /// Updates the query to point to the last query the user started.
     ///
@@ -53,7 +51,6 @@ extension UserSearchState {
     }
 }
 
-@available(iOS 13.0, *)
 extension UserListQuery {
     func hasFilterOrSortingChanged(_ otherQuery: UserListQuery) -> Bool {
         guard filter?.filterHash == otherQuery.filter?.filterHash else { return true }
