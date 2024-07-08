@@ -65,7 +65,7 @@ extension StreamTestCase {
             ])
         } else if switchApiKey {
             // Use SwiftUI api key instead
-            app.setLaunchArguments(.switchApiKey)
+            app.setEnvironmentVariables([.customApiKey: "zcgvnykxsfm8"])
         }
     }
 
