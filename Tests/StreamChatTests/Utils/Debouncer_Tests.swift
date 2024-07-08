@@ -44,7 +44,7 @@ final class Debouncer_Tests: XCTestCase {
             expectation.fulfill()
         }
 
-        wait(for: [expectation], timeout: 1.0)
+        wait(for: [expectation], timeout: defaultTimeout)
     }
 
     // MARK: - invalidate
@@ -63,6 +63,6 @@ final class Debouncer_Tests: XCTestCase {
             expectation.fulfill()
         }
 
-        wait(for: [expectation], timeout: 1.0)
+        wait(for: [expectation], timeout: defaultTimeout)
     }
 }

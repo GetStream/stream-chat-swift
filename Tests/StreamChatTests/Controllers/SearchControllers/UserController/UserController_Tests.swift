@@ -175,7 +175,7 @@ final class UserController_Tests: XCTestCase {
         env.userUpdater?.loadUser_completion?(nil)
 
         // Wait for delegate callback
-        waitForDelegateCallback()
+        waitForUser()
         
         // Assert the user is loaded
         XCTAssertEqual(controller.user?.id, userId)
@@ -699,8 +699,9 @@ final class UserController_Tests: XCTestCase {
     
     // MARK: -
     
-    func waitForDelegateCallback() {
+    func waitForUser() {
         guard StreamRuntimeCheck._isBackgroundMappingEnabled else { return }
+        guard controller.user == nil else { return }
         let delegate = DelegateWaiter()
         controller.delegate = delegate
         wait(for: [delegate.didUpdateUserExpectation], timeout: defaultTimeout)
