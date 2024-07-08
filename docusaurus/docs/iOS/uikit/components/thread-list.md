@@ -40,7 +40,7 @@ The `ThreadListQuery` is responsible to configure the list of threads that will 
 - `participantLimit`: The amount of participants fetched per thread. The default is 10.
 - `next`: The pagination token from the previous response to fetch the next page.
 
-All the parameters are customizable and you can change them according to your needs. The default values are a good comprimise between performance and user experience.
+All the parameters are customizable and you can change them according to your needs. The default values are a good compromise between performance and user experience.
 
 If you are using the `ChatThreadListVC` component, you don't need to worry about the `next` parameter, since pagination is handled for you. If not, you can use the `next` parameter from the previous response to fetch the next page of threads.
 
@@ -208,6 +208,7 @@ Components.default.threadListErrorView = CustomThreadListErrorView.self
 The `ChatThreadListItemView` is the view that is displayed for each thread in the `ChatThreadListVC`. This view is responsible for displaying the thread information like the channel that it belongs to, the last reply, unread replies count, and participants. You can customize this view by overriding the `Components.default.threadListItemView` property.
 
 This view is composed by the following subviews:
+
 - `mainContainer`: Holds the `threadContainer` and the `replyContainer`.
 - `threadContainer`: By default displays the information related to the thread.
   - `threadIconView`: Displays the thread icon.
@@ -306,6 +307,7 @@ Components.default.threadListRouter = CustomThreadListRouter.self
 ## Thread Events
 
 By default the UI components handle automatically the thread events, like new replies and thread updates. But, in case your app needs additional logic, these are the available thread events:
+
 - `ThreadMessageNewEvent`: Triggered when a new reply is added to a thread.
 - `ThreadUpdatedEvent`: Triggered when a thread is updated, like the thread title or custom data.
 
