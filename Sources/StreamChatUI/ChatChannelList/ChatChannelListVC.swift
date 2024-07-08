@@ -474,26 +474,6 @@ open class ChatChannelListVC: _ViewController,
 
 extension ChatChannel: Differentiable {
     public func isContentEqual(to source: ChatChannel) -> Bool {
-        cid == source.cid &&
-            name == source.name &&
-            imageURL == source.imageURL &&
-            lastMessageAt == source.lastMessageAt &&
-            createdAt == source.createdAt &&
-            updatedAt == source.updatedAt &&
-            deletedAt == source.deletedAt &&
-            truncatedAt == source.truncatedAt &&
-            isHidden == source.isHidden &&
-            createdBy == source.createdBy &&
-            ownCapabilities == source.ownCapabilities &&
-            isFrozen == source.isFrozen &&
-            memberCount == source.memberCount &&
-            membership == source.membership &&
-            watcherCount == source.watcherCount &&
-            team == source.team &&
-            reads == source.reads &&
-            muteDetails == source.muteDetails &&
-            cooldownDuration == source.cooldownDuration &&
-            extraData == source.extraData &&
-            previewMessage == source.previewMessage
+        self == source
     }
 }

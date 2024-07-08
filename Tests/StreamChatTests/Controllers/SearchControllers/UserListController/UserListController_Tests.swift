@@ -118,7 +118,7 @@ final class UserListController_Tests: XCTestCase {
             try session.saveUser(payload: self.dummyUser(id: idNotMatchingQuery), query: nil, cache: nil)
         }
         
-        waitForDelegateCallback()
+        waitForUsersChange(expectedUserCount: 1)
 
         // Assert the existing user is loaded
         XCTAssertEqual(controller.users.map(\.id), [idMatchingQuery])
@@ -139,6 +139,8 @@ final class UserListController_Tests: XCTestCase {
 
         // Simulate successful network call.
         env.userListUpdater?.update_completion?(.success([]))
+        
+        waitForUsersChange(expectedUserCount: 1)
 
         // Assert the existing user is loaded
         XCTAssertEqual(controller.users.map(\.id), [userId])
@@ -323,18 +325,26 @@ final class UserListController_Tests: XCTestCase {
     
     // MARK: -
     
-    func waitForDelegateCallback() {
+    func waitForUsersChange(expectedUserCount: Int) {
         guard StreamRuntimeCheck._isBackgroundMappingEnabled else { return }
-        let delegate = DelegateWaiter()
+        guard expectedUserCount != controller.users.count else { return }
+        
+        let delegate = DelegateWaiter(expectedUserCount: expectedUserCount)
         controller.delegate = delegate
         wait(for: [delegate.didUpdateUsersExpectation], timeout: defaultTimeout)
         controller.delegate = nil
     }
     
     private class DelegateWaiter: ChatUserListControllerDelegate {
+        let expectedUserCount: Int
         let didUpdateUsersExpectation = XCTestExpectation(description: "DidChangeVotes")
 
+        init(expectedUserCount: Int) {
+            self.expectedUserCount = expectedUserCount
+        }
+        
         func controller(_ controller: ChatUserListController, didChangeUsers changes: [ListChange<ChatUser>]) {
+            guard expectedUserCount == controller.users.count else { return }
             didUpdateUsersExpectation.fulfill()
         }
     }

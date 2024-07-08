@@ -413,7 +413,29 @@ public extension ChatMessage {
 
 extension ChatMessage: Hashable {
     public static func == (lhs: Self, rhs: Self) -> Bool {
-        lhs.id == rhs.id
+        lhs.id == rhs.id &&
+            lhs.updatedAt == rhs.updatedAt &&
+            lhs.allAttachments == rhs.allAttachments &&
+            lhs.arguments == rhs.arguments &&
+            lhs.author == rhs.author &&
+            lhs.command == rhs.command &&
+            lhs.currentUserReactionsCount == rhs.currentUserReactionsCount &&
+            lhs.extraData == rhs.extraData &&
+            lhs.isFlaggedByCurrentUser == rhs.isFlaggedByCurrentUser &&
+            lhs.isShadowed == rhs.isShadowed &&
+            lhs.localState == rhs.localState &&
+            lhs.parentMessageId == rhs.parentMessageId &&
+            lhs.quotedMessage == rhs.quotedMessage &&
+            lhs.reactionCounts == rhs.reactionCounts &&
+            lhs.reactionGroups == rhs.reactionGroups &&
+            lhs.reactionScores == rhs.reactionScores &&
+            lhs.readByCount == rhs.readByCount &&
+            lhs.replyCount == rhs.replyCount &&
+            lhs.showReplyInChannel == rhs.showReplyInChannel &&
+            lhs.text == rhs.text &&
+            lhs.threadParticipantsCount == rhs.threadParticipantsCount &&
+            lhs.translations == rhs.translations &&
+            lhs.type == rhs.type
     }
 
     public func hash(into hasher: inout Hasher) {
