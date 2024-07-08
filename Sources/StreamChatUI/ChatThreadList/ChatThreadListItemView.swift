@@ -244,27 +244,38 @@ open class ChatThreadListItemView: _View, ThemeProvider {
         let thread = content.thread
         let channel = thread.channel
         let latestReply = thread.latestReplies.last
-
-        let channelNameText = appearance.formatters.channelName.format(
-            channel: channel,
-            forCurrentUserId: content.currentUserId
-        )
-        let replyTimestampLabelText = latestReply.map {
-            appearance.formatters.threadListMessageTimestamp.format($0.createdAt)
-        }
         let unreadReplies = thread.reads.first(where: { $0.user.id == content.currentUserId })?.unreadMessagesCount ?? 0
 
         threadTitleLabel.text = channelNameText
-        threadDescriptionLabel.text = parentMessagePreviewText()
-        replyDescriptionLabel.text = replyPreviewText()
+        threadDescriptionLabel.text = parentMessagePreviewText.map { L10n.ThreadListItem.repliedTo($0) }
+        replyDescriptionLabel.text = replyPreviewText
         replyTimestampLabel.text = replyTimestampLabelText
         replyAuthorAvatarView.content = latestReply?.author
         replyTitleLabel.text = latestReply?.author.name
         threadUnreadCountView.content = unreadReplies
     }
 
+    /// The timestamp text formatted.
+    open var replyTimestampLabelText: String? {
+        content?.thread.latestReplies.last.map {
+            appearance.formatters.threadListMessageTimestamp.format($0.createdAt)
+        }
+    }
+
+    /// The channel name formatted.
+    open var channelNameText: String? {
+        guard let content = self.content else {
+            return nil
+        }
+
+        return appearance.formatters.channelName.format(
+            channel: content.thread.channel,
+            forCurrentUserId: content.currentUserId
+        )
+    }
+
     /// The parent message preview text.
-    open func parentMessagePreviewText() -> String? {
+    open var parentMessagePreviewText: String? {
         guard let thread = content?.thread else { return nil }
         
         var parentMessageText: String
@@ -278,11 +289,11 @@ open class ChatThreadListItemView: _View, ThemeProvider {
             parentMessageText = thread.parentMessage.allAttachments.first?.type.rawValue ?? ""
         }
 
-        return L10n.ThreadListItem.repliedTo(parentMessageText)
+        return parentMessageText
     }
 
     /// The reply preview text.
-    open func replyPreviewText() -> String? {
+    open var replyPreviewText: String? {
         // TODO: On v5 the logic in ChatChannelItemView.subtitleText should be extracted to `Appearance.formatters` and shared with the `ChatThreadListItemView`
         guard let latestReply = content?.thread.latestReplies.last else {
             return nil
