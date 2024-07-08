@@ -188,13 +188,13 @@ extension UserCredentials {
 
 // MARK: - Tokens for different Api Keys
 
-struct DemoApiKeys {
+enum DemoApiKeys {
     static let frankfurtC1 = "8br4watad788" // UIKit default
     static let frankfurtC2 = "pd67s34fzpgw"
     static let usEastC6 = "zcgvnykxsfm8" // SwiftUI default
 }
 
-struct DemoUserTokens {
+enum DemoUserTokens {
     static var luke: Token {
         switch apiKeyString {
         case DemoApiKeys.frankfurtC1:
