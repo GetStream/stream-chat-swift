@@ -205,7 +205,7 @@ Components.default.threadListErrorView = CustomThreadListErrorView.self
 
 ### Thread List Item View
 
-The `ChatThreadListItemView` is the view that is displayed for each thread in the `ChatThreadListVC`. This view is responsible for displaying the thread information like the channel that it belongs to, the last reply, unread replies count, and participants. You can customize this view by overriding the `Components.default.threadListItemView` property.
+The `ChatThreadListItemView` is the view that is displayed for each thread in the `ChatThreadListVC`. You can customize this view by overriding the `Components.default.threadListItemView` property.
 
 This view is composed by the following subviews:
 
@@ -292,7 +292,9 @@ Components.default.threadListItemView = CustomChatThreadListItemView.self
 
 ## Navigation
 
-This component uses the `ChatThreadListRouter` to handle navigation, you can customize the navigation behavior by overriding the `Components.default.threadListRouter`. By default, the `ChatThreadListRouter` uses the `ChatThreadVC` to show the thread replies, it is the same component used in the `ChatChannelVC` when tapping the replies of a message.
+This component uses the `ChatThreadListRouter` to handle navigation, you can customize the navigation behavior by overriding the `Components.default.threadListRouter`. 
+
+By default, the `ChatThreadListRouter` uses the `ChatThreadVC` to show the thread replies, it is the same component used in the `ChatChannelVC` when tapping the replies of a message.
 
 ```swift
 class CustomThreadListRouter: ChatThreadListRouter {
