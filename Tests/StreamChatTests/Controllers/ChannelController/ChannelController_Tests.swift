@@ -471,7 +471,7 @@ final class ChannelController_Tests: XCTestCase {
 
         createChannel(oldestMessageId: oldestMessageId, newestMessageId: newestMessageId, channelReads: [channelRead])
 
-        writeAndWaitForMessageUpdates(count: 2) {
+        writeAndWaitForMessageUpdates(count: 2, channelChanges: true) {
             try $0.saveCurrentUser(payload: .dummy(userId: userId, role: .user))
         }
 
@@ -494,7 +494,7 @@ final class ChannelController_Tests: XCTestCase {
 
         createChannel(oldestMessageId: oldestMessageId, newestMessageId: newestMessageId, channelReads: [channelRead])
 
-        writeAndWaitForMessageUpdates(count: 2) {
+        writeAndWaitForMessageUpdates(count: 2, channelChanges: true) {
             try $0.saveCurrentUser(payload: .dummy(userId: userId, role: .user))
         }
 
@@ -1678,7 +1678,7 @@ final class ChannelController_Tests: XCTestCase {
         // Since initially the controller doesn't know it's final `cid`, it can't report correct initial values.
         // That's why we simulate delegate callbacks for initial values.
         // Assert that delegate gets initial values as callback
-        let delegate = controller.delegate as? MessagesUpdateWaiter
+        let delegate = controller.delegate as? ControllerUpdateWaiter
         XCTAssertEqual(delegate?.didUpdateChannel?.cid, dummyChannel.channel.cid)
         XCTAssertEqual(controller.messages.count, dummyChannel.messages.count)
     }
@@ -5211,7 +5211,7 @@ final class ChannelController_Tests: XCTestCase {
             ))
         }
 
-        try client.databaseContainer.writeSynchronously { session in
+        writeAndWaitForMessageUpdates(count: 0, channelChanges: true) { session in
             try session.saveChannel(payload: .dummy(channel: .dummy(
                 cid: self.channelId, ownCapabilities: [ChannelCapability.sendTypingEvents.rawValue]
             )))
@@ -5231,12 +5231,11 @@ final class ChannelController_Tests: XCTestCase {
             ))
         }
 
-        try client.databaseContainer.writeSynchronously { session in
+        writeAndWaitForMessageUpdates(count: 0, channelChanges: true) { session in
             try session.saveChannel(payload: .dummy(channel: .dummy(
                 cid: self.channelId, ownCapabilities: []
             )))
         }
-
         XCTAssertEqual(controller.shouldSendTypingEvents, false)
     }
 
@@ -5251,7 +5250,7 @@ final class ChannelController_Tests: XCTestCase {
             ))
         }
 
-        try client.databaseContainer.writeSynchronously { session in
+        writeAndWaitForMessageUpdates(count: 0, channelChanges: true) { session in
             try session.saveChannel(payload: .dummy(channel: .dummy(
                 cid: self.channelId, ownCapabilities: [ChannelCapability.sendTypingEvents.rawValue]
             )))
@@ -5271,7 +5270,7 @@ final class ChannelController_Tests: XCTestCase {
             ))
         }
 
-        try client.databaseContainer.writeSynchronously { session in
+        writeAndWaitForMessageUpdates(count: 0, channelChanges: true) { session in
             try session.saveChannel(payload: .dummy(channel: .dummy(
                 cid: self.channelId, ownCapabilities: []
             )))
@@ -5455,8 +5454,8 @@ extension ChannelController_Tests {
         waitForMessagesUpdate(count: count) {}
     }
 
-    private func writeAndWaitForMessageUpdates(count: Int, _ actions: @escaping (DatabaseSession) throws -> Void, file: StaticString = #file, line: UInt = #line) {
-        waitForMessagesUpdate(count: count, file: file, line: line) {
+    private func writeAndWaitForMessageUpdates(count: Int, channelChanges: Bool = false, _ actions: @escaping (DatabaseSession) throws -> Void, file: StaticString = #file, line: UInt = #line) {
+        waitForMessagesUpdate(count: count, channelChanges: channelChanges, file: file, line: line) {
             do {
                 try client.databaseContainer.writeSynchronously(actions)
             } catch {
@@ -5530,9 +5529,13 @@ extension ChannelController_Tests {
         XCTAssertEqual(controller.firstUnreadMessageId, oldestRegularMessage.id, file: file, line: line)
     }
 
-    private func waitForMessagesUpdate(count: Int, file: StaticString = #file, line: UInt = #line, block: () throws -> Void) {
+    private func waitForMessagesUpdate(count: Int, channelChanges: Bool = false, file: StaticString = #file, line: UInt = #line, block: () throws -> Void) {
         guard StreamRuntimeCheck._isBackgroundMappingEnabled else {
-            controller.delegate = MessagesUpdateWaiter(messagesCount: count, messagesExpectation: nil)
+            controller.delegate = ControllerUpdateWaiter(
+                messagesCount: count,
+                messagesExpectation: nil,
+                channelExpectation: nil
+            )
             do {
                 try block()
             } catch {
@@ -5540,26 +5543,36 @@ extension ChannelController_Tests {
             }
             return
         }
-        let expectation = self.expectation(description: "Messages update")
-        controller.delegate = MessagesUpdateWaiter(messagesCount: count, messagesExpectation: expectation)
+        let messagesExpectation = expectation(description: "Messages update")
+        let channelExpectation = channelChanges ? expectation(description: "Channel update") : nil
+        controller.delegate = ControllerUpdateWaiter(
+            messagesCount: count,
+            messagesExpectation: messagesExpectation,
+            channelExpectation: channelExpectation
+        )
         do {
             try block()
         } catch {
             XCTFail(error.localizedDescription)
         }
-        wait(for: [expectation], timeout: defaultTimeout)
+        wait(
+            for: [messagesExpectation, channelExpectation].compactMap { $0 },
+            timeout: defaultTimeout
+        )
     }
 }
 
-private class MessagesUpdateWaiter: ChatChannelControllerDelegate {
-    weak var messagesExpectation: XCTestExpectation?
-    private let expectedMessagesCount: Int
+private class ControllerUpdateWaiter: ChatChannelControllerDelegate {
+    @Atomic var messagesExpectation: XCTestExpectation?
+    @Atomic private var expectedMessagesCount: Int
 
-    var didUpdateChannel: ChatChannel?
-    var didUpdateMessagesCount: Int?
+    @Atomic var didUpdateChannel: ChatChannel?
+    @Atomic var didUpdateMessagesCount: Int?
+    @Atomic var channelExpectation: XCTestExpectation?
 
-    init(messagesCount: Int, messagesExpectation: XCTestExpectation?) {
+    init(messagesCount: Int, messagesExpectation: XCTestExpectation?, channelExpectation: XCTestExpectation?) {
         expectedMessagesCount = messagesCount
+        self.channelExpectation = channelExpectation
         self.messagesExpectation = messagesExpectation
     }
 
@@ -5576,6 +5589,7 @@ private class MessagesUpdateWaiter: ChatChannelControllerDelegate {
     func channelController(_ channelController: ChatChannelController, didUpdateChannel channel: EntityChange<ChatChannel>) {
         DispatchQueue.main.async {
             self.didUpdateChannel = channel.item
+            self.channelExpectation?.fulfill()
         }
     }
 }
