@@ -202,6 +202,7 @@ final class ChatThreadListVC_Tests: XCTestCase {
         let newThreadMessageEvent = ThreadMessageNewEvent(
             message: .mock(parentMessageId: .unique),
             channel: .mock(cid: .unique),
+            unreadCount: .noUnread,
             createdAt: .unique
         )
         vc.eventsController(
@@ -219,6 +220,7 @@ final class ChatThreadListVC_Tests: XCTestCase {
         let newThreadMessageEvent = ThreadMessageNewEvent(
             message: .mock(parentMessageId: expectedParentMessageId),
             channel: .mock(cid: .unique),
+            unreadCount: .noUnread,
             createdAt: .unique
         )
         vc.eventsController(
@@ -235,6 +237,7 @@ final class ChatThreadListVC_Tests: XCTestCase {
         let newThreadMessageEvent = ThreadMessageNewEvent(
             message: .mock(parentMessageId: parentMessageId),
             channel: .mock(cid: .unique),
+            unreadCount: .noUnread,
             createdAt: .unique
         )
         try mockedThreadListController.dataStore.database.writeSynchronously { session in

@@ -159,6 +159,8 @@ final class MessageEvents_IntegrationTests: XCTestCase {
         // Save channel to database since it must exist when we get this event
         _ = try session.saveChannel(payload: .dummy(cid: cid), query: nil, cache: nil)
 
+        _ = try session.saveCurrentUser(payload: .dummy(userPayload: .dummy(userId: .unique), unreadCount: eventPayload.unreadCount))
+
         // Save event to database
         try session.saveUser(payload: eventPayload.user!)
         _ = try session.saveMessage(payload: eventPayload.message!, for: cid, cache: nil)
@@ -169,7 +171,7 @@ final class MessageEvents_IntegrationTests: XCTestCase {
         XCTAssertEqual(event.user.id, eventPayload.user?.id)
         XCTAssertEqual(event.message.id, eventPayload.message?.id)
         XCTAssertEqual(event.watcherCount, eventPayload.watcherCount)
-        XCTAssertEqual(event.unreadCount, eventPayload.unreadCount)
+        XCTAssert(event.unreadCount?.isEqual(toPayload: eventPayload.unreadCount) == true)
         XCTAssertEqual(event.createdAt, eventPayload.createdAt)
     }
 
@@ -280,6 +282,8 @@ final class MessageEvents_IntegrationTests: XCTestCase {
         // Save the thread to the database
         _ = try session.saveThread(payload: .dummy(parentMessageId: parentMessageId, channel: .dummy(cid: cid)), cache: nil)
 
+        _ = try session.saveCurrentUser(payload: .dummy(userPayload: .dummy(userId: .unique), unreadCount: eventPayload.unreadCount))
+
         // Save event to database
         try session.saveUser(payload: eventPayload.user!)
 
@@ -287,8 +291,16 @@ final class MessageEvents_IntegrationTests: XCTestCase {
         let event = try XCTUnwrap(dto.toDomainEvent(session: session) as? MessageReadEvent)
         XCTAssertEqual(event.cid, eventPayload.cid)
         XCTAssertEqual(event.user.id, eventPayload.user?.id)
-        XCTAssertEqual(event.unreadCount, eventPayload.unreadCount)
+        XCTAssert(event.unreadCount?.isEqual(toPayload: eventPayload.unreadCount) == true)
         XCTAssertEqual(event.createdAt, eventPayload.createdAt)
         XCTAssertNotNil(event.thread)
+    }
+}
+
+extension UnreadCount {
+    func isEqual(toPayload payload: UnreadCountPayload?) -> Bool {
+        channels == payload?.channels &&
+            threads == payload?.threads &&
+            messages == payload?.messages
     }
 }

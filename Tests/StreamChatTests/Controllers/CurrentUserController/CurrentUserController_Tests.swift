@@ -261,7 +261,7 @@ final class CurrentUserController_Tests: XCTestCase {
         // Call synchronize to get updates from DB
         controller.synchronize()
 
-        let unreadCount = UnreadCount(channels: 10, messages: 15, threads: 10)
+        let unreadCount = UnreadCountPayload(channels: 10, messages: 15, threads: 10)
 
         // Set the delegate
         let delegate = UserController_Delegate(expectedQueueId: callbackQueueID)
@@ -278,7 +278,8 @@ final class CurrentUserController_Tests: XCTestCase {
         }
 
         // Assert delegate received correct unread count
-        AssertAsync.willBeEqual(delegate.didChangeCurrentUserUnreadCount_count, unreadCount)
+        let delegateUnreadCount = delegate.didChangeCurrentUserUnreadCount_count
+        AssertAsync.willBeTrue(delegateUnreadCount?.isEqual(toPayload: unreadCount) == true)
     }
 
     // MARK: - Updating current user

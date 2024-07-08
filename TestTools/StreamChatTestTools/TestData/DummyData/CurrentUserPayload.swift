@@ -19,7 +19,7 @@ extension CurrentUserPayload {
         isInvisible: Bool = true,
         isBanned: Bool = true,
         role: UserRole,
-        unreadCount: UnreadCount? = .dummy,
+        unreadCount: UnreadCountPayload? = .dummy,
         extraData: [String: RawJSON] = [:],
         devices: [DevicePayload] = [],
         mutedUsers: [MutedUserPayload] = [],
@@ -52,7 +52,7 @@ extension CurrentUserPayload {
     /// Returns a dummy current user payload with the given user payload
     static func dummy(
         userPayload: UserPayload,
-        unreadCount: UnreadCount? = .dummy,
+        unreadCount: UnreadCountPayload? = .dummy,
         devices: [DevicePayload] = [],
         mutedUsers: [MutedUserPayload] = [],
         mutedChannels: [MutedChannelPayload] = [],

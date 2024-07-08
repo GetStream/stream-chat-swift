@@ -63,11 +63,11 @@ struct UnreadCountPayload: Decodable, Equatable {
             self.channels = channels
             self.messages = messages
             threads = try container.decodeIfPresent(Int.self, forKey: .threads)
-        } else if let currentUserUnreadCount = try container.decodeIfPresent(UnreadCount.self, forKey: .currentUserUnreadCount) {
+        } else if let currentUserUnreadCount = try container.decodeIfPresent(UnreadCountPayload.self, forKey: .currentUserUnreadCount) {
             channels = currentUserUnreadCount.channels
             messages = currentUserUnreadCount.messages
             threads = currentUserUnreadCount.threads
-        } else if let userUnreadCount = try container.decodeIfPresent(UnreadCount.self, forKey: .userUnreadCount) {
+        } else if let userUnreadCount = try container.decodeIfPresent(UnreadCountPayload.self, forKey: .userUnreadCount) {
             channels = userUnreadCount.channels
             messages = userUnreadCount.messages
             threads = userUnreadCount.threads

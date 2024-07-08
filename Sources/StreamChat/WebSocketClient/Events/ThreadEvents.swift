@@ -35,7 +35,7 @@ class ThreadMessageNewEventDTO: EventDTO {
         message = try response.value(at: \.message)
         createdAt = try response.value(at: \.createdAt)
         channel = try response.value(at: \.channel)
-        unreadCount = try response.value(at: \.unreadCount)
+        unreadCount = try? response.value(at: \.unreadCount)
         payload = response
     }
 

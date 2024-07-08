@@ -33,7 +33,7 @@ final class ThreadUpdaterMiddleware_Tests: XCTestCase {
             cid: .unique,
             user: .dummy(userId: .unique),
             channel: .dummy(),
-            unreadCount: .noUnread,
+            unreadCount: .init(channels: 0, messages: 0, threads: 0),
             createdAt: .unique,
             threadDetails: .success(.dummy(parentMessageId: .unique))
         )
