@@ -134,9 +134,9 @@ final class ChatThreadListVC_Tests: XCTestCase {
         mockedThreadListController.threads_mock = mockThreads
         vc.controller(mockedThreadListController, didChangeState: .initialized)
         vc.controller(mockedThreadListController, didChangeThreads: [])
+        vc.setUpLayout()
         vc.showHeaderBannerView()
         vc.newAvailableThreadIds = [.unique, .unique]
-        vc.setUpLayout()
         AssertSnapshot(vc)
     }
 
@@ -281,7 +281,7 @@ final class ChatThreadListVC_Tests: XCTestCase {
     }
 
     func test_didTapOnErrorView_whenThreadsNotEmpty_shouldShowLoadingHeaderBannerView() {
-        mockedThreadListController.threads_mock = [.mock(), .mock()]
+        mockedThreadListController.threads_mock = mockThreads
         vc.controller(vc.threadListController, didChangeThreads: [])
 
         vc.didTapOnErrorView()
