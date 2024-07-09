@@ -106,8 +106,9 @@ jobs:
         ls derived_data/
         echo "ls derived_data/Build/"
         ls derived_data/Build/
+        echo "ls derived_data/Build/Intermediates.noindex/"
         ls derived_data/Build/Intermediates.noindex/
-        ls derived_data/Build/Products/
+        echo "ls derived_data/Build/Products/Debug-iphonesimulator/"
         ls derived_data/Build/Products/Debug-iphonesimulator/
     - uses: ./.github/actions/bootstrap
       env:
