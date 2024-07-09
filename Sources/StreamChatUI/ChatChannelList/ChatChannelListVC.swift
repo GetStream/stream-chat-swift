@@ -476,4 +476,8 @@ extension ChatChannel: Differentiable {
     public func isContentEqual(to source: ChatChannel) -> Bool {
         self == source
     }
+    
+    public var differenceIdentifier: Int {
+        hashValue
+    }
 }
