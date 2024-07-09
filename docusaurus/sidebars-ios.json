@@ -3,7 +3,8 @@
     {
       "Basics": [
         "basics/overview",
-        "basics/integration"
+        "basics/integration",
+        "basics/logs"
       ]
     },
     {
@@ -118,7 +119,6 @@
       "Advanced Guides": [
         "client/push-notifications",
         "guides/video-integration",
-        "basics/logs",
         "client/custom-cdn",
         "guides/moderation",        
         "guides/go-live-checklist",
