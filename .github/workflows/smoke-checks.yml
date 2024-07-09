@@ -104,6 +104,11 @@ jobs:
       with:
         name: cache-derived-data
         path: derived_data/Build/
+    - run: |
+        echo "ls derived_data/"
+        ls derived_data/
+        echo "ls derived_data/Build/"
+        ls derived_data/Build/
     - uses: ./.github/actions/bootstrap
       env:
         INSTALL_YEETD: true
