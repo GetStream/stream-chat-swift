@@ -516,6 +516,7 @@ final class ChannelController_Tests: XCTestCase {
         )
         let token = Token(rawValue: "", userId: userId, expiration: nil)
         controller.client.authenticationRepository.setMockToken(token)
+        try client.mockDatabaseContainer.createCurrentUser(id: userId)
 
         let messages: [MessagePayload] = [
             .dummy(messageId: notOwnMessageId, authorUserId: .unique, createdAt: Date().addingTimeInterval(-1000)),
@@ -4009,27 +4010,30 @@ final class ChannelController_Tests: XCTestCase {
         let payload = dummyPayload(with: channelId, numberOfMessages: 3, ownCapabilities: [ChannelCapability.readEvents.rawValue])
         let dummyUserPayload: CurrentUserPayload = .dummy(userId: payload.channelReads.first!.user.id, role: .user)
 
-        try client.databaseContainer.writeSynchronously { session in
+        // This is needed to determine if the channel needs to be marked as read
+        client.setToken(token: .unique(userId: dummyUserPayload.id))
+
+        writeAndWaitForMessageUpdates(count: 0, channelChanges: true) { session in
             try session.saveCurrentUser(payload: dummyUserPayload)
             try session.saveChannel(payload: payload)
         }
 
-        // This is needed to determine if the channel needs to be marked as read
-        client.setToken(token: .unique(userId: dummyUserPayload.id))
-
         // Simulate `markRead` call and catch the completion
+        let expectation = XCTestExpectation(description: "Mark read")
         var completionCalledError: Error?
         controller.markRead { [callbackQueueID] in
             AssertTestQueue(withId: callbackQueueID)
             completionCalledError = $0
+            expectation.fulfill()
         }
 
         // Simulate failed update
         let testError = TestError()
         env.channelUpdater!.markRead_completion?(testError)
+        wait(for: [expectation], timeout: defaultTimeout)
 
         // Completion should be called with the error
-        AssertAsync.willBeEqual(completionCalledError as? TestError, testError)
+        XCTAssertEqual(completionCalledError as? TestError, testError, "Received error is \(String(describing: completionCalledError))")
     }
 
     func test_markRead_keepsControllerAlive() throws {
@@ -4073,7 +4077,7 @@ final class ChannelController_Tests: XCTestCase {
             channel: .dummy(cid: channelId, ownCapabilities: [])
         )
 
-        try client.databaseContainer.writeSynchronously { session in
+        writeAndWaitForMessageUpdates(count: 0, channelChanges: true) { session in
             try session.saveChannel(payload: channel)
         }
 
@@ -4149,7 +4153,7 @@ final class ChannelController_Tests: XCTestCase {
             channel: .dummy(cid: channelId, ownCapabilities: [ChannelCapability.readEvents.rawValue])
         )
 
-        try client.databaseContainer.writeSynchronously { session in
+        writeAndWaitForMessageUpdates(count: 0, channelChanges: true) { session in
             try session.saveChannel(payload: channel)
         }
 
