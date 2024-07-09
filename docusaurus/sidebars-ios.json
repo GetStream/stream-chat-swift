@@ -19,7 +19,6 @@
         },
         "uikit/components/channel",
         "uikit/views/channel-header-view",
-        "uikit/components/thread-list",
         {
           "Message List": [
             "uikit/components/message-list",
@@ -41,7 +40,8 @@
             "uikit/guides/customize-message-composer",
             "uikit/guides/message-composer-custom-attachments"
           ]
-        },  
+        },
+        "uikit/components/thread-list",
         "uikit/navigation",
         "uikit/localization",            
         "uikit/data-formatting",

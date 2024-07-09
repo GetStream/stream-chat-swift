@@ -2,7 +2,7 @@
 title: Thread List
 ---
 
-The `ChatThreadListVC` is the UI component that displays the list of threads that the current user is participating.
+The `ChatThreadListVC` is the UI component that displays the list of threads that the current user is participating in.
 
 :::note
 The Thread List component is available on the UIKit SDK since version [4.59.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.59.0).
@@ -28,7 +28,7 @@ let navigationThreadListVC = UINavigationController(rootViewController: threadLi
 navigationController?.pushViewController(navigationThreadListVC, animated: true)
 ```
 
-You can present the Thread List in a `UINavigationController` or in a `UITabBarController` whatever fits your app design. The `ChatThreadListVC` has two required dependencies: a `ThreadListController` and an `EventsController`.
+You can present the Thread List in a `UINavigationController` or in a `UITabBarController` depending on your app design. The `ChatThreadListVC` has two required dependencies: a `ThreadListController` and an `EventsController`.
 
 ## Thread List Query
 
@@ -64,7 +64,7 @@ class CustomThreadListVC: ChatThreadListVC {
 
 ### Thread List Header Banner View
 
-The `ChatThreadListHeaderBannerView` is the view that is displayed by default as a `tableHeaderView` in the `ChatThreadListVC`. This view is shown whenever the user is on the Thread List and new threads are available to fetch. New threads are not added automatically to the Thread List on propose so that the user can manually decide to fetch them whenever he is ready and has read all the current unread threads.
+The `ChatThreadListHeaderBannerView` is the view that is displayed by default as a `tableHeaderView` in the `ChatThreadListVC`. This view is shown whenever the user is on the Thread List and new threads are available to fetch. New threads are not added automatically to the Thread List on purpose, allowing users to manually decide when to fetch them after reading all current unread threads.
 
 You can customize this view by overriding the `Components.default.threadListHeaderBannerView` property in the `ChatThreadListVC`.
 
@@ -221,7 +221,7 @@ This view is composed by the following subviews:
   - `replyDescriptionLabel`: Displays the last reply text.
   - `replyTimestampLabel`: Displays the last reply timestamp.
 
-Lets see an example of how you can customize the `ChatThreadListItemView` to display the information in a different way:
+Let's see an example of how you can customize the `ChatThreadListItemView` to display the information in a different way:
 
 ```swift
 class CustomChatThreadListItemView: ChatThreadListItemView {
