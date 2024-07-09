@@ -46,9 +46,11 @@ struct ThreadUpdaterMiddleware: EventMiddleware {
         case let event as ChannelDeletedEventDTO:
             // Delete threads belonging to this deleted channel
             guard let channel = session.channel(cid: event.channel.cid) else { break }
-            channel.threads.forEach {
-                session.delete(thread: $0)
-            }
+            deleteThreads(for: channel, session: session)
+        case let event as ChannelTruncatedEventDTO:
+            // Delete threads belonging to this truncated channel
+            guard let channel = session.channel(cid: event.channel.cid) else { break }
+            deleteThreads(for: channel, session: session)
         case let event as ThreadMessageNewEventDTO:
             let messagePayload = event.message
             guard let channelId = event.message.cid,
@@ -92,5 +94,11 @@ struct ThreadUpdaterMiddleware: EventMiddleware {
             break
         }
         return event
+    }
+
+    private func deleteThreads(for channel: ChannelDTO, session: DatabaseSession) {
+        channel.threads.forEach {
+            session.delete(thread: $0)
+        }
     }
 }
