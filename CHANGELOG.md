@@ -13,6 +13,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
    - Add `ChatMessageController.updateThread()`
    - Add `ChatMessageController.loadThread()`
    - Add `ChatCurrentUserController.loadAllUnreads()`
+   - Add `CurrentChatUser.unreadCount.threads`
 
 ## StreamChatUI
 ### ✅ Added
@@ -25,6 +26,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - `message.item.deleted`
 - `threadListItem.replied-to`
 - `threadList.empty.description`
+- `threadList.error.message`
 - `threadList.new-threads`
 
 ### 🐞 Fixed

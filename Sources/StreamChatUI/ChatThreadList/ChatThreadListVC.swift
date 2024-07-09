@@ -110,19 +110,11 @@ open class ChatThreadListVC:
         tableView.dataSource = self
 
         headerBannerView.onAction = { [weak self] in
-            self?.hideHeaderBannerView()
-            self?.showLoadingBannerView()
-            self?.threadListController.synchronize { error in
-                self?.didFinishSynchronizingThreads(with: error)
-            }
+            self?.didTapOnHeaderBannerView()
         }
 
         errorView.onAction = { [weak self] in
-            self?.hideErrorView()
-            self?.showLoadingView()
-            self?.threadListController.synchronize { error in
-                self?.didFinishSynchronizingThreads(with: error)
-            }
+            self?.didTapOnErrorView()
         }
 
         viewPaginationHandler.bottomThreshold = 800
@@ -152,6 +144,7 @@ open class ChatThreadListVC:
         hideLoadingView()
         hideEmptyView()
         hideErrorView()
+        hideHeaderBannerView()
     }
 
     override open func viewWillAppear(_ animated: Bool) {
@@ -165,12 +158,56 @@ open class ChatThreadListVC:
         }
     }
 
+    /// Loads the next page of threads. This action is triggered when reaching the bottom of the list view.
+    open func loadMoreThreads() {
+        guard !isPaginatingThreads && !threadListController.hasLoadedAllThreads else {
+            return
+        }
+
+        isPaginatingThreads = true
+        threadListController.loadMoreThreads { [weak self] result in
+            self?.didFinishLoadingMoreThreads(with: result)
+        }
+    }
+
+    /// The user tapped on the banner view to load new threads.
+    open func didTapOnHeaderBannerView() {
+        hideHeaderBannerView()
+        showLoadingBannerView()
+        threadListController.synchronize { [weak self] error in
+            self?.didFinishSynchronizingThreads(with: error)
+        }
+    }
+
+    /// The user tapped on the error view to refresh the data.
+    open func didTapOnErrorView() {
+        hideErrorView()
+
+        /// If the view already contains data, do not show the loading spinner
+        /// above it, but show the loading banner instead.
+        if threads.isEmpty {
+            showLoadingView()
+        } else {
+            hideHeaderBannerView()
+            showLoadingBannerView()
+        }
+
+        threadListController.synchronize { [weak self] error in
+            self?.didFinishSynchronizingThreads(with: error)
+        }
+    }
+
     // Called when the syncing of the `threadListController` is finished.
     /// - Parameter error: An `error` if the syncing failed; `nil` if it was successful.
     open func didFinishSynchronizingThreads(with error: Error?) {
         hideLoadingView()
         hideLoadingBannerView()
         newAvailableThreadIds = []
+    }
+
+    /// Called when loading a new page of threads is finished.
+    open func didFinishLoadingMoreThreads(with result: Result<[ChatThread], Error>) {
+        isPaginatingThreads = false
     }
 
     /// Updates the threads header banner view content.
@@ -237,25 +274,6 @@ open class ChatThreadListVC:
     /// Hides the error view.
     open func hideErrorView() {
         errorView.isHidden = true
-    }
-
-    // MARK: - Actions
-
-    /// Loads the next page of threads. This action is triggered when reaching the bottom of the list view.
-    open func loadMoreThreads() {
-        guard !isPaginatingThreads && !threadListController.hasLoadedAllThreads else {
-            return
-        }
-
-        isPaginatingThreads = true
-        threadListController.loadMoreThreads { [weak self] result in
-            self?.didFinishLoadingMoreThreads(with: result)
-        }
-    }
-
-    /// Called when loading a new page of threads is finished.
-    open func didFinishLoadingMoreThreads(with result: Result<[ChatThread], Error>) {
-        isPaginatingThreads = false
     }
 
     // MARK: - ChatThreadListControllerDelegate
@@ -350,27 +368,31 @@ open class ChatThreadListVC:
     }
 }
 
-extension ChatThread: Differentiable, Hashable {
+extension ChatThread: Differentiable, Equatable, Hashable {
     public static func == (lhs: ChatThread, rhs: ChatThread) -> Bool {
-        lhs.parentMessageId == rhs.parentMessageId
+        lhs.parentMessageId == rhs.parentMessageId &&
+            lhs.updatedAt == rhs.updatedAt &&
+            lhs.parentMessage.isContentEqual(to: rhs.parentMessage) &&
+            lhs.title == rhs.title &&
+            lhs.reads == rhs.reads &&
+            lhs.latestReplies == rhs.latestReplies &&
+            lhs.lastMessageAt == rhs.lastMessageAt &&
+            lhs.channel == rhs.channel &&
+            lhs.participantCount == rhs.participantCount &&
+            lhs.replyCount == rhs.replyCount &&
+            lhs.threadParticipants == rhs.threadParticipants &&
+            lhs.extraData == rhs.extraData
     }
     
     public func hash(into hasher: inout Hasher) {
         hasher.combine(parentMessageId)
     }
 
+    public var differenceIdentifier: Int {
+        hashValue
+    }
+
     public func isContentEqual(to source: ChatThread) -> Bool {
-        parentMessageId == source.parentMessageId &&
-            updatedAt == source.updatedAt &&
-            parentMessage.isContentEqual(to: source.parentMessage) &&
-            title == source.title &&
-            reads == source.reads &&
-            latestReplies == source.latestReplies &&
-            lastMessageAt == source.lastMessageAt &&
-            channel == source.channel &&
-            participantCount == source.participantCount &&
-            replyCount == source.replyCount &&
-            threadParticipants == source.threadParticipants &&
-            extraData == source.extraData
+        self == source
     }
 }

@@ -831,7 +831,7 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
             eventType: .messageRead,
             cid: channelId,
             user: dummyCurrentUser,
-            unreadCount: .noUnread,
+            unreadCount: .init(channels: 0, messages: 0, threads: 0),
             createdAt: newReadDate
         )
         let messageReadEvent = try MessageReadEventDTO(from: eventPayload)
@@ -880,7 +880,7 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
             eventType: .messageRead,
             cid: channelId,
             user: dummyUser(id: memberId),
-            unreadCount: .noUnread,
+            unreadCount: .init(channels: 0, messages: 0, threads: 0),
             createdAt: newReadDate
         )
         let messageReadEvent = try MessageReadEventDTO(from: eventPayload)
@@ -950,7 +950,7 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
             cid: channelDetailPayload.cid,
             user: dummyCurrentUser,
             channel: channelDetailPayload,
-            unreadCount: .noUnread,
+            unreadCount: .init(channels: 0, messages: 0, threads: 0),
             createdAt: newReadDate
         )
         let notificationMarkReadEvent = try NotificationMarkReadEventDTO(from: eventPayload)
@@ -999,7 +999,7 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
             cid: payload.channel.cid,
             user: dummyUser(id: memberId),
             channel: payload.channel,
-            unreadCount: .noUnread,
+            unreadCount: .init(channels: 0, messages: 0, threads: 0),
             createdAt: newReadDate
         )
         let messageReadEvent = try NotificationMarkReadEventDTO(from: eventPayload)

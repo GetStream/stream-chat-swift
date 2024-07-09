@@ -1,0 +1,196 @@
+{
+    "type": "notification.thread_message_new",
+    "cid": "messaging:456F834D-1",
+    "channel_id": "456F834D-1",
+    "channel_type": "messaging",
+    "message": {
+        "id": "74625138-f60a-4d19-a3f1-4d97ec3f1390",
+        "text": "@Han Solo Ahahah",
+        "html": "<p>@Han Solo Ahahah</p>\n",
+        "type": "reply",
+        "user": {
+            "id": "leia_organa",
+            "role": "admin",
+            "created_at": "2024-04-04T09:42:00.68335Z",
+            "updated_at": "2024-06-13T18:15:03.769495Z",
+            "last_active": "2024-07-08T16:55:29.012416088Z",
+            "banned": false,
+            "online": true,
+            "language": "de",
+            "image": "https://vignette.wikia.nocookie.net/starwars/images/f/fc/Leia_Organa_TLJ.png",
+            "birthland": "Polis Massa",
+            "private_settings": {
+                "readReceipts": {
+                    "enabled": false
+                },
+                "typingIndicators": {
+                    "enabled": false
+                }
+            },
+            "name": "Leia Organa"
+        },
+        "attachments": [],
+        "latest_reactions": [],
+        "own_reactions": [],
+        "reaction_counts": {},
+        "reaction_scores": {},
+        "reaction_groups": null,
+        "parent_id": "6967a9d8-eb89-461e-a12a-97ae531d4400",
+        "reply_count": 0,
+        "deleted_reply_count": 0,
+        "cid": "messaging:456F834D-1",
+        "created_at": "2024-07-08T16:59:43.261348Z",
+        "updated_at": "2024-07-08T16:59:43.261348Z",
+        "shadowed": false,
+        "mentioned_users": [
+            {
+                "id": "han_solo",
+                "role": "user",
+                "created_at": "2024-04-04T09:18:11.060737Z",
+                "updated_at": "2024-06-25T14:17:08.295189Z",
+                "last_active": "2024-07-08T16:59:20.759383311Z",
+                "banned": false,
+                "online": true,
+                "image": "https://vignette.wikia.nocookie.net/starwars/images/e/e2/TFAHanSolo.png",
+                "birthland": "Corellia",
+                "name": "Han Solo"
+            }
+        ],
+        "i18n": {
+            "de_text": "@Han Solo Ahahah",
+            "language": "de",
+            "zh_text": "@Han Solo 啊哈哈"
+        },
+        "silent": false,
+        "before_message_send_failed": true,
+        "pinned": false,
+        "pinned_at": null,
+        "pinned_by": null,
+        "pin_expires": null
+    },
+    "channel": {
+        "id": "456F834D-1",
+        "type": "messaging",
+        "cid": "messaging:456F834D-1",
+        "last_message_at": "2024-07-08T16:59:43.261348Z",
+        "created_at": "2024-04-05T19:56:23.169549Z",
+        "updated_at": "2024-05-31T13:26:04.005786Z",
+        "created_by": {
+            "id": "r2-d2",
+            "role": "user",
+            "created_at": "2024-04-04T09:44:54.206412Z",
+            "updated_at": "2024-06-06T02:26:13.813675Z",
+            "last_active": "2024-07-07T23:08:45.748373Z",
+            "banned": false,
+            "online": false,
+            "language": "zh",
+            "birthland": "Naboo",
+            "name": "R2-D2",
+            "image": "https://vignette.wikia.nocookie.net/starwars/images/e/eb/ArtooTFA2-Fathead.png"
+        },
+        "frozen": false,
+        "disabled": false,
+        "members": [
+            {
+                "user_id": "han_solo",
+                "user": {
+                    "id": "han_solo",
+                    "role": "user",
+                    "created_at": "2024-04-04T09:18:11.060737Z",
+                    "updated_at": "2024-06-25T14:17:08.295189Z",
+                    "last_active": "2024-07-08T16:59:20.759383311Z",
+                    "banned": false,
+                    "online": true,
+                    "name": "Han Solo",
+                    "image": "https://vignette.wikia.nocookie.net/starwars/images/e/e2/TFAHanSolo.png",
+                    "birthland": "Corellia"
+                },
+                "status": "member",
+                "created_at": "2024-04-05T19:56:23.1735Z",
+                "updated_at": "2024-04-05T19:56:23.1735Z",
+                "banned": false,
+                "shadow_banned": false,
+                "role": "member",
+                "channel_role": "channel_member",
+                "notifications_muted": false
+            },
+            {
+                "user_id": "lando_calrissian",
+                "user": {
+                    "id": "lando_calrissian",
+                    "role": "user",
+                    "created_at": "2024-04-04T19:06:08.890459Z",
+                    "updated_at": "2024-06-06T02:24:02.598138Z",
+                    "last_active": "2024-07-07T22:25:29.082165Z",
+                    "banned": false,
+                    "online": false,
+                    "birthland": "Socorro",
+                    "name": "Lando Calrissian",
+                    "image": "https://vignette.wikia.nocookie.net/starwars/images/8/8f/Lando_ROTJ.png"
+                },
+                "status": "member",
+                "created_at": "2024-04-05T19:56:23.1735Z",
+                "updated_at": "2024-04-05T19:56:23.1735Z",
+                "banned": false,
+                "shadow_banned": false,
+                "role": "member",
+                "channel_role": "channel_member",
+                "notifications_muted": true
+            }
+        ],
+        "member_count": 2,
+        "config": {
+            "created_at": "2021-03-01T19:26:18.406502Z",
+            "updated_at": "2024-06-24T13:04:21.722886Z",
+            "name": "messaging",
+            "typing_events": true,
+            "read_events": true,
+            "connect_events": true,
+            "search": true,
+            "reactions": true,
+            "replies": true,
+            "quotes": true,
+            "mutes": true,
+            "uploads": true,
+            "url_enrichment": true,
+            "custom_events": true,
+            "push_notifications": true,
+            "reminders": false,
+            "mark_messages_pending": false,
+            "polls": true,
+            "message_retention": "infinite",
+            "max_message_length": 5000,
+            "automod": "AI",
+            "automod_behavior": "block",
+            "blocklist": "profanity_en_2020_v1",
+            "blocklist_behavior": "block",
+            "automod_thresholds": {
+                "explicit": {
+                    "flag": 0.85,
+                    "block": 0.9
+                },
+                "spam": {
+                    "flag": 0.85,
+                    "block": 0.9
+                },
+                "toxic": {
+                    "flag": 0.85,
+                    "block": 0.9
+                }
+            },
+            "commands": [
+                {
+                    "name": "giphy",
+                    "description": "Post a random gif to the channel",
+                    "args": "[text]",
+                    "set": "fun_set"
+                }
+            ]
+        },
+        "name": "Cult meetup",
+        "is_cool": true
+    },
+    "created_at": "2024-07-08T16:59:43.294921432Z",
+    "unread_threads": 7,
+    "unread_thread_messages": 9
+}

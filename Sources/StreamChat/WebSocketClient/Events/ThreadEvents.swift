@@ -15,6 +15,9 @@ public struct ThreadMessageNewEvent: Event {
     /// The channel a message was sent to.
     public let channel: ChatChannel
 
+    /// The unread count information of the current user.
+    public let unreadCount: UnreadCount
+
     /// The event timestamp.
     public let createdAt: Date
 }
@@ -23,6 +26,7 @@ class ThreadMessageNewEventDTO: EventDTO {
     let cid: ChannelId
     let message: MessagePayload
     let channel: ChannelDetailPayload
+    let unreadCount: UnreadCountPayload?
     let createdAt: Date
     let payload: EventPayload
 
@@ -31,18 +35,21 @@ class ThreadMessageNewEventDTO: EventDTO {
         message = try response.value(at: \.message)
         createdAt = try response.value(at: \.createdAt)
         channel = try response.value(at: \.channel)
+        unreadCount = try? response.value(at: \.unreadCount)
         payload = response
     }
 
     func toDomainEvent(session: DatabaseSession) -> Event? {
         guard
             let messageDTO = session.message(id: message.id),
-            let channelDTO = session.channel(cid: cid)
+            let channelDTO = session.channel(cid: cid),
+            let currentUser = session.currentUser
         else { return nil }
 
         return try? ThreadMessageNewEvent(
             message: messageDTO.asModel(),
             channel: channelDTO.asModel(),
+            unreadCount: UnreadCount(currentUserDTO: currentUser),
             createdAt: createdAt
         )
     }

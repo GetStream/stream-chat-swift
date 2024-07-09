@@ -49,7 +49,7 @@ class EventPayload: Decodable {
     let message: MessagePayload?
     let reaction: MessageReactionPayload?
     let watcherCount: Int?
-    let unreadCount: UnreadCount?
+    let unreadCount: UnreadCountPayload?
     let createdAt: Date?
     let isChannelHistoryCleared: Bool?
     let banReason: String?
@@ -81,7 +81,7 @@ class EventPayload: Decodable {
         message: MessagePayload? = nil,
         reaction: MessageReactionPayload? = nil,
         watcherCount: Int? = nil,
-        unreadCount: UnreadCount? = nil,
+        unreadCount: UnreadCountPayload? = nil,
         createdAt: Date? = nil,
         isChannelHistoryCleared: Bool? = nil,
         banReason: String? = nil,
@@ -142,7 +142,7 @@ class EventPayload: Decodable {
         message = try container.decodeIfPresent(MessagePayload.self, forKey: .message)
         reaction = try container.decodeIfPresent(MessageReactionPayload.self, forKey: .reaction)
         watcherCount = try container.decodeIfPresent(Int.self, forKey: .watcherCount)
-        unreadCount = try? UnreadCount(from: decoder)
+        unreadCount = try? UnreadCountPayload(from: decoder)
         createdAt = try container.decodeIfPresent(Date.self, forKey: .createdAt)
         isChannelHistoryCleared = try container.decodeIfPresent(Bool.self, forKey: .isChannelHistoryCleared)
         banReason = try container.decodeIfPresent(String.self, forKey: .banReason)

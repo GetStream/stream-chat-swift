@@ -40,7 +40,7 @@ protocol CurrentUserDatabaseSession {
 
     /// Updates the `CurrentUserDTO` with the provided unread.
     /// If there is no current user, the error will be thrown.
-    func saveCurrentUserUnreadCount(count: UnreadCount) throws
+    func saveCurrentUserUnreadCount(count: UnreadCountPayload) throws
 
     /// Updates the `CurrentUserDTO.devices` with the provided `DevicesPayload`
     /// If there's no current user set, an error will be thrown.

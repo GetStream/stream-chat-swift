@@ -93,7 +93,7 @@ final class CurrentUserModelDTO_Tests: XCTestCase {
         XCTAssertEqual(payload.createdAt, loadedCurrentUser.userCreatedAt)
         XCTAssertEqual(payload.updatedAt, loadedCurrentUser.userUpdatedAt)
         XCTAssertEqual(payload.lastActiveAt, loadedCurrentUser.lastActiveAt)
-        XCTAssertEqual(payload.unreadCount, loadedCurrentUser.unreadCount)
+        XCTAssert(loadedCurrentUser.unreadCount.isEqual(toPayload: payload.unreadCount) == true)
         XCTAssertEqual(payload.extraData, loadedCurrentUser.extraData)
         XCTAssertEqual(mutedUserIDs, Set(loadedCurrentUser.mutedUsers.map(\.id)))
         XCTAssertEqual(payload.devices.count, loadedCurrentUser.devices.count)

@@ -10,6 +10,7 @@ The navigation of StreamChatUI SDK is handled by `NavigationRouter`'s. Currently
 
 - `ChatChannelListRouter`: The Channel List Router is responsible to handle the navigation of the Channel List, like showing the Channel View.
 - `ChatMessageListRouter`: The Message List Router is responsible to handle the navigation of the Message List, like showing the User Profile View, the Gallery View, the Message Actions Popup, etc.
+- `ChatThreadListRouter`: The Thread List Router is responsible to handle the navigation of the Thread List, like showing the Thread View.
 - `AlertsRouter`: The Alerts Router is responsible to show alerts in the Chat SDK, like confirmation dialogues.
 
 ### Presenting a custom user profile view

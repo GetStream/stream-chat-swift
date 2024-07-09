@@ -25,7 +25,7 @@ public struct NotificationMessageNewEvent: ChannelSpecificEvent, HasUnreadCount 
 class NotificationMessageNewEventDTO: EventDTO {
     let channel: ChannelDetailPayload
     let message: MessagePayload
-    let unreadCount: UnreadCount?
+    let unreadCount: UnreadCountPayload?
     let createdAt: Date
     let payload: EventPayload
 
@@ -40,14 +40,15 @@ class NotificationMessageNewEventDTO: EventDTO {
     func toDomainEvent(session: DatabaseSession) -> Event? {
         guard
             let channelDTO = session.channel(cid: channel.cid),
-            let messageDTO = session.message(id: message.id)
+            let messageDTO = session.message(id: message.id),
+            let currentUser = session.currentUser
         else { return nil }
 
         return try? NotificationMessageNewEvent(
             channel: channelDTO.asModel(),
             message: messageDTO.asModel(),
             createdAt: createdAt,
-            unreadCount: unreadCount
+            unreadCount: UnreadCount(currentUserDTO: currentUser)
         )
     }
 }
@@ -66,7 +67,7 @@ public struct NotificationMarkAllReadEvent: Event, HasUnreadCount {
 
 class NotificationMarkAllReadEventDTO: EventDTO {
     let user: UserPayload
-    let unreadCount: UnreadCount
+    let unreadCount: UnreadCountPayload
     let createdAt: Date
     let payload: EventPayload
 
@@ -79,10 +80,11 @@ class NotificationMarkAllReadEventDTO: EventDTO {
 
     func toDomainEvent(session: DatabaseSession) -> Event? {
         guard let userDTO = session.user(id: user.id) else { return nil }
+        guard let currentUser = session.currentUser else { return nil }
 
         return try? NotificationMarkAllReadEvent(
             user: userDTO.asModel(),
-            unreadCount: unreadCount,
+            unreadCount: UnreadCount(currentUserDTO: currentUser),
             createdAt: createdAt
         )
     }
@@ -136,7 +138,7 @@ public struct NotificationMarkUnreadEvent: ChannelSpecificEvent {
 class NotificationMarkReadEventDTO: EventDTO {
     let user: UserPayload
     let cid: ChannelId
-    let unreadCount: UnreadCount
+    let unreadCount: UnreadCountPayload
     let createdAt: Date
     let lastReadMessageId: MessageId?
     let payload: EventPayload
@@ -152,11 +154,12 @@ class NotificationMarkReadEventDTO: EventDTO {
 
     func toDomainEvent(session: DatabaseSession) -> Event? {
         guard let userDTO = session.user(id: user.id) else { return nil }
+        guard let currentUser = session.currentUser else { return nil }
 
         return try? NotificationMarkReadEvent(
             user: userDTO.asModel(),
             cid: cid,
-            unreadCount: unreadCount,
+            unreadCount: UnreadCount(currentUserDTO: currentUser),
             lastReadMessageId: lastReadMessageId,
             createdAt: createdAt
         )
@@ -170,7 +173,7 @@ class NotificationMarkUnreadEventDTO: EventDTO {
     let firstUnreadMessageId: MessageId
     let lastReadMessageId: MessageId?
     let lastReadAt: Date
-    let unreadCount: UnreadCount
+    let unreadCount: UnreadCountPayload
     let unreadMessagesCount: Int
     let payload: EventPayload
 
@@ -188,6 +191,7 @@ class NotificationMarkUnreadEventDTO: EventDTO {
 
     func toDomainEvent(session: DatabaseSession) -> Event? {
         guard let userDTO = session.user(id: user.id) else { return nil }
+        guard let currentUser = session.currentUser else { return nil }
 
         return try? NotificationMarkUnreadEvent(
             user: userDTO.asModel(),
@@ -196,7 +200,7 @@ class NotificationMarkUnreadEventDTO: EventDTO {
             firstUnreadMessageId: firstUnreadMessageId,
             lastReadMessageId: lastReadMessageId,
             lastReadAt: lastReadAt,
-            unreadCount: unreadCount,
+            unreadCount: UnreadCount(currentUserDTO: currentUser),
             unreadMessagesCount: unreadMessagesCount
         )
     }
@@ -252,7 +256,7 @@ public struct NotificationAddedToChannelEvent: ChannelSpecificEvent, HasUnreadCo
 
 class NotificationAddedToChannelEventDTO: EventDTO {
     let channel: ChannelDetailPayload
-    let unreadCount: UnreadCount?
+    let unreadCount: UnreadCountPayload?
     // This `member` field is equal to the `membership` field in channel query
     let member: MemberPayload
     let createdAt: Date
@@ -269,12 +273,13 @@ class NotificationAddedToChannelEventDTO: EventDTO {
     func toDomainEvent(session: DatabaseSession) -> Event? {
         guard
             let channelDTO = session.channel(cid: channel.cid),
-            let memberDTO = session.member(userId: member.userId, cid: channel.cid)
+            let memberDTO = session.member(userId: member.userId, cid: channel.cid),
+            let currentUser = session.currentUser
         else { return nil }
 
         return try? NotificationAddedToChannelEvent(
             channel: channelDTO.asModel(),
-            unreadCount: unreadCount,
+            unreadCount: UnreadCount(currentUserDTO: currentUser),
             member: memberDTO.asModel(),
             createdAt: createdAt
         )
