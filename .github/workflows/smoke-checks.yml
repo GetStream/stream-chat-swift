@@ -40,7 +40,7 @@ jobs:
       with:
         name: cache-derived-data
         path: |
-          derived_data/
+          derived_data/Build/
 
   # automated-code-review:
   #   name: Automated Code Review
@@ -100,7 +100,7 @@ jobs:
     - uses: actions/download-artifact@v4
       with:
         name: cache-derived-data
-        path: derived_data/
+        path: derived_data/Build/
     - run: |
         echo "ls derived_data/"
         ls derived_data/
