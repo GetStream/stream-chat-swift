@@ -715,7 +715,10 @@ final class ChannelController_Tests: XCTestCase {
         )
 
         // Simulate synchronize call
-        controller.synchronize()
+        let synchronizeExpectation = XCTestExpectation(description: "Synchronize")
+        controller.synchronize { _ in
+            synchronizeExpectation.fulfill()
+        }
 
         let payload = dummyPayload(with: channelId)
         assert(!payload.messages.isEmpty)
@@ -735,7 +738,8 @@ final class ChannelController_Tests: XCTestCase {
                 completion(true)
             }
         }
-
+        
+        wait(for: [synchronizeExpectation], timeout: defaultTimeout)
         XCTAssertEqual(controller.channel?.cid, channelId)
         XCTAssertEqual(controller.messages.count, payload.messages.count)
     }
