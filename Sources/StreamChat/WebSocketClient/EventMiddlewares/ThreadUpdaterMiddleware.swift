@@ -18,6 +18,15 @@ struct ThreadUpdaterMiddleware: EventMiddleware {
             if isUnreadThread {
                 session.markThreadAsUnread(for: event.firstUnreadMessageId, userId: event.user.id)
             }
+        case let event as MessageUpdatedEventDTO:
+            guard let parentId = event.message.parentId else { break }
+            guard let thread = session.thread(parentMessageId: parentId, cache: nil) else {
+                break
+            }
+            // Trigger thread update if a thread reply's text was updated.
+            if event.message.messageTextUpdatedAt != nil {
+                thread.updatedAt = thread.updatedAt
+            }
         case let event as MessageDeletedEventDTO:
             /// Parent message deleted
             if let thread = session.thread(parentMessageId: event.message.id, cache: nil) {

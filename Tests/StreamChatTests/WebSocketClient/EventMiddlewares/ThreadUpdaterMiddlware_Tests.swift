@@ -382,4 +382,76 @@ final class ThreadUpdaterMiddleware_Tests: XCTestCase {
         let deletedThread = database.viewContext.thread(parentMessageId: parentMessageId, cache: nil)
         XCTAssertNil(deletedThread)
     }
+
+    func test_messageUpdatedEvent_whenIsReplyOfThread_whenTextChanged_shouldTriggerThreadUpdate() throws {
+        let currentUserId = UserId.unique
+        let parentMessageId = MessageId.unique
+        let cid = ChannelId.unique
+        let eventPayload = EventPayload(
+            eventType: .messageUpdated,
+            cid: cid,
+            user: .dummy(userId: .unique),
+            message: .dummy(messageId: .unique, parentId: parentMessageId, messageTextUpdatedAt: .unique),
+            createdAt: .unique,
+            hardDelete: false
+        )
+
+        let event = try MessageUpdatedEventDTO(from: eventPayload)
+
+        try database.writeSynchronously { session in
+            try session.saveCurrentUser(payload: .dummy(userId: currentUserId, role: .user))
+            try session.saveChannel(payload: .dummy(channel: .dummy(cid: cid)))
+            try session.saveThread(
+                payload: .dummy(
+                    parentMessageId: parentMessageId,
+                    channel: .dummy(cid: cid),
+                    latestReplies: [.dummy(), .dummy()]
+                ),
+                cache: nil
+            )
+        }
+
+        try database.writeSynchronously { session in
+            _ = self.middleware.handle(event: event, session: session)
+
+            let thread = session.thread(parentMessageId: parentMessageId, cache: nil)
+            XCTAssertEqual(thread?.hasChanges, true)
+        }
+    }
+
+    func test_messageUpdatedEvent_whenIsReplyOfThread_whenTextNotChanged_shouldNotTriggerThreadUpdate() throws {
+        let currentUserId = UserId.unique
+        let parentMessageId = MessageId.unique
+        let cid = ChannelId.unique
+        let eventPayload = EventPayload(
+            eventType: .messageUpdated,
+            cid: cid,
+            user: .dummy(userId: .unique),
+            message: .dummy(messageId: .unique, parentId: parentMessageId, messageTextUpdatedAt: nil),
+            createdAt: .unique,
+            hardDelete: false
+        )
+
+        let event = try MessageUpdatedEventDTO(from: eventPayload)
+
+        try database.writeSynchronously { session in
+            try session.saveCurrentUser(payload: .dummy(userId: currentUserId, role: .user))
+            try session.saveChannel(payload: .dummy(channel: .dummy(cid: cid)))
+            try session.saveThread(
+                payload: .dummy(
+                    parentMessageId: parentMessageId,
+                    channel: .dummy(cid: cid),
+                    latestReplies: [.dummy(), .dummy()]
+                ),
+                cache: nil
+            )
+        }
+
+        try database.writeSynchronously { session in
+            _ = self.middleware.handle(event: event, session: session)
+
+            let thread = session.thread(parentMessageId: parentMessageId, cache: nil)
+            XCTAssertEqual(thread?.hasChanges, false)
+        }
+    }
 }
