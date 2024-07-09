@@ -20,11 +20,12 @@ public enum EnvironmentVariable: String {
     case websocketHost = "MOCK_SERVER_WEBSOCKET_HOST"
     case httpHost = "MOCK_SERVER_HTTP_HOST"
     case port = "MOCK_SERVER_PORT"
+    
+    case customApiKey = "CUSTOM_API_KEY"
 }
 
 public enum LaunchArgument: String {
     case useMockServer = "USE_MOCK_SERVER"
-    case switchApiKey = "SWIFTUI_API_KEY"
     case jwt = "MOCK_JWT"
 }
 
