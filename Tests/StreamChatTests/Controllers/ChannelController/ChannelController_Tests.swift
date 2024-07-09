@@ -4055,7 +4055,7 @@ final class ChannelController_Tests: XCTestCase {
         let currentUser: CurrentUserPayload = .dummy(userId: channel.channelReads.first!.user.id, role: .user)
         client.setToken(token: .unique(userId: currentUser.id))
 
-        try client.databaseContainer.writeSynchronously { session in
+        writeAndWaitForMessageUpdates(count: 0, channelChanges: true) { session in
             try session.saveCurrentUser(payload: currentUser)
             try session.saveChannel(payload: channel)
         }
