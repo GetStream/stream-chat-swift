@@ -715,7 +715,10 @@ final class ChannelController_Tests: XCTestCase {
         )
 
         // Simulate synchronize call
-        controller.synchronize()
+        let synchronizeExpectation = XCTestExpectation(description: "Synchronize")
+        controller.synchronize { _ in
+            synchronizeExpectation.fulfill()
+        }
 
         let payload = dummyPayload(with: channelId)
         assert(!payload.messages.isEmpty)
@@ -735,7 +738,8 @@ final class ChannelController_Tests: XCTestCase {
                 completion(true)
             }
         }
-
+        
+        wait(for: [synchronizeExpectation], timeout: defaultTimeout)
         XCTAssertEqual(controller.channel?.cid, channelId)
         XCTAssertEqual(controller.messages.count, payload.messages.count)
     }
@@ -948,8 +952,10 @@ final class ChannelController_Tests: XCTestCase {
             dto.localMessageState = .sendingFailed
             oldMessageId = dto.id
         }
-        var channel = try XCTUnwrap(client.databaseContainer.viewContext.channel(cid: channelId))
-        XCTAssertNearlySameDate(channel.lastMessageAt?.bridgeDate, originalLastMessageAt)
+        try client.mockDatabaseContainer.readSynchronously { session in
+            let dto = try XCTUnwrap(session.channel(cid: channelId))
+            XCTAssertNearlySameDate(dto.lastMessageAt?.bridgeDate, originalLastMessageAt)
+        }
 
         // Create a new message payload that's newer than `channel.lastMessageAt`
         let newerMessagePayload: MessagePayload = .dummy(
@@ -961,8 +967,10 @@ final class ChannelController_Tests: XCTestCase {
         writeAndWaitForMessageUpdates(count: 6) {
             try $0.saveMessage(payload: newerMessagePayload, for: channelId, syncOwnReactions: true, cache: nil)
         }
-        channel = try XCTUnwrap(client.databaseContainer.viewContext.channel(cid: channelId))
-        XCTAssertEqual(channel.lastMessageAt?.bridgeDate, newerMessagePayload.createdAt)
+        try client.mockDatabaseContainer.readSynchronously { session in
+            let dto = try XCTUnwrap(session.channel(cid: channelId))
+            XCTAssertEqual(dto.lastMessageAt?.bridgeDate, newerMessagePayload.createdAt)
+        }
 
         // Check if the message ordering is correct
         // First message should be the newest message
@@ -1450,7 +1458,10 @@ final class ChannelController_Tests: XCTestCase {
             }, completion: $0)
         }
         XCTAssertNil(error)
-        let channel = try XCTUnwrap(client.databaseContainer.viewContext.channel(cid: channelId)).asModel()
+        
+        let channel = try client.mockDatabaseContainer.readSynchronously { session in
+            try XCTUnwrap(session.channel(cid: self.channelId)).asModel()
+        }
         XCTAssertEqual(channel.latestMessages.count, 1)
         let message: ChatMessage = try XCTUnwrap(channel.latestMessages.first)
 
@@ -1472,7 +1483,9 @@ final class ChannelController_Tests: XCTestCase {
             }, completion: $0)
         }
         XCTAssertNil(error)
-        let newChannel = try XCTUnwrap(client.databaseContainer.viewContext.channel(cid: newCid)).asModel()
+        let newChannel = try client.mockDatabaseContainer.readSynchronously { session in
+            try XCTUnwrap(session.channel(cid: newCid)).asModel()
+        }
         assert(channel.latestMessages.count == 1)
         let newMessage: ChatMessage = newChannel.latestMessages.first!
 
@@ -1521,7 +1534,9 @@ final class ChannelController_Tests: XCTestCase {
         }
 
         // Load the user
-        let typingUser = try XCTUnwrap(client.databaseContainer.viewContext.user(id: userId)).asModel()
+        let typingUser = try client.mockDatabaseContainer.readSynchronously { session in
+            try XCTUnwrap(session.user(id: userId)).asModel()
+        }
 
         // Assert the delegate receives typing user
         AssertAsync.willBeEqual(delegate.didChangeTypingUsers_typingUsers, [typingUser])
@@ -1545,7 +1560,9 @@ final class ChannelController_Tests: XCTestCase {
             }, completion: $0)
         }
         XCTAssertNil(error)
-        let channel = try XCTUnwrap(client.databaseContainer.viewContext.channel(cid: channelId)).asModel()
+        let channel = try client.mockDatabaseContainer.readSynchronously { session in
+            try XCTUnwrap(session.channel(cid: self.channelId)).asModel()
+        }
         XCTAssertEqual(channel.latestMessages.count, 1)
         let message: ChatMessage = try XCTUnwrap(channel.latestMessages.first)
 
@@ -4042,7 +4059,7 @@ final class ChannelController_Tests: XCTestCase {
         let currentUser: CurrentUserPayload = .dummy(userId: channel.channelReads.first!.user.id, role: .user)
         client.setToken(token: .unique(userId: currentUser.id))
 
-        try client.databaseContainer.writeSynchronously { session in
+        writeAndWaitForMessageUpdates(count: 0, channelChanges: true) { session in
             try session.saveCurrentUser(payload: currentUser)
             try session.saveChannel(payload: channel)
         }
@@ -5302,11 +5319,10 @@ final class ChannelController_Tests: XCTestCase {
             )
         )
 
-        var channel: ChannelDTO? {
-            try? XCTUnwrap(client.databaseContainer.viewContext.channel(cid: channelId))
+        try client.mockDatabaseContainer.readSynchronously { session in
+            let dto = try XCTUnwrap(session.channel(cid: self.channelId))
+            XCTAssertEqual(dto.messages.count, messages.count)
         }
-
-        XCTAssertEqual(channel?.messages.count, messages.count)
 
         // WHEN
         env.channelUpdater?.mockPaginationState.hasLoadedAllNextMessages = false
@@ -5314,7 +5330,11 @@ final class ChannelController_Tests: XCTestCase {
         // THEN
         env.channelUpdater?.cleanUp()
         controller = nil
-        AssertAsync.willBeEqual(channel?.messages.count, 0)
+        
+        try client.mockDatabaseContainer.readSynchronously { session in
+            let dto = try XCTUnwrap(session.channel(cid: self.channelId))
+            AssertAsync.willBeEqual(0, dto.messages.count)
+        }
     }
 
     func test_deinit_whenIsNotJumpingToMessage_doesNotDeleteAnyMessage() throws {
@@ -5333,11 +5353,10 @@ final class ChannelController_Tests: XCTestCase {
             )
         )
 
-        var channel: ChannelDTO? {
-            try? XCTUnwrap(client.databaseContainer.viewContext.channel(cid: channelId))
+        try client.mockDatabaseContainer.readSynchronously { session in
+            let dto = try XCTUnwrap(session.channel(cid: self.channelId))
+            XCTAssertEqual(dto.messages.count, messages.count)
         }
-
-        XCTAssertEqual(channel?.messages.count, messages.count)
 
         // WHEN
         XCTAssertEqual(controller.isJumpingToMessage, false)
@@ -5345,7 +5364,10 @@ final class ChannelController_Tests: XCTestCase {
         // THEN
         env.channelUpdater?.cleanUp()
         controller = nil
-        AssertAsync.willBeEqual(channel?.messages.count, 4)
+        try client.mockDatabaseContainer.readSynchronously { session in
+            let dto = try XCTUnwrap(session.channel(cid: self.channelId))
+            AssertAsync.willBeEqual(4, dto.messages.count)
+        }
     }
 }
 
