@@ -368,27 +368,31 @@ open class ChatThreadListVC:
     }
 }
 
-extension ChatThread: Differentiable, Hashable {
+extension ChatThread: Differentiable, Equatable, Hashable {
     public static func == (lhs: ChatThread, rhs: ChatThread) -> Bool {
-        lhs.parentMessageId == rhs.parentMessageId
+        lhs.parentMessageId == rhs.parentMessageId &&
+            lhs.updatedAt == rhs.updatedAt &&
+            lhs.parentMessage.isContentEqual(to: rhs.parentMessage) &&
+            lhs.title == rhs.title &&
+            lhs.reads == rhs.reads &&
+            lhs.latestReplies == rhs.latestReplies &&
+            lhs.lastMessageAt == rhs.lastMessageAt &&
+            lhs.channel == rhs.channel &&
+            lhs.participantCount == rhs.participantCount &&
+            lhs.replyCount == rhs.replyCount &&
+            lhs.threadParticipants == rhs.threadParticipants &&
+            lhs.extraData == rhs.extraData
     }
     
     public func hash(into hasher: inout Hasher) {
         hasher.combine(parentMessageId)
     }
 
+    public var differenceIdentifier: Int {
+        hashValue
+    }
+
     public func isContentEqual(to source: ChatThread) -> Bool {
-        parentMessageId == source.parentMessageId &&
-            updatedAt == source.updatedAt &&
-            parentMessage.isContentEqual(to: source.parentMessage) &&
-            title == source.title &&
-            reads == source.reads &&
-            latestReplies == source.latestReplies &&
-            lastMessageAt == source.lastMessageAt &&
-            channel == source.channel &&
-            participantCount == source.participantCount &&
-            replyCount == source.replyCount &&
-            threadParticipants == source.threadParticipants &&
-            extraData == source.extraData
+        self == source
     }
 }
