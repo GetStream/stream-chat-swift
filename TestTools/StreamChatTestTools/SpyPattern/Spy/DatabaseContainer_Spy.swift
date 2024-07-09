@@ -45,6 +45,9 @@ public final class DatabaseContainer_Spy: DatabaseContainer, Spy {
         shouldShowShadowedMessages: Bool? = nil
     ) {
         init_kind = kind
+        if case .onDisk = kind {
+            shouldCleanUpTempDBFiles = true
+        }
         super.init(
             kind: kind,
             shouldFlushOnStart: shouldFlushOnStart,

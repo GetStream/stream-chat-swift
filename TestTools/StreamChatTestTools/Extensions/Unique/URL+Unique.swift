@@ -26,7 +26,13 @@ public extension URL {
 
 extension URL {
     static var temporaryDirectoryRoot: URL {
-        URL(fileURLWithPath: NSTemporaryDirectory(), isDirectory: true)
+        try! FileManager.default.url(
+            for: .cachesDirectory,
+            in: .userDomainMask,
+            appropriateFor: nil,
+            create: true
+        )
+        .appendingPathComponent("StreamChatTests")
     }
     
     static let temporaryFileName = "temp_file"
