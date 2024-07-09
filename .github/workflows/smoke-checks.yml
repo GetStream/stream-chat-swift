@@ -103,7 +103,7 @@ jobs:
     - uses: actions/download-artifact@v4
       with:
         name: cache-derived-data
-        path: derived_data/Build/
+        path: derived_data/
     - run: |
         echo "ls derived_data/"
         ls derived_data/
