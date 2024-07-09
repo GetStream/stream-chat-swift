@@ -2896,7 +2896,7 @@ final class MessageDTO_Tests: XCTestCase {
 
     // MARK: - removeReaction
 
-    func test_removeReaction_whenOnlyOneReactionExists() {
+    func test_removeReaction_whenOnlyOneReactionExists() throws {
         let userId = "user_id"
         let messageId = "message_id"
         let reactionType: MessageReactionType = "reaction-type"
@@ -2911,25 +2911,25 @@ final class MessageDTO_Tests: XCTestCase {
         XCTAssertNil(error)
 
         // The message should not contain those reactions
-        let message = self.message(with: messageId)
-        XCTAssertTrue(message?.latestReactions.contains { $0.type.rawValue == reactionType.rawValue } == false)
-        XCTAssertTrue(message?.currentUserReactions.contains { $0.type.rawValue == reactionType.rawValue } == false)
+        let message = try XCTUnwrap(self.message(with: messageId))
+        XCTAssertTrue(message.latestReactions.contains { $0.type.rawValue == reactionType.rawValue } == false)
+        XCTAssertTrue(message.currentUserReactions.contains { $0.type.rawValue == reactionType.rawValue } == false)
 
         // Updates count, scores and groups optimistically
-        XCTAssertEqual(message?.reactionCounts, [
-            "other-id-1": 1,
-            "other-id-2": 1
-        ])
-        XCTAssertEqual(message?.reactionScores, [
-            "other-id-1": 1,
-            "other-id-2": 1
-        ])
-        XCTAssertEqual(message?.reactionGroups["other-id-1"]?.count, 1)
-        XCTAssertEqual(message?.reactionGroups["other-id-2"]?.count, 1)
-        XCTAssertEqual(message?.reactionGroups["reaction-type"]?.count, nil)
-        XCTAssertEqual(message?.reactionGroups["other-id-1"]?.sumScores, 1)
-        XCTAssertEqual(message?.reactionGroups["other-id-2"]?.sumScores, 1)
-        XCTAssertEqual(message?.reactionGroups["reaction-type"]?.sumScores, nil)
+        XCTAssertEqual(2, message.reactionCounts.count)
+        XCTAssertEqual(1, message.reactionCounts["other-id-1"])
+        XCTAssertEqual(1, message.reactionCounts["other-id-2"])
+        
+        XCTAssertEqual(2, message.reactionScores.count)
+        XCTAssertEqual(1, message.reactionScores["other-id-1"])
+        XCTAssertEqual(1, message.reactionScores["other-id-2"])
+        
+        XCTAssertEqual(message.reactionGroups["other-id-1"]?.count, 1)
+        XCTAssertEqual(message.reactionGroups["other-id-2"]?.count, 1)
+        XCTAssertEqual(message.reactionGroups[reactionType]?.count, nil)
+        XCTAssertEqual(message.reactionGroups["other-id-1"]?.sumScores, 1)
+        XCTAssertEqual(message.reactionGroups["other-id-2"]?.sumScores, 1)
+        XCTAssertEqual(message.reactionGroups[reactionType]?.sumScores, nil)
     }
 
     func test_removeReaction_whenMultipleReactionsExist() {
@@ -3969,9 +3969,11 @@ final class MessageDTO_Tests: XCTestCase {
 
     private func addReactionToMessage(userId: UserId, messageId: MessageId, reactionId: ReactionString) {
         try? database.writeSynchronously { session in
+            let reactionScore = 1
             try session.saveReaction(
                 payload: .dummy(
                     type: .init(rawValue: reactionId.reactionType),
+                    score: reactionScore,
                     messageId: messageId,
                     user: .dummy(userId: userId)
                 ),
@@ -3982,12 +3984,12 @@ final class MessageDTO_Tests: XCTestCase {
             let message = session.message(id: messageId)
             message?.latestReactions = [reactionId, "other-id-1"]
             message?.ownReactions = [reactionId, "other-id-2"]
-            message?.reactionScores = [reactionId.reactionType: 1, "other-id-1": 1, "other-id-2": 1]
+            message?.reactionScores = [reactionId.reactionType: reactionScore, "other-id-1": 1, "other-id-2": 1]
             message?.reactionCounts = [reactionId.reactionType: 1, "other-id-1": 1, "other-id-2": 1]
             message?.reactionGroups = Set([
                 .init(
                     type: .init(rawValue: reactionId.reactionType),
-                    sumScores: 1,
+                    sumScores: reactionScore,
                     count: 1,
                     firstReactionAt: .unique,
                     lastReactionAt: .unique,
