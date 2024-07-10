@@ -2977,7 +2977,7 @@ final class ChannelController_Tests: XCTestCase {
 
     func test_keystroke() throws {
         let payload = dummyPayload(with: channelId, ownCapabilities: [ChannelCapability.sendTypingEvents.rawValue])
-        try client.databaseContainer.writeSynchronously { session in
+        writeAndWaitForMessageUpdates(count: payload.messages.count, channelChanges: true) { session in
             try session.saveChannel(payload: payload)
         }
 
@@ -3013,7 +3013,7 @@ final class ChannelController_Tests: XCTestCase {
 
     func test_keystroke_withParentMessageId() throws {
         let payload = dummyPayload(with: channelId, ownCapabilities: [ChannelCapability.sendTypingEvents.rawValue])
-        try client.databaseContainer.writeSynchronously { session in
+        writeAndWaitForMessageUpdates(count: payload.messages.count, channelChanges: true) { session in
             try session.saveChannel(payload: payload)
         }
 
@@ -3048,7 +3048,7 @@ final class ChannelController_Tests: XCTestCase {
 
     func test_startTyping() throws {
         let payload = dummyPayload(with: channelId, ownCapabilities: [ChannelCapability.sendTypingEvents.rawValue])
-        try client.databaseContainer.writeSynchronously { session in
+        writeAndWaitForMessageUpdates(count: payload.messages.count, channelChanges: true) { session in
             try session.saveChannel(payload: payload)
         }
 
@@ -3084,7 +3084,7 @@ final class ChannelController_Tests: XCTestCase {
 
     func test_startTyping_withParentMessageId() throws {
         let payload = dummyPayload(with: channelId, ownCapabilities: [ChannelCapability.sendTypingEvents.rawValue])
-        try client.databaseContainer.writeSynchronously { session in
+        writeAndWaitForMessageUpdates(count: payload.messages.count, channelChanges: true) { session in
             try session.saveChannel(payload: payload)
         }
 
@@ -3119,7 +3119,7 @@ final class ChannelController_Tests: XCTestCase {
 
     func test_stopTyping() throws {
         let payload = dummyPayload(with: channelId, ownCapabilities: [ChannelCapability.sendTypingEvents.rawValue])
-        try client.databaseContainer.writeSynchronously { session in
+        writeAndWaitForMessageUpdates(count: payload.messages.count, channelChanges: true) { session in
             try session.saveChannel(payload: payload)
         }
 
@@ -3155,7 +3155,7 @@ final class ChannelController_Tests: XCTestCase {
 
     func test_stopTyping_withParentMessageId() throws {
         let payload = dummyPayload(with: channelId, ownCapabilities: [ChannelCapability.sendTypingEvents.rawValue])
-        try client.databaseContainer.writeSynchronously { session in
+        writeAndWaitForMessageUpdates(count: payload.messages.count, channelChanges: true) { session in
             try session.saveChannel(payload: payload)
         }
 
@@ -3190,7 +3190,7 @@ final class ChannelController_Tests: XCTestCase {
 
     func test_sendKeystrokeEvent_whenTypingEventsAreDisabled_doesNothing() throws {
         let payload = dummyPayload(with: channelId, ownCapabilities: [])
-        try client.databaseContainer.writeSynchronously { session in
+        writeAndWaitForMessageUpdates(count: payload.messages.count, channelChanges: true) { session in
             try session.saveChannel(payload: payload)
         }
 
@@ -3209,7 +3209,7 @@ final class ChannelController_Tests: XCTestCase {
 
     func test_sendStartTypingEvent_whenTypingEventsAreDisabled_errors() throws {
         let payload = dummyPayload(with: channelId, ownCapabilities: [])
-        try client.databaseContainer.writeSynchronously { session in
+        writeAndWaitForMessageUpdates(count: payload.messages.count, channelChanges: true) { session in
             try session.saveChannel(payload: payload)
         }
 
@@ -3235,7 +3235,7 @@ final class ChannelController_Tests: XCTestCase {
 
     func test_sendStopTypingEvent_whenTypingEventsAreDisabled_errors() throws {
         let payload = dummyPayload(with: channelId, ownCapabilities: [])
-        try client.databaseContainer.writeSynchronously { session in
+        writeAndWaitForMessageUpdates(count: payload.messages.count, channelChanges: true) { session in
             try session.saveChannel(payload: payload)
         }
 
@@ -3261,7 +3261,7 @@ final class ChannelController_Tests: XCTestCase {
 
     func test_keystroke_keepsControllerAlive() throws {
         // Save channel with typing events enabled to database
-        try client.mockDatabaseContainer.writeSynchronously {
+        writeAndWaitForMessageUpdates(count: 1, channelChanges: true) {
             try $0.saveChannel(
                 payload: self.dummyPayload(
                     with: self.channelId,
@@ -3283,7 +3283,7 @@ final class ChannelController_Tests: XCTestCase {
 
     func test_startTyping_keepsControllerAlive() throws {
         // Save channel with typing events enabled to database
-        try client.mockDatabaseContainer.writeSynchronously {
+        writeAndWaitForMessageUpdates(count: 1, channelChanges: true) {
             try $0.saveChannel(
                 payload: self.dummyPayload(
                     with: self.channelId,
@@ -3305,7 +3305,7 @@ final class ChannelController_Tests: XCTestCase {
 
     func test_stopTyping_keepsControllerAlive() throws {
         // Save channel with typing events enabled to database
-        try client.mockDatabaseContainer.writeSynchronously {
+        writeAndWaitForMessageUpdates(count: 1, channelChanges: true) {
             try $0.saveChannel(
                 payload: self.dummyPayload(
                     with: self.channelId,
