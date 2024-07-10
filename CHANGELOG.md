@@ -3,6 +3,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 # Upcoming
 
+### 🔄 Changed
+
+# [4.59.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.59.0)
+_July 10, 2024_
+
 ## StreamChat
 ### ✅ Added
 - Add support for user blocking [#3223](https://github.com/GetStream/stream-chat-swift/pull/3223)
