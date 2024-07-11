@@ -23,7 +23,7 @@ public struct Debouncer {
     ///   executed. If not provided, a global queue with background quality of service is used by default.
     public init(
         _ interval: TimeInterval,
-        queue: DispatchQueue = DispatchQueue.global(qos: .background)
+        queue: DispatchQueue = DispatchQueue.global(qos: .utility)
     ) {
         self.interval = interval
         self.queue = queue
