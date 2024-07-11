@@ -34,4 +34,8 @@ extension ChatMessage: Differentiable {
     public func isContentEqual(to source: ChatMessage) -> Bool {
         self == source
     }
+    
+    public var differenceIdentifier: Int {
+        hashValue
+    }
 }

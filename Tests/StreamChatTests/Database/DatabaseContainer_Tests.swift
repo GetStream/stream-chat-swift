@@ -202,6 +202,7 @@ final class DatabaseContainer_Tests: XCTestCase {
             modelName: "TestDataModel",
             bundle: .testTools
         )
+        database?.shouldCleanUpTempDBFiles = false
 
         // Insert a new object
         try database!.writeSynchronously {
@@ -209,8 +210,13 @@ final class DatabaseContainer_Tests: XCTestCase {
         }
 
         // Assert `resetEphemeralValuesCalled` of the object is `false`
-        let testObject = try database!.viewContext.fetch(NSFetchRequest<TestManagedObject>(entityName: "TestManagedObject")).first
-        XCTAssertEqual(testObject?.resetEphemeralValuesCalled, false)
+        try database!.readSynchronously { session in
+            let context = session as! NSManagedObjectContext
+            let testObject = try XCTUnwrap(context
+                .fetch(NSFetchRequest<TestManagedObject>(entityName: "TestManagedObject"))
+                .first)
+            XCTAssertEqual(testObject.resetEphemeralValuesCalled, false)
+        }
 
         // Get rid of the original database
         AssertAsync.canBeReleased(&database)
@@ -225,11 +231,13 @@ final class DatabaseContainer_Tests: XCTestCase {
         // Assert `resetEphemeralValues` is called on DatabaseContainer
         XCTAssert((newDatabase as! DatabaseContainer_Spy).resetEphemeralValues_called)
 
-        let testObject2 = try newDatabase.viewContext
-            .fetch(NSFetchRequest<TestManagedObject>(entityName: "TestManagedObject"))
-            .first
-
-        AssertAsync.willBeTrue(testObject2?.resetEphemeralValuesCalled)
+        try newDatabase.readSynchronously { session in
+            let context = session as! NSManagedObjectContext
+            let testObject2 = try XCTUnwrap(context
+                .fetch(NSFetchRequest<TestManagedObject>(entityName: "TestManagedObject"))
+                .first)
+            XCTAssertTrue(testObject2.resetEphemeralValuesCalled)
+        }
 
         // Wait for the new DB instance to be released
         AssertAsync.canBeReleased(&newDatabase)

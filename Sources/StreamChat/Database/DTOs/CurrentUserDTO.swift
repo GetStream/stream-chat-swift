@@ -110,15 +110,19 @@ extension NSManagedObjectContext: CurrentUserDatabaseSession {
         return dto
     }
 
-    func saveCurrentUserUnreadCount(count: UnreadCount) throws {
+    func saveCurrentUserUnreadCount(count: UnreadCountPayload) throws {
         invalidateCurrentUserCache()
 
         guard let dto = currentUser else {
             throw ClientError.CurrentUserDoesNotExist()
         }
 
-        dto.unreadChannelsCount = Int64(clamping: count.channels)
-        dto.unreadMessagesCount = Int64(clamping: count.messages)
+        if let unreadChannels = count.channels {
+            dto.unreadChannelsCount = Int64(clamping: unreadChannels)
+        }
+        if let unreadMessages = count.messages {
+            dto.unreadMessagesCount = Int64(clamping: unreadMessages)
+        }
         if let threadsCount = count.threads {
             dto.unreadThreadsCount = Int64(clamping: threadsCount)
         }

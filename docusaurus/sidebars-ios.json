@@ -3,7 +3,8 @@
     {
       "Basics": [
         "basics/overview",
-        "basics/integration"
+        "basics/integration",
+        "basics/logs"
       ]
     },
     {
@@ -40,7 +41,8 @@
             "uikit/guides/customize-message-composer",
             "uikit/guides/message-composer-custom-attachments"
           ]
-        },  
+        },
+        "uikit/components/thread-list",
         "uikit/navigation",
         "uikit/localization",            
         "uikit/data-formatting",
@@ -117,7 +119,6 @@
       "Advanced Guides": [
         "client/push-notifications",
         "guides/video-integration",
-        "basics/logs",
         "client/custom-cdn",
         "guides/moderation",        
         "guides/go-live-checklist",

@@ -24,6 +24,8 @@ public final class DatabaseContainer_Spy: DatabaseContainer, Spy {
 
     /// Every time a write session finishes this counter is increased
     @Atomic var writeSessionCounter: Int = 0
+    
+    @Atomic var didWrite: (() -> Void)?
 
     /// If set to `true` and the mock will remove its database files once deinited.
     var shouldCleanUpTempDBFiles = false
@@ -45,6 +47,9 @@ public final class DatabaseContainer_Spy: DatabaseContainer, Spy {
         shouldShowShadowedMessages: Bool? = nil
     ) {
         init_kind = kind
+        if case .onDisk = kind {
+            shouldCleanUpTempDBFiles = true
+        }
         super.init(
             kind: kind,
             shouldFlushOnStart: shouldFlushOnStart,
@@ -110,6 +115,7 @@ public final class DatabaseContainer_Spy: DatabaseContainer, Spy {
         let completion: (Error?) -> Void = { error in
             completion(error)
             self._writeSessionCounter { $0 += 1 }
+            self.didWrite?()
         }
 
         if let error = write_errorResponse {

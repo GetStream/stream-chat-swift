@@ -4,6 +4,17 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 # Upcoming
 
 ## StreamChat
+### 🔄 Changed
+- Increase QoS for `Throttler` and `Debouncer` to `utility` [#3295](https://github.com/GetStream/stream-chat-swift/issues/3295)
+
+# [4.59.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.59.0)
+_July 10, 2024_
+
+## ⚠️ Important
+- This is the last SDK version that will support iOS 12 as the minimum deployment target.
+- Our next release will have iOS 13 as the minimum deployment target.
+
+## StreamChat
 ### ✅ Added
 - Add support for user blocking [#3223](https://github.com/GetStream/stream-chat-swift/pull/3223)
 - [Threads v2] Add support for Threads v2 [#3229](https://github.com/GetStream/stream-chat-swift/pull/3229)
@@ -13,6 +24,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
    - Add `ChatMessageController.updateThread()`
    - Add `ChatMessageController.loadThread()`
    - Add `ChatCurrentUserController.loadAllUnreads()`
+   - Add `CurrentChatUser.unreadCount.threads`
+### 🐞 Fixed
+- Fix user not able to connect when the user name contains a semicolon [#3275](https://github.com/GetStream/stream-chat-swift/pull/3275)
+### 🔄 Changed
+- Add additional fields to the `Equatable` conformance in `ChatChannel` and `ChatMessage` [#3277](https://github.com/GetStream/stream-chat-swift/issues/3277)
 
 ## StreamChatUI
 ### ✅ Added
@@ -25,17 +41,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - `message.item.deleted`
 - `threadListItem.replied-to`
 - `threadList.empty.description`
+- `threadList.error.message`
 - `threadList.new-threads`
-
-### 🐞 Fixed
-- Fix user not able to connect when the user name contains a semicolon [#3275](https://github.com/GetStream/stream-chat-swift/pull/3275)
-
-### 🔄 Changed
-- Add additional fields to the `Equatable` conformance in `ChatChannel` and `ChatMessage` [#3277](https://github.com/GetStream/stream-chat-swift/issues/3277)
-
-## ⚠️ Important
-- This is the last SDK version that will support iOS 12 as the minimum deployment target.
-- Our next release will have iOS 13 as the minimum deployment target.
 
 # [4.58.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.58.0)
 _June 26, 2024_

@@ -66,7 +66,7 @@ class DemoAppTabBarController: UITabBarController, CurrentChatUserControllerDele
     func currentUserController(_ controller: CurrentChatUserController, didChangeCurrentUserUnreadCount: UnreadCount) {
         let unreadCount = didChangeCurrentUserUnreadCount
         self.unreadCount = unreadCount
-        let totalUnreadBadge = unreadCount.channels + (unreadCount.threads ?? 0)
+        let totalUnreadBadge = unreadCount.channels + unreadCount.threads
         UIApplication.shared.applicationIconBadgeNumber = totalUnreadBadge
     }
 }

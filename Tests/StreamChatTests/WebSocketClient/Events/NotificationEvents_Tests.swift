@@ -156,12 +156,13 @@ final class NotificationsEvents_Tests: XCTestCase {
         try session.saveUser(payload: eventPayload.user!)
         _ = try session.saveChannel(payload: eventPayload.channel!, query: nil, cache: nil)
         _ = try session.saveMessage(payload: eventPayload.message!, for: cid, cache: nil)
+        _ = try session.saveCurrentUser(payload: .dummy(userPayload: .dummy(userId: .unique), unreadCount: eventPayload.unreadCount))
 
         // Assert event can be created and has correct fields
         let event = try XCTUnwrap(dto.toDomainEvent(session: session) as? NotificationMessageNewEvent)
         XCTAssertEqual(event.channel.cid, eventPayload.cid)
         XCTAssertEqual(event.message.id, eventPayload.message?.id)
-        XCTAssertEqual(event.unreadCount, eventPayload.unreadCount)
+        XCTAssert(event.unreadCount?.isEqual(toPayload: eventPayload.unreadCount) == true)
         XCTAssertEqual(event.createdAt, eventPayload.createdAt)
     }
 
@@ -185,11 +186,12 @@ final class NotificationsEvents_Tests: XCTestCase {
 
         // Save event to database
         try session.saveUser(payload: eventPayload.user!)
+        _ = try session.saveCurrentUser(payload: .dummy(userPayload: .dummy(userId: .unique), unreadCount: eventPayload.unreadCount))
 
         // Assert event can be created and has correct fields
         let event = try XCTUnwrap(dto.toDomainEvent(session: session) as? NotificationMarkAllReadEvent)
         XCTAssertEqual(event.user.id, eventPayload.user?.id)
-        XCTAssertEqual(event.unreadCount, eventPayload.unreadCount)
+        XCTAssert(event.unreadCount?.isEqual(toPayload: eventPayload.unreadCount) == true)
         XCTAssertEqual(event.createdAt, eventPayload.createdAt)
     }
 
@@ -215,12 +217,13 @@ final class NotificationsEvents_Tests: XCTestCase {
 
         // Save event to database
         try session.saveUser(payload: eventPayload.user!)
+        _ = try session.saveCurrentUser(payload: .dummy(userPayload: .dummy(userId: .unique), unreadCount: eventPayload.unreadCount))
 
         // Assert event can be created and has correct fields
         let event = try XCTUnwrap(dto.toDomainEvent(session: session) as? NotificationMarkReadEvent)
         XCTAssertEqual(event.user.id, eventPayload.user?.id)
         XCTAssertEqual(event.cid, eventPayload.cid)
-        XCTAssertEqual(event.unreadCount, eventPayload.unreadCount)
+        XCTAssert(event.unreadCount?.isEqual(toPayload: eventPayload.unreadCount) == true)
         XCTAssertEqual(event.lastReadMessageId, eventPayload.lastReadMessageId)
         XCTAssertEqual(event.createdAt, eventPayload.createdAt)
     }
@@ -251,6 +254,7 @@ final class NotificationsEvents_Tests: XCTestCase {
 
         // Save event to database
         try session.saveUser(payload: eventPayload.user!)
+        _ = try session.saveCurrentUser(payload: .dummy(userPayload: .dummy(userId: .unique), unreadCount: eventPayload.unreadCount))
 
         // Assert event can be created and has correct fields
         let event = try XCTUnwrap(dto.toDomainEvent(session: session) as? NotificationMarkUnreadEvent)
@@ -316,11 +320,12 @@ final class NotificationsEvents_Tests: XCTestCase {
             query: nil,
             cache: nil
         )
+        _ = try session.saveCurrentUser(payload: .dummy(userPayload: .dummy(userId: .unique), unreadCount: eventPayload.unreadCount))
 
         // Assert event can be created and has correct fields
         let event = try XCTUnwrap(dto.toDomainEvent(session: session) as? NotificationAddedToChannelEvent)
         XCTAssertEqual(event.channel.cid, eventPayload.channel?.cid)
-        XCTAssertEqual(event.unreadCount, eventPayload.unreadCount)
+        XCTAssert(event.unreadCount?.isEqual(toPayload: eventPayload.unreadCount) == true)
         XCTAssertEqual(event.createdAt, eventPayload.createdAt)
     }
 

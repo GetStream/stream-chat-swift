@@ -18,6 +18,15 @@ struct ThreadUpdaterMiddleware: EventMiddleware {
             if isUnreadThread {
                 session.markThreadAsUnread(for: event.firstUnreadMessageId, userId: event.user.id)
             }
+        case let event as MessageUpdatedEventDTO:
+            guard let parentId = event.message.parentId else { break }
+            guard let thread = session.thread(parentMessageId: parentId, cache: nil) else {
+                break
+            }
+            // Trigger thread update if a thread reply's text was updated.
+            if event.message.messageTextUpdatedAt != nil {
+                thread.updatedAt = thread.updatedAt
+            }
         case let event as MessageDeletedEventDTO:
             /// Parent message deleted
             if let thread = session.thread(parentMessageId: event.message.id, cache: nil) {
@@ -37,9 +46,11 @@ struct ThreadUpdaterMiddleware: EventMiddleware {
         case let event as ChannelDeletedEventDTO:
             // Delete threads belonging to this deleted channel
             guard let channel = session.channel(cid: event.channel.cid) else { break }
-            channel.threads.forEach {
-                session.delete(thread: $0)
-            }
+            deleteThreads(for: channel, session: session)
+        case let event as ChannelTruncatedEventDTO:
+            // Delete threads belonging to this truncated channel
+            guard let channel = session.channel(cid: event.channel.cid) else { break }
+            deleteThreads(for: channel, session: session)
         case let event as ThreadMessageNewEventDTO:
             let messagePayload = event.message
             guard let channelId = event.message.cid,
@@ -83,5 +94,11 @@ struct ThreadUpdaterMiddleware: EventMiddleware {
             break
         }
         return event
+    }
+
+    private func deleteThreads(for channel: ChannelDTO, session: DatabaseSession) {
+        channel.threads.forEach {
+            session.delete(thread: $0)
+        }
     }
 }

@@ -111,7 +111,7 @@ class DatabaseSession_Mock: DatabaseSession {
         return try saveCurrentUser(payload: payload)
     }
 
-    func saveCurrentUserUnreadCount(count: UnreadCount) throws {
+    func saveCurrentUserUnreadCount(count: UnreadCountPayload) throws {
         try throwErrorIfNeeded()
         try saveCurrentUserUnreadCount(count: count)
     }
