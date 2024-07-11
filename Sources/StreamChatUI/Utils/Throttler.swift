@@ -21,7 +21,7 @@ class Throttler {
     init(
         interval: TimeInterval,
         broadcastLatestEvent: Bool = true,
-        queue: DispatchQueue = .init(label: "com.stream.throttler", qos: .background)
+        queue: DispatchQueue = .init(label: "com.stream.throttler", qos: .utility)
     ) {
         self.interval = interval
         self.broadcastLatestEvent = broadcastLatestEvent
