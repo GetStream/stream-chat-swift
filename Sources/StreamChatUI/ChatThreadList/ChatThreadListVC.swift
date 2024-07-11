@@ -144,7 +144,6 @@ open class ChatThreadListVC:
         hideLoadingView()
         hideEmptyView()
         hideErrorView()
-        hideHeaderBannerView()
     }
 
     override open func viewWillAppear(_ animated: Bool) {
