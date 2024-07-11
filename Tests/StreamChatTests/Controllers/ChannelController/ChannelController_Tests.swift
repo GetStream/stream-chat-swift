@@ -492,6 +492,7 @@ final class ChannelController_Tests: XCTestCase {
         )
         let token = Token(rawValue: "", userId: userId, expiration: nil)
         controller.client.authenticationRepository.setMockToken(token)
+        try client.mockDatabaseContainer.createCurrentUser(id: userId)
 
         createChannel(oldestMessageId: oldestMessageId, newestMessageId: newestMessageId, channelReads: [channelRead])
 
