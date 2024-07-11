@@ -127,7 +127,6 @@ extension InternetConnection {
 
         /// Internet connection uses Low Data Mode.
         /// Recommendations for Low Data Mode: don't autoplay video, music (high-quality) or gifs (big files).
-        /// Supports only by iOS 13+
         case constrained
     }
 }
