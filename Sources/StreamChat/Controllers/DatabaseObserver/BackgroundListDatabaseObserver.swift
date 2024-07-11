@@ -6,41 +6,24 @@ import CoreData
 import Foundation
 
 class ListDatabaseObserverWrapper<Item, DTO: NSManagedObject> {
-    private var foreground: ListDatabaseObserver<Item, DTO>?
-    private var background: BackgroundListDatabaseObserver<Item, DTO>?
-    let isBackground: Bool
+    private let background: BackgroundListDatabaseObserver<Item, DTO>
 
     var items: LazyCachedMapCollection<Item> {
-        if isBackground, let background = background {
-            return background.items
-        } else if let foreground = foreground {
-            return foreground.items
-        } else {
-            log.assertionFailure("Should have foreground or background observer")
-            return []
-        }
+        background.items
     }
 
     /// This function is only useful with background mapping enabled.
     /// Since DB updates now happen in a background thread, sometimes we need to
     /// wait for the updates to do some action, so this function is useful for that.
     func refreshItems(completion: @escaping () -> Void) {
-        if let background = background {
-            background.updateItems(changes: nil, completion: completion)
-        } else {
-            completion()
-        }
+        background.updateItems(changes: nil, completion: completion)
     }
 
     /// Called with the aggregated changes after the internal `NSFetchResultsController` calls `controllerWillChangeContent`
     /// on its delegate.
     var onWillChange: (() -> Void)? {
         didSet {
-            if isBackground {
-                background?.onWillChange = onWillChange
-            } else {
-                foreground?.onWillChange = onWillChange
-            }
+            background.onWillChange = onWillChange
         }
     }
 
@@ -48,16 +31,11 @@ class ListDatabaseObserverWrapper<Item, DTO: NSManagedObject> {
     /// on its delegate.
     var onDidChange: (([ListChange<Item>]) -> Void)? {
         didSet {
-            if isBackground {
-                background?.onDidChange = onDidChange
-            } else {
-                foreground?.onChange = onDidChange
-            }
+            background.onDidChange = onDidChange
         }
     }
 
     init(
-        isBackground: Bool,
         database: DatabaseContainer,
         fetchRequest: NSFetchRequest<DTO>,
         itemCreator: @escaping (DTO) throws -> Item,
@@ -65,36 +43,18 @@ class ListDatabaseObserverWrapper<Item, DTO: NSManagedObject> {
         sorting: [SortValue<Item>] = [],
         fetchedResultsControllerType: NSFetchedResultsController<DTO>.Type = NSFetchedResultsController<DTO>.self
     ) {
-        self.isBackground = isBackground
-        if isBackground {
-            background = BackgroundListDatabaseObserver(
-                context: database.backgroundReadOnlyContext,
-                fetchRequest: fetchRequest,
-                itemCreator: itemCreator,
-                itemReuseKeyPaths: itemReuseKeyPaths,
-                sorting: sorting,
-                fetchedResultsControllerType: fetchedResultsControllerType
-            )
-        } else {
-            foreground = ListDatabaseObserver(
-                context: database.viewContext,
-                fetchRequest: fetchRequest,
-                itemCreator: itemCreator,
-                itemReuseKeyPaths: itemReuseKeyPaths,
-                sorting: sorting,
-                fetchedResultsControllerType: fetchedResultsControllerType
-            )
-        }
+        background = BackgroundListDatabaseObserver(
+            context: database.backgroundReadOnlyContext,
+            fetchRequest: fetchRequest,
+            itemCreator: itemCreator,
+            itemReuseKeyPaths: itemReuseKeyPaths,
+            sorting: sorting,
+            fetchedResultsControllerType: fetchedResultsControllerType
+        )
     }
 
     func startObserving() throws {
-        if isBackground, let background = background {
-            try background.startObserving()
-        } else if let foreground = foreground {
-            try foreground.startObserving()
-        } else {
-            log.assertionFailure("Should have foreground or background observer")
-        }
+        try background.startObserving()
     }
 }
 

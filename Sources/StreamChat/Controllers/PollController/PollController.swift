@@ -65,7 +65,6 @@ public class PollController: DataController, DelegateCallable, DataStoreProvider
         }
         
         let observer = environment.pollObserverBuilder(
-            StreamRuntimeCheck._isBackgroundMappingEnabled,
             self.client.databaseContainer,
             PollDTO.fetchRequest(for: pollId),
             { try $0.asModel() as Poll },
@@ -88,7 +87,6 @@ public class PollController: DataController, DelegateCallable, DataStoreProvider
         let request = PollVoteDTO.pollVoteListFetchRequest(query: self.ownVotesQuery)
 
         let observer = environment.ownVotesObserverBuilder(
-            StreamRuntimeCheck._isBackgroundMappingEnabled,
             self.client.databaseContainer,
             request,
             { try $0.asModel() }
@@ -287,32 +285,28 @@ public struct VotingVisibility: RawRepresentable, Equatable {
 extension PollController {
     struct Environment {
         var pollObserverBuilder: (
-            _ isBackgroundMappingEnabled: Bool,
             _ database: DatabaseContainer,
             _ fetchRequest: NSFetchRequest<PollDTO>,
             _ itemCreator: @escaping (PollDTO) throws -> Poll,
             _ fetchedResultsControllerType: NSFetchedResultsController<PollDTO>.Type
         ) -> EntityDatabaseObserverWrapper<Poll, PollDTO> = {
             EntityDatabaseObserverWrapper(
-                isBackground: $0,
-                database: $1,
-                fetchRequest: $2,
-                itemCreator: $3,
-                fetchedResultsControllerType: $4
+                database: $0,
+                fetchRequest: $1,
+                itemCreator: $2,
+                fetchedResultsControllerType: $3
             )
         }
         
         var ownVotesObserverBuilder: (
-            _ isBackgroundMappingEnabled: Bool,
             _ database: DatabaseContainer,
             _ fetchRequest: NSFetchRequest<PollVoteDTO>,
             _ itemCreator: @escaping (PollVoteDTO) throws -> PollVote
         ) -> ListDatabaseObserverWrapper<PollVote, PollVoteDTO> = {
             ListDatabaseObserverWrapper(
-                isBackground: $0,
-                database: $1,
-                fetchRequest: $2,
-                itemCreator: $3,
+                database: $0,
+                fetchRequest: $1,
+                itemCreator: $2,
                 itemReuseKeyPaths: (\PollVote.id, \PollVoteDTO.id)
             )
         }

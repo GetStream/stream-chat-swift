@@ -1736,7 +1736,6 @@ final class ChannelListController_Tests: XCTestCase {
     }
 
     private func waitForInitialChannelsUpdate(file: StaticString = #file, line: UInt = #line) {
-        guard StreamRuntimeCheck._isBackgroundMappingEnabled else { return }
         waitForChannelsUpdate {}
     }
 

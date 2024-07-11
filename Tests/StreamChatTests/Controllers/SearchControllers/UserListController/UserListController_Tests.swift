@@ -326,7 +326,6 @@ final class UserListController_Tests: XCTestCase {
     // MARK: -
     
     func waitForUsersChange(expectedUserCount: Int) {
-        guard StreamRuntimeCheck._isBackgroundMappingEnabled else { return }
         guard expectedUserCount != controller.users.count else { return }
         
         let delegate = DelegateWaiter(expectedUserCount: expectedUserCount)

@@ -363,7 +363,6 @@ final class PollController_Tests: XCTestCase {
     // MARK: -
     
     func waitForDelegateCallback() {
-        guard StreamRuntimeCheck._isBackgroundMappingEnabled else { return }
         let delegate = DelegateWaiter()
         controller.delegate = delegate
         wait(for: [delegate.didUpdatePollExpectation], timeout: defaultTimeout)

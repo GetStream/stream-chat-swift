@@ -3879,14 +3879,6 @@ final class MessageDTO_Tests: XCTestCase {
     // MARK: Max depth
 
     func test_asModel_onlyFetchesUntilCertainRelationship() throws {
-        let originalIsBackgroundMappingEnabled = StreamRuntimeCheck._isBackgroundMappingEnabled
-        try test_asModel_onlyFetchesUntilCertainRelationship(isBackgroundMappingEnabled: false)
-        try test_asModel_onlyFetchesUntilCertainRelationship(isBackgroundMappingEnabled: true)
-        StreamRuntimeCheck._isBackgroundMappingEnabled = originalIsBackgroundMappingEnabled
-    }
-
-    private func test_asModel_onlyFetchesUntilCertainRelationship(isBackgroundMappingEnabled: Bool) throws {
-        StreamRuntimeCheck._isBackgroundMappingEnabled = isBackgroundMappingEnabled
         let cid = ChannelId.unique
 
         // GIVEN
@@ -3937,12 +3929,8 @@ final class MessageDTO_Tests: XCTestCase {
         XCTAssertEqual(quoted2Message.id, quoted2MessagePayload.id)
 
         let quoted3Message = quoted2Message.quotedMessage
-        if isBackgroundMappingEnabled {
-            // 3rd level of depth is not mapped
-            XCTAssertNil(quoted3Message)
-        } else {
-            XCTAssertEqual(quoted3Message?.id, quoted3MessagePayload.id)
-        }
+        // 3rd level of depth is not mapped
+        XCTAssertNil(quoted3Message)
     }
 
     // MARK: - Helpers:
@@ -4145,7 +4133,6 @@ final class MessageDTO_Tests: XCTestCase {
     // Creates a messages observer (FRC wrapper)
     private func createMessagesFRC(for channelPayload: ChannelPayload) throws -> ListDatabaseObserverWrapper<ChatMessage, MessageDTO> {
         let observer = ListDatabaseObserverWrapper(
-            isBackground: false,
             database: database,
             fetchRequest: MessageDTO.messagesFetchRequest(
                 for: channelPayload.channel.cid,

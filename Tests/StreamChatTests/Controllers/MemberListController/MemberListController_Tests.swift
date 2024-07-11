@@ -457,12 +457,11 @@ private class TestEnvironment {
         },
         memberListObserverBuilder: { [unowned self] in
             self.memberListObserver = .init(
-                isBackground: $0,
-                database: $1,
-                fetchRequest: $2,
-                itemCreator: $3,
+                database: $0,
+                fetchRequest: $1,
+                itemCreator: $2,
                 itemReuseKeyPaths: (\ChatChannelMember.id, \MemberDTO.id),
-                fetchedResultsControllerType: $4
+                fetchedResultsControllerType: $3
             )
             self.memberListObserver?.synchronizeError = self.memberListObserverSynchronizeError
             return self.memberListObserver!

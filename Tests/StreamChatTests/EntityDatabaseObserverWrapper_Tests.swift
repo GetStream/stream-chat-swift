@@ -40,23 +40,13 @@ final class EntityDatabaseObserverWrapper_Tests: XCTestCase {
         super.tearDown()
     }
 
-    func test_initialValues() {
-        test_initialValues(isBackground: false)
-        test_initialValues(isBackground: true)
-    }
-
-    private func test_initialValues(isBackground: Bool) {
-        prepare(isBackground: isBackground)
+    private func test_initialValues() {
+        prepare()
         XCTAssertNil(observer.item)
     }
 
-    func test_observingChanges() throws {
-        try test_observingChanges(isBackground: false)
-        try test_observingChanges(isBackground: true)
-    }
-
-    private func test_observingChanges(isBackground: Bool) throws {
-        prepare(isBackground: isBackground)
+    private func test_observingChanges() throws {
+        prepare()
 
         let testId: String = .unique
         fetchRequest.predicate = NSPredicate(format: "testId == %@", testId)
@@ -105,13 +95,8 @@ final class EntityDatabaseObserverWrapper_Tests: XCTestCase {
         AssertAsync.willBeEqual(observer.item, nil)
     }
 
-    func test_onChange_worksForMultipleListeners() throws {
-        try test_onChange_worksForMultipleListeners(isBackground: false)
-        try test_onChange_worksForMultipleListeners(isBackground: true)
-    }
-
-    private func test_onChange_worksForMultipleListeners(isBackground: Bool) throws {
-        prepare(isBackground: isBackground)
+    private func test_onChange_worksForMultipleListeners() throws {
+        prepare()
         let testItem = TestItem(id: .unique, value: .unique)
         fetchRequest.predicate = NSPredicate(format: "testId == %@", testItem.id)
 
@@ -140,12 +125,7 @@ final class EntityDatabaseObserverWrapper_Tests: XCTestCase {
     }
 
     func test_onFieldChange_forwardsCreateFieldChange() throws {
-        try test_onFieldChange_forwardsCreateFieldChange(isBackground: false)
-        try test_onFieldChange_forwardsCreateFieldChange(isBackground: true)
-    }
-
-    private func test_onFieldChange_forwardsCreateFieldChange(isBackground: Bool) throws {
-        prepare(isBackground: isBackground)
+        prepare()
         let testItem: TestItem = .unique
         fetchRequest.predicate = NSPredicate(format: "testId == %@", testItem.id)
 
@@ -170,12 +150,7 @@ final class EntityDatabaseObserverWrapper_Tests: XCTestCase {
     }
 
     func test_onFieldChange_forwardsUpdateFieldChange() throws {
-        try test_onFieldChange_forwardsUpdateFieldChange(isBackground: false)
-        try test_onFieldChange_forwardsUpdateFieldChange(isBackground: true)
-    }
-
-    private func test_onFieldChange_forwardsUpdateFieldChange(isBackground: Bool) throws {
-        prepare(isBackground: isBackground)
+        prepare()
         var testItem: TestItem = .unique
         fetchRequest.predicate = NSPredicate(format: "testId == %@", testItem.id)
 
@@ -210,12 +185,7 @@ final class EntityDatabaseObserverWrapper_Tests: XCTestCase {
     }
 
     func test_onFieldChange_forwardsRemoveFieldChange() throws {
-        try test_onFieldChange_forwardsRemoveFieldChange(isBackground: false)
-        try test_onFieldChange_forwardsRemoveFieldChange(isBackground: true)
-    }
-
-    private func test_onFieldChange_forwardsRemoveFieldChange(isBackground: Bool) throws {
-        prepare(isBackground: isBackground)
+        prepare()
         let testItem: TestItem = .unique
         fetchRequest.predicate = NSPredicate(format: "testId == %@", testItem.id)
 
@@ -254,8 +224,8 @@ final class EntityDatabaseObserverWrapper_Tests: XCTestCase {
 }
 
 extension EntityDatabaseObserverWrapper_Tests {
-    private func prepare(isBackground: Bool) {
-        observer = .init(isBackground: isBackground, database: database, fetchRequest: fetchRequest, itemCreator: { $0.model }, fetchedResultsControllerType: FRC.self)
+    private func prepare() {
+        observer = .init(database: database, fetchRequest: fetchRequest, itemCreator: { $0.model }, fetchedResultsControllerType: FRC.self)
     }
 
     private func startObservingWaitingForInitialResults(file: StaticString = #file, line: UInt = #line) throws {

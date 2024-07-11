@@ -12,11 +12,6 @@ public enum StreamRuntimeCheck {
 
     /// For *internal use* only
     ///
-    ///  Enables background mapping of DB models
-    public static var _isBackgroundMappingEnabled = true
-
-    /// For *internal use* only
-    ///
     ///  Established the maximum depth of relationships to fetch when performing a mapping
     ///
     ///  Eg.
@@ -29,9 +24,7 @@ public enum StreamRuntimeCheck {
     ///
     ///  Returns true if the maximum depth of relationships to fetch when performing a mapping is not yet met
     static func _canFetchRelationship(currentDepth: Int) -> Bool {
-        guard _isBackgroundMappingEnabled else { return true }
-
-        return currentDepth <= _backgroundMappingRelationshipsMaxDepth
+        currentDepth <= _backgroundMappingRelationshipsMaxDepth
     }
     
     /// For *internal use* only

@@ -2488,8 +2488,6 @@ final class MessageController_Tests: XCTestCase {
     
     func waitForRepliesChange(count: Int, requireDelegateChange: Bool = false) throws {
         let delegate = try XCTUnwrap(controller.delegate as? TestDelegate)
-        guard StreamRuntimeCheck._isBackgroundMappingEnabled else { return }
-        
         guard requireDelegateChange || count != controller.replies.count else { return }
         let expectation = XCTestExpectation(description: "RepliesChange")
         delegate.didChangeRepliesExpectation = expectation
@@ -2557,12 +2555,11 @@ private class TestEnvironment {
             },
             repliesObserverBuilder: { [unowned self] in
                 self.repliesObserver = .init(
-                    isBackground: $0,
-                    database: $1,
-                    fetchRequest: $2,
-                    itemCreator: $3,
+                    database: $0,
+                    fetchRequest: $1,
+                    itemCreator: $2,
                     itemReuseKeyPaths: (\ChatMessage.id, \MessageDTO.id),
-                    fetchedResultsControllerType: $4
+                    fetchedResultsControllerType: $3
                 )
                 return self.repliesObserver!
             },

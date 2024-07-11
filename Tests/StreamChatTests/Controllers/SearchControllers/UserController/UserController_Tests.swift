@@ -700,7 +700,6 @@ final class UserController_Tests: XCTestCase {
     // MARK: -
     
     func waitForUser() {
-        guard StreamRuntimeCheck._isBackgroundMappingEnabled else { return }
         guard controller.user == nil else { return }
         let delegate = DelegateWaiter()
         controller.delegate = delegate
@@ -732,11 +731,10 @@ private class TestEnvironment {
         },
         userObserverBuilder: { [unowned self] in
             self.userObserver = .init(
-                isBackground: $0,
-                database: $1,
-                fetchRequest: $2,
-                itemCreator: $3,
-                fetchedResultsControllerType: $4
+                database: $0,
+                fetchRequest: $1,
+                itemCreator: $2,
+                fetchedResultsControllerType: $3
             )
             self.userObserver?.synchronizeError = self.userObserverSynchronizeError
             return self.userObserver!

@@ -100,7 +100,6 @@ public class ChatChannelWatcherListController: DataController, DelegateCallable,
 
     private func createWatchersObserver() -> ListDatabaseObserverWrapper<ChatUser, UserDTO> {
         let observer = environment.watcherListObserverBuilder(
-            StreamRuntimeCheck._isBackgroundMappingEnabled,
             client.databaseContainer,
             UserDTO.watcherFetchRequest(cid: query.cid),
             { try $0.asModel() as ChatUser },
@@ -145,19 +144,17 @@ extension ChatChannelWatcherListController {
         ) -> ChannelUpdater = ChannelUpdater.init
 
         var watcherListObserverBuilder: (
-            _ isBackgroundMappingEnabled: Bool,
             _ database: DatabaseContainer,
             _ fetchRequest: NSFetchRequest<UserDTO>,
             _ itemCreator: @escaping (UserDTO) throws -> ChatUser,
             _ controllerType: NSFetchedResultsController<UserDTO>.Type
         ) -> ListDatabaseObserverWrapper<ChatUser, UserDTO> = {
             ListDatabaseObserverWrapper(
-                isBackground: $0,
-                database: $1,
-                fetchRequest: $2,
-                itemCreator: $3,
+                database: $0,
+                fetchRequest: $1,
+                itemCreator: $2,
                 itemReuseKeyPaths: (\ChatUser.id, \UserDTO.id),
-                fetchedResultsControllerType: $4
+                fetchedResultsControllerType: $3
             )
         }
     }

@@ -49,7 +49,7 @@ final class ListDatabaseObserverWrapper_Tests: XCTestCase {
     }
 
     func test_whenForeground_canCallWithoutAssertions() throws {
-        prepare(isBackground: false)
+        prepare()
 
         // Simulate startObserving
         try observer.startObserving()
@@ -62,7 +62,7 @@ final class ListDatabaseObserverWrapper_Tests: XCTestCase {
     }
 
     func test_whenBackground_canCallWithoutAssertions() throws {
-        prepare(isBackground: true)
+        prepare()
 
         // Simulate startObserving
         try observer.startObserving()
@@ -77,22 +77,12 @@ final class ListDatabaseObserverWrapper_Tests: XCTestCase {
     // MARK: Feature parity
 
     func test_initialValues() {
-        test_initialValues(isBackground: false)
-        test_initialValues(isBackground: true)
-    }
-
-    func test_initialValues(isBackground: Bool) {
-        prepare(isBackground: isBackground)
+        prepare()
         XCTAssertTrue(observer.items.isEmpty)
     }
 
     func test_itemsArray() throws {
-        try test_itemsArray(isBackground: false)
-        try test_itemsArray(isBackground: true)
-    }
-
-    func test_itemsArray(isBackground: Bool) throws {
-        prepare(isBackground: isBackground)
+        prepare()
         
         // Call startObserving to set everything up
         try startObservingWaitingForInitialResults()
@@ -104,7 +94,7 @@ final class ListDatabaseObserverWrapper_Tests: XCTestCase {
         ]
         frc?.mockedFetchedObjects = reference1
 
-        assertItemsAfterUpdate(reference1.map(\.uniqueValue), isBackground: isBackground)
+        assertItemsAfterUpdate(reference1.map(\.uniqueValue))
 
         // Update the simulated fetch objects
         let reference2 = [TestManagedObject()]
@@ -115,7 +105,7 @@ final class ListDatabaseObserverWrapper_Tests: XCTestCase {
         XCTAssertEqual(Array(observer.items), reference1.map(\.uniqueValue))
 
         // When receiving updates, the values should be updated
-        assertItemsAfterUpdate(reference2.map(\.uniqueValue), isBackground: isBackground)
+        assertItemsAfterUpdate(reference2.map(\.uniqueValue))
     }
 
     func test_startObserving_startsFRC() throws {
@@ -124,7 +114,7 @@ final class ListDatabaseObserverWrapper_Tests: XCTestCase {
     }
 
     func test_startObserving_startsFRC(isBackground: Bool) throws {
-        prepare(isBackground: isBackground)
+        prepare()
         let frc = try XCTUnwrap(frc)
         XCTAssertFalse(frc.performFetchCalled)
         try observer.startObserving()
@@ -132,15 +122,9 @@ final class ListDatabaseObserverWrapper_Tests: XCTestCase {
     }
 
     func test_updateStillReported_whenSamePropertyAssigned() throws {
-        try test_updateStillReported_whenSamePropertyAssigned(isBackground: false)
-        try test_updateStillReported_whenSamePropertyAssigned(isBackground: true)
-    }
-
-    func test_updateStillReported_whenSamePropertyAssigned(isBackground: Bool) throws {
         // For this test, we need an actual NSFetchedResultsController, not the test one
         setUp()
         observer = ListDatabaseObserverWrapper<String, TestManagedObject>(
-            isBackground: isBackground,
             database: database,
             fetchRequest: fetchRequest,
             itemCreator: { $0.testId },
@@ -150,7 +134,7 @@ final class ListDatabaseObserverWrapper_Tests: XCTestCase {
         // Call startObserving to set everything up
         try startObservingWaitingForInitialResults()
 
-        let firstExpectation = expectation(description: "onDidChange1_\(isBackground ? "B" : "F")")
+        let firstExpectation = expectation(description: "onDidChange1_B")
         var receivedChanges: [ListChange<String>] = []
         observer.onDidChange = {
             receivedChanges.append(contentsOf: $0)
@@ -170,7 +154,7 @@ final class ListDatabaseObserverWrapper_Tests: XCTestCase {
 
         waitForExpectations(timeout: defaultTimeout)
 
-        let secondExpectation = expectation(description: "onDidChange2_\(isBackground ? "B" : "F")")
+        let secondExpectation = expectation(description: "onDidChange2_B")
         observer.onDidChange = {
             receivedChanges.append(contentsOf: $0)
             secondExpectation.fulfill()
@@ -191,9 +175,8 @@ final class ListDatabaseObserverWrapper_Tests: XCTestCase {
 }
 
 extension ListDatabaseObserverWrapper_Tests {
-    private func prepare(isBackground: Bool) {
+    private func prepare() {
         observer = ListDatabaseObserverWrapper(
-            isBackground: isBackground,
             database: database,
             fetchRequest: fetchRequest,
             itemCreator: { $0.uniqueValue },
@@ -206,13 +189,8 @@ extension ListDatabaseObserverWrapper_Tests {
         try observer.startObservingAndWaitForInitialUpdate(on: self, file: file, line: line)
     }
 
-    private func assertItemsAfterUpdate(_ items: [String], isBackground: Bool, file: StaticString = #file, line: UInt = #line) {
+    private func assertItemsAfterUpdate(_ items: [String], file: StaticString = #file, line: UInt = #line) {
         let sutItems: [String] = {
-            guard isBackground else {
-                changeAggregator?.onDidChange?([])
-                return Array(observer.items)
-            }
-
             let expectation = self.expectation(description: "Get items")
             observer.onDidChange = { _ in
                 expectation.fulfill()

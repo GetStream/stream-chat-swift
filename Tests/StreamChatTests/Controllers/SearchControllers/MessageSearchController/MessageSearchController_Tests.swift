@@ -686,7 +686,6 @@ final class MessageSearchController_Tests: XCTestCase {
     // MARK: -
     
     func waitForMessages(count: Int) throws {
-        guard StreamRuntimeCheck._isBackgroundMappingEnabled else { return }
         let delegate = try XCTUnwrap(controller.delegate as? MessageSearchController_Delegate)
         guard controller.messages.count != count else { return }
         let expectation = XCTestExpectation(description: "Messages change")

@@ -97,7 +97,6 @@ public class ChatChannelMemberListController: DataController, DelegateCallable, 
 
     private func createMemberListObserver() -> ListDatabaseObserverWrapper<ChatChannelMember, MemberDTO> {
         let observer = environment.memberListObserverBuilder(
-            false,
             client.databaseContainer,
             MemberDTO.members(matching: query),
             { try $0.asModel() },
@@ -162,19 +161,17 @@ extension ChatChannelMemberListController {
         ) -> ChannelMemberListUpdater = ChannelMemberListUpdater.init
 
         var memberListObserverBuilder: (
-            _ isBackgroundMappingEnabled: Bool,
             _ database: DatabaseContainer,
             _ fetchRequest: NSFetchRequest<MemberDTO>,
             _ itemCreator: @escaping (MemberDTO) throws -> ChatChannelMember,
             _ controllerType: NSFetchedResultsController<MemberDTO>.Type
         ) -> ListDatabaseObserverWrapper<ChatChannelMember, MemberDTO> = {
             .init(
-                isBackground: $0,
-                database: $1,
-                fetchRequest: $2,
-                itemCreator: $3,
+                database: $0,
+                fetchRequest: $1,
+                itemCreator: $2,
                 itemReuseKeyPaths: (\ChatChannelMember.id, \MemberDTO.id),
-                fetchedResultsControllerType: $4
+                fetchedResultsControllerType: $3
             )
         }
     }

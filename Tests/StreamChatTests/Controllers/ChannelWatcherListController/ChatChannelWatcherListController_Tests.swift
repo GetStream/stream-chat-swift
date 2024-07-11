@@ -491,12 +491,11 @@ private class TestEnvironment {
         },
         watcherListObserverBuilder: { [unowned self] in
             self.watcherListObserver = .init(
-                isBackground: $0,
-                database: $1,
-                fetchRequest: $2,
-                itemCreator: $3,
+                database: $0,
+                fetchRequest: $1,
+                itemCreator: $2,
                 itemReuseKeyPaths: (\ChatUser.id, \UserDTO.id),
-                fetchedResultsControllerType: $4
+                fetchedResultsControllerType: $3
             )
             self.watcherListObserver?.synchronizeError = self.watcherListObserverSynchronizeError
             return self.watcherListObserver!

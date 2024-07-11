@@ -76,65 +76,33 @@ extension EntityChange {
 }
 
 class EntityDatabaseObserverWrapper<Item, DTO: NSManagedObject> {
-    private var foreground: EntityDatabaseObserver<Item, DTO>?
-    private var background: BackgroundEntityDatabaseObserver<Item, DTO>?
-    let isBackground: Bool
+    private let background: BackgroundEntityDatabaseObserver<Item, DTO>
 
     var item: Item? {
-        if isBackground, let background = background {
-            return background.item
-        } else if let foreground = foreground {
-            return foreground.item
-        } else {
-            log.assertionFailure("Should have foreground or background observer")
-            return nil
-        }
+        background.item
     }
 
     init(
-        isBackground: Bool,
         database: DatabaseContainer,
         fetchRequest: NSFetchRequest<DTO>,
         itemCreator: @escaping (DTO) throws -> Item,
         fetchedResultsControllerType: NSFetchedResultsController<DTO>.Type = NSFetchedResultsController<DTO>.self
     ) {
-        self.isBackground = isBackground
-        if isBackground {
-            background = BackgroundEntityDatabaseObserver(
-                context: database.backgroundReadOnlyContext,
-                fetchRequest: fetchRequest,
-                itemCreator: itemCreator,
-                fetchedResultsControllerType: fetchedResultsControllerType
-            )
-        } else {
-            foreground = EntityDatabaseObserver(
-                context: database.viewContext,
-                fetchRequest: fetchRequest,
-                itemCreator: itemCreator,
-                fetchedResultsControllerType: fetchedResultsControllerType
-            )
-        }
+        background = BackgroundEntityDatabaseObserver(
+            context: database.backgroundReadOnlyContext,
+            fetchRequest: fetchRequest,
+            itemCreator: itemCreator,
+            fetchedResultsControllerType: fetchedResultsControllerType
+        )
     }
 
     func startObserving() throws {
-        if isBackground, let background = background {
-            try background.startObserving()
-        } else if let foreground = foreground {
-            try foreground.startObserving()
-        } else {
-            log.assertionFailure("Should have foreground or background observer")
-        }
+        try background.startObserving()
     }
 
     @discardableResult
     func onChange(do listener: @escaping (EntityChange<Item>) -> Void) -> EntityDatabaseObserverWrapper {
-        if isBackground, let background = background {
-            background.onChange(do: listener)
-        } else if let foreground = foreground {
-            foreground.onChange(do: listener)
-        } else {
-            log.assertionFailure("Should have foreground or background observer")
-        }
+        background.onChange(do: listener)
         return self
     }
 
@@ -143,13 +111,7 @@ class EntityDatabaseObserverWrapper<Item, DTO: NSManagedObject> {
         _ keyPath: KeyPath<Item, Value>,
         do listener: @escaping (EntityChange<Value>) -> Void
     ) -> EntityDatabaseObserverWrapper {
-        if isBackground, let background = background {
-            background.onFieldChange(keyPath, do: listener)
-        } else if let foreground = foreground {
-            foreground.onFieldChange(keyPath, do: listener)
-        } else {
-            log.assertionFailure("Should have foreground or background observer")
-        }
+        background.onFieldChange(keyPath, do: listener)
         return self
     }
 }

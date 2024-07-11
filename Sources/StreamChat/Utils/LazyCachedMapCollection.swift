@@ -58,15 +58,7 @@ public struct LazyCachedMapCollection<Element>: RandomAccessCollection {
             return element
         }
 
-        /// This is just an internal test to see how we behave when the DB models are immediately mapped instead of being lazily mapped
-        if !StreamRuntimeCheck._isBackgroundMappingEnabled {
-            cache = .init(capacity: source.count)
-        } else {
-            if Thread.isMainThread {
-                log.debug("This should not be happening on the Main Thread")
-            }
-            cache = .init(elements: source.map(map))
-        }
+        cache = .init(elements: source.map(map))
     }
 
     internal var generator: (Index) -> Element

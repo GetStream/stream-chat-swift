@@ -809,19 +809,17 @@ extension ChatMessageController {
         ) -> EntityDatabaseObserver<ChatMessage, MessageDTO> = EntityDatabaseObserver.init
 
         var repliesObserverBuilder: (
-            _ isBackgroundMappingEnabled: Bool,
             _ database: DatabaseContainer,
             _ fetchRequest: NSFetchRequest<MessageDTO>,
             _ itemCreator: @escaping (MessageDTO) throws -> ChatMessage,
             _ fetchedResultsControllerType: NSFetchedResultsController<MessageDTO>.Type
         ) -> ListDatabaseObserverWrapper<ChatMessage, MessageDTO> = {
             .init(
-                isBackground: $0,
-                database: $1,
-                fetchRequest: $2,
-                itemCreator: $3,
+                database: $0,
+                fetchRequest: $1,
+                itemCreator: $2,
                 itemReuseKeyPaths: (\ChatMessage.id, \MessageDTO.id),
-                fetchedResultsControllerType: $4
+                fetchedResultsControllerType: $3
             )
         }
 
@@ -856,7 +854,6 @@ private extension ChatMessageController {
 
         let pageSize: Int = repliesPageSize
         let observer = environment.repliesObserverBuilder(
-            StreamRuntimeCheck._isBackgroundMappingEnabled,
             client.databaseContainer,
             MessageDTO.repliesFetchRequest(
                 for: messageId,

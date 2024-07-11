@@ -89,7 +89,6 @@ public class ChatMessageSearchController: DataController, DelegateCallable, Data
 
     private func setMessagesObserver() {
         let observer = ListDatabaseObserverWrapper(
-            isBackground: StreamRuntimeCheck._isBackgroundMappingEnabled,
             database: client.databaseContainer,
             fetchRequest: MessageDTO.messagesFetchRequest(
                 for: lastQuery ?? query

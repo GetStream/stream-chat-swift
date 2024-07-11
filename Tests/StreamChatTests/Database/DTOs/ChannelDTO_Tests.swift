@@ -1418,14 +1418,6 @@ final class ChannelDTO_Tests: XCTestCase {
     // MARK: Max depth
 
     func test_asModel_onlyFetchesUntilCertainRelationship() throws {
-        let originalIsBackgroundMappingEnabled = StreamRuntimeCheck._isBackgroundMappingEnabled
-        try test_asModel_onlyFetchesUntilCertainRelationship(isBackgroundMappingEnabled: false)
-        try test_asModel_onlyFetchesUntilCertainRelationship(isBackgroundMappingEnabled: true)
-        StreamRuntimeCheck._isBackgroundMappingEnabled = originalIsBackgroundMappingEnabled
-    }
-
-    private func test_asModel_onlyFetchesUntilCertainRelationship(isBackgroundMappingEnabled: Bool) throws {
-        StreamRuntimeCheck._isBackgroundMappingEnabled = isBackgroundMappingEnabled
         let cid = ChannelId.unique
 
         // GIVEN
@@ -1470,12 +1462,8 @@ final class ChannelDTO_Tests: XCTestCase {
         XCTAssertEqual(quoted2Message.id, quoted2MessagePayload.id)
 
         let quoted3Message = quoted2Message.quotedMessage
-        if isBackgroundMappingEnabled {
-            // 3rd level of depth is not mapped
-            XCTAssertNil(quoted3Message)
-        } else {
-            XCTAssertEqual(quoted3Message?.id, quoted3MessagePayload.id)
-        }
+        // 3rd level of depth is not mapped
+        XCTAssertNil(quoted3Message)
     }
 }
 

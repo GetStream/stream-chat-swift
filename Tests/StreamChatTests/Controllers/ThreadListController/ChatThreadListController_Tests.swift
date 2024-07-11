@@ -216,9 +216,8 @@ extension ChatThreadListController_Tests {
                 threadsRepositoryBuilder: { _, _ in
                     self.repositoryMock
                 },
-                createThreadListDatabaseObserver: { _, database, fetchRequest, itemCreator in
-                    observer ?? .init(
-                        isBackground: false,
+                createThreadListDatabaseObserver: { database, fetchRequest, itemCreator in
+                    observer ?? ListDatabaseObserverWrapper(
                         database: database,
                         fetchRequest: fetchRequest,
                         itemCreator: itemCreator,

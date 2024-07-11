@@ -1492,7 +1492,6 @@ private extension ChatChannelController {
             }
 
             let observer = EntityDatabaseObserverWrapper(
-                isBackground: StreamRuntimeCheck._isBackgroundMappingEnabled,
                 database: self.client.databaseContainer,
                 fetchRequest: ChannelDTO.fetchRequest(for: cid),
                 itemCreator: { try $0.asModel() as ChatChannel }
@@ -1540,7 +1539,6 @@ private extension ChatChannelController {
 
             let pageSize = channelQuery.pagination?.pageSize ?? .messagesPageSize
             let observer = ListDatabaseObserverWrapper(
-                isBackground: StreamRuntimeCheck._isBackgroundMappingEnabled,
                 database: client.databaseContainer,
                 fetchRequest: MessageDTO.messagesFetchRequest(
                     for: cid,
