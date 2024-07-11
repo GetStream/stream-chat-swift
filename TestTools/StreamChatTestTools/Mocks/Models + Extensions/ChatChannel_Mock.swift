@@ -87,6 +87,7 @@ public extension ChatChannel {
         cooldownDuration: Int = 0,
         extraData: [String: RawJSON] = [:],
         latestMessages: [ChatMessage] = [],
+        pinnedMessages: [ChatMessage] = [],
         muteDetails: MuteDetails? = nil,
         previewMessage: ChatMessage? = nil
     ) -> Self {
@@ -103,20 +104,21 @@ public extension ChatChannel {
             config: config,
             ownCapabilities: ownCapabilities,
             isFrozen: isFrozen,
-            lastActiveMembers: { lastActiveMembers },
+            lastActiveMembers: lastActiveMembers,
             membership: membership,
-            currentlyTypingUsers: { currentlyTypingUsers },
-            lastActiveWatchers: { lastActiveWatchers },
-            unreadCount: { unreadCount },
+            currentlyTypingUsers: currentlyTypingUsers,
+            lastActiveWatchers: lastActiveWatchers,
+            unreadCount: unreadCount,
             watcherCount: watcherCount,
             memberCount: memberCount,
             reads: reads,
             cooldownDuration: cooldownDuration,
             extraData: extraData,
-            latestMessages: { latestMessages },
-            muteDetails: { muteDetails },
-            previewMessage: { previewMessage },
-            underlyingContext: nil
+            latestMessages: latestMessages,
+            lastMessageFromCurrentUser: nil,
+            pinnedMessages: pinnedMessages,
+            muteDetails: muteDetails,
+            previewMessage: previewMessage
         )
     }
 
@@ -157,19 +159,19 @@ public extension ChatChannel {
             createdBy: createdBy,
             config: config,
             isFrozen: isFrozen,
-            lastActiveMembers: { lastActiveMembers },
-            currentlyTypingUsers: { currentlyTypingUsers },
-            lastActiveWatchers: { lastActiveWatchers },
-            unreadCount: { unreadCount },
+            lastActiveMembers: lastActiveMembers,
+            currentlyTypingUsers: currentlyTypingUsers,
+            lastActiveWatchers: lastActiveWatchers,
+            unreadCount: unreadCount,
             watcherCount: watcherCount,
             memberCount: memberCount ?? lastActiveMembers.count,
             reads: reads,
             extraData: extraData,
-            latestMessages: { latestMessages },
-            pinnedMessages: { pinnedMessages },
-            muteDetails: { muteDetails },
-            previewMessage: { previewMessage },
-            underlyingContext: nil
+            latestMessages: latestMessages,
+            lastMessageFromCurrentUser: nil, 
+            pinnedMessages: pinnedMessages,
+            muteDetails: muteDetails,
+            previewMessage: previewMessage
         )
     }
 
@@ -194,6 +196,7 @@ public extension ChatChannel {
         reads: [ChatChannelRead] = [],
         extraData: [String: RawJSON] = [:],
         latestMessages: [ChatMessage] = [],
+        pinnedMessages: [ChatMessage] = [],
         muteDetails: MuteDetails? = nil,
         previewMessage: ChatMessage? = nil
     ) -> Self {
@@ -209,18 +212,19 @@ public extension ChatChannel {
             createdBy: createdBy,
             config: config,
             isFrozen: isFrozen,
-            lastActiveMembers: { lastActiveMembers },
-            currentlyTypingUsers: { currentlyTypingUsers },
-            lastActiveWatchers: { lastActiveWatchers },
-            unreadCount: { unreadCount },
+            lastActiveMembers: lastActiveMembers,
+            currentlyTypingUsers: currentlyTypingUsers,
+            lastActiveWatchers: lastActiveWatchers,
+            unreadCount: unreadCount,
             watcherCount: watcherCount,
             memberCount: memberCount,
             reads: reads,
             extraData: extraData,
-            latestMessages: { latestMessages },
-            muteDetails: { muteDetails },
-            previewMessage: { previewMessage },
-            underlyingContext: nil
+            latestMessages: latestMessages,
+            lastMessageFromCurrentUser: nil,
+            pinnedMessages: pinnedMessages,
+            muteDetails: muteDetails,
+            previewMessage: previewMessage
         )
     }
 }

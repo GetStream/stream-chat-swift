@@ -12,9 +12,6 @@ class EventNotificationCenter: NotificationCenter {
     /// The database used when evaluating middlewares.
     let database: DatabaseContainer
 
-    // We post events on a queue different from database.writable context
-    // queue to prevent a deadlock happening when @CoreDataLazy (with `context.performAndWait` inside)
-    // model is accessed in event handlers.
     var eventPostingQueue = DispatchQueue(label: "io.getstream.event-notification-center")
 
     // Contains the ids of the new messages that are going to be added during the ongoing process
