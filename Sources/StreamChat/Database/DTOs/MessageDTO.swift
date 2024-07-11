@@ -1309,72 +1309,43 @@ private extension ChatMessage {
 
         if let currentUser = context.currentUser {
             isSentByCurrentUser = currentUser.user.id == dto.user.id
-            $_currentUserReactions = ({
-                Set(
-                    MessageReactionDTO
-                        .loadReactions(ids: dto.ownReactions, context: context)
-                        .compactMap { try? $0.asModel() }
-                )
-            }, dto.managedObjectContext)
-            $_currentUserReactionsCount = ({ dto.ownReactions.count }, dto.managedObjectContext)
-        } else {
-            isSentByCurrentUser = false
-            $_currentUserReactions = ({ [] }, nil)
-            $_currentUserReactionsCount = ({ 0 }, nil)
-        }
-
-        $_latestReactions = ({
-            Set(
+            currentUserReactions = Set(
                 MessageReactionDTO
-                    .loadReactions(ids: dto.latestReactions, context: context)
+                    .loadReactions(ids: dto.ownReactions, context: context)
                     .compactMap { try? $0.asModel() }
             )
-        }, dto.managedObjectContext)
-
-        $_threadParticipantsCount = ({ dto.threadParticipants.count }, dto.managedObjectContext)
-        if dto.threadParticipants.array.isEmpty {
-            $_threadParticipants = ({ [] }, nil)
         } else {
-            $_threadParticipants = (
-                {
-                    let threadParticipants = dto.threadParticipants.array as? [UserDTO] ?? []
-                    return threadParticipants.compactMap { try? $0.asModel() }
-                },
-                dto.managedObjectContext
-            )
+            isSentByCurrentUser = false
+            currentUserReactions = []
         }
 
-        $_mentionedUsers = ({
-            guard dto.isValid else { return [] }
-            return Set(dto.mentionedUsers.compactMap { try? $0.asModel() })
-        }, dto.managedObjectContext)
+        latestReactions = Set(
+            MessageReactionDTO
+                .loadReactions(ids: dto.latestReactions, context: context)
+                .compactMap { try? $0.asModel() }
+        )
 
-        let user = try dto.user.asModel()
-        $_author = ({ user }, nil)
-        $_attachments = ({
-            dto.attachments
-                .compactMap { $0.asAnyModel() }
-                .sorted { $0.id.index < $1.id.index }
-        }, dto.managedObjectContext)
+        threadParticipants = dto.threadParticipants.array
+            .compactMap { $0 as? UserDTO }
+            .compactMap { try? $0.asModel() }
 
-        if dto.replies.isEmpty {
-            $_latestReplies = ({ [] }, nil)
-        } else {
-            $_latestReplies = ({
-                MessageDTO
-                    .loadReplies(for: dto.id, limit: 5, context: context)
-                    .compactMap { try? ChatMessage(fromDTO: $0, depth: depth) }
-            }, dto.managedObjectContext)
-        }
+        mentionedUsers = Set(dto.mentionedUsers.compactMap { try? $0.asModel() })
 
-        $_quotedMessage = ({ try? dto.quotedMessage?.relationshipAsModel(depth: depth) }, dto.managedObjectContext)
+        author = try dto.user.asModel()
+        _attachments = dto.attachments
+            .compactMap { $0.asAnyModel() }
+            .sorted { $0.id.index < $1.id.index }
 
-        let readBy = {
-            Set(dto.reads.compactMap { try? $0.user.asModel() })
-        }
+        latestReplies = {
+            guard !dto.replies.isEmpty else { return [] }
+            return MessageDTO.loadReplies(for: dto.id, limit: 5, context: context)
+                .compactMap { try? ChatMessage(fromDTO: $0, depth: depth) }
+        }()
 
-        $_readBy = (readBy, dto.managedObjectContext)
-        $_readByCount = ({ dto.reads.count }, dto.managedObjectContext)
+        let message = try? dto.quotedMessage?.relationshipAsModel(depth: depth)
+        _quotedMessage = { message }
+
+        readBy = Set(dto.reads.compactMap { try? $0.user.asModel() })
     }
 }
 
