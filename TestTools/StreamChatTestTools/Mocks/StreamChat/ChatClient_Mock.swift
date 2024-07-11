@@ -230,7 +230,7 @@ extension ChatClient.Environment {
             },
             databaseContainerBuilder: {
                 DatabaseContainer_Spy(
-                    kind: .onDisk(databaseFileURL: .newTemporaryFileURL()),
+                    kind: .inMemory,
                     shouldFlushOnStart: $1,
                     shouldResetEphemeralValuesOnStart: $2,
                     localCachingSettings: $3,
