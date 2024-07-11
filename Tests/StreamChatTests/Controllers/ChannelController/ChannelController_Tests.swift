@@ -5323,7 +5323,12 @@ final class ChannelController_Tests: XCTestCase {
             let dto = try XCTUnwrap(session.channel(cid: self.channelId))
             XCTAssertEqual(dto.messages.count, messages.count)
         }
-
+        
+        let deinitWriteExpectation = XCTestExpectation(description: "Deinit")
+        client.mockDatabaseContainer.didWrite = {
+            deinitWriteExpectation.fulfill()
+        }
+        
         // WHEN
         env.channelUpdater?.mockPaginationState.hasLoadedAllNextMessages = false
 
@@ -5331,9 +5336,11 @@ final class ChannelController_Tests: XCTestCase {
         env.channelUpdater?.cleanUp()
         controller = nil
         
+        wait(for: [deinitWriteExpectation], timeout: defaultTimeout)
+        
         try client.mockDatabaseContainer.readSynchronously { session in
             let dto = try XCTUnwrap(session.channel(cid: self.channelId))
-            AssertAsync.willBeEqual(0, dto.messages.count)
+            XCTAssertEqual(0, dto.messages.count)
         }
     }
 
