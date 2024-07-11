@@ -56,7 +56,7 @@ extension NSManagedObjectContext: MemberListQueryDatabaseSession {
 
         var jsonData: Data?
         do {
-            jsonData = try JSONEncoder.default.encode(query.filter)
+            jsonData = query.filter == nil ? nil : try JSONEncoder.default.encode(query.filter)
         } catch {
             log.error("Failed encoding query Filter data with error: \(error). Using 'none' filter instead.")
         }
