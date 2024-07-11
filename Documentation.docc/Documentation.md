@@ -11,7 +11,7 @@ This is the official iOS SDK for [Stream Chat](https://getstream.io/chat/sdk/ios
 - **`SwiftUI` support:** We have developed a brand new SDK to help you have smoother Stream Chat integration in your SwiftUI apps.
 - **First-class support for `Combine`**: The StreamChat SDK (Low Level Client) has Combine wrappers to make it really easy use in an app that uses `Combine`.
 - **Fully open-source implementation:** You have access to the complete source code of the SDK here on GitHub.
-- **Supports iOS 12+:** We proudly support older versions of iOS, so your app can stay available to almost everyone.
+- **Supports iOS 13+:** We proudly support older versions of iOS, so your app can stay available to almost everyone.
 
 ## Quick Links
 
