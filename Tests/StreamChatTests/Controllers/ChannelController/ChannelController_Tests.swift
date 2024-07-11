@@ -5366,7 +5366,7 @@ final class ChannelController_Tests: XCTestCase {
         controller = nil
         try client.mockDatabaseContainer.readSynchronously { session in
             let dto = try XCTUnwrap(session.channel(cid: self.channelId))
-            AssertAsync.willBeEqual(4, dto.messages.count)
+            XCTAssertEqual(4, dto.messages.count)
         }
     }
 }
