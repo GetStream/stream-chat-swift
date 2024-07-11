@@ -3,7 +3,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 # Upcoming
 
+## StreamChat
 ### 🔄 Changed
+- Increase QoS for `Throttler` and `Debouncer` to `utility` [#3295](https://github.com/GetStream/stream-chat-swift/issues/3295)
 
 # [4.59.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.59.0)
 _July 10, 2024_
