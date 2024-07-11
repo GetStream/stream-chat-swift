@@ -12,6 +12,9 @@ final class BannerShowingConnectionDelegate {
     private let bannerView = DemoConnectionBannerView()
     private let bannerAppearanceDuration: TimeInterval = 0.5
 
+    // Do not show connection banner on first connect.
+    private var shouldShowConnectionBanner = false
+
     // MARK: -
 
     init(showUnder view: UIView) {
@@ -32,8 +35,13 @@ extension BannerShowingConnectionDelegate: ChatConnectionControllerDelegate {
             hideBanner()
         case .disconnecting:
             bannerView.update(text: "Disconnecting...")
+            showBanner()
         case .connecting:
             bannerView.update(text: "Connecting...")
+            if shouldShowConnectionBanner {
+                showBanner()
+            }
+            shouldShowConnectionBanner = true
         case .initialized:
             break
         }
