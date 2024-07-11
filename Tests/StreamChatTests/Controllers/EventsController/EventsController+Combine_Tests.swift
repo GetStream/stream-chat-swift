@@ -7,7 +7,6 @@ import Combine
 @testable import StreamChatTestTools
 import XCTest
 
-@available(iOS 13, *)
 final class EventsController_Combine_Tests: iOS13TestCase {
     var controller: EventsController!
     var notificationCenter: EventNotificationCenter!

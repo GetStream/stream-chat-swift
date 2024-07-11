@@ -10,8 +10,8 @@ Pod::Spec.new do |spec|
   spec.social_media_url = "https://getstream.io"
 
   spec.swift_version = '5.6'
-  spec.ios.deployment_target  = '12.0'
-  spec.osx.deployment_target  = '10.15'
+  spec.ios.deployment_target  = '13.0'
+  spec.osx.deployment_target  = '11.0'
   spec.requires_arc = true
 
   spec.framework = "Foundation"
@@ -19,6 +19,6 @@ Pod::Spec.new do |spec|
 
   spec.module_name = "StreamChat"
   spec.source = { :git => "https://github.com/GetStream/stream-chat-swift.git", :tag => "#{spec.version}" }
-  spec.source_files  = ["Sources/StreamChat/**/*.swift", "Sources/StreamStarscream/**/*.swift"]
+  spec.source_files  = ["Sources/StreamChat/**/*.swift"]
   spec.resource_bundles = { "StreamChat" => ["Sources/StreamChat/**/*.xcdatamodeld"] }
 end

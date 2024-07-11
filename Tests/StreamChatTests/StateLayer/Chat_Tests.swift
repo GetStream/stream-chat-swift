@@ -6,7 +6,6 @@
 @testable import StreamChatTestTools
 import XCTest
 
-@available(iOS 13.0, *)
 final class Chat_Tests: XCTestCase {
     private var env: TestEnvironment!
     private var chat: Chat!
@@ -1593,7 +1592,6 @@ final class Chat_Tests: XCTestCase {
     }
 }
 
-@available(iOS 13.0, *)
 extension Chat_Tests {
     final class TestEnvironment {
         let client: ChatClient_Mock

@@ -3,7 +3,6 @@ title: SwiftUIViewRepresentable
 ---
 
 ``` swift
-@available(iOS 13.0, *)
 /// A concrete type that wraps a view conforming to `SwiftUIRepresentable` and enables using it in SwiftUI via `UIViewRepresentable`
 public struct SwiftUIViewRepresentable<View: UIView & SwiftUIRepresentable>: UIViewRepresentable 
 ```

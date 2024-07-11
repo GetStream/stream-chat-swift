@@ -8,7 +8,6 @@ import CoreData
 @testable import StreamChatTestTools
 import XCTest
 
-@available(iOS 13, *)
 final class PollVoteListController_Combine_Tests: iOS13TestCase {
     var voteListController: PollVoteListController!
     var cancellables: Set<AnyCancellable>!

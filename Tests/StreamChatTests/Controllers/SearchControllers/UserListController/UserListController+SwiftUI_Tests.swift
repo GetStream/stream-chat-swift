@@ -6,7 +6,6 @@
 @testable import StreamChatTestTools
 import XCTest
 
-@available(iOS 13, *)
 final class UserListController_SwiftUI_Tests: iOS13TestCase {
     var userListController: UserListControllerMock!
 

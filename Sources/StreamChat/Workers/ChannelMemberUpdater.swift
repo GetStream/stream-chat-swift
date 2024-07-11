@@ -45,7 +45,6 @@ class ChannelMemberUpdater: Worker {
     }
 }
 
-@available(iOS 13.0, *)
 extension ChannelMemberUpdater {
     func banMember(
         _ userId: UserId,

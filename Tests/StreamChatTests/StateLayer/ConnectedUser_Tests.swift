@@ -6,7 +6,6 @@
 @testable import StreamChatTestTools
 import XCTest
 
-@available(iOS 13.0, *)
 final class ConnectedUser_Tests: XCTestCase {
     private var connectedUser: ConnectedUser!
     private var connectedUserId: UserId!
@@ -190,7 +189,6 @@ final class ConnectedUser_Tests: XCTestCase {
     }
 }
 
-@available(iOS 13.0, *)
 extension ConnectedUser_Tests {
     final class TestEnvironment {
         let client: ChatClient_Mock

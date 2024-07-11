@@ -6,7 +6,6 @@ import Combine
 import Foundation
 
 /// An object which represents a `ChatChannel`.
-@available(iOS 13.0, *)
 public class Chat {
     private let channelUpdater: ChannelUpdater
     private let client: ChatClient
@@ -1314,7 +1313,6 @@ public class Chat {
 
 // MARK: - Internal
 
-@available(iOS 13.0, *)
 extension Chat {
     @MainActor var cid: ChannelId {
         get throws {
@@ -1362,7 +1360,6 @@ extension Chat {
 
 // MARK: - Environment
 
-@available(iOS 13.0, *)
 extension Chat {
     struct Environment {
         var chatStateBuilder: @MainActor(

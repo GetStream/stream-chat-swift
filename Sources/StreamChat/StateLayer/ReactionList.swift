@@ -5,7 +5,6 @@
 import Foundation
 
 /// An object which represents a list of `ChatMessageReaction` for the specified query.
-@available(iOS 13.0, *)
 public final class ReactionList {
     private let query: ReactionListQuery
     private let reactionListUpdater: ReactionListUpdater
@@ -68,7 +67,6 @@ public final class ReactionList {
     }
 }
 
-@available(iOS 13.0, *)
 extension ReactionList {
     struct Environment {
         var reactionListUpdaterBuilder: (

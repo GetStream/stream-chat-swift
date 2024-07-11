@@ -9,7 +9,6 @@ import StreamSwiftTestHelpers
 import SwiftUI
 import XCTest
 
-@available(iOS 13.0, *)
 final class ChatThreadView_Tests: iOS13TestCase {
     var chatThreadView: SwiftUIViewControllerRepresentable<ChatThreadVC>!
 

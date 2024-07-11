@@ -67,7 +67,6 @@ enum UpdatePolicy {
     case replace
 }
 
-@available(iOS 13.0, *)
 extension UserListUpdater {
     @discardableResult func update(
         userListQuery: UserListQuery,

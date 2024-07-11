@@ -873,7 +873,6 @@ private extension DatabaseSession {
     }
 }
 
-@available(iOS 13.0, *)
 extension MessageUpdater {
     func addReaction(
         _ type: MessageReactionType,

@@ -22,7 +22,6 @@ final class CommandLabelView_Tests: XCTestCase {
     }
 }
 
-@available(iOS 13, *)
 final class CommandLabelView_SwiftUI_Tests: iOS13TestCase {
     func test_defaultAppearance_SwiftUI() {
         let view = CommandLabelView.asView(

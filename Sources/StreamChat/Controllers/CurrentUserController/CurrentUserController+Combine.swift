@@ -5,7 +5,6 @@
 import Combine
 import Foundation
 
-@available(iOS 13, *)
 extension CurrentChatUserController {
     /// A publisher emitting a new value every time the current user changes.
     public var currentUserChangePublisher: AnyPublisher<EntityChange<CurrentChatUser>, Never> {
@@ -39,7 +38,6 @@ extension CurrentChatUserController {
     }
 }
 
-@available(iOS 13, *)
 extension CurrentChatUserController.BasePublishers: CurrentChatUserControllerDelegate {
     func currentUserController(
         _ controller: CurrentChatUserController,

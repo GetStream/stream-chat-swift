@@ -13,7 +13,6 @@ public protocol SwiftUIRepresentable: AnyObject {
     var content: ViewContent { get set }
 }
 
-@available(iOS 13.0, *)
 public extension SwiftUIRepresentable where Self: UIView {
     /// Creates `SwiftUIViewRepresentable` instance wrapping the current type that can be used in your SwiftUI view
     /// - Parameters:
@@ -26,7 +25,6 @@ public extension SwiftUIRepresentable where Self: UIView {
     }
 }
 
-@available(iOS 13.0, *)
 public extension SwiftUIRepresentable where Self: UIViewController {
     /// Creates `SwiftUIViewControllerRepresentable` instance wrapping the current type that can be used in your SwiftUI view
     /// - Parameters:
@@ -39,7 +37,6 @@ public extension SwiftUIRepresentable where Self: UIViewController {
     }
 }
 
-@available(iOS 13.0, *)
 /// A concrete type that wraps a view conforming to `SwiftUIRepresentable` and enables using it in SwiftUI via `UIViewRepresentable`
 public struct SwiftUIViewRepresentable<View: UIView & SwiftUIRepresentable>: UIViewRepresentable {
     private let view: View.Type
@@ -62,7 +59,6 @@ public struct SwiftUIViewRepresentable<View: UIView & SwiftUIRepresentable>: UIV
     }
 }
 
-@available(iOS 13.0, *)
 /// A concrete type that wraps a view conforming to `SwiftUIRepresentable` and enables using it in SwiftUI via `UIViewControllerRepresentable`
 public struct SwiftUIViewControllerRepresentable<
     ViewController: UIViewController &

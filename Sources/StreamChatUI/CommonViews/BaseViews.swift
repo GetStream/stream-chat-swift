@@ -132,7 +132,6 @@ open class _View: UIView, Customizable, AccessibilityView {
     override open func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
         super.traitCollectionDidChange(previousTraitCollection)
 
-        guard #available(iOS 12, *) else { return }
         guard previousTraitCollection?.userInterfaceStyle != traitCollection.userInterfaceStyle else { return }
 
         TraitCollectionReloadStack.push {
@@ -174,7 +173,6 @@ open class _CollectionViewCell: UICollectionViewCell, Customizable, Accessibilit
     override open func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
         super.traitCollectionDidChange(previousTraitCollection)
 
-        guard #available(iOS 12, *) else { return }
         guard previousTraitCollection?.userInterfaceStyle != traitCollection.userInterfaceStyle else { return }
 
         TraitCollectionReloadStack.push {
@@ -216,7 +214,6 @@ open class _CollectionReusableView: UICollectionReusableView, Customizable, Acce
     override open func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
         super.traitCollectionDidChange(previousTraitCollection)
 
-        guard #available(iOS 12, *) else { return }
         guard previousTraitCollection?.userInterfaceStyle != traitCollection.userInterfaceStyle else { return }
 
         TraitCollectionReloadStack.push {
@@ -258,7 +255,6 @@ open class _Control: UIControl, Customizable, AccessibilityView {
     override open func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
         super.traitCollectionDidChange(previousTraitCollection)
 
-        guard #available(iOS 12, *) else { return }
         guard previousTraitCollection?.userInterfaceStyle != traitCollection.userInterfaceStyle else { return }
 
         TraitCollectionReloadStack.push {
@@ -300,7 +296,6 @@ open class _Button: UIButton, Customizable, AccessibilityView {
     override open func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
         super.traitCollectionDidChange(previousTraitCollection)
 
-        guard #available(iOS 12, *) else { return }
         guard previousTraitCollection?.userInterfaceStyle != traitCollection.userInterfaceStyle else { return }
 
         TraitCollectionReloadStack.push {
@@ -342,7 +337,6 @@ open class _NavigationBar: UINavigationBar, Customizable, AccessibilityView {
     override open func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
         super.traitCollectionDidChange(previousTraitCollection)
 
-        guard #available(iOS 12, *) else { return }
         guard previousTraitCollection?.userInterfaceStyle != traitCollection.userInterfaceStyle else { return }
 
         TraitCollectionReloadStack.push {
@@ -394,7 +388,6 @@ open class _ViewController: UIViewController, Customizable {
     override open func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
         super.traitCollectionDidChange(previousTraitCollection)
 
-        guard #available(iOS 12, *) else { return }
         guard previousTraitCollection?.userInterfaceStyle != traitCollection.userInterfaceStyle else { return }
 
         TraitCollectionReloadStack.push {
@@ -469,7 +462,6 @@ open class _TableViewCell: UITableViewCell, Customizable, AccessibilityView {
     override open func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
         super.traitCollectionDidChange(previousTraitCollection)
 
-        guard #available(iOS 12, *) else { return }
         guard previousTraitCollection?.userInterfaceStyle != traitCollection.userInterfaceStyle else { return }
 
         TraitCollectionReloadStack.push {

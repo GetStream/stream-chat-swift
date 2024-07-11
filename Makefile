@@ -44,8 +44,6 @@ zip_artifacts:
 update_dependencies:
 	echo "👉 Updating Nuke"
 	make update_nuke version=10.3.3
-	echo "👉 Updating Starscream"
-	make update_starscream version=4.0.4
 	echo "👉 Updating SwiftyGif"
 	make update_swiftygif version=5.4.2
 	echo "👉 Updating SwiftyMarkdown"
@@ -56,10 +54,6 @@ update_dependencies:
 update_nuke: check_version_parameter
 	./Scripts/updateDependency.sh $(version) Dependencies/Nuke Sources/StreamChatUI/StreamNuke Sources
 	./Scripts/removePublicDeclarations.sh Sources/StreamChatUI/StreamNuke
-
-update_starscream: check_version_parameter
-	./Scripts/updateDependency.sh $(version) Dependencies/Starscream Sources/StreamChat/StreamStarscream Sources
-	./Scripts/removePublicDeclarations.sh Sources/StreamChat/StreamStarscream
 
 update_swiftygif: check_version_parameter
 	./Scripts/updateDependency.sh $(version) Dependencies/SwiftyGif Sources/StreamChatUI/StreamSwiftyGif SwiftyGif

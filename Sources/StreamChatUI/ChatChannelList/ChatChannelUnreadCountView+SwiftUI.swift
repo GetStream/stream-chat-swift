@@ -6,13 +6,11 @@ import Combine
 import StreamChat
 import SwiftUI
 
-@available(iOS 13.0, *)
 /// Protocol of `ChatChannelUnreadCountView` wrapper for use in SwiftUI.
 public protocol ChatChannelUnreadCountViewSwiftUIView: View {
     init(dataSource: ChatChannelUnreadCountView.ObservedObject<Self>)
 }
 
-@available(iOS 13.0, *)
 extension ChatChannelUnreadCountView {
     /// Data source of `ChatChannelUnreadCountView` represented as `ObservedObject`.
     public typealias ObservedObject<Content: SwiftUIView> = SwiftUIWrapper<Content>

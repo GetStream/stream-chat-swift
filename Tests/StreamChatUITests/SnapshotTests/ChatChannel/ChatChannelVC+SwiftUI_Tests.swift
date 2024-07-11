@@ -9,7 +9,6 @@ import StreamSwiftTestHelpers
 import SwiftUI
 import XCTest
 
-@available(iOS 13.0, *)
 final class ChatChannelView_Tests: iOS13TestCase {
     var chatChannel: SwiftUIViewControllerRepresentable<ChatChannelVC>!
     fileprivate var mockComposer: ComposerVC_Mock!

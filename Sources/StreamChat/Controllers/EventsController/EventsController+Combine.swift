@@ -5,7 +5,6 @@
 import Combine
 import Foundation
 
-@available(iOS 13, *)
 extension EventsController {
     /// A publisher emitting a new value every time an event is observed.
     public var allEventsPublisher: AnyPublisher<Event, Never> {
@@ -35,7 +34,6 @@ extension EventsController {
     }
 }
 
-@available(iOS 13, *)
 extension EventsController.BasePublishers: EventsControllerDelegate {
     func eventsController(_ controller: EventsController, didReceiveEvent event: Event) {
         events.send(event)

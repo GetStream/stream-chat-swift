@@ -20,23 +20,14 @@ final class AttachmentTypes_Tests: XCTestCase {
             "sticker"
         ]
 
-        // Different test for < iOS 13 because of decoding bug.
-        if #available(iOS 13, *) {
-            // Encode objects
-            let encoded = try types.map { try JSONEncoder.default.encode($0) }
+        // Encode objects
+        let encoded = try types.map { try JSONEncoder.default.encode($0) }
 
-            // Decode objects
-            let decoded = try encoded.map { try JSONDecoder().decode(AttachmentType.self, from: $0) }
+        // Decode objects
+        let decoded = try encoded.map { try JSONDecoder().decode(AttachmentType.self, from: $0) }
 
-            // Assert objects encoded and decoded correctly
-            XCTAssertEqual(types, decoded)
-        } else {
-            // Encoded strings
-            let encoded = types.map(JSONEncoder.default.encodedString)
-
-            // Assert objects encoded correctly
-            XCTAssertEqual(types.map(\.rawValue), encoded)
-        }
+        // Assert objects encoded and decoded correctly
+        XCTAssertEqual(types, decoded)
     }
 
     func test_attachmentFileType_isUnaffected_byUppercase() {

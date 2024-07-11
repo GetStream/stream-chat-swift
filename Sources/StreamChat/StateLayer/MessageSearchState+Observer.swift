@@ -4,7 +4,6 @@
 
 import Foundation
 
-@available(iOS 13.0, *)
 extension MessageSearchState {
     final class Observer {
         private let database: DatabaseContainer

@@ -5,7 +5,6 @@
 import Foundation
 
 /// An object which represents a list of `ChatUser` for the specified search query.
-@available(iOS 13.0, *)
 public class UserSearch {
     private let stateBuilder: StateBuilder<UserSearchState>
     private let userListUpdater: UserListUpdater
@@ -73,7 +72,6 @@ public class UserSearch {
     }
 }
 
-@available(iOS 13.0, *)
 extension UserSearch {
     struct Environment {
         var userListUpdaterBuilder: (

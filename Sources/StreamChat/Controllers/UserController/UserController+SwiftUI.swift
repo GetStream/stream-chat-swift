@@ -5,7 +5,6 @@
 import Foundation
 import SwiftUI
 
-@available(iOS 13, *)
 extension ChatUserController {
     /// A wrapper object that exposes the controller variables in the form of `ObservableObject` to be used in SwiftUI.
     public var observableObject: ObservableObject { .init(controller: self) }
@@ -33,7 +32,6 @@ extension ChatUserController {
     }
 }
 
-@available(iOS 13, *)
 extension ChatUserController.ObservableObject: ChatUserControllerDelegate {
     public func userController(
         _ controller: ChatUserController,

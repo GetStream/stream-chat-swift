@@ -306,7 +306,6 @@ public class ChatClient {
     ///
     /// - Throws: An error while communicating with the Stream API.
     /// - Returns: A type representing the connected user and its state.
-    @available(iOS 13.0, *)
     @discardableResult public func connectUser(
         userInfo: UserInfo,
         tokenProvider: @escaping TokenProvider
@@ -359,7 +358,6 @@ public class ChatClient {
     ///
     /// - Throws: An error while communicating with the Stream API.
     /// - Returns: A type representing the connected user and its state.
-    @available(iOS 13.0, *)
     @discardableResult public func connectUser(
         userInfo: UserInfo,
         token: Token
@@ -392,7 +390,6 @@ public class ChatClient {
     ///
     /// - Throws: An error while communicating with the Stream API.
     /// - Returns: A type representing the connected user and its state.
-    @available(iOS 13.0, *)
     @discardableResult public func connectGuestUser(userInfo: UserInfo) async throws -> ConnectedUser {
         try await withCheckedThrowingContinuation { continuation in
             connectGuestUser(userInfo: userInfo) { error in
@@ -414,7 +411,6 @@ public class ChatClient {
     ///
     /// - Throws: An error while communicating with the Stream API.
     /// - Returns: A type representing the connected user and its state.
-    @available(iOS 13.0, *)
     @discardableResult public func connectAnonymousUser() async throws -> ConnectedUser {
         try await withCheckedThrowingContinuation { continuation in
             connectAnonymousUser { error in
@@ -451,7 +447,6 @@ public class ChatClient {
 
     /// Disconnects the chat client from the chat servers. No further updates from the servers
     /// are received.
-    @available(iOS 13.0, *)
     public func disconnect() async {
         await withCheckedContinuation { continuation in
             disconnect {
@@ -497,7 +492,6 @@ public class ChatClient {
     }
     
     /// Disconnects the chat client form the chat servers and removes all the local data related.
-    @available(iOS 13.0, *)
     public func logout() async {
         await withCheckedContinuation { continuation in
             logout {
@@ -529,7 +523,6 @@ public class ChatClient {
     ///   - handler: The handler closure which is called when the event happens.
     ///
     /// - Returns: A cancellable instance, which you use when you end the subscription. Deallocation of the result will tear down the subscription stream.
-    @available(iOS 13.0, *)
     public func subscribe<E>(toEvent event: E.Type, handler: @escaping (E) -> Void) -> AnyCancellable where E: Event {
         eventNotificationCenter.subscribe(to: E.self, handler: handler)
     }
@@ -541,7 +534,6 @@ public class ChatClient {
     /// - Parameter handler: The handler closure which is called when the event happens.
     ///
     /// - Returns: A cancellable instance, which you use when you end the subscription. Deallocation of the result will tear down the subscription stream.
-    @available(iOS 13.0, *)
     public func subscribe(_ handler: @escaping (Event) -> Void) -> AnyCancellable {
         eventNotificationCenter.subscribe(handler: handler)
     }
@@ -568,7 +560,6 @@ public class ChatClient {
     /// Fetches the app settings and updates the ``ChatClient/appSettings``.
     ///
     /// - Returns: The latest state of app settings.
-    @available(iOS 13.0, *)
     public func loadAppSettings() async throws -> AppSettings {
         try await withCheckedThrowingContinuation { continuation in
             loadAppSettings(completion: continuation.resume(with:))

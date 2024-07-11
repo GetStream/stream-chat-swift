@@ -9,7 +9,6 @@ import StreamSwiftTestHelpers
 import SwiftUI
 import XCTest
 
-@available(iOS 13.0, *)
 final class QuotedChatMessageView_SwiftUI_Tests: XCTestCase {
     func test_injectedSwiftUIView() {
         struct CustomQuotedChatMessageView: QuotedChatMessageView.SwiftUIView {

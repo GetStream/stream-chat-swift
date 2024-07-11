@@ -23,8 +23,7 @@ class MessageSender: Worker {
     /// Because we need to be sure messages for every channel are sent in the correct order, we create a sending queue for
     /// every cid. These queues can send messages in parallel.
     @Atomic private var sendingQueueByCid: [ChannelId: MessageSendingQueue] = [:]
-    // Any because CheckedContinuation<Void, Error> requires iOS 13
-    private var continuations = [MessageId: Any]()
+    private var continuations = [MessageId: CheckedContinuation<ChatMessage, Error>]()
     
     private lazy var observer = ListDatabaseObserver<MessageDTO, MessageDTO>(
         context: self.database.backgroundReadOnlyContext,
@@ -111,9 +110,7 @@ class MessageSender: Worker {
                     )
                     sendingQueueByCid[cid] = messageSendingQueue
                     
-                    if #available(iOS 13.0, *) {
-                        messageSendingQueue.delegate = self
-                    }
+                    messageSendingQueue.delegate = self
                 }
 
                 sendingQueueByCid[cid]?.scheduleSend(requests: requests)
@@ -124,7 +121,6 @@ class MessageSender: Worker {
 
 // MARK: - Chat State Layer
 
-@available(iOS 13.0, *)
 extension MessageSender: MessageSendingQueueDelegate {
     func waitForAPIRequest(messageId: MessageId) async throws -> ChatMessage {
         try await withCheckedThrowingContinuation { continuation in
@@ -144,7 +140,7 @@ extension MessageSender: MessageSendingQueueDelegate {
         result: Result<ChatMessage, MessageRepositoryError>
     ) {
         sendingDispatchQueue.async(flags: .barrier) {
-            guard let continuation = self.continuations.removeValue(forKey: messageId) as? CheckedContinuation<ChatMessage, Error> else { return }
+            guard let continuation = self.continuations.removeValue(forKey: messageId) else { return }
             continuation.resume(with: result)
         }
     }

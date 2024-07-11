@@ -8,7 +8,6 @@ import CoreData
 @testable import StreamChatTestTools
 import XCTest
 
-@available(iOS 13, *)
 final class CurrentUserController_Combine_Tests: iOS13TestCase {
     var currentUserController: CurrentUserController_Mock!
     var cancellables: Set<AnyCancellable>!

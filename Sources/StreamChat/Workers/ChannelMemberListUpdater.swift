@@ -45,7 +45,6 @@ class ChannelMemberListUpdater: Worker {
     }
 }
 
-@available(iOS 13.0, *)
 extension ChannelMemberListUpdater {
     func load(_ query: ChannelMemberListQuery) async throws -> [ChatChannelMember] {
         try await withCheckedThrowingContinuation { continuation in

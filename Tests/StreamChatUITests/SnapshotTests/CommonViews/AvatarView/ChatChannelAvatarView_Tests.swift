@@ -186,7 +186,6 @@ final class ChatChannelAvatarView_Tests: XCTestCase {
         AssertSnapshot(view, variants: .onlyUserInterfaceStyles)
     }
 
-    @available(iOS 13.0, *)
     func test_wrappedChatChannelAvatarViewInSwiftUI() {
         struct CustomView: View {
             @EnvironmentObject var components: Components.ObservableObject

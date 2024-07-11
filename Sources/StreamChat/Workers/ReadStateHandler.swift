@@ -43,7 +43,6 @@ final class ReadStateHandler {
         }
     }
     
-    @available(iOS 13.0, *)
     func markRead(_ channel: ChatChannel) async throws {
         try await withCheckedThrowingContinuation { continuation in
             markRead(channel) { error in
@@ -86,7 +85,6 @@ final class ReadStateHandler {
         }
     }
     
-    @available(iOS 13.0, *)
     func markUnread(
         from messageId: MessageId,
         in channel: ChatChannel

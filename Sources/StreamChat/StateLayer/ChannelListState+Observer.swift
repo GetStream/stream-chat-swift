@@ -4,7 +4,6 @@
 
 import Foundation
 
-@available(iOS 13.0, *)
 extension ChannelListState {
     final class Observer {
         private let channelListObserver: StateLayerDatabaseObserver<ListResult, ChatChannel, ChannelDTO>

@@ -4,7 +4,6 @@
 
 import Foundation
 
-@available(iOS 13, *)
 class URLSessionWebSocketEngine: NSObject, WebSocketEngine {
     private weak var task: URLSessionWebSocketTask? {
         didSet {
@@ -135,7 +134,6 @@ class URLSessionWebSocketEngine: NSObject, WebSocketEngine {
     }
 }
 
-@available(iOS 13, *)
 class URLSessionDelegateHandler: NSObject, URLSessionDataDelegate, URLSessionWebSocketDelegate {
     var onOpen: ((_ protocol: String?) -> Void)?
     var onClose: ((_ code: URLSessionWebSocketTask.CloseCode, _ reason: Data?) -> Void)?

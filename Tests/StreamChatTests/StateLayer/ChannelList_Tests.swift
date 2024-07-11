@@ -6,7 +6,6 @@
 @testable import StreamChatTestTools
 import XCTest
 
-@available(iOS 13.0, *)
 final class ChannelList_Tests: XCTestCase {
     private var channelList: ChannelList!
     private var env: TestEnvironment!
@@ -293,7 +292,6 @@ final class ChannelList_Tests: XCTestCase {
     }
 }
 
-@available(iOS 13.0, *)
 extension ChannelList_Tests {
     final class TestEnvironment {
         let client: ChatClient_Mock
@@ -329,7 +327,6 @@ extension ChannelList_Tests {
     }
 }
 
-@available(iOS 13.0, *)
 extension XCTestCase {
     func fulfillmentCompatibility(of expectations: [XCTestExpectation], timeout seconds: TimeInterval, enforceOrder enforceOrderOfFulfillment: Bool = false) async {
         #if swift(>=5.8)

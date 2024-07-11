@@ -5,7 +5,6 @@
 import Foundation
 @testable import StreamChat
 
-@available(iOS 13.0, *)
 public class MessageSearch_Mock: MessageSearch {
     public static func mock(client: ChatClient? = nil) -> MessageSearch_Mock {
         .init(client: client ?? .mock(bundle: Bundle(for: Self.self)))

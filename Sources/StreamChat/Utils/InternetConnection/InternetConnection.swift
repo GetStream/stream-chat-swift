@@ -127,7 +127,6 @@ extension InternetConnection {
 
         /// Internet connection uses Low Data Mode.
         /// Recommendations for Low Data Mode: don't autoplay video, music (high-quality) or gifs (big files).
-        /// Supports only by iOS 13+
         case constrained
     }
 }
@@ -194,12 +193,7 @@ extension InternetConnection {
             }
 
             let quality: InternetConnection.Quality
-
-            if #available(iOS 13.0, *) {
-                quality = path.isConstrained ? .constrained : (path.isExpensive ? .expensive : .great)
-            } else {
-                quality = path.isExpensive ? .expensive : .great
-            }
+            quality = path.isConstrained ? .constrained : (path.isExpensive ? .expensive : .great)
 
             return .available(quality)
         }

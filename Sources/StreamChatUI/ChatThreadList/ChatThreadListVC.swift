@@ -60,11 +60,7 @@ open class ChatThreadListVC:
 
     /// The loading indicator shown at the top when fetching new threads.
     open private(set) lazy var loadingBannerIndicator: UIActivityIndicatorView = {
-        if #available(iOS 13.0, *) {
-            return UIActivityIndicatorView(style: .medium)
-        } else {
-            return UIActivityIndicatorView(style: .gray)
-        }
+        UIActivityIndicatorView(style: .medium)
     }()
 
     /// The banner view shown by default as a table view header to fetch unread threads.

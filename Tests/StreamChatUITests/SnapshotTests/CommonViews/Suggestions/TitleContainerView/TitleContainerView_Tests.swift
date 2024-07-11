@@ -66,7 +66,6 @@ final class TitleContainerView_Tests: XCTestCase {
     }
 }
 
-@available(iOS 13, *)
 final class TitleContainerView_Swift_Tests: iOS13TestCase {
     func test_swiftUIWrapper() {
         let view = TitleContainerView.asView((title: "Luke Skywalker", subtitle: "Last seen a long time ago..."))

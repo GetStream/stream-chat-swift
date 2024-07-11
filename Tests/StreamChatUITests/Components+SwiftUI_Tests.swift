@@ -7,7 +7,6 @@
 import SwiftUI
 import XCTest
 
-@available(iOS 13, *)
 final class Components_SwiftUI_Tests: iOS13TestCase {
     func test_correctInstanceIsUsed() {
         class TestView: UIView, MaskProviding {

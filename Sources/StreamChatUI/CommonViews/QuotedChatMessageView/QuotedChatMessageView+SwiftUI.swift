@@ -6,13 +6,11 @@ import Combine
 import StreamChat
 import SwiftUI
 
-@available(iOS 13.0, *)
 /// Protocol of `QuotedChatMessageView` wrapper for use in SwiftUI.
 public protocol QuotedChatMessageViewSwiftUIView: View {
     init(dataSource: QuotedChatMessageView.ObservedObject<Self>)
 }
 
-@available(iOS 13.0, *)
 extension QuotedChatMessageView {
     /// Data source of `QuotedChatMessageView` represented as `ObservedObject`.
     public typealias ObservedObject<Content: SwiftUIView> = SwiftUIWrapper<Content>

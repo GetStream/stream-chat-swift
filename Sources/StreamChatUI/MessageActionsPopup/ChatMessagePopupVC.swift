@@ -27,12 +27,8 @@ open class ChatMessagePopupVC: _ViewController, ComponentsProvider {
 
     /// `UIView` with `UIBlurEffect` that is shown as a background.
     open private(set) lazy var blurView: UIView = {
-        let blur: UIBlurEffect
-        if #available(iOS 13.0, *) {
-            blur = UIBlurEffect(style: .systemUltraThinMaterial)
-        } else {
-            blur = UIBlurEffect(style: .regular)
-        }
+        let blur = UIBlurEffect(style: .systemUltraThinMaterial)
+
         return UIVisualEffectView(effect: blur)
             .withoutAutoresizingMaskConstraints
             .withAccessibilityIdentifier(identifier: "blurView")

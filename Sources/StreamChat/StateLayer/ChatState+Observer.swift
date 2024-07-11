@@ -5,7 +5,6 @@
 import Combine
 import Foundation
 
-@available(iOS 13.0, *)
 extension ChatState {
     final class Observer {
         private let cid: ChannelId

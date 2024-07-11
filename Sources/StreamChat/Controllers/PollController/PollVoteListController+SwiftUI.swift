@@ -5,7 +5,6 @@
 import Foundation
 import SwiftUI
 
-@available(iOS 13, *)
 extension PollVoteListController {
     /// A wrapper object that exposes the controller variables in the form of `ObservableObject` to be used in SwiftUI.
     public var observableObject: ObservableObject { .init(controller: self) }
@@ -34,7 +33,6 @@ extension PollVoteListController {
     }
 }
 
-@available(iOS 13, *)
 extension PollVoteListController.ObservableObject: PollVoteListControllerDelegate {
     public func controller(
         _ controller: PollVoteListController,

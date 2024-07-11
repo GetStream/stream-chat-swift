@@ -6,7 +6,6 @@
 @testable import StreamChatTestTools
 import XCTest
 
-@available(iOS 13, *)
 final class PollVoteListController_SwiftUI_Tests: iOS13TestCase {
     var voteListController: PollVoteListController_Mock!
 

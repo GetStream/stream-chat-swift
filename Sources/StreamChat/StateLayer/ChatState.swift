@@ -5,7 +5,6 @@
 import Foundation
 
 /// Represents a ``ChatChannel`` and its state.
-@available(iOS 13.0, *)
 @MainActor public final class ChatState: ObservableObject {
     private let channelUpdater: ChannelUpdater
     private let dataStore: DataStore
@@ -167,7 +166,6 @@ import Foundation
 
 // MARK: - Internal
 
-@available(iOS 13.0, *)
 extension ChatState {
     func setChannelId(_ channelId: ChannelId) {
         channelQuery = ChannelQuery(cid: channelId, channelQuery: channelQuery)

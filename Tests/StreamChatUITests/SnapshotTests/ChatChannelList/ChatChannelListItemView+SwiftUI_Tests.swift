@@ -9,7 +9,6 @@ import StreamSwiftTestHelpers
 import SwiftUI
 import XCTest
 
-@available(iOS 13.0, *)
 final class ChatChannelListItemView_SwiftUI_Tests: XCTestCase {
     func test_injectedSwiftUIView() {
         struct CustomChannelListItemView: ChatChannelListItemView.SwiftUIView {
@@ -59,7 +58,6 @@ private extension UIView {
     }
 }
 
-@available(iOS 13.0, *)
 extension Image {
     init(url: URL) {
         let uiImage = UIImage(data: try! Data(contentsOf: url))!

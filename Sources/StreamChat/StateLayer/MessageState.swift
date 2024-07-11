@@ -5,7 +5,6 @@
 import Foundation
 
 /// Represents a ``ChatMessage`` and its state.
-@available(iOS 13.0, *)
 @MainActor public final class MessageState: ObservableObject {
     private let messageOrder: MessageOrdering
     private let observer: Observer

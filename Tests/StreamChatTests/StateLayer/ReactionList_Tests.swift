@@ -8,7 +8,6 @@ import XCTest
 @testable import StreamChatTestTools
 import XCTest
 
-@available(iOS 13.0, *)
 final class ReactionList_Tests: XCTestCase {
     private var channelId: ChannelId!
     private var messageId: MessageId!
@@ -198,7 +197,6 @@ final class ReactionList_Tests: XCTestCase {
     }
 }
 
-@available(iOS 13.0, *)
 extension ReactionList_Tests {
     final class TestEnvironment {
         let client: ChatClient_Mock

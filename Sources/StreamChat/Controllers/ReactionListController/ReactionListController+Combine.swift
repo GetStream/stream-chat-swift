@@ -5,7 +5,6 @@
 import Combine
 import Foundation
 
-@available(iOS 13, *)
 extension ChatReactionListController {
     /// A publisher emitting a new value every time the state of the controller changes.
     public var statePublisher: AnyPublisher<DataController.State, Never> {
@@ -39,7 +38,6 @@ extension ChatReactionListController {
     }
 }
 
-@available(iOS 13, *)
 extension ChatReactionListController.BasePublishers: ChatReactionListControllerDelegate {
     func controller(_ controller: DataController, didChangeState state: DataController.State) {
         self.state.send(state)

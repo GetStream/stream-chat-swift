@@ -202,7 +202,6 @@ class CurrentUserUpdater: Worker {
     }
 }
 
-@available(iOS 13.0, *)
 extension CurrentUserUpdater {
     func addDevice(_ device: PushDevice, currentUserId: UserId) async throws {
         try await withCheckedThrowingContinuation { continuation in

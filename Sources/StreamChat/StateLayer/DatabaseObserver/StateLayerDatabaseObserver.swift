@@ -5,21 +5,17 @@
 import CoreData
 import Foundation
 
-@available(iOS 13.0, *)
 protocol DatabaseObserverType {}
 
 /// The result type for a single entity observer.
-@available(iOS 13.0, *)
 class EntityResult: DatabaseObserverType {}
 
 /// The result type for list observer.
-@available(iOS 13.0, *)
 class ListResult: DatabaseObserverType {}
     
 /// A CoreData store observer which immediately reports changes as soon as the store has been changed.
 ///
 /// - Note: Requires the ``DatabaseContainer/stateLayerContext`` which is immediately synchronized.
-@available(iOS 13.0, *)
 final class StateLayerDatabaseObserver<ResultType: DatabaseObserverType, Item, DTO: NSManagedObject> {
     private let changeAggregator: ListChangeAggregator<DTO, Item>
     private let frc: NSFetchedResultsController<DTO>
@@ -55,7 +51,6 @@ final class StateLayerDatabaseObserver<ResultType: DatabaseObserverType, Item, D
 
 // MARK: - Observing a Single Entity
 
-@available(iOS 13.0, *)
 extension StateLayerDatabaseObserver where ResultType == EntityResult {
     convenience init(
         databaseContainer: DatabaseContainer,
@@ -139,7 +134,6 @@ extension StateLayerDatabaseObserver where ResultType == EntityResult {
 
 // MARK: - Observing List of Entities
 
-@available(iOS 13.0, *)
 extension StateLayerDatabaseObserver where ResultType == ListResult {
     convenience init(
         databaseContainer: DatabaseContainer,

@@ -5,7 +5,6 @@
 import Foundation
 
 /// Represents a list of users matching to the specified query.
-@available(iOS 13.0, *)
 @MainActor public final class UserListState: ObservableObject {
     private let observer: Observer
     

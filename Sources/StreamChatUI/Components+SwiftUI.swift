@@ -6,7 +6,6 @@ import Combine
 import StreamChat
 import SwiftUI
 
-@available(iOS 13.0, *)
 extension Components {
     /// Used to initialize `Components` as `ObservableObject`.
     public var asObservableObject: ObservableObject { .init(self) }
@@ -26,7 +25,6 @@ extension Components {
     }
 }
 
-@available(iOS 13.0, *)
 /// Modifier for setting `Components` environment object.
 private struct SwiftUIComponents: ViewModifier {
     /// Custom `ObservableObject` of `components`
@@ -41,7 +39,6 @@ private struct SwiftUIComponents: ViewModifier {
     }
 }
 
-@available(iOS 13.0, *)
 public extension View {
     /// Sets up custom `Components`.
     func setUpStreamChatComponents(

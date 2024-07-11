@@ -210,7 +210,6 @@ private extension ChannelListUpdater {
     }
 }
 
-@available(iOS 13.0, *)
 extension ChannelListUpdater {
     @discardableResult func update(channelListQuery: ChannelListQuery) async throws -> [ChatChannel] {
         try await withCheckedThrowingContinuation { continuation in

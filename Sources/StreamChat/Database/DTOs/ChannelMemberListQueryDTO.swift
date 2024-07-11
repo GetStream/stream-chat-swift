@@ -56,8 +56,6 @@ extension NSManagedObjectContext: MemberListQueryDatabaseSession {
 
         var jsonData: Data?
         do {
-            // On iOS 12 attempt of encoding nil value will produce an error.
-            // We can remove this nil check after dropping iOS 12 support.
             jsonData = query.filter == nil ? nil : try JSONEncoder.default.encode(query.filter)
         } catch {
             log.error("Failed encoding query Filter data with error: \(error). Using 'none' filter instead.")

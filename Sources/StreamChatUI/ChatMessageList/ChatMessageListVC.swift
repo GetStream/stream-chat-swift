@@ -389,20 +389,6 @@ open class ChatMessageListVC: _ViewController,
 
     /// Updates the table view data with given `changes`.
     open func updateMessages(with changes: [ListChange<ChatMessage>], completion: (() -> Void)? = nil) {
-        // There is an issue on iOS 12 that when the message list has 0 or 1 message,
-        // the UI is not updated for the next inserted messages.
-        guard #available(iOS 13.0, *) else {
-            if listView.previousMessagesSnapshot.count < 2 {
-                dataSource?.messages = Array(listView.newMessagesSnapshot)
-                listView.reloadData()
-                completion?()
-                return
-            }
-
-            handleMessageUpdates(with: changes, completion: completion)
-            return
-        }
-
         handleMessageUpdates(with: changes, completion: completion)
     }
 

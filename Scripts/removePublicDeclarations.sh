@@ -39,13 +39,6 @@ do
 		fi
 	fi
 
-	# Starscream
-	if [[ $directory == *"Starscream"* ]]; then
-		replaceDeclaration 'WebSocketClient' 'StarscreamWebSocketClient' $f
-		replaceDeclaration 'ConnectionEvent' 'StarscreamConnectionEvent' $f
-		replaceDeclaration ': class {' ': AnyObject {' $f
-	fi
-
 	# DiffernceKit
 	if [[ $directory == *"DifferenceKit"* ]]; then
 		# For DifferenceKit we need to change some declarations to public

@@ -8,7 +8,6 @@ import StreamSwiftTestHelpers
 import SwiftUI
 import XCTest
 
-@available(iOS 13.0, *)
 final class ChatChannelUnreadCountView_SwiftUI_Tests: XCTestCase {
     func test_injectedSwiftUIView() {
         struct CustomUnreadCountView: ChatChannelUnreadCountView.SwiftUIView {

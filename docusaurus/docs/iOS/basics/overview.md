@@ -58,10 +58,6 @@ The SDK tries to keep the list of external dependencies to a minimum, these are 
 - [Gifu](https://github.com/kaishin/Gifu) for high performance gif rendering
 - [StreamChat]((https://getstream.io/chat/docs/ios-swift/?language=swift)) the low-level client for the Stream Chat API
 
-#### StreamChat
-
-- [Starscream](https://github.com/daltoniam/Starscream) to handle WebSocket connections (used only on iOS 11 and 12)
-
 :::note
 Starting **4.6.0**, and in order to improve the developer experience, dependencies are hidden inside our libraries.
 :::
