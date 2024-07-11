@@ -219,9 +219,7 @@ extension CurrentChatUser {
         let flaggedUsers: [ChatUser] = try dto.flaggedUsers.map { try $0.asModel() }
         let flaggedMessagesIDs: [MessageId] = dto.flaggedMessages.map(\.id)
 
-        let fetchMutedChannels: () -> Set<ChatChannel> = {
-            Set(dto.channelMutes.compactMap { try? $0.channel.asModel() })
-        }
+        let mutedChannels = Set(dto.channelMutes.compactMap { try? $0.channel.asModel() })
 
         let language: TranslationLanguage? = dto.user.language.map(TranslationLanguage.init)
 
@@ -251,12 +249,11 @@ extension CurrentChatUser {
                 messages: Int(dto.unreadMessagesCount),
                 threads: Int(dto.unreadThreadsCount)
             ),
-            mutedChannels: fetchMutedChannels,
+            mutedChannels: mutedChannels,
             privacySettings: .init(
                 typingIndicators: .init(enabled: dto.isTypingIndicatorsEnabled),
                 readReceipts: .init(enabled: dto.isReadReceiptsEnabled)
-            ),
-            underlyingContext: context
+            )
         )
     }
 }

@@ -50,8 +50,7 @@ public class CurrentChatUser: ChatUser {
     /// A set of channels muted by the current user.
     ///
     /// - Important: The `mutedChannels` property is loaded and evaluated lazily to maintain high performance.
-    public var mutedChannels: Set<ChatChannel> { _mutedChannels }
-    @CoreDataLazy private var _mutedChannels: Set<ChatChannel>
+    public let mutedChannels: Set<ChatChannel>
 
     /// The unread counts for the current user.
     public let unreadCount: UnreadCount
@@ -84,9 +83,8 @@ public class CurrentChatUser: ChatUser {
         flaggedUsers: Set<ChatUser>,
         flaggedMessageIDs: Set<MessageId>,
         unreadCount: UnreadCount,
-        mutedChannels: @escaping () -> Set<ChatChannel>,
-        privacySettings: UserPrivacySettings,
-        underlyingContext: NSManagedObjectContext?
+        mutedChannels: Set<ChatChannel>,
+        privacySettings: UserPrivacySettings
     ) {
         self.devices = devices
         self.currentDevice = currentDevice
@@ -97,7 +95,8 @@ public class CurrentChatUser: ChatUser {
         self.unreadCount = unreadCount
         self.isInvisible = isInvisible
         self.privacySettings = privacySettings
-
+        self.mutedChannels = mutedChannels
+        
         super.init(
             id: id,
             name: name,
@@ -114,8 +113,6 @@ public class CurrentChatUser: ChatUser {
             language: language,
             extraData: extraData
         )
-
-        $_mutedChannels = (mutedChannels, underlyingContext)
     }
 }
 
