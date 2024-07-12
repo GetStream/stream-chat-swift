@@ -95,7 +95,7 @@ extension ChatClient {
         var timerType: Timer.Type = DefaultTimer.self
 
         var tokenExpirationRetryStrategy: RetryStrategy = ExponentialBackoffRetryStrategy(
-            maximumReconnectionDelay: 25,
+            maximumRetryDelay: 25,
             maximumNumberOfRetries: 10
         )
 
@@ -116,7 +116,7 @@ extension ChatClient {
                 backgroundTaskScheduler: $4,
                 internetConnection: $5,
                 reconnectionStrategy: ExponentialBackoffRetryStrategy(
-                    maximumReconnectionDelay: 25,
+                    maximumRetryDelay: 25,
                     maximumNumberOfRetries: 8
                 ),
                 reconnectionTimerType: DefaultTimer.self,

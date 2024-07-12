@@ -20,18 +20,20 @@ protocol RetryStrategy {
 /// make the retry intervals slightly different for different callers to avoid putting the backend down by
 /// making all the retries at the same time.
 class ExponentialBackoffRetryStrategy: RetryStrategy {
-    @Atomic private var consecutiveFailuresCount = 0
-
-    let maximumReconnectionDelay: TimeInterval
-    let maximumNumberOfRetries: Int
+    /// The maximum delay per retry.
+    private let maximumRetryDelay: TimeInterval
+    /// The maximum number of retry attempts.
+    private let maximumNumberOfRetries: Int
 
     init(
-        maximumReconnectionDelay: TimeInterval,
+        maximumRetryDelay: TimeInterval,
         maximumNumberOfRetries: Int
     ) {
-        self.maximumReconnectionDelay = maximumReconnectionDelay
+        self.maximumRetryDelay = maximumRetryDelay
         self.maximumNumberOfRetries = maximumNumberOfRetries
     }
+
+    @Atomic private var consecutiveFailuresCount = 0
 
     func reset() {
         _consecutiveFailuresCount.mutate { $0 = 0 }
@@ -45,8 +47,8 @@ class ExponentialBackoffRetryStrategy: RetryStrategy {
         var delay: TimeInterval = 0
 
         _consecutiveFailuresCount.mutate {
-            let maxDelay: TimeInterval = min(0.5 + Double($0 * 2), maximumReconnectionDelay)
-            let minDelay: TimeInterval = min(max(0.25, (Double($0) - 1) * 2), maximumReconnectionDelay)
+            let maxDelay: TimeInterval = min(0.5 + Double($0 * 2), maximumRetryDelay)
+            let minDelay: TimeInterval = min(max(0.25, (Double($0) - 1) * 2), maximumRetryDelay)
 
             delay = TimeInterval.random(in: minDelay...maxDelay)
         }
