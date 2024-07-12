@@ -1623,25 +1623,25 @@ private extension ChatChannelController {
 // MARK: - Errors
 
 extension ClientError {
-    class ChannelNotCreatedYet: ClientError {
+    final class ChannelNotCreatedYet: ClientError {
         override public var localizedDescription: String {
             "You can't modify the channel because the channel hasn't been created yet. Call `synchronize()` to create the channel and wait for the completion block to finish. Alternatively, you can observe the `state` changes of the controller and wait for the `remoteDataFetched` state."
         }
     }
 
-    class ChannelEmptyMembers: ClientError {
+    final class ChannelEmptyMembers: ClientError {
         override public var localizedDescription: String {
             "You can't create direct messaging channel with empty members."
         }
     }
 
-    class ChannelEmptyMessages: ClientError {
+    final class ChannelEmptyMessages: ClientError {
         override public var localizedDescription: String {
             "You can't load new messages when there is no messages in the channel."
         }
     }
 
-    class InvalidCooldownDuration: ClientError {
+    final class InvalidCooldownDuration: ClientError {
         override public var localizedDescription: String {
             "You can't specify a value outside the range 1-120 for cooldown duration."
         }
@@ -1649,7 +1649,7 @@ extension ClientError {
 }
 
 extension ClientError {
-    class ChannelFeatureDisabled: ClientError {}
+    final class ChannelFeatureDisabled: ClientError {}
 }
 
 // MARK: - Deprecations

@@ -297,31 +297,31 @@ class PollsRepository {
 }
 
 extension ClientError {
-    class PollDoesNotExist: ClientError {
+    final class PollDoesNotExist: ClientError {
         init(pollId: String) {
             super.init("There is no `PollDTO` instance in the DB matching id: \(pollId).")
         }
     }
     
-    class PollOptionDoesNotExist: ClientError {
+    final class PollOptionDoesNotExist: ClientError {
         init(optionId: String) {
             super.init("There is no `PollOptionDTO` instance in the DB matching id: \(optionId).")
         }
     }
     
-    class PollVoteDoesNotExist: ClientError {
+    final class PollVoteDoesNotExist: ClientError {
         init(voteId: String) {
             super.init("There is no `PollVoteDTO` instance in the DB matching id: \(voteId).")
         }
     }
     
-    public class PollVoteAlreadyExists: ClientError {
+    public final class PollVoteAlreadyExists: ClientError {
         public init() {
             super.init("There is already `PollVoteDTO` instance in the DB.")
         }
     }
     
-    class InvalidInput: ClientError {
+    final class InvalidInput: ClientError {
         init() {
             super.init("Invalid input provided to the method")
         }

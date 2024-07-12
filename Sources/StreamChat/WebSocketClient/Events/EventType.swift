@@ -219,13 +219,13 @@ extension EventType {
 }
 
 extension ClientError {
-    class UnknownChannelEvent: ClientError {
+    final class UnknownChannelEvent: ClientError {
         init(_ type: EventType) {
             super.init("Event with \(type) cannot be decoded as system event.")
         }
     }
 
-    class UnknownUserEvent: ClientError {
+    final class UnknownUserEvent: ClientError {
         init(_ type: EventType) {
             super.init("Event with \(type) cannot be decoded as system event.")
         }

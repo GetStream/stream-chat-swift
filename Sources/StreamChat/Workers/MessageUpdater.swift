@@ -839,13 +839,13 @@ private extension MessageUpdater {
 }
 
 extension ClientError {
-    class MessageDoesNotExist: ClientError {
+    final class MessageDoesNotExist: ClientError {
         init(messageId: MessageId) {
             super.init("There is no `MessageDTO` instance in the DB matching id: \(messageId).")
         }
     }
 
-    class MessageEditing: ClientError {
+    final class MessageEditing: ClientError {
         init(messageId: String, reason: String) {
             super.init("Message with id: \(messageId) can't be edited (\(reason)")
         }

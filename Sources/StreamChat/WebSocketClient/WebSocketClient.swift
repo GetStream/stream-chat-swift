@@ -279,7 +279,7 @@ extension WebSocketClient {
 #endif
 
 extension ClientError {
-    public class WebSocket: ClientError {}
+    public final class WebSocket: ClientError {}
 }
 
 /// WebSocket Error

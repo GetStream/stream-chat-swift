@@ -165,7 +165,7 @@ public extension AnyAttachmentPayload {
 }
 
 extension ClientError {
-    public class UnsupportedUploadableAttachmentType: ClientError {
+    public final class UnsupportedUploadableAttachmentType: ClientError {
         init(_ type: AttachmentType) {
             super.init(
                 "For uploadable attachments only image/video/audio/file/voiceRecording types are supported."
