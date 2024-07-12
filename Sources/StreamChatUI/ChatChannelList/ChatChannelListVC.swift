@@ -437,6 +437,7 @@ open class ChatChannelListVC: _ViewController,
             case .remoteDataFetched:
                 isLoading = false
                 shouldHideEmptyView = !controller.channels.isEmpty
+                channelListErrorView.hide()
             case .localDataFetchFailed, .remoteDataFetchFailed:
                 shouldHideEmptyView = emptyView.isHidden
                 isLoading = false
