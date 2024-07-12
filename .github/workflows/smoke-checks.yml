@@ -182,8 +182,7 @@ jobs:
     name: Launch Allure TestOps
     runs-on: macos-13
     if: ${{ github.event_name != 'push' && github.event.inputs.snapshots != 'true' }}
-    needs:
-      - test-llc-debug
+    needs: build-test-app-and-frameworks
     outputs:
       launch_id: ${{ steps.get_launch_id.outputs.launch_id }}
     steps:
@@ -204,7 +203,6 @@ jobs:
     runs-on: macos-14
     if: ${{ github.event_name != 'push' && github.event.inputs.snapshots != 'true' }}
     needs:
-      - test-llc-debug
       - allure_testops_launch
       - build-test-app-and-frameworks
     env:
@@ -264,9 +262,7 @@ jobs:
   build-apps:
     name: Build Demo App + Example Apps
     runs-on: macos-14
-    needs:
-      - test-llc-debug
-      - build-test-app-and-frameworks
+    needs: build-test-app-and-frameworks
     if: ${{ github.event_name != 'push' && github.event.inputs.snapshots != 'true' }}
     env:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -298,9 +294,7 @@ jobs:
   test-integration:
     name: Test Integration
     runs-on: macos-14
-    needs:
-      - test-llc-debug
-      - build-test-app-and-frameworks
+    needs: build-test-app-and-frameworks
     if: ${{ github.event_name != 'push' && github.event.inputs.snapshots != 'true' }}
     env:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
