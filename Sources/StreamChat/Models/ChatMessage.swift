@@ -89,13 +89,9 @@ public struct ChatMessage {
     public let reactionGroups: [MessageReactionType: ChatMessageReactionGroup]
 
     /// The user which is the author of the message.
-    ///
-    /// - Important: The `author` property is loaded and evaluated lazily to maintain high performance.
     public let author: ChatUser
 
     /// A list of users that are mentioned in this message.
-    ///
-    /// - Important: The `mentionedUsers` property is loaded and evaluated lazily to maintain high performance.
     public let mentionedUsers: Set<ChatUser>
 
     /// A list of users that participated in this message thread.
@@ -278,8 +274,6 @@ public extension ChatMessage {
     }
 
     /// Returns all the attachments with the payload of the provided type.
-    ///
-    /// - Important: Attachments are loaded lazily and cached to maintain high performance.
     func attachments<Payload: AttachmentPayload>(
         payloadType: Payload.Type
     ) -> [ChatMessageAttachment<Payload>] {
@@ -289,50 +283,36 @@ public extension ChatMessage {
     }
 
     /// Returns the attachments of `.image` type.
-    ///
-    /// - Important: The `imageAttachments` are loaded lazily and cached to maintain high performance.
     var imageAttachments: [ChatMessageImageAttachment] {
         attachments(payloadType: ImageAttachmentPayload.self)
     }
 
     /// Returns the attachments of `.file` type.
-    ///
-    /// - Important: The `fileAttachments` are loaded lazily and cached to maintain high performance.
     var fileAttachments: [ChatMessageFileAttachment] {
         attachments(payloadType: FileAttachmentPayload.self)
     }
 
     /// Returns the attachments of `.video` type.
-    ///
-    /// - Important: The `videoAttachments` are loaded lazily and cached to maintain high performance.
     var videoAttachments: [ChatMessageVideoAttachment] {
         attachments(payloadType: VideoAttachmentPayload.self)
     }
 
     /// Returns the attachments of `.giphy` type.
-    ///
-    /// - Important: The `giphyAttachments` are loaded lazily and cached to maintain high performance.
     var giphyAttachments: [ChatMessageGiphyAttachment] {
         attachments(payloadType: GiphyAttachmentPayload.self)
     }
 
     /// Returns the attachments of `.linkPreview` type.
-    ///
-    /// - Important: The `linkAttachments` are loaded lazily and cached to maintain high performance.
     var linkAttachments: [ChatMessageLinkAttachment] {
         attachments(payloadType: LinkAttachmentPayload.self)
     }
 
     /// Returns the attachments of `.audio` type.
-    ///
-    /// - Important: The `audioAttachments` are loaded lazily and cached to maintain high performance.
     var audioAttachments: [ChatMessageAudioAttachment] {
         attachments(payloadType: AudioAttachmentPayload.self)
     }
 
     /// Returns the attachments of `.voiceRecording` type.
-    ///
-    /// - Important: The `voiceRecordingAttachments` are loaded lazily and cached to maintain high performance.
     var voiceRecordingAttachments: [ChatMessageVoiceRecordingAttachment] {
         attachments(payloadType: VoiceRecordingAttachmentPayload.self)
     }

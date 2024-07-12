@@ -201,7 +201,6 @@ extension CurrentUserDTO {
 
 extension CurrentChatUser {
     fileprivate static func create(fromDTO dto: CurrentUserDTO) throws -> CurrentChatUser {
-        guard let context = dto.managedObjectContext else { throw InvalidModel(dto) }
         let user = dto.user
 
         let extraData: [String: RawJSON]

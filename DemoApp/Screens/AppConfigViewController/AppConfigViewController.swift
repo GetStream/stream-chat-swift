@@ -51,8 +51,6 @@ class AppConfig {
             tokenRefreshDetails: nil
         )
 
-        StreamRuntimeCheck._isBackgroundMappingEnabled = true
-
         if StreamRuntimeCheck.isStreamInternalConfiguration {
             demoAppConfig.isAtlantisEnabled = true
             demoAppConfig.isMessageDebuggerEnabled = true
@@ -166,7 +164,6 @@ class AppConfigViewController: UITableViewController {
         case isMessageDebuggerEnabled
         case isChannelPinningEnabled
         case isLocationAttachmentsEnabled
-        case isBackgroundMappingEnabled
         case tokenRefreshDetails
     }
 
@@ -310,10 +307,6 @@ class AppConfigViewController: UITableViewController {
         case .isLocationAttachmentsEnabled:
             cell.accessoryView = makeSwitchButton(demoAppConfig.isLocationAttachmentsEnabled) { [weak self] newValue in
                 self?.demoAppConfig.isLocationAttachmentsEnabled = newValue
-            }
-        case .isBackgroundMappingEnabled:
-            cell.accessoryView = makeSwitchButton(StreamRuntimeCheck._isBackgroundMappingEnabled) { newValue in
-                StreamRuntimeCheck._isBackgroundMappingEnabled = newValue
             }
         case .tokenRefreshDetails:
             if let tokenRefreshDuration = demoAppConfig.tokenRefreshDetails?.duration {
