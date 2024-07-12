@@ -12,9 +12,6 @@ final class BannerShowingConnectionDelegate {
     private let bannerView = DemoConnectionBannerView()
     private let bannerAppearanceDuration: TimeInterval = 0.5
 
-    // Do not show connection banner on first connect.
-    private var shouldShowConnectionBanner = false
-
     init(showUnder view: UIView) {
         self.view = view
         setupViews()
@@ -30,16 +27,14 @@ extension BannerShowingConnectionDelegate: ChatConnectionControllerDelegate {
             bannerView.update(text: "Disconnected")
             showBanner()
         case .connected:
+            bannerView.update(text: "Connected")
             hideBanner()
         case .disconnecting:
             bannerView.update(text: "Disconnecting...")
             showBanner()
         case .connecting:
             bannerView.update(text: "Connecting...")
-            if shouldShowConnectionBanner {
-                showBanner()
-            }
-            shouldShowConnectionBanner = true
+            showBanner()
         case .initialized:
             break
         }
@@ -51,7 +46,7 @@ extension BannerShowingConnectionDelegate: ChatConnectionControllerDelegate {
 private extension BannerShowingConnectionDelegate {
     func setupViews() {
         attachToTopViewIfNeeded()
-        bannerView.alpha = 0
+        bannerView.alpha = 1
         bannerView.update(text: "Connecting...")
     }
 
