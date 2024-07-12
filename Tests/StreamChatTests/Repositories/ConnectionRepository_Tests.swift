@@ -275,8 +275,8 @@ final class ConnectionRepository_Tests: XCTestCase {
             (.disconnecting(source: .userInitiated), .disconnecting),
             (.disconnecting(source: .noPongReceived), .disconnecting),
             (.disconnected(source: .userInitiated), .disconnected(error: nil)),
-            (.disconnected(source: .systemInitiated), .disconnected(error: nil)),
-            (.disconnected(source: .serverInitiated(error: invalidTokenError)), .disconnected(error: invalidTokenError))
+            (.disconnected(source: .systemInitiated), .connecting),
+            (.disconnected(source: .serverInitiated(error: invalidTokenError)), .connecting)
         ]
 
         for (webSocketState, connectionStatus) in pairs {

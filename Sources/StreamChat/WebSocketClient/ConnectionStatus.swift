@@ -37,12 +37,15 @@ extension ConnectionStatus {
 
         case .connected:
             self = .connected
-        
+
         case .disconnecting:
             self = .disconnecting
 
         case let .disconnected(source):
-            self = .disconnected(error: source.serverError)
+            let isWaitingForReconnect = webSocketConnectionState.isAutomaticReconnectionEnabled || source.serverError?
+                .isInvalidTokenError == true
+
+            self = isWaitingForReconnect ? .connecting : .disconnected(error: source.serverError)
         }
     }
 }
