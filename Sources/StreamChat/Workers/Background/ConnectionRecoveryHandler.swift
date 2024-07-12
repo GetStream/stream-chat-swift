@@ -212,11 +212,6 @@ private extension DefaultConnectionRecoveryHandler {
             return false
         }
 
-        guard internetConnection.status.isAvailable else {
-            log.debug("Reconnection is not possible (internet ❌)", subsystems: .webSocket)
-            return false
-        }
-
         guard backgroundTaskScheduler?.isAppActive ?? true else {
             log.debug("Reconnection is not possible (app 💤)", subsystems: .webSocket)
             return false
