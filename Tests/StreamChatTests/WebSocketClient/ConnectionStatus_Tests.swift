@@ -26,7 +26,7 @@ final class ChatClientConnectionStatus_Tests: XCTestCase {
             (.disconnected(source: .noPongReceived), .connecting),
             (.disconnected(source: .serverInitiated(error: nil)), .connecting),
             (.disconnected(source: .serverInitiated(error: testError)), .connecting),
-            (.disconnected(source: .serverInitiated(error: invalidTokenError)), .connecting),
+            (.disconnected(source: .serverInitiated(error: invalidTokenError)), .disconnected(error: invalidTokenError)),
             (.connected(connectionId: .unique), .connected),
             (.disconnecting(source: .noPongReceived), .disconnecting),
             (.disconnecting(source: .serverInitiated(error: testError)), .disconnecting),
