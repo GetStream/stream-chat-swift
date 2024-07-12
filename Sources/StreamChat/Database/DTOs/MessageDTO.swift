@@ -1379,16 +1379,16 @@ private extension ChatMessage {
 }
 
 extension ClientError {
-    class CurrentUserDoesNotExist: ClientError {
+    final class CurrentUserDoesNotExist: ClientError {
         override var localizedDescription: String {
             "There is no `CurrentUserDTO` instance in the DB."
                 + "Make sure to call `client.currentUserController.reloadUserIfNeeded()`"
         }
     }
 
-    class MessagePayloadSavingFailure: ClientError {}
+    final class MessagePayloadSavingFailure: ClientError {}
 
-    class ChannelDoesNotExist: ClientError {
+    final class ChannelDoesNotExist: ClientError {
         init(cid: ChannelId) {
             super.init("There is no `ChannelDTO` instance in the DB matching cid: \(cid).")
         }

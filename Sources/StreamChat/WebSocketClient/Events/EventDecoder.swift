@@ -22,11 +22,11 @@ struct EventDecoder {
 }
 
 extension ClientError {
-    public class IgnoredEventType: ClientError {
+    public final class IgnoredEventType: ClientError {
         override public var localizedDescription: String { "The incoming event type is not supported. Ignoring." }
     }
 
-    public class EventDecoding: ClientError {
+    public final class EventDecoding: ClientError {
         override init(_ message: String, _ file: StaticString = #file, _ line: UInt = #line) {
             super.init(message, file, line)
         }

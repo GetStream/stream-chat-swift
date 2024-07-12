@@ -483,7 +483,7 @@ open class StreamAudioRecorder: NSObject, AudioRecording, AVAudioRecorderDelegat
 // MARK: - Error
 
 /// An enum that acts as a namespace for various audio recording errors that might occur
-public class AudioRecorderError: ClientError {
+public final class AudioRecorderError: ClientError {
     /// An unknown error occurred
     public static func unknown(file: StaticString = #file, line: UInt = #line) -> AudioRecorderError { .init("An unknown error occurred.", file, line) }
 

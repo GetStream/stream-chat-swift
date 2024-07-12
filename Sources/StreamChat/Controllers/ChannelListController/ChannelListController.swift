@@ -328,7 +328,7 @@ public extension ChatChannelListControllerDelegate {
 }
 
 extension ClientError {
-    public class FetchFailed: Error {
-        public var localizedDescription: String = "Failed to perform fetch request. This is an internal error."
+    public final class FetchFailed: Error {
+        public let localizedDescription: String = "Failed to perform fetch request. This is an internal error."
     }
 }

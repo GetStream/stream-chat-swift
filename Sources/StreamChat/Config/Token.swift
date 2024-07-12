@@ -83,7 +83,7 @@ public extension Token {
 }
 
 extension ClientError {
-    public class InvalidToken: ClientError {}
+    public final class InvalidToken: ClientError {}
 }
 
 private extension String {
