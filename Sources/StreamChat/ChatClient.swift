@@ -669,11 +669,11 @@ extension ChatClient: ConnectionDetailsProviderDelegate {
 }
 
 extension ClientError {
-    public class MissingLocalStorageURL: ClientError {
+    public final class MissingLocalStorageURL: ClientError {
         override public var localizedDescription: String { "The URL provided in ChatClientConfig is `nil`." }
     }
 
-    public class ConnectionNotSuccessful: ClientError {
+    public final class ConnectionNotSuccessful: ClientError {
         override public var localizedDescription: String {
             """
             Connection to the API has failed.
@@ -685,10 +685,10 @@ extension ClientError {
         }
     }
 
-    public class MissingToken: ClientError {}
-    class WaiterTimeout: ClientError {}
+    public final class MissingToken: ClientError {}
+    final class WaiterTimeout: ClientError {}
 
-    public class ClientIsNotInActiveMode: ClientError {
+    public final class ClientIsNotInActiveMode: ClientError {
         override public var localizedDescription: String {
             """
                 ChatClient is in connectionless mode, it cannot connect to websocket.
@@ -697,7 +697,7 @@ extension ClientError {
         }
     }
 
-    public class ConnectionWasNotInitiated: ClientError {
+    public final class ConnectionWasNotInitiated: ClientError {
         override public var localizedDescription: String {
             """
                 Before performing any other actions on chat client it's required to connect by using \
@@ -706,13 +706,13 @@ extension ClientError {
         }
     }
 
-    public class ClientHasBeenDeallocated: ClientError {
+    public final class ClientHasBeenDeallocated: ClientError {
         override public var localizedDescription: String {
             "ChatClient has been deallocated, make sure to keep at least one strong reference to it."
         }
     }
 
-    public class MissingTokenProvider: ClientError {
+    public final class MissingTokenProvider: ClientError {
         override public var localizedDescription: String {
             """
                 Missing token refresh provider to get a new token

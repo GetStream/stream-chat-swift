@@ -240,21 +240,21 @@ extension LocalAttachmentState {
 }
 
 extension ClientError {
-    class AttachmentDoesNotExist: ClientError {
+    final class AttachmentDoesNotExist: ClientError {
         init(id: AttachmentId) {
             super.init("There is no `AttachmentDTO` instance in the DB matching id: \(id).")
         }
     }
 
-    class AttachmentEditing: ClientError {
+    final class AttachmentEditing: ClientError {
         init(id: AttachmentId, reason: String) {
             super.init("`AttachmentDTO` with id: \(id) can't be edited (\(reason))")
         }
     }
 
-    class AttachmentDecoding: ClientError {}
+    final class AttachmentDecoding: ClientError {}
 
-    class AttachmentUploading: ClientError {
+    final class AttachmentUploading: ClientError {
         init(id: AttachmentId) {
             super.init(
                 "Failed to upload attachment with id: \(id)"

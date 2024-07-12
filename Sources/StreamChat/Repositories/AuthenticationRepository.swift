@@ -425,7 +425,7 @@ class AuthenticationRepository {
 }
 
 extension ClientError {
-    public class TooManyFailedTokenRefreshAttempts: ClientError {
+    public final class TooManyFailedTokenRefreshAttempts: ClientError {
         override public var localizedDescription: String {
             """
                 Token fetch has failed more than 10 times.
