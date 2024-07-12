@@ -116,10 +116,10 @@ public class ChatThreadListController: DataController, DelegateCallable, DataSto
                     self?.callback {
                         self?.threadListObserver.refreshItems {
                             self?.state = .remoteDataFetched
+                            self?.nextCursor = threadListResponse.next
+                            self?.hasLoadedAllThreads = threadListResponse.next == nil
+                            completion?(nil)
                         }
-                        self?.nextCursor = threadListResponse.next
-                        self?.hasLoadedAllThreads = threadListResponse.next == nil
-                        completion?(nil)
                     }
                 }
             case let .failure(error):

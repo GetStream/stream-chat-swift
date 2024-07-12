@@ -260,7 +260,7 @@ final class MessageDTO_Tests: XCTestCase {
         exp.isInverted = true
         var changes: [ListChange<ChatMessage>] = []
         let observer = try createMessagesFRC(for: channelPayload)
-        observer.onDidChange = { newChanges in
+        observer.onChange = { newChanges in
             changes += newChanges
             exp.fulfill()
         }
@@ -320,7 +320,7 @@ final class MessageDTO_Tests: XCTestCase {
         let exp = expectation(description: "FRC should report changes")
         var changes: [ListChange<ChatMessage>] = []
         let observer = try createMessagesFRC(for: channelPayload)
-        observer.onDidChange = { newChanges in
+        observer.onChange = { newChanges in
             changes += newChanges
             exp.fulfill()
         }
@@ -386,7 +386,7 @@ final class MessageDTO_Tests: XCTestCase {
         let exp = expectation(description: "FRC should not report changes for quoted message")
         var changes: [ListChange<ChatMessage>] = []
         let observer = try createMessagesFRC(for: channelPayload)
-        observer.onDidChange = { newChanges in
+        observer.onChange = { newChanges in
             changes += newChanges
             exp.fulfill()
         }
@@ -432,7 +432,7 @@ final class MessageDTO_Tests: XCTestCase {
         let exp = expectation(description: "FRC should report changes for quoted message")
         var changes: [ListChange<ChatMessage>] = []
         let observer = try createMessagesFRC(for: channelPayload)
-        observer.onDidChange = { newChanges in
+        observer.onChange = { newChanges in
             changes += newChanges
             exp.fulfill()
         }
@@ -4131,9 +4131,9 @@ final class MessageDTO_Tests: XCTestCase {
     }
 
     // Creates a messages observer (FRC wrapper)
-    private func createMessagesFRC(for channelPayload: ChannelPayload) throws -> BackgroundListDatabaseObserver<ChatMessage, MessageDTO> {
-        let observer = BackgroundListDatabaseObserver(
-            database: database,
+    private func createMessagesFRC(for channelPayload: ChannelPayload) throws -> ListDatabaseObserver<ChatMessage, MessageDTO> {
+        let observer = ListDatabaseObserver(
+            context: database.viewContext,
             fetchRequest: MessageDTO.messagesFetchRequest(
                 for: channelPayload.channel.cid,
                 pageSize: 25,
@@ -4142,7 +4142,8 @@ final class MessageDTO_Tests: XCTestCase {
                 shouldShowShadowedMessages: false
             ),
             itemCreator: { try $0.asModel() as ChatMessage },
-            itemReuseKeyPaths: (\ChatMessage.id, \MessageDTO.id)
+            itemReuseKeyPaths: (\ChatMessage.id, \MessageDTO.id),
+            sorting: []
         )
         try observer.startObserving()
         return observer

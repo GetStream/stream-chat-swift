@@ -136,9 +136,10 @@ final class PollController_Tests: XCTestCase {
         let user = UserPayload.dummy(userId: currentUserId)
         try client.databaseContainer.createPoll(id: pollId, createdBy: user)
         
-        // Trigger DB observers when using background mapping
-        _ = controller.poll
-        waitForDelegateCallback()
+        // Wait for DB observer
+        if controller.poll == nil {
+            waitForDelegateCallback()
+        }
 
         // Assert message is fetched from the database and has correct field values
         var poll = try XCTUnwrap(controller.poll)
