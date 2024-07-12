@@ -26,7 +26,7 @@ extension StreamChatWrapper {
 
                 let numberOfSuccessfulRefreshes = refreshDetails.numberOfSuccessfulRefreshesBeforeFailing
                 let shouldNotFail = numberOfSuccessfulRefreshes == 0
-                if shouldNotFail || self.numberOfRefreshTokens <= numberOfSuccessfulRefreshes {
+                if shouldNotFail || self.numberOfRefreshTokens >= numberOfSuccessfulRefreshes {
                     print("Demo App Token Refreshing: New token generated successfully.")
                     let newToken = generatedToken ?? initialToken
                     completion(.success(newToken))
