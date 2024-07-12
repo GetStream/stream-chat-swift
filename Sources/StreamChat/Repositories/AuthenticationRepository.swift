@@ -56,10 +56,6 @@ class AuthenticationRepository {
         set { tokenQueue.async(flags: .barrier) { self._isGettingToken = newValue }}
     }
 
-    private var consecutiveRefreshFailures: Int {
-        tokenQueue.sync { _consecutiveRefreshFailures }
-    }
-
     private(set) var currentUserId: UserId? {
         get { tokenQueue.sync { _currentUserId } }
         set { tokenQueue.async(flags: .barrier) { self._currentUserId = newValue }}
@@ -312,9 +308,15 @@ class AuthenticationRepository {
             return
         }
 
-        let interval = tokenQueue.sync(flags: .barrier) {
-            _tokenExpirationRetryStrategy.getDelayAfterTheFailure()
+        let interval: TimeInterval? = tokenQueue.sync(flags: .barrier) {
+            try? _tokenExpirationRetryStrategy.delay()
         }
+
+        guard let interval else {
+            completion(ClientError.TooManyFailedTokenRefreshAttempts())
+            return
+        }
+
         tokenProviderTimer = timerType.schedule(
             timeInterval: interval,
             queue: .main
@@ -353,11 +355,6 @@ class AuthenticationRepository {
             completionBlocks?.forEach { $0(error) }
         }
 
-        guard consecutiveRefreshFailures < Constants.maximumTokenRefreshAttempts else {
-            onCompletion(ClientError.TooManyFailedTokenRefreshAttempts())
-            return
-        }
-
         let onTokenReceived: (Token) -> Void = { [weak self, weak connectionRepository] token in
             self?.isGettingToken = false
             self?.prepareEnvironment(userInfo: userInfo, newToken: token)
@@ -368,15 +365,8 @@ class AuthenticationRepository {
             connectionRepository?.connect(completion: onCompletion)
         }
 
-        let retryFetchIfPossible: (Error?) -> Void = { [weak self] error in
+        let retryFetchIfPossible: (Error?) -> Void = { [weak self] _ in
             guard let self = self else { return }
-            self.tokenQueue.async(flags: .barrier) {
-                self._consecutiveRefreshFailures += 1
-            }
-            guard self.consecutiveRefreshFailures < Constants.maximumTokenRefreshAttempts else {
-                onCompletion(error ?? ClientError.TooManyFailedTokenRefreshAttempts())
-                return
-            }
 
             // We don't need to pass the completion again, as it is already present in `tokenRequestCompletions`
             self.scheduleTokenFetch(isRetry: true, userInfo: userInfo, tokenProvider: tokenProvider, completion: { _ in })
@@ -388,7 +378,7 @@ class AuthenticationRepository {
             case let .success(newToken):
                 onTokenReceived(newToken)
                 self?.tokenQueue.sync(flags: .barrier) {
-                    self?._tokenExpirationRetryStrategy.resetConsecutiveFailures()
+                    self?._tokenExpirationRetryStrategy.reset()
                 }
             case let .failure(error):
                 log.info("Failed fetching token with error: \(error)")
