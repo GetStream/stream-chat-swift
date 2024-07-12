@@ -15,8 +15,6 @@ final class BannerShowingConnectionDelegate {
     // Do not show connection banner on first connect.
     private var shouldShowConnectionBanner = false
 
-    // MARK: -
-
     init(showUnder view: UIView) {
         self.view = view
         setupViews()
