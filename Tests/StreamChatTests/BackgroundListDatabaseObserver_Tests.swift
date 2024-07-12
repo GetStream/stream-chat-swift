@@ -26,7 +26,7 @@ final class BackgroundListDatabaseObserver_Tests: XCTestCase {
         )
 
         observer = .init(
-            context: database.backgroundReadOnlyContext,
+            database: database,
             fetchRequest: fetchRequest,
             itemCreator: { $0.uniqueValue },
             sorting: [],
@@ -116,7 +116,7 @@ final class BackgroundListDatabaseObserver_Tests: XCTestCase {
     func test_updateStillReported_whenSamePropertyAssigned() throws {
         // For this test, we need an actual NSFetchedResultsController, not the test one
         observer = BackgroundListDatabaseObserver<String, TestManagedObject>(
-            context: database.backgroundReadOnlyContext,
+            database: database,
             fetchRequest: fetchRequest,
             itemCreator: { $0.testId },
             sorting: []

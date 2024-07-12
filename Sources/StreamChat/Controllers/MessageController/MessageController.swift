@@ -178,7 +178,7 @@ public class ChatMessageController: DataController, DelegateCallable, DataStoreP
 
     /// The observer used to listen replies updates.
     /// It will be reset on `listOrdering` changes.
-    private var repliesObserver: ListDatabaseObserverWrapper<ChatMessage, MessageDTO>?
+    private var repliesObserver: BackgroundListDatabaseObserver<ChatMessage, MessageDTO>?
 
     /// The worker used to fetch the remote data and communicate with servers.
     private let messageUpdater: MessageUpdater
@@ -813,7 +813,7 @@ extension ChatMessageController {
             _ fetchRequest: NSFetchRequest<MessageDTO>,
             _ itemCreator: @escaping (MessageDTO) throws -> ChatMessage,
             _ fetchedResultsControllerType: NSFetchedResultsController<MessageDTO>.Type
-        ) -> ListDatabaseObserverWrapper<ChatMessage, MessageDTO> = {
+        ) -> BackgroundListDatabaseObserver<ChatMessage, MessageDTO> = {
             .init(
                 database: $0,
                 fetchRequest: $1,

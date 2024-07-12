@@ -4131,8 +4131,8 @@ final class MessageDTO_Tests: XCTestCase {
     }
 
     // Creates a messages observer (FRC wrapper)
-    private func createMessagesFRC(for channelPayload: ChannelPayload) throws -> ListDatabaseObserverWrapper<ChatMessage, MessageDTO> {
-        let observer = ListDatabaseObserverWrapper(
+    private func createMessagesFRC(for channelPayload: ChannelPayload) throws -> BackgroundListDatabaseObserver<ChatMessage, MessageDTO> {
+        let observer = BackgroundListDatabaseObserver(
             database: database,
             fetchRequest: MessageDTO.messagesFetchRequest(
                 for: channelPayload.channel.cid,

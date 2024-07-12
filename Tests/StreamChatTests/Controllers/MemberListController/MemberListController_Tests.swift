@@ -444,7 +444,7 @@ final class MemberListController_Tests: XCTestCase {
 
 private class TestEnvironment {
     @Atomic var memberListUpdater: ChannelMemberListUpdater_Mock?
-    @Atomic var memberListObserver: ListDatabaseObserverWrapper_Mock<ChatChannelMember, MemberDTO>?
+    @Atomic var memberListObserver: BackgroundListDatabaseObserver_Mock<ChatChannelMember, MemberDTO>?
     @Atomic var memberListObserverSynchronizeError: Error?
 
     lazy var environment: ChatChannelMemberListController.Environment = .init(

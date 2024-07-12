@@ -23,7 +23,7 @@ final class ListDatabaseObserver_Mock<Item, DTO: NSManagedObject>: ListDatabaseO
     }
 }
 
-extension ListDatabaseObserverWrapper {
+extension BackgroundListDatabaseObserver {
     func startObservingAndWaitForInitialUpdate(on testCase: XCTestCase, file: StaticString = #file, line: UInt = #line) throws {
         let expectation = testCase.expectation(description: "List update")
         onDidChange = { _ in

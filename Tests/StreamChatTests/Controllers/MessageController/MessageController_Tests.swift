@@ -2537,7 +2537,7 @@ private class TestEnvironment {
     var replyMessagesPaginationStateHandler: MessagesPaginationStateHandler_Mock!
     var messageUpdater: MessageUpdater_Mock!
     var messageObserver: EntityDatabaseObserver_Mock<ChatMessage, MessageDTO>!
-    var repliesObserver: ListDatabaseObserverWrapper_Mock<ChatMessage, MessageDTO>!
+    var repliesObserver: BackgroundListDatabaseObserver_Mock<ChatMessage, MessageDTO>!
 
     var messageObserver_synchronizeError: Error?
 

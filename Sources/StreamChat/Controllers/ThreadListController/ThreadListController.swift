@@ -60,7 +60,7 @@ public class ChatThreadListController: DataController, DelegateCallable, DataSto
         }
     }
 
-    private(set) lazy var threadListObserver: ListDatabaseObserverWrapper<ChatThread, ThreadDTO> = {
+    private(set) lazy var threadListObserver: BackgroundListDatabaseObserver<ChatThread, ThreadDTO> = {
         let request = ThreadDTO.threadListFetchRequest()
         let observer = self.environment.createThreadListDatabaseObserver(
             client.databaseContainer,
@@ -198,8 +198,8 @@ extension ChatThreadListController {
             _ fetchRequest: NSFetchRequest<ThreadDTO>,
             _ itemCreator: @escaping (ThreadDTO) throws -> ChatThread
         )
-            -> ListDatabaseObserverWrapper<ChatThread, ThreadDTO> = {
-                ListDatabaseObserverWrapper(
+            -> BackgroundListDatabaseObserver<ChatThread, ThreadDTO> = {
+                BackgroundListDatabaseObserver(
                     database: $0,
                     fetchRequest: $1,
                     itemCreator: $2,

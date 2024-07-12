@@ -55,7 +55,7 @@ public class ChatChannelWatcherListController: DataController, DelegateCallable,
     }
 
     /// The observer used to observe the changes in the database.
-    private lazy var watchersObserver: ListDatabaseObserverWrapper<ChatUser, UserDTO> = createWatchersObserver()
+    private lazy var watchersObserver: BackgroundListDatabaseObserver<ChatUser, UserDTO> = createWatchersObserver()
 
     /// The worker used to fetch the remote data and communicate with servers.
     private lazy var updater: ChannelUpdater = self.environment.channelUpdaterBuilder(
@@ -98,7 +98,7 @@ public class ChatChannelWatcherListController: DataController, DelegateCallable,
         }
     }
 
-    private func createWatchersObserver() -> ListDatabaseObserverWrapper<ChatUser, UserDTO> {
+    private func createWatchersObserver() -> BackgroundListDatabaseObserver<ChatUser, UserDTO> {
         let observer = environment.watcherListObserverBuilder(
             client.databaseContainer,
             UserDTO.watcherFetchRequest(cid: query.cid),
@@ -148,8 +148,8 @@ extension ChatChannelWatcherListController {
             _ fetchRequest: NSFetchRequest<UserDTO>,
             _ itemCreator: @escaping (UserDTO) throws -> ChatUser,
             _ controllerType: NSFetchedResultsController<UserDTO>.Type
-        ) -> ListDatabaseObserverWrapper<ChatUser, UserDTO> = {
-            ListDatabaseObserverWrapper(
+        ) -> BackgroundListDatabaseObserver<ChatUser, UserDTO> = {
+            BackgroundListDatabaseObserver(
                 database: $0,
                 fetchRequest: $1,
                 itemCreator: $2,

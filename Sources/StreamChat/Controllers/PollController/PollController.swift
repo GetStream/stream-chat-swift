@@ -83,7 +83,7 @@ public class PollController: DataController, DelegateCallable, DataStoreProvider
         return observer
     }()
     
-    private(set) lazy var ownVotesObserver: ListDatabaseObserverWrapper<PollVote, PollVoteDTO> = {
+    private(set) lazy var ownVotesObserver: BackgroundListDatabaseObserver<PollVote, PollVoteDTO> = {
         let request = PollVoteDTO.pollVoteListFetchRequest(query: self.ownVotesQuery)
 
         let observer = environment.ownVotesObserverBuilder(
@@ -302,8 +302,8 @@ extension PollController {
             _ database: DatabaseContainer,
             _ fetchRequest: NSFetchRequest<PollVoteDTO>,
             _ itemCreator: @escaping (PollVoteDTO) throws -> PollVote
-        ) -> ListDatabaseObserverWrapper<PollVote, PollVoteDTO> = {
-            ListDatabaseObserverWrapper(
+        ) -> BackgroundListDatabaseObserver<PollVote, PollVoteDTO> = {
+            BackgroundListDatabaseObserver(
                 database: $0,
                 fetchRequest: $1,
                 itemCreator: $2,

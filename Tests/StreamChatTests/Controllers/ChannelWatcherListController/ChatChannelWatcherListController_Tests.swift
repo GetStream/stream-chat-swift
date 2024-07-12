@@ -474,7 +474,7 @@ final class ChatChannelWatcherListController_Tests: XCTestCase {
 
 private class TestEnvironment {
     @Atomic var watcherListUpdater: ChannelUpdater_Mock?
-    @Atomic var watcherListObserver: ListDatabaseObserverWrapper_Mock<ChatUser, UserDTO>?
+    @Atomic var watcherListObserver: BackgroundListDatabaseObserver_Mock<ChatUser, UserDTO>?
     @Atomic var watcherListObserverSynchronizeError: Error?
 
     lazy var environment: ChatChannelWatcherListController.Environment = .init(

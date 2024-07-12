@@ -207,7 +207,7 @@ extension ChatThreadListController_Tests {
     func makeController(
         query: ThreadListQuery = .init(watch: true),
         repository: ThreadsRepository? = nil,
-        observer: ListDatabaseObserverWrapper<ChatThread, ThreadDTO>? = nil
+        observer: BackgroundListDatabaseObserver<ChatThread, ThreadDTO>? = nil
     ) -> ChatThreadListController {
         ChatThreadListController(
             query: query,
@@ -217,7 +217,7 @@ extension ChatThreadListController_Tests {
                     self.repositoryMock
                 },
                 createThreadListDatabaseObserver: { database, fetchRequest, itemCreator in
-                    observer ?? ListDatabaseObserverWrapper(
+                    observer ?? BackgroundListDatabaseObserver(
                         database: database,
                         fetchRequest: fetchRequest,
                         itemCreator: itemCreator,

@@ -27,7 +27,7 @@ final class ListDatabaseObserver_Sorting_Tests: XCTestCase {
 
     var database: DatabaseContainer_Spy!
     var query: ChannelListQuery!
-    var observer: ListDatabaseObserverWrapper<ChatChannel, ChannelDTO>!
+    var observer: BackgroundListDatabaseObserver<ChatChannel, ChannelDTO>!
 
     override func tearDown() {
         super.tearDown()
@@ -329,7 +329,7 @@ final class ListDatabaseObserver_Sorting_Tests: XCTestCase {
 
         let request = ChannelDTO.channelListFetchRequest(query: query, chatClientConfig: ChatClientConfig(apiKeyString: "1234"))
 
-        observer = ListDatabaseObserverWrapper(
+        observer = BackgroundListDatabaseObserver(
             database: database,
             fetchRequest: request,
             itemCreator: { try $0.asModel() },

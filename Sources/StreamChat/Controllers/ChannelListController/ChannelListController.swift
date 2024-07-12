@@ -69,7 +69,7 @@ public class ChatChannelListController: DataController, DelegateCallable, DataSt
         }
     }
 
-    private(set) lazy var channelListObserver: ListDatabaseObserverWrapper<ChatChannel, ChannelDTO> = {
+    private(set) lazy var channelListObserver: BackgroundListDatabaseObserver<ChatChannel, ChannelDTO> = {
         let request = ChannelDTO.channelListFetchRequest(query: self.query, chatClientConfig: client.config)
         let observer = self.environment.createChannelListDatabaseObserver(
             client.databaseContainer,
@@ -275,8 +275,8 @@ extension ChatChannelListController {
             _ itemCreator: @escaping (ChannelDTO) throws -> ChatChannel,
             _ sorting: [SortValue<ChatChannel>]
         )
-            -> ListDatabaseObserverWrapper<ChatChannel, ChannelDTO> = {
-                ListDatabaseObserverWrapper(
+            -> BackgroundListDatabaseObserver<ChatChannel, ChannelDTO> = {
+                BackgroundListDatabaseObserver(
                     database: $0,
                     fetchRequest: $1,
                     itemCreator: $2,

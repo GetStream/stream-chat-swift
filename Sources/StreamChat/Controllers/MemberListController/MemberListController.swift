@@ -95,7 +95,7 @@ public class ChatChannelMemberListController: DataController, DelegateCallable, 
         )
     }
 
-    private func createMemberListObserver() -> ListDatabaseObserverWrapper<ChatChannelMember, MemberDTO> {
+    private func createMemberListObserver() -> BackgroundListDatabaseObserver<ChatChannelMember, MemberDTO> {
         let observer = environment.memberListObserverBuilder(
             client.databaseContainer,
             MemberDTO.members(matching: query),
@@ -165,7 +165,7 @@ extension ChatChannelMemberListController {
             _ fetchRequest: NSFetchRequest<MemberDTO>,
             _ itemCreator: @escaping (MemberDTO) throws -> ChatChannelMember,
             _ controllerType: NSFetchedResultsController<MemberDTO>.Type
-        ) -> ListDatabaseObserverWrapper<ChatChannelMember, MemberDTO> = {
+        ) -> BackgroundListDatabaseObserver<ChatChannelMember, MemberDTO> = {
             .init(
                 database: $0,
                 fetchRequest: $1,

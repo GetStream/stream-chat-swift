@@ -73,7 +73,7 @@ public class ChatMessageSearchController: DataController, DelegateCallable, Data
         )
 
     /// Used for observing the database for changes.
-    private var messagesObserver: ListDatabaseObserverWrapper<ChatMessage, MessageDTO>?
+    private var messagesObserver: BackgroundListDatabaseObserver<ChatMessage, MessageDTO>?
 
     private func startObserversIfNeeded() {
         guard state == .initialized else { return }
@@ -88,7 +88,7 @@ public class ChatMessageSearchController: DataController, DelegateCallable, Data
     }
 
     private func setMessagesObserver() {
-        let observer = ListDatabaseObserverWrapper(
+        let observer = BackgroundListDatabaseObserver(
             database: client.databaseContainer,
             fetchRequest: MessageDTO.messagesFetchRequest(
                 for: lastQuery ?? query
