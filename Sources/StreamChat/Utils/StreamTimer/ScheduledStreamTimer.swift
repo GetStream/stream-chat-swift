@@ -6,6 +6,7 @@ import Foundation
 
 public class ScheduledStreamTimer: StreamTimer {
     let interval: TimeInterval
+    let fireOnStart: Bool
     var runLoop = RunLoop.current
     var timer: Foundation.Timer?
     public var onChange: (() -> Void)?
@@ -14,8 +15,9 @@ public class ScheduledStreamTimer: StreamTimer {
         timer?.isValid ?? false
     }
 
-    public init(interval: TimeInterval) {
+    public init(interval: TimeInterval, fireOnStart: Bool = true) {
         self.interval = interval
+        self.fireOnStart = fireOnStart
     }
 
     public func start() {
@@ -28,7 +30,9 @@ public class ScheduledStreamTimer: StreamTimer {
             self.onChange?()
         }
         runLoop.add(timer!, forMode: .common)
-        timer?.fire()
+        if fireOnStart {
+            timer?.fire()
+        }
     }
 
     public func stop() {

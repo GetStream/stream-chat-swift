@@ -59,6 +59,9 @@ enum WebSocketConnectionState: Equatable {
         /// A user initiated web socket disconnecting.
         case userInitiated
 
+        /// The connection timed out while trying to connect.
+        case timeout
+
         /// A server initiated web socket disconnecting, an optional error object is provided.
         case serverInitiated(error: ClientError? = nil)
 
@@ -140,6 +143,8 @@ enum WebSocketConnectionState: Equatable {
         case .noPongReceived:
             return true
         case .userInitiated:
+            return false
+        case .timeout:
             return false
         }
     }

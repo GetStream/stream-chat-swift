@@ -142,6 +142,10 @@ class WebSocketClient {
             eventsBatcher.processImmediately(completion: completion)
         }
     }
+
+    func timeout() {
+        connectionState = .disconnected(source: .timeout)
+    }
 }
 
 protocol ConnectionStateDelegate: AnyObject {

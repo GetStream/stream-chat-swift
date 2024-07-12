@@ -33,6 +33,7 @@ final class DefaultConnectionRecoveryHandler: ConnectionRecoveryHandler {
     private var reconnectionStrategy: RetryStrategy
     private var reconnectionTimer: TimerControl?
     private let keepConnectionAliveInBackground: Bool
+    private var reconnectionTimeoutHandler: StreamTimer = ScheduledStreamTimer(interval: 30, fireOnStart: false)
 
     // MARK: - Init
 
@@ -63,6 +64,7 @@ final class DefaultConnectionRecoveryHandler: ConnectionRecoveryHandler {
     deinit {
         unsubscribeFromNotifications()
         cancelReconnectionTimer()
+        reconnectionTimeoutHandler.stop()
     }
 }
 
@@ -81,6 +83,13 @@ private extension DefaultConnectionRecoveryHandler {
             name: .internetConnectionAvailabilityDidChange,
             object: nil
         )
+
+        reconnectionTimeoutHandler.onChange = { [weak self] in
+            if self?.webSocketClient.connectionState.isAutomaticReconnectionEnabled == true {
+                self?.webSocketClient.timeout()
+                self?.reconnectionTimeoutHandler.stop()
+            }
+        }
     }
 
     func unsubscribeFromNotifications() {
@@ -153,6 +162,7 @@ extension DefaultConnectionRecoveryHandler {
         switch state {
         case .connecting:
             cancelReconnectionTimer()
+            reconnectionTimeoutHandler.start()
 
         case .connected:
             extensionLifecycle.setAppState(isReceivingEvents: true)
@@ -160,6 +170,7 @@ extension DefaultConnectionRecoveryHandler {
             syncRepository.syncLocalState {
                 log.info("Local state sync completed", subsystems: .offlineSupport)
             }
+            reconnectionTimeoutHandler.stop()
 
         case .disconnected:
             extensionLifecycle.setAppState(isReceivingEvents: false)
