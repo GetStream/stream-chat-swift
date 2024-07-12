@@ -5,7 +5,7 @@
 import Foundation
 
 /// Provides thread-safe access to the value's storage
-final class AudioRecordingContextAccessor {
+final class AudioRecordingContextAccessor: @unchecked Sendable {
     /// The queue that thread-safe access to the value's storage
     private var accessQueue: DispatchQueue
 
@@ -30,6 +30,7 @@ final class AudioRecordingContextAccessor {
     }
 
     private func writeValue(_ newValue: AudioRecordingContext) {
+        nonisolated(unsafe) let newValue = newValue
         accessQueue.async { [weak self] in
             self?._value = newValue
         }

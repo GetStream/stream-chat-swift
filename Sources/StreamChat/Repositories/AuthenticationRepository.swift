@@ -4,7 +4,7 @@
 
 import Foundation
 
-public typealias TokenProvider = (@escaping (Result<Token, Error>) -> Void) -> Void
+public typealias TokenProvider = @Sendable (@escaping (Result<Token, Error>) -> Void) -> Void
 
 enum EnvironmentState {
     case firstConnection
@@ -27,7 +27,7 @@ protocol AuthenticationRepositoryDelegate: AnyObject {
     func logOutUser(completion: @escaping () -> Void)
 }
 
-class AuthenticationRepository {
+class AuthenticationRepository: @unchecked Sendable {
     private enum Constants {
         /// Maximum amount of consecutive token refresh attempts before failing
         static let maximumTokenRefreshAttempts = 10
@@ -46,8 +46,8 @@ class AuthenticationRepository {
     private var _currentToken: Token?
     private var _tokenExpirationRetryStrategy: RetryStrategy
     private var _tokenProvider: TokenProvider?
-    private var _tokenRequestCompletions: [(Error?) -> Void] = []
-    private var _tokenWaiters: [String: (Result<Token, Error>) -> Void] = [:]
+    private var _tokenRequestCompletions: [@Sendable (Error?) -> Void] = []
+    private var _tokenWaiters: [String: @Sendable(Result<Token, Error>) -> Void] = [:]
     private var _tokenProviderTimer: TimerControl?
     private var _connectionProviderTimer: TimerControl?
 
@@ -147,7 +147,7 @@ class AuthenticationRepository {
     /// - Parameters:
     ///   - userInfo:       The user information that will be created OR updated if it exists.
     ///   - tokenProvider:  The block to be used to get a token.
-    func connectUser(userInfo: UserInfo, tokenProvider: @escaping TokenProvider, completion: @escaping (Error?) -> Void) {
+    func connectUser(userInfo: UserInfo, tokenProvider: @escaping TokenProvider, completion: @Sendable @escaping (Error?) -> Void) {
         var logOutFirst: Bool {
             if let currentUserId = currentUserId, currentUserId.isGuest {
                 return true
@@ -163,7 +163,7 @@ class AuthenticationRepository {
     /// Establishes a connection for a guest user.
     /// - Parameters:
     ///   - userInfo: The user information that will be created OR updated if it exists.
-    func connectGuestUser(userInfo: UserInfo, completion: @escaping (Error?) -> Void) {
+    func connectGuestUser(userInfo: UserInfo, completion: @Sendable @escaping (Error?) -> Void) {
         let tokenProvider: TokenProvider = { [weak self] completion in
             self?.fetchGuestToken(userInfo: userInfo, completion: completion)
         }
@@ -171,12 +171,12 @@ class AuthenticationRepository {
     }
 
     /// Establishes a connection for an anonymous user.
-    func connectAnonymousUser(completion: @escaping (Error?) -> Void) {
+    func connectAnonymousUser(completion: @Sendable @escaping (Error?) -> Void) {
         let tokenProvider: TokenProvider = { $0(.success(.anonymous)) }
         executeTokenFetch(logOutFirst: true, userInfo: nil, tokenProvider: tokenProvider, completion: completion)
     }
 
-    private func executeTokenFetch(logOutFirst: Bool, userInfo: UserInfo?, tokenProvider: @escaping TokenProvider, completion: @escaping (Error?) -> Void) {
+    private func executeTokenFetch(logOutFirst: Bool, userInfo: UserInfo?, tokenProvider: @escaping TokenProvider, completion: @Sendable @escaping (Error?) -> Void) {
         log.assert(delegate != nil, "Delegate should not be nil at this point")
 
         let handleTokenFetch = { [weak self] in
@@ -213,7 +213,7 @@ class AuthenticationRepository {
         currentUserId = nil
     }
 
-    func refreshToken(completion: @escaping (Error?) -> Void) {
+    func refreshToken(completion: @Sendable @escaping (Error?) -> Void) {
         guard let tokenProvider = tokenProvider else {
             let error = ClientError.MissingTokenProvider()
             log.assertionFailure(error.localizedDescription)
@@ -253,7 +253,7 @@ class AuthenticationRepository {
         }
     }
 
-    func provideToken(timeout: TimeInterval = 10, completion: @escaping (Result<Token, Error>) -> Void) {
+    func provideToken(timeout: TimeInterval = 10, completion: @Sendable @escaping (Result<Token, Error>) -> Void) {
         if let token = currentToken {
             completion(.success(token))
             return
@@ -304,7 +304,7 @@ class AuthenticationRepository {
         }
     }
 
-    private func scheduleTokenFetch(isRetry: Bool, userInfo: UserInfo?, tokenProvider: @escaping TokenProvider, completion: @escaping (Error?) -> Void) {
+    private func scheduleTokenFetch(isRetry: Bool, userInfo: UserInfo?, tokenProvider: @escaping TokenProvider, completion: @Sendable @escaping (Error?) -> Void) {
         guard !isGettingToken || isRetry else {
             tokenQueue.async(flags: .barrier) {
                 self._tokenRequestCompletions.append(completion)
@@ -324,7 +324,7 @@ class AuthenticationRepository {
         }
     }
 
-    private func getToken(isRetry: Bool, userInfo: UserInfo?, tokenProvider: @escaping TokenProvider, completion: @escaping (Error?) -> Void) {
+    private func getToken(isRetry: Bool, userInfo: UserInfo?, tokenProvider: @escaping TokenProvider, completion: @Sendable @escaping (Error?) -> Void) {
         tokenQueue.async(flags: .barrier) {
             self._tokenRequestCompletions.append(completion)
         }
@@ -335,7 +335,7 @@ class AuthenticationRepository {
 
         isGettingToken = true
 
-        let onCompletion: (Error?) -> Void = { [weak self] error in
+        let onCompletion: @Sendable(Error?) -> Void = { [weak self] error in
             guard let self = self else { return }
             if let error = error {
                 log.error("Error when getting token: \(error)", subsystems: .authentication)

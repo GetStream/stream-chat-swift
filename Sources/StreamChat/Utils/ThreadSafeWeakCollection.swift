@@ -4,7 +4,7 @@
 
 import Foundation
 
-final class ThreadSafeWeakCollection<T: AnyObject> {
+final class ThreadSafeWeakCollection<T: AnyObject>: @unchecked Sendable {
     private let queue = DispatchQueue(label: "io.stream.com.weak-collection", attributes: .concurrent)
     private let storage = NSHashTable<T>.weakObjects()
 
@@ -25,12 +25,14 @@ final class ThreadSafeWeakCollection<T: AnyObject> {
     }
 
     func add(_ object: T) {
+        nonisolated(unsafe) let object = object
         queue.async(flags: .barrier) {
             self.storage.add(object)
         }
     }
 
     func remove(_ object: T) {
+        nonisolated(unsafe) let object = object
         queue.async(flags: .barrier) {
             self.storage.remove(object)
         }

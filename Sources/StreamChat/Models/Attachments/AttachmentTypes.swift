@@ -87,7 +87,7 @@ public struct AttachmentAction: Codable, Hashable {
 
 /// An attachment type.
 /// There are some predefined types on backend but any type can be introduced and sent to backend.
-public struct AttachmentType: RawRepresentable, Codable, Hashable, ExpressibleByStringLiteral {
+public struct AttachmentType: RawRepresentable, Codable, Hashable, ExpressibleByStringLiteral, Sendable {
     public let rawValue: String
 
     public init(rawValue: String) {
@@ -143,7 +143,7 @@ public struct AttachmentFile: Codable, Hashable {
     /// A mime type.
     public let mimeType: String?
     /// A file size formatter.
-    public static let sizeFormatter = ByteCountFormatter()
+    nonisolated(unsafe) public static let sizeFormatter = ByteCountFormatter()
 
     // TODO: This should be deprecated in the future. UI Formatting should not belong to domain models.
     // All formatting logic should come from `Appearance.formatters`.
@@ -203,7 +203,7 @@ public struct AttachmentFile: Codable, Hashable {
 }
 
 /// An attachment file type.
-public enum AttachmentFileType: String, Codable, Equatable, CaseIterable {
+public enum AttachmentFileType: String, Codable, Equatable, CaseIterable, Sendable {
     /// File
     case generic, doc, docx, pdf, ppt, pptx, tar, xls, zip, x7z, xz, ods, odt, xlsx
     /// Text

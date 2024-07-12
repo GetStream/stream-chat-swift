@@ -4,7 +4,7 @@
 
 import Foundation
 
-class URLSessionWebSocketEngine: NSObject, WebSocketEngine {
+final class URLSessionWebSocketEngine: NSObject, WebSocketEngine, @unchecked Sendable {
     private weak var task: URLSessionWebSocketTask? {
         didSet {
             oldValue?.cancel()
@@ -93,13 +93,14 @@ class URLSessionWebSocketEngine: NSObject, WebSocketEngine {
     private func makeURLSessionDelegateHandler() -> URLSessionDelegateHandler {
         let urlSessionDelegateHandler = URLSessionDelegateHandler()
         urlSessionDelegateHandler.onOpen = { [weak self] _ in
-            self?.callbackQueue.async {
-                self?.delegate?.webSocketDidConnect()
+            guard let self else { return }
+            self.callbackQueue.async {
+                self.delegate?.webSocketDidConnect()
             }
         }
 
         urlSessionDelegateHandler.onClose = { [weak self] closeCode, reason in
-            var error: WebSocketEngineError?
+            nonisolated(unsafe) var error: WebSocketEngineError?
 
             if let reasonData = reason, let reasonString = String(data: reasonData, encoding: .utf8) {
                 error = WebSocketEngineError(
@@ -134,7 +135,7 @@ class URLSessionWebSocketEngine: NSObject, WebSocketEngine {
     }
 }
 
-final class URLSessionDelegateHandler: NSObject, URLSessionDataDelegate, URLSessionWebSocketDelegate {
+final class URLSessionDelegateHandler: NSObject, URLSessionDataDelegate, URLSessionWebSocketDelegate, @unchecked Sendable {
     var onOpen: ((_ protocol: String?) -> Void)?
     var onClose: ((_ code: URLSessionWebSocketTask.CloseCode, _ reason: Data?) -> Void)?
     var onCompletion: ((Error?) -> Void)?

@@ -5,7 +5,7 @@
 import CoreData
 
 /// This enum describes the changes of the given collections of items.
-public enum ListChange<Item> {
+public enum ListChange<Item>: @unchecked Sendable {
     /// A new item was inserted on the given index path.
     case insert(_ item: Item, index: IndexPath)
 

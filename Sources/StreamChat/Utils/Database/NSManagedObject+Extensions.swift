@@ -67,11 +67,11 @@ extension NSManagedObject {
     }
 }
 
-class FetchCache {
+class FetchCache: @unchecked Sendable {
     /// We use this wrapper to have a custom implementation of both Equatable and Hashable.
     /// This is because when using NSFetchRequest directly, its implementation of `hash` uses `entity`, which is a property that crashes on access
     /// when it is not yet set
-    struct FetchRequestWrapper<T: NSFetchRequestResult>: Equatable, Hashable {
+    struct FetchRequestWrapper<T: NSFetchRequestResult>: Equatable, Hashable, @unchecked Sendable {
         let request: NSFetchRequest<T>
 
         static func == (lhs: FetchRequestWrapper<T>, rhs: FetchRequestWrapper<T>) -> Bool {

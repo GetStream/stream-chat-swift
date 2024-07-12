@@ -10,7 +10,7 @@ import Foundation
 ///
 /// Typically, an app contains just one instance of `ChatClient`. However, it's possible to have multiple instances if your use
 /// case requires it (i.e. more than one window with different workspaces in a Slack-like app).
-public class ChatClient {
+public class ChatClient: @unchecked Sendable {
     /// The `UserId` of the currently logged in user.
     public var currentUserId: UserId? {
         authenticationRepository.currentUserId
@@ -58,7 +58,7 @@ public class ChatClient {
 
     /// The registry that contains all the attachment payloads associated with their attachment types.
     /// For the meantime this is a static property to avoid breaking changes. On v5, this can be changed.
-    private(set) static var attachmentTypesRegistry: [AttachmentType: AttachmentPayload.Type] = [
+    nonisolated(unsafe) private(set) static var attachmentTypesRegistry: [AttachmentType: AttachmentPayload.Type] = [
         .image: ImageAttachmentPayload.self,
         .video: VideoAttachmentPayload.self,
         .audio: AudioAttachmentPayload.self,
@@ -286,7 +286,7 @@ public class ChatClient {
     public func connectUser(
         userInfo: UserInfo,
         tokenProvider: @escaping TokenProvider,
-        completion: ((Error?) -> Void)? = nil
+        completion: (@Sendable(Error?) -> Void)? = nil
     ) {
         authenticationRepository.connectUser(
             userInfo: userInfo,
@@ -331,7 +331,7 @@ public class ChatClient {
     public func connectUser(
         userInfo: UserInfo,
         token: Token,
-        completion: ((Error?) -> Void)? = nil
+        completion: (@Sendable(Error?) -> Void)? = nil
     ) {
         guard token.expiration == nil else {
             let error = ClientError.MissingTokenProvider()
@@ -377,7 +377,7 @@ public class ChatClient {
     ///   - completion: The completion that will be called once the **first** user session for the given token is setup.
     public func connectGuestUser(
         userInfo: UserInfo,
-        completion: ((Error?) -> Void)? = nil
+        completion: (@Sendable(Error?) -> Void)? = nil
     ) {
         authenticationRepository.connectGuestUser(userInfo: userInfo, completion: { completion?($0) })
     }
@@ -401,7 +401,7 @@ public class ChatClient {
 
     /// Connects an anonymous user
     /// - Parameter completion: The completion that will be called once the **first** user session for the given token is setup.
-    public func connectAnonymousUser(completion: ((Error?) -> Void)? = nil) {
+    public func connectAnonymousUser(completion: (@Sendable(Error?) -> Void)? = nil) {
         authenticationRepository.connectAnonymousUser(
             completion: { completion?($0) }
         )
@@ -436,7 +436,7 @@ public class ChatClient {
 
     /// Disconnects the chat client from the chat servers. No further updates from the servers
     /// are received.
-    public func disconnect(completion: @escaping () -> Void) {
+    public func disconnect(completion: @Sendable @escaping () -> Void) {
         connectionRepository.disconnect(source: .userInitiated) {
             log.info("The `ChatClient` has been disconnected.", subsystems: .webSocket)
             completion()
@@ -622,6 +622,7 @@ public class ChatClient {
     /// Starts the process to  refresh the token
     /// - Parameter completion: A block to be executed when the process is completed. Contains an error if something went wrong
     private func refreshToken(completion: ((Error?) -> Void)?) {
+        nonisolated(unsafe) let completion = completion
         authenticationRepository.refreshToken {
             completion?($0)
         }
@@ -659,11 +660,11 @@ extension ChatClient: ConnectionStateDelegate {
 
 /// `Client` provides connection details for the `RequestEncoder`s it creates.
 extension ChatClient: ConnectionDetailsProviderDelegate {
-    func provideToken(timeout: TimeInterval = 10, completion: @escaping (Result<Token, Error>) -> Void) {
+    func provideToken(timeout: TimeInterval = 10, completion: @Sendable @escaping (Result<Token, Error>) -> Void) {
         authenticationRepository.provideToken(timeout: timeout, completion: completion)
     }
 
-    func provideConnectionId(timeout: TimeInterval = 10, completion: @escaping (Result<ConnectionId, Error>) -> Void) {
+    func provideConnectionId(timeout: TimeInterval = 10, completion: @Sendable @escaping (Result<ConnectionId, Error>) -> Void) {
         connectionRepository.provideConnectionId(timeout: timeout, completion: completion)
     }
 }

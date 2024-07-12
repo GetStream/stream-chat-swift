@@ -144,6 +144,8 @@ public class PollController: DataController, DelegateCallable, DataStoreProvider
     override public func synchronize(_ completion: ((_ error: Error?) -> Void)? = nil) {
         startObserversIfNeeded()
 
+        nonisolated(unsafe) let completion = completion
+        
         pollsRepository.queryPollVotes(query: ownVotesQuery) { [weak self] result in
             guard let self else { return }
             if let error = result.error {
@@ -180,6 +182,7 @@ public class PollController: DataController, DelegateCallable, DataStoreProvider
             }
         }
         
+        nonisolated(unsafe) let completion = completion
         pollsRepository.castPollVote(
             messageId: messageId,
             pollId: pollId,
@@ -205,6 +208,7 @@ public class PollController: DataController, DelegateCallable, DataStoreProvider
         voteId: String,
         completion: ((Error?) -> Void)? = nil
     ) {
+        nonisolated(unsafe) let completion = completion
         pollsRepository.removePollVote(
             messageId: messageId,
             pollId: pollId,
@@ -222,6 +226,7 @@ public class PollController: DataController, DelegateCallable, DataStoreProvider
     /// - Parameters:
     ///   - completion: A closure to be called upon completion, with an optional `Error` if something went wrong.
     public func closePoll(completion: ((Error?) -> Void)? = nil) {
+        nonisolated(unsafe) let completion = completion
         pollsRepository.closePoll(pollId: pollId, completion: { [weak self] result in
             self?.callback {
                 completion?(result)
@@ -242,6 +247,7 @@ public class PollController: DataController, DelegateCallable, DataStoreProvider
         extraData: [String: RawJSON]? = nil,
         completion: ((Error?) -> Void)? = nil
     ) {
+        nonisolated(unsafe) let completion = completion
         pollsRepository.suggestPollOption(
             pollId: pollId,
             text: text,
@@ -271,7 +277,7 @@ public class PollController: DataController, DelegateCallable, DataStoreProvider
 }
 
 /// Represents the visibility of votes in a poll.
-public struct VotingVisibility: RawRepresentable, Equatable {
+public struct VotingVisibility: RawRepresentable, Equatable, Sendable {
     public let rawValue: String
 
     public init(rawValue: String) {

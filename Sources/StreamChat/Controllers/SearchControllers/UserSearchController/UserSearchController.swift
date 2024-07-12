@@ -130,7 +130,7 @@ private extension ChatUserSearchController {
         // This is needed to make the delegate fire about state changes at the same time with the same
         // values as it was when query was persisted.
         setLocalDataFetchedStateIfNeeded()
-
+        nonisolated(unsafe) let completion = completion
         userQueryUpdater.fetch(userListQuery: query) { [weak self] result in
             switch result {
             case let .success(page):
@@ -145,10 +145,12 @@ private extension ChatUserSearchController {
                         self?._users = users
                     }
                     self?.state = .remoteDataFetched
+                    
+                    guard let self else { return }
 
-                    self?.callback {
-                        self?.multicastDelegate.invoke {
-                            guard let self = self, let listChanges = listChanges else { return }
+                    self.callback {
+                        self.multicastDelegate.invoke {
+                            guard let listChanges = listChanges else { return }
                             $0.controller(self, didChangeUsers: listChanges)
                         }
                         completion?(nil)

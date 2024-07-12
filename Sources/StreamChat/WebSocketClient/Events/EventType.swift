@@ -5,7 +5,7 @@
 import Foundation
 
 /// An event type.
-public struct EventType: RawRepresentable, Codable, Hashable, ExpressibleByStringLiteral {
+public struct EventType: RawRepresentable, Codable, Hashable, ExpressibleByStringLiteral, Sendable {
     public let rawValue: String
 
     public init(rawValue: String) {

@@ -4,7 +4,7 @@
 
 import Foundation
 
-public struct TranslationLanguage: Hashable {
+public struct TranslationLanguage: Hashable, Sendable {
     public let languageCode: String
 
     public init(languageCode: String) {
@@ -75,7 +75,7 @@ public extension TranslationLanguage {
     static let urdu: TranslationLanguage = TranslationLanguage(languageCode: "ur")
     static let vietnamese: TranslationLanguage = TranslationLanguage(languageCode: "vi")
 
-    static var allCases: [Self] = [
+    static let allCases: [Self] = [
         .afrikaans,
         .albanian,
         .amharic,

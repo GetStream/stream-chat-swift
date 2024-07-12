@@ -90,7 +90,7 @@ extension UserDTO {
     ///   - context: The context used to fetch `UserDTO`
     ///
     static func load(id: String, context: NSManagedObjectContext) -> UserDTO? {
-        load(by: id, context: context).first
+        load(by: id, context: context).first as? UserDTO
     }
 
     /// If a User with the given id exists in the context, fetches and returns it. Otherwise creates a new

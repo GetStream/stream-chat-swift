@@ -7,15 +7,15 @@ import Foundation
 /// A collection wrapping the base collection which allows base collections of different types.
 ///
 /// - Note: The type of the base collection can change in the future.
-public struct StreamCollection<Element>: RandomAccessCollection {
+public struct StreamCollection<Element>: RandomAccessCollection, Sendable {
     public typealias Index = Int
 
-    private let _endIndex: () -> Index
-    private let _position: (Index) -> Element
-    private let _startIndex: () -> Index
+    private let _endIndex: @Sendable() -> Index
+    private let _position: @Sendable(Index) -> Element
+    private let _startIndex: @Sendable() -> Index
 
     /// Creates an instance of the collection using the base collection as the data source.
-    public init<BaseCollection>(_ baseCollection: BaseCollection) where BaseCollection: RandomAccessCollection, BaseCollection.Element == Element, BaseCollection.Index == Index {
+    public init<BaseCollection: Sendable>(_ baseCollection: BaseCollection) where BaseCollection: RandomAccessCollection, BaseCollection.Element == Element, BaseCollection.Index == Index {
         _endIndex = { baseCollection.endIndex }
         _position = { baseCollection[$0] }
         _startIndex = { baseCollection.startIndex }

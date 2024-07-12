@@ -124,7 +124,7 @@ public class PollVoteListController: DataController, DelegateCallable, DataStore
 
     override public func synchronize(_ completion: ((_ error: Error?) -> Void)? = nil) {
         startPollVotesListObserverIfNeeded()
-
+        nonisolated(unsafe) let completion = completion
         pollsRepository.queryPollVotes(query: query) { [weak self] result in
             guard let self else { return }
             if let value = result.value {
@@ -168,6 +168,7 @@ public class PollVoteListController: DataController, DelegateCallable, DataStore
         let limit = limit ?? query.pagination.pageSize
         var updatedQuery = query
         updatedQuery.pagination = Pagination(pageSize: limit, cursor: nextCursor)
+        nonisolated(unsafe) let completion = completion
         pollsRepository.queryPollVotes(query: updatedQuery) { [weak self] result in
             guard let self else { return }
             if let value = result.value {

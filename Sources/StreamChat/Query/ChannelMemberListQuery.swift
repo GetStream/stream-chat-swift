@@ -51,7 +51,7 @@ public extension FilterKey where Scope: AnyMemberListFilterScope {
 }
 
 /// A query type used for fetching channel members from the backend.
-public struct ChannelMemberListQuery: Encodable {
+public struct ChannelMemberListQuery: Encodable, @unchecked Sendable {
     private enum CodingKeys: String, CodingKey {
         case filter = "filter_conditions"
         case sort

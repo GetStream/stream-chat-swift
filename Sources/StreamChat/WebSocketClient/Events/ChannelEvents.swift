@@ -22,7 +22,7 @@ public struct ChannelUpdatedEvent: ChannelSpecificEvent {
     public let createdAt: Date
 }
 
-class ChannelUpdatedEventDTO: EventDTO {
+class ChannelUpdatedEventDTO: EventDTO, @unchecked Sendable {
     let channel: ChannelDetailPayload
     let user: UserPayload?
     let message: MessagePayload?
@@ -67,7 +67,7 @@ public struct ChannelDeletedEvent: ChannelSpecificEvent {
     public let createdAt: Date
 }
 
-class ChannelDeletedEventDTO: EventDTO {
+class ChannelDeletedEventDTO: EventDTO, @unchecked Sendable {
     let user: UserPayload?
     let channel: ChannelDetailPayload
     let createdAt: Date
@@ -111,7 +111,7 @@ public struct ChannelTruncatedEvent: ChannelSpecificEvent {
     public let createdAt: Date
 }
 
-class ChannelTruncatedEventDTO: EventDTO {
+class ChannelTruncatedEventDTO: EventDTO, @unchecked Sendable {
     let channel: ChannelDetailPayload
     let user: UserPayload?
     let createdAt: Date
@@ -153,7 +153,7 @@ public struct ChannelVisibleEvent: ChannelSpecificEvent {
     public let createdAt: Date
 }
 
-class ChannelVisibleEventDTO: EventDTO {
+class ChannelVisibleEventDTO: EventDTO, @unchecked Sendable {
     let cid: ChannelId
     let user: UserPayload
     let createdAt: Date
@@ -192,7 +192,7 @@ public struct ChannelHiddenEvent: ChannelSpecificEvent {
     public let createdAt: Date
 }
 
-class ChannelHiddenEventDTO: EventDTO {
+class ChannelHiddenEventDTO: EventDTO, @unchecked Sendable {
     let cid: ChannelId
     let user: UserPayload
     let isHistoryCleared: Bool

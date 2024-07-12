@@ -5,8 +5,8 @@
 import Foundation
 
 /// A Client error.
-public class ClientError: Error, CustomStringConvertible {
-    public struct Location: Equatable {
+public class ClientError: Error, CustomStringConvertible, @unchecked Sendable {
+    public struct Location: Equatable, Sendable {
         public let file: String
         public let line: Int
     }
@@ -27,9 +27,11 @@ public class ClientError: Error, CustomStringConvertible {
     /// Retrieve the localized description for this error.
     public var localizedDescription: String { message ?? errorDescription ?? "" }
 
-    public private(set) lazy var description = "Error \(type(of: self)) in \(location?.file ?? ""):\(location?.line ?? 0)"
-        + (localizedDescription.isEmpty ? "" : " -> ")
-        + localizedDescription
+    public let description: String = ""
+    // TODO: fix this
+//    public let description = "Error \(type(of: self)) in \(location?.file ?? ""):\(location?.line ?? 0)"
+//        + (localizedDescription.isEmpty ? "" : " -> ")
+//        + localizedDescription
 
     /// A client error based on an external general error.
     /// - Parameters:

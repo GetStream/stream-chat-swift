@@ -13,7 +13,7 @@ public struct UserPresenceChangedEvent: Event {
     public let createdAt: Date?
 }
 
-class UserPresenceChangedEventDTO: EventDTO {
+class UserPresenceChangedEventDTO: EventDTO, @unchecked Sendable {
     let user: UserPayload
     let createdAt: Date
     let payload: EventPayload
@@ -43,7 +43,7 @@ public struct UserUpdatedEvent: Event {
     public let createdAt: Date?
 }
 
-class UserUpdatedEventDTO: EventDTO {
+class UserUpdatedEventDTO: EventDTO, @unchecked Sendable {
     let user: UserPayload
     let createdAt: Date
     let payload: EventPayload
@@ -84,7 +84,7 @@ public struct UserWatchingEvent: ChannelSpecificEvent {
     public let isStarted: Bool
 }
 
-class UserWatchingEventDTO: EventDTO {
+class UserWatchingEventDTO: EventDTO, @unchecked Sendable {
     let cid: ChannelId
     let user: UserPayload
     let createdAt: Date
@@ -125,7 +125,7 @@ public struct UserGloballyBannedEvent: Event {
     public let createdAt: Date
 }
 
-struct UserGloballyBannedEventDTO: EventDTO {
+struct UserGloballyBannedEventDTO: EventDTO, @unchecked Sendable {
     let user: UserPayload
     let createdAt: Date
     let payload: EventPayload
@@ -170,7 +170,7 @@ public struct UserBannedEvent: ChannelSpecificEvent {
     public let isShadowBan: Bool?
 }
 
-class UserBannedEventDTO: EventDTO {
+class UserBannedEventDTO: EventDTO, @unchecked Sendable {
     let cid: ChannelId
     let user: UserPayload
     let ownerId: UserId
@@ -215,7 +215,7 @@ public struct UserGloballyUnbannedEvent: Event {
     public let createdAt: Date
 }
 
-struct UserGloballyUnbannedEventDTO: EventDTO {
+struct UserGloballyUnbannedEventDTO: EventDTO, @unchecked Sendable {
     let user: UserPayload
     let createdAt: Date
     let payload: EventPayload
@@ -248,7 +248,7 @@ public struct UserUnbannedEvent: ChannelSpecificEvent {
     public let createdAt: Date?
 }
 
-class UserUnbannedEventDTO: EventDTO {
+class UserUnbannedEventDTO: EventDTO, @unchecked Sendable {
     let cid: ChannelId
     let user: UserPayload
     let createdAt: Date

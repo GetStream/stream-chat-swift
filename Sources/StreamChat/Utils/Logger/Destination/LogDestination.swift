@@ -6,7 +6,7 @@ import Foundation
 
 /// Log level for any messages to be logged.
 /// Please check [this Apple Logging Article](https://developer.apple.com/documentation/os/logging/generating_log_messages_from_your_code) to understand different logging levels.
-public enum LogLevel: Int {
+public enum LogLevel: Int, Sendable {
     /// Use this log level if you want to see everything that is logged.
     case debug = 0
     /// Use this log level if you want to see what is happening during the app execution.
@@ -31,7 +31,7 @@ public struct LogDetails {
     public let lineNumber: UInt
 }
 
-public protocol LogDestination {
+public protocol LogDestination: Sendable {
     var identifier: String { get set }
     var level: LogLevel { get set }
     var subsystems: LogSubsystem { get set }

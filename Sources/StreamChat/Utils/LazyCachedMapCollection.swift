@@ -8,7 +8,7 @@ import Foundation
 /// Read-only collection that applies transformation to element on first access.
 ///
 /// Compared to `LazyMapCollection` does not evaluate the whole collection on `count` call.
-public struct LazyCachedMapCollection<Element>: RandomAccessCollection {
+public struct LazyCachedMapCollection<Element>: RandomAccessCollection, @unchecked Sendable {
     public typealias Index = Int
 
     public func index(before i: Index) -> Index {

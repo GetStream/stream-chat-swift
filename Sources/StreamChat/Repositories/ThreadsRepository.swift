@@ -4,7 +4,7 @@
 
 import CoreData
 
-struct ThreadListResponse {
+struct ThreadListResponse: Sendable {
     var threads: [ChatThread]
     var next: String?
 }

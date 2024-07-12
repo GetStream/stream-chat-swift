@@ -5,7 +5,7 @@
 import Foundation
 
 /// The attachment which was successfully uploaded.
-public struct UploadedAttachment {
+public struct UploadedAttachment: @unchecked Sendable {
     /// The attachment which contains the payload details of the attachment.
     public var attachment: AnyChatMessageAttachment
 

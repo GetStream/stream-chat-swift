@@ -5,7 +5,7 @@
 import Foundation
 
 /// An object which represents a list of `ChatUser` for the specified search query.
-public class UserSearch {
+public class UserSearch: @unchecked Sendable {
     private let stateBuilder: StateBuilder<UserSearchState>
     private let userListUpdater: UserListUpdater
     

@@ -5,7 +5,7 @@
 import Foundation
 
 /// An object which represents a list of `ChatChannelMember` for the specified channel.
-public final class MemberList {
+public final class MemberList: @unchecked Sendable {
     private let query: ChannelMemberListQuery
     private let memberListUpdater: ChannelMemberListUpdater
     private let stateBuilder: StateBuilder<MemberListState>
@@ -16,10 +16,11 @@ public final class MemberList {
             client.databaseContainer,
             client.apiClient
         )
+        let databaseContainer = client.databaseContainer
         stateBuilder = StateBuilder {
             environment.stateBuilder(
                 query,
-                client.databaseContainer
+                databaseContainer
             )
         }
     }
@@ -58,13 +59,14 @@ public final class MemberList {
     /// - Returns: An array of channel members.
     @discardableResult public func loadMoreMembers(limit: Int? = nil) async throws -> [ChatChannelMember] {
         let pageSize = limit ?? query.pagination.pageSize
-        let pagination = Pagination(pageSize: pageSize, offset: await state.members.count)
+        let count = await state.members.count
+        let pagination = Pagination(pageSize: pageSize, offset: count)
         return try await loadMembers(with: pagination)
     }
 }
 
 extension MemberList {
-    struct Environment {
+    struct Environment: @unchecked Sendable {
         var memberListUpdaterBuilder: (
             _ database: DatabaseContainer,
             _ apiClient: APIClient

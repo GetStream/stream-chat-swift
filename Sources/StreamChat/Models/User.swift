@@ -12,7 +12,7 @@ public typealias TeamId = String
 
 /// A type representing a chat user. `ChatUser` is an immutable snapshot of a chat user entity at the given time.
 ///
-public class ChatUser {
+public class ChatUser: @unchecked Sendable {
     /// The unique identifier of the user.
     public let id: UserId
 
@@ -121,7 +121,7 @@ extension ChatUser: Equatable {
     }
 }
 
-public struct UserRole: RawRepresentable, Codable, Hashable, ExpressibleByStringLiteral {
+public struct UserRole: RawRepresentable, Codable, Hashable, ExpressibleByStringLiteral, Sendable {
     public let rawValue: String
 
     public init(rawValue: String) {

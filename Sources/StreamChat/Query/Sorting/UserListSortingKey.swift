@@ -34,12 +34,12 @@ public enum UserListSortingKey: String, SortingKey {
 }
 
 extension UserListSortingKey {
-    static let defaultSortDescriptor: NSSortDescriptor = {
+    nonisolated(unsafe) static let defaultSortDescriptor: NSSortDescriptor = {
         let stringKeyPath: KeyPath<UserDTO, String> = \UserDTO.id
         return .init(keyPath: stringKeyPath, ascending: false)
     }()
 
-    static let lastActiveSortDescriptor: NSSortDescriptor = {
+    nonisolated(unsafe) static let lastActiveSortDescriptor: NSSortDescriptor = {
         let dateKeyPath: KeyPath<UserDTO, DBDate?> = \UserDTO.lastActivityAt
         return .init(keyPath: dateKeyPath, ascending: false)
     }()

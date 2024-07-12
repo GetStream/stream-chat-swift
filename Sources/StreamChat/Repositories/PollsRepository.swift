@@ -289,7 +289,7 @@ class PollsRepository {
         }
     }
     
-    struct VotePaginationResponse {
+    struct VotePaginationResponse: Sendable {
         var votes: [PollVote]
         var next: String?
     }

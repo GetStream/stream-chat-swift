@@ -23,7 +23,7 @@ public protocol EventsControllerDelegate: AnyObject {
 }
 
 /// `EventsController` is a controller class which allows to observe custom and system events.
-public class EventsController: Controller, DelegateCallable {
+public class EventsController: Controller, DelegateCallable, @unchecked Sendable {
     // An underlaying observer listening for events.
     private var observer: EventObserver!
 

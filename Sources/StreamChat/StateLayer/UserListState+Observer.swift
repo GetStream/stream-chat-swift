@@ -20,7 +20,7 @@ extension UserListState {
         }
         
         struct Handlers {
-            let usersDidChange: (StreamCollection<ChatUser>) async -> Void
+            let usersDidChange: @Sendable (StreamCollection<ChatUser>) async -> Void
         }
         
         func start(with handlers: Handlers) -> StreamCollection<ChatUser> {

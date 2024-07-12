@@ -6,7 +6,7 @@ import AVFoundation
 import Foundation
 
 /// A protocol describing an object that can be manage the playback of an audio file or stream.
-public protocol AudioPlaying: AnyObject {
+@MainActor public protocol AudioPlaying: AnyObject {
     init()
 
     /// Subscribes the provided object on AudioPlayer's updates
@@ -388,7 +388,9 @@ open class StreamAudioPlayer: AudioPlaying, AppStateObserverDelegate {
             guard finished else {
                 return
             }
-            self?.updateContext { value in value.isSeeking = false }
+            DispatchQueue.main.async {
+                self?.updateContext { value in value.isSeeking = false }
+            }
         }
     }
 }

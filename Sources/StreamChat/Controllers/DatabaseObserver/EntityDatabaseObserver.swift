@@ -6,7 +6,7 @@ import CoreData
 import Foundation
 
 /// This enum describes the changes to a certain item when observing it.
-public enum EntityChange<Item> {
+public enum EntityChange<Item>: @unchecked Sendable {
     /// The item was created or the recent changes to it make it match the predicate of the observer.
     case create(_ item: Item)
 

@@ -4,7 +4,7 @@
 
 import Foundation
 
-class WebSocketClient {
+class WebSocketClient: @unchecked Sendable {
     /// The notification center `WebSocketClient` uses to send notifications about incoming events.
     let eventNotificationCenter: EventNotificationCenter
 
@@ -133,7 +133,7 @@ class WebSocketClient {
     /// - Parameter source: Additional information about the source of the disconnection. Default value is `.userInitiated`.
     func disconnect(
         source: WebSocketConnectionState.DisconnectionSource = .userInitiated,
-        completion: @escaping () -> Void
+        completion: @Sendable @escaping () -> Void
     ) {
         connectionState = .disconnecting(source: source)
         engineQueue.async { [engine, eventsBatcher] in

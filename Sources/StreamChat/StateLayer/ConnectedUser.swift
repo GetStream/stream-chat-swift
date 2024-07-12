@@ -5,7 +5,7 @@
 import Foundation
 
 /// An object which represents the currently logged in user.
-public final class ConnectedUser {
+public final class ConnectedUser: @unchecked Sendable {
     private let authenticationRepository: AuthenticationRepository
     private let currentUserUpdater: CurrentUserUpdater
     private let stateBuilder: StateBuilder<ConnectedUserState>
@@ -17,10 +17,11 @@ public final class ConnectedUser {
             client.databaseContainer,
             client.apiClient
         )
+        let databaseContainer = client.databaseContainer
         stateBuilder = StateBuilder {
             environment.stateBuilder(
                 user,
-                client.databaseContainer
+                databaseContainer
             )
         }
         userUpdater = environment.userUpdaterBuilder(
@@ -185,7 +186,7 @@ public final class ConnectedUser {
 }
 
 extension ConnectedUser {
-    struct Environment {
+    struct Environment: @unchecked Sendable {
         var stateBuilder: @MainActor(
             _ user: CurrentChatUser,
             _ database: DatabaseContainer

@@ -255,6 +255,7 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
         extraData: [String: RawJSON] = [:],
         completion: ((Error?) -> Void)? = nil
     ) {
+        nonisolated(unsafe) let completion = completion
         /// Perform action only if channel is already created on backend side and have a valid `cid`.
         guard let cid = cid, isChannelAlreadyCreated else {
             channelModificationFailed(completion)
@@ -299,6 +300,7 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
         unsetProperties: [String] = [],
         completion: ((Error?) -> Void)? = nil
     ) {
+        nonisolated(unsafe) let completion = completion
         /// Perform action only if channel is already created on backend side and have a valid `cid`.
         guard let cid = cid, isChannelAlreadyCreated else {
             channelModificationFailed(completion)
@@ -330,6 +332,7 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
     ///                 If request fails, the completion will be called with an error.
     ///
     public func muteChannel(expiration: Int? = nil, completion: ((Error?) -> Void)? = nil) {
+        nonisolated(unsafe) let completion = completion
         /// Perform action only if channel is already created on backend side and have a valid `cid`.
         guard let cid = cid, isChannelAlreadyCreated else {
             channelModificationFailed(completion)
@@ -350,6 +353,7 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
     ///                 If request fails, the completion will be called with an error.
     ///
     public func unmuteChannel(completion: ((Error?) -> Void)? = nil) {
+        nonisolated(unsafe) let completion = completion
         /// Perform action only if channel is already created on backend side and have a valid `cid`.
         guard let cid = cid, isChannelAlreadyCreated else {
             channelModificationFailed(completion)
@@ -368,6 +372,7 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
     ///   - completion: The completion. Will be called on a **callbackQueue** when the network request is finished.
     ///                 If request fails, the completion will be called with an error.
     public func deleteChannel(completion: ((Error?) -> Void)? = nil) {
+        nonisolated(unsafe) let completion = completion
         /// Perform action only if channel is already created on backend side and have a valid `cid`.
         guard let cid = cid, isChannelAlreadyCreated else {
             channelModificationFailed(completion)
@@ -398,6 +403,7 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
         systemMessage: String? = nil,
         completion: ((Error?) -> Void)? = nil
     ) {
+        nonisolated(unsafe) let completion = completion
         /// Perform action only if channel is already created on backend side and have a valid `cid`.
         guard let cid = cid, isChannelAlreadyCreated else {
             channelModificationFailed(completion)
@@ -424,6 +430,7 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
     ///                 If request fails, the completion will be called with an error.
     ///
     public func hideChannel(clearHistory: Bool = false, completion: ((Error?) -> Void)? = nil) {
+        nonisolated(unsafe) let completion = completion
         /// Perform action only if channel is already created on backend side and have a valid `cid`.
         guard let cid = cid, isChannelAlreadyCreated else {
             channelModificationFailed(completion)
@@ -443,6 +450,7 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
     ///                         If request fails, the completion will be called with an error.
     ///
     public func showChannel(completion: ((Error?) -> Void)? = nil) {
+        nonisolated(unsafe) let completion = completion
         /// Perform action only if channel is already created on backend side and have a valid `cid`.
         guard let cid = cid, isChannelAlreadyCreated else {
             channelModificationFailed(completion)
@@ -469,6 +477,7 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
         limit: Int? = nil,
         completion: ((Error?) -> Void)? = nil
     ) {
+        nonisolated(unsafe) let completion = completion
         /// Perform action only if channel is already created on backend side and have a valid `cid`.
         guard cid != nil, isChannelAlreadyCreated else {
             channelModificationFailed(completion)
@@ -520,6 +529,7 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
         limit: Int? = nil,
         completion: ((Error?) -> Void)? = nil
     ) {
+        nonisolated(unsafe) let completion = completion
         /// Perform action only if channel is already created on backend side and have a valid `cid`.
         guard cid != nil, isChannelAlreadyCreated else {
             channelModificationFailed(completion)
@@ -566,6 +576,7 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
     ///   - limit: The number of messages to load in total, including the message to jump to.
     ///   - completion: Callback when the API call is completed.
     public func loadPageAroundMessageId(_ messageId: MessageId, limit: Int? = nil, completion: ((Error?) -> Void)? = nil) {
+        nonisolated(unsafe) let completion = completion
         guard isChannelAlreadyCreated else {
             channelModificationFailed(completion)
             return
@@ -611,6 +622,7 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
     /// - Parameter completion: a completion block with an error if the request was failed.
     ///
     public func sendKeystrokeEvent(parentMessageId: MessageId? = nil, completion: ((Error?) -> Void)? = nil) {
+        nonisolated(unsafe) let completion = completion
         /// Ignore if app-level typing events or user-level typing events are not enabled.
         guard shouldSendTypingEvents else {
             callback {
@@ -641,6 +653,7 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
     /// - Parameter completion: a completion block with an error if the request was failed.
     ///
     public func sendStartTypingEvent(parentMessageId: MessageId? = nil, completion: ((Error?) -> Void)? = nil) {
+        nonisolated(unsafe) let completion = completion
         /// Ignore if app-level typing events or user-level typing events are not enabled.
         guard shouldSendTypingEvents else {
             channelFeatureDisabled(feature: "typing events", completion: completion)
@@ -669,6 +682,7 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
     /// - Parameter completion: a completion block with an error if the request was failed.
     ///
     public func sendStopTypingEvent(parentMessageId: MessageId? = nil, completion: ((Error?) -> Void)? = nil) {
+        nonisolated(unsafe) let completion = completion
         /// Ignore if app-level typing events or user-level typing events are not enabled.
         guard shouldSendTypingEvents else {
             channelFeatureDisabled(feature: "typing events", completion: completion)
@@ -758,6 +772,7 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
         extraData: [String: RawJSON]? = nil,
         completion: ((Result<MessageId, Error>) -> Void)?
     ) {
+        nonisolated(unsafe) let completion = completion
         pollsRepository.createPoll(
             name: name,
             allowAnswers: allowAnswers,
@@ -800,6 +815,7 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
         message: String? = nil,
         completion: ((Error?) -> Void)? = nil
     ) {
+        nonisolated(unsafe) let completion = completion
         /// Perform action only if channel is already created on backend side and have a valid `cid`.
         guard let cid = cid, isChannelAlreadyCreated else {
             channelModificationFailed(completion)
@@ -832,6 +848,7 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
         message: String? = nil,
         completion: ((Error?) -> Void)? = nil
     ) {
+        nonisolated(unsafe) let completion = completion
         /// Perform action only if channel is already created on backend side and have a valid `cid`.
         guard let cid = cid, isChannelAlreadyCreated else {
             channelModificationFailed(completion)
@@ -855,6 +872,7 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
     ///   - userIds: Set of ids of users to be invited to the channel
     ///   - completion: Called when the API call is finished. Called with `Error` if the remote update fails.
     public func inviteMembers(userIds: Set<UserId>, completion: ((Error?) -> Void)? = nil) {
+        nonisolated(unsafe) let completion = completion
         /// Perform action only if channel is already created on backend side and have a valid `cid`.
         guard let cid = cid, isChannelAlreadyCreated else {
             channelModificationFailed(completion)
@@ -875,6 +893,7 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
     ///   - message: message
     ///   - completion: Called when the API call is finished. Called with `Error` if the remote update fails.
     public func acceptInvite(message: String? = nil, completion: ((Error?) -> Void)? = nil) {
+        nonisolated(unsafe) let completion = completion
         /// Perform action only if channel is already created on backend side and have a valid `cid`.
         guard let cid = cid, isChannelAlreadyCreated else {
             channelModificationFailed(completion)
@@ -892,6 +911,7 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
     ///   - cid: The channel identifier.
     ///   - completion: Called when the API call is finished. Called with `Error` if the remote update fails.
     public func rejectInvite(completion: ((Error?) -> Void)? = nil) {
+        nonisolated(unsafe) let completion = completion
         /// Perform action only if channel is already created on backend side and have a valid `cid`.
         guard let cid = cid, isChannelAlreadyCreated else {
             channelModificationFailed(completion)
@@ -911,6 +931,7 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
     ///                         If request fails, the completion will be called with an error.
     ///
     public func markRead(completion: ((Error?) -> Void)? = nil) {
+        nonisolated(unsafe) let completion = completion
         /// Perform action only if channel is already created on backend side and have a valid `cid`.
         guard let channel = channel else {
             channelModificationFailed(completion)
@@ -936,6 +957,7 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
     ///   - messageId: The id of the first message id that will be marked as unread.
     ///   - completion: The completion will be called on a **callbackQueue** when the network request is finished.
     public func markUnread(from messageId: MessageId, completion: ((Result<ChatChannel, Error>) -> Void)? = nil) {
+        nonisolated(unsafe) let completion = completion
         /// Perform action only if channel is already created on backend side and have a valid `cid`.
         guard let channel = channel else {
             let error = ClientError.ChannelNotCreatedYet()
@@ -977,6 +999,7 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
     ///   Specified in seconds. Should be between 1-120.
     ///   - completion: Called when the API call is finished. Called with `Error` if the remote update fails.
     public func enableSlowMode(cooldownDuration: Int, completion: ((Error?) -> Void)? = nil) {
+        nonisolated(unsafe) let completion = completion
         /// Perform action only if channel is already created on backend side and have a valid `cid`.
         guard let cid = cid, isChannelAlreadyCreated else {
             channelModificationFailed(completion)
@@ -1002,6 +1025,7 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
     /// - Parameters:
     ///   - completion: Called when the API call is finished. Called with `Error` if the remote update fails.
     public func disableSlowMode(completion: ((Error?) -> Void)? = nil) {
+        nonisolated(unsafe) let completion = completion
         /// Perform action only if channel is already created on backend side and have a valid `cid`.
         guard let cid = cid, isChannelAlreadyCreated else {
             channelModificationFailed(completion)
@@ -1025,6 +1049,7 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
     ///
     /// - Parameter completion: Called when the API call is finished. Called with `Error` if the remote update fails.
     public func startWatching(isInRecoveryMode: Bool, completion: ((Error?) -> Void)? = nil) {
+        nonisolated(unsafe) let completion = completion
         /// Perform action only if channel is already created on backend side and have a valid `cid`.
         guard let cid = cid, isChannelAlreadyCreated else {
             channelModificationFailed(completion)
@@ -1059,6 +1084,7 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
     ///
     /// - Parameter completion: Called when the API call is finished. Called with `Error` if the remote update fails.
     public func stopWatching(completion: ((Error?) -> Void)? = nil) {
+        nonisolated(unsafe) let completion = completion
         /// Perform action only if channel is already created on backend side and have a valid `cid`.
         guard let cid = cid, isChannelAlreadyCreated else {
             channelModificationFailed(completion)
@@ -1084,6 +1110,7 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
     ///                 If request fails, the completion will be called with an error.
     ///
     public func freezeChannel(completion: ((Error?) -> Void)? = nil) {
+        nonisolated(unsafe) let completion = completion
         /// Perform action only if channel is already created on backend side and have a valid `cid`.
         guard let cid = cid, isChannelAlreadyCreated else {
             channelModificationFailed(completion)
@@ -1106,6 +1133,7 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
     ///                 If request fails, the completion will be called with an error.
     ///
     public func unfreezeChannel(completion: ((Error?) -> Void)? = nil) {
+        nonisolated(unsafe) let completion = completion
         /// Perform action only if channel is already created on backend side and have a valid `cid`.
         guard let cid = cid, isChannelAlreadyCreated else {
             channelModificationFailed(completion)
@@ -1131,6 +1159,7 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
         progress: ((Double) -> Void)? = nil,
         completion: @escaping ((Result<UploadedAttachment, Error>) -> Void)
     ) {
+        nonisolated(unsafe) let completion = completion
         guard let cid = cid, isChannelAlreadyCreated else {
             channelModificationFailed { error in
                 completion(.failure(error ?? ClientError.ChannelNotCreatedYet()))
@@ -1149,6 +1178,7 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
     ///
     /// This will return the data present in the OG Metadata.
     public func enrichUrl(_ url: URL, completion: @escaping (Result<LinkAttachmentPayload, Error>) -> Void) {
+        nonisolated(unsafe) let completion = completion
         updater.enrichUrl(url) { result in
             self.callback {
                 completion(result)
@@ -1169,6 +1199,7 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
         pagination: PinnedMessagesPagination? = nil,
         completion: @escaping (Result<[ChatMessage], Error>) -> Void
     ) {
+        nonisolated(unsafe) let completion = completion
         guard let cid = cid, isChannelAlreadyCreated else {
             channelModificationFailed { completion(.failure($0 ?? ClientError.ChannelNotCreatedYet())) }
             return
@@ -1208,6 +1239,7 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
     }
 
     public func createCall(id: String, type: String, completion: @escaping (Result<CallWithToken, Error>) -> Void) {
+        nonisolated(unsafe) let completion = completion
         guard let cid = cid, isChannelAlreadyCreated else {
             channelModificationFailed { completion(.failure($0 ?? ClientError.ChannelNotCreatedYet())) }
             return
@@ -1288,6 +1320,7 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
         poll: PollPayload?,
         completion: ((Result<MessageId, Error>) -> Void)? = nil
     ) {
+        nonisolated(unsafe) let completion = completion
         /// Perform action only if channel is already created on backend side and have a valid `cid`.
         guard let cid = cid, isChannelAlreadyCreated else {
             channelModificationFailed { error in
@@ -1360,7 +1393,7 @@ extension ChatChannelController {
 }
 
 /// Describes the flow of the messages in the list
-public enum MessageOrdering {
+public enum MessageOrdering: Sendable {
     /// New messages appears on the top of the list.
     case topToBottom
 
@@ -1372,6 +1405,7 @@ public enum MessageOrdering {
 
 private extension ChatChannelController {
     func synchronize(isInRecoveryMode: Bool, _ completion: ((_ error: Error?) -> Void)? = nil) {
+        nonisolated(unsafe) let completion = completion
         let channelCreatedCallback = isChannelAlreadyCreated ? nil : channelCreated(forwardErrorTo: setLocalStateBasedOnError)
         updater.update(
             channelQuery: channelQuery,
@@ -1553,8 +1587,8 @@ private extension ChatChannelController {
                 itemReuseKeyPaths: (\ChatMessage.id, \MessageDTO.id)
             )
             observer.onDidChange = { [weak self] changes in
-                self?.delegateCallback {
-                    guard let self = self else { return }
+                guard let self = self else { return }
+                self.delegateCallback {
                     log.debug("didUpdateMessages: \(changes.map(\.debugDescription))")
 
                     $0.channelController(self, didUpdateMessages: changes)
@@ -1567,6 +1601,7 @@ private extension ChatChannelController {
     /// A convenience method that invokes the completion? with a ChannelFeatureDisabled error
     /// ie. VCs should use the `are{FEATURE_NAME}Enabled` props (ie. `areReadEventsEnabled`) before using any feature
     private func channelFeatureDisabled(feature: String, completion: ((Error?) -> Void)?) {
+        nonisolated(unsafe) let completion = completion
         let error = ClientError.ChannelFeatureDisabled("Channel feature: \(feature) is disabled for this channel.")
         log.error(error.localizedDescription)
         callback {
@@ -1577,6 +1612,7 @@ private extension ChatChannelController {
     // It's impossible to perform any channel modification before it's creation on backend.
     // So before any modification attempt we need to check if channel is already created and call this function if not.
     private func channelModificationFailed(_ completion: ((Error?) -> Void)?) {
+        nonisolated(unsafe) let completion = completion
         let error = ClientError.ChannelNotCreatedYet()
         log.error(error.localizedDescription)
         callback {

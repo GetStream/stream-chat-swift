@@ -5,7 +5,7 @@
 import Foundation
 
 /// A struct that represents the current state of an audio player
-public struct AudioPlaybackContext: Equatable {
+public struct AudioPlaybackContext: Equatable, Sendable {
     public var assetLocation: URL?
 
     /// The duration of the audio track in seconds

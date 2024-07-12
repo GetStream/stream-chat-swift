@@ -12,7 +12,7 @@ import IOKit
 
 extension SystemEnvironment {
     static let xStreamClientHeader: String = {
-        "stream-chat-\(sdkIdentifier)-client-v\(version)|app=\(appName)|app_version=\(appVersion)|os=\(os) \(osVersion)|device_model=\(model)|device_screen_ratio=\(scale)"
+        "stream-chat-\(sdkIdentifier)-client-v\(version)|app=\(appName)|app_version=\(appVersion)|os=\(os) \(osVersion)|device_model=\(model)"
     }()
 
     private static var sdkIdentifier: String {
@@ -62,11 +62,7 @@ extension SystemEnvironment {
     #endif
 
     private static var osVersion: String {
-        #if os(iOS)
-        return UIDevice.current.systemVersion
-        #elseif os(macOS)
         return ProcessInfo.processInfo.operatingSystemVersionString
-        #endif
     }
 
     private static var os: String {
@@ -74,14 +70,6 @@ extension SystemEnvironment {
         return "iOS"
         #elseif os(macOS)
         return "MacOS"
-        #endif
-    }
-
-    private static var scale: String {
-        #if os(iOS)
-        return String(format: "%0.2f", UIScreen.main.scale)
-        #elseif os(macOS)
-        return "1.00"
         #endif
     }
 }

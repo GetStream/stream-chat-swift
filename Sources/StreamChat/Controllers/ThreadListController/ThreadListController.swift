@@ -20,7 +20,7 @@ public protocol ChatThreadListControllerDelegate: DataControllerStateDelegate {
 
 /// `ChatThreadListController` is a controller class which allows querying and
 /// observing the threads that the current user is participating.
-public class ChatThreadListController: DataController, DelegateCallable, DataStoreProvider {
+public class ChatThreadListController: DataController, DelegateCallable, DataStoreProvider, @unchecked Sendable {
     /// The query of the thread list.
     public let query: ThreadListQuery
 
@@ -111,15 +111,17 @@ public class ChatThreadListController: DataController, DelegateCallable, DataSto
         threadsRepository.loadThreads(
             query: query
         ) { [weak self] result in
+            nonisolated(unsafe) let completion = completion
             switch result {
             case let .success(threadListResponse):
                 self?.threadListObserver.refreshItems { [weak self] in
-                    self?.callback {
-                        self?.threadListObserver.refreshItems {
-                            self?.state = .remoteDataFetched
+                    guard let self else { return }
+                    self.callback {
+                        self.threadListObserver.refreshItems {
+                            self.state = .remoteDataFetched
                         }
-                        self?.nextCursor = threadListResponse.next
-                        self?.hasLoadedAllThreads = threadListResponse.next == nil
+                        self.nextCursor = threadListResponse.next
+                        self.hasLoadedAllThreads = threadListResponse.next == nil
                         completion?(nil)
                     }
                 }
@@ -145,13 +147,15 @@ public class ChatThreadListController: DataController, DelegateCallable, DataSto
         var updatedQuery = query
         updatedQuery.limit = limit
         updatedQuery.next = nextCursor
+        nonisolated(unsafe) let completion = completion
         threadsRepository.loadThreads(query: updatedQuery) { [weak self] result in
             switch result {
             case let .success(threadListResponse):
-                self?.callback {
+                guard let self else { return }
+                self.callback {
                     let threads = threadListResponse.threads
-                    self?.nextCursor = threadListResponse.next
-                    self?.hasLoadedAllThreads = threadListResponse.next == nil
+                    self.nextCursor = threadListResponse.next
+                    self.hasLoadedAllThreads = threadListResponse.next == nil
                     completion?(.success(threads))
                 }
             case let .failure(error):

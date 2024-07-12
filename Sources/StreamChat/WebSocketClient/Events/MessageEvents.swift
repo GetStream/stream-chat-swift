@@ -28,7 +28,7 @@ public struct MessageNewEvent: ChannelSpecificEvent, HasUnreadCount {
     public let unreadCount: UnreadCount?
 }
 
-class MessageNewEventDTO: EventDTO {
+class MessageNewEventDTO: EventDTO, @unchecked Sendable {
     let user: UserPayload
     let cid: ChannelId
     let message: MessagePayload
@@ -84,7 +84,7 @@ public struct MessageUpdatedEvent: ChannelSpecificEvent {
     public let createdAt: Date
 }
 
-class MessageUpdatedEventDTO: EventDTO {
+class MessageUpdatedEventDTO: EventDTO, @unchecked Sendable {
     let user: UserPayload
     let cid: ChannelId
     let message: MessagePayload
@@ -136,7 +136,7 @@ public struct MessageDeletedEvent: ChannelSpecificEvent {
     public let isHardDelete: Bool
 }
 
-class MessageDeletedEventDTO: EventDTO {
+class MessageDeletedEventDTO: EventDTO, @unchecked Sendable {
     let user: UserPayload?
     let cid: ChannelId
     let message: MessagePayload
@@ -194,7 +194,7 @@ public struct MessageReadEvent: ChannelSpecificEvent {
     public let unreadCount: UnreadCount?
 }
 
-class MessageReadEventDTO: EventDTO {
+class MessageReadEventDTO: EventDTO, @unchecked Sendable {
     let user: UserPayload
     let cid: ChannelId
     let createdAt: Date

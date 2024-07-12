@@ -86,6 +86,7 @@ public class ChatChannelWatcherListController: DataController, DelegateCallable,
     override public func synchronize(_ completion: ((_ error: Error?) -> Void)? = nil) {
         startObservingIfNeeded()
 
+        nonisolated(unsafe) let completion = completion
         if case let .localDataFetchFailed(error) = state {
             callback { completion?(error) }
             return
@@ -180,6 +181,7 @@ public extension ChatChannelWatcherListController {
     ///   - completion: The completion. Will be called on a **callbackQueue** when the network request is finished.
     ///                 If request fails, the completion will be called with an error.
     func loadNextWatchers(limit: Int = .channelWatchersPageSize, completion: ((Error?) -> Void)? = nil) {
+        nonisolated(unsafe) let completion = completion
         var updatedQuery = query
         updatedQuery.pagination = .init(pageSize: limit, offset: watchers.count)
         updater.channelWatchers(query: updatedQuery) { result in

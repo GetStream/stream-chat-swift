@@ -151,7 +151,7 @@ class DefaultRequestEncoder: RequestEncoder {
         )
 
         let missingTokenError = ClientError.MissingToken("Failed to get `token`, request can't be created.")
-
+        nonisolated(unsafe) let completion = completion
         connectionDetailsProviderDelegate?.provideToken(timeout: waiterTimeout) {
             switch $0 {
             case let .success(token):
@@ -191,7 +191,7 @@ class DefaultRequestEncoder: RequestEncoder {
         let missingConnectionIdError = ClientError.MissingConnectionId(
             "Failed to get `connectionId`, request can't be created."
         )
-
+        nonisolated(unsafe) let completion = completion
         connectionDetailsProviderDelegate?.provideConnectionId(timeout: waiterTimeout) {
             do {
                 switch $0 {
@@ -299,8 +299,8 @@ private extension URL {
 
 typealias WaiterToken = String
 protocol ConnectionDetailsProviderDelegate: AnyObject {
-    func provideConnectionId(timeout: TimeInterval, completion: @escaping (Result<ConnectionId, Error>) -> Void)
-    func provideToken(timeout: TimeInterval, completion: @escaping (Result<Token, Error>) -> Void)
+    func provideConnectionId(timeout: TimeInterval, completion: @Sendable @escaping (Result<ConnectionId, Error>) -> Void)
+    func provideToken(timeout: TimeInterval, completion: @Sendable @escaping (Result<Token, Error>) -> Void)
 }
 
 extension ClientError {

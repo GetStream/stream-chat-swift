@@ -5,7 +5,7 @@
 import Foundation
 
 /// Keys that you can use to sort Message search results.
-public enum MessageSearchSortingKey: String, SortingKey {
+public enum MessageSearchSortingKey: String, SortingKey, Sendable {
     /// Sort messages by their relevance to the query.
     /// - Warning: This sorting key will not take effect on iOS SDK. We suggest using other sorting keys for now.
     case relevance
@@ -43,7 +43,7 @@ public enum MessageSearchSortingKey: String, SortingKey {
     }
 
     /// Default sort descriptor for Message search. Corresponds to `created_at`
-    static let defaultSortDescriptor: NSSortDescriptor = {
+    nonisolated(unsafe) static let defaultSortDescriptor: NSSortDescriptor = {
         NSSortDescriptor(keyPath: \MessageDTO.defaultSortingKey, ascending: true)
     }()
 
@@ -83,7 +83,7 @@ public extension Filter where Scope: AnyMessageSearchFilterScope {
     }
 }
 
-public struct MessageSearchQuery: Encodable {
+public struct MessageSearchQuery: Encodable, Sendable {
     private enum CodingKeys: String, CodingKey {
         case query
         case channelFilter = "filter_conditions"

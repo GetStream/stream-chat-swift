@@ -5,7 +5,7 @@
 import Foundation
 
 /// The base class for controllers which represent and control a data entity. Not meant to be used directly.
-public class DataController: Controller {
+public class DataController: Controller, @unchecked Sendable {
     /// Describes the possible states of `DataController`
     public enum State: Equatable {
         /// The controller is created but no data fetched.
@@ -80,9 +80,9 @@ public extension DataControllerStateDelegate {
 }
 
 /// A helper protocol allowing calling delegate using existing `callback` method.
-protocol DelegateCallable {
+protocol DelegateCallable: Sendable {
     associatedtype Delegate
-    func callback(_ action: @escaping () -> Void)
+    func callback(_ action: @Sendable @escaping () -> Void)
 
     /// The multicast delegate wrapper for all delegates of the controller
     var multicastDelegate: MulticastDelegate<Delegate> { get }
@@ -90,7 +90,7 @@ protocol DelegateCallable {
 
 extension DelegateCallable {
     /// A helper function to ensure the delegate callback is performed using the `callback` method.
-    func delegateCallback(_ callback: @escaping (Delegate) -> Void) {
+    func delegateCallback(_ callback: @Sendable @escaping (Delegate) -> Void) {
         self.callback {
             self.multicastDelegate.invoke(callback)
         }

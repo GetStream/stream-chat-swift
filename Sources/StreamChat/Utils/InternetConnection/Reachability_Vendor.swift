@@ -13,7 +13,7 @@ enum ReachabilityError: Error {
     case unableToGetFlags(Int32)
 }
 
-class Reachability {
+class Reachability: @unchecked Sendable {
     typealias NetworkReachable = (Reachability) -> Void
     typealias NetworkUnreachable = (Reachability) -> Void
 
@@ -209,7 +209,7 @@ private extension Reachability {
     }
 
     func notifyReachabilityChanged() {
-        let notify = { [weak self] in
+        let notify = { @Sendable [weak self] in
             guard let self = self else { return }
             self.connection != .unavailable ? self.whenReachable?(self) : self.whenUnreachable?(self)
         }

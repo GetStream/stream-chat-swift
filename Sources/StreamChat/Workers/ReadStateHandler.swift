@@ -7,7 +7,7 @@ import Foundation
 /// A handler which enables marking channels read and unread.
 ///
 /// Only one mark read or unread request is allowed to be active.
-final class ReadStateHandler {
+final class ReadStateHandler: @unchecked Sendable {
     private let authenticationRepository: AuthenticationRepository
     private let channelUpdater: ChannelUpdater
     private let messageRepository: MessageRepository

@@ -5,7 +5,7 @@
 import Foundation
 
 /// `ChannelMemberListSortingKey` describes the keys by which you can get sorted channel members after query.
-public enum ChannelMemberListSortingKey: String, SortingKey {
+public enum ChannelMemberListSortingKey: String, SortingKey, Sendable {
     case createdAt = "memberCreatedAt"
 
     /// Sort channel members by name.
@@ -28,12 +28,12 @@ public enum ChannelMemberListSortingKey: String, SortingKey {
 }
 
 extension ChannelMemberListSortingKey {
-    static let defaultSortDescriptor: NSSortDescriptor = {
+    nonisolated(unsafe) static let defaultSortDescriptor: NSSortDescriptor = {
         let dateKeyPath: KeyPath<MemberDTO, DBDate> = \MemberDTO.memberCreatedAt
         return .init(keyPath: dateKeyPath, ascending: false)
     }()
 
-    static let lastActiveSortDescriptor: NSSortDescriptor = {
+    nonisolated(unsafe) static let lastActiveSortDescriptor: NSSortDescriptor = {
         let dateKeyPath: KeyPath<MemberDTO, DBDate?> = \MemberDTO.user.lastActivityAt
         return .init(keyPath: dateKeyPath, ascending: false)
     }()

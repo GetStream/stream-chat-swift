@@ -4,7 +4,7 @@
 
 import Foundation
 
-protocol WebSocketEngine: AnyObject {
+protocol WebSocketEngine: AnyObject, Sendable {
     var request: URLRequest { get }
     var callbackQueue: DispatchQueue { get }
     var delegate: WebSocketEngineDelegate? { get set }

@@ -100,6 +100,8 @@ public class ChatChannelMemberController: DataController, DelegateCallable, Data
     override public func synchronize(_ completion: ((_ error: Error?) -> Void)? = nil) {
         startObservingIfNeeded()
 
+        nonisolated(unsafe) let completion = completion
+        
         if case let .localDataFetchFailed(error) = state {
             callback { completion?(error) }
             return
@@ -165,6 +167,7 @@ public extension ChatChannelMemberController {
         reason: String? = nil,
         completion: ((Error?) -> Void)? = nil
     ) {
+        nonisolated(unsafe) let completion = completion
         memberUpdater.banMember(
             userId,
             in: cid,
@@ -190,6 +193,7 @@ public extension ChatChannelMemberController {
         reason: String? = nil,
         completion: ((Error?) -> Void)? = nil
     ) {
+        nonisolated(unsafe) let completion = completion
         memberUpdater.banMember(
             userId,
             in: cid,
@@ -207,6 +211,7 @@ public extension ChatChannelMemberController {
     /// - Parameter completion: The completion. Will be called on a **callbackQueue** when the network request is finished.
     ///                         If request fails, the completion will be called with an error.
     func unban(completion: ((Error?) -> Void)? = nil) {
+        nonisolated(unsafe) let completion = completion
         memberUpdater.unbanMember(userId, in: cid) { error in
             self.callback {
                 completion?(error)

@@ -9,7 +9,7 @@ import Foundation
 public typealias MessageId = String
 
 /// A type representing a chat message. `ChatMessage` is an immutable snapshot of a chat message entity at the given time.
-public struct ChatMessage {
+public struct ChatMessage: @unchecked Sendable {
     /// A unique identifier of the message.
     public let id: MessageId
 
@@ -530,7 +530,7 @@ public enum LocalReactionState: String {
 }
 
 /// The type describing message delivery status.
-public struct MessageDeliveryStatus: RawRepresentable, Hashable {
+public struct MessageDeliveryStatus: RawRepresentable, Hashable, Sendable {
     public let rawValue: String
 
     public init(rawValue: String) {

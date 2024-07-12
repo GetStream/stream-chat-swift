@@ -5,7 +5,7 @@
 import Foundation
 
 /// An object which represents a list of ``ChatMessage`` for the specified search query.
-public class MessageSearch {
+public class MessageSearch: @unchecked Sendable {
     private let authenticationRepository: AuthenticationRepository
     private let messageUpdater: MessageUpdater
     private let stateBuilder: StateBuilder<MessageSearchState>
@@ -19,7 +19,8 @@ public class MessageSearch {
             client.databaseContainer,
             client.apiClient
         )
-        stateBuilder = StateBuilder { environment.stateBuilder(client.databaseContainer) }
+        let databaseContainer = client.databaseContainer
+        stateBuilder = StateBuilder { environment.stateBuilder(databaseContainer) }
     }
     
     // MARK: - Accessing the State
@@ -100,7 +101,7 @@ public class MessageSearch {
 }
 
 extension MessageSearch {
-    struct Environment {
+    struct Environment: @unchecked Sendable {
         var messageUpdaterBuilder: (
             _ isLocalStorageEnabled: Bool,
             _ messageRepository: MessageRepository,

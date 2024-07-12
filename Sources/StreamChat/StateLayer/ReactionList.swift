@@ -5,7 +5,7 @@
 import Foundation
 
 /// An object which represents a list of `ChatMessageReaction` for the specified query.
-public final class ReactionList {
+public final class ReactionList: @unchecked Sendable {
     private let query: ReactionListQuery
     private let reactionListUpdater: ReactionListUpdater
     private let stateBuilder: StateBuilder<ReactionListState>
@@ -16,10 +16,11 @@ public final class ReactionList {
             client.databaseContainer,
             client.apiClient
         )
+        let databaseContainer = client.databaseContainer
         stateBuilder = StateBuilder {
             environment.stateBuilder(
                 query,
-                client.databaseContainer
+                databaseContainer
             )
         }
     }
@@ -59,16 +60,17 @@ public final class ReactionList {
     /// - Returns: An array of message reactions.
     @discardableResult public func loadMoreReactions(limit: Int? = nil) async throws -> [ChatMessageReaction] {
         let pageSize = limit ?? query.pagination.pageSize
+        let count = await state.reactions.count
         let pagination = Pagination(
             pageSize: pageSize,
-            offset: await state.reactions.count
+            offset: count
         )
         return try await loadReactions(with: pagination)
     }
 }
 
 extension ReactionList {
-    struct Environment {
+    struct Environment: @unchecked Sendable {
         var reactionListUpdaterBuilder: (
             _ database: DatabaseContainer,
             _ apiClient: APIClient

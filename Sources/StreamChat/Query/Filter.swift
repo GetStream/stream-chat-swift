@@ -63,7 +63,7 @@ public protocol FilterScope {}
 ///
 /// Only types representing text, numbers, booleans, dates, and other filters can be on the "right-hand" side of `Filter`.
 ///
-public protocol FilterValue: Encodable {}
+public protocol FilterValue: Encodable, Sendable {}
 
 // Built-in `FilterValue` conformances for supported types
 
@@ -88,7 +88,7 @@ extension Optional: FilterValue where Wrapped == TeamId {}
 ///
 /// Learn more about how to create simple, advanced, and custom filters in our [cheat sheet](https://github.com/GetStream/stream-chat-swift/wiki/StreamChat-SDK-Cheat-Sheet#query-filters).
 ///
-public struct Filter<Scope: FilterScope> {
+public struct Filter<Scope: FilterScope>: Sendable {
     /// An operator used for the filter.
     public let `operator`: String
 
@@ -101,7 +101,7 @@ public struct Filter<Scope: FilterScope> {
 
     /// The mapper that will transform the input value to a value that
     /// can be compared with the DB value
-    typealias ValueMapper = (Any) -> FilterValue?
+    typealias ValueMapper = @Sendable(Any) -> FilterValue?
     let valueMapper: ValueMapper?
 
     /// The keypath of the DB object that will be compared with the input value during
@@ -113,7 +113,7 @@ public struct Filter<Scope: FilterScope> {
 
     /// The mapper that will override the DB Predicate. This might be needed
     /// for cases where our DB value is completely different from the server value.
-    typealias PredicateMapper = (FilterOperator, Any) -> NSPredicate?
+    typealias PredicateMapper = @Sendable(FilterOperator, Any) -> NSPredicate?
     let predicateMapper: PredicateMapper?
 
     init(
@@ -233,14 +233,14 @@ public struct FilterKey<Scope: FilterScope, Value: FilterValue>: ExpressibleBySt
 
     /// The mapper that will transform the input value to a value that
     /// can be compared with the DB value
-    typealias ValueMapper = (Any) -> FilterValue?
-    typealias TypedValueMapper = (Value) -> FilterValue?
+    typealias ValueMapper = @Sendable(Any) -> FilterValue?
+    typealias TypedValueMapper = @Sendable(Value) -> FilterValue?
     let valueMapper: ValueMapper?
 
     /// The mapper that will override the DB Predicate. This might be needed
     /// for cases where our DB value is completely different from the server value.
-    typealias PredicateMapper = (FilterOperator, Any) -> NSPredicate?
-    typealias TypedPredicateMapper = (FilterOperator, Value) -> NSPredicate?
+    typealias PredicateMapper = @Sendable(FilterOperator, Any) -> NSPredicate?
+    typealias TypedPredicateMapper = @Sendable(FilterOperator, Value) -> NSPredicate?
     let predicateMapper: PredicateMapper?
 
     let isCollectionFilter: Bool

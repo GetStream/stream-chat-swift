@@ -25,7 +25,7 @@ extension ChannelListPayload: Decodable {
     }
 }
 
-struct ChannelPayload {
+struct ChannelPayload: @unchecked Sendable {
     let channel: ChannelDetailPayload
 
     let watcherCount: Int?

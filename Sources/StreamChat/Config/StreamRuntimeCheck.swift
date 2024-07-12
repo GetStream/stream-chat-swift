@@ -8,12 +8,12 @@ public enum StreamRuntimeCheck {
     /// Enables assertions thrown by the Stream SDK.
     ///
     /// When set to false, a message will be logged on console, but the assertion will not be thrown.
-    public static var assertionsEnabled = false
+    nonisolated(unsafe) public static var assertionsEnabled = false
 
     /// For *internal use* only
     ///
     ///  Enables background mapping of DB models
-    public static var _isBackgroundMappingEnabled = true
+    nonisolated(unsafe) public static var _isBackgroundMappingEnabled = true
 
     /// For *internal use* only
     ///
@@ -23,7 +23,7 @@ public enum StreamRuntimeCheck {
     ///  Relationship:    Message --->  QuotedMessage --->    QuotedMessage   ---X---     NIL
     ///  Relationship:    Channel  --->      Message         --->     QuotedMessage  ---X---     NIL
     ///  Depth:                     0                         1                                     2                               3
-    static var _backgroundMappingRelationshipsMaxDepth = 2
+    nonisolated(unsafe) static var _backgroundMappingRelationshipsMaxDepth = 2
 
     /// For *internal use* only
     ///
@@ -37,5 +37,5 @@ public enum StreamRuntimeCheck {
     /// For *internal use* only
     ///
     /// Enables reusing unchanged converted items in database observers.
-    public static var _isDatabaseObserverItemReusingEnabled = true
+    nonisolated(unsafe) public static var _isDatabaseObserverItemReusingEnabled = true
 }

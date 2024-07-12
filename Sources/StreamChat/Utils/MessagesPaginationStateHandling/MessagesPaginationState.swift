@@ -5,7 +5,7 @@
 import Foundation
 
 /// The current state of the messages pagination.
-struct MessagesPaginationState {
+struct MessagesPaginationState: Sendable {
     // MARK: State
 
     /// The oldest fetched message while paginating.
@@ -58,7 +58,7 @@ struct MessagesPaginationState {
     // MARK: Initial State
 
     /// The initial state.
-    static var initial: Self = .init(
+    static let initial: Self = .init(
         oldestFetchedMessage: nil,
         newestFetchedMessage: nil,
         hasLoadedAllNextMessages: true,

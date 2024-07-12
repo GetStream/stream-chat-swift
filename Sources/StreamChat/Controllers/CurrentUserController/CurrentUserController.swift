@@ -100,6 +100,8 @@ public class CurrentChatUserController: DataController, DelegateCallable, DataSt
     override public func synchronize(_ completion: ((_ error: Error?) -> Void)? = nil) {
         startObservingIfNeeded()
 
+        nonisolated(unsafe) let completion = completion
+        
         if case let .localDataFetchFailed(error) = state {
             callback { completion?(error) }
             return
@@ -109,7 +111,7 @@ public class CurrentChatUserController: DataController, DelegateCallable, DataSt
         // But we can assume that if we wait for the connection of the WebSocket, it means the local data
         // is in sync with the remote server, so we can set the state to remoteDataFetched.
         client.provideConnectionId { [weak self] result in
-            var error: ClientError?
+            nonisolated(unsafe) var error: ClientError?
             if case .failure = result {
                 error = ClientError.ConnectionNotSuccessful()
             }
@@ -144,6 +146,7 @@ public extension CurrentChatUserController {
     ///
     /// - Parameter completion: The completion to be called when the operation is completed.
     func reloadUserIfNeeded(completion: ((Error?) -> Void)? = nil) {
+        nonisolated(unsafe) let completion = completion
         client.authenticationRepository.refreshToken { error in
             self.callback {
                 completion?(error)
@@ -176,7 +179,7 @@ public extension CurrentChatUserController {
             completion?(ClientError.CurrentUserDoesNotExist())
             return
         }
-
+        nonisolated(unsafe) let completion = completion
         currentUserUpdater.updateUserData(
             currentUserId: currentUserId,
             name: name,
@@ -199,6 +202,8 @@ public extension CurrentChatUserController {
             return
         }
 
+        nonisolated(unsafe) let completion = completion
+        
         currentUserUpdater.fetchDevices(currentUserId: currentUserId) { result in
             self.callback { completion?(result.error) }
         }
@@ -213,7 +218,8 @@ public extension CurrentChatUserController {
             completion?(ClientError.CurrentUserDoesNotExist())
             return
         }
-
+        
+        nonisolated(unsafe) let completion = completion
         currentUserUpdater.addDevice(
             deviceId: pushDevice.deviceId,
             pushProvider: pushDevice.pushProvider,
@@ -238,6 +244,7 @@ public extension CurrentChatUserController {
             return
         }
 
+        nonisolated(unsafe) let completion = completion
         currentUserUpdater.removeDevice(id: id, currentUserId: currentUserId) { error in
             self.callback {
                 completion?(error)
@@ -250,6 +257,7 @@ public extension CurrentChatUserController {
     /// - Parameter completion: Called when the API call is finished. Called with `Error` if the remote update fails.
     ///
     func markAllRead(completion: ((Error?) -> Void)? = nil) {
+        nonisolated(unsafe) let completion = completion
         currentUserUpdater.markAllRead { error in
             self.callback {
                 completion?(error)
@@ -264,6 +272,7 @@ public extension CurrentChatUserController {
     ///
     /// Note: This is a one-time request, it is not observable.
     func loadAllUnreads(completion: @escaping ((Result<CurrentUserUnreads, Error>) -> Void)) {
+        nonisolated(unsafe) let completion = completion
         currentUserUpdater.loadAllUnreads { result in
             self.callback {
                 completion(result)
@@ -276,6 +285,7 @@ public extension CurrentChatUserController {
     /// - Parameter completion: Called when the API call is finished. Called with `Error` if the remote update fails.
     ///
     func loadBlockedUsers(completion: @escaping (Result<[BlockedUserDetails], Error>) -> Void) {
+        nonisolated(unsafe) let completion = completion
         currentUserUpdater.loadBlockedUsers { result in
             self.callback {
                 completion(result)

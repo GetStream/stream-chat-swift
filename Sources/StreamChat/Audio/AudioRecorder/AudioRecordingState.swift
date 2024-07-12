@@ -6,7 +6,7 @@ import Foundation
 
 /// Defines a struct named AudioRecordingState that is being used to describe the state of a recording
 /// session.
-public struct AudioRecordingState: Hashable {
+public struct AudioRecordingState: Hashable, Sendable {
     var rawValue: String
 
     /// Defines a static constant property called recording of type AudioRecordingState with a raw value

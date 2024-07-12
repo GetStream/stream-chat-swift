@@ -5,7 +5,7 @@
 import Foundation
 
 /// An object which represents a list of `ChatUser`.
-public final class UserList {
+public final class UserList: @unchecked Sendable {
     private let query: UserListQuery
     private let stateBuilder: StateBuilder<UserListState>
     private let userListUpdater: UserListUpdater
@@ -69,7 +69,7 @@ public final class UserList {
 }
 
 extension UserList {
-    struct Environment {
+    struct Environment: @unchecked Sendable {
         var userListUpdater: (
             _ database: DatabaseContainer,
             _ apiClient: APIClient

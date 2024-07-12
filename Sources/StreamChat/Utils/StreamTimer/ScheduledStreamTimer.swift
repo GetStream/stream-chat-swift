@@ -4,7 +4,7 @@
 
 import Foundation
 
-public class ScheduledStreamTimer: StreamTimer {
+public class ScheduledStreamTimer: StreamTimer, @unchecked Sendable {
     let interval: TimeInterval
     var runLoop = RunLoop.current
     var timer: Foundation.Timer?

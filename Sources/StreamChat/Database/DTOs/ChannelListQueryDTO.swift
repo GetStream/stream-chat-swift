@@ -21,7 +21,7 @@ class ChannelListQueryDTO: NSManagedObject {
             keyPath: #keyPath(ChannelListQueryDTO.filterHash),
             equalTo: filterHash,
             context: context
-        ).first
+        ).first as? ChannelListQueryDTO
     }
 
     /// The fetch request that returns all existed queries from the database.

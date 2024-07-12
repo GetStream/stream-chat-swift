@@ -16,7 +16,7 @@ class MessageSearchQueryDTO: NSManagedObject {
             keyPath: #keyPath(MessageSearchQueryDTO.filterHash),
             equalTo: filterHash,
             context: context
-        ).first
+        ).first as? MessageSearchQueryDTO
     }
 }
 

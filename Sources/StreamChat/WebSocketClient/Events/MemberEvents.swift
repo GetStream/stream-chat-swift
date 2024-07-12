@@ -19,7 +19,7 @@ public struct MemberAddedEvent: MemberEvent, ChannelSpecificEvent {
     public let createdAt: Date
 }
 
-class MemberAddedEventDTO: EventDTO {
+class MemberAddedEventDTO: EventDTO, @unchecked Sendable {
     let user: UserPayload
     let cid: ChannelId
     let member: MemberPayload
@@ -64,7 +64,7 @@ public struct MemberUpdatedEvent: MemberEvent, ChannelSpecificEvent {
     public let createdAt: Date
 }
 
-class MemberUpdatedEventDTO: EventDTO {
+class MemberUpdatedEventDTO: EventDTO, @unchecked Sendable {
     let user: UserPayload
     let cid: ChannelId
     let member: MemberPayload
@@ -106,7 +106,7 @@ public struct MemberRemovedEvent: MemberEvent, ChannelSpecificEvent {
     public let createdAt: Date
 }
 
-class MemberRemovedEventDTO: EventDTO {
+class MemberRemovedEventDTO: EventDTO, @unchecked Sendable {
     let user: UserPayload
     let cid: ChannelId
     let createdAt: Date

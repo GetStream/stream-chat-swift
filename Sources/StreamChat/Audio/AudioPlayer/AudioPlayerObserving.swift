@@ -88,6 +88,7 @@ final class StreamPlayerObserver: AudioPlayerObserving {
         _ player: AVPlayer,
         using block: @escaping (AVPlayer.TimeControlStatus?) -> Void
     ) {
+        nonisolated(unsafe) let block = block
         timeControlStatusObserver = player.observe(
             \.timeControlStatus,
             changeHandler: { player, _ in block(player.timeControlStatus) }
@@ -100,6 +101,7 @@ final class StreamPlayerObserver: AudioPlayerObserving {
         queue: DispatchQueue?,
         using block: @escaping () -> Void
     ) {
+        nonisolated(unsafe) let block = block
         periodicTimeObservationToken = player.addPeriodicTimeObserver(
             forInterval: interval,
             queue: queue,
@@ -120,6 +122,7 @@ final class StreamPlayerObserver: AudioPlayerObserving {
         queue: OperationQueue?,
         using block: @escaping (AVPlayerItem) -> Void
     ) {
+        nonisolated(unsafe) let block = block
         stoppedPlaybackObservationToken = notificationCenter.addObserver(
             forName: NSNotification.Name.AVPlayerItemDidPlayToEndTime,
             object: nil,

@@ -13,7 +13,7 @@ import Foundation
         self.query = query
         
         users = observer.start(
-            with: .init(usersDidChange: { [weak self] in self?.users = $0 })
+            with: .init(usersDidChange: { @MainActor [weak self] in self?.users = $0 })
         )
     }
     

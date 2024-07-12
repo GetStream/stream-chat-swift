@@ -5,7 +5,7 @@
 import Foundation
 
 /// Defines an struct which describes an audio player's playback state
-public struct AudioPlaybackState: Equatable, CustomStringConvertible {
+public struct AudioPlaybackState: Equatable, CustomStringConvertible, Sendable {
     /// The name that describes the state
     public let name: String
 

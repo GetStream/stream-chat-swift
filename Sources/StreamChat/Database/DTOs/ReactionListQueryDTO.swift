@@ -21,7 +21,7 @@ class ReactionListQueryDTO: NSManagedObject {
             keyPath: #keyPath(ReactionListQueryDTO.filterHash),
             equalTo: filterHash,
             context: context
-        ).first
+        ).first as? ReactionListQueryDTO
     }
 
     static func loadOrCreate(filterHash: String, context: NSManagedObjectContext) -> ReactionListQueryDTO {

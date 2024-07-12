@@ -13,7 +13,7 @@ extension Data {
 }
 
 /// An object representing a device which can receive push notifications.
-public struct Device: Codable, Equatable {
+public struct Device: Codable, Equatable, Sendable {
     private enum CodingKeys: String, CodingKey {
         case id
         case createdAt = "created_at"

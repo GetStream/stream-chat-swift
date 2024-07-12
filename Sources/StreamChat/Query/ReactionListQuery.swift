@@ -5,7 +5,7 @@
 import Foundation
 
 /// A query used for querying specific reactions from a message.
-public struct ReactionListQuery: Encodable {
+public struct ReactionListQuery: Encodable, Sendable {
     /// The message id that the reactions belong to.
     public var messageId: MessageId
     /// The pagination information to query the reactions.
@@ -39,7 +39,7 @@ public struct ReactionListQuery: Encodable {
 public protocol AnyReactionListFilterScope {}
 
 /// An extra-data-specific namespace for the `FilterKey`s suitable to be used for `ReactionListQuery`.
-public class ReactionListFilterScope: FilterScope, AnyReactionListFilterScope {}
+public final class ReactionListFilterScope: FilterScope, AnyReactionListFilterScope, Sendable {}
 
 /// Make the reaction type conform to FilterValue.
 extension MessageReactionType: FilterValue {}

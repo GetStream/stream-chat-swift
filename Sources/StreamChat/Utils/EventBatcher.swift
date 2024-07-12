@@ -5,7 +5,7 @@
 import Foundation
 
 /// The type that does events batching.
-protocol EventBatcher {
+protocol EventBatcher: Sendable {
     typealias Batch = [Event]
     typealias BatchHandler = (_ batch: Batch, _ completion: @escaping () -> Void) -> Void
 
@@ -27,7 +27,7 @@ protocol EventBatcher {
 
 extension Batcher: EventBatcher where Item == Event {}
 
-final class Batcher<Item> {
+final class Batcher<Item>: @unchecked Sendable {
     /// The batching period. If the item is added sonner then `period` has passed after the first item they will get into the same batch.
     private let period: TimeInterval
     /// The time used to create timers.

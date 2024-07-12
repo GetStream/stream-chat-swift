@@ -64,7 +64,7 @@ struct MessageSearchResultsPayload: Decodable {
 }
 
 /// An object describing the incoming message JSON payload.
-class MessagePayload: Decodable {
+class MessagePayload: Decodable, @unchecked Sendable {
     let id: String
     /// Only messages from `translate` endpoint contain `cid`
     let cid: ChannelId?

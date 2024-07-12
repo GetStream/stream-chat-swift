@@ -39,7 +39,7 @@ extension Timer {
 }
 
 /// Allows resuming and suspending of a timer.
-protocol RepeatingTimerControl {
+protocol RepeatingTimerControl: Sendable {
     /// Resumes the timer.
     func resume()
 
@@ -48,12 +48,16 @@ protocol RepeatingTimerControl {
 }
 
 /// Allows cancelling a timer.
-protocol TimerControl {
+protocol TimerControl: Sendable {
     /// Cancels the timer.
     func cancel()
 }
 
+#if swift(>=6.0)
+extension DispatchWorkItem: TimerControl, @retroactive @unchecked Sendable {}
+#else
 extension DispatchWorkItem: TimerControl {}
+#endif
 
 /// Default real-world implementations of timers.
 struct DefaultTimer: Timer {
@@ -77,7 +81,7 @@ struct DefaultTimer: Timer {
     }
 }
 
-private class RepeatingTimer: RepeatingTimerControl {
+private class RepeatingTimer: RepeatingTimerControl, @unchecked Sendable {
     private enum State {
         case suspended
         case resumed

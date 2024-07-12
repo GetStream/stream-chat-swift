@@ -9,7 +9,7 @@ import UIKit
 
 /// This protocol defines the methods that should be implemented by any class that wants to observe
 /// app state changes.
-protocol AppStateObserverDelegate: AnyObject {
+@MainActor protocol AppStateObserverDelegate: AnyObject {
     /// Will be triggered when the app moves to the background
     func applicationDidMoveToBackground()
 
@@ -30,7 +30,7 @@ protocol AppStateObserving {
 }
 
 /// A class responsible for observing changes to the app state.
-final class StreamAppStateObserver: AppStateObserving {
+final class StreamAppStateObserver: AppStateObserving, @unchecked Sendable {
     /// The NotificationCenter used for observing app state changes.
     let notificationCenter: NotificationCenter
 
@@ -93,11 +93,15 @@ final class StreamAppStateObserver: AppStateObserving {
 
     /// Handles the app moving to background notification by invoking the delegate method.
     @objc private func handleAppDidMoveToBackground() {
-        delegate.invoke { $0.applicationDidMoveToBackground() }
+        DispatchQueue.main.async {
+            self.delegate.invoke { $0.applicationDidMoveToBackground() }
+        }
     }
 
     /// Handles the app moving to foreground notification by invoking the delegate method.
     @objc private func handleAppDidMoveToForeground() {
-        delegate.invoke { $0.applicationDidMoveToForeground() }
+        DispatchQueue.main.async {
+            self.delegate.invoke { $0.applicationDidMoveToForeground() }
+        }
     }
 }

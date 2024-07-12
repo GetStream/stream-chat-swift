@@ -6,7 +6,7 @@ import Combine
 import Foundation
 
 /// An object which represents a `ChatChannel`.
-public class Chat {
+public class Chat: @unchecked Sendable {
     private let channelUpdater: ChannelUpdater
     private let client: ChatClient
     private let databaseContainer: DatabaseContainer
@@ -1052,7 +1052,7 @@ public class Chat {
     /// - Returns: A cancellable instance, which you use when you end the subscription. Deallocation of the result will tear down the subscription stream.
     public func subscribe<E>(
         toEvent event: E.Type,
-        handler: @escaping (E) -> Void
+        handler: @Sendable @escaping (E) -> Void
     ) -> AnyCancellable where E: Event {
         eventNotificationCenter.subscribe(
             to: event,
@@ -1069,7 +1069,7 @@ public class Chat {
     /// - Parameter handler: The handler closure which is called when the event happens.
     ///
     /// - Returns: A cancellable instance, which you use when you end the subscription. Deallocation of the result will tear down the subscription stream.
-    public func subscribe(_ handler: @escaping (Event) -> Void) -> AnyCancellable {
+    public func subscribe(_ handler: @Sendable @escaping (Event) -> Void) -> AnyCancellable {
         eventNotificationCenter.subscribe(
             handler: { [weak self] event in
                 self?.dispatchSubscribeHandler(event, callback: handler)
@@ -1321,7 +1321,7 @@ extension Chat {
         }
     }
     
-    func dispatchSubscribeHandler<E>(_ event: E, callback: @escaping (E) -> Void) where E: Event {
+    func dispatchSubscribeHandler<E>(_ event: E, callback: @Sendable @escaping (E) -> Void) where E: Event {
         Task.mainActor {
             guard let cid = try? self.cid else { return }
             guard EventNotificationCenter.channelFilter(cid: cid, event: event) else { return }
@@ -1361,7 +1361,7 @@ extension Chat {
 // MARK: - Environment
 
 extension Chat {
-    struct Environment {
+    struct Environment: @unchecked Sendable {
         var chatStateBuilder: @MainActor(
             _ channelQuery: ChannelQuery,
             _ messageOrder: MessageOrdering,

@@ -11,7 +11,7 @@ import Foundation
 public typealias ChatMessageLinkAttachment = ChatMessageAttachment<LinkAttachmentPayload>
 
 /// Represents a payload for attachments with `.linkPreview` type.
-public struct LinkAttachmentPayload: AttachmentPayload {
+public struct LinkAttachmentPayload: AttachmentPayload, @unchecked Sendable {
     /// An attachment type all `LinkAttachmentPayload` instances conform to. Is set to `.linkPreview`.
     public static let type: AttachmentType = .linkPreview
 

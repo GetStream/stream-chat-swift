@@ -5,7 +5,7 @@
 import Foundation
 
 /// An `Event` object representing an event in the chat system.
-public protocol Event {}
+public protocol Event: Sendable {}
 
 extension Event {
     var name: String {
@@ -43,7 +43,7 @@ public protocol HasUnreadCount: Event {
 }
 
 /// A protocol for any `MemberEvent` where it has a `member`, and `channel` payload.
-public protocol MemberEvent: Event {
+public protocol MemberEvent: Event, Sendable {
     var memberUserId: UserId { get }
     var cid: ChannelId { get }
 }
