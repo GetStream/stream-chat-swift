@@ -156,7 +156,7 @@ extension DefaultConnectionRecoveryHandler {
 
         case .connected:
             extensionLifecycle.setAppState(isReceivingEvents: true)
-            reconnectionStrategy.resetConsecutiveFailures()
+            reconnectionStrategy.reset()
             syncRepository.syncLocalState {
                 log.info("Local state sync completed", subsystems: .offlineSupport)
             }
@@ -233,19 +233,24 @@ private extension DefaultConnectionRecoveryHandler {
     }
 
     func scheduleReconnectionTimer() {
-        let delay = reconnectionStrategy.getDelayAfterTheFailure()
+        do {
+            let delay = try reconnectionStrategy.delay()
 
-        log.debug("Timer ⏳ \(delay) sec", subsystems: .webSocket)
+            log.debug("Timer ⏳ \(delay) sec", subsystems: .webSocket)
 
-        reconnectionTimer = reconnectionTimerType.schedule(
-            timeInterval: delay,
-            queue: .main,
-            onFire: { [weak self] in
-                log.debug("Timer 🔥", subsystems: .webSocket)
+            reconnectionTimer = reconnectionTimerType.schedule(
+                timeInterval: delay,
+                queue: .main,
+                onFire: { [weak self] in
+                    log.debug("Timer 🔥", subsystems: .webSocket)
 
-                self?.reconnectIfNeeded()
-            }
-        )
+                    self?.reconnectIfNeeded()
+                }
+            )
+        } catch {
+            reconnectionStrategy.reset()
+            webSocketClient.reconnectionTimedOut(error: error)
+        }
     }
 
     func cancelReconnectionTimer() {

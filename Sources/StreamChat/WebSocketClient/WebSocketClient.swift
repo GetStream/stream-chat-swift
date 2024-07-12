@@ -142,6 +142,11 @@ class WebSocketClient {
             eventsBatcher.processImmediately(completion: completion)
         }
     }
+
+    func reconnectionTimedOut(error: Error) {
+        connectionState = .disconnected(source: .retryTimeout(error: error as? ClientError))
+        log.error("Web-socket reconnection timeout. Error: \(error)", subsystems: .webSocket)
+    }
 }
 
 protocol ConnectionStateDelegate: AnyObject {

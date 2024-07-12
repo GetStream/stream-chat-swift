@@ -4,62 +4,63 @@
 
 import Foundation
 
-/// The type encapsulating the logic of computing delays for the failed actions that needs to be retried.
+/// A component responsible for the logic of computing delays for failed actions that needs to be retried.
 protocol RetryStrategy {
-    /// Returns the # of consecutively failed retries.
-    var consecutiveFailuresCount: Int { get }
+    /// Resets the retry mechanism.
+    func reset()
 
-    /// Increments the # of consecutively failed retries making the next delay longer.
-    mutating func incrementConsecutiveFailures()
-
-    /// Resets the # of consecutively failed retries making the next delay be the shortest one.
-    mutating func resetConsecutiveFailures()
-
-    /// Calculates and returns the delay for the next retry.
-    ///
-    /// Consecutive calls after the same # of failures may return different delays. This randomization is done to
-    /// make the retry intervals slightly different for different callers to avoid putting the backend down by
-    /// making all the retries at the same time.
-    ///
-    /// - Returns: The delay for the next retry.
-    func nextRetryDelay() -> TimeInterval
-}
-
-extension RetryStrategy {
-    /// Returns the delay and then increments # of consecutively failed retries.
-    ///
-    /// - Returns: The delay for the next retry.
-    mutating func getDelayAfterTheFailure() -> TimeInterval {
-        defer { incrementConsecutiveFailures() }
-
-        return nextRetryDelay()
-    }
+    /// Returns the delay for the next retry.
+    /// Throws error in case it should not retry.
+    func delay() throws -> TimeInterval
 }
 
 /// The default implementation of `RetryStrategy` with exponentially growing delays.
-struct DefaultRetryStrategy: RetryStrategy {
-    static let maximumReconnectionDelay: TimeInterval = 25
+///
+/// Consecutive calls after the same # of failures may return different delays. This randomization is done to
+/// make the retry intervals slightly different for different callers to avoid putting the backend down by
+/// making all the retries at the same time.
+class ExponentialBackoffRetryStrategy: RetryStrategy {
+    @Atomic private var consecutiveFailuresCount = 0
 
-    @Atomic private(set) var consecutiveFailuresCount = 0
+    let maximumReconnectionDelay: TimeInterval
+    let maximumNumberOfRetries: Int
 
-    mutating func incrementConsecutiveFailures() {
-        _consecutiveFailuresCount.mutate { $0 += 1 }
+    init(
+        maximumReconnectionDelay: TimeInterval,
+        maximumNumberOfRetries: Int
+    ) {
+        self.maximumReconnectionDelay = maximumReconnectionDelay
+        self.maximumNumberOfRetries = maximumNumberOfRetries
     }
 
-    mutating func resetConsecutiveFailures() {
+    func reset() {
         _consecutiveFailuresCount.mutate { $0 = 0 }
     }
 
-    func nextRetryDelay() -> TimeInterval {
+    func delay() throws -> TimeInterval {
+        if consecutiveFailuresCount >= maximumNumberOfRetries {
+            throw ClientError.RetryTimeout("Connection Retry has timed out.")
+        }
+
         var delay: TimeInterval = 0
 
         _consecutiveFailuresCount.mutate {
-            let maxDelay: TimeInterval = min(0.5 + Double($0 * 2), Self.maximumReconnectionDelay)
-            let minDelay: TimeInterval = min(max(0.25, (Double($0) - 1) * 2), Self.maximumReconnectionDelay)
+            let maxDelay: TimeInterval = min(0.5 + Double($0 * 2), maximumReconnectionDelay)
+            let minDelay: TimeInterval = min(max(0.25, (Double($0) - 1) * 2), maximumReconnectionDelay)
 
             delay = TimeInterval.random(in: minDelay...maxDelay)
         }
 
+        incrementConsecutiveFailures()
+
         return delay
     }
+
+    private func incrementConsecutiveFailures() {
+        _consecutiveFailuresCount.mutate { $0 += 1 }
+    }
+}
+
+extension ClientError {
+    final class RetryTimeout: ClientError {}
 }
