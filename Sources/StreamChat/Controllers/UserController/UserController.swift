@@ -112,7 +112,7 @@ public class ChatUserController: DataController, DelegateCallable, DataStoreProv
         )
     }
 
-    private func createUserObserver() -> EntityDatabaseObserverWrapper<ChatUser, UserDTO> {
+    private func createUserObserver() -> BackgroundEntityDatabaseObserver<ChatUser, UserDTO> {
         environment.userObserverBuilder(
             client.databaseContainer,
             UserDTO.user(withID: userId),
@@ -216,7 +216,7 @@ extension ChatUserController {
             _ fetchRequest: NSFetchRequest<UserDTO>,
             _ itemCreator: @escaping (UserDTO) throws -> ChatUser,
             _ fetchedResultsControllerType: NSFetchedResultsController<UserDTO>.Type
-        ) -> EntityDatabaseObserverWrapper<ChatUser, UserDTO> = EntityDatabaseObserverWrapper.init
+        ) -> BackgroundEntityDatabaseObserver<ChatUser, UserDTO> = BackgroundEntityDatabaseObserver.init
     }
 }
 

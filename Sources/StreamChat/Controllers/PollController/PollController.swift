@@ -58,7 +58,7 @@ public class PollController: DataController, DelegateCallable, DataStoreProvider
     
     private let eventsController: EventsController
     
-    private lazy var pollObserver: EntityDatabaseObserverWrapper<Poll, PollDTO>? = { [weak self] in
+    private lazy var pollObserver: BackgroundEntityDatabaseObserver<Poll, PollDTO>? = { [weak self] in
         guard let self = self else {
             log.warning("Callback called while self is nil")
             return nil
@@ -289,8 +289,8 @@ extension PollController {
             _ fetchRequest: NSFetchRequest<PollDTO>,
             _ itemCreator: @escaping (PollDTO) throws -> Poll,
             _ fetchedResultsControllerType: NSFetchedResultsController<PollDTO>.Type
-        ) -> EntityDatabaseObserverWrapper<Poll, PollDTO> = {
-            EntityDatabaseObserverWrapper(
+        ) -> BackgroundEntityDatabaseObserver<Poll, PollDTO> = {
+            BackgroundEntityDatabaseObserver(
                 database: $0,
                 fetchRequest: $1,
                 itemCreator: $2,

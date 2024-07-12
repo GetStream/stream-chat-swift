@@ -8,7 +8,7 @@ import CoreData
 import XCTest
 
 final class EntityDatabaseObserverWrapper_Tests: XCTestCase {
-    private var observer: EntityDatabaseObserverWrapper<TestItem, TestManagedObject>!
+    private var observer: BackgroundEntityDatabaseObserver_Mock<TestItem, TestManagedObject>!
     var fetchRequest: NSFetchRequest<TestManagedObject>!
     var database: DatabaseContainer_Spy!
 

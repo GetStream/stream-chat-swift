@@ -286,6 +286,8 @@
 		4F8E531D2B833D6C008C0F9F /* ChatState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F8E531B2B833D6C008C0F9F /* ChatState.swift */; };
 		4F910C6C2BEE1BDC00214EB9 /* UnreadMessageLookup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F910C6B2BEE1BDC00214EB9 /* UnreadMessageLookup.swift */; };
 		4F910C6D2BEE1BDC00214EB9 /* UnreadMessageLookup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F910C6B2BEE1BDC00214EB9 /* UnreadMessageLookup.swift */; };
+		4F9494BB2C41086F00B5C9CE /* BackgroundEntityDatabaseObserver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F9494BA2C41086F00B5C9CE /* BackgroundEntityDatabaseObserver.swift */; };
+		4F9494BC2C41086F00B5C9CE /* BackgroundEntityDatabaseObserver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F9494BA2C41086F00B5C9CE /* BackgroundEntityDatabaseObserver.swift */; };
 		4F94B0E02BA1C4220045216B /* MemberListState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F94B0DF2BA1C4220045216B /* MemberListState.swift */; };
 		4F94B0E12BA1C4220045216B /* MemberListState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F94B0DF2BA1C4220045216B /* MemberListState.swift */; };
 		4F97F2672BA83146001C4D66 /* UserList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F97F2662BA83146001C4D66 /* UserList.swift */; };
@@ -1732,7 +1734,7 @@
 		BDDD1EAC2632E32000BA007B /* AppearanceProvider_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDDD1EAB2632E32000BA007B /* AppearanceProvider_Tests.swift */; };
 		BDDD1EAE2632E6C200BA007B /* Appearance+SwiftUI_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDDD1EAD2632E6C200BA007B /* Appearance+SwiftUI_Tests.swift */; };
 		BDEB9417268211EC00928AF1 /* ChatMessageListUnreadCountView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDEB9416268211EC00928AF1 /* ChatMessageListUnreadCountView.swift */; };
-		C10AB8D42AD7DFFB001A4644 /* EntityDatabaseObserverWrapper_Mock.swift in Sources */ = {isa = PBXBuildFile; fileRef = C10AB8D32AD7DFFB001A4644 /* EntityDatabaseObserverWrapper_Mock.swift */; };
+		C10AB8D42AD7DFFB001A4644 /* BackgroundEntityDatabaseObserver_Mock.swift in Sources */ = {isa = PBXBuildFile; fileRef = C10AB8D32AD7DFFB001A4644 /* BackgroundEntityDatabaseObserver_Mock.swift */; };
 		C10B0A0A29D20B3A006517FC /* DeactivatedUser.json in Resources */ = {isa = PBXBuildFile; fileRef = C10B0A0929D20B3A006517FC /* DeactivatedUser.json */; };
 		C10B5C722A1F794A006A5BCB /* MembersViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C10B5C712A1F794A006A5BCB /* MembersViewController.swift */; };
 		C10BB5402AE95CDC00BDF7BC /* EntityDatabaseObserverWrapper_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C10BB53F2AE95CDC00BDF7BC /* EntityDatabaseObserverWrapper_Tests.swift */; };
@@ -3119,6 +3121,7 @@
 		4F8E530A2B7CEBFB008C0F9F /* ChatClient+Factory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ChatClient+Factory.swift"; sourceTree = "<group>"; };
 		4F8E531B2B833D6C008C0F9F /* ChatState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatState.swift; sourceTree = "<group>"; };
 		4F910C6B2BEE1BDC00214EB9 /* UnreadMessageLookup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UnreadMessageLookup.swift; sourceTree = "<group>"; };
+		4F9494BA2C41086F00B5C9CE /* BackgroundEntityDatabaseObserver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackgroundEntityDatabaseObserver.swift; sourceTree = "<group>"; };
 		4F94B0DF2BA1C4220045216B /* MemberListState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemberListState.swift; sourceTree = "<group>"; };
 		4F97F2662BA83146001C4D66 /* UserList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserList.swift; sourceTree = "<group>"; };
 		4F97F2692BA83150001C4D66 /* UserListState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserListState.swift; sourceTree = "<group>"; };
@@ -4335,7 +4338,7 @@
 		BDDD1EAB2632E32000BA007B /* AppearanceProvider_Tests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppearanceProvider_Tests.swift; sourceTree = "<group>"; };
 		BDDD1EAD2632E6C200BA007B /* Appearance+SwiftUI_Tests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Appearance+SwiftUI_Tests.swift"; sourceTree = "<group>"; };
 		BDEB9416268211EC00928AF1 /* ChatMessageListUnreadCountView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessageListUnreadCountView.swift; sourceTree = "<group>"; };
-		C10AB8D32AD7DFFB001A4644 /* EntityDatabaseObserverWrapper_Mock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EntityDatabaseObserverWrapper_Mock.swift; sourceTree = "<group>"; };
+		C10AB8D32AD7DFFB001A4644 /* BackgroundEntityDatabaseObserver_Mock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackgroundEntityDatabaseObserver_Mock.swift; sourceTree = "<group>"; };
 		C10B0A0929D20B3A006517FC /* DeactivatedUser.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = DeactivatedUser.json; sourceTree = "<group>"; };
 		C10B0A0B29D20DE1006517FC /* User_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = User_Tests.swift; sourceTree = "<group>"; };
 		C10B5C712A1F794A006A5BCB /* MembersViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = MembersViewController.swift; path = DemoApp/Screens/MembersViewController.swift; sourceTree = SOURCE_ROOT; };
@@ -7183,22 +7186,22 @@
 		A364D0A627D128220029857A /* Controllers */ = {
 			isa = PBXGroup;
 			children = (
-				A344076B27D753530044F150 /* ChatChannelController_Mock.swift */,
+				C10AB8D32AD7DFFB001A4644 /* BackgroundEntityDatabaseObserver_Mock.swift */,
+				C17E0AF62B04D190007188F1 /* BackgroundListDatabaseObserver_Mock.swift */,
 				A3C7BAB427E4D81A00BBF4FA /* ChannelListController_Mock.swift */,
+				A344076B27D753530044F150 /* ChatChannelController_Mock.swift */,
 				A344076E27D753530044F150 /* ChatChannelListController_Mock.swift */,
 				79D6CE6125F7D6C700BE2EEC /* ChatChannelWatcherListController_Mock.swift */,
 				A344076F27D753530044F150 /* ChatMessageController_Mock.swift */,
+				84A40366284A2F72006DBA52 /* ChatMessageSearchController_Mock.swift */,
+				AD0CB4AD2C25DAE3006285E8 /* ChatThreadListController_Mock.swift */,
 				A344076C27D753530044F150 /* ChatUserSearchController_Mock.swift */,
 				A344076D27D753530044F150 /* CurrentChatUserController_Mock.swift */,
-				84A40366284A2F72006DBA52 /* ChatMessageSearchController_Mock.swift */,
+				A3C7BABC27E4D9B500BBF4FA /* CurrentUserController_Mock.swift */,
+				F649B2382500FD56008F98C8 /* EntityDatabaseObserver_Mock.swift */,
+				88D85DAD252F468B00AE1030 /* ListDatabaseObserver_Mock.swift */,
 				8459C9E92BFB39DC00F0D235 /* PollController_Mock.swift */,
 				8459C9F12BFB6D3200F0D235 /* PollVoteListController_Mock.swift */,
-				F649B2382500FD56008F98C8 /* EntityDatabaseObserver_Mock.swift */,
-				C10AB8D32AD7DFFB001A4644 /* EntityDatabaseObserverWrapper_Mock.swift */,
-				88D85DAD252F468B00AE1030 /* ListDatabaseObserver_Mock.swift */,
-				C17E0AF62B04D190007188F1 /* BackgroundListDatabaseObserver_Mock.swift */,
-				A3C7BABC27E4D9B500BBF4FA /* CurrentUserController_Mock.swift */,
-				AD0CB4AD2C25DAE3006285E8 /* ChatThreadListController_Mock.swift */,
 			);
 			path = Controllers;
 			sourceTree = "<group>";
@@ -8906,9 +8909,10 @@
 		C13382D62AFE5A15003460F0 /* DatabaseObserver */ = {
 			isa = PBXGroup;
 			children = (
-				792AF91524D812440010097B /* EntityDatabaseObserver.swift */,
-				C15C8837286C7BF300E6A72C /* BackgroundListDatabaseObserver.swift */,
 				C189D7772AEBC6CD00D4B966 /* BackgroundDatabaseObserver.swift */,
+				4F9494BA2C41086F00B5C9CE /* BackgroundEntityDatabaseObserver.swift */,
+				C15C8837286C7BF300E6A72C /* BackgroundListDatabaseObserver.swift */,
+				792AF91524D812440010097B /* EntityDatabaseObserver.swift */,
 				79E2B83F24CAC8D60024752F /* ListDatabaseObserver.swift */,
 			);
 			path = DatabaseObserver;
@@ -10896,7 +10900,7 @@
 				A344078627D753530044F150 /* MessagePayload.swift in Sources */,
 				A3C3BC1F27E87F1200224761 /* ListDatabaseObserver_Mock.swift in Sources */,
 				A3C3BC3227E87F2900224761 /* URLProtocol_Mock.swift in Sources */,
-				C10AB8D42AD7DFFB001A4644 /* EntityDatabaseObserverWrapper_Mock.swift in Sources */,
+				C10AB8D42AD7DFFB001A4644 /* BackgroundEntityDatabaseObserver_Mock.swift in Sources */,
 				A3C3BC2C27E87F2000224761 /* MutedUserPayload.swift in Sources */,
 				A344078E27D753530044F150 /* CurrentChatUserController_Mock.swift in Sources */,
 				A311B43A27E8BC8400CFCF6D /* UserListController_Delegate.swift in Sources */,
@@ -11066,6 +11070,7 @@
 				841BAA4B2BD1CCC0000C73E4 /* PollVoteDTO.swift in Sources */,
 				88381E65258258C20047A6A3 /* FileUploadPayload.swift in Sources */,
 				7978FBBF26E1667C002CA2DF /* MessageSearchController.swift in Sources */,
+				4F9494BB2C41086F00B5C9CE /* BackgroundEntityDatabaseObserver.swift in Sources */,
 				DAF1BED1250660F8003CEDC0 /* MessageController+SwiftUI.swift in Sources */,
 				AD70DC3C2ADEF09C00CFC3B7 /* MessageModerationDetails.swift in Sources */,
 				4F94B0E02BA1C4220045216B /* MemberListState.swift in Sources */,
@@ -12161,6 +12166,7 @@
 				AD0F7F1A2B613EDC00914C4C /* TextLinkDetector.swift in Sources */,
 				C121E884274544AF00023E4C /* ChatMessageFileAttachment.swift in Sources */,
 				C121E885274544AF00023E4C /* ChatMessageVideoAttachment.swift in Sources */,
+				4F9494BC2C41086F00B5C9CE /* BackgroundEntityDatabaseObserver.swift in Sources */,
 				C121E886274544AF00023E4C /* ChatMessageImageAttachment.swift in Sources */,
 				43D3F0FD28410A0200B74921 /* CreateCallRequestBody.swift in Sources */,
 				C121E887274544AF00023E4C /* AnyAttachmentPayload.swift in Sources */,

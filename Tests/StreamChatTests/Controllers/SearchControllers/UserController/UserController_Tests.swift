@@ -718,7 +718,7 @@ final class UserController_Tests: XCTestCase {
 
 private class TestEnvironment {
     @Atomic var userUpdater: UserUpdater_Mock?
-    @Atomic var userObserver: EntityDatabaseObserverWrapper_Mock<ChatUser, UserDTO>?
+    @Atomic var userObserver: BackgroundEntityDatabaseObserver_Mock<ChatUser, UserDTO>?
     @Atomic var userObserverSynchronizeError: Error?
 
     lazy var environment: ChatUserController.Environment = .init(
