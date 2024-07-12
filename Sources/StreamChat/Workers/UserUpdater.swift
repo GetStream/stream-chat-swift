@@ -162,7 +162,7 @@ class UserUpdater: Worker {
 }
 
 extension ClientError {
-    class UserDoesNotExist: ClientError {
+    final class UserDoesNotExist: ClientError {
         init(userId: UserId) {
             super.init("There is no user with id: <\(userId)>.")
         }

@@ -42,7 +42,7 @@ struct UserChannelBanEventsMiddleware: EventMiddleware {
 }
 
 extension ClientError {
-    class MemberDoesNotExist: ClientError {
+    final class MemberDoesNotExist: ClientError {
         init(userId: UserId, cid: ChannelId) {
             super.init("There is no `MemberDTO` instance in the DB matching userId: \(userId) and cid: \(cid).")
         }

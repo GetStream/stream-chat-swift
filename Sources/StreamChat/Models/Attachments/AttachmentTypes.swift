@@ -308,7 +308,7 @@ public enum AttachmentFileType: String, Codable, Equatable, CaseIterable {
 }
 
 extension ClientError {
-    class InvalidAttachmentFileURL: ClientError {
+    final class InvalidAttachmentFileURL: ClientError {
         init(_ url: URL) {
             super.init("The \(url) is invalid since it is not a file URL.")
         }

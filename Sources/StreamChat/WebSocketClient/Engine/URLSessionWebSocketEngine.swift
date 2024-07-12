@@ -134,7 +134,7 @@ class URLSessionWebSocketEngine: NSObject, WebSocketEngine {
     }
 }
 
-class URLSessionDelegateHandler: NSObject, URLSessionDataDelegate, URLSessionWebSocketDelegate {
+final class URLSessionDelegateHandler: NSObject, URLSessionDataDelegate, URLSessionWebSocketDelegate {
     var onOpen: ((_ protocol: String?) -> Void)?
     var onClose: ((_ code: URLSessionWebSocketTask.CloseCode, _ reason: Data?) -> Void)?
     var onCompletion: ((Error?) -> Void)?

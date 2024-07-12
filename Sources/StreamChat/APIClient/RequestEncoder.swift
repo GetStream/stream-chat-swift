@@ -304,7 +304,7 @@ protocol ConnectionDetailsProviderDelegate: AnyObject {
 }
 
 extension ClientError {
-    class InvalidURL: ClientError {}
-    class InvalidJSON: ClientError {}
-    class MissingConnectionId: ClientError {}
+    final class InvalidURL: ClientError {}
+    final class InvalidJSON: ClientError {}
+    final class MissingConnectionId: ClientError {}
 }

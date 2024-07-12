@@ -56,10 +56,10 @@ public class ClientError: Error, CustomStringConvertible {
 
 extension ClientError {
     /// An unexpected error.
-    public class Unexpected: ClientError {}
+    public final class Unexpected: ClientError {}
 
     /// An unknown error.
-    public class Unknown: ClientError {}
+    public final class Unknown: ClientError {}
 }
 
 // This should probably live only in the test target since it's not "true" equatable
