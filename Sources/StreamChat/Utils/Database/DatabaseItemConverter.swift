@@ -15,7 +15,6 @@ enum DatabaseItemConverter {
     ///   - itemCreator: A closure which converts database models.
     ///   - itemReuseKeyPaths: A pair of keypaths used for matching database models to existing items.
     ///   - sorting: A list of sort values for sorting items outside of NSFetchedResultsController.
-    ///   - checkCancellation: A closure called before each invocation of the `itemCreator`. If true, no more models are converted.
     /// - Returns: Returns a list of immutable models by reusing existing unchanged models.
     static func convert<Item, DTO>(
         dtos: [DTO],
@@ -23,8 +22,7 @@ enum DatabaseItemConverter {
         changes: [ListChange<Item>]?,
         itemCreator: (DTO) throws -> Item,
         itemReuseKeyPaths: (item: KeyPath<Item, String>, dto: KeyPath<DTO, String>)?,
-        sorting: [SortValue<Item>],
-        checkCancellation: () -> Bool
+        sorting: [SortValue<Item>]
     ) -> [Item] where DTO: NSManagedObject {
         let items: [Item]
         
@@ -39,17 +37,15 @@ enum DatabaseItemConverter {
                     let key = updatedItem[keyPath: itemReuseKeyPaths.item]
                     lookup[key] = updatedItem
                 }
-            items = dtos.compactMap { dto in
+            items = dtos.compactMapLoggingError { dto in
                 if let existing = lookup[dto[keyPath: itemReuseKeyPaths.dto]] {
                     return existing
                 }
-                guard !checkCancellation() else { return nil }
-                return try? itemCreator(dto)
+                return try itemCreator(dto)
             }
         } else {
-            items = dtos.compactMap { dto in
-                guard !checkCancellation() else { return nil }
-                return try? itemCreator(dto)
+            items = dtos.compactMapLoggingError { dto in
+                try itemCreator(dto)
             }
         }
         return sorting.isEmpty ? items : items.sort(using: sorting)

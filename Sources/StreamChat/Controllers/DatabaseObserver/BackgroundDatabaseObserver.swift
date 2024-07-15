@@ -206,8 +206,7 @@ class BackgroundDatabaseObserver<Item, DTO: NSManagedObject> {
             changes: changes,
             itemCreator: itemCreator,
             itemReuseKeyPaths: itemReuseKeyPaths,
-            sorting: sorting,
-            checkCancellation: { false }
+            sorting: sorting
         )
     }
 }
