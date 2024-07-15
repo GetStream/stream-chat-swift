@@ -155,6 +155,58 @@ final class BackgroundListDatabaseObserver_Tests: XCTestCase {
         XCTAssertEqual(receivedChanges.first?.isInsertion, true)
         XCTAssertEqual(receivedChanges.last?.isUpdate, true)
     }
+    
+    func test_accessingItemsBeforeInitialFetchHasEnded() throws {
+        try database.writeSynchronously { session in
+            let context = try XCTUnwrap(session as? NSManagedObjectContext)
+            let item = try XCTUnwrap(NSEntityDescription.insertNewObject(forEntityName: "TestManagedObject", into: context) as? TestManagedObject)
+            item.testId = "1"
+            item.testValue = "testValue1"
+        }
+        
+        observer = BackgroundListDatabaseObserver<String, TestManagedObject>(
+            context: database.backgroundReadOnlyContext,
+            fetchRequest: fetchRequest,
+            itemCreator: { $0.testId },
+            sorting: []
+        )
+        try observer.startObserving()
+        
+        let itemIds = observer.items
+        XCTAssertEqual(["1"], itemIds)
+    }
+    
+    func test_accessingItemsConcurrentlyWhileInitialFetchIsRunning() throws {
+        let expectedIds = (0..<5).map { "\($0)" }
+        try database.writeSynchronously { session in
+            let context = try XCTUnwrap(session as? NSManagedObjectContext)
+            for itemId in expectedIds {
+                let item = try XCTUnwrap(NSEntityDescription.insertNewObject(forEntityName: "TestManagedObject", into: context) as? TestManagedObject)
+                item.testId = itemId
+                item.testValue = "testValue_" + itemId
+            }
+        }
+        
+        let initialFinishedExpectation = XCTestExpectation(description: "Initial")
+        observer = BackgroundListDatabaseObserver<String, TestManagedObject>(
+            context: database.backgroundReadOnlyContext,
+            fetchRequest: fetchRequest,
+            itemCreator: { $0.testId },
+            sorting: []
+        )
+        observer.onDidChange = { [initialFinishedExpectation] _ in
+            initialFinishedExpectation.fulfill()
+        }
+        try observer.startObserving()
+        
+        DispatchQueue.concurrentPerform(iterations: 1000) { _ in
+            XCTAssertEqual(expectedIds, observer.items.map { $0 })
+        }
+        wait(for: [initialFinishedExpectation], timeout: defaultTimeout)
+        XCTAssertEqual(expectedIds, observer.items.map { $0 })
+    }
+    
+    // MARK: -
 
     private func startObservingAndWaitForInitialResults() throws {
         try waitForItemsUpdate {
