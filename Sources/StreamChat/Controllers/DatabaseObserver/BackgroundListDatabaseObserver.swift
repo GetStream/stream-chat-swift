@@ -7,7 +7,7 @@ import Foundation
 
 class BackgroundListDatabaseObserver<Item, DTO: NSManagedObject>: BackgroundDatabaseObserver<Item, DTO> {
     var items: LazyCachedMapCollection<Item> {
-        LazyCachedMapCollection(source: rawItems, map: { $0 }, context: nil)
+        LazyCachedMapCollection(elements: rawItems)
     }
 
     init(
