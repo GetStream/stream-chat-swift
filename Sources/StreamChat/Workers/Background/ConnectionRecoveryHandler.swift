@@ -160,7 +160,9 @@ extension DefaultConnectionRecoveryHandler {
         switch state {
         case .connecting:
             cancelReconnectionTimer()
-            reconnectionTimeoutHandler.start()
+            if !reconnectionTimeoutHandler.isRunning {
+                reconnectionTimeoutHandler.start()
+            }
 
         case .connected:
             extensionLifecycle.setAppState(isReceivingEvents: true)
