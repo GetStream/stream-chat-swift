@@ -112,15 +112,11 @@ public class ChatThreadListController: DataController, DelegateCallable, DataSto
         ) { [weak self] result in
             switch result {
             case let .success(threadListResponse):
-                self?.threadListObserver.refreshItems { [weak self] in
-                    self?.callback {
-                        self?.threadListObserver.refreshItems {
-                            self?.state = .remoteDataFetched
-                            self?.nextCursor = threadListResponse.next
-                            self?.hasLoadedAllThreads = threadListResponse.next == nil
-                            completion?(nil)
-                        }
-                    }
+                self?.callback {
+                    self?.state = .remoteDataFetched
+                    self?.nextCursor = threadListResponse.next
+                    self?.hasLoadedAllThreads = threadListResponse.next == nil
+                    completion?(nil)
                 }
             case let .failure(error):
                 self?.state = .remoteDataFetchFailed(ClientError(with: error))
