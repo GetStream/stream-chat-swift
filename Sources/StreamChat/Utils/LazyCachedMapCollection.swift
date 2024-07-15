@@ -29,7 +29,7 @@ public struct LazyCachedMapCollection<Element>: RandomAccessCollection {
         mappedElements = collection.mappedElements
     }
     
-    private let mappedElements: [Element]
+    private var mappedElements: [Element]
     
     init(elements: [Element]) {
         mappedElements = elements
@@ -48,9 +48,7 @@ public struct LazyCachedMapCollection<Element>: RandomAccessCollection {
     }
 
     public mutating func append(_ element: Element) {
-        var elements = mappedElements
-        elements.append(element)
-        self = LazyCachedMapCollection(elements: elements)
+        mappedElements.append(element)
     }
 }
 
