@@ -1,17 +1,17 @@
 {
-    "channel_id": "066b8094-37bf-11ef-8aad-9af4b4bba79c",
+    "channel_id": "1560a544-4240-11ef-9421-4ab7168f5007",
     "channel_type": "messaging",
-    "cid": "messaging:066b8094-37bf-11ef-8aad-9af4b4bba79c",
-    "created_at": "2024-07-01T15:31:48.944299847Z",
+    "cid": "messaging:1560a544-4240-11ef-9421-4ab7168f5007",
+    "created_at": "2024-07-15T00:20:51.147638266Z",
     "member": {
         "banned": false,
         "channel_role": "channel_member",
-        "created_at": "2024-07-01T15:31:48.926953Z",
+        "created_at": "2024-07-15T00:20:51.139536Z",
         "notifications_muted": false,
         "role": "admin",
         "shadow_banned": false,
         "status": "member",
-        "updated_at": "2024-07-01T15:31:48.926953Z",
+        "updated_at": "2024-07-15T00:20:51.139536Z",
         "user": {
             "banned": false,
             "birthland": "Polis Massa",
@@ -19,9 +19,9 @@
             "id": "leia_organa",
             "image": "https://vignette.wikia.nocookie.net/starwars/images/f/fc/Leia_Organa_TLJ.png",
             "language": "de",
-            "last_active": "2024-07-01T15:21:14.375234102Z",
-            "name": "Leia Organa",
-            "online": true,
+            "last_active": "2024-07-13T06:41:25.112604Z",
+            "name": "Priyanka Dropouts",
+            "online": false,
             "private_settings": {
                 "readReceipts": {
                     "enabled": false
@@ -31,7 +31,7 @@
                 }
             },
             "role": "admin",
-            "updated_at": "2024-06-13T18:15:03.769495Z"
+            "updated_at": "2024-07-12T22:13:43.192457Z"
         },
         "user_id": "leia_organa"
     },
@@ -43,9 +43,9 @@
         "id": "leia_organa",
         "image": "https://vignette.wikia.nocookie.net/starwars/images/f/fc/Leia_Organa_TLJ.png",
         "language": "de",
-        "last_active": "2024-07-01T15:21:14.375234102Z",
-        "name": "Leia Organa",
-        "online": true,
+        "last_active": "2024-07-13T06:41:25.112604Z",
+        "name": "Priyanka Dropouts",
+        "online": false,
         "private_settings": {
             "readReceipts": {
                 "enabled": false
@@ -55,6 +55,6 @@
             }
         },
         "role": "admin",
-        "updated_at": "2024-06-13T18:15:03.769495Z"
+        "updated_at": "2024-07-12T22:13:43.192457Z"
     }
 }
