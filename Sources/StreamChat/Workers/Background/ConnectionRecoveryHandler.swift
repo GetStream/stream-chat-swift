@@ -85,10 +85,8 @@ private extension DefaultConnectionRecoveryHandler {
         )
 
         reconnectionTimeoutHandler.onChange = { [weak self] in
-            if self?.webSocketClient.connectionState.isAutomaticReconnectionEnabled == true {
-                self?.webSocketClient.timeout()
-                self?.reconnectionTimeoutHandler.stop()
-            }
+            self?.webSocketClient.timeout()
+            self?.reconnectionTimeoutHandler.stop()
         }
     }
 
@@ -149,8 +147,8 @@ extension DefaultConnectionRecoveryHandler {
 
         log.debug("Internet -> \(isAvailable ? "✅" : "❌")", subsystems: .webSocket)
 
-        if isAvailable {
-            reconnectIfNeeded()
+        if isAvailable && canReconnectFromOffline {
+            webSocketClient.connect()
         } else {
             disconnectIfNeeded()
         }
@@ -223,17 +221,28 @@ private extension DefaultConnectionRecoveryHandler {
             return false
         }
 
-        guard internetConnection.status.isAvailable else {
-            log.debug("Reconnection is not possible (internet ❌)", subsystems: .webSocket)
-            return false
-        }
-
         guard backgroundTaskScheduler?.isAppActive ?? true else {
             log.debug("Reconnection is not possible (app 💤)", subsystems: .webSocket)
             return false
         }
 
         log.debug("Will reconnect automatically", subsystems: .webSocket)
+
+        return true
+    }
+
+    var canReconnectFromOffline: Bool {
+        guard backgroundTaskScheduler?.isAppActive ?? true else {
+            log.debug("Reconnection is not possible (app 💤)", subsystems: .webSocket)
+            return false
+        }
+
+        switch webSocketClient.connectionState {
+        case .disconnected(let source) where source == .userInitiated:
+            return false
+        default:
+            break
+        }
 
         return true
     }
