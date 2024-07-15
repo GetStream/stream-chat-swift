@@ -3876,9 +3876,9 @@ final class MessageDTO_Tests: XCTestCase {
         XCTAssertNotNil(messageModel.cid)
     }
 
-    // MARK: Max depth
+    // MARK: Depth
 
-    func test_asModel_onlyFetchesUntilCertainRelationship() throws {
+    func test_asModel_fetchesRelationshipsWithDepth() throws {
         let cid = ChannelId.unique
 
         // GIVEN
@@ -3928,9 +3928,8 @@ final class MessageDTO_Tests: XCTestCase {
         let quoted2Message = try XCTUnwrap(quoted1Message.quotedMessage)
         XCTAssertEqual(quoted2Message.id, quoted2MessagePayload.id)
 
-        let quoted3Message = quoted2Message.quotedMessage
-        // 3rd level of depth is not mapped
-        XCTAssertNil(quoted3Message)
+        let quoted3Message = try XCTUnwrap(quoted2Message.quotedMessage)
+        XCTAssertEqual(quoted3MessagePayload.id, quoted3Message.id)
     }
 
     // MARK: - Helpers:

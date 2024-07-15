@@ -400,26 +400,12 @@ extension ChannelDTO {
 
 extension ChannelDTO {
     /// Snapshots the current state of `ChannelDTO` and returns an immutable model object from it.
-    func asModel() throws -> ChatChannel { try .create(fromDTO: self, depth: 0) }
-
-    /// Snapshots the current state of `ChannelDTO` and returns an immutable model object from it if the dependency depth
-    /// limit has not been reached
-    func relationshipAsModel(depth: Int) throws -> ChatChannel? {
-        do {
-            return try .create(fromDTO: self, depth: depth + 1)
-        } catch {
-            if error is RecursionLimitError { return nil }
-            throw error
-        }
-    }
+    func asModel() throws -> ChatChannel { try .create(fromDTO: self) }
 }
 
 extension ChatChannel {
     /// Create a ChannelModel struct from its DTO
-    fileprivate static func create(fromDTO dto: ChannelDTO, depth: Int) throws -> ChatChannel {
-        guard StreamRuntimeCheck._canFetchRelationship(currentDepth: depth) else {
-            throw RecursionLimitError()
-        }
+    fileprivate static func create(fromDTO dto: ChannelDTO) throws -> ChatChannel {
         guard let cid = try? ChannelId(cid: dto.cid), let context = dto.managedObjectContext else {
             throw InvalidModel(dto)
         }
@@ -479,7 +465,7 @@ extension ChatChannel {
                     shouldShowShadowedMessages: dto.managedObjectContext?.shouldShowShadowedMessages ?? false,
                     context: context
                 )
-                .compactMap { try? $0.relationshipAsModel(depth: depth) }
+                .compactMap { try? $0.asModel() }
         }()
 
         let latestMessageFromUser: ChatMessage? = {
@@ -491,7 +477,7 @@ extension ChatChannel {
                     in: dto.cid,
                     context: context
                 )?
-                .relationshipAsModel(depth: depth)
+                .asModel()
         }()
 
         let watchers = UserDTO.loadLastActiveWatchers(cid: cid, context: context)
@@ -509,8 +495,8 @@ extension ChatChannel {
             )
         }()
         let membership = try dto.membership.map { try $0.asModel() }
-        let pinnedMessages = dto.pinnedMessages.compactMap { try? $0.relationshipAsModel(depth: depth) }
-        let previewMessage = try? dto.previewMessage?.relationshipAsModel(depth: depth)
+        let pinnedMessages = dto.pinnedMessages.compactMap { try? $0.asModel() }
+        let previewMessage = try? dto.previewMessage?.asModel()
         let typingUsers = Set(dto.currentlyTypingUsers.compactMap { try? $0.asModel() })
         
         return try ChatChannel(
