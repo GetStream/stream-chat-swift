@@ -166,7 +166,7 @@ class BackgroundDatabaseObserver<Item, DTO: NSManagedObject> {
                 return
             }
             // Operation queue runs on the same `self.queue`
-            let reusableItems = _items
+            let reusableItems = self._items
             self.frc.managedObjectContext.perform {
                 self.processItems(changes, reusableItems: reusableItems) {
                     done(.continue)
