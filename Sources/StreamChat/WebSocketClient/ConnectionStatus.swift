@@ -53,12 +53,12 @@ typealias ConnectionId = String
 /// A web socket connection state.
 enum WebSocketConnectionState: Equatable {
     /// Provides additional information about the source of disconnecting.
-    enum DisconnectionSource: Equatable {
+    indirect enum DisconnectionSource: Equatable {
         /// A user initiated web socket disconnecting.
         case userInitiated
 
         /// The connection timed out while trying to connect.
-        case timeout
+        case timeout(from: WebSocketConnectionState)
 
         /// A server initiated web socket disconnecting, an optional error object is provided.
         case serverInitiated(error: ClientError? = nil)
