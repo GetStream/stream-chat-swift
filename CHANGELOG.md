@@ -7,7 +7,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### 🔄 Changed
 - Dropped iOS 12 support [#3285](https://github.com/GetStream/stream-chat-swift/pull/3285)
 - Increase QoS for `Throttler` and `Debouncer` to `utility` [#3295](https://github.com/GetStream/stream-chat-swift/issues/3295)
-- Fetch database items immediately if the initial fetch has not finished in background database observers [#3304](https://github.com/GetStream/stream-chat-swift/issues/3304)
+- Provide immediate access to controller managed database items [#3304](https://github.com/GetStream/stream-chat-swift/issues/3304)
 
 # [4.59.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.59.0)
 _July 10, 2024_
