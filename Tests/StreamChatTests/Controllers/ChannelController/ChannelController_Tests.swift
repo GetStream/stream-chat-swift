@@ -5485,7 +5485,6 @@ extension ChannelController_Tests {
     }
 
     private func waitForInitialMessagesUpdate(count: Int, file: StaticString = #file, line: UInt = #line) {
-        guard StreamRuntimeCheck._isBackgroundMappingEnabled else { return }
         waitForMessagesUpdate(count: count) {}
     }
 
@@ -5565,19 +5564,6 @@ extension ChannelController_Tests {
     }
 
     private func waitForMessagesUpdate(count: Int, channelChanges: Bool = false, file: StaticString = #file, line: UInt = #line, block: () throws -> Void) {
-        guard StreamRuntimeCheck._isBackgroundMappingEnabled else {
-            controller.delegate = ControllerUpdateWaiter(
-                messagesCount: count,
-                messagesExpectation: nil,
-                channelExpectation: nil
-            )
-            do {
-                try block()
-            } catch {
-                XCTFail(error.localizedDescription)
-            }
-            return
-        }
         let messagesExpectation = expectation(description: "Messages update")
         let channelExpectation = channelChanges ? expectation(description: "Channel update") : nil
         controller.delegate = ControllerUpdateWaiter(

@@ -69,10 +69,9 @@ public class ChatChannelListController: DataController, DelegateCallable, DataSt
         }
     }
 
-    private(set) lazy var channelListObserver: ListDatabaseObserverWrapper<ChatChannel, ChannelDTO> = {
+    private(set) lazy var channelListObserver: BackgroundListDatabaseObserver<ChatChannel, ChannelDTO> = {
         let request = ChannelDTO.channelListFetchRequest(query: self.query, chatClientConfig: client.config)
         let observer = self.environment.createChannelListDatabaseObserver(
-            StreamRuntimeCheck._isBackgroundMappingEnabled,
             client.databaseContainer,
             request,
             { try $0.asModel() },
@@ -271,20 +270,18 @@ extension ChatChannelListController {
         ) -> ChannelListLinker = ChannelListLinker.init
         
         var createChannelListDatabaseObserver: (
-            _ isBackground: Bool,
             _ database: DatabaseContainer,
             _ fetchRequest: NSFetchRequest<ChannelDTO>,
             _ itemCreator: @escaping (ChannelDTO) throws -> ChatChannel,
             _ sorting: [SortValue<ChatChannel>]
         )
-            -> ListDatabaseObserverWrapper<ChatChannel, ChannelDTO> = {
-                ListDatabaseObserverWrapper(
-                    isBackground: $0,
-                    database: $1,
-                    fetchRequest: $2,
-                    itemCreator: $3,
+            -> BackgroundListDatabaseObserver<ChatChannel, ChannelDTO> = {
+                BackgroundListDatabaseObserver(
+                    database: $0,
+                    fetchRequest: $1,
+                    itemCreator: $2,
                     itemReuseKeyPaths: (\ChatChannel.cid.rawValue, \ChannelDTO.cid),
-                    sorting: $4
+                    sorting: $3
                 )
             }
     }

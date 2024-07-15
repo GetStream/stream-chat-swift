@@ -444,7 +444,7 @@ final class MemberListController_Tests: XCTestCase {
 
 private class TestEnvironment {
     @Atomic var memberListUpdater: ChannelMemberListUpdater_Mock?
-    @Atomic var memberListObserver: ListDatabaseObserverWrapper_Mock<ChatChannelMember, MemberDTO>?
+    @Atomic var memberListObserver: ListDatabaseObserver_Mock<ChatChannelMember, MemberDTO>?
     @Atomic var memberListObserverSynchronizeError: Error?
 
     lazy var environment: ChatChannelMemberListController.Environment = .init(
@@ -457,12 +457,11 @@ private class TestEnvironment {
         },
         memberListObserverBuilder: { [unowned self] in
             self.memberListObserver = .init(
-                isBackground: $0,
-                database: $1,
-                fetchRequest: $2,
-                itemCreator: $3,
+                context: $0.viewContext,
+                fetchRequest: $1,
+                itemCreator: $2,
                 itemReuseKeyPaths: (\ChatChannelMember.id, \MemberDTO.id),
-                fetchedResultsControllerType: $4
+                fetchedResultsControllerType: $3
             )
             self.memberListObserver?.synchronizeError = self.memberListObserverSynchronizeError
             return self.memberListObserver!

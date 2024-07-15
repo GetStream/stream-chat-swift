@@ -260,7 +260,7 @@ final class MessageDTO_Tests: XCTestCase {
         exp.isInverted = true
         var changes: [ListChange<ChatMessage>] = []
         let observer = try createMessagesFRC(for: channelPayload)
-        observer.onDidChange = { newChanges in
+        observer.onChange = { newChanges in
             changes += newChanges
             exp.fulfill()
         }
@@ -320,7 +320,7 @@ final class MessageDTO_Tests: XCTestCase {
         let exp = expectation(description: "FRC should report changes")
         var changes: [ListChange<ChatMessage>] = []
         let observer = try createMessagesFRC(for: channelPayload)
-        observer.onDidChange = { newChanges in
+        observer.onChange = { newChanges in
             changes += newChanges
             exp.fulfill()
         }
@@ -386,7 +386,7 @@ final class MessageDTO_Tests: XCTestCase {
         let exp = expectation(description: "FRC should not report changes for quoted message")
         var changes: [ListChange<ChatMessage>] = []
         let observer = try createMessagesFRC(for: channelPayload)
-        observer.onDidChange = { newChanges in
+        observer.onChange = { newChanges in
             changes += newChanges
             exp.fulfill()
         }
@@ -432,7 +432,7 @@ final class MessageDTO_Tests: XCTestCase {
         let exp = expectation(description: "FRC should report changes for quoted message")
         var changes: [ListChange<ChatMessage>] = []
         let observer = try createMessagesFRC(for: channelPayload)
-        observer.onDidChange = { newChanges in
+        observer.onChange = { newChanges in
             changes += newChanges
             exp.fulfill()
         }
@@ -3879,14 +3879,6 @@ final class MessageDTO_Tests: XCTestCase {
     // MARK: Max depth
 
     func test_asModel_onlyFetchesUntilCertainRelationship() throws {
-        let originalIsBackgroundMappingEnabled = StreamRuntimeCheck._isBackgroundMappingEnabled
-        try test_asModel_onlyFetchesUntilCertainRelationship(isBackgroundMappingEnabled: false)
-        try test_asModel_onlyFetchesUntilCertainRelationship(isBackgroundMappingEnabled: true)
-        StreamRuntimeCheck._isBackgroundMappingEnabled = originalIsBackgroundMappingEnabled
-    }
-
-    private func test_asModel_onlyFetchesUntilCertainRelationship(isBackgroundMappingEnabled: Bool) throws {
-        StreamRuntimeCheck._isBackgroundMappingEnabled = isBackgroundMappingEnabled
         let cid = ChannelId.unique
 
         // GIVEN
@@ -3937,12 +3929,8 @@ final class MessageDTO_Tests: XCTestCase {
         XCTAssertEqual(quoted2Message.id, quoted2MessagePayload.id)
 
         let quoted3Message = quoted2Message.quotedMessage
-        if isBackgroundMappingEnabled {
-            // 3rd level of depth is not mapped
-            XCTAssertNil(quoted3Message)
-        } else {
-            XCTAssertEqual(quoted3Message?.id, quoted3MessagePayload.id)
-        }
+        // 3rd level of depth is not mapped
+        XCTAssertNil(quoted3Message)
     }
 
     // MARK: - Helpers:
@@ -4143,10 +4131,9 @@ final class MessageDTO_Tests: XCTestCase {
     }
 
     // Creates a messages observer (FRC wrapper)
-    private func createMessagesFRC(for channelPayload: ChannelPayload) throws -> ListDatabaseObserverWrapper<ChatMessage, MessageDTO> {
-        let observer = ListDatabaseObserverWrapper(
-            isBackground: false,
-            database: database,
+    private func createMessagesFRC(for channelPayload: ChannelPayload) throws -> ListDatabaseObserver<ChatMessage, MessageDTO> {
+        let observer = ListDatabaseObserver(
+            context: database.viewContext,
             fetchRequest: MessageDTO.messagesFetchRequest(
                 for: channelPayload.channel.cid,
                 pageSize: 25,
@@ -4155,7 +4142,8 @@ final class MessageDTO_Tests: XCTestCase {
                 shouldShowShadowedMessages: false
             ),
             itemCreator: { try $0.asModel() as ChatMessage },
-            itemReuseKeyPaths: (\ChatMessage.id, \MessageDTO.id)
+            itemReuseKeyPaths: (\ChatMessage.id, \MessageDTO.id),
+            sorting: []
         )
         try observer.startObserving()
         return observer

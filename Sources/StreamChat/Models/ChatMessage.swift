@@ -61,8 +61,8 @@ public struct ChatMessage {
     ///
     /// If message is inline reply this property will contain the message quoted by this reply.
     ///
-    public var quotedMessage: ChatMessage? { _quotedMessage }
-    @CoreDataLazy internal var _quotedMessage: ChatMessage?
+    public var quotedMessage: ChatMessage? { _quotedMessage() }
+    let _quotedMessage: () -> ChatMessage?
 
     /// A flag indicating whether the message was bounced due to moderation.
     public let isBounced: Bool
@@ -89,30 +89,18 @@ public struct ChatMessage {
     public let reactionGroups: [MessageReactionType: ChatMessageReactionGroup]
 
     /// The user which is the author of the message.
-    ///
-    /// - Important: The `author` property is loaded and evaluated lazily to maintain high performance.
-    public var author: ChatUser { _author }
-
-    @CoreDataLazy internal var _author: ChatUser
+    public let author: ChatUser
 
     /// A list of users that are mentioned in this message.
-    ///
-    /// - Important: The `mentionedUsers` property is loaded and evaluated lazily to maintain high performance.
-    public var mentionedUsers: Set<ChatUser> { _mentionedUsers }
-
-    @CoreDataLazy internal var _mentionedUsers: Set<ChatUser>
+    public let mentionedUsers: Set<ChatUser>
 
     /// A list of users that participated in this message thread.
     /// The last user in the list is the author of the most recent reply.
-    public var threadParticipants: [ChatUser] { _threadParticipants }
+    public let threadParticipants: [ChatUser]
 
-    @CoreDataLazy internal var _threadParticipants: [ChatUser]
+    public var threadParticipantsCount: Int { threadParticipants.count }
 
-    public var threadParticipantsCount: Int { _threadParticipantsCount }
-
-    @CoreDataLazy internal var _threadParticipantsCount: Int
-
-    @CoreDataLazy internal var _attachments: [AnyChatMessageAttachment]
+    let _attachments: [AnyChatMessageAttachment]
 
     /// The overall attachment count by attachment type.
     public var attachmentCounts: [AttachmentType: Int] {
@@ -122,11 +110,7 @@ public struct ChatMessage {
     }
 
     /// A list of latest 25 replies to this message.
-    ///
-    /// - Important: The `latestReplies` property is loaded and evaluated lazily to maintain high performance.
-    public var latestReplies: [ChatMessage] { _latestReplies }
-    // stream:annotation "Move to async"
-    @CoreDataLazy internal var _latestReplies: [ChatMessage]
+    public let latestReplies: [ChatMessage]
 
     /// A possible additional local state of the message. Applies only for the messages of the current user.
     ///
@@ -144,21 +128,12 @@ public struct ChatMessage {
     /// The latest reactions to the message created by any user.
     ///
     /// - Note: There can be `10` reactions at max.
-    /// - Important: The `latestReactions` property is loaded and evaluated lazily to maintain high performance.
-    public var latestReactions: Set<ChatMessageReaction> { _latestReactions }
-
-    @CoreDataLazy internal var _latestReactions: Set<ChatMessageReaction>
+    public let latestReactions: Set<ChatMessageReaction>
 
     /// The entire list of reactions to the message left by the current user.
-    ///
-    /// - Important: The `currentUserReactions` property is loaded and evaluated lazily to maintain high performance.
-    public var currentUserReactions: Set<ChatMessageReaction> { _currentUserReactions }
+    public let currentUserReactions: Set<ChatMessageReaction>
 
-    @CoreDataLazy internal var _currentUserReactions: Set<ChatMessageReaction>
-
-    public var currentUserReactionsCount: Int { _currentUserReactionsCount }
-
-    @CoreDataLazy internal var _currentUserReactionsCount: Int
+    public var currentUserReactionsCount: Int { currentUserReactions.count }
 
     /// `true` if the author of the message is the currently logged-in user.
     public let isSentByCurrentUser: Bool
@@ -189,19 +164,13 @@ public struct ChatMessage {
     /// who read this message (excluding the current user).
     ///
     /// - Note: For the message authored by other members this field is always empty.
-    /// - Important: The `readBy` loads and evaluates user models. If you're interested only in `count`,
-    /// it's recommended to use `readByCount` instead of `readBy.count` for better performance.
-    public var readBy: Set<ChatUser> { _readBy }
-
-    @CoreDataLazy internal var _readBy: Set<ChatUser>
+    public let readBy: Set<ChatUser>
 
     /// For the message authored by the current user this field contains number of channel members
     /// who has read this message (excluding the current user).
     ///
     /// - Note: For the message authored by other channel members this field always returns `0`.
-    public var readByCount: Int { _readByCount }
-
-    @CoreDataLazy internal var _readByCount: Int
+    public var readByCount: Int { readBy.count }
     
     /// Optional poll that is part of the message.
     public let poll: Poll?
@@ -221,33 +190,29 @@ public struct ChatMessage {
         showReplyInChannel: Bool,
         replyCount: Int,
         extraData: [String: RawJSON],
-        quotedMessage: @escaping () -> ChatMessage?,
+        quotedMessage: ChatMessage?,
         isBounced: Bool,
         isSilent: Bool,
         isShadowed: Bool,
         reactionScores: [MessageReactionType: Int],
         reactionCounts: [MessageReactionType: Int],
         reactionGroups: [MessageReactionType: ChatMessageReactionGroup],
-        author: @escaping () -> ChatUser,
-        mentionedUsers: @escaping () -> Set<ChatUser>,
-        threadParticipants: @escaping () -> [ChatUser],
-        threadParticipantsCount: @escaping () -> Int,
-        attachments: @escaping () -> [AnyChatMessageAttachment],
-        latestReplies: @escaping () -> [ChatMessage],
+        author: ChatUser,
+        mentionedUsers: Set<ChatUser>,
+        threadParticipants: [ChatUser],
+        attachments: [AnyChatMessageAttachment],
+        latestReplies: [ChatMessage],
         localState: LocalMessageState?,
         isFlaggedByCurrentUser: Bool,
-        latestReactions: @escaping () -> Set<ChatMessageReaction>,
-        currentUserReactions: @escaping () -> Set<ChatMessageReaction>,
-        currentUserReactionsCount: @escaping () -> Int,
+        latestReactions: Set<ChatMessageReaction>,
+        currentUserReactions: Set<ChatMessageReaction>,
         isSentByCurrentUser: Bool,
         pinDetails: MessagePinDetails?,
         translations: [TranslationLanguage: String]?,
         originalLanguage: TranslationLanguage?,
         moderationDetails: MessageModerationDetails?,
-        readBy: @escaping () -> Set<ChatUser>,
-        readByCount: @escaping () -> Int,
+        readBy: Set<ChatUser>,
         poll: Poll?,
-        underlyingContext: NSManagedObjectContext?,
         textUpdatedAt: Date?
     ) {
         self.id = id
@@ -280,18 +245,15 @@ public struct ChatMessage {
         self.textUpdatedAt = textUpdatedAt
         self.poll = poll
 
-        $_author = (author, underlyingContext)
-        $_mentionedUsers = (mentionedUsers, underlyingContext)
-        $_threadParticipants = (threadParticipants, underlyingContext)
-        $_threadParticipantsCount = (threadParticipantsCount, underlyingContext)
-        $_attachments = (attachments, underlyingContext)
-        $_latestReplies = (latestReplies, underlyingContext)
-        $_latestReactions = (latestReactions, underlyingContext)
-        $_currentUserReactions = (currentUserReactions, underlyingContext)
-        $_currentUserReactionsCount = (currentUserReactionsCount, underlyingContext)
-        $_quotedMessage = (quotedMessage, underlyingContext)
-        $_readBy = (readBy, underlyingContext)
-        $_readByCount = (readByCount, underlyingContext)
+        self.author = author
+        self.mentionedUsers = mentionedUsers
+        self.threadParticipants = threadParticipants
+        self.latestReplies = latestReplies
+        self.latestReactions = latestReactions
+        self.currentUserReactions = currentUserReactions
+        self.readBy = readBy
+        _attachments = attachments
+        _quotedMessage = { quotedMessage }
     }
 }
 
@@ -312,8 +274,6 @@ public extension ChatMessage {
     }
 
     /// Returns all the attachments with the payload of the provided type.
-    ///
-    /// - Important: Attachments are loaded lazily and cached to maintain high performance.
     func attachments<Payload: AttachmentPayload>(
         payloadType: Payload.Type
     ) -> [ChatMessageAttachment<Payload>] {
@@ -323,50 +283,36 @@ public extension ChatMessage {
     }
 
     /// Returns the attachments of `.image` type.
-    ///
-    /// - Important: The `imageAttachments` are loaded lazily and cached to maintain high performance.
     var imageAttachments: [ChatMessageImageAttachment] {
         attachments(payloadType: ImageAttachmentPayload.self)
     }
 
     /// Returns the attachments of `.file` type.
-    ///
-    /// - Important: The `fileAttachments` are loaded lazily and cached to maintain high performance.
     var fileAttachments: [ChatMessageFileAttachment] {
         attachments(payloadType: FileAttachmentPayload.self)
     }
 
     /// Returns the attachments of `.video` type.
-    ///
-    /// - Important: The `videoAttachments` are loaded lazily and cached to maintain high performance.
     var videoAttachments: [ChatMessageVideoAttachment] {
         attachments(payloadType: VideoAttachmentPayload.self)
     }
 
     /// Returns the attachments of `.giphy` type.
-    ///
-    /// - Important: The `giphyAttachments` are loaded lazily and cached to maintain high performance.
     var giphyAttachments: [ChatMessageGiphyAttachment] {
         attachments(payloadType: GiphyAttachmentPayload.self)
     }
 
     /// Returns the attachments of `.linkPreview` type.
-    ///
-    /// - Important: The `linkAttachments` are loaded lazily and cached to maintain high performance.
     var linkAttachments: [ChatMessageLinkAttachment] {
         attachments(payloadType: LinkAttachmentPayload.self)
     }
 
     /// Returns the attachments of `.audio` type.
-    ///
-    /// - Important: The `audioAttachments` are loaded lazily and cached to maintain high performance.
     var audioAttachments: [ChatMessageAudioAttachment] {
         attachments(payloadType: AudioAttachmentPayload.self)
     }
 
     /// Returns the attachments of `.voiceRecording` type.
-    ///
-    /// - Important: The `voiceRecordingAttachments` are loaded lazily and cached to maintain high performance.
     var voiceRecordingAttachments: [ChatMessageVoiceRecordingAttachment] {
         attachments(payloadType: VoiceRecordingAttachmentPayload.self)
     }

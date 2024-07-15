@@ -66,11 +66,10 @@ public class PollVoteListController: DataController, DelegateCallable, DataStore
     }
 
     /// Used for observing the database for changes.
-    private(set) lazy var pollVotesObserver: ListDatabaseObserverWrapper<PollVote, PollVoteDTO> = {
+    private(set) lazy var pollVotesObserver: BackgroundListDatabaseObserver<PollVote, PollVoteDTO> = {
         let request = PollVoteDTO.pollVoteListFetchRequest(query: query)
 
         let observer = self.environment.createPollListDatabaseObserver(
-            StreamRuntimeCheck._isBackgroundMappingEnabled,
             client.databaseContainer,
             request,
             { try $0.asModel() }
@@ -187,17 +186,15 @@ extension PollVoteListController {
         ) -> PollsRepository = PollsRepository.init
 
         var createPollListDatabaseObserver: (
-            _ isBackgroundMappingEnabled: Bool,
             _ database: DatabaseContainer,
             _ fetchRequest: NSFetchRequest<PollVoteDTO>,
             _ itemCreator: @escaping (PollVoteDTO) throws -> PollVote
         )
-            -> ListDatabaseObserverWrapper<PollVote, PollVoteDTO> = {
-                ListDatabaseObserverWrapper(
-                    isBackground: $0,
-                    database: $1,
-                    fetchRequest: $2,
-                    itemCreator: $3,
+            -> BackgroundListDatabaseObserver<PollVote, PollVoteDTO> = {
+                BackgroundListDatabaseObserver(
+                    database: $0,
+                    fetchRequest: $1,
+                    itemCreator: $2,
                     itemReuseKeyPaths: (\PollVote.id, \PollVoteDTO.id)
                 )
             }

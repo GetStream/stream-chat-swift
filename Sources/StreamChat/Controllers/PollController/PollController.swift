@@ -58,14 +58,13 @@ public class PollController: DataController, DelegateCallable, DataStoreProvider
     
     private let eventsController: EventsController
     
-    private lazy var pollObserver: EntityDatabaseObserverWrapper<Poll, PollDTO>? = { [weak self] in
+    private lazy var pollObserver: BackgroundEntityDatabaseObserver<Poll, PollDTO>? = { [weak self] in
         guard let self = self else {
             log.warning("Callback called while self is nil")
             return nil
         }
         
         let observer = environment.pollObserverBuilder(
-            StreamRuntimeCheck._isBackgroundMappingEnabled,
             self.client.databaseContainer,
             PollDTO.fetchRequest(for: pollId),
             { try $0.asModel() as Poll },
@@ -84,11 +83,10 @@ public class PollController: DataController, DelegateCallable, DataStoreProvider
         return observer
     }()
     
-    private(set) lazy var ownVotesObserver: ListDatabaseObserverWrapper<PollVote, PollVoteDTO> = {
+    private(set) lazy var ownVotesObserver: BackgroundListDatabaseObserver<PollVote, PollVoteDTO> = {
         let request = PollVoteDTO.pollVoteListFetchRequest(query: self.ownVotesQuery)
 
         let observer = environment.ownVotesObserverBuilder(
-            StreamRuntimeCheck._isBackgroundMappingEnabled,
             self.client.databaseContainer,
             request,
             { try $0.asModel() }
@@ -287,32 +285,28 @@ public struct VotingVisibility: RawRepresentable, Equatable {
 extension PollController {
     struct Environment {
         var pollObserverBuilder: (
-            _ isBackgroundMappingEnabled: Bool,
             _ database: DatabaseContainer,
             _ fetchRequest: NSFetchRequest<PollDTO>,
             _ itemCreator: @escaping (PollDTO) throws -> Poll,
             _ fetchedResultsControllerType: NSFetchedResultsController<PollDTO>.Type
-        ) -> EntityDatabaseObserverWrapper<Poll, PollDTO> = {
-            EntityDatabaseObserverWrapper(
-                isBackground: $0,
-                database: $1,
-                fetchRequest: $2,
-                itemCreator: $3,
-                fetchedResultsControllerType: $4
+        ) -> BackgroundEntityDatabaseObserver<Poll, PollDTO> = {
+            BackgroundEntityDatabaseObserver(
+                database: $0,
+                fetchRequest: $1,
+                itemCreator: $2,
+                fetchedResultsControllerType: $3
             )
         }
         
         var ownVotesObserverBuilder: (
-            _ isBackgroundMappingEnabled: Bool,
             _ database: DatabaseContainer,
             _ fetchRequest: NSFetchRequest<PollVoteDTO>,
             _ itemCreator: @escaping (PollVoteDTO) throws -> PollVote
-        ) -> ListDatabaseObserverWrapper<PollVote, PollVoteDTO> = {
-            ListDatabaseObserverWrapper(
-                isBackground: $0,
-                database: $1,
-                fetchRequest: $2,
-                itemCreator: $3,
+        ) -> BackgroundListDatabaseObserver<PollVote, PollVoteDTO> = {
+            BackgroundListDatabaseObserver(
+                database: $0,
+                fetchRequest: $1,
+                itemCreator: $2,
                 itemReuseKeyPaths: (\PollVote.id, \PollVoteDTO.id)
             )
         }

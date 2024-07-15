@@ -90,7 +90,8 @@ class PollsRepository {
                     answerText: answerText,
                     userId: currentUserId,
                     query: query
-                ).asModel()
+                )
+                .asModel()
             } else {
                 throw ClientError.PollVoteAlreadyExists()
             }

@@ -68,12 +68,10 @@ public struct ChatChannel {
     ///
     /// - Note: This property will contain no more than `ChatClientConfig.channel.lastActiveMembersLimit` members.
     ///
-    public var lastActiveMembers: [ChatChannelMember] { _lastActiveMembers }
-    @CoreDataLazy private var _lastActiveMembers: [ChatChannelMember]
+    public let lastActiveMembers: [ChatChannelMember]
 
     /// A list of currently typing users.
-    public var currentlyTypingUsers: Set<ChatUser> { _currentlyTypingUsers }
-    @CoreDataLazy private var _currentlyTypingUsers: Set<ChatUser>
+    public let currentlyTypingUsers: Set<ChatUser>
 
     /// If the current user is a member of the channel, this variable contains the details about the membership.
     public let membership: ChatChannelMember?
@@ -87,8 +85,7 @@ public struct ChatChannel {
     ///
     /// - Note: This property will contain no more than `ChatClientConfig.channel.lastActiveWatchersLimit` members.
     ///
-    public var lastActiveWatchers: [ChatUser] { _lastActiveWatchers }
-    @CoreDataLazy private var _lastActiveWatchers: [ChatUser]
+    public let lastActiveWatchers: [ChatUser]
 
     /// The total number of online members watching this channel.
     public let watcherCount: Int
@@ -101,11 +98,7 @@ public struct ChatChannel {
     public let team: TeamId?
 
     /// The unread counts for the channel.
-    public var unreadCount: ChannelUnreadCount { _unreadCount }
-    @CoreDataLazy private var _unreadCount: ChannelUnreadCount
-
-    /// An option to enable ban users.
-//    public let banEnabling: BanEnabling
+    public let unreadCount: ChannelUnreadCount
 
     /// Latest messages present on the channel. The first item of the array, is the most recent message.
     ///
@@ -113,27 +106,16 @@ public struct ChatChannel {
     /// and using a `ChatChannelController` for this channel id.
     ///
     /// The amount of latest messages is controlled by the `ChatClientConfig.LocalCaching.latestMessagesLimit`.
-    ///
-    /// - Important: The `latestMessages` property is loaded and evaluated lazily to maintain high performance.
-    public var latestMessages: [ChatMessage] { _latestMessages }
-    // stream:annotation "Move to async"
-    @CoreDataLazy private var _latestMessages: [ChatMessage]
+    public let latestMessages: [ChatMessage]
 
     /// Latest message present on the channel sent by current user even if sent on a thread.
-    ///
-    /// - Important: The `lastMessageFromCurrentUser` property is loaded and evaluated lazily to maintain high performance.
-    public var lastMessageFromCurrentUser: ChatMessage? { _lastMessageFromCurrentUser }
-    @CoreDataLazy private var _lastMessageFromCurrentUser: ChatMessage?
+    public let lastMessageFromCurrentUser: ChatMessage?
 
     /// Pinned messages present on the channel.
     ///
     /// This field contains only the pinned messages of the channel. You can get all existing messages in the channel by creating
     /// and using a `ChatChannelController` for this channel id.
-    ///
-    /// - Important: The `pinnedMessages` property is loaded and evaluated lazily to maintain high performance.
-    public var pinnedMessages: [ChatMessage] { _pinnedMessages }
-    // stream:annotation "Move to async"
-    @CoreDataLazy private var _pinnedMessages: [ChatMessage]
+    public let pinnedMessages: [ChatMessage]
 
     /// Read states of the users for this channel.
     ///
@@ -142,16 +124,10 @@ public struct ChatChannel {
     public let reads: [ChatChannelRead]
 
     /// Channel mute details. If `nil` the channel is not muted by the current user.
-    ///
-    /// - Important: The `muteDetails` property is loaded and evaluated lazily to maintain high performance.
-    public var muteDetails: MuteDetails? { _muteDetails }
+    public let muteDetails: MuteDetails?
 
     /// Says whether the channel is muted by the current user.
-    ///
-    /// - Important: The `isMuted` property is loaded and evaluated lazily to maintain high performance.
     public var isMuted: Bool { muteDetails != nil }
-
-    @CoreDataLazy private var _muteDetails: MuteDetails?
 
     /// Cooldown duration for the channel, if it's in slow mode.
     /// This value will be 0 if the channel is not in slow mode.
@@ -166,21 +142,13 @@ public struct ChatChannel {
     ///
     /// - Important: The `previewMessage` can differ from `latestMessages.first` (or even not be included into `latestMessages`)
     /// because the preview message is the last `non-deleted` message sent to the channel.
-    public var previewMessage: ChatMessage? { _previewMessage }
-    // stream:annotation "Move to async?"
-    @CoreDataLazy private var _previewMessage: ChatMessage?
+    public let previewMessage: ChatMessage?
 
     // MARK: - Internal
 
     var hasUnread: Bool {
         unreadCount.messages > 0
     }
-
-    /// A helper variable to cache the result of the filter for only banned members.
-    //  lazy var bannedMembers: Set<ChatChannelMember> = Set(self.members.filter { $0.isBanned })
-
-    /// A list of users to invite in the channel.
-//    let invitedMembers: Set<ChatChannelMember> // TODO: Why is this not public?
 
     init(
         cid: ChannelId,
@@ -197,23 +165,22 @@ public struct ChatChannel {
         ownCapabilities: Set<ChannelCapability> = [],
         isFrozen: Bool = false,
         isBlocked: Bool = false,
-        lastActiveMembers: @escaping (() -> [ChatChannelMember]) = { [] },
+        lastActiveMembers: [ChatChannelMember],
         membership: ChatChannelMember? = nil,
-        currentlyTypingUsers: @escaping () -> Set<ChatUser> = { [] },
-        lastActiveWatchers: @escaping (() -> [ChatUser]) = { [] },
+        currentlyTypingUsers: Set<ChatUser>,
+        lastActiveWatchers: [ChatUser],
         team: TeamId? = nil,
-        unreadCount: @escaping () -> ChannelUnreadCount = { .noUnread },
+        unreadCount: ChannelUnreadCount,
         watcherCount: Int = 0,
         memberCount: Int = 0,
         reads: [ChatChannelRead] = [],
         cooldownDuration: Int = 0,
         extraData: [String: RawJSON],
-        latestMessages: @escaping (() -> [ChatMessage]) = { [] },
-        lastMessageFromCurrentUser: @escaping (() -> ChatMessage?) = { nil },
-        pinnedMessages: @escaping (() -> [ChatMessage]) = { [] },
-        muteDetails: @escaping () -> MuteDetails?,
-        previewMessage: @escaping () -> ChatMessage?,
-        underlyingContext: NSManagedObjectContext?
+        latestMessages: [ChatMessage],
+        lastMessageFromCurrentUser: ChatMessage?,
+        pinnedMessages: [ChatMessage],
+        muteDetails: MuteDetails?,
+        previewMessage: ChatMessage?
     ) {
         self.cid = cid
         self.name = name
@@ -236,16 +203,15 @@ public struct ChatChannel {
         self.cooldownDuration = cooldownDuration
         self.extraData = extraData
         self.truncatedAt = truncatedAt
-
-        $_unreadCount = (unreadCount, underlyingContext)
-        $_latestMessages = (latestMessages, underlyingContext)
-        $_lastMessageFromCurrentUser = (lastMessageFromCurrentUser, underlyingContext)
-        $_lastActiveMembers = (lastActiveMembers, underlyingContext)
-        $_currentlyTypingUsers = (currentlyTypingUsers, underlyingContext)
-        $_lastActiveWatchers = (lastActiveWatchers, underlyingContext)
-        $_pinnedMessages = (pinnedMessages, underlyingContext)
-        $_muteDetails = (muteDetails, underlyingContext)
-        $_previewMessage = (previewMessage, underlyingContext)
+        self.unreadCount = unreadCount
+        self.latestMessages = latestMessages
+        self.lastMessageFromCurrentUser = lastMessageFromCurrentUser
+        self.lastActiveMembers = lastActiveMembers
+        self.currentlyTypingUsers = currentlyTypingUsers
+        self.lastActiveWatchers = lastActiveWatchers
+        self.pinnedMessages = pinnedMessages
+        self.muteDetails = muteDetails
+        self.previewMessage = previewMessage
     }
 }
 
@@ -255,9 +221,6 @@ extension ChatChannel {
 
     /// Returns `true` if the channel was deleted.
     public var isDeleted: Bool { deletedAt != nil }
-
-    /// Checks if read events evadable for the current user.
-//    public var readEventsEnabled: Bool { /* config.readEventsEnabled && members.contains(Member.current) */ fatalError() }
 
     /// Returns `true` when the channel is a direct-message channel.
     /// A "direct message" channel is created when client sends only the user id's for the channel and not an explicit `cid`,

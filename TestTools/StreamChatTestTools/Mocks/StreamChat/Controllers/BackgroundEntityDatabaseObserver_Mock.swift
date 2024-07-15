@@ -6,27 +6,30 @@ import CoreData
 @testable import StreamChat
 import XCTest
 
-final class ListDatabaseObserver_Mock<Item, DTO: NSManagedObject>: ListDatabaseObserver<Item, DTO> {
+final class BackgroundEntityDatabaseObserver_Mock<Item, DTO: NSManagedObject>: BackgroundEntityDatabaseObserver<Item, DTO> {
     var synchronizeError: Error?
+    var startObservingCalled: Bool = false
 
     override func startObserving() throws {
         if let error = synchronizeError {
             throw error
         } else {
+            startObservingCalled = true
             try super.startObserving()
         }
     }
 
-    var items_mock: LazyCachedMapCollection<Item>?
-    override var items: LazyCachedMapCollection<Item> {
-        items_mock ?? super.items
+    var item_mock: Item?
+    override var item: Item? {
+        item_mock ?? super.item
     }
 }
 
-extension BackgroundListDatabaseObserver {
+extension BackgroundEntityDatabaseObserver {
     func startObservingAndWaitForInitialUpdate(on testCase: XCTestCase, file: StaticString = #file, line: UInt = #line) throws {
-        let expectation = testCase.expectation(description: "List update")
-        onDidChange = { _ in
+        let expectation = testCase.expectation(description: "Entity update")
+        expectation.assertForOverFulfill = false
+        onChange { _ in
             expectation.fulfill()
         }
         try startObserving()

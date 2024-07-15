@@ -55,9 +55,8 @@ public extension CurrentChatUser {
             flaggedUsers: flaggedUsers,
             flaggedMessageIDs: flaggedMessageIDs,
             unreadCount: unreadCount,
-            mutedChannels: { mutedChannels }, 
-            privacySettings: privacySettings,
-            underlyingContext: nil
+            mutedChannels: mutedChannels,
+            privacySettings: privacySettings
         )
     }
 }

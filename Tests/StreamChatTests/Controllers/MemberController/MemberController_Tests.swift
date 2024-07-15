@@ -488,7 +488,7 @@ final class MemberController_Tests: XCTestCase {
 private class TestEnvironment {
     @Atomic var memberUpdater: ChannelMemberUpdater_Mock?
     @Atomic var memberListUpdater: ChannelMemberListUpdater_Mock?
-    @Atomic var memberObserver: EntityDatabaseObserverWrapper_Mock<ChatChannelMember, MemberDTO>?
+    @Atomic var memberObserver: BackgroundEntityDatabaseObserver_Mock<ChatChannelMember, MemberDTO>?
     @Atomic var memberObserverSynchronizeError: Error?
 
     lazy var environment: ChatChannelMemberController.Environment = .init(
@@ -508,11 +508,10 @@ private class TestEnvironment {
         },
         memberObserverBuilder: { [unowned self] in
             self.memberObserver = .init(
-                isBackground: $0,
-                database: $1,
-                fetchRequest: $2,
-                itemCreator: $3,
-                fetchedResultsControllerType: $4
+                database: $0,
+                fetchRequest: $1,
+                itemCreator: $2,
+                fetchedResultsControllerType: $3
             )
             self.memberObserver?.synchronizeError = self.memberObserverSynchronizeError
             return self.memberObserver!

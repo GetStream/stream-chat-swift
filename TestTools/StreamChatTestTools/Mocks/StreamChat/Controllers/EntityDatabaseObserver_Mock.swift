@@ -24,20 +24,3 @@ final class EntityDatabaseObserver_Mock<Item, DTO: NSManagedObject>: EntityDatab
         item_mock ?? super.item
     }
 }
-
-extension EntityDatabaseObserverWrapper {
-    func startObservingAndWaitForInitialUpdate(on testCase: XCTestCase, file: StaticString = #file, line: UInt = #line) throws {
-        guard isBackground else {
-            try startObserving()
-            return
-        }
-
-        let expectation = testCase.expectation(description: "Entity update")
-        expectation.assertForOverFulfill = false
-        onChange { _ in
-            expectation.fulfill()
-        }
-        try startObserving()
-        testCase.wait(for: [expectation], timeout: defaultTimeout)
-    }
-}

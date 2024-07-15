@@ -27,19 +27,7 @@ final class ListDatabaseObserver_Sorting_Tests: XCTestCase {
 
     var database: DatabaseContainer_Spy!
     var query: ChannelListQuery!
-    var observer: ListDatabaseObserverWrapper<ChatChannel, ChannelDTO>!
-
-    private static var originalIsBackgroundMappingEnabled = StreamRuntimeCheck._isBackgroundMappingEnabled
-
-    override class func setUp() {
-        super.setUp()
-        originalIsBackgroundMappingEnabled = StreamRuntimeCheck._isBackgroundMappingEnabled
-    }
-
-    override class func tearDown() {
-        super.tearDown()
-        StreamRuntimeCheck._isBackgroundMappingEnabled = originalIsBackgroundMappingEnabled
-    }
+    var observer: BackgroundListDatabaseObserver<ChatChannel, ChannelDTO>!
 
     override func tearDown() {
         super.tearDown()
@@ -332,7 +320,6 @@ final class ListDatabaseObserver_Sorting_Tests: XCTestCase {
     // MARK: - Helpers
 
     private func createObserver(with sorting: [Sorting<ChannelListSortingKey>], isBackground: Bool) {
-        StreamRuntimeCheck._isBackgroundMappingEnabled = isBackground
         database = DatabaseContainer_Spy(
             kind: .onDisk(databaseFileURL: .newTemporaryFileURL()),
             modelName: "StreamChatModel",
@@ -342,8 +329,7 @@ final class ListDatabaseObserver_Sorting_Tests: XCTestCase {
 
         let request = ChannelDTO.channelListFetchRequest(query: query, chatClientConfig: ChatClientConfig(apiKeyString: "1234"))
 
-        observer = ListDatabaseObserverWrapper(
-            isBackground: isBackground,
+        observer = BackgroundListDatabaseObserver(
             database: database,
             fetchRequest: request,
             itemCreator: { try $0.asModel() },

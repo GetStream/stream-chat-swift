@@ -172,8 +172,8 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
 
     /// Database observers.
     /// Will be `nil` when observing channel with backend generated `id` is not yet created.
-    private var channelObserver: EntityDatabaseObserverWrapper<ChatChannel, ChannelDTO>?
-    private var messagesObserver: ListDatabaseObserverWrapper<ChatMessage, MessageDTO>?
+    private var channelObserver: BackgroundEntityDatabaseObserver<ChatChannel, ChannelDTO>?
+    private var messagesObserver: BackgroundListDatabaseObserver<ChatMessage, MessageDTO>?
 
     private var eventObservers: [EventObserver] = []
     private let environment: Environment
@@ -1491,8 +1491,7 @@ private extension ChatChannelController {
                 return nil
             }
 
-            let observer = EntityDatabaseObserverWrapper(
-                isBackground: StreamRuntimeCheck._isBackgroundMappingEnabled,
+            let observer = BackgroundEntityDatabaseObserver(
                 database: self.client.databaseContainer,
                 fetchRequest: ChannelDTO.fetchRequest(for: cid),
                 itemCreator: { try $0.asModel() as ChatChannel }
@@ -1539,8 +1538,7 @@ private extension ChatChannelController {
             }
 
             let pageSize = channelQuery.pagination?.pageSize ?? .messagesPageSize
-            let observer = ListDatabaseObserverWrapper(
-                isBackground: StreamRuntimeCheck._isBackgroundMappingEnabled,
+            let observer = BackgroundListDatabaseObserver(
                 database: client.databaseContainer,
                 fetchRequest: MessageDTO.messagesFetchRequest(
                     for: cid,

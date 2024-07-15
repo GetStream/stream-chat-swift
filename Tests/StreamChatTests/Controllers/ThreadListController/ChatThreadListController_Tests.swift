@@ -160,15 +160,24 @@ final class ChatThreadListController_Tests: XCTestCase {
     func test_observer_triggerDidChangeThreads_threadsHaveCorrectOrder() throws {
         class DelegateMock: ChatThreadListControllerDelegate {
             var threads: [ChatThread] = []
+            let expectation = XCTestExpectation(description: "Did Change Threads")
+            let expectedThreadsCount: Int
+            
+            init(expectedThreadsCount: Int) {
+                self.expectedThreadsCount = expectedThreadsCount
+            }
+            
             func controller(
                 _ controller: ChatThreadListController,
                 didChangeThreads changes: [ListChange<ChatThread>]
             ) {
                 threads = Array(controller.threads)
+                guard expectedThreadsCount == threads.count else { return }
+                expectation.fulfill()
             }
         }
 
-        let delegate = DelegateMock()
+        let delegate = DelegateMock(expectedThreadsCount: 3)
         controller.synchronize()
         controller.delegate = delegate
 
@@ -195,7 +204,7 @@ final class ChatThreadListController_Tests: XCTestCase {
                 next: nil
             ))
         }
-
+        wait(for: [delegate.expectation], timeout: defaultTimeout)
         XCTAssertEqual(controller.threads.count, 3)
         XCTAssertEqual(delegate.threads.map(\.title), ["1", "2", "3"])
     }
@@ -207,7 +216,7 @@ extension ChatThreadListController_Tests {
     func makeController(
         query: ThreadListQuery = .init(watch: true),
         repository: ThreadsRepository? = nil,
-        observer: ListDatabaseObserverWrapper<ChatThread, ThreadDTO>? = nil
+        observer: BackgroundListDatabaseObserver<ChatThread, ThreadDTO>? = nil
     ) -> ChatThreadListController {
         ChatThreadListController(
             query: query,
@@ -216,9 +225,8 @@ extension ChatThreadListController_Tests {
                 threadsRepositoryBuilder: { _, _ in
                     self.repositoryMock
                 },
-                createThreadListDatabaseObserver: { _, database, fetchRequest, itemCreator in
-                    observer ?? .init(
-                        isBackground: false,
+                createThreadListDatabaseObserver: { database, fetchRequest, itemCreator in
+                    observer ?? BackgroundListDatabaseObserver(
                         database: database,
                         fetchRequest: fetchRequest,
                         itemCreator: itemCreator,

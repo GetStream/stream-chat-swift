@@ -60,10 +60,9 @@ public class ChatThreadListController: DataController, DelegateCallable, DataSto
         }
     }
 
-    private(set) lazy var threadListObserver: ListDatabaseObserverWrapper<ChatThread, ThreadDTO> = {
+    private(set) lazy var threadListObserver: BackgroundListDatabaseObserver<ChatThread, ThreadDTO> = {
         let request = ThreadDTO.threadListFetchRequest()
         let observer = self.environment.createThreadListDatabaseObserver(
-            StreamRuntimeCheck._isBackgroundMappingEnabled,
             client.databaseContainer,
             request,
             { try $0.asModel() }
@@ -117,10 +116,10 @@ public class ChatThreadListController: DataController, DelegateCallable, DataSto
                     self?.callback {
                         self?.threadListObserver.refreshItems {
                             self?.state = .remoteDataFetched
+                            self?.nextCursor = threadListResponse.next
+                            self?.hasLoadedAllThreads = threadListResponse.next == nil
+                            completion?(nil)
                         }
-                        self?.nextCursor = threadListResponse.next
-                        self?.hasLoadedAllThreads = threadListResponse.next == nil
-                        completion?(nil)
                     }
                 }
             case let .failure(error):
@@ -195,17 +194,15 @@ extension ChatThreadListController {
         ) -> ThreadsRepository = ThreadsRepository.init
 
         var createThreadListDatabaseObserver: (
-            _ isBackground: Bool,
             _ database: DatabaseContainer,
             _ fetchRequest: NSFetchRequest<ThreadDTO>,
             _ itemCreator: @escaping (ThreadDTO) throws -> ChatThread
         )
-            -> ListDatabaseObserverWrapper<ChatThread, ThreadDTO> = {
-                ListDatabaseObserverWrapper(
-                    isBackground: $0,
-                    database: $1,
-                    fetchRequest: $2,
-                    itemCreator: $3,
+            -> BackgroundListDatabaseObserver<ChatThread, ThreadDTO> = {
+                BackgroundListDatabaseObserver(
+                    database: $0,
+                    fetchRequest: $1,
+                    itemCreator: $2,
                     itemReuseKeyPaths: (\ChatThread.reuseId, \ThreadDTO.reuseId)
                 )
             }

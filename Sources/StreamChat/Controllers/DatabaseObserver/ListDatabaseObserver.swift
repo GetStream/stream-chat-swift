@@ -208,7 +208,7 @@ class ListDatabaseObserver<Item, DTO: NSManagedObject> {
         fetchRequest: NSFetchRequest<DTO>,
         itemCreator: @escaping (DTO) throws -> Item,
         itemReuseKeyPaths: (item: KeyPath<Item, String>, dto: KeyPath<DTO, String>)? = nil,
-        sorting: [SortValue<Item>],
+        sorting: [SortValue<Item>] = [],
         fetchedResultsControllerType: NSFetchedResultsController<DTO>.Type = NSFetchedResultsController<DTO>.self
     ) {
         self.context = context
@@ -252,12 +252,12 @@ class ListDatabaseObserver<Item, DTO: NSManagedObject> {
                   let context = self?.context else { return [] }
             var result: LazyCachedMapCollection<Item>!
             context.performAndWait {
-                result = LazyCachedMapCollection(
-                    source: frc.fetchedObjects ?? [],
-                    itemCreator: itemCreator,
-                    sorting: sorting,
-                    context: context
-                )
+                let dtos = frc.fetchedObjects ?? []
+                var mapped = dtos.compactMapLoggingError { try itemCreator($0) }
+                if !sorting.isEmpty {
+                    mapped = mapped.sort(using: sorting)
+                }
+                result = LazyCachedMapCollection(elements: mapped)
             }
             return result
         }

@@ -60,11 +60,10 @@ public class ChatReactionListController: DataController, DelegateCallable, DataS
     }
 
     /// Used for observing the database for changes.
-    private(set) lazy var reactionListObserver: ListDatabaseObserverWrapper<ChatMessageReaction, MessageReactionDTO> = {
+    private(set) lazy var reactionListObserver: BackgroundListDatabaseObserver<ChatMessageReaction, MessageReactionDTO> = {
         let request = MessageReactionDTO.reactionListFetchRequest(query: query)
 
         let observer = self.environment.createReactionListDatabaseObserver(
-            StreamRuntimeCheck._isBackgroundMappingEnabled,
             client.databaseContainer,
             request,
             { try $0.asModel() }
@@ -165,17 +164,15 @@ extension ChatReactionListController {
         ) -> ReactionListUpdater = ReactionListUpdater.init
 
         var createReactionListDatabaseObserver: (
-            _ isBackgroundMappingEnabled: Bool,
             _ database: DatabaseContainer,
             _ fetchRequest: NSFetchRequest<MessageReactionDTO>,
             _ itemCreator: @escaping (MessageReactionDTO) throws -> ChatMessageReaction
         )
-            -> ListDatabaseObserverWrapper<ChatMessageReaction, MessageReactionDTO> = {
-                ListDatabaseObserverWrapper(
-                    isBackground: $0,
-                    database: $1,
-                    fetchRequest: $2,
-                    itemCreator: $3,
+            -> BackgroundListDatabaseObserver<ChatMessageReaction, MessageReactionDTO> = {
+                BackgroundListDatabaseObserver(
+                    database: $0,
+                    fetchRequest: $1,
+                    itemCreator: $2,
                     itemReuseKeyPaths: (\ChatMessageReaction.id, \MessageReactionDTO.id)
                 )
             }

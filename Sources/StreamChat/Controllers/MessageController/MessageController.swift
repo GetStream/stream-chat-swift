@@ -178,7 +178,7 @@ public class ChatMessageController: DataController, DelegateCallable, DataStoreP
 
     /// The observer used to listen replies updates.
     /// It will be reset on `listOrdering` changes.
-    private var repliesObserver: ListDatabaseObserverWrapper<ChatMessage, MessageDTO>?
+    private var repliesObserver: BackgroundListDatabaseObserver<ChatMessage, MessageDTO>?
 
     /// The worker used to fetch the remote data and communicate with servers.
     private let messageUpdater: MessageUpdater
@@ -809,19 +809,17 @@ extension ChatMessageController {
         ) -> EntityDatabaseObserver<ChatMessage, MessageDTO> = EntityDatabaseObserver.init
 
         var repliesObserverBuilder: (
-            _ isBackgroundMappingEnabled: Bool,
             _ database: DatabaseContainer,
             _ fetchRequest: NSFetchRequest<MessageDTO>,
             _ itemCreator: @escaping (MessageDTO) throws -> ChatMessage,
             _ fetchedResultsControllerType: NSFetchedResultsController<MessageDTO>.Type
-        ) -> ListDatabaseObserverWrapper<ChatMessage, MessageDTO> = {
+        ) -> BackgroundListDatabaseObserver<ChatMessage, MessageDTO> = {
             .init(
-                isBackground: $0,
-                database: $1,
-                fetchRequest: $2,
-                itemCreator: $3,
+                database: $0,
+                fetchRequest: $1,
+                itemCreator: $2,
                 itemReuseKeyPaths: (\ChatMessage.id, \MessageDTO.id),
-                fetchedResultsControllerType: $4
+                fetchedResultsControllerType: $3
             )
         }
 
@@ -856,7 +854,6 @@ private extension ChatMessageController {
 
         let pageSize: Int = repliesPageSize
         let observer = environment.repliesObserverBuilder(
-            StreamRuntimeCheck._isBackgroundMappingEnabled,
             client.databaseContainer,
             MessageDTO.repliesFetchRequest(
                 for: messageId,

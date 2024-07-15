@@ -127,9 +127,8 @@ public class ChatChannelMemberController: DataController, DelegateCallable, Data
         )
     }
 
-    private func createMemberObserver() -> EntityDatabaseObserverWrapper<ChatChannelMember, MemberDTO> {
+    private func createMemberObserver() -> BackgroundEntityDatabaseObserver<ChatChannelMember, MemberDTO> {
         environment.memberObserverBuilder(
-            StreamRuntimeCheck._isBackgroundMappingEnabled,
             client.databaseContainer,
             MemberDTO.member(userId, in: cid),
             { try $0.asModel() },
@@ -228,12 +227,11 @@ extension ChatChannelMemberController {
         ) -> ChannelMemberListUpdater = ChannelMemberListUpdater.init
 
         var memberObserverBuilder: (
-            _ isBackgroundMappingEnabled: Bool,
             _ databaseContainer: DatabaseContainer,
             _ fetchRequest: NSFetchRequest<MemberDTO>,
             _ itemCreator: @escaping (MemberDTO) throws -> ChatChannelMember,
             _ fetchedResultsControllerType: NSFetchedResultsController<MemberDTO>.Type
-        ) -> EntityDatabaseObserverWrapper<ChatChannelMember, MemberDTO> = EntityDatabaseObserverWrapper.init
+        ) -> BackgroundEntityDatabaseObserver<ChatChannelMember, MemberDTO> = BackgroundEntityDatabaseObserver.init
     }
 }
 

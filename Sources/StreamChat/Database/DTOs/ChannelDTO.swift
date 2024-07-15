@@ -437,12 +437,8 @@ extension ChatChannel {
 
         let reads: [ChatChannelRead] = try dto.reads.map { try $0.asModel() }
 
-        let unreadCount: () -> ChannelUnreadCount = {
-            guard dto.isValid, let currentUser = context.currentUser else {
-                return .noUnread
-            }
-
-            guard currentUser.user.isValid else {
+        let unreadCount: ChannelUnreadCount = {
+            guard let currentUser = context.currentUser else {
                 return .noUnread
             }
 
@@ -463,8 +459,6 @@ extension ChatChannel {
                 NSPredicate(format: "%@ IN mentionedUsers", currentUser.user)
             ])
 
-            guard dto.isValid, currentUser.user.isValid else { return .noUnread }
-
             do {
                 return ChannelUnreadCount(
                     messages: allUnreadMessages,
@@ -474,11 +468,10 @@ extension ChatChannel {
                 log.error("Failed to fetch unread counts for channel `\(cid)`. Error: \(error)")
                 return .noUnread
             }
-        }
+        }()
 
-        let fetchMessages: () -> [ChatMessage] = {
-            guard dto.isValid else { return [] }
-            return MessageDTO
+        let messages: [ChatMessage] = {
+            MessageDTO
                 .load(
                     for: dto.cid,
                     limit: dto.managedObjectContext?.localCachingSettings?.chatChannel.latestMessagesLimit ?? 25,
@@ -487,10 +480,10 @@ extension ChatChannel {
                     context: context
                 )
                 .compactMap { try? $0.relationshipAsModel(depth: depth) }
-        }
+        }()
 
-        let fetchLatestMessageFromUser: () -> ChatMessage? = {
-            guard dto.isValid, let currentUser = context.currentUser else { return nil }
+        let latestMessageFromUser: ChatMessage? = {
+            guard let currentUser = context.currentUser else { return nil }
 
             return try? MessageDTO
                 .loadLastMessage(
@@ -499,30 +492,27 @@ extension ChatChannel {
                     context: context
                 )?
                 .relationshipAsModel(depth: depth)
-        }
+        }()
 
-        let fetchWatchers: () -> [ChatUser] = {
-            UserDTO
-                .loadLastActiveWatchers(cid: cid, context: context)
-                .compactMap { try? $0.asModel() }
-        }
+        let watchers = UserDTO.loadLastActiveWatchers(cid: cid, context: context)
+            .compactMap { try? $0.asModel() }
+        
+        let members = MemberDTO.loadLastActiveMembers(cid: cid, context: context)
+            .compactMap { try? $0.asModel() }
 
-        let fetchMembers: () -> [ChatChannelMember] = {
-            MemberDTO
-                .loadLastActiveMembers(cid: cid, context: context)
-                .compactMap { try? $0.asModel() }
-        }
-
-        let fetchMuteDetails: () -> MuteDetails? = {
+        let muteDetails: MuteDetails? = {
             guard let mute = dto.mute else { return nil }
-
             return .init(
                 createdAt: mute.createdAt.bridgeDate,
                 updatedAt: mute.updatedAt.bridgeDate,
                 expiresAt: mute.expiresAt?.bridgeDate
             )
-        }
-
+        }()
+        let membership = try dto.membership.map { try $0.asModel() }
+        let pinnedMessages = dto.pinnedMessages.compactMap { try? $0.relationshipAsModel(depth: depth) }
+        let previewMessage = try? dto.previewMessage?.relationshipAsModel(depth: depth)
+        let typingUsers = Set(dto.currentlyTypingUsers.compactMap { try? $0.asModel() })
+        
         return try ChatChannel(
             cid: cid,
             name: dto.name,
@@ -538,24 +528,22 @@ extension ChatChannel {
             ownCapabilities: Set(dto.ownCapabilities.compactMap(ChannelCapability.init(rawValue:))),
             isFrozen: dto.isFrozen,
             isBlocked: dto.isBlocked,
-            lastActiveMembers: { fetchMembers() },
-            membership: dto.membership.map { try $0.asModel() },
-            currentlyTypingUsers: { Set(dto.currentlyTypingUsers.compactMap { try? $0.asModel() }) },
-            lastActiveWatchers: { fetchWatchers() },
+            lastActiveMembers: members,
+            membership: membership,
+            currentlyTypingUsers: typingUsers,
+            lastActiveWatchers: watchers,
             team: dto.team,
-            unreadCount: { unreadCount() },
+            unreadCount: unreadCount,
             watcherCount: Int(dto.watcherCount),
             memberCount: Int(dto.memberCount),
             reads: reads,
             cooldownDuration: Int(dto.cooldownDuration),
             extraData: extraData,
-            //            invitedMembers: [],
-            latestMessages: { fetchMessages() },
-            lastMessageFromCurrentUser: { fetchLatestMessageFromUser() },
-            pinnedMessages: { dto.pinnedMessages.compactMap { try? $0.relationshipAsModel(depth: depth) } },
-            muteDetails: fetchMuteDetails,
-            previewMessage: { try? dto.previewMessage?.relationshipAsModel(depth: depth) },
-            underlyingContext: dto.managedObjectContext
+            latestMessages: messages,
+            lastMessageFromCurrentUser: latestMessageFromUser,
+            pinnedMessages: pinnedMessages,
+            muteDetails: muteDetails,
+            previewMessage: previewMessage
         )
     }
 }
