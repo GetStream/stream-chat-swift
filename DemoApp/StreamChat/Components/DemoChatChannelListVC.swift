@@ -7,7 +7,7 @@ import StreamChat
 import StreamChatUI
 import UIKit
 
-final class DemoChatChannelListVC: ChatChannelListVC, EventsControllerDelegate {
+final class DemoChatChannelListVC: ChatChannelListVC {
     /// The `UIButton` instance used for navigating to new channel screen creation.
     lazy var createChannelButton: UIButton = {
         let button = UIButton()
@@ -62,7 +62,6 @@ final class DemoChatChannelListVC: ChatChannelListVC, EventsControllerDelegate {
 
         initialQuery = controller.query
 
-        eventsController.delegate = self
         connectionController.delegate = connectionDelegate
 
         navigationItem.rightBarButtonItems = [
@@ -195,11 +194,5 @@ final class DemoChatChannelListVC: ChatChannelListVC, EventsControllerDelegate {
             animated: false,
             scrollPosition: .centeredHorizontally
         )
-    }
-
-    func eventsController(_ controller: EventsController, didReceiveEvent event: Event) {
-        if let newMessageEvent = event as? MessageNewEvent {
-            _ = newMessageEvent.message.author
-        }
     }
 }
