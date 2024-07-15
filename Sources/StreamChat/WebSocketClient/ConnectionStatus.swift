@@ -42,9 +42,7 @@ extension ConnectionStatus {
             self = .disconnecting
 
         case let .disconnected(source):
-            let isWaitingForReconnect = webSocketConnectionState.isAutomaticReconnectionEnabled || source.serverError?
-                .isInvalidTokenError == true
-
+            let isWaitingForReconnect = webSocketConnectionState.isAutomaticReconnectionEnabled
             self = isWaitingForReconnect ? .connecting : .disconnected(error: source.serverError)
         }
     }
