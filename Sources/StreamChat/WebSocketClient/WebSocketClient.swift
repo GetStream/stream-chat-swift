@@ -146,6 +146,11 @@ class WebSocketClient {
     func timeout() {
         let previousState = connectionState
         connectionState = .disconnected(source: .timeout(from: previousState))
+        engineQueue.async { [engine, eventsBatcher] in
+            engine?.disconnect()
+
+            eventsBatcher.processImmediately {}
+        }
         log.error("Connection timed out. `\(connectionState)", subsystems: .webSocket)
     }
 }

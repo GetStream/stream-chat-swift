@@ -87,6 +87,7 @@ private extension DefaultConnectionRecoveryHandler {
         reconnectionTimeoutHandler.onChange = { [weak self] in
             self?.webSocketClient.timeout()
             self?.reconnectionTimeoutHandler.stop()
+            self?.cancelReconnectionTimer()
         }
     }
 
@@ -109,7 +110,9 @@ extension DefaultConnectionRecoveryHandler {
 
         backgroundTaskScheduler?.endTask()
 
-        reconnectIfNeeded()
+        if canReconnectFromOffline {
+            webSocketClient.connect()
+        }
     }
 
     private func appDidEnterBackground() {
@@ -143,14 +146,12 @@ extension DefaultConnectionRecoveryHandler {
     }
 
     @objc private func internetConnectionAvailabilityDidChange(_ notification: Notification) {
-        guard let isAvailable = notification.internetConnectionStatus?.isAvailable else { return }
+        if let isAvailable = notification.internetConnectionStatus?.isAvailable {
+            log.debug("Internet -> \(isAvailable ? "✅" : "❌")", subsystems: .webSocket)
+        }
 
-        log.debug("Internet -> \(isAvailable ? "✅" : "❌")", subsystems: .webSocket)
-
-        if isAvailable && canReconnectFromOffline {
+        if canReconnectFromOffline {
             webSocketClient.connect()
-        } else {
-            disconnectIfNeeded()
         }
     }
 
@@ -178,6 +179,24 @@ extension DefaultConnectionRecoveryHandler {
         case .initialized, .waitingForConnectionId, .disconnecting:
             break
         }
+    }
+
+    var canReconnectFromOffline: Bool {
+        guard backgroundTaskScheduler?.isAppActive ?? true else {
+            log.debug("Reconnection is not possible (app 💤)", subsystems: .webSocket)
+            return false
+        }
+
+        switch webSocketClient.connectionState {
+        case .disconnected(let source) where source == .userInitiated:
+            return false
+        case .initialized, .connected:
+            return false
+        default:
+            break
+        }
+
+        return true
     }
 }
 
@@ -208,48 +227,6 @@ private extension DefaultConnectionRecoveryHandler {
     }
 }
 
-// MARK: - Reconnection
-
-private extension DefaultConnectionRecoveryHandler {
-    func reconnectIfNeeded() {
-        guard canReconnectAutomatically else { return }
-
-        webSocketClient.connect()
-    }
-
-    var canReconnectAutomatically: Bool {
-        guard webSocketClient.connectionState.isAutomaticReconnectionEnabled else {
-            log.debug("Reconnection is not required (\(webSocketClient.connectionState))", subsystems: .webSocket)
-            return false
-        }
-
-        guard backgroundTaskScheduler?.isAppActive ?? true else {
-            log.debug("Reconnection is not possible (app 💤)", subsystems: .webSocket)
-            return false
-        }
-
-        log.debug("Will reconnect automatically", subsystems: .webSocket)
-
-        return true
-    }
-
-    var canReconnectFromOffline: Bool {
-        guard backgroundTaskScheduler?.isAppActive ?? true else {
-            log.debug("Reconnection is not possible (app 💤)", subsystems: .webSocket)
-            return false
-        }
-
-        switch webSocketClient.connectionState {
-        case .disconnected(let source) where source == .userInitiated:
-            return false
-        default:
-            break
-        }
-
-        return true
-    }
-}
-
 // MARK: - Reconnection Timer
 
 private extension DefaultConnectionRecoveryHandler {
@@ -270,7 +247,9 @@ private extension DefaultConnectionRecoveryHandler {
             onFire: { [weak self] in
                 log.debug("Timer 🔥", subsystems: .webSocket)
 
-                self?.reconnectIfNeeded()
+                if self?.canReconnectAutomatically == true {
+                    self?.webSocketClient.connect()
+                }
             }
         )
     }
@@ -282,5 +261,21 @@ private extension DefaultConnectionRecoveryHandler {
 
         reconnectionTimer?.cancel()
         reconnectionTimer = nil
+    }
+
+    var canReconnectAutomatically: Bool {
+        guard webSocketClient.connectionState.isAutomaticReconnectionEnabled else {
+            log.debug("Reconnection is not required (\(webSocketClient.connectionState))", subsystems: .webSocket)
+            return false
+        }
+
+        guard backgroundTaskScheduler?.isAppActive ?? true else {
+            log.debug("Reconnection is not possible (app 💤)", subsystems: .webSocket)
+            return false
+        }
+
+        log.debug("Will reconnect automatically", subsystems: .webSocket)
+
+        return true
     }
 }
