@@ -35,7 +35,7 @@ class BackgroundDatabaseObserver<Item, DTO: NSManagedObject> {
 
     /// The items that have been fetched and mapped
     ///
-    /// -Note: Fetches items synchronously if the initial fetch has not finished.
+    /// - Note: Fetches items synchronously if the observer is in the middle of processing a change.
     var rawItems: [Item] {
         // When items are accessed while DB change is being processed in the background,
         // we want to return the processing change immediately.
