@@ -165,7 +165,7 @@ final class BackgroundListDatabaseObserver_Tests: XCTestCase {
         }
         
         observer = BackgroundListDatabaseObserver<String, TestManagedObject>(
-            context: database.backgroundReadOnlyContext,
+            database: database,
             fetchRequest: fetchRequest,
             itemCreator: { $0.testId },
             sorting: []
@@ -189,7 +189,7 @@ final class BackgroundListDatabaseObserver_Tests: XCTestCase {
         
         let initialFinishedExpectation = XCTestExpectation(description: "Initial")
         observer = BackgroundListDatabaseObserver<String, TestManagedObject>(
-            context: database.backgroundReadOnlyContext,
+            database: database,
             fetchRequest: fetchRequest,
             itemCreator: { $0.testId },
             sorting: []

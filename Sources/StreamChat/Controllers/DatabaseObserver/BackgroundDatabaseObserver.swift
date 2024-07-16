@@ -37,23 +37,21 @@ class BackgroundDatabaseObserver<Item, DTO: NSManagedObject> {
     ///
     /// -Note: Fetches items synchronously if the initial fetch has not finished.
     var rawItems: [Item] {
-        // If we have already loaded initial items, return them immediately
-        if let items = queue.sync(execute: { _hasFetchedInitialItems ? _items : nil }) {
-            return items
+        let state: (canUse: Bool, preparedItems: [Item]) = queue.sync { (_usesPreparedItems, _items) }
+        if state.canUse {
+            return state.preparedItems
         }
-        // Otherwise load items synchronously if the initial fetch has not finished
-        return queue.sync(flags: .barrier) {
-            var items = [Item]()
-            frc.managedObjectContext.performAndWait {
-                items = mapItems(changes: nil, reusableItems: [])
-            }
-            _items = items
-            _hasFetchedInitialItems = true
-            return _items
+        // Otherwise fetch the state from the DB.
+        // Gives better support for cases where we create a controller, synchronize it,
+        // and then need the observer to return new results as soon as possible.
+        var items = [Item]()
+        frc.managedObjectContext.performAndWait {
+            items = mapItems(changes: nil, reusableItems: state.preparedItems)
         }
+        return items
     }
 
-    private var _hasFetchedInitialItems = false
+    private var _usesPreparedItems = false
     
     private var _isInitialized: Bool = false
     private var isInitialized: Bool {
@@ -158,7 +156,7 @@ class BackgroundDatabaseObserver<Item, DTO: NSManagedObject> {
 
     /// This method will add a new operation to the `processingQueue`, where operations are executed one-by-one.
     /// The operation added to the queue will start the process of getting new results for the observer.
-    func updateItems(changes: [ListChange<Item>]?, completion: (() -> Void)? = nil) {
+    private func updateItems(changes: [ListChange<Item>]?, completion: (() -> Void)? = nil) {
         let operation = AsyncOperation { [weak self] _, done in
             guard let self = self else {
                 done(.continue)
@@ -188,7 +186,12 @@ class BackgroundDatabaseObserver<Item, DTO: NSManagedObject> {
         /// This also includes finishing the operation and notifying about the update. Only once everything is done, we conclude the operation.
         queue.async(flags: .barrier) {
             self._items = items
-            self._hasFetchedInitialItems = true
+            
+            // Switch to prepared items after the first FRC change
+            // Gives better support for controllers which call synchronize, update the DB, and then require access for new content immediately
+            if changes != nil {
+                self._usesPreparedItems = true
+            }
             let returnedChanges = changes ?? items.enumerated().map { .insert($1, index: IndexPath(item: $0, section: 0)) }
             self.notifyDidChange(changes: returnedChanges, onCompletion: onCompletion)
         }
