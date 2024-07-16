@@ -37,13 +37,15 @@ class BackgroundDatabaseObserver<Item, DTO: NSManagedObject> {
     ///
     /// -Note: Fetches items synchronously if the initial fetch has not finished.
     var rawItems: [Item] {
-        let state: (canUse: Bool, preparedItems: [Item]) = queue.sync { (_usesPreparedItems, _items) }
-        if state.canUse {
+        // When items are accessed while DB change is being processed in the background,
+        // we want to return the processing change immediately.
+        // Example: controller synchronizes which updates DB, but then controller wants the
+        // updated data while the processing is still in progress.
+        let state: (isProcessing: Bool, preparedItems: [Item]) = queue.sync { (_isProcessingDatabaseChange, _items) }
+        if !state.isProcessing {
             return state.preparedItems
         }
-        // Otherwise fetch the state from the DB.
-        // Gives better support for cases where we create a controller, synchronize it,
-        // and then need the observer to return new results as soon as possible.
+        // Otherwise fetch the state from the DB but also reusing existing state.
         var items = [Item]()
         frc.managedObjectContext.performAndWait {
             items = mapItems(changes: nil, reusableItems: state.preparedItems)
@@ -51,7 +53,7 @@ class BackgroundDatabaseObserver<Item, DTO: NSManagedObject> {
         return items
     }
 
-    private var _usesPreparedItems = false
+    private var _isProcessingDatabaseChange = false
     
     private var _isInitialized: Bool = false
     private var isInitialized: Bool {
@@ -104,6 +106,9 @@ class BackgroundDatabaseObserver<Item, DTO: NSManagedObject> {
         processingQueue = operationQueue
 
         changeAggregator.onWillChange = { [weak self] in
+            self?.queue.async(flags: .barrier) {
+                self?._isProcessingDatabaseChange = true
+            }
             self?.notifyWillChange()
         }
 
@@ -186,12 +191,7 @@ class BackgroundDatabaseObserver<Item, DTO: NSManagedObject> {
         /// This also includes finishing the operation and notifying about the update. Only once everything is done, we conclude the operation.
         queue.async(flags: .barrier) {
             self._items = items
-            
-            // Switch to prepared items after the first FRC change
-            // Gives better support for controllers which call synchronize, update the DB, and then require access for new content immediately
-            if changes != nil {
-                self._usesPreparedItems = true
-            }
+            self._isProcessingDatabaseChange = false
             let returnedChanges = changes ?? items.enumerated().map { .insert($1, index: IndexPath(item: $0, section: 0)) }
             self.notifyDidChange(changes: returnedChanges, onCompletion: onCompletion)
         }
