@@ -300,67 +300,67 @@ public struct ChannelCapability: RawRepresentable, ExpressibleByStringLiteral, H
     }
 
     /// Ability to ban channel members.
-    public static var banChannelMembers: Self = "ban-channel-members"
+    public static let banChannelMembers: Self = "ban-channel-members"
     /// Ability to receive connect events.
-    public static var connectEvents: Self = "connect-events"
+    public static let connectEvents: Self = "connect-events"
     /// Ability to delete any message from the channel.
-    public static var deleteAnyMessage: Self = "delete-any-message"
+    public static let deleteAnyMessage: Self = "delete-any-message"
     /// Ability to delete the channel.
-    public static var deleteChannel: Self = "delete-channel"
+    public static let deleteChannel: Self = "delete-channel"
     /// Ability to delete own messages from the channel.
-    public static var deleteOwnMessage: Self = "delete-own-message"
+    public static let deleteOwnMessage: Self = "delete-own-message"
     /// Ability to flag a message.
-    public static var flagMessage: Self = "flag-message"
+    public static let flagMessage: Self = "flag-message"
     /// Ability to freeze or unfreeze the channel.
-    public static var freezeChannel: Self = "freeze-channel"
+    public static let freezeChannel: Self = "freeze-channel"
     /// Ability to leave the channel (remove own membership).
-    public static var leaveChannel: Self = "leave-channel"
+    public static let leaveChannel: Self = "leave-channel"
     /// Ability to join channel (add own membership).
-    public static var joinChannel: Self = "join-channel"
+    public static let joinChannel: Self = "join-channel"
     /// Ability to mute the channel.
-    public static var muteChannel: Self = "mute-channel"
+    public static let muteChannel: Self = "mute-channel"
     /// Ability to pin a message.
-    public static var pinMessage: Self = "pin-message"
+    public static let pinMessage: Self = "pin-message"
     /// Ability to quote a message.
-    public static var quoteMessage: Self = "quote-message"
+    public static let quoteMessage: Self = "quote-message"
     /// Ability to receive read events.
-    public static var readEvents: Self = "read-events"
+    public static let readEvents: Self = "read-events"
     /// Ability to use message search.
-    public static var searchMessages: Self = "search-messages"
+    public static let searchMessages: Self = "search-messages"
     /// Ability to send custom events.
-    public static var sendCustomEvents: Self = "send-custom-events"
+    public static let sendCustomEvents: Self = "send-custom-events"
     /// Ability to attach links to messages.
-    public static var sendLinks: Self = "send-links"
+    public static let sendLinks: Self = "send-links"
     /// Ability to send a message.
-    public static var sendMessage: Self = "send-message"
+    public static let sendMessage: Self = "send-message"
     /// Ability to send reactions.
-    public static var sendReaction: Self = "send-reaction"
+    public static let sendReaction: Self = "send-reaction"
     /// Ability to thread reply to a message.
-    public static var sendReply: Self = "send-reply"
+    public static let sendReply: Self = "send-reply"
     /// Ability to enable or disable slow mode.
-    public static var setChannelCooldown: Self = "set-channel-cooldown"
+    public static let setChannelCooldown: Self = "set-channel-cooldown"
     /// Ability to send and receive typing events.
-    public static var sendTypingEvents: Self = "send-typing-events"
+    public static let sendTypingEvents: Self = "send-typing-events"
     /// Ability to update any message in the channel.
-    public static var updateAnyMessage: Self = "update-any-message"
+    public static let updateAnyMessage: Self = "update-any-message"
     /// Ability to update channel data.
-    public static var updateChannel: Self = "update-channel"
+    public static let updateChannel: Self = "update-channel"
     /// Ability to update channel members.
-    public static var updateChannelMembers: Self = "update-channel-members"
+    public static let updateChannelMembers: Self = "update-channel-members"
     /// Ability to update own messages in the channel.
-    public static var updateOwnMessage: Self = "update-own-message"
+    public static let updateOwnMessage: Self = "update-own-message"
     /// Ability to upload message attachments.
-    public static var uploadFile: Self = "upload-file"
+    public static let uploadFile: Self = "upload-file"
     /// Ability to send and receive typing events.
-    public static var typingEvents: Self = "typing-events"
+    public static let typingEvents: Self = "typing-events"
     /// Indicates that channel slow mode is active.
-    public static var slowMode: Self = "slow-mode"
+    public static let slowMode: Self = "slow-mode"
     /// Ability to skip the slow mode when it's active.
-    public static var skipSlowMode: Self = "skip-slow-mode"
+    public static let skipSlowMode: Self = "skip-slow-mode"
     /// Ability to join a call.
-    public static var joinCall: Self = "join-call"
+    public static let joinCall: Self = "join-call"
     /// Ability to create a call.
-    public static var createCall: Self = "create-call"
+    public static let createCall: Self = "create-call"
 }
 
 public extension ChatChannel {
