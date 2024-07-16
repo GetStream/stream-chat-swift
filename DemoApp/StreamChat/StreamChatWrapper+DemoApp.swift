@@ -61,6 +61,7 @@ extension StreamChatWrapper {
         Components.default.messageActionsVC = DemoChatMessageActionsVC.self
         Components.default.messageLayoutOptionsResolver = DemoChatMessageLayoutOptionsResolver()
         Components.default.reactionsSorting = ReactionSorting.byFirstReactionAt
+        Components.default.channelListErrorView = DemoChatChannelListErrorView.self
 
         // Customize MarkdownFormatter
         let defaultFormatter = DefaultMarkdownFormatter()
