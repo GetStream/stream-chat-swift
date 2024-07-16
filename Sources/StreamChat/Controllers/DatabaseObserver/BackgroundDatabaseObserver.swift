@@ -106,9 +106,6 @@ class BackgroundDatabaseObserver<Item, DTO: NSManagedObject> {
         processingQueue = operationQueue
 
         changeAggregator.onWillChange = { [weak self] in
-            self?.queue.async(flags: .barrier) {
-                self?._isProcessingDatabaseChange = true
-            }
             self?.notifyWillChange()
         }
 
@@ -137,9 +134,20 @@ class BackgroundDatabaseObserver<Item, DTO: NSManagedObject> {
     }
 
     private func notifyWillChange() {
-        guard let onWillChange = onWillChange else { return }
+        let setProcessingState: (Bool) -> Void = { [weak self] state in
+            self?.queue.async(flags: .barrier) {
+                self?._isProcessingDatabaseChange = state
+            }
+        }
+        
+        guard let onWillChange = onWillChange else {
+            setProcessingState(true)
+            return
+        }
         DispatchQueue.main.async {
+            setProcessingState(false)
             onWillChange()
+            setProcessingState(true)
         }
     }
 
