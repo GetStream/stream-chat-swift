@@ -198,8 +198,7 @@ extension StateLayerDatabaseObserver where ResultType == ListResult {
             changes: changes,
             itemCreator: itemCreator,
             itemReuseKeyPaths: itemReuseKeyPaths,
-            sorting: sorting,
-            checkCancellation: { false }
+            sorting: sorting
         )
         reuseItems = items
         return items

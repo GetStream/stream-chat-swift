@@ -224,9 +224,7 @@ public class ChatChannelListController: DataController, DelegateCallable, DataSt
         ) { [weak self] result in
             switch result {
             case let .success(channels):
-                self?.channelListObserver.refreshItems { [weak self] in
-                    self?.state = .remoteDataFetched
-                }
+                self?.state = .remoteDataFetched
                 self?.hasLoadedAllPreviousChannels = channels.count < limit
                 self?.callback { completion?(nil) }
             case let .failure(error):
