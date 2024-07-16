@@ -442,7 +442,7 @@ lane :xcmetrics do |options|
       diff = (diff * 100.0 / benchmark_value_avoids_zero_division).round(2)
 
       diff_emoji =
-        if (is_frame_rate && diff < 0) || (!is_frame_rate && diff > 0)
+        if diff > 0
           '🔼'
         elsif diff.zero?
           '🟰'
