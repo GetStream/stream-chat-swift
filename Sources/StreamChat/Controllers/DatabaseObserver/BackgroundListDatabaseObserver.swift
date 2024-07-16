@@ -27,10 +27,4 @@ class BackgroundListDatabaseObserver<Item, DTO: NSManagedObject>: BackgroundData
             fetchedResultsControllerType: fetchedResultsControllerType
         )
     }
-    
-    /// Since DB updates now happen in a background thread, sometimes we need to
-    /// wait for the updates to do some action, so this function is useful for that.
-    func refreshItems(completion: @escaping () -> Void) {
-        updateItems(changes: nil, completion: completion)
-    }
 }
