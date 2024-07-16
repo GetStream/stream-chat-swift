@@ -105,6 +105,79 @@ If you build your own view components and you want to use the chat context provi
 
 You can find more details about the dependency injection approach we are using [here](../dependency-injection).
 
+### Connect User
+
+The next step is to connect the `ChatClient` with a user. In order to connect, the chat client needs an authorization token.
+
+In case the **token does not expire**, the connection step can look as follows:
+
+```swift
+// You can generate the token for this user from https://getstream.io/chat/docs/ios-swift/token_generator/?language=swift
+// make sure to use the `leia_organa` as user id and the correct API Key Secret.
+let nonExpiringToken: Token = "<# User Token Here #>"
+
+// Create the user info to connect with
+let userInfo = UserInfo(
+    id: "leia_organa",
+    name: "Leia Organa",
+    imageURL: URL(string: "https://cutt.ly/SmeFRfC")
+)
+
+// Connect the client with the static token
+chatClient.connectUser(userInfo: userInfo, token: nonExpiringToken) { error in
+ /* handle the connection error */
+}
+```
+
+:::note
+This example has the user and its token hard-coded. But the best practice is to fetch the user and generate a valid chat token on your backend infrastructure.
+:::
+
+In case of a **token with an expiration date**, the chat client should be connected by giving the token provider that is invoked for initial connection and also to obtain the new token when the current token expires:
+
+```swift
+// Create the user info to connect with
+let userInfo = UserInfo(
+    id: "leia_organa",
+    name: "Leia Organa",
+    imageURL: URL(string: "https://cutt.ly/SmeFRfC")
+)
+
+// Create a token provider that uses the backend to retrieve a new token. The token provider is called on `connect` as well as when the current token expires
+let tokenProvider: TokenProvider = { completion in
+   yourAuthService.fetchToken(for: userInfo.id, completion: completion)
+}
+
+// Connect the client with the token provider
+chatClient.connectUser(userInfo: userInfo, tokenProvider: tokenProvider) { error in
+ /* handle the connection error */
+}
+```
+
+You can find more details about tokens and authentication at the following [page](https://getstream.io/chat/docs/ios-swift/tokens_and_authentication/?language=swift).
+
+### Disconnect & Logout
+
+Whenever your users leave the chat component, you should use disconnect to stop receiving chat updates and events while using other features of your app. You disconnect by calling:
+
+```swift
+chatClient.disconnect {
+    // dismiss the current screen or go to another screen
+    print("disconnect completed")
+}
+```
+
+If your users logout form their account you should use logout instead for completely logging out from the session. You logout by calling:
+
+```swift
+chatClient.logout {
+    // dismiss the current screen or go to another screen
+    print("logout completed")
+}
+```
+
+It's important that you wait for the completion handler to be called before trying to login with a different user.
+
 ### Putting it all Together
 
 Here's the complete code needed to customize different parts of the `StreamChat` class.
@@ -132,8 +205,19 @@ let channelNamer: ChatChannelNamer = { channel, currentUserId in
 let utils = Utils(channelNamer: channelNamer)
 
 let streamChat = StreamChat(chatClient: chatClient, appearance: appearance, utils: utils)
+let nonExpiringToken: Token = "<# User Token Here #>"
+
+let userInfo = UserInfo(
+    id: "leia_organa",
+    name: "Leia Organa",
+    imageURL: URL(string: "https://cutt.ly/SmeFRfC")
+)
+
+chatClient.connectUser(userInfo: userInfo, token: nonExpiringToken) { error in
+ /* handle the connection error */
+}
 ```
 
 Please note that these are customizations for branding and utilities.
 
-Please refer to this [page] (../view-customisations) if you want to customize the views themselves and inject your views, please refer to this [page](../view-customizations).
+Please refer to this [page](../view-customisations) if you want to customize the views themselves and inject your views, please refer to this [page](../view-customizations).
