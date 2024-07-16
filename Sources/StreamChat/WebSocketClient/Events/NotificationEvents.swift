@@ -22,7 +22,7 @@ public struct NotificationMessageNewEvent: ChannelSpecificEvent, HasUnreadCount 
     public let unreadCount: UnreadCount?
 }
 
-class NotificationMessageNewEventDTO: EventDTO {
+class NotificationMessageNewEventDTO: EventDTO, @unchecked Sendable {
     let channel: ChannelDetailPayload
     let message: MessagePayload
     let unreadCount: UnreadCountPayload?
@@ -65,7 +65,7 @@ public struct NotificationMarkAllReadEvent: Event, HasUnreadCount {
     public let createdAt: Date
 }
 
-class NotificationMarkAllReadEventDTO: EventDTO {
+class NotificationMarkAllReadEventDTO: EventDTO, @unchecked Sendable {
     let user: UserPayload
     let unreadCount: UnreadCountPayload
     let createdAt: Date
@@ -135,7 +135,7 @@ public struct NotificationMarkUnreadEvent: ChannelSpecificEvent {
     public let unreadMessagesCount: Int
 }
 
-class NotificationMarkReadEventDTO: EventDTO {
+class NotificationMarkReadEventDTO: EventDTO, @unchecked Sendable {
     let user: UserPayload
     let cid: ChannelId
     let unreadCount: UnreadCountPayload
@@ -166,7 +166,7 @@ class NotificationMarkReadEventDTO: EventDTO {
     }
 }
 
-class NotificationMarkUnreadEventDTO: EventDTO {
+class NotificationMarkUnreadEventDTO: EventDTO, @unchecked Sendable {
     let user: UserPayload
     let cid: ChannelId
     let createdAt: Date
@@ -215,7 +215,7 @@ public struct NotificationMutesUpdatedEvent: Event {
     public let createdAt: Date
 }
 
-class NotificationMutesUpdatedEventDTO: EventDTO {
+class NotificationMutesUpdatedEventDTO: EventDTO, @unchecked Sendable {
     let currentUser: CurrentUserPayload
     let createdAt: Date
     let payload: EventPayload
@@ -254,7 +254,7 @@ public struct NotificationAddedToChannelEvent: ChannelSpecificEvent, HasUnreadCo
     public let createdAt: Date
 }
 
-class NotificationAddedToChannelEventDTO: EventDTO {
+class NotificationAddedToChannelEventDTO: EventDTO, @unchecked Sendable {
     let channel: ChannelDetailPayload
     let unreadCount: UnreadCountPayload?
     // This `member` field is equal to the `membership` field in channel query
@@ -301,7 +301,7 @@ public struct NotificationRemovedFromChannelEvent: ChannelSpecificEvent {
     public let createdAt: Date
 }
 
-class NotificationRemovedFromChannelEventDTO: EventDTO {
+class NotificationRemovedFromChannelEventDTO: EventDTO, @unchecked Sendable {
     let cid: ChannelId
     let user: UserPayload
     // This `member` field is equal to the `membership` field in channel query
@@ -341,7 +341,7 @@ public struct NotificationChannelMutesUpdatedEvent: Event {
     public let createdAt: Date
 }
 
-class NotificationChannelMutesUpdatedEventDTO: EventDTO {
+class NotificationChannelMutesUpdatedEventDTO: EventDTO, @unchecked Sendable {
     let currentUser: CurrentUserPayload
     let createdAt: Date
     let payload: EventPayload
@@ -377,7 +377,7 @@ public struct NotificationInvitedEvent: MemberEvent, ChannelSpecificEvent {
     public let createdAt: Date
 }
 
-class NotificationInvitedEventDTO: EventDTO {
+class NotificationInvitedEventDTO: EventDTO, @unchecked Sendable {
     let user: UserPayload
     let cid: ChannelId
     // This `member` field is equal to the `membership` field in channel query
@@ -426,7 +426,7 @@ public struct NotificationInviteAcceptedEvent: MemberEvent, ChannelSpecificEvent
     public let createdAt: Date
 }
 
-class NotificationInviteAcceptedEventDTO: EventDTO {
+class NotificationInviteAcceptedEventDTO: EventDTO, @unchecked Sendable {
     let user: UserPayload
     let channel: ChannelDetailPayload
     // This `member` field is equal to the `membership` field in channel query
@@ -476,7 +476,7 @@ public struct NotificationInviteRejectedEvent: MemberEvent, ChannelSpecificEvent
     public let createdAt: Date
 }
 
-class NotificationInviteRejectedEventDTO: EventDTO {
+class NotificationInviteRejectedEventDTO: EventDTO, @unchecked Sendable {
     let user: UserPayload
     let channel: ChannelDetailPayload
     // This `member` field is equal to the `membership` field in channel query
@@ -520,7 +520,7 @@ public struct NotificationChannelDeletedEvent: ChannelSpecificEvent {
     public let createdAt: Date
 }
 
-class NotificationChannelDeletedEventDTO: EventDTO {
+class NotificationChannelDeletedEventDTO: EventDTO, @unchecked Sendable {
     let cid: ChannelId
     let channel: ChannelDetailPayload
     let createdAt: Date

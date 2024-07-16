@@ -1156,7 +1156,7 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
     public func uploadAttachment(
         localFileURL: URL,
         type: AttachmentType,
-        progress: ((Double) -> Void)? = nil,
+        progress: (@Sendable(Double) -> Void)? = nil,
         completion: @escaping ((Result<UploadedAttachment, Error>) -> Void)
     ) {
         nonisolated(unsafe) let completion = completion
@@ -1264,7 +1264,7 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
     ///   - url: The URL of the file to be deleted.
     ///   - completion: An optional closure to be called when the delete operation is complete.
     ///                 If an error occurs during deletion, the error will be passed to this closure.
-    public func deleteFile(url: String, completion: ((Error?) -> Void)? = nil) {
+    public func deleteFile(url: String, completion: (@Sendable(Error?) -> Void)? = nil) {
         guard let cid = cid, isChannelAlreadyCreated else {
             channelModificationFailed(completion)
             return
@@ -1278,7 +1278,7 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
     ///   - url: The URL of the image to be deleted.
     ///   - completion: An optional closure to be called when the delete operation is complete.
     ///                 If an error occurs during deletion, the error will be passed to this closure.
-    public func deleteImage(url: String, completion: ((Error?) -> Void)? = nil) {
+    public func deleteImage(url: String, completion: (@Sendable(Error?) -> Void)? = nil) {
         guard let cid = cid, isChannelAlreadyCreated else {
             channelModificationFailed(completion)
             return
@@ -1623,7 +1623,7 @@ private extension ChatChannelController {
     /// This callback is called after channel is created on backend but before channel is saved to DB. When channel is created
     /// we receive backend generated cid and setting up current `ChannelController` to observe this channel DB changes.
     /// Completion will be called if DB fetch will fail after setting new `ChannelQuery`.
-    private func channelCreated(forwardErrorTo completion: ((_ error: Error?) -> Void)?) -> ((ChannelId) -> Void) {
+    private func channelCreated(forwardErrorTo completion: (@Sendable(_ error: Error?) -> Void)?) -> (@Sendable(ChannelId) -> Void) {
         return { [weak self] cid in
             guard let self = self else { return }
             self.isChannelAlreadyCreated = true
@@ -1632,7 +1632,7 @@ private extension ChatChannelController {
     }
 
     /// Helper for updating state after fetching local data.
-    private var setLocalStateBasedOnError: ((_ error: Error?) -> Void) {
+    private var setLocalStateBasedOnError: (@Sendable(_ error: Error?) -> Void) {
         return { [weak self] error in
             // Update observing state
             self?.state = error == nil ? .localDataFetched : .localDataFetchFailed(ClientError(with: error))
@@ -1739,8 +1739,8 @@ public extension ChatChannelController {
     @available(*, deprecated, message: "use uploadAttachment() instead.")
     func uploadFile(
         localFileURL: URL,
-        progress: ((Double) -> Void)? = nil,
-        completion: @escaping ((Result<URL, Error>) -> Void)
+        progress: (@Sendable(Double) -> Void)? = nil,
+        completion: @escaping (@Sendable(Result<URL, Error>) -> Void)
     ) {
         uploadAttachment(localFileURL: localFileURL, type: .file, progress: progress) { result in
             completion(result.map(\.remoteURL))
@@ -1755,7 +1755,7 @@ public extension ChatChannelController {
     @available(*, deprecated, message: "use uploadAttachment() instead.")
     func uploadImage(
         localFileURL: URL,
-        progress: ((Double) -> Void)? = nil,
+        progress: (@Sendable(Double) -> Void)? = nil,
         completion: @escaping ((Result<URL, Error>) -> Void)
     ) {
         uploadAttachment(localFileURL: localFileURL, type: .image, progress: progress) { result in

@@ -50,16 +50,14 @@ class OfflineRequestsRepository: @unchecked Sendable {
     /// - If the requests succeeds -> The request is removed from the pending ones
     /// - If the request fails with a connection error -> The request is kept to be executed once the connection is back (we are not putting it back at the queue to make sure we respect the order)
     /// - If the request fails with any other error -> We are dismissing the request, and removing it from the queue
-    func runQueuedRequests(completion: @escaping () -> Void) {
-        nonisolated(unsafe) let completion = completion
+    func runQueuedRequests(completion: @Sendable @escaping () -> Void) {
         let readContext = database.backgroundReadOnlyContext
         readContext.perform { [weak self] in
             let requests = QueuedRequestDTO.loadAllPendingRequests(context: readContext).map {
                 ($0.id, $0.endpoint, $0.date as Date)
             }
-            DispatchQueue.main.async {
-                //TODO: fix this one!
-//                self?.executeRequests(requests, completion: completion)
+            DispatchQueue.main.async { [weak self] in
+                self?.executeRequests(requests, completion: completion)
             }
         }
     }
@@ -72,10 +70,10 @@ class OfflineRequestsRepository: @unchecked Sendable {
         let group = DispatchGroup()
         for (id, endpoint, date) in requests {
             group.enter()
-            let leave = {
+            let leave = { @Sendable in
                 group.leave()
             }
-            let deleteQueuedRequestAndComplete = {
+            let deleteQueuedRequestAndComplete = { @Sendable in
                 database.write({ session in
                     session.deleteQueuedRequest(id: id)
                 }, completion: { _ in leave() })

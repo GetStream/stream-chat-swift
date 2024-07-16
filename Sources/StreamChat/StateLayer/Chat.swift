@@ -1276,7 +1276,7 @@ public class Chat: @unchecked Sendable {
     public func uploadAttachment(
         with localFileURL: URL,
         type: AttachmentType,
-        progress: ((Double) -> Void)? = nil
+        progress: (@Sendable(Double) -> Void)? = nil
     ) async throws -> UploadedAttachment {
         try await channelUpdater.uploadFile(
             type: type,

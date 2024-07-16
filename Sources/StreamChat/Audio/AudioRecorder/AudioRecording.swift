@@ -7,7 +7,7 @@ import AVFoundation
 // MARK: - Protocol
 
 /// Describes an object that can record audio
-public protocol AudioRecording {
+@MainActor public protocol AudioRecording {
     /// A static function which returns an instance of the type conforming to `AudioRecording`
     init()
 
@@ -22,7 +22,7 @@ public protocol AudioRecording {
     /// - Note: If the recording permission has been answered before
     /// the completionHandler will be called immediately, otherwise it will be called once the user has
     /// replied on the request permission prompt.
-    func beginRecording(_ completionHandler: @escaping (() -> Void))
+    func beginRecording(_ completionHandler: @escaping (@Sendable() -> Void))
 
     /// Pause the currently active recording process
     func pauseRecording()
@@ -37,7 +37,7 @@ public protocol AudioRecording {
 // MARK: - Implementation
 
 /// Definition of a class to handle audio recording
-open class StreamAudioRecorder: NSObject, AudioRecording, AVAudioRecorderDelegate, AppStateObserverDelegate {
+open class StreamAudioRecorder: NSObject, AudioRecording, AVAudioRecorderDelegate, AppStateObserverDelegate, @unchecked Sendable {
     /// Contains the configuration properties required by the AudioRecorder
     public struct Configuration {
         /// The settings that will be used to create **internally** the AVAudioRecorder instances
@@ -79,7 +79,7 @@ open class StreamAudioRecorder: NSObject, AudioRecording, AVAudioRecorderDelegat
         }
 
         /// The default Configuration that is being bused by `StreamAudioRecorder`
-        public static let `default` = Configuration(
+        nonisolated(unsafe) public static let `default` = Configuration(
             audioRecorderSettings: [
                 AVFormatIDKey: Int(kAudioFormatMPEG4AAC),
                 AVSampleRateKey: 12000,
@@ -198,15 +198,17 @@ open class StreamAudioRecorder: NSObject, AudioRecording, AVAudioRecorderDelegat
         multicastDelegate.add(additionalDelegate: subscriber)
     }
 
-    open func beginRecording(_ completionHandler: @escaping (() -> Void)) {
+    open func beginRecording(_ completionHandler: @escaping (@Sendable() -> Void)) {
         do {
             /// Enable recording on `AudioSession`
             try audioSessionConfigurator.activateRecordingSession()
 
             /// Request record permission. The first time this will be executed, it will prompt the user
             /// to allow recording.
-            audioSessionConfigurator.requestRecordPermission { [weak self] in
-                self?.handleRecordRequest($0, completionHandler: completionHandler)
+            audioSessionConfigurator.requestRecordPermission { [weak self] result in
+                DispatchQueue.main.async {
+                    self?.handleRecordRequest(result, completionHandler: completionHandler)
+                }
             }
         } catch {
             /// In case we failed to activate the `AudioSession` for recording, inform the delegates
@@ -274,47 +276,53 @@ open class StreamAudioRecorder: NSObject, AudioRecording, AVAudioRecorderDelegat
 
     // MARK: - AVAudioRecorderDelegate
 
-    open func audioRecorderDidFinishRecording(
+    nonisolated open func audioRecorderDidFinishRecording(
         _ recorder: AVAudioRecorder,
         successfully flag: Bool
     ) {
         guard flag else {
-            /// If the recording operation hasn't completed successfully, inform the delegates
-            multicastDelegate.invoke {
-                $0.audioRecorder(
-                    self,
-                    didFailWithError: AudioRecorderError.failedToSave()
-                )
+            DispatchQueue.main.async {
+                /// If the recording operation hasn't completed successfully, inform the delegates
+                self.multicastDelegate.invoke {
+                    $0.audioRecorder(
+                        self,
+                        didFailWithError: AudioRecorderError.failedToSave()
+                    )
+                }
             }
             return
         }
 
-        /// Create the location/filename where the finalised recording will be moved.
-        let newLocation = configuration
-            .audioRecorderBaseStorageURL
-            .appendingPathComponent(UUID().uuidString) // Using UUID here ensures that there will be conflicts between file names
-            .appendingPathExtension(configuration.audioRecorderFileExtension) // Use the file extension provided with configuration
-        do {
-            let data = try Data(contentsOf: recorder.url.standardizedFileURL)
-            try data.write(to: newLocation)
+        DispatchQueue.main.async {
+            /// Create the location/filename where the finalised recording will be moved.
+            let newLocation = self.configuration
+                .audioRecorderBaseStorageURL
+                .appendingPathComponent(UUID().uuidString) // Using UUID here ensures that there will be conflicts between file names
+                .appendingPathExtension(self.configuration.audioRecorderFileExtension) // Use the file extension provided with configuration
+            do {
+                let data = try Data(contentsOf: recorder.url.standardizedFileURL)
+                try data.write(to: newLocation)
 
-            /// If we managed to move the recording its new location, inform the delegates
-            multicastDelegate.invoke { $0.audioRecorder(self, didFinishRecordingAtURL: newLocation) }
-        } catch {
-            /// If we failed to move the recording its new location, inform the delegates
-            multicastDelegate.invoke { $0.audioRecorder(self, didFailWithError: error) }
+                /// If we managed to move the recording its new location, inform the delegates
+                self.multicastDelegate.invoke { $0.audioRecorder(self, didFinishRecordingAtURL: newLocation) }
+            } catch {
+                /// If we failed to move the recording its new location, inform the delegates
+                self.multicastDelegate.invoke { $0.audioRecorder(self, didFailWithError: error) }
+            }
         }
     }
 
-    open func audioRecorderBeginInterruption(
+    nonisolated open func audioRecorderBeginInterruption(
         _ recorder: AVAudioRecorder
     ) {
-        /// If an interruption occurs (e.g. a phone call) then we want to stop the recording as we don't
-        /// have the ability to pause and resume it afterwards.
-        stopRecording()
+        DispatchQueue.main.async {
+            /// If an interruption occurs (e.g. a phone call) then we want to stop the recording as we don't
+            /// have the ability to pause and resume it afterwards.
+            self.stopRecording()
+        }
     }
 
-    open func audioRecorderEndInterruption(
+    nonisolated open func audioRecorderEndInterruption(
         _ recorder: AVAudioRecorder,
         withOptions flags: Int
     ) {
@@ -324,20 +332,22 @@ open class StreamAudioRecorder: NSObject, AudioRecording, AVAudioRecorderDelegat
         /* No-op */
     }
 
-    open func audioRecorderEncodeErrorDidOccur(
+    nonisolated open func audioRecorderEncodeErrorDidOccur(
         _ recorder: AVAudioRecorder,
         error: Error?
     ) {
-        /// In case of an error we want to update the delegates with an error
-        multicastDelegate.invoke {
-            $0.audioRecorder(
-                self,
-                didFailWithError: error ?? AudioRecorderError.unknown()
-            )
-        }
+        DispatchQueue.main.async {
+            /// In case of an error we want to update the delegates with an error
+            self.multicastDelegate.invoke {
+                $0.audioRecorder(
+                    self,
+                    didFailWithError: error ?? AudioRecorderError.unknown()
+                )
+            }
 
-        /// Due to the error, we are going to stop recording and deactivate recording on the `AudioSession`
-        stopRecording()
+            /// Due to the error, we are going to stop recording and deactivate recording on the `AudioSession`
+            self.stopRecording()
+        }
     }
 
     // MARK: - AppStateObserverDelegate

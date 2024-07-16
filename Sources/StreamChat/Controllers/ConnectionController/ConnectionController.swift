@@ -17,7 +17,7 @@ public extension ChatClient {
 
 /// `ChatConnectionController` is a controller class which allows to explicitly
 /// connect/disconnect the `ChatClient` and observe connection events.
-public class ChatConnectionController: Controller, DelegateCallable, DataStoreProvider {
+public class ChatConnectionController: Controller, DelegateCallable, DataStoreProvider, @unchecked Sendable {
     public var callbackQueue: DispatchQueue = .main
 
     var _basePublishers: Any?
@@ -91,7 +91,7 @@ public extension ChatConnectionController {
     /// - Parameter completion: Called when the connection is established. If the connection fails, the completion is
     /// called with an error.
     ///
-    func connect(completion: ((Error?) -> Void)? = nil) {
+    func connect(completion: (@Sendable(Error?) -> Void)? = nil) {
         connectionRepository.connect { [weak self] error in
             self?.callback {
                 completion?(error)
@@ -132,8 +132,8 @@ public extension ChatConnectionController {
 private class ConnectionEventObserver: EventObserver {
     init(
         notificationCenter: NotificationCenter,
-        filter: ((ConnectionStatusUpdated) -> Bool)? = nil,
-        callback: @escaping (ConnectionStatusUpdated) -> Void
+        filter: (@Sendable(ConnectionStatusUpdated) -> Bool)? = nil,
+        callback: @Sendable @escaping (ConnectionStatusUpdated) -> Void
     ) {
         super.init(notificationCenter: notificationCenter, transform: { $0 as? ConnectionStatusUpdated }) {
             guard filter == nil || filter?($0) == true else { return }

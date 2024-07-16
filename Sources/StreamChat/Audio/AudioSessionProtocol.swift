@@ -22,7 +22,7 @@ protocol AudioSessionProtocol {
         options: AVAudioSession.SetActiveOptions
     ) throws
 
-    func requestRecordPermission(_ response: @escaping (Bool) -> Void)
+    func requestRecordPermission(_ response: @Sendable @escaping (Bool) -> Void)
 
     func setPreferredInput(_ inPort: AVAudioSessionPortDescription?) throws
 

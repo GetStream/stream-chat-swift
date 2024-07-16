@@ -20,7 +20,7 @@ protocol ConnectionRecoveryHandler: ConnectionStateDelegate {}
 /// We remember `lastReceivedEventDate` when state becomes `connecting` to catch the last event date
 /// before the `HealthCheck` override the `lastReceivedEventDate` with the recent date.
 ///
-final class DefaultConnectionRecoveryHandler: ConnectionRecoveryHandler {
+final class DefaultConnectionRecoveryHandler: ConnectionRecoveryHandler, @unchecked Sendable {
     // MARK: - Properties
 
     private let webSocketClient: WebSocketClient
@@ -201,12 +201,14 @@ private extension DefaultConnectionRecoveryHandler {
 
 private extension DefaultConnectionRecoveryHandler {
     func reconnectIfNeeded() {
-        guard canReconnectAutomatically else { return }
+        DispatchQueue.main.async {
+            guard self.canReconnectAutomatically else { return }
 
-        webSocketClient.connect()
+            self.webSocketClient.connect()
+        }
     }
 
-    var canReconnectAutomatically: Bool {
+    @MainActor var canReconnectAutomatically: Bool {
         guard webSocketClient.connectionState.isAutomaticReconnectionEnabled else {
             log.debug("Reconnection is not required (\(webSocketClient.connectionState))", subsystems: .webSocket)
             return false
@@ -232,9 +234,11 @@ private extension DefaultConnectionRecoveryHandler {
 
 private extension DefaultConnectionRecoveryHandler {
     func scheduleReconnectionTimerIfNeeded() {
-        guard canReconnectAutomatically else { return }
+        DispatchQueue.main.async {
+            guard self.canReconnectAutomatically else { return }
 
-        scheduleReconnectionTimer()
+            self.scheduleReconnectionTimer()
+        }
     }
 
     func scheduleReconnectionTimer() {

@@ -182,7 +182,7 @@ public extension ChatChannelWatcherListController {
     ///                 If request fails, the completion will be called with an error.
     func loadNextWatchers(limit: Int = .channelWatchersPageSize, completion: ((Error?) -> Void)? = nil) {
         nonisolated(unsafe) let completion = completion
-        var updatedQuery = query
+        nonisolated(unsafe) var updatedQuery = query
         updatedQuery.pagination = .init(pageSize: limit, offset: watchers.count)
         updater.channelWatchers(query: updatedQuery) { result in
             self.query = updatedQuery

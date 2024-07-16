@@ -204,7 +204,7 @@ class SyncRepository: @unchecked Sendable {
 
     /// Syncs the events for the active chat channels using the last sync date.
     /// - Parameter completion: A block that will get executed upon completion of the synchronization
-    func syncExistingChannelsEvents(completion: @escaping (Result<[ChannelId], SyncError>) -> Void) {
+    func syncExistingChannelsEvents(completion: @Sendable @escaping (Result<[ChannelId], SyncError>) -> Void) {
         getUser { [weak self] currentUser in
             guard let lastSyncAt = currentUser?.lastSynchedEventDate?.bridgeDate else {
                 completion(.failure(.noNeedToSync))
@@ -241,7 +241,7 @@ class SyncRepository: @unchecked Sendable {
         channelIds: [ChannelId],
         lastSyncAt: Date,
         isRecovery: Bool,
-        completion: @escaping (Result<[ChannelId], SyncError>) -> Void
+        completion: @Sendable @escaping (Result<[ChannelId], SyncError>) -> Void
     ) {
         guard lastSyncAt.numberOfDaysUntilNow < Constants.maximumDaysSinceLastSync else {
             updateLastSyncAt(with: Date()) { error in
@@ -281,7 +281,7 @@ class SyncRepository: @unchecked Sendable {
         using date: Date,
         channelIds: [ChannelId],
         isRecoveryRequest: Bool,
-        completion: @escaping (Result<[ChannelId], SyncError>) -> Void
+        completion: @Sendable @escaping (Result<[ChannelId], SyncError>) -> Void
     ) {
         log.info("Synching events for existing channels since \(date)", subsystems: .offlineSupport)
 
@@ -291,7 +291,7 @@ class SyncRepository: @unchecked Sendable {
         }
 
         let endpoint: Endpoint<MissingEventsPayload> = .missingEvents(since: date, cids: channelIds)
-        let requestCompletion: (Result<MissingEventsPayload, Error>) -> Void = { [weak self] result in
+        let requestCompletion: @Sendable(Result<MissingEventsPayload, Error>) -> Void = { [weak self] result in
             switch result {
             case let .success(payload):
                 log.info("Processing pending events. Count \(payload.eventPayloads.count)", subsystems: .offlineSupport)

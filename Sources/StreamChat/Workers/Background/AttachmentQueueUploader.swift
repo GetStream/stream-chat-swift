@@ -84,7 +84,7 @@ class AttachmentQueueUploader: Worker, @unchecked Sendable {
 
             self?.apiClient.uploadAttachment(
                 attachment,
-                progress: {
+                progress: { [weak self] in
                     self?.updateAttachmentIfNeeded(
                         attachmentId: id,
                         uploadedAttachment: nil,
@@ -92,7 +92,7 @@ class AttachmentQueueUploader: Worker, @unchecked Sendable {
                         completion: {}
                     )
                 },
-                completion: { result in
+                completion: { [weak self] result in
                     self?.updateAttachmentIfNeeded(
                         attachmentId: id,
                         uploadedAttachment: result.value,
@@ -123,7 +123,7 @@ class AttachmentQueueUploader: Worker, @unchecked Sendable {
                 }
             }
 
-            nonisolated(unsafe) let model = attachment.asAnyModel()
+            let model = attachment.asAnyModel()
             nonisolated(unsafe) let completion = completion
             DispatchQueue.main.async {
                 completion(model)

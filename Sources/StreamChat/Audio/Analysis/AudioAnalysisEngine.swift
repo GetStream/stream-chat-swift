@@ -5,7 +5,7 @@
 import AVFoundation
 
 /// An object responsible to coordinate the audio analysis pipeline
-public struct AudioAnalysisEngine {
+public struct AudioAnalysisEngine: @unchecked Sendable {
     /// The loader that will be called to when loading asset properties is required
     private let assetPropertiesLoader: AssetPropertyLoading
 
@@ -53,7 +53,7 @@ public struct AudioAnalysisEngine {
     public func waveformVisualisation(
         fromAudioURL audioURL: URL,
         for targetSamples: Int,
-        completionHandler: @escaping (Result<[Float], Error>) -> Void
+        completionHandler: @Sendable @escaping (Result<[Float], Error>) -> Void
     ) {
         let asset = AVURLAsset(
             url: audioURL,

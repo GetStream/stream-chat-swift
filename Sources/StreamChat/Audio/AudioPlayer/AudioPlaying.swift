@@ -161,7 +161,11 @@ open class StreamAudioPlayer: AudioPlaying, AppStateObserverDelegate {
         assetPropertyLoader.loadProperties(
             [.init(\.duration)],
             of: asset
-        ) { [weak self] in self?.handleDurationLoading($0) }
+        ) { [weak self] result in
+            DispatchQueue.main.async {
+                self?.handleDurationLoading(result)
+            }
+        }
     }
 
     open func play() {

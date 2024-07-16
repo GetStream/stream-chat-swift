@@ -18,7 +18,7 @@ import Foundation
 /// - Message edit retry
 /// - Start editing messages when connection status changes (offline -> online)
 ///
-class MessageEditor: Worker {
+class MessageEditor: Worker, @unchecked Sendable {
     @Atomic private var pendingMessageIDs: Set<MessageId> = []
 
     private let observer: ListDatabaseObserver<MessageDTO, MessageDTO>
@@ -79,13 +79,13 @@ class MessageEditor: Worker {
 
             let requestBody = dto.asRequestBody() as MessageRequestBody
             messageRepository?.updateMessage(withID: messageId, localState: .syncing) { _ in
-                self?.apiClient.request(endpoint: .editMessage(payload: requestBody, skipEnrichUrl: dto.skipEnrichUrl)) { apiResult in
+                self?.apiClient.request(endpoint: .editMessage(payload: requestBody, skipEnrichUrl: dto.skipEnrichUrl)) { [weak messageRepository, weak self] apiResult in
                     let newMessageState: LocalMessageState? = apiResult.error == nil ? nil : .syncingFailed
 
                     messageRepository?.updateMessage(
                         withID: messageId,
                         localState: newMessageState
-                    ) { updateResult in
+                    ) { [weak self] updateResult in
                         switch apiResult {
                         case .success:
                             self?.removeMessageIDAndContinue(messageId, result: updateResult)

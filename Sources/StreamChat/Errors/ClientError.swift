@@ -27,11 +27,9 @@ public class ClientError: Error, CustomStringConvertible, @unchecked Sendable {
     /// Retrieve the localized description for this error.
     public var localizedDescription: String { message ?? errorDescription ?? "" }
 
-    public let description: String = ""
-    // TODO: fix this
-//    public let description = "Error \(type(of: self)) in \(location?.file ?? ""):\(location?.line ?? 0)"
-//        + (localizedDescription.isEmpty ? "" : " -> ")
-//        + localizedDescription
+    public lazy var description = "Error \(type(of: self)) in \(location?.file ?? ""):\(location?.line ?? 0)"
+        + (localizedDescription.isEmpty ? "" : " -> ")
+        + localizedDescription
 
     /// A client error based on an external general error.
     /// - Parameters:

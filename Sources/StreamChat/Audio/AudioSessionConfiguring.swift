@@ -27,7 +27,7 @@ public protocol AudioSessionConfiguring {
     /// with a result, call the completionHandler to continue the flow.
     /// - Parameter completionHandler: The completion handler that will be called to continue the flow.
     func requestRecordPermission(
-        _ completionHandler: @escaping (Bool) -> Void
+        _ completionHandler: @Sendable @escaping (Bool) -> Void
     )
 }
 
@@ -49,7 +49,7 @@ open class StreamAudioSessionConfigurator: AudioSessionConfiguring {
     public func requestRecordPermission(_ completionHandler: @escaping (Bool) -> Void) { completionHandler(true) }
 }
 #else
-open class StreamAudioSessionConfigurator: AudioSessionConfiguring {
+open class StreamAudioSessionConfigurator: AudioSessionConfiguring, @unchecked Sendable {
     /// The audioSession with which the configurator will interact.
     private let audioSession: AudioSessionProtocol
 
@@ -120,10 +120,15 @@ open class StreamAudioSessionConfigurator: AudioSessionConfiguring {
     ///     with a response.
     ///     - Note: The closure's invocation will be dispatched on the MainThread.
     open func requestRecordPermission(
-        _ completionHandler: @escaping (Bool) -> Void
+        _ completionHandler: @Sendable @escaping (Bool) -> Void
     ) {
-        audioSession.requestRecordPermission { [weak self] in
-            self?.handleRecordPermissionResponse($0, completionHandler: completionHandler)
+        audioSession.requestRecordPermission { [weak self] response in
+            DispatchQueue.main.async {
+                self?.handleRecordPermissionResponse(
+                    response,
+                    completionHandler: completionHandler
+                )
+            }
         }
     }
 
@@ -139,20 +144,10 @@ open class StreamAudioSessionConfigurator: AudioSessionConfiguring {
         try audioSession.setActive(false, options: [])
     }
 
-    private func handleRecordPermissionResponse(
+    @MainActor private func handleRecordPermissionResponse(
         _ permissionGranted: Bool,
-        completionHandler: @escaping (Bool) -> Void
+        completionHandler: @Sendable @escaping (Bool) -> Void
     ) {
-        guard Thread.isMainThread else {
-            DispatchQueue.main.async { [weak self] in
-                self?.handleRecordPermissionResponse(
-                    permissionGranted,
-                    completionHandler: completionHandler
-                )
-            }
-            return
-        }
-
         if permissionGranted {
             log.debug("🎤 Request Permission: ✅", subsystems: .audioRecording)
         } else {
