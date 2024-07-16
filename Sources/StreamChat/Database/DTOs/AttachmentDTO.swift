@@ -62,7 +62,7 @@ class AttachmentDTO: NSManagedObject {
     }
 
     static func load(id: AttachmentId, context: NSManagedObjectContext) -> AttachmentDTO? {
-        load(by: id.rawValue, context: context).first
+        load(by: id.rawValue, context: context).first as? AttachmentDTO
     }
 
     static func loadOrCreate(id: AttachmentId, context: NSManagedObjectContext) -> AttachmentDTO {

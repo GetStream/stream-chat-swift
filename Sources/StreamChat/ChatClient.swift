@@ -543,7 +543,7 @@ public class ChatClient: @unchecked Sendable {
     /// Fetches the app settings and updates the ``ChatClient/appSettings``.
     /// - Parameter completion: The completion block once the app settings has finished fetching.
     public func loadAppSettings(
-        completion: ((Result<AppSettings, Error>) -> Void)? = nil
+        completion: (@Sendable (Result<AppSettings, Error>) -> Void)? = nil
     ) {
         apiClient.request(endpoint: .appSettings()) { [weak self] result in
             switch result {

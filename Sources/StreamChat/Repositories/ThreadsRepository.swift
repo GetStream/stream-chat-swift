@@ -9,7 +9,7 @@ struct ThreadListResponse: Sendable {
     var next: String?
 }
 
-class ThreadsRepository {
+class ThreadsRepository: @unchecked Sendable {
     let database: DatabaseContainer
     let apiClient: APIClient
 
@@ -20,7 +20,7 @@ class ThreadsRepository {
 
     func loadThreads(
         query: ThreadListQuery,
-        completion: @escaping (Result<ThreadListResponse, Error>) -> Void
+        completion: @Sendable @escaping (Result<ThreadListResponse, Error>) -> Void
     ) {
         apiClient.request(endpoint: .threads(query: query)) { [weak self] result in
             switch result {

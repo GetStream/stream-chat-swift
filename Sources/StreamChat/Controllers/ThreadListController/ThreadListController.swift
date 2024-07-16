@@ -107,11 +107,11 @@ public class ChatThreadListController: DataController, DelegateCallable, DataSto
     }
 
     override public func synchronize(_ completion: ((_ error: Error?) -> Void)? = nil) {
+        nonisolated(unsafe) let completion = completion
         startThreadListObserverIfNeeded()
         threadsRepository.loadThreads(
             query: query
         ) { [weak self] result in
-            nonisolated(unsafe) let completion = completion
             switch result {
             case let .success(threadListResponse):
                 self?.threadListObserver.refreshItems { [weak self] in

@@ -2,7 +2,7 @@
 // Copyright © 2024 Stream.io Inc. All rights reserved.
 //
 
-class ChannelRepository {
+class ChannelRepository: @unchecked Sendable {
     let database: DatabaseContainer
     let apiClient: APIClient
 
@@ -18,7 +18,7 @@ class ChannelRepository {
     func markRead(
         cid: ChannelId,
         userId: UserId,
-        completion: ((Error?) -> Void)? = nil
+        completion: (@Sendable(Error?) -> Void)? = nil
     ) {
         apiClient.request(endpoint: .markRead(cid: cid)) { [weak self] result in
             if let error = result.error {
@@ -47,7 +47,7 @@ class ChannelRepository {
         userId: UserId,
         from messageId: MessageId,
         lastReadMessageId: MessageId?,
-        completion: ((Result<ChatChannel, Error>) -> Void)? = nil
+        completion: (@Sendable(Result<ChatChannel, Error>) -> Void)? = nil
     ) {
         apiClient.request(
             endpoint: .markUnread(cid: cid, messageId: messageId, userId: userId)

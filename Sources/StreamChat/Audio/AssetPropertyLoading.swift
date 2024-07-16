@@ -71,7 +71,7 @@ public struct AssetPropertyLoadingCompositeError: Error {
 }
 
 /// Defines a type that represents the properties of an asset that can be loaded
-public struct AssetProperty: CustomStringConvertible {
+public struct AssetProperty: CustomStringConvertible, Sendable {
     /// The property's name
     public var name: String
 
@@ -94,23 +94,24 @@ public protocol AssetPropertyLoading {
     func loadProperties<Asset: AVAsset>(
         _ properties: [AssetProperty],
         of asset: Asset,
-        completion: @escaping (Result<Asset, AssetPropertyLoadingCompositeError>) -> Void
+        completion: @Sendable @escaping (Result<Asset, AssetPropertyLoadingCompositeError>) -> Void
     )
 }
 
 /// A concrete implementation of `AssetPropertyLoading`
-public struct StreamAssetPropertyLoader: AssetPropertyLoading {
+public struct StreamAssetPropertyLoader: AssetPropertyLoading, @unchecked Sendable {
     public init() {}
 
     public func loadProperties<Asset: AVAsset>(
         _ properties: [AssetProperty],
         of asset: Asset,
-        completion: @escaping (Result<Asset, AssetPropertyLoadingCompositeError>) -> Void
+        completion: @Sendable @escaping (Result<Asset, AssetPropertyLoadingCompositeError>) -> Void
     ) {
         // it's worth noting here that according to the documentation, the completion
         // handler will be invoked only once, regardless of the number of
         // properties we are loading.
         // https://developer.apple.com/documentation/avfoundation/avasynchronouskeyvalueloading/1387321-loadvaluesasynchronously
+        nonisolated(unsafe) let asset = asset
         asset.loadValuesAsynchronously(forKeys: properties.map(\.name)) {
             handlePropertiesLoadingResult(
                 properties,

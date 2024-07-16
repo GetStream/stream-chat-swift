@@ -4,7 +4,7 @@
 
 import Foundation
 
-class PollsRepository {
+class PollsRepository: @unchecked Sendable {
     let database: DatabaseContainer
     let apiClient: APIClient
     
@@ -23,7 +23,7 @@ class PollsRepository {
         votingVisibility: String?,
         options: [PollOption]?,
         custom: [String: RawJSON]?,
-        completion: @escaping (Result<PollPayload, Error>) -> Void
+        completion: @Sendable @escaping (Result<PollPayload, Error>) -> Void
     ) {
         let request = CreatePollRequestBody(
             name: name,
@@ -54,7 +54,7 @@ class PollsRepository {
         currentUserId: String?,
         query: PollVoteListQuery?,
         deleteExistingVotes: [PollVote],
-        completion: ((Error?) -> Void)? = nil
+        completion: (@Sendable(Error?) -> Void)? = nil
     ) {
         guard let optionId, !optionId.isEmpty else {
             // No optimistic updates for answers.
@@ -98,6 +98,8 @@ class PollsRepository {
                 _ = try? session.removePollVote(with: toDelete.id, pollId: toDelete.pollId)
             }
         } completion: { [weak self] error in
+            guard let self else { return }
+            let pollVote = pollVote
             if let error {
                 completion?(error)
                 return
@@ -110,7 +112,7 @@ class PollsRepository {
                     option: nil
                 )
             )
-            self?.apiClient.request(
+            self.apiClient.request(
                 endpoint: .castPollVote(
                     messageId: messageId,
                     pollId: pollId,
@@ -118,7 +120,7 @@ class PollsRepository {
                 )
             ) {
                 if $0.isError, $0.error?.isBackendErrorWith400StatusCode == false, let pollVote {
-                    self?.database.write { session in
+                    self.database.write { session in
                         _ = try? session.removePollVote(with: pollVote.id, pollId: pollVote.pollId)
                         for vote in deleteExistingVotes {
                             _ = try? session.savePollVote(
@@ -141,7 +143,7 @@ class PollsRepository {
         messageId: MessageId,
         pollId: String,
         voteId: String,
-        completion: ((Error?) -> Void)? = nil
+        completion: (@Sendable(Error?) -> Void)? = nil
     ) {
         var pollVote: PollVote?
         var filterHash: String?
@@ -150,8 +152,11 @@ class PollsRepository {
             filterHash = voteDto?.queries?.first?.filterHash
             pollVote = try voteDto?.asModel()
         } completion: { [weak self] error in
+            let pollVote = pollVote
+            let filterHash = filterHash
+            guard let self else { return }
             if error == nil {
-                self?.apiClient.request(
+                self.apiClient.request(
                     endpoint: .removePollVote(
                         messageId: messageId,
                         pollId: pollId,
@@ -159,7 +164,7 @@ class PollsRepository {
                     )
                 ) {
                     if $0.error != nil, $0.error?.isBackendNotFound404StatusCode == false, let pollVote {
-                        self?.database.write { session in
+                        self.database.write { session in
                             _ = try session.savePollVote(
                                 voteId: voteId,
                                 pollId: pollId,
@@ -181,7 +186,7 @@ class PollsRepository {
     
     func closePoll(
         pollId: String,
-        completion: ((Error?) -> Void)? = nil
+        completion: (@Sendable(Error?) -> Void)? = nil
     ) {
         let request = UpdatePollPartialRequestBody(
             pollId: pollId,
@@ -199,7 +204,7 @@ class PollsRepository {
         text: String,
         position: Int? = nil,
         custom: [String: RawJSON]? = nil,
-        completion: ((Error?) -> Void)? = nil
+        completion: (@Sendable(Error?) -> Void)? = nil
     ) {
         let request = CreatePollOptionRequestBody(
             pollId: pollId,
@@ -217,7 +222,7 @@ class PollsRepository {
     
     func queryPollVotes(
         query: PollVoteListQuery,
-        completion: ((Result<VotePaginationResponse, Error>) -> Void)? = nil
+        completion: (@Sendable(Result<VotePaginationResponse, Error>) -> Void)? = nil
     ) {
         apiClient.request(
             endpoint: .queryPollVotes(pollId: query.pollId, query: query)
@@ -247,7 +252,7 @@ class PollsRepository {
         prev: String?,
         sort: [SortParamRequest?],
         filter: [String: RawJSON]?,
-        completion: ((Result<PollVoteListResponse, Error>) -> Void)? = nil
+        completion: (@Sendable(Result<PollVoteListResponse, Error>) -> Void)? = nil
     ) {
         let request = QueryPollVotesRequestBody(
             pollId: pollId,

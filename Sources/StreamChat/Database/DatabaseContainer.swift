@@ -2,7 +2,7 @@
 // Copyright © 2024 Stream.io Inc. All rights reserved.
 //
 
-import CoreData
+@preconcurrency import CoreData
 import Foundation
 
 /// Convenience subclass of `NSPersistentContainer` allowing easier setup of the database stack.
@@ -83,7 +83,7 @@ class DatabaseContainer: NSPersistentContainer {
     private let deletedMessageVisibility: ChatClientConfig.DeletedMessageVisibility?
     private let shouldShowShadowedMessages: Bool?
 
-    static var cachedModels = [String: NSManagedObjectModel]()
+    nonisolated(unsafe) static var cachedModels = [String: NSManagedObjectModel]()
 
     /// All `NSManagedObjectContext`s this container owns.
     private(set) lazy var allContext: [NSManagedObjectContext] = [viewContext, backgroundReadOnlyContext, stateLayerContext, writableContext]
@@ -278,7 +278,7 @@ class DatabaseContainer: NSPersistentContainer {
         return try await withCheckedThrowingContinuation { continuation in
             context.perform {
                 do {
-                    let results = try actions(context)
+                    nonisolated(unsafe) let results = try actions(context)
                     if context.hasChanges {
                         assertionFailure("State layer context is read only, but calling actions() created changes")
                     }

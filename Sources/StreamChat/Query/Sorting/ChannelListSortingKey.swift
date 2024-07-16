@@ -68,7 +68,7 @@ public struct ChannelListSortingKey: SortingKey, Equatable {
         .init(keyPath: keyPath, localKey: nil, remoteKey: key)
     }
 
-    let keyPath: PartialKeyPath<ChatChannel>
+    nonisolated(unsafe) let keyPath: PartialKeyPath<ChatChannel>
     let localKey: String?
     let remoteKey: String
     var requiresRuntimeSorting: Bool {
@@ -94,7 +94,7 @@ extension ChannelListSortingKey: CustomDebugStringConvertible {
 }
 
 extension ChannelListSortingKey {
-    static let defaultSortDescriptor: NSSortDescriptor = {
+    nonisolated(unsafe) static let defaultSortDescriptor: NSSortDescriptor = {
         let dateKeyPath: KeyPath<ChannelDTO, DBDate> = \ChannelDTO.defaultSortingAt
         return .init(keyPath: dateKeyPath, ascending: false)
     }()

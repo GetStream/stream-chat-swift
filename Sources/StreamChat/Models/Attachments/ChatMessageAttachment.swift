@@ -7,7 +7,7 @@ import Foundation
 /// A type representing a chat message attachment.
 /// `ChatMessageAttachment<Payload>` is an immutable snapshot of message attachment at the given time.
 @dynamicMemberLookup
-public struct ChatMessageAttachment<Payload> {
+public struct ChatMessageAttachment<Payload>: @unchecked Sendable {
     /// The attachment identifier.
     public let id: AttachmentId
 

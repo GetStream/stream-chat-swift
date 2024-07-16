@@ -12,7 +12,7 @@ enum MessageRepositoryError: LocalizedError {
     case failedToSendMessage(Error)
 }
 
-class MessageRepository {
+class MessageRepository: @unchecked Sendable {
     let database: DatabaseContainer
     let apiClient: APIClient
 
@@ -23,7 +23,7 @@ class MessageRepository {
 
     func sendMessage(
         with messageId: MessageId,
-        completion: @escaping (Result<ChatMessage, MessageRepositoryError>) -> Void
+        completion: @Sendable @escaping (Result<ChatMessage, MessageRepositoryError>) -> Void
     ) {
         // Check the message with the given id is still in the DB.
         database.backgroundReadOnlyContext.perform { [weak self] in
@@ -55,9 +55,10 @@ class MessageRepository {
                 let messageDTO = $0.message(id: messageId)
                 messageDTO?.localMessageState = .sending
             }, completion: { error in
+                guard let self else { return }
                 if let error = error {
                     log.error("Error changing localMessageState message with id \(messageId) to `sending`: \(error)")
-                    self?.markMessageAsFailedToSend(id: messageId) {
+                    self.markMessageAsFailedToSend(id: messageId) {
                         completion(.failure(.failedToSendMessage(error)))
                     }
                     return
@@ -69,10 +70,10 @@ class MessageRepository {
                     skipPush: skipPush,
                     skipEnrichUrl: skipEnrichUrl
                 )
-                self?.apiClient.request(endpoint: endpoint) {
+                self.apiClient.request(endpoint: endpoint) {
                     switch $0 {
                     case let .success(payload):
-                        self?.saveSuccessfullySentMessage(cid: cid, message: payload.message) { result in
+                        self.saveSuccessfullySentMessage(cid: cid, message: payload.message) { result in
                             switch result {
                             case let .success(message):
                                 completion(.success(message))
@@ -82,7 +83,7 @@ class MessageRepository {
                         }
 
                     case let .failure(error):
-                        self?.handleSendingMessageError(error, messageId: messageId, completion: completion)
+                        self.handleSendingMessageError(error, messageId: messageId, completion: completion)
                     }
                 }
             })
@@ -186,7 +187,7 @@ class MessageRepository {
     ///   - messageId: The message identifier.
     ///   - store: A boolean indicating if the message should be stored to database or should only be retrieved
     ///   - completion: The completion. Will be called with an error if something goes wrong, otherwise - will be called with `nil`.
-    func getMessage(cid: ChannelId, messageId: MessageId, store: Bool, completion: ((Result<ChatMessage, Error>) -> Void)? = nil) {
+    func getMessage(cid: ChannelId, messageId: MessageId, store: Bool, completion: (@Sendable(Result<ChatMessage, Error>) -> Void)? = nil) {
         let endpoint: Endpoint<MessagePayload.Boxed> = .getMessage(messageId: messageId)
         apiClient.request(endpoint: endpoint) {
             switch $0 {

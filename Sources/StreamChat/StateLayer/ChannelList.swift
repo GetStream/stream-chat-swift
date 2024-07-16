@@ -5,14 +5,14 @@
 import Foundation
 
 /// An object which represents a list of `ChatChannel`s for the specified  channel query.
-public class ChannelList {
+public class ChannelList: @unchecked Sendable {
     private let channelListUpdater: ChannelListUpdater
     private let stateBuilder: StateBuilder<ChannelListState>
     let query: ChannelListQuery
     
     init(
         query: ChannelListQuery,
-        dynamicFilter: ((ChatChannel) -> Bool)?,
+        dynamicFilter: (@Sendable(ChatChannel) -> Bool)?,
         client: ChatClient,
         environment: Environment = .init()
     ) {
@@ -81,7 +81,7 @@ public class ChannelList {
 }
 
 extension ChannelList {
-    struct Environment {
+    struct Environment: @unchecked Sendable {
         var channelListUpdater: (
             _ database: DatabaseContainer,
             _ apiClient: APIClient

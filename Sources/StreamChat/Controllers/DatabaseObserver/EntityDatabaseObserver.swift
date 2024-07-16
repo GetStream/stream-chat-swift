@@ -75,7 +75,7 @@ extension EntityChange {
     }
 }
 
-class EntityDatabaseObserverWrapper<Item, DTO: NSManagedObject> {
+class EntityDatabaseObserverWrapper<Item: Sendable, DTO: NSManagedObject> {
     private var foreground: EntityDatabaseObserver<Item, DTO>?
     private var background: BackgroundEntityDatabaseObserver<Item, DTO>?
     let isBackground: Bool
@@ -297,7 +297,7 @@ private extension ListChangeAggregator {
 
 /// Observes changes of a single entity specified using an `NSFetchRequest`in the provided `NSManagedObjectContext`.
 /// This observation is performed on the background
-class BackgroundEntityDatabaseObserver<Item, DTO: NSManagedObject>: BackgroundDatabaseObserver<Item, DTO> {
+class BackgroundEntityDatabaseObserver<Item: Sendable, DTO: NSManagedObject>: BackgroundDatabaseObserver<Item, DTO> {
     var item: Item? {
         rawItems.first
     }

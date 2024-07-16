@@ -11,7 +11,7 @@ class CallRepository {
         self.apiClient = apiClient
     }
 
-    func getCallToken(callId: String, completion: @escaping (Result<CallToken, Error>) -> Void) {
+    func getCallToken(callId: String, completion: @Sendable @escaping (Result<CallToken, Error>) -> Void) {
         apiClient.request(endpoint: .getCallToken(callId: callId)) { result in
             switch result {
             case let .failure(error):
@@ -29,7 +29,7 @@ class CallRepository {
         }
     }
 
-    func createCall(in cid: ChannelId, callId: String, type: String, completion: @escaping (Result<CallWithToken, Error>) -> Void) {
+    func createCall(in cid: ChannelId, callId: String, type: String, completion: @Sendable @escaping (Result<CallWithToken, Error>) -> Void) {
         apiClient.request(endpoint: .createCall(cid: cid, callId: callId, type: type)) { result in
             switch result {
             case let .success(payload):

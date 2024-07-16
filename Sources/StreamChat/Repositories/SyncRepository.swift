@@ -23,7 +23,7 @@ enum SyncError: Error {
 
 /// This class is in charge of the synchronization of our local storage with the remote.
 /// When executing a sync, it will remove outdated elements, and will refresh the content to always show the latest data.
-class SyncRepository {
+class SyncRepository: @unchecked Sendable {
     private enum Constants {
         static let maximumDaysSinceLastSync = 30
     }
@@ -181,6 +181,7 @@ class SyncRepository {
             operations.append(ExecutePendingOfflineActions(offlineRequestsRepository: offlineRequestsRepository))
         }
 
+        nonisolated(unsafe) let completion = completion
         operations.append(BlockOperation(block: { [weak self] in
             log.info("Finished recovering offline state", subsystems: .offlineSupport)
             DispatchQueue.main.async {

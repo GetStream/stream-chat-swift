@@ -5,7 +5,7 @@
 import Foundation
 
 /// A final class that holds the context for the ongoing operations during the sync process
-final class SyncContext {
+final class SyncContext: @unchecked Sendable {
     let lastSyncAt: Date
     var localChannelIds: [ChannelId] = []
     var synchedChannelIds: Set<ChannelId> = Set()

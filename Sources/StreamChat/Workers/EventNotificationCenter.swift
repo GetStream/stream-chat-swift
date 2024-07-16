@@ -61,6 +61,8 @@ class EventNotificationCenter: NotificationCenter {
                 return
             }
 
+            nonisolated(unsafe) let completion = completion
+            let eventsToPost = eventsToPost
             self.eventPostingQueue.async {
                 eventsToPost.forEach { self.post(Notification(newEventReceived: $0, sender: self)) }
                 completion?()

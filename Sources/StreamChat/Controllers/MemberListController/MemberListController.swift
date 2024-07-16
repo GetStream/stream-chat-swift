@@ -144,7 +144,7 @@ public extension ChatChannelMemberListController {
         limit: Int = 25,
         completion: ((Error?) -> Void)? = nil
     ) {
-        var updatedQuery = query
+        nonisolated(unsafe) var updatedQuery = query
         updatedQuery.pagination = Pagination(pageSize: limit, offset: members.count)
         nonisolated(unsafe) let completion = completion
         memberListUpdater.load(updatedQuery) { result in

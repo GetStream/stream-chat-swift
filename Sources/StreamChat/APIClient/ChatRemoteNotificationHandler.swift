@@ -66,7 +66,7 @@ public class ChatPushNotificationInfo {
     }
 }
 
-public class ChatRemoteNotificationHandler {
+public class ChatRemoteNotificationHandler: @unchecked Sendable {
     var client: ChatClient
     var content: UNNotificationContent
     let chatCategoryIdentifiers: Set<String> = ["stream.chat", "MESSAGE_NEW"]
@@ -84,7 +84,7 @@ public class ChatRemoteNotificationHandler {
         extensionLifecycle = client.extensionLifecycle
     }
 
-    public func handleNotification(completion: @escaping (ChatPushNotificationContent) -> Void) -> Bool {
+    public func handleNotification(completion: @Sendable @escaping (ChatPushNotificationContent) -> Void) -> Bool {
         guard chatCategoryIdentifiers.contains(content.categoryIdentifier) else {
             return false
         }
@@ -93,7 +93,7 @@ public class ChatRemoteNotificationHandler {
         return true
     }
 
-    private func getContent(completion: @escaping (ChatPushNotificationContent) -> Void) {
+    private func getContent(completion: @Sendable @escaping (ChatPushNotificationContent) -> Void) {
         guard let payload = content.userInfo["stream"], let dict = payload as? [String: String] else {
             return completion(.unknown(UnknownNotificationContent(content: content)))
         }
@@ -119,7 +119,7 @@ public class ChatRemoteNotificationHandler {
         }
     }
 
-    private func getMessageAndSync(cid: ChannelId, messageId: String, completion: @escaping (ChatMessage?, ChatChannel?) -> Void) {
+    private func getMessageAndSync(cid: ChannelId, messageId: String, completion: @Sendable @escaping (ChatMessage?, ChatChannel?) -> Void) {
         let database = self.database
         messageRepository.getMessage(
             cid: cid,

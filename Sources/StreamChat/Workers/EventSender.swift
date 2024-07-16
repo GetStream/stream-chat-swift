@@ -15,7 +15,7 @@ class EventSender: Worker {
     func sendEvent<Payload: CustomEventPayload>(
         _ payload: Payload,
         to cid: ChannelId,
-        completion: ((Error?) -> Void)? = nil
+        completion: (@Sendable(Error?) -> Void)? = nil
     ) {
         apiClient.request(endpoint: .sendEvent(payload, cid: cid)) {
             completion?($0.error)

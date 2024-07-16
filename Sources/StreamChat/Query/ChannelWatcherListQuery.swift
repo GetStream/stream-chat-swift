@@ -8,7 +8,7 @@ import Foundation
 ///
 /// Learn more about watchers in our documentation [here](https://getstream.io/chat/docs/ios/watch_channel/?language=swift)
 ///
-public struct ChannelWatcherListQuery: Encodable {
+public struct ChannelWatcherListQuery: Encodable, Sendable {
     private enum CodingKeys: String, CodingKey {
         case watchers
     }

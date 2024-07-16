@@ -5,7 +5,7 @@
 import CoreData
 
 /// Makes a channels query call to the backend and updates the local storage with the results.
-class ChannelListUpdater: Worker {
+class ChannelListUpdater: Worker, @unchecked Sendable {
     /// Makes a channels query call to the backend and updates the local storage with the results.
     ///
     /// - Parameters:
@@ -14,7 +14,7 @@ class ChannelListUpdater: Worker {
     ///
     func update(
         channelListQuery: ChannelListQuery,
-        completion: ((Result<[ChatChannel], Error>) -> Void)? = nil
+        completion: (@Sendable(Result<[ChatChannel], Error>) -> Void)? = nil
     ) {
         fetch(channelListQuery: channelListQuery) { [weak self] in
             switch $0 {
@@ -46,12 +46,12 @@ class ChannelListUpdater: Worker {
         pageSize: Int,
         watchedAndSynchedChannelIds: Set<ChannelId>,
         synchedChannelIds: Set<ChannelId>,
-        completion: @escaping (Result<(synchedAndWatched: [ChatChannel], unwanted: Set<ChannelId>), Error>) -> Void
+        completion: @Sendable @escaping (Result<(synchedAndWatched: [ChatChannel], unwanted: Set<ChannelId>), Error>) -> Void
     ) {
-        var updatedQuery = query
+        nonisolated(unsafe) var updatedQuery = query
         updatedQuery.pagination = .init(pageSize: pageSize, offset: 0)
 
-        var unwantedCids = Set<ChannelId>()
+        nonisolated(unsafe) var unwantedCids = Set<ChannelId>()
         // Fetches the channels matching the query, and stores them in the database.
         apiClient.recoveryRequest(endpoint: .channels(query: query)) { [weak self] result in
             switch result {
@@ -106,7 +106,7 @@ class ChannelListUpdater: Worker {
     /// - Parameters:
     ///   - ids: The channel ids.
     ///   - completion: The callback once the request is complete.
-    func startWatchingChannels(withIds ids: [ChannelId], completion: ((Error?) -> Void)? = nil) {
+    func startWatchingChannels(withIds ids: [ChannelId], completion: (@Sendable(Error?) -> Void)? = nil) {
         var query = ChannelListQuery(filter: .in(.cid, values: ids))
         query.options = .all
 
@@ -131,7 +131,7 @@ class ChannelListUpdater: Worker {
     ///   - completion: The completion to call with the results.
     func fetch(
         channelListQuery: ChannelListQuery,
-        completion: @escaping (Result<ChannelListPayload, Error>) -> Void
+        completion: @Sendable @escaping (Result<ChannelListPayload, Error>) -> Void
     ) {
         apiClient.request(
             endpoint: .channels(query: channelListQuery),
@@ -141,7 +141,7 @@ class ChannelListUpdater: Worker {
 
     /// Marks all channels for a user as read.
     /// - Parameter completion: Called when the API call is finished. Called with `Error` if the remote update fails.
-    func markAllRead(completion: ((Error?) -> Void)? = nil) {
+    func markAllRead(completion: (@Sendable(Error?) -> Void)? = nil) {
         apiClient.request(endpoint: .markAllRead()) {
             completion?($0.error)
         }
@@ -193,7 +193,7 @@ private extension ChannelListUpdater {
         payload: ChannelListPayload,
         query: ChannelListQuery,
         initialActions: ((DatabaseSession) -> Void)? = nil,
-        completion: ((Result<[ChatChannel], Error>) -> Void)? = nil
+        completion: (@Sendable(Result<[ChatChannel], Error>) -> Void)? = nil
     ) {
         var channels: [ChatChannel] = []
         database.write { session in

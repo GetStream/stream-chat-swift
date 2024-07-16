@@ -7,8 +7,8 @@ import Foundation
 final class MemberEventObserver: EventObserver {
     init(
         notificationCenter: NotificationCenter,
-        filter: @escaping (MemberEvent) -> Bool,
-        callback: @escaping (MemberEvent) -> Void
+        filter: @Sendable @escaping (MemberEvent) -> Bool,
+        callback: @Sendable @escaping (MemberEvent) -> Void
     ) {
         super.init(notificationCenter: notificationCenter, transform: { $0 as? MemberEvent }) {
             guard filter($0) else { return }
@@ -18,7 +18,7 @@ final class MemberEventObserver: EventObserver {
 }
 
 extension MemberEventObserver {
-    convenience init(notificationCenter: NotificationCenter, callback: @escaping (MemberEvent) -> Void) {
+    convenience init(notificationCenter: NotificationCenter, callback: @Sendable @escaping (MemberEvent) -> Void) {
         self.init(
             notificationCenter: notificationCenter,
             filter: { _ in true },
@@ -26,7 +26,7 @@ extension MemberEventObserver {
         )
     }
 
-    convenience init(notificationCenter: NotificationCenter, cid: ChannelId, callback: @escaping (MemberEvent) -> Void) {
+    convenience init(notificationCenter: NotificationCenter, cid: ChannelId, callback: @Sendable @escaping (MemberEvent) -> Void) {
         self.init(
             notificationCenter: notificationCenter,
             filter: { $0.cid == cid },

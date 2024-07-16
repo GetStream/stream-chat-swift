@@ -145,7 +145,7 @@ extension InternetConnection.Status {
 // MARK: - Internet Connection Monitor
 
 extension InternetConnection {
-    class Monitor: InternetConnectionMonitor {
+    class Monitor: InternetConnectionMonitor, @unchecked Sendable {
         private var monitor: NWPathMonitor?
         private let queue = DispatchQueue(label: "io.getstream.internet-monitor")
 

@@ -4,7 +4,7 @@
 
 import Foundation
 
-struct Endpoint<ResponseType: Decodable>: Codable {
+struct Endpoint<ResponseType: Decodable>: Codable, @unchecked Sendable {
     let path: EndpointPath
     let method: EndpointMethod
     let queryItems: Encodable?

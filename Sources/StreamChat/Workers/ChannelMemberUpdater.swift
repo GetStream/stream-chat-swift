@@ -20,7 +20,7 @@ class ChannelMemberUpdater: Worker {
         shadow: Bool,
         for timeoutInMinutes: Int? = nil,
         reason: String? = nil,
-        completion: ((Error?) -> Void)? = nil
+        completion: (@Sendable(Error?) -> Void)? = nil
     ) {
         apiClient.request(
             endpoint: .banMember(userId, cid: cid, shadow: shadow, timeoutInMinutes: timeoutInMinutes, reason: reason)
@@ -37,7 +37,7 @@ class ChannelMemberUpdater: Worker {
     func unbanMember(
         _ userId: UserId,
         in cid: ChannelId,
-        completion: ((Error?) -> Void)? = nil
+        completion: (@Sendable(Error?) -> Void)? = nil
     ) {
         apiClient.request(endpoint: .unbanMember(userId, cid: cid)) {
             completion?($0.error)

@@ -5,7 +5,7 @@
 import Foundation
 
 /// An object allowing making request to Stream Chat servers.
-class APIClient {
+class APIClient: @unchecked Sendable {
     /// The URL session used for all requests.
     let session: URLSession
 
@@ -74,7 +74,7 @@ class APIClient {
     ///   - completion: Called when the networking request is finished.
     func request<Response: Decodable>(
         endpoint: Endpoint<Response>,
-        completion: @escaping (Result<Response, Error>) -> Void
+        completion: @Sendable @escaping (Result<Response, Error>) -> Void
     ) {
         let requestOperation = operation(endpoint: endpoint, isRecoveryOperation: false, completion: completion)
         operationQueue.addOperation(requestOperation)
@@ -87,7 +87,7 @@ class APIClient {
     ///   - completion: Called when the networking request is finished.
     func recoveryRequest<Response: Decodable>(
         endpoint: Endpoint<Response>,
-        completion: @escaping (Result<Response, Error>) -> Void
+        completion: @Sendable @escaping (Result<Response, Error>) -> Void
     ) {
         if !isInRecoveryMode {
             log.assertionFailure("We should not call this method if not in recovery mode")
@@ -105,7 +105,7 @@ class APIClient {
     ///   - completion: Called when the networking request is finished.
     func unmanagedRequest<Response: Decodable>(
         endpoint: Endpoint<Response>,
-        completion: @escaping (Result<Response, Error>) -> Void
+        completion: @Sendable @escaping (Result<Response, Error>) -> Void
     ) {
         OperationQueue.main.addOperation(
             unmanagedOperation(endpoint: endpoint, completion: completion)
@@ -115,7 +115,7 @@ class APIClient {
     private func operation<Response: Decodable>(
         endpoint: Endpoint<Response>,
         isRecoveryOperation: Bool,
-        completion: @escaping (Result<Response, Error>) -> Void
+        completion: @Sendable @escaping (Result<Response, Error>) -> Void
     ) -> AsyncOperation {
         AsyncOperation(maxRetries: maximumRequestRetries) { [weak self] operation, done in
             guard let self = self else {
@@ -184,7 +184,7 @@ class APIClient {
 
     private func unmanagedOperation<Response: Decodable>(
         endpoint: Endpoint<Response>,
-        completion: @escaping (Result<Response, Error>) -> Void
+        completion: @Sendable @escaping (Result<Response, Error>) -> Void
     ) -> AsyncOperation {
         AsyncOperation(maxRetries: maximumRequestRetries) { [weak self] operation, done in
             self?.executeRequest(endpoint: endpoint) { [weak self] result in
@@ -240,6 +240,7 @@ class APIClient {
                 return
             }
 
+            nonisolated(unsafe) let completion = completion
             let task = self.session.dataTask(with: urlRequest) { [decoder = self.decoder] (data, response, error) in
                 do {
                     let decodedResponse: Response = try decoder.decodeRequestResponse(
@@ -291,13 +292,14 @@ class APIClient {
 
     func uploadAttachment(
         _ attachment: AnyChatMessageAttachment,
-        progress: ((Double) -> Void)?,
-        completion: @escaping (Result<UploadedAttachment, Error>) -> Void
+        progress: (@Sendable(Double) -> Void)?,
+        completion: @Sendable @escaping (Result<UploadedAttachment, Error>) -> Void
     ) {
         let uploadOperation = AsyncOperation(maxRetries: maximumRequestRetries) { [weak self] operation, done in
-            self?.attachmentUploader.upload(attachment, progress: progress) { result in
+            guard let self else { return }
+            self.attachmentUploader.upload(attachment, progress: progress) { result in
                 switch result {
-                case let .failure(error) where self?.isConnectionError(error) == true:
+                case let .failure(error) where self.isConnectionError(error) == true:
                     // Do not retry unless its a connection problem and we still have retries left
                     if operation.canRetry {
                         done(.retry)

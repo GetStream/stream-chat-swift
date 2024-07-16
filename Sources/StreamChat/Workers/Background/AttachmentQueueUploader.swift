@@ -19,7 +19,7 @@ import Foundation
 /// - Upload attachments in order declared by `locallyCreatedAt`
 /// - Start uploading attachments when connection status changes (offline -> online)
 ///
-class AttachmentQueueUploader: Worker {
+class AttachmentQueueUploader: Worker, @unchecked Sendable {
     @Atomic private var pendingAttachmentIDs: Set<AttachmentId> = []
 
     private let observer: ListDatabaseObserver<AttachmentDTO, AttachmentDTO>
@@ -123,8 +123,8 @@ class AttachmentQueueUploader: Worker {
                 }
             }
 
-            let model = attachment.asAnyModel()
-
+            nonisolated(unsafe) let model = attachment.asAnyModel()
+            nonisolated(unsafe) let completion = completion
             DispatchQueue.main.async {
                 completion(model)
             }

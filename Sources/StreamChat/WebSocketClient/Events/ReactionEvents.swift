@@ -22,7 +22,7 @@ public struct ReactionNewEvent: ChannelSpecificEvent {
     public let createdAt: Date
 }
 
-class ReactionNewEventDTO: EventDTO {
+class ReactionNewEventDTO: EventDTO, @unchecked Sendable {
     let user: UserPayload
     let cid: ChannelId
     let message: MessagePayload
@@ -78,7 +78,7 @@ public struct ReactionUpdatedEvent: ChannelSpecificEvent {
     public let createdAt: Date
 }
 
-class ReactionUpdatedEventDTO: EventDTO {
+class ReactionUpdatedEventDTO: EventDTO, @unchecked Sendable {
     let user: UserPayload
     let cid: ChannelId
     let message: MessagePayload
@@ -134,7 +134,7 @@ public struct ReactionDeletedEvent: ChannelSpecificEvent {
     public let createdAt: Date
 }
 
-class ReactionDeletedEventDTO: EventDTO {
+class ReactionDeletedEventDTO: EventDTO, @unchecked Sendable {
     let user: UserPayload
     let cid: ChannelId
     let message: MessagePayload

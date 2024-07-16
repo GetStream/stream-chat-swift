@@ -197,7 +197,7 @@ public class ChatChannelListController: DataController, DelegateCallable, DataSt
     func resetQuery(
         watchedAndSynchedChannelIds: Set<ChannelId>,
         synchedChannelIds: Set<ChannelId>,
-        completion: @escaping (Result<(synchedAndWatched: [ChatChannel], unwanted: Set<ChannelId>), Error>) -> Void
+        completion: @Sendable @escaping (Result<(synchedAndWatched: [ChatChannel], unwanted: Set<ChannelId>), Error>) -> Void
     ) {
         let pageSize = query.pagination.pageSize
         worker.resetChannelsQuery(

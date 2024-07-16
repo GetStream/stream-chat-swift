@@ -4,7 +4,7 @@
 
 import Foundation
 
-public typealias TokenProvider = @Sendable (@escaping (Result<Token, Error>) -> Void) -> Void
+public typealias TokenProvider = @Sendable (@Sendable @escaping (Result<Token, Error>) -> Void) -> Void
 
 enum EnvironmentState {
     case firstConnection
@@ -358,7 +358,7 @@ class AuthenticationRepository: @unchecked Sendable {
             return
         }
 
-        let onTokenReceived: (Token) -> Void = { [weak self, weak connectionRepository] token in
+        let onTokenReceived: @Sendable(Token) -> Void = { [weak self, weak connectionRepository] token in
             self?.isGettingToken = false
             self?.prepareEnvironment(userInfo: userInfo, newToken: token)
             // We manually change the `connectionStatus` for passive client
@@ -368,7 +368,7 @@ class AuthenticationRepository: @unchecked Sendable {
             connectionRepository?.connect(completion: onCompletion)
         }
 
-        let retryFetchIfPossible: (Error?) -> Void = { [weak self] error in
+        let retryFetchIfPossible: @Sendable(Error?) -> Void = { [weak self] error in
             guard let self = self else { return }
             self.tokenQueue.async(flags: .barrier) {
                 self._consecutiveRefreshFailures += 1
@@ -399,7 +399,7 @@ class AuthenticationRepository: @unchecked Sendable {
 
     private func fetchGuestToken(
         userInfo: UserInfo,
-        completion: @escaping (Result<Token, Error>) -> Void
+        completion: @Sendable @escaping (Result<Token, Error>) -> Void
     ) {
         let endpoint: Endpoint<GuestUserTokenPayload> = .guestUserToken(
             userId: userInfo.id,

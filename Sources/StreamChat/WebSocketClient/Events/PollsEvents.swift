@@ -57,7 +57,7 @@ public struct PollClosedEvent: Event {
     public let createdAt: Date?
 }
 
-struct PollClosedEventDTO: PollEventDTO {
+struct PollClosedEventDTO: PollEventDTO, @unchecked Sendable {
     var poll: PollPayload?
     var payload: EventPayload
 
@@ -81,7 +81,7 @@ public struct PollCreatedEvent: Event {
     public let createdAt: Date?
 }
 
-struct PollCreatedEventDTO: PollEventDTO {
+struct PollCreatedEventDTO: PollEventDTO, @unchecked Sendable {
     var poll: PollPayload?
     var payload: EventPayload
 
@@ -105,7 +105,7 @@ public struct PollDeletedEvent: Event {
     public let createdAt: Date?
 }
 
-struct PollDeletedEventDTO: PollEventDTO {
+struct PollDeletedEventDTO: PollEventDTO, @unchecked Sendable {
     var poll: PollPayload?
     var payload: EventPayload
 
@@ -129,7 +129,7 @@ public struct PollUpdatedEvent: Event {
     public let createdAt: Date?
 }
 
-struct PollUpdatedEventDTO: PollEventDTO {
+struct PollUpdatedEventDTO: PollEventDTO, @unchecked Sendable {
     var poll: PollPayload?
     var payload: EventPayload
 
@@ -156,7 +156,7 @@ public struct PollVoteCastedEvent: Event {
     public let createdAt: Date?
 }
 
-struct PollVoteCastedEventDTO: PollVoteEventDTO {
+struct PollVoteCastedEventDTO: PollVoteEventDTO, @unchecked Sendable {
     var vote: PollVotePayload?
     var poll: PollPayload?
     var payload: EventPayload
@@ -185,7 +185,7 @@ public struct PollVoteChangedEvent: Event {
     public let createdAt: Date?
 }
 
-struct PollVoteChangedEventDTO: PollVoteEventDTO {
+struct PollVoteChangedEventDTO: PollVoteEventDTO, @unchecked Sendable {
     var vote: PollVotePayload?
     var poll: PollPayload?
     var payload: EventPayload
@@ -214,7 +214,7 @@ public struct PollVoteRemovedEvent: Event {
     public let createdAt: Date?
 }
 
-struct PollVoteRemovedEventDTO: PollVoteEventDTO {
+struct PollVoteRemovedEventDTO: PollVoteEventDTO, @unchecked Sendable {
     var vote: PollVotePayload?
     var poll: PollPayload?
     var payload: EventPayload

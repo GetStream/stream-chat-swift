@@ -22,7 +22,7 @@ extension Endpoint {
 
 /// OfflineRequestsRepository handles both the enqueuing and the execution of offline requests when needed.
 /// When running the queued requests, it basically passes the requests on to the APIClient, and waits for its result.
-class OfflineRequestsRepository {
+class OfflineRequestsRepository: @unchecked Sendable {
     enum Constants {
         static let secondsInHour: Double = 3600
     }
@@ -51,13 +51,15 @@ class OfflineRequestsRepository {
     /// - If the request fails with a connection error -> The request is kept to be executed once the connection is back (we are not putting it back at the queue to make sure we respect the order)
     /// - If the request fails with any other error -> We are dismissing the request, and removing it from the queue
     func runQueuedRequests(completion: @escaping () -> Void) {
+        nonisolated(unsafe) let completion = completion
         let readContext = database.backgroundReadOnlyContext
         readContext.perform { [weak self] in
             let requests = QueuedRequestDTO.loadAllPendingRequests(context: readContext).map {
                 ($0.id, $0.endpoint, $0.date as Date)
             }
             DispatchQueue.main.async {
-                self?.executeRequests(requests, completion: completion)
+                //TODO: fix this one!
+//                self?.executeRequests(requests, completion: completion)
             }
         }
     }
@@ -165,7 +167,8 @@ class OfflineRequestsRepository {
             completion?()
             return
         }
-
+        
+        nonisolated(unsafe) let completion = completion
         let date = Date()
         retryQueue.async { [database] in
             guard let data = try? JSONEncoder.stream.encode(endpoint) else {

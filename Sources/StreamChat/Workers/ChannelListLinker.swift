@@ -11,7 +11,7 @@ import Foundation
 ///   so we also analyse if it should be added to the current query.
 /// - Channel is updated: We only check if we should remove it from the current query.
 ///   We don't try to add it to the current query to not mess with pagination.
-final class ChannelListLinker {
+final class ChannelListLinker: @unchecked Sendable {
     private let clientConfig: ChatClientConfig
     private let databaseContainer: DatabaseContainer
     private var eventObservers = [EventObserver]()

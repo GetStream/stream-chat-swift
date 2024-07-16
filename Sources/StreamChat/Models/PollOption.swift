@@ -5,7 +5,7 @@
 import Foundation
 
 /// The model for an option in a poll.
-public struct PollOption: Equatable {
+public struct PollOption: Equatable, Sendable {
     /// The unique identifier of the poll option.
     public let id: String
     

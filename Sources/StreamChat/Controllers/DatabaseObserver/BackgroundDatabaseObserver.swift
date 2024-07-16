@@ -5,7 +5,7 @@
 import CoreData
 import Foundation
 
-class BackgroundDatabaseObserver<Item, DTO: NSManagedObject> {
+class BackgroundDatabaseObserver<Item: Sendable, DTO: NSManagedObject>: @unchecked Sendable {
     /// Called with the aggregated changes after the internal `NSFetchResultsController` calls `controllerWillChangeContent`
     /// on its delegate.
     var onWillChange: (() -> Void)?
@@ -129,7 +129,7 @@ class BackgroundDatabaseObserver<Item, DTO: NSManagedObject> {
         }
     }
 
-    private func notifyDidChange(changes: [ListChange<Item>], onCompletion: @escaping () -> Void) {
+    private func notifyDidChange(changes: [ListChange<Item>], onCompletion: @Sendable @escaping () -> Void) {
         guard let onDidChange = onDidChange else {
             onCompletion()
             return
@@ -147,7 +147,7 @@ class BackgroundDatabaseObserver<Item, DTO: NSManagedObject> {
 
     /// This method will add a new operation to the `processingQueue`, where operations are executed one-by-one.
     /// The operation added to the queue will start the process of getting new results for the observer.
-    func updateItems(changes: [ListChange<Item>]?, completion: (() -> Void)? = nil) {
+    func updateItems(changes: [ListChange<Item>]?, completion: (@Sendable() -> Void)? = nil) {
         let operation = AsyncOperation { [weak self] _, done in
             guard let self = self else {
                 done(.continue)
@@ -155,6 +155,7 @@ class BackgroundDatabaseObserver<Item, DTO: NSManagedObject> {
                 return
             }
 
+            nonisolated(unsafe) let done = done
             self.frc.managedObjectContext.perform {
                 self.processItems(changes) {
                     done(.continue)
@@ -169,7 +170,7 @@ class BackgroundDatabaseObserver<Item, DTO: NSManagedObject> {
     /// This method will process  the currently fetched objects, and will notify the listeners.
     /// When the process is done, it also updates the `_items`, which is the locally cached list of mapped items
     /// This method will be called through an operation on `processingQueue`, which will serialize the execution until `onCompletion` is called.
-    private func processItems(_ changes: [ListChange<Item>]?, onCompletion: @escaping () -> Void) {
+    private func processItems(_ changes: [ListChange<Item>]?, onCompletion: @Sendable @escaping () -> Void) {
         mapItems(changes) { [weak self] items in
             guard let self = self else {
                 onCompletion()

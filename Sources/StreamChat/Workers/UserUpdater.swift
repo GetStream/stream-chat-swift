@@ -6,13 +6,13 @@ import CoreData
 import Foundation
 
 /// Makes user-related calls to the backend and updates the local storage with the results.
-class UserUpdater: Worker {
+class UserUpdater: Worker, @unchecked Sendable {
     /// Mutes the user with the provided `userId`.
     /// - Parameters:
     ///   - userId: The user identifier.
     ///   - completion: Called when the API call is finished. Called with `Error` if the remote update fails.
     ///
-    func muteUser(_ userId: UserId, completion: ((Error?) -> Void)? = nil) {
+    func muteUser(_ userId: UserId, completion: (@Sendable(Error?) -> Void)? = nil) {
         apiClient.request(endpoint: .muteUser(userId)) {
             completion?($0.error)
         }
@@ -23,7 +23,7 @@ class UserUpdater: Worker {
     ///   - userId: The user identifier.
     ///   - completion: Called when the API call is finished. Called with `Error` if the remote update fails.
     ///
-    func unmuteUser(_ userId: UserId, completion: ((Error?) -> Void)? = nil) {
+    func unmuteUser(_ userId: UserId, completion: (@Sendable(Error?) -> Void)? = nil) {
         apiClient.request(endpoint: .unmuteUser(userId)) {
             completion?($0.error)
         }
@@ -34,7 +34,7 @@ class UserUpdater: Worker {
     ///   - userId: The user identifier.
     ///   - completion: Called when the API call is finished. Called with `Error` if the remote update fails.
     ///
-    func blockUser(_ userId: UserId, completion: ((Error?) -> Void)? = nil) {
+    func blockUser(_ userId: UserId, completion: (@Sendable(Error?) -> Void)? = nil) {
         apiClient.request(endpoint: .blockUser(userId)) {
             switch $0 {
             case .success:
@@ -65,7 +65,7 @@ class UserUpdater: Worker {
     ///   - userId: The user identifier.
     ///   - completion: Called when the API call is finished. Called with `Error` if the remote update fails.
     ///
-    func unblockUser(_ userId: UserId, completion: ((Error?) -> Void)? = nil) {
+    func unblockUser(_ userId: UserId, completion: (@Sendable(Error?) -> Void)? = nil) {
         apiClient.request(endpoint: .unblockUser(userId)) {
             switch $0 {
             case .success:
@@ -97,7 +97,7 @@ class UserUpdater: Worker {
     ///   - userId: The user identifier
     ///   - completion: Called when the API call is finished. Called with `Error` if the remote update fails.
     ///
-    func loadUser(_ userId: UserId, completion: ((Error?) -> Void)? = nil) {
+    func loadUser(_ userId: UserId, completion: (@Sendable(Error?) -> Void)? = nil) {
         apiClient
             .request(endpoint: .users(query: .user(withID: userId))) { (result: Result<UserListPayload, Error>) in
                 switch result {
@@ -134,7 +134,7 @@ class UserUpdater: Worker {
     ///   - userId: The identifier of a user that should be flagged or unflagged.
     ///   - completion: Called when the API call is finished. Called with `Error` if the remote update fails.
     ///
-    func flagUser(_ flag: Bool, with userId: UserId, completion: ((Error?) -> Void)? = nil) {
+    func flagUser(_ flag: Bool, with userId: UserId, completion: (@Sendable(Error?) -> Void)? = nil) {
         let endpoint: Endpoint<FlagUserPayload> = .flagUser(flag, with: userId)
         apiClient.request(endpoint: endpoint) {
             switch $0 {

@@ -10,8 +10,8 @@ class EventObserver {
 
     init<EventType>(
         notificationCenter: NotificationCenter,
-        transform: @escaping (Event) -> EventType?,
-        callback: @escaping (EventType) -> Void
+        transform: @Sendable  @escaping (Event) -> EventType?,
+        callback: @Sendable @escaping (EventType) -> Void
     ) {
         let observer = notificationCenter.addObserver(forName: .NewEventReceived, object: nil, queue: nil) {
             guard let event = $0.event.flatMap(transform) else { return }
