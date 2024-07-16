@@ -21,7 +21,7 @@ extension DeviceDTO {
     ///   - context: The context used to fetch `DeviceDTO`
     ///
     static func load(id: String, context: NSManagedObjectContext) -> DeviceDTO? {
-        load(by: id, context: context).first
+        load(by: id, context: context).first as? DeviceDTO
     }
 
     /// If a Device with the given id exists in the context, fetches and returns it. Otherwise creates a new

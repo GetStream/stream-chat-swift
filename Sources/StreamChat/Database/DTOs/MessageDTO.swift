@@ -437,7 +437,7 @@ class MessageDTO: NSManagedObject {
     }
 
     static func load(id: String, context: NSManagedObjectContext) -> MessageDTO? {
-        load(by: id, context: context).first
+        load(by: id, context: context).first as? MessageDTO
     }
 
     static func loadOrCreate(id: String, context: NSManagedObjectContext, cache: PreWarmedCache?) -> MessageDTO {
