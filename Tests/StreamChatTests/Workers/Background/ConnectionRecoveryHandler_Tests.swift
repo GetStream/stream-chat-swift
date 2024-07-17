@@ -14,6 +14,7 @@ final class ConnectionRecoveryHandler_Tests: XCTestCase {
     var mockBackgroundTaskScheduler: BackgroundTaskScheduler_Mock!
     var mockRetryStrategy: RetryStrategy_Spy!
     var mockTime: VirtualTime { VirtualTimeTimer.time }
+    var mockReconnectionTimeoutHandler: ScheduledStreamTimer_Mock!
 
     override func setUp() {
         super.setUp()
@@ -24,6 +25,7 @@ final class ConnectionRecoveryHandler_Tests: XCTestCase {
         mockBackgroundTaskScheduler = BackgroundTaskScheduler_Mock()
         mockRetryStrategy = RetryStrategy_Spy()
         mockInternetConnection = .init(notificationCenter: mockChatClient.eventNotificationCenter)
+        mockReconnectionTimeoutHandler = ScheduledStreamTimer_Mock()
     }
 
     override func tearDown() {
@@ -593,7 +595,8 @@ private extension ConnectionRecoveryHandler_Tests {
             internetConnection: mockInternetConnection,
             reconnectionStrategy: mockRetryStrategy,
             reconnectionTimerType: VirtualTimeTimer.self,
-            keepConnectionAliveInBackground: keepConnectionAliveInBackground
+            keepConnectionAliveInBackground: keepConnectionAliveInBackground,
+            reconnectionTimeoutHandler: nil
         )
 
         // Make a handler a delegate to simlulate real life chain when
