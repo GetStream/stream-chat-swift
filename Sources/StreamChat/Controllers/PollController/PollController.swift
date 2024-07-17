@@ -141,11 +141,9 @@ public class PollController: DataController, DelegateCallable, DataStoreProvider
         eventsController.delegate = self
     }
     
-    override public func synchronize(_ completion: ((_ error: Error?) -> Void)? = nil) {
+    override public func synchronize(_ completion: (@Sendable(_ error: Error?) -> Void)? = nil) {
         startObserversIfNeeded()
 
-        nonisolated(unsafe) let completion = completion
-        
         pollsRepository.queryPollVotes(query: ownVotesQuery) { [weak self] result in
             guard let self else { return }
             if let error = result.error {
@@ -166,7 +164,7 @@ public class PollController: DataController, DelegateCallable, DataStoreProvider
     public func castPollVote(
         answerText: String?,
         optionId: String?,
-        completion: ((Error?) -> Void)? = nil
+        completion: (@Sendable(Error?) -> Void)? = nil
     ) {
         if answerText == nil && optionId == nil {
             completion?(ClientError.InvalidInput())
@@ -182,7 +180,6 @@ public class PollController: DataController, DelegateCallable, DataStoreProvider
             }
         }
         
-        nonisolated(unsafe) let completion = completion
         pollsRepository.castPollVote(
             messageId: messageId,
             pollId: pollId,
@@ -206,9 +203,8 @@ public class PollController: DataController, DelegateCallable, DataStoreProvider
     ///   - completion: A closure to be called upon completion, with an optional `Error` if something went wrong.
     public func removePollVote(
         voteId: String,
-        completion: ((Error?) -> Void)? = nil
+        completion: (@Sendable(Error?) -> Void)? = nil
     ) {
-        nonisolated(unsafe) let completion = completion
         pollsRepository.removePollVote(
             messageId: messageId,
             pollId: pollId,
@@ -225,8 +221,7 @@ public class PollController: DataController, DelegateCallable, DataStoreProvider
     ///
     /// - Parameters:
     ///   - completion: A closure to be called upon completion, with an optional `Error` if something went wrong.
-    public func closePoll(completion: ((Error?) -> Void)? = nil) {
-        nonisolated(unsafe) let completion = completion
+    public func closePoll(completion: (@Sendable(Error?) -> Void)? = nil) {
         pollsRepository.closePoll(pollId: pollId, completion: { [weak self] result in
             self?.callback {
                 completion?(result)
@@ -245,9 +240,8 @@ public class PollController: DataController, DelegateCallable, DataStoreProvider
         text: String,
         position: Int? = nil,
         extraData: [String: RawJSON]? = nil,
-        completion: ((Error?) -> Void)? = nil
+        completion: (@Sendable(Error?) -> Void)? = nil
     ) {
-        nonisolated(unsafe) let completion = completion
         pollsRepository.suggestPollOption(
             pollId: pollId,
             text: text,

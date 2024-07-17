@@ -33,7 +33,6 @@ class ReactionListUpdater: Worker, @unchecked Sendable {
     func loadReactions(query: ReactionListQuery) async throws -> [ChatMessageReaction] {
         try await withCheckedThrowingContinuation { continuation in
             loadReactions(query: query) { completion in
-                nonisolated(unsafe) let completion = completion
                 continuation.resume(with: completion)
             }
         }

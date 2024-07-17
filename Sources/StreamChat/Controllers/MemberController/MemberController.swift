@@ -97,11 +97,9 @@ public class ChatChannelMemberController: DataController, DelegateCallable, Data
         self.environment = environment
     }
 
-    override public func synchronize(_ completion: ((_ error: Error?) -> Void)? = nil) {
+    override public func synchronize(_ completion: (@Sendable(_ error: Error?) -> Void)? = nil) {
         startObservingIfNeeded()
 
-        nonisolated(unsafe) let completion = completion
-        
         if case let .localDataFetchFailed(error) = state {
             callback { completion?(error) }
             return
@@ -165,9 +163,8 @@ public extension ChatChannelMemberController {
     func ban(
         for timeoutInMinutes: Int? = nil,
         reason: String? = nil,
-        completion: ((Error?) -> Void)? = nil
+        completion: (@Sendable(Error?) -> Void)? = nil
     ) {
-        nonisolated(unsafe) let completion = completion
         memberUpdater.banMember(
             userId,
             in: cid,
@@ -191,9 +188,8 @@ public extension ChatChannelMemberController {
     func shadowBan(
         for timeoutInMinutes: Int? = nil,
         reason: String? = nil,
-        completion: ((Error?) -> Void)? = nil
+        completion: (@Sendable(Error?) -> Void)? = nil
     ) {
-        nonisolated(unsafe) let completion = completion
         memberUpdater.banMember(
             userId,
             in: cid,
@@ -210,8 +206,7 @@ public extension ChatChannelMemberController {
     /// Unbans the channel member.
     /// - Parameter completion: The completion. Will be called on a **callbackQueue** when the network request is finished.
     ///                         If request fails, the completion will be called with an error.
-    func unban(completion: ((Error?) -> Void)? = nil) {
-        nonisolated(unsafe) let completion = completion
+    func unban(completion: (@Sendable(Error?) -> Void)? = nil) {
         memberUpdater.unbanMember(userId, in: cid) { error in
             self.callback {
                 completion?(error)

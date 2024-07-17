@@ -160,13 +160,12 @@ class OfflineRequestsRepository: @unchecked Sendable {
         }
     }
 
-    func queueOfflineRequest(endpoint: DataEndpoint, completion: (() -> Void)? = nil) {
+    func queueOfflineRequest(endpoint: DataEndpoint, completion: (@Sendable() -> Void)? = nil) {
         guard endpoint.shouldBeQueuedOffline else {
             completion?()
             return
         }
         
-        nonisolated(unsafe) let completion = completion
         let date = Date()
         retryQueue.async { [database] in
             guard let data = try? JSONEncoder.stream.encode(endpoint) else {

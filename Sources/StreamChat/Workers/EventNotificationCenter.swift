@@ -33,7 +33,7 @@ class EventNotificationCenter: NotificationCenter {
         middlewares.append(middleware)
     }
 
-    func process(_ events: [Event], postNotifications: Bool = true, completion: (() -> Void)? = nil) {
+    func process(_ events: [Event], postNotifications: Bool = true, completion: (@Sendable() -> Void)? = nil) {
         let processingEventsDebugMessage: () -> String = {
             let eventNames = events.map(\.name)
             return "Processing Events: \(eventNames)"
@@ -61,7 +61,6 @@ class EventNotificationCenter: NotificationCenter {
                 return
             }
 
-            nonisolated(unsafe) let completion = completion
             let eventsToPost = eventsToPost
             self.eventPostingQueue.async {
                 eventsToPost.forEach { self.post(Notification(newEventReceived: $0, sender: self)) }
@@ -72,7 +71,7 @@ class EventNotificationCenter: NotificationCenter {
 }
 
 extension EventNotificationCenter {
-    func process(_ event: Event, postNotification: Bool = true, completion: (() -> Void)? = nil) {
+    func process(_ event: Event, postNotification: Bool = true, completion: (@Sendable() -> Void)? = nil) {
         process([event], postNotifications: postNotification, completion: completion)
     }
 }

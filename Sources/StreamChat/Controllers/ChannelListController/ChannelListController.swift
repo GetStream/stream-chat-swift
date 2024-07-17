@@ -142,7 +142,7 @@ public class ChatChannelListController: DataController, DelegateCallable, DataSt
         super.init()
     }
 
-    override public func synchronize(_ completion: ((_ error: Error?) -> Void)? = nil) {
+    override public func synchronize(_ completion: (@Sendable(_ error: Error?) -> Void)? = nil) {
         startChannelListObserverIfNeeded()
         channelListLinker.start(with: client.eventNotificationCenter)
         client.startTrackingChannelListController(self)
@@ -160,14 +160,13 @@ public class ChatChannelListController: DataController, DelegateCallable, DataSt
     ///
     public func loadNextChannels(
         limit: Int? = nil,
-        completion: ((Error?) -> Void)? = nil
+        completion: (@Sendable(Error?) -> Void)? = nil
     ) {
         if hasLoadedAllPreviousChannels {
             completion?(nil)
             return
         }
 
-        nonisolated(unsafe) let completion = completion
         let limit = limit ?? query.pagination.pageSize
         var updatedQuery = query
         updatedQuery.pagination = Pagination(pageSize: limit, offset: channels.count)
@@ -183,8 +182,7 @@ public class ChatChannelListController: DataController, DelegateCallable, DataSt
     }
 
     @available(*, deprecated, message: "Please use `markAllRead` available in `CurrentChatUserController`")
-    public func markAllRead(completion: ((Error?) -> Void)? = nil) {
-        nonisolated(unsafe) let completion = completion
+    public func markAllRead(completion: (@Sendable(Error?) -> Void)? = nil) {
         worker.markAllRead { error in
             self.callback {
                 completion?(error)
@@ -219,9 +217,8 @@ public class ChatChannelListController: DataController, DelegateCallable, DataSt
     // MARK: - Helpers
 
     private func updateChannelList(
-        _ completion: ((_ error: Error?) -> Void)? = nil
+        _ completion: (@Sendable(_ error: Error?) -> Void)? = nil
     ) {
-        nonisolated(unsafe) let completion = completion
         let limit = query.pagination.pageSize
         worker.update(
             channelListQuery: query

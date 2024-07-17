@@ -19,7 +19,7 @@ protocol RequestEncoder {
     ///   - completion: Called when the encoded `URLRequest` is ready. Called with en `Error` if the encoding fails.
     func encodeRequest<ResponsePayload: Decodable>(
         for endpoint: Endpoint<ResponsePayload>,
-        completion: @escaping (Result<URLRequest, Error>) -> Void
+        completion: @Sendable @escaping (Result<URLRequest, Error>) -> Void
     )
 
     /// Creates a new `RequestEncoder`.
@@ -45,7 +45,7 @@ extension RequestEncoder {
             subsystems: .httpRequests
         )
 
-        var result: Result<URLRequest, Error> = .failure(
+        nonisolated(unsafe) var result: Result<URLRequest, Error> = .failure(
             ClientError("Unexpected error. The result was not changed after encoding the request.")
         )
 
@@ -70,7 +70,7 @@ extension RequestEncoder {
 }
 
 /// The default implementation of `RequestEncoder`.
-class DefaultRequestEncoder: RequestEncoder {
+class DefaultRequestEncoder: RequestEncoder, @unchecked Sendable {
     let baseURL: URL
     let apiKey: APIKey
 
@@ -87,7 +87,7 @@ class DefaultRequestEncoder: RequestEncoder {
 
     func encodeRequest<ResponsePayload: Decodable>(
         for endpoint: Endpoint<ResponsePayload>,
-        completion: @escaping (Result<URLRequest, Error>) -> Void
+        completion: @Sendable @escaping (Result<URLRequest, Error>) -> Void
     ) {
         var request: URLRequest
 
@@ -111,10 +111,10 @@ class DefaultRequestEncoder: RequestEncoder {
             return
         }
 
-        addAuthorizationHeader(request: request, endpoint: endpoint) {
+        addAuthorizationHeader(request: request, endpoint: endpoint) { [weak self] in
             switch $0 {
             case let .success(requestWithAuth):
-                self.addConnectionIdIfNeeded(
+                self?.addConnectionIdIfNeeded(
                     request: requestWithAuth,
                     endpoint: endpoint,
                     completion: completion
@@ -135,7 +135,7 @@ class DefaultRequestEncoder: RequestEncoder {
     private func addAuthorizationHeader<T: Decodable>(
         request: URLRequest,
         endpoint: Endpoint<T>,
-        completion: @escaping (Result<URLRequest, Error>) -> Void
+        completion: @Sendable @escaping (Result<URLRequest, Error>) -> Void
     ) {
         guard endpoint.requiresToken else {
             var updatedRequest = request
@@ -151,7 +151,6 @@ class DefaultRequestEncoder: RequestEncoder {
         )
 
         let missingTokenError = ClientError.MissingToken("Failed to get `token`, request can't be created.")
-        nonisolated(unsafe) let completion = completion
         connectionDetailsProviderDelegate?.provideToken(timeout: waiterTimeout) {
             switch $0 {
             case let .success(token):
@@ -175,7 +174,7 @@ class DefaultRequestEncoder: RequestEncoder {
     private func addConnectionIdIfNeeded<T: Decodable>(
         request: URLRequest,
         endpoint: Endpoint<T>,
-        completion: @escaping (Result<URLRequest, Error>) -> Void
+        completion: @Sendable @escaping (Result<URLRequest, Error>) -> Void
     ) {
         guard endpoint.requiresConnectionId else {
             completion(.success(request))
@@ -191,7 +190,6 @@ class DefaultRequestEncoder: RequestEncoder {
         let missingConnectionIdError = ClientError.MissingConnectionId(
             "Failed to get `connectionId`, request can't be created."
         )
-        nonisolated(unsafe) let completion = completion
         connectionDetailsProviderDelegate?.provideConnectionId(timeout: waiterTimeout) {
             do {
                 switch $0 {

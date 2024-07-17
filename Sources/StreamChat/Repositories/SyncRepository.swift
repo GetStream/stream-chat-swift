@@ -91,7 +91,7 @@ class SyncRepository: @unchecked Sendable {
     
     // MARK: -
 
-    func syncLocalState(completion: @escaping () -> Void) {
+    func syncLocalState(completion: @Sendable @escaping () -> Void) {
         cancelRecoveryFlow()
 
         getUser { [weak self] in
@@ -124,7 +124,7 @@ class SyncRepository: @unchecked Sendable {
     /// 5. Run offline actions requests
     ///
     /// - Parameter completion: A block that will get executed upon completion of the synchronization
-    private func syncLocalState(lastSyncAt: Date, completion: @escaping () -> Void) {
+    private func syncLocalState(lastSyncAt: Date, completion: @Sendable @escaping () -> Void) {
         log.info("Starting to recover offline state", subsystems: .offlineSupport)
         let context = SyncContext(lastSyncAt: lastSyncAt)
         var operations: [Operation] = []
@@ -181,7 +181,6 @@ class SyncRepository: @unchecked Sendable {
             operations.append(ExecutePendingOfflineActions(offlineRequestsRepository: offlineRequestsRepository))
         }
 
-        nonisolated(unsafe) let completion = completion
         operations.append(BlockOperation(block: { [weak self] in
             log.info("Finished recovering offline state", subsystems: .offlineSupport)
             DispatchQueue.main.async {
@@ -295,7 +294,7 @@ class SyncRepository: @unchecked Sendable {
             switch result {
             case let .success(payload):
                 log.info("Processing pending events. Count \(payload.eventPayloads.count)", subsystems: .offlineSupport)
-                self?.processMissingEventsPayload(payload) {
+                self?.processMissingEventsPayload(payload) { [weak self] in
                     self?.updateLastSyncAt(with: payload.eventPayloads.last?.createdAt ?? date, completion: { error in
                         if let error = error {
                             completion(.failure(error))
@@ -337,7 +336,7 @@ class SyncRepository: @unchecked Sendable {
         }, completion: completion)
     }
 
-    private func processMissingEventsPayload(_ payload: MissingEventsPayload, completion: @escaping () -> Void) {
+    private func processMissingEventsPayload(_ payload: MissingEventsPayload, completion: @Sendable @escaping () -> Void) {
         eventNotificationCenter.process(payload.eventPayloads.asEvents(), postNotifications: false) {
             log.info(
                 "Successfully processed pending events. Count \(payload.eventPayloads.count)",

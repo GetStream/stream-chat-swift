@@ -16,7 +16,7 @@ class APIClient: @unchecked Sendable {
     let decoder: RequestDecoder
 
     /// Used for reobtaining tokens when they expire and API client receives token expiration error
-    var tokenRefresher: ((@escaping () -> Void) -> Void)?
+    var tokenRefresher: ((@Sendable @escaping () -> Void) -> Void)?
 
     /// Used to queue requests that happen while we are offline
     var queueOfflineRequest: QueueOfflineRequestBlock?
@@ -214,7 +214,7 @@ class APIClient: @unchecked Sendable {
     ///   - completion: Called when the networking request is finished.
     private func executeRequest<Response: Decodable>(
         endpoint: Endpoint<Response>,
-        completion: @escaping (Result<Response, Error>) -> Void
+        completion: @Sendable @escaping (Result<Response, Error>) -> Void
     ) {
         encoder.encodeRequest(for: endpoint) { [weak self] (requestResult) in
             let urlRequest: URLRequest
@@ -240,7 +240,6 @@ class APIClient: @unchecked Sendable {
                 return
             }
 
-            nonisolated(unsafe) let completion = completion
             let task = self.session.dataTask(with: urlRequest) { [decoder = self.decoder] (data, response, error) in
                 do {
                     let decodedResponse: Response = try decoder.decodeRequestResponse(
@@ -271,7 +270,7 @@ class APIClient: @unchecked Sendable {
         }
     }
 
-    private func refreshToken(completion: @escaping (ClientError) -> Void) {
+    private func refreshToken(completion: @Sendable @escaping (ClientError) -> Void) {
         guard !isRefreshingToken else {
             completion(ClientError.RefreshingToken())
             return

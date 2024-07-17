@@ -621,8 +621,7 @@ public class ChatClient: @unchecked Sendable {
 
     /// Starts the process to  refresh the token
     /// - Parameter completion: A block to be executed when the process is completed. Contains an error if something went wrong
-    private func refreshToken(completion: ((Error?) -> Void)?) {
-        nonisolated(unsafe) let completion = completion
+    private func refreshToken(completion: (@Sendable(Error?) -> Void)?) {
         authenticationRepository.refreshToken {
             completion?($0)
         }

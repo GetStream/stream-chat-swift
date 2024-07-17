@@ -89,11 +89,9 @@ public class ChatUserController: DataController, DelegateCallable, DataStoreProv
         self.environment = environment
     }
 
-    override public func synchronize(_ completion: ((_ error: Error?) -> Void)? = nil) {
+    override public func synchronize(_ completion: (@Sendable(_ error: Error?) -> Void)? = nil) {
         startObservingIfNeeded()
 
-        nonisolated(unsafe) let completion = completion
-        
         if case let .localDataFetchFailed(error) = state {
             callback { completion?(error) }
             return
@@ -143,8 +141,7 @@ public extension ChatUserController {
     /// Mutes the user this controller manages.
     /// - Parameter completion: The completion. Will be called on a **callbackQueue** when the network request is finished.
     ///                         If request fails, the completion will be called with an error.
-    func mute(completion: ((Error?) -> Void)? = nil) {
-        nonisolated(unsafe) let completion = completion
+    func mute(completion: (@Sendable(Error?) -> Void)? = nil) {
         userUpdater.muteUser(userId) { error in
             self.callback {
                 completion?(error)
@@ -155,8 +152,7 @@ public extension ChatUserController {
     /// Unmutes the user this controller manages.
     /// - Parameter completion: The completion. Will be called on a **callbackQueue** when the network request is finished.
     ///
-    func unmute(completion: ((Error?) -> Void)? = nil) {
-        nonisolated(unsafe) let completion = completion
+    func unmute(completion: (@Sendable(Error?) -> Void)? = nil) {
         userUpdater.unmuteUser(userId) { error in
             self.callback {
                 completion?(error)
@@ -167,8 +163,7 @@ public extension ChatUserController {
     /// Blocks the user this controller manages.
     /// - Parameter completion: The completion. Will be called on a **callbackQueue** when the network request is finished.
     ///                         If request fails, the completion will be called with an error.
-    func block(completion: ((Error?) -> Void)? = nil) {
-        nonisolated(unsafe) let completion = completion
+    func block(completion: (@Sendable(Error?) -> Void)? = nil) {
         userUpdater.blockUser(userId) { error in
             self.callback {
                 completion?(error)
@@ -179,8 +174,7 @@ public extension ChatUserController {
     /// Unblocks the user this controller manages.
     /// - Parameter completion: The completion. Will be called on a **callbackQueue** when the network request is finished.
     ///
-    func unblock(completion: ((Error?) -> Void)? = nil) {
-        nonisolated(unsafe) let completion = completion
+    func unblock(completion: (@Sendable(Error?) -> Void)? = nil) {
         userUpdater.unblockUser(userId) { error in
             self.callback {
                 completion?(error)
@@ -191,8 +185,7 @@ public extension ChatUserController {
     /// Flags the user this controller manages.
     /// - Parameter completion: The completion. Will be called on a **callbackQueue** when the network request is finished.
     ///                         If request fails, the completion will be called with an error.
-    func flag(completion: ((Error?) -> Void)? = nil) {
-        nonisolated(unsafe) let completion = completion
+    func flag(completion: (@Sendable(Error?) -> Void)? = nil) {
         userUpdater.flagUser(true, with: userId) { error in
             self.callback {
                 completion?(error)
@@ -203,8 +196,7 @@ public extension ChatUserController {
     /// Unflags the user this controller manages.
     /// - Parameter completion: The completion. Will be called on a **callbackQueue** when the network request is finished.
     ///
-    func unflag(completion: ((Error?) -> Void)? = nil) {
-        nonisolated(unsafe) let completion = completion
+    func unflag(completion: (@Sendable(Error?) -> Void)? = nil) {
         userUpdater.flagUser(false, with: userId) { error in
             self.callback {
                 completion?(error)

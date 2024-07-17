@@ -286,7 +286,7 @@ class AuthenticationRepository: @unchecked Sendable {
     }
 
     private func updateToken(token: Token?, notifyTokenWaiters: Bool) {
-        let waiters: [String: (Result<Token, Error>) -> Void] = tokenQueue.sync(flags: .barrier) {
+        let waiters: [String: @Sendable(Result<Token, Error>) -> Void] = tokenQueue.sync(flags: .barrier) {
             _currentToken = token
             _currentUserId = token?.userId
             guard notifyTokenWaiters else { return [:] }

@@ -109,10 +109,9 @@ public class ChatReactionListController: DataController, DelegateCallable, DataS
         self.environment = environment
     }
 
-    override public func synchronize(_ completion: ((_ error: Error?) -> Void)? = nil) {
+    override public func synchronize(_ completion: (@Sendable(_ error: Error?) -> Void)? = nil) {
         startReactionListObserverIfNeeded()
 
-        nonisolated(unsafe) let completion = completion
         worker.loadReactions(query: query) { result in
             if let error = result.error {
                 self.state = .remoteDataFetchFailed(ClientError(with: error))
@@ -148,9 +147,8 @@ public extension ChatReactionListController {
     ///   - completion: The completion callback.
     func loadMoreReactions(
         limit: Int = 25,
-        completion: ((Error?) -> Void)? = nil
+        completion: (@Sendable(Error?) -> Void)? = nil
     ) {
-        nonisolated(unsafe) let completion = completion
         var updatedQuery = query
         updatedQuery.pagination = Pagination(pageSize: limit, offset: reactions.count)
         worker.loadReactions(query: updatedQuery) { result in

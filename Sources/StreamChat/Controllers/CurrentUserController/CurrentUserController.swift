@@ -97,11 +97,9 @@ public class CurrentChatUserController: DataController, DelegateCallable, DataSt
     ///
     /// - Parameter completion: Called when the controller has finished fetching the local data
     ///   and the client connection is established.
-    override public func synchronize(_ completion: ((_ error: Error?) -> Void)? = nil) {
+    override public func synchronize(_ completion: (@Sendable(_ error: Error?) -> Void)? = nil) {
         startObservingIfNeeded()
 
-        nonisolated(unsafe) let completion = completion
-        
         if case let .localDataFetchFailed(error) = state {
             callback { completion?(error) }
             return
@@ -145,8 +143,7 @@ public extension CurrentChatUserController {
     /// database will be flushed.
     ///
     /// - Parameter completion: The completion to be called when the operation is completed.
-    func reloadUserIfNeeded(completion: ((Error?) -> Void)? = nil) {
-        nonisolated(unsafe) let completion = completion
+    func reloadUserIfNeeded(completion: (@Sendable(Error?) -> Void)? = nil) {
         client.authenticationRepository.refreshToken { error in
             self.callback {
                 completion?(error)
@@ -173,13 +170,12 @@ public extension CurrentChatUserController {
         privacySettings: UserPrivacySettings? = nil,
         role: UserRole? = nil,
         userExtraData: [String: RawJSON] = [:],
-        completion: ((Error?) -> Void)? = nil
+        completion: (@Sendable(Error?) -> Void)? = nil
     ) {
         guard let currentUserId = client.currentUserId else {
             completion?(ClientError.CurrentUserDoesNotExist())
             return
         }
-        nonisolated(unsafe) let completion = completion
         currentUserUpdater.updateUserData(
             currentUserId: currentUserId,
             name: name,
@@ -196,14 +192,12 @@ public extension CurrentChatUserController {
 
     /// Fetches the most updated devices and syncs with the local database.
     /// - Parameter completion: Called when the devices are synced successfully, or with error.
-    func synchronizeDevices(completion: ((Error?) -> Void)? = nil) {
+    func synchronizeDevices(completion: (@Sendable(Error?) -> Void)? = nil) {
         guard let currentUserId = client.currentUserId else {
             completion?(ClientError.CurrentUserDoesNotExist())
             return
         }
 
-        nonisolated(unsafe) let completion = completion
-        
         currentUserUpdater.fetchDevices(currentUserId: currentUserId) { result in
             self.callback { completion?(result.error) }
         }
@@ -213,13 +207,12 @@ public extension CurrentChatUserController {
     /// - Parameters:
     ///   - pushDevice: The device information required for the desired push provider.
     ///   - completion: Callback when device is successfully registered, or failed with error.
-    func addDevice(_ pushDevice: PushDevice, completion: ((Error?) -> Void)? = nil) {
+    func addDevice(_ pushDevice: PushDevice, completion: (@Sendable(Error?) -> Void)? = nil) {
         guard let currentUserId = client.currentUserId else {
             completion?(ClientError.CurrentUserDoesNotExist())
             return
         }
         
-        nonisolated(unsafe) let completion = completion
         currentUserUpdater.addDevice(
             deviceId: pushDevice.deviceId,
             pushProvider: pushDevice.pushProvider,
@@ -238,13 +231,12 @@ public extension CurrentChatUserController {
     ///   - id: Device id to be removed. You can obtain registered devices via `currentUser.devices`.
     ///   If `currentUser.devices` is not up-to-date, please make an `synchronize` call.
     ///   - completion: Called when device is successfully deregistered, or with error.
-    func removeDevice(id: DeviceId, completion: ((Error?) -> Void)? = nil) {
+    func removeDevice(id: DeviceId, completion: (@Sendable(Error?) -> Void)? = nil) {
         guard let currentUserId = client.currentUserId else {
             completion?(ClientError.CurrentUserDoesNotExist())
             return
         }
 
-        nonisolated(unsafe) let completion = completion
         currentUserUpdater.removeDevice(id: id, currentUserId: currentUserId) { error in
             self.callback {
                 completion?(error)
@@ -256,8 +248,7 @@ public extension CurrentChatUserController {
     ///
     /// - Parameter completion: Called when the API call is finished. Called with `Error` if the remote update fails.
     ///
-    func markAllRead(completion: ((Error?) -> Void)? = nil) {
-        nonisolated(unsafe) let completion = completion
+    func markAllRead(completion: (@Sendable(Error?) -> Void)? = nil) {
         currentUserUpdater.markAllRead { error in
             self.callback {
                 completion?(error)
@@ -271,8 +262,7 @@ public extension CurrentChatUserController {
     ///  Returns the current user unreads or an error if the API call fails.
     ///
     /// Note: This is a one-time request, it is not observable.
-    func loadAllUnreads(completion: @escaping ((Result<CurrentUserUnreads, Error>) -> Void)) {
-        nonisolated(unsafe) let completion = completion
+    func loadAllUnreads(completion: @escaping (@Sendable(Result<CurrentUserUnreads, Error>) -> Void)) {
         currentUserUpdater.loadAllUnreads { result in
             self.callback {
                 completion(result)
@@ -284,8 +274,7 @@ public extension CurrentChatUserController {
     ///
     /// - Parameter completion: Called when the API call is finished. Called with `Error` if the remote update fails.
     ///
-    func loadBlockedUsers(completion: @escaping (Result<[BlockedUserDetails], Error>) -> Void) {
-        nonisolated(unsafe) let completion = completion
+    func loadBlockedUsers(completion: @Sendable @escaping (Result<[BlockedUserDetails], Error>) -> Void) {
         currentUserUpdater.loadBlockedUsers { result in
             self.callback {
                 completion(result)
@@ -368,7 +357,7 @@ public extension CurrentChatUserController {
         deprecated,
         message: "use addDevice(_pushDevice:) instead. This deprecated function doesn't correctly support multiple push providers."
     )
-    func addDevice(token: Data, pushProvider: PushProvider = .apn, completion: ((Error?) -> Void)? = nil) {
+    func addDevice(token: Data, pushProvider: PushProvider = .apn, completion: (@Sendable(Error?) -> Void)? = nil) {
         addDevice(.apn(token: token), completion: completion)
     }
 }

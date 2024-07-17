@@ -106,7 +106,7 @@ class AttachmentQueueUploader: Worker, @unchecked Sendable {
         }
     }
 
-    private func prepareAttachmentForUpload(with id: AttachmentId, completion: @escaping (AnyChatMessageAttachment?) -> Void) {
+    private func prepareAttachmentForUpload(with id: AttachmentId, completion: @Sendable @escaping (AnyChatMessageAttachment?) -> Void) {
         let attachmentStorage = self.attachmentStorage
         database.write { session in
             guard let attachment = session.attachment(id: id) else {
@@ -124,7 +124,6 @@ class AttachmentQueueUploader: Worker, @unchecked Sendable {
             }
 
             let model = attachment.asAnyModel()
-            nonisolated(unsafe) let completion = completion
             DispatchQueue.main.async {
                 completion(model)
             }

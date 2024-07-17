@@ -103,10 +103,9 @@ public class ChatUserListController: DataController, DelegateCallable, DataStore
         self.environment = environment
     }
 
-    override public func synchronize(_ completion: ((_ error: Error?) -> Void)? = nil) {
+    override public func synchronize(_ completion: (@Sendable(_ error: Error?) -> Void)? = nil) {
         startUserListObserverIfNeeded()
 
-        nonisolated(unsafe) let completion = completion
         worker.update(userListQuery: query) { result in
             self.state = result.error == nil ? .remoteDataFetched : .remoteDataFetchFailed(ClientError(with: result.error))
             self.callback { completion?(result.error) }
@@ -143,11 +142,10 @@ public extension ChatUserListController {
     ///
     func loadNextUsers(
         limit: Int = 25,
-        completion: ((Error?) -> Void)? = nil
+        completion: (@Sendable(Error?) -> Void)? = nil
     ) {
         var updatedQuery = query
         updatedQuery.pagination = Pagination(pageSize: limit, offset: users.count)
-        nonisolated(unsafe) let completion = completion
         worker.update(userListQuery: updatedQuery) { result in
             self.callback { completion?(result.error) }
         }

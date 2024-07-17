@@ -74,10 +74,9 @@ public class ChatChannelMemberListController: DataController, DelegateCallable, 
         self.environment = environment
     }
 
-    override public func synchronize(_ completion: ((_ error: Error?) -> Void)? = nil) {
+    override public func synchronize(_ completion: (@Sendable(_ error: Error?) -> Void)? = nil) {
         startObservingIfNeeded()
 
-        nonisolated(unsafe) let completion = completion
         if case let .localDataFetchFailed(error) = state {
             callback { completion?(error) }
             return
@@ -142,11 +141,10 @@ public extension ChatChannelMemberListController {
     ///                 If request fails, the completion will be called with an error.
     func loadNextMembers(
         limit: Int = 25,
-        completion: ((Error?) -> Void)? = nil
+        completion: (@Sendable(Error?) -> Void)? = nil
     ) {
         nonisolated(unsafe) var updatedQuery = query
         updatedQuery.pagination = Pagination(pageSize: limit, offset: members.count)
-        nonisolated(unsafe) let completion = completion
         memberListUpdater.load(updatedQuery) { result in
             self.query = updatedQuery
             self.callback {
