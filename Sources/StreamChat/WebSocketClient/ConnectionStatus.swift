@@ -129,8 +129,9 @@ enum WebSocketConnectionState: Equatable {
                     return false
                 }
 
-                if serverInitiatedError.isClientError {
-                    // Don't reconnect on client side errors
+                if serverInitiatedError.isClientError && !serverInitiatedError.isExpiredTokenError {
+                    // Don't reconnect on client side errors unless it is an expired token
+                    // Expired tokens return 401, so it is considered client error.
                     return false
                 }
             }

@@ -287,7 +287,13 @@ final class ConnectionRepository_Tests: XCTestCase {
 
     func test_handleConnectionUpdate_shouldNotifyWaitersWhenNeeded() {
         let invalidTokenError = ClientError(with: ErrorPayload(
-            code: .random(in: ClosedRange.tokenInvalidErrorCodes),
+            code: StreamErrorCode.accessKeyInvalid,
+            message: .unique,
+            statusCode: .unique
+        ))
+
+        let expiredTokenError = ClientError(with: ErrorPayload(
+            code: StreamErrorCode.expiredToken,
             message: .unique,
             statusCode: .unique
         ))
@@ -301,7 +307,8 @@ final class ConnectionRepository_Tests: XCTestCase {
             (.disconnecting(source: .noPongReceived), false),
             (.disconnected(source: .userInitiated), true),
             (.disconnected(source: .systemInitiated), true),
-            (.disconnected(source: .serverInitiated(error: invalidTokenError)), false)
+            (.disconnected(source: .serverInitiated(error: invalidTokenError)), true),
+            (.disconnected(source: .serverInitiated(error: expiredTokenError)), false)
         ]
 
         for (webSocketState, shouldNotify) in pairs {

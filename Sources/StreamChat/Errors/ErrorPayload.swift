@@ -57,7 +57,7 @@ extension ErrorPayload {
 
 extension ClosedRange where Bound == Int {
     /// The error codes for token-related errors. Typically, a refreshed token is required to recover.
-    static let tokenInvalidErrorCodes: Self = StreamErrorCode.expiredToken...StreamErrorCode.invalidTokenSignature
+    static let tokenInvalidErrorCodes: Self = StreamErrorCode.notYetValidToken...StreamErrorCode.invalidTokenSignature
 
     /// The range of HTTP request status codes for client errors.
     static let clientErrorCodes: Self = 400...499
