@@ -343,7 +343,7 @@ class AuthenticationRepository: @unchecked Sendable {
                 log.debug("Successfully retrieved token", subsystems: .authentication)
             }
 
-            let completionBlocks: [(Error?) -> Void]? = self.tokenQueue.sync(flags: .barrier) {
+            let completionBlocks: [@Sendable(Error?) -> Void]? = self.tokenQueue.sync(flags: .barrier) {
                 self._isGettingToken = false
                 let completions = self._tokenRequestCompletions
                 self._tokenRequestCompletions = []
