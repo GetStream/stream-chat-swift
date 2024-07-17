@@ -5,19 +5,22 @@
 import Foundation
 
 public class ScheduledStreamTimer: StreamTimer {
-    let interval: TimeInterval
-    let fireOnStart: Bool
     var runLoop = RunLoop.current
     var timer: Foundation.Timer?
     public var onChange: (() -> Void)?
 
-    public var isRunning: Bool {
-        timer?.isValid ?? false
-    }
+    let interval: TimeInterval
+    let fireOnStart: Bool
+    let repeats: Bool
 
-    public init(interval: TimeInterval, fireOnStart: Bool = true) {
+    public init(interval: TimeInterval, fireOnStart: Bool = true, repeats: Bool = true) {
         self.interval = interval
         self.fireOnStart = fireOnStart
+        self.repeats = repeats
+    }
+
+    public var isRunning: Bool {
+        timer?.isValid ?? false
     }
 
     public func start() {
@@ -25,7 +28,7 @@ public class ScheduledStreamTimer: StreamTimer {
 
         timer = Foundation.Timer.scheduledTimer(
             withTimeInterval: interval,
-            repeats: true
+            repeats: repeats
         ) { _ in
             self.onChange?()
         }

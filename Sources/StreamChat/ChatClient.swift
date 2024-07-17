@@ -258,7 +258,7 @@ public class ChatClient {
             environment.backgroundTaskSchedulerBuilder(),
             environment.internetConnection(eventNotificationCenter, environment.internetMonitor),
             config.staysConnectedInBackground,
-            config.reconnectionTimeout.map { ScheduledStreamTimer(interval: $0, fireOnStart: false) }
+            config.reconnectionTimeout.map { ScheduledStreamTimer(interval: $0, fireOnStart: false, repeats: false) }
         )
     }
 

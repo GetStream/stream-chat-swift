@@ -21,6 +21,8 @@ final class WebSocketClient_Mock: WebSocketClient {
     var disconnect_called: Bool { disconnect_calledCounter > 0 }
     var disconnect_completion: (() -> Void)?
 
+    var timeout_callCount = 0
+
 
     var mockedConnectionState: WebSocketConnectionState?
 
@@ -74,6 +76,10 @@ final class WebSocketClient_Mock: WebSocketClient {
         _disconnect_calledCounter { $0 += 1 }
         disconnect_source = source
         disconnect_completion = completion
+    }
+
+    override func timeout() {
+        timeout_callCount += 1
     }
 
     var mockEventsBatcher: EventBatcher_Mock {

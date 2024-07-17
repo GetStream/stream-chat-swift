@@ -88,7 +88,6 @@ private extension DefaultConnectionRecoveryHandler {
 
         reconnectionTimeoutHandler?.onChange = { [weak self] in
             self?.webSocketClient.timeout()
-            self?.reconnectionTimeoutHandler?.stop()
             self?.cancelReconnectionTimer()
         }
     }
