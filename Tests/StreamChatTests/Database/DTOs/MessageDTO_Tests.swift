@@ -631,7 +631,7 @@ final class MessageDTO_Tests: XCTestCase {
         XCTAssertEqual(messagePayload.isShadowed, loadedMessage?.isShadowed)
         XCTAssertEqual(
             Set(messagePayload.attachmentIDs(cid: channelId)),
-            loadedMessage.flatMap { Set($0.attachments.map(\.attachmentID)) }
+            loadedMessage.flatMap { Set($0.attachments.compactMap(\.attachmentID)) }
         )
         XCTAssertEqual(messagePayload.translations?.mapKeys(\.languageCode), loadedMessage?.translations)
         XCTAssertEqual("es", loadedMessage?.originalLanguage)
@@ -782,7 +782,7 @@ final class MessageDTO_Tests: XCTestCase {
             Assert.willBeEqual(messagePayload.isSilent, loadedMessage?.isSilent)
             Assert.willBeEqual(
                 Set(messagePayload.attachmentIDs(cid: channelId)),
-                loadedMessage.flatMap { Set($0.attachments.map(\.attachmentID)) }
+                loadedMessage.flatMap { Set($0.attachments.compactMap(\.attachmentID)) }
             )
         }
     }
