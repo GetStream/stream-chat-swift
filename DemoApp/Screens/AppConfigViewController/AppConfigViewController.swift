@@ -186,6 +186,7 @@ class AppConfigViewController: UITableViewController {
     enum ChatClientConfigOption: String, CaseIterable {
         case isLocalStorageEnabled
         case staysConnectedInBackground
+        case reconnectionTimeout
         case shouldShowShadowedMessages
         case deletedMessagesVisibility
         case isChannelAutomaticFilteringEnabled
@@ -337,6 +338,9 @@ class AppConfigViewController: UITableViewController {
             cell.accessoryView = makeSwitchButton(chatClientConfig.staysConnectedInBackground) { [weak self] newValue in
                 self?.chatClientConfig.staysConnectedInBackground = newValue
             }
+        case .reconnectionTimeout:
+            cell.detailTextLabel?.text = chatClientConfig.reconnectionTimeout.map { "\($0)" } ?? "None"
+            cell.accessoryType = .disclosureIndicator
         case .shouldShowShadowedMessages:
             cell.accessoryView = makeSwitchButton(chatClientConfig.shouldShowShadowedMessages) { [weak self] newValue in
                 self?.chatClientConfig.shouldShowShadowedMessages = newValue
@@ -361,6 +365,8 @@ class AppConfigViewController: UITableViewController {
         switch option {
         case .deletedMessagesVisibility:
             pushDeletedMessagesVisibilitySelectorVC()
+        case .reconnectionTimeout:
+            pushReconnectionTimeoutSelectorVC()
         default:
             break
         }
@@ -561,6 +567,24 @@ class AppConfigViewController: UITableViewController {
         selectorViewController.didChangeSelectedOptions = { [weak self] options in
             guard let selectedOption = options.first else { return }
             UserConfig.shared.language = selectedOption
+            self?.tableView.reloadData()
+        }
+
+        navigationController?.pushViewController(selectorViewController, animated: true)
+    }
+
+    private func pushReconnectionTimeoutSelectorVC() {
+        let selectorViewController = OptionsSelectorViewController<TimeInterval?>(
+            options: [nil, 15.0, 30.0, 45.0, 60.0],
+            initialSelectedOptions: [chatClientConfig.reconnectionTimeout],
+            allowsMultipleSelection: false,
+            optionFormatter: { option in
+                option.map { "\($0)" } ?? "None"
+            }
+        )
+        selectorViewController.didChangeSelectedOptions = { [weak self] options in
+            guard let selectedOption = options.first else { return }
+            self?.chatClientConfig.reconnectionTimeout = selectedOption
             self?.tableView.reloadData()
         }
 

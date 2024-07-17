@@ -103,7 +103,8 @@ extension ChatClient {
             _ extensionLifecycle: NotificationExtensionLifecycle,
             _ backgroundTaskScheduler: BackgroundTaskScheduler?,
             _ internetConnection: InternetConnection,
-            _ keepConnectionAliveInBackground: Bool
+            _ keepConnectionAliveInBackground: Bool,
+            _ reconnectionTimeoutHandler: StreamTimer?
         ) -> ConnectionRecoveryHandler = {
             DefaultConnectionRecoveryHandler(
                 webSocketClient: $0,
@@ -114,7 +115,8 @@ extension ChatClient {
                 internetConnection: $5,
                 reconnectionStrategy: DefaultRetryStrategy(),
                 reconnectionTimerType: DefaultTimer.self,
-                keepConnectionAliveInBackground: $6
+                keepConnectionAliveInBackground: $6,
+                reconnectionTimeoutHandler: $7
             )
         }
 

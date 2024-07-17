@@ -257,7 +257,8 @@ public class ChatClient {
             extensionLifecycle,
             environment.backgroundTaskSchedulerBuilder(),
             environment.internetConnection(eventNotificationCenter, environment.internetMonitor),
-            config.staysConnectedInBackground
+            config.staysConnectedInBackground,
+            config.reconnectionTimeout.map { ScheduledStreamTimer(interval: $0, fireOnStart: false) }
         )
     }
 
