@@ -58,6 +58,6 @@ let package = Package(
 
 #if swift(>=5.6)
 package.dependencies.append(
-    .package(name: "SwiftDocCPlugin", url: "https://github.com/apple/swift-docc-plugin", .exact("1.0.0"))
+    .package(url: "https://github.com/apple/swift-docc-plugin", exact: "1.0.0")
 )
 #endif
