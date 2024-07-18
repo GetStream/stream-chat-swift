@@ -62,7 +62,9 @@ final class DemoChatChannelListVC: ChatChannelListVC {
 
         initialQuery = controller.query
 
-        connectionController.delegate = connectionDelegate
+        if AppConfig.shared.demoAppConfig.shouldShowConnectionBanner {
+            connectionController.delegate = connectionDelegate
+        }
 
         navigationItem.rightBarButtonItems = [
             UIBarButtonItem(customView: filterChannelsButton),
