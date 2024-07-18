@@ -136,11 +136,6 @@ final class PollController_Tests: XCTestCase {
         let user = UserPayload.dummy(userId: currentUserId)
         try client.databaseContainer.createPoll(id: pollId, createdBy: user)
         
-        // Wait for DB observer
-        if controller.poll == nil {
-            waitForDelegateCallback()
-        }
-
         // Assert message is fetched from the database and has correct field values
         var poll = try XCTUnwrap(controller.poll)
         XCTAssertEqual(poll.id, pollId)
@@ -155,7 +150,6 @@ final class PollController_Tests: XCTestCase {
         try client.databaseContainer.writeSynchronously { session in
             try session.savePoll(payload: pollPayload, cache: nil)
         }
-        waitForDelegateCallback()
         
         // Assert the controller's `poll` is up-to-date
         poll = try XCTUnwrap(controller.poll)
@@ -186,8 +180,6 @@ final class PollController_Tests: XCTestCase {
         try client.databaseContainer.writeSynchronously { session in
             try session.savePollVotes(payload: response, query: query, cache: nil)
         }
-        
-        waitForDelegateCallback()
         
         XCTAssertEqual(controller.poll?.id, pollId)
         XCTAssertEqual(controller.ownVotes.count, ownVotes.count)
@@ -359,24 +351,5 @@ final class PollController_Tests: XCTestCase {
         
         // Assert completion is called.
         XCTAssertTrue(completionIsCalled)
-    }
-    
-    // MARK: -
-    
-    func waitForDelegateCallback() {
-        let delegate = DelegateWaiter()
-        controller.delegate = delegate
-        wait(for: [delegate.didUpdatePollExpectation], timeout: defaultTimeout)
-        controller.delegate = nil
-    }
-    
-    private class DelegateWaiter: PollControllerDelegate {
-        let didUpdatePollExpectation = XCTestExpectation(description: "Initial update callback")
-        
-        func pollController(_ pollController: StreamChat.PollController, didUpdatePoll poll: StreamChat.EntityChange<StreamChat.Poll>) {
-            didUpdatePollExpectation.fulfill()
-        }
-        
-        func pollController(_ pollController: StreamChat.PollController, didUpdateCurrentUserVotes votes: [StreamChat.ListChange<StreamChat.PollVote>]) {}
     }
 }
