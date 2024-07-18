@@ -181,6 +181,7 @@ class AppConfigViewController: UITableViewController {
         case isJumpToUnreadEnabled
         case mentionAllAppUsers
         case isBlockingUsersEnabled
+        case isMessageListAnimationsEnabled
     }
 
     enum ChatClientConfigOption: String, CaseIterable {
@@ -456,6 +457,10 @@ class AppConfigViewController: UITableViewController {
         case .isBlockingUsersEnabled:
             cell.accessoryView = makeSwitchButton(Components.default.isBlockingUsersEnabled) { newValue in
                 Components.default.isBlockingUsersEnabled = newValue
+            }
+        case .isMessageListAnimationsEnabled:
+            cell.accessoryView = makeSwitchButton(Components.default.isMessageListAnimationsEnabled) { newValue in
+                Components.default.isMessageListAnimationsEnabled = newValue
             }
         }
     }
