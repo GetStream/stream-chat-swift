@@ -22,15 +22,17 @@ final class StreamChatWrapper {
     var client: ChatClient?
 
     // ChatClient config
-    var config: ChatClientConfig = {
-        var config = ChatClientConfig(apiKeyString: apiKeyString)
+    var config: ChatClientConfig {
+        didSet {
+            client = ChatClient(config: config)
+        }
+    }
+
+    private init() {
+        config = ChatClientConfig(apiKeyString: apiKeyString)
         config.shouldShowShadowedMessages = true
         config.applicationGroupIdentifier = applicationGroupIdentifier
         config.urlSessionConfiguration.httpAdditionalHeaders = ["Custom": "Example"]
-        return config
-    }()
-
-    private init() {
         configureUI()
     }
 }

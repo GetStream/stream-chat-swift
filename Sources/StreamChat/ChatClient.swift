@@ -257,7 +257,8 @@ public class ChatClient {
             extensionLifecycle,
             environment.backgroundTaskSchedulerBuilder(),
             environment.internetConnection(eventNotificationCenter, environment.internetMonitor),
-            config.staysConnectedInBackground
+            config.staysConnectedInBackground,
+            config.reconnectionTimeout.map { ScheduledStreamTimer(interval: $0, fireOnStart: false, repeats: false) }
         )
     }
 
@@ -288,6 +289,8 @@ public class ChatClient {
         tokenProvider: @escaping TokenProvider,
         completion: ((Error?) -> Void)? = nil
     ) {
+        connectionRecoveryHandler?.start()
+
         authenticationRepository.connectUser(
             userInfo: userInfo,
             tokenProvider: tokenProvider,
@@ -379,6 +382,7 @@ public class ChatClient {
         userInfo: UserInfo,
         completion: ((Error?) -> Void)? = nil
     ) {
+        connectionRecoveryHandler?.start()
         authenticationRepository.connectGuestUser(userInfo: userInfo, completion: { completion?($0) })
     }
     
@@ -402,6 +406,7 @@ public class ChatClient {
     /// Connects an anonymous user
     /// - Parameter completion: The completion that will be called once the **first** user session for the given token is setup.
     public func connectAnonymousUser(completion: ((Error?) -> Void)? = nil) {
+        connectionRecoveryHandler?.start()
         authenticationRepository.connectAnonymousUser(
             completion: { completion?($0) }
         )
@@ -437,6 +442,7 @@ public class ChatClient {
     /// Disconnects the chat client from the chat servers. No further updates from the servers
     /// are received.
     public func disconnect(completion: @escaping () -> Void) {
+        connectionRecoveryHandler?.stop()
         connectionRepository.disconnect(source: .userInitiated) {
             log.info("The `ChatClient` has been disconnected.", subsystems: .webSocket)
             completion()

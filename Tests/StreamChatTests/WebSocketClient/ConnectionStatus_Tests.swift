@@ -26,7 +26,7 @@ final class ChatClientConnectionStatus_Tests: XCTestCase {
             (.disconnected(source: .noPongReceived), .connecting),
             (.disconnected(source: .serverInitiated(error: nil)), .connecting),
             (.disconnected(source: .serverInitiated(error: testError)), .connecting),
-            (.disconnected(source: .serverInitiated(error: invalidTokenError)), .connecting),
+            (.disconnected(source: .serverInitiated(error: invalidTokenError)), .disconnected(error: invalidTokenError)),
             (.connected(connectionId: .unique), .connected),
             (.disconnecting(source: .noPongReceived), .disconnecting),
             (.disconnecting(source: .serverInitiated(error: testError)), .disconnecting),
@@ -141,6 +141,23 @@ final class WebSocketConnectionState_Tests: XCTestCase {
 
         // Assert `isAutomaticReconnectionEnabled` returns false
         XCTAssertFalse(state.isAutomaticReconnectionEnabled)
+    }
+
+    func test_isAutomaticReconnectionEnabled_whenDisconnectedByServerWithExpiredToken_returnsTrue() {
+        // Create expired token error
+        let expiredTokenError = ErrorPayload(
+            code: StreamErrorCode.expiredToken,
+            message: .unique,
+            statusCode: .unique
+        )
+
+        // Create disconnected state intiated by the server with invalid token error
+        let state: WebSocketConnectionState = .disconnected(
+            source: .serverInitiated(error: ClientError(with: expiredTokenError))
+        )
+
+        // Assert `isAutomaticReconnectionEnabled` returns true
+        XCTAssertTrue(state.isAutomaticReconnectionEnabled)
     }
 
     func test_isAutomaticReconnectionEnabled_whenDisconnectedByServerWithClientError_returnsFalse() {

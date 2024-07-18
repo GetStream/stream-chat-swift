@@ -4,10 +4,19 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 # Upcoming
 
 ## StreamChat
+### ✅ Added
+- Add an option to configure a reconnection timeout [#3303](https://github.com/GetStream/stream-chat-swift/pull/3303)
+### 🐞 Fixed
+- Improve the stability of the reconnection process [#3303](https://github.com/GetStream/stream-chat-swift/pull/3303)
+- Fix invalid token errors considered as recoverable errors [#3303](https://github.com/GetStream/stream-chat-swift/pull/3303)
 ### 🔄 Changed
 - Dropped iOS 12 support [#3285](https://github.com/GetStream/stream-chat-swift/pull/3285)
 - Increase QoS for `Throttler` and `Debouncer` to `utility` [#3295](https://github.com/GetStream/stream-chat-swift/issues/3295)
-- Improve reliability of accessing database models in controller provided completion handlers [#3304](https://github.com/GetStream/stream-chat-swift/issues/3304)
+- Improve reliability of accessing data in controllers' completion handlers [#3304](https://github.com/GetStream/stream-chat-swift/issues/3304)
+
+## StreamChatUI
+### 🐞 Fixed
+- Fix Channel List not hiding error state view when data is available [#3303](https://github.com/GetStream/stream-chat-swift/pull/3303)
 
 ## StreamChatUI
 ### ✅ Added

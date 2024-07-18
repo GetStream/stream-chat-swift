@@ -276,7 +276,7 @@ final class ConnectionRepository_Tests: XCTestCase {
             (.disconnecting(source: .noPongReceived), .disconnecting),
             (.disconnected(source: .userInitiated), .disconnected(error: nil)),
             (.disconnected(source: .systemInitiated), .connecting),
-            (.disconnected(source: .serverInitiated(error: invalidTokenError)), .connecting)
+            (.disconnected(source: .serverInitiated(error: invalidTokenError)), .disconnected(error: invalidTokenError))
         ]
 
         for (webSocketState, connectionStatus) in pairs {
@@ -287,7 +287,13 @@ final class ConnectionRepository_Tests: XCTestCase {
 
     func test_handleConnectionUpdate_shouldNotifyWaitersWhenNeeded() {
         let invalidTokenError = ClientError(with: ErrorPayload(
-            code: .random(in: ClosedRange.tokenInvalidErrorCodes),
+            code: StreamErrorCode.accessKeyInvalid,
+            message: .unique,
+            statusCode: .unique
+        ))
+
+        let expiredTokenError = ClientError(with: ErrorPayload(
+            code: StreamErrorCode.expiredToken,
             message: .unique,
             statusCode: .unique
         ))
@@ -301,7 +307,8 @@ final class ConnectionRepository_Tests: XCTestCase {
             (.disconnecting(source: .noPongReceived), false),
             (.disconnected(source: .userInitiated), true),
             (.disconnected(source: .systemInitiated), true),
-            (.disconnected(source: .serverInitiated(error: invalidTokenError)), false)
+            (.disconnected(source: .serverInitiated(error: invalidTokenError)), true),
+            (.disconnected(source: .serverInitiated(error: expiredTokenError)), false)
         ]
 
         for (webSocketState, shouldNotify) in pairs {

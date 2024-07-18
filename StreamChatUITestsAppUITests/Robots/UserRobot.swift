@@ -536,6 +536,8 @@ extension UserRobot {
     @discardableResult
     func setConnectivity(to state: SwitchState) -> Self {
         setSwitchState(Settings.isConnected.element, state: state)
+        Settings.isConnected.element.wait(timeout: 2)
+        return self
     }
 }
 

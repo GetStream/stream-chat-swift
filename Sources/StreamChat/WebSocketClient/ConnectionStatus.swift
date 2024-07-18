@@ -42,9 +42,7 @@ extension ConnectionStatus {
             self = .disconnecting
 
         case let .disconnected(source):
-            let isWaitingForReconnect = webSocketConnectionState.isAutomaticReconnectionEnabled || source.serverError?
-                .isInvalidTokenError == true
-
+            let isWaitingForReconnect = webSocketConnectionState.isAutomaticReconnectionEnabled
             self = isWaitingForReconnect ? .connecting : .disconnected(error: source.serverError)
         }
     }
@@ -55,9 +53,12 @@ typealias ConnectionId = String
 /// A web socket connection state.
 enum WebSocketConnectionState: Equatable {
     /// Provides additional information about the source of disconnecting.
-    enum DisconnectionSource: Equatable {
+    indirect enum DisconnectionSource: Equatable {
         /// A user initiated web socket disconnecting.
         case userInitiated
+
+        /// The connection timed out while trying to connect.
+        case timeout(from: WebSocketConnectionState)
 
         /// A server initiated web socket disconnecting, an optional error object is provided.
         case serverInitiated(error: ClientError? = nil)
@@ -128,8 +129,9 @@ enum WebSocketConnectionState: Equatable {
                     return false
                 }
 
-                if serverInitiatedError.isClientError {
-                    // Don't reconnect on client side errors
+                if serverInitiatedError.isClientError && !serverInitiatedError.isExpiredTokenError {
+                    // Don't reconnect on client side errors unless it is an expired token
+                    // Expired tokens return 401, so it is considered client error.
                     return false
                 }
             }
@@ -140,6 +142,8 @@ enum WebSocketConnectionState: Equatable {
         case .noPongReceived:
             return true
         case .userInitiated:
+            return false
+        case .timeout:
             return false
         }
     }

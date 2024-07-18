@@ -148,6 +148,9 @@ extension ChatClient {
                         deletedMessagesVisibility: $4,
                         shouldShowShadowedMessages: $5
                     )
+                }, 
+                internetConnection: { center, _ in
+                    InternetConnection_Mock(notificationCenter: center)
                 },
                 authenticationRepositoryBuilder: AuthenticationRepository_Mock.init
             )

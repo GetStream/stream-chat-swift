@@ -183,6 +183,10 @@ public struct ChatClientConfig {
     /// It controls how long (in seconds) a network task should wait for additional data to arrive before giving up
     public var timeoutIntervalForRequest: TimeInterval = 30
 
+    /// The maximum time in seconds the SDK will wait until it reconnects successfully, in case it was disconnected by a recoverable error.
+    /// By default there is no timeout, so the SDK will keep trying to connect for an undetermined time.
+    public var reconnectionTimeout: TimeInterval?
+
     /// Enable/Disable local filtering for Channel lists. When enabled,
     /// whenever a new channel is created,/updated the SDK will try to
     /// match the channel list filter automatically.

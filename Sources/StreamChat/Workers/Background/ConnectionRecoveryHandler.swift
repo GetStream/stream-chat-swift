@@ -6,7 +6,10 @@ import CoreData
 import Foundation
 
 /// The type that keeps track of active chat components and asks them to reconnect when it's needed
-protocol ConnectionRecoveryHandler: ConnectionStateDelegate {}
+protocol ConnectionRecoveryHandler: ConnectionStateDelegate {
+    func start()
+    func stop()
+}
 
 /// The type is designed to obtain missing events that happened in watched channels while user
 /// was not connected to the web-socket.
@@ -33,6 +36,7 @@ final class DefaultConnectionRecoveryHandler: ConnectionRecoveryHandler {
     private var reconnectionStrategy: RetryStrategy
     private var reconnectionTimer: TimerControl?
     private let keepConnectionAliveInBackground: Bool
+    private var reconnectionTimeoutHandler: StreamTimer?
 
     // MARK: - Init
 
@@ -45,7 +49,8 @@ final class DefaultConnectionRecoveryHandler: ConnectionRecoveryHandler {
         internetConnection: InternetConnection,
         reconnectionStrategy: RetryStrategy,
         reconnectionTimerType: Timer.Type,
-        keepConnectionAliveInBackground: Bool
+        keepConnectionAliveInBackground: Bool,
+        reconnectionTimeoutHandler: StreamTimer?
     ) {
         self.webSocketClient = webSocketClient
         self.eventNotificationCenter = eventNotificationCenter
@@ -56,13 +61,21 @@ final class DefaultConnectionRecoveryHandler: ConnectionRecoveryHandler {
         self.reconnectionStrategy = reconnectionStrategy
         self.reconnectionTimerType = reconnectionTimerType
         self.keepConnectionAliveInBackground = keepConnectionAliveInBackground
+        self.reconnectionTimeoutHandler = reconnectionTimeoutHandler
+    }
 
+    func start() {
         subscribeOnNotifications()
     }
 
-    deinit {
+    func stop() {
         unsubscribeFromNotifications()
         cancelReconnectionTimer()
+        reconnectionTimeoutHandler?.stop()
+    }
+
+    deinit {
+        stop()
     }
 }
 
@@ -81,6 +94,11 @@ private extension DefaultConnectionRecoveryHandler {
             name: .internetConnectionAvailabilityDidChange,
             object: nil
         )
+
+        reconnectionTimeoutHandler?.onChange = { [weak self] in
+            self?.webSocketClient.timeout()
+            self?.cancelReconnectionTimer()
+        }
     }
 
     func unsubscribeFromNotifications() {
@@ -102,7 +120,9 @@ extension DefaultConnectionRecoveryHandler {
 
         backgroundTaskScheduler?.endTask()
 
-        reconnectIfNeeded()
+        if canReconnectFromOffline {
+            webSocketClient.connect()
+        }
     }
 
     private func appDidEnterBackground() {
@@ -136,12 +156,16 @@ extension DefaultConnectionRecoveryHandler {
     }
 
     @objc private func internetConnectionAvailabilityDidChange(_ notification: Notification) {
-        guard let isAvailable = notification.internetConnectionStatus?.isAvailable else { return }
+        guard let isAvailable = notification.internetConnectionStatus?.isAvailable else {
+            return
+        }
 
         log.debug("Internet -> \(isAvailable ? "✅" : "❌")", subsystems: .webSocket)
 
         if isAvailable {
-            reconnectIfNeeded()
+            if canReconnectFromOffline {
+                webSocketClient.connect()
+            }
         } else {
             disconnectIfNeeded()
         }
@@ -153,6 +177,9 @@ extension DefaultConnectionRecoveryHandler {
         switch state {
         case .connecting:
             cancelReconnectionTimer()
+            if reconnectionTimeoutHandler?.isRunning == false {
+                reconnectionTimeoutHandler?.start()
+            }
 
         case .connected:
             extensionLifecycle.setAppState(isReceivingEvents: true)
@@ -160,6 +187,7 @@ extension DefaultConnectionRecoveryHandler {
             syncRepository.syncLocalState {
                 log.info("Local state sync completed", subsystems: .offlineSupport)
             }
+            reconnectionTimeoutHandler?.stop()
 
         case .disconnected:
             extensionLifecycle.setAppState(isReceivingEvents: false)
@@ -167,6 +195,24 @@ extension DefaultConnectionRecoveryHandler {
         case .initialized, .waitingForConnectionId, .disconnecting:
             break
         }
+    }
+
+    var canReconnectFromOffline: Bool {
+        guard backgroundTaskScheduler?.isAppActive ?? true else {
+            log.debug("Reconnection is not possible (app 💤)", subsystems: .webSocket)
+            return false
+        }
+
+        switch webSocketClient.connectionState {
+        case .disconnected(let source) where source == .userInitiated:
+            return false
+        case .initialized, .connected:
+            return false
+        default:
+            break
+        }
+
+        return true
     }
 }
 
@@ -197,37 +243,6 @@ private extension DefaultConnectionRecoveryHandler {
     }
 }
 
-// MARK: - Reconnection
-
-private extension DefaultConnectionRecoveryHandler {
-    func reconnectIfNeeded() {
-        guard canReconnectAutomatically else { return }
-
-        webSocketClient.connect()
-    }
-
-    var canReconnectAutomatically: Bool {
-        guard webSocketClient.connectionState.isAutomaticReconnectionEnabled else {
-            log.debug("Reconnection is not required (\(webSocketClient.connectionState))", subsystems: .webSocket)
-            return false
-        }
-
-        guard internetConnection.status.isAvailable else {
-            log.debug("Reconnection is not possible (internet ❌)", subsystems: .webSocket)
-            return false
-        }
-
-        guard backgroundTaskScheduler?.isAppActive ?? true else {
-            log.debug("Reconnection is not possible (app 💤)", subsystems: .webSocket)
-            return false
-        }
-
-        log.debug("Will reconnect automatically", subsystems: .webSocket)
-
-        return true
-    }
-}
-
 // MARK: - Reconnection Timer
 
 private extension DefaultConnectionRecoveryHandler {
@@ -248,7 +263,9 @@ private extension DefaultConnectionRecoveryHandler {
             onFire: { [weak self] in
                 log.debug("Timer 🔥", subsystems: .webSocket)
 
-                self?.reconnectIfNeeded()
+                if self?.canReconnectAutomatically == true {
+                    self?.webSocketClient.connect()
+                }
             }
         )
     }
@@ -260,5 +277,21 @@ private extension DefaultConnectionRecoveryHandler {
 
         reconnectionTimer?.cancel()
         reconnectionTimer = nil
+    }
+
+    var canReconnectAutomatically: Bool {
+        guard webSocketClient.connectionState.isAutomaticReconnectionEnabled else {
+            log.debug("Reconnection is not required (\(webSocketClient.connectionState))", subsystems: .webSocket)
+            return false
+        }
+
+        guard backgroundTaskScheduler?.isAppActive ?? true else {
+            log.debug("Reconnection is not possible (app 💤)", subsystems: .webSocket)
+            return false
+        }
+
+        log.debug("Will reconnect automatically", subsystems: .webSocket)
+
+        return true
     }
 }

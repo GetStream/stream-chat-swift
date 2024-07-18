@@ -14,6 +14,7 @@ final class ConnectionRecoveryHandler_Tests: XCTestCase {
     var mockBackgroundTaskScheduler: BackgroundTaskScheduler_Mock!
     var mockRetryStrategy: RetryStrategy_Spy!
     var mockTime: VirtualTime { VirtualTimeTimer.time }
+    var mockReconnectionTimeoutHandler: ScheduledStreamTimer_Mock!
 
     override func setUp() {
         super.setUp()
@@ -23,7 +24,9 @@ final class ConnectionRecoveryHandler_Tests: XCTestCase {
         mockChatClient = ChatClient_Mock(config: .init(apiKeyString: .unique))
         mockBackgroundTaskScheduler = BackgroundTaskScheduler_Mock()
         mockRetryStrategy = RetryStrategy_Spy()
+        mockRetryStrategy.mock_nextRetryDelay.returns(5)
         mockInternetConnection = .init(notificationCenter: mockChatClient.eventNotificationCenter)
+        mockReconnectionTimeoutHandler = ScheduledStreamTimer_Mock()
     }
 
     override func tearDown() {
@@ -43,6 +46,14 @@ final class ConnectionRecoveryHandler_Tests: XCTestCase {
         super.tearDown()
     }
 
+    func test_reconnectionTimeoutHandler_onChange_shouldTimeout() {
+        handler = makeConnectionRecoveryHandler(keepConnectionAliveInBackground: false, withReconnectionTimeout: true)
+        mockReconnectionTimeoutHandler.onChange?()
+
+        XCTAssertEqual(mockChatClient.mockWebSocketClient.timeout_callCount, 1)
+        XCTAssertTrue(mockTime.scheduledTimers.isEmpty)
+    }
+
     /// keepConnectionAliveInBackground == false
     ///
     /// 1. internet -> OFF (no disconnect, no bg task, no timer)
@@ -60,6 +71,8 @@ final class ConnectionRecoveryHandler_Tests: XCTestCase {
         XCTAssertFalse(mockBackgroundTaskScheduler.beginBackgroundTask_called)
         // Assert no reconnect timer
         XCTAssertTrue(mockTime.scheduledTimers.isEmpty)
+
+        mockChatClient.mockWebSocketClient.connect_calledCounter = 0
 
         // Internet -> ON
         mockInternetConnection.monitorMock.status = .available(.great)
@@ -85,6 +98,8 @@ final class ConnectionRecoveryHandler_Tests: XCTestCase {
         XCTAssertFalse(mockBackgroundTaskScheduler.beginBackgroundTask_called)
         // Assert no reconnect timer
         XCTAssertTrue(mockTime.scheduledTimers.isEmpty)
+
+        mockChatClient.mockWebSocketClient.connect_calledCounter = 0
 
         // App -> foreground
         mockBackgroundTaskScheduler.simulateAppGoingToForeground()
@@ -119,6 +134,8 @@ final class ConnectionRecoveryHandler_Tests: XCTestCase {
         // Assert no reconnect timer
         XCTAssertTrue(mockTime.scheduledTimers.isEmpty)
 
+        mockChatClient.mockWebSocketClient.connect_calledCounter = 0
+
         // Internet -> ON
         mockInternetConnection.monitorMock.status = .available(.great)
 
@@ -152,6 +169,8 @@ final class ConnectionRecoveryHandler_Tests: XCTestCase {
         // Assert no reconnect timer
         XCTAssertTrue(mockTime.scheduledTimers.isEmpty)
 
+        mockChatClient.mockWebSocketClient.connect_calledCounter = 0
+
         // App -> foregorund
         mockBackgroundTaskScheduler.simulateAppGoingToForeground()
 
@@ -162,7 +181,7 @@ final class ConnectionRecoveryHandler_Tests: XCTestCase {
     /// keepConnectionAliveInBackground == false
     ///
     /// 1. ws -> connected
-    /// 2. internet -> OFF (disconnect, no bg task, no timer)
+    /// 2. internet -> OFF (no bg task, no timer)
     /// 3. internet -> ON (reconnect)
     func test_socketIsConnected_appBackgroundForeground() {
         // Create handler passive in background
@@ -174,12 +193,12 @@ final class ConnectionRecoveryHandler_Tests: XCTestCase {
         // Internet -> OFF
         mockInternetConnection.monitorMock.status = .unavailable
 
-        // Assert disconnect is initiated by the sytem
-        XCTAssertEqual(mockChatClient.mockWebSocketClient.disconnect_source, .systemInitiated)
         // Assert no background task
         XCTAssertFalse(mockBackgroundTaskScheduler.beginBackgroundTask_called)
         // Assert no reconnect timer
         XCTAssertTrue(mockTime.scheduledTimers.isEmpty)
+
+        mockChatClient.mockWebSocketClient.connect_calledCounter = 0
 
         // Disconnect (system initiated)
         disconnectWebSocket(source: .systemInitiated)
@@ -212,6 +231,8 @@ final class ConnectionRecoveryHandler_Tests: XCTestCase {
         XCTAssertTrue(mockBackgroundTaskScheduler.beginBackgroundTask_called)
         // Assert no reconnect timer
         XCTAssertTrue(mockTime.scheduledTimers.isEmpty)
+
+        mockChatClient.mockWebSocketClient.connect_calledCounter = 0
 
         // App -> foregorund
         mockBackgroundTaskScheduler.simulateAppGoingToForeground()
@@ -298,10 +319,10 @@ final class ConnectionRecoveryHandler_Tests: XCTestCase {
     ///
     /// 1. ws -> connected
     /// 2. app -> background (no disconnect, background task is started, no timer)
-    /// 3. internet -> OFF (disconnect)
+    /// 3. internet -> OFF
     /// 4. internet -> ON (no reconnect in background)
     /// 5. internet -> OFF (no disconnect)
-    /// 6. app -> foregorund (no reconnect without internet)
+    /// 6. app -> foregorund (reconnect)
     /// 7. internet -> ON (reconnect)
     func test_socketIsConnected_appBackgroundInternetOffOnOffAppForegroundInternetOn() {
         // Create handler active in background
@@ -323,19 +344,17 @@ final class ConnectionRecoveryHandler_Tests: XCTestCase {
         // Internet -> OFF
         mockInternetConnection.monitorMock.status = .unavailable
 
-        // Assert disconnection is system initiated
-        XCTAssertEqual(mockChatClient.mockWebSocketClient.disconnect_source, .systemInitiated)
-
         // Disconnect (system initiated)
         disconnectWebSocket(source: .systemInitiated)
 
-        // Reset disconnect calls count
+        // Reset calls counts
         mockChatClient.mockWebSocketClient.disconnect_calledCounter = 0
+        mockChatClient.mockWebSocketClient.connect_calledCounter = 0
 
         // Internet -> ON
         mockInternetConnection.monitorMock.status = .available(.great)
 
-        // Assert no reconnect in backround
+        // Assert no reconnect in background
         XCTAssertFalse(mockChatClient.mockWebSocketClient.connect_called)
 
         // Internet -> OFF
@@ -343,9 +362,6 @@ final class ConnectionRecoveryHandler_Tests: XCTestCase {
 
         // App -> foregorund
         mockBackgroundTaskScheduler.simulateAppGoingToForeground()
-
-        // Assert no reconnect without internet connection
-        XCTAssertFalse(mockChatClient.mockWebSocketClient.connect_called)
 
         // Internet -> ON
         mockInternetConnection.monitorMock.status = .available(.great)
@@ -495,6 +511,31 @@ final class ConnectionRecoveryHandler_Tests: XCTestCase {
 
         XCTAssertNotCall("syncLocalState(completion:)", on: mockChatClient.mockSyncRepository)
         XCTAssertNil(mockChatClient.mockExtensionLifecycle.receivedIsReceivingEvents)
+        XCTAssertEqual(mockReconnectionTimeoutHandler.startCallCount, 0)
+    }
+
+    func test_webSocketStateUpdate_connecting_whenTimeout_whenNotRunning_shouldStartTimeout() {
+        handler = makeConnectionRecoveryHandler(keepConnectionAliveInBackground: false, withReconnectionTimeout: true)
+        mockReconnectionTimeoutHandler.isRunning = false
+
+        // Simulate connection update
+        handler.webSocketClient(mockChatClient.mockWebSocketClient, didUpdateConnectionState: .connecting)
+
+        XCTAssertNotCall("syncLocalState(completion:)", on: mockChatClient.mockSyncRepository)
+        XCTAssertNil(mockChatClient.mockExtensionLifecycle.receivedIsReceivingEvents)
+        XCTAssertEqual(mockReconnectionTimeoutHandler.startCallCount, 1)
+    }
+
+    func test_webSocketStateUpdate_connecting_whenTimeout_whenRunning_shouldNotStartTimeout() {
+        handler = makeConnectionRecoveryHandler(keepConnectionAliveInBackground: false, withReconnectionTimeout: true)
+        mockReconnectionTimeoutHandler.isRunning = true
+
+        // Simulate connection update
+        handler.webSocketClient(mockChatClient.mockWebSocketClient, didUpdateConnectionState: .connecting)
+
+        XCTAssertNotCall("syncLocalState(completion:)", on: mockChatClient.mockSyncRepository)
+        XCTAssertNil(mockChatClient.mockExtensionLifecycle.receivedIsReceivingEvents)
+        XCTAssertEqual(mockReconnectionTimeoutHandler.startCallCount, 0)
     }
 
     func test_webSocketStateUpdate_connected() {
@@ -506,6 +547,19 @@ final class ConnectionRecoveryHandler_Tests: XCTestCase {
         XCTAssertCall(RetryStrategy_Spy.Signature.resetConsecutiveFailures, on: mockRetryStrategy, times: 1)
         XCTAssertCall("syncLocalState(completion:)", on: mockChatClient.mockSyncRepository, times: 1)
         XCTAssert(mockChatClient.mockExtensionLifecycle.receivedIsReceivingEvents == true)
+        XCTAssertEqual(mockReconnectionTimeoutHandler.stopCallCount, 0)
+    }
+
+    func test_webSocketStateUpdate_connected_whenTimeout_shouldStopTimeout() {
+        handler = makeConnectionRecoveryHandler(keepConnectionAliveInBackground: false, withReconnectionTimeout: true)
+
+        // Simulate connection update
+        handler.webSocketClient(mockChatClient.mockWebSocketClient, didUpdateConnectionState: .connected(connectionId: "124"))
+
+        XCTAssertCall(RetryStrategy_Spy.Signature.resetConsecutiveFailures, on: mockRetryStrategy, times: 1)
+        XCTAssertCall("syncLocalState(completion:)", on: mockChatClient.mockSyncRepository, times: 1)
+        XCTAssert(mockChatClient.mockExtensionLifecycle.receivedIsReceivingEvents == true)
+        XCTAssertEqual(mockReconnectionTimeoutHandler.stopCallCount, 1)
     }
 
     func test_webSocketStateUpdate_disconnected_userInitiated() {
@@ -582,7 +636,8 @@ final class ConnectionRecoveryHandler_Tests: XCTestCase {
 
 private extension ConnectionRecoveryHandler_Tests {
     func makeConnectionRecoveryHandler(
-        keepConnectionAliveInBackground: Bool
+        keepConnectionAliveInBackground: Bool,
+        withReconnectionTimeout: Bool = false
     ) -> DefaultConnectionRecoveryHandler {
         let handler = DefaultConnectionRecoveryHandler(
             webSocketClient: mockChatClient.mockWebSocketClient,
@@ -593,8 +648,10 @@ private extension ConnectionRecoveryHandler_Tests {
             internetConnection: mockInternetConnection,
             reconnectionStrategy: mockRetryStrategy,
             reconnectionTimerType: VirtualTimeTimer.self,
-            keepConnectionAliveInBackground: keepConnectionAliveInBackground
+            keepConnectionAliveInBackground: keepConnectionAliveInBackground,
+            reconnectionTimeoutHandler: withReconnectionTimeout ? mockReconnectionTimeoutHandler : nil
         )
+        handler.start()
 
         // Make a handler a delegate to simlulate real life chain when
         // connection changes are propagated back to the handler.
