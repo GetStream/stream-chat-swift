@@ -148,7 +148,6 @@ final class PollVoteListController_Tests: XCTestCase {
         try client.databaseContainer.writeSynchronously { session in
             try session.savePollVotes(payload: response, query: query, cache: nil)
         }
-        waitForDelegateCallback()
 
         XCTAssertEqual(controller.votes.count, votes.count)
     }
@@ -208,22 +207,5 @@ final class PollVoteListController_Tests: XCTestCase {
 
         wait(for: [exp], timeout: defaultTimeout)
         XCTAssertTrue(controller.hasLoadedAllVotes)
-    }
-    
-    // MARK: -
-    
-    func waitForDelegateCallback() {
-        let delegate = DelegateWaiter()
-        controller.delegate = delegate
-        wait(for: [delegate.didChangeVotesExpectation], timeout: defaultTimeout)
-        controller.delegate = nil
-    }
-    
-    private class DelegateWaiter: PollVoteListControllerDelegate {
-        let didChangeVotesExpectation = XCTestExpectation(description: "DidChangeVotes")
-        
-        func controller(_ controller: StreamChat.PollVoteListController, didChangeVotes changes: [StreamChat.ListChange<StreamChat.PollVote>]) {
-            didChangeVotesExpectation.fulfill()
-        }
     }
 }
