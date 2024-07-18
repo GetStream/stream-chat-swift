@@ -14,7 +14,7 @@ extension StreamChatWrapper {
         { completion in
             // Simulate API call delay
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-                var generatedToken: Token? = _generateUserToken(
+                let generatedToken: Token? = _generateUserToken(
                     secret: refreshDetails.appSecret,
                     userID: initialToken.userId,
                     expirationDate: Date().addingTimeInterval(refreshDetails.duration)

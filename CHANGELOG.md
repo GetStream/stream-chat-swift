@@ -18,6 +18,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### 🐞 Fixed
 - Fix Channel List not hiding error state view when data is available [#3303](https://github.com/GetStream/stream-chat-swift/pull/3303)
 
+## StreamChatUI
+### ✅ Added
+- Add support for enabling message list view animations [#3314](https://github.com/GetStream/stream-chat-swift/pull/3314)
+
 # [4.59.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.59.0)
 _July 10, 2024_
 
