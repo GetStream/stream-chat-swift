@@ -123,6 +123,10 @@ public struct Components {
     /// The foundation view for the message list view controller.
     public var messageListView: ChatMessageListView.Type = ChatMessageListView.self
 
+    /// Whether the message list should have animations when inserting/updating/deleting messages.
+    /// By default it disabled since the SDK uses an inverted list to render the messages, and so animations do not look good overall.
+    public var isMessageListAnimationsEnabled: Bool = false
+
     /// A boolean value that determines whether the messages should start at the top
     /// of the list  when there are few messages. By default it is `false`.
     public var shouldMessagesStartAtTheTop: Bool = false

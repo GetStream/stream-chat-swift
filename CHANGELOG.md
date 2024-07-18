@@ -9,6 +9,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Increase QoS for `Throttler` and `Debouncer` to `utility` [#3295](https://github.com/GetStream/stream-chat-swift/issues/3295)
 - Improve reliability of accessing database models in controller provided completion handlers [#3304](https://github.com/GetStream/stream-chat-swift/issues/3304)
 
+## StreamChatUI
+### ✅ Added
+- Add support for enabling message list view animations [#3314](https://github.com/GetStream/stream-chat-swift/pull/3314)
+
 # [4.59.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.59.0)
 _July 10, 2024_
 
