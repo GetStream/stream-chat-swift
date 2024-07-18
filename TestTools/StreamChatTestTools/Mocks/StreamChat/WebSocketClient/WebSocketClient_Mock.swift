@@ -13,10 +13,10 @@ final class WebSocketClient_Mock: WebSocketClient {
     let init_eventNotificationCenter: EventNotificationCenter
     let init_environment: WebSocketClient.Environment
 
-    @Atomic var connect_calledCounter = 0
+    var connect_calledCounter = 0
     var connect_called: Bool { connect_calledCounter > 0 }
 
-    @Atomic var disconnect_calledCounter = 0
+    var disconnect_calledCounter = 0
     var disconnect_source: WebSocketConnectionState.DisconnectionSource?
     var disconnect_called: Bool { disconnect_calledCounter > 0 }
     var disconnect_completion: (() -> Void)?
@@ -66,14 +66,14 @@ final class WebSocketClient_Mock: WebSocketClient {
     }
 
     override func connect() {
-        _connect_calledCounter { $0 += 1 }
+        connect_calledCounter += 1
     }
 
     override func disconnect(
         source: WebSocketConnectionState.DisconnectionSource = .userInitiated,
         completion: @escaping () -> Void
     ) {
-        _disconnect_calledCounter { $0 += 1 }
+        disconnect_calledCounter += 1
         disconnect_source = source
         disconnect_completion = completion
     }

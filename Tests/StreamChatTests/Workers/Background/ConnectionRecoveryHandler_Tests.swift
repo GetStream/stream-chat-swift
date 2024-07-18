@@ -130,6 +130,8 @@ final class ConnectionRecoveryHandler_Tests: XCTestCase {
         // Assert no reconnect timer
         XCTAssertTrue(mockTime.scheduledTimers.isEmpty)
 
+        mockChatClient.mockWebSocketClient.connect_calledCounter = 0
+
         // Internet -> ON
         mockInternetConnection.monitorMock.status = .available(.great)
 
