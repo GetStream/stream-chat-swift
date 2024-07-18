@@ -6,7 +6,10 @@ import CoreData
 import Foundation
 
 /// The type that keeps track of active chat components and asks them to reconnect when it's needed
-protocol ConnectionRecoveryHandler: ConnectionStateDelegate {}
+protocol ConnectionRecoveryHandler: ConnectionStateDelegate {
+    func start()
+    func stop()
+}
 
 /// The type is designed to obtain missing events that happened in watched channels while user
 /// was not connected to the web-socket.
@@ -59,14 +62,20 @@ final class DefaultConnectionRecoveryHandler: ConnectionRecoveryHandler {
         self.reconnectionTimerType = reconnectionTimerType
         self.keepConnectionAliveInBackground = keepConnectionAliveInBackground
         self.reconnectionTimeoutHandler = reconnectionTimeoutHandler
+    }
 
+    func start() {
         subscribeOnNotifications()
     }
 
-    deinit {
+    func stop() {
         unsubscribeFromNotifications()
         cancelReconnectionTimer()
         reconnectionTimeoutHandler?.stop()
+    }
+
+    deinit {
+        stop()
     }
 }
 
