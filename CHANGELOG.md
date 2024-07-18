@@ -12,7 +12,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### 🔄 Changed
 - Dropped iOS 12 support [#3285](https://github.com/GetStream/stream-chat-swift/pull/3285)
 - Increase QoS for `Throttler` and `Debouncer` to `utility` [#3295](https://github.com/GetStream/stream-chat-swift/issues/3295)
-- Improve reliability of accessing database models in controllers' completion handlers [#3304](https://github.com/GetStream/stream-chat-swift/issues/3304)
+- Improve reliability of accessing data in controllers' completion handlers [#3304](https://github.com/GetStream/stream-chat-swift/issues/3304)
 
 ## StreamChatUI
 ### 🐞 Fixed
