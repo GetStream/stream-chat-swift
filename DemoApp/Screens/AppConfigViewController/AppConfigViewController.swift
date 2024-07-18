@@ -20,6 +20,8 @@ struct DemoAppConfig {
     var isLocationAttachmentsEnabled: Bool
     /// Set this value to define if we should mimic token refresh scenarios.
     var tokenRefreshDetails: TokenRefreshDetails?
+    /// A Boolean value that determines if a connection banner UI should be shown.
+    var shouldShowConnectionBanner: Bool
 
     /// The details to generate expirable tokens in the demo app.
     struct TokenRefreshDetails {
@@ -48,7 +50,8 @@ class AppConfig {
             isMessageDebuggerEnabled: false,
             isChannelPinningEnabled: false,
             isLocationAttachmentsEnabled: false,
-            tokenRefreshDetails: nil
+            tokenRefreshDetails: nil,
+            shouldShowConnectionBanner: false
         )
 
         if StreamRuntimeCheck.isStreamInternalConfiguration {
@@ -57,6 +60,7 @@ class AppConfig {
             demoAppConfig.isLocationAttachmentsEnabled = true
             demoAppConfig.isLocationAttachmentsEnabled = true
             demoAppConfig.isHardDeleteEnabled = true
+            demoAppConfig.shouldShowConnectionBanner = true
             StreamRuntimeCheck.assertionsEnabled = true
         }
     }
@@ -165,6 +169,7 @@ class AppConfigViewController: UITableViewController {
         case isChannelPinningEnabled
         case isLocationAttachmentsEnabled
         case tokenRefreshDetails
+        case shouldShowConnectionBanner
     }
 
     enum ComponentsConfigOption: String, CaseIterable {
@@ -316,6 +321,10 @@ class AppConfigViewController: UITableViewController {
                 cell.detailTextLabel?.text = "Disabled"
             }
             cell.accessoryType = .none
+        case .shouldShowConnectionBanner:
+            cell.accessoryView = makeSwitchButton(demoAppConfig.shouldShowConnectionBanner) { [weak self] newValue in
+                self?.demoAppConfig.shouldShowConnectionBanner = newValue
+            }
         }
     }
 

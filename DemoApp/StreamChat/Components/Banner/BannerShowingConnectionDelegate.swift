@@ -29,11 +29,14 @@ extension BannerShowingConnectionDelegate: ChatConnectionControllerDelegate {
             bannerView.update(text: "Disconnected")
             showBanner()
         case .connected:
+            bannerView.update(text: "Connected")
             hideBanner()
         case .disconnecting:
             bannerView.update(text: "Disconnecting...")
+            showBanner()
         case .connecting:
             bannerView.update(text: "Connecting...")
+            showBanner()
         case .initialized:
             break
         }
@@ -45,7 +48,7 @@ extension BannerShowingConnectionDelegate: ChatConnectionControllerDelegate {
 private extension BannerShowingConnectionDelegate {
     func setupViews() {
         attachToTopViewIfNeeded()
-        bannerView.alpha = 0
+        bannerView.alpha = 1
         bannerView.update(text: "Connecting...")
     }
 

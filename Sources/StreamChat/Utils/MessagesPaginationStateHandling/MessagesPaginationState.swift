@@ -58,7 +58,7 @@ struct MessagesPaginationState {
     // MARK: Initial State
 
     /// The initial state.
-    static var initial: Self = .init(
+    static let initial: Self = .init(
         oldestFetchedMessage: nil,
         newestFetchedMessage: nil,
         hasLoadedAllNextMessages: true,
