@@ -638,6 +638,7 @@ private extension ConnectionRecoveryHandler_Tests {
             keepConnectionAliveInBackground: keepConnectionAliveInBackground,
             reconnectionTimeoutHandler: withReconnectionTimeout ? mockReconnectionTimeoutHandler : nil
         )
+        handler.start()
 
         // Make a handler a delegate to simlulate real life chain when
         // connection changes are propagated back to the handler.
