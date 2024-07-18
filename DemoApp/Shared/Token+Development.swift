@@ -14,7 +14,7 @@ extension StreamChatWrapper {
         { completion in
             // Simulate API call delay
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-                var generatedToken: Token? = _generateUserToken(
+                let generatedToken: Token? = _generateUserToken(
                     secret: refreshDetails.appSecret,
                     userID: initialToken.userId,
                     expirationDate: Date().addingTimeInterval(refreshDetails.duration)
@@ -26,7 +26,7 @@ extension StreamChatWrapper {
 
                 let numberOfSuccessfulRefreshes = refreshDetails.numberOfSuccessfulRefreshesBeforeFailing
                 let shouldNotFail = numberOfSuccessfulRefreshes == 0
-                if shouldNotFail || self.numberOfRefreshTokens <= numberOfSuccessfulRefreshes {
+                if shouldNotFail || self.numberOfRefreshTokens >= numberOfSuccessfulRefreshes {
                     print("Demo App Token Refreshing: New token generated successfully.")
                     let newToken = generatedToken ?? initialToken
                     completion(.success(newToken))
