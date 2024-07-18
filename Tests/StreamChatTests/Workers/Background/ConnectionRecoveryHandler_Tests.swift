@@ -72,6 +72,8 @@ final class ConnectionRecoveryHandler_Tests: XCTestCase {
         // Assert no reconnect timer
         XCTAssertTrue(mockTime.scheduledTimers.isEmpty)
 
+        mockChatClient.mockWebSocketClient.connect_calledCounter = 0
+
         // Internet -> ON
         mockInternetConnection.monitorMock.status = .available(.great)
 
@@ -96,6 +98,8 @@ final class ConnectionRecoveryHandler_Tests: XCTestCase {
         XCTAssertFalse(mockBackgroundTaskScheduler.beginBackgroundTask_called)
         // Assert no reconnect timer
         XCTAssertTrue(mockTime.scheduledTimers.isEmpty)
+
+        mockChatClient.mockWebSocketClient.connect_calledCounter = 0
 
         // App -> foreground
         mockBackgroundTaskScheduler.simulateAppGoingToForeground()
@@ -165,6 +169,8 @@ final class ConnectionRecoveryHandler_Tests: XCTestCase {
         // Assert no reconnect timer
         XCTAssertTrue(mockTime.scheduledTimers.isEmpty)
 
+        mockChatClient.mockWebSocketClient.connect_calledCounter = 0
+
         // App -> foregorund
         mockBackgroundTaskScheduler.simulateAppGoingToForeground()
 
@@ -191,6 +197,8 @@ final class ConnectionRecoveryHandler_Tests: XCTestCase {
         XCTAssertFalse(mockBackgroundTaskScheduler.beginBackgroundTask_called)
         // Assert no reconnect timer
         XCTAssertTrue(mockTime.scheduledTimers.isEmpty)
+
+        mockChatClient.mockWebSocketClient.connect_calledCounter = 0
 
         // Disconnect (system initiated)
         disconnectWebSocket(source: .systemInitiated)
@@ -223,6 +231,8 @@ final class ConnectionRecoveryHandler_Tests: XCTestCase {
         XCTAssertTrue(mockBackgroundTaskScheduler.beginBackgroundTask_called)
         // Assert no reconnect timer
         XCTAssertTrue(mockTime.scheduledTimers.isEmpty)
+
+        mockChatClient.mockWebSocketClient.connect_calledCounter = 0
 
         // App -> foregorund
         mockBackgroundTaskScheduler.simulateAppGoingToForeground()
@@ -337,13 +347,14 @@ final class ConnectionRecoveryHandler_Tests: XCTestCase {
         // Disconnect (system initiated)
         disconnectWebSocket(source: .systemInitiated)
 
-        // Reset disconnect calls count
+        // Reset calls counts
         mockChatClient.mockWebSocketClient.disconnect_calledCounter = 0
+        mockChatClient.mockWebSocketClient.connect_calledCounter = 0
 
         // Internet -> ON
         mockInternetConnection.monitorMock.status = .available(.great)
 
-        // Assert no reconnect in backround
+        // Assert no reconnect in background
         XCTAssertFalse(mockChatClient.mockWebSocketClient.connect_called)
 
         // Internet -> OFF
