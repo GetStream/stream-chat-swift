@@ -147,12 +147,18 @@ extension DefaultConnectionRecoveryHandler {
     }
 
     @objc private func internetConnectionAvailabilityDidChange(_ notification: Notification) {
-        if let isAvailable = notification.internetConnectionStatus?.isAvailable {
-            log.debug("Internet -> \(isAvailable ? "✅" : "❌")", subsystems: .webSocket)
+        guard let isAvailable = notification.internetConnectionStatus?.isAvailable else {
+            return
         }
 
-        if canReconnectFromOffline {
-            webSocketClient.connect()
+        log.debug("Internet -> \(isAvailable ? "✅" : "❌")", subsystems: .webSocket)
+
+        if isAvailable {
+            if canReconnectFromOffline {
+                webSocketClient.connect()
+            }
+        } else {
+            disconnectIfNeeded()
         }
     }
 
