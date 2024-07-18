@@ -75,7 +75,7 @@ public extension TranslationLanguage {
     static let urdu: TranslationLanguage = TranslationLanguage(languageCode: "ur")
     static let vietnamese: TranslationLanguage = TranslationLanguage(languageCode: "vi")
 
-    static var allCases: [Self] = [
+    static let allCases: [Self] = [
         .afrikaans,
         .albanian,
         .amharic,
