@@ -3,6 +3,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 # Upcoming
 
+### 🔄 Changed
+
+# [4.60.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.60.0)
+_July 18, 2024_
+
 ## StreamChat
 ### ✅ Added
 - Add an option to configure a reconnection timeout [#3303](https://github.com/GetStream/stream-chat-swift/pull/3303)
