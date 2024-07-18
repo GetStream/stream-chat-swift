@@ -216,8 +216,9 @@ open class ChatMessageListView: UITableView, Customizable, ComponentsProvider {
             !self.skippedMessages.contains($0.id)
         }
         adjustContentInsetToPositionMessagesAtTheTop()
-        UIView.performWithoutAnimation {
-            reloadMessages(
+
+        let reloadMessages: () -> Void = {
+            self.reloadMessages(
                 previousSnapshot: previousMessagesSnapshot,
                 newSnapshot: newMessagesWithoutSkipped,
                 with: .fade,
@@ -226,6 +227,14 @@ open class ChatMessageListView: UITableView, Customizable, ComponentsProvider {
                     self?.adjustContentInsetToPositionMessagesAtTheTop()
                 }
             )
+        }
+
+        if components.isMessageListAnimationsEnabled {
+            reloadMessages()
+        } else {
+            UIView.performWithoutAnimation {
+                reloadMessages()
+            }
         }
     }
 

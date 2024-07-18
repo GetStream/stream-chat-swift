@@ -561,6 +561,11 @@ open class ChatMessageContentView: _View, ThemeProvider, UITextViewDelegate {
     // are no unwanted animations caused by the ContainerStackView.
     func updateContentIfNeeded() {
         if superview != nil {
+            if components.isMessageListAnimationsEnabled {
+                updateContent()
+                return
+            }
+
             UIView.performWithoutAnimation {
                 updateContent()
             }
