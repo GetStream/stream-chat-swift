@@ -100,8 +100,8 @@ open class ChatChannelListSearchVC: ChatChannelListVC, UISearchResultsUpdating {
 
     // MARK: - State Handling
 
-    override open func controller(_ controller: DataController, didChangeState state: DataController.State) {
-        switch state {
+    override open func handleStateChanges(_ newState: DataController.State) {
+        switch newState {
         case .initialized, .localDataFetched:
             if hasEmptyResults {
                 loadingIndicator.startAnimating()
