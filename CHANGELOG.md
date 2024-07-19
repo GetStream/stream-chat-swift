@@ -14,6 +14,7 @@ _July 18, 2024_
 ### 🐞 Fixed
 - Improve the stability of the reconnection process [#3303](https://github.com/GetStream/stream-chat-swift/pull/3303)
 - Fix invalid token errors considered as recoverable errors [#3303](https://github.com/GetStream/stream-chat-swift/pull/3303)
+- Fix crashes in `LazyCachedMapCollection` when logging out an user [3299](https://github.com/GetStream/stream-chat-swift/pull/3299)
 ### 🔄 Changed
 - Dropped iOS 12 support [#3285](https://github.com/GetStream/stream-chat-swift/pull/3285)
 - Increase QoS for `Throttler` and `Debouncer` to `utility` [#3297](https://github.com/GetStream/stream-chat-swift/issues/3297)
