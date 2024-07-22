@@ -4,7 +4,6 @@
 
 <p align="center">
   <a href="https://cocoapods.org/pods/StreamChatUI"><img src="https://img.shields.io/badge/CocoaPods-compatible-green" /></a>
-  <a href="https://github.com/Carthage/Carthage"><img src="https://img.shields.io/badge/Carthage-compatible-green" /></a>
   <a href="https://www.swift.org/package-manager/"><img src="https://img.shields.io/badge/SPM-compatible-green" /></a>
 </p>
 <p align="center">
@@ -49,7 +48,7 @@ The **StreamChatSwiftUI SDK** is our UI SDK for SwiftUI components. If your appl
 
 - [iOS/Swift Chat Tutorial](https://getstream.io/tutorials/ios-chat/): Learn how to use the SDK by following our simple tutorial with UIKit (or [SwiftUI](https://getstream.io/tutorials/swiftui-chat/)).
 - [Register](https://getstream.io/chat/trial/): Register to get an API key for Stream Chat.
-- [Installation](https://getstream.io/chat/docs/sdk/ios/basics/integration): Learn more about how to install the SDK using CocoaPods, SPM or Carthage.
+- [Installation](https://getstream.io/chat/docs/sdk/ios/basics/integration): Learn more about how to install the SDK using SPM or CocoaPods.
   - Do you want to use Module Stable XCFrameworks? [Check this out](https://getstream.io/chat/docs/sdk/ios/basics/integration#xcframeworks)
 - [Documentation](https://getstream.io/chat/docs/sdk/ios/): An extensive documentation is available to help with you integration.
 - [SwiftUI](https://github.com/GetStream/stream-chat-swiftui): Check our SwiftUI SDK if you are developing with SwiftUI.

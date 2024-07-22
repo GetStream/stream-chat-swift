@@ -12,7 +12,6 @@ excluded:
   - UISDKdocumentation
   - Tests
   - TestTools
-  - Carthage
   - Pods
   - .build
   - spm_cache
