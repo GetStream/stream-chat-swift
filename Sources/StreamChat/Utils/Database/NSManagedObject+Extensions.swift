@@ -169,29 +169,36 @@ extension NSManagedObjectContext {
 extension Set where Element: NSManagedObject {
     func filtered(using request: NSFetchRequest<Element>) -> [Element] {
         guard !isEmpty else { return [] }
-        let allObjects = NSMutableArray(array: (self as NSSet).allObjects, copyItems: false)
+        var allObjects = NSMutableArray(array: (self as NSSet).allObjects, copyItems: false)
         if let sortDescriptors = request.sortDescriptors, !sortDescriptors.isEmpty {
             allObjects.sort(using: sortDescriptors)
         }
-        if let predicate = request.predicate {
-            if request.fetchLimit > 0 {
-                var result = NSMutableArray(capacity: request.fetchLimit)
-                let batchSize = Swift.min(request.fetchLimit, 100)
-                for index in stride(from: 0, to: allObjects.count, by: batchSize) {
-                    let range = NSRange(location: index, length: Swift.min(batchSize, allObjects.count - index))
-                    let batch = allObjects.subarray(with: range) as NSArray
-                    result.addObjects(from: batch.filtered(using: predicate))
-                    if result.count == request.fetchLimit {
-                        break
-                    }
+        if request.fetchLimit > 0 {
+            let result = NSMutableArray(capacity: request.fetchLimit)
+            let batchSize = Swift.min(request.fetchLimit, 100)
+            for index in stride(from: 0, to: allObjects.count, by: batchSize) {
+                let range = NSRange(location: index, length: Swift.min(batchSize, allObjects.count - index))
+                let batch = allObjects.subarray(with: range)
+                if let predicate = request.predicate {
+                    result.addObjects(from: (batch as NSArray).filtered(using: predicate))
+                } else {
+                    result.addObjects(from: batch)
                 }
-                return result as? [Element] ?? []
-            } else {
-                allObjects.filter(using: predicate)
-                return allObjects as? [Element] ?? []
+                if result.count > request.fetchLimit {
+                    let removeCount = result.count - request.fetchLimit
+                    result.removeObjects(in: NSRange(location: result.count - removeCount, length: removeCount))
+                }
+                if result.count == request.fetchLimit {
+                    break
+                }
             }
+            allObjects = result
         } else {
-            return allObjects as? [Element] ?? []
+            if let predicate = request.predicate {
+                allObjects.filter(using: predicate)
+            }
         }
+        
+        return allObjects as? [Element] ?? []
     }
 }
