@@ -1662,6 +1662,8 @@
 		ADD3286E2C07CCCA00BAD0E9 /* BadgeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADD3286B2C07CC7100BAD0E9 /* BadgeView.swift */; };
 		ADD328712C07CD7000BAD0E9 /* ChatThreadUnreadCountView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADD3286F2C07CD5300BAD0E9 /* ChatThreadUnreadCountView.swift */; };
 		ADD328722C07CD7200BAD0E9 /* ChatThreadUnreadCountView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADD3286F2C07CD5300BAD0E9 /* ChatThreadUnreadCountView.swift */; };
+		ADD328762C07E9B200BAD0E9 /* ViewContainerBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADD328742C07E9AC00BAD0E9 /* ViewContainerBuilder.swift */; };
+		ADD328772C07E9B300BAD0E9 /* ViewContainerBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADD328742C07E9AC00BAD0E9 /* ViewContainerBuilder.swift */; };
 		ADD4C0E12B30A98300F230FF /* UnsupportedAttachmentViewInjector.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADD4C0DE2B30A95200F230FF /* UnsupportedAttachmentViewInjector.swift */; };
 		ADD4C0E22B30A98400F230FF /* UnsupportedAttachmentViewInjector.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADD4C0DE2B30A95200F230FF /* UnsupportedAttachmentViewInjector.swift */; };
 		ADD738472A8D312B0011FE81 /* ChannelListMessageTimestampFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADD738462A8D312B0011FE81 /* ChannelListMessageTimestampFormatter.swift */; };
@@ -4266,6 +4268,7 @@
 		ADD328642C06B39F00BAD0E9 /* ChatThreadListItemCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatThreadListItemCell.swift; sourceTree = "<group>"; };
 		ADD3286B2C07CC7100BAD0E9 /* BadgeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BadgeView.swift; sourceTree = "<group>"; };
 		ADD3286F2C07CD5300BAD0E9 /* ChatThreadUnreadCountView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatThreadUnreadCountView.swift; sourceTree = "<group>"; };
+		ADD328742C07E9AC00BAD0E9 /* ViewContainerBuilder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewContainerBuilder.swift; sourceTree = "<group>"; };
 		ADD4C0DE2B30A95200F230FF /* UnsupportedAttachmentViewInjector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UnsupportedAttachmentViewInjector.swift; sourceTree = "<group>"; };
 		ADD5A9E725DE8AF6006DC88A /* ChatSuggestionsVC_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatSuggestionsVC_Tests.swift; sourceTree = "<group>"; };
 		ADD738462A8D312B0011FE81 /* ChannelListMessageTimestampFormatter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelListMessageTimestampFormatter.swift; sourceTree = "<group>"; };
@@ -5223,6 +5226,7 @@
 				BD4016352638411D00F09774 /* Deprecations.swift */,
 				C14A46572846636900EF498E /* SDKIdentifier.swift */,
 				AD99C901279B06E9009DD9C5 /* Appearance+Formatters */,
+				ADD328732C07E99700BAD0E9 /* ViewContainerBuilder */,
 				ADECE08926AAEC63001AE411 /* ChatChannel */,
 				790882BE25486AB000896F03 /* ChatChannelList */,
 				7908830C2548707B00896F03 /* ChatMessageList */,
@@ -8677,6 +8681,14 @@
 			path = ChatThreadList;
 			sourceTree = "<group>";
 		};
+		ADD328732C07E99700BAD0E9 /* ViewContainerBuilder */ = {
+			isa = PBXGroup;
+			children = (
+				ADD328742C07E9AC00BAD0E9 /* ViewContainerBuilder.swift */,
+			);
+			path = ViewContainerBuilder;
+			sourceTree = "<group>";
+		};
 		ADD4C0D82B30A6E100F230FF /* Giphy */ = {
 			isa = PBXGroup;
 			children = (
@@ -10283,6 +10295,7 @@
 				CF01EB7B288A2B7200B426B8 /* ChatChannelListLoadingView.swift in Sources */,
 				883051C82630579D0069D731 /* ChatThreadArrowView.swift in Sources */,
 				E798D6D325FF69120002C3B9 /* SwipeableView.swift in Sources */,
+				ADD328762C07E9B200BAD0E9 /* ViewContainerBuilder.swift in Sources */,
 				E701201E2583EBD50036DACD /* CALayer+Extensions.swift in Sources */,
 				C1FC2F7C27416E150062530F /* Combine.swift in Sources */,
 				84C11BE527FB459900000A9E /* ChatMessageDeliveryStatusView.swift in Sources */,
@@ -12395,6 +12408,7 @@
 				AD7BE1712C234798000A5756 /* ChatThreadListLoadingView.swift in Sources */,
 				C121EB962746A1E800023E4C /* AttachmentPreviewContainer.swift in Sources */,
 				C121EB972746A1E800023E4C /* AttachmentPreviewProvider.swift in Sources */,
+				ADD328772C07E9B300BAD0E9 /* ViewContainerBuilder.swift in Sources */,
 				C121EB982746A1E800023E4C /* DefaultAttachmentPreviewProvider.swift in Sources */,
 				C121EB992746A1E800023E4C /* FileAttachmentView.swift in Sources */,
 				AD78F9FC28EC735700BC0FCE /* PerfomanceLog.swift in Sources */,
