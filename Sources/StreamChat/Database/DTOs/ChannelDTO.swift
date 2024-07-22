@@ -516,7 +516,8 @@ extension ChatChannel {
         let members: [ChatChannelMember] = {
             guard !dto.members.isEmpty else { return [] }
             let memberRequest = MemberDTO.lastActiveMembersRequest(cid: cid, context: context)
-            return dto.members.filtered(using: memberRequest)
+            return dto.members
+                .filtered(using: memberRequest)
                 .compactMap { try? $0.asModel() }
         }()
         
