@@ -103,6 +103,8 @@ lane :publish_release do |options|
   )
 
   update_spm(version: options[:version])
+
+  merge_main_to_develop
 end
 
 lane :merge_release_to_main do
@@ -123,11 +125,18 @@ lane :merge_release_to_main do
 end
 
 lane :merge_main_to_develop do
-  ensure_git_status_clean
-  sh('git checkout main && git pull')
-  sh('git checkout develop && git pull')
+  if is_ci
+    sh('git reset --hard')
+  else
+    ensure_git_status_clean
+  end
+
+  sh('git checkout main')
+  sh('git pull origin main')
+  sh('git checkout develop')
+  sh('git pull origin develop')
+  sh('git log develop..main')
   sh('git merge main')
-  UI.user_error!('Not pushing changes') unless prompt(text: 'Will push changes. All looking good?', boolean: true)
   sh('git push')
 end
 
