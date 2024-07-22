@@ -54,12 +54,6 @@ playground.xcworkspace
 # https://guides.cocoapods.org/using/using-cocoapods.html#should-i-check-the-pods-directory-into-source-control
 Pods/
 
-# Carthage
-#
-# Add this line if you want to avoid checking in source code from Carthage dependencies.
-Carthage/
-!Sample/Carthage/
-
 # fastlane
 #
 # It is recommended to not store the screenshots in the git repo. Instead, use fastlane to re-generate the
@@ -82,8 +76,6 @@ StreamChatCoreTests.xctest.coverage.txt
 vendor/bundle/
 .bundle/
 .swiftpm
-Example/Carthage/.env
-Example/Carthage/fastlane/report.xml
 Sample/Cocoapods/Podfile.lock
 docusaurus/.env
 reports/

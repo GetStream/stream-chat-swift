@@ -8,7 +8,6 @@ To integrate Stream Chat in your app, you can use one of the following dependenc
 
 - [**Swift Package Manager**](#swift-package-manager)
 - [**CocoaPods**](#cocoapods)
-- [**Carthage**](#carthage)
 
 We also provide pre-built XCFramework support, read more [here](#xcframeworks).
 
@@ -113,70 +112,6 @@ The above command will generate the **MyProject.xcworkspace** file automatically
 With our workspace now containing our Pods project with dependencies, as well as our original project, let’s go ahead and move over to Xcode to complete the process.
 
 _More information about CocoaPods [can be found here](https://cocoapods.org/)._
-
-### Carthage
-
-If you are using **Swift 5.7 / Xcode 14** or above, the recommended method for Carthage is to use **pre-built XCFrameworks**.
-
-:::note
-Our SwiftUI components library is not yet available using Carthage, please use Swift Package Manager or CocoaPods.
-:::
-
-<details><summary>➤ Using pre-built <b>XCFrameworks</b></summary>
-<p>
-
-:::caution
-Our XCFrameworks are built with **Swift 5.7**. In order to use them you need **Xcode 14** or above
-:::
-
-You can learn more about [our Module Stable XCFrameworks here](#xcframeworks)
-
-- For the LLC (**StreamChat**) use:
-  - `binary "https://raw.githubusercontent.com/GetStream/stream-chat-swift/main/StreamChatArtifacts.json" ~> 4.6`
-- For the UIKit components (**StreamChatUI**, which depends on **StreamChat**) use:
-  - `binary "https://raw.githubusercontent.com/GetStream/stream-chat-swift/main/StreamChatArtifacts.json" ~> 4.6`
-
-Now that we’ve modified our Cartfile, let’s go ahead and install the project dependencies via the terminal with one simple command:
-
-```bash
-carthage update --use-xcframeworks
-```
-
-The previous command will download pre-built XCFrameworks. You now need to add those to your project. Keep reading.
-
-</p>
-</details>
-
-<details><summary>➤ Building from source <b>(OSS)</b></summary>
-<p>
-
-In your project's `Cartfile`, add one of these options
-
-- For the LLC (**StreamChat**) use:
-  - `github "getstream/stream-chat-swift" ~> 4.6.0`
-- For the UIKit components (**StreamChatUI**, which depends on **StreamChat**) use:
-  - `github "getstream/stream-chat-swift" ~> 4.6.0`
-
-Now that we’ve modified our Cartfile, let’s go ahead and install the project dependencies via the terminal with one simple command:
-
-```bash
-carthage update --use-xcframeworks --no-use-binaries --platform iOS
-```
-
-The previous command will create pre-built XCFrameworks built from our source code (This might take a while ⏱). You now need to add those to your project. Keep reading.
-
-</p>
-</details>
-
-Open the `Carthage/Build` folder that has been created in the root of your project, and drag and drop the frameworks you want to use. Those should be added to the "Frameworks, Libraries, and Embedded Content" section under General settings:
-
-![Screenshot shows XCFrameworks being dragged into Xcode](../assets/carthage-drag.png)
-
-Make sure you select **Embed & Sign** under "Embed" options if you are adding Stream libraries to an app target. If not, use **Do Not Embed**
-
-![Screenshot shows Embed and Sign being the option selected](../assets/carthage-embed-and-sign.png)
-
-_More information about Carthage [can be found here](https://github.com/Carthage/Carthage)._
 
 ## XCFrameworks
 
