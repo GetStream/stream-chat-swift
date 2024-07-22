@@ -403,14 +403,13 @@ class MessageDTO: NSManagedObject {
         return request
     }
 
-    static func load(
+    static func channelMessagesRequest(
         for cid: String,
         limit: Int,
         offset: Int = 0,
         deletedMessagesVisibility: ChatClientConfig.DeletedMessageVisibility,
-        shouldShowShadowedMessages: Bool,
-        context: NSManagedObjectContext
-    ) -> [MessageDTO] {
+        shouldShowShadowedMessages: Bool
+    ) -> NSFetchRequest<MessageDTO> {
         let request = NSFetchRequest<MessageDTO>(entityName: entityName)
         request.predicate = channelMessagesPredicate(
             for: cid,
@@ -420,6 +419,24 @@ class MessageDTO: NSManagedObject {
         request.sortDescriptors = [NSSortDescriptor(keyPath: \MessageDTO.createdAt, ascending: false)]
         request.fetchLimit = limit
         request.fetchOffset = offset
+        return request
+    }
+    
+    static func load(
+        for cid: String,
+        limit: Int,
+        offset: Int = 0,
+        deletedMessagesVisibility: ChatClientConfig.DeletedMessageVisibility,
+        shouldShowShadowedMessages: Bool,
+        context: NSManagedObjectContext
+    ) -> [MessageDTO] {
+        let request = Self.channelMessagesRequest(
+            for: cid,
+            limit: limit,
+            offset: offset,
+            deletedMessagesVisibility: deletedMessagesVisibility,
+            shouldShowShadowedMessages: shouldShowShadowedMessages
+        )
         return load(by: request, context: context)
     }
 
@@ -457,6 +474,20 @@ class MessageDTO: NSManagedObject {
         return new
     }
 
+    static func loadRepliesRequest(
+        for messageId: MessageId,
+        limit: Int,
+        offset: Int = 0,
+        context: NSManagedObjectContext
+    ) -> NSFetchRequest<MessageDTO> {
+        let request = NSFetchRequest<MessageDTO>(entityName: entityName)
+        request.predicate = NSPredicate(format: "parentMessageId == %@", messageId)
+        request.sortDescriptors = [NSSortDescriptor(keyPath: \MessageDTO.createdAt, ascending: false)]
+        request.fetchLimit = limit
+        request.fetchOffset = offset
+        return request
+    }
+    
     /// Load replies for the specified `parentMessageId`.
     static func loadReplies(
         for messageId: MessageId,
@@ -464,11 +495,7 @@ class MessageDTO: NSManagedObject {
         offset: Int = 0,
         context: NSManagedObjectContext
     ) -> [MessageDTO] {
-        let request = NSFetchRequest<MessageDTO>(entityName: entityName)
-        request.predicate = NSPredicate(format: "parentMessageId == %@", messageId)
-        request.sortDescriptors = [NSSortDescriptor(keyPath: \MessageDTO.createdAt, ascending: false)]
-        request.fetchLimit = limit
-        request.fetchOffset = offset
+        let request = loadRepliesRequest(for: messageId, limit: limit, offset: offset, context: context)
         return load(by: request, context: context)
     }
 
@@ -516,7 +543,7 @@ class MessageDTO: NSManagedObject {
         return (try? context.count(for: request)) ?? 0
     }
 
-    static func loadLastMessage(from userId: String, in cid: String, context: NSManagedObjectContext) -> MessageDTO? {
+    static func lastMessageRequest(from userId: String, in cid: String, context: NSManagedObjectContext) -> NSFetchRequest<MessageDTO> {
         let request = NSFetchRequest<MessageDTO>(entityName: entityName)
         request.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [
             channelPredicate(with: cid),
@@ -526,6 +553,11 @@ class MessageDTO: NSManagedObject {
         ])
         request.sortDescriptors = [NSSortDescriptor(keyPath: \MessageDTO.createdAt, ascending: false)]
         request.fetchLimit = 1
+        return request
+    }
+    
+    static func loadLastMessage(from userId: String, in cid: String, context: NSManagedObjectContext) -> MessageDTO? {
+        let request = lastMessageRequest(from: userId, in: cid, context: context)
         return load(by: request, context: context).first
     }
 

@@ -163,3 +163,25 @@ extension NSManagedObjectContext {
         return objects
     }
 }
+
+// MARK: - Runtime Filtering
+
+extension Set where Element: NSManagedObject {
+    func filtered(using request: NSFetchRequest<Element>) -> [Element] {
+        guard !isEmpty else { return [] }
+        let result = NSMutableArray(array: (self as NSSet).allObjects, copyItems: false)
+        if let predicate = request.predicate {
+            result.filter(using: predicate)
+        }
+        if let sortDescriptors = request.sortDescriptors, !sortDescriptors.isEmpty {
+            result.sort(using: sortDescriptors)
+        }
+        if request.fetchLimit > 0 {
+            let removeCount = result.count - request.fetchLimit
+            if removeCount > 0 {
+                result.removeObjects(in: NSRange(location: result.count - removeCount, length: removeCount))
+            }
+        }
+        return result as? [Element] ?? []
+    }
+}

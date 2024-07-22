@@ -446,6 +446,11 @@ extension ChatChannel {
 
             let allUnreadMessages = currentUserRead?.unreadMessagesCount ?? 0
 
+            // Therefore, no unread messages with mentions and we can skip the fetch
+            if allUnreadMessages == 0 {
+                return .noUnread
+            }
+            
             // Fetch count of all mentioned messages after last read
             // (this is not 100% accurate but it's the best we have)
             let unreadMentionsRequest = NSFetchRequest<MessageDTO>(entityName: MessageDTO.entityName)
@@ -471,35 +476,50 @@ extension ChatChannel {
         }()
 
         let messages: [ChatMessage] = {
-            MessageDTO
-                .load(
-                    for: dto.cid,
-                    limit: dto.managedObjectContext?.localCachingSettings?.chatChannel.latestMessagesLimit ?? 25,
-                    deletedMessagesVisibility: dto.managedObjectContext?.deletedMessagesVisibility ?? .visibleForCurrentUser,
-                    shouldShowShadowedMessages: dto.managedObjectContext?.shouldShowShadowedMessages ?? false,
-                    context: context
-                )
+            guard !dto.messages.isEmpty else { return [] }
+            let request = MessageDTO.channelMessagesRequest(
+                for: dto.cid,
+                limit: dto.managedObjectContext?.localCachingSettings?.chatChannel.latestMessagesLimit ?? 25,
+                deletedMessagesVisibility: dto.managedObjectContext?.deletedMessagesVisibility ?? .visibleForCurrentUser,
+                shouldShowShadowedMessages: dto.managedObjectContext?.shouldShowShadowedMessages ?? false
+            )
+            return dto.messages
+                .filtered(using: request)
                 .compactMap { try? $0.relationshipAsModel(depth: depth) }
         }()
 
         let latestMessageFromUser: ChatMessage? = {
             guard let currentUser = context.currentUser else { return nil }
-
-            return try? MessageDTO
-                .loadLastMessage(
-                    from: currentUser.user.id,
-                    in: dto.cid,
-                    context: context
-                )?
+            guard !dto.messages.isEmpty else { return nil }
+            let request = MessageDTO.lastMessageRequest(
+                from: currentUser.user.id,
+                in: dto.cid,
+                context: context
+            )
+            return try? dto.messages
+                .filtered(using: request)
+                .first?
                 .relationshipAsModel(depth: depth)
         }()
-
-        let watchers = UserDTO.loadLastActiveWatchers(cid: cid, context: context)
-            .compactMap { try? $0.asModel() }
         
-        let members = MemberDTO.loadLastActiveMembers(cid: cid, context: context)
-            .compactMap { try? $0.asModel() }
-
+        let watchers: [ChatUser] = {
+            guard !dto.watchers.isEmpty else { return [] }
+            let request = UserDTO.lastActiveWatchersRequest(
+                cid: cid,
+                context: context
+            )
+            return dto.watchers
+                .filtered(using: request)
+                .compactMap { try? $0.asModel() }
+        }()
+        
+        let members: [ChatChannelMember] = {
+            guard !dto.members.isEmpty else { return [] }
+            let memberRequest = MemberDTO.lastActiveMembersRequest(cid: cid, context: context)
+            return dto.members.filtered(using: memberRequest)
+                .compactMap { try? $0.asModel() }
+        }()
+        
         let muteDetails: MuteDetails? = {
             guard let mute = dto.mute else { return nil }
             return .init(
