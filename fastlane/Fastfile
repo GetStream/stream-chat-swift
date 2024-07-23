@@ -465,7 +465,7 @@ lane :xcmetrics do |options|
 
       markdown_table << "| #{target} | #{title} | #{benchmark_value} #{value_extension} | #{branch_value} #{value_extension} | #{diff}% #{diff_emoji} | #{status_emoji} |\n"
       FastlaneCore::PrintTable.print_values(
-        title: "⏳ #{title} ⏳",
+        title: title,
         config: {
           benchmark: "#{benchmark_value} #{value_extension}",
           branch: "#{branch_value} #{value_extension}",
@@ -853,9 +853,20 @@ desc 'Show current frameworks size'
 lane :show_frameworks_sizes do |options|
   options[:sizes] ||= frameworks_sizes
 
-  UI.success("StreamChat: #{options[:sizes][:stream_chat]}MB")
-  UI.success("StreamChatUI: #{options[:sizes][:stream_chat_ui]}MB")
-  UI.success("Total Size: #{options[:sizes][:total]}MB")
+  if is_ci && !ENV['GITHUB_PR_NUM'].to_s.empty?
+    markdown_table = "## SDK Size\n| `StreamChat` | `StreamChatUI` | `Total` |\n| - | - | - |\n"
+    markdown_table << "|#{options[:sizes][:stream_chat]}MB|#{options[:sizes][:stream_chat_ui]}MB|#{options[:sizes][:total]}MB|"
+    sh("gh pr comment #{ENV.fetch('GITHUB_PR_NUM')} -b '#{markdown_table}'")
+  end
+
+  FastlaneCore::PrintTable.print_values(
+    title: 'SDK Size',
+    config: {
+      StreamChat: "#{options[:sizes][:stream_chat]}MB",
+      StreamChatUI: "#{options[:sizes][:stream_chat]}MB",
+      'Total Size': "#{options[:sizes][:total]}MB"
+    }
+  )
 end
 
 desc 'Update img shields SDK size labels'
