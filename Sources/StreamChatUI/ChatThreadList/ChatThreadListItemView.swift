@@ -242,7 +242,6 @@ open class ChatThreadListItemView: _View, ThemeProvider {
         }
 
         let thread = content.thread
-        let channel = thread.channel
         let latestReply = thread.latestReplies.last
         let unreadReplies = thread.reads.first(where: { $0.user.id == content.currentUserId })?.unreadMessagesCount ?? 0
 
