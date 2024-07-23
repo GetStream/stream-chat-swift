@@ -964,6 +964,8 @@ def frameworks_sizes
   # Cleanup the previous builds
   FileUtils.rm_rf("../#{root_dir}/")
 
+  match_me
+
   gym(
     scheme: 'DemoApp',
     archive_path: archive_dir,
