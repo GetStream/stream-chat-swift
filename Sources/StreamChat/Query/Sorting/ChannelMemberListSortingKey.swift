@@ -33,11 +33,6 @@ extension ChannelMemberListSortingKey {
         return .init(keyPath: dateKeyPath, ascending: false)
     }()
 
-    static let lastActiveSortDescriptor: NSSortDescriptor = {
-        let dateKeyPath: KeyPath<MemberDTO, DBDate?> = \MemberDTO.user.lastActivityAt
-        return .init(keyPath: dateKeyPath, ascending: false)
-    }()
-
     func sortDescriptor(isAscending: Bool) -> NSSortDescriptor {
         .init(key: rawValue, ascending: isAscending)
     }

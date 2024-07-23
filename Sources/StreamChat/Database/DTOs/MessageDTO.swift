@@ -543,24 +543,6 @@ class MessageDTO: NSManagedObject {
         return (try? context.count(for: request)) ?? 0
     }
 
-    static func lastMessageRequest(from userId: String, in cid: String, context: NSManagedObjectContext) -> NSFetchRequest<MessageDTO> {
-        let request = NSFetchRequest<MessageDTO>(entityName: entityName)
-        request.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [
-            channelPredicate(with: cid),
-            .init(format: "user.id == %@", userId),
-            .init(format: "type != %@", MessageType.ephemeral.rawValue),
-            messageSentPredicate()
-        ])
-        request.sortDescriptors = [NSSortDescriptor(keyPath: \MessageDTO.createdAt, ascending: false)]
-        request.fetchLimit = 1
-        return request
-    }
-    
-    static func loadLastMessage(from userId: String, in cid: String, context: NSManagedObjectContext) -> MessageDTO? {
-        let request = lastMessageRequest(from: userId, in: cid, context: context)
-        return load(by: request, context: context).first
-    }
-
     static func loadSendingMessages(context: NSManagedObjectContext) -> [MessageDTO] {
         let request = NSFetchRequest<MessageDTO>(entityName: MessageDTO.entityName)
         request.sortDescriptors = [NSSortDescriptor(keyPath: \MessageDTO.locallyCreatedAt, ascending: false)]
