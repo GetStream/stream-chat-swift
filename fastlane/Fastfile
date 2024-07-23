@@ -835,7 +835,8 @@ lane :sources_matrix do
     sample_apps: ['Sources', 'Examples', 'DemoApp', xcode_project],
     integration: ['Sources', 'Integration', xcode_project],
     ruby: ['fastlane', 'Gemfile', 'Gemfile.lock'],
-    xcmetrics: ['Sources']
+    xcmetrics: ['Sources'],
+    size: ['Sources']
   }
 end
 
@@ -851,6 +852,8 @@ end
 
 desc 'Show current frameworks size'
 lane :show_frameworks_sizes do |options|
+  next unless is_check_required(sources: sources_matrix[:size], force_check: @force_check)
+
   options[:sizes] ||= frameworks_sizes
 
   if is_ci && !ENV['GITHUB_PR_NUM'].to_s.empty?
