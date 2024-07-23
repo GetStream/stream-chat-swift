@@ -17,6 +17,7 @@ excluded:
   - spm_cache
   - vendor/bundle
   - .ruby-lsp
+  - derived_data
 
 disabled_rules:
   - large_tuple
