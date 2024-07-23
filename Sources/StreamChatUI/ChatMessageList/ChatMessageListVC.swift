@@ -16,6 +16,7 @@ open class ChatMessageListVC: _ViewController,
     GiphyActionContentViewDelegate,
     FileActionContentViewDelegate,
     LinkPreviewViewDelegate,
+    PollAttachmentViewInjectorDelegate,
     UITableViewDataSource,
     UITableViewDelegate,
     UIGestureRecognizerDelegate,
@@ -1061,6 +1062,22 @@ open class ChatMessageListVC: _ViewController,
     ) {
         audioSessionFeedbackGenerator.feedbackForSeeking()
         audioPlayer?.seek(to: timeInterval)
+    }
+
+    // MARK: - PollAttachmentViewDelegate
+
+    open func pollAttachmentView(
+        _ pollAttachmentView: PollAttachmentView,
+        didTapOnOption option: PollOption,
+        for message: ChatMessage
+    ) {
+        guard let poll = message.poll else { return }
+        let pollController = client.pollController(messageId: message.id, pollId: poll.id)
+        if let currentUserVote = poll.currentUserVote(forOption: option) {
+            pollController.removePollVote(voteId: currentUserVote.id)
+        } else {
+            pollController.castPollVote(answerText: nil, optionId: option.id)
+        }
     }
 
     // MARK: - Deprecations
