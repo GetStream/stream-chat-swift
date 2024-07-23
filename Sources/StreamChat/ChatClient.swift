@@ -100,6 +100,8 @@ public class ChatClient {
     /// Used as a bridge to communicate between the host app and the notification extension. Holds the state for the app lifecycle.
     let extensionLifecycle: NotificationExtensionLifecycle
 
+    var reconnectionTimeoutHandler: StreamTimer? = ScheduledStreamTimer(interval: 15, fireOnStart: false, repeats: false)
+
     /// The environment object containing all dependencies of this `Client` instance.
     private let environment: Environment
 
@@ -124,6 +126,8 @@ public class ChatClient {
             factory: .init(config: config, environment: environment)
         )
     }
+
+    struct Timeout: Error {}
 
     /// Creates a new instance `ChatClient`.
     ///
@@ -223,11 +227,16 @@ public class ChatClient {
         setupTokenRefresher()
         setupOfflineRequestQueue()
         setupConnectionRecoveryHandler(with: environment)
+
+        reconnectionTimeoutHandler?.onChange = { [weak self] in
+            self?.timeout()
+        }
     }
 
     deinit {
         completeConnectionIdWaiters(connectionId: nil)
         completeTokenWaiters(token: nil)
+        reconnectionTimeoutHandler?.stop()
     }
 
     func setupTokenRefresher() {
@@ -257,8 +266,7 @@ public class ChatClient {
             extensionLifecycle,
             environment.backgroundTaskSchedulerBuilder(),
             environment.internetConnection(eventNotificationCenter, environment.internetMonitor),
-            config.staysConnectedInBackground,
-            config.reconnectionTimeout.map { ScheduledStreamTimer(interval: $0, fireOnStart: false, repeats: false) }
+            config.staysConnectedInBackground
         )
     }
 
@@ -289,7 +297,9 @@ public class ChatClient {
         tokenProvider: @escaping TokenProvider,
         completion: ((Error?) -> Void)? = nil
     ) {
+        reconnectionTimeoutHandler?.start()
         connectionRecoveryHandler?.start()
+        connectionRepository.initialize()
 
         authenticationRepository.connectUser(
             userInfo: userInfo,
@@ -382,7 +392,9 @@ public class ChatClient {
         userInfo: UserInfo,
         completion: ((Error?) -> Void)? = nil
     ) {
+        connectionRepository.initialize()
         connectionRecoveryHandler?.start()
+        reconnectionTimeoutHandler?.start()
         authenticationRepository.connectGuestUser(userInfo: userInfo, completion: { completion?($0) })
     }
     
@@ -406,6 +418,8 @@ public class ChatClient {
     /// Connects an anonymous user
     /// - Parameter completion: The completion that will be called once the **first** user session for the given token is setup.
     public func connectAnonymousUser(completion: ((Error?) -> Void)? = nil) {
+        connectionRepository.initialize()
+        reconnectionTimeoutHandler?.start()
         connectionRecoveryHandler?.start()
         authenticationRepository.connectAnonymousUser(
             completion: { completion?($0) }
@@ -632,6 +646,16 @@ public class ChatClient {
             completion?($0)
         }
     }
+
+    private func timeout() {
+        completeConnectionIdWaiters(connectionId: nil)
+        authenticationRepository.completeTokenCompletions(error: Timeout())
+        completeTokenWaiters(token: nil)
+        authenticationRepository.cancelTimers()
+        connectionRecoveryHandler?.stop()
+        let webSocketConnectionState = webSocketClient?.connectionState ?? .initialized
+        connectionRepository.disconnect(source: .timeout(from: webSocketConnectionState)) {}
+    }
 }
 
 extension ChatClient: AuthenticationRepositoryDelegate {
@@ -660,6 +684,17 @@ extension ChatClient: ConnectionStateDelegate {
             }
         )
         connectionRecoveryHandler?.webSocketClient(client, didUpdateConnectionState: state)
+
+        switch state {
+        case .connecting:
+            if reconnectionTimeoutHandler?.isRunning == false {
+                reconnectionTimeoutHandler?.start()
+            }
+        case .connected:
+            reconnectionTimeoutHandler?.stop()
+        default:
+            break
+        }
     }
 }
 

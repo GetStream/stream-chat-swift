@@ -285,6 +285,19 @@ class AuthenticationRepository {
         updateToken(token: token, notifyTokenWaiters: true)
     }
 
+    func completeTokenCompletions(error: Error?) {
+        let completionBlocks: [(Error?) -> Void]? = tokenQueue.sync(flags: .barrier) {
+            self._isGettingToken = false
+            let completions = self._tokenRequestCompletions
+            return completions
+        }
+        completionBlocks?.forEach { $0(error) }
+        tokenQueue.async(flags: .barrier) {
+            self._tokenRequestCompletions = []
+            self._consecutiveRefreshFailures = 0
+        }
+    }
+
     private func updateToken(token: Token?, notifyTokenWaiters: Bool) {
         let waiters: [String: (Result<Token, Error>) -> Void] = tokenQueue.sync(flags: .barrier) {
             _currentToken = token
@@ -343,14 +356,7 @@ class AuthenticationRepository {
                 log.debug("Successfully retrieved token", subsystems: .authentication)
             }
 
-            let completionBlocks: [(Error?) -> Void]? = self.tokenQueue.sync(flags: .barrier) {
-                self._isGettingToken = false
-                let completions = self._tokenRequestCompletions
-                self._tokenRequestCompletions = []
-                self._consecutiveRefreshFailures = 0
-                return completions
-            }
-            completionBlocks?.forEach { $0(error) }
+            completeTokenCompletions(error: error)
         }
 
         guard consecutiveRefreshFailures < Constants.maximumTokenRefreshAttempts else {

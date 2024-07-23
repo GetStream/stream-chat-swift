@@ -98,6 +98,10 @@ class WebSocketClient {
         self.eventNotificationCenter = eventNotificationCenter
     }
 
+    func initialize() {
+        connectionState = .initialized
+    }
+
     /// Connects the web connect.
     ///
     /// Calling this method has no effect is the web socket is already connected, or is in the connecting phase.
@@ -135,23 +139,18 @@ class WebSocketClient {
         source: WebSocketConnectionState.DisconnectionSource = .userInitiated,
         completion: @escaping () -> Void
     ) {
-        connectionState = .disconnecting(source: source)
+        switch connectionState {
+        case .initialized, .disconnected, .disconnecting:
+            connectionState = .disconnected(source: source)
+        case .connecting, .waitingForConnectionId, .connected:
+            connectionState = .disconnecting(source: source)
+        }
+        
         engineQueue.async { [engine, eventsBatcher] in
             engine?.disconnect()
 
             eventsBatcher.processImmediately(completion: completion)
         }
-    }
-
-    func timeout() {
-        let previousState = connectionState
-        connectionState = .disconnected(source: .timeout(from: previousState))
-        engineQueue.async { [engine, eventsBatcher] in
-            engine?.disconnect()
-
-            eventsBatcher.processImmediately {}
-        }
-        log.error("Connection timed out. `\(connectionState)", subsystems: .webSocket)
     }
 }
 
