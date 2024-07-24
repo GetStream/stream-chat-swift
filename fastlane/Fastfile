@@ -151,7 +151,7 @@ lane :compress_frameworks do
   Dir.chdir('..') do
     FileUtils.cp('LICENSE', 'Products/LICENSE')
     Dir.chdir('Products') do
-      ['StreamChat', 'StreamChatUI'].each do |framework|
+      sdk_names.each do |framework|
         sh("zip -r #{framework} ./#{framework}.xcframework ./LICENSE")
         sh("swift package compute-checksum #{framework}.zip")
       end
@@ -488,7 +488,7 @@ lane :xcmetrics do |options|
     sh("gh pr comment #{ENV.fetch('GITHUB_PR_NUM')} -b '#{markdown_table}'") if pr_comment_required
   end
 
-  UI.user_error!('Performance benchmark failed.') if markdown_table.include?('🔴')
+  UI.user_error!('Performance benchmark failed.') if markdown_table.include?(fail_status)
 end
 
 private_lane :xcmetrics_log_parser do |options|
@@ -842,7 +842,7 @@ end
 
 desc 'Show current frameworks size'
 lane :show_frameworks_sizes do |options|
-  # next unless is_check_required(sources: sources_matrix[:size], force_check: @force_check)
+  next unless is_check_required(sources: sources_matrix[:size], force_check: @force_check)
 
   ['performance/'].each { |dir| FileUtils.remove_dir(dir, force: true) }
 
@@ -872,7 +872,7 @@ lane :show_frameworks_sizes do |options|
   end
 
   FastlaneCore::PrintTable.print_values(title: 'Benchmark', config: expected_performance)
-  FastlaneCore::PrintTable.print_values(title: 'Actual Result', config: actual_performance)
+  FastlaneCore::PrintTable.print_values(title: 'SDK Size', config: actual_performance)
 
   if is_ci
     pr_comment_required = !ENV['GITHUB_PR_NUM'].to_s.empty?
@@ -893,7 +893,7 @@ lane :show_frameworks_sizes do |options|
     sh("gh pr comment #{ENV.fetch('GITHUB_PR_NUM')} -b '#{markdown_table}'") if pr_comment_required
   end
 
-  UI.user_error!('Performance benchmark failed.') if markdown_table.include?('🔴')
+  UI.user_error!('Performance benchmark failed.') if markdown_table.include?(fail_status)
 end
 
 def compose_performance_diff_emoji(benchmark_value:, branch_value:, inverse_diff: false)
@@ -912,15 +912,14 @@ end
 desc 'Update img shields SDK size labels'
 lane :update_img_shields_sdk_sizes do
   sizes = frameworks_sizes
-  show_frameworks_sizes(sizes: sizes)
 
   # Read the file into a string
   readme_path = '../README.md'
   readme_content = File.read(readme_path)
 
   # Define the new value for the badge
-  stream_chat_size = "#{sizes['StreamChat']}MB"
-  stream_chat_ui_size = "#{sizes['StreamChatUI']}MB"
+  stream_chat_size = "#{sizes[:StreamChat]}MB"
+  stream_chat_ui_size = "#{sizes[:StreamChatUI]}MB"
 
   # Replace the value in the badge URL
   readme_content.gsub!(%r{(https://img.shields.io/badge/StreamChat-)(.*?)(-blue)}, "\\1#{stream_chat_size}\\3")
