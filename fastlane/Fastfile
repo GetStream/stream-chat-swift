@@ -1021,10 +1021,11 @@ def frameworks_sizes
 
   stream_chat_size_mb = (stream_chat_size.to_f / 1024 / 1024).round(1)
   stream_chat_ui_size_mb = ((stream_chat_ui_size + assets_thinned_size).to_f / 1024 / 1024).round(1)
+  total_size_mb = (stream_chat_size_mb + stream_chat_ui_size_mb).round(1)
 
   {
     StreamChat: stream_chat_size_mb,
     StreamChatUI: stream_chat_ui_size_mb,
-    Total: stream_chat_size_mb + stream_chat_ui_size_mb
+    Total: total_size_mb
   }
 end
