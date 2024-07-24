@@ -3,7 +3,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 # Upcoming
 
-### 🔄 Changed
+## StreamChat
+### 🐞 Fixed
+- Expose `MissingConnectionId` + `InvalidURL` + `InvalidJSON` Errors [#3332](https://github.com/GetStream/stream-chat-swift/pull/3332)
 
 # [4.60.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.60.0)
 _July 18, 2024_
@@ -11,7 +13,7 @@ _July 18, 2024_
 ## StreamChat
 ### ✅ Added
 - Add an option to configure a reconnection timeout [#3303](https://github.com/GetStream/stream-chat-swift/pull/3303)
-### 🐞 Fixed
+## StreamChat
 - Improve the stability of the reconnection process [#3303](https://github.com/GetStream/stream-chat-swift/pull/3303)
 - Fix invalid token errors considered as recoverable errors [#3303](https://github.com/GetStream/stream-chat-swift/pull/3303)
 - Fix crashes in `LazyCachedMapCollection` when logging out an user [3299](https://github.com/GetStream/stream-chat-swift/pull/3299)
