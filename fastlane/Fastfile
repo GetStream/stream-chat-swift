@@ -861,7 +861,7 @@ lane :show_frameworks_sizes do |options|
   develop_sizes = sdk_size_benchmarks['develop']
   branch_sizes = options[:sizes] || frameworks_sizes
 
-  markdown_table = "## SDK Size\n| `title` | `benchmark` | `branch` | `diff` | `status` |\n| - | - | - | - | - |\n"
+  markdown_table = "## SDK Size\n| `title` | `develop` | `branch` | `diff` | `status` |\n| - | - | - | - | - |\n"
   sdk_names.each do |title|
     benchmark_value = develop_sizes[title]
     branch_value = branch_sizes[title.to_sym]
