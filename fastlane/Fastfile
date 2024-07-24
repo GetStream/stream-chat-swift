@@ -13,17 +13,18 @@ github_repo = ENV['GITHUB_REPOSITORY'] || 'GetStream/stream-chat-swift'
 stress_tests_cycles = 50
 derived_data_path = 'derived_data'
 source_packages_path = 'spm_cache'
-performance_git = 'git@github.com:GetStream/stream-swift-performance-benchmarks.git'
-xcmetrics_path = "performance/#{github_repo.split('/').last}-xcmetrics.json"
-sdk_size_path = "performance/#{github_repo.split('/').last}-size.json"
+metrics_git = 'git@github.com:GetStream/apple-internal-metrics.git'
+xcmetrics_path = "metrics/#{github_repo.split('/').last}-xcmetrics.json"
+sdk_size_path = "metrics/#{github_repo.split('/').last}-size.json"
 buildcache_xcargs = 'CC=clang CPLUSPLUS=clang++ LD=clang LDPLUSPLUS=clang++'
 testlab_bucket = 'gs://test-lab-af3rt9m4yh360-mqm1zzm767nhc'
 is_localhost = !is_ci
 @force_check = false
 
-warning_status = '🟡' # Warning if a branch is #{max_tolerance}% less performant than the benchmark
-fail_status = '🔴' # Failure if a branch is more than #{max_tolerance}% less performant than the benchmark
+warning_status = '🟡' # Warning if a branch is #{max_tolerance} less performant than the benchmark
+fail_status = '🔴' # Failure if a branch is more than #{max_tolerance} less performant than the benchmark
 success_status = '🟢' # Success if a branch is more performant or equals to the benchmark
+outstanding_status = '🚀' # Outstanding performance
 
 before_all do |lane|
   if is_ci
@@ -381,7 +382,7 @@ end
 lane :xcmetrics do |options|
   next unless is_check_required(sources: sources_matrix[:xcmetrics], force_check: @force_check)
 
-  ['test_output/', 'performance/', "../#{derived_data_path}/Build/Products"].each { |dir| FileUtils.remove_dir(dir, force: true) }
+  ['test_output/', 'metrics/', "../#{derived_data_path}/Build/Products"].each { |dir| FileUtils.remove_dir(dir, force: true) }
 
   match_me
 
@@ -414,7 +415,7 @@ lane :xcmetrics do |options|
     xcodebuild_output = File.read('xcodebuild_output.log')
   end
 
-  sh("git clone #{performance_git} #{File.dirname(xcmetrics_path)}")
+  sh("git clone #{metrics_git} #{File.dirname(xcmetrics_path)}")
   performance_benchmarks = JSON.parse(File.read(xcmetrics_path))
   expected_performance = performance_benchmarks['benchmark']
   actual_performance = xcmetrics_log_parser(log: xcodebuild_output)
@@ -429,7 +430,16 @@ lane :xcmetrics do |options|
       value_extension = actual_performance[test_name][metric]['ext']
       max_tolerance = benchmark_value * 0.1 # Default Xcode Max Tolerance is 10%
 
-      diff_emoji = compose_performance_diff_emoji(benchmark_value: benchmark_value, branch_value: branch_value, inverse_diff: is_frame_rate)
+      benchmark_value_avoids_zero_division = benchmark_value == 0 ? 1 : benchmark_value
+      diff = is_frame_rate ? branch_value - benchmark_value : benchmark_value - branch_value
+      diff = (diff * 100.0 / benchmark_value_avoids_zero_division).round(2)
+      if diff > 0
+        '🔼'
+      elsif diff.zero?
+        '🟰'
+      else
+        '🔽'
+      end
 
       status_emoji =
         if is_frame_rate
@@ -844,45 +854,51 @@ desc 'Show current frameworks size'
 lane :show_frameworks_sizes do |options|
   next unless is_check_required(sources: sources_matrix[:size], force_check: @force_check)
 
-  ['performance/'].each { |dir| FileUtils.remove_dir(dir, force: true) }
+  ['metrics/'].each { |dir| FileUtils.remove_dir(dir, force: true) }
 
-  sh("git clone #{performance_git} #{File.dirname(sdk_size_path)}")
-  performance_benchmarks = JSON.parse(File.read(sdk_size_path))
-  expected_performance = performance_benchmarks['develop']
-  actual_performance = options[:sizes] || frameworks_sizes
+  sh("git clone #{metrics_git} #{File.dirname(sdk_size_path)}")
+  sdk_size_benchmarks = JSON.parse(File.read(sdk_size_path))
+  expected_sizes = sdk_size_benchmarks['develop']
+  actual_sizes = options[:sizes] || frameworks_sizes
 
-  markdown_table = "## SDK Size\n| `title` | `benchmark` | `branch` | `performance` | `status` |\n| - | - | - | - | - |\n"
+  markdown_table = "## SDK Size\n| `title` | `benchmark` | `branch` | `diff` | `status` |\n| - | - | - | - | - |\n"
   (sdk_names << 'Total').each do |title|
-    benchmark_value = expected_performance[title]
-    branch_value = actual_performance[title.to_sym]
-    max_tolerance = benchmark_value * 0.01 # Default Max Tolerance is 1%
+    is_total = title == 'Total'
+    benchmark_value = expected_sizes[title]
+    branch_value = actual_sizes[title.to_sym]
+    max_tolerance = 0.5 # Max Tolerance is 0.5MB
+    fine_tolerance = 0.25 # Fine Tolerance is 0.25MB
 
-    diff_emoji = compose_performance_diff_emoji(benchmark_value: benchmark_value, branch_value: branch_value)
+    diff = branch_value - benchmark_value
 
     status_emoji =
-      if branch_value > benchmark_value && branch_value < benchmark_value + max_tolerance
-        warning_status
-      elsif branch_value > benchmark_value
+      if is_total
+        ''
+      elsif diff < 0
+        outstanding_status
+      elsif diff > max_tolerance
         fail_status
+      elsif diff > fine_tolerance
+        warning_status
       else
         success_status
       end
 
-    markdown_table << "|#{title}|#{benchmark_value}mb|#{branch_value}mb| #{diff_emoji} | #{status_emoji} |\n"
+    markdown_table << "|#{title}|#{benchmark_value}mb|#{branch_value}mb|#{diff}mb|#{status_emoji}|\n"
   end
 
-  FastlaneCore::PrintTable.print_values(title: 'Benchmark', config: expected_performance)
-  FastlaneCore::PrintTable.print_values(title: 'SDK Size', config: actual_performance)
+  FastlaneCore::PrintTable.print_values(title: 'Benchmark', config: expected_sizes)
+  FastlaneCore::PrintTable.print_values(title: 'SDK Size', config: actual_sizes)
 
   if is_ci
     pr_comment_required = !ENV['GITHUB_PR_NUM'].to_s.empty?
-    performance_benchmarks[current_branch] = actual_performance
-    File.write(sdk_size_path, JSON.pretty_generate(performance_benchmarks))
+    sdk_size_benchmarks[current_branch] = actual_sizes
+    File.write(sdk_size_path, JSON.pretty_generate(sdk_size_benchmarks))
 
     Dir.chdir(File.dirname(sdk_size_path)) do
       if sh('git status -s', log: false).to_s.empty?
         pr_comment_required = false
-        UI.important('No changes in performance benchmarks. Skipping commit and comment.')
+        UI.important('No changes in SDK sizes benchmarks. Skipping commit and comment.')
       else
         sh('git add -A')
         sh("git commit -m 'Update #{sdk_size_path}: #{current_branch}'")
@@ -893,20 +909,7 @@ lane :show_frameworks_sizes do |options|
     sh("gh pr comment #{ENV.fetch('GITHUB_PR_NUM')} -b '#{markdown_table}'") if pr_comment_required
   end
 
-  UI.user_error!('Performance benchmark failed.') if markdown_table.include?(fail_status)
-end
-
-def compose_performance_diff_emoji(benchmark_value:, branch_value:, inverse_diff: false)
-  benchmark_value_avoids_zero_division = benchmark_value == 0 ? 1 : benchmark_value
-  diff = inverse_diff ? branch_value - benchmark_value : benchmark_value - branch_value
-  diff = (diff * 100.0 / benchmark_value_avoids_zero_division).round(2)
-  if diff > 0
-    '🔼'
-  elsif diff.zero?
-    '🟰'
-  else
-    '🔽'
-  end
+  UI.user_error!('SDK sizes benchmark failed.') if markdown_table.include?(fail_status)
 end
 
 desc 'Update img shields SDK size labels'
