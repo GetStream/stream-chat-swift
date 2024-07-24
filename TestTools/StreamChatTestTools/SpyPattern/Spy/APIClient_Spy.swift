@@ -166,6 +166,7 @@ final class APIClient_Spy: APIClient, Spy {
     @discardableResult
     func waitForRequest(timeout: Double = defaultTimeout) -> AnyEndpoint? {
         XCTWaiter().wait(for: [request_expectation], timeout: timeout)
+        request_expectation = XCTestExpectation()
         return request_endpoint
     }
 

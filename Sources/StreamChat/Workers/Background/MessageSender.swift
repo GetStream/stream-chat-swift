@@ -14,10 +14,7 @@ import Foundation
 ///     3. When the message is being sent, its local state is changed to `.sending`
 ///     4. If the operation is successful, the local state of the message is changed to `nil`. If the operation fails, the local
 ///     state of is changed to `sendingFailed`.
-///
-// TODO:
-/// - Message send retry
-/// - Start sending messages when connection status changes (offline -> online)
+///     5. When connection errors happen, all the queued messages are sent to offline retry which retries them one by one.
 ///
 class MessageSender: Worker {
     /// Because we need to be sure messages for every channel are sent in the correct order, we create a sending queue for
@@ -117,6 +114,15 @@ class MessageSender: Worker {
             }
         }
     }
+    
+    func didUpdateConnectionState(_ state: WebSocketConnectionState) {
+        guard case WebSocketConnectionState.connected = state else { return }
+        sendingDispatchQueue.async { [weak self] in
+            self?.sendingQueueByCid.forEach { _, messageQueue in
+                messageQueue.webSocketConnected()
+            }
+        }
+    }
 }
 
 // MARK: - Chat State Layer
@@ -170,6 +176,7 @@ private class MessageSendingQueue {
     /// We use Set because the message Id is the main identifier. Thanks to this, it's possible to schedule message for sending
     /// multiple times without having to worry about that.
     @Atomic private(set) var requests: Set<SendRequest> = []
+    @Atomic private var isWaitingForConnection = false
 
     /// Schedules sending of the message. All already scheduled messages with `createdLocallyAt` older than these ones will
     /// be sent first.
@@ -184,38 +191,66 @@ private class MessageSendingQueue {
             sendNextMessage()
         }
     }
+    
+    func webSocketConnected() {
+        guard isWaitingForConnection else { return }
+        isWaitingForConnection = false
+        log.debug("Message sender resumed sending messages after establishing internet connection")
+        sendNextMessage()
+    }
 
+    private var sortedQueuedRequests: [SendRequest] {
+        requests.sorted(by: { $0.createdLocallyAt < $1.createdLocallyAt })
+    }
+    
     /// Gets the oldest message from the queue and tries to send it.
     private func sendNextMessage() {
         dispatchQueue.async { [weak self] in
-            // Sort the messages and send the oldest one
-            // If this proves to be a bottleneck in the future, we might
-            // switch to using a custom `OrderedSet`
-            guard let request = self?.requests.sorted(by: { $0.createdLocallyAt < $1.createdLocallyAt }).first else { return }
+            guard let self else { return }
+            guard let request = self.sortedQueuedRequests.first else { return }
 
-            self?.messageRepository.sendMessage(with: request.messageId) { [weak self] result in
-                guard let self else { return }
-                self.removeRequestAndContinue(request)
-                if let error = result.error {
-                    switch error {
-                    case .messageDoesNotExist,
-                         .messageNotPendingSend,
-                         .messageDoesNotHaveValidChannel:
-                        let event = NewMessageErrorEvent(messageId: request.messageId, error: error)
-                        self.eventsNotificationCenter.process(event)
-                    case let .failedToSendMessage(error):
-                        let event = NewMessageErrorEvent(messageId: request.messageId, error: error)
-                        self.eventsNotificationCenter.process(event)
-                    }
+            if self.isWaitingForConnection {
+                self.messageRepository.scheduleOfflineRetry(for: request.messageId) { [weak self] _ in
+                    self?._requests.mutate { $0.remove(request) }
+                    self?.sendNextMessage()
                 }
-                self.delegate?.messageSendingQueue(self, didProcess: request.messageId, result: result)
+            } else {
+                self.messageRepository.sendMessage(with: request.messageId) { [weak self] result in
+                    self?.handleSendMessageResult(request, result: result)
+                }
             }
         }
     }
-
-    private func removeRequestAndContinue(_ request: SendRequest) {
+    
+    private func handleSendMessageResult(_ request: SendRequest, result: Result<ChatMessage, MessageRepositoryError>) {
         _requests.mutate { $0.remove(request) }
-        sendNextMessage()
+        
+        if let repositoryError = result.error {
+            switch repositoryError {
+            case .messageDoesNotExist, .messageNotPendingSend, .messageDoesNotHaveValidChannel:
+                let event = NewMessageErrorEvent(messageId: request.messageId, error: repositoryError)
+                eventsNotificationCenter.process(event)
+            case .failedToSendMessage(let clientError):
+                let event = NewMessageErrorEvent(messageId: request.messageId, error: clientError)
+                eventsNotificationCenter.process(event)
+                
+                if ClientError.isEphemeral(error: clientError) {
+                    // We hit a connection error, therefore all the remaining and upcoming requests should be scheduled for keeping the order
+                    isWaitingForConnection = true
+                    log.debug("Message sender started waiting for connection and forwarding messages to offline requests queue")
+                    messageRepository.scheduleOfflineRetry(for: request.messageId) { [weak self] _ in
+                        // Handle remaining messages
+                        self?.sendNextMessage()
+                    }
+                }
+            }
+        }
+        
+        delegate?.messageSendingQueue(self, didProcess: request.messageId, result: result)
+        
+        if !isWaitingForConnection {
+            sendNextMessage()
+        }
     }
 }
 
