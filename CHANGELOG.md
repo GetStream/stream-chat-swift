@@ -4,7 +4,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 # Upcoming
 
 ## StreamChat
-### 🐞 Fixed
+### ✅ Added
 - Expose `MissingConnectionId` + `InvalidURL` + `InvalidJSON` Errors [#3332](https://github.com/GetStream/stream-chat-swift/pull/3332)
 
 # [4.60.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.60.0)
