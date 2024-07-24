@@ -39,7 +39,7 @@ jobs:
           GOOGLE_APPLICATION_CREDENTIALS: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
           INSTALL_GCLOUD: true
 
-      - name: Run Performance Metrics
+      - name: Run XCMetrics
         if: ${{ github.event_name != 'pull_request' || github.event.pull_request.draft == false }}
         run: bundle exec fastlane xcmetrics
         timeout-minutes: 120
@@ -56,3 +56,30 @@ jobs:
           path: |
             derived_data/Build/Products/xcodebuild_output.log
             fastlane/performance/stream-chat-swift.json
+
+  size:
+    name: SDK Size
+    runs-on: macos-14
+    env:
+      GITHUB_TOKEN: '${{ secrets.CI_BOT_GITHUB_TOKEN }}'
+    steps:
+      - name: Install Bot SSH Key
+        if: ${{ github.event_name != 'pull_request' || github.event.pull_request.draft == false }}
+        uses: webfactory/ssh-agent@v0.7.0
+        with:
+          ssh-private-key: ${{ secrets.BOT_SSH_PRIVATE_KEY }}
+
+      - uses: actions/checkout@v3.1.0
+        if: ${{ github.event_name != 'pull_request' || github.event.pull_request.draft == false }}
+
+      - uses: ./.github/actions/bootstrap
+        if: ${{ github.event_name != 'pull_request' || github.event.pull_request.draft == false }}
+
+      - name: Run SDK Size Metrics
+        if: ${{ github.event_name != 'pull_request' || github.event.pull_request.draft == false }}
+        run: bundle exec fastlane show_frameworks_sizes
+        timeout-minutes: 30
+        env:
+          GITHUB_PR_NUM: ${{ github.event.pull_request.number }}
+          MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
+          APPSTORE_API_KEY: ${{ secrets.APPSTORE_API_KEY }}
