@@ -876,9 +876,9 @@ lane :show_frameworks_sizes do |options|
         ''
       elsif diff < 0
         outstanding_status
-      elsif diff > max_tolerance
+      elsif diff >= max_tolerance
         fail_status
-      elsif diff > fine_tolerance
+      elsif diff >= fine_tolerance
         warning_status
       else
         success_status
