@@ -858,14 +858,14 @@ lane :show_frameworks_sizes do |options|
 
   sh("git clone #{metrics_git} #{File.dirname(sdk_size_path)}")
   sdk_size_benchmarks = JSON.parse(File.read(sdk_size_path))
-  expected_sizes = sdk_size_benchmarks['develop']
-  actual_sizes = options[:sizes] || frameworks_sizes
+  develop_sizes = sdk_size_benchmarks['develop']
+  branch_sizes = options[:sizes] || frameworks_sizes
 
   markdown_table = "## SDK Size\n| `title` | `benchmark` | `branch` | `diff` | `status` |\n| - | - | - | - | - |\n"
   (sdk_names << 'Total').each do |title|
     is_total = title == 'Total'
-    benchmark_value = expected_sizes[title]
-    branch_value = actual_sizes[title.to_sym]
+    benchmark_value = develop_sizes[title]
+    branch_value = branch_sizes[title.to_sym]
     max_tolerance = 0.5 # Max Tolerance is 0.5MB
     fine_tolerance = 0.25 # Fine Tolerance is 0.25MB
 
@@ -887,12 +887,12 @@ lane :show_frameworks_sizes do |options|
     markdown_table << "|#{title}|#{benchmark_value}mb|#{branch_value}mb|#{diff}mb|#{status_emoji}|\n"
   end
 
-  FastlaneCore::PrintTable.print_values(title: 'Benchmark', config: expected_sizes)
-  FastlaneCore::PrintTable.print_values(title: 'SDK Size', config: actual_sizes)
+  FastlaneCore::PrintTable.print_values(title: 'Benchmark', config: develop_sizes)
+  FastlaneCore::PrintTable.print_values(title: 'SDK Size', config: branch_sizes)
 
   if is_ci
     pr_comment_required = !ENV['GITHUB_PR_NUM'].to_s.empty?
-    sdk_size_benchmarks[current_branch] = actual_sizes
+    sdk_size_benchmarks[current_branch] = branch_sizes
     File.write(sdk_size_path, JSON.pretty_generate(sdk_size_benchmarks))
 
     Dir.chdir(File.dirname(sdk_size_path)) do

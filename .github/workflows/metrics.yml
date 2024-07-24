@@ -1,4 +1,4 @@
-name: Performance Benchmarks
+name: Metrics
 
 on:
   schedule:
@@ -57,7 +57,7 @@ jobs:
             derived_data/Build/Products/xcodebuild_output.log
             fastlane/performance/stream-chat-swift.json
 
-  size:
+  sdk_size:
     name: SDK Size
     runs-on: macos-14
     env:
