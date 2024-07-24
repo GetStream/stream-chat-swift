@@ -862,8 +862,7 @@ lane :show_frameworks_sizes do |options|
   branch_sizes = options[:sizes] || frameworks_sizes
 
   markdown_table = "## SDK Size\n| `title` | `benchmark` | `branch` | `diff` | `status` |\n| - | - | - | - | - |\n"
-  (sdk_names << 'Total').each do |title|
-    is_total = title == 'Total'
+  sdk_names.each do |title|
     benchmark_value = develop_sizes[title]
     branch_value = branch_sizes[title.to_sym]
     max_tolerance = 0.5 # Max Tolerance is 0.5MB
@@ -872,9 +871,7 @@ lane :show_frameworks_sizes do |options|
     diff = branch_value - benchmark_value
 
     status_emoji =
-      if is_total
-        ''
-      elsif diff < 0
+      if diff < 0
         outstanding_status
       elsif diff >= max_tolerance
         fail_status
@@ -1027,11 +1024,9 @@ def frameworks_sizes
 
   stream_chat_size_mb = (stream_chat_size.to_f / 1024 / 1024).round(1)
   stream_chat_ui_size_mb = ((stream_chat_ui_size + assets_thinned_size).to_f / 1024 / 1024).round(1)
-  total_size_mb = (stream_chat_size_mb + stream_chat_ui_size_mb).round(1)
 
   {
     StreamChat: stream_chat_size_mb,
-    StreamChatUI: stream_chat_ui_size_mb,
-    Total: total_size_mb
+    StreamChatUI: stream_chat_ui_size_mb
   }
 end
