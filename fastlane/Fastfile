@@ -900,7 +900,7 @@ lane :show_frameworks_sizes do |options|
       end
     end
 
-    sh("gh pr comment #{ENV.fetch('GITHUB_PR_NUM')} -b '#{markdown_table}'") if !ENV['GITHUB_PR_NUM'].to_s.empty?
+    sh("gh pr comment #{ENV.fetch('GITHUB_PR_NUM')} -b '#{markdown_table}'") unless ENV['GITHUB_PR_NUM'].to_s.empty?
   end
 
   UI.user_error!('SDK sizes benchmark failed.') if markdown_table.include?(fail_status)
