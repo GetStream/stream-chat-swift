@@ -303,7 +303,7 @@ protocol ConnectionDetailsProviderDelegate: AnyObject {
     func provideToken(timeout: TimeInterval, completion: @escaping (Result<Token, Error>) -> Void)
 }
 
-extension ClientError {
+public extension ClientError {
     final class InvalidURL: ClientError {}
     final class InvalidJSON: ClientError {}
     final class MissingConnectionId: ClientError {}
