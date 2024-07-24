@@ -855,7 +855,7 @@ lane :show_frameworks_sizes do |options|
   (sdk_names << 'Total').each do |title|
     benchmark_value = expected_performance[title]
     branch_value = actual_performance[title.to_sym]
-    max_tolerance = benchmark_value * 0.05 # Default Max Tolerance is 5%
+    max_tolerance = benchmark_value * 0.01 # Default Max Tolerance is 1%
 
     diff_emoji = compose_performance_diff_emoji(benchmark_value: benchmark_value, branch_value: branch_value)
 
