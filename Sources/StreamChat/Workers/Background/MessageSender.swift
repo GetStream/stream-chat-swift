@@ -238,19 +238,11 @@ private class MessageSendingQueue {
                     // We hit a connection error, therefore all the remaining and upcoming requests should be scheduled for keeping the order
                     isWaitingForConnection = true
                     log.debug("Message sender started waiting for connection and forwarding messages to offline requests queue")
-                    messageRepository.scheduleOfflineRetry(for: request.messageId) { [weak self] _ in
-                        // Handle remaining messages
-                        self?.sendNextMessage()
-                    }
                 }
             }
         }
-        
         delegate?.messageSendingQueue(self, didProcess: request.messageId, result: result)
-        
-        if !isWaitingForConnection {
-            sendNextMessage()
-        }
+        sendNextMessage()
     }
 }
 
