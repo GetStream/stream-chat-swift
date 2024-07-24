@@ -433,13 +433,13 @@ lane :xcmetrics do |options|
       benchmark_value_avoids_zero_division = benchmark_value == 0 ? 1 : benchmark_value
       diff = is_frame_rate ? branch_value - benchmark_value : benchmark_value - branch_value
       diff = (diff * 100.0 / benchmark_value_avoids_zero_division).round(2)
-      if diff > 0
-        '🔼'
-      elsif diff.zero?
-        '🟰'
-      else
-        '🔽'
-      end
+      diff_emoji = if diff > 0
+                     '🔼'
+                   elsif diff.zero?
+                     '🟰'
+                   else
+                     '🔽'
+                   end
 
       status_emoji =
         if is_frame_rate
