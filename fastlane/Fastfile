@@ -835,8 +835,8 @@ lane :sources_matrix do
     sample_apps: ['Sources', 'Examples', 'DemoApp', xcode_project],
     integration: ['Sources', 'Integration', xcode_project],
     ruby: ['fastlane', 'Gemfile', 'Gemfile.lock'],
-    xcmetrics: ['Sources'],
-    size: ['Sources']
+    size: ['Sources', xcode_project],
+    xcmetrics: ['Sources']
   }
 end
 
