@@ -13905,7 +13905,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = io.getstream.iOS.StreamChatUITestsApp;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
-				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = "match Development io.getstream.iOS.StreamChatUITestsApp 1721818857";
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = "match Development io.getstream.iOS.StreamChatUITestsApp";
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG TESTS";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_OPTIMIZATION_LEVEL = "-O";
@@ -14003,7 +14003,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = io.getstream.iOS.StreamChatUITestsAppUITests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
-				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = "match Development io.getstream.iOS.StreamChatUITestsAppUITests.xctrunner 1721818859";
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = "match Development io.getstream.iOS.StreamChatUITestsAppUITests.xctrunner";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = NO;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
