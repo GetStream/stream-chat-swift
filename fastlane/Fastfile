@@ -868,7 +868,7 @@ lane :show_frameworks_sizes do |options|
         success_status
       end
 
-    markdown_table << "|#{title}|#{benchmark_value}MB|#{branch_value}MB| #{diff_emoji} | #{status_emoji} |\n"
+    markdown_table << "|#{title}|#{benchmark_value}mb|#{branch_value}mb| #{diff_emoji} | #{status_emoji} |\n"
   end
 
   FastlaneCore::PrintTable.print_values(title: 'Benchmark', config: expected_performance)
