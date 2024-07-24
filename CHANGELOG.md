@@ -13,7 +13,7 @@ _July 18, 2024_
 ## StreamChat
 ### ✅ Added
 - Add an option to configure a reconnection timeout [#3303](https://github.com/GetStream/stream-chat-swift/pull/3303)
-## StreamChat
+### 🐞 Fixed
 - Improve the stability of the reconnection process [#3303](https://github.com/GetStream/stream-chat-swift/pull/3303)
 - Fix invalid token errors considered as recoverable errors [#3303](https://github.com/GetStream/stream-chat-swift/pull/3303)
 - Fix crashes in `LazyCachedMapCollection` when logging out an user [3299](https://github.com/GetStream/stream-chat-swift/pull/3299)
