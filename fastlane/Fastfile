@@ -857,8 +857,7 @@ lane :show_frameworks_sizes do |options|
   ['metrics/'].each { |dir| FileUtils.remove_dir(dir, force: true) }
 
   sh("git clone #{metrics_git} #{File.dirname(sdk_size_path)}")
-  sdk_size_benchmarks = JSON.parse(File.read(sdk_size_path))
-  develop_sizes = sdk_size_benchmarks['develop']
+  develop_sizes = JSON.parse(File.read(sdk_size_path))
   branch_sizes = options[:sizes] || frameworks_sizes
 
   markdown_table = "## SDK Size\n| `title` | `develop` | `branch` | `diff` | `status` |\n| - | - | - | - | - |\n"
@@ -881,29 +880,27 @@ lane :show_frameworks_sizes do |options|
         success_status
       end
 
-    markdown_table << "|#{title}|#{benchmark_value}mb|#{branch_value}mb|#{diff}mb|#{status_emoji}|\n"
+    markdown_table << "|#{title}|#{benchmark_value}MB|#{branch_value}MB|#{diff}MB|#{status_emoji}|\n"
   end
 
   FastlaneCore::PrintTable.print_values(title: 'Benchmark', config: develop_sizes)
   FastlaneCore::PrintTable.print_values(title: 'SDK Size', config: branch_sizes)
 
   if is_ci
-    pr_comment_required = !ENV['GITHUB_PR_NUM'].to_s.empty?
-    sdk_size_benchmarks[current_branch] = branch_sizes
-    File.write(sdk_size_path, JSON.pretty_generate(sdk_size_benchmarks))
-
-    Dir.chdir(File.dirname(sdk_size_path)) do
-      if sh('git status -s', log: false).to_s.empty?
-        pr_comment_required = false
-        UI.important('No changes in SDK sizes benchmarks. Skipping commit and comment.')
-      else
-        sh('git add -A')
-        sh("git commit -m 'Update #{sdk_size_path}: #{current_branch}'")
-        sh('git push')
+    if current_branch == 'develop'
+      File.write(sdk_size_path, JSON.pretty_generate(branch_sizes))
+      Dir.chdir(File.dirname(sdk_size_path)) do
+        if sh('git status -s', log: false).to_s.empty?
+          UI.important('No changes in SDK sizes benchmarks.')
+        else
+          sh('git add -A')
+          sh("git commit -m 'Update #{sdk_size_path}'")
+          sh('git push')
+        end
       end
     end
 
-    sh("gh pr comment #{ENV.fetch('GITHUB_PR_NUM')} -b '#{markdown_table}'") if pr_comment_required
+    sh("gh pr comment #{ENV.fetch('GITHUB_PR_NUM')} -b '#{markdown_table}'") if !ENV['GITHUB_PR_NUM'].to_s.empty?
   end
 
   UI.user_error!('SDK sizes benchmark failed.') if markdown_table.include?(fail_status)
@@ -1027,6 +1024,7 @@ def frameworks_sizes
 
   {
     StreamChat: stream_chat_size_mb,
-    StreamChatUI: stream_chat_ui_size_mb
+    StreamChatUI: stream_chat_ui_size_mb,
+    Total: stream_chat_size_mb + stream_chat_ui_size_mb
   }
 end
