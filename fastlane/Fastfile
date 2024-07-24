@@ -415,9 +415,9 @@ lane :xcmetrics do |options|
   end
 
   sh("git clone #{performance_git} #{File.dirname(xcmetrics_path)}")
-  branch_performance = xcmetrics_log_parser(log: xcodebuild_output)
   performance_benchmarks = JSON.parse(File.read(xcmetrics_path))
   expected_performance = performance_benchmarks['benchmark']
+  actual_performance = xcmetrics_log_parser(log: xcodebuild_output)
 
   markdown_table = "## StreamChat XCMetrics\n| `target` | `metric` | `benchmark` | `branch` | `performance` | `status` |\n| - | - | - | - | - | - |\n"
   ['testMessageListScrollTime', 'testChannelListScrollTime'].each do |test_name|
@@ -425,11 +425,11 @@ lane :xcmetrics do |options|
     ['hitches_total_duration', 'duration', 'hitch_time_ratio', 'frame_rate', 'number_of_hitches'].each do |metric|
       is_frame_rate = metric == 'frame_rate'
       benchmark_value = expected_performance[test_name][metric]['value']
-      branch_value = branch_performance[test_name][metric]['value']
-      value_extension = branch_performance[test_name][metric]['ext']
+      branch_value = actual_performance[test_name][metric]['value']
+      value_extension = actual_performance[test_name][metric]['ext']
       max_tolerance = benchmark_value * 0.1 # Default Xcode Max Tolerance is 10%
 
-      diff_emoji = compose_diff_emoji(benchmark_value: benchmark_value, branch_value: branch_value)
+      diff_emoji = compose_performance_diff_emoji(benchmark_value: benchmark_value, branch_value: branch_value, inverse_diff: is_frame_rate)
 
       status_emoji =
         if is_frame_rate
@@ -471,8 +471,7 @@ lane :xcmetrics do |options|
 
   if is_ci
     pr_comment_required = !ENV['GITHUB_PR_NUM'].to_s.empty?
-    performance_benchmarks[current_branch] = branch_performance
-    UI.message("Performance benchmarks: #{performance_benchmarks}")
+    performance_benchmarks[current_branch] = actual_performance
     File.write(xcmetrics_path, JSON.pretty_generate(performance_benchmarks))
 
     Dir.chdir(File.dirname(xcmetrics_path)) do
@@ -481,7 +480,7 @@ lane :xcmetrics do |options|
         UI.important('No changes in performance benchmarks. Skipping commit and comment.')
       else
         sh('git add -A')
-        sh("git commit -m 'Update #{github_repo.split('/').last}.json: #{current_branch}'")
+        sh("git commit -m 'Update #{xcmetrics_path}: #{current_branch}'")
         sh('git push')
       end
     end
@@ -845,41 +844,61 @@ desc 'Show current frameworks size'
 lane :show_frameworks_sizes do |options|
   # next unless is_check_required(sources: sources_matrix[:size], force_check: @force_check)
 
+  ['performance/'].each { |dir| FileUtils.remove_dir(dir, force: true) }
+
   sh("git clone #{performance_git} #{File.dirname(sdk_size_path)}")
   performance_benchmarks = JSON.parse(File.read(sdk_size_path))
-  expected_sizes = performance_benchmarks['benchmark']
-  actual_sizes = options[:sizes] || frameworks_sizes
+  expected_performance = performance_benchmarks['develop']
+  actual_performance = options[:sizes] || frameworks_sizes
 
   markdown_table = "## SDK Size\n| `title` | `benchmark` | `branch` | `performance` | `status` |\n| - | - | - | - | - |\n"
   (sdk_names << 'Total').each do |title|
-    benchmark_value = expected_sizes[title]
+    benchmark_value = expected_performance[title]
+    branch_value = actual_performance[title.to_sym]
     max_tolerance = benchmark_value * 0.05 # Default Max Tolerance is 5%
 
-    diff_emoji = compose_diff_emoji(benchmark_value: benchmark_value, branch_value: branch_value)
+    diff_emoji = compose_performance_diff_emoji(benchmark_value: benchmark_value, branch_value: branch_value)
 
     status_emoji =
-      if branch_value < benchmark_value && branch_value > benchmark_value - max_tolerance
+      if branch_value > benchmark_value && branch_value < benchmark_value + max_tolerance
         warning_status
-      elsif branch_value < benchmark_value
+      elsif branch_value > benchmark_value
         fail_status
       else
         success_status
       end
 
-    markdown_table << "|#{title}|#{benchmark_value}MB|#{actual_sizes[title]}MB| #{diff_emoji} | #{status_emoji} |\n"
+    markdown_table << "|#{title}|#{benchmark_value}MB|#{branch_value}MB| #{diff_emoji} | #{status_emoji} |\n"
   end
 
-  FastlaneCore::PrintTable.print_values(title: 'Benchmark', config: expected_sizes)
-  FastlaneCore::PrintTable.print_values(title: 'Actual Result', config: actual_sizes)
+  FastlaneCore::PrintTable.print_values(title: 'Benchmark', config: expected_performance)
+  FastlaneCore::PrintTable.print_values(title: 'Actual Result', config: actual_performance)
 
-  sh("gh pr comment #{ENV.fetch('GITHUB_PR_NUM')} -b '#{markdown_table}'") if is_ci && !ENV['GITHUB_PR_NUM'].to_s.empty?
+  if is_ci
+    pr_comment_required = !ENV['GITHUB_PR_NUM'].to_s.empty?
+    performance_benchmarks[current_branch] = actual_performance
+    File.write(sdk_size_path, JSON.pretty_generate(performance_benchmarks))
+
+    Dir.chdir(File.dirname(sdk_size_path)) do
+      if sh('git status -s', log: false).to_s.empty?
+        pr_comment_required = false
+        UI.important('No changes in performance benchmarks. Skipping commit and comment.')
+      else
+        sh('git add -A')
+        sh("git commit -m 'Update #{sdk_size_path}: #{current_branch}'")
+        sh('git push')
+      end
+    end
+
+    sh("gh pr comment #{ENV.fetch('GITHUB_PR_NUM')} -b '#{markdown_table}'") if pr_comment_required
+  end
 
   UI.user_error!('Performance benchmark failed.') if markdown_table.include?('🔴')
 end
 
-def compose_diff_emoji(benchmark_value:, branch_value:)
+def compose_performance_diff_emoji(benchmark_value:, branch_value:, inverse_diff: false)
   benchmark_value_avoids_zero_division = benchmark_value == 0 ? 1 : benchmark_value
-  diff = is_frame_rate ? branch_value - benchmark_value : benchmark_value - branch_value
+  diff = inverse_diff ? branch_value - benchmark_value : benchmark_value - branch_value
   diff = (diff * 100.0 / benchmark_value_avoids_zero_division).round(2)
   if diff > 0
     '🔼'
@@ -1009,8 +1028,8 @@ def frameworks_sizes
   total_size_mb = (stream_chat_size_mb + stream_chat_ui_size_mb).round(1)
 
   {
-    'StreamChat': stream_chat_size_mb,
-    'StreamChatUI': stream_chat_ui_size_mb,
-    'Total': total_size_mb
+    StreamChat: stream_chat_size_mb,
+    StreamChatUI: stream_chat_ui_size_mb,
+    Total: total_size_mb
   }
 end
