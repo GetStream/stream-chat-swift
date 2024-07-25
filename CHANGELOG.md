@@ -3,7 +3,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 # Upcoming
 
-### 🔄 Changed
+### ⚡ Performance
 - Improve performance of `ChatChannel` database model conversions more than 4 times [#3322](https://github.com/GetStream/stream-chat-swift/pull/3322)
 
 # [4.60.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.60.0)

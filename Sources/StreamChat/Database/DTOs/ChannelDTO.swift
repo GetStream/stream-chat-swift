@@ -434,7 +434,8 @@ extension ChatChannel {
             )
             extraData = [:]
         }
-
+        
+        let sortedMessageDTOs = dto.messages.sorted(by: { $0.createdAt.bridgeDate > $1.createdAt.bridgeDate })
         let reads: [ChatChannelRead] = try dto.reads.map { try $0.asModel() }
         let unreadCount: ChannelUnreadCount = {
             guard let currentUserDTO = context.currentUser else {
@@ -446,8 +447,7 @@ extension ChatChannel {
             if allUnreadMessages == 0 {
                 return .noUnread
             }
-            let unreadMentionsCount = dto.messages
-                .sorted(by: { $0.createdAt.bridgeDate > $1.createdAt.bridgeDate })
+            let unreadMentionsCount = sortedMessageDTOs
                 .prefix(allUnreadMessages)
                 .filter { $0.mentionedUsers.contains(currentUserDTO.user) }
                 .count
@@ -457,23 +457,22 @@ extension ChatChannel {
             )
         }()
 
-        let messages: [ChatMessage] = {
-            guard !dto.messages.isEmpty else { return [] }
-            let request = MessageDTO.channelMessagesRequest(
-                for: dto.cid,
-                limit: dto.managedObjectContext?.localCachingSettings?.chatChannel.latestMessagesLimit ?? 25,
-                deletedMessagesVisibility: dto.managedObjectContext?.deletedMessagesVisibility ?? .visibleForCurrentUser,
-                shouldShowShadowedMessages: dto.managedObjectContext?.shouldShowShadowedMessages ?? false
-            )
-            return dto.messages
-                .filtered(using: request)
+        let latestMessages: [ChatMessage] = {
+            var messages = sortedMessageDTOs
+                .prefix(dto.managedObjectContext?.localCachingSettings?.chatChannel.latestMessagesLimit ?? 25)
                 .compactMap { try? $0.relationshipAsModel(depth: depth) }
+            if let oldest = dto.oldestMessageAt?.bridgeDate {
+                messages = messages.filter { $0.createdAt >= oldest }
+            }
+            if let truncated = dto.truncatedAt?.bridgeDate {
+                messages = messages.filter { $0.createdAt >= truncated }
+            }
+            return messages
         }()
 
         let latestMessageFromUser: ChatMessage? = {
             guard let currentUserId = context.currentUser?.user.id else { return nil }
-            return try? dto.messages
-                .sorted(by: { $0.createdAt.bridgeDate > $1.createdAt.bridgeDate })
+            return try? sortedMessageDTOs
                 .first(where: { messageDTO in
                     guard messageDTO.user.id == currentUserId else { return false }
                     guard messageDTO.localMessageState == nil else { return false }
@@ -545,7 +544,7 @@ extension ChatChannel {
             reads: reads,
             cooldownDuration: Int(dto.cooldownDuration),
             extraData: extraData,
-            latestMessages: messages,
+            latestMessages: latestMessages,
             lastMessageFromCurrentUser: latestMessageFromUser,
             pinnedMessages: pinnedMessages,
             muteDetails: muteDetails,
