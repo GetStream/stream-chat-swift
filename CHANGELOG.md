@@ -5,7 +5,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## StreamChat
 ### ⚡ Performance
-- Improve performance of `ChatChannel` database model conversions more than 4 times [#3322](https://github.com/GetStream/stream-chat-swift/pull/3322)
+- Improve performance of `ChatChannel` database model conversions more than 7 times [#3322](https://github.com/GetStream/stream-chat-swift/pull/3322)
 ### ✅ Added
 - Expose `MissingConnectionId` + `InvalidURL` + `InvalidJSON` Errors [#3332](https://github.com/GetStream/stream-chat-swift/pull/3332)
 
