@@ -504,7 +504,7 @@ extension ChatChannel {
             }
             .prefix(context.localCachingSettings?.chatChannel.lastActiveMembersLimit ?? 100)
             .compactMap { try? $0.asModel() }
-        
+
         let muteDetails: MuteDetails? = {
             guard let mute = dto.mute else { return nil }
             return .init(

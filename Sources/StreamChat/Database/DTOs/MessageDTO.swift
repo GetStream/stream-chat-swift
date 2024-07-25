@@ -402,7 +402,7 @@ class MessageDTO: NSManagedObject {
         request.predicate = NSPredicate(format: "id == %@", messageId)
         return request
     }
-    
+
     static func load(
         for cid: String,
         limit: Int,
