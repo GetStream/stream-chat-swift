@@ -13,11 +13,18 @@ github_repo = ENV['GITHUB_REPOSITORY'] || 'GetStream/stream-chat-swift'
 stress_tests_cycles = 50
 derived_data_path = 'derived_data'
 source_packages_path = 'spm_cache'
-performance_path = "performance/#{github_repo.split('/').last}.json"
+metrics_git = 'git@github.com:GetStream/apple-internal-metrics.git'
+xcmetrics_path = "metrics/#{github_repo.split('/').last}-xcmetrics.json"
+sdk_size_path = "metrics/#{github_repo.split('/').last}-size.json"
 buildcache_xcargs = 'CC=clang CPLUSPLUS=clang++ LD=clang LDPLUSPLUS=clang++'
 testlab_bucket = 'gs://test-lab-af3rt9m4yh360-mqm1zzm767nhc'
 is_localhost = !is_ci
 @force_check = false
+
+warning_status = '🟡' # Warning if a branch is #{max_tolerance} less performant than the benchmark
+fail_status = '🔴' # Failure if a branch is more than #{max_tolerance} less performant than the benchmark
+success_status = '🟢' # Success if a branch is more performant or equals to the benchmark
+outstanding_status = '🚀' # Outstanding performance
 
 before_all do |lane|
   if is_ci
@@ -145,7 +152,7 @@ lane :compress_frameworks do
   Dir.chdir('..') do
     FileUtils.cp('LICENSE', 'Products/LICENSE')
     Dir.chdir('Products') do
-      ['StreamChat', 'StreamChatUI'].each do |framework|
+      sdk_names.each do |framework|
         sh("zip -r #{framework} ./#{framework}.xcframework ./LICENSE")
         sh("swift package compute-checksum #{framework}.zip")
       end
@@ -375,7 +382,7 @@ end
 lane :xcmetrics do |options|
   next unless is_check_required(sources: sources_matrix[:xcmetrics], force_check: @force_check)
 
-  ['test_output/', 'performance/', "../#{derived_data_path}/Build/Products"].each { |dir| FileUtils.remove_dir(dir, force: true) }
+  ['test_output/', 'metrics/', "../#{derived_data_path}/Build/Products"].each { |dir| FileUtils.remove_dir(dir, force: true) }
 
   match_me
 
@@ -408,10 +415,10 @@ lane :xcmetrics do |options|
     xcodebuild_output = File.read('xcodebuild_output.log')
   end
 
-  sh("git clone git@github.com:GetStream/stream-swift-performance-benchmarks.git #{File.dirname(performance_path)}")
-  branch_performance = xcmetrics_log_parser(log: xcodebuild_output)
-  performance_benchmarks = JSON.parse(File.read(performance_path))
+  sh("git clone #{metrics_git} #{File.dirname(xcmetrics_path)}")
+  performance_benchmarks = JSON.parse(File.read(xcmetrics_path))
   expected_performance = performance_benchmarks['benchmark']
+  actual_performance = xcmetrics_log_parser(log: xcodebuild_output)
 
   markdown_table = "## StreamChat XCMetrics\n| `target` | `metric` | `benchmark` | `branch` | `performance` | `status` |\n| - | - | - | - | - | - |\n"
   ['testMessageListScrollTime', 'testChannelListScrollTime'].each do |test_name|
@@ -419,17 +426,24 @@ lane :xcmetrics do |options|
     ['hitches_total_duration', 'duration', 'hitch_time_ratio', 'frame_rate', 'number_of_hitches'].each do |metric|
       is_frame_rate = metric == 'frame_rate'
       benchmark_value = expected_performance[test_name][metric]['value']
-      branch_value = branch_performance[test_name][metric]['value']
-      value_extension = branch_performance[test_name][metric]['ext']
+      branch_value = actual_performance[test_name][metric]['value']
+      value_extension = actual_performance[test_name][metric]['ext']
+      max_tolerance = benchmark_value * 0.1 # Default Xcode Max Tolerance is 10%
 
-      max_stddev = benchmark_value * 0.1 # Default Xcode Max STDDEV is 10%
-      warning_status = '🟡' # Warning if a branch is 10% less performant than the benchmark
-      fail_status = '🔴' # Failure if a branch is more than 10% less performant than the benchmark
-      success_status = '🟢' # Success if a branch is more performant or equals to the benchmark
+      benchmark_value_avoids_zero_division = benchmark_value == 0 ? 1 : benchmark_value
+      diff = is_frame_rate ? branch_value - benchmark_value : benchmark_value - branch_value
+      diff = (diff * 100.0 / benchmark_value_avoids_zero_division).round(2)
+      diff_emoji = if diff > 0
+                     '🔼'
+                   elsif diff.zero?
+                     '🟰'
+                   else
+                     '🔽'
+                   end
 
       status_emoji =
         if is_frame_rate
-          if branch_value < benchmark_value && branch_value > benchmark_value - max_stddev
+          if branch_value < benchmark_value && branch_value > benchmark_value - max_tolerance
             warning_status
           elsif branch_value < benchmark_value
             fail_status
@@ -437,26 +451,13 @@ lane :xcmetrics do |options|
             success_status
           end
         else
-          if branch_value > benchmark_value && branch_value < benchmark_value + max_stddev
+          if branch_value > benchmark_value && branch_value < benchmark_value + max_tolerance
             warning_status
           elsif branch_value > benchmark_value
             fail_status
           else
             success_status
           end
-        end
-
-      benchmark_value_avoids_zero_division = benchmark_value == 0 ? 1 : benchmark_value
-      diff = is_frame_rate ? branch_value - benchmark_value : benchmark_value - branch_value
-      diff = (diff * 100.0 / benchmark_value_avoids_zero_division).round(2)
-
-      diff_emoji =
-        if diff > 0
-          '🔼'
-        elsif diff.zero?
-          '🟰'
-        else
-          '🔽'
         end
 
       title = metric.to_s.gsub('_', ' ').capitalize
@@ -480,17 +481,16 @@ lane :xcmetrics do |options|
 
   if is_ci
     pr_comment_required = !ENV['GITHUB_PR_NUM'].to_s.empty?
-    performance_benchmarks[current_branch] = branch_performance
-    UI.message("Performance benchmarks: #{performance_benchmarks}")
-    File.write(performance_path, JSON.pretty_generate(performance_benchmarks))
+    performance_benchmarks[current_branch] = actual_performance
+    File.write(xcmetrics_path, JSON.pretty_generate(performance_benchmarks))
 
-    Dir.chdir(File.dirname(performance_path)) do
+    Dir.chdir(File.dirname(xcmetrics_path)) do
       if sh('git status -s', log: false).to_s.empty?
         pr_comment_required = false
         UI.important('No changes in performance benchmarks. Skipping commit and comment.')
       else
         sh('git add -A')
-        sh("git commit -m 'Update #{github_repo.split('/').last}.json: #{current_branch}'")
+        sh("git commit -m 'Update #{xcmetrics_path}: #{current_branch}'")
         sh('git push')
       end
     end
@@ -498,7 +498,7 @@ lane :xcmetrics do |options|
     sh("gh pr comment #{ENV.fetch('GITHUB_PR_NUM')} -b '#{markdown_table}'") if pr_comment_required
   end
 
-  UI.user_error!('Performance benchmark failed.') if markdown_table.include?('🔴')
+  UI.user_error!('Performance benchmark failed.') if markdown_table.include?(fail_status)
 end
 
 private_lane :xcmetrics_log_parser do |options|
@@ -835,8 +835,8 @@ lane :sources_matrix do
     sample_apps: ['Sources', 'Examples', 'DemoApp', xcode_project],
     integration: ['Sources', 'Integration', xcode_project],
     ruby: ['fastlane', 'Gemfile', 'Gemfile.lock'],
-    xcmetrics: ['Sources'],
-    size: ['Sources']
+    size: ['Sources', xcode_project],
+    xcmetrics: ['Sources']
   }
 end
 
@@ -854,36 +854,69 @@ desc 'Show current frameworks size'
 lane :show_frameworks_sizes do |options|
   next unless is_check_required(sources: sources_matrix[:size], force_check: @force_check)
 
-  options[:sizes] ||= frameworks_sizes
+  ['metrics/'].each { |dir| FileUtils.remove_dir(dir, force: true) }
 
-  if is_ci && !ENV['GITHUB_PR_NUM'].to_s.empty?
-    markdown_table = "## SDK Size\n| `StreamChat` | `StreamChatUI` | `Total` |\n| - | - | - |\n"
-    markdown_table << "|#{options[:sizes][:stream_chat]}MB|#{options[:sizes][:stream_chat_ui]}MB|#{options[:sizes][:total]}MB|"
-    sh("gh pr comment #{ENV.fetch('GITHUB_PR_NUM')} -b '#{markdown_table}'")
+  sh("git clone #{metrics_git} #{File.dirname(sdk_size_path)}")
+  develop_sizes = JSON.parse(File.read(sdk_size_path))
+  branch_sizes = options[:sizes] || frameworks_sizes
+
+  markdown_table = "## SDK Size\n| `title` | `develop` | `branch` | `diff` | `status` |\n| - | - | - | - | - |\n"
+  sdk_names.each do |title|
+    benchmark_value = develop_sizes[title]
+    branch_value = branch_sizes[title.to_sym]
+    max_tolerance = 0.5 # Max Tolerance is 0.5MB
+    fine_tolerance = 0.25 # Fine Tolerance is 0.25MB
+
+    diff = branch_value - benchmark_value
+
+    status_emoji =
+      if diff < 0
+        outstanding_status
+      elsif diff >= max_tolerance
+        fail_status
+      elsif diff >= fine_tolerance
+        warning_status
+      else
+        success_status
+      end
+
+    markdown_table << "|#{title}|#{benchmark_value}MB|#{branch_value}MB|#{diff}MB|#{status_emoji}|\n"
   end
 
-  FastlaneCore::PrintTable.print_values(
-    title: 'SDK Size',
-    config: {
-      StreamChat: "#{options[:sizes][:stream_chat]}MB",
-      StreamChatUI: "#{options[:sizes][:stream_chat]}MB",
-      'Total Size': "#{options[:sizes][:total]}MB"
-    }
-  )
+  FastlaneCore::PrintTable.print_values(title: 'Benchmark', config: develop_sizes)
+  FastlaneCore::PrintTable.print_values(title: 'SDK Size', config: branch_sizes)
+
+  if is_ci
+    if ENV['EVENT_NAME'].to_s == 'push'
+      File.write(sdk_size_path, JSON.pretty_generate(branch_sizes))
+      Dir.chdir(File.dirname(sdk_size_path)) do
+        if sh('git status -s', log: false).to_s.empty?
+          UI.important('No changes in SDK sizes benchmarks.')
+        else
+          sh('git add -A')
+          sh("git commit -m 'Update #{sdk_size_path}'")
+          sh('git push')
+        end
+      end
+    end
+
+    sh("gh pr comment #{ENV.fetch('GITHUB_PR_NUM')} -b '#{markdown_table}'") unless ENV['GITHUB_PR_NUM'].to_s.empty?
+  end
+
+  UI.user_error!('SDK sizes benchmark failed.') if markdown_table.include?(fail_status)
 end
 
 desc 'Update img shields SDK size labels'
 lane :update_img_shields_sdk_sizes do
   sizes = frameworks_sizes
-  show_frameworks_sizes(sizes: sizes)
 
   # Read the file into a string
   readme_path = '../README.md'
   readme_content = File.read(readme_path)
 
   # Define the new value for the badge
-  stream_chat_size = "#{sizes[:stream_chat]}MB"
-  stream_chat_ui_size = "#{sizes[:stream_chat_ui]}MB"
+  stream_chat_size = "#{sizes[:StreamChat]}MB"
+  stream_chat_ui_size = "#{sizes[:StreamChatUI]}MB"
 
   # Replace the value in the badge URL
   readme_content.gsub!(%r{(https://img.shields.io/badge/StreamChat-)(.*?)(-blue)}, "\\1#{stream_chat_size}\\3")
@@ -991,8 +1024,8 @@ def frameworks_sizes
   total_size_mb = (stream_chat_size_mb + stream_chat_ui_size_mb).round(1)
 
   {
-    stream_chat: stream_chat_size_mb,
-    stream_chat_ui: stream_chat_ui_size_mb,
-    total: total_size_mb
+    StreamChat: stream_chat_size_mb,
+    StreamChatUI: stream_chat_ui_size_mb,
+    Total: total_size_mb
   }
 end
