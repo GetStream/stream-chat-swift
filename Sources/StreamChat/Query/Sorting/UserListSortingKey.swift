@@ -39,11 +39,6 @@ extension UserListSortingKey {
         return .init(keyPath: stringKeyPath, ascending: false)
     }()
 
-    static let lastActiveSortDescriptor: NSSortDescriptor = {
-        let dateKeyPath: KeyPath<UserDTO, DBDate?> = \UserDTO.lastActivityAt
-        return .init(keyPath: dateKeyPath, ascending: false)
-    }()
-
     func sortDescriptor(isAscending: Bool) -> NSSortDescriptor? {
         .init(key: rawValue, ascending: isAscending)
     }

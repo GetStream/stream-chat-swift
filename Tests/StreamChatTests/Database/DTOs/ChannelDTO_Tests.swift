@@ -1322,7 +1322,7 @@ final class ChannelDTO_Tests: XCTestCase {
         XCTAssertEqual(channel.unreadCount.messages, 0)
     }
 
-    func test_asModel_populatesLatestMessage() throws {
+    func test_asModel_populatesLatestMessage_withoutFilteringDeletedMessages() throws {
         // GIVEN
         database = DatabaseContainer_Spy(
             kind: .inMemory,
@@ -1411,7 +1411,7 @@ final class ChannelDTO_Tests: XCTestCase {
         // THEN
         XCTAssertEqual(
             Set(channel.latestMessages.map(\.id)),
-            Set([message1.id, deletedMessageFromCurrentUser.id, shadowedMessageFromAnotherUser.id])
+            Set([message1.id, deletedMessageFromCurrentUser.id, deletedMessageFromAnotherUser.id])
         )
     }
 

@@ -434,70 +434,75 @@ extension ChatChannel {
             )
             extraData = [:]
         }
-
+        
+        let sortedMessageDTOs = dto.messages.sorted(by: { $0.createdAt.bridgeDate > $1.createdAt.bridgeDate })
         let reads: [ChatChannelRead] = try dto.reads.map { try $0.asModel() }
-
         let unreadCount: ChannelUnreadCount = {
-            guard let currentUser = context.currentUser else {
+            guard let currentUserDTO = context.currentUser else {
                 return .noUnread
             }
-
-            let currentUserRead = reads.first(where: { $0.user.id == currentUser.user.id })
-
+            let currentUserRead = reads.first(where: { $0.user.id == currentUserDTO.user.id })
             let allUnreadMessages = currentUserRead?.unreadMessagesCount ?? 0
-
-            // Fetch count of all mentioned messages after last read
-            // (this is not 100% accurate but it's the best we have)
-            let unreadMentionsRequest = NSFetchRequest<MessageDTO>(entityName: MessageDTO.entityName)
-            unreadMentionsRequest.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [
-                MessageDTO.channelMessagesPredicate(
-                    for: dto.cid,
-                    deletedMessagesVisibility: context.deletedMessagesVisibility ?? .visibleForCurrentUser,
-                    shouldShowShadowedMessages: context.shouldShowShadowedMessages ?? false
-                ),
-                NSPredicate(format: "createdAt > %@", currentUserRead?.lastReadAt.bridgeDate ?? DBDate(timeIntervalSince1970: 0)),
-                NSPredicate(format: "%@ IN mentionedUsers", currentUser.user)
-            ])
-
-            do {
-                return ChannelUnreadCount(
-                    messages: allUnreadMessages,
-                    mentions: try context.count(for: unreadMentionsRequest)
-                )
-            } catch {
-                log.error("Failed to fetch unread counts for channel `\(cid)`. Error: \(error)")
+            // Therefore, no unread messages with mentions and we can skip the fetch
+            if allUnreadMessages == 0 {
                 return .noUnread
             }
+            let unreadMentionsCount = sortedMessageDTOs
+                .prefix(allUnreadMessages)
+                .filter { $0.mentionedUsers.contains(currentUserDTO.user) }
+                .count
+            return ChannelUnreadCount(
+                messages: allUnreadMessages,
+                mentions: unreadMentionsCount
+            )
         }()
 
-        let messages: [ChatMessage] = {
-            MessageDTO
-                .load(
-                    for: dto.cid,
-                    limit: dto.managedObjectContext?.localCachingSettings?.chatChannel.latestMessagesLimit ?? 25,
-                    deletedMessagesVisibility: dto.managedObjectContext?.deletedMessagesVisibility ?? .visibleForCurrentUser,
-                    shouldShowShadowedMessages: dto.managedObjectContext?.shouldShowShadowedMessages ?? false,
-                    context: context
-                )
+        let latestMessages: [ChatMessage] = {
+            var messages = sortedMessageDTOs
+                .prefix(dto.managedObjectContext?.localCachingSettings?.chatChannel.latestMessagesLimit ?? 25)
                 .compactMap { try? $0.relationshipAsModel(depth: depth) }
+            if let oldest = dto.oldestMessageAt?.bridgeDate {
+                messages = messages.filter { $0.createdAt >= oldest }
+            }
+            if let truncated = dto.truncatedAt?.bridgeDate {
+                messages = messages.filter { $0.createdAt >= truncated }
+            }
+            return messages
         }()
 
         let latestMessageFromUser: ChatMessage? = {
-            guard let currentUser = context.currentUser else { return nil }
-
-            return try? MessageDTO
-                .loadLastMessage(
-                    from: currentUser.user.id,
-                    in: dto.cid,
-                    context: context
-                )?
+            guard let currentUserId = context.currentUser?.user.id else { return nil }
+            return try? sortedMessageDTOs
+                .first(where: { messageDTO in
+                    guard messageDTO.user.id == currentUserId else { return false }
+                    guard messageDTO.localMessageState == nil else { return false }
+                    return messageDTO.type != MessageType.ephemeral.rawValue
+                })?
                 .relationshipAsModel(depth: depth)
         }()
-
-        let watchers = UserDTO.loadLastActiveWatchers(cid: cid, context: context)
+        
+        let watchers = dto.watchers
+            .sorted { lhs, rhs in
+                let lhsActivity = lhs.lastActivityAt?.bridgeDate ?? .distantPast
+                let rhsActivity = rhs.lastActivityAt?.bridgeDate ?? .distantPast
+                if lhsActivity == rhsActivity {
+                    return lhs.id > rhs.id
+                }
+                return lhsActivity > rhsActivity
+            }
+            .prefix(context.localCachingSettings?.chatChannel.lastActiveWatchersLimit ?? 100)
             .compactMap { try? $0.asModel() }
         
-        let members = MemberDTO.loadLastActiveMembers(cid: cid, context: context)
+        let members = dto.members
+            .sorted { lhs, rhs in
+                let lhsActivity = lhs.user.lastActivityAt?.bridgeDate ?? .distantPast
+                let rhsActivity = rhs.user.lastActivityAt?.bridgeDate ?? .distantPast
+                if lhsActivity == rhsActivity {
+                    return lhs.id > rhs.id
+                }
+                return lhsActivity > rhsActivity
+            }
+            .prefix(context.localCachingSettings?.chatChannel.lastActiveMembersLimit ?? 100)
             .compactMap { try? $0.asModel() }
 
         let muteDetails: MuteDetails? = {
@@ -539,7 +544,7 @@ extension ChatChannel {
             reads: reads,
             cooldownDuration: Int(dto.cooldownDuration),
             extraData: extraData,
-            latestMessages: messages,
+            latestMessages: latestMessages,
             lastMessageFromCurrentUser: latestMessageFromUser,
             pinnedMessages: pinnedMessages,
             muteDetails: muteDetails,
