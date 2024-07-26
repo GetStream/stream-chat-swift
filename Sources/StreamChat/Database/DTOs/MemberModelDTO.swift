@@ -92,17 +92,6 @@ extension MemberDTO {
         new.id = memberId
         return new
     }
-
-    static func loadLastActiveMembers(cid: ChannelId, context: NSManagedObjectContext) -> [MemberDTO] {
-        let request = NSFetchRequest<MemberDTO>(entityName: MemberDTO.entityName)
-        request.predicate = NSPredicate(format: "channel.cid == %@", cid.rawValue)
-        request.sortDescriptors = [
-            ChannelMemberListSortingKey.lastActiveSortDescriptor,
-            ChannelMemberListSortingKey.defaultSortDescriptor
-        ]
-        request.fetchLimit = context.localCachingSettings?.chatChannel.lastActiveMembersLimit ?? 100
-        return load(by: request, context: context)
-    }
 }
 
 extension NSManagedObjectContext {

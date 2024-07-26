@@ -265,6 +265,7 @@ final class DatabaseContainer_Tests: XCTestCase {
             modelName: "TestDataModel",
             bundle: .testTools
         )
+        database?.shouldCleanUpTempDBFiles = false
 
         // Insert a new object
         try database!.writeSynchronously {

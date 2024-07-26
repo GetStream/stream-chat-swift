@@ -359,29 +359,30 @@ public extension ChatMessage {
 
 extension ChatMessage: Hashable {
     public static func == (lhs: Self, rhs: Self) -> Bool {
-        lhs.id == rhs.id &&
-            lhs.updatedAt == rhs.updatedAt &&
-            lhs.allAttachments == rhs.allAttachments &&
-            lhs.arguments == rhs.arguments &&
-            lhs.author == rhs.author &&
-            lhs.command == rhs.command &&
-            lhs.currentUserReactionsCount == rhs.currentUserReactionsCount &&
-            lhs.extraData == rhs.extraData &&
-            lhs.isFlaggedByCurrentUser == rhs.isFlaggedByCurrentUser &&
-            lhs.isShadowed == rhs.isShadowed &&
-            lhs.localState == rhs.localState &&
-            lhs.parentMessageId == rhs.parentMessageId &&
-            lhs.quotedMessage == rhs.quotedMessage &&
-            lhs.reactionCounts == rhs.reactionCounts &&
-            lhs.reactionGroups == rhs.reactionGroups &&
-            lhs.reactionScores == rhs.reactionScores &&
-            lhs.readByCount == rhs.readByCount &&
-            lhs.replyCount == rhs.replyCount &&
-            lhs.showReplyInChannel == rhs.showReplyInChannel &&
-            lhs.text == rhs.text &&
-            lhs.threadParticipantsCount == rhs.threadParticipantsCount &&
-            lhs.translations == rhs.translations &&
-            lhs.type == rhs.type
+        guard lhs.id == rhs.id else { return false }
+        guard lhs.localState == rhs.localState else { return false }
+        guard lhs.updatedAt == rhs.updatedAt else { return false }
+        guard lhs.allAttachments == rhs.allAttachments else { return false }
+        guard lhs.author == rhs.author else { return false }
+        guard lhs.currentUserReactionsCount == rhs.currentUserReactionsCount else { return false }
+        guard lhs.text == rhs.text else { return false }
+        guard lhs.parentMessageId == rhs.parentMessageId else { return false }
+        guard lhs.reactionCounts == rhs.reactionCounts else { return false }
+        guard lhs.reactionGroups == rhs.reactionGroups else { return false }
+        guard lhs.reactionScores == rhs.reactionScores else { return false }
+        guard lhs.readByCount == rhs.readByCount else { return false }
+        guard lhs.replyCount == rhs.replyCount else { return false }
+        guard lhs.showReplyInChannel == rhs.showReplyInChannel else { return false }
+        guard lhs.threadParticipantsCount == rhs.threadParticipantsCount else { return false }
+        guard lhs.arguments == rhs.arguments else { return false }
+        guard lhs.command == rhs.command else { return false }
+        guard lhs.extraData == rhs.extraData else { return false }
+        guard lhs.isFlaggedByCurrentUser == rhs.isFlaggedByCurrentUser else { return false }
+        guard lhs.isShadowed == rhs.isShadowed else { return false }
+        guard lhs.quotedMessage == rhs.quotedMessage else { return false }
+        guard lhs.translations == rhs.translations else { return false }
+        guard lhs.type == rhs.type else { return false }
+        return true
     }
 
     public func hash(into hasher: inout Hasher) {

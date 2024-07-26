@@ -237,27 +237,28 @@ extension ChatChannel: AnyChannel {}
 
 extension ChatChannel: Hashable {
     public static func == (lhs: ChatChannel, rhs: ChatChannel) -> Bool {
-        lhs.cid == rhs.cid &&
-            lhs.updatedAt == rhs.updatedAt &&
-            lhs.cooldownDuration == rhs.cooldownDuration &&
-            lhs.createdAt == rhs.createdAt &&
-            lhs.createdBy == rhs.createdBy &&
-            lhs.deletedAt == rhs.deletedAt &&
-            lhs.extraData == rhs.extraData &&
-            lhs.imageURL == rhs.imageURL &&
-            lhs.isFrozen == rhs.isFrozen &&
-            lhs.isHidden == rhs.isHidden &&
-            lhs.lastMessageAt == rhs.lastMessageAt &&
-            lhs.memberCount == rhs.memberCount &&
-            lhs.membership == rhs.membership &&
-            lhs.muteDetails == rhs.muteDetails &&
-            lhs.name == rhs.name &&
-            lhs.ownCapabilities == rhs.ownCapabilities &&
-            lhs.previewMessage == rhs.previewMessage &&
-            lhs.reads == rhs.reads &&
-            lhs.team == rhs.team &&
-            lhs.truncatedAt == rhs.truncatedAt &&
-            lhs.watcherCount == rhs.watcherCount
+        guard lhs.cid == rhs.cid else { return false }
+        guard lhs.updatedAt == rhs.updatedAt else { return false }
+        guard lhs.lastMessageAt == rhs.lastMessageAt else { return false }
+        guard lhs.muteDetails == rhs.muteDetails else { return false }
+        guard lhs.reads == rhs.reads else { return false }
+        guard lhs.previewMessage == rhs.previewMessage else { return false }
+        guard lhs.name == rhs.name else { return false }
+        guard lhs.watcherCount == rhs.watcherCount else { return false }
+        guard lhs.createdAt == rhs.createdAt else { return false }
+        guard lhs.cooldownDuration == rhs.cooldownDuration else { return false }
+        guard lhs.createdBy == rhs.createdBy else { return false }
+        guard lhs.deletedAt == rhs.deletedAt else { return false }
+        guard lhs.extraData == rhs.extraData else { return false }
+        guard lhs.imageURL == rhs.imageURL else { return false }
+        guard lhs.isFrozen == rhs.isFrozen else { return false }
+        guard lhs.isHidden == rhs.isHidden else { return false }
+        guard lhs.memberCount == rhs.memberCount else { return false }
+        guard lhs.membership == rhs.membership else { return false }
+        guard lhs.team == rhs.team else { return false }
+        guard lhs.truncatedAt == rhs.truncatedAt else { return false }
+        guard lhs.ownCapabilities == rhs.ownCapabilities else { return false }
+        return true
     }
 
     public func hash(into hasher: inout Hasher) {
