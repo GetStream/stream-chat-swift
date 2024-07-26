@@ -315,19 +315,33 @@ final class OfflineRequestsRepository_Tests: XCTestCase {
         XCTAssertEqual(pendingRequests.count, 0)
     }
 
-    private func createSendMessageRequests(count: Int, date: Date = Date()) throws {
+    private func createSendMessageRequests(count: Int, date: Date = Date().addingTimeInterval(-3600)) throws {
         try (1...count).forEach {
-            let id = "request\($0)"
-            try self.createRequest(
-                id: id,
-                path: .sendMessage(.init(type: .messaging, id: id)),
-                body: ["some\($0)": 123],
-                date: date
+            try createSendMessageRequest(
+                requestIdNumber: $0,
+                messageIdNumber: $0,
+                date: date.addingTimeInterval(TimeInterval($0))
             )
         }
 
         let allRequests = QueuedRequestDTO.loadAllPendingRequests(context: database.viewContext)
         XCTAssertEqual(allRequests.count, count)
+    }
+    
+    private func createSendMessageRequest(requestIdNumber: Int, messageIdNumber: Int, date: Date) throws {
+        let id = "request\(requestIdNumber)"
+        let messageId = "message\(messageIdNumber)"
+        let requestBody = MessageRequestBody(id: messageId, user: .dummy(userId: .unique), text: .unique, extraData: [:])
+        let endpoint: Endpoint<MessagePayload.Boxed> = .sendMessage(
+            cid: .init(type: .messaging, id: id),
+            messagePayload: requestBody,
+            skipPush: false,
+            skipEnrichUrl: false
+        )
+        let endpointData: Data = try JSONEncoder.stream.encode(endpoint.withDataResponse)
+        try database.writeSynchronously { _ in
+            QueuedRequestDTO.createRequest(id: id, date: date, endpoint: endpointData, context: self.database.writableContext)
+        }
     }
 
     private func createRequest(id: String, path: EndpointPath, body: Encodable? = nil, date: Date = Date()) throws {
@@ -381,5 +395,31 @@ final class OfflineRequestsRepository_Tests: XCTestCase {
         }
         waitForExpectations(timeout: defaultTimeout, handler: nil)
         XCTAssertCall("write(_:completion:)", on: database, times: 1)
+    }
+    
+    func test_queueOfflineRequestsMultipleTimesThenDuplicateSendMessageRequestsAreCoalesced() throws {
+        try createSendMessageRequests(count: 5) // 1...5
+        // Duplicate second and forth
+        try createSendMessageRequest(requestIdNumber: 6, messageIdNumber: 2, date: Date())
+        try createSendMessageRequest(requestIdNumber: 7, messageIdNumber: 4, date: Date())
+        
+        // 5 successful responses, 2 should never end up here because these should be coalesced
+        for _ in 0..<5 {
+            apiClient.test_mockRecoveryResponseResult(Result<Data, Error>.success(Data()))
+        }
+        
+        let expectation = XCTestExpectation(description: "Run")
+        repository.runQueuedRequests {
+            expectation.fulfill()
+        }
+        
+        // When failure happens then request merging did not work
+        wait(for: [expectation], timeout: defaultTimeout)
+        
+        // Validate that all the requests are cleaned up
+        try database.readSynchronously { session in
+            let requests = session.allQueuedRequests()
+            XCTAssertEqual(0, requests.count)
+        }
     }
 }

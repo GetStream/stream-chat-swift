@@ -116,7 +116,7 @@ class MessageSender: Worker {
     }
     
     func didUpdateConnectionState(_ state: WebSocketConnectionState) {
-        guard case WebSocketConnectionState.connected = state else { return }
+        guard state.isConnected else { return }
         sendingDispatchQueue.async { [weak self] in
             self?.sendingQueueByCid.forEach { _, messageQueue in
                 messageQueue.webSocketConnected()
