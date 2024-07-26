@@ -93,7 +93,7 @@ class OfflineRequestsRepository {
                         continue
                     }
                     if let duplicates = sendMessageIdGroups[sendMessageId], duplicates.count >= 2 {
-                        // Coalesce send message requests12 in a way that we use the latest endpoint data
+                        // Coalesce send message requests in a way that we use the latest endpoint data
                         // because the message could have changed when there was a manual retry
                         let sortedDuplicates = duplicates.sorted(by: { $0.date < $1.date })
                         let earliest = sortedDuplicates.first!
@@ -108,6 +108,7 @@ class OfflineRequestsRepository {
                     mergedRequests.append(request)
                 }
             }
+            log.info("\(mergedRequests.count) pending offline requests (coalesced = \(requests.count - mergedRequests.count)", subsystems: .offlineSupport)
             return (requests: mergedRequests, deleteIds: requestIdsToDelete)
         } completion: { [weak self] result in
             switch result {
@@ -139,8 +140,6 @@ class OfflineRequestsRepository {
     }
     
     private func executeRequests(_ requests: [Request], completion: @escaping () -> Void) {
-        log.info("\(requests.count) pending offline requests", subsystems: .offlineSupport)
-
         let database = self.database
         let group = DispatchGroup()
         for request in requests {
