@@ -420,7 +420,8 @@ lane :xcmetrics do |options|
   expected_performance = performance_benchmarks['benchmark']
   actual_performance = xcmetrics_log_parser(log: xcodebuild_output)
 
-  markdown_table = "## StreamChat XCMetrics\n| `target` | `metric` | `benchmark` | `branch` | `performance` | `status` |\n| - | - | - | - | - | - |\n"
+  table_header = '## SDK Performance'
+  markdown_table = "#{table_header}\n| `target` | `metric` | `benchmark` | `branch` | `performance` | `status` |\n| - | - | - | - | - | - |\n"
   ['testMessageListScrollTime', 'testChannelListScrollTime'].each do |test_name|
     index = 0
     ['hitches_total_duration', 'duration', 'hitch_time_ratio', 'frame_rate', 'number_of_hitches'].each do |metric|
@@ -479,26 +480,9 @@ lane :xcmetrics do |options|
 
   UI.user_error!("See Firebase error above ☝️") unless firebase_error.to_s.empty?
 
-  if is_ci
-    pr_comment_required = !ENV['GITHUB_PR_NUM'].to_s.empty?
-    performance_benchmarks[current_branch] = actual_performance
-    File.write(xcmetrics_path, JSON.pretty_generate(performance_benchmarks))
+  create_pr_comment(pr_num: ENV.fetch('GITHUB_PR_NUM'), text: markdown_table, edit_last_comment_with_text: table_header)
 
-    Dir.chdir(File.dirname(xcmetrics_path)) do
-      if sh('git status -s', log: false).to_s.empty?
-        pr_comment_required = false
-        UI.important('No changes in performance benchmarks. Skipping commit and comment.')
-      else
-        sh('git add -A')
-        sh("git commit -m 'Update #{xcmetrics_path}: #{current_branch}'")
-        sh('git push')
-      end
-    end
-
-    sh("gh pr comment #{ENV.fetch('GITHUB_PR_NUM')} -b '#{markdown_table}'") if pr_comment_required
-  end
-
-  UI.user_error!('Performance benchmark failed.') if markdown_table.include?(fail_status)
+  UI.user_error!("#{table_header} benchmark failed.") if markdown_table.include?(fail_status)
 end
 
 private_lane :xcmetrics_log_parser do |options|
@@ -860,7 +844,8 @@ lane :show_frameworks_sizes do |options|
   develop_sizes = JSON.parse(File.read(sdk_size_path))
   branch_sizes = options[:sizes] || frameworks_sizes
 
-  markdown_table = "## SDK Size\n| `title` | `develop` | `branch` | `diff` | `status` |\n| - | - | - | - | - |\n"
+  table_header = '## SDK Size'
+  markdown_table = "#{table_header}\n| `title` | `develop` | `branch` | `diff` | `status` |\n| - | - | - | - | - |\n"
   sdk_names.each do |title|
     benchmark_value = develop_sizes[title]
     branch_value = branch_sizes[title.to_sym]
@@ -900,10 +885,10 @@ lane :show_frameworks_sizes do |options|
       end
     end
 
-    sh("gh pr comment #{ENV.fetch('GITHUB_PR_NUM')} -b '#{markdown_table}'") unless ENV['GITHUB_PR_NUM'].to_s.empty?
+    create_pr_comment(pr_num: ENV.fetch('GITHUB_PR_NUM'), text: markdown_table, edit_last_comment_with_text: table_header)
   end
 
-  UI.user_error!('SDK sizes benchmark failed.') if markdown_table.include?(fail_status)
+  UI.user_error!("#{table_header} benchmark failed.") if markdown_table.include?(fail_status)
 end
 
 desc 'Update img shields SDK size labels'
@@ -945,6 +930,14 @@ private_lane :create_pr do |options|
     base: options[:base_branch],
     body: 'This PR was created automatically by CI.'
   )
+end
+
+private_lane :create_pr_comment do |options|
+  if is_ci && !options[:pr_num].to_s.empty?
+    last_comment = sh("gh pr view #{options[:pr_num]} --json comments --jq '.comments | map(select(.author.login == \"Stream-iOS-Bot\")) | last'")
+    edit_last_comment = last_comment.include?(options[:edit_last_comment_with_text]) ? '--edit-last' : ''
+    sh("gh pr comment #{options[:pr_num]} #{edit_last_comment} -b '#{options[:text]}'")
+  end
 end
 
 private_lane :current_branch do
