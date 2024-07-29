@@ -33,6 +33,6 @@ jobs:
         timeout-minutes: 30
         env:
           GITHUB_PR_NUM: ${{ github.event.pull_request.number }}
-          EVENT_NAME: ${{ github.event_name }}
+          GITHUB_EVENT_NAME: ${{ github.event_name }}
           MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
           APPSTORE_API_KEY: ${{ secrets.APPSTORE_API_KEY }}

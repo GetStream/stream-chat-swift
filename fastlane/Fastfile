@@ -872,7 +872,7 @@ lane :show_frameworks_sizes do |options|
   FastlaneCore::PrintTable.print_values(title: 'SDK Size', config: branch_sizes)
 
   if is_ci
-    if ENV['EVENT_NAME'].to_s == 'push'
+    if ENV['GITHUB_EVENT_NAME'].to_s == 'push'
       File.write(sdk_size_path, JSON.pretty_generate(branch_sizes))
       Dir.chdir(File.dirname(sdk_size_path)) do
         if sh('git status -s', log: false).to_s.empty?

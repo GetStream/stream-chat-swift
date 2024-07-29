@@ -193,7 +193,7 @@ jobs:
       env:
         ALLURE_TOKEN: ${{ secrets.ALLURE_TOKEN }}
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        GITHUB_EVENT: ${{ toJson(github.event) }}
+        GITHUB_PR_NUM: ${{ github.event.number }}
     - id: get_launch_id
       run: echo "launch_id=${{env.LAUNCH_ID}}" >> $GITHUB_OUTPUT
       if: env.LAUNCH_ID != ''
