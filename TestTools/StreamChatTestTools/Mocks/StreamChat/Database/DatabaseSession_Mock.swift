@@ -360,6 +360,10 @@ class DatabaseSession_Mock: DatabaseSession {
     func saveQuery(query: MessageSearchQuery) -> MessageSearchQueryDTO {
         underlyingSession.saveQuery(query: query)
     }
+    
+    func allQueuedRequests() -> [QueuedRequestDTO] {
+        underlyingSession.allQueuedRequests()
+    }
 
     func deleteQueuedRequest(id: String) {
         underlyingSession.deleteQueuedRequest(id: id)

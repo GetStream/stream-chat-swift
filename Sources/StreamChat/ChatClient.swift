@@ -660,6 +660,7 @@ extension ChatClient: ConnectionStateDelegate {
             }
         )
         connectionRecoveryHandler?.webSocketClient(client, didUpdateConnectionState: state)
+        try? backgroundWorker(of: MessageSender.self).didUpdateConnectionState(state)
     }
 }
 
@@ -671,6 +672,21 @@ extension ChatClient: ConnectionDetailsProviderDelegate {
 
     func provideConnectionId(timeout: TimeInterval = 10, completion: @escaping (Result<ConnectionId, Error>) -> Void) {
         connectionRepository.provideConnectionId(timeout: timeout, completion: completion)
+    }
+}
+
+extension ChatClient {
+    func backgroundWorker<T>(of type: T.Type) throws -> T {
+        if let worker = backgroundWorkers.compactMap({ $0 as? T }).first {
+            return worker
+        }
+        if currentUserId == nil {
+            throw ClientError.CurrentUserDoesNotExist()
+        }
+        if !config.isClientInActiveMode {
+            throw ClientError.ClientIsNotInActiveMode()
+        }
+        throw ClientError("Background worker of type \(T.self) is not set up")
     }
 }
 
