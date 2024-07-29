@@ -263,7 +263,7 @@ public struct FilterKey<Scope: FilterScope, Value: FilterValue>: ExpressibleBySt
 
     init(
         rawValue value: String,
-        keyPathString: String,
+        keyPathString: String?,
         valueMapper: TypedValueMapper? = nil,
         isCollectionFilter: Bool = false,
         predicateMapper: TypedPredicateMapper? = nil

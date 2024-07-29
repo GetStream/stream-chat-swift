@@ -25,6 +25,11 @@ public extension Filter where Scope: AnyChannelListFilterScope {
     static var noTeam: Filter<Scope> {
         .equal(.team, to: nil)
     }
+
+    /// Filter for fetching only the unread channels.
+    static var hasUnread: Filter<Scope> {
+        .equal(.hasUnread, to: true)
+    }
 }
 
 extension Filter where Scope: AnyChannelListFilterScope {
@@ -160,6 +165,28 @@ public extension FilterKey where Scope: AnyChannelListFilterScope {
     /// Filter for the time of the last message in the channel. If the channel has no messages, then the time the channel was created.
     /// Supported operators: `equal`, `greaterThan`, `lessThan`, `greaterOrEqual`, `lessOrEqual`, `notEqual`
     static var lastUpdatedAt: FilterKey<Scope, Date> { .init(rawValue: "last_updated", keyPathString: #keyPath(ChannelDTO.lastMessageAt)) }
+}
+
+/// Internal filter queries for the channel list.
+/// These ones are helpers that should be used by an higher-level filter.
+internal extension FilterKey where Scope: AnyChannelListFilterScope {
+    /// Filter for fetching only the unread channels.
+    /// Supported operators: `equal`, and only `true` is supported.
+    static var hasUnread: FilterKey<Scope, Bool> {
+        .init(
+            rawValue: "has_unread",
+            keyPathString: nil,
+            predicateMapper: { op, hasUnread in
+                let key = #keyPath(ChannelDTO.currentUserUnreadMessagesCount)
+                switch op {
+                case .equal:
+                    return NSPredicate(format: hasUnread ? "\(key) > 0" : "\(key) <= 0")
+                default:
+                    return nil
+                }
+            }
+        )
+    }
 }
 
 /// A query is used for querying specific channels from backend.
