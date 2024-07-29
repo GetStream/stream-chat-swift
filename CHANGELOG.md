@@ -9,7 +9,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Improve performance of `ChatChannel` and `ChatMessage` equality checks [#3335](https://github.com/GetStream/stream-chat-swift/pull/3335)
 ### ✅ Added
 - Expose `MissingConnectionId` + `InvalidURL` + `InvalidJSON` Errors [#3332](https://github.com/GetStream/stream-chat-swift/pull/3332)
-- Add `.hasUnread` filter key to `ChannelListQuery` [#3340](https://github.com/GetStream/stream-chat-swift/pull/3340)
+- Add support for `.hasUnread` filter key to `ChannelListQuery` [#3340](https://github.com/GetStream/stream-chat-swift/pull/3340)
 ### 🐞 Fixed
 - Fix a rare issue with incorrect message order when sending multiple messages while offline [#3316](https://github.com/GetStream/stream-chat-swift/issues/3316)
 - Fix sorting channel list by unread count [#3340](https://github.com/GetStream/stream-chat-swift/pull/3340)
