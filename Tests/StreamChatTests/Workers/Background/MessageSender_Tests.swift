@@ -404,6 +404,56 @@ final class MessageSender_Tests: XCTestCase {
         AssertAsync.willBeTrue(eventsNotificationCenter.mock_processCalledWithEvents.first is NewMessageErrorEvent)
         XCTAssertCall("sendMessage(with:completion:)", on: messageRepository, times: 1)
     }
+    
+    func test_senderSendsMessages_forwardsPendingMessagesToOfflineHandlingOnConnectionError() throws {
+        // Sender with non-mock message repository
+        let nonMockMessageRepository = MessageRepository(database: database, apiClient: apiClient)
+        sender = MessageSender(
+            messageRepository: nonMockMessageRepository,
+            eventsNotificationCenter: eventsNotificationCenter,
+            database: database,
+            apiClient: apiClient
+        )
+        var queueOfflineRequestCounter = 0
+        let offlineQueuingExpectation = XCTestExpectation(description: "2, 3, 4, 5 queued")
+        apiClient.queueOfflineRequest = { _ in
+            queueOfflineRequestCounter += 1
+            guard queueOfflineRequestCounter == 4 else { return }
+            offlineQueuingExpectation.fulfill()
+        }
+        
+        // At the end of test all 5 are expected to finish successfully
+        let messageIds = (1...5).map { "\($0)" }
+        
+        try database.writeSynchronously { session in
+            for id in messageIds {
+                try self.createMessage(id: id, in: session)
+            }
+        }
+        
+        // First: success
+        apiClient.waitForRequest()
+        try resumeAPIRequestAndWaitForLocalStateChange(messageId: "1", success: true)
+        
+        // Second: connection error
+        apiClient.waitForRequest()
+        try resumeAPIRequestAndWaitForLocalStateChange(messageId: "2", success: false)
+        
+        // We use mocked API client which does not do the automatic forwarding, therefore we simulate it here
+        apiClient.queueOfflineRequest?(DataEndpoint(path: .sendMessage(cid), method: .post))
+        
+        // Since connection error was received, all the remaining queued messages are sent directly to offline repository
+        wait(for: [offlineQueuingExpectation], timeout: defaultTimeout)
+        
+        // Verify states (one successful, others failing)
+        try database.readSynchronously { session in
+            let localMessageStates = messageIds.map { session.message(id: $0)?.localMessageState }
+            let expected: [LocalMessageState?] = [nil, .sendingFailed, .sendingFailed, .sendingFailed, .sendingFailed]
+            XCTAssertEqual(expected, localMessageStates)
+        }
+        
+        // Offline repository is now responsible of sending the requests
+    }
 
     // MARK: - Life cycle tests
 
@@ -455,6 +505,38 @@ final class MessageSender_Tests: XCTestCase {
 
         // Then
         wait(for: [sessionMock.rescueMessagesExpectation], timeout: defaultTimeout)
+    }
+    
+    // MARK: -
+    
+    @discardableResult func createMessage(id: MessageId, in session: DatabaseSession) throws -> MessageId {
+        let dto = try session.createNewMessage(
+            in: cid,
+            messageId: id,
+            text: "\(id)",
+            pinning: nil,
+            quotedMessageId: nil,
+            skipPush: false,
+            skipEnrichUrl: false
+        )
+        dto.localMessageState = .pendingSend
+        return dto.id
+    }
+    
+    private func resumeAPIRequestAndWaitForLocalStateChange(messageId: MessageId, success: Bool) throws {
+        let localStateExpectation = XCTestExpectation(description: "\(messageId) - local state change")
+        database.didWrite = {
+            // Extra delay for allowing MessageSender to run the MessageRepository's completion
+            DispatchQueue.main.async {
+                localStateExpectation.fulfill()
+            }
+        }
+        if success {
+            apiClient.test_simulateResponse(.success(MessagePayload.Boxed(message: .dummy(messageId: messageId, text: "processed", cid: cid))))
+        } else {
+            apiClient.test_simulateResponse(Result<MessagePayload.Boxed, Error>.failure(NSError(domain: NSURLErrorDomain, code: NSURLErrorNetworkConnectionLost)))
+        }
+        wait(for: [localStateExpectation], timeout: defaultTimeout)
     }
 }
 
