@@ -44,7 +44,7 @@ final class DemoChatChannelListVC: ChatChannelListVC {
     lazy var unreadChannelsQuery: ChannelListQuery = .init(filter: .and([
         .containMembers(userIds: [currentUserId]),
         .hasUnread
-    ]))
+    ]), sort: [.init(key: .unreadCount, isAscending: false)])
 
     lazy var mutedChannelsQuery: ChannelListQuery = .init(filter: .and([
         .containMembers(userIds: [currentUserId]),

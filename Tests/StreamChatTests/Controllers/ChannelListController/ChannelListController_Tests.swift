@@ -1558,6 +1558,7 @@ final class ChannelListController_Tests: XCTestCase {
 
         try assertFilterPredicate(
             .hasUnread,
+            sort: [.init(key: .unreadCount, isAscending: false)],
             currentUserId: currentUserId,
             channelsInDB: [
                 .dummy(
@@ -1588,12 +1589,12 @@ final class ChannelListController_Tests: XCTestCase {
                             user: .dummy(userId: currentUserId),
                             lastReadAt: .unique,
                             lastReadMessageId: nil,
-                            unreadMessagesCount: 1
+                            unreadMessagesCount: 20
                         )
                     ]
                 )
             ],
-            expectedResult: [cid1, cid2]
+            expectedResult: [cid2, cid1]
         )
     }
 
@@ -1672,6 +1673,7 @@ final class ChannelListController_Tests: XCTestCase {
 
     private func assertFilterPredicate(
         _ filter: @autoclosure () -> Filter<ChannelListFilterScope>,
+        sort: [Sorting<ChannelListSortingKey>] = [],
         currentUserId: UserId? = nil,
         channelsInDB: @escaping @autoclosure () -> [ChannelPayload],
         expectedResult: @autoclosure () -> [ChannelId],
@@ -1692,7 +1694,8 @@ final class ChannelListController_Tests: XCTestCase {
         }
 
         let query = ChannelListQuery(
-            filter: filter()
+            filter: filter(),
+            sort: sort
         )
         controller = ChatChannelListController(
             query: query,
