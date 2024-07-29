@@ -852,7 +852,7 @@ lane :show_frameworks_sizes do |options|
     max_tolerance = 0.5 # Max Tolerance is 0.5MB
     fine_tolerance = 0.25 # Fine Tolerance is 0.25MB
 
-    diff = branch_value - benchmark_value
+    diff = (branch_value - benchmark_value).round(2)
 
     status_emoji =
       if diff < 0
