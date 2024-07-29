@@ -1,4 +1,4 @@
-name: Metrics
+name: SDK Performance
 
 on:
   schedule:
@@ -17,7 +17,7 @@ env:
 
 jobs:
   performance:
-    name: Performance
+    name: Metrics
     runs-on: macos-14
     env:
       GITHUB_TOKEN: '${{ secrets.CI_BOT_GITHUB_TOKEN }}'

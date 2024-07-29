@@ -1,10 +1,7 @@
-name: Metrics
+name: SDK Size
 
 on:
   pull_request:
-    types:
-      - opened
-      - ready_for_review
 
   workflow_dispatch:
 
@@ -17,29 +14,25 @@ env:
 
 jobs:
   sdk_size:
-    name: SDK Size
+    name: Metrics
     runs-on: macos-14
     env:
       GITHUB_TOKEN: '${{ secrets.CI_BOT_GITHUB_TOKEN }}'
     steps:
       - name: Install Bot SSH Key
-        if: ${{ github.event_name != 'pull_request' || github.event.pull_request.draft == false }}
         uses: webfactory/ssh-agent@v0.7.0
         with:
           ssh-private-key: ${{ secrets.BOT_SSH_PRIVATE_KEY }}
 
       - uses: actions/checkout@v3.1.0
-        if: ${{ github.event_name != 'pull_request' || github.event.pull_request.draft == false }}
 
       - uses: ./.github/actions/bootstrap
-        if: ${{ github.event_name != 'pull_request' || github.event.pull_request.draft == false }}
 
       - name: Run SDK Size Metrics
-        if: ${{ github.event_name != 'pull_request' || github.event.pull_request.draft == false }}
         run: bundle exec fastlane show_frameworks_sizes
         timeout-minutes: 30
         env:
           GITHUB_PR_NUM: ${{ github.event.pull_request.number }}
-          EVENT_NAME: ${{ github.event_name }}
+          GITHUB_EVENT_NAME: ${{ github.event_name }}
           MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
           APPSTORE_API_KEY: ${{ secrets.APPSTORE_API_KEY }}

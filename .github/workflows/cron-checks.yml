@@ -58,7 +58,6 @@ jobs:
       fail-fast: false
     runs-on: ${{ matrix.os }}
     env:
-      GITHUB_EVENT: ${{ toJson(github.event) }}
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       ALLURE_TOKEN: ${{ secrets.ALLURE_TOKEN }}
       STREAM_DEMO_APP_SECRET: ${{ secrets.STREAM_DEMO_APP_SECRET }}
