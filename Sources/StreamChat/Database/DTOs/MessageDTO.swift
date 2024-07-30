@@ -516,6 +516,19 @@ class MessageDTO: NSManagedObject {
         return (try? context.count(for: request)) ?? 0
     }
 
+    static func loadLastMessage(from userId: String, in cid: String, context: NSManagedObjectContext) -> MessageDTO? {
+        let request = NSFetchRequest<MessageDTO>(entityName: entityName)
+        request.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [
+            channelPredicate(with: cid),
+            .init(format: "user.id == %@", userId),
+            .init(format: "type != %@", MessageType.ephemeral.rawValue),
+            messageSentPredicate()
+        ])
+        request.sortDescriptors = [NSSortDescriptor(keyPath: \MessageDTO.createdAt, ascending: false)]
+        request.fetchLimit = 1
+        return load(by: request, context: context).first
+    }
+
     static func loadSendingMessages(context: NSManagedObjectContext) -> [MessageDTO] {
         let request = NSFetchRequest<MessageDTO>(entityName: MessageDTO.entityName)
         request.sortDescriptors = [NSSortDescriptor(keyPath: \MessageDTO.locallyCreatedAt, ascending: false)]
@@ -1296,28 +1309,21 @@ private extension ChatMessage {
 
         if let currentUser = context.currentUser {
             isSentByCurrentUser = currentUser.user.id == dto.user.id
-            if !dto.ownReactions.isEmpty {
-                currentUserReactions = Set(
-                    MessageReactionDTO
-                        .loadReactions(ids: dto.ownReactions, context: context)
-                        .compactMap { try? $0.asModel() }
-                )
-            } else {
-                currentUserReactions = []
-            }
+            currentUserReactions = Set(
+                MessageReactionDTO
+                    .loadReactions(ids: dto.ownReactions, context: context)
+                    .compactMap { try? $0.asModel() }
+            )
         } else {
             isSentByCurrentUser = false
             currentUserReactions = []
         }
 
-        latestReactions = {
-            guard !dto.latestReactions.isEmpty else { return Set() }
-            return Set(
-                MessageReactionDTO
-                    .loadReactions(ids: dto.latestReactions, context: context)
-                    .compactMap { try? $0.asModel() }
-            )
-        }()
+        latestReactions = Set(
+            MessageReactionDTO
+                .loadReactions(ids: dto.latestReactions, context: context)
+                .compactMap { try? $0.asModel() }
+        )
 
         threadParticipants = dto.threadParticipants.array
             .compactMap { $0 as? UserDTO }
@@ -1331,10 +1337,8 @@ private extension ChatMessage {
             .sorted { $0.id.index < $1.id.index }
 
         latestReplies = {
-            guard dto.replyCount > 0 else { return [] }
-            return dto.replies
-                .sorted(by: { $0.createdAt.bridgeDate > $1.createdAt.bridgeDate })
-                .prefix(5)
+            guard !dto.replies.isEmpty else { return [] }
+            return MessageDTO.loadReplies(for: dto.id, limit: 5, context: context)
                 .compactMap { try? ChatMessage(fromDTO: $0, depth: depth) }
         }()
 
