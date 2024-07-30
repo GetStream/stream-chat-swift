@@ -31,7 +31,7 @@ open class ChatMessageSearchVC: ChatChannelListSearchVC, ChatMessageSearchContro
     // MARK: - ChatChannelListSearchVC Abstract Implementations
 
     override open var hasEmptyResults: Bool {
-        messages.isEmpty
+        messageSearchController.messages.isEmpty
     }
 
     override open func loadSearchResults(with text: String) {
