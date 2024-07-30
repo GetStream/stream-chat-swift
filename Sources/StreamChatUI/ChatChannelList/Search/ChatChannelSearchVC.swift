@@ -15,7 +15,7 @@ open class ChatChannelSearchVC: ChatChannelListSearchVC {
     // MARK: - ChatChannelListSearchVC Abstract Implementations
 
     override open var hasEmptyResults: Bool {
-        channels.isEmpty
+        controller.channels.isEmpty
     }
 
     override open func loadSearchResults(with text: String) {

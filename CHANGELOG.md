@@ -19,6 +19,10 @@ _July 30, 2024_
 - Fix a rare issue with incorrect message order when sending multiple messages while offline [#3316](https://github.com/GetStream/stream-chat-swift/issues/3316)
 - Fix sorting channel list by unread count [#3340](https://github.com/GetStream/stream-chat-swift/pull/3340)
 
+## StreamChatUI
+### 🐞 Fixed
+- Fix message search not showing results for new search terms [#3345](https://github.com/GetStream/stream-chat-swift/pull/3345)
+
 # [4.60.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.60.0)
 _July 18, 2024_
 
