@@ -61,6 +61,7 @@ class ChannelDTO: NSManagedObject {
     @NSManaged var messages: Set<MessageDTO>
     @NSManaged var pinnedMessages: Set<MessageDTO>
     @NSManaged var reads: Set<ChannelReadDTO>
+    @NSManaged var currentUserUnreadMessagesCount: Int32
     @NSManaged var watchers: Set<UserDTO>
     @NSManaged var memberListQueries: Set<ChannelMemberListQueryDTO>
     @NSManaged var previewMessage: MessageDTO?
@@ -73,6 +74,16 @@ class ChannelDTO: NSManagedObject {
 
         guard !isDeleted else {
             return
+        }
+
+        // Update the unreadMessagesCount for the current user.
+        // At the moment this computed property is used for `hasUnread` automatic channel list filtering.
+        if let currentUserId = managedObjectContext?.currentUser?.user.id {
+            let currentUserUnread = reads.first(where: { $0.user.id == currentUserId })
+            let newUnreadCount = currentUserUnread?.unreadMessageCount ?? 0
+            if newUnreadCount != currentUserUnreadMessagesCount {
+                currentUserUnreadMessagesCount = newUnreadCount
+            }
         }
 
         // Change to the `truncatedAt` value have effect on messages, we need to mark them dirty manually

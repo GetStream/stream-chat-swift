@@ -49,8 +49,11 @@ public struct ChannelListSortingKey: SortingKey, Equatable {
         remoteKey: ChannelCodingKeys.cid.rawValue
     )
 
-    /// Sort channels by unread state. When using this sorting key, every unread channel weighs the same,
-    /// so they're sorted by `updatedAt`
+    /// Sort channels by unread state.
+    ///
+    /// When using this sorting key, every unread channel weighs the same, so they're sorted by `updatedAt`.
+    ///
+    /// **Note:** If you want to sort by number of unreads, you should use the `unreadCount` sorting key.
     public static let hasUnread = Self(
         keyPath: \.hasUnread,
         localKey: nil,
@@ -60,7 +63,7 @@ public struct ChannelListSortingKey: SortingKey, Equatable {
     /// Sort channels by their unread count.
     public static let unreadCount = Self(
         keyPath: \.unreadCount,
-        localKey: nil,
+        localKey: #keyPath(ChannelDTO.currentUserUnreadMessagesCount),
         remoteKey: "unread_count"
     )
 

@@ -77,9 +77,13 @@ final class ChannelListSortingKey_Tests: XCTestCase {
                 XCTAssertEqual(key.remoteKey, "has_unread")
                 XCTAssertTrue(key.requiresRuntimeSorting)
             case .unreadCount:
-                XCTAssertNil(key.sortDescriptor(isAscending: true))
+                XCTAssertNotNil(key.sortDescriptor(isAscending: true))
                 XCTAssertEqual(key.remoteKey, "unread_count")
-                XCTAssertTrue(key.requiresRuntimeSorting)
+                XCTAssertFalse(key.requiresRuntimeSorting)
+                XCTAssertEqual(
+                    key.localKey,
+                    NSExpression(forKeyPath: \ChannelDTO.currentUserUnreadMessagesCount).keyPath
+                )
             default:
                 XCTFail()
             }

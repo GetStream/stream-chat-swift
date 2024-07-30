@@ -41,6 +41,11 @@ final class DemoChatChannelListVC: ChatChannelListVC {
         .equal(.hidden, to: true)
     ]))
 
+    lazy var unreadChannelsQuery: ChannelListQuery = .init(filter: .and([
+        .containMembers(userIds: [currentUserId]),
+        .hasUnread
+    ]), sort: [.init(key: .unreadCount, isAscending: false)])
+
     lazy var mutedChannelsQuery: ChannelListQuery = .init(filter: .and([
         .containMembers(userIds: [currentUserId]),
         .equal(.muted, to: true)
@@ -113,6 +118,15 @@ final class DemoChatChannelListVC: ChatChannelListVC {
             }
         )
 
+        let unreadChannelsAction = UIAlertAction(
+            title: "Unread Channels",
+            style: .default,
+            handler: { [weak self] _ in
+                self?.title = "Unread Channels"
+                self?.setUnreadChannelsQuery()
+            }
+        )
+
         let coolChannelsAction = UIAlertAction(
             title: "Cool Channels",
             style: .default,
@@ -133,7 +147,13 @@ final class DemoChatChannelListVC: ChatChannelListVC {
 
         presentAlert(
             title: "Filter Channels",
-            actions: [defaultChannelsAction, hiddenChannelsAction, mutedChannelsAction, coolChannelsAction],
+            actions: [
+                defaultChannelsAction,
+                unreadChannelsAction,
+                hiddenChannelsAction,
+                mutedChannelsAction,
+                coolChannelsAction
+            ],
             preferredStyle: .actionSheet,
             sourceView: filterChannelsButton
         )
@@ -141,6 +161,10 @@ final class DemoChatChannelListVC: ChatChannelListVC {
 
     func setHiddenChannelsQuery() {
         replaceQuery(hiddenChannelsQuery)
+    }
+
+    func setUnreadChannelsQuery() {
+        replaceQuery(unreadChannelsQuery)
     }
 
     func setMutedChannelsQuery() {
