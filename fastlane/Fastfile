@@ -841,13 +841,16 @@ lane :show_frameworks_sizes do |options|
   ['metrics/'].each { |dir| FileUtils.remove_dir(dir, force: true) }
 
   sh("git clone #{metrics_git} #{File.dirname(sdk_size_path)}")
-  develop_sizes = JSON.parse(File.read(sdk_size_path))
+  is_release = current_branch.include?('release/')
+  benchmark_config = JSON.parse(File.read(sdk_size_path))
+  benchmark_key = is_release ? 'release' : 'develop'
+  benchmark_sizes = benchmark_config[benchmark_key]
   branch_sizes = options[:sizes] || frameworks_sizes
 
   table_header = '## SDK Size'
-  markdown_table = "#{table_header}\n| `title` | `develop` | `branch` | `diff` | `status` |\n| - | - | - | - | - |\n"
+  markdown_table = "#{table_header}\n| `title` | `#{is_release ? 'previous release' : 'develop'}` | `#{is_release ? 'current release' : 'branch'}` | `diff` | `status` |\n| - | - | - | - | - |\n"
   sdk_names.each do |title|
-    benchmark_value = develop_sizes[title]
+    benchmark_value = benchmark_sizes[title]
     branch_value = branch_sizes[title.to_sym]
     max_tolerance = 0.5 # Max Tolerance is 0.5MB
     fine_tolerance = 0.25 # Fine Tolerance is 0.25MB
@@ -868,12 +871,13 @@ lane :show_frameworks_sizes do |options|
     markdown_table << "|#{title}|#{benchmark_value}MB|#{branch_value}MB|#{diff}MB|#{status_emoji}|\n"
   end
 
-  FastlaneCore::PrintTable.print_values(title: 'Benchmark', config: develop_sizes)
+  FastlaneCore::PrintTable.print_values(title: 'Benchmark', config: benchmark_sizes)
   FastlaneCore::PrintTable.print_values(title: 'SDK Size', config: branch_sizes)
 
   if is_ci
-    if ENV['GITHUB_EVENT_NAME'].to_s == 'push'
-      File.write(sdk_size_path, JSON.pretty_generate(branch_sizes))
+    if is_release || ENV['GITHUB_EVENT_NAME'].to_s == 'push'
+      benchmark_config[benchmark_key] = branch_sizes
+      File.write(sdk_size_path, JSON.pretty_generate(benchmark_config))
       Dir.chdir(File.dirname(sdk_size_path)) do
         if sh('git status -s', log: false).to_s.empty?
           UI.important('No changes in SDK sizes benchmarks.')
