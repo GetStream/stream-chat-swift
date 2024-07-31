@@ -8,11 +8,10 @@ allure_results_path = 'allure-results'
 
 desc 'Upload test results to Allure TestOps'
 lane :allure_upload do |options|
-  branch = github_run_details['head_branch']
   allure_args = "-e #{allure_url} --project-id #{allure_project_id} --launch-id #{options[:launch_id]}"
   sh("./xcresults export test_output/StreamChatUITestsApp.xcresult #{allure_results_path} || true")
   sh("./allurectl launch reopen #{options[:launch_id]} || true") # to prevent allure from uploading results to a closed launch
-  sh("env BRANCH_NAME='#{branch}' ./allurectl upload #{allure_args} #{allure_results_path} || true")
+  sh("env BRANCH_NAME='#{current_branch}' ./allurectl upload #{allure_args} #{allure_results_path} || true")
   UI.success("Check out test results in Allure TestOps: #{allure_url}/launch/#{options[:launch_id]} 🎉")
 end
 
@@ -54,6 +53,6 @@ def github_run_details
   return nil unless is_ci
 
   github_path = "#{ENV.fetch('GITHUB_API_URL', nil)}/repos/#{ENV.fetch('GITHUB_REPOSITORY', nil)}/actions/runs/#{ENV.fetch('GITHUB_RUN_ID', nil)}"
-  output = sh(command: "curl -s -H 'authorization: Bearer #{ENV.fetch('GITHUB_TOKEN', nil)}' -X GET -G #{github_path}", log: false)
+  output = sh(command: "curl -s -H 'authorization: Bearer #{ENV.fetch('GITHUB_TOKEN', nil)}' -X GET -G #{github_path}")
   JSON.parse(output)
 end

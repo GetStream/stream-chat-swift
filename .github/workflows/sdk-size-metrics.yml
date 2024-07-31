@@ -19,7 +19,7 @@ jobs:
     env:
       GITHUB_TOKEN: '${{ secrets.CI_BOT_GITHUB_TOKEN }}'
     steps:
-      - name: Install Bot SSH Key
+      - name: Connect iOS Bot
         uses: webfactory/ssh-agent@v0.7.0
         with:
           ssh-private-key: ${{ secrets.BOT_SSH_PRIVATE_KEY }}
@@ -28,16 +28,10 @@ jobs:
 
       - uses: ./.github/actions/bootstrap
 
-      - name: Get branch name
-        id: get_branch_name
-        run: echo "branch=${GITHUB_REF#refs/heads/}" >> $GITHUB_OUTPUT
-
       - name: Run SDK Size Metrics
         run: bundle exec fastlane show_frameworks_sizes
         timeout-minutes: 30
         env:
-          BRANCH_NAME: ${{ steps.get_branch_name.outputs.branch }}
           GITHUB_PR_NUM: ${{ github.event.pull_request.number }}
-          GITHUB_EVENT_NAME: ${{ github.event_name }}
           MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
           APPSTORE_API_KEY: ${{ secrets.APPSTORE_API_KEY }}

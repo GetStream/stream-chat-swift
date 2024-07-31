@@ -20,6 +20,8 @@ concurrency:
 env:
   HOMEBREW_NO_INSTALL_CLEANUP: 1 # Disable cleanup for homebrew, we don't need it on CI
   IOS_SIMULATOR_DEVICE: "iPhone 15 Pro (17.4)"
+  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  GITHUB_PR_NUM: ${{ github.event.pull_request.number }}
 
 jobs:
   build-test-app-and-frameworks:
@@ -48,8 +50,6 @@ jobs:
     name: Automated Code Review
     runs-on: macos-12
     env:
-      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      GITHUB_PR_NUM: ${{ github.event.number }}
       XCODE_VERSION: "14.0.1"
     if: ${{ github.event_name != 'push' && github.event.inputs.snapshots != 'true' }}
     steps:
@@ -73,8 +73,6 @@ jobs:
     if: ${{ github.event_name != 'push' && github.event.inputs.snapshots != 'true' }}
     env:
       XCODE_VERSION: "14.0.1"
-      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      GITHUB_PR_NUM: ${{ github.event.number }}
     steps:
     - uses: actions/checkout@v4.1.1
     - uses: ./.github/actions/ruby-cache
@@ -92,9 +90,6 @@ jobs:
     runs-on: macos-14
     if: ${{ github.event.inputs.snapshots != 'true' }}
     needs: build-test-app-and-frameworks
-    env:
-      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      GITHUB_PR_NUM: ${{ github.event.number }}
     steps:
     - uses: actions/checkout@v4.1.1
       with:
@@ -110,13 +105,9 @@ jobs:
     - name: Run LLC Tests (Debug)
       run: bundle exec fastlane test device:"${{ env.IOS_SIMULATOR_DEVICE }}" skip_build:true
       timeout-minutes: 60
-    - name: Get branch name
-      id: get_branch_name
-      run: echo "branch=${GITHUB_REF#refs/heads/}" >> $GITHUB_OUTPUT
     - name: Run Sonar analysis
       run: bundle exec fastlane sonar_upload
       env:
-        BRANCH_NAME: ${{ steps.get_branch_name.outputs.branch }}
         SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         PR_NUMBER: ${{ github.event.number }}
@@ -165,7 +156,6 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.DANGER_GITHUB_API_TOKEN }} # to open a PR
         GH_TOKEN: ${{ secrets.GITHUB_TOKEN }} # to use github cli
-        GITHUB_PR_NUM: ${{ github.event.number }}
     - name: Parse xcresult
       if: failure()
       run: |
@@ -192,8 +182,6 @@ jobs:
       run: bundle exec fastlane allure_launch
       env:
         ALLURE_TOKEN: ${{ secrets.ALLURE_TOKEN }}
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        GITHUB_PR_NUM: ${{ github.event.number }}
         GITHUB_EVENT: ${{ toJson(github.event) }}
     - id: get_launch_id
       run: echo "launch_id=${{env.LAUNCH_ID}}" >> $GITHUB_OUTPUT
@@ -230,15 +218,12 @@ jobs:
       env:
         XCODE_VERSION: "15.0.1" # the most stable pair of Xcode
         IOS_SIMULATOR_DEVICE: "iPhone 15 Pro (17.0)" # and iOS
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        GITHUB_PR_NUM: ${{ github.event.number }}
         MATRIX_SIZE: ${{ strategy.job-total }}
         STREAM_DEMO_APP_SECRET: ${{ secrets.STREAM_DEMO_APP_SECRET }}
     - name: Allure TestOps Upload
       if: env.LAUNCH_ID != '' && (success() || failure())
       run: bundle exec fastlane allure_upload launch_id:$LAUNCH_ID
       env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         ALLURE_TOKEN: ${{ secrets.ALLURE_TOKEN }}
     - name: Allure TestOps Launch Removal
       if: env.LAUNCH_ID != '' && cancelled()
@@ -265,9 +250,6 @@ jobs:
     runs-on: macos-14
     needs: build-test-app-and-frameworks
     if: ${{ github.event_name != 'push' && github.event.inputs.snapshots != 'true' }}
-    env:
-      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      GITHUB_PR_NUM: ${{ github.event.number }}
     steps:
     - uses: actions/checkout@v4.1.1
     - uses: actions/download-artifact@v4
@@ -297,9 +279,6 @@ jobs:
     runs-on: macos-14
     needs: build-test-app-and-frameworks
     if: ${{ github.event_name != 'push' && github.event.inputs.snapshots != 'true' }}
-    env:
-      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      GITHUB_PR_NUM: ${{ github.event.number }}
     steps:
     - uses: actions/checkout@v4.1.1
     - uses: actions/download-artifact@v4
