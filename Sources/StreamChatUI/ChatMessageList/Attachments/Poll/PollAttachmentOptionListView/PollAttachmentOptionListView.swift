@@ -30,7 +30,7 @@ open class PollAttachmentOptionListView: _View, ThemeProvider {
     override open func updateContent() {
         super.updateContent()
 
-        container = VContainer(spacing: 4) {
+        container = VContainer(spacing: 24) {
             itemViews
         }.embed(in: self)
     }

@@ -39,6 +39,22 @@ open class PollAttachmentOptionListItemView: _View, ThemeProvider {
         .withAdjustingFontForContentSizeCategory
         .withAccessibilityIdentifier(identifier: "votesCountLabel")
 
+    /// A progress view that displays the number of votes this option
+    /// has in relation with the option with max votes.
+    open private(set) lazy var votesProgressView = UIProgressView()
+        .withoutAutoresizingMaskConstraints
+        .withAccessibilityIdentifier(identifier: "votesProgressView")
+
+    /// A button to add or remove a vote for this option.
+    open private(set) lazy var voteCheckboxButton = UIButton(type: .roundedRect)
+        .withoutAutoresizingMaskConstraints
+        .withAccessibilityIdentifier(identifier: "voteCheckboxView")
+
+    /// The avatar view type used to build the avatar views displayed on the vote authors.
+    open var voteAuthorAvatarViewType: ChatUserAvatarView.Type {
+        components.userAvatarView
+    }
+
     // MARK: - Lifecycle
 
     override open func setUpAppearance() {
@@ -46,18 +62,26 @@ open class PollAttachmentOptionListItemView: _View, ThemeProvider {
 
         optionNameLabel.numberOfLines = 0
         optionNameLabel.font = appearance.fonts.subheadline
-        votesCountLabel.font = appearance.fonts.caption1
-        votesCountLabel.textColor = appearance.colorPalette.textLowEmphasis
+        votesCountLabel.font = appearance.fonts.body.withSize(14)
+        votesCountLabel.textColor = appearance.colorPalette.text
+        voteCheckboxButton.contentEdgeInsets = .zero
+        voteCheckboxButton.imageEdgeInsets = .zero
+        voteCheckboxButton.titleEdgeInsets = .zero
     }
 
     override open func setUpLayout() {
         super.setUpLayout()
 
-        VContainer(spacing: 2) {
-            HContainer {
-                optionNameLabel
-                Spacer()
-                votesCountLabel
+        HContainer(spacing: 3) {
+            voteCheckboxButton
+            VContainer(spacing: 3) {
+                HContainer(spacing: 4) {
+                    optionNameLabel
+                    Spacer()
+                    voteAuthorsAvatarView
+                    votesCountLabel
+                }
+                votesProgressView
             }
         }
         .embed(in: self)
@@ -68,5 +92,29 @@ open class PollAttachmentOptionListItemView: _View, ThemeProvider {
 
         optionNameLabel.text = content.option.text
         votesCountLabel.text = "\(content.option.latestVotes.count)"
+        votesProgressView.setProgress(0.5, animated: true)
+
+        if content.option.latestVotes.count >= 1 {
+            voteCheckboxButton.setImage(appearance.images.pollVoteCheckmarkActive, for: .normal)
+            voteCheckboxButton.tintColor = appearance.colorPalette.accentPrimary
+        } else {
+            voteCheckboxButton.setImage(appearance.images.pollVoteCheckmarkInactive, for: .normal)
+            voteCheckboxButton.tintColor = appearance.colorPalette.inactiveTint
+        }
+    }
+
+    open var voteAuthorsAvatarView: UIView {
+        HContainer(spacing: -4) {
+            content.option.latestVotes
+                .sorted(by: { $0.createdAt > $1.createdAt })
+                .suffix(2)
+                .map { vote in
+                    let view = voteAuthorAvatarViewType.init()
+                        .width(20)
+                        .height(20)
+                    view.content = vote.user
+                    return view
+                }
+        }
     }
 }

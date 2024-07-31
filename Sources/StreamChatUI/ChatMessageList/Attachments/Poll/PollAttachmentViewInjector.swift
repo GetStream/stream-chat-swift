@@ -3,6 +3,7 @@
 //
 
 import Foundation
+import StreamChat
 
 public class PollAttachmentViewInjector: AttachmentViewInjector {
     open lazy var pollAttachmentView: PollAttachmentView = contentView.components

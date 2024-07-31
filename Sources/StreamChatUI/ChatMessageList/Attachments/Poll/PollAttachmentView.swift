@@ -58,7 +58,9 @@ open class PollAttachmentView: _View, ThemeProvider {
     override open func setUpLayout() {
         super.setUpLayout()
 
-        VContainer(spacing: 12) {
+        directionalLayoutMargins = .init(top: 12, leading: 10, bottom: 12, trailing: 12)
+
+        VContainer(spacing: 14) {
             VContainer(spacing: 2) {
                 pollTitleLabel
                 pollSubtitleLabel
