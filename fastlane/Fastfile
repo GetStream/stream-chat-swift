@@ -944,21 +944,15 @@ private_lane :create_pr_comment do |options|
   end
 end
 
-private_lane :current_branch do
-  github_pr_branch_name = ENV['BRANCH_NAME'].to_s
-  github_ref_branch_name = ENV['GITHUB_REF'].to_s.sub('refs/heads/', '')
-  fastlane_branch_name = git_branch
+lane :current_branch do
+  branch = if ENV['GITHUB_PR_NUM'].to_s.empty?
+             git_branch
+           else
+             sh("gh pr view #{ENV.fetch('GITHUB_PR_NUM')} --json headRefName -q .headRefName").strip
+           end
 
-  branch_name = if !github_pr_branch_name.empty?
-                  github_pr_branch_name
-                elsif !fastlane_branch_name.empty?
-                  fastlane_branch_name
-                elsif !github_ref_branch_name.empty?
-                  github_ref_branch_name
-                end
-
-  UI.important("Current branch: #{branch_name} 🕊️")
-  branch_name
+  UI.important("Current branch: #{branch} 🕊️")
+  branch
 end
 
 private_lane :git_status do |options|

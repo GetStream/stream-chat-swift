@@ -13,7 +13,7 @@ jobs:
     runs-on: macos-12
     if: github.event.pull_request.merged == true # only merged pull requests must trigger this job
     steps:
-      - name: Install Bot SSH Key
+      - name: Connect iOS Bot
         uses: webfactory/ssh-agent@v0.7.0
         with:
           ssh-private-key: ${{ secrets.BOT_SSH_PRIVATE_KEY }}

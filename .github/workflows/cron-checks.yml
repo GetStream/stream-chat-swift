@@ -13,6 +13,7 @@ concurrency:
 
 env:
   HOMEBREW_NO_INSTALL_CLEANUP: 1 # Disable cleanup for homebrew, we don't need it on CI
+  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
 jobs:
   build-test-app-and-frameworks:
@@ -59,7 +60,6 @@ jobs:
     runs-on: ${{ matrix.os }}
     env:
       GITHUB_EVENT: ${{ toJson(github.event) }}
-      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       ALLURE_TOKEN: ${{ secrets.ALLURE_TOKEN }}
       STREAM_DEMO_APP_SECRET: ${{ secrets.STREAM_DEMO_APP_SECRET }}
       XCODE_VERSION: ${{ matrix.xcode }}
@@ -151,7 +151,6 @@ jobs:
       fail-fast: false
     runs-on: ${{ matrix.os }}
     env:
-      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       XCODE_VERSION: ${{ matrix.xcode }}
     steps:
     - uses: actions/checkout@v4.1.1
@@ -195,8 +194,11 @@ jobs:
     runs-on: macos-12
     env:
       XCODE_VERSION: "14.0.1"
-      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     steps:
+    - name: Connect iOS Bot
+      uses: webfactory/ssh-agent@v0.7.0
+      with:
+        ssh-private-key: ${{ secrets.BOT_SSH_PRIVATE_KEY }}
     - uses: actions/checkout@v4.1.1
     - uses: ./.github/actions/ruby-cache
     - name: List Xcode versions
@@ -207,10 +209,6 @@ jobs:
     - name: Build UI
       run: bundle exec fastlane test_ui device:"iPhone 8" build_for_testing:true
       timeout-minutes: 25
-    - name: Install Bot SSH Key
-      uses: webfactory/ssh-agent@v0.7.0
-      with:
-        ssh-private-key: ${{ secrets.BOT_SSH_PRIVATE_KEY }}
     - name: Build XCFrameworks
       run: bundle exec fastlane build_xcframeworks
       timeout-minutes: 25
