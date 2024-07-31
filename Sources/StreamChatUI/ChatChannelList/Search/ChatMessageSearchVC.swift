@@ -61,7 +61,9 @@ open class ChatMessageSearchVC: ChatChannelListSearchVC, ChatMessageSearchContro
         isPaginatingMessages = true
 
         messageSearchController.loadNextMessages { [weak self] _ in
-            self?.isPaginatingMessages = false
+            DispatchQueue.main.async {
+                self?.isPaginatingMessages = false
+            }
         }
     }
 
@@ -105,7 +107,9 @@ open class ChatMessageSearchVC: ChatChannelListSearchVC, ChatMessageSearchContro
 
     // MARK: - ChatMessageSearchControllerDelegate
 
-    open func controller(_ controller: ChatMessageSearchController, didChangeMessages changes: [ListChange<ChatMessage>]) {
-        reloadMessages()
+    nonisolated open func controller(_ controller: ChatMessageSearchController, didChangeMessages changes: [ListChange<ChatMessage>]) {
+        DispatchQueue.main.async {
+            self.reloadMessages()
+        }
     }
 }

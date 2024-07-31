@@ -104,25 +104,29 @@ open class ChatChannelHeaderView: _View,
             withTimeInterval: statusUpdateInterval,
             repeats: true
         ) { [weak self] _ in
-            self?.updateContentIfNeeded()
+            DispatchQueue.main.async {
+                self?.updateContentIfNeeded()
+            }
         }
     }
 
     // MARK: - ChatChannelControllerDelegate Implementation
 
-    open func channelController(
+    nonisolated open func channelController(
         _ channelController: ChatChannelController,
         didUpdateChannel channel: EntityChange<ChatChannel>
     ) {
         switch channel {
         case .update, .create:
-            updateContent()
+            DispatchQueue.main.async {
+                self.updateContent()
+            }
         default:
             break
         }
     }
 
-    open func channelController(
+    nonisolated open func channelController(
         _ channelController: ChatChannelController,
         didChangeTypingUsers typingUsers: Set<ChatUser>
     ) {
@@ -130,7 +134,7 @@ open class ChatChannelHeaderView: _View,
         // but this can be overridden by subclassing this component.
     }
 
-    open func channelController(
+    nonisolated open func channelController(
         _ channelController: ChatChannelController,
         didReceiveMemberEvent: MemberEvent
     ) {
@@ -138,7 +142,7 @@ open class ChatChannelHeaderView: _View,
         // but this can be overridden by subclassing this component.
     }
 
-    open func channelController(
+    nonisolated open func channelController(
         _ channelController: ChatChannelController,
         didUpdateMessages changes: [ListChange<ChatMessage>]
     ) {
@@ -147,6 +151,7 @@ open class ChatChannelHeaderView: _View,
     }
 
     deinit {
-        timer?.invalidate()
+        //TODO: fix this!
+//        timer?.invalidate()
     }
 }

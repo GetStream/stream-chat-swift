@@ -578,7 +578,7 @@ public struct Components {
 
     public init() {}
     
-    public static var `default` = Self()
+    nonisolated(unsafe) public static var `default` = Self()
 
     // MARK: Deprecations
 

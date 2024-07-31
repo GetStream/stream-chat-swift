@@ -5,7 +5,7 @@
 import StreamChat
 import UIKit
 
-public protocol AttachmentPreviewProvider {
+@MainActor public protocol AttachmentPreviewProvider {
     /// The view representing the attachment.
     func previewView(components: Components) -> UIView
 

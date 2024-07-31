@@ -8,11 +8,11 @@ protocol ViewPaginationHandling {
     var topThreshold: Int { get set }
     var bottomThreshold: Int { get set }
 
-    var onNewTopPage: (() -> Void)? { get set }
-    var onNewBottomPage: (() -> Void)? { get set }
+    var onNewTopPage: (@Sendable() -> Void)? { get set }
+    var onNewBottomPage: (@Sendable() -> Void)? { get set }
 }
 
-typealias StatefulViewPaginationHandlingBlock = ((_ notifyItemCount: (Int) -> Void, _ completion: @escaping (Error?) -> Void) -> Void)
+typealias StatefulViewPaginationHandlingBlock = ((_ notifyItemCount: (Int) -> Void, _ completion: @Sendable @escaping (Error?) -> Void) -> Void)
 protocol StatefulViewPaginationHandling {
     var topThreshold: Int { get set }
     var bottomThreshold: Int { get set }

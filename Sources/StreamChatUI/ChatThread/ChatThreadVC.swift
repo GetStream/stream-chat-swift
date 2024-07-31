@@ -149,7 +149,9 @@ open class ChatThreadVC: _ViewController,
 
         // Load data from server
         messageController.synchronize { [weak self] error in
-            self?.didFinishSynchronizing(with: error)
+            DispatchQueue.main.async {
+                self?.didFinishSynchronizing(with: error)
+            }
         }
     }
 
@@ -210,8 +212,10 @@ open class ChatThreadVC: _ViewController,
                     return
                 }
 
-                let shouldAnimate = self?.components.shouldAnimateJumpToMessageWhenOpeningChannel == true
-                self?.jumpToMessage(id: initialReplyId, animated: shouldAnimate)
+                DispatchQueue.main.async {
+                    let shouldAnimate = self?.components.shouldAnimateJumpToMessageWhenOpeningChannel == true
+                    self?.jumpToMessage(id: initialReplyId, animated: shouldAnimate)
+                }
             }
             return
         }
@@ -219,7 +223,9 @@ open class ChatThreadVC: _ViewController,
         // When we tap on the parent message and start from oldest replies is enabled
         if shouldStartFromOldestReplies, let parentMessage = messageController.message {
             messageController.loadPageAroundReplyId(parentMessage.id) { [weak self] _ in
-                self?.messageListVC.scrollToTop(animated: false)
+                DispatchQueue.main.async {
+                    self?.messageListVC.scrollToTop(animated: false)
+                }
             }
             return
         }
@@ -344,7 +350,7 @@ open class ChatThreadVC: _ViewController,
 
     public func chatMessageListVC(
         _ vc: ChatMessageListVC, shouldLoadPageAroundMessageId messageId: MessageId,
-        _ completion: @escaping ((Error?) -> Void)
+        _ completion: @escaping (@Sendable(Error?) -> Void)
     ) {
         messageController.loadPageAroundReplyId(messageId, completion: completion)
     }
@@ -400,60 +406,66 @@ open class ChatThreadVC: _ViewController,
 
     // MARK: - ChatMessageControllerDelegate
 
-    open func messageController(
+    nonisolated open func messageController(
         _ controller: ChatMessageController,
         didChangeMessage change: EntityChange<ChatMessage>
     ) {
-        guard shouldRenderParentMessage && !messages.isEmpty else {
-            return
+        DispatchQueue.main.async {
+            guard self.shouldRenderParentMessage && !self.messages.isEmpty else {
+                return
+            }
+
+            let indexPath = IndexPath(row: self.messages.count - 1, section: 0)
+
+            let listChange: ListChange<ChatMessage>
+            switch change {
+            case let .create(item):
+                listChange = .insert(item, index: indexPath)
+            case let .update(item):
+                listChange = .update(item, index: indexPath)
+            case let .remove(item):
+                listChange = .remove(item, index: indexPath)
+            }
+
+            self.updateMessages(with: [listChange])
         }
-
-        let indexPath = IndexPath(row: messages.count - 1, section: 0)
-
-        let listChange: ListChange<ChatMessage>
-        switch change {
-        case let .create(item):
-            listChange = .insert(item, index: indexPath)
-        case let .update(item):
-            listChange = .update(item, index: indexPath)
-        case let .remove(item):
-            listChange = .remove(item, index: indexPath)
-        }
-
-        updateMessages(with: [listChange])
     }
 
-    open func messageController(
+    nonisolated open func messageController(
         _ controller: ChatMessageController,
         didChangeReplies changes: [ListChange<ChatMessage>]
     ) {
-        updateMessages(with: changes)
+        DispatchQueue.main.async {
+            self.updateMessages(with: changes)
+        }
     }
 
     // MARK: - EventsControllerDelegate
 
-    open func eventsController(_ controller: EventsController, didReceiveEvent event: Event) {
-        switch event {
-        case let event as TypingEvent:
-            guard event.parentId == messageController.messageId && event.user.id != client.currentUserId else { return }
-            if event.isTyping {
-                currentlyTypingUsers.insert(event.user)
-            } else {
-                currentlyTypingUsers.remove(event.user)
+    nonisolated open func eventsController(_ controller: EventsController, didReceiveEvent event: Event) {
+        DispatchQueue.main.async { [unowned self] in
+            switch event {
+            case let event as TypingEvent:
+                guard event.parentId == messageController.messageId && event.user.id != client.currentUserId else { return }
+                if event.isTyping {
+                    currentlyTypingUsers.insert(event.user)
+                } else {
+                    currentlyTypingUsers.remove(event.user)
+                }
+                
+                if currentlyTypingUsers.isEmpty {
+                    messageListVC.hideTypingIndicator()
+                } else {
+                    messageListVC.showTypingIndicator(typingUsers: Array(currentlyTypingUsers))
+                }
+            case let event as NewMessagePendingEvent:
+                let newMessage = event.message
+                if !isFirstPageLoaded && newMessage.isSentByCurrentUser && newMessage.isPartOfThread {
+                    messageController.loadFirstPage()
+                }
+            default:
+                break
             }
-
-            if currentlyTypingUsers.isEmpty {
-                messageListVC.hideTypingIndicator()
-            } else {
-                messageListVC.showTypingIndicator(typingUsers: Array(currentlyTypingUsers))
-            }
-        case let event as NewMessagePendingEvent:
-            let newMessage = event.message
-            if !isFirstPageLoaded && newMessage.isSentByCurrentUser && newMessage.isPartOfThread {
-                messageController.loadFirstPage()
-            }
-        default:
-            break
         }
     }
 

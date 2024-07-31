@@ -9,7 +9,7 @@ import UIKit
 
 extension ContainerStackView {
     /// Describes the size distribution of the arranged subviews in a container stack view.
-    public struct Distribution: Equatable {
+    public struct Distribution: Equatable, Sendable {
         /// Makes the arranged subviews with their natural size.
         public static let natural = Distribution(rawValue: 0)
         /// Makes the arranged subviews all with the same size.
@@ -19,7 +19,7 @@ extension ContainerStackView {
     }
 
     /// Describes the alignment of the arranged subviews in perpendicular to the container's axis.
-    public struct Alignment: Equatable {
+    public struct Alignment: Equatable, Sendable {
         /// Makes the arranged subviews so that they **fill** the available space perpendicular to the container’s axis.
         public static let fill = Alignment(rawValue: 0)
         /// Makes the arranged subviews align to the **leading edge** in a **vertical axis** container.
@@ -37,7 +37,7 @@ extension ContainerStackView {
     }
 
     /// Describes the Spacing between the arranged subviews.
-    public struct Spacing: Equatable, ExpressibleByFloatLiteral, ExpressibleByIntegerLiteral {
+    public struct Spacing: Equatable, ExpressibleByFloatLiteral, ExpressibleByIntegerLiteral, Sendable {
         /// The actual value of the Spacing.
         public var rawValue: CGFloat
 
@@ -202,10 +202,12 @@ public class ContainerStackView: UIView {
 
         hidingObserversByView[subview] = subview
             .observe(\.isHidden, options: [.new]) { [weak self] (view, isHiddenChange) in
-                if isHiddenChange.newValue == true {
-                    self?.hideArrangedSubview(view)
-                } else {
-                    self?.showArrangedSubview(view)
+                DispatchQueue.main.async {
+                    if isHiddenChange.newValue == true {
+                        self?.hideArrangedSubview(view)
+                    } else {
+                        self?.showArrangedSubview(view)
+                    }
                 }
             }
 

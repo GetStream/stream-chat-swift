@@ -6,7 +6,7 @@ import StreamChat
 import UIKit
 
 /// The channel list search strategy. It is possible to search by messages or channels.
-public struct ChannelListSearchStrategy {
+public struct ChannelListSearchStrategy: Sendable {
     /// The name of the strategy.
     public var name: String
     /// The type of search UI component.
@@ -34,7 +34,7 @@ public struct ChannelListSearchStrategy {
     }
 
     /// Creates the `UISearchController` for the Channel List depending on the current search strategy.
-    public func makeSearchController(
+    @MainActor public func makeSearchController(
         with channelListVC: ChatChannelListVC
     ) -> UISearchController? {
         if let messageSearchVC = searchVC.init() as? ChatMessageSearchVC {

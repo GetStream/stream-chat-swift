@@ -7,7 +7,7 @@ import UIKit.UIImpactFeedbackGenerator
 import UIKit.UISelectionFeedbackGenerator
 
 /// A protocol that defines the required methods for providing haptic feedback for different events in an audio session
-public protocol AudioSessionFeedbackGenerator {
+@MainActor public protocol AudioSessionFeedbackGenerator {
     /// Initialises an instance of the conforming type
     init()
 
@@ -43,7 +43,7 @@ public protocol AudioSessionFeedbackGenerator {
 }
 
 /// A class that conforms to the AudioSessionFeedbackGenerator protocol
-open class StreamAudioSessionFeedbackGenerator: AudioSessionFeedbackGenerator {
+@MainActor open class StreamAudioSessionFeedbackGenerator: AudioSessionFeedbackGenerator {
     /// The following properties are instances of feedback generators
     private let lightImpactFeedbackGenerator: UIImpactFeedbackGenerator
     private let mediumImpactFeedbackGenerator: UIImpactFeedbackGenerator

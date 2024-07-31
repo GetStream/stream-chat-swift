@@ -12,7 +12,7 @@ public protocol MaskProviding {
     /// Path used to mask space in super view.
     ///
     /// No mask is used when nil is returned
-    var maskingPath: CGPath? { get }
+    @MainActor var maskingPath: CGPath? { get }
 }
 
 /// A view used to indicate the presence of a user.

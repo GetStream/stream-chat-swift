@@ -13,7 +13,7 @@ extension NSObject {
 }
 
 // Protocol that provides accessibility features
-protocol AccessibilityView {
+@MainActor protocol AccessibilityView {
     // Identifier for view
     var accessibilityViewIdentifier: String { get }
 
@@ -32,7 +32,7 @@ extension AccessibilityView where Self: UIView {
 }
 
 // Just a protocol to formalize the methods required
-public protocol Customizable {
+@MainActor public protocol Customizable {
     /// Main point of customization for the view functionality.
     ///
     /// **It's called zero or one time(s) during the view's lifetime.** Calling super implementation is required.
@@ -107,7 +107,7 @@ extension AppearanceProvider where Self: _View {
 
 /// Base class for overridable views StreamChatUI provides.
 /// All conformers will have StreamChatUI appearance settings by default.
-open class _View: UIView, Customizable, AccessibilityView {
+@MainActor open class _View: UIView, Customizable, AccessibilityView {
     // Flag for preventing multiple lifecycle methods calls.
     fileprivate var isInitialized: Bool = false
 
@@ -408,7 +408,7 @@ open class _ViewController: UIViewController, Customizable {
     }
 }
 
-protocol ViewVisibilityChecker {
+@MainActor protocol ViewVisibilityChecker {
     func isViewVisible(for viewController: UIViewController) -> Bool
 }
 
@@ -420,7 +420,7 @@ struct DefaultViewVisibilityChecker: ViewVisibilityChecker {
 }
 
 /// Closure stack, used to reverse order of appearance reloads on trait collection changes
-private enum TraitCollectionReloadStack {
+@MainActor private enum TraitCollectionReloadStack {
     private static var stack: [() -> Void] = []
 
     static func executePendingUpdates() {

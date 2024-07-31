@@ -9,7 +9,7 @@ import UIKit
 
 public protocol ThemeProvider: ComponentsProvider, AppearanceProvider {}
 
-public protocol ComponentsProvider: AnyObject {
+@MainActor public protocol ComponentsProvider: AnyObject {
     /// Appearance object to change components and component types from which the default SDK views are build
     /// or to use the default components in custom views.
     var components: Components { get set }

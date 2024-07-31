@@ -41,7 +41,7 @@ import Foundation
 }
 
 /// An implementation of ``AudioPlaying`` that can be used to stream audio files from a URL
-open class StreamAudioPlayer: AudioPlaying, AppStateObserverDelegate {
+@MainActor open class StreamAudioPlayer: AudioPlaying, AppStateObserverDelegate {
     // MARK: - Properties
     
     /// Provides thread-safe access to context storage

@@ -59,8 +59,10 @@ open class ChatMessageReactionsPickerVC: _ViewController, ThemeProvider, ChatMes
     open func toggleReaction(_ reaction: MessageReactionType) {
         guard let message = messageController.message else { return }
 
-        let completion: (Error?) -> Void = { [weak self] _ in
-            self?.dismiss(animated: true)
+        let completion: @Sendable(Error?) -> Void = { [weak self] _ in
+            DispatchQueue.main.async {
+                self?.dismiss(animated: true)
+            }
         }
 
         let shouldRemove = message.currentUserReactions.contains { $0.type == reaction }
@@ -71,13 +73,15 @@ open class ChatMessageReactionsPickerVC: _ViewController, ThemeProvider, ChatMes
 
     // MARK: - MessageControllerDelegate
 
-    open func messageController(
+    nonisolated open func messageController(
         _ controller: ChatMessageController,
         didChangeMessage change: EntityChange<ChatMessage>
     ) {
-        switch change {
-        case .create, .remove: break
-        case .update: updateContentIfNeeded()
+        DispatchQueue.main.async {
+            switch change {
+            case .create, .remove: break
+            case .update: self.updateContentIfNeeded()
+            }
         }
     }
 }
