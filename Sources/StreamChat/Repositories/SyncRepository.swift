@@ -132,11 +132,6 @@ class SyncRepository {
         // Enter recovery mode so no other requests are triggered.
         apiClient.enterRecoveryMode()
 
-        // Run offline actions requests as the first thing
-        if config.isLocalStorageEnabled {
-            operations.append(ExecutePendingOfflineActions(offlineRequestsRepository: offlineRequestsRepository))
-        }
-        
         // Get the existing channelIds
         let activeChannelIds = activeChannelControllers.allObjects.compactMap(\.cid)
         operations.append(GetChannelIdsOperation(database: database, context: context, activeChannelIds: activeChannelIds))
@@ -180,6 +175,11 @@ class SyncRepository {
 
         // 4. Clean up unwanted channels
         operations.append(DeleteUnwantedChannelsOperation(database: database, context: context))
+
+        // 5. Run offline actions requests
+        if config.isLocalStorageEnabled {
+            operations.append(ExecutePendingOfflineActions(offlineRequestsRepository: offlineRequestsRepository))
+        }
 
         operations.append(BlockOperation(block: { [weak self] in
             log.info("Finished recovering offline state", subsystems: .offlineSupport)

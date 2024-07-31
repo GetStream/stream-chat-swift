@@ -393,7 +393,6 @@ protocol AttachmentDatabaseSession {
 }
 
 protocol QueuedRequestDatabaseSession {
-    func allQueuedRequests() -> [QueuedRequestDTO]
     func deleteQueuedRequest(id: String)
 }
 

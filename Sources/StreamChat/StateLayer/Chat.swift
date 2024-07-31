@@ -1418,3 +1418,20 @@ extension Chat {
         ) -> TypingEventsSender = TypingEventsSender.init
     }
 }
+
+// MARK: - Chat Client
+
+private extension ChatClient {
+    func backgroundWorker<T>(of type: T.Type) throws -> T {
+        if let worker = backgroundWorkers.compactMap({ $0 as? T }).first {
+            return worker
+        }
+        if currentUserId == nil {
+            throw ClientError.CurrentUserDoesNotExist()
+        }
+        if !config.isClientInActiveMode {
+            throw ClientError.ClientIsNotInActiveMode()
+        }
+        throw ClientError("Background worker of type \(T.self) is not set up")
+    }
+}
