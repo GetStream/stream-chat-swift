@@ -115,24 +115,36 @@ lane :publish_release do |options|
 end
 
 lane :merge_release_to_main do
-  ensure_git_status_clean
-  sh('git checkout main')
-  sh('git pull')
+  release_branch =
+    if is_ci
+      sh('git config --global user.name "Stream Bot"')
+      sh('git reset --hard')
+      current_branch
+    else
+      ensure_git_status_clean
+      release_branches = sh(command: 'git branch -a', log: false).delete(' ').split("\n").grep(%r(origin/.*release/))
+      UI.user_error!("Expected 1 release branch, found #{release_branches.size}") if release_branches.size != 1
+      release_branches.first
+    end
 
-  # Grep all remote release branches and ensure there's only one
-  release_branches = sh(command: 'git branch -a', log: false).delete(' ').split("\n").grep(%r(origin/.*release/))
-  UI.user_error!("Expected 1 release branch, found #{release_branches.size}") if release_branches.size != 1
+  UI.user_error!("`#{release_branch}`` branch does not match the release branch pattern: `release/*`") unless release_branch.start_with?('release/')
+
+  sh('git checkout origin/main')
+  sh('git pull origin main')
 
   # Merge release branch to main. For more info, read: https://notion.so/iOS-Branching-Strategy-37c10127dc26493e937769d44b1d6d9a
-  sh("git merge #{release_branches.first} --ff-only")
-  UI.user_error!('Not pushing changes') unless prompt(text: 'Will push changes. All looking good?', boolean: true)
-  sh('git push')
-  UI.important('Please, wait for the `Publish new release` workflow to pass on GitHub Actions: ' \
-               "https://github.com/#{github_repo}/actions/workflows/publish-release.yml")
+  sh("git merge #{release_branch} --ff-only")
+  sh('git push origin main')
+
+  comment = 'Please, wait for the `Publish new release` workflow to pass on GitHub Actions: ' \
+            "https://github.com/#{github_repo}/actions/workflows/release-publish.yml"
+  UI.important(comment)
+  create_pr_comment(pr_num: ENV.fetch('GITHUB_PR_NUM'), text: comment, edit_last_comment_with_text: comment)
 end
 
 lane :merge_main_to_develop do
   if is_ci
+    sh('git config --global user.name "Stream Bot"')
     sh('git reset --hard')
   else
     ensure_git_status_clean
@@ -140,11 +152,11 @@ lane :merge_main_to_develop do
 
   sh('git checkout main')
   sh('git pull origin main')
-  sh('git checkout develop')
+  sh('git checkout origin/develop')
   sh('git pull origin develop')
   sh('git log develop..main')
   sh('git merge main')
-  sh('git push')
+  sh('git push origin develop')
 end
 
 desc 'Compresses the XCFrameworks into zip files'
