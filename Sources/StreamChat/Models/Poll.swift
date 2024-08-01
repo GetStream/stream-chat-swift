@@ -68,4 +68,20 @@ public struct Poll: Equatable {
     
     /// A list of the latest votes received for each option in the poll.
     public let latestVotesByOption: [PollOption]
+
+    /// The list of the current user votes.
+    public let ownVotes: [PollVote]
+}
+
+/// Poll domain logic helpers.
+public extension Poll {
+    /// Returns the vote of the current user for the given option in case the user has voted.
+    func currentUserVote(forOption option: PollOption) -> PollVote? {
+        ownVotes.first(where: { $0.optionId == option.id })
+    }
+
+    /// Returns a Boolean value indicating whether the current user has voted the given option.
+    func hasCurrentUserVoted(forOption option: PollOption) -> Bool {
+        ownVotes.map(\.optionId).contains(option.id)
+    }
 }
