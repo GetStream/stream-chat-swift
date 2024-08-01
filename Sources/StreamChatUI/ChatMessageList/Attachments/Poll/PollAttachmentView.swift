@@ -10,6 +10,10 @@ open class PollAttachmentView: _View, ThemeProvider {
     /// The content data of the poll attachment view.
     public struct Content {
         public var poll: Poll
+
+        public init(poll: Poll) {
+            self.poll = poll
+        }
     }
 
     /// The object responsible to
@@ -18,6 +22,9 @@ open class PollAttachmentView: _View, ThemeProvider {
             updateContentIfNeeded()
         }
     }
+
+    /// A closure that is triggered whenever the option is tapped either from the button or the item itself.
+    public var onOptionTap: ((PollOption) -> Void)?
 
     // MARK: - UI Components
 
@@ -36,12 +43,10 @@ open class PollAttachmentView: _View, ThemeProvider {
         .withAccessibilityIdentifier(identifier: "pollSubtitleLabel")
 
     /// A label which by default displays the selection rules of the Poll.
-    open private(set) lazy var optionListView = components
+    open private(set) lazy var optionListView: PollAttachmentOptionListView = components
         .pollAttachmentOptionListView.init()
         .withoutAutoresizingMaskConstraints
         .withAccessibilityIdentifier(identifier: "optionsListView")
-
-    // MARK: - Configuration properties
 
     // MARK: - Lifecycle
 
@@ -79,6 +84,7 @@ open class PollAttachmentView: _View, ThemeProvider {
 
         pollTitleLabel.text = content.poll.name
         pollSubtitleLabel.text = "Select one or more"
-        optionListView.content = .init(options: content.poll.options)
+        optionListView.onOptionTap = onOptionTap
+        optionListView.content = .init(poll: content.poll)
     }
 }

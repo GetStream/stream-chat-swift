@@ -8,14 +8,16 @@ import UIKit
 /// The options list view of the poll attachment.
 open class PollAttachmentOptionListView: _View, ThemeProvider {
     public struct Content: Equatable {
-        public var options: [PollOption]
+        public var poll: Poll
+
+        public init(poll: Poll) {
+            self.poll = poll
+        }
     }
 
     public var content: Content? {
         didSet {
-            if oldValue != content {
-                updateContentIfNeeded()
-            }
+            updateContentIfNeeded()
         }
     }
 
@@ -27,6 +29,9 @@ open class PollAttachmentOptionListView: _View, ThemeProvider {
         }
     }
 
+    /// A closure that is triggered whenever the option is tapped either from the button or the item itself.
+    public var onOptionTap: ((PollOption) -> Void)?
+
     override open func updateContent() {
         super.updateContent()
 
@@ -37,8 +42,18 @@ open class PollAttachmentOptionListView: _View, ThemeProvider {
 
     /// The option item views.
     open var itemViews: [UIView] {
-        content?.options.map { option in
-            components.pollAttachmentOptionListItemView.init(content: .init(option: option))
-        } ?? []
+        guard let content = self.content else { return [] }
+        return content.poll.options.map { option in
+            let view = components.pollAttachmentOptionListItemView.init(
+                content: .init(
+                    option: option,
+                    isVotedByCurrentUser: content.poll.hasCurrentUserVoted(forOption: option)
+                )
+            )
+            view.onOptionTap = { option in
+                self.onOptionTap?(option)
+            }
+            return view
+        }
     }
 }

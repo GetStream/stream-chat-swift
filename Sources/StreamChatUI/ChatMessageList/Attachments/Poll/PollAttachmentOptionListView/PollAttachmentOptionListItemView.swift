@@ -9,6 +9,12 @@ import UIKit
 open class PollAttachmentOptionListItemView: _View, ThemeProvider {
     public struct Content {
         public var option: PollOption
+        public var isVotedByCurrentUser: Bool
+
+        public init(option: PollOption, isVotedByCurrentUser: Bool) {
+            self.option = option
+            self.isVotedByCurrentUser = isVotedByCurrentUser
+        }
     }
 
     public var content: Content
@@ -22,6 +28,11 @@ open class PollAttachmentOptionListItemView: _View, ThemeProvider {
     public required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+
+    // MARK: - Action Handlers
+
+    /// A closure that is triggered whenever the option is tapped either from the button or the item itself.
+    public var onOptionTap: ((PollOption) -> Void)?
 
     // MARK: - UI Components
 
@@ -56,6 +67,14 @@ open class PollAttachmentOptionListItemView: _View, ThemeProvider {
     }
 
     // MARK: - Lifecycle
+
+    override open func setUp() {
+        super.setUp()
+
+        voteCheckboxButton.addTarget(self, action: #selector(didTapOption(sender:)), for: .touchUpInside)
+        let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(didTapOption(sender:)))
+        addGestureRecognizer(tapGestureRecognizer)
+    }
 
     override open func setUpAppearance() {
         super.setUpAppearance()
@@ -92,9 +111,9 @@ open class PollAttachmentOptionListItemView: _View, ThemeProvider {
 
         optionNameLabel.text = content.option.text
         votesCountLabel.text = "\(content.option.latestVotes.count)"
-        votesProgressView.setProgress(0.5, animated: true)
+        votesProgressView.progress = 0.5
 
-        if content.option.latestVotes.count >= 1 {
+        if content.isVotedByCurrentUser {
             voteCheckboxButton.setImage(appearance.images.pollVoteCheckmarkActive, for: .normal)
             voteCheckboxButton.tintColor = appearance.colorPalette.accentPrimary
         } else {
@@ -103,6 +122,7 @@ open class PollAttachmentOptionListItemView: _View, ThemeProvider {
         }
     }
 
+    // TODO: Migrate to Seperate view (easier to customize)
     open var voteAuthorsAvatarView: UIView {
         HContainer(spacing: -4) {
             content.option.latestVotes
@@ -112,9 +132,14 @@ open class PollAttachmentOptionListItemView: _View, ThemeProvider {
                     let view = voteAuthorAvatarViewType.init()
                         .width(20)
                         .height(20)
+                    view.shouldShowOnlineIndicator = false
                     view.content = vote.user
                     return view
                 }
         }
+    }
+
+    @objc func didTapOption(sender: Any?) {
+        onOptionTap?(content.option)
     }
 }
