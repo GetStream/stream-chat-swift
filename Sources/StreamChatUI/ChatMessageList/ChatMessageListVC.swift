@@ -163,6 +163,13 @@ open class ChatMessageListVC: _ViewController,
         dataSource?.isFirstPageLoaded == true
     }
 
+    /// The poll controller to manage the poll actions.
+    /// There is only one controller active for the poll which the user is currently interacting.
+    public internal(set) var pollController: PollController?
+
+    /// The poll options that are currently being changed.
+    public internal(set) var pollOptionsCastingVote: Set<String> = []
+
     /// The message cell height caches. This makes sure that the message list doesn't
     /// need to recalculate the cell height every time. This improve the scrolling
     /// experience since the content size calculation is more precise.
@@ -1072,11 +1079,30 @@ open class ChatMessageListVC: _ViewController,
         for message: ChatMessage
     ) {
         guard let poll = message.poll else { return }
-        let pollController = client.pollController(messageId: message.id, pollId: poll.id)
-        if let currentUserVote = poll.currentUserVote(forOption: option) {
-            pollController.removePollVote(voteId: currentUserVote.id)
+
+        if pollOptionsCastingVote.contains(option.id) {
+            return
+        }
+
+        pollOptionsCastingVote.insert(option.id)
+
+        let pollController: PollController
+        if let existingPollController = self.pollController, poll.id == existingPollController.pollId {
+            pollController = existingPollController
         } else {
-            pollController.castPollVote(answerText: nil, optionId: option.id)
+            pollController = client.pollController(messageId: message.id, pollId: poll.id)
+            pollOptionsCastingVote = []
+        }
+        self.pollController = pollController
+
+        if let currentUserVote = poll.currentUserVote(forOption: option) {
+            pollController.removePollVote(voteId: currentUserVote.id) { [weak self] _ in
+                self?.pollOptionsCastingVote.remove(option.id)
+            }
+        } else {
+            pollController.castPollVote(answerText: nil, optionId: option.id) { [weak self] _ in
+                self?.pollOptionsCastingVote.remove(option.id)
+            }
         }
     }
 
