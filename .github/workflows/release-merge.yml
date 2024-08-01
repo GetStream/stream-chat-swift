@@ -1,0 +1,28 @@
+name: "Merge release"
+
+on:
+  issue_comment:
+    types: [created]
+
+jobs:
+  merge-comment:
+    name: Merge release to main
+    runs-on: macos-14
+    if: github.event.issue.pull_request && github.event.issue.state == 'open' && github.event.comment.body == '/merge release'
+    steps:
+      - name: Connect iOS Bot
+        uses: webfactory/ssh-agent@v0.7.0
+        with:
+          ssh-private-key: ${{ secrets.BOT_SSH_PRIVATE_KEY }}
+
+      - uses: actions/checkout@v4.1.1
+        with:
+          fetch-depth: 0
+
+      - uses: ./.github/actions/ruby-cache
+
+      - name: Merge
+        run: bundle exec fastlane merge_release_to_main author:"${{ github.event.comment.user.login }}" --verbose
+        env:
+          GITHUB_TOKEN: ${{ secrets.DANGER_GITHUB_API_TOKEN }}
+          GITHUB_PR_NUM: ${{ github.event.issue.number }}
