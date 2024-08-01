@@ -111,12 +111,13 @@ open class PollAttachmentOptionListItemView: _View, ThemeProvider {
 
         optionNameLabel.text = content.option.text
         votesCountLabel.text = "\(content.option.latestVotes.count)"
-        votesProgressView.progress = 0.5
 
         if content.isVotedByCurrentUser {
+            votesProgressView.setProgress(0.5, animated: true)
             voteCheckboxButton.setImage(appearance.images.pollVoteCheckmarkActive, for: .normal)
             voteCheckboxButton.tintColor = appearance.colorPalette.accentPrimary
         } else {
+            votesProgressView.setProgress(0, animated: true)
             voteCheckboxButton.setImage(appearance.images.pollVoteCheckmarkInactive, for: .normal)
             voteCheckboxButton.tintColor = appearance.colorPalette.inactiveTint
         }
