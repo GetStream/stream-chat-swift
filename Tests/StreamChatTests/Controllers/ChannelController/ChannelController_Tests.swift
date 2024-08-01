@@ -5377,6 +5377,38 @@ final class ChannelController_Tests: XCTestCase {
             XCTAssertEqual(4, dto.messages.count)
         }
     }
+    
+    // MARK: - Logout
+    
+    func test_channels_afterLogout() throws {
+        controller = ChatChannelController(
+            channelQuery: .init(cid: channelId),
+            channelListQuery: nil,
+            client: client,
+            environment: env.environment
+        )
+        
+        let messages: [MessagePayload] = [.dummy(), .dummy(), .dummy(), .dummy()]
+        try setupChannel(
+            channelPayload: .dummy(
+                channel: .dummy(cid: channelId),
+                messages: messages
+            )
+        )
+        
+        XCTAssertEqual(channelId, controller.cid)
+        XCTAssertEqual(4, controller.messages.count)
+        
+        let expectation = XCTestExpectation(description: "Remove")
+        client.databaseContainer.removeAllData { error in
+            XCTAssertNil(error)
+            expectation.fulfill()
+        }
+        wait(for: [expectation], timeout: defaultTimeout)
+        
+        XCTAssertEqual(channelId, controller.cid)
+        XCTAssertEqual(0, controller.messages.count)
+    }
 }
 
 // MARK: Test Helpers

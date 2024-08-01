@@ -62,86 +62,12 @@ final class DatabaseContainer_Tests: XCTestCase {
 
         wait(for: [errorPathExpectation], timeout: defaultTimeout)
     }
-
+    
     func test_removingAllData() throws {
         let container = DatabaseContainer(kind: .inMemory)
 
         // // Create data for all our entities in the DB
-        try container.writeSynchronously { session in
-            let cid = ChannelId.unique
-            let currentUserId = UserId.unique
-            try session.saveChannel(payload: self.dummyPayload(with: cid), query: .init(filter: .nonEmpty), cache: nil)
-            try session.saveChannel(payload: self.dummyPayload(with: .unique), query: nil, cache: nil)
-            try session.saveChannel(payload: self.dummyPayload(with: .unique), query: nil, cache: nil)
-            try session.saveMember(payload: .dummy(), channelId: cid, query: .init(cid: cid), cache: nil)
-            try session.saveCurrentUser(payload: .dummy(userId: currentUserId, role: .admin))
-            try session.saveCurrentDevice("123")
-            try session.saveChannelMute(payload: .init(
-                mutedChannel: .dummy(cid: cid),
-                user: .dummy(userId: currentUserId),
-                createdAt: .unique,
-                updatedAt: .unique
-            ))
-            session.saveThreadList(
-                payload: ThreadListPayload(
-                    threads: [
-                        self.dummyThreadPayload(
-                            threadParticipants: [self.dummyThreadParticipantPayload(), self.dummyThreadParticipantPayload()],
-                            read: [self.dummyThreadReadPayload(), self.dummyThreadReadPayload()]
-                        ),
-                        self.dummyThreadPayload()
-                    ],
-                    next: nil
-                )
-            )
-            try session.saveUser(payload: .dummy(userId: .unique), query: .user(withID: currentUserId), cache: nil)
-            try session.saveUser(payload: .dummy(userId: .unique))
-            let messages: [MessagePayload] = [
-                .dummy(
-                    reactionGroups: [
-                        "like": MessageReactionGroupPayload(
-                            sumScores: 1,
-                            count: 1,
-                            firstReactionAt: .unique,
-                            lastReactionAt: .unique
-                        )
-                    ],
-                    moderationDetails: .init(originalText: "yo", action: "spam")
-                ),
-                .dummy(
-                    poll: self.dummyPollPayload(
-                        createdById: currentUserId,
-                        id: "pollId",
-                        options: [self.dummyPollOptionPayload(id: "test")],
-                        latestVotesByOption: ["test": [self.dummyPollVotePayload(pollId: "pollId")]],
-                        user: .dummy(userId: currentUserId)
-                    )
-                ),
-                .dummy(),
-                .dummy(),
-                .dummy()
-            ]
-            try messages.forEach {
-                let message = try session.saveMessage(payload: $0, for: cid, syncOwnReactions: true, cache: nil)
-                try session.saveReaction(
-                    payload: .dummy(messageId: message.id, user: .dummy(userId: currentUserId)),
-                    query: .init(messageId: message.id, filter: .equal(.authorId, to: currentUserId)),
-                    cache: nil
-                )
-            }
-            try session.saveMessage(
-                payload: .dummy(channel: .dummy(cid: cid)),
-                for: MessageSearchQuery(channelFilter: .noTeam, messageFilter: .withoutAttachments),
-                cache: nil
-            )
-            try session.savePollVote(
-                payload: self.dummyPollVotePayload(pollId: "pollId"),
-                query: .init(pollId: "pollId", optionId: "test", filter: .contains(.pollId, value: "pollId")),
-                cache: nil
-            )
-            
-            QueuedRequestDTO.createRequest(date: .unique, endpoint: Data(), context: container.writableContext)
-        }
+        try writeDataForAllEntities(to: container)
 
         // Fetch the data from all out entities
         let totalEntities = container.managedObjectModel.entities.count
@@ -191,6 +117,45 @@ final class DatabaseContainer_Tests: XCTestCase {
             context.performAndWait {
                 XCTAssertNil(context.currentUser)
             }
+        }
+    }
+    
+    func test_removingAllData_whileAnotherWrite() throws {
+        let container = DatabaseContainer(kind: .inMemory)
+        try writeDataForAllEntities(to: container)
+        
+        // Schedule saving just before removing it all
+        container.write { session in
+            try session.saveChannel(payload: self.dummyPayload(with: .unique), query: nil, cache: nil)
+        }
+        
+        let expectation = XCTestExpectation(description: "Remove")
+        container.removeAllData { error in
+            XCTAssertNil(error)
+            expectation.fulfill()
+        }
+        
+        // Save just after triggering remove all
+        container.write { session in
+            try session.saveChannel(payload: self.dummyPayload(with: .unique), query: nil, cache: nil)
+        }
+        
+        wait(for: [expectation], timeout: defaultTimeout)
+        
+        let counts = try container.readSynchronously { session in
+            guard let context = session as? NSManagedObjectContext else { return [String: Int]() }
+            var counts = [String: Int]()
+            let requests = container.managedObjectModel.entities
+                .compactMap(\.name)
+                .map { NSFetchRequest<NSManagedObject>(entityName: $0) }
+            for request in requests {
+                let count = try context.count(for: request)
+                counts[request.entityName!] = count
+            }
+            return counts
+        }
+        for count in counts {
+            XCTAssertEqual(0, count.value, count.key)
         }
     }
 
@@ -363,6 +328,86 @@ final class DatabaseContainer_Tests: XCTestCase {
 
         database.backgroundReadOnlyContext.performAndWait {
             XCTAssertEqual(database.backgroundReadOnlyContext.shouldShowShadowedMessages, shouldShowShadowedMessages)
+        }
+    }
+    
+    // MARK: -
+    
+    private func writeDataForAllEntities(to container: DatabaseContainer) throws {
+        try container.writeSynchronously { session in
+            let cid = ChannelId.unique
+            let currentUserId = UserId.unique
+            try session.saveChannel(payload: self.dummyPayload(with: cid), query: .init(filter: .nonEmpty), cache: nil)
+            try session.saveChannel(payload: self.dummyPayload(with: .unique), query: nil, cache: nil)
+            try session.saveChannel(payload: self.dummyPayload(with: .unique), query: nil, cache: nil)
+            try session.saveMember(payload: .dummy(), channelId: cid, query: .init(cid: cid), cache: nil)
+            try session.saveCurrentUser(payload: .dummy(userId: currentUserId, role: .admin))
+            try session.saveCurrentDevice("123")
+            try session.saveChannelMute(payload: .init(
+                mutedChannel: .dummy(cid: cid),
+                user: .dummy(userId: currentUserId),
+                createdAt: .unique,
+                updatedAt: .unique
+            ))
+            session.saveThreadList(
+                payload: ThreadListPayload(
+                    threads: [
+                        self.dummyThreadPayload(
+                            threadParticipants: [self.dummyThreadParticipantPayload(), self.dummyThreadParticipantPayload()],
+                            read: [self.dummyThreadReadPayload(), self.dummyThreadReadPayload()]
+                        ),
+                        self.dummyThreadPayload()
+                    ],
+                    next: nil
+                )
+            )
+            try session.saveUser(payload: .dummy(userId: .unique), query: .user(withID: currentUserId), cache: nil)
+            try session.saveUser(payload: .dummy(userId: .unique))
+            let messages: [MessagePayload] = [
+                .dummy(
+                    reactionGroups: [
+                        "like": MessageReactionGroupPayload(
+                            sumScores: 1,
+                            count: 1,
+                            firstReactionAt: .unique,
+                            lastReactionAt: .unique
+                        )
+                    ],
+                    moderationDetails: .init(originalText: "yo", action: "spam")
+                ),
+                .dummy(
+                    poll: self.dummyPollPayload(
+                        createdById: currentUserId,
+                        id: "pollId",
+                        options: [self.dummyPollOptionPayload(id: "test")],
+                        latestVotesByOption: ["test": [self.dummyPollVotePayload(pollId: "pollId")]],
+                        user: .dummy(userId: currentUserId)
+                    )
+                ),
+                .dummy(),
+                .dummy(),
+                .dummy()
+            ]
+            try messages.forEach {
+                let message = try session.saveMessage(payload: $0, for: cid, syncOwnReactions: true, cache: nil)
+                try session.saveReaction(
+                    payload: .dummy(messageId: message.id, user: .dummy(userId: currentUserId)),
+                    query: .init(messageId: message.id, filter: .equal(.authorId, to: currentUserId)),
+                    cache: nil
+                )
+            }
+            try session.saveMessage(
+                payload: .dummy(channel: .dummy(cid: cid)),
+                for: MessageSearchQuery(channelFilter: .noTeam, messageFilter: .withoutAttachments),
+                cache: nil
+            )
+            try session.savePollVote(
+                payload: self.dummyPollVotePayload(pollId: "pollId"),
+                query: .init(pollId: "pollId", optionId: "test", filter: .contains(.pollId, value: "pollId")),
+                cache: nil
+            )
+            
+            QueuedRequestDTO.createRequest(date: .unique, endpoint: Data(), context: container.writableContext)
         }
     }
 }

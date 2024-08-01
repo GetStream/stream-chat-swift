@@ -77,6 +77,7 @@ class DatabaseContainer: NSPersistentContainer {
         return context
     }()
 
+    private var canWriteData = true
     private var stateLayerContextRefreshObservers = [NSObjectProtocol]()
     private var loggerNotificationObserver: NSObjectProtocol?
     private let localCachingSettings: ChatClientConfig.LocalCaching?
@@ -217,6 +218,12 @@ class DatabaseContainer: NSPersistentContainer {
     func write(_ actions: @escaping (DatabaseSession) throws -> Void, completion: @escaping (Error?) -> Void) {
         writableContext.perform {
             log.debug("Starting a database session.", subsystems: .database)
+            guard self.canWriteData else {
+                log.debug("Discarding write attempt.", subsystems: .database)
+                completion(nil)
+                return
+            }
+            
             do {
                 FetchCache.clear()
                 try actions(self.writableContext)
@@ -299,22 +306,39 @@ class DatabaseContainer: NSPersistentContainer {
                 context.reset()
             }
         }
-
-        writableContext.performAndWait { [weak self] in
-            let entityNames = self?.managedObjectModel.entities.compactMap(\.name)
-            var deleteError: Error?
-            entityNames?.forEach { [weak self] entityName in
-                let deleteFetch = NSFetchRequest<NSFetchRequestResult>(entityName: entityName)
-                let deleteRequest = NSBatchDeleteRequest(fetchRequest: deleteFetch)
+        
+        let entityNames = managedObjectModel.entities.compactMap(\.name)
+        writableContext.perform { [weak self] in
+            self?.canWriteData = false
+            let requests = entityNames
+                .map { NSFetchRequest<NSFetchRequestResult>(entityName: $0) }
+                .map { fetchRequest in
+                    let batchDelete = NSBatchDeleteRequest(fetchRequest: fetchRequest)
+                    batchDelete.resultType = .resultTypeObjectIDs
+                    return batchDelete
+                }
+            var lastEncounteredError: Error?
+            var deletedObjectIds = [NSManagedObjectID]()
+            for request in requests {
                 do {
-                    try self?.writableContext.execute(deleteRequest)
-                    try self?.writableContext.save()
+                    let result = try self?.writableContext.execute(request) as? NSBatchDeleteResult
+                    if let objectIds = result?.result as? [NSManagedObjectID] {
+                        deletedObjectIds.append(contentsOf: objectIds)
+                    }
                 } catch {
                     log.error("Batch delete request failed with error \(error)")
-                    deleteError = error
+                    lastEncounteredError = error
                 }
             }
-            completion?(deleteError)
+            if !deletedObjectIds.isEmpty, let contexts = self?.allContext {
+                log.debug("Merging \(deletedObjectIds.count) deletions to contexts", subsystems: .database)
+                NSManagedObjectContext.mergeChanges(
+                    fromRemoteContextSave: [NSDeletedObjectsKey: deletedObjectIds],
+                    into: contexts
+                )
+            }
+            self?.canWriteData = true
+            completion?(lastEncounteredError)
         }
     }
 
