@@ -24,6 +24,7 @@ class PollDTO: NSManagedObject {
     @NSManaged var votingVisibility: String?
     @NSManaged var createdBy: UserDTO?
     @NSManaged var latestAnswers: Set<PollVoteDTO>
+    @NSManaged var ownVotes: Set<PollVoteDTO>
     @NSManaged var message: MessageDTO?
     @NSManaged var options: NSOrderedSet
     @NSManaged var latestVotesByOption: Set<PollOptionDTO>
@@ -90,7 +91,8 @@ extension PollDTO {
             createdBy: createdBy?.asModel(),
             latestAnswers: latestAnswers.map { try $0.asModel() },
             options: optionsArray.map { try $0.asModel() },
-            latestVotesByOption: latestVotesByOption.map { try $0.asModel() }
+            latestVotesByOption: latestVotesByOption.map { try $0.asModel() },
+            ownVotes: ownVotes.map { try $0.asModel() }
         )
     }
     
@@ -174,7 +176,24 @@ extension NSManagedObjectContext {
                 }
             } ?? []
         )
-        
+
+        if let payloadOwnVotes = payload.ownVotes, !payload.fromEvent {
+            pollDto.ownVotes = try Set(
+                payloadOwnVotes.compactMap { payload in
+                    if let payload {
+                        let voteDto = try savePollVote(payload: payload, query: nil, cache: cache)
+                        voteDto.poll = pollDto
+                        return voteDto
+                    } else {
+                        return nil
+                    }
+                }
+            )
+        }
+
+        // Trigger FRC message update
+        pollDto.message?.poll = pollDto
+
         return pollDto
     }
     
