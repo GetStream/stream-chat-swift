@@ -21,7 +21,7 @@ jobs:
 
       - uses: ./.github/actions/ruby-cache
 
-      - name: Create Release PR
+      - name: Merge
         run: bundle exec fastlane merge_release_to_main author:"${{ github.event.comment.user.login }}" --verbose
         env:
           GITHUB_TOKEN: ${{ secrets.DANGER_GITHUB_API_TOKEN }}
