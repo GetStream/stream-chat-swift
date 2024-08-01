@@ -114,16 +114,20 @@ lane :publish_release do |options|
   merge_main_to_develop
 end
 
-lane :merge_release_to_main do
+lane :merge_release_to_main do |options|
   release_branch =
     if is_ci
       sh('git config --global user.name "Stream Bot"')
       sh('git reset --hard')
+      ios_team = sh('gh api "orgs/GetStream/teams/ios-developers/members" --jq ".[].login"', log: false).split
+      UI.user_error!("#{options[:author]} is not a member of the iOS Team") unless ios_team.include?(options[:author])
+
       current_branch
     else
       ensure_git_status_clean
       release_branches = sh(command: 'git branch -a', log: false).delete(' ').split("\n").grep(%r(origin/.*release/))
       UI.user_error!("Expected 1 release branch, found #{release_branches.size}") if release_branches.size != 1
+
       release_branches.first
     end
 
@@ -136,8 +140,7 @@ lane :merge_release_to_main do
   sh("git merge #{release_branch} --ff-only")
   sh('git push origin main')
 
-  comment = 'Please, wait for the `Publish new release` workflow to pass on GitHub Actions: ' \
-            "https://github.com/#{github_repo}/actions/workflows/release-publish.yml"
+  comment = "[Publication of the release](https://github.com/#{github_repo}/actions/workflows/release-publish.yml) has been launched 👍"
   UI.important(comment)
   create_pr_comment(pr_num: ENV.fetch('GITHUB_PR_NUM'), text: comment)
 end
