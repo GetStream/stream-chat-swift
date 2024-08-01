@@ -29,6 +29,7 @@ outstanding_status = '🚀' # Outstanding performance
 before_all do |lane|
   if is_ci
     setup_ci
+    sh('git config --global user.name "Stream Bot"')
     xcversion(version: xcode_version) unless [:publish_release, :allure_launch, :allure_upload, :pod_lint, :sync_mock_server, :copyright].include?(lane)
   end
 end
@@ -115,16 +116,16 @@ lane :publish_release do |options|
 end
 
 lane :merge_release_to_main do |options|
+  ensure_git_status_clean
+
   release_branch =
     if is_ci
-      sh('git config --global user.name "Stream Bot"')
-      sh('git reset --hard')
-      ios_team = sh('gh api "orgs/GetStream/teams/ios-developers/members" --jq ".[].login"', log: false).split
+      # This API operation needs the "admin:org" scope.
+      ios_team = sh('gh api orgs/GetStream/teams/ios-developers/members -q ".[].login"', log: false).split
       UI.user_error!("#{options[:author]} is not a member of the iOS Team") unless ios_team.include?(options[:author])
 
       current_branch
     else
-      ensure_git_status_clean
       release_branches = sh(command: 'git branch -a', log: false).delete(' ').split("\n").grep(%r(origin/.*release/))
       UI.user_error!("Expected 1 release branch, found #{release_branches.size}") if release_branches.size != 1
 
@@ -146,13 +147,7 @@ lane :merge_release_to_main do |options|
 end
 
 lane :merge_main_to_develop do
-  if is_ci
-    sh('git config --global user.name "Stream Bot"')
-    sh('git reset --hard')
-  else
-    ensure_git_status_clean
-  end
-
+  ensure_git_status_clean
   sh('git checkout main')
   sh('git pull origin main')
   sh('git checkout origin/develop')
@@ -233,7 +228,6 @@ private_lane :update_spm do |options|
   File.open('./Package.swift', 'w') { |file| file << file_data }
 
   # Update the repo
-  sh('git config --global user.name "Stream Bot"')
   sh('git add -A')
   sh("git commit -m 'Bump #{version}'")
   sh('git push')
