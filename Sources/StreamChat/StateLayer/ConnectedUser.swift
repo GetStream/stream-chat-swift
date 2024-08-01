@@ -154,7 +154,7 @@ public final class ConnectedUser {
     ///
     /// - Parameter completion: Called when the API call is finished. Called with `Error` if the remote update fails.
     ///
-    func loadBlockedUsers() async throws -> [BlockedUserDetails] {
+    public func loadBlockedUsers() async throws -> [BlockedUserDetails] {
         try await currentUserUpdater.loadBlockedUsers()
     }
     
