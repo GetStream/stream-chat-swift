@@ -81,15 +81,20 @@ class PollsRepository {
         var pollVote: PollVote?
         database.write { session in
             let voteId = PollVoteDTO.localVoteId(optionId: optionId, pollId: pollId, userId: currentUserId)
-            pollVote = try session.savePollVote(
-                voteId: nil,
-                pollId: pollId,
-                optionId: optionId,
-                answerText: answerText,
-                userId: currentUserId,
-                query: query
-            )
-            .asModel()
+            let existing = try? session.pollVote(id: voteId, pollId: pollId)
+            if existing == nil {
+                pollVote = try session.savePollVote(
+                    voteId: nil,
+                    pollId: pollId,
+                    optionId: optionId,
+                    answerText: answerText,
+                    userId: currentUserId,
+                    query: query
+                )
+                .asModel()
+            } else {
+                throw ClientError.PollVoteAlreadyExists()
+            }
             for toDelete in deleteExistingVotes {
                 _ = try? session.removePollVote(with: toDelete.id, pollId: toDelete.pollId)
             }
@@ -307,6 +312,12 @@ extension ClientError {
     final class PollVoteDoesNotExist: ClientError {
         init(voteId: String) {
             super.init("There is no `PollVoteDTO` instance in the DB matching id: \(voteId).")
+        }
+    }
+    
+    public final class PollVoteAlreadyExists: ClientError {
+        public init() {
+            super.init("There is already `PollVoteDTO` instance in the DB.")
         }
     }
     
