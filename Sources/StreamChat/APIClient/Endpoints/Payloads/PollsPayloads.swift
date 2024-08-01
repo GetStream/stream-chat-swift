@@ -174,7 +174,7 @@ struct PollPayload: Decodable {
     var voteCount: Int
     var latestAnswers: [PollVotePayload?]?
     var options: [PollOptionPayload?]
-    var ownVotes: [PollVotePayload?]
+    var ownVotes: [PollVotePayload?]?
     var custom: [String: RawJSON]?
     var latestVotesByOption: [String: [PollVotePayload]]?
     var voteCountsByOption: [String: Int]?
@@ -182,6 +182,8 @@ struct PollPayload: Decodable {
     var maxVotesAllowed: Int?
     var votingVisibility: String?
     var createdBy: UserPayload?
+
+    var fromEvent: Bool = false
 
     init(
         allowAnswers: Bool,
