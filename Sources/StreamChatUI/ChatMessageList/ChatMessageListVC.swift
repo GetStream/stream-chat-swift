@@ -136,6 +136,11 @@ open class ChatMessageListVC: _ViewController,
         .audioSessionFeedbackGenerator
         .init()
 
+    /// A feedbackGenerator that will be used to provide feedback when a task is successful or not.
+    /// You can disable the feedback generator by overriding to `nil`.
+    open private(set) lazy var notificationFeedbackGenerator: UINotificationFeedbackGenerator? = UINotificationFeedbackGenerator()
+    /// A feedbackGenerator that will be used to provide feedback when a task is successful or not.
+
     /// A component responsible to manage the swipe to quote reply logic.
     open lazy var swipeToReplyGestureHandler = SwipeToReplyGestureHandler(listView: self.listView)
 
@@ -168,6 +173,7 @@ open class ChatMessageListVC: _ViewController,
     public internal(set) var pollController: PollController?
 
     /// The poll options that are currently being changed.
+    /// It is used to avoid making duplicate calls.
     public internal(set) var pollOptionsCastingVote: Set<String> = []
 
     /// The message cell height caches. This makes sure that the message list doesn't
@@ -1095,14 +1101,50 @@ open class ChatMessageListVC: _ViewController,
         }
         self.pollController = pollController
 
+        notificationFeedbackGenerator?.notificationOccurred(.success)
+
         if let currentUserVote = poll.currentUserVote(forOption: option) {
-            pollController.removePollVote(voteId: currentUserVote.id) { [weak self] _ in
-                self?.pollOptionsCastingVote.remove(option.id)
+            pollController.removePollVote(voteId: currentUserVote.id) { [weak self] error in
+                self?.didRemovePollVote(currentUserVote, for: option, in: message, error: error)
             }
         } else {
-            pollController.castPollVote(answerText: nil, optionId: option.id) { [weak self] _ in
-                self?.pollOptionsCastingVote.remove(option.id)
+            pollController.castPollVote(answerText: nil, optionId: option.id) { [weak self] error in
+                self?.didCastPollVote(for: option, in: message, error: error)
             }
+        }
+    }
+
+    /// Called when removing a poll vote completed.
+    /// - Parameters:
+    ///   - vote: The vote that was removed.
+    ///   - option: The option which the voted was removed from.
+    ///   - message: The message where the Poll belongs to.
+    ///   - error: An error in case the call failed.
+    open func didRemovePollVote(
+        _ vote: PollVote,
+        for option: PollOption,
+        in message: ChatMessage,
+        error: Error?
+    ) {
+        pollOptionsCastingVote.remove(option.id)
+        if error != nil {
+            notificationFeedbackGenerator?.notificationOccurred(.error)
+        }
+    }
+
+    /// Called when adding a poll vote completed.
+    /// - Parameters:
+    ///   - option: The option which the voted was added to.
+    ///   - message: The message where the Poll belongs to.
+    ///   - error: An error in case the call failed.
+    open func didCastPollVote(
+        for option: PollOption,
+        in message: ChatMessage,
+        error: Error?
+    ) {
+        pollOptionsCastingVote.remove(option.id)
+        if error != nil {
+            notificationFeedbackGenerator?.notificationOccurred(.error)
         }
     }
 
