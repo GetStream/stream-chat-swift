@@ -10,23 +10,17 @@ open class PollAttachmentOptionListItemView: _View, ThemeProvider {
     public struct Content {
         public var option: PollOption
         public var isVotedByCurrentUser: Bool
-
+        
         public init(option: PollOption, isVotedByCurrentUser: Bool) {
             self.option = option
             self.isVotedByCurrentUser = isVotedByCurrentUser
         }
     }
-
-    public var content: Content
-
-    public required init(content: Content) {
-        self.content = content
-        super.init(frame: .zero)
-    }
-
-    @available(*, unavailable)
-    public required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
+    
+    public var content: Content? {
+        didSet {
+            updateContentIfNeeded()
+        }
     }
 
     // MARK: - Action Handlers
@@ -62,9 +56,9 @@ open class PollAttachmentOptionListItemView: _View, ThemeProvider {
         .withAccessibilityIdentifier(identifier: "voteCheckboxView")
 
     /// The avatar view type used to build the avatar views displayed on the vote authors.
-    open var voteAuthorAvatarViewType: ChatUserAvatarView.Type {
-        components.userAvatarView
-    }
+    open lazy var latestVotesAuthorsView = StackedUserAvatarsView()
+        .withoutAutoresizingMaskConstraints
+        .withAccessibilityIdentifier(identifier: "latestVotesAuthorsView")
 
     // MARK: - Lifecycle
 
@@ -97,7 +91,7 @@ open class PollAttachmentOptionListItemView: _View, ThemeProvider {
                 HContainer(spacing: 4) {
                     optionNameLabel
                     Spacer()
-                    voteAuthorsAvatarView
+                    latestVotesAuthorsView
                     votesCountLabel
                 }
                 votesProgressView
@@ -108,6 +102,10 @@ open class PollAttachmentOptionListItemView: _View, ThemeProvider {
 
     override open func updateContent() {
         super.updateContent()
+
+        guard let content = self.content else {
+            return
+        }
 
         optionNameLabel.text = content.option.text
         votesCountLabel.text = "\(content.option.latestVotes.count)"
@@ -121,26 +119,60 @@ open class PollAttachmentOptionListItemView: _View, ThemeProvider {
             voteCheckboxButton.setImage(appearance.images.pollVoteCheckmarkInactive, for: .normal)
             voteCheckboxButton.tintColor = appearance.colorPalette.inactiveTint
         }
-    }
 
-    // TODO: Migrate to Seperate view (easier to customize)
-    open var voteAuthorsAvatarView: UIView {
-        HContainer(spacing: -4) {
-            content.option.latestVotes
-                .sorted(by: { $0.createdAt > $1.createdAt })
-                .suffix(2)
-                .map { vote in
-                    let view = voteAuthorAvatarViewType.init()
-                        .width(20)
-                        .height(20)
-                    view.shouldShowOnlineIndicator = false
-                    view.content = vote.user
-                    return view
-                }
-        }
+        latestVotesAuthorsView.content = .init(users: content.option.latestVotes
+            .sorted(by: { $0.createdAt > $1.createdAt })
+            .compactMap(\.user)
+            .suffix(2)
+        )
     }
 
     @objc func didTapOption(sender: Any?) {
-        onOptionTap?(content.option)
+        guard let option = content?.option else {
+            return
+        }
+        onOptionTap?(option)
+    }
+}
+
+///
+open class StackedUserAvatarsView: _View, ThemeProvider {
+    struct Content {
+        var users: [ChatUser]
+    }
+
+    var content: Content? {
+        didSet {
+            updateContentIfNeeded()
+        }
+    }
+
+    open private(set) lazy var mainContainer: UIStackView = HContainer(spacing: -4)
+
+    open var userAvatarViews: [ChatUserAvatarView] {
+        guard let content = self.content else { return [] }
+        return content.users.map { user in
+            let avatarView = components.userAvatarView.init()
+                .width(20)
+                .height(20)
+            avatarView.shouldShowOnlineIndicator = false
+            avatarView.content = user
+            return avatarView
+        }
+    }
+
+    override open func setUpLayout() {
+        super.setUpLayout()
+
+        mainContainer.embed(in: self)
+    }
+
+    override open func updateContent() {
+        super.updateContent()
+
+        mainContainer.removeAllArrangedSubviews()
+        userAvatarViews.forEach {
+            mainContainer.addArrangedSubview($0)
+        }
     }
 }
