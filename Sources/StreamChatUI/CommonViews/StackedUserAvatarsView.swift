@@ -27,10 +27,6 @@ open class StackedUserAvatarsView: _View, ThemeProvider {
     // MARK: - Views
 
     /// The user avatar views.
-    ///
-    /// The number of views is constant dependent on `maximumNumberOfAvatars`.
-    /// This is to make sure views are not re-created dependent on the content.
-    /// Hiding/Showing views has better performance than re-creating the views from scratch.
     open lazy var userAvatarViews: [ChatUserAvatarView] = {
         (0...maximumNumberOfAvatars - 1).map { _ in
             let avatarView = components.userAvatarView.init()
