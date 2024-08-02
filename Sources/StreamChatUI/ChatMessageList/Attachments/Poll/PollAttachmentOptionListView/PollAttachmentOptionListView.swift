@@ -25,35 +25,25 @@ open class PollAttachmentOptionListView: _View, ThemeProvider {
 
     // MARK: - Configuration
 
-    public var maximumNumberOfVisibleOptions = 10
-
     /// A closure that is triggered whenever the option is tapped either from the button or the item itself.
     public var onOptionTap: ((PollOption) -> Void)?
 
     // MARK: - Views
 
+    /// The container that holds all option item views.
+    open var container: UIStackView?
+
     /// The item views that display each option.
-    ///
-    /// The number of views is constant dependent on `maximumNumberOfVisibleOptions`.
-    /// This is to make sure views are not re-created dependent on the content.
-    /// Hiding/Showing views has better performance than re-creating the views from scratch.
-    open lazy var itemViews: [PollAttachmentOptionListItemView] = {
-        (0...maximumNumberOfVisibleOptions - 1).map { _ in
-            let view = self.components.pollAttachmentOptionListItemView.init()
-            view.onOptionTap = { option in
-                self.onOptionTap?(option)
-            }
-            return view
-        }
-    }()
+    open var itemViews: [PollAttachmentOptionListItemView] = []
 
     // MARK: - Lifecycle
 
     override open func setUpLayout() {
         super.setUpLayout()
 
-        VContainer(spacing: 24) {
-            itemViews
+        container?.removeFromSuperview()
+        container = VContainer(spacing: 24) {
+            makeItemViews()
         }.embed(in: self)
     }
 
@@ -62,6 +52,12 @@ open class PollAttachmentOptionListView: _View, ThemeProvider {
 
         guard let content = self.content else {
             return
+        }
+
+        /// We only recreate the item views in case the options do not match the number of views.
+        /// This makes sure we only recreate the item views when needed.
+        if itemViews.count != content.poll.options.count {
+            setUpLayout()
         }
 
         itemViews.forEach {
@@ -74,5 +70,19 @@ open class PollAttachmentOptionListView: _View, ThemeProvider {
             )
             itemView.isHidden = false
         }
+    }
+
+    /// Creates the option item views based on the number of options.
+    open func makeItemViews() -> [PollAttachmentOptionListItemView] {
+        guard let content = self.content else { return [] }
+        guard !content.poll.options.isEmpty else { return [] }
+        itemViews = (0..<content.poll.options.count).map { _ in
+            let view = self.components.pollAttachmentOptionListItemView.init()
+            view.onOptionTap = { [weak self] option in
+                self?.onOptionTap?(option)
+            }
+            return view
+        }
+        return itemViews
     }
 }
