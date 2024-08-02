@@ -41,14 +41,13 @@ open class PollAttachmentOptionListView: _View, ThemeProvider {
     }
 
     /// The option item views.
-    open var itemViews: [UIView] {
+    open var itemViews: [PollAttachmentOptionListItemView] {
         guard let content = self.content else { return [] }
         return content.poll.options.map { option in
-            let view = components.pollAttachmentOptionListItemView.init(
-                content: .init(
-                    option: option,
-                    isVotedByCurrentUser: content.poll.hasCurrentUserVoted(forOption: option)
-                )
+            let view = components.pollAttachmentOptionListItemView.init()
+            view.content = .init(
+                option: option,
+                isVotedByCurrentUser: content.poll.hasCurrentUserVoted(forOption: option)
             )
             view.onOptionTap = { option in
                 self.onOptionTap?(option)
