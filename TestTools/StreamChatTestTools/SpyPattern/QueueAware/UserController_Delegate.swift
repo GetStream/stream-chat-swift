@@ -11,6 +11,7 @@ final class UserController_Delegate: QueueAwareDelegate, CurrentChatUserControll
     @Atomic var state: DataController.State?
     @Atomic var didChangeCurrentUser_change: EntityChange<CurrentChatUser>?
     @Atomic var didChangeCurrentUserUnreadCount_count: UnreadCount?
+    let didChangeCurrentUserUnreadCountExpectation = XCTestExpectation()
 
     func controller(_ controller: DataController, didChangeState state: DataController.State) {
         self.state = state
@@ -28,5 +29,6 @@ final class UserController_Delegate: QueueAwareDelegate, CurrentChatUserControll
     func currentUserController(_ controller: CurrentChatUserController, didChangeCurrentUserUnreadCount count: UnreadCount) {
         didChangeCurrentUserUnreadCount_count = count
         validateQueue()
+        didChangeCurrentUserUnreadCountExpectation.fulfill()
     }
 }

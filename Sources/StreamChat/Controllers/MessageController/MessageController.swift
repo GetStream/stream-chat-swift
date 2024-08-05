@@ -802,11 +802,11 @@ public class ChatMessageController: DataController, DelegateCallable, DataStoreP
 extension ChatMessageController {
     struct Environment {
         var messageObserverBuilder: (
-            _ context: NSManagedObjectContext,
+            _ database: DatabaseContainer,
             _ fetchRequest: NSFetchRequest<MessageDTO>,
             _ itemCreator: @escaping (MessageDTO) throws -> ChatMessage,
             _ fetchedResultsControllerType: NSFetchedResultsController<MessageDTO>.Type
-        ) -> EntityDatabaseObserver<ChatMessage, MessageDTO> = EntityDatabaseObserver.init
+        ) -> BackgroundEntityDatabaseObserver<ChatMessage, MessageDTO> = BackgroundEntityDatabaseObserver.init
 
         var repliesObserverBuilder: (
             _ database: DatabaseContainer,
@@ -835,9 +835,9 @@ extension ChatMessageController {
 // MARK: - Private
 
 private extension ChatMessageController {
-    func createMessageObserver() -> EntityDatabaseObserver<ChatMessage, MessageDTO> {
+    func createMessageObserver() -> BackgroundEntityDatabaseObserver<ChatMessage, MessageDTO> {
         let observer = environment.messageObserverBuilder(
-            client.databaseContainer.viewContext,
+            client.databaseContainer,
             MessageDTO.message(withID: messageId),
             { try $0.asModel() },
             NSFetchedResultsController<MessageDTO>.self

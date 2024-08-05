@@ -95,15 +95,13 @@ public class ChatChannelMemberListController: DataController, DelegateCallable, 
         )
     }
 
-    private func createMemberListObserver() -> ListDatabaseObserver<ChatChannelMember, MemberDTO> {
+    private func createMemberListObserver() -> BackgroundListDatabaseObserver<ChatChannelMember, MemberDTO> {
         let observer = environment.memberListObserverBuilder(
             client.databaseContainer,
             MemberDTO.members(matching: query),
-            { try $0.asModel() },
-            NSFetchedResultsController<MemberDTO>.self
+            { try $0.asModel() }
         )
-
-        observer.onChange = { [weak self] changes in
+        observer.onDidChange = { [weak self] changes in
             self?.delegateCallback { [weak self] in
                 guard let self = self else {
                     log.warning("Callback called while self is nil")
@@ -163,15 +161,13 @@ extension ChatChannelMemberListController {
         var memberListObserverBuilder: (
             _ database: DatabaseContainer,
             _ fetchRequest: NSFetchRequest<MemberDTO>,
-            _ itemCreator: @escaping (MemberDTO) throws -> ChatChannelMember,
-            _ controllerType: NSFetchedResultsController<MemberDTO>.Type
-        ) -> ListDatabaseObserver<ChatChannelMember, MemberDTO> = {
-            .init(
-                context: $0.viewContext,
+            _ itemCreator: @escaping (MemberDTO) throws -> ChatChannelMember
+        ) -> BackgroundListDatabaseObserver<ChatChannelMember, MemberDTO> = {
+            BackgroundListDatabaseObserver(
+                database: $0,
                 fetchRequest: $1,
                 itemCreator: $2,
-                itemReuseKeyPaths: (\ChatChannelMember.id, \MemberDTO.id),
-                fetchedResultsControllerType: $3
+                itemReuseKeyPaths: (\ChatChannelMember.id, \MemberDTO.id)
             )
         }
     }
