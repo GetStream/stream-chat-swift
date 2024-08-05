@@ -9,11 +9,15 @@ import UIKit
 open class StackedUserAvatarsView: _View, ThemeProvider {
     // MARK: - Content
 
-    struct Content {
-        var users: [ChatUser]
+    public struct Content {
+        public var users: [ChatUser]
+
+        public init(users: [ChatUser]) {
+            self.users = users
+        }
     }
 
-    var content: Content? {
+    public var content: Content? {
         didSet {
             updateContentIfNeeded()
         }
