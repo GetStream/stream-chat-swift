@@ -5040,22 +5040,6 @@
 			path = AudioRecorder;
 			sourceTree = "<group>";
 		};
-		40824D192A1271B9003B61FD /* RecordButton */ = {
-			isa = PBXGroup;
-			children = (
-				40824D1A2A1271B9003B61FD /* RecordButton.swift */,
-			);
-			path = RecordButton;
-			sourceTree = "<group>";
-		};
-		40824D1B2A1271B9003B61FD /* PlayPauseButton */ = {
-			isa = PBXGroup;
-			children = (
-				40824D1C2A1271B9003B61FD /* PlayPauseButton.swift */,
-			);
-			path = PlayPauseButton;
-			sourceTree = "<group>";
-		};
 		40824D252A1271D7003B61FD /* RecordButton */ = {
 			isa = PBXGroup;
 			children = (
@@ -5247,12 +5231,12 @@
 				7908830C2548707B00896F03 /* ChatMessageList */,
 				ADECE08A26AAED3B001AE411 /* ChatThread */,
 				ADD3285B2C05440B00BAD0E9 /* ChatThreadList */,
-				888123E5255D51BD00070D5A /* CommonViews */,
 				AD4EA229264ADE0100DF8EE2 /* Composer */,
 				F833D64326393E4800651D14 /* Gallery */,
 				401105252A12734800F877C7 /* VoiceRecording */,
 				88F8364E2578D1590039AEC8 /* MessageActionsPopup */,
 				7973CE48265413B4004C7CE5 /* Navigation */,
+				888123E5255D51BD00070D5A /* CommonViews */,
 				888123D0255D42F000070D5A /* Utils */,
 				88F0D6EA257E409E00F4B050 /* Generated */,
 				88F0D6ED257E446800F4B050 /* Resources */,
@@ -6035,14 +6019,6 @@
 			path = PinnedMessages;
 			sourceTree = "<group>";
 		};
-		843F0BCB2677666B00B342CB /* AttachmentActionButton */ = {
-			isa = PBXGroup;
-			children = (
-				843F0BCC2677667000B342CB /* AttachmentActionButton.swift */,
-			);
-			path = AttachmentActionButton;
-			sourceTree = "<group>";
-		};
 		8440861528FFE85F0027849C /* Shared */ = {
 			isa = PBXGroup;
 			children = (
@@ -6094,14 +6070,6 @@
 				84790E9C2AC1D346003AFF1C /* Info.plist */,
 			);
 			path = DemoShare;
-			sourceTree = "<group>";
-		};
-		847DD2D9267233CF0084E14B /* GradientView */ = {
-			isa = PBXGroup;
-			children = (
-				847DD2DA267233DB0084E14B /* GradientView.swift */,
-			);
-			path = GradientView;
 			sourceTree = "<group>";
 		};
 		847E946C269C685F00E31D0C /* EventsController */ = {
@@ -6214,37 +6182,25 @@
 				ADD3286B2C07CC7100BAD0E9 /* BadgeView.swift */,
 				AD96106E2C2DD874004F543C /* BannerView.swift */,
 				40824D182A1271B9003B61FD /* ClampedView.swift */,
-				40824D172A1271B9003B61FD /* PillButton.swift */,
-				4067764E2A14CB550079B05C /* MediaButton.swift */,
 				792DD9D8256BC542001DB91B /* BaseViews.swift */,
 				88BA7F5C258B6953006CE0C5 /* ChatLoadingIndicator.swift */,
 				22A0921625682880001FE9F0 /* ChatNavigationBar.swift */,
-				F80BCA1D26304FEE00F2107B /* CloseButton.swift */,
 				A3BB3FFE261DA74D00365496 /* ContainerStackView.swift */,
 				DBF12127258BAFC1001919C6 /* OnlyLinkTappableTextView.swift */,
 				84DA54DE2680C66A003A26CD /* PlayerView.swift */,
-				F80BCA1326304F7800F2107B /* ShareButton.swift */,
 				F87A4865260B3516001653A8 /* SwiftUIViewRepresentable.swift */,
 				CF62AD9828944D4700392893 /* SkeletonLoadable.swift */,
 				AD4C8C212C5D479B00E1C414 /* StackedUserAvatarsView.swift */,
-				40824D1B2A1271B9003B61FD /* PlayPauseButton */,
-				40824D192A1271B9003B61FD /* RecordButton */,
-				843F0BCB2677666B00B342CB /* AttachmentActionButton */,
-				AD87D094263C7495008B466C /* AttachmentButton */,
+				2210525E256FE16600A5F0DB /* CommandLabelView.swift */,
+				847DD2DA267233DB0084E14B /* GradientView.swift */,
+				CF33B3AB28171BE500C84CDB /* CooldownView.swift */,
+				ADE8B4B32C611B6700C26FBF /* Buttons */,
 				AD4474C1263AFD380030E583 /* Attachments */,
 				AD7112D325F10CF300932AEE /* AvatarView */,
-				AD4474B8263AFCC30030E583 /* CheckboxControl */,
-				AD87D093263C7489008B466C /* CircularCloseButton */,
-				AD87D092263C747C008B466C /* CommandButton */,
-				AD8E6BBD2642DB520013E01E /* CommandLabelView */,
-				AD4475A8263B4DF90030E583 /* ConfirmButton */,
-				847DD2D9267233CF0084E14B /* GradientView */,
 				ADFB13262637610E00D321FD /* InputChatMessageView */,
 				ADED4BBF26431CA500F4E2C8 /* InputTextView */,
 				AD81AEEB25ED132400F17F8F /* ListCollectionViewLayout */,
 				ADB3C478261638C500A69B66 /* QuotedChatMessageView */,
-				AD447496263AFC4A0030E583 /* SendButton */,
-				AD87D095263C74A4008B466C /* ShrinkInputButton */,
 				ADA35730269C9B3B004AD8E9 /* TitleContainerView */,
 			);
 			path = CommonViews;
@@ -8327,23 +8283,6 @@
 			path = ChatMentionSuggestionView;
 			sourceTree = "<group>";
 		};
-		AD447496263AFC4A0030E583 /* SendButton */ = {
-			isa = PBXGroup;
-			children = (
-				22753598257C442300D1FDB6 /* SendButton.swift */,
-				CF33B3AB28171BE500C84CDB /* CooldownView.swift */,
-			);
-			path = SendButton;
-			sourceTree = "<group>";
-		};
-		AD4474B8263AFCC30030E583 /* CheckboxControl */ = {
-			isa = PBXGroup;
-			children = (
-				224165A725910A2C00ED7F78 /* CheckboxControl.swift */,
-			);
-			path = CheckboxControl;
-			sourceTree = "<group>";
-		};
 		AD4474C1263AFD380030E583 /* Attachments */ = {
 			isa = PBXGroup;
 			children = (
@@ -8354,14 +8293,6 @@
 				BD3EA7F4264AD954003AFA09 /* AttachmentViews */,
 			);
 			path = Attachments;
-			sourceTree = "<group>";
-		};
-		AD4475A8263B4DF90030E583 /* ConfirmButton */ = {
-			isa = PBXGroup;
-			children = (
-				7943382A26208D020094471F /* ConfirmButton.swift */,
-			);
-			path = ConfirmButton;
 			sourceTree = "<group>";
 		};
 		AD4CDD80296498B10057BC8A /* ViewPaginationHandling */ = {
@@ -8458,38 +8389,6 @@
 			path = ListCollectionViewLayout;
 			sourceTree = "<group>";
 		};
-		AD87D092263C747C008B466C /* CommandButton */ = {
-			isa = PBXGroup;
-			children = (
-				AD87D096263C7783008B466C /* CommandButton.swift */,
-			);
-			path = CommandButton;
-			sourceTree = "<group>";
-		};
-		AD87D093263C7489008B466C /* CircularCloseButton */ = {
-			isa = PBXGroup;
-			children = (
-				AD87D0BC263C7C09008B466C /* CircularCloseButton.swift */,
-			);
-			path = CircularCloseButton;
-			sourceTree = "<group>";
-		};
-		AD87D094263C7495008B466C /* AttachmentButton */ = {
-			isa = PBXGroup;
-			children = (
-				AD87D0A0263C7823008B466C /* AttachmentButton.swift */,
-			);
-			path = AttachmentButton;
-			sourceTree = "<group>";
-		};
-		AD87D095263C74A4008B466C /* ShrinkInputButton */ = {
-			isa = PBXGroup;
-			children = (
-				AD87D0AA263C7A7E008B466C /* ShrinkInputButton.swift */,
-			);
-			path = ShrinkInputButton;
-			sourceTree = "<group>";
-		};
 		AD8B7277290801B800921C31 /* ImageCDN */ = {
 			isa = PBXGroup;
 			children = (
@@ -8497,14 +8396,6 @@
 				BDC80CB4265CF4B800F62CE2 /* ImageCDN.swift */,
 			);
 			path = ImageCDN;
-			sourceTree = "<group>";
-		};
-		AD8E6BBD2642DB520013E01E /* CommandLabelView */ = {
-			isa = PBXGroup;
-			children = (
-				2210525E256FE16600A5F0DB /* CommandLabelView.swift */,
-			);
-			path = CommandLabelView;
 			sourceTree = "<group>";
 		};
 		AD9490552BF3BA8000E69224 /* ThreadListController */ = {
@@ -8794,6 +8685,27 @@
 				ADE57B852C3C5C9100DD6B88 /* ThreadUpdated.json */,
 			);
 			path = Thread;
+			sourceTree = "<group>";
+		};
+		ADE8B4B32C611B6700C26FBF /* Buttons */ = {
+			isa = PBXGroup;
+			children = (
+				22753598257C442300D1FDB6 /* SendButton.swift */,
+				AD87D0AA263C7A7E008B466C /* ShrinkInputButton.swift */,
+				7943382A26208D020094471F /* ConfirmButton.swift */,
+				AD87D096263C7783008B466C /* CommandButton.swift */,
+				40824D1C2A1271B9003B61FD /* PlayPauseButton.swift */,
+				F80BCA1326304F7800F2107B /* ShareButton.swift */,
+				F80BCA1D26304FEE00F2107B /* CloseButton.swift */,
+				4067764E2A14CB550079B05C /* MediaButton.swift */,
+				40824D172A1271B9003B61FD /* PillButton.swift */,
+				40824D1A2A1271B9003B61FD /* RecordButton.swift */,
+				AD87D0A0263C7823008B466C /* AttachmentButton.swift */,
+				843F0BCC2677667000B342CB /* AttachmentActionButton.swift */,
+				224165A725910A2C00ED7F78 /* CheckboxControl.swift */,
+				AD87D0BC263C7C09008B466C /* CircularCloseButton.swift */,
+			);
+			path = Buttons;
 			sourceTree = "<group>";
 		};
 		ADECE08926AAEC63001AE411 /* ChatChannel */ = {
