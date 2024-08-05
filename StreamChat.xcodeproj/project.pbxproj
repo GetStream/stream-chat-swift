@@ -1689,6 +1689,8 @@
 		ADE57B8F2C3C638900DD6B88 /* ThreadMessageNew.json in Resources */ = {isa = PBXBuildFile; fileRef = ADE57B832C3C5C8700DD6B88 /* ThreadMessageNew.json */; };
 		ADE595782B44A2B500727CC1 /* MixedAttachmentViewInjector_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADE595772B44A2B500727CC1 /* MixedAttachmentViewInjector_Tests.swift */; };
 		ADE88A142949453200C0F084 /* ChatMessageListRouter_Mock.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADE88A132949453200C0F084 /* ChatMessageListRouter_Mock.swift */; };
+		ADE8B4B52C611DEA00C26FBF /* CheckboxButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADE8B4B42C611DEA00C26FBF /* CheckboxButton.swift */; };
+		ADE8B4B62C611DEA00C26FBF /* CheckboxButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADE8B4B42C611DEA00C26FBF /* CheckboxButton.swift */; };
 		ADEDA1FA2B2BC46C00020460 /* RepeatingTimer_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADEDA1F92B2BC46C00020460 /* RepeatingTimer_Tests.swift */; };
 		ADEE651829BF712D00186129 /* ChatMessageListView_Mock.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADEE651429BF711200186129 /* ChatMessageListView_Mock.swift */; };
 		ADEE651929BF713200186129 /* ChatMessageCell_Mock.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADEE651629BF712500186129 /* ChatMessageCell_Mock.swift */; };
@@ -4295,6 +4297,7 @@
 		ADE57B872C3C60CB00DD6B88 /* ThreadEvents_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThreadEvents_Tests.swift; sourceTree = "<group>"; };
 		ADE595772B44A2B500727CC1 /* MixedAttachmentViewInjector_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MixedAttachmentViewInjector_Tests.swift; sourceTree = "<group>"; };
 		ADE88A132949453200C0F084 /* ChatMessageListRouter_Mock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessageListRouter_Mock.swift; sourceTree = "<group>"; };
+		ADE8B4B42C611DEA00C26FBF /* CheckboxButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CheckboxButton.swift; sourceTree = "<group>"; };
 		ADEA7F21261D2F8C00CA2289 /* chewbacca.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = chewbacca.jpg; sourceTree = "<group>"; };
 		ADEA7F22261D2F8C00CA2289 /* r2.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = r2.jpg; sourceTree = "<group>"; };
 		ADEDA1F92B2BC46C00020460 /* RepeatingTimer_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RepeatingTimer_Tests.swift; sourceTree = "<group>"; };
@@ -8702,6 +8705,7 @@
 				40824D1A2A1271B9003B61FD /* RecordButton.swift */,
 				AD87D0A0263C7823008B466C /* AttachmentButton.swift */,
 				843F0BCC2677667000B342CB /* AttachmentActionButton.swift */,
+				ADE8B4B42C611DEA00C26FBF /* CheckboxButton.swift */,
 				224165A725910A2C00ED7F78 /* CheckboxControl.swift */,
 				AD87D0BC263C7C09008B466C /* CircularCloseButton.swift */,
 			);
@@ -10263,6 +10267,7 @@
 				8803E9E726398F4E002B2A7B /* ChatMessageBubbleView.swift in Sources */,
 				22FF4365256E943F00133910 /* ChatSuggestionsVC.swift in Sources */,
 				22A0921725682880001FE9F0 /* ChatNavigationBar.swift in Sources */,
+				ADE8B4B52C611DEA00C26FBF /* CheckboxButton.swift in Sources */,
 				AD87D0A1263C7823008B466C /* AttachmentButton.swift in Sources */,
 				22753599257C442300D1FDB6 /* SendButton.swift in Sources */,
 				AD7BE1732C2347A3000A5756 /* ChatThreadListEmptyView.swift in Sources */,
@@ -12381,6 +12386,7 @@
 				C121EBA32746A1E800023E4C /* QuotedChatMessageView.swift in Sources */,
 				C121EBA42746A1E800023E4C /* QuotedChatMessageView+SwiftUI.swift in Sources */,
 				C121EBA52746A1E800023E4C /* OnlineIndicatorView.swift in Sources */,
+				ADE8B4B62C611DEA00C26FBF /* CheckboxButton.swift in Sources */,
 				AD8B72762908016400921C31 /* ImageDownloadRequest.swift in Sources */,
 				AD78F9FE28EC735700BC0FCE /* Token.swift in Sources */,
 				ADDB2F5A2954CBF700BF80DA /* ViewPaginationHandling.swift in Sources */,

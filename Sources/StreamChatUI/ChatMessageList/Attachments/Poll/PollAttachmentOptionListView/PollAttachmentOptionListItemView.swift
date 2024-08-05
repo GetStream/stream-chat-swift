@@ -51,7 +51,7 @@ open class PollAttachmentOptionListItemView: _View, ThemeProvider {
         .withAccessibilityIdentifier(identifier: "votesProgressView")
 
     /// A button to add or remove a vote for this option.
-    open private(set) lazy var voteCheckboxButton = UIButton(type: .roundedRect)
+    open private(set) lazy var voteCheckboxButton = CheckboxButton(type: .roundedRect)
         .withoutAutoresizingMaskConstraints
         .withAccessibilityIdentifier(identifier: "voteCheckboxView")
 
@@ -112,12 +112,10 @@ open class PollAttachmentOptionListItemView: _View, ThemeProvider {
 
         if content.isVotedByCurrentUser {
             votesProgressView.setProgress(0.5, animated: true)
-            voteCheckboxButton.setImage(appearance.images.pollVoteCheckmarkActive, for: .normal)
-            voteCheckboxButton.tintColor = appearance.colorPalette.accentPrimary
+            voteCheckboxButton.setCheckedState()
         } else {
             votesProgressView.setProgress(0, animated: true)
-            voteCheckboxButton.setImage(appearance.images.pollVoteCheckmarkInactive, for: .normal)
-            voteCheckboxButton.tintColor = appearance.colorPalette.inactiveTint
+            voteCheckboxButton.setUncheckedState()
         }
 
         latestVotesAuthorsView.content = .init(users: content.option.latestVotes
