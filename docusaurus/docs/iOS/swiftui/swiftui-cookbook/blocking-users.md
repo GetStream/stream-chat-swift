@@ -5,13 +5,13 @@ description: How to block and unblock users
 
 ## Introduction
 
-Blocking users is an essential feature in a chat app because it enhances user safety and experience. It allows individuals to protect themselves from harassment, spam, and unwanted interactions. By giving users control over their interactions, it helps maintain privacy, reduces the risk of cyberbullying, and promotes a respectful community atmosphere. 
+Blocking users is an essential feature in a chat app because it enhances user safety and experience. It allows individuals to protect themselves from harassment, spam, and unwanted interactions. By giving users control over their interactions, it helps maintain privacy, reduces the risk of cyber bullying, and promotes a respectful community atmosphere. 
 
 As a result, some app stores require this functionality as part of their review process.
 
 ## Stream Chat
 
-The Stream Chat SDK provides blocking and unblocking users out of the box, as well as listing them.
+The Stream Chat SDK provides a way for blocking and unblocking users, as well as listing all of the blocked users.
 
 When you block a user, you won’t receive any direct messages from that user anymore. However, if you share a group with other participants, you will still receive messages from the blocked user.
 
@@ -19,7 +19,7 @@ In this cookbook, we will see how to implement this feature in your chat apps, u
 
 ## Low-Level Client support
 
-The low-level client provides the following methods concerned with user blocking.
+The low-level client provides the following methods related to user user blocking.
 
 ### Block a user
 
