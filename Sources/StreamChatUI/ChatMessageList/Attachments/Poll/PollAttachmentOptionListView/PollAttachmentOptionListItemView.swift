@@ -25,12 +25,12 @@ open class PollAttachmentOptionListItemView: _View, ThemeProvider {
 
         /// The number of votes this option has.
         public var voteCount: Int {
-            poll.voteCountsByOption?[option.id] ?? 0
+            poll.voteCount(forOption: option)
         }
 
         /// The total votes this poll has.
         public var pollTotalVoteCount: Int {
-            poll.voteCountsByOption?.values.max() ?? 0
+            poll.totalVotes
         }
 
         /// The ratio of the votes of this option in comparison with the number of total votes.

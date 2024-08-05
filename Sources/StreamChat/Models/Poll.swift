@@ -75,6 +75,15 @@ public struct Poll: Equatable {
 
 /// Poll domain logic helpers.
 public extension Poll {
+    /// Returns the total number of votes for every option.
+    var totalVotes: Int {
+        voteCountsByOption?.values.max() ?? 0
+    }
+
+    func voteCount(forOption option: PollOption) -> Int {
+        voteCountsByOption?[option.id] ?? 0
+    }
+
     /// Returns the vote of the current user for the given option in case the user has voted.
     func currentUserVote(forOption option: PollOption) -> PollVote? {
         ownVotes.first(where: { $0.optionId == option.id })
