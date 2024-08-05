@@ -66,7 +66,7 @@ open class PollAttachmentOptionListView: _View, ThemeProvider {
         zip(itemViews, content.poll.options).forEach { itemView, option in
             itemView.content = .init(
                 option: option,
-                isVotedByCurrentUser: content.poll.hasCurrentUserVoted(forOption: option)
+                poll: content.poll
             )
             itemView.isHidden = false
         }
