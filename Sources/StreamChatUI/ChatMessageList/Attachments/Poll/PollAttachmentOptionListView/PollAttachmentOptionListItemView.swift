@@ -110,14 +110,17 @@ open class PollAttachmentOptionListItemView: _View, ThemeProvider {
         HContainer(spacing: 3) {
             voteCheckboxButton
             VContainer(spacing: 3) {
-                HContainer(spacing: 4) {
+                HContainer(spacing: 4, alignment: .top) {
                     optionNameLabel
                     Spacer()
                     latestVotesAuthorsView
-                    votesCountLabel
+                    votesCountLabel.layout {
+                        $0.setContentCompressionResistancePriority(.streamRequire, for: .horizontal)
+                    }
                 }
                 votesProgressView
             }
+            .height(greaterThanOrEqualTo: 27)
         }
         .embed(in: self)
     }
