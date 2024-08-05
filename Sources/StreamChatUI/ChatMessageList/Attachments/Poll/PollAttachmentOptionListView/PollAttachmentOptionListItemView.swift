@@ -28,14 +28,14 @@ open class PollAttachmentOptionListItemView: _View, ThemeProvider {
             poll.voteCount(forOption: option)
         }
 
-        /// The total votes this poll has.
-        public var pollTotalVoteCount: Int {
-            poll.totalVotes
-        }
-
         /// The ratio of the votes of this option in comparison with the number of total votes.
         public var voteRatio: Float {
-            Float(voteCount) / Float(max(pollTotalVoteCount, 1))
+            poll.voteRatio(forOption: option)
+        }
+
+        /// Whether the poll is closed and this option is the winner.
+        public var isWinner: Bool {
+            poll.isClosed && voteRatio == 1.0
         }
     }
     
@@ -134,13 +134,20 @@ open class PollAttachmentOptionListItemView: _View, ThemeProvider {
 
         optionNameLabel.text = content.option.text
         votesCountLabel.text = "\(content.voteCount)"
-        votesProgressView.setProgress(content.voteRatio, animated: true)
         latestVotesAuthorsView.content = .init(users: latestVotesAuthors)
 
         if content.isVotedByCurrentUser {
             voteCheckboxButton.setCheckedState()
         } else {
             voteCheckboxButton.setUncheckedState()
+        }
+        voteCheckboxButton.isHidden = content.poll.isClosed
+
+        votesProgressView.progress = content.voteRatio
+        if content.isWinner {
+            votesProgressView.tintColor = appearance.colorPalette.alternativeActiveTint
+        } else {
+            votesProgressView.tintColor = appearance.colorPalette.accentPrimary
         }
     }
 
