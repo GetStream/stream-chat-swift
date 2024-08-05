@@ -75,13 +75,24 @@ public struct Poll: Equatable {
 
 /// Poll domain logic helpers.
 public extension Poll {
-    /// Returns the total number of votes for every option.
-    var totalVotes: Int {
+    /// The value of the option with the most votes.
+    var currentMaximumVoteCount: Int {
         voteCountsByOption?.values.max() ?? 0
     }
 
+    /// The vote count for the given option.
     func voteCount(forOption option: PollOption) -> Int {
         voteCountsByOption?[option.id] ?? 0
+    }
+    
+    // The ratio of the votes for the given option in comparison with the number of total votes.
+    func voteRatio(forOption option: PollOption) -> Float {
+        if currentMaximumVoteCount == 0 {
+            return 0
+        }
+
+        let optionVoteCount = voteCount(forOption: option)
+        return Float(optionVoteCount) / Float(currentMaximumVoteCount)
     }
 
     /// Returns the vote of the current user for the given option in case the user has voted.
