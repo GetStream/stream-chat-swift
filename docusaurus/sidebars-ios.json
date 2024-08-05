@@ -101,7 +101,8 @@
         "swiftui/swiftui-cookbook/list-alignment",
         "swiftui/swiftui-cookbook/custom-channel-list",        
         "swiftui/swiftui-cookbook/custom-message-list",
-        "swiftui/swiftui-cookbook/creating-channels"
+        "swiftui/swiftui-cookbook/creating-channels",
+        "swiftui/swiftui-cookbook/blocking-users"
       ]
     },
     {
