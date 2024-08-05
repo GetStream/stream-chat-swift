@@ -20,22 +20,17 @@ open class PollAttachmentOptionListItemView: _View, ThemeProvider {
 
         /// Whether the current option has been voted by the current user.
         public var isVotedByCurrentUser: Bool {
-            poll.hasCurrentUserVoted(forOption: option)
+            poll.hasCurrentUserVoted(for: option)
         }
 
         /// The number of votes this option has.
         public var voteCount: Int {
-            poll.voteCount(forOption: option)
+            poll.voteCount(for: option)
         }
 
         /// The ratio of the votes of this option in comparison with the number of total votes.
         public var voteRatio: Float {
-            poll.voteRatio(forOption: option)
-        }
-
-        /// Whether the poll is closed and this option is the winner.
-        public var isWinner: Bool {
-            poll.isClosed && voteRatio == 1.0
+            poll.voteRatio(for: option)
         }
     }
     
@@ -143,12 +138,12 @@ open class PollAttachmentOptionListItemView: _View, ThemeProvider {
         }
         voteCheckboxButton.isHidden = content.poll.isClosed
 
-        votesProgressView.progress = content.voteRatio
-        if content.isWinner {
+        if isOptionWinner {
             votesProgressView.tintColor = appearance.colorPalette.alternativeActiveTint
         } else {
             votesProgressView.tintColor = appearance.colorPalette.accentPrimary
         }
+        votesProgressView.progress = content.voteRatio
     }
 
     @objc func didTapOption(sender: Any?) {
@@ -156,6 +151,14 @@ open class PollAttachmentOptionListItemView: _View, ThemeProvider {
             return
         }
         onOptionTap?(option)
+    }
+
+    /// Whether the poll is closed and this option is the winner.
+    /// By default it only returns true if this option is the only one with most votes.
+    /// The `poll.isOptionWithMaximumVotes()` function can be used in case you don't want the winner to be unique.
+    open var isOptionWinner: Bool {
+        guard let content = self.content else { return false }
+        return content.poll.isClosed && content.poll.isOptionWithMostVotes(content.option)
     }
 
     /// The authors of the latest votes of this option.
