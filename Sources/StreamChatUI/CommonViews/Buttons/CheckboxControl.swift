@@ -5,7 +5,7 @@
 import StreamChat
 import UIKit
 
-/// A view to check/uncheck an option.
+/// A view to check/uncheck an option a long with a label describing the option.
 open class CheckboxControl: _Control, AppearanceProvider {
     // MARK: - Properties
 
