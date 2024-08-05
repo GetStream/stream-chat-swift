@@ -8,12 +8,34 @@ import UIKit
 /// The view that displays a poll option in the poll option list view.
 open class PollAttachmentOptionListItemView: _View, ThemeProvider {
     public struct Content {
+        /// The option that this view represents.
         public var option: PollOption
-        public var isVotedByCurrentUser: Bool
+        /// The poll that this option belongs.
+        public var poll: Poll
         
-        public init(option: PollOption, isVotedByCurrentUser: Bool) {
+        public init(option: PollOption, poll: Poll) {
             self.option = option
-            self.isVotedByCurrentUser = isVotedByCurrentUser
+            self.poll = poll
+        }
+
+        /// Whether the current option has been voted by the current user.
+        public var isVotedByCurrentUser: Bool {
+            poll.hasCurrentUserVoted(forOption: option)
+        }
+
+        /// The number of votes this option has.
+        public var voteCount: Int {
+            poll.voteCountsByOption?[option.id] ?? 0
+        }
+
+        /// The total votes this poll has.
+        public var pollTotalVoteCount: Int {
+            poll.voteCountsByOption?.values.max() ?? 0
+        }
+
+        /// The ratio of the votes of this option in comparison with the number of total votes.
+        public var voteRatio: Float {
+            Float(voteCount) / Float(max(pollTotalVoteCount, 1))
         }
     }
     
@@ -108,21 +130,15 @@ open class PollAttachmentOptionListItemView: _View, ThemeProvider {
         }
 
         optionNameLabel.text = content.option.text
-        votesCountLabel.text = "\(content.option.latestVotes.count)"
+        votesCountLabel.text = "\(content.voteCount)"
+        votesProgressView.setProgress(content.voteRatio, animated: true)
+        latestVotesAuthorsView.content = .init(users: latestVotesAuthors)
 
         if content.isVotedByCurrentUser {
-            votesProgressView.setProgress(0.5, animated: true)
             voteCheckboxButton.setCheckedState()
         } else {
-            votesProgressView.setProgress(0, animated: true)
             voteCheckboxButton.setUncheckedState()
         }
-
-        latestVotesAuthorsView.content = .init(users: content.option.latestVotes
-            .sorted(by: { $0.createdAt > $1.createdAt })
-            .compactMap(\.user)
-            .suffix(2)
-        )
     }
 
     @objc func didTapOption(sender: Any?) {
@@ -130,5 +146,13 @@ open class PollAttachmentOptionListItemView: _View, ThemeProvider {
             return
         }
         onOptionTap?(option)
+    }
+
+    /// The authors of the latest votes of this option.
+    open var latestVotesAuthors: [ChatUser] {
+        content?.option.latestVotes
+            .sorted(by: { $0.createdAt > $1.createdAt })
+            .compactMap(\.user)
+            .suffix(2) ?? []
     }
 }
