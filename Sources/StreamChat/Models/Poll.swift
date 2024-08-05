@@ -80,28 +80,40 @@ public extension Poll {
         voteCountsByOption?.values.max() ?? 0
     }
 
+    /// Whether the provided option is the one, and **the only one** with the most votes.
+    func isOptionWithMostVotes(_ option: PollOption) -> Bool {
+        let optionsWithMostVotes = voteCountsByOption?.filter { $0.value == currentMaximumVoteCount }
+        return optionsWithMostVotes?.count == 1 && optionsWithMostVotes?[option.id] != nil
+    }
+
+    /// Whether the provided option is one of that has the most votes.
+    func isOptionWithMaximumVotes(_ option: PollOption) -> Bool {
+        let optionsWithMostVotes = voteCountsByOption?.filter { $0.value == currentMaximumVoteCount }
+        return optionsWithMostVotes?[option.id] != nil
+    }
+
     /// The vote count for the given option.
-    func voteCount(forOption option: PollOption) -> Int {
+    func voteCount(for option: PollOption) -> Int {
         voteCountsByOption?[option.id] ?? 0
     }
     
     // The ratio of the votes for the given option in comparison with the number of total votes.
-    func voteRatio(forOption option: PollOption) -> Float {
+    func voteRatio(for option: PollOption) -> Float {
         if currentMaximumVoteCount == 0 {
             return 0
         }
 
-        let optionVoteCount = voteCount(forOption: option)
+        let optionVoteCount = voteCount(for: option)
         return Float(optionVoteCount) / Float(currentMaximumVoteCount)
     }
 
     /// Returns the vote of the current user for the given option in case the user has voted.
-    func currentUserVote(forOption option: PollOption) -> PollVote? {
+    func currentUserVote(for option: PollOption) -> PollVote? {
         ownVotes.first(where: { $0.optionId == option.id })
     }
 
     /// Returns a Boolean value indicating whether the current user has voted the given option.
-    func hasCurrentUserVoted(forOption option: PollOption) -> Bool {
+    func hasCurrentUserVoted(for option: PollOption) -> Bool {
         ownVotes.map(\.optionId).contains(option.id)
     }
 }

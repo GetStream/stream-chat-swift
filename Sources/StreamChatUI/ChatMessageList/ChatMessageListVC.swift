@@ -1103,7 +1103,7 @@ open class ChatMessageListVC: _ViewController,
 
         notificationFeedbackGenerator?.notificationOccurred(.success)
 
-        if let currentUserVote = poll.currentUserVote(forOption: option) {
+        if let currentUserVote = poll.currentUserVote(for: option) {
             pollController.removePollVote(voteId: currentUserVote.id) { [weak self] error in
                 self?.didRemovePollVote(currentUserVote, for: option, in: message, error: error)
             }
