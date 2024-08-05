@@ -229,3 +229,10 @@
 "threadList.new-threads" = "%d new threads";
 /// Shown when there's an error when loading the threads.
 "threadList.error.message" = "Error loading threads";
+
+// MARK: - Polls
+
+"message.polls.subtitle.selectOne" = "Select one";
+"message.polls.subtitle.selectOneOrMore" = "Select one or more";
+"message.polls.subtitle.selectUpTo" = "Select up to %d";
+"message.polls.subtitle.voteEnded" = "Vote ended";
