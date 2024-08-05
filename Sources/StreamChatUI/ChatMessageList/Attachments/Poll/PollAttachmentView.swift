@@ -35,7 +35,7 @@ open class PollAttachmentView: _View, ThemeProvider {
         .withAdjustingFontForContentSizeCategory
         .withAccessibilityIdentifier(identifier: "pollTitleLabel")
 
-    /// A label which by default displays the selection rules of the Poll.
+    /// A label which by default displays the voting state of the Poll.
     open private(set) lazy var pollSubtitleLabel = UILabel()
         .withoutAutoresizingMaskConstraints
         .withBidirectionalLanguagesSupport
@@ -83,8 +83,23 @@ open class PollAttachmentView: _View, ThemeProvider {
         }
 
         pollTitleLabel.text = content.poll.name
-        pollSubtitleLabel.text = "Select one or more"
+        pollSubtitleLabel.text = subtitleText
         optionListView.onOptionTap = onOptionTap
         optionListView.content = .init(poll: content.poll)
+    }
+
+    /// The subtitle text. By default it displays the current voting state.
+    open var subtitleText: String {
+        guard let content = self.content else { return "" }
+        let poll = content.poll
+        if poll.isClosed == true {
+            return L10n.Message.Polls.Subtitle.voteEnded
+        } else if poll.enforceUniqueVote == true {
+            return L10n.Message.Polls.Subtitle.selectOne
+        } else if let maxVotes = poll.maxVotesAllowed, maxVotes > 0 {
+            return L10n.Message.Polls.Subtitle.selectUpTo(min(maxVotes, poll.options.count))
+        } else {
+            return L10n.Message.Polls.Subtitle.selectOneOrMore
+        }
     }
 }

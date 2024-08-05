@@ -269,6 +269,20 @@ internal enum L10n {
       /// Are you sure?
       internal static var title: String { L10n.tr("Localizable", "message.moderation.title") }
     }
+    internal enum Polls {
+      internal enum Subtitle {
+        /// Select one
+        internal static var selectOne: String { L10n.tr("Localizable", "message.polls.subtitle.selectOne") }
+        /// Select one or more
+        internal static var selectOneOrMore: String { L10n.tr("Localizable", "message.polls.subtitle.selectOneOrMore") }
+        /// Select up to %d
+        internal static func selectUpTo(_ p1: Int) -> String {
+          return L10n.tr("Localizable", "message.polls.subtitle.selectUpTo", p1)
+        }
+        /// Vote ended
+        internal static var voteEnded: String { L10n.tr("Localizable", "message.polls.subtitle.voteEnded") }
+      }
+    }
     internal enum Sending {
       /// UPLOADING FAILED
       internal static var attachmentUploadingFailed: String { L10n.tr("Localizable", "message.sending.attachment-uploading-failed") }
