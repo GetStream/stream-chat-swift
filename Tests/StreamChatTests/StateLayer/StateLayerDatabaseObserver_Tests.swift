@@ -30,7 +30,7 @@ final class StateLayerDatabaseObserver_Tests: XCTestCase {
         let expectation = XCTestExpectation()
         var changeCount = 0
         let observer = makeChannelObserver()
-        _ = try observer.startObserving(onContextDidChange: { _ in
+        _ = try observer.startObserving(onContextDidChange: { _, _ in
             changeCount += 1
             expectation.fulfill()
         })
@@ -57,7 +57,7 @@ final class StateLayerDatabaseObserver_Tests: XCTestCase {
         let expectation = XCTestExpectation()
         var changeCount = 0
         let observer = makeChannelObserver()
-        _ = try observer.startObserving(onContextDidChange: { _ in
+        _ = try observer.startObserving(onContextDidChange: { _, _ in
             changeCount += 1
             expectation.fulfill()
         })
@@ -80,7 +80,7 @@ final class StateLayerDatabaseObserver_Tests: XCTestCase {
         let expectation = XCTestExpectation()
         var changeCount = 0
         let observer = makeChannelObserver()
-        _ = try observer.startObserving(onContextDidChange: { _ in
+        _ = try observer.startObserving(onContextDidChange: { _, _ in
             changeCount += 1
             expectation.fulfill()
         })
@@ -116,7 +116,7 @@ final class StateLayerDatabaseObserver_Tests: XCTestCase {
         let expectation = XCTestExpectation()
         var changeCount = 0
         let observer = makeMessagesListObserver()
-        _ = try observer.startObserving(onContextDidChange: { _ in
+        _ = try observer.startObserving(onContextDidChange: { _, _ in
             changeCount += 1
             expectation.fulfill()
         })
@@ -145,7 +145,7 @@ final class StateLayerDatabaseObserver_Tests: XCTestCase {
         let expectation = XCTestExpectation()
         var changeCount = 0
         let observer = makeMessagesListObserver()
-        _ = try observer.startObserving(onContextDidChange: { _ in
+        _ = try observer.startObserving(onContextDidChange: { _, _ in
             changeCount += 1
             expectation.fulfill()
         })
@@ -177,7 +177,7 @@ final class StateLayerDatabaseObserver_Tests: XCTestCase {
         let expectation = XCTestExpectation()
         var changeCount = 0
         let observer = makeMessagesListObserver()
-        _ = try observer.startObserving(onContextDidChange: { _ in
+        _ = try observer.startObserving(onContextDidChange: { _, _ in
             changeCount += 1
             expectation.fulfill()
         })
@@ -231,7 +231,7 @@ final class StateLayerDatabaseObserver_Tests: XCTestCase {
         let expectation = XCTestExpectation()
         var itemCreatorCounter = 0
         let channelListObserver = StateLayerDatabaseObserver(
-            databaseContainer: client.mockDatabaseContainer,
+            database: client.mockDatabaseContainer,
             fetchRequest: ChannelDTO.channelListFetchRequest(
                 query: query,
                 chatClientConfig: client.config
@@ -243,7 +243,7 @@ final class StateLayerDatabaseObserver_Tests: XCTestCase {
             itemReuseKeyPaths: (\ChatChannel.cid.rawValue, \ChannelDTO.cid),
             sorting: query.sort.runtimeSorting
         )
-        _ = try channelListObserver.startObserving(onContextDidChange: { _ in
+        _ = try channelListObserver.startObserving(onContextDidChange: { _, _ in
             expectation.fulfill()
         })
         XCTAssertEqual(5, itemCreatorCounter)
@@ -268,7 +268,7 @@ final class StateLayerDatabaseObserver_Tests: XCTestCase {
         
         let expectation = XCTestExpectation()
         let observer = makeMessagesListObserver()
-        _ = try observer.startObserving(onContextDidChange: { _ in
+        _ = try observer.startObserving(onContextDidChange: { _, _ in
             expectation.fulfill()
         })
         XCTAssertEqual(10, messageItemCreatorCounter)
@@ -311,7 +311,7 @@ final class StateLayerDatabaseObserver_Tests: XCTestCase {
         let expectation = XCTestExpectation()
         var itemCreatorCounter = 0
         let reactionListObserver = StateLayerDatabaseObserver(
-            databaseContainer: client.mockDatabaseContainer,
+            database: client.mockDatabaseContainer,
             fetchRequest: MessageReactionDTO.reactionListFetchRequest(query: query),
             itemCreator: {
                 itemCreatorCounter += 1
@@ -319,7 +319,7 @@ final class StateLayerDatabaseObserver_Tests: XCTestCase {
             },
             itemReuseKeyPaths: (\ChatMessageReaction.id, \MessageReactionDTO.id)
         )
-        _ = try reactionListObserver.startObserving(onContextDidChange: { _ in
+        _ = try reactionListObserver.startObserving(onContextDidChange: { _, _ in
             expectation.fulfill()
         })
         XCTAssertEqual(5, itemCreatorCounter)
@@ -347,7 +347,7 @@ final class StateLayerDatabaseObserver_Tests: XCTestCase {
         let expectation = XCTestExpectation()
         var itemCreatorCounter = 0
         let threadListObserver = StateLayerDatabaseObserver(
-            databaseContainer: client.mockDatabaseContainer,
+            database: client.mockDatabaseContainer,
             fetchRequest: ThreadDTO.threadListFetchRequest(),
             itemCreator: {
                 itemCreatorCounter += 1
@@ -355,7 +355,7 @@ final class StateLayerDatabaseObserver_Tests: XCTestCase {
             },
             itemReuseKeyPaths: (\ChatThread.reuseId, \ThreadDTO.reuseId)
         )
-        _ = try threadListObserver.startObserving(onContextDidChange: { _ in
+        _ = try threadListObserver.startObserving(onContextDidChange: { _, _ in
             expectation.fulfill()
         })
         XCTAssertEqual(5, itemCreatorCounter)
@@ -387,7 +387,7 @@ final class StateLayerDatabaseObserver_Tests: XCTestCase {
         let expectation = XCTestExpectation()
         var itemCreatorCounter = 0
         let usersObserver = StateLayerDatabaseObserver(
-            databaseContainer: client.mockDatabaseContainer,
+            database: client.mockDatabaseContainer,
             fetchRequest: UserDTO.userListFetchRequest(query: query),
             itemCreator: {
                 itemCreatorCounter += 1
@@ -395,7 +395,7 @@ final class StateLayerDatabaseObserver_Tests: XCTestCase {
             },
             itemReuseKeyPaths: (\ChatUser.id, \UserDTO.id)
         )
-        _ = try usersObserver.startObserving(onContextDidChange: { _ in
+        _ = try usersObserver.startObserving(onContextDidChange: { _, _ in
             expectation.fulfill()
         })
         XCTAssertEqual(5, itemCreatorCounter)
@@ -415,7 +415,7 @@ final class StateLayerDatabaseObserver_Tests: XCTestCase {
     
     private func makeChannelObserver() -> StateLayerDatabaseObserver<EntityResult, ChatChannel, ChannelDTO> {
         StateLayerDatabaseObserver(
-            databaseContainer: client.mockDatabaseContainer,
+            database: client.mockDatabaseContainer,
             fetchRequest: ChannelDTO.fetchRequest(for: channelId),
             itemCreator: { try $0.asModel() as ChatChannel }
         )
@@ -423,7 +423,7 @@ final class StateLayerDatabaseObserver_Tests: XCTestCase {
     
     private func makeMessagesListObserver() -> StateLayerDatabaseObserver<ListResult, ChatMessage, MessageDTO> {
         StateLayerDatabaseObserver(
-            databaseContainer: client.mockDatabaseContainer,
+            database: client.mockDatabaseContainer,
             fetchRequest: MessageDTO.messagesFetchRequest(
                 for: channelId,
                 pageSize: 25,

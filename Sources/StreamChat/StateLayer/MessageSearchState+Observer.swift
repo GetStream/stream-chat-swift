@@ -38,7 +38,7 @@ extension MessageSearchState {
             guard let handlers else { return }
             if let query {
                 messagesObserver = StateLayerDatabaseObserver(
-                    databaseContainer: database,
+                    database: database,
                     fetchRequest: MessageDTO.messagesFetchRequest(for: query),
                     itemCreator: { try $0.asModel() },
                     itemReuseKeyPaths: (\ChatMessage.id, \MessageDTO.id)

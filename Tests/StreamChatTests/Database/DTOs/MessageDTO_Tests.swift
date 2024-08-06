@@ -259,8 +259,7 @@ final class MessageDTO_Tests: XCTestCase {
         let exp = expectation(description: "FRC should not report any changes")
         exp.isInverted = true
         var changes: [ListChange<ChatMessage>] = []
-        let observer = try createMessagesFRC(for: channelPayload)
-        observer.onChange = { newChanges in
+        let observer = try createMessagesFRC(for: channelPayload) { newChanges in
             changes += newChanges
             exp.fulfill()
         }
@@ -278,6 +277,7 @@ final class MessageDTO_Tests: XCTestCase {
         }
 
         waitForExpectations(timeout: defaultTimeout)
+        XCTAssertEqual(1, observer.items.count)
     }
 
     func test_saveMessage_whenMessageNotInParentReplies_shouldReportChangesInFRC() throws {
@@ -319,8 +319,7 @@ final class MessageDTO_Tests: XCTestCase {
 
         let exp = expectation(description: "FRC should report changes")
         var changes: [ListChange<ChatMessage>] = []
-        let observer = try createMessagesFRC(for: channelPayload)
-        observer.onChange = { newChanges in
+        let observer = try createMessagesFRC(for: channelPayload) { newChanges in
             changes += newChanges
             exp.fulfill()
         }
@@ -342,6 +341,7 @@ final class MessageDTO_Tests: XCTestCase {
         let parentMessage = try XCTUnwrap(database.viewContext.message(id: parentId))
         XCTAssertEqual(parentMessage.replies.count, 2)
         XCTAssertEqual(changes.count, 1)
+        XCTAssertEqual(1, observer.items.count)
     }
 
     // This is required because FRC can report a deletion when inserting a message which already exists
@@ -385,8 +385,7 @@ final class MessageDTO_Tests: XCTestCase {
 
         let exp = expectation(description: "FRC should not report changes for quoted message")
         var changes: [ListChange<ChatMessage>] = []
-        let observer = try createMessagesFRC(for: channelPayload)
-        observer.onChange = { newChanges in
+        let observer = try createMessagesFRC(for: channelPayload) { newChanges in
             changes += newChanges
             exp.fulfill()
         }
@@ -407,6 +406,7 @@ final class MessageDTO_Tests: XCTestCase {
 
         XCTAssertEqual(changes.count, 1)
         XCTAssertNil(changes.first { $0.item.id == quotedMessageId })
+        XCTAssertEqual(2, observer.items.count)
     }
 
     func test_saveMessage_whenQuotedMessageDoesNotExist_shouldReportChangesForQuotedMessageInFRC() throws {
@@ -431,8 +431,7 @@ final class MessageDTO_Tests: XCTestCase {
 
         let exp = expectation(description: "FRC should report changes for quoted message")
         var changes: [ListChange<ChatMessage>] = []
-        let observer = try createMessagesFRC(for: channelPayload)
-        observer.onChange = { newChanges in
+        let observer = try createMessagesFRC(for: channelPayload) { newChanges in
             changes += newChanges
             exp.fulfill()
         }
@@ -453,6 +452,7 @@ final class MessageDTO_Tests: XCTestCase {
 
         XCTAssertEqual(changes.count, 2)
         XCTAssertNotNil(changes.first { $0.item.id == quotedMessageId })
+        XCTAssertEqual(2, observer.items.count)
     }
 
     func test_numberOfReads() {
@@ -4131,9 +4131,12 @@ final class MessageDTO_Tests: XCTestCase {
     }
 
     // Creates a messages observer (FRC wrapper)
-    private func createMessagesFRC(for channelPayload: ChannelPayload) throws -> ListDatabaseObserver<ChatMessage, MessageDTO> {
-        let observer = ListDatabaseObserver(
-            context: database.viewContext,
+    private func createMessagesFRC(
+        for channelPayload: ChannelPayload,
+        onChange: @escaping ([ListChange<ChatMessage>]) -> Void
+    ) throws -> StateLayerDatabaseObserver<ListResult, ChatMessage, MessageDTO> {
+        let observer = StateLayerDatabaseObserver(
+            database: database,
             fetchRequest: MessageDTO.messagesFetchRequest(
                 for: channelPayload.channel.cid,
                 pageSize: 25,
@@ -4145,7 +4148,7 @@ final class MessageDTO_Tests: XCTestCase {
             itemReuseKeyPaths: (\ChatMessage.id, \MessageDTO.id),
             sorting: []
         )
-        try observer.startObserving()
+        try observer.startObserving(onContextDidChange: { _, changes in onChange(changes) })
         return observer
     }
 }

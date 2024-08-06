@@ -7,21 +7,20 @@ import Foundation
 
 // A concrete `ChannelListObserver` implementation allowing capturing the delegate calls
 final class TestChannelListObserver {
-    let databaseObserver: ListDatabaseObserver<ChannelId, ChannelDTO>
+    let databaseObserver: StateLayerDatabaseObserver<ListResult, ChannelId, ChannelDTO>
 
     var observedChanges: [ListChange<ChannelId>] = []
 
     init(database: DatabaseContainer_Spy) {
-        databaseObserver = ListDatabaseObserver<ChannelId, ChannelDTO>(
-            context: database.viewContext,
+        databaseObserver = StateLayerDatabaseObserver<ListResult, ChannelId, ChannelDTO>(
+            database: database,
             fetchRequest: ChannelDTO.allChannelsFetchRequest,
-            itemCreator: { try! ChannelId(cid: $0.cid) }
+            itemCreator: { try! ChannelId(cid: $0.cid) },
+            itemReuseKeyPaths: nil
         )
 
-        databaseObserver.onChange = { [weak self] in
-            self?.observedChanges.append(contentsOf: $0)
-        }
-
-        try! databaseObserver.startObserving()
+        try! databaseObserver.startObserving(onContextDidChange: { [weak self] _, changes in
+            self?.observedChanges.append(contentsOf: changes)
+        })
     }
 }

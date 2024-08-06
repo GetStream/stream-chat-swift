@@ -306,15 +306,12 @@ final class AttachmentDTO_Tests: XCTestCase {
         }
 
         // Arrange: Observe changes on message
-        let observer = EntityDatabaseObserver<MessageDTO, MessageDTO>(
+        let observer = StateLayerDatabaseObserver<EntityResult, MessageDTO, MessageDTO>(
             context: database.viewContext,
-            fetchRequest: MessageDTO.message(withID: messageId),
-            itemCreator: { $0 }
+            fetchRequest: MessageDTO.message(withID: messageId)
         )
-        try observer.startObserving()
-
         var receivedChange: EntityChange<MessageDTO>?
-        observer.onChange { receivedChange = $0 }
+        try observer.startObserving(onContextDidChange: { receivedChange = $1 })
 
         // Act: Update attachment
         try database.writeSynchronously { session in

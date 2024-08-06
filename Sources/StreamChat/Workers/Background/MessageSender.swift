@@ -22,11 +22,10 @@ class MessageSender: Worker {
     @Atomic private var sendingQueueByCid: [ChannelId: MessageSendingQueue] = [:]
     private var continuations = [MessageId: CheckedContinuation<ChatMessage, Error>]()
     
-    private lazy var observer = ListDatabaseObserver<MessageDTO, MessageDTO>(
+    private lazy var observer = StateLayerDatabaseObserver<ListResult, MessageDTO, MessageDTO>(
         context: self.database.backgroundReadOnlyContext,
         fetchRequest: MessageDTO
-            .messagesPendingSendFetchRequest(),
-        itemCreator: { $0 }
+            .messagesPendingSendFetchRequest()
     )
 
     private let sendingDispatchQueue: DispatchQueue = .init(
@@ -52,15 +51,17 @@ class MessageSender: Worker {
 
         // The rest can be done on a background queue
         sendingDispatchQueue.async { [weak self] in
-            self?.observer.onChange = { self?.handleChanges(changes: $0) }
             do {
-                try self?.observer.startObserving()
+                let items = try self?.observer.startObserving(onContextDidChange: { [weak self] _, changes in
+                    self?.handleChanges(changes: changes)
+                })
 
                 // Send the existing unsent message first. We can simulate callback from the observer and ignore
                 // the index path completely.
-                if let changes = self?.observer.items.map({ ListChange.insert($0, index: .init(item: 0, section: 0)) }) {
+                if let changes = items?.map({ ListChange.insert($0, index: .init(item: 0, section: 0)) }) {
                     self?.handleChanges(changes: changes)
                 }
+                
                 self?.database.write {
                     $0.rescueMessagesStuckInSending()
                 }

@@ -12,7 +12,7 @@ extension UserListState {
         init(query: UserListQuery, database: DatabaseContainer) {
             self.query = query
             usersObserver = StateLayerDatabaseObserver(
-                databaseContainer: database,
+                database: database,
                 fetchRequest: UserDTO.userListFetchRequest(query: query),
                 itemCreator: { try $0.asModel() },
                 itemReuseKeyPaths: (\ChatUser.id, \UserDTO.id)

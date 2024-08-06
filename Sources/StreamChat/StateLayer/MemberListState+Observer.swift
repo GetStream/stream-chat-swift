@@ -10,7 +10,7 @@ extension MemberListState {
         
         init(query: ChannelMemberListQuery, database: DatabaseContainer) {
             memberListObserver = StateLayerDatabaseObserver(
-                databaseContainer: database,
+                database: database,
                 fetchRequest: MemberDTO.members(matching: query),
                 itemCreator: { try $0.asModel() },
                 itemReuseKeyPaths: (\ChatChannelMember.id, \MemberDTO.id)
