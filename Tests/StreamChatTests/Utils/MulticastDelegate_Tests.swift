@@ -141,6 +141,17 @@ final class MulticastDelegate_Tests: XCTestCase {
         XCTAssertNil(multicastDelegate.mainDelegate)
         XCTAssertTrue(multicastDelegate.additionalDelegates.isEmpty)
     }
+    
+    func test_whenAccessingConcurrently_shouldNotCrash() {
+        DispatchQueue.concurrentPerform(iterations: 1000) { _ in
+            let newMainDelegate = TestDelegate()
+            let newAdditionalDelegates = (0..<10).map { _ in TestDelegate() }
+            multicastDelegate.set(mainDelegate: newMainDelegate)
+            multicastDelegate.set(additionalDelegates: newAdditionalDelegates)
+            _ = multicastDelegate.mainDelegate
+            _ = multicastDelegate.additionalDelegates
+        }
+    }
 }
 
 private class TestDelegate {
