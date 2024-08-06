@@ -185,6 +185,10 @@ open class QuotedChatMessageView: _View, ThemeProvider, SwiftUIRepresentable {
            let translatedText = content?.message.translatedText(for: currentUserLang) {
             textView.text = translatedText
         }
+
+        if let poll = message.poll, !message.isDeleted {
+            textView.text = "📊 \(poll.name)"
+        }
     }
 
     /// Sets the text of the quoted message.
