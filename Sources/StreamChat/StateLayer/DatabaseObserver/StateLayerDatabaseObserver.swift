@@ -207,7 +207,7 @@ extension StateLayerDatabaseObserver where ResultType == ListResult {
     }
 }
 
-// MARK: - Mapping Skipped
+// MARK: - DTO Observer
 
 extension StateLayerDatabaseObserver where DTO == Item {
     convenience init(
