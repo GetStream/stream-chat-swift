@@ -10,11 +10,11 @@ struct MulticastDelegate<T> {
     private let queue = DispatchQueue(label: "io.stream.com.multicast-delegate")
     /// We need to use a weak NSHashTable instead of a WeakReference<T> type because <T> can't
     /// be conformed to AnyObject or the rest of the codebase won't compile because of `DelegateCallable`.
-    private var _additionalDelegates = NSHashTable<AnyObject>.weakObjects()
+    private let _additionalDelegates = NSHashTable<AnyObject>.weakObjects()
 
     /// Because we use `delegate` pattern from UIKit, and NSHashTable is not ordered,
     /// we need to keep a separate HashTable to distinguish a single UIKit delegate vs Combine delegates.
-    private var _mainDelegate = NSHashTable<AnyObject>.weakObjects()
+    private let _mainDelegate = NSHashTable<AnyObject>.weakObjects()
 
     /// The main delegate. If a `controller.delegate` is set, the main delegate will be used.
     var mainDelegate: T? {
@@ -41,11 +41,11 @@ struct MulticastDelegate<T> {
     /// Sets the main delegate. If is nil, removes the main delegate.
     /// - Parameter mainDelegate: The main delegate.
     mutating func set(mainDelegate: T?) {
-        queue.sync {
-            _mainDelegate.removeAllObjects()
+        queue.async { [weak _mainDelegate] in
+            _mainDelegate?.removeAllObjects()
             
             if let delegate = mainDelegate {
-                _mainDelegate.add(delegate as AnyObject)
+                _mainDelegate?.add(delegate as AnyObject)
             }
         }
     }
@@ -53,25 +53,25 @@ struct MulticastDelegate<T> {
     /// Replaces the current additional delegates with another collection of delegates.
     /// - Parameter additionalDelegates: The new additional delegates.
     mutating func set(additionalDelegates: [T]) {
-        queue.sync {
-            _additionalDelegates.removeAllObjects()
-            additionalDelegates.forEach { _additionalDelegates.add($0 as AnyObject) }
+        queue.async { [weak _additionalDelegates] in
+            _additionalDelegates?.removeAllObjects()
+            additionalDelegates.forEach { _additionalDelegates?.add($0 as AnyObject) }
         }
     }
 
     /// Adds a new delegate to the additional delegates.
     /// - Parameter additionalDelegate: The additional delegate.
     mutating func add(additionalDelegate: T) {
-        queue.sync {
-            _additionalDelegates.add(additionalDelegate as AnyObject)
+        queue.async { [weak _additionalDelegates] in
+            _additionalDelegates?.add(additionalDelegate as AnyObject)
         }
     }
 
     /// Removes a delegate from the additional delegates.
     /// - Parameter additionalDelegate: The delegate to be removed.
     mutating func remove(additionalDelegate: T) {
-        queue.sync {
-            _additionalDelegates.remove(additionalDelegate as AnyObject)
+        queue.async { [weak _additionalDelegates] in
+            _additionalDelegates?.remove(additionalDelegate as AnyObject)
         }
     }
 }
