@@ -283,6 +283,20 @@ internal enum L10n {
         internal static var voteEnded: String { L10n.tr("Localizable", "message.polls.subtitle.voteEnded") }
       }
     }
+    internal enum Preview {
+      /// %@ created:
+      internal static func pollSomeoneCreated(_ p1: Any) -> String {
+        return L10n.tr("Localizable", "message.preview.poll-someone-created", String(describing: p1))
+      }
+      /// %@ voted:
+      internal static func pollSomeoneVoted(_ p1: Any) -> String {
+        return L10n.tr("Localizable", "message.preview.poll-someone-voted", String(describing: p1))
+      }
+      /// You created:
+      internal static var pollYouCreated: String { L10n.tr("Localizable", "message.preview.poll-you-created") }
+      /// You voted:
+      internal static var pollYouVoted: String { L10n.tr("Localizable", "message.preview.poll-you-voted") }
+    }
     internal enum Sending {
       /// UPLOADING FAILED
       internal static var attachmentUploadingFailed: String { L10n.tr("Localizable", "message.sending.attachment-uploading-failed") }

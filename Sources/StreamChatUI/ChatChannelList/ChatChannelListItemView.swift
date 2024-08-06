@@ -150,6 +150,10 @@ open class ChatChannelListItemView: _View, ThemeProvider, SwiftUIRepresentable {
         }
 
         if let previewMessage = content.channel.previewMessage {
+            if let pollPreviewText = pollAttachmentPreviewText(for: previewMessage) {
+                return pollPreviewText
+            }
+
             if isLastMessageVoiceRecording {
                 return previewMessageForAudioRecordingMessage(messageText: previewMessage.text)
             }
@@ -440,6 +444,7 @@ open class ChatChannelListItemView: _View, ThemeProvider, SwiftUIRepresentable {
         guard let attachment = previewMessage.allAttachments.first else {
             return nil
         }
+
         let text = messageText
         switch attachment.type {
         case .audio:
@@ -462,6 +467,31 @@ open class ChatChannelListItemView: _View, ThemeProvider, SwiftUIRepresentable {
         default:
             return nil
         }
+    }
+
+    /// The message preview text in case it is a Poll.
+    /// - Parameter previewMessage: The preview message of the channel.
+    /// - Returns: A string representing the message preview text.
+    open func pollAttachmentPreviewText(for previewMessage: ChatMessage) -> String? {
+        guard let poll = previewMessage.poll, !previewMessage.isDeleted else { return nil }
+        var components = ["📊"]
+        if let latestVoter = poll.latestVotesByOption.first?.latestVotes.first?.user {
+            if previewMessage.isSentByCurrentUser {
+                components.append(L10n.Message.Preview.pollYouVoted)
+            } else {
+                components.append(L10n.Message.Preview.pollSomeoneVoted(latestVoter.name ?? latestVoter.id))
+            }
+        } else if let creator = poll.createdBy {
+            if previewMessage.isSentByCurrentUser {
+                components.append(L10n.Message.Preview.pollYouCreated)
+            } else {
+                components.append(L10n.Message.Preview.pollSomeoneCreated(creator.name ?? creator.id))
+            }
+        }
+        if !poll.name.isEmpty {
+            components.append(poll.name)
+        }
+        return components.joined(separator: " ")
     }
 
     // MARK: - Channel preview when user is typing

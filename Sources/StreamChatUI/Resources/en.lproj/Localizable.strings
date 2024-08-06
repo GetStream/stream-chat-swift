@@ -232,7 +232,20 @@
 
 // MARK: - Polls
 
+/// Shown in the message poll view to describe that only one option is selectable.
 "message.polls.subtitle.selectOne" = "Select one";
+/// Shown in the message poll view to describe that multiple options are selectable.
 "message.polls.subtitle.selectOneOrMore" = "Select one or more";
+/// Shown in the message poll view to describe that multiple options are selectable up until a limit.
 "message.polls.subtitle.selectUpTo" = "Select up to %d";
+/// Shown in the message poll view to describe that the poll has ended.
 "message.polls.subtitle.voteEnded" = "Vote ended";
+
+/// Shown in the channel list or thread list message preview in case someone voted a poll.
+"message.preview.poll-someone-voted" = "%@ voted:";
+/// Shown in the channel list or thread list message preview in case the current user voted a poll.
+"message.preview.poll-you-voted" = "You voted:";
+/// Shown in the channel list or thread list message preview in case someone created a poll.
+"message.preview.poll-someone-created" = "%@ created:";
+/// Shown in the channel list or thread list message preview in case the current user created a poll.
+"message.preview.poll-you-created" = "You created:";
