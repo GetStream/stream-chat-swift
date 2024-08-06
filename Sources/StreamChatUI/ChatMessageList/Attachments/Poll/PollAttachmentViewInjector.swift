@@ -40,6 +40,7 @@ public class PollAttachmentViewInjector: AttachmentViewInjector {
 
         guard let message = contentView.content else { return }
         guard let poll = message.poll else { return }
+        guard let currentUserId = contentView.currentUserId else { return }
 
         pollAttachmentView.onOptionTap = { [weak self] option in
             guard let self = self else { return }
@@ -49,6 +50,6 @@ public class PollAttachmentViewInjector: AttachmentViewInjector {
                 for: message
             )
         }
-        pollAttachmentView.content = .init(poll: poll)
+        pollAttachmentView.content = .init(poll: poll, currentUserId: currentUserId)
     }
 }

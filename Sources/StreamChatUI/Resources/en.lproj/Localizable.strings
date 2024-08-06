@@ -240,6 +240,10 @@
 "message.polls.subtitle.selectUpTo" = "Select up to %d";
 /// Shown in the message poll view to describe that the poll has ended.
 "message.polls.subtitle.voteEnded" = "Vote ended";
+/// Shown in the message poll view on the button to end the poll.
+"message.polls.button.endVote" = "End Vote";
+/// Shown in the message poll view on the button to view the poll results.
+"message.polls.button.viewResults" = "View Results";
 
 /// Shown in the channel list or thread list message preview in case someone voted a poll.
 "message.preview.poll-someone-voted" = "%@ voted:";

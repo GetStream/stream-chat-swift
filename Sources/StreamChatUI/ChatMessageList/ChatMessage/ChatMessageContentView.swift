@@ -91,6 +91,9 @@ open class ChatMessageContentView: _View, ThemeProvider, UITextViewDelegate {
         didSet { updateContentIfNeeded() }
     }
 
+    /// The current logged in user id.
+    public var currentUserId: UserId?
+
     /// A formatter that converts the message timestamp to textual representation.
     public lazy var timestampFormatter: MessageTimestampFormatter = appearance.formatters.messageTimestamp
 
