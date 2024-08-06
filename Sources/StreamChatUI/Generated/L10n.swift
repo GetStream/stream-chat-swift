@@ -270,6 +270,12 @@ internal enum L10n {
       internal static var title: String { L10n.tr("Localizable", "message.moderation.title") }
     }
     internal enum Polls {
+      internal enum Button {
+        /// End Vote
+        internal static var endVote: String { L10n.tr("Localizable", "message.polls.button.endVote") }
+        /// View Results
+        internal static var viewResults: String { L10n.tr("Localizable", "message.polls.button.viewResults") }
+      }
       internal enum Subtitle {
         /// Select one
         internal static var selectOne: String { L10n.tr("Localizable", "message.polls.subtitle.selectOne") }
