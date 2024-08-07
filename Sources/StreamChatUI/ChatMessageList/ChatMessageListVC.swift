@@ -1083,28 +1083,19 @@ open class ChatMessageListVC: _ViewController,
 
     open func pollAttachmentView(
         _ pollAttachmentView: PollAttachmentView,
-        didTapOnOption option: PollOption,
-        for message: ChatMessage
+        didTapOption option: PollOption,
+        in message: ChatMessage
     ) {
         guard let poll = message.poll else { return }
 
         if pollOptionsCastingVote.contains(option.id) {
             return
         }
-
         pollOptionsCastingVote.insert(option.id)
-
-        let pollController: PollController
-        if let existingPollController = self.pollController, poll.id == existingPollController.pollId {
-            pollController = existingPollController
-        } else {
-            pollController = client.pollController(messageId: message.id, pollId: poll.id)
-            pollOptionsCastingVote = []
-        }
-        self.pollController = pollController
 
         notificationFeedbackGenerator?.notificationOccurred(.success)
 
+        let pollController = makePollController(for: poll, in: message)
         if let currentUserVote = poll.currentUserVote(for: option) {
             pollController.removePollVote(voteId: currentUserVote.id) { [weak self] error in
                 self?.didRemovePollVote(currentUserVote, for: option, in: message, error: error)
@@ -1115,6 +1106,37 @@ open class ChatMessageListVC: _ViewController,
             }
         }
     }
+
+    open func pollAttachmentView(
+        _ pollAttachmentView: PollAttachmentView,
+        didTapPollResults poll: Poll,
+        in message: ChatMessage
+    ) {
+        print("show view results")
+    }
+
+    open func pollAttachmentView(
+        _ pollAttachmentView: PollAttachmentView,
+        didTapEndPoll poll: Poll,
+        in message: ChatMessage
+    ) {
+        let pollController = makePollController(for: poll, in: message)
+        let alert = UIAlertController(
+            title: nil,
+            message: L10n.Alert.Poll.endTitle,
+            preferredStyle: .actionSheet
+        )
+        alert.addAction(.init(title: L10n.Alert.Poll.end, style: .destructive, handler: { _ in
+            pollController.closePoll { [weak self] error in
+                let isSuccess = error == nil
+                self?.notificationFeedbackGenerator?.notificationOccurred(isSuccess ? .success : .error)
+            }
+        }))
+        alert.addAction(.init(title: L10n.Alert.Actions.cancel, style: .cancel))
+        present(alert, animated: true)
+    }
+
+    // MARK: Poll Requests Completion Handlers
 
     /// Called when removing a poll vote completed.
     /// - Parameters:
@@ -1148,6 +1170,19 @@ open class ChatMessageListVC: _ViewController,
         if error != nil {
             notificationFeedbackGenerator?.notificationOccurred(.error)
         }
+    }
+
+    /// Creates the poll controller for the poll that is being interacted at the moment.
+    private func makePollController(for poll: Poll, in message: ChatMessage) -> PollController {
+        let pollController: PollController
+        if let existingPollController = self.pollController, poll.id == existingPollController.pollId {
+            pollController = existingPollController
+        } else {
+            pollController = client.pollController(messageId: message.id, pollId: poll.id)
+            pollOptionsCastingVote = []
+        }
+        self.pollController = pollController
+        return pollController
     }
 
     // MARK: - Deprecations

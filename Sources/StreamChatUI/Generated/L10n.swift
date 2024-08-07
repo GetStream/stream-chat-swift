@@ -24,6 +24,12 @@ internal enum L10n {
       /// Ok
       internal static var ok: String { L10n.tr("Localizable", "alert.actions.ok") }
     }
+    internal enum Poll {
+      /// End
+      internal static var end: String { L10n.tr("Localizable", "alert.poll.end") }
+      /// Nobody will be able to vote in this poll anymore.
+      internal static var endTitle: String { L10n.tr("Localizable", "alert.poll.end-title") }
+    }
   }
 
   internal enum Attachment {

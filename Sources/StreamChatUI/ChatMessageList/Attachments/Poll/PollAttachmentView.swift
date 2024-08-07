@@ -28,6 +28,12 @@ open class PollAttachmentView: _View, ThemeProvider {
     /// A closure that is triggered whenever the option is tapped either from the button or the item itself.
     public var onOptionTap: ((PollOption) -> Void)?
 
+    /// A closure that is triggered whenever the end poll button is tapped.
+    public var onEndTap: ((Poll) -> Void)?
+
+    /// A closure that is triggered whenever the poll results button is tapped.
+    public var onResultsTap: ((Poll) -> Void)?
+
     // MARK: - UI Components
 
     /// A label which by default displays the title of the Poll.
@@ -78,18 +84,25 @@ open class PollAttachmentView: _View, ThemeProvider {
 
     // MARK: - Lifecycle
 
+    override open func setUp() {
+        super.setUp()
+
+        pollResultsButton.addTarget(self, action: #selector(didTapResultsButton(sender:)), for: .touchUpInside)
+        endPollButton.addTarget(self, action: #selector(didTapEndPollButton(sender:)), for: .touchUpInside)
+    }
+
     override open func setUpAppearance() {
         super.setUpAppearance()
 
         clipsToBounds = true
-        pollTitleLabel.font = appearance.fonts.subheadlineBold
+        pollTitleLabel.font = appearance.fonts.headlineBold
         pollTitleLabel.numberOfLines = 0
         pollSubtitleLabel.font = appearance.fonts.caption1
         pollSubtitleLabel.textColor = appearance.colorPalette.textLowEmphasis
         pollResultsButton.setTitleColor(appearance.colorPalette.accentPrimary, for: .normal)
-        pollResultsButton.titleLabel?.font = appearance.fonts.subheadline
+        pollResultsButton.titleLabel?.font = appearance.fonts.subheadline.withSize(16)
         endPollButton.setTitleColor(appearance.colorPalette.accentPrimary, for: .normal)
-        endPollButton.titleLabel?.font = appearance.fonts.subheadline
+        endPollButton.titleLabel?.font = appearance.fonts.subheadline.withSize(16)
     }
 
     override open func setUpLayout() {
@@ -114,14 +127,26 @@ open class PollAttachmentView: _View, ThemeProvider {
 
         pollTitleLabel.text = content.poll.name
         pollSubtitleLabel.text = subtitleText
-        pollResultsButton.setTitle(L10n.Message.Polls.Button.viewResults, for: .normal)
-        endPollButton.setTitle(L10n.Message.Polls.Button.endVote, for: .normal)
+
         optionListView.onOptionTap = onOptionTap
         optionListView.content = .init(poll: content.poll)
+
+        pollResultsButton.setTitle(L10n.Message.Polls.Button.viewResults, for: .normal)
+        endPollButton.setTitle(L10n.Message.Polls.Button.endVote, for: .normal)
 
         let isPollCreatedByCurrentUser = content.poll.createdBy?.id == content.currentUserId
         let shouldShowEndPollButton = !content.poll.isClosed && isPollCreatedByCurrentUser
         endPollButton.isHidden = !shouldShowEndPollButton
+    }
+
+    @objc open func didTapResultsButton(sender: Any?) {
+        guard let poll = content?.poll else { return }
+        onResultsTap?(poll)
+    }
+
+    @objc open func didTapEndPollButton(sender: Any?) {
+        guard let poll = content?.poll else { return }
+        onEndTap?(poll)
     }
 
     /// The subtitle text. By default it displays the current voting state.
