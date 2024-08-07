@@ -28,12 +28,12 @@ extension ChatState {
             self.cid = cid
             self.memberListState = memberListState
             channelObserver = StateLayerDatabaseObserver(
-                databaseContainer: database,
+                database: database,
                 fetchRequest: ChannelDTO.fetchRequest(for: cid),
                 itemCreator: { try $0.asModel() }
             )
             messagesObserver = StateLayerDatabaseObserver(
-                databaseContainer: database,
+                database: database,
                 fetchRequest: MessageDTO.messagesFetchRequest(
                     for: cid,
                     pageSize: channelQuery.pagination?.pageSize ?? .messagesPageSize,
@@ -46,7 +46,7 @@ extension ChatState {
                 sorting: []
             )
             watchersObserver = StateLayerDatabaseObserver(
-                databaseContainer: database,
+                database: database,
                 fetchRequest: UserDTO.watcherFetchRequest(cid: cid),
                 itemCreator: { try $0.asModel() },
                 itemReuseKeyPaths: (\ChatUser.id, \UserDTO.id),

@@ -19,12 +19,12 @@ extension MessageState {
         ) {
             self.messageId = messageId
             messageObserver = StateLayerDatabaseObserver(
-                databaseContainer: database,
+                database: database,
                 fetchRequest: MessageDTO.message(withID: messageId),
                 itemCreator: { try $0.asModel() }
             )
             reactionsObserver = StateLayerDatabaseObserver(
-                databaseContainer: database,
+                database: database,
                 fetchRequest: MessageReactionDTO.reactionsFetchRequest(
                     for: messageId,
                     sort: ChatMessageReaction.defaultSortingDescriptors()
@@ -33,7 +33,7 @@ extension MessageState {
                 itemReuseKeyPaths: (\ChatMessageReaction.id, \MessageReactionDTO.id)
             )
             repliesObserver = StateLayerDatabaseObserver(
-                databaseContainer: database,
+                database: database,
                 fetchRequest: MessageDTO.repliesFetchRequest(
                     for: messageId,
                     pageSize: .messagesPageSize,
@@ -60,7 +60,7 @@ extension MessageState {
             replies: StreamCollection<ChatMessage>
         ) {
             do {
-                let message = try messageObserver.startObserving(onContextDidChange: { message in
+                let message = try messageObserver.startObserving(onContextDidChange: { message, _ in
                     guard let message else { return }
                     Task.mainActor { await handlers.messageDidChange(message) }
                 })

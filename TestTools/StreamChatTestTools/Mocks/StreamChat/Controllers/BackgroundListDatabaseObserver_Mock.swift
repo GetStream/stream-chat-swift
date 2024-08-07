@@ -22,3 +22,14 @@ final class BackgroundListDatabaseObserver_Mock<Item, DTO: NSManagedObject>: Bac
         items_mock ?? super.items
     }
 }
+
+extension BackgroundListDatabaseObserver {
+    func startObservingAndWaitForInitialUpdate(on testCase: XCTestCase, file: StaticString = #file, line: UInt = #line) throws {
+        let expectation = testCase.expectation(description: "List update")
+        onDidChange = { _ in
+            expectation.fulfill()
+        }
+        try startObserving()
+        testCase.wait(for: [expectation], timeout: defaultTimeout)
+    }
+}
