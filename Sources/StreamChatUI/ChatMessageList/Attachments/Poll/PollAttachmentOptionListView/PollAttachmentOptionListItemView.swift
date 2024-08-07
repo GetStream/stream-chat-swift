@@ -102,10 +102,10 @@ open class PollAttachmentOptionListItemView: _View, ThemeProvider {
     override open func setUpLayout() {
         super.setUpLayout()
 
-        HContainer(spacing: 3) {
+        HContainer(spacing: 2) {
             voteCheckboxButton
                 .width(25)
-            VContainer(spacing: 3) {
+            VContainer(spacing: 4) {
                 HContainer(spacing: 4, alignment: .top) {
                     optionNameLabel
                     Spacer()
@@ -116,7 +116,7 @@ open class PollAttachmentOptionListItemView: _View, ThemeProvider {
                 }
                 votesProgressView
             }
-            .height(greaterThanOrEqualTo: 27)
+            .height(greaterThanOrEqualTo: 28)
         }
         .embed(in: self)
     }
