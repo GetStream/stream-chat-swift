@@ -564,7 +564,7 @@ final class ChannelReadDTO_Tests: XCTestCase {
 // MARK: - Helpers
 
 private class MessageListObserver {
-    let databaseObserver: ListDatabaseObserver<MessageDTO, MessageDTO>
+    let databaseObserver: StateLayerDatabaseObserver<ListResult, MessageDTO, MessageDTO>
 
     var observedChanges: [ListChange<MessageDTO>] = []
 
@@ -585,14 +585,11 @@ private class MessageListObserver {
                 pageSize: pageSize,
                 deletedMessagesVisibility: .alwaysVisible,
                 shouldShowShadowedMessages: false
-            ),
-            itemCreator: { $0 }
+            )
         )
 
-        databaseObserver.onChange = { [weak self] in
-            self?.observedChanges.append(contentsOf: $0)
-        }
-
-        try! databaseObserver.startObserving()
+        try! databaseObserver.startObserving(onContextDidChange: { [weak self] _, changes in
+            self?.observedChanges.append(contentsOf: changes)
+        })
     }
 }

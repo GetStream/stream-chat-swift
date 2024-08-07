@@ -31,7 +31,7 @@ extension ChannelListState {
             self.eventNotificationCenter = eventNotificationCenter
             
             channelListObserver = StateLayerDatabaseObserver(
-                databaseContainer: database,
+                database: database,
                 fetchRequest: ChannelDTO.channelListFetchRequest(
                     query: query,
                     chatClientConfig: clientConfig

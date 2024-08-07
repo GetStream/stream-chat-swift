@@ -6,21 +6,19 @@ import Foundation
 @testable import StreamChat
 
 final class TestChannelObserver {
-    let databaseObserver: EntityDatabaseObserver<ChatChannel, ChannelDTO>
+    let databaseObserver: StateLayerDatabaseObserver<EntityResult, ChatChannel, ChannelDTO>
 
     var observedChanges: [EntityChange<ChatChannel>] = []
 
     init(cid: ChannelId, database: DatabaseContainer) {
-        databaseObserver = .init(
-            context: database.viewContext,
+        databaseObserver = StateLayerDatabaseObserver(
+            database: database,
             fetchRequest: ChannelDTO.fetchRequest(for: cid),
             itemCreator: { try $0.asModel() }
         )
 
-        databaseObserver.onChange { [weak self] change in
+        try! databaseObserver.startObserving(onContextDidChange: { [weak self] _, change in
             self?.observedChanges.append(change)
-        }
-
-        try! databaseObserver.startObserving()
+        })
     }
 }

@@ -85,7 +85,10 @@ final class MemberEventMiddleware_Tests: XCTestCase {
         let channelListObserver = TestChannelListObserver(database: database)
 
         // Simulate `MemberAddedEvent` event.
-        let forwardedEvent = middleware.handle(event: event, session: database.viewContext)
+        var forwardedEvent: Event?
+        try database.writeSynchronously { session in
+            forwardedEvent = self.middleware.handle(event: event, session: session)
+        }
 
         // Load the channel.
         let channel = try XCTUnwrap(
@@ -364,7 +367,10 @@ final class MemberEventMiddleware_Tests: XCTestCase {
         let event = try MemberUpdatedEventDTO(from: eventPayload)
 
         // Simulate `MemberUpdatedEvent` event.
-        let forwardedEvent = middleware.handle(event: event, session: database.viewContext)
+        var forwardedEvent: Event?
+        try database.writeSynchronously { session in
+            forwardedEvent = self.middleware.handle(event: event, session: session)
+        }
 
         // Load the channel again
         channel = try XCTUnwrap(
@@ -417,7 +423,10 @@ final class MemberEventMiddleware_Tests: XCTestCase {
         let channelListObserver = TestChannelListObserver(database: database)
 
         // Simulate `NotificationAddedToChannelEvent` event.
-        let forwardedEvent = middleware.handle(event: event, session: database.viewContext)
+        var forwardedEvent: Event?
+        try database.writeSynchronously { session in
+            forwardedEvent = self.middleware.handle(event: event, session: session)
+        }
 
         // Assert membership is not nil
         XCTAssertNotNil(channel)
@@ -558,7 +567,10 @@ final class MemberEventMiddleware_Tests: XCTestCase {
         let channelListObserver = TestChannelListObserver(database: database)
 
         // Simulate `NotificationAddedToChannelEvent` event.
-        let forwardedEvent = middleware.handle(event: event, session: database.viewContext)
+        var forwardedEvent: Event?
+        try database.writeSynchronously { session in
+            forwardedEvent = self.middleware.handle(event: event, session: session)
+        }
 
         // Assert membership is not nil
         XCTAssertNotNil(channel)
@@ -651,7 +663,10 @@ final class MemberEventMiddleware_Tests: XCTestCase {
         let channelListObserver = TestChannelListObserver(database: database)
 
         // Simulate `NotificationAddedToChannelEvent` event.
-        let forwardedEvent = middleware.handle(event: event, session: database.viewContext)
+        var forwardedEvent: Event?
+        try database.writeSynchronously { session in
+            forwardedEvent = self.middleware.handle(event: event, session: session)
+        }
 
         // Assert membership is not nil
         XCTAssertNotNil(channel)
@@ -701,7 +716,10 @@ final class MemberEventMiddleware_Tests: XCTestCase {
         let channelListObserver = TestChannelListObserver(database: database)
 
         // Simulate `NotificationAddedToChannelEvent` event.
-        let forwardedEvent = middleware.handle(event: event, session: database.viewContext)
+        var forwardedEvent: Event?
+        try database.writeSynchronously { session in
+            forwardedEvent = self.middleware.handle(event: event, session: session)
+        }
 
         // Assert membership is not nil
         XCTAssertNotNil(channel)

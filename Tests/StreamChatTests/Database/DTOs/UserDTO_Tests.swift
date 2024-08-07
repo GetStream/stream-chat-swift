@@ -302,15 +302,12 @@ final class UserDTO_Tests: XCTestCase {
         }
 
         // Arrange: Observe changes on members
-        let observer = EntityDatabaseObserver<MemberDTO, MemberDTO>(
+        let observer = StateLayerDatabaseObserver<EntityResult, MemberDTO, MemberDTO>(
             context: database.viewContext,
-            fetchRequest: MemberDTO.member(userId, in: channelId),
-            itemCreator: { $0 }
+            fetchRequest: MemberDTO.member(userId, in: channelId)
         )
-        try observer.startObserving()
-
         var receivedChange: EntityChange<MemberDTO>?
-        observer.onChange { receivedChange = $0 }
+        try observer.startObserving(onContextDidChange: { receivedChange = $1 })
 
         // Act: Update user
         try database.writeSynchronously { session in
@@ -341,15 +338,12 @@ final class UserDTO_Tests: XCTestCase {
         }
 
         // Arrange: Observe changes on current user
-        let observer = EntityDatabaseObserver<CurrentUserDTO, CurrentUserDTO>(
+        let observer = StateLayerDatabaseObserver<EntityResult, CurrentUserDTO, CurrentUserDTO>(
             context: database.viewContext,
-            fetchRequest: CurrentUserDTO.defaultFetchRequest,
-            itemCreator: { $0 }
+            fetchRequest: CurrentUserDTO.defaultFetchRequest
         )
-        try observer.startObserving()
-
         var receivedChange: EntityChange<CurrentUserDTO>?
-        observer.onChange { receivedChange = $0 }
+        try observer.startObserving(onContextDidChange: { receivedChange = $1 })
 
         // Act: Update user
         try database.writeSynchronously { session in
@@ -381,16 +375,13 @@ final class UserDTO_Tests: XCTestCase {
         }
 
         // Arrange: Observe changes on channel
-        let observer = EntityDatabaseObserver<ChannelDTO, ChannelDTO>(
+        let observer = StateLayerDatabaseObserver<EntityResult, ChannelDTO, ChannelDTO>(
             context: database.viewContext,
-            fetchRequest: ChannelDTO.fetchRequest(for: channelId),
-            itemCreator: { $0 }
+            fetchRequest: ChannelDTO.fetchRequest(for: channelId)
         )
-        try observer.startObserving()
-
         var receivedChange: EntityChange<ChannelDTO>?
-        observer.onChange { receivedChange = $0 }
-
+        try observer.startObserving(onContextDidChange: { receivedChange = $1 })
+        
         // Act: Update user
         try database.writeSynchronously { session in
             let loadedUser: UserDTO = try XCTUnwrap(session.user(id: userId))
@@ -421,20 +412,17 @@ final class UserDTO_Tests: XCTestCase {
         }
 
         // Arrange: Observe changes on messages
-        let observer = EntityDatabaseObserver<MessageDTO, MessageDTO>(
+        let observer = StateLayerDatabaseObserver<EntityResult, MessageDTO, MessageDTO>(
             context: database.viewContext,
             fetchRequest: MessageDTO.messagesFetchRequest(
                 for: channelId,
                 pageSize: 20,
                 deletedMessagesVisibility: .alwaysVisible,
                 shouldShowShadowedMessages: false
-            ),
-            itemCreator: { $0 }
+            )
         )
-        try observer.startObserving()
-
         var receivedChange: EntityChange<MessageDTO>?
-        observer.onChange { receivedChange = $0 }
+        try observer.startObserving(onContextDidChange: { receivedChange = $1 })
 
         // Act: Update user name
         try database.writeSynchronously { session in

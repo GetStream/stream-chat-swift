@@ -53,12 +53,12 @@ final class StateLayerDatabaseObserver<ResultType: DatabaseObserverType, Item, D
 
 extension StateLayerDatabaseObserver where ResultType == EntityResult {
     convenience init(
-        databaseContainer: DatabaseContainer,
+        database: DatabaseContainer,
         fetchRequest: NSFetchRequest<DTO>,
         itemCreator: @escaping (DTO) throws -> Item
     ) {
         self.init(
-            context: databaseContainer.stateLayerContext,
+            context: database.stateLayerContext,
             fetchRequest: fetchRequest,
             itemCreator: itemCreator,
             itemReuseKeyPaths: nil,
@@ -84,7 +84,7 @@ extension StateLayerDatabaseObserver where ResultType == EntityResult {
     ///
     /// - Returns: Returns the current state of the item in the local database.
     func startObserving(didChange: @escaping @MainActor(Item?) async -> Void) throws -> Item? {
-        try startObserving(onContextDidChange: { item in Task.mainActor { await didChange(item) } })
+        try startObserving(onContextDidChange: { item, _ in Task.mainActor { await didChange(item) } })
     }
     
     /// Starts observing the database and dispatches changes on the NSManagedObjectContext's queue.
@@ -94,16 +94,18 @@ extension StateLayerDatabaseObserver where ResultType == EntityResult {
     /// - Note: Use it if you need to do additional processing on the context's queue.
     ///
     /// - Returns: Returns the current state of the item in the local database.
-    func startObserving(onContextDidChange: @escaping (Item?) -> Void) throws -> Item? {
+    @discardableResult
+    func startObserving(onContextDidChange: @escaping (Item?, EntityChange<Item>) -> Void) throws -> Item? {
         changeAggregator.onDidChange = { [weak self] changes in
             guard let self else { return }
+            guard let change = changes.first else { return }
             // Runs on the NSManagedObjectContext's queue, therefore skip performAndWait
             let item = Self.makeEntity(
                 frc: self.frc,
                 change: changes.first,
                 itemCreator: self.itemCreator
             )
-            onContextDidChange(item)
+            onContextDidChange(item, EntityChange(listChange: change))
         }
         frc.delegate = changeAggregator
         try frc.performFetch()
@@ -136,14 +138,14 @@ extension StateLayerDatabaseObserver where ResultType == EntityResult {
 
 extension StateLayerDatabaseObserver where ResultType == ListResult {
     convenience init(
-        databaseContainer: DatabaseContainer,
+        database: DatabaseContainer,
         fetchRequest: NSFetchRequest<DTO>,
         itemCreator: @escaping (DTO) throws -> Item,
         itemReuseKeyPaths: (item: KeyPath<Item, String>, dto: KeyPath<DTO, String>)?,
         sorting: [SortValue<Item>] = []
     ) {
         self.init(
-            context: databaseContainer.stateLayerContext,
+            context: database.stateLayerContext,
             fetchRequest: fetchRequest,
             itemCreator: itemCreator,
             itemReuseKeyPaths: itemReuseKeyPaths,
@@ -167,7 +169,7 @@ extension StateLayerDatabaseObserver where ResultType == ListResult {
     ///
     /// - Returns: Returns the current state of items in the local database.
     func startObserving(didChange: @escaping @MainActor(StreamCollection<Item>) async -> Void) throws -> StreamCollection<Item> {
-        try startObserving(onContextDidChange: { items in
+        try startObserving(onContextDidChange: { items, _ in
             Task.mainActor { await didChange(items) }
         })
     }
@@ -179,12 +181,12 @@ extension StateLayerDatabaseObserver where ResultType == ListResult {
     /// - Note: Use it if you need to do additional processing on the context's queue.
     ///
     /// - Returns: Returns the current state of items in the local database.
-    func startObserving(onContextDidChange: @escaping (StreamCollection<Item>) -> Void) throws -> StreamCollection<Item> {
+    @discardableResult func startObserving(onContextDidChange: @escaping (StreamCollection<Item>, [ListChange<Item>]) -> Void) throws -> StreamCollection<Item> {
         changeAggregator.onDidChange = { [weak self] changes in
             guard let self else { return }
             // Runs on the NSManagedObjectContext's queue, therefore skip performAndWait
             let items = self.updateItems(changes)
-            onContextDidChange(StreamCollection(items))
+            onContextDidChange(StreamCollection(items), changes)
         }
         frc.delegate = changeAggregator
         try frc.performFetch()
@@ -202,5 +204,23 @@ extension StateLayerDatabaseObserver where ResultType == ListResult {
         )
         reuseItems = items
         return items
+    }
+}
+
+// MARK: - DTO Observer
+
+extension StateLayerDatabaseObserver where DTO == Item {
+    convenience init(
+        context: NSManagedObjectContext,
+        fetchRequest: NSFetchRequest<DTO>,
+        sorting: [SortValue<Item>] = []
+    ) {
+        self.init(
+            context: context,
+            fetchRequest: fetchRequest,
+            itemCreator: { $0 },
+            itemReuseKeyPaths: nil,
+            sorting: sorting
+        )
     }
 }

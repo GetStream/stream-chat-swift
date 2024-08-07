@@ -10,7 +10,7 @@ extension ConnectedUserState {
         
         init(database: DatabaseContainer) {
             userObserver = StateLayerDatabaseObserver(
-                databaseContainer: database,
+                database: database,
                 fetchRequest: CurrentUserDTO.defaultFetchRequest,
                 itemCreator: { try $0.asModel() }
             )
