@@ -1654,19 +1654,17 @@ extension Chat_Tests {
                 channelUpdaterBuilder: { [unowned self] in
                     self.channelUpdater = ChannelUpdater(
                         channelRepository: $0,
-                        callRepository: $1,
-                        messageRepository: $2,
-                        paginationStateHandler: $3,
-                        database: $4,
-                        apiClient: $5
+                        messageRepository: $1,
+                        paginationStateHandler: $2,
+                        database: $3,
+                        apiClient: $4
                     )
                     self.channelUpdaterMock = ChannelUpdater_Mock(
                         channelRepository: $0,
-                        callRepository: $1,
-                        messageRepository: $2,
-                        paginationStateHandler: $3,
-                        database: $4,
-                        apiClient: $5
+                        messageRepository: $1,
+                        paginationStateHandler: $2,
+                        database: $3,
+                        apiClient: $4
                     )
                     return usesMockedUpdaters ? self.channelUpdaterMock : self.channelUpdater
                 },

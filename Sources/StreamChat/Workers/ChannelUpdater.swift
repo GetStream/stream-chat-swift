@@ -7,20 +7,17 @@ import Foundation
 /// Makes a channel query call to the backend and updates the local storage with the results.
 class ChannelUpdater: Worker {
     private let channelRepository: ChannelRepository
-    private let callRepository: CallRepository
     private let messageRepository: MessageRepository
     let paginationStateHandler: MessagesPaginationStateHandling
 
     init(
         channelRepository: ChannelRepository,
-        callRepository: CallRepository,
         messageRepository: MessageRepository,
         paginationStateHandler: MessagesPaginationStateHandling,
         database: DatabaseContainer,
         apiClient: APIClient
     ) {
         self.channelRepository = channelRepository
-        self.callRepository = callRepository
         self.messageRepository = messageRepository
         self.paginationStateHandler = paginationStateHandler
         super.init(database: database, apiClient: apiClient)
@@ -646,10 +643,6 @@ class ChannelUpdater: Worker {
                 completion(.failure(error))
             }
         }
-    }
-
-    func createCall(in cid: ChannelId, callId: String, type: String, completion: @escaping (Result<CallWithToken, Error>) -> Void) {
-        callRepository.createCall(in: cid, callId: callId, type: type, completion: completion)
     }
     
     func deleteFile(in cid: ChannelId, url: String, completion: ((Error?) -> Void)? = nil) {

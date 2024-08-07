@@ -76,8 +76,6 @@ public class ChatClient {
 
     let syncRepository: SyncRepository
 
-    let callRepository: CallRepository
-
     let channelRepository: ChannelRepository
     
     let pollsRepository: PollsRepository
@@ -208,7 +206,6 @@ public class ChatClient {
         self.syncRepository = syncRepository
         authenticationRepository = authRepository
         extensionLifecycle = environment.extensionLifecycleBuilder(config.applicationGroupIdentifier)
-        callRepository = environment.callRepositoryBuilder(apiClient)
         channelRepository = environment.channelRepositoryBuilder(
             databaseContainer,
             apiClient

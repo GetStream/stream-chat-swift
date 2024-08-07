@@ -24,7 +24,6 @@ final class ChannelUpdater_Tests: XCTestCase {
         paginationStateHandler = MessagesPaginationStateHandler_Mock()
         channelUpdater = ChannelUpdater(
             channelRepository: channelRepository,
-            callRepository: CallRepository(apiClient: apiClient),
             messageRepository: messageRepository,
             paginationStateHandler: paginationStateHandler,
             database: database,

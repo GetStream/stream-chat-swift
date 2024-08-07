@@ -5141,77 +5141,6 @@ final class ChannelController_Tests: XCTestCase {
         XCTAssert(client.activeChannelControllers.allObjects.first === controller)
     }
 
-    // MARK: Test creation of a call
-
-    func test_createCall_failsWhenChannelIsNotAlreadyCreated() {
-        let controller = ChatChannelController(
-            channelQuery: ChannelQuery(cid: channelId),
-            channelListQuery: nil,
-            client: ChatClient.mock,
-            isChannelAlreadyCreated: false
-        )
-
-        let id: String = .unique
-        let type: String = "video"
-        var completionError: Error?
-        controller.createCall(id: id, type: type) { result in
-            completionError = result.error
-        }
-
-        AssertAsync.willBeTrue(completionError != nil)
-    }
-
-    func test_createCall_propagatesErrorFromUpdater() throws {
-        let id: String = .unique
-        let type: String = "video"
-        var completionError: Error?
-
-        // Set completion handler
-        let expectation = XCTestExpectation()
-        controller.createCall(id: id, type: type) { result in
-            completionError = result.error
-            expectation.fulfill()
-        }
-
-        // Simulate failed update
-        let testError = TestError()
-        let completion = try XCTUnwrap(env.channelUpdater?.createCall_completion)
-        completion(.failure(testError))
-
-        // Error is propagated to completion
-        wait(for: [expectation], timeout: defaultTimeout)
-        XCTAssertEqual(completionError as? TestError, testError)
-    }
-
-    func test_createCall_propagatesResultFromUpdater() {
-        let id: String = .unique
-        let provider: String = "agora"
-        let token: String = .unique
-        let type: String = "video"
-
-        var resultingCallWithToken: CallWithToken?
-        let mockCallWithToken = CallWithToken(
-            call: Call(
-                id: id,
-                provider: provider,
-                agora: nil,
-                hms: nil
-            ),
-            token: token
-        )
-
-        // Set completion handler
-        controller.createCall(id: id, type: type) { result in
-            resultingCallWithToken = result.value
-        }
-
-        // Simulate successful completion
-        env.channelUpdater!.createCall_completion!(.success(mockCallWithToken))
-
-        // Result is propagated to completion
-        AssertAsync.willBeEqual(resultingCallWithToken, mockCallWithToken)
-    }
-
     // MARK: shouldSendTypingEvents
 
     func test_shouldSendTypingEvents_default() throws {
@@ -5655,11 +5584,10 @@ private class TestEnvironment {
         channelUpdaterBuilder: { [unowned self] in
             self.channelUpdater = ChannelUpdater_Mock(
                 channelRepository: $0,
-                callRepository: $1,
-                messageRepository: $2,
-                paginationStateHandler: $3,
-                database: $4,
-                apiClient: $5
+                messageRepository: $1,
+                paginationStateHandler: $2,
+                database: $3,
+                apiClient: $4
             )
             return self.channelUpdater!
         },
