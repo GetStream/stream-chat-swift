@@ -104,6 +104,7 @@ open class PollAttachmentOptionListItemView: _View, ThemeProvider {
 
         HContainer(spacing: 3) {
             voteCheckboxButton
+                .width(25)
             VContainer(spacing: 3) {
                 HContainer(spacing: 4, alignment: .top) {
                     optionNameLabel
