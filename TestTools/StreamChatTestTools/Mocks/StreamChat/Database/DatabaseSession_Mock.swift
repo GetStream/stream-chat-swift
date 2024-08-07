@@ -215,6 +215,14 @@ class DatabaseSession_Mock: DatabaseSession {
     func rescueMessagesStuckInSending() {
         underlyingSession.rescueMessagesStuckInSending()
     }
+    
+    func loadMessages(from fromIncludingDate: Date, to toIncludingDate: Date, in cid: ChannelId, sortAscending: Bool) throws -> [MessageDTO] {
+        try underlyingSession.loadMessages(from: fromIncludingDate, to: toIncludingDate, in: cid, sortAscending: sortAscending)
+    }
+    
+    func loadReplies(from fromIncludingDate: Date, to toIncludingDate: Date, in messageId: MessageId, sortAscending: Bool) throws -> [MessageDTO] {
+        try underlyingSession.loadReplies(from: fromIncludingDate, to: toIncludingDate, in: messageId, sortAscending: sortAscending)
+    }
 
     func reaction(messageId: MessageId, userId: UserId, type: MessageReactionType) -> MessageReactionDTO? {
         underlyingSession.reaction(messageId: messageId, userId: userId, type: type)

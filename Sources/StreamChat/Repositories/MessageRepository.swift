@@ -333,15 +333,12 @@ class MessageRepository {
 extension MessageRepository {
     /// Fetches messages from the database with a date range.
     func messages(from fromDate: Date, to toDate: Date, in cid: ChannelId) async throws -> [ChatMessage] {
-        try await database.read { context in
-            try MessageDTO.loadMessages(
+        try await database.read { session in
+            try session.loadMessages(
                 from: fromDate,
                 to: toDate,
                 in: cid,
-                sortAscending: true,
-                deletedMessagesVisibility: context.deletedMessagesVisibility ?? .alwaysVisible,
-                shouldShowShadowedMessages: context.shouldShowShadowedMessages ?? true,
-                context: context
+                sortAscending: true
             )
             .map { try $0.asModel() }
         }
@@ -349,15 +346,12 @@ extension MessageRepository {
     
     /// Fetches replies from the database with a date range.
     func replies(from fromDate: Date, to toDate: Date, in message: MessageId) async throws -> [ChatMessage] {
-        try await database.read { context in
-            try MessageDTO.loadReplies(
+        try await database.read { session in
+            try session.loadReplies(
                 from: fromDate,
                 to: toDate,
                 in: message,
-                sortAscending: true,
-                deletedMessagesVisibility: context.deletedMessagesVisibility ?? .alwaysVisible,
-                shouldShowShadowedMessages: context.shouldShowShadowedMessages ?? true,
-                context: context
+                sortAscending: true
             )
             .map { try $0.asModel() }
         }

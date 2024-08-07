@@ -253,21 +253,6 @@ class DatabaseContainer: NSPersistentContainer {
         }
     }
     
-    func read<T>(_ actions: @escaping (DatabaseSession) throws -> T, completion: @escaping (Result<T, Error>) -> Void) {
-        let context = backgroundReadOnlyContext
-        context.perform {
-            do {
-                let results = try actions(context)
-                if context.hasChanges {
-                    assertionFailure("Background context is read only, but calling actions() created changes")
-                }
-                completion(.success(results))
-            } catch {
-                completion(.failure(error))
-            }
-        }
-    }
-    
     func write(_ actions: @escaping (DatabaseSession) throws -> Void) async throws {
         try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
             write(actions) { error in
@@ -279,34 +264,40 @@ class DatabaseContainer: NSPersistentContainer {
             }
         }
     }
-    
-    func read<T>(_ actions: @escaping (NSManagedObjectContext) throws -> T) async throws -> T {
-        let context = stateLayerContext
-        return try await withCheckedThrowingContinuation { continuation in
-            context.perform {
-                do {
-                    let results = try actions(context)
-                    if context.hasChanges {
-                        assertionFailure("State layer context is read only, but calling actions() created changes")
-                    }
-                    continuation.resume(returning: results)
-                } catch {
-                    continuation.resume(throwing: error)
+        
+    private func read<T>(
+        from context: NSManagedObjectContext,
+        _ actions: @escaping (DatabaseSession) throws -> T,
+        completion: @escaping (Result<T, Error>) -> Void
+    ) {
+        context.perform {
+            do {
+                let changeCounts = context.currentChangeCounts()
+                let results = try actions(context)
+                if changeCounts != context.currentChangeCounts() {
+                    assertionFailure("Context is read only, but actions created changes: (updated=\(context.updatedObjects), inserted=\(context.insertedObjects), deleted=\(context.deletedObjects)")
                 }
+                completion(.success(results))
+            } catch {
+                completion(.failure(error))
+            }
+        }
+    }
+    
+    func read<T>(_ actions: @escaping (DatabaseSession) throws -> T, completion: @escaping (Result<T, Error>) -> Void) {
+        read(from: backgroundReadOnlyContext, actions, completion: completion)
+    }
+    
+    func read<T>(_ actions: @escaping (DatabaseSession) throws -> T) async throws -> T {
+        try await withCheckedThrowingContinuation { continuation in
+            read(from: stateLayerContext, actions) { result in
+                continuation.resume(with: result)
             }
         }
     }
 
     /// Removes all data from the local storage.
     func removeAllData(completion: ((Error?) -> Void)? = nil) {
-        /// Cleanup the current user cache for all manage object contexts.
-        allContext.forEach { context in
-            context.perform {
-                context.invalidateCurrentUserCache()
-                context.reset()
-            }
-        }
-        
         let entityNames = managedObjectModel.entities.compactMap(\.name)
         writableContext.perform { [weak self] in
             self?.canWriteData = false
@@ -332,10 +323,23 @@ class DatabaseContainer: NSPersistentContainer {
             }
             if !deletedObjectIds.isEmpty, let contexts = self?.allContext {
                 log.debug("Merging \(deletedObjectIds.count) deletions to contexts", subsystems: .database)
+                // Merging changes triggers DB observers to react to deletions
                 NSManagedObjectContext.mergeChanges(
                     fromRemoteContextSave: [NSDeletedObjectsKey: deletedObjectIds],
                     into: contexts
                 )
+            }
+            // Finally reset states of all the contexts after batch delete and deletion propagation.
+            if let writableContext = self?.writableContext, let allContext = self?.allContext {
+                writableContext.invalidateCurrentUserCache()
+                writableContext.reset()
+                
+                for context in allContext where context != writableContext {
+                    context.performAndWait {
+                        context.invalidateCurrentUserCache()
+                        context.reset()
+                    }
+                }
             }
             self?.canWriteData = true
             completion?(lastEncounteredError)
@@ -450,6 +454,14 @@ extension NSManagedObjectContext {
         insertedObjects.forEach { discardChanges(for: $0) }
         updatedObjects.forEach { discardChanges(for: $0) }
         deletedObjects.forEach { discardChanges(for: $0) }
+    }
+    
+    fileprivate func currentChangeCounts() -> [String: Int] {
+        [
+            "inserted": insertedObjects.count,
+            "updated": updatedObjects.count,
+            "deleted": deletedObjects.count
+        ]
     }
     
     func observeChanges(in otherContext: NSManagedObjectContext) -> NSObjectProtocol {

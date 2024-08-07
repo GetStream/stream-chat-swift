@@ -194,6 +194,20 @@ protocol MessageDatabaseSession {
     /// to avoid those from being stuck there in limbo.
     /// Messages can get stuck in `.sending` state if the network request to send them takes to much, and the app is backgrounded or killed.
     func rescueMessagesStuckInSending()
+    
+    func loadMessages(
+        from fromIncludingDate: Date,
+        to toIncludingDate: Date,
+        in cid: ChannelId,
+        sortAscending: Bool
+    ) throws -> [MessageDTO]
+    
+    func loadReplies(
+        from fromIncludingDate: Date,
+        to toIncludingDate: Date,
+        in messageId: MessageId,
+        sortAscending: Bool
+    ) throws -> [MessageDTO]
 }
 
 extension MessageDatabaseSession {

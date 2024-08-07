@@ -1154,6 +1154,53 @@ extension NSManagedObjectContext: MessageDatabaseSession {
             $0.localState = .pendingUpload
         }
     }
+    
+    func loadMessage(
+        before id: MessageId,
+        cid: String
+    ) throws -> MessageDTO? {
+        try MessageDTO.loadMessage(
+            before: id,
+            cid: cid,
+            deletedMessagesVisibility: deletedMessagesVisibility ?? .alwaysVisible,
+            shouldShowShadowedMessages: shouldShowShadowedMessages ?? true,
+            context: self
+        )
+    }
+    
+    func loadMessages(
+        from fromIncludingDate: Date,
+        to toIncludingDate: Date,
+        in cid: ChannelId,
+        sortAscending: Bool
+    ) throws -> [MessageDTO] {
+        try MessageDTO.loadMessages(
+            from: fromIncludingDate,
+            to: toIncludingDate,
+            in: cid,
+            sortAscending: sortAscending,
+            deletedMessagesVisibility: deletedMessagesVisibility ?? .alwaysVisible,
+            shouldShowShadowedMessages: shouldShowShadowedMessages ?? true,
+            context: self
+        )
+    }
+    
+    func loadReplies(
+        from fromIncludingDate: Date,
+        to toIncludingDate: Date,
+        in messageId: MessageId,
+        sortAscending: Bool
+    ) throws -> [MessageDTO] {
+        try MessageDTO.loadReplies(
+            from: fromIncludingDate,
+            to: toIncludingDate,
+            in: messageId,
+            sortAscending: sortAscending,
+            deletedMessagesVisibility: deletedMessagesVisibility ?? .alwaysVisible,
+            shouldShowShadowedMessages: shouldShowShadowedMessages ?? true,
+            context: self
+        )
+    }
 }
 
 extension MessageDTO {
