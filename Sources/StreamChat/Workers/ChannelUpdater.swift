@@ -718,8 +718,8 @@ extension ChannelUpdater {
             }
         }
         guard let ids = payload.watchers?.map(\.id) else { return [] }
-        return try await database.read { context in
-            try ids.compactMap { try UserDTO.load(id: $0, context: context)?.asModel() }
+        return try await database.read { session in
+            try ids.compactMap { try session.user(id: $0)?.asModel() }
         }
     }
     
