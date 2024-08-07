@@ -215,7 +215,6 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
         self.messageOrdering = messageOrdering
         updater = self.environment.channelUpdaterBuilder(
             client.channelRepository,
-            client.callRepository,
             client.messageRepository,
             client.makeMessagesPaginationStateHandler(),
             client.databaseContainer,
@@ -1206,26 +1205,6 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
 
         return max(0, cooldownDuration - Int(currentTime))
     }
-
-    public func createCall(id: String, type: String, completion: @escaping (Result<CallWithToken, Error>) -> Void) {
-        guard let cid = cid, isChannelAlreadyCreated else {
-            channelModificationFailed { completion(.failure($0 ?? ClientError.ChannelNotCreatedYet())) }
-            return
-        }
-
-        updater.createCall(in: cid, callId: id, type: type) {
-            switch $0 {
-            case let .success(messages):
-                self.callback {
-                    completion(.success(messages))
-                }
-            case let .failure(error):
-                self.callback {
-                    completion(.failure(error))
-                }
-            }
-        }
-    }
     
     /// Deletes a file associated with the given URL in the channel.
     /// - Parameters:
@@ -1339,7 +1318,6 @@ extension ChatChannelController {
     struct Environment {
         var channelUpdaterBuilder: (
             _ channelRepository: ChannelRepository,
-            _ callRepository: CallRepository,
             _ messageRepository: MessageRepository,
             _ paginationStateHandler: MessagesPaginationStateHandling,
             _ database: DatabaseContainer,

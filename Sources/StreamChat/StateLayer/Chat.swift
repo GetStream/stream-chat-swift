@@ -29,7 +29,6 @@ public class Chat {
         databaseContainer = client.databaseContainer
         channelUpdater = environment.channelUpdaterBuilder(
             client.channelRepository,
-            client.callRepository,
             client.messageRepository,
             client.makeMessagesPaginationStateHandler(),
             client.databaseContainer,
@@ -1382,7 +1381,6 @@ extension Chat {
         
         var channelUpdaterBuilder: (
             _ channelRepository: ChannelRepository,
-            _ callRepository: CallRepository,
             _ messageRepository: MessageRepository,
             _ paginationStateHandler: MessagesPaginationStateHandling,
             _ database: DatabaseContainer,
