@@ -1440,6 +1440,20 @@
 		AD4C8C232C5D479B00E1C414 /* StackedUserAvatarsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD4C8C212C5D479B00E1C414 /* StackedUserAvatarsView.swift */; };
 		AD4CDD85296499160057BC8A /* ScrollViewPaginationHandler_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD4CDD81296498D20057BC8A /* ScrollViewPaginationHandler_Tests.swift */; };
 		AD4CDD862964991A0057BC8A /* InvertedScrollViewPaginationHandler_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD4CDD83296498EB0057BC8A /* InvertedScrollViewPaginationHandler_Tests.swift */; };
+		AD4F89D02C666471006DF7E5 /* PollResultsOptionHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD4F89CA2C666471006DF7E5 /* PollResultsOptionHeaderView.swift */; };
+		AD4F89D12C666471006DF7E5 /* PollResultsOptionHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD4F89CA2C666471006DF7E5 /* PollResultsOptionHeaderView.swift */; };
+		AD4F89D22C666471006DF7E5 /* PollResultsOptionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD4F89CB2C666471006DF7E5 /* PollResultsOptionView.swift */; };
+		AD4F89D32C666471006DF7E5 /* PollResultsOptionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD4F89CB2C666471006DF7E5 /* PollResultsOptionView.swift */; };
+		AD4F89D42C666471006DF7E5 /* PollResultsVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD4F89CC2C666471006DF7E5 /* PollResultsVC.swift */; };
+		AD4F89D52C666471006DF7E5 /* PollResultsVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD4F89CC2C666471006DF7E5 /* PollResultsVC.swift */; };
+		AD4F89D62C666471006DF7E5 /* PollResultsVoteItemCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD4F89CD2C666471006DF7E5 /* PollResultsVoteItemCell.swift */; };
+		AD4F89D72C666471006DF7E5 /* PollResultsVoteItemCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD4F89CD2C666471006DF7E5 /* PollResultsVoteItemCell.swift */; };
+		AD4F89D82C666471006DF7E5 /* PollResultsVoteItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD4F89CE2C666471006DF7E5 /* PollResultsVoteItemView.swift */; };
+		AD4F89D92C666471006DF7E5 /* PollResultsVoteItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD4F89CE2C666471006DF7E5 /* PollResultsVoteItemView.swift */; };
+		AD4F89DB2C667886006DF7E5 /* PollResultsTableHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD4F89DA2C667886006DF7E5 /* PollResultsTableHeaderView.swift */; };
+		AD4F89DC2C667886006DF7E5 /* PollResultsTableHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD4F89DA2C667886006DF7E5 /* PollResultsTableHeaderView.swift */; };
+		AD4F89DE2C6A5908006DF7E5 /* PollResultsFooterButtonView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD4F89DD2C6A5908006DF7E5 /* PollResultsFooterButtonView.swift */; };
+		AD4F89DF2C6A5908006DF7E5 /* PollResultsFooterButtonView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD4F89DD2C6A5908006DF7E5 /* PollResultsFooterButtonView.swift */; };
 		AD4FB7152C1B758100EB73C5 /* Unread.json in Resources */ = {isa = PBXBuildFile; fileRef = AD4FB7142C1B758100EB73C5 /* Unread.json */; };
 		AD50BC072AF0336D00EF8523 /* MessageModerationDetails_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD50BC062AF0336D00EF8523 /* MessageModerationDetails_Tests.swift */; };
 		AD50C31D2A607A88002FDD06 /* ChannelListSearchStrategy.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD50C31C2A607A88002FDD06 /* ChannelListSearchStrategy.swift */; };
@@ -4136,6 +4150,13 @@
 		AD4C8C212C5D479B00E1C414 /* StackedUserAvatarsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StackedUserAvatarsView.swift; sourceTree = "<group>"; };
 		AD4CDD81296498D20057BC8A /* ScrollViewPaginationHandler_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScrollViewPaginationHandler_Tests.swift; sourceTree = "<group>"; };
 		AD4CDD83296498EB0057BC8A /* InvertedScrollViewPaginationHandler_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InvertedScrollViewPaginationHandler_Tests.swift; sourceTree = "<group>"; };
+		AD4F89CA2C666471006DF7E5 /* PollResultsOptionHeaderView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PollResultsOptionHeaderView.swift; sourceTree = "<group>"; };
+		AD4F89CB2C666471006DF7E5 /* PollResultsOptionView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PollResultsOptionView.swift; sourceTree = "<group>"; };
+		AD4F89CC2C666471006DF7E5 /* PollResultsVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PollResultsVC.swift; sourceTree = "<group>"; };
+		AD4F89CD2C666471006DF7E5 /* PollResultsVoteItemCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PollResultsVoteItemCell.swift; sourceTree = "<group>"; };
+		AD4F89CE2C666471006DF7E5 /* PollResultsVoteItemView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PollResultsVoteItemView.swift; sourceTree = "<group>"; };
+		AD4F89DA2C667886006DF7E5 /* PollResultsTableHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PollResultsTableHeaderView.swift; sourceTree = "<group>"; };
+		AD4F89DD2C6A5908006DF7E5 /* PollResultsFooterButtonView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PollResultsFooterButtonView.swift; sourceTree = "<group>"; };
 		AD4FB7142C1B758100EB73C5 /* Unread.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = Unread.json; sourceTree = "<group>"; };
 		AD50BC062AF0336D00EF8523 /* MessageModerationDetails_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageModerationDetails_Tests.swift; sourceTree = "<group>"; };
 		AD50C31C2A607A88002FDD06 /* ChannelListSearchStrategy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelListSearchStrategy.swift; sourceTree = "<group>"; };
@@ -8338,6 +8359,29 @@
 			path = Composer;
 			sourceTree = "<group>";
 		};
+		AD4F89CF2C666471006DF7E5 /* PollResultsVC */ = {
+			isa = PBXGroup;
+			children = (
+				AD4F89E02C6A591B006DF7E5 /* PollResultsVoteItem */,
+				AD4F89CC2C666471006DF7E5 /* PollResultsVC.swift */,
+				AD4F89DA2C667886006DF7E5 /* PollResultsTableHeaderView.swift */,
+				AD4F89CA2C666471006DF7E5 /* PollResultsOptionHeaderView.swift */,
+				AD4F89CB2C666471006DF7E5 /* PollResultsOptionView.swift */,
+				AD4F89DD2C6A5908006DF7E5 /* PollResultsFooterButtonView.swift */,
+			);
+			name = PollResultsVC;
+			path = Sources/StreamChatUI/ChatMessageList/Attachments/Poll/PollResultsVC;
+			sourceTree = SOURCE_ROOT;
+		};
+		AD4F89E02C6A591B006DF7E5 /* PollResultsVoteItem */ = {
+			isa = PBXGroup;
+			children = (
+				AD4F89CE2C666471006DF7E5 /* PollResultsVoteItemView.swift */,
+				AD4F89CD2C666471006DF7E5 /* PollResultsVoteItemCell.swift */,
+			);
+			path = PollResultsVoteItem;
+			sourceTree = "<group>";
+		};
 		AD57DE742A77D566005408B6 /* Search */ = {
 			isa = PBXGroup;
 			children = (
@@ -8796,6 +8840,7 @@
 				ADF5096B2C5A80EE008F95CD /* PollAttachmentViewInjector.swift */,
 				ADF5096A2C5A80EE008F95CD /* PollAttachmentView.swift */,
 				ADF509692C5A80EE008F95CD /* PollAttachmentOptionListView */,
+				AD4F89CF2C666471006DF7E5 /* PollResultsVC */,
 			);
 			path = Poll;
 			sourceTree = "<group>";
@@ -10256,6 +10301,7 @@
 				888123D2255D430B00070D5A /* UIView+Extensions.swift in Sources */,
 				AD158B6526C1873000C104CD /* ChatThreadVC+SwiftUI.swift in Sources */,
 				8825333E258CE7AC00B77352 /* ChatMessageActionsVC.swift in Sources */,
+				AD4F89D02C666471006DF7E5 /* PollResultsOptionHeaderView.swift in Sources */,
 				F80BCA1E26304FEE00F2107B /* CloseButton.swift in Sources */,
 				22ADD682256C40410098EFEB /* ComposerView.swift in Sources */,
 				E7A37B8425ADA66E0055458F /* ChatSuggestionsHeaderView.swift in Sources */,
@@ -10290,8 +10336,11 @@
 				AD7BE1732C2347A3000A5756 /* ChatThreadListEmptyView.swift in Sources */,
 				88F836502578D16D0039AEC8 /* ChatMessageActionControl.swift in Sources */,
 				ADD328682C06B3AD00BAD0E9 /* ChatThreadListItemView.swift in Sources */,
+				AD4F89DE2C6A5908006DF7E5 /* PollResultsFooterButtonView.swift in Sources */,
+				AD4F89D42C666471006DF7E5 /* PollResultsVC.swift in Sources */,
 				88BA7F5D258B6953006CE0C5 /* ChatLoadingIndicator.swift in Sources */,
 				40FA4DD42A12A0C300DA21D2 /* SlideToCancelView.swift in Sources */,
+				AD4F89D22C666471006DF7E5 /* PollResultsOptionView.swift in Sources */,
 				ADCB578B28A42D7700B81AE8 /* Differentiable.swift in Sources */,
 				883051742630366E0069D731 /* CACornerMask+Extensions.swift in Sources */,
 				AD876B4727288DF700317314 /* ChatMessageReactionAuthorsFlowLayout.swift in Sources */,
@@ -10352,6 +10401,7 @@
 				AD4474FD263B19F90030E583 /* ImageAttachmentComposerPreview.swift in Sources */,
 				88BA7F87258B97C9006CE0C5 /* UploadingOverlayView.swift in Sources */,
 				8806570D259A51C200E31D23 /* ChatMessageInteractiveAttachmentView+ActionButton.swift in Sources */,
+				AD4F89D62C666471006DF7E5 /* PollResultsVoteItemCell.swift in Sources */,
 				E79AC10C25831A1500C3CE5D /* ChatSuggestionsCollectionView.swift in Sources */,
 				C1FC2F8527416E150062530F /* DataCache.swift in Sources */,
 				40824D0E2A1270CB003B61FD /* ChatMessageVoiceRecordingAttachmentListView.swift in Sources */,
@@ -10402,6 +10452,7 @@
 				DBC8A564258113F700B20A82 /* ChatThreadVC.swift in Sources */,
 				7973CD2F2653AE18004C7CE5 /* DefaultAttachmentPreviewProvider.swift in Sources */,
 				DB8230F2259B8DBF00E7D7FE /* ChatMessageGiphyView.swift in Sources */,
+				AD4F89DB2C667886006DF7E5 /* PollResultsTableHeaderView.swift in Sources */,
 				22086B40259509450007F8C0 /* FileAttachmentView.swift in Sources */,
 				E768AAFB2627691600328E6E /* TypingAnimationView.swift in Sources */,
 				40824D122A1270CB003B61FD /* ChatMessageVoiceRecordingAttachmentListView+ItemViewPresenter.swift in Sources */,
@@ -10427,6 +10478,7 @@
 				E79AC10B25831A1500C3CE5D /* ChatCommandSuggestionView.swift in Sources */,
 				40FA4DD82A12A0C700DA21D2 /* VoiceRecordingVC.swift in Sources */,
 				AD4473B3263ABFA20030E583 /* ChatSuggestionsCollectionReusableView.swift in Sources */,
+				AD4F89D82C666471006DF7E5 /* PollResultsVoteItemView.swift in Sources */,
 				AD470C9C26C6D8C60090759A /* ChatMessageListVCDataSource.swift in Sources */,
 				C1788F5F29C33A1000149883 /* ChatThreadRepliesCountDecorationView.swift in Sources */,
 				40824D092A1270BF003B61FD /* VoiceRecordingAttachmentViewInjector.swift in Sources */,
@@ -12335,6 +12387,7 @@
 				C121EB702746A1E600023E4C /* ImageCDN.swift in Sources */,
 				C121EB712746A1E700023E4C /* UIColor+Extensions.swift in Sources */,
 				C121EB722746A1E700023E4C /* Bundle+Extensions.swift in Sources */,
+				AD4F89D72C666471006DF7E5 /* PollResultsVoteItemCell.swift in Sources */,
 				C121EB742746A1E700023E4C /* UIImage+Extensions.swift in Sources */,
 				C121EB752746A1E700023E4C /* UIFont+Extensions.swift in Sources */,
 				AD99C909279B0E9D009DD9C5 /* MessageDateSeparatorFormatter.swift in Sources */,
@@ -12369,6 +12422,7 @@
 				40824D242A1271B9003B61FD /* PlayPauseButton.swift in Sources */,
 				C121EB892746A1E700023E4C /* TitleContainerView.swift in Sources */,
 				C121EB8A2746A1E700023E4C /* GradientView.swift in Sources */,
+				AD4F89D12C666471006DF7E5 /* PollResultsOptionHeaderView.swift in Sources */,
 				C121EB8B2746A1E700023E4C /* AttachmentActionButton.swift in Sources */,
 				C121EB8C2746A1E700023E4C /* ChatSuggestionsVC.swift in Sources */,
 				C121EB8D2746A1E700023E4C /* ChatSuggestionsHeaderView.swift in Sources */,
@@ -12438,6 +12492,7 @@
 				ADD4C0E22B30A98400F230FF /* UnsupportedAttachmentViewInjector.swift in Sources */,
 				C121EBB72746A1E900023E4C /* SwiftUIViewRepresentable.swift in Sources */,
 				C121EBB82746A1E900023E4C /* ChatLoadingIndicator.swift in Sources */,
+				AD4F89DF2C6A5908006DF7E5 /* PollResultsFooterButtonView.swift in Sources */,
 				ADEE888E289C3CC0007DF3F8 /* ChatMessageListView+DiffKit.swift in Sources */,
 				CFE5F85C2874A9330099A6A1 /* ChatChannelListEmptyView.swift in Sources */,
 				AD78F9F528EC735700BC0FCE /* SwiftyMarkdown+macOS.swift in Sources */,
@@ -12493,6 +12548,7 @@
 				C121EBD62746A1EA00023E4C /* ChatMessageReactionAppearance.swift in Sources */,
 				AD78F9FB28EC735700BC0FCE /* SwiftyLineProcessor.swift in Sources */,
 				C1788F6029C33A1000149883 /* ChatThreadRepliesCountDecorationView.swift in Sources */,
+				AD4F89D32C666471006DF7E5 /* PollResultsOptionView.swift in Sources */,
 				40824D0A2A1270BF003B61FD /* VoiceRecordingAttachmentViewInjector.swift in Sources */,
 				ADD738482A8D312B0011FE81 /* ChannelListMessageTimestampFormatter.swift in Sources */,
 				C121EBD72746A1EA00023E4C /* ChatMessageReactions+Types.swift in Sources */,
@@ -12507,9 +12563,11 @@
 				C121EBDB2746A1EA00023E4C /* ChatMessageDefaultReactionsBubbleView.swift in Sources */,
 				C121EBDC2746A1EA00023E4C /* ChatMessageReactionsBubbleTail.swift in Sources */,
 				C121EBDD2746A1EA00023E4C /* ChatMessageReactionItemView.swift in Sources */,
+				AD4F89DC2C667886006DF7E5 /* PollResultsTableHeaderView.swift in Sources */,
 				40D396282A0905560020DDC9 /* AudioRecordingNameFormatter.swift in Sources */,
 				C121EBDE2746A1EA00023E4C /* ChatReactionPickerReactionsView.swift in Sources */,
 				C121EBDF2746A1EA00023E4C /* ChatMessageAttachmentPreviewVC.swift in Sources */,
+				AD4F89D92C666471006DF7E5 /* PollResultsVoteItemView.swift in Sources */,
 				CF7B2A2728BEAA93006BE124 /* TextViewMentionedUsersHandler.swift in Sources */,
 				C121EBE02746A1EA00023E4C /* ChatFileAttachmentListView+ItemView.swift in Sources */,
 				C121EBE12746A1EA00023E4C /* ChatMessageFileAttachmentListView.swift in Sources */,
@@ -12541,6 +12599,7 @@
 				AD76CE352A5F1133003CA182 /* ChatChannelSearchVC.swift in Sources */,
 				C121EBF22746A1EB00023E4C /* ChatMessageContentView+SwiftUI.swift in Sources */,
 				406776502A14CB550079B05C /* MediaButton.swift in Sources */,
+				AD4F89D52C666471006DF7E5 /* PollResultsVC.swift in Sources */,
 				C121EBF32746A1EB00023E4C /* ChatMessageBubbleView.swift in Sources */,
 				C121EBF42746A1EB00023E4C /* ChatMessageLayoutOptions.swift in Sources */,
 				C121EBF52746A1EB00023E4C /* ChatMessageLayoutOptionsResolver.swift in Sources */,

@@ -139,7 +139,7 @@ open class PollAttachmentOptionListItemView: _View, ThemeProvider {
         }
         voteCheckboxButton.isHidden = content.poll.isClosed
 
-        if isOptionWinner {
+        if content.poll.isOptionWinner(content.option) {
             votesProgressView.tintColor = appearance.colorPalette.alternativeActiveTint
         } else {
             votesProgressView.tintColor = appearance.colorPalette.accentPrimary
