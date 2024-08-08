@@ -10,6 +10,8 @@ public extension Appearance {
         /// A formatter that converts the message to textual representation in the message list.
         public var messageTimestamp: MessageTimestampFormatter = DefaultMessageTimestampFormatter()
 
+        public var pollVoteTimestamp: MessageTimestampFormatter = ChannelListMessageTimestampFormatter()
+
         /// A formatter that converts the message to textual representation in the channel list.
         public var channelListMessageTimestamp: MessageTimestampFormatter = ChannelListMessageTimestampFormatter()
 
