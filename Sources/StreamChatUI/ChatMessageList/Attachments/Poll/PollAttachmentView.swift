@@ -18,7 +18,6 @@ open class PollAttachmentView: _View, ThemeProvider {
         }
     }
 
-    /// The object responsible to
     public var content: Content? {
         didSet {
             updateContentIfNeeded()

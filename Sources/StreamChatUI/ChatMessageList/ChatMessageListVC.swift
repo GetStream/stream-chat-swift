@@ -139,7 +139,6 @@ open class ChatMessageListVC: _ViewController,
     /// A feedbackGenerator that will be used to provide feedback when a task is successful or not.
     /// You can disable the feedback generator by overriding to `nil`.
     open private(set) lazy var notificationFeedbackGenerator: UINotificationFeedbackGenerator? = UINotificationFeedbackGenerator()
-    /// A feedbackGenerator that will be used to provide feedback when a task is successful or not.
 
     /// A component responsible to manage the swipe to quote reply logic.
     open lazy var swipeToReplyGestureHandler = SwipeToReplyGestureHandler(listView: self.listView)
