@@ -41,6 +41,56 @@ class ChannelListUpdater: Worker {
         }
     }
 
+    func refreshLoadedChannels(for query: ChannelListQuery, channelCount: Int, completion: @escaping (Result<Set<ChannelId>, Error>) -> Void) {
+        var allPages = [ChannelListQuery]()
+        for offset in stride(from: 0, to: channelCount, by: .channelsPageSize) {
+            var pageQuery = query
+            pageQuery.pagination = Pagination(pageSize: .channelsPageSize, offset: offset)
+            allPages.append(pageQuery)
+        }
+        refreshLoadedChannels(for: allPages, refreshedChannelIds: Set(), completion: completion)
+    }
+    
+    func refreshLoadedChannels(for query: ChannelListQuery, channelCount: Int) async throws -> Set<ChannelId> {
+        try await withCheckedThrowingContinuation { continuation in
+            refreshLoadedChannels(for: query, channelCount: channelCount) { result in
+                continuation.resume(with: result)
+            }
+        }
+    }
+        
+    private func refreshLoadedChannels(for pageQueries: [ChannelListQuery], refreshedChannelIds: Set<ChannelId>, completion: @escaping (Result<Set<ChannelId>, Error>) -> Void) {
+        guard let nextQuery = pageQueries.first else {
+            completion(.success(refreshedChannelIds))
+            return
+        }
+        
+        let remaining = pageQueries.dropFirst()
+        fetch(channelListQuery: nextQuery) { [weak self] result in
+            switch result {
+            case .success(let channelListPayload):
+                self?.writeChannelListPayload(
+                    payload: channelListPayload,
+                    query: nextQuery,
+                    completion: { writeResult in
+                        switch writeResult {
+                        case .success(let writtenChannels):
+                            self?.refreshLoadedChannels(
+                                for: Array(remaining),
+                                refreshedChannelIds: refreshedChannelIds.union(writtenChannels.map(\.cid)),
+                                completion: completion
+                            )
+                        case .failure(let error):
+                            completion(.failure(error))
+                        }
+                    }
+                )
+            case .failure(let error):
+                completion(.failure(error))
+            }
+        }
+    }
+    
     func resetChannelsQuery(
         for query: ChannelListQuery,
         pageSize: Int,

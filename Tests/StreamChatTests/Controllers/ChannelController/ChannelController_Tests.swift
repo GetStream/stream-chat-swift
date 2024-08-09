@@ -4597,12 +4597,12 @@ final class ChannelController_Tests: XCTestCase {
             channelListQuery: channelListQuery,
             client: client
         )
-        XCTAssert(client.activeChannelControllers.allObjects.isEmpty)
+        XCTAssert(client.syncRepository.activeChannelControllers.allObjects.isEmpty)
 
         controller.startWatching(isInRecoveryMode: false)
         XCTAssert(controller.client === client)
-        XCTAssert(client.activeChannelControllers.count == 1)
-        XCTAssert(client.activeChannelControllers.allObjects.first === controller)
+        XCTAssert(client.syncRepository.activeChannelControllers.count == 1)
+        XCTAssert(client.syncRepository.activeChannelControllers.allObjects.first === controller)
     }
 
     func test_startWatching_propagatesErrorFromUpdater() {
@@ -4783,10 +4783,10 @@ final class ChannelController_Tests: XCTestCase {
             client: client
         )
         controller.synchronize()
-        XCTAssert(client.activeChannelControllers.count == 1)
+        XCTAssert(client.syncRepository.activeChannelControllers.count == 1)
 
         controller.stopWatching()
-        XCTAssert(client.activeChannelControllers.allObjects.isEmpty == true)
+        XCTAssert(client.syncRepository.activeChannelControllers.allObjects.isEmpty == true)
     }
 
     // MARK: - Freeze channel
@@ -5137,8 +5137,8 @@ final class ChannelController_Tests: XCTestCase {
         controller.synchronize()
 
         XCTAssert(controller.client === client)
-        XCTAssert(client.activeChannelControllers.count == 1)
-        XCTAssert(client.activeChannelControllers.allObjects.first === controller)
+        XCTAssert(client.syncRepository.activeChannelControllers.count == 1)
+        XCTAssert(client.syncRepository.activeChannelControllers.allObjects.first === controller)
     }
 
     // MARK: shouldSendTypingEvents
