@@ -118,6 +118,7 @@ extension XCTestCase {
 
     func dummyPayload(
         with channelId: ChannelId,
+        name: String = .unique,
         numberOfMessages: Int = 1,
         members: [MemberPayload] = [.unique],
         watchers: [UserPayload]? = nil,
@@ -170,7 +171,7 @@ extension XCTestCase {
             .init(
                 channel: .init(
                     cid: channelId,
-                    name: .unique,
+                    name: name,
                     imageURL: .unique(),
                     extraData: channelExtraData,
                     typeRawValue: channelId.type.rawValue,
