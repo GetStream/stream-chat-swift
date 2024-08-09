@@ -254,6 +254,36 @@ final class ChannelList_Tests: XCTestCase {
         cancellable.cancel()
     }
     
+    func test_refreshingChannels_whenMultiplePagesAreLoaded_thenAllAreRefreshed() async throws {
+        await setUpChannelList(usesMockedChannelUpdater: false, dynamicFilter: { _ in true })
+        
+        let pageCount = 2
+        let loadedCount = pageCount * Int.channelsPageSize
+        let existingChannelListPayload = makeMatchingChannelListPayload(channelCount: loadedCount, createdAtOffset: 0)
+        try await env.client.mockDatabaseContainer.write { session in
+            session.saveChannelList(payload: existingChannelListPayload, query: self.channelList.query)
+        }
+        
+        // Ensure that the channel is in the state
+        XCTAssertEqual(existingChannelListPayload.channels.map(\.channel.cid.rawValue), await channelList.state.channels.map(\.cid.rawValue))
+        
+        // Record 2 mock responses
+        for offset in stride(from: 0, to: loadedCount, by: Int.channelsPageSize) {
+            let nextChannelListPayload = makeMatchingChannelListPayload(
+                channelCount: Int.channelsPageSize,
+                createdAtOffset: offset,
+                namePrefix: "Updated Name"
+            )
+            env.client.mockAPIClient.test_mockResponseResult(.success(nextChannelListPayload))
+        }
+        
+        let refreshedChannelIds = try await channelList.refreshLoadedChannels()
+        XCTAssertEqual(loadedCount, refreshedChannelIds.count)
+        
+        let expectedNames = (0..<loadedCount).map { "Updated Name \($0)" }
+        await XCTAssertEqual(expectedNames, channelList.state.channels.compactMap(\.name))
+    }
+    
     // MARK: - Test Data
     
     /// For tests which rely on the channel updater to update the local database.
@@ -279,11 +309,12 @@ final class ChannelList_Tests: XCTestCase {
         makeMatchingChannelListPayload(channelCount: 1, createdAtOffset: createdAtOffset).channels[0]
     }
     
-    private func makeMatchingChannelListPayload(channelCount: Int, createdAtOffset: Int) -> ChannelListPayload {
+    private func makeMatchingChannelListPayload(channelCount: Int, createdAtOffset: Int, namePrefix: String = "Name") -> ChannelListPayload {
         let channelPayloads = (0..<channelCount)
             .map {
                 dummyPayload(
-                    with: ChannelId(type: .messaging, id: .unique),
+                    with: ChannelId(type: .messaging, id: "cid\($0 + createdAtOffset)"),
+                    name: "\(namePrefix) \($0 + createdAtOffset)",
                     members: [.dummy(user: .dummy(userId: memberId))],
                     createdAt: Date(timeIntervalSinceReferenceDate: TimeInterval($0 + createdAtOffset))
                 )

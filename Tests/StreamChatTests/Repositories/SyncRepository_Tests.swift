@@ -793,7 +793,7 @@ extension SyncRepository_Tests {
         })
     }
 
-    private func prepareForSyncLocalStorage(
+    func prepareForSyncLocalStorage(
         createUser: Bool,
         lastSynchedEventDate: Date?,
         createChannel: Bool,
@@ -815,7 +815,7 @@ extension SyncRepository_Tests {
         database.writeSessionCounter = 0
     }
 
-    private func waitForSyncLocalStateRun(requestResult: Result<MissingEventsPayload, Error>? = nil) {
+    func waitForSyncLocalStateRun(requestResult: Result<MissingEventsPayload, Error>? = nil) {
         database.writeSessionCounter = 0
         apiClient.clear()
 
