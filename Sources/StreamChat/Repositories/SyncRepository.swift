@@ -36,25 +36,25 @@ class SyncRepository {
     private let database: DatabaseContainer
     private let apiClient: APIClient
     private let channelListUpdater: ChannelListUpdater
-    let activeChannelControllers: ThreadSafeWeakCollection<ChatChannelController>
-    let activeChannelListControllers: ThreadSafeWeakCollection<ChatChannelListController>
+    var usesV2Sync = StreamRuntimeCheck._isSyncV2Enabled
     let offlineRequestsRepository: OfflineRequestsRepository
     let eventNotificationCenter: EventNotificationCenter
     
-    private var _activeChannelListQueryProviders = [() -> ChannelListQuery?]()
-    private let syncQueue = DispatchQueue(label: "io.getstream.sync-repository-queue")
-
+    let activeChannelControllers = ThreadSafeWeakCollection<ChatChannelController>()
+    let activeChannelListControllers = ThreadSafeWeakCollection<ChatChannelListController>()
+    let activeChats = ThreadSafeWeakCollection<Chat>()
+    let activeChannelLists = ThreadSafeWeakCollection<ChannelList>()
+    
     private lazy var operationQueue: OperationQueue = {
         let operationQueue = OperationQueue()
         operationQueue.maxConcurrentOperationCount = 1
         operationQueue.name = "com.stream.sync-repository"
+        operationQueue.qualityOfService = .utility
         return operationQueue
     }()
 
     init(
         config: ChatClientConfig,
-        activeChannelControllers: ThreadSafeWeakCollection<ChatChannelController>,
-        activeChannelListControllers: ThreadSafeWeakCollection<ChatChannelListController>,
         offlineRequestsRepository: OfflineRequestsRepository,
         eventNotificationCenter: EventNotificationCenter,
         database: DatabaseContainer,
@@ -62,8 +62,6 @@ class SyncRepository {
         channelListUpdater: ChannelListUpdater
     ) {
         self.config = config
-        self.activeChannelControllers = activeChannelControllers
-        self.activeChannelListControllers = activeChannelListControllers
         self.offlineRequestsRepository = offlineRequestsRepository
         self.channelListUpdater = channelListUpdater
         self.eventNotificationCenter = eventNotificationCenter
@@ -77,20 +75,51 @@ class SyncRepository {
     
     // MARK: - Tracking Active
     
-    func trackChannelListQuery(_ provider: @escaping () -> ChannelListQuery?) {
-        syncQueue.sync {
-            _activeChannelListQueryProviders.append(provider)
-        }
+    func startTrackingChat(_ chat: Chat) {
+        guard !activeChats.contains(chat) else { return }
+        activeChats.add(chat)
+    }
+    
+    func stopTrackingChat(_ chat: Chat) {
+        activeChats.remove(chat)
+    }
+    
+    func startTrackingChannelController(_ controller: ChatChannelController) {
+        guard !activeChannelControllers.contains(controller) else { return }
+        activeChannelControllers.add(controller)
+    }
+    
+    func stopTrackingChannelController(_ controller: ChatChannelController) {
+        activeChannelControllers.remove(controller)
+    }
+    
+    func startTrackingChannelList(_ channelList: ChannelList) {
+        guard !activeChannelLists.contains(channelList) else { return }
+        activeChannelLists.add(channelList)
+    }
+    
+    func stopTrackingChannelList(_ channelList: ChannelList) {
+        activeChannelLists.remove(channelList)
+    }
+    
+    func startTrackingChannelListController(_ controller: ChatChannelListController) {
+        guard !activeChannelListControllers.contains(controller) else { return }
+        activeChannelListControllers.add(controller)
+    }
+    
+    func stopTrackingChannelListController(_ controller: ChatChannelListController) {
+        activeChannelListControllers.remove(controller)
     }
     
     func removeAllTracked() {
-        syncQueue.sync {
-            _activeChannelListQueryProviders.removeAll()
-        }
+        activeChats.removeAllObjects()
+        activeChannelControllers.removeAllObjects()
+        activeChannelLists.removeAllObjects()
+        activeChannelListControllers.removeAllObjects()
     }
     
-    // MARK: -
-
+    // MARK: - Syncing
+    
     func syncLocalState(completion: @escaping () -> Void) {
         cancelRecoveryFlow()
 
@@ -108,10 +137,77 @@ class SyncRepository {
                 }
                 return
             }
-
-            self?.syncLocalState(lastSyncAt: lastSyncAt, completion: completion)
+            if self?.usesV2Sync == true {
+                self?.syncLocalStateV2(lastSyncAt: lastSyncAt, completion: completion)
+            } else {
+                self?.syncLocalState(lastSyncAt: lastSyncAt, completion: completion)
+            }
         }
     }
+    
+    // MARK: - V2
+    
+    /// Runs offline tasks and updates the local state for channels
+    ///
+    /// Recovery mode (pauses regular API requests while it is running)
+    /// 1. Enter recovery
+    /// 2. Runs offline API requests
+    /// 3. Exit recovery
+    ///
+    /// Background mode (other regular API requests are allowed to run at the same time)
+    /// 1. Collect all the **active** channel ids (from instances of `Chat`, `ChannelList`, `ChatChannelController`, `ChatChannelListController`)
+    /// 2. Ask updates from the /sync endpoint for these channels
+    /// 2.a Apply changes
+    /// 2.b When there are too many events, just refresh channel lists (channels for current pages in `ChannelList`, `ChatChannelListController`)
+    private func syncLocalStateV2(lastSyncAt: Date, completion: @escaping () -> Void) {
+        let context = SyncContext(lastSyncAt: lastSyncAt)
+        var operations: [Operation] = []
+        let start = CFAbsoluteTimeGetCurrent()
+        log.info("Starting to refresh offline state", subsystems: .offlineSupport)
+        
+        //
+        // Recovery mode operations (other API requests are paused)
+        //
+        if config.isLocalStorageEnabled {
+            apiClient.enterRecoveryMode()
+            operations.append(ExecutePendingOfflineActions(offlineRequestsRepository: offlineRequestsRepository))
+            operations.append(BlockOperation(block: { [apiClient] in
+                apiClient.exitRecoveryMode()
+            }))
+        }
+        
+        //
+        // Background mode operations
+        //
+        
+        /// 1. Collect all the **active** channel ids
+        operations.append(ActiveChannelIdsOperation(syncRepository: self, context: context))
+        
+        // 2. /sync
+        operations.append(SyncEventsOperation(syncRepository: self, context: context, recovery: false))
+        
+        // 2.b.1 (these run only if sync was not possible in the previous step)
+        operations.append(contentsOf: activeChannelLists.allObjects.map { RefreshChannelListOperation(channelList: $0, context: context) })
+        operations.append(contentsOf: activeChannelListControllers.allObjects.map { RefreshChannelListOperation(controller: $0, context: context) })
+        
+        operations.append(BlockOperation(block: {
+            let duration = CFAbsoluteTimeGetCurrent() - start
+            log.info("Finished refreshing offline state (\(context.synchedChannelIds.count) channels in \(String(format: "%.1f", duration)) seconds)", subsystems: .offlineSupport)
+            DispatchQueue.main.async {
+                completion()
+            }
+        }))
+        
+        var previousOperation: Operation?
+        operations.reversed().forEach { operation in
+            defer { previousOperation = operation }
+            guard let previousOperation = previousOperation else { return }
+            previousOperation.addDependency(operation)
+        }
+        operationQueue.addOperations(operations, waitUntilFinished: false)
+    }
+    
+    // MARK: - V1
 
     /// Syncs the local state with the server to make sure the local database is up to date.
     /// It features queuing, serialization and retries
@@ -142,7 +238,7 @@ class SyncRepository {
         operations.append(GetChannelIdsOperation(database: database, context: context, activeChannelIds: activeChannelIds))
 
         // 1. Call `/sync` endpoint and get missing events for all locally existed channels
-        operations.append(SyncEventsOperation(syncRepository: self, context: context))
+        operations.append(SyncEventsOperation(syncRepository: self, context: context, recovery: true))
 
         // 2. Start watching open channels.
         let watchChannelOperations: [AsyncOperation] = activeChannelControllers.allObjects.map { controller in
@@ -162,13 +258,13 @@ class SyncRepository {
             }
         operations.append(contentsOf: refetchChannelListQueryOperations)
         
-        let channelListQueries = syncQueue.sync {
-            let queries = _activeChannelListQueryProviders
-                .compactMap { $0() }
+        let channelListQueries: [ChannelListQuery] = {
+            let queries = activeChannelLists.allObjects
+                .map(\.query)
                 .map { ($0.filter.filterHash, $0) }
             let uniqueQueries = Dictionary(queries, uniquingKeysWith: { _, last in last })
             return Array(uniqueQueries.values)
-        }
+        }()
         operations.append(contentsOf: channelListQueries
             .map { channelListQuery in
                 RefetchChannelListQueryOperation(
@@ -204,8 +300,12 @@ class SyncRepository {
     /// Syncs the events for the active chat channels using the last sync date.
     /// - Parameter completion: A block that will get executed upon completion of the synchronization
     func syncExistingChannelsEvents(completion: @escaping (Result<[ChannelId], SyncError>) -> Void) {
-        getUser { [weak self] currentUser in
+        getUser { [weak self, syncCooldown] currentUser in
             guard let lastSyncAt = currentUser?.lastSynchedEventDate?.bridgeDate else {
+                completion(.failure(.noNeedToSync))
+                return
+            }
+            guard Date().timeIntervalSince(lastSyncAt) > syncCooldown else {
                 completion(.failure(.noNeedToSync))
                 return
             }
@@ -250,13 +350,6 @@ class SyncRepository {
                     completion(.success([]))
                 }
             }
-            return
-        }
-
-        // In recovery mode, `/sync` should always be called.
-        // Otherwise, the cooldown is checked.
-        guard isRecovery || Date().timeIntervalSince(lastSyncAt) > syncCooldown else {
-            completion(.failure(.noNeedToSync))
             return
         }
 
