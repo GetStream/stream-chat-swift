@@ -195,7 +195,7 @@ jobs:
     env:
       XCODE_VERSION: "14.0.1"
     steps:
-    - name: Connect iOS Bot
+    - name: Connect Bot
       uses: webfactory/ssh-agent@v0.7.0
       with:
         ssh-private-key: ${{ secrets.BOT_SSH_PRIVATE_KEY }}

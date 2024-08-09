@@ -12,7 +12,7 @@ jobs:
     runs-on: macos-14
     if: github.event_name == 'workflow_dispatch' || (github.event.issue.pull_request && github.event.issue.state == 'open' && github.event.comment.body == '/merge release')
     steps:
-      - name: Connect iOS Bot
+      - name: Connect Bot
         uses: webfactory/ssh-agent@v0.7.0
         with:
           ssh-private-key: ${{ secrets.BOT_SSH_PRIVATE_KEY }}
