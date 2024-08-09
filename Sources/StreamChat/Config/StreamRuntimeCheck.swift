@@ -34,6 +34,6 @@ public enum StreamRuntimeCheck {
     
     /// For *internal use* only
     ///
-    /// Uses vresion 2 for offline state sync.
+    /// Uses version 2 for offline state sync.
     public static var _isSyncV2Enabled = true
 }
