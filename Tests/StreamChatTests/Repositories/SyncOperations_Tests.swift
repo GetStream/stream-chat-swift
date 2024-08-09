@@ -80,7 +80,7 @@ final class SyncOperations_Tests: XCTestCase {
         try database.writeSynchronously { session in
             session.currentUser?.lastSynchedEventDate = originalDate.bridgeDate
         }
-        let operation = SyncEventsOperation(syncRepository: syncRepository, context: context)
+        let operation = SyncEventsOperation(syncRepository: syncRepository, context: context, recovery: false)
         syncRepository.syncMissingEventsResult = .failure(.syncEndpointFailed(ClientError("")))
 
         operation.startAndWaitForCompletion()
@@ -101,7 +101,7 @@ final class SyncOperations_Tests: XCTestCase {
             session.currentUser?.lastSynchedEventDate = DBDate().addingTimeInterval(-3600)
         }
 
-        let operation = SyncEventsOperation(syncRepository: syncRepository, context: context)
+        let operation = SyncEventsOperation(syncRepository: syncRepository, context: context, recovery: false)
         syncRepository.syncMissingEventsResult = .success([.unique, .unique])
 
         operation.startAndWaitForCompletion()

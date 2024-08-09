@@ -17,8 +17,6 @@ final class SyncRepository_Mock: SyncRepository, Spy {
         let apiClient = APIClient_Spy()
         let database = DatabaseContainer_Spy()
         self.init(config: .init(apiKeyString: ""),
-                  activeChannelControllers: ThreadSafeWeakCollection<ChatChannelController>(),
-                  activeChannelListControllers: ThreadSafeWeakCollection<ChatChannelListController>(),
                   offlineRequestsRepository: OfflineRequestsRepository_Mock(),
                   eventNotificationCenter: EventNotificationCenter_Mock(database: database),
                   database: database,
@@ -26,8 +24,22 @@ final class SyncRepository_Mock: SyncRepository, Spy {
                   channelListUpdater: ChannelListUpdater_Spy(database: database, apiClient: apiClient))
     }
 
-    override init(config: ChatClientConfig, activeChannelControllers: ThreadSafeWeakCollection<ChatChannelController>, activeChannelListControllers: ThreadSafeWeakCollection<ChatChannelListController>, offlineRequestsRepository: OfflineRequestsRepository, eventNotificationCenter: EventNotificationCenter, database: DatabaseContainer, apiClient: APIClient, channelListUpdater: ChannelListUpdater) {
-        super.init(config: config, activeChannelControllers: activeChannelControllers, activeChannelListControllers: activeChannelListControllers, offlineRequestsRepository: offlineRequestsRepository, eventNotificationCenter: eventNotificationCenter, database: database, apiClient: apiClient, channelListUpdater: channelListUpdater)
+    override init(
+        config: ChatClientConfig,
+        offlineRequestsRepository: OfflineRequestsRepository,
+        eventNotificationCenter: EventNotificationCenter,
+        database: DatabaseContainer,
+        apiClient: APIClient,
+        channelListUpdater: ChannelListUpdater
+    ) {
+        super.init(
+            config: config,
+            offlineRequestsRepository: offlineRequestsRepository,
+            eventNotificationCenter: eventNotificationCenter,
+            database: database,
+            apiClient: apiClient,
+            channelListUpdater: channelListUpdater
+        )
     }
 
     override func syncLocalState(completion: @escaping () -> Void) {

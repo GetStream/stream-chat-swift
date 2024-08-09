@@ -31,4 +31,9 @@ public enum StreamRuntimeCheck {
     ///
     /// Enables reusing unchanged converted items in database observers.
     public static var _isDatabaseObserverItemReusingEnabled = true
+    
+    /// For *internal use* only
+    ///
+    /// Uses version 2 for offline state sync.
+    public static var _isSyncV2Enabled = true
 }

@@ -35,9 +35,7 @@ extension ChatClient {
         with query: ChannelListQuery,
         dynamicFilter: ((ChatChannel) -> Bool)? = nil
     ) -> ChannelList {
-        let channelList = ChannelList(query: query, dynamicFilter: dynamicFilter, client: self)
-        syncRepository.trackChannelListQuery { [weak channelList] in channelList?.query }
-        return channelList
+        ChannelList(query: query, dynamicFilter: dynamicFilter, client: self)
     }
 }
 
