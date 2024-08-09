@@ -13,7 +13,7 @@ github_repo = ENV['GITHUB_REPOSITORY'] || 'GetStream/stream-chat-swift'
 stress_tests_cycles = 50
 derived_data_path = 'derived_data'
 source_packages_path = 'spm_cache'
-metrics_git = 'git@github.com:GetStream/apple-internal-metrics.git'
+metrics_git = 'git@github.com:GetStream/stream-internal-metrics.git'
 xcmetrics_path = "metrics/#{github_repo.split('/').last}-xcmetrics.json"
 sdk_size_path = "metrics/#{github_repo.split('/').last}-size.json"
 buildcache_xcargs = 'CC=clang CPLUSPLUS=clang++ LD=clang LDPLUSPLUS=clang++'
