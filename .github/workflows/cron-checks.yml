@@ -46,11 +46,11 @@ jobs:
             os: macos-14
             device: "iPhone 14 Pro"
             setup_runtime: false
-          # - ios: 16.4
-          #   xcode: 15.3
-          #   os: macos-14
-          #   device: "iPhone 14 Pro"
-          #   setup_runtime: true
+          - ios: 16.4
+            xcode: 15.3
+            os: macos-14
+            device: "iPhone 14 Pro"
+            setup_runtime: true
           - ios: 15.5
             xcode: 15.3
             os: macos-14
@@ -128,21 +128,21 @@ jobs:
             os: macos-14
             device: "iPhone 14 Pro"
             setup_runtime: false
-          # - ios: 16.4
-          #   xcode: 15.3
-          #   os: macos-14
-          #   device: "iPhone 14 Pro"
-          #   setup_runtime: true
-          # - ios: 15.5
-          #   xcode: 15.3
-          #   os: macos-14
-          #   device: "iPhone 13 Pro"
-          #   setup_runtime: true
-          # - ios: 14.5
-          #   xcode: 14.2
-          #   os: macos-12
-          #   device: "iPhone 12 Pro"
-          #   setup_runtime: true
+          - ios: 16.4
+            xcode: 15.3
+            os: macos-14
+            device: "iPhone 14 Pro"
+            setup_runtime: true
+          - ios: 15.5
+            xcode: 15.3
+            os: macos-14
+            device: "iPhone 13 Pro"
+            setup_runtime: true
+          - ios: 14.5
+            xcode: 14.2
+            os: macos-12
+            device: "iPhone 12 Pro"
+            setup_runtime: true
           - ios: 13.7
             xcode: 14.2
             os: macos-12
