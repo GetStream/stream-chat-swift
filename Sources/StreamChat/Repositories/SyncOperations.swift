@@ -11,14 +11,9 @@ final class SyncContext {
     var synchedChannelIds: Set<ChannelId> = Set()
     var watchedAndSynchedChannelIds: Set<ChannelId> = Set()
     var unwantedChannelIds: Set<ChannelId> = Set()
-    var missingEventSyncSuccessful = false
 
     init(lastSyncAt: Date) {
         self.lastSyncAt = lastSyncAt
-    }
-    
-    var canRefreshChannelLists: Bool {
-        !missingEventSyncSuccessful
     }
 }
 
@@ -35,6 +30,12 @@ final class ActiveChannelIdsOperation: AsyncOperation {
                 return
             }
             
+            let completion: () -> Void = {
+                context.localChannelIds = Array(Set(context.localChannelIds))
+                log.info("Found \(context.localChannelIds.count) active channels", subsystems: .offlineSupport)
+                done(.continue)
+            }
+            
             context.localChannelIds.append(contentsOf: syncRepository.activeChannelControllers.allObjects.compactMap(\.cid))
             context.localChannelIds.append(contentsOf:
                 syncRepository.activeChannelListControllers.allObjects
@@ -43,18 +44,22 @@ final class ActiveChannelIdsOperation: AsyncOperation {
                     .map(\.cid)
             )
             
-            // Main actor requirement
-            DispatchQueue.main.async {
-                context.localChannelIds.append(contentsOf: syncRepository.activeChats.allObjects.compactMap { try? $0.cid })
-                context.localChannelIds.append(contentsOf:
-                    syncRepository.activeChannelLists.allObjects
-                        .map(\.state.channels)
-                        .flatMap { $0 }
-                        .map(\.cid)
-                )
-                context.localChannelIds = Array(Set(context.localChannelIds))
-                log.info("Found \(context.localChannelIds.count) active channels", subsystems: .offlineSupport)
-                done(.continue)
+            let activeChats = syncRepository.activeChats.allObjects
+            let activeChannelLists = syncRepository.activeChannelLists.allObjects
+            if activeChats.isEmpty, activeChannelLists.isEmpty {
+                completion()
+            } else {
+                // Main actor requirement
+                DispatchQueue.main.async {
+                    context.localChannelIds.append(contentsOf: syncRepository.activeChats.allObjects.compactMap { try? $0.cid })
+                    context.localChannelIds.append(contentsOf:
+                        syncRepository.activeChannelLists.allObjects
+                            .map(\.state.channels)
+                            .flatMap { $0 }
+                            .map(\.cid)
+                    )
+                    completion()
+                }
             }
         }
     }
@@ -63,10 +68,6 @@ final class ActiveChannelIdsOperation: AsyncOperation {
 final class RefreshChannelListOperation: AsyncOperation {
     init(controller: ChatChannelListController, context: SyncContext) {
         super.init(maxRetries: syncOperationsMaximumRetries) { [weak controller] _, done in
-            guard context.canRefreshChannelLists else {
-                done(.continue)
-                return
-            }
             guard let controller = controller, controller.canBeRecovered else {
                 done(.continue)
                 return
@@ -87,10 +88,6 @@ final class RefreshChannelListOperation: AsyncOperation {
     
     init(channelList: ChannelList, context: SyncContext) {
         super.init(maxRetries: syncOperationsMaximumRetries) { [weak channelList] _, done in
-            guard context.canRefreshChannelLists else {
-                done(.continue)
-                return
-            }
             guard let channelList else {
                 done(.continue)
                 return
@@ -145,11 +142,9 @@ final class SyncEventsOperation: AsyncOperation {
                 switch result {
                 case let .success(channelIds):
                     context.synchedChannelIds = Set(channelIds)
-                    context.missingEventSyncSuccessful = true
                     done(.continue)
                 case let .failure(error):
                     context.synchedChannelIds = Set([])
-                    context.missingEventSyncSuccessful = false
                     done(error.shouldRetry ? .retry : .continue)
                 }
             }

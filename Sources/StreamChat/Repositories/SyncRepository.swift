@@ -156,9 +156,8 @@ class SyncRepository {
     ///
     /// Background mode (other regular API requests are allowed to run at the same time)
     /// 1. Collect all the **active** channel ids (from instances of `Chat`, `ChannelList`, `ChatChannelController`, `ChatChannelListController`)
-    /// 2. Ask updates from the /sync endpoint for these channels
-    /// 2.a Apply changes
-    /// 2.b When there are too many events, just refresh channel lists (channels for current pages in `ChannelList`, `ChatChannelListController`)
+    /// 2. Apply updates from the /sync endpoint for these channels
+    /// 3. Refresh channel lists (channels for current pages in `ChannelList`, `ChatChannelListController`)
     private func syncLocalStateV2(lastSyncAt: Date, completion: @escaping () -> Void) {
         let context = SyncContext(lastSyncAt: lastSyncAt)
         var operations: [Operation] = []
@@ -186,7 +185,7 @@ class SyncRepository {
         // 2. /sync
         operations.append(SyncEventsOperation(syncRepository: self, context: context, recovery: false))
         
-        // 2.b.1 (these run only if sync was not possible in the previous step)
+        // 3. Refresh channel lists (required even after applying events)
         operations.append(contentsOf: activeChannelLists.allObjects.map { RefreshChannelListOperation(channelList: $0, context: context) })
         operations.append(contentsOf: activeChannelListControllers.allObjects.map { RefreshChannelListOperation(controller: $0, context: context) })
         

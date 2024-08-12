@@ -257,9 +257,9 @@ class SyncRepository_Tests: XCTestCase {
         XCTAssertEqual(repository.activeChannelControllers.count, 0)
         XCTAssertEqual(repository.activeChannelListControllers.count, 1)
         if repository.usesV2Sync {
-            // refresh can only happen when /sync fails
-            XCTAssertNotCall(
-                "refreshLoadedChannels(completion:)", on: chatListController
+            XCTAssertCall(
+                "refreshLoadedChannels(completion:)", on: chatListController,
+                times: 1
             )
             XCTAssertEqual(apiClient.recoveryRequest_allRecordedCalls.count, 0)
             XCTAssertEqual(apiClient.request_allRecordedCalls.count, 1)
@@ -326,6 +326,8 @@ class SyncRepository_Tests: XCTestCase {
             chatListController.state = .remoteDataFetched
             chatListController.channels_mock = [.mock(cid: cid)]
             repository.startTrackingChannelListController(chatListController)
+            
+            chatListController.refreshLoadedChannelsResult = .success(Set([cid]))
         }
 
         let firstDate = lastSyncDate.addingTimeInterval(1)
