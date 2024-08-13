@@ -147,7 +147,7 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
     /// It is `true` if the channel typing events are enabled as well as the user privacy settings.
     internal var shouldSendTypingEvents: Bool {
         /// Ignore if user typing indicators privacy settings are disabled. By default, they are enabled.
-        let currentUserPrivacySettings = client.currentUserController().currentUser?.privacySettings
+        let currentUserPrivacySettings = client.sharedCurrentUserController.currentUser?.privacySettings
         let isTypingIndicatorsForCurrentUserEnabled = currentUserPrivacySettings?.typingIndicators?.enabled ?? true
         let isChannelTypingEventsEnabled = channel?.canSendTypingEvents ?? true
         return isTypingIndicatorsForCurrentUserEnabled && isChannelTypingEventsEnabled

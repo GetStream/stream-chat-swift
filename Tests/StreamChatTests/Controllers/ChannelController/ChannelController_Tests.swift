@@ -36,6 +36,7 @@ final class ChannelController_Tests: XCTestCase {
     }
 
     override func tearDown() {
+        client?.cleanUp()
         env?.channelUpdater?.cleanUp()
         env?.eventSender?.cleanUp()
         env = nil
