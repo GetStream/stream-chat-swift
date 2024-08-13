@@ -71,7 +71,7 @@ fastlane/allurectl
 fastlane/xcresults
 fastlane/recordings
 fastlane/performance
-fastlane/metrics
+**/metrics/
 StreamChatCore.framework.coverage.txt
 StreamChatCoreTests.xctest.coverage.txt
 vendor/bundle/
