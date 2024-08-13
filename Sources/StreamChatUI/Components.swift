@@ -344,6 +344,9 @@ public struct Components {
     /// The vote item view that displays information in a poll results cell.
     public var pollResultsVoteItemView: PollResultsVoteItemView.Type = PollResultsVoteItemView.self
 
+    /// The controller that shows all votes of poll option.
+    public var pollResultsVoteListVC: PollResultsVoteListVC.Type = PollResultsVoteListVC.self
+
     // MARK: - Reactions
 
     /// The Reaction picker VC.

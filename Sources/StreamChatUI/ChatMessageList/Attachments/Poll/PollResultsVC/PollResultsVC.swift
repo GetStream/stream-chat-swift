@@ -116,8 +116,8 @@ open class PollResultsVC:
         snapshot.appendSections(poll.options)
         poll.options.forEach { option in
             let latestVotes = option.latestVotes
-                .sorted(by: { $0.createdAt < $1.createdAt })
-                .suffix(maximumVotesPerOption)
+                .sorted(by: { $0.createdAt > $1.createdAt })
+                .prefix(maximumVotesPerOption)
 
             snapshot.appendItems(Array(latestVotes), toSection: option)
         }
@@ -169,8 +169,8 @@ open class PollResultsVC:
             return nil
         }
         let view = tableView.dequeueReusableHeaderFooter(with: components.pollResultsFooterButtonView)
-        view.onTap = {
-            print(option)
+        view.onTap = { [weak self] in
+            self?.showVoteList(for: option)
         }
         view.container.layer.cornerRadius = sectionCornerRadius
         view.container.layer.maskedCorners = [.layerMaxXMaxYCorner, .layerMinXMaxYCorner]
@@ -196,5 +196,24 @@ open class PollResultsVC:
         didUpdateCurrentUserVotes votes: [ListChange<PollVote>]
     ) {
         // no-op
+    }
+
+    // MARK: - Navigation
+
+    open func showVoteList(for option: PollOption) {
+        guard let poll = pollController.poll else { return }
+        let query = PollVoteListQuery(
+            pollId: pollController.pollId,
+            optionId: option.id,
+            pagination: .init(pageSize: 25),
+            filter: .equal(.optionId, to: option.id)
+        )
+        let voteListController = pollController.client.pollVoteListController(query: query)
+        let viewController = components.pollResultsVoteListVC.init(
+            pollVoteListController: voteListController,
+            poll: poll,
+            option: option
+        )
+        navigationController?.pushViewController(viewController, animated: true)
     }
 }
