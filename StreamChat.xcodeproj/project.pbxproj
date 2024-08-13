@@ -1456,6 +1456,8 @@
 		AD4F89DF2C6A5908006DF7E5 /* PollResultsFooterButtonView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD4F89DD2C6A5908006DF7E5 /* PollResultsFooterButtonView.swift */; };
 		AD4F89E32C6A7B81006DF7E5 /* PollResultsVoteListVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD4F89E22C6A7B81006DF7E5 /* PollResultsVoteListVC.swift */; };
 		AD4F89E42C6A7B81006DF7E5 /* PollResultsVoteListVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD4F89E22C6A7B81006DF7E5 /* PollResultsVoteListVC.swift */; };
+		AD4F89E62C6AE658006DF7E5 /* GroupedSectionListStyling.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD4F89E52C6AE658006DF7E5 /* GroupedSectionListStyling.swift */; };
+		AD4F89E72C6AE658006DF7E5 /* GroupedSectionListStyling.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD4F89E52C6AE658006DF7E5 /* GroupedSectionListStyling.swift */; };
 		AD4FB7152C1B758100EB73C5 /* Unread.json in Resources */ = {isa = PBXBuildFile; fileRef = AD4FB7142C1B758100EB73C5 /* Unread.json */; };
 		AD50BC072AF0336D00EF8523 /* MessageModerationDetails_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD50BC062AF0336D00EF8523 /* MessageModerationDetails_Tests.swift */; };
 		AD50C31D2A607A88002FDD06 /* ChannelListSearchStrategy.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD50C31C2A607A88002FDD06 /* ChannelListSearchStrategy.swift */; };
@@ -4160,6 +4162,7 @@
 		AD4F89DA2C667886006DF7E5 /* PollResultsTableHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PollResultsTableHeaderView.swift; sourceTree = "<group>"; };
 		AD4F89DD2C6A5908006DF7E5 /* PollResultsFooterButtonView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PollResultsFooterButtonView.swift; sourceTree = "<group>"; };
 		AD4F89E22C6A7B81006DF7E5 /* PollResultsVoteListVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PollResultsVoteListVC.swift; sourceTree = "<group>"; };
+		AD4F89E52C6AE658006DF7E5 /* GroupedSectionListStyling.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroupedSectionListStyling.swift; sourceTree = "<group>"; };
 		AD4FB7142C1B758100EB73C5 /* Unread.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = Unread.json; sourceTree = "<group>"; };
 		AD50BC062AF0336D00EF8523 /* MessageModerationDetails_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageModerationDetails_Tests.swift; sourceTree = "<group>"; };
 		AD50C31C2A607A88002FDD06 /* ChannelListSearchStrategy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelListSearchStrategy.swift; sourceTree = "<group>"; };
@@ -6227,6 +6230,7 @@
 				2210525E256FE16600A5F0DB /* CommandLabelView.swift */,
 				847DD2DA267233DB0084E14B /* GradientView.swift */,
 				CF33B3AB28171BE500C84CDB /* CooldownView.swift */,
+				AD4F89E52C6AE658006DF7E5 /* GroupedSectionListStyling.swift */,
 				ADE8B4B32C611B6700C26FBF /* Buttons */,
 				AD4474C1263AFD380030E583 /* Attachments */,
 				AD7112D325F10CF300932AEE /* AvatarView */,
@@ -10406,6 +10410,7 @@
 				A3C5022B284F9CF70048753E /* Token.swift in Sources */,
 				A39A8AE7263825F4003453D9 /* ChatMessageLayoutOptionsResolver.swift in Sources */,
 				AD8B72752908016400921C31 /* ImageDownloadRequest.swift in Sources */,
+				AD4F89E62C6AE658006DF7E5 /* GroupedSectionListStyling.swift in Sources */,
 				8825334C258CE82500B77352 /* AlertsRouter.swift in Sources */,
 				ADDB2F592954CBF500BF80DA /* ViewPaginationHandling.swift in Sources */,
 				ADDB2F612954D48A00BF80DA /* InvertedScrollViewPaginationHandler.swift in Sources */,
@@ -12521,6 +12526,7 @@
 				C121EBBE2746A1E900023E4C /* ZoomDismissalInteractionController.swift in Sources */,
 				C1BFBABF29CB2A7500FC82A2 /* JumpToUnreadMessagesButton.swift in Sources */,
 				AD95FD1228FA038900DBDF41 /* ImageDownloadOptions.swift in Sources */,
+				AD4F89E72C6AE658006DF7E5 /* GroupedSectionListStyling.swift in Sources */,
 				C121EBBF2746A1E900023E4C /* ZoomTransitionController.swift in Sources */,
 				C121EBC02746A1E900023E4C /* ZoomAnimator.swift in Sources */,
 				40824D362A1271D7003B61FD /* PillButton_Tests.swift in Sources */,

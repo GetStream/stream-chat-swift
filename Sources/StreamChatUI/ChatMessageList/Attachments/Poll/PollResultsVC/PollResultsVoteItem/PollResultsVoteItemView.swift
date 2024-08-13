@@ -43,7 +43,6 @@ open class PollResultsVoteItemView: _View, ThemeProvider {
     override open func setUpAppearance() {
         super.setUpAppearance()
 
-        backgroundColor = appearance.colorPalette.background1
         authorAvatarView.shouldShowOnlineIndicator = false
         authorNameLabel.font = appearance.fonts.body
         authorNameLabel.textColor = appearance.colorPalette.text

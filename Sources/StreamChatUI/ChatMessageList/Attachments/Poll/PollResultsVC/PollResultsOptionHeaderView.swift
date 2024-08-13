@@ -28,12 +28,6 @@ open class PollResultsOptionHeaderView: _TableHeaderFooterView, ThemeProvider {
         .pollResultsOptionView.init()
         .withoutAutoresizingMaskConstraints
 
-    override open func setUpAppearance() {
-        super.setUpAppearance()
-
-        backgroundColor = appearance.colorPalette.background
-    }
-
     override open func setUpLayout() {
         super.setUpLayout()
 

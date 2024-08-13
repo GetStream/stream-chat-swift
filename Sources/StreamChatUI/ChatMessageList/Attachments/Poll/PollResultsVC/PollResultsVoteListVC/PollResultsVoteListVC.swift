@@ -39,8 +39,26 @@ open class PollResultsVoteListVC:
 
     // MARK: - Configuration
 
+    /// Whether the grouped section styling is enabled. By default it is true.
+    /// If you want to have a custom look without grouped sections, you should disable this flag.
+    open var isGroupedSectionStylingEnabled: Bool {
+        true
+    }
+
+    /// The background color of the table view.
+    open var listBackgroundColor: UIColor {
+        appearance.colorPalette.background
+    }
+
+    /// The background color for each poll option section.
+    open var sectionBackgroundColor: UIColor {
+        appearance.colorPalette.background1
+    }
+
     /// The corner radius amount of each section group.
-    public var sectionCornerRadius: CGFloat = 16
+    open var sectionCornerRadius: CGFloat {
+        16
+    }
 
     // MARK: - Views
 
@@ -88,7 +106,7 @@ open class PollResultsVoteListVC:
         super.setUpAppearance()
 
         tableView.allowsSelection = false
-        tableView.backgroundColor = appearance.colorPalette.background
+        tableView.backgroundColor = listBackgroundColor
         tableView.separatorStyle = .none
         dataSource.defaultRowAnimation = .fade
     }
@@ -108,13 +126,7 @@ open class PollResultsVoteListVC:
         let cell = tableView.dequeueReusableCell(with: components.pollResultsVoteItemCell, for: indexPath)
         cell.content = .init(vote: vote)
         let isLastItem = pollVoteListController.votes.count == indexPath.item - 1
-        if isLastItem {
-            cell.itemView.layer.cornerRadius = sectionCornerRadius
-            cell.itemView.layer.maskedCorners = [.layerMaxXMaxYCorner, .layerMinXMaxYCorner]
-        } else {
-            cell.itemView.layer.cornerRadius = 0
-            cell.itemView.layer.maskedCorners = []
-        }
+        style(cell: cell, contentView: cell.itemView, isLastItem: isLastItem)
         return cell
     }
 
@@ -123,12 +135,7 @@ open class PollResultsVoteListVC:
     public func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
         let view = tableView.dequeueReusableHeaderFooter(with: components.pollResultsOptionHeaderView)
         view.content = .init(option: option, poll: poll)
-        view.optionView.layer.cornerRadius = sectionCornerRadius
-        if !option.latestVotes.isEmpty {
-            view.optionView.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
-        } else {
-            view.optionView.layer.maskedCorners = .all
-        }
+        style(sectionHeaderView: view, contentView: view.optionView, isEmptySection: false)
         return view
     }
 

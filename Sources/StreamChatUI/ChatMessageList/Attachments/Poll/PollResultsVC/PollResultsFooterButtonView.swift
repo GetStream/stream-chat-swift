@@ -7,6 +7,9 @@ import UIKit
 
 /// The poll results footer view for each section.
 open class PollResultsFooterButtonView: _TableHeaderFooterView, ThemeProvider {
+    /// The bottom spacing of the footer.
+    public var bottomSpacing: CGFloat = 8
+
     /// A closure that is trigger when the button is tapped.
     public var onTap: (() -> Void)?
 
@@ -26,8 +29,6 @@ open class PollResultsFooterButtonView: _TableHeaderFooterView, ThemeProvider {
     override open func setUpAppearance() {
         super.setUpAppearance()
 
-        backgroundColor = appearance.colorPalette.background
-        container.backgroundColor = appearance.colorPalette.background1
         actionButton.setTitle(L10n.Message.Polls.Button.showAll, for: .normal)
         actionButton.setTitleColor(appearance.colorPalette.accentPrimary, for: .normal)
         actionButton.titleLabel?.font = appearance.fonts.subheadline
@@ -41,7 +42,7 @@ open class PollResultsFooterButtonView: _TableHeaderFooterView, ThemeProvider {
         container.views {
             actionButton
         }
-        .embed(in: self, insets: .init(top: 0, leading: 16, bottom: 8, trailing: 16))
+        .embed(in: self, insets: .init(top: 0, leading: 16, bottom: bottomSpacing, trailing: 16))
     }
 
     @objc open func didTapButton(sender: Any?) {

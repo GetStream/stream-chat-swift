@@ -10,7 +10,8 @@ open class PollResultsVC:
     _ViewController,
     ThemeProvider,
     PollControllerDelegate,
-    UITableViewDelegate {
+    UITableViewDelegate,
+    GroupedSectionListStyling {
     /// The controller that manages the poll data.
     public var pollController: PollController
 
@@ -22,13 +23,35 @@ open class PollResultsVC:
     // MARK: - Configuration
 
     /// The maximum votes displayed per option.
-    public var maximumVotesPerOption: Int = 5
+    open var maximumVotesPerOption: Int {
+        5
+    }
+
+    /// Whether the grouped section styling is enabled. By default it is true.
+    /// If you want to have a custom look without grouped sections, you should disable this flag.
+    open var isGroupedSectionStylingEnabled: Bool {
+        true
+    }
+
+    /// The background color of the table view.
+    open var listBackgroundColor: UIColor {
+        appearance.colorPalette.background
+    }
+
+    /// The background color for each poll option section.
+    open var sectionBackgroundColor: UIColor {
+        appearance.colorPalette.background1
+    }
 
     /// The corner radius amount of each section group.
-    public var sectionCornerRadius: CGFloat = 16
+    open var sectionCornerRadius: CGFloat {
+        16
+    }
 
     /// The spacing between each section.
-    public var sectionSpacing: CGFloat = 8
+    open var sectionSpacing: CGFloat {
+        8
+    }
 
     // MARK: - Views
 
@@ -83,10 +106,10 @@ open class PollResultsVC:
 
         title = L10n.Message.Polls.resultsTitle
         tableView.allowsSelection = false
-        tableView.backgroundColor = appearance.colorPalette.background
+        tableView.backgroundColor = listBackgroundColor
         tableView.separatorStyle = .none
         dataSource.defaultRowAnimation = .fade
-        headerView.container.layer.cornerRadius = sectionCornerRadius
+        style(tableHeaderView: headerView, contentView: headerView.container)
     }
 
     override open func setUpLayout() {
@@ -137,13 +160,7 @@ open class PollResultsVC:
         }
         cell.content = .init(vote: vote)
         let isLastItem = indexPath.row == option.latestVotes.count - 1
-        if isLastItem {
-            cell.itemView.layer.cornerRadius = sectionCornerRadius
-            cell.itemView.layer.maskedCorners = [.layerMaxXMaxYCorner, .layerMinXMaxYCorner]
-        } else {
-            cell.itemView.layer.cornerRadius = 0
-            cell.itemView.layer.maskedCorners = []
-        }
+        style(cell: cell, contentView: cell.itemView, isLastItem: isLastItem)
         return cell
     }
 
@@ -154,12 +171,7 @@ open class PollResultsVC:
         let option = poll.options[section]
         let view = tableView.dequeueReusableHeaderFooter(with: components.pollResultsOptionHeaderView)
         view.content = .init(option: option, poll: poll)
-        view.optionView.layer.cornerRadius = sectionCornerRadius
-        if !option.latestVotes.isEmpty {
-            view.optionView.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
-        } else {
-            view.optionView.layer.maskedCorners = .all
-        }
+        style(sectionHeaderView: view, contentView: view.optionView, isEmptySection: option.latestVotes.isEmpty)
         return view
     }
 
@@ -172,8 +184,8 @@ open class PollResultsVC:
         view.onTap = { [weak self] in
             self?.showVoteList(for: option)
         }
-        view.container.layer.cornerRadius = sectionCornerRadius
-        view.container.layer.maskedCorners = [.layerMaxXMaxYCorner, .layerMinXMaxYCorner]
+        view.bottomSpacing = sectionSpacing
+        style(sectionFooterView: view, contentView: view.container)
         return view
     }
 

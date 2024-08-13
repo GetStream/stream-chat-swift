@@ -26,12 +26,6 @@ open class PollResultsVoteItemCell: _TableViewCell, ThemeProvider {
         .pollResultsVoteItemView.init()
         .withoutAutoresizingMaskConstraints
 
-    override open func setUpAppearance() {
-        super.setUpAppearance()
-
-        backgroundColor = appearance.colorPalette.background
-    }
-
     override open func setUpLayout() {
         super.setUpLayout()
 

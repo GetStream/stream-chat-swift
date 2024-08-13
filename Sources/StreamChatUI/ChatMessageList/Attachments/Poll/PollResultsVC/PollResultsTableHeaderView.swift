@@ -33,8 +33,6 @@ open class PollResultsTableHeaderView: _View, ThemeProvider {
     override open func setUpAppearance() {
         super.setUpAppearance()
 
-        backgroundColor = appearance.colorPalette.background
-        container.backgroundColor = appearance.colorPalette.background1
         titleLabel.numberOfLines = 0
     }
 

@@ -41,7 +41,6 @@ open class PollResultsOptionView: _View, ThemeProvider {
     override open func setUpAppearance() {
         super.setUpAppearance()
 
-        backgroundColor = appearance.colorPalette.background1
         optionNameLabel.numberOfLines = 0
         optionNameLabel.font = appearance.fonts.headlineBold
         optionNameLabel.textColor = appearance.colorPalette.text
