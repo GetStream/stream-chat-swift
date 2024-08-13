@@ -217,8 +217,7 @@ open class PollResultsVC:
         let query = PollVoteListQuery(
             pollId: pollController.pollId,
             optionId: option.id,
-            pagination: .init(pageSize: 25),
-            filter: .equal(.optionId, to: option.id)
+            pagination: .init(pageSize: 25)
         )
         let voteListController = pollController.client.pollVoteListController(query: query)
         let viewController = components.pollResultsVoteListVC.init(
