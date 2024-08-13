@@ -15,21 +15,15 @@ derived_data_path = 'derived_data'
 source_packages_path = 'spm_cache'
 metrics_git = 'git@github.com:GetStream/stream-internal-metrics.git'
 xcmetrics_path = "metrics/#{github_repo.split('/').last}-xcmetrics.json"
-sdk_size_path = "metrics/#{github_repo.split('/').last}-size.json"
 buildcache_xcargs = 'CC=clang CPLUSPLUS=clang++ LD=clang LDPLUSPLUS=clang++'
 testlab_bucket = 'gs://test-lab-af3rt9m4yh360-mqm1zzm767nhc'
 is_localhost = !is_ci
 @force_check = false
 
-warning_status = '🟡' # Warning if a branch is #{max_tolerance} less performant than the benchmark
-fail_status = '🔴' # Failure if a branch is more than #{max_tolerance} less performant than the benchmark
-success_status = '🟢' # Success if a branch is more performant or equals to the benchmark
-outstanding_status = '🚀' # Outstanding performance
-
 before_all do |lane|
   if is_ci
     setup_ci
-    sh('git config --global user.name "Stream Bot"')
+    setup_git_config
     xcversion(version: xcode_version) unless [:publish_release, :allure_launch, :allure_upload, :pod_lint, :sync_mock_server, :copyright].include?(lane)
   end
 end
@@ -143,7 +137,7 @@ lane :merge_release_to_main do |options|
 
   comment = "[Publication of the release](https://github.com/#{github_repo}/actions/workflows/release-publish.yml) has been launched 👍"
   UI.important(comment)
-  create_pr_comment(pr_num: ENV.fetch('GITHUB_PR_NUM'), text: comment)
+  pr_comment(text: comment)
 end
 
 lane :merge_main_to_develop do
@@ -424,6 +418,10 @@ lane :xcmetrics do |options|
     xcodebuild_output = File.read('xcodebuild_output.log')
   end
 
+  warning_status = '🟡' # Warning if a branch is #{max_tolerance} less performant than the benchmark
+  fail_status = '🔴' # Failure if a branch is more than #{max_tolerance} less performant than the benchmark
+  success_status = '🟢' # Success if a branch is more performant or equals to the benchmark
+
   sh("git clone #{metrics_git} #{File.dirname(xcmetrics_path)}")
   performance_benchmarks = JSON.parse(File.read(xcmetrics_path))
   expected_performance = performance_benchmarks['benchmark']
@@ -489,7 +487,7 @@ lane :xcmetrics do |options|
 
   UI.user_error!("See Firebase error above ☝️") unless firebase_error.to_s.empty?
 
-  create_pr_comment(pr_num: ENV.fetch('GITHUB_PR_NUM'), text: markdown_table, edit_last_comment_with_text: table_header)
+  pr_comment(text: markdown_table, edit_last_comment_with_text: table_header) if is_ci
 
   UI.user_error!("#{table_header} benchmark failed.") if markdown_table.include?(fail_status)
 end
@@ -643,7 +641,7 @@ lane :test_ui do |options|
     png_files.each { |png| sh("git add #{png}") || true }
     sh('git restore .')
 
-    create_pr(
+    pr_create(
       title: '[CI] Snapshots',
       base_branch: current_branch,
       head_branch: "#{current_branch}-snapshots"
@@ -777,7 +775,7 @@ lane :sync_mock_server do
   sh('python3 sync_mock_server.py')
   next unless is_ci
 
-  create_pr(
+  pr_create(
     title: '[CI] Sync Mock Server',
     head_branch: "ci/sync-mock-server-#{Time.now.to_i}"
   )
@@ -791,21 +789,7 @@ lane :rubocop do
 end
 
 lane :install_runtime do |options|
-  runtimes = `xcrun simctl runtime list -j`
-  UI.message("👉 Runtime list:\n#{runtimes}")
-  simulators = JSON.parse(runtimes).select do |_, sim|
-    sim['platformIdentifier'].end_with?('iphonesimulator') && sim['version'] == options[:ios] && sim['state'] == 'Ready'
-  end
-
-  if simulators.empty?
-    Dir.chdir('..') do
-      sh("echo 'iOS #{options[:ios]} Simulator' | ipsw download xcode --sim") if Dir['*.dmg'].first.nil?
-      sh("./Scripts/install_ios_runtime.sh #{Dir['*.dmg'].first}")
-      UI.success("iOS #{options[:ios]} Runtime successfuly installed")
-    end
-  else
-    UI.important("iOS #{options[:ios]} Runtime already exists")
-  end
+  install_ios_runtime(version: options[:ios], custom_script: 'Scripts/install_ios_runtime.sh')
 end
 
 desc 'Remove UI snapshots'
@@ -837,160 +821,26 @@ lane :copyright do
   update_copyright(ignore: [derived_data_path, source_packages_path, 'vendor/'])
   next unless is_ci
 
-  create_pr(
+  pr_create(
     title: '[CI] Update Copyright',
     head_branch: "ci/update-copyright-#{Time.now.to_i}"
   )
 end
 
-desc 'Show current frameworks size'
 lane :show_frameworks_sizes do |options|
   next unless is_check_required(sources: sources_matrix[:size], force_check: @force_check)
 
-  ['metrics/'].each { |dir| FileUtils.remove_dir(dir, force: true) }
-
-  sh("git clone #{metrics_git} #{File.dirname(sdk_size_path)}")
-  is_release = current_branch.include?('release/')
-  benchmark_config = JSON.parse(File.read(sdk_size_path))
-  benchmark_key = is_release ? 'release' : 'develop'
-  benchmark_sizes = benchmark_config[benchmark_key]
-  branch_sizes = options[:sizes] || frameworks_sizes
-
-  table_header = '## SDK Size'
-  markdown_table = "#{table_header}\n| `title` | `#{is_release ? 'previous release' : 'develop'}` | `#{is_release ? 'current release' : 'branch'}` | `diff` | `status` |\n| - | - | - | - | - |\n"
-  sdk_names.each do |title|
-    benchmark_value = benchmark_sizes[title]
-    branch_value = branch_sizes[title.to_sym]
-    max_tolerance = 0.5 # Max Tolerance is 0.5MB
-    fine_tolerance = 0.25 # Fine Tolerance is 0.25MB
-
-    diff = (branch_value - benchmark_value).round(2)
-
-    status_emoji =
-      if diff < 0
-        outstanding_status
-      elsif diff >= max_tolerance
-        fail_status
-      elsif diff >= fine_tolerance
-        warning_status
-      else
-        success_status
-      end
-
-    markdown_table << "|#{title}|#{benchmark_value}MB|#{branch_value}MB|#{diff}MB|#{status_emoji}|\n"
-  end
-
-  FastlaneCore::PrintTable.print_values(title: 'Benchmark', config: benchmark_sizes)
-  FastlaneCore::PrintTable.print_values(title: 'SDK Size', config: branch_sizes)
-
-  if is_ci
-    if is_release || ENV['GITHUB_EVENT_NAME'].to_s == 'push'
-      benchmark_config[benchmark_key] = branch_sizes
-      File.write(sdk_size_path, JSON.pretty_generate(benchmark_config))
-      Dir.chdir(File.dirname(sdk_size_path)) do
-        if sh('git status -s', log: false).to_s.empty?
-          UI.important('No changes in SDK sizes benchmarks.')
-        else
-          sh('git add -A')
-          sh("git commit -m 'Update #{sdk_size_path}'")
-          sh('git push')
-        end
-      end
-    end
-
-    create_pr_comment(pr_num: ENV.fetch('GITHUB_PR_NUM'), text: markdown_table, edit_last_comment_with_text: table_header)
-  end
-
-  UI.user_error!("#{table_header} benchmark failed.") if markdown_table.include?(fail_status)
+  sizes = options[:sizes] || frameworks_sizes
+  show_sdk_size(branch_sizes: sizes, github_repo: github_repo)
+  update_img_shields_sdk_sizes(sizes: sizes, open_pr: options[:open_pr]) if options[:update_readme]
 end
 
-desc 'Update img shields SDK size labels'
-lane :update_img_shields_sdk_sizes do
-  sizes = frameworks_sizes
-
-  # Read the file into a string
-  readme_path = '../README.md'
-  readme_content = File.read(readme_path)
-
-  # Define the new value for the badge
-  stream_chat_size = "#{sizes[:StreamChat]}MB"
-  stream_chat_ui_size = "#{sizes[:StreamChatUI]}MB"
-
-  # Replace the value in the badge URL
-  readme_content.gsub!(%r{(https://img.shields.io/badge/StreamChat-)(.*?)(-blue)}, "\\1#{stream_chat_size}\\3")
-  readme_content.gsub!(%r{(https://img.shields.io/badge/StreamChatUI-)(.*?)(-blue)}, "\\1#{stream_chat_ui_size}\\3")
-
-  # Write the updated content back to the file
-  File.write(readme_path, readme_content)
-
-  # Notify success
-  UI.success('Successfully updated the SDK size labels in README.md!')
-end
-
-private_lane :create_pr do |options|
-  options[:base_branch] ||= 'develop'
-  sh("git checkout -b #{options[:head_branch]}")
-  sh('git restore Brewfile.lock.json || true')
-  sh('git add -A')
-  sh("git commit -m '#{options[:title]}'")
-  push_to_git_remote(tags: false)
-
-  create_pull_request(
-    api_token: ENV.fetch('GITHUB_TOKEN', nil),
-    repo: github_repo,
-    title: options[:title],
-    head: options[:head_branch],
-    base: options[:base_branch],
-    body: 'This PR was created automatically by CI.'
+lane :update_img_shields_sdk_sizes do |options|
+  update_sdk_size_in_readme(
+    open_pr: options[:open_pr] || false,
+    readme_path: 'README.md',
+    sizes: options[:sizes] || frameworks_sizes
   )
-end
-
-private_lane :create_pr_comment do |options|
-  if is_ci && !options[:pr_num].to_s.empty?
-    last_comment = sh("gh pr view #{options[:pr_num]} --json comments --jq '.comments | map(select(.author.login == \"Stream-SDK-Bot\")) | last'")
-    edit_last_comment = options[:edit_last_comment_with_text] && last_comment.include?(options[:edit_last_comment_with_text]) ? '--edit-last' : ''
-    sh("gh pr comment #{options[:pr_num]} #{edit_last_comment} -b '#{options[:text]}'")
-  end
-end
-
-lane :current_branch do
-  branch = if ENV['GITHUB_PR_NUM'].to_s.empty?
-             git_branch
-           else
-             sh("gh pr view #{ENV.fetch('GITHUB_PR_NUM')} --json headRefName -q .headRefName").strip
-           end
-
-  UI.important("Current branch: #{branch} 🕊️")
-  branch
-end
-
-private_lane :git_status do |options|
-  UI.user_error!('Extension should be provided') unless options[:ext]
-
-  untracked_files = sh('git status -s', log: false).split("\n").map(&:strip)
-  UI.important("Git Status: #{untracked_files}")
-
-  deleted_files = select_files_from(files: untracked_files, with_extension: options[:ext], that_start_with: 'D')
-  added_files = select_files_from(files: untracked_files, with_extension: options[:ext], that_start_with: ['A', '??'])
-  renamed_files = select_files_from(files: untracked_files, with_extension: options[:ext], that_start_with: 'R')
-  modified_files = select_files_from(files: untracked_files, with_extension: options[:ext], that_start_with: 'M')
-
-  renamed_files.each do |renamed_file|
-    content = renamed_file.split.drop(1).join.split('->').map(&:strip)
-    deleted_files << content.first
-    added_files << content.last
-  end
-  { a: added_files, d: deleted_files, m: modified_files }
-end
-
-def select_files_from(files:, with_extension:, that_start_with:)
-  files.select do |f|
-    f.start_with?(*that_start_with)
-  end.map do |f|
-    f.split.drop(1).join(' ')
-  end.select do |f|
-    f.gsub(/['"]/, '').end_with?(with_extension)
-  end
 end
 
 def frameworks_sizes
@@ -1019,13 +869,11 @@ def frameworks_sizes
   stream_chat_size = File.size("#{frameworks_path}/StreamChat.framework/StreamChat")
   stream_chat_ui_size = File.size("#{frameworks_path}/StreamChatUI.framework/StreamChatUI")
 
-  stream_chat_size_mb = (stream_chat_size.to_f / 1024 / 1024).round(2)
-  stream_chat_ui_size_mb = ((stream_chat_ui_size + assets_thinned_size).to_f / 1024 / 1024).round(2)
-  total_size_mb = (stream_chat_size_mb + stream_chat_ui_size_mb).round(2)
+  stream_chat_size_kb = stream_chat_size.to_f / 1024
+  stream_chat_ui_size_kb = (stream_chat_ui_size + assets_thinned_size).to_f / 1024
 
   {
-    StreamChat: stream_chat_size_mb,
-    StreamChatUI: stream_chat_ui_size_mb,
-    Total: total_size_mb
+    StreamChat: stream_chat_size_kb,
+    StreamChatUI: stream_chat_ui_size_kb
   }
 end
