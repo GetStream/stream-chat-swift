@@ -6,7 +6,7 @@ import StreamChat
 import UIKit
 
 /// The poll results option section header view.
-open class PollResultsOptionHeaderView: _TableHeaderFooterView, ThemeProvider {
+open class PollResultsSectionHeaderView: _TableHeaderFooterView, ThemeProvider {
     public struct Content {
         public var option: PollOption
         public var poll: Poll
@@ -24,8 +24,8 @@ open class PollResultsOptionHeaderView: _TableHeaderFooterView, ThemeProvider {
     }
 
     /// The poll option view displayed in the section header of the poll results.
-    open private(set) lazy var optionView: PollResultsOptionView = components
-        .pollResultsOptionView.init()
+    open private(set) lazy var optionView: PollResultsSectionHeaderOptionView = components
+        .pollResultsSectionHeaderOptionView.init()
         .withoutAutoresizingMaskConstraints
 
     override open func setUpLayout() {

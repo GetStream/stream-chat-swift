@@ -6,7 +6,7 @@ import StreamChat
 import UIKit
 
 /// The poll option view displayed in the section header of the poll results.
-open class PollResultsOptionView: _View, ThemeProvider {
+open class PollResultsSectionHeaderOptionView: _View, ThemeProvider {
     public struct Content {
         public var option: PollOption
         public var poll: Poll
@@ -53,7 +53,7 @@ open class PollResultsOptionView: _View, ThemeProvider {
     override open func setUpLayout() {
         super.setUpLayout()
 
-        directionalLayoutMargins = .init(top: 12, leading: 12, bottom: 12, trailing: 12)
+        directionalLayoutMargins = .init(top: 12, leading: 12, bottom: 8, trailing: 12)
 
         HContainer(spacing: 4, alignment: .center) {
             optionNameLabel

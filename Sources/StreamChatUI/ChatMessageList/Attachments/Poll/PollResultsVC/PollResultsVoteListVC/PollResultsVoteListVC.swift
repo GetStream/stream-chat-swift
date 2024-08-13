@@ -87,7 +87,7 @@ open class PollResultsVoteListVC:
         super.setUp()
 
         tableView.register(components.pollResultsVoteItemCell)
-        tableView.register(components.pollResultsOptionHeaderView)
+        tableView.register(components.pollResultsSectionHeaderView)
 
         tableView.estimatedSectionHeaderHeight = 50
         tableView.sectionHeaderHeight = UITableView.automaticDimension
@@ -133,7 +133,7 @@ open class PollResultsVoteListVC:
     // MARK: - UITableViewDelegate
 
     public func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-        let view = tableView.dequeueReusableHeaderFooter(with: components.pollResultsOptionHeaderView)
+        let view = tableView.dequeueReusableHeaderFooter(with: components.pollResultsSectionHeaderView)
         view.content = .init(option: option, poll: poll)
         style(sectionHeaderView: view, contentView: view.optionView, isEmptySection: false)
         return view

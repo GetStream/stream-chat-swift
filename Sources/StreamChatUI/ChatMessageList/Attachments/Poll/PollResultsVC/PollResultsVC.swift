@@ -89,7 +89,7 @@ open class PollResultsVC:
         navigationItem.leftBarButtonItem?.tintColor = appearance.colorPalette.background7
 
         tableView.register(components.pollResultsVoteItemCell)
-        tableView.register(components.pollResultsOptionHeaderView)
+        tableView.register(components.pollResultsSectionHeaderView)
         tableView.register(components.pollResultsFooterButtonView)
 
         tableView.estimatedSectionHeaderHeight = 50
@@ -169,7 +169,7 @@ open class PollResultsVC:
     open func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
         guard let poll = pollController.poll else { return nil }
         let option = poll.options[section]
-        let view = tableView.dequeueReusableHeaderFooter(with: components.pollResultsOptionHeaderView)
+        let view = tableView.dequeueReusableHeaderFooter(with: components.pollResultsSectionHeaderView)
         view.content = .init(option: option, poll: poll)
         style(sectionHeaderView: view, contentView: view.optionView, isEmptySection: option.latestVotes.isEmpty)
         return view

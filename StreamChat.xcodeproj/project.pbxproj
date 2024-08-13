@@ -1440,10 +1440,10 @@
 		AD4C8C232C5D479B00E1C414 /* StackedUserAvatarsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD4C8C212C5D479B00E1C414 /* StackedUserAvatarsView.swift */; };
 		AD4CDD85296499160057BC8A /* ScrollViewPaginationHandler_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD4CDD81296498D20057BC8A /* ScrollViewPaginationHandler_Tests.swift */; };
 		AD4CDD862964991A0057BC8A /* InvertedScrollViewPaginationHandler_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD4CDD83296498EB0057BC8A /* InvertedScrollViewPaginationHandler_Tests.swift */; };
-		AD4F89D02C666471006DF7E5 /* PollResultsOptionHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD4F89CA2C666471006DF7E5 /* PollResultsOptionHeaderView.swift */; };
-		AD4F89D12C666471006DF7E5 /* PollResultsOptionHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD4F89CA2C666471006DF7E5 /* PollResultsOptionHeaderView.swift */; };
-		AD4F89D22C666471006DF7E5 /* PollResultsOptionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD4F89CB2C666471006DF7E5 /* PollResultsOptionView.swift */; };
-		AD4F89D32C666471006DF7E5 /* PollResultsOptionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD4F89CB2C666471006DF7E5 /* PollResultsOptionView.swift */; };
+		AD4F89D02C666471006DF7E5 /* PollResultsSectionHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD4F89CA2C666471006DF7E5 /* PollResultsSectionHeaderView.swift */; };
+		AD4F89D12C666471006DF7E5 /* PollResultsSectionHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD4F89CA2C666471006DF7E5 /* PollResultsSectionHeaderView.swift */; };
+		AD4F89D22C666471006DF7E5 /* PollResultsSectionHeaderOptionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD4F89CB2C666471006DF7E5 /* PollResultsSectionHeaderOptionView.swift */; };
+		AD4F89D32C666471006DF7E5 /* PollResultsSectionHeaderOptionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD4F89CB2C666471006DF7E5 /* PollResultsSectionHeaderOptionView.swift */; };
 		AD4F89D42C666471006DF7E5 /* PollResultsVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD4F89CC2C666471006DF7E5 /* PollResultsVC.swift */; };
 		AD4F89D52C666471006DF7E5 /* PollResultsVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD4F89CC2C666471006DF7E5 /* PollResultsVC.swift */; };
 		AD4F89D62C666471006DF7E5 /* PollResultsVoteItemCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD4F89CD2C666471006DF7E5 /* PollResultsVoteItemCell.swift */; };
@@ -4158,8 +4158,8 @@
 		AD4C8C212C5D479B00E1C414 /* StackedUserAvatarsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StackedUserAvatarsView.swift; sourceTree = "<group>"; };
 		AD4CDD81296498D20057BC8A /* ScrollViewPaginationHandler_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScrollViewPaginationHandler_Tests.swift; sourceTree = "<group>"; };
 		AD4CDD83296498EB0057BC8A /* InvertedScrollViewPaginationHandler_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InvertedScrollViewPaginationHandler_Tests.swift; sourceTree = "<group>"; };
-		AD4F89CA2C666471006DF7E5 /* PollResultsOptionHeaderView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PollResultsOptionHeaderView.swift; sourceTree = "<group>"; };
-		AD4F89CB2C666471006DF7E5 /* PollResultsOptionView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PollResultsOptionView.swift; sourceTree = "<group>"; };
+		AD4F89CA2C666471006DF7E5 /* PollResultsSectionHeaderView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PollResultsSectionHeaderView.swift; sourceTree = "<group>"; };
+		AD4F89CB2C666471006DF7E5 /* PollResultsSectionHeaderOptionView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PollResultsSectionHeaderOptionView.swift; sourceTree = "<group>"; };
 		AD4F89CC2C666471006DF7E5 /* PollResultsVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PollResultsVC.swift; sourceTree = "<group>"; };
 		AD4F89CD2C666471006DF7E5 /* PollResultsVoteItemCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PollResultsVoteItemCell.swift; sourceTree = "<group>"; };
 		AD4F89CE2C666471006DF7E5 /* PollResultsVoteItemView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PollResultsVoteItemView.swift; sourceTree = "<group>"; };
@@ -8379,8 +8379,8 @@
 				AD4F89E02C6A591B006DF7E5 /* PollResultsVoteItem */,
 				AD4F89CC2C666471006DF7E5 /* PollResultsVC.swift */,
 				AD4F89DA2C667886006DF7E5 /* PollResultsTableHeaderView.swift */,
-				AD4F89CA2C666471006DF7E5 /* PollResultsOptionHeaderView.swift */,
-				AD4F89CB2C666471006DF7E5 /* PollResultsOptionView.swift */,
+				AD4F89CA2C666471006DF7E5 /* PollResultsSectionHeaderView.swift */,
+				AD4F89CB2C666471006DF7E5 /* PollResultsSectionHeaderOptionView.swift */,
 				AD4F89DD2C6A5908006DF7E5 /* PollResultsFooterButtonView.swift */,
 			);
 			name = PollResultsVC;
@@ -10325,7 +10325,7 @@
 				888123D2255D430B00070D5A /* UIView+Extensions.swift in Sources */,
 				AD158B6526C1873000C104CD /* ChatThreadVC+SwiftUI.swift in Sources */,
 				8825333E258CE7AC00B77352 /* ChatMessageActionsVC.swift in Sources */,
-				AD4F89D02C666471006DF7E5 /* PollResultsOptionHeaderView.swift in Sources */,
+				AD4F89D02C666471006DF7E5 /* PollResultsSectionHeaderView.swift in Sources */,
 				F80BCA1E26304FEE00F2107B /* CloseButton.swift in Sources */,
 				22ADD682256C40410098EFEB /* ComposerView.swift in Sources */,
 				E7A37B8425ADA66E0055458F /* ChatSuggestionsHeaderView.swift in Sources */,
@@ -10364,7 +10364,7 @@
 				AD4F89D42C666471006DF7E5 /* PollResultsVC.swift in Sources */,
 				88BA7F5D258B6953006CE0C5 /* ChatLoadingIndicator.swift in Sources */,
 				40FA4DD42A12A0C300DA21D2 /* SlideToCancelView.swift in Sources */,
-				AD4F89D22C666471006DF7E5 /* PollResultsOptionView.swift in Sources */,
+				AD4F89D22C666471006DF7E5 /* PollResultsSectionHeaderOptionView.swift in Sources */,
 				ADCB578B28A42D7700B81AE8 /* Differentiable.swift in Sources */,
 				883051742630366E0069D731 /* CACornerMask+Extensions.swift in Sources */,
 				AD876B4727288DF700317314 /* ChatMessageReactionAuthorsFlowLayout.swift in Sources */,
@@ -12450,7 +12450,7 @@
 				40824D242A1271B9003B61FD /* PlayPauseButton.swift in Sources */,
 				C121EB892746A1E700023E4C /* TitleContainerView.swift in Sources */,
 				C121EB8A2746A1E700023E4C /* GradientView.swift in Sources */,
-				AD4F89D12C666471006DF7E5 /* PollResultsOptionHeaderView.swift in Sources */,
+				AD4F89D12C666471006DF7E5 /* PollResultsSectionHeaderView.swift in Sources */,
 				C121EB8B2746A1E700023E4C /* AttachmentActionButton.swift in Sources */,
 				C121EB8C2746A1E700023E4C /* ChatSuggestionsVC.swift in Sources */,
 				C121EB8D2746A1E700023E4C /* ChatSuggestionsHeaderView.swift in Sources */,
@@ -12578,7 +12578,7 @@
 				C121EBD62746A1EA00023E4C /* ChatMessageReactionAppearance.swift in Sources */,
 				AD78F9FB28EC735700BC0FCE /* SwiftyLineProcessor.swift in Sources */,
 				C1788F6029C33A1000149883 /* ChatThreadRepliesCountDecorationView.swift in Sources */,
-				AD4F89D32C666471006DF7E5 /* PollResultsOptionView.swift in Sources */,
+				AD4F89D32C666471006DF7E5 /* PollResultsSectionHeaderOptionView.swift in Sources */,
 				40824D0A2A1270BF003B61FD /* VoiceRecordingAttachmentViewInjector.swift in Sources */,
 				ADD738482A8D312B0011FE81 /* ChannelListMessageTimestampFormatter.swift in Sources */,
 				C121EBD72746A1EA00023E4C /* ChatMessageReactions+Types.swift in Sources */,

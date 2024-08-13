@@ -330,10 +330,10 @@ public struct Components {
     public var pollResultsTableHeaderView: PollResultsTableHeaderView.Type = PollResultsTableHeaderView.self
 
     /// The poll results header view for each section.
-    public var pollResultsOptionHeaderView: PollResultsOptionHeaderView.Type = PollResultsOptionHeaderView.self
+    public var pollResultsSectionHeaderView: PollResultsSectionHeaderView.Type = PollResultsSectionHeaderView.self
 
-    /// The poll results header content view for header footer view section.
-    public var pollResultsOptionView: PollResultsOptionView.Type = PollResultsOptionView.self
+    /// The poll results header content view for the section header.
+    public var pollResultsSectionHeaderOptionView: PollResultsSectionHeaderOptionView.Type = PollResultsSectionHeaderOptionView.self
 
     /// The poll results footer view for each section.
     public var pollResultsFooterButtonView: PollResultsFooterButtonView.Type = PollResultsFooterButtonView.self

@@ -56,7 +56,7 @@ open class PollResultsTableHeaderView: _View, ThemeProvider {
         super.setUpLayout()
 
         directionalLayoutMargins = .init(top: 16, leading: 16, bottom: 16, trailing: 16)
-        container.layoutMargins = .init(top: 16, left: 16, bottom: 16, right: 16)
+        container.directionalLayoutMargins = .init(top: 16, leading: 12, bottom: 16, trailing: 12)
         container.isLayoutMarginsRelativeArrangement = true
         container.views {
             titleLabel
