@@ -2,8 +2,8 @@ name: SDK Performance
 
 on:
   schedule:
-    # Runs "At 03:00 every night"
-    - cron: '0 3 * * *'
+    # Runs "At 03:00 every night except weekends"
+    - cron: '0 3 * * 1-5'
 
   pull_request:
     types:
