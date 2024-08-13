@@ -1458,6 +1458,10 @@
 		AD4F89E42C6A7B81006DF7E5 /* PollResultsVoteListVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD4F89E22C6A7B81006DF7E5 /* PollResultsVoteListVC.swift */; };
 		AD4F89E62C6AE658006DF7E5 /* GroupedSectionListStyling.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD4F89E52C6AE658006DF7E5 /* GroupedSectionListStyling.swift */; };
 		AD4F89E72C6AE658006DF7E5 /* GroupedSectionListStyling.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD4F89E52C6AE658006DF7E5 /* GroupedSectionListStyling.swift */; };
+		AD4F89E92C6B89B3006DF7E5 /* PollTimestampFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD4F89E82C6B89B3006DF7E5 /* PollTimestampFormatter.swift */; };
+		AD4F89EA2C6B89B3006DF7E5 /* PollTimestampFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD4F89E82C6B89B3006DF7E5 /* PollTimestampFormatter.swift */; };
+		AD4F89EC2C6B935A006DF7E5 /* Calendar+StreamCalendar.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD4F89EB2C6B935A006DF7E5 /* Calendar+StreamCalendar.swift */; };
+		AD4F89ED2C6B935A006DF7E5 /* Calendar+StreamCalendar.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD4F89EB2C6B935A006DF7E5 /* Calendar+StreamCalendar.swift */; };
 		AD4FB7152C1B758100EB73C5 /* Unread.json in Resources */ = {isa = PBXBuildFile; fileRef = AD4FB7142C1B758100EB73C5 /* Unread.json */; };
 		AD50BC072AF0336D00EF8523 /* MessageModerationDetails_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD50BC062AF0336D00EF8523 /* MessageModerationDetails_Tests.swift */; };
 		AD50C31D2A607A88002FDD06 /* ChannelListSearchStrategy.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD50C31C2A607A88002FDD06 /* ChannelListSearchStrategy.swift */; };
@@ -4163,6 +4167,8 @@
 		AD4F89DD2C6A5908006DF7E5 /* PollResultsFooterButtonView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PollResultsFooterButtonView.swift; sourceTree = "<group>"; };
 		AD4F89E22C6A7B81006DF7E5 /* PollResultsVoteListVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PollResultsVoteListVC.swift; sourceTree = "<group>"; };
 		AD4F89E52C6AE658006DF7E5 /* GroupedSectionListStyling.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroupedSectionListStyling.swift; sourceTree = "<group>"; };
+		AD4F89E82C6B89B3006DF7E5 /* PollTimestampFormatter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PollTimestampFormatter.swift; sourceTree = "<group>"; };
+		AD4F89EB2C6B935A006DF7E5 /* Calendar+StreamCalendar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Calendar+StreamCalendar.swift"; sourceTree = "<group>"; };
 		AD4FB7142C1B758100EB73C5 /* Unread.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = Unread.json; sourceTree = "<group>"; };
 		AD50BC062AF0336D00EF8523 /* MessageModerationDetails_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageModerationDetails_Tests.swift; sourceTree = "<group>"; };
 		AD50C31C2A607A88002FDD06 /* ChannelListSearchStrategy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelListSearchStrategy.swift; sourceTree = "<group>"; };
@@ -8544,9 +8550,9 @@
 		AD99C901279B06E9009DD9C5 /* Appearance+Formatters */ = {
 			isa = PBXGroup;
 			children = (
+				ADC4AAAF2788C8850004BB35 /* Appearance+Formatters.swift */,
 				40D396232A0905560020DDC9 /* AudioPlaybackRateFormatter.swift */,
 				40D396242A0905560020DDC9 /* AudioRecordingNameFormatter.swift */,
-				ADC4AAAF2788C8850004BB35 /* Appearance+Formatters.swift */,
 				ADBBDA27279F0E9B00E47B1C /* ChannelNameFormatter.swift */,
 				AD99C906279B0C9B009DD9C5 /* MessageDateSeparatorFormatter.swift */,
 				AD99C902279B0716009DD9C5 /* MessageTimestampFormatter.swift */,
@@ -8555,6 +8561,8 @@
 				AD99C90A279B1363009DD9C5 /* UserLastActivityFormatter.swift */,
 				ADBBDA1E279F0CEA00E47B1C /* VideoDurationFormatter.swift */,
 				CFBF8D502847C57700EEB7D3 /* MarkdownFormatter.swift */,
+				AD4F89E82C6B89B3006DF7E5 /* PollTimestampFormatter.swift */,
+				AD4F89EB2C6B935A006DF7E5 /* Calendar+StreamCalendar.swift */,
 			);
 			path = "Appearance+Formatters";
 			sourceTree = "<group>";
@@ -10490,6 +10498,7 @@
 				790882F725486B8000896F03 /* ChatChannelListCollectionViewDelegate.swift in Sources */,
 				43F4750C26F4E4FF0009487D /* ChatMessageReactionItemView.swift in Sources */,
 				DBF12128258BAFC1001919C6 /* OnlyLinkTappableTextView.swift in Sources */,
+				AD4F89EC2C6B935A006DF7E5 /* Calendar+StreamCalendar.swift in Sources */,
 				ADDB2F5F2954D43D00BF80DA /* ScrollViewPaginationHandler.swift in Sources */,
 				ADEE888D289C3CC0007DF3F8 /* ChatMessageListView+DiffKit.swift in Sources */,
 				E79AC10B25831A1500C3CE5D /* ChatCommandSuggestionView.swift in Sources */,
@@ -10619,6 +10628,7 @@
 				88CABC8E25936E440061BB67 /* ChatMessageReactionsBubbleTail.swift in Sources */,
 				AD50C31D2A607A88002FDD06 /* ChannelListSearchStrategy.swift in Sources */,
 				AD87D0AB263C7A7E008B466C /* ShrinkInputButton.swift in Sources */,
+				AD4F89E92C6B89B3006DF7E5 /* PollTimestampFormatter.swift in Sources */,
 				C1FC2F6C27416E150062530F /* LinkedList.swift in Sources */,
 				C1FC2F7A27416E150062530F /* ImageTask.swift in Sources */,
 				CF33B3AC28171BE500C84CDB /* CooldownView.swift in Sources */,
@@ -12616,6 +12626,7 @@
 				C121EBEF2746A1EB00023E4C /* FileAttachmentViewInjector.swift in Sources */,
 				C121EBF02746A1EB00023E4C /* AttachmentViewCatalog.swift in Sources */,
 				C121EBF12746A1EB00023E4C /* ChatMessageContentView.swift in Sources */,
+				AD4F89EA2C6B89B3006DF7E5 /* PollTimestampFormatter.swift in Sources */,
 				AD76CE352A5F1133003CA182 /* ChatChannelSearchVC.swift in Sources */,
 				C121EBF22746A1EB00023E4C /* ChatMessageContentView+SwiftUI.swift in Sources */,
 				406776502A14CB550079B05C /* MediaButton.swift in Sources */,
@@ -12683,6 +12694,7 @@
 				C121EC1C2746A1EC00023E4C /* ImagePipelineCache.swift in Sources */,
 				AD9632DD2C09E0350073B814 /* ChatThreadListRouter.swift in Sources */,
 				400F063229A63A0B00242A86 /* ChatMessageDecorationView.swift in Sources */,
+				AD4F89ED2C6B935A006DF7E5 /* Calendar+StreamCalendar.swift in Sources */,
 				C121EC1D2746A1EC00023E4C /* DataLoader.swift in Sources */,
 				C121EC1E2746A1EC00023E4C /* ImageResponse.swift in Sources */,
 				4011052A2A12734800F877C7 /* WaveformView.swift in Sources */,

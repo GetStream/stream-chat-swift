@@ -46,7 +46,7 @@ open class PollResultsVoteItemView: _View, ThemeProvider {
         authorAvatarView.shouldShowOnlineIndicator = false
         authorNameLabel.font = appearance.fonts.body
         authorNameLabel.textColor = appearance.colorPalette.text
-        voteTimestampLabel.font = appearance.fonts.footnote
+        voteTimestampLabel.font = appearance.fonts.body.withSize(14)
         voteTimestampLabel.textColor = appearance.colorPalette.textLowEmphasis
     }
 
@@ -68,12 +68,20 @@ open class PollResultsVoteItemView: _View, ThemeProvider {
     }
 
     override open func updateContent() {
-        authorAvatarView.content = content?.vote.user
-        authorNameLabel.text = content?.vote.user?.name
-        if #available(iOS 15.0, *) {
-            voteTimestampLabel.text = content?.vote.createdAt.formatted(.dateTime)
-        } else {
-            // Fallback on earlier versions
+        guard let content = self.content else { return }
+
+        authorAvatarView.content = content.vote.user
+        authorNameLabel.text = content.vote.user?.name
+
+        let formatter = appearance.formatters.pollVoteTimestamp
+        let voteDay = formatter.formatDay(content.vote.createdAt)
+        let voteTime = formatter.formatTime(content.vote.createdAt)
+        let originalString = [voteDay, voteTime].joined(separator: " ")
+        let attributedString = NSMutableAttributedString(string: originalString)
+        if let range = originalString.range(of: voteDay) {
+            let nsRange = NSRange(range, in: originalString)
+            attributedString.addAttribute(.font, value: voteTimestampLabel.font.bold, range: nsRange)
         }
+        voteTimestampLabel.attributedText = attributedString
     }
 }
