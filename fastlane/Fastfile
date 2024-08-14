@@ -869,11 +869,11 @@ def frameworks_sizes
   stream_chat_size = File.size("#{frameworks_path}/StreamChat.framework/StreamChat")
   stream_chat_ui_size = File.size("#{frameworks_path}/StreamChatUI.framework/StreamChatUI")
 
-  stream_chat_size_kb = stream_chat_size.to_f / 1024
-  stream_chat_ui_size_kb = (stream_chat_ui_size + assets_thinned_size).to_f / 1024
+  stream_chat_size_kb = stream_chat_size / 1024.0
+  stream_chat_ui_size_kb = (stream_chat_ui_size + assets_thinned_size) / 1024.0
 
   {
-    StreamChat: stream_chat_size_kb,
-    StreamChatUI: stream_chat_ui_size_kb
+    StreamChat: stream_chat_size_kb.round(0),
+    StreamChatUI: stream_chat_ui_size_kb.round(0)
   }
 end
