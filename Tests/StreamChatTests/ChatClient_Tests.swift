@@ -824,6 +824,43 @@ final class ChatClient_Tests: XCTestCase {
 
         XCTAssertEqual(streamHeader, SystemEnvironment.xStreamClientHeader)
     }
+    
+    // MARK: - User Session
+    
+    func test_sharedCurrentUserController() {
+        let client = ChatClient_Mock.mock()
+        let controller1 = client.sharedCurrentUserController
+        let controller2 = client.sharedCurrentUserController
+        XCTAssertTrue(controller1 === controller2, "Shared instance should be returned")
+    }
+    
+    func test_sharedCurrentUserController_whenConnectAndLogout_thenNewInstance() throws {
+        let client = ChatClient_Mock(config: inMemoryStorageConfig, environment: testEnv.environment)
+        let userInfo = UserInfo(id: "id1")
+        // Connect
+        let expectation = XCTestExpectation(description: "Connect")
+        client.mockAuthenticationRepository.connectUserResult = .success(())
+        try client.mockDatabaseContainer.createCurrentUser(id: userInfo.id)
+        client.connectUser(userInfo: userInfo, token: .unique()) { error in
+            guard error == nil else { return }
+            expectation.fulfill()
+        }
+        wait(for: [expectation], timeout: defaultTimeout)
+        let controller1 = client.sharedCurrentUserController
+        let controller2 = client.sharedCurrentUserController
+        XCTAssertTrue(controller1 === controller2, "Shared instance should be returned")
+        
+        // Logout
+        let expectation2 = XCTestExpectation(description: "Logout")
+        let connectionRepositoryMock = try XCTUnwrap(client.connectionRepository as? ConnectionRepository_Mock)
+        connectionRepositoryMock.disconnectResult = .success(())
+        client.logout {
+            expectation2.fulfill()
+        }
+        wait(for: [expectation2], timeout: defaultTimeout)
+        let controller3 = client.sharedCurrentUserController
+        XCTAssertFalse(controller1 === controller3, "New instance should be returned")
+    }
 }
 
 final class TestWorker: Worker {
