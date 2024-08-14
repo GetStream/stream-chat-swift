@@ -46,10 +46,6 @@ public class ChatClient {
     /// work if needed (i.e. when a new message pending sent appears in the database, a worker tries to send it.)
     private(set) var backgroundWorkers: [Worker] = []
 
-    /// Keeps a weak reference to the active channel list controllers to ensure a proper recovery when coming back online
-    private(set) var activeChannelListControllers = ThreadSafeWeakCollection<ChatChannelListController>()
-    private(set) var activeChannelControllers = ThreadSafeWeakCollection<ChatChannelController>()
-
     /// Background worker that takes care about client connection recovery when the Internet comes back OR app transitions from background to foreground.
     private(set) var connectionRecoveryHandler: ConnectionRecoveryHandler?
 
@@ -167,8 +163,6 @@ public class ChatClient {
         )
         let syncRepository = environment.syncRepositoryBuilder(
             config,
-            activeChannelControllers,
-            activeChannelListControllers,
             offlineRequestsRepository,
             eventNotificationCenter,
             databaseContainer,
@@ -469,8 +463,6 @@ public class ChatClient {
         authenticationRepository.logOutUser()
 
         // Stop tracking active components
-        activeChannelControllers.removeAllObjects()
-        activeChannelListControllers.removeAllObjects()
         syncRepository.removeAllTracked()
 
         let group = DispatchGroup()
@@ -589,29 +581,6 @@ public class ChatClient {
                 attachmentPostProcessor: config.uploadedAttachmentPostProcessor
             )
         ]
-    }
-
-    func startTrackingChannelController(_ channelController: ChatChannelController) {
-        // If it is already tracking, do nothing.
-        guard !activeChannelControllers.contains(channelController) else {
-            return
-        }
-        activeChannelControllers.add(channelController)
-    }
-
-    func stopTrackingChannelController(_ channelController: ChatChannelController) {
-        activeChannelControllers.remove(channelController)
-    }
-
-    func startTrackingChannelListController(_ channelListController: ChatChannelListController) {
-        guard !activeChannelListControllers.contains(channelListController) else {
-            return
-        }
-        activeChannelListControllers.add(channelListController)
-    }
-
-    func stopTrackingChannelListController(_ channelListController: ChatChannelListController) {
-        activeChannelListControllers.remove(channelListController)
     }
 
     func completeConnectionIdWaiters(connectionId: String?) {
