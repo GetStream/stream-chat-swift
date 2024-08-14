@@ -80,6 +80,16 @@ public extension Poll {
         voteCountsByOption?.values.max() ?? 0
     }
 
+    /// Whether the poll is already closed and the provided option is the one, and **the only one** with the most votes.
+    func isOptionWinner(_ option: PollOption) -> Bool {
+        isClosed && isOptionWithMostVotes(option)
+    }
+
+    /// Whether the poll is already close and the provided option is one of that has the most votes.
+    func isOptionOneOfTheWinners(_ option: PollOption) -> Bool {
+        isClosed && isOptionWithMaximumVotes(option)
+    }
+
     /// Whether the provided option is the one, and **the only one** with the most votes.
     func isOptionWithMostVotes(_ option: PollOption) -> Bool {
         let optionsWithMostVotes = voteCountsByOption?.filter { $0.value == currentMaximumVoteCount }

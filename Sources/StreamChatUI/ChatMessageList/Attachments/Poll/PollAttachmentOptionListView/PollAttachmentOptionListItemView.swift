@@ -155,11 +155,9 @@ open class PollAttachmentOptionListItemView: _View, ThemeProvider {
     }
 
     /// Whether the poll is closed and this option is the winner.
-    /// By default it only returns true if this option is the only one with most votes.
-    /// The `poll.isOptionWithMaximumVotes()` function can be used in case you don't want the winner to be unique.
     open var isOptionWinner: Bool {
         guard let content = self.content else { return false }
-        return content.poll.isClosed && content.poll.isOptionWithMostVotes(content.option)
+        return content.poll.isOptionWinner(content.option)
     }
 
     /// The authors of the latest votes of this option.
