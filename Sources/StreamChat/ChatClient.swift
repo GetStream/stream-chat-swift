@@ -46,15 +46,14 @@ public class ChatClient {
     /// work if needed (i.e. when a new message pending sent appears in the database, a worker tries to send it.)
     private(set) var backgroundWorkers: [Worker] = []
 
-    /// Keeps a weak reference to the active channel list controllers to ensure a proper recovery when coming back online
-    private(set) var activeChannelListControllers = ThreadSafeWeakCollection<ChatChannelListController>()
-    private(set) var activeChannelControllers = ThreadSafeWeakCollection<ChatChannelController>()
-
     /// Background worker that takes care about client connection recovery when the Internet comes back OR app transitions from background to foreground.
     private(set) var connectionRecoveryHandler: ConnectionRecoveryHandler?
 
     /// The notification center used to send and receive notifications about incoming events.
     private(set) var eventNotificationCenter: EventNotificationCenter
+    
+    private var _sharedCurrentUserController: CurrentChatUserController?
+    private let queue = DispatchQueue(label: "io.getstream.chat-client")
 
     /// The registry that contains all the attachment payloads associated with their attachment types.
     /// For the meantime this is a static property to avoid breaking changes. On v5, this can be changed.
@@ -167,8 +166,6 @@ public class ChatClient {
         )
         let syncRepository = environment.syncRepositoryBuilder(
             config,
-            activeChannelControllers,
-            activeChannelListControllers,
             offlineRequestsRepository,
             eventNotificationCenter,
             databaseContainer,
@@ -467,10 +464,9 @@ public class ChatClient {
     /// Disconnects the chat client from the chat servers and removes all the local data related.
     public func logout(completion: @escaping () -> Void) {
         authenticationRepository.logOutUser()
+        resetSharedCurrentUserController()
 
         // Stop tracking active components
-        activeChannelControllers.removeAllObjects()
-        activeChannelListControllers.removeAllObjects()
         syncRepository.removeAllTracked()
 
         let group = DispatchGroup()
@@ -591,29 +587,6 @@ public class ChatClient {
         ]
     }
 
-    func startTrackingChannelController(_ channelController: ChatChannelController) {
-        // If it is already tracking, do nothing.
-        guard !activeChannelControllers.contains(channelController) else {
-            return
-        }
-        activeChannelControllers.add(channelController)
-    }
-
-    func stopTrackingChannelController(_ channelController: ChatChannelController) {
-        activeChannelControllers.remove(channelController)
-    }
-
-    func startTrackingChannelListController(_ channelListController: ChatChannelListController) {
-        guard !activeChannelListControllers.contains(channelListController) else {
-            return
-        }
-        activeChannelListControllers.add(channelListController)
-    }
-
-    func stopTrackingChannelListController(_ channelListController: ChatChannelListController) {
-        activeChannelListControllers.remove(channelListController)
-    }
-
     func completeConnectionIdWaiters(connectionId: String?) {
         connectionRepository.completeConnectionIdWaiters(connectionId: connectionId)
     }
@@ -627,6 +600,24 @@ public class ChatClient {
     private func refreshToken(completion: ((Error?) -> Void)?) {
         authenticationRepository.refreshToken {
             completion?($0)
+        }
+    }
+    
+    /// A shared user controller for an easy access to the current user.
+    var sharedCurrentUserController: CurrentChatUserController {
+        queue.sync {
+            if let controller = _sharedCurrentUserController {
+                return controller
+            }
+            let controller = currentUserController()
+            _sharedCurrentUserController = controller
+            return controller
+        }
+    }
+    
+    func resetSharedCurrentUserController() {
+        queue.async {
+            self._sharedCurrentUserController = nil
         }
     }
 }

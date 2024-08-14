@@ -144,7 +144,7 @@ public class ChatChannelListController: DataController, DelegateCallable, DataSt
     override public func synchronize(_ completion: ((_ error: Error?) -> Void)? = nil) {
         startChannelListObserverIfNeeded()
         channelListLinker.start(with: client.eventNotificationCenter)
-        client.startTrackingChannelListController(self)
+        client.syncRepository.startTrackingChannelListController(self)
         updateChannelList(completion)
     }
 
@@ -191,6 +191,11 @@ public class ChatChannelListController: DataController, DelegateCallable, DataSt
 
     // MARK: - Internal
 
+    func refreshLoadedChannels(completion: @escaping (Result<Set<ChannelId>, Error>) -> Void) {
+        let channelCount = channelListObserver.items.count
+        worker.refreshLoadedChannels(for: query, channelCount: channelCount, completion: completion)
+    }
+    
     func resetQuery(
         watchedAndSynchedChannelIds: Set<ChannelId>,
         synchedChannelIds: Set<ChannelId>,

@@ -147,7 +147,7 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
     /// It is `true` if the channel typing events are enabled as well as the user privacy settings.
     internal var shouldSendTypingEvents: Bool {
         /// Ignore if user typing indicators privacy settings are disabled. By default, they are enabled.
-        let currentUserPrivacySettings = client.currentUserController().currentUser?.privacySettings
+        let currentUserPrivacySettings = client.sharedCurrentUserController.currentUser?.privacySettings
         let isTypingIndicatorsForCurrentUserEnabled = currentUserPrivacySettings?.typingIndicators?.enabled ?? true
         let isChannelTypingEventsEnabled = channel?.canSendTypingEvents ?? true
         return isTypingIndicatorsForCurrentUserEnabled && isChannelTypingEventsEnabled
@@ -229,7 +229,7 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
     }
 
     override public func synchronize(_ completion: ((_ error: Error?) -> Void)? = nil) {
-        client.startTrackingChannelController(self)
+        client.syncRepository.startTrackingChannelController(self)
         synchronize(isInRecoveryMode: false, completion)
     }
 
@@ -1030,7 +1030,7 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
             return
         }
 
-        client.startTrackingChannelController(self)
+        client.syncRepository.startTrackingChannelController(self)
 
         updater.startWatching(cid: cid, isInRecoveryMode: isInRecoveryMode) { error in
             self.state = error.map { .remoteDataFetchFailed(ClientError(with: $0)) } ?? .remoteDataFetched
@@ -1064,7 +1064,7 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
             return
         }
 
-        client.stopTrackingChannelController(self)
+        client.syncRepository.stopTrackingChannelController(self)
 
         updater.stopWatching(cid: cid) { error in
             self.state = error.map { .remoteDataFetchFailed(ClientError(with: $0)) } ?? .localDataFetched

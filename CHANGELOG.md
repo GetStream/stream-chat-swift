@@ -6,12 +6,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## StreamChat
 ### ⚡ Performance
 - Use background database observers for `CurrentUserController.currentUser`, `ChatChannelMemberListController.members`, and `ChatMessageController.message` which reduces CPU usage on the main thread [#3357](https://github.com/GetStream/stream-chat-swift/pull/3357)
+- `CurrentChatUserController` was often recreated when sending typing events [#3372](https://github.com/GetStream/stream-chat-swift/pull/3372)
 ### 🐞 Fixed
 - Fix rare crashes when deleting local database content on logout [#3355](https://github.com/GetStream/stream-chat-swift/pull/3355)
 - Fix rare crashes in `MulticastDelegate` when accessing it concurrently [#3361](https://github.com/GetStream/stream-chat-swift/pull/3361)
 ### 🔄 Changed
 - Made loadBlockedUsers in ConnectedUser public [#3352](https://github.com/GetStream/stream-chat-swift/pull/3352)
 - Removed Agora and 100ms related code, the recommended way to support calls is to use StreamVideo [#3364](https://github.com/GetStream/stream-chat-swift/pull/3364)
+- Run offline state sync in the background instead of pausing other API requests while it runs [#3367](https://github.com/GetStream/stream-chat-swift/pull/3367)
 
 # [4.61.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.61.0)
 _July 30, 2024_

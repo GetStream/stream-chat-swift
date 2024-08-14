@@ -6,9 +6,14 @@
 @testable import StreamChatTestTools
 import XCTest
 
-final class SyncRepository_Tests: XCTestCase {
-    var _activeChannelControllers: ThreadSafeWeakCollection<ChatChannelController>!
-    var _activeChannelListControllers: ThreadSafeWeakCollection<ChatChannelListController>!
+class SyncRepositoryV2_Tests: SyncRepository_Tests {
+    override func setUp() {
+        super.setUp()
+        repository.usesV2Sync = true
+    }
+}
+
+class SyncRepository_Tests: XCTestCase {
     var client: ChatClient_Mock!
     var offlineRequestsRepository: OfflineRequestsRepository_Mock!
     var database: DatabaseContainer_Spy!
@@ -24,8 +29,6 @@ final class SyncRepository_Tests: XCTestCase {
     override func setUp() {
         super.setUp()
 
-        _activeChannelControllers = ThreadSafeWeakCollection<ChatChannelController>()
-        _activeChannelListControllers = ThreadSafeWeakCollection<ChatChannelListController>()
         var config = ChatClientConfig(apiKeyString: .unique)
         config.isLocalStorageEnabled = true
         client = ChatClient_Mock(config: config)
@@ -41,20 +44,17 @@ final class SyncRepository_Tests: XCTestCase {
 
         repository = SyncRepository(
             config: client.config,
-            activeChannelControllers: _activeChannelControllers,
-            activeChannelListControllers: _activeChannelListControllers,
             offlineRequestsRepository: offlineRequestsRepository,
             eventNotificationCenter: client.eventNotificationCenter,
             database: database,
             apiClient: apiClient,
             channelListUpdater: channelListUpdater
         )
+        repository.usesV2Sync = false
     }
 
     override func tearDown() {
         super.tearDown()
-        _activeChannelControllers = nil
-        _activeChannelListControllers = nil
         client.cleanUp()
         client = nil
         offlineRequestsRepository.clear()
@@ -93,8 +93,6 @@ final class SyncRepository_Tests: XCTestCase {
         let client = ChatClient_Mock(config: config)
         repository = SyncRepository(
             config: client.config,
-            activeChannelControllers: _activeChannelControllers,
-            activeChannelListControllers: _activeChannelListControllers,
             offlineRequestsRepository: offlineRequestsRepository,
             eventNotificationCenter: repository.eventNotificationCenter,
             database: database,
@@ -127,8 +125,6 @@ final class SyncRepository_Tests: XCTestCase {
         let client = ChatClient_Mock(config: config)
         repository = SyncRepository(
             config: client.config,
-            activeChannelControllers: _activeChannelControllers,
-            activeChannelListControllers: _activeChannelListControllers,
             offlineRequestsRepository: offlineRequestsRepository,
             eventNotificationCenter: repository.eventNotificationCenter,
             database: database,
@@ -171,6 +167,8 @@ final class SyncRepository_Tests: XCTestCase {
     }
 
     func test_syncLocalState_localStorageEnabled_pendingConnectionDate_channels() throws {
+        try XCTSkipIf(repository.usesV2Sync, "V2 only syncs if there are active controllers")
+        
         let channelId = ChannelId.unique
         try prepareForSyncLocalStorage(
             createUser: true,
@@ -206,7 +204,7 @@ final class SyncRepository_Tests: XCTestCase {
 
         let chatController = ChatChannelController_Spy(client: client)
         chatController.state = .remoteDataFetched
-        _activeChannelControllers.add(chatController)
+        repository.startTrackingChannelController(chatController)
 
         let eventDate = Date.unique
         waitForSyncLocalStateRun(requestResult: .success(messageEventPayload(cid: cid, with: [eventDate])))
@@ -216,10 +214,17 @@ final class SyncRepository_Tests: XCTestCase {
         // Write: API Response, lastSyncAt
         XCTAssertEqual(database.writeSessionCounter, 2)
         XCTAssertEqual(repository.activeChannelControllers.count, 1)
-        XCTAssertCall("recoverWatchedChannel(completion:)", on: chatController, times: 1)
+        if !repository.usesV2Sync {
+            XCTAssertCall("recoverWatchedChannel(completion:)", on: chatController, times: 1)
+        }
         XCTAssertEqual(repository.activeChannelListControllers.count, 0)
-        XCTAssertEqual(apiClient.recoveryRequest_allRecordedCalls.count, 1)
-        XCTAssertEqual(apiClient.request_allRecordedCalls.count, 0)
+        if repository.usesV2Sync {
+            XCTAssertEqual(apiClient.recoveryRequest_allRecordedCalls.count, 0)
+            XCTAssertEqual(apiClient.request_allRecordedCalls.count, 1)
+        } else {
+            XCTAssertEqual(apiClient.recoveryRequest_allRecordedCalls.count, 1)
+            XCTAssertEqual(apiClient.request_allRecordedCalls.count, 0)
+        }
         XCTAssertCall("runQueuedRequests(completion:)", on: offlineRequestsRepository, times: 1)
     }
 
@@ -234,8 +239,13 @@ final class SyncRepository_Tests: XCTestCase {
 
         let chatListController = ChatChannelListController_Mock(query: .init(filter: .exists(.cid)), client: client)
         chatListController.state = .remoteDataFetched
-        _activeChannelListControllers.add(chatListController)
-        chatListController.resetChannelsQueryResult = .success(([], []))
+        chatListController.channels_mock = [.mock(cid: cid)]
+        repository.startTrackingChannelListController(chatListController)
+        if repository.usesV2Sync {
+            chatListController.refreshLoadedChannelsResult = .success(Set())
+        } else {
+            chatListController.resetChannelsQueryResult = .success(([], []))
+        }
 
         let eventDate = Date.unique
         waitForSyncLocalStateRun(requestResult: .success(messageEventPayload(cid: cid, with: [eventDate])))
@@ -246,17 +256,28 @@ final class SyncRepository_Tests: XCTestCase {
         XCTAssertEqual(database.writeSessionCounter, 2)
         XCTAssertEqual(repository.activeChannelControllers.count, 0)
         XCTAssertEqual(repository.activeChannelListControllers.count, 1)
-        XCTAssertCall(
-            "resetQuery(watchedAndSynchedChannelIds:synchedChannelIds:completion:)", on: chatListController,
-            times: 1
-        )
-        XCTAssertEqual(apiClient.recoveryRequest_allRecordedCalls.count, 1)
-        XCTAssertEqual(apiClient.request_allRecordedCalls.count, 0)
+        if repository.usesV2Sync {
+            XCTAssertCall(
+                "refreshLoadedChannels(completion:)", on: chatListController,
+                times: 1
+            )
+            XCTAssertEqual(apiClient.recoveryRequest_allRecordedCalls.count, 0)
+            XCTAssertEqual(apiClient.request_allRecordedCalls.count, 1)
+        } else {
+            XCTAssertCall(
+                "resetQuery(watchedAndSynchedChannelIds:synchedChannelIds:completion:)", on: chatListController,
+                times: 1
+            )
+            XCTAssertEqual(apiClient.recoveryRequest_allRecordedCalls.count, 1)
+            XCTAssertEqual(apiClient.request_allRecordedCalls.count, 0)
+        }
         XCTAssertCall("runQueuedRequests(completion:)", on: offlineRequestsRepository, times: 1)
     }
 
     func test_syncLocalState_localStorageEnabled_pendingConnectionDate_channels_activeRemoteChannelListController_unwantedChannels(
     ) throws {
+        try XCTSkipIf(repository.usesV2Sync, "V2 does not handle unwanted channels")
+
         let cid = ChannelId.unique
         try prepareForSyncLocalStorage(
             createUser: true,
@@ -267,7 +288,7 @@ final class SyncRepository_Tests: XCTestCase {
 
         let chatListController = ChatChannelListController_Mock(query: .init(filter: .exists(.cid)), client: client)
         chatListController.state = .remoteDataFetched
-        _activeChannelListControllers.add(chatListController)
+        repository.startTrackingChannelListController(chatListController)
         let unwantedId = ChannelId.unique
         chatListController.resetChannelsQueryResult = .success(([], [unwantedId]))
 
@@ -298,6 +319,16 @@ final class SyncRepository_Tests: XCTestCase {
             createChannel: true,
             cid: cid
         )
+        
+        // At least one active controller is needed for sync to happen
+        let chatListController = ChatChannelListController_Mock(query: .init(filter: .exists(.cid)), client: client)
+        if repository.usesV2Sync {
+            chatListController.state = .remoteDataFetched
+            chatListController.channels_mock = [.mock(cid: cid)]
+            repository.startTrackingChannelListController(chatListController)
+            
+            chatListController.refreshLoadedChannelsResult = .success(Set([cid]))
+        }
 
         let firstDate = lastSyncDate.addingTimeInterval(1)
         let secondDate = lastSyncDate.addingTimeInterval(2)
@@ -311,6 +342,8 @@ final class SyncRepository_Tests: XCTestCase {
         waitForSyncLocalStateRun(requestResult: .success(eventsPayload2))
 
         XCTAssertNearlySameDate(lastSyncAtValue, thirdDate)
+        
+        repository.stopTrackingChannelListController(chatListController)
     }
 
     // MARK: - Sync existing channels events
@@ -533,8 +566,6 @@ final class SyncRepository_Tests: XCTestCase {
         let client = ChatClient_Mock(config: config)
         repository = SyncRepository(
             config: client.config,
-            activeChannelControllers: _activeChannelControllers,
-            activeChannelListControllers: _activeChannelListControllers,
             offlineRequestsRepository: offlineRequestsRepository,
             eventNotificationCenter: repository.eventNotificationCenter,
             database: database,
@@ -561,8 +592,6 @@ final class SyncRepository_Tests: XCTestCase {
         let client = ChatClient_Mock(config: config)
         repository = SyncRepository(
             config: client.config,
-            activeChannelControllers: _activeChannelControllers,
-            activeChannelListControllers: _activeChannelListControllers,
             offlineRequestsRepository: offlineRequestsRepository,
             eventNotificationCenter: repository.eventNotificationCenter,
             database: database,
@@ -600,8 +629,6 @@ final class SyncRepository_Tests: XCTestCase {
         // GIVEN
         let mock = CancelRecoveryFlowTracker(
             config: client.config,
-            activeChannelControllers: _activeChannelControllers,
-            activeChannelListControllers: _activeChannelListControllers,
             offlineRequestsRepository: offlineRequestsRepository,
             eventNotificationCenter: repository.eventNotificationCenter,
             database: database,
@@ -625,8 +652,6 @@ final class SyncRepository_Tests: XCTestCase {
         // GIVEN
         var mock: CancelRecoveryFlowTracker? = .init(
             config: client.config,
-            activeChannelControllers: _activeChannelControllers,
-            activeChannelListControllers: _activeChannelListControllers,
             offlineRequestsRepository: offlineRequestsRepository,
             eventNotificationCenter: repository.eventNotificationCenter,
             database: database,
@@ -658,12 +683,12 @@ final class SyncRepository_Tests: XCTestCase {
         let channelQuery = ChannelQuery(cid: .unique)
         let channelController = ChatChannelController(channelQuery: channelQuery, channelListQuery: nil, client: client)
         channelController.state = .remoteDataFetched
-        _activeChannelControllers.add(channelController)
+        repository.startTrackingChannelController(channelController)
 
         // Add active channel list component
         let channelListController = ChatChannelListController_Mock(query: .init(filter: .exists(.cid)), client: client)
         channelListController.state = .remoteDataFetched
-        _activeChannelListControllers.add(channelListController)
+        repository.startTrackingChannelListController(channelListController)
 
         // Sync local state
         var completionCalled = false
@@ -672,7 +697,11 @@ final class SyncRepository_Tests: XCTestCase {
         }
 
         // Wait for /sync to be called
-        AssertAsync.willBeTrue(apiClient.recoveryRequest_completion != nil)
+        if repository.usesV2Sync {
+            apiClient.waitForRequest()
+        } else {
+            apiClient.waitForRecoveryRequest()
+        }
 
         // Let /sync operation to complete
         let syncResponse = Result<MissingEventsPayload, Error>.success(.init(eventPayloads: []))
@@ -680,7 +709,9 @@ final class SyncRepository_Tests: XCTestCase {
         apiClient.recoveryRequest_completion = nil
 
         // Wait for watch operation
-        AssertAsync.willBeTrue(apiClient.recoveryRequest_completion != nil)
+        if !repository.usesV2Sync {
+            AssertAsync.willBeTrue(apiClient.recoveryRequest_completion != nil)
+        }
 
         // Cancel recovery flow
         repository.cancelRecoveryFlow()
@@ -694,6 +725,60 @@ final class SyncRepository_Tests: XCTestCase {
             Assert.staysTrue(channelListController.recordedFunctions.isEmpty)
             Assert.staysFalse(completionCalled)
         }
+    }
+    
+    // MARK: - Tracking
+
+    func test_startTrackingChannelController() {
+        let controller = ChatChannelController_Mock.mock()
+        repository.startTrackingChannelController(controller)
+
+        XCTAssertTrue(repository.activeChannelControllers.allObjects.first === controller)
+    }
+
+    func test_startTrackingChannelController_whenAlreadyExists_thenDoNotDuplicate() {
+        let controller = ChatChannelController_Mock.mock()
+        repository.startTrackingChannelController(controller)
+        repository.startTrackingChannelController(controller)
+
+        XCTAssertTrue(repository.activeChannelControllers.allObjects.first === controller)
+        XCTAssertEqual(repository.activeChannelControllers.allObjects.count, 1)
+    }
+
+    func test_stopTrackingChannelController() {
+        let controller = ChatChannelController_Mock.mock()
+        repository.startTrackingChannelController(controller)
+        XCTAssertEqual(repository.activeChannelControllers.allObjects.count, 1)
+
+        repository.stopTrackingChannelController(controller)
+
+        XCTAssertTrue(repository.activeChannelControllers.allObjects.isEmpty)
+    }
+
+    func test_startTrackingChannelListController() {
+        let controller = ChatChannelListController_Mock.mock()
+        repository.startTrackingChannelListController(controller)
+
+        XCTAssertTrue(repository.activeChannelListControllers.allObjects.first === controller)
+    }
+
+    func test_startTrackingChannelListController_whenAlreadyExists_thenDoNotDuplicate() {
+        let controller = ChatChannelListController_Mock.mock()
+        repository.startTrackingChannelListController(controller)
+        repository.startTrackingChannelListController(controller)
+
+        XCTAssertTrue(repository.activeChannelListControllers.allObjects.first === controller)
+        XCTAssertEqual(repository.activeChannelListControllers.allObjects.count, 1)
+    }
+
+    func test_stopTrackingChannelListController() {
+        let controller = ChatChannelListController_Mock.mock()
+        repository.startTrackingChannelListController(controller)
+        XCTAssertEqual(repository.activeChannelListControllers.allObjects.count, 1)
+
+        repository.stopTrackingChannelListController(controller)
+
+        XCTAssertTrue(repository.activeChannelListControllers.allObjects.isEmpty)
     }
 }
 
@@ -710,7 +795,7 @@ extension SyncRepository_Tests {
         })
     }
 
-    private func prepareForSyncLocalStorage(
+    func prepareForSyncLocalStorage(
         createUser: Bool,
         lastSynchedEventDate: Date?,
         createChannel: Bool,
@@ -732,7 +817,7 @@ extension SyncRepository_Tests {
         database.writeSessionCounter = 0
     }
 
-    private func waitForSyncLocalStateRun(requestResult: Result<MissingEventsPayload, Error>? = nil) {
+    func waitForSyncLocalStateRun(requestResult: Result<MissingEventsPayload, Error>? = nil) {
         database.writeSessionCounter = 0
         apiClient.clear()
 
@@ -741,21 +826,32 @@ extension SyncRepository_Tests {
             expectation.fulfill()
         }
 
-        AssertAsync.willBeTrue(
-            "enterRecoveryMode()".wasCalled(on: apiClient, times: 1)
-        )
+        if !repository.usesV2Sync {
+            AssertAsync.willBeTrue(
+                "enterRecoveryMode()".wasCalled(on: apiClient, times: 1)
+            )
+        }
 
         if let result = requestResult {
             // Simulate API Failure
-            AssertAsync.willBeTrue(apiClient.recoveryRequest_completion != nil)
-            guard let callback = apiClient.recoveryRequest_completion as? (Result<MissingEventsPayload, Error>) -> Void else {
-                XCTFail("A request for /sync should have been executed")
-                return
+            if repository.usesV2Sync {
+                apiClient.waitForRequest()
+                guard let callback = apiClient.request_completion as? (Result<MissingEventsPayload, Error>) -> Void else {
+                    XCTFail("A request for /sync should have been executed")
+                    return
+                }
+                callback(result)
+            } else {
+                apiClient.waitForRecoveryRequest()
+                guard let callback = apiClient.recoveryRequest_completion as? (Result<MissingEventsPayload, Error>) -> Void else {
+                    XCTFail("A request for /sync should have been executed")
+                    return
+                }
+                callback(result)
             }
-            callback(result)
         }
 
-        waitForExpectations(timeout: 10000, handler: nil)
+        waitForExpectations(timeout: defaultTimeout, handler: nil)
         XCTAssertCall("exitRecoveryMode()", on: apiClient)
     }
 

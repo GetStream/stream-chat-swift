@@ -19,6 +19,94 @@ final class SyncContext {
 
 private let syncOperationsMaximumRetries = 2
 
+final class ActiveChannelIdsOperation: AsyncOperation {
+    init(
+        syncRepository: SyncRepository,
+        context: SyncContext
+    ) {
+        super.init(maxRetries: syncOperationsMaximumRetries) { [weak syncRepository] _, done in
+            guard let syncRepository else {
+                done(.continue)
+                return
+            }
+            
+            let completion: () -> Void = {
+                context.localChannelIds = Array(Set(context.localChannelIds))
+                log.info("Found \(context.localChannelIds.count) active channels", subsystems: .offlineSupport)
+                done(.continue)
+            }
+            
+            context.localChannelIds.append(contentsOf: syncRepository.activeChannelControllers.allObjects.compactMap(\.cid))
+            context.localChannelIds.append(contentsOf:
+                syncRepository.activeChannelListControllers.allObjects
+                    .map(\.channels)
+                    .flatMap { $0 }
+                    .map(\.cid)
+            )
+            
+            let activeChats = syncRepository.activeChats.allObjects
+            let activeChannelLists = syncRepository.activeChannelLists.allObjects
+            if activeChats.isEmpty, activeChannelLists.isEmpty {
+                completion()
+            } else {
+                // Main actor requirement
+                DispatchQueue.main.async {
+                    context.localChannelIds.append(contentsOf: syncRepository.activeChats.allObjects.compactMap { try? $0.cid })
+                    context.localChannelIds.append(contentsOf:
+                        syncRepository.activeChannelLists.allObjects
+                            .map(\.state.channels)
+                            .flatMap { $0 }
+                            .map(\.cid)
+                    )
+                    completion()
+                }
+            }
+        }
+    }
+}
+
+final class RefreshChannelListOperation: AsyncOperation {
+    init(controller: ChatChannelListController, context: SyncContext) {
+        super.init(maxRetries: syncOperationsMaximumRetries) { [weak controller] _, done in
+            guard let controller = controller, controller.canBeRecovered else {
+                done(.continue)
+                return
+            }
+            controller.refreshLoadedChannels { result in
+                switch result {
+                case .success(let channelIds):
+                    log.debug("Synced \(channelIds.count) channels in a channel list controller (\(controller.query.filter)", subsystems: .offlineSupport)
+                    context.synchedChannelIds.formUnion(channelIds)
+                    done(.continue)
+                case .failure(let error):
+                    log.error("Failed refreshing channel list controller (\(controller.query.filter) with error \(error)", subsystems: .offlineSupport)
+                    done(.retry)
+                }
+            }
+        }
+    }
+    
+    init(channelList: ChannelList, context: SyncContext) {
+        super.init(maxRetries: syncOperationsMaximumRetries) { [weak channelList] _, done in
+            guard let channelList else {
+                done(.continue)
+                return
+            }
+            Task {
+                do {
+                    let channelIds = try await channelList.refreshLoadedChannels()
+                    log.debug("Synced \(channelIds.count) channels in a channel list (\(channelList.query.filter)", subsystems: .offlineSupport)
+                    context.synchedChannelIds.formUnion(channelIds)
+                    done(.continue)
+                } catch {
+                    log.error("Failed refreshing channel list (\(channelList.query.filter) with error \(error)", subsystems: .offlineSupport)
+                    done(.retry)
+                }
+            }
+        }
+    }
+}
+
 final class GetChannelIdsOperation: AsyncOperation {
     init(database: DatabaseContainer, context: SyncContext, activeChannelIds: [ChannelId]) {
         super.init(maxRetries: syncOperationsMaximumRetries) { [weak database] _, done in
@@ -39,7 +127,7 @@ final class GetChannelIdsOperation: AsyncOperation {
 }
 
 final class SyncEventsOperation: AsyncOperation {
-    init(syncRepository: SyncRepository, context: SyncContext) {
+    init(syncRepository: SyncRepository, context: SyncContext, recovery: Bool) {
         super.init(maxRetries: syncOperationsMaximumRetries) { [weak syncRepository] _, done in
             log.info(
                 "1. Call `/sync` endpoint and get missing events for all locally existed channels",
@@ -49,7 +137,7 @@ final class SyncEventsOperation: AsyncOperation {
             syncRepository?.syncChannelsEvents(
                 channelIds: context.localChannelIds,
                 lastSyncAt: context.lastSyncAt,
-                isRecovery: true
+                isRecovery: recovery
             ) { result in
                 switch result {
                 case let .success(channelIds):
@@ -182,7 +270,7 @@ final class DeleteUnwantedChannelsOperation: AsyncOperation {
 final class ExecutePendingOfflineActions: AsyncOperation {
     init(offlineRequestsRepository: OfflineRequestsRepository) {
         super.init(maxRetries: syncOperationsMaximumRetries) { [weak offlineRequestsRepository] _, done in
-            log.info("5. Running offline actions requests", subsystems: .offlineSupport)
+            log.info("Running offline actions requests", subsystems: .offlineSupport)
             offlineRequestsRepository?.runQueuedRequests {
                 done(.continue)
             }

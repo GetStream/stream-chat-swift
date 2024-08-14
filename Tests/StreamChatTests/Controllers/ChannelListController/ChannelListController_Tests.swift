@@ -1014,8 +1014,8 @@ final class ChannelListController_Tests: XCTestCase {
         controller.synchronize()
 
         XCTAssert(controller.client === client)
-        XCTAssert(client.activeChannelListControllers.count == 1)
-        XCTAssert(client.activeChannelListControllers.allObjects.first === controller)
+        XCTAssert(client.syncRepository.activeChannelListControllers.count == 1)
+        XCTAssert(client.syncRepository.activeChannelListControllers.allObjects.first === controller)
     }
 
     // MARK: Predicates

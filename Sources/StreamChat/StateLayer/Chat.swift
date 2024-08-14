@@ -87,6 +87,7 @@ public class Chat {
             channelQuery: query,
             memberSorting: state.memberSorting
         )
+        client.syncRepository.startTrackingChat(self)
         // cid is retrieved from the server when we are creating new channels or there is no local state present
         guard query.cid != payload.channel.cid else { return }
         await state.setChannelId(payload.channel.cid)
@@ -102,8 +103,8 @@ public class Chat {
     ///
     /// - Throws: An error while communicating with the Stream API.
     public func watch() async throws {
-        // Note that watching is started in ChatClient+Chat when channel updater's update is called.
         try await channelUpdater.startWatching(cid: cid, isInRecoveryMode: false)
+        client.syncRepository.startTrackingChat(self)
     }
     
     /// Stop watching the channel which disables server-side events.
@@ -113,6 +114,7 @@ public class Chat {
     /// - Throws: An error while communicating with the Stream API.
     public func stopWatching() async throws {
         try await channelUpdater.stopWatching(cid: cid)
+        client.syncRepository.stopTrackingChat(self)
     }
     
     // MARK: - Deleting the Channel
