@@ -392,6 +392,7 @@ final class IdentifiablePayload_Tests: XCTestCase {
                     isMemberBanned: false
                 ),
                 messages: messages,
+                pendingMessages: nil,
                 pinnedMessages: [],
                 channelReads: (0..<channelReadCount).map { i in
                     ChannelReadPayload(

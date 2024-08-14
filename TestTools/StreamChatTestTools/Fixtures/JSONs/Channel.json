@@ -1191,6 +1191,52 @@
       "pinned_by": null
     }
   ],
+  "pending_messages": [
+    {
+      "user": null,
+      "channel": null,
+      "message": {
+        "id": "a55451b7-ae6d-441f-a7b2-60e895226914",
+        "text": "My pending message",
+        "html": "\\u003cp\\u003eS\\u003c/p\\u003e\\n",
+        "type": "regular",
+        "user": {
+          "id" : "broken-waterfall-5",
+          "banned" : false,
+          "unread_channels" : 0,
+          "totalUnreadCount" : 0,
+          "last_active" : "2020-06-10T13:24:00.501797Z",
+          "created_at" : "2019-12-12T15:33:46.488935Z",
+          "unreadChannels" : 0,
+          "unread_count" : 0,
+          "image" : "https:\/\/getstream.io\/random_svg\/?id=broken-waterfall-5&amp;name=Broken+waterfall",
+          "updated_at" : "2020-06-10T14:11:29.946106Z",
+          "role" : "user",
+          "total_unread_count" : 0,
+          "online" : true,
+          "name" : "broken-waterfall-5"
+        },
+        "attachments": [],
+        "latest_reactions": [],
+        "own_reactions": [],
+        "reaction_counts": {},
+        "reaction_scores": {},
+        "reaction_groups": null,
+        "reply_count": 0,
+        "deleted_reply_count": 0,
+        "cid": "messaging:general",
+        "created_at": "2024-08-14T06:52:45.66591Z",
+        "updated_at": "2024-08-14T06:52:45.66591Z",
+        "shadowed": false,
+        "mentioned_users": [],
+        "silent": false,
+        "pinned": false,
+        "pinned_at": null,
+        "pinned_by": null,
+        "pin_expires": null
+      }
+    }
+  ],
   "pinned_messages": [
       {
         "id" : "broken-waterfall-5-7aede36b-b89f-4f45-baff-c40c7c1875d9",

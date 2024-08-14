@@ -48,6 +48,7 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
             members: [.dummy(user: currentUserPayload), .dummy(user: anotherUserPayload)],
             membership: .dummy(user: currentUserPayload),
             messages: [],
+            pendingMessages: nil,
             pinnedMessages: [],
             channelReads: [currentUserReadPayload],
             isHidden: false
