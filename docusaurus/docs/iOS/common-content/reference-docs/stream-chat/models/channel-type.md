@@ -70,7 +70,7 @@ The type of the channel is custom.
 case custom(String)
 ```
 
-Only small letters, underscore and numbers should be used
+Only letters, underscore, hyphen, and numbers should be used.
 
 ## Properties
 

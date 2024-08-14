@@ -23,7 +23,7 @@ public enum ChannelType: Codable, Hashable {
 
     /// The type of the channel is custom.
     ///
-    /// Only small letters, underscore and numbers should be used
+    /// Only letters, underscore and numbers should be used
     case custom(String)
 
     /// A channel type title.
@@ -83,7 +83,7 @@ public enum ChannelType: Codable, Hashable {
         log.assert(
             valueCharacters.isSubset(of: allowedCharacters),
             // swiftlint:disable:next line_length
-            "Value \"\(value)\" is not valid `ChannelType.custom` identifier, allowed characters are small letters, numbers and underscore."
+            "Value \"\(value)\" is not valid `ChannelType.custom` identifier, allowed characters are letters, numbers, underscore, and hyphen."
         )
     }
 }
