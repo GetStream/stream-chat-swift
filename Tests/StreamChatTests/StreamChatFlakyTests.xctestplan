@@ -29,7 +29,6 @@
         "AttachmentQueueUploader_Tests\/test_uploader_whenPostProcessorAvailable_shouldChangeTheAttachmentPayload()",
         "AttachmentQueueUploader_Tests\/test_uploader_whenUploadFails_markMessageAsFailed()",
         "ChannelController_Tests\/test_createCall_propagatesResultFromUpdater()",
-        "ChannelListController_Tests\/test_willAndDidCallbacks_areCalledInCorrectOrder()",
         "ChannelListPayload_Tests\/test_decode_bigChannelListPayload()",
         "ChannelListPayload_Tests\/test_hugeChannelListQuery_save()",
         "ChannelListPayload_Tests\/test_hugeChannelListQuery_save_DB_empty()",

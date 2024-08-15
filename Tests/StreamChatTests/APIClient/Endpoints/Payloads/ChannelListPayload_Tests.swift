@@ -236,6 +236,7 @@ final class ChannelListPayload_Tests: XCTestCase {
                     isMemberBanned: false
                 ),
                 messages: messages,
+                pendingMessages: nil,
                 pinnedMessages: [],
                 channelReads: (0..<channelReadCount).map { i in
                     ChannelReadPayload(
@@ -286,6 +287,10 @@ final class ChannelPayload_Tests: XCTestCase {
         XCTAssertEqual(firstMessage.replyCount, 0)
         XCTAssertFalse(firstMessage.isSilent)
 
+        XCTAssertEqual(payload.pendingMessages?.count ?? 0, 1)
+        let pendingMessage = try XCTUnwrap(payload.pendingMessages?.first)
+        XCTAssertEqual(pendingMessage.text, "My pending message")
+        
         XCTAssertEqual(payload.pinnedMessages.map(\.id), ["broken-waterfall-5-7aede36b-b89f-4f45-baff-c40c7c1875d9"])
 
         let channel = payload.channel
