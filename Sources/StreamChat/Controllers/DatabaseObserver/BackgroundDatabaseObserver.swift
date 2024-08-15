@@ -29,26 +29,31 @@ class BackgroundDatabaseObserver<Item, DTO: NSManagedObject> {
     var releaseNotificationObservers: (() -> Void)?
 
     private let queue = DispatchQueue(label: "io.getstream.list-database-observer", qos: .userInitiated)
-    private var _items: [Item] = []
+    private var _items: [Item]?
+    
+    // State handling for supporting will change, because in the callback we should return the previous state.
+    private var _willChangeItems: [Item]?
+    private var _notifyingWillChange = false
 
     /// The items that have been fetched and mapped
-    ///
-    /// - Note: Fetches items synchronously if the observer is in the middle of processing a change.
     var rawItems: [Item] {
-        let state: (needsValidation: Bool, preparedItems: [Item]) = queue.sync { (_rawItemsNeedsValidation, _items) }
-        if !state.needsValidation {
-            return state.preparedItems
+        // During the onWillChange we swap the results back to the previous state because onWillChange
+        // is dispatched to the main thread and when the main thread handles it, observer has already processed
+        // the database change.
+        if onWillChange != nil {
+            let willChangeState: (active: Bool, cachedItems: [Item]?) = queue.sync { (_notifyingWillChange, _willChangeItems) }
+            if willChangeState.active {
+                return willChangeState.cachedItems ?? []
+            }
         }
-        // Validate current items and update the _items property for the next access.
-        // Note that already cached items are reused (items loaded by the initial fetch).
-        var items = [Item]()
+        
+        var rawItems: [Item]!
         frc.managedObjectContext.performAndWait {
-            items = processItems(nil, reusableItems: state.preparedItems, rawItemsNeedsValidation: false, notify: false)
+            // When we already have loaded items, reuse them, otherwise refetch all
+            rawItems = _items ?? updateItems(nil)
         }
-        return items
+        return rawItems
     }
-
-    private var _rawItemsNeedsValidation = true
     
     private var _isInitialized: Bool = false
     private var isInitialized: Bool {
@@ -98,8 +103,9 @@ class BackgroundDatabaseObserver<Item, DTO: NSManagedObject> {
         }
         changeAggregator.onDidChange = { [weak self] changes in
             guard let self else { return }
-            let reusableItems = self.queue.sync { self._items }
-            self.processItems(changes, reusableItems: reusableItems, rawItemsNeedsValidation: false, notify: true)
+            // Runs on the NSManagedObjectContext's queue, therefore skip performAndWait
+            self.updateItems(changes)
+            notifyDidChange(changes: changes)
         }
     }
 
@@ -119,29 +125,38 @@ class BackgroundDatabaseObserver<Item, DTO: NSManagedObject> {
         frc.delegate = changeAggregator
 
         // Start loading initial items and call did change for the initial change.
-        // There can be a race between initial load and DB write which requires
-        // validation when rawItems are accessed.
-        frc.managedObjectContext.perform {
-            self.processItems(nil, reusableItems: [], rawItemsNeedsValidation: true, notify: true)
+        frc.managedObjectContext.perform { [weak self] in
+            guard let self else { return }
+            let items = self.updateItems(nil)
+            let changes: [ListChange<Item>] = items.enumerated().map { .insert($1, index: IndexPath(item: $0, section: 0)) }
+            self.notifyDidChange(changes: changes)
         }
     }
 
     private func notifyWillChange() {
-        let setNeedsValidation: (Bool) -> Void = { [weak self] state in
-            self?.queue.async {
-                self?._rawItemsNeedsValidation = state
-            }
-        }
-        
-        setNeedsValidation(true)
         guard let onWillChange = onWillChange else {
             return
         }
-        DispatchQueue.main.async {
-            // Do not allow reading the state directly from FRC when accessing rawItems in will change
-            setNeedsValidation(false)
+        // Will change callback happens on the main thread but by that time the observer
+        // has already updated its local cached state. For allowing to access the previous
+        // state from the will change callback, there is no other way than caching previous state.
+        // This is used by the channel list delegate.
+        
+        // `_items` is mutated by the NSManagedObjectContext's queue, here we are on that queue
+        // so it is safe to read the `_items` state from `self.queue`.
+        queue.sync {
+            _willChangeItems = _items
+        }
+        DispatchQueue.main.async { [weak self] in
+            guard let self else { return }
+            self.queue.async {
+                self._notifyingWillChange = true
+            }
             onWillChange()
-            setNeedsValidation(true)
+            self.queue.async {
+                self._willChangeItems = nil
+                self._notifyingWillChange = false
+            }
         }
     }
 
@@ -153,28 +168,20 @@ class BackgroundDatabaseObserver<Item, DTO: NSManagedObject> {
             onDidChange(changes)
         }
     }
-
-    /// This method will process  the currently fetched objects, and will notify the listeners.
-    /// When the process is done, it also updates the `_items`, which is the locally cached list of mapped items
+    
+    /// Updates the locally cached items.
+    ///
     /// - Important: Must be called from the managed object's perform closure.
-    @discardableResult private func processItems(_ changes: [ListChange<Item>]?, reusableItems: [Item], rawItemsNeedsValidation: Bool, notify: Bool) -> [Item] {
-        let objects = frc.fetchedObjects ?? []
+    @discardableResult private func updateItems(_ changes: [ListChange<Item>]?) -> [Item] {
         let items = DatabaseItemConverter.convert(
-            dtos: objects,
-            existing: reusableItems,
+            dtos: frc.fetchedObjects ?? [],
+            existing: _items ?? [],
             changes: changes,
             itemCreator: itemCreator,
             itemReuseKeyPaths: itemReuseKeyPaths,
             sorting: sorting
         )
-        queue.async {
-            self._items = items
-            self._rawItemsNeedsValidation = rawItemsNeedsValidation
-            guard notify else { return }
-            let returnedChanges = changes ?? items.enumerated().map { .insert($1, index: IndexPath(item: $0, section: 0)) }
-            self.notifyDidChange(changes: returnedChanges)
-        }
-        
+        _items = items
         return items
     }
 }
