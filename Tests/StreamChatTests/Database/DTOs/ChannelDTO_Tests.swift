@@ -1101,6 +1101,7 @@ final class ChannelDTO_Tests: XCTestCase {
             members: [.dummy(user: currentUserPayload)],
             membership: .dummy(user: currentUserPayload),
             messages: [messageMentioningCurrentUser],
+            pendingMessages: nil,
             pinnedMessages: [],
             channelReads: [currentUserChannelReadPayload],
             isHidden: false
@@ -1156,6 +1157,7 @@ final class ChannelDTO_Tests: XCTestCase {
             members: [memberPayload],
             membership: membershipPayload,
             messages: [],
+            pendingMessages: nil,
             pinnedMessages: [],
             channelReads: [],
             isHidden: nil

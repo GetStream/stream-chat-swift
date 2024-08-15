@@ -686,6 +686,20 @@ final class Chat_Tests: XCTestCase {
         await XCTAssertEqual(initialChannelPayload.messages.map(\.id), chat.state.messages.map(\.id))
     }
     
+    func test_restoreMessages_whenExistingMessagesWithPendingMessages_thenStateUpdates() async throws {
+        // DB has some older messages loaded
+        let initialChannelPayload = makeChannelPayload(messageCount: 3, createdAtOffset: 0)
+        try await env.client.mockDatabaseContainer.write { session in
+            try session.saveChannel(payload: initialChannelPayload)
+        }
+        
+        try await setUpChat(usesMockedUpdaters: false, loadState: false)
+        
+        // Accessing the state triggers loading the inital states
+        let allMessages = initialChannelPayload.messages + (initialChannelPayload.pendingMessages ?? [])
+        await XCTAssertEqual(allMessages.map(\.id), chat.state.messages.map(\.id))
+    }
+    
     func test_loadMessages_whenAPIRequestSucceeds_thenStateUpdates() async throws {
         try await setUpChat(usesMockedUpdaters: false)
         let pageSize = 2
@@ -1514,6 +1528,7 @@ final class Chat_Tests: XCTestCase {
     private func makeChannelPayload(
         cid: ChannelId? = nil,
         messageCount: Int,
+        pendingMessagesCount: Int = 0,
         memberCount: Int = 0,
         watcherCount: Int = 0,
         createdAtOffset: Int
@@ -1525,6 +1540,14 @@ final class Chat_Tests: XCTestCase {
                 .dummy(
                     messageId: String(format: "%03d", $0 + createdAtOffset),
                     createdAt: Date(timeIntervalSinceReferenceDate: TimeInterval($0 + createdAtOffset)),
+                    cid: channelId
+                )
+            }
+        let pendingMessages: [MessagePayload] = (0..<pendingMessagesCount)
+            .map {
+                .dummy(
+                    messageId: String(format: "%03d", $0 + createdAtOffset + messageCount),
+                    createdAt: Date(timeIntervalSinceReferenceDate: TimeInterval($0 + createdAtOffset + messageCount)),
                     cid: channelId
                 )
             }
@@ -1545,7 +1568,8 @@ final class Chat_Tests: XCTestCase {
             channel: .dummy(cid: channelId),
             watchers: watchers,
             members: members,
-            messages: messages
+            messages: messages,
+            pendingMessages: pendingMessages
         )
     }
     

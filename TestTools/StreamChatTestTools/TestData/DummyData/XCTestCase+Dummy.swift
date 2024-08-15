@@ -124,6 +124,7 @@ extension XCTestCase {
         watchers: [UserPayload]? = nil,
         includeMembership: Bool = true,
         messages: [MessagePayload]? = nil,
+        pendingMessages: [MessagePayload]? = nil,
         pinnedMessages: [MessagePayload] = [],
         channelConfig: ChannelConfig = .init(
             reactionsEnabled: true,
@@ -196,6 +197,7 @@ extension XCTestCase {
                 members: members,
                 membership: includeMembership ? members.first : nil,
                 messages: payloadMessages,
+                pendingMessages: pendingMessages,
                 pinnedMessages: pinnedMessages,
                 channelReads: channelReads ?? [dummyChannelRead],
                 isHidden: false
@@ -309,6 +311,7 @@ extension XCTestCase {
                 members: [member],
                 membership: member,
                 messages: [dummyMessageWithNoExtraData],
+                pendingMessages: nil,
                 pinnedMessages: [dummyMessageWithNoExtraData],
                 channelReads: [dummyChannelReadWithNoExtraData],
                 isHidden: nil
