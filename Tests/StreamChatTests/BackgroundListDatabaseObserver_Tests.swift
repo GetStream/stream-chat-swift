@@ -54,11 +54,6 @@ final class BackgroundListDatabaseObserver_Tests: XCTestCase {
     }
 
     func test_changeAggregatorSetup() throws {
-        let expectation1 = expectation(description: "onWillChange is called")
-        observer.onWillChange = {
-            expectation1.fulfill()
-        }
-
         let expectation2 = expectation(description: "onDidChange is called")
         observer.onDidChange = { _ in
             expectation2.fulfill()
@@ -204,6 +199,30 @@ final class BackgroundListDatabaseObserver_Tests: XCTestCase {
         }
         wait(for: [initialFinishedExpectation], timeout: defaultTimeout)
         XCTAssertEqual(expectedIds, observer.items.map { $0 })
+    }
+    
+    func test_accessingItems_whenObservationStartsWithEmptyDBAndWriteHappens_thenWrittenDataIsReturned() throws {
+        let initialFinishedExpectation = XCTestExpectation(description: "Initial")
+        observer = BackgroundListDatabaseObserver<String, TestManagedObject>(
+            database: database,
+            fetchRequest: fetchRequest,
+            itemCreator: { $0.testId },
+            sorting: []
+        )
+        observer.onDidChange = { _ in
+            initialFinishedExpectation.fulfill()
+        }
+        try observer.startObserving()
+        // Immediate write after starting to observe (race between initial load and DB change)
+        try database.writeSynchronously { session in
+            let context = try XCTUnwrap(session as? NSManagedObjectContext)
+            let item = try XCTUnwrap(NSEntityDescription.insertNewObject(forEntityName: "TestManagedObject", into: context) as? TestManagedObject)
+            item.testId = "1"
+            item.testValue = "testValue1"
+        }
+        XCTAssertEqual(["1"], observer.items.map { $0 })
+        wait(for: [initialFinishedExpectation], timeout: defaultTimeout)
+        XCTAssertEqual(["1"], observer.items.map { $0 })
     }
     
     // MARK: -
