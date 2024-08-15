@@ -105,7 +105,7 @@ class BackgroundDatabaseObserver<Item, DTO: NSManagedObject> {
             guard let self else { return }
             // Runs on the NSManagedObjectContext's queue, therefore skip performAndWait
             self.updateItems(changes)
-            notifyDidChange(changes: changes)
+            self.notifyDidChange(changes: changes)
         }
     }
 
