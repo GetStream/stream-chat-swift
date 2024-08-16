@@ -24,7 +24,7 @@ jobs:
       - uses: ./.github/actions/ruby-cache
 
       - name: Merge
-        run: bundle exec fastlane merge_release_to_main author:"$USER_LOGIN" --verbose
+        run: bundle exec fastlane merge_release author:"$USER_LOGIN" --verbose
         env:
           GITHUB_TOKEN: ${{ secrets.ADMIN_API_TOKEN }} # A token with the "admin:org" scope to get the list of the team members on GitHub
           GITHUB_PR_NUM: ${{ github.event.issue.number }}
