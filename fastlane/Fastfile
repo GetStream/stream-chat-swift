@@ -112,6 +112,8 @@ end
 lane :merge_release_to_main do |options|
   ensure_git_status_clean
 
+  sh('git fetch --all')
+
   release_branch =
     if is_ci
       # This API operation needs the "admin:org" scope.
@@ -128,7 +130,7 @@ lane :merge_release_to_main do |options|
 
   UI.user_error!("`#{release_branch}`` branch does not match the release branch pattern: `release/*`") unless release_branch.start_with?('release/')
 
-  sh('git checkout origin/main')
+  sh('git checkout main')
   sh('git pull origin main')
 
   # Merge release branch to main. For more info, read: https://notion.so/iOS-Branching-Strategy-37c10127dc26493e937769d44b1d6d9a
@@ -142,9 +144,10 @@ end
 
 lane :merge_main_to_develop do
   ensure_git_status_clean
+  sh('git fetch --all')
   sh('git checkout main')
   sh('git pull origin main')
-  sh('git checkout origin/develop')
+  sh('git checkout develop')
   sh('git pull origin develop')
   sh('git log develop..main')
   sh('git merge main')
