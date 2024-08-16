@@ -40,7 +40,7 @@ jobs:
           echo "RELEASE_VERSION=${{ github.event.inputs.version }}" >> $GITHUB_ENV
 
       - name: Extract version from branch name (for release branches)
-        if: startsWith(github.event.pull_request.head.ref, 'release/')
+        if: ${{ github.event_name == 'pull_request' && startsWith(github.event.pull_request.head.ref, 'release/') }}
         run: |
           BRANCH_NAME="${{ github.event.pull_request.head.ref }}"
           VERSION=${BRANCH_NAME#release/}
