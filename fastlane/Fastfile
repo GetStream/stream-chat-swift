@@ -17,6 +17,7 @@ metrics_git = 'git@github.com:GetStream/stream-internal-metrics.git'
 xcmetrics_path = "metrics/#{github_repo.split('/').last}-xcmetrics.json"
 buildcache_xcargs = 'CC=clang CPLUSPLUS=clang++ LD=clang LDPLUSPLUS=clang++'
 testlab_bucket = 'gs://test-lab-af3rt9m4yh360-mqm1zzm767nhc'
+swift_environment_path = File.absolute_path('../Sources/StreamChat/Generated/SystemEnvironment+Version.swift')
 is_localhost = !is_ci
 @force_check = false
 
@@ -58,7 +59,6 @@ desc 'Start a new release'
 lane :release do |options|
   previous_version_number = last_git_tag
   artifacts_path = File.absolute_path('../StreamChatArtifacts.json')
-  swift_environment_path = File.absolute_path('../Sources/StreamChat/Generated/SystemEnvironment+Version.swift')
   extra_changes = lambda do |release_version|
     # Set the framework version on the artifacts
     artifacts = JSON.parse(File.read(artifacts_path))
@@ -86,10 +86,17 @@ lane :release do |options|
   )
 end
 
+lane :merge_release do |options|
+  merge_release_to_main(author: options[:author])
+end
+
 desc 'Completes an SDK Release'
 lane :publish_release do |options|
-  xcversion(version: '14.0.1')
+  release_version = File.read(swift_environment_path).match(/String\s+=\s+"([\d.]+)"/)[1]
+  UI.user_error!("Release #{release_version} has already been published.") if git_tag_exists(tag: release_version, remote: true)
+  ensure_git_branch(branch: 'main')
 
+  xcversion(version: '14.0.1')
   clean_products
   build_xcframeworks
   compress_frameworks
@@ -97,64 +104,16 @@ lane :publish_release do |options|
 
   publish_ios_sdk(
     skip_git_status_check: false,
-    version: options[:version],
+    version: release_version,
     sdk_names: sdk_names,
     podspec_names: ['StreamChat', 'StreamChat-XCFramework', 'StreamChatUI', 'StreamChatUI-XCFramework'],
     github_repo: github_repo,
     upload_assets: ['Products/StreamChat.zip', 'Products/StreamChatUI.zip', 'Products/StreamChat-All.zip']
   )
 
-  update_spm(version: options[:version])
+  update_spm(version: release_version)
 
   merge_main_to_develop
-end
-
-lane :merge_release_to_main do |options|
-  ensure_git_status_clean
-
-  release_branch =
-    if is_ci
-      # This API operation needs the "admin:org" scope.
-      ios_team = sh('gh api orgs/GetStream/teams/ios-developers/members -q ".[].login"', log: false).split
-      UI.user_error!("#{options[:author]} is not a member of the iOS Team") unless ios_team.include?(options[:author])
-
-      current_branch
-    else
-      release_branches = sh(command: 'git branch -a', log: false).delete(' ').split("\n").grep(%r(origin/.*release/))
-      UI.user_error!("Expected 1 release branch, found #{release_branches.size}") if release_branches.size != 1
-
-      release_branches.first
-    end
-
-  UI.user_error!("`#{release_branch}`` branch does not match the release branch pattern: `release/*`") unless release_branch.start_with?('release/')
-
-  sh('git config pull.ff only')
-  sh('git fetch --all --tags --prune')
-  sh("git checkout #{release_branch}")
-  sh("git pull origin #{release_branch} --ff-only")
-  sh('git checkout main')
-  sh('git pull origin main --ff-only')
-
-  # Merge release branch to main. For more info, read: https://notion.so/iOS-Branching-Strategy-37c10127dc26493e937769d44b1d6d9a
-  sh("git merge #{release_branch} --ff-only")
-  sh('git push origin main')
-
-  comment = "[Publication of the release](https://github.com/#{github_repo}/actions/workflows/release-publish.yml) has been launched 👍"
-  UI.important(comment)
-  pr_comment(text: comment)
-end
-
-lane :merge_main_to_develop do
-  ensure_git_status_clean
-  sh('git config pull.ff only')
-  sh('git fetch --all --tags --prune')
-  sh('git checkout main')
-  sh('git pull origin main --ff-only')
-  sh('git checkout develop')
-  sh('git pull origin develop --ff-only')
-  sh('git log develop..main')
-  sh('git merge main')
-  sh('git push origin develop')
 end
 
 desc 'Compresses the XCFrameworks into zip files'
