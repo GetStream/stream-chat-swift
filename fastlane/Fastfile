@@ -130,6 +130,7 @@ lane :merge_release_to_main do |options|
 
   UI.user_error!("`#{release_branch}`` branch does not match the release branch pattern: `release/*`") unless release_branch.start_with?('release/')
 
+  sh("git pull origin #{release_branch}")
   sh('git checkout main')
   sh('git pull origin main')
 
