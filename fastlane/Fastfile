@@ -128,8 +128,12 @@ lane :merge_release_to_main do |options|
 
   UI.user_error!("`#{release_branch}`` branch does not match the release branch pattern: `release/*`") unless release_branch.start_with?('release/')
 
-  sh('git checkout origin/main')
-  sh('git pull origin main')
+  sh('git config pull.ff only')
+  sh('git fetch --all --tags --prune')
+  sh("git checkout #{release_branch}")
+  sh("git pull origin #{release_branch} --ff-only")
+  sh('git checkout main')
+  sh('git pull origin main --ff-only')
 
   # Merge release branch to main. For more info, read: https://notion.so/iOS-Branching-Strategy-37c10127dc26493e937769d44b1d6d9a
   sh("git merge #{release_branch} --ff-only")
@@ -142,10 +146,12 @@ end
 
 lane :merge_main_to_develop do
   ensure_git_status_clean
+  sh('git config pull.ff only')
+  sh('git fetch --all --tags --prune')
   sh('git checkout main')
-  sh('git pull origin main')
-  sh('git checkout origin/develop')
-  sh('git pull origin develop')
+  sh('git pull origin main --ff-only')
+  sh('git checkout develop')
+  sh('git pull origin develop --ff-only')
   sh('git log develop..main')
   sh('git merge main')
   sh('git push origin develop')
