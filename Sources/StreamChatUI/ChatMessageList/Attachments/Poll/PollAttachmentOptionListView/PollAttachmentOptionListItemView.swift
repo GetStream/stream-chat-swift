@@ -163,7 +163,6 @@ open class PollAttachmentOptionListItemView: _View, ThemeProvider {
     /// The authors of the latest votes of this option.
     open var latestVotesAuthors: [ChatUser] {
         content?.option.latestVotes
-            .sorted(by: { $0.createdAt > $1.createdAt })
             .compactMap(\.user)
             .suffix(2) ?? []
     }

@@ -56,7 +56,9 @@ extension PollOptionDTO {
         return PollOption(
             id: id,
             text: text,
-            latestVotes: try latestVotes.map { try $0.asModel() },
+            latestVotes: try latestVotes
+                .map { try $0.asModel() }
+                .sorted(by: { $0.createdAt < $1.createdAt }),
             extraData: extraData
         )
     }

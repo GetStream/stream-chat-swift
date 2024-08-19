@@ -89,7 +89,9 @@ extension PollDTO {
             maxVotesAllowed: maxVotesAllowed?.intValue,
             votingVisibility: votingVisibility(from: votingVisibility),
             createdBy: createdBy?.asModel(),
-            latestAnswers: latestAnswers.map { try $0.asModel() },
+            latestAnswers: latestAnswers
+                .map { try $0.asModel() }
+                .sorted(by: { $0.createdAt < $1.createdAt }),
             options: optionsArray.map { try $0.asModel() },
             latestVotesByOption: latestVotesByOption.map { try $0.asModel() },
             ownVotes: ownVotes.map { try $0.asModel() }
