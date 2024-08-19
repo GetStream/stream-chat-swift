@@ -17,6 +17,19 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - ✨ Introducing `ViewContainerBuilder`, a new, easier way to customize views [#3374](https://github.com/GetStream/stream-chat-swift/pull/3374) (Learn more by reading the docs [here](https://getstream.io/chat/docs/sdk/ios/uikit/custom-components/))
 - Add `PollAttachmentView` component to render polls in the message list [#3374](https://github.com/GetStream/stream-chat-swift/pull/3374)
 - Add `ChatUserAvatarView.shouldShowOnlineIndicator` to disable the online indicator easily [#3374](https://github.com/GetStream/stream-chat-swift/pull/3374)
+### 🎭 New Localizations
+- `message.polls.subtitle.selectOne`
+- `message.polls.subtitle.selectOneOrMore`
+- `message.polls.subtitle.selectUpTo`
+- `message.polls.subtitle.voteEnded`
+- `message.polls.button.endVote`
+- `message.polls.button.viewResults`
+- `message.preview.poll-someone-voted`
+- `message.preview.poll-you-voted`
+- `message.preview.poll-someone-created`
+- `message.preview.poll-you-created`
+- `alert.poll.end-title`
+- `alert.poll.end`
 
 # [4.62.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.62.0)
 _August 15, 2024_
