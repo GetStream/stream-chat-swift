@@ -1385,6 +1385,7 @@
 		AD0F7F1A2B613EDC00914C4C /* TextLinkDetector.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD0F7F162B6139D500914C4C /* TextLinkDetector.swift */; };
 		AD0F7F1C2B616DD000914C4C /* TextLinkDetector_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD0F7F1B2B616DD000914C4C /* TextLinkDetector_Tests.swift */; };
 		AD142ACA2C739D6600ABCC1F /* Poll_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD142AC92C739D6600ABCC1F /* Poll_Tests.swift */; };
+		AD142ACE2C73B0C700ABCC1F /* Poll_Mock.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD142ACD2C73B0C700ABCC1F /* Poll_Mock.swift */; };
 		AD154C6D25DC3BA000850925 /* ChatCommandSuggestionView_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD154C6C25DC3BA000850925 /* ChatCommandSuggestionView_Tests.swift */; };
 		AD158B6526C1873000C104CD /* ChatThreadVC+SwiftUI.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD158B6326C1872D00C104CD /* ChatThreadVC+SwiftUI.swift */; };
 		AD158B6626C1876800C104CD /* ChatChannelVC+SwiftUI_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 64B059EC267116B40024CE90 /* ChatChannelVC+SwiftUI_Tests.swift */; };
@@ -4096,6 +4097,7 @@
 		AD0F7F162B6139D500914C4C /* TextLinkDetector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextLinkDetector.swift; sourceTree = "<group>"; };
 		AD0F7F1B2B616DD000914C4C /* TextLinkDetector_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextLinkDetector_Tests.swift; sourceTree = "<group>"; };
 		AD142AC92C739D6600ABCC1F /* Poll_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Poll_Tests.swift; sourceTree = "<group>"; };
+		AD142ACD2C73B0C700ABCC1F /* Poll_Mock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Poll_Mock.swift; sourceTree = "<group>"; };
 		AD154C6C25DC3BA000850925 /* ChatCommandSuggestionView_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatCommandSuggestionView_Tests.swift; sourceTree = "<group>"; };
 		AD158B6326C1872D00C104CD /* ChatThreadVC+SwiftUI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ChatThreadVC+SwiftUI.swift"; sourceTree = "<group>"; };
 		AD17CDF827E4DB2700E0D092 /* PushProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PushProvider.swift; sourceTree = "<group>"; };
@@ -6630,6 +6632,7 @@
 				A344075E27D753530044F150 /* ChatUser_Mock.swift */,
 				A344075427D753530044F150 /* CurrentChatUser_Mock.swift */,
 				AD9490652BF6756200E69224 /* ChatThread_Mock.swift */,
+				AD142ACD2C73B0C700ABCC1F /* Poll_Mock.swift */,
 				A344075527D753530044F150 /* Attachments */,
 			);
 			path = "Models + Extensions";
@@ -10881,6 +10884,7 @@
 				C17E0AF72B04D190007188F1 /* BackgroundListDatabaseObserver_Mock.swift in Sources */,
 				A344077827D753530044F150 /* CurrentChatUser_Mock.swift in Sources */,
 				82E6554B2B067ED700D64906 /* WaitUntil.swift in Sources */,
+				AD142ACE2C73B0C700ABCC1F /* Poll_Mock.swift in Sources */,
 				A3C3BC6027E8AA0A00224761 /* Date+Unique.swift in Sources */,
 				82F714A92B0785D900442A74 /* XCTest+Helpers.swift in Sources */,
 				A3C3BC2827E87F2000224761 /* UserRequestBody.swift in Sources */,
