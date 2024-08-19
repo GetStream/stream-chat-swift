@@ -115,7 +115,7 @@ public func HContainer(
 
 /// A flexible space that expands along the major axis of its containing stack layout.
 public func Spacer() -> UIView {
-    let view = UIView()
+    let view = UIStackView()
     view.translatesAutoresizingMaskIntoConstraints = false
     return view
 }
