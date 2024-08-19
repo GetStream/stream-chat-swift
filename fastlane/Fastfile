@@ -86,6 +86,10 @@ lane :release do |options|
   )
 end
 
+lane :merge_release do |options|
+  merge_release_to_main(author: options[:author])
+end
+
 desc 'Completes an SDK Release'
 lane :publish_release do |options|
   xcversion(version: '14.0.1')
@@ -107,54 +111,6 @@ lane :publish_release do |options|
   update_spm(version: options[:version])
 
   merge_main_to_develop
-end
-
-lane :merge_release_to_main do |options|
-  ensure_git_status_clean
-
-  release_branch =
-    if is_ci
-      # This API operation needs the "admin:org" scope.
-      ios_team = sh('gh api orgs/GetStream/teams/ios-developers/members -q ".[].login"', log: false).split
-      UI.user_error!("#{options[:author]} is not a member of the iOS Team") unless ios_team.include?(options[:author])
-
-      current_branch
-    else
-      release_branches = sh(command: 'git branch -a', log: false).delete(' ').split("\n").grep(%r(origin/.*release/))
-      UI.user_error!("Expected 1 release branch, found #{release_branches.size}") if release_branches.size != 1
-
-      release_branches.first
-    end
-
-  UI.user_error!("`#{release_branch}`` branch does not match the release branch pattern: `release/*`") unless release_branch.start_with?('release/')
-
-  sh('git config pull.ff only')
-  sh('git fetch --all --tags --prune')
-  sh("git checkout #{release_branch}")
-  sh("git pull origin #{release_branch} --ff-only")
-  sh('git checkout main')
-  sh('git pull origin main --ff-only')
-
-  # Merge release branch to main. For more info, read: https://notion.so/iOS-Branching-Strategy-37c10127dc26493e937769d44b1d6d9a
-  sh("git merge #{release_branch} --ff-only")
-  sh('git push origin main')
-
-  comment = "[Publication of the release](https://github.com/#{github_repo}/actions/workflows/release-publish.yml) has been launched 👍"
-  UI.important(comment)
-  pr_comment(text: comment)
-end
-
-lane :merge_main_to_develop do
-  ensure_git_status_clean
-  sh('git config pull.ff only')
-  sh('git fetch --all --tags --prune')
-  sh('git checkout main')
-  sh('git pull origin main --ff-only')
-  sh('git checkout develop')
-  sh('git pull origin develop --ff-only')
-  sh('git log develop..main')
-  sh('git merge main')
-  sh('git push origin develop')
 end
 
 desc 'Compresses the XCFrameworks into zip files'
