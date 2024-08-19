@@ -773,8 +773,7 @@ open class ChatMessageListVC: _ViewController,
 
         guard
             let message = message,
-            let channel = dataSource?.channel(for: self),
-            let currentUserId = client.currentUserId
+            let channel = dataSource?.channel(for: self)
         else {
             return cell
         }
@@ -782,7 +781,7 @@ open class ChatMessageListVC: _ViewController,
         cell.messageContentView?.delegate = self
         cell.messageContentView?.channel = channel
         cell.messageContentView?.content = message
-        cell.messageContentView?.currentUserId = currentUserId
+        cell.messageContentView?.currentUserId = client.currentUserId
 
         /// Process cell decorations
         cell.setDecoration(for: .header, decorationView: delegate?.chatMessageListVC(self, headerViewForMessage: message, at: indexPath))
