@@ -163,7 +163,7 @@ open class PollAttachmentOptionListItemView: _View, ThemeProvider {
     /// The authors of the latest votes of this option.
     open var latestVotesAuthors: [ChatUser] {
         content?.option.latestVotes
-            .compactMap(\.user)
-            .suffix(2) ?? []
+            .prefix(2)
+            .compactMap(\.user) ?? []
     }
 }
