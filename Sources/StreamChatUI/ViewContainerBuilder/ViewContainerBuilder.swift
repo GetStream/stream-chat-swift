@@ -181,34 +181,6 @@ public extension UIStackView {
     }
 }
 
-// MARK: - UIStackView.embed() - Helper to add container to parent view
-
-public extension UIStackView {
-    /// Embeds the container to the given view.
-    @discardableResult
-    func embed(in view: UIView) -> UIStackView {
-        view.addSubview(self)
-        pin(to: view)
-        return self
-    }
-
-    /// Embeds the container to the given view with insets.
-    @discardableResult
-    func embed(in view: UIView, insets: NSDirectionalEdgeInsets) -> UIStackView {
-        view.embed(self, insets: insets)
-        return self
-    }
-
-    /// Embeds the container to the given view respecting the layout margins guide.
-    /// The margins can be customised by changing the `directionalLayoutMargins`.
-    @discardableResult
-    func embedToMargins(in view: UIView) -> UIStackView {
-        view.addSubview(self)
-        pin(to: view.layoutMarginsGuide)
-        return self
-    }
-}
-
 // MARK: - UIView width and height helpers
 
 public extension UIView {
@@ -265,6 +237,34 @@ public extension UIView {
         NSLayoutConstraint.activate([
             heightAnchor.pin(lessThanOrEqualToConstant: value)
         ])
+        return self
+    }
+}
+
+// MARK: - UIStackView.embed() - Helper to add container to parent view
+
+public extension UIStackView {
+    /// Embeds the container to the given view.
+    @discardableResult
+    func embed(in view: UIView) -> UIStackView {
+        view.addSubview(self)
+        pin(to: view)
+        return self
+    }
+
+    /// Embeds the container to the given view with insets.
+    @discardableResult
+    func embed(in view: UIView, insets: NSDirectionalEdgeInsets) -> UIStackView {
+        view.embed(self, insets: insets)
+        return self
+    }
+
+    /// Embeds the container to the given view respecting the layout margins guide.
+    /// The margins can be customised by changing the `directionalLayoutMargins`.
+    @discardableResult
+    func embedToMargins(in view: UIView) -> UIStackView {
+        view.addSubview(self)
+        pin(to: view.layoutMarginsGuide)
         return self
     }
 }
