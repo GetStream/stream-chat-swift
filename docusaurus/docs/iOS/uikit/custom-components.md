@@ -401,4 +401,4 @@ public class CustomChatThreadListItemView: ChatThreadListItemView {
 Components.default.threadListItemView = CustomChatThreadListItemView.self
 ```
 
-From the version **4.63.0** onwards our own components will be using the `ViewContainerBuilder` to create the layout. This will make it easier to understand how the components are laid out and make it easier to customize them. This does not mean that you need to use the `ViewContainerBuilder` to customize the components, you can still use regular UIKit or your own UI framework to customize the components.
+From the version **4.63.0** onward our own components will be using the `ViewContainerBuilder` to create the layout. This will make it easier to understand how the components are laid out and make it easier to customize them. This does not mean that you need to use the `ViewContainerBuilder` to customize the components, you can still use regular UIKit or your own UI framework to customize the components.
