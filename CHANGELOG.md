@@ -11,6 +11,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Fix `PollOption.latestVotes` sorting [#3374](https://github.com/GetStream/stream-chat-swift/pull/3374)
 - Fix `Poll.latestAnswers` sorting [#3374](https://github.com/GetStream/stream-chat-swift/pull/3374)
 - Fix `Poll` updates not triggering message updates in `ChannelController` [#3374](https://github.com/GetStream/stream-chat-swift/pull/3374)
+### 🔄 Changed
+- Deprecates `PollVoteListQuery(pollId:optionId:pagination:filter:)` initializer in favor of `(pollId:filter:pagination:)` [#3381](https://github.com/GetStream/stream-chat-swift/pull/3381)
 
 ## StreamChatUI
 ### ✅ Added
