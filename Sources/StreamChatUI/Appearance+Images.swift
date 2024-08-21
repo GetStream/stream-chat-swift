@@ -81,7 +81,7 @@ public extension Appearance {
 
         // MARK: - Polls
 
-        public var pollWinnerMedal: UIImage = loadSafely(systemName: "medal", assetsFallback: "medal")
+        public var pollWinner: UIImage = loadSafely(systemName: "trophy", assetsFallback: "trophy")
         public var pollVoteCheckmarkActive: UIImage = .checkmark
         public var pollVoteCheckmarkInactive: UIImage = UIImage(
             systemName: "circle",

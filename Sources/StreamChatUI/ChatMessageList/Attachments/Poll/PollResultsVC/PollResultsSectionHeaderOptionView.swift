@@ -29,7 +29,8 @@ open class PollResultsSectionHeaderOptionView: _View, ThemeProvider {
         .withoutAutoresizingMaskConstraints
         .withAdjustingFontForContentSizeCategory
 
-    open private(set) lazy var medalImageView = UIImageView()
+    /// The image view that shows the poll winner icon.
+    open private(set) lazy var pollWinnerIconView = UIImageView()
         .withoutAutoresizingMaskConstraints
 
     /// The label that displays the number of votes in an option.
@@ -46,8 +47,8 @@ open class PollResultsSectionHeaderOptionView: _View, ThemeProvider {
         optionNameLabel.textColor = appearance.colorPalette.text
         votesLabel.font = appearance.fonts.body.withSize(17)
         votesLabel.textColor = appearance.colorPalette.text
-        medalImageView.image = appearance.images.pollWinnerMedal
-        medalImageView.tintColor = appearance.colorPalette.textLowEmphasis
+        pollWinnerIconView.image = appearance.images.pollWinner
+        pollWinnerIconView.tintColor = appearance.colorPalette.textLowEmphasis
     }
 
     override open func setUpLayout() {
@@ -59,7 +60,7 @@ open class PollResultsSectionHeaderOptionView: _View, ThemeProvider {
             optionNameLabel
             Spacer()
             HContainer(spacing: 6) {
-                medalImageView
+                pollWinnerIconView
                     .width(20)
                     .height(20)
                 votesLabel.layout {
@@ -77,6 +78,6 @@ open class PollResultsSectionHeaderOptionView: _View, ThemeProvider {
         optionNameLabel.text = content.option.text
         let voteCount = content.poll.voteCount(for: content.option)
         votesLabel.text = L10n.Message.Polls.votes(voteCount)
-        medalImageView.isHidden = !content.poll.isOptionWinner(content.option)
+        pollWinnerIconView.isHidden = !content.poll.isOptionWinner(content.option)
     }
 }
