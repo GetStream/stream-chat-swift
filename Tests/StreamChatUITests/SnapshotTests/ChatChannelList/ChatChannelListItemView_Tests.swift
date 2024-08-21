@@ -1812,21 +1812,3 @@ private extension ChatChannelListItemView {
         ])
     }
 }
-
-private class Calendar_Mock: ChannelListMessageTimestampCalendar {
-    var mockIsDateInToday = false
-    var mockIsDateInYesterday = false
-    var mockIsDateInLastWeek = false
-
-    func isDateInToday(_ date: Date) -> Bool {
-        mockIsDateInToday
-    }
-
-    func isDateInYesterday(_ date: Date) -> Bool {
-        mockIsDateInYesterday
-    }
-
-    func isDateInLastWeek(_ date: Date) -> Bool {
-        mockIsDateInLastWeek
-    }
-}
