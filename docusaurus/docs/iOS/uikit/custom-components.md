@@ -240,8 +240,8 @@ VContainer {
     replyTimestampLabel.layout {
        $0.setContentCompressionResistancePriority(.required, for: .horizontal)
        NSLayoutConstraint.activate([
-        $0.heightAnchor.pin(equalToConstant: 15),
-        $0.widthAnchor.pin(equalToConstant: 15)
+        $0.heightAnchor.constraint(equalToConstant: 15),
+        $0.widthAnchor.constraint(equalToConstant: 15)
        ])
     }
 }
@@ -255,8 +255,8 @@ VContainer {
     replyTimestampLabel.layout { view in
        view.setContentCompressionResistancePriority(.required, for: .horizontal)
        NSLayoutConstraint.activate([
-        view.heightAnchor.pin(equalToConstant: 15)
-        view.widthAnchor.pin(equalToConstant: 15)
+        view.heightAnchor.constraint(equalToConstant: 15)
+        view.widthAnchor.constraint(equalToConstant: 15)
        ])
     }
 }
@@ -270,8 +270,8 @@ The `UIView.constraints` is a result builder function that allows you to activat
 VContainer {
     unreadCountView
     replyTimestampLabel.constraints {
-        $0.heightAnchor.pin(equalToConstant: 15)
-        $0.widthAnchor.pin(equalToConstant: 15)
+        $0.heightAnchor.constraint(equalToConstant: 15)
+        $0.widthAnchor.constraint(equalToConstant: 15)
     }
 }
 ```
