@@ -16,7 +16,7 @@ class ChannelListScrollTime: StreamTestCase {
     func testChannelListScrollTime() {
         WHEN("user opens the channel list") {
             userRobot.login().waitForChannelListToLoad()
-            sleep(10)
+            sleep(20)
         }
         THEN("user scrolls the channel list") {
             let measureOptions = XCTMeasureOptions()
