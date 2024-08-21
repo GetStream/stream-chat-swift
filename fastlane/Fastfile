@@ -355,7 +355,6 @@ lane :xcmetrics do |options|
     project: xcode_project,
     scheme: 'StreamChatUITestsApp',
     testplan: 'Performance',
-    configuration: 'Release',
     result_bundle: true,
     derived_data_path: derived_data_path,
     cloned_source_packages_path: source_packages_path,
