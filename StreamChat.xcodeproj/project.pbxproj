@@ -1642,6 +1642,7 @@
 		ADC1B76B2C763209009AFA9B /* Calendar_Mock.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADC1B76A2C763209009AFA9B /* Calendar_Mock.swift */; };
 		ADC1B76D2C763CBC009AFA9B /* PollResultsVC_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADC1B76C2C763CBC009AFA9B /* PollResultsVC_Tests.swift */; };
 		ADC1B76F2C764431009AFA9B /* PollMockFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADC1B76E2C764431009AFA9B /* PollMockFactory.swift */; };
+		ADC1B7722C7651D8009AFA9B /* PollResultsVoteListVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADC1B7712C7651D8009AFA9B /* PollResultsVoteListVC.swift */; };
 		ADC40C3226E26E9F005B616C /* UserSearchController_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 795297052583B52000435B2E /* UserSearchController_Tests.swift */; };
 		ADC40C3426E294EB005B616C /* MessageSearchController+Combine.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADC40C3326E294EB005B616C /* MessageSearchController+Combine.swift */; };
 		ADC40C3626E2980D005B616C /* MessageSearchController+SwiftUI.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADC40C3526E2980D005B616C /* MessageSearchController+SwiftUI.swift */; };
@@ -4296,6 +4297,7 @@
 		ADC1B76A2C763209009AFA9B /* Calendar_Mock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Calendar_Mock.swift; sourceTree = "<group>"; };
 		ADC1B76C2C763CBC009AFA9B /* PollResultsVC_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PollResultsVC_Tests.swift; sourceTree = "<group>"; };
 		ADC1B76E2C764431009AFA9B /* PollMockFactory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PollMockFactory.swift; sourceTree = "<group>"; };
+		ADC1B7712C7651D8009AFA9B /* PollResultsVoteListVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PollResultsVoteListVC.swift; sourceTree = "<group>"; };
 		ADC40C3326E294EB005B616C /* MessageSearchController+Combine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MessageSearchController+Combine.swift"; sourceTree = "<group>"; };
 		ADC40C3526E2980D005B616C /* MessageSearchController+SwiftUI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MessageSearchController+SwiftUI.swift"; sourceTree = "<group>"; };
 		ADC4AAAD2788ACFE0004BB35 /* MessageDeletedHard.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = MessageDeletedHard.json; sourceTree = "<group>"; };
@@ -8309,6 +8311,7 @@
 			children = (
 				AD142AD02C73BB2300ABCC1F /* PollAttachmentView_Tests.swift */,
 				ADC1B76C2C763CBC009AFA9B /* PollResultsVC_Tests.swift */,
+				ADC1B7712C7651D8009AFA9B /* PollResultsVoteListVC.swift */,
 				ADC1B76E2C764431009AFA9B /* PollMockFactory.swift */,
 			);
 			path = Poll;
@@ -10704,6 +10707,7 @@
 				AD44758F263B46430030E583 /* ConfirmButton_Tests.swift in Sources */,
 				A3D9D69927EDE88300725066 /* VideoLoader_Mock.swift in Sources */,
 				40FA4E112A12AA4500DA21D2 /* AttachmentsPreviewVC_Tests.swift in Sources */,
+				ADC1B7722C7651D8009AFA9B /* PollResultsVoteListVC.swift in Sources */,
 				E798D6F125FF6BF70002C3B9 /* SwipeableView_Tests.swift in Sources */,
 				408599982A1FB96300FD6E26 /* MockAudioSessionFeedbackGenerator.swift in Sources */,
 				E7296E942611D50900B1AE79 /* SendButton_Tests.swift in Sources */,
