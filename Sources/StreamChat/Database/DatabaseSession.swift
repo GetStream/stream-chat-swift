@@ -698,7 +698,8 @@ extension DatabaseSession {
             }
         }
         
-        if let poll = payload.poll {
+        if var poll = payload.poll {
+            poll.fromEvent = true
             try savePoll(payload: poll, cache: nil)
         }
 

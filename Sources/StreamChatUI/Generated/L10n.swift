@@ -24,6 +24,12 @@ internal enum L10n {
       /// Ok
       internal static var ok: String { L10n.tr("Localizable", "alert.actions.ok") }
     }
+    internal enum Poll {
+      /// End
+      internal static var end: String { L10n.tr("Localizable", "alert.poll.end") }
+      /// Nobody will be able to vote in this poll anymore.
+      internal static var endTitle: String { L10n.tr("Localizable", "alert.poll.end-title") }
+    }
   }
 
   internal enum Attachment {
@@ -268,6 +274,40 @@ internal enum L10n {
       internal static var resend: String { L10n.tr("Localizable", "message.moderation.resend") }
       /// Are you sure?
       internal static var title: String { L10n.tr("Localizable", "message.moderation.title") }
+    }
+    internal enum Polls {
+      internal enum Button {
+        /// End Vote
+        internal static var endVote: String { L10n.tr("Localizable", "message.polls.button.endVote") }
+        /// View Results
+        internal static var viewResults: String { L10n.tr("Localizable", "message.polls.button.viewResults") }
+      }
+      internal enum Subtitle {
+        /// Select one
+        internal static var selectOne: String { L10n.tr("Localizable", "message.polls.subtitle.selectOne") }
+        /// Select one or more
+        internal static var selectOneOrMore: String { L10n.tr("Localizable", "message.polls.subtitle.selectOneOrMore") }
+        /// Select up to %d
+        internal static func selectUpTo(_ p1: Int) -> String {
+          return L10n.tr("Localizable", "message.polls.subtitle.selectUpTo", p1)
+        }
+        /// Vote ended
+        internal static var voteEnded: String { L10n.tr("Localizable", "message.polls.subtitle.voteEnded") }
+      }
+    }
+    internal enum Preview {
+      /// %@ created:
+      internal static func pollSomeoneCreated(_ p1: Any) -> String {
+        return L10n.tr("Localizable", "message.preview.poll-someone-created", String(describing: p1))
+      }
+      /// %@ voted:
+      internal static func pollSomeoneVoted(_ p1: Any) -> String {
+        return L10n.tr("Localizable", "message.preview.poll-someone-voted", String(describing: p1))
+      }
+      /// You created:
+      internal static var pollYouCreated: String { L10n.tr("Localizable", "message.preview.poll-you-created") }
+      /// You voted:
+      internal static var pollYouVoted: String { L10n.tr("Localizable", "message.preview.poll-you-voted") }
     }
     internal enum Sending {
       /// UPLOADING FAILED

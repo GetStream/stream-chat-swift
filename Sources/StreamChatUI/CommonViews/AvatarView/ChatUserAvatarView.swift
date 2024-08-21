@@ -17,9 +17,16 @@ open class ChatUserAvatarView: _View, ThemeProvider {
         didSet { updateContentIfNeeded() }
     }
 
+    /// A boolean value to determine if online indicator should be shown or not.
+    public var shouldShowOnlineIndicator: Bool = true
+
     override open func setUpLayout() {
         super.setUpLayout()
         embed(presenceAvatarView)
+
+        if !shouldShowOnlineIndicator {
+            presenceAvatarView.onlineIndicatorView.isHidden = true
+        }
     }
 
     override open func updateContent() {
@@ -32,6 +39,8 @@ open class ChatUserAvatarView: _View, ThemeProvider {
             )
         )
 
-        presenceAvatarView.isOnlineIndicatorVisible = content?.isOnline ?? false
+        if shouldShowOnlineIndicator {
+            presenceAvatarView.isOnlineIndicatorVisible = content?.isOnline ?? false
+        }
     }
 }
