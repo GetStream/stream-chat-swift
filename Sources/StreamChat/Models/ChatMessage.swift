@@ -363,6 +363,7 @@ extension ChatMessage: Hashable {
         guard lhs.localState == rhs.localState else { return false }
         guard lhs.updatedAt == rhs.updatedAt else { return false }
         guard lhs.allAttachments == rhs.allAttachments else { return false }
+        guard lhs.poll == rhs.poll else { return false }
         guard lhs.author == rhs.author else { return false }
         guard lhs.currentUserReactionsCount == rhs.currentUserReactionsCount else { return false }
         guard lhs.text == rhs.text else { return false }

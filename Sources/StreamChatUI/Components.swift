@@ -315,6 +315,17 @@ public struct Components {
     /// A flag which determines if download action is shown for file attachments.
     public var isDownloadFileAttachmentsEnabled = false
 
+    // MARK: - Polls
+
+    /// The view that displays a poll in the message list.
+    public var pollAttachmentView: PollAttachmentView.Type = PollAttachmentView.self
+
+    /// The options list view of the poll attachment in the message list.
+    public var pollAttachmentOptionListView: PollAttachmentOptionListView.Type = PollAttachmentOptionListView.self
+
+    /// The view that displays a poll option in the poll option list view.
+    public var pollAttachmentOptionListItemView: PollAttachmentOptionListItemView.Type = PollAttachmentOptionListItemView.self
+
     // MARK: - Reactions
 
     /// The Reaction picker VC.
