@@ -131,7 +131,14 @@ extension NSManagedObjectContext {
             let queryDTO = try saveQuery(query: query)
             queryDTO?.votes.insert(dto)
         }
-        
+
+        if currentUser?.user.id == dto.user?.id {
+            poll.ownVotes.insert(dto)
+        }
+
+        // Trigger FRC message update
+        poll.message?.poll = poll
+
         return dto
     }
     
@@ -187,7 +194,14 @@ extension NSManagedObjectContext {
         }
         
         option?.latestVotes.insert(dto)
-        
+
+        if currentUser?.user.id == dto.user?.id {
+            poll.ownVotes.insert(dto)
+        }
+
+        // Trigger FRC message update
+        poll.message?.poll = poll
+
         return dto
     }
     
@@ -213,7 +227,13 @@ extension NSManagedObjectContext {
                 poll?.voteCountsByOption?[optionId] = votes
             }
             dto.option?.latestVotes.remove(dto)
+            if currentUser?.user.id == dto.user?.id {
+                dto.poll?.ownVotes.remove(dto)
+            }
         }
+
+        // Trigger FRC message update
+        poll?.message?.poll = poll
 
         delete(pollVote: dto)
         return dto

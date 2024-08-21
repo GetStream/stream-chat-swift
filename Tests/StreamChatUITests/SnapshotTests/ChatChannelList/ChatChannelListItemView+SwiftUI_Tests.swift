@@ -27,7 +27,7 @@ final class ChatChannelListItemView_SwiftUI_Tests: XCTestCase {
                         .mask(Circle())
                         .frame(width: 50, height: 50)
 
-                    Spacer()
+                    SwiftUI.Spacer()
 
                     Text(dataSource.content!.channel.name!)
                 }.padding()

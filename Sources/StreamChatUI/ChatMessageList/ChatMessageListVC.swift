@@ -16,6 +16,7 @@ open class ChatMessageListVC: _ViewController,
     GiphyActionContentViewDelegate,
     FileActionContentViewDelegate,
     LinkPreviewViewDelegate,
+    PollAttachmentViewInjectorDelegate,
     UITableViewDataSource,
     UITableViewDelegate,
     UIGestureRecognizerDelegate,
@@ -135,6 +136,10 @@ open class ChatMessageListVC: _ViewController,
         .audioSessionFeedbackGenerator
         .init()
 
+    /// A feedbackGenerator that will be used to provide feedback when a task is successful or not.
+    /// You can disable the feedback generator by overriding to `nil`.
+    open private(set) lazy var notificationFeedbackGenerator: UINotificationFeedbackGenerator? = UINotificationFeedbackGenerator()
+
     /// A component responsible to manage the swipe to quote reply logic.
     open lazy var swipeToReplyGestureHandler = SwipeToReplyGestureHandler(listView: self.listView)
 
@@ -161,6 +166,14 @@ open class ChatMessageListVC: _ViewController,
     private var isFirstPageLoaded: Bool {
         dataSource?.isFirstPageLoaded == true
     }
+
+    /// The poll controller to manage the poll actions.
+    /// There is only one controller active for the poll which the user is currently interacting.
+    public internal(set) var pollController: PollController?
+
+    /// The poll options that are currently being changed.
+    /// It is used to avoid making duplicate calls.
+    public internal(set) var pollOptionsCastingVote: Set<String> = []
 
     /// The message cell height caches. This makes sure that the message list doesn't
     /// need to recalculate the cell height every time. This improve the scrolling
@@ -768,6 +781,7 @@ open class ChatMessageListVC: _ViewController,
         cell.messageContentView?.delegate = self
         cell.messageContentView?.channel = channel
         cell.messageContentView?.content = message
+        cell.messageContentView?.currentUserId = client.currentUserId
 
         /// Process cell decorations
         cell.setDecoration(for: .header, decorationView: delegate?.chatMessageListVC(self, headerViewForMessage: message, at: indexPath))
@@ -1061,6 +1075,112 @@ open class ChatMessageListVC: _ViewController,
     ) {
         audioSessionFeedbackGenerator.feedbackForSeeking()
         audioPlayer?.seek(to: timeInterval)
+    }
+
+    // MARK: - PollAttachmentViewDelegate
+
+    open func pollAttachmentView(
+        _ pollAttachmentView: PollAttachmentView,
+        didTapOption option: PollOption,
+        in message: ChatMessage
+    ) {
+        guard let poll = message.poll else { return }
+
+        if pollOptionsCastingVote.contains(option.id) {
+            return
+        }
+        pollOptionsCastingVote.insert(option.id)
+
+        notificationFeedbackGenerator?.notificationOccurred(.success)
+
+        let pollController = makePollController(for: poll, in: message)
+        if let currentUserVote = poll.currentUserVote(for: option) {
+            pollController.removePollVote(voteId: currentUserVote.id) { [weak self] error in
+                self?.didRemovePollVote(currentUserVote, for: option, in: message, error: error)
+            }
+        } else {
+            pollController.castPollVote(answerText: nil, optionId: option.id) { [weak self] error in
+                self?.didCastPollVote(for: option, in: message, error: error)
+            }
+        }
+    }
+
+    open func pollAttachmentView(
+        _ pollAttachmentView: PollAttachmentView,
+        didTapPollResults poll: Poll,
+        in message: ChatMessage
+    ) {
+        print("show view results")
+    }
+
+    open func pollAttachmentView(
+        _ pollAttachmentView: PollAttachmentView,
+        didTapEndPoll poll: Poll,
+        in message: ChatMessage
+    ) {
+        let pollController = makePollController(for: poll, in: message)
+        let alert = UIAlertController(
+            title: nil,
+            message: L10n.Alert.Poll.endTitle,
+            preferredStyle: .actionSheet
+        )
+        alert.addAction(.init(title: L10n.Alert.Poll.end, style: .destructive, handler: { _ in
+            pollController.closePoll { [weak self] error in
+                let isSuccess = error == nil
+                self?.notificationFeedbackGenerator?.notificationOccurred(isSuccess ? .success : .error)
+            }
+        }))
+        alert.addAction(.init(title: L10n.Alert.Actions.cancel, style: .cancel))
+        present(alert, animated: true)
+    }
+
+    // MARK: Poll Requests Completion Handlers
+
+    /// Called when removing a poll vote completed.
+    /// - Parameters:
+    ///   - vote: The vote that was removed.
+    ///   - option: The option which the voted was removed from.
+    ///   - message: The message where the Poll belongs to.
+    ///   - error: An error in case the call failed.
+    open func didRemovePollVote(
+        _ vote: PollVote,
+        for option: PollOption,
+        in message: ChatMessage,
+        error: Error?
+    ) {
+        pollOptionsCastingVote.remove(option.id)
+        if error != nil {
+            notificationFeedbackGenerator?.notificationOccurred(.error)
+        }
+    }
+
+    /// Called when adding a poll vote completed.
+    /// - Parameters:
+    ///   - option: The option which the voted was added to.
+    ///   - message: The message where the Poll belongs to.
+    ///   - error: An error in case the call failed.
+    open func didCastPollVote(
+        for option: PollOption,
+        in message: ChatMessage,
+        error: Error?
+    ) {
+        pollOptionsCastingVote.remove(option.id)
+        if error != nil {
+            notificationFeedbackGenerator?.notificationOccurred(.error)
+        }
+    }
+
+    /// Creates the poll controller for the poll that is being interacted at the moment.
+    private func makePollController(for poll: Poll, in message: ChatMessage) -> PollController {
+        let pollController: PollController
+        if let existingPollController = self.pollController, poll.id == existingPollController.pollId {
+            pollController = existingPollController
+        } else {
+            pollController = client.pollController(messageId: message.id, pollId: poll.id)
+            pollOptionsCastingVote = []
+        }
+        self.pollController = pollController
+        return pollController
     }
 
     // MARK: - Deprecations

@@ -248,6 +248,12 @@ final class QuotedChatMessageView_Tests: XCTestCase {
         AssertSnapshot(view, variants: [.defaultLight])
     }
 
+    func test_withPoll() {
+        view.content = makeContent(text: "", poll: .mock(name: "Best player"))
+
+        AssertSnapshot(view, variants: [.defaultLight])
+    }
+
     func test_appearanceCustomization_usingComponents() {
         class TestView: ChatAvatarView {
             override func setUpAppearance() {
@@ -352,7 +358,8 @@ extension QuotedChatMessageView_Tests {
         channel: ChatChannel? = nil,
         isSentByCurrentUser: Bool = false,
         avatarAlignment: QuotedAvatarAlignment = .leading,
-        attachments: [AnyChatMessageAttachment] = []
+        attachments: [AnyChatMessageAttachment] = [],
+        poll: Poll? = nil
     ) -> QuotedChatMessageView.Content {
         let message = ChatMessage.mock(
             id: .unique,
@@ -361,7 +368,8 @@ extension QuotedChatMessageView_Tests {
             author: .mock(id: .unique),
             translations: translations,
             attachments: attachments,
-            isSentByCurrentUser: isSentByCurrentUser
+            isSentByCurrentUser: isSentByCurrentUser,
+            poll: poll
         )
         return .init(message: message, avatarAlignment: avatarAlignment, channel: channel)
     }

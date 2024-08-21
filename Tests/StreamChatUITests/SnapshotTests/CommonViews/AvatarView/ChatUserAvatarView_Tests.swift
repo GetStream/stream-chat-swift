@@ -37,6 +37,15 @@ final class ChatUserAvatarView_Tests: XCTestCase {
         AssertSnapshot(avatarViewOffline, variants: .onlyUserInterfaceStyles, suffix: "without online indicator")
     }
 
+    func test_appearance_whenOnlineIndicatorDisabled() {
+        let avatarViewOnline = ChatUserAvatarView().withoutAutoresizingMaskConstraints
+        avatarViewOnline.addSizeConstraints()
+        avatarViewOnline.components = .mock
+        avatarViewOnline.content = user
+        avatarViewOnline.shouldShowOnlineIndicator = false
+        AssertSnapshot(avatarViewOnline, variants: [.defaultLight])
+    }
+
     func test_appearanceCustomization_usingAppearanceAndComponents() {
         class RectIndicator: UIView, MaskProviding {
             override func didMoveToSuperview() {
