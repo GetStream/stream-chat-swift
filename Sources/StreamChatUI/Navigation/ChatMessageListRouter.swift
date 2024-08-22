@@ -224,6 +224,18 @@ open class ChatMessageListRouter:
         )
     }
 
+    /// Shows the poll results view.
+    /// - Parameters:
+    ///   - poll: The poll to show the results.
+    ///   - messageId: The message ID which this poll belongs to.
+    ///   - client: The current `ChatClient` instance.
+    open func showResults(forPoll poll: Poll, in messageId: MessageId, client: ChatClient) {
+        let pollController = client.pollController(messageId: messageId, pollId: poll.id)
+        let pollResultsVC = components.pollResultsVC.init(pollController: pollController)
+        let navVC = UINavigationController(rootViewController: pollResultsVC)
+        rootViewController.present(navVC, animated: true)
+    }
+
     // MARK: - UIViewControllerTransitioningDelegate
 
     open func animationController(

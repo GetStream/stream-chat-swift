@@ -183,6 +183,9 @@ struct PollPayload: Decodable {
     var votingVisibility: String?
     var createdBy: UserPayload?
 
+    // Workaround for handling events. The backend always returns the `ownVotes` as an empty array.
+    // This would reset the ownVotes of a Poll, so we need to understand that this payload is from an event
+    // and ignore the `ownVotes` property.
     var fromEvent: Bool = false
 
     init(
