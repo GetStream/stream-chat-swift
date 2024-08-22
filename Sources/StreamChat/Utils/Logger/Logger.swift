@@ -290,6 +290,10 @@ public class Logger {
         // it is important the closure is performed in the managedObjectContext's thread.
         let messageString = String(describing: message())
 
+        // Read the thread name before dispatching the log to the desired destinations,
+        // so that we have the name of the thread that actually initiated the log.
+        let threadName = threadName
+
         loggerQueue.async { [weak self] in
             guard let self = self else { return }
 
@@ -298,7 +302,7 @@ public class Logger {
                 level: level,
                 date: Date(),
                 message: messageString,
-                threadName: self.threadName,
+                threadName: threadName,
                 functionName: functionName,
                 fileName: fileName,
                 lineNumber: lineNumber

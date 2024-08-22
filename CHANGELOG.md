@@ -3,7 +3,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 # Upcoming
 
-### 🔄 Changed
+## StreamChat
+### 🐞 Fixed
+- Fix Logger printing the incorrect thread name [#3382](https://github.com/GetStream/stream-chat-swift/pull/3382)
 
 # [4.62.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.62.0)
 _August 15, 2024_
