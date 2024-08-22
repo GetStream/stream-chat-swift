@@ -155,6 +155,7 @@ final class AudioQueuePlayerNextItemProvider_Tests: XCTestCase {
             id: .init(cid: .unique, messageId: .unique, index: 0),
             type: type,
             payload: try! encoder.encode(payload),
+            downloadingState: nil,
             uploadingState: nil
         )
     }

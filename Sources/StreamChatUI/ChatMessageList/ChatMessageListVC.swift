@@ -979,13 +979,30 @@ open class ChatMessageListVC: _ViewController,
     }
 
     open func didTapActionOnAttachment(_ attachment: ChatMessageFileAttachment, at indexPath: IndexPath?) {
-        switch attachment.uploadingState?.state {
-        case .uploadingFailed:
-            client
-                .messageController(cid: attachment.id.cid, messageId: attachment.id.messageId)
-                .restartFailedAttachmentUploading(with: attachment.id)
-        default:
-            break
+        if let uploadingState = attachment.uploadingState {
+            switch uploadingState.state {
+            case .uploadingFailed:
+                client
+                    .messageController(cid: attachment.id.cid, messageId: attachment.id.messageId)
+                    .restartFailedAttachmentUploading(with: attachment.id)
+            default:
+                break
+            }
+        } else if let downloadingState = attachment.downloadingState, downloadingState.state == .downloaded {
+            guard let indexPath, let cell = listView.cellForRow(at: indexPath) else { return }
+            let activityViewController = UIActivityViewController(activityItems: [downloadingState.localFileURL], applicationActivities: nil)
+            // TODO: sourceView is incorrect
+            activityViewController.popoverPresentationController?.sourceView = cell
+            present(activityViewController, animated: true)
+        } else {
+            let chat = client.makeChat(for: attachment.id.cid)
+            _Concurrency.Task {
+                do {
+                    try await chat.downloadAttachment(attachment.id)
+                } catch {
+                    log.debug("Downloaded attachment for id \(attachment.id)")
+                }
+            }
         }
     }
 

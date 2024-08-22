@@ -40,6 +40,10 @@ class AttachmentDTO: NSManagedObject {
 
     /// An attachment local url.
     @NSManaged var localURL: URL?
+    
+    /// An attachment local relative path used for storing downloaded attachments.
+    @NSManaged var localRelativePath: String?
+    
     /// An attachment raw `Data`.
     @NSManaged var data: Data
 
@@ -91,6 +95,19 @@ class AttachmentDTO: NSManagedObject {
     }
 }
 
+extension AttachmentDTO: EphemeralValuesContainer {
+    func resetEphemeralValues() {
+        switch localState {
+        case .downloading, .downloadingFailed:
+            localState = nil
+            localURL = nil
+            localRelativePath = nil
+        default:
+            break
+        }
+    }
+}
+
 extension NSManagedObjectContext: AttachmentDatabaseSession {
     func attachment(id: AttachmentId) -> AttachmentDTO? {
         AttachmentDTO.load(id: id, context: self)
@@ -110,8 +127,12 @@ extension NSManagedObjectContext: AttachmentDatabaseSession {
         dto.data = try JSONEncoder.default.encode(payload.payload)
         dto.message = messageDTO
 
-        dto.localURL = nil
-        dto.localState = nil
+        // Keep local state for downloaded attachments
+        if dto.localState?.isUploading == true {
+            dto.localURL = nil
+            dto.localRelativePath = nil
+            dto.localState = nil
+        }
 
         return dto
     }
@@ -143,11 +164,26 @@ extension NSManagedObjectContext: AttachmentDatabaseSession {
 }
 
 private extension AttachmentDTO {
+    var downloadingState: AttachmentDownloadingState? {
+        guard let localRelativePath, !localRelativePath.isEmpty else { return nil }
+        guard let localState, localState.isDownloading else { return nil }
+        // Only file attachments can be downloaded.
+        guard let filePayload = try? JSONDecoder.stream.decode(FileAttachmentPayload.self, from: data) else { return nil }
+        // Local URL exists only when the state is downloaded
+        let localURL = ChatMessageFileAttachment.localStorageURL(forRelativePath: localRelativePath)
+        return AttachmentDownloadingState(
+            localFileURL: localURL,
+            state: localState,
+            file: filePayload.file
+        )
+    }
+    
     var uploadingState: AttachmentUploadingState? {
         guard
             let localURL = localURL,
             let localState = localState
         else { return nil }
+        guard localState.isUploading else { return nil }
 
         do {
             return .init(
@@ -177,6 +213,7 @@ extension AttachmentDTO {
             id: id,
             type: attachmentType,
             payload: data,
+            downloadingState: downloadingState,
             uploadingState: uploadingState
         )
     }
@@ -209,12 +246,20 @@ extension LocalAttachmentState {
             return "uploadingFailed"
         case .uploaded:
             return "uploaded"
+        case .downloading:
+            return "downloading"
+        case .downloadingFailed:
+            return "downloadingFailed"
+        case .downloaded:
+            return "downloaded"
         }
     }
 
     var progress: Double {
         switch self {
         case let .uploading(progress):
+            return progress
+        case let .downloading(progress):
             return progress
         default:
             return 0
@@ -233,6 +278,12 @@ extension LocalAttachmentState {
             self = .uploaded
         case LocalAttachmentState.unknown.rawValue:
             self = .unknown
+        case LocalAttachmentState.downloaded.rawValue:
+            self = .downloaded
+        case LocalAttachmentState.downloadingFailed.rawValue:
+            self = .downloadingFailed
+        case LocalAttachmentState.downloading(progress: 0).rawValue:
+            self = .downloading(progress: progress)
         default:
             self = .unknown
         }
@@ -254,6 +305,14 @@ extension ClientError {
 
     final class AttachmentDecoding: ClientError {}
 
+    final class AttachmentDownloading: ClientError {
+        init(id: AttachmentId, reason: String) {
+            super.init(
+                "Failed to download attachment with id: \(id): \(reason)"
+            )
+        }
+    }
+    
     final class AttachmentUploading: ClientError {
         init(id: AttachmentId) {
             super.init(

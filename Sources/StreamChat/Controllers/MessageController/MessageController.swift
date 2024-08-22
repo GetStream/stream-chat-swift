@@ -664,7 +664,19 @@ public class ChatMessageController: DataController, DelegateCallable, DataStoreP
             }
         }
     }
-
+    
+    /// Downloads the attachment for the id and stores it on the device.
+    /// - Parameters:
+    ///   - id: The id of the file attachment.
+    ///   - completion: A completion block with a local URL of the downloaded file.
+    public func downloadAttachment(with id: AttachmentId, completion: @escaping (Error?) -> Void) {
+        Task.run({ [messageUpdater] in
+            try await messageUpdater.downloadAttachment(with: id)
+        }, completion: { error in
+            self.callback { completion(error) }
+        })
+    }
+    
     /// Updates local state of attachment with provided `id` to be enqueued by attachment uploader.
     /// - Parameters:
     ///   - id: The attachment identifier.

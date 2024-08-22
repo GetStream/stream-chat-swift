@@ -24,6 +24,7 @@ public extension ChatMessageFileAttachment {
                 file: file,
                 extraData: extraData
             ),
+            downloadingState: nil,
             uploadingState: localState.map {
                 .init(
                     localFileURL: assetURL,

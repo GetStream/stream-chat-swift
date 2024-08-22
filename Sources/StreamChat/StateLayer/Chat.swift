@@ -352,6 +352,22 @@ public class Chat {
         return try await messageSender.waitForAPIRequest(messageId: messageId)
     }
     
+    /// Downloads the attachment specified by the attachment id to the local storage.
+    ///
+    /// The local URL of the downloaded file:
+    /// ```swift
+    /// let attachment = try await chat.downloadAttachment(id)
+    /// let localURL = attachment.downloadingState?.localFileURL
+    /// ```
+    ///
+    /// - Note: The local storage URL can change between app launches.
+    ///
+    /// - Parameter attachment: The id of the attachment.
+    /// - Returns: An instance of the downloaded file attachment.
+    @discardableResult public func downloadAttachment(_ attachment: AttachmentId) async throws -> ChatMessageFileAttachment {
+        try await messageUpdater.downloadAttachment(with: attachment)
+    }
+    
     /// Resends a failed attachment.
     ///
     /// - Parameter attachment: The id of the attachment.

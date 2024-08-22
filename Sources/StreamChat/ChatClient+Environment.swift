@@ -11,15 +11,9 @@ extension ChatClient {
             _ sessionConfiguration: URLSessionConfiguration,
             _ requestEncoder: RequestEncoder,
             _ requestDecoder: RequestDecoder,
+            _ attachmentDownloader: AttachmentDownloader,
             _ attachmentUploader: AttachmentUploader
-        ) -> APIClient = {
-            APIClient(
-                sessionConfiguration: $0,
-                requestEncoder: $1,
-                requestDecoder: $2,
-                attachmentUploader: $3
-            )
-        }
+        ) -> APIClient = APIClient.init
 
         var webSocketClientBuilder: ((
             _ sessionConfiguration: URLSessionConfiguration,

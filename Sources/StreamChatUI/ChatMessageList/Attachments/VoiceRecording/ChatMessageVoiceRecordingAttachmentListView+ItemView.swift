@@ -194,7 +194,7 @@ extension ChatMessageVoiceRecordingAttachmentListView {
             case .uploadingFailed:
                 fileSizeLabel.text = L10n.Message.Sending.attachmentUploadingFailed
             default:
-                fileSizeLabel.text = content?.uploadingState?.fileUploadingProgress
+                fileSizeLabel.text = content?.uploadingState?.fileProgress
             }
 
             switch content?.uploadingState?.state {

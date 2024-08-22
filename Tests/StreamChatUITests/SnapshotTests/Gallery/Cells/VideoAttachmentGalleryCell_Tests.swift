@@ -27,6 +27,7 @@ final class VideoAttachmentGalleryCell_Tests: XCTestCase {
                 file: try! .init(url: url),
                 extraData: nil
             ),
+            downloadingState: nil,
             uploadingState: nil
         ).asAnyAttachment
 

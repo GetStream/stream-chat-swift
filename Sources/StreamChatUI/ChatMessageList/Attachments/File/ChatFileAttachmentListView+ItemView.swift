@@ -104,7 +104,7 @@ extension ChatMessageFileAttachmentListView {
             fileNameAndSizeStack.spacing = 3
 
             mainContainerStackView.axis = .horizontal
-            mainContainerStackView.alignment = .center
+            mainContainerStackView.alignment = .top
         }
 
         override open func updateContent() {
@@ -114,23 +114,20 @@ extension ChatMessageFileAttachmentListView {
             // If we cannot fetch filename, let's use only content type.
             fileNameLabel.text = content?.payload.title ?? content?.type.rawValue
 
-            switch content?.uploadingState?.state {
-            case .uploaded, .none:
+            let localAttachmentState: LocalAttachmentState? = content?.uploadingState?.state ?? content?.downloadingState?.state
+            switch localAttachmentState {
+            case .uploaded, .downloaded, .none:
                 fileSizeLabel.text = content?.payload.file.sizeString
             case .uploadingFailed:
                 fileSizeLabel.text = L10n.Message.Sending.attachmentUploadingFailed
             default:
-                fileSizeLabel.text = content?.uploadingState?.fileUploadingProgress
+                fileSizeLabel.text = content?.uploadingState?.fileProgress ?? content?.downloadingState?.fileProgress
             }
 
-            if let state = content?.uploadingState?.state {
-                actionIconImageView.image = appearance.fileAttachmentActionIcon(for: state)
-            } else {
-                actionIconImageView.image = nil
-            }
+            actionIconImageView.image = appearance.fileAttachmentActionIcon(for: localAttachmentState)
 
-            switch content?.uploadingState?.state {
-            case .pendingUpload, .uploading:
+            switch localAttachmentState {
+            case .pendingUpload, .uploading, .downloading:
                 loadingIndicator.isVisible = true
             default:
                 loadingIndicator.isVisible = false

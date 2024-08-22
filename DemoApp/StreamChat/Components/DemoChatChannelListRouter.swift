@@ -518,6 +518,14 @@ final class DemoChatChannelListRouter: ChatChannelListRouter {
                         self?.showChannel(for: cid, at: message?.id)
                     }
                 }
+            }),
+            .init(title: "Delete Downloaded Attachments", handler: { _ in
+                guard FileManager.default.fileExists(atPath: URL.streamAttachmentDownloadsDirectory.path) else { return }
+                do {
+                    try FileManager.default.removeItem(at: .streamAttachmentDownloadsDirectory)
+                } catch {
+                    log.debug("Failed to delete downloaded attachments with error: \(error.localizedDescription)")
+                }
             })
         ])
     }

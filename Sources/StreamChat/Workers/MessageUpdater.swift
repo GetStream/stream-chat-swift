@@ -573,7 +573,56 @@ class MessageUpdater: Worker {
             }
         }
     }
-
+    
+    static let minSignificantDownloadingProgressChange: Double = 0.01
+    
+    @discardableResult func downloadAttachment(with attachmentId: AttachmentId) async throws -> ChatMessageFileAttachment {
+        let attachment = try await fileAttachment(for: attachmentId)
+        let localURL = ChatMessageFileAttachment.localStorageURL(forRelativePath: attachment.relativeStoragePath)
+        do {
+            try await apiClient.downloadAttachment(attachment, to: localURL) { [weak self] progress in
+                Task { [weak self] in
+                    try await self?.updateDownloadProgress(for: attachmentId, newState: .downloading(progress: progress), localURL: localURL)
+                }
+            }
+            try await updateDownloadProgress(for: attachmentId, newState: .downloaded, localURL: localURL)
+            return try await fileAttachment(for: attachmentId)
+        } catch {
+            try await updateDownloadProgress(for: attachmentId, newState: .downloadingFailed, localURL: localURL)
+            throw error
+        }
+    }
+    
+    private func fileAttachment(for attachmentId: AttachmentId) async throws -> ChatMessageFileAttachment {
+        try await database.read { session in
+            guard let attachment = session.attachment(id: attachmentId)?.asAnyModel() else {
+                throw ClientError.AttachmentDoesNotExist(id: attachmentId)
+            }
+            guard let fileAttachment = attachment.attachment(payloadType: FileAttachmentPayload.self) else {
+                throw ClientError.AttachmentDownloading(id: attachmentId, reason: "Only file attachments can be downloaded")
+            }
+            return fileAttachment
+        }
+    }
+    
+    private func updateDownloadProgress(for attachmentId: AttachmentId, newState: LocalAttachmentState, localURL: URL) async throws {
+        try await database.write { session in
+            guard let attachmentDTO = session.attachment(id: attachmentId) else { return }
+            let needsUpdate: Bool = {
+                if case let .downloading(lastProgress) = attachmentDTO.localState,
+                   case let .downloading(currentProgress) = newState {
+                    return abs(currentProgress - lastProgress) >= Self.minSignificantDownloadingProgressChange
+                } else {
+                    return attachmentDTO.localState != newState
+                }
+            }()
+            guard needsUpdate else { return }
+            attachmentDTO.localState = newState
+            // Store only the relative path because sandboxed base URL can change between app launchs
+            attachmentDTO.localRelativePath = localURL.relativePath
+        }
+    }
+    
     /// Updates local state of attachment with provided `id` to be enqueued by attachment uploader.
     /// - Parameters:
     ///   - id: The attachment identifier.

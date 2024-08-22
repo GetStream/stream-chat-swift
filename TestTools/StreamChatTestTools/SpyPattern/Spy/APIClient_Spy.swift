@@ -74,6 +74,7 @@ final class APIClient_Spy: APIClient, Spy {
         sessionConfiguration: URLSessionConfiguration,
         requestEncoder: RequestEncoder,
         requestDecoder: RequestDecoder,
+        attachmentDownloader: AttachmentDownloader,
         attachmentUploader: AttachmentUploader
     ) {
         init_sessionConfiguration = sessionConfiguration
@@ -88,6 +89,7 @@ final class APIClient_Spy: APIClient, Spy {
             sessionConfiguration: sessionConfiguration,
             requestEncoder: requestEncoder,
             requestDecoder: requestDecoder,
+            attachmentDownloader: attachmentDownloader,
             attachmentUploader: attachmentUploader
         )
     }
@@ -204,6 +206,7 @@ extension APIClient_Spy {
             sessionConfiguration: .ephemeral,
             requestEncoder: DefaultRequestEncoder(baseURL: .unique(), apiKey: .init(.unique)),
             requestDecoder: DefaultRequestDecoder(),
+            attachmentDownloader: AttachmentDownloader_Spy(),
             attachmentUploader: AttachmentUploader_Spy()
         )
     }

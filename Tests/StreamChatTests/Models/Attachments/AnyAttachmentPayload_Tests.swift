@@ -138,6 +138,7 @@ final class AnyAttachmentPayload_Tests: XCTestCase {
             id: .unique,
             type: .image,
             payload: .init(title: nil, imageRemoteURL: .localYodaImage),
+            downloadingState: nil,
             uploadingState: nil
         ).asAnyAttachment
 
@@ -150,6 +151,7 @@ final class AnyAttachmentPayload_Tests: XCTestCase {
             id: .unique,
             type: .image,
             payload: .init(title: nil, imageRemoteURL: .localYodaImage),
+            downloadingState: nil,
             uploadingState: try .mock(localFileURL: .localYodaImage, state: .uploaded)
         ).asAnyAttachment
 
@@ -162,6 +164,7 @@ final class AnyAttachmentPayload_Tests: XCTestCase {
             id: .unique,
             type: .image,
             payload: .init(title: nil, imageRemoteURL: .localYodaImage),
+            downloadingState: nil,
             uploadingState: try .mock(localFileURL: .localYodaImage, state: .uploadingFailed)
         ).asAnyAttachment
 

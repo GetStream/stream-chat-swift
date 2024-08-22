@@ -22,6 +22,7 @@ extension ChatMessageImageAttachment {
                 imageRemoteURL: imageURL,
                 extraData: extraData
             ),
+            downloadingState: nil,
             uploadingState: localState.map {
                 .init(
                     localFileURL: imageURL,

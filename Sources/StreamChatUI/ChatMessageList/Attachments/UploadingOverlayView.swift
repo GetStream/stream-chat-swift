@@ -114,6 +114,8 @@ open class UploadingOverlayView: _View, ThemeProvider {
             case .pendingUpload, .uploading, .unknown:
                 // TODO: Return `.cancel` when it's is supported.
                 return nil
+            case .downloaded, .downloading, .downloadingFailed:
+                return nil
             case .uploadingFailed:
                 return .restart
             case .uploaded:
@@ -128,7 +130,7 @@ open class UploadingOverlayView: _View, ThemeProvider {
                 return uploadingProgressFormatter.format(progress)
             case .pendingUpload:
                 return uploadingProgressFormatter.format(0)
-            case .uploaded, .unknown:
+            case .uploaded, .unknown, .downloaded, .downloading, .downloadingFailed:
                 return nil
             case .uploadingFailed:
                 return L10n.Message.Sending.attachmentUploadingFailed
@@ -154,22 +156,34 @@ open class UploadingOverlayView: _View, ThemeProvider {
 }
 
 extension Appearance {
-    func fileAttachmentActionIcon(for state: LocalAttachmentState) -> UIImage? {
+    func fileAttachmentActionIcon(for state: LocalAttachmentState?) -> UIImage? {
         images.fileAttachmentActionIcons[state]
     }
 }
 
-extension AttachmentUploadingState {
-    var fileUploadingProgress: String {
-        switch state {
-        case let .uploading(progress):
+extension LocalAttachmentState {
+    func progressDescription(for file: AttachmentFile) -> String {
+        switch self {
+        case .uploading(let progress), .downloading(let progress):
             let uploadedByteCount = Int64(Double(file.size) * progress)
             let uploadedSize = AttachmentFile.sizeFormatter.string(fromByteCount: uploadedByteCount)
             return "\(uploadedSize)/\(file.sizeString)"
         case .pendingUpload:
             return "0/\(file.sizeString)"
-        case .uploaded, .uploadingFailed, .unknown:
+        case .uploaded, .uploadingFailed, .unknown, .downloaded, .downloadingFailed:
             return file.sizeString
         }
+    }
+}
+
+extension AttachmentDownloadingState {
+    var fileProgress: String {
+        state.progressDescription(for: file)
+    }
+}
+
+extension AttachmentUploadingState {
+    var fileProgress: String {
+        state.progressDescription(for: file)
     }
 }

@@ -74,3 +74,24 @@ extension FileAttachmentPayload: Decodable {
         )
     }
 }
+
+// MARK: - Local Downloads
+
+extension URL {
+    /// The directory URL for attachment downloads.
+    public static var streamAttachmentDownloadsDirectory: URL {
+        (FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first ?? FileManager.default.temporaryDirectory)
+            .appendingPathComponent("AttachmentDownloads", isDirectory: true)
+    }
+}
+
+extension ChatMessageFileAttachment {
+    static func localStorageURL(forRelativePath path: String) -> URL {
+        URL(fileURLWithPath: path, relativeTo: .streamAttachmentDownloadsDirectory).standardizedFileURL
+    }
+    
+    var relativeStoragePath: String {
+        let fileName = payload.title ?? payload.assetURL.lastPathComponent
+        return "\(id.messageId)-\(id.index)/\(fileName)"
+    }
+}

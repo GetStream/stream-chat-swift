@@ -28,6 +28,7 @@ public extension ChatMessageVoiceRecordingAttachment {
                 waveformData: waveformData,
                 extraData: extraData
             ),
+            downloadingState: nil,
             uploadingState: localState.map {
                 .init(
                     localFileURL: assetURL,

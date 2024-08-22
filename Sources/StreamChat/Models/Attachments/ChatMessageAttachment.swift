@@ -17,6 +17,11 @@ public struct ChatMessageAttachment<Payload> {
     /// The attachment payload.
     public var payload: Payload
 
+    /// The downloading state of the attachment.
+    ///
+    /// Reflects the downloading progress for attachments.
+    public let downloadingState: AttachmentDownloadingState?
+    
     /// The uploading state of the attachment.
     ///
     /// Reflects uploading progress for local attachments that require file uploading.
@@ -29,11 +34,13 @@ public struct ChatMessageAttachment<Payload> {
         id: AttachmentId,
         type: AttachmentType,
         payload: Payload,
+        downloadingState: AttachmentDownloadingState?,
         uploadingState: AttachmentUploadingState?
     ) {
         self.id = id
         self.type = type
         self.payload = payload
+        self.downloadingState = downloadingState
         self.uploadingState = uploadingState
     }
 }
@@ -46,6 +53,18 @@ public extension ChatMessageAttachment {
 
 extension ChatMessageAttachment: Equatable where Payload: Equatable {}
 extension ChatMessageAttachment: Hashable where Payload: Hashable {}
+
+/// A type represeting the downloading state for attachments.
+public struct AttachmentDownloadingState: Hashable {
+    /// The local file URL of the downloaded attachment.
+    public let localFileURL: URL
+    
+    /// The local state of the attachment.
+    public let state: LocalAttachmentState
+    
+    /// The information about file size/mimeType.
+    public let file: AttachmentFile
+}
 
 /// A type representing the uploading state for attachments that require prior uploading.
 public struct AttachmentUploadingState: Hashable {
@@ -83,6 +102,7 @@ public extension AnyChatMessageAttachment {
             id: id,
             type: type,
             payload: concretePayload,
+            downloadingState: downloadingState,
             uploadingState: uploadingState
         )
     }
@@ -96,6 +116,7 @@ public extension ChatMessageAttachment where Payload: AttachmentPayload {
             id: id,
             type: type,
             payload: try! JSONEncoder.stream.encode(payload),
+            downloadingState: downloadingState,
             uploadingState: uploadingState
         )
     }
@@ -118,6 +139,7 @@ public extension ChatMessageAttachment where Payload: AttachmentPayload {
             id: id,
             type: .file,
             payload: concretePayload,
+            downloadingState: downloadingState,
             uploadingState: uploadingState
         )
     }

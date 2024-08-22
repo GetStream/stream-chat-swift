@@ -14,6 +14,7 @@ final class AnyAttachmentUpdater_Tests: XCTestCase {
             id: .init(cid: .unique, messageId: .unique, index: .unique),
             type: .image,
             payload: .init(title: "old", imageRemoteURL: .localYodaImage, extraData: [:]),
+            downloadingState: nil,
             uploadingState: nil
         ).asAnyAttachment
 

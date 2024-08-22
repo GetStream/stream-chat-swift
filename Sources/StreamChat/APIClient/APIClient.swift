@@ -21,6 +21,9 @@ class APIClient {
     /// Used to queue requests that happen while we are offline
     var queueOfflineRequest: QueueOfflineRequestBlock?
 
+    /// The attachment downloader.
+    let attachmentDownloader: AttachmentDownloader
+    
     /// The attachment uploader.
     let attachmentUploader: AttachmentUploader
 
@@ -59,11 +62,13 @@ class APIClient {
         sessionConfiguration: URLSessionConfiguration,
         requestEncoder: RequestEncoder,
         requestDecoder: RequestDecoder,
+        attachmentDownloader: AttachmentDownloader,
         attachmentUploader: AttachmentUploader
     ) {
         encoder = requestEncoder
         decoder = requestDecoder
         session = URLSession(configuration: sessionConfiguration)
+        self.attachmentDownloader = attachmentDownloader
         self.attachmentUploader = attachmentUploader
     }
 
@@ -288,7 +293,29 @@ class APIClient {
         // We only retry transient errors like connectivity stuff or HTTP 5xx errors
         ClientError.isEphemeral(error: error)
     }
-
+    
+    func downloadAttachment(_ attachment: ChatMessageFileAttachment, to localURL: URL, progress: ((Double) -> Void)?) async throws {
+        try await withCheckedThrowingContinuation { continuation in
+            let downloadOperation = AsyncOperation(maxRetries: maximumRequestRetries) { [weak self] operation, done in
+                self?.attachmentDownloader.download(attachment, to: localURL, progress: progress) { error in
+                    if let error, self?.isConnectionError(error) == true {
+                        // Do not retry unless its a connection problem and we still have retries left
+                        if operation.canRetry {
+                            done(.retry)
+                        } else {
+                            continuation.resume(with: error)
+                            done(.continue)
+                        }
+                    } else {
+                        continuation.resume(with: error)
+                        done(.continue)
+                    }
+                }
+            }
+            operationQueue.addOperation(downloadOperation)
+        }
+    }
+    
     func uploadAttachment(
         _ attachment: AnyChatMessageAttachment,
         progress: ((Double) -> Void)?,

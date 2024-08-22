@@ -589,6 +589,7 @@ class ChannelUpdater: Worker {
                 id: .init(cid: cid, messageId: "", index: 0), // messageId and index won't be used for uploading
                 type: type,
                 payload: .init(), // payload won't be used for uploading
+                downloadingState: nil,
                 uploadingState: .init(
                     localFileURL: localFileURL,
                     state: .pendingUpload, // will not be used
