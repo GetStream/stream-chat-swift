@@ -33,6 +33,12 @@ open class PollAttachmentView: _View, ThemeProvider {
     /// A closure that is triggered whenever the poll results button is tapped.
     public var onResultsTap: ((Poll) -> Void)?
 
+    /// A closure that is triggered whenever the view comments button is tapped.
+    public var onCommentsTap: ((Poll) -> Void)?
+
+    /// A closure that is triggered whenever the add comment button is tapped.
+    public var onAddCommentTap: ((Poll) -> Void)?
+
     // MARK: - UI Components
 
     /// A label which by default displays the title of the Poll.
@@ -98,6 +104,8 @@ open class PollAttachmentView: _View, ThemeProvider {
     override open func setUp() {
         super.setUp()
 
+        pollCommentsButton.addTarget(self, action: #selector(didTapCommentsButton(sender:)), for: .touchUpInside)
+        addCommentButton.addTarget(self, action: #selector(didTapAddCommentButton(sender:)), for: .touchUpInside)
         pollResultsButton.addTarget(self, action: #selector(didTapResultsButton(sender:)), for: .touchUpInside)
         endPollButton.addTarget(self, action: #selector(didTapEndPollButton(sender:)), for: .touchUpInside)
     }
@@ -165,6 +173,16 @@ open class PollAttachmentView: _View, ThemeProvider {
         let commentsCount = content.poll.answersCount
         pollCommentsButton.isHidden = commentsCount == 0
         pollCommentsButton.setTitle(L10n.Message.Polls.Button.viewComments(commentsCount), for: .normal)
+    }
+
+    @objc open func didTapAddCommentButton(sender: Any?) {
+        guard let poll = content?.poll else { return }
+        onAddCommentTap?(poll)
+    }
+
+    @objc open func didTapCommentsButton(sender: Any?) {
+        guard let poll = content?.poll else { return }
+        onCommentsTap?(poll)
     }
 
     @objc open func didTapResultsButton(sender: Any?) {

@@ -1107,10 +1107,39 @@ open class ChatMessageListVC: _ViewController,
 
     open func pollAttachmentView(
         _ pollAttachmentView: PollAttachmentView,
-        didTapPollResults poll: Poll,
+        didTapResultsOfPoll poll: Poll,
         in message: ChatMessage
     ) {
         router.showResults(forPoll: poll, in: message.id, client: client)
+    }
+
+    open func pollAttachmentView(
+        _ pollAttachmentView: PollAttachmentView,
+        didTapAddCommentOnPoll poll: Poll,
+        in message: ChatMessage
+    ) {
+        let pollController = makePollController(for: poll, in: message)
+        let alert = UIAlertController(
+            title: nil,
+            message: L10n.Alert.Poll.addComment,
+            preferredStyle: .alert
+        )
+        alert.addTextField()
+        alert.addAction(.init(title: L10n.Alert.Poll.send, style: .default, handler: { _ in
+            guard let textFieldValue = alert.textFields?.first?.text else { return }
+            guard !textFieldValue.isEmpty else { return }
+            pollController.castPollVote(answerText: textFieldValue, optionId: nil)
+        }))
+        alert.addAction(.init(title: L10n.Alert.Actions.cancel, style: .cancel))
+        present(alert, animated: true)
+    }
+
+    open func pollAttachmentView(
+        _ pollAttachmentView: PollAttachmentView,
+        didTapCommentsOfPoll poll: Poll,
+        in message: ChatMessage
+    ) {
+        print("Show Comments")
     }
 
     open func pollAttachmentView(

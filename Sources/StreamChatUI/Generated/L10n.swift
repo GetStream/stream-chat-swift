@@ -25,10 +25,14 @@ internal enum L10n {
       internal static var ok: String { L10n.tr("Localizable", "alert.actions.ok") }
     }
     internal enum Poll {
+      /// Add a comment
+      internal static var addComment: String { L10n.tr("Localizable", "alert.poll.add-comment") }
       /// End
       internal static var end: String { L10n.tr("Localizable", "alert.poll.end") }
       /// Nobody will be able to vote in this poll anymore.
       internal static var endTitle: String { L10n.tr("Localizable", "alert.poll.end-title") }
+      /// Send
+      internal static var send: String { L10n.tr("Localizable", "alert.poll.send") }
     }
   }
 
