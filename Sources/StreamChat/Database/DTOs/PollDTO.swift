@@ -167,17 +167,20 @@ extension NSManagedObjectContext {
                 return optionDto
             } ?? []
         )
-        pollDto.latestAnswers = try Set(
-            payload.latestAnswers?.compactMap { payload in
-                if let payload {
-                    let answerDto = try savePollVote(payload: payload, query: nil, cache: cache)
-                    answerDto.poll = pollDto
-                    return answerDto
-                } else {
-                    return nil
+
+        if let latestAnswers = payload.latestAnswers {
+            pollDto.latestAnswers = try Set(
+                latestAnswers.compactMap { payload in
+                    if let payload {
+                        let answerDto = try savePollVote(payload: payload, query: nil, cache: cache)
+                        answerDto.poll = pollDto
+                        return answerDto
+                    } else {
+                        return nil
+                    }
                 }
-            } ?? []
-        )
+            )
+        }
 
         if let payloadOwnVotes = payload.ownVotes, !payload.fromEvent {
             pollDto.ownVotes = try Set(
