@@ -283,10 +283,16 @@ internal enum L10n {
         return L10n.tr("Localizable", "message.polls.votes", p1)
       }
       internal enum Button {
+        /// Add Comment
+        internal static var addComment: String { L10n.tr("Localizable", "message.polls.button.addComment") }
         /// End Vote
         internal static var endVote: String { L10n.tr("Localizable", "message.polls.button.endVote") }
         /// Show all
         internal static var showAll: String { L10n.tr("Localizable", "message.polls.button.showAll") }
+        /// View %d Comments
+        internal static func viewComments(_ p1: Int) -> String {
+          return L10n.tr("Localizable", "message.polls.button.viewComments", p1)
+        }
         /// View Results
         internal static var viewResults: String { L10n.tr("Localizable", "message.polls.button.viewResults") }
       }

@@ -55,6 +55,16 @@ open class PollAttachmentView: _View, ThemeProvider {
         .withoutAutoresizingMaskConstraints
         .withAccessibilityIdentifier(identifier: "optionsListView")
 
+    /// The button to add a comment to the poll.
+    open private(set) lazy var addCommentButton = UIButton()
+        .withoutAutoresizingMaskConstraints
+        .withAccessibilityIdentifier(identifier: "addCommentButton")
+
+    /// The button to show the current comments of the poll.
+    open private(set) lazy var pollCommentsButton = UIButton()
+        .withoutAutoresizingMaskConstraints
+        .withAccessibilityIdentifier(identifier: "pollCommentsButton")
+
     /// The button that when tapped it shows the polls results.
     open private(set) lazy var pollResultsButton = UIButton()
         .withoutAutoresizingMaskConstraints
@@ -76,6 +86,8 @@ open class PollAttachmentView: _View, ThemeProvider {
     /// The footer view composed by a stack of buttons that can perform actions on the poll.
     open private(set) lazy var footerView: UIView = {
         VContainer(spacing: 2) {
+            addCommentButton
+            pollCommentsButton
             pollResultsButton
             endPollButton
         }
@@ -98,10 +110,16 @@ open class PollAttachmentView: _View, ThemeProvider {
         pollTitleLabel.numberOfLines = 0
         pollSubtitleLabel.font = appearance.fonts.caption1
         pollSubtitleLabel.textColor = appearance.colorPalette.textLowEmphasis
-        pollResultsButton.setTitleColor(appearance.colorPalette.accentPrimary, for: .normal)
-        pollResultsButton.titleLabel?.font = appearance.fonts.subheadline.withSize(16)
-        endPollButton.setTitleColor(appearance.colorPalette.accentPrimary, for: .normal)
-        endPollButton.titleLabel?.font = appearance.fonts.subheadline.withSize(16)
+
+        let footerButtons = [
+            pollResultsButton,
+            endPollButton,
+            addCommentButton,
+            pollCommentsButton
+        ]
+        footerButtons.forEach {
+            styleFooterButton($0)
+        }
     }
 
     override open func setUpLayout() {
@@ -136,6 +154,17 @@ open class PollAttachmentView: _View, ThemeProvider {
         let isPollCreatedByCurrentUser = content.poll.createdBy?.id == content.currentUserId
         let shouldShowEndPollButton = !content.poll.isClosed && isPollCreatedByCurrentUser
         endPollButton.isHidden = !shouldShowEndPollButton
+
+        let currentUserHasComment = content.poll.latestAnswers
+            .compactMap(\.user?.id)
+            .contains(content.currentUserId)
+        let shouldShowAddCommentButton = content.poll.allowAnswers && !currentUserHasComment
+        addCommentButton.isHidden = !shouldShowAddCommentButton
+        addCommentButton.setTitle(L10n.Message.Polls.Button.addComment, for: .normal)
+
+        let commentsCount = content.poll.answersCount
+        pollCommentsButton.isHidden = commentsCount == 0
+        pollCommentsButton.setTitle(L10n.Message.Polls.Button.viewComments(commentsCount), for: .normal)
     }
 
     @objc open func didTapResultsButton(sender: Any?) {
@@ -161,5 +190,11 @@ open class PollAttachmentView: _View, ThemeProvider {
         } else {
             return L10n.Message.Polls.Subtitle.selectOneOrMore
         }
+    }
+
+    /// The styling for the footer buttons.
+    open func styleFooterButton(_ button: UIButton) {
+        button.setTitleColor(appearance.colorPalette.accentPrimary, for: .normal)
+        button.titleLabel?.font = appearance.fonts.subheadline.withSize(16)
     }
 }

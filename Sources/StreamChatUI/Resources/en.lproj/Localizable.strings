@@ -244,6 +244,11 @@
 "message.polls.button.endVote" = "End Vote";
 /// Shown in the message poll view on the button to view the poll results.
 "message.polls.button.viewResults" = "View Results";
+
+/// Shown in the message poll view on the button to add a poll comment.
+"message.polls.button.addComment" = "Add Comment";
+/// Shown in the message poll view on the button to view the poll comments.
+"message.polls.button.viewComments" = "View %d Comments";
 /// Shown in the message poll results on the button to show more votes.
 "message.polls.button.showAll" = "Show all";
 /// Shown to display the number of votes in an option.

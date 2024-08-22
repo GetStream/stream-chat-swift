@@ -38,6 +38,22 @@ final class PollAttachmentView_Tests: XCTestCase {
         AssertSnapshot(view, variants: [.defaultLight, .defaultDark])
     }
 
+    func test_appearance_withComments() {
+        let poll = pollFactory.makePoll(allowAnswers: true, answersCount: 5)
+        let view = makeMessageView(for: poll)
+        AssertSnapshot(view, variants: [.defaultLight, .defaultDark])
+    }
+
+    func test_appearance_withComments_whenCurrentUserAlreadyComment() {
+        let poll = pollFactory.makePoll(
+            allowAnswers: true,
+            answersCount: 5,
+            latestAnswers: [.mock(user: currentUser)]
+        )
+        let view = makeMessageView(for: poll)
+        AssertSnapshot(view, variants: [.defaultLight])
+    }
+
     func test_subtitleText() {
         let pollAttachmentView = PollAttachmentView()
         let pollDefault = pollFactory.makePoll(isClosed: false)
