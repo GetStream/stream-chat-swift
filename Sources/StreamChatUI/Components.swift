@@ -332,11 +332,8 @@ public struct Components {
     /// The poll results header view for each section.
     public var pollResultsSectionHeaderView: PollResultsSectionHeaderView.Type = PollResultsSectionHeaderView.self
 
-    /// The poll results header content view for the section header.
-    public var pollResultsSectionHeaderOptionView: PollResultsSectionHeaderOptionView.Type = PollResultsSectionHeaderOptionView.self
-
     /// The poll results footer view for each section.
-    public var pollResultsFooterButtonView: PollResultsFooterButtonView.Type = PollResultsFooterButtonView.self
+    public var pollResultsSectionFooterView: PollResultsSectionFooterView.Type = PollResultsSectionFooterView.self
 
     /// The `UITableViewCell` for the poll results vote item.
     public var pollResultsVoteItemCell: PollResultsVoteItemCell.Type = PollResultsVoteItemCell.self

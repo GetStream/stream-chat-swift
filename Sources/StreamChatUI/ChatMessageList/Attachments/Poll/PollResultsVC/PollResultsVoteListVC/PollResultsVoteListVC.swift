@@ -135,7 +135,7 @@ open class PollResultsVoteListVC:
     public func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
         let view = tableView.dequeueReusableHeaderFooter(with: components.pollResultsSectionHeaderView)
         view.content = .init(option: option, poll: poll)
-        style(sectionHeaderView: view, contentView: view.optionView, isEmptySection: false)
+        style(sectionHeaderView: view, contentView: view.container, isEmptySection: false)
         return view
     }
 

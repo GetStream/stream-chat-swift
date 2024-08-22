@@ -90,7 +90,7 @@ open class PollResultsVC:
 
         tableView.register(components.pollResultsVoteItemCell)
         tableView.register(components.pollResultsSectionHeaderView)
-        tableView.register(components.pollResultsFooterButtonView)
+        tableView.register(components.pollResultsSectionFooterView)
 
         tableView.estimatedSectionHeaderHeight = 50
         tableView.sectionHeaderHeight = UITableView.automaticDimension
@@ -171,7 +171,7 @@ open class PollResultsVC:
         let option = poll.options[section]
         let view = tableView.dequeueReusableHeaderFooter(with: components.pollResultsSectionHeaderView)
         view.content = .init(option: option, poll: poll)
-        style(sectionHeaderView: view, contentView: view.optionView, isEmptySection: option.latestVotes.isEmpty)
+        style(sectionHeaderView: view, contentView: view.container, isEmptySection: option.latestVotes.isEmpty)
         return view
     }
 
@@ -180,7 +180,7 @@ open class PollResultsVC:
               option.latestVotes.count > maximumVotesPerOption else {
             return nil
         }
-        let view = tableView.dequeueReusableHeaderFooter(with: components.pollResultsFooterButtonView)
+        let view = tableView.dequeueReusableHeaderFooter(with: components.pollResultsSectionFooterView)
         view.onTap = { [weak self] in
             self?.showVoteList(for: option)
         }
