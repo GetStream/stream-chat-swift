@@ -13,7 +13,7 @@ github_repo = ENV['GITHUB_REPOSITORY'] || 'GetStream/stream-chat-swift'
 stress_tests_cycles = 50
 derived_data_path = 'derived_data'
 source_packages_path = 'spm_cache'
-performance_path = "performance/#{github_repo.split('/').last}.json"
+performance_path = "performance/#{github_repo.split('/').last}-xcmetrics.json"
 buildcache_xcargs = 'CC=clang CPLUSPLUS=clang++ LD=clang LDPLUSPLUS=clang++'
 testlab_bucket = 'gs://test-lab-af3rt9m4yh360-mqm1zzm767nhc'
 is_localhost = !is_ci
@@ -386,7 +386,7 @@ lane :xcmetrics do |options|
     xcodebuild_output = File.read('xcodebuild_output.log')
   end
 
-  sh("git clone git@github.com:GetStream/stream-swift-performance-benchmarks.git #{File.dirname(performance_path)}")
+  sh("git clone git@github.com:GetStream/stream-internal-metrics.git #{File.dirname(performance_path)}")
   branch_performance = xcmetrics_log_parser(log: xcodebuild_output)
   performance_benchmarks = JSON.parse(File.read(performance_path))
   expected_performance = performance_benchmarks['benchmark']
