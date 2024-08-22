@@ -128,11 +128,10 @@ public class PollController: DataController, DelegateCallable, DataStoreProvider
         eventsController = client.eventsController()
         ownVotesQuery = PollVoteListQuery(
             pollId: pollId,
-            optionId: nil,
-            pagination: .init(pageSize: 25, cursor: nil),
             filter: .and(
                 [.equal(.userId, to: client.currentUserId ?? ""), .equal(.pollId, to: pollId)]
-            )
+            ),
+            pagination: .init(pageSize: 25, cursor: nil)
         )
         pollsRepository = client.pollsRepository
         super.init()

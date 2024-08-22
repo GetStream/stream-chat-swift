@@ -326,6 +326,30 @@ public struct Components {
     /// The view that displays a poll option in the poll option list view.
     public var pollAttachmentOptionListItemView: PollAttachmentOptionListItemView.Type = PollAttachmentOptionListItemView.self
 
+    /// The view controller that shows the results of a poll.
+    public var pollResultsVC: PollResultsVC.Type = PollResultsVC.self
+
+    /// The table header view of the polls results. By default it displays the poll's name.
+    public var pollResultsTableHeaderView: PollResultsTableHeaderView.Type = PollResultsTableHeaderView.self
+
+    /// The poll results header view for each section.
+    public var pollResultsSectionHeaderView: PollResultsSectionHeaderView.Type = PollResultsSectionHeaderView.self
+
+    /// The poll results header content view for the section header.
+    public var pollResultsSectionHeaderOptionView: PollResultsSectionHeaderOptionView.Type = PollResultsSectionHeaderOptionView.self
+
+    /// The poll results footer view for each section.
+    public var pollResultsFooterButtonView: PollResultsFooterButtonView.Type = PollResultsFooterButtonView.self
+
+    /// The `UITableViewCell` for the poll results vote item.
+    public var pollResultsVoteItemCell: PollResultsVoteItemCell.Type = PollResultsVoteItemCell.self
+
+    /// The vote item view that displays information in a poll results cell.
+    public var pollResultsVoteItemView: PollResultsVoteItemView.Type = PollResultsVoteItemView.self
+
+    /// The controller that shows all votes of poll option.
+    public var pollResultsVoteListVC: PollResultsVoteListVC.Type = PollResultsVoteListVC.self
+
     // MARK: - Reactions
 
     /// The Reaction picker VC.
