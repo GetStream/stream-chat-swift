@@ -5,7 +5,7 @@
 import Foundation
 
 /// The model for an option in a poll.
-public struct PollOption: Equatable {
+public struct PollOption: Hashable, Equatable {
     /// The unique identifier of the poll option.
     public let id: String
     
@@ -36,5 +36,9 @@ public struct PollOption: Equatable {
         self.text = text
         self.latestVotes = latestVotes
         self.extraData = extraData
+    }
+
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(id)
     }
 }

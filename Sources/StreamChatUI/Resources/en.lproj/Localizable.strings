@@ -244,6 +244,12 @@
 "message.polls.button.endVote" = "End Vote";
 /// Shown in the message poll view on the button to view the poll results.
 "message.polls.button.viewResults" = "View Results";
+/// Shown in the message poll results on the button to show more votes.
+"message.polls.button.showAll" = "Show all";
+/// Shown to display the number of votes in an option.
+"message.polls.votes" = "%d votes";
+/// Shown in the poll results navigation title.
+"message.polls.results-title" = "Poll Results";
 
 /// Shown in the channel list or thread list message preview in case someone voted a poll.
 "message.preview.poll-someone-voted" = "%@ voted:";

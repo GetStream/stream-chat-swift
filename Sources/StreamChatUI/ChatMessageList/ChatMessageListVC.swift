@@ -1110,7 +1110,7 @@ open class ChatMessageListVC: _ViewController,
         didTapPollResults poll: Poll,
         in message: ChatMessage
     ) {
-        print("show view results")
+        router.showResults(forPoll: poll, in: message.id, client: client)
     }
 
     open func pollAttachmentView(

@@ -6,13 +6,23 @@ import Foundation
 
 /// A query used for querying specific votes from a poll.
 public struct PollVoteListQuery: Encodable {
+    /// The pollId which the votes belong to.
     public var pollId: String
+    /// The optionId which the votes belong to in case the query relates to only one poll option.
     public var optionId: String?
     /// The pagination information to query the votes.
     public var pagination: Pagination
     /// The filter details to query the votes.
     public var filter: Filter<VoteListFilterScope>?
 
+    @available(
+        *,
+        deprecated,
+        message: """
+        There are now two new initializers.
+        This one was not using the optionId argument correctly.
+        """
+    )
     public init(
         pollId: String,
         optionId: String?,
@@ -23,6 +33,29 @@ public struct PollVoteListQuery: Encodable {
         self.optionId = optionId
         self.pagination = pagination
         self.filter = filter
+    }
+
+    /// Creates a vote list query for the given pollId and the provided filter.
+    public init(
+        pollId: String,
+        filter: Filter<VoteListFilterScope>? = nil,
+        pagination: Pagination = .init(pageSize: 10, offset: 0)
+    ) {
+        self.pollId = pollId
+        self.pagination = pagination
+        self.filter = filter
+    }
+
+    /// Creates a vote list query for the given pollId and optionId.
+    public init(
+        pollId: String,
+        optionId: String,
+        pagination: Pagination = .init(pageSize: 10, offset: 0)
+    ) {
+        self.pollId = pollId
+        self.optionId = optionId
+        self.pagination = pagination
+        filter = .equal(.optionId, to: optionId)
     }
 
     enum CodingKeys: CodingKey {
