@@ -94,6 +94,7 @@ desc 'Completes an SDK Release'
 lane :publish_release do |options|
   release_version = File.read(swift_environment_path).match(/String\s+=\s+"([\d.]+)"/)[1]
   UI.user_error!("Release #{release_version} has already been published.") if git_tag_exists(tag: release_version, remote: true)
+  UI.user_error!('Release version cannot be empty') if release_version.to_s.empty?
   ensure_git_branch(branch: 'main')
 
   xcversion(version: '14.0.1')
