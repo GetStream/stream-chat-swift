@@ -59,7 +59,7 @@ open class PollResultsSectionHeaderView: _TableHeaderFooterView, ThemeProvider {
 
         container.layout {
             $0.isLayoutMarginsRelativeArrangement = true
-            $0.directionalLayoutMargins = .init(top: 12, leading: 12, bottom: 8, trailing: 12)
+            $0.directionalLayoutMargins = .init(top: 12, leading: 12, bottom: 12, trailing: 12)
         }
         .views {
             optionNameLabel
