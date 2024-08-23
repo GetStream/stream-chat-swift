@@ -57,7 +57,9 @@ extension ChatMessageAttachment: Hashable where Payload: Hashable {}
 /// A type represeting the downloading state for attachments.
 public struct AttachmentDownloadingState: Hashable {
     /// The local file URL of the downloaded attachment.
-    public let localFileURL: URL
+    ///
+    /// - Note: The local file URL is available when the state is `.downloaded`.
+    public let localFileURL: URL?
     
     /// The local state of the attachment.
     public let state: LocalAttachmentState

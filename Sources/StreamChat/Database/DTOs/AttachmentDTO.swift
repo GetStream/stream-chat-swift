@@ -183,14 +183,17 @@ extension NSManagedObjectContext: AttachmentDatabaseSession {
 
 private extension AttachmentDTO {
     var downloadingState: AttachmentDownloadingState? {
-        guard let localRelativePath, !localRelativePath.isEmpty else { return nil }
         guard let localState, localState.isDownloading else { return nil }
         // Only file attachments can be downloaded.
         guard let filePayload = try? JSONDecoder.stream.decode(FileAttachmentPayload.self, from: data) else { return nil }
-        // Local URL exists only when the state is downloaded
-        let localURL = ChatMessageFileAttachment.localStorageURL(forRelativePath: localRelativePath)
+        
+        let localFileURL: URL? = {
+            guard let localRelativePath, !localRelativePath.isEmpty else { return nil }
+            return ChatMessageFileAttachment.localStorageURL(forRelativePath: localRelativePath)
+        }()
+        
         return AttachmentDownloadingState(
-            localFileURL: localURL,
+            localFileURL: localFileURL,
             state: localState,
             file: filePayload.file
         )
