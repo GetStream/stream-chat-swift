@@ -1908,6 +1908,77 @@ final class MessageUpdater_Tests: XCTestCase {
         XCTAssertTrue(message.isPinned)
         XCTAssertEqual(pinExpires, message.pinDetails?.expiresAt)
     }
+    
+    // MARK: - Download Attachments
+    
+    func test_downloadAttachment_propagatesAttachmentDoesNotExistError() throws {
+        let attachmentId = AttachmentId.unique
+        let result = try waitFor { messageUpdater.downloadAttachment(with: attachmentId, completion: $0) }
+        let error = try XCTUnwrap(result.error)
+        XCTAssertEqual(ClientError.AttachmentDoesNotExist(id: attachmentId), error)
+    }
+    
+    func test_downloadAttachment_propagatesAttachmentDownloadingError() throws {
+        let attachmentId = try setUpAttachment(with: .mockImage)
+        let result = try waitFor { messageUpdater.downloadAttachment(with: attachmentId, completion: $0) }
+        let error = try XCTUnwrap(result.error)
+        XCTAssertEqual(ClientError.AttachmentDownloading(id: attachmentId, reason: "Only file attachments can be downloaded"), error)
+    }
+    
+    func test_downloadAttachment_success() throws {
+        let attachmentId = try setUpAttachment(with: .mockFile)
+        apiClient.downloadAttachment_completion_result = .success(())
+        let result = try waitFor { messageUpdater.downloadAttachment(with: attachmentId, completion: $0) }
+        let value = try XCTUnwrap(result.value)
+        XCTAssertEqual(attachmentId, value.id)
+        XCTAssertEqual(LocalAttachmentState.downloaded, value.downloadingState?.state)
+        XCTAssertEqual(ChatMessageFileAttachment.localStorageURL(forRelativePath: value.relativeStoragePath), value.downloadingState?.localFileURL)
+    }
+    
+    // MARK: - Delete Attachments
+    
+    func test_deleteLocalAttachmentDownload_propagatesAttachmentDoesNotExistError() throws {
+        let attachmentId = AttachmentId.unique
+        let error = try XCTUnwrap(waitFor { messageUpdater.deleteLocalAttachmentDownload(for: attachmentId, completion: $0) })
+        XCTAssertEqual(ClientError.AttachmentDoesNotExist(id: attachmentId), error)
+    }
+    
+    func test_deleteLocalAttachmentDownload_success() throws {
+        let attachmentId = try setUpAttachment(with: .mockFile)
+        
+        // Download
+        apiClient.downloadAttachment_completion_result = .success(())
+        let downloadResult = try waitFor { messageUpdater.downloadAttachment(with: attachmentId, completion: $0) }
+        let localFileURL = try XCTUnwrap(downloadResult.value?.downloadingState?.localFileURL)
+        
+        // Dummy file
+        try FileManager.default.createDirectory(at: .streamAttachmentDownloadsDirectory, withIntermediateDirectories: true)
+        try "abc".write(to: localFileURL, atomically: false, encoding: .utf8)
+        XCTAssertTrue(FileManager.default.fileExists(atPath: localFileURL.path))
+        
+        // Delete
+        let error = try waitFor { messageUpdater.deleteLocalAttachmentDownload(for: attachmentId, completion: $0) }
+        XCTAssertNil(error)
+        try database.readSynchronously { session in
+            guard let dto = session.attachment(id: attachmentId) else {
+                throw ClientError.AttachmentDoesNotExist(id: attachmentId)
+            }
+            XCTAssertEqual(nil, dto.localState)
+            XCTAssertEqual(nil, dto.localRelativePath)
+            XCTAssertEqual(nil, dto.localURL)
+        }
+        XCTAssertFalse(FileManager.default.fileExists(atPath: localFileURL.path))
+    }
+    
+    private func setUpAttachment(with payload: AnyAttachmentPayload, messageId: MessageId = .unique, cid: ChannelId = .unique) throws -> AttachmentId {
+        let attachmentId: AttachmentId = .init(cid: cid, messageId: messageId, index: 0)
+        try database.createChannel(cid: cid, withMessages: false)
+        try database.createMessage(id: messageId, cid: cid)
+        try database.writeSynchronously { session in
+            try session.createNewAttachment(attachment: payload, id: attachmentId)
+        }
+        return attachmentId
+    }
 
     // MARK: - Restart failed attachment uploading
 

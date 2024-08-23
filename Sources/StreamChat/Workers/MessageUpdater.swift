@@ -600,13 +600,15 @@ class MessageUpdater: Worker {
                         self?.updateDownloadProgress(
                             for: attachmentId,
                             newState: error == nil ? .downloaded : .downloadingFailed,
-                            localURL: localURL
+                            localURL: localURL,
+                            completion: {
+                                if let error {
+                                    completion(.failure(error))
+                                } else {
+                                    self?.fileAttachment(with: attachmentId, completion: completion)
+                                }
+                            }
                         )
-                        if let error {
-                            completion(.failure(error))
-                        } else {
-                            self?.fileAttachment(with: attachmentId, completion: completion)
-                        }
                     }
                 )
             case .failure(let readError):
@@ -644,8 +646,8 @@ class MessageUpdater: Worker {
         }, completion: completion)
     }
     
-    private func updateDownloadProgress(for attachmentId: AttachmentId, newState: LocalAttachmentState, localURL: URL) {
-        database.write { session in
+    private func updateDownloadProgress(for attachmentId: AttachmentId, newState: LocalAttachmentState, localURL: URL, completion: (() -> Void)? = nil) {
+        database.write({ session in
             guard let attachmentDTO = session.attachment(id: attachmentId) else { return }
             let needsUpdate: Bool = {
                 if case let .downloading(lastProgress) = attachmentDTO.localState,
@@ -659,7 +661,9 @@ class MessageUpdater: Worker {
             attachmentDTO.localState = newState
             // Store only the relative path because sandboxed base URL can change between app launchs
             attachmentDTO.localRelativePath = localURL.relativePath
-        }
+        }, completion: { _ in
+            completion?()
+        })
     }
     
     /// Updates local state of attachment with provided `id` to be enqueued by attachment uploader.

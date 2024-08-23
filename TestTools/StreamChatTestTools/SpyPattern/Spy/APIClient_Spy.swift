@@ -32,6 +32,11 @@ final class APIClient_Spy: APIClient, Spy {
     @Atomic var unmanagedRequest_completion: Any?
     @Atomic var unmanagedRequest_allRecordedCalls: [(endpoint: AnyEndpoint, completion: Any?)] = []
 
+    @Atomic var downloadAttachment_attachment: ChatMessageFileAttachment?
+    @Atomic var downloadAttachment_localURL: URL?
+    @Atomic var downloadAttachment_completion_result: Result<Void, Error>?
+    @Atomic var downloadAttachment_expectation: XCTestExpectation
+    
     /// The last endpoint `uploadFile` function was called with.
     @Atomic var uploadFile_attachment: AnyChatMessageAttachment?
     @Atomic var uploadFile_progress: ((Double) -> Void)?
@@ -62,6 +67,10 @@ final class APIClient_Spy: APIClient, Spy {
         recoveryRequest_allRecordedCalls = []
         recoveryRequest_completion = nil
 
+        downloadAttachment_attachment = nil
+        downloadAttachment_localURL = nil
+        downloadAttachment_completion_result = nil
+        
         uploadFile_attachment = nil
         uploadFile_progress = nil
         uploadFile_completion = nil
@@ -81,6 +90,7 @@ final class APIClient_Spy: APIClient, Spy {
         init_requestEncoder = requestEncoder
         init_requestDecoder = requestDecoder
         init_attachmentUploader = attachmentUploader
+        downloadAttachment_expectation = .init()
         request_expectation = .init()
         recoveryRequest_expectation = .init()
         uploadRequest_expectation = .init()
@@ -157,6 +167,18 @@ final class APIClient_Spy: APIClient, Spy {
         }
     }
 
+    override func downloadAttachment(
+        _ attachment: ChatMessageFileAttachment,
+        to localURL: URL,
+        progress: ((Double) -> Void)?,
+        completion: @escaping ((any Error)?) -> Void
+    ) {
+        downloadAttachment_attachment = attachment
+        downloadAttachment_localURL = localURL
+        downloadAttachment_completion_result?.invoke(with: completion)
+        downloadAttachment_expectation.fulfill()
+    }
+    
     override func uploadAttachment(
         _ attachment: AnyChatMessageAttachment,
         progress: ((Double) -> Void)?,

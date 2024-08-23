@@ -87,11 +87,11 @@ extension URL {
 
 extension ChatMessageFileAttachment {
     static func localStorageURL(forRelativePath path: String) -> URL {
-        URL(fileURLWithPath: path, relativeTo: .streamAttachmentDownloadsDirectory).standardizedFileURL
+        URL(fileURLWithPath: path, isDirectory: false, relativeTo: .streamAttachmentDownloadsDirectory).standardizedFileURL
     }
     
     var relativeStoragePath: String {
         let fileName = payload.title ?? payload.assetURL.lastPathComponent
-        return "\(id.messageId)-\(id.index)/\(fileName)"
+        return "\(id.messageId)-\(id.index)-\(fileName)"
     }
 }
