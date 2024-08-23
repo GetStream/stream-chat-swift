@@ -228,11 +228,25 @@ open class ChatMessageListRouter:
     /// - Parameters:
     ///   - poll: The poll to show the results.
     ///   - messageId: The message ID which this poll belongs to.
-    ///   - client: The current `ChatClient` instance.
-    open func showResults(forPoll poll: Poll, in messageId: MessageId, client: ChatClient) {
+    ///   - client: The `ChatClient` instance.
+    open func showPollResults(for poll: Poll, in messageId: MessageId, client: ChatClient) {
         let pollController = client.pollController(messageId: messageId, pollId: poll.id)
         let pollResultsVC = components.pollResultsVC.init(pollController: pollController)
         let navVC = UINavigationController(rootViewController: pollResultsVC)
+        rootViewController.present(navVC, animated: true)
+    }
+
+    /// Shows the poll comments view
+    /// - Parameters:
+    ///   - poll: The poll to show the comments.
+    ///   - messageId: The message ID which this poll belongs to.
+    ///   - client: The `ChatClient` instance.
+    open func showPollComments(for poll: Poll, in messageId: MessageId, client: ChatClient) {
+        let pollController = client.pollController(messageId: messageId, pollId: poll.id)
+        let pollCommentListVC = components.pollCommentListVC.init(
+            pollController: pollController
+        )
+        let navVC = UINavigationController(rootViewController: pollCommentListVC)
         rootViewController.present(navVC, animated: true)
     }
 

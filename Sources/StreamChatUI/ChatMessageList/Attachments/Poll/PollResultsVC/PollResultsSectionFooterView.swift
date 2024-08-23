@@ -29,7 +29,7 @@ open class PollResultsSectionFooterView: _TableHeaderFooterView, ThemeProvider {
     override open func setUpAppearance() {
         super.setUpAppearance()
 
-        actionButton.setTitle(L10n.Message.Polls.Button.showAll, for: .normal)
+        actionButton.setTitle(L10n.Polls.Button.showAll, for: .normal)
         actionButton.setTitleColor(appearance.colorPalette.accentPrimary, for: .normal)
         actionButton.titleLabel?.font = appearance.fonts.subheadline
     }

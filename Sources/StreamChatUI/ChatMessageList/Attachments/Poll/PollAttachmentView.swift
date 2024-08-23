@@ -156,8 +156,8 @@ open class PollAttachmentView: _View, ThemeProvider {
         optionListView.onOptionTap = onOptionTap
         optionListView.content = .init(poll: content.poll)
 
-        pollResultsButton.setTitle(L10n.Message.Polls.Button.viewResults, for: .normal)
-        endPollButton.setTitle(L10n.Message.Polls.Button.endVote, for: .normal)
+        pollResultsButton.setTitle(L10n.Polls.Button.viewResults, for: .normal)
+        endPollButton.setTitle(L10n.Polls.Button.endVote, for: .normal)
 
         let isPollCreatedByCurrentUser = content.poll.createdBy?.id == content.currentUserId
         let shouldShowEndPollButton = !content.poll.isClosed && isPollCreatedByCurrentUser
@@ -168,11 +168,11 @@ open class PollAttachmentView: _View, ThemeProvider {
             .contains(content.currentUserId)
         let shouldShowAddCommentButton = content.poll.allowAnswers && !currentUserHasComment
         addCommentButton.isHidden = !shouldShowAddCommentButton
-        addCommentButton.setTitle(L10n.Message.Polls.Button.addComment, for: .normal)
+        addCommentButton.setTitle(L10n.Polls.Button.addComment, for: .normal)
 
         let commentsCount = content.poll.answersCount
         pollCommentsButton.isHidden = commentsCount == 0
-        pollCommentsButton.setTitle(L10n.Message.Polls.Button.viewComments(commentsCount), for: .normal)
+        pollCommentsButton.setTitle(L10n.Polls.Button.viewComments(commentsCount), for: .normal)
     }
 
     @objc open func didTapAddCommentButton(sender: Any?) {
@@ -200,13 +200,13 @@ open class PollAttachmentView: _View, ThemeProvider {
         guard let content = self.content else { return "" }
         let poll = content.poll
         if poll.isClosed == true {
-            return L10n.Message.Polls.Subtitle.voteEnded
+            return L10n.Polls.Subtitle.voteEnded
         } else if poll.enforceUniqueVote == true {
-            return L10n.Message.Polls.Subtitle.selectOne
+            return L10n.Polls.Subtitle.selectOne
         } else if let maxVotes = poll.maxVotesAllowed, maxVotes > 0 {
-            return L10n.Message.Polls.Subtitle.selectUpTo(min(maxVotes, poll.options.count))
+            return L10n.Polls.Subtitle.selectUpTo(min(maxVotes, poll.options.count))
         } else {
-            return L10n.Message.Polls.Subtitle.selectOneOrMore
+            return L10n.Polls.Subtitle.selectOneOrMore
         }
     }
 

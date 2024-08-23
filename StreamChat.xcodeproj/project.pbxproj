@@ -1546,6 +1546,16 @@
 		AD7BE1742C2347A3000A5756 /* ChatThreadListEmptyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD7BE1722C2347A3000A5756 /* ChatThreadListEmptyView.swift */; };
 		AD7CF1712694ABCE00F3101D /* ComposerVC_Documentation_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD7CF16F2694ABC500F3101D /* ComposerVC_Documentation_Tests.swift */; };
 		AD7DFC3625D2FA8100DD9DA3 /* CurrentUserUpdater.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD7DFC3525D2FA8100DD9DA3 /* CurrentUserUpdater.swift */; };
+		AD7EFDA72C7796D400625FC5 /* PollCommentListVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD7EFDA52C77749300625FC5 /* PollCommentListVC.swift */; };
+		AD7EFDAA2C78C0AF00625FC5 /* PollCommentListItemCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD7EFDA82C78C0A900625FC5 /* PollCommentListItemCell.swift */; };
+		AD7EFDAB2C78C0B600625FC5 /* PollCommentListVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD7EFDA52C77749300625FC5 /* PollCommentListVC.swift */; };
+		AD7EFDAC2C78C0B900625FC5 /* PollCommentListItemCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD7EFDA82C78C0A900625FC5 /* PollCommentListItemCell.swift */; };
+		AD7EFDB32C78DBF600625FC5 /* PollCommentListSectionHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD7EFDAF2C78C0E100625FC5 /* PollCommentListSectionHeaderView.swift */; };
+		AD7EFDB42C78DBF800625FC5 /* PollCommentListSectionHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD7EFDAF2C78C0E100625FC5 /* PollCommentListSectionHeaderView.swift */; };
+		AD7EFDB52C78DC1800625FC5 /* PollCommentListItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD7EFDAD2C78C0D200625FC5 /* PollCommentListItemView.swift */; };
+		AD7EFDB62C78DC1A00625FC5 /* PollCommentListItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD7EFDAD2C78C0D200625FC5 /* PollCommentListItemView.swift */; };
+		AD7EFDB72C78DC6600625FC5 /* PollCommentListSectionFooterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD7EFDB12C78C0F000625FC5 /* PollCommentListSectionFooterView.swift */; };
+		AD7EFDB82C78DC6700625FC5 /* PollCommentListSectionFooterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD7EFDB12C78C0F000625FC5 /* PollCommentListSectionFooterView.swift */; };
 		AD81AF0525ED141800F17F8F /* CellSeparatorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD81AEEC25ED135100F17F8F /* CellSeparatorView.swift */; };
 		AD81AF0D25ED141A00F17F8F /* ListCollectionViewLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD81AEF525ED13D900F17F8F /* ListCollectionViewLayout.swift */; };
 		AD8258A32BD2939500B9ED74 /* MessageReactionGroup.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD8258A22BD2939500B9ED74 /* MessageReactionGroup.swift */; };
@@ -4222,6 +4232,11 @@
 		AD7D633225AF577E0051219B /* UserUpdateResponse+MissingUser.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "UserUpdateResponse+MissingUser.json"; sourceTree = "<group>"; };
 		AD7DFBEB25D2AE7400DD9DA3 /* TestDataModel2.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = TestDataModel2.xcdatamodel; sourceTree = "<group>"; };
 		AD7DFC3525D2FA8100DD9DA3 /* CurrentUserUpdater.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrentUserUpdater.swift; sourceTree = "<group>"; };
+		AD7EFDA52C77749300625FC5 /* PollCommentListVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PollCommentListVC.swift; sourceTree = "<group>"; };
+		AD7EFDA82C78C0A900625FC5 /* PollCommentListItemCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PollCommentListItemCell.swift; sourceTree = "<group>"; };
+		AD7EFDAD2C78C0D200625FC5 /* PollCommentListItemView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PollCommentListItemView.swift; sourceTree = "<group>"; };
+		AD7EFDAF2C78C0E100625FC5 /* PollCommentListSectionHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PollCommentListSectionHeaderView.swift; sourceTree = "<group>"; };
+		AD7EFDB12C78C0F000625FC5 /* PollCommentListSectionFooterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PollCommentListSectionFooterView.swift; sourceTree = "<group>"; };
 		AD81AEEC25ED135100F17F8F /* CellSeparatorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CellSeparatorView.swift; sourceTree = "<group>"; };
 		AD81AEF525ED13D900F17F8F /* ListCollectionViewLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListCollectionViewLayout.swift; sourceTree = "<group>"; };
 		AD8258A22BD2939500B9ED74 /* MessageReactionGroup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageReactionGroup.swift; sourceTree = "<group>"; };
@@ -8477,6 +8492,11 @@
 		AD7EFDA42C776EB700625FC5 /* PollCommentListVC */ = {
 			isa = PBXGroup;
 			children = (
+				AD7EFDA52C77749300625FC5 /* PollCommentListVC.swift */,
+				AD7EFDAF2C78C0E100625FC5 /* PollCommentListSectionHeaderView.swift */,
+				AD7EFDA82C78C0A900625FC5 /* PollCommentListItemCell.swift */,
+				AD7EFDAD2C78C0D200625FC5 /* PollCommentListItemView.swift */,
+				AD7EFDB12C78C0F000625FC5 /* PollCommentListSectionFooterView.swift */,
 			);
 			path = PollCommentListVC;
 			sourceTree = "<group>";
@@ -10377,6 +10397,7 @@
 				88F836502578D16D0039AEC8 /* ChatMessageActionControl.swift in Sources */,
 				ADD328682C06B3AD00BAD0E9 /* ChatThreadListItemView.swift in Sources */,
 				AD4F89DE2C6A5908006DF7E5 /* PollResultsSectionFooterView.swift in Sources */,
+				AD7EFDB72C78DC6600625FC5 /* PollCommentListSectionFooterView.swift in Sources */,
 				AD4F89D42C666471006DF7E5 /* PollResultsVC.swift in Sources */,
 				88BA7F5D258B6953006CE0C5 /* ChatLoadingIndicator.swift in Sources */,
 				40FA4DD42A12A0C300DA21D2 /* SlideToCancelView.swift in Sources */,
@@ -10464,6 +10485,7 @@
 				ADF509752C5A80EE008F95CD /* PollAttachmentViewInjector.swift in Sources */,
 				C1FC2F6F27416E150062530F /* ImagePipelineConfiguration.swift in Sources */,
 				ADE57B792C36DB2000DD6B88 /* ChatThreadListErrorView.swift in Sources */,
+				AD7EFDA72C7796D400625FC5 /* PollCommentListVC.swift in Sources */,
 				F838F6B32636D42B0025E1F5 /* ZoomAnimator.swift in Sources */,
 				ADCB578328A42D7700B81AE8 /* StagedChangeset.swift in Sources */,
 				64B059E22670EFFE0024CE90 /* ChatChannelVC+SwiftUI.swift in Sources */,
@@ -10505,6 +10527,7 @@
 				790882FD25486BFD00896F03 /* ChatChannelListCollectionViewCell.swift in Sources */,
 				88CABC4525933EE70061BB67 /* ChatMessageReactionsView.swift in Sources */,
 				ADD2A99028FF0CD300A83305 /* ImageSizeCalculator.swift in Sources */,
+				AD7EFDAA2C78C0AF00625FC5 /* PollCommentListItemCell.swift in Sources */,
 				A3C5022A284F9CF70048753E /* CharacterRule.swift in Sources */,
 				E7166CE225BEE20600B03B07 /* Appearance+Images.swift in Sources */,
 				88CABC6625934CF60061BB67 /* ChatMessageReactions+Types.swift in Sources */,
@@ -10553,6 +10576,7 @@
 				BDC80CB5265CF4B800F62CE2 /* ImageCDN.swift in Sources */,
 				843F0BCD2677667000B342CB /* AttachmentActionButton.swift in Sources */,
 				C1FC2F6927416E150062530F /* Log.swift in Sources */,
+				AD7EFDB52C78DC1800625FC5 /* PollCommentListItemView.swift in Sources */,
 				CF143980288637AD00898ECA /* ChatChannelListLoadingViewCellContentView.swift in Sources */,
 				843F0BC72677640000B342CB /* VideoAttachmentGalleryPreview.swift in Sources */,
 				ADB22F7D25F1626200853C92 /* ChatPresenceAvatarView.swift in Sources */,
@@ -10589,6 +10613,7 @@
 				ADD3285E2C05447200BAD0E9 /* ChatThreadListVC.swift in Sources */,
 				843F0BC526775D2D00B342CB /* VideoLoading.swift in Sources */,
 				88CABC4625933EE70061BB67 /* ChatReactionPickerBubbleView.swift in Sources */,
+				AD7EFDB32C78DBF600625FC5 /* PollCommentListSectionHeaderView.swift in Sources */,
 				F838F6A92636D3C30025E1F5 /* ZoomTransitionController.swift in Sources */,
 				AD81AF0D25ED141A00F17F8F /* ListCollectionViewLayout.swift in Sources */,
 				ADCB577B28A42D7700B81AE8 /* AppKitExtension.swift in Sources */,
@@ -12451,6 +12476,7 @@
 				C121EB7C2746A1E700023E4C /* Animation.swift in Sources */,
 				ADF509702C5A80EE008F95CD /* PollAttachmentOptionListItemView.swift in Sources */,
 				C121EB7D2746A1E700023E4C /* ChatChannelNamer.swift in Sources */,
+				AD7EFDAB2C78C0B600625FC5 /* PollCommentListVC.swift in Sources */,
 				C121EB7E2746A1E700023E4C /* UIStackView+Extensions.swift in Sources */,
 				C121EB7F2746A1E700023E4C /* SystemEnvironment.swift in Sources */,
 				C121EB802746A1E700023E4C /* CACornerMask+Extensions.swift in Sources */,
@@ -12463,6 +12489,7 @@
 				C121EB842746A1E700023E4C /* Cache.swift in Sources */,
 				AD7BE1742C2347A3000A5756 /* ChatThreadListEmptyView.swift in Sources */,
 				C121EB852746A1E700023E4C /* VideoLoading.swift in Sources */,
+				AD7EFDB42C78DBF800625FC5 /* PollCommentListSectionHeaderView.swift in Sources */,
 				ADCB577C28A42D7700B81AE8 /* AppKitExtension.swift in Sources */,
 				C121EB872746A1E700023E4C /* ImageMerger.swift in Sources */,
 				C121EB882746A1E700023E4C /* NukeImageProcessor.swift in Sources */,
@@ -12483,6 +12510,7 @@
 				C121EB932746A1E800023E4C /* ChatCommandSuggestionView.swift in Sources */,
 				4F05ECB92B6CCA4900641820 /* DifferenceKit+Stream.swift in Sources */,
 				C121EB942746A1E800023E4C /* ChatCommandSuggestionCollectionViewCell.swift in Sources */,
+				AD7EFDAC2C78C0B900625FC5 /* PollCommentListItemCell.swift in Sources */,
 				40824D4A2A1271EF003B61FD /* PlayPauseButton_Tests.swift in Sources */,
 				C12297D42AC57A3200C5FF04 /* Throttler.swift in Sources */,
 				C121EB952746A1E800023E4C /* AttachmentsPreviewVC.swift in Sources */,
@@ -12697,8 +12725,10 @@
 				C121EC142746A1EC00023E4C /* ImageTask.swift in Sources */,
 				C121EC152746A1EC00023E4C /* ImagePipeline.swift in Sources */,
 				C121EC162746A1EC00023E4C /* ImageProcessing.swift in Sources */,
+				AD7EFDB82C78DC6700625FC5 /* PollCommentListSectionFooterView.swift in Sources */,
 				CF143981288637AD00898ECA /* ChatChannelListLoadingViewCellContentView.swift in Sources */,
 				C121EC172746A1EC00023E4C /* ImagePipelineConfiguration.swift in Sources */,
+				AD7EFDB62C78DC1A00625FC5 /* PollCommentListItemView.swift in Sources */,
 				C121EC182746A1EC00023E4C /* ImageEncoding.swift in Sources */,
 				ADBBDA29279F0E9B00E47B1C /* ChannelNameFormatter.swift in Sources */,
 				C121EC192746A1EC00023E4C /* ImageRequest.swift in Sources */,

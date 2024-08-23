@@ -83,7 +83,7 @@ open class PollResultsSectionHeaderView: _TableHeaderFooterView, ThemeProvider {
 
         optionNameLabel.text = content.option.text
         let voteCount = content.poll.voteCount(for: content.option)
-        votesLabel.text = L10n.Message.Polls.votes(voteCount)
+        votesLabel.text = L10n.Polls.votes(voteCount)
         pollWinnerIconView.isHidden = !content.poll.isOptionWinner(content.option)
     }
 }

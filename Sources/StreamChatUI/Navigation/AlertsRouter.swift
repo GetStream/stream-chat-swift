@@ -66,4 +66,46 @@ open class AlertsRouter: NavigationRouter<UIViewController> {
 
         rootViewController.present(alert, animated: true)
     }
+
+    open func showPollAddCommentAlert(
+        for poll: Poll,
+        in messageId: MessageId,
+        currentUserId: UserId,
+        handler: @escaping (String) -> Void
+    ) {
+        let currentUserHasAnswer = poll.latestAnswers
+            .compactMap(\.user?.id)
+            .contains(currentUserId)
+
+        let alert = UIAlertController(
+            title: nil,
+            message: currentUserHasAnswer ? L10n.Alert.Poll.updateComment : L10n.Alert.Poll.addComment,
+            preferredStyle: .alert
+        )
+        alert.addTextField()
+        alert.addAction(.init(title: L10n.Alert.Poll.send, style: .default, handler: { _ in
+            guard let textFieldValue = alert.textFields?.first?.text else { return }
+            guard !textFieldValue.isEmpty else { return }
+            handler(textFieldValue)
+        }))
+        alert.addAction(.init(title: L10n.Alert.Actions.cancel, style: .cancel))
+        rootViewController.present(alert, animated: true)
+    }
+
+    open func showPollEndVoteAlert(
+        for poll: Poll,
+        in messageId: MessageId,
+        handler: @escaping () -> Void
+    ) {
+        let alert = UIAlertController(
+            title: nil,
+            message: L10n.Alert.Poll.endTitle,
+            preferredStyle: .actionSheet
+        )
+        alert.addAction(.init(title: L10n.Alert.Poll.end, style: .destructive, handler: { _ in
+            handler()
+        }))
+        alert.addAction(.init(title: L10n.Alert.Actions.cancel, style: .cancel))
+        rootViewController.present(alert, animated: true)
+    }
 }
