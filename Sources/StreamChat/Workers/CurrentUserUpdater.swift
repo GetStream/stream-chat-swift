@@ -174,7 +174,6 @@ class CurrentUserUpdater: Worker {
                 }
                 attachment.localState = nil
                 attachment.localRelativePath = nil
-                attachment.localState = nil
                 attachment.localURL = nil
             }
             log.info("Deleted local downloads for number of attachments: \(attachments.count)", subsystems: .database)
@@ -253,7 +252,7 @@ extension CurrentUserUpdater {
 
     func deleteAllLocalAttachmentDownloads() async throws {
         try await withCheckedThrowingContinuation { continuation in
-            deleteAllLocalAttachmentDownloads() { error in
+            deleteAllLocalAttachmentDownloads { error in
                 continuation.resume(with: error)
             }
         }

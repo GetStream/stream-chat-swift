@@ -643,4 +643,51 @@ final class CurrentUserUpdater_Tests: XCTestCase {
         // THEN
         AssertAsync.willBeEqual(completionCalledError as? TestError, error)
     }
+    
+    // MARK: - Delete Local Downloads
+    
+    func test_deleteAllLocalAttachmentDownloads_success() throws {
+        let storedFileCount: () -> Int = {
+            let paths = try? FileManager.default.subpathsOfDirectory(atPath: URL.streamAttachmentDownloadsDirectory.path)
+            return paths?.count ?? 0
+        }
+        try FileManager.default.removeItem(at: .streamAttachmentDownloadsDirectory)
+        
+        let attachmentIds = try (0..<5).map { _ in try setUpDownloadedAttachment(with: .mockFile) }
+        XCTAssertEqual(5, storedFileCount())
+        
+        let error = try waitFor { currentUserUpdater.deleteAllLocalAttachmentDownloads(completion: $0) }
+        XCTAssertNil(error)
+        XCTAssertEqual(0, storedFileCount())
+        
+        try database.readSynchronously { session in
+            for attachmentId in attachmentIds {
+                guard let dto = session.attachment(id: attachmentId) else {
+                    throw ClientError.AttachmentDoesNotExist(id: attachmentId)
+                }
+                XCTAssertEqual(nil, dto.localState)
+                XCTAssertEqual(nil, dto.localRelativePath)
+                XCTAssertEqual(nil, dto.localURL)
+            }
+        }
+    }
+    
+    // MARK: -
+    
+    private func setUpDownloadedAttachment(with payload: AnyAttachmentPayload, messageId: MessageId = .unique, cid: ChannelId = .unique) throws -> AttachmentId {
+        let attachmentId: AttachmentId = .init(cid: cid, messageId: messageId, index: 0)
+        try FileManager.default.createDirectory(at: .streamAttachmentDownloadsDirectory, withIntermediateDirectories: true)
+        try database.createChannel(cid: cid, withMessages: false)
+        try database.createMessage(id: messageId, cid: cid)
+        try database.writeSynchronously { session in
+            let dto = try session.createNewAttachment(attachment: payload, id: attachmentId)
+            let localRelativePath = messageId + "-file.txt"
+            dto.localState = .downloaded
+            dto.localRelativePath = localRelativePath
+            let localFileURL = ChatMessageFileAttachment.localStorageURL(forRelativePath: localRelativePath)
+            try "abc".write(to: localFileURL, atomically: false, encoding: .utf8)
+            XCTAssertTrue(FileManager.default.fileExists(atPath: localFileURL.path))
+        }
+        return attachmentId
+    }
 }

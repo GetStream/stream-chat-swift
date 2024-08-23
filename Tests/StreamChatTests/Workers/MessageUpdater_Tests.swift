@@ -1969,16 +1969,6 @@ final class MessageUpdater_Tests: XCTestCase {
         }
         XCTAssertFalse(FileManager.default.fileExists(atPath: localFileURL.path))
     }
-    
-    private func setUpAttachment(with payload: AnyAttachmentPayload, messageId: MessageId = .unique, cid: ChannelId = .unique) throws -> AttachmentId {
-        let attachmentId: AttachmentId = .init(cid: cid, messageId: messageId, index: 0)
-        try database.createChannel(cid: cid, withMessages: false)
-        try database.createMessage(id: messageId, cid: cid)
-        try database.writeSynchronously { session in
-            try session.createNewAttachment(attachment: payload, id: attachmentId)
-        }
-        return attachmentId
-    }
 
     // MARK: - Restart failed attachment uploading
 
@@ -3002,5 +2992,15 @@ extension MessageUpdater_Tests {
             file: file,
             line: line
         )
+    }
+    
+    private func setUpAttachment(with payload: AnyAttachmentPayload, messageId: MessageId = .unique, cid: ChannelId = .unique) throws -> AttachmentId {
+        let attachmentId: AttachmentId = .init(cid: cid, messageId: messageId, index: 0)
+        try database.createChannel(cid: cid, withMessages: false)
+        try database.createMessage(id: messageId, cid: cid)
+        try database.writeSynchronously { session in
+            try session.createNewAttachment(attachment: payload, id: attachmentId)
+        }
+        return attachmentId
     }
 }
