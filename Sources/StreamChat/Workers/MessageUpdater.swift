@@ -574,6 +574,8 @@ class MessageUpdater: Worker {
         }
     }
     
+    // MARK: - Attachments
+    
     static let minSignificantDownloadingProgressChange: Double = 0.01
     
     func downloadAttachment(
@@ -611,6 +613,23 @@ class MessageUpdater: Worker {
                 completion(.failure(readError))
             }
         }
+    }
+    
+    func deleteLocalAttachmentDownload(for attachmentId: AttachmentId, completion: @escaping (Error?) -> Void) {
+        database.write({ session in
+            let dto = session.attachment(id: attachmentId)
+            guard let attachment = dto?.asAnyModel() else {
+                throw ClientError.AttachmentDoesNotExist(id: attachmentId)
+            }
+            guard attachment.downloadingState?.state == .downloaded else { return }
+            guard let localURL = attachment.downloadingState?.localFileURL else { return }
+            guard FileManager.default.fileExists(atPath: localURL.path) else { return }
+            try FileManager.default.removeItem(at: localURL)
+            dto?.localState = nil
+            dto?.localRelativePath = nil
+            dto?.localState = nil
+            dto?.localURL = nil
+        }, completion: completion)
     }
     
     private func fileAttachment(with attachmentId: AttachmentId, completion: @escaping (Result<ChatMessageFileAttachment, Error>) -> Void) {
@@ -666,6 +685,8 @@ class MessageUpdater: Worker {
             attachmentDTO.localState = .pendingUpload
         }, completion: completion)
     }
+    
+    // MARK: -
 
     /// Updates local state of the message with provided `messageId` to be enqueued by message sender background worker.
     /// - Parameters:
@@ -1007,6 +1028,14 @@ extension MessageUpdater {
                 extraData: extraData
             ) { result in
                 continuation.resume(with: result)
+            }
+        }
+    }
+    
+    func deleteLocalAttachmentDownload(for attachmentId: AttachmentId) async throws {
+        try await withCheckedThrowingContinuation { continuation in
+            deleteLocalAttachmentDownload(for: attachmentId) { error in
+                continuation.resume(with: error)
             }
         }
     }

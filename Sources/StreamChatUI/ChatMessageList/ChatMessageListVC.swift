@@ -998,7 +998,7 @@ open class ChatMessageListVC: _ViewController,
             let chat = client.makeChat(for: attachment.id.cid)
             _Concurrency.Task {
                 do {
-                    try await chat.downloadAttachment(attachment.id)
+                    try await chat.downloadAttachment(with: attachment.id)
                 } catch {
                     log.debug("Downloaded attachment for id \(attachment.id)")
                 }

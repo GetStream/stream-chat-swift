@@ -670,7 +670,24 @@ public class ChatMessageController: DataController, DelegateCallable, DataStoreP
     ///   - id: The id of the file attachment.
     ///   - completion: A completion block with a file attachment containing the downloading state.
     public func downloadAttachment(with id: AttachmentId, completion: @escaping (Result<ChatMessageFileAttachment, Error>) -> Void) {
-        messageUpdater.downloadAttachment(with: id, completion: completion)
+        messageUpdater.downloadAttachment(with: id) { result in
+            self.callback {
+                completion(result)
+            }
+        }
+    }
+    
+    /// Deletes the locally downloaded file.
+    ///
+    /// - Parameters:
+    ///   - attachmentId: The id of the attachment.
+    ///   - completion: A completion block with an error if the deletion failed.
+    public func deleteLocalAttachmentDownload(for attachmentId: AttachmentId, completion: ((Error?) -> Void)? = nil) {
+        messageUpdater.deleteLocalAttachmentDownload(for: attachmentId) { error in
+            self.callback {
+                completion?(error)
+            }
+        }
     }
     
     /// Updates local state of attachment with provided `id` to be enqueued by attachment uploader.

@@ -519,12 +519,18 @@ final class DemoChatChannelListRouter: ChatChannelListRouter {
                     }
                 }
             }),
-            .init(title: "Delete Downloaded Attachments", handler: { _ in
-                guard FileManager.default.fileExists(atPath: URL.streamAttachmentDownloadsDirectory.path) else { return }
+            .init(title: "Delete Downloaded Attachments", handler: { [unowned self] _ in
                 do {
-                    try FileManager.default.removeItem(at: .streamAttachmentDownloadsDirectory)
+                    let connectedUser = try self.rootViewController.controller.client.makeConnectedUser()
+                    Task {
+                        do {
+                            try await connectedUser.deleteAllLocalAttachmentDownloads()
+                        } catch {
+                            self.rootViewController.presentAlert(title: error.localizedDescription)
+                        }
+                    }
                 } catch {
-                    log.debug("Failed to delete downloaded attachments with error: \(error.localizedDescription)")
+                    self.rootViewController.presentAlert(title: error.localizedDescription)
                 }
             })
         ])

@@ -363,9 +363,20 @@ public class Chat {
     /// - Note: The local storage URL can change between app launches.
     ///
     /// - Parameter attachmentId: The id of the attachment.
+    ///
+    /// - Throws: An error while downloading an attachment.
     /// - Returns: An instance of the downloaded file attachment.
     @discardableResult public func downloadAttachment(with attachmentId: AttachmentId) async throws -> ChatMessageFileAttachment {
         try await messageUpdater.downloadAttachment(with: attachmentId)
+    }
+    
+    /// Deletes the locally downloaded file.
+    ///
+    /// - Parameter attachmentId: The id of the attachment.
+    ///
+    /// - Throws: An error while deleting a downloaded file.
+    public func deleteLocalAttachmentDownload(for attachmentId: AttachmentId) async throws {
+        try await messageUpdater.deleteLocalAttachmentDownload(for: attachmentId)
     }
     
     /// Resends a failed attachment.

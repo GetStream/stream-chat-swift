@@ -80,6 +80,13 @@ class AttachmentDTO: NSManagedObject {
         return new
     }
 
+    static func downloadedFetchRequest() -> NSFetchRequest<AttachmentDTO> {
+        let request = NSFetchRequest<AttachmentDTO>(entityName: AttachmentDTO.entityName)
+        request.sortDescriptors = [NSSortDescriptor(keyPath: \AttachmentDTO.id, ascending: true)]
+        request.predicate = NSPredicate(format: "localStateRaw == %@", LocalAttachmentState.downloaded.rawValue)
+        return request
+    }
+    
     static func pendingUploadFetchRequest() -> NSFetchRequest<AttachmentDTO> {
         let request = NSFetchRequest<AttachmentDTO>(entityName: AttachmentDTO.entityName)
         request.sortDescriptors = [NSSortDescriptor(keyPath: \AttachmentDTO.id, ascending: true)]
@@ -91,6 +98,13 @@ class AttachmentDTO: NSManagedObject {
         let request = NSFetchRequest<AttachmentDTO>(entityName: AttachmentDTO.entityName)
         request.sortDescriptors = [NSSortDescriptor(keyPath: \AttachmentDTO.id, ascending: true)]
         request.predicate = NSPredicate(format: "localStateRaw == %@", LocalAttachmentState.uploading(progress: 0).rawValue)
+        return load(by: request, context: context)
+    }
+    
+    static func loadAllDownloadedAttachments(context: NSManagedObjectContext) -> [AttachmentDTO] {
+        let request = NSFetchRequest<AttachmentDTO>(entityName: AttachmentDTO.entityName)
+        request.sortDescriptors = [NSSortDescriptor(keyPath: \AttachmentDTO.id, ascending: true)]
+        request.predicate = NSPredicate(format: "localStateRaw == %@", LocalAttachmentState.downloaded.rawValue)
         return load(by: request, context: context)
     }
 }
@@ -160,6 +174,10 @@ extension NSManagedObjectContext: AttachmentDatabaseSession {
 
     func delete(attachment: AttachmentDTO) {
         delete(attachment)
+    }
+    
+    func allLocallyDownloadedAttachments() -> [AttachmentDTO] {
+        AttachmentDTO.loadAllDownloadedAttachments(context: self)
     }
 }
 

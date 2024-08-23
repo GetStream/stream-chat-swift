@@ -155,6 +155,33 @@ class CurrentUserUpdater: Worker {
             }
         }
     }
+    
+    func deleteAllLocalAttachmentDownloads(completion: @escaping (Error?) -> Void) {
+        database.write({ session in
+            // Try to delete all the local files even when one of them happens to fail.
+            var latestError: Error?
+            let attachments = session.allLocallyDownloadedAttachments()
+            for attachment in attachments {
+                if let localRelativePath = attachment.localRelativePath {
+                    let localURL = ChatMessageFileAttachment.localStorageURL(forRelativePath: localRelativePath)
+                    if FileManager.default.fileExists(atPath: localURL.path) {
+                        do {
+                            try FileManager.default.removeItem(at: localURL)
+                        } catch {
+                            latestError = error
+                        }
+                    }
+                }
+                attachment.localState = nil
+                attachment.localRelativePath = nil
+                attachment.localState = nil
+                attachment.localURL = nil
+            }
+            log.info("Deleted local downloads for number of attachments: \(attachments.count)", subsystems: .database)
+            guard let latestError else { return }
+            throw latestError
+        }, completion: completion)
+    }
 
     /// Marks all channels for a user as read.
     /// - Parameter completion: Called when the API call is finished. Called with `Error` if the remote update fails.
@@ -224,6 +251,14 @@ extension CurrentUserUpdater {
         }
     }
 
+    func deleteAllLocalAttachmentDownloads() async throws {
+        try await withCheckedThrowingContinuation { continuation in
+            deleteAllLocalAttachmentDownloads() { error in
+                continuation.resume(with: error)
+            }
+        }
+    }
+    
     func fetchDevices(currentUserId: UserId) async throws -> [Device] {
         try await withCheckedThrowingContinuation { continuation in
             fetchDevices(currentUserId: currentUserId) { result in

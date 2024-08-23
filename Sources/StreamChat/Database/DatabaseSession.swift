@@ -404,6 +404,9 @@ protocol AttachmentDatabaseSession {
     /// Deletes the provided dto from a database
     /// - Parameter attachment: The DTO to be deleted
     func delete(attachment: AttachmentDTO)
+    
+    /// All the attachments with the local status being downloaded.
+    func allLocallyDownloadedAttachments() -> [AttachmentDTO]
 }
 
 protocol QueuedRequestDatabaseSession {

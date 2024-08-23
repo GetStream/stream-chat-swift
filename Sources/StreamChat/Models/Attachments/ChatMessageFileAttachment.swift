@@ -79,7 +79,7 @@ extension FileAttachmentPayload: Decodable {
 
 extension URL {
     /// The directory URL for attachment downloads.
-    public static var streamAttachmentDownloadsDirectory: URL {
+    static var streamAttachmentDownloadsDirectory: URL {
         (FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first ?? FileManager.default.temporaryDirectory)
             .appendingPathComponent("AttachmentDownloads", isDirectory: true)
     }
