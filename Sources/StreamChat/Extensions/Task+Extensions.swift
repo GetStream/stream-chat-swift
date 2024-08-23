@@ -11,16 +11,3 @@ extension Task {
         }
     }
 }
-
-extension Task {
-    static func run(_ operation: @escaping () async throws -> Void, completion: @escaping (Error?) -> Void) where Success == Void, Failure == any Error {
-        Task {
-            do {
-                try await operation()
-                completion(nil)
-            } catch {
-                completion(error)
-            }
-        }
-    }
-}

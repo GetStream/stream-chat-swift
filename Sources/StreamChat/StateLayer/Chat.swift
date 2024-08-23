@@ -362,22 +362,22 @@ public class Chat {
     ///
     /// - Note: The local storage URL can change between app launches.
     ///
-    /// - Parameter attachment: The id of the attachment.
+    /// - Parameter attachmentId: The id of the attachment.
     /// - Returns: An instance of the downloaded file attachment.
-    @discardableResult public func downloadAttachment(_ attachment: AttachmentId) async throws -> ChatMessageFileAttachment {
-        try await messageUpdater.downloadAttachment(with: attachment)
+    @discardableResult public func downloadAttachment(with attachmentId: AttachmentId) async throws -> ChatMessageFileAttachment {
+        try await messageUpdater.downloadAttachment(with: attachmentId)
     }
     
     /// Resends a failed attachment.
     ///
-    /// - Parameter attachment: The id of the attachment.
+    /// - Parameter attachmentId: The id of the attachment.
     ///
     /// - Throws: An error while sending a message to the Stream API.
     /// - Returns: The uploaded attachment with additional information like remote and thumbnail URLs.
-    @discardableResult public func resendAttachment(_ attachment: AttachmentId) async throws -> UploadedAttachment {
+    @discardableResult public func resendAttachment(_ attachmentId: AttachmentId) async throws -> UploadedAttachment {
         let attachmentQueueUploader = try client.backgroundWorker(of: AttachmentQueueUploader.self)
-        try await messageUpdater.resendAttachment(with: attachment)
-        return try await attachmentQueueUploader.waitForAPIRequest(attachmentId: attachment)
+        try await messageUpdater.resendAttachment(with: attachmentId)
+        return try await attachmentQueueUploader.waitForAPIRequest(attachmentId: attachmentId)
     }
     
     /// Invokes the ephemeral action specified by the attachment.

@@ -294,26 +294,29 @@ class APIClient {
         ClientError.isEphemeral(error: error)
     }
     
-    func downloadAttachment(_ attachment: ChatMessageFileAttachment, to localURL: URL, progress: ((Double) -> Void)?) async throws {
-        try await withCheckedThrowingContinuation { continuation in
-            let downloadOperation = AsyncOperation(maxRetries: maximumRequestRetries) { [weak self] operation, done in
-                self?.attachmentDownloader.download(attachment, to: localURL, progress: progress) { error in
-                    if let error, self?.isConnectionError(error) == true {
-                        // Do not retry unless its a connection problem and we still have retries left
-                        if operation.canRetry {
-                            done(.retry)
-                        } else {
-                            continuation.resume(with: error)
-                            done(.continue)
-                        }
+    func downloadAttachment(
+        _ attachment: ChatMessageFileAttachment,
+        to localURL: URL,
+        progress: ((Double) -> Void)?,
+        completion: @escaping (Error?) -> Void
+    ) {
+        let downloadOperation = AsyncOperation(maxRetries: maximumRequestRetries) { [weak self] operation, done in
+            self?.attachmentDownloader.download(attachment, to: localURL, progress: progress) { error in
+                if let error, self?.isConnectionError(error) == true {
+                    // Do not retry unless its a connection problem and we still have retries left
+                    if operation.canRetry {
+                        done(.retry)
                     } else {
-                        continuation.resume(with: error)
+                        completion(error)
                         done(.continue)
                     }
+                } else {
+                    completion(error)
+                    done(.continue)
                 }
             }
-            operationQueue.addOperation(downloadOperation)
         }
+        operationQueue.addOperation(downloadOperation)
     }
     
     func uploadAttachment(
