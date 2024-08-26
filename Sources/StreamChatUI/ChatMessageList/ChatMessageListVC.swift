@@ -1120,10 +1120,25 @@ open class ChatMessageListVC: _ViewController,
 
     open func pollAttachmentView(
         _ pollAttachmentView: PollAttachmentView,
+        didTapSuggestOptionForPoll poll: Poll,
+        in message: ChatMessage
+    ) {
+        let pollController = client.pollController(messageId: message.id, pollId: poll.id)
+        alertRouter.showPollAddSuggestionAlert(
+            for: poll,
+            in: message.id
+        ) { [weak self] suggestion in
+            pollController.suggestPollOption(text: suggestion) { error in
+                self?.notificationFeedbackGenerator?.notificationOccurred(error == nil ? .success : .error)
+            }
+        }
+    }
+
+    open func pollAttachmentView(
+        _ pollAttachmentView: PollAttachmentView,
         didTapEndPoll poll: Poll,
         in message: ChatMessage
     ) {
-        guard let currentUserId = client.currentUserId else { return }
         let pollController = client.pollController(messageId: message.id, pollId: poll.id)
         alertRouter.showPollEndVoteAlert(for: poll, in: message.id) {
             pollController.closePoll { [weak self] error in

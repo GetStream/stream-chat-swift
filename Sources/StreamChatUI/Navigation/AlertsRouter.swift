@@ -67,6 +67,13 @@ open class AlertsRouter: NavigationRouter<UIViewController> {
         rootViewController.present(alert, animated: true)
     }
 
+    /// Shows an alert to add a poll comment.
+    ///
+    /// - Parameters:
+    ///   - poll: The poll to add a comment.
+    ///   - messageId: The messageId which the poll belongs to.
+    ///   - currentUserId: The user ID of the current logged in user.
+    ///   - handler: The closure to handle the value that the user inputted.
     open func showPollAddCommentAlert(
         for poll: Poll,
         in messageId: MessageId,
@@ -92,6 +99,37 @@ open class AlertsRouter: NavigationRouter<UIViewController> {
         rootViewController.present(alert, animated: true)
     }
 
+    /// Shows an alert to add a suggestion of new poll option.
+    ///
+    /// - Parameters:
+    ///   - poll: The poll to add a suggestion.
+    ///   - messageId: The messageId which the poll belongs to.
+    ///   - handler: The closure to handle the value that the user inputted.
+    open func showPollAddSuggestionAlert(
+        for poll: Poll,
+        in messageId: MessageId,
+        handler: @escaping (String) -> Void
+    ) {
+        let alert = UIAlertController(
+            title: nil,
+            message: L10n.Alert.Poll.suggestOption,
+            preferredStyle: .alert
+        )
+        alert.addTextField()
+        alert.addAction(.init(title: L10n.Alert.Poll.send, style: .default, handler: { _ in
+            guard let textFieldValue = alert.textFields?.first?.text else { return }
+            guard !textFieldValue.isEmpty else { return }
+            handler(textFieldValue)
+        }))
+        alert.addAction(.init(title: L10n.Alert.Actions.cancel, style: .cancel))
+        rootViewController.present(alert, animated: true)
+    }
+
+    /// Shows an alert to confirm that the user wants to end the pol;l.
+    ///
+    /// - Parameters:
+    ///   - poll: The poll to be eneded
+    ///   - messageId: The messageId which the poll belongs to.
     open func showPollEndVoteAlert(
         for poll: Poll,
         in messageId: MessageId,

@@ -246,11 +246,13 @@
 "polls.button.viewResults" = "View Results";
 
 /// Shown in the message poll view on the button to add a poll comment.
-"polls.button.addComment" = "Add Comment";
+"polls.button.add-comment" = "Add Comment";
 /// Shown in the message poll view on the button to view the poll comments.
-"polls.button.viewComments" = "View %d Comments";
+"polls.button.view-comments" = "View %d Comments";
 /// Shown in the message poll results on the button to show more votes.
-"polls.button.showAll" = "Show all";
+"polls.button.show-all" = "Show all";
+/// Shown in the message poll results on the button to add a new suggestion.
+"polls.button.suggest-option" = "Suggest an Option";
 /// Shown to display the number of votes in an option.
 "polls.votes" = "%d votes";
 /// Shown in the poll results navigation title.
@@ -275,6 +277,8 @@
 "alert.poll.end-title" = "Nobody will be able to vote in this poll anymore.";
 /// Alert title when adding a comment to a poll.
 "alert.poll.add-comment" = "Add a Comment";
+/// Alert title when adding a new poll suggestion.
+"alert.poll.suggest-option" = "Suggest an Option";
 /// Alert title when updating a comment to a poll.
 "alert.poll.update-comment" ="Update your Comment";
 /// Alert send action when confirm an action on a poll.

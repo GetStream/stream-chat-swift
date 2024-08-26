@@ -33,6 +33,8 @@ internal enum L10n {
       internal static var endTitle: String { L10n.tr("Localizable", "alert.poll.end-title") }
       /// Send
       internal static var send: String { L10n.tr("Localizable", "alert.poll.send") }
+      /// Suggest an Option
+      internal static var suggestOption: String { L10n.tr("Localizable", "alert.poll.suggest-option") }
       /// Update your Comment
       internal static var updateComment: String { L10n.tr("Localizable", "alert.poll.update-comment") }
     }
@@ -367,14 +369,16 @@ internal enum L10n {
     }
     internal enum Button {
       /// Add Comment
-      internal static var addComment: String { L10n.tr("Localizable", "polls.button.addComment") }
+      internal static var addComment: String { L10n.tr("Localizable", "polls.button.add-comment") }
       /// End Vote
       internal static var endVote: String { L10n.tr("Localizable", "polls.button.endVote") }
       /// Show all
-      internal static var showAll: String { L10n.tr("Localizable", "polls.button.showAll") }
+      internal static var showAll: String { L10n.tr("Localizable", "polls.button.show-all") }
+      /// Suggest an Option
+      internal static var suggestOption: String { L10n.tr("Localizable", "polls.button.suggest-option") }
       /// View %d Comments
       internal static func viewComments(_ p1: Int) -> String {
-        return L10n.tr("Localizable", "polls.button.viewComments", p1)
+        return L10n.tr("Localizable", "polls.button.view-comments", p1)
       }
       /// View Results
       internal static var viewResults: String { L10n.tr("Localizable", "polls.button.viewResults") }
