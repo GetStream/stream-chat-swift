@@ -124,7 +124,7 @@ open class PollResultsVoteListVC:
         vote: PollVote
     ) -> PollResultsVoteItemCell {
         let cell = tableView.dequeueReusableCell(with: components.pollResultsVoteItemCell, for: indexPath)
-        cell.content = .init(vote: vote)
+        cell.content = .init(vote: vote, poll: poll)
         let isLastItem = pollVoteListController.votes.count == indexPath.item - 1
         style(cell: cell, contentView: cell.itemView, isLastItem: isLastItem)
         return cell

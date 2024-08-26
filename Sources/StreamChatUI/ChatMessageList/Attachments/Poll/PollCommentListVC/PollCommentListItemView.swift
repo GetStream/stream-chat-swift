@@ -9,11 +9,14 @@ import UIKit
 open class PollCommentListItemView: _View, ThemeProvider {
     public struct Content {
         public var comment: PollVote
+        public var poll: Poll
 
         public init(
-            comment: PollVote
+            comment: PollVote,
+            poll: Poll
         ) {
             self.comment = comment
+            self.poll = poll
         }
     }
 
@@ -40,6 +43,6 @@ open class PollCommentListItemView: _View, ThemeProvider {
 
         guard let content = self.content else { return }
 
-        voteItemView.content = .init(vote: content.comment)
+        voteItemView.content = .init(vote: content.comment, poll: content.poll)
     }
 }

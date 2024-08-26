@@ -9,9 +9,11 @@ import UIKit
 open class PollCommentListItemCell: _TableViewCell, ThemeProvider {
     public struct Content {
         public var comment: PollVote
+        public var poll: Poll
 
-        public init(comment: PollVote) {
+        public init(comment: PollVote, poll: Poll) {
             self.comment = comment
+            self.poll = poll
         }
     }
 
@@ -34,6 +36,6 @@ open class PollCommentListItemCell: _TableViewCell, ThemeProvider {
 
     override open func updateContent() {
         guard let content = self.content else { return }
-        itemView.content = .init(comment: content.comment)
+        itemView.content = .init(comment: content.comment, poll: content.poll)
     }
 }

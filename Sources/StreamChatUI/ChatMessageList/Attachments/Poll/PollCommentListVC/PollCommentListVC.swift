@@ -148,8 +148,10 @@ open class PollCommentListVC:
         comment: PollVote
     ) -> PollCommentListItemCell {
         let cell = tableView.dequeueReusableCell(with: components.pollCommentListItemCell, for: indexPath)
-        cell.content = .init(comment: comment)
         style(cell: cell, contentView: cell.itemView, isLastItem: true)
+        if let poll = pollController.poll {
+            cell.content = .init(comment: comment, poll: poll)
+        }
         return cell
     }
 

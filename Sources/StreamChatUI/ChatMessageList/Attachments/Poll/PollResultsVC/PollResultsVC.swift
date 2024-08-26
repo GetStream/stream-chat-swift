@@ -137,12 +137,15 @@ open class PollResultsVC:
 
         var snapshot = NSDiffableDataSourceSnapshot<PollOption, PollVote>()
         snapshot.appendSections(poll.options)
-        poll.options.forEach { option in
-            let latestVotes = option.latestVotes
-                .sorted(by: { $0.createdAt > $1.createdAt })
-                .prefix(maximumVotesPerOption)
+       
+        if poll.votingVisibility != .anonymous {
+            poll.options.forEach { option in
+                let latestVotes = option.latestVotes
+                    .sorted(by: { $0.createdAt > $1.createdAt })
+                    .prefix(maximumVotesPerOption)
 
-            snapshot.appendItems(Array(latestVotes), toSection: option)
+                snapshot.appendItems(Array(latestVotes), toSection: option)
+            }
         }
 
         dataSource.apply(snapshot, animatingDifferences: true)
@@ -155,10 +158,11 @@ open class PollResultsVC:
         vote: PollVote
     ) -> PollResultsVoteItemCell {
         let cell = tableView.dequeueReusableCell(with: components.pollResultsVoteItemCell, for: indexPath)
-        guard let option = pollController.poll?.options[indexPath.section] else {
+        guard let option = pollController.poll?.options[safe: indexPath.section],
+              let poll = pollController.poll else {
             return cell
         }
-        cell.content = .init(vote: vote)
+        cell.content = .init(vote: vote, poll: poll)
         let isLastItem = indexPath.row == option.latestVotes.count - 1
         style(cell: cell, contentView: cell.itemView, isLastItem: isLastItem)
         return cell
@@ -173,7 +177,8 @@ open class PollResultsVC:
         }
         let view = tableView.dequeueReusableHeaderFooter(with: components.pollResultsSectionHeaderView)
         view.content = .init(option: option, poll: poll)
-        style(sectionHeaderView: view, contentView: view.container, isEmptySection: option.latestVotes.isEmpty)
+        let isEmptySection = option.latestVotes.isEmpty || poll.votingVisibility == .anonymous
+        style(sectionHeaderView: view, contentView: view.container, isEmptySection: isEmptySection)
         return view
     }
 

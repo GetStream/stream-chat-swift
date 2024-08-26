@@ -130,7 +130,9 @@ open class PollAttachmentOptionListItemView: _View, ThemeProvider {
 
         optionNameLabel.text = content.option.text
         votesCountLabel.text = "\(content.voteCount)"
+        
         latestVotesAuthorsView.content = .init(users: latestVotesAuthors)
+        latestVotesAuthorsView.isHidden = content.poll.votingVisibility == .anonymous
 
         if content.isVotedByCurrentUser {
             voteCheckboxButton.setCheckedState()
