@@ -104,7 +104,7 @@ extension ChatMessageFileAttachmentListView {
             fileNameAndSizeStack.spacing = 3
 
             mainContainerStackView.axis = .horizontal
-            mainContainerStackView.alignment = .top
+            mainContainerStackView.alignment = .center
         }
 
         override open func updateContent() {

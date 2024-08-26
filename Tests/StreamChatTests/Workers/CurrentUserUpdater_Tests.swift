@@ -687,7 +687,7 @@ final class CurrentUserUpdater_Tests: XCTestCase {
             dto.localState = .downloaded
             dto.localRelativePath = localRelativePath
             let localFileURL = ChatMessageFileAttachment.localStorageURL(forRelativePath: localRelativePath)
-            try "abc".write(to: localFileURL, atomically: false, encoding: .utf8)
+            try UUID().uuidString.write(to: localFileURL, atomically: false, encoding: .utf8)
             XCTAssertTrue(FileManager.default.fileExists(atPath: localFileURL.path))
         }
         return attachmentId
