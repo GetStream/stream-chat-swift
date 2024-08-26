@@ -137,10 +137,14 @@ extension ChatMessageFileAttachmentListView {
                 fileSizeLabel.text = content?.payload.file.sizeString
             }
             
-            actionIconImageView.image = appearance.fileAttachmentActionIcon(
-                uploadState: uploadState,
-                downloadState: downloadState
-            )
+            actionIconImageView.image = {
+                guard let fileSize = content?.file.size, fileSize > 0 else { return nil }
+                guard content?.file.type != .unknown else { return nil }
+                return appearance.fileAttachmentActionIcon(
+                    uploadState: uploadState,
+                    downloadState: downloadState
+                )
+            }()
 
             loadingIndicator.isVisible = {
                 if let downloadState, case .downloading = downloadState {

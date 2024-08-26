@@ -192,7 +192,7 @@ extension AnyChatMessageAttachment {
     
     var relativeStoragePath: String {
         let fileName: String = {
-            guard let assetInfo = try? assetInfo() else { return "unknown" }
+            guard let assetInfo = try? assetInfo() else { return "file_download" }
             return assetInfo.title ?? assetInfo.url.lastPathComponent
         }()
         return "\(id.messageId)-\(id.index)-\(fileName)"
