@@ -1918,13 +1918,6 @@ final class MessageUpdater_Tests: XCTestCase {
         XCTAssertEqual(ClientError.AttachmentDoesNotExist(id: attachmentId), error)
     }
     
-    func test_downloadAttachment_propagatesAttachmentDownloadingError() throws {
-        let attachmentId = try setUpAttachment(with: .mockImage)
-        let result = try waitFor { messageUpdater.downloadAttachment(with: attachmentId, completion: $0) }
-        let error = try XCTUnwrap(result.error)
-        XCTAssertEqual(ClientError.AttachmentDownloading(id: attachmentId, reason: "Only file attachments can be downloaded"), error)
-    }
-    
     func test_downloadAttachment_success() throws {
         let attachmentId = try setUpAttachment(with: .mockFile)
         apiClient.downloadAttachment_completion_result = .success(())
@@ -1932,7 +1925,7 @@ final class MessageUpdater_Tests: XCTestCase {
         let value = try XCTUnwrap(result.value)
         XCTAssertEqual(attachmentId, value.id)
         XCTAssertEqual(LocalAttachmentDownloadState.downloaded, value.downloadingState?.state)
-        XCTAssertEqual(ChatMessageFileAttachment.localStorageURL(forRelativePath: value.relativeStoragePath), value.downloadingState?.localFileURL)
+        XCTAssertEqual(AnyChatMessageAttachment.localStorageURL(forRelativePath: value.relativeStoragePath), value.downloadingState?.localFileURL)
     }
     
     // MARK: - Delete Attachments

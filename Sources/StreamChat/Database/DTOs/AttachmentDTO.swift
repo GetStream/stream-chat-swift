@@ -204,7 +204,7 @@ private extension AttachmentDTO {
         
         let localFileURL: URL? = {
             guard let localRelativePath, !localRelativePath.isEmpty else { return nil }
-            return ChatMessageFileAttachment.localStorageURL(forRelativePath: localRelativePath)
+            return AnyChatMessageAttachment.localStorageURL(forRelativePath: localRelativePath)
         }()
         
         return AttachmentDownloadingState(

@@ -163,7 +163,7 @@ class CurrentUserUpdater: Worker {
             let attachments = session.allLocallyDownloadedAttachments()
             for attachment in attachments {
                 if let localRelativePath = attachment.localRelativePath {
-                    let localURL = ChatMessageFileAttachment.localStorageURL(forRelativePath: localRelativePath)
+                    let localURL = AnyChatMessageAttachment.localStorageURL(forRelativePath: localRelativePath)
                     if FileManager.default.fileExists(atPath: localURL.path) {
                         do {
                             try FileManager.default.removeItem(at: localURL)

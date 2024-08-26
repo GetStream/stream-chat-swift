@@ -32,7 +32,7 @@ final class APIClient_Spy: APIClient, Spy {
     @Atomic var unmanagedRequest_completion: Any?
     @Atomic var unmanagedRequest_allRecordedCalls: [(endpoint: AnyEndpoint, completion: Any?)] = []
 
-    @Atomic var downloadAttachment_attachment: ChatMessageFileAttachment?
+    @Atomic var downloadAttachment_attachment: AnyChatMessageAttachment?
     @Atomic var downloadAttachment_localURL: URL?
     @Atomic var downloadAttachment_completion_result: Result<Void, Error>?
     @Atomic var downloadAttachment_expectation: XCTestExpectation
@@ -168,7 +168,7 @@ final class APIClient_Spy: APIClient, Spy {
     }
 
     override func downloadAttachment(
-        _ attachment: ChatMessageFileAttachment,
+        _ attachment: AnyChatMessageAttachment,
         to localURL: URL,
         progress: ((Double) -> Void)?,
         completion: @escaping ((any Error)?) -> Void

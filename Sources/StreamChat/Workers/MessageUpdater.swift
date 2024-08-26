@@ -580,12 +580,12 @@ class MessageUpdater: Worker {
     
     func downloadAttachment(
         with attachmentId: AttachmentId,
-        completion: @escaping (Result<ChatMessageFileAttachment, Error>) -> Void
+        completion: @escaping (Result<AnyChatMessageAttachment, Error>) -> Void
     ) {
-        fileAttachment(with: attachmentId) { [weak self] result in
+        attachment(with: attachmentId) { [weak self] result in
             switch result {
             case .success(let attachment):
-                let localURL = ChatMessageFileAttachment.localStorageURL(forRelativePath: attachment.relativeStoragePath)
+                let localURL = AnyChatMessageAttachment.localStorageURL(forRelativePath: attachment.relativeStoragePath)
                 self?.apiClient.downloadAttachment(
                     attachment,
                     to: localURL,
@@ -605,7 +605,7 @@ class MessageUpdater: Worker {
                                 if let error {
                                     completion(.failure(error))
                                 } else {
-                                    self?.fileAttachment(with: attachmentId, completion: completion)
+                                    self?.attachment(with: attachmentId, completion: completion)
                                 }
                             }
                         )
@@ -634,18 +634,15 @@ class MessageUpdater: Worker {
         }, completion: completion)
     }
     
-    private func fileAttachment(
+    private func attachment(
         with attachmentId: AttachmentId,
-        completion: @escaping (Result<ChatMessageFileAttachment, Error>) -> Void
+        completion: @escaping (Result<AnyChatMessageAttachment, Error>) -> Void
     ) {
         database.read({ session in
             guard let attachment = session.attachment(id: attachmentId)?.asAnyModel() else {
                 throw ClientError.AttachmentDoesNotExist(id: attachmentId)
             }
-            guard let fileAttachment = attachment.attachment(payloadType: FileAttachmentPayload.self) else {
-                throw ClientError.AttachmentDownloading(id: attachmentId, reason: "Only file attachments can be downloaded")
-            }
-            return fileAttachment
+            return attachment
         }, completion: completion)
     }
     
@@ -1084,7 +1081,7 @@ extension MessageUpdater {
         }
     }
     
-    func downloadAttachment(with attachmentId: AttachmentId) async throws -> ChatMessageFileAttachment {
+    func downloadAttachment(with attachmentId: AttachmentId) async throws -> AnyChatMessageAttachment {
         try await withCheckedThrowingContinuation { continuation in
             downloadAttachment(with: attachmentId) { result in
                 continuation.resume(with: result)

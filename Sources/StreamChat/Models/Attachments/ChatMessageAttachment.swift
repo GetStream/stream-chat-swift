@@ -146,3 +146,55 @@ public extension ChatMessageAttachment where Payload: AttachmentPayload {
         )
     }
 }
+
+// MARK: - Local Downloads
+
+extension URL {
+    /// The directory URL for attachment downloads.
+    static var streamAttachmentDownloadsDirectory: URL {
+        (FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first ?? FileManager.default.temporaryDirectory)
+            .appendingPathComponent("AttachmentDownloads", isDirectory: true)
+    }
+}
+
+extension AnyChatMessageAttachment {
+    static func localStorageURL(forRelativePath path: String) -> URL {
+        URL(fileURLWithPath: path, isDirectory: false, relativeTo: .streamAttachmentDownloadsDirectory).standardizedFileURL
+    }
+    
+    private func assetInfo() throws -> (title: String?, url: URL) {
+        if let attachment = attachment(payloadType: FileAttachmentPayload.self) {
+            return (attachment.title, attachment.assetURL)
+        }
+        if let attachment = attachment(payloadType: ImageAttachmentPayload.self) {
+            return (attachment.title, attachment.imageURL)
+        }
+        if let attachment = attachment(payloadType: VideoAttachmentPayload.self) {
+            return (attachment.title, attachment.videoURL)
+        }
+        if let attachment = attachment(payloadType: AudioAttachmentPayload.self) {
+            return (attachment.title, attachment.audioURL)
+        }
+        if let attachment = attachment(payloadType: VoiceRecordingAttachmentPayload.self) {
+            return (attachment.title, attachment.voiceRecordingURL)
+        }
+        if let attachment = attachment(payloadType: GiphyAttachmentPayload.self) {
+            return (attachment.title, attachment.previewURL)
+        }
+        throw ClientError.AttachmentDownloading(id: id, reason: "Download is unavailable")
+    }
+    
+    var downloadURL: URL {
+        get throws {
+            try assetInfo().url
+        }
+    }
+    
+    var relativeStoragePath: String {
+        let fileName: String = {
+            guard let assetInfo = try? assetInfo() else { return "unknown" }
+            return assetInfo.title ?? assetInfo.url.lastPathComponent
+        }()
+        return "\(id.messageId)-\(id.index)-\(fileName)"
+    }
+}

@@ -356,7 +356,7 @@ public class Chat {
     ///
     /// The local URL of the downloaded file:
     /// ```swift
-    /// let attachment = try await chat.downloadAttachment(id)
+    /// let attachment = try await chat.downloadAttachment(with: id)
     /// let localURL = attachment.downloadingState?.localFileURL
     /// ```
     ///
@@ -365,8 +365,8 @@ public class Chat {
     /// - Parameter attachmentId: The id of the attachment.
     ///
     /// - Throws: An error while downloading an attachment.
-    /// - Returns: An instance of the downloaded file attachment.
-    @discardableResult public func downloadAttachment(with attachmentId: AttachmentId) async throws -> ChatMessageFileAttachment {
+    /// - Returns: An instance of the downloaded attachment.
+    @discardableResult public func downloadAttachment(with attachmentId: AttachmentId) async throws -> AnyChatMessageAttachment {
         try await messageUpdater.downloadAttachment(with: attachmentId)
     }
     

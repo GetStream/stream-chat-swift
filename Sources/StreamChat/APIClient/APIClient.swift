@@ -295,7 +295,7 @@ class APIClient {
     }
     
     func downloadAttachment(
-        _ attachment: ChatMessageFileAttachment,
+        _ attachment: AnyChatMessageAttachment,
         to localURL: URL,
         progress: ((Double) -> Void)?,
         completion: @escaping (Error?) -> Void

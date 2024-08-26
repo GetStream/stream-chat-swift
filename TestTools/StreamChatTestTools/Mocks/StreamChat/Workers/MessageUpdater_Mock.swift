@@ -17,7 +17,7 @@ final class MessageUpdater_Mock: MessageUpdater {
     @Atomic var deleteMessage_hard: Bool?
 
     @Atomic var downloadAttachment_attachmentId: AttachmentId?
-    @Atomic var downloadAttachment_completion_result: Result<ChatMessageFileAttachment, Error>?
+    @Atomic var downloadAttachment_completion_result: Result<AnyChatMessageAttachment, Error>?
     
     @Atomic var deleteLocalAttachmentDownload_attachmentId: AttachmentId?
     @Atomic var deleteLocalAttachmentDownload_completion_result: Result<Void, Error>?
@@ -265,7 +265,7 @@ final class MessageUpdater_Mock: MessageUpdater {
         deleteLocalAttachmentDownload_completion_result?.invoke(with: completion)
     }
     
-    override func downloadAttachment(with attachmentId: AttachmentId, completion: @escaping (Result<ChatMessageFileAttachment, any Error>) -> Void) {
+    override func downloadAttachment(with attachmentId: AttachmentId, completion: @escaping (Result<AnyChatMessageAttachment, any Error>) -> Void) {
         downloadAttachment_attachmentId = attachmentId
         downloadAttachment_completion_result?.invoke(with: completion)
     }

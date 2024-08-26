@@ -189,9 +189,9 @@ extension AttachmentDownloadingState {
     var fileProgress: String {
         switch state {
         case .downloading(let progress):
-            file.progressDescription(for: progress)
+            return file.progressDescription(for: progress)
         case .downloaded, .downloadingFailed:
-            file.sizeString
+            return file.sizeString
         }
     }
 }
@@ -200,11 +200,11 @@ extension AttachmentUploadingState {
     var fileProgress: String {
         switch state {
         case .uploading(let progress):
-            file.progressDescription(for: progress)
+            return file.progressDescription(for: progress)
         case .pendingUpload:
-            "0 / \(file.sizeString)"
+            return "0 / \(file.sizeString)"
         case .uploaded, .uploadingFailed, .unknown:
-            file.sizeString
+            return file.sizeString
         }
     }
 }
