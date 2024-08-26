@@ -28,6 +28,11 @@ final class ChatFileAttachmentListViewItemView_Tests: XCTestCase {
         fileAttachmentView.content = .mock(id: .unique)
         AssertSnapshot(fileAttachmentView, variants: [.defaultLight])
     }
+    
+    func test_appearance_pdf_whenDownloadedThenShareIcon() throws {
+        fileAttachmentView.content = .mock(id: .unique, localState: nil, localDownloadState: .downloaded)
+        AssertSnapshot(fileAttachmentView, variants: [.defaultLight])
+    }
 
     func test_appearance_pdf_whenUploadingStateIsNil() {
         fileAttachmentView.content = .mock(id: .unique, localState: nil)
