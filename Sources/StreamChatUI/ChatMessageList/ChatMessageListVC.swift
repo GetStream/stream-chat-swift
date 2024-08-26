@@ -991,7 +991,6 @@ open class ChatMessageListVC: _ViewController,
         } else if let downloadingState = attachment.downloadingState, downloadingState.state == .downloaded {
             guard let indexPath, let cell = listView.cellForRow(at: indexPath) else { return }
             let activityViewController = UIActivityViewController(activityItems: [downloadingState.localFileURL], applicationActivities: nil)
-            // TODO: sourceView is incorrect
             activityViewController.popoverPresentationController?.sourceView = cell
             present(activityViewController, animated: true)
         } else {
