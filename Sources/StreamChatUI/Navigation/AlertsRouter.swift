@@ -10,8 +10,7 @@ open class AlertsRouter: NavigationRouter<UIViewController> {
     /// Shows an alert with confirmation for message deletion.
     ///
     /// - Parameters:
-    ///     - confirmed: Completion closure with a `Bool` parameter indicating whether the deletion has been confirmed or not.
-    ///
+    ///   - confirmed: Completion closure with a `Bool` parameter indicating whether the deletion has been confirmed or not.
     open func showMessageDeletionConfirmationAlert(confirmed: @escaping (Bool) -> Void) {
         let alert = UIAlertController(
             title: L10n.Message.Actions.Delete.confirmationTitle,
@@ -40,8 +39,7 @@ open class AlertsRouter: NavigationRouter<UIViewController> {
     /// Shows an alert with confirmation for message flag.
     ///
     /// - Parameters:
-    ///     - confirmed: Completion closure with a `Bool` parameter indicating whether the deletion has been confirmed or not.
-    ///
+    ///   - confirmed: Completion closure with a `Bool` parameter indicating whether the deletion has been confirmed or not.
     open func showMessageFlagConfirmationAlert(confirmed: @escaping (Bool) -> Void) {
         let alert = UIAlertController(
             title: L10n.Message.Actions.Flag.confirmationTitle,
@@ -125,10 +123,10 @@ open class AlertsRouter: NavigationRouter<UIViewController> {
         rootViewController.present(alert, animated: true)
     }
 
-    /// Shows an alert to confirm that the user wants to end the pol;l.
+    /// Shows an alert to confirm that the user wants to end the poll.
     ///
     /// - Parameters:
-    ///   - poll: The poll to be eneded
+    ///   - poll: The poll to be ended.
     ///   - messageId: The messageId which the poll belongs to.
     open func showPollEndVoteAlert(
         for poll: Poll,
