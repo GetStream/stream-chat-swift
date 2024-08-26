@@ -167,8 +167,10 @@ open class PollResultsVC:
     // MARK: - UITableViewDelegate
 
     open func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-        guard let poll = pollController.poll else { return nil }
-        let option = poll.options[section]
+        guard let poll = pollController.poll,
+              let option = poll.options[safe: section] else {
+            return nil
+        }
         let view = tableView.dequeueReusableHeaderFooter(with: components.pollResultsSectionHeaderView)
         view.content = .init(option: option, poll: poll)
         style(sectionHeaderView: view, contentView: view.container, isEmptySection: option.latestVotes.isEmpty)

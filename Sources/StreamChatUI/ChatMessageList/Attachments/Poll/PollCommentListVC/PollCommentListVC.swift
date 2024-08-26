@@ -110,18 +110,7 @@ open class PollCommentListVC:
         tableView.delegate = self
 
         footerView.onTap = { [weak self] in
-            guard let self = self, let poll = self.pollController.poll else { return }
-            guard let currentUserId = self.pollController.client.currentUserId else { return }
-            let messageId = pollController.messageId
-            self.alertsRouter.showPollAddCommentAlert(
-                for: poll,
-                in: messageId,
-                currentUserId: currentUserId
-            ) { [weak self] comment in
-                self?.pollController.castPollVote(answerText: comment, optionId: nil) { _ in
-                    self?.tableView.scrollToRow(at: IndexPath(item: 0, section: 0), at: .top, animated: true)
-                }
-            }
+            self?.addComment()
         }
 
         commentsController.synchronize()
@@ -167,12 +156,11 @@ open class PollCommentListVC:
     // MARK: - UITableViewDelegate
 
     public func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-        guard !commentsController.votes.isEmpty else {
+        guard let comment = commentsController.votes[safe: section] else {
             return nil
         }
 
         let view = tableView.dequeueReusableHeaderFooter(with: components.pollCommentListSectionHeaderView)
-        let comment = commentsController.votes[section]
         view.content = .init(comment: comment)
         style(sectionHeaderView: view, contentView: view.container, isEmptySection: false)
         return view
@@ -205,6 +193,22 @@ open class PollCommentListVC:
         isPaginatingComments = true
         commentsController.loadMoreVotes { [weak self] error in
             self?.didFinishLoadingMoreComments(with: error)
+        }
+    }
+
+    /// Called when adding a comment on the poll. By default, it shows an alert with an input.
+    open func addComment() {
+        guard let poll = pollController.poll else { return }
+        guard let currentUserId = pollController.client.currentUserId else { return }
+        let messageId = pollController.messageId
+        alertsRouter.showPollAddCommentAlert(
+            for: poll,
+            in: messageId,
+            currentUserId: currentUserId
+        ) { [weak self] comment in
+            self?.pollController.castPollVote(answerText: comment, optionId: nil) { _ in
+                self?.tableView.scrollToRow(at: IndexPath(item: 0, section: 0), at: .top, animated: true)
+            }
         }
     }
 
