@@ -61,8 +61,8 @@ public struct AttachmentDownloadingState: Hashable {
     /// - Note: The local file URL is available when the state is `.downloaded`.
     public let localFileURL: URL?
     
-    /// The local state of the attachment.
-    public let state: LocalAttachmentState
+    /// The local download state of the attachment.
+    public let state: LocalAttachmentDownloadState
     
     /// The information about file size/mimeType.
     public let file: AttachmentFile

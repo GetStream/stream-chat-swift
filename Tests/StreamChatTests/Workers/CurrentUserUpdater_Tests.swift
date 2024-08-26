@@ -684,7 +684,7 @@ final class CurrentUserUpdater_Tests: XCTestCase {
         try database.writeSynchronously { session in
             let dto = try session.createNewAttachment(attachment: payload, id: attachmentId)
             let localRelativePath = messageId + "-file.txt"
-            dto.localState = .downloaded
+            dto.localDownloadState = .downloaded
             dto.localRelativePath = localRelativePath
             let localFileURL = ChatMessageFileAttachment.localStorageURL(forRelativePath: localRelativePath)
             try UUID().uuidString.write(to: localFileURL, atomically: false, encoding: .utf8)

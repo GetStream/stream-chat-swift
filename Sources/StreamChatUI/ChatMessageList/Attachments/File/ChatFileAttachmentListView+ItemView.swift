@@ -114,24 +114,48 @@ extension ChatMessageFileAttachmentListView {
             // If we cannot fetch filename, let's use only content type.
             fileNameLabel.text = content?.payload.title ?? content?.type.rawValue
 
-            let localAttachmentState: LocalAttachmentState? = content?.uploadingState?.state ?? content?.downloadingState?.state
-            switch localAttachmentState {
-            case .uploaded, .downloaded, .none:
+            let downloadState = content?.downloadingState?.state
+            let uploadState = content?.uploadingState?.state
+            
+            if let downloadState {
+                switch downloadState {
+                case .downloading:
+                    fileSizeLabel.text = content?.downloadingState?.fileProgress
+                case .downloaded, .downloadingFailed:
+                    fileSizeLabel.text = content?.payload.file.sizeString
+                }
+            } else if let uploadState {
+                switch uploadState {
+                case .uploading:
+                    fileSizeLabel.text = content?.uploadingState?.fileProgress
+                case .uploadingFailed:
+                    fileSizeLabel.text = L10n.Message.Sending.attachmentUploadingFailed
+                case .pendingUpload, .uploaded, .unknown:
+                    fileSizeLabel.text = content?.payload.file.sizeString
+                }
+            } else {
                 fileSizeLabel.text = content?.payload.file.sizeString
-            case .uploadingFailed:
-                fileSizeLabel.text = L10n.Message.Sending.attachmentUploadingFailed
-            default:
-                fileSizeLabel.text = content?.uploadingState?.fileProgress ?? content?.downloadingState?.fileProgress
             }
+            
+            actionIconImageView.image = appearance.fileAttachmentActionIcon(
+                uploadState: uploadState,
+                downloadState: downloadState
+            )
 
-            actionIconImageView.image = appearance.fileAttachmentActionIcon(for: localAttachmentState)
-
-            switch localAttachmentState {
-            case .pendingUpload, .uploading, .downloading:
-                loadingIndicator.isVisible = true
-            default:
-                loadingIndicator.isVisible = false
-            }
+            loadingIndicator.isVisible = {
+                if let downloadState, case .downloading = downloadState {
+                    return true
+                }
+                if let uploadState {
+                    switch uploadState {
+                    case .pendingUpload, .uploading:
+                        return true
+                    default:
+                        return false
+                    }
+                }
+                return false
+            }()
 
             if content?.file.type == .unknown {
                 fileNameLabel.text = L10n.Message.unsupportedAttachment

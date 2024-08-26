@@ -34,25 +34,16 @@ public enum LocalAttachmentState: Hashable {
     case uploadingFailed
     /// The attachment is successfully uploaded.
     case uploaded
+}
+
+/// A local download state of the attachment.
+public enum LocalAttachmentDownloadState: Hashable {
     /// The attachment is being downloaded.
     case downloading(progress: Double)
     /// The attachment download failed.
     case downloadingFailed
     /// The attachment has been downloaded.
     case downloaded
-    
-    var isUploading: Bool {
-        switch self {
-        case .pendingUpload, .uploading, .uploadingFailed, .uploaded:
-            return true
-        case .unknown, .downloading, .downloadingFailed, .downloaded:
-            return false
-        }
-    }
-    
-    var isDownloading: Bool {
-        !isUploading
-    }
 }
 
 /// An attachment action, e.g. send, shuffle.

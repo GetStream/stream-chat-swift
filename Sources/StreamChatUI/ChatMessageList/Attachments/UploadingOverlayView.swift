@@ -114,8 +114,6 @@ open class UploadingOverlayView: _View, ThemeProvider {
             case .pendingUpload, .uploading, .unknown:
                 // TODO: Return `.cancel` when it's is supported.
                 return nil
-            case .downloaded, .downloading, .downloadingFailed:
-                return nil
             case .uploadingFailed:
                 return .restart
             case .uploaded:
@@ -130,7 +128,7 @@ open class UploadingOverlayView: _View, ThemeProvider {
                 return uploadingProgressFormatter.format(progress)
             case .pendingUpload:
                 return uploadingProgressFormatter.format(0)
-            case .uploaded, .unknown, .downloaded, .downloading, .downloadingFailed:
+            case .uploaded, .unknown:
                 return nil
             case .uploadingFailed:
                 return L10n.Message.Sending.attachmentUploadingFailed
@@ -156,34 +154,57 @@ open class UploadingOverlayView: _View, ThemeProvider {
 }
 
 extension Appearance {
-    func fileAttachmentActionIcon(for state: LocalAttachmentState?) -> UIImage? {
-        images.fileAttachmentActionIcons[state]
+    func fileAttachmentActionIcon(uploadState: LocalAttachmentState?, downloadState: LocalAttachmentDownloadState?) -> UIImage? {
+        if let uploadState {
+            return images.fileAttachmentActionIcons[uploadState]
+        }
+        return images.fileAttachmentDownloadActionIcons[downloadState]
     }
 }
 
 extension LocalAttachmentState {
     func progressDescription(for file: AttachmentFile) -> String {
         switch self {
-        case .uploading(let progress), .downloading(let progress):
+        case .uploading(let progress):
             let uploadedByteCount = Int64(Double(file.size) * progress)
             let uploadedSize = AttachmentFile.sizeFormatter.string(fromByteCount: uploadedByteCount)
             return "\(uploadedSize)/\(file.sizeString)"
         case .pendingUpload:
             return "0/\(file.sizeString)"
-        case .uploaded, .uploadingFailed, .unknown, .downloaded, .downloadingFailed:
+        case .uploaded, .uploadingFailed, .unknown:
             return file.sizeString
         }
     }
 }
 
+private extension AttachmentFile {
+    func progressDescription(for progress: Double) -> String {
+        let uploadedByteCount = Int64(Double(size) * progress)
+        let uploadedSize = AttachmentFile.sizeFormatter.string(fromByteCount: uploadedByteCount)
+        return "\(uploadedSize) / \(sizeString)"
+    }
+}
+
 extension AttachmentDownloadingState {
     var fileProgress: String {
-        state.progressDescription(for: file)
+        switch state {
+        case .downloading(let progress):
+            file.progressDescription(for: progress)
+        case .downloaded, .downloadingFailed:
+            file.sizeString
+        }
     }
 }
 
 extension AttachmentUploadingState {
     var fileProgress: String {
-        state.progressDescription(for: file)
+        switch state {
+        case .uploading(let progress):
+            file.progressDescription(for: progress)
+        case .pendingUpload:
+            "0 / \(file.sizeString)"
+        case .uploaded, .uploadingFailed, .unknown:
+            file.sizeString
+        }
     }
 }

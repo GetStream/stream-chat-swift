@@ -206,7 +206,7 @@ extension ChatMessageVoiceRecordingAttachmentListView {
 
             switch content?.uploadingState?.state {
             case .uploadingFailed:
-                fileIconImageView.image = appearance.fileAttachmentActionIcon(for: .uploadingFailed)
+                fileIconImageView.image = appearance.fileAttachmentActionIcon(uploadState: .uploadingFailed, downloadState: nil)
             default:
                 fileIconImageView.image = appearance.images.fileAac
             }

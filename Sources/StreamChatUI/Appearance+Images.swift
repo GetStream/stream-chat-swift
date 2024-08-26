@@ -235,11 +235,21 @@ public extension Appearance {
             get { _fileAttachmentActionIcons ??
                 [
                     .uploadingFailed: restart,
-                    .downloaded: share,
-                    .none: download
+                    nil: folder
                 ]
             }
             set { _fileAttachmentActionIcons = newValue }
+        }
+
+        private var _fileAttachmentDownloadActionIcons: [LocalAttachmentDownloadState?: UIImage]?
+        public var fileAttachmentDownloadActionIcons: [LocalAttachmentDownloadState?: UIImage] {
+            get { _fileAttachmentDownloadActionIcons ??
+                [
+                    .downloaded: share,
+                    nil: download
+                ]
+            }
+            set { _fileAttachmentDownloadActionIcons = newValue }
         }
 
         public var camera: UIImage = loadImageSafely(with: "camera")

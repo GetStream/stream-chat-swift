@@ -634,7 +634,10 @@ class MessageUpdater: Worker {
         }, completion: completion)
     }
     
-    private func fileAttachment(with attachmentId: AttachmentId, completion: @escaping (Result<ChatMessageFileAttachment, Error>) -> Void) {
+    private func fileAttachment(
+        with attachmentId: AttachmentId,
+        completion: @escaping (Result<ChatMessageFileAttachment, Error>) -> Void
+    ) {
         database.read({ session in
             guard let attachment = session.attachment(id: attachmentId)?.asAnyModel() else {
                 throw ClientError.AttachmentDoesNotExist(id: attachmentId)
@@ -646,19 +649,24 @@ class MessageUpdater: Worker {
         }, completion: completion)
     }
     
-    private func updateDownloadProgress(for attachmentId: AttachmentId, newState: LocalAttachmentState, localURL: URL, completion: (() -> Void)? = nil) {
+    private func updateDownloadProgress(
+        for attachmentId: AttachmentId,
+        newState: LocalAttachmentDownloadState,
+        localURL: URL,
+        completion: (() -> Void)? = nil
+    ) {
         database.write({ session in
             guard let attachmentDTO = session.attachment(id: attachmentId) else { return }
             let needsUpdate: Bool = {
-                if case let .downloading(lastProgress) = attachmentDTO.localState,
+                if case let .downloading(lastProgress) = attachmentDTO.localDownloadState,
                    case let .downloading(currentProgress) = newState {
                     return abs(currentProgress - lastProgress) >= Self.minSignificantDownloadingProgressChange
                 } else {
-                    return attachmentDTO.localState != newState
+                    return attachmentDTO.localDownloadState != newState
                 }
             }()
             guard needsUpdate else { return }
-            attachmentDTO.localState = newState
+            attachmentDTO.localDownloadState = newState
             // Store only the relative path because sandboxed base URL can change between app launchs
             attachmentDTO.localRelativePath = localURL.relativePath
         }, completion: { _ in

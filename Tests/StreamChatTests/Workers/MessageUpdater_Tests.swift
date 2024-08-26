@@ -1931,7 +1931,7 @@ final class MessageUpdater_Tests: XCTestCase {
         let result = try waitFor { messageUpdater.downloadAttachment(with: attachmentId, completion: $0) }
         let value = try XCTUnwrap(result.value)
         XCTAssertEqual(attachmentId, value.id)
-        XCTAssertEqual(LocalAttachmentState.downloaded, value.downloadingState?.state)
+        XCTAssertEqual(LocalAttachmentDownloadState.downloaded, value.downloadingState?.state)
         XCTAssertEqual(ChatMessageFileAttachment.localStorageURL(forRelativePath: value.relativeStoragePath), value.downloadingState?.localFileURL)
     }
     

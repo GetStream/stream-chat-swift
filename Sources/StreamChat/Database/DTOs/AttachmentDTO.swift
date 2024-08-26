@@ -24,7 +24,7 @@ class AttachmentDTO: NSManagedObject {
         set { type = newValue.rawValue }
     }
 
-    /// An attachment local state.
+    /// An attachment local upload state.
     @NSManaged private var localStateRaw: String?
     @NSManaged private var localProgress: Double
     var localState: LocalAttachmentState? {
@@ -34,6 +34,19 @@ class AttachmentDTO: NSManagedObject {
         }
         set {
             localStateRaw = newValue?.rawValue
+            localProgress = newValue?.progress ?? 0
+        }
+    }
+    
+    /// An attachment local download state.
+    @NSManaged private var localDownloadStateRaw: String?
+    var localDownloadState: LocalAttachmentDownloadState? {
+        get {
+            guard let localDownloadStateRaw else { return nil }
+            return LocalAttachmentDownloadState(rawValue: localDownloadStateRaw, progress: localProgress)
+        }
+        set {
+            localDownloadStateRaw = newValue?.rawValue
             localProgress = newValue?.progress ?? 0
         }
     }
@@ -83,7 +96,7 @@ class AttachmentDTO: NSManagedObject {
     static func downloadedFetchRequest() -> NSFetchRequest<AttachmentDTO> {
         let request = NSFetchRequest<AttachmentDTO>(entityName: AttachmentDTO.entityName)
         request.sortDescriptors = [NSSortDescriptor(keyPath: \AttachmentDTO.id, ascending: true)]
-        request.predicate = NSPredicate(format: "localStateRaw == %@", LocalAttachmentState.downloaded.rawValue)
+        request.predicate = NSPredicate(format: "localDownloadStateRaw == %@", LocalAttachmentDownloadState.downloaded.rawValue)
         return request
     }
     
@@ -104,14 +117,14 @@ class AttachmentDTO: NSManagedObject {
     static func loadAllDownloadedAttachments(context: NSManagedObjectContext) -> [AttachmentDTO] {
         let request = NSFetchRequest<AttachmentDTO>(entityName: AttachmentDTO.entityName)
         request.sortDescriptors = [NSSortDescriptor(keyPath: \AttachmentDTO.id, ascending: true)]
-        request.predicate = NSPredicate(format: "localStateRaw == %@", LocalAttachmentState.downloaded.rawValue)
+        request.predicate = NSPredicate(format: "localDownloadStateRaw == %@", LocalAttachmentDownloadState.downloaded.rawValue)
         return load(by: request, context: context)
     }
 }
 
 extension AttachmentDTO: EphemeralValuesContainer {
     func resetEphemeralValues() {
-        switch localState {
+        switch localDownloadState {
         case .downloading, .downloadingFailed:
             localState = nil
             localURL = nil
@@ -142,10 +155,11 @@ extension NSManagedObjectContext: AttachmentDatabaseSession {
         dto.message = messageDTO
 
         // Keep local state for downloaded attachments
-        if dto.localState?.isUploading == true {
-            dto.localURL = nil
+        if dto.localDownloadState == nil {
             dto.localRelativePath = nil
             dto.localState = nil
+            dto.localDownloadState = nil
+            dto.localURL = nil
         }
 
         return dto
@@ -183,7 +197,7 @@ extension NSManagedObjectContext: AttachmentDatabaseSession {
 
 private extension AttachmentDTO {
     var downloadingState: AttachmentDownloadingState? {
-        guard let localState, localState.isDownloading else { return nil }
+        guard let localDownloadState else { return nil }
         // Only file attachments can be downloaded.
         guard let filePayload = try? JSONDecoder.stream.decode(FileAttachmentPayload.self, from: data) else { return nil }
         
@@ -194,7 +208,7 @@ private extension AttachmentDTO {
         
         return AttachmentDownloadingState(
             localFileURL: localFileURL,
-            state: localState,
+            state: localDownloadState,
             file: filePayload.file
         )
     }
@@ -204,7 +218,6 @@ private extension AttachmentDTO {
             let localURL = localURL,
             let localState = localState
         else { return nil }
-        guard localState.isUploading else { return nil }
 
         do {
             return .init(
@@ -267,20 +280,12 @@ extension LocalAttachmentState {
             return "uploadingFailed"
         case .uploaded:
             return "uploaded"
-        case .downloading:
-            return "downloading"
-        case .downloadingFailed:
-            return "downloadingFailed"
-        case .downloaded:
-            return "downloaded"
         }
     }
 
     var progress: Double {
         switch self {
         case let .uploading(progress):
-            return progress
-        case let .downloading(progress):
             return progress
         default:
             return 0
@@ -299,14 +304,43 @@ extension LocalAttachmentState {
             self = .uploaded
         case LocalAttachmentState.unknown.rawValue:
             self = .unknown
-        case LocalAttachmentState.downloaded.rawValue:
-            self = .downloaded
-        case LocalAttachmentState.downloadingFailed.rawValue:
-            self = .downloadingFailed
-        case LocalAttachmentState.downloading(progress: 0).rawValue:
-            self = .downloading(progress: progress)
         default:
             self = .unknown
+        }
+    }
+}
+
+extension LocalAttachmentDownloadState {
+    var rawValue: String {
+        switch self {
+        case .downloading:
+            return "downloading"
+        case .downloadingFailed:
+            return "downloadingFailed"
+        case .downloaded:
+            return "downloaded"
+        }
+    }
+    
+    var progress: Double {
+        switch self {
+        case let .downloading(progress):
+            return progress
+        default:
+            return 0
+        }
+    }
+    
+    init?(rawValue: String, progress: Double) {
+        switch rawValue {
+        case LocalAttachmentDownloadState.downloaded.rawValue:
+            self = .downloaded
+        case LocalAttachmentDownloadState.downloadingFailed.rawValue:
+            self = .downloadingFailed
+        case LocalAttachmentDownloadState.downloading(progress: 0).rawValue:
+            self = .downloading(progress: progress)
+        default:
+            return nil
         }
     }
 }
