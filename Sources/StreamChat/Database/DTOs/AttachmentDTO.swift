@@ -126,6 +126,7 @@ extension AttachmentDTO: EphemeralValuesContainer {
     func resetEphemeralValues() {
         switch localDownloadState {
         case .downloading, .downloadingFailed:
+            localDownloadState = nil
             localState = nil
             localURL = nil
             localRelativePath = nil
@@ -156,10 +157,10 @@ extension NSManagedObjectContext: AttachmentDatabaseSession {
 
         // Keep local state for downloaded attachments
         if dto.localDownloadState == nil {
-            dto.localRelativePath = nil
-            dto.localState = nil
             dto.localDownloadState = nil
+            dto.localState = nil
             dto.localURL = nil
+            dto.localRelativePath = nil
         }
 
         return dto

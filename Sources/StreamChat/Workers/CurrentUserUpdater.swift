@@ -172,6 +172,7 @@ class CurrentUserUpdater: Worker {
                         }
                     }
                 }
+                attachment.localDownloadState = nil
                 attachment.localState = nil
                 attachment.localRelativePath = nil
                 attachment.localURL = nil

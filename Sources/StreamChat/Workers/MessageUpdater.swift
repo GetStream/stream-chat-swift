@@ -627,7 +627,7 @@ class MessageUpdater: Worker {
             guard let localURL = attachment.downloadingState?.localFileURL else { return }
             guard FileManager.default.fileExists(atPath: localURL.path) else { return }
             try FileManager.default.removeItem(at: localURL)
-            dto?.localState = nil
+            dto?.localDownloadState = nil
             dto?.localRelativePath = nil
             dto?.localState = nil
             dto?.localURL = nil
