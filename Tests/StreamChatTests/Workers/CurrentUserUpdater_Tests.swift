@@ -651,7 +651,9 @@ final class CurrentUserUpdater_Tests: XCTestCase {
             let paths = try? FileManager.default.subpathsOfDirectory(atPath: URL.streamAttachmentDownloadsDirectory.path)
             return paths?.count ?? 0
         }
-        try FileManager.default.removeItem(at: .streamAttachmentDownloadsDirectory)
+        if FileManager.default.fileExists(atPath: URL.streamAttachmentDownloadsDirectory.path) {
+            try FileManager.default.removeItem(at: .streamAttachmentDownloadsDirectory)
+        }
         
         let attachmentIds = try (0..<5).map { _ in try setUpDownloadedAttachment(with: .mockFile) }
         XCTAssertEqual(5, storedFileCount())
