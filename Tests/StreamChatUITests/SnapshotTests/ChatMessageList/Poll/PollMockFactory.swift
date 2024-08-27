@@ -20,6 +20,7 @@ struct PollMockFactory {
         latestAnswers: [PollVote] = [],
         enforceUniqueVote: Bool = false,
         maxVotesAllowed: Int? = nil,
+        votingVisibility: VotingVisibility? = nil,
         createdBy: ChatUser? = nil
     ) -> Poll {
         Poll.mock(
@@ -38,6 +39,7 @@ struct PollMockFactory {
             ],
             isClosed: isClosed,
             maxVotesAllowed: maxVotesAllowed,
+            votingVisibility: votingVisibility,
             createdBy: createdBy ?? currentUser,
             latestAnswers: latestAnswers,
             options: [
