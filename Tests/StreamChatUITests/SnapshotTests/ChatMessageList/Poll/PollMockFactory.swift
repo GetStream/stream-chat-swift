@@ -15,6 +15,7 @@ struct PollMockFactory {
     func makePoll(
         isClosed: Bool = false,
         allowAnswers: Bool = false,
+        allowUserSuggestedOptions: Bool = false,
         answersCount: Int = 0,
         latestAnswers: [PollVote] = [],
         enforceUniqueVote: Bool = false,
@@ -23,6 +24,7 @@ struct PollMockFactory {
     ) -> Poll {
         Poll.mock(
             allowAnswers: allowAnswers,
+            allowUserSuggestedOptions: allowUserSuggestedOptions,
             answersCount: answersCount,
             enforceUniqueVote: enforceUniqueVote,
             name: "The Best Football Player of All Time A.K.A. The Goat",

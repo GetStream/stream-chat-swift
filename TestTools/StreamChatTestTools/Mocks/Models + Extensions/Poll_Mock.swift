@@ -8,7 +8,7 @@ import Foundation
 extension Poll {
     static func mock(
         allowAnswers: Bool = true,
-        allowUserSuggestedOptions: Bool = true,
+        allowUserSuggestedOptions: Bool = false,
         answersCount: Int = 0,
         createdAt: Date = .unique,
         pollDescription: String? = nil,
