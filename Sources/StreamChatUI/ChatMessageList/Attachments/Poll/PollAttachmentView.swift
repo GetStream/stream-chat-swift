@@ -39,7 +39,7 @@ open class PollAttachmentView: _View, ThemeProvider {
     /// A closure that is triggered whenever the add comment button is tapped.
     public var onAddCommentTap: ((Poll) -> Void)?
 
-    /// A closure that is triggered whenever the add comment button is tapped.
+    /// A closure that is triggered whenever the add suggestion button is tapped.
     public var onSuggestOptionTap: ((Poll) -> Void)?
 
     // MARK: - UI Components
