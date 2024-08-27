@@ -11,6 +11,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Fix `PollOption.latestVotes` sorting [#3374](https://github.com/GetStream/stream-chat-swift/pull/3374)
 - Fix `Poll.latestAnswers` sorting [#3374](https://github.com/GetStream/stream-chat-swift/pull/3374)
 - Fix `Poll` updates not triggering message updates in `ChannelController` [#3374](https://github.com/GetStream/stream-chat-swift/pull/3374)
+- Fix `Poll.latestAnswers` being reset on events, causing "Add a comment" button to not update in the UI SDKs [#3398](https://github.com/GetStream/stream-chat-swift/pull/3398)
+- Fix `PollVoteListController` resetting the first page when loading a new page [#3398](https://github.com/GetStream/stream-chat-swift/pull/3398)
+- Fix `PollVoteListController` default sorting being from oldest to newest from the server response [#3398](https://github.com/GetStream/stream-chat-swift/pull/3398)
 ### 🔄 Changed
 - Deprecates `PollVoteListQuery(pollId:optionId:pagination:filter:)` initializer in favor of `(pollId:filter:pagination:)` [#3381](https://github.com/GetStream/stream-chat-swift/pull/3381)
 
@@ -19,6 +22,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - ✨ Introducing `ViewContainerBuilder`, a new, easier way to customize views [#3374](https://github.com/GetStream/stream-chat-swift/pull/3374) (Learn more by reading the docs [here](https://getstream.io/chat/docs/sdk/ios/uikit/custom-components/))
 - Add `PollAttachmentView` component to render polls in the message list [#3374](https://github.com/GetStream/stream-chat-swift/pull/3374)
 - Add `PollResultsVC` component to show the results of a poll [#3381](https://github.com/GetStream/stream-chat-swift/pull/3381)
+- Add `PollCommentListVC` component to show the comments of a poll [#3398](https://github.com/GetStream/stream-chat-swift/pull/3398)
 - Add `ChatUserAvatarView.shouldShowOnlineIndicator` to disable the online indicator easily [#3374](https://github.com/GetStream/stream-chat-swift/pull/3374)
 ### 🎭 New Localizations
 - `polls.subtitle.selectOne`
