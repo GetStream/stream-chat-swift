@@ -152,8 +152,11 @@ public extension ChatMessageAttachment where Payload: AttachmentPayload {
 
 // MARK: - Local Downloads
 
+/// The attachment payload which can be downloaded.
+public typealias DownloadableAttachmentPayload = AttachmentPayloadDownloading & AttachmentPayload
+
 /// A capability of downloading attachment payload data to the local storage.
-public protocol AttachmentPayloadDownloading: AttachmentPayload {
+public protocol AttachmentPayloadDownloading {
     /// The file name used for storing the attachment file locally.
     ///
     /// Example: `myfile.txt`

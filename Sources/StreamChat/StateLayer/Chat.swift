@@ -368,13 +368,15 @@ public class Chat {
     /// - Returns: An instance of the downloaded attachment which includes the local URL.
     @discardableResult public func downloadAttachment<Payload>(
         _ attachment: ChatMessageAttachment<Payload>
-    ) async throws -> ChatMessageAttachment<Payload> where Payload: AttachmentPayloadDownloading {
+    ) async throws -> ChatMessageAttachment<Payload> where Payload: DownloadableAttachmentPayload {
         try await messageUpdater.downloadAttachment(attachment)
     }
     
     /// Deletes the locally downloaded file.
     ///
     /// - Parameter attachmentId: The id of the attachment.
+    ///
+    /// - SeeAlso: Deleting all the local downloads: ``ConnectedUser/deleteAllLocalAttachmentDownloads()``
     ///
     /// - Throws: An error while deleting a downloaded file.
     public func deleteLocalAttachmentDownload(for attachmentId: AttachmentId) async throws {

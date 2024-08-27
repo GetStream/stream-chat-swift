@@ -3084,7 +3084,7 @@ extension MessageUpdater_Tests {
         attachment: ChatMessageAttachment<PayloadData>,
         messageId: MessageId = .unique,
         cid: ChannelId = .unique
-    ) throws -> ChatMessageAttachment<PayloadData> where PayloadData: AttachmentPayloadDownloading {
+    ) throws -> ChatMessageAttachment<PayloadData> where PayloadData: DownloadableAttachmentPayload {
         let attachmentId: AttachmentId = .init(cid: cid, messageId: messageId, index: 0)
         try database.createChannel(cid: cid, withMessages: false)
         try database.createMessage(id: messageId, cid: cid)

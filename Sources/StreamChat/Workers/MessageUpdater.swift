@@ -581,7 +581,7 @@ class MessageUpdater: Worker {
     func downloadAttachment<Payload>(
         _ attachment: ChatMessageAttachment<Payload>,
         completion: @escaping (Result<ChatMessageAttachment<Payload>, Error>) -> Void
-    ) where Payload: AttachmentPayloadDownloading {
+    ) where Payload: DownloadableAttachmentPayload {
         let attachmentId = attachment.id
         let localURL = URL.streamAttachmentLocalStorageURL(forRelativePath: attachment.relativeStoragePath)
         apiClient.downloadFile(
@@ -633,7 +633,7 @@ class MessageUpdater: Worker {
         newState: LocalAttachmentDownloadState,
         localURL: URL,
         completion: ((Result<ChatMessageAttachment<Payload>, Error>) -> Void)? = nil
-    ) where Payload: AttachmentPayloadDownloading {
+    ) where Payload: DownloadableAttachmentPayload {
         var model: ChatMessageAttachment<Payload>?
         database.write({ session in
             guard let attachmentDTO = session.attachment(id: attachmentId) else {
@@ -1079,7 +1079,9 @@ extension MessageUpdater {
         }
     }
     
-    func downloadAttachment<Payload>(_ attachment: ChatMessageAttachment<Payload>) async throws -> ChatMessageAttachment<Payload> where Payload: AttachmentPayload, Payload: AttachmentPayloadDownloading {
+    func downloadAttachment<Payload>(
+        _ attachment: ChatMessageAttachment<Payload>
+    ) async throws -> ChatMessageAttachment<Payload> where Payload: DownloadableAttachmentPayload {
         try await withCheckedThrowingContinuation { continuation in
             downloadAttachment(attachment) { result in
                 continuation.resume(with: result)

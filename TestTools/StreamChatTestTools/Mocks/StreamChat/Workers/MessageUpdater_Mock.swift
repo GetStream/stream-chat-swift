@@ -265,7 +265,10 @@ final class MessageUpdater_Mock: MessageUpdater {
         deleteLocalAttachmentDownload_completion_result?.invoke(with: completion)
     }
     
-    override func downloadAttachment<Payload>(_ attachment: ChatMessageAttachment<Payload>, completion: @escaping (Result<ChatMessageAttachment<Payload>, any Error>) -> Void) where Payload : AttachmentPayloadDownloading {
+    override func downloadAttachment<Payload>(
+        _ attachment: ChatMessageAttachment<Payload>,
+        completion: @escaping (Result<ChatMessageAttachment<Payload>, any Error>) -> Void
+    ) where Payload : DownloadableAttachmentPayload {
         downloadAttachment_attachmentId = attachment.id
         switch downloadAttachment_completion_result {
         case .success(let anyAttachment):
