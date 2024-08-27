@@ -61,6 +61,10 @@ class PollController_Mock: PollController {
         super.init(client: .mock, messageId: .unique, pollId: .unique)
     }
 
+    init(client: ChatClient_Mock) {
+        super.init(client: client, messageId: .unique, pollId: .unique)
+    }
+
     var mockedPoll: Poll?
     override var poll: Poll? {
         mockedPoll
