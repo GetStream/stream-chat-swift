@@ -5,36 +5,39 @@
 @testable import StreamChat
 import Foundation
 
-extension ChatMessageImageAttachment {
-    /// Creates a new `ChatMessageImageAttachment` object from the provided data.
-    public static func mock(
+public extension ChatMessageVideoAttachment {
+    static func mock(
         id: AttachmentId,
-        imageURL: URL = .localYodaImage,
-        title: String = URL.localYodaImage.lastPathComponent,
+        title: String = "Sample.mp4",
+        thumbnailURL: URL? = nil,
+        videoRemoteURL: URL = URL(string: "http://asset.url/video.mp4")!,
+        file: AttachmentFile = AttachmentFile(type: .mp4, size: 1200, mimeType: "video/mp4"),
         localState: LocalAttachmentState? = .uploaded,
         localDownloadState: LocalAttachmentDownloadState? = nil,
         extraData: [String: RawJSON]? = nil
     ) -> Self {
         .init(
             id: id,
-            type: .image,
-            payload: .init(
+            type: .video,
+            payload: VideoAttachmentPayload(
                 title: title,
-                imageRemoteURL: imageURL,
+                videoRemoteURL: videoRemoteURL,
+                thumbnailURL: thumbnailURL,
+                file: file,
                 extraData: extraData
             ),
             downloadingState: localDownloadState.map {
                 .init(
                     localFileURL: $0 == .downloaded ? .newTemporaryFileURL() : nil,
                     state: $0,
-                    file: try! AttachmentFile(url: imageURL)
+                    file: file
                 )
             },
             uploadingState: localState.map {
                 .init(
-                    localFileURL: imageURL,
+                    localFileURL: .newTemporaryFileURL(),
                     state: $0,
-                    file: try! AttachmentFile(url: imageURL)
+                    file: file
                 )
             }
         )

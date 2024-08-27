@@ -32,10 +32,10 @@ final class APIClient_Spy: APIClient, Spy {
     @Atomic var unmanagedRequest_completion: Any?
     @Atomic var unmanagedRequest_allRecordedCalls: [(endpoint: AnyEndpoint, completion: Any?)] = []
 
-    @Atomic var downloadAttachment_attachment: AnyChatMessageAttachment?
-    @Atomic var downloadAttachment_localURL: URL?
-    @Atomic var downloadAttachment_completion_result: Result<Void, Error>?
-    @Atomic var downloadAttachment_expectation: XCTestExpectation
+    @Atomic var downloadFile_remoteURL: URL?
+    @Atomic var downloadFile_localURL: URL?
+    @Atomic var downloadFile_completion_result: Result<Void, Error>?
+    @Atomic var downloadFile_expectation: XCTestExpectation
     
     /// The last endpoint `uploadFile` function was called with.
     @Atomic var uploadFile_attachment: AnyChatMessageAttachment?
@@ -67,9 +67,9 @@ final class APIClient_Spy: APIClient, Spy {
         recoveryRequest_allRecordedCalls = []
         recoveryRequest_completion = nil
 
-        downloadAttachment_attachment = nil
-        downloadAttachment_localURL = nil
-        downloadAttachment_completion_result = nil
+        downloadFile_remoteURL = nil
+        downloadFile_localURL = nil
+        downloadFile_completion_result = nil
         
         uploadFile_attachment = nil
         uploadFile_progress = nil
@@ -90,7 +90,7 @@ final class APIClient_Spy: APIClient, Spy {
         init_requestEncoder = requestEncoder
         init_requestDecoder = requestDecoder
         init_attachmentUploader = attachmentUploader
-        downloadAttachment_expectation = .init()
+        downloadFile_expectation = .init()
         request_expectation = .init()
         recoveryRequest_expectation = .init()
         uploadRequest_expectation = .init()
@@ -167,16 +167,16 @@ final class APIClient_Spy: APIClient, Spy {
         }
     }
 
-    override func downloadAttachment(
-        _ attachment: AnyChatMessageAttachment,
+    override func downloadFile(
+        from remoteURL: URL,
         to localURL: URL,
         progress: ((Double) -> Void)?,
         completion: @escaping ((any Error)?) -> Void
     ) {
-        downloadAttachment_attachment = attachment
-        downloadAttachment_localURL = localURL
-        downloadAttachment_completion_result?.invoke(with: completion)
-        downloadAttachment_expectation.fulfill()
+        downloadFile_remoteURL = remoteURL
+        downloadFile_localURL = localURL
+        downloadFile_completion_result?.invoke(with: completion)
+        downloadFile_expectation.fulfill()
     }
     
     override func uploadAttachment(

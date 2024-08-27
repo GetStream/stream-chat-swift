@@ -578,43 +578,39 @@ class MessageUpdater: Worker {
     
     static let minSignificantDownloadingProgressChange: Double = 0.01
     
-    func downloadAttachment(
-        with attachmentId: AttachmentId,
-        completion: @escaping (Result<AnyChatMessageAttachment, Error>) -> Void
-    ) {
-        attachment(with: attachmentId) { [weak self] result in
-            switch result {
-            case .success(let attachment):
-                let localURL = AnyChatMessageAttachment.localStorageURL(forRelativePath: attachment.relativeStoragePath)
-                self?.apiClient.downloadAttachment(
-                    attachment,
-                    to: localURL,
-                    progress: { [weak self] progress in
-                        self?.updateDownloadProgress(
-                            for: attachmentId,
-                            newState: .downloading(progress: progress),
-                            localURL: localURL
-                        )
-                    },
-                    completion: { [weak self] error in
-                        self?.updateDownloadProgress(
-                            for: attachmentId,
-                            newState: error == nil ? .downloaded : .downloadingFailed,
-                            localURL: localURL,
-                            completion: {
-                                if let error {
-                                    completion(.failure(error))
-                                } else {
-                                    self?.attachment(with: attachmentId, completion: completion)
-                                }
-                            }
-                        )
+    func downloadAttachment<Payload>(
+        _ attachment: ChatMessageAttachment<Payload>,
+        completion: @escaping (Result<ChatMessageAttachment<Payload>, Error>) -> Void
+    ) where Payload: AttachmentPayloadDownloading {
+        let attachmentId = attachment.id
+        let localURL = URL.streamAttachmentLocalStorageURL(forRelativePath: attachment.relativeStoragePath)
+        apiClient.downloadFile(
+            from: attachment.remoteURL,
+            to: localURL,
+            progress: { [weak self] progress in
+                self?.updateDownloadProgress(
+                    for: attachmentId,
+                    payloadType: Payload.self,
+                    newState: .downloading(progress: progress),
+                    localURL: localURL
+                )
+            },
+            completion: { [weak self] error in
+                self?.updateDownloadProgress(
+                    for: attachmentId,
+                    payloadType: Payload.self,
+                    newState: error == nil ? .downloaded : .downloadingFailed,
+                    localURL: localURL,
+                    completion: { result in
+                        if let downloadError = error {
+                            completion(.failure(downloadError))
+                        } else {
+                            completion(result)
+                        }
                     }
                 )
-            case .failure(let readError):
-                completion(.failure(readError))
             }
-        }
+        )
     }
     
     func deleteLocalAttachmentDownload(for attachmentId: AttachmentId, completion: @escaping (Error?) -> Void) {
@@ -627,33 +623,22 @@ class MessageUpdater: Worker {
             guard let localURL = attachment.downloadingState?.localFileURL else { return }
             guard FileManager.default.fileExists(atPath: localURL.path) else { return }
             try FileManager.default.removeItem(at: localURL)
-            dto?.localDownloadState = nil
-            dto?.localRelativePath = nil
-            dto?.localState = nil
-            dto?.localURL = nil
+            dto?.clearLocalState()
         }, completion: completion)
     }
-    
-    private func attachment(
-        with attachmentId: AttachmentId,
-        completion: @escaping (Result<AnyChatMessageAttachment, Error>) -> Void
-    ) {
-        database.read({ session in
-            guard let attachment = session.attachment(id: attachmentId)?.asAnyModel() else {
-                throw ClientError.AttachmentDoesNotExist(id: attachmentId)
-            }
-            return attachment
-        }, completion: completion)
-    }
-    
-    private func updateDownloadProgress(
+        
+    private func updateDownloadProgress<Payload>(
         for attachmentId: AttachmentId,
+        payloadType: Payload.Type,
         newState: LocalAttachmentDownloadState,
         localURL: URL,
-        completion: (() -> Void)? = nil
-    ) {
+        completion: ((Result<ChatMessageAttachment<Payload>, Error>) -> Void)? = nil
+    ) where Payload: AttachmentPayloadDownloading {
+        var model: ChatMessageAttachment<Payload>?
         database.write({ session in
-            guard let attachmentDTO = session.attachment(id: attachmentId) else { return }
+            guard let attachmentDTO = session.attachment(id: attachmentId) else {
+                throw ClientError.AttachmentDoesNotExist(id: attachmentId)
+            }
             let needsUpdate: Bool = {
                 if case let .downloading(lastProgress) = attachmentDTO.localDownloadState,
                    case let .downloading(currentProgress) = newState {
@@ -666,8 +651,21 @@ class MessageUpdater: Worker {
             attachmentDTO.localDownloadState = newState
             // Store only the relative path because sandboxed base URL can change between app launchs
             attachmentDTO.localRelativePath = localURL.relativePath
-        }, completion: { _ in
-            completion?()
+            
+            guard completion != nil else { return }
+            guard let attachmentAnyModel = attachmentDTO.asAnyModel() else {
+                throw ClientError.AttachmentDoesNotExist(id: attachmentId)
+            }
+            guard let result = attachmentAnyModel.attachment(payloadType: Payload.self) else {
+                throw ClientError.AttachmentDownloading(id: attachmentId, reason: "Invalid payload type: \(Payload.self)")
+            }
+            model = result
+        }, completion: { error in
+            if let error {
+                completion?(.failure(error))
+            } else if let model {
+                completion?(.success(model))
+            }
         })
     }
     
@@ -1081,9 +1079,9 @@ extension MessageUpdater {
         }
     }
     
-    func downloadAttachment(with attachmentId: AttachmentId) async throws -> AnyChatMessageAttachment {
+    func downloadAttachment<Payload>(_ attachment: ChatMessageAttachment<Payload>) async throws -> ChatMessageAttachment<Payload> where Payload: AttachmentPayload, Payload: AttachmentPayloadDownloading {
         try await withCheckedThrowingContinuation { continuation in
-            downloadAttachment(with: attachmentId) { result in
+            downloadAttachment(attachment) { result in
                 continuation.resume(with: result)
             }
         }

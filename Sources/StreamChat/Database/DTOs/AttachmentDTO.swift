@@ -60,6 +60,13 @@ class AttachmentDTO: NSManagedObject {
     /// An attachment raw `Data`.
     @NSManaged var data: Data
 
+    func clearLocalState() {
+        localDownloadState = nil
+        localRelativePath = nil
+        localState = nil
+        localURL = nil
+    }
+    
     // MARK: - Relationships
 
     @NSManaged var message: MessageDTO
@@ -126,10 +133,7 @@ extension AttachmentDTO: EphemeralValuesContainer {
     func resetEphemeralValues() {
         switch localDownloadState {
         case .downloading, .downloadingFailed:
-            localDownloadState = nil
-            localState = nil
-            localURL = nil
-            localRelativePath = nil
+            clearLocalState()
         default:
             break
         }
@@ -157,10 +161,7 @@ extension NSManagedObjectContext: AttachmentDatabaseSession {
 
         // Keep local state for downloaded attachments
         if dto.localDownloadState == nil {
-            dto.localDownloadState = nil
-            dto.localState = nil
-            dto.localURL = nil
-            dto.localRelativePath = nil
+            dto.clearLocalState()
         }
 
         return dto
@@ -199,18 +200,25 @@ extension NSManagedObjectContext: AttachmentDatabaseSession {
 private extension AttachmentDTO {
     var downloadingState: AttachmentDownloadingState? {
         guard let localDownloadState else { return nil }
-        // Only file attachments can be downloaded.
-        guard let filePayload = try? JSONDecoder.stream.decode(FileAttachmentPayload.self, from: data) else { return nil }
-        
         let localFileURL: URL? = {
             guard let localRelativePath, !localRelativePath.isEmpty else { return nil }
-            return AnyChatMessageAttachment.localStorageURL(forRelativePath: localRelativePath)
+            return URL.streamAttachmentLocalStorageURL(forRelativePath: localRelativePath)
         }()
-        
+        let file: AttachmentFile? = {
+            // Most attachments contain the attachment file information
+            if let file = try? JSONDecoder.stream.decode(AttachmentFile.self, from: data) {
+                return file
+            }
+            // Try extracting it from the downloaded file
+            if let localFileURL {
+                return try? AttachmentFile(url: localFileURL)
+            }
+            return nil
+        }()
         return AttachmentDownloadingState(
             localFileURL: localFileURL,
             state: localDownloadState,
-            file: filePayload.file
+            file: file
         )
     }
     

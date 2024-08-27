@@ -50,6 +50,18 @@ public struct VideoAttachmentPayload: AttachmentPayload {
 
 extension VideoAttachmentPayload: Hashable {}
 
+// MARK: - Local Downloads
+
+extension VideoAttachmentPayload: AttachmentPayloadDownloading {
+    public var localStorageFileName: String {
+        title ?? file.defaultLocalStorageFileName(for: Self.type)
+    }
+    
+    public var remoteURL: URL {
+        videoURL
+    }
+}
+
 // MARK: - Encodable
 
 extension VideoAttachmentPayload: Encodable {

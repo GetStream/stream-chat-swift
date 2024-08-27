@@ -294,14 +294,14 @@ class APIClient {
         ClientError.isEphemeral(error: error)
     }
     
-    func downloadAttachment(
-        _ attachment: AnyChatMessageAttachment,
+    func downloadFile(
+        from remoteURL: URL,
         to localURL: URL,
         progress: ((Double) -> Void)?,
         completion: @escaping (Error?) -> Void
     ) {
         let downloadOperation = AsyncOperation(maxRetries: maximumRequestRetries) { [weak self] operation, done in
-            self?.attachmentDownloader.download(attachment, to: localURL, progress: progress) { error in
+            self?.attachmentDownloader.download(from: remoteURL, to: localURL, progress: progress) { error in
                 if let error, self?.isConnectionError(error) == true {
                     // Do not retry unless its a connection problem and we still have retries left
                     if operation.canRetry {

@@ -163,7 +163,7 @@ class CurrentUserUpdater: Worker {
             let attachments = session.allLocallyDownloadedAttachments()
             for attachment in attachments {
                 if let localRelativePath = attachment.localRelativePath {
-                    let localURL = AnyChatMessageAttachment.localStorageURL(forRelativePath: localRelativePath)
+                    let localURL = URL.streamAttachmentLocalStorageURL(forRelativePath: localRelativePath)
                     if FileManager.default.fileExists(atPath: localURL.path) {
                         do {
                             try FileManager.default.removeItem(at: localURL)
@@ -172,10 +172,7 @@ class CurrentUserUpdater: Worker {
                         }
                     }
                 }
-                attachment.localDownloadState = nil
-                attachment.localState = nil
-                attachment.localRelativePath = nil
-                attachment.localURL = nil
+                attachment.clearLocalState()
             }
             log.info("Deleted local downloads for number of attachments: \(attachments.count)", subsystems: .database)
             guard let latestError else { return }

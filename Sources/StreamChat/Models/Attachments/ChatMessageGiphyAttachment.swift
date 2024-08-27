@@ -15,7 +15,7 @@ public struct GiphyAttachmentPayload: AttachmentPayload {
     /// An attachment type all `GiphyAttachmentPayload` instances conform to. Is set to `.giphy`.
     public static let type: AttachmentType = .giphy
 
-    /// A  title, usually the search request used to find the gif.
+    /// A title, usually the search request used to find the gif.
     public var title: String?
     /// A link to gif file.
     public var previewURL: URL
@@ -46,6 +46,18 @@ extension GiphyAttachmentPayload: Hashable {}
 
 enum GiphyAttachmentSpecificCodingKeys: String, CodingKey {
     case actions
+}
+
+// MARK: - Local Downloads
+
+extension GiphyAttachmentPayload: AttachmentPayloadDownloading {
+    public var localStorageFileName: String {
+        previewURL.lastPathComponent
+    }
+    
+    public var remoteURL: URL {
+        previewURL
+    }
 }
 
 // MARK: - Encodable

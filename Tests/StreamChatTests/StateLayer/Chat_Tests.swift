@@ -393,19 +393,20 @@ final class Chat_Tests: XCTestCase {
     
     func test_downloadAttachment_whenMessageUpdaterSucceeds_thenSucceess() async throws {
         let attachmentId = AttachmentId.unique
-        let expected = AnyChatMessageAttachment.dummy(id: attachmentId)
-        env.messageUpdaterMock.downloadAttachment_completion_result = .success(expected)
-        let result = try await chat.downloadAttachment(with: attachmentId)
+        let expected = ChatMessageFileAttachment.mock(id: attachmentId)
+        env.messageUpdaterMock.downloadAttachment_completion_result = .success(expected.asAnyAttachment)
+        let result = try await chat.downloadAttachment(expected)
         XCTAssertEqual(expected, result)
         XCTAssertEqual(attachmentId, env.messageUpdaterMock.downloadAttachment_attachmentId)
     }
     
     func test_downloadAttachment_whenMessageUpdaterFails_thenFailure() async throws {
         let attachmentId = AttachmentId.unique
+        let attachment = ChatMessageFileAttachment.mock(id: attachmentId)
         let expected = TestError()
         env.messageUpdaterMock.downloadAttachment_completion_result = .failure(expected)
         await XCTAssertAsyncFailure(
-            try await chat.downloadAttachment(with: attachmentId),
+            try await chat.downloadAttachment(attachment),
             expected
         )
         XCTAssertEqual(attachmentId, env.messageUpdaterMock.downloadAttachment_attachmentId)

@@ -65,7 +65,10 @@ public struct AttachmentDownloadingState: Hashable {
     public let state: LocalAttachmentDownloadState
     
     /// The information about file size/mimeType.
-    public let file: AttachmentFile
+    ///
+    /// - Returns: The file information if it is part of the attachment payload,
+    /// otherwise it is extracted from the downloaded file.
+    public let file: AttachmentFile?
 }
 
 /// A type representing the uploading state for attachments that require prior uploading.
@@ -149,52 +152,42 @@ public extension ChatMessageAttachment where Payload: AttachmentPayload {
 
 // MARK: - Local Downloads
 
+/// A capability of downloading attachment payload data to the local storage.
+public protocol AttachmentPayloadDownloading: AttachmentPayload {
+    /// The file name used for storing the attachment file locally.
+    ///
+    /// Example: `myfile.txt`
+    ///
+    /// - Note: Does not need to be unique.
+    var localStorageFileName: String { get }
+    
+    /// The remote URL of the attachment what can be downloaded and stored locally.
+    ///
+    /// For example, an image for image attachments.
+    var remoteURL: URL { get }
+}
+
+extension AttachmentFile {
+    func defaultLocalStorageFileName(for attachmentType: AttachmentType) -> String {
+        "\(attachmentType.rawValue.localizedCapitalized).\(type.rawValue)" // image.jpeg
+    }
+}
+
 extension URL {
     /// The directory URL for attachment downloads.
     static var streamAttachmentDownloadsDirectory: URL {
         (FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first ?? FileManager.default.temporaryDirectory)
             .appendingPathComponent("AttachmentDownloads", isDirectory: true)
     }
-}
-
-extension AnyChatMessageAttachment {
-    static func localStorageURL(forRelativePath path: String) -> URL {
+    
+    static func streamAttachmentLocalStorageURL(forRelativePath path: String) -> URL {
         URL(fileURLWithPath: path, isDirectory: false, relativeTo: .streamAttachmentDownloadsDirectory).standardizedFileURL
     }
-    
-    private func assetInfo() throws -> (title: String?, url: URL) {
-        if let attachment = attachment(payloadType: FileAttachmentPayload.self) {
-            return (attachment.title, attachment.assetURL)
-        }
-        if let attachment = attachment(payloadType: ImageAttachmentPayload.self) {
-            return (attachment.title, attachment.imageURL)
-        }
-        if let attachment = attachment(payloadType: VideoAttachmentPayload.self) {
-            return (attachment.title, attachment.videoURL)
-        }
-        if let attachment = attachment(payloadType: AudioAttachmentPayload.self) {
-            return (attachment.title, attachment.audioURL)
-        }
-        if let attachment = attachment(payloadType: VoiceRecordingAttachmentPayload.self) {
-            return (attachment.title, attachment.voiceRecordingURL)
-        }
-        if let attachment = attachment(payloadType: GiphyAttachmentPayload.self) {
-            return (attachment.title, attachment.previewURL)
-        }
-        throw ClientError.AttachmentDownloading(id: id, reason: "Download is unavailable")
-    }
-    
-    var downloadURL: URL {
-        get throws {
-            try assetInfo().url
-        }
-    }
-    
+}
+
+extension ChatMessageAttachment where Payload: AttachmentPayloadDownloading {
+    /// A local and unique file path for the attachment.
     var relativeStoragePath: String {
-        let fileName: String = {
-            guard let assetInfo = try? assetInfo() else { return "file_download" }
-            return assetInfo.title ?? assetInfo.url.lastPathComponent
-        }()
-        return "\(id.messageId)-\(id.index)-\(fileName)"
+        "\(id.messageId)-\(id.index)/\(payload.localStorageFileName)"
     }
 }

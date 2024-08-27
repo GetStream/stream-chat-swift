@@ -665,12 +665,18 @@ public class ChatMessageController: DataController, DelegateCallable, DataStoreP
         }
     }
     
-    /// Downloads the attachment for the id and stores it on the device.
+    /// Downloads the specified attachment and stores it locally on the device.
+    ///
+    /// - Note: The local storage URL (`attachment.downloadingState?.localFileURL`) can change between app launches.
+    ///
     /// - Parameters:
-    ///   - id: The id of the file attachment.
+    ///   - attachment: The attachment to download.
     ///   - completion: A completion block with the attachment containing the downloading state.
-    public func downloadAttachment(with id: AttachmentId, completion: @escaping (Result<AnyChatMessageAttachment, Error>) -> Void) {
-        messageUpdater.downloadAttachment(with: id) { result in
+    public func downloadAttachment<Payload>(
+        _ attachment: ChatMessageAttachment<Payload>,
+        completion: @escaping (Result<ChatMessageAttachment<Payload>, Error>) -> Void
+    ) where Payload: AttachmentPayloadDownloading {
+        messageUpdater.downloadAttachment(attachment) { result in
             self.callback {
                 completion(result)
             }

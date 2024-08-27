@@ -255,6 +255,8 @@
 		4F1BEE7C2BE3851200B6685C /* ReactionListState+Observer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F1BEE7B2BE3851200B6685C /* ReactionListState+Observer.swift */; };
 		4F1BEE7D2BE3851200B6685C /* ReactionListState+Observer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F1BEE7B2BE3851200B6685C /* ReactionListState+Observer.swift */; };
 		4F1BEE7F2BE38B5500B6685C /* ReactionList_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F1BEE7E2BE38B5500B6685C /* ReactionList_Tests.swift */; };
+		4F1FB7D62C7DE22D00C47C2A /* ChatMessageAudioAttachment_Mock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F1FB7D52C7DE22D00C47C2A /* ChatMessageAudioAttachment_Mock.swift */; };
+		4F1FB7D82C7DEC6600C47C2A /* ChatMessageVideoAttachment_Mock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F1FB7D72C7DEC6600C47C2A /* ChatMessageVideoAttachment_Mock.swift */; };
 		4F427F662BA2F43200D92238 /* ConnectedUser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F427F652BA2F43200D92238 /* ConnectedUser.swift */; };
 		4F427F672BA2F43200D92238 /* ConnectedUser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F427F652BA2F43200D92238 /* ConnectedUser.swift */; };
 		4F427F692BA2F52100D92238 /* ConnectedUserState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F427F682BA2F52100D92238 /* ConnectedUserState.swift */; };
@@ -3093,6 +3095,8 @@
 		4F1BEE782BE384FE00B6685C /* ReactionListState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReactionListState.swift; sourceTree = "<group>"; };
 		4F1BEE7B2BE3851200B6685C /* ReactionListState+Observer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ReactionListState+Observer.swift"; sourceTree = "<group>"; };
 		4F1BEE7E2BE38B5500B6685C /* ReactionList_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReactionList_Tests.swift; sourceTree = "<group>"; };
+		4F1FB7D52C7DE22D00C47C2A /* ChatMessageAudioAttachment_Mock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessageAudioAttachment_Mock.swift; sourceTree = "<group>"; };
+		4F1FB7D72C7DEC6600C47C2A /* ChatMessageVideoAttachment_Mock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessageVideoAttachment_Mock.swift; sourceTree = "<group>"; };
 		4F427F652BA2F43200D92238 /* ConnectedUser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectedUser.swift; sourceTree = "<group>"; };
 		4F427F682BA2F52100D92238 /* ConnectedUserState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectedUserState.swift; sourceTree = "<group>"; };
 		4F427F6B2BA2F53200D92238 /* ConnectedUserState+Observer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ConnectedUserState+Observer.swift"; sourceTree = "<group>"; };
@@ -6672,10 +6676,12 @@
 			children = (
 				A344075C27D753530044F150 /* AnyAttachmentPayload_Mock.swift */,
 				A344075A27D753530044F150 /* AttachmentUploadingState_Mock.swift */,
+				4F1FB7D52C7DE22D00C47C2A /* ChatMessageAudioAttachment_Mock.swift */,
 				A344075727D753530044F150 /* ChatMessageFileAttachment_Mock.swift */,
-				40A2961929F8244500E0C186 /* ChatMessageVoiceRecordingAttachment_Mock.swift */,
 				A344075927D753530044F150 /* ChatMessageImageAttachment_Mock.swift */,
 				A344075B27D753530044F150 /* ChatMessageLinkAttachment_Mock.swift */,
+				4F1FB7D72C7DEC6600C47C2A /* ChatMessageVideoAttachment_Mock.swift */,
+				40A2961929F8244500E0C186 /* ChatMessageVoiceRecordingAttachment_Mock.swift */,
 			);
 			path = Attachments;
 			sourceTree = "<group>";
@@ -10834,6 +10840,7 @@
 				A3C3BC7527E8AA7000224761 /* Endpoint+Mock.swift in Sources */,
 				A344077527D753530044F150 /* ChatChannel_Mock.swift in Sources */,
 				A344078527D753530044F150 /* UnreadCount.swift in Sources */,
+				4F1FB7D62C7DE22D00C47C2A /* ChatMessageAudioAttachment_Mock.swift in Sources */,
 				A3D15D8827E9D4B5006B34D7 /* VirtualTime.swift in Sources */,
 				40A2961A29F8244500E0C186 /* ChatMessageVoiceRecordingAttachment_Mock.swift in Sources */,
 				A3C3BC6927E8AA4300224761 /* TestBuilder.swift in Sources */,
@@ -10907,6 +10914,7 @@
 				A3C3BC2327E87F1800224761 /* ChatChannelWatcherListController_Mock.swift in Sources */,
 				A3C3BC3627E87F3200224761 /* InternetConnection_Mock.swift in Sources */,
 				A3C3BC4627E87F5C00224761 /* CurrentUserUpdater_Mock.swift in Sources */,
+				4F1FB7D82C7DEC6600C47C2A /* ChatMessageVideoAttachment_Mock.swift in Sources */,
 				A3C3BC5E27E8AA0A00224761 /* String+Unique.swift in Sources */,
 				CF5DCBC42837F11000CCA48C /* ScheduledStreamTimer_Mock.swift in Sources */,
 				A3C3BC4527E87F5C00224761 /* EventSender_Mock.swift in Sources */,
