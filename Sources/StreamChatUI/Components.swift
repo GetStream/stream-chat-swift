@@ -313,7 +313,7 @@ public struct Components {
     public var messageHeaderDecorationView: ChatChannelMessageHeaderDecoratorView.Type = ChatChannelMessageHeaderDecoratorView.self
     
     /// A flag which determines if download action is shown for file attachments.
-    public var isDownloadFileAttachmentsEnabled = true
+    public var isDownloadFileAttachmentsEnabled = false
 
     // MARK: - Reactions
 

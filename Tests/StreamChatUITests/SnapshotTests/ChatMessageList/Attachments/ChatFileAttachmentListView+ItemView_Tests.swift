@@ -30,8 +30,12 @@ final class ChatFileAttachmentListViewItemView_Tests: XCTestCase {
     }
     
     func test_appearance_pdf_whenDownloadedThenShareIcon() throws {
+        let oldValue = Components.default.isDownloadFileAttachmentsEnabled
+        defer { Components.default.isDownloadFileAttachmentsEnabled = oldValue }
+        Components.default.isDownloadFileAttachmentsEnabled = true
         fileAttachmentView.content = .mock(id: .unique, localState: nil, localDownloadState: .downloaded)
         AssertSnapshot(fileAttachmentView, variants: [.defaultLight])
+        Components.default.isDownloadFileAttachmentsEnabled = false
     }
 
     func test_appearance_pdf_whenUploadingStateIsNil() {
