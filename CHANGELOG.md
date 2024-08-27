@@ -14,6 +14,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Fix `Poll.latestAnswers` being reset on events, causing "Add a comment" button to not update in the UI SDKs [#3398](https://github.com/GetStream/stream-chat-swift/pull/3398)
 - Fix `PollVoteListController` resetting the first page when loading a new page [#3398](https://github.com/GetStream/stream-chat-swift/pull/3398)
 - Fix `PollVoteListController` default sorting being from oldest to newest from the server response [#3398](https://github.com/GetStream/stream-chat-swift/pull/3398)
+- Fix `PollVoteListQuery.pollId` not limiting the votes query to the given poll id [#3398](https://github.com/GetStream/stream-chat-swift/pull/3398)
 ### 🔄 Changed
 - Deprecates `PollVoteListQuery(pollId:optionId:pagination:filter:)` initializer in favor of `(pollId:filter:pagination:)` [#3381](https://github.com/GetStream/stream-chat-swift/pull/3381)
 
