@@ -47,6 +47,12 @@ final class PollAttachmentView_Tests: XCTestCase {
     func test_appearance_withZeroComments() {
         let poll = pollFactory.makePoll(allowAnswers: true, answersCount: 0)
         let view = makeMessageView(for: poll)
+        AssertSnapshot(view, variants: [.defaultLight])
+    }
+
+    func test_appearance_whenSuggestionsEnabled() {
+        let poll = pollFactory.makePoll(allowAnswers: true, allowUserSuggestedOptions: true, answersCount: 3)
+        let view = makeMessageView(for: poll)
         AssertSnapshot(view, variants: [.defaultLight], record: true)
     }
 
