@@ -29,7 +29,7 @@ open class PollCommentListTableFooterView: _View, ThemeProvider {
     /// The main container responsible to render the grey background.
     open private(set) lazy var container = HContainer()
 
-    /// The title label that displays the poll name by default.
+    /// The button to add a comment to the poll.
     open private(set) lazy var actionButton = UIButton(type: .system)
         .withoutAutoresizingMaskConstraints
 
