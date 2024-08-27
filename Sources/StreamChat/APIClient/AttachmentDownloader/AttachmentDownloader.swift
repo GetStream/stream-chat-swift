@@ -5,7 +5,7 @@
 import Foundation
 
 /// The component responsible for downloading files.
-public protocol AttachmentDownloader {
+protocol AttachmentDownloader {
     /// Downloads a file attachment to the specified local URL.
     ///
     /// - Parameters:

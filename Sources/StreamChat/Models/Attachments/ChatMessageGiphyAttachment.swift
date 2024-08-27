@@ -48,18 +48,6 @@ enum GiphyAttachmentSpecificCodingKeys: String, CodingKey {
     case actions
 }
 
-// MARK: - Local Downloads
-
-extension GiphyAttachmentPayload: AttachmentPayloadDownloading {
-    public var localStorageFileName: String {
-        previewURL.lastPathComponent
-    }
-    
-    public var remoteURL: URL {
-        previewURL
-    }
-}
-
 // MARK: - Encodable
 
 extension GiphyAttachmentPayload: Encodable {

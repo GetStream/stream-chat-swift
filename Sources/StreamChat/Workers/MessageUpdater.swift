@@ -574,8 +574,6 @@ class MessageUpdater: Worker {
         }
     }
     
-    // MARK: - Attachments
-    
     static let minSignificantDownloadingProgressChange: Double = 0.01
     
     func downloadAttachment<Payload>(
@@ -692,8 +690,6 @@ class MessageUpdater: Worker {
             attachmentDTO.localState = .pendingUpload
         }, completion: completion)
     }
-    
-    // MARK: -
 
     /// Updates local state of the message with provided `messageId` to be enqueued by message sender background worker.
     /// - Parameters:

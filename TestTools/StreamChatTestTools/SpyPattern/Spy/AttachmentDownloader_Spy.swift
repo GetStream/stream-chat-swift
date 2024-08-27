@@ -3,7 +3,7 @@
 //
 
 import Foundation
-import StreamChat
+@testable import StreamChat
 
 final class AttachmentDownloader_Spy: AttachmentDownloader, Spy {
     let spyState = SpyState()
