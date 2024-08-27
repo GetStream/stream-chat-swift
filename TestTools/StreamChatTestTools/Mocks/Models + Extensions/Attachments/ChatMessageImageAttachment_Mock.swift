@@ -11,7 +11,7 @@ extension ChatMessageImageAttachment {
         id: AttachmentId,
         imageURL: URL = .localYodaImage,
         title: String = URL.localYodaImage.lastPathComponent,
-        localState: LocalAttachmentState? = .uploaded,
+        localState: LocalAttachmentState? = nil,
         localDownloadState: LocalAttachmentDownloadState? = nil,
         extraData: [String: RawJSON]? = nil
     ) -> Self {

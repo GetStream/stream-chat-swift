@@ -360,9 +360,9 @@ public class Chat {
     /// let localURL = downloadedAttachment.downloadingState?.localFileURL
     /// ```
     ///
-    /// - Note: The local storage URL can change between app launches.
-    ///
     /// - Parameter attachment: The attachment to download.
+    ///
+    /// - Note: The local storage URL can change between app launches.
     ///
     /// - Throws: An error while downloading the attachment.
     /// - Returns: An instance of the downloaded attachment which includes the local URL.
