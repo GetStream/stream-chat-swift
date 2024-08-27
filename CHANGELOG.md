@@ -21,21 +21,27 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Add `PollResultsVC` component to show the results of a poll [#3381](https://github.com/GetStream/stream-chat-swift/pull/3381)
 - Add `ChatUserAvatarView.shouldShowOnlineIndicator` to disable the online indicator easily [#3374](https://github.com/GetStream/stream-chat-swift/pull/3374)
 ### 🎭 New Localizations
-- `message.polls.subtitle.selectOne`
-- `message.polls.subtitle.selectOneOrMore`
-- `message.polls.subtitle.selectUpTo`
-- `message.polls.subtitle.voteEnded`
-- `message.polls.button.endVote`
-- `message.polls.button.viewResults`
-- `message.polls.button.showAll`
-- `message.polls.votes`
-- `message.polls.results-title`
+- `polls.subtitle.selectOne`
+- `polls.subtitle.selectOneOrMore`
+- `polls.subtitle.selectUpTo`
+- `polls.subtitle.voteEnded`
+- `polls.button.endVote`
+- `polls.button.viewResults`
+- `polls.button.show-all`
+- `polls.votes`
+- `polls.results-title`
+- `polls.comments-title`
+- `polls.update-comment`
 - `message.preview.poll-someone-voted`
 - `message.preview.poll-you-voted`
 - `message.preview.poll-someone-created`
 - `message.preview.poll-you-created`
 - `alert.poll.end-title`
 - `alert.poll.end`
+- `alert.poll.add-comment`
+- `alert.poll.suggest-option`
+- `alert.poll.update-comment`
+- `alert.poll.send`
 
 # [4.62.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.62.0)
 _August 15, 2024_
