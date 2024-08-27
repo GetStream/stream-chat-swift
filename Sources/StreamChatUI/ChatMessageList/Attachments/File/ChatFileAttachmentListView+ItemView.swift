@@ -142,7 +142,8 @@ extension ChatMessageFileAttachmentListView {
                 guard content?.file.type != .unknown else { return nil }
                 return appearance.fileAttachmentActionIcon(
                     uploadState: uploadState,
-                    downloadState: downloadState
+                    downloadState: downloadState,
+                    downloadingEnabled: Components.default.isDownloadFileAttachmentsEnabled
                 )
             }()
 

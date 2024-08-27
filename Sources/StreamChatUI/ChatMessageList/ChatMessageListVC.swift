@@ -988,18 +988,20 @@ open class ChatMessageListVC: _ViewController,
             default:
                 break
             }
-        } else if let downloadingState = attachment.downloadingState, downloadingState.state == .downloaded, let localFileURL = downloadingState.localFileURL {
-            guard let indexPath, let cell = listView.cellForRow(at: indexPath) else { return }
-            let activityViewController = UIActivityViewController(activityItems: [localFileURL], applicationActivities: nil)
-            activityViewController.popoverPresentationController?.sourceView = cell
-            present(activityViewController, animated: true)
-        } else {
-            let chat = client.makeChat(for: attachment.id.cid)
-            _Concurrency.Task {
-                do {
-                    try await chat.downloadAttachment(attachment)
-                } catch {
-                    log.debug("Downloaded attachment for id \(attachment.id)")
+        } else if Components.default.isDownloadFileAttachmentsEnabled {
+            if let downloadingState = attachment.downloadingState, downloadingState.state == .downloaded, let localFileURL = downloadingState.localFileURL {
+                guard let indexPath, let cell = listView.cellForRow(at: indexPath) else { return }
+                let activityViewController = UIActivityViewController(activityItems: [localFileURL], applicationActivities: nil)
+                activityViewController.popoverPresentationController?.sourceView = cell
+                present(activityViewController, animated: true)
+            } else {
+                let chat = client.makeChat(for: attachment.id.cid)
+                _Concurrency.Task {
+                    do {
+                        try await chat.downloadAttachment(attachment)
+                    } catch {
+                        log.debug("Downloaded attachment for id \(attachment.id)")
+                    }
                 }
             }
         }

@@ -154,11 +154,14 @@ open class UploadingOverlayView: _View, ThemeProvider {
 }
 
 extension Appearance {
-    func fileAttachmentActionIcon(uploadState: LocalAttachmentState?, downloadState: LocalAttachmentDownloadState?) -> UIImage? {
+    func fileAttachmentActionIcon(uploadState: LocalAttachmentState?, downloadState: LocalAttachmentDownloadState?, downloadingEnabled: Bool) -> UIImage? {
         if let uploadState {
             return images.fileAttachmentActionIcons[uploadState]
         }
-        return images.fileAttachmentDownloadActionIcons[downloadState]
+        if downloadingEnabled {
+            return images.fileAttachmentDownloadActionIcons[downloadState]
+        }
+        return nil
     }
 }
 
