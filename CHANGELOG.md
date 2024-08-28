@@ -26,27 +26,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Add `PollCommentListVC` component to show the comments of a poll [#3398](https://github.com/GetStream/stream-chat-swift/pull/3398)
 - Add `ChatUserAvatarView.shouldShowOnlineIndicator` to disable the online indicator easily [#3374](https://github.com/GetStream/stream-chat-swift/pull/3374)
 ### 🎭 New Localizations
-- `polls.subtitle.selectOne`
-- `polls.subtitle.selectOneOrMore`
-- `polls.subtitle.selectUpTo`
-- `polls.subtitle.voteEnded`
-- `polls.button.endVote`
-- `polls.button.viewResults`
-- `polls.button.show-all`
-- `polls.votes`
-- `polls.results-title`
-- `polls.comments-title`
-- `polls.update-comment`
-- `message.preview.poll-someone-voted`
-- `message.preview.poll-you-voted`
-- `message.preview.poll-someone-created`
-- `message.preview.poll-you-created`
-- `alert.poll.end-title`
-- `alert.poll.end`
-- `alert.poll.add-comment`
-- `alert.poll.suggest-option`
-- `alert.poll.update-comment`
-- `alert.poll.send`
+Multiple localizations were added to Polls, for more details please check the strings file.
+- `polls.subtitle.*`
+- `polls.button.*`
+- `polls.*`
+- `alert.poll.*`
+- `message.preview.poll-*`
 
 # [4.62.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.62.0)
 _August 15, 2024_
