@@ -335,11 +335,8 @@ public struct Components {
     /// The poll results header view for each section.
     public var pollResultsSectionHeaderView: PollResultsSectionHeaderView.Type = PollResultsSectionHeaderView.self
 
-    /// The poll results header content view for the section header.
-    public var pollResultsSectionHeaderOptionView: PollResultsSectionHeaderOptionView.Type = PollResultsSectionHeaderOptionView.self
-
     /// The poll results footer view for each section.
-    public var pollResultsFooterButtonView: PollResultsFooterButtonView.Type = PollResultsFooterButtonView.self
+    public var pollResultsSectionFooterView: PollResultsSectionFooterView.Type = PollResultsSectionFooterView.self
 
     /// The `UITableViewCell` for the poll results vote item.
     public var pollResultsVoteItemCell: PollResultsVoteItemCell.Type = PollResultsVoteItemCell.self
@@ -349,6 +346,21 @@ public struct Components {
 
     /// The controller that shows all votes of poll option.
     public var pollResultsVoteListVC: PollResultsVoteListVC.Type = PollResultsVoteListVC.self
+
+    /// The view controller that shows the comments/answers of a poll.
+    public var pollCommentListVC: PollCommentListVC.Type = PollCommentListVC.self
+
+    /// The poll comments header view for each section.
+    public var pollCommentListSectionHeaderView: PollCommentListSectionHeaderView.Type = PollCommentListSectionHeaderView.self
+
+    /// The poll comments table footer view that by default displays the action to add/update a comment.
+    public var pollCommentListTableFooterView: PollCommentListTableFooterView.Type = PollCommentListTableFooterView.self
+
+    /// The `UITableViewCell` for the poll comment list item cell.
+    public var pollCommentListItemCell: PollCommentListItemCell.Type = PollCommentListItemCell.self
+
+    /// The item view that displays information in a poll comment item cell.
+    public var pollCommentListItemView: PollCommentListItemView.Type = PollCommentListItemView.self
 
     // MARK: - Reactions
 

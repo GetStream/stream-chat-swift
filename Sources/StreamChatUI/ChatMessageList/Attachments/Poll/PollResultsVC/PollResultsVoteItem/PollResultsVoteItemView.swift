@@ -9,11 +9,11 @@ import UIKit
 open class PollResultsVoteItemView: _View, ThemeProvider {
     public struct Content {
         public var vote: PollVote
+        public var poll: Poll
 
-        public init(
-            vote: PollVote
-        ) {
+        public init(vote: PollVote, poll: Poll) {
             self.vote = vote
+            self.poll = poll
         }
     }
 

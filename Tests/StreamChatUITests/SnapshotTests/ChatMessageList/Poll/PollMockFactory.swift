@@ -13,12 +13,20 @@ struct PollMockFactory {
     }
 
     func makePoll(
-        isClosed: Bool,
+        isClosed: Bool = false,
+        allowAnswers: Bool = false,
+        allowUserSuggestedOptions: Bool = false,
+        answersCount: Int = 0,
+        latestAnswers: [PollVote] = [],
         enforceUniqueVote: Bool = false,
         maxVotesAllowed: Int? = nil,
+        votingVisibility: VotingVisibility? = nil,
         createdBy: ChatUser? = nil
     ) -> Poll {
         Poll.mock(
+            allowAnswers: allowAnswers,
+            allowUserSuggestedOptions: allowUserSuggestedOptions,
+            answersCount: answersCount,
             enforceUniqueVote: enforceUniqueVote,
             name: "The Best Football Player of All Time A.K.A. The Goat",
             voteCount: 6,
@@ -31,7 +39,9 @@ struct PollMockFactory {
             ],
             isClosed: isClosed,
             maxVotesAllowed: maxVotesAllowed,
+            votingVisibility: votingVisibility,
             createdBy: createdBy ?? currentUser,
+            latestAnswers: latestAnswers,
             options: [
                 .init(id: "messi", text: "Messi"),
                 .init(id: "ronaldo", text: "Cristiano Ronaldo dos Santos Aveiro", latestVotes: [
