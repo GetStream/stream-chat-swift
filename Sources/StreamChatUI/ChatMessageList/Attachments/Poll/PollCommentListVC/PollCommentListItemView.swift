@@ -35,7 +35,7 @@ open class PollCommentListItemView: _View, ThemeProvider {
     override open func setUpLayout() {
         super.setUpLayout()
 
-        embed(voteItemView, insets: .init(top: 0, leading: 0, bottom: 6, trailing: 0))
+        embed(voteItemView, insets: .init(top: 4, leading: 0, bottom: 4, trailing: 0))
     }
 
     override open func updateContent() {

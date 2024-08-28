@@ -29,6 +29,8 @@ open class PollCommentListSectionHeaderView: _TableHeaderFooterView, ThemeProvid
     /// The label that displays the comment text.
     open private(set) lazy var commentLabel = UILabel()
         .withoutAutoresizingMaskConstraints
+        .withAdjustingFontForContentSizeCategory
+        .withBidirectionalLanguagesSupport
 
     override open func setUpAppearance() {
         super.setUpAppearance()
@@ -43,7 +45,7 @@ open class PollCommentListSectionHeaderView: _TableHeaderFooterView, ThemeProvid
 
         container.layout {
             $0.isLayoutMarginsRelativeArrangement = true
-            $0.directionalLayoutMargins = .init(top: 12, leading: 12, bottom: 6, trailing: 12)
+            $0.directionalLayoutMargins = .init(top: 12, leading: 12, bottom: 0, trailing: 12)
         }
         .views {
             commentLabel
