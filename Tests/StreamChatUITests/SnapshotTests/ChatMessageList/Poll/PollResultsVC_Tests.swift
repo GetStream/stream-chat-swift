@@ -39,6 +39,12 @@ final class PollResultsVC_Tests: XCTestCase {
         AssertSnapshot(pollResultsVC, variants: [.defaultLight, .defaultDark])
     }
 
+    func test_appearance_whenAnonymous() {
+        let poll = pollFactory.makePoll(isClosed: false, votingVisibility: .anonymous)
+        let pollResultsVC = makePollResultsVC(for: poll)
+        AssertSnapshot(pollResultsVC, variants: [.defaultLight])
+    }
+
     private func makePollResultsVC(for poll: Poll) -> MockPollResultsVC {
         let mockedPollController = PollController_Mock()
         mockedPollController.mockedPoll = poll
@@ -59,6 +65,10 @@ class MockPollResultsVC: PollResultsVC {
 class PollController_Mock: PollController {
     init() {
         super.init(client: .mock, messageId: .unique, pollId: .unique)
+    }
+
+    init(client: ChatClient_Mock) {
+        super.init(client: client, messageId: .unique, pollId: .unique)
     }
 
     var mockedPoll: Poll?

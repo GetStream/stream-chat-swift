@@ -75,7 +75,7 @@ extension PollVoteDTO {
 extension NSManagedObjectContext {
     @discardableResult
     func savePollVotes(payload: PollVoteListResponse, query: PollVoteListQuery?, cache: PreWarmedCache?) -> [PollVoteDTO] {
-        let isFirstPage = query?.pagination.offset == 0
+        let isFirstPage = query?.pagination.cursor == nil
         if let filterHash = query?.queryHash, isFirstPage {
             let queryDTO = PollVoteListQueryDTO.load(filterHash: filterHash, context: self)
             queryDTO?.votes = []
@@ -247,16 +247,8 @@ extension NSManagedObjectContext {
 extension PollVoteDTO {
     static func pollVoteListFetchRequest(query: PollVoteListQuery) -> NSFetchRequest<PollVoteDTO> {
         let request = NSFetchRequest<PollVoteDTO>(entityName: PollVoteDTO.entityName)
-
-        // Fetch results controller requires at least one sorting descriptor.
-        // At the moment, we do not allow changing the query sorting.
         request.sortDescriptors = [.init(key: #keyPath(PollVoteDTO.createdAt), ascending: false)]
-
-        // If a filter exists, use is for the predicate. Otherwise, `nil` filter matches all reactions.
-        if let filterHash = query.filter?.filterHash {
-            request.predicate = NSPredicate(format: "ANY queries.filterHash == %@", filterHash)
-        }
-            
+        request.predicate = NSPredicate(format: "ANY queries.filterHash == %@", query.queryHash)
         return request
     }
 }

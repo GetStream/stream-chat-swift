@@ -23,21 +23,67 @@ open class PollResultsSectionHeaderView: _TableHeaderFooterView, ThemeProvider {
         }
     }
 
-    /// The poll option view displayed in the section header of the poll results.
-    open private(set) lazy var optionView: PollResultsSectionHeaderOptionView = components
-        .pollResultsSectionHeaderOptionView.init()
+    /// The container responsible to layout the subviews.
+    open private(set) lazy var container = HContainer(spacing: 4, alignment: .center)
+
+    /// The label that displays the option name.
+    open private(set) lazy var optionNameLabel = UILabel()
+        .withBidirectionalLanguagesSupport
         .withoutAutoresizingMaskConstraints
+        .withAdjustingFontForContentSizeCategory
+
+    /// The image view that shows the poll winner icon.
+    open private(set) lazy var pollWinnerIconView = UIImageView()
+        .withoutAutoresizingMaskConstraints
+
+    /// The label that displays the number of votes in an option.
+    open private(set) lazy var votesLabel = UILabel()
+        .withBidirectionalLanguagesSupport
+        .withoutAutoresizingMaskConstraints
+        .withAdjustingFontForContentSizeCategory
+
+    override open func setUpAppearance() {
+        super.setUpAppearance()
+
+        optionNameLabel.numberOfLines = 0
+        optionNameLabel.font = appearance.fonts.headlineBold
+        optionNameLabel.textColor = appearance.colorPalette.text
+        votesLabel.font = appearance.fonts.body.withSize(17)
+        votesLabel.textColor = appearance.colorPalette.text
+        pollWinnerIconView.image = appearance.images.pollWinner
+        pollWinnerIconView.tintColor = appearance.colorPalette.textLowEmphasis
+    }
 
     override open func setUpLayout() {
         super.setUpLayout()
 
-        embed(optionView, insets: .init(top: 0, leading: 16, bottom: 0, trailing: 16))
+        container.layout {
+            $0.isLayoutMarginsRelativeArrangement = true
+            $0.directionalLayoutMargins = .init(top: 12, leading: 12, bottom: 12, trailing: 12)
+        }
+        .views {
+            optionNameLabel
+            Spacer()
+            HContainer(spacing: 6) {
+                pollWinnerIconView
+                    .width(20)
+                    .height(20)
+                votesLabel.layout {
+                    $0.setContentCompressionResistancePriority(.streamRequire, for: .horizontal)
+                }
+            }
+        }
+        .embed(in: self, insets: .init(top: 0, leading: 16, bottom: 0, trailing: 16))
     }
 
     override open func updateContent() {
         super.updateContent()
 
         guard let content = self.content else { return }
-        optionView.content = .init(option: content.option, poll: content.poll)
+
+        optionNameLabel.text = content.option.text
+        let voteCount = content.poll.voteCount(for: content.option)
+        votesLabel.text = L10n.Polls.votes(voteCount)
+        pollWinnerIconView.isHidden = !content.poll.isOptionWinner(content.option)
     }
 }

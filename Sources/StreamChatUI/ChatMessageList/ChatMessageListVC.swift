@@ -40,6 +40,11 @@ open class ChatMessageListVC: _ViewController,
         .messageListRouter
         .init(rootViewController: self)
 
+    /// The router object that handles presenting alerts.
+    open lazy var alertRouter: AlertsRouter = components
+        .alertsRouter
+        .init(rootViewController: self)
+
     /// Strong reference of message actions view controller to allow performing async operations.
     private var messageActionsVC: ChatMessageActionsVC?
 
@@ -1081,6 +1086,69 @@ open class ChatMessageListVC: _ViewController,
 
     open func pollAttachmentView(
         _ pollAttachmentView: PollAttachmentView,
+        didTapResultsOfPoll poll: Poll,
+        in message: ChatMessage
+    ) {
+        router.showPollResults(for: poll, in: message.id, client: client)
+    }
+
+    open func pollAttachmentView(
+        _ pollAttachmentView: PollAttachmentView,
+        didTapCommentsOfPoll poll: Poll,
+        in message: ChatMessage
+    ) {
+        router.showPollComments(for: poll, in: message.id, client: client)
+    }
+
+    open func pollAttachmentView(
+        _ pollAttachmentView: PollAttachmentView,
+        didTapAddCommentOnPoll poll: Poll,
+        in message: ChatMessage
+    ) {
+        guard let currentUserId = client.currentUserId else { return }
+        let pollController = client.pollController(messageId: message.id, pollId: poll.id)
+        alertRouter.showPollAddCommentAlert(
+            for: poll,
+            in: message.id,
+            currentUserId: currentUserId
+        ) { [weak self] comment in
+            pollController.castPollVote(answerText: comment, optionId: nil) { error in
+                self?.notificationFeedbackGenerator?.notificationOccurred(error == nil ? .success : .error)
+            }
+        }
+    }
+
+    open func pollAttachmentView(
+        _ pollAttachmentView: PollAttachmentView,
+        didTapSuggestOptionForPoll poll: Poll,
+        in message: ChatMessage
+    ) {
+        let pollController = client.pollController(messageId: message.id, pollId: poll.id)
+        alertRouter.showPollAddSuggestionAlert(
+            for: poll,
+            in: message.id
+        ) { [weak self] suggestion in
+            pollController.suggestPollOption(text: suggestion) { error in
+                self?.notificationFeedbackGenerator?.notificationOccurred(error == nil ? .success : .error)
+            }
+        }
+    }
+
+    open func pollAttachmentView(
+        _ pollAttachmentView: PollAttachmentView,
+        didTapEndPoll poll: Poll,
+        in message: ChatMessage
+    ) {
+        let pollController = client.pollController(messageId: message.id, pollId: poll.id)
+        alertRouter.showPollEndVoteAlert(for: poll, in: message.id) {
+            pollController.closePoll { [weak self] error in
+                self?.notificationFeedbackGenerator?.notificationOccurred(error == nil ? .success : .error)
+            }
+        }
+    }
+
+    open func pollAttachmentView(
+        _ pollAttachmentView: PollAttachmentView,
         didTapOption option: PollOption,
         in message: ChatMessage
     ) {
@@ -1103,35 +1171,6 @@ open class ChatMessageListVC: _ViewController,
                 self?.didCastPollVote(for: option, in: message, error: error)
             }
         }
-    }
-
-    open func pollAttachmentView(
-        _ pollAttachmentView: PollAttachmentView,
-        didTapPollResults poll: Poll,
-        in message: ChatMessage
-    ) {
-        router.showResults(forPoll: poll, in: message.id, client: client)
-    }
-
-    open func pollAttachmentView(
-        _ pollAttachmentView: PollAttachmentView,
-        didTapEndPoll poll: Poll,
-        in message: ChatMessage
-    ) {
-        let pollController = makePollController(for: poll, in: message)
-        let alert = UIAlertController(
-            title: nil,
-            message: L10n.Alert.Poll.endTitle,
-            preferredStyle: .actionSheet
-        )
-        alert.addAction(.init(title: L10n.Alert.Poll.end, style: .destructive, handler: { _ in
-            pollController.closePoll { [weak self] error in
-                let isSuccess = error == nil
-                self?.notificationFeedbackGenerator?.notificationOccurred(isSuccess ? .success : .error)
-            }
-        }))
-        alert.addAction(.init(title: L10n.Alert.Actions.cancel, style: .cancel))
-        present(alert, animated: true)
     }
 
     // MARK: Poll Requests Completion Handlers

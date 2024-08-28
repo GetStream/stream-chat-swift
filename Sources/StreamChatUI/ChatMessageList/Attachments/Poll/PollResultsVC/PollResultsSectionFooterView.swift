@@ -6,7 +6,7 @@ import StreamChat
 import UIKit
 
 /// The poll results footer view for each section.
-open class PollResultsFooterButtonView: _TableHeaderFooterView, ThemeProvider {
+open class PollResultsSectionFooterView: _TableHeaderFooterView, ThemeProvider {
     /// The bottom spacing of the footer.
     public var bottomSpacing: CGFloat = 8
 
@@ -29,7 +29,7 @@ open class PollResultsFooterButtonView: _TableHeaderFooterView, ThemeProvider {
     override open func setUpAppearance() {
         super.setUpAppearance()
 
-        actionButton.setTitle(L10n.Message.Polls.Button.showAll, for: .normal)
+        actionButton.setTitle(L10n.Polls.Button.showAll, for: .normal)
         actionButton.setTitleColor(appearance.colorPalette.accentPrimary, for: .normal)
         actionButton.titleLabel?.font = appearance.fonts.subheadline
     }
@@ -37,10 +37,12 @@ open class PollResultsFooterButtonView: _TableHeaderFooterView, ThemeProvider {
     override open func setUpLayout() {
         super.setUpLayout()
 
-        container.isLayoutMarginsRelativeArrangement = true
-        container.directionalLayoutMargins = .init(top: 8, leading: 0, bottom: 8, trailing: 0)
         container.views {
             actionButton
+        }
+        .layout {
+            $0.isLayoutMarginsRelativeArrangement = true
+            $0.directionalLayoutMargins = .init(top: 8, leading: 0, bottom: 8, trailing: 0)
         }
         .embed(in: self, insets: .init(top: 0, leading: 16, bottom: bottomSpacing, trailing: 16))
     }

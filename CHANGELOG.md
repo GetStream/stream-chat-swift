@@ -11,6 +11,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Fix `PollOption.latestVotes` sorting [#3374](https://github.com/GetStream/stream-chat-swift/pull/3374)
 - Fix `Poll.latestAnswers` sorting [#3374](https://github.com/GetStream/stream-chat-swift/pull/3374)
 - Fix `Poll` updates not triggering message updates in `ChannelController` [#3374](https://github.com/GetStream/stream-chat-swift/pull/3374)
+- Fix `Poll.latestAnswers` being reset on events, causing "Add a comment" button to not update in the UI SDKs [#3398](https://github.com/GetStream/stream-chat-swift/pull/3398)
+- Fix `PollVoteListController` resetting the first page when loading a new page [#3398](https://github.com/GetStream/stream-chat-swift/pull/3398)
+- Fix `PollVoteListController` default sorting being from oldest to newest from the server response [#3398](https://github.com/GetStream/stream-chat-swift/pull/3398)
+- Fix `PollVoteListQuery.pollId` not limiting the votes query to the given poll id [#3398](https://github.com/GetStream/stream-chat-swift/pull/3398)
 ### 🔄 Changed
 - Deprecates `PollVoteListQuery(pollId:optionId:pagination:filter:)` initializer in favor of `(pollId:filter:pagination:)` [#3381](https://github.com/GetStream/stream-chat-swift/pull/3381)
 
@@ -19,23 +23,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - ✨ Introducing `ViewContainerBuilder`, a new, easier way to customize views [#3374](https://github.com/GetStream/stream-chat-swift/pull/3374) (Learn more by reading the docs [here](https://getstream.io/chat/docs/sdk/ios/uikit/custom-components/))
 - Add `PollAttachmentView` component to render polls in the message list [#3374](https://github.com/GetStream/stream-chat-swift/pull/3374)
 - Add `PollResultsVC` component to show the results of a poll [#3381](https://github.com/GetStream/stream-chat-swift/pull/3381)
+- Add `PollCommentListVC` component to show the comments of a poll [#3398](https://github.com/GetStream/stream-chat-swift/pull/3398)
 - Add `ChatUserAvatarView.shouldShowOnlineIndicator` to disable the online indicator easily [#3374](https://github.com/GetStream/stream-chat-swift/pull/3374)
 ### 🎭 New Localizations
-- `message.polls.subtitle.selectOne`
-- `message.polls.subtitle.selectOneOrMore`
-- `message.polls.subtitle.selectUpTo`
-- `message.polls.subtitle.voteEnded`
-- `message.polls.button.endVote`
-- `message.polls.button.viewResults`
-- `message.polls.button.showAll`
-- `message.polls.votes`
-- `message.polls.results-title`
-- `message.preview.poll-someone-voted`
-- `message.preview.poll-you-voted`
-- `message.preview.poll-someone-created`
-- `message.preview.poll-you-created`
-- `alert.poll.end-title`
-- `alert.poll.end`
+Multiple localizations were added to Polls, for more details please check the strings file.
+- `polls.subtitle.*`
+- `polls.button.*`
+- `polls.*`
+- `alert.poll.*`
+- `message.preview.poll-*`
 
 # [4.62.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.62.0)
 _August 15, 2024_

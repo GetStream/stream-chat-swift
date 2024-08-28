@@ -233,23 +233,36 @@
 // MARK: - Polls
 
 /// Shown in the message poll view to describe that only one option is selectable.
-"message.polls.subtitle.selectOne" = "Select one";
+"polls.subtitle.selectOne" = "Select one";
 /// Shown in the message poll view to describe that multiple options are selectable.
-"message.polls.subtitle.selectOneOrMore" = "Select one or more";
+"polls.subtitle.selectOneOrMore" = "Select one or more";
 /// Shown in the message poll view to describe that multiple options are selectable up until a limit.
-"message.polls.subtitle.selectUpTo" = "Select up to %d";
+"polls.subtitle.selectUpTo" = "Select up to %d";
 /// Shown in the message poll view to describe that the poll has ended.
-"message.polls.subtitle.voteEnded" = "Vote ended";
+"polls.subtitle.voteEnded" = "Vote ended";
 /// Shown in the message poll view on the button to end the poll.
-"message.polls.button.endVote" = "End Vote";
+"polls.button.endVote" = "End Vote";
 /// Shown in the message poll view on the button to view the poll results.
-"message.polls.button.viewResults" = "View Results";
+"polls.button.viewResults" = "View Results";
+
+/// Shown in the message poll view on the button to add a poll comment.
+"polls.button.add-comment" = "Add Comment";
+/// Shown in the message poll view on the button to view the poll comments.
+"polls.button.view-comments" = "View %d Comments";
 /// Shown in the message poll results on the button to show more votes.
-"message.polls.button.showAll" = "Show all";
+"polls.button.show-all" = "Show all";
+/// Shown in the message poll results on the button to add a new suggestion.
+"polls.button.suggest-option" = "Suggest an Option";
 /// Shown to display the number of votes in an option.
-"message.polls.votes" = "%d votes";
+"polls.votes" = "%d votes";
 /// Shown in the poll results navigation title.
-"message.polls.results-title" = "Poll Results";
+"polls.results-title" = "Poll Results";
+/// Shown in the poll comments navigation title.
+"polls.comments-title" = "Poll Comments";
+/// Shown in the poll comments table footer view in the button to add a comment.
+"polls.add-comment" = "Add a Comment";
+/// Shown in the poll comments table footer view in the button to update the comment.
+"polls.update-comment" = "Update your Comment";
 
 /// Shown in the channel list or thread list message preview in case someone voted a poll.
 "message.preview.poll-someone-voted" = "%@ voted:";
@@ -262,5 +275,13 @@
 
 /// Alert title when closing a poll.
 "alert.poll.end-title" = "Nobody will be able to vote in this poll anymore.";
+/// Alert title when adding a comment to a poll.
+"alert.poll.add-comment" = "Add a comment.";
+/// Alert title when adding a new poll suggestion.
+"alert.poll.suggest-option" = "Suggest an option.";
+/// Alert title when updating a comment to a poll.
+"alert.poll.update-comment" ="Update your comment.";
+/// Alert send action when confirm an action on a poll.
+"alert.poll.send" = "Send";
 /// Alert end action when closing a poll.
 "alert.poll.end" = "End";

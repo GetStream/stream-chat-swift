@@ -33,6 +33,15 @@ open class PollAttachmentView: _View, ThemeProvider {
     /// A closure that is triggered whenever the poll results button is tapped.
     public var onResultsTap: ((Poll) -> Void)?
 
+    /// A closure that is triggered whenever the view comments button is tapped.
+    public var onCommentsTap: ((Poll) -> Void)?
+
+    /// A closure that is triggered whenever the add comment button is tapped.
+    public var onAddCommentTap: ((Poll) -> Void)?
+
+    /// A closure that is triggered whenever the add suggestion button is tapped.
+    public var onSuggestOptionTap: ((Poll) -> Void)?
+
     // MARK: - UI Components
 
     /// A label which by default displays the title of the Poll.
@@ -55,6 +64,21 @@ open class PollAttachmentView: _View, ThemeProvider {
         .withoutAutoresizingMaskConstraints
         .withAccessibilityIdentifier(identifier: "optionsListView")
 
+    // The button to add a suggestion to the poll.
+    open private(set) lazy var suggestOptionButton = UIButton()
+        .withoutAutoresizingMaskConstraints
+        .withAccessibilityIdentifier(identifier: "suggestOptionButton")
+
+    /// The button to add a comment to the poll.
+    open private(set) lazy var addCommentButton = UIButton()
+        .withoutAutoresizingMaskConstraints
+        .withAccessibilityIdentifier(identifier: "addCommentButton")
+
+    /// The button to show the current comments of the poll.
+    open private(set) lazy var pollCommentsButton = UIButton()
+        .withoutAutoresizingMaskConstraints
+        .withAccessibilityIdentifier(identifier: "pollCommentsButton")
+
     /// The button that when tapped it shows the polls results.
     open private(set) lazy var pollResultsButton = UIButton()
         .withoutAutoresizingMaskConstraints
@@ -76,6 +100,9 @@ open class PollAttachmentView: _View, ThemeProvider {
     /// The footer view composed by a stack of buttons that can perform actions on the poll.
     open private(set) lazy var footerView: UIView = {
         VContainer(spacing: 2) {
+            suggestOptionButton
+            addCommentButton
+            pollCommentsButton
             pollResultsButton
             endPollButton
         }
@@ -86,6 +113,9 @@ open class PollAttachmentView: _View, ThemeProvider {
     override open func setUp() {
         super.setUp()
 
+        suggestOptionButton.addTarget(self, action: #selector(didTapSuggestOptionButton(sender:)), for: .touchUpInside)
+        pollCommentsButton.addTarget(self, action: #selector(didTapCommentsButton(sender:)), for: .touchUpInside)
+        addCommentButton.addTarget(self, action: #selector(didTapAddCommentButton(sender:)), for: .touchUpInside)
         pollResultsButton.addTarget(self, action: #selector(didTapResultsButton(sender:)), for: .touchUpInside)
         endPollButton.addTarget(self, action: #selector(didTapEndPollButton(sender:)), for: .touchUpInside)
     }
@@ -98,10 +128,17 @@ open class PollAttachmentView: _View, ThemeProvider {
         pollTitleLabel.numberOfLines = 0
         pollSubtitleLabel.font = appearance.fonts.caption1
         pollSubtitleLabel.textColor = appearance.colorPalette.textLowEmphasis
-        pollResultsButton.setTitleColor(appearance.colorPalette.accentPrimary, for: .normal)
-        pollResultsButton.titleLabel?.font = appearance.fonts.subheadline.withSize(16)
-        endPollButton.setTitleColor(appearance.colorPalette.accentPrimary, for: .normal)
-        endPollButton.titleLabel?.font = appearance.fonts.subheadline.withSize(16)
+
+        let footerButtons = [
+            pollResultsButton,
+            endPollButton,
+            addCommentButton,
+            pollCommentsButton,
+            suggestOptionButton
+        ]
+        footerButtons.forEach {
+            styleFooterButton($0)
+        }
     }
 
     override open func setUpLayout() {
@@ -130,12 +167,34 @@ open class PollAttachmentView: _View, ThemeProvider {
         optionListView.onOptionTap = onOptionTap
         optionListView.content = .init(poll: content.poll)
 
-        pollResultsButton.setTitle(L10n.Message.Polls.Button.viewResults, for: .normal)
-        endPollButton.setTitle(L10n.Message.Polls.Button.endVote, for: .normal)
-
-        let isPollCreatedByCurrentUser = content.poll.createdBy?.id == content.currentUserId
-        let shouldShowEndPollButton = !content.poll.isClosed && isPollCreatedByCurrentUser
+        pollResultsButton.setTitle(L10n.Polls.Button.viewResults, for: .normal)
+        endPollButton.setTitle(L10n.Polls.Button.endVote, for: .normal)
         endPollButton.isHidden = !shouldShowEndPollButton
+
+        addCommentButton.isHidden = !shouldShowAddCommentButton
+        addCommentButton.setTitle(L10n.Polls.Button.addComment, for: .normal)
+
+        let commentsCount = content.poll.answersCount
+        pollCommentsButton.isHidden = !shouldShowViewCommentsButton
+        pollCommentsButton.setTitle(L10n.Polls.Button.viewComments(commentsCount), for: .normal)
+
+        suggestOptionButton.isHidden = !shouldShowSuggestOptionButton
+        suggestOptionButton.setTitle(L10n.Polls.Button.suggestOption, for: .normal)
+    }
+
+    @objc open func didTapSuggestOptionButton(sender: Any?) {
+        guard let poll = content?.poll else { return }
+        onSuggestOptionTap?(poll)
+    }
+
+    @objc open func didTapAddCommentButton(sender: Any?) {
+        guard let poll = content?.poll else { return }
+        onAddCommentTap?(poll)
+    }
+
+    @objc open func didTapCommentsButton(sender: Any?) {
+        guard let poll = content?.poll else { return }
+        onCommentsTap?(poll)
     }
 
     @objc open func didTapResultsButton(sender: Any?) {
@@ -153,13 +212,83 @@ open class PollAttachmentView: _View, ThemeProvider {
         guard let content = self.content else { return "" }
         let poll = content.poll
         if poll.isClosed == true {
-            return L10n.Message.Polls.Subtitle.voteEnded
+            return L10n.Polls.Subtitle.voteEnded
         } else if poll.enforceUniqueVote == true {
-            return L10n.Message.Polls.Subtitle.selectOne
+            return L10n.Polls.Subtitle.selectOne
         } else if let maxVotes = poll.maxVotesAllowed, maxVotes > 0 {
-            return L10n.Message.Polls.Subtitle.selectUpTo(min(maxVotes, poll.options.count))
+            return L10n.Polls.Subtitle.selectUpTo(min(maxVotes, poll.options.count))
         } else {
-            return L10n.Message.Polls.Subtitle.selectOneOrMore
+            return L10n.Polls.Subtitle.selectOneOrMore
         }
+    }
+
+    /// A boolean value dependent on the content of the view
+    /// to determine if it should show the end poll button or not.
+    open var shouldShowEndPollButton: Bool {
+        guard let content = self.content else {
+            return false
+        }
+
+        if content.poll.isClosed {
+            return false
+        }
+
+        let isPollCreatedByCurrentUser = content.poll.createdBy?.id == content.currentUserId
+        return isPollCreatedByCurrentUser
+    }
+
+    /// A boolean value dependent on the content of the view
+    /// to determine if it should show the add comment button or not.
+    open var shouldShowAddCommentButton: Bool {
+        guard let content = self.content else {
+            return false
+        }
+
+        if content.poll.isClosed || !content.poll.allowAnswers {
+            return false
+        }
+
+        let currentUserAlreadyCommented = content.poll.latestAnswers
+            .contains(where: { $0.user?.id == content.currentUserId })
+
+        if currentUserAlreadyCommented {
+            return false
+        }
+
+        return true
+    }
+
+    /// A boolean value dependent on the content of the view
+    /// to determine if it should show the view comments button or not.
+    open var shouldShowViewCommentsButton: Bool {
+        guard let content = self.content else {
+            return false
+        }
+
+        if content.poll.isClosed {
+            return false
+        }
+
+        return content.poll.answersCount > 0
+    }
+
+    /// A boolean value dependent on the content of the view
+    /// to determine if it should show the add suggestion button or not.
+    open var shouldShowSuggestOptionButton: Bool {
+        guard let content = self.content else {
+            return false
+        }
+
+        if content.poll.isClosed {
+            return false
+        }
+
+        return content.poll.allowUserSuggestedOptions
+    }
+
+    /// The styling for the footer buttons.
+    open func styleFooterButton(_ button: UIButton) {
+        button.setTitleColor(appearance.colorPalette.accentPrimary, for: .normal)
+        button.titleLabel?.font = appearance.fonts.subheadline.withSize(16)
     }
 }

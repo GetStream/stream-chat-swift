@@ -56,6 +56,20 @@ extension GroupedSectionListStyling {
         contentView.layer.cornerRadius = sectionCornerRadius
     }
 
+    /// Styles the table footer view.
+    /// - Parameters:
+    ///   - tableFooterView: The `tableView.tableFooterView`.
+    ///   - contentView: The content view that of the table footer view.
+    func style(tableFooterView: UIView, contentView: UIView) {
+        guard isGroupedSectionStylingEnabled else {
+            return
+        }
+
+        tableFooterView.backgroundColor = listBackgroundColor
+        contentView.backgroundColor = sectionBackgroundColor
+        contentView.layer.cornerRadius = sectionCornerRadius
+    }
+
     /// Styles the header view of each section
     /// - Parameters:
     ///   - sectionHeaderView: The actual `UITableViewHeaderFooterView`.
