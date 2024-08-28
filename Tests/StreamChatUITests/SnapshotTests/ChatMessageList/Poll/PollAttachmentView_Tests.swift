@@ -33,7 +33,11 @@ final class PollAttachmentView_Tests: XCTestCase {
     }
 
     func test_appearance_whenClosed() {
-        let poll = pollFactory.makePoll(isClosed: true)
+        let poll = pollFactory.makePoll(
+            isClosed: true,
+            allowAnswers: true,
+            allowUserSuggestedOptions: true
+        )
         let view = makeMessageView(for: poll)
         AssertSnapshot(view, variants: [.defaultLight, .defaultDark])
     }

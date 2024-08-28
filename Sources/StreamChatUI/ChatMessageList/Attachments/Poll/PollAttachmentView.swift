@@ -169,23 +169,16 @@ open class PollAttachmentView: _View, ThemeProvider {
 
         pollResultsButton.setTitle(L10n.Polls.Button.viewResults, for: .normal)
         endPollButton.setTitle(L10n.Polls.Button.endVote, for: .normal)
-
-        let isPollCreatedByCurrentUser = content.poll.createdBy?.id == content.currentUserId
-        let shouldShowEndPollButton = !content.poll.isClosed && isPollCreatedByCurrentUser
         endPollButton.isHidden = !shouldShowEndPollButton
 
-        let currentUserHasComment = content.poll.latestAnswers
-            .compactMap(\.user?.id)
-            .contains(content.currentUserId)
-        let shouldShowAddCommentButton = content.poll.allowAnswers && !currentUserHasComment
         addCommentButton.isHidden = !shouldShowAddCommentButton
         addCommentButton.setTitle(L10n.Polls.Button.addComment, for: .normal)
 
         let commentsCount = content.poll.answersCount
-        pollCommentsButton.isHidden = commentsCount == 0
+        pollCommentsButton.isHidden = !shouldShowViewCommentsButton
         pollCommentsButton.setTitle(L10n.Polls.Button.viewComments(commentsCount), for: .normal)
 
-        suggestOptionButton.isHidden = !content.poll.allowUserSuggestedOptions
+        suggestOptionButton.isHidden = !shouldShowSuggestOptionButton
         suggestOptionButton.setTitle(L10n.Polls.Button.suggestOption, for: .normal)
     }
 
@@ -227,6 +220,71 @@ open class PollAttachmentView: _View, ThemeProvider {
         } else {
             return L10n.Polls.Subtitle.selectOneOrMore
         }
+    }
+
+    /// A boolean value dependent on the content of the view
+    /// to determine if it should show the end poll button or not.
+    open var shouldShowEndPollButton: Bool {
+        guard let content = self.content else {
+            return false
+        }
+
+        if content.poll.isClosed {
+            return false
+        }
+
+        let isPollCreatedByCurrentUser = content.poll.createdBy?.id == content.currentUserId
+        return isPollCreatedByCurrentUser
+    }
+
+    /// A boolean value dependent on the content of the view
+    /// to determine if it should show the add comment button or not.
+    open var shouldShowAddCommentButton: Bool {
+        guard let content = self.content else {
+            return false
+        }
+
+        if content.poll.isClosed || !content.poll.allowAnswers {
+            return false
+        }
+
+        let currentUserAlreadyCommented = content.poll.latestAnswers
+            .compactMap(\.user?.id)
+            .contains(content.currentUserId)
+
+        if currentUserAlreadyCommented {
+            return false
+        }
+
+        return true
+    }
+
+    /// A boolean value dependent on the content of the view
+    /// to determine if it should show the view comments button or not.
+    open var shouldShowViewCommentsButton: Bool {
+        guard let content = self.content else {
+            return false
+        }
+
+        if content.poll.isClosed {
+            return false
+        }
+
+        return content.poll.answersCount > 0
+    }
+
+    /// A boolean value dependent on the content of the view
+    /// to determine if it should show the add suggestion button or not.
+    open var shouldShowSuggestOptionButton: Bool {
+        guard let content = self.content else {
+            return false
+        }
+
+        if content.poll.isClosed {
+            return false
+        }
+
+        return content.poll.allowUserSuggestedOptions
     }
 
     /// The styling for the footer buttons.
