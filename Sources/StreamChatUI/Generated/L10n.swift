@@ -144,6 +144,8 @@ internal enum L10n {
       internal static var file: String { L10n.tr("Localizable", "composer.picker.file") }
       /// Photo or Video
       internal static var media: String { L10n.tr("Localizable", "composer.picker.media") }
+      /// Create Poll
+      internal static var poll: String { L10n.tr("Localizable", "composer.picker.poll") }
       /// Choose attachment type: 
       internal static var title: String { L10n.tr("Localizable", "composer.picker.title") }
     }

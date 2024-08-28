@@ -280,8 +280,11 @@
 /// Alert title when adding a new poll suggestion.
 "alert.poll.suggest-option" = "Suggest an option.";
 /// Alert title when updating a comment to a poll.
-"alert.poll.update-comment" ="Update your comment.";
+"alert.poll.update-comment" = "Update your comment.";
 /// Alert send action when confirm an action on a poll.
 "alert.poll.send" = "Send";
 /// Alert end action when closing a poll.
 "alert.poll.end" = "End";
+
+/// Shown in the composer's picker view to create a poll.
+"composer.picker.poll" = "Create Poll";
