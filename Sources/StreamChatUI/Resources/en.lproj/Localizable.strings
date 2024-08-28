@@ -276,11 +276,11 @@
 /// Alert title when closing a poll.
 "alert.poll.end-title" = "Nobody will be able to vote in this poll anymore.";
 /// Alert title when adding a comment to a poll.
-"alert.poll.add-comment" = "Add a Comment";
+"alert.poll.add-comment" = "Add a comment.";
 /// Alert title when adding a new poll suggestion.
-"alert.poll.suggest-option" = "Suggest an Option";
+"alert.poll.suggest-option" = "Suggest an option.";
 /// Alert title when updating a comment to a poll.
-"alert.poll.update-comment" ="Update your Comment";
+"alert.poll.update-comment" ="Update your comment.";
 /// Alert send action when confirm an action on a poll.
 "alert.poll.send" = "Send";
 /// Alert end action when closing a poll.

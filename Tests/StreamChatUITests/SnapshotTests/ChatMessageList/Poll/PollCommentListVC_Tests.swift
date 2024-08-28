@@ -10,6 +10,9 @@ import UIKit
 import XCTest
 
 final class PollCommentListVC_Tests: XCTestCase {
+    // Note: Table cells won't have the correct corner radius,
+    // due to this issue: https://github.com/pointfreeco/swift-snapshot-testing/issues/358
+
     let currentUser = ChatUser.mock(
         id: .unique,
         name: "José Mourinho"
