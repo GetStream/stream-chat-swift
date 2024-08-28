@@ -80,8 +80,7 @@ open class PollCommentListTableFooterView: _View, ThemeProvider {
         guard let content = self.content else { return }
 
         let currentUserHasAnswer = content.poll.latestAnswers
-            .compactMap(\.user?.id)
-            .contains(content.currentUserId)
+            .contains(where: { $0.user?.id == content.currentUserId })
 
         if currentUserHasAnswer {
             actionButton.setTitle(L10n.Polls.updateComment, for: .normal)

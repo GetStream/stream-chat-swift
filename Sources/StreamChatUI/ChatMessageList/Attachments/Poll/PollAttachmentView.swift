@@ -249,8 +249,7 @@ open class PollAttachmentView: _View, ThemeProvider {
         }
 
         let currentUserAlreadyCommented = content.poll.latestAnswers
-            .compactMap(\.user?.id)
-            .contains(content.currentUserId)
+            .contains(where: { $0.user?.id == content.currentUserId })
 
         if currentUserAlreadyCommented {
             return false
