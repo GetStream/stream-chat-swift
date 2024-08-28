@@ -5,14 +5,14 @@
 import StreamChat
 import UIKit
 
-/// The `UITableViewCell` for the poll results vote item.
-open class PollResultsVoteItemCell: _TableViewCell, ThemeProvider {
+/// The `UITableViewCell` for the poll comment list item cell.
+open class PollCommentListItemCell: _TableViewCell, ThemeProvider {
     public struct Content {
-        public var vote: PollVote
+        public var comment: PollVote
         public var poll: Poll
 
-        public init(vote: PollVote, poll: Poll) {
-            self.vote = vote
+        public init(comment: PollVote, poll: Poll) {
+            self.comment = comment
             self.poll = poll
         }
     }
@@ -23,9 +23,9 @@ open class PollResultsVoteItemCell: _TableViewCell, ThemeProvider {
         }
     }
 
-    /// The actual pole vote item view that the cell displays.
-    open private(set) lazy var itemView: PollResultsVoteItemView = components
-        .pollResultsVoteItemView.init()
+    /// The actual comment item view that the cell displays.
+    open private(set) lazy var itemView: PollCommentListItemView = components
+        .pollCommentListItemView.init()
         .withoutAutoresizingMaskConstraints
 
     override open func setUpLayout() {
@@ -36,6 +36,6 @@ open class PollResultsVoteItemCell: _TableViewCell, ThemeProvider {
 
     override open func updateContent() {
         guard let content = self.content else { return }
-        itemView.content = .init(vote: content.vote, poll: content.poll)
+        itemView.content = .init(comment: content.comment, poll: content.poll)
     }
 }

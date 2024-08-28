@@ -6,13 +6,13 @@ import Foundation
 
 /// The model for a Poll.
 public struct Poll: Equatable {
-    /// A boolean indicating whether the poll allows answers.
+    /// A boolean indicating whether the poll allows answers/comments.
     public let allowAnswers: Bool
     
     /// A boolean indicating whether the poll allows user-suggested options.
     public let allowUserSuggestedOptions: Bool
     
-    /// The count of answers received for the poll.
+    /// The count of answers/comments received for the poll.
     public let answersCount: Int
     
     /// The date and time when the poll was created.
@@ -60,7 +60,7 @@ public struct Poll: Equatable {
     /// This property is optional and may be `nil`.
     public let createdBy: ChatUser?
     
-    /// A list of the latest answers received for the poll.
+    /// A list of the latest answers/comments received for the poll.
     public let latestAnswers: [PollVote]
     
     /// An array of options available in the poll.

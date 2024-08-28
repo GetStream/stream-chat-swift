@@ -53,21 +53,16 @@ extension NSManagedObjectContext {
     }
 
     func saveQuery(query: PollVoteListQuery) throws -> PollVoteListQueryDTO? {
-        guard let filterHash = query.filter?.filterHash else {
-            // A query without a filter doesn't have to be saved to the DB because it matches all users by default.
-            return nil
-        }
-
-        if let existingDTO = PollVoteListQueryDTO.load(filterHash: filterHash, context: self) {
+        if let existingDTO = PollVoteListQueryDTO.load(filterHash: query.queryHash, context: self) {
             return existingDTO
         }
 
         let request = PollVoteListQueryDTO.fetchRequest(
             keyPath: #keyPath(PollVoteListQueryDTO.filterHash),
-            equalTo: filterHash
+            equalTo: query.queryHash
         )
         let newDTO = NSEntityDescription.insertNewObject(into: self, for: request)
-        newDTO.filterHash = filterHash
+        newDTO.filterHash = query.queryHash
 
         do {
             newDTO.filterJSONData = try JSONEncoder.default.encode(query.filter)

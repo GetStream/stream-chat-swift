@@ -24,7 +24,28 @@ public protocol PollAttachmentViewInjectorDelegate: ChatMessageContentViewDelega
     /// Called when the user taps on the button to show the poll results.
     func pollAttachmentView(
         _ pollAttachmentView: PollAttachmentView,
-        didTapPollResults poll: Poll,
+        didTapResultsOfPoll poll: Poll,
+        in message: ChatMessage
+    )
+
+    /// Called when the user taps on the button to show the poll comments.
+    func pollAttachmentView(
+        _ pollAttachmentView: PollAttachmentView,
+        didTapCommentsOfPoll poll: Poll,
+        in message: ChatMessage
+    )
+
+    /// Called when the user taps on the button to suggest a new option.
+    func pollAttachmentView(
+        _ pollAttachmentView: PollAttachmentView,
+        didTapSuggestOptionForPoll poll: Poll,
+        in message: ChatMessage
+    )
+
+    /// Called when the user taps on the button to show the poll comments.
+    func pollAttachmentView(
+        _ pollAttachmentView: PollAttachmentView,
+        didTapAddCommentOnPoll poll: Poll,
         in message: ChatMessage
     )
 }
@@ -66,7 +87,19 @@ public class PollAttachmentViewInjector: AttachmentViewInjector {
         }
         pollAttachmentView.onResultsTap = { [weak self] poll in
             guard let self = self else { return }
-            self.pollAttachmentViewDelegate?.pollAttachmentView(self.pollAttachmentView, didTapPollResults: poll, in: message)
+            self.pollAttachmentViewDelegate?.pollAttachmentView(self.pollAttachmentView, didTapResultsOfPoll: poll, in: message)
+        }
+        pollAttachmentView.onCommentsTap = { [weak self] poll in
+            guard let self = self else { return }
+            self.pollAttachmentViewDelegate?.pollAttachmentView(self.pollAttachmentView, didTapCommentsOfPoll: poll, in: message)
+        }
+        pollAttachmentView.onAddCommentTap = { [weak self] poll in
+            guard let self = self else { return }
+            self.pollAttachmentViewDelegate?.pollAttachmentView(self.pollAttachmentView, didTapAddCommentOnPoll: poll, in: message)
+        }
+        pollAttachmentView.onSuggestOptionTap = { [weak self] poll in
+            guard let self = self else { return }
+            self.pollAttachmentViewDelegate?.pollAttachmentView(self.pollAttachmentView, didTapSuggestOptionForPoll: poll, in: message)
         }
 
         pollAttachmentView.content = .init(poll: poll, currentUserId: currentUserId)

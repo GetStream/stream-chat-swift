@@ -33,9 +33,47 @@ final class PollAttachmentView_Tests: XCTestCase {
     }
 
     func test_appearance_whenClosed() {
-        let poll = pollFactory.makePoll(isClosed: true)
+        let poll = pollFactory.makePoll(
+            isClosed: true,
+            allowAnswers: true,
+            allowUserSuggestedOptions: true
+        )
         let view = makeMessageView(for: poll)
         AssertSnapshot(view, variants: [.defaultLight, .defaultDark])
+    }
+
+    func test_appearance_withComments() {
+        let poll = pollFactory.makePoll(allowAnswers: true, answersCount: 5)
+        let view = makeMessageView(for: poll)
+        AssertSnapshot(view, variants: [.defaultLight, .defaultDark])
+    }
+
+    func test_appearance_withZeroComments() {
+        let poll = pollFactory.makePoll(allowAnswers: true, answersCount: 0)
+        let view = makeMessageView(for: poll)
+        AssertSnapshot(view, variants: [.defaultLight])
+    }
+
+    func test_appearance_whenSuggestionsEnabled() {
+        let poll = pollFactory.makePoll(allowAnswers: true, allowUserSuggestedOptions: true, answersCount: 3)
+        let view = makeMessageView(for: poll)
+        AssertSnapshot(view, variants: [.defaultLight])
+    }
+
+    func test_appearance_whenAnonymous() {
+        let poll = pollFactory.makePoll(allowAnswers: true, answersCount: 3, votingVisibility: .anonymous)
+        let view = makeMessageView(for: poll)
+        AssertSnapshot(view, variants: [.defaultLight])
+    }
+
+    func test_appearance_withComments_whenCurrentUserAlreadyComment() {
+        let poll = pollFactory.makePoll(
+            allowAnswers: true,
+            answersCount: 5,
+            latestAnswers: [.mock(user: currentUser)]
+        )
+        let view = makeMessageView(for: poll)
+        AssertSnapshot(view, variants: [.defaultLight])
     }
 
     func test_subtitleText() {

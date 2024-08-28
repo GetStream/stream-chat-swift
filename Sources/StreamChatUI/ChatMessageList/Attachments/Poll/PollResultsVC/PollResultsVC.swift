@@ -90,7 +90,7 @@ open class PollResultsVC:
 
         tableView.register(components.pollResultsVoteItemCell)
         tableView.register(components.pollResultsSectionHeaderView)
-        tableView.register(components.pollResultsFooterButtonView)
+        tableView.register(components.pollResultsSectionFooterView)
 
         tableView.estimatedSectionHeaderHeight = 50
         tableView.sectionHeaderHeight = UITableView.automaticDimension
@@ -104,7 +104,7 @@ open class PollResultsVC:
     override open func setUpAppearance() {
         super.setUpAppearance()
 
-        title = L10n.Message.Polls.resultsTitle
+        title = L10n.Polls.resultsTitle
         tableView.allowsSelection = false
         tableView.backgroundColor = listBackgroundColor
         tableView.separatorStyle = .none
@@ -137,12 +137,15 @@ open class PollResultsVC:
 
         var snapshot = NSDiffableDataSourceSnapshot<PollOption, PollVote>()
         snapshot.appendSections(poll.options)
-        poll.options.forEach { option in
-            let latestVotes = option.latestVotes
-                .sorted(by: { $0.createdAt > $1.createdAt })
-                .prefix(maximumVotesPerOption)
+       
+        if poll.votingVisibility != .anonymous {
+            poll.options.forEach { option in
+                let latestVotes = option.latestVotes
+                    .sorted(by: { $0.createdAt > $1.createdAt })
+                    .prefix(maximumVotesPerOption)
 
-            snapshot.appendItems(Array(latestVotes), toSection: option)
+                snapshot.appendItems(Array(latestVotes), toSection: option)
+            }
         }
 
         dataSource.apply(snapshot, animatingDifferences: true)
@@ -155,10 +158,11 @@ open class PollResultsVC:
         vote: PollVote
     ) -> PollResultsVoteItemCell {
         let cell = tableView.dequeueReusableCell(with: components.pollResultsVoteItemCell, for: indexPath)
-        guard let option = pollController.poll?.options[indexPath.section] else {
+        guard let option = pollController.poll?.options[safe: indexPath.section],
+              let poll = pollController.poll else {
             return cell
         }
-        cell.content = .init(vote: vote)
+        cell.content = .init(vote: vote, poll: poll)
         let isLastItem = indexPath.row == option.latestVotes.count - 1
         style(cell: cell, contentView: cell.itemView, isLastItem: isLastItem)
         return cell
@@ -167,11 +171,14 @@ open class PollResultsVC:
     // MARK: - UITableViewDelegate
 
     open func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-        guard let poll = pollController.poll else { return nil }
-        let option = poll.options[section]
+        guard let poll = pollController.poll,
+              let option = poll.options[safe: section] else {
+            return nil
+        }
         let view = tableView.dequeueReusableHeaderFooter(with: components.pollResultsSectionHeaderView)
         view.content = .init(option: option, poll: poll)
-        style(sectionHeaderView: view, contentView: view.optionView, isEmptySection: option.latestVotes.isEmpty)
+        let isEmptySection = option.latestVotes.isEmpty || poll.votingVisibility == .anonymous
+        style(sectionHeaderView: view, contentView: view.container, isEmptySection: isEmptySection)
         return view
     }
 
@@ -180,7 +187,7 @@ open class PollResultsVC:
               option.latestVotes.count > maximumVotesPerOption else {
             return nil
         }
-        let view = tableView.dequeueReusableHeaderFooter(with: components.pollResultsFooterButtonView)
+        let view = tableView.dequeueReusableHeaderFooter(with: components.pollResultsSectionFooterView)
         view.onTap = { [weak self] in
             self?.showVoteList(for: option)
         }

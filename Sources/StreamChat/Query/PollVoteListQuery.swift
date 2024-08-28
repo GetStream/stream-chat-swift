@@ -12,6 +12,8 @@ public struct PollVoteListQuery: Encodable {
     public var optionId: String?
     /// The pagination information to query the votes.
     public var pagination: Pagination
+    // The sorting parameter. By default votes are sorted by newest first.
+    public var sorting: [Sorting<PollVoteListSortingKey>]
     /// The filter details to query the votes.
     public var filter: Filter<VoteListFilterScope>?
 
@@ -27,11 +29,13 @@ public struct PollVoteListQuery: Encodable {
         pollId: String,
         optionId: String?,
         pagination: Pagination = .init(pageSize: 10, offset: 0),
+        sorting: [Sorting<PollVoteListSortingKey>] = [.init(key: .createdAt, isAscending: false)],
         filter: Filter<VoteListFilterScope>? = nil
     ) {
         self.pollId = pollId
         self.optionId = optionId
         self.pagination = pagination
+        self.sorting = sorting
         self.filter = filter
     }
 
@@ -39,10 +43,12 @@ public struct PollVoteListQuery: Encodable {
     public init(
         pollId: String,
         filter: Filter<VoteListFilterScope>? = nil,
-        pagination: Pagination = .init(pageSize: 10, offset: 0)
+        pagination: Pagination = .init(pageSize: 10, offset: 0),
+        sorting: [Sorting<PollVoteListSortingKey>] = [.init(key: .createdAt, isAscending: false)]
     ) {
         self.pollId = pollId
         self.pagination = pagination
+        self.sorting = sorting
         self.filter = filter
     }
 
@@ -50,24 +56,44 @@ public struct PollVoteListQuery: Encodable {
     public init(
         pollId: String,
         optionId: String,
-        pagination: Pagination = .init(pageSize: 10, offset: 0)
+        pagination: Pagination = .init(pageSize: 10, offset: 0),
+        sorting: [Sorting<PollVoteListSortingKey>] = [.init(key: .createdAt, isAscending: false)]
     ) {
         self.pollId = pollId
         self.optionId = optionId
         self.pagination = pagination
+        self.sorting = sorting
         filter = .equal(.optionId, to: optionId)
     }
 
     enum CodingKeys: CodingKey {
         case pagination
         case filter
+        case sort
     }
 
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encodeIfPresent(filter, forKey: .filter)
+        if !sorting.isEmpty {
+            try container.encode(sorting, forKey: .sort)
+        }
         try pagination.encode(to: encoder)
     }
+}
+
+/// The type describing a value that can be used as a sorting when paginating a list of votes in a poll.
+public struct PollVoteListSortingKey: RawRepresentable, Hashable, SortingKey {
+    public let rawValue: String
+
+    public init(rawValue: String) {
+        self.rawValue = rawValue
+    }
+}
+
+public extension PollVoteListSortingKey {
+    /// Sorts votes by `created_at` field.
+    static let createdAt = Self(rawValue: PollVotePayload.CodingKeys.createdAt.rawValue)
 }
 
 /// A namespace for the `FilterKey`s suitable to be used for `PollVoteListQuery`.

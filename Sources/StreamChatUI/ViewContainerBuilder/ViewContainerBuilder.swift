@@ -179,6 +179,23 @@ public extension UIStackView {
         subviews().forEach { addArrangedSubview($0) }
         return self
     }
+
+    /// Syntax sugar to be able to add additional layout changes in place when building layouts specific for containers it can allow changing UIStackView properties in place.
+    /// Example:
+    /// ```
+    /// VContainer(spacing: 5) {
+    ///    topView
+    ///    bottomView
+    /// }.layout {
+    ///   $0.isLayoutMarginsRelativeArrangement = true
+    ///   $0.directionalLayoutMargins = .init(top: 12, leading: 12, bottom: 8, trailing: 12)
+    /// }
+    /// ```
+    @discardableResult
+    func layout(_ block: (UIStackView) -> Void) -> UIStackView {
+        block(self)
+        return self
+    }
 }
 
 // MARK: - UIView width and height helpers
