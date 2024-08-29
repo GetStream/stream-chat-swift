@@ -180,7 +180,7 @@ extension URL {
     /// The directory URL for attachment downloads.
     static var streamAttachmentDownloadsDirectory: URL {
         (FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first ?? FileManager.default.temporaryDirectory)
-            .appendingPathComponent("AttachmentDownloads", isDirectory: true)
+            .appendingPathComponent("StreamAttachmentDownloads", isDirectory: true)
     }
     
     static func streamAttachmentLocalStorageURL(forRelativePath path: String) -> URL {
