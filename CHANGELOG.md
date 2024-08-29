@@ -5,8 +5,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## StreamChat
 ### ✅ Added
-- Add `downloadAttachment(_:)` and `deleteLocalAttachmentDownload(for:)` to `Chat` and `MessageController` [#3393](https://github.com/GetStream/stream-chat-swift/pull/3393)
-- Add `deleteAllLocalAttachmentDownloads()` to `ConnectedUser` and `CurrentUserController` [#3393](https://github.com/GetStream/stream-chat-swift/pull/3393)
+- Local attachment downloads ([docs](https://getstream.io/chat/docs/sdk/ios/client/attachment-downloads)) [#3393](https://github.com/GetStream/stream-chat-swift/pull/3393)
+  - Add `downloadAttachment(_:)` and `deleteLocalAttachmentDownload(for:)` to `Chat` and `MessageController`
+  - Add `deleteAllLocalAttachmentDownloads()` to `ConnectedUser` and `CurrentUserController`
 ### 🐞 Fixed
 - Fix Logger printing the incorrect thread name [#3382](https://github.com/GetStream/stream-chat-swift/pull/3382)
 
