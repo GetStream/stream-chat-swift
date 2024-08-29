@@ -16,7 +16,7 @@ Available from `StreamChat` version 4.63.0.
 
 `ChatMessageController` has a new method `downloadAttachment(_:completion:)`. The method requires to pass in an instance of  `ChatMessageAttachment` which we can retrieve from the controller managed `ChatMessage`.
 
-Here is an example of creating an instance of `ChatMessageController` using a channel id and a message id. `ChatMessage` has convenient accessors for looking up attachments with specific attachment type. In the example below, we know that this particular message has file attachments and therefore we go ahead and download the first file attachment of the message. When the attachment download has finished, the completion is called with updated `ChatMessageAttachment` value which contains the local file URL of the download.
+Here is an example of creating an instance of `ChatMessageController` using a channel id and a message id. `ChatMessage` has convenient properties for looking up attachments with a specific attachment type. In the example below, we know that this particular message has file attachments and therefore we go ahead and download the first file attachment of the message. When the attachment download has finished, the completion is called with updated `ChatMessageAttachment` value which contains the local file URL of the download.
 
 ```swift
 let message: ChatMessage = …
