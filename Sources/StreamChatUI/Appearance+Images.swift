@@ -246,6 +246,7 @@ public extension Appearance {
             get { _fileAttachmentDownloadActionIcons ??
                 [
                     .downloaded: share,
+                    .downloadingFailed: download,
                     nil: download
                 ]
             }
