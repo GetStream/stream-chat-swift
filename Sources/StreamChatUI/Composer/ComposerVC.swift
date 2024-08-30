@@ -812,7 +812,14 @@ open class ComposerVC: _ViewController,
 
     /// Shows the poll creation view.
     open func showPollCreation() {
-        print("Show poll creation")
+        guard let channelId = channelController?.channel?.cid,
+              let channelController = channelController?.client.channelController(for: channelId)
+        else {
+            return
+        }
+        let pollCreationVC = PollCreationVC(channelController: channelController)
+        let navVC = UINavigationController(rootViewController: pollCreationVC)
+        present(navVC, animated: true)
     }
 
     /// Returns actions for attachments picker.
