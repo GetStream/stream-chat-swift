@@ -66,7 +66,12 @@ final class DatabaseContainer_Tests: XCTestCase {
     func test_removingAllData() throws {
         let container = DatabaseContainer(kind: .inMemory)
 
-        // // Create data for all our entities in the DB
+        // Create dummy local download
+        let localDownload = URL.streamAttachmentLocalStorageURL(forRelativePath: "mypath")
+        try FileManager.default.createDirectory(at: localDownload.deletingLastPathComponent(), withIntermediateDirectories: true)
+        try "1".write(to: localDownload, atomically: false, encoding: .utf8)
+        
+        // Create data for all our entities in the DB
         try writeDataForAllEntities(to: container)
 
         // Fetch the data from all out entities
@@ -118,6 +123,9 @@ final class DatabaseContainer_Tests: XCTestCase {
                 XCTAssertNil(context.currentUser)
             }
         }
+        
+        // Assert that local downloads were removed
+        XCTAssertEqual(false, FileManager.default.fileExists(atPath: URL.streamAttachmentDownloadsDirectory.path))
     }
     
     func test_removingAllData_whileAnotherWrite() throws {

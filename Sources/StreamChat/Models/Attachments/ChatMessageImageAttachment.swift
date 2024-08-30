@@ -84,6 +84,18 @@ public struct ImageAttachmentPayload: AttachmentPayload {
 
 extension ImageAttachmentPayload: Hashable {}
 
+// MARK: - Local Downloads
+
+extension ImageAttachmentPayload: AttachmentPayloadDownloading {
+    public var localStorageFileName: String {
+        title ?? imageURL.lastPathComponent
+    }
+    
+    public var remoteURL: URL {
+        imageURL
+    }
+}
+
 // MARK: - Encodable
 
 extension ImageAttachmentPayload: Encodable {

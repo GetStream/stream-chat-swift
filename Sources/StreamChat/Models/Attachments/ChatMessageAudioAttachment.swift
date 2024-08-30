@@ -47,6 +47,18 @@ public struct AudioAttachmentPayload: AttachmentPayload {
 
 extension AudioAttachmentPayload: Hashable {}
 
+// MARK: - Local Downloads
+
+extension AudioAttachmentPayload: AttachmentPayloadDownloading {
+    public var localStorageFileName: String {
+        title ?? file.defaultLocalStorageFileName(for: Self.type)
+    }
+    
+    public var remoteURL: URL {
+        audioURL
+    }
+}
+
 // MARK: - Encodable
 
 extension AudioAttachmentPayload: Encodable {

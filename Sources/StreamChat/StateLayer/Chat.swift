@@ -352,16 +352,47 @@ public class Chat {
         return try await messageSender.waitForAPIRequest(messageId: messageId)
     }
     
+    /// Downloads the specified attachment and stores it locally on the device.
+    ///
+    /// The local URL of the downloaded file:
+    /// ```swift
+    /// let downloadedAttachment = try await chat.downloadAttachment(attachment)
+    /// let localURL = downloadedAttachment.downloadingState?.localFileURL
+    /// ```
+    ///
+    /// - Parameter attachment: The attachment to download.
+    ///
+    /// - Note: The local storage URL can change between app launches.
+    ///
+    /// - Throws: An error while downloading the attachment.
+    /// - Returns: An instance of the downloaded attachment which includes the local URL.
+    @discardableResult public func downloadAttachment<Payload>(
+        _ attachment: ChatMessageAttachment<Payload>
+    ) async throws -> ChatMessageAttachment<Payload> where Payload: DownloadableAttachmentPayload {
+        try await messageUpdater.downloadAttachment(attachment)
+    }
+    
+    /// Deletes the locally downloaded file.
+    ///
+    /// - Parameter attachmentId: The id of the attachment.
+    ///
+    /// - SeeAlso: Deleting all the local downloads: ``ConnectedUser/deleteAllLocalAttachmentDownloads()``
+    ///
+    /// - Throws: An error while deleting a downloaded file.
+    public func deleteLocalAttachmentDownload(for attachmentId: AttachmentId) async throws {
+        try await messageUpdater.deleteLocalAttachmentDownload(for: attachmentId)
+    }
+    
     /// Resends a failed attachment.
     ///
-    /// - Parameter attachment: The id of the attachment.
+    /// - Parameter attachmentId: The id of the attachment.
     ///
     /// - Throws: An error while sending a message to the Stream API.
     /// - Returns: The uploaded attachment with additional information like remote and thumbnail URLs.
-    @discardableResult public func resendAttachment(_ attachment: AttachmentId) async throws -> UploadedAttachment {
+    @discardableResult public func resendAttachment(_ attachmentId: AttachmentId) async throws -> UploadedAttachment {
         let attachmentQueueUploader = try client.backgroundWorker(of: AttachmentQueueUploader.self)
-        try await messageUpdater.resendAttachment(with: attachment)
-        return try await attachmentQueueUploader.waitForAPIRequest(attachmentId: attachment)
+        try await messageUpdater.resendAttachment(with: attachmentId)
+        return try await attachmentQueueUploader.waitForAPIRequest(attachmentId: attachmentId)
     }
     
     /// Invokes the ephemeral action specified by the attachment.

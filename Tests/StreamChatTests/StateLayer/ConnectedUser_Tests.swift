@@ -158,6 +158,26 @@ final class ConnectedUser_Tests: XCTestCase {
         XCTAssertEqual(id, env.userUpdaterMock.unblockUser_userId)
     }
     
+    // MARK: - Delete All Attachment Downloads
+    
+    func test_deleteAllLocalAttachmentDownloads_propagatesErrorFromUpdater() async throws {
+        try await setUpConnectedUser(usesMockedUpdaters: true)
+        
+        let testError = TestError()
+        env.currentUserUpdaterMock.deleteAllLocalAttachmentDownloads_completion_result = .failure(testError)
+        await XCTAssertAsyncFailure(
+            try await connectedUser.deleteAllLocalAttachmentDownloads(),
+            testError
+        )
+    }
+    
+    func test_deleteAllLocalAttachmentDownloads_success() async throws {
+        try await setUpConnectedUser(usesMockedUpdaters: true)
+        
+        env.currentUserUpdaterMock.deleteAllLocalAttachmentDownloads_completion_result = .success(())
+        try await connectedUser.deleteAllLocalAttachmentDownloads()
+    }
+    
     // MARK: - Test Data
     
     @MainActor private func setUpConnectedUser(usesMockedUpdaters: Bool, loadState: Bool = true, initialDeviceCount: Int = 0) async throws {

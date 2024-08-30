@@ -905,7 +905,8 @@ private class TestEnvironment {
                     sessionConfiguration: $0,
                     requestEncoder: $1,
                     requestDecoder: $2,
-                    attachmentUploader: $3
+                    attachmentDownloader: $3,
+                    attachmentUploader: $4
                 )
                 return self.apiClient!
             },

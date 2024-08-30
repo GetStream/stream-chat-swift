@@ -121,6 +121,7 @@
         "client/push-notifications",
         "guides/video-integration",
         "client/custom-cdn",
+        "client/attachment-downloads",
         "guides/moderation",        
         "guides/go-live-checklist",
         {

@@ -176,6 +176,17 @@ public final class ConnectedUser {
         try await userUpdater.unflag(userId)
     }
     
+    // MARK: Managing Local Attachment Downloads
+    
+    /// Deletes all the local downloads of file attachments.
+    ///
+    /// - Parameter completion: Called when files have been deleted or when an error occured.
+    ///
+    /// - Throws: An error while deleting local downloads.
+    public func deleteAllLocalAttachmentDownloads() async throws {
+        try await currentUserUpdater.deleteAllLocalAttachmentDownloads()
+    }
+    
     // MARK: - Private
     
     private func currentUserId() throws -> UserId {

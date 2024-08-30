@@ -381,7 +381,7 @@ final class Chat_Tests: XCTestCase {
         }
     }
     
-    func test_deleteMessage_whenMessageUpdaterFails_thenDeleteMessageSucceeds() async throws {
+    func test_deleteMessage_whenMessageUpdaterFails_thenDeleteMessageFails() async throws {
         for hard in [true, false] {
             env.messageUpdaterMock.deleteMessage_completion_result = .failure(expectedTestError)
             let messageId: MessageId = .unique
@@ -389,6 +389,45 @@ final class Chat_Tests: XCTestCase {
             XCTAssertEqual(messageId, env.messageUpdaterMock.deleteMessage_messageId)
             XCTAssertEqual(hard, env.messageUpdaterMock.deleteMessage_hard)
         }
+    }
+    
+    func test_downloadAttachment_whenMessageUpdaterSucceeds_thenSucceess() async throws {
+        let attachmentId = AttachmentId.unique
+        let expected = ChatMessageFileAttachment.mock(id: attachmentId)
+        env.messageUpdaterMock.downloadAttachment_completion_result = .success(expected.asAnyAttachment)
+        let result = try await chat.downloadAttachment(expected)
+        XCTAssertEqual(expected, result)
+        XCTAssertEqual(attachmentId, env.messageUpdaterMock.downloadAttachment_attachmentId)
+    }
+    
+    func test_downloadAttachment_whenMessageUpdaterFails_thenFailure() async throws {
+        let attachmentId = AttachmentId.unique
+        let attachment = ChatMessageFileAttachment.mock(id: attachmentId)
+        let expected = TestError()
+        env.messageUpdaterMock.downloadAttachment_completion_result = .failure(expected)
+        await XCTAssertAsyncFailure(
+            try await chat.downloadAttachment(attachment),
+            expected
+        )
+        XCTAssertEqual(attachmentId, env.messageUpdaterMock.downloadAttachment_attachmentId)
+    }
+    
+    func test_deleteLocalAttachmentDownload_whenMessageUpdaterSucceeds_thenSucceess() async throws {
+        let attachmentId = AttachmentId.unique
+        env.messageUpdaterMock.deleteLocalAttachmentDownload_completion_result = .success(())
+        try await chat.deleteLocalAttachmentDownload(for: attachmentId)
+        XCTAssertEqual(attachmentId, env.messageUpdaterMock.deleteLocalAttachmentDownload_attachmentId)
+    }
+    
+    func test_deleteLocalAttachmentDownload_whenMessageUpdaterFails_thenFailure() async throws {
+        let attachmentId = AttachmentId.unique
+        let expected = TestError()
+        env.messageUpdaterMock.deleteLocalAttachmentDownload_completion_result = .failure(expected)
+        await XCTAssertAsyncFailure(
+            try await chat.deleteLocalAttachmentDownload(for: attachmentId),
+            expected
+        )
+        XCTAssertEqual(attachmentId, env.messageUpdaterMock.deleteLocalAttachmentDownload_attachmentId)
     }
     
     func test_resendAttachment_whenAPIRequestSucceeds_thenResendAttachmentSucceeds() async throws {

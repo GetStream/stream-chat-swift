@@ -114,27 +114,53 @@ extension ChatMessageFileAttachmentListView {
             // If we cannot fetch filename, let's use only content type.
             fileNameLabel.text = content?.payload.title ?? content?.type.rawValue
 
-            switch content?.uploadingState?.state {
-            case .uploaded, .none:
-                fileSizeLabel.text = content?.payload.file.sizeString
-            case .uploadingFailed:
-                fileSizeLabel.text = L10n.Message.Sending.attachmentUploadingFailed
-            default:
-                fileSizeLabel.text = content?.uploadingState?.fileUploadingProgress
-            }
-
-            if let state = content?.uploadingState?.state {
-                actionIconImageView.image = appearance.fileAttachmentActionIcon(for: state)
+            let downloadState = content?.downloadingState?.state
+            let uploadState = content?.uploadingState?.state
+            
+            if let downloadState {
+                switch downloadState {
+                case .downloading:
+                    fileSizeLabel.text = content?.downloadingState?.fileProgress
+                case .downloaded, .downloadingFailed:
+                    fileSizeLabel.text = content?.payload.file.sizeString
+                }
+            } else if let uploadState {
+                switch uploadState {
+                case .uploading:
+                    fileSizeLabel.text = content?.uploadingState?.fileProgress
+                case .uploadingFailed:
+                    fileSizeLabel.text = L10n.Message.Sending.attachmentUploadingFailed
+                case .pendingUpload, .uploaded, .unknown:
+                    fileSizeLabel.text = content?.payload.file.sizeString
+                }
             } else {
-                actionIconImageView.image = nil
+                fileSizeLabel.text = content?.payload.file.sizeString
             }
+            
+            actionIconImageView.image = {
+                guard let fileSize = content?.file.size, fileSize > 0 else { return nil }
+                guard content?.file.type != .unknown else { return nil }
+                return appearance.fileAttachmentActionIcon(
+                    uploadState: uploadState,
+                    downloadState: downloadState,
+                    downloadingEnabled: Components.default.isDownloadFileAttachmentsEnabled
+                )
+            }()
 
-            switch content?.uploadingState?.state {
-            case .pendingUpload, .uploading:
-                loadingIndicator.isVisible = true
-            default:
-                loadingIndicator.isVisible = false
-            }
+            loadingIndicator.isVisible = {
+                if let downloadState, case .downloading = downloadState {
+                    return true
+                }
+                if let uploadState {
+                    switch uploadState {
+                    case .pendingUpload, .uploading:
+                        return true
+                    default:
+                        return false
+                    }
+                }
+                return false
+            }()
 
             if content?.file.type == .unknown {
                 fileNameLabel.text = L10n.Message.unsupportedAttachment

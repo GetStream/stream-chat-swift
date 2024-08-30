@@ -69,6 +69,18 @@ extension VoiceRecordingAttachmentPayload {
     }
 }
 
+// MARK: - Local Downloads
+
+extension VoiceRecordingAttachmentPayload: AttachmentPayloadDownloading {
+    public var localStorageFileName: String {
+        title ?? file.defaultLocalStorageFileName(for: Self.type)
+    }
+    
+    public var remoteURL: URL {
+        voiceRecordingURL
+    }
+}
+
 // MARK: - Encodable
 
 extension VoiceRecordingAttachmentPayload: Encodable {

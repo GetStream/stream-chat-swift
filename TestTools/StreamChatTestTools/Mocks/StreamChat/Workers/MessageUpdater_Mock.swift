@@ -16,6 +16,12 @@ final class MessageUpdater_Mock: MessageUpdater {
     @Atomic var deleteMessage_completion_result: Result<Void, Error>?
     @Atomic var deleteMessage_hard: Bool?
 
+    @Atomic var downloadAttachment_attachmentId: AttachmentId?
+    @Atomic var downloadAttachment_completion_result: Result<AnyChatMessageAttachment, Error>?
+    
+    @Atomic var deleteLocalAttachmentDownload_attachmentId: AttachmentId?
+    @Atomic var deleteLocalAttachmentDownload_completion_result: Result<Void, Error>?
+
     @Atomic var editMessage_messageId: MessageId?
     @Atomic var editMessage_text: String?
     @Atomic var editMessage_skipEnrichUrl: Bool?
@@ -136,6 +142,12 @@ final class MessageUpdater_Mock: MessageUpdater {
         deleteMessage_completion = nil
         deleteMessage_completion_result = nil
 
+        deleteLocalAttachmentDownload_attachmentId = nil
+        deleteLocalAttachmentDownload_completion_result = nil
+        
+        downloadAttachment_attachmentId = nil
+        downloadAttachment_completion_result = nil
+        
         editMessage_messageId = nil
         editMessage_text = nil
         editMessage_completion = nil
@@ -246,6 +258,32 @@ final class MessageUpdater_Mock: MessageUpdater {
         deleteMessage_hard = hard
         deleteMessage_completion = completion
         deleteMessage_completion_result?.invoke(with: completion)
+    }
+    
+    override func deleteLocalAttachmentDownload(for attachmentId: AttachmentId, completion: @escaping ((any Error)?) -> Void) {
+        deleteLocalAttachmentDownload_attachmentId = attachmentId
+        deleteLocalAttachmentDownload_completion_result?.invoke(with: completion)
+    }
+    
+    override func downloadAttachment<Payload>(
+        _ attachment: ChatMessageAttachment<Payload>,
+        completion: @escaping (Result<ChatMessageAttachment<Payload>, any Error>) -> Void
+    ) where Payload : DownloadableAttachmentPayload {
+        downloadAttachment_attachmentId = attachment.id
+        switch downloadAttachment_completion_result {
+        case .success(let anyAttachment):
+            if let result = anyAttachment.attachment(payloadType: Payload.self) {
+                completion(.success(result))
+            } else {
+                completion(.failure(TestError()))
+            }
+        case .failure(let error):
+            completion(.failure(error))
+        case nil:
+            break
+        }
+        
+        //downloadAttachment_completion_result?  .invoke(with: completion)
     }
     
     override func editMessage(

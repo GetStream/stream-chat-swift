@@ -1908,6 +1908,153 @@ final class MessageUpdater_Tests: XCTestCase {
         XCTAssertTrue(message.isPinned)
         XCTAssertEqual(pinExpires, message.pinDetails?.expiresAt)
     }
+    
+    // MARK: - Download Attachments
+    
+    func test_downloadAttachment_propagatesDownloadError() throws {
+        let attachment = try setUpAttachment(attachment: ChatMessageAudioAttachment.mock(id: .unique))
+        let testError = TestError()
+        apiClient.downloadFile_completion_result = .failure(testError)
+        let result = try waitFor { messageUpdater.downloadAttachment(attachment, completion: $0) }
+        let error = try XCTUnwrap(result.error)
+        XCTAssertEqual(testError, error as? TestError)
+    }
+    
+    func test_downloadAttachment_audioAttachment_success() throws {
+        let attachment = try setUpAttachment(attachment: ChatMessageAudioAttachment.mock(id: .unique))
+        apiClient.downloadFile_completion_result = .success(())
+        let result = try waitFor { messageUpdater.downloadAttachment(attachment, completion: $0) }
+        let value = try XCTUnwrap(result.value)
+        XCTAssertEqual("Sample.wav", apiClient.downloadFile_localURL?.lastPathComponent)
+        XCTAssertEqual("http://asset.url/file.wav", apiClient.downloadFile_remoteURL?.absoluteString)
+        XCTAssertEqual(attachment.id, value.id)
+        XCTAssertEqual(LocalAttachmentDownloadState.downloaded, value.downloadingState?.state)
+        XCTAssertEqual(URL.streamAttachmentLocalStorageURL(forRelativePath: value.relativeStoragePath), value.downloadingState?.localFileURL)
+    }
+    
+    func test_downloadAttachment_fileAttachment_success() throws {
+        let attachment = try setUpAttachment(
+            attachment: ChatMessageFileAttachment.mock(id: .unique)
+        )
+        apiClient.downloadFile_completion_result = .success(())
+        let result = try waitFor { messageUpdater.downloadAttachment(attachment, completion: $0) }
+        let value = try XCTUnwrap(result.value)
+        XCTAssertEqual("Sample.pdf", apiClient.downloadFile_localURL?.lastPathComponent)
+        XCTAssertEqual("http://asset.url", apiClient.downloadFile_remoteURL?.absoluteString)
+        XCTAssertEqual(attachment.id, value.id)
+        XCTAssertEqual(LocalAttachmentDownloadState.downloaded, value.downloadingState?.state)
+        XCTAssertEqual(URL.streamAttachmentLocalStorageURL(forRelativePath: value.relativeStoragePath), value.downloadingState?.localFileURL)
+    }
+    
+    func test_downloadAttachment_imageAttachment_success() throws {
+        let attachment = try setUpAttachment(
+            attachment: ChatMessageImageAttachment.mock(
+                id: .unique,
+                imageURL: URL(string: "http://asset.url/image.jpg")!,
+                localState: nil
+            )
+        )
+        apiClient.downloadFile_completion_result = .success(())
+        let result = try waitFor { messageUpdater.downloadAttachment(attachment, completion: $0) }
+        let value = try XCTUnwrap(result.value)
+        XCTAssertEqual("yoda.jpg", apiClient.downloadFile_localURL?.lastPathComponent)
+        XCTAssertEqual("http://asset.url/image.jpg", apiClient.downloadFile_remoteURL?.absoluteString)
+        XCTAssertEqual(attachment.id, value.id)
+        XCTAssertEqual(LocalAttachmentDownloadState.downloaded, value.downloadingState?.state)
+        XCTAssertEqual(URL.streamAttachmentLocalStorageURL(forRelativePath: value.relativeStoragePath), value.downloadingState?.localFileURL)
+    }
+    
+    func test_downloadAttachment_videoAttachment_success() throws {
+        let attachment = try setUpAttachment(
+            attachment: ChatMessageVideoAttachment.mock(id: .unique)
+        )
+        apiClient.downloadFile_completion_result = .success(())
+        let result = try waitFor { messageUpdater.downloadAttachment(attachment, completion: $0) }
+        let value = try XCTUnwrap(result.value)
+        XCTAssertEqual("Sample.mp4", apiClient.downloadFile_localURL?.lastPathComponent)
+        XCTAssertEqual("http://asset.url/video.mp4", apiClient.downloadFile_remoteURL?.absoluteString)
+        XCTAssertEqual(attachment.id, value.id)
+        XCTAssertEqual(LocalAttachmentDownloadState.downloaded, value.downloadingState?.state)
+        XCTAssertEqual(URL.streamAttachmentLocalStorageURL(forRelativePath: value.relativeStoragePath), value.downloadingState?.localFileURL)
+    }
+    
+    func test_downloadAttachment_voiceRecordingAttachment_success() throws {
+        let attachment = try setUpAttachment(
+            attachment: ChatMessageVoiceRecordingAttachment.mock(
+                id: .unique,
+                assetURL: URL(string: "http://asset.url/myrecording.aac")!
+            )
+        )
+        apiClient.downloadFile_completion_result = .success(())
+        let result = try waitFor { messageUpdater.downloadAttachment(attachment, completion: $0) }
+        let value = try XCTUnwrap(result.value)
+        XCTAssertEqual("recording.aac", apiClient.downloadFile_localURL?.lastPathComponent)
+        XCTAssertEqual("http://asset.url/myrecording.aac", apiClient.downloadFile_remoteURL?.absoluteString)
+        XCTAssertEqual(attachment.id, value.id)
+        XCTAssertEqual(LocalAttachmentDownloadState.downloaded, value.downloadingState?.state)
+        XCTAssertEqual(URL.streamAttachmentLocalStorageURL(forRelativePath: value.relativeStoragePath), value.downloadingState?.localFileURL)
+    }
+    
+    func test_downloadAttachment_customAttachment_success() throws {
+        let attachment = try setUpAttachment(
+            attachment: ChatMessageCustomLocationAttachment(
+                id: .unique,
+                type: .customLocation,
+                payload: .init(
+                    coordinate: .init(latitude: 52.3676, longitude: 4.9041),
+                    mapURL: URL(string: "https://asset.url/map_preview")!
+                ),
+                downloadingState: nil,
+                uploadingState: nil
+            )
+        )
+        apiClient.downloadFile_completion_result = .success(())
+        let result = try waitFor { messageUpdater.downloadAttachment(attachment, completion: $0) }
+        let value = try XCTUnwrap(result.value)
+        XCTAssertEqual("52.3676-4.9041", apiClient.downloadFile_localURL?.lastPathComponent)
+        XCTAssertEqual("https://asset.url/map_preview", apiClient.downloadFile_remoteURL?.absoluteString)
+        XCTAssertEqual(attachment.id, value.id)
+        XCTAssertEqual(LocalAttachmentDownloadState.downloaded, value.downloadingState?.state)
+        XCTAssertEqual(URL.streamAttachmentLocalStorageURL(forRelativePath: value.relativeStoragePath), value.downloadingState?.localFileURL)
+    }
+    
+    // MARK: - Delete Attachments
+    
+    func test_deleteLocalAttachmentDownload_propagatesAttachmentDoesNotExistError() throws {
+        let attachmentId = AttachmentId.unique
+        let error = try XCTUnwrap(waitFor { messageUpdater.deleteLocalAttachmentDownload(for: attachmentId, completion: $0) })
+        XCTAssertEqual(ClientError.AttachmentDoesNotExist(id: attachmentId), error)
+    }
+    
+    func test_deleteLocalAttachmentDownload_success() throws {
+        let attachment = try setUpAttachment(
+            attachment: ChatMessageFileAttachment.mock(id: .unique)
+        )
+
+        // Download
+        apiClient.downloadFile_completion_result = .success(())
+        let downloadResult = try waitFor { messageUpdater.downloadAttachment(attachment, completion: $0) }
+        let localFileURL = try XCTUnwrap(downloadResult.value?.downloadingState?.localFileURL)
+        
+        // Dummy file
+        try FileManager.default.createDirectory(at: localFileURL.deletingLastPathComponent(), withIntermediateDirectories: true)
+        try UUID().uuidString.write(to: localFileURL, atomically: false, encoding: .utf8)
+        XCTAssertTrue(FileManager.default.fileExists(atPath: localFileURL.path))
+        
+        // Delete
+        let error = try waitFor { messageUpdater.deleteLocalAttachmentDownload(for: attachment.id, completion: $0) }
+        XCTAssertNil(error)
+        try database.readSynchronously { session in
+            guard let dto = session.attachment(id: attachment.id) else {
+                throw ClientError.AttachmentDoesNotExist(id: attachment.id)
+            }
+            XCTAssertEqual(nil, dto.localDownloadState)
+            XCTAssertEqual(nil, dto.localState)
+            XCTAssertEqual(nil, dto.localRelativePath)
+            XCTAssertEqual(nil, dto.localURL)
+        }
+        XCTAssertFalse(FileManager.default.fileExists(atPath: localFileURL.path))
+    }
 
     // MARK: - Restart failed attachment uploading
 
@@ -2932,4 +3079,52 @@ extension MessageUpdater_Tests {
             line: line
         )
     }
+    
+    private func setUpAttachment<PayloadData>(
+        attachment: ChatMessageAttachment<PayloadData>,
+        messageId: MessageId = .unique,
+        cid: ChannelId = .unique
+    ) throws -> ChatMessageAttachment<PayloadData> where PayloadData: DownloadableAttachmentPayload {
+        let attachmentId: AttachmentId = .init(cid: cid, messageId: messageId, index: 0)
+        try database.createChannel(cid: cid, withMessages: false)
+        try database.createMessage(id: messageId, cid: cid)
+        var result: ChatMessageAttachment<PayloadData>!
+        try database.writeSynchronously { session in
+            let anyPayload = AnyAttachmentPayload(type: attachment.type, payload: attachment.payload, localFileURL: nil)
+            let dto = try session.createNewAttachment(attachment: anyPayload, id: attachmentId)
+            guard let anyModel = dto.asAnyModel() else { throw ClientError.AttachmentDecoding() }
+            guard let model = anyModel.attachment(payloadType: PayloadData.self) else { throw ClientError.AttachmentDecoding() }
+            result = model
+        }
+        return result
+    }
 }
+
+private extension AttachmentType {
+    static let customLocation = Self(rawValue: "custom_location")
+}
+
+private struct LocationCoordinate: Codable, Hashable {
+    let latitude: Double
+    let longitude: Double
+}
+
+private struct CustomLocationAttachmentPayload: AttachmentPayload {
+    static var type: AttachmentType = .customLocation
+
+    var coordinate: LocationCoordinate
+    
+    var mapURL: URL
+}
+
+extension CustomLocationAttachmentPayload: AttachmentPayloadDownloading {
+    var localStorageFileName: String {
+        "\(coordinate.latitude)-\(coordinate.longitude)"
+    }
+    
+    var remoteURL: URL {
+        mapURL
+    }
+}
+
+private typealias ChatMessageCustomLocationAttachment = ChatMessageAttachment<CustomLocationAttachmentPayload>

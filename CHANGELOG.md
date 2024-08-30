@@ -4,8 +4,17 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 # Upcoming
 
 ## StreamChat
+### ✅ Added
+- Local attachment downloads ([docs](https://getstream.io/chat/docs/sdk/ios/client/attachment-downloads)) [#3393](https://github.com/GetStream/stream-chat-swift/pull/3393)
+  - Add `downloadAttachment(_:)` and `deleteLocalAttachmentDownload(for:)` to `Chat` and `MessageController`
+  - Add `deleteAllLocalAttachmentDownloads()` to `ConnectedUser` and `CurrentUserController`
 ### 🐞 Fixed
 - Fix Logger printing the incorrect thread name [#3382](https://github.com/GetStream/stream-chat-swift/pull/3382)
+
+## StreamChatUI
+### ✅ Added
+- Downloading and sharing file attachments in the message list [#3393](https://github.com/GetStream/stream-chat-swift/pull/3393)
+  - Feature toggle for download and share buttons: `Components.default.isDownloadFileAttachmentsEnabled` (default is `false`)
 
 # [4.62.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.62.0)
 _August 15, 2024_

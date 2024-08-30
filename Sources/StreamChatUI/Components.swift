@@ -311,6 +311,9 @@ public struct Components {
 
     /// The view that displays the number of unread messages in the chat.
     public var messageHeaderDecorationView: ChatChannelMessageHeaderDecoratorView.Type = ChatChannelMessageHeaderDecoratorView.self
+    
+    /// A flag which determines if download action is shown for file attachments.
+    public var isDownloadFileAttachmentsEnabled = false
 
     // MARK: - Reactions
 

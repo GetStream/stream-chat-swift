@@ -518,6 +518,20 @@ final class DemoChatChannelListRouter: ChatChannelListRouter {
                         self?.showChannel(for: cid, at: message?.id)
                     }
                 }
+            }),
+            .init(title: "Delete Downloaded Attachments", handler: { [unowned self] _ in
+                do {
+                    let connectedUser = try self.rootViewController.controller.client.makeConnectedUser()
+                    Task {
+                        do {
+                            try await connectedUser.deleteAllLocalAttachmentDownloads()
+                        } catch {
+                            self.rootViewController.presentAlert(title: error.localizedDescription)
+                        }
+                    }
+                } catch {
+                    self.rootViewController.presentAlert(title: error.localizedDescription)
+                }
             })
         ])
     }

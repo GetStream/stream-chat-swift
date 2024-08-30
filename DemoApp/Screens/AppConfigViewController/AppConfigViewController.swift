@@ -187,6 +187,7 @@ class AppConfigViewController: UITableViewController {
         case mentionAllAppUsers
         case isBlockingUsersEnabled
         case isMessageListAnimationsEnabled
+        case isDownloadFileAttachmentsEnabled
     }
 
     enum ChatClientConfigOption: String, CaseIterable {
@@ -476,6 +477,10 @@ class AppConfigViewController: UITableViewController {
         case .isMessageListAnimationsEnabled:
             cell.accessoryView = makeSwitchButton(Components.default.isMessageListAnimationsEnabled) { newValue in
                 Components.default.isMessageListAnimationsEnabled = newValue
+            }
+        case .isDownloadFileAttachmentsEnabled:
+            cell.accessoryView = makeSwitchButton(Components.default.isDownloadFileAttachmentsEnabled) { newValue in
+                Components.default.isDownloadFileAttachmentsEnabled = newValue
             }
         }
     }

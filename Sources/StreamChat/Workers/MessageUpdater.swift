@@ -573,7 +573,100 @@ class MessageUpdater: Worker {
             }
         }
     }
-
+    
+    static let minSignificantDownloadingProgressChange: Double = 0.01
+    
+    func downloadAttachment<Payload>(
+        _ attachment: ChatMessageAttachment<Payload>,
+        completion: @escaping (Result<ChatMessageAttachment<Payload>, Error>) -> Void
+    ) where Payload: DownloadableAttachmentPayload {
+        let attachmentId = attachment.id
+        let localURL = URL.streamAttachmentLocalStorageURL(forRelativePath: attachment.relativeStoragePath)
+        apiClient.downloadFile(
+            from: attachment.remoteURL,
+            to: localURL,
+            progress: { [weak self] progress in
+                self?.updateDownloadProgress(
+                    for: attachmentId,
+                    payloadType: Payload.self,
+                    newState: .downloading(progress: progress),
+                    localURL: localURL
+                )
+            },
+            completion: { [weak self] error in
+                self?.updateDownloadProgress(
+                    for: attachmentId,
+                    payloadType: Payload.self,
+                    newState: error == nil ? .downloaded : .downloadingFailed,
+                    localURL: localURL,
+                    completion: { result in
+                        if let downloadError = error {
+                            completion(.failure(downloadError))
+                        } else {
+                            completion(result)
+                        }
+                    }
+                )
+            }
+        )
+    }
+    
+    func deleteLocalAttachmentDownload(for attachmentId: AttachmentId, completion: @escaping (Error?) -> Void) {
+        database.write({ session in
+            let dto = session.attachment(id: attachmentId)
+            guard let attachment = dto?.asAnyModel() else {
+                throw ClientError.AttachmentDoesNotExist(id: attachmentId)
+            }
+            guard attachment.downloadingState?.state == .downloaded else { return }
+            guard let localURL = attachment.downloadingState?.localFileURL else { return }
+            guard FileManager.default.fileExists(atPath: localURL.path) else { return }
+            try FileManager.default.removeItem(at: localURL)
+            dto?.clearLocalState()
+        }, completion: completion)
+    }
+        
+    private func updateDownloadProgress<Payload>(
+        for attachmentId: AttachmentId,
+        payloadType: Payload.Type,
+        newState: LocalAttachmentDownloadState,
+        localURL: URL,
+        completion: ((Result<ChatMessageAttachment<Payload>, Error>) -> Void)? = nil
+    ) where Payload: DownloadableAttachmentPayload {
+        var model: ChatMessageAttachment<Payload>?
+        database.write({ session in
+            guard let attachmentDTO = session.attachment(id: attachmentId) else {
+                throw ClientError.AttachmentDoesNotExist(id: attachmentId)
+            }
+            let needsUpdate: Bool = {
+                if case let .downloading(lastProgress) = attachmentDTO.localDownloadState,
+                   case let .downloading(currentProgress) = newState {
+                    return abs(currentProgress - lastProgress) >= Self.minSignificantDownloadingProgressChange
+                } else {
+                    return attachmentDTO.localDownloadState != newState
+                }
+            }()
+            guard needsUpdate else { return }
+            attachmentDTO.localDownloadState = newState
+            // Store only the relative path because sandboxed base URL can change between app launchs
+            attachmentDTO.localRelativePath = localURL.relativePath
+            
+            guard completion != nil else { return }
+            guard let attachmentAnyModel = attachmentDTO.asAnyModel() else {
+                throw ClientError.AttachmentDoesNotExist(id: attachmentId)
+            }
+            guard let result = attachmentAnyModel.attachment(payloadType: Payload.self) else {
+                throw ClientError.AttachmentDownloading(id: attachmentId, reason: "Invalid payload type: \(Payload.self)")
+            }
+            model = result
+        }, completion: { error in
+            if let error {
+                completion?(.failure(error))
+            } else if let model {
+                completion?(.success(model))
+            }
+        })
+    }
+    
     /// Updates local state of attachment with provided `id` to be enqueued by attachment uploader.
     /// - Parameters:
     ///   - id: The attachment identifier.
@@ -942,6 +1035,14 @@ extension MessageUpdater {
         }
     }
     
+    func deleteLocalAttachmentDownload(for attachmentId: AttachmentId) async throws {
+        try await withCheckedThrowingContinuation { continuation in
+            deleteLocalAttachmentDownload(for: attachmentId) { error in
+                continuation.resume(with: error)
+            }
+        }
+    }
+    
     func deleteMessage(messageId: MessageId, hard: Bool) async throws {
         try await withCheckedThrowingContinuation { continuation in
             deleteMessage(messageId: messageId, hard: hard) { error in
@@ -970,6 +1071,16 @@ extension MessageUpdater {
                 action: action
             ) { error in
                 continuation.resume(with: error)
+            }
+        }
+    }
+    
+    func downloadAttachment<Payload>(
+        _ attachment: ChatMessageAttachment<Payload>
+    ) async throws -> ChatMessageAttachment<Payload> where Payload: DownloadableAttachmentPayload {
+        try await withCheckedThrowingContinuation { continuation in
+            downloadAttachment(attachment) { result in
+                continuation.resume(with: result)
             }
         }
     }

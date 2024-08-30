@@ -340,6 +340,14 @@ class DatabaseContainer: NSPersistentContainer {
                         context.reset()
                     }
                 }
+                
+                if FileManager.default.fileExists(atPath: URL.streamAttachmentDownloadsDirectory.path) {
+                    do {
+                        try FileManager.default.removeItem(at: .streamAttachmentDownloadsDirectory)
+                    } catch {
+                        log.debug("Failed to remove local downloads", subsystems: .database)
+                    }
+                }
             }
             self?.canWriteData = true
             completion?(lastEncounteredError)

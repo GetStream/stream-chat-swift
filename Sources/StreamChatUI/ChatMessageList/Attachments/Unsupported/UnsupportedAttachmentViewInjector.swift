@@ -44,6 +44,7 @@ public class UnsupportedAttachmentViewInjector: AttachmentViewInjector {
                     file: .init(type: .unknown, size: 0, mimeType: nil),
                     extraData: nil
                 ),
+                downloadingState: $0.downloadingState,
                 uploadingState: $0.uploadingState
             )
         }

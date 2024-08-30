@@ -154,20 +154,58 @@ open class UploadingOverlayView: _View, ThemeProvider {
 }
 
 extension Appearance {
-    func fileAttachmentActionIcon(for state: LocalAttachmentState) -> UIImage? {
-        images.fileAttachmentActionIcons[state]
+    func fileAttachmentActionIcon(uploadState: LocalAttachmentState?, downloadState: LocalAttachmentDownloadState?, downloadingEnabled: Bool) -> UIImage? {
+        if let uploadState {
+            return images.fileAttachmentActionIcons[uploadState]
+        }
+        if downloadingEnabled {
+            return images.fileAttachmentDownloadActionIcons[downloadState]
+        }
+        return nil
     }
 }
 
-extension AttachmentUploadingState {
-    var fileUploadingProgress: String {
-        switch state {
-        case let .uploading(progress):
+extension LocalAttachmentState {
+    func progressDescription(for file: AttachmentFile) -> String {
+        switch self {
+        case .uploading(let progress):
             let uploadedByteCount = Int64(Double(file.size) * progress)
             let uploadedSize = AttachmentFile.sizeFormatter.string(fromByteCount: uploadedByteCount)
             return "\(uploadedSize)/\(file.sizeString)"
         case .pendingUpload:
             return "0/\(file.sizeString)"
+        case .uploaded, .uploadingFailed, .unknown:
+            return file.sizeString
+        }
+    }
+}
+
+private extension AttachmentFile {
+    func progressDescription(for progress: Double) -> String {
+        let uploadedByteCount = Int64(Double(size) * progress)
+        let uploadedSize = AttachmentFile.sizeFormatter.string(fromByteCount: uploadedByteCount)
+        return "\(uploadedSize) / \(sizeString)"
+    }
+}
+
+extension AttachmentDownloadingState {
+    var fileProgress: String {
+        switch state {
+        case .downloading(let progress):
+            return file?.progressDescription(for: progress) ?? ""
+        case .downloaded, .downloadingFailed:
+            return file?.sizeString ?? ""
+        }
+    }
+}
+
+extension AttachmentUploadingState {
+    var fileProgress: String {
+        switch state {
+        case .uploading(let progress):
+            return file.progressDescription(for: progress)
+        case .pendingUpload:
+            return "0 / \(file.sizeString)"
         case .uploaded, .uploadingFailed, .unknown:
             return file.sizeString
         }

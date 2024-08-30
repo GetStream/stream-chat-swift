@@ -752,6 +752,31 @@ final class CurrentUserController_Tests: XCTestCase {
 
         wait(for: [exp], timeout: defaultTimeout)
     }
+    
+    // MARK: - Delete All Attachment Downloads
+    
+    func test_deleteAllLocalAttachmentDownloads_propagatesErrorFromUpdater() {
+        let testError = TestError()
+        let expectation = XCTestExpectation()
+        controller.deleteAllLocalAttachmentDownloads { [callbackQueueID] error in
+            AssertTestQueue(withId: callbackQueueID)
+            XCTAssertEqual(testError, error as? TestError)
+            expectation.fulfill()
+        }
+        env.currentUserUpdater.deleteAllLocalAttachmentDownloads_completion?(testError)
+        wait(for: [expectation], timeout: defaultTimeout)
+    }
+    
+    func test_deleteAllLocalAttachmentDownloads_success() {
+        let expectation = XCTestExpectation()
+        controller.deleteAllLocalAttachmentDownloads { [callbackQueueID] error in
+            AssertTestQueue(withId: callbackQueueID)
+            XCTAssertNil(error)
+            expectation.fulfill()
+        }
+        env.currentUserUpdater.deleteAllLocalAttachmentDownloads_completion?(nil)
+        wait(for: [expectation], timeout: defaultTimeout)
+    }
 }
 
 private class TestEnvironment {

@@ -344,6 +344,10 @@ class DatabaseSession_Mock: DatabaseSession {
     func delete(attachment: AttachmentDTO) {
         underlyingSession.delete(attachment: attachment)
     }
+    
+    func allLocallyDownloadedAttachments() -> [StreamChat.AttachmentDTO] {
+        underlyingSession.allLocallyDownloadedAttachments()
+    }
 
     func saveChannelMute(
         payload: MutedChannelPayload

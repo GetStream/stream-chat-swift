@@ -17,6 +17,11 @@ public struct ChatMessageAttachment<Payload> {
     /// The attachment payload.
     public var payload: Payload
 
+    /// The downloading state of the attachment.
+    ///
+    /// Reflects the downloading progress for attachments.
+    public let downloadingState: AttachmentDownloadingState?
+    
     /// The uploading state of the attachment.
     ///
     /// Reflects uploading progress for local attachments that require file uploading.
@@ -29,11 +34,13 @@ public struct ChatMessageAttachment<Payload> {
         id: AttachmentId,
         type: AttachmentType,
         payload: Payload,
+        downloadingState: AttachmentDownloadingState?,
         uploadingState: AttachmentUploadingState?
     ) {
         self.id = id
         self.type = type
         self.payload = payload
+        self.downloadingState = downloadingState
         self.uploadingState = uploadingState
     }
 }
@@ -46,6 +53,23 @@ public extension ChatMessageAttachment {
 
 extension ChatMessageAttachment: Equatable where Payload: Equatable {}
 extension ChatMessageAttachment: Hashable where Payload: Hashable {}
+
+/// A type represeting the downloading state for attachments.
+public struct AttachmentDownloadingState: Hashable {
+    /// The local file URL of the downloaded attachment.
+    ///
+    /// - Note: The local file URL is available when the state is `.downloaded`.
+    public let localFileURL: URL?
+    
+    /// The local download state of the attachment.
+    public let state: LocalAttachmentDownloadState
+    
+    /// The information about file size/mimeType.
+    ///
+    /// - Returns: The file information if it is part of the attachment payload,
+    /// otherwise it is extracted from the downloaded file.
+    public let file: AttachmentFile?
+}
 
 /// A type representing the uploading state for attachments that require prior uploading.
 public struct AttachmentUploadingState: Hashable {
@@ -83,6 +107,7 @@ public extension AnyChatMessageAttachment {
             id: id,
             type: type,
             payload: concretePayload,
+            downloadingState: downloadingState,
             uploadingState: uploadingState
         )
     }
@@ -96,6 +121,7 @@ public extension ChatMessageAttachment where Payload: AttachmentPayload {
             id: id,
             type: type,
             payload: try! JSONEncoder.stream.encode(payload),
+            downloadingState: downloadingState,
             uploadingState: uploadingState
         )
     }
@@ -118,7 +144,53 @@ public extension ChatMessageAttachment where Payload: AttachmentPayload {
             id: id,
             type: .file,
             payload: concretePayload,
+            downloadingState: downloadingState,
             uploadingState: uploadingState
         )
+    }
+}
+
+// MARK: - Local Downloads
+
+/// The attachment payload which can be downloaded.
+public typealias DownloadableAttachmentPayload = AttachmentPayloadDownloading & AttachmentPayload
+
+/// A capability of downloading attachment payload data to the local storage.
+public protocol AttachmentPayloadDownloading {
+    /// The file name used for storing the attachment file locally.
+    ///
+    /// Example: `myfile.txt`
+    ///
+    /// - Note: Does not need to be unique.
+    var localStorageFileName: String { get }
+    
+    /// The remote URL of the attachment what can be downloaded and stored locally.
+    ///
+    /// For example, an image for image attachments.
+    var remoteURL: URL { get }
+}
+
+extension AttachmentFile {
+    func defaultLocalStorageFileName(for attachmentType: AttachmentType) -> String {
+        "\(attachmentType.rawValue.localizedCapitalized).\(type.rawValue)" // image.jpeg
+    }
+}
+
+extension URL {
+    /// The directory URL for attachment downloads.
+    static var streamAttachmentDownloadsDirectory: URL {
+        (FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first ?? FileManager.default.temporaryDirectory)
+            .appendingPathComponent("StreamAttachmentDownloads", isDirectory: true)
+    }
+    
+    static func streamAttachmentLocalStorageURL(forRelativePath path: String) -> URL {
+        URL(fileURLWithPath: path, isDirectory: false, relativeTo: .streamAttachmentDownloadsDirectory).standardizedFileURL
+    }
+}
+
+extension ChatMessageAttachment where Payload: AttachmentPayloadDownloading {
+    /// A local and unique file path for the attachment.
+    var relativeStoragePath: String {
+        "\(id.messageId)-\(id.index)/\(payload.localStorageFileName)"
     }
 }

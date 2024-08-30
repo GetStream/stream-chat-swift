@@ -84,6 +84,7 @@ final class ChatMessageAttachment_Tests: XCTestCase {
             id: .unique,
             type: .unknown,
             payload: fileAttachmentPayload,
+            downloadingState: nil,
             uploadingState: nil
         )
 
@@ -111,6 +112,7 @@ final class ChatMessageAttachment_Tests: XCTestCase {
             id: .unique,
             type: .unknown,
             payload: try JSONEncoder().encode(joke),
+            downloadingState: nil,
             uploadingState: try .mock()
         )
 
@@ -119,6 +121,7 @@ final class ChatMessageAttachment_Tests: XCTestCase {
             id: typeErasedAttachment.id,
             type: typeErasedAttachment.type,
             payload: joke,
+            downloadingState: nil,
             uploadingState: typeErasedAttachment.uploadingState
         )
         XCTAssertEqual(typeErasedAttachment.attachment(payloadType: Joke.self), jokeAttachment)
