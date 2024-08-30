@@ -3,13 +3,6 @@ description: 'Download and Install requested iOS Runtime'
 runs:
   using: "composite"
   steps:
-    - name: Cache iOS Simulator Runtime
-      uses: actions/cache@v4
-      id: runtime-cache
-      with:
-        path: ./*.dmg
-        key: ipsw-runtime-ios-${{ inputs.version }}
-        restore-keys: ipsw-runtime-ios-${{ inputs.version }}
     - name: Setup iOS Simulator Runtime
       shell: bash
       run: |
