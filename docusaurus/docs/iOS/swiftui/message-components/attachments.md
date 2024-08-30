@@ -82,6 +82,110 @@ var body: some Scene {
 
 These are all the steps needed to change the default SDK view with your custom one.
 
+### Image Attachment View
+
+Similarly, you can change the other types of attachments view in the SDK. To update the view that presents images, you need to implement the following method:
+
+```swift
+func makeImageAttachmentView(
+    for message: ChatMessage,
+    isFirst: Bool,
+    availableWidth: CGFloat,
+    scrolledId: Binding<String?>
+) -> some View {
+    CustomImageAttachment(
+        factory: self,
+        message: message,
+        width: availableWidth,
+        isFirst: isFirst,
+        scrolledId: scrolledId
+    )
+}
+```
+
+### Giphy Attachment View
+
+To update the view that presents gifs, you should implement the following method:
+
+```swift
+func makeGiphyAttachmentView(
+        for message: ChatMessage,
+        isFirst: Bool,
+        availableWidth: CGFloat,
+        scrolledId: Binding<String?>
+) -> some View {
+    GiphyAttachmentView(
+        factory: self,
+        message: message,
+        width: availableWidth,
+        isFirst: isFirst,
+        scrolledId: scrolledId
+    )
+}
+```
+
+### Link Attachment View
+
+You can also change the way links are displayed in the message list, by implementing the following method:
+
+```swift
+func makeLinkAttachmentView(
+    for message: ChatMessage,
+    isFirst: Bool,
+    availableWidth: CGFloat,
+    scrolledId: Binding<String?>
+) -> some View {
+    CustomLinkAttachmentView(
+        factory: self,
+        message: message,
+        width: availableWidth,
+        isFirst: isFirst,
+        scrolledId: scrolledId
+    )
+}
+```
+
+### File Attachment View
+
+File attachments can be customized by implementing the method below:
+
+```swift
+func makeFileAttachmentView(
+    for message: ChatMessage,
+    isFirst: Bool,
+    availableWidth: CGFloat,
+    scrolledId: Binding<String?>
+) -> some View {
+    CustomFileAttachmentsView(
+        factory: self,
+        message: message,
+        width: availableWidth,
+        isFirst: isFirst,
+        scrolledId: scrolledId
+    )
+}
+```
+
+### Video Attachments
+
+To replace the way video attachments are presented, you need to provide your own implementation of this method:
+
+```swift
+func makeVideoAttachmentView(
+    for message: ChatMessage,
+    isFirst: Bool,
+    availableWidth: CGFloat,
+    scrolledId: Binding<String?>
+) -> some View {
+    CustomVideoAttachmentsView(
+        factory: self,
+        message: message,
+        width: availableWidth,
+        scrolledId: scrolledId
+    )
+}
+```
+
 ## Handling Custom Attachments
 
 You can go a step further and introduce your own custom attachments with their corresponding custom views. Use-cases can be workout attachments, food delivery, money sending and anything else that might be supported within your apps.

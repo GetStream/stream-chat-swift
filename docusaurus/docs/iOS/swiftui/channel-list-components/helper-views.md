@@ -263,3 +263,105 @@ var body: some Scene {
     }
 }
 ```
+
+## Search Results View
+
+You can change the search results view with your own implementation. In order to do that, you should implement the following method:
+
+```swift
+func makeSearchResultsView(
+    selectedChannel: Binding<ChannelSelectionInfo?>,
+    searchResults: [ChannelSelectionInfo],
+    loadingSearchResults: Bool,
+    onlineIndicatorShown: @escaping (ChatChannel) -> Bool,
+    channelNaming: @escaping (ChatChannel) -> String,
+    imageLoader: @escaping (ChatChannel) -> UIImage,
+    onSearchResultTap: @escaping (ChannelSelectionInfo) -> Void,
+    onItemAppear: @escaping (Int) -> Void
+) -> some View {
+    CustomSearchResultsView(
+        factory: self,
+        selectedChannel: selectedChannel,
+        searchResults: searchResults,
+        loadingSearchResults: loadingSearchResults,
+        onlineIndicatorShown: onlineIndicatorShown,
+        channelNaming: channelNaming,
+        imageLoader: imageLoader,
+        onSearchResultTap: onSearchResultTap,
+        onItemAppear: onItemAppear
+    )
+}
+```
+
+In case you want to use the default implementation, you can still customize the individual search result items, with the following method:
+
+```swift
+func makeChannelListSearchResultItem(
+    searchResult: ChannelSelectionInfo,
+    onlineIndicatorShown: Bool,
+    channelName: String,
+    avatar: UIImage,
+    onSearchResultTap: @escaping (ChannelSelectionInfo) -> Void,
+    channelDestination: @escaping (ChannelSelectionInfo) -> ChannelDestination
+) -> some View {
+    SearchResultItem(
+        searchResult: searchResult,
+        onlineIndicatorShown: onlineIndicatorShown,
+        channelName: channelName,
+        avatar: avatar,
+        onSearchResultTap: onSearchResultTap,
+        channelDestination: channelDestination
+    )
+}
+```
+
+## Navigation Bar display mode
+
+You can change the display mode of the navigation bar to be either `large`, `automatic` or `inline` (which is the default value). To do that, you should implement the following method:
+
+```swift
+func navigationBarDisplayMode() -> NavigationBarItem.TitleDisplayMode {
+    .inline
+}
+```
+
+## More Channel Actions View
+
+In the default implementation, when you press on the more button of a channel list item, a view with the actions about the channel is shown (muting, deleting and more). You can provide your own implementation of this view, with the following method:
+
+```swift
+func makeMoreChannelActionsView(
+        for channel: ChatChannel,
+        swipedChannelId: Binding<String?>,
+        onDismiss: @escaping () -> Void,
+        onError: @escaping (Error) -> Void
+    ) -> some View {
+        MoreChannelActionsView(
+            channel: channel,
+            channelActions: supportedMoreChannelActions(
+                for: channel,
+                onDismiss: onDismiss,
+                onError: onError
+            ),
+            swipedChannelId: swipedChannelId,
+            onDismiss: onDismiss
+        )
+    }
+```
+
+Additionally, you can customize only the presented actions in the view above, by implementing the following method instead:
+
+```swift
+func supportedMoreChannelActions(
+    for channel: ChatChannel,
+    onDismiss: @escaping () -> Void,
+    onError: @escaping (Error) -> Void
+) -> [ChannelAction] {
+    ChannelAction.defaultActions(
+        for: channel,
+        chatClient: chatClient,
+        onDismiss: onDismiss,
+        onError: onError
+    )
+}
+```
