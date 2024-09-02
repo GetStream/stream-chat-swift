@@ -1,12 +1,12 @@
 {
-    "duration": "862.00ms",
+    "duration": "1578.86ms",
     "message": {
         "attachments": [],
-        "cid": "messaging:36d17a7e-50b8-11ef-a447-1eebe6661088",
-        "created_at": "2024-08-02T10:16:01.297535Z",
+        "cid": "messaging:62291f0a-67f7-11ef-bc15-c6eef6ed0640",
+        "created_at": "2024-09-01T00:16:11.276243Z",
         "deleted_reply_count": 0,
         "html": "<p>Test</p>\n",
-        "id": "374a68d0-50b8-11ef-a447-1eebe6661088",
+        "id": "638e6710-67f7-11ef-bc15-c6eef6ed0640",
         "latest_reactions": [],
         "mentioned_users": [],
         "own_reactions": [],
@@ -21,7 +21,7 @@
         "silent": false,
         "text": "Test",
         "type": "regular",
-        "updated_at": "2024-08-02T10:16:01.297535Z",
+        "updated_at": "2024-09-01T00:16:11.276243Z",
         "user": {
             "banned": false,
             "birthland": "Tatooine",
@@ -30,20 +30,14 @@
             "id": "luke_skywalker",
             "image": "https://vignette.wikia.nocookie.net/starwars/images/2/20/LukeTLJ.jpg",
             "language": "fr",
-            "last_active": "2024-08-02T10:15:59.863243042Z",
+            "last_active": "2024-09-01T00:16:08.037217752Z",
             "name": "Luke Skywalker",
             "online": true,
-            "privacy_settings": {
-                "read_receipts": {
-                    "enabled": false
-                },
-                "typing_indicators": {
-                    "enabled": false
-                }
-            },
             "role": "admin",
+            "team": "test",
             "teams": [],
-            "updated_at": "2024-07-31T12:39:19.150927Z"
+            "type": "team",
+            "updated_at": "2024-08-29T10:37:09.068681Z"
         }
     }
 }
