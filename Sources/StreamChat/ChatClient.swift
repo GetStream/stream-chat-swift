@@ -10,6 +10,8 @@ import Foundation
 ///
 /// Typically, an app contains just one instance of `ChatClient`. However, it's possible to have multiple instances if your use
 /// case requires it (i.e. more than one window with different workspaces in a Slack-like app).
+///
+/// - Important: When using multiple instances of `ChatClient` at the same time, it is required to use a different ``ChatClientConfig/localStorageFolderURL`` for each instance. For example, adding an additional path component to the default URL.
 public class ChatClient {
     /// The `UserId` of the currently logged in user.
     public var currentUserId: UserId? {

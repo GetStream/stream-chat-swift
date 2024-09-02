@@ -10,6 +10,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   - Add `deleteAllLocalAttachmentDownloads()` to `ConnectedUser` and `CurrentUserController`
 ### 🐞 Fixed
 - Fix Logger printing the incorrect thread name [#3382](https://github.com/GetStream/stream-chat-swift/pull/3382)
+### 🔄 Changed
+- Discard offline state changes when saving database changes fails [#3399](https://github.com/GetStream/stream-chat-swift/pull/3399)
 
 ## StreamChatUI
 ### ✅ Added
