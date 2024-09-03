@@ -6,8 +6,10 @@ runs:
     - name: Setup iOS Simulator Runtime
       shell: bash
       run: |
+        sudo rm -rfv ~/Library/Developer/CoreSimulator/* || true
         brew install blacktop/tap/ipsw
         bundle exec fastlane install_runtime ios:${{ inputs.version }}
+        sudo rm -rfv *.dmg || true
         xcrun simctl list runtimes
     - name: Create Custom iOS Simulator
       shell: bash
