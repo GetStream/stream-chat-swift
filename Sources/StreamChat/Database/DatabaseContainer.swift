@@ -173,9 +173,7 @@ class DatabaseContainer: NSPersistentContainer {
 
         FetchCache.clear()
 
-        if LogConfig.level == .debug {
-            setupLoggerForDatabaseChanges()
-        }
+        setupLoggerForDatabaseChanges()
     }
 
     deinit {

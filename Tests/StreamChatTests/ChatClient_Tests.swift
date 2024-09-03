@@ -58,6 +58,17 @@ final class ChatClient_Tests: XCTestCase {
 
     // MARK: - Database stack tests
 
+    func test_multipleInstance_whenLocalStorageURLIsTheSame() {
+        let client1 = ChatClient(config: ChatClientConfig(apiKeyString: "123"))
+        let client2 = ChatClient(config: ChatClientConfig(apiKeyString: "123"))
+        XCTAssertEqual(1, ChatClient.activeLocalStorageURLs.count)
+        // We only log an error when misuse happens
+        XCTAssertEqual(
+            client1.databaseContainer.persistentStoreDescriptions.compactMap(\.url),
+            client2.databaseContainer.persistentStoreDescriptions.compactMap(\.url)
+        )
+    }
+    
     func test_clientDatabaseStackInitialization_whenLocalStorageEnabled_respectsConfigValues() {
         // Prepare a config with the local storage
         let storeFolderURL = URL.newTemporaryDirectoryURL()
