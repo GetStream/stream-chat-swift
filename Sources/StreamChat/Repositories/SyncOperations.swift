@@ -161,7 +161,7 @@ final class WatchChannelOperation: AsyncOperation {
             }
 
             let cidString = (controller.cid?.rawValue ?? "unknown")
-            log.info("2. Watching active channel \(cidString)", subsystems: .offlineSupport)
+            log.info("Watching active channel \(cidString)", subsystems: .offlineSupport)
             controller.recoverWatchedChannel { error in
                 if let cid = controller.cid, error == nil {
                     log.info("Successfully watched active channel \(cidString)", subsystems: .offlineSupport)
@@ -170,6 +170,32 @@ final class WatchChannelOperation: AsyncOperation {
                 } else {
                     let errorMessage = error?.localizedDescription ?? "missing cid"
                     log.error("Failed watching active channel \(cidString): \(errorMessage)", subsystems: .offlineSupport)
+                    done(.retry)
+                }
+            }
+        }
+    }
+    
+    init(chat: Chat, context: SyncContext) {
+        super.init(maxRetries: syncOperationsMaximumRetries) { [weak chat] _, done in
+            guard let chat else {
+                done(.continue)
+                return
+            }
+            Task {
+                guard await chat.state.channelQuery.options.contains(.watch) else {
+                    done(.continue)
+                    return
+                }
+                do {
+                    let cid = try await chat.cid
+                    log.info("Watching active chat \(cid.rawValue)", subsystems: .offlineSupport)
+                    try await chat.watch()
+                    context.watchedAndSynchedChannelIds.insert(cid)
+                    log.info("Successfully watched active chat \(cid.rawValue)", subsystems: .offlineSupport)
+                    done(.continue)
+                } catch {
+                    log.error("Failed watching active chat with error \(error.localizedDescription)", subsystems: .offlineSupport)
                     done(.retry)
                 }
             }

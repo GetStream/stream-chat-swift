@@ -167,8 +167,12 @@ import Foundation
 // MARK: - Internal
 
 extension ChatState {
+    func setChannelQuery(_ query: ChannelQuery) {
+        channelQuery = query
+    }
+    
     func setChannelId(_ channelId: ChannelId) {
-        channelQuery = ChannelQuery(cid: channelId, channelQuery: channelQuery)
+        setChannelQuery(ChannelQuery(cid: channelId, channelQuery: channelQuery))
         observe(channelId)
     }
     
