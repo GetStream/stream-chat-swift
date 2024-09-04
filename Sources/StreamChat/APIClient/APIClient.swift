@@ -231,19 +231,12 @@ class APIClient {
                 return
             }
 
-            log.debug(
-                "Making URL request: \(endpoint.method.rawValue.uppercased()) \(endpoint.path)\n"
-                    + "Headers:\n\(String(describing: urlRequest.allHTTPHeaderFields))\n"
-                    + "Body:\n\(urlRequest.httpBody?.debugPrettyPrintedJSON ?? "<Empty>")\n"
-                    + "Query items:\n\(urlRequest.queryItems.prettyPrinted)",
-                subsystems: .httpRequests
-            )
-
             guard let self = self else {
                 log.warning("Callback called while self is nil", subsystems: .httpRequests)
                 completion(.failure(ClientError("APIClient was deallocated")))
                 return
             }
+            log.debug(urlRequest.cURLRepresentation(for: self.session), subsystems: .httpRequests)
 
             let task = self.session.dataTask(with: urlRequest) { [decoder = self.decoder] (data, response, error) in
                 do {

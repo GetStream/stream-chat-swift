@@ -238,6 +238,8 @@
 		43F4750C26F4E4FF0009487D /* ChatMessageReactionItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43F4750B26F4E4FF0009487D /* ChatMessageReactionItemView.swift */; };
 		43F4750E26FB247C0009487D /* ChatReactionPickerReactionsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43F4750D26FB247C0009487D /* ChatReactionPickerReactionsView.swift */; };
 		4A4E184728D06F260062378D /* Documentation.docc in Sources */ = {isa = PBXBuildFile; fileRef = 4A4E184528D06CA30062378D /* Documentation.docc */; };
+		4F05C0712C8832C40085B4B7 /* URLRequest+cURL.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F05C0702C8832C40085B4B7 /* URLRequest+cURL.swift */; };
+		4F05C0722C8832C40085B4B7 /* URLRequest+cURL.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F05C0702C8832C40085B4B7 /* URLRequest+cURL.swift */; };
 		4F05ECB82B6CCA4900641820 /* DifferenceKit+Stream.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F05ECB72B6CCA4900641820 /* DifferenceKit+Stream.swift */; };
 		4F05ECB92B6CCA4900641820 /* DifferenceKit+Stream.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F05ECB72B6CCA4900641820 /* DifferenceKit+Stream.swift */; };
 		4F072F032BC008D9006A66CA /* StateLayerDatabaseObserver_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F072F022BC008D9006A66CA /* StateLayerDatabaseObserver_Tests.swift */; };
@@ -3084,6 +3086,7 @@
 		43F4750D26FB247C0009487D /* ChatReactionPickerReactionsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatReactionPickerReactionsView.swift; sourceTree = "<group>"; };
 		4A4E184528D06CA30062378D /* Documentation.docc */ = {isa = PBXFileReference; lastKnownFileType = folder.documentationcatalog; path = Documentation.docc; sourceTree = "<group>"; };
 		4A51230029D3170C005CEA9B /* docusaurus */ = {isa = PBXFileReference; lastKnownFileType = folder; path = docusaurus; sourceTree = "<group>"; };
+		4F05C0702C8832C40085B4B7 /* URLRequest+cURL.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "URLRequest+cURL.swift"; sourceTree = "<group>"; };
 		4F05ECB72B6CCA4900641820 /* DifferenceKit+Stream.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DifferenceKit+Stream.swift"; sourceTree = "<group>"; };
 		4F072F022BC008D9006A66CA /* StateLayerDatabaseObserver_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StateLayerDatabaseObserver_Tests.swift; sourceTree = "<group>"; };
 		4F12DC8A2B70DE4C009E48CC /* DifferenceKit+Stream_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DifferenceKit+Stream_Tests.swift"; sourceTree = "<group>"; };
@@ -7456,8 +7459,9 @@
 			isa = PBXGroup;
 			children = (
 				4FFB5E9F2BA0507900F0454F /* Collection+Extensions.swift */,
-				A36C39F42860680A0004EB7E /* URL+EnrichedURL.swift */,
 				4F51519B2BC66FBE001B7152 /* Task+Extensions.swift */,
+				A36C39F42860680A0004EB7E /* URL+EnrichedURL.swift */,
+				4F05C0702C8832C40085B4B7 /* URLRequest+cURL.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -11173,6 +11177,7 @@
 				88E26D6E2580F34B00F55AB5 /* AttachmentQueueUploader.swift in Sources */,
 				88A00DD02525F08000259AB4 /* ModerationEndpoints.swift in Sources */,
 				79A0E9B02498C09900E9BD50 /* ConnectionStatus.swift in Sources */,
+				4F05C0712C8832C40085B4B7 /* URLRequest+cURL.swift in Sources */,
 				799C9439247D2FB9001F1104 /* ChannelDTO.swift in Sources */,
 				799C9443247D3DA7001F1104 /* APIClient.swift in Sources */,
 				4F14F1262BBBDD7400B1074E /* StateLayerDatabaseObserver.swift in Sources */,
@@ -12259,6 +12264,7 @@
 				C121E8C5274544B100023E4C /* ChannelMemberListQuery.swift in Sources */,
 				40789D3029F6AC500018C2BB /* AudioRecordingDelegate.swift in Sources */,
 				C121E8C6274544B100023E4C /* ChannelWatcherListQuery.swift in Sources */,
+				4F05C0722C8832C40085B4B7 /* URLRequest+cURL.swift in Sources */,
 				AD37D7CB2BC98A5300800D8C /* ThreadReadDTO.swift in Sources */,
 				C121E8C7274544B100023E4C /* ChannelListQuery.swift in Sources */,
 				841BAA0B2BCE9B57000C73E4 /* CreatePollOptionRequestBody.swift in Sources */,
