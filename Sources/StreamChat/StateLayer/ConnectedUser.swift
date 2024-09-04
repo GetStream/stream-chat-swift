@@ -38,7 +38,7 @@ public final class ConnectedUser {
     
     /// Updates the currently logged-in user's data.
     ///
-    /// - Note: This does partial update and only updates existing data when a non-nil value is specified.
+    /// - Note: This does partial update and only updates existing data when a non-nil value is specified. Use ``unset`` for clearing the existing state.
     ///
     /// - Parameters:
     ///   - name: The name to be set to the user.
@@ -46,6 +46,7 @@ public final class ConnectedUser {
     ///   - privacySettings: The privacy settings of the user. Example: If the user does not want to expose typing events or read events.
     ///   - role: The role for the user.
     ///   - extraData: Additional data associated with the user.
+    ///   - unset: Existing values for specified fields are removed. For example, `image` or `name`.
     ///
     /// - Throws: An error while communicating with the Stream API or when user is not logged in.
     public func update(
@@ -53,7 +54,8 @@ public final class ConnectedUser {
         imageURL: URL? = nil,
         privacySettings: UserPrivacySettings? = nil,
         role: UserRole? = nil,
-        extraData: [String: RawJSON] = [:]
+        extraData: [String: RawJSON] = [:],
+        unset: Set<String> = []
     ) async throws {
         try await currentUserUpdater.updateUserData(
             currentUserId: try currentUserId(),
@@ -61,7 +63,8 @@ public final class ConnectedUser {
             imageURL: imageURL,
             privacySettings: privacySettings,
             role: role,
-            userExtraData: extraData
+            userExtraData: extraData,
+            unset: unset
         )
     }
     

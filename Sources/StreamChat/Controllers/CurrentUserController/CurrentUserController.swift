@@ -155,7 +155,7 @@ public extension CurrentChatUserController {
     ///
     /// By default all data is `nil`, and it won't be updated unless a value is provided.
     ///
-    /// - Note: This operation does a partial user update which keeps existing data if not modified.
+    /// - Note: This operation does a partial user update which keeps existing data if not modified. Use ``unset`` for clearing the existing state.
     ///
     /// - Parameters:
     ///   - name: Optionally provide a new name to be updated.
@@ -163,6 +163,7 @@ public extension CurrentChatUserController {
     ///   - privacySettings: The privacy settings of the user. Example: If the user does not want to expose typing events or read events.
     ///   - role: The role for the user.
     ///   - userExtraData: Optionally provide new user extra data to be updated.
+    ///   - unset: Existing values for specified properties are removed. For example, `image` or `name`.
     ///   - completion: Called when user is successfuly updated, or with error.
     func updateUserData(
         name: String? = nil,
@@ -170,6 +171,7 @@ public extension CurrentChatUserController {
         privacySettings: UserPrivacySettings? = nil,
         role: UserRole? = nil,
         userExtraData: [String: RawJSON] = [:],
+        unsetProperties: Set<String> = [],
         completion: ((Error?) -> Void)? = nil
     ) {
         guard let currentUserId = client.currentUserId else {

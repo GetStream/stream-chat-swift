@@ -100,7 +100,41 @@ final class CurrentUserUpdater_Tests: XCTestCase {
                 ),
                 role: expectedRole,
                 extraData: [:]
-            )
+            ),
+            unset: []
+        )
+        XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(expectedEndpoint))
+    }
+    
+    func test_updateUser_makesCorrectAPICall_whenOnlyUnsetProperties() throws {
+        // Simulate user already set
+        let userPayload: CurrentUserPayload = .dummy(userId: .unique, role: .user)
+        try database.writeSynchronously {
+            try $0.saveCurrentUser(payload: userPayload)
+        }
+        
+        currentUserUpdater.updateUserData(
+            currentUserId: userPayload.id,
+            name: nil,
+            imageURL: nil,
+            privacySettings: nil,
+            role: nil,
+            userExtraData: nil,
+            unset: ["image"],
+            completion: { _ in }
+        )
+        
+        // Assert that request is made to the correct endpoint
+        let expectedEndpoint: Endpoint<CurrentUserUpdateResponse> = .updateUser(
+            id: userPayload.id,
+            payload: .init(
+                name: nil,
+                imageURL: nil,
+                privacySettings: nil,
+                role: nil,
+                extraData: nil
+            ),
+            unset: ["image"]
         )
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(expectedEndpoint))
     }
