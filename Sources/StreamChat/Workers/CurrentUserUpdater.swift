@@ -17,6 +17,7 @@ class CurrentUserUpdater: Worker {
     ///   - imageURL: Optionally provide a new image to be updated.
     ///   - privacySettings: The privacy settings of the user. Example: If the user does not want to expose typing events or read events.
     ///   - userExtraData: Optionally provide new user extra data to be updated.
+    ///   - unset: Existing values for specified fields are removed. For example, `image` or `name`.
     ///   - completion: Called when user is successfuly updated, or with error.
     func updateUserData(
         currentUserId: UserId,
@@ -25,10 +26,11 @@ class CurrentUserUpdater: Worker {
         privacySettings: UserPrivacySettings?,
         role: UserRole?,
         userExtraData: [String: RawJSON]?,
+        unset: Set<String> = [],
         completion: ((Error?) -> Void)? = nil
     ) {
         let params: [Any?] = [name, imageURL, userExtraData]
-        guard !params.allSatisfy({ $0 == nil }) else {
+        guard !params.allSatisfy({ $0 == nil }) || !unset.isEmpty else {
             log.warning("Update user request not performed. All provided data was nil.")
             completion?(nil)
             return
@@ -43,7 +45,7 @@ class CurrentUserUpdater: Worker {
         )
 
         apiClient
-            .request(endpoint: .updateUser(id: currentUserId, payload: payload)) { [weak self] in
+            .request(endpoint: .updateUser(id: currentUserId, payload: payload, unset: Array(unset))) { [weak self] in
                 switch $0 {
                 case let .success(response):
                     self?.database.write({ (session) in
@@ -286,7 +288,8 @@ extension CurrentUserUpdater {
         imageURL: URL?,
         privacySettings: UserPrivacySettings?,
         role: UserRole?,
-        userExtraData: [String: RawJSON]?
+        userExtraData: [String: RawJSON]?,
+        unset: Set<String>
     ) async throws {
         try await withCheckedThrowingContinuation { continuation in
             updateUserData(
@@ -295,7 +298,8 @@ extension CurrentUserUpdater {
                 imageURL: imageURL,
                 privacySettings: privacySettings,
                 role: role,
-                userExtraData: userExtraData
+                userExtraData: userExtraData,
+                unset: unset
             ) { error in
                 continuation.resume(with: error)
             }
