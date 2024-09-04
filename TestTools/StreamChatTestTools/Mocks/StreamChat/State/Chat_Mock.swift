@@ -5,8 +5,9 @@
 import Foundation
 @testable import StreamChat
 
-public class Chat_Mock: Chat {
-
+public class Chat_Mock: Chat, Spy {
+    public let spyState = SpyState()
+    
     static let cid = try! ChannelId(cid: "mock:channel")
     
     init(
@@ -67,6 +68,10 @@ public class Chat_Mock: Chat {
     public var loadPageAroundMessageIdCallCount = 0
     public override func loadMessages(around messageId: MessageId, limit: Int? = nil) async throws {
         loadPageAroundMessageIdCallCount += 1
+    }
+    
+    public override func watch() async throws {
+        record()
     }
 }
 

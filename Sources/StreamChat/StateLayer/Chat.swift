@@ -87,6 +87,9 @@ public class Chat {
             channelQuery: query,
             memberSorting: state.memberSorting
         )
+        // Store the watch state
+        await state.setChannelQuery(query)
+        
         client.syncRepository.startTrackingChat(self)
         // cid is retrieved from the server when we are creating new channels or there is no local state present
         guard query.cid != payload.channel.cid else { return }

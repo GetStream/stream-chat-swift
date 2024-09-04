@@ -205,6 +205,13 @@ class SyncRepository_Tests: XCTestCase {
         let chatController = ChatChannelController_Spy(client: client)
         chatController.state = .remoteDataFetched
         repository.startTrackingChannelController(chatController)
+        
+        let chat = Chat_Mock(
+            chatClient: client,
+            channelQuery: .init(cid: Chat_Mock.cid),
+            channelListQuery: nil
+        )
+        repository.startTrackingChat(chat)
 
         let eventDate = Date.unique
         waitForSyncLocalStateRun(requestResult: .success(messageEventPayload(cid: cid, with: [eventDate])))
@@ -214,7 +221,9 @@ class SyncRepository_Tests: XCTestCase {
         // Write: API Response, lastSyncAt
         XCTAssertEqual(database.writeSessionCounter, 2)
         XCTAssertEqual(repository.activeChannelControllers.count, 1)
-        if !repository.usesV2Sync {
+        if repository.usesV2Sync {
+            XCTAssertCall("watch()", on: chat, times: 1)
+        } else {
             XCTAssertCall("recoverWatchedChannel(completion:)", on: chatController, times: 1)
         }
         XCTAssertEqual(repository.activeChannelListControllers.count, 0)
