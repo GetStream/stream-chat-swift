@@ -8,10 +8,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Local attachment downloads ([docs](https://getstream.io/chat/docs/sdk/ios/client/attachment-downloads)) [#3393](https://github.com/GetStream/stream-chat-swift/pull/3393)
   - Add `downloadAttachment(_:)` and `deleteLocalAttachmentDownload(for:)` to `Chat` and `MessageController`
   - Add `deleteAllLocalAttachmentDownloads()` to `ConnectedUser` and `CurrentUserController`
-- Add `unset` argument to `CurrentChatUserController.updateUserData` and `ConnectedUser.update` for clearing user data fields [#3403](https://github.com/GetStream/stream-chat-swift/pull/3403)
+- Add `unset` argument to `CurrentChatUserController.updateUserData` and `ConnectedUser.update` for clearing user data fields [#3404](https://github.com/GetStream/stream-chat-swift/pull/3404)
 ### 🐞 Fixed
 - Fix Logger printing the incorrect thread name [#3382](https://github.com/GetStream/stream-chat-swift/pull/3382)
-- Channel watching did not resume on web-socket reconnection [#3408](https://github.com/GetStream/stream-chat-swift/pull/3408)
+- Channel watching did not resume on web-socket reconnection [#3409](https://github.com/GetStream/stream-chat-swift/pull/3409)
 ### 🔄 Changed
 - Discard offline state changes when saving database changes fails [#3399](https://github.com/GetStream/stream-chat-swift/pull/3399)
 
