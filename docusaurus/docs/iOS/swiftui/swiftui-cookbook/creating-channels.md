@@ -287,34 +287,6 @@ struct VerticallyCenteredView<Content: View>: View {
     }
 }
 
-struct CreateGroupButton: View {
-
-    @Injected(\.colors) var colors
-    @Injected(\.fonts) var fonts
-
-    @Binding var isNewChatShown: Bool
-
-    var body: some View {
-        NavigationLink {
-            CreateGroupView(isNewChatShown: $isNewChatShown)
-        } label: {
-            HStack {
-                Image(systemName: "person.3")
-                    .renderingMode(.template)
-                    .foregroundColor(colors.tintColor)
-
-                Text("Create a group")
-                    .font(fonts.bodyBold)
-                    .foregroundColor(Color(colors.text))
-
-                Spacer()
-            }
-            .padding()
-        }
-        .isDetailLink(false)
-    }
-}
-
 struct ChatUserView: View {
 
     @Injected(\.colors) var colors
