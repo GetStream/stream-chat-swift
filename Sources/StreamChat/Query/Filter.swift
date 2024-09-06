@@ -300,6 +300,7 @@ public extension Filter {
     }
 
     /// Matches all values that are not equal to a specified value.
+    @available(*, deprecated, message: "The notEqual filter will be removed in the future")
     static func notEqual<Value: Encodable>(_ key: FilterKey<Scope, Value>, to value: Value) -> Filter {
         .init(
             operator: .notEqual,
@@ -366,6 +367,7 @@ public extension Filter {
     }
 
     /// Matches none of the values specified in an array.
+    @available(*, deprecated, message: "The notIn filter will be removed in the future")
     static func notIn<Value: Encodable>(_ key: FilterKey<Scope, Value>, values: [Value]) -> Filter {
         .init(
             operator: .notIn,

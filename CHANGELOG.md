@@ -14,6 +14,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Channel watching did not resume on web-socket reconnection [#3409](https://github.com/GetStream/stream-chat-swift/pull/3409)
 ### 🔄 Changed
 - Discard offline state changes when saving database changes fails [#3399](https://github.com/GetStream/stream-chat-swift/pull/3399)
+- Deprecate `Filter.notEqual` and `Filter.notIn` [#3413](https://github.com/GetStream/stream-chat-swift/pull/3413)
 
 ## StreamChatUI
 ### ✅ Added
