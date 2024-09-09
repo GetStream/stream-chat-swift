@@ -307,3 +307,34 @@ try await userSearch.search(term: "thie")
 // all the fetched results for "thie"
 users = userSearch.state.users
 ```
+
+## Listening to Web-Socket Events
+
+Web-socket events are delivered when-ever server side state changes. Stream chat's low-level client listen to these events and updates the local state accordingly. If there is a need, we can subscribe to these events using `ChatClient` for any events including channel events, and `Chat` for channel specific events. The latter offers convenience over the former.
+```swift
+// Every single event
+chatClient.subscribe { event in
+    // …
+}
+.store(in: &cancellables)
+
+// A specific event
+chatClient.subscribe(toEvent: ConnectionStatusUpdated.self) { event in
+    // …
+}
+.store(in: &cancellables)
+
+// Channel specific event
+let channelId = ChannelId(type: .messaging, id: "general")
+let chat = chatClient.makeChat(for: channelId)
+chat.subscribe { event in
+    // All the events only for this particular channel id
+}
+.store(in: &cancellables)
+
+// Channel specific events filtered down to a single type
+chat.subscribe(toEvent: ChannelHiddenEvent.self) { event in
+    // …
+}
+.store(in: &cancellables)
+```
