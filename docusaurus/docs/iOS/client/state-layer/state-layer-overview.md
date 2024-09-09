@@ -45,6 +45,42 @@ The state layer has objects representing different use-cases which enables acces
 
 These objects are created through factory methods in `ChatClient`. Factory methods create instances of `ChannelList`, `Chat`, `ConnectedUser`, `MemberList`, `MessageSearch`, `ReactionList`, `UserList`,  and `UserSearch`. The observable state is accessed through `state` properties what return the respective state object. `ChannelList`, `Chat`, `MemberList`, `ReactionList`, and `UserList` have a `get()` method for fetching the default set of data from the Stream API.
 
+### ConnectedUser
+
+`ConnectedUser` and its `ConnectedUserState` represent the currently logged in user. We log in by calling `connectUser` method on the `ChatClient` instance. Please refer to our [tokens and authentication](https://getstream.io/chat/docs/ios-swift/tokens_and_authentication/?language=swift) documentation for more information on expiring and non-expiring tokens. `ConnectedUser` type enables setting up push notifications and set states, like muting a user in every channel or even blocking an user. Another common use-case is marking all the channels as read.
+
+```swift
+var connectedUser = try await chatClient.connectUser(
+    userInfo: UserInfo(id: "<# Your User ID Here #>"),
+    token: "<# Your User Token Here#>"
+)
+// or while being logged in
+connectedUser = try chatClient.makeConnectedUser()
+// register for push notifications
+try await connectedUser.addDevice(
+    .apn(
+        token: apnTokenData, 
+        providerName: "<# Your Stream's Push Configuration Name>"
+    )
+)
+// mute a user
+try await connectedUser.muteUser("user-id")
+// block a user
+try await connectedUser.blockUser("another-user-id")
+// mark all the channels as read
+try await connectedUser.markAllChannelsRead()
+// read user data
+let unreadCounts = connectedUser.state.user.unreadCount
+let numberOfUnreadChannels = unreadCounts.channels
+let numberOfUnreadMessages = unreadCounts.messages
+// react to user data changes
+connectedUser.state.$user
+  .sink { changedUser in
+      let changedUnreadCount = changedUser.unreadCount
+  }
+  .store(in: &cancellables)
+```
+
 ### ChannelList
 
 `ChannelList` and its `ChannelListState` enable querying a list of channels from the Stream API and provide an interface for loading channels in a paginated manner.
@@ -83,9 +119,7 @@ let cancellable = channelList.state
 
 `Chat` and its `ChatState` represent the state of a channel. In addition, `Chat` has a method for retrieving an observable `MessageState` type which represents a single message and its observable state like reactions and replies.
 
-:::note
-Use `Chat` for loading all the reactions per message and `ReactionList` if you need to load reactions using a filter.
-:::
+Here is an example of creating an instance of `Chat`, using the offline state, refreshing it with server state and then paginating available messages.
 
 ```swift
 let channelId = ChannelId(type: .messaging, id: "general")
@@ -104,39 +138,81 @@ try await chat.loadOlderMessages()
 messages = chat.state.messages
 ```
 
-If we would like to observe a single message's state we can use the `MessageState` observable object.
-
-```swift
-let messageState = try await chat.messageState(for: messageId)
-try await chat.loadMoreReplies(for: messageId)
-// access all the fetched replies
-let replies = messageState.replies 
-```
-
 :::tip Call get with watch true once per app lifetime
 The get method fetches the latest state from the Stream API and if we set watch to true, server-side events will keep your local state up to state.
 :::
 
-### ConnectedUser
-
-`ConnectedUser` and its `ConnectedUserState` represent the currently logged in user. We can set up push notifications and set states, like muting a user in every channel. Another common use-case is marking all the channels as read.
+`Chat` has a `sendMessage` method for sending messages. Sending a message could be as simple as just sending a text or more complex like including attachments, quoting another message, marking it as pinned and including extra data.
 
 ```swift
-var connectedUser = try await chatClient.connectUser(
-    userInfo: UserInfo(id: "<# Your User ID Here #>"),
-    token: "<# Your User Token Here#>"
+let fileURL = URL(filePath: "<file url>")
+let attachment = try AnyAttachmentPayload(
+    localFileURL: fileURL,
+    attachmentType: .file
 )
-// or while being logged in
-connectedUser = try chatClient.makeConnectedUser()
-// register for push notifications
-try await connectedUser.addDevice(
-    .apn(
-        token: apnTokenData, 
-        providerName: "<# Your Stream's Push Configuration Name>"
-    )
+try await chat.sendMessage(
+    with: "Hello",
+    attachments: [attachment],
+    quote: "other-message-id",
+    pinning: .noExpiration,
+    extraData: [
+      "my-custom-key": .string("and string value")
+    ]
 )
-try await connectedUser.markAllChannelsRead()
 ```
+
+If we would like to create a message thread within a channel, the `Chat` type provides a reply method with all the before-mentioned arguments.
+
+```swift
+try await chat.reply(
+    to: "parent-message-id",
+    text: "Hi!",
+    showReplyInChannel: true
+)
+```
+
+Adding and deleting reactions is also done through `Chat`. 
+
+```swift
+try await chat.sendReaction(
+    to: "message-id",
+    with: "like",
+    score: 1,
+    enforceUnique: true,
+    extraData: [
+        "has-xyz-enabled": .bool(true)
+    ]
+)
+try await chat.deleteReaction(
+    from: "message-id",
+    with: "like"
+)
+```
+
+If we would like to observe or read a single message's state, then we can use the `MessageState` observable object. This type also gives access to all the fetched replies and reactions for the given message.
+
+```swift
+let messageState = try await chat.messageState(for: "message-id")
+try await chat.loadMoreReplies(for: messageId)
+// access all the fetched replies
+let replies = messageState.replies
+// load reactions
+let reactionsBatch25 = try await chat.loadReactions(
+    for: "message-id",
+    pagination: Pagination(pageSize: 25)
+)
+// paginate reactions by loading 10 more
+let reactionsBatch10 = try await chat.loadMoreReactions(
+    for: "message-id",
+    limit: 10
+)
+// access all the currently loaded reactions
+let allLoadedReactions35 = messageState.reactions
+```
+
+:::note
+Use `Chat` for loading all the reactions per message and `ReactionList` if you need to load reactions using a filter.
+:::
 
 ### MemberList
 
