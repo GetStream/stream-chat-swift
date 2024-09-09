@@ -18,6 +18,8 @@ extension ChatClient {
 }
 
 /// `ChatUserSearchController` is a controller class which allows observing a list of chat users based on the provided query.
+///
+/// - Note: Please refer to ``UserSearch`` in the async-await supported [state layer](https://getstream.io/chat/docs/sdk/ios/client/state-layer/state-layer-overview/).
 public class ChatUserSearchController: DataController, DelegateCallable, DataStoreProvider {
     /// The `ChatClient` instance this controller belongs to.
     public let client: ChatClient
