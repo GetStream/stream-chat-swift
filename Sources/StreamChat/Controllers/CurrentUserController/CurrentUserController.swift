@@ -18,7 +18,7 @@ public extension ChatClient {
 /// `CurrentChatUserController` is a controller class which allows observing and mutating the currently logged-in
 /// user of `ChatClient`.
 ///
-/// - Note: Please refer to ``ConnectedUser`` in the async-await supported [state layer](https://getstream.io/chat/docs/sdk/ios/client/state-layer/state-layer-overview/).
+/// - Note: For an async-await alternative of the `CurrentChatUserController`, please check ``ConnectedUser`` in the async-await supported [state layer](https://getstream.io/chat/docs/sdk/ios/client/state-layer/state-layer-overview/).
 public class CurrentChatUserController: DataController, DelegateCallable, DataStoreProvider {
     /// The `ChatClient` instance this controller belongs to.
     public let client: ChatClient

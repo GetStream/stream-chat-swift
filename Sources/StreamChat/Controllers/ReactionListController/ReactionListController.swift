@@ -20,7 +20,7 @@ public protocol ChatReactionListControllerDelegate: DataControllerStateDelegate 
 
 /// A controller which allows querying and filtering the reactions of a message.
 ///
-/// - Note: Please refer to ``ReactionList`` in the async-await supported [state layer](https://getstream.io/chat/docs/sdk/ios/client/state-layer/state-layer-overview/).
+/// - Note: For an async-await alternative of the `ChatReactionListController`, please check ``ReactionList`` in the async-await supported [state layer](https://getstream.io/chat/docs/sdk/ios/client/state-layer/state-layer-overview/).
 public class ChatReactionListController: DataController, DelegateCallable, DataStoreProvider {
     /// The query specifying and filtering the list of reactions.
     public let query: ReactionListQuery

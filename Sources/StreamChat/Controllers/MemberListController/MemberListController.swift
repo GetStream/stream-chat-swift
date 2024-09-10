@@ -18,7 +18,7 @@ extension ChatClient {
 
 /// `ChatChannelMemberListController` is a controller class which allows observing
 /// a list of chat users based on the provided query.
-/// - Note: Please refer to ``MemberList`` in the async-await supported [state layer](https://getstream.io/chat/docs/sdk/ios/client/state-layer/state-layer-overview/).
+/// - Note: For an async-await alternative of the `ChatChannelMemberListControler`, please check ``MemberList`` in the async-await supported [state layer](https://getstream.io/chat/docs/sdk/ios/client/state-layer/state-layer-overview/).
 public class ChatChannelMemberListController: DataController, DelegateCallable, DataStoreProvider {
     /// The query specifying sorting and filtering for the list of channel members.
     @Atomic public private(set) var query: ChannelMemberListQuery

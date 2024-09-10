@@ -32,7 +32,7 @@ extension ChatClient {
 
 /// `ChatChannelListController` is a controller class which allows observing a list of chat channels based on the provided query.
 ///
-/// - Note: Please refer to ``ChannelList`` in the async-await supported [state layer](https://getstream.io/chat/docs/sdk/ios/client/state-layer/state-layer-overview/).
+/// - Note: For an async-await alternative of the `ChatChannelListController`, please check ``ChannelList`` in the async-await supported [state layer](https://getstream.io/chat/docs/sdk/ios/client/state-layer/state-layer-overview/).
 public class ChatChannelListController: DataController, DelegateCallable, DataStoreProvider {
     /// The query specifying and filtering the list of channels.
     public let query: ChannelListQuery

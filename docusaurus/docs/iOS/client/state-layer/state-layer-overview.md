@@ -43,7 +43,7 @@ The state layer has objects representing different use-cases which enables acces
 * UserSearch
   * UserSearchState
 
-These objects are created through factory methods in `ChatClient`. Factory methods create instances of `ChannelList`, `Chat`, `ConnectedUser`, `MemberList`, `MessageSearch`, `ReactionList`, `UserList`,  and `UserSearch`. The observable state is accessed through `state` properties what return the respective state object. `ChannelList`, `Chat`, `MemberList`, `ReactionList`, and `UserList` have a `get()` method for fetching the default set of data from the Stream API.
+These objects are created through factory methods in `ChatClient`. Factory methods create instances of `ChannelList`, `Chat`, `ConnectedUser`, `MemberList`, `MessageSearch`, `ReactionList`, `UserList`,  and `UserSearch`. The observable state is accessed through `state` properties what return the respective state object. `ChannelList`, `Chat`, `MemberList`, `ReactionList`, and `UserList` have a `get()` method for loading the default set of data from the Stream API.
 
 ### ConnectedUser
 
@@ -54,26 +54,26 @@ var connectedUser = try await chatClient.connectUser(
     userInfo: UserInfo(id: "<# Your User ID Here #>"),
     token: "<# Your User Token Here#>"
 )
-// or while being logged in
+// Or while being logged in
 connectedUser = try chatClient.makeConnectedUser()
-// register for push notifications
+// Register for push notifications
 try await connectedUser.addDevice(
     .apn(
         token: apnTokenData, 
         providerName: "<# Your Stream's Push Configuration Name>"
     )
 )
-// mute a user
+// Mute a user
 try await connectedUser.muteUser("user-id")
-// block a user
+// Block a user
 try await connectedUser.blockUser("another-user-id")
-// mark all the channels as read
+// Mark all the channels as read
 try await connectedUser.markAllChannelsRead()
-// read user data
+// Read user data
 let unreadCounts = connectedUser.state.user.unreadCount
 let numberOfUnreadChannels = unreadCounts.channels
 let numberOfUnreadMessages = unreadCounts.messages
-// react to user data changes
+// React to user data changes
 connectedUser.state.$user
   .sink { changedUser in
       let changedUnreadCount = changedUser.unreadCount
@@ -95,13 +95,13 @@ let query = ChannelListQuery(
     pageSize: 10
 )
 let channelList = chatClient.makeChannelList(with: query)
-// local state of the channel list (state from previous sessions)
+// Local state of the channel list (state from previous sessions)
 var channels = channelList.state.channels
-// fetch the first page of channels from the Stream API
+// Load the first page of channels from the Stream API
 try await channelList.get()
-// fetch more channels
+// Load more channels
 try await channelList.loadMoreChannels()
-// access all the fetched channels
+// Access all the loaded channels
 channels = channelList.state.channels
 ```
 
@@ -111,7 +111,7 @@ Since `ChannelListState` is observable, we can observe and react to channel list
 let cancellable = channelList.state
     .$channels
     .sink { channels in
-        // do something with channels
+        // Do something with channels
     }
 ```
 
@@ -124,22 +124,22 @@ Here is an example of creating an instance of `Chat`, using the offline state, r
 ```swift
 let channelId = ChannelId(type: .messaging, id: "general")
 let chat = chatClient.makeChat(for: channelId)
-// local state of the channel (state from previous sessions)
+// Local state of the channel (state from previous sessions)
 var messages = chat.state.messages
 var members = chat.state.members
-// fetch the latest state from the Stream API and subscribe to data changes
+// Load the latest state from the Stream API and subscribe to data changes
 try await chat.get(watch: true)
-// access all the fetched messages and members
+// Access all the loaded messages and members
 messages = chat.state.messages
 members = chat.state.members
-// fetch more messages
+// Load more messages
 try await chat.loadOlderMessages()
-// access all the fetched messages
+// Access all the loaded messages
 messages = chat.state.messages
 ```
 
-:::tip Call get with watch true once per app lifetime
-The get method fetches the latest state from the Stream API and if we set watch to true, server-side events will keep your local state up to state.
+:::tip Call `get(watch: true)` once per app lifetime
+The get method loads the latest state from the Stream API and if we set watch to true, server-side events will keep your local state up to state.
 :::
 
 `Chat` has a `sendMessage` method for sending messages. Sending a message could be as simple as just sending a text or more complex like including attachments, quoting another message, marking it as pinned and including extra data.
@@ -161,7 +161,7 @@ try await chat.sendMessage(
 )
 ```
 
-If we would like to create a message thread within a channel, the `Chat` type provides a reply method with all the before-mentioned arguments.
+If we would like to create a message thread within a channel, the `Chat` type provides a `reply` method with all the before-mentioned arguments.
 
 ```swift
 try await chat.reply(
@@ -189,24 +189,24 @@ try await chat.deleteReaction(
 )
 ```
 
-If we would like to observe or read a single message's state, then we can use the `MessageState` observable object. This type also gives access to all the fetched replies and reactions for the given message.
+If we would like to observe or read a single message's state, then we can use the `MessageState` observable object. This type also gives access to all the loaded replies and reactions for the given message.
 
 ```swift
 let messageState = try await chat.messageState(for: "message-id")
 try await chat.loadMoreReplies(for: messageId)
-// access all the fetched replies
+// Access all the loaded replies
 let replies = messageState.replies
-// load reactions
+// Load reactions
 let reactionsBatch25 = try await chat.loadReactions(
     for: "message-id",
     pagination: Pagination(pageSize: 25)
 )
-// paginate reactions by loading 10 more
+// Paginate reactions by loading 10 more
 let reactionsBatch10 = try await chat.loadMoreReactions(
     for: "message-id",
     limit: 10
 )
-// access all the currently loaded reactions
+// Access all the currently loaded reactions
 let allLoadedReactions35 = messageState.reactions
 ```
 
@@ -224,13 +224,13 @@ let query = ChannelMemberListQuery(
         sort: [Sorting(key: .createdAt, isAscending: true)]
     )
 let memberList = chatClient.makeMemberList(with: query)
-// local state of the member list (state from previous sessions)
+// Local state of the member list (state from previous sessions)
 var members = memberList.state.members
-// fetch the first page of members from the Stream API
+// Load the first page of members from the Stream API
 try await memberList.get()
-// fetch more members
+// Load more members
 try await memberList.loadMoreMembers()
-// access all the fetched members
+// Access all the loaded members
 members = memberList.state.members
 ```
 
@@ -240,18 +240,18 @@ members = memberList.state.members
 
 ```swift
 let messageSearch = chatClient.makeMessageSearch()
-// searching for messages containing "Stream"
+// Searching for messages containing "Stream"
 try await messageSearch.search(text: "Stream")
-// or searching for messages in the specified channel containing "Stream"
+// Or searching for messages in the specified channel containing "Stream"
 try await messageSearch.search(query:
     MessageSearchQuery(
         channelFilter: .containMembers(userIds: ["john"]),
         messageFilter: .autocomplete(.text, text: "Stream")
     )
 )
-// fetch more results
+// Load more results
 try await messageSearch.loadMoreMessages()
-// all the fetched results
+// All the loaded results
 let matches = messageSearch.state.messages
 ```
 
@@ -265,11 +265,11 @@ let query = ReactionListQuery(
     filter: .equal(.reactionType, to: "like")
 )
 let reactionList = chatClient.makeReactionList(with: query)
-// fetch reactions for the query
+// Load reactions for the query
 try await reactionList.get()
-// load more reactions
+// Load more reactions
 try await reactionList.loadMoreReactions()
-// all the loaded reactions
+// All the loaded reactions
 let users = reactionList.state.reactions
 ```
 
@@ -283,11 +283,11 @@ let query = UserListQuery(
     sort: [Sorting(key: .lastActivityAt, isAscending: false)]
 )
 let userList = chatClient.makeUserList(with: query)
-// fetch users for the query
+// Load users for the query
 try await userList.get()
-// load more users
+// Load more users
 try await userList.loadMoreUsers()
-// all the loaded users
+// All the loaded users
 let users = userList.state.users
 ```
 
@@ -298,19 +298,19 @@ let users = userList.state.users
 ```swift
 let userSearch = chatClient.makeUserSearch()
 try await userSearch.search(term: "thi")
-// fetch more results
+// Load more results
 try await userSearch.loadMoreUsers()
-// all the fetched results for "thi"
+// All the loaded results for "thi"
 var users = userSearch.state.users
-// change the search term
+// Change the search term
 try await userSearch.search(term: "thie")
-// all the fetched results for "thie"
+// All the loaded results for "thie"
 users = userSearch.state.users
 ```
 
 ## Listening to Web-Socket Events
 
-Web-socket events are delivered when-ever server side state changes. Stream chat's low-level client listen to these events and updates the local state accordingly. If there is a need, we can subscribe to these events using `ChatClient` for any events including channel events, and `Chat` for channel specific events. The latter offers convenience over the former.
+Web-socket events are delivered whenever server side state changes. Stream chat's low-level client listens to these events and updates the local state accordingly. If there is a need, we can subscribe to these events using `ChatClient` for any events including channel events, and `Chat` for channel specific events. The latter offers convenience over the former.
 ```swift
 // Every single event
 chatClient.subscribe { event in

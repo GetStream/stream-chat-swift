@@ -10,7 +10,7 @@ import Foundation
 /// `ChatChannelController` objects are lightweight, and they can be used for both, continuous data change observations (like
 /// getting new messages in the channel), and for quick channel mutations (like adding a member to a channel).
 ///
-/// - Note: Please refer to ``Chat`` in the async-await supported [state layer](https://getstream.io/chat/docs/sdk/ios/client/state-layer/state-layer-overview/).
+/// - Note: For an async-await alternative of the `ChatChannelController`, please check ``Chat`` in the async-await supported [state layer](https://getstream.io/chat/docs/sdk/ios/client/state-layer/state-layer-overview/).
 public class ChatChannelController: DataController, DelegateCallable, DataStoreProvider {
     /// The ChannelQuery this controller observes.
     @Atomic public private(set) var channelQuery: ChannelQuery

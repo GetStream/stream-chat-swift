@@ -19,7 +19,7 @@ extension ChatClient {
 
 /// `ChatUserListController` is a controller class which allows observing a list of chat users based on the provided query.
 ///
-/// - Note: Please refer to ``UserList`` in the async-await supported [state layer](https://getstream.io/chat/docs/sdk/ios/client/state-layer/state-layer-overview/).
+/// - Note: For an async-await alternative of the `ChatUserListController`, please check ``UserList`` in the async-await supported [state layer](https://getstream.io/chat/docs/sdk/ios/client/state-layer/state-layer-overview/).
 public class ChatUserListController: DataController, DelegateCallable, DataStoreProvider {
     /// The query specifying and filtering the list of users.
     public let query: UserListQuery
