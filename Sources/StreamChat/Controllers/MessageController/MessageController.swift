@@ -17,6 +17,7 @@ public extension ChatClient {
 
 /// `ChatMessageController` is a controller class which allows observing and mutating a chat message entity.
 ///
+/// - Note: For an async-await alternative of the `ChatMessageController`, please check ``Chat`` and ``MessageState`` in the async-await supported [state layer](https://getstream.io/chat/docs/sdk/ios/client/state-layer/state-layer-overview/).
 public class ChatMessageController: DataController, DelegateCallable, DataStoreProvider {
     /// The `ChatClient` instance this controller belongs to.
     public let client: ChatClient

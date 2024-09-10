@@ -26,6 +26,10 @@ extension ChatClient {
 }
 ```
 
+:::important
+When using multiple instances of `ChatClient` at the same time, it is required to use a different `ChatClientConfig.localStorageFolderURL` for each instance. For example, adding an additional path component to the default URL.
+:::
+
 ### Connect User
 
 The next step is to connect the `ChatClient` with a user. In order to connect, the chat client needs an authorization token.
@@ -86,7 +90,7 @@ chatClient.disconnect {
 }
 ```
 
-If your users logout form their account you should use logout instead for completely logging out from the session. You logout by calling:
+If your users logout form their account you should use logout instead for completely logging out from the session. Logout disconnects and deletes the offline state for the user. You logout by calling:
 
 ```swift
 chatClient.logout {
