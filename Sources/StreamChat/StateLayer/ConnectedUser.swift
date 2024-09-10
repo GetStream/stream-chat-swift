@@ -163,11 +163,18 @@ public final class ConnectedUser {
     
     /// Flags the specified user.
     ///
-    /// - Parameter userId: The id of the user to flag.
+    /// - Parameters:
+    ///   - userId: The id of the user to flag.
+    ///   - reason: The reason of the flag request.
+    ///   - extraData: Additional data associated with the flag request.
     ///
     /// - Throws: An error while communicating with the Stream API.
-    public func flag(_ userId: UserId) async throws {
-        try await userUpdater.flag(userId)
+    public func flag(
+        _ userId: UserId,
+        reason: String? = nil,
+        extraData: [String: RawJSON]? = nil
+    ) async throws {
+        try await userUpdater.flag(userId, reason: reason, extraData: extraData)
     }
     
     /// Unflags the specified user.

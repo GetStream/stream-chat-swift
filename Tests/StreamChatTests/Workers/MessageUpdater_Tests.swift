@@ -1209,6 +1209,7 @@ final class MessageUpdater_Tests: XCTestCase {
         let messageId: MessageId = .unique
         let cid: ChannelId = .unique
         let reason = "Test"
+        let extraData: [String: RawJSON] = ["key": .bool(true)]
 
         // Create current user in the database
         try database.createCurrentUser(id: currentUserId)
@@ -1224,13 +1225,13 @@ final class MessageUpdater_Tests: XCTestCase {
 
         // Simulate `flagMessage` call.
         let expectation = self.expectation(description: "Flag message completion")
-        messageUpdater.flagMessage(true, with: messageId, in: cid, reason: reason) { error in
+        messageUpdater.flagMessage(true, with: messageId, in: cid, reason: reason, extraData: extraData) { error in
             XCTAssertNil(error)
             expectation.fulfill()
         }
 
         // Assert flag endpoint is called.
-        let flagEndpoint: Endpoint<FlagMessagePayload> = .flagMessage(true, with: messageId, reason: reason)
+        let flagEndpoint: Endpoint<FlagMessagePayload> = .flagMessage(true, with: messageId, reason: reason, extraData: extraData)
         AssertAsync.willBeEqual(apiClient.request_endpoint, AnyEndpoint(flagEndpoint))
 
         // Add it to DB as it is as expected after a successful getMessage call

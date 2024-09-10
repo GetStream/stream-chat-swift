@@ -182,10 +182,18 @@ public extension ChatUserController {
     }
 
     /// Flags the user this controller manages.
-    /// - Parameter completion: The completion. Will be called on a **callbackQueue** when the network request is finished.
+    ///
+    /// - Parameters:
+    ///   - reason: The reason of the flag request.
+    ///   - extraData: Additional data associated with the flag request.
+    ///   - completion: The completion. Will be called on a **callbackQueue** when the network request is finished.
     ///                         If request fails, the completion will be called with an error.
-    func flag(completion: ((Error?) -> Void)? = nil) {
-        userUpdater.flagUser(true, with: userId) { error in
+    func flag(
+        reason: String? = nil,
+        extraData: [String: RawJSON]? = nil,
+        completion: ((Error?) -> Void)? = nil
+    ) {
+        userUpdater.flagUser(true, with: userId, reason: reason, extraData: extraData) { error in
             self.callback {
                 completion?(error)
             }
@@ -196,7 +204,7 @@ public extension ChatUserController {
     /// - Parameter completion: The completion. Will be called on a **callbackQueue** when the network request is finished.
     ///
     func unflag(completion: ((Error?) -> Void)? = nil) {
-        userUpdater.flagUser(false, with: userId) { error in
+        userUpdater.flagUser(false, with: userId, reason: nil, extraData: nil) { error in
             self.callback {
                 completion?(error)
             }

@@ -637,17 +637,20 @@ public class Chat {
     /// - Parameters:
     /// - messageId: The id of the message to be flagged.
     /// - reason: A reason why the user was flagged.
+    /// - extraData: Additional data associated with the flag request.
     ///
     /// - Throws: An error while communicating with the Stream API.
     public func flagMessage(
         _ messageId: MessageId,
-        reason: String? = nil
+        reason: String? = nil,
+        extraData: [String: RawJSON]? = nil
     ) async throws {
         try await messageUpdater.flagMessage(
             true,
             with: messageId,
             in: cid,
-            reason: reason
+            reason: reason,
+            extraData: extraData
         )
     }
     
@@ -657,7 +660,7 @@ public class Chat {
     ///
     /// - Throws: An error while communicating with the Stream API.
     public func unflagMessage(_ messageId: MessageId) async throws {
-        try await messageUpdater.flagMessage(false, with: messageId, in: cid, reason: nil)
+        try await messageUpdater.flagMessage(false, with: messageId, in: cid, reason: nil, extraData: nil)
     }
     
     // MARK: - Message Rich Content

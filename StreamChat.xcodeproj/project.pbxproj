@@ -259,6 +259,8 @@
 		4F1BEE7F2BE38B5500B6685C /* ReactionList_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F1BEE7E2BE38B5500B6685C /* ReactionList_Tests.swift */; };
 		4F1FB7D62C7DE22D00C47C2A /* ChatMessageAudioAttachment_Mock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F1FB7D52C7DE22D00C47C2A /* ChatMessageAudioAttachment_Mock.swift */; };
 		4F1FB7D82C7DEC6600C47C2A /* ChatMessageVideoAttachment_Mock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F1FB7D72C7DEC6600C47C2A /* ChatMessageVideoAttachment_Mock.swift */; };
+		4F312D0E2C905A2E0073A1BC /* FlagRequestBody.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F312D0D2C905A2E0073A1BC /* FlagRequestBody.swift */; };
+		4F312D0F2C905A2E0073A1BC /* FlagRequestBody.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F312D0D2C905A2E0073A1BC /* FlagRequestBody.swift */; };
 		4F427F662BA2F43200D92238 /* ConnectedUser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F427F652BA2F43200D92238 /* ConnectedUser.swift */; };
 		4F427F672BA2F43200D92238 /* ConnectedUser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F427F652BA2F43200D92238 /* ConnectedUser.swift */; };
 		4F427F692BA2F52100D92238 /* ConnectedUserState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F427F682BA2F52100D92238 /* ConnectedUserState.swift */; };
@@ -3100,6 +3102,7 @@
 		4F1BEE7E2BE38B5500B6685C /* ReactionList_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReactionList_Tests.swift; sourceTree = "<group>"; };
 		4F1FB7D52C7DE22D00C47C2A /* ChatMessageAudioAttachment_Mock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessageAudioAttachment_Mock.swift; sourceTree = "<group>"; };
 		4F1FB7D72C7DEC6600C47C2A /* ChatMessageVideoAttachment_Mock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessageVideoAttachment_Mock.swift; sourceTree = "<group>"; };
+		4F312D0D2C905A2E0073A1BC /* FlagRequestBody.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlagRequestBody.swift; sourceTree = "<group>"; };
 		4F427F652BA2F43200D92238 /* ConnectedUser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectedUser.swift; sourceTree = "<group>"; };
 		4F427F682BA2F52100D92238 /* ConnectedUserState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectedUserState.swift; sourceTree = "<group>"; };
 		4F427F6B2BA2F53200D92238 /* ConnectedUserState+Observer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ConnectedUserState+Observer.swift"; sourceTree = "<group>"; };
@@ -9136,21 +9139,22 @@
 			isa = PBXGroup;
 			children = (
 				884C61212594A449008B70DC /* AttachmentActionRequestBody.swift */,
+				841BA9FA2BCE8468000C73E4 /* CastPollVoteRequestBody.swift */,
 				888E8C4D252B4B1C00195E03 /* ChannelMemberBanRequestPayload.swift */,
 				AD483B952A2658970004B406 /* ChannelMemberUnbanRequestPayload.swift */,
 				A3B0CFA127BBF52600F352F9 /* ChannelTruncateRequestPayload.swift */,
 				43D3F0FB28410A0200B74921 /* CreateCallRequestBody.swift */,
+				841BAA092BCE9B57000C73E4 /* CreatePollOptionRequestBody.swift */,
+				841BA9FD2BCE8E6D000C73E4 /* CreatePollRequestBody.swift */,
 				840B4FCE26A9E53100D5EFAB /* CustomEventRequestBody.swift */,
+				4F312D0D2C905A2E0073A1BC /* FlagRequestBody.swift */,
 				8A0D64A524E57A520017A3C0 /* GuestUserTokenRequestPayload.swift */,
 				8899BC46254305F8003CB98B /* MessageReactionRequestPayload.swift */,
 				F6ED5F7725027907005D7327 /* MissingEventsRequestBody.swift */,
-				841BA9FA2BCE8468000C73E4 /* CastPollVoteRequestBody.swift */,
-				841BA9FD2BCE8E6D000C73E4 /* CreatePollRequestBody.swift */,
-				841BAA002BCE9394000C73E4 /* UpdatePollRequestBody.swift */,
 				841BAA032BCE94F8000C73E4 /* QueryPollsRequestBody.swift */,
 				841BAA062BCE9A49000C73E4 /* UpdatePartialRequestBody.swift */,
-				841BAA092BCE9B57000C73E4 /* CreatePollOptionRequestBody.swift */,
 				841BAA0C2BCE9F44000C73E4 /* UpdatePollOptionRequestBody.swift */,
+				841BAA002BCE9394000C73E4 /* UpdatePollRequestBody.swift */,
 			);
 			path = Requests;
 			sourceTree = "<group>";
@@ -11175,6 +11179,7 @@
 				88BDCA8A2642B02D0099AD74 /* ChatMessageAttachment.swift in Sources */,
 				841BAA4E2BD1CD76000C73E4 /* PollOptionDTO.swift in Sources */,
 				88E26D6E2580F34B00F55AB5 /* AttachmentQueueUploader.swift in Sources */,
+				4F312D0E2C905A2E0073A1BC /* FlagRequestBody.swift in Sources */,
 				88A00DD02525F08000259AB4 /* ModerationEndpoints.swift in Sources */,
 				79A0E9B02498C09900E9BD50 /* ConnectionStatus.swift in Sources */,
 				4F05C0712C8832C40085B4B7 /* URLRequest+cURL.swift in Sources */,
@@ -12101,6 +12106,7 @@
 				C121E86D274544AF00023E4C /* DatabaseContainer.swift in Sources */,
 				C121E86E274544AF00023E4C /* DatabaseSession.swift in Sources */,
 				C121E86F274544AF00023E4C /* DataStore.swift in Sources */,
+				4F312D0F2C905A2E0073A1BC /* FlagRequestBody.swift in Sources */,
 				84355D892AB2FCAC00FD5838 /* FilesEndpoints.swift in Sources */,
 				C121E870274544AF00023E4C /* MessageReactionDTO.swift in Sources */,
 				C121E871274544AF00023E4C /* MessageDTO.swift in Sources */,

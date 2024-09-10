@@ -9,6 +9,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   - Add `downloadAttachment(_:)` and `deleteLocalAttachmentDownload(for:)` to `Chat` and `MessageController`
   - Add `deleteAllLocalAttachmentDownloads()` to `ConnectedUser` and `CurrentUserController`
 - Add `unset` argument to `CurrentChatUserController.updateUserData` and `ConnectedUser.update` for clearing user data fields [#3404](https://github.com/GetStream/stream-chat-swift/pull/3404)
+- Add `reason` and `extraData` arguments to `ChatUserController.flag(reason:extraData:completion:)` and `ConnectedUser.flag(_:reason:extraData:)` [#3417](https://github.com/GetStream/stream-chat-swift/pull/3417)
+- Add `extraData` argument to `ChatMessageController.flag(reason:extraData:completion:)` and `Chat.flagMessage(_:reason:extraData:)` [#3417](https://github.com/GetStream/stream-chat-swift/pull/3417)
 ### 🐞 Fixed
 - Fix Logger printing the incorrect thread name [#3382](https://github.com/GetStream/stream-chat-swift/pull/3382)
 - Channel watching did not resume on web-socket reconnection [#3409](https://github.com/GetStream/stream-chat-swift/pull/3409)

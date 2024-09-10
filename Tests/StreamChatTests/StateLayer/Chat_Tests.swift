@@ -920,10 +920,14 @@ final class Chat_Tests: XCTestCase {
     
     func test_flagMessage_whenMessageUpdaterSucceeds_thenFlagMessageActionSucceeds() async throws {
         let messageId: MessageId = .unique
+        let reason: String = .unique
+        let extraData: [String: RawJSON] = ["key": .bool(true)]
         env.messageUpdaterMock.flagMessage_completion_result = .success(())
-        try await chat.flagMessage(messageId)
+        try await chat.flagMessage(messageId, reason: reason, extraData: extraData)
         XCTAssertEqual(channelId, env.messageUpdaterMock.flagMessage_cid)
         XCTAssertEqual(messageId, env.messageUpdaterMock.flagMessage_messageId)
+        XCTAssertEqual(reason, env.messageUpdaterMock.flagMessage_reason)
+        XCTAssertEqual(extraData, env.messageUpdaterMock.flagMessage_extraData)
         XCTAssertEqual(true, env.messageUpdaterMock.flagMessage_flag)
     }
     
