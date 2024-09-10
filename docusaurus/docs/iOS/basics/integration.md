@@ -55,7 +55,7 @@ Based on the repository you select you can find 3 different targets: StreamChat,
 After you press finish, it's done.
 
 :::caution
-Because StreamChat SDKs have to be distributed with its resources, the minimal Swift version requirement for this installation method is 5.3. If you need to support older Swift version, please install it using CocoaPods.
+Because StreamChat SDKs have to be distributed with its resources, the minimal Swift version requirement for this installation method is 5.6. If you need to support older Swift version, please install it using CocoaPods.
 :::
 
 _More information about Swift Package Manager [can be found here](https://www.swift.org/package-manager/)_
@@ -139,6 +139,6 @@ While ABI Stability was allowing us to have code written with different Swift ve
 
 ## Add Usage Descriptions to Info.plist
 
-Add the NSPhotoLibraryUsageDescription key in your Info.plist with a description of use.
-Add the NSPhotoLibraryAddUsageDescription key in your Info.plist with a description of use.
-Add the NSCameraUsageDescription key in your Info.plist with a description of use.
+Add the [NSPhotoLibraryUsageDescription](https://developer.apple.com/documentation/bundleresources/information_property_list/nsphotolibraryusagedescription) key in your Info.plist with a description of use.
+Add the [NSPhotoLibraryAddUsageDescription](https://developer.apple.com/documentation/bundleresources/information_property_list/nsphotolibraryaddusagedescription) key in your Info.plist with a description of use.
+Add the [NSCameraUsageDescription](https://developer.apple.com/documentation/bundleresources/information_property_list/nscamerausagedescription) key in your Info.plist with a description of use.
