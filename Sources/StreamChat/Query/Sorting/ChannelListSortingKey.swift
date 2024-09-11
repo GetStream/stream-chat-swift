@@ -124,7 +124,7 @@ extension Array where Element == Sorting<ChannelListSortingKey> {
     }
 }
 
-private extension Sorting where Key == ChannelListSortingKey {
+extension Sorting where Key == ChannelListSortingKey {
     var sortValue: SortValue<ChatChannel>? {
         SortValue(keyPath: key.keyPath, isAscending: isAscending)
     }

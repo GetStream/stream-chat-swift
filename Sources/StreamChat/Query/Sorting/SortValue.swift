@@ -10,49 +10,54 @@ struct SortValue<T> {
 }
 
 extension Array {
-    func sort(using sorting: [SortValue<Element>]) -> [Element] {
-        var result = self
-
-        for sort in sorting.reversed() {
-            result = result.sorted { lhs, rhs in
-                let lhsValue = lhs[keyPath: sort.keyPath]
-                let rhsValue = rhs[keyPath: sort.keyPath]
-
-                if sort.isAscending, evaluate(lhs: lhsValue, rhs: rhsValue, isAscending: sort.isAscending) {
-                    return true
-                } else if !sort.isAscending, evaluate(lhs: lhsValue, rhs: rhsValue, isAscending: sort.isAscending) {
-                    return true
-                } else {
-                    return false
+    /// Returns the elements of the sequence, sorted using the given sort values as the comparison between elements.
+    ///
+    /// The first `SortValue` is the primary key and subsequent `SortValue`s are for breaking the tie.
+    func sorted(using sortValues: [SortValue<Element>]) -> [Element] {
+        guard !sortValues.isEmpty else { return self }
+        return sorted { lhs, rhs in
+            for sortValue in sortValues {
+                let lhsValue = lhs[keyPath: sortValue.keyPath]
+                let rhsValue = rhs[keyPath: sortValue.keyPath]
+                let isAscending = sortValue.isAscending
+                // These are type-erased, therefore we need to manually cast them
+                if let result = nilComparison(lhs: lhsValue, rhs: rhsValue, isAscending: isAscending) {
+                    return result
+                } else if let result = areInIncreasingOrder(lhs: lhsValue, rhs: rhsValue, type: String.self, isAscending: isAscending) {
+                    return result
+                } else if let result = areInIncreasingOrder(lhs: lhsValue, rhs: rhsValue, type: Int.self, isAscending: isAscending) {
+                    return result
+                } else if let result = areInIncreasingOrder(lhs: lhsValue, rhs: rhsValue, type: Double.self, isAscending: isAscending) {
+                    return result
+                } else if let result = areInIncreasingOrder(lhs: lhsValue, rhs: rhsValue, type: Date.self, isAscending: isAscending) {
+                    return result
+                } else if let lBool = lhs as? Bool, let rBool = rhs as? Bool, lBool != rBool {
+                    // Backend considers boolean sorting in reversed order.
+                    return isAscending ? lBool && !rBool : !lBool && rBool
                 }
             }
+            return false
         }
-
-        return result
     }
-
-    private func evaluate(lhs: Any?, rhs: Any?, isAscending: Bool) -> Bool {
-        if lhs == nil, rhs != nil, !isAscending {
-            return true
-        } else if lhs != nil, rhs == nil, isAscending {
-            return true
+    
+    /// Dedicated nil handling for Any type which returns false if we do `lhs == nil`.
+    private func nilComparison(lhs: Any, rhs: Any, isAscending: Bool) -> Bool? {
+        func isAnyNil(_ value: Any) -> Bool {
+            let mirror = Mirror(reflecting: value)
+            return mirror.displayStyle == .optional && mirror.children.isEmpty
         }
-
-        if let lString = lhs as? String, let rString = rhs as? String {
-            return isAscending ? lString < rString : lString > rString
-        } else if let lInt = lhs as? Int, let rInt = rhs as? Int {
-            return isAscending ? lInt < rInt : lInt > rInt
-        } else if let lDouble = lhs as? Double, let rDouble = rhs as? Double {
-            return isAscending ? lDouble < rDouble : lDouble > rDouble
-        } else if let lDate = lhs as? Date, let rDate = rhs as? Date {
-            return isAscending ? lDate < rDate : lDate > rDate
-        } else if let lBool = lhs as? Bool, let rBool = rhs as? Bool {
-            // The logic is actually the other way around, and this a backend issue.
-            // But we can't change the backend at the moment otherwise it would be a breaking change.
-            // So for now, isAscending means true values will come first, and then false.
-            return isAscending ? lBool && !rBool : !lBool && rBool
+        switch (isAnyNil(lhs), isAnyNil(rhs)) {
+        case (true, true): return nil
+        case (true, false): return isAscending
+        case (false, true): return !isAscending
+        case (false, false): return nil
         }
-
-        return false
+    }
+    
+    /// Nil, if type mismatches or typed values are equal and we need to consider the next sorting key instead.
+    private func areInIncreasingOrder<T>(lhs: Any, rhs: Any, type: T.Type, isAscending: Bool) -> Bool? where T: Comparable {
+        guard let lhs = lhs as? T, let rhs = rhs as? T else { return nil }
+        guard lhs != rhs else { return nil }
+        return isAscending ? lhs < rhs : lhs > rhs
     }
 }

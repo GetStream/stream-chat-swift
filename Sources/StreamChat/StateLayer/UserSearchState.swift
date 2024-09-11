@@ -45,7 +45,7 @@ extension UserSearchState {
             let incomingIds = Set(incomingUsers.map(\.id))
             let incomingRemovedUsers = users.filter { !incomingIds.contains($0.id) }
             let sortValues = completedQuery.sort.map(\.sortValue)
-            result = StreamCollection((incomingRemovedUsers + incomingUsers).sort(using: sortValues))
+            result = StreamCollection((incomingRemovedUsers + incomingUsers).sorted(using: sortValues))
         }
         users = result
     }
