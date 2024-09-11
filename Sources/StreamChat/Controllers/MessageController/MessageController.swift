@@ -579,10 +579,15 @@ public class ChatMessageController: DataController, DelegateCallable, DataStoreP
     ///
     /// - Parameters:
     ///   - reason: The flag reason.
+    ///   - extraData: Additional data associated with the flag request.
     ///   - completion: The completion. Will be called on a **callbackQueue** when the network request is finished.
     ///
-    public func flag(reason: String? = nil, completion: ((Error?) -> Void)? = nil) {
-        messageUpdater.flagMessage(true, with: messageId, in: cid, reason: reason) { error in
+    public func flag(
+        reason: String? = nil,
+        extraData: [String: RawJSON]? = nil,
+        completion: ((Error?) -> Void)? = nil
+    ) {
+        messageUpdater.flagMessage(true, with: messageId, in: cid, reason: reason, extraData: extraData) { error in
             self.callback {
                 completion?(error)
             }
@@ -594,7 +599,7 @@ public class ChatMessageController: DataController, DelegateCallable, DataStoreP
     /// - Parameter completion: The completion. Will be called on a **callbackQueue** when the network request is finished.
     ///
     public func unflag(completion: ((Error?) -> Void)? = nil) {
-        messageUpdater.flagMessage(false, with: messageId, in: cid) { error in
+        messageUpdater.flagMessage(false, with: messageId, in: cid, reason: nil, extraData: nil) { error in
             self.callback {
                 completion?(error)
             }

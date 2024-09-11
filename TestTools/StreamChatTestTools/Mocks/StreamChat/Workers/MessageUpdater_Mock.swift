@@ -62,6 +62,7 @@ final class MessageUpdater_Mock: MessageUpdater {
     @Atomic var flagMessage_messageId: MessageId?
     @Atomic var flagMessage_cid: ChannelId?
     @Atomic var flagMessage_reason: String?
+    @Atomic var flagMessage_extraData: [String: RawJSON]?
     @Atomic var flagMessage_completion: ((Error?) -> Void)?
     @Atomic var flagMessage_completion_result: Result<Void, Error>?
 
@@ -181,6 +182,7 @@ final class MessageUpdater_Mock: MessageUpdater {
         flagMessage_messageId = nil
         flagMessage_cid = nil
         flagMessage_reason = nil
+        flagMessage_extraData = nil
         flagMessage_completion = nil
         flagMessage_completion_result = nil
 
@@ -377,13 +379,15 @@ final class MessageUpdater_Mock: MessageUpdater {
         _ flag: Bool,
         with messageId: MessageId,
         in cid: ChannelId,
-        reason: String? = nil,
+        reason: String?,
+        extraData: [String: RawJSON]?,
         completion: ((Error?) -> Void)? = nil
     ) {
         flagMessage_flag = flag
         flagMessage_messageId = messageId
         flagMessage_cid = cid
         flagMessage_reason = reason
+        flagMessage_extraData = extraData
         flagMessage_completion = completion
         flagMessage_completion_result?.invoke(with: completion)
     }

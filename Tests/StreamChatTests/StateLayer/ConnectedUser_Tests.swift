@@ -125,9 +125,13 @@ final class ConnectedUser_Tests: XCTestCase {
         
         env.userUpdaterMock.flagUser_completion_result = .success(())
         let id = UserId.unique
-        try await connectedUser.flag(id)
+        let reason = String.unique
+        let extraData: [String: RawJSON] = ["key": .string("value")]
+        try await connectedUser.flag(id, reason: reason, extraData: extraData)
         XCTAssertEqual(true, env.userUpdaterMock.flagUser_flag)
         XCTAssertEqual(id, env.userUpdaterMock.flagUser_userId)
+        XCTAssertEqual(reason, env.userUpdaterMock.flagUser_reason)
+        XCTAssertEqual(extraData, env.userUpdaterMock.flagUser_extraData)
     }
     
     func test_unflagUser_whenUpdatedSucceeds_thenUnflagUserSucceeds() async throws {
@@ -138,6 +142,8 @@ final class ConnectedUser_Tests: XCTestCase {
         try await connectedUser.unflag(id)
         XCTAssertEqual(false, env.userUpdaterMock.flagUser_flag)
         XCTAssertEqual(id, env.userUpdaterMock.flagUser_userId)
+        XCTAssertNil(env.userUpdaterMock.flagUser_reason)
+        XCTAssertNil(env.userUpdaterMock.flagUser_extraData)
     }
     
     func test_blockUser_whenUpdatedSucceeds_thenBlockUserSucceeds() async throws {

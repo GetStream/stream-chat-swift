@@ -344,6 +344,7 @@ class MessageUpdater: Worker {
     ///   - messageId: The identifier of a message that should be flagged or unflagged.
     ///   - cid: The identifier of the channel the message belongs to.
     ///   - reason: The flag reason.
+    ///   - extraData: Additional data associated with the flag request.
     ///   - completion: Called when the API call is finished. Called with `Error` if the remote update fails.
     ///
     func flagMessage(
@@ -351,6 +352,7 @@ class MessageUpdater: Worker {
         with messageId: MessageId,
         in cid: ChannelId,
         reason: String? = nil,
+        extraData: [String: RawJSON]? = nil,
         completion: ((Error?) -> Void)? = nil
     ) {
         fetchAndSaveMessageIfNeeded(messageId, cid: cid) { error in
@@ -359,7 +361,7 @@ class MessageUpdater: Worker {
                 return
             }
 
-            let endpoint: Endpoint<FlagMessagePayload> = .flagMessage(flag, with: messageId, reason: reason)
+            let endpoint: Endpoint<FlagMessagePayload> = .flagMessage(flag, with: messageId, reason: reason, extraData: extraData)
             self.apiClient.request(endpoint: endpoint) { result in
                 switch result {
                 case let .success(payload):
@@ -1109,14 +1111,16 @@ extension MessageUpdater {
         _ flag: Bool,
         with messageId: MessageId,
         in cid: ChannelId,
-        reason: String?
+        reason: String?,
+        extraData: [String: RawJSON]?
     ) async throws {
         try await withCheckedThrowingContinuation { continuation in
             flagMessage(
                 flag,
                 with: messageId,
                 in: cid,
-                reason: reason
+                reason: reason,
+                extraData: extraData
             ) { error in
                 continuation.resume(with: error)
             }
