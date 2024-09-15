@@ -1,17 +1,17 @@
 {
-    "channel_id": "62291f0a-67f7-11ef-bc15-c6eef6ed0640",
+    "channel_id": "97274db6-72f7-11ef-b6d3-6644d678b5e5",
     "channel_type": "messaging",
-    "cid": "messaging:62291f0a-67f7-11ef-bc15-c6eef6ed0640",
-    "created_at": "2024-09-01T00:16:11.768406088Z",
+    "cid": "messaging:97274db6-72f7-11ef-b6d3-6644d678b5e5",
+    "created_at": "2024-09-15T00:15:23.592667587Z",
     "member": {
         "banned": false,
         "channel_role": "channel_member",
-        "created_at": "2024-09-01T00:16:11.760869Z",
+        "created_at": "2024-09-15T00:15:23.585217Z",
         "notifications_muted": false,
         "role": "admin",
         "shadow_banned": false,
         "status": "member",
-        "updated_at": "2024-09-01T00:16:11.760869Z",
+        "updated_at": "2024-09-15T00:15:23.585217Z",
         "user": {
             "banned": false,
             "birthland": "Polis Massa",
@@ -19,7 +19,7 @@
             "id": "leia_organa",
             "image": "https://vignette.wikia.nocookie.net/starwars/images/f/fc/Leia_Organa_TLJ.png",
             "language": "en",
-            "last_active": "2024-08-30T14:16:49.393869Z",
+            "last_active": "2024-09-13T13:46:07.532535Z",
             "name": "Leia Organa",
             "online": false,
             "private_settings": {
@@ -31,7 +31,7 @@
                 }
             },
             "role": "admin",
-            "updated_at": "2024-08-29T18:09:28.42841Z"
+            "updated_at": "2024-09-13T11:00:27.647455Z"
         },
         "user_id": "leia_organa"
     },
@@ -43,7 +43,7 @@
         "id": "leia_organa",
         "image": "https://vignette.wikia.nocookie.net/starwars/images/f/fc/Leia_Organa_TLJ.png",
         "language": "en",
-        "last_active": "2024-08-30T14:16:49.393869Z",
+        "last_active": "2024-09-13T13:46:07.532535Z",
         "name": "Leia Organa",
         "online": false,
         "private_settings": {
@@ -55,6 +55,6 @@
             }
         },
         "role": "admin",
-        "updated_at": "2024-08-29T18:09:28.42841Z"
+        "updated_at": "2024-09-13T11:00:27.647455Z"
     }
 }
