@@ -59,14 +59,9 @@ public struct ViewContainerBuilder {
         NSLayoutConstraint.activate(components)
         return components
     }
-
-    /// A block responsible to support if-statements when building the stack views.
-    public static func buildEither(first component: UIStackView) -> UIStackView {
-        component
-    }
-
-    /// A block responsible to support if-statements when building the stack views.
-    public static func buildEither(second component: UIStackView) -> UIStackView {
+    
+    /// A block responsible to support if-statements.
+    public static func buildOptional(_ component: UIView?) -> UIView? {
         component
     }
 }
