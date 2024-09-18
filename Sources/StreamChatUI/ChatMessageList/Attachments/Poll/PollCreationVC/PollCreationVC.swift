@@ -120,9 +120,11 @@ open class PollCreationVC:
     override open func setUp() {
         super.setUp()
 
+        // TODO: Use Components
         tableView.register(PollCreationTextFieldCell.self)
         tableView.register(PollCreationFeatureCell.self)
         tableView.register(PollCreationMultipleVotesFeatureCell.self)
+        tableView.register(PollCreationSectionHeaderView.self)
         tableView.delegate = self
         tableView.dataSource = self
         tableView.isEditing = true
@@ -135,6 +137,7 @@ open class PollCreationVC:
         title = "Create Poll"
         tableView.separatorStyle = .none
         tableView.backgroundColor = appearance.colorPalette.background
+        tableView.sectionFooterHeight = 8
     }
 
     override open func setUpLayout() {
@@ -282,13 +285,16 @@ open class PollCreationVC:
         }
     }
 
-    open func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+    open func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+        let view = tableView.dequeueReusableHeaderFooter(with: PollCreationSectionHeaderView.self)
         let section = sections[section]
         switch section {
         case .name:
-            return "Question"
+            view.content = .init(title: "Questions")
+            return view
         case .options:
-            return "Options"
+            view.content = .init(title: "Options")
+            return view
         case .features:
             return nil
         default:

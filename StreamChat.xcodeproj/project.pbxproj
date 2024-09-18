@@ -1397,6 +1397,8 @@
 		AD169DF02C9B115A00F58FAC /* KeyboardHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD169DED2C9B114500F58FAC /* KeyboardHandler.swift */; };
 		AD169DF32C9B119900F58FAC /* DefaultTableViewKeyboardHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD169DF12C9B118400F58FAC /* DefaultTableViewKeyboardHandler.swift */; };
 		AD169DF42C9B11A100F58FAC /* DefaultTableViewKeyboardHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD169DF12C9B118400F58FAC /* DefaultTableViewKeyboardHandler.swift */; };
+		AD169DF72C9B33B500F58FAC /* PollCreationSectionHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD169DF52C9B339E00F58FAC /* PollCreationSectionHeaderView.swift */; };
+		AD169DF82C9B33B700F58FAC /* PollCreationSectionHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD169DF52C9B339E00F58FAC /* PollCreationSectionHeaderView.swift */; };
 		AD17CDF927E4DB2700E0D092 /* PushProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD17CDF827E4DB2700E0D092 /* PushProvider.swift */; };
 		AD17CDFA27E4DB2700E0D092 /* PushProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD17CDF827E4DB2700E0D092 /* PushProvider.swift */; };
 		AD1D7A8526A2131D00494CA5 /* ChatChannelVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD1D7A8326A212D000494CA5 /* ChatChannelVC.swift */; };
@@ -4160,6 +4162,7 @@
 		AD169DE82C99CB7F00F58FAC /* PollFeature.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PollFeature.swift; sourceTree = "<group>"; };
 		AD169DED2C9B114500F58FAC /* KeyboardHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyboardHandler.swift; sourceTree = "<group>"; };
 		AD169DF12C9B118400F58FAC /* DefaultTableViewKeyboardHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DefaultTableViewKeyboardHandler.swift; sourceTree = "<group>"; };
+		AD169DF52C9B339E00F58FAC /* PollCreationSectionHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PollCreationSectionHeaderView.swift; sourceTree = "<group>"; };
 		AD17CDF827E4DB2700E0D092 /* PushProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PushProvider.swift; sourceTree = "<group>"; };
 		AD1D7A8326A212D000494CA5 /* ChatChannelVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatChannelVC.swift; sourceTree = "<group>"; };
 		AD25070B272C0C8800BC14C4 /* ChatMessageReactionAuthorsVC_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessageReactionAuthorsVC_Tests.swift; sourceTree = "<group>"; };
@@ -8841,6 +8844,7 @@
 			children = (
 				ADDC07E72C7F75F500EA0E5F /* PollCreationVC.swift */,
 				AD169DE82C99CB7F00F58FAC /* PollFeature.swift */,
+				AD169DF52C9B339E00F58FAC /* PollCreationSectionHeaderView.swift */,
 				ADDC08102C82911B00EA0E5F /* PollCreationTextFieldCell.swift */,
 				ADDC08072C828FDB00EA0E5F /* PollCreationFeatureCell.swift */,
 				ADDC080D2C8290EC00EA0E5F /* PollCreationMultipleVotesFeatureCell.swift */,
@@ -10498,6 +10502,7 @@
 				88D88F86257F9AA700AFE2A2 /* NSLayoutConstraint+Extensions.swift in Sources */,
 				ADCB577928A42D7700B81AE8 /* Algorithm.swift in Sources */,
 				796CBD1C25FF9552003299B0 /* UIStackView+Extensions.swift in Sources */,
+				AD169DF72C9B33B500F58FAC /* PollCreationSectionHeaderView.swift in Sources */,
 				C1FC2F8627416E150062530F /* Allocations.swift in Sources */,
 				C1FC2F8C27416E1F0062530F /* UIImage+SwiftyGif.swift in Sources */,
 				AD9632DC2C09E0350073B814 /* ChatThreadListRouter.swift in Sources */,
@@ -12589,6 +12594,7 @@
 				AD7BE1712C234798000A5756 /* ChatThreadListLoadingView.swift in Sources */,
 				C121EB962746A1E800023E4C /* AttachmentPreviewContainer.swift in Sources */,
 				C121EB972746A1E800023E4C /* AttachmentPreviewProvider.swift in Sources */,
+				AD169DF82C9B33B700F58FAC /* PollCreationSectionHeaderView.swift in Sources */,
 				ADD328772C07E9B300BAD0E9 /* ViewContainerBuilder.swift in Sources */,
 				C121EB982746A1E800023E4C /* DefaultAttachmentPreviewProvider.swift in Sources */,
 				C121EB992746A1E800023E4C /* FileAttachmentView.swift in Sources */,
