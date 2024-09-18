@@ -98,7 +98,24 @@ open class PollCreationVC:
     open private(set) lazy var tableView = UITableView(frame: .zero, style: .grouped)
         .withoutAutoresizingMaskConstraints
 
+    /// Component responsible for setting the correct offset when keyboard frame is changed.
+    open lazy var keyboardHandler: KeyboardHandler = DefaultTableViewKeyboardHandler(
+        tableView: self.tableView
+    )
+
     // MARK: - Lifecycle
+
+    override open func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+
+        keyboardHandler.start()
+    }
+
+    override open func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+
+        keyboardHandler.stop()
+    }
 
     override open func setUp() {
         super.setUp()

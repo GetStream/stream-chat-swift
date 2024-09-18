@@ -1393,6 +1393,10 @@
 		AD158B6726C1876D00C104CD /* ChatChannelVC_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 64B8AC16266F86020092D5F6 /* ChatChannelVC_Tests.swift */; };
 		AD169DEA2C99CB8200F58FAC /* PollFeature.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD169DE82C99CB7F00F58FAC /* PollFeature.swift */; };
 		AD169DEB2C99CB8200F58FAC /* PollFeature.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD169DE82C99CB7F00F58FAC /* PollFeature.swift */; };
+		AD169DEF2C9B115400F58FAC /* KeyboardHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD169DED2C9B114500F58FAC /* KeyboardHandler.swift */; };
+		AD169DF02C9B115A00F58FAC /* KeyboardHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD169DED2C9B114500F58FAC /* KeyboardHandler.swift */; };
+		AD169DF32C9B119900F58FAC /* DefaultTableViewKeyboardHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD169DF12C9B118400F58FAC /* DefaultTableViewKeyboardHandler.swift */; };
+		AD169DF42C9B11A100F58FAC /* DefaultTableViewKeyboardHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD169DF12C9B118400F58FAC /* DefaultTableViewKeyboardHandler.swift */; };
 		AD17CDF927E4DB2700E0D092 /* PushProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD17CDF827E4DB2700E0D092 /* PushProvider.swift */; };
 		AD17CDFA27E4DB2700E0D092 /* PushProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD17CDF827E4DB2700E0D092 /* PushProvider.swift */; };
 		AD1D7A8526A2131D00494CA5 /* ChatChannelVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD1D7A8326A212D000494CA5 /* ChatChannelVC.swift */; };
@@ -4154,6 +4158,8 @@
 		AD154C6C25DC3BA000850925 /* ChatCommandSuggestionView_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatCommandSuggestionView_Tests.swift; sourceTree = "<group>"; };
 		AD158B6326C1872D00C104CD /* ChatThreadVC+SwiftUI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ChatThreadVC+SwiftUI.swift"; sourceTree = "<group>"; };
 		AD169DE82C99CB7F00F58FAC /* PollFeature.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PollFeature.swift; sourceTree = "<group>"; };
+		AD169DED2C9B114500F58FAC /* KeyboardHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyboardHandler.swift; sourceTree = "<group>"; };
+		AD169DF12C9B118400F58FAC /* DefaultTableViewKeyboardHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DefaultTableViewKeyboardHandler.swift; sourceTree = "<group>"; };
 		AD17CDF827E4DB2700E0D092 /* PushProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PushProvider.swift; sourceTree = "<group>"; };
 		AD1D7A8326A212D000494CA5 /* ChatChannelVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatChannelVC.swift; sourceTree = "<group>"; };
 		AD25070B272C0C8800BC14C4 /* ChatMessageReactionAuthorsVC_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessageReactionAuthorsVC_Tests.swift; sourceTree = "<group>"; };
@@ -6255,6 +6261,7 @@
 				79F691B12604C10A000AE89B /* SystemEnvironment.swift */,
 				CF7B2A2528BEAA93006BE124 /* TextViewMentionedUsersHandler.swift */,
 				C12297D22AC57A3200C5FF04 /* Throttler.swift */,
+				AD169DEC2C9B112B00F58FAC /* KeyboardHandler */,
 				AD95FD0F28F9B72200DBDF41 /* Extensions */,
 				ACCA772826C40C7A007AE2ED /* ImageLoading */,
 				AD95FD0B28F98C7A00DBDF41 /* ImageProcessor */,
@@ -8357,6 +8364,16 @@
 			path = Poll;
 			sourceTree = "<group>";
 		};
+		AD169DEC2C9B112B00F58FAC /* KeyboardHandler */ = {
+			isa = PBXGroup;
+			children = (
+				AD169DED2C9B114500F58FAC /* KeyboardHandler.swift */,
+				AD169DF12C9B118400F58FAC /* DefaultTableViewKeyboardHandler.swift */,
+				A35757C62613081B00DC914C /* ComposerKeyboardHandler.swift */,
+			);
+			path = KeyboardHandler;
+			sourceTree = "<group>";
+		};
 		AD4473DD263AC2B80030E583 /* ChatCommandSuggestionView */ = {
 			isa = PBXGroup;
 			children = (
@@ -8414,7 +8431,6 @@
 		AD4EA229264ADE0100DF8EE2 /* Composer */ = {
 			isa = PBXGroup;
 			children = (
-				A35757C62613081B00DC914C /* ComposerKeyboardHandler.swift */,
 				E73A8B2A2578EB2B00FBDC56 /* ComposerVC.swift */,
 				22ADD681256C40410098EFEB /* ComposerView.swift */,
 				AD0F7F122B5ED64600914C4C /* ComposerLinkPreviewView.swift */,
@@ -10409,6 +10425,7 @@
 				22ADD682256C40410098EFEB /* ComposerView.swift in Sources */,
 				E7A37B8425ADA66E0055458F /* ChatSuggestionsHeaderView.swift in Sources */,
 				849980F1277246DB00ABA58B /* UIScrollView+Extensions.swift in Sources */,
+				AD169DF32C9B119900F58FAC /* DefaultTableViewKeyboardHandler.swift in Sources */,
 				AD4C8C222C5D479B00E1C414 /* StackedUserAvatarsView.swift in Sources */,
 				8850FE91256558B200C8D534 /* NavigationRouter.swift in Sources */,
 				CF01EB7B288A2B7200B426B8 /* ChatChannelListLoadingView.swift in Sources */,
@@ -10440,6 +10457,7 @@
 				AD7BE1732C2347A3000A5756 /* ChatThreadListEmptyView.swift in Sources */,
 				88F836502578D16D0039AEC8 /* ChatMessageActionControl.swift in Sources */,
 				ADD328682C06B3AD00BAD0E9 /* ChatThreadListItemView.swift in Sources */,
+				AD169DEF2C9B115400F58FAC /* KeyboardHandler.swift in Sources */,
 				AD4F89DE2C6A5908006DF7E5 /* PollResultsSectionFooterView.swift in Sources */,
 				AD7EFDB72C78DC6600625FC5 /* PollCommentListSectionFooterView.swift in Sources */,
 				AD4F89D42C666471006DF7E5 /* PollResultsVC.swift in Sources */,
@@ -12530,6 +12548,7 @@
 				C121EB7D2746A1E700023E4C /* ChatChannelNamer.swift in Sources */,
 				AD7EFDAB2C78C0B600625FC5 /* PollCommentListVC.swift in Sources */,
 				C121EB7E2746A1E700023E4C /* UIStackView+Extensions.swift in Sources */,
+				AD169DF02C9B115A00F58FAC /* KeyboardHandler.swift in Sources */,
 				ADDC080C2C82905300EA0E5F /* PollCreationFeatureSwitchView.swift in Sources */,
 				C121EB7F2746A1E700023E4C /* SystemEnvironment.swift in Sources */,
 				C121EB802746A1E700023E4C /* CACornerMask+Extensions.swift in Sources */,
@@ -12755,6 +12774,7 @@
 				84C11BE627FB459900000A9E /* ChatMessageDeliveryStatusView.swift in Sources */,
 				C121EBFE2746A1EB00023E4C /* ChatMessageListScrollOverlayView.swift in Sources */,
 				C121EBFF2746A1EB00023E4C /* ChatMessageListUnreadCountView.swift in Sources */,
+				AD169DF42C9B11A100F58FAC /* DefaultTableViewKeyboardHandler.swift in Sources */,
 				C121EC002746A1EB00023E4C /* ScrollToBottomButton.swift in Sources */,
 				AD78F9F628EC735700BC0FCE /* String+SwiftyMarkdown.swift in Sources */,
 				C121EC012746A1EB00023E4C /* TypingIndicatorView.swift in Sources */,
