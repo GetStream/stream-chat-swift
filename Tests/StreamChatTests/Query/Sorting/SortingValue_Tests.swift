@@ -28,7 +28,7 @@ final class SortingValue_Tests: XCTestCase {
             channel3,
             channel4,
             channel5
-        ].sort(using: sorting)
+        ].sorted(using: sorting)
 
         XCTAssertEqual(result.map(\.name), ["A", "B", "C", "D", "E"])
     }
@@ -44,7 +44,7 @@ final class SortingValue_Tests: XCTestCase {
             channel3,
             channel4,
             channel5
-        ].sort(using: sorting)
+        ].sorted(using: sorting)
 
         XCTAssertEqual(result.map(\.name), ["B", "D", "A", "E", "C"])
     }
@@ -61,7 +61,7 @@ final class SortingValue_Tests: XCTestCase {
             channel3,
             channel4,
             channel5
-        ].sort(using: sorting)
+        ].sorted(using: sorting)
 
         XCTAssertEqual(result.map(\.name), ["D", "B", "E", "A", "C"])
     }
@@ -70,20 +70,20 @@ final class SortingValue_Tests: XCTestCase {
     
     func test_sortingValue_channelList_whenNonNilValues_thenEqualsToNSSortDesciptorSorting() {
         let channels = [
-            makeChannel(cidIndex: 1, lastMessageAtOffset: 1, updatedAtOffset: 15),
-            makeChannel(cidIndex: 2, lastMessageAtOffset: 2, updatedAtOffset: 14),
-            makeChannel(cidIndex: 3, lastMessageAtOffset: 3, updatedAtOffset: 13),
-            makeChannel(cidIndex: 4, lastMessageAtOffset: 4, updatedAtOffset: 12),
-            makeChannel(cidIndex: 5, lastMessageAtOffset: 5, updatedAtOffset: 11)
+            makeChannel(cidIndex: 1, lastMessageAtOffset: 1, createdAtOffset: 15),
+            makeChannel(cidIndex: 2, lastMessageAtOffset: 2, createdAtOffset: 14),
+            makeChannel(cidIndex: 3, lastMessageAtOffset: 3, createdAtOffset: 13),
+            makeChannel(cidIndex: 4, lastMessageAtOffset: 4, createdAtOffset: 12),
+            makeChannel(cidIndex: 5, lastMessageAtOffset: 5, createdAtOffset: 11)
         ]
         let sortingKeys: [Sorting<ChannelListSortingKey>] = [
             Sorting(key: .lastMessageAt, isAscending: false),
-            Sorting(key: .updatedAt, isAscending: false)
+            Sorting(key: .createdAt, isAscending: false)
         ]
         let runtimeSortResult = channels
-            .sort(using: sortingKeys.compactMap(\.sortValue))
+            .sorted(using: sortingKeys.compactMap(\.sortValue))
             .map(\.cid.id)
-        let nsArrayChannels = NSArray(array: channels.map({ ChannelBoxed(channel: $0) }))
+        let nsArrayChannels = NSArray(array: channels.map { ChannelBoxed(channel: $0) })
         let sortDescriptors = sortingKeys.compactMap { $0.key.sortDescriptor(isAscending: $0.isAscending) }
         let sortDescriptorResult = (nsArrayChannels.sortedArray(using: sortDescriptors) as! [ChannelBoxed]).compactMap(\.id)
         let expectedIds = ["5", "4", "3", "2", "1"]
@@ -93,23 +93,23 @@ final class SortingValue_Tests: XCTestCase {
     
     func test_sortingValue_channelList_whenSomeNilValues_thenEqualsToNSSortDesciptorSorting() {
         let channels = [
-            makeChannel(cidIndex: 1, lastMessageAtOffset: 1, updatedAtOffset: 15),
-            makeChannel(cidIndex: 2, lastMessageAtOffset: nil, updatedAtOffset: 14),
-            makeChannel(cidIndex: 3, lastMessageAtOffset: 3, updatedAtOffset: 13),
-            makeChannel(cidIndex: 4, lastMessageAtOffset: nil, updatedAtOffset: 12),
-            makeChannel(cidIndex: 5, lastMessageAtOffset: 5, updatedAtOffset: 11)
+            makeChannel(cidIndex: 1, lastMessageAtOffset: 1, createdAtOffset: 15),
+            makeChannel(cidIndex: 2, lastMessageAtOffset: nil, createdAtOffset: 14),
+            makeChannel(cidIndex: 3, lastMessageAtOffset: 3, createdAtOffset: 13),
+            makeChannel(cidIndex: 4, lastMessageAtOffset: nil, createdAtOffset: 12),
+            makeChannel(cidIndex: 5, lastMessageAtOffset: 5, createdAtOffset: 11)
         ]
         let sortingKeys: [Sorting<ChannelListSortingKey>] = [
             Sorting(key: .lastMessageAt, isAscending: false),
-            Sorting(key: .updatedAt, isAscending: false)
+            Sorting(key: .createdAt, isAscending: false)
         ]
         let sortValues = sortingKeys.compactMap(\.sortValue)
         XCTAssertEqual(2, sortValues.count)
         let runtimeSortResult = channels
-            .sort(using: sortValues)
+            .sorted(using: sortValues)
             .map(\.cid.id)
         
-        let nsArrayChannels = NSArray(array: channels.map({ ChannelBoxed(channel: $0) }))
+        let nsArrayChannels = NSArray(array: channels.map { ChannelBoxed(channel: $0) })
         let sortDescriptors = sortingKeys.compactMap { $0.key.sortDescriptor(isAscending: $0.isAscending) }
         XCTAssertEqual(2, sortDescriptors.count)
         
@@ -121,23 +121,23 @@ final class SortingValue_Tests: XCTestCase {
     
     func test_sortingValue_channelList_whenSomeEqualValues_thenEqualsToNSSortDesciptorSorting() {
         let channels = [
-            makeChannel(cidIndex: 1, lastMessageAtOffset: 1, updatedAtOffset: 15),
-            makeChannel(cidIndex: 2, lastMessageAtOffset: 3, updatedAtOffset: 14),
-            makeChannel(cidIndex: 3, lastMessageAtOffset: 3, updatedAtOffset: 13),
-            makeChannel(cidIndex: 4, lastMessageAtOffset: 3, updatedAtOffset: 12),
-            makeChannel(cidIndex: 5, lastMessageAtOffset: 5, updatedAtOffset: 11)
+            makeChannel(cidIndex: 1, lastMessageAtOffset: 1, createdAtOffset: 15),
+            makeChannel(cidIndex: 2, lastMessageAtOffset: 3, createdAtOffset: 14),
+            makeChannel(cidIndex: 3, lastMessageAtOffset: 3, createdAtOffset: 13),
+            makeChannel(cidIndex: 4, lastMessageAtOffset: 3, createdAtOffset: 12),
+            makeChannel(cidIndex: 5, lastMessageAtOffset: 5, createdAtOffset: 11)
         ]
         let sortingKeys: [Sorting<ChannelListSortingKey>] = [
             Sorting(key: .lastMessageAt, isAscending: false),
-            Sorting(key: .updatedAt, isAscending: false)
+            Sorting(key: .createdAt, isAscending: false)
         ]
         let sortValues = sortingKeys.compactMap(\.sortValue)
         XCTAssertEqual(2, sortValues.count)
         let runtimeSortResult = channels
-            .sort(using: sortValues)
+            .sorted(using: sortValues)
             .map(\.cid.id)
         
-        let nsArrayChannels = NSArray(array: channels.map({ ChannelBoxed(channel: $0) }))
+        let nsArrayChannels = NSArray(array: channels.map { ChannelBoxed(channel: $0) })
         let sortDescriptors = sortingKeys.compactMap { $0.key.sortDescriptor(isAscending: $0.isAscending) }
         XCTAssertEqual(2, sortDescriptors.count)
         
@@ -149,28 +149,56 @@ final class SortingValue_Tests: XCTestCase {
     
     func test_sortingValue_channelList_whenAllEqualValues_thenEqualsToNSSortDesciptorSortingAndInitialOrderIsKept() {
         let channels = [
-            makeChannel(cidIndex: 1, lastMessageAtOffset: 1, updatedAtOffset: 11),
-            makeChannel(cidIndex: 2, lastMessageAtOffset: 1, updatedAtOffset: 11),
-            makeChannel(cidIndex: 3, lastMessageAtOffset: 1, updatedAtOffset: 11),
-            makeChannel(cidIndex: 4, lastMessageAtOffset: 1, updatedAtOffset: 11),
-            makeChannel(cidIndex: 5, lastMessageAtOffset: 1, updatedAtOffset: 11)
+            makeChannel(cidIndex: 1, lastMessageAtOffset: 1, createdAtOffset: 11),
+            makeChannel(cidIndex: 2, lastMessageAtOffset: 1, createdAtOffset: 11),
+            makeChannel(cidIndex: 3, lastMessageAtOffset: 1, createdAtOffset: 11),
+            makeChannel(cidIndex: 4, lastMessageAtOffset: 1, createdAtOffset: 11),
+            makeChannel(cidIndex: 5, lastMessageAtOffset: 1, createdAtOffset: 11)
         ]
         let sortingKeys: [Sorting<ChannelListSortingKey>] = [
             Sorting(key: .lastMessageAt, isAscending: false),
-            Sorting(key: .updatedAt, isAscending: false)
+            Sorting(key: .createdAt, isAscending: false)
         ]
         let sortValues = sortingKeys.compactMap(\.sortValue)
         XCTAssertEqual(2, sortValues.count)
         let runtimeSortResult = channels
-            .sort(using: sortValues)
+            .sorted(using: sortValues)
             .map(\.cid.id)
         
-        let nsArrayChannels = NSArray(array: channels.map({ ChannelBoxed(channel: $0) }))
+        let nsArrayChannels = NSArray(array: channels.map { ChannelBoxed(channel: $0) })
         let sortDescriptors = sortingKeys.compactMap { $0.key.sortDescriptor(isAscending: $0.isAscending) }
         XCTAssertEqual(2, sortDescriptors.count)
         
         let sortDescriptorResult = (nsArrayChannels.sortedArray(using: sortDescriptors) as! [ChannelBoxed]).compactMap(\.id)
         let expectedIds = ["1", "2", "3", "4", "5"]
+        XCTAssertEqual(expectedIds, sortDescriptorResult, "\(sortDescriptorResult)")
+        XCTAssertEqual(expectedIds, runtimeSortResult, "\(runtimeSortResult)")
+    }
+    
+    func test_sortingValue_channelList_whenSomeEqualValuesAndDescendingAndAscending_thenEqualsToNSSortDesciptorSorting() {
+        let channels = [
+            makeChannel(cidIndex: 1, createdAtOffset: 1, unreadMessages: 3),
+            makeChannel(cidIndex: 2, createdAtOffset: 2, unreadMessages: 0),
+            makeChannel(cidIndex: 3, createdAtOffset: 3, unreadMessages: 2),
+            makeChannel(cidIndex: 4, createdAtOffset: 4, unreadMessages: 0),
+            makeChannel(cidIndex: 5, createdAtOffset: 5, unreadMessages: 0)
+        ]
+        let sortingKeys: [Sorting<ChannelListSortingKey>] = [
+            Sorting(key: .unreadCount, isAscending: false),
+            Sorting(key: .createdAt, isAscending: true)
+        ]
+        let sortValues = sortingKeys.compactMap(\.sortValue)
+        XCTAssertEqual(2, sortValues.count)
+        let runtimeSortResult = channels
+            .sorted(using: sortValues)
+            .map(\.cid.id)
+        
+        let nsArrayChannels = NSArray(array: channels.map { ChannelBoxed(channel: $0) })
+        let sortDescriptors = sortingKeys.compactMap { $0.key.sortDescriptor(isAscending: $0.isAscending) }
+        XCTAssertEqual(2, sortDescriptors.count)
+        
+        let sortDescriptorResult = (nsArrayChannels.sortedArray(using: sortDescriptors) as! [ChannelBoxed]).compactMap(\.id)
+        let expectedIds = ["1", "3", "2", "4", "5"]
         XCTAssertEqual(expectedIds, sortDescriptorResult, "\(sortDescriptorResult)")
         XCTAssertEqual(expectedIds, runtimeSortResult, "\(runtimeSortResult)")
     }
@@ -186,16 +214,18 @@ final class SortingValue_Tests: XCTestCase {
         
         @objc var id: String? { channel.cid.id }
         @objc var lastMessageAt: NSDate? { channel.lastMessageAt as? NSDate }
-        @objc var updatedAt: NSDate { channel.updatedAt as NSDate }
+        @objc var createdAt: NSDate { channel.createdAt as NSDate }
+        @objc var currentUserUnreadMessagesCount: Int { channel.unreadCount.messages }
     }
     
     static let referenceDate = Date().addingTimeInterval(-3600)
     
-    func makeChannel(cidIndex: Int, lastMessageAtOffset: Int?, updatedAtOffset: Int) -> ChatChannel {
+    func makeChannel(cidIndex: Int, lastMessageAtOffset: Int? = nil, createdAtOffset: Int, unreadMessages: Int = 0) -> ChatChannel {
         ChatChannel.mock(
             cid: ChannelId(type: .messaging, id: "\(cidIndex)"),
             lastMessageAt: lastMessageAtOffset != nil ? Self.referenceDate.addingTimeInterval(TimeInterval(lastMessageAtOffset!)) : nil,
-            updatedAt: Self.referenceDate.addingTimeInterval(TimeInterval(updatedAtOffset))
+            createdAt: Self.referenceDate.addingTimeInterval(TimeInterval(createdAtOffset)),
+            unreadCount: ChannelUnreadCount(messages: unreadMessages, mentions: 0)
         )
     }
 }

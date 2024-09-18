@@ -62,7 +62,7 @@ public struct ChannelListSortingKey: SortingKey, Equatable {
 
     /// Sort channels by their unread count.
     public static let unreadCount = Self(
-        keyPath: \.unreadCount,
+        keyPath: \.unreadCount.messages,
         localKey: #keyPath(ChannelDTO.currentUserUnreadMessagesCount),
         remoteKey: "unread_count"
     )
