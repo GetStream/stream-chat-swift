@@ -134,6 +134,7 @@ open class PollCreationVC:
 
         title = "Create Poll"
         tableView.separatorStyle = .none
+        tableView.backgroundColor = appearance.colorPalette.background
     }
 
     override open func setUpLayout() {
@@ -174,6 +175,7 @@ open class PollCreationVC:
         switch section {
         case .name:
             let cell = tableView.dequeueReusableCell(with: PollCreationTextFieldCell.self, for: indexPath)
+            cell.isReorderingSupported = false
             cell.content = .init(
                 initialText: name,
                 placeholder: "Ask a question",
@@ -254,8 +256,8 @@ open class PollCreationVC:
         let section = sections[indexPath.section]
         switch section {
         case .options:
-            let option = options[indexPath.item]
-            return !option.isEmpty
+            let isAddNewOptionItem = indexPath.item == options.count - 1
+            return !isAddNewOptionItem
         default:
             return false
         }

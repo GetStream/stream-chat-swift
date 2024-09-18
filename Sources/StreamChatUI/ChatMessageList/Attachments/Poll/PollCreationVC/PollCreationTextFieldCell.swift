@@ -27,6 +27,15 @@ open class PollCreationTextFieldCell: _TableViewCell, ThemeProvider {
         }
     }
 
+    /// A boolean value indicating if the cell can be re-ordered.
+    ///
+    /// This is used to control whether an additional spacing should be added
+    /// to accommodate the native reorder control of the table view.
+    public var isReorderingSupported = true
+
+    /// The main container that holds the subviews.
+    open private(set) lazy var container = HContainer()
+
     /// A text field that supports showing validator errors.
     open private(set) lazy var textFieldView = PollCreationTextFieldView()
         .withoutAutoresizingMaskConstraints
@@ -43,12 +52,29 @@ open class PollCreationTextFieldCell: _TableViewCell, ThemeProvider {
         contentView.isUserInteractionEnabled = true
     }
 
+    override open func setUpAppearance() {
+        super.setUpAppearance()
+
+        backgroundColor = appearance.colorPalette.background
+        container.backgroundColor = appearance.colorPalette.background1
+        container.layer.cornerRadius = 16
+    }
+
     override open func setUpLayout() {
         super.setUpLayout()
 
-        HContainer {
+        container.views {
             textFieldView
-        }.embedToMargins(in: contentView)
+            if isReorderingSupported {
+                Spacer().width(28)
+            }
+        }
+        .height(56)
+        .layout {
+            $0.isLayoutMarginsRelativeArrangement = true
+            $0.directionalLayoutMargins = .init(top: 0, leading: 12, bottom: 0, trailing: 12)
+        }
+        .embed(in: self, insets: .init(top: 6, leading: 12, bottom: 6, trailing: 12))
     }
 
     override open func updateContent() {
