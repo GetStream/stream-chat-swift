@@ -21,8 +21,6 @@ class ChannelDTO: NSManagedObject {
     @NSManaged var updatedAt: DBDate
     @NSManaged var lastMessageAt: DBDate?
 
-    @NSManaged var localInsertionAt: DBDate
-    
     // The oldest message of the channel we have locally coming from a regular channel query.
     // This property only lives locally, and it is useful to filter out older pinned/quoted messages
     // that do not belong to the regular channel query.
@@ -157,7 +155,6 @@ class ChannelDTO: NSManagedObject {
 
         let new = NSEntityDescription.insertNewObject(into: context, for: request)
         new.cid = cid.rawValue
-        new.localInsertionAt = DBDate()
         return new
     }
 }
@@ -375,12 +372,16 @@ extension ChannelDTO {
 
         // Fetch results controller requires at least one sorting descriptor.
         var sortDescriptors = query.sort.compactMap { $0.key.sortDescriptor(isAscending: $0.isAscending) }
-        sortDescriptors = sortDescriptors.isEmpty ? [ChannelListSortingKey.defaultSortDescriptor] : sortDescriptors
         
-        // For consistent order, we need to have a sort descriptor which breaks ties
-        sortDescriptors.append(NSSortDescriptor(keyPath: \ChannelDTO.localInsertionAt, ascending: true))
-        request.sortDescriptors = sortDescriptors
+        // For consistent order we need to have a sort descriptor which breaks ties
+        if !sortDescriptors.isEmpty, !sortDescriptors.contains(where: { $0.key == ChannelListSortingKey.updatedAt.localKey }) {
+            if let tieBreaker = ChannelListSortingKey.updatedAt.sortDescriptor(isAscending: false) {
+                sortDescriptors.append(tieBreaker)
+            }
+        }
         
+        request.sortDescriptors = sortDescriptors.isEmpty ? [ChannelListSortingKey.defaultSortDescriptor] : sortDescriptors
+
         let matchingQuery = NSPredicate(format: "ANY queries.filterHash == %@", query.filter.filterHash)
         let notDeleted = NSPredicate(format: "deletedAt == nil")
 

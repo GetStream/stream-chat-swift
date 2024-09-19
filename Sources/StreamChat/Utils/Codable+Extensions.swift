@@ -34,7 +34,7 @@ final class StreamJSONDecoder: JSONDecoder {
                 return date.bridgeDate
             }
 
-            if let date = self?.iso8601formatter.date(from: dateString) {
+            if let date = self?.iso8601formatter.dateWithMicroseconds(from: dateString) {
                 self?.dateCache.setObject(date.bridgeDate, forKey: dateString as NSString)
                 return date
             }
@@ -164,6 +164,24 @@ extension DateFormatter {
             formatter.dateFormat = dateFormat
             return formatter
         }
+    }
+}
+
+private extension ISO8601DateFormatter {
+    func dateWithMicroseconds(from string: String) -> Date? {
+        guard let date = date(from: string) else { return nil }
+        // Manually parse microseconds and nanoseconds, because ISO8601DateFormatter is limited to ms.
+        // Note that Date timeIntervalSince1970 rounds to 0.000_000_1
+        guard let index = string.lastIndex(of: ".") else { return date }
+        let range = string.suffix(from: index)
+            .dropFirst(4) // . and ms part
+            .dropLast() // Z
+        var fractionWithoutMilliseconds = String(range)
+        if fractionWithoutMilliseconds.count < 3 {
+            fractionWithoutMilliseconds = fractionWithoutMilliseconds.padding(toLength: 3, withPad: "0", startingAt: 0)
+        }
+        guard let microseconds = TimeInterval("0.000".appending(fractionWithoutMilliseconds)) else { return date }
+        return date.addingTimeInterval(microseconds)
     }
 }
 
