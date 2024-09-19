@@ -6,6 +6,9 @@ import UIKit
 
 /// The cell for the poll creation form to configure the multiple votes feature.
 open class PollCreationMultipleVotesFeatureCell: _TableViewCell, ThemeProvider {
+    /// The main container that holds the subviews.
+    open private(set) lazy var container = VContainer(spacing: 4)
+
     /// A view that displays the feature name and the switch to enable/disable the feature.
     open private(set) lazy var featureSwitchView = PollCreationFeatureSwitchView()
         .withoutAutoresizingMaskConstraints
@@ -20,13 +23,28 @@ open class PollCreationMultipleVotesFeatureCell: _TableViewCell, ThemeProvider {
         contentView.isUserInteractionEnabled = true
     }
 
+    override open func setUpAppearance() {
+        super.setUpAppearance()
+
+        backgroundColor = appearance.colorPalette.background
+        container.backgroundColor = appearance.colorPalette.background1
+        container.layer.cornerRadius = 16
+    }
+
     override open func setUpLayout() {
         super.setUpLayout()
 
-        VContainer(spacing: 18) {
+        container.views {
             featureSwitchView
+                .height(56)
             maximumVotesSwitchView
-        }.embedToMargins(in: self)
+                .height(56)
+        }
+        .layout {
+            $0.isLayoutMarginsRelativeArrangement = true
+            $0.directionalLayoutMargins = .init(top: 0, leading: 12, bottom: 0, trailing: 12)
+        }
+        .embed(in: self, insets: .init(top: 6, leading: 12, bottom: 6, trailing: 12))
     }
 }
 
@@ -46,7 +64,6 @@ open class PollCreationMaximumVotesSwitchView: _View, ThemeProvider {
             textFieldView
             switchView
         }
-        .height(greaterThanOrEqualTo: 45)
         .embed(in: self)
     }
 }

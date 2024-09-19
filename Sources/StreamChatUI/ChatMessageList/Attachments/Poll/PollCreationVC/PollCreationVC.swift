@@ -189,13 +189,14 @@ open class PollCreationVC:
             }
             return cell
         case .options:
-            let cell = PollCreationTextFieldCell()
+            let cell = tableView.dequeueReusableCell(with: PollCreationTextFieldCell.self, for: indexPath)
             let option = options[indexPath.item]
             cell.content = .init(
                 initialText: option,
                 placeholder: "Add an option",
                 errorText: nil
             )
+            cell.textFieldView.inputTextField.text = option
             cell.textFieldView.onTextChanged = { [weak self] oldValue, newValue in
                 self?.options[indexPath.item] = newValue
                 let numberOfOptions = self?.options.count ?? 0
