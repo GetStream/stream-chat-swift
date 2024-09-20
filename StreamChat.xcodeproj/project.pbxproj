@@ -1399,6 +1399,8 @@
 		AD169DF42C9B11A100F58FAC /* DefaultTableViewKeyboardHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD169DF12C9B118400F58FAC /* DefaultTableViewKeyboardHandler.swift */; };
 		AD169DF72C9B33B500F58FAC /* PollCreationSectionHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD169DF52C9B339E00F58FAC /* PollCreationSectionHeaderView.swift */; };
 		AD169DF82C9B33B700F58FAC /* PollCreationSectionHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD169DF52C9B339E00F58FAC /* PollCreationSectionHeaderView.swift */; };
+		AD169DFB2C9E1A3400F58FAC /* PollCreationNameCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD169DF92C9E1A2C00F58FAC /* PollCreationNameCell.swift */; };
+		AD169DFC2C9E1A3600F58FAC /* PollCreationNameCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD169DF92C9E1A2C00F58FAC /* PollCreationNameCell.swift */; };
 		AD17CDF927E4DB2700E0D092 /* PushProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD17CDF827E4DB2700E0D092 /* PushProvider.swift */; };
 		AD17CDFA27E4DB2700E0D092 /* PushProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD17CDF827E4DB2700E0D092 /* PushProvider.swift */; };
 		AD1D7A8526A2131D00494CA5 /* ChatChannelVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD1D7A8326A212D000494CA5 /* ChatChannelVC.swift */; };
@@ -1732,8 +1734,8 @@
 		ADDC080C2C82905300EA0E5F /* PollCreationFeatureSwitchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADDC080A2C82905300EA0E5F /* PollCreationFeatureSwitchView.swift */; };
 		ADDC080E2C8290EC00EA0E5F /* PollCreationMultipleVotesFeatureCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADDC080D2C8290EC00EA0E5F /* PollCreationMultipleVotesFeatureCell.swift */; };
 		ADDC080F2C8290EC00EA0E5F /* PollCreationMultipleVotesFeatureCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADDC080D2C8290EC00EA0E5F /* PollCreationMultipleVotesFeatureCell.swift */; };
-		ADDC08112C82911B00EA0E5F /* PollCreationTextFieldCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADDC08102C82911B00EA0E5F /* PollCreationTextFieldCell.swift */; };
-		ADDC08122C82911B00EA0E5F /* PollCreationTextFieldCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADDC08102C82911B00EA0E5F /* PollCreationTextFieldCell.swift */; };
+		ADDC08112C82911B00EA0E5F /* PollCreationOptionCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADDC08102C82911B00EA0E5F /* PollCreationOptionCell.swift */; };
+		ADDC08122C82911B00EA0E5F /* PollCreationOptionCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADDC08102C82911B00EA0E5F /* PollCreationOptionCell.swift */; };
 		ADDC08142C82A81F00EA0E5F /* TextFieldView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADDC08132C82A81F00EA0E5F /* TextFieldView.swift */; };
 		ADDC08152C82A81F00EA0E5F /* TextFieldView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADDC08132C82A81F00EA0E5F /* TextFieldView.swift */; };
 		ADDFDE2B2779EC8A003B3B07 /* Atlantis in Frameworks */ = {isa = PBXBuildFile; productRef = ADDFDE2A2779EC8A003B3B07 /* Atlantis */; };
@@ -4163,6 +4165,7 @@
 		AD169DED2C9B114500F58FAC /* KeyboardHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyboardHandler.swift; sourceTree = "<group>"; };
 		AD169DF12C9B118400F58FAC /* DefaultTableViewKeyboardHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DefaultTableViewKeyboardHandler.swift; sourceTree = "<group>"; };
 		AD169DF52C9B339E00F58FAC /* PollCreationSectionHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PollCreationSectionHeaderView.swift; sourceTree = "<group>"; };
+		AD169DF92C9E1A2C00F58FAC /* PollCreationNameCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PollCreationNameCell.swift; sourceTree = "<group>"; };
 		AD17CDF827E4DB2700E0D092 /* PushProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PushProvider.swift; sourceTree = "<group>"; };
 		AD1D7A8326A212D000494CA5 /* ChatChannelVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatChannelVC.swift; sourceTree = "<group>"; };
 		AD25070B272C0C8800BC14C4 /* ChatMessageReactionAuthorsVC_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessageReactionAuthorsVC_Tests.swift; sourceTree = "<group>"; };
@@ -4380,7 +4383,7 @@
 		ADDC08072C828FDB00EA0E5F /* PollCreationFeatureCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PollCreationFeatureCell.swift; sourceTree = "<group>"; };
 		ADDC080A2C82905300EA0E5F /* PollCreationFeatureSwitchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PollCreationFeatureSwitchView.swift; sourceTree = "<group>"; };
 		ADDC080D2C8290EC00EA0E5F /* PollCreationMultipleVotesFeatureCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PollCreationMultipleVotesFeatureCell.swift; sourceTree = "<group>"; };
-		ADDC08102C82911B00EA0E5F /* PollCreationTextFieldCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PollCreationTextFieldCell.swift; sourceTree = "<group>"; };
+		ADDC08102C82911B00EA0E5F /* PollCreationOptionCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PollCreationOptionCell.swift; sourceTree = "<group>"; };
 		ADDC08132C82A81F00EA0E5F /* TextFieldView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextFieldView.swift; sourceTree = "<group>"; };
 		ADE2093C29FC022D007D0FF3 /* MessagesPaginationStateHandling.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessagesPaginationStateHandling.swift; sourceTree = "<group>"; };
 		ADE40042291B1A510000C98B /* AttachmentUploader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AttachmentUploader.swift; sourceTree = "<group>"; };
@@ -8845,7 +8848,8 @@
 				ADDC07E72C7F75F500EA0E5F /* PollCreationVC.swift */,
 				AD169DE82C99CB7F00F58FAC /* PollFeature.swift */,
 				AD169DF52C9B339E00F58FAC /* PollCreationSectionHeaderView.swift */,
-				ADDC08102C82911B00EA0E5F /* PollCreationTextFieldCell.swift */,
+				AD169DF92C9E1A2C00F58FAC /* PollCreationNameCell.swift */,
+				ADDC08102C82911B00EA0E5F /* PollCreationOptionCell.swift */,
 				ADDC08072C828FDB00EA0E5F /* PollCreationFeatureCell.swift */,
 				ADDC080D2C8290EC00EA0E5F /* PollCreationMultipleVotesFeatureCell.swift */,
 				ADDC080A2C82905300EA0E5F /* PollCreationFeatureSwitchView.swift */,
@@ -10606,7 +10610,7 @@
 				790882F725486B8000896F03 /* ChatChannelListCollectionViewDelegate.swift in Sources */,
 				43F4750C26F4E4FF0009487D /* ChatMessageReactionItemView.swift in Sources */,
 				DBF12128258BAFC1001919C6 /* OnlyLinkTappableTextView.swift in Sources */,
-				ADDC08112C82911B00EA0E5F /* PollCreationTextFieldCell.swift in Sources */,
+				ADDC08112C82911B00EA0E5F /* PollCreationOptionCell.swift in Sources */,
 				AD4F89EC2C6B935A006DF7E5 /* Calendar+StreamCalendar.swift in Sources */,
 				ADDB2F5F2954D43D00BF80DA /* ScrollViewPaginationHandler.swift in Sources */,
 				ADEE888D289C3CC0007DF3F8 /* ChatMessageListView+DiffKit.swift in Sources */,
@@ -10700,6 +10704,7 @@
 				78C8473825FA0EF000A5D1D0 /* ChatChannelUnreadCountView+SwiftUI.swift in Sources */,
 				ACCA772A26C40C96007AE2ED /* ImageLoading.swift in Sources */,
 				DB3CCF3F258CF7ED009D5E99 /* ChatMessageLinkPreviewView.swift in Sources */,
+				AD169DFB2C9E1A3400F58FAC /* PollCreationNameCell.swift in Sources */,
 				43F4750E26FB247C0009487D /* ChatReactionPickerReactionsView.swift in Sources */,
 				E7516B162642E11A00DE778C /* GiphyAttachmentViewInjector.swift in Sources */,
 				E79AC10D25831A1500C3CE5D /* ChatSuggestionsCollectionViewLayout.swift in Sources */,
@@ -12722,6 +12727,7 @@
 				C121EBDD2746A1EA00023E4C /* ChatMessageReactionItemView.swift in Sources */,
 				AD4F89DC2C667886006DF7E5 /* PollResultsTableHeaderView.swift in Sources */,
 				40D396282A0905560020DDC9 /* AudioRecordingNameFormatter.swift in Sources */,
+				AD169DFC2C9E1A3600F58FAC /* PollCreationNameCell.swift in Sources */,
 				C121EBDE2746A1EA00023E4C /* ChatReactionPickerReactionsView.swift in Sources */,
 				C121EBDF2746A1EA00023E4C /* ChatMessageAttachmentPreviewVC.swift in Sources */,
 				AD4F89D92C666471006DF7E5 /* PollResultsVoteItemView.swift in Sources */,
@@ -12739,7 +12745,7 @@
 				AD7B51D427EDECA80068CBD1 /* MixedAttachmentViewInjector.swift in Sources */,
 				C121EBE92746A1EA00023E4C /* ChatMessageGiphyView.swift in Sources */,
 				E3C7A0E12858BA9E006133C3 /* Reusable+Extensions.swift in Sources */,
-				ADDC08122C82911B00EA0E5F /* PollCreationTextFieldCell.swift in Sources */,
+				ADDC08122C82911B00EA0E5F /* PollCreationOptionCell.swift in Sources */,
 				ADCB578428A42D7700B81AE8 /* StagedChangeset.swift in Sources */,
 				AD99C90D279B136D009DD9C5 /* UserLastActivityFormatter.swift in Sources */,
 				AD78F9F828EC735700BC0FCE /* SwiftyMarkdown+iOS.swift in Sources */,

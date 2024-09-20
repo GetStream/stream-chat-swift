@@ -5,17 +5,14 @@
 import UIKit
 
 /// The cell for the poll creation form that displays a text field and supports showing validator errors.
-open class PollCreationTextFieldCell: _TableViewCell, ThemeProvider {
+open class PollCreationOptionCell: _TableViewCell, ThemeProvider {
     public struct Content {
-        /// The initial value of the text field.
-        public var initialText: String?
         /// The placeholder of the text field.
         public var placeholder: String
         /// The error text in case there are validator errors.
         public var errorText: String?
 
-        public init(initialText: String?, placeholder: String, errorText: String?) {
-            self.initialText = initialText
+        public init(placeholder: String, errorText: String?) {
             self.placeholder = placeholder
             self.errorText = errorText
         }
@@ -27,12 +24,6 @@ open class PollCreationTextFieldCell: _TableViewCell, ThemeProvider {
         }
     }
 
-    /// A boolean value indicating if the cell can be re-ordered.
-    ///
-    /// This is used to control whether an additional spacing should be added
-    /// to accommodate the native reorder control of the table view.
-    public var isReorderingSupported = true
-
     /// The main container that holds the subviews.
     open private(set) lazy var container = HContainer()
 
@@ -40,16 +31,16 @@ open class PollCreationTextFieldCell: _TableViewCell, ThemeProvider {
     open private(set) lazy var textFieldView = PollCreationTextFieldView()
         .withoutAutoresizingMaskConstraints
 
-    override open func setEditing(_ editing: Bool, animated: Bool) {
-        super.setEditing(editing, animated: animated)
-
-        shouldIndentWhileEditing = false
-    }
+    /// A closure to notify that the input text changed.
+    public var onTextChanged: ((_ oldValue: String, _ newValue: String) -> Void)?
 
     override open func setUp() {
         super.setUp()
 
         contentView.isUserInteractionEnabled = true
+        textFieldView.onTextChanged = { [weak self] oldValue, newValue in
+            self?.onTextChanged?(oldValue, newValue)
+        }
     }
 
     override open func setUpAppearance() {
@@ -65,9 +56,8 @@ open class PollCreationTextFieldCell: _TableViewCell, ThemeProvider {
 
         container.views {
             textFieldView
-            if isReorderingSupported {
-                Spacer().width(28)
-            }
+            Spacer()
+                .width(28)
         }
         .height(56)
         .layout {
@@ -88,5 +78,15 @@ open class PollCreationTextFieldCell: _TableViewCell, ThemeProvider {
             placeholder: content.placeholder,
             errorText: content.errorText
         )
+    }
+
+    open func setText(_ text: String) {
+        textFieldView.inputTextField.text = text
+    }
+
+    override open func prepareForReuse() {
+        super.prepareForReuse()
+
+        textFieldView.hideError()
     }
 }

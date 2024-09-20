@@ -4,13 +4,17 @@
 
 import UIKit
 
-/// The cell for the poll creation form that displays the name of a feature and the switch button to enable it.
-open class PollCreationFeatureCell: _TableViewCell, ThemeProvider {
+/// The cell for editing the poll's name.
+open class PollCreationNameCell: _TableViewCell, ThemeProvider {
     public struct Content {
-        public var featureName: String
+        /// The placeholder of the text field.
+        public var placeholder: String
+        /// The error text in case there are validator errors.
+        public var errorText: String?
 
-        public init(featureName: String) {
-            self.featureName = featureName
+        public init(placeholder: String, errorText: String?) {
+            self.placeholder = placeholder
+            self.errorText = errorText
         }
     }
 
@@ -23,19 +27,19 @@ open class PollCreationFeatureCell: _TableViewCell, ThemeProvider {
     /// The main container that holds the subviews.
     open private(set) lazy var container = HContainer()
 
-    /// A view that displays the feature name and the switch to enable/disable the feature.
-    open private(set) lazy var featureSwitchView = PollCreationFeatureSwitchView()
+    /// A text field that supports showing validator errors.
+    open private(set) lazy var textFieldView = PollCreationTextFieldView()
         .withoutAutoresizingMaskConstraints
 
-    /// A closure that is triggered whenever the switch value changes.
-    public var onValueChange: ((Bool) -> Void)?
+    /// A closure to notify that the input text changed.
+    public var onTextChanged: ((_ oldValue: String, _ newValue: String) -> Void)?
 
     override open func setUp() {
         super.setUp()
 
         contentView.isUserInteractionEnabled = true
-        featureSwitchView.onValueChange = { [weak self] newValue in
-            self?.onValueChange?(newValue)
+        textFieldView.onTextChanged = { [weak self] oldValue, newValue in
+            self?.onTextChanged?(oldValue, newValue)
         }
     }
 
@@ -51,7 +55,7 @@ open class PollCreationFeatureCell: _TableViewCell, ThemeProvider {
         super.setUpLayout()
 
         container.views {
-            featureSwitchView
+            textFieldView
         }
         .height(56)
         .layout {
@@ -64,6 +68,17 @@ open class PollCreationFeatureCell: _TableViewCell, ThemeProvider {
     override open func updateContent() {
         super.updateContent()
 
-        featureSwitchView.featureNameLabel.text = content?.featureName
+        guard let content = self.content else {
+            return
+        }
+
+        textFieldView.content = .init(
+            placeholder: content.placeholder,
+            errorText: content.errorText
+        )
+    }
+
+    open func setText(_ text: String) {
+        textFieldView.inputTextField.text = text
     }
 }

@@ -65,11 +65,11 @@ open class PollCreationVC:
     /// A poll option.
     public struct Option {
         public var name: String
-        public var error: Error?
+        public var errorText: String?
 
-        public init(name: String, error: Error? = nil) {
+        public init(name: String, errorText: String? = nil) {
             self.name = name
-            self.error = error
+            self.errorText = errorText
         }
 
         public static var empty = Option(name: "")
@@ -148,7 +148,7 @@ open class PollCreationVC:
         name.isEmpty == false
             && maximumVotesErrorText == nil
             && options.filter { !$0.name.isEmpty }.count >= 2
-            && options.first(where: { $0.error != nil }) == nil
+            && options.first(where: { $0.errorText != nil }) == nil
     }
 
     // MARK: - Views
@@ -188,7 +188,8 @@ open class PollCreationVC:
         super.setUp()
 
         // TODO: Use Components
-        tableView.register(PollCreationTextFieldCell.self)
+        tableView.register(PollCreationNameCell.self)
+        tableView.register(PollCreationOptionCell.self)
         tableView.register(PollCreationFeatureCell.self)
         tableView.register(PollCreationMultipleVotesFeatureCell.self)
         tableView.register(PollCreationSectionHeaderView.self)
@@ -331,41 +332,50 @@ open class PollCreationVC:
 
     // MARK: - Cell Configuration
 
-    open func pollNameCell(at indexPath: IndexPath) -> PollCreationTextFieldCell {
-        let cell = tableView.dequeueReusableCell(with: PollCreationTextFieldCell.self, for: indexPath)
-        cell.isReorderingSupported = false
+    open func pollNameCell(at indexPath: IndexPath) -> PollCreationNameCell {
+        let cell = tableView.dequeueReusableCell(with: PollCreationNameCell.self, for: indexPath)
         cell.content = .init(
-            initialText: name,
             placeholder: "Ask a question",
             errorText: nil
         )
-        cell.textFieldView.onTextChanged = { [weak self] _, newValue in
+        cell.setText(name)
+        cell.onTextChanged = { [weak self] _, newValue in
             self?.name = newValue
         }
         return cell
     }
 
-    open func pollOptionCell(at indexPath: IndexPath) -> PollCreationTextFieldCell {
-        let cell = tableView.dequeueReusableCell(with: PollCreationTextFieldCell.self, for: indexPath)
+    open func pollOptionCell(at indexPath: IndexPath) -> PollCreationOptionCell {
+        let cell = tableView.dequeueReusableCell(with: PollCreationOptionCell.self, for: indexPath)
         let option = options[indexPath.item]
         cell.content = .init(
-            initialText: option.name,
             placeholder: "Add an option",
-            errorText: nil
+            errorText: option.errorText
         )
-        cell.textFieldView.inputTextField.text = option.name
-        cell.textFieldView.onTextChanged = { [weak self] oldValue, newValue in
-            self?.options[indexPath.item] = .init(name: newValue)
-            let numberOfOptions = self?.options.count ?? 0
+        cell.setText(option.name)
+        cell.onTextChanged = { [weak self, weak tableView, weak cell] oldValue, newValue in
+            guard let self = self else { return }
+            guard let cell = cell else { return }
+            guard let tableView = tableView else { return }
+            guard indexPath.item < self.options.count else { return }
+
+            var errorText: String?
+            if !newValue.isEmpty, self.options.contains(where: { $0.name == newValue }) {
+                errorText = "This is already an option"
+            }
+
+            cell.content?.errorText = errorText
+            self.options[indexPath.item] = .init(name: newValue, errorText: errorText)
+
+            let numberOfOptions = self.options.count
             let isLastItem = indexPath.item == numberOfOptions - 1
             if isLastItem && !newValue.isEmpty {
-                self?.options.append(.empty)
+                self.options.append(.empty)
                 let newIndexPath = IndexPath(item: indexPath.item + 1, section: indexPath.section)
-                self?.tableView.insertRows(at: [newIndexPath], with: .bottom)
-            }
-            if oldValue.isEmpty && newValue.isEmpty && !isLastItem {
-                self?.options.remove(at: indexPath.item)
-                self?.tableView.reloadData()
+                tableView.insertRows(at: [newIndexPath], with: .bottom)
+            } else if oldValue.isEmpty && newValue.isEmpty && !isLastItem {
+                self.options.remove(at: indexPath.item)
+                tableView.reloadData()
             }
         }
         return cell

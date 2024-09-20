@@ -5,7 +5,7 @@
 import UIKit
 
 /// A view that displays an editable text field with an error label to show validation errors.
-open class PollCreationTextFieldView: _View, ThemeProvider, UITextFieldDelegate {
+open class PollCreationTextFieldView: _View, ThemeProvider {
     public struct Content {
         /// The placeholder of the text field.
         public var placeholder: String
@@ -39,8 +39,9 @@ open class PollCreationTextFieldView: _View, ThemeProvider, UITextFieldDelegate 
     override open func setUp() {
         super.setUp()
 
-        inputTextField.delegate = self
-        inputTextField.onTextChanged = onTextChanged
+        inputTextField.onTextChanged = { [weak self] oldValue, newValue in
+            self?.onTextChanged?(oldValue, newValue)
+        }
     }
 
     override open func setUpAppearance() {
@@ -82,9 +83,9 @@ open class PollCreationTextFieldView: _View, ThemeProvider, UITextFieldDelegate 
         errorLabel.isHidden = false
         errorLabel.alpha = 0
         errorLabel.frame.origin.y = 8
-        UIView.animate(withDuration: 0.3) {
-            self.errorLabel.alpha = 1
-            self.errorLabel.frame.origin.y = 0
+        UIView.animate(withDuration: 0.3) { [weak self] in
+            self?.errorLabel.alpha = 1
+            self?.errorLabel.frame.origin.y = 0
         }
     }
 
@@ -93,11 +94,11 @@ open class PollCreationTextFieldView: _View, ThemeProvider, UITextFieldDelegate 
         errorLabel.frame.origin.y = 0
         UIView.animate(
             withDuration: 0.3,
-            animations: {
-                self.errorLabel.isHidden = true
-                self.errorLabel.alpha = 0
-                self.errorLabel.frame.origin.y = -8
-                self.layoutIfNeeded()
+            animations: { [weak self] in
+                self?.errorLabel.isHidden = true
+                self?.errorLabel.alpha = 0
+                self?.errorLabel.frame.origin.y = -8
+                self?.layoutIfNeeded()
             }
         )
     }
