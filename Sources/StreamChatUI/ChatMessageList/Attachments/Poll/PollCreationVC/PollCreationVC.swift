@@ -44,6 +44,19 @@ open class PollCreationVC:
 
     // MARK: - Content
 
+    /// A poll option.
+    public struct Option {
+        public var name: String
+        public var error: Error?
+
+        public init(name: String, error: Error? = nil) {
+            self.name = name
+            self.error = error
+        }
+
+        public static var empty = Option(name: "")
+    }
+
     /// The sections of the poll creation form.
     public var sections: [PollCreationSection] = [
         .name,
@@ -55,7 +68,7 @@ open class PollCreationVC:
     public var name: String = ""
 
     /// The available options of the poll.
-    public var options: [String] = [""]
+    public var options: [Option] = [Option(name: "")]
 
     /// The multiple votes feature configuration.
     public var allowMultipleVotesFeature = MultipleVotesPollFeature(
@@ -91,6 +104,12 @@ open class PollCreationVC:
             allowCommentsFeature
         ]
     }
+
+    /// The current maximum votes input text.
+    public var maximumVotesText: String?
+
+    /// The error in case the maximum votes is not valid.
+    public var maximumVotesErrorText: String?
 
     // MARK: - Views
 
@@ -178,39 +197,11 @@ open class PollCreationVC:
         switch section {
         case .name:
             let cell = tableView.dequeueReusableCell(with: PollCreationTextFieldCell.self, for: indexPath)
-            cell.isReorderingSupported = false
-            cell.content = .init(
-                initialText: name,
-                placeholder: "Ask a question",
-                errorText: nil
-            )
-            cell.textFieldView.onTextChanged = { [weak self] _, newValue in
-                self?.name = newValue
-            }
+            configurePollNameCell(cell, at: indexPath)
             return cell
         case .options:
             let cell = tableView.dequeueReusableCell(with: PollCreationTextFieldCell.self, for: indexPath)
-            let option = options[indexPath.item]
-            cell.content = .init(
-                initialText: option,
-                placeholder: "Add an option",
-                errorText: nil
-            )
-            cell.textFieldView.inputTextField.text = option
-            cell.textFieldView.onTextChanged = { [weak self] oldValue, newValue in
-                self?.options[indexPath.item] = newValue
-                let numberOfOptions = self?.options.count ?? 0
-                let isLastItem = indexPath.item == numberOfOptions - 1
-                if isLastItem && !newValue.isEmpty {
-                    self?.options.append("")
-                    let newIndexPath = IndexPath(item: indexPath.item + 1, section: section.rawValue)
-                    tableView.insertRows(at: [newIndexPath], with: .bottom)
-                }
-                if oldValue.isEmpty && newValue.isEmpty && !isLastItem {
-                    self?.options.remove(at: indexPath.item)
-                    self?.tableView.reloadData()
-                }
-            }
+            configurePollOptionCell(cell, at: indexPath)
             return cell
         case .features:
             let feature = pollFeatures[indexPath.item]
@@ -219,29 +210,24 @@ open class PollCreationVC:
                     with: PollCreationMultipleVotesFeatureCell.self,
                     for: indexPath
                 )
-                cell.featureSwitchView.featureNameLabel.text = feature.name
-                cell.featureSwitchView.switchView.isOn = feature.isEnabled
-                cell.maximumVotesSwitchView.isHidden = !feature.isEnabled
-                cell.featureSwitchView.onValueChange = { isOn in
-                    self.allowMultipleVotesFeature.isEnabled = isOn
-                    tableView.reloadRows(at: [indexPath], with: .automatic)
-                }
-                cell.maximumVotesSwitchView.textFieldView.content = .init(
-                    initialText: multipleVotesFeature.config.maxVotes.map(String.init),
-                    placeholder: "Maximum votes per person",
-                    errorText: nil
+                cell.content = .init(
+                    feature: multipleVotesFeature,
+                    maximumVotesText: maximumVotesText,
+                    maximumVotesErrorText: maximumVotesErrorText
                 )
-                cell.maximumVotesSwitchView.textFieldView.onTextChanged = { _, newValue in
-                    if newValue.isEmpty { cell.maximumVotesSwitchView.textFieldView.content?.errorText = nil
-                        return
-                    }
-
-                    guard let value = Int(newValue) else {
-                        cell.maximumVotesSwitchView.textFieldView.content?.errorText = "Error"
-                        return
-                    }
-                    cell.maximumVotesSwitchView.textFieldView.content?.errorText = nil
-                    self.allowMultipleVotesFeature.config.maxVotes = value
+                cell.maximumVotesSwitchView.textFieldView.inputTextField.text = maximumVotesText
+                cell.onMaximumVotesValueChanged = { [weak self] maxVotes in
+                    self?.allowMultipleVotesFeature.config.maxVotes = maxVotes
+                }
+                cell.onMaximumVotesTextChanged = { [weak self] text in
+                    self?.maximumVotesText = text
+                }
+                cell.onMaximumVotesErrorTextChanged = { [weak self] errorText in
+                    self?.maximumVotesErrorText = errorText
+                }
+                cell.onFeatureEnabledChanged = { [weak self] isEnabled in
+                    self?.allowMultipleVotesFeature.isEnabled = isEnabled
+                    tableView.reloadRows(at: [indexPath], with: .automatic)
                 }
                 return cell
             }
@@ -291,7 +277,7 @@ open class PollCreationVC:
         let section = sections[section]
         switch section {
         case .name:
-            view.content = .init(title: "Questions")
+            view.content = .init(title: "Question")
             return view
         case .options:
             view.content = .init(title: "Options")
@@ -300,6 +286,44 @@ open class PollCreationVC:
             return nil
         default:
             return nil
+        }
+    }
+
+    // MARK: - Cell Configuration
+
+    open func configurePollNameCell(_ cell: PollCreationTextFieldCell, at indexPath: IndexPath) {
+        cell.isReorderingSupported = false
+        cell.content = .init(
+            initialText: name,
+            placeholder: "Ask a question",
+            errorText: nil
+        )
+        cell.textFieldView.onTextChanged = { [weak self] _, newValue in
+            self?.name = newValue
+        }
+    }
+
+    open func configurePollOptionCell(_ cell: PollCreationTextFieldCell, at indexPath: IndexPath) {
+        let option = options[indexPath.item]
+        cell.content = .init(
+            initialText: option.name,
+            placeholder: "Add an option",
+            errorText: nil
+        )
+        cell.textFieldView.inputTextField.text = option.name
+        cell.textFieldView.onTextChanged = { [weak self] oldValue, newValue in
+            self?.options[indexPath.item] = .init(name: newValue)
+            let numberOfOptions = self?.options.count ?? 0
+            let isLastItem = indexPath.item == numberOfOptions - 1
+            if isLastItem && !newValue.isEmpty {
+                self?.options.append(.empty)
+                let newIndexPath = IndexPath(item: indexPath.item + 1, section: indexPath.section)
+                self?.tableView.insertRows(at: [newIndexPath], with: .bottom)
+            }
+            if oldValue.isEmpty && newValue.isEmpty && !isLastItem {
+                self?.options.remove(at: indexPath.item)
+                self?.tableView.reloadData()
+            }
         }
     }
 
@@ -315,7 +339,7 @@ open class PollCreationVC:
             enforceUniqueVote: !allowMultipleVotesFeature.isEnabled,
             maxVotesAllowed: allowMultipleVotesFeature.config.maxVotes,
             votingVisibility: isAnonymousFeature.isEnabled ? .anonymous : .public,
-            options: options.map { PollOption(text: $0) },
+            options: options.map { PollOption(text: $0.name) },
             extraData: nil
         ) { result in
             print(result)

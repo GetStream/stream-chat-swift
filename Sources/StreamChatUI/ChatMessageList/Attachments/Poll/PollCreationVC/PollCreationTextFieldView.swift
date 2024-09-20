@@ -67,10 +67,6 @@ open class PollCreationTextFieldView: _View, ThemeProvider, UITextFieldDelegate 
     override open func updateContent() {
         super.updateContent()
 
-        if let initialText = content?.initialText {
-            inputTextField.text = initialText
-        }
-
         inputTextField.placeholder = content?.placeholder
         errorLabel.text = content?.errorText
 
@@ -78,6 +74,10 @@ open class PollCreationTextFieldView: _View, ThemeProvider, UITextFieldDelegate 
             showError()
         } else if !errorLabel.isHidden && content?.errorText == nil {
             hideError()
+        }
+
+        if let initialText = content?.initialText {
+            inputTextField.text = initialText
         }
     }
 
