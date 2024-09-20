@@ -83,10 +83,18 @@ open class PollCreationVC:
     ]
 
     /// The name of the poll.
-    public var name: String = ""
+    public var name: String = "" {
+        didSet {
+            updateContentIfNeeded()
+        }
+    }
 
     /// The available options of the poll.
-    public var options: [Option] = [Option(name: "")]
+    public var options: [Option] = [Option(name: "")] {
+        didSet {
+            updateContentIfNeeded()
+        }
+    }
 
     /// The features supported to be enabled in the poll.
     public var pollFeatures: [PollFeatureType] = [
@@ -122,16 +130,40 @@ open class PollCreationVC:
     )
 
     /// The current maximum votes input text.
-    public var maximumVotesText: String = ""
+    public var maximumVotesText: String = "" {
+        didSet {
+            updateContentIfNeeded()
+        }
+    }
 
     /// The error in case the maximum votes is not valid.
-    public var maximumVotesErrorText: String?
+    public var maximumVotesErrorText: String? {
+        didSet {
+            updateContentIfNeeded()
+        }
+    }
+
+    /// A boolean value indicating if there are no errors and it is possible to create the poll.
+    open var canCreatePoll: Bool {
+        name.isEmpty == false
+            && maximumVotesErrorText == nil
+            && options.filter { !$0.name.isEmpty }.count >= 2
+            && options.first(where: { $0.error != nil }) == nil
+    }
 
     // MARK: - Views
 
     /// The table view responsible to display the poll creation form.
     open private(set) lazy var tableView = UITableView(frame: .zero, style: .grouped)
         .withoutAutoresizingMaskConstraints
+
+    /// The button to create the poll.
+    open private(set) lazy var createPollButton = UIBarButtonItem(
+        image: UIImage(systemName: "paperplane.fill")!,
+        style: .plain,
+        target: self,
+        action: #selector(createPoll)
+    )
 
     /// Component responsible for setting the correct offset when keyboard frame is changed.
     open lazy var keyboardHandler: KeyboardHandler = DefaultTableViewKeyboardHandler(
@@ -173,6 +205,8 @@ open class PollCreationVC:
         tableView.separatorStyle = .none
         tableView.backgroundColor = appearance.colorPalette.background
         tableView.sectionFooterHeight = 8
+
+        navigationItem.rightBarButtonItems = [createPollButton]
     }
 
     override open func setUpLayout() {
@@ -372,10 +406,18 @@ open class PollCreationVC:
         return cell
     }
 
+    // MARK: - Update Content
+
+    override open func updateContent() {
+        super.updateContent()
+
+        createPollButton.isEnabled = canCreatePoll
+    }
+
     // MARK: - Actions
 
     /// Creates the poll with the current configuration.
-    open func createPoll() {
+    @objc open func createPoll() {
         channelController.createPoll(
             name: name,
             allowAnswers: commentsFeature.isEnabled,
@@ -384,10 +426,21 @@ open class PollCreationVC:
             enforceUniqueVote: !multipleVotesFeature.isEnabled,
             maxVotesAllowed: multipleVotesFeature.config.maxVotes,
             votingVisibility: anonymousFeature.isEnabled ? .anonymous : .public,
-            options: options.map { PollOption(text: $0.name) },
+            options: options
+                .filter { !$0.name.isEmpty }
+                .map { PollOption(text: $0.name) },
             extraData: nil
-        ) { result in
-            print(result)
+        ) { [weak self] result in
+            self?.handleCreatePollResponse(result: result)
+        }
+    }
+
+    open func handleCreatePollResponse(result: Result<MessageId, Error>) {
+        switch result {
+        case .success:
+            dismiss(animated: true)
+        case .failure:
+            dismiss(animated: true)
         }
     }
 }
