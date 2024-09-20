@@ -26,13 +26,13 @@ final class StreamJSONDecoderTests: XCTestCase {
     
     func test_parsingDate_whenMicrosecondsTruncated_thenReturnsDateWithMicroseconds() throws {
         // Last 0 is not there
-        let jsonData = jsonDataForItem(withDateString: "2024-06-14T16:24:37.63793Z")
+        let jsonData = jsonDataForItem(withDateString: "2024-06-14T16:24:37.63784Z")
         let item = try streamJSONDecoder.decode(Item.self, from: jsonData)
-        XCTAssertEqual(1_718_382_277.637_930, item.date.timeIntervalSince1970)
+        XCTAssertEqual(1_718_382_277.637_840, item.date.timeIntervalSince1970)
         
-        let jsonData2 = jsonDataForItem(withDateString: "2024-06-14T16:24:37.637930Z")
+        let jsonData2 = jsonDataForItem(withDateString: "2024-06-14T16:24:37.637840Z")
         let item2 = try streamJSONDecoder.decode(Item.self, from: jsonData2)
-        XCTAssertEqual(1_718_382_277.637_930, item2.date.timeIntervalSince1970)
+        XCTAssertEqual(1_718_382_277.637_840, item2.date.timeIntervalSince1970)
     }
     
     func test_parsingDate_whenNanoseconds_thenReturnsDateWithTruncatedNanoseconds() throws {
