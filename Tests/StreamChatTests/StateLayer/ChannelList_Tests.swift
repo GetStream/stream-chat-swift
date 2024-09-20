@@ -161,19 +161,21 @@ final class ChannelList_Tests: XCTestCase {
         XCTAssertEqual(expectedChannels.map(\.channel.cid.rawValue), await channelList.state.channels.map(\.cid.rawValue))
     }
     
-    func test_loadChannels_whenSortingByEqualLastMessageAt_thenSortingOrderDoesNotChange() async throws {
+    func test_loadChannels_whenSortingByLastMessageAtWithEqualMilliseconds_thenSortingOrderDoesNotChange() async throws {
         await setUpChannelList(
             usesMockedChannelUpdater: false,
-            sort: [.init(key: .lastMessageAt, isAscending: false)]
+            sort: [.init(key: .lastMessageAt, isAscending: true)]
         )
-        let equalLastMessageAt = Date()
+        let lastMessageAtWithEqualMilliseconds = Date(timeIntervalSinceReferenceDate: 748_509_541.864)
         
         // Fetch 10 channels with the same lastMessageAt
         let payload1 = makeMatchingChannelListPayload(
             channelCount: 10,
             createdAtOffset: 0,
-            messagesCreator: { cid in
-                [MessagePayload.dummy(createdAt: equalLastMessageAt, cid: cid)]
+            messagesCreator: { cid, index in
+                // Created at growing only in microseconds
+                let createdAt = lastMessageAtWithEqualMilliseconds.addingTimeInterval(TimeInterval(index) * 0.000_001)
+                return [MessagePayload.dummy(createdAt: createdAt, cid: cid)]
             }
         )
         let payload1Cids = payload1.channels.map(\.channel.cid)
@@ -188,8 +190,8 @@ final class ChannelList_Tests: XCTestCase {
                 let channel = payload1.channels[index].channel
                 try session.saveChannel(
                     payload: .dummy(
-                        channel: .dummy(cid: channel.cid, lastMessageAt: equalLastMessageAt, createdAt: channel.createdAt),
-                        messages: [MessagePayload.dummy(createdAt: equalLastMessageAt, cid: channel.cid)]
+                        channel: .dummy(cid: channel.cid, createdAt: channel.createdAt),
+                        messages: [MessagePayload.dummy(createdAt: channel.lastMessageAt, cid: channel.cid)]
                     )
                 )
             }
@@ -201,8 +203,10 @@ final class ChannelList_Tests: XCTestCase {
         let payload2 = makeMatchingChannelListPayload(
             channelCount: 10,
             createdAtOffset: 10,
-            messagesCreator: { cid in
-                [MessagePayload.dummy(createdAt: equalLastMessageAt, cid: cid)]
+            messagesCreator: { cid, index in
+                // Created at growing only in microseconds
+                let createdAt = lastMessageAtWithEqualMilliseconds.addingTimeInterval(TimeInterval(index) * 0.000_001)
+                return [MessagePayload.dummy(createdAt: createdAt, cid: cid)]
             }
         )
         let payload2Cids = payload2.channels.map(\.channel.cid)
@@ -376,7 +380,7 @@ final class ChannelList_Tests: XCTestCase {
         channelCount: Int,
         createdAtOffset: Int,
         namePrefix: String = "Name",
-        messagesCreator: ((ChannelId) -> [MessagePayload])? = nil
+        messagesCreator: ((ChannelId, Int) -> [MessagePayload])? = nil
     ) -> ChannelListPayload {
         let channelPayloads = (0..<channelCount)
             .map {
@@ -385,7 +389,7 @@ final class ChannelList_Tests: XCTestCase {
                     with: channelId,
                     name: "\(namePrefix) \($0 + createdAtOffset)",
                     members: [.dummy(user: .dummy(userId: memberId))],
-                    messages: messagesCreator?(channelId),
+                    messages: messagesCreator?(channelId, $0 + createdAtOffset),
                     createdAt: Date(timeIntervalSinceReferenceDate: TimeInterval($0 + createdAtOffset))
                 )
             }

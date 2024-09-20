@@ -167,11 +167,11 @@ extension DateFormatter {
     }
 }
 
-private extension ISO8601DateFormatter {
+extension ISO8601DateFormatter {
     func dateWithMicroseconds(from string: String) -> Date? {
         guard let date = date(from: string) else { return nil }
         // Manually parse microseconds and nanoseconds, because ISO8601DateFormatter is limited to ms.
-        // Note that Date timeIntervalSince1970 rounds to 0.000_000_1
+        // Note that Date's timeIntervalSince1970 rounds to 0.000_000_1
         guard let index = string.lastIndex(of: ".") else { return date }
         let range = string.suffix(from: index)
             .dropFirst(4) // . and ms part
@@ -181,7 +181,7 @@ private extension ISO8601DateFormatter {
             fractionWithoutMilliseconds = fractionWithoutMilliseconds.padding(toLength: 3, withPad: "0", startingAt: 0)
         }
         guard let microseconds = TimeInterval("0.000".appending(fractionWithoutMilliseconds)) else { return date }
-        return date.addingTimeInterval(microseconds)
+        return Date(timeIntervalSince1970: date.timeIntervalSince1970 + microseconds)
     }
 }
 
