@@ -85,7 +85,6 @@ open class PollCreationTextFieldCell: _TableViewCell, ThemeProvider {
         }
         
         textFieldView.content = .init(
-            initialText: content.initialText,
             placeholder: content.placeholder,
             errorText: content.errorText
         )

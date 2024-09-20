@@ -7,18 +7,36 @@ import UIKit
 
 /// The sections for the poll creation view.
 public struct PollCreationSection: RawRepresentable, Equatable {
-    public var rawValue: Int
+    public var rawValue: String
 
-    public init(rawValue: Int) {
+    public init(rawValue: String) {
         self.rawValue = rawValue
     }
 
     /// The section to edit the name of the poll.
-    public static var name = Self(rawValue: 0)
+    public static var name = Self(rawValue: "name")
     /// The section to provide the options of the poll.
-    public static var options = Self(rawValue: 1)
+    public static var options = Self(rawValue: "options")
     /// THe section to enable or disable the poll features.
-    public static var features = Self(rawValue: 2)
+    public static var features = Self(rawValue: "features")
+}
+
+/// The sections for the poll creation view.
+public struct PollFeatureType: Equatable {
+    public var rawValue: String
+
+    public init(rawValue: String) {
+        self.rawValue = rawValue
+    }
+
+    public static var multipleVotes = Self(rawValue: "multiple-votes")
+    public static var anonymous = Self(rawValue: "anonymous")
+    public static var suggestions = Self(rawValue: "suggestions")
+    public static var comments = Self(rawValue: "comments")
+
+    public static func == (lhs: PollFeatureType, rhs: PollFeatureType) -> Bool {
+        lhs.rawValue == rhs.rawValue
+    }
 }
 
 /// The view controller to create a poll in the given channel.
@@ -70,43 +88,41 @@ open class PollCreationVC:
     /// The available options of the poll.
     public var options: [Option] = [Option(name: "")]
 
+    /// The features supported to be enabled in the poll.
+    public var pollFeatures: [PollFeatureType] = [
+        .multipleVotes,
+        .anonymous,
+        .suggestions,
+        .comments
+    ]
+
     /// The multiple votes feature configuration.
-    public var allowMultipleVotesFeature = MultipleVotesPollFeature(
+    public var multipleVotesFeature = MultipleVotesPollFeature(
         name: "Multiple votes",
         isEnabled: false,
         config: .disabled
     )
 
     /// The anonymous feature configuration.
-    public var isAnonymousFeature = BasicPollFeature(
+    public var anonymousFeature = BasicPollFeature(
         name: "Anonymous poll",
         isEnabled: false
     )
 
     /// The allow suggestions feature configuration.
-    public var allowSuggestionsFeature = BasicPollFeature(
+    public var suggestionsFeature = BasicPollFeature(
         name: "Suggest an option",
         isEnabled: false
     )
 
     /// The allow comments feature configuration.
-    public var allowCommentsFeature = BasicPollFeature(
+    public var commentsFeature = BasicPollFeature(
         name: "Add a comment",
         isEnabled: false
     )
 
-    /// The features supported to be enabled in the poll.
-    open var pollFeatures: [PollFeature] {
-        [
-            allowMultipleVotesFeature,
-            isAnonymousFeature,
-            allowSuggestionsFeature,
-            allowCommentsFeature
-        ]
-    }
-
     /// The current maximum votes input text.
-    public var maximumVotesText: String?
+    public var maximumVotesText: String = ""
 
     /// The error in case the maximum votes is not valid.
     public var maximumVotesErrorText: String?
@@ -193,53 +209,43 @@ open class PollCreationVC:
     }
 
     open func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell: UITableViewCell
         let section = sections[indexPath.section]
         switch section {
         case .name:
-            let cell = tableView.dequeueReusableCell(with: PollCreationTextFieldCell.self, for: indexPath)
-            configurePollNameCell(cell, at: indexPath)
-            return cell
+            cell = pollNameCell(at: indexPath)
         case .options:
-            let cell = tableView.dequeueReusableCell(with: PollCreationTextFieldCell.self, for: indexPath)
-            configurePollOptionCell(cell, at: indexPath)
-            return cell
+            cell = pollOptionCell(at: indexPath)
         case .features:
             let feature = pollFeatures[indexPath.item]
-            if let multipleVotesFeature = feature as? MultipleVotesPollFeature {
-                let cell = tableView.dequeueReusableCell(
-                    with: PollCreationMultipleVotesFeatureCell.self,
-                    for: indexPath
-                )
-                cell.content = .init(
-                    feature: multipleVotesFeature,
-                    maximumVotesText: maximumVotesText,
-                    maximumVotesErrorText: maximumVotesErrorText
-                )
-                cell.maximumVotesSwitchView.textFieldView.inputTextField.text = maximumVotesText
-                cell.onMaximumVotesValueChanged = { [weak self] maxVotes in
-                    self?.allowMultipleVotesFeature.config.maxVotes = maxVotes
+            switch feature {
+            case .multipleVotes:
+                cell = pollMultipleVotesFeatureCell(at: indexPath)
+            case .anonymous:
+                let basicFeatureCell = pollBasicFeatureCell(at: indexPath, feature: anonymousFeature)
+                basicFeatureCell.onValueChange = { [weak self] newValue in
+                    self?.anonymousFeature.isEnabled = newValue
                 }
-                cell.onMaximumVotesTextChanged = { [weak self] text in
-                    self?.maximumVotesText = text
+                cell = basicFeatureCell
+            case .suggestions:
+                let basicFeatureCell = pollBasicFeatureCell(at: indexPath, feature: suggestionsFeature)
+                basicFeatureCell.onValueChange = { [weak self] newValue in
+                    self?.suggestionsFeature.isEnabled = newValue
                 }
-                cell.onMaximumVotesErrorTextChanged = { [weak self] errorText in
-                    self?.maximumVotesErrorText = errorText
+                cell = basicFeatureCell
+            case .comments:
+                let basicFeatureCell = pollBasicFeatureCell(at: indexPath, feature: commentsFeature)
+                basicFeatureCell.onValueChange = { [weak self] newValue in
+                    self?.commentsFeature.isEnabled = newValue
                 }
-                cell.onFeatureEnabledChanged = { [weak self] isEnabled in
-                    self?.allowMultipleVotesFeature.isEnabled = isEnabled
-                    tableView.reloadRows(at: [indexPath], with: .automatic)
-                }
-                return cell
+                cell = basicFeatureCell
+            default:
+                cell = UITableViewCell()
             }
-            let cell = tableView.dequeueReusableCell(
-                with: PollCreationFeatureCell.self,
-                for: indexPath
-            )
-            cell.content = .init(featureName: feature.name)
-            return cell
         default:
-            return UITableViewCell()
+            cell = UITableViewCell()
         }
+        return cell
     }
 
     open func tableView(_ tableView: UITableView, canMoveRowAt indexPath: IndexPath) -> Bool {
@@ -291,7 +297,8 @@ open class PollCreationVC:
 
     // MARK: - Cell Configuration
 
-    open func configurePollNameCell(_ cell: PollCreationTextFieldCell, at indexPath: IndexPath) {
+    open func pollNameCell(at indexPath: IndexPath) -> PollCreationTextFieldCell {
+        let cell = tableView.dequeueReusableCell(with: PollCreationTextFieldCell.self, for: indexPath)
         cell.isReorderingSupported = false
         cell.content = .init(
             initialText: name,
@@ -301,9 +308,11 @@ open class PollCreationVC:
         cell.textFieldView.onTextChanged = { [weak self] _, newValue in
             self?.name = newValue
         }
+        return cell
     }
 
-    open func configurePollOptionCell(_ cell: PollCreationTextFieldCell, at indexPath: IndexPath) {
+    open func pollOptionCell(at indexPath: IndexPath) -> PollCreationTextFieldCell {
+        let cell = tableView.dequeueReusableCell(with: PollCreationTextFieldCell.self, for: indexPath)
         let option = options[indexPath.item]
         cell.content = .init(
             initialText: option.name,
@@ -325,6 +334,42 @@ open class PollCreationVC:
                 self?.tableView.reloadData()
             }
         }
+        return cell
+    }
+
+    open func pollMultipleVotesFeatureCell(at indexPath: IndexPath) -> PollCreationMultipleVotesFeatureCell {
+        let cell = tableView.dequeueReusableCell(
+            with: PollCreationMultipleVotesFeatureCell.self,
+            for: indexPath
+        )
+        cell.content = .init(
+            feature: multipleVotesFeature,
+            maximumVotesErrorText: maximumVotesErrorText
+        )
+        cell.setMaximumVotesText(maximumVotesText)
+        cell.onMaximumVotesValueChanged = { [weak self] maxVotes in
+            self?.multipleVotesFeature.config.maxVotes = maxVotes
+        }
+        cell.onMaximumVotesTextChanged = { [weak self] text in
+            self?.maximumVotesText = text
+        }
+        cell.onMaximumVotesErrorTextChanged = { [weak self] errorText in
+            self?.maximumVotesErrorText = errorText
+        }
+        cell.onFeatureEnabledChanged = { [weak self] isEnabled in
+            self?.multipleVotesFeature.isEnabled = isEnabled
+            self?.tableView.reloadRows(at: [indexPath], with: .automatic)
+        }
+        return cell
+    }
+
+    open func pollBasicFeatureCell(at indexPath: IndexPath, feature: PollFeature) -> PollCreationFeatureCell {
+        let cell = tableView.dequeueReusableCell(
+            with: PollCreationFeatureCell.self,
+            for: indexPath
+        )
+        cell.content = .init(featureName: feature.name)
+        return cell
     }
 
     // MARK: - Actions
@@ -333,12 +378,12 @@ open class PollCreationVC:
     open func createPoll() {
         channelController.createPoll(
             name: name,
-            allowAnswers: allowCommentsFeature.isEnabled,
-            allowUserSuggestedOptions: allowSuggestionsFeature.isEnabled,
+            allowAnswers: commentsFeature.isEnabled,
+            allowUserSuggestedOptions: suggestionsFeature.isEnabled,
             description: nil,
-            enforceUniqueVote: !allowMultipleVotesFeature.isEnabled,
-            maxVotesAllowed: allowMultipleVotesFeature.config.maxVotes,
-            votingVisibility: isAnonymousFeature.isEnabled ? .anonymous : .public,
+            enforceUniqueVote: !multipleVotesFeature.isEnabled,
+            maxVotesAllowed: multipleVotesFeature.config.maxVotes,
+            votingVisibility: anonymousFeature.isEnabled ? .anonymous : .public,
             options: options.map { PollOption(text: $0.name) },
             extraData: nil
         ) { result in

@@ -7,15 +7,12 @@ import UIKit
 /// A view that displays an editable text field with an error label to show validation errors.
 open class PollCreationTextFieldView: _View, ThemeProvider, UITextFieldDelegate {
     public struct Content {
-        /// The initial value of the text field.
-        public var initialText: String?
         /// The placeholder of the text field.
         public var placeholder: String
         /// The error text in case there are validator errors.
         public var errorText: String?
 
-        public init(initialText: String?, placeholder: String, errorText: String?) {
-            self.initialText = initialText
+        public init(placeholder: String, errorText: String?) {
             self.placeholder = placeholder
             self.errorText = errorText
         }
@@ -75,10 +72,10 @@ open class PollCreationTextFieldView: _View, ThemeProvider, UITextFieldDelegate 
         } else if !errorLabel.isHidden && content?.errorText == nil {
             hideError()
         }
+    }
 
-        if let initialText = content?.initialText {
-            inputTextField.text = initialText
-        }
+    open func setText(_ text: String) {
+        inputTextField.text = text
     }
 
     open func showError() {

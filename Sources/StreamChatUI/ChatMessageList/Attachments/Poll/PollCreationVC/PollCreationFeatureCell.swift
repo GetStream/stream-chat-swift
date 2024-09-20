@@ -27,10 +27,14 @@ open class PollCreationFeatureCell: _TableViewCell, ThemeProvider {
     open private(set) lazy var featureSwitchView = PollCreationFeatureSwitchView()
         .withoutAutoresizingMaskConstraints
 
+    /// A closure that is triggered whenever the switch value changes.
+    public var onValueChange: ((Bool) -> Void)?
+
     override open func setUp() {
         super.setUp()
 
         contentView.isUserInteractionEnabled = true
+        featureSwitchView.onValueChange = onValueChange
     }
 
     override open func setUpAppearance() {

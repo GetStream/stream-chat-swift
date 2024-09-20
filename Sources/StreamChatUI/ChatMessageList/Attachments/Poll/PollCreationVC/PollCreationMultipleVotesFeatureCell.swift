@@ -8,16 +8,13 @@ import UIKit
 open class PollCreationMultipleVotesFeatureCell: _TableViewCell, ThemeProvider {
     public struct Content {
         public var feature: MultipleVotesPollFeature
-        public var maximumVotesText: String?
         public var maximumVotesErrorText: String?
 
         public init(
             feature: MultipleVotesPollFeature,
-            maximumVotesText: String?,
             maximumVotesErrorText: String?
         ) {
             self.feature = feature
-            self.maximumVotesText = maximumVotesText
             self.maximumVotesErrorText = maximumVotesErrorText
         }
     }
@@ -39,6 +36,13 @@ open class PollCreationMultipleVotesFeatureCell: _TableViewCell, ThemeProvider {
     open private(set) lazy var maximumVotesSwitchView = PollCreationMaximumVotesSwitchView()
         .withoutAutoresizingMaskConstraints
 
+    private var currentMaximumVotesText: String = "" {
+        didSet {
+            validateMaximumVotesValue(currentMaximumVotesText)
+            onMaximumVotesTextChanged?(currentMaximumVotesText)
+        }
+    }
+
     public var onFeatureEnabledChanged: ((Bool) -> Void)?
     public var onMaximumVotesValueChanged: ((Int?) -> Void)?
     public var onMaximumVotesTextChanged: ((String) -> Void)?
@@ -54,19 +58,12 @@ open class PollCreationMultipleVotesFeatureCell: _TableViewCell, ThemeProvider {
         }
 
         maximumVotesSwitchView.textFieldView.onTextChanged = { [weak self] _, newValue in
-            self?.onMaximumVotesTextChanged?(newValue)
-            self?.validateMaximumVotesValue(newValue)
+            self?.currentMaximumVotesText = newValue
         }
 
-        maximumVotesSwitchView.onValueChange = { [weak self] isOn in
-            guard let self = self else { return }
-            if isOn {
-                self.validateMaximumVotesValue("")
-            } else {
-                self.maximumVotesSwitchView.textFieldView.inputTextField.text = nil
-                self.onMaximumVotesTextChanged?("")
-                self.validateMaximumVotesValue("")
-            }
+        maximumVotesSwitchView.onValueChange = { [weak self] _ in
+            self?.maximumVotesSwitchView.textFieldView.inputTextField.text = nil
+            self?.currentMaximumVotesText = ""
         }
     }
 
@@ -105,24 +102,25 @@ open class PollCreationMultipleVotesFeatureCell: _TableViewCell, ThemeProvider {
         featureSwitchView.switchView.isOn = content.feature.isEnabled
         maximumVotesSwitchView.isHidden = !content.feature.isEnabled
         maximumVotesSwitchView.textFieldView.content = .init(
-            initialText: nil, // TODO: Maybe remove the initial text?
             placeholder: "Maximum votes per person",
             errorText: content.maximumVotesErrorText
         )
+    }
+
+    open func setMaximumVotesText(_ text: String) {
+        maximumVotesSwitchView.textFieldView.setText(text)
     }
 
     open func validateMaximumVotesValue(_ newValue: String) {
         let errorText = "Type a number from 1 and 10"
         
         if newValue.isEmpty && maximumVotesSwitchView.switchView.isOn {
-            maximumVotesSwitchView.textFieldView.content?.errorText = errorText
-            onMaximumVotesErrorTextChanged?(errorText)
+            showMaxVotesError(message: errorText)
             return
         }
 
         if newValue.isEmpty {
-            maximumVotesSwitchView.textFieldView.content?.errorText = nil
-            onMaximumVotesErrorTextChanged?(nil)
+            clearMaxVotesError()
             maximumVotesSwitchView.switchView.setOn(false, animated: true)
             return
         }
@@ -130,14 +128,22 @@ open class PollCreationMultipleVotesFeatureCell: _TableViewCell, ThemeProvider {
         maximumVotesSwitchView.switchView.setOn(true, animated: true)
 
         guard let value = Int(newValue), value >= 1 && value <= 10 else {
-            maximumVotesSwitchView.textFieldView.content?.errorText = errorText
-            onMaximumVotesErrorTextChanged?(errorText)
+            showMaxVotesError(message: errorText)
             return
         }
 
+        clearMaxVotesError()
+        onMaximumVotesValueChanged?(value)
+    }
+
+    open func showMaxVotesError(message: String) {
+        maximumVotesSwitchView.textFieldView.content?.errorText = message
+        onMaximumVotesErrorTextChanged?(message)
+    }
+
+    open func clearMaxVotesError() {
         maximumVotesSwitchView.textFieldView.content?.errorText = nil
         onMaximumVotesErrorTextChanged?(nil)
-        onMaximumVotesValueChanged?(value)
     }
 }
 
