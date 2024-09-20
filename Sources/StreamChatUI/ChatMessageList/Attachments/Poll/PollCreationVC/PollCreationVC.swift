@@ -62,19 +62,6 @@ open class PollCreationVC:
 
     // MARK: - Content
 
-    /// A poll option.
-    public struct Option {
-        public var name: String
-        public var errorText: String?
-
-        public init(name: String, errorText: String? = nil) {
-            self.name = name
-            self.errorText = errorText
-        }
-
-        public static var empty = Option(name: "")
-    }
-
     /// The sections of the poll creation form.
     public var sections: [PollCreationSection] = [
         .name,
@@ -90,11 +77,13 @@ open class PollCreationVC:
     }
 
     /// The available options of the poll.
-    public var options: [Option] = [Option(name: "")] {
+    public var options: [String] = [""] {
         didSet {
             updateContentIfNeeded()
         }
     }
+
+    public var optionsErrorIndices: [Int: String] = [:]
 
     /// The features supported to be enabled in the poll.
     public var pollFeatures: [PollFeatureType] = [
@@ -147,8 +136,8 @@ open class PollCreationVC:
     open var canCreatePoll: Bool {
         name.isEmpty == false
             && maximumVotesErrorText == nil
-            && options.filter { !$0.name.isEmpty }.count >= 2
-            && options.first(where: { $0.errorText != nil }) == nil
+            && options.filter { !$0.isEmpty }.count >= 2
+            && optionsErrorIndices.isEmpty
     }
 
     // MARK: - Views
@@ -350,27 +339,20 @@ open class PollCreationVC:
         let option = options[indexPath.item]
         cell.content = .init(
             placeholder: "Add an option",
-            errorText: option.errorText
+            errorText: optionsErrorIndices[indexPath.item]
         )
-        cell.setText(option.name)
-        cell.onTextChanged = { [weak self, weak tableView, weak cell] oldValue, newValue in
+        cell.setText(option)
+        cell.onTextChanged = { [weak self, weak tableView] oldValue, newValue in
             guard let self = self else { return }
-            guard let cell = cell else { return }
             guard let tableView = tableView else { return }
             guard indexPath.item < self.options.count else { return }
 
-            var errorText: String?
-            if !newValue.isEmpty, self.options.contains(where: { $0.name == newValue }) {
-                errorText = "This is already an option"
-            }
-
-            cell.content?.errorText = errorText
-            self.options[indexPath.item] = .init(name: newValue, errorText: errorText)
+            self.options[indexPath.item] = newValue
 
             let numberOfOptions = self.options.count
             let isLastItem = indexPath.item == numberOfOptions - 1
             if isLastItem && !newValue.isEmpty {
-                self.options.append(.empty)
+                self.options.append("")
                 let newIndexPath = IndexPath(item: indexPath.item + 1, section: indexPath.section)
                 tableView.insertRows(at: [newIndexPath], with: .bottom)
             } else if oldValue.isEmpty && newValue.isEmpty && !isLastItem {
@@ -421,6 +403,17 @@ open class PollCreationVC:
     override open func updateContent() {
         super.updateContent()
 
+        optionsErrorIndices = [:]
+        options.enumerated().forEach { offset, option in
+            guard let optionsSectionIndex = sections.firstIndex(of: .options) else { return }
+            let cell = tableView.cellForRow(at: .init(row: offset, section: optionsSectionIndex)) as? PollCreationOptionCell
+            var otherOptions = options
+            otherOptions.remove(at: offset)
+            if !option.isEmpty && otherOptions.contains(where: { $0 == option }) {
+                optionsErrorIndices[offset] = "This is already an option"
+            }
+            cell?.content?.errorText = optionsErrorIndices[offset]
+        }
         createPollButton.isEnabled = canCreatePoll
     }
 
@@ -437,8 +430,8 @@ open class PollCreationVC:
             maxVotesAllowed: multipleVotesFeature.config.maxVotes,
             votingVisibility: anonymousFeature.isEnabled ? .anonymous : .public,
             options: options
-                .filter { !$0.name.isEmpty }
-                .map { PollOption(text: $0.name) },
+                .filter { !$0.isEmpty }
+                .map { PollOption(text: $0) },
             extraData: nil
         ) { [weak self] result in
             self?.handleCreatePollResponse(result: result)

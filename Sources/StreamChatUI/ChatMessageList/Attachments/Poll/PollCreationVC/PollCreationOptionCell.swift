@@ -25,7 +25,7 @@ open class PollCreationOptionCell: _TableViewCell, ThemeProvider {
     }
 
     /// The main container that holds the subviews.
-    open private(set) lazy var container = HContainer()
+    open private(set) lazy var container = HContainer(alignment: .center)
 
     /// A text field that supports showing validator errors.
     open private(set) lazy var textFieldView = PollCreationTextFieldView()
