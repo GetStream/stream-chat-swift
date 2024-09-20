@@ -120,7 +120,7 @@ final class SyncOperations_Tests: XCTestCase {
         let context = SyncContext(lastSyncAt: .init())
         let controller = ChatChannelController_Spy(client: client)
         controller.state = .initialized
-        let operation = WatchChannelOperation(controller: controller, context: context)
+        let operation = WatchChannelOperation(controller: controller, context: context, recovery: true)
 
         operation.startAndWaitForCompletion()
 
@@ -134,7 +134,7 @@ final class SyncOperations_Tests: XCTestCase {
         controller.state = .remoteDataFetched
         context.synchedChannelIds.insert(controller.cid!)
 
-        let operation = WatchChannelOperation(controller: controller, context: context)
+        let operation = WatchChannelOperation(controller: controller, context: context, recovery: true)
 
         operation.startAndWaitForCompletion()
 
@@ -147,7 +147,7 @@ final class SyncOperations_Tests: XCTestCase {
         let controller = ChatChannelController_Spy(client: client)
         controller.state = .remoteDataFetched
 
-        let operation = WatchChannelOperation(controller: controller, context: context)
+        let operation = WatchChannelOperation(controller: controller, context: context, recovery: true)
 
         operation.startAndWaitForCompletion()
 
@@ -162,7 +162,7 @@ final class SyncOperations_Tests: XCTestCase {
         controller.state = .remoteDataFetched
         controller.watchActiveChannelError = ClientError("")
 
-        let operation = WatchChannelOperation(controller: controller, context: context)
+        let operation = WatchChannelOperation(controller: controller, context: context, recovery: true)
 
         operation.startAndWaitForCompletion()
 
@@ -176,7 +176,7 @@ final class SyncOperations_Tests: XCTestCase {
         controller.state = .remoteDataFetched
         controller.watchActiveChannelError = nil
 
-        let operation = WatchChannelOperation(controller: controller, context: context)
+        let operation = WatchChannelOperation(controller: controller, context: context, recovery: true)
 
         operation.startAndWaitForCompletion()
 

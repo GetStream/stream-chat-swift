@@ -4683,7 +4683,7 @@ final class ChannelController_Tests: XCTestCase {
 
         var receivedError: Error?
         let expectation = self.expectation(description: "watchActiveChannel completion")
-        controller.recoverWatchedChannel { error in
+        controller.recoverWatchedChannel(recovery: true) { error in
             receivedError = error
             expectation.fulfill()
         }
