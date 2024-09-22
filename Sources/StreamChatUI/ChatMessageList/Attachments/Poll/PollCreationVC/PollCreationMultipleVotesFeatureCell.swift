@@ -5,7 +5,7 @@
 import UIKit
 
 /// The cell for the poll creation form to configure the multiple votes feature.
-open class PollCreationMultipleVotesFeatureCell: _TableViewCell, ThemeProvider {
+open class PollCreationMultipleVotesFeatureCell: _CollectionViewCell, ThemeProvider {
     public struct Content {
         public var feature: MultipleVotesPollFeature
         public var maximumVotesErrorText: String?

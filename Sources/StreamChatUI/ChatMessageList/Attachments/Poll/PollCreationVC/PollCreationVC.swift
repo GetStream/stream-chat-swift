@@ -43,8 +43,8 @@ public struct PollFeatureType: Equatable {
 open class PollCreationVC:
     _ViewController,
     ThemeProvider,
-    UITableViewDelegate,
-    UITableViewDataSource {
+    UICollectionViewDelegate,
+    UICollectionViewDataSource {
     // MARK: - Dependencies
 
     /// The channel controller to create the poll in the given channel.
@@ -54,7 +54,7 @@ open class PollCreationVC:
         self.channelController = channelController
         super.init(nibName: nil, bundle: nil)
     }
-    
+
     @available(*, unavailable)
     public required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
@@ -83,6 +83,7 @@ open class PollCreationVC:
         }
     }
 
+    /// The indices of the options that contain an error.
     public var optionsErrorIndices: [Int: String] = [:]
 
     /// The features supported to be enabled in the poll.
@@ -142,21 +143,84 @@ open class PollCreationVC:
 
     // MARK: - Views
 
-    /// The table view responsible to display the poll creation form.
-    open private(set) lazy var tableView = UITableView(frame: .zero, style: .grouped)
-        .withoutAutoresizingMaskConstraints
+    open private(set) lazy var collectionView: UICollectionView = {
+        let layout = makeCompositionalLayout()
+        let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
+            .withoutAutoresizingMaskConstraints
+        return collectionView
+    }()
+
+    // MARK: - Compositional Layout
+
+    open func makeCompositionalLayout() -> UICollectionViewCompositionalLayout {
+        UICollectionViewCompositionalLayout { [weak self] sectionIndex, _ in
+            guard let self = self else { return nil }
+            let section = self.sections[sectionIndex]
+            switch section {
+            case .name:
+                return self.createNameSectionLayout()
+            case .options:
+                return self.createOptionsSectionLayout()
+            case .features:
+                return self.createFeaturesSectionLayout()
+            default:
+                return nil
+            }
+        }
+    }
+
+    open func createNameSectionLayout() -> NSCollectionLayoutSection {
+        let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .estimated(44))
+        let item = NSCollectionLayoutItem(layoutSize: itemSize)
+        let group = NSCollectionLayoutGroup.horizontal(layoutSize: itemSize, subitems: [item])
+        let section = NSCollectionLayoutSection(group: group)
+        section.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 8, bottom: 8, trailing: 8)
+        section.boundarySupplementaryItems = [createHeaderItem()]
+        return section
+    }
+
+    open func createOptionsSectionLayout() -> NSCollectionLayoutSection {
+        let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .estimated(44))
+        let item = NSCollectionLayoutItem(layoutSize: itemSize)
+        let group = NSCollectionLayoutGroup.vertical(layoutSize: itemSize, subitems: [item])
+        let section = NSCollectionLayoutSection(group: group)
+        section.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 8, bottom: 8, trailing: 8)
+        section.interGroupSpacing = 8
+        section.boundarySupplementaryItems = [createHeaderItem()]
+        return section
+    }
+
+    open func createFeaturesSectionLayout() -> NSCollectionLayoutSection {
+        let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .estimated(44))
+        let item = NSCollectionLayoutItem(layoutSize: itemSize)
+        let group = NSCollectionLayoutGroup.vertical(layoutSize: itemSize, subitems: [item])
+        let section = NSCollectionLayoutSection(group: group)
+        section.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 8, bottom: 0, trailing: 8)
+        section.interGroupSpacing = 8
+        section.boundarySupplementaryItems = [createHeaderItem()]
+        return section
+    }
+
+    open func createHeaderItem() -> NSCollectionLayoutBoundarySupplementaryItem {
+        let headerSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .estimated(16))
+        return NSCollectionLayoutBoundarySupplementaryItem(
+            layoutSize: headerSize,
+            elementKind: UICollectionView.elementKindSectionHeader,
+            alignment: .top
+        )
+    }
 
     /// The button to create the poll.
     open private(set) lazy var createPollButton = UIBarButtonItem(
-        image: UIImage(systemName: "paperplane.fill")!,
+        image: UIImage(systemName: "paperplane.fill")!, // TODO: use appearance
         style: .plain,
         target: self,
         action: #selector(createPoll)
     )
 
     /// Component responsible for setting the correct offset when keyboard frame is changed.
-    open lazy var keyboardHandler: KeyboardHandler = DefaultTableViewKeyboardHandler(
-        tableView: self.tableView
+    open lazy var keyboardHandler: KeyboardHandler = DefaultScrollViewKeyboardHandler(
+        scrollView: self.collectionView
     )
 
     // MARK: - Lifecycle
@@ -176,42 +240,44 @@ open class PollCreationVC:
     override open func setUp() {
         super.setUp()
 
-        // TODO: Use Components
-        tableView.register(PollCreationNameCell.self)
-        tableView.register(PollCreationOptionCell.self)
-        tableView.register(PollCreationFeatureCell.self)
-        tableView.register(PollCreationMultipleVotesFeatureCell.self)
-        tableView.register(PollCreationSectionHeaderView.self)
-        tableView.delegate = self
-        tableView.dataSource = self
-        tableView.isEditing = true
-        tableView.tableHeaderView = UIView()
+        let longGestureRecognizer = UILongPressGestureRecognizer(target: self, action: #selector(handleLongPressGesture))
+        longGestureRecognizer.minimumPressDuration = 0.3
+        collectionView.addGestureRecognizer(longGestureRecognizer)
+
+        collectionView.delegate = self
+        collectionView.dataSource = self
+        collectionView.register(PollCreationNameCell.self)
+        collectionView.register(PollCreationOptionCell.self)
+        collectionView.register(PollCreationFeatureCell.self)
+        collectionView.register(PollCreationMultipleVotesFeatureCell.self)
+        collectionView.register(
+            PollCreationSectionHeaderView.self,
+            forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader,
+            withReuseIdentifier: String(describing: PollCreationSectionHeaderView.self)
+        )
     }
 
     override open func setUpAppearance() {
         super.setUpAppearance()
 
         title = "Create Poll"
-        tableView.separatorStyle = .none
-        tableView.backgroundColor = appearance.colorPalette.background
-        tableView.sectionFooterHeight = 8
-
+        collectionView.backgroundColor = appearance.colorPalette.background
         navigationItem.rightBarButtonItems = [createPollButton]
     }
 
     override open func setUpLayout() {
         super.setUpLayout()
 
-        view.embed(tableView)
+        view.embed(collectionView)
     }
 
-    // MARK: - UITableViewDelegate & UITableViewDataSource
+    // MARK: - UICollectionViewDelegate & UICollectionViewDataSource
 
-    open func numberOfSections(in tableView: UITableView) -> Int {
+    open func numberOfSections(in collectionView: UICollectionView) -> Int {
         sections.count
     }
 
-    open func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    open func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         let section = sections[section]
         switch section {
         case .name:
@@ -225,54 +291,59 @@ open class PollCreationVC:
         }
     }
 
-    open func tableView(
-        _ tableView: UITableView,
-        editingStyleForRowAt indexPath: IndexPath
-    ) -> UITableViewCell.EditingStyle {
-        .none
-    }
-
-    open func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell: UITableViewCell
+    open func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let section = sections[indexPath.section]
         switch section {
         case .name:
-            cell = pollNameCell(at: indexPath)
+            return pollNameCell(at: indexPath)
         case .options:
-            cell = pollOptionCell(at: indexPath)
+            return pollOptionCell(at: indexPath)
         case .features:
             let feature = pollFeatures[indexPath.item]
             switch feature {
             case .multipleVotes:
-                cell = pollMultipleVotesFeatureCell(at: indexPath)
+                return pollMultipleVotesFeatureCell(at: indexPath)
             case .anonymous:
-                let basicFeatureCell = pollBasicFeatureCell(at: indexPath, feature: anonymousFeature)
-                basicFeatureCell.onValueChange = { [weak self] newValue in
-                    self?.anonymousFeature.isEnabled = newValue
-                }
-                cell = basicFeatureCell
+                return pollBasicFeatureCell(at: indexPath, feature: anonymousFeature)
             case .suggestions:
-                let basicFeatureCell = pollBasicFeatureCell(at: indexPath, feature: suggestionsFeature)
-                basicFeatureCell.onValueChange = { [weak self] newValue in
-                    self?.suggestionsFeature.isEnabled = newValue
-                }
-                cell = basicFeatureCell
+                return pollBasicFeatureCell(at: indexPath, feature: suggestionsFeature)
             case .comments:
-                let basicFeatureCell = pollBasicFeatureCell(at: indexPath, feature: commentsFeature)
-                basicFeatureCell.onValueChange = { [weak self] newValue in
-                    self?.commentsFeature.isEnabled = newValue
-                }
-                cell = basicFeatureCell
+                return pollBasicFeatureCell(at: indexPath, feature: commentsFeature)
             default:
-                cell = UITableViewCell()
+                return UICollectionViewCell()
             }
         default:
-            cell = UITableViewCell()
+            return UICollectionViewCell()
         }
-        return cell
     }
 
-    open func tableView(_ tableView: UITableView, canMoveRowAt indexPath: IndexPath) -> Bool {
+    open func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
+        guard kind == UICollectionView.elementKindSectionHeader else {
+            return UICollectionReusableView()
+        }
+
+        guard let view = collectionView.dequeueReusableSupplementaryView(
+            ofKind: kind,
+            withReuseIdentifier: String(describing: PollCreationSectionHeaderView.self),
+            for: indexPath
+        ) as? PollCreationSectionHeaderView else {
+            return UICollectionReusableView()
+        }
+
+        let section = sections[indexPath.section]
+        switch section {
+        case .name:
+            view.content = .init(title: "Question")
+        case .options:
+            view.content = .init(title: "Options")
+        default:
+            view.content = nil
+        }
+
+        return view
+    }
+
+    open func collectionView(_ collectionView: UICollectionView, canMoveItemAt indexPath: IndexPath) -> Bool {
         let section = sections[indexPath.section]
         switch section {
         case .options:
@@ -283,46 +354,33 @@ open class PollCreationVC:
         }
     }
 
-    open func tableView(_ tableView: UITableView, moveRowAt sourceIndexPath: IndexPath, to destinationIndexPath: IndexPath) {
+    open func collectionView(_ collectionView: UICollectionView, moveItemAt sourceIndexPath: IndexPath, to destinationIndexPath: IndexPath) {
         let movedObject = options[sourceIndexPath.row]
         options.remove(at: sourceIndexPath.row)
         options.insert(movedObject, at: destinationIndexPath.row)
-        tableView.reloadData()
     }
 
-    open func tableView(_ tableView: UITableView, targetIndexPathForMoveFromRowAt sourceIndexPath: IndexPath, toProposedIndexPath proposedDestinationIndexPath: IndexPath) -> IndexPath {
-        switch sections[proposedDestinationIndexPath.section] {
+    open func collectionView(
+        _ collectionView: UICollectionView,
+        targetIndexPathForMoveOfItemFromOriginalIndexPath originalIndexPath: IndexPath,
+        atCurrentIndexPath currentIndexPath: IndexPath,
+        toProposedIndexPath proposedIndexPath: IndexPath
+    ) -> IndexPath {
+        switch sections[proposedIndexPath.section] {
         case .options:
-            if proposedDestinationIndexPath.item == options.count - 1 {
-                return sourceIndexPath
+            if proposedIndexPath.item == options.count - 1 {
+                return originalIndexPath
             }
-            return proposedDestinationIndexPath
+            return proposedIndexPath
         default:
-            return sourceIndexPath
-        }
-    }
-
-    open func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-        let view = tableView.dequeueReusableHeaderFooter(with: PollCreationSectionHeaderView.self)
-        let section = sections[section]
-        switch section {
-        case .name:
-            view.content = .init(title: "Question")
-            return view
-        case .options:
-            view.content = .init(title: "Options")
-            return view
-        case .features:
-            return nil
-        default:
-            return nil
+            return originalIndexPath
         }
     }
 
     // MARK: - Cell Configuration
 
     open func pollNameCell(at indexPath: IndexPath) -> PollCreationNameCell {
-        let cell = tableView.dequeueReusableCell(with: PollCreationNameCell.self, for: indexPath)
+        let cell = collectionView.dequeueReusableCell(with: PollCreationNameCell.self, for: indexPath)
         cell.content = .init(
             placeholder: "Ask a question",
             errorText: nil
@@ -335,18 +393,22 @@ open class PollCreationVC:
     }
 
     open func pollOptionCell(at indexPath: IndexPath) -> PollCreationOptionCell {
-        let cell = tableView.dequeueReusableCell(with: PollCreationOptionCell.self, for: indexPath)
+        let isLastItem = indexPath.item == options.count - 1
+        let cell = collectionView.dequeueReusableCell(with: PollCreationOptionCell.self, for: indexPath)
         let option = options[indexPath.item]
         cell.content = .init(
             placeholder: "Add an option",
             errorText: optionsErrorIndices[indexPath.item]
         )
+        cell.reorderImageView.isHidden = option.isEmpty && isLastItem
         cell.setText(option)
-        cell.onTextChanged = { [weak self, weak tableView] oldValue, newValue in
+        cell.onTextChanged = { [weak self, weak collectionView, weak cell] oldValue, newValue in
             guard let self = self else { return }
-            guard let tableView = tableView else { return }
+            guard let collectionView = collectionView else { return }
+            guard let cell = cell else { return }
             guard indexPath.item < self.options.count else { return }
 
+            cell.reorderImageView.isHidden = false
             self.options[indexPath.item] = newValue
 
             let numberOfOptions = self.options.count
@@ -354,17 +416,17 @@ open class PollCreationVC:
             if isLastItem && !newValue.isEmpty {
                 self.options.append("")
                 let newIndexPath = IndexPath(item: indexPath.item + 1, section: indexPath.section)
-                tableView.insertRows(at: [newIndexPath], with: .bottom)
+                collectionView.insertItems(at: [newIndexPath])
             } else if oldValue.isEmpty && newValue.isEmpty && !isLastItem {
                 self.options.remove(at: indexPath.item)
-                tableView.reloadData()
+                collectionView.reloadData()
             }
         }
         return cell
     }
 
     open func pollMultipleVotesFeatureCell(at indexPath: IndexPath) -> PollCreationMultipleVotesFeatureCell {
-        let cell = tableView.dequeueReusableCell(
+        let cell = collectionView.dequeueReusableCell(
             with: PollCreationMultipleVotesFeatureCell.self,
             for: indexPath
         )
@@ -384,13 +446,13 @@ open class PollCreationVC:
         }
         cell.onFeatureEnabledChanged = { [weak self] isEnabled in
             self?.multipleVotesFeature.isEnabled = isEnabled
-            self?.tableView.reloadRows(at: [indexPath], with: .automatic)
+            self?.collectionView.reloadItems(at: [indexPath])
         }
         return cell
     }
 
     open func pollBasicFeatureCell(at indexPath: IndexPath, feature: PollFeature) -> PollCreationFeatureCell {
-        let cell = tableView.dequeueReusableCell(
+        let cell = collectionView.dequeueReusableCell(
             with: PollCreationFeatureCell.self,
             for: indexPath
         )
@@ -406,7 +468,8 @@ open class PollCreationVC:
         optionsErrorIndices = [:]
         options.enumerated().forEach { offset, option in
             guard let optionsSectionIndex = sections.firstIndex(of: .options) else { return }
-            let cell = tableView.cellForRow(at: .init(row: offset, section: optionsSectionIndex)) as? PollCreationOptionCell
+            let indexPath = IndexPath(item: offset, section: optionsSectionIndex)
+            let cell = collectionView.cellForItem(at: indexPath) as? PollCreationOptionCell
             var otherOptions = options
             otherOptions.remove(at: offset)
             if !option.isEmpty && otherOptions.contains(where: { $0 == option }) {
@@ -414,6 +477,7 @@ open class PollCreationVC:
             }
             cell?.content?.errorText = optionsErrorIndices[offset]
         }
+
         createPollButton.isEnabled = canCreatePoll
     }
 
@@ -444,6 +508,24 @@ open class PollCreationVC:
             dismiss(animated: true)
         case .failure:
             dismiss(animated: true)
+        }
+    }
+
+    @objc open func handleLongPressGesture(gesture: UILongPressGestureRecognizer) {
+        switch gesture.state {
+        case .began:
+            guard let targetIndexPath = collectionView.indexPathForItem(at: gesture.location(in: collectionView)) else {
+                return
+            }
+            collectionView.beginInteractiveMovementForItem(at: targetIndexPath)
+        case .changed:
+            var location = gesture.location(in: collectionView)
+            location.x = collectionView.center.x
+            collectionView.updateInteractiveMovementTargetPosition(location)
+        case .ended:
+            collectionView.endInteractiveMovement()
+        default:
+            collectionView.cancelInteractiveMovement()
         }
     }
 }

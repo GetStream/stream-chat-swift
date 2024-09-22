@@ -6,7 +6,7 @@ import StreamChat
 import UIKit
 
 /// The poll creation section header view.
-open class PollCreationSectionHeaderView: _TableHeaderFooterView, ThemeProvider {
+open class PollCreationSectionHeaderView: _CollectionReusableView, ThemeProvider {
     public struct Content {
         public var title: String
 

@@ -5,7 +5,7 @@
 import UIKit
 
 /// The cell for the poll creation form that displays a text field and supports showing validator errors.
-open class PollCreationOptionCell: _TableViewCell, ThemeProvider {
+open class PollCreationOptionCell: _CollectionViewCell, ThemeProvider {
     public struct Content {
         /// The placeholder of the text field.
         public var placeholder: String
@@ -31,6 +31,10 @@ open class PollCreationOptionCell: _TableViewCell, ThemeProvider {
     open private(set) lazy var textFieldView = PollCreationTextFieldView()
         .withoutAutoresizingMaskConstraints
 
+    /// The image view that shows the reorder icon.
+    open private(set) lazy var reorderImageView = UIImageView(image: .init(systemName: "line.3.horizontal"))
+        .withoutAutoresizingMaskConstraints
+
     /// A closure to notify that the input text changed.
     public var onTextChanged: ((_ oldValue: String, _ newValue: String) -> Void)?
 
@@ -49,6 +53,7 @@ open class PollCreationOptionCell: _TableViewCell, ThemeProvider {
         backgroundColor = appearance.colorPalette.background
         container.backgroundColor = appearance.colorPalette.background1
         container.layer.cornerRadius = 16
+        reorderImageView.tintColor = appearance.colorPalette.textLowEmphasis
     }
 
     override open func setUpLayout() {
@@ -56,8 +61,9 @@ open class PollCreationOptionCell: _TableViewCell, ThemeProvider {
 
         container.views {
             textFieldView
-            Spacer()
+            reorderImageView
                 .width(28)
+                .height(22)
         }
         .height(56)
         .layout {

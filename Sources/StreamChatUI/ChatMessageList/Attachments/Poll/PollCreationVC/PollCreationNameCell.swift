@@ -5,7 +5,7 @@
 import UIKit
 
 /// The cell for editing the poll's name.
-open class PollCreationNameCell: _TableViewCell, ThemeProvider {
+open class PollCreationNameCell: _CollectionViewCell, ThemeProvider {
     public struct Content {
         /// The placeholder of the text field.
         public var placeholder: String

@@ -5,7 +5,7 @@
 import UIKit
 
 /// The cell for the poll creation form that displays the name of a feature and the switch button to enable it.
-open class PollCreationFeatureCell: _TableViewCell, ThemeProvider {
+open class PollCreationFeatureCell: _CollectionViewCell, ThemeProvider {
     public struct Content {
         public var featureName: String
 

@@ -5,11 +5,11 @@
 import UIKit
 
 /// The component for handling keyboard events in a table view.
-open class DefaultTableViewKeyboardHandler: KeyboardHandler {
-    public weak var tableView: UITableView?
+open class DefaultScrollViewKeyboardHandler: KeyboardHandler {
+    public weak var scrollView: UIScrollView?
 
-    public init(tableView: UITableView?) {
-        self.tableView = tableView
+    public init(scrollView: UIScrollView?) {
+        self.scrollView = scrollView
     }
 
     public func start() {
@@ -34,6 +34,8 @@ open class DefaultTableViewKeyboardHandler: KeyboardHandler {
         NotificationCenter.default.removeObserver(self)
     }
 
+    // swiftlint:enable notification_center_detachment
+
     @objc open func keyboardWillChangeFrame(_ notification: Notification) {
         guard let userInfo = notification.userInfo,
               let frame = (userInfo[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue,
@@ -48,8 +50,8 @@ open class DefaultTableViewKeyboardHandler: KeyboardHandler {
             options: UIView.AnimationOptions(rawValue: curve << 16)
         ) { [weak self] in
             let insets = UIEdgeInsets(top: 0, left: 0, bottom: frame.height, right: 0)
-            self?.tableView?.contentInset = insets
-            self?.tableView?.scrollIndicatorInsets = insets
+            self?.scrollView?.contentInset = insets
+            self?.scrollView?.scrollIndicatorInsets = insets
         }
     }
 }
