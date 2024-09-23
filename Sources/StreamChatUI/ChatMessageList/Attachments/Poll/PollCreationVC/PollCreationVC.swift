@@ -279,6 +279,7 @@ open class PollCreationVC:
         longGestureRecognizer.minimumPressDuration = 0.3
         collectionView.addGestureRecognizer(longGestureRecognizer)
 
+        collectionView.keyboardDismissMode = .onDrag
         collectionView.delegate = self
         collectionView.dataSource = self
         collectionView.register(components.pollCreationNameCell)
@@ -427,6 +428,14 @@ open class PollCreationVC:
         cell.onTextChanged = { [weak self] _, newValue in
             self?.name = newValue
         }
+        cell.onReturnKeyPressed = { [weak self, weak collectionView] in
+            guard let collectionView = collectionView else { return true }
+            guard let optionsSectionIndex = self?.sections.firstIndex(of: .options) else { return true }
+            let firstOptionIndexPath = IndexPath(item: 0, section: optionsSectionIndex)
+            let cell = collectionView.cellForItem(at: firstOptionIndexPath) as? PollCreationOptionCell
+            cell?.textFieldView.inputTextField.becomeFirstResponder()
+            return false
+        }
         return cell
     }
 
@@ -459,6 +468,19 @@ open class PollCreationVC:
                 self.options.remove(at: indexPath.item)
                 collectionView.reloadData()
             }
+        }
+        cell.onReturnKeyPressed = { [weak self, weak collectionView, weak cell] in
+            guard let collectionView = collectionView else { return true }
+            guard let cell = cell else { return true }
+            guard let optionsSectionIndex = self?.sections.firstIndex(of: .options) else { return true }
+            guard let currentIndexPath = collectionView.indexPath(for: cell) else { return true }
+            let nextOptionIndexPath = IndexPath(item: currentIndexPath.item + 1, section: optionsSectionIndex)
+            guard let nextCell = collectionView.cellForItem(at: nextOptionIndexPath) as? PollCreationOptionCell else {
+                self?.view.endEditing(true)
+                return true
+            }
+            nextCell.textFieldView.inputTextField.becomeFirstResponder()
+            return false
         }
         return cell
     }

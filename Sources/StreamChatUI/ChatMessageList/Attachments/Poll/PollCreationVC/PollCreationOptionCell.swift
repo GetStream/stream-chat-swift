@@ -5,7 +5,7 @@
 import UIKit
 
 /// The cell for adding an option to the poll.
-open class PollCreationOptionCell: _CollectionViewCell, ThemeProvider {
+open class PollCreationOptionCell: _CollectionViewCell, ThemeProvider, UITextFieldDelegate {
     public struct Content {
         /// The placeholder of the text field.
         public var placeholder: String
@@ -39,10 +39,22 @@ open class PollCreationOptionCell: _CollectionViewCell, ThemeProvider {
     /// A closure to notify that the input text changed.
     public var onTextChanged: ((_ oldValue: String, _ newValue: String) -> Void)?
 
+    /// A closure to notify that the return key was pressed.
+    public var onReturnKeyPressed: (() -> Bool)?
+
+    override open func prepareForReuse() {
+        super.prepareForReuse()
+
+        textFieldView.hideError()
+    }
+
     override open func setUp() {
         super.setUp()
 
         contentView.isUserInteractionEnabled = true
+        textFieldView.inputTextField.delegate = self
+        textFieldView.inputTextField.returnKeyType = .next
+        textFieldView.inputTextField.enablesReturnKeyAutomatically = true
         textFieldView.onTextChanged = { [weak self] oldValue, newValue in
             self?.onTextChanged?(oldValue, newValue)
         }
@@ -92,9 +104,7 @@ open class PollCreationOptionCell: _CollectionViewCell, ThemeProvider {
         textFieldView.inputTextField.text = text
     }
 
-    override open func prepareForReuse() {
-        super.prepareForReuse()
-
-        textFieldView.hideError()
+    open func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        onReturnKeyPressed?() ?? false
     }
 }

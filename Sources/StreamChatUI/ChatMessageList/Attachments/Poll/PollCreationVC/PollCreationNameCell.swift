@@ -5,7 +5,7 @@
 import UIKit
 
 /// The cell for editing the poll's name.
-open class PollCreationNameCell: _CollectionViewCell, ThemeProvider {
+open class PollCreationNameCell: _CollectionViewCell, ThemeProvider, UITextFieldDelegate {
     public struct Content {
         /// The placeholder of the text field.
         public var placeholder: String
@@ -35,10 +35,16 @@ open class PollCreationNameCell: _CollectionViewCell, ThemeProvider {
     /// A closure to notify that the input text changed.
     public var onTextChanged: ((_ oldValue: String, _ newValue: String) -> Void)?
 
+    /// A closure to notify that the return key was pressed.
+    public var onReturnKeyPressed: (() -> Bool)?
+
     override open func setUp() {
         super.setUp()
 
         contentView.isUserInteractionEnabled = true
+        textFieldView.inputTextField.delegate = self
+        textFieldView.inputTextField.returnKeyType = .next
+        textFieldView.inputTextField.enablesReturnKeyAutomatically = true
         textFieldView.onTextChanged = { [weak self] oldValue, newValue in
             self?.onTextChanged?(oldValue, newValue)
         }
@@ -81,5 +87,9 @@ open class PollCreationNameCell: _CollectionViewCell, ThemeProvider {
 
     open func setText(_ text: String) {
         textFieldView.inputTextField.text = text
+    }
+
+    open func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        onReturnKeyPressed?() ?? false
     }
 }

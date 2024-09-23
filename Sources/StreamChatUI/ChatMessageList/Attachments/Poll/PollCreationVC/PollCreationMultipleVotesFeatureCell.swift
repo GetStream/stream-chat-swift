@@ -5,7 +5,7 @@
 import UIKit
 
 /// The cell to configure the multiple votes poll feature.
-open class PollCreationMultipleVotesFeatureCell: _CollectionViewCell, ThemeProvider {
+open class PollCreationMultipleVotesFeatureCell: _CollectionViewCell, ThemeProvider, UITextFieldDelegate {
     public struct Content {
         public var feature: MultipleVotesPollFeature
         public var maximumVotesErrorText: String?
@@ -60,6 +60,8 @@ open class PollCreationMultipleVotesFeatureCell: _CollectionViewCell, ThemeProvi
         super.setUp()
 
         contentView.isUserInteractionEnabled = true
+
+        maximumVotesSwitchView.textFieldView.inputTextField.delegate = self
 
         featureSwitchView.onValueChange = { [weak self] isOn in
             self?.onFeatureEnabledChanged?(isOn)
@@ -153,6 +155,11 @@ open class PollCreationMultipleVotesFeatureCell: _CollectionViewCell, ThemeProvi
         maximumVotesSwitchView.textFieldView.content?.errorText = nil
         onMaximumVotesErrorTextChanged?(nil)
     }
+
+    open func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        textField.resignFirstResponder()
+        return true
+    }
 }
 
 open class PollCreationMaximumVotesSwitchView: _View, ThemeProvider {
@@ -171,6 +178,7 @@ open class PollCreationMaximumVotesSwitchView: _View, ThemeProvider {
     override open func setUp() {
         super.setUp()
 
+        textFieldView.inputTextField.keyboardType = .numbersAndPunctuation
         switchView.addTarget(self, action: #selector(switchChangedValue(sender:)), for: .valueChanged)
     }
 
