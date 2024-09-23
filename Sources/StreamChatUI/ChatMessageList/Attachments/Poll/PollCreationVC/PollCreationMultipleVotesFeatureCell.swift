@@ -4,7 +4,7 @@
 
 import UIKit
 
-/// The cell for the poll creation form to configure the multiple votes feature.
+/// The cell to configure the multiple votes poll feature.
 open class PollCreationMultipleVotesFeatureCell: _CollectionViewCell, ThemeProvider {
     public struct Content {
         public var feature: MultipleVotesPollFeature
@@ -29,7 +29,8 @@ open class PollCreationMultipleVotesFeatureCell: _CollectionViewCell, ThemeProvi
     open private(set) lazy var container = VContainer(spacing: 4)
 
     /// A view that displays the feature name and the switch to enable/disable the feature.
-    open private(set) lazy var featureSwitchView = PollCreationFeatureSwitchView()
+    open private(set) lazy var featureSwitchView = components
+        .pollCreationFeatureSwitchView.init()
         .withoutAutoresizingMaskConstraints
 
     /// A view to configure the maximum votes per user.
@@ -43,9 +44,16 @@ open class PollCreationMultipleVotesFeatureCell: _CollectionViewCell, ThemeProvi
         }
     }
 
+    /// A closure that is triggered whenever the feature is enabled or disabled.
     public var onFeatureEnabledChanged: ((Bool) -> Void)?
+
+    /// A closure that is triggered whenever the maximum votes value changes.
     public var onMaximumVotesValueChanged: ((Int?) -> Void)?
+
+    /// A closure that is triggered whenever the maximum votes text changes.
     public var onMaximumVotesTextChanged: ((String) -> Void)?
+
+    /// A closure that is triggered whenever the validation of the maximum votes changes.
     public var onMaximumVotesErrorTextChanged: ((String?) -> Void)?
 
     override open func setUp() {
@@ -149,7 +157,8 @@ open class PollCreationMultipleVotesFeatureCell: _CollectionViewCell, ThemeProvi
 
 open class PollCreationMaximumVotesSwitchView: _View, ThemeProvider {
     /// A text field that supports showing validator errors.
-    open private(set) lazy var textFieldView = PollCreationTextFieldView()
+    open private(set) lazy var textFieldView = components
+        .pollCreationTextFieldView.init()
         .withoutAutoresizingMaskConstraints
 
     /// A view to switch on or off. Used to enable or disable poll features.

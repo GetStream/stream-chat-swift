@@ -359,6 +359,30 @@ public struct Components {
     /// The item view that displays information in a poll comment item cell.
     public var pollCommentListItemView: PollCommentListItemView.Type = PollCommentListItemView.self
 
+    /// The view controller responsible to create a poll.
+    public var pollCreationVC: PollCreationVC.Type = PollCreationVC.self
+
+    /// The cell for editing the poll's name.
+    public var pollCreationNameCell: PollCreationNameCell.Type = PollCreationNameCell.self
+
+    /// The cell for adding an option to the poll.
+    public var pollCreationOptionCell: PollCreationOptionCell.Type = PollCreationOptionCell.self
+
+    /// The cell for enabling or disabling a poll feature.
+    public var pollCreationFeatureCell: PollCreationFeatureCell.Type = PollCreationFeatureCell.self
+
+    /// The cell to configure the multiple votes poll feature.
+    public var pollCreationMultipleVotesFeatureCell: PollCreationMultipleVotesFeatureCell.Type = PollCreationMultipleVotesFeatureCell.self
+
+    /// The poll creation section header view.
+    public var pollCreationSectionHeaderView: PollCreationSectionHeaderView.Type = PollCreationSectionHeaderView.self
+
+    /// A text field used by the poll creation form to input text and show validation errors.
+    public var pollCreationTextFieldView: PollCreationTextFieldView.Type = PollCreationTextFieldView.self
+
+    /// A view responsible to enable or disable a poll feature.
+    public var pollCreationFeatureSwitchView: PollCreationFeatureSwitchView.Type = PollCreationFeatureSwitchView.self
+
     // MARK: - Reactions
 
     /// The Reaction picker VC.

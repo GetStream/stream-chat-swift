@@ -4,7 +4,7 @@
 
 import UIKit
 
-/// A view that displays the feature name and the switch to enable/disable the feature.
+/// A view responsible to enable or disable a poll feature.
 open class PollCreationFeatureSwitchView: _View, ThemeProvider {
     /// A label to show the name of the feature.
     open private(set) lazy var featureNameLabel = UILabel()

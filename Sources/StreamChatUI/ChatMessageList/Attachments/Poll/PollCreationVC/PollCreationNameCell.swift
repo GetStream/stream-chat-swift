@@ -27,8 +27,9 @@ open class PollCreationNameCell: _CollectionViewCell, ThemeProvider {
     /// The main container that holds the subviews.
     open private(set) lazy var container = HContainer()
 
-    /// A text field that supports showing validator errors.
-    open private(set) lazy var textFieldView = PollCreationTextFieldView()
+    /// A text field that supports showing validation errors.
+    open private(set) lazy var textFieldView = components
+        .pollCreationTextFieldView.init()
         .withoutAutoresizingMaskConstraints
 
     /// A closure to notify that the input text changed.

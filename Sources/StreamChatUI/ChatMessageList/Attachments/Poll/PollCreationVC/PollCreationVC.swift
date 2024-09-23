@@ -39,7 +39,7 @@ public struct PollFeatureType: Equatable {
     }
 }
 
-/// The view controller to create a poll in the given channel.
+/// The view controller to create a poll in a channel.
 open class PollCreationVC:
     _ViewController,
     ThemeProvider,
@@ -62,7 +62,7 @@ open class PollCreationVC:
 
     // MARK: - Content
 
-    /// The sections of the poll creation form.
+    /// The sections of the poll.
     public var sections: [PollCreationSection] = [
         .name,
         .options,
@@ -143,66 +143,101 @@ open class PollCreationVC:
 
     // MARK: - Views
 
+    /// The collection view responsible to render the poll input data.
     open private(set) lazy var collectionView: UICollectionView = {
         let layout = makeCompositionalLayout()
-        let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
+        return UICollectionView(frame: .zero, collectionViewLayout: layout)
             .withoutAutoresizingMaskConstraints
-        return collectionView
     }()
 
-    // MARK: - Compositional Layout
+    /// The estimated cell height.
+    open var estimatedCellHeight: CGFloat {
+        56
+    }
 
+    /// The estimated section header height.
+    open var estimatedSectionHeaderHeight: CGFloat {
+        16
+    }
+
+    /// The leading spacing of the collection's view content.
+    open var leadingSpacing: CGFloat {
+        8
+    }
+
+    /// The trailing spacing of the collection's view content.
+    open var trailingSpacing: CGFloat {
+        8
+    }
+
+    /// Creates the composition layout for the collection view.
     open func makeCompositionalLayout() -> UICollectionViewCompositionalLayout {
         UICollectionViewCompositionalLayout { [weak self] sectionIndex, _ in
             guard let self = self else { return nil }
             let section = self.sections[sectionIndex]
             switch section {
             case .name:
-                return self.createNameSectionLayout()
+                return self.makeNameSectionLayout()
             case .options:
-                return self.createOptionsSectionLayout()
+                return self.makeOptionsSectionLayout()
             case .features:
-                return self.createFeaturesSectionLayout()
+                return self.makeFeaturesSectionLayout()
             default:
                 return nil
             }
         }
     }
 
-    open func createNameSectionLayout() -> NSCollectionLayoutSection {
-        let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .estimated(44))
+    /// Creates the layout for the name section.
+    open func makeNameSectionLayout() -> NSCollectionLayoutSection {
+        let itemSize = NSCollectionLayoutSize(
+            widthDimension: .fractionalWidth(1.0),
+            heightDimension: .estimated(estimatedCellHeight)
+        )
         let item = NSCollectionLayoutItem(layoutSize: itemSize)
         let group = NSCollectionLayoutGroup.horizontal(layoutSize: itemSize, subitems: [item])
         let section = NSCollectionLayoutSection(group: group)
-        section.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 8, bottom: 8, trailing: 8)
-        section.boundarySupplementaryItems = [createHeaderItem()]
+        section.contentInsets = .init(top: 0, leading: leadingSpacing, bottom: 8, trailing: trailingSpacing)
+        section.boundarySupplementaryItems = [makeSectionHeaderItem()]
         return section
     }
 
-    open func createOptionsSectionLayout() -> NSCollectionLayoutSection {
-        let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .estimated(44))
+    /// Creates the layout for the options section.
+    open func makeOptionsSectionLayout() -> NSCollectionLayoutSection {
+        let itemSize = NSCollectionLayoutSize(
+            widthDimension: .fractionalWidth(1.0),
+            heightDimension: .estimated(estimatedCellHeight)
+        )
         let item = NSCollectionLayoutItem(layoutSize: itemSize)
         let group = NSCollectionLayoutGroup.vertical(layoutSize: itemSize, subitems: [item])
         let section = NSCollectionLayoutSection(group: group)
-        section.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 8, bottom: 8, trailing: 8)
+        section.contentInsets = .init(top: 0, leading: leadingSpacing, bottom: 8, trailing: trailingSpacing)
         section.interGroupSpacing = 8
-        section.boundarySupplementaryItems = [createHeaderItem()]
+        section.boundarySupplementaryItems = [makeSectionHeaderItem()]
         return section
     }
 
-    open func createFeaturesSectionLayout() -> NSCollectionLayoutSection {
-        let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .estimated(44))
+    /// Creates the layout for the features section.
+    open func makeFeaturesSectionLayout() -> NSCollectionLayoutSection {
+        let itemSize = NSCollectionLayoutSize(
+            widthDimension: .fractionalWidth(1.0),
+            heightDimension: .estimated(estimatedCellHeight)
+        )
         let item = NSCollectionLayoutItem(layoutSize: itemSize)
         let group = NSCollectionLayoutGroup.vertical(layoutSize: itemSize, subitems: [item])
         let section = NSCollectionLayoutSection(group: group)
-        section.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 8, bottom: 0, trailing: 8)
+        section.contentInsets = .init(top: 0, leading: leadingSpacing, bottom: 0, trailing: trailingSpacing)
         section.interGroupSpacing = 8
-        section.boundarySupplementaryItems = [createHeaderItem()]
+        section.boundarySupplementaryItems = [makeSectionHeaderItem()]
         return section
     }
 
-    open func createHeaderItem() -> NSCollectionLayoutBoundarySupplementaryItem {
-        let headerSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .estimated(16))
+    /// Creates the supplementary header view for each section.
+    open func makeSectionHeaderItem() -> NSCollectionLayoutBoundarySupplementaryItem {
+        let headerSize = NSCollectionLayoutSize(
+            widthDimension: .fractionalWidth(1.0),
+            heightDimension: .estimated(estimatedSectionHeaderHeight)
+        )
         return NSCollectionLayoutBoundarySupplementaryItem(
             layoutSize: headerSize,
             elementKind: UICollectionView.elementKindSectionHeader,
@@ -212,7 +247,7 @@ open class PollCreationVC:
 
     /// The button to create the poll.
     open private(set) lazy var createPollButton = UIBarButtonItem(
-        image: UIImage(systemName: "paperplane.fill")!, // TODO: use appearance
+        image: appearance.images.pollCreationSendIcon,
         style: .plain,
         target: self,
         action: #selector(createPoll)
@@ -246,14 +281,14 @@ open class PollCreationVC:
 
         collectionView.delegate = self
         collectionView.dataSource = self
-        collectionView.register(PollCreationNameCell.self)
-        collectionView.register(PollCreationOptionCell.self)
-        collectionView.register(PollCreationFeatureCell.self)
-        collectionView.register(PollCreationMultipleVotesFeatureCell.self)
+        collectionView.register(components.pollCreationNameCell)
+        collectionView.register(components.pollCreationOptionCell)
+        collectionView.register(components.pollCreationFeatureCell)
+        collectionView.register(components.pollCreationMultipleVotesFeatureCell)
         collectionView.register(
-            PollCreationSectionHeaderView.self,
+            components.pollCreationSectionHeaderView,
             forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader,
-            withReuseIdentifier: String(describing: PollCreationSectionHeaderView.self)
+            withReuseIdentifier: String(describing: components.pollCreationSectionHeaderView)
         )
     }
 
@@ -317,18 +352,20 @@ open class PollCreationVC:
         }
     }
 
-    open func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
+    open func collectionView(
+        _ collectionView: UICollectionView,
+        viewForSupplementaryElementOfKind kind: String,
+        at indexPath: IndexPath
+    ) -> UICollectionReusableView {
         guard kind == UICollectionView.elementKindSectionHeader else {
             return UICollectionReusableView()
         }
 
-        guard let view = collectionView.dequeueReusableSupplementaryView(
+        let view = collectionView.dequeueReusableSupplementaryView(
+            with: components.pollCreationSectionHeaderView,
             ofKind: kind,
-            withReuseIdentifier: String(describing: PollCreationSectionHeaderView.self),
             for: indexPath
-        ) as? PollCreationSectionHeaderView else {
-            return UICollectionReusableView()
-        }
+        )
 
         let section = sections[indexPath.section]
         switch section {
@@ -368,6 +405,7 @@ open class PollCreationVC:
     ) -> IndexPath {
         switch sections[proposedIndexPath.section] {
         case .options:
+            // Do not allow moving option after the cell to create a new option.
             if proposedIndexPath.item == options.count - 1 {
                 return originalIndexPath
             }
@@ -380,7 +418,7 @@ open class PollCreationVC:
     // MARK: - Cell Configuration
 
     open func pollNameCell(at indexPath: IndexPath) -> PollCreationNameCell {
-        let cell = collectionView.dequeueReusableCell(with: PollCreationNameCell.self, for: indexPath)
+        let cell = collectionView.dequeueReusableCell(with: components.pollCreationNameCell, for: indexPath)
         cell.content = .init(
             placeholder: "Ask a question",
             errorText: nil
@@ -394,7 +432,7 @@ open class PollCreationVC:
 
     open func pollOptionCell(at indexPath: IndexPath) -> PollCreationOptionCell {
         let isLastItem = indexPath.item == options.count - 1
-        let cell = collectionView.dequeueReusableCell(with: PollCreationOptionCell.self, for: indexPath)
+        let cell = collectionView.dequeueReusableCell(with: components.pollCreationOptionCell, for: indexPath)
         let option = options[indexPath.item]
         cell.content = .init(
             placeholder: "Add an option",
@@ -425,9 +463,18 @@ open class PollCreationVC:
         return cell
     }
 
+    open func pollBasicFeatureCell(at indexPath: IndexPath, feature: PollFeature) -> PollCreationFeatureCell {
+        let cell = collectionView.dequeueReusableCell(
+            with: components.pollCreationFeatureCell,
+            for: indexPath
+        )
+        cell.content = .init(featureName: feature.name)
+        return cell
+    }
+
     open func pollMultipleVotesFeatureCell(at indexPath: IndexPath) -> PollCreationMultipleVotesFeatureCell {
         let cell = collectionView.dequeueReusableCell(
-            with: PollCreationMultipleVotesFeatureCell.self,
+            with: components.pollCreationMultipleVotesFeatureCell,
             for: indexPath
         )
         cell.content = .init(
@@ -451,20 +498,17 @@ open class PollCreationVC:
         return cell
     }
 
-    open func pollBasicFeatureCell(at indexPath: IndexPath, feature: PollFeature) -> PollCreationFeatureCell {
-        let cell = collectionView.dequeueReusableCell(
-            with: PollCreationFeatureCell.self,
-            for: indexPath
-        )
-        cell.content = .init(featureName: feature.name)
-        return cell
-    }
-
     // MARK: - Update Content
 
     override open func updateContent() {
         super.updateContent()
 
+        validatePollOptions()
+        createPollButton.isEnabled = canCreatePoll
+    }
+
+    /// Validates if the poll options contain any errors.
+    open func validatePollOptions() {
         optionsErrorIndices = [:]
         options.enumerated().forEach { offset, option in
             guard let optionsSectionIndex = sections.firstIndex(of: .options) else { return }
@@ -477,8 +521,6 @@ open class PollCreationVC:
             }
             cell?.content?.errorText = optionsErrorIndices[offset]
         }
-
-        createPollButton.isEnabled = canCreatePoll
     }
 
     // MARK: - Actions

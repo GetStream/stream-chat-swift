@@ -4,7 +4,7 @@
 
 import UIKit
 
-/// The cell for the poll creation form that displays a text field and supports showing validator errors.
+/// The cell for adding an option to the poll.
 open class PollCreationOptionCell: _CollectionViewCell, ThemeProvider {
     public struct Content {
         /// The placeholder of the text field.
@@ -27,12 +27,13 @@ open class PollCreationOptionCell: _CollectionViewCell, ThemeProvider {
     /// The main container that holds the subviews.
     open private(set) lazy var container = HContainer(alignment: .center)
 
-    /// A text field that supports showing validator errors.
-    open private(set) lazy var textFieldView = PollCreationTextFieldView()
+    /// A text field that supports showing validation errors.
+    open private(set) lazy var textFieldView = components
+        .pollCreationTextFieldView.init()
         .withoutAutoresizingMaskConstraints
 
     /// The image view that shows the reorder icon.
-    open private(set) lazy var reorderImageView = UIImageView(image: .init(systemName: "line.3.horizontal"))
+    open private(set) lazy var reorderImageView = UIImageView()
         .withoutAutoresizingMaskConstraints
 
     /// A closure to notify that the input text changed.
@@ -53,6 +54,7 @@ open class PollCreationOptionCell: _CollectionViewCell, ThemeProvider {
         backgroundColor = appearance.colorPalette.background
         container.backgroundColor = appearance.colorPalette.background1
         container.layer.cornerRadius = 16
+        reorderImageView.image = appearance.images.pollReorderIcon
         reorderImageView.tintColor = appearance.colorPalette.textLowEmphasis
     }
 

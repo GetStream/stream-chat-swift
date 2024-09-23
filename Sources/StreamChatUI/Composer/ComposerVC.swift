@@ -817,7 +817,7 @@ open class ComposerVC: _ViewController,
         else {
             return
         }
-        let pollCreationVC = PollCreationVC(channelController: channelController)
+        let pollCreationVC = components.pollCreationVC.init(channelController: channelController)
         let navVC = UINavigationController(rootViewController: pollCreationVC)
         present(navVC, animated: true)
     }

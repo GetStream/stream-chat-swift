@@ -4,7 +4,7 @@
 
 import UIKit
 
-/// The cell for the poll creation form that displays the name of a feature and the switch button to enable it.
+/// The cell for enabling or disabling a poll feature.
 open class PollCreationFeatureCell: _CollectionViewCell, ThemeProvider {
     public struct Content {
         public var featureName: String
@@ -24,7 +24,8 @@ open class PollCreationFeatureCell: _CollectionViewCell, ThemeProvider {
     open private(set) lazy var container = HContainer()
 
     /// A view that displays the feature name and the switch to enable/disable the feature.
-    open private(set) lazy var featureSwitchView = PollCreationFeatureSwitchView()
+    open private(set) lazy var featureSwitchView = components
+        .pollCreationFeatureSwitchView.init()
         .withoutAutoresizingMaskConstraints
 
     /// A closure that is triggered whenever the switch value changes.

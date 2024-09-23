@@ -73,6 +73,18 @@ extension UICollectionView {
     func dequeueReusableCell<Cell: UICollectionViewCell>(with type: Cell.Type, for indexPath: IndexPath, reuseIdentifier: String? = nil) -> Cell {
         dequeueReusableCell(withReuseIdentifier: reuseIdentifier ?? type.reuseIdentifier, for: indexPath) as! Cell
     }
+
+    func dequeueReusableSupplementaryView<View: UICollectionReusableView>(
+        with type: View.Type,
+        ofKind kind: String,
+        for indexPath: IndexPath
+    ) -> View {
+        dequeueReusableSupplementaryView(
+            ofKind: kind,
+            withReuseIdentifier: String(describing: type),
+            for: indexPath
+        ) as! View
+    }
 }
 
 // swiftlint:enable force_cast

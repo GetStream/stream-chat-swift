@@ -4,7 +4,7 @@
 
 import UIKit
 
-/// A view that displays an editable text field with an error label to show validation errors.
+/// A text field used by the poll creation form to input text and show validation errors.
 open class PollCreationTextFieldView: _View, ThemeProvider {
     public struct Content {
         /// The placeholder of the text field.
