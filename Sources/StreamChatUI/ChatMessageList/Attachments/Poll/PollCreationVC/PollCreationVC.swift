@@ -44,7 +44,8 @@ open class PollCreationVC:
     _ViewController,
     ThemeProvider,
     UICollectionViewDelegate,
-    UICollectionViewDataSource {
+    UICollectionViewDataSource,
+    UIAdaptivePresentationControllerDelegate {
     // MARK: - Dependencies
 
     /// The channel controller to create the poll in the given channel.
@@ -131,6 +132,12 @@ open class PollCreationVC:
         didSet {
             updateContentIfNeeded()
         }
+    }
+
+    /// A boolean value indicating if the user has made any changes to the poll or not.
+    /// By default this boolean is used to check if the user wants to discard his changes or not.
+    open var hasChanges: Bool {
+        name.isEmpty == false || options.count > 1
     }
 
     /// A boolean value indicating if there are no errors and it is possible to create the poll.
@@ -253,6 +260,13 @@ open class PollCreationVC:
         action: #selector(createPoll)
     )
 
+    open private(set) lazy var cancelButton = UIBarButtonItem(
+        title: "Cancel",
+        style: .plain,
+        target: self,
+        action: #selector(cancelPoll)
+    )
+
     /// Component responsible for setting the correct offset when keyboard frame is changed.
     open lazy var keyboardHandler: KeyboardHandler = DefaultScrollViewKeyboardHandler(
         scrollView: self.collectionView
@@ -274,6 +288,8 @@ open class PollCreationVC:
 
     override open func setUp() {
         super.setUp()
+
+        navigationController?.presentationController?.delegate = self
 
         let longGestureRecognizer = UILongPressGestureRecognizer(target: self, action: #selector(handleLongPressGesture))
         longGestureRecognizer.minimumPressDuration = 0.3
@@ -299,6 +315,7 @@ open class PollCreationVC:
         title = "Create Poll"
         collectionView.backgroundColor = appearance.colorPalette.background
         navigationItem.rightBarButtonItems = [createPollButton]
+        navigationItem.leftBarButtonItems = [cancelButton]
     }
 
     override open func setUpLayout() {
@@ -545,7 +562,26 @@ open class PollCreationVC:
         }
     }
 
+    // MARK: - Presentation Delegate
+
+    open func presentationControllerShouldDismiss(_ presentationController: UIPresentationController) -> Bool {
+        !hasChanges
+    }
+
+    open func presentationControllerDidAttemptToDismiss(_ presentationController: UIPresentationController) {
+        showDismissConfirmation()
+    }
+
     // MARK: - Actions
+
+    /// The cancel button was tapped.
+    @objc open func cancelPoll() {
+        if hasChanges {
+            showDismissConfirmation()
+            return
+        }
+        dismiss(animated: true)
+    }
 
     /// Creates the poll with the current configuration.
     @objc open func createPoll() {
@@ -566,6 +602,23 @@ open class PollCreationVC:
         }
     }
 
+    /// Shows an alert for the user to confirm it wants to discard his changes.
+    open func showDismissConfirmation() {
+        let alert = UIAlertController(
+            title: nil,
+            message: "Are you sure you want to discard your poll?",
+            preferredStyle: .actionSheet
+        )
+
+        alert.addAction(UIAlertAction(title: "Discard Changes", style: .destructive, handler: { _ in
+            self.dismiss(animated: true, completion: nil)
+        }))
+        alert.addAction(UIAlertAction(title: "Keep Editing", style: .cancel, handler: nil))
+
+        present(alert, animated: true, completion: nil)
+    }
+
+    /// Handles the poll creation response.
     open func handleCreatePollResponse(result: Result<MessageId, Error>) {
         switch result {
         case .success:
@@ -575,6 +628,7 @@ open class PollCreationVC:
         }
     }
 
+    /// Manages the dragging and sorting of the collection view cells.
     @objc open func handleLongPressGesture(gesture: UILongPressGestureRecognizer) {
         switch gesture.state {
         case .began:
