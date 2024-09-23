@@ -157,6 +157,11 @@ open class PollCreationVC:
             .withoutAutoresizingMaskConstraints
     }()
 
+    /// The router object that handles presenting alerts.
+    open lazy var alertsRouter: AlertsRouter = components
+        .alertsRouter
+        .init(rootViewController: self)
+
     /// The estimated cell height.
     open var estimatedCellHeight: CGFloat {
         56
@@ -585,6 +590,7 @@ open class PollCreationVC:
 
     /// Creates the poll with the current configuration.
     @objc open func createPoll() {
+        createPollButton.isEnabled = false
         channelController.createPoll(
             name: name,
             allowAnswers: commentsFeature.isEnabled,
@@ -598,24 +604,16 @@ open class PollCreationVC:
                 .map { PollOption(text: $0) },
             extraData: nil
         ) { [weak self] result in
+            self?.createPollButton.isEnabled = true
             self?.handleCreatePollResponse(result: result)
         }
     }
 
     /// Shows an alert for the user to confirm it wants to discard his changes.
     open func showDismissConfirmation() {
-        let alert = UIAlertController(
-            title: nil,
-            message: "Are you sure you want to discard your poll?",
-            preferredStyle: .actionSheet
-        )
-
-        alert.addAction(UIAlertAction(title: "Discard Changes", style: .destructive, handler: { _ in
-            self.dismiss(animated: true, completion: nil)
-        }))
-        alert.addAction(UIAlertAction(title: "Keep Editing", style: .cancel, handler: nil))
-
-        present(alert, animated: true, completion: nil)
+        alertsRouter.showPollDiscardChangesAlert { [weak self] in
+            self?.dismiss(animated: true)
+        }
     }
 
     /// Handles the poll creation response.
@@ -624,7 +622,7 @@ open class PollCreationVC:
         case .success:
             dismiss(animated: true)
         case .failure:
-            dismiss(animated: true)
+            alertsRouter.showPollCreationErrorAlert()
         }
     }
 
