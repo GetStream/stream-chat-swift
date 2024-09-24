@@ -53,7 +53,12 @@ final class ChannelListLinker {
             EventObserver(
                 notificationCenter: nc,
                 transform: { $0 as? ChannelUpdatedEvent },
-                callback: { [weak self] event in self?.unlinkChannelIfNeeded(event.channel) }
+                callback: { [weak self] event in
+                    guard let self else { return }
+                    let shouldUnlink = self.unlinkChannelIfNeeded(event.channel)
+                    guard !shouldUnlink else { return }
+                    self.linkChannelIfNeeded(event.channel)
+                }
             ),
             EventObserver(
                 notificationCenter: nc,
@@ -83,9 +88,10 @@ final class ChannelListLinker {
     }
     
     /// Handles if a channel should be linked to the current query or not.
-    private func linkChannelIfNeeded(_ channel: ChatChannel) {
-        guard shouldChannelBelongToCurrentQuery(channel) else { return }
+    @discardableResult private func linkChannelIfNeeded(_ channel: ChatChannel) -> Bool {
+        guard shouldChannelBelongToCurrentQuery(channel) else { return false }
         isInChannelList(channel) { [worker, query] exists in
+            print(#function, exists, channel.cid)
             guard !exists else { return }
             worker.link(channel: channel, with: query) { error in
                 if let error = error {
@@ -100,15 +106,18 @@ final class ChannelListLinker {
                 }
             }
         }
+        return true
     }
 
     /// Handles if a channel should be unlinked from the current query or not.
-    private func unlinkChannelIfNeeded(_ channel: ChatChannel) {
-        guard !shouldChannelBelongToCurrentQuery(channel) else { return }
+    @discardableResult private func unlinkChannelIfNeeded(_ channel: ChatChannel) -> Bool {
+        guard !shouldChannelBelongToCurrentQuery(channel) else { return false }
         isInChannelList(channel) { [worker, query] exists in
+            print(#function, exists, channel.cid)
             guard exists else { return }
             worker.unlink(channel: channel, with: query)
         }
+        return true
     }
 
     /// Checks if the given channel should belong to the current query or not.
