@@ -604,8 +604,10 @@ lane :test_ui do |options|
     next if png_files.empty?
 
     # Discard all files apart from the snapshots
-    png_files.each { |png| sh("git add #{png}") || true }
-    sh('git restore .')
+    Dir.chdir('..') do
+      png_files.each { |png| sh("git add #{png}") || true }
+      sh('git restore .')
+    end
 
     pr_create(
       title: '[CI] Snapshots',
