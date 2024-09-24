@@ -362,11 +362,23 @@ open class PollCreationVC:
             case .multipleVotes:
                 return pollMultipleVotesFeatureCell(at: indexPath)
             case .anonymous:
-                return pollBasicFeatureCell(at: indexPath, feature: anonymousFeature)
+                let basicFeatureCell = pollBasicFeatureCell(at: indexPath, feature: anonymousFeature)
+                basicFeatureCell.onValueChange = { [weak self] newValue in
+                    self?.anonymousFeature.isEnabled = newValue
+                }
+                return basicFeatureCell
             case .suggestions:
-                return pollBasicFeatureCell(at: indexPath, feature: suggestionsFeature)
+                let basicFeatureCell = pollBasicFeatureCell(at: indexPath, feature: suggestionsFeature)
+                basicFeatureCell.onValueChange = { [weak self] newValue in
+                    self?.suggestionsFeature.isEnabled = newValue
+                }
+                return basicFeatureCell
             case .comments:
-                return pollBasicFeatureCell(at: indexPath, feature: commentsFeature)
+                let basicFeatureCell = pollBasicFeatureCell(at: indexPath, feature: commentsFeature)
+                basicFeatureCell.onValueChange = { [weak self] newValue in
+                    self?.commentsFeature.isEnabled = newValue
+                }
+                return basicFeatureCell
             default:
                 return UICollectionViewCell()
             }
