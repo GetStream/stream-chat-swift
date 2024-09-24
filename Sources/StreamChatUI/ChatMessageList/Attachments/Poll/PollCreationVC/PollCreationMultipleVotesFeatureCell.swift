@@ -56,6 +56,16 @@ open class PollCreationMultipleVotesFeatureCell: _CollectionViewCell, ThemeProvi
     /// A closure that is triggered whenever the validation of the maximum votes changes.
     public var onMaximumVotesErrorTextChanged: ((String?) -> Void)?
 
+    /// The text for the maximum votes input placeholder.
+    open var maximumVotesPlaceholderText: String {
+        L10n.Polls.Creation.maximumVotesPlaceholder
+    }
+
+    /// The error text for the maximum votes input.
+    open var maximumVotesErrorText: String {
+        L10n.Polls.Creation.maximumVotesError
+    }
+
     override open func setUp() {
         super.setUp()
 
@@ -112,18 +122,20 @@ open class PollCreationMultipleVotesFeatureCell: _CollectionViewCell, ThemeProvi
         featureSwitchView.switchView.isOn = content.feature.isEnabled
         maximumVotesSwitchView.isHidden = !content.feature.isEnabled
         maximumVotesSwitchView.textFieldView.content = .init(
-            placeholder: "Maximum votes per person",
+            placeholder: maximumVotesPlaceholderText,
             errorText: content.maximumVotesErrorText
         )
     }
 
+    /// Sets the maximum votes in the maximum votes switch view.
     open func setMaximumVotesText(_ text: String) {
         maximumVotesSwitchView.textFieldView.setText(text)
     }
 
+    /// Validates the maximum votes text and shows an error if it is not valid.
     open func validateMaximumVotesValue(_ newValue: String) {
-        let errorText = "Type a number from 1 and 10"
-        
+        let errorText = maximumVotesErrorText
+
         if newValue.isEmpty && maximumVotesSwitchView.switchView.isOn {
             showMaxVotesError(message: errorText)
             return
@@ -146,11 +158,13 @@ open class PollCreationMultipleVotesFeatureCell: _CollectionViewCell, ThemeProvi
         onMaximumVotesValueChanged?(value)
     }
 
+    /// Shows an error in the maximum votes switch view.
     open func showMaxVotesError(message: String) {
         maximumVotesSwitchView.textFieldView.content?.errorText = message
         onMaximumVotesErrorTextChanged?(message)
     }
 
+    /// Clears the error of the maximum votes switch view.
     open func clearMaxVotesError() {
         maximumVotesSwitchView.textFieldView.content?.errorText = nil
         onMaximumVotesErrorTextChanged?(nil)

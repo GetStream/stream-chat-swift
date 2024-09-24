@@ -97,26 +97,26 @@ open class PollCreationVC:
 
     /// The multiple votes feature configuration.
     public var multipleVotesFeature = MultipleVotesPollFeature(
-        name: "Multiple votes",
+        name: L10n.Polls.Creation.multipleVotes,
         isEnabled: false,
         config: .disabled
     )
 
     /// The anonymous feature configuration.
     public var anonymousFeature = BasicPollFeature(
-        name: "Anonymous poll",
+        name: L10n.Polls.Creation.anonymousPoll,
         isEnabled: false
     )
 
     /// The allow suggestions feature configuration.
     public var suggestionsFeature = BasicPollFeature(
-        name: "Suggest an option",
+        name: L10n.Polls.Creation.suggestAnOption,
         isEnabled: false
     )
 
     /// The allow comments feature configuration.
     public var commentsFeature = BasicPollFeature(
-        name: "Add a comment",
+        name: L10n.Polls.Creation.addAComment,
         isEnabled: false
     )
 
@@ -265,8 +265,9 @@ open class PollCreationVC:
         action: #selector(createPoll)
     )
 
+    /// The button to cancel the poll creation.
     open private(set) lazy var cancelButton = UIBarButtonItem(
-        title: "Cancel",
+        title: L10n.Polls.Creation.cancel,
         style: .plain,
         target: self,
         action: #selector(cancelPoll)
@@ -405,9 +406,9 @@ open class PollCreationVC:
         let section = sections[indexPath.section]
         switch section {
         case .name:
-            view.content = .init(title: "Question")
+            view.content = .init(title: L10n.Polls.Creation.questionTitle)
         case .options:
-            view.content = .init(title: "Options")
+            view.content = .init(title: L10n.Polls.Creation.optionsTitle)
         default:
             view.content = nil
         }
@@ -455,7 +456,7 @@ open class PollCreationVC:
     open func pollNameCell(at indexPath: IndexPath) -> PollCreationNameCell {
         let cell = collectionView.dequeueReusableCell(with: components.pollCreationNameCell, for: indexPath)
         cell.content = .init(
-            placeholder: "Ask a question",
+            placeholder: L10n.Polls.Creation.askAQuestionPlaceholder,
             errorText: nil
         )
         cell.setText(name)
@@ -478,7 +479,7 @@ open class PollCreationVC:
         let cell = collectionView.dequeueReusableCell(with: components.pollCreationOptionCell, for: indexPath)
         let option = options[indexPath.item]
         cell.content = .init(
-            placeholder: "Add an option",
+            placeholder: L10n.Polls.Creation.addAnOptionPlaceholder,
             errorText: optionsErrorIndices[indexPath.item]
         )
         cell.reorderImageView.isHidden = option.isEmpty && isLastItem
@@ -573,7 +574,7 @@ open class PollCreationVC:
             var otherOptions = options
             otherOptions.remove(at: offset)
             if !option.isEmpty && otherOptions.contains(where: { $0 == option }) {
-                optionsErrorIndices[offset] = "This is already an option"
+                optionsErrorIndices[offset] = L10n.Polls.Creation.alreadyAnOptionError
             }
             cell?.content?.errorText = optionsErrorIndices[offset]
         }

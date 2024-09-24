@@ -264,6 +264,31 @@
 /// Shown in the poll comments table footer view in the button to update the comment.
 "polls.update-comment" = "Update your Comment";
 
+/// The multiple votes name feature shown in the poll creation view.
+"polls.creation.multiple-votes" = "Multiple votes";
+/// The anonymous poll feature name shown in the poll creation view.
+"polls.creation.anonymous-poll" = "Anonymous poll";
+/// The suggestions feature name shown in the poll creation view.
+"polls.creation.suggest-an-option" = "Suggest an option";
+/// The comments feature name shown in the poll creation view.
+"polls.creation.add-a-comment" = "Add a comment";
+/// The cancel button text to close the poll creation view.
+"polls.creation.cancel" = "Cancel";
+/// The question section title for the poll creation view.
+"polls.creation.question-title" = "Question";
+/// The question section title for the poll creation view.
+"polls.creation.options-title" = "Options";
+/// The placeholder for the poll name input field.
+"polls.creation.ask-a-question-placeholder" = "Ask a question";
+/// The placeholder for the adding an option input field.
+"polls.creation.add-an-option-placeholder" = "Add an option";
+/// The error in case the poll option already exists.
+"polls.creation.already-an-option-error" = "This is already an option";
+/// The text for the maximum votes input placeholder.
+"polls.creation.maximum-votes-placeholder" = "Maximum votes per person";
+/// The error text for the maximum votes input.
+"polls.creation.maximum-votes-error" = "Type a number from 1 and 10";
+
 /// Shown in the channel list or thread list message preview in case someone voted a poll.
 "message.preview.poll-someone-voted" = "%@ voted:";
 /// Shown in the channel list or thread list message preview in case the current user voted a poll.
@@ -285,6 +310,16 @@
 "alert.poll.send" = "Send";
 /// Alert end action when closing a poll.
 "alert.poll.end" = "End";
+/// The alert message when discarding poll changes.
+"alert.poll.discard-changes-message" = "Are you sure you want to discard your poll?";
+/// The text shown on poll alerts to discard the current changes.
+"alert.poll.discard-changes" = "Discard Changes";
+/// The text shown pol alerts to keep editing the current changes.
+"alert.poll.keep-editing" = "Keep Editing";
+/// A generic error title for when poll actions fail.
+"alert.poll.generic-error-title" = "Something went wrong!";
+/// An error message displayed when creating a poll fails.
+"alert.poll.create-error-message" = "It was not possible to create the poll.";
 
 /// Shown in the composer's picker view to create a poll.
 "composer.picker.poll" = "Create Poll";
