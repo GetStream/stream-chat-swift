@@ -7,10 +7,10 @@ import UIKit
 /// The cell for enabling or disabling a poll feature.
 open class PollCreationFeatureCell: _CollectionViewCell, ThemeProvider {
     public struct Content {
-        public var featureName: String
+        public var feature: PollFeature
 
-        public init(featureName: String) {
-            self.featureName = featureName
+        public init(feature: PollFeature) {
+            self.feature = feature
         }
     }
 
@@ -65,6 +65,11 @@ open class PollCreationFeatureCell: _CollectionViewCell, ThemeProvider {
     override open func updateContent() {
         super.updateContent()
 
-        featureSwitchView.featureNameLabel.text = content?.featureName
+        guard let feature = content?.feature else {
+            return
+        }
+
+        featureSwitchView.switchView.isOn = feature.isEnabled
+        featureSwitchView.featureNameLabel.text = feature.name
     }
 }

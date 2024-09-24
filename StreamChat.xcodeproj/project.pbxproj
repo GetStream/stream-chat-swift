@@ -1725,6 +1725,8 @@
 		ADDB2F602954D43E00BF80DA /* ScrollViewPaginationHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADDB2F5B2954CC0A00BF80DA /* ScrollViewPaginationHandler.swift */; };
 		ADDB2F612954D48A00BF80DA /* InvertedScrollViewPaginationHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADDB2F5D2954CC1700BF80DA /* InvertedScrollViewPaginationHandler.swift */; };
 		ADDB2F632954D48D00BF80DA /* InvertedScrollViewPaginationHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADDB2F5D2954CC1700BF80DA /* InvertedScrollViewPaginationHandler.swift */; };
+		ADDBA9E62CA3117B008E9970 /* PollsConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADDBA9E52CA3117B008E9970 /* PollsConfig.swift */; };
+		ADDBA9E72CA3117B008E9970 /* PollsConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADDBA9E52CA3117B008E9970 /* PollsConfig.swift */; };
 		ADDC07E52C7E18CD00EA0E5F /* PollCommentListVC_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADDC07E42C7E18CD00EA0E5F /* PollCommentListVC_Tests.swift */; };
 		ADDC08052C828F9B00EA0E5F /* PollCreationTextFieldView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADDC08042C828F9B00EA0E5F /* PollCreationTextFieldView.swift */; };
 		ADDC08062C828F9B00EA0E5F /* PollCreationTextFieldView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADDC08042C828F9B00EA0E5F /* PollCreationTextFieldView.swift */; };
@@ -4378,6 +4380,7 @@
 		ADDB2F572954CBA200BF80DA /* ViewPaginationHandling.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewPaginationHandling.swift; sourceTree = "<group>"; };
 		ADDB2F5B2954CC0A00BF80DA /* ScrollViewPaginationHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScrollViewPaginationHandler.swift; sourceTree = "<group>"; };
 		ADDB2F5D2954CC1700BF80DA /* InvertedScrollViewPaginationHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InvertedScrollViewPaginationHandler.swift; sourceTree = "<group>"; };
+		ADDBA9E52CA3117B008E9970 /* PollsConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PollsConfig.swift; sourceTree = "<group>"; };
 		ADDC07E42C7E18CD00EA0E5F /* PollCommentListVC_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PollCommentListVC_Tests.swift; sourceTree = "<group>"; };
 		ADDC08042C828F9B00EA0E5F /* PollCreationTextFieldView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PollCreationTextFieldView.swift; sourceTree = "<group>"; };
 		ADDC08072C828FDB00EA0E5F /* PollCreationFeatureCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PollCreationFeatureCell.swift; sourceTree = "<group>"; };
@@ -8962,6 +8965,7 @@
 		ADF5096C2C5A80EE008F95CD /* Poll */ = {
 			isa = PBXGroup;
 			children = (
+				ADDBA9E52CA3117B008E9970 /* PollsConfig.swift */,
 				ADF5096B2C5A80EE008F95CD /* PollAttachmentViewInjector.swift */,
 				ADF5096A2C5A80EE008F95CD /* PollAttachmentView.swift */,
 				ADF509692C5A80EE008F95CD /* PollAttachmentOptionListView */,
@@ -10424,6 +10428,7 @@
 			files = (
 				BD8EBC3A26442E090052199F /* AttachmentsPreviewVC.swift in Sources */,
 				792057A326416776002B145B /* ChatMentionSuggestionCollectionViewCell.swift in Sources */,
+				ADDBA9E62CA3117B008E9970 /* PollsConfig.swift in Sources */,
 				228190EB256733420048D7C6 /* UIFont+Extensions.swift in Sources */,
 				888123D2255D430B00070D5A /* UIView+Extensions.swift in Sources */,
 				AD158B6526C1873000C104CD /* ChatThreadVC+SwiftUI.swift in Sources */,
@@ -12709,6 +12714,7 @@
 				AD43DE6E2A712B0F0040C0FD /* ChatChannelListSearchVC.swift in Sources */,
 				C121EBD62746A1EA00023E4C /* ChatMessageReactionAppearance.swift in Sources */,
 				AD78F9FB28EC735700BC0FCE /* SwiftyLineProcessor.swift in Sources */,
+				ADDBA9E72CA3117B008E9970 /* PollsConfig.swift in Sources */,
 				C1788F6029C33A1000149883 /* ChatThreadRepliesCountDecorationView.swift in Sources */,
 				40824D0A2A1270BF003B61FD /* VoiceRecordingAttachmentViewInjector.swift in Sources */,
 				ADD738482A8D312B0011FE81 /* ChannelListMessageTimestampFormatter.swift in Sources */,

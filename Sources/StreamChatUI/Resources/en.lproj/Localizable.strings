@@ -264,6 +264,8 @@
 /// Shown in the poll comments table footer view in the button to update the comment.
 "polls.update-comment" = "Update your Comment";
 
+/// The title for the poll creation view.
+"polls.creation.title" = "Create Poll";
 /// The multiple votes name feature shown in the poll creation view.
 "polls.creation.multiple-votes" = "Multiple votes";
 /// The anonymous poll feature name shown in the poll creation view.

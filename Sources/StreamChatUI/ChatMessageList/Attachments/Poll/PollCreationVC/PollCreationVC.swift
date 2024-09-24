@@ -63,6 +63,10 @@ open class PollCreationVC:
 
     // MARK: - Content
 
+    open var pollsConfig: PollsConfig {
+        components.pollsConfig
+    }
+
     /// The sections of the poll.
     public var sections: [PollCreationSection] = [
         .name,
@@ -88,18 +92,18 @@ open class PollCreationVC:
     public var optionsErrorIndices: [Int: String] = [:]
 
     /// The features supported to be enabled in the poll.
-    public var pollFeatures: [PollFeatureType] = [
-        .multipleVotes,
-        .anonymous,
-        .suggestions,
-        .comments
-    ]
+    open lazy var pollFeatures: [PollFeatureType] = [
+        pollsConfig.multipleVotes.configurable ? .multipleVotes : nil,
+        pollsConfig.anonymousPoll.configurable ? .anonymous : nil,
+        pollsConfig.suggestAnOption.configurable ? .suggestions : nil,
+        pollsConfig.addComments.configurable ? .comments : nil
+    ].compactMap { $0 }
 
     /// The multiple votes feature configuration.
     public var multipleVotesFeature = MultipleVotesPollFeature(
         name: L10n.Polls.Creation.multipleVotes,
         isEnabled: false,
-        config: .disabled
+        maxVotesConfig: .init(maxVotes: nil)
     )
 
     /// The anonymous feature configuration.
@@ -295,6 +299,8 @@ open class PollCreationVC:
     override open func setUp() {
         super.setUp()
 
+        configurePollFeaturesSupport()
+
         navigationController?.presentationController?.delegate = self
 
         let longGestureRecognizer = UILongPressGestureRecognizer(target: self, action: #selector(handleLongPressGesture))
@@ -318,7 +324,7 @@ open class PollCreationVC:
     override open func setUpAppearance() {
         super.setUpAppearance()
 
-        title = "Create Poll"
+        title = L10n.Polls.Creation.title
         collectionView.backgroundColor = appearance.colorPalette.background
         navigationItem.rightBarButtonItems = [createPollButton]
         navigationItem.leftBarButtonItems = [cancelButton]
@@ -525,7 +531,7 @@ open class PollCreationVC:
             with: components.pollCreationFeatureCell,
             for: indexPath
         )
-        cell.content = .init(featureName: feature.name)
+        cell.content = .init(feature: feature)
         return cell
     }
 
@@ -540,7 +546,7 @@ open class PollCreationVC:
         )
         cell.setMaximumVotesText(maximumVotesText)
         cell.onMaximumVotesValueChanged = { [weak self] maxVotes in
-            self?.multipleVotesFeature.config.maxVotes = maxVotes
+            self?.multipleVotesFeature.maxVotesConfig?.maxVotes = maxVotes
         }
         cell.onMaximumVotesTextChanged = { [weak self] text in
             self?.maximumVotesText = text
@@ -553,6 +559,22 @@ open class PollCreationVC:
             self?.collectionView.reloadItems(at: [indexPath])
         }
         return cell
+    }
+
+    // MARK: - Poll Features Configuration
+
+    open func configurePollFeaturesSupport() {
+        let isMultipleVotesSupported = pollsConfig.multipleVotes.configurable
+        let isMaxVotesSupported = pollsConfig.maxVotesPerPerson.configurable
+        let isCommentsSupported = pollsConfig.addComments.configurable
+        let isSuggestionsSupported = pollsConfig.suggestAnOption.configurable
+        let isAnonymousPollSupported = pollsConfig.anonymousPoll.configurable
+
+        multipleVotesFeature.isEnabled = isMaxVotesSupported ? pollsConfig.multipleVotes.defaultValue : false
+        multipleVotesFeature.maxVotesConfig = isMaxVotesSupported ? .init(maxVotes: nil) : nil
+        commentsFeature.isEnabled = isCommentsSupported ? pollsConfig.addComments.defaultValue : false
+        suggestionsFeature.isEnabled = isSuggestionsSupported ? pollsConfig.suggestAnOption.defaultValue : false
+        anonymousFeature.isEnabled = isAnonymousPollSupported ? pollsConfig.anonymousPoll.defaultValue : false
     }
 
     // MARK: - Update Content
@@ -610,7 +632,7 @@ open class PollCreationVC:
             allowUserSuggestedOptions: suggestionsFeature.isEnabled,
             description: nil,
             enforceUniqueVote: !multipleVotesFeature.isEnabled,
-            maxVotesAllowed: multipleVotesFeature.config.maxVotes,
+            maxVotesAllowed: multipleVotesFeature.maxVotesConfig?.maxVotes,
             votingVisibility: anonymousFeature.isEnabled ? .anonymous : .public,
             options: options
                 .filter { !$0.isEmpty }

@@ -420,6 +420,8 @@ internal enum L10n {
       internal static var questionTitle: String { L10n.tr("Localizable", "polls.creation.question-title") }
       /// Suggest an option
       internal static var suggestAnOption: String { L10n.tr("Localizable", "polls.creation.suggest-an-option") }
+      /// Create Poll
+      internal static var title: String { L10n.tr("Localizable", "polls.creation.title") }
     }
     internal enum Subtitle {
       /// Select one

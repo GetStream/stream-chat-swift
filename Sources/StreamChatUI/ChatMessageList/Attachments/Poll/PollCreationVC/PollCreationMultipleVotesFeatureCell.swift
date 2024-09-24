@@ -120,7 +120,7 @@ open class PollCreationMultipleVotesFeatureCell: _CollectionViewCell, ThemeProvi
 
         featureSwitchView.featureNameLabel.text = content.feature.name
         featureSwitchView.switchView.isOn = content.feature.isEnabled
-        maximumVotesSwitchView.isHidden = !content.feature.isEnabled
+        maximumVotesSwitchView.isHidden = content.feature.maxVotesConfig == nil ? true : !content.feature.isEnabled
         maximumVotesSwitchView.textFieldView.content = .init(
             placeholder: maximumVotesPlaceholderText,
             errorText: content.maximumVotesErrorText

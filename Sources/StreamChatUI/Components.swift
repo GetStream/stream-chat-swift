@@ -359,6 +359,9 @@ public struct Components {
     /// The item view that displays information in a poll comment item cell.
     public var pollCommentListItemView: PollCommentListItemView.Type = PollCommentListItemView.self
 
+    /// The configuration for the various poll features. It determines if the user can or can not enable certain poll features.
+    public var pollsConfig = PollsConfig()
+
     /// The view controller responsible to create a poll.
     public var pollCreationVC: PollCreationVC.Type = PollCreationVC.self
 

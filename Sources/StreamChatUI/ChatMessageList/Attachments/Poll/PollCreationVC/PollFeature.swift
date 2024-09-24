@@ -31,36 +31,22 @@ public struct MultipleVotesPollFeature: PollFeature {
     public var name: String
     /// A boolean value indicating if the feature is enabled or not.
     public var isEnabled: Bool
-    /// The configuration of the multiple votes feature.
-    public var config: MultipleVotesConfig
+    /// The maximum votes per person configuration. If `nil` it means the max votes feature is not supported.
+    public var maxVotesConfig: MaximumVotesConfig?
 
-    public init(name: String, isEnabled: Bool, config: MultipleVotesConfig) {
+    public init(name: String, isEnabled: Bool, maxVotesConfig: MaximumVotesConfig?) {
         self.name = name
         self.isEnabled = isEnabled
-        self.config = config
+        self.maxVotesConfig = maxVotesConfig
     }
 }
 
-/// The configuration of the multiple votes feature.
-public struct MultipleVotesConfig {
-    /// A boolean value indicating if multiple votes is possible.
-    public var enabled: Bool
-    /// A boolean value indicating if there is a maximum number of votes per user.
+/// The maximum votes per person configuration.
+public struct MaximumVotesConfig {
+    /// The value of the maximum votes per person in case there is any maximum.
     public var maxVotes: Int?
 
-    public init(enabled: Bool, maxVotes: Int? = nil) {
-        self.enabled = enabled
+    public init(maxVotes: Int? = nil) {
         self.maxVotes = maxVotes
-    }
-
-    /// The multiple votes feature is disabled.
-    public static var disabled = Self(enabled: false, maxVotes: nil)
-
-    /// The multiple votes feature is enabled without maximum votes.
-    public static var enabled = Self(enabled: true, maxVotes: nil)
-
-    /// The multiple votes feature is enabled with maximum votes per user.
-    public static func limited(maxVotes: Int) -> Self {
-        .init(enabled: true, maxVotes: maxVotes)
     }
 }
