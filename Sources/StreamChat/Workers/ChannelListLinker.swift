@@ -4,24 +4,24 @@
 
 import Foundation
 
-/// When we receive events, we need to check if a channel should be added or removed from
-/// the current query depending on the following events:
-/// - Channel created: We analyse if the channel should be added to the current query.
-/// - New message sent: This means the channel will reorder and appear on first position,
-///   so we also analyse if it should be added to the current query.
-/// - Channel is updated: We only check if we should remove it from the current query.
-///   We don't try to add it to the current query to not mess with pagination.
+/// Inserts or removes channels from the currently loaded channel list based on web-socket events.
+///
+/// Requires either `filter` or `isChannelAutomaticFilteringEnabled` to be set.
+/// - Channels are inserted (linked) only when they would end up on the currently loaded pages.
+/// - Channels are removed (unlinked) when not on the currently loaded pages.
 final class ChannelListLinker {
     private let clientConfig: ChatClientConfig
     private let databaseContainer: DatabaseContainer
     private var eventObservers = [EventObserver]()
     private let filter: ((ChatChannel) -> Bool)?
+    private let loadedChannels: () -> StreamCollection<ChatChannel>
     private let query: ChannelListQuery
     private let worker: ChannelListUpdater
     
     init(
         query: ChannelListQuery,
         filter: ((ChatChannel) -> Bool)?,
+        loadedChannels: @escaping () -> StreamCollection<ChatChannel>,
         clientConfig: ChatClientConfig,
         databaseContainer: DatabaseContainer,
         worker: ChannelListUpdater
@@ -29,6 +29,7 @@ final class ChannelListLinker {
         self.clientConfig = clientConfig
         self.databaseContainer = databaseContainer
         self.filter = filter
+        self.loadedChannels = loadedChannels
         self.query = query
         self.worker = worker
     }
@@ -38,27 +39,23 @@ final class ChannelListLinker {
         eventObservers = [
             EventObserver(
                 notificationCenter: nc,
-                transform: { $0 as? NotificationAddedToChannelEvent }
-            ) { [weak self] event in self?.linkChannelIfNeeded(event.channel) },
+                transform: { $0 as? NotificationAddedToChannelEvent },
+                callback: { [weak self] event in self?.handleChannel(event.channel) }
+            ),
             EventObserver(
                 notificationCenter: nc,
                 transform: { $0 as? MessageNewEvent },
-                callback: { [weak self] event in self?.linkChannelIfNeeded(event.channel) }
+                callback: { [weak self] event in self?.handleChannel(event.channel) }
             ),
             EventObserver(
                 notificationCenter: nc,
                 transform: { $0 as? NotificationMessageNewEvent },
-                callback: { [weak self] event in self?.linkChannelIfNeeded(event.channel) }
+                callback: { [weak self] event in self?.handleChannel(event.channel) }
             ),
             EventObserver(
                 notificationCenter: nc,
                 transform: { $0 as? ChannelUpdatedEvent },
-                callback: { [weak self] event in
-                    guard let self else { return }
-                    let shouldUnlink = self.unlinkChannelIfNeeded(event.channel)
-                    guard !shouldUnlink else { return }
-                    self.linkChannelIfNeeded(event.channel)
-                }
+                callback: { [weak self] event in self?.handleChannel(event.channel) }
             ),
             EventObserver(
                 notificationCenter: nc,
@@ -67,33 +64,22 @@ final class ChannelListLinker {
                     let context = databaseContainer.backgroundReadOnlyContext
                     context.perform {
                         guard let channel = try? context.channel(cid: event.cid)?.asModel() else { return }
-                        self?.linkChannelIfNeeded(channel)
+                        self?.handleChannel(channel)
                     }
                 }
             )
         ]
     }
-
-    private func isInChannelList(_ channel: ChatChannel, completion: @escaping (Bool) -> Void) {
-        let context = databaseContainer.backgroundReadOnlyContext
-        context.performAndWait { [weak self] in
-            guard let self else { return }
-            if let (channelDTO, queryDTO) = context.getChannelWithQuery(cid: channel.cid, query: self.query) {
-                let isPresent = queryDTO.channels.contains(channelDTO)
-                completion(isPresent)
-            } else {
-                completion(false)
-            }
-        }
+    
+    enum LinkingAction {
+        case link, unlink, none
     }
     
-    /// Handles if a channel should be linked to the current query or not.
-    @discardableResult private func linkChannelIfNeeded(_ channel: ChatChannel) -> Bool {
-        guard shouldChannelBelongToCurrentQuery(channel) else { return false }
-        isInChannelList(channel) { [worker, query] exists in
-            print(#function, exists, channel.cid)
-            guard !exists else { return }
-            worker.link(channel: channel, with: query) { error in
+    private func handleChannel(_ channel: ChatChannel) {
+        let action = linkingActionForChannel(channel)
+        switch action {
+        case .link:
+            worker.link(channel: channel, with: query) { [worker] error in
                 if let error = error {
                     log.error(error)
                     return
@@ -105,33 +91,47 @@ final class ChannelListLinker {
                     )
                 }
             }
+        case .unlink:
+            worker.unlink(channel: channel, with: query) { error in
+                guard let error = error else { return }
+                log.error(error)
+            }
+        case .none:
+            break
         }
-        return true
     }
-
-    /// Handles if a channel should be unlinked from the current query or not.
-    @discardableResult private func unlinkChannelIfNeeded(_ channel: ChatChannel) -> Bool {
-        guard !shouldChannelBelongToCurrentQuery(channel) else { return false }
-        isInChannelList(channel) { [worker, query] exists in
-            print(#function, exists, channel.cid)
-            guard exists else { return }
-            worker.unlink(channel: channel, with: query)
-        }
-        return true
-    }
-
-    /// Checks if the given channel should belong to the current query or not.
-    private func shouldChannelBelongToCurrentQuery(_ channel: ChatChannel) -> Bool {
-        if let filter = filter {
-            return filter(channel)
-        }
-
-        if clientConfig.isChannelAutomaticFilteringEnabled {
+    
+    private func linkingActionForChannel(_ channel: ChatChannel) -> LinkingAction {
+        // Linking/unlinking can only happen when either runtime filter is set or `isChannelAutomaticFilteringEnabled` is true
+        // In other cases the channel list should not be changed.
+        guard filter != nil || clientConfig.isChannelAutomaticFilteringEnabled else { return .none }
+        let belongsToQuery: Bool = {
+            if let filter = filter {
+                return filter(channel)
+            }
             // When auto-filtering is enabled the channel will appear or not automatically if the
             // query matches the DB Predicate. So here we default to saying it always belong to the current query.
-            return true
+            return clientConfig.isChannelAutomaticFilteringEnabled
+        }()
+        
+        let loadedSortedChannels = loadedChannels()
+        if loadedSortedChannels.contains(where: { $0.cid == channel.cid }) {
+            return belongsToQuery ? .none : .unlink
+        } else {
+            // If the channel would be appended, consider it to be part of an old page.
+            if let last = loadedSortedChannels.last {
+                let sort: [Sorting<ChannelListSortingKey>] = query.sort.isEmpty ? [Sorting(key: ChannelListSortingKey.default)] : query.sort
+                let preceedsLastLoaded = [last, channel]
+                    .sorted(using: sort.compactMap(\.sortValue))
+                    .first?.cid == channel.cid
+                if preceedsLastLoaded || loadedSortedChannels.count < query.pagination.pageSize {
+                    return belongsToQuery ? .link : .none
+                } else {
+                    return .none
+                }
+            } else {
+                return belongsToQuery ? .link : .none
+            }
         }
-
-        return false
     }
 }

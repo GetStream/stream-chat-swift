@@ -10,6 +10,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Keep consistent order in channel and member lists when sorting by key with many equal values [#3423](https://github.com/GetStream/stream-chat-swift/pull/3423)
   - Recommendation: Always add at least one unique key to the query's sort
 - Fix a crash with thematic breaks in markdown [#3437](https://github.com/GetStream/stream-chat-swift/pull/3437)
+- In some cases channel was not added to the channel list automatically [#3430](https://github.com/GetStream/stream-chat-swift/pull/3430)
 
 # [4.63.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.63.0)
 _September 12, 2024_

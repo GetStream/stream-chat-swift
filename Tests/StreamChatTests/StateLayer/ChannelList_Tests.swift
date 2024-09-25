@@ -259,7 +259,7 @@ final class ChannelList_Tests: XCTestCase {
             channel: .mock(cid: incomingCid),
             unreadCount: nil,
             member: .mock(id: .unique),
-            createdAt: .unique
+            createdAt: Date()
         )
         // Write the incoming channel to the database
         try await env.client.mockDatabaseContainer.write { session in
