@@ -102,6 +102,7 @@ final class PollCreationVC_Tests: XCTestCase {
         let pollCreationVC = PollCreationVC(channelController: mockChannelController)
         pollCreationVC.name = "Some poll"
         pollCreationVC.options = ["1", "2", "1", ""]
+        pollCreationVC.updateContent()
         XCTAssertFalse(pollCreationVC.canCreatePoll)
     }
 }
