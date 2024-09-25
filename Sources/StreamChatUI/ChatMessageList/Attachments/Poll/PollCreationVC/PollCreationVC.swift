@@ -103,7 +103,7 @@ open class PollCreationVC:
     public var multipleVotesFeature = MultipleVotesPollFeature(
         name: L10n.Polls.Creation.multipleVotes,
         isEnabled: false,
-        maxVotesConfig: .init(maxVotes: nil)
+        maxVotesConfig: .init(isEnabled: false, maxVotes: nil)
     )
 
     /// The anonymous feature configuration.
@@ -570,8 +570,11 @@ open class PollCreationVC:
         let isSuggestionsSupported = pollsConfig.suggestAnOption.configurable
         let isAnonymousPollSupported = pollsConfig.anonymousPoll.configurable
 
-        multipleVotesFeature.isEnabled = isMaxVotesSupported ? pollsConfig.multipleVotes.defaultValue : false
-        multipleVotesFeature.maxVotesConfig = isMaxVotesSupported ? .init(maxVotes: nil) : nil
+        multipleVotesFeature.maxVotesConfig = isMaxVotesSupported ? MaximumVotesConfig(
+            isEnabled: pollsConfig.maxVotesPerPerson.defaultValue,
+            maxVotes: nil
+        ) : nil
+        multipleVotesFeature.isEnabled = isMultipleVotesSupported ? pollsConfig.multipleVotes.defaultValue : false
         commentsFeature.isEnabled = isCommentsSupported ? pollsConfig.addComments.defaultValue : false
         suggestionsFeature.isEnabled = isSuggestionsSupported ? pollsConfig.suggestAnOption.defaultValue : false
         anonymousFeature.isEnabled = isAnonymousPollSupported ? pollsConfig.anonymousPoll.defaultValue : false

@@ -1727,6 +1727,7 @@
 		ADDB2F632954D48D00BF80DA /* InvertedScrollViewPaginationHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADDB2F5D2954CC1700BF80DA /* InvertedScrollViewPaginationHandler.swift */; };
 		ADDBA9E62CA3117B008E9970 /* PollsConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADDBA9E52CA3117B008E9970 /* PollsConfig.swift */; };
 		ADDBA9E72CA3117B008E9970 /* PollsConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADDBA9E52CA3117B008E9970 /* PollsConfig.swift */; };
+		ADDBA9E92CA32D6A008E9970 /* PollCreationVC_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADDBA9E82CA32D6A008E9970 /* PollCreationVC_Tests.swift */; };
 		ADDC07E52C7E18CD00EA0E5F /* PollCommentListVC_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADDC07E42C7E18CD00EA0E5F /* PollCommentListVC_Tests.swift */; };
 		ADDC08052C828F9B00EA0E5F /* PollCreationTextFieldView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADDC08042C828F9B00EA0E5F /* PollCreationTextFieldView.swift */; };
 		ADDC08062C828F9B00EA0E5F /* PollCreationTextFieldView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADDC08042C828F9B00EA0E5F /* PollCreationTextFieldView.swift */; };
@@ -4381,6 +4382,7 @@
 		ADDB2F5B2954CC0A00BF80DA /* ScrollViewPaginationHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScrollViewPaginationHandler.swift; sourceTree = "<group>"; };
 		ADDB2F5D2954CC1700BF80DA /* InvertedScrollViewPaginationHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InvertedScrollViewPaginationHandler.swift; sourceTree = "<group>"; };
 		ADDBA9E52CA3117B008E9970 /* PollsConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PollsConfig.swift; sourceTree = "<group>"; };
+		ADDBA9E82CA32D6A008E9970 /* PollCreationVC_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PollCreationVC_Tests.swift; sourceTree = "<group>"; };
 		ADDC07E42C7E18CD00EA0E5F /* PollCommentListVC_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PollCommentListVC_Tests.swift; sourceTree = "<group>"; };
 		ADDC08042C828F9B00EA0E5F /* PollCreationTextFieldView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PollCreationTextFieldView.swift; sourceTree = "<group>"; };
 		ADDC08072C828FDB00EA0E5F /* PollCreationFeatureCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PollCreationFeatureCell.swift; sourceTree = "<group>"; };
@@ -8365,6 +8367,7 @@
 			isa = PBXGroup;
 			children = (
 				AD142AD02C73BB2300ABCC1F /* PollAttachmentView_Tests.swift */,
+				ADDBA9E82CA32D6A008E9970 /* PollCreationVC_Tests.swift */,
 				ADC1B76C2C763CBC009AFA9B /* PollResultsVC_Tests.swift */,
 				ADC1B7712C7651D8009AFA9B /* PollResultsVoteListVC_Tests.swift */,
 				ADDC07E42C7E18CD00EA0E5F /* PollCommentListVC_Tests.swift */,
@@ -10869,6 +10872,7 @@
 				40824D2F2A1271D7003B61FD /* RecordButton_Tests.swift in Sources */,
 				A3D9D69627EDE87900725066 /* Components_Mock.swift in Sources */,
 				AD25070D272C0C8D00BC14C4 /* ChatMessageReactionAuthorsVC_Tests.swift in Sources */,
+				ADDBA9E92CA32D6A008E9970 /* PollCreationVC_Tests.swift in Sources */,
 				AD158B6726C1876D00C104CD /* ChatChannelVC_Tests.swift in Sources */,
 				849AE664270CB14000423A20 /* VideoAttachmentComposerPreview_Tests.swift in Sources */,
 				40FA4E0D2A12A86800DA21D2 /* RecordingIndicatorView_Tests.swift in Sources */,

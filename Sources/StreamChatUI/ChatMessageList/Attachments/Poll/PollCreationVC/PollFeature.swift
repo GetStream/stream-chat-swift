@@ -43,10 +43,13 @@ public struct MultipleVotesPollFeature: PollFeature {
 
 /// The maximum votes per person configuration.
 public struct MaximumVotesConfig {
+    /// A boolean indicating if maximum votes is enabled.
+    public var isEnabled: Bool
     /// The value of the maximum votes per person in case there is any maximum.
     public var maxVotes: Int?
 
-    public init(maxVotes: Int? = nil) {
+    public init(isEnabled: Bool, maxVotes: Int?) {
+        self.isEnabled = isEnabled
         self.maxVotes = maxVotes
     }
 }
