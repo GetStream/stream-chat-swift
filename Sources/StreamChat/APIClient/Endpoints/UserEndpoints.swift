@@ -18,11 +18,13 @@ extension Endpoint {
 
     static func updateUser(
         id: UserId,
-        payload: UserUpdateRequestBody
+        payload: UserUpdateRequestBody,
+        unset: [String]
     ) -> Endpoint<CurrentUserUpdateResponse> {
         let users: [String: AnyEncodable] = [
             "id": AnyEncodable(id),
-            "set": AnyEncodable(payload)
+            "set": AnyEncodable(payload),
+            "unset": AnyEncodable(unset)
         ]
         let body: [String: AnyEncodable] = [
             "users": AnyEncodable([users])

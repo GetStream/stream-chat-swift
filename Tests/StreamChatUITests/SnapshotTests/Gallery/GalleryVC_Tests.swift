@@ -80,6 +80,7 @@ final class GalleryVC_Tests: XCTestCase {
                 file: try! .init(url: TestImages.chewbacca.url),
                 extraData: nil
             ),
+            downloadingState: nil,
             uploadingState: nil
         )
 

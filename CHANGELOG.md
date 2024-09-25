@@ -5,9 +5,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## StreamChat
 ### ✅ Added
+- Add `ChannelMemberListSortingKey.userId` for sorting channel members by id [#3423](https://github.com/GetStream/stream-chat-swift/pull/3423)
 - Add helper functions to `Poll` that extracts common domain logic [#3374](https://github.com/GetStream/stream-chat-swift/pull/3374)
 ### 🐞 Fixed
-- Fix Logger printing the incorrect thread name [#3382](https://github.com/GetStream/stream-chat-swift/pull/3382)
+- Keep consistent order in channel and member lists when sorting by key with many equal values [#3423](https://github.com/GetStream/stream-chat-swift/pull/3423)
+  - Recommendation: Always add at least one unique key to the query's sort
 - Fix `PollOption.latestVotes` sorting [#3374](https://github.com/GetStream/stream-chat-swift/pull/3374)
 - Fix `Poll.latestAnswers` sorting [#3374](https://github.com/GetStream/stream-chat-swift/pull/3374)
 - Fix `Poll` updates not triggering message updates in `ChannelController` [#3374](https://github.com/GetStream/stream-chat-swift/pull/3374)
@@ -33,6 +35,29 @@ Multiple localizations were added to Polls, for more details please check the st
 - `polls.*`
 - `alert.poll.*`
 - `message.preview.poll-*`
+
+# [4.63.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.63.0)
+_September 12, 2024_
+
+## StreamChat
+### ✅ Added
+- Local attachment downloads ([docs](https://getstream.io/chat/docs/sdk/ios/client/attachment-downloads)) [#3393](https://github.com/GetStream/stream-chat-swift/pull/3393)
+  - Add `downloadAttachment(_:)` and `deleteLocalAttachmentDownload(for:)` to `Chat` and `MessageController`
+  - Add `deleteAllLocalAttachmentDownloads()` to `ConnectedUser` and `CurrentUserController`
+- Add `unset` argument to `CurrentChatUserController.updateUserData` and `ConnectedUser.update` for clearing user data fields [#3404](https://github.com/GetStream/stream-chat-swift/pull/3404)
+- Add `reason` and `extraData` arguments to `ChatUserController.flag(reason:extraData:completion:)` and `ConnectedUser.flag(_:reason:extraData:)` [#3417](https://github.com/GetStream/stream-chat-swift/pull/3417)
+- Add `extraData` argument to `ChatMessageController.flag(reason:extraData:completion:)` and `Chat.flagMessage(_:reason:extraData:)` [#3417](https://github.com/GetStream/stream-chat-swift/pull/3417)
+### 🐞 Fixed
+- Fix Logger printing the incorrect thread name [#3382](https://github.com/GetStream/stream-chat-swift/pull/3382)
+- Channel watching did not resume on web-socket reconnection [#3409](https://github.com/GetStream/stream-chat-swift/pull/3409)
+### 🔄 Changed
+- Discard offline state changes when saving database changes fails [#3399](https://github.com/GetStream/stream-chat-swift/pull/3399)
+- Deprecate `Filter.notEqual` and `Filter.notIn` [#3414](https://github.com/GetStream/stream-chat-swift/pull/3414)
+
+## StreamChatUI
+### ✅ Added
+- Downloading and sharing file attachments in the message list [#3393](https://github.com/GetStream/stream-chat-swift/pull/3393)
+  - Feature toggle for download and share buttons: `Components.default.isDownloadFileAttachmentsEnabled` (default is `false`)
 
 # [4.62.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.62.0)
 _August 15, 2024_

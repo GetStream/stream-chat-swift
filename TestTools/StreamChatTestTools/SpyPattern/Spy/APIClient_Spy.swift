@@ -32,6 +32,11 @@ final class APIClient_Spy: APIClient, Spy {
     @Atomic var unmanagedRequest_completion: Any?
     @Atomic var unmanagedRequest_allRecordedCalls: [(endpoint: AnyEndpoint, completion: Any?)] = []
 
+    @Atomic var downloadFile_remoteURL: URL?
+    @Atomic var downloadFile_localURL: URL?
+    @Atomic var downloadFile_completion_result: Result<Void, Error>?
+    @Atomic var downloadFile_expectation: XCTestExpectation
+    
     /// The last endpoint `uploadFile` function was called with.
     @Atomic var uploadFile_attachment: AnyChatMessageAttachment?
     @Atomic var uploadFile_progress: ((Double) -> Void)?
@@ -62,6 +67,10 @@ final class APIClient_Spy: APIClient, Spy {
         recoveryRequest_allRecordedCalls = []
         recoveryRequest_completion = nil
 
+        downloadFile_remoteURL = nil
+        downloadFile_localURL = nil
+        downloadFile_completion_result = nil
+        
         uploadFile_attachment = nil
         uploadFile_progress = nil
         uploadFile_completion = nil
@@ -74,12 +83,14 @@ final class APIClient_Spy: APIClient, Spy {
         sessionConfiguration: URLSessionConfiguration,
         requestEncoder: RequestEncoder,
         requestDecoder: RequestDecoder,
+        attachmentDownloader: AttachmentDownloader,
         attachmentUploader: AttachmentUploader
     ) {
         init_sessionConfiguration = sessionConfiguration
         init_requestEncoder = requestEncoder
         init_requestDecoder = requestDecoder
         init_attachmentUploader = attachmentUploader
+        downloadFile_expectation = .init()
         request_expectation = .init()
         recoveryRequest_expectation = .init()
         uploadRequest_expectation = .init()
@@ -88,6 +99,7 @@ final class APIClient_Spy: APIClient, Spy {
             sessionConfiguration: sessionConfiguration,
             requestEncoder: requestEncoder,
             requestDecoder: requestDecoder,
+            attachmentDownloader: attachmentDownloader,
             attachmentUploader: attachmentUploader
         )
     }
@@ -155,6 +167,18 @@ final class APIClient_Spy: APIClient, Spy {
         }
     }
 
+    override func downloadFile(
+        from remoteURL: URL,
+        to localURL: URL,
+        progress: ((Double) -> Void)?,
+        completion: @escaping ((any Error)?) -> Void
+    ) {
+        downloadFile_remoteURL = remoteURL
+        downloadFile_localURL = localURL
+        downloadFile_completion_result?.invoke(with: completion)
+        downloadFile_expectation.fulfill()
+    }
+    
     override func uploadAttachment(
         _ attachment: AnyChatMessageAttachment,
         progress: ((Double) -> Void)?,
@@ -204,6 +228,7 @@ extension APIClient_Spy {
             sessionConfiguration: .ephemeral,
             requestEncoder: DefaultRequestEncoder(baseURL: .unique(), apiKey: .init(.unique)),
             requestDecoder: DefaultRequestDecoder(),
+            attachmentDownloader: AttachmentDownloader_Spy(),
             attachmentUploader: AttachmentUploader_Spy()
         )
     }

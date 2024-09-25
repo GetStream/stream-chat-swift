@@ -29,6 +29,7 @@ extension ChatMessageLinkAttachment {
                 assetURL: assetURL,
                 previewURL: previewURL
             ),
+            downloadingState: nil,
             uploadingState: nil
         )
     }

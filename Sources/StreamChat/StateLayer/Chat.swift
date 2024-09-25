@@ -87,6 +87,9 @@ public class Chat {
             channelQuery: query,
             memberSorting: state.memberSorting
         )
+        // Store the watch state
+        await state.setChannelQuery(query)
+        
         client.syncRepository.startTrackingChat(self)
         // cid is retrieved from the server when we are creating new channels or there is no local state present
         guard query.cid != payload.channel.cid else { return }
@@ -352,16 +355,47 @@ public class Chat {
         return try await messageSender.waitForAPIRequest(messageId: messageId)
     }
     
+    /// Downloads the specified attachment and stores it locally on the device.
+    ///
+    /// The local URL of the downloaded file:
+    /// ```swift
+    /// let downloadedAttachment = try await chat.downloadAttachment(attachment)
+    /// let localURL = downloadedAttachment.downloadingState?.localFileURL
+    /// ```
+    ///
+    /// - Parameter attachment: The attachment to download.
+    ///
+    /// - Note: The local storage URL can change between app launches.
+    ///
+    /// - Throws: An error while downloading the attachment.
+    /// - Returns: An instance of the downloaded attachment which includes the local URL.
+    @discardableResult public func downloadAttachment<Payload>(
+        _ attachment: ChatMessageAttachment<Payload>
+    ) async throws -> ChatMessageAttachment<Payload> where Payload: DownloadableAttachmentPayload {
+        try await messageUpdater.downloadAttachment(attachment)
+    }
+    
+    /// Deletes the locally downloaded file.
+    ///
+    /// - Parameter attachmentId: The id of the attachment.
+    ///
+    /// - SeeAlso: Deleting all the local downloads: ``ConnectedUser/deleteAllLocalAttachmentDownloads()``
+    ///
+    /// - Throws: An error while deleting a downloaded file.
+    public func deleteLocalAttachmentDownload(for attachmentId: AttachmentId) async throws {
+        try await messageUpdater.deleteLocalAttachmentDownload(for: attachmentId)
+    }
+    
     /// Resends a failed attachment.
     ///
-    /// - Parameter attachment: The id of the attachment.
+    /// - Parameter attachmentId: The id of the attachment.
     ///
     /// - Throws: An error while sending a message to the Stream API.
     /// - Returns: The uploaded attachment with additional information like remote and thumbnail URLs.
-    @discardableResult public func resendAttachment(_ attachment: AttachmentId) async throws -> UploadedAttachment {
+    @discardableResult public func resendAttachment(_ attachmentId: AttachmentId) async throws -> UploadedAttachment {
         let attachmentQueueUploader = try client.backgroundWorker(of: AttachmentQueueUploader.self)
-        try await messageUpdater.resendAttachment(with: attachment)
-        return try await attachmentQueueUploader.waitForAPIRequest(attachmentId: attachment)
+        try await messageUpdater.resendAttachment(with: attachmentId)
+        return try await attachmentQueueUploader.waitForAPIRequest(attachmentId: attachmentId)
     }
     
     /// Invokes the ephemeral action specified by the attachment.
@@ -603,17 +637,20 @@ public class Chat {
     /// - Parameters:
     /// - messageId: The id of the message to be flagged.
     /// - reason: A reason why the user was flagged.
+    /// - extraData: Additional data associated with the flag request.
     ///
     /// - Throws: An error while communicating with the Stream API.
     public func flagMessage(
         _ messageId: MessageId,
-        reason: String? = nil
+        reason: String? = nil,
+        extraData: [String: RawJSON]? = nil
     ) async throws {
         try await messageUpdater.flagMessage(
             true,
             with: messageId,
             in: cid,
-            reason: reason
+            reason: reason,
+            extraData: extraData
         )
     }
     
@@ -623,7 +660,7 @@ public class Chat {
     ///
     /// - Throws: An error while communicating with the Stream API.
     public func unflagMessage(_ messageId: MessageId) async throws {
-        try await messageUpdater.flagMessage(false, with: messageId, in: cid, reason: nil)
+        try await messageUpdater.flagMessage(false, with: messageId, in: cid, reason: nil, extraData: nil)
     }
     
     // MARK: - Message Rich Content

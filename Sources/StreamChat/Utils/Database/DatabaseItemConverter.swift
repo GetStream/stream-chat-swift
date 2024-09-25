@@ -48,6 +48,6 @@ enum DatabaseItemConverter {
                 try itemCreator(dto)
             }
         }
-        return sorting.isEmpty ? items : items.sort(using: sorting)
+        return sorting.isEmpty ? items : items.sorted(using: sorting)
     }
 }

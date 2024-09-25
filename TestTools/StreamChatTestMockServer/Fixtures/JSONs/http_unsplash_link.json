@@ -1,27 +1,27 @@
 {
-    "duration": "231.36ms",
+    "duration": "1225.21ms",
     "message": {
         "attachments": [
             {
-                "image_url": "https://images.unsplash.com/photo-1568574728383-06fca083883d?blend=000000&blend-alpha=10&blend-mode=normal&blend-w=1&crop=faces%2Cedges&h=630&mark=https%3A%2F%2Fimages.unsplash.com%2Fopengraph%2Flogo.png&mark-align=top%2Cleft&mark-pad=50&mark-w=64&w=1200&auto=format&fit=crop&q=60&ixid=M3wxMjA3fDB8MXxhbGx8fHx8fHx8fHwxNzIyNTkyNTQ5fA&ixlib=rb-4.0.3",
+                "image_url": "https://images.unsplash.com/photo-1568574728383-06fca083883d?mark=https%3A%2F%2Fimages.unsplash.com%2Fopengraph%2Flogo.png&mark-w=64&mark-align=top%2Cleft&mark-pad=50&h=630&w=1200&crop=faces%2Cedges&blend-w=1&blend=000000&blend-mode=normal&blend-alpha=10&auto=format&fit=crop&q=60&ixid=M3wxMjA3fDB8MXxhbGx8fHx8fHx8fHwxNzI2MzU4NzY2fA&ixlib=rb-4.0.3",
                 "og_scrape_url": "https://unsplash.com/photos/1_2d3MRbI9c",
                 "text": "Download this photo by Joao Branco on Unsplash",
-                "thumb_url": "https://images.unsplash.com/photo-1568574728383-06fca083883d?blend=000000&blend-alpha=10&blend-mode=normal&blend-w=1&crop=faces%2Cedges&h=630&mark=https%3A%2F%2Fimages.unsplash.com%2Fopengraph%2Flogo.png&mark-align=top%2Cleft&mark-pad=50&mark-w=64&w=1200&auto=format&fit=crop&q=60&ixid=M3wxMjA3fDB8MXxhbGx8fHx8fHx8fHwxNzIyNTkyNTQ5fA&ixlib=rb-4.0.3",
+                "thumb_url": "https://images.unsplash.com/photo-1568574728383-06fca083883d?mark=https%3A%2F%2Fimages.unsplash.com%2Fopengraph%2Flogo.png&mark-w=64&mark-align=top%2Cleft&mark-pad=50&h=630&w=1200&crop=faces%2Cedges&blend-w=1&blend=000000&blend-mode=normal&blend-alpha=10&auto=format&fit=crop&q=60&ixid=M3wxMjA3fDB8MXxhbGx8fHx8fHx8fHwxNzI2MzU4NzY2fA&ixlib=rb-4.0.3",
                 "title": "Photo by Joao Branco on Unsplash",
                 "title_link": "https://unsplash.com/photos/green-pine-tree-mountain-slope-scenery-1_2d3MRbI9c",
                 "type": "image"
             }
         ],
-        "cid": "messaging:36d17a7e-50b8-11ef-a447-1eebe6661088",
-        "created_at": "2024-08-02T10:16:02.706829Z",
+        "cid": "messaging:97274db6-72f7-11ef-b6d3-6644d678b5e5",
+        "created_at": "2024-09-15T00:15:26.671302Z",
         "deleted_reply_count": 0,
         "html": "<p><a href=\"https://unsplash.com/photos/1_2d3MRbI9c\" rel=\"nofollow\">https://unsplash.com/photos/1_2d3MRbI9c</a></p>\n",
         "i18n": {
-            "de_text": "https://unsplash.com/photos/1_2d3MRbI9c",
+            "en_text": "https://unsplash.com/photos/1_2d3MRbI9c",
             "fr_text": "https://unsplash.com/photos/1_2d3MRbI9c",
             "language": "fr"
         },
-        "id": "387dd2a0-50b8-11ef-a447-1eebe6661088",
+        "id": "9af4fff6-72f7-11ef-b6d3-6644d678b5e5",
         "latest_reactions": [],
         "mentioned_users": [],
         "own_reactions": [],
@@ -36,7 +36,7 @@
         "silent": false,
         "text": "https://unsplash.com/photos/1_2d3MRbI9c",
         "type": "regular",
-        "updated_at": "2024-08-02T10:16:02.706829Z",
+        "updated_at": "2024-09-15T00:15:26.671302Z",
         "user": {
             "banned": false,
             "birthland": "Tatooine",
@@ -45,20 +45,15 @@
             "id": "luke_skywalker",
             "image": "https://vignette.wikia.nocookie.net/starwars/images/2/20/LukeTLJ.jpg",
             "language": "fr",
-            "last_active": "2024-08-02T10:15:59.863243042Z",
+            "last_active": "2024-09-15T00:15:18.696192257Z",
             "name": "Luke Skywalker",
             "online": true,
-            "privacy_settings": {
-                "read_receipts": {
-                    "enabled": false
-                },
-                "typing_indicators": {
-                    "enabled": false
-                }
-            },
+            "pando": "{\"speciality\":\"ios engineer\"}",
             "role": "admin",
+            "team": "test",
             "teams": [],
-            "updated_at": "2024-07-31T12:39:19.150927Z"
+            "type": "team",
+            "updated_at": "2024-09-13T11:36:29.64089Z"
         }
     }
 }

@@ -224,6 +224,7 @@ final class ChatMessageListVC_Tests: XCTestCase {
                 id: attachmentId,
                 type: .unknown,
                 payload: attachmentWithCommentsData,
+                downloadingState: nil,
                 uploadingState: nil
             )
         }

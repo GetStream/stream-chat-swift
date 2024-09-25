@@ -1,5 +1,5 @@
 {
-    "duration": "317.71ms",
+    "duration": "419.55ms",
     "message": {
         "attachments": [
             {
@@ -14,16 +14,16 @@
                 "type": "video"
             }
         ],
-        "cid": "messaging:36d17a7e-50b8-11ef-a447-1eebe6661088",
-        "created_at": "2024-08-02T10:16:02.419412Z",
+        "cid": "messaging:97274db6-72f7-11ef-b6d3-6644d678b5e5",
+        "created_at": "2024-09-15T00:15:25.253329Z",
         "deleted_reply_count": 0,
         "html": "<p><a href=\"https://youtube.com/watch?v=xOX7MsrbaPY\" rel=\"nofollow\">https://youtube.com/watch?v=xOX7MsrbaPY</a></p>\n",
         "i18n": {
-            "de_text": "https://youtube.com/watch?v=xOX7MsrbaPY",
+            "en_text": "https://youtube.com/watch?v=xOX7MsrbaPY",
             "fr_text": "https://youtube.com/watch?v=xOX7MsrbaPY",
             "language": "fr"
         },
-        "id": "384584ae-50b8-11ef-a447-1eebe6661088",
+        "id": "9a97ccc8-72f7-11ef-b6d3-6644d678b5e5",
         "latest_reactions": [],
         "mentioned_users": [],
         "own_reactions": [],
@@ -38,7 +38,7 @@
         "silent": false,
         "text": "https://youtube.com/watch?v=xOX7MsrbaPY",
         "type": "regular",
-        "updated_at": "2024-08-02T10:16:02.419412Z",
+        "updated_at": "2024-09-15T00:15:25.253329Z",
         "user": {
             "banned": false,
             "birthland": "Tatooine",
@@ -47,20 +47,15 @@
             "id": "luke_skywalker",
             "image": "https://vignette.wikia.nocookie.net/starwars/images/2/20/LukeTLJ.jpg",
             "language": "fr",
-            "last_active": "2024-08-02T10:15:59.863243042Z",
+            "last_active": "2024-09-15T00:15:18.696192257Z",
             "name": "Luke Skywalker",
             "online": true,
-            "privacy_settings": {
-                "read_receipts": {
-                    "enabled": false
-                },
-                "typing_indicators": {
-                    "enabled": false
-                }
-            },
+            "pando": "{\"speciality\":\"ios engineer\"}",
             "role": "admin",
+            "team": "test",
             "teams": [],
-            "updated_at": "2024-07-31T12:39:19.150927Z"
+            "type": "team",
+            "updated_at": "2024-09-13T11:36:29.64089Z"
         }
     }
 }

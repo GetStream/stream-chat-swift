@@ -189,7 +189,7 @@ final class ChatMessageVoiceRecordingAttachmentListViewItemView_Tests: XCTestCas
         subject.content = .mock(id: .unique, assetURL: .unique(), localState: .pendingUpload)
         subject.updateContent()
 
-        XCTAssertEqual(subject.fileSizeLabel.text, "0/120 bytes")
+        XCTAssertEqual(subject.fileSizeLabel.text, "0 / 120 bytes")
     }
 
     func test_updateContent_contentIsNil_loadingIndicatorWasConfiguredCorrectly() {

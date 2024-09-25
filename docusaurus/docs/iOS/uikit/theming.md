@@ -64,7 +64,7 @@ If the same image is used in multiple places, changing the image in the `Appeara
 
 ## Properties
 
-Appearance style properties are organized in three groups:
+Appearance style properties are organized in four groups:
 
 ### `colorPalette`
 
@@ -77,3 +77,7 @@ The set of fonts used by UI components. The full reference can be found [here](.
 ### `images`
 
 The set of images used by UI components. The full reference can be found [here](../common-content/reference-docs/stream-chat-ui/appearance.images.md).
+
+### `formatters`
+
+The set of formatters used by UI components. Please refer to [here](data-formatting.md) for additional information.

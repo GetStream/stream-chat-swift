@@ -12,6 +12,7 @@ final class CurrentUserUpdater_Mock: CurrentUserUpdater {
     @Atomic var updateUserData_imageURL: URL?
     @Atomic var updateUserData_userExtraData: [String: RawJSON]?
     @Atomic var updateUserData_privacySettings: UserPrivacySettings?
+    @Atomic var updateUserData_unset: Set<String>?
     @Atomic var updateUserData_completion: ((Error?) -> Void)?
 
     @Atomic var addDevice_id: DeviceId?
@@ -29,6 +30,9 @@ final class CurrentUserUpdater_Mock: CurrentUserUpdater {
 
     @Atomic var markAllRead_completion: ((Error?) -> Void)?
     @Atomic var markAllRead_completion_result: Result<Void, Error>?
+    
+    @Atomic var deleteAllLocalAttachmentDownloads_completion: ((Error?) -> Void)?
+    @Atomic var deleteAllLocalAttachmentDownloads_completion_result: Result<Void, Error>?
 
     override func updateUserData(
         currentUserId: UserId,
@@ -37,6 +41,7 @@ final class CurrentUserUpdater_Mock: CurrentUserUpdater {
         privacySettings: UserPrivacySettings?,
         role: UserRole?,
         userExtraData: [String: RawJSON]?,
+        unset: Set<String>,
         completion: ((Error?) -> Void)? = nil
     ) {
         updateUserData_currentUserId = currentUserId
@@ -44,6 +49,7 @@ final class CurrentUserUpdater_Mock: CurrentUserUpdater {
         updateUserData_imageURL = imageURL
         updateUserData_userExtraData = userExtraData
         updateUserData_privacySettings = privacySettings
+        updateUserData_unset = unset
         updateUserData_completion = completion
     }
 
@@ -75,13 +81,20 @@ final class CurrentUserUpdater_Mock: CurrentUserUpdater {
         fetchDevices_currentUserId = currentUserId
         fetchDevices_completion = completion
     }
+    
+    override func deleteAllLocalAttachmentDownloads(completion: @escaping ((any Error)?) -> Void) {
+        deleteAllLocalAttachmentDownloads_completion = completion
+        deleteAllLocalAttachmentDownloads_completion_result?.invoke(with: completion)
+    }
 
     // Cleans up all recorded values
     func cleanUp() {
         updateUserData_currentUserId = nil
         updateUserData_name = nil
         updateUserData_imageURL = nil
+        updateUserData_privacySettings = nil
         updateUserData_userExtraData = nil
+        updateUserData_unset = nil
         updateUserData_completion = nil
 
         addDevice_id = nil
@@ -97,6 +110,9 @@ final class CurrentUserUpdater_Mock: CurrentUserUpdater {
 
         markAllRead_completion = nil
         markAllRead_completion_result = nil
+        
+        deleteAllLocalAttachmentDownloads_completion = nil
+        deleteAllLocalAttachmentDownloads_completion_result = nil
     }
 
     override func markAllRead(completion: ((Error?) -> Void)? = nil) {

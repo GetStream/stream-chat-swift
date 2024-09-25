@@ -77,7 +77,6 @@ class DatabaseContainer: NSPersistentContainer {
         return context
     }()
 
-    private var canWriteData = true
     private var stateLayerContextRefreshObservers = [NSObjectProtocol]()
     private var loggerNotificationObserver: NSObjectProtocol?
     private let localCachingSettings: ChatClientConfig.LocalCaching?
@@ -218,12 +217,6 @@ class DatabaseContainer: NSPersistentContainer {
     func write(_ actions: @escaping (DatabaseSession) throws -> Void, completion: @escaping (Error?) -> Void) {
         writableContext.perform {
             log.debug("Starting a database session.", subsystems: .database)
-            guard self.canWriteData else {
-                log.debug("Discarding write attempt.", subsystems: .database)
-                completion(nil)
-                return
-            }
-            
             do {
                 FetchCache.clear()
                 try actions(self.writableContext)
@@ -244,9 +237,9 @@ class DatabaseContainer: NSPersistentContainer {
 
                 log.debug("Database session succesfully saved.", subsystems: .database)
                 completion(nil)
-
             } catch {
                 log.error("Failed to save data to DB. Error: \(error)", subsystems: .database)
+                self.writableContext.reset()
                 FetchCache.clear()
                 completion(error)
             }
@@ -300,7 +293,6 @@ class DatabaseContainer: NSPersistentContainer {
     func removeAllData(completion: ((Error?) -> Void)? = nil) {
         let entityNames = managedObjectModel.entities.compactMap(\.name)
         writableContext.perform { [weak self] in
-            self?.canWriteData = false
             let requests = entityNames
                 .map { NSFetchRequest<NSFetchRequestResult>(entityName: $0) }
                 .map { fetchRequest in
@@ -323,7 +315,7 @@ class DatabaseContainer: NSPersistentContainer {
             }
             if !deletedObjectIds.isEmpty, let contexts = self?.allContext {
                 log.debug("Merging \(deletedObjectIds.count) deletions to contexts", subsystems: .database)
-                // Merging changes triggers DB observers to react to deletions
+                // Merging changes triggers DB observers to react to deletions which clears the state
                 NSManagedObjectContext.mergeChanges(
                     fromRemoteContextSave: [NSDeletedObjectsKey: deletedObjectIds],
                     into: contexts
@@ -340,8 +332,15 @@ class DatabaseContainer: NSPersistentContainer {
                         context.reset()
                     }
                 }
+                
+                if FileManager.default.fileExists(atPath: URL.streamAttachmentDownloadsDirectory.path) {
+                    do {
+                        try FileManager.default.removeItem(at: .streamAttachmentDownloadsDirectory)
+                    } catch {
+                        log.debug("Failed to remove local downloads", subsystems: .database)
+                    }
+                }
             }
-            self?.canWriteData = true
             completion?(lastEncounteredError)
         }
     }

@@ -47,6 +47,18 @@ public struct FileAttachmentPayload: AttachmentPayload {
 
 extension FileAttachmentPayload: Hashable {}
 
+// MARK: - Local Downloads
+
+extension FileAttachmentPayload: AttachmentPayloadDownloading {
+    public var localStorageFileName: String {
+        title ?? file.defaultLocalStorageFileName(for: Self.type)
+    }
+    
+    public var remoteURL: URL {
+        assetURL
+    }
+}
+
 // MARK: - Encodable
 
 extension FileAttachmentPayload: Encodable {

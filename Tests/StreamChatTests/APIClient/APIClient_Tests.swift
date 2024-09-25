@@ -17,6 +17,7 @@ final class APIClient_Tests: XCTestCase {
 
     var encoder: RequestEncoder_Spy!
     var decoder: RequestDecoder_Spy!
+    var attachmentDownloader: AttachmentDownloader_Spy!
     var attachmentUploader: AttachmentUploader_Spy!
     var tokenRefresher: ((@escaping () -> Void) -> Void)!
     var queueOfflineRequest: QueueOfflineRequestBlock!
@@ -39,6 +40,7 @@ final class APIClient_Tests: XCTestCase {
 
         encoder = RequestEncoder_Spy(baseURL: baseURL, apiKey: apiKey)
         decoder = RequestDecoder_Spy()
+        attachmentDownloader = AttachmentDownloader_Spy()
         attachmentUploader = AttachmentUploader_Spy()
         tokenRefresher = { _ in }
         queueOfflineRequest = { _ in }
@@ -47,6 +49,7 @@ final class APIClient_Tests: XCTestCase {
             sessionConfiguration: sessionConfiguration,
             requestEncoder: encoder,
             requestDecoder: decoder,
+            attachmentDownloader: attachmentDownloader,
             attachmentUploader: attachmentUploader
         )
         apiClient.tokenRefresher = tokenRefresher
@@ -64,6 +67,7 @@ final class APIClient_Tests: XCTestCase {
         uniqueHeaderValue = nil
         encoder = nil
         decoder = nil
+        attachmentDownloader = nil
         attachmentUploader = nil
         tokenRefresher = nil
         queueOfflineRequest = nil
@@ -709,6 +713,7 @@ extension APIClient_Tests {
             sessionConfiguration: sessionConfiguration,
             requestEncoder: encoder,
             requestDecoder: decoder,
+            attachmentDownloader: attachmentDownloader,
             attachmentUploader: attachmentUploader
         )
         apiClient.tokenRefresher = self.tokenRefresher

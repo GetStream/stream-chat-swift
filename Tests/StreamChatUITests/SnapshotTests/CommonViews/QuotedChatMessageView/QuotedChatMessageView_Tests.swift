@@ -163,6 +163,7 @@ final class QuotedChatMessageView_Tests: XCTestCase {
             id: .unique,
             type: .giphy,
             payload: .init(title: "", previewURL: TestImages.yoda.url, actions: []),
+            downloadingState: nil,
             uploadingState: nil
         )
 

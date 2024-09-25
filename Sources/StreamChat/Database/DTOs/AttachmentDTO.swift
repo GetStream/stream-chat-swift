@@ -24,7 +24,7 @@ class AttachmentDTO: NSManagedObject {
         set { type = newValue.rawValue }
     }
 
-    /// An attachment local state.
+    /// An attachment local upload state.
     @NSManaged private var localStateRaw: String?
     @NSManaged private var localProgress: Double
     var localState: LocalAttachmentState? {
@@ -37,12 +37,36 @@ class AttachmentDTO: NSManagedObject {
             localProgress = newValue?.progress ?? 0
         }
     }
+    
+    /// An attachment local download state.
+    @NSManaged private var localDownloadStateRaw: String?
+    var localDownloadState: LocalAttachmentDownloadState? {
+        get {
+            guard let localDownloadStateRaw else { return nil }
+            return LocalAttachmentDownloadState(rawValue: localDownloadStateRaw, progress: localProgress)
+        }
+        set {
+            localDownloadStateRaw = newValue?.rawValue
+            localProgress = newValue?.progress ?? 0
+        }
+    }
 
     /// An attachment local url.
     @NSManaged var localURL: URL?
+    
+    /// An attachment local relative path used for storing downloaded attachments.
+    @NSManaged var localRelativePath: String?
+    
     /// An attachment raw `Data`.
     @NSManaged var data: Data
 
+    func clearLocalState() {
+        localDownloadState = nil
+        localRelativePath = nil
+        localState = nil
+        localURL = nil
+    }
+    
     // MARK: - Relationships
 
     @NSManaged var message: MessageDTO
@@ -76,6 +100,13 @@ class AttachmentDTO: NSManagedObject {
         return new
     }
 
+    static func downloadedFetchRequest() -> NSFetchRequest<AttachmentDTO> {
+        let request = NSFetchRequest<AttachmentDTO>(entityName: AttachmentDTO.entityName)
+        request.sortDescriptors = [NSSortDescriptor(keyPath: \AttachmentDTO.id, ascending: true)]
+        request.predicate = NSPredicate(format: "localDownloadStateRaw == %@", LocalAttachmentDownloadState.downloaded.rawValue)
+        return request
+    }
+    
     static func pendingUploadFetchRequest() -> NSFetchRequest<AttachmentDTO> {
         let request = NSFetchRequest<AttachmentDTO>(entityName: AttachmentDTO.entityName)
         request.sortDescriptors = [NSSortDescriptor(keyPath: \AttachmentDTO.id, ascending: true)]
@@ -88,6 +119,24 @@ class AttachmentDTO: NSManagedObject {
         request.sortDescriptors = [NSSortDescriptor(keyPath: \AttachmentDTO.id, ascending: true)]
         request.predicate = NSPredicate(format: "localStateRaw == %@", LocalAttachmentState.uploading(progress: 0).rawValue)
         return load(by: request, context: context)
+    }
+    
+    static func loadAllDownloadedAttachments(context: NSManagedObjectContext) -> [AttachmentDTO] {
+        let request = NSFetchRequest<AttachmentDTO>(entityName: AttachmentDTO.entityName)
+        request.sortDescriptors = [NSSortDescriptor(keyPath: \AttachmentDTO.id, ascending: true)]
+        request.predicate = NSPredicate(format: "localDownloadStateRaw == %@", LocalAttachmentDownloadState.downloaded.rawValue)
+        return load(by: request, context: context)
+    }
+}
+
+extension AttachmentDTO: EphemeralValuesContainer {
+    func resetEphemeralValues() {
+        switch localDownloadState {
+        case .downloading, .downloadingFailed:
+            clearLocalState()
+        default:
+            break
+        }
     }
 }
 
@@ -110,8 +159,10 @@ extension NSManagedObjectContext: AttachmentDatabaseSession {
         dto.data = try JSONEncoder.default.encode(payload.payload)
         dto.message = messageDTO
 
-        dto.localURL = nil
-        dto.localState = nil
+        // Keep local state for downloaded attachments
+        if dto.localDownloadState == nil {
+            dto.clearLocalState()
+        }
 
         return dto
     }
@@ -140,9 +191,37 @@ extension NSManagedObjectContext: AttachmentDatabaseSession {
     func delete(attachment: AttachmentDTO) {
         delete(attachment)
     }
+    
+    func allLocallyDownloadedAttachments() -> [AttachmentDTO] {
+        AttachmentDTO.loadAllDownloadedAttachments(context: self)
+    }
 }
 
 private extension AttachmentDTO {
+    var downloadingState: AttachmentDownloadingState? {
+        guard let localDownloadState else { return nil }
+        let localFileURL: URL? = {
+            guard let localRelativePath, !localRelativePath.isEmpty else { return nil }
+            return URL.streamAttachmentLocalStorageURL(forRelativePath: localRelativePath)
+        }()
+        let file: AttachmentFile? = {
+            // Most attachments contain the attachment file information
+            if let file = try? JSONDecoder.stream.decode(AttachmentFile.self, from: data) {
+                return file
+            }
+            // Try extracting it from the downloaded file
+            if let localFileURL {
+                return try? AttachmentFile(url: localFileURL)
+            }
+            return nil
+        }()
+        return AttachmentDownloadingState(
+            localFileURL: localFileURL,
+            state: localDownloadState,
+            file: file
+        )
+    }
+    
     var uploadingState: AttachmentUploadingState? {
         guard
             let localURL = localURL,
@@ -177,6 +256,7 @@ extension AttachmentDTO {
             id: id,
             type: attachmentType,
             payload: data,
+            downloadingState: downloadingState,
             uploadingState: uploadingState
         )
     }
@@ -239,6 +319,41 @@ extension LocalAttachmentState {
     }
 }
 
+extension LocalAttachmentDownloadState {
+    var rawValue: String {
+        switch self {
+        case .downloading:
+            return "downloading"
+        case .downloadingFailed:
+            return "downloadingFailed"
+        case .downloaded:
+            return "downloaded"
+        }
+    }
+    
+    var progress: Double {
+        switch self {
+        case let .downloading(progress):
+            return progress
+        default:
+            return 0
+        }
+    }
+    
+    init?(rawValue: String, progress: Double) {
+        switch rawValue {
+        case LocalAttachmentDownloadState.downloaded.rawValue:
+            self = .downloaded
+        case LocalAttachmentDownloadState.downloadingFailed.rawValue:
+            self = .downloadingFailed
+        case LocalAttachmentDownloadState.downloading(progress: 0).rawValue:
+            self = .downloading(progress: progress)
+        default:
+            return nil
+        }
+    }
+}
+
 extension ClientError {
     final class AttachmentDoesNotExist: ClientError {
         init(id: AttachmentId) {
@@ -254,6 +369,14 @@ extension ClientError {
 
     final class AttachmentDecoding: ClientError {}
 
+    final class AttachmentDownloading: ClientError {
+        init(id: AttachmentId, reason: String) {
+            super.init(
+                "Failed to download attachment with id: \(id): \(reason)"
+            )
+        }
+    }
+    
     final class AttachmentUploading: ClientError {
         init(id: AttachmentId) {
             super.init(

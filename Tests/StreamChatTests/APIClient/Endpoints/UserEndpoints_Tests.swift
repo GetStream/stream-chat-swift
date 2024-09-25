@@ -41,10 +41,12 @@ final class UserEndpoints_Tests: XCTestCase {
             role: .anonymous,
             extraData: ["company": .string(.unique)]
         )
+        let unset = ["image", "name"]
 
         let users: [String: AnyEncodable] = [
             "id": AnyEncodable(userId),
-            "set": AnyEncodable(payload)
+            "set": AnyEncodable(payload),
+            "unset": AnyEncodable(unset)
         ]
         let body: [String: AnyEncodable] = [
             "users": AnyEncodable([users])
@@ -58,7 +60,7 @@ final class UserEndpoints_Tests: XCTestCase {
             body: body
         )
 
-        let endpoint: Endpoint<CurrentUserUpdateResponse> = .updateUser(id: userId, payload: payload)
+        let endpoint: Endpoint<CurrentUserUpdateResponse> = .updateUser(id: userId, payload: payload, unset: unset)
 
         XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
         XCTAssertEqual("users", endpoint.path.value)

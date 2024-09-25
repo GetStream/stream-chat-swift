@@ -21,6 +21,8 @@ final class UserUpdater_Mock: UserUpdater {
 
     @Atomic var flagUser_flag: Bool?
     @Atomic var flagUser_userId: UserId?
+    @Atomic var flagUser_reason: String?
+    @Atomic var flagUser_extraData: [String: RawJSON]?
     @Atomic var flagUser_completion: ((Error?) -> Void)?
     @Atomic var flagUser_completion_result: Result<Void, Error>?
     
@@ -50,9 +52,11 @@ final class UserUpdater_Mock: UserUpdater {
         loadUser_completion_result?.invoke(with: completion)
     }
 
-    override func flagUser(_ flag: Bool, with userId: UserId, completion: ((Error?) -> Void)? = nil) {
+    override func flagUser(_ flag: Bool, with userId: UserId, reason: String?, extraData: [String : RawJSON]?, completion: (((any Error)?) -> Void)? = nil) {
         flagUser_flag = flag
         flagUser_userId = userId
+        flagUser_reason = reason
+        flagUser_extraData = extraData
         flagUser_completion = completion
         flagUser_completion_result?.invoke(with: completion)
     }
@@ -84,6 +88,8 @@ final class UserUpdater_Mock: UserUpdater {
         loadUser_completion_result = nil
 
         flagUser_flag = nil
+        flagUser_reason = nil
+        flagUser_extraData = nil
         flagUser_userId = nil
         flagUser_completion = nil
         flagUser_completion_result = nil

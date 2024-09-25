@@ -17,6 +17,7 @@ metrics_git = 'git@github.com:GetStream/stream-internal-metrics.git'
 xcmetrics_path = "metrics/#{github_repo.split('/').last}-xcmetrics.json"
 buildcache_xcargs = 'CC=clang CPLUSPLUS=clang++ LD=clang LDPLUSPLUS=clang++'
 testlab_bucket = 'gs://test-lab-af3rt9m4yh360-mqm1zzm767nhc'
+swift_environment_path = File.absolute_path('../Sources/StreamChat/Generated/SystemEnvironment+Version.swift')
 is_localhost = !is_ci
 @force_check = false
 
@@ -58,7 +59,6 @@ desc 'Start a new release'
 lane :release do |options|
   previous_version_number = last_git_tag
   artifacts_path = File.absolute_path('../StreamChatArtifacts.json')
-  swift_environment_path = File.absolute_path('../Sources/StreamChat/Generated/SystemEnvironment+Version.swift')
   extra_changes = lambda do |release_version|
     # Set the framework version on the artifacts
     artifacts = JSON.parse(File.read(artifacts_path))
@@ -92,8 +92,12 @@ end
 
 desc 'Completes an SDK Release'
 lane :publish_release do |options|
-  xcversion(version: '14.0.1')
+  release_version = File.read(swift_environment_path).match(/String\s+=\s+"([\d.]+)"/)[1]
+  UI.user_error!("Release #{release_version} has already been published.") if git_tag_exists(tag: release_version, remote: true)
+  UI.user_error!('Release version cannot be empty') if release_version.to_s.empty?
+  ensure_git_branch(branch: 'main')
 
+  xcversion(version: '14.0.1')
   clean_products
   build_xcframeworks
   compress_frameworks
@@ -101,14 +105,14 @@ lane :publish_release do |options|
 
   publish_ios_sdk(
     skip_git_status_check: false,
-    version: options[:version],
+    version: release_version,
     sdk_names: sdk_names,
     podspec_names: ['StreamChat', 'StreamChat-XCFramework', 'StreamChatUI', 'StreamChatUI-XCFramework'],
     github_repo: github_repo,
     upload_assets: ['Products/StreamChat.zip', 'Products/StreamChatUI.zip', 'Products/StreamChat-All.zip']
   )
 
-  update_spm(version: options[:version])
+  update_spm(version: release_version)
 
   merge_main_to_develop
 end
@@ -600,8 +604,10 @@ lane :test_ui do |options|
     next if png_files.empty?
 
     # Discard all files apart from the snapshots
-    png_files.each { |png| sh("git add #{png}") || true }
-    sh('git restore .')
+    Dir.chdir('..') do
+      png_files.each { |png| sh("git add #{png}") || true }
+      sh('git restore .')
+    end
 
     pr_create(
       title: '[CI] Snapshots',

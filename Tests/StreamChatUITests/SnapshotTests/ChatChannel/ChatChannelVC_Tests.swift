@@ -584,6 +584,7 @@ final class ChatChannelVC_Tests: XCTestCase {
                             )
                         ]
                     ),
+                    downloadingState: nil,
                     uploadingState: nil
                 ).asAnyAttachment
             ],

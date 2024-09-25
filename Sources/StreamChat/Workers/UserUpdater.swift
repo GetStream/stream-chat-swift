@@ -132,10 +132,22 @@ class UserUpdater: Worker {
     /// - Parameters:
     ///   - flag: The indicator saying whether the user should be flagged or unflagged.
     ///   - userId: The identifier of a user that should be flagged or unflagged.
+    ///   - extraData: Additional data associated with the flag request.
     ///   - completion: Called when the API call is finished. Called with `Error` if the remote update fails.
     ///
-    func flagUser(_ flag: Bool, with userId: UserId, completion: ((Error?) -> Void)? = nil) {
-        let endpoint: Endpoint<FlagUserPayload> = .flagUser(flag, with: userId)
+    func flagUser(
+        _ flag: Bool,
+        with userId: UserId,
+        reason: String? = nil,
+        extraData: [String: RawJSON]? = nil,
+        completion: ((Error?) -> Void)? = nil
+    ) {
+        let endpoint: Endpoint<FlagUserPayload> = .flagUser(
+            flag,
+            with: userId,
+            reason: reason,
+            extraData: extraData
+        )
         apiClient.request(endpoint: endpoint) {
             switch $0 {
             case let .success(payload):
@@ -202,9 +214,18 @@ extension UserUpdater {
         }
     }
     
-    func flag(_ userId: UserId) async throws {
+    func flag(
+        _ userId: UserId,
+        reason: String?,
+        extraData: [String: RawJSON]?
+    ) async throws {
         try await withCheckedThrowingContinuation { continuation in
-            flagUser(true, with: userId) { error in
+            flagUser(
+                true,
+                with: userId,
+                reason: reason,
+                extraData: extraData
+            ) { error in
                 continuation.resume(with: error)
             }
         }

@@ -21,6 +21,9 @@ class APIClient {
     /// Used to queue requests that happen while we are offline
     var queueOfflineRequest: QueueOfflineRequestBlock?
 
+    /// The attachment downloader.
+    let attachmentDownloader: AttachmentDownloader
+    
     /// The attachment uploader.
     let attachmentUploader: AttachmentUploader
 
@@ -59,11 +62,13 @@ class APIClient {
         sessionConfiguration: URLSessionConfiguration,
         requestEncoder: RequestEncoder,
         requestDecoder: RequestDecoder,
+        attachmentDownloader: AttachmentDownloader,
         attachmentUploader: AttachmentUploader
     ) {
         encoder = requestEncoder
         decoder = requestDecoder
         session = URLSession(configuration: sessionConfiguration)
+        self.attachmentDownloader = attachmentDownloader
         self.attachmentUploader = attachmentUploader
     }
 
@@ -226,19 +231,12 @@ class APIClient {
                 return
             }
 
-            log.debug(
-                "Making URL request: \(endpoint.method.rawValue.uppercased()) \(endpoint.path)\n"
-                    + "Headers:\n\(String(describing: urlRequest.allHTTPHeaderFields))\n"
-                    + "Body:\n\(urlRequest.httpBody?.debugPrettyPrintedJSON ?? "<Empty>")\n"
-                    + "Query items:\n\(urlRequest.queryItems.prettyPrinted)",
-                subsystems: .httpRequests
-            )
-
             guard let self = self else {
                 log.warning("Callback called while self is nil", subsystems: .httpRequests)
                 completion(.failure(ClientError("APIClient was deallocated")))
                 return
             }
+            log.debug(urlRequest.cURLRepresentation(for: self.session), subsystems: .httpRequests)
 
             let task = self.session.dataTask(with: urlRequest) { [decoder = self.decoder] (data, response, error) in
                 do {
@@ -288,7 +286,32 @@ class APIClient {
         // We only retry transient errors like connectivity stuff or HTTP 5xx errors
         ClientError.isEphemeral(error: error)
     }
-
+    
+    func downloadFile(
+        from remoteURL: URL,
+        to localURL: URL,
+        progress: ((Double) -> Void)?,
+        completion: @escaping (Error?) -> Void
+    ) {
+        let downloadOperation = AsyncOperation(maxRetries: maximumRequestRetries) { [weak self] operation, done in
+            self?.attachmentDownloader.download(from: remoteURL, to: localURL, progress: progress) { error in
+                if let error, self?.isConnectionError(error) == true {
+                    // Do not retry unless its a connection problem and we still have retries left
+                    if operation.canRetry {
+                        done(.retry)
+                    } else {
+                        completion(error)
+                        done(.continue)
+                    }
+                } else {
+                    completion(error)
+                    done(.continue)
+                }
+            }
+        }
+        operationQueue.addOperation(downloadOperation)
+    }
+    
     func uploadAttachment(
         _ attachment: AnyChatMessageAttachment,
         progress: ((Double) -> Void)?,

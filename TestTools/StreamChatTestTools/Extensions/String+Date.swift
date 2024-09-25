@@ -8,6 +8,9 @@ import Foundation
 public extension String {
     /// Converst a string to `Date`. Only for testing!
     func toDate() -> Date {
-        DateFormatter.Stream.rfc3339Date(from: self)!
+        if let date = JSONDecoder.stream.iso8601formatter.dateWithMicroseconds(from: self) {
+            return date
+        }
+        return DateFormatter.Stream.rfc3339Date(from: self)!
     }
 }

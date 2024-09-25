@@ -38,7 +38,7 @@ public final class ConnectedUser {
     
     /// Updates the currently logged-in user's data.
     ///
-    /// - Note: This does partial update and only updates existing data when a non-nil value is specified.
+    /// - Note: This does partial update and only updates existing data when a non-nil value is specified. Use ``unset`` for clearing the existing state.
     ///
     /// - Parameters:
     ///   - name: The name to be set to the user.
@@ -46,6 +46,7 @@ public final class ConnectedUser {
     ///   - privacySettings: The privacy settings of the user. Example: If the user does not want to expose typing events or read events.
     ///   - role: The role for the user.
     ///   - extraData: Additional data associated with the user.
+    ///   - unset: Existing values for specified fields are removed. For example, `image` or `name`.
     ///
     /// - Throws: An error while communicating with the Stream API or when user is not logged in.
     public func update(
@@ -53,7 +54,8 @@ public final class ConnectedUser {
         imageURL: URL? = nil,
         privacySettings: UserPrivacySettings? = nil,
         role: UserRole? = nil,
-        extraData: [String: RawJSON] = [:]
+        extraData: [String: RawJSON] = [:],
+        unset: Set<String> = []
     ) async throws {
         try await currentUserUpdater.updateUserData(
             currentUserId: try currentUserId(),
@@ -61,7 +63,8 @@ public final class ConnectedUser {
             imageURL: imageURL,
             privacySettings: privacySettings,
             role: role,
-            userExtraData: extraData
+            userExtraData: extraData,
+            unset: unset
         )
     }
     
@@ -160,11 +163,18 @@ public final class ConnectedUser {
     
     /// Flags the specified user.
     ///
-    /// - Parameter userId: The id of the user to flag.
+    /// - Parameters:
+    ///   - userId: The id of the user to flag.
+    ///   - reason: The reason of the flag request.
+    ///   - extraData: Additional data associated with the flag request.
     ///
     /// - Throws: An error while communicating with the Stream API.
-    public func flag(_ userId: UserId) async throws {
-        try await userUpdater.flag(userId)
+    public func flag(
+        _ userId: UserId,
+        reason: String? = nil,
+        extraData: [String: RawJSON]? = nil
+    ) async throws {
+        try await userUpdater.flag(userId, reason: reason, extraData: extraData)
     }
     
     /// Unflags the specified user.
@@ -174,6 +184,17 @@ public final class ConnectedUser {
     /// - Throws: An error while communicating with the Stream API.
     public func unflag(_ userId: UserId) async throws {
         try await userUpdater.unflag(userId)
+    }
+    
+    // MARK: Managing Local Attachment Downloads
+    
+    /// Deletes all the local downloads of file attachments.
+    ///
+    /// - Parameter completion: Called when files have been deleted or when an error occured.
+    ///
+    /// - Throws: An error while deleting local downloads.
+    public func deleteAllLocalAttachmentDownloads() async throws {
+        try await currentUserUpdater.deleteAllLocalAttachmentDownloads()
     }
     
     // MARK: - Private

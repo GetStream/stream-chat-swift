@@ -26,6 +26,7 @@ public extension AnyAttachmentPayload {
             id: id,
             type: type,
             payload: payload,
+            downloadingState: nil,
             uploadingState: localFileURL.map {
                 .init(
                     localFileURL: $0,

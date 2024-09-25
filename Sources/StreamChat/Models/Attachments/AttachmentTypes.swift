@@ -36,6 +36,16 @@ public enum LocalAttachmentState: Hashable {
     case uploaded
 }
 
+/// A local download state of the attachment.
+public enum LocalAttachmentDownloadState: Hashable {
+    /// The attachment is being downloaded.
+    case downloading(progress: Double)
+    /// The attachment download failed.
+    case downloadingFailed
+    /// The attachment has been downloaded.
+    case downloaded
+}
+
 /// An attachment action, e.g. send, shuffle.
 public struct AttachmentAction: Codable, Hashable {
     /// A name.

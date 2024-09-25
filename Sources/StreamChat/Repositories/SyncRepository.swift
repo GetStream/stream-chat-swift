@@ -158,6 +158,7 @@ class SyncRepository {
     /// 1. Collect all the **active** channel ids (from instances of `Chat`, `ChannelList`, `ChatChannelController`, `ChatChannelListController`)
     /// 2. Apply updates from the /sync endpoint for these channels
     /// 3. Refresh channel lists (channels for current pages in `ChannelList`, `ChatChannelListController`)
+    /// 4. Re-watch channels what we were watching before disconnect
     private func syncLocalStateV2(lastSyncAt: Date, completion: @escaping () -> Void) {
         let context = SyncContext(lastSyncAt: lastSyncAt)
         var operations: [Operation] = []
@@ -188,6 +189,11 @@ class SyncRepository {
         // 3. Refresh channel lists (required even after applying events)
         operations.append(contentsOf: activeChannelLists.allObjects.map { RefreshChannelListOperation(channelList: $0, context: context) })
         operations.append(contentsOf: activeChannelListControllers.allObjects.map { RefreshChannelListOperation(controller: $0, context: context) })
+        
+        // 4. Re-watch channels what we were watching before disconnect
+        // Needs to be done explicitly after reconnection, otherwise SDK users need to handle connection changes
+        operations.append(contentsOf: activeChannelControllers.allObjects.map { WatchChannelOperation(controller: $0, context: context) })
+        operations.append(contentsOf: activeChats.allObjects.map { WatchChannelOperation(chat: $0, context: context) })
         
         operations.append(BlockOperation(block: {
             let duration = CFAbsoluteTimeGetCurrent() - start

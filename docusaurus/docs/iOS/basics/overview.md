@@ -11,7 +11,7 @@ We have component libraries available for both UIKit and SwiftUI. Each library i
 - Reactions
 - Threads and quoted replies
 - Text input commands (ex: Giphy and @mentions)
-- Image and file uploads
+- Image and file uploads and downloads
 - Video playback
 - Read state and typing indicators
 - Channel and message lists
@@ -48,14 +48,15 @@ The SDK tries to keep the list of external dependencies to a minimum, these are 
 #### StreamChatUI
 
 - [Nuke](https://github.com/kean/Nuke) for loading images  
-- [SwiftyGif](https://github.com/kirualex/SwiftyGif) for high performance gif rendering
+- [SwiftyGif](https://github.com/alexiscreuzot/SwiftyGif) for high performance gif rendering
+- [SwiftyMarkdown](https://github.com/SimonFairbairn/SwiftyMarkdown) for markdown support
 - [StreamChat]((https://getstream.io/chat/docs/ios-swift/?language=swift)) the low-level client for the Stream Chat API
 
 #### StreamChatSwiftUI
 
 - [Nuke](https://github.com/kean/Nuke) for loading images  
 - [NukeUI](https://github.com/kean/Nuke) for loading images  
-- [Gifu](https://github.com/kaishin/Gifu) for high performance gif rendering
+- [SwiftyGif](https://github.com/alexiscreuzot/SwiftyGif) for high performance gif rendering
 - [StreamChat]((https://getstream.io/chat/docs/ios-swift/?language=swift)) the low-level client for the Stream Chat API
 
 :::note
@@ -94,7 +95,7 @@ You should either use a fixed version, or an optimistic operator (a.k.a. squiggl
 For example with CocoaPods:
 
 ```ruby 
-pod 'StreamChat', '~> 4.0.0'
+pod 'StreamChat', '~> 4.62.0'
 ```
 
 To stay up-to-date with our updates and get a detailed breakdown of what's new, subscribe to the releases of [getstream/stream-chat-swift](https://github.com/GetStream/stream-chat-swift/releases) by clicking the "watch" button. You can further tweak your watch preferences and subscribe only to the release events.

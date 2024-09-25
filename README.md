@@ -13,8 +13,8 @@
   <a href="https://sonarcloud.io/summary/new_code?id=GetStream_stream-chat-swift"><img src="https://sonarcloud.io/api/project_badges/measure?project=GetStream_stream-chat-swift&metric=coverage" /></a>
 </p>
 <p align="center">
-  <img id="stream-chat-label" alt="StreamChat" src="https://img.shields.io/badge/StreamChat-6.75%20MB-blue"/>
-  <img id="stream-chat-ui-label" alt="StreamChatUI" src="https://img.shields.io/badge/StreamChatUI-4.41%20MB-blue"/>
+  <img id="stream-chat-label" alt="StreamChat" src="https://img.shields.io/badge/StreamChat-6.83%20MB-blue"/>
+  <img id="stream-chat-ui-label" alt="StreamChatUI" src="https://img.shields.io/badge/StreamChatUI-4.42%20MB-blue"/>
 </p>
 
 This is the official iOS SDK for [Stream Chat](https://getstream.io/chat/sdk/ios/), a service for building chat and messaging applications. This library includes both a low-level SDK and a set of reusable UI components.
@@ -38,11 +38,11 @@ The **StreamChatSwiftUI SDK** is our UI SDK for SwiftUI components. If your appl
 - **Offline support:** Browse channels and send messages while offline.
 - **Familiar behavior**: The UI elements are good platform citizens and behave like native elements; they respect `tintColor`, `layoutMargins`, light/dark mode, dynamic font sizes, etc.
 - **Swift native API:** Uses Swift's powerful language features to make the SDK usage easy and type-safe.
-- **Uses `UIKit` patterns and paradigms:** The API follows the design of native system SDKs. It makes integration with your existing code easy and familiar.
-- **`SwiftUI` support:** We have developed a brand new SDK to help you have smoother Stream Chat integration in your SwiftUI apps.
-- **First-class support for `Combine`**: The StreamChat SDK (Low Level Client) has Combine wrappers to make it really easy use in an app that uses `Combine`.
+- `UIKit` and `SwiftUI` SDKs use native patterns and paradigms from respective UI frameworks: The API follows the design of native system SDKs. It makes integration with your existing code easy and familiar.
+  - `UIKit` SDK is part of this repository whereas `SwiftUI` SDK is available [here](https://github.com/GetStream/stream-chat-swiftui). 
+- **First-class support for `Combine` and `Structured Concurrency`**: Refer to our getting started guides for [Combine](https://getstream.io/chat/docs/sdk/ios/combine/) and [Structured Concurrency](https://getstream.io/chat/docs/sdk/ios/client/state-layer/state-layer-overview/).
 - **Fully open-source implementation:** You have access to the complete source code of the SDK here on GitHub.
-- **Supports iOS 12+:** We proudly support older versions of iOS, so your app can stay available to almost everyone.
+- **Supports iOS 13+:** We proudly support older versions of iOS, so your app can stay available to almost everyone.
 
 ## **Quick Links**
 
@@ -67,13 +67,12 @@ Stream is free for most side and hobby projects. You can use Stream Chat for fre
 
 - **`open` by default:** Everything is `open` unless there's a strong reason for it to not be. This means you can easily modify almost every behavior of the SDK such that it fits your needs.
 
-- **Good platform citizen:** The UI elements behave like good platform citizens. They use existing iOS patterns; their behavior is predictable and matches system UI components; they respect `tintColor`, `layourMargins`, dynamic font sizes, and other system-defined UI constants.
+- **Good platform citizen:** The UI elements behave like good platform citizens. They use existing iOS patterns; their behavior is predictable and matches system UI components; they respect `tintColor`, `layoutMargins`, dynamic font sizes, and other system-defined UI constants.
 
 ## Dependencies
 
 This SDK tries to keep the list of external dependencies to a minimum.
 Starting **4.6.0**, and in order to improve the developer experience, dependencies are hidden inside our libraries.
-(Does not apply to StreamChatSwiftUI's dependencies yet).
 
 Learn more about our dependencies [here](https://getstream.io/chat/docs/sdk/ios/#dependencies)
 
@@ -171,7 +170,7 @@ Check out our current openings and apply via [Stream's website](https://getstrea
   </tr>
   <tr> <td> GIPHY support out of box</td> </tr>
   <tr> <td> Supports mute, unmute, ban, unban commands </td> </tr>
-  <tr> <td> WIP support of custom commands </td> </tr>
+  <tr> <td> Support for custom commands </td> </tr>
   <tr><td> </td> </tr>
   </tr>
 </table>

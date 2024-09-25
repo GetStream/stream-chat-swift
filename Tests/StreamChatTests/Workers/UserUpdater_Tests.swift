@@ -249,16 +249,16 @@ final class UserUpdater_Tests: XCTestCase {
 
     func test_flagUser_makesCorrectAPICall() {
         let cases = [
-            (true, UserId.unique),
-            (false, UserId.unique)
+            (true, UserId.unique, String.unique, ["a": RawJSON.string("1")]),
+            (false, UserId.unique, String.unique, ["b": RawJSON.bool(true)])
         ]
 
-        for (flag, userId) in cases {
+        for (flag, userId, reason, extraData) in cases {
             // Simulate `flagUser` call.
-            userUpdater.flagUser(flag, with: userId)
+            userUpdater.flagUser(flag, with: userId, reason: reason, extraData: extraData)
 
             // Assert correct endpoint is called.
-            let expectedEndpoint: Endpoint<FlagUserPayload> = .flagUser(flag, with: userId)
+            let expectedEndpoint: Endpoint<FlagUserPayload> = .flagUser(flag, with: userId, reason: reason, extraData: extraData)
             XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(expectedEndpoint))
         }
     }
@@ -272,7 +272,7 @@ final class UserUpdater_Tests: XCTestCase {
 
         // Simulate `flagUser` call.
         var flagCompletionCalled = false
-        userUpdater.flagUser(true, with: flaggedUserId) { error in
+        userUpdater.flagUser(true, with: flaggedUserId, reason: nil, extraData: nil) { error in
             XCTAssertNil(error)
             flagCompletionCalled = true
         }
@@ -301,7 +301,7 @@ final class UserUpdater_Tests: XCTestCase {
 
         // Simulate `unflagUser` call.
         var unflagCompletionCalled = false
-        userUpdater.flagUser(false, with: flaggedUserId) { error in
+        userUpdater.flagUser(false, with: flaggedUserId, reason: nil, extraData: nil) { error in
             XCTAssertNil(error)
             unflagCompletionCalled = true
         }
@@ -319,7 +319,7 @@ final class UserUpdater_Tests: XCTestCase {
     func test_flagUser_propagatesNetworkError() {
         // Simulate `flagUser` call.
         var completionCalledError: Error?
-        userUpdater.flagUser(true, with: .unique) {
+        userUpdater.flagUser(true, with: .unique, reason: nil, extraData: nil) {
             completionCalledError = $0
         }
 
@@ -338,7 +338,7 @@ final class UserUpdater_Tests: XCTestCase {
 
         // Simulate `flagUser` call.
         var completionCalledError: Error?
-        userUpdater.flagUser(true, with: .unique) {
+        userUpdater.flagUser(true, with: .unique, reason: nil, extraData: nil) {
             completionCalledError = $0
         }
 

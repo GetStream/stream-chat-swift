@@ -1,24 +1,16 @@
 name: "Publish new release"
 
 on:
-  pull_request:
+  push:
     branches:
       - main
-    types:
-      - closed
 
   workflow_dispatch:
-    inputs:
-      version:
-        description: 'Release version'
-        type: string
-        required: true
 
 jobs:
   release:
     name: Publish new release
     runs-on: macos-12
-    if: ${{ github.event_name == 'workflow_dispatch' || github.event.pull_request.merged == true }}  # only merged pull requests must trigger this job
     steps:
       - name: Connect Bot
         uses: webfactory/ssh-agent@v0.7.0
@@ -26,31 +18,15 @@ jobs:
           ssh-private-key: ${{ secrets.BOT_SSH_PRIVATE_KEY }}
 
       - uses: actions/checkout@v4.1.1
+        with:
+          fetch-depth: 0
 
       - uses: ./.github/actions/ruby-cache
 
-      - name: Extract version from input (for workflow dispatch)
-        if: ${{ github.event_name == 'workflow_dispatch' }}
-        run: |
-          BRANCH_NAME=$(git rev-parse --abbrev-ref HEAD)
-          if [ "$BRANCH_NAME" != "main" ]; then
-            echo "This workflow can only be run on the main branch."
-            exit 1
-          fi
-          echo "RELEASE_VERSION=${{ github.event.inputs.version }}" >> $GITHUB_ENV
-
-      - name: Extract version from branch name (for release branches)
-        if: ${{ github.event_name == 'pull_request' && startsWith(github.event.pull_request.head.ref, 'release/') }}
-        run: |
-          BRANCH_NAME="${{ github.event.pull_request.head.ref }}"
-          VERSION=${BRANCH_NAME#release/}
-          echo "RELEASE_VERSION=$VERSION" >> $GITHUB_ENV
-
       - name: "Fastlane - Publish Release"
-        if: ${{ github.event_name == 'workflow_dispatch' || startsWith(github.event.pull_request.head.ref, 'release/') }}
         env:
           GITHUB_TOKEN: ${{ secrets.DANGER_GITHUB_API_TOKEN }}
           COCOAPODS_TRUNK_TOKEN: ${{ secrets.COCOAPODS_TRUNK_TOKEN }}
           MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
           APPSTORE_API_KEY: ${{ secrets.APPSTORE_API_KEY }}
-        run: bundle exec fastlane publish_release version:${{ env.RELEASE_VERSION }} --verbose
+        run: bundle exec fastlane publish_release --verbose

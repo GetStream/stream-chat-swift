@@ -88,13 +88,23 @@ extension Endpoint {
 // MARK: - User flagging
 
 extension Endpoint {
-    static func flagUser(_ flag: Bool, with userId: UserId) -> Endpoint<FlagUserPayload> {
+    static func flagUser(
+        _ flag: Bool,
+        with userId: UserId,
+        reason: String? = nil,
+        extraData: [String: RawJSON]? = nil
+    ) -> Endpoint<FlagUserPayload> {
         .init(
             path: .flagUser(flag),
             method: .post,
             queryItems: nil,
             requiresConnectionId: false,
-            body: ["target_user_id": userId]
+            body: FlagRequestBody(
+                reason: reason,
+                targetMessageId: nil,
+                targetUserId: userId,
+                custom: extraData
+            )
         )
     }
 }
@@ -105,20 +115,20 @@ extension Endpoint {
     static func flagMessage(
         _ flag: Bool,
         with messageId: MessageId,
-        reason: String? = nil
+        reason: String? = nil,
+        extraData: [String: RawJSON]? = nil
     ) -> Endpoint<FlagMessagePayload> {
-        var body: [String: AnyEncodable] = ["target_message_id": AnyEncodable(messageId)]
-        
-        if let reason = reason {
-            body["reason"] = AnyEncodable(reason)
-        }
-            
-        return .init(
+        .init(
             path: .flagMessage(flag),
             method: .post,
             queryItems: nil,
             requiresConnectionId: false,
-            body: body
+            body: FlagRequestBody(
+                reason: reason,
+                targetMessageId: messageId,
+                targetUserId: nil,
+                custom: extraData
+            )
         )
     }
 }

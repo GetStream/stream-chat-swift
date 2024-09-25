@@ -66,7 +66,12 @@ final class DatabaseContainer_Tests: XCTestCase {
     func test_removingAllData() throws {
         let container = DatabaseContainer(kind: .inMemory)
 
-        // // Create data for all our entities in the DB
+        // Create dummy local download
+        let localDownload = URL.streamAttachmentLocalStorageURL(forRelativePath: "mypath")
+        try FileManager.default.createDirectory(at: localDownload.deletingLastPathComponent(), withIntermediateDirectories: true)
+        try "1".write(to: localDownload, atomically: false, encoding: .utf8)
+        
+        // Create data for all our entities in the DB
         try writeDataForAllEntities(to: container)
 
         // Fetch the data from all out entities
@@ -118,6 +123,9 @@ final class DatabaseContainer_Tests: XCTestCase {
                 XCTAssertNil(context.currentUser)
             }
         }
+        
+        // Assert that local downloads were removed
+        XCTAssertEqual(false, FileManager.default.fileExists(atPath: URL.streamAttachmentDownloadsDirectory.path))
     }
     
     func test_removingAllData_whileAnotherWrite() throws {
@@ -329,6 +337,26 @@ final class DatabaseContainer_Tests: XCTestCase {
         database.backgroundReadOnlyContext.performAndWait {
             XCTAssertEqual(database.backgroundReadOnlyContext.shouldShowShadowedMessages, shouldShowShadowedMessages)
         }
+    }
+    
+    func test_storingMicrosecondsDate() throws {
+        let expectedCreatedAt = Date(timeIntervalSinceReferenceDate: 0.000123123)
+        let currentUserId = String.unique
+        let container = DatabaseContainer_Spy()
+        try container.writeSynchronously { session in
+            try session.saveCurrentUser(
+                payload: .dummy(
+                    userId: currentUserId,
+                    createdAt: expectedCreatedAt,
+                    role: .admin
+                )
+            )
+        }
+        let user = try container.readSynchronously { session in
+            try XCTUnwrap(session.currentUser).asModel()
+        }
+        // Note! Date limits precision to 0.000_000_1
+        XCTAssertEqual(978_307_200.000_123_1, user.userCreatedAt.timeIntervalSince1970, "Microseconds date is not stored correctly")
     }
     
     // MARK: -

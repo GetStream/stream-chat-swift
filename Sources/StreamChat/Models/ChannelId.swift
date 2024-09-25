@@ -8,7 +8,7 @@ import Foundation
 ///
 /// It reflects channel's type and a unique id.
 ///
-public struct ChannelId: Hashable, CustomStringConvertible {
+public struct ChannelId: Hashable, CustomStringConvertible, Sendable {
     private static let separator: Character = ":"
     private static let separatorCharSet = CharacterSet(charactersIn: String(separator))
 

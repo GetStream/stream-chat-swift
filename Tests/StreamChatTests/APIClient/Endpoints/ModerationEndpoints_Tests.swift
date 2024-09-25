@@ -110,17 +110,29 @@ final class ModerationEndpoints_Tests: XCTestCase {
 
         for (flag, path) in testCases {
             let userId: UserId = .unique
-
+            let reason: String = .unique
+            let extraData: [String: RawJSON] = ["key": .string(.unique)]
+            let body = FlagRequestBody(
+                reason: reason,
+                targetMessageId: nil,
+                targetUserId: userId,
+                custom: extraData
+            )
             let expectedEndpoint = Endpoint<FlagUserPayload>(
                 path: path,
                 method: .post,
                 queryItems: nil,
                 requiresConnectionId: false,
-                body: ["target_user_id": userId]
+                body: body
             )
 
             // Build endpoint.
-            let endpoint: Endpoint<FlagUserPayload> = .flagUser(flag, with: userId)
+            let endpoint: Endpoint<FlagUserPayload> = .flagUser(
+                flag,
+                with: userId,
+                reason: reason,
+                extraData: extraData
+            )
 
             // Assert endpoint is built correctly.
             XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
@@ -136,21 +148,24 @@ final class ModerationEndpoints_Tests: XCTestCase {
 
         for (flag, path) in testCases {
             let messageId: MessageId = .unique
-            let reason = "Test"
-
+            let reason: String = .unique
+            let extraData: [String: RawJSON] = ["key": .string(.unique)]
+            let body = FlagRequestBody(
+                reason: reason,
+                targetMessageId: messageId,
+                targetUserId: nil,
+                custom: extraData
+            )
             let expectedEndpoint = Endpoint<FlagMessagePayload>(
                 path: path,
                 method: .post,
                 queryItems: nil,
                 requiresConnectionId: false,
-                body: [
-                    "target_message_id": messageId,
-                    "reason": reason
-                ]
+                body: body
             )
 
             // Build endpoint.
-            let endpoint: Endpoint<FlagMessagePayload> = .flagMessage(flag, with: messageId, reason: reason)
+            let endpoint: Endpoint<FlagMessagePayload> = .flagMessage(flag, with: messageId, reason: reason, extraData: extraData)
 
             // Assert endpoint is built correctly.
             XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))

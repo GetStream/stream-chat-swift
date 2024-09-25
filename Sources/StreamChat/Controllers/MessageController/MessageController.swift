@@ -17,6 +17,7 @@ public extension ChatClient {
 
 /// `ChatMessageController` is a controller class which allows observing and mutating a chat message entity.
 ///
+/// - Note: For an async-await alternative of the `ChatMessageController`, please check ``Chat`` and ``MessageState`` in the async-await supported [state layer](https://getstream.io/chat/docs/sdk/ios/client/state-layer/state-layer-overview/).
 public class ChatMessageController: DataController, DelegateCallable, DataStoreProvider {
     /// The `ChatClient` instance this controller belongs to.
     public let client: ChatClient
@@ -578,10 +579,15 @@ public class ChatMessageController: DataController, DelegateCallable, DataStoreP
     ///
     /// - Parameters:
     ///   - reason: The flag reason.
+    ///   - extraData: Additional data associated with the flag request.
     ///   - completion: The completion. Will be called on a **callbackQueue** when the network request is finished.
     ///
-    public func flag(reason: String? = nil, completion: ((Error?) -> Void)? = nil) {
-        messageUpdater.flagMessage(true, with: messageId, in: cid, reason: reason) { error in
+    public func flag(
+        reason: String? = nil,
+        extraData: [String: RawJSON]? = nil,
+        completion: ((Error?) -> Void)? = nil
+    ) {
+        messageUpdater.flagMessage(true, with: messageId, in: cid, reason: reason, extraData: extraData) { error in
             self.callback {
                 completion?(error)
             }
@@ -593,7 +599,7 @@ public class ChatMessageController: DataController, DelegateCallable, DataStoreP
     /// - Parameter completion: The completion. Will be called on a **callbackQueue** when the network request is finished.
     ///
     public func unflag(completion: ((Error?) -> Void)? = nil) {
-        messageUpdater.flagMessage(false, with: messageId, in: cid) { error in
+        messageUpdater.flagMessage(false, with: messageId, in: cid, reason: nil, extraData: nil) { error in
             self.callback {
                 completion?(error)
             }
@@ -664,7 +670,40 @@ public class ChatMessageController: DataController, DelegateCallable, DataStoreP
             }
         }
     }
-
+    
+    /// Downloads the specified attachment and stores it locally on the device.
+    ///
+    /// - Parameters:
+    ///   - attachment: The attachment to download.
+    ///   - completion: A completion block with the attachment containing the downloading state.
+    ///
+    /// - Note: The local storage URL (`attachment.downloadingState?.localFileURL`) can change between app launches.
+    public func downloadAttachment<Payload>(
+        _ attachment: ChatMessageAttachment<Payload>,
+        completion: @escaping (Result<ChatMessageAttachment<Payload>, Error>) -> Void
+    ) where Payload: DownloadableAttachmentPayload {
+        messageUpdater.downloadAttachment(attachment) { result in
+            self.callback {
+                completion(result)
+            }
+        }
+    }
+    
+    /// Deletes the locally downloaded file.
+    ///
+    /// - SeeAlso: Deleting all the local downloads: ``CurrentChatUserController/deleteAllLocalAttachmentDownloads(completion:)``
+    ///
+    /// - Parameters:
+    ///   - attachmentId: The id of the attachment.
+    ///   - completion: A completion block with an error if the deletion failed.
+    public func deleteLocalAttachmentDownload(for attachmentId: AttachmentId, completion: ((Error?) -> Void)? = nil) {
+        messageUpdater.deleteLocalAttachmentDownload(for: attachmentId) { error in
+            self.callback {
+                completion?(error)
+            }
+        }
+    }
+    
     /// Updates local state of attachment with provided `id` to be enqueued by attachment uploader.
     /// - Parameters:
     ///   - id: The attachment identifier.

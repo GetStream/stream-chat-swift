@@ -10,6 +10,8 @@ import Foundation
 ///
 /// Typically, an app contains just one instance of `ChatClient`. However, it's possible to have multiple instances if your use
 /// case requires it (i.e. more than one window with different workspaces in a Slack-like app).
+///
+/// - Important: When using multiple instances of `ChatClient` at the same time, it is required to use a different ``ChatClientConfig/localStorageFolderURL`` for each instance. For example, adding an additional path component to the default URL.
 public class ChatClient {
     /// The `UserId` of the currently logged in user.
     public var currentUserId: UserId? {
@@ -99,6 +101,8 @@ public class ChatClient {
 
     /// The environment object containing all dependencies of this `Client` instance.
     private let environment: Environment
+    
+    @Atomic static var activeLocalStorageURLs = Set<URL>()
 
     /// The default configuration of URLSession to be used for both the `APIClient` and `WebSocketClient`. It contains all
     /// required header auth parameters to make a successful request.
@@ -217,9 +221,11 @@ public class ChatClient {
         setupTokenRefresher()
         setupOfflineRequestQueue()
         setupConnectionRecoveryHandler(with: environment)
+        validateIntegrity()
     }
 
     deinit {
+        Self._activeLocalStorageURLs.mutate { $0.subtract(databaseContainer.persistentStoreDescriptions.compactMap(\.url)) }
         completeConnectionIdWaiters(connectionId: nil)
         completeTokenWaiters(token: nil)
     }
@@ -254,6 +260,20 @@ public class ChatClient {
             config.staysConnectedInBackground,
             config.reconnectionTimeout.map { ScheduledStreamTimer(interval: $0, fireOnStart: false, repeats: false) }
         )
+    }
+    
+    private func validateIntegrity() {
+        Self._activeLocalStorageURLs.mutate { urls in
+            let existingCount = urls.count
+            urls.formUnion(databaseContainer.persistentStoreDescriptions.compactMap(\.url).filter { $0.path != "/dev/null" })
+            guard existingCount == urls.count, !urls.isEmpty else { return }
+            log.error(
+                """
+                There are multiple ChatClient instances using the same `ChatClientConfig.localStorageFolderURL` - this is disallowed.
+                Either create a shared instance or make sure the previous instance of `ChatClient` is deallocated.
+                """
+            )
+        }
     }
 
     /// Register a custom attachment payload.

@@ -1,25 +1,25 @@
 {
-    "channel_id": "36d17a7e-50b8-11ef-a447-1eebe6661088",
+    "channel_id": "97274db6-72f7-11ef-b6d3-6644d678b5e5",
     "channel_type": "messaging",
-    "cid": "messaging:36d17a7e-50b8-11ef-a447-1eebe6661088",
-    "created_at": "2024-08-02T10:16:01.580203708Z",
+    "cid": "messaging:97274db6-72f7-11ef-b6d3-6644d678b5e5",
+    "created_at": "2024-09-15T00:15:23.592667587Z",
     "member": {
         "banned": false,
         "channel_role": "channel_member",
-        "created_at": "2024-08-02T10:16:01.569225Z",
+        "created_at": "2024-09-15T00:15:23.585217Z",
         "notifications_muted": false,
         "role": "admin",
         "shadow_banned": false,
         "status": "member",
-        "updated_at": "2024-08-02T10:16:01.569225Z",
+        "updated_at": "2024-09-15T00:15:23.585217Z",
         "user": {
             "banned": false,
             "birthland": "Polis Massa",
             "created_at": "2024-04-04T09:42:00.68335Z",
             "id": "leia_organa",
             "image": "https://vignette.wikia.nocookie.net/starwars/images/f/fc/Leia_Organa_TLJ.png",
-            "language": "de",
-            "last_active": "2024-08-02T06:35:06.594322Z",
+            "language": "en",
+            "last_active": "2024-09-13T13:46:07.532535Z",
             "name": "Leia Organa",
             "online": false,
             "private_settings": {
@@ -31,7 +31,7 @@
                 }
             },
             "role": "admin",
-            "updated_at": "2024-07-15T12:34:51.215666Z"
+            "updated_at": "2024-09-13T11:00:27.647455Z"
         },
         "user_id": "leia_organa"
     },
@@ -42,8 +42,8 @@
         "created_at": "2024-04-04T09:42:00.68335Z",
         "id": "leia_organa",
         "image": "https://vignette.wikia.nocookie.net/starwars/images/f/fc/Leia_Organa_TLJ.png",
-        "language": "de",
-        "last_active": "2024-08-02T06:35:06.594322Z",
+        "language": "en",
+        "last_active": "2024-09-13T13:46:07.532535Z",
         "name": "Leia Organa",
         "online": false,
         "private_settings": {
@@ -55,6 +55,6 @@
             }
         },
         "role": "admin",
-        "updated_at": "2024-07-15T12:34:51.215666Z"
+        "updated_at": "2024-09-13T11:00:27.647455Z"
     }
 }
