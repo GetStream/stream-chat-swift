@@ -9,7 +9,7 @@ extension UserPayload {
     /// Returns a dummy user payload with the given `id` and `extraData`
     static func dummy(
         userId: UserId,
-        name: String = .unique,
+        name: String? = .unique,
         imageUrl: URL? = .unique(),
         role: UserRole = .admin,
         extraData: [String: RawJSON] = [:],

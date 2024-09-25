@@ -6,8 +6,12 @@ import Foundation
 
 /// `ChannelMemberListSortingKey` describes the keys by which you can get sorted channel members after query.
 public enum ChannelMemberListSortingKey: String, SortingKey {
+    /// Sort channels by creation date.
     case createdAt = "memberCreatedAt"
 
+    /// Sort channels by user id.
+    case userId = "user.id"
+    
     /// Sort channel members by name.
     ///
     /// - Warning: This option is heavy for the backend and can slow down API requests' response time. If there's no explicit requirement for this sorting option consider using a different one.
@@ -21,6 +25,7 @@ public enum ChannelMemberListSortingKey: String, SortingKey {
         /// Sort channel members by date they were created.
         case .createdAt: value = "created_at"
         case .name: value = "name"
+        case .userId: value = "user_id"
         }
 
         try container.encode(value)

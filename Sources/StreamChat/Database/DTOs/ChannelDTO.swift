@@ -371,7 +371,15 @@ extension ChannelDTO {
         let request = NSFetchRequest<ChannelDTO>(entityName: ChannelDTO.entityName)
 
         // Fetch results controller requires at least one sorting descriptor.
-        let sortDescriptors = query.sort.compactMap { $0.key.sortDescriptor(isAscending: $0.isAscending) }
+        var sortDescriptors = query.sort.compactMap { $0.key.sortDescriptor(isAscending: $0.isAscending) }
+        
+        // For consistent order we need to have a sort descriptor which breaks ties
+        if !sortDescriptors.isEmpty, !sortDescriptors.contains(where: { $0.key == ChannelListSortingKey.updatedAt.localKey }) {
+            if let tieBreaker = ChannelListSortingKey.updatedAt.sortDescriptor(isAscending: false) {
+                sortDescriptors.append(tieBreaker)
+            }
+        }
+        
         request.sortDescriptors = sortDescriptors.isEmpty ? [ChannelListSortingKey.defaultSortDescriptor] : sortDescriptors
 
         let matchingQuery = NSPredicate(format: "ANY queries.filterHash == %@", query.filter.filterHash)

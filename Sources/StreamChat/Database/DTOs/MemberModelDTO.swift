@@ -50,7 +50,12 @@ extension MemberDTO {
     static func members(matching query: ChannelMemberListQuery) -> NSFetchRequest<MemberDTO> {
         let request = NSFetchRequest<MemberDTO>(entityName: MemberDTO.entityName)
         request.predicate = NSPredicate(format: "ANY queries.queryHash == %@", query.queryHash)
-        request.sortDescriptors = query.sortDescriptors
+        var sortDescriptors = query.sortDescriptors
+        // For consistent order we need to have a sort descriptor which breaks ties
+        if !sortDescriptors.isEmpty, !sortDescriptors.contains(where: { $0.key == ChannelMemberListSortingKey.userId.rawValue }) {
+            sortDescriptors.append(ChannelMemberListSortingKey.userId.sortDescriptor(isAscending: true))
+        }
+        request.sortDescriptors = sortDescriptors
         return request
     }
 }

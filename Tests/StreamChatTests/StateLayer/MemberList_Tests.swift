@@ -116,6 +116,33 @@ final class MemberList_Tests: XCTestCase {
         let allExpectedIds = (initialPayload.members + apiResult.members).map(\.user?.id)
         await XCTAssertEqual(allExpectedIds, memberList.state.members.map(\.id))
     }
+    
+    func test_loadMembers_whenSortingByName_thenSortingOrderDoesNotChange() async throws {
+        try await createChannel()
+        try await setUpMemberList(usesMockedUpdater: false)
+        
+        // Fetch 10 members
+        let payload1 = makeMemberListPayload(count: 10, offset: 0, memberNameCreator: { _ in "Name" })
+        let payload1Ids = payload1.members.compactMap(\.user?.id)
+        env.client.mockAPIClient.test_mockResponseResult(.success(payload1))
+        let fetchedIds1 = try await memberList.loadMembers(with: Pagination(pageSize: 10)).map(\.id)
+        XCTAssertEqual(payload1Ids, fetchedIds1)
+        
+        // Fetch 10 more
+        let payload2 = makeMemberListPayload(count: 10, offset: 10, memberNameCreator: { _ in "Name" })
+        let payload2Ids = payload2.members.compactMap(\.user?.id)
+        env.client.mockAPIClient.test_mockResponseResult(.success(payload2))
+        let fetchedIds2 = try await memberList.loadMoreMembers(limit: 10).map(\.id)
+        XCTAssertEqual(payload2Ids, fetchedIds2)
+        
+        let allPayloadIds = payload1Ids + payload2Ids
+        let allMemberIds = await memberList.state.members.map(\.id)
+        XCTAssertEqual(
+            allPayloadIds,
+            allMemberIds,
+            "Exactly the same order as payload returned should be kept locally"
+        )
+    }
 
     // MARK: - Test Data
     
@@ -140,14 +167,24 @@ final class MemberList_Tests: XCTestCase {
         }
     }
     
-    private func makeMemberListPayload(count: Int, offset: Int) -> ChannelMemberListPayload {
+    private func makeMemberListPayload(
+        count: Int,
+        offset: Int,
+        memberNameCreator: ((Int) -> String?)? = nil
+    ) -> ChannelMemberListPayload {
         let members = (0..<count)
             .map { $0 + offset }
-            .map {
-                MemberPayload.dummy(
+            .map { index in
+                let name: String?
+                if let memberNameCreator {
+                    name = memberNameCreator(index)
+                } else {
+                    name = String(format: "%03d", index)
+                }
+                return MemberPayload.dummy(
                     user: .dummy(
-                        userId: String(format: "%03d", $0),
-                        name: String(format: "%03d", $0)
+                        userId: String(format: "%03d", index),
+                        name: name
                     )
                 )
             }

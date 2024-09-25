@@ -339,6 +339,26 @@ final class DatabaseContainer_Tests: XCTestCase {
         }
     }
     
+    func test_storingMicrosecondsDate() throws {
+        let expectedCreatedAt = Date(timeIntervalSinceReferenceDate: 0.000123123)
+        let currentUserId = String.unique
+        let container = DatabaseContainer_Spy()
+        try container.writeSynchronously { session in
+            try session.saveCurrentUser(
+                payload: .dummy(
+                    userId: currentUserId,
+                    createdAt: expectedCreatedAt,
+                    role: .admin
+                )
+            )
+        }
+        let user = try container.readSynchronously { session in
+            try XCTUnwrap(session.currentUser).asModel()
+        }
+        // Note! Date limits precision to 0.000_000_1
+        XCTAssertEqual(978_307_200.000_123_1, user.userCreatedAt.timeIntervalSince1970, "Microseconds date is not stored correctly")
+    }
+    
     // MARK: -
     
     private func writeDataForAllEntities(to container: DatabaseContainer) throws {

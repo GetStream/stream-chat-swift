@@ -161,6 +161,68 @@ final class ChannelList_Tests: XCTestCase {
         XCTAssertEqual(expectedChannels.map(\.channel.cid.rawValue), await channelList.state.channels.map(\.cid.rawValue))
     }
     
+    func test_loadChannels_whenSortingByLastMessageAtWithEqualMilliseconds_thenSortingOrderDoesNotChange() async throws {
+        await setUpChannelList(
+            usesMockedChannelUpdater: false,
+            sort: [.init(key: .lastMessageAt, isAscending: true)]
+        )
+        let lastMessageAtWithEqualMilliseconds = Date(timeIntervalSinceReferenceDate: 748_509_541.864)
+        
+        // Fetch 10 channels with the same lastMessageAt
+        let payload1 = makeMatchingChannelListPayload(
+            channelCount: 10,
+            createdAtOffset: 0,
+            messagesCreator: { cid, index in
+                // Created at growing only in microseconds
+                let createdAt = lastMessageAtWithEqualMilliseconds.addingTimeInterval(TimeInterval(index) * 0.000_001)
+                return [MessagePayload.dummy(createdAt: createdAt, cid: cid)]
+            }
+        )
+        let payload1Cids = payload1.channels.map(\.channel.cid)
+        env.client.mockAPIClient.test_mockResponseResult(.success(payload1))
+        try await channelList.get()
+        let allCids1 = await channelList.state.channels.map(\.cid)
+        XCTAssertEqual(payload1Cids, allCids1)
+        
+        // Update some of the channels which makes FRC to refetch
+        try await env.client.mockDatabaseContainer.write { session in
+            for index in [3, 5, 7] {
+                let channel = payload1.channels[index].channel
+                try session.saveChannel(
+                    payload: .dummy(
+                        channel: .dummy(cid: channel.cid, createdAt: channel.createdAt),
+                        messages: [MessagePayload.dummy(createdAt: channel.lastMessageAt, cid: channel.cid)]
+                    )
+                )
+            }
+        }
+        let allCids2 = await channelList.state.channels.map(\.cid)
+        XCTAssertEqual(payload1Cids, allCids2)
+        
+        // Fetch 10 more channels with the same lastMessageAt
+        let payload2 = makeMatchingChannelListPayload(
+            channelCount: 10,
+            createdAtOffset: 10,
+            messagesCreator: { cid, index in
+                // Created at growing only in microseconds
+                let createdAt = lastMessageAtWithEqualMilliseconds.addingTimeInterval(TimeInterval(index) * 0.000_001)
+                return [MessagePayload.dummy(createdAt: createdAt, cid: cid)]
+            }
+        )
+        let payload2Cids = payload2.channels.map(\.channel.cid)
+        env.client.mockAPIClient.test_mockResponseResult(.success(payload2))
+        let loadMoreCids = try await channelList.loadMoreChannels(limit: 10).map(\.cid)
+        XCTAssertEqual(payload2Cids, loadMoreCids)
+        
+        let allCidsState3 = await channelList.state.channels.map(\.cid)
+        let allPayloadCids = payload1Cids + payload2Cids
+        XCTAssertEqual(
+            allPayloadCids,
+            allCidsState3,
+            "Exactly the same order as payload returned should be kept locally"
+        )
+    }
+    
     // MARK: - Observing the Core Data Store
     
     func test_observingLocalStore_whenStoreChanges_thenStateChanges() async throws {
@@ -287,9 +349,14 @@ final class ChannelList_Tests: XCTestCase {
     // MARK: - Test Data
     
     /// For tests which rely on the channel updater to update the local database.
-    @MainActor private func setUpChannelList(usesMockedChannelUpdater: Bool, loadState: Bool = true, dynamicFilter: ((ChatChannel) -> Bool)? = nil) {
+    @MainActor private func setUpChannelList(
+        usesMockedChannelUpdater: Bool,
+        loadState: Bool = true,
+        sort: [Sorting<ChannelListSortingKey>] = [.init(key: .createdAt, isAscending: true)],
+        dynamicFilter: ((ChatChannel) -> Bool)? = nil
+    ) {
         channelList = ChannelList(
-            query: ChannelListQuery(filter: .in(.members, values: [memberId]), sort: [.init(key: .createdAt, isAscending: true)]),
+            query: ChannelListQuery(filter: .in(.members, values: [memberId]), sort: sort),
             dynamicFilter: dynamicFilter,
             client: env.client,
             environment: env.channelListEnvironment(usesMockedUpdater: usesMockedChannelUpdater)
@@ -309,13 +376,20 @@ final class ChannelList_Tests: XCTestCase {
         makeMatchingChannelListPayload(channelCount: 1, createdAtOffset: createdAtOffset).channels[0]
     }
     
-    private func makeMatchingChannelListPayload(channelCount: Int, createdAtOffset: Int, namePrefix: String = "Name") -> ChannelListPayload {
+    private func makeMatchingChannelListPayload(
+        channelCount: Int,
+        createdAtOffset: Int,
+        namePrefix: String = "Name",
+        messagesCreator: ((ChannelId, Int) -> [MessagePayload])? = nil
+    ) -> ChannelListPayload {
         let channelPayloads = (0..<channelCount)
             .map {
-                dummyPayload(
-                    with: ChannelId(type: .messaging, id: "cid\($0 + createdAtOffset)"),
+                let channelId = ChannelId(type: .messaging, id: "cid\($0 + createdAtOffset)")
+                return dummyPayload(
+                    with: channelId,
                     name: "\(namePrefix) \($0 + createdAtOffset)",
                     members: [.dummy(user: .dummy(userId: memberId))],
+                    messages: messagesCreator?(channelId, $0 + createdAtOffset),
                     createdAt: Date(timeIntervalSinceReferenceDate: TimeInterval($0 + createdAtOffset))
                 )
             }
