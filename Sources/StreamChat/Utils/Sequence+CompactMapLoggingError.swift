@@ -4,7 +4,7 @@
 
 import Foundation
 
-extension Collection {
+extension Sequence {
     @inlinable
     func compactMapLoggingError<ElementOfResult>(_ transform: (Element) throws -> ElementOfResult?) -> [ElementOfResult] {
         compactMap {

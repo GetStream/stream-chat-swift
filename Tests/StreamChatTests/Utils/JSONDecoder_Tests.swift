@@ -169,7 +169,7 @@ final class JSONDecoder_Tests: XCTestCase {
         XCTAssertEqual(dateCache.getObjectCalledCounter, 5)
 
         // The actual decoded date must match the date JSONDecoder decoded and cached
-        let actualDecodedDate = Date(timeIntervalSince1970: 1_591_690_240.8)
+        let actualDecodedDate = Date(timeIntervalSince1970: 1_591_690_240.800_912)
         XCTAssertEqual(dateCache.object(forKey: repeatedDate as NSString)?.timeIntervalSince1970, actualDecodedDate.timeIntervalSince1970)
 
         // All dates must be decoded
