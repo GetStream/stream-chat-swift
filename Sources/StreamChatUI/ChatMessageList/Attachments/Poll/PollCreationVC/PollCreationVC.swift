@@ -33,10 +33,6 @@ public struct PollFeatureType: Equatable {
     public static var anonymous = Self(rawValue: "anonymous")
     public static var suggestions = Self(rawValue: "suggestions")
     public static var comments = Self(rawValue: "comments")
-
-    public static func == (lhs: PollFeatureType, rhs: PollFeatureType) -> Bool {
-        lhs.rawValue == rhs.rawValue
-    }
 }
 
 /// The view controller to create a poll in a channel.
