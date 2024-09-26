@@ -192,7 +192,7 @@ class SyncRepository {
         
         // 4. Re-watch channels what we were watching before disconnect
         // Needs to be done explicitly after reconnection, otherwise SDK users need to handle connection changes
-        operations.append(contentsOf: activeChannelControllers.allObjects.map { WatchChannelOperation(controller: $0, context: context) })
+        operations.append(contentsOf: activeChannelControllers.allObjects.map { WatchChannelOperation(controller: $0, context: context, recovery: false) })
         operations.append(contentsOf: activeChats.allObjects.map { WatchChannelOperation(chat: $0, context: context) })
         
         operations.append(BlockOperation(block: {
@@ -247,7 +247,7 @@ class SyncRepository {
 
         // 2. Start watching open channels.
         let watchChannelOperations: [AsyncOperation] = activeChannelControllers.allObjects.map { controller in
-            WatchChannelOperation(controller: controller, context: context)
+            WatchChannelOperation(controller: controller, context: context, recovery: true)
         }
         operations.append(contentsOf: watchChannelOperations)
 

@@ -120,12 +120,12 @@ final class SyncOperations_Tests: XCTestCase {
         let context = SyncContext(lastSyncAt: .init())
         let controller = ChatChannelController_Spy(client: client)
         controller.state = .initialized
-        let operation = WatchChannelOperation(controller: controller, context: context)
+        let operation = WatchChannelOperation(controller: controller, context: context, recovery: true)
 
         operation.startAndWaitForCompletion()
 
         XCTAssertEqual(context.watchedAndSynchedChannelIds.count, 0)
-        XCTAssertNotCall("recoverWatchedChannel(completion:)", on: controller)
+        XCTAssertNotCall("recoverWatchedChannel(recovery:completion:)", on: controller)
     }
 
     func test_WatchChannelOperation_availableOnRemote_alreadySynched() {
@@ -134,12 +134,12 @@ final class SyncOperations_Tests: XCTestCase {
         controller.state = .remoteDataFetched
         context.synchedChannelIds.insert(controller.cid!)
 
-        let operation = WatchChannelOperation(controller: controller, context: context)
+        let operation = WatchChannelOperation(controller: controller, context: context, recovery: true)
 
         operation.startAndWaitForCompletion()
 
         XCTAssertEqual(context.watchedAndSynchedChannelIds.count, 1)
-        XCTAssertCall("recoverWatchedChannel(completion:)", on: controller)
+        XCTAssertCall("recoverWatchedChannel(recovery:completion:)", on: controller)
     }
 
     func test_WatchChannelOperation_availableOnRemote_notSynched() {
@@ -147,13 +147,13 @@ final class SyncOperations_Tests: XCTestCase {
         let controller = ChatChannelController_Spy(client: client)
         controller.state = .remoteDataFetched
 
-        let operation = WatchChannelOperation(controller: controller, context: context)
+        let operation = WatchChannelOperation(controller: controller, context: context, recovery: true)
 
         operation.startAndWaitForCompletion()
 
         XCTAssertEqual(context.watchedAndSynchedChannelIds.count, 1)
         XCTAssertEqual(context.synchedChannelIds.count, 0)
-        XCTAssertCall("recoverWatchedChannel(completion:)", on: controller)
+        XCTAssertCall("recoverWatchedChannel(recovery:completion:)", on: controller)
     }
 
     func test_WatchChannelOperation_availableOnRemote_notSynched_watchFailure_shouldRetry() {
@@ -162,12 +162,12 @@ final class SyncOperations_Tests: XCTestCase {
         controller.state = .remoteDataFetched
         controller.watchActiveChannelError = ClientError("")
 
-        let operation = WatchChannelOperation(controller: controller, context: context)
+        let operation = WatchChannelOperation(controller: controller, context: context, recovery: true)
 
         operation.startAndWaitForCompletion()
 
         XCTAssertEqual(context.watchedAndSynchedChannelIds.count, 0)
-        XCTAssertCall("recoverWatchedChannel(completion:)", on: controller, times: 3)
+        XCTAssertCall("recoverWatchedChannel(recovery:completion:)", on: controller, times: 3)
     }
 
     func test_WatchChannelOperation_availableOnRemote_notSynched_watchSuccess() {
@@ -176,12 +176,12 @@ final class SyncOperations_Tests: XCTestCase {
         controller.state = .remoteDataFetched
         controller.watchActiveChannelError = nil
 
-        let operation = WatchChannelOperation(controller: controller, context: context)
+        let operation = WatchChannelOperation(controller: controller, context: context, recovery: true)
 
         operation.startAndWaitForCompletion()
 
         XCTAssertEqual(context.watchedAndSynchedChannelIds.count, 1)
-        XCTAssertCall("recoverWatchedChannel(completion:)", on: controller, times: 1)
+        XCTAssertCall("recoverWatchedChannel(recovery:completion:)", on: controller, times: 1)
     }
 
     // MARK: - RefetchChannelListQueryOperation

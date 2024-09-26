@@ -1246,11 +1246,11 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
 
     // MARK: - Internal
 
-    func recoverWatchedChannel(completion: @escaping (Error?) -> Void) {
+    func recoverWatchedChannel(recovery: Bool, completion: @escaping (Error?) -> Void) {
         if cid != nil, isChannelAlreadyCreated {
-            startWatching(isInRecoveryMode: true, completion: completion)
+            startWatching(isInRecoveryMode: recovery, completion: completion)
         } else {
-            synchronize(isInRecoveryMode: true, completion)
+            synchronize(isInRecoveryMode: recovery, completion)
         }
     }
     

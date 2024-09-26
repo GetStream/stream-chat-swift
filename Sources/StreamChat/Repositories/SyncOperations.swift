@@ -153,7 +153,7 @@ final class SyncEventsOperation: AsyncOperation {
 }
 
 final class WatchChannelOperation: AsyncOperation {
-    init(controller: ChatChannelController, context: SyncContext) {
+    init(controller: ChatChannelController, context: SyncContext, recovery: Bool) {
         super.init(maxRetries: syncOperationsMaximumRetries) { [weak controller] _, done in
             guard let controller = controller, controller.canBeRecovered else {
                 done(.continue)
@@ -162,7 +162,7 @@ final class WatchChannelOperation: AsyncOperation {
 
             let cidString = (controller.cid?.rawValue ?? "unknown")
             log.info("Watching active channel \(cidString)", subsystems: .offlineSupport)
-            controller.recoverWatchedChannel { error in
+            controller.recoverWatchedChannel(recovery: recovery) { error in
                 if let cid = controller.cid, error == nil {
                     log.info("Successfully watched active channel \(cidString)", subsystems: .offlineSupport)
                     context.watchedAndSynchedChannelIds.insert(cid)
