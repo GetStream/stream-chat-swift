@@ -71,6 +71,8 @@ final class ChannelListLinker {
         ]
     }
     
+    var didHandleChannel: ((ChatChannel, LinkingAction) -> Void)?
+    
     enum LinkingAction {
         case link, unlink, none
     }
@@ -79,25 +81,30 @@ final class ChannelListLinker {
         let action = linkingActionForChannel(channel)
         switch action {
         case .link:
-            worker.link(channel: channel, with: query) { [worker] error in
+            worker.link(channel: channel, with: query) { [worker, didHandleChannel] error in
                 if let error = error {
                     log.error(error)
+                    didHandleChannel?(channel, action)
                     return
                 }
                 worker.startWatchingChannels(withIds: [channel.cid]) { error in
-                    guard let error = error else { return }
-                    log.warning(
-                        "Failed to start watching linked channel: \(channel.cid), error: \(error.localizedDescription)"
-                    )
+                    if let error {
+                        log.warning(
+                            "Failed to start watching linked channel: \(channel.cid), error: \(error.localizedDescription)"
+                        )
+                    }
+                    didHandleChannel?(channel, action)
                 }
             }
         case .unlink:
-            worker.unlink(channel: channel, with: query) { error in
-                guard let error = error else { return }
-                log.error(error)
+            worker.unlink(channel: channel, with: query) { [didHandleChannel] error in
+                if let error {
+                    log.error(error)
+                }
+                didHandleChannel?(channel, action)
             }
         case .none:
-            break
+            didHandleChannel?(channel, action)
         }
     }
     
