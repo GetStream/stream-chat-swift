@@ -18,7 +18,16 @@ class PollVoteDTO: NSManagedObject {
     @NSManaged var poll: PollDTO?
     @NSManaged var user: UserDTO?
     @NSManaged var queries: Set<PollVoteListQueryDTO>?
-    
+
+    override func willSave() {
+        super.willSave()
+
+        // When the poll is updated, trigger message FRC update.
+        if let message = poll?.message, hasPersistentChangedValues, !message.hasChanges, !message.isDeleted {
+            message.id = message.id
+        }
+    }
+
     static func loadOrCreate(
         voteId: String,
         poll: PollDTO,
@@ -136,9 +145,6 @@ extension NSManagedObjectContext {
             poll.ownVotes.insert(dto)
         }
 
-        // Trigger FRC message update
-        poll.message?.poll = poll
-
         return dto
     }
     
@@ -199,9 +205,6 @@ extension NSManagedObjectContext {
             poll.ownVotes.insert(dto)
         }
 
-        // Trigger FRC message update
-        poll.message?.poll = poll
-
         return dto
     }
     
@@ -231,9 +234,6 @@ extension NSManagedObjectContext {
                 dto.poll?.ownVotes.remove(dto)
             }
         }
-
-        // Trigger FRC message update
-        poll?.message?.poll = poll
 
         delete(pollVote: dto)
         return dto

@@ -28,7 +28,16 @@ class PollDTO: NSManagedObject {
     @NSManaged var message: MessageDTO?
     @NSManaged var options: NSOrderedSet
     @NSManaged var latestVotesByOption: Set<PollOptionDTO>
-    
+
+    override func willSave() {
+        super.willSave()
+        
+        // When the poll is updated, trigger message FRC update.
+        if let message = self.message, hasPersistentChangedValues, !message.hasChanges, !message.isDeleted {
+            message.id = message.id
+        }
+    }
+
     static func loadOrCreate(
         pollId: String,
         context: NSManagedObjectContext,
@@ -195,9 +204,6 @@ extension NSManagedObjectContext {
                 }
             )
         }
-
-        // Trigger FRC message update
-        pollDto.message?.poll = pollDto
 
         return pollDto
     }
