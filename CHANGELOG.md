@@ -26,7 +26,6 @@ _September 12, 2024_
 ### 🐞 Fixed
 - Fix Logger printing the incorrect thread name [#3382](https://github.com/GetStream/stream-chat-swift/pull/3382)
 - Channel watching did not resume on web-socket reconnection [#3409](https://github.com/GetStream/stream-chat-swift/pull/3409)
-- Channel was not linked to the channel list query when receiving the `ChannelUpdatedEvent` event [#3430](https://github.com/GetStream/stream-chat-swift/pull/3430)
 ### 🔄 Changed
 - Discard offline state changes when saving database changes fails [#3399](https://github.com/GetStream/stream-chat-swift/pull/3399)
 - Deprecate `Filter.notEqual` and `Filter.notIn` [#3414](https://github.com/GetStream/stream-chat-swift/pull/3414)
