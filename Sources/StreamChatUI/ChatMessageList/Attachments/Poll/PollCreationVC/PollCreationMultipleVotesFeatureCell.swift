@@ -101,9 +101,9 @@ open class PollCreationMultipleVotesFeatureCell: _CollectionViewCell, ThemeProvi
 
         container.views {
             featureSwitchView
-                .height(56)
+                .height(PollCreationVC.pollCreationInputViewHeight)
             maximumVotesSwitchView
-                .height(56)
+                .height(PollCreationVC.pollCreationInputViewHeight)
         }
         .layout {
             $0.isLayoutMarginsRelativeArrangement = true

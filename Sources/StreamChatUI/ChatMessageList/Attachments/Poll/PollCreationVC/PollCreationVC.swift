@@ -162,6 +162,10 @@ open class PollCreationVC:
         .alertsRouter
         .init(rootViewController: self)
 
+    /// The height for all the input views present in the poll creation view.
+    /// The height is static in order for the error view to not change the position or height of the parent view.
+    public static var pollCreationInputViewHeight: CGFloat = 56
+
     /// The estimated cell height.
     open var estimatedCellHeight: CGFloat {
         56

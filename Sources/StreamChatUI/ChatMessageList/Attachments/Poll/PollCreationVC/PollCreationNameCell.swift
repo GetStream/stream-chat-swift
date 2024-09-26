@@ -64,7 +64,7 @@ open class PollCreationNameCell: _CollectionViewCell, ThemeProvider, UITextField
         container.views {
             textFieldView
         }
-        .height(56)
+        .height(PollCreationVC.pollCreationInputViewHeight)
         .layout {
             $0.isLayoutMarginsRelativeArrangement = true
             $0.directionalLayoutMargins = .init(top: 0, leading: 12, bottom: 0, trailing: 12)

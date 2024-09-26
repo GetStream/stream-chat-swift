@@ -79,7 +79,7 @@ open class PollCreationOptionCell: _CollectionViewCell, ThemeProvider, UITextFie
                 .width(28)
                 .height(22)
         }
-        .height(56)
+        .height(PollCreationVC.pollCreationInputViewHeight)
         .layout {
             $0.isLayoutMarginsRelativeArrangement = true
             $0.directionalLayoutMargins = .init(top: 0, leading: 12, bottom: 0, trailing: 12)

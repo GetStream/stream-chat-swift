@@ -54,7 +54,7 @@ open class PollCreationFeatureCell: _CollectionViewCell, ThemeProvider {
         container.views {
             featureSwitchView
         }
-        .height(56)
+        .height(PollCreationVC.pollCreationInputViewHeight)
         .layout {
             $0.isLayoutMarginsRelativeArrangement = true
             $0.directionalLayoutMargins = .init(top: 0, leading: 12, bottom: 0, trailing: 12)
