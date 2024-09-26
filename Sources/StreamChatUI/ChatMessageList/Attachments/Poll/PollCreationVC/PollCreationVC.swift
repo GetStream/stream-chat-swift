@@ -496,12 +496,12 @@ open class PollCreationVC:
             guard let cell = cell else { return }
             guard indexPath.item < self.options.count else { return }
 
-            cell.reorderImageView.isHidden = false
             self.options[indexPath.item] = newValue
 
             let numberOfOptions = self.options.count
             let isLastItem = indexPath.item == numberOfOptions - 1
             if isLastItem && !newValue.isEmpty {
+                cell.reorderImageView.isHidden = false
                 self.options.append("")
                 let newIndexPath = IndexPath(item: indexPath.item + 1, section: indexPath.section)
                 collectionView.insertItems(at: [newIndexPath])
