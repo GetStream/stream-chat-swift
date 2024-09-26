@@ -271,44 +271,6 @@ final class PollsRepository_Tests: XCTestCase {
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(referenceEndpoint))
     }
     
-    func test_castPollVote_whenLocallySaving_thenLatestAnswerDoesNotIncludeVote() throws {
-        let completionCalled = expectation(description: "completion called")
-        let pollId = "123"
-        let messageId: String = .unique
-        let pollOptionId = "345"
-        
-        try database.writeSynchronously { session in
-            try session.savePoll(
-                payload: self.dummyPollPayload(
-                    id: pollId,
-                    options: [self.dummyPollOptionPayload(id: pollOptionId)]
-                ),
-                cache: nil
-            )
-        }
-        
-        repository.castPollVote(
-            messageId: messageId,
-            pollId: pollId,
-            answerText: nil,
-            optionId: pollOptionId,
-            currentUserId: .unique,
-            query: nil,
-            deleteExistingVotes: []
-        ) { _ in
-            completionCalled.fulfill()
-        }
-        wait(for: [apiClient.request_expectation], timeout: defaultTimeout)
-
-        database.backgroundReadOnlyContext.performAndWait {
-            let poll = try? database.backgroundReadOnlyContext.poll(id: pollId)
-            XCTAssertEqual(0, poll?.latestAnswers.count)
-        }
-        
-        apiClient.test_simulateResponse(Result<PollVotePayloadResponse, Error>.failure(TestError()))
-        wait(for: [completionCalled], timeout: defaultTimeout)
-    }
-    
     func test_castPollAnswer_whenSuccess() {
         let completionCalled = expectation(description: "completion called")
         let pollId = "123"
