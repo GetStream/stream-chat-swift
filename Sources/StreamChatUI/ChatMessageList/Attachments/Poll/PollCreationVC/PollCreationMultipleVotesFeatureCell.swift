@@ -75,6 +75,8 @@ open class PollCreationMultipleVotesFeatureCell: _CollectionViewCell, ThemeProvi
 
         featureSwitchView.onValueChange = { [weak self] isOn in
             self?.onFeatureEnabledChanged?(isOn)
+            self?.resetMaximumVotesInput()
+            self?.clearMaxVotesError()
         }
 
         maximumVotesSwitchView.textFieldView.onTextChanged = { [weak self] _, newValue in
@@ -82,8 +84,7 @@ open class PollCreationMultipleVotesFeatureCell: _CollectionViewCell, ThemeProvi
         }
 
         maximumVotesSwitchView.onValueChange = { [weak self] _ in
-            self?.maximumVotesSwitchView.textFieldView.inputTextField.text = nil
-            self?.currentMaximumVotesText = ""
+            self?.resetMaximumVotesInput()
         }
     }
 
@@ -169,6 +170,11 @@ open class PollCreationMultipleVotesFeatureCell: _CollectionViewCell, ThemeProvi
     open func clearMaxVotesError() {
         maximumVotesSwitchView.textFieldView.content?.errorText = nil
         onMaximumVotesErrorTextChanged?(nil)
+    }
+
+    open func resetMaximumVotesInput() {
+        maximumVotesSwitchView.textFieldView.inputTextField.text = nil
+        currentMaximumVotesText = ""
     }
 
     open func textFieldShouldReturn(_ textField: UITextField) -> Bool {
