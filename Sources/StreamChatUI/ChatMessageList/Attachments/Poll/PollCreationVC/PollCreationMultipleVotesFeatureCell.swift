@@ -199,7 +199,7 @@ open class PollCreationMaximumVotesSwitchView: _View, ThemeProvider {
     override open func setUp() {
         super.setUp()
 
-        textFieldView.inputTextField.keyboardType = .numbersAndPunctuation
+        textFieldView.inputTextField.keyboardType = .numberPad
         switchView.addTarget(self, action: #selector(switchChangedValue(sender:)), for: .valueChanged)
     }
 
