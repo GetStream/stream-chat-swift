@@ -197,17 +197,16 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
 ## New View Container Builder
 
-Since version **4.63.0**, we introduced a new way to re-layout the components. The `ViewContainerBuilder` is a result builder that allows you to create stack views with a declarative syntax. If you are already familiar with SwiftUI, you will find this new way of building the layout very similar. The only difference is that the `ViewContainerBuilder` is only meant to be used for layout purposes, the appearance should still be set in the `setUpAppearance()` method and the component logic should still be set in the `updateContent()` method.
+Since version **4.64.0**, we introduced a new way to re-layout the components. The `ViewContainerBuilder` is a result builder that allows you to create stack views with a declarative syntax. If you are already familiar with SwiftUI, you will find this new way of building the layout very similar. The only difference is that the `ViewContainerBuilder` is only meant to be used for layout purposes, the appearance should still be set in the `setUpAppearance()` method and the component logic should still be set in the `updateContent()` method.
 
 The interface of the `ViewContainerBuilder` is very simple, below you can find all the available methods:
 
 - `HContainer()`, to create horizontal stack views.
 - `VContainer()`, to create vertical stack views.
 - `Spacer()`, to create a flexible space between views.
-- `UIView.layout {}`, a closure to apply additional layout changes to the view.
-- `UIView.constraints {}`, a result builder function to automatically activate multiple constraints.
 - `UIView.width()` and `UIView.height()`, convenience methods to set the width and height of the view.
 - `UIStackView.views {}`, a result builder function to replace the views of a stack view.
+- `UIStackView.padding()`, a convenience method to add padding to a stack view.
 - `UIStackView.embed()` and `UIStackView.embedToMargins()`, convenience methods to embed the containers to a parent view.
 
 ### HContainer
@@ -229,52 +228,6 @@ The `VContainer` is used to create vertical stack views. You can add as many vie
 ### Spacer
 
 The `Spacer` is used to create a flexible space between views. There are no parameters for this method.
-
-### UIView.layout
-
-The `UIView.layout` is a closure that allows you to apply additional layout changes to the view. Here is an example of how to use it:
-
-```swift
-VContainer {
-    unreadCountView
-    replyTimestampLabel.layout {
-       $0.setContentCompressionResistancePriority(.required, for: .horizontal)
-       NSLayoutConstraint.activate([
-        $0.heightAnchor.constraint(equalToConstant: 15),
-        $0.widthAnchor.constraint(equalToConstant: 15)
-       ])
-    }
-}
-```
-
-The `$0` is the reference of the view. You could also write the code above like this:
-
-```swift
-VContainer {
-    unreadCountView
-    replyTimestampLabel.layout { view in
-       view.setContentCompressionResistancePriority(.required, for: .horizontal)
-       NSLayoutConstraint.activate([
-        view.heightAnchor.constraint(equalToConstant: 15)
-        view.widthAnchor.constraint(equalToConstant: 15)
-       ])
-    }
-}
-```
-
-### UView.contraints
-
-The `UIView.constraints` is a result builder function that allows you to activate multiple constraints at once. It is similar to `UIView.layout` but you can only provide an array of constraints, and it activates the constraints automatically for you. Here is an example of how to use it:
-
-```swift
-VContainer {
-    unreadCountView
-    replyTimestampLabel.constraints {
-        $0.heightAnchor.constraint(equalToConstant: 15)
-        $0.widthAnchor.constraint(equalToConstant: 15)
-    }
-}
-```
 
 ### UIView.width and UIView.height
 
@@ -304,6 +257,26 @@ bottomContainer.views {
     unreadCountView
     replyTimestampLabel
 }
+```
+
+### UIStackView.padding
+
+The `UIStackView.padding()` is a convenience method to add padding to a stack view. Internally, it uses the `UIStackView.isLayoutMarginsRelativeArrangement` and sets the `directionalLayoutMargins`. Here is an example on how to use it:
+
+```swift
+VContainer {
+    unreadCountView
+    replyTimestampLabel
+}.padding(top: 8, leading: 16, bottom: 8, trailing: 16)
+```
+
+If you want to apply the same value to all edges:
+
+```swift
+VContainer {
+    unreadCountView
+    replyTimestampLabel
+}.padding(8)
 ```
 
 ### UIStackView.embed
@@ -379,9 +352,7 @@ public class CustomChatThreadListItemView: ChatThreadListItemView {
                     .height(20)
                 replyDescriptionLabel
                 Spacer()
-                replyTimestampLabel.layout {
-                    $0.setContentCompressionResistancePriority(.required, for: .horizontal)
-                }
+                replyTimestampLabel
             }
         }
         .embedToMargins(in: self)
@@ -401,4 +372,4 @@ public class CustomChatThreadListItemView: ChatThreadListItemView {
 Components.default.threadListItemView = CustomChatThreadListItemView.self
 ```
 
-From the version **4.63.0** onward our own components will be using the `ViewContainerBuilder` to create the layout. This will make it easier to understand how the components are laid out and make it easier to customize them. This does not mean that you need to use the `ViewContainerBuilder` to customize the components, you can still use regular UIKit or your own UI framework to customize the components.
+From the version **4.64.0** onward our own components will be using the `ViewContainerBuilder` to create the layout. This will make it easier to understand how the components are laid out and make it easier to customize them. This does not mean that you need to use the `ViewContainerBuilder` to customize the components, you can still use regular UIKit or your own UI framework to customize the components.

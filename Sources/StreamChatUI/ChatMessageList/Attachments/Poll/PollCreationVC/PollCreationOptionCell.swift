@@ -80,10 +80,7 @@ open class PollCreationOptionCell: _CollectionViewCell, ThemeProvider, UITextFie
                 .height(22)
         }
         .height(PollCreationVC.pollCreationInputViewHeight)
-        .layout {
-            $0.isLayoutMarginsRelativeArrangement = true
-            $0.directionalLayoutMargins = .init(top: 0, leading: 12, bottom: 0, trailing: 12)
-        }
+        .padding(leading: 12, trailing: 12)
         .embed(in: self, insets: .init(top: 6, leading: 12, bottom: 6, trailing: 12))
     }
 

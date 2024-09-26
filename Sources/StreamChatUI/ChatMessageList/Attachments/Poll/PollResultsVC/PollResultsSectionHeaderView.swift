@@ -57,22 +57,12 @@ open class PollResultsSectionHeaderView: _TableHeaderFooterView, ThemeProvider {
     override open func setUpLayout() {
         super.setUpLayout()
 
-        container.layout {
-            $0.isLayoutMarginsRelativeArrangement = true
-            $0.directionalLayoutMargins = .init(top: 12, leading: 12, bottom: 12, trailing: 12)
-        }
-        .views {
+        container.views {
             optionNameLabel
             Spacer()
-            HContainer(spacing: 6) {
-                pollWinnerIconView
-                    .width(20)
-                    .height(20)
-                votesLabel.layout {
-                    $0.setContentCompressionResistancePriority(.streamRequire, for: .horizontal)
-                }
-            }
+            votesLabel
         }
+        .padding(12)
         .embed(in: self, insets: .init(top: 0, leading: 16, bottom: 0, trailing: 16))
     }
 

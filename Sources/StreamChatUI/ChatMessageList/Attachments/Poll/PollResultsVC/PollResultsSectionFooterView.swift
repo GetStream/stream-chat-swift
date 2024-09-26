@@ -40,10 +40,7 @@ open class PollResultsSectionFooterView: _TableHeaderFooterView, ThemeProvider {
         container.views {
             actionButton
         }
-        .layout {
-            $0.isLayoutMarginsRelativeArrangement = true
-            $0.directionalLayoutMargins = .init(top: 8, leading: 0, bottom: 8, trailing: 0)
-        }
+        .padding(top: 8, bottom: 8)
         .embed(in: self, insets: .init(top: 0, leading: 16, bottom: bottomSpacing, trailing: 16))
     }
 

@@ -115,44 +115,6 @@ public func Spacer() -> UIView {
     return view
 }
 
-// MARK: - Layout & Constraints Builders
-
-public extension UIView {
-    /// Syntax sugar to be able to add additional layout changes in place when building layouts with the `@ViewContainerBuilder`.
-    /// Example:
-    /// ```
-    /// replyTimestampLabel.layout {
-    ///   $0.setContentCompressionResistancePriority(.required, for: .horizontal)
-    ///
-    ///   NSLayoutConstraint.activate([
-    ///     $0.heightAnchor.pin(equalToConstant: 15)
-    ///     $0.widthAnchor.pin(equalToConstant: 15)
-    ///   ])
-    /// }
-    /// ```
-    @discardableResult
-    func layout(_ block: (Self) -> Void) -> Self {
-        block(self)
-        return self
-    }
-
-    /// Syntax sugar to be able to set view constraints in place when building layouts with the `@ViewContainerBuilder`.
-    /// The constraints are automatically activated.
-    ///
-    /// Example:
-    /// ```
-    /// threadIconView.constraints {
-    ///   $0.heightAnchor.pin(equalToConstant: 15)
-    ///   $0.widthAnchor.pin(equalToConstant: 15)
-    /// }
-    /// ```
-    @discardableResult
-    func constraints(@ViewContainerBuilder block: (Self) -> [NSLayoutConstraint]) -> Self {
-        NSLayoutConstraint.activate(block(self))
-        return self
-    }
-}
-
 // MARK: - UIStackView.views {} - Helper to replace the subviews
 
 public extension UIStackView {
@@ -174,21 +136,40 @@ public extension UIStackView {
         subviews().forEach { addArrangedSubview($0) }
         return self
     }
+}
 
-    /// Syntax sugar to be able to add additional layout changes in place when building layouts specific for containers it can allow changing UIStackView properties in place.
-    /// Example:
-    /// ```
-    /// VContainer(spacing: 5) {
-    ///    topView
-    ///    bottomView
-    /// }.layout {
-    ///   $0.isLayoutMarginsRelativeArrangement = true
-    ///   $0.directionalLayoutMargins = .init(top: 12, leading: 12, bottom: 8, trailing: 12)
-    /// }
-    /// ```
+// MARK: - UIStackView.padding()
+
+public extension UIStackView {
+    /// Adds padding to the stack view. Internally is uses `isLayoutMarginsRelativeArrangement`.
+    /// - Parameter value: The value to apply the padding to all edges.
     @discardableResult
-    func layout(_ block: (UIStackView) -> Void) -> UIStackView {
-        block(self)
+    func padding(_ value: CGFloat = 8) -> UIStackView {
+        isLayoutMarginsRelativeArrangement = true
+        directionalLayoutMargins = .init(
+            top: value,
+            leading: value,
+            bottom: value,
+            trailing: value
+        )
+        return self
+    }
+
+    /// Adds padding to the stack view. Internally is uses `isLayoutMarginsRelativeArrangement`.
+    /// - Parameters:
+    ///   - top: The padding value at the top.
+    ///   - leading: The padding value at the leading edge.
+    ///   - bottom: The padding value at the bottom edge.
+    ///   - trailing: The padding value at the trailing edge.
+    @discardableResult
+    func padding(top: CGFloat = 0, leading: CGFloat = 0, bottom: CGFloat = 0, trailing: CGFloat = 0) -> UIStackView {
+        isLayoutMarginsRelativeArrangement = true
+        directionalLayoutMargins = .init(
+            top: top,
+            leading: leading,
+            bottom: bottom,
+            trailing: trailing
+        )
         return self
     }
 }

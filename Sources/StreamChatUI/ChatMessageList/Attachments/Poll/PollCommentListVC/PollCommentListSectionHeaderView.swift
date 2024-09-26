@@ -43,13 +43,10 @@ open class PollCommentListSectionHeaderView: _TableHeaderFooterView, ThemeProvid
     override open func setUpLayout() {
         super.setUpLayout()
 
-        container.layout {
-            $0.isLayoutMarginsRelativeArrangement = true
-            $0.directionalLayoutMargins = .init(top: 12, leading: 12, bottom: 0, trailing: 12)
-        }
-        .views {
+        container.views {
             commentLabel
         }
+        .padding(top: 12, leading: 12, bottom: 0, trailing: 12)
         .embed(in: self, insets: .init(top: 0, leading: 16, bottom: 0, trailing: 16))
     }
 

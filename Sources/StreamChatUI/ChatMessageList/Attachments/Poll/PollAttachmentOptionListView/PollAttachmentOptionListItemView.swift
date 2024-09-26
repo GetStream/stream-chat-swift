@@ -110,9 +110,7 @@ open class PollAttachmentOptionListItemView: _View, ThemeProvider {
                     optionNameLabel
                     Spacer()
                     latestVotesAuthorsView
-                    votesCountLabel.layout {
-                        $0.setContentCompressionResistancePriority(.streamRequire, for: .horizontal)
-                    }
+                    votesCountLabel
                 }
                 votesProgressView
             }
