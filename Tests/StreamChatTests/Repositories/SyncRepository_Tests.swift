@@ -224,7 +224,7 @@ class SyncRepository_Tests: XCTestCase {
         if repository.usesV2Sync {
             XCTAssertCall("watch()", on: chat, times: 1)
         } else {
-            XCTAssertCall("recoverWatchedChannel(completion:)", on: chatController, times: 1)
+            XCTAssertCall("recoverWatchedChannel(recovery:completion:)", on: chatController, times: 1)
         }
         XCTAssertEqual(repository.activeChannelListControllers.count, 0)
         if repository.usesV2Sync {
