@@ -141,10 +141,6 @@ extension NSManagedObjectContext {
             queryDTO?.votes.insert(dto)
         }
 
-        if currentUser?.user.id == dto.user?.id {
-            poll.ownVotes.insert(dto)
-        }
-
         return dto
     }
     
@@ -191,7 +187,6 @@ extension NSManagedObjectContext {
         if let optionId {
             let currentVoteCount = poll.voteCountsByOption?[optionId] ?? 0
             poll.voteCountsByOption?[optionId] = currentVoteCount + 1
-            poll.latestAnswers.remove(dto)
         }
         
         if let query = query {
@@ -200,10 +195,6 @@ extension NSManagedObjectContext {
         }
         
         option?.latestVotes.insert(dto)
-
-        if currentUser?.user.id == dto.user?.id {
-            poll.ownVotes.insert(dto)
-        }
 
         return dto
     }
@@ -230,9 +221,6 @@ extension NSManagedObjectContext {
                 poll?.voteCountsByOption?[optionId] = votes
             }
             dto.option?.latestVotes.remove(dto)
-            if currentUser?.user.id == dto.user?.id {
-                dto.poll?.ownVotes.remove(dto)
-            }
         }
 
         delete(pollVote: dto)

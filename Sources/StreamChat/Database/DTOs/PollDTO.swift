@@ -23,8 +23,7 @@ class PollDTO: NSManagedObject {
     @NSManaged var maxVotesAllowed: NSNumber?
     @NSManaged var votingVisibility: String?
     @NSManaged var createdBy: UserDTO?
-    @NSManaged var latestAnswers: Set<PollVoteDTO>
-    @NSManaged var ownVotes: Set<PollVoteDTO>
+    @NSManaged var latestVotes: Set<PollVoteDTO>
     @NSManaged var message: MessageDTO?
     @NSManaged var options: NSOrderedSet
     @NSManaged var latestVotesByOption: Set<PollOptionDTO>
@@ -80,7 +79,8 @@ extension PollDTO {
         }
         
         let optionsArray = (options.array as? [PollOptionDTO]) ?? []
-        
+        let currentUserId = managedObjectContext?.currentUser?.user.id
+
         return try Poll(
             allowAnswers: allowAnswers,
             allowUserSuggestedOptions: allowUserSuggestedOptions,
@@ -98,12 +98,15 @@ extension PollDTO {
             maxVotesAllowed: maxVotesAllowed?.intValue,
             votingVisibility: votingVisibility(from: votingVisibility),
             createdBy: createdBy?.asModel(),
-            latestAnswers: latestAnswers
+            latestAnswers: latestVotes
+                .filter { $0.isAnswer }
                 .map { try $0.asModel() }
                 .sorted(by: { $0.createdAt < $1.createdAt }),
             options: optionsArray.map { try $0.asModel() },
             latestVotesByOption: latestVotesByOption.map { try $0.asModel() },
-            ownVotes: ownVotes.map { try $0.asModel() }
+            ownVotes: latestVotes
+                .filter { !$0.isAnswer && $0.user?.id == currentUserId }
+                .map { try $0.asModel() }
         )
     }
     
@@ -178,31 +181,33 @@ extension NSManagedObjectContext {
         )
 
         if let latestAnswers = payload.latestAnswers {
-            pollDto.latestAnswers = try Set(
-                latestAnswers.compactMap { payload in
-                    if let payload {
-                        let answerDto = try savePollVote(payload: payload, query: nil, cache: cache)
-                        answerDto.poll = pollDto
-                        return answerDto
-                    } else {
-                        return nil
-                    }
+            pollDto.latestVotes
+                .filter { $0.isAnswer }
+                .forEach {
+                    pollDto.latestVotes.remove($0)
                 }
-            )
+
+            try latestAnswers.forEach { payload in
+                if let payload {
+                    let answerDto = try savePollVote(payload: payload, query: nil, cache: cache)
+                    answerDto.poll = pollDto
+                }
+            }
         }
 
         if let payloadOwnVotes = payload.ownVotes, !payload.fromEvent {
-            pollDto.ownVotes = try Set(
-                payloadOwnVotes.compactMap { payload in
-                    if let payload {
-                        let voteDto = try savePollVote(payload: payload, query: nil, cache: cache)
-                        voteDto.poll = pollDto
-                        return voteDto
-                    } else {
-                        return nil
-                    }
+            pollDto.latestVotes
+                .filter { !$0.isAnswer }
+                .forEach {
+                    pollDto.latestVotes.remove($0)
                 }
-            )
+
+            try payloadOwnVotes.forEach { payload in
+                if let payload {
+                    let voteDto = try savePollVote(payload: payload, query: nil, cache: cache)
+                    voteDto.poll = pollDto
+                }
+            }
         }
 
         return pollDto
