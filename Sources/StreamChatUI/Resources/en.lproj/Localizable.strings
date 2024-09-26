@@ -263,6 +263,8 @@
 "polls.add-comment" = "Add a Comment";
 /// Shown in the poll comments table footer view in the button to update the comment.
 "polls.update-comment" = "Update your Comment";
+/// The name of the author in case it is anonymous.
+"polls.anonymous-author" = "Anonymous";
 
 /// The title for the poll creation view.
 "polls.creation.title" = "Create Poll";

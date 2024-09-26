@@ -248,6 +248,10 @@ open class PollAttachmentView: _View, ThemeProvider {
             return false
         }
 
+        if content.poll.votingVisibility == .anonymous {
+            return true
+        }
+
         let currentUserAlreadyCommented = content.poll.latestAnswers
             .contains(where: { $0.user?.id == content.currentUserId })
 

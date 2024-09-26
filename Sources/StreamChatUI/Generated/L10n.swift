@@ -369,6 +369,8 @@ internal enum L10n {
   internal enum Polls {
     /// Add a Comment
     internal static var addComment: String { L10n.tr("Localizable", "polls.add-comment") }
+    /// Anonymous
+    internal static var anonymousAuthor: String { L10n.tr("Localizable", "polls.anonymous-author") }
     /// Poll Comments
     internal static var commentsTitle: String { L10n.tr("Localizable", "polls.comments-title") }
     /// Poll Results

@@ -70,8 +70,13 @@ open class PollResultsVoteItemView: _View, ThemeProvider {
     override open func updateContent() {
         guard let content = self.content else { return }
 
-        authorAvatarView.content = content.vote.user
-        authorNameLabel.text = content.vote.user?.name
+        if content.poll.votingVisibility == .anonymous {
+            authorAvatarView.isHidden = true
+            authorNameLabel.text = L10n.Polls.anonymousAuthor
+        } else {
+            authorAvatarView.content = content.vote.user
+            authorNameLabel.text = content.vote.user?.name
+        }
 
         let formatter = appearance.formatters.pollVoteTimestamp
         let voteDay = formatter.formatDay(content.vote.createdAt)
