@@ -144,4 +144,31 @@ open class AlertsRouter: NavigationRouter<UIViewController> {
         alert.addAction(.init(title: L10n.Alert.Actions.cancel, style: .cancel))
         rootViewController.present(alert, animated: true)
     }
+
+    /// Shows an alert for the user to confirm it wants to discard his changes.
+    open func showPollDiscardChangesAlert(handler: @escaping () -> Void) {
+        let alert = UIAlertController(
+            title: nil,
+            message: L10n.Alert.Poll.discardChangesMessage,
+            preferredStyle: .actionSheet
+        )
+
+        alert.addAction(UIAlertAction(title: L10n.Alert.Poll.discardChanges, style: .destructive, handler: { _ in
+            handler()
+        }))
+        alert.addAction(UIAlertAction(title: L10n.Alert.Poll.keepEditing, style: .cancel, handler: nil))
+
+        rootViewController.present(alert, animated: true)
+    }
+
+    /// Shows a generic error alert if it was not possible to create the poll from the backend.
+    open func showPollCreationErrorAlert() {
+        let alert = UIAlertController(
+            title: L10n.Alert.Poll.genericErrorTitle,
+            message: L10n.Alert.Poll.createErrorMessage,
+            preferredStyle: .alert
+        )
+        alert.addAction(.init(title: L10n.Alert.Actions.ok, style: .default, handler: { _ in }))
+        rootViewController.present(alert, animated: true)
+    }
 }

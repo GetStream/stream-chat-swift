@@ -31,6 +31,8 @@ disabled_rules:
   - type_body_length
   - opening_brace
   - line_length
+  - switch_case_alignment
+  - notification_center_detachment
 
   # TODO: https://github.com/GetStream/ios-issues-tracking/issues/538
   - attributes # it should be included in `opt_in_rules`

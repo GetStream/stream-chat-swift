@@ -5,14 +5,6 @@
 import StreamChat
 import UIKit
 
-/// A component responsible to handle keyboard events and act on them.
-public protocol KeyboardHandler {
-    /// Start handling events.
-    func start()
-    /// Stop handling events.
-    func stop()
-}
-
 /// The component for handling keyboard events and adjust the composer.
 open class ComposerKeyboardHandler: KeyboardHandler {
     public weak var composerParentVC: UIViewController?

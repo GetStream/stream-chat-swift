@@ -81,6 +81,8 @@ public extension Appearance {
 
         // MARK: - Polls
 
+        public var pollReorderIcon: UIImage = loadSafely(systemName: "line.3.horizontal", assetsFallback: "line.3.horizontal")
+        public var pollCreationSendIcon: UIImage = loadSafely(systemName: "paperplane.fill", assetsFallback: "paperplane.fill")
         public var pollWinner: UIImage = loadSafely(systemName: "trophy", assetsFallback: "trophy")
         public var pollVoteCheckmarkActive: UIImage = .checkmark
         public var pollVoteCheckmarkInactive: UIImage = UIImage(

@@ -1146,6 +1146,10 @@ open class ChatMessageListVC: _ViewController,
             for: poll,
             in: message.id
         ) { [weak self] suggestion in
+            let isDuplicate = poll.options.contains(where: { $0.text == suggestion })
+            if isDuplicate {
+                return
+            }
             pollController.suggestPollOption(text: suggestion) { error in
                 self?.notificationFeedbackGenerator?.notificationOccurred(error == nil ? .success : .error)
             }
