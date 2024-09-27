@@ -62,10 +62,10 @@ open class PollResultsSectionHeaderView: _TableHeaderFooterView, ThemeProvider {
         container.views {
             optionNameLabel
             Spacer()
-            HContainer(spacing: 8) {
+            HContainer(spacing: 6) {
                 pollWinnerIconView
-                    .width(18)
-                    .height(18)
+                    .width(20)
+                    .height(20)
                 votesLabel
             }
         }
