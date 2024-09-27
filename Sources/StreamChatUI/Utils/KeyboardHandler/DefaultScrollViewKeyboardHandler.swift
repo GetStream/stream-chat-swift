@@ -28,13 +28,9 @@ open class DefaultScrollViewKeyboardHandler: KeyboardHandler {
         )
     }
 
-    // swiftlint:disable notification_center_detachment
-
     public func stop() {
         NotificationCenter.default.removeObserver(self)
     }
-
-    // swiftlint:enable notification_center_detachment
 
     @objc open func keyboardWillChangeFrame(_ notification: Notification) {
         guard let userInfo = notification.userInfo,
