@@ -102,6 +102,8 @@ open class PollAttachmentOptionListItemView: _View, ThemeProvider {
     override open func setUpLayout() {
         super.setUpLayout()
 
+        votesCountLabel.setContentCompressionResistancePriority(.streamRequire, for: .horizontal)
+
         HContainer(spacing: 2) {
             voteCheckboxButton
                 .width(25)

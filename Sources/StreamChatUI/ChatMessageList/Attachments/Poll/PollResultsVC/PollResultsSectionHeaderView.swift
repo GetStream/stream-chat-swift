@@ -57,6 +57,8 @@ open class PollResultsSectionHeaderView: _TableHeaderFooterView, ThemeProvider {
     override open func setUpLayout() {
         super.setUpLayout()
 
+        votesLabel.setContentCompressionResistancePriority(.streamRequire, for: .horizontal)
+
         container.views {
             optionNameLabel
             Spacer()
