@@ -129,10 +129,12 @@ open class ChatMessageActionsVC: _ViewController, ThemeProvider {
                 actions.append(copyActionItem())
             }
 
-            if canUpdateAnyMessage && message.giphyAttachments.isEmpty {
-                actions.append(editActionItem())
-            } else if canUpdateOwnMessage && message.isSentByCurrentUser && message.giphyAttachments.isEmpty {
-                actions.append(editActionItem())
+            if message.poll == nil {
+                if canUpdateAnyMessage && message.giphyAttachments.isEmpty {
+                    actions.append(editActionItem())
+                } else if canUpdateOwnMessage && message.isSentByCurrentUser && message.giphyAttachments.isEmpty {
+                    actions.append(editActionItem())
+                }
             }
 
             if canDeleteAnyMessage {
