@@ -60,7 +60,12 @@ open class PollResultsSectionHeaderView: _TableHeaderFooterView, ThemeProvider {
         container.views {
             optionNameLabel
             Spacer()
-            votesLabel
+            HContainer(spacing: 8) {
+                pollWinnerIconView
+                    .width(18)
+                    .height(18)
+                votesLabel
+            }
         }
         .padding(12)
         .embed(in: self, insets: .init(top: 0, leading: 16, bottom: 0, trailing: 16))
