@@ -152,6 +152,12 @@ final class ChannelListLinker_Tests: XCTestCase {
                 message: nil,
                 createdAt: Date()
             ),
+            ChannelHiddenEvent(
+                cid: channel.cid,
+                user: .mock(id: memberId),
+                isHistoryCleared: false,
+                createdAt: Date()
+            ),
             ChannelVisibleEvent(
                 cid: channel.cid,
                 user: .mock(id: memberId),

@@ -60,22 +60,13 @@ final class ChannelListLinker {
             ),
             EventObserver(
                 notificationCenter: nc,
+                transform: { $0 as? ChannelHiddenEvent },
+                callback: { [weak self] event in self?.handleChannelId(event.cid) }
+            ),
+            EventObserver(
+                notificationCenter: nc,
                 transform: { $0 as? ChannelVisibleEvent },
-                callback: { [weak self, weak databaseContainer] event in
-                    databaseContainer?.read { session in
-                        guard let dto = session.channel(cid: event.cid) else {
-                            throw ClientError.ChannelDoesNotExist(cid: event.cid)
-                        }
-                        return try dto.asModel()
-                    } completion: { result in
-                        switch result {
-                        case .success(let channel):
-                            self?.handleChannel(channel)
-                        case .failure:
-                            self?.didHandleChannel?(event.cid, .none)
-                        }
-                    }
-                }
+                callback: { [weak self] event in self?.handleChannelId(event.cid) }
             )
         ]
     }
@@ -84,6 +75,22 @@ final class ChannelListLinker {
     
     enum LinkingAction {
         case link, unlink, none
+    }
+    
+    private func handleChannelId(_ cid: ChannelId) {
+        databaseContainer.read { session in
+            guard let dto = session.channel(cid: cid) else {
+                throw ClientError.ChannelDoesNotExist(cid: cid)
+            }
+            return try dto.asModel()
+        } completion: { [weak self] result in
+            switch result {
+            case .success(let channel):
+                self?.handleChannel(channel)
+            case .failure:
+                self?.didHandleChannel?(cid, .none)
+            }
+        }
     }
     
     private func handleChannel(_ channel: ChatChannel) {
