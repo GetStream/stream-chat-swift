@@ -48,8 +48,8 @@ final class ChannelListLinker_Tests: XCTestCase {
     }
     
     func test_linkingChannel_whenChannelOnTheLoadedPage_thenItIsLinked() throws {
-        loadedChannels = generateChannels(count: pageSize)
-        let events = events(with: generateChannel(index: -1))
+        loadedChannels = try generateChannels(count: pageSize)
+        let events = events(with: try generateChannel(index: -1))
         for event in events {
             setUpChannelListLinker(filter: nil)
             let result = processEventAndWait(event)
@@ -58,8 +58,8 @@ final class ChannelListLinker_Tests: XCTestCase {
     }
     
     func test_linkingChannel_whenChannelOnOlderPage_thenItIsNotLinked() throws {
-        loadedChannels = generateChannels(count: pageSize)
-        let events = events(with: generateChannel(index: 6))
+        loadedChannels = try generateChannels(count: pageSize)
+        let events = events(with: try generateChannel(index: 6))
         for event in events {
             setUpChannelListLinker(filter: nil)
             let result = processEventAndWait(event)
@@ -68,8 +68,8 @@ final class ChannelListLinker_Tests: XCTestCase {
     }
     
     func test_linkingChannel_notificationAddedToChannelEvent_whenLessThanRequestedIsLoaded_thenItIsLinked() throws {
-        loadedChannels = generateChannels(count: 0)
-        let events = events(with: generateChannel(index: 0))
+        loadedChannels = try generateChannels(count: 0)
+        let events = events(with: try generateChannel(index: 0))
         for event in events {
             setUpChannelListLinker(filter: nil)
             let result = processEventAndWait(event)
@@ -78,8 +78,8 @@ final class ChannelListLinker_Tests: XCTestCase {
     }
     
     func test_linkingChannel_channelUpdatedEvent_whenItMatchesTheFilter_thenItIsLinked() throws {
-        loadedChannels = generateChannels(count: pageSize)
-        let events = events(with: generateChannel(index: 0))
+        loadedChannels = try generateChannels(count: pageSize)
+        let events = events(with: try generateChannel(index: 0))
         for event in events {
             setUpChannelListLinker(filter: { _ in
                 // simulate channel matching the query, e.g. extraData property based filtering
@@ -91,7 +91,7 @@ final class ChannelListLinker_Tests: XCTestCase {
     }
     
     func test_unlinkingChannel_channelUpdatedEvent_whenItDoesNotMatchTheFilterAnymore_thenItIsUnlinked() throws {
-        loadedChannels = generateChannels(count: pageSize)
+        loadedChannels = try generateChannels(count: pageSize)
         let events = events(with: loadedChannels[0])
         for event in events {
             setUpChannelListLinker(filter: { _ in
@@ -132,31 +132,58 @@ final class ChannelListLinker_Tests: XCTestCase {
                 member: .mock(id: memberId),
                 createdAt: Date()
             ),
+            MessageNewEvent(
+                user: .mock(id: memberId),
+                message: .unique,
+                channel: channel,
+                createdAt: Date(),
+                watcherCount: nil,
+                unreadCount: nil
+            ),
+            NotificationMessageNewEvent(
+                channel: channel,
+                message: .unique,
+                createdAt: Date(),
+                unreadCount: nil
+            ),
             ChannelUpdatedEvent(
                 channel: channel,
                 user: nil,
                 message: nil,
                 createdAt: Date()
+            ),
+            ChannelVisibleEvent(
+                cid: channel.cid,
+                user: .mock(id: memberId),
+                createdAt: Date()
             )
         ]
     }
     
-    private func generateChannel(index: Int) -> ChatChannel {
-        ChatChannel.mock(
-            cid: .unique,
-            name: "Name \(index)",
-            createdAt: Date(timeIntervalSinceReferenceDate: TimeInterval(index))
-        )
+    private func generateChannel(index: Int) throws -> ChatChannel {
+        let query = channelListLinker.query
+        var model: ChatChannel!
+        try database.writeSynchronously { session in
+            let payload = ChannelPayload.dummy(
+                channel: .dummy(
+                    name: "Name \(index)",
+                    createdAt: Date(timeIntervalSinceReferenceDate: TimeInterval(index))
+                )
+            )
+            let dto = try session.saveChannel(payload: payload, query: query, cache: nil)
+            model = try dto.asModel()
+        }
+        return model
     }
     
-    private func generateChannels(count: Int) -> [ChatChannel] {
-        (0..<count).map { generateChannel(index: $0) }
+    private func generateChannels(count: Int) throws -> [ChatChannel] {
+        try (0..<count).map { try generateChannel(index: $0) }
     }
 }
 
 extension ChannelListLinker_Tests {
     func processEventAndWait(_ event: Event) -> ChannelListLinker.LinkingAction {
-        let expectation = XCTestExpectation(description: "Handle Event")
+        let expectation = XCTestExpectation(description: "Handle \(event.name)")
         var action = ChannelListLinker.LinkingAction.none
         channelListLinker.didHandleChannel = { _, receivedAction in
             action = receivedAction

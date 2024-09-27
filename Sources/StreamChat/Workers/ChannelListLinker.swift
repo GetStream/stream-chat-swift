@@ -8,15 +8,16 @@ import Foundation
 ///
 /// Requires either `filter` or `isChannelAutomaticFilteringEnabled` to be set.
 /// - Channels are inserted (linked) only when they would end up on the currently loaded pages.
-/// - Channels are removed (unlinked) when not on the currently loaded pages.
+/// - Channels are removed (unlinked) when not on the currently loaded pages. For example, event changes
+/// extra data which makes it not to match with the current filter closure anymore.
 final class ChannelListLinker {
     private let clientConfig: ChatClientConfig
     private let databaseContainer: DatabaseContainer
     private var eventObservers = [EventObserver]()
     private let filter: ((ChatChannel) -> Bool)?
     private let loadedChannels: () -> StreamCollection<ChatChannel>
-    private let query: ChannelListQuery
     private let worker: ChannelListUpdater
+    let query: ChannelListQuery
     
     init(
         query: ChannelListQuery,
@@ -60,18 +61,26 @@ final class ChannelListLinker {
             EventObserver(
                 notificationCenter: nc,
                 transform: { $0 as? ChannelVisibleEvent },
-                callback: { [weak self, databaseContainer] event in
-                    let context = databaseContainer.backgroundReadOnlyContext
-                    context.perform {
-                        guard let channel = try? context.channel(cid: event.cid)?.asModel() else { return }
-                        self?.handleChannel(channel)
+                callback: { [weak self, weak databaseContainer] event in
+                    databaseContainer?.read { session in
+                        guard let dto = session.channel(cid: event.cid) else {
+                            throw ClientError.ChannelDoesNotExist(cid: event.cid)
+                        }
+                        return try dto.asModel()
+                    } completion: { result in
+                        switch result {
+                        case .success(let channel):
+                            self?.handleChannel(channel)
+                        case .failure:
+                            self?.didHandleChannel?(event.cid, .none)
+                        }
                     }
                 }
             )
         ]
     }
     
-    var didHandleChannel: ((ChatChannel, LinkingAction) -> Void)?
+    var didHandleChannel: ((ChannelId, LinkingAction) -> Void)?
     
     enum LinkingAction {
         case link, unlink, none
@@ -84,7 +93,7 @@ final class ChannelListLinker {
             worker.link(channel: channel, with: query) { [worker, didHandleChannel] error in
                 if let error = error {
                     log.error(error)
-                    didHandleChannel?(channel, action)
+                    didHandleChannel?(channel.cid, action)
                     return
                 }
                 worker.startWatchingChannels(withIds: [channel.cid]) { error in
@@ -93,7 +102,7 @@ final class ChannelListLinker {
                             "Failed to start watching linked channel: \(channel.cid), error: \(error.localizedDescription)"
                         )
                     }
-                    didHandleChannel?(channel, action)
+                    didHandleChannel?(channel.cid, action)
                 }
             }
         case .unlink:
@@ -101,10 +110,10 @@ final class ChannelListLinker {
                 if let error {
                     log.error(error)
                 }
-                didHandleChannel?(channel, action)
+                didHandleChannel?(channel.cid, action)
             }
         case .none:
-            didHandleChannel?(channel, action)
+            didHandleChannel?(channel.cid, action)
         }
     }
     
