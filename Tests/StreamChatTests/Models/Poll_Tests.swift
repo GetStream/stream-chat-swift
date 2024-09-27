@@ -28,6 +28,7 @@ final class Poll_Tests: XCTestCase {
             latestAnswers: [],
             options: [],
             latestVotesByOption: [],
+            latestVotes: [],
             ownVotes: []
         )
 
@@ -56,6 +57,7 @@ final class Poll_Tests: XCTestCase {
             latestAnswers: [],
             options: [],
             latestVotesByOption: [],
+            latestVotes: [],
             ownVotes: []
         )
 
@@ -84,6 +86,7 @@ final class Poll_Tests: XCTestCase {
             latestAnswers: [],
             options: [],
             latestVotesByOption: [],
+            latestVotes: [],
             ownVotes: []
         )
 
@@ -112,6 +115,7 @@ final class Poll_Tests: XCTestCase {
             latestAnswers: [],
             options: [],
             latestVotesByOption: [],
+            latestVotes: [],
             ownVotes: []
         )
 
@@ -140,6 +144,7 @@ final class Poll_Tests: XCTestCase {
             latestAnswers: [],
             options: [],
             latestVotesByOption: [],
+            latestVotes: [],
             ownVotes: []
         )
 
@@ -168,6 +173,7 @@ final class Poll_Tests: XCTestCase {
             latestAnswers: [],
             options: [],
             latestVotesByOption: [],
+            latestVotes: [],
             ownVotes: []
         )
 
@@ -196,6 +202,7 @@ final class Poll_Tests: XCTestCase {
             latestAnswers: [],
             options: [],
             latestVotesByOption: [],
+            latestVotes: [],
             ownVotes: []
         )
 
@@ -224,6 +231,7 @@ final class Poll_Tests: XCTestCase {
             latestAnswers: [],
             options: [],
             latestVotesByOption: [],
+            latestVotes: [],
             ownVotes: []
         )
 
@@ -252,6 +260,7 @@ final class Poll_Tests: XCTestCase {
             latestAnswers: [],
             options: [],
             latestVotesByOption: [],
+            latestVotes: [],
             ownVotes: []
         )
 
@@ -280,6 +289,7 @@ final class Poll_Tests: XCTestCase {
             latestAnswers: [],
             options: [],
             latestVotesByOption: [],
+            latestVotes: [],
             ownVotes: []
         )
 
@@ -308,6 +318,7 @@ final class Poll_Tests: XCTestCase {
             latestAnswers: [],
             options: [],
             latestVotesByOption: [],
+            latestVotes: [],
             ownVotes: []
         )
 
@@ -336,6 +347,7 @@ final class Poll_Tests: XCTestCase {
             latestAnswers: [],
             options: [],
             latestVotesByOption: [],
+            latestVotes: [],
             ownVotes: []
         )
 
@@ -364,6 +376,7 @@ final class Poll_Tests: XCTestCase {
             latestAnswers: [],
             options: [],
             latestVotesByOption: [],
+            latestVotes: [],
             ownVotes: []
         )
 
@@ -392,6 +405,7 @@ final class Poll_Tests: XCTestCase {
             latestAnswers: [],
             options: [],
             latestVotesByOption: [],
+            latestVotes: [],
             ownVotes: []
         )
 
@@ -430,6 +444,7 @@ final class Poll_Tests: XCTestCase {
             latestAnswers: [],
             options: [],
             latestVotesByOption: [],
+            latestVotes: [],
             ownVotes: [vote]
         )
 
@@ -468,6 +483,7 @@ final class Poll_Tests: XCTestCase {
             latestAnswers: [],
             options: [],
             latestVotesByOption: [],
+            latestVotes: [],
             ownVotes: [vote]
         )
 

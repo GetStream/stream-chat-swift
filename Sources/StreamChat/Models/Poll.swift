@@ -69,6 +69,9 @@ public struct Poll: Equatable {
     /// A list of the latest votes received for each option in the poll.
     public let latestVotesByOption: [PollOption]
 
+    /// The list of the latest votes in the poll.
+    public let latestVotes: [PollVote]
+
     /// The list of the current user votes.
     public let ownVotes: [PollVote]
 }

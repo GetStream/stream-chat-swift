@@ -104,6 +104,11 @@ extension PollDTO {
                 .sorted(by: { $0.createdAt < $1.createdAt }),
             options: optionsArray.map { try $0.asModel() },
             latestVotesByOption: latestVotesByOption.map { try $0.asModel() },
+            latestVotes: latestVotesByOption
+                .map(\.latestVotes)
+                .joined()
+                .map { try $0.asModel() }
+                .sorted(by: { $0.createdAt < $1.createdAt }),
             ownVotes: latestVotes
                 .filter { !$0.isAnswer && $0.user?.id == currentUserId }
                 .map { try $0.asModel() }

@@ -26,7 +26,8 @@ extension Poll {
             createdBy: .mock(id: .unique),
             latestAnswers: [],
             options: [],
-            latestVotesByOption: [], 
+            latestVotesByOption: [],
+            latestVotes: [], 
             ownVotes: []
         )
     }

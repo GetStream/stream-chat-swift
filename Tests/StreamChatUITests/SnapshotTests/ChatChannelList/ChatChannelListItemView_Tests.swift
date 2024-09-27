@@ -757,11 +757,10 @@ final class ChatChannelListItemView_Tests: XCTestCase {
         let message: ChatMessage = try mockPollMessage(
             poll: .mock(
                 name: "Poll",
-                latestVotesByOption: [
-                    .init(text: "1", latestVotes: [
-                        .mock(user: currentUser),
-                        .mock(user: .mock(id: .unique))
-                    ])
+                latestVotes: [
+                    .mock(user: .unique),
+                    .mock(user: .unique),
+                    .mock(user: currentUser)
                 ]
             ),
             messageAuthor: currentUser,
@@ -782,11 +781,10 @@ final class ChatChannelListItemView_Tests: XCTestCase {
         let message: ChatMessage = try mockPollMessage(
             poll: .mock(
                 name: "Poll",
-                latestVotesByOption: [
-                    .init(text: "1", latestVotes: [
-                        .mock(user: .mock(id: .unique, name: "Someone")),
-                        .mock(user: .mock(id: currentUser.id))
-                    ])
+                latestVotes: [
+                    .mock(user: .unique),
+                    .mock(user: currentUser),
+                    .mock(user: .mock(id: .unique, name: "Someone"))
                 ]
             ),
             messageAuthor: currentUser,

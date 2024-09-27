@@ -26,6 +26,7 @@ extension Poll {
         latestAnswers: [PollVote] = [],
         options: [PollOption] = [],
         latestVotesByOption: [PollOption] = [],
+        latestVotes: [PollVote] = [],
         ownVotes: [PollVote] = []
     ) -> Poll {
         .init(
@@ -47,7 +48,8 @@ extension Poll {
             createdBy: createdBy,
             latestAnswers: latestAnswers,
             options: options,
-            latestVotesByOption: latestVotesByOption,
+            latestVotesByOption: latestVotesByOption, 
+            latestVotes: latestVotes,
             ownVotes: ownVotes
         )
     }
