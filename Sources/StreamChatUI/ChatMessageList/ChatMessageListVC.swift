@@ -1174,7 +1174,7 @@ open class ChatMessageListVC: _ViewController,
         didTapOption option: PollOption,
         in message: ChatMessage
     ) {
-        guard let poll = message.poll else { return }
+        guard let poll = message.poll, !poll.isClosed else { return }
 
         if pollOptionsCastingVote.contains(option.id) {
             return
