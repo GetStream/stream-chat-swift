@@ -84,7 +84,7 @@ extension PollVoteDTO {
 extension NSManagedObjectContext {
     @discardableResult
     func savePollVotes(payload: PollVoteListResponse, query: PollVoteListQuery?, cache: PreWarmedCache?) -> [PollVoteDTO] {
-        let isFirstPage = query?.pagination.cursor == nil
+        let isFirstPage = query?.pagination.cursor == nil && query?.pagination.offset == 0
         if let filterHash = query?.queryHash, isFirstPage {
             let queryDTO = PollVoteListQueryDTO.load(filterHash: filterHash, context: self)
             queryDTO?.votes = []

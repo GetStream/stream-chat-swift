@@ -127,6 +127,6 @@ public extension Poll {
 
     /// Returns a Boolean value indicating whether the current user has voted the given option.
     func hasCurrentUserVoted(for option: PollOption) -> Bool {
-        ownVotes.map(\.optionId).contains(option.id)
+        ownVotes.contains(where: { $0.optionId == option.id })
     }
 }
