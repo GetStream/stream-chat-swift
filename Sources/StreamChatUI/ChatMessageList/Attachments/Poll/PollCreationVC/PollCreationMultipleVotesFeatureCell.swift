@@ -148,7 +148,7 @@ open class PollCreationMultipleVotesFeatureCell: _CollectionViewCell, ThemeProvi
 
         maximumVotesSwitchView.switchView.setOn(true, animated: true)
 
-        guard let value = Int(newValue), value >= 1 && value <= 10 else {
+        guard let value = Int(newValue), value >= 2 && value <= 10 else {
             showMaxVotesError(message: errorText)
             return
         }

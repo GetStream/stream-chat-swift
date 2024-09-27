@@ -410,7 +410,7 @@ internal enum L10n {
       internal static var askAQuestionPlaceholder: String { L10n.tr("Localizable", "polls.creation.ask-a-question-placeholder") }
       /// Cancel
       internal static var cancel: String { L10n.tr("Localizable", "polls.creation.cancel") }
-      /// Type a number from 1 and 10
+      /// Type a number from 2 and 10
       internal static var maximumVotesError: String { L10n.tr("Localizable", "polls.creation.maximum-votes-error") }
       /// Maximum votes per person
       internal static var maximumVotesPlaceholder: String { L10n.tr("Localizable", "polls.creation.maximum-votes-placeholder") }
