@@ -475,7 +475,7 @@ open class ChatChannelListItemView: _View, ThemeProvider, SwiftUIRepresentable {
     open func pollAttachmentPreviewText(for previewMessage: ChatMessage) -> String? {
         guard let poll = previewMessage.poll, !previewMessage.isDeleted else { return nil }
         var components = ["📊"]
-        if let latestVoter = poll.latestVotes.last?.user {
+        if let latestVoter = poll.latestVotes.first?.user {
             if latestVoter.id == content?.currentUserId {
                 components.append(L10n.Message.Preview.pollYouVoted)
             } else {

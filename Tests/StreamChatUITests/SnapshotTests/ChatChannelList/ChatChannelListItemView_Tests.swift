@@ -758,9 +758,9 @@ final class ChatChannelListItemView_Tests: XCTestCase {
             poll: .mock(
                 name: "Poll",
                 latestVotes: [
+                    .mock(user: currentUser),
                     .mock(user: .unique),
-                    .mock(user: .unique),
-                    .mock(user: currentUser)
+                    .mock(user: .unique)
                 ]
             ),
             messageAuthor: currentUser,
@@ -782,9 +782,9 @@ final class ChatChannelListItemView_Tests: XCTestCase {
             poll: .mock(
                 name: "Poll",
                 latestVotes: [
-                    .mock(user: .unique),
+                    .mock(user: .mock(id: .unique, name: "Someone")),
                     .mock(user: currentUser),
-                    .mock(user: .mock(id: .unique, name: "Someone"))
+                    .mock(user: .unique)
                 ]
             ),
             messageAuthor: currentUser,
