@@ -255,4 +255,20 @@ final class DefaultMarkdownFormatter_Tests: XCTestCase {
         let result = sut.format(string)
         XCTAssertEqual(result.string, "**~~*~**~~ h e a r d ***~~~**~")
     }
+    
+    func test_thematicBreak_isHandled() {
+        // Note: --- is removed by SwiftyMarkdown although it should be kept
+        let string = """
+        ---
+        hi!
+        """
+        let result = sut.format(string)
+        XCTAssertEqual(
+            result.string,
+            """
+            
+            hi!
+            """
+        )
+    }
 }
