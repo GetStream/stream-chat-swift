@@ -117,6 +117,7 @@ open class PollAllOptionsListVC:
         switch sections[indexPath.section] {
         case .name:
             let cell = UITableViewCell()
+            cell.selectionStyle = .none
             cell.backgroundColor = appearance.colorPalette.background1
             cell.textLabel?.numberOfLines = 0
             cell.textLabel?.text = pollController.poll?.name
