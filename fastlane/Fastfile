@@ -90,6 +90,10 @@ lane :merge_release do |options|
   merge_release_to_main(author: options[:author])
 end
 
+lane :merge_main do
+  merge_main_to_develop
+end
+
 desc 'Completes an SDK Release'
 lane :publish_release do |options|
   release_version = File.read(swift_environment_path).match(/String\s+=\s+"([\d.]+)"/)[1]
@@ -114,7 +118,7 @@ lane :publish_release do |options|
 
   update_spm(version: release_version)
 
-  merge_main_to_develop
+  merge_main
 end
 
 desc 'Compresses the XCFrameworks into zip files'
