@@ -236,7 +236,7 @@ open class ChatMessageListRouter:
         rootViewController.present(navVC, animated: true)
     }
 
-    /// Shows the poll comments view
+    /// Shows the poll comments view.
     /// - Parameters:
     ///   - poll: The poll to show the comments.
     ///   - messageId: The message ID which this poll belongs to.
@@ -247,6 +247,18 @@ open class ChatMessageListRouter:
             pollController: pollController
         )
         let navVC = UINavigationController(rootViewController: pollCommentListVC)
+        rootViewController.present(navVC, animated: true)
+    }
+
+    /// Shows the poll all options view.
+    /// - Parameters:
+    ///   - poll: The poll that the options belong to.
+    ///   - messageId: The message ID which this poll belongs to.
+    ///   - client: The `ChatClient` instance.
+    open func showAllPollOptions(for poll: Poll, messageId: MessageId, client: ChatClient) {
+        let pollController = client.pollController(messageId: messageId, pollId: poll.id)
+        let pollAllOptionsVC = components.pollAllOptionsListVC.init(pollController: pollController)
+        let navVC = UINavigationController(rootViewController: pollAllOptionsVC)
         rootViewController.present(navVC, animated: true)
     }
 

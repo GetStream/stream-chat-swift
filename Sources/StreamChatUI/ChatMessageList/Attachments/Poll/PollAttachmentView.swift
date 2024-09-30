@@ -30,6 +30,9 @@ open class PollAttachmentView: _View, ThemeProvider {
     /// A closure that is triggered whenever the end poll button is tapped.
     public var onEndTap: ((Poll) -> Void)?
 
+    /// A closure that is triggered whenever the show all options button is tapped.
+    public var onShowAllOptionsTap: ((Poll) -> Void)?
+
     /// A closure that is triggered whenever the poll results button is tapped.
     public var onResultsTap: ((Poll) -> Void)?
 
@@ -64,6 +67,11 @@ open class PollAttachmentView: _View, ThemeProvider {
         .withoutAutoresizingMaskConstraints
         .withAccessibilityIdentifier(identifier: "optionsListView")
 
+    // The button to show all options of the poll.
+    open private(set) lazy var allOptionsButton = UIButton()
+        .withoutAutoresizingMaskConstraints
+        .withAccessibilityIdentifier(identifier: "allOptionsButton")
+
     // The button to add a suggestion to the poll.
     open private(set) lazy var suggestOptionButton = UIButton()
         .withoutAutoresizingMaskConstraints
@@ -89,35 +97,27 @@ open class PollAttachmentView: _View, ThemeProvider {
         .withoutAutoresizingMaskConstraints
         .withAccessibilityIdentifier(identifier: "endPollButton")
 
-    /// The header view composed by the poll title and subtile labels.
-    open private(set) lazy var headerView: UIView = {
-        VContainer(spacing: 2) {
-            pollTitleLabel
-            pollSubtitleLabel
-        }
-    }()
+    // MARK: - Configuration
 
-    /// The footer view composed by a stack of buttons that can perform actions on the poll.
-    open private(set) lazy var footerView: UIView = {
-        VContainer(spacing: 2) {
-            suggestOptionButton
-            addCommentButton
-            pollCommentsButton
-            pollResultsButton
-            endPollButton
-        }
-    }()
+    /// The maximum number of visible options displayed in the poll attachment view.
+    ///
+    /// By default it is 10. If `nil` all options will be visible and the button
+    /// to show all options will never be rendered.
+    open var maxNumberOfVisibleOptions: Int? {
+        10
+    }
 
     // MARK: - Lifecycle
 
     override open func setUp() {
         super.setUp()
 
-        suggestOptionButton.addTarget(self, action: #selector(didTapSuggestOptionButton(sender:)), for: .touchUpInside)
-        pollCommentsButton.addTarget(self, action: #selector(didTapCommentsButton(sender:)), for: .touchUpInside)
-        addCommentButton.addTarget(self, action: #selector(didTapAddCommentButton(sender:)), for: .touchUpInside)
-        pollResultsButton.addTarget(self, action: #selector(didTapResultsButton(sender:)), for: .touchUpInside)
-        endPollButton.addTarget(self, action: #selector(didTapEndPollButton(sender:)), for: .touchUpInside)
+        suggestOptionButton.addTarget(self, action: #selector(didTapSuggestOptionButton), for: .touchUpInside)
+        pollCommentsButton.addTarget(self, action: #selector(didTapCommentsButton), for: .touchUpInside)
+        addCommentButton.addTarget(self, action: #selector(didTapAddCommentButton), for: .touchUpInside)
+        pollResultsButton.addTarget(self, action: #selector(didTapResultsButton), for: .touchUpInside)
+        endPollButton.addTarget(self, action: #selector(didTapEndPollButton), for: .touchUpInside)
+        allOptionsButton.addTarget(self, action: #selector(didTapAllOptionsButton), for: .touchUpInside)
     }
 
     override open func setUpAppearance() {
@@ -130,6 +130,7 @@ open class PollAttachmentView: _View, ThemeProvider {
         pollSubtitleLabel.textColor = appearance.colorPalette.textLowEmphasis
 
         let footerButtons = [
+            allOptionsButton,
             pollResultsButton,
             endPollButton,
             addCommentButton,
@@ -154,6 +155,26 @@ open class PollAttachmentView: _View, ThemeProvider {
         .embedToMargins(in: self)
     }
 
+    /// The header view composed by the poll title and subtile labels.
+    open private(set) lazy var headerView: UIView = {
+        VContainer(spacing: 2) {
+            pollTitleLabel
+            pollSubtitleLabel
+        }
+    }()
+
+    /// The footer view composed by a stack of buttons that can perform actions on the poll.
+    open private(set) lazy var footerView: UIView = {
+        VContainer(spacing: 2) {
+            allOptionsButton
+            suggestOptionButton
+            addCommentButton
+            pollCommentsButton
+            pollResultsButton
+            endPollButton
+        }
+    }()
+
     override open func updateContent() {
         super.updateContent()
 
@@ -163,9 +184,6 @@ open class PollAttachmentView: _View, ThemeProvider {
 
         pollTitleLabel.text = content.poll.name
         pollSubtitleLabel.text = subtitleText
-
-        optionListView.onOptionTap = onOptionTap
-        optionListView.content = .init(poll: content.poll)
 
         pollResultsButton.setTitle(L10n.Polls.Button.viewResults, for: .normal)
         endPollButton.setTitle(L10n.Polls.Button.endVote, for: .normal)
@@ -180,6 +198,21 @@ open class PollAttachmentView: _View, ThemeProvider {
 
         suggestOptionButton.isHidden = !shouldShowSuggestOptionButton
         suggestOptionButton.setTitle(L10n.Polls.Button.suggestOption, for: .normal)
+
+        optionListView.onOptionTap = onOptionTap
+        optionListView.content = .init(
+            poll: content.poll,
+            maxNumberOfVisibleOptions: maxNumberOfVisibleOptions
+        )
+
+        let numberOfOptions = content.poll.options.count
+        if let maxNumberOfVisibleOptions, numberOfOptions > maxNumberOfVisibleOptions {
+            let numberOfHiddenOptions = numberOfOptions - maxNumberOfVisibleOptions
+            allOptionsButton.setTitle(L10n.Polls.Button.allOptions(numberOfHiddenOptions), for: .normal)
+            allOptionsButton.isHidden = false
+        } else {
+            allOptionsButton.isHidden = true
+        }
     }
 
     @objc open func didTapSuggestOptionButton(sender: Any?) {
@@ -205,6 +238,11 @@ open class PollAttachmentView: _View, ThemeProvider {
     @objc open func didTapEndPollButton(sender: Any?) {
         guard let poll = content?.poll else { return }
         onEndTap?(poll)
+    }
+
+    @objc open func didTapAllOptionsButton(sender: Any?) {
+        guard let poll = content?.poll else { return }
+        onShowAllOptionsTap?(poll)
     }
 
     /// The subtitle text. By default it displays the current voting state.

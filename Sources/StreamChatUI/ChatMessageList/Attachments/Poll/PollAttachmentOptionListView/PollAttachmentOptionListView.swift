@@ -11,9 +11,22 @@ open class PollAttachmentOptionListView: _View, ThemeProvider {
 
     public struct Content: Equatable {
         public var poll: Poll
+        public var maxNumberOfVisibleOptions: Int?
 
-        public init(poll: Poll) {
+        public init(
+            poll: Poll,
+            maxNumberOfVisibleOptions: Int?
+        ) {
             self.poll = poll
+            self.maxNumberOfVisibleOptions = maxNumberOfVisibleOptions
+        }
+
+        var options: [PollOption] {
+            if let maxNumberOfVisibleOptions = maxNumberOfVisibleOptions {
+                return Array(poll.options.prefix(maxNumberOfVisibleOptions))
+            } else {
+                return poll.options
+            }
         }
     }
 
@@ -56,14 +69,14 @@ open class PollAttachmentOptionListView: _View, ThemeProvider {
 
         /// We only recreate the item views in case the options do not match the number of views.
         /// This makes sure we only recreate the item views when needed.
-        if itemViews.count != content.poll.options.count {
+        if itemViews.count != content.options.count {
             setUpLayout()
         }
 
         itemViews.forEach {
             $0.isHidden = true
         }
-        zip(itemViews, content.poll.options).forEach { itemView, option in
+        zip(itemViews, content.options).forEach { itemView, option in
             itemView.content = .init(
                 option: option,
                 poll: content.poll
@@ -75,8 +88,8 @@ open class PollAttachmentOptionListView: _View, ThemeProvider {
     /// Creates the option item views based on the number of options.
     open func makeItemViews() -> [PollAttachmentOptionListItemView] {
         guard let content = self.content else { return [] }
-        guard !content.poll.options.isEmpty else { return [] }
-        itemViews = (0..<content.poll.options.count).map { _ in
+        guard !content.options.isEmpty else { return [] }
+        itemViews = (0..<content.options.count).map { _ in
             let view = self.components.pollAttachmentOptionListItemView.init()
             view.onOptionTap = { [weak self] option in
                 self?.onOptionTap?(option)

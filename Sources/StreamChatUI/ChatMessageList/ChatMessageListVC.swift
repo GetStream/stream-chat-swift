@@ -1120,6 +1120,14 @@ open class ChatMessageListVC: _ViewController,
 
     open func pollAttachmentView(
         _ pollAttachmentView: PollAttachmentView,
+        didTapShowAllOptionsForPoll poll: Poll,
+        in message: ChatMessage
+    ) {
+        router.showAllPollOptions(for: poll, messageId: message.id, client: client)
+    }
+
+    open func pollAttachmentView(
+        _ pollAttachmentView: PollAttachmentView,
         didTapAddCommentOnPoll poll: Poll,
         in message: ChatMessage
     ) {

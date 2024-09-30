@@ -389,6 +389,12 @@ public struct Components {
     /// A view responsible to enable or disable a poll feature.
     public var pollCreationFeatureSwitchView: PollCreationFeatureSwitchView.Type = PollCreationFeatureSwitchView.self
 
+    /// The view controller that shows all the options of a poll.
+    public var pollAllOptionsListVC: PollAllOptionsListVC.Type = PollAllOptionsListVC.self
+
+    /// The cell for displaying an option in the all options view.
+    public var pollAllOptionsListItemCell: PollAllOptionsListItemCell.Type = PollAllOptionsListItemCell.self
+
     // MARK: - Reactions
 
     /// The Reaction picker VC.

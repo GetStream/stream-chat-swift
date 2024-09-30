@@ -20,6 +20,11 @@ open class PollResultsVC:
         super.init(nibName: nil, bundle: nil)
     }
 
+    @available(*, unavailable)
+    public required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
     // MARK: - Configuration
 
     /// The maximum votes displayed per option.
@@ -69,11 +74,6 @@ open class PollResultsVC:
     /// The header view of the table view. By default it displays the poll's name.
     open private(set) lazy var headerView: PollResultsTableHeaderView = components
         .pollResultsTableHeaderView.init()
-
-    @available(*, unavailable)
-    public required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
 
     // MARK: - Lifecycle
 

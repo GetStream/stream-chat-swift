@@ -369,6 +369,8 @@ internal enum L10n {
   internal enum Polls {
     /// Add a Comment
     internal static var addComment: String { L10n.tr("Localizable", "polls.add-comment") }
+    /// Poll Options
+    internal static var allOptionsTitle: String { L10n.tr("Localizable", "polls.all-options-title") }
     /// Anonymous
     internal static var anonymousAuthor: String { L10n.tr("Localizable", "polls.anonymous-author") }
     /// Poll Comments
@@ -384,6 +386,10 @@ internal enum L10n {
     internal enum Button {
       /// Add Comment
       internal static var addComment: String { L10n.tr("Localizable", "polls.button.add-comment") }
+      /// See %d More Options
+      internal static func allOptions(_ p1: Int) -> String {
+        return L10n.tr("Localizable", "polls.button.all-options", p1)
+      }
       /// End Vote
       internal static var endVote: String { L10n.tr("Localizable", "polls.button.endVote") }
       /// Show all

@@ -48,6 +48,13 @@ public protocol PollAttachmentViewInjectorDelegate: ChatMessageContentViewDelega
         didTapAddCommentOnPoll poll: Poll,
         in message: ChatMessage
     )
+
+    /// Called when the user taps on the button to show all the options of the poll.
+    func pollAttachmentView(
+        _ pollAttachmentView: PollAttachmentView,
+        didTapShowAllOptionsForPoll poll: Poll,
+        in message: ChatMessage
+    )
 }
 
 public class PollAttachmentViewInjector: AttachmentViewInjector {
@@ -100,6 +107,14 @@ public class PollAttachmentViewInjector: AttachmentViewInjector {
         pollAttachmentView.onSuggestOptionTap = { [weak self] poll in
             guard let self = self else { return }
             self.pollAttachmentViewDelegate?.pollAttachmentView(self.pollAttachmentView, didTapSuggestOptionForPoll: poll, in: message)
+        }
+        pollAttachmentView.onShowAllOptionsTap = { [weak self] poll in
+            guard let self = self else { return }
+            self.pollAttachmentViewDelegate?.pollAttachmentView(
+                self.pollAttachmentView,
+                didTapShowAllOptionsForPoll: poll,
+                in: message
+            )
         }
 
         pollAttachmentView.content = .init(poll: poll, currentUserId: currentUserId)

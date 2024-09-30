@@ -249,6 +249,8 @@
 "polls.button.add-comment" = "Add Comment";
 /// Shown in the message poll view on the button to view the poll comments.
 "polls.button.view-comments" = "View %d Comments";
+/// Shown in the message poll view on the button to to show all options.
+"polls.button.all-options" = "See %d More Options";
 /// Shown in the message poll results on the button to show more votes.
 "polls.button.show-all" = "Show all";
 /// Shown in the message poll results on the button to add a new suggestion.
@@ -259,6 +261,8 @@
 "polls.results-title" = "Poll Results";
 /// Shown in the poll comments navigation title.
 "polls.comments-title" = "Poll Comments";
+/// Shown in the poll all options navigation title.
+"polls.all-options-title" = "Poll Options";
 /// Shown in the poll comments table footer view in the button to add a comment.
 "polls.add-comment" = "Add a Comment";
 /// Shown in the poll comments table footer view in the button to update the comment.
