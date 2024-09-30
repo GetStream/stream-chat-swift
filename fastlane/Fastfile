@@ -88,6 +88,7 @@ end
 
 lane :merge_release do |options|
   merge_release_to_main(author: options[:author])
+  sh('gh workflow run release-publish.yml --ref main')
 end
 
 lane :merge_main do
