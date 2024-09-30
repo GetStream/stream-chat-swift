@@ -27,7 +27,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Add `PollResultsVC` component to show the results of a poll [#3381](https://github.com/GetStream/stream-chat-swift/pull/3381)
 - Add `PollCommentListVC` component to show the comments of a poll [#3398](https://github.com/GetStream/stream-chat-swift/pull/3398)
 - Add `PollCreationVC` component to create a poll in a channel [#3433](https://github.com/GetStream/stream-chat-swift/pull/3433)
+- Add `PollAllOptionsListVC` component to show all the options of a poll [#3435](https://github.com/GetStream/stream-chat-swift/pull/3435)
 - Add `ChatUserAvatarView.shouldShowOnlineIndicator` to disable the online indicator easily [#3374](https://github.com/GetStream/stream-chat-swift/pull/3374)
+### 🐞 Fixed
+- Fix Message Actions Alert view is not scrollable when the view has the exact same height as the screen [#3435](https://github.com/GetStream/stream-chat-swift/pull/3435)
 ### 🎭 New Localizations
 Multiple localizations were added to Polls, for more details please check the strings file.
 - `polls.subtitle.*`
