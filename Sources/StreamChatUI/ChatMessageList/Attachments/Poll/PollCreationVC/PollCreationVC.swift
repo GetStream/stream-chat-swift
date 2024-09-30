@@ -144,7 +144,7 @@ open class PollCreationVC:
     open var canCreatePoll: Bool {
         name.isEmpty == false
             && maximumVotesErrorText == nil
-            && options.filter { !$0.isEmpty }.count >= 2
+            && options.filter { !$0.isEmpty }.count >= 1
             && optionsErrorIndices.isEmpty
     }
 
