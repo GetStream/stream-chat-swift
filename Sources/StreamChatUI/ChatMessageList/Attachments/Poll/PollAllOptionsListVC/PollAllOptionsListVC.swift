@@ -114,11 +114,11 @@ open class PollAllOptionsListVC:
     }
 
     public func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = UITableViewCell()
         switch sections[indexPath.section] {
         case .name:
             let cell = UITableViewCell()
             cell.backgroundColor = appearance.colorPalette.background1
+            cell.textLabel?.numberOfLines = 0
             cell.textLabel?.text = pollController.poll?.name
             cell.textLabel?.textColor = appearance.colorPalette.text
             return cell

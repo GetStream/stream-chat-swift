@@ -76,6 +76,35 @@ final class PollAttachmentView_Tests: XCTestCase {
         AssertSnapshot(view, variants: [.defaultLight])
     }
 
+    func test_appearance_whenOptionsMoreThanMaxVisibleOptions() {
+        let voteCountsByOption: [String: Int] = [
+            "1": 2,
+            "2": 1,
+            "3": 1,
+            "4": 1,
+            "5": 1,
+            "6": 1,
+            "7": 1,
+            "8": 1,
+            "9": 1,
+            "10": 1,
+            "11": 1,
+            "12": 1
+        ]
+        let poll = Poll.mock(
+            allowAnswers: true,
+            answersCount: 3,
+            name: "Many Options",
+            voteCountsByOption: voteCountsByOption,
+            isClosed: false,
+            options: voteCountsByOption.sorted(by: { $0.key > $1.key }).map {
+                .init(text: $0.key)
+            }
+        )
+        let view = makeMessageView(for: poll)
+        AssertSnapshot(view, variants: [.defaultLight])
+    }
+
     func test_subtitleText() {
         let pollAttachmentView = PollAttachmentView()
         let pollDefault = pollFactory.makePoll(isClosed: false)
