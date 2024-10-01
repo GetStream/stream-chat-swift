@@ -406,7 +406,7 @@ GEM
       concurrent-ruby (~> 1.0)
     uber (0.1.0)
     unicode-display_width (2.5.0)
-    webrick (1.8.1)
+    webrick (1.8.2)
     word_wrap (1.0.0)
     xcinvoke (0.3.0)
       liferaft (~> 0.0.6)
