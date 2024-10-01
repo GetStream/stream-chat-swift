@@ -30,14 +30,14 @@ When you tap the "Polls" icon, a new screen for creating polls would be shown. O
 
 You can setup which of these options are going to be configurable for the users creating the poll. In order to do that, you need to provide your own `PollsConfig`.
 
-For example, let's create a new configuration which will hide the "Comments" option, and it will allow multiple votes by default.
+For example, let's create a new configuration that removes the suggestions feature and enables multiples votes by default.
 
 ```swift
 let pollsConfig = PollsConfig(
     multipleAnswers: PollsEntryConfig(configurable: true, defaultValue: true),
     anonymousPoll: .default,
-    suggestAnOption: .default,
-    addComments: PollsEntryConfig(configurable: false, defaultValue: false),
+    suggestAnOption: .notConfigurable,
+    addComments: .default,
     maxVotesPerPerson: .default
 )
 

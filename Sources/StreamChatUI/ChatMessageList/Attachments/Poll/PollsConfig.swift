@@ -54,6 +54,8 @@ public struct PollsEntryConfig {
 }
 
 extension PollsEntryConfig {
-    /// The default configuration for a poll entry.
+    /// The default configuration for a poll entry. It will make it configurable but disabled by default.
     public static let `default` = PollsEntryConfig(configurable: true, defaultValue: false)
+    /// The feature should not be supported, so it is not configurable by the user.
+    public static let notConfigurable = PollsEntryConfig(configurable: false, defaultValue: false)
 }

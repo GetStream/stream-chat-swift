@@ -23,20 +23,20 @@ When enabling Polls, an additional "Create Poll" action will be shown in the att
 
 ## Polls configuration
 
-When you tap the "Polls" icon, a new screen for creating polls will be shown. On this screen, you can configure the poll title, the options, as well as several other settings, such as the maximum number of votes, whether the poll is anonymous and if it allows comments.
+You can configure the default poll features by changing the `Components.default.pollsConfig`. This will determine which features the user can enable when creating the poll. Below is the poll creation view with all features supported:
 
 ![Screenshot showing create poll view](../assets/create-poll.png)
 
-You can setup which of these options are going to be configurable for the users creating the poll. In order to do that, you need to provide your own `PollsConfig`.
+You can setup which of these options will be supported. In order to do that, you need to provide your own `PollsConfig`.
 
-For example, let's create a new configuration which will hide the "Comments" option, and it will allow multiple votes by default.
+For example, let's create a new configuration that removes the suggestions feature and enables multiples votes by default.
 
 ```swift
 let pollsConfig = PollsConfig(
     multipleAnswers: PollsEntryConfig(configurable: true, defaultValue: true),
     anonymousPoll: .default,
-    suggestAnOption: .default,
-    addComments: PollsEntryConfig(configurable: false, defaultValue: false),
+    suggestAnOption: .notConfigurable,
+    addComments: .default,
     maxVotesPerPerson: .default
 )
 
