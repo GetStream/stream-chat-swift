@@ -8,6 +8,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Add `ChannelMemberListSortingKey.userId` for sorting channel members by id [#3423](https://github.com/GetStream/stream-chat-swift/pull/3423)
 - Add helper functions to `Poll` that extracts common domain logic [#3374](https://github.com/GetStream/stream-chat-swift/pull/3374)
 ### 🐞 Fixed
+- Fix old channel updates not being added to the channel list automatically [#3430](https://github.com/GetStream/stream-chat-swift/pull/3430)
 - Keep consistent order in channel and member lists when sorting by key with many equal values [#3423](https://github.com/GetStream/stream-chat-swift/pull/3423)
   - Recommendation: Always add at least one unique key to the query's sort
 - Fix `PollOption.latestVotes` sorting [#3374](https://github.com/GetStream/stream-chat-swift/pull/3374)
@@ -30,7 +31,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Add `PollAllOptionsListVC` component to show all the options of a poll [#3435](https://github.com/GetStream/stream-chat-swift/pull/3435)
 - Add `ChatUserAvatarView.shouldShowOnlineIndicator` to disable the online indicator easily [#3374](https://github.com/GetStream/stream-chat-swift/pull/3374)
 ### 🐞 Fixed
-- Fix Message Actions Alert view is not scrollable when the view has the exact same height as the screen [#3435](https://github.com/GetStream/stream-chat-swift/pull/3435)
+- Fix a crash with thematic breaks in markdown [#3437](https://github.com/GetStream/stream-chat-swift/pull/3437)
+- Fix Message Actions Alert view not scrollable when the view has the exact same height as the screen [#3435](https://github.com/GetStream/stream-chat-swift/pull/3435)
 ### 🎭 New Localizations
 Multiple localizations were added to Polls, for more details please check the strings file.
 - `polls.subtitle.*`

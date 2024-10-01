@@ -1,10 +1,6 @@
 name: "Publish new release"
 
 on:
-  push:
-    branches:
-      - main
-
   workflow_dispatch:
 
 jobs:
