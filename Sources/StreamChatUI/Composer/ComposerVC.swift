@@ -805,12 +805,28 @@ open class ComposerVC: _ViewController,
         present(filePickerVC, animated: true)
     }
 
+    /// Shows the camera view.
     open func showCamera() {
         present(cameraVC, animated: true)
     }
 
+    /// Shows the poll creation view.
+    open func showPollCreation() {
+        guard let channelId = channelController?.channel?.cid,
+              let channelController = channelController?.client.channelController(for: channelId)
+        else {
+            return
+        }
+        let pollCreationVC = components.pollCreationVC.init(channelController: channelController)
+        let navVC = UINavigationController(rootViewController: pollCreationVC)
+        present(navVC, animated: true)
+    }
+
     /// Returns actions for attachments picker.
     open var attachmentsPickerActions: [UIAlertAction] {
+        let isCameraAvailable = UIImagePickerController.isSourceTypeAvailable(.camera)
+        let isPollCreationEnabled = channelConfig?.pollsEnabled == true
+
         let showFilePickerAction = UIAlertAction(
             title: L10n.Composer.Picker.file,
             style: .default,
@@ -823,24 +839,30 @@ open class ComposerVC: _ViewController,
             handler: { [weak self] _ in self?.showMediaPicker() }
         )
 
-        let showCameraAction = UIAlertAction(
+        let showCameraAction = isCameraAvailable ? UIAlertAction(
             title: L10n.Composer.Picker.camera,
             style: .default,
             handler: { [weak self] _ in self?.showCamera() }
-        )
+        ) : nil
+
+        let showPollCreationAction = isPollCreationEnabled ? UIAlertAction(
+            title: L10n.Composer.Picker.poll,
+            style: .default,
+            handler: { [weak self] _ in self?.showPollCreation() }
+        ) : nil
 
         let cancelAction = UIAlertAction(
             title: L10n.Composer.Picker.cancel,
             style: .cancel
         )
 
-        let isCameraAvailable = UIImagePickerController.isSourceTypeAvailable(.camera)
-
-        if isCameraAvailable {
-            return [showCameraAction, showMediaPickerAction, showFilePickerAction, cancelAction]
-        }
-
-        return [showMediaPickerAction, showFilePickerAction, cancelAction]
+        return [
+            showCameraAction,
+            showMediaPickerAction,
+            showFilePickerAction,
+            showPollCreationAction,
+            cancelAction
+        ].compactMap { $0 }
     }
 
     /// Action that handles tap on attachments button in composer.

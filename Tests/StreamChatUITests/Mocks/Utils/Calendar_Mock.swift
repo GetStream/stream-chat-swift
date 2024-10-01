@@ -1,0 +1,24 @@
+//
+// Copyright © 2024 Stream.io Inc. All rights reserved.
+//
+
+@testable import StreamChat
+@testable import StreamChatUI
+
+class Calendar_Mock: StreamCalendar {
+    var mockIsDateInToday = false
+    var mockIsDateInYesterday = false
+    var mockIsDateInLastWeek = false
+
+    func isDateInToday(_ date: Date) -> Bool {
+        mockIsDateInToday
+    }
+
+    func isDateInYesterday(_ date: Date) -> Bool {
+        mockIsDateInYesterday
+    }
+
+    func isDateInLastWeek(_ date: Date) -> Bool {
+        mockIsDateInLastWeek
+    }
+}

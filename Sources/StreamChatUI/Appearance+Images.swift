@@ -79,6 +79,17 @@ public extension Appearance {
         public var messageDeliveryStatusRead: UIImage = loadImageSafely(with: "message_receipt_read")
         public var messageDeliveryStatusFailed: UIImage = loadImageSafely(with: "message_receipt_failed")
 
+        // MARK: - Polls
+
+        public var pollReorderIcon: UIImage = loadSafely(systemName: "line.3.horizontal", assetsFallback: "line.3.horizontal")
+        public var pollCreationSendIcon: UIImage = loadSafely(systemName: "paperplane.fill", assetsFallback: "paperplane.fill")
+        public var pollWinner: UIImage = loadSafely(systemName: "trophy", assetsFallback: "trophy")
+        public var pollVoteCheckmarkActive: UIImage = .checkmark
+        public var pollVoteCheckmarkInactive: UIImage = UIImage(
+            systemName: "circle",
+            withConfiguration: UIImage.SymbolConfiguration(weight: .thin)
+        ) ?? loadSafely(systemName: "circle", assetsFallback: "checkmark_confirm")
+
         // MARK: - Threads
 
         public var threadIcon: UIImage = loadSafely(systemName: "text.bubble", assetsFallback: "text_bubble")

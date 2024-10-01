@@ -18,7 +18,16 @@ class PollVoteDTO: NSManagedObject {
     @NSManaged var poll: PollDTO?
     @NSManaged var user: UserDTO?
     @NSManaged var queries: Set<PollVoteListQueryDTO>?
-    
+
+    override func willSave() {
+        super.willSave()
+
+        // When the poll is updated, trigger message FRC update.
+        if let message = poll?.message, hasPersistentChangedValues, !message.hasChanges, !message.isDeleted {
+            message.id = message.id
+        }
+    }
+
     static func loadOrCreate(
         voteId: String,
         poll: PollDTO,
@@ -75,7 +84,7 @@ extension PollVoteDTO {
 extension NSManagedObjectContext {
     @discardableResult
     func savePollVotes(payload: PollVoteListResponse, query: PollVoteListQuery?, cache: PreWarmedCache?) -> [PollVoteDTO] {
-        let isFirstPage = query?.pagination.offset == 0
+        let isFirstPage = query?.pagination.cursor == nil && query?.pagination.offset == 0
         if let filterHash = query?.queryHash, isFirstPage {
             let queryDTO = PollVoteListQueryDTO.load(filterHash: filterHash, context: self)
             queryDTO?.votes = []
@@ -131,7 +140,7 @@ extension NSManagedObjectContext {
             let queryDTO = try saveQuery(query: query)
             queryDTO?.votes.insert(dto)
         }
-        
+
         return dto
     }
     
@@ -178,7 +187,6 @@ extension NSManagedObjectContext {
         if let optionId {
             let currentVoteCount = poll.voteCountsByOption?[optionId] ?? 0
             poll.voteCountsByOption?[optionId] = currentVoteCount + 1
-            poll.latestAnswers.remove(dto)
         }
         
         if let query = query {
@@ -187,7 +195,7 @@ extension NSManagedObjectContext {
         }
         
         option?.latestVotes.insert(dto)
-        
+
         return dto
     }
     
@@ -227,16 +235,8 @@ extension NSManagedObjectContext {
 extension PollVoteDTO {
     static func pollVoteListFetchRequest(query: PollVoteListQuery) -> NSFetchRequest<PollVoteDTO> {
         let request = NSFetchRequest<PollVoteDTO>(entityName: PollVoteDTO.entityName)
-
-        // Fetch results controller requires at least one sorting descriptor.
-        // At the moment, we do not allow changing the query sorting.
         request.sortDescriptors = [.init(key: #keyPath(PollVoteDTO.createdAt), ascending: false)]
-
-        // If a filter exists, use is for the predicate. Otherwise, `nil` filter matches all reactions.
-        if let filterHash = query.filter?.filterHash {
-            request.predicate = NSPredicate(format: "ANY queries.filterHash == %@", filterHash)
-        }
-            
+        request.predicate = NSPredicate(format: "ANY queries.filterHash == %@", query.queryHash)
         return request
     }
 }

@@ -11,6 +11,10 @@ class PollOptionDTO: NSManagedObject {
     @NSManaged var text: String
     @NSManaged var custom: Data?
     @NSManaged var poll: PollDTO?
+    
+    // It contains both latestAnswers and ownVotes, plus every other vote.
+    // We can't have separate properties unless they have different entities.
+    // So the only way it would work would be to add a new PollAnswerDTO entity.
     @NSManaged var latestVotes: Set<PollVoteDTO>
     
     static func loadOrCreate(
@@ -56,7 +60,9 @@ extension PollOptionDTO {
         return PollOption(
             id: id,
             text: text,
-            latestVotes: try latestVotes.map { try $0.asModel() },
+            latestVotes: try latestVotes
+                .map { try $0.asModel() }
+                .sorted(by: { $0.createdAt > $1.createdAt }),
             extraData: extraData
         )
     }

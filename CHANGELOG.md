@@ -6,11 +6,40 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## StreamChat
 ### ✅ Added
 - Add `ChannelMemberListSortingKey.userId` for sorting channel members by id [#3423](https://github.com/GetStream/stream-chat-swift/pull/3423)
+- Add helper functions to `Poll` that extracts common domain logic [#3374](https://github.com/GetStream/stream-chat-swift/pull/3374)
 ### 🐞 Fixed
+- Fix old channel updates not being added to the channel list automatically [#3430](https://github.com/GetStream/stream-chat-swift/pull/3430)
 - Keep consistent order in channel and member lists when sorting by key with many equal values [#3423](https://github.com/GetStream/stream-chat-swift/pull/3423)
   - Recommendation: Always add at least one unique key to the query's sort
+- Fix `PollOption.latestVotes` sorting [#3374](https://github.com/GetStream/stream-chat-swift/pull/3374)
+- Fix `Poll.latestAnswers` sorting [#3374](https://github.com/GetStream/stream-chat-swift/pull/3374)
+- Fix `Poll` updates not triggering message updates in `ChannelController` [#3374](https://github.com/GetStream/stream-chat-swift/pull/3374)
+- Fix `Poll.latestAnswers` being reset on events, causing "Add a comment" button to not update in the UI SDKs [#3398](https://github.com/GetStream/stream-chat-swift/pull/3398)
+- Fix `PollVoteListController` resetting the first page when loading a new page [#3398](https://github.com/GetStream/stream-chat-swift/pull/3398)
+- Fix `PollVoteListController` default sorting being from oldest to newest from the server response [#3398](https://github.com/GetStream/stream-chat-swift/pull/3398)
+- Fix `PollVoteListQuery.pollId` not limiting the votes query to the given poll id [#3398](https://github.com/GetStream/stream-chat-swift/pull/3398)
+### 🔄 Changed
+- Deprecates `PollVoteListQuery(pollId:optionId:pagination:filter:)` initializer in favor of `(pollId:filter:pagination:)` [#3381](https://github.com/GetStream/stream-chat-swift/pull/3381)
+
+## StreamChatUI
+### ✅ Added
+- ✨ Introducing `ViewContainerBuilder`, a new, easier way to customize views [#3374](https://github.com/GetStream/stream-chat-swift/pull/3374) (Learn more by reading the docs [here](https://getstream.io/chat/docs/sdk/ios/uikit/custom-components/))
+- Add `PollAttachmentView` component to render polls in the message list [#3374](https://github.com/GetStream/stream-chat-swift/pull/3374)
+- Add `PollResultsVC` component to show the results of a poll [#3381](https://github.com/GetStream/stream-chat-swift/pull/3381)
+- Add `PollCommentListVC` component to show the comments of a poll [#3398](https://github.com/GetStream/stream-chat-swift/pull/3398)
+- Add `PollCreationVC` component to create a poll in a channel [#3433](https://github.com/GetStream/stream-chat-swift/pull/3433)
+- Add `PollAllOptionsListVC` component to show all the options of a poll [#3435](https://github.com/GetStream/stream-chat-swift/pull/3435)
+- Add `ChatUserAvatarView.shouldShowOnlineIndicator` to disable the online indicator easily [#3374](https://github.com/GetStream/stream-chat-swift/pull/3374)
+### 🐞 Fixed
 - Fix a crash with thematic breaks in markdown [#3437](https://github.com/GetStream/stream-chat-swift/pull/3437)
-- In some cases channel was not added to the channel list automatically [#3430](https://github.com/GetStream/stream-chat-swift/pull/3430)
+- Fix Message Actions Alert view not scrollable when the view has the exact same height as the screen [#3435](https://github.com/GetStream/stream-chat-swift/pull/3435)
+### 🎭 New Localizations
+Multiple localizations were added to Polls, for more details please check the strings file.
+- `polls.subtitle.*`
+- `polls.button.*`
+- `polls.*`
+- `alert.poll.*`
+- `message.preview.poll-*`
 
 # [4.63.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.63.0)
 _September 12, 2024_
