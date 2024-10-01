@@ -259,7 +259,7 @@ final class ChannelList_Tests: XCTestCase {
             channel: .mock(cid: incomingCid),
             unreadCount: nil,
             member: .mock(id: .unique),
-            createdAt: .unique
+            createdAt: Date()
         )
         // Write the incoming channel to the database
         try await env.client.mockDatabaseContainer.write { session in
@@ -283,7 +283,7 @@ final class ChannelList_Tests: XCTestCase {
         cancellable.cancel()
     }
     
-    func test_observingEvents_whenChannelUpdatedEventReceived_thenChannelIsUnlinkedAndStateUpdates() async throws {
+    func test_observingEvents_whenChannelUpdatedEventReceivedMatchingFilter_thenChannelIsUnlinkedAndStateUpdates() async throws {
         // Allow unlink a channel
         await setUpChannelList(usesMockedChannelUpdater: false, dynamicFilter: { _ in false })
         // Create channel list
@@ -306,6 +306,40 @@ final class ChannelList_Tests: XCTestCase {
         
         let event = ChannelUpdatedEvent(
             channel: .mock(cid: existingCid, memberCount: 4),
+            user: .unique,
+            message: .unique,
+            createdAt: .unique
+        )
+        let eventExpectation = XCTestExpectation(description: "Event processed")
+        env.client.eventNotificationCenter.process([event], completion: { eventExpectation.fulfill() })
+        await fulfillmentCompatibility(of: [eventExpectation], timeout: defaultTimeout, enforceOrder: true)
+        cancellable.cancel()
+    }
+    
+    func test_observingEvents_whenChannelUpdatedEventReceivedMatchingFilter_thenChannelIsLinkedAndStateUpdates() async throws {
+        // Allow link a channel
+        await setUpChannelList(usesMockedChannelUpdater: false, dynamicFilter: { _ in true })
+        // Create a channel list
+        let existingChannelListPayload = makeMatchingChannelListPayload(channelCount: 1, createdAtOffset: 0)
+        let existingCid = try XCTUnwrap(existingChannelListPayload.channels.first?.channel.cid)
+        try await env.client.mockDatabaseContainer.write { session in
+            session.saveChannelList(payload: existingChannelListPayload, query: self.channelList.query)
+        }
+        let newCid = ChannelId.unique
+        // Ensure that the channel is in the state
+        XCTAssertEqual(existingChannelListPayload.channels.map(\.channel.cid.rawValue), await channelList.state.channels.map(\.cid.rawValue))
+        
+        let stateExpectation = XCTestExpectation(description: "State changed")
+        let cancellable = await channelList.state.$channels
+            .dropFirst() // ignore initial
+            .sink { channels in
+                // Ensure linking added it to the state
+                XCTAssertEqual(Set([existingCid, newCid]), Set(channels.map(\.cid)))
+                stateExpectation.fulfill()
+            }
+        
+        let event = ChannelUpdatedEvent(
+            channel: .mock(cid: newCid, memberCount: 4),
             user: .unique,
             message: .unique,
             createdAt: .unique
