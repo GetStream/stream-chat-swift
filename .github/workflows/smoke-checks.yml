@@ -1,16 +1,32 @@
 name: Smoke Checks
 
 on:
-  issue_comment:
-    types: [created]
+  pull_request:
+    branches:
+      - '**'
 
   workflow_dispatch:
+    inputs:
+      snapshots:
+        description: 'Should Snapshots be recorded on CI?'
+        type: boolean
+        required: false
+        default: false
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  HOMEBREW_NO_INSTALL_CLEANUP: 1 # Disable cleanup for homebrew, we don't need it on CI
+  IOS_SIMULATOR_DEVICE: "iPhone 15 Pro (17.4)"
+  # GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  # GITHUB_PR_NUM: ${{ github.event.pull_request.number }}
 
 jobs:
   test-comment:
     name: Test
     runs-on: macos-14
-    if: github.event.comment.body == '/test fix'
     steps:
       - name: Connect Bot
         uses: webfactory/ssh-agent@v0.7.0
@@ -27,4 +43,4 @@ jobs:
         run: gh workflow run smoke-checks.yml --ref main
         env:
           GITHUB_TOKEN: ${{ secrets.ADMIN_API_TOKEN }}
-          GITHUB_PR_NUM: ${{ github.event.issue.number }}
+          # GITHUB_PR_NUM: ${{ github.event.issue.number }}
