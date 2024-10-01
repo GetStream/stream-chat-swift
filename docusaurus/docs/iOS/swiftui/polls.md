@@ -116,22 +116,22 @@ The `message`, the `poll` and whether the message is first in the group are prov
 
 To facilitate your custom implementation, you can use the public `PollAttachmentViewModel` class, that is used by the default `PollAttachmentView`.
 
-## Poll State
+## Poll state
 
 <PollState />
 
-## `PollController`
+### PollController
 
 <PollController />
 
-## `PollControllerDelegate`
+### PollControllerDelegate
 
 <PollControllerDelegate />
 
-## `PollVoteListController`
+### PollVoteListController
 
 <PollVoteListController />
 
-## `PollVoteListControllerDelegate`
+### PollVoteListControllerDelegate
 
 <PollVoteListControllerDelegate />

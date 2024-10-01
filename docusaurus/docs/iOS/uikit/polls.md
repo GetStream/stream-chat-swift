@@ -269,22 +269,22 @@ Besides these components, the SDK also provides components to show the results o
 - `Components.default.pollCommentListVC` - The view controller that shows the comments of the poll.
 - `Components.default.pollAllOptionsListVC` - The view controller that shows the full list of options in case it is a big poll.
 
-## Poll State
+## Poll state
 
 <PollState />
 
-## `PollController`
+### PollController
 
 <PollController />
 
-## `PollControllerDelegate`
+### PollControllerDelegate
 
 <PollControllerDelegate />
 
-## `PollVoteListController`
+### PollVoteListController
 
 <PollVoteListController />
 
-## `PollVoteListControllerDelegate`
+### PollVoteListControllerDelegate
 
 <PollVoteListControllerDelegate />
