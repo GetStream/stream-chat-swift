@@ -1,5 +1,5 @@
 {
-    "duration": "419.55ms",
+    "duration": "717.24ms",
     "message": {
         "attachments": [
             {
@@ -14,8 +14,8 @@
                 "type": "video"
             }
         ],
-        "cid": "messaging:97274db6-72f7-11ef-b6d3-6644d678b5e5",
-        "created_at": "2024-09-15T00:15:25.253329Z",
+        "cid": "messaging:5d752e2c-7f8a-11ef-ac84-9ed7d9dd4b89",
+        "created_at": "2024-10-01T00:16:17.854312Z",
         "deleted_reply_count": 0,
         "html": "<p><a href=\"https://youtube.com/watch?v=xOX7MsrbaPY\" rel=\"nofollow\">https://youtube.com/watch?v=xOX7MsrbaPY</a></p>\n",
         "i18n": {
@@ -23,7 +23,7 @@
             "fr_text": "https://youtube.com/watch?v=xOX7MsrbaPY",
             "language": "fr"
         },
-        "id": "9a97ccc8-72f7-11ef-b6d3-6644d678b5e5",
+        "id": "6037fe14-7f8a-11ef-ac84-9ed7d9dd4b89",
         "latest_reactions": [],
         "mentioned_users": [],
         "own_reactions": [],
@@ -38,7 +38,7 @@
         "silent": false,
         "text": "https://youtube.com/watch?v=xOX7MsrbaPY",
         "type": "regular",
-        "updated_at": "2024-09-15T00:15:25.253329Z",
+        "updated_at": "2024-10-01T00:16:17.854312Z",
         "user": {
             "banned": false,
             "birthland": "Tatooine",
@@ -47,7 +47,7 @@
             "id": "luke_skywalker",
             "image": "https://vignette.wikia.nocookie.net/starwars/images/2/20/LukeTLJ.jpg",
             "language": "fr",
-            "last_active": "2024-09-15T00:15:18.696192257Z",
+            "last_active": "2024-10-01T00:16:15.816762701Z",
             "name": "Luke Skywalker",
             "online": true,
             "pando": "{\"speciality\":\"ios engineer\"}",
@@ -55,7 +55,7 @@
             "team": "test",
             "teams": [],
             "type": "team",
-            "updated_at": "2024-09-13T11:36:29.64089Z"
+            "updated_at": "2024-09-25T16:00:10.292868Z"
         }
     }
 }

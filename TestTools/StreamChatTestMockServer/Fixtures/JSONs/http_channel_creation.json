@@ -1,7 +1,7 @@
 {
     "channel": {
         "blocked": false,
-        "cid": "messaging:97274db6-72f7-11ef-b6d3-6644d678b5e5",
+        "cid": "messaging:5d752e2c-7f8a-11ef-ac84-9ed7d9dd4b89",
         "config": {
             "automod": "AI",
             "automod_behavior": "block",
@@ -50,7 +50,7 @@
             "uploads": true,
             "url_enrichment": true
         },
-        "created_at": "2024-09-15T00:15:19.531074Z",
+        "created_at": "2024-10-01T00:16:12.882125Z",
         "created_by": {
             "banned": false,
             "birthland": "Tatooine",
@@ -59,7 +59,7 @@
             "id": "luke_skywalker",
             "image": "https://vignette.wikia.nocookie.net/starwars/images/2/20/LukeTLJ.jpg",
             "language": "fr",
-            "last_active": "2024-09-15T00:15:18.696192257Z",
+            "last_active": "2024-10-01T00:16:12.155816578Z",
             "name": "Luke Skywalker",
             "online": true,
             "pando": "{\"speciality\":\"ios engineer\"}",
@@ -67,12 +67,12 @@
             "team": "test",
             "teams": [],
             "type": "team",
-            "updated_at": "2024-09-13T11:36:29.64089Z"
+            "updated_at": "2024-09-25T16:00:10.292868Z"
         },
         "disabled": false,
         "frozen": false,
         "hidden": false,
-        "id": "97274db6-72f7-11ef-b6d3-6644d678b5e5",
+        "id": "5d752e2c-7f8a-11ef-ac84-9ed7d9dd4b89",
         "member_count": 3,
         "name": "Sync Mock Server",
         "own_capabilities": [
@@ -111,19 +111,19 @@
             "upload-file"
         ],
         "type": "messaging",
-        "updated_at": "2024-09-15T00:15:19.531075Z"
+        "updated_at": "2024-10-01T00:16:12.882125Z"
     },
-    "duration": "244.16ms",
+    "duration": "237.16ms",
     "members": [
         {
             "banned": false,
             "channel_role": "channel_member",
-            "created_at": "2024-09-15T00:15:19.553997Z",
+            "created_at": "2024-10-01T00:16:12.895633Z",
             "notifications_muted": false,
             "role": "member",
             "shadow_banned": false,
             "status": "member",
-            "updated_at": "2024-09-15T00:15:19.553997Z",
+            "updated_at": "2024-10-01T00:16:12.895633Z",
             "user": {
                 "banned": false,
                 "birthland": "Serenno",
@@ -144,12 +144,12 @@
         {
             "banned": false,
             "channel_role": "channel_member",
-            "created_at": "2024-09-15T00:15:19.553997Z",
+            "created_at": "2024-10-01T00:16:12.895633Z",
             "notifications_muted": false,
             "role": "member",
             "shadow_banned": false,
             "status": "member",
-            "updated_at": "2024-09-15T00:15:19.553997Z",
+            "updated_at": "2024-10-01T00:16:12.895633Z",
             "user": {
                 "banned": false,
                 "birthland": "Corellia",
@@ -158,24 +158,24 @@
                 "id": "han_solo",
                 "image": "https://vignette.wikia.nocookie.net/starwars/images/e/e2/TFAHanSolo.png",
                 "language": "",
-                "last_active": "2024-09-13T18:02:38.052191Z",
+                "last_active": "2024-09-30T16:55:50.20738Z",
                 "name": "Han Solo",
                 "online": false,
                 "role": "user",
                 "teams": [],
-                "updated_at": "2024-06-25T14:17:08.295189Z"
+                "updated_at": "2024-09-17T23:40:07.681474Z"
             },
             "user_id": "han_solo"
         },
         {
             "banned": false,
             "channel_role": "channel_member",
-            "created_at": "2024-09-15T00:15:19.553997Z",
+            "created_at": "2024-10-01T00:16:12.895633Z",
             "notifications_muted": false,
             "role": "owner",
             "shadow_banned": false,
             "status": "member",
-            "updated_at": "2024-09-15T00:15:19.553997Z",
+            "updated_at": "2024-10-01T00:16:12.895633Z",
             "user": {
                 "banned": false,
                 "birthland": "Tatooine",
@@ -184,7 +184,7 @@
                 "id": "luke_skywalker",
                 "image": "https://vignette.wikia.nocookie.net/starwars/images/2/20/LukeTLJ.jpg",
                 "language": "fr",
-                "last_active": "2024-09-15T00:15:18.696192257Z",
+                "last_active": "2024-10-01T00:16:12.155816578Z",
                 "name": "Luke Skywalker",
                 "online": true,
                 "pando": "{\"speciality\":\"ios engineer\"}",
@@ -192,7 +192,7 @@
                 "team": "test",
                 "teams": [],
                 "type": "team",
-                "updated_at": "2024-09-13T11:36:29.64089Z"
+                "updated_at": "2024-09-25T16:00:10.292868Z"
             },
             "user_id": "luke_skywalker"
         }
@@ -200,12 +200,12 @@
     "membership": {
         "banned": false,
         "channel_role": "channel_member",
-        "created_at": "2024-09-15T00:15:19.553997Z",
+        "created_at": "2024-10-01T00:16:12.895633Z",
         "notifications_muted": false,
         "role": "owner",
         "shadow_banned": false,
         "status": "member",
-        "updated_at": "2024-09-15T00:15:19.553997Z",
+        "updated_at": "2024-10-01T00:16:12.895633Z",
         "user": {
             "banned": false,
             "birthland": "Tatooine",
@@ -214,7 +214,7 @@
             "id": "luke_skywalker",
             "image": "https://vignette.wikia.nocookie.net/starwars/images/2/20/LukeTLJ.jpg",
             "language": "fr",
-            "last_active": "2024-09-15T00:15:18.696192257Z",
+            "last_active": "2024-10-01T00:16:12.155816578Z",
             "name": "Luke Skywalker",
             "online": true,
             "pando": "{\"speciality\":\"ios engineer\"}",
@@ -222,14 +222,14 @@
             "team": "test",
             "teams": [],
             "type": "team",
-            "updated_at": "2024-09-13T11:36:29.64089Z"
+            "updated_at": "2024-09-25T16:00:10.292868Z"
         }
     },
     "messages": [],
     "pinned_messages": [],
     "read": [
         {
-            "last_read": "2024-09-15T00:15:19.603321971Z",
+            "last_read": "2024-10-01T00:16:12.940398225Z",
             "unread_messages": 0,
             "user": {
                 "banned": false,
@@ -248,7 +248,7 @@
             }
         },
         {
-            "last_read": "2024-09-15T00:15:19.603321971Z",
+            "last_read": "2024-10-01T00:16:12.940398225Z",
             "unread_messages": 0,
             "user": {
                 "banned": false,
@@ -258,16 +258,16 @@
                 "id": "han_solo",
                 "image": "https://vignette.wikia.nocookie.net/starwars/images/e/e2/TFAHanSolo.png",
                 "language": "",
-                "last_active": "2024-09-13T18:02:38.052191Z",
+                "last_active": "2024-09-30T16:55:50.20738Z",
                 "name": "Han Solo",
                 "online": false,
                 "role": "user",
                 "teams": [],
-                "updated_at": "2024-06-25T14:17:08.295189Z"
+                "updated_at": "2024-09-17T23:40:07.681474Z"
             }
         },
         {
-            "last_read": "2024-09-15T00:15:19.603321971Z",
+            "last_read": "2024-10-01T00:16:12.940398225Z",
             "unread_messages": 0,
             "user": {
                 "banned": false,
@@ -277,7 +277,7 @@
                 "id": "luke_skywalker",
                 "image": "https://vignette.wikia.nocookie.net/starwars/images/2/20/LukeTLJ.jpg",
                 "language": "fr",
-                "last_active": "2024-09-15T00:15:18.696192257Z",
+                "last_active": "2024-10-01T00:16:12.155816578Z",
                 "name": "Luke Skywalker",
                 "online": true,
                 "pando": "{\"speciality\":\"ios engineer\"}",
@@ -285,7 +285,7 @@
                 "team": "test",
                 "teams": [],
                 "type": "team",
-                "updated_at": "2024-09-13T11:36:29.64089Z"
+                "updated_at": "2024-09-25T16:00:10.292868Z"
             }
         }
     ],
