@@ -30,7 +30,10 @@ open class PollCommentListVC:
     /// A convenience initializer that creates the comments controller automatically.
     public required convenience init(pollController: PollController) {
         let commentsController = pollController.client.pollVoteListController(
-            query: .init(pollId: pollController.pollId, filter: .equal(.isAnswer, to: true))
+            query: .init(
+                pollId: pollController.pollId,
+                filter: .equal(.isAnswer, to: true)
+            )
         )
         self.init(pollController: pollController, commentsController: commentsController)
     }
