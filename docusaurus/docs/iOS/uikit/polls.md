@@ -21,7 +21,7 @@ Polls are disabled by default. In order to enable this feature, you need to go t
 
 When enabling Polls, an additional "Create Poll" action will be shown in the attachment picker of the default composer component.
 
-## Polls configuration
+## Poll configuration
 
 You can configure the default poll features by changing the `Components.default.pollsConfig`. This will determine which features the user can enable when creating the poll. Below is the poll creation view with all features supported:
 

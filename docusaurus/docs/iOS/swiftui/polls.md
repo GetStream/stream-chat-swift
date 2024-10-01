@@ -22,7 +22,7 @@ As soon as you do that, an additional "Polls" icon would be shown in the attachm
 
 ![Screenshot showing polls icon in the composer](../assets/polls-composer.png)
 
-## Polls configuration
+## Poll configuration
 
 When you tap the "Polls" icon, a new screen for creating polls would be shown. On this screen, you can configure the poll title, the options, as well as several other settings, such as the maximum number of votes, whether the poll is anonymous and if it allows comments.
 
