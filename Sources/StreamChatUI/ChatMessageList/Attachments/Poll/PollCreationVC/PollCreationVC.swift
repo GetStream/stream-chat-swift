@@ -70,8 +70,31 @@ open class PollCreationVC:
         .features
     ]
 
+    /// The features supported to be enabled in the poll.
+    open lazy var pollFeatures: [PollFeatureType] = [
+        pollsConfig.multipleVotes.configurable ? .multipleVotes : nil,
+        pollsConfig.anonymousPoll.configurable ? .anonymous : nil,
+        pollsConfig.suggestAnOption.configurable ? .suggestions : nil,
+        pollsConfig.addComments.configurable ? .comments : nil
+    ].compactMap { $0 }
+
     /// The name of the poll.
     public var name: String = "" {
+        didSet {
+            updateContentIfNeeded()
+        }
+    }
+
+    /// The description of the poll. By default it is `nil` and it is not used by the default component.
+    public var pollDescription: String? {
+        didSet {
+            updateContentIfNeeded()
+        }
+    }
+
+    /// Extra data of the poll. By default it is `nil` and it is not used by the default component.
+    /// This can be used to add custom features to the Poll.
+    public var extraData: [String: RawJSON] = [:] {
         didSet {
             updateContentIfNeeded()
         }
@@ -86,14 +109,6 @@ open class PollCreationVC:
 
     /// The indices of the options that contain an error.
     public var optionsErrorIndices: [Int: String] = [:]
-
-    /// The features supported to be enabled in the poll.
-    open lazy var pollFeatures: [PollFeatureType] = [
-        pollsConfig.multipleVotes.configurable ? .multipleVotes : nil,
-        pollsConfig.anonymousPoll.configurable ? .anonymous : nil,
-        pollsConfig.suggestAnOption.configurable ? .suggestions : nil,
-        pollsConfig.addComments.configurable ? .comments : nil
-    ].compactMap { $0 }
 
     /// The multiple votes feature configuration.
     public var multipleVotesFeature = MultipleVotesPollFeature(
@@ -633,14 +648,14 @@ open class PollCreationVC:
             name: name,
             allowAnswers: commentsFeature.isEnabled,
             allowUserSuggestedOptions: suggestionsFeature.isEnabled,
-            description: nil,
+            description: pollDescription,
             enforceUniqueVote: !multipleVotesFeature.isEnabled,
             maxVotesAllowed: multipleVotesFeature.maxVotesConfig?.maxVotes,
             votingVisibility: anonymousFeature.isEnabled ? .anonymous : .public,
             options: options
                 .filter { !$0.isEmpty }
                 .map { PollOption(text: $0) },
-            extraData: nil
+            extraData: extraData
         ) { [weak self] result in
             self?.createPollButton.isEnabled = true
             self?.handleCreatePollResponse(result: result)

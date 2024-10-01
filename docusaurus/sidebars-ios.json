@@ -46,7 +46,8 @@
         "uikit/navigation",
         "uikit/localization",            
         "uikit/data-formatting",
-        "uikit/components/voice-recording"
+        "uikit/components/voice-recording",
+        "uikit/polls"
       ]
     },
     {
