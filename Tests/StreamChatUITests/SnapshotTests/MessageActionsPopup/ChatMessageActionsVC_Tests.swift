@@ -412,6 +412,18 @@ final class ChatMessageActionsVC_Tests: XCTestCase {
 
         AssertSnapshot(vc.embedded(), variants: [.defaultLight])
     }
+
+    func test_messageActions_whenPoll_shouldNotContainEditMessageAction() {
+        chatMessageController.simulateInitial(
+            message: ChatMessage.mock(text: "", isSentByCurrentUser: true, poll: .unique),
+            replies: [],
+            state: .remoteDataFetched
+        )
+
+        vc.channel = .mock(cid: .unique, ownCapabilities: [.updateAnyMessage])
+
+        XCTAssertFalse(vc.messageActions.contains(where: { $0 is EditActionItem }))
+    }
 }
 
 // MARK: - Helpers

@@ -315,6 +315,86 @@ public struct Components {
     /// A flag which determines if download action is shown for file attachments.
     public var isDownloadFileAttachmentsEnabled = false
 
+    // MARK: - Polls
+
+    /// The view that displays a poll in the message list.
+    public var pollAttachmentView: PollAttachmentView.Type = PollAttachmentView.self
+
+    /// The options list view of the poll attachment in the message list.
+    public var pollAttachmentOptionListView: PollAttachmentOptionListView.Type = PollAttachmentOptionListView.self
+
+    /// The view that displays a poll option in the poll option list view.
+    public var pollAttachmentOptionListItemView: PollAttachmentOptionListItemView.Type = PollAttachmentOptionListItemView.self
+
+    /// The view controller that shows the results of a poll.
+    public var pollResultsVC: PollResultsVC.Type = PollResultsVC.self
+
+    /// The table header view of the polls results. By default it displays the poll's name.
+    public var pollResultsTableHeaderView: PollResultsTableHeaderView.Type = PollResultsTableHeaderView.self
+
+    /// The poll results header view for each section.
+    public var pollResultsSectionHeaderView: PollResultsSectionHeaderView.Type = PollResultsSectionHeaderView.self
+
+    /// The poll results footer view for each section.
+    public var pollResultsSectionFooterView: PollResultsSectionFooterView.Type = PollResultsSectionFooterView.self
+
+    /// The `UITableViewCell` for the poll results vote item.
+    public var pollResultsVoteItemCell: PollResultsVoteItemCell.Type = PollResultsVoteItemCell.self
+
+    /// The vote item view that displays information in a poll results cell.
+    public var pollResultsVoteItemView: PollResultsVoteItemView.Type = PollResultsVoteItemView.self
+
+    /// The controller that shows all votes of poll option.
+    public var pollResultsVoteListVC: PollResultsVoteListVC.Type = PollResultsVoteListVC.self
+
+    /// The view controller that shows the comments/answers of a poll.
+    public var pollCommentListVC: PollCommentListVC.Type = PollCommentListVC.self
+
+    /// The poll comments header view for each section.
+    public var pollCommentListSectionHeaderView: PollCommentListSectionHeaderView.Type = PollCommentListSectionHeaderView.self
+
+    /// The poll comments table footer view that by default displays the action to add/update a comment.
+    public var pollCommentListTableFooterView: PollCommentListTableFooterView.Type = PollCommentListTableFooterView.self
+
+    /// The `UITableViewCell` for the poll comment list item cell.
+    public var pollCommentListItemCell: PollCommentListItemCell.Type = PollCommentListItemCell.self
+
+    /// The item view that displays information in a poll comment item cell.
+    public var pollCommentListItemView: PollCommentListItemView.Type = PollCommentListItemView.self
+
+    /// The configuration for the various poll features. It determines if the user can or can not enable certain poll features.
+    public var pollsConfig = PollsConfig()
+
+    /// The view controller responsible to create a poll.
+    public var pollCreationVC: PollCreationVC.Type = PollCreationVC.self
+
+    /// The cell for editing the poll's name.
+    public var pollCreationNameCell: PollCreationNameCell.Type = PollCreationNameCell.self
+
+    /// The cell for adding an option to the poll.
+    public var pollCreationOptionCell: PollCreationOptionCell.Type = PollCreationOptionCell.self
+
+    /// The cell for enabling or disabling a poll feature.
+    public var pollCreationFeatureCell: PollCreationFeatureCell.Type = PollCreationFeatureCell.self
+
+    /// The cell to configure the multiple votes poll feature.
+    public var pollCreationMultipleVotesFeatureCell: PollCreationMultipleVotesFeatureCell.Type = PollCreationMultipleVotesFeatureCell.self
+
+    /// The poll creation section header view.
+    public var pollCreationSectionHeaderView: PollCreationSectionHeaderView.Type = PollCreationSectionHeaderView.self
+
+    /// A text field used by the poll creation form to input text and show validation errors.
+    public var pollCreationTextFieldView: PollCreationTextFieldView.Type = PollCreationTextFieldView.self
+
+    /// A view responsible to enable or disable a poll feature.
+    public var pollCreationFeatureSwitchView: PollCreationFeatureSwitchView.Type = PollCreationFeatureSwitchView.self
+
+    /// The view controller that shows all the options of a poll.
+    public var pollAllOptionsListVC: PollAllOptionsListVC.Type = PollAllOptionsListVC.self
+
+    /// The cell for displaying an option in the all options view.
+    public var pollAllOptionsListItemCell: PollAllOptionsListItemCell.Type = PollAllOptionsListItemCell.self
+
     // MARK: - Reactions
 
     /// The Reaction picker VC.

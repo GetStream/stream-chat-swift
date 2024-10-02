@@ -60,6 +60,7 @@ public extension Appearance {
 
         // MARK: - Tint and alert
 
+        public var validationError: UIColor = .streamAccentRed
         public var alert: UIColor = .streamAccentRed
         public var alternativeActiveTint: UIColor = .streamAccentGreen
         public var inactiveTint: UIColor = .streamGray

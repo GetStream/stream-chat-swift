@@ -753,6 +753,94 @@ final class ChatChannelListItemView_Tests: XCTestCase {
         AssertSnapshot(view, variants: .onlyUserInterfaceStyles)
     }
 
+    func test_appearance_pollPreview_whenLatestVoterIsCurrentUser() throws {
+        let message: ChatMessage = try mockPollMessage(
+            poll: .mock(
+                name: "Poll",
+                latestVotes: [
+                    .mock(user: currentUser),
+                    .mock(user: .unique),
+                    .mock(user: .unique)
+                ]
+            ),
+            messageAuthor: currentUser,
+            isSentByCurrentUser: true
+        )
+
+        let view = channelItemView(
+            content: .init(
+                channel: channel(previewMessage: message),
+                currentUserId: currentUser.id
+            )
+        )
+
+        AssertSnapshot(view)
+    }
+
+    func test_appearance_pollPreview_whenLatestVoterIsAnotherUser() throws {
+        let message: ChatMessage = try mockPollMessage(
+            poll: .mock(
+                name: "Poll",
+                latestVotes: [
+                    .mock(user: .mock(id: .unique, name: "Someone")),
+                    .mock(user: currentUser),
+                    .mock(user: .unique)
+                ]
+            ),
+            messageAuthor: currentUser,
+            isSentByCurrentUser: true
+        )
+
+        let view = channelItemView(
+            content: .init(
+                channel: channel(previewMessage: message),
+                currentUserId: currentUser.id
+            )
+        )
+
+        AssertSnapshot(view, variants: [.defaultLight])
+    }
+
+    func test_appearance_pollPreview_whenPollCreatedByCurrentUser() throws {
+        let message: ChatMessage = try mockPollMessage(
+            poll: .mock(
+                name: "Poll",
+                createdBy: currentUser
+            ),
+            messageAuthor: currentUser,
+            isSentByCurrentUser: true
+        )
+
+        let view = channelItemView(
+            content: .init(
+                channel: channel(previewMessage: message),
+                currentUserId: currentUser.id
+            )
+        )
+
+        AssertSnapshot(view, variants: [.defaultLight])
+    }
+
+    func test_appearance_pollPreview_whenPollCreatedByAnotherUser() throws {
+        let message: ChatMessage = try mockPollMessage(
+            poll: .mock(
+                name: "Poll",
+                createdBy: .mock(id: .unique, name: "Darth Vader")
+            ),
+            messageAuthor: .mock(id: .unique, name: "Darth Vader"),
+            isSentByCurrentUser: false
+        )
+
+        let view = channelItemView(
+            content: .init(
+                channel: channel(previewMessage: message),
+                currentUserId: currentUser.id
+            )
+        )
+
+        AssertSnapshot(view, variants: [.defaultLight])
+    }
+
     func test_appearanceCustomization_usingAppearance() {
         var appearance = Appearance()
         appearance.fonts.bodyBold = .italicSystemFont(ofSize: 20)
@@ -1567,7 +1655,7 @@ final class ChatChannelListItemView_Tests: XCTestCase {
 
     private func channel(
         previewMessage: ChatMessage? = nil,
-        readEventsEnabled: Bool,
+        readEventsEnabled: Bool = true,
         memberCount: Int = 0,
         membership: ChatChannelMember? = nil
     ) -> ChatChannel {
@@ -1698,6 +1786,21 @@ final class ChatChannelListItemView_Tests: XCTestCase {
             isSentByCurrentUser: isSentByCurrentUser
         )
     }
+
+    private func mockPollMessage(poll: Poll, messageAuthor: ChatUser, isSentByCurrentUser: Bool) throws -> ChatMessage {
+        .mock(
+            id: .unique,
+            cid: .unique,
+            text: "",
+            type: .regular,
+            author: messageAuthor,
+            createdAt: Date(timeIntervalSince1970: 100),
+            attachments: [],
+            localState: nil,
+            isSentByCurrentUser: isSentByCurrentUser,
+            poll: poll
+        )
+    }
 }
 
 private extension ChatChannelListItemView {
@@ -1705,23 +1808,5 @@ private extension ChatChannelListItemView {
         NSLayoutConstraint.activate([
             widthAnchor.constraint(equalToConstant: 400)
         ])
-    }
-}
-
-private class Calendar_Mock: ChannelListMessageTimestampCalendar {
-    var mockIsDateInToday = false
-    var mockIsDateInYesterday = false
-    var mockIsDateInLastWeek = false
-
-    func isDateInToday(_ date: Date) -> Bool {
-        mockIsDateInToday
-    }
-
-    func isDateInYesterday(_ date: Date) -> Bool {
-        mockIsDateInYesterday
-    }
-
-    func isDateInLastWeek(_ date: Date) -> Bool {
-        mockIsDateInLastWeek
     }
 }

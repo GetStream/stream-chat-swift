@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="23231" systemVersion="24A335" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="22758" systemVersion="23G93" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
     <entity name="AttachmentDTO" representedClassName="AttachmentDTO" syncable="YES">
         <attribute name="data" attributeType="Binary"/>
         <attribute name="id" attributeType="String"/>
@@ -330,7 +330,7 @@
         <attribute name="voteCountsByOption" optional="YES" attributeType="Transformable" valueTransformerName="NSSecureUnarchiveFromData"/>
         <attribute name="votingVisibility" optional="YES" attributeType="String"/>
         <relationship name="createdBy" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="UserDTO" inverseName="pollCreatedBy" inverseEntity="UserDTO"/>
-        <relationship name="latestAnswers" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="PollVoteDTO" inverseName="poll" inverseEntity="PollVoteDTO"/>
+        <relationship name="latestVotes" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="PollVoteDTO" inverseName="poll" inverseEntity="PollVoteDTO"/>
         <relationship name="latestVotesByOption" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="PollOptionDTO" inverseName="pollLatestVotes" inverseEntity="PollOptionDTO"/>
         <relationship name="message" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="MessageDTO" inverseName="poll" inverseEntity="MessageDTO"/>
         <relationship name="options" optional="YES" toMany="YES" deletionRule="Nullify" ordered="YES" destinationEntity="PollOptionDTO" inverseName="poll" inverseEntity="PollOptionDTO"/>
@@ -352,7 +352,7 @@
         <attribute name="pollId" attributeType="String"/>
         <attribute name="updatedAt" attributeType="Date" usesScalarValueType="NO"/>
         <relationship name="option" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="PollOptionDTO" inverseName="latestVotes" inverseEntity="PollOptionDTO"/>
-        <relationship name="poll" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="PollDTO" inverseName="latestAnswers" inverseEntity="PollDTO"/>
+        <relationship name="poll" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="PollDTO" inverseName="latestVotes" inverseEntity="PollDTO"/>
         <relationship name="queries" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="PollVoteListQueryDTO" inverseName="votes" inverseEntity="PollVoteListQueryDTO"/>
         <relationship name="user" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="UserDTO" inverseName="votes" inverseEntity="UserDTO"/>
     </entity>

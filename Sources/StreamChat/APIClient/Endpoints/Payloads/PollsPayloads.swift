@@ -174,7 +174,7 @@ struct PollPayload: Decodable {
     var voteCount: Int
     var latestAnswers: [PollVotePayload?]?
     var options: [PollOptionPayload?]
-    var ownVotes: [PollVotePayload?]
+    var ownVotes: [PollVotePayload?]?
     var custom: [String: RawJSON]?
     var latestVotesByOption: [String: [PollVotePayload]]?
     var voteCountsByOption: [String: Int]?
@@ -182,6 +182,11 @@ struct PollPayload: Decodable {
     var maxVotesAllowed: Int?
     var votingVisibility: String?
     var createdBy: UserPayload?
+
+    // Workaround for handling events. The backend always returns the `ownVotes` as an empty array.
+    // This would reset the ownVotes of a Poll, so we need to understand that this payload is from an event
+    // and ignore the `ownVotes` property.
+    var fromEvent: Bool = false
 
     init(
         allowAnswers: Bool,

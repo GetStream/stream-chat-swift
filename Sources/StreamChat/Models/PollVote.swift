@@ -5,7 +5,7 @@
 import Foundation
 
 /// A structure representing a vote in a poll.
-public struct PollVote: Equatable {
+public struct PollVote: Hashable, Equatable {
     /// The unique identifier of the poll vote.
     public let id: String
     
@@ -32,4 +32,8 @@ public struct PollVote: Equatable {
     /// The user who submitted the vote.
     /// This property is optional and may be `nil` if the vote was submitted anonymously.
     public let user: ChatUser?
+
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(id)
+    }
 }

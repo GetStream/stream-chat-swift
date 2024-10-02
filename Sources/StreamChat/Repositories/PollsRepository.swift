@@ -285,7 +285,7 @@ class PollsRepository {
             try session.linkVote(
                 with: pollVote.id,
                 in: pollVote.pollId,
-                to: query.filter?.filterHash
+                to: query.queryHash
             )
         }
     }

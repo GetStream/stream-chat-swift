@@ -23,11 +23,20 @@ class PollDTO: NSManagedObject {
     @NSManaged var maxVotesAllowed: NSNumber?
     @NSManaged var votingVisibility: String?
     @NSManaged var createdBy: UserDTO?
-    @NSManaged var latestAnswers: Set<PollVoteDTO>
+    @NSManaged var latestVotes: Set<PollVoteDTO>
     @NSManaged var message: MessageDTO?
     @NSManaged var options: NSOrderedSet
     @NSManaged var latestVotesByOption: Set<PollOptionDTO>
-    
+
+    override func willSave() {
+        super.willSave()
+        
+        // When the poll is updated, trigger message FRC update.
+        if let message = self.message, hasPersistentChangedValues, !message.hasChanges, !message.isDeleted {
+            message.id = message.id
+        }
+    }
+
     static func loadOrCreate(
         pollId: String,
         context: NSManagedObjectContext,
@@ -70,7 +79,8 @@ extension PollDTO {
         }
         
         let optionsArray = (options.array as? [PollOptionDTO]) ?? []
-        
+        let currentUserId = managedObjectContext?.currentUser?.user.id
+
         return try Poll(
             allowAnswers: allowAnswers,
             allowUserSuggestedOptions: allowUserSuggestedOptions,
@@ -88,9 +98,20 @@ extension PollDTO {
             maxVotesAllowed: maxVotesAllowed?.intValue,
             votingVisibility: votingVisibility(from: votingVisibility),
             createdBy: createdBy?.asModel(),
-            latestAnswers: latestAnswers.map { try $0.asModel() },
+            latestAnswers: latestVotes
+                .filter { $0.isAnswer }
+                .map { try $0.asModel() }
+                .sorted(by: { $0.createdAt > $1.createdAt }),
             options: optionsArray.map { try $0.asModel() },
-            latestVotesByOption: latestVotesByOption.map { try $0.asModel() }
+            latestVotesByOption: latestVotesByOption.map { try $0.asModel() },
+            latestVotes: latestVotesByOption
+                .map(\.latestVotes)
+                .joined()
+                .map { try $0.asModel() }
+                .sorted(by: { $0.createdAt > $1.createdAt }),
+            ownVotes: latestVotes
+                .filter { !$0.isAnswer && $0.user?.id == currentUserId }
+                .map { try $0.asModel() }
         )
     }
     
@@ -163,18 +184,37 @@ extension NSManagedObjectContext {
                 return optionDto
             } ?? []
         )
-        pollDto.latestAnswers = try Set(
-            payload.latestAnswers?.compactMap { payload in
+
+        if let latestAnswers = payload.latestAnswers {
+            pollDto.latestVotes
+                .filter { $0.isAnswer }
+                .forEach {
+                    pollDto.latestVotes.remove($0)
+                }
+
+            try latestAnswers.forEach { payload in
                 if let payload {
                     let answerDto = try savePollVote(payload: payload, query: nil, cache: cache)
                     answerDto.poll = pollDto
-                    return answerDto
-                } else {
-                    return nil
                 }
-            } ?? []
-        )
-        
+            }
+        }
+
+        if let payloadOwnVotes = payload.ownVotes, !payload.fromEvent {
+            pollDto.latestVotes
+                .filter { !$0.isAnswer }
+                .forEach {
+                    pollDto.latestVotes.remove($0)
+                }
+
+            try payloadOwnVotes.forEach { payload in
+                if let payload {
+                    let voteDto = try savePollVote(payload: payload, query: nil, cache: cache)
+                    voteDto.poll = pollDto
+                }
+            }
+        }
+
         return pollDto
     }
     

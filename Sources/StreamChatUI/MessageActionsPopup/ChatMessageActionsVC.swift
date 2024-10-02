@@ -53,7 +53,13 @@ open class ChatMessageActionsVC: _ViewController, ThemeProvider {
     override open func setUpLayout() {
         super.setUpLayout()
 
-        view.embed(messageActionsContainerStackView)
+        view.addSubview(messageActionsContainerStackView)
+        NSLayoutConstraint.activate([
+            messageActionsContainerStackView.leadingAnchor.pin(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
+            messageActionsContainerStackView.trailingAnchor.pin(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
+            messageActionsContainerStackView.topAnchor.pin(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            messageActionsContainerStackView.bottomAnchor.pin(equalTo: view.safeAreaLayoutGuide.bottomAnchor)
+        ])
         messageActionsContainerStackView.axis = .vertical
         messageActionsContainerStackView.alignment = .fill
         messageActionsContainerStackView.spacing = 1
@@ -129,10 +135,12 @@ open class ChatMessageActionsVC: _ViewController, ThemeProvider {
                 actions.append(copyActionItem())
             }
 
-            if canUpdateAnyMessage && message.giphyAttachments.isEmpty {
-                actions.append(editActionItem())
-            } else if canUpdateOwnMessage && message.isSentByCurrentUser && message.giphyAttachments.isEmpty {
-                actions.append(editActionItem())
+            if message.poll == nil {
+                if canUpdateAnyMessage && message.giphyAttachments.isEmpty {
+                    actions.append(editActionItem())
+                } else if canUpdateOwnMessage && message.isSentByCurrentUser && message.giphyAttachments.isEmpty {
+                    actions.append(editActionItem())
+                }
             }
 
             if canDeleteAnyMessage {

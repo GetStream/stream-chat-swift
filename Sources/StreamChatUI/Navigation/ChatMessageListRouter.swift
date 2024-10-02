@@ -224,6 +224,44 @@ open class ChatMessageListRouter:
         )
     }
 
+    /// Shows the poll results view.
+    /// - Parameters:
+    ///   - poll: The poll to show the results.
+    ///   - messageId: The message ID which this poll belongs to.
+    ///   - client: The `ChatClient` instance.
+    open func showPollResults(for poll: Poll, in messageId: MessageId, client: ChatClient) {
+        let pollController = client.pollController(messageId: messageId, pollId: poll.id)
+        let pollResultsVC = components.pollResultsVC.init(pollController: pollController)
+        let navVC = UINavigationController(rootViewController: pollResultsVC)
+        rootViewController.present(navVC, animated: true)
+    }
+
+    /// Shows the poll comments view.
+    /// - Parameters:
+    ///   - poll: The poll to show the comments.
+    ///   - messageId: The message ID which this poll belongs to.
+    ///   - client: The `ChatClient` instance.
+    open func showPollComments(for poll: Poll, in messageId: MessageId, client: ChatClient) {
+        let pollController = client.pollController(messageId: messageId, pollId: poll.id)
+        let pollCommentListVC = components.pollCommentListVC.init(
+            pollController: pollController
+        )
+        let navVC = UINavigationController(rootViewController: pollCommentListVC)
+        rootViewController.present(navVC, animated: true)
+    }
+
+    /// Shows the poll all options view.
+    /// - Parameters:
+    ///   - poll: The poll that the options belong to.
+    ///   - messageId: The message ID which this poll belongs to.
+    ///   - client: The `ChatClient` instance.
+    open func showAllPollOptions(for poll: Poll, messageId: MessageId, client: ChatClient) {
+        let pollController = client.pollController(messageId: messageId, pollId: poll.id)
+        let pollAllOptionsVC = components.pollAllOptionsListVC.init(pollController: pollController)
+        let navVC = UINavigationController(rootViewController: pollAllOptionsVC)
+        rootViewController.present(navVC, animated: true)
+    }
+
     // MARK: - UIViewControllerTransitioningDelegate
 
     open func animationController(
