@@ -3,6 +3,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 # Upcoming
 
+### 🔄 Changed
+
+# [4.64.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.64.0)
+_October 02, 2024_
+
 ## StreamChat
 ### ✅ Added
 - Add `ChannelMemberListSortingKey.userId` for sorting channel members by id [#3423](https://github.com/GetStream/stream-chat-swift/pull/3423)

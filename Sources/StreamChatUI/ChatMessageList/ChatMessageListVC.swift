@@ -1132,13 +1132,13 @@ open class ChatMessageListVC: _ViewController,
         in message: ChatMessage
     ) {
         guard let currentUserId = client.currentUserId else { return }
-        let pollController = client.pollController(messageId: message.id, pollId: poll.id)
         alertRouter.showPollAddCommentAlert(
             for: poll,
             in: message.id,
             currentUserId: currentUserId
         ) { [weak self] comment in
-            pollController.castPollVote(answerText: comment, optionId: nil) { error in
+            let pollController = self?.client.pollController(messageId: message.id, pollId: poll.id)
+            pollController?.castPollVote(answerText: comment, optionId: nil) { error in
                 self?.notificationFeedbackGenerator?.notificationOccurred(error == nil ? .success : .error)
             }
         }
@@ -1149,16 +1149,16 @@ open class ChatMessageListVC: _ViewController,
         didTapSuggestOptionForPoll poll: Poll,
         in message: ChatMessage
     ) {
-        let pollController = client.pollController(messageId: message.id, pollId: poll.id)
         alertRouter.showPollAddSuggestionAlert(
             for: poll,
             in: message.id
         ) { [weak self] suggestion in
+            let pollController = self?.client.pollController(messageId: message.id, pollId: poll.id)
             let isDuplicate = poll.options.contains(where: { $0.text == suggestion })
             if isDuplicate {
                 return
             }
-            pollController.suggestPollOption(text: suggestion) { error in
+            pollController?.suggestPollOption(text: suggestion) { error in
                 self?.notificationFeedbackGenerator?.notificationOccurred(error == nil ? .success : .error)
             }
         }
@@ -1170,8 +1170,9 @@ open class ChatMessageListVC: _ViewController,
         in message: ChatMessage
     ) {
         let pollController = client.pollController(messageId: message.id, pollId: poll.id)
-        alertRouter.showPollEndVoteAlert(for: poll, in: message.id) {
-            pollController.closePoll { [weak self] error in
+        alertRouter.showPollEndVoteAlert(for: poll, in: message.id) { [weak self] in
+            let pollController = self?.client.pollController(messageId: message.id, pollId: poll.id)
+            pollController?.closePoll { [weak self] error in
                 self?.notificationFeedbackGenerator?.notificationOccurred(error == nil ? .success : .error)
             }
         }
