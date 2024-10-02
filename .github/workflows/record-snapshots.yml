@@ -1,0 +1,15 @@
+name: Record Snapshots
+
+on:
+  workflow_dispatch:
+
+jobs:
+  record:
+    name: Record
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4.1.1
+    - run: gh workflow run smoke-checks.yml --ref "${GITHUB_REF#refs/heads/}" -f snapshots=true
+      timeout-minutes: 5
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
