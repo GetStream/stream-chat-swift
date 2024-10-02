@@ -3,7 +3,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 # Upcoming
 
-### 🔄 Changed
+## StreamChatUI
+### 🐞 Fixed
+- Unread messages divider did not appear in the message list when marking messages as unread [#3444](https://github.com/GetStream/stream-chat-swift/pull/3444)
 
 # [4.64.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.64.0)
 _October 02, 2024_

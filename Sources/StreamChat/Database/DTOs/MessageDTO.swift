@@ -538,7 +538,7 @@ class MessageDTO: NSManagedObject {
             .init(format: "id != %@", id),
             .init(format: "createdAt <= %@", message.createdAt)
         ])
-        request.sortDescriptors = [NSSortDescriptor(keyPath: \MessageDTO.createdAt, ascending: true)]
+        request.sortDescriptors = [NSSortDescriptor(keyPath: \MessageDTO.createdAt, ascending: false)]
         request.fetchLimit = 1
         return try context.fetch(request).first
     }
