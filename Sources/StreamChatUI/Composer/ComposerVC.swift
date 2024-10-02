@@ -845,7 +845,7 @@ open class ComposerVC: _ViewController,
             handler: { [weak self] _ in self?.showCamera() }
         ) : nil
 
-        let showPollCreationAction = isPollCreationEnabled ? UIAlertAction(
+        let showPollCreationAction = isPollCreationEnabled && !content.isInsideThread ? UIAlertAction(
             title: L10n.Composer.Picker.poll,
             style: .default,
             handler: { [weak self] _ in self?.showPollCreation() }
