@@ -12,7 +12,7 @@ public class ChatMessageCell: _TableViewCell, ThemeProvider {
     public static var reuseId: String { "\(self)" }
 
     /// The container that holds the header, footer and the message content view.
-    internal lazy var containerStackView = UIStackView()
+    internal lazy var containerStackView = ContainerStackView()
         .withoutAutoresizingMaskConstraints
         .withAccessibilityIdentifier(identifier: "containerStackView")
 
@@ -51,6 +51,7 @@ public class ChatMessageCell: _TableViewCell, ThemeProvider {
 
         containerStackView.axis = .vertical
         containerStackView.alignment = .center
+        containerStackView.spacing = 0
 
         containerStackView.addArrangedSubview(headerContainerView)
         messageContentView.map { containerStackView.addArrangedSubview($0) }
