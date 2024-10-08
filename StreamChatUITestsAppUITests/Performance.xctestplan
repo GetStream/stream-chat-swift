@@ -14,7 +14,6 @@
   "testTargets" : [
     {
       "selectedTests" : [
-        "ChannelListScrollTime\/testChannelListScrollTime()",
         "MessageListScrollTime\/testMessageListScrollTime()"
       ],
       "target" : {
