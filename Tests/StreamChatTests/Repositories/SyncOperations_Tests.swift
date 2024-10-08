@@ -189,7 +189,7 @@ final class SyncOperations_Tests: XCTestCase {
     func test_RefetchChannelListQueryOperation_notAvailableOnRemote() {
         let context = SyncContext(lastSyncAt: .init())
         let controller = ChatChannelListController_Mock(query: .init(filter: .exists(.cid)), client: client)
-        controller.state = .initialized
+        controller.state_mock = .initialized
         let operation = RefetchChannelListQueryOperation(
             controller: controller,
             context: context
@@ -207,7 +207,7 @@ final class SyncOperations_Tests: XCTestCase {
     func test_RefetchChannelListQueryOperation_availableOnRemote_resetFailure_shouldRetry() {
         let context = SyncContext(lastSyncAt: .init())
         let controller = ChatChannelListController_Mock(query: .init(filter: .exists(.cid)), client: client)
-        controller.state = .remoteDataFetched
+        controller.state_mock = .remoteDataFetched
         let operation = RefetchChannelListQueryOperation(
             controller: controller,
             context: context
@@ -226,7 +226,7 @@ final class SyncOperations_Tests: XCTestCase {
     func test_RefetchChannelListQueryOperation_availableOnRemote_resetSuccess_shouldAddToContext() throws {
         let context = SyncContext(lastSyncAt: .init())
         let controller = ChatChannelListController_Mock(query: .init(filter: .exists(.cid)), client: client)
-        controller.state = .remoteDataFetched
+        controller.state_mock = .remoteDataFetched
         let channelId = ChannelId.unique
         try database.writeSynchronously { session in
             try session.saveChannel(payload: self.dummyPayload(with: channelId))
@@ -258,7 +258,7 @@ final class SyncOperations_Tests: XCTestCase {
     func test_RefetchChannelListQueryOperation_availableOnRemote_resetSuccess_shouldNotAddToContextWhenAlreadyExisting() throws {
         let context = SyncContext(lastSyncAt: .init())
         let controller = ChatChannelListController_Mock(query: .init(filter: .exists(.cid)), client: client)
-        controller.state = .remoteDataFetched
+        controller.state_mock = .remoteDataFetched
         let channelId = ChannelId.unique
         try database.writeSynchronously { session in
             try session.saveChannel(payload: self.dummyPayload(with: channelId))

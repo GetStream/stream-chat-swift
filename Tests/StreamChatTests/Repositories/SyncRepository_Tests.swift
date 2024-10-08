@@ -350,14 +350,9 @@ class SyncRepository_Tests: XCTestCase {
             cid: cid
         )
         
-        // At least one active controller is needed for sync to happen
-        let chatListController = ChatChannelListController_Mock(query: .init(filter: .exists(.cid)), client: client)
+        let channelController = ChatChannelController_Mock(channelQuery: ChannelQuery(cid: .unique), channelListQuery: nil, client: client)
         if repository.usesV2Sync {
-            chatListController.state_mock = .remoteDataFetched
-            chatListController.channels_mock = [.mock(cid: cid)]
-            repository.startTrackingChannelListController(chatListController)
-            
-            chatListController.refreshLoadedChannelsResult = .success(Set([cid]))
+            repository.startTrackingChannelController(channelController)
         }
 
         let firstDate = lastSyncDate.addingTimeInterval(1)
@@ -373,7 +368,7 @@ class SyncRepository_Tests: XCTestCase {
 
         XCTAssertNearlySameDate(lastSyncAtValue, thirdDate)
         
-        repository.stopTrackingChannelListController(chatListController)
+        repository.stopTrackingChannelController(channelController)
     }
 
     // MARK: - Sync existing channels events
@@ -702,6 +697,7 @@ class SyncRepository_Tests: XCTestCase {
     }
 
     func test_cancelRecoveryFlow_cancelsAllOperations() throws {
+        try XCTSkipIf(repository.usesV2Sync, "V2 has different implementation")
         // Prepare environment
         try prepareForSyncLocalStorage(
             createUser: true,
