@@ -134,8 +134,14 @@ final class SyncEventsOperation: AsyncOperation {
                 subsystems: .offlineSupport
             )
 
+            let channelIds = Set(context.localChannelIds).subtracting(context.synchedChannelIds)
+            guard !channelIds.isEmpty else {
+                done(.continue)
+                return
+            }
+            
             syncRepository?.syncChannelsEvents(
-                channelIds: context.localChannelIds,
+                channelIds: Array(channelIds),
                 lastSyncAt: context.lastSyncAt,
                 isRecovery: recovery
             ) { result in

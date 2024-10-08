@@ -11,6 +11,27 @@ class SyncRepositoryV2_Tests: SyncRepository_Tests {
         super.setUp()
         repository.usesV2Sync = true
     }
+    
+    func test_syncLocalEvents_bySkippingAlreadyFetchedChannelIds() throws {
+        let lastSyncDate = Date()
+        let cid = ChannelId.unique
+        try prepareForSyncLocalStorage(
+            createUser: true,
+            lastSynchedEventDate: lastSyncDate,
+            createChannel: true,
+            cid: cid
+        )
+        
+        // One channel list controller which fetches the state for cid
+        let chatListController = ChatChannelListController_Mock(query: .init(filter: .exists(.cid)), client: client)
+        chatListController.state_mock = .remoteDataFetched
+        chatListController.channels_mock = [.mock(cid: cid)]
+        repository.startTrackingChannelListController(chatListController)
+        chatListController.refreshLoadedChannelsResult = .success(Set([cid]))
+        
+        // If it fails, it means /sync was called but we expect it to be skipped because channel list refresh already refreshed the channel
+        waitForSyncLocalStateRun()
+    }
 }
 
 class SyncRepository_Tests: XCTestCase {
@@ -247,7 +268,7 @@ class SyncRepository_Tests: XCTestCase {
         )
 
         let chatListController = ChatChannelListController_Mock(query: .init(filter: .exists(.cid)), client: client)
-        chatListController.state = .remoteDataFetched
+        chatListController.state_mock = .remoteDataFetched
         chatListController.channels_mock = [.mock(cid: cid)]
         repository.startTrackingChannelListController(chatListController)
         if repository.usesV2Sync {
@@ -296,7 +317,7 @@ class SyncRepository_Tests: XCTestCase {
         )
 
         let chatListController = ChatChannelListController_Mock(query: .init(filter: .exists(.cid)), client: client)
-        chatListController.state = .remoteDataFetched
+        chatListController.state_mock = .remoteDataFetched
         repository.startTrackingChannelListController(chatListController)
         let unwantedId = ChannelId.unique
         chatListController.resetChannelsQueryResult = .success(([], [unwantedId]))
@@ -332,7 +353,7 @@ class SyncRepository_Tests: XCTestCase {
         // At least one active controller is needed for sync to happen
         let chatListController = ChatChannelListController_Mock(query: .init(filter: .exists(.cid)), client: client)
         if repository.usesV2Sync {
-            chatListController.state = .remoteDataFetched
+            chatListController.state_mock = .remoteDataFetched
             chatListController.channels_mock = [.mock(cid: cid)]
             repository.startTrackingChannelListController(chatListController)
             
@@ -696,7 +717,7 @@ class SyncRepository_Tests: XCTestCase {
 
         // Add active channel list component
         let channelListController = ChatChannelListController_Mock(query: .init(filter: .exists(.cid)), client: client)
-        channelListController.state = .remoteDataFetched
+        channelListController.state_mock = .remoteDataFetched
         repository.startTrackingChannelListController(channelListController)
 
         // Sync local state
@@ -842,7 +863,6 @@ extension SyncRepository_Tests {
         }
 
         if let result = requestResult {
-            // Simulate API Failure
             if repository.usesV2Sync {
                 apiClient.waitForRequest()
                 guard let callback = apiClient.request_completion as? (Result<MissingEventsPayload, Error>) -> Void else {
