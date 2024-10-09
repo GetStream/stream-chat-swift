@@ -15,6 +15,7 @@ extension UserPayload {
         extraData: [String: RawJSON] = [:],
         teams: [TeamId] = [.unique, .unique, .unique],
         language: String? = nil,
+        isOnline: Bool = true,
         isBanned: Bool = false,
         updatedAt: Date = .unique,
         deactivatedAt: Date? = nil
@@ -28,7 +29,7 @@ extension UserPayload {
             updatedAt: updatedAt,
             deactivatedAt: deactivatedAt,
             lastActiveAt: .unique,
-            isOnline: true,
+            isOnline: isOnline,
             isInvisible: true,
             isBanned: isBanned,
             teams: teams,

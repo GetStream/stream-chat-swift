@@ -129,16 +129,29 @@ class AttachmentDTO: NSManagedObject {
     }
 }
 
+// MARK: - Reset Ephemeral Values
+
 extension AttachmentDTO: EphemeralValuesContainer {
-    func resetEphemeralValues() {
-        switch localDownloadState {
-        case .downloading, .downloadingFailed:
-            clearLocalState()
-        default:
-            break
-        }
+    static func resetEphemeralRelationshipValues(in context: NSManagedObjectContext) {}
+    
+    static func resetEphemeralValuesBatchRequests() -> [NSBatchUpdateRequest] {
+        let request = NSBatchUpdateRequest(entityName: AttachmentDTO.entityName)
+        request.predicate = NSCompoundPredicate(orPredicateWithSubpredicates: [
+            NSPredicate(format: "localDownloadStateRaw == %@", LocalAttachmentDownloadState.downloadingFailed.rawValue),
+            NSPredicate(format: "localDownloadStateRaw == %@", LocalAttachmentDownloadState.downloading(progress: 0).rawValue)
+        ])
+        request.propertiesToUpdate = [
+            KeyPath.string(\AttachmentDTO.localDownloadStateRaw): NSNull(),
+            KeyPath.string(\AttachmentDTO.localRelativePath): NSNull(),
+            KeyPath.string(\AttachmentDTO.localStateRaw): NSNull(),
+            KeyPath.string(\AttachmentDTO.localProgress): 0,
+            KeyPath.string(\AttachmentDTO.localURL): NSNull()
+        ]
+        return [request]
     }
 }
+
+// MARK: - Attachment Database Session
 
 extension NSManagedObjectContext: AttachmentDatabaseSession {
     func attachment(id: AttachmentId) -> AttachmentDTO? {

@@ -167,69 +167,6 @@ final class DatabaseContainer_Tests: XCTestCase {
         }
     }
 
-    func test_databaseContainer_callsResetEphemeralValues_onAllEphemeralValuesContainerEntities() throws {
-        // Create a new on-disc database with the test data model
-        let dbURL = URL.newTemporaryFileURL()
-        var database: DatabaseContainer_Spy? = DatabaseContainer_Spy(
-            kind: .onDisk(databaseFileURL: dbURL),
-            modelName: "TestDataModel",
-            bundle: .testTools
-        )
-        database?.shouldCleanUpTempDBFiles = false
-
-        // Insert a new object
-        try database!.writeSynchronously {
-            _ = TestManagedObject(context: $0 as! NSManagedObjectContext)
-        }
-
-        // Assert `resetEphemeralValuesCalled` of the object is `false`
-        try database!.readSynchronously { session in
-            let context = session as! NSManagedObjectContext
-            let testObject = try XCTUnwrap(context
-                .fetch(NSFetchRequest<TestManagedObject>(entityName: "TestManagedObject"))
-                .first)
-            XCTAssertEqual(testObject.resetEphemeralValuesCalled, false)
-        }
-
-        // Get rid of the original database
-        AssertAsync.canBeReleased(&database)
-
-        // Create a new database with the same underlying SQLite store
-        var newDatabase: DatabaseContainer! = DatabaseContainer_Spy(
-            kind: .onDisk(databaseFileURL: dbURL),
-            modelName: "TestDataModel",
-            bundle: .testTools
-        )
-
-        // Assert `resetEphemeralValues` is called on DatabaseContainer
-        XCTAssert((newDatabase as! DatabaseContainer_Spy).resetEphemeralValues_called)
-
-        try newDatabase.readSynchronously { session in
-            let context = session as! NSManagedObjectContext
-            let testObject2 = try XCTUnwrap(context
-                .fetch(NSFetchRequest<TestManagedObject>(entityName: "TestManagedObject"))
-                .first)
-            XCTAssertTrue(testObject2.resetEphemeralValuesCalled)
-        }
-
-        // Wait for the new DB instance to be released
-        AssertAsync.canBeReleased(&newDatabase)
-    }
-
-    func test_databaseContainer_doesntCallsResetEphemeralValues_whenFlagIsSetToFalse() {
-        // Create a new on-disc database with the test data model
-        let dbURL = URL.newTemporaryFileURL()
-        let database = DatabaseContainer_Spy(
-            kind: .onDisk(databaseFileURL: dbURL),
-            shouldResetEphemeralValuesOnStart: false,
-            modelName: "TestDataModel",
-            bundle: .testTools
-        )
-
-        // Assert `resetEphemeralValues` is not called on DatabaseContainer
-        XCTAssertFalse(database.resetEphemeralValues_called)
-    }
-
     func test_databaseContainer_removesAllData_whenShouldFlushOnStartIsTrue() throws {
         // Create a new on-disc database with the test data model
         let dbURL = URL.newTemporaryFileURL()
@@ -357,6 +294,83 @@ final class DatabaseContainer_Tests: XCTestCase {
         }
         // Note! Date limits precision to 0.000_000_1
         XCTAssertEqual(978_307_200.000_123_1, user.userCreatedAt.timeIntervalSince1970, "Microseconds date is not stored correctly")
+    }
+    
+    // MARK: - Reset Ephemeral Values
+    
+    func test_resetEphemeralValues_inDTOs() throws {
+        let container = DatabaseContainer_Spy()
+        let cid = ChannelId.unique
+        let messageId = MessageId.unique
+        let userId = UserId.unique
+        let watcherId = UserId.unique
+        let attachmentId = AttachmentId(cid: cid, messageId: messageId, index: 0)
+        try container.createCurrentUser()
+        try container.writeSynchronously { session in
+            let user = try session.saveUser(
+                payload: .dummy(
+                    userId: userId,
+                    isOnline: true
+                )
+            )
+            let channelDTO = try session.saveChannel(
+                payload: .dummy(
+                    channel: .dummy(cid: cid),
+                    watchers: [.dummy(userId: watcherId)],
+                    messages: [.dummy(messageId: messageId)]
+                )
+            )
+            channelDTO.currentlyTypingUsers = [user]
+            let attachmentDTO = try session.saveAttachment(
+                payload: .image(),
+                id: attachmentId
+            )
+            attachmentDTO.localDownloadState = .downloadingFailed
+            attachmentDTO.localURL = .localYodaImage
+            attachmentDTO.localRelativePath = URL.localYodaImage.lastPathComponent
+            attachmentDTO.localState = .uploaded
+        }
+        try container.readSynchronously { session in
+            let userDTO = try XCTUnwrap(session.user(id: userId))
+            XCTAssertEqual(true, userDTO.isOnline)
+            let channelDTO = try XCTUnwrap(session.channel(cid: cid))
+            XCTAssertEqual([userId], channelDTO.currentlyTypingUsers.map(\.id))
+            XCTAssertEqual([watcherId], channelDTO.watchers.map(\.id))
+            XCTAssertEqual(1, channelDTO.watcherCount)
+            let attachmentDTO = try XCTUnwrap(session.attachment(id: attachmentId))
+            XCTAssertEqual(LocalAttachmentDownloadState.downloadingFailed, attachmentDTO.localDownloadState)
+            XCTAssertEqual(URL.localYodaImage, attachmentDTO.localURL)
+            XCTAssertEqual(URL.localYodaImage.lastPathComponent, attachmentDTO.localRelativePath)
+            XCTAssertEqual(LocalAttachmentState.uploaded, attachmentDTO.localState)
+        }
+        container.resetEphemeralValues()
+        try container.readSynchronously { session in
+            let userDTO = try XCTUnwrap(session.user(id: userId))
+            XCTAssertEqual(false, userDTO.isOnline)
+            let channelDTO = try XCTUnwrap(session.channel(cid: cid))
+            XCTAssertEqual([], channelDTO.currentlyTypingUsers.map(\.id))
+            XCTAssertEqual([], channelDTO.watchers.map(\.id))
+            XCTAssertEqual(0, channelDTO.watcherCount)
+            let attachmentDTO = try XCTUnwrap(session.attachment(id: attachmentId))
+            XCTAssertEqual(nil, attachmentDTO.localDownloadState)
+            XCTAssertEqual(nil, attachmentDTO.localURL)
+            XCTAssertEqual(nil, attachmentDTO.localRelativePath)
+            XCTAssertEqual(nil, attachmentDTO.localState)
+        }
+    }
+    
+    func test_databaseContainer_doesntCallsResetEphemeralValues_whenFlagIsSetToFalse() {
+        // Create a new on-disk database with the test data model
+        let dbURL = URL.newTemporaryFileURL()
+        let database = DatabaseContainer_Spy(
+            kind: .onDisk(databaseFileURL: dbURL),
+            shouldResetEphemeralValuesOnStart: false,
+            modelName: "TestDataModel",
+            bundle: .testTools
+        )
+
+        // Assert `resetEphemeralValues` is not called on DatabaseContainer
+        XCTAssertFalse(database.resetEphemeralValues_called)
     }
     
     // MARK: -
