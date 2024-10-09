@@ -47,7 +47,8 @@ struct CacheKey: Hashable {
     }
 
     static func == (lhs: CacheKey, rhs: CacheKey) -> Bool {
-        lhs.imageId == rhs.imageId && (lhs.processors ?? []) == (rhs.processors ?? [])
+        guard lhs.imageId == rhs.imageId else { return false }
+        return (lhs.processors ?? []) == (rhs.processors ?? [])
     }
 }
 
