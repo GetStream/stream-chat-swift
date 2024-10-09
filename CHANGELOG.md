@@ -3,6 +3,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 # Upcoming
 
+## StreamChat
+### 🐞 Fixed
+- Fix rare crash in `WebSocketPingController.connectionStateDidChange` [#3451](https://github.com/GetStream/stream-chat-swift/pull/3451)
+
 ## StreamChatUI
 ### 🐞 Fixed
 - Unread messages divider did not appear in the message list when marking messages as unread [#3444](https://github.com/GetStream/stream-chat-swift/pull/3444)
