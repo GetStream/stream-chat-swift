@@ -157,7 +157,9 @@ class SyncRepository {
     /// Background mode (other regular API requests are allowed to run at the same time)
     /// 1. Collect all the **active** channel ids (from instances of `Chat`, `ChannelList`, `ChatChannelController`, `ChatChannelListController`)
     /// 2. Refresh channel lists (channels for current pages in `ChannelList`, `ChatChannelListController`)
-    /// 3. Apply updates from the /sync endpoint for channels (which were not already refreshed, note max 1000 events is supported)
+    /// 3. Apply updates from the /sync endpoint for channels not in active channel lists (max 1000 events is supported)
+    ///      * channel controllers targeting other channels
+    ///      * no channel lists active, but channel controllers are
     /// 4. Re-watch channels what we were watching before disconnect
     private func syncLocalStateV2(lastSyncAt: Date, completion: @escaping () -> Void) {
         let context = SyncContext(lastSyncAt: lastSyncAt)
