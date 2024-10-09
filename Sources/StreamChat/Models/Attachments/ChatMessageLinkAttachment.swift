@@ -80,10 +80,15 @@ extension LinkAttachmentPayload: Decodable {
     public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: AttachmentCodingKeys.self)
 
-        let assetURL = try
-            container.decodeIfPresent(URL.self, forKey: .imageURL) ??
-            container.decodeIfPresent(URL.self, forKey: .image) ??
-            container.decodeIfPresent(URL.self, forKey: .assetURL)
+        let assetURL: URL? = try {
+            if let url = try container.decodeIfPresent(URL.self, forKey: .imageURL) {
+                return url
+            }
+            if let url = try container.decodeIfPresent(URL.self, forKey: .image) {
+                return url
+            }
+            return try container.decodeIfPresent(URL.self, forKey: .assetURL)
+        }()
 
         self.init(
             originalURL: try container.decode(URL.self, forKey: .ogURL),

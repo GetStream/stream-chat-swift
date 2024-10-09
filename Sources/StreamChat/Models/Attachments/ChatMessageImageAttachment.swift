@@ -124,17 +124,21 @@ extension ImageAttachmentPayload: Decodable {
             container.decodeIfPresent(URL.self, forKey: .imageURL) ??
             container.decode(URL.self, forKey: .assetURL)
 
-        let title = (
-            try container.decodeIfPresent(String.self, forKey: .title) ??
-                container.decodeIfPresent(String.self, forKey: .fallback) ??
-                container.decodeIfPresent(String.self, forKey: .name)
-        )?.trimmingCharacters(in: .whitespacesAndNewlines)
-
+        let title: String? = try {
+            if let title = try container.decodeIfPresent(String.self, forKey: .title) {
+                return title
+            }
+            if let fallback = try container.decodeIfPresent(String.self, forKey: .fallback) {
+                return fallback
+            }
+            return try container.decodeIfPresent(String.self, forKey: .name)
+        }()
+        
         let originalWidth = try container.decodeIfPresent(Double.self, forKey: .originalWidth)
         let originalHeight = try container.decodeIfPresent(Double.self, forKey: .originalHeight)
 
         self.init(
-            title: title,
+            title: title?.trimmingCharacters(in: .whitespacesAndNewlines),
             imageRemoteURL: imageURL,
             originalWidth: originalWidth,
             originalHeight: originalHeight,
