@@ -16,7 +16,9 @@ class WebSocketClient {
     /// The current state the web socket connection.
     @Atomic private(set) var connectionState: WebSocketConnectionState = .initialized {
         didSet {
-            pingController.connectionStateDidChange(connectionState)
+            engineQueue.async { [connectionState, pingController] in
+                pingController.connectionStateDidChange(connectionState)
+            }
 
             guard connectionState != oldValue else { return }
 
