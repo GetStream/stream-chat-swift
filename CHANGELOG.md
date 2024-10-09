@@ -5,7 +5,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## StreamChat
 ### 🐞 Fixed
-- Rare crash in `WebSocketPingController` [#3451](https://github.com/GetStream/stream-chat-swift/pull/3451)
+- Fix rare crash in `WebSocketPingController.connectionStateDidChange` [#3451](https://github.com/GetStream/stream-chat-swift/pull/3451)
 
 ## StreamChatUI
 ### 🐞 Fixed
