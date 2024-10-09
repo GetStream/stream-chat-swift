@@ -75,6 +75,7 @@ final class SyncOperations_Tests: XCTestCase {
 
     func test_SyncEventsOperation_pendingDate_syncFailure_shouldRetry() throws {
         let context = SyncContext(lastSyncAt: .init())
+        context.localChannelIds = [ChannelId.unique]
         try database.createCurrentUser()
         let originalDate = Date().addingTimeInterval(-3600)
         try database.writeSynchronously { session in
@@ -96,6 +97,7 @@ final class SyncOperations_Tests: XCTestCase {
 
     func test_SyncEventsOperation_pendingDate_syncSuccess_shouldUpdateLastPendingConnectionDate() throws {
         let context = SyncContext(lastSyncAt: .init())
+        context.localChannelIds = [ChannelId.unique]
         try database.createCurrentUser()
         try database.writeSynchronously { session in
             session.currentUser?.lastSynchedEventDate = DBDate().addingTimeInterval(-3600)
