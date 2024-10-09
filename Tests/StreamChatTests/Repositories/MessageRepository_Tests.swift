@@ -418,6 +418,34 @@ final class MessageRepositoryTests: XCTestCase {
         // Assert fetched message is NOT saved to the database
         XCTAssertNil(database.viewContext.message(id: messageId))
     }
+    
+    func test_getMessageBefore_returnsCorrectResult() throws {
+        let cid = ChannelId.unique
+        try database.createCurrentUser()
+        try database.writeSynchronously { session in
+            let messages = (0..<5).map { index in
+                MessagePayload.dummy(
+                    messageId: "\(index)",
+                    createdAt: Date(timeIntervalSinceReferenceDate: TimeInterval(index))
+                )
+            }
+            try session.saveChannel(
+                payload: ChannelPayload.dummy(
+                    channel: .dummy(cid: cid),
+                    messages: messages
+                )
+            )
+        }
+        let result = try waitFor { done in
+            repository.getMessage(before: "3", in: cid, completion: done)
+        }
+        switch result {
+        case .success(let messageId):
+            XCTAssertEqual("2", messageId)
+        case .failure(let error):
+            XCTFail(error.localizedDescription)
+        }
+    }
 
     // MARK: markMessage
 

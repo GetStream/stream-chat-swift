@@ -5,6 +5,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## StreamChatUI
 ### 🐞 Fixed
+- Unread messages divider did not appear in the message list when marking messages as unread [#3444](https://github.com/GetStream/stream-chat-swift/pull/3444)
 - Fix UI glitch in thread parent message when sending a message and scrolling [#3446](https://github.com/GetStream/stream-chat-swift/pull/3446)
 
 # [4.64.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.64.0)

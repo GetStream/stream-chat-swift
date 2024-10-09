@@ -399,6 +399,8 @@ lane :xcmetrics do |options|
   table_header = '## SDK Performance'
   markdown_table = "#{table_header}\n| `target` | `metric` | `benchmark` | `branch` | `performance` | `status` |\n| - | - | - | - | - | - |\n"
   ['testMessageListScrollTime', 'testChannelListScrollTime'].each do |test_name|
+    next if test_name == 'testChannelListScrollTime' # Delete this line and return the test to the testplan as soon as PBE-5666 is solved
+
     index = 0
     ['hitches_total_duration', 'duration', 'hitch_time_ratio', 'frame_rate', 'number_of_hitches'].each do |metric|
       is_frame_rate = metric == 'frame_rate'
@@ -467,6 +469,8 @@ private_lane :xcmetrics_log_parser do |options|
   metrics = {}
 
   ['testMessageListScrollTime', 'testChannelListScrollTime'].each do |test_name|
+    next if test_name == 'testChannelListScrollTime' # Delete this line and return the test to the testplan as soon as PBE-5666 is solved
+
     hitches_total_duration = log.match(/#{test_name}\]' measured \[Hitches Total Duration \(#{method}\), ms\] average: (\d+\.\d+)/)
     UI.user_error!("Hitches Total Duration not found for #{test_name}") if hitches_total_duration.nil?
 
