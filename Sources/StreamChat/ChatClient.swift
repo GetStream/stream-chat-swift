@@ -581,7 +581,7 @@ public class ChatClient {
     /// - Returns: The latest state of app settings.
     public func loadAppSettings() async throws -> AppSettings {
         try await withCheckedThrowingContinuation { continuation in
-            loadAppSettings(completion: continuation.resume(with:))
+            loadAppSettings { continuation.resume(with: $0) }
         }
     }
 
