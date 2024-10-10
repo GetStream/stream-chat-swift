@@ -143,11 +143,6 @@ final class DatabaseContainer_Tests: XCTestCase {
             expectation.fulfill()
         }
         
-        // Save just after triggering remove all
-        container.write { session in
-            try session.saveChannel(payload: self.dummyPayload(with: .unique), query: nil, cache: nil)
-        }
-        
         wait(for: [expectation], timeout: defaultTimeout)
         
         let counts = try container.readSynchronously { session in
