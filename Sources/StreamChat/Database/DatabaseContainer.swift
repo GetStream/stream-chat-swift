@@ -420,17 +420,44 @@ class DatabaseContainer: NSPersistentContainer {
         }
     }
 
-    /// Iterates over all items and if the DTO conforms to `EphemeralValueContainers` calls `resetEphemeralValues()` on
-    /// every object.
+    /// Resets property values tied to container's lifetime.
+    ///
+    /// - Note: CoreData's transient property feature is not used due to lack of support in predicates.
+    /// - Important: Batch updates can't be used for relationships, therefore DTOs need to be loaded.
     func resetEphemeralValues() {
         writableContext.performAndWait {
-            do {
-                try self.managedObjectModel.entities.forEach { entityDescription in
-                    guard let entityName = entityDescription.name else { return }
-                    let fetchRequest: NSFetchRequest<NSFetchRequestResult> = NSFetchRequest(entityName: entityName)
-                    let entities = try writableContext.fetch(fetchRequest) as? [EphemeralValuesContainer]
-                    entities?.forEach { $0.resetEphemeralValues() }
+            let dtoClasses = managedObjectModel.entities
+                .compactMap(\.name)
+                .compactMap { NSClassFromString($0) }
+            
+            // Reset relationships
+            for dtoClass in dtoClasses {
+                dtoClass.resetEphemeralRelationshipValues?(in: writableContext)
+            }
+            
+            // Reset properties without relationships
+            let allRequests: [NSBatchUpdateRequest] = dtoClasses
+                .compactMap { $0.resetEphemeralValuesBatchRequests?() }
+                .flatMap { $0 }
+            var updatedObjectIDs = [NSManagedObjectID]()
+            allRequests.forEach { request in
+                do {
+                    request.resultType = .updatedObjectIDsResultType
+                    let result = try writableContext.execute(request) as? NSBatchUpdateResult
+                    if let ids = result?.result as? [NSManagedObjectID] {
+                        updatedObjectIDs.append(contentsOf: ids)
+                    }
+                } catch {
+                    log.error("Resetting values failed with error \(error)", subsystems: .database)
                 }
+            }
+            guard !updatedObjectIDs.isEmpty else { return }
+            log.debug("Merging \(updatedObjectIDs.count) ephemeral updates to contexts", subsystems: .database)
+            NSManagedObjectContext.mergeChanges(
+                fromRemoteContextSave: [NSUpdatedObjectsKey: updatedObjectIDs],
+                into: self.allContext
+            )
+            do {
                 FetchCache.clear()
                 try writableContext.save()
                 log.debug("Ephemeral values reset.", subsystems: .database)

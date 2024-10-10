@@ -11,11 +11,4 @@ public final class TestManagedObject: NSManagedObject {
 
     @NSManaged public var testId: String
     @NSManaged public var testValue: String?
-    @NSManaged public var resetEphemeralValuesCalled: Bool
-}
-
-extension TestManagedObject: EphemeralValuesContainer {
-    public func resetEphemeralValues() {
-        resetEphemeralValuesCalled = true
-    }
 }

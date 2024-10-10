@@ -159,9 +159,22 @@ class ChannelDTO: NSManagedObject {
     }
 }
 
-// MARK: - EphemeralValuesContainer
+// MARK: - Reset Ephemeral Values
 
 extension ChannelDTO: EphemeralValuesContainer {
+    static func resetEphemeralValuesBatchRequests() -> [NSBatchUpdateRequest] {
+        []
+    }
+    
+    static func resetEphemeralRelationshipValues(in context: NSManagedObjectContext) {
+        let request = NSFetchRequest<ChannelDTO>(entityName: ChannelDTO.entityName)
+        request.predicate = NSPredicate(format: "watchers.@count > 0 OR currentlyTypingUsers.@count > 0")
+        let channels = load(by: request, context: context)
+        channels.forEach { channel in
+            channel.resetEphemeralValues()
+        }
+    }
+    
     func resetEphemeralValues() {
         currentlyTypingUsers.removeAll()
         watchers.removeAll()

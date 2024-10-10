@@ -76,11 +76,21 @@ class UserDTO: NSManagedObject {
     }
 }
 
+// MARK: - Reset Ephemeral Values
+
 extension UserDTO: EphemeralValuesContainer {
-    func resetEphemeralValues() {
-        isOnline = false
+    static func resetEphemeralRelationshipValues(in context: NSManagedObjectContext) {}
+    
+    static func resetEphemeralValuesBatchRequests() -> [NSBatchUpdateRequest] {
+        let request = NSBatchUpdateRequest(entityName: UserDTO.entityName)
+        request.propertiesToUpdate = [
+            KeyPath.string(\UserDTO.isOnline): false
+        ]
+        return [request]
     }
 }
+
+// MARK: - Load DTOs
 
 extension UserDTO {
     /// Fetches and returns `UserDTO` with the given id. Returns `nil` if the entity doesn't exist.

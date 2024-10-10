@@ -138,9 +138,7 @@ final class UserDTO_Tests: XCTestCase {
         }
 
         // Reset ephemeral values
-        try database.writeSynchronously {
-            $0.user(id: userId)?.resetEphemeralValues()
-        }
+        database.resetEphemeralValues()
 
         // Check the online status is `false`
         XCTAssertEqual(database.viewContext.user(id: userId)?.isOnline, false)
