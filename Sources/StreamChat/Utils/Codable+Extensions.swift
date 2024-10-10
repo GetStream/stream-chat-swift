@@ -6,7 +6,7 @@ import Foundation
 
 // MARK: - JSONDecoder Stream
 
-final class StreamJSONDecoder: JSONDecoder {
+final class StreamJSONDecoder: JSONDecoder, @unchecked Sendable {
     let iso8601formatter: ISO8601DateFormatter
     let dateCache: NSCache<NSString, NSDate>
 

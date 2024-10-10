@@ -6,7 +6,7 @@ import CoreData
 import Foundation
 
 /// Convenience subclass of `NSPersistentContainer` allowing easier setup of the database stack.
-class DatabaseContainer: NSPersistentContainer {
+class DatabaseContainer: NSPersistentContainer, @unchecked Sendable {
     enum Kind: Equatable {
         /// The database lives only in memory. This option is used typically for anonymous users, when the local
         /// persistence is not enabled, or in tests.

@@ -4,7 +4,7 @@
 
 import Foundation
 
-class AsyncOperation: BaseOperation {
+class AsyncOperation: BaseOperation, @unchecked Sendable {
     enum Output {
         case retry
         case `continue`
@@ -57,7 +57,7 @@ class AsyncOperation: BaseOperation {
     }
 }
 
-class BaseOperation: Operation {
+class BaseOperation: Operation, @unchecked Sendable {
     private var _finished = false
     private var _executing = false
     private let stateQueue = DispatchQueue(label: "io.getstream.base-operation", attributes: .concurrent)
