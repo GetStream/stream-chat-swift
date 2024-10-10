@@ -920,7 +920,7 @@ extension ChannelUpdater {
                 isInRecoveryMode: false,
                 onChannelCreated: useCreateEndpoint,
                 actions: ChannelUpdateActions(memberListSorting: memberSorting),
-                completion: continuation.resume(with:)
+                completion: { continuation.resume(with: $0) }
             )
         }
     }
