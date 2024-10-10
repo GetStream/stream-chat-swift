@@ -157,6 +157,10 @@ open class ChatMessageContentView: _View, ThemeProvider, UITextViewDelegate {
     open var editedLabelSeparator: String {
         " • "
     }
+    
+    /// Skip content update when tintColorDidChange is called but content was already updated for that color
+    /// Unnecessary updates can get expensive due to text updates.
+    private var previousContentUpdateTintColor: UIColor?
 
     // MARK: - Content views
 
@@ -590,6 +594,7 @@ open class ChatMessageContentView: _View, ThemeProvider, UITextViewDelegate {
         super.updateContent()
         defer {
             attachmentViewInjector?.contentViewDidUpdateContent()
+            previousContentUpdateTintColor = tintColor
             setNeedsLayout()
         }
 
@@ -747,7 +752,7 @@ open class ChatMessageContentView: _View, ThemeProvider, UITextViewDelegate {
 
     override open func tintColorDidChange() {
         super.tintColorDidChange()
-
+        guard previousContentUpdateTintColor != tintColor else { return }
         guard UIApplication.shared.applicationState == .active else { return }
         // We need to update the content and manually apply the updated `tintColor`
         // to the subviews which don't listen for `tintColor` updates.

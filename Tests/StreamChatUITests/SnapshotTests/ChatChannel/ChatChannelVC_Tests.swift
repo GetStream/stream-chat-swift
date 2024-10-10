@@ -652,6 +652,10 @@ final class ChatChannelVC_Tests: XCTestCase {
 
         vc.components.isMessageEditedLabelEnabled = true
 
+        // Also update the default because in snapshot tests, message cells are created before they are in the responder chain
+        defer { Components.default.isMessageEditedLabelEnabled = false }
+        Components.default.isMessageEditedLabelEnabled = true
+        
         AssertSnapshot(vc, variants: [.defaultLight])
     }
 
