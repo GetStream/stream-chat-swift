@@ -6,7 +6,7 @@ import Combine
 import Foundation
 
 /// The type is designed to pre-process some incoming `Event` via middlewares before being published
-class EventNotificationCenter: NotificationCenter {
+class EventNotificationCenter: NotificationCenter, @unchecked Sendable {
     private(set) var middlewares: [EventMiddleware] = []
 
     /// The database used when evaluating middlewares.
