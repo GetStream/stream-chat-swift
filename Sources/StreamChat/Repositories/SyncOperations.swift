@@ -7,7 +7,7 @@ import Foundation
 /// A final class that holds the context for the ongoing operations during the sync process
 final class SyncContext {
     let lastSyncAt: Date
-    var localChannelIds: [ChannelId] = []
+    var localChannelIds: Set<ChannelId> = Set()
     var synchedChannelIds: Set<ChannelId> = Set()
     var watchedAndSynchedChannelIds: Set<ChannelId> = Set()
     var unwantedChannelIds: Set<ChannelId> = Set()
@@ -31,13 +31,13 @@ final class ActiveChannelIdsOperation: AsyncOperation, @unchecked Sendable {
             }
             
             let completion: () -> Void = {
-                context.localChannelIds = Array(Set(context.localChannelIds))
+                context.localChannelIds = Set(context.localChannelIds)
                 log.info("Found \(context.localChannelIds.count) active channels", subsystems: .offlineSupport)
                 done(.continue)
             }
             
-            context.localChannelIds.append(contentsOf: syncRepository.activeChannelControllers.allObjects.compactMap(\.cid))
-            context.localChannelIds.append(contentsOf:
+            context.localChannelIds.formUnion(syncRepository.activeChannelControllers.allObjects.compactMap(\.cid))
+            context.localChannelIds.formUnion(
                 syncRepository.activeChannelListControllers.allObjects
                     .map(\.channels)
                     .flatMap { $0 }
@@ -51,8 +51,8 @@ final class ActiveChannelIdsOperation: AsyncOperation, @unchecked Sendable {
             } else {
                 // Main actor requirement
                 DispatchQueue.main.async {
-                    context.localChannelIds.append(contentsOf: syncRepository.activeChats.allObjects.compactMap { try? $0.cid })
-                    context.localChannelIds.append(contentsOf:
+                    context.localChannelIds.formUnion(syncRepository.activeChats.allObjects.compactMap { try? $0.cid })
+                    context.localChannelIds.formUnion(
                         syncRepository.activeChannelLists.allObjects
                             .map(\.state.channels)
                             .flatMap { $0 }
@@ -119,7 +119,7 @@ final class GetChannelIdsOperation: AsyncOperation, @unchecked Sendable {
                     .flatMap(\.channels)
                     .compactMap { try? ChannelId(cid: $0.cid) }
                 log.info("0. Retrieved channels from existing queries from DB. Count \(cids.count)", subsystems: .offlineSupport)
-                context.localChannelIds = Array(Set(cids + activeChannelIds))
+                context.localChannelIds = Set(cids + activeChannelIds)
                 done(.continue)
             }
         }
@@ -134,17 +134,22 @@ final class SyncEventsOperation: AsyncOperation, @unchecked Sendable {
                 subsystems: .offlineSupport
             )
 
+            let channelIds = Set(context.localChannelIds).subtracting(context.synchedChannelIds)
+            guard !channelIds.isEmpty else {
+                done(.continue)
+                return
+            }
+            
             syncRepository?.syncChannelsEvents(
-                channelIds: context.localChannelIds,
+                channelIds: Array(channelIds),
                 lastSyncAt: context.lastSyncAt,
                 isRecovery: recovery
             ) { result in
                 switch result {
                 case let .success(channelIds):
-                    context.synchedChannelIds = Set(channelIds)
+                    context.synchedChannelIds.formUnion(channelIds)
                     done(.continue)
                 case let .failure(error):
-                    context.synchedChannelIds = Set([])
                     done(error.shouldRetry ? .retry : .continue)
                 }
             }
@@ -247,8 +252,8 @@ final class RefetchChannelListQueryOperation: AsyncOperation, @unchecked Sendabl
         case let .success((watchedChannels, unwantedCids)):
             log.info("Successfully refetched query for \(query.debugDescription)", subsystems: .offlineSupport)
             let queryChannelIds = watchedChannels.map(\.cid)
-            context.watchedAndSynchedChannelIds = context.watchedAndSynchedChannelIds.union(queryChannelIds)
-            context.unwantedChannelIds = context.unwantedChannelIds.union(unwantedCids)
+            context.watchedAndSynchedChannelIds.formUnion(queryChannelIds)
+            context.unwantedChannelIds.formUnion(unwantedCids)
             done(.continue)
         case let .failure(error):
             log.error(
