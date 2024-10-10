@@ -4,7 +4,7 @@
 
 import Foundation
 
-final class Operation: Foundation.Operation {
+final class Operation: Foundation.Operation, @unchecked Sendable {
     private let _isExecuting: UnsafeMutablePointer<Int32>
     private let _isFinished: UnsafeMutablePointer<Int32>
     private let isFinishCalled: UnsafeMutablePointer<Int32>
