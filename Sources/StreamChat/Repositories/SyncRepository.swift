@@ -157,7 +157,7 @@ class SyncRepository {
     /// Background mode (other regular API requests are allowed to run at the same time)
     /// 1. Collect all the **active** channel ids (from instances of `Chat`, `ChannelList`, `ChatChannelController`, `ChatChannelListController`)
     /// 2. Refresh channel lists (channels for current pages in `ChannelList`, `ChatChannelListController`)
-    /// 3. Apply updates from the /sync endpoint for channels not in active channel lists (max 1000 events is supported)
+    /// 3. Apply updates from the /sync endpoint for channels not in active channel lists (max 2000 events is supported)
     ///      * channel controllers targeting other channels
     ///      * no channel lists active, but channel controllers are
     /// 4. Re-watch channels what we were watching before disconnect
@@ -409,7 +409,7 @@ class SyncRepository {
                     completion(.failure(.syncEndpointFailed(error)))
                     return
                 }
-                // Backend responds with 400 if there were more than 1000 events to return
+                // Backend responds with 400 if there were more than 2000 events to return
                 // Cleaning local channels data and refetching it from scratch
                 log.info("/sync returned too many events. Continuing...", subsystems: .offlineSupport)
 
