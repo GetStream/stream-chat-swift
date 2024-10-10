@@ -16,7 +16,7 @@ class PerformanceLog {
 	
 	init( with environmentVariableName : String, identifier : String, log : OSLog  ) {
 		self.log = log
-		self.enablePerfomanceLog = (ProcessInfo.processInfo.environment[environmentVariableName] != nil)
+		self.enablePerfomanceLog = false
 		self.identifier = identifier
 	}
 	

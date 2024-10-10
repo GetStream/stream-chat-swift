@@ -271,7 +271,6 @@ open class ChatMessageListVC: _ViewController,
 
     override open func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
         super.traitCollectionDidChange(previousTraitCollection)
-
         view.layoutIfNeeded()
         listView.adjustContentInsetToPositionMessagesAtTheTop()
     }
@@ -1304,10 +1303,14 @@ private extension ChatMessageListVC {
             }
 
             UIView.performWithoutAnimation {
-                self?.scrollToBottomIfNeeded(with: changes, newestChange: newestChange)
-                self?.reloadMovedMessage(newestChange: newestChange)
-                self?.reloadPreviousMessagesForVisibleRemoves(with: changes)
-                self?.reloadPreviousMessageWhenInsertingNewMessage()
+                guard let self else { return }
+                self.scrollToBottomIfNeeded(with: changes, newestChange: newestChange)
+                var additionalChanges = Set<IndexPath>()
+                additionalChanges.formUnion(self.reloadMovedMessage(newestChange: newestChange))
+                additionalChanges.formUnion(self.reloadPreviousMessagesForVisibleRemoves(with: changes))
+                additionalChanges.formUnion(self.reloadPreviousMessageWhenInsertingNewMessage(with: changes))
+                guard !additionalChanges.isEmpty else { return }
+                self.listView.reloadRows(at: additionalChanges.sorted(), with: .none)
             }
 
             self?.scrollPendingMessageIfNeeded()
@@ -1356,24 +1359,21 @@ private extension ChatMessageListVC {
 
     // If we are inserting messages at the bottom, update the previous cell
     // to hide the timestamp of the previous message if needed.
-    func reloadPreviousMessageWhenInsertingNewMessage() {
-        guard isFirstPageLoaded else { return }
-        if listView.isLastCellFullyVisible && listView.newMessagesSnapshot.count > 1 {
-            let previousMessageIndexPath = IndexPath(item: 1, section: 0)
-            listView.reloadRows(at: [previousMessageIndexPath], with: .none)
-        }
+    private func reloadPreviousMessageWhenInsertingNewMessage(with changes: [ListChange<ChatMessage>]) -> [IndexPath] {
+        guard isFirstPageLoaded else { return [] }
+        guard listView.isLastCellFullyVisible && listView.newMessagesSnapshot.count > 1 else { return [] }
+        guard !changes.contains(where: { $0.indexPath.item == 1 && $0.isInsertion }) else { return [] }
+        return [IndexPath(item: 1, section: 0)]
     }
 
     // When there are deletions, we should update the previous message, so that we add the
     // avatar image is rendered back and the timestamp too. Since we have an inverted list, the previous
     // message has the same index of the deleted message after the deletion has been executed.
-    func reloadPreviousMessagesForVisibleRemoves(with changes: [ListChange<ChatMessage>]) {
+    private func reloadPreviousMessagesForVisibleRemoves(with changes: [ListChange<ChatMessage>]) -> [IndexPath] {
         let visibleRemoves = changes.filter {
             $0.isRemove && isMessageVisible(at: $0.indexPath)
         }
-        visibleRemoves.forEach {
-            listView.reloadRows(at: [$0.indexPath], with: .none)
-        }
+        return visibleRemoves.map(\.indexPath)
     }
 
     // Scroll to the bottom if the new message was sent by
@@ -1391,10 +1391,7 @@ private extension ChatMessageListVC {
 
     // When a Giphy moves to the bottom, we need to also trigger a reload
     // Since a move doesn't trigger a reload of the cell.
-    func reloadMovedMessage(newestChange: ListChange<ChatMessage>?) {
-        if newestChange?.isMove == true {
-            let movedIndexPath = IndexPath(item: 0, section: 0)
-            listView.reloadRows(at: [movedIndexPath], with: .none)
-        }
+    private func reloadMovedMessage(newestChange: ListChange<ChatMessage>?) -> [IndexPath] {
+        newestChange?.isMove == true ? [IndexPath(item: 0, section: 0)] : []
     }
 }

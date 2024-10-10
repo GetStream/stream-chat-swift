@@ -506,7 +506,7 @@ final class ChatMessageListVC_Tests: XCTestCase {
         ])
         mockedListView.updateMessagesCompletion?()
 
-        XCTAssertEqual(mockedListView.reloadRowsCallCount, 2)
+        XCTAssertEqual(mockedListView.reloadRowsCallCount, 1)
         XCTAssertEqual(mockedListView.reloadRowsCalledWith, [.init(item: 0, section: 0), .init(item: 1, section: 0)])
     }
 
