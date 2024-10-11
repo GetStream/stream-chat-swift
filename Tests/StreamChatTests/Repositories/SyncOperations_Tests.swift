@@ -75,6 +75,7 @@ final class SyncOperations_Tests: XCTestCase {
 
     func test_SyncEventsOperation_pendingDate_syncFailure_shouldRetry() throws {
         let context = SyncContext(lastSyncAt: .init())
+        context.localChannelIds = [ChannelId.unique]
         try database.createCurrentUser()
         let originalDate = Date().addingTimeInterval(-3600)
         try database.writeSynchronously { session in
@@ -96,6 +97,7 @@ final class SyncOperations_Tests: XCTestCase {
 
     func test_SyncEventsOperation_pendingDate_syncSuccess_shouldUpdateLastPendingConnectionDate() throws {
         let context = SyncContext(lastSyncAt: .init())
+        context.localChannelIds = [ChannelId.unique]
         try database.createCurrentUser()
         try database.writeSynchronously { session in
             session.currentUser?.lastSynchedEventDate = DBDate().addingTimeInterval(-3600)
@@ -189,7 +191,7 @@ final class SyncOperations_Tests: XCTestCase {
     func test_RefetchChannelListQueryOperation_notAvailableOnRemote() {
         let context = SyncContext(lastSyncAt: .init())
         let controller = ChatChannelListController_Mock(query: .init(filter: .exists(.cid)), client: client)
-        controller.state = .initialized
+        controller.state_mock = .initialized
         let operation = RefetchChannelListQueryOperation(
             controller: controller,
             context: context
@@ -207,7 +209,7 @@ final class SyncOperations_Tests: XCTestCase {
     func test_RefetchChannelListQueryOperation_availableOnRemote_resetFailure_shouldRetry() {
         let context = SyncContext(lastSyncAt: .init())
         let controller = ChatChannelListController_Mock(query: .init(filter: .exists(.cid)), client: client)
-        controller.state = .remoteDataFetched
+        controller.state_mock = .remoteDataFetched
         let operation = RefetchChannelListQueryOperation(
             controller: controller,
             context: context
@@ -226,7 +228,7 @@ final class SyncOperations_Tests: XCTestCase {
     func test_RefetchChannelListQueryOperation_availableOnRemote_resetSuccess_shouldAddToContext() throws {
         let context = SyncContext(lastSyncAt: .init())
         let controller = ChatChannelListController_Mock(query: .init(filter: .exists(.cid)), client: client)
-        controller.state = .remoteDataFetched
+        controller.state_mock = .remoteDataFetched
         let channelId = ChannelId.unique
         try database.writeSynchronously { session in
             try session.saveChannel(payload: self.dummyPayload(with: channelId))
@@ -258,7 +260,7 @@ final class SyncOperations_Tests: XCTestCase {
     func test_RefetchChannelListQueryOperation_availableOnRemote_resetSuccess_shouldNotAddToContextWhenAlreadyExisting() throws {
         let context = SyncContext(lastSyncAt: .init())
         let controller = ChatChannelListController_Mock(query: .init(filter: .exists(.cid)), client: client)
-        controller.state = .remoteDataFetched
+        controller.state_mock = .remoteDataFetched
         let channelId = ChannelId.unique
         try database.writeSynchronously { session in
             try session.saveChannel(payload: self.dummyPayload(with: channelId))
