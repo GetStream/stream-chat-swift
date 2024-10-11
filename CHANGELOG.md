@@ -8,7 +8,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Fix a rare crash caused by missing uniqueness constraints in polls [#3454](https://github.com/GetStream/stream-chat-swift/pull/3454)
 - Fix rare crash in `WebSocketPingController.connectionStateDidChange` [#3451](https://github.com/GetStream/stream-chat-swift/pull/3451)
 - Improve reliability and performance of resetting ephemeral values [#3439](https://github.com/GetStream/stream-chat-swift/pull/3439)
-- Reduce channel list updates when syncing by reording syncing sequence and skipping channel based events sync (if already in sync) [#3450](https://github.com/GetStream/stream-chat-swift/pull/3450)
 - Reduce channel list updates when updating the local state [#3450](https://github.com/GetStream/stream-chat-swift/pull/3450)
 
 ## StreamChatUI
