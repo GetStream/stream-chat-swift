@@ -200,7 +200,7 @@ public var chatChannelListLoadingView: ChatChannelListLoadingView.Type = ChatCha
 
 ## Navigation
 
-This component uses the [`ChannelListRouter`](../../common-content/reference-docs/stream-chat-ui/navigation/chat-channel-list-router.md) navigation component, you can customize this by providing your own.
+This component uses the [`ChatChannelListRouter`](https://github.com/GetStream/stream-chat-swift/blob/develop/Sources/StreamChatUI/Navigation/ChatChannelListRouter.swift) navigation component, you can customize this by providing your own.
 
 ```swift
 Components.default.channelListRouter = CustomChannelListRouter.self

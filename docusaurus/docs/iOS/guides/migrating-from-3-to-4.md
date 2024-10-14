@@ -5,13 +5,13 @@ title: Migrating from 3.x to 4.x
 The major version bump is due to the presence of several breaking changes. We believe they are easy to take care of in the upgrade process and improve the design of the library.
 
 ---
-Please don't hesitate to contact us by sending an email to support@getstream.io or opening a ticket in our [GitHub repository](https://github.com/GetStream/stream-chat-swift). We'll help you during your migration process and any issues you might face.
+Please don't hesitate to contact our Support team or open a ticket in our [GitHub repository](https://github.com/GetStream/stream-chat-swift). We'll help you during your migration process and any issues you might face.
 
 ---
 
 ## What's New in v4.x?
 
-- UI components have an open API and are fully customizable. Review [UI Customization Guide](ui-customization.md) to learn more about how to customize UI components.
+- UI components have an open API and are fully customizable. Review [UI Customization Guide](../uikit/custom-components.md) to learn more about how to customize UI components.
 - Messages can have custom attachments. See [Attachments v4.x Migration](#attachments-v4x-migration) below.
 - ExtraData is now stored in a Dictionary, instead of using generics. See [ExtraData Changes](#extradata-changes) below.
 - `UIConfig` is split into `Appearance` and `Components` to improve clarity.
@@ -271,7 +271,7 @@ let attachments: [AnyAttachmentPayload] = [
 ### Get attachments
 
 In both `v4.x` and `v3.2` the sequence of steps is the same:
-- **[1]** get a `ChatMessage` model ([Working with messages](working-with-messages.md))
+- **[1]** get a `ChatMessage` model
 - **[2]** get all attachments of the required type
 - **[3]** access attachment fields
 
