@@ -35,7 +35,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 }
 ```
 
-The full list of customizations exposed by `Components` is available [here](../common-content/reference-docs/stream-chat-ui/components.md#properties).
+The full list of customizations exposed by `Components` is available [here](https://github.com/GetStream/stream-chat-swift/blob/develop/Sources/StreamChatUI/Components.swift).
 
 ## Components Lifecycle Methods
 

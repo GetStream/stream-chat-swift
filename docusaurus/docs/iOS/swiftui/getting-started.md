@@ -44,7 +44,7 @@ let appearance = Appearance(colors: colors)
 let streamChat = StreamChat(chatClient: chatClient, appearance: appearance)
 ```
 
-In this way, you can change all the colors used in the SDK. For a complete reference, please visit this [page](../common-content/reference-docs/stream-chat-ui/appearance.color-palette.md).
+In this way, you can change all the colors used in the SDK. For a complete reference, please check our source code [here](https://github.com/GetStream/stream-chat-swiftui/blob/develop/Sources/StreamChatSwiftUI/ColorPalette.swift).
 
 ### Changing Images
 
@@ -59,7 +59,7 @@ let appearance = Appearance(colors: colors, images: images)
 let streamChat = StreamChat(chatClient: chatClient, appearance: appearance)
 ```
 
-The full reference of images can be found [here](../common-content/reference-docs/stream-chat-ui/appearance.images.md).
+The full reference of images can be found [here](https://github.com/GetStream/stream-chat-swiftui/blob/develop/Sources/StreamChatSwiftUI/Images.swift).
 
 ### Changing Fonts
 
@@ -76,7 +76,7 @@ let appearance = Appearance(colors: colors, fonts: fonts)
 let streamChat = StreamChat(chatClient: chatClient, appearance: appearance)
 ```
 
-Similarly, you can create your own font and replace the corresponding property. The full reference of fonts can be found [here](../common-content/reference-docs/stream-chat-ui/appearance.fonts.md).
+Similarly, you can create your own font and replace the corresponding property. The full reference of fonts can be found [here](https://github.com/GetStream/stream-chat-swiftui/blob/develop/Sources/StreamChatSwiftUI/Fonts.swift).
 
 ### Changing Presentation Logic
 
