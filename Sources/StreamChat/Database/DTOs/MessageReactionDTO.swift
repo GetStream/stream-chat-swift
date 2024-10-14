@@ -65,7 +65,7 @@ extension MessageReactionDTO {
     }
 
     static func load(reactionId: String, context: NSManagedObjectContext) -> MessageReactionDTO? {
-        load(by: reactionId, context: context).first
+        load(by: reactionId, context: context).first as? MessageReactionDTO
     }
 
     static let notLocallyDeletedPredicates: NSPredicate = {
