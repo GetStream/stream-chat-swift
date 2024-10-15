@@ -1,21 +1,19 @@
 {
-    "duration": "419.55ms",
+    "duration": "3756.00ms",
     "message": {
         "attachments": [
             {
-                "asset_url": "https://www.youtube.com/watch?v=xOX7MsrbaPY",
-                "author_name": "YouTube",
-                "image_url": "https://i.ytimg.com/vi/xOX7MsrbaPY/mqdefault.jpg",
+                "asset_url": "https://www.youtube.com/embed/xOX7MsrbaPY",
+                "author_name": "Introducing MotionScape",
                 "og_scrape_url": "https://youtube.com/watch?v=xOX7MsrbaPY",
-                "text": "MotionScape is your SwiftUI animation's playground as a developer. You can see all animations and their parameters in effect with beautifully designed and handcrafted animation examples. Best of all: directly preview and export your settings as production-ready SwiftUI code that you can use in your apps as-is.\n\nSupercharge your apps with animations and get to know how to use them - with MotionScape!\n\nDownload MotionScape from the Mac AppStore: \nhttps://gstrm.io/motionscape-yt\n\nWebpage:\nhttps://getstream.github.io/motionscape-app/\n\nSwiftUI chat messaging:\nhttps://getstream.io/chat/sdk/swiftui/\n...",
-                "thumb_url": "https://i.ytimg.com/vi/xOX7MsrbaPY/mqdefault.jpg",
+                "text": "MotionScape is your SwiftUI animation's playground as a developer. You can see all animations and their parameters in effect with beautifully designed and handcrafted animation examples. Best of all: directly preview and export your settings as production-ready SwiftUI code that you can use in your apps as-is.  Supercharge your apps with animations and get to know how to use them - with MotionScape!  Download MotionScape from the Mac AppStore:  https://gstrm.io/motionscape-yt  Webpage: https://getstream.github.io/motionscape-app/  SwiftUI chat messaging: https://getstream.io/chat/sdk/swiftui/  Chapters: 00:00 Introducing MotionScape 00:31 Adjusting animation parameters 00:54 Supported interpolations 01:03 Previewing animation examples 01:50 Find and download MotionScape",
                 "title": "Introducing MotionScape: Prototype SwiftUI Animation Easings",
                 "title_link": "https://www.youtube.com/watch?v=xOX7MsrbaPY",
                 "type": "video"
             }
         ],
-        "cid": "messaging:97274db6-72f7-11ef-b6d3-6644d678b5e5",
-        "created_at": "2024-09-15T00:15:25.253329Z",
+        "cid": "messaging:6a84b834-8a8a-11ef-956e-5aa278ae9c99",
+        "created_at": "2024-10-15T00:14:26.676453Z",
         "deleted_reply_count": 0,
         "html": "<p><a href=\"https://youtube.com/watch?v=xOX7MsrbaPY\" rel=\"nofollow\">https://youtube.com/watch?v=xOX7MsrbaPY</a></p>\n",
         "i18n": {
@@ -23,7 +21,7 @@
             "fr_text": "https://youtube.com/watch?v=xOX7MsrbaPY",
             "language": "fr"
         },
-        "id": "9a97ccc8-72f7-11ef-b6d3-6644d678b5e5",
+        "id": "6dcb63bc-8a8a-11ef-956e-5aa278ae9c99",
         "latest_reactions": [],
         "mentioned_users": [],
         "own_reactions": [],
@@ -38,7 +36,7 @@
         "silent": false,
         "text": "https://youtube.com/watch?v=xOX7MsrbaPY",
         "type": "regular",
-        "updated_at": "2024-09-15T00:15:25.253329Z",
+        "updated_at": "2024-10-15T00:14:26.676453Z",
         "user": {
             "banned": false,
             "birthland": "Tatooine",
@@ -47,7 +45,7 @@
             "id": "luke_skywalker",
             "image": "https://vignette.wikia.nocookie.net/starwars/images/2/20/LukeTLJ.jpg",
             "language": "fr",
-            "last_active": "2024-09-15T00:15:18.696192257Z",
+            "last_active": "2024-10-15T00:14:17.063362534Z",
             "name": "Luke Skywalker",
             "online": true,
             "pando": "{\"speciality\":\"ios engineer\"}",
@@ -55,7 +53,7 @@
             "team": "test",
             "teams": [],
             "type": "team",
-            "updated_at": "2024-09-13T11:36:29.64089Z"
+            "updated_at": "2024-10-11T14:38:41.26242Z"
         }
     }
 }
