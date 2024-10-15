@@ -82,6 +82,17 @@ open class ChatThreadListStatefulVC:
         tableView.delegate = self
         tableView.dataSource = self
 
+        headerBannerView.onAction = { [weak self] in
+            self?.viewModel.loadThreads()
+        }
+        errorView.onAction = { [weak self] in
+            self?.viewModel.retryLoadThreads()
+        }
+        viewPaginationHandler.bottomThreshold = 800
+        viewPaginationHandler.onNewBottomPage = { [weak self] in
+            self?.viewModel.loadMoreThreads()
+        }
+
         viewModel.$threads
             .sink { [weak self] threads in
                 guard let self = self else { return }
@@ -153,17 +164,6 @@ open class ChatThreadListStatefulVC:
                 self?.headerBannerView.content = .init(newThreadsCount: newThreadsCount)
             }
             .store(in: &cancellables)
-
-        headerBannerView.onAction = { [weak self] in
-            self?.viewModel.loadThreads()
-        }
-        errorView.onAction = { [weak self] in
-            self?.viewModel.retryLoadThreads()
-        }
-        viewPaginationHandler.bottomThreshold = 800
-        viewPaginationHandler.onNewBottomPage = { [weak self] in
-            self?.viewModel.loadMoreThreads()
-        }
     }
 
     override open func setUpAppearance() {
