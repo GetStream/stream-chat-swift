@@ -260,3 +260,144 @@ func makeThreadListContainerViewModifier(viewModel: ChatThreadListViewModel) -> 
 | Before| After |
 | ------------- | ------------- |
 | ![Before](../assets/thread-list-swiftui/ThreadListHeaderBannerView.png) | ![After](../assets/thread-list-swiftui/ThreadListHeaderBannerView_CustomAdvanced.png) |
+
+### Thread List States
+
+The Thread List component comes with three states: **loading**, **empty**, and **error**. The state logic is handled automatically by this component. You can override the appearance of these states by providing a custom `ViewFactory` and customizing the views related to these states:
+- `makeNoThreadsView()` - The empty state view.
+- `makeThreadsListErrorBannerView()` - The error banner state view.
+- `makeThreadListLoadingView()` - The loading state view.
+
+| Empty | Error | Loading |
+| ------------- | ------------- | ------------- |
+| ![Empty View](../assets/thread-list-swiftui/ChatThreadListEmptyView.png) | ![Error View](../assets/thread-list-swiftui/ChatThreadListErrorView.png) | ![Loading View](../assets/thread-list-swiftui/ChatThreadListLoadingView.png) |
+
+The loading view uses a redacted effect to simulate the loading state based on our thread list item layout. You can customize the loading view by providing your own redacted effect or just a simple progress view like the example below:
+
+```swift
+struct CustomThreadListLoadingView: View {
+    var body: some View {
+        VStack {
+            Spacer()
+            ProgressView()
+            Spacer()
+        }.frame(maxWidth: .infinity)
+    }
+}
+
+// view factory replacement
+func makeThreadListLoadingView() -> some View {
+    CustomThreadListLoadingView()
+}
+```
+
+Below is an example of a custom empty view:
+```swift
+struct CustomNoThreadsView: View {
+    var body: some View {
+        VStack {
+            Spacer()
+            Image(systemName: "tray")
+                .resizable()
+                .scaledToFit()
+                .frame(width: 80, height: 80)
+                .foregroundColor(.gray)
+            Text("No threads found.")
+                .font(.title)
+                .foregroundColor(.gray)
+            Spacer()
+        }
+        .frame(maxWidth: .infinity)
+    }
+}
+
+// view factory replacement
+func makeNoThreadsView() -> some View {
+    CustomNoThreadsView()
+}
+```
+
+For the loading view, let's change the default banner to be a floating red banner:
+```swift
+struct CustomThreadListErrorBannerView: View {
+    var onRefreshAction: () -> Void
+
+    var body: some View {
+        HStack {
+            Spacer()
+            Button(action: onRefreshAction) {
+                HStack {
+                    Image(systemName: "arrow.clockwise")
+                    Text("Retry")
+                }
+                .padding(.horizontal, 16)
+                .padding(.vertical, 8)
+                .background(Color.red)
+                .foregroundColor(.white)
+                .cornerRadius(8)
+                .shadow(radius: 4)
+            }
+            Spacer()
+        }
+        .padding(.bottom, 16)
+    }
+}
+
+// view factory replacement
+func makeThreadsListErrorBannerView(onRefreshAction: @escaping () -> Void) -> some View {
+    CustomThreadListErrorBannerView(onRefreshAction: onRefreshAction)
+}
+```
+
+With the customizations above, the thread list states will look like this:
+
+| Empty | Error | Loading |
+| ------------- | ------------- | ------------- |
+| ![Empty View](../assets/thread-list-swiftui/ChatThreadListEmptyView_Custom.png) | ![Error View](../assets/thread-list-swiftui/ChatThreadListErrorView_Custom.png) | ![Loading View](../assets/thread-list-swiftui/ChatThreadListLoadingView_Custom.png) |
+
+#### Advanced Customization
+
+You can have more control on how you display the different states of the thread list by making use of the thread list container view modifier. For example, instead of showing a floating error button, you can show a full screen error view. Here is an example on how it is possible to completely take control of the thread list states:
+
+```swift
+struct CustomChatThreadListContainerModifier: ViewModifier {
+    @ObservedObject private var viewModel: ChatThreadListViewModel
+
+    init(viewModel: ChatThreadListViewModel) {
+        self.viewModel = viewModel
+    }
+
+    func body(content: Content) -> some View {
+        if viewModel.isLoading {
+            CustomThreadListLoadingView()
+        } else if viewModel.failedToLoadThreads {
+            CustomErrorView()
+        } else if viewModel.isEmpty {
+            CustomNoThreadsView()
+        } else {
+            content
+        }
+    }
+}
+```
+
+Then, you would need to change the view factory to return empty views for the existing state views, and add the custom container modifier:
+
+```swift
+func makeNoThreadsView() -> some View {
+    EmptyView()
+}
+
+func makeThreadListLoadingView() -> some View {
+    EmptyView()
+}
+
+func makeThreadsListErrorBannerView(onRefreshAction: @escaping () -> Void) -> some View {
+    EmptyView()
+}
+
+func makeThreadListContainerViewModifier(viewModel: ChatThreadListViewModel) -> some ViewModifier {
+    CustomChatThreadListContainerModifier(viewModel: viewModel)
+}
+```
+
