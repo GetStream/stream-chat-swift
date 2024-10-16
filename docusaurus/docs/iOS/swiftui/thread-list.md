@@ -50,7 +50,7 @@ If you are using the `ChatThreadListView` component, you don't need to worry abo
 
 ## UI Customization
 
-You can customize the Thread List component by providing a custom `ViewFactory`. The view factory is responsible for creating the views used by the thread list. Below his all the views and modifiers related to the thread list that can be customized:
+You can customize the Thread List component by providing a custom `ViewFactory`. The view factory is responsible for creating the views used by the thread list. Below there is all the views and modifiers related to the thread list that can be customized:
 - `makeThreadDestination()` - Creates the destination view for the thread detail view. By default it shows the thread view.
 - `makeThreadListItem(thread:threadDestination:selectedThread:)` - Creates the view for each thread in the list.
 - `makeNoThreadsView()` - Creates the view displayed when the thread list is empty.
