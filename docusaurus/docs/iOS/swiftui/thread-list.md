@@ -491,3 +491,9 @@ As you can see above, you can use our `ChatThreadListItemViewModel` to reuse som
 | ------------- | ------------- |
 | ![Default](../assets/thread-list-swiftui/ChatThreadListItem.png) | ![Custom](../assets/thread-list-swiftui/ChatThreadListItem_Custom.png) |
 
+## Thread Events
+
+By default the UI components handle automatically the thread events, like new replies and thread updates. But, in case your app needs additional logic, these are the available thread events:
+
+- `ThreadMessageNewEvent`: Triggered when a new reply is added to a thread.
+- `ThreadUpdatedEvent`: Triggered when a thread is updated, like the thread title or custom data.
