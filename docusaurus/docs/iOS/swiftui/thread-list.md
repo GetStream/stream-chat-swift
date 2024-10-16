@@ -64,3 +64,32 @@ You can customize the Thread List component by providing a custom `ViewFactory`.
 - `makeThreadListItemBackground(thread:isSelected:)` - Creates the background view for each thread in the list.
 - `makeThreadListDividerItem()` - Creates the divider view between threads in the list.
 
+### Thread List Navigation Header
+
+The navigation header of the thread list can be configured through the `makeThreadListHeaderViewModifier()` view factory method. Here is sample example on how to change the header to a large title navigation style:
+
+```swift
+class AppFactory: ViewFactory {
+
+    public static let shared = AppFactory()
+
+    func makeThreadListHeaderViewModifier(title: String) -> some ViewModifier {
+        ThreadListLargeTitleViewModifier(
+            title: title
+        )
+    }
+}
+
+struct ThreadListLargeTitleViewModifier: ViewModifier {
+    let title: String
+
+    func body(content: Content) -> some View {
+        content
+            .navigationBarTitleDisplayMode(.large)
+            .navigationTitle(title)
+    }
+}
+```
+
+As you can see, the customization is quite similar to the Channel List header modifier. If you need a more advanced customization, you can take a look at the [`ChannelListHeaderViewModifier`](../swiftui/channel-list-components/channel-list-header.md) customization.
+
