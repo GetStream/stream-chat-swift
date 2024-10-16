@@ -401,3 +401,93 @@ func makeThreadListContainerViewModifier(viewModel: ChatThreadListViewModel) -> 
 }
 ```
 
+### Thread List Item
+
+The thread list item view is responsible for displaying each thread in the list. You can customize the thread list item view by providing a custom implementation of `makeThreadListItem(thread:threadDestination:selectedThread:)`.
+
+By default, the navigation is automatically handled for you, as long as you wrap your custom channel list item inside our `ChatThreadListNavigatableItem` container view. Here is how you provide your custom thread list item in the view factory:
+
+```swift
+func makeThreadListItem(
+    thread: ChatThread,
+    threadDestination: @escaping (ChatThread) -> ChatChannelView<DemoAppFactory>,
+    selectedThread: Binding<ThreadSelectionInfo?>
+) -> some View{
+    ChatThreadListNavigatableItem(
+        thread: thread,
+        threadListItem: CustomChatThreadListItem(thread: thread),
+        threadDestination: threadDestination,
+        selectedThread: selectedThread,
+        handleTabBarVisibility: true
+    )
+}
+```
+
+If you want to handle the navigation yourself, you can provider a custom wrapper view that handles the navigation.
+
+Below, you can see an example of a custom thread list item view that makes the layout more compact and similar to Slack:
+
+```swift
+struct CustomChatThreadListItem: View {
+    let thread: ChatThread
+    let viewModel: ChatThreadListItemViewModel
+
+    init(thread: ChatThread) {
+        self.thread = thread
+        self.viewModel = ChatThreadListItemViewModel(thread: thread)
+    }
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 2) {
+            HStack {
+                HStack(spacing: 2) {
+                    Text("#")
+                        .font(.title3.bold())
+                    Text(threadTitle)
+                        .lineLimit(1)
+                        .font(.headline)
+                        .foregroundColor(.primary)
+                }
+                Spacer()
+                if viewModel.unreadRepliesCount > 0 {
+                    UnreadIndicatorView(unreadCount: viewModel.unreadRepliesCount)
+                }
+            }
+            HStack(alignment: .center, spacing: 4) {
+                MessageAvatarView(
+                    avatarURL: viewModel.latestReplyAuthorImageURL,
+                    size: .init(width: 20, height: 20)
+                )
+                Text(viewModel.latestReplyMessageText)
+                    .font(.subheadline)
+                    .foregroundColor(.secondary)
+                Spacer()
+                Text(viewModel.latestReplyTimestampText)
+                    .font(.subheadline)
+                    .foregroundColor(.secondary)
+            }
+        }
+        .padding(.all, 8)
+    }
+
+    var threadTitle: String {
+        let title = thread.title ?? thread.parentMessage.text
+        if title.isEmpty {
+            if let lastAttachment = thread.parentMessage.allAttachments.last?.type.rawValue.capitalized {
+                return lastAttachment
+            }
+            return thread.parentMessage.poll?.name ?? title
+        }
+        return title
+    }
+}
+```
+
+As you can see above, you can use our `ChatThreadListItemViewModel` to reuse some of the default presentation logic. You can also access the `ChatThread` directly or even create your own view model. Just like every other custom view, you can use our reusable components like the `MessageAvatarView` and `UnreadIndicatorView` to help you build your custom layout.
+
+**Result:**
+
+| Before | After |
+| ------------- | ------------- |
+| ![Default](../assets/thread-list-swiftui/ChatThreadListItem.png) | ![Custom](../assets/thread-list-swiftui/ChatThreadListItem_Custom.png) |
+
