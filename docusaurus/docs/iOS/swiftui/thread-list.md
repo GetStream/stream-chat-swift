@@ -93,3 +93,170 @@ struct ThreadListLargeTitleViewModifier: ViewModifier {
 
 As you can see, the customization is quite similar to the Channel List header modifier. If you need a more advanced customization, you can take a look at the [`ChannelListHeaderViewModifier`](../swiftui/channel-list-components/channel-list-header.md) customization.
 
+### Thread List Header View
+
+By default, the Thread List header view shows a loading spinner when re-fetching the threads or a banner when there are new threads to be fetched. You can customize this view by providing a custom implementation of `makeThreadListHeaderView()`.
+
+As an example customization, lets keep the same loading spinner but change the header when there are new threads to be fetched:
+
+```swift
+struct CustomChatThreadListHeaderView: View {
+    @Injected(\.colors) private var colors
+    @Injected(\.images) private var images
+
+    @ObservedObject private var viewModel: ChatThreadListViewModel
+
+    init(
+        viewModel: ChatThreadListViewModel
+    ) {
+        self.viewModel = viewModel
+    }
+
+    var body: some View {
+        Group {
+            if viewModel.isReloading {
+                loadingView
+            } else if viewModel.hasNewThreads {
+                newThreadsBannerView
+            } else {
+                EmptyView()
+            }
+        }
+    }
+
+    var loadingView: some View {
+        VStack {
+            Spacer()
+            ProgressView()
+            Spacer()
+        }
+        .frame(height: 40)
+    }
+
+    var newThreadsBannerView: some View {
+        HStack(alignment: .center) {
+            Spacer()
+            Text("\(viewModel.newThreadsCount) new threads")
+                .foregroundColor(Color(colors.staticColorText))
+            Spacer()
+        }
+        .padding(.all, 12)
+        .background(colors.tintColor)
+        .onTapGesture {
+            viewModel.loadThreads()
+        }
+    }
+}
+```
+
+Then, don't forget to provide the custom view in the view factory:
+```swift
+func makeThreadListHeaderView(viewModel: ChatThreadListViewModel) -> some View {
+    CustomChatThreadListHeaderView(viewModel: viewModel)
+}
+```
+
+**Result:**
+
+| Before| After |
+| ------------- | ------------- |
+| ![Before](../assets/thread-list-swiftui/ThreadListHeaderBannerView.png) | ![After](../assets/thread-list-swiftui/ThreadListHeaderBannerView_CustomBasic.png) |
+
+#### Advanced Customization
+
+Let's imagine that you do not want the new threads banner to appear in the thread list header view, but instead you want to show a floating banner on the top of the thread list. You can do this by first, changing the `makeThreadListHeaderView()` method to return only the loading view when it is reloading, and then provide a custom `makeThreadListContainerViewModifier()` to add the floating banner on top of the thread list.
+
+First, we change the thread list header view to only show the loading spinner:
+```swift
+struct CustomChatThreadListHeaderView: View {
+    @ObservedObject private var viewModel: ChatThreadListViewModel
+
+    init(
+        viewModel: ChatThreadListViewModel
+    ) {
+        self.viewModel = viewModel
+    }
+
+    var body: some View {
+        Group {
+            if viewModel.isReloading {
+                loadingView
+            } else {
+                EmptyView()
+            }
+        }
+    }
+
+    var loadingView: some View {
+        VStack {
+            Spacer()
+            ProgressView()
+            Spacer()
+        }
+        .frame(height: 40)
+    }
+}
+```
+
+Then, we provide a custom view modifier to add the floating banner on top of the thread list:
+```swift
+struct CustomChatThreadListContainerModifier: ViewModifier {
+    @Injected(\.colors) private var colors
+    @Injected(\.images) private var images
+
+    @ObservedObject private var viewModel: ChatThreadListViewModel
+
+    init(
+        viewModel: ChatThreadListViewModel
+    ) {
+        self.viewModel = viewModel
+    }
+
+    func body(content: Content) -> some View {
+        if viewModel.hasNewThreads && !viewModel.isReloading {
+            ZStack(alignment: .top) {
+                content
+                newThreadsBannerView
+            }
+        } else {
+            content
+        }
+    }
+
+    var newThreadsBannerView: some View {
+        VStack(alignment: .center) {
+            HStack(alignment: .center) {
+                Text("\(viewModel.newThreadsCount) new threads")
+                    .font(.footnote.bold())
+                    .foregroundColor(Color(colors.staticColorText))
+                Image(uiImage: images.restart)
+                    .customizable()
+                    .frame(width: 20, height: 20)
+                    .foregroundColor(Color(colors.staticColorText))
+            }
+            .frame(width: 140, height: 25)
+            .padding(.all, 8)
+            .background(colors.tintColor)
+            .clipShape(.capsule)
+            .shadow(radius: 4)
+            .onTapGesture {
+                viewModel.loadThreads()
+            }
+        }
+        .padding(.top, 20)
+    }
+}
+```
+
+Make sure you set the custom view modifier in the view factory:
+```swift
+func makeThreadListContainerViewModifier(viewModel: ChatThreadListViewModel) -> some ViewModifier {
+    CustomChatThreadListContainerModifier(viewModel: viewModel)
+}
+```
+
+**Result:**
+
+| Before| After |
+| ------------- | ------------- |
+| ![Before](../assets/thread-list-swiftui/ThreadListHeaderBannerView.png) | ![After](../assets/thread-list-swiftui/ThreadListHeaderBannerView_CustomAdvanced.png) |
