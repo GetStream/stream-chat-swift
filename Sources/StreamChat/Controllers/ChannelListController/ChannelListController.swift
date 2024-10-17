@@ -121,7 +121,7 @@ public class ChatChannelListController: DataController, DelegateCallable, DataSt
     private let environment: Environment
     private lazy var channelListLinker: ChannelListLinker = self.environment
         .channelListLinkerBuilder(
-            query, filter, { [weak self] in StreamCollection(self?.channels ?? []) }, client.config, client.databaseContainer, worker
+            query, filter, client.config, client.databaseContainer, worker
         )
 
     /// Creates a new `ChannelListController`.
@@ -269,7 +269,6 @@ extension ChatChannelListController {
         var channelListLinkerBuilder: (
             _ query: ChannelListQuery,
             _ filter: ((ChatChannel) -> Bool)?,
-            _ loadedChannels: @escaping () -> StreamCollection<ChatChannel>,
             _ clientConfig: ChatClientConfig,
             _ databaseContainer: DatabaseContainer,
             _ worker: ChannelListUpdater

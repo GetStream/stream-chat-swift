@@ -9,6 +9,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Fix rare crash in `WebSocketPingController.connectionStateDidChange` [#3451](https://github.com/GetStream/stream-chat-swift/pull/3451)
 - Improve reliability and performance of resetting ephemeral values [#3439](https://github.com/GetStream/stream-chat-swift/pull/3439)
 - Reduce channel list updates when updating the local state [#3450](https://github.com/GetStream/stream-chat-swift/pull/3450)
+### 🔄 Changed
+- Reverts "Fix old channel updates not being added to the channel list automatically" [#3465](https://github.com/GetStream/stream-chat-swift/pull/3465)
+  - This was causing some issues on the SwiftUI SDK, so we are temporarily reverting this.
 
 ## StreamChatUI
 ### 🐞 Fixed
