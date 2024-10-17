@@ -222,9 +222,10 @@ class DatabaseContainer: NSPersistentContainer, @unchecked Sendable {
                 try actions(self.writableContext)
                 FetchCache.clear()
 
-                // Refresh the state by merging persistent state and local state for avoiding optimistic locking failure
                 for object in self.writableContext.updatedObjects {
-                    self.writableContext.refresh(object, mergeChanges: true)
+                    if object.changedValues().isEmpty {
+                        self.writableContext.refresh(object, mergeChanges: true)
+                    }
                 }
 
                 if self.writableContext.hasChanges {
