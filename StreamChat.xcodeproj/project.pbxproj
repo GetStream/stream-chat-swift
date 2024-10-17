@@ -1764,6 +1764,10 @@
 		ADE2093D29FC022D007D0FF3 /* MessagesPaginationStateHandling.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADE2093C29FC022D007D0FF3 /* MessagesPaginationStateHandling.swift */; };
 		ADE40043291B1A510000C98B /* AttachmentUploader.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADE40042291B1A510000C98B /* AttachmentUploader.swift */; };
 		ADE40044291B1A510000C98B /* AttachmentUploader.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADE40042291B1A510000C98B /* AttachmentUploader.swift */; };
+		ADE442F42CBECD560066CDF7 /* ChatThreadListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADE442F32CBECD560066CDF7 /* ChatThreadListViewModel.swift */; };
+		ADE442F52CBECD560066CDF7 /* ChatThreadListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADE442F32CBECD560066CDF7 /* ChatThreadListViewModel.swift */; };
+		ADE442F72CBECE030066CDF7 /* ChatThreadListStatefulVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADE442F62CBECE030066CDF7 /* ChatThreadListStatefulVC.swift */; };
+		ADE442F82CBECE030066CDF7 /* ChatThreadListStatefulVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADE442F62CBECE030066CDF7 /* ChatThreadListStatefulVC.swift */; };
 		ADE57B792C36DB2000DD6B88 /* ChatThreadListErrorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADE57B782C36DB2000DD6B88 /* ChatThreadListErrorView.swift */; };
 		ADE57B7A2C36DB2000DD6B88 /* ChatThreadListErrorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADE57B782C36DB2000DD6B88 /* ChatThreadListErrorView.swift */; };
 		ADE57B7C2C36E71200DD6B88 /* ChatThreadListHeaderBannerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADE57B7B2C36E71200DD6B88 /* ChatThreadListHeaderBannerView.swift */; };
@@ -4422,6 +4426,8 @@
 		ADDC08132C82A81F00EA0E5F /* TextFieldView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextFieldView.swift; sourceTree = "<group>"; };
 		ADE2093C29FC022D007D0FF3 /* MessagesPaginationStateHandling.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessagesPaginationStateHandling.swift; sourceTree = "<group>"; };
 		ADE40042291B1A510000C98B /* AttachmentUploader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AttachmentUploader.swift; sourceTree = "<group>"; };
+		ADE442F32CBECD560066CDF7 /* ChatThreadListViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatThreadListViewModel.swift; sourceTree = "<group>"; };
+		ADE442F62CBECE030066CDF7 /* ChatThreadListStatefulVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatThreadListStatefulVC.swift; sourceTree = "<group>"; };
 		ADE57B782C36DB2000DD6B88 /* ChatThreadListErrorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatThreadListErrorView.swift; sourceTree = "<group>"; };
 		ADE57B7B2C36E71200DD6B88 /* ChatThreadListHeaderBannerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatThreadListHeaderBannerView.swift; sourceTree = "<group>"; };
 		ADE57B832C3C5C8700DD6B88 /* ThreadMessageNew.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = ThreadMessageNew.json; sourceTree = "<group>"; };
@@ -8820,6 +8826,8 @@
 				AD7BE16F2C234798000A5756 /* ChatThreadListLoadingView.swift */,
 				AD7BE1722C2347A3000A5756 /* ChatThreadListEmptyView.swift */,
 				ADE57B782C36DB2000DD6B88 /* ChatThreadListErrorView.swift */,
+				ADE442F62CBECE030066CDF7 /* ChatThreadListStatefulVC.swift */,
+				ADE442F32CBECD560066CDF7 /* ChatThreadListViewModel.swift */,
 			);
 			path = ChatThreadList;
 			sourceTree = "<group>";
@@ -10555,6 +10563,7 @@
 				ACCA772E26C568D8007AE2ED /* NukeImageProcessor.swift in Sources */,
 				4067764F2A14CB550079B05C /* MediaButton.swift in Sources */,
 				C1FC2F6B27416E150062530F /* ImagePublisher.swift in Sources */,
+				ADE442F42CBECD560066CDF7 /* ChatThreadListViewModel.swift in Sources */,
 				88A8CF16256E7BDA004EA4C7 /* ChatMessageContentView.swift in Sources */,
 				BDEB9417268211EC00928AF1 /* ChatMessageListUnreadCountView.swift in Sources */,
 				226C438D25802AAD008B3648 /* InputTextView.swift in Sources */,
@@ -10755,6 +10764,7 @@
 				ADCB577F28A42D7700B81AE8 /* ContentIdentifiable.swift in Sources */,
 				E7073A6325DD67B3003896B9 /* UILabel+Extensions.swift in Sources */,
 				C171041E2768C34E008FB3F2 /* Array+SafeSubscript.swift in Sources */,
+				ADE442F72CBECE030066CDF7 /* ChatThreadListStatefulVC.swift in Sources */,
 				ADD3285E2C05447200BAD0E9 /* ChatThreadListVC.swift in Sources */,
 				843F0BC526775D2D00B342CB /* VideoLoading.swift in Sources */,
 				88CABC4625933EE70061BB67 /* ChatReactionPickerBubbleView.swift in Sources */,
@@ -12646,6 +12656,7 @@
 				C121EB7F2746A1E700023E4C /* SystemEnvironment.swift in Sources */,
 				C121EB802746A1E700023E4C /* CACornerMask+Extensions.swift in Sources */,
 				C121EB812746A1E700023E4C /* CGRect+Extensions.swift in Sources */,
+				ADE442F52CBECD560066CDF7 /* ChatThreadListViewModel.swift in Sources */,
 				AD4C8C232C5D479B00E1C414 /* StackedUserAvatarsView.swift in Sources */,
 				C121EB822746A1E700023E4C /* CGPoint+Extensions.swift in Sources */,
 				40FA4DEB2A12A46D00DA21D2 /* VoiceRecordingAttachmentComposerPreview_Tests.swift in Sources */,
@@ -12699,6 +12710,7 @@
 				C121EBA12746A1E800023E4C /* ShrinkInputButton.swift in Sources */,
 				C121EBA22746A1E800023E4C /* CheckboxControl.swift in Sources */,
 				AD50C31E2A607A88002FDD06 /* ChannelListSearchStrategy.swift in Sources */,
+				ADE442F82CBECE030066CDF7 /* ChatThreadListStatefulVC.swift in Sources */,
 				C121EBA32746A1E800023E4C /* QuotedChatMessageView.swift in Sources */,
 				C121EBA42746A1E800023E4C /* QuotedChatMessageView+SwiftUI.swift in Sources */,
 				C121EBA52746A1E800023E4C /* OnlineIndicatorView.swift in Sources */,
