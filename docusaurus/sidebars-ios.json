@@ -43,11 +43,11 @@
           ]
         },
         "uikit/components/thread-list",
-        "uikit/navigation",
-        "uikit/localization",            
-        "uikit/data-formatting",
         "uikit/components/voice-recording",
-        "uikit/polls"
+        "uikit/polls",
+        "uikit/data-formatting",
+        "uikit/navigation",
+        "uikit/localization"
       ]
     },
     {
@@ -87,10 +87,11 @@
             "swiftui/chat-channel-components/composer-commands"
           ]
         },
-        "swiftui/localization",
-        "swiftui/dependency-injection",
+        "swiftui/thread-list",
         "swiftui/voice-recording",
-        "swiftui/polls"        
+        "swiftui/polls",
+        "swiftui/dependency-injection",
+        "swiftui/localization"       
       ]
     },
     {
