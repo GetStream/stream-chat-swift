@@ -50,14 +50,6 @@ _October 02, 2024_
 - Add `ChatUserAvatarView.shouldShowOnlineIndicator` to disable the online indicator easily [#3374](https://github.com/GetStream/stream-chat-swift/pull/3374)
 ### 🐞 Fixed
 - Fix a crash with thematic breaks in markdown [#3437](https://github.com/GetStream/stream-chat-swift/pull/3437)
-- Fix Message Actions Alert view not scrollable when the view has the exact same height as the screen [#3435](https://github.com/GetStream/stream-chat-swift/pull/3435)
-### 🎭 New Localizations
-Multiple localizations were added to Polls, for more details please check the strings file.
-- `polls.subtitle.*`
-- `polls.button.*`
-- `polls.*`
-- `alert.poll.*`
-- `message.preview.poll-*`
 
 # [4.63.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.63.0)
 _September 12, 2024_

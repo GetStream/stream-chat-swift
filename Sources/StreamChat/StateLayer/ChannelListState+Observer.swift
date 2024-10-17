@@ -43,7 +43,6 @@ extension ChannelListState {
             channelListLinker = ChannelListLinker(
                 query: query,
                 filter: dynamicFilter,
-                loadedChannels: { [weak channelListObserver] in channelListObserver?.items ?? StreamCollection([]) },
                 clientConfig: clientConfig,
                 databaseContainer: database,
                 worker: channelListUpdater
