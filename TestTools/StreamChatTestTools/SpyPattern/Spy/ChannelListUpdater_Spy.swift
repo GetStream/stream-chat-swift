@@ -23,14 +23,11 @@ final class ChannelListUpdater_Spy: ChannelListUpdater, Spy {
     var startWatchingChannels_callCount = 0
     @Atomic var startWatchingChannels_cids: [ChannelId] = []
     @Atomic var startWatchingChannels_completion: ((Error?) -> Void)?
-    @Atomic var startWatchingChannels_completion_result: Result<Void, Error>?
-    
+
     var link_callCount = 0
     var link_completion: ((Error?) -> Void)?
-    @Atomic var link_completion_result: Result<Void, Error>?
-    
+
     var unlink_callCount = 0
-    @Atomic var unlink_completion_result: Result<Void, Error>?
 
     func cleanUp() {
         update_queries.removeAll()
@@ -40,15 +37,10 @@ final class ChannelListUpdater_Spy: ChannelListUpdater, Spy {
         fetch_queries.removeAll()
         fetch_completion = nil
 
-        link_completion_result = nil
-        
         markAllRead_completion = nil
 
         startWatchingChannels_cids.removeAll()
         startWatchingChannels_completion = nil
-        startWatchingChannels_completion_result = nil
-        
-        unlink_completion_result = nil
     }
 
     override func update(
@@ -90,7 +82,6 @@ final class ChannelListUpdater_Spy: ChannelListUpdater, Spy {
     ) {
         link_callCount += 1
         link_completion = completion
-        link_completion_result?.invoke(with: completion)
     }
 
     override func unlink(
@@ -99,13 +90,11 @@ final class ChannelListUpdater_Spy: ChannelListUpdater, Spy {
         completion: ((Error?) -> Void)? = nil
     ) {
         unlink_callCount += 1
-        unlink_completion_result?.invoke(with: completion)
     }
 
     override func startWatchingChannels(withIds ids: [ChannelId], completion: ((Error?) -> Void)?) {
         startWatchingChannels_callCount += 1
         startWatchingChannels_cids = ids
         startWatchingChannels_completion = completion
-        startWatchingChannels_completion_result?.invoke(with: completion)
     }
 }
