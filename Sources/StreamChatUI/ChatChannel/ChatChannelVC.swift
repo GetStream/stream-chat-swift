@@ -81,7 +81,7 @@ open class ChatChannelVC: _ViewController,
     }
     
     /// A boolean value indicating whether it should mark the channel read.
-    public var shouldMarkChannelRead: Bool {
+    open var shouldMarkChannelRead: Bool {
         guard isViewVisible, case .remoteDataFetched = channelController.state else {
             return false
         }
