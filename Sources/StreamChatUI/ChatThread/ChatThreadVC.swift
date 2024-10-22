@@ -94,7 +94,7 @@ open class ChatThreadVC: _ViewController,
     }
 
     /// A boolean value indicating whether it should mark the thread read.
-    public var shouldMarkThreadRead: Bool {
+    open var shouldMarkThreadRead: Bool {
         guard isViewVisible, case .remoteDataFetched = messageController.state else {
             return false
         }
