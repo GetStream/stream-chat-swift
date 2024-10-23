@@ -831,17 +831,17 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
         }
     }
 
-    /// Add users to the channel as members.
+    /// Add users to the channel as members with additional data.
     ///
     /// - Parameters:
-    ///   - userIds: User ids that will be added to a channel.
+    ///   - members: An array of `AddMemberInput` objects, each representing a member to be added to the channel.
     ///   - hideHistory: Hide the history of the channel to the added member. By default, it is false.
     ///   - message: Optional system message sent when adding members.
     ///   - completion: The completion. Will be called on a **callbackQueue** when the network request is finished.
     ///                 If request fails, the completion will be called with an error.
     ///
     public func addMembers(
-        userIds: Set<UserId>,
+        _ members: [MemberInfo],
         hideHistory: Bool = false,
         message: String? = nil,
         completion: ((Error?) -> Void)? = nil
@@ -855,7 +855,7 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
         updater.addMembers(
             currentUserId: client.currentUserId,
             cid: cid,
-            userIds: userIds,
+            members: members,
             message: message,
             hideHistory: hideHistory
         ) { error in
@@ -863,6 +863,29 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
                 completion?(error)
             }
         }
+    }
+
+    /// Add users to the channel as members.
+    ///
+    /// - Parameters:
+    ///   - userIds: User ids that will be added to a channel.
+    ///   - hideHistory: Hide the history of the channel to the added member. By default, it is false.
+    ///   - message: Optional system message sent when adding members.
+    ///   - completion: The completion. Will be called on a **callbackQueue** when the network request is finished.
+    ///                 If request fails, the completion will be called with an error.
+    @available(*, deprecated, message: "A new addMembers function is now available that supports adding MemberInfo instead of only the user id.")
+    public func addMembers(
+        userIds: Set<UserId>,
+        hideHistory: Bool = false,
+        message: String? = nil,
+        completion: ((Error?) -> Void)? = nil
+    ) {
+        addMembers(
+            userIds.map { .init(userId: $0, extraData: nil) },
+            hideHistory: hideHistory,
+            message: message,
+            completion: completion
+        )
     }
 
     /// Remove users to the channel as members.

@@ -189,7 +189,32 @@ public class Chat {
     }
     
     // MARK: - Members
-    
+
+    /// Adds given users as members.
+    ///
+    /// - Note: You can only add up to 100 members at once.
+    ///
+    /// - Parameters:
+    ///   - members: An array of member data that will be added to the channel.
+    ///   - systemMessage: A system message to be added after adding members.
+    ///   - hideHistory: If true, the previous history is available for added members, otherwise they do not see the history. The default value is false.
+    ///
+    /// - Throws: An error while communicating with the Stream API.
+    public func addMembers(
+        _ members: [MemberInfo],
+        systemMessage: String? = nil,
+        hideHistory: Bool = false
+    ) async throws {
+        let currentUserId = client.authenticationRepository.currentUserId
+        try await channelUpdater.addMembers(
+            currentUserId: currentUserId,
+            cid: cid,
+            members: members,
+            message: systemMessage,
+            hideHistory: hideHistory
+        )
+    }
+
     /// Adds given users as members.
     ///
     /// - Note: You can only add up to 100 members at once.
@@ -200,17 +225,15 @@ public class Chat {
     ///   - hideHistory: If true, the previous history is available for added members, otherwise they do not see the history. The default value is false.
     ///
     /// - Throws: An error while communicating with the Stream API.
+    @available(*, deprecated, message: "A new addMembers function is now available that supports adding MemberInfo instead of only the user id.")
     public func addMembers(
         _ members: [UserId],
         systemMessage: String? = nil,
         hideHistory: Bool = false
     ) async throws {
-        let currentUserId = client.authenticationRepository.currentUserId
-        try await channelUpdater.addMembers(
-            currentUserId: currentUserId,
-            cid: cid,
-            userIds: Set(members),
-            message: systemMessage,
+        try await addMembers(
+            members.map { .init(userId: $0, extraData: nil) },
+            systemMessage: systemMessage,
             hideHistory: hideHistory
         )
     }

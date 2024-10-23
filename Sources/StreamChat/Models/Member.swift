@@ -145,3 +145,14 @@ public extension MemberRole {
         }
     }
 }
+
+/// The member information when adding a member to a channel.
+public struct MemberInfo {
+    public var userId: UserId
+    public var extraData: [String: RawJSON]?
+
+    public init(userId: UserId, extraData: [String: RawJSON]?) {
+        self.userId = userId
+        self.extraData = extraData
+    }
+}
