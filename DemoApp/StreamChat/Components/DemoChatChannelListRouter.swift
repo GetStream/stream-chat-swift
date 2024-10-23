@@ -165,7 +165,7 @@ final class DemoChatChannelListRouter: ChatChannelListRouter {
                         return
                     }
                     channelController.addMembers(
-                        userIds: [id],
+                        [MemberInfo(userId: id, extraData: nil)],
                         message: "Members added to the channel"
                     ) { error in
                         if let error = error {
@@ -184,7 +184,7 @@ final class DemoChatChannelListRouter: ChatChannelListRouter {
                         return
                     }
                     channelController.addMembers(
-                        userIds: [id],
+                        [MemberInfo(userId: id, extraData: nil)],
                         hideHistory: true,
                         message: "Members added to the channel"
                     ) { error in
@@ -196,6 +196,45 @@ final class DemoChatChannelListRouter: ChatChannelListRouter {
                         }
                     }
                 }
+            }),
+            .init(title: "Add premium member", isEnabled: canUpdateChannelMembers, handler: { [unowned self] _ in
+                self.rootViewController.presentAlert(title: "Enter user id", textFieldPlaceholder: "User ID") { id in
+                    guard let id = id, !id.isEmpty else {
+                        self.rootViewController.presentAlert(title: "User ID is not valid")
+                        return
+                    }
+                    channelController.addMembers(
+                        [MemberInfo(userId: id, extraData: ["is_premium": true])],
+                        message: "Premium member added to the channel"
+                    ) { error in
+                        if let error = error {
+                            self.rootViewController.presentAlert(
+                                title: "Couldn't add user \(id) to channel \(cid)",
+                                message: "\(error)"
+                            )
+                        }
+                    }
+                }
+            }),
+            .init(title: "Set member as premium", isEnabled: canUpdateChannelMembers, handler: { [unowned self] _ in
+                let actions = channelController.channel?.lastActiveMembers.map { member in
+                    UIAlertAction(title: member.id, style: .default) { _ in
+                        channelController.client.memberController(userId: member.id, in: cid)
+                            .partialUpdate(extraData: ["is_premium": true], unsetProperties: nil) { [unowned self] result in
+                                do {
+                                    let data = try result.get()
+                                    print("Member updated. Premium: ", data.isPremium)
+                                    self.rootNavigationController?.popViewController(animated: true)
+                                } catch {
+                                    self.rootViewController.presentAlert(
+                                        title: "Couldn't set user \(member.id) as premium.",
+                                        message: "\(error)"
+                                    )
+                                }
+                            }
+                    }
+                } ?? []
+                self.rootViewController.presentAlert(title: "Select a member", actions: actions)
             }),
             .init(title: "Remove a member", isEnabled: canUpdateChannelMembers, handler: { [unowned self] _ in
                 let actions = channelController.channel?.lastActiveMembers.map { member in
