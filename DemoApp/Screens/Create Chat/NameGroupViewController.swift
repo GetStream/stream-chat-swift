@@ -5,6 +5,7 @@
 import Foundation
 import Nuke
 import StreamChat
+import StreamChatUI
 import UIKit
 
 class NameGroupViewController: UIViewController {
@@ -14,6 +15,7 @@ class NameGroupViewController: UIViewController {
         let avatarView = AvatarView()
         let nameLabel = UILabel()
         let removeButton = UIButton()
+        let premiumImageView = UIImageView(image: .init(systemName: "crown.fill")!)
 
         override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
             super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -26,31 +28,27 @@ class NameGroupViewController: UIViewController {
         }
 
         func setupUI() {
-            [avatarView, nameLabel, removeButton].forEach {
-                $0.translatesAutoresizingMaskIntoConstraints = false
-                contentView.addSubview($0)
-            }
-
-            removeButton.tintColor = .black
-            removeButton.setImage(UIImage(systemName: "xmark"), for: .normal)
+            removeButton.tintColor = Appearance.default.colorPalette.text
+            removeButton.setImage(UIImage(systemName: "xmark")!, for: .normal)
             removeButton.imageView?.contentMode = .scaleAspectFit
+            removeButton.isUserInteractionEnabled = true
+            premiumImageView.contentMode = .scaleAspectFill
+            premiumImageView.tintColor = .systemBlue
+            premiumImageView.isHidden = true
 
-            NSLayoutConstraint.activate([
-                // AvatarView
-                avatarView.leftAnchor.constraint(equalTo: contentView.leftAnchor, constant: 0),
-                avatarView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: contentView.layoutMargins.top),
-                avatarView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -contentView.layoutMargins.bottom),
-                avatarView.heightAnchor.constraint(equalToConstant: 40),
-                avatarView.widthAnchor.constraint(equalTo: avatarView.heightAnchor),
-                // NameLabel
-                nameLabel.leadingAnchor.constraint(equalTo: avatarView.trailingAnchor, constant: contentView.layoutMargins.left),
-                nameLabel.centerYAnchor.constraint(equalTo: avatarView.centerYAnchor),
-                // removeButton
-                removeButton.leftAnchor.constraint(equalTo: nameLabel.rightAnchor, constant: contentView.layoutMargins.left),
-                removeButton.rightAnchor.constraint(equalTo: contentView.rightAnchor, constant: -contentView.layoutMargins.right),
-                removeButton.widthAnchor.constraint(equalToConstant: 10),
-                removeButton.centerYAnchor.constraint(equalTo: avatarView.centerYAnchor)
-            ])
+            HContainer(spacing: 8, alignment: .center) {
+                avatarView
+                    .width(30)
+                    .height(30)
+                nameLabel
+                Spacer()
+                premiumImageView
+                    .width(20)
+                    .height(20)
+                removeButton
+                    .width(30)
+                    .height(30)
+            }.embedToMargins(in: contentView)
         }
     }
 
@@ -154,6 +152,7 @@ extension NameGroupViewController: UITableViewDataSource {
         }
 
         cell.nameLabel.text = user.name
+        cell.premiumImageView.isHidden = true
         cell.removeButton.addAction(.init(handler: { [weak self] _ in
             guard let self = self else { return }
             if let index = self.selectedUsers.firstIndex(of: user) {

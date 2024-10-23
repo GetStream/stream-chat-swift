@@ -56,6 +56,7 @@ class MembersViewController: UITableViewController, ChatChannelMemberListControl
         }
         cell.nameLabel.text = member.name ?? member.id
         cell.removeButton.isHidden = true
+        cell.premiumImageView.isHidden = member.isPremium == false
         return cell
     }
 
@@ -67,5 +68,11 @@ class MembersViewController: UITableViewController, ChatChannelMemberListControl
     func memberListController(_ controller: ChatChannelMemberListController, didChangeMembers changes: [ListChange<ChatChannelMember>]) {
         members = Array(controller.members)
         updateData()
+    }
+}
+
+extension ChatChannelMember {
+    var isPremium: Bool {
+        extraData["is_premium"]?.boolValue == true
     }
 }
