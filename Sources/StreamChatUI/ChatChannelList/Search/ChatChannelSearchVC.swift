@@ -21,12 +21,16 @@ open class ChatChannelSearchVC: ChatChannelListSearchVC {
     override open func loadSearchResults(with text: String) {
         guard let currentUserId = controller.client.currentUserId else { return }
 
-        replaceQuery(.init(
+        var searchChannelsQuery = ChannelListQuery(
             filter: .and([
                 .autocomplete(.name, text: text),
                 .containMembers(userIds: [currentUserId])
             ])
-        ))
+        )
+        // Do not watch the query when searching.
+        searchChannelsQuery.options = []
+
+        replaceQuery(searchChannelsQuery)
     }
 
     override open func loadMoreSearchResults() {
