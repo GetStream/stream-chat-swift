@@ -100,6 +100,7 @@ final class ChatChannelSearchVC_Tests: XCTestCase {
             vc.controller.query.filter.filterHash,
             "(name AUTOCOMPLETE Dummy) AND (members IN [\"\(currentUserId)\"])"
         )
+        XCTAssertTrue(vc.controller.query.options.isEmpty)
     }
 
     func test_loadMoreSearchResults() {
