@@ -1315,7 +1315,7 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
         skipPush: Bool = false,
         skipEnrichUrl: Bool = false,
         extraData: [String: RawJSON] = [:],
-        completion: ((Result<EphemeralMessageUpdater, Error>) -> Void)? = nil
+        completion: ((Result<MessageId, Error>) -> Void)? = nil
     ) {
         /// Perform action only if channel is already created on backend side and have a valid `cid`.
         guard let cid = cid, isChannelAlreadyCreated else {
@@ -1341,19 +1341,17 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
             extraData: extraData
         ) { result in
             self.callback {
-                switch result {
-                case .success(let message):
-                    let updater = EphemeralMessageUpdater(messageId: message.id) { [weak self] newText in
-                        self?.updater.updateEphemeralMessage(id: message.id, text: newText)
-                    } publish: { [weak self] in
-                        self?.updater.publishEphemeralMessage(id: message.id)
-                    }
-                    completion?(.success(updater))
-                case .failure(let error):
-                    completion?(.failure(error))
-                }
+                completion?(result.map(\.id))
             }
         }
+    }
+
+    public func updateEphemeralMessage(id: MessageId, text: String) {
+        updater.updateEphemeralMessage(id: id, text: text)
+    }
+    
+    public func publishEphemeralMessage(id: MessageId) {
+        updater.publishEphemeralMessage(id: id)
     }
 
     deinit {

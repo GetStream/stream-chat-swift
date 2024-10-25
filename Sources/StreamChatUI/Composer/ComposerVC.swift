@@ -903,7 +903,7 @@ open class ComposerVC: _ViewController,
         content.clear()
     }
 
-    var ephemeralMessageUpdater: EphemeralMessageUpdater?
+    var ephemeralMessageId: MessageId?
 
     /// Creates a new message and notifies the delegate that a new message was created.
     /// - Parameter text: The text content of the message.
@@ -938,8 +938,10 @@ open class ComposerVC: _ViewController,
             return
         }
 
-        ephemeralMessageUpdater?.publish()
-        ephemeralMessageUpdater = nil
+        if let ephemeralMessageId {
+            channelController?.publishEphemeralMessage(id: ephemeralMessageId)
+            self.ephemeralMessageId = nil
+        }
     }
 
     /// Updates an existing message.
@@ -1441,14 +1443,14 @@ open class ComposerVC: _ViewController,
 
         content.text = textView.text
 
-        guard let ephemeralMessageUpdater = self.ephemeralMessageUpdater else {
+        guard let ephemeralMessageId = self.ephemeralMessageId else {
             channelController?.createEphemeralMessage(text: content.text) { [weak self] result in
-                self?.ephemeralMessageUpdater = try? result.get()
+                self?.ephemeralMessageId = try? result.get()
             }
             return
         }
 
-        ephemeralMessageUpdater.update(content.text)
+        channelController?.updateEphemeralMessage(id: ephemeralMessageId, text: content.text)
     }
 
     open func textView(
