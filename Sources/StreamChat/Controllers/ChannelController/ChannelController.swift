@@ -222,7 +222,7 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
             client.apiClient
         )
         pollsRepository = client.pollsRepository
-        
+
         super.init()
 
         setChannelObserver()
@@ -1303,8 +1303,10 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
             }
         }
     }
+    
+    public lazy var ephemeralMessageEditor: EphemeralMessageEditor = EphemeralMessageEditor(channelController: self)
 
-    public func createEphemeralMessage(
+    internal func createEphemeralMessage(
         messageId: MessageId? = nil,
         text: String,
         pinning: MessagePinning? = nil,
@@ -1346,11 +1348,11 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
         }
     }
 
-    public func updateEphemeralMessage(id: MessageId, text: String) {
+    internal func updateEphemeralMessage(id: MessageId, text: String) {
         updater.updateEphemeralMessage(id: id, text: text)
     }
     
-    public func publishEphemeralMessage(id: MessageId) {
+    internal func publishEphemeralMessage(id: MessageId) {
         updater.publishEphemeralMessage(id: id)
     }
 
@@ -1363,10 +1365,32 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
     }
 }
 
-public struct EphemeralMessageUpdater {
-    public let messageId: MessageId
-    public let update: ((_ newText: String) -> Void)
-    public let publish: (() -> Void)
+public class EphemeralMessageEditor {
+    private unowned let channelController: ChatChannelController
+    private var messageId: MessageId?
+
+    init(channelController: ChatChannelController) {
+        self.channelController = channelController
+    }
+
+    public func updateMessage(text: String) {
+        if let messageId {
+            channelController.updateEphemeralMessage(id: messageId, text: text)
+            return
+        }
+        
+        let group = DispatchGroup()
+        group.enter()
+        channelController.createEphemeralMessage(text: text) {
+            self.messageId = try? $0.get()
+            group.leave()
+        }
+    }
+
+    public func publish() {
+        messageId.map { channelController.publishEphemeralMessage(id: $0) }
+        messageId = nil
+    }
 }
 
 // MARK: - Environment
