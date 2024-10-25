@@ -344,6 +344,74 @@ class ChannelUpdater: Worker {
         }
     }
 
+    func createEphemeralMessage(
+        in cid: ChannelId,
+        messageId: MessageId?,
+        text: String,
+        pinning: MessagePinning? = nil,
+        isSilent: Bool,
+        command: String?,
+        arguments: String?,
+        attachments: [AnyAttachmentPayload] = [],
+        mentionedUserIds: [UserId],
+        quotedMessageId: MessageId?,
+        skipPush: Bool,
+        skipEnrichUrl: Bool,
+        poll: PollPayload? = nil,
+        extraData: [String: RawJSON],
+        completion: ((Result<ChatMessage, Error>) -> Void)? = nil
+    ) {
+        var newMessage: ChatMessage?
+        database.write({ (session) in
+            let newMessageDTO = try session.createNewMessage(
+                in: cid,
+                messageId: messageId,
+                text: text,
+                pinning: pinning,
+                command: command,
+                arguments: arguments,
+                parentMessageId: nil,
+                attachments: attachments,
+                mentionedUserIds: mentionedUserIds,
+                showReplyInChannel: false,
+                isSilent: isSilent,
+                quotedMessageId: quotedMessageId,
+                createdAt: nil,
+                skipPush: skipPush,
+                skipEnrichUrl: skipEnrichUrl,
+                poll: poll,
+                extraData: extraData
+            )
+            if quotedMessageId != nil {
+                newMessageDTO.showInsideThread = true
+            }
+            newMessageDTO.type = MessageType.regular.rawValue
+            newMessageDTO.localMessageState = .sending
+            newMessage = try newMessageDTO.asModel()
+        }) { error in
+            if let message = newMessage, error == nil {
+                completion?(.success(message))
+            } else {
+                completion?(.failure(error ?? ClientError.Unknown()))
+            }
+        }
+    }
+
+    func updateEphemeralMessage(id: MessageId, text: String) {
+        database.write { (session) in
+            let dto = session.message(id: id)
+            dto?.text = text
+            dto?.localMessageState = .sending
+        }
+    }
+
+    func publishEphemeralMessage(id: MessageId) {
+        database.write { (session) in
+            let dto = session.message(id: id)
+            dto?.localMessageState = .pendingSend
+        }
+    }
+
     /// Add users to the channel as members.
     /// - Parameters:
     ///   - currentUserId: the id of the current user.

@@ -1304,6 +1304,58 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
         }
     }
 
+    public func createEphemeralMessage(
+        messageId: MessageId? = nil,
+        text: String,
+        pinning: MessagePinning? = nil,
+        isSilent: Bool = false,
+        attachments: [AnyAttachmentPayload] = [],
+        mentionedUserIds: [UserId] = [],
+        quotedMessageId: MessageId? = nil,
+        skipPush: Bool = false,
+        skipEnrichUrl: Bool = false,
+        extraData: [String: RawJSON] = [:],
+        completion: ((Result<EphemeralMessageUpdater, Error>) -> Void)? = nil
+    ) {
+        /// Perform action only if channel is already created on backend side and have a valid `cid`.
+        guard let cid = cid, isChannelAlreadyCreated else {
+            channelModificationFailed { error in
+                completion?(.failure(error ?? ClientError.Unknown()))
+            }
+            return
+        }
+
+        updater.createEphemeralMessage(
+            in: cid,
+            messageId: messageId,
+            text: text,
+            pinning: pinning,
+            isSilent: isSilent,
+            command: nil,
+            arguments: nil,
+            attachments: attachments,
+            mentionedUserIds: mentionedUserIds,
+            quotedMessageId: quotedMessageId,
+            skipPush: skipPush,
+            skipEnrichUrl: skipEnrichUrl,
+            extraData: extraData
+        ) { result in
+            self.callback {
+                switch result {
+                case .success(let message):
+                    let updater = EphemeralMessageUpdater(messageId: message.id) { [weak self] newText in
+                        self?.updater.updateEphemeralMessage(id: message.id, text: newText)
+                    } publish: { [weak self] in
+                        self?.updater.publishEphemeralMessage(id: message.id)
+                    }
+                    completion?(.success(updater))
+                case .failure(let error):
+                    completion?(.failure(error))
+                }
+            }
+        }
+    }
+
     deinit {
         guard self.isJumpingToMessage, let cid = self.cid else { return }
         dataStore.database.write { session in
@@ -1311,6 +1363,12 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
             channelDTO?.cleanAllMessagesExcludingLocalOnly()
         }
     }
+}
+
+public struct EphemeralMessageUpdater {
+    public let messageId: MessageId
+    public let update: ((_ newText: String) -> Void)
+    public let publish: (() -> Void)
 }
 
 // MARK: - Environment
