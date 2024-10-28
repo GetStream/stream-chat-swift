@@ -385,7 +385,7 @@ class ChannelUpdater: Worker {
             if quotedMessageId != nil {
                 newMessageDTO.showInsideThread = true
             }
-            newMessageDTO.type = MessageType.regular.rawValue
+            newMessageDTO.type = MessageType.ephemeral.rawValue
             newMessageDTO.localMessageState = .sending
             newMessage = try newMessageDTO.asModel()
         }) { error in

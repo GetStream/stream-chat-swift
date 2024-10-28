@@ -8,6 +8,10 @@ import StreamChat
 public extension ChatMessage {
     /// A boolean value that checks if actions are available on the message (e.g. `edit`, `delete`, `resend`, etc.).
     var isInteractionEnabled: Bool {
+        if extraData["is_live"]?.boolValue == true {
+            return true
+        }
+        
         if type == .ephemeral || isDeleted || shouldRenderAsSystemMessage {
             return false
         }
@@ -45,7 +49,7 @@ public extension ChatMessage {
 
     /// The text which should be shown in a text view inside the message bubble.
     var textContent: String? {
-        guard type != .ephemeral else {
+        if type == .ephemeral && extraData["is_live"]?.boolValue != true {
             return nil
         }
 
