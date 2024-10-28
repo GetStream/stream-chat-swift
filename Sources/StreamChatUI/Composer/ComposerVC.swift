@@ -1442,7 +1442,7 @@ open class ComposerVC: _ViewController,
 
         channelController?
             .ephemeralMessageEditor
-            .updateMessage(text: content.text)
+            .updateMessage(text: content.text, extraData: ["is_live": true])
     }
 
     open func textView(

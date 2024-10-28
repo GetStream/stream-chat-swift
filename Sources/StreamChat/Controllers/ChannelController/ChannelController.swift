@@ -1348,8 +1348,8 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
         }
     }
 
-    internal func updateEphemeralMessage(id: MessageId, text: String) {
-        updater.updateEphemeralMessage(id: id, text: text)
+    internal func updateEphemeralMessage(id: MessageId, text: String, extraData: [String: RawJSON]) {
+        updater.updateEphemeralMessage(id: id, text: text, extraData: extraData)
     }
     
     internal func publishEphemeralMessage(id: MessageId) {
@@ -1373,15 +1373,15 @@ public class EphemeralMessageEditor {
         self.channelController = channelController
     }
 
-    public func updateMessage(text: String) {
+    public func updateMessage(text: String, extraData: [String: RawJSON] = [:]) {
         if let messageId {
-            channelController.updateEphemeralMessage(id: messageId, text: text)
+            channelController.updateEphemeralMessage(id: messageId, text: text, extraData: extraData)
             return
         }
         
         let group = DispatchGroup()
         group.enter()
-        channelController.createEphemeralMessage(text: text) {
+        channelController.createEphemeralMessage(text: text, extraData: extraData) {
             self.messageId = try? $0.get()
             group.leave()
         }

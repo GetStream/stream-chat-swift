@@ -397,11 +397,14 @@ class ChannelUpdater: Worker {
         }
     }
 
-    func updateEphemeralMessage(id: MessageId, text: String) {
+    func updateEphemeralMessage(id: MessageId, text: String, extraData: [String: RawJSON]?) {
         database.write { (session) in
             let dto = session.message(id: id)
             dto?.text = text
             dto?.localMessageState = .sending
+            if let extraData {
+                dto?.extraData = try JSONEncoder.default.encode(extraData)
+            }
         }
     }
 

@@ -53,5 +53,15 @@ final class DemoChatMessageContentView: ChatMessageContentView {
            let birthLand = content?.author.birthLand {
             authorNameLabel.text?.append(" \(birthLand)")
         }
+
+        if content?.extraData["is_live"]?.boolValue == true && content?.localState != nil {
+            bubbleView?.layer.borderWidth = 2
+            bubbleView?.layer.borderColor = appearance.colorPalette.accentPrimary.cgColor
+            footnoteContainer?.isHidden = true
+        } else {
+            bubbleView?.layer.borderWidth = 1
+            bubbleView?.layer.borderColor = appearance.colorPalette.border3.cgColor
+            footnoteContainer?.isHidden = false
+        }
     }
 }
