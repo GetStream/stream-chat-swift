@@ -519,7 +519,10 @@ class MessageDTO: NSManagedObject {
     static func loadSendingMessages(context: NSManagedObjectContext) -> [MessageDTO] {
         let request = NSFetchRequest<MessageDTO>(entityName: MessageDTO.entityName)
         request.sortDescriptors = [NSSortDescriptor(keyPath: \MessageDTO.locallyCreatedAt, ascending: false)]
-        request.predicate = NSPredicate(format: "localMessageStateRaw == %@", LocalMessageState.sending.rawValue)
+        request.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [
+            .init(format: "localMessageStateRaw == %@", LocalMessageState.sending.rawValue),
+            .init(format: "type != %@", MessageType.ephemeral.rawValue)
+        ])
         return load(by: request, context: context)
     }
     
