@@ -361,7 +361,6 @@ class ChannelUpdater: Worker {
         extraData: [String: RawJSON],
         completion: ((Result<ChatMessage, Error>) -> Void)? = nil
     ) {
-        var newMessage: ChatMessage?
         database.write({ (session) in
             let newMessageDTO = try session.createNewMessage(
                 in: cid,
@@ -387,12 +386,11 @@ class ChannelUpdater: Worker {
             }
             newMessageDTO.type = MessageType.ephemeral.rawValue
             newMessageDTO.localMessageState = .sending
-            newMessage = try newMessageDTO.asModel()
+            let newMessage = try newMessageDTO.asModel()
+            completion?(.success(newMessage))
         }) { error in
-            if let message = newMessage, error == nil {
-                completion?(.success(message))
-            } else {
-                completion?(.failure(error ?? ClientError.Unknown()))
+            if let error {
+                completion?(.failure(error))
             }
         }
     }
