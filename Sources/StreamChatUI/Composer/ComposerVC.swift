@@ -1438,11 +1438,17 @@ open class ComposerVC: _ViewController,
         // it will update `UITextView.text` and vice-versa.
         guard textView.text != content.text else { return }
 
-        content.text = textView.text
+        if textView.text.isEmpty && !content.text.isEmpty {
+            channelController?
+                .ephemeralMessageEditor
+                .delete()
+        } else {
+            channelController?
+                .ephemeralMessageEditor
+                .updateMessage(text: textView.text, extraData: ["is_live": true])
+        }
 
-        channelController?
-            .ephemeralMessageEditor
-            .updateMessage(text: content.text, extraData: ["is_live": true])
+        content.text = textView.text
     }
 
     open func textView(

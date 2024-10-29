@@ -1317,7 +1317,7 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
         skipPush: Bool = false,
         skipEnrichUrl: Bool = false,
         extraData: [String: RawJSON] = [:],
-        completion: ((Result<MessageId, Error>) -> Void)? = nil
+        completion: ((Result<ChatMessage, Error>) -> Void)? = nil
     ) {
         /// Perform action only if channel is already created on backend side and have a valid `cid`.
         guard let cid = cid, isChannelAlreadyCreated else {
@@ -1343,7 +1343,7 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
             extraData: extraData
         ) { result in
             self.callback {
-                completion?(result.map(\.id))
+                completion?(result)
             }
         }
     }
@@ -1367,29 +1367,38 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
 
 public class EphemeralMessageEditor {
     private unowned let channelController: ChatChannelController
-    private var messageId: MessageId?
+    private var message: ChatMessage?
 
     init(channelController: ChatChannelController) {
         self.channelController = channelController
     }
 
     public func updateMessage(text: String, extraData: [String: RawJSON] = [:]) {
-        if let messageId {
+        if let messageId = message?.id {
             channelController.updateEphemeralMessage(id: messageId, text: text, extraData: extraData)
             return
         }
-        
-        let group = DispatchGroup()
-        group.enter()
+
         channelController.createEphemeralMessage(text: text, extraData: extraData) {
-            self.messageId = try? $0.get()
-            group.leave()
+            self.message = try? $0.get()
         }
     }
 
     public func publish() {
-        messageId.map { channelController.publishEphemeralMessage(id: $0) }
-        messageId = nil
+        message.map { channelController.publishEphemeralMessage(id: $0.id) }
+        message = nil
+    }
+
+    public func delete() {
+        guard let cid = channelController.cid, let messageId = message?.id else {
+            return
+        }
+
+        message = nil
+        channelController
+            .client
+            .messageController(cid: cid, messageId: messageId)
+            .deleteMessage()
     }
 }
 
