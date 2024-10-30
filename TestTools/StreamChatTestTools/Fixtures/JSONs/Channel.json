@@ -1318,6 +1318,7 @@
       "created_at" : "2019-03-21T15:49:15.40182Z",
       "automod" : "AI",
       "read_events" : true,
+      "skip_last_msg_update_for_system_msgs": true,
       "commands" : [
         {
           "set" : "fun_set",

@@ -224,6 +224,7 @@ public class ChannelConfig: Codable {
         case commands
         case createdAt = "created_at"
         case updatedAt = "updated_at"
+        case skipLastMsgAtUpdateForSystemMsg = "skip_last_msg_update_for_system_msgs"
     }
 
     /// If users are allowed to add reactions to messages. Enabled by default.
@@ -258,6 +259,8 @@ public class ChannelConfig: Codable {
     public let updatedAt: Date
     /// Determines if polls are enabled.
     public let pollsEnabled: Bool
+    /// Determines if system messages should not update the last message at date.
+    public let skipLastMsgAtUpdateForSystemMsg: Bool
 
     public required init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
@@ -282,6 +285,7 @@ public class ChannelConfig: Codable {
         createdAt = try container.decode(Date.self, forKey: .createdAt)
         updatedAt = try container.decode(Date.self, forKey: .updatedAt)
         pollsEnabled = try container.decodeIfPresent(Bool.self, forKey: .pollsEnabled) ?? false
+        skipLastMsgAtUpdateForSystemMsg = try container.decodeIfPresent(Bool.self, forKey: .skipLastMsgAtUpdateForSystemMsg) ?? false
     }
 
     internal required init(
@@ -296,6 +300,7 @@ public class ChannelConfig: Codable {
         mutesEnabled: Bool = false,
         pollsEnabled: Bool = false,
         urlEnrichmentEnabled: Bool = false,
+        skipLastMsgAtUpdateForSystemMsg: Bool = false,
         messageRetention: String = "",
         maxMessageLength: Int = 0,
         commands: [Command] = [],
@@ -318,5 +323,6 @@ public class ChannelConfig: Codable {
         self.createdAt = createdAt
         self.updatedAt = updatedAt
         self.pollsEnabled = pollsEnabled
+        self.skipLastMsgAtUpdateForSystemMsg = skipLastMsgAtUpdateForSystemMsg
     }
 }

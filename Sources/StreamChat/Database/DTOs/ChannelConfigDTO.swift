@@ -11,6 +11,7 @@ final class ChannelConfigDTO: NSManagedObject {
     @NSManaged var typingEventsEnabled: Bool
     @NSManaged var readEventsEnabled: Bool
     @NSManaged var connectEventsEnabled: Bool
+    @NSManaged var skipLastMsgAtUpdateForSystemMsg: Bool
     @NSManaged var uploadsEnabled: Bool
     @NSManaged var repliesEnabled: Bool
     @NSManaged var quotesEnabled: Bool
@@ -37,6 +38,7 @@ final class ChannelConfigDTO: NSManagedObject {
             mutesEnabled: mutesEnabled,
             pollsEnabled: pollsEnabled,
             urlEnrichmentEnabled: urlEnrichmentEnabled,
+            skipLastMsgAtUpdateForSystemMsg: skipLastMsgAtUpdateForSystemMsg,
             messageRetention: messageRetention,
             maxMessageLength: Int(maxMessageLength),
             commands: Array(Set(
@@ -76,6 +78,7 @@ extension ChannelConfig {
         dto.updatedAt = updatedAt.bridgeDate
         dto.commands = NSOrderedSet(array: commands.map { $0.asDTO(context: context) })
         dto.pollsEnabled = pollsEnabled
+        dto.skipLastMsgAtUpdateForSystemMsg = skipLastMsgAtUpdateForSystemMsg
         return dto
     }
 }

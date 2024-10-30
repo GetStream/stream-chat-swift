@@ -813,7 +813,11 @@ extension NSManagedObjectContext: MessageDatabaseSession {
             array: payload.threadParticipants.map { try saveUser(payload: $0) }
         )
 
-        channelDTO.lastMessageAt = max(channelDTO.lastMessageAt?.bridgeDate ?? payload.createdAt, payload.createdAt).bridgeDate
+        let isSystemMessage = dto.type == MessageType.system.rawValue
+        let shouldNotUpdateLastMessageAt = isSystemMessage && channelDTO.config.skipLastMsgAtUpdateForSystemMsg
+        if !shouldNotUpdateLastMessageAt {
+            channelDTO.lastMessageAt = max(channelDTO.lastMessageAt?.bridgeDate ?? payload.createdAt, payload.createdAt).bridgeDate
+        }
         
         dto.channel = channelDTO
 
