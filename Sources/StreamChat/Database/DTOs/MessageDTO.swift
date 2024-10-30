@@ -695,9 +695,12 @@ extension NSManagedObjectContext: MessageDatabaseSession {
         message.user = currentUserDTO.user
         message.channel = channelDTO
 
-        let newLastMessageAt = max(channelDTO.lastMessageAt?.bridgeDate ?? createdAt, createdAt).bridgeDate
-        channelDTO.lastMessageAt = newLastMessageAt
-        channelDTO.defaultSortingAt = newLastMessageAt
+        let shouldNotUpdateLastMessageAt = isSystem && channelDTO.config.skipLastMsgAtUpdateForSystemMsg
+        if !shouldNotUpdateLastMessageAt {
+            let newLastMessageAt = max(channelDTO.lastMessageAt?.bridgeDate ?? createdAt, createdAt).bridgeDate
+            channelDTO.lastMessageAt = newLastMessageAt
+            channelDTO.defaultSortingAt = newLastMessageAt
+        }
 
         if let parentMessageId = parentMessageId,
            let parentMessageDTO = MessageDTO.load(id: parentMessageId, context: self) {
