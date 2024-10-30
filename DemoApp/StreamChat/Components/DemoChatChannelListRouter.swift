@@ -480,6 +480,15 @@ final class DemoChatChannelListRouter: ChatChannelListRouter {
                     channelController.createNewMessage(text: message, skipPush: true)
                 }
             }),
+            .init(title: "Send system message", isEnabled: canSendMessage, handler: { [unowned self] _ in
+                self.rootViewController.presentAlert(title: "Enter the message text", textFieldPlaceholder: "Send message") { message in
+                    guard let message = message, !message.isEmpty else {
+                        self.rootViewController.presentAlert(title: "Message is not valid")
+                        return
+                    }
+                    channelController.createSystemMessage(text: message)
+                }
+            }),
             .init(title: "Send message without url enriching", isEnabled: canSendMessage, handler: { [unowned self] _ in
                 self.rootViewController.presentAlert(title: "Enter the message text", textFieldPlaceholder: "Send message") { message in
                     guard let message = message, !message.isEmpty else {
