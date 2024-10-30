@@ -481,7 +481,7 @@ public class Chat {
     ///  - extraData: Additional extra data of the message object.
     @discardableResult
     public func sendSystemMessage(
-        text: String,
+        with text: String,
         messageId: MessageId? = nil,
         extraData: [String: RawJSON] = [:]
     ) async throws -> ChatMessage {
@@ -503,6 +503,7 @@ public class Chat {
         )
         // Important to set up the waiter immediately
         async let sentMessage = try await waitForAPIRequest(localMessage: localMessage)
+        eventNotificationCenter.process(NewMessagePendingEvent(message: localMessage))
         return try await sentMessage
     }
 
