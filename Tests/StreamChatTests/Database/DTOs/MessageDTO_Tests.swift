@@ -1254,7 +1254,6 @@ final class MessageDTO_Tests: XCTestCase {
     func test_newMessage_asRequestBody_whenSystemMessage() throws {
         let currentUserId: UserId = .unique
         let cid: ChannelId = .unique
-        let parentMessageId: MessageId = .unique
 
         // Create current user in the database.
         try database.createCurrentUser(id: currentUserId)
@@ -1268,7 +1267,7 @@ final class MessageDTO_Tests: XCTestCase {
 
         // Create message with attachments in the database.
         try database.writeSynchronously { session in
-            let message = try session.createNewMessage(
+            try session.createNewMessage(
                 in: cid,
                 messageId: messageId,
                 text: messageText,
@@ -1567,7 +1566,7 @@ final class MessageDTO_Tests: XCTestCase {
         let messageDTO: MessageDTO = try XCTUnwrap(database.viewContext.message(id: newMessageId))
         XCTAssertEqual(messageDTO.skipPush, true)
         XCTAssertEqual(messageDTO.skipEnrichUrl, true)
-        XCTAssertEqual(messageDTO.isSystem, false)
+        XCTAssertEqual(messageDTO.type, "reply")
 
         let loadedMessage: ChatMessage = try messageDTO.asModel()
         XCTAssertEqual(loadedMessage.text, newMessageText)
@@ -1636,7 +1635,7 @@ final class MessageDTO_Tests: XCTestCase {
         let loadedChannel: ChatChannel = try XCTUnwrap(database.viewContext.channel(cid: cid)).asModel()
 
         let messageDTO: MessageDTO = try XCTUnwrap(database.viewContext.message(id: newMessageId))
-        XCTAssertEqual(messageDTO.isSystem, true)
+        XCTAssertEqual(messageDTO.type, "system")
 
         let loadedMessage: ChatMessage = try messageDTO.asModel()
         XCTAssertEqual(loadedMessage.text, newMessageText)

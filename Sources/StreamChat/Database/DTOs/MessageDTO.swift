@@ -39,9 +39,6 @@ class MessageDTO: NSManagedObject {
     @NSManaged var extraData: Data?
     @NSManaged var isSilent: Bool
 
-    // Used for creating a message as a system message from the client SDK.
-    @NSManaged var isSystem: Bool
-
     @NSManaged var skipPush: Bool
     @NSManaged var skipEnrichUrl: Bool
     @NSManaged var isShadowed: Bool
@@ -659,23 +656,27 @@ extension NSManagedObjectContext: MessageDatabaseSession {
         }
 
         message.cid = cid.rawValue
-        message.type = parentMessageId == nil ? MessageType.regular.rawValue : MessageType.reply.rawValue
         message.text = text
         message.command = command
         message.args = arguments
         message.parentMessageId = parentMessageId
         message.extraData = try JSONEncoder.default.encode(extraData)
         message.isSilent = isSilent
-        message.isSystem = isSystem
-        if isSystem {
-            message.type = MessageType.system.rawValue
-        }
         message.skipPush = skipPush
         message.skipEnrichUrl = skipEnrichUrl
         message.reactionScores = [:]
         message.reactionCounts = [:]
         message.reactionGroups = []
-        
+
+        // Message type
+        if parentMessageId != nil {
+            message.type = MessageType.reply.rawValue
+        } else if isSystem {
+            message.type = MessageType.system.rawValue
+        } else {
+            message.type = MessageType.regular.rawValue
+        }
+
         if let poll {
             message.poll = try? savePoll(payload: poll, cache: nil)
         }
@@ -1258,7 +1259,7 @@ extension MessageDTO {
             .compactMap { $0.asRequestPayload() }
 
         // At the moment, we only provide the type for system messages when creating a message.
-        let systemType = isSystem ? MessageType.system.rawValue : nil
+        let systemType = type == MessageType.system.rawValue ? type : nil
 
         return .init(
             id: id,

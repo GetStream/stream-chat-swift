@@ -609,7 +609,7 @@ final class ChannelUpdater_Tests: XCTestCase {
         XCTAssertEqual(messageDTO.skipPush, true)
         XCTAssertEqual(messageDTO.skipEnrichUrl, true)
         XCTAssertEqual(messageDTO.mentionedUserIds, [currentUserId])
-        XCTAssertEqual(messageDTO.isSystem, false)
+        XCTAssertEqual(messageDTO.type, "regular")
 
         let message = try messageDTO.asModel()
         XCTAssertEqual(message.text, text)
