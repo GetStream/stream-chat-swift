@@ -273,7 +273,7 @@ struct MessageRequestBody: Encodable {
         id: String,
         user: UserRequestBody,
         text: String,
-        type: String?,
+        type: String? = nil,
         command: String? = nil,
         args: String? = nil,
         parentId: String? = nil,

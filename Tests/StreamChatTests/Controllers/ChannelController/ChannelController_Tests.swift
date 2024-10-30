@@ -943,6 +943,7 @@ final class ChannelController_Tests: XCTestCase {
                 mentionedUserIds: [],
                 showReplyInChannel: false,
                 isSilent: false,
+                isSystem: false,
                 quotedMessageId: nil,
                 createdAt: oldMessageCreatedAt,
                 skipPush: false,

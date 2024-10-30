@@ -577,6 +577,7 @@ final class ChannelUpdater_Tests: XCTestCase {
                 text: text,
                 pinning: MessagePinning(expirationDate: .unique),
                 isSilent: false,
+                isSystem: false,
                 command: command,
                 arguments: arguments,
                 attachments: attachmentEnvelopes,
@@ -608,6 +609,7 @@ final class ChannelUpdater_Tests: XCTestCase {
         XCTAssertEqual(messageDTO.skipPush, true)
         XCTAssertEqual(messageDTO.skipEnrichUrl, true)
         XCTAssertEqual(messageDTO.mentionedUserIds, [currentUserId])
+        XCTAssertEqual(messageDTO.isSystem, false)
 
         let message = try messageDTO.asModel()
         XCTAssertEqual(message.text, text)
@@ -657,6 +659,7 @@ final class ChannelUpdater_Tests: XCTestCase {
                 messageId: .unique,
                 text: .unique,
                 isSilent: false,
+                isSystem: false,
                 command: .unique,
                 arguments: .unique,
                 mentionedUserIds: [.unique],
@@ -1004,6 +1007,7 @@ final class ChannelUpdater_Tests: XCTestCase {
                         .message?.id ?? "id",
                     user: currentUser,
                     text: systemMessage,
+                    type: nil,
                     extraData: [:]
                 )
             )))
@@ -1227,6 +1231,7 @@ final class ChannelUpdater_Tests: XCTestCase {
             id: messageId,
             user: UserRequestBody(id: senderId, name: nil, imageURL: nil, extraData: [:]),
             text: message,
+            type: nil,
             extraData: [:]
         )
         let referenceEndpoint: Endpoint<EmptyResponse> = .addMembers(
@@ -1456,6 +1461,7 @@ final class ChannelUpdater_Tests: XCTestCase {
             id: messageId,
             user: UserRequestBody(id: senderId, name: nil, imageURL: nil, extraData: [:]),
             text: message,
+            type: nil,
             extraData: [:]
         )
         let referenceEndpoint: Endpoint<EmptyResponse> = .removeMembers(

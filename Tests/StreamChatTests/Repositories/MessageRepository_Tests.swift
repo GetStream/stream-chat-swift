@@ -674,6 +674,7 @@ extension MessageRepositoryTests {
                 pinning: nil,
                 quotedMessageId: nil,
                 isSilent: false,
+                isSystem: false,
                 skipPush: skipPush,
                 skipEnrichUrl: skipEnrichUrl,
                 extraData: [:]

@@ -80,6 +80,7 @@ final class MessageSender_Tests: XCTestCase {
                 pinning: nil,
                 quotedMessageId: nil,
                 isSilent: false,
+                isSystem: false,
                 skipPush: false,
                 skipEnrichUrl: false,
                 extraData: [:]
@@ -94,6 +95,7 @@ final class MessageSender_Tests: XCTestCase {
                 pinning: nil,
                 quotedMessageId: nil,
                 isSilent: false,
+                isSystem: false,
                 skipPush: false,
                 skipEnrichUrl: false,
                 attachments: [
@@ -114,6 +116,7 @@ final class MessageSender_Tests: XCTestCase {
                 pinning: nil,
                 quotedMessageId: nil,
                 isSilent: false,
+                isSystem: false,
                 skipPush: false,
                 skipEnrichUrl: false,
                 attachments: [],
@@ -157,6 +160,7 @@ final class MessageSender_Tests: XCTestCase {
                 pinning: nil,
                 quotedMessageId: nil,
                 isSilent: false,
+                isSystem: false,
                 skipPush: false,
                 skipEnrichUrl: false,
                 attachments: [
@@ -184,6 +188,7 @@ final class MessageSender_Tests: XCTestCase {
                 pinning: nil,
                 quotedMessageId: nil,
                 isSilent: false,
+                isSystem: false,
                 skipPush: false,
                 skipEnrichUrl: false,
                 attachments: [
@@ -224,6 +229,7 @@ final class MessageSender_Tests: XCTestCase {
                 pinning: nil,
                 quotedMessageId: nil,
                 isSilent: false,
+                isSystem: false,
                 skipPush: false,
                 skipEnrichUrl: false,
                 extraData: [:]
@@ -238,6 +244,7 @@ final class MessageSender_Tests: XCTestCase {
                 pinning: nil,
                 quotedMessageId: nil,
                 isSilent: false,
+                isSystem: false,
                 skipPush: false,
                 skipEnrichUrl: false,
                 extraData: [:]
@@ -252,6 +259,7 @@ final class MessageSender_Tests: XCTestCase {
                 pinning: nil,
                 quotedMessageId: nil,
                 isSilent: false,
+                isSystem: false,
                 skipPush: false,
                 skipEnrichUrl: false,
                 extraData: [:]
@@ -301,6 +309,7 @@ final class MessageSender_Tests: XCTestCase {
                 pinning: nil,
                 quotedMessageId: nil,
                 isSilent: false,
+                isSystem: false,
                 skipPush: false,
                 skipEnrichUrl: false,
                 extraData: [:]
@@ -315,6 +324,7 @@ final class MessageSender_Tests: XCTestCase {
                 pinning: nil,
                 quotedMessageId: nil,
                 isSilent: false,
+                isSystem: false,
                 skipPush: false,
                 skipEnrichUrl: false,
                 extraData: [:]
@@ -329,6 +339,7 @@ final class MessageSender_Tests: XCTestCase {
                 pinning: nil,
                 quotedMessageId: nil,
                 isSilent: false,
+                isSystem: false,
                 skipPush: false,
                 skipEnrichUrl: false,
                 extraData: [:]
@@ -343,6 +354,7 @@ final class MessageSender_Tests: XCTestCase {
                 pinning: nil,
                 quotedMessageId: nil,
                 isSilent: false,
+                isSystem: false,
                 skipPush: false,
                 skipEnrichUrl: false,
                 extraData: [:]
@@ -388,6 +400,7 @@ final class MessageSender_Tests: XCTestCase {
                 pinning: nil,
                 quotedMessageId: nil,
                 isSilent: false,
+                isSystem: false,
                 skipPush: false,
                 skipEnrichUrl: false,
                 attachments: [
@@ -516,6 +529,7 @@ final class MessageSender_Tests: XCTestCase {
             text: "\(id)",
             pinning: nil,
             quotedMessageId: nil,
+            isSystem: false,
             skipPush: false,
             skipEnrichUrl: false
         )

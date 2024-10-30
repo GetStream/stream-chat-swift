@@ -73,6 +73,7 @@ final class MessageEndpoints_Tests: XCTestCase {
             id: .unique,
             user: .init(id: .unique, name: .unique, imageURL: .unique(), extraData: .init()),
             text: .unique,
+            type: nil,
             extraData: [:]
         )
 
