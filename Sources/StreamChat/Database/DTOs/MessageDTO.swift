@@ -38,6 +38,10 @@ class MessageDTO: NSManagedObject {
     @NSManaged var replyCount: Int32
     @NSManaged var extraData: Data?
     @NSManaged var isSilent: Bool
+
+    // Used for creating a message as a system message from the client SDK.
+    @NSManaged var isSystem: Bool
+
     @NSManaged var skipPush: Bool
     @NSManaged var skipEnrichUrl: Bool
     @NSManaged var isShadowed: Bool
@@ -621,6 +625,7 @@ extension NSManagedObjectContext: MessageDatabaseSession {
         mentionedUserIds: [UserId],
         showReplyInChannel: Bool,
         isSilent: Bool,
+        isSystem: Bool,
         quotedMessageId: MessageId?,
         createdAt: Date?,
         skipPush: Bool,
@@ -661,6 +666,10 @@ extension NSManagedObjectContext: MessageDatabaseSession {
         message.parentMessageId = parentMessageId
         message.extraData = try JSONEncoder.default.encode(extraData)
         message.isSilent = isSilent
+        message.isSystem = isSystem
+        if isSystem {
+            message.type = MessageType.system.rawValue
+        }
         message.skipPush = skipPush
         message.skipEnrichUrl = skipEnrichUrl
         message.reactionScores = [:]
@@ -1245,10 +1254,14 @@ extension MessageDTO {
             .sorted { ($0.attachmentID?.index ?? 0) < ($1.attachmentID?.index ?? 0) }
             .compactMap { $0.asRequestPayload() }
 
+        // At the moment, we only provide the type for system messages when creating a message.
+        let systemType = isSystem ? MessageType.system.rawValue : nil
+
         return .init(
             id: id,
             user: user.asRequestBody(),
             text: text,
+            type: systemType,
             command: command,
             args: args,
             parentId: parentMessageId,
