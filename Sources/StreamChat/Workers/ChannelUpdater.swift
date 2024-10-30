@@ -202,6 +202,7 @@ class ChannelUpdater: Worker {
                 id: .newUniqueId,
                 user: user,
                 text: message,
+                type: nil,
                 command: nil,
                 args: nil,
                 parentId: nil,
@@ -285,6 +286,7 @@ class ChannelUpdater: Worker {
     ///   - text: Text of the message.
     ///   - pinning: Pins the new message. Nil if should not be pinned.
     ///   - isSilent: A flag indicating whether the message is a silent message. Silent messages are special messages that don't increase the unread messages count nor mark a channel as unread.
+    ///   - isSystem: A flag indicating whether the message is a system message.
     ///   - attachments: An array of the attachments for the message.
     ///   - quotedMessageId: An id of the message new message quotes. (inline reply)
     ///   - skipPush: If true, skips sending push notification to channel members.
@@ -298,6 +300,7 @@ class ChannelUpdater: Worker {
         text: String,
         pinning: MessagePinning? = nil,
         isSilent: Bool,
+        isSystem: Bool,
         command: String?,
         arguments: String?,
         attachments: [AnyAttachmentPayload] = [],
@@ -323,6 +326,7 @@ class ChannelUpdater: Worker {
                 mentionedUserIds: mentionedUserIds,
                 showReplyInChannel: false,
                 isSilent: isSilent,
+                isSystem: isSystem,
                 quotedMessageId: quotedMessageId,
                 createdAt: nil,
                 skipPush: skipPush,
@@ -673,6 +677,7 @@ class ChannelUpdater: Worker {
                 id: .newUniqueId,
                 user: userRequestBody,
                 text: text,
+                type: nil,
                 extraData: [:]
             )
             return messagePayload
@@ -730,6 +735,7 @@ extension ChannelUpdater {
         text: String,
         pinning: MessagePinning? = nil,
         isSilent: Bool,
+        isSystem: Bool,
         command: String?,
         arguments: String?,
         attachments: [AnyAttachmentPayload] = [],
@@ -746,6 +752,7 @@ extension ChannelUpdater {
                 text: text,
                 pinning: pinning,
                 isSilent: isSilent,
+                isSystem: isSystem,
                 command: command,
                 arguments: arguments,
                 attachments: attachments,

@@ -636,7 +636,26 @@ final class Chat_Tests: XCTestCase {
         XCTAssertEqual(text, stateMessage.text)
         XCTAssertEqual(LocalMessageState.sendingFailed, stateMessage.localState)
     }
-    
+
+    func test_sendSystemMessage_thenCallsChannelUpdaterWithIsSystemTrue() async throws {
+        try await setUpChat(usesMockedUpdaters: true)
+        await XCTAssertEqual(0, chat.state.messages.count)
+
+        let text = "Text"
+        env.channelUpdaterMock.createNewMessage_completion_result = .success((
+            .mock(id: "0", text: text, type: .system)
+        ))
+        let message = try await chat.sendSystemMessage(
+            with: text,
+            messageId: "0"
+        )
+
+        XCTAssertEqual(env.typingEventsSenderMock.stopTyping_cid, nil)
+        XCTAssertEqual(env.channelUpdaterMock.createNewMessage_isSystem, true)
+        XCTAssertEqual(text, message.text)
+        XCTAssertEqual(.system, message.type)
+    }
+
     func test_updateMessage_whenAPIRequestSucceeds_thenUpdateMessageSucceeds() async throws {
         try await env.client.databaseContainer.write { session in
             try session.saveChannel(payload: self.makeChannelPayload(messageCount: 1, createdAtOffset: 0))

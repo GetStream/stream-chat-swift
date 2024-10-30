@@ -268,6 +268,7 @@ final class ChannelEndpoints_Tests: XCTestCase {
             id: .unique,
             user: .dummy(userId: .unique),
             text: .unique,
+            type: nil,
             command: .unique,
             args: .unique,
             parentId: .unique,

@@ -331,7 +331,13 @@ final class OfflineRequestsRepository_Tests: XCTestCase {
     private func createSendMessageRequest(requestIdNumber: Int, messageIdNumber: Int, date: Date) throws {
         let id = "request\(requestIdNumber)"
         let messageId = "message\(messageIdNumber)"
-        let requestBody = MessageRequestBody(id: messageId, user: .dummy(userId: .unique), text: .unique, extraData: [:])
+        let requestBody = MessageRequestBody(
+            id: messageId,
+            user: .dummy(userId: .unique),
+            text: .unique,
+            type: nil,
+            extraData: [:]
+        )
         let endpoint: Endpoint<MessagePayload.Boxed> = .sendMessage(
             cid: .init(type: .messaging, id: id),
             messagePayload: requestBody,

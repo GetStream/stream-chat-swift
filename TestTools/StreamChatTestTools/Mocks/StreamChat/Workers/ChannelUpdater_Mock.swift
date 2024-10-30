@@ -77,6 +77,7 @@ final class ChannelUpdater_Mock: ChannelUpdater {
     @Atomic var createNewMessage_cid: ChannelId?
     @Atomic var createNewMessage_text: String?
     @Atomic var createNewMessage_isSilent: Bool?
+    @Atomic var createNewMessage_isSystem: Bool?
     @Atomic var createNewMessage_skipPush: Bool?
     @Atomic var createNewMessage_skipEnrichUrl: Bool?
     @Atomic var createNewMessage_command: String?
@@ -343,6 +344,7 @@ final class ChannelUpdater_Mock: ChannelUpdater {
         text: String,
         pinning: MessagePinning?,
         isSilent: Bool,
+        isSystem: Bool,
         command: String?,
         arguments: String?,
         attachments: [AnyAttachmentPayload],
@@ -357,6 +359,7 @@ final class ChannelUpdater_Mock: ChannelUpdater {
         createNewMessage_cid = cid
         createNewMessage_text = text
         createNewMessage_isSilent = isSilent
+        createNewMessage_isSystem = isSystem
         createNewMessage_skipPush = skipPush
         createNewMessage_skipEnrichUrl = skipEnrichUrl
         createNewMessage_command = command

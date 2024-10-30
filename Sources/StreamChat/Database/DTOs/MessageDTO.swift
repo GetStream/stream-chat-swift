@@ -38,6 +38,7 @@ class MessageDTO: NSManagedObject {
     @NSManaged var replyCount: Int32
     @NSManaged var extraData: Data?
     @NSManaged var isSilent: Bool
+
     @NSManaged var skipPush: Bool
     @NSManaged var skipEnrichUrl: Bool
     @NSManaged var isShadowed: Bool
@@ -621,6 +622,7 @@ extension NSManagedObjectContext: MessageDatabaseSession {
         mentionedUserIds: [UserId],
         showReplyInChannel: Bool,
         isSilent: Bool,
+        isSystem: Bool,
         quotedMessageId: MessageId?,
         createdAt: Date?,
         skipPush: Bool,
@@ -654,7 +656,6 @@ extension NSManagedObjectContext: MessageDatabaseSession {
         }
 
         message.cid = cid.rawValue
-        message.type = parentMessageId == nil ? MessageType.regular.rawValue : MessageType.reply.rawValue
         message.text = text
         message.command = command
         message.args = arguments
@@ -666,7 +667,16 @@ extension NSManagedObjectContext: MessageDatabaseSession {
         message.reactionScores = [:]
         message.reactionCounts = [:]
         message.reactionGroups = []
-        
+
+        // Message type
+        if parentMessageId != nil {
+            message.type = MessageType.reply.rawValue
+        } else if isSystem {
+            message.type = MessageType.system.rawValue
+        } else {
+            message.type = MessageType.regular.rawValue
+        }
+
         if let poll {
             message.poll = try? savePoll(payload: poll, cache: nil)
         }
@@ -686,9 +696,12 @@ extension NSManagedObjectContext: MessageDatabaseSession {
         message.user = currentUserDTO.user
         message.channel = channelDTO
 
-        let newLastMessageAt = max(channelDTO.lastMessageAt?.bridgeDate ?? createdAt, createdAt).bridgeDate
-        channelDTO.lastMessageAt = newLastMessageAt
-        channelDTO.defaultSortingAt = newLastMessageAt
+        let shouldNotUpdateLastMessageAt = isSystem && channelDTO.config.skipLastMsgAtUpdateForSystemMsg
+        if !shouldNotUpdateLastMessageAt {
+            let newLastMessageAt = max(channelDTO.lastMessageAt?.bridgeDate ?? createdAt, createdAt).bridgeDate
+            channelDTO.lastMessageAt = newLastMessageAt
+            channelDTO.defaultSortingAt = newLastMessageAt
+        }
 
         if let parentMessageId = parentMessageId,
            let parentMessageDTO = MessageDTO.load(id: parentMessageId, context: self) {
@@ -1245,10 +1258,14 @@ extension MessageDTO {
             .sorted { ($0.attachmentID?.index ?? 0) < ($1.attachmentID?.index ?? 0) }
             .compactMap { $0.asRequestPayload() }
 
+        // At the moment, we only provide the type for system messages when creating a message.
+        let systemType = type == MessageType.system.rawValue ? type : nil
+
         return .init(
             id: id,
             user: user.asRequestBody(),
             text: text,
+            type: systemType,
             command: command,
             args: args,
             parentId: parentMessageId,

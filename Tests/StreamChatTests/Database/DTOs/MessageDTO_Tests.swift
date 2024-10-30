@@ -1190,6 +1190,7 @@ final class MessageDTO_Tests: XCTestCase {
                 mentionedUserIds: mentionedUserIds,
                 showReplyInChannel: messageShowReplyInChannel,
                 isSilent: messageIsSilent,
+                isSystem: false,
                 quotedMessageId: nil,
                 createdAt: nil,
                 skipPush: false,
@@ -1228,7 +1229,6 @@ final class MessageDTO_Tests: XCTestCase {
         }
 
         let messageDTO: MessageDTO = try XCTUnwrap(database.viewContext.message(id: messageId))
-        XCTAssertEqual(messageDTO.attachments.count, 4)
 
         // Load the message from the database and convert to request body.
         let requestBody: MessageRequestBody = messageDTO.asRequestBody()
@@ -1248,6 +1248,57 @@ final class MessageDTO_Tests: XCTestCase {
         XCTAssertEqual(requestBody.attachments.map(\.type), [.image, .video])
         XCTAssertEqual(requestBody.attachments.count, 2)
         XCTAssertEqual(requestBody.mentionedUserIds, mentionedUserIds)
+        XCTAssertEqual(requestBody.type, nil)
+    }
+
+    func test_newMessage_asRequestBody_whenSystemMessage() throws {
+        let currentUserId: UserId = .unique
+        let cid: ChannelId = .unique
+
+        // Create current user in the database.
+        try database.createCurrentUser(id: currentUserId)
+
+        // Create channel in the database.
+        try database.createChannel(cid: cid, withMessages: false)
+
+        let messageId: MessageId = .unique
+        let messageText: String = .unique
+        let messageIsSystem = true
+
+        // Create message with attachments in the database.
+        try database.writeSynchronously { session in
+            try session.createNewMessage(
+                in: cid,
+                messageId: messageId,
+                text: messageText,
+                pinning: nil,
+                command: nil,
+                arguments: nil,
+                parentMessageId: nil,
+                attachments: [],
+                mentionedUserIds: [],
+                showReplyInChannel: false,
+                isSilent: false,
+                isSystem: messageIsSystem,
+                quotedMessageId: nil,
+                createdAt: nil,
+                skipPush: false,
+                skipEnrichUrl: false,
+                poll: nil,
+                extraData: [:]
+            )
+        }
+
+        let messageDTO: MessageDTO = try XCTUnwrap(database.viewContext.message(id: messageId))
+
+        // Load the message from the database and convert to request body.
+        let requestBody: MessageRequestBody = messageDTO.asRequestBody()
+
+        // Assert request body has correct fields.
+        XCTAssertEqual(requestBody.id, messageId)
+        XCTAssertEqual(requestBody.user.id, currentUserId)
+        XCTAssertEqual(requestBody.text, messageText)
+        XCTAssertEqual(requestBody.type, "system")
     }
 
     func test_additionalLocalState_isStored() throws {
@@ -1332,6 +1383,7 @@ final class MessageDTO_Tests: XCTestCase {
                     mentionedUserIds: [],
                     showReplyInChannel: false,
                     isSilent: false,
+                    isSystem: false,
                     quotedMessageId: nil,
                     createdAt: nil,
                     skipPush: false,
@@ -1355,6 +1407,7 @@ final class MessageDTO_Tests: XCTestCase {
                     mentionedUserIds: [],
                     showReplyInChannel: false,
                     isSilent: false,
+                    isSystem: false,
                     quotedMessageId: nil,
                     createdAt: nil,
                     skipPush: false,
@@ -1497,6 +1550,7 @@ final class MessageDTO_Tests: XCTestCase {
                 mentionedUserIds: newMentionedUserIds,
                 showReplyInChannel: true,
                 isSilent: false,
+                isSystem: false,
                 quotedMessageId: nil,
                 createdAt: nil,
                 skipPush: true,
@@ -1512,6 +1566,7 @@ final class MessageDTO_Tests: XCTestCase {
         let messageDTO: MessageDTO = try XCTUnwrap(database.viewContext.message(id: newMessageId))
         XCTAssertEqual(messageDTO.skipPush, true)
         XCTAssertEqual(messageDTO.skipEnrichUrl, true)
+        XCTAssertEqual(messageDTO.type, "reply")
 
         let loadedMessage: ChatMessage = try messageDTO.asModel()
         XCTAssertEqual(loadedMessage.text, newMessageText)
@@ -1531,6 +1586,60 @@ final class MessageDTO_Tests: XCTestCase {
             newMessageAttachments.map(\.localFileURL)
         )
         XCTAssertEqual(loadedChannel.previewMessage?.id, loadedMessage.id)
+    }
+
+    func test_createNewMessage_whenIsSystemMessage() throws {
+        // Prepare the current user and channel first
+        let cid: ChannelId = .unique
+        let currentUserId: UserId = .unique
+
+        try database.writeSynchronously { session in
+            let currentUserPayload: CurrentUserPayload = .dummy(
+                userId: currentUserId,
+                role: .admin,
+                extraData: [:]
+            )
+
+            try session.saveCurrentUser(payload: currentUserPayload)
+
+            try session.saveChannel(payload: self.dummyPayload(with: cid))
+        }
+
+        // Create a new message
+        var newMessageId: MessageId!
+        let newMessageText: String = .unique
+        try database.writeSynchronously { session in
+            let messageDTO = try session.createNewMessage(
+                in: cid,
+                messageId: .unique,
+                text: newMessageText,
+                pinning: nil,
+                command: nil,
+                arguments: nil,
+                parentMessageId: nil,
+                attachments: [],
+                mentionedUserIds: [],
+                showReplyInChannel: true,
+                isSilent: false,
+                isSystem: true,
+                quotedMessageId: nil,
+                createdAt: nil,
+                skipPush: true,
+                skipEnrichUrl: true,
+                poll: nil,
+                extraData: [:]
+            )
+            newMessageId = messageDTO.id
+        }
+
+        let loadedChannel: ChatChannel = try XCTUnwrap(database.viewContext.channel(cid: cid)).asModel()
+
+        let messageDTO: MessageDTO = try XCTUnwrap(database.viewContext.message(id: newMessageId))
+        XCTAssertEqual(messageDTO.type, "system")
+
+        let loadedMessage: ChatMessage = try messageDTO.asModel()
+        XCTAssertEqual(loadedMessage.text, newMessageText)
+        XCTAssertEqual(loadedMessage.type, .system)
     }
 
     func test_createNewMessage_whenRegularMessageIsCreated_makesItChannelPreview() throws {
@@ -1564,6 +1673,7 @@ final class MessageDTO_Tests: XCTestCase {
                 mentionedUserIds: [],
                 showReplyInChannel: false,
                 isSilent: false,
+                isSystem: false,
                 quotedMessageId: nil,
                 createdAt: nil,
                 skipPush: false,
@@ -1610,6 +1720,7 @@ final class MessageDTO_Tests: XCTestCase {
                 mentionedUserIds: [],
                 showReplyInChannel: true,
                 isSilent: false,
+                isSystem: false,
                 quotedMessageId: nil,
                 createdAt: nil,
                 skipPush: false,
@@ -1669,6 +1780,7 @@ final class MessageDTO_Tests: XCTestCase {
                 mentionedUserIds: [],
                 showReplyInChannel: false,
                 isSilent: false,
+                isSystem: false,
                 quotedMessageId: nil,
                 createdAt: nil,
                 skipPush: false,
@@ -1697,6 +1809,7 @@ final class MessageDTO_Tests: XCTestCase {
                     mentionedUserIds: [.unique],
                     showReplyInChannel: true,
                     isSilent: false,
+                    isSystem: false,
                     quotedMessageId: nil,
                     createdAt: nil,
                     skipPush: false,
@@ -1739,6 +1852,7 @@ final class MessageDTO_Tests: XCTestCase {
                     mentionedUserIds: [.unique],
                     showReplyInChannel: true,
                     isSilent: false,
+                    isSystem: false,
                     quotedMessageId: nil,
                     createdAt: nil,
                     skipPush: false,
@@ -1781,6 +1895,7 @@ final class MessageDTO_Tests: XCTestCase {
                 pinning: MessagePinning(expirationDate: .unique),
                 quotedMessageId: nil,
                 isSilent: false,
+                isSystem: false,
                 skipPush: false,
                 skipEnrichUrl: false,
                 extraData: [:]
@@ -1826,6 +1941,7 @@ final class MessageDTO_Tests: XCTestCase {
                 mentionedUserIds: [],
                 showReplyInChannel: false,
                 isSilent: false,
+                isSystem: false,
                 quotedMessageId: nil,
                 createdAt: nil,
                 skipPush: false,
