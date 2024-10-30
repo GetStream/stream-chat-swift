@@ -1960,6 +1960,52 @@ final class MessageDTO_Tests: XCTestCase {
         XCTAssertEqual(channel.lastMessageAt?.bridgeDate, newerMessagePayload.createdAt)
     }
 
+    func test_messageDoesNotUpdateChannelsLastMessageAt_whenSystemMessageAndSkipIsEnabled() throws {
+        let userId: UserId = .unique
+        let messageId: MessageId = .unique
+        let channelId: ChannelId = .unique
+        // Save channel with some messages
+        let channelPayload: ChannelPayload = dummyPayload(
+            with: channelId,
+            numberOfMessages: 5,
+            channelConfig: .mock(skipLastMsgAtUpdateForSystemMsg: true)
+        )
+        let originalLastMessageAt: Date = channelPayload.channel.lastMessageAt ?? channelPayload.channel.createdAt
+        try database.writeSynchronously {
+            try $0.saveChannel(payload: channelPayload)
+        }
+
+        // Create a new message payload that's older than `channel.lastMessageAt`
+        let olderMessagePayload: MessagePayload = .dummy(
+            messageId: messageId,
+            authorUserId: userId,
+            createdAt: .unique(before: channelPayload.channel.lastMessageAt!)
+        )
+        assert(olderMessagePayload.createdAt < channelPayload.channel.lastMessageAt!)
+        // Save the message payload and check `channel.lastMessageAt` is not updated by older message
+        try database.writeSynchronously {
+            try $0.saveMessage(payload: olderMessagePayload, for: channelId, syncOwnReactions: true, cache: nil)
+        }
+        var channel = try XCTUnwrap(database.viewContext.channel(cid: channelId))
+        XCTAssertNearlySameDate(channel.lastMessageAt?.bridgeDate, originalLastMessageAt)
+
+        // Create a new message payload that's newer than `channel.lastMessageAt`
+        let newerMessagePayload: MessagePayload = .dummy(
+            type: .system,
+            messageId: messageId,
+            authorUserId: userId,
+            createdAt: .unique(after: channelPayload.channel.lastMessageAt!)
+        )
+        assert(newerMessagePayload.createdAt > channelPayload.channel.lastMessageAt!)
+
+        // Save the message payload and check `channel.lastMessageAt` is not updated.
+        try database.writeSynchronously {
+            try $0.saveMessage(payload: newerMessagePayload, for: channelId, syncOwnReactions: true, cache: nil)
+        }
+        channel = try XCTUnwrap(database.viewContext.channel(cid: channelId))
+        XCTAssertNotEqual(channel.lastMessageAt?.bridgeDate, newerMessagePayload.createdAt)
+    }
+
     func test_saveMultipleMessagesWithSameQuotedMessage() throws {
         // We check whether a message can be quoted by multiple other messages in the same channel
         // Here, secondMessage and thirdMessage quote the firstMessage

@@ -328,6 +328,7 @@ final class ChannelPayload_Tests: XCTestCase {
         XCTAssertEqual(config.urlEnrichmentEnabled, true)
         XCTAssertEqual(config.messageRetention, "infinite")
         XCTAssertEqual(config.maxMessageLength, 5000)
+        XCTAssertEqual(config.skipLastMsgAtUpdateForSystemMsg, true)
         XCTAssertEqual(
             config.commands,
             [.init(name: "giphy", description: "Post a random gif to the channel", set: "fun_set", args: "[text]")]

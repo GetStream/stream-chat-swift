@@ -408,10 +408,8 @@ final class DemoChatChannelListRouter: ChatChannelListRouter {
                 }
             }),
             .init(title: "Show Channel Info", handler: { [unowned self] _ in
-                self.rootViewController.presentAlert(
-                    title: "Channel Info",
-                    message: channelController.channel.debugDescription
-                )
+                let debugViewController = DebugObjectViewController(object: channelController.channel)
+                self.rootViewController.present(debugViewController, animated: true)
             }),
             .init(title: "Show Channel Members", handler: { [unowned self] _ in
                 guard let cid = channelController.channel?.cid else { return }
