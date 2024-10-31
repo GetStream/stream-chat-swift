@@ -14,6 +14,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## StreamChatUI
 ### ✅ Added
 - Open `shouldMarkThreadRead` and `shouldMarkChannelRead` [#3468](https://github.com/GetStream/stream-chat-swift/pull/3468)
+### 🐞 Fixed
+- Fix channel list state views not updating when the view is not visible [#3479](https://github.com/GetStream/stream-chat-swift/pull/3479)
 
 # [4.65.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.65.0)
 _October 18, 2024_

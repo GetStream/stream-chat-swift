@@ -410,12 +410,14 @@ open class ChatChannelListVC: _ViewController,
         _ controller: ChatChannelListController,
         didChangeChannels changes: [ListChange<ChatChannel>]
     ) {
+        handleStateChanges(controller.state)
+
         if skipChannelUpdates {
             skippedRendering = true
             return
         }
+
         reloadChannels()
-        handleStateChanges(controller.state)
     }
 
     // MARK: - DataControllerStateDelegate
