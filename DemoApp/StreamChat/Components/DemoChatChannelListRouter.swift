@@ -408,10 +408,8 @@ final class DemoChatChannelListRouter: ChatChannelListRouter {
                 }
             }),
             .init(title: "Show Channel Info", handler: { [unowned self] _ in
-                self.rootViewController.presentAlert(
-                    title: "Channel Info",
-                    message: channelController.channel.debugDescription
-                )
+                let debugViewController = DebugObjectViewController(object: channelController.channel)
+                self.rootViewController.present(debugViewController, animated: true)
             }),
             .init(title: "Show Channel Members", handler: { [unowned self] _ in
                 guard let cid = channelController.channel?.cid else { return }
@@ -480,6 +478,15 @@ final class DemoChatChannelListRouter: ChatChannelListRouter {
                         return
                     }
                     channelController.createNewMessage(text: message, skipPush: true)
+                }
+            }),
+            .init(title: "Send system message", isEnabled: canSendMessage, handler: { [unowned self] _ in
+                self.rootViewController.presentAlert(title: "Enter the message text", textFieldPlaceholder: "Send message") { message in
+                    guard let message = message, !message.isEmpty else {
+                        self.rootViewController.presentAlert(title: "Message is not valid")
+                        return
+                    }
+                    channelController.createSystemMessage(text: message)
                 }
             }),
             .init(title: "Send message without url enriching", isEnabled: canSendMessage, handler: { [unowned self] _ in

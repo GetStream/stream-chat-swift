@@ -230,6 +230,7 @@ class MessageUpdater: Worker {
                 mentionedUserIds: mentionedUserIds,
                 showReplyInChannel: showReplyInChannel,
                 isSilent: isSilent,
+                isSystem: false,
                 quotedMessageId: quotedMessageId,
                 createdAt: nil,
                 skipPush: skipPush,

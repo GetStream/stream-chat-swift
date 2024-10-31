@@ -252,6 +252,10 @@ struct MessageRequestBody: Encodable {
     let id: String
     let user: UserRequestBody
     let text: String
+
+    // Used at the moment only for creating a system a message.
+    let type: String?
+
     let command: String?
     let args: String?
     let parentId: String?
@@ -269,6 +273,7 @@ struct MessageRequestBody: Encodable {
         id: String,
         user: UserRequestBody,
         text: String,
+        type: String? = nil,
         command: String? = nil,
         args: String? = nil,
         parentId: String? = nil,
@@ -285,6 +290,7 @@ struct MessageRequestBody: Encodable {
         self.id = id
         self.user = user
         self.text = text
+        self.type = type
         self.command = command
         self.args = args
         self.parentId = parentId
@@ -312,6 +318,7 @@ struct MessageRequestBody: Encodable {
         try container.encodeIfPresent(pinExpires, forKey: .pinExpires)
         try container.encode(isSilent, forKey: .isSilent)
         try container.encodeIfPresent(pollId, forKey: .pollId)
+        try container.encodeIfPresent(type, forKey: .type)
 
         if !attachments.isEmpty {
             try container.encode(attachments, forKey: .attachments)

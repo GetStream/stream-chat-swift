@@ -138,6 +138,7 @@ final class MessageRequestBody_Tests: XCTestCase {
             id: .unique,
             user: .dummy(userId: .unique),
             text: .unique,
+            type: nil,
             command: .unique,
             args: .unique,
             parentId: .unique,
@@ -169,12 +170,35 @@ final class MessageRequestBody_Tests: XCTestCase {
         AssertJSONEqual(serializedJSON, expectedJSON)
     }
 
+    func test_isSerialized_whenSystemMessage() throws {
+        let payload: MessageRequestBody = .init(
+            id: .unique,
+            user: .dummy(userId: .unique),
+            text: "Announcement: The Death Star will be operational in 2 weeks.",
+            type: MessageType.system.rawValue,
+            extraData: [:]
+        )
+
+        let serializedJSON = try JSONEncoder.stream.encode(payload)
+        let expected: [String: Any] = [
+            "id": payload.id,
+            "text": payload.text,
+            "type": "system",
+            "silent": false,
+            "pinned": false,
+            "show_in_channel": false
+        ]
+        let expectedJSON = try JSONSerialization.data(withJSONObject: expected, options: [])
+        AssertJSONEqual(serializedJSON, expectedJSON)
+    }
+
     /// Check whether the message body is serialized when `isSilent` is not provided in `init`
     func test_isSerializedWithoutSilent() throws {
         let payload: MessageRequestBody = .init(
             id: .unique,
             user: .dummy(userId: .unique),
             text: .unique,
+            type: nil,
             command: .unique,
             args: .unique,
             parentId: .unique,

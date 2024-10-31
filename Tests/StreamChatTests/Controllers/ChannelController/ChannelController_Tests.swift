@@ -943,6 +943,7 @@ final class ChannelController_Tests: XCTestCase {
                 mentionedUserIds: [],
                 showReplyInChannel: false,
                 isSilent: false,
+                isSystem: false,
                 quotedMessageId: nil,
                 createdAt: oldMessageCreatedAt,
                 skipPush: false,
@@ -3435,6 +3436,35 @@ final class ChannelController_Tests: XCTestCase {
 
         let event = try XCTUnwrap(mockedEventNotificationCenter.mock_process.calls.first?.0.first)
         XCTAssertTrue(event is NewMessagePendingEvent)
+    }
+
+    // MARK: - Create system message
+
+    func test_createSystemMessage_callsChannelUpdater() {
+        let systemMessage = ChatMessage.mock(type: .system)
+
+        // New message values
+        let text: String = .unique
+
+        // Simulate `createNewMessage` calls and catch the completion
+        var completionCalled = false
+        controller.createSystemMessage(
+            text: text
+        ) { [callbackQueueID] result in
+            AssertTestQueue(withId: callbackQueueID)
+            AssertResultSuccess(result, systemMessage.id)
+            completionCalled = true
+        }
+
+        XCTAssertFalse(completionCalled)
+        XCTAssertEqual(env.channelUpdater?.createNewMessage_cid, channelId)
+        XCTAssertEqual(env.channelUpdater?.createNewMessage_text, text)
+        XCTAssertEqual(env.channelUpdater?.createNewMessage_isSystem, true)
+
+        // Simulate successful update
+        env.channelUpdater?.createNewMessage_completion?(.success(systemMessage))
+        // Release reference of completion so we can deallocate stuff
+        env.channelUpdater!.createNewMessage_completion = nil
     }
 
     // MARK: - Adding members

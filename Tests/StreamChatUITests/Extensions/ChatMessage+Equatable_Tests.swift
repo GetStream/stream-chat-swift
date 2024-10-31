@@ -131,6 +131,7 @@ final class ChatMessage_Equatable_Tests: XCTestCase {
                     text: changingText ? "edited-message-\(index)" : "message\(index)",
                     pinning: nil,
                     quotedMessageId: nil,
+                    isSystem: false,
                     skipPush: true,
                     skipEnrichUrl: true
                 )
