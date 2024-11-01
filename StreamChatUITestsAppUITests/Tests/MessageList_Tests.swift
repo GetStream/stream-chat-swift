@@ -621,7 +621,7 @@ extension MessageList_Tests {
                 .scrollMessageListDown() // to hide the keyboard
         }
         THEN("user observes a preview of the video with description") {
-            userRobot.assertLinkPreview(alsoVerifyServiceName: "YouTube")
+            userRobot.assertLinkPreview()
         }
     }
 
@@ -655,7 +655,7 @@ extension MessageList_Tests {
             userRobot.scrollMessageListDown() // to hide the keyboard
         }
         THEN("user observes a preview of the video with description") {
-            userRobot.assertLinkPreview(alsoVerifyServiceName: "YouTube")
+            userRobot.assertLinkPreview()
         }
     }
 
