@@ -44,7 +44,7 @@ jobs:
           - ios: 18.1
             xcode: 16.1
             os: macos-14
-            device: "iPhone 16 Pro"
+            device: "iPhone 15 Pro"
             setup_runtime: false
           - ios: 17.4
             xcode: 15.4
