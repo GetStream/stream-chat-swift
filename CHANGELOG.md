@@ -3,6 +3,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 # Upcoming
 
+### 🔄 Changed
+
+# [4.66.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.66.0)
+_November 05, 2024_
+
 ## StreamChat
 ### ✅ Added
 - Add support for system messages not updating `channel.lastMessageAt` [#3476](https://github.com/GetStream/stream-chat-swift/pull/3476)
