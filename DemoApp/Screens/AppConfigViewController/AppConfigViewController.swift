@@ -642,11 +642,11 @@ class AppConfigViewController: UITableViewController {
         alert.addAction(.init(title: "Enable", style: .default, handler: { _ in
             guard let appSecret = alert.textFields?[0].text else { return }
             guard let duration = alert.textFields?[1].text else { return }
-            guard let successfulRetries = alert.textFields?[2].text else { return }
+            guard let numberOfFailures = alert.textFields?[2].text else { return }
             self.demoAppConfig.tokenRefreshDetails = .init(
                 appSecret: appSecret,
                 expirationDuration: TimeInterval(duration) ?? 60,
-                numberOfFailures: Int(successfulRetries) ?? 0
+                numberOfFailures: Int(numberOfFailures) ?? 0
             )
         }))
 
