@@ -3,7 +3,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 # Upcoming
 
-### 🔄 Changed
+## StreamChat
+### 🐞 Fixed
+- Fix connection not resuming after guest user goes to background [#3483](https://github.com/GetStream/stream-chat-swift/pull/3483)
 
 # [4.66.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.66.0)
 _November 05, 2024_
