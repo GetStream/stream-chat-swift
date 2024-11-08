@@ -456,7 +456,6 @@ public class ChatClient {
     /// Disconnects the chat client from the chat servers. No further updates from the servers
     /// are received.
     public func disconnect(completion: @escaping () -> Void) {
-        connectionRecoveryHandler?.stop()
         connectionRepository.disconnect(source: .userInitiated) {
             log.info("The `ChatClient` has been disconnected.", subsystems: .webSocket)
             completion()
