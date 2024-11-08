@@ -17,16 +17,15 @@ extension StreamChatWrapper {
                 let generatedToken: Token? = _generateUserToken(
                     secret: refreshDetails.appSecret,
                     userID: initialToken.userId,
-                    expirationDate: Date().addingTimeInterval(refreshDetails.duration)
+                    expirationDate: Date().addingTimeInterval(refreshDetails.expirationDuration)
                 )
 
                 if generatedToken == nil {
                     log.error("Demo App Token Refreshing: Unable to generate token. Using initialToken instead.")
                 }
 
-                let numberOfSuccessfulRefreshes = refreshDetails.numberOfSuccessfulRefreshesBeforeFailing
-                let shouldNotFail = numberOfSuccessfulRefreshes == 0
-                if shouldNotFail || self.numberOfRefreshTokens >= numberOfSuccessfulRefreshes {
+                let shouldNotFail = refreshDetails.numberOfFailures == 0
+                if shouldNotFail || self.numberOfRefreshTokens >= refreshDetails.numberOfFailures {
                     print("Demo App Token Refreshing: New token generated successfully.")
                     let newToken = generatedToken ?? initialToken
                     completion(.success(newToken))

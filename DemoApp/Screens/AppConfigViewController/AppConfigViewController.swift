@@ -28,11 +28,10 @@ struct DemoAppConfig {
         /// The app secret from the dashboard.
         let appSecret: String
         /// The duration in seconds until the token is expired.
-        let duration: TimeInterval
+        let expirationDuration: TimeInterval
         /// In order to test token refresh fails, we can set a value of how
-        /// many token refresh will succeed before it starts failing.
-        /// By default it is 0. Which means it will always succeed.
-        let numberOfSuccessfulRefreshesBeforeFailing: Int
+        /// many token refresh will fail before a successful one.
+        let numberOfFailures: Int
     }
 }
 
@@ -317,8 +316,8 @@ class AppConfigViewController: UITableViewController {
                 self?.demoAppConfig.isLocationAttachmentsEnabled = newValue
             }
         case .tokenRefreshDetails:
-            if let tokenRefreshDuration = demoAppConfig.tokenRefreshDetails?.duration {
-                cell.detailTextLabel?.text = "Duration: \(tokenRefreshDuration)s"
+            if let tokenRefreshDuration = demoAppConfig.tokenRefreshDetails?.expirationDuration {
+                cell.detailTextLabel?.text = "Duration before expired: \(tokenRefreshDuration)s"
             } else {
                 cell.detailTextLabel?.text = "Disabled"
             }
@@ -626,16 +625,16 @@ class AppConfigViewController: UITableViewController {
             }
         }
         alert.addTextField { textField in
-            textField.placeholder = "Duration (Seconds)"
+            textField.placeholder = "Expiration duration (Seconds)"
             textField.keyboardType = .numberPad
-            if let duration = self.demoAppConfig.tokenRefreshDetails?.duration {
+            if let duration = self.demoAppConfig.tokenRefreshDetails?.expirationDuration {
                 textField.text = "\(duration)"
             }
         }
         alert.addTextField { textField in
-            textField.placeholder = "Number of Refreshes Before Failing"
+            textField.placeholder = "Number of refresh fails"
             textField.keyboardType = .numberPad
-            if let numberOfRefreshes = self.demoAppConfig.tokenRefreshDetails?.numberOfSuccessfulRefreshesBeforeFailing {
+            if let numberOfRefreshes = self.demoAppConfig.tokenRefreshDetails?.numberOfFailures {
                 textField.text = "\(numberOfRefreshes)"
             }
         }
@@ -643,11 +642,11 @@ class AppConfigViewController: UITableViewController {
         alert.addAction(.init(title: "Enable", style: .default, handler: { _ in
             guard let appSecret = alert.textFields?[0].text else { return }
             guard let duration = alert.textFields?[1].text else { return }
-            guard let successfulRetries = alert.textFields?[2].text else { return }
+            guard let numberOfFailures = alert.textFields?[2].text else { return }
             self.demoAppConfig.tokenRefreshDetails = .init(
                 appSecret: appSecret,
-                duration: TimeInterval(duration) ?? 60,
-                numberOfSuccessfulRefreshesBeforeFailing: Int(successfulRetries) ?? 0
+                expirationDuration: TimeInterval(duration) ?? 60,
+                numberOfFailures: Int(numberOfFailures) ?? 0
             )
         }))
 
