@@ -68,7 +68,7 @@ extension Filter where Scope == ChannelListFilterScope {
     ) -> NSPredicate? {
         switch op {
         case .and where mappedValue is [Filter<Scope>]:
-            guard let predicates = (mappedValue as? [Filter<Scope>])?.compactMap(\.predicate), predicates.count > 0 else {
+            guard let predicates = (mappedValue as? [Filter<Scope>])?.compactMap(\.predicate), !predicates.isEmpty else {
                 return nil
             }
 
@@ -77,14 +77,14 @@ extension Filter where Scope == ChannelListFilterScope {
             )
             return result
         case .or where mappedValue is [Filter<Scope>]:
-            guard let predicates = (mappedValue as? [Filter<Scope>])?.compactMap(\.predicate), predicates.count > 0 else {
+            guard let predicates = (mappedValue as? [Filter<Scope>])?.compactMap(\.predicate), !predicates.isEmpty else {
                 return nil
             }
             return NSCompoundPredicate(
                 orPredicateWithSubpredicates: predicates
             )
         case .nor where mappedValue is [Filter<Scope>]:
-            guard let predicates = (mappedValue as? [Filter<Scope>])?.compactMap(\.predicate), predicates.count > 0 else {
+            guard let predicates = (mappedValue as? [Filter<Scope>])?.compactMap(\.predicate), !predicates.isEmpty else {
                 return nil
             }
             return NSCompoundPredicate(
