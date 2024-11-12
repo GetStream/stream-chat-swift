@@ -63,6 +63,7 @@ public class ChatUser {
     /// The language code of the user.
     public let language: TranslationLanguage?
 
+    /// Any additional custom data associated with the user.
     public let extraData: [String: RawJSON]
 
     init(

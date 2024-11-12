@@ -45,6 +45,9 @@ public class ChatChannelMember: ChatUser {
     /// A boolean value that returns whether the user has muted the channel or not.
     public let notificationsMuted: Bool
 
+    /// Any additional custom data associated with the member of the channel.
+    public let memberExtraData: [String: RawJSON]
+
     init(
         id: String,
         name: String?,
@@ -69,7 +72,8 @@ public class ChatChannelMember: ChatUser {
         isBannedFromChannel: Bool,
         banExpiresAt: Date?,
         isShadowBannedFromChannel: Bool,
-        notificationsMuted: Bool
+        notificationsMuted: Bool,
+        memberExtraData: [String: RawJSON]
     ) {
         self.memberRole = memberRole
         self.memberCreatedAt = memberCreatedAt
@@ -81,6 +85,7 @@ public class ChatChannelMember: ChatUser {
         self.isShadowBannedFromChannel = isShadowBannedFromChannel
         self.banExpiresAt = banExpiresAt
         self.notificationsMuted = notificationsMuted
+        self.memberExtraData = memberExtraData
 
         super.init(
             id: id,

@@ -73,6 +73,6 @@ class MembersViewController: UITableViewController, ChatChannelMemberListControl
 
 extension ChatChannelMember {
     var isPremium: Bool {
-        extraData["is_premium"]?.boolValue == true
+        memberExtraData["is_premium"]?.boolValue == true
     }
 }
