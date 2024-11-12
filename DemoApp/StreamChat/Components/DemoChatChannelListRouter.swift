@@ -457,6 +457,15 @@ final class DemoChatChannelListRouter: ChatChannelListRouter {
                     membersController: client.memberListController(query: .init(cid: cid, pageSize: 105))
                 ), animated: true)
             }),
+            .init(title: "Show Channel Premium Members", handler: { [unowned self] _ in
+                guard let cid = channelController.channel?.cid else { return }
+                let client = channelController.client
+                self.rootViewController.present(MembersViewController(
+                    membersController: client.memberListController(
+                        query: .init(cid: cid, filter: .equal("is_premium", to: true), pageSize: 105)
+                    )
+                ), animated: true)
+            }),
             .init(title: "Show Channel Moderators", handler: { [unowned self] _ in
                 guard let cid = channelController.channel?.cid else { return }
                 let client = channelController.client
