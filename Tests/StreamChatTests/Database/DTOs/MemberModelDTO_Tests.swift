@@ -50,7 +50,8 @@ final class MemberModelDTO_Tests: XCTestCase {
             banExpiresAt: .unique,
             isBanned: true,
             isShadowBanned: true,
-            notificationsMuted: true
+            notificationsMuted: true,
+            extraData: ["is_premium": .bool(true)]
         )
 
         // Asynchronously save the payload to the db
@@ -82,6 +83,7 @@ final class MemberModelDTO_Tests: XCTestCase {
             Assert.willBeEqual(payload.user!.extraData, loadedMember?.extraData)
             Assert.willBeEqual(Set(payload.user!.teams), loadedMember?.teams)
             Assert.willBeEqual(payload.user!.language!, loadedMember?.language?.languageCode)
+            Assert.willBeEqual(true, loadedMember?.memberExtraData["is_premium"]?.boolValue)
         }
     }
 

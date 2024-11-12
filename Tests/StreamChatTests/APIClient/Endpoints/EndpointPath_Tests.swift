@@ -70,6 +70,16 @@ final class EndpointPathTests: XCTestCase {
         XCTAssertFalse(EndpointPath.unread.shouldBeQueuedOffline)
     }
 
+    func test_partialMemberUpdate_shouldNOTBeQueuedOffline() {
+        XCTAssertFalse(EndpointPath.partialMemberUpdate(userId: "1", cid: .unique).shouldBeQueuedOffline)
+    }
+
+    func test_partialMemberUpdate_value() {
+        let cid = ChannelId.unique
+        let path = EndpointPath.partialMemberUpdate(userId: "1", cid: cid).value
+        XCTAssertEqual(path, "channels/\(cid.apiPath)/member/1")
+    }
+
     // MARK: - Codable
 
     func test_isProperlyEncodedAndDecoded() throws {
@@ -78,6 +88,7 @@ final class EndpointPathTests: XCTestCase {
         assertResultEncodingAndDecoding(.users)
         assertResultEncodingAndDecoding(.guest)
         assertResultEncodingAndDecoding(.members)
+        assertResultEncodingAndDecoding(.partialMemberUpdate(userId: "1", cid: .init(type: .messaging, id: "2")))
         assertResultEncodingAndDecoding(.search)
         assertResultEncodingAndDecoding(.devices)
         assertResultEncodingAndDecoding(.threads)

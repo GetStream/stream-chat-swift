@@ -209,10 +209,10 @@ final class Chat_Tests: XCTestCase {
     func test_addMembers_whenChannelUpdaterSucceeds_thenAddMembersSucceeds() async throws {
         for hideHistory in [true, false] {
             env.channelUpdaterMock.addMembers_completion_result = .success(())
-            let memberIds: [UserId] = [.unique, .unique]
-            try await chat.addMembers(memberIds, systemMessage: "My system message", hideHistory: hideHistory)
+            let members: [MemberInfo] = [.init(userId: .unique, extraData: nil), .init(userId: .unique, extraData: nil)]
+            try await chat.addMembers(members, systemMessage: "My system message", hideHistory: hideHistory)
             XCTAssertEqual(channelId, env.channelUpdaterMock.addMembers_cid)
-            XCTAssertEqual(memberIds.sorted(), env.channelUpdaterMock.addMembers_userIds?.sorted())
+            XCTAssertEqual(members.map(\.userId).sorted(), env.channelUpdaterMock.addMembers_userIds?.sorted())
             XCTAssertEqual("My system message", env.channelUpdaterMock.addMembers_message)
             XCTAssertEqual(hideHistory, env.channelUpdaterMock.addMembers_hideHistory)
             XCTAssertEqual(currentUserId, env.channelUpdaterMock.addMembers_currentUserId)

@@ -299,7 +299,7 @@ final class ChannelEndpoints_Tests: XCTestCase {
     func test_addMembers_buildsCorrectly() {
         let cid = ChannelId.unique
         let userIds: Set<UserId> = Set([UserId.unique])
-        let members = userIds.map { MemberInfoRequest(userId: $0, extraData: nil) }
+        let members = userIds.map { MemberInfoRequest(userId: $0, extraData: ["is_premium": true]) }
 
         let expectedEndpoint = Endpoint<EmptyResponse>(
             path: .channelUpdate(cid.apiPath),

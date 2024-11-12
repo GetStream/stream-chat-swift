@@ -483,6 +483,67 @@ final class MemberController_Tests: XCTestCase {
         XCTAssertEqual(env.memberUpdater!.unbanMember_userId, controller.userId)
         XCTAssertEqual(env.memberUpdater!.unbanMember_cid, controller.cid)
     }
+
+    // MARK: - Partial Update
+
+    func test_partialUpdate_propagatesError() {
+        let expectedError = TestError()
+        
+        // Simulate `partialUpdate` call and catch the completion
+        var receivedResult: Result<ChatChannelMember, Error>?
+        controller.partialUpdate(extraData: ["key": .string("value")], unsetProperties: ["field"]) { [callbackQueueID] result in
+            AssertTestQueue(withId: callbackQueueID)
+            receivedResult = result
+        }
+        
+        // Simulate network response with error
+        env.memberUpdater!.partialUpdate_completion?(.failure(expectedError))
+        
+        // Assert error is propagated
+        AssertAsync.willBeEqual(receivedResult?.error as? TestError, expectedError)
+    }
+
+    func test_partialUpdate_propagatesSuccess() {
+        let expectedMember: ChatChannelMember = .mock(id: .unique)
+
+        // Simulate `partialUpdate` call and catch the completion
+        var receivedResult: Result<ChatChannelMember, Error>?
+        controller.partialUpdate(extraData: ["key": .string("value")], unsetProperties: ["field"]) { [callbackQueueID] result in
+            AssertTestQueue(withId: callbackQueueID)
+            receivedResult = result
+        }
+        
+        // Keep a weak ref so we can check if it's actually deallocated
+        weak var weakController = controller
+        
+        // (Try to) deallocate the controller
+        // by not keeping any references to it
+        controller = nil
+        
+        // Simulate successful network response
+        env.memberUpdater!.partialUpdate_completion?(.success(expectedMember))
+        // Release reference of completion so we can deallocate stuff
+        env.memberUpdater!.partialUpdate_completion = nil
+        
+        // Assert success is propagated
+        AssertAsync.willBeEqual(receivedResult?.value?.id, expectedMember.id)
+        // `weakController` should be deallocated too
+        AssertAsync.canBeReleased(&weakController)
+    }
+
+    func test_partialUpdate_callsMemberUpdater_withCorrectValues() {
+        let extraData: [String: RawJSON] = ["key": .string("value")]
+        let unsetProperties = ["field1", "field2"]
+        
+        // Simulate `partialUpdate` call
+        controller.partialUpdate(extraData: extraData, unsetProperties: unsetProperties)
+        
+        // Assert updater is called with correct values
+        XCTAssertEqual(env.memberUpdater!.partialUpdate_userId, controller.userId)
+        XCTAssertEqual(env.memberUpdater!.partialUpdate_cid, controller.cid)
+        XCTAssertEqual(env.memberUpdater!.partialUpdate_extraData, extraData)
+        XCTAssertEqual(env.memberUpdater!.partialUpdate_unset, unsetProperties)
+    }
 }
 
 private class TestEnvironment {
