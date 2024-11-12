@@ -4,8 +4,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 # Upcoming
 
 ## StreamChat
+### ✅ Added
+- Add support for channel member extra data [#3487](https://github.com/GetStream/stream-chat-swift/pull/3487)
+- Add `ChatChannelMemberController.partialUpdate(extraData:unsetProperties:)` [#3487](https://github.com/GetStream/stream-chat-swift/pull/3487)
+- Add `ChatChannelController.addMembers(_ members: [MemberInfo])` [#3487](https://github.com/GetStream/stream-chat-swift/pull/3487)
+- Exposes `ChatChannelMember.memberExtraData` property [#3487](https://github.com/GetStream/stream-chat-swift/pull/3487)
 ### 🐞 Fixed
 - Fix connection not resuming after guest user goes to background [#3483](https://github.com/GetStream/stream-chat-swift/pull/3483)
+### 🔄 Changed
+- Deprecates `ChatChannelController.addMembers(userIds: [UserId])` [#3487](https://github.com/GetStream/stream-chat-swift/pull/3487)
 
 # [4.66.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.66.0)
 _November 05, 2024_
