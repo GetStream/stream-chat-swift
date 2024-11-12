@@ -31,7 +31,8 @@ extension ChatChannelMember {
             isBannedFromChannel: true,
             banExpiresAt: .unique,
             isShadowBannedFromChannel: true, 
-            notificationsMuted: false
+            notificationsMuted: false,
+            memberExtraData: [:]
         )
     }
 }

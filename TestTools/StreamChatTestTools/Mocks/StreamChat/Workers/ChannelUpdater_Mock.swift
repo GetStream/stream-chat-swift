@@ -48,6 +48,7 @@ final class ChannelUpdater_Mock: ChannelUpdater {
     @Atomic var addMembers_currentUserId: UserId?
     @Atomic var addMembers_cid: ChannelId?
     @Atomic var addMembers_userIds: Set<UserId>?
+    @Atomic var addMembers_memberInfos: [MemberInfo]?
     @Atomic var addMembers_message: String?
     @Atomic var addMembers_hideHistory: Bool?
     @Atomic var addMembers_completion: ((Error?) -> Void)?
@@ -376,20 +377,39 @@ final class ChannelUpdater_Mock: ChannelUpdater {
     override func addMembers(
         currentUserId: UserId?,
         cid: ChannelId,
-        userIds: Set<UserId>,
+        members: [MemberInfo],
         message: String?,
         hideHistory: Bool,
         completion: ((Error?) -> Void)? = nil
     ) {
         addMembers_currentUserId = currentUserId
         addMembers_cid = cid
-        addMembers_userIds = userIds
+        addMembers_userIds = Set(members.map(\.userId))
+        addMembers_memberInfos = members
         addMembers_message = message
         addMembers_hideHistory = hideHistory
         addMembers_completion = completion
         addMembers_completion_result?.invoke(with: completion)
     }
-    
+
+    func addMembers(
+        currentUserId: UserId?,
+        cid: ChannelId,
+        userIds: Set<UserId>,
+        message: String?,
+        hideHistory: Bool,
+        completion: ((Error?) -> Void)? = nil
+    ) {
+        self.addMembers(
+            currentUserId: currentUserId,
+            cid: cid,
+            members: userIds.map { MemberInfo(userId: $0, extraData: nil) },
+            message: message,
+            hideHistory: hideHistory,
+            completion: completion
+        )
+    }
+
     override func inviteMembers(
         cid: ChannelId,
         userIds: Set<UserId>,
