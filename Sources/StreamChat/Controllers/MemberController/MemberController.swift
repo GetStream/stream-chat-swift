@@ -161,7 +161,7 @@ public extension ChatChannelMemberController {
     ///   - unsetProperties: Properties from the member to be cleared/unset.
     func partialUpdate(
         extraData: [String: RawJSON]?,
-        unsetProperties: [String]?,
+        unsetProperties: [String]? = nil,
         completion: ((Result<ChatChannelMember, Error>) -> Void)? = nil
     ) {
         memberUpdater.partialUpdate(
