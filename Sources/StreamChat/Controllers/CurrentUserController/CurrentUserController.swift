@@ -83,6 +83,9 @@ public class CurrentChatUserController: DataController, DelegateCallable, DataSt
         client.apiClient
     )
 
+    /// The worker used to update the current user member for a given channel.
+    private lazy var currentMemberUpdater = createMemberUpdater()
+
     /// Creates a new `CurrentUserControllerGeneric`.
     ///
     /// - Parameters:
@@ -195,6 +198,38 @@ public extension CurrentChatUserController {
         }
     }
 
+    /// Updates the current user member data in a specific channel.
+    ///
+    /// **Note**: If you want to observe member changes in real-time, use the `ChatClient.memberController()`.
+    ///
+    /// - Parameters:
+    ///   - extraData: The additional data to be added to the member object.
+    ///   - unsetProperties: The custom properties to be removed from the member object.
+    ///   - channelId: The channel where the member data is updated.
+    ///   - completion: Returns the updated member object or an error if the update fails.
+    func updateMemberData(
+        _ extraData: [String: RawJSON],
+        unsetProperties: [String]? = nil,
+        in channelId: ChannelId,
+        completion: ((Result<ChatChannelMember, Error>) -> Void)? = nil
+    ) {
+        guard let currentUserId = client.currentUserId else {
+            completion?(.failure(ClientError.CurrentUserDoesNotExist()))
+            return
+        }
+
+        currentMemberUpdater.partialUpdate(
+            userId: currentUserId,
+            in: channelId,
+            extraData: extraData,
+            unset: unsetProperties
+        ) { result in
+            self.callback {
+                completion?(result)
+            }
+        }
+    }
+
     /// Fetches the most updated devices and syncs with the local database.
     /// - Parameter completion: Called when the devices are synced successfully, or with error.
     func synchronizeDevices(completion: ((Error?) -> Void)? = nil) {
@@ -297,6 +332,10 @@ public extension CurrentChatUserController {
                 completion(result)
             }
         }
+    }
+
+    private func createMemberUpdater() -> ChannelMemberUpdater {
+        .init(database: client.databaseContainer, apiClient: client.apiClient)
     }
 }
 
