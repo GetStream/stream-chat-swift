@@ -834,7 +834,7 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
     /// Add users to the channel as members with additional data.
     ///
     /// - Parameters:
-    ///   - members: An array of `AddMemberInput` objects, each representing a member to be added to the channel.
+    ///   - members: An array of `MemberInfo` objects, each representing a member to be added to the channel.
     ///   - hideHistory: Hide the history of the channel to the added member. By default, it is false.
     ///   - message: Optional system message sent when adding members.
     ///   - completion: The completion. Will be called on a **callbackQueue** when the network request is finished.
