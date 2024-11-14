@@ -156,7 +156,7 @@ public struct MemberInfo {
     public var userId: UserId
     public var extraData: [String: RawJSON]?
 
-    public init(userId: UserId, extraData: [String: RawJSON]?) {
+    public init(userId: UserId, extraData: [String: RawJSON]? = nil) {
         self.userId = userId
         self.extraData = extraData
     }
