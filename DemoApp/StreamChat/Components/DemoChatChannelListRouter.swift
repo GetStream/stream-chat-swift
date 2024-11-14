@@ -361,7 +361,7 @@ final class DemoChatChannelListRouter: ChatChannelListRouter {
                 } ?? []
                 self.rootViewController.presentAlert(title: "Select a member", actions: actions)
             }),
-            .init(title: "Set current member as premium", isVisible: isPremiumMemberFeatureEnabled, isEnabled: canUpdateChannelMembers, handler: { [unowned self] _ in
+            .init(title: "Set current member as premium", isVisible: isPremiumMemberFeatureEnabled, handler: { [unowned self] _ in
                 channelController.client.currentUserController()
                     .updateMemberData(["is_premium": true], in: cid) { [unowned self] result in
                         do {
