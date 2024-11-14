@@ -12,6 +12,10 @@ class MembersViewController: UITableViewController, ChatChannelMemberListControl
     let membersController: ChatChannelMemberListController
     private var members: [ChatChannelMember] = []
 
+    var isPremiumMemberFeatureEnabled: Bool {
+        AppConfig.shared.demoAppConfig.isPremiumMemberFeatureEnabled
+    }
+
     init(membersController: ChatChannelMemberListController) {
         self.membersController = membersController
         super.init(style: .insetGrouped)
@@ -56,7 +60,7 @@ class MembersViewController: UITableViewController, ChatChannelMemberListControl
         }
         cell.nameLabel.text = member.name ?? member.id
         cell.removeButton.isHidden = true
-        cell.premiumImageView.isHidden = member.isPremium == false
+        cell.premiumImageView.isHidden = member.isPremium == false || !isPremiumMemberFeatureEnabled
         return cell
     }
 
