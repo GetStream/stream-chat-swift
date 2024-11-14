@@ -225,7 +225,6 @@ public class Chat {
     ///   - hideHistory: If true, the previous history is available for added members, otherwise they do not see the history. The default value is false.
     ///
     /// - Throws: An error while communicating with the Stream API.
-    @available(*, deprecated, message: "A new addMembers function is now available that supports adding MemberInfo instead of only the user id.")
     public func addMembers(
         _ members: [UserId],
         systemMessage: String? = nil,

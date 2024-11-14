@@ -873,7 +873,6 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
     ///   - message: Optional system message sent when adding members.
     ///   - completion: The completion. Will be called on a **callbackQueue** when the network request is finished.
     ///                 If request fails, the completion will be called with an error.
-    @available(*, deprecated, message: "A new addMembers function is now available that supports adding MemberInfo instead of only the user id.")
     public func addMembers(
         userIds: Set<UserId>,
         hideHistory: Bool = false,
