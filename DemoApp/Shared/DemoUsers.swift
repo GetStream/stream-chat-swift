@@ -5,13 +5,23 @@
 import Foundation
 import StreamChat
 
-let apiKeyString = ProcessInfo.processInfo.environment["CUSTOM_API_KEY"] ?? DemoApiKeys.frankfurtC1
+var apiKeyString = ProcessInfo.processInfo.environment["CUSTOM_API_KEY"] ?? DemoApiKeys.frankfurtC1.rawValue
 let applicationGroupIdentifier = "group.io.getstream.iOS.ChatDemoApp"
 
 enum DemoUserType {
     case credentials(UserCredentials)
     case anonymous
     case guest(String)
+    case custom(UserCredentials?)
+
+    var userCredentials: UserCredentials? {
+        switch self {
+        case .credentials(let credentials): return credentials
+        case .anonymous: return nil
+        case .guest: return nil
+        case .custom(let credentials): return credentials
+        }
+    }
 }
 
 struct UserCredentials {
@@ -20,6 +30,23 @@ struct UserCredentials {
     let avatarURL: URL
     let token: Token
     let birthLand: String
+    let customApiKey: String?
+
+    init(
+        id: String,
+        name: String,
+        avatarURL: URL,
+        token: Token,
+        birthLand: String,
+        customApiKey: String? = nil
+    ) {
+        self.id = id
+        self.name = name
+        self.avatarURL = avatarURL
+        self.token = token
+        self.birthLand = birthLand
+        self.customApiKey = customApiKey
+    }
 
     var userInfo: UserInfo {
         .init(
@@ -34,164 +61,225 @@ struct UserCredentials {
 // MARK: - Built-in users
 
 extension UserCredentials {
-    static let builtInUsers: [UserCredentials] = [
-        .luke,
-        .leia,
-        .hanSolo,
-        .lando,
-        .chewbacca,
-        .c3po,
-        .r2d2,
-        .anakin,
-        .obiwan,
-        .padme,
-        .quiGonJinn,
-        .maceWindu,
-        .jarJarBinks,
-        .darthMaul,
-        .countDooku,
-        .generalGrievous
-    ]
+    static var builtInUsers: [UserCredentials] {
+        [
+            luke,
+            leia,
+            hanSolo,
+            lando,
+            chewbacca,
+            c3po,
+            r2d2,
+            anakin,
+            obiwan,
+            padme,
+            quiGonJinn,
+            maceWindu,
+            jarJarBinks,
+            darthMaul,
+            countDooku,
+            generalGrievous
+        ]
+    }
 
     static func builtInUsersByID(id: String) -> UserCredentials? {
         builtInUsers.first { $0.id == id }
     }
 
-    static let luke = Self(
-        id: "luke_skywalker",
-        name: "Luke Skywalker",
-        avatarURL: URL(string: "https://vignette.wikia.nocookie.net/starwars/images/2/20/LukeTLJ.jpg")!,
-        token: DemoUserTokens.luke,
-        birthLand: "Tatooine"
-    )
+    static var luke: Self {
+        .init(
+            id: "luke_skywalker",
+            name: "Luke Skywalker",
+            avatarURL: URL(string: "https://vignette.wikia.nocookie.net/starwars/images/2/20/LukeTLJ.jpg")!,
+            token: DemoUserTokens.luke,
+            birthLand: "Tatooine"
+        )
+    }
 
-    static let leia = Self(
-        id: "leia_organa",
-        name: "Leia Organa",
-        avatarURL: URL(string: "https://vignette.wikia.nocookie.net/starwars/images/f/fc/Leia_Organa_TLJ.png")!,
-        token: DemoUserTokens.leia,
-        birthLand: "Polis Massa"
-    )
+    static var leia: Self {
+        .init(
+            id: "leia_organa",
+            name: "Leia Organa",
+            avatarURL: URL(string: "https://vignette.wikia.nocookie.net/starwars/images/f/fc/Leia_Organa_TLJ.png")!,
+            token: DemoUserTokens.leia,
+            birthLand: "Polis Massa"
+        )
+    }
 
-    static let hanSolo = Self(
-        id: "han_solo",
-        name: "Han Solo",
-        avatarURL: URL(string: "https://vignette.wikia.nocookie.net/starwars/images/e/e2/TFAHanSolo.png")!,
-        token: DemoUserTokens.hanSolo,
-        birthLand: "Corellia"
-    )
+    static var hanSolo: Self {
+        .init(
+            id: "han_solo",
+            name: "Han Solo",
+            avatarURL: URL(string: "https://vignette.wikia.nocookie.net/starwars/images/e/e2/TFAHanSolo.png")!,
+            token: DemoUserTokens.hanSolo,
+            birthLand: "Corellia"
+        )
+    }
 
-    static let lando = Self(
-        id: "lando_calrissian",
-        name: "Lando Calrissian",
-        avatarURL: URL(string: "https://vignette.wikia.nocookie.net/starwars/images/8/8f/Lando_ROTJ.png")!,
-        token: DemoUserTokens.lando,
-        birthLand: "Socorro"
-    )
+    static var lando: Self {
+        .init(
+            id: "lando_calrissian",
+            name: "Lando Calrissian",
+            avatarURL: URL(string: "https://vignette.wikia.nocookie.net/starwars/images/8/8f/Lando_ROTJ.png")!,
+            token: DemoUserTokens.lando,
+            birthLand: "Socorro"
+        )
+    }
 
-    static let chewbacca = Self(
-        id: "chewbacca",
-        name: "Chewbacca",
-        avatarURL: URL(string: "https://vignette.wikia.nocookie.net/starwars/images/4/48/Chewbacca_TLJ.png")!,
-        token: DemoUserTokens.chewbacca,
-        birthLand: "Kashyyyk"
-    )
+    static var chewbacca: Self {
+        .init(
+            id: "chewbacca",
+            name: "Chewbacca",
+            avatarURL: URL(string: "https://vignette.wikia.nocookie.net/starwars/images/4/48/Chewbacca_TLJ.png")!,
+            token: DemoUserTokens.chewbacca,
+            birthLand: "Kashyyyk"
+        )
+    }
 
-    static let c3po = Self(
-        id: "c-3po",
-        name: "C-3PO",
-        avatarURL: URL(string: "https://vignette.wikia.nocookie.net/starwars/images/3/3f/C-3PO_TLJ_Card_Trader_Award_Card.png")!,
-        token: DemoUserTokens.c3po,
-        birthLand: "Affa"
-    )
+    static var c3po: Self {
+        .init(
+            id: "c-3po",
+            name: "C-3PO",
+            avatarURL: URL(string: "https://vignette.wikia.nocookie.net/starwars/images/3/3f/C-3PO_TLJ_Card_Trader_Award_Card.png")!,
+            token: DemoUserTokens.c3po,
+            birthLand: "Affa"
+        )
+    }
 
-    static let r2d2 = Self(
-        id: "r2-d2",
-        name: "R2-D2",
-        avatarURL: URL(string: "https://vignette.wikia.nocookie.net/starwars/images/e/eb/ArtooTFA2-Fathead.png")!,
-        token: DemoUserTokens.r2d2,
-        birthLand: "Naboo"
-    )
+    static var r2d2: Self {
+        .init(
+            id: "r2-d2",
+            name: "R2-D2",
+            avatarURL: URL(string: "https://vignette.wikia.nocookie.net/starwars/images/e/eb/ArtooTFA2-Fathead.png")!,
+            token: DemoUserTokens.r2d2,
+            birthLand: "Naboo"
+        )
+    }
 
-    static let anakin = Self(
-        id: "anakin_skywalker",
-        name: "Anakin Skywalker",
-        avatarURL: URL(string: "https://vignette.wikia.nocookie.net/starwars/images/6/6f/Anakin_Skywalker_RotS.png")!,
-        token: DemoUserTokens.anakin,
-        birthLand: "Tatooine"
-    )
+    static var anakin: Self {
+        .init(
+            id: "anakin_skywalker",
+            name: "Anakin Skywalker",
+            avatarURL: URL(string: "https://vignette.wikia.nocookie.net/starwars/images/6/6f/Anakin_Skywalker_RotS.png")!,
+            token: DemoUserTokens.anakin,
+            birthLand: "Tatooine"
+        )
+    }
 
-    static let obiwan = Self(
-        id: "obi-wan_kenobi",
-        name: "Obi-Wan Kenobi",
-        avatarURL: URL(string: "https://vignette.wikia.nocookie.net/starwars/images/4/4e/ObiWanHS-SWE.jpg")!,
-        token: DemoUserTokens.obiwan,
-        birthLand: "Stewjon"
-    )
+    static var obiwan: Self {
+        .init(
+            id: "obi-wan_kenobi",
+            name: "Obi-Wan Kenobi",
+            avatarURL: URL(string: "https://vignette.wikia.nocookie.net/starwars/images/4/4e/ObiWanHS-SWE.jpg")!,
+            token: DemoUserTokens.obiwan,
+            birthLand: "Stewjon"
+        )
+    }
 
-    static let padme = Self(
-        id: "padme_amidala",
-        name: "Padmé Amidala",
-        avatarURL: URL(string: "https://vignette.wikia.nocookie.net/starwars/images/b/b2/Padmegreenscrshot.jpg")!,
-        token: DemoUserTokens.padme,
-        birthLand: "Naboo"
-    )
+    static var padme: Self {
+        .init(
+            id: "padme_amidala",
+            name: "Padmé Amidala",
+            avatarURL: URL(string: "https://vignette.wikia.nocookie.net/starwars/images/b/b2/Padmegreenscrshot.jpg")!,
+            token: DemoUserTokens.padme,
+            birthLand: "Naboo"
+        )
+    }
 
-    static let quiGonJinn = Self(
-        id: "qui-gon_jinn",
-        name: "Qui-Gon Jinn",
-        avatarURL: URL(string: "https://vignette.wikia.nocookie.net/starwars/images/f/f6/Qui-Gon_Jinn_Headshot_TPM.jpg")!,
-        token: DemoUserTokens.quiGonJinn,
-        birthLand: "Coruscant"
-    )
+    static var quiGonJinn: Self {
+        .init(
+            id: "qui-gon_jinn",
+            name: "Qui-Gon Jinn",
+            avatarURL: URL(string: "https://vignette.wikia.nocookie.net/starwars/images/f/f6/Qui-Gon_Jinn_Headshot_TPM.jpg")!,
+            token: DemoUserTokens.quiGonJinn,
+            birthLand: "Coruscant"
+        )
+    }
 
-    static let maceWindu = Self(
-        id: "mace_windu",
-        name: "Mace Windu",
-        avatarURL: URL(string: "https://vignette.wikia.nocookie.net/starwars/images/5/58/Mace_ROTS.png")!,
-        token: DemoUserTokens.maceWindu,
-        birthLand: "Haruun Kal"
-    )
+    static var maceWindu: Self {
+        .init(
+            id: "mace_windu",
+            name: "Mace Windu",
+            avatarURL: URL(string: "https://vignette.wikia.nocookie.net/starwars/images/5/58/Mace_ROTS.png")!,
+            token: DemoUserTokens.maceWindu,
+            birthLand: "Haruun Kal"
+        )
+    }
 
-    static let jarJarBinks = Self(
-        id: "jar_jar_binks",
-        name: "Jar Jar Binks",
-        avatarURL: URL(string: "https://vignette.wikia.nocookie.net/starwars/images/d/d2/Jar_Jar_aotc.jpg")!,
-        token: DemoUserTokens.jarJarBinks,
-        birthLand: "Naboo"
-    )
+    static var jarJarBinks: Self {
+        .init(
+            id: "jar_jar_binks",
+            name: "Jar Jar Binks",
+            avatarURL: URL(string: "https://vignette.wikia.nocookie.net/starwars/images/d/d2/Jar_Jar_aotc.jpg")!,
+            token: DemoUserTokens.jarJarBinks,
+            birthLand: "Naboo"
+        )
+    }
 
-    static let darthMaul = Self(
-        id: "darth_maul",
-        name: "Darth Maul",
-        avatarURL: URL(string: "https://vignette.wikia.nocookie.net/starwars/images/5/50/Darth_Maul_profile.png")!,
-        token: DemoUserTokens.darthMaul,
-        birthLand: "Dathomir"
-    )
+    static var darthMaul: Self {
+        .init(
+            id: "darth_maul",
+            name: "Darth Maul",
+            avatarURL: URL(string: "https://vignette.wikia.nocookie.net/starwars/images/5/50/Darth_Maul_profile.png")!,
+            token: DemoUserTokens.darthMaul,
+            birthLand: "Dathomir"
+        )
+    }
 
-    static let countDooku = Self(
-        id: "count_dooku",
-        name: "Count Dooku",
-        avatarURL: URL(string: "https://vignette.wikia.nocookie.net/starwars/images/b/b8/Dooku_Headshot.jpg")!,
-        token: DemoUserTokens.countDooku,
-        birthLand: "Serenno"
-    )
+    static var countDooku: Self {
+        .init(
+            id: "count_dooku",
+            name: "Count Dooku",
+            avatarURL: URL(string: "https://vignette.wikia.nocookie.net/starwars/images/b/b8/Dooku_Headshot.jpg")!,
+            token: DemoUserTokens.countDooku,
+            birthLand: "Serenno"
+        )
+    }
 
-    static let generalGrievous = Self(
-        id: "general_grievous",
-        name: "General Grievous",
-        avatarURL: URL(string: "https://vignette.wikia.nocookie.net/starwars/images/d/de/Grievoushead.jpg")!,
-        token: DemoUserTokens.generalGrievous,
-        birthLand: "Qymaen jai Sheelal"
-    )
+    static var generalGrievous: Self {
+        .init(
+            id: "general_grievous",
+            name: "General Grievous",
+            avatarURL: URL(string: "https://vignette.wikia.nocookie.net/starwars/images/d/de/Grievoushead.jpg")!,
+            token: DemoUserTokens.generalGrievous,
+            birthLand: "Qymaen jai Sheelal"
+        )
+    }
 }
 
 // MARK: - Tokens for different Api Keys
 
-enum DemoApiKeys {
-    static let frankfurtC1 = "8br4watad788" // UIKit default
-    static let frankfurtC2 = "pd67s34fzpgw"
-    static let usEastC6 = "zcgvnykxsfm8" // SwiftUI default
+struct DemoApiKeys: RawRepresentable, Equatable, Hashable {
+    var rawValue: String
+
+    init(rawValue: String) {
+        self.rawValue = rawValue
+    }
+
+    static let frankfurtC1: DemoApiKeys = .init(rawValue: "8br4watad788") // UIKit default
+    static let frankfurtC2: DemoApiKeys = .init(rawValue: "pd67s34fzpgw")
+    static let usEastC6: DemoApiKeys = .init(rawValue: "zcgvnykxsfm8") // SwiftUI default
+
+    var appName: String? {
+        switch self {
+        case .frankfurtC1: return "UIKit"
+        case .frankfurtC2: return nil
+        case .usEastC6: return "SwiftUI"
+        default: return nil
+        }
+    }
+
+    static func ~= (pattern: DemoApiKeys, value: DemoApiKeys) -> Bool {
+        value.rawValue == pattern.rawValue
+    }
+
+    static func ~= (pattern: String, value: DemoApiKeys) -> Bool {
+        value.rawValue == pattern
+    }
+
+    static func ~= (pattern: DemoApiKeys, value: String) -> Bool {
+        value == pattern.rawValue
+    }
 }
 
 enum DemoUserTokens {
