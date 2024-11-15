@@ -873,9 +873,16 @@ extension NSManagedObjectContext: MessageDatabaseSession {
         dto.translations = payload.translations?.mapKeys { $0.languageCode }
         dto.originalLanguage = payload.originalLanguage
 
-        if let moderationDetailsPayload = payload.moderationDetails {
+        if let moderationPayload = payload.moderation {
+            dto.moderationDetails = MessageModerationDetailsDTO.create(
+                from: moderationPayload,
+                isV1: false,
+                context: self
+            )
+        } else if let moderationDetailsPayload = payload.moderationDetails {
             dto.moderationDetails = MessageModerationDetailsDTO.create(
                 from: moderationDetailsPayload,
+                isV1: true,
                 context: self
             )
         } else {
