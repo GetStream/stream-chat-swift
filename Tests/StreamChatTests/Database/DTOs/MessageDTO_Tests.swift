@@ -524,10 +524,6 @@ final class MessageDTO_Tests: XCTestCase {
             ],
             translations: [.english: .unique],
             originalLanguage: "es",
-            moderationDetails: .init(
-                originalText: "Original",
-                action: "BOUNCE"
-            ),
             messageTextUpdatedAt: .unique
         )
 
@@ -635,9 +631,7 @@ final class MessageDTO_Tests: XCTestCase {
         )
         XCTAssertEqual(messagePayload.translations?.mapKeys(\.languageCode), loadedMessage?.translations)
         XCTAssertEqual("es", loadedMessage?.originalLanguage)
-        XCTAssertEqual("Original", loadedMessage?.moderationDetails?.originalText)
-        XCTAssertEqual("BOUNCE", loadedMessage?.moderationDetails?.action)
-        
+
         // Reaction Groups
         let loadedMessageReactionGroup = try XCTUnwrap(loadedMessage?.reactionGroups)
         let loadedLoveReactionGroup = try XCTUnwrap(loadedMessageReactionGroup.first(where: { $0.type == "love" }))
@@ -1058,8 +1052,14 @@ final class MessageDTO_Tests: XCTestCase {
                     lastReactionAt: .unique
                 )
             ],
-            moderationDetails: .init(
-                originalText: "Original", action: "MESSAGE_RESPONSE_ACTION_BOUNCE"
+            moderation: .init(
+                originalText: "Original",
+                action: "bounce",
+                textHarms: ["textHarm"],
+                imageHarms: ["imageHarm"],
+                blocklistMatched: ["block"],
+                semanticFilterMatched: ["semantic"],
+                platformCircumvented: true
             )
         )
 
@@ -1107,6 +1107,11 @@ final class MessageDTO_Tests: XCTestCase {
         // Moderation
         XCTAssertEqual(loadedMessage.moderationDetails?.originalText, "Original")
         XCTAssertEqual(loadedMessage.moderationDetails?.action, MessageModerationAction.bounce)
+        XCTAssertEqual(loadedMessage.moderationDetails?.textHarms, ["textHarm"])
+        XCTAssertEqual(loadedMessage.moderationDetails?.imageHarms, ["imageHarm"])
+        XCTAssertEqual(loadedMessage.moderationDetails?.blocklistMatched, ["block"])
+        XCTAssertEqual(loadedMessage.moderationDetails?.semanticFilterMatched, ["semantic"])
+        XCTAssertEqual(loadedMessage.moderationDetails?.platformCircumvented, true)
         XCTAssertEqual(loadedMessage.isBounced, true)
 
         // Attachments
@@ -1440,7 +1445,7 @@ final class MessageDTO_Tests: XCTestCase {
         let messagePayload: MessagePayload = .dummy(
             messageId: messageId,
             authorUserId: userId,
-            moderationDetails: .init(originalText: "original", action: "dummy")
+            moderationDetails: .dummy(originalText: "original", action: "dummy")
         )
 
         let messagePayloadResetModeration: MessagePayload = .dummy(
@@ -1631,8 +1636,6 @@ final class MessageDTO_Tests: XCTestCase {
             )
             newMessageId = messageDTO.id
         }
-
-        let loadedChannel: ChatChannel = try XCTUnwrap(database.viewContext.channel(cid: cid)).asModel()
 
         let messageDTO: MessageDTO = try XCTUnwrap(database.viewContext.message(id: newMessageId))
         XCTAssertEqual(messageDTO.type, "system")

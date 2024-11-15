@@ -13,6 +13,24 @@ struct MessageModerationDetailsPayload: Decodable {
     let semanticFilterMatched: [String]?
     let platformCircumvented: Bool?
 
+    init(
+        originalText: String,
+        action: String,
+        textHarms: [String]?,
+        imageHarms: [String]?,
+        blocklistMatched: [String]?,
+        semanticFilterMatched: [String]?,
+        platformCircumvented: Bool?
+    ) {
+        self.originalText = originalText
+        self.action = action
+        self.textHarms = textHarms
+        self.imageHarms = imageHarms
+        self.blocklistMatched = blocklistMatched
+        self.semanticFilterMatched = semanticFilterMatched
+        self.platformCircumvented = platformCircumvented
+    }
+
     enum CodingKeys: String, CodingKey, CaseIterable {
         case originalText = "original_text"
         case action

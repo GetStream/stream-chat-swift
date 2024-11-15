@@ -45,6 +45,7 @@ extension MessagePayload {
         reactionGroups: [MessageReactionType: MessageReactionGroupPayload] = [:],
         translations: [TranslationLanguage: String]? = nil,
         originalLanguage: String? = nil,
+        moderation: MessageModerationDetailsPayload? = nil,
         moderationDetails: MessageModerationDetailsPayload? = nil,
         mentionedUsers: [UserPayload] = [.dummy(userId: .unique)],
         messageTextUpdatedAt: Date? = nil,
@@ -85,6 +86,7 @@ extension MessagePayload {
             pinExpires: pinExpires,
             translations: translations,
             originalLanguage: originalLanguage,
+            moderation: moderation,
             moderationDetails: moderationDetails,
             messageTextUpdatedAt: messageTextUpdatedAt,
             poll: poll
@@ -103,5 +105,27 @@ extension MessagePayload {
 extension MessagePayload {
     func attachmentIDs(cid: ChannelId) -> [AttachmentId] {
         attachments.enumerated().map { .init(cid: cid, messageId: id, index: $0.offset) }
+    }
+}
+
+extension MessageModerationDetailsPayload {
+    static func dummy(
+        originalText: String,
+        action: String,
+        textHarms: [String]? = nil,
+        imageHarms: [String]? = nil,
+        blocklistMatched: [String]? = nil,
+        semanticFilterMatched: [String]? = nil,
+        platformCircumvented: Bool? = nil
+    ) -> Self {
+        .init(
+            originalText: originalText,
+            action: action,
+            textHarms: textHarms,
+            imageHarms: imageHarms,
+            blocklistMatched: blocklistMatched,
+            semanticFilterMatched: semanticFilterMatched,
+            platformCircumvented: platformCircumvented
+        )
     }
 }

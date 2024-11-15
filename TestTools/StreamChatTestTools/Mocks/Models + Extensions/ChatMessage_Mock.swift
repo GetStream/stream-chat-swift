@@ -93,3 +93,25 @@ public extension ChatMessage {
         )
     }
 }
+
+extension MessageModerationDetails {
+    static func mock(
+        originalText: String,
+        action: MessageModerationAction,
+        textHarms: [String]? = nil,
+        imageHarms: [String]? = nil,
+        blocklistMatched: [String]? = nil,
+        semanticFilterMatched: [String]? = nil,
+        platformCircumvented: Bool? = nil
+    ) -> Self {
+        .init(
+            originalText: originalText,
+            action: action,
+            textHarms: textHarms,
+            imageHarms: imageHarms,
+            blocklistMatched: blocklistMatched,
+            semanticFilterMatched: semanticFilterMatched,
+            platformCircumvented: platformCircumvented
+        )
+    }
+}
