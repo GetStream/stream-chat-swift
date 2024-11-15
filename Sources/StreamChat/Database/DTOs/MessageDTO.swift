@@ -1330,12 +1330,7 @@ private extension ChatMessage {
         reactionGroups = dto.reactionGroups.asModel()
         translations = dto.translations?.mapKeys { TranslationLanguage(languageCode: $0) }
         originalLanguage = dto.originalLanguage.map(TranslationLanguage.init)
-        moderationDetails = dto.moderationDetails.map {
-            MessageModerationDetails(
-                originalText: $0.originalText,
-                action: MessageModerationAction(rawValue: $0.action)
-            )
-        }
+        moderationDetails = dto.moderationDetails.map { MessageModerationDetails(fromDTO: $0) }
         textUpdatedAt = dto.textUpdatedAt?.bridgeDate
 
         if let extraData = dto.extraData, !extraData.isEmpty {

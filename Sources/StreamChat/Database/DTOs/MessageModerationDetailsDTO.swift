@@ -9,6 +9,11 @@ import Foundation
 final class MessageModerationDetailsDTO: NSManagedObject {
     @NSManaged var originalText: String
     @NSManaged var action: String
+    @NSManaged var textHarms: [String]?
+    @NSManaged var imageHarms: [String]?
+    @NSManaged var blocklistMatched: [String]?
+    @NSManaged var semanticFilterMatched: [String]?
+    @NSManaged var platformCircumvented: Bool
 }
 
 extension MessageModerationDetailsDTO {
@@ -24,7 +29,26 @@ extension MessageModerationDetailsDTO {
         let new = NSEntityDescription.insertNewObject(into: context, for: request)
         new.action = moderationAction.rawValue
         new.originalText = payload.originalText
+        new.textHarms = payload.textHarms
+        new.imageHarms = payload.imageHarms
+        new.blocklistMatched = payload.blocklistMatched
+        new.semanticFilterMatched = payload.semanticFilterMatched
+        new.platformCircumvented = payload.platformCircumvented ?? false
         return new
+    }
+}
+
+extension MessageModerationDetails {
+    init(fromDTO dto: MessageModerationDetailsDTO) {
+        self.init(
+            originalText: dto.originalText,
+            action: MessageModerationAction(rawValue: dto.action),
+            textHarms: dto.textHarms,
+            imageHarms: dto.imageHarms,
+            blocklistMatched: dto.blocklistMatched,
+            semanticFilterMatched: dto.semanticFilterMatched,
+            platformCircumvented: dto.platformCircumvented
+        )
     }
 }
 
