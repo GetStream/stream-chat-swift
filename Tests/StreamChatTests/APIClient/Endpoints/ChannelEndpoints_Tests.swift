@@ -299,17 +299,22 @@ final class ChannelEndpoints_Tests: XCTestCase {
     func test_addMembers_buildsCorrectly() {
         let cid = ChannelId.unique
         let userIds: Set<UserId> = Set([UserId.unique])
+        let members = userIds.map { MemberInfoRequest(userId: $0, extraData: ["is_premium": true]) }
 
         let expectedEndpoint = Endpoint<EmptyResponse>(
             path: .channelUpdate(cid.apiPath),
             method: .post,
             queryItems: nil,
             requiresConnectionId: false,
-            body: ["add_members": AnyEncodable(userIds), "hide_history": AnyEncodable(true)]
+            body: ["add_members": AnyEncodable(members), "hide_history": AnyEncodable(true)]
         )
 
         // Build endpoint
-        let endpoint: Endpoint<EmptyResponse> = .addMembers(cid: cid, userIds: userIds, hideHistory: true)
+        let endpoint: Endpoint<EmptyResponse> = .addMembers(
+            cid: cid,
+            members: members,
+            hideHistory: true
+        )
 
         // Assert endpoint is built correctly
         XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))

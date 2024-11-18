@@ -27,7 +27,7 @@ struct MemberContainerPayload: Decodable {
 }
 
 struct MemberPayload: Decodable {
-    private enum CodingKeys: String, CodingKey {
+    private enum CodingKeys: String, CodingKey, CaseIterable {
         case user
         case userId = "user_id"
         case role = "channel_role"
@@ -67,6 +67,9 @@ struct MemberPayload: Decodable {
     /// A boolean value that returns whether the user has muted the channel or not.
     let notificationsMuted: Bool
 
+    /// Extra data associated with the member.
+    let extraData: [String: RawJSON]?
+
     init(
         user: UserPayload?,
         userId: String,
@@ -79,7 +82,8 @@ struct MemberPayload: Decodable {
         isInvited: Bool? = nil,
         inviteAcceptedAt: Date? = nil,
         inviteRejectedAt: Date? = nil,
-        notificationsMuted: Bool = false
+        notificationsMuted: Bool = false,
+        extraData: [String: RawJSON]? = nil
     ) {
         self.user = user
         self.userId = userId
@@ -93,6 +97,7 @@ struct MemberPayload: Decodable {
         self.inviteAcceptedAt = inviteAcceptedAt
         self.inviteRejectedAt = inviteRejectedAt
         self.notificationsMuted = notificationsMuted
+        self.extraData = extraData
     }
 
     init(from decoder: Decoder) throws {
@@ -113,6 +118,14 @@ struct MemberPayload: Decodable {
             userId = user.id
         } else {
             userId = try container.decode(String.self, forKey: .userId)
+        }
+
+        do {
+            var payload = try [String: RawJSON](from: decoder)
+            payload.removeValues(forKeys: CodingKeys.allCases.map(\.rawValue))
+            extraData = payload
+        } catch {
+            extraData = [:]
         }
     }
 }

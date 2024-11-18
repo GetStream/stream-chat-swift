@@ -9,11 +9,13 @@ enum EndpointPath: Codable {
     case sync
     case users
     case guest
-    case members
     case search
     case devices
     case og
     case unread
+
+    case members
+    case partialMemberUpdate(userId: UserId, cid: ChannelId)
 
     case threads
     case thread(messageId: MessageId)
@@ -79,11 +81,14 @@ enum EndpointPath: Codable {
         case .sync: return "sync"
         case .users: return "users"
         case .guest: return "guest"
-        case .members: return "members"
         case .search: return "search"
         case .devices: return "devices"
         case .og: return "og"
         case .unread: return "unread"
+
+        case .members: return "members"
+        case let .partialMemberUpdate(userId, cid):
+            return "channels/\(cid.apiPath)/member/\(userId)"
 
         case .threads:
             return "threads"

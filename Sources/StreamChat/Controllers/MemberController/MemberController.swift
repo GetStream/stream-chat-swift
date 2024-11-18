@@ -152,6 +152,30 @@ public class ChatChannelMemberController: DataController, DelegateCallable, Data
 // MARK: - Actions
 
 public extension ChatChannelMemberController {
+    /// Updates the channel member with additional information.
+    ///
+    /// **Note:** The data is assigned to the member in this channel only, and not the user object
+    /// across multiple channels.
+    /// - Parameters:
+    ///   - extraData: The additional data to populate the member.
+    ///   - unsetProperties: Properties from the member to be cleared/unset.
+    func partialUpdate(
+        extraData: [String: RawJSON]?,
+        unsetProperties: [String]? = nil,
+        completion: ((Result<ChatChannelMember, Error>) -> Void)? = nil
+    ) {
+        memberUpdater.partialUpdate(
+            userId: userId,
+            in: cid,
+            extraData: extraData,
+            unset: unsetProperties
+        ) { result in
+            self.callback {
+                completion?(result)
+            }
+        }
+    }
+
     /// Bans the channel member.
     /// - Parameters:
     ///   - timeoutInMinutes: The # of minutes the user should be banned for.

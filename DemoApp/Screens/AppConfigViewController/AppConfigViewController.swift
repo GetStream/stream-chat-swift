@@ -22,6 +22,8 @@ struct DemoAppConfig {
     var tokenRefreshDetails: TokenRefreshDetails?
     /// A Boolean value that determines if a connection banner UI should be shown.
     var shouldShowConnectionBanner: Bool
+    /// A Boolean value to define if the premium member feature is enabled. This is to test custom member data.
+    var isPremiumMemberFeatureEnabled: Bool
 
     /// The details to generate expirable tokens in the demo app.
     struct TokenRefreshDetails {
@@ -50,7 +52,8 @@ class AppConfig {
             isChannelPinningEnabled: false,
             isLocationAttachmentsEnabled: false,
             tokenRefreshDetails: nil,
-            shouldShowConnectionBanner: false
+            shouldShowConnectionBanner: false,
+            isPremiumMemberFeatureEnabled: false
         )
 
         if StreamRuntimeCheck.isStreamInternalConfiguration {
@@ -60,6 +63,7 @@ class AppConfig {
             demoAppConfig.isLocationAttachmentsEnabled = true
             demoAppConfig.isHardDeleteEnabled = true
             demoAppConfig.shouldShowConnectionBanner = true
+            demoAppConfig.isPremiumMemberFeatureEnabled = true
             StreamRuntimeCheck.assertionsEnabled = true
         }
     }
@@ -172,6 +176,7 @@ class AppConfigViewController: UITableViewController {
         case isLocationAttachmentsEnabled
         case tokenRefreshDetails
         case shouldShowConnectionBanner
+        case isPremiumMemberFeatureEnabled
     }
 
     enum ComponentsConfigOption: String, CaseIterable {
@@ -335,6 +340,10 @@ class AppConfigViewController: UITableViewController {
         case .shouldShowConnectionBanner:
             cell.accessoryView = makeSwitchButton(demoAppConfig.shouldShowConnectionBanner) { [weak self] newValue in
                 self?.demoAppConfig.shouldShowConnectionBanner = newValue
+            }
+        case .isPremiumMemberFeatureEnabled:
+            cell.accessoryView = makeSwitchButton(demoAppConfig.isPremiumMemberFeatureEnabled) { [weak self] newValue in
+                self?.demoAppConfig.isPremiumMemberFeatureEnabled = newValue
             }
         }
     }
