@@ -23,10 +23,10 @@ public struct MessageModerationDetails {
 }
 
 /// The type of moderation performed to a message.
-public struct MessageModerationAction: Equatable {
-    let rawValue: String
+public struct MessageModerationAction: RawRepresentable, Equatable {
+    public let rawValue: String
 
-    internal init(rawValue: String) {
+    public init(rawValue: String) {
         self.rawValue = rawValue
     }
 
