@@ -267,11 +267,11 @@
     </entity>
     <entity name="MessageModerationDetailsDTO" representedClassName="MessageModerationDetailsDTO" syncable="YES">
         <attribute name="action" attributeType="String" defaultValueString=""/>
-        <attribute name="blocklistMatched" optional="YES" attributeType="Transformable" valueTransformerName="NSSecureUnarchiveFromDataTransformer"/>
+        <attribute name="blocklistMatched" optional="YES" attributeType="String" valueTransformerName="NSSecureUnarchiveFromDataTransformer"/>
         <attribute name="imageHarms" optional="YES" attributeType="Transformable" valueTransformerName="NSSecureUnarchiveFromDataTransformer"/>
         <attribute name="originalText" attributeType="String" defaultValueString=""/>
         <attribute name="platformCircumvented" optional="YES" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
-        <attribute name="semanticFilterMatched" optional="YES" attributeType="Transformable" valueTransformerName="NSSecureUnarchiveFromDataTransformer"/>
+        <attribute name="semanticFilterMatched" optional="YES" attributeType="String" valueTransformerName="NSSecureUnarchiveFromDataTransformer"/>
         <attribute name="textHarms" optional="YES" attributeType="Transformable" valueTransformerName="NSSecureUnarchiveFromDataTransformer"/>
         <relationship name="message" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="MessageDTO" inverseName="moderationDetails" inverseEntity="MessageDTO"/>
     </entity>

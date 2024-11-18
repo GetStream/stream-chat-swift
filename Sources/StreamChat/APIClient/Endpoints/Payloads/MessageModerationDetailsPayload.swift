@@ -9,8 +9,8 @@ struct MessageModerationDetailsPayload: Decodable {
     let action: String
     let textHarms: [String]?
     let imageHarms: [String]?
-    let blocklistMatched: [String]?
-    let semanticFilterMatched: [String]?
+    let blocklistMatched: String?
+    let semanticFilterMatched: String?
     let platformCircumvented: Bool?
 
     init(
@@ -18,8 +18,8 @@ struct MessageModerationDetailsPayload: Decodable {
         action: String,
         textHarms: [String]?,
         imageHarms: [String]?,
-        blocklistMatched: [String]?,
-        semanticFilterMatched: [String]?,
+        blocklistMatched: String?,
+        semanticFilterMatched: String?,
         platformCircumvented: Bool?
     ) {
         self.originalText = originalText

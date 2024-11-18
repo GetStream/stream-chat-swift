@@ -11,8 +11,8 @@ final class MessageModerationDetailsDTO: NSManagedObject {
     @NSManaged var action: String
     @NSManaged var textHarms: [String]?
     @NSManaged var imageHarms: [String]?
-    @NSManaged var blocklistMatched: [String]?
-    @NSManaged var semanticFilterMatched: [String]?
+    @NSManaged var blocklistMatched: String?
+    @NSManaged var semanticFilterMatched: String?
     @NSManaged var platformCircumvented: Bool
 }
 

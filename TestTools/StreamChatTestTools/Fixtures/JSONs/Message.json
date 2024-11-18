@@ -288,8 +288,8 @@
             "original_text": "The message original text",
             "text_harms": ["sexual_harrassment", "self_harm"],
             "image_harms": ["nudity"],
-            "blocklist_matched": ["profanity_2021_01"],
-            "semantic_filter_matched": ["bad_phrases"],
+            "blocklist_matched": "profanity_2021_01",
+            "semantic_filter_matched": "bad_phrases",
             "platform_circumvented": false
         },
         "moderation_details": {

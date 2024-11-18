@@ -114,8 +114,8 @@ extension MessageModerationDetailsPayload {
         action: String,
         textHarms: [String]? = nil,
         imageHarms: [String]? = nil,
-        blocklistMatched: [String]? = nil,
-        semanticFilterMatched: [String]? = nil,
+        blocklistMatched: String? = nil,
+        semanticFilterMatched: String? = nil,
         platformCircumvented: Bool? = nil
     ) -> Self {
         .init(

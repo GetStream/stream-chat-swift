@@ -60,8 +60,8 @@ final class MessagePayload_Tests: XCTestCase {
         XCTAssertEqual(payload.moderation?.originalText, "The message original text")
         XCTAssertEqual(payload.moderation?.textHarms, ["sexual_harrassment", "self_harm"])
         XCTAssertEqual(payload.moderation?.imageHarms, ["nudity"])
-        XCTAssertEqual(payload.moderation?.blocklistMatched, ["profanity_2021_01"])
-        XCTAssertEqual(payload.moderation?.semanticFilterMatched, ["bad_phrases"])
+        XCTAssertEqual(payload.moderation?.blocklistMatched, "profanity_2021_01")
+        XCTAssertEqual(payload.moderation?.semanticFilterMatched, "bad_phrases")
         XCTAssertEqual(payload.moderation?.platformCircumvented, false)
     }
 

@@ -15,9 +15,9 @@ public struct MessageModerationDetails {
     /// Array of harm labels found in images.
     public let imageHarms: [String]?
     /// Blocklist name that was matched.
-    public let blocklistMatched: [String]?
-    /// Semantic filter phrase list that was matched.
-    public let semanticFilterMatched: [String]?
+    public let blocklistMatched: String?
+    /// Semantic filter phrase that was matched.
+    public let semanticFilterMatched: String?
     /// A boolean value indicating if the message triggered the platform circumvention model.
     public let platformCircumvented: Bool?
 }

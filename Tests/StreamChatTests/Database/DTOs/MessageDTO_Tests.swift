@@ -1057,8 +1057,8 @@ final class MessageDTO_Tests: XCTestCase {
                 action: "bounce",
                 textHarms: ["textHarm"],
                 imageHarms: ["imageHarm"],
-                blocklistMatched: ["block"],
-                semanticFilterMatched: ["semantic"],
+                blocklistMatched: "block",
+                semanticFilterMatched: "semantic",
                 platformCircumvented: true
             )
         )
@@ -1109,8 +1109,8 @@ final class MessageDTO_Tests: XCTestCase {
         XCTAssertEqual(loadedMessage.moderationDetails?.action, MessageModerationAction.bounce)
         XCTAssertEqual(loadedMessage.moderationDetails?.textHarms, ["textHarm"])
         XCTAssertEqual(loadedMessage.moderationDetails?.imageHarms, ["imageHarm"])
-        XCTAssertEqual(loadedMessage.moderationDetails?.blocklistMatched, ["block"])
-        XCTAssertEqual(loadedMessage.moderationDetails?.semanticFilterMatched, ["semantic"])
+        XCTAssertEqual(loadedMessage.moderationDetails?.blocklistMatched, "block")
+        XCTAssertEqual(loadedMessage.moderationDetails?.semanticFilterMatched, "semantic")
         XCTAssertEqual(loadedMessage.moderationDetails?.platformCircumvented, true)
         XCTAssertEqual(loadedMessage.isBounced, true)
 

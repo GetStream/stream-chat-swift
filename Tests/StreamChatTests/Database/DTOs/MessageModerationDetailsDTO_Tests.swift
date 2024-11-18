@@ -81,8 +81,8 @@ final class MessageModerationDetailsDTO_Tests: XCTestCase {
             action: "bounce",
             textHarms: ["hate"],
             imageHarms: nil,
-            blocklistMatched: ["badword"],
-            semanticFilterMatched: ["phrase"],
+            blocklistMatched: "badword",
+            semanticFilterMatched: "phrase",
             platformCircumvented: true
         )
         
@@ -100,8 +100,8 @@ final class MessageModerationDetailsDTO_Tests: XCTestCase {
         XCTAssertEqual(dto.action, "bounce")
         XCTAssertEqual(dto.textHarms, ["hate"])
         XCTAssertNil(dto.imageHarms)
-        XCTAssertEqual(dto.blocklistMatched, ["badword"])
-        XCTAssertEqual(dto.semanticFilterMatched, ["phrase"])
+        XCTAssertEqual(dto.blocklistMatched, "badword")
+        XCTAssertEqual(dto.semanticFilterMatched, "phrase")
         XCTAssertTrue(dto.platformCircumvented)
     }
     
@@ -145,8 +145,8 @@ final class MessageModerationDetailsDTO_Tests: XCTestCase {
             action: "bounce",
             textHarms: ["hate"],
             imageHarms: ["nsfw"],
-            blocklistMatched: ["badword"],
-            semanticFilterMatched: ["phrase"],
+            blocklistMatched: "badword",
+            semanticFilterMatched: "phrase",
             platformCircumvented: true,
             context: database.viewContext
         )
@@ -159,8 +159,8 @@ final class MessageModerationDetailsDTO_Tests: XCTestCase {
         XCTAssertEqual(model.action, .bounce)
         XCTAssertEqual(model.textHarms, ["hate"])
         XCTAssertEqual(model.imageHarms, ["nsfw"])
-        XCTAssertEqual(model.blocklistMatched, ["badword"])
-        XCTAssertEqual(model.semanticFilterMatched, ["phrase"])
+        XCTAssertEqual(model.blocklistMatched, "badword")
+        XCTAssertEqual(model.semanticFilterMatched, "phrase")
         XCTAssertEqual(model.platformCircumvented, true)
     }
 }
@@ -173,8 +173,8 @@ private extension MessageModerationDetailsDTO {
         action: String,
         textHarms: [String]?,
         imageHarms: [String]?,
-        blocklistMatched: [String]?,
-        semanticFilterMatched: [String]?,
+        blocklistMatched: String?,
+        semanticFilterMatched: String?,
         platformCircumvented: Bool,
         context: NSManagedObjectContext
     ) -> MessageModerationDetailsDTO {
