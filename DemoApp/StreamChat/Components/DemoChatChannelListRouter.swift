@@ -170,6 +170,15 @@ final class DemoChatChannelListRouter: ChatChannelListRouter {
                     membersController: client.memberListController(query: .init(cid: cid, pageSize: 105))
                 ), animated: true)
             }),
+            .init(title: "Show Channel Premium Members", isVisible: isPremiumMemberFeatureEnabled, handler: { [unowned self] _ in
+                guard let cid = channelController.channel?.cid else { return }
+                let client = channelController.client
+                self.rootViewController.present(MembersViewController(
+                    membersController: client.memberListController(
+                        query: .init(cid: cid, filter: .equal("is_premium", to: true), pageSize: 105)
+                    )
+                ), animated: true)
+            }),
             .init(title: "Show Channel Moderators", handler: { [unowned self] _ in
                 guard let cid = channelController.channel?.cid else { return }
                 let client = channelController.client
@@ -313,15 +322,6 @@ final class DemoChatChannelListRouter: ChatChannelListRouter {
                 } ?? []
                 self.rootViewController.presentAlert(title: "Select a member", actions: actions)
             }),
-            .init(title: "Show Channel Premium Members", isVisible: isPremiumMemberFeatureEnabled, handler: { [unowned self] _ in
-                guard let cid = channelController.channel?.cid else { return }
-                let client = channelController.client
-                self.rootViewController.present(MembersViewController(
-                    membersController: client.memberListController(
-                        query: .init(cid: cid, filter: .equal("is_premium", to: true), pageSize: 105)
-                    )
-                ), animated: true)
-            }),
             .init(title: "Add premium member", isVisible: isPremiumMemberFeatureEnabled, isEnabled: canUpdateChannelMembers, handler: { [unowned self] _ in
                 self.rootViewController.presentAlert(title: "Enter user id", textFieldPlaceholder: "User ID") { id in
                     guard let id = id, !id.isEmpty else {
@@ -375,6 +375,26 @@ final class DemoChatChannelListRouter: ChatChannelListRouter {
                             )
                         }
                     }
+            }),
+            .init(title: "Unset premium from member", isVisible: isPremiumMemberFeatureEnabled, isEnabled: canUpdateChannelMembers, handler: { [unowned self] _ in
+                let actions = channelController.channel?.lastActiveMembers.map { member in
+                    UIAlertAction(title: member.id, style: .default) { _ in
+                        channelController.client.memberController(userId: member.id, in: cid)
+                            .partialUpdate(extraData: nil, unsetProperties: ["is_premium"]) { [unowned self] result in
+                                do {
+                                    let data = try result.get()
+                                    print("Member updated. Premium: ", data.isPremium)
+                                    self.rootNavigationController?.popViewController(animated: true)
+                                } catch {
+                                    self.rootViewController.presentAlert(
+                                        title: "Couldn't set user \(member.id) as premium.",
+                                        message: "\(error)"
+                                    )
+                                }
+                            }
+                    }
+                } ?? []
+                self.rootViewController.presentAlert(title: "Select a member", actions: actions)
             }),
             .init(title: "Freeze channel", isEnabled: canFreezeChannel, handler: { [unowned self] _ in
                 channelController.freezeChannel { error in
