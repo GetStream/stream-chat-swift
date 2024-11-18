@@ -1,5 +1,5 @@
 {
-    "duration": "3692.78ms",
+    "duration": "3804.39ms",
     "message": {
         "attachments": [
             {
@@ -12,16 +12,16 @@
                 "type": "video"
             }
         ],
-        "cid": "messaging:7fd0a69e-97e6-11ef-a39a-fa017888627c",
-        "created_at": "2024-11-01T00:16:19.970153Z",
+        "cid": "messaging:b8788452-a2e6-11ef-9498-6e95f8ad76d5",
+        "created_at": "2024-11-15T00:15:39.579551Z",
         "deleted_reply_count": 0,
         "html": "<p><a href=\"https://youtube.com/watch?v=xOX7MsrbaPY\" rel=\"nofollow\">https://youtube.com/watch?v=xOX7MsrbaPY</a></p>\n",
         "i18n": {
             "en_text": "https://youtube.com/watch?v=xOX7MsrbaPY",
-            "fr_text": "https://youtube.com/watch?v=xOX7MsrbaPY",
-            "language": "fr"
+            "language": "en",
+            "ru_text": "https://youtube.com/watch?v=xOX7MsrbaPY"
         },
-        "id": "827efa1c-97e6-11ef-a39a-fa017888627c",
+        "id": "bc010d2e-a2e6-11ef-9498-6e95f8ad76d5",
         "latest_reactions": [],
         "mentioned_users": [],
         "own_reactions": [],
@@ -36,7 +36,7 @@
         "silent": false,
         "text": "https://youtube.com/watch?v=xOX7MsrbaPY",
         "type": "regular",
-        "updated_at": "2024-11-01T00:16:19.970153Z",
+        "updated_at": "2024-11-15T00:15:39.579551Z",
         "user": {
             "banned": false,
             "birthland": "Tatooine",
@@ -44,8 +44,8 @@
             "created_at": "2024-04-04T09:26:11.805899Z",
             "id": "luke_skywalker",
             "image": "https://vignette.wikia.nocookie.net/starwars/images/2/20/LukeTLJ.jpg",
-            "language": "fr",
-            "last_active": "2024-11-01T00:16:11.425440851Z",
+            "language": "en",
+            "last_active": "2024-11-15T00:15:29.496638486Z",
             "name": "Luke Skywalker",
             "online": true,
             "pando": "{\"speciality\":\"ios engineer\"}",
@@ -53,7 +53,7 @@
             "team": "test",
             "teams": [],
             "type": "team",
-            "updated_at": "2024-10-26T00:10:58.852569Z"
+            "updated_at": "2024-11-05T15:05:10.176527Z"
         }
     }
 }

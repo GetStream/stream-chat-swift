@@ -53,11 +53,11 @@ _October 02, 2024_
 
 ## StreamChat
 ### ✅ Added
-- Add `ChannelMemberListSortingKey.userId` for sorting channel members by id [#3423](https://github.com/GetStream/stream-chat-swift/pull/3423)
+- Add `ChannelMemberListSortingKey.userId` for sorting channel members by id [#3419](https://github.com/GetStream/stream-chat-swift/pull/3419)
 - Add helper functions to `Poll` that extracts common domain logic [#3374](https://github.com/GetStream/stream-chat-swift/pull/3374)
 ### 🐞 Fixed
 - Fix old channel updates not being added to the channel list automatically [#3430](https://github.com/GetStream/stream-chat-swift/pull/3430)
-- Keep consistent order in channel and member lists when sorting by key with many equal values [#3423](https://github.com/GetStream/stream-chat-swift/pull/3423)
+- Keep consistent order in channel and member lists when sorting by key with many equal values [#3419](https://github.com/GetStream/stream-chat-swift/pull/3419)
   - Recommendation: Always add at least one unique key to the query's sort
 - Avoid rare optimistic locking failure by refreshing the object before saving to the persistent store [#3432](https://github.com/GetStream/stream-chat-swift/pull/3432)
 - Fix `PollOption.latestVotes` sorting [#3374](https://github.com/GetStream/stream-chat-swift/pull/3374)
