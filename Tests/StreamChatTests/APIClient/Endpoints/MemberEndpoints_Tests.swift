@@ -29,4 +29,34 @@ final class MemberEndpoints_Tests: XCTestCase {
         XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
         XCTAssertEqual("members", endpoint.path.value)
     }
+
+    func test_partialMemberUpdate_buildsCorrectly() {
+        let userId: UserId = "test-user"
+        let cid: ChannelId = .unique
+        let extraData: [String: RawJSON] = ["is_premium": .bool(true)]
+        let unset: [String] = ["is_cool"]
+
+        let body: [String: AnyEncodable] = [
+            "set": AnyEncodable(["is_premium": true]),
+            "unset": AnyEncodable(["is_cool"])
+        ]
+        let expectedEndpoint = Endpoint<PartialMemberUpdateResponse>(
+            path: .partialMemberUpdate(userId: userId, cid: cid),
+            method: .patch,
+            queryItems: nil,
+            requiresConnectionId: false,
+            body: body
+        )
+
+        // Build endpoint.
+        let endpoint: Endpoint<PartialMemberUpdateResponse> = .partialMemberUpdate(
+            userId: userId,
+            cid: cid,
+            extraData: extraData,
+            unset: unset
+        )
+
+        // Assert endpoint is built correctly.
+        XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
+    }
 }

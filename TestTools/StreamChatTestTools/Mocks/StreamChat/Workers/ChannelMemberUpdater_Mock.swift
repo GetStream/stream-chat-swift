@@ -20,6 +20,13 @@ final class ChannelMemberUpdater_Mock: ChannelMemberUpdater {
     @Atomic var unbanMember_completion: ((Error?) -> Void)?
     @Atomic var unbanMember_completion_result: Result<Void, Error>?
 
+    @Atomic var partialUpdate_userId: UserId?
+    @Atomic var partialUpdate_cid: ChannelId?
+    @Atomic var partialUpdate_extraData: [String: RawJSON]?
+    @Atomic var partialUpdate_unset: [String]?
+    @Atomic var partialUpdate_completion: ((Result<ChatChannelMember, Error>) -> Void)?
+    @Atomic var partialUpdate_completion_result: Result<ChatChannelMember, Error>?
+
     func cleanUp() {
         banMember_userId = nil
         banMember_cid = nil
@@ -33,6 +40,13 @@ final class ChannelMemberUpdater_Mock: ChannelMemberUpdater {
         unbanMember_cid = nil
         unbanMember_completion = nil
         unbanMember_completion_result = nil
+
+        partialUpdate_userId = nil
+        partialUpdate_cid = nil
+        partialUpdate_extraData = nil
+        partialUpdate_unset = nil
+        partialUpdate_completion = nil
+        partialUpdate_completion_result = nil
     }
 
     override func banMember(
@@ -60,5 +74,20 @@ final class ChannelMemberUpdater_Mock: ChannelMemberUpdater {
         unbanMember_cid = cid
         unbanMember_completion = completion
         unbanMember_completion_result?.invoke(with: completion)
+    }
+
+    override func partialUpdate(
+        userId: UserId,
+        in cid: ChannelId,
+        extraData: [String: RawJSON]?,
+        unset: [String]?,
+        completion: @escaping ((Result<ChatChannelMember, Error>) -> Void)
+    ) {
+        partialUpdate_userId = userId
+        partialUpdate_cid = cid
+        partialUpdate_extraData = extraData
+        partialUpdate_unset = unset
+        partialUpdate_completion = completion
+        partialUpdate_completion_result?.invoke(with: completion)
     }
 }

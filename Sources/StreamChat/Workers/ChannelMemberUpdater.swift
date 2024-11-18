@@ -6,6 +6,39 @@ import Foundation
 
 /// Makes channel member related calls to the backend.
 class ChannelMemberUpdater: Worker {
+    /// Updates the channel member with additional information.
+    /// - Parameters:
+    ///   - userId: The user id of the member.
+    ///   - cid: The channel which the member should be updated.
+    ///   - extraData: The additional information.
+    ///   - unset: The properties to be unset/cleared.
+    func partialUpdate(
+        userId: UserId,
+        in cid: ChannelId,
+        extraData: [String: RawJSON]?,
+        unset: [String]?,
+        completion: @escaping ((Result<ChatChannelMember, Error>) -> Void)
+    ) {
+        apiClient.request(
+            endpoint: .partialMemberUpdate(
+                userId: userId,
+                cid: cid,
+                extraData: extraData,
+                unset: unset
+            )
+        ) { result in
+            switch result {
+            case .success(let response):
+                self.database.write { session in
+                    let member = try session.saveMember(payload: response.channelMember, channelId: cid).asModel()
+                    completion(.success(member))
+                }
+            case .failure(let error):
+                completion(.failure(error))
+            }
+        }
+    }
+
     /// Bans the user in the channel.
     /// - Parameters:
     ///   - userId: The user identifier to ban.
