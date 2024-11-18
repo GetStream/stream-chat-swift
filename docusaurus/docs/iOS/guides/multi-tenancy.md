@@ -1,3 +1,0 @@
----
-title: Multi-Tenancy & Teams
----
