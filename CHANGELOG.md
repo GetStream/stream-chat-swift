@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## StreamChat
 ### ✅ Added
 - Add moderation v2 support [#3492](https://github.com/GetStream/stream-chat-swift/pull/3492)
+- Add additional context to why a message has been moderated in `MessageModerationDetails`  [#3492](https://github.com/GetStream/stream-chat-swift/pull/3492)
 ### 🐞 Fixed
 - Fix connection not resuming after guest user goes to background [#3483](https://github.com/GetStream/stream-chat-swift/pull/3483)
 - Fix empty channel list if the channel list filter contains OR statement with only custom filtering keys [#3482](https://github.com/GetStream/stream-chat-swift/pull/3482)
