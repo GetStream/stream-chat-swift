@@ -41,16 +41,6 @@ We make sure to put staged changes (on default branch but not released in a vers
 
 If possible, we deprecate stuff before removing them directly. Deprecated stuff will be removed after a minor release, and will include a migration/upgrade guide.
 
-## Local linting of documentation
+## Documentation updates
 
-In case you modify any of our documentation, we require some of our docs to pass a linting step.
-
-To run our doc linting locally:
-
-```shell
-$ brew install vale
-# from the root of our repository
-$ vale docusaurus
-```
-
-
+At the moment, docs updates are limited to the SDK teams at Stream. In case you want to modify the docs, please create an issue with your desired changes.
