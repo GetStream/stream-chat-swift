@@ -10,16 +10,19 @@ public struct MessageModerationDetails {
     public let originalText: String
     /// The type of moderation performed to a message.
     public let action: MessageModerationAction
+
+    // MARK: - Internal for now since the Backend is still finalising the API.
+
     /// Array of harm labels found in text.
-    public let textHarms: [String]?
+    internal let textHarms: [String]?
     /// Array of harm labels found in images.
-    public let imageHarms: [String]?
+    internal let imageHarms: [String]?
     /// Blocklist name that was matched.
-    public let blocklistMatched: String?
+    internal let blocklistMatched: String?
     /// Semantic filter phrase that was matched.
-    public let semanticFilterMatched: String?
+    internal let semanticFilterMatched: String?
     /// A boolean value indicating if the message triggered the platform circumvention model.
-    public let platformCircumvented: Bool?
+    internal let platformCircumvented: Bool?
 }
 
 /// The type of moderation performed to a message.
