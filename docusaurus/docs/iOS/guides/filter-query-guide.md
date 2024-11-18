@@ -1,3 +1,0 @@
----
-title: Filter & Query Guide
----
