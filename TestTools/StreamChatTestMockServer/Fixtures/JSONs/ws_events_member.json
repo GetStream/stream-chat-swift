@@ -1,27 +1,29 @@
 {
-    "channel_id": "7fd0a69e-97e6-11ef-a39a-fa017888627c",
-    "channel_last_message_at": "2024-11-01T00:16:14.820346Z",
+    "channel_id": "b8788452-a2e6-11ef-9498-6e95f8ad76d5",
+    "channel_last_message_at": "2024-11-15T00:15:33.983915Z",
     "channel_type": "messaging",
-    "cid": "messaging:7fd0a69e-97e6-11ef-a39a-fa017888627c",
-    "created_at": "2024-11-01T00:16:15.271319194Z",
+    "cid": "messaging:b8788452-a2e6-11ef-9498-6e95f8ad76d5",
+    "created_at": "2024-11-15T00:15:34.513533669Z",
     "member": {
+        "archived_at": null,
         "banned": false,
         "channel_role": "channel_member",
-        "created_at": "2024-11-01T00:16:15.25552Z",
+        "created_at": "2024-11-15T00:15:34.502793Z",
         "notifications_muted": false,
+        "pinned_at": null,
         "role": "admin",
         "shadow_banned": false,
         "status": "member",
-        "updated_at": "2024-11-01T00:16:15.25552Z",
+        "updated_at": "2024-11-15T00:15:34.502793Z",
         "user": {
             "banned": false,
             "birthland": "Polis Massa",
             "created_at": "2024-04-04T09:42:00.68335Z",
             "id": "leia_organa",
             "image": "https://vignette.wikia.nocookie.net/starwars/images/f/fc/Leia_Organa_TLJ.png",
-            "language": "en",
-            "last_active": "2024-10-31T23:56:28.45147453Z",
-            "last_engaged_at": "2024-10-31T01:33:56.178274Z",
+            "language": "ru",
+            "last_active": "2024-11-14T06:29:34.91001Z",
+            "last_engaged_at": "2024-11-14T01:59:50.78209Z",
             "name": "Leia Organa",
             "online": false,
             "private_settings": {
@@ -33,7 +35,7 @@
                 }
             },
             "role": "admin",
-            "updated_at": "2024-10-25T01:26:44.215389Z"
+            "updated_at": "2024-11-06T19:37:19.402099Z"
         },
         "user_id": "leia_organa"
     },
@@ -44,9 +46,9 @@
         "created_at": "2024-04-04T09:42:00.68335Z",
         "id": "leia_organa",
         "image": "https://vignette.wikia.nocookie.net/starwars/images/f/fc/Leia_Organa_TLJ.png",
-        "language": "en",
-        "last_active": "2024-10-31T23:56:28.45147453Z",
-        "last_engaged_at": "2024-10-31T01:33:56.178274Z",
+        "language": "ru",
+        "last_active": "2024-11-14T06:29:34.91001Z",
+        "last_engaged_at": "2024-11-14T01:59:50.78209Z",
         "name": "Leia Organa",
         "online": false,
         "private_settings": {
@@ -58,6 +60,6 @@
             }
         },
         "role": "admin",
-        "updated_at": "2024-10-25T01:26:44.215389Z"
+        "updated_at": "2024-11-06T19:37:19.402099Z"
     }
 }
