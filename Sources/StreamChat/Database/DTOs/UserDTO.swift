@@ -31,6 +31,7 @@ class UserDTO: NSManagedObject {
     /// Returns a fetch request for the dto with the provided `userId`.
     static func user(withID userId: UserId) -> NSFetchRequest<UserDTO> {
         let request = NSFetchRequest<UserDTO>(entityName: UserDTO.entityName)
+        UserDTO.applyPrefetchingState(to: request)
         request.sortDescriptors = [NSSortDescriptor(keyPath: \UserDTO.id, ascending: false)]
         request.predicate = NSPredicate(format: "id == %@", userId)
         return request
@@ -201,6 +202,7 @@ extension UserDTO {
 extension UserDTO {
     static func userListFetchRequest(query: UserListQuery) -> NSFetchRequest<UserDTO> {
         let request = NSFetchRequest<UserDTO>(entityName: UserDTO.entityName)
+        UserDTO.applyPrefetchingState(to: request)
 
         // Fetch results controller requires at least one sorting descriptor.
         let sortDescriptors = query.sort.compactMap { $0.key.sortDescriptor(isAscending: $0.isAscending) }
@@ -214,15 +216,9 @@ extension UserDTO {
         return request
     }
 
-    static var userWithoutQueryFetchRequest: NSFetchRequest<UserDTO> {
-        let request = NSFetchRequest<UserDTO>(entityName: UserDTO.entityName)
-        request.sortDescriptors = [UserListSortingKey.defaultSortDescriptor]
-        request.predicate = NSPredicate(format: "queries.@count == 0")
-        return request
-    }
-
     static func watcherFetchRequest(cid: ChannelId) -> NSFetchRequest<UserDTO> {
         let request = NSFetchRequest<UserDTO>(entityName: UserDTO.entityName)
+        UserDTO.applyPrefetchingState(to: request)
         request.sortDescriptors = [UserListSortingKey.defaultSortDescriptor]
         request.predicate = NSPredicate(format: "ANY watchedChannels.cid == %@", cid.rawValue)
         return request

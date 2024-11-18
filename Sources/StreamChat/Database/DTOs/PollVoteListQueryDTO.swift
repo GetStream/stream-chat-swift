@@ -39,6 +39,12 @@ class PollVoteListQueryDTO: NSManagedObject {
     }
 }
 
+extension PollVoteListQueryDTO {
+    override class func prefetchedRelationshipKeyPaths() -> [String] {
+        [KeyPath.string(\PollVoteListQueryDTO.votes)]
+    }
+}
+
 extension NSManagedObjectContext {
     func linkVote(with id: String, in pollId: String, to filterHash: String?) throws {
         guard let filterHash else { throw ClientError.Unexpected() }
