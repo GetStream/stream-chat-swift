@@ -41,11 +41,11 @@ struct MulticastDelegate<T> {
     /// Sets the main delegate. If is nil, removes the main delegate.
     /// - Parameter mainDelegate: The main delegate.
     mutating func set(mainDelegate: T?) {
-        queue.async { [weak _mainDelegate] in
-            _mainDelegate?.removeAllObjects()
+        queue.sync {
+            _mainDelegate.removeAllObjects()
             
             if let delegate = mainDelegate {
-                _mainDelegate?.add(delegate as AnyObject)
+                _mainDelegate.add(delegate as AnyObject)
             }
         }
     }
@@ -53,25 +53,25 @@ struct MulticastDelegate<T> {
     /// Replaces the current additional delegates with another collection of delegates.
     /// - Parameter additionalDelegates: The new additional delegates.
     mutating func set(additionalDelegates: [T]) {
-        queue.async { [weak _additionalDelegates] in
-            _additionalDelegates?.removeAllObjects()
-            additionalDelegates.forEach { _additionalDelegates?.add($0 as AnyObject) }
+        queue.sync {
+            _additionalDelegates.removeAllObjects()
+            additionalDelegates.forEach { _additionalDelegates.add($0 as AnyObject) }
         }
     }
 
     /// Adds a new delegate to the additional delegates.
     /// - Parameter additionalDelegate: The additional delegate.
     mutating func add(additionalDelegate: T) {
-        queue.async { [weak _additionalDelegates] in
-            _additionalDelegates?.add(additionalDelegate as AnyObject)
+        queue.sync {
+            _additionalDelegates.add(additionalDelegate as AnyObject)
         }
     }
 
     /// Removes a delegate from the additional delegates.
     /// - Parameter additionalDelegate: The delegate to be removed.
     mutating func remove(additionalDelegate: T) {
-        queue.async { [weak _additionalDelegates] in
-            _additionalDelegates?.remove(additionalDelegate as AnyObject)
+        queue.sync {
+            _additionalDelegates.remove(additionalDelegate as AnyObject)
         }
     }
 }
