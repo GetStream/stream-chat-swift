@@ -9,14 +9,18 @@ import UIKit
 import UserNotifications
 
 final class StreamChatWrapper {
-    static let shared = StreamChatWrapper()
+    static var shared = StreamChatWrapper(apiKeyString: apiKeyString)
+
+    static func replaceSharedInstance(apiKeyString: String) {
+        StreamChatWrapper.shared = StreamChatWrapper(apiKeyString: apiKeyString)
+    }
 
     /// How many times the token has been refreshed. This is mostly used
     /// to fake token refresh fails.
     var numberOfRefreshTokens = 0
 
     // This closure is called once the SDK is ready to register for remote push notifications
-    var onRemotePushRegistration: (() -> Void)?
+    static var onRemotePushRegistration: (() -> Void)?
 
     // Chat client
     var client: ChatClient?
@@ -28,7 +32,7 @@ final class StreamChatWrapper {
         }
     }
 
-    private init() {
+    init(apiKeyString: String) {
         config = ChatClientConfig(apiKeyString: apiKeyString)
         config.shouldShowShadowedMessages = true
         config.applicationGroupIdentifier = applicationGroupIdentifier
@@ -53,50 +57,61 @@ extension StreamChatWrapper {
     func connect(user: DemoUserType, completion: @escaping (Error?) -> Void) {
         switch user {
         case let .credentials(userCredentials):
-            var privacySettings: UserPrivacySettings?
-            
-            if UserConfig.shared.readReceiptsEnabled != nil || UserConfig.shared.typingIndicatorsEnabled != nil {
-                privacySettings = .init()
-            }
-            if let readReceiptsEnabled = UserConfig.shared.readReceiptsEnabled {
-                privacySettings?.readReceipts = .init(enabled: readReceiptsEnabled)
-            }
-            if let typingIndicatorsEnabled = UserConfig.shared.typingIndicatorsEnabled {
-                privacySettings?.typingIndicators = .init(enabled: typingIndicatorsEnabled)
-            }
-
-            let userInfo = UserInfo(
-                id: userCredentials.userInfo.id,
-                name: userCredentials.userInfo.name,
-                imageURL: userCredentials.userInfo.imageURL,
-                isInvisible: UserConfig.shared.isInvisible,
-                language: UserConfig.shared.language,
-                privacySettings: privacySettings,
-                extraData: userCredentials.userInfo.extraData
-            )
-
-            if let tokenRefreshDetails = AppConfig.shared.demoAppConfig.tokenRefreshDetails {
-                client?.connectUser(
-                    userInfo: userInfo,
-                    tokenProvider: refreshingTokenProvider(
-                        initialToken: userCredentials.token,
-                        refreshDetails: tokenRefreshDetails
-                    ),
-                    completion: completion
-                )
-                return
-            }
-
-            client?.connectUser(
-                userInfo: userInfo,
-                token: userCredentials.token,
-                completion: completion
-            )
+            connectUser(credentials: userCredentials, completion: completion)
+        case let .custom(userCredentials):
+            connectUser(credentials: userCredentials, completion: completion)
         case let .guest(userId):
             client?.connectGuestUser(userInfo: .init(id: userId), completion: completion)
         case .anonymous:
             client?.connectAnonymousUser(completion: completion)
         }
+    }
+
+    func connectUser(credentials: UserCredentials?, completion: @escaping (Error?) -> Void) {
+        guard let userCredentials = credentials else {
+            log.error("User credentials are missing")
+            return
+        }
+
+        var privacySettings: UserPrivacySettings?
+
+        if UserConfig.shared.readReceiptsEnabled != nil || UserConfig.shared.typingIndicatorsEnabled != nil {
+            privacySettings = .init()
+        }
+        if let readReceiptsEnabled = UserConfig.shared.readReceiptsEnabled {
+            privacySettings?.readReceipts = .init(enabled: readReceiptsEnabled)
+        }
+        if let typingIndicatorsEnabled = UserConfig.shared.typingIndicatorsEnabled {
+            privacySettings?.typingIndicators = .init(enabled: typingIndicatorsEnabled)
+        }
+
+        let userInfo = UserInfo(
+            id: userCredentials.userInfo.id,
+            name: userCredentials.userInfo.name,
+            imageURL: userCredentials.userInfo.imageURL,
+            isInvisible: UserConfig.shared.isInvisible,
+            language: UserConfig.shared.language,
+            privacySettings: privacySettings,
+            extraData: userCredentials.userInfo.extraData
+        )
+
+        if let tokenRefreshDetails = AppConfig.shared.demoAppConfig.tokenRefreshDetails {
+            client?.connectUser(
+                userInfo: userInfo,
+                tokenProvider: refreshingTokenProvider(
+                    initialToken: userCredentials.token,
+                    refreshDetails: tokenRefreshDetails
+                ),
+                completion: completion
+            )
+            return
+        }
+
+        client?.connectUser(
+            userInfo: userInfo,
+            token: userCredentials.token,
+            completion: completion
+        )
     }
 
     func logIn(as user: DemoUserType, completion: @escaping (Error?) -> Void) {
@@ -106,11 +121,11 @@ extension StreamChatWrapper {
         // Reset number of refresh tokens
         numberOfRefreshTokens = 0
 
-        connect(user: user) { [weak self] error in
+        connect(user: user) { error in
             if let error = error {
                 log.warning(error.localizedDescription)
             } else {
-                self?.onRemotePushRegistration?()
+                StreamChatWrapper.onRemotePushRegistration?()
             }
 
             DispatchQueue.main.async {

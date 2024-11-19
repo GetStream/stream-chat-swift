@@ -8,16 +8,13 @@ import UIKit
 
 final class DemoAppCoordinator: NSObject {
     internal let window: UIWindow
-    internal let chat: StreamChatWrapper
     internal let pushNotifications: PushNotifications
 
     init(
         window: UIWindow,
-        chat: StreamChatWrapper,
         pushNotifications: PushNotifications
     ) {
         self.window = window
-        self.chat = chat
         self.pushNotifications = pushNotifications
 
         super.init()
@@ -31,7 +28,7 @@ final class DemoAppCoordinator: NSObject {
                 return
             }
             guard
-                let chatNotificationInfo = self?.chat.notificationInfo(for: response),
+                let chatNotificationInfo = StreamChatWrapper.shared.notificationInfo(for: response),
                 let cid = chatNotificationInfo.cid else {
                 return
             }

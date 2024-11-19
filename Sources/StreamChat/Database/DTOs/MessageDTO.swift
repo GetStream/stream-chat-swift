@@ -884,9 +884,16 @@ extension NSManagedObjectContext: MessageDatabaseSession {
         dto.translations = payload.translations?.mapKeys { $0.languageCode }
         dto.originalLanguage = payload.originalLanguage
 
-        if let moderationDetailsPayload = payload.moderationDetails {
+        if let moderationPayload = payload.moderation {
+            dto.moderationDetails = MessageModerationDetailsDTO.create(
+                from: moderationPayload,
+                isV1: false,
+                context: self
+            )
+        } else if let moderationDetailsPayload = payload.moderationDetails {
             dto.moderationDetails = MessageModerationDetailsDTO.create(
                 from: moderationDetailsPayload,
+                isV1: true,
                 context: self
             )
         } else {
@@ -1354,12 +1361,7 @@ private extension ChatMessage {
         reactionGroups = dto.reactionGroups.asModel()
         translations = dto.translations?.mapKeys { TranslationLanguage(languageCode: $0) }
         originalLanguage = dto.originalLanguage.map(TranslationLanguage.init)
-        moderationDetails = dto.moderationDetails.map {
-            MessageModerationDetails(
-                originalText: $0.originalText,
-                action: MessageModerationAction(rawValue: $0.action)
-            )
-        }
+        moderationDetails = dto.moderationDetails.map { MessageModerationDetails(fromDTO: $0) }
         textUpdatedAt = dto.textUpdatedAt?.bridgeDate
 
         if let extraData = dto.extraData, !extraData.isEmpty {
