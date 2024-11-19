@@ -144,12 +144,18 @@ class PollsRepository {
         voteId: String,
         completion: ((Error?) -> Void)? = nil
     ) {
-        var pollVote: PollVote?
+        var exists = false
+        var answerText: String?
+        var optionId: String?
+        var userId: UserId?
         var filterHash: String?
         database.write { session in
             let voteDto = try session.removePollVote(with: voteId, pollId: pollId)
+            exists = voteDto != nil
             filterHash = voteDto?.queries?.first?.filterHash
-            pollVote = try voteDto?.asModel()
+            answerText = voteDto?.answerText
+            optionId = voteDto?.optionId
+            userId = voteDto?.user?.id
         } completion: { [weak self] error in
             if error == nil {
                 self?.apiClient.request(
@@ -159,14 +165,14 @@ class PollsRepository {
                         voteId: voteId
                     )
                 ) {
-                    if $0.error != nil, $0.error?.isBackendNotFound404StatusCode == false, let pollVote {
+                    if $0.error != nil, $0.error?.isBackendNotFound404StatusCode == false, exists {
                         self?.database.write { session in
                             _ = try session.savePollVote(
                                 voteId: voteId,
                                 pollId: pollId,
-                                optionId: pollVote.optionId,
-                                answerText: pollVote.answerText,
-                                userId: pollVote.user?.id,
+                                optionId: optionId,
+                                answerText: answerText,
+                                userId: userId,
                                 query: nil
                             )
                             try? session.linkVote(with: voteId, in: pollId, to: filterHash)
