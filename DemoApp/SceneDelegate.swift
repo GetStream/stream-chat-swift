@@ -59,14 +59,13 @@ extension SceneDelegate {
     func makeCoordinator(in window: UIWindow) {
         // Hook on registration for push notifications.
         // This closure is called once the chat user is connected.
-        chat.onRemotePushRegistration = { [weak self] in
+        StreamChatWrapper.onRemotePushRegistration = { [weak self] in
             self?.pushNotifications.registerForPushNotifications()
         }
 
         // Create coordinator for this demo app
         coordinator = DemoAppCoordinator(
             window: window,
-            chat: chat,
             pushNotifications: pushNotifications
         )
         coordinator.start { error in
