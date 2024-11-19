@@ -62,7 +62,8 @@ class ThreadReadDTO: NSManagedObject {
 
 extension ThreadReadDTO {
     func asModel() throws -> ThreadRead {
-        try .init(
+        guard !isDeleted else { throw ClientError.DeletedModel(modelType: Self.self) }
+        return try .init(
             user: user.asModel(),
             lastReadAt: lastReadAt?.bridgeDate,
             unreadMessagesCount: Int(unreadMessagesCount)

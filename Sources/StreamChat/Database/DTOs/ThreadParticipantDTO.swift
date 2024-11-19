@@ -39,7 +39,8 @@ class ThreadParticipantDTO: NSManagedObject {
 
 extension ThreadParticipantDTO {
     func asModel() throws -> ThreadParticipant {
-        try .init(
+        guard !isDeleted else { throw ClientError.DeletedModel(modelType: Self.self) }
+        return try .init(
             user: user.asModel(),
             threadId: threadId,
             createdAt: createdAt.bridgeDate,

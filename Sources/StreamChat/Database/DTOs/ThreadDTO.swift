@@ -128,6 +128,8 @@ class ThreadDTO: NSManagedObject {
 
 extension ThreadDTO {
     func asModel() throws -> ChatThread {
+        guard !isDeleted else { throw ClientError.DeletedModel(modelType: Self.self) }
+        
         let extraData: [String: RawJSON]
         do {
             extraData = try JSONDecoder.default.decode([String: RawJSON].self, from: self.extraData)

@@ -4,6 +4,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 # Upcoming
 
 ## StreamChat
+### 🐞 Fixed
+- Fix not returning models with empty properties when the underlying database model was deleted [Fill in PR number]
+- Fix an issue where deleting current user in the local database cleared member data in channels [Fill in PR number]
+
+## StreamChat
 ### ✅ Added
 - Add support for channel member extra data [#3487](https://github.com/GetStream/stream-chat-swift/pull/3487)
 - Add `ChatChannelMemberController.partialUpdate(extraData:unsetProperties:)` [#3487](https://github.com/GetStream/stream-chat-swift/pull/3487)

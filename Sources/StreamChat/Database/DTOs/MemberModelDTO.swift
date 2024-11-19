@@ -172,6 +172,8 @@ extension MemberDTO {
 
 extension ChatChannelMember {
     fileprivate static func create(fromDTO dto: MemberDTO) throws -> ChatChannelMember {
+        guard !dto.isDeleted else { throw ClientError.DeletedModel(modelType: MemberDTO.self) }
+        
         let extraData: [String: RawJSON]
         do {
             extraData = try JSONDecoder.default.decode([String: RawJSON].self, from: dto.user.extraData)

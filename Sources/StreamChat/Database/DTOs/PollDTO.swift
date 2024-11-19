@@ -71,6 +71,8 @@ class PollDTO: NSManagedObject {
 
 extension PollDTO {
     func asModel() throws -> Poll {
+        guard !isDeleted else { throw ClientError.DeletedModel(modelType: Self.self) }
+        
         var extraData: [String: RawJSON] = [:]
         if let custom,
            !custom.isEmpty,

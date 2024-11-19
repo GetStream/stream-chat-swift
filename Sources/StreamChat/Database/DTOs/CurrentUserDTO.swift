@@ -201,6 +201,8 @@ extension CurrentUserDTO {
 
 extension CurrentChatUser {
     fileprivate static func create(fromDTO dto: CurrentUserDTO) throws -> CurrentChatUser {
+        guard !dto.isDeleted else { throw ClientError.DeletedModel(modelType: CurrentUserDTO.self) }
+        
         let user = dto.user
 
         var extraData = [String: RawJSON]()

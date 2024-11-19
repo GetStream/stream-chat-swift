@@ -68,7 +68,8 @@ class PollVoteDTO: NSManagedObject {
 
 extension PollVoteDTO {
     func asModel() throws -> PollVote {
-        try PollVote(
+        guard !isDeleted else { throw ClientError.DeletedModel(modelType: Self.self) }
+        return try PollVote(
             id: id,
             createdAt: createdAt.bridgeDate,
             updatedAt: updatedAt.bridgeDate,

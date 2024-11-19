@@ -1301,6 +1301,7 @@ private extension ChatMessage {
         guard let context = dto.managedObjectContext else {
             throw InvalidModel(dto)
         }
+        guard !dto.isDeleted else { throw ClientError.DeletedModel(modelType: MessageDTO.self) }
 
         id = dto.id
         cid = try? dto.cid.map { try ChannelId(cid: $0) }

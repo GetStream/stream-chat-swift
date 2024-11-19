@@ -26,7 +26,8 @@ final class ChannelConfigDTO: NSManagedObject {
     @NSManaged var commands: NSOrderedSet
 
     func asModel() throws -> ChannelConfig {
-        .init(
+        guard !isDeleted else { throw ClientError.DeletedModel(modelType: Self.self) }
+        return .init(
             reactionsEnabled: reactionsEnabled,
             typingEventsEnabled: typingEventsEnabled,
             readEventsEnabled: readEventsEnabled,

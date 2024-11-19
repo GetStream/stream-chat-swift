@@ -196,6 +196,8 @@ extension MessageReactionDTO {
 
     /// Snapshots the current state of `MessageReactionDTO` and returns an immutable model object from it.
     func asModel() throws -> ChatMessageReaction {
+        guard !isDeleted else { throw ClientError.DeletedModel(modelType: Self.self) }
+        
         let decodedExtraData: [String: RawJSON]
 
         if let extraData = self.extraData, !extraData.isEmpty {
