@@ -4,6 +4,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 # Upcoming
 
 ## StreamChat
+### ✅ Added
+- Add support for channel member extra data [#3487](https://github.com/GetStream/stream-chat-swift/pull/3487)
+- Add `ChatChannelMemberController.partialUpdate(extraData:unsetProperties:)` [#3487](https://github.com/GetStream/stream-chat-swift/pull/3487)
+- Add `ChatChannelController.addMembers(_ members: [MemberInfo])` [#3487](https://github.com/GetStream/stream-chat-swift/pull/3487)
+- Add `CurrentUserController.updateMemberData()` [#3487](https://github.com/GetStream/stream-chat-swift/pull/3487)
+- Exposes `ChatChannelMember.memberExtraData` property [#3487](https://github.com/GetStream/stream-chat-swift/pull/3487)
 ### 🐞 Fixed
 - Fix connection not resuming after guest user goes to background [#3483](https://github.com/GetStream/stream-chat-swift/pull/3483)
 - Fix empty channel list if the channel list filter contains OR statement with only custom filtering keys [#3482](https://github.com/GetStream/stream-chat-swift/pull/3482)
@@ -50,11 +56,11 @@ _October 02, 2024_
 
 ## StreamChat
 ### ✅ Added
-- Add `ChannelMemberListSortingKey.userId` for sorting channel members by id [#3423](https://github.com/GetStream/stream-chat-swift/pull/3423)
+- Add `ChannelMemberListSortingKey.userId` for sorting channel members by id [#3419](https://github.com/GetStream/stream-chat-swift/pull/3419)
 - Add helper functions to `Poll` that extracts common domain logic [#3374](https://github.com/GetStream/stream-chat-swift/pull/3374)
 ### 🐞 Fixed
 - Fix old channel updates not being added to the channel list automatically [#3430](https://github.com/GetStream/stream-chat-swift/pull/3430)
-- Keep consistent order in channel and member lists when sorting by key with many equal values [#3423](https://github.com/GetStream/stream-chat-swift/pull/3423)
+- Keep consistent order in channel and member lists when sorting by key with many equal values [#3419](https://github.com/GetStream/stream-chat-swift/pull/3419)
   - Recommendation: Always add at least one unique key to the query's sort
 - Avoid rare optimistic locking failure by refreshing the object before saving to the persistent store [#3432](https://github.com/GetStream/stream-chat-swift/pull/3432)
 - Fix `PollOption.latestVotes` sorting [#3374](https://github.com/GetStream/stream-chat-swift/pull/3374)

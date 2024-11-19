@@ -1201,10 +1201,18 @@ final class ChannelUpdater_Tests: XCTestCase {
         let userIds: Set<UserId> = Set([UserId.unique])
 
         // Simulate `addMembers(cid:, mute:, userIds:)` call
-        channelUpdater.addMembers(cid: channelID, userIds: userIds, hideHistory: false)
+        channelUpdater.addMembers(
+            cid: channelID,
+            members: userIds.map { MemberInfo(userId: $0, extraData: nil) },
+            hideHistory: false
+        )
 
         // Assert correct endpoint is called
-        let referenceEndpoint: Endpoint<EmptyResponse> = .addMembers(cid: channelID, userIds: userIds, hideHistory: false)
+        let referenceEndpoint: Endpoint<EmptyResponse> = .addMembers(
+            cid: channelID,
+            members: userIds.map { MemberInfoRequest(userId: $0, extraData: nil) },
+            hideHistory: false
+        )
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(referenceEndpoint))
     }
     
@@ -1218,7 +1226,7 @@ final class ChannelUpdater_Tests: XCTestCase {
         channelUpdater.addMembers(
             currentUserId: senderId,
             cid: channelID,
-            userIds: userIds,
+            members: userIds.map { MemberInfo(userId: $0, extraData: nil) },
             message: message,
             hideHistory: false
         )
@@ -1236,7 +1244,7 @@ final class ChannelUpdater_Tests: XCTestCase {
         )
         let referenceEndpoint: Endpoint<EmptyResponse> = .addMembers(
             cid: channelID,
-            userIds: userIds,
+            members: userIds.map { MemberInfoRequest(userId: $0, extraData: nil) },
             hideHistory: false,
             messagePayload: messageRequestBody
         )
@@ -1249,7 +1257,11 @@ final class ChannelUpdater_Tests: XCTestCase {
 
         // Simulate `addMembers(cid:, mute:, userIds:)` call
         var completionCalled = false
-        channelUpdater.addMembers(cid: channelID, userIds: userIds, hideHistory: false) { error in
+        channelUpdater.addMembers(
+            cid: channelID,
+            members: userIds.map { MemberInfo(userId: $0, extraData: nil) },
+            hideHistory: false
+        ) { error in
             XCTAssertNil(error)
             completionCalled = true
         }
@@ -1268,9 +1280,14 @@ final class ChannelUpdater_Tests: XCTestCase {
         let channelID = ChannelId.unique
         let userIds: Set<UserId> = Set([UserId.unique])
 
-        // Simulate `addMembers(cid:, userIds:, hideHistory:)` call
         var completionCalledError: Error?
-        channelUpdater.addMembers(cid: channelID, userIds: userIds, hideHistory: false) { completionCalledError = $0 }
+        channelUpdater.addMembers(
+            cid: channelID,
+            members: userIds.map { MemberInfo(userId: $0, extraData: nil) },
+            hideHistory: false
+        ) {
+            completionCalledError = $0
+        }
 
         // Simulate API response with failure
         let error = TestError()

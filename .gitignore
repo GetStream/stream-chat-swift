@@ -102,5 +102,6 @@ Products/
 # Ignore Dependencies folder
 Dependencies/
 
-# Ignore internal scheme
-StreamChat.xcodeproj/xcshareddata/xcschemes/DemoApp-StreamDevelopers.xcscheme
+# VSCode
+.vscode
+buildServer.json

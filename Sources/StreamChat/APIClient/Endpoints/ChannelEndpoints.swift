@@ -142,12 +142,12 @@ extension Endpoint {
 
     static func addMembers(
         cid: ChannelId,
-        userIds: Set<UserId>,
+        members: [MemberInfoRequest],
         hideHistory: Bool,
         messagePayload: MessageRequestBody? = nil
     ) -> Endpoint<EmptyResponse> {
         var body: [String: AnyEncodable] = [
-            "add_members": AnyEncodable(userIds),
+            "add_members": AnyEncodable(members),
             "hide_history": AnyEncodable(hideHistory)
         ]
         if let messagePayload = messagePayload {
@@ -361,5 +361,21 @@ extension Endpoint {
             requiresConnectionId: false,
             body: ["payload": query]
         )
+    }
+}
+
+struct MemberInfoRequest: Encodable {
+    let userId: UserId
+    let extraData: [String: RawJSON]?
+
+    enum CodingKeys: String, CodingKey {
+        case userId = "user_id"
+        case extraData
+    }
+
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(userId, forKey: .userId)
+        try extraData?.encode(to: encoder)
     }
 }
