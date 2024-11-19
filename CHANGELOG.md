@@ -5,8 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## StreamChat
 ### 🐞 Fixed
-- Fix not returning models with empty properties when the underlying database model was deleted [Fill in PR number]
-- Fix an issue where deleting current user in the local database cleared member data in channels [Fill in PR number]
+- Fix not returning models with empty properties when the underlying database model was deleted [#3497](https://github.com/GetStream/stream-chat-swift/pull/3497)
+- Fix an issue where deleting current user in the local database cleared member data in channels [#3497](https://github.com/GetStream/stream-chat-swift/pull/3497)
 
 ## StreamChat
 ### ✅ Added
