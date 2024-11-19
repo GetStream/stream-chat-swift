@@ -175,20 +175,17 @@ extension NSManagedObjectContext: CurrentUserDatabaseSession {
 
     private static let currentUserKey = "io.getStream.chat.core.context.current_user_key"
     var currentUser: CurrentUserDTO? {
-        // we already have cached value in `userInfo` so all setup is complete
-        // so we can just return cached value
-        if let currentUser = userInfo[Self.currentUserKey] as? CurrentUserDTO {
-            return currentUser
+        if let objectId = userInfo[Self.currentUserKey] as? NSManagedObjectID {
+            if let dto = try? existingObject(with: objectId) as? CurrentUserDTO {
+                return dto.isDeleted ? nil : dto
+            }
         }
-
-        // we do not have cached value in `userInfo` so we try to load current user from DB
-        if let currentUser = CurrentUserDTO.load(context: self) {
-            // if we have current user we save it to `userInfo` so we do not have to load it again
-            userInfo[Self.currentUserKey] = currentUser
-            return currentUser
+        if let dto = CurrentUserDTO.load(context: self) {
+            if !dto.objectID.isTemporaryID {
+                userInfo[Self.currentUserKey] = dto.objectID
+            }
+            return dto
         }
-
-        // we really don't have current user
         return nil
     }
 
