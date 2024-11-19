@@ -3473,11 +3473,11 @@ final class ChannelController_Tests: XCTestCase {
         //  Create `ChannelController` for new channel
         let query = ChannelQuery(channelPayload: .unique)
         setupControllerForNewChannel(query: query)
-        let members: Set<UserId> = [.unique]
+        let members: [MemberInfo] = [.init(userId: .unique, extraData: nil)]
 
         // Simulate `addMembers` call and assert error is returned
         var error: Error? = try waitFor { [callbackQueueID] completion in
-            controller.addMembers(userIds: members) { error in
+            controller.addMembers(members) { error in
                 AssertTestQueue(withId: callbackQueueID)
                 completion(error)
             }
@@ -3489,7 +3489,7 @@ final class ChannelController_Tests: XCTestCase {
 
         // Simulate `addMembers` call and assert no error is returned
         error = try waitFor { [callbackQueueID] completion in
-            controller.addMembers(userIds: members) { error in
+            controller.addMembers(members) { error in
                 AssertTestQueue(withId: callbackQueueID)
                 completion(error)
             }
@@ -3500,11 +3500,11 @@ final class ChannelController_Tests: XCTestCase {
     }
 
     func test_addMembers_callsChannelUpdater() {
-        let members: Set<UserId> = [.unique]
+        let members: [MemberInfo] = [.init(userId: .unique, extraData: ["is_premium": true])]
 
         // Simulate `addMembers` call and catch the completion
         var completionCalled = false
-        controller.addMembers(userIds: members) { [callbackQueueID] error in
+        controller.addMembers(members) { [callbackQueueID] error in
             AssertTestQueue(withId: callbackQueueID)
             XCTAssertNil(error)
             completionCalled = true
@@ -3519,7 +3519,7 @@ final class ChannelController_Tests: XCTestCase {
 
         // Assert cid and members state are passed to `channelUpdater`, completion is not called yet
         XCTAssertEqual(env.channelUpdater!.addMembers_cid, channelId)
-        XCTAssertEqual(env.channelUpdater!.addMembers_userIds, members)
+        XCTAssertEqual(env.channelUpdater!.addMembers_memberInfos?.map(\.userId), members.map(\.userId))
         XCTAssertFalse(completionCalled)
 
         // Simulate successful update
@@ -3534,11 +3534,11 @@ final class ChannelController_Tests: XCTestCase {
     }
 
     func test_addMembers_propagatesErrorFromUpdater() {
-        let members: Set<UserId> = [.unique]
+        let members: [MemberInfo] = [.init(userId: .unique, extraData: nil)]
 
         // Simulate `addMembers` call and catch the completion
         var completionCalledError: Error?
-        controller.addMembers(userIds: members) { [callbackQueueID] in
+        controller.addMembers(members) { [callbackQueueID] in
             AssertTestQueue(withId: callbackQueueID)
             completionCalledError = $0
         }

@@ -24,6 +24,8 @@ class MemberDTO: NSManagedObject {
     @NSManaged var inviteRejectedAt: DBDate?
     @NSManaged var isInvited: Bool
 
+    @NSManaged var extraData: Data?
+
     // MARK: - Relationships
 
     @NSManaged var user: UserDTO
@@ -128,6 +130,10 @@ extension NSManagedObjectContext {
         dto.inviteRejectedAt = payload.inviteRejectedAt?.bridgeDate
         dto.notificationsMuted = payload.notificationsMuted
 
+        if let extraData = payload.extraData {
+            dto.extraData = try? JSONEncoder.default.encode(payload.extraData)
+        }
+
         if let query = query {
             let queryDTO = try saveQuery(query)
             queryDTO.members.insert(dto)
@@ -177,6 +183,15 @@ extension ChatChannelMember {
             extraData = [:]
         }
 
+        var memberExtraData: [String: RawJSON] = [:]
+        if let dtoMemberExtraData = dto.extraData {
+            do {
+                memberExtraData = try JSONDecoder.default.decode([String: RawJSON].self, from: dtoMemberExtraData)
+            } catch {
+                memberExtraData = [:]
+            }
+        }
+
         let role = dto.channelRoleRaw.flatMap { MemberRole(rawValue: $0) } ?? .member
         let language: TranslationLanguage? = dto.user.language.map(TranslationLanguage.init)
 
@@ -204,7 +219,8 @@ extension ChatChannelMember {
             isBannedFromChannel: dto.isBanned,
             banExpiresAt: dto.banExpiresAt?.bridgeDate,
             isShadowBannedFromChannel: dto.isShadowBanned,
-            notificationsMuted: dto.notificationsMuted
+            notificationsMuted: dto.notificationsMuted,
+            memberExtraData: memberExtraData
         )
     }
 }

@@ -78,8 +78,9 @@ final class DemoChatChannelListRouter: ChatChannelListRouter {
         let canMuteChannel = channelController.channel?.canMuteChannel == true
         let canSetChannelCooldown = channelController.channel?.canSetChannelCooldown == true
         let canSendMessage = channelController.channel?.canSendMessage == true
+        let isPremiumMemberFeatureEnabled = AppConfig.shared.demoAppConfig.isPremiumMemberFeatureEnabled
 
-        rootViewController.presentAlert(title: "Select an action", actions: [
+        let actions: [UIAlertAction?] = [
             .init(title: "Change nav bar translucency", handler: { [unowned self] _ in
                 self.rootViewController.presentAlert(
                     title: "Change nav bar translucency",
@@ -158,6 +159,59 @@ final class DemoChatChannelListRouter: ChatChannelListRouter {
                     }
                 }
             }),
+            .init(title: "Show Channel Info", handler: { [unowned self] _ in
+                let debugViewController = DebugObjectViewController(object: channelController.channel)
+                self.rootViewController.present(debugViewController, animated: true)
+            }),
+            .init(title: "Show Channel Members", handler: { [unowned self] _ in
+                guard let cid = channelController.channel?.cid else { return }
+                let client = channelController.client
+                self.rootViewController.present(MembersViewController(
+                    membersController: client.memberListController(query: .init(cid: cid, pageSize: 105))
+                ), animated: true)
+            }),
+            .init(title: "Show Channel Premium Members", isVisible: isPremiumMemberFeatureEnabled, handler: { [unowned self] _ in
+                guard let cid = channelController.channel?.cid else { return }
+                let client = channelController.client
+                self.rootViewController.present(MembersViewController(
+                    membersController: client.memberListController(
+                        query: .init(cid: cid, filter: .equal("is_premium", to: true), pageSize: 105)
+                    )
+                ), animated: true)
+            }),
+            .init(title: "Show Channel Moderators", handler: { [unowned self] _ in
+                guard let cid = channelController.channel?.cid else { return }
+                let client = channelController.client
+                self.rootViewController.present(MembersViewController(
+                    membersController: client.memberListController(
+                        query: .init(cid: cid, filter: .equal(.isModerator, to: true))
+                    )
+                ), animated: true)
+            }),
+            .init(title: "Show Banned Members", handler: { [unowned self] _ in
+                guard let cid = channelController.channel?.cid else { return }
+                let client = channelController.client
+                self.rootViewController.present(MembersViewController(
+                    membersController: client.memberListController(
+                        query: .init(cid: cid, filter: .equal(.banned, to: true))
+                    )
+                ), animated: true)
+            }),
+            .init(title: "Show Blocked Users", handler: { [unowned self] _ in
+                guard let cid = channelController.channel?.cid else { return }
+                let client = channelController.client
+                client.currentUserController().loadBlockedUsers { result in
+                    guard let blockedUsers = try? result.get() else { return }
+                    self.rootViewController.present(MembersViewController(
+                        membersController: client.memberListController(
+                            query: .init(
+                                cid: cid,
+                                filter: .in(.id, values: blockedUsers.map(\.userId))
+                            )
+                        )
+                    ), animated: true)
+                }
+            }),
             .init(title: "Add member", isEnabled: canUpdateChannelMembers, handler: { [unowned self] _ in
                 self.rootViewController.presentAlert(title: "Enter user id", textFieldPlaceholder: "User ID") { id in
                     guard let id = id, !id.isEmpty else {
@@ -165,7 +219,7 @@ final class DemoChatChannelListRouter: ChatChannelListRouter {
                         return
                     }
                     channelController.addMembers(
-                        userIds: [id],
+                        [MemberInfo(userId: id, extraData: nil)],
                         message: "Members added to the channel"
                     ) { error in
                         if let error = error {
@@ -184,7 +238,7 @@ final class DemoChatChannelListRouter: ChatChannelListRouter {
                         return
                     }
                     channelController.addMembers(
-                        userIds: [id],
+                        [MemberInfo(userId: id, extraData: nil)],
                         hideHistory: true,
                         message: "Members added to the channel"
                     ) { error in
@@ -260,6 +314,80 @@ final class DemoChatChannelListRouter: ChatChannelListRouter {
                                 if let error = error {
                                     self.rootViewController.presentAlert(
                                         title: "Couldn't unban user \(member.id) from channel \(cid)",
+                                        message: "\(error)"
+                                    )
+                                }
+                            }
+                    }
+                } ?? []
+                self.rootViewController.presentAlert(title: "Select a member", actions: actions)
+            }),
+            .init(title: "Add premium member", isVisible: isPremiumMemberFeatureEnabled, isEnabled: canUpdateChannelMembers, handler: { [unowned self] _ in
+                self.rootViewController.presentAlert(title: "Enter user id", textFieldPlaceholder: "User ID") { id in
+                    guard let id = id, !id.isEmpty else {
+                        self.rootViewController.presentAlert(title: "User ID is not valid")
+                        return
+                    }
+                    channelController.addMembers(
+                        [MemberInfo(userId: id, extraData: ["is_premium": true])],
+                        message: "Premium member added to the channel"
+                    ) { error in
+                        if let error = error {
+                            self.rootViewController.presentAlert(
+                                title: "Couldn't add user \(id) to channel \(cid)",
+                                message: "\(error)"
+                            )
+                        }
+                    }
+                }
+            }),
+            .init(title: "Set member as premium", isVisible: isPremiumMemberFeatureEnabled, isEnabled: canUpdateChannelMembers, handler: { [unowned self] _ in
+                let actions = channelController.channel?.lastActiveMembers.map { member in
+                    UIAlertAction(title: member.id, style: .default) { _ in
+                        channelController.client.memberController(userId: member.id, in: cid)
+                            .partialUpdate(extraData: ["is_premium": true], unsetProperties: nil) { [unowned self] result in
+                                do {
+                                    let data = try result.get()
+                                    print("Member updated. Premium: ", data.isPremium)
+                                    self.rootNavigationController?.popViewController(animated: true)
+                                } catch {
+                                    self.rootViewController.presentAlert(
+                                        title: "Couldn't set user \(member.id) as premium.",
+                                        message: "\(error)"
+                                    )
+                                }
+                            }
+                    }
+                } ?? []
+                self.rootViewController.presentAlert(title: "Select a member", actions: actions)
+            }),
+            .init(title: "Set current member as premium", isVisible: isPremiumMemberFeatureEnabled, handler: { [unowned self] _ in
+                channelController.client.currentUserController()
+                    .updateMemberData(["is_premium": true], in: cid) { [unowned self] result in
+                        do {
+                            let data = try result.get()
+                            print("Member updated. Premium: ", data.isPremium)
+                            self.rootNavigationController?.popViewController(animated: true)
+                        } catch {
+                            self.rootViewController.presentAlert(
+                                title: "Couldn't set current user as premium.",
+                                message: "\(error)"
+                            )
+                        }
+                    }
+            }),
+            .init(title: "Unset premium from member", isVisible: isPremiumMemberFeatureEnabled, isEnabled: canUpdateChannelMembers, handler: { [unowned self] _ in
+                let actions = channelController.channel?.lastActiveMembers.map { member in
+                    UIAlertAction(title: member.id, style: .default) { _ in
+                        channelController.client.memberController(userId: member.id, in: cid)
+                            .partialUpdate(extraData: nil, unsetProperties: ["is_premium"]) { [unowned self] result in
+                                do {
+                                    let data = try result.get()
+                                    print("Member updated. Premium: ", data.isPremium)
+                                    self.rootNavigationController?.popViewController(animated: true)
+                                } catch {
+                                    self.rootViewController.presentAlert(
+                                        title: "Couldn't set user \(member.id) as premium.",
                                         message: "\(error)"
                                     )
                                 }
@@ -407,50 +535,6 @@ final class DemoChatChannelListRouter: ChatChannelListRouter {
                     }
                 }
             }),
-            .init(title: "Show Channel Info", handler: { [unowned self] _ in
-                let debugViewController = DebugObjectViewController(object: channelController.channel)
-                self.rootViewController.present(debugViewController, animated: true)
-            }),
-            .init(title: "Show Channel Members", handler: { [unowned self] _ in
-                guard let cid = channelController.channel?.cid else { return }
-                let client = channelController.client
-                self.rootViewController.present(MembersViewController(
-                    membersController: client.memberListController(query: .init(cid: cid, pageSize: 105))
-                ), animated: true)
-            }),
-            .init(title: "Show Channel Moderators", handler: { [unowned self] _ in
-                guard let cid = channelController.channel?.cid else { return }
-                let client = channelController.client
-                self.rootViewController.present(MembersViewController(
-                    membersController: client.memberListController(
-                        query: .init(cid: cid, filter: .equal(.isModerator, to: true))
-                    )
-                ), animated: true)
-            }),
-            .init(title: "Show Banned Members", handler: { [unowned self] _ in
-                guard let cid = channelController.channel?.cid else { return }
-                let client = channelController.client
-                self.rootViewController.present(MembersViewController(
-                    membersController: client.memberListController(
-                        query: .init(cid: cid, filter: .equal(.banned, to: true))
-                    )
-                ), animated: true)
-            }),
-            .init(title: "Show Blocked Users", handler: { [unowned self] _ in
-                guard let cid = channelController.channel?.cid else { return }
-                let client = channelController.client
-                client.currentUserController().loadBlockedUsers { result in
-                    guard let blockedUsers = try? result.get() else { return }
-                    self.rootViewController.present(MembersViewController(
-                        membersController: client.memberListController(
-                            query: .init(
-                                cid: cid,
-                                filter: .in(.id, values: blockedUsers.map(\.userId))
-                            )
-                        )
-                    ), animated: true)
-                }
-            }),
             .init(title: "Truncate channel w/o message", isEnabled: canUpdateChannel, handler: { _ in
                 channelController.truncateChannel { [unowned self] error in
                     if let error = error {
@@ -554,7 +638,12 @@ final class DemoChatChannelListRouter: ChatChannelListRouter {
                     self.rootViewController.presentAlert(title: error.localizedDescription)
                 }
             })
-        ])
+        ]
+
+        rootViewController.presentAlert(
+            title: "Select an action",
+            actions: actions.compactMap { $0 }
+        )
     }
 
     // swiftlint:enable function_body_length
@@ -570,6 +659,12 @@ final class DemoChatChannelListRouter: ChatChannelListRouter {
 }
 
 private extension UIAlertAction {
+    /// Convenience initializer to create an alert action with a custom isEnabled flag.
+    /// - Parameters:
+    ///  - title: The title of the action.
+    ///  - isEnabled: The flag saying if the action is enabled.
+    ///  - style: The style of the action.
+    ///  - handler: The block to execute when the user selects the action.
     convenience init(
         title: String?,
         isEnabled: Bool = true,
@@ -582,5 +677,25 @@ private extension UIAlertAction {
             handler: handler
         )
         self.isEnabled = isEnabled
+    }
+
+    /// Convenience initializer to create an alert action only if should be visible.
+    /// - Parameters:
+    ///  - title: The title of the action.
+    ///  - isVisible: The flag saying if the action should be visible.
+    ///  - isEnabled: The flag saying if the action is enabled.
+    ///  - style: The style of the action.
+    ///  - handler: The block to execute when the user selects the action.
+    convenience init?(
+        title: String?,
+        isVisible: Bool = true,
+        isEnabled: Bool = true,
+        style: Style = .default,
+        handler: ((UIAlertAction) -> Void)?
+    ) {
+        if !isVisible {
+            return nil
+        }
+        self.init(title: title, isEnabled: isEnabled, style: style, handler: handler)
     }
 }
