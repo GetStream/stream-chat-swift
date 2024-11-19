@@ -410,7 +410,7 @@ final class DatabaseContainer_Tests: XCTestCase {
                             lastReactionAt: .unique
                         )
                     ],
-                    moderationDetails: .init(originalText: "yo", action: "spam")
+                    moderationDetails: .dummy(originalText: "yo", action: "spam")
                 ),
                 .dummy(
                     poll: self.dummyPollPayload(

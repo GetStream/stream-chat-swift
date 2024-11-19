@@ -41,7 +41,8 @@ enum MessagePayloadsCodingKeys: String, CodingKey, CaseIterable {
     case mml
     case imageLabels = "image_labels"
     case shadowed
-    case moderationDetails = "moderation_details"
+    case moderationDetails = "moderation_details" // moderation v1 key
+    case moderation // moderation v2 key
     case messageTextUpdatedAt = "message_text_updated_at"
     case poll
     case pollId = "poll_id"
@@ -96,7 +97,8 @@ class MessagePayload: Decodable {
     let isShadowed: Bool
     let translations: [TranslationLanguage: String]?
     let originalLanguage: String?
-    let moderationDetails: MessageModerationDetailsPayload?
+    let moderationDetails: MessageModerationDetailsPayload? // moderation v1 payload
+    var moderation: MessageModerationDetailsPayload? // moderation v2 payload
 
     var pinned: Bool
     var pinnedBy: UserPayload?
@@ -165,6 +167,7 @@ class MessagePayload: Decodable {
         let i18n = try container.decodeIfPresent(MessageTranslationsPayload.self, forKey: .i18n)
         translations = i18n?.translated
         originalLanguage = i18n?.originalLanguage
+        moderation = try container.decodeIfPresent(MessageModerationDetailsPayload.self, forKey: .moderation)
         moderationDetails = try container.decodeIfPresent(MessageModerationDetailsPayload.self, forKey: .moderationDetails)
         messageTextUpdatedAt = try container.decodeIfPresent(Date.self, forKey: .messageTextUpdatedAt)
         poll = try container.decodeIfPresent(PollPayload.self, forKey: .poll)
@@ -204,6 +207,7 @@ class MessagePayload: Decodable {
         pinExpires: Date? = nil,
         translations: [TranslationLanguage: String]? = nil,
         originalLanguage: String? = nil,
+        moderation: MessageModerationDetailsPayload? = nil,
         moderationDetails: MessageModerationDetailsPayload? = nil,
         messageTextUpdatedAt: Date? = nil,
         poll: PollPayload? = nil
@@ -241,6 +245,7 @@ class MessagePayload: Decodable {
         self.quotedMessageId = quotedMessageId
         self.translations = translations
         self.originalLanguage = originalLanguage
+        self.moderation = moderation
         self.moderationDetails = moderationDetails
         self.messageTextUpdatedAt = messageTextUpdatedAt
         self.poll = poll

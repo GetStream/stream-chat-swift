@@ -56,6 +56,13 @@ final class MessagePayload_Tests: XCTestCase {
         XCTAssertEqual(payload.originalLanguage, "it")
         XCTAssertEqual(payload.moderationDetails?.action, "MESSAGE_RESPONSE_ACTION_BOUNCE")
         XCTAssertEqual(payload.moderationDetails?.originalText, "click here to win a new iphone!!")
+        XCTAssertEqual(payload.moderation?.action, "bounce")
+        XCTAssertEqual(payload.moderation?.originalText, "The message original text")
+        XCTAssertEqual(payload.moderation?.textHarms, ["sexual_harrassment", "self_harm"])
+        XCTAssertEqual(payload.moderation?.imageHarms, ["nudity"])
+        XCTAssertEqual(payload.moderation?.blocklistMatched, "profanity_2021_01")
+        XCTAssertEqual(payload.moderation?.semanticFilterMatched, "bad_phrases")
+        XCTAssertEqual(payload.moderation?.platformCircumvented, false)
     }
 
     func test_messagePayload_isSerialized_withDefaultExtraData_withBrokenAttachmentPayload() throws {
