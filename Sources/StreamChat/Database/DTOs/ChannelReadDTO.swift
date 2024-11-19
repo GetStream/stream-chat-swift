@@ -18,7 +18,10 @@ class ChannelReadDTO: NSManagedObject {
 
     override func willSave() {
         super.willSave()
-
+        
+        guard !isDeleted else {
+            return
+        }
         // When the read is updated, we need to propagate this change up to holding channel
         if hasPersistentChangedValues, !channel.hasChanges, !channel.isDeleted {
             // this will not change object, but mark it as dirty, triggering updates

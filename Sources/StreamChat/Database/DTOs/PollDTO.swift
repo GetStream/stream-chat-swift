@@ -31,6 +31,10 @@ class PollDTO: NSManagedObject {
     override func willSave() {
         super.willSave()
         
+        guard !isDeleted else {
+            return
+        }
+        
         // When the poll is updated, trigger message FRC update.
         if let message = self.message, hasPersistentChangedValues, !message.hasChanges, !message.isDeleted {
             message.id = message.id
