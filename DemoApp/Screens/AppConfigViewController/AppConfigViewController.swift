@@ -154,10 +154,13 @@ class AppConfigViewController: UITableViewController {
     }
 
     enum DemoAppInfoOption: CustomStringConvertible, CaseIterable {
+        case environment
         case pushConfiguration
 
         var description: String {
             switch self {
+            case .environment:
+                return "App Key"
             case .pushConfiguration:
                 let configuration = Bundle.pushProviderName ?? "Not set"
                 return "Push Configuration: \(configuration)"
@@ -265,8 +268,8 @@ class AppConfigViewController: UITableViewController {
         guard let cell = tableView.cellForRow(at: indexPath) else { return }
 
         switch options[indexPath.section] {
-        case .info:
-            break
+        case let .info(options):
+            didSelectInfoOptionsCell(cell, at: indexPath, options: options)
         case let .components(options):
             didSelectComponentsOptionsCell(cell, at: indexPath, options: options)
         case let .chatClient(options):
@@ -287,6 +290,13 @@ class AppConfigViewController: UITableViewController {
     ) {
         let option = options[indexPath.row]
         cell.textLabel?.text = option.description
+        switch option {
+        case .environment:
+            cell.accessoryType = .disclosureIndicator
+            cell.detailTextLabel?.text = apiKeyString
+        case .pushConfiguration:
+            break
+        }
     }
 
     // MARK: - Demo App Options
@@ -493,6 +503,20 @@ class AppConfigViewController: UITableViewController {
         }
     }
 
+    private func didSelectInfoOptionsCell(
+        _ cell: UITableViewCell,
+        at indexPath: IndexPath,
+        options: [DemoAppInfoOption]
+    ) {
+        let option = options[indexPath.row]
+        switch option {
+        case .environment:
+            pushEnvironmentSelectorVC()
+        case .pushConfiguration:
+            break
+        }
+    }
+
     private func didSelectComponentsOptionsCell(
         _ cell: UITableViewCell,
         at indexPath: IndexPath,
@@ -664,5 +688,28 @@ class AppConfigViewController: UITableViewController {
         }))
 
         present(alert, animated: true, completion: nil)
+    }
+
+    private func pushEnvironmentSelectorVC() {
+        let selectorViewController = OptionsSelectorViewController<DemoApiKeys>(
+            options: [.frankfurtC1, .frankfurtC2, .usEastC6],
+            initialSelectedOptions: [DemoApiKeys(rawValue: apiKeyString)],
+            allowsMultipleSelection: false,
+            optionFormatter: { option in
+                var optionName = option.rawValue
+                if let appName = option.appName {
+                    optionName += " (\(appName))"
+                }
+                return optionName
+            }
+        )
+        selectorViewController.didChangeSelectedOptions = { [weak self] options in
+            guard let selectedOption = options.first else { return }
+            apiKeyString = selectedOption.rawValue
+            StreamChatWrapper.replaceSharedInstance(apiKeyString: apiKeyString)
+            self?.tableView.reloadData()
+        }
+
+        navigationController?.pushViewController(selectorViewController, animated: true)
     }
 }

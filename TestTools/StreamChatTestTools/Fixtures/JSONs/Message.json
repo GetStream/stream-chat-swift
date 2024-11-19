@@ -283,6 +283,15 @@
             "online" : true,
             "name" : "John Doe"
         },
+        "moderation": {
+            "action": "bounce",
+            "original_text": "The message original text",
+            "text_harms": ["sexual_harrassment", "self_harm"],
+            "image_harms": ["nudity"],
+            "blocklist_matched": "profanity_2021_01",
+            "semantic_filter_matched": "bad_phrases",
+            "platform_circumvented": false
+        },
         "moderation_details": {
             "original_text": "click here to win a new iphone!!",
             "action": "MESSAGE_RESPONSE_ACTION_BOUNCE",
