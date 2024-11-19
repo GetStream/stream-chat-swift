@@ -131,7 +131,7 @@ extension NSManagedObjectContext {
         dto.notificationsMuted = payload.notificationsMuted
 
         if let extraData = payload.extraData {
-            dto.extraData = try? JSONEncoder.default.encode(payload.extraData)
+            dto.extraData = try? JSONEncoder.default.encode(extraData)
         }
 
         if let query = query {
