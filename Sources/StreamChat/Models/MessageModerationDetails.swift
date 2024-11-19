@@ -33,7 +33,7 @@ public struct MessageModerationAction: RawRepresentable, Equatable {
         self.rawValue = rawValue
     }
 
-    /// The message was bounced message, which means it needs to be rephrased and sent again.
+    /// The message was bounced, which means it needs to be rephrased and sent again.
     public static let bounce = Self(rawValue: "bounce")
     /// The message was blocked and removed from the chat.
     public static let remove = Self(rawValue: "remove")
