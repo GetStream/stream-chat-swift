@@ -173,7 +173,7 @@ extension NSManagedObjectContext: CurrentUserDatabaseSession {
         }
     }
 
-    private static let currentUserKey = "io.getStream.chat.core.context.current_user_key"
+    static let currentUserKey = "io.getStream.chat.core.context.current_user_key"
     var currentUser: CurrentUserDTO? {
         if let objectId = userInfo[Self.currentUserKey] as? NSManagedObjectID {
             if let dto = try? existingObject(with: objectId) as? CurrentUserDTO {
