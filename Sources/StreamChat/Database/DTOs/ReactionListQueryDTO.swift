@@ -39,6 +39,12 @@ class ReactionListQueryDTO: NSManagedObject {
     }
 }
 
+extension ReactionListQueryDTO {
+    override class func prefetchedRelationshipKeyPaths() -> [String] {
+        [KeyPath.string(\ReactionListQueryDTO.reactions)]
+    }
+}
+
 extension NSManagedObjectContext {
     func reactionListQuery(filterHash: String) -> ReactionListQueryDTO? {
         ReactionListQueryDTO.load(filterHash: filterHash, context: self)

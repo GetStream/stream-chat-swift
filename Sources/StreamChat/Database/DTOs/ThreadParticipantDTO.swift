@@ -15,6 +15,7 @@ class ThreadParticipantDTO: NSManagedObject {
 
     static func fetchRequest(for threadId: String, userId: String) -> NSFetchRequest<ThreadParticipantDTO> {
         let request = NSFetchRequest<ThreadParticipantDTO>(entityName: ThreadParticipantDTO.entityName)
+        ThreadParticipantDTO.applyPrefetchingState(to: request)
         request.predicate = NSPredicate(format: "threadId == %@ && user.id == %@", threadId, userId)
         return request
     }
@@ -34,6 +35,12 @@ class ThreadParticipantDTO: NSManagedObject {
         new.thread = ThreadDTO.loadOrCreate(parentMessageId: threadId, context: context, cache: cache)
         new.user = UserDTO.loadOrCreate(id: userId, context: context, cache: cache)
         return new
+    }
+}
+
+extension ThreadParticipantDTO {
+    override class func prefetchedRelationshipKeyPaths() -> [String] {
+        [KeyPath.string(\ThreadParticipantDTO.user)]
     }
 }
 
