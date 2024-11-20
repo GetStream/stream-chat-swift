@@ -33,6 +33,7 @@ class CurrentUserDTO: NSManagedObject {
     /// Returns a default fetch request for the current user.
     static var defaultFetchRequest: NSFetchRequest<CurrentUserDTO> {
         let request = NSFetchRequest<CurrentUserDTO>(entityName: CurrentUserDTO.entityName)
+        CurrentUserDTO.applyPrefetchingState(to: request)
         // Sorting doesn't matter here as soon as we have a single current-user in a database.
         // It's here to make the request safe for FRC
         request.sortDescriptors = [.init(keyPath: \CurrentUserDTO.unreadMessagesCount, ascending: true)]
@@ -46,6 +47,7 @@ extension CurrentUserDTO {
     /// - Parameter context: The context used to fetch `CurrentUserDTO`
     fileprivate static func load(context: NSManagedObjectContext) -> CurrentUserDTO? {
         let request = NSFetchRequest<CurrentUserDTO>(entityName: CurrentUserDTO.entityName)
+        CurrentUserDTO.applyPrefetchingState(to: request)
         let result = load(by: request, context: context)
 
         log.assert(
@@ -61,6 +63,7 @@ extension CurrentUserDTO {
     /// - Parameter context: The context used to fetch/create `CurrentUserDTO`
     fileprivate static func loadOrCreate(context: NSManagedObjectContext) -> CurrentUserDTO {
         let request = NSFetchRequest<CurrentUserDTO>(entityName: CurrentUserDTO.entityName)
+        CurrentUserDTO.applyPrefetchingState(to: request)
         let result = load(by: request, context: context)
         log.assert(
             result.count <= 1,
@@ -191,6 +194,20 @@ extension NSManagedObjectContext: CurrentUserDatabaseSession {
 
     func invalidateCurrentUserCache() {
         userInfo[Self.currentUserKey] = nil
+    }
+}
+
+extension CurrentUserDTO {
+    override class func prefetchedRelationshipKeyPaths() -> [String] {
+        [
+            KeyPath.string(\CurrentUserDTO.channelMutes),
+            KeyPath.string(\CurrentUserDTO.currentDevice),
+            KeyPath.string(\CurrentUserDTO.devices),
+            KeyPath.string(\CurrentUserDTO.flaggedMessages),
+            KeyPath.string(\CurrentUserDTO.flaggedUsers),
+            KeyPath.string(\CurrentUserDTO.mutedUsers),
+            KeyPath.string(\CurrentUserDTO.user)
+        ]
     }
 }
 
