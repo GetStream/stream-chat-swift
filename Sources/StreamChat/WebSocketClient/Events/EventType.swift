@@ -146,7 +146,7 @@ public extension EventType {
     
     // MARK: - AI
     
-    static let aiTypingIndicatorChanged: Self = "ai.typing_indicator_changed"
+    static let aiTypingIndicatorChanged: Self = "ai_indicator_changed"
 }
 
 extension EventType {
