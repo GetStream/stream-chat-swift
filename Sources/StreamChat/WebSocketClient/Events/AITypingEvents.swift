@@ -11,16 +11,15 @@ public struct AITypingEvent: Event {
 
 class AITypingEventDTO: EventDTO {
     let payload: EventPayload
-    let typingState: String
     
-    init(from response: EventPayload, typingState: String) throws {
+    init(from response: EventPayload) throws {
         payload = response
-        self.typingState = typingState
     }
 
     func toDomainEvent(session: DatabaseSession) -> Event? {
-        if let typingState = AITypingState(rawValue: typingState) {
-            return AITypingEvent(typingState: typingState, cid: payload.cid)
+        if let typingState = payload.typingState,
+           let aITypingState = AITypingState(rawValue: typingState) {
+            return AITypingEvent(typingState: aITypingState, cid: payload.cid)
         } else {
             return nil
         }

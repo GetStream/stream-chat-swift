@@ -36,6 +36,7 @@ class EventPayload: Decodable {
         case thread
         case vote = "poll_vote"
         case poll
+        case typingState
     }
 
     let eventType: EventType
@@ -68,6 +69,8 @@ class EventPayload: Decodable {
     /// Thread Data, it is stored in Result, to be easier to debug decoding errors
     let threadDetails: Result<ThreadDetailsPayload, Error>?
     let threadPartial: Result<ThreadPartialPayload, Error>?
+    
+    let typingState: String?
 
     init(
         eventType: EventType,
@@ -96,7 +99,8 @@ class EventPayload: Decodable {
         threadDetails: Result<ThreadDetailsPayload, Error>? = nil,
         threadPartial: Result<ThreadPartialPayload, Error>? = nil,
         poll: PollPayload? = nil,
-        vote: PollVotePayload? = nil
+        vote: PollVotePayload? = nil,
+        typingState: String? = nil
     ) {
         self.eventType = eventType
         self.connectionId = connectionId
@@ -125,6 +129,7 @@ class EventPayload: Decodable {
         self.threadDetails = threadDetails
         self.poll = poll
         self.vote = vote
+        self.typingState = typingState
     }
 
     required init(from decoder: Decoder) throws {
@@ -158,6 +163,7 @@ class EventPayload: Decodable {
         threadPartial = container.decodeAsResultIfPresent(ThreadPartialPayload.self, forKey: .thread)
         vote = try container.decodeIfPresent(PollVotePayload.self, forKey: .vote)
         poll = try container.decodeIfPresent(PollPayload.self, forKey: .poll)
+        typingState = try container.decodeIfPresent(String.self, forKey: .typingState)
     }
 
     func event() throws -> Event {
