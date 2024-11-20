@@ -756,6 +756,8 @@
 		847E946E269C687300E31D0C /* EventsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 847E946D269C687300E31D0C /* EventsController.swift */; };
 		847F3CEA2689FDEB00D240E0 /* ChatMessageCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 847F3CE92689FDEB00D240E0 /* ChatMessageCell.swift */; };
 		8486CAF926FA51EE00A9AD96 /* EventDTOConverterMiddleware_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8486CAF826FA51EE00A9AD96 /* EventDTOConverterMiddleware_Tests.swift */; };
+		848849B62CEE01070010E7CA /* AITypingEvents.swift in Sources */ = {isa = PBXBuildFile; fileRef = 848849B52CEE01070010E7CA /* AITypingEvents.swift */; };
+		848849B72CEE01070010E7CA /* AITypingEvents.swift in Sources */ = {isa = PBXBuildFile; fileRef = 848849B52CEE01070010E7CA /* AITypingEvents.swift */; };
 		849980F1277246DB00ABA58B /* UIScrollView+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 849980F0277246DB00ABA58B /* UIScrollView+Extensions.swift */; };
 		849AE664270CB14000423A20 /* VideoAttachmentComposerPreview_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 849AE663270CB14000423A20 /* VideoAttachmentComposerPreview_Tests.swift */; };
 		849AE666270CB55F00423A20 /* VideoAttachmentGalleryCell_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 849AE665270CB55F00423A20 /* VideoAttachmentGalleryCell_Tests.swift */; };
@@ -3661,6 +3663,7 @@
 		847E946D269C687300E31D0C /* EventsController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventsController.swift; sourceTree = "<group>"; };
 		847F3CE92689FDEB00D240E0 /* ChatMessageCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessageCell.swift; sourceTree = "<group>"; };
 		8486CAF826FA51EE00A9AD96 /* EventDTOConverterMiddleware_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventDTOConverterMiddleware_Tests.swift; sourceTree = "<group>"; };
+		848849B52CEE01070010E7CA /* AITypingEvents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AITypingEvents.swift; sourceTree = "<group>"; };
 		849980F0277246DB00ABA58B /* UIScrollView+Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIScrollView+Extensions.swift"; sourceTree = "<group>"; };
 		849AE661270CB00000423A20 /* VideoLoader_Mock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoLoader_Mock.swift; sourceTree = "<group>"; };
 		849AE663270CB14000423A20 /* VideoAttachmentComposerPreview_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoAttachmentComposerPreview_Tests.swift; sourceTree = "<group>"; };
@@ -5516,6 +5519,7 @@
 				8A0C3BBB24C0947400CAFD19 /* UserEvents.swift */,
 				841BAA0F2BCEADAC000C73E4 /* PollsEvents.swift */,
 				AD7BE1692C209888000A5756 /* ThreadEvents.swift */,
+				848849B52CEE01070010E7CA /* AITypingEvents.swift */,
 			);
 			path = Events;
 			sourceTree = "<group>";
@@ -11553,6 +11557,7 @@
 				40789D1729F6AC500018C2BB /* AudioPlaybackContextAccessor.swift in Sources */,
 				79D5CDD427EA1BE300BE7D8B /* MessageTranslationsPayload.swift in Sources */,
 				88D85D97252F168000AE1030 /* MemberController+SwiftUI.swift in Sources */,
+				848849B72CEE01070010E7CA /* AITypingEvents.swift in Sources */,
 				43D3F0FC28410A0200B74921 /* CreateCallRequestBody.swift in Sources */,
 				79877A0D2498E4BC00015F8B /* CurrentUser.swift in Sources */,
 				4042967D29FAC9DA0089126D /* AudioAnalysisContext.swift in Sources */,
@@ -12499,6 +12504,7 @@
 				C121E8C2274544B100023E4C /* ChannelEventsController.swift in Sources */,
 				C121E8C3274544B100023E4C /* ListChange.swift in Sources */,
 				C15C8839286C7BF300E6A72C /* BackgroundListDatabaseObserver.swift in Sources */,
+				848849B62CEE01070010E7CA /* AITypingEvents.swift in Sources */,
 				ADB951B3291C3CE900800554 /* AnyAttachmentUpdater.swift in Sources */,
 				40789D3829F6AC500018C2BB /* AssetPropertyLoading.swift in Sources */,
 				C121E8C4274544B100023E4C /* EntityChange.swift in Sources */,
