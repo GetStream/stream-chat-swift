@@ -3032,6 +3032,9 @@ final class ChannelController_Tests: XCTestCase {
         // (Try to) deallocate the controller
         // by not keeping any references to it
         controller = nil
+        
+        // Continue the request
+        env.eventSender!.currentUserTypingEventsState_completion?(true)
 
         // Check keystroke cid and parentMessageId.
         XCTAssertEqual(env.eventSender!.keystroke_cid, channelId)
@@ -3041,6 +3044,7 @@ final class ChannelController_Tests: XCTestCase {
         let testError = TestError()
         env.eventSender!.keystroke_completion!(testError)
         // Release reference of completion so we can deallocate stuff
+        env.eventSender!.currentUserTypingEventsState_completion = nil
         env.eventSender!.keystroke_completion = nil
 
         // Completion should be called with the error
@@ -3104,6 +3108,9 @@ final class ChannelController_Tests: XCTestCase {
         // by not keeping any references to it
         controller = nil
 
+        // Continue the request
+        env.eventSender!.currentUserTypingEventsState_completion?(true)
+        
         // Check `startTyping` cid and parentMessageId.
         XCTAssertEqual(env.eventSender!.startTyping_cid, channelId)
         XCTAssertEqual(env.eventSender!.startTyping_parentMessageId, parentMessageId)
@@ -3112,6 +3119,7 @@ final class ChannelController_Tests: XCTestCase {
         let testError = TestError()
         env.eventSender!.startTyping_completion!(testError)
         // Release reference of completion so we can deallocate stuff
+        env.eventSender!.currentUserTypingEventsState_completion = nil
         env.eventSender!.startTyping_completion = nil
 
         // Completion should be called with the error
@@ -3174,6 +3182,9 @@ final class ChannelController_Tests: XCTestCase {
         // (Try to) deallocate the controller
         // by not keeping any references to it
         controller = nil
+        
+        // Continue the request
+        env.eventSender!.currentUserTypingEventsState_completion?(true)
 
         // Check `stopTyping` cid and parentMessageId.
         XCTAssertEqual(env.eventSender!.stopTyping_cid, channelId)
@@ -3183,6 +3194,7 @@ final class ChannelController_Tests: XCTestCase {
         let testError = TestError()
         env.eventSender!.stopTyping_completion!(testError)
         // Release reference of completion so we can deallocate stuff
+        env.eventSender!.currentUserTypingEventsState_completion = nil
         env.eventSender!.stopTyping_completion = nil
 
         // Completion should be called with the error
@@ -5180,7 +5192,8 @@ final class ChannelController_Tests: XCTestCase {
             try $0.saveCurrentUser(payload: .dummy(userId: userId, privacySettings: nil))
         }
 
-        XCTAssertEqual(controller.shouldSendTypingEvents, true)
+        let isEnabled = try waitFor { controller.shouldSendTypingEvents(completion: $0) }
+        XCTAssertEqual(isEnabled, true)
     }
 
     func test_shouldSendTypingEvents_whenChannelEnabled_whenUserEnabled() throws {
@@ -5200,7 +5213,8 @@ final class ChannelController_Tests: XCTestCase {
             )))
         }
 
-        XCTAssertEqual(controller.shouldSendTypingEvents, true)
+        let isEnabled = try waitFor { controller.shouldSendTypingEvents(completion: $0) }
+        XCTAssertEqual(isEnabled, true)
     }
 
     func test_shouldSendTypingEvents_whenChannelDisabled_whenUserEnabled() throws {
@@ -5219,7 +5233,9 @@ final class ChannelController_Tests: XCTestCase {
                 cid: self.channelId, ownCapabilities: []
             )))
         }
-        XCTAssertEqual(controller.shouldSendTypingEvents, false)
+        
+        let isEnabled = try waitFor { controller.shouldSendTypingEvents(completion: $0) }
+        XCTAssertEqual(isEnabled, false)
     }
 
     func test_shouldSendTypingEvents_whenChannelEnabled_whenUserDisabled() throws {
@@ -5239,7 +5255,8 @@ final class ChannelController_Tests: XCTestCase {
             )))
         }
 
-        XCTAssertEqual(controller.shouldSendTypingEvents, false)
+        let isEnabled = try waitFor { controller.shouldSendTypingEvents(completion: $0) }
+        XCTAssertEqual(isEnabled, false)
     }
 
     func test_shouldSendTypingEvents_whenChannelDisabled_whenUserDisabled() throws {
@@ -5259,7 +5276,8 @@ final class ChannelController_Tests: XCTestCase {
             )))
         }
 
-        XCTAssertEqual(controller.shouldSendTypingEvents, false)
+        let isEnabled = try waitFor { controller.shouldSendTypingEvents(completion: $0) }
+        XCTAssertEqual(isEnabled, false)
     }
 
     // MARK: deinit

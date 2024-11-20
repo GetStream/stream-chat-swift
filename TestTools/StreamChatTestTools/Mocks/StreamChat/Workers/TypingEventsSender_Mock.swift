@@ -19,7 +19,13 @@ final class TypingEventsSender_Mock: TypingEventsSender {
     @Atomic var stopTyping_parentMessageId: MessageId?
     @Atomic var stopTyping_completion: ((Error?) -> Void)?
     @Atomic var stopTyping_completion_result: Result<Void, Error>?
+    
+    @Atomic var currentUserTypingEventsState_completion: ((Bool) -> Void)?
 
+    override func currentUserTypingEventsState(completion: @escaping (Bool) -> Void) {
+        currentUserTypingEventsState_completion = completion
+    }
+    
     override func keystroke(in cid: ChannelId, parentMessageId: MessageId?, completion: ((Error?) -> Void)? = nil) {
         keystroke_cid = cid
         keystroke_parentMessageId = parentMessageId
