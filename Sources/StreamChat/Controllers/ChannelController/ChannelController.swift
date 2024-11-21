@@ -151,7 +151,11 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
             completion(false)
             return
         }
-        eventSender.currentUserTypingEventsState(completion: completion)
+        eventSender.database.read { session in
+            session.currentUser?.isTypingIndicatorsEnabled ?? true
+        } completion: { result in
+            completion(result.value ?? false)
+        }
     }
 
     /// Set the delegate of `ChannelController` to observe the changes in the system.

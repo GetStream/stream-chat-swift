@@ -39,19 +39,6 @@ class TypingEventsSender: Worker {
         guard currentUserLastTypingDate != nil else { return }
         self.stopTyping(in: typingInfo.channelId, parentMessageId: typingInfo.parentMessageId)
     }
-    
-    func currentUserTypingEventsState(completion: @escaping (Bool) -> Void) {
-        database.read { session in
-            session.currentUser?.isTypingIndicatorsEnabled ?? true
-        } completion: { result in
-            switch result {
-            case .success(let isEnabled):
-                completion(isEnabled)
-            case .failure:
-                completion(false)
-            }
-        }
-    }
 
     // MARK: Typing events
 

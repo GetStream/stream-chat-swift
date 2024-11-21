@@ -3032,11 +3032,9 @@ final class ChannelController_Tests: XCTestCase {
         // (Try to) deallocate the controller
         // by not keeping any references to it
         controller = nil
-        
-        // Continue the request
-        env.eventSender!.currentUserTypingEventsState_completion?(true)
 
         // Check keystroke cid and parentMessageId.
+        wait(for: [env.eventSender!.keystroke_completion_expectation])
         XCTAssertEqual(env.eventSender!.keystroke_cid, channelId)
         XCTAssertEqual(env.eventSender!.keystroke_parentMessageId, parentMessageId)
 
@@ -3044,7 +3042,6 @@ final class ChannelController_Tests: XCTestCase {
         let testError = TestError()
         env.eventSender!.keystroke_completion!(testError)
         // Release reference of completion so we can deallocate stuff
-        env.eventSender!.currentUserTypingEventsState_completion = nil
         env.eventSender!.keystroke_completion = nil
 
         // Completion should be called with the error
@@ -3107,11 +3104,9 @@ final class ChannelController_Tests: XCTestCase {
         // (Try to) deallocate the controller
         // by not keeping any references to it
         controller = nil
-
-        // Continue the request
-        env.eventSender!.currentUserTypingEventsState_completion?(true)
         
         // Check `startTyping` cid and parentMessageId.
+        wait(for: [env.eventSender!.startTyping_completion_expectation])
         XCTAssertEqual(env.eventSender!.startTyping_cid, channelId)
         XCTAssertEqual(env.eventSender!.startTyping_parentMessageId, parentMessageId)
 
@@ -3119,7 +3114,6 @@ final class ChannelController_Tests: XCTestCase {
         let testError = TestError()
         env.eventSender!.startTyping_completion!(testError)
         // Release reference of completion so we can deallocate stuff
-        env.eventSender!.currentUserTypingEventsState_completion = nil
         env.eventSender!.startTyping_completion = nil
 
         // Completion should be called with the error
@@ -3182,11 +3176,9 @@ final class ChannelController_Tests: XCTestCase {
         // (Try to) deallocate the controller
         // by not keeping any references to it
         controller = nil
-        
-        // Continue the request
-        env.eventSender!.currentUserTypingEventsState_completion?(true)
 
         // Check `stopTyping` cid and parentMessageId.
+        wait(for: [env.eventSender!.stopTyping_completion_expectation])
         XCTAssertEqual(env.eventSender!.stopTyping_cid, channelId)
         XCTAssertEqual(env.eventSender!.stopTyping_parentMessageId, parentMessageId)
 
@@ -3194,7 +3186,6 @@ final class ChannelController_Tests: XCTestCase {
         let testError = TestError()
         env.eventSender!.stopTyping_completion!(testError)
         // Release reference of completion so we can deallocate stuff
-        env.eventSender!.currentUserTypingEventsState_completion = nil
         env.eventSender!.stopTyping_completion = nil
 
         // Completion should be called with the error
