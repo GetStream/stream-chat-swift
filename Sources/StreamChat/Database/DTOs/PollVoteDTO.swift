@@ -65,8 +65,15 @@ class PollVoteDTO: NSManagedObject {
     
     static func fetchRequest(for voteId: String, pollId: String) -> NSFetchRequest<PollVoteDTO> {
         let request = NSFetchRequest<PollVoteDTO>(entityName: PollVoteDTO.entityName)
+        PollVoteDTO.applyPrefetchingState(to: request)
         request.predicate = NSPredicate(format: "id == %@ && pollId == %@", voteId, pollId)
         return request
+    }
+}
+
+extension PollVoteDTO {
+    override class func prefetchedRelationshipKeyPaths() -> [String] {
+        [KeyPath.string(\PollVoteDTO.user)]
     }
 }
 
@@ -206,6 +213,7 @@ extension NSManagedObjectContext {
     
     func pollVotes(for userId: String, pollId: String) throws -> [PollVoteDTO] {
         let request = NSFetchRequest<PollVoteDTO>(entityName: PollVoteDTO.entityName)
+        PollVoteDTO.applyPrefetchingState(to: request)
         request.predicate = NSPredicate(format: "user.id == %@ && pollId == %@", userId, pollId)
         return PollVoteDTO.load(by: request, context: self)
     }
@@ -240,6 +248,7 @@ extension NSManagedObjectContext {
 extension PollVoteDTO {
     static func pollVoteListFetchRequest(query: PollVoteListQuery) -> NSFetchRequest<PollVoteDTO> {
         let request = NSFetchRequest<PollVoteDTO>(entityName: PollVoteDTO.entityName)
+        PollVoteDTO.applyPrefetchingState(to: request)
         request.sortDescriptors = [.init(key: #keyPath(PollVoteDTO.createdAt), ascending: false)]
         request.predicate = NSPredicate(format: "ANY queries.filterHash == %@", query.queryHash)
         return request

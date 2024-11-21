@@ -31,12 +31,14 @@ class ChannelReadDTO: NSManagedObject {
 
     static func fetchRequest(userId: String) -> NSFetchRequest<ChannelReadDTO> {
         let request = NSFetchRequest<ChannelReadDTO>(entityName: ChannelReadDTO.entityName)
+        ChannelReadDTO.applyPrefetchingState(to: request)
         request.predicate = NSPredicate(format: "user.id == %@", userId)
         return request
     }
 
     static func fetchRequest(for cid: ChannelId, userId: String) -> NSFetchRequest<ChannelReadDTO> {
         let request = NSFetchRequest<ChannelReadDTO>(entityName: ChannelReadDTO.entityName)
+        ChannelReadDTO.applyPrefetchingState(to: request)
         request.predicate = NSPredicate(format: "channel.cid == %@ && user.id == %@", cid.rawValue, userId)
         return request
     }
@@ -191,6 +193,12 @@ extension NSManagedObjectContext {
         for message in messages {
             message.reads.insert(read)
         }
+    }
+}
+
+extension ChannelReadDTO {
+    override class func prefetchedRelationshipKeyPaths() -> [String] {
+        [KeyPath.string(\ChannelReadDTO.user)]
     }
 }
 

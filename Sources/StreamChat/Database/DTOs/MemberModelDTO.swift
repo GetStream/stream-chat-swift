@@ -43,6 +43,7 @@ extension MemberDTO {
     /// Returns a fetch request for the dto with the provided `userId`.
     static func member(_ userId: UserId, in cid: ChannelId) -> NSFetchRequest<MemberDTO> {
         let request = NSFetchRequest<MemberDTO>(entityName: MemberDTO.entityName)
+        MemberDTO.applyPrefetchingState(to: request)
         request.sortDescriptors = [NSSortDescriptor(keyPath: \MemberDTO.memberCreatedAt, ascending: false)]
         request.predicate = NSPredicate(format: "id == %@", Self.createId(userId: userId, channeldId: cid))
         return request
@@ -51,6 +52,7 @@ extension MemberDTO {
     /// Returns a fetch request for the DTOs matching the provided `query`.
     static func members(matching query: ChannelMemberListQuery) -> NSFetchRequest<MemberDTO> {
         let request = NSFetchRequest<MemberDTO>(entityName: MemberDTO.entityName)
+        MemberDTO.applyPrefetchingState(to: request)
         request.predicate = NSPredicate(format: "ANY queries.queryHash == %@", query.queryHash)
         var sortDescriptors = query.sortDescriptors
         // For consistent order we need to have a sort descriptor which breaks ties
@@ -131,7 +133,7 @@ extension NSManagedObjectContext {
         dto.notificationsMuted = payload.notificationsMuted
 
         if let extraData = payload.extraData {
-            dto.extraData = try? JSONEncoder.default.encode(payload.extraData)
+            dto.extraData = try? JSONEncoder.default.encode(extraData)
         }
 
         if let query = query {
@@ -163,6 +165,12 @@ extension NSManagedObjectContext {
         return payload.members.compactMapLoggingError {
             try saveMember(payload: $0, channelId: channelId, query: query, cache: cache)
         }
+    }
+}
+
+extension MemberDTO {
+    override class func prefetchedRelationshipKeyPaths() -> [String] {
+        [KeyPath.string(\MemberDTO.user)]
     }
 }
 

@@ -67,9 +67,20 @@ class PollDTO: NSManagedObject {
     
     static func fetchRequest(for pollId: String) -> NSFetchRequest<PollDTO> {
         let request = NSFetchRequest<PollDTO>(entityName: PollDTO.entityName)
+        PollDTO.applyPrefetchingState(to: request)
         request.sortDescriptors = [NSSortDescriptor(keyPath: \PollDTO.updatedAt, ascending: false)]
         request.predicate = NSPredicate(format: "id == %@", pollId)
         return request
+    }
+}
+
+extension PollDTO {
+    override class func prefetchedRelationshipKeyPaths() -> [String] {
+        [
+            KeyPath.string(\PollDTO.createdBy),
+            KeyPath.string(\PollDTO.latestVotes),
+            KeyPath.string(\PollDTO.latestVotesByOption)
+        ]
     }
 }
 

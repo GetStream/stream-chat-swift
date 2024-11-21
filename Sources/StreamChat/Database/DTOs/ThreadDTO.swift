@@ -59,6 +59,7 @@ class ThreadDTO: NSManagedObject {
 
     static func fetchRequest(for parentMessageId: MessageId) -> NSFetchRequest<ThreadDTO> {
         let request = NSFetchRequest<ThreadDTO>(entityName: ThreadDTO.entityName)
+        ThreadDTO.applyPrefetchingState(to: request)
         request.sortDescriptors = [NSSortDescriptor(keyPath: \ThreadDTO.updatedAt, ascending: false)]
         request.predicate = NSPredicate(format: "parentMessageId == %@", parentMessageId)
         return request
@@ -66,6 +67,7 @@ class ThreadDTO: NSManagedObject {
 
     static func threadListFetchRequest() -> NSFetchRequest<ThreadDTO> {
         let request = NSFetchRequest<ThreadDTO>(entityName: ThreadDTO.entityName)
+        ThreadDTO.applyPrefetchingState(to: request)
 
         // By default threads are sorted by unread + updatedAt and
         // at the moment this is not customisable.
@@ -123,6 +125,19 @@ class ThreadDTO: NSManagedObject {
         if let currentUserUnreadCount {
             self.currentUserUnreadCount = Int64(currentUserUnreadCount)
         }
+    }
+}
+
+extension ThreadDTO {
+    override class func prefetchedRelationshipKeyPaths() -> [String] {
+        [
+            KeyPath.string(\ThreadDTO.channel),
+            KeyPath.string(\ThreadDTO.createdBy),
+            KeyPath.string(\ThreadDTO.latestReplies),
+            KeyPath.string(\ThreadDTO.parentMessage),
+            KeyPath.string(\ThreadDTO.read),
+            KeyPath.string(\ThreadDTO.threadParticipants)
+        ]
     }
 }
 

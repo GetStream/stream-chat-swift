@@ -35,6 +35,7 @@ final class MessageReactionDTO: NSManagedObject {
 extension MessageReactionDTO {
     static func reactionListFetchRequest(query: ReactionListQuery) -> NSFetchRequest<MessageReactionDTO> {
         let request = NSFetchRequest<MessageReactionDTO>(entityName: MessageReactionDTO.entityName)
+        MessageReactionDTO.applyPrefetchingState(to: request)
 
         // Fetch results controller requires at least one sorting descriptor.
         // At the moment, we do not allow changing the query sorting.
@@ -83,6 +84,7 @@ extension MessageReactionDTO {
         }
 
         let request = NSFetchRequest<MessageReactionDTO>(entityName: MessageReactionDTO.entityName)
+        MessageReactionDTO.applyPrefetchingState(to: request)
         request.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [
             NSPredicate(format: "id IN %@", ids),
             Self.notLocallyDeletedPredicates
@@ -120,6 +122,7 @@ extension MessageReactionDTO {
         sort: [NSSortDescriptor]
     ) -> NSFetchRequest<MessageReactionDTO> {
         let request = NSFetchRequest<MessageReactionDTO>(entityName: MessageReactionDTO.entityName)
+        MessageReactionDTO.applyPrefetchingState(to: request)
         request.sortDescriptors = sort
         request.predicate = NSPredicate(format: "message.id == %@", messageId)
         request.fetchBatchSize = 30
@@ -181,6 +184,12 @@ extension NSManagedObjectContext {
 
     func delete(reaction: MessageReactionDTO) {
         delete(reaction)
+    }
+}
+
+extension MessageReactionDTO {
+    override class func prefetchedRelationshipKeyPaths() -> [String] {
+        [KeyPath.string(\MessageReactionDTO.user)]
     }
 }
 

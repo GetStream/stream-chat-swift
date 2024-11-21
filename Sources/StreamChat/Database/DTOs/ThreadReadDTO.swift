@@ -53,14 +53,22 @@ class ThreadReadDTO: NSManagedObject {
 
     static func fetchRequest(userId: String) -> NSFetchRequest<ThreadReadDTO> {
         let request = NSFetchRequest<ThreadReadDTO>(entityName: ThreadReadDTO.entityName)
+        ThreadReadDTO.applyPrefetchingState(to: request)
         request.predicate = NSPredicate(format: "user.id == %@", userId)
         return request
     }
 
     static func fetchRequest(for parentMessageId: MessageId, userId: String) -> NSFetchRequest<ThreadReadDTO> {
         let request = NSFetchRequest<ThreadReadDTO>(entityName: ThreadReadDTO.entityName)
+        ThreadReadDTO.applyPrefetchingState(to: request)
         request.predicate = NSPredicate(format: "thread.parentMessageId == %@ && user.id == %@", parentMessageId, userId)
         return request
+    }
+}
+
+extension ThreadReadDTO {
+    override class func prefetchedRelationshipKeyPaths() -> [String] {
+        [KeyPath.string(\ThreadReadDTO.user)]
     }
 }
 
