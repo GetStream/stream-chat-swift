@@ -74,7 +74,7 @@ extension ThreadReadDTO {
 
 extension ThreadReadDTO {
     func asModel() throws -> ThreadRead {
-        guard !isDeleted else { throw DeletedModel(self) }
+        try isNotDeleted()
         return try .init(
             user: user.asModel(),
             lastReadAt: lastReadAt?.bridgeDate,

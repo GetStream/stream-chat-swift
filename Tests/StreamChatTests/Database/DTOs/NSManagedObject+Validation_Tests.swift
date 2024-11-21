@@ -2,6 +2,7 @@
 // Copyright © 2024 Stream.io Inc. All rights reserved.
 //
 
+import CoreData
 @testable import StreamChat
 @testable import StreamChatTestTools
 import XCTest
@@ -70,9 +71,11 @@ final class NSManagedObject_Validation_Tests: XCTestCase {
         try database.createCurrentUser()
         
         do {
-            try database.readSynchronously { session in
-                let user = session.currentUser!
-                throw DeletedModel(user)
+            try database.writeSynchronously { session in
+                guard let user = session.currentUser else { throw ClientError.CurrentUserDoesNotExist() }
+                (session as! NSManagedObjectContext).delete(user)
+                // Error is thrown when converting to model
+                _ = try user.asModel()
             }
             XCTFail("Error should have been thrown")
         } catch {

@@ -58,7 +58,7 @@ extension PollOptionDTO {
 
 extension PollOptionDTO {
     func asModel() throws -> PollOption {
-        guard !isDeleted else { throw DeletedModel(self) }
+        try isNotDeleted()
         
         var extraData: [String: RawJSON] = [:]
         if let custom,

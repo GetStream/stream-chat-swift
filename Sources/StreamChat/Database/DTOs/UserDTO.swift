@@ -231,7 +231,7 @@ extension UserDTO {
 
 extension ChatUser {
     fileprivate static func create(fromDTO dto: UserDTO) throws -> ChatUser {
-        guard !dto.isDeleted else { throw DeletedModel(dto) }
+        try dto.isNotDeleted()
         
         let extraData: [String: RawJSON]
         do {

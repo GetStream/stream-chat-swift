@@ -79,7 +79,7 @@ extension PollVoteDTO {
 
 extension PollVoteDTO {
     func asModel() throws -> PollVote {
-        guard !isDeleted else { throw DeletedModel(self) }
+        try isNotDeleted()
         return try PollVote(
             id: id,
             createdAt: createdAt.bridgeDate,

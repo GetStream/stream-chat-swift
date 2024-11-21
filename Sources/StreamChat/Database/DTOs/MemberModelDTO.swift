@@ -180,7 +180,7 @@ extension MemberDTO {
 
 extension ChatChannelMember {
     fileprivate static func create(fromDTO dto: MemberDTO) throws -> ChatChannelMember {
-        guard !dto.isDeleted else { throw DeletedModel(dto) }
+        try dto.isNotDeleted()
         
         let extraData: [String: RawJSON]
         do {

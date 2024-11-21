@@ -15,6 +15,11 @@ extension NSManagedObject {
         }
         return true
     }
+    
+    func isNotDeleted() throws {
+        guard isDeleted else { return }
+        throw DeletedModel(self)
+    }
 }
 
 struct InvalidModel: LocalizedError {

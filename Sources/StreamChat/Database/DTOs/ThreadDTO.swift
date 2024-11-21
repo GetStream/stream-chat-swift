@@ -143,7 +143,7 @@ extension ThreadDTO {
 
 extension ThreadDTO {
     func asModel() throws -> ChatThread {
-        guard !isDeleted else { throw DeletedModel(self) }
+        try isNotDeleted()
         
         let extraData: [String: RawJSON]
         do {

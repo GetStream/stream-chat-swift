@@ -45,7 +45,7 @@ extension DeviceDTO {
 
 extension DeviceDTO {
     func asModel() throws -> Device {
-        guard !isDeleted else { throw DeletedModel(self) }
+        try isNotDeleted()
         return Device(id: id, createdAt: createdAt?.bridgeDate)
     }
 }
