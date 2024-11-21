@@ -7,6 +7,7 @@ import Foundation
 public struct AITypingEvent: Event {
     public let typingState: AITypingState
     public let cid: ChannelId?
+    public let messageId: MessageId?
 }
 
 class AITypingEventDTO: EventDTO {
@@ -19,7 +20,7 @@ class AITypingEventDTO: EventDTO {
     func toDomainEvent(session: DatabaseSession) -> Event? {
         if let typingState = payload.typingState,
            let aITypingState = AITypingState(rawValue: typingState) {
-            return AITypingEvent(typingState: aITypingState, cid: payload.cid)
+            return AITypingEvent(typingState: aITypingState, cid: payload.cid, messageId: payload.messageId)
         } else {
             return nil
         }
