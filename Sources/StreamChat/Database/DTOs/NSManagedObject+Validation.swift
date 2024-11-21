@@ -31,11 +31,17 @@ struct InvalidModel: LocalizedError {
     }
 }
 
-extension ClientError {
-    final class DeletedModel: ClientError {
-        init(_ model: NSManagedObject) {
-            super.init("There is no \(model.entity.name ?? "Unknown") instance in the DB")
-        }
+struct DeletedModel: LocalizedError {
+    let id: NSManagedObjectID
+    let entityName: String?
+    
+    init(_ model: NSManagedObject) {
+        id = model.objectID
+        entityName = model.entity.name
+    }
+    
+    var errorDescription: String? {
+        "\(entityName ?? "Unknown") object with ID \(id) is deleted"
     }
 }
 

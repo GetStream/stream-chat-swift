@@ -204,7 +204,7 @@ extension ChannelReadDTO {
 
 extension ChatChannelRead {
     fileprivate static func create(fromDTO dto: ChannelReadDTO) throws -> ChatChannelRead {
-        guard !dto.isDeleted else { throw ClientError.DeletedModel(dto) }
+        guard !dto.isDeleted else { throw DeletedModel(dto) }
         return try .init(
             lastReadAt: dto.lastReadAt.bridgeDate,
             lastReadMessageId: dto.lastReadMessageId,

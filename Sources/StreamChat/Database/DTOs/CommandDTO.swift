@@ -13,7 +13,7 @@ final class CommandDTO: NSManagedObject {
     @NSManaged var args: String
 
     func asModel() throws -> Command {
-        guard !isDeleted else { throw ClientError.DeletedModel(self) }
+        guard !isDeleted else { throw DeletedModel(self) }
         return .init(
             name: name,
             description: desc,

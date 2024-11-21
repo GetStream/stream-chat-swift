@@ -65,6 +65,20 @@ final class NSManagedObject_Validation_Tests: XCTestCase {
         XCTAssertNil(message.locallyCreatedAt?.bridgeDate)
         XCTAssertNil(message.defaultSortingKey?.bridgeDate)
     }
+    
+    func test_throwingDeletedModelError() throws {
+        try database.createCurrentUser()
+        
+        do {
+            try database.readSynchronously { session in
+                let user = session.currentUser!
+                throw DeletedModel(user)
+            }
+            XCTFail("Error should have been thrown")
+        } catch {
+            XCTAssertTrue(error is DeletedModel)
+        }
+    }
 }
 
 private extension NSManagedObject_Validation_Tests {

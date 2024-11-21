@@ -58,7 +58,7 @@ extension Set where Element == MessageReactionGroupDTO {
 
 extension MessageReactionGroupDTO {
     func asModel() throws -> ChatMessageReactionGroup {
-        guard !isDeleted else { throw ClientError.DeletedModel(self) }
+        guard !isDeleted else { throw DeletedModel(self) }
         return .init(
             type: MessageReactionType(rawValue: type),
             sumScores: Int(sumScores),

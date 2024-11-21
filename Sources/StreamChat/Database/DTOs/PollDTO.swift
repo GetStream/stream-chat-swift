@@ -86,7 +86,7 @@ extension PollDTO {
 
 extension PollDTO {
     func asModel() throws -> Poll {
-        guard !isDeleted else { throw ClientError.DeletedModel(self) }
+        guard !isDeleted else { throw DeletedModel(self) }
         
         var extraData: [String: RawJSON] = [:]
         if let custom,
