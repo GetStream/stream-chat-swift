@@ -99,8 +99,6 @@ final class ChatClient_Mock: ChatClient {
     // MARK: - Clean Up
 
     func cleanUp() {
-        resetSharedCurrentUserController()
-        
         (apiClient as? APIClient_Spy)?.cleanUp()
 
         fetchCurrentUserIdFromDatabase_called = false

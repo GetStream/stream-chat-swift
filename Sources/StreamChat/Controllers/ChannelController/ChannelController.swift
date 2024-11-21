@@ -146,12 +146,16 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
 
     /// A boolean value indicating if it should send typing events.
     /// It is `true` if the channel typing events are enabled as well as the user privacy settings.
-    internal var shouldSendTypingEvents: Bool {
-        /// Ignore if user typing indicators privacy settings are disabled. By default, they are enabled.
-        let currentUserPrivacySettings = client.sharedCurrentUserController.currentUser?.privacySettings
-        let isTypingIndicatorsForCurrentUserEnabled = currentUserPrivacySettings?.typingIndicators?.enabled ?? true
-        let isChannelTypingEventsEnabled = channel?.canSendTypingEvents ?? true
-        return isTypingIndicatorsForCurrentUserEnabled && isChannelTypingEventsEnabled
+    func shouldSendTypingEvents(completion: @escaping (Bool) -> Void) {
+        guard channel?.canSendTypingEvents ?? true else {
+            completion(false)
+            return
+        }
+        eventSender.database.read { session in
+            session.currentUser?.isTypingIndicatorsEnabled ?? true
+        } completion: { result in
+            completion(result.value ?? false)
+        }
     }
 
     /// Set the delegate of `ChannelController` to observe the changes in the system.
@@ -611,23 +615,19 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
     /// - Parameter completion: a completion block with an error if the request was failed.
     ///
     public func sendKeystrokeEvent(parentMessageId: MessageId? = nil, completion: ((Error?) -> Void)? = nil) {
-        /// Ignore if app-level typing events or user-level typing events are not enabled.
-        guard shouldSendTypingEvents else {
-            callback {
-                completion?(nil)
-            }
-            return
-        }
-
         /// Perform action only if channel is already created on backend side and have a valid `cid`.
         guard let cid = cid, isChannelAlreadyCreated else {
             channelModificationFailed { completion?($0) }
             return
         }
-
-        eventSender.keystroke(in: cid, parentMessageId: parentMessageId) { error in
-            self.callback {
-                completion?(error)
+        /// Ignore if app-level typing events or user-level typing events are not enabled.
+        shouldSendTypingEvents { isEnabled in
+            guard isEnabled else {
+                self.callback { completion?(nil) }
+                return
+            }
+            self.eventSender.keystroke(in: cid, parentMessageId: parentMessageId) { error in
+                self.callback { completion?(error) }
             }
         }
     }
@@ -641,21 +641,19 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
     /// - Parameter completion: a completion block with an error if the request was failed.
     ///
     public func sendStartTypingEvent(parentMessageId: MessageId? = nil, completion: ((Error?) -> Void)? = nil) {
-        /// Ignore if app-level typing events or user-level typing events are not enabled.
-        guard shouldSendTypingEvents else {
-            channelFeatureDisabled(feature: "typing events", completion: completion)
-            return
-        }
-
         /// Perform action only if channel is already created on backend side and have a valid `cid`.
         guard let cid = cid, isChannelAlreadyCreated else {
             channelModificationFailed { completion?($0) }
             return
         }
-
-        eventSender.startTyping(in: cid, parentMessageId: parentMessageId) { error in
-            self.callback {
-                completion?(error)
+        
+        shouldSendTypingEvents { isEnabled in
+            guard isEnabled else {
+                self.channelFeatureDisabled(feature: "typing events", completion: completion)
+                return
+            }
+            self.eventSender.startTyping(in: cid, parentMessageId: parentMessageId) { error in
+                self.callback { completion?(error) }
             }
         }
     }
@@ -669,21 +667,18 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
     /// - Parameter completion: a completion block with an error if the request was failed.
     ///
     public func sendStopTypingEvent(parentMessageId: MessageId? = nil, completion: ((Error?) -> Void)? = nil) {
-        /// Ignore if app-level typing events or user-level typing events are not enabled.
-        guard shouldSendTypingEvents else {
-            channelFeatureDisabled(feature: "typing events", completion: completion)
-            return
-        }
-
         /// Perform action only if channel is already created on backend side and have a valid `cid`.
         guard let cid = cid, isChannelAlreadyCreated else {
             channelModificationFailed { completion?($0) }
             return
         }
-
-        eventSender.stopTyping(in: cid, parentMessageId: parentMessageId) { error in
-            self.callback {
-                completion?(error)
+        shouldSendTypingEvents { isEnabled in
+            guard isEnabled else {
+                self.channelFeatureDisabled(feature: "typing events", completion: completion)
+                return
+            }
+            self.eventSender.stopTyping(in: cid, parentMessageId: parentMessageId) { error in
+                self.callback { completion?(error) }
             }
         }
     }
