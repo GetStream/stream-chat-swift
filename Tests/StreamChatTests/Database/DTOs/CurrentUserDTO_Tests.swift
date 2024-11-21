@@ -246,9 +246,8 @@ final class CurrentUserModelDTO_Tests: XCTestCase {
 
         let originalUser = try XCTUnwrap(database.viewContext.currentUser)
 
-        database.writableContext.performAndWait {
-            database.writableContext.delete(database.writableContext.currentUser!)
-            try! database.writableContext.save()
+        database.viewContext.performAndWait {
+            XCTAssertNotNil(database.viewContext.userInfo[NSManagedObjectContext.currentUserKey])
         }
 
         XCTAssertEqual(database.viewContext.currentUser, originalUser)

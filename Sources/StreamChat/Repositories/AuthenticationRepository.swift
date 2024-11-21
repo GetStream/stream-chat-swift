@@ -123,13 +123,8 @@ class AuthenticationRepository {
     func fetchCurrentUser() {
         var currentUserId: UserId?
 
-        let context = databaseContainer.viewContext
-        if Thread.isMainThread {
-            currentUserId = context.currentUser?.user.id
-        } else {
-            context.performAndWait {
-                currentUserId = context.currentUser?.user.id
-            }
+        databaseContainer.backgroundReadOnlyContext.performAndWait {
+            currentUserId = databaseContainer.backgroundReadOnlyContext.currentUser?.user.id
         }
         self.currentUserId = currentUserId
     }
