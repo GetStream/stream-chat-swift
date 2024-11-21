@@ -3034,7 +3034,7 @@ final class ChannelController_Tests: XCTestCase {
         controller = nil
 
         // Check keystroke cid and parentMessageId.
-        wait(for: [env.eventSender!.keystroke_completion_expectation])
+        wait(for: [env.eventSender!.keystroke_completion_expectation], timeout: defaultTimeout)
         XCTAssertEqual(env.eventSender!.keystroke_cid, channelId)
         XCTAssertEqual(env.eventSender!.keystroke_parentMessageId, parentMessageId)
 
@@ -3106,7 +3106,7 @@ final class ChannelController_Tests: XCTestCase {
         controller = nil
         
         // Check `startTyping` cid and parentMessageId.
-        wait(for: [env.eventSender!.startTyping_completion_expectation])
+        wait(for: [env.eventSender!.startTyping_completion_expectation], timeout: defaultTimeout)
         XCTAssertEqual(env.eventSender!.startTyping_cid, channelId)
         XCTAssertEqual(env.eventSender!.startTyping_parentMessageId, parentMessageId)
 
@@ -3178,7 +3178,7 @@ final class ChannelController_Tests: XCTestCase {
         controller = nil
 
         // Check `stopTyping` cid and parentMessageId.
-        wait(for: [env.eventSender!.stopTyping_completion_expectation])
+        wait(for: [env.eventSender!.stopTyping_completion_expectation], timeout: defaultTimeout)
         XCTAssertEqual(env.eventSender!.stopTyping_cid, channelId)
         XCTAssertEqual(env.eventSender!.stopTyping_parentMessageId, parentMessageId)
 
