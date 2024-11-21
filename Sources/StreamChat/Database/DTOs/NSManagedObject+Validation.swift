@@ -33,8 +33,8 @@ struct InvalidModel: LocalizedError {
 
 extension ClientError {
     final class DeletedModel: ClientError {
-        init<DTO: NSManagedObject>(modelType: DTO.Type) {
-            super.init("There is no `\(String(describing: modelType))` instance in the DB")
+        init(_ model: NSManagedObject) {
+            super.init("There is no \(model.entity.name ?? "Unknown") instance in the DB")
         }
     }
 }

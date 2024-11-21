@@ -46,7 +46,7 @@ extension ThreadParticipantDTO {
 
 extension ThreadParticipantDTO {
     func asModel() throws -> ThreadParticipant {
-        guard !isDeleted else { throw ClientError.DeletedModel(modelType: Self.self) }
+        guard !isDeleted else { throw ClientError.DeletedModel(self) }
         return try .init(
             user: user.asModel(),
             threadId: threadId,
