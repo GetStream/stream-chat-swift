@@ -228,6 +228,9 @@ class DatabaseContainer: NSPersistentContainer, @unchecked Sendable {
                 }
 
                 if self.writableContext.hasChanges {
+                    ImmutableModelCache.clear(ids: self.writableContext.insertedObjects.map(\.objectID))
+                    ImmutableModelCache.clear(ids: self.writableContext.deletedObjects.map(\.objectID))
+                    ImmutableModelCache.clear(ids: self.writableContext.updatedObjects.map(\.objectID))
                     log.debug("Context has changes. Saving.", subsystems: .database)
                     try self.writableContext.save()
                 } else {

@@ -190,3 +190,33 @@ extension NSManagedObjectContext {
         return objects
     }
 }
+
+class ImmutableModelCache {
+    private static let shared = ImmutableModelCache()
+    private var storage = NSCache<NSManagedObjectID, AnyObject>()
+    
+    static func clear() {
+        shared.storage.removeAllObjects()
+    }
+    
+    static func clear(ids: [NSManagedObjectID]) {
+        guard !ids.isEmpty else { return }
+        ids.forEach { id in
+            shared.storage.removeObject(forKey: id)
+        }
+    }
+    
+    static func model<DTO: NSManagedObject, Value>(for dto: DTO, modelType: Value.Type) -> Value? {
+        if dto.hasChanges {
+            shared.storage.removeObject(forKey: dto.objectID)
+            return nil
+        } else {
+            return shared.storage.object(forKey: dto.objectID) as? Value
+        }
+    }
+    
+    static func store<Value: AnyObject>(_ value: Value, for objectID: NSManagedObjectID) {
+        guard !objectID.isTemporaryID else { return }
+        shared.storage.setObject(value, forKey: objectID)
+    }
+}

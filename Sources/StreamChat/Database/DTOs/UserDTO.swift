@@ -233,6 +233,10 @@ extension ChatUser {
     fileprivate static func create(fromDTO dto: UserDTO) throws -> ChatUser {
         try dto.isNotDeleted()
         
+        if let user = ImmutableModelCache.model(for: dto, modelType: ChatUser.self) {
+            return user
+        }
+        
         let extraData: [String: RawJSON]
         do {
             extraData = try JSONDecoder.default.decode([String: RawJSON].self, from: dto.extraData)
@@ -246,7 +250,7 @@ extension ChatUser {
 
         let language: TranslationLanguage? = dto.language.map(TranslationLanguage.init)
 
-        return ChatUser(
+        let user = ChatUser(
             id: dto.id,
             name: dto.name,
             imageURL: dto.imageURL,
@@ -262,5 +266,7 @@ extension ChatUser {
             language: language,
             extraData: extraData
         )
+        ImmutableModelCache.store(user, for: dto.objectID)
+        return user
     }
 }
