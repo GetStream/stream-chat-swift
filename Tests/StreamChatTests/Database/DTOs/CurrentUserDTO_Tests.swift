@@ -325,7 +325,7 @@ final class CurrentUserModelDTO_Tests: XCTestCase {
             guard let currentUserDTO = session.currentUser else { throw ClientError.CurrentUserDoesNotExist() }
             (session as! NSManagedObjectContext).delete(currentUserDTO)
         }
-        try database.readSynchronously { session in
+        try database.writeSynchronously { session in
             guard let channelDTO = session.channel(cid: cid) else { throw ClientError.ChannelDoesNotExist(cid: cid) }
             let channel = try channelDTO.asModel()
             let memberIds = channel.lastActiveMembers.map(\.id).sorted()
