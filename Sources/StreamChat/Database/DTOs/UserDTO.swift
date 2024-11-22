@@ -40,6 +40,10 @@ class UserDTO: NSManagedObject {
     override func willSave() {
         super.willSave()
 
+        guard !isDeleted else {
+            return
+        }
+        
         // We need to propagate fake changes to other models so that it triggers FRC
         // updates for other entities. We also need to check that these models
         // don't have changes already, otherwise it creates an infinite loop.
@@ -227,6 +231,8 @@ extension UserDTO {
 
 extension ChatUser {
     fileprivate static func create(fromDTO dto: UserDTO) throws -> ChatUser {
+        try dto.isNotDeleted()
+        
         let extraData: [String: RawJSON]
         do {
             extraData = try JSONDecoder.default.decode([String: RawJSON].self, from: dto.extraData)

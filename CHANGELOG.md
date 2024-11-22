@@ -14,6 +14,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### 🐞 Fixed
 - Fix connection not resuming after guest user goes to background [#3483](https://github.com/GetStream/stream-chat-swift/pull/3483)
 - Fix empty channel list if the channel list filter contains OR statement with only custom filtering keys [#3482](https://github.com/GetStream/stream-chat-swift/pull/3482)
+- Fix not returning models with empty properties when the underlying database model was deleted [#3497](https://github.com/GetStream/stream-chat-swift/pull/3497)
+- Fix an issue where deleting current user in the local database cleared member data in channels [#3497](https://github.com/GetStream/stream-chat-swift/pull/3497)
 - Fix rare crashes when accessing the current user object [#3500](https://github.com/GetStream/stream-chat-swift/pull/3500)
 ### ⚡ Performance
 - Avoid creating `CurrentChatUserController` for reading user privacy settings which is more expensive than just reading the data from the local database [#3502](https://github.com/GetStream/stream-chat-swift/pull/3502)

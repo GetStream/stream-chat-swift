@@ -46,7 +46,8 @@ extension ThreadParticipantDTO {
 
 extension ThreadParticipantDTO {
     func asModel() throws -> ThreadParticipant {
-        try .init(
+        try isNotDeleted()
+        return try .init(
             user: user.asModel(),
             threadId: threadId,
             createdAt: createdAt.bridgeDate,

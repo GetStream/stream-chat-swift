@@ -50,14 +50,16 @@ extension Set where Element == MessageReactionGroupDTO {
 
     func asModel() -> [MessageReactionType: ChatMessageReactionGroup] {
         reduce(into: [:]) { partialResult, groupDTO in
-            partialResult[MessageReactionType(rawValue: groupDTO.type)] = groupDTO.asModel()
+            guard let model = try? groupDTO.asModel() else { return }
+            partialResult[MessageReactionType(rawValue: groupDTO.type)] = model
         }
     }
 }
 
 extension MessageReactionGroupDTO {
-    func asModel() -> ChatMessageReactionGroup {
-        .init(
+    func asModel() throws -> ChatMessageReactionGroup {
+        try isNotDeleted()
+        return .init(
             type: MessageReactionType(rawValue: type),
             sumScores: Int(sumScores),
             count: Int(count),

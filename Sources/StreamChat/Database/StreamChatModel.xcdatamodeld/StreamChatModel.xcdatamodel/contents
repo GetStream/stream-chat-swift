@@ -152,7 +152,7 @@
         <relationship name="devices" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="DeviceDTO" inverseName="user" inverseEntity="DeviceDTO"/>
         <relationship name="flaggedMessages" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="MessageDTO" inverseName="flaggedBy" inverseEntity="MessageDTO"/>
         <relationship name="flaggedUsers" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="UserDTO" inverseName="flaggedBy" inverseEntity="UserDTO"/>
-        <relationship name="mutedUsers" toMany="YES" deletionRule="Cascade" destinationEntity="UserDTO" inverseName="mutedBy" inverseEntity="UserDTO"/>
+        <relationship name="mutedUsers" toMany="YES" deletionRule="Nullify" destinationEntity="UserDTO" inverseName="mutedBy" inverseEntity="UserDTO"/>
         <relationship name="user" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="UserDTO" inverseName="currentUser" inverseEntity="UserDTO"/>
         <uniquenessConstraints>
             <uniquenessConstraint>

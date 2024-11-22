@@ -215,6 +215,8 @@ extension CurrentUserDTO {
 
 extension CurrentChatUser {
     fileprivate static func create(fromDTO dto: CurrentUserDTO) throws -> CurrentChatUser {
+        try dto.isNotDeleted()
+        
         let user = dto.user
 
         var extraData = [String: RawJSON]()
