@@ -36,7 +36,7 @@ class EventPayload: Decodable {
         case thread
         case vote = "poll_vote"
         case poll
-        case typingState = "typing_state"
+        case state
         case messageId = "message_id"
     }
 
@@ -71,7 +71,7 @@ class EventPayload: Decodable {
     let threadDetails: Result<ThreadDetailsPayload, Error>?
     let threadPartial: Result<ThreadPartialPayload, Error>?
     
-    let typingState: String?
+    let state: String?
     let messageId: String?
 
     init(
@@ -102,7 +102,7 @@ class EventPayload: Decodable {
         threadPartial: Result<ThreadPartialPayload, Error>? = nil,
         poll: PollPayload? = nil,
         vote: PollVotePayload? = nil,
-        typingState: String? = nil,
+        state: String? = nil,
         messageId: String? = nil
     ) {
         self.eventType = eventType
@@ -132,7 +132,7 @@ class EventPayload: Decodable {
         self.threadDetails = threadDetails
         self.poll = poll
         self.vote = vote
-        self.typingState = typingState
+        self.state = state
         self.messageId = messageId
     }
 
@@ -167,7 +167,7 @@ class EventPayload: Decodable {
         threadPartial = container.decodeAsResultIfPresent(ThreadPartialPayload.self, forKey: .thread)
         vote = try container.decodeIfPresent(PollVotePayload.self, forKey: .vote)
         poll = try container.decodeIfPresent(PollPayload.self, forKey: .poll)
-        typingState = try container.decodeIfPresent(String.self, forKey: .typingState)
+        state = try container.decodeIfPresent(String.self, forKey: .state)
         messageId = try container.decodeIfPresent(String.self, forKey: .messageId)
     }
 

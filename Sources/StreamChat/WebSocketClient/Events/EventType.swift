@@ -147,6 +147,8 @@ public extension EventType {
     // MARK: - AI
     
     static let aiTypingIndicatorChanged: Self = "ai_indicator_changed"
+    
+    static let aiTypingIndicatorClear: Self = "ai_indicator_clear"
 }
 
 extension EventType {
@@ -213,6 +215,7 @@ extension EventType {
         case .threadUpdated: return try ThreadUpdatedEventDTO(from: response)
         case .threadMessageNew: return try ThreadMessageNewEventDTO(from: response)
         case .aiTypingIndicatorChanged: return try AITypingEventDTO(from: response)
+        case .aiTypingIndicatorClear: return try AIClearTypingEventDTO(from: response)
         default:
             if response.cid == nil {
                 throw ClientError.UnknownUserEvent(response.eventType)
