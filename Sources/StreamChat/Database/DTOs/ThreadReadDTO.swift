@@ -15,6 +15,10 @@ class ThreadReadDTO: NSManagedObject {
     override func willSave() {
         super.willSave()
 
+        guard !isDeleted else {
+            return
+        }
+        
         // When the read is updated, we need to propagate this change up to holding thread
         if hasPersistentChangedValues, !thread.hasChanges, !thread.isDeleted {
             // this will not change object, but mark it as dirty, triggering updates
@@ -70,7 +74,8 @@ extension ThreadReadDTO {
 
 extension ThreadReadDTO {
     func asModel() throws -> ThreadRead {
-        try .init(
+        try isNotDeleted()
+        return try .init(
             user: user.asModel(),
             lastReadAt: lastReadAt?.bridgeDate,
             unreadMessagesCount: Int(unreadMessagesCount)

@@ -180,6 +180,8 @@ extension MemberDTO {
 
 extension ChatChannelMember {
     fileprivate static func create(fromDTO dto: MemberDTO) throws -> ChatChannelMember {
+        try dto.isNotDeleted()
+        
         let extraData: [String: RawJSON]
         do {
             extraData = try JSONDecoder.default.decode([String: RawJSON].self, from: dto.user.extraData)
