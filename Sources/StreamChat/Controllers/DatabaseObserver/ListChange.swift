@@ -150,9 +150,8 @@ class ListChangeAggregator<DTO: NSManagedObject, Item>: NSObject, NSFetchedResul
     /// Called with the aggregated changes after `FetchResultsController` calls controllerDidChangeContent` on its delegate.
     var onDidChange: (([ListChange<Item>]) -> Void)?
 
-    /// An array of changes in the current update. It gets reset every time `controllerWillChangeContent` is called, and
-    /// published to the observer when `controllerDidChangeContent` is called.
-    private var currentChanges: [ListChange<Item>] = []
+    /// An array of changes in the current update.
+    private var currentChanges: [ListChange<DTO>] = []
 
     /// Creates a new `ChangeAggregator`.
     ///
@@ -178,8 +177,10 @@ class ListChangeAggregator<DTO: NSManagedObject, Item>: NSObject, NSFetchedResul
         for type: NSFetchedResultsChangeType,
         newIndexPath: IndexPath?
     ) {
-        guard let dto = anObject as? DTO, let item = try? itemCreator(dto) else {
-            log.debug("Skipping the update from DB because the DTO can't be converted to the model object.")
+        // Model conversions must happen in `controllerDidChangeContent`. Otherwise, it can trigger a loop where
+        // this delegate method is called again when additional fetch requests in `asModel()` are triggered.
+        guard let dto = anObject as? DTO else {
+            log.debug("Skipping the update from DB because the DTO has invalid type: \(anObject)")
             return
         }
 
@@ -189,28 +190,28 @@ class ListChangeAggregator<DTO: NSManagedObject, Item>: NSObject, NSFetchedResul
                 log.warning("Skipping the update from DB because `newIndexPath` is missing for `.insert` change.")
                 return
             }
-            currentChanges.append(.insert(item, index: index))
+            currentChanges.append(.insert(dto, index: index))
 
         case .move:
             guard let fromIndex = indexPath, let toIndex = newIndexPath else {
                 log.warning("Skipping the update from DB because `indexPath` or `newIndexPath` are missing for `.move` change.")
                 return
             }
-            currentChanges.append(.move(item, fromIndex: fromIndex, toIndex: toIndex))
+            currentChanges.append(.move(dto, fromIndex: fromIndex, toIndex: toIndex))
 
         case .update:
             guard let index = indexPath else {
                 log.warning("Skipping the update from DB because `indexPath` is missing for `.update` change.")
                 return
             }
-            currentChanges.append(.update(item, index: index))
+            currentChanges.append(.update(dto, index: index))
 
         case .delete:
             guard let index = indexPath else {
                 log.warning("Skipping the update from DB because `indexPath` is missing for `.delete` change.")
                 return
             }
-            currentChanges.append(.remove(item, index: index))
+            currentChanges.append(.remove(dto, index: index))
 
         default:
             break
@@ -218,6 +219,25 @@ class ListChangeAggregator<DTO: NSManagedObject, Item>: NSObject, NSFetchedResul
     }
 
     func controllerDidChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
-        onDidChange?(currentChanges)
+        // Model conversion is safe when all the changes have been processed (Core Data's _processRecentChanges can be called if conversion triggers additional fetch requests).
+        let itemChanges = currentChanges.compactMap { dtoChange in
+            do {
+                switch dtoChange {
+                case .update(let dto, index: let indexPath):
+                    return try ListChange.update(itemCreator(dto), index: indexPath)
+                case .insert(let dto, index: let indexPath):
+                    return try ListChange.insert(itemCreator(dto), index: indexPath)
+                case .move(let dto, fromIndex: let fromIndex, toIndex: let toIndex):
+                    return try ListChange.move(itemCreator(dto), fromIndex: fromIndex, toIndex: toIndex)
+                case .remove(let dto, index: let indexPath):
+                    return try ListChange.remove(itemCreator(dto), index: indexPath)
+                }
+            } catch {
+                log.debug("Skipping the update from DB because the DTO can't be converted to the model object: \(error)")
+                return nil
+            }
+        }
+        onDidChange?(itemChanges)
+        currentChanges.removeAll()
     }
 }
