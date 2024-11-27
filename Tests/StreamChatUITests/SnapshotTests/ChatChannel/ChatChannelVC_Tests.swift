@@ -659,7 +659,7 @@ final class ChatChannelVC_Tests: XCTestCase {
         AssertSnapshot(vc, variants: [.defaultLight])
     }
 
-    func test_didReceiveNewMessagePendingEvent_whenFirstPageNotLoaded_whenMessageSentByCurrentUser_whenMessageNotPartOfThread_thenLoadsFirstPage() throws {
+    func test_didReceiveNewMessagePendingEvent_whenFirstPageNotLoaded_whenMessageSentByCurrentUser_whenMessageNotPartOfThread_thenLoadsFirstPage() {
         channelControllerMock.hasLoadedAllNextMessages_mock = false
         let message = ChatMessage.mock(
             parentMessageId: nil,
@@ -672,7 +672,8 @@ final class ChatChannelVC_Tests: XCTestCase {
         XCTAssertEqual(channelControllerMock.loadFirstPageCallCount, 1)
     }
 
-    func test_didReceiveNewMessagePendingEvent_whenIsFirstPageLoaded_thenDoestNotLoadFirstPage() throws {
+    func test_didReceiveNewMessagePendingEvent_whenIsFirstPageLoaded_thenDoestNotLoadFirstPage() {
+        channelControllerMock.hasLoadedAllNextMessages_mock = true
         let message = ChatMessage.mock(
             parentMessageId: nil,
             isSentByCurrentUser: true
@@ -684,7 +685,7 @@ final class ChatChannelVC_Tests: XCTestCase {
         XCTAssertEqual(channelControllerMock.loadFirstPageCallCount, 0)
     }
 
-    func test_didReceiveNewMessagePendingEvent_whenMessageSentByOtherUser_thenDoestNotLoadFirstPage() throws {
+    func test_didReceiveNewMessagePendingEvent_whenMessageSentByOtherUser_thenDoestNotLoadFirstPage() {
         channelControllerMock.hasLoadedAllNextMessages_mock = false
         let message = ChatMessage.mock(
             parentMessageId: nil,
@@ -697,7 +698,7 @@ final class ChatChannelVC_Tests: XCTestCase {
         XCTAssertEqual(channelControllerMock.loadFirstPageCallCount, 0)
     }
 
-    func test_didReceiveNewMessagePendingEvent_whenMessageIsPartOfThread_thenDoestNotLoadFirstPage() throws {
+    func test_didReceiveNewMessagePendingEvent_whenMessageIsPartOfThread_thenDoestNotLoadFirstPage() {
         channelControllerMock.hasLoadedAllNextMessages_mock = false
         let message = ChatMessage.mock(
             parentMessageId: .unique,
@@ -710,12 +711,12 @@ final class ChatChannelVC_Tests: XCTestCase {
         XCTAssertEqual(channelControllerMock.loadFirstPageCallCount, 0)
     }
 
-    func test_shouldLoadFirstPage_thenLoadFirstPage() throws {
+    func test_shouldLoadFirstPage_thenLoadFirstPage() {
         vc.chatMessageListVCShouldLoadFirstPage(vc.messageListVC)
         XCTAssertEqual(channelControllerMock.loadFirstPageCallCount, 1)
     }
 
-    func test_shouldLoadPageAroundMessageId_thenLoadPageAroundMessageId() throws {
+    func test_shouldLoadPageAroundMessageId_thenLoadPageAroundMessageId() {
         vc.chatMessageListVC(vc.messageListVC, shouldLoadPageAroundMessageId: .unique) { _ in }
         XCTAssertEqual(channelControllerMock.loadPageAroundMessageIdCallCount, 1)
     }
