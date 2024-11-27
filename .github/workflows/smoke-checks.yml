@@ -216,8 +216,6 @@ jobs:
       run: bundle exec fastlane test_e2e_mock device:"${{ env.IOS_SIMULATOR_DEVICE }}" batch:'${{ matrix.batch }}' test_without_building:true
       timeout-minutes: 100
       env:
-        # XCODE_VERSION: "15.0.1" # the most stable pair of Xcode
-        # IOS_SIMULATOR_DEVICE: "iPhone 15 Pro (17.0)" # and iOS
         MATRIX_SIZE: ${{ strategy.job-total }}
         STREAM_DEMO_APP_SECRET: ${{ secrets.STREAM_DEMO_APP_SECRET }}
     - name: Allure TestOps Upload
