@@ -99,14 +99,6 @@ class ConnectionRepository {
             return
         }
 
-        if connectionId == nil {
-            if source == .userInitiated {
-                log.warning("The client is already disconnected. Skipping the `disconnect` call.")
-            }
-            completion()
-            return
-        }
-
         // Disconnect the web socket
         webSocketClient?.disconnect(source: source) { [weak self] in
             // Reset `connectionId`. This would happen asynchronously by the callback from WebSocketClient anyway, but it's
