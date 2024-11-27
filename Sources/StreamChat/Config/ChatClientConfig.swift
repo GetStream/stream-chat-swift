@@ -1,7 +1,3 @@
-//
-// Copyright © 2024 Stream.io Inc. All rights reserved.
-//
-
 import Foundation
 
 /// A configuration object used to configure a `ChatClient` instance.
@@ -198,6 +194,9 @@ public struct ChatClientConfig {
     
     /// How many hours the unsent actions should be queued for sending when the internet connection is available.
     public var queuedActionsMaxHoursThreshold: Int = 12
+
+    /// The maximum number of messages to render in a channel.
+    public var maxMessagesLimit: Int?
 
     public init(
         apiKey: APIKey

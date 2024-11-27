@@ -1,7 +1,3 @@
-//
-// Copyright © 2024 Stream.io Inc. All rights reserved.
-//
-
 import CoreData
 import Foundation
 
@@ -59,7 +55,11 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
         if state == .initialized {
             setLocalStateBasedOnError(startDatabaseObservers())
         }
-        return messagesObserver?.items ?? []
+        let allMessages = messagesObserver?.items ?? []
+        if let maxMessagesLimit = maxMessagesLimit {
+            return LazyCachedMapCollection(allMessages.prefix(maxMessagesLimit))
+        }
+        return allMessages
     }
 
     /// Describes the ordering the messages are presented.
@@ -204,13 +204,16 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
     ///   - client: The `Client` this controller belongs to.
     ///   - environment: Environment for this controller.
     ///   - isChannelAlreadyCreated: Flag indicating whether channel is created on backend.
+    ///   - messageOrdering: Describes the ordering the messages are presented.
+    ///   - maxMessagesLimit: The maximum number of messages to render.
     init(
         channelQuery: ChannelQuery,
         channelListQuery: ChannelListQuery?,
         client: ChatClient,
         environment: Environment = .init(),
         isChannelAlreadyCreated: Bool = true,
-        messageOrdering: MessageOrdering = .topToBottom
+        messageOrdering: MessageOrdering = .topToBottom,
+        maxMessagesLimit: Int? = nil
     ) {
         self.channelQuery = channelQuery
         self.channelListQuery = channelListQuery
@@ -218,6 +221,7 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
         self.environment = environment
         self.isChannelAlreadyCreated = isChannelAlreadyCreated
         self.messageOrdering = messageOrdering
+        self.maxMessagesLimit = maxMessagesLimit
         updater = self.environment.channelUpdaterBuilder(
             client.channelRepository,
             client.messageRepository,

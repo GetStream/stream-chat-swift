@@ -1,7 +1,3 @@
-//
-// Copyright © 2024 Stream.io Inc. All rights reserved.
-//
-
 import Foundation
 
 /// A factory component to help build all `ChatClient` dependencies.
