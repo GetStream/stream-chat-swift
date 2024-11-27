@@ -238,7 +238,9 @@ final class WebSocketClient_Tests: XCTestCase {
         ]
 
         for source in testCases {
+            // reset state
             engine?.disconnect_calledCount = 0
+            webSocketClient.connect()
 
             // Call `disconnect` with the given source
             webSocketClient.disconnect(source: source) {}
