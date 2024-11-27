@@ -1039,11 +1039,12 @@ final class AuthenticationRepository_Tests: XCTestCase {
         XCTAssertEqual(state, .newToken)
     }
 
-    // MARK: Cancel Timers
+    // MARK: Reset
 
-    func test_cancelTimers() {
+    func test_reset() {
         let mockTimer = MockTimer()
         FakeTimer.mockTimer = mockTimer
+        retryStrategy.consecutiveFailuresCount = 5
         let repository = AuthenticationRepository(
             apiClient: apiClient,
             databaseContainer: database,
@@ -1059,10 +1060,11 @@ final class AuthenticationRepository_Tests: XCTestCase {
             completion: { _ in }
         )
 
-        repository.cancelTimers()
+        repository.reset()
         // should cancel the connection provider timer and the
         // the token provider timer
         XCTAssertEqual(mockTimer.cancelCallCount, 2)
+        XCTAssertEqual(retryStrategy.consecutiveFailuresCount, 0)
     }
 
     // MARK: Helpers

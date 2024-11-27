@@ -665,7 +665,7 @@ final class ChatClient_Tests: XCTestCase {
 
         XCTAssertCall(ConnectionRepository_Mock.Signature.disconnect, on: connectionRepository)
         XCTAssertCall(AuthenticationRepository_Mock.Signature.clearTokenProvider, on: authenticationRepository)
-        XCTAssertEqual(client.mockAuthenticationRepository.cancelTimersCallCount, 1)
+        XCTAssertEqual(client.mockAuthenticationRepository.resetCallCount, 1)
     }
 
     func test_logout_shouldDisconnect_logOut_andRemoveAllData() throws {
