@@ -637,7 +637,6 @@ public class ChatClient {
         authenticationRepository.completeTokenCompletions(error: ClientError.ReconnectionTimeout())
         completeTokenWaiters(token: nil)
         authenticationRepository.reset()
-        connectionRecoveryHandler?.stop()
         let webSocketConnectionState = webSocketClient?.connectionState ?? .initialized
         connectionRepository.disconnect(source: .timeout(from: webSocketConnectionState)) {}
     }
