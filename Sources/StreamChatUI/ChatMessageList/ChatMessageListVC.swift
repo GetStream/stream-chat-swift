@@ -1168,7 +1168,6 @@ open class ChatMessageListVC: _ViewController,
         didTapEndPoll poll: Poll,
         in message: ChatMessage
     ) {
-        let pollController = client.pollController(messageId: message.id, pollId: poll.id)
         alertRouter.showPollEndVoteAlert(for: poll, in: message.id) { [weak self] in
             let pollController = self?.client.pollController(messageId: message.id, pollId: poll.id)
             pollController?.closePoll { [weak self] error in

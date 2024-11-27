@@ -126,6 +126,7 @@ class ChannelDTO: NSManagedObject {
 
     static func fetchRequest(for cid: ChannelId) -> NSFetchRequest<ChannelDTO> {
         let request = NSFetchRequest<ChannelDTO>(entityName: ChannelDTO.entityName)
+        ChannelDTO.applyPrefetchingState(to: request)
         request.sortDescriptors = [NSSortDescriptor(keyPath: \ChannelDTO.updatedAt, ascending: false)]
         request.predicate = NSPredicate(format: "cid == %@", cid.rawValue)
         return request
@@ -139,6 +140,7 @@ class ChannelDTO: NSManagedObject {
     static func load(cids: [ChannelId], context: NSManagedObjectContext) -> [ChannelDTO] {
         guard !cids.isEmpty else { return [] }
         let request = NSFetchRequest<ChannelDTO>(entityName: ChannelDTO.entityName)
+        ChannelDTO.applyPrefetchingState(to: request)
         request.predicate = NSPredicate(format: "cid IN %@", cids)
         return load(by: request, context: context)
     }
@@ -156,6 +158,19 @@ class ChannelDTO: NSManagedObject {
         let new = NSEntityDescription.insertNewObject(into: context, for: request)
         new.cid = cid.rawValue
         return new
+    }
+}
+
+extension ChannelDTO {
+    override class func prefetchedRelationshipKeyPaths() -> [String] {
+        [
+            KeyPath.string(\ChannelDTO.currentlyTypingUsers),
+            KeyPath.string(\ChannelDTO.pinnedMessages),
+            KeyPath.string(\ChannelDTO.messages),
+            KeyPath.string(\ChannelDTO.members),
+            KeyPath.string(\ChannelDTO.reads),
+            KeyPath.string(\ChannelDTO.watchers)
+        ]
     }
 }
 
@@ -382,6 +397,7 @@ extension ChannelDTO {
         chatClientConfig: ChatClientConfig
     ) -> NSFetchRequest<ChannelDTO> {
         let request = NSFetchRequest<ChannelDTO>(entityName: ChannelDTO.entityName)
+        ChannelDTO.applyPrefetchingState(to: request)
 
         // Fetch results controller requires at least one sorting descriptor.
         var sortDescriptors = query.sort.compactMap { $0.key.sortDescriptor(isAscending: $0.isAscending) }
@@ -420,6 +436,7 @@ extension ChannelDTO {
     
     static func directMessageChannel(participantId: UserId, context: NSManagedObjectContext) -> ChannelDTO? {
         let request = NSFetchRequest<ChannelDTO>(entityName: ChannelDTO.entityName)
+        ChannelDTO.applyPrefetchingState(to: request)
         request.sortDescriptors = [NSSortDescriptor(keyPath: \ChannelDTO.updatedAt, ascending: false)]
         request.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [
             NSPredicate(format: "cid CONTAINS ':!members'"),
@@ -453,6 +470,7 @@ extension ChatChannel {
         guard StreamRuntimeCheck._canFetchRelationship(currentDepth: depth) else {
             throw RecursionLimitError()
         }
+        try dto.isNotDeleted()
         guard let cid = try? ChannelId(cid: dto.cid), let context = dto.managedObjectContext else {
             throw InvalidModel(dto)
         }

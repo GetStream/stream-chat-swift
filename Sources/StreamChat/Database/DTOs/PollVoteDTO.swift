@@ -22,6 +22,10 @@ class PollVoteDTO: NSManagedObject {
     override func willSave() {
         super.willSave()
 
+        guard !isDeleted else {
+            return
+        }
+        
         // When the poll is updated, trigger message FRC update.
         if let message = poll?.message, hasPersistentChangedValues, !message.hasChanges, !message.isDeleted {
             message.id = message.id
@@ -61,14 +65,22 @@ class PollVoteDTO: NSManagedObject {
     
     static func fetchRequest(for voteId: String, pollId: String) -> NSFetchRequest<PollVoteDTO> {
         let request = NSFetchRequest<PollVoteDTO>(entityName: PollVoteDTO.entityName)
+        PollVoteDTO.applyPrefetchingState(to: request)
         request.predicate = NSPredicate(format: "id == %@ && pollId == %@", voteId, pollId)
         return request
     }
 }
 
 extension PollVoteDTO {
+    override class func prefetchedRelationshipKeyPaths() -> [String] {
+        [KeyPath.string(\PollVoteDTO.user)]
+    }
+}
+
+extension PollVoteDTO {
     func asModel() throws -> PollVote {
-        try PollVote(
+        try isNotDeleted()
+        return try PollVote(
             id: id,
             createdAt: createdAt.bridgeDate,
             updatedAt: updatedAt.bridgeDate,
@@ -201,6 +213,7 @@ extension NSManagedObjectContext {
     
     func pollVotes(for userId: String, pollId: String) throws -> [PollVoteDTO] {
         let request = NSFetchRequest<PollVoteDTO>(entityName: PollVoteDTO.entityName)
+        PollVoteDTO.applyPrefetchingState(to: request)
         request.predicate = NSPredicate(format: "user.id == %@ && pollId == %@", userId, pollId)
         return PollVoteDTO.load(by: request, context: self)
     }
@@ -235,6 +248,7 @@ extension NSManagedObjectContext {
 extension PollVoteDTO {
     static func pollVoteListFetchRequest(query: PollVoteListQuery) -> NSFetchRequest<PollVoteDTO> {
         let request = NSFetchRequest<PollVoteDTO>(entityName: PollVoteDTO.entityName)
+        PollVoteDTO.applyPrefetchingState(to: request)
         request.sortDescriptors = [.init(key: #keyPath(PollVoteDTO.createdAt), ascending: false)]
         request.predicate = NSPredicate(format: "ANY queries.filterHash == %@", query.queryHash)
         return request

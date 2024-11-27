@@ -18,7 +18,10 @@ class ChannelReadDTO: NSManagedObject {
 
     override func willSave() {
         super.willSave()
-
+        
+        guard !isDeleted else {
+            return
+        }
         // When the read is updated, we need to propagate this change up to holding channel
         if hasPersistentChangedValues, !channel.hasChanges, !channel.isDeleted {
             // this will not change object, but mark it as dirty, triggering updates
@@ -28,12 +31,14 @@ class ChannelReadDTO: NSManagedObject {
 
     static func fetchRequest(userId: String) -> NSFetchRequest<ChannelReadDTO> {
         let request = NSFetchRequest<ChannelReadDTO>(entityName: ChannelReadDTO.entityName)
+        ChannelReadDTO.applyPrefetchingState(to: request)
         request.predicate = NSPredicate(format: "user.id == %@", userId)
         return request
     }
 
     static func fetchRequest(for cid: ChannelId, userId: String) -> NSFetchRequest<ChannelReadDTO> {
         let request = NSFetchRequest<ChannelReadDTO>(entityName: ChannelReadDTO.entityName)
+        ChannelReadDTO.applyPrefetchingState(to: request)
         request.predicate = NSPredicate(format: "channel.cid == %@ && user.id == %@", cid.rawValue, userId)
         return request
     }
@@ -191,9 +196,16 @@ extension NSManagedObjectContext {
     }
 }
 
+extension ChannelReadDTO {
+    override class func prefetchedRelationshipKeyPaths() -> [String] {
+        [KeyPath.string(\ChannelReadDTO.user)]
+    }
+}
+
 extension ChatChannelRead {
     fileprivate static func create(fromDTO dto: ChannelReadDTO) throws -> ChatChannelRead {
-        try .init(
+        try dto.isNotDeleted()
+        return try .init(
             lastReadAt: dto.lastReadAt.bridgeDate,
             lastReadMessageId: dto.lastReadMessageId,
             unreadMessagesCount: Int(dto.unreadMessageCount),

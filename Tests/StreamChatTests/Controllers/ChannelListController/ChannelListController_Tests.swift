@@ -1271,6 +1271,76 @@ final class ChannelListController_Tests: XCTestCase {
             expectedResult: [cid1, cid2, cid3]
         )
     }
+    
+    func test_filterPredicate_and_withORAndOnlyCustomKeys() throws {
+        let memberId1 = UserId.unique
+        let memberId2 = UserId.unique
+        let cid1 = ChannelId.unique
+        let cid2 = ChannelId.unique
+        let cid3 = ChannelId.unique
+
+        // or is ignored because it is a custom key and therefore there is no Core Data predicate available ([read more](https://getstream.io/chat/docs/sdk/ios/client/controllers/channels/))
+        try assertFilterPredicate(
+            .and([
+                .in(.members, values: [memberId1, memberId2]),
+                .or([
+                    .equal("customKey", to: "abc")
+                ])
+            ]),
+            channelsInDB: [
+                .dummy(channel: .dummy(cid: cid1, members: [.dummy(user: .dummy(userId: memberId1)), .dummy(user: .dummy(userId: memberId2))])),
+                .dummy(channel: .dummy()),
+                .dummy(channel: .dummy(cid: cid2, members: [.dummy(user: .dummy(userId: memberId1)), .dummy(user: .dummy(userId: memberId2))])),
+                .dummy(channel: .dummy(cid: cid3))
+            ],
+            expectedResult: [cid1, cid2]
+        )
+    }
+    
+    func test_filterPredicate_and_withANDAndOnlyCustomKeys() throws {
+        let cid1 = ChannelId(type: .messaging, id: "1")
+        let cid2 = ChannelId(type: .messaging, id: "2")
+        let cid3 = ChannelId(type: .messaging, id: "3")
+
+        try assertFilterPredicate(
+            .and([
+                .equal(.hidden, to: true),
+                // nested and is unnecessary, but it is here only for testing purposes
+                .and([
+                    .equal("customKey", to: "abc"),
+                    .equal("customKey2", to: "123")
+                ])
+            ]),
+            channelsInDB: [
+                .dummy(channel: .dummy(cid: cid1, name: "streamOriginal", isHidden: true)),
+                .dummy(channel: .dummy(cid: cid2, name: "teamDream", isHidden: true)),
+                .dummy(channel: .dummy(cid: cid3, name: "team", isHidden: false))
+            ],
+            expectedResult: [cid1, cid2]
+        )
+    }
+    
+    func test_filterPredicate_and_withNORAndOnlyCustomKeys() throws {
+        let cid1 = ChannelId(type: .messaging, id: "1")
+        let cid2 = ChannelId(type: .messaging, id: "2")
+        let cid3 = ChannelId(type: .messaging, id: "3")
+
+        try assertFilterPredicate(
+            .and([
+                .equal(.hidden, to: true),
+                // does not make sense in reality, but it is here only for testing purposes
+                .nor([
+                    .equal("hidden", to: true)
+                ])
+            ]),
+            channelsInDB: [
+                .dummy(channel: .dummy(cid: cid1, name: "streamOriginal", isHidden: true)),
+                .dummy(channel: .dummy(cid: cid2, name: "teamDream", isHidden: true)),
+                .dummy(channel: .dummy(cid: cid3, name: "team", isHidden: false))
+            ],
+            expectedResult: [cid1, cid2]
+        )
+    }
 
     func test_filterPredicate_whenHiddenTrueOrFalse_containsExpectedItems() throws {
         let cid1 = ChannelId(type: .messaging, id: "1")

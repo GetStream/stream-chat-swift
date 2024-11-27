@@ -9,6 +9,10 @@ import UIKit
 // MARK: - Navigation
 
 extension DemoAppCoordinator {
+    var chat: StreamChatWrapper {
+        StreamChatWrapper.shared
+    }
+
     func start(cid: ChannelId? = nil, completion: @escaping (Error?) -> Void) {
         if let user = UserDefaults.shared.currentUser {
             showChat(for: .credentials(user), cid: cid, animated: false, completion: completion)
@@ -106,6 +110,13 @@ extension DemoAppCoordinator {
                     filter: .containMembers(userIds: [userCredentials.id])
                 )
             }
+        case let .custom(userCredentials):
+            guard let userId = userCredentials?.id else {
+                fallthrough
+            }
+            channelListQuery = .init(
+                filter: .containMembers(userIds: [userId])
+            )
         case .anonymous, .guest:
             channelListQuery = .init(filter: .equal(.type, to: .messaging))
         }
@@ -181,6 +192,10 @@ private extension DemoAppCoordinator {
 
         // App configuration used by our dev team
         DemoAppConfiguration.setInternalConfiguration()
+
+        if let userCredentials = user.userCredentials, let customApiKey = userCredentials.customApiKey {
+            StreamChatWrapper.replaceSharedInstance(apiKeyString: customApiKey)
+        }
 
         chat.logIn(as: user, completion: completion)
     }

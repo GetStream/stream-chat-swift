@@ -15,6 +15,7 @@ final class ChannelMuteDTO: NSManagedObject {
 
     static func fetchRequest(for cid: ChannelId) -> NSFetchRequest<ChannelMuteDTO> {
         let request = NSFetchRequest<ChannelMuteDTO>(entityName: ChannelMuteDTO.entityName)
+        ChannelMuteDTO.applyPrefetchingState(to: request)
         request.predicate = NSPredicate(format: "channel.cid == %@", cid.rawValue)
         return request
     }
@@ -34,6 +35,15 @@ final class ChannelMuteDTO: NSManagedObject {
             for: request
         )
         return new
+    }
+}
+
+extension ChannelMuteDTO {
+    override class func prefetchedRelationshipKeyPaths() -> [String] {
+        [
+            KeyPath.string(\ChannelMuteDTO.channel),
+            KeyPath.string(\ChannelMuteDTO.currentUser)
+        ]
     }
 }
 

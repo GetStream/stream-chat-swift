@@ -20,19 +20,18 @@ class UserListQueryDTO: NSManagedObject {
 
     @NSManaged var users: Set<UserDTO>
 
-    static func observedQueries() -> NSFetchRequest<UserListQueryDTO> {
-        let fetchRequest = NSFetchRequest<UserListQueryDTO>(entityName: UserListQueryDTO.entityName)
-        fetchRequest.predicate = NSPredicate(format: "shouldBeUpdatedInBackground == YES")
-        fetchRequest.sortDescriptors = [NSSortDescriptor(keyPath: \UserListQueryDTO.filterHash, ascending: true)]
-        return fetchRequest
-    }
-
     static func load(filterHash: String, context: NSManagedObjectContext) -> UserListQueryDTO? {
         load(
             keyPath: #keyPath(UserListQueryDTO.filterHash),
             equalTo: filterHash,
             context: context
         ).first
+    }
+}
+
+extension UserListQueryDTO {
+    override class func prefetchedRelationshipKeyPaths() -> [String] {
+        [KeyPath.string(\UserListQueryDTO.users)]
     }
 }
 

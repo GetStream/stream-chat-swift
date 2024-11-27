@@ -386,6 +386,9 @@ final class DatabaseContainer_Tests: XCTestCase {
                 createdAt: .unique,
                 updatedAt: .unique
             ))
+            let mutedUserId = UserId.unique
+            let mutedUserDTO = try session.saveUser(payload: .dummy(userId: mutedUserId))
+            session.currentUser?.mutedUsers = Set([mutedUserDTO])
             session.saveThreadList(
                 payload: ThreadListPayload(
                     threads: [
@@ -410,7 +413,7 @@ final class DatabaseContainer_Tests: XCTestCase {
                             lastReactionAt: .unique
                         )
                     ],
-                    moderationDetails: .init(originalText: "yo", action: "spam")
+                    moderationDetails: .dummy(originalText: "yo", action: "spam")
                 ),
                 .dummy(
                     poll: self.dummyPollPayload(

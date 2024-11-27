@@ -7,6 +7,7 @@
   "ban_expires" : "2021-03-08T15:42:31.355923Z",
   "user_id" : "broken-waterfall-5",
   "channel_role" : "owner",
+  "is_premium": true,
   "user" : {
     "id" : "broken-waterfall-5",
     "banned" : false,

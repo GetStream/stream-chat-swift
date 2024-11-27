@@ -53,9 +53,6 @@ public class ChatClient {
 
     /// The notification center used to send and receive notifications about incoming events.
     private(set) var eventNotificationCenter: EventNotificationCenter
-    
-    private var _sharedCurrentUserController: CurrentChatUserController?
-    private let queue = DispatchQueue(label: "io.getstream.chat-client")
 
     /// The registry that contains all the attachment payloads associated with their attachment types.
     /// For the meantime this is a static property to avoid breaking changes. On v5, this can be changed.
@@ -456,7 +453,6 @@ public class ChatClient {
     /// Disconnects the chat client from the chat servers. No further updates from the servers
     /// are received.
     public func disconnect(completion: @escaping () -> Void) {
-        connectionRecoveryHandler?.stop()
         connectionRepository.disconnect(source: .userInitiated) {
             log.info("The `ChatClient` has been disconnected.", subsystems: .webSocket)
             completion()
@@ -484,7 +480,6 @@ public class ChatClient {
     /// Disconnects the chat client from the chat servers and removes all the local data related.
     public func logout(completion: @escaping () -> Void) {
         authenticationRepository.logOutUser()
-        resetSharedCurrentUserController()
 
         // Stop tracking active components
         syncRepository.removeAllTracked()
@@ -620,24 +615,6 @@ public class ChatClient {
     private func refreshToken(completion: ((Error?) -> Void)?) {
         authenticationRepository.refreshToken {
             completion?($0)
-        }
-    }
-    
-    /// A shared user controller for an easy access to the current user.
-    var sharedCurrentUserController: CurrentChatUserController {
-        queue.sync {
-            if let controller = _sharedCurrentUserController {
-                return controller
-            }
-            let controller = currentUserController()
-            _sharedCurrentUserController = controller
-            return controller
-        }
-    }
-    
-    func resetSharedCurrentUserController() {
-        queue.async {
-            self._sharedCurrentUserController = nil
         }
     }
 }

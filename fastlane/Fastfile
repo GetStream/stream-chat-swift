@@ -66,7 +66,7 @@ lane :release do |options|
     File.write(artifacts_path, JSON.dump(artifacts))
 
     # Set the framework version in SystemEnvironment+Version.swift
-    new_content = File.read(swift_environment_path).gsub!(previous_version_number, release_version)
+    new_content = File.read(swift_environment_path).gsub!(previous_version_number, release_version).gsub!('-SNAPSHOT', '')
     File.open(swift_environment_path, 'w') { |f| f.puts(new_content) }
 
     # Update sdk sizes
@@ -93,11 +93,17 @@ end
 
 lane :merge_main do
   merge_main_to_develop
+  current_version = get_sdk_version_from_environment
+  add_snapshot_to_current_version(file_path: swift_environment_path)
+  ensure_git_branch(branch: 'develop')
+  sh("git add #{swift_environment_path}")
+  sh("git commit -m 'Add snapshot postfix to v#{current_version}'")
+  sh('git push')
 end
 
 desc 'Completes an SDK Release'
 lane :publish_release do |options|
-  release_version = File.read(swift_environment_path).match(/String\s+=\s+"([\d.]+)"/)[1]
+  release_version = get_sdk_version_from_environment
   UI.user_error!("Release #{release_version} has already been published.") if git_tag_exists(tag: release_version, remote: true)
   UI.user_error!('Release version cannot be empty') if release_version.to_s.empty?
   ensure_git_branch(branch: 'main')
@@ -117,6 +123,10 @@ lane :publish_release do |options|
   )
 
   update_spm(version: release_version)
+end
+
+lane :get_sdk_version_from_environment do
+  File.read(swift_environment_path).match(/String\s+=\s+"([\d.]+).*"/)[1]
 end
 
 desc 'Compresses the XCFrameworks into zip files'

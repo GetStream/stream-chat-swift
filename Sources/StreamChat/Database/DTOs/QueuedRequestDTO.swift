@@ -27,12 +27,14 @@ class QueuedRequestDTO: NSManagedObject {
 
     static func loadAllPendingRequests(context: NSManagedObjectContext) -> [QueuedRequestDTO] {
         let request = NSFetchRequest<QueuedRequestDTO>(entityName: QueuedRequestDTO.entityName)
+        QueuedRequestDTO.applyPrefetchingState(to: request)
         request.sortDescriptors = [NSSortDescriptor(keyPath: \QueuedRequestDTO.date, ascending: true)]
         return load(by: request, context: context)
     }
 
     static func load(id: String, context: NSManagedObjectContext) -> QueuedRequestDTO? {
         let request = NSFetchRequest<QueuedRequestDTO>(entityName: entityName)
+        QueuedRequestDTO.applyPrefetchingState(to: request)
         request.predicate = NSPredicate(format: "id == %@", id)
         return load(by: request, context: context).first
     }

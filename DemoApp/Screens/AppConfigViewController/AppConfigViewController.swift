@@ -22,17 +22,18 @@ struct DemoAppConfig {
     var tokenRefreshDetails: TokenRefreshDetails?
     /// A Boolean value that determines if a connection banner UI should be shown.
     var shouldShowConnectionBanner: Bool
+    /// A Boolean value to define if the premium member feature is enabled. This is to test custom member data.
+    var isPremiumMemberFeatureEnabled: Bool
 
     /// The details to generate expirable tokens in the demo app.
     struct TokenRefreshDetails {
         /// The app secret from the dashboard.
         let appSecret: String
         /// The duration in seconds until the token is expired.
-        let duration: TimeInterval
+        let expirationDuration: TimeInterval
         /// In order to test token refresh fails, we can set a value of how
-        /// many token refresh will succeed before it starts failing.
-        /// By default it is 0. Which means it will always succeed.
-        let numberOfSuccessfulRefreshesBeforeFailing: Int
+        /// many token refresh will fail before a successful one.
+        let numberOfFailures: Int
     }
 }
 
@@ -51,7 +52,8 @@ class AppConfig {
             isChannelPinningEnabled: false,
             isLocationAttachmentsEnabled: false,
             tokenRefreshDetails: nil,
-            shouldShowConnectionBanner: false
+            shouldShowConnectionBanner: false,
+            isPremiumMemberFeatureEnabled: false
         )
 
         if StreamRuntimeCheck.isStreamInternalConfiguration {
@@ -61,6 +63,7 @@ class AppConfig {
             demoAppConfig.isLocationAttachmentsEnabled = true
             demoAppConfig.isHardDeleteEnabled = true
             demoAppConfig.shouldShowConnectionBanner = true
+            demoAppConfig.isPremiumMemberFeatureEnabled = true
             StreamRuntimeCheck.assertionsEnabled = true
         }
     }
@@ -151,10 +154,13 @@ class AppConfigViewController: UITableViewController {
     }
 
     enum DemoAppInfoOption: CustomStringConvertible, CaseIterable {
+        case environment
         case pushConfiguration
 
         var description: String {
             switch self {
+            case .environment:
+                return "App Key"
             case .pushConfiguration:
                 let configuration = Bundle.pushProviderName ?? "Not set"
                 return "Push Configuration: \(configuration)"
@@ -170,6 +176,7 @@ class AppConfigViewController: UITableViewController {
         case isLocationAttachmentsEnabled
         case tokenRefreshDetails
         case shouldShowConnectionBanner
+        case isPremiumMemberFeatureEnabled
     }
 
     enum ComponentsConfigOption: String, CaseIterable {
@@ -261,8 +268,8 @@ class AppConfigViewController: UITableViewController {
         guard let cell = tableView.cellForRow(at: indexPath) else { return }
 
         switch options[indexPath.section] {
-        case .info:
-            break
+        case let .info(options):
+            didSelectInfoOptionsCell(cell, at: indexPath, options: options)
         case let .components(options):
             didSelectComponentsOptionsCell(cell, at: indexPath, options: options)
         case let .chatClient(options):
@@ -283,6 +290,13 @@ class AppConfigViewController: UITableViewController {
     ) {
         let option = options[indexPath.row]
         cell.textLabel?.text = option.description
+        switch option {
+        case .environment:
+            cell.accessoryType = .disclosureIndicator
+            cell.detailTextLabel?.text = apiKeyString
+        case .pushConfiguration:
+            break
+        }
     }
 
     // MARK: - Demo App Options
@@ -317,8 +331,8 @@ class AppConfigViewController: UITableViewController {
                 self?.demoAppConfig.isLocationAttachmentsEnabled = newValue
             }
         case .tokenRefreshDetails:
-            if let tokenRefreshDuration = demoAppConfig.tokenRefreshDetails?.duration {
-                cell.detailTextLabel?.text = "Duration: \(tokenRefreshDuration)s"
+            if let tokenRefreshDuration = demoAppConfig.tokenRefreshDetails?.expirationDuration {
+                cell.detailTextLabel?.text = "Duration before expired: \(tokenRefreshDuration)s"
             } else {
                 cell.detailTextLabel?.text = "Disabled"
             }
@@ -326,6 +340,10 @@ class AppConfigViewController: UITableViewController {
         case .shouldShowConnectionBanner:
             cell.accessoryView = makeSwitchButton(demoAppConfig.shouldShowConnectionBanner) { [weak self] newValue in
                 self?.demoAppConfig.shouldShowConnectionBanner = newValue
+            }
+        case .isPremiumMemberFeatureEnabled:
+            cell.accessoryView = makeSwitchButton(demoAppConfig.isPremiumMemberFeatureEnabled) { [weak self] newValue in
+                self?.demoAppConfig.isPremiumMemberFeatureEnabled = newValue
             }
         }
     }
@@ -485,6 +503,20 @@ class AppConfigViewController: UITableViewController {
         }
     }
 
+    private func didSelectInfoOptionsCell(
+        _ cell: UITableViewCell,
+        at indexPath: IndexPath,
+        options: [DemoAppInfoOption]
+    ) {
+        let option = options[indexPath.row]
+        switch option {
+        case .environment:
+            pushEnvironmentSelectorVC()
+        case .pushConfiguration:
+            break
+        }
+    }
+
     private func didSelectComponentsOptionsCell(
         _ cell: UITableViewCell,
         at indexPath: IndexPath,
@@ -626,16 +658,16 @@ class AppConfigViewController: UITableViewController {
             }
         }
         alert.addTextField { textField in
-            textField.placeholder = "Duration (Seconds)"
+            textField.placeholder = "Expiration duration (Seconds)"
             textField.keyboardType = .numberPad
-            if let duration = self.demoAppConfig.tokenRefreshDetails?.duration {
+            if let duration = self.demoAppConfig.tokenRefreshDetails?.expirationDuration {
                 textField.text = "\(duration)"
             }
         }
         alert.addTextField { textField in
-            textField.placeholder = "Number of Refreshes Before Failing"
+            textField.placeholder = "Number of refresh fails"
             textField.keyboardType = .numberPad
-            if let numberOfRefreshes = self.demoAppConfig.tokenRefreshDetails?.numberOfSuccessfulRefreshesBeforeFailing {
+            if let numberOfRefreshes = self.demoAppConfig.tokenRefreshDetails?.numberOfFailures {
                 textField.text = "\(numberOfRefreshes)"
             }
         }
@@ -643,11 +675,11 @@ class AppConfigViewController: UITableViewController {
         alert.addAction(.init(title: "Enable", style: .default, handler: { _ in
             guard let appSecret = alert.textFields?[0].text else { return }
             guard let duration = alert.textFields?[1].text else { return }
-            guard let successfulRetries = alert.textFields?[2].text else { return }
+            guard let numberOfFailures = alert.textFields?[2].text else { return }
             self.demoAppConfig.tokenRefreshDetails = .init(
                 appSecret: appSecret,
-                duration: TimeInterval(duration) ?? 60,
-                numberOfSuccessfulRefreshesBeforeFailing: Int(successfulRetries) ?? 0
+                expirationDuration: TimeInterval(duration) ?? 60,
+                numberOfFailures: Int(numberOfFailures) ?? 0
             )
         }))
 
@@ -656,5 +688,28 @@ class AppConfigViewController: UITableViewController {
         }))
 
         present(alert, animated: true, completion: nil)
+    }
+
+    private func pushEnvironmentSelectorVC() {
+        let selectorViewController = OptionsSelectorViewController<DemoApiKeys>(
+            options: [.frankfurtC1, .frankfurtC2, .usEastC6],
+            initialSelectedOptions: [DemoApiKeys(rawValue: apiKeyString)],
+            allowsMultipleSelection: false,
+            optionFormatter: { option in
+                var optionName = option.rawValue
+                if let appName = option.appName {
+                    optionName += " (\(appName))"
+                }
+                return optionName
+            }
+        )
+        selectorViewController.didChangeSelectedOptions = { [weak self] options in
+            guard let selectedOption = options.first else { return }
+            apiKeyString = selectedOption.rawValue
+            StreamChatWrapper.replaceSharedInstance(apiKeyString: apiKeyString)
+            self?.tableView.reloadData()
+        }
+
+        navigationController?.pushViewController(selectorViewController, animated: true)
     }
 }

@@ -179,7 +179,12 @@ final class MessageUpdater_Tests: XCTestCase {
                     messageId: messageId,
                     moderationDetails: .init(
                         originalText: "",
-                        action: MessageModerationAction.bounce.rawValue
+                        action: MessageModerationAction.bounce.rawValue,
+                        textHarms: nil,
+                        imageHarms: nil,
+                        blocklistMatched: nil,
+                        semanticFilterMatched: nil,
+                        platformCircumvented: nil
                     )
                 ),
                 for: channelId,
@@ -678,7 +683,8 @@ final class MessageUpdater_Tests: XCTestCase {
             guard let messageDTO = session.message(id: messageId) else { return }
 
             messageDTO.moderationDetails = MessageModerationDetailsDTO.create(
-                from: .init(originalText: "", action: MessageModerationAction.bounce.rawValue),
+                from: .dummy(originalText: "", action: MessageModerationAction.bounce.rawValue),
+                isV1: false,
                 context: self.database.writableContext
             )
             messageDTO.localMessageState = .sendingFailed
@@ -722,7 +728,8 @@ final class MessageUpdater_Tests: XCTestCase {
             guard let messageDTO = session.message(id: messageId) else { return }
 
             messageDTO.moderationDetails = MessageModerationDetailsDTO.create(
-                from: .init(originalText: "", action: MessageModerationAction.bounce.rawValue),
+                from: .dummy(originalText: "", action: MessageModerationAction.bounce.rawValue),
+                isV1: false,
                 context: self.database.writableContext
             )
         }
@@ -777,7 +784,11 @@ final class MessageUpdater_Tests: XCTestCase {
             guard let messageDTO = session.message(id: secondMessageId) else { return }
 
             messageDTO.moderationDetails = MessageModerationDetailsDTO.create(
-                from: .init(originalText: "", action: MessageModerationAction.bounce.rawValue),
+                from: .dummy(
+                    originalText: "",
+                    action: MessageModerationAction.bounce.rawValue
+                ),
+                isV1: false,
                 context: self.database.writableContext
             )
             messageDTO.localMessageState = .sendingFailed
@@ -2286,7 +2297,12 @@ final class MessageUpdater_Tests: XCTestCase {
                     messageId: messageId,
                     moderationDetails: .init(
                         originalText: "",
-                        action: MessageModerationAction.bounce.rawValue
+                        action: MessageModerationAction.bounce.rawValue,
+                        textHarms: nil,
+                        imageHarms: nil,
+                        blocklistMatched: nil,
+                        semanticFilterMatched: nil,
+                        platformCircumvented: nil
                     )
                 ),
                 for: channelId,

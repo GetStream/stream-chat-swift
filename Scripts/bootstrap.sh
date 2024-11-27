@@ -83,8 +83,3 @@ if [[ ${INSTALL_GCLOUD-default} == true ]]; then
   gcloud config set project stream-chat-swift
   gcloud services enable toolresults.googleapis.com
 fi
-
-# Vale should not be installed on CI
-if [ "$GITHUB_ACTIONS" != true ]; then
-  brew install vale
-fi

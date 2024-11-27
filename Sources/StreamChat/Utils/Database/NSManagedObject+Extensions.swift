@@ -33,12 +33,38 @@ extension NSFetchRequestGettable where Self: NSManagedObject {
 
     static func fetchRequest(keyPath: String, equalTo value: String) -> NSFetchRequest<Self> {
         let request = NSFetchRequest<Self>(entityName: entityName)
+        Self.applyPrefetchingState(to: request)
         request.predicate = NSPredicate(format: "%K == %@", keyPath, value)
         return request
     }
 }
 
 extension NSManagedObject: NSFetchRequestGettable {}
+
+// MARK: - Fetch Request Prefetching
+
+protocol NSFetchRequestPrefetching {}
+
+extension NSFetchRequestPrefetching where Self: NSManagedObject {
+    /// Turns off Core Data object faulting and sets prefetched relationship keypaths.
+    ///
+    /// Note: Reduces additional Core Data fetches when most of the data is accessed from fetched objects.
+    static func applyPrefetchingState(to request: NSFetchRequest<Self>) {
+        guard StreamRuntimeCheck._isDatabasePrefetchingEnabled else { return }
+        request.returnsObjectsAsFaults = false
+        request.relationshipKeyPathsForPrefetching = Self.prefetchedRelationshipKeyPaths()
+    }
+}
+
+extension NSManagedObject: NSFetchRequestPrefetching {}
+
+extension NSManagedObject {
+    @objc class func prefetchedRelationshipKeyPaths() -> [String] {
+        []
+    }
+}
+
+// MARK: - Loading Objects
 
 extension NSManagedObject {
     static func load<T: NSManagedObject>(by id: String, context: NSManagedObjectContext) -> [T] {
@@ -47,6 +73,7 @@ extension NSManagedObject {
 
     static func load<T: NSManagedObject>(keyPath: String, equalTo value: String, context: NSManagedObjectContext) -> [T] {
         let request = NSFetchRequest<T>(entityName: entityName)
+        T.applyPrefetchingState(to: request)
         request.predicate = NSPredicate(format: "%K == %@", keyPath, value)
         return load(by: request, context: context)
     }
