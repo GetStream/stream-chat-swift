@@ -42,6 +42,10 @@ class ConnectionRepository {
         self.timerType = timerType
     }
 
+    func initialize() {
+        webSocketClient?.initialize()
+    }
+
     /// Connects the chat client the controller represents to the chat servers.
     ///
     /// When the connection is established, `ChatClient` starts receiving chat updates, and `currentUser` variable is available.
