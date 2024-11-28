@@ -347,14 +347,12 @@ class AuthenticationRepository {
         isGettingToken = true
 
         let onCompletion: (Error?) -> Void = { [weak self] error in
-            guard let self = self else { return }
             if let error = error {
                 log.error("Error when getting token: \(error)", subsystems: .authentication)
             } else {
                 log.debug("Successfully retrieved token", subsystems: .authentication)
             }
-
-            completeTokenCompletions(error: error)
+            self?.completeTokenCompletions(error: error)
         }
 
         guard consecutiveRefreshFailures < Constants.maximumTokenRefreshAttempts else {
