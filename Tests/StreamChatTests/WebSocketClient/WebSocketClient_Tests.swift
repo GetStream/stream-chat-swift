@@ -259,6 +259,17 @@ final class WebSocketClient_Tests: XCTestCase {
         }
     }
 
+    func test_disconnect_whenInitialized_shouldDisconnect() {
+        // When in initialized state
+        XCTAssertEqual(webSocketClient.connectionState, .initialized)
+
+        // Call disconnect when not connected
+        webSocketClient.disconnect {}
+
+        // Assert connection state is updated
+        XCTAssertEqual(webSocketClient.connectionState, .disconnected(source: .userInitiated))
+    }
+
     func test_connectionState_afterDecodingError() {
         // Simulate connection
         test_connectionFlow()
