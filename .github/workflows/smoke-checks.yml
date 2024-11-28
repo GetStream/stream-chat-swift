@@ -87,7 +87,7 @@ jobs:
 
   test-llc-debug:
     name: Test LLC (Debug)
-    runs-on: macos-14
+    runs-on: macos-15
     if: ${{ github.event.inputs.snapshots != 'true' }}
     needs: build-test-app-and-frameworks
     steps:
@@ -136,7 +136,7 @@ jobs:
 
   test-ui-debug:
     name: Test UI (Debug)
-    runs-on: macos-14
+    runs-on: macos-15
     needs: build-test-app-and-frameworks
     if: ${{ github.event_name != 'push' }}
     steps:
@@ -189,7 +189,7 @@ jobs:
 
   test-e2e-debug:
     name: Test E2E UI (Debug)
-    runs-on: macos-14
+    runs-on: macos-15
     if: ${{ github.event_name != 'push' && github.event.inputs.snapshots != 'true' }}
     needs:
       - allure_testops_launch
