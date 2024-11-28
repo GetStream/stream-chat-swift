@@ -38,6 +38,33 @@ class ChannelMemberUpdater: Worker {
             }
         }
     }
+    
+    func pinMemberChannel(
+        _ isPinned: Bool,
+        userId: UserId,
+        cid: ChannelId,
+        completion: @escaping (Error?) -> Void
+    ) {
+        partialUpdate(
+            userId: userId,
+            in: cid,
+            extraData: isPinned ? ["pinned": .bool(true)] : nil,
+            unset: isPinned ? nil : ["pinned"],
+            completion: { completion($0.error) }
+        )
+    }
+    
+    func pinMemberChannel(
+        _ isPinned: Bool,
+        userId: UserId,
+        cid: ChannelId
+    ) async throws {
+        try await withCheckedThrowingContinuation { continuation in
+            pinMemberChannel(isPinned, userId: userId, cid: cid) { error in
+                continuation.resume(with: error)
+            }
+        }
+    }
 
     /// Bans the user in the channel.
     /// - Parameters:

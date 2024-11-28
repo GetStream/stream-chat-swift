@@ -112,6 +112,9 @@ public extension FilterKey where Scope: AnyChannelListFilterScope {
     /// A filter key for matching the `blocked` value.
     /// Supported operators: `equal`
     static var blocked: FilterKey<Scope, Bool> { .init(rawValue: "blocked", keyPathString: #keyPath(ChannelDTO.isBlocked)) }
+    
+    /// A filter key for matching the `pinned` value.
+    static var pinned: FilterKey<Scope, Bool> { .init(rawValue: "pinned", keyPathString: #keyPath(ChannelDTO.isPinned)) }
 
     /// A filter key for matching the `memberCount` value.
     /// Supported operators: `equal`, `greaterThan`, `lessThan`, `greaterOrEqual`, `lessOrEqual`, `notEqual`

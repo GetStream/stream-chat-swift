@@ -55,6 +55,9 @@ protocol CurrentUserDatabaseSession {
 
     /// Returns `CurrentUserDTO` from the DB. Returns `nil` if no `CurrentUserDTO` exists.
     var currentUser: CurrentUserDTO? { get }
+    
+    /// Removes the current user from DB.
+    func deleteCurrentUser()
 }
 
 extension CurrentUserDatabaseSession {

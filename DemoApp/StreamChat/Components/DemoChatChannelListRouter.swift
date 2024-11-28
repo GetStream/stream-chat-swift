@@ -451,22 +451,16 @@ final class DemoChatChannelListRouter: ChatChannelListRouter {
                     }
                 }
             }),
-            .init(title: "Pin channel", isEnabled: AppConfig.shared.demoAppConfig.isChannelPinningEnabled, handler: { [unowned self] _ in
-                let userId = channelController.channel?.membership?.id ?? ""
-                let pinnedKey = ChatChannel.isPinnedBy(keyForUserId: userId)
-                channelController.partialChannelUpdate(extraData: [pinnedKey: true]) { error in
-                    if let error = error {
-                        self.rootViewController.presentAlert(title: "Couldn't pin channel \(cid)", message: "\(error)")
-                    }
+            .init(title: "Pin channel", isEnabled: true, handler: { [unowned self] _ in
+                channelController.pin { error in
+                    guard let error else { return }
+                    self.rootViewController.presentAlert(title: "Couldn't pin channel \(cid)", message: "\(error)")
                 }
             }),
-            .init(title: "Unpin channel", isEnabled: AppConfig.shared.demoAppConfig.isChannelPinningEnabled, handler: { [unowned self] _ in
-                let userId = channelController.channel?.membership?.id ?? ""
-                let pinnedKey = ChatChannel.isPinnedBy(keyForUserId: userId)
-                channelController.partialChannelUpdate(extraData: [pinnedKey: false]) { error in
-                    if let error = error {
-                        self.rootViewController.presentAlert(title: "Couldn't unpin channel \(cid)", message: "\(error)")
-                    }
+            .init(title: "Unpin channel", isEnabled: true, handler: { [unowned self] _ in
+                channelController.unpin { error in
+                    guard let error else { return }
+                    self.rootViewController.presentAlert(title: "Couldn't unpin channel \(cid)", message: "\(error)")
                 }
             }),
             .init(title: "Enable slow mode", isEnabled: canSetChannelCooldown, handler: { [unowned self] _ in

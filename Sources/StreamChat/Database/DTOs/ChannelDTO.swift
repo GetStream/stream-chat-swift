@@ -43,6 +43,7 @@ class ChannelDTO: NSManagedObject {
     @NSManaged var team: String?
     
     @NSManaged var isBlocked: Bool
+    @NSManaged var isPinned: Bool
 
     // MARK: - Queries
 
@@ -334,6 +335,7 @@ extension NSManagedObjectContext {
         if let membership = payload.membership {
             let membership = try saveMember(payload: membership, channelId: payload.channel.cid, query: nil, cache: cache)
             dto.membership = membership
+            dto.isPinned = membership.pinnedAt != nil
         } else {
             dto.membership = nil
         }

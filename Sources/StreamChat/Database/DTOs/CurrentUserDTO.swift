@@ -192,6 +192,11 @@ extension NSManagedObjectContext: CurrentUserDatabaseSession {
     func invalidateCurrentUserCache() {
         userInfo[Self.currentUserKey] = nil
     }
+    
+    func deleteCurrentUser() {
+        guard let currentUser else { return }
+        delete(currentUser)
+    }
 }
 
 extension CurrentUserDTO {

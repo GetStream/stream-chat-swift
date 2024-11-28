@@ -1132,6 +1132,26 @@ public class Chat {
         try await channelUpdater.showChannel(cid: cid)
     }
     
+    // MARK: - Pinning and Unpinning
+    
+    /// Pins the channel for the current user.
+    ///
+    /// - SeeAlso: Pinned channels can be queried with ``FilterKey/pinned`` filter and sorted with ``ChannelListSortingKey/pinnedAt`` sorting key.
+    ///
+    /// - Throws: An error while communicating with the Stream API.
+    public func pin() async throws {
+        guard let currentUserId = client.authenticationRepository.currentUserId else { throw ClientError.CurrentUserDoesNotExist() }
+        try await memberUpdater.pinMemberChannel(true, userId: currentUserId, cid: cid)
+    }
+    
+    /// Unpins the channel for the current user.
+    ///
+    /// - Throws: An error while communicating with the Stream API.
+    public func unpin() async throws {
+        guard let currentUserId = client.authenticationRepository.currentUserId else { throw ClientError.CurrentUserDoesNotExist() }
+        try await memberUpdater.pinMemberChannel(false, userId: currentUserId, cid: cid)
+    }
+    
     // MARK: - Sending and Listening to Events
     
     /// Subscribes to web-socket events of a single type which is a channel specific event in this channel.

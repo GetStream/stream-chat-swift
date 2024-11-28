@@ -27,11 +27,18 @@ public struct ChannelListSortingKey: SortingKey, Equatable {
         remoteKey: ChannelCodingKeys.updatedAt.rawValue
     )
 
-    /// Sort channels by the last message date..
+    /// Sort channels by the last message date.
     public static let lastMessageAt = Self(
         keyPath: \.lastMessageAt,
         localKey: #keyPath(ChannelDTO.lastMessageAt),
         remoteKey: ChannelCodingKeys.lastMessageAt.rawValue
+    )
+    
+    /// Sort channels by the pinned date.
+    public static let pinnedAt = Self(
+        keyPath: \.membership?.pinnedAt,
+        localKey: #keyPath(ChannelDTO.membership.pinnedAt),
+        remoteKey: "pinned_at"
     )
 
     /// Sort channels by number of members.

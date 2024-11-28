@@ -1438,6 +1438,70 @@ final class Chat_Tests: XCTestCase {
         XCTAssertEqual(channelId, env.channelUpdaterMock.showChannel_cid)
     }
     
+    // MARK: - Pinning and Unpinning the Channel
+    
+    func test_pin_whenCurrentUserIdIsNotSet_thenPinningFails() async throws {
+        try await setUpChat(usesMockedUpdaters: true, loggedIn: false)
+        await XCTAssertAsyncFailure(
+            try await chat.pin(),
+            expectedErrorHandler: { error in error is ClientError.CurrentUserDoesNotExist }
+        )
+    }
+    
+    func test_pin_whenChannelUpdaterFails_thenExpectedErrorIsThrown() async throws {
+        env.memberUpdaterMock.partialUpdate_completion_result = .failure(expectedTestError)
+        await XCTAssertAsyncFailure(try await chat.pin(), expectedTestError)
+        XCTAssertEqual(channelId, env.memberUpdaterMock.partialUpdate_cid)
+        XCTAssertEqual(currentUserId, env.memberUpdaterMock.partialUpdate_userId)
+        XCTAssertEqual(nil, env.memberUpdaterMock.partialUpdate_unset)
+        XCTAssertEqual(["pinned": RawJSON(booleanLiteral: true)], env.memberUpdaterMock.partialUpdate_extraData)
+    }
+    
+    func test_pin_whenChannelUpdaterSucceeds_thenPinningSucceeds() async throws {
+        env.memberUpdaterMock.partialUpdate_completion_result = .success(
+            ChatChannelMember.mock(
+                id: currentUserId,
+                pinnedAt: .unique
+            )
+        )
+        try await chat.pin()
+        XCTAssertEqual(channelId, env.memberUpdaterMock.partialUpdate_cid)
+        XCTAssertEqual(currentUserId, env.memberUpdaterMock.partialUpdate_userId)
+        XCTAssertEqual(nil, env.memberUpdaterMock.partialUpdate_unset)
+        XCTAssertEqual(["pinned": RawJSON(booleanLiteral: true)], env.memberUpdaterMock.partialUpdate_extraData)
+    }
+    
+    func test_unpin_whenCurrentUserIdIsNotSet_thenUnpinningFails() async throws {
+        try await setUpChat(usesMockedUpdaters: true, loggedIn: false)
+        await XCTAssertAsyncFailure(
+            try await chat.unpin(),
+            expectedErrorHandler: { error in error is ClientError.CurrentUserDoesNotExist }
+        )
+    }
+
+    func test_unpin_whenChannelUpdaterFails_thenExpectedErrorIsThrown() async throws {
+        env.memberUpdaterMock.partialUpdate_completion_result = .failure(expectedTestError)
+        await XCTAssertAsyncFailure(try await chat.unpin(), expectedTestError)
+        XCTAssertEqual(channelId, env.memberUpdaterMock.partialUpdate_cid)
+        XCTAssertEqual(currentUserId, env.memberUpdaterMock.partialUpdate_userId)
+        XCTAssertEqual(["pinned"], env.memberUpdaterMock.partialUpdate_unset)
+        XCTAssertEqual(nil, env.memberUpdaterMock.partialUpdate_extraData)
+    }
+    
+    func test_unpin_whenChannelUpdaterSucceeds_thenUnpiningSucceeds() async throws {
+        env.memberUpdaterMock.partialUpdate_completion_result = .success(
+            ChatChannelMember.mock(
+                id: currentUserId,
+                pinnedAt: nil
+            )
+        )
+        try await chat.unpin()
+        XCTAssertEqual(channelId, env.memberUpdaterMock.partialUpdate_cid)
+        XCTAssertEqual(currentUserId, env.memberUpdaterMock.partialUpdate_userId)
+        XCTAssertEqual(["pinned"], env.memberUpdaterMock.partialUpdate_unset)
+        XCTAssertEqual(nil, env.memberUpdaterMock.partialUpdate_extraData)
+    }
+    
     // MARK: - Throttling and Slow Mode
     
     func test_enableSlowMode_whenChannelUpdaterSucceeds_thenEnableSlowModeActionSucceeds() async throws {
@@ -1573,13 +1637,15 @@ final class Chat_Tests: XCTestCase {
         if loadState {
             _ = chat.state
         }
-        if loggedIn {
-            env.client.mockAuthenticationRepository.mockedCurrentUserId = currentUserId
-            try await env.client.databaseContainer.write { session in
-                guard session.currentUser == nil else { return }
+        
+        env.client.mockAuthenticationRepository.mockedCurrentUserId = loggedIn ? currentUserId : nil
+        try await env.client.databaseContainer.write { session in
+            if loggedIn {
                 try session.saveCurrentUser(
                     payload: .dummy(userId: self.currentUserId, role: .admin)
                 )
+            } else {
+                session.deleteCurrentUser()
             }
         }
         try await env.client.databaseContainer.write { session in

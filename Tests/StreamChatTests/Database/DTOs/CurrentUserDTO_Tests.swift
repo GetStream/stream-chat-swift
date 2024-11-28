@@ -322,8 +322,7 @@ final class CurrentUserModelDTO_Tests: XCTestCase {
         }
         // Delete current user which should not clear member ids of the channel
         try database.writeSynchronously { session in
-            guard let currentUserDTO = session.currentUser else { throw ClientError.CurrentUserDoesNotExist() }
-            (session as! NSManagedObjectContext).delete(currentUserDTO)
+            session.deleteCurrentUser()
         }
         try database.writeSynchronously { session in
             guard let channelDTO = session.channel(cid: cid) else { throw ClientError.ChannelDoesNotExist(cid: cid) }
