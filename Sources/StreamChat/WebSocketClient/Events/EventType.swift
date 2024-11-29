@@ -219,9 +219,9 @@ extension EventType {
         case .pollVoteRemoved: return try PollVoteRemovedEventDTO(from: response)
         case .threadUpdated: return try ThreadUpdatedEventDTO(from: response)
         case .threadMessageNew: return try ThreadMessageNewEventDTO(from: response)
-        case .aiTypingIndicatorChanged: return try AITypingUpdateEventDTO(from: response)
-        case .aiTypingIndicatorClear: return try AIClearTypingEventDTO(from: response)
-        case .aiTypingIndicatorStop: return try AIStopTypingEventDTO(from: response)
+        case .aiTypingIndicatorChanged: return try AIIndicatorUpdateEventDTO(from: response)
+        case .aiTypingIndicatorClear: return try AIIndicatorClearEventDTO(from: response)
+        case .aiTypingIndicatorStop: return try AIIndicatorStopEventDTO(from: response)
         default:
             if response.cid == nil {
                 throw ClientError.UnknownUserEvent(response.eventType)

@@ -5,7 +5,7 @@
 import Foundation
 
 /// An event that provides updates about the state of the AI typing indicator.
-public struct AITypingUpdateEvent: Event {
+public struct AIIndicatorUpdateEvent: Event {
     /// The state of the AI typing indicator.
     public let state: AITypingState
     /// The channel ID this event is related to.
@@ -16,7 +16,7 @@ public struct AITypingUpdateEvent: Event {
     public let message: String?
 }
 
-class AITypingUpdateEventDTO: EventDTO {
+class AIIndicatorUpdateEventDTO: EventDTO {
     let payload: EventPayload
     
     init(from response: EventPayload) throws {
@@ -26,7 +26,7 @@ class AITypingUpdateEventDTO: EventDTO {
     func toDomainEvent(session: DatabaseSession) -> Event? {
         if let typingState = payload.aiState,
            let aiTypingState = AITypingState(rawValue: typingState) {
-            return AITypingUpdateEvent(
+            return AIIndicatorUpdateEvent(
                 state: aiTypingState,
                 cid: payload.cid,
                 messageId: payload.messageId,
@@ -39,12 +39,12 @@ class AITypingUpdateEventDTO: EventDTO {
 }
 
 /// An event that clears the AI typing indicator.
-public struct AIClearTypingEvent: Event {
+public struct AIIndicatorClearEvent: Event {
     /// The channel ID this event is related to.
     public let cid: ChannelId?
 }
 
-class AIClearTypingEventDTO: EventDTO {
+class AIIndicatorClearEventDTO: EventDTO {
     let payload: EventPayload
         
     init(from response: EventPayload) throws {
@@ -52,17 +52,17 @@ class AIClearTypingEventDTO: EventDTO {
     }
     
     func toDomainEvent(session: any DatabaseSession) -> (any Event)? {
-        AIClearTypingEvent(cid: payload.cid)
+        AIIndicatorClearEvent(cid: payload.cid)
     }
 }
 
 /// An event that indicates the AI has stopped generating the message.
-public struct AIStopTypingEvent: Event {
+public struct AIIndicatorStopEvent: Event {
     /// The channel ID this event is related to.
     public let cid: ChannelId?
 }
 
-class AIStopTypingEventDTO: EventDTO {
+class AIIndicatorStopEventDTO: EventDTO {
     let payload: EventPayload
         
     init(from response: EventPayload) throws {
@@ -70,7 +70,7 @@ class AIStopTypingEventDTO: EventDTO {
     }
     
     func toDomainEvent(session: any DatabaseSession) -> (any Event)? {
-        AIStopTypingEvent(cid: payload.cid)
+        AIIndicatorStopEvent(cid: payload.cid)
     }
 }
 
