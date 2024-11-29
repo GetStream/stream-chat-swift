@@ -114,7 +114,21 @@ public extension FilterKey where Scope: AnyChannelListFilterScope {
     static var blocked: FilterKey<Scope, Bool> { .init(rawValue: "blocked", keyPathString: #keyPath(ChannelDTO.isBlocked)) }
     
     /// A filter key for matching the `pinned` value.
-    static var pinned: FilterKey<Scope, Bool> { .init(rawValue: "pinned", keyPathString: #keyPath(ChannelDTO.isPinned)) }
+    static var pinned: FilterKey<Scope, Bool> {
+        .init(
+            rawValue: "pinned",
+            keyPathString: #keyPath(ChannelDTO.membership.pinnedAt),
+            predicateMapper: { op, pinned in
+                switch op {
+                case .equal:
+                    let key = #keyPath(ChannelDTO.membership.pinnedAt)
+                    return NSPredicate(format: pinned ? "\(key) != nil" : "\(key) == nil")
+                default:
+                    return nil
+                }
+            }
+        )
+    }
 
     /// A filter key for matching the `memberCount` value.
     /// Supported operators: `equal`, `greaterThan`, `lessThan`, `greaterOrEqual`, `lessOrEqual`, `notEqual`
