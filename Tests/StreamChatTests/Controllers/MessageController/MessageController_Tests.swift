@@ -404,7 +404,7 @@ final class MessageController_Tests: XCTestCase {
 
         // Set top-to-bottom ordering
         controller.listOrdering = .topToBottom
-        try waitForRepliesChange(count: 2, requireDelegateChange: true)
+        try waitForRepliesChange(count: 2)
         
         // Check the order of replies is correct
         let topToBottomIds = [reply1, reply2].sorted { $0.createdAt > $1.createdAt }.map(\.id)
@@ -412,7 +412,7 @@ final class MessageController_Tests: XCTestCase {
 
         // Set bottom-to-top ordering
         controller.listOrdering = .bottomToTop
-        try waitForRepliesChange(count: 2, requireDelegateChange: true)
+        try waitForRepliesChange(count: 2)
 
         // Check the order of replies is correct
         let bottomToTopIds = [reply1, reply2].sorted { $0.createdAt < $1.createdAt }.map(\.id)
@@ -2486,9 +2486,8 @@ final class MessageController_Tests: XCTestCase {
     
     // MARK: -
     
-    func waitForRepliesChange(count: Int, requireDelegateChange: Bool = false) throws {
+    func waitForRepliesChange(count: Int) throws {
         let delegate = try XCTUnwrap(controller.delegate as? TestDelegate)
-        guard requireDelegateChange || count != controller.replies.count else { return }
         let expectation = XCTestExpectation(description: "RepliesChange")
         delegate.didChangeRepliesExpectation = expectation
         delegate.didChangeRepliesExpectedCount = count

@@ -15,6 +15,10 @@ class ThreadReadDTO: NSManagedObject {
     override func willSave() {
         super.willSave()
 
+        guard !isDeleted else {
+            return
+        }
+        
         // When the read is updated, we need to propagate this change up to holding thread
         if hasPersistentChangedValues, !thread.hasChanges, !thread.isDeleted {
             // this will not change object, but mark it as dirty, triggering updates
@@ -49,20 +53,29 @@ class ThreadReadDTO: NSManagedObject {
 
     static func fetchRequest(userId: String) -> NSFetchRequest<ThreadReadDTO> {
         let request = NSFetchRequest<ThreadReadDTO>(entityName: ThreadReadDTO.entityName)
+        ThreadReadDTO.applyPrefetchingState(to: request)
         request.predicate = NSPredicate(format: "user.id == %@", userId)
         return request
     }
 
     static func fetchRequest(for parentMessageId: MessageId, userId: String) -> NSFetchRequest<ThreadReadDTO> {
         let request = NSFetchRequest<ThreadReadDTO>(entityName: ThreadReadDTO.entityName)
+        ThreadReadDTO.applyPrefetchingState(to: request)
         request.predicate = NSPredicate(format: "thread.parentMessageId == %@ && user.id == %@", parentMessageId, userId)
         return request
     }
 }
 
 extension ThreadReadDTO {
+    override class func prefetchedRelationshipKeyPaths() -> [String] {
+        [KeyPath.string(\ThreadReadDTO.user)]
+    }
+}
+
+extension ThreadReadDTO {
     func asModel() throws -> ThreadRead {
-        try .init(
+        try isNotDeleted()
+        return try .init(
             user: user.asModel(),
             lastReadAt: lastReadAt?.bridgeDate,
             unreadMessagesCount: Int(unreadMessagesCount)

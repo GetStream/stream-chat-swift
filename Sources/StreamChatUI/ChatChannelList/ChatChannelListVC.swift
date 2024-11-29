@@ -138,6 +138,7 @@ open class ChatChannelListVC: _ViewController,
             withReuseIdentifier: separatorReuseIdentifier
         )
 
+        collectionView.alwaysBounceVertical = true
         collectionView.dataSource = self
         collectionView.delegate = self
 

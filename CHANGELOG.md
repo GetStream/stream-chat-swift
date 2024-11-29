@@ -4,6 +4,17 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 # Upcoming
 
 ## StreamChat
+### 🐞 Fixed
+- Fix a rare infinite loop triggering a crash when handling database changes [#3508](https://github.com/GetStream/stream-chat-swift/pull/3508)
+
+## StreamChatUI
+### 🐞 Fixed
+- Fix Channel List search bar disappearing after it loses scrollability in rare scenarios [#3515](https://github.com/GetStream/stream-chat-swift/pull/3515)
+
+# [4.67.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.67.0)
+_November 25, 2024_
+
+## StreamChat
 ### ✅ Added
 - Add support for channel member extra data [#3487](https://github.com/GetStream/stream-chat-swift/pull/3487)
 - Add `ChatChannelMemberController.partialUpdate(extraData:unsetProperties:)` [#3487](https://github.com/GetStream/stream-chat-swift/pull/3487)
@@ -14,6 +25,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### 🐞 Fixed
 - Fix connection not resuming after guest user goes to background [#3483](https://github.com/GetStream/stream-chat-swift/pull/3483)
 - Fix empty channel list if the channel list filter contains OR statement with only custom filtering keys [#3482](https://github.com/GetStream/stream-chat-swift/pull/3482)
+- Fix not returning models with empty properties when the underlying database model was deleted [#3497](https://github.com/GetStream/stream-chat-swift/pull/3497)
+- Fix an issue where deleting current user in the local database cleared member data in channels [#3497](https://github.com/GetStream/stream-chat-swift/pull/3497)
+- Fix rare crashes when accessing the current user object [#3500](https://github.com/GetStream/stream-chat-swift/pull/3500)
+### ⚡ Performance
+- Avoid creating `CurrentChatUserController` for reading user privacy settings which is more expensive than just reading the data from the local database [#3502](https://github.com/GetStream/stream-chat-swift/pull/3502)
 
 # [4.66.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.66.0)
 _November 05, 2024_
@@ -187,7 +203,7 @@ _July 10, 2024_
 - Add support for user blocking [#3223](https://github.com/GetStream/stream-chat-swift/pull/3223)
 - [Threads v2] Add support for Threads v2 [#3229](https://github.com/GetStream/stream-chat-swift/pull/3229)
    - Add `ChatThreadListController` to fetch current user threads
-   - Add `ChatMessageController.markThreadRead()` 
+   - Add `ChatMessageController.markThreadRead()`
    - Add `ChatMessageController.markThreadUnread()`
    - Add `ChatMessageController.updateThread()`
    - Add `ChatMessageController.loadThread()`

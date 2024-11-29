@@ -31,6 +31,10 @@ class PollDTO: NSManagedObject {
     override func willSave() {
         super.willSave()
         
+        guard !isDeleted else {
+            return
+        }
+        
         // When the poll is updated, trigger message FRC update.
         if let message = self.message, hasPersistentChangedValues, !message.hasChanges, !message.isDeleted {
             message.id = message.id
@@ -63,6 +67,7 @@ class PollDTO: NSManagedObject {
     
     static func fetchRequest(for pollId: String) -> NSFetchRequest<PollDTO> {
         let request = NSFetchRequest<PollDTO>(entityName: PollDTO.entityName)
+        PollDTO.applyPrefetchingState(to: request)
         request.sortDescriptors = [NSSortDescriptor(keyPath: \PollDTO.updatedAt, ascending: false)]
         request.predicate = NSPredicate(format: "id == %@", pollId)
         return request
@@ -70,7 +75,19 @@ class PollDTO: NSManagedObject {
 }
 
 extension PollDTO {
+    override class func prefetchedRelationshipKeyPaths() -> [String] {
+        [
+            KeyPath.string(\PollDTO.createdBy),
+            KeyPath.string(\PollDTO.latestVotes),
+            KeyPath.string(\PollDTO.latestVotesByOption)
+        ]
+    }
+}
+
+extension PollDTO {
     func asModel() throws -> Poll {
+        try isNotDeleted()
+        
         var extraData: [String: RawJSON] = [:]
         if let custom,
            !custom.isEmpty,

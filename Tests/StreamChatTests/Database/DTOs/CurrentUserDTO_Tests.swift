@@ -246,9 +246,8 @@ final class CurrentUserModelDTO_Tests: XCTestCase {
 
         let originalUser = try XCTUnwrap(database.viewContext.currentUser)
 
-        database.writableContext.performAndWait {
-            database.writableContext.delete(database.writableContext.currentUser!)
-            try! database.writableContext.save()
+        database.viewContext.performAndWait {
+            XCTAssertNotNil(database.viewContext.userInfo[NSManagedObjectContext.currentUserKey])
         }
 
         XCTAssertEqual(database.viewContext.currentUser, originalUser)
@@ -289,5 +288,48 @@ final class CurrentUserModelDTO_Tests: XCTestCase {
         // By default, the values should be true if not set.
         XCTAssertEqual(true, loadedCurrentUser.privacySettings.readReceipts?.enabled)
         XCTAssertEqual(true, loadedCurrentUser.privacySettings.typingIndicators?.enabled)
+    }
+    
+    func test_deletingCurrentUser() throws {
+        let currentUserId = "current_user_id"
+        let mutedUserId = "muted_user_id"
+        let cid = ChannelId.unique
+        try database.writeSynchronously { session in
+            try session.saveCurrentUser(
+                payload: .dummy(
+                    userId: currentUserId,
+                    role: .admin,
+                    mutedUsers: [.dummy(
+                        userId: mutedUserId
+                    )]
+                )
+            )
+            try session.saveChannel(
+                payload: .dummy(
+                    channel: .dummy(cid: cid),
+                    members: [
+                        .dummy(user: .dummy(userId: currentUserId)),
+                        .dummy(user: .dummy(userId: mutedUserId))
+                    ]
+                )
+            )
+        }
+        try database.readSynchronously { session in
+            guard let channelDTO = session.channel(cid: cid) else { throw ClientError.ChannelDoesNotExist(cid: cid) }
+            let channel = try channelDTO.asModel()
+            let memberIds = channel.lastActiveMembers.map(\.id).sorted()
+            XCTAssertEqual([currentUserId, mutedUserId].sorted(), memberIds)
+        }
+        // Delete current user which should not clear member ids of the channel
+        try database.writeSynchronously { session in
+            guard let currentUserDTO = session.currentUser else { throw ClientError.CurrentUserDoesNotExist() }
+            (session as! NSManagedObjectContext).delete(currentUserDTO)
+        }
+        try database.writeSynchronously { session in
+            guard let channelDTO = session.channel(cid: cid) else { throw ClientError.ChannelDoesNotExist(cid: cid) }
+            let channel = try channelDTO.asModel()
+            let memberIds = channel.lastActiveMembers.map(\.id).sorted()
+            XCTAssertEqual([currentUserId, mutedUserId].sorted(), memberIds)
+        }
     }
 }

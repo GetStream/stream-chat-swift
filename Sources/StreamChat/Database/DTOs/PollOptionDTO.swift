@@ -44,13 +44,22 @@ class PollOptionDTO: NSManagedObject {
     
     static func fetchRequest(for optionId: String) -> NSFetchRequest<PollOptionDTO> {
         let request = NSFetchRequest<PollOptionDTO>(entityName: PollOptionDTO.entityName)
+        PollOptionDTO.applyPrefetchingState(to: request)
         request.predicate = NSPredicate(format: "id == %@", optionId)
         return request
     }
 }
 
 extension PollOptionDTO {
+    override class func prefetchedRelationshipKeyPaths() -> [String] {
+        [KeyPath.string(\PollOptionDTO.latestVotes)]
+    }
+}
+
+extension PollOptionDTO {
     func asModel() throws -> PollOption {
+        try isNotDeleted()
+        
         var extraData: [String: RawJSON] = [:]
         if let custom,
            !custom.isEmpty,

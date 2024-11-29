@@ -354,6 +354,7 @@ class MessageDTO: NSManagedObject {
         shouldShowShadowedMessages: Bool
     ) -> NSFetchRequest<MessageDTO> {
         let request = NSFetchRequest<MessageDTO>(entityName: MessageDTO.entityName)
+        MessageDTO.applyPrefetchingState(to: request)
         request.sortDescriptors = [NSSortDescriptor(keyPath: \MessageDTO.defaultSortingKey, ascending: sortAscending)]
         request.predicate = channelMessagesPredicate(
             for: cid.rawValue,
@@ -374,6 +375,7 @@ class MessageDTO: NSManagedObject {
         shouldShowShadowedMessages: Bool
     ) -> NSFetchRequest<MessageDTO> {
         let request = NSFetchRequest<MessageDTO>(entityName: MessageDTO.entityName)
+        MessageDTO.applyPrefetchingState(to: request)
         request.sortDescriptors = [NSSortDescriptor(keyPath: \MessageDTO.defaultSortingKey, ascending: sortAscending)]
         request.predicate = threadRepliesPredicate(
             for: messageId,
@@ -387,6 +389,7 @@ class MessageDTO: NSManagedObject {
 
     static func messagesFetchRequest(for query: MessageSearchQuery) -> NSFetchRequest<MessageDTO> {
         let request = NSFetchRequest<MessageDTO>(entityName: MessageDTO.entityName)
+        MessageDTO.applyPrefetchingState(to: request)
         request.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [
             NSPredicate(format: "ANY searches.filterHash == %@", query.filterHash),
             NSPredicate(format: "isHardDeleted == NO")
@@ -399,6 +402,7 @@ class MessageDTO: NSManagedObject {
     /// Returns a fetch request for the dto with a specific `messageId`.
     static func message(withID messageId: MessageId) -> NSFetchRequest<MessageDTO> {
         let request = NSFetchRequest<MessageDTO>(entityName: MessageDTO.entityName)
+        MessageDTO.applyPrefetchingState(to: request)
         request.sortDescriptors = [NSSortDescriptor(keyPath: \MessageDTO.defaultSortingKey, ascending: false)]
         request.predicate = NSPredicate(format: "id == %@", messageId)
         return request
@@ -413,6 +417,7 @@ class MessageDTO: NSManagedObject {
         context: NSManagedObjectContext
     ) -> [MessageDTO] {
         let request = NSFetchRequest<MessageDTO>(entityName: entityName)
+        MessageDTO.applyPrefetchingState(to: request)
         request.predicate = channelMessagesPredicate(
             for: cid,
             deletedMessagesVisibility: deletedMessagesVisibility,
@@ -426,6 +431,7 @@ class MessageDTO: NSManagedObject {
 
     static func preview(for cid: String, context: NSManagedObjectContext) -> MessageDTO? {
         let request = NSFetchRequest<MessageDTO>(entityName: entityName)
+        MessageDTO.applyPrefetchingState(to: request)
         request.predicate = previewMessagePredicate(
             cid: cid,
             includeShadowedMessages: context.shouldShowShadowedMessages ?? false
@@ -466,6 +472,7 @@ class MessageDTO: NSManagedObject {
         context: NSManagedObjectContext
     ) -> [MessageDTO] {
         let request = NSFetchRequest<MessageDTO>(entityName: entityName)
+        MessageDTO.applyPrefetchingState(to: request)
         request.predicate = NSPredicate(format: "parentMessageId == %@", messageId)
         request.sortDescriptors = [NSSortDescriptor(keyPath: \MessageDTO.createdAt, ascending: false)]
         request.fetchLimit = limit
@@ -487,6 +494,7 @@ class MessageDTO: NSManagedObject {
         ]
 
         let request = NSFetchRequest<MessageDTO>(entityName: MessageDTO.entityName)
+        MessageDTO.applyPrefetchingState(to: request)
         request.sortDescriptors = [NSSortDescriptor(keyPath: \MessageDTO.defaultSortingKey, ascending: false)]
         request.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: subpredicates)
 
@@ -534,6 +542,7 @@ class MessageDTO: NSManagedObject {
         guard let message = load(id: id, context: context) else { return nil }
         
         let request = NSFetchRequest<MessageDTO>(entityName: entityName)
+        MessageDTO.applyPrefetchingState(to: request)
         request.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [
             channelMessagesPredicate(for: cid, deletedMessagesVisibility: deletedMessagesVisibility, shouldShowShadowedMessages: shouldShowShadowedMessages),
             .init(format: "id != %@", id),
@@ -554,6 +563,7 @@ class MessageDTO: NSManagedObject {
         context: NSManagedObjectContext
     ) throws -> [MessageDTO] {
         let request = NSFetchRequest<MessageDTO>(entityName: MessageDTO.entityName)
+        MessageDTO.applyPrefetchingState(to: request)
         request.sortDescriptors = [NSSortDescriptor(keyPath: \MessageDTO.defaultSortingKey, ascending: sortAscending)]
         request.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [
             channelMessagesPredicate(
@@ -577,6 +587,7 @@ class MessageDTO: NSManagedObject {
         context: NSManagedObjectContext
     ) throws -> [MessageDTO] {
         let request = NSFetchRequest<MessageDTO>(entityName: MessageDTO.entityName)
+        MessageDTO.applyPrefetchingState(to: request)
         request.sortDescriptors = [NSSortDescriptor(keyPath: \MessageDTO.defaultSortingKey, ascending: sortAscending)]
         request.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [
             threadRepliesPredicate(
@@ -1228,6 +1239,26 @@ extension NSManagedObjectContext: MessageDatabaseSession {
 }
 
 extension MessageDTO {
+    override class func prefetchedRelationshipKeyPaths() -> [String] {
+        [
+            KeyPath.string(\MessageDTO.attachments),
+            KeyPath.string(\MessageDTO.flaggedBy),
+            KeyPath.string(\MessageDTO.mentionedUsers),
+            KeyPath.string(\MessageDTO.moderationDetails),
+            KeyPath.string(\MessageDTO.pinnedBy),
+            KeyPath.string(\MessageDTO.poll),
+            KeyPath.string(\MessageDTO.quotedBy),
+            KeyPath.string(\MessageDTO.quotedMessage),
+            KeyPath.string(\MessageDTO.reactionGroups),
+            KeyPath.string(\MessageDTO.reads),
+            KeyPath.string(\MessageDTO.replies),
+            KeyPath.string(\MessageDTO.threadParticipants),
+            KeyPath.string(\MessageDTO.user)
+        ]
+    }
+}
+
+extension MessageDTO {
     /// Snapshots the current state of `MessageDTO` and returns an immutable model object from it.
     func asModel() throws -> ChatMessage { try .init(fromDTO: self, depth: 0) }
 
@@ -1308,6 +1339,7 @@ private extension ChatMessage {
         guard let context = dto.managedObjectContext else {
             throw InvalidModel(dto)
         }
+        try dto.isNotDeleted()
 
         id = dto.id
         cid = try? dto.cid.map { try ChannelId(cid: $0) }
