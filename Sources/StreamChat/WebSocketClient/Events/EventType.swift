@@ -146,9 +146,14 @@ public extension EventType {
     
     // MARK: - AI
     
-    static let aiTypingIndicatorChanged: Self = "ai_indicator_changed"
+    // When an AI typing indicator's state has changed.
+    static let aiTypingIndicatorChanged: Self = "ai_indicator.update"
     
-    static let aiTypingIndicatorClear: Self = "ai_indicator_clear"
+    // When an AI typing indicator has been cleared.
+    static let aiTypingIndicatorClear: Self = "ai_indicator.clear"
+    
+    // When an AI typing indicator has been stopped.
+    static let aiTypingIndicatorStop: Self = "ai_indicator.stop"
 }
 
 extension EventType {
@@ -214,8 +219,9 @@ extension EventType {
         case .pollVoteRemoved: return try PollVoteRemovedEventDTO(from: response)
         case .threadUpdated: return try ThreadUpdatedEventDTO(from: response)
         case .threadMessageNew: return try ThreadMessageNewEventDTO(from: response)
-        case .aiTypingIndicatorChanged: return try AITypingEventDTO(from: response)
+        case .aiTypingIndicatorChanged: return try AITypingUpdateEventDTO(from: response)
         case .aiTypingIndicatorClear: return try AIClearTypingEventDTO(from: response)
+        case .aiTypingIndicatorStop: return try AIStopTypingEventDTO(from: response)
         default:
             if response.cid == nil {
                 throw ClientError.UnknownUserEvent(response.eventType)

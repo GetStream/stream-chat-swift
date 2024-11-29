@@ -36,8 +36,9 @@ class EventPayload: Decodable {
         case thread
         case vote = "poll_vote"
         case poll
-        case state
+        case aiState = "ai_state"
         case messageId = "message_id"
+        case aiMessage = "ai_message"
     }
 
     let eventType: EventType
@@ -71,8 +72,9 @@ class EventPayload: Decodable {
     let threadDetails: Result<ThreadDetailsPayload, Error>?
     let threadPartial: Result<ThreadPartialPayload, Error>?
     
-    let state: String?
+    let aiState: String?
     let messageId: String?
+    let aiMessage: String?
 
     init(
         eventType: EventType,
@@ -102,8 +104,9 @@ class EventPayload: Decodable {
         threadPartial: Result<ThreadPartialPayload, Error>? = nil,
         poll: PollPayload? = nil,
         vote: PollVotePayload? = nil,
-        state: String? = nil,
-        messageId: String? = nil
+        aiState: String? = nil,
+        messageId: String? = nil,
+        aiMessage: String? = nil
     ) {
         self.eventType = eventType
         self.connectionId = connectionId
@@ -132,8 +135,9 @@ class EventPayload: Decodable {
         self.threadDetails = threadDetails
         self.poll = poll
         self.vote = vote
-        self.state = state
+        self.aiState = aiState
         self.messageId = messageId
+        self.aiMessage = aiMessage
     }
 
     required init(from decoder: Decoder) throws {
@@ -167,8 +171,9 @@ class EventPayload: Decodable {
         threadPartial = container.decodeAsResultIfPresent(ThreadPartialPayload.self, forKey: .thread)
         vote = try container.decodeIfPresent(PollVotePayload.self, forKey: .vote)
         poll = try container.decodeIfPresent(PollPayload.self, forKey: .poll)
-        state = try container.decodeIfPresent(String.self, forKey: .state)
+        aiState = try container.decodeIfPresent(String.self, forKey: .aiState)
         messageId = try container.decodeIfPresent(String.self, forKey: .messageId)
+        aiMessage = try container.decodeIfPresent(String.self, forKey: .aiMessage)
     }
 
     func event() throws -> Event {
