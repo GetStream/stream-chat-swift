@@ -7,6 +7,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### 🐞 Fixed
 - Fix a rare infinite loop triggering a crash when handling database changes [#3508](https://github.com/GetStream/stream-chat-swift/pull/3508)
 
+## StreamChatUI
+### 🐞 Fixed
+- Fix Channel List search bar disappearing after it loses scrollability in rare scenarios [#3515](https://github.com/GetStream/stream-chat-swift/pull/3515)
+
 # [4.67.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.67.0)
 _November 25, 2024_
 
