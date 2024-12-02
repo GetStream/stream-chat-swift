@@ -13,7 +13,7 @@ public struct AIIndicatorUpdateEvent: Event {
     /// The message ID this event is related to.
     public let messageId: MessageId?
     /// Optional server message, usually when an error occurs.
-    public let message: String?
+    public let aiMessage: String?
 }
 
 class AIIndicatorUpdateEventDTO: EventDTO {
@@ -30,7 +30,7 @@ class AIIndicatorUpdateEventDTO: EventDTO {
                 state: aiTypingState,
                 cid: payload.cid,
                 messageId: payload.messageId,
-                message: payload.aiMessage
+                aiMessage: payload.aiMessage
             )
         } else {
             return nil
