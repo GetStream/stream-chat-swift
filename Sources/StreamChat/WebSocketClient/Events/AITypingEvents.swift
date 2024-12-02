@@ -57,7 +57,9 @@ class AIIndicatorClearEventDTO: EventDTO {
 }
 
 /// An event that indicates the AI has stopped generating the message.
-public struct AIIndicatorStopEvent: Event {
+public struct AIIndicatorStopEvent: CustomEventPayload, Event {
+    public static var eventType: EventType = .aiTypingIndicatorStop
+    
     /// The channel ID this event is related to.
     public let cid: ChannelId?
     
