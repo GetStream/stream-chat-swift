@@ -32,7 +32,9 @@ extension URLRequest {
                 .replacingOccurrences(of: "\"", with: "\\\"")
             cURL.append("-d \"\(escapedBody)\"")
         }
-        cURL.append("\"\(url.absoluteString)\"")
+        let urlString = url.absoluteString
+            .replacingOccurrences(of: "$", with: "%24") // encoded JSON payload
+        cURL.append("\"\(urlString)\"")
         return cURL.joined(separator: " \\\n\t")
     }
 }

@@ -54,6 +54,7 @@ final class ChannelListFilterScope_Tests: XCTestCase {
         XCTAssertEqual(Key<Date>.lastUpdatedAt.keyPathString, "lastMessageAt")
         XCTAssertEqual(Key<Bool>.joined.keyPathString, "membership")
         XCTAssertEqual(Key<Bool>.muted.keyPathString, "mute")
+        XCTAssertEqual(Key<Bool>.pinned.keyPathString, "membership.pinnedAt")
         XCTAssertNil(Key<InviteFilterValue>.invite.keyPathString)
     }
 
