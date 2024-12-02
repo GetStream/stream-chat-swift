@@ -60,6 +60,10 @@ class AIIndicatorClearEventDTO: EventDTO {
 public struct AIIndicatorStopEvent: Event {
     /// The channel ID this event is related to.
     public let cid: ChannelId?
+    
+    public init(cid: ChannelId?) {
+        self.cid = cid
+    }
 }
 
 class AIIndicatorStopEventDTO: EventDTO {
