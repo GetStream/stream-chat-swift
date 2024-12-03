@@ -14,7 +14,6 @@ final class ConnectionRecoveryHandler_Tests: XCTestCase {
     var mockBackgroundTaskScheduler: BackgroundTaskScheduler_Mock!
     var mockRetryStrategy: RetryStrategy_Spy!
     var mockTime: VirtualTime { VirtualTimeTimer.time }
-    var mockReconnectionTimeoutHandler: ScheduledStreamTimer_Mock!
 
     override func setUp() {
         super.setUp()
@@ -26,7 +25,6 @@ final class ConnectionRecoveryHandler_Tests: XCTestCase {
         mockRetryStrategy = RetryStrategy_Spy()
         mockRetryStrategy.mock_nextRetryDelay.returns(5)
         mockInternetConnection = .init(notificationCenter: mockChatClient.eventNotificationCenter)
-        mockReconnectionTimeoutHandler = ScheduledStreamTimer_Mock()
     }
 
     override func tearDown() {
@@ -44,14 +42,6 @@ final class ConnectionRecoveryHandler_Tests: XCTestCase {
         VirtualTimeTimer.invalidate()
 
         super.tearDown()
-    }
-
-    func test_reconnectionTimeoutHandler_onChange_shouldTimeout() {
-        handler = makeConnectionRecoveryHandler(keepConnectionAliveInBackground: false, withReconnectionTimeout: true)
-        mockReconnectionTimeoutHandler.onChange?()
-
-        XCTAssertEqual(mockChatClient.mockWebSocketClient.timeout_callCount, 1)
-        XCTAssertTrue(mockTime.scheduledTimers.isEmpty)
     }
 
     /// keepConnectionAliveInBackground == false
@@ -511,31 +501,26 @@ final class ConnectionRecoveryHandler_Tests: XCTestCase {
 
         XCTAssertNotCall("syncLocalState(completion:)", on: mockChatClient.mockSyncRepository)
         XCTAssertNil(mockChatClient.mockExtensionLifecycle.receivedIsReceivingEvents)
-        XCTAssertEqual(mockReconnectionTimeoutHandler.startCallCount, 0)
     }
 
     func test_webSocketStateUpdate_connecting_whenTimeout_whenNotRunning_shouldStartTimeout() {
         handler = makeConnectionRecoveryHandler(keepConnectionAliveInBackground: false, withReconnectionTimeout: true)
-        mockReconnectionTimeoutHandler.isRunning = false
 
         // Simulate connection update
         handler.webSocketClient(mockChatClient.mockWebSocketClient, didUpdateConnectionState: .connecting)
 
         XCTAssertNotCall("syncLocalState(completion:)", on: mockChatClient.mockSyncRepository)
         XCTAssertNil(mockChatClient.mockExtensionLifecycle.receivedIsReceivingEvents)
-        XCTAssertEqual(mockReconnectionTimeoutHandler.startCallCount, 1)
     }
 
     func test_webSocketStateUpdate_connecting_whenTimeout_whenRunning_shouldNotStartTimeout() {
         handler = makeConnectionRecoveryHandler(keepConnectionAliveInBackground: false, withReconnectionTimeout: true)
-        mockReconnectionTimeoutHandler.isRunning = true
 
         // Simulate connection update
         handler.webSocketClient(mockChatClient.mockWebSocketClient, didUpdateConnectionState: .connecting)
 
         XCTAssertNotCall("syncLocalState(completion:)", on: mockChatClient.mockSyncRepository)
         XCTAssertNil(mockChatClient.mockExtensionLifecycle.receivedIsReceivingEvents)
-        XCTAssertEqual(mockReconnectionTimeoutHandler.startCallCount, 0)
     }
 
     func test_webSocketStateUpdate_connected() {
@@ -547,7 +532,6 @@ final class ConnectionRecoveryHandler_Tests: XCTestCase {
         XCTAssertCall(RetryStrategy_Spy.Signature.resetConsecutiveFailures, on: mockRetryStrategy, times: 1)
         XCTAssertCall("syncLocalState(completion:)", on: mockChatClient.mockSyncRepository, times: 1)
         XCTAssert(mockChatClient.mockExtensionLifecycle.receivedIsReceivingEvents == true)
-        XCTAssertEqual(mockReconnectionTimeoutHandler.stopCallCount, 0)
     }
 
     func test_webSocketStateUpdate_connected_whenTimeout_shouldStopTimeout() {
@@ -559,7 +543,6 @@ final class ConnectionRecoveryHandler_Tests: XCTestCase {
         XCTAssertCall(RetryStrategy_Spy.Signature.resetConsecutiveFailures, on: mockRetryStrategy, times: 1)
         XCTAssertCall("syncLocalState(completion:)", on: mockChatClient.mockSyncRepository, times: 1)
         XCTAssert(mockChatClient.mockExtensionLifecycle.receivedIsReceivingEvents == true)
-        XCTAssertEqual(mockReconnectionTimeoutHandler.stopCallCount, 1)
     }
 
     func test_webSocketStateUpdate_disconnected_userInitiated() {
@@ -648,8 +631,7 @@ private extension ConnectionRecoveryHandler_Tests {
             internetConnection: mockInternetConnection,
             reconnectionStrategy: mockRetryStrategy,
             reconnectionTimerType: VirtualTimeTimer.self,
-            keepConnectionAliveInBackground: keepConnectionAliveInBackground,
-            reconnectionTimeoutHandler: withReconnectionTimeout ? mockReconnectionTimeoutHandler : nil
+            keepConnectionAliveInBackground: keepConnectionAliveInBackground
         )
         handler.start()
 
