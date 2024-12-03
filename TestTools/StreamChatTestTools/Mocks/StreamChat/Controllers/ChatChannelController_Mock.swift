@@ -5,20 +5,20 @@
 import Foundation
 @testable import StreamChat
 
-public class ChatChannelController_Mock: ChatChannelController {
+class ChatChannelController_Mock: ChatChannelController {
 
     var mockCid: ChannelId?
-    public override var cid: ChannelId? {
+    override var cid: ChannelId? {
         mockCid ?? super.cid
     }
 
     var mockFirstUnreadMessageId: MessageId?
-    public override var firstUnreadMessageId: MessageId? {
+    override var firstUnreadMessageId: MessageId? {
         mockFirstUnreadMessageId ?? super.firstUnreadMessageId
     }
 
     /// Creates a new mock instance of `ChatChannelController`.
-    public static func mock(chatClientConfig: ChatClientConfig? = nil) -> ChatChannelController_Mock {
+    static func mock(chatClientConfig: ChatClientConfig? = nil) -> ChatChannelController_Mock {
         .init(
             channelQuery: .init(cid: try! .init(cid: "mock:channel")),
             channelListQuery: nil,
@@ -35,7 +35,7 @@ public class ChatChannelController_Mock: ChatChannelController {
         )
     }
 
-    public static func mock(
+    static func mock(
         channelQuery: ChannelQuery,
         channelListQuery: ChannelListQuery?,
         client: ChatClient
@@ -47,7 +47,7 @@ public class ChatChannelController_Mock: ChatChannelController {
         )
     }
 
-    public static func mock(client: ChatClient) -> ChatChannelController_Mock {
+    static func mock(client: ChatClient) -> ChatChannelController_Mock {
         .init(
             channelQuery: .init(cid: try! .init(cid: "mock:channel")),
             channelListQuery: nil,
@@ -56,7 +56,7 @@ public class ChatChannelController_Mock: ChatChannelController {
     }
 
     var createNewMessageCallCount = 0
-    public override func createNewMessage(
+    override func createNewMessage(
         messageId: MessageId? = nil,
         text: String, pinning: MessagePinning? = nil,
         isSilent: Bool = false,
@@ -71,61 +71,61 @@ public class ChatChannelController_Mock: ChatChannelController {
         createNewMessageCallCount += 1
     }
 
-    public var hasLoadedAllNextMessages_mock: Bool? = true
-    public override var hasLoadedAllNextMessages: Bool {
+    var hasLoadedAllNextMessages_mock: Bool? = true
+    override var hasLoadedAllNextMessages: Bool {
         hasLoadedAllNextMessages_mock ?? super.hasLoadedAllNextMessages
     }
 
-    public var hasLoadedAllPreviousMessages_mock: Bool? = true
-    public override var hasLoadedAllPreviousMessages: Bool {
+    var hasLoadedAllPreviousMessages_mock: Bool? = true
+    override var hasLoadedAllPreviousMessages: Bool {
         hasLoadedAllPreviousMessages_mock ?? super.hasLoadedAllPreviousMessages
     }
 
-    public var markedAsUnread_mock: Bool? = true
-    public override var isMarkedAsUnread: Bool {
+    var markedAsUnread_mock: Bool? = true
+    override var isMarkedAsUnread: Bool {
         markedAsUnread_mock ?? super.isMarkedAsUnread
     }
 
-    public var channel_mock: ChatChannel?
-    override public var channel: ChatChannel? {
+    var channel_mock: ChatChannel?
+    override var channel: ChatChannel? {
         channel_mock ?? super.channel
     }
 
-    public var channelQuery_mock: ChannelQuery?
-    public override var channelQuery: ChannelQuery {
+    var channelQuery_mock: ChannelQuery?
+    override var channelQuery: ChannelQuery {
         channelQuery_mock ?? super.channelQuery
     }
 
-    public var messages_mock: [ChatMessage]?
-    override public var messages: LazyCachedMapCollection<ChatMessage> {
+    var messages_mock: [ChatMessage]?
+    override var messages: LazyCachedMapCollection<ChatMessage> {
         messages_mock.map { $0.lazyCachedMap { $0 } } ?? super.messages
     }
 
-    public var markReadCallCount = 0
-    public override func markRead(completion: ((Error?) -> Void)?) {
+    var markReadCallCount = 0
+    override func markRead(completion: ((Error?) -> Void)?) {
         markReadCallCount += 1
     }
 
-    public var state_mock: State?
-    override public var state: DataController.State {
+    var state_mock: State?
+    override var state: DataController.State {
         get { state_mock ?? super.state }
         set { super.state = newValue }
     }
 
-    public private(set) var synchronize_completion: ((Error?) -> Void)?
-    override public func synchronize(_ completion: ((Error?) -> Void)? = nil) {
+    private(set) var synchronize_completion: ((Error?) -> Void)?
+    override func synchronize(_ completion: ((Error?) -> Void)? = nil) {
         synchronize_completion = completion
     }
 
-    public var loadFirstPageCallCount = 0
-    public var loadFirstPage_result: Error?
-    public override func loadFirstPage(_ completion: ((Error?) -> Void)? = nil) {
+    var loadFirstPageCallCount = 0
+    var loadFirstPage_result: Error?
+    override func loadFirstPage(_ completion: ((Error?) -> Void)? = nil) {
         loadFirstPageCallCount += 1
         completion?(loadFirstPage_result)
     }
 
-    public var loadPageAroundMessageIdCallCount = 0
-    public override func loadPageAroundMessageId(
+    var loadPageAroundMessageIdCallCount = 0
+    override func loadPageAroundMessageId(
         _ messageId: MessageId,
         limit: Int? = nil,
         completion: ((Error?) -> Void)? = nil
@@ -134,7 +134,7 @@ public class ChatChannelController_Mock: ChatChannelController {
     }
 }
 
-public extension ChatChannelController_Mock {
+extension ChatChannelController_Mock {
     /// Simulates the initial conditions. Setting these values doesn't trigger any observer callback.
     func simulateInitial(channel: ChatChannel, messages: [ChatMessage], state: DataController.State) {
         channel_mock = channel

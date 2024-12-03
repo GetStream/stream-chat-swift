@@ -13,7 +13,7 @@ env:
 jobs:
   copyright:
     name: Copyright
-    runs-on: macos-13
+    runs-on: macos-14
     steps:
     - uses: actions/checkout@v4.1.1
     - uses: ./.github/actions/ruby-cache
