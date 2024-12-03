@@ -47,6 +47,11 @@ extension ChatClient {
             )
         }
 
+        var reconnectionHandlerBuilder: (_ chatClientConfig: ChatClientConfig) -> StreamTimer? = {
+            guard let reconnectionTimeout = $0.reconnectionTimeout else { return nil }
+            return ScheduledStreamTimer(interval: reconnectionTimeout, fireOnStart: false, repeats: false)
+        }
+
         var extensionLifecycleBuilder = NotificationExtensionLifecycle.init
 
         var requestEncoderBuilder: (_ baseURL: URL, _ apiKey: APIKey) -> RequestEncoder = DefaultRequestEncoder.init
@@ -97,8 +102,7 @@ extension ChatClient {
             _ extensionLifecycle: NotificationExtensionLifecycle,
             _ backgroundTaskScheduler: BackgroundTaskScheduler?,
             _ internetConnection: InternetConnection,
-            _ keepConnectionAliveInBackground: Bool,
-            _ reconnectionTimeoutHandler: StreamTimer?
+            _ keepConnectionAliveInBackground: Bool
         ) -> ConnectionRecoveryHandler = {
             DefaultConnectionRecoveryHandler(
                 webSocketClient: $0,
@@ -109,8 +113,7 @@ extension ChatClient {
                 internetConnection: $5,
                 reconnectionStrategy: DefaultRetryStrategy(),
                 reconnectionTimerType: DefaultTimer.self,
-                keepConnectionAliveInBackground: $6,
-                reconnectionTimeoutHandler: $7
+                keepConnectionAliveInBackground: $6
             )
         }
 

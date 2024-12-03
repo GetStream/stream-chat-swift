@@ -462,6 +462,9 @@ final class ChatClient_Tests: XCTestCase {
         let client = ChatClient(config: inMemoryStorageConfig, environment: testEnv.environment)
         let userInfo = UserInfo(id: "id")
         let authenticationRepository = try XCTUnwrap(client.authenticationRepository as? AuthenticationRepository_Mock)
+        let reconnectionTimeoutHandler = try XCTUnwrap(client.reconnectionTimeoutHandler as? ScheduledStreamTimer_Mock)
+        let connectionRecoveryHandler = try XCTUnwrap(client.connectionRecoveryHandler as? ConnectionRecoveryHandler_Mock)
+        let connectionRepository = try XCTUnwrap(client.connectionRepository as? ConnectionRepository_Mock)
         let expectation = self.expectation(description: "Connect completes")
 
         authenticationRepository.connectUserResult = .success(())
@@ -472,8 +475,11 @@ final class ChatClient_Tests: XCTestCase {
         }
         waitForExpectations(timeout: defaultTimeout)
 
-        XCTAssertCall(AuthenticationRepository_Mock.Signature.connectTokenProvider, on: authenticationRepository)
         XCTAssertNil(receivedError)
+        XCTAssertCall(AuthenticationRepository_Mock.Signature.connectTokenProvider, on: authenticationRepository)
+        XCTAssertCall(ConnectionRepository_Mock.Signature.initialize, on: connectionRepository)
+        XCTAssertEqual(reconnectionTimeoutHandler.startCallCount, 1)
+        XCTAssertEqual(connectionRecoveryHandler.startCallCount, 1)
     }
 
     // MARK: - Connect Static Token
@@ -598,6 +604,9 @@ final class ChatClient_Tests: XCTestCase {
         let client = ChatClient(config: inMemoryStorageConfig, environment: testEnv.environment)
         let userInfo = UserInfo(id: "id")
         let authenticationRepository = try XCTUnwrap(client.authenticationRepository as? AuthenticationRepository_Mock)
+        let reconnectionTimeoutHandler = try XCTUnwrap(client.reconnectionTimeoutHandler as? ScheduledStreamTimer_Mock)
+        let connectionRecoveryHandler = try XCTUnwrap(client.connectionRecoveryHandler as? ConnectionRecoveryHandler_Mock)
+        let connectionRepository = try XCTUnwrap(client.connectionRepository as? ConnectionRepository_Mock)
         let expectation = self.expectation(description: "Connect completes")
 
         authenticationRepository.connectGuestResult = .success(())
@@ -608,8 +617,11 @@ final class ChatClient_Tests: XCTestCase {
         }
         waitForExpectations(timeout: defaultTimeout)
 
-        XCTAssertCall(AuthenticationRepository_Mock.Signature.connectGuest, on: authenticationRepository)
         XCTAssertNil(receivedError)
+        XCTAssertCall(AuthenticationRepository_Mock.Signature.connectGuest, on: authenticationRepository)
+        XCTAssertCall(ConnectionRepository_Mock.Signature.initialize, on: connectionRepository)
+        XCTAssertEqual(reconnectionTimeoutHandler.startCallCount, 1)
+        XCTAssertEqual(connectionRecoveryHandler.startCallCount, 1)
     }
 
     // MARK: - Connect Anonymous
@@ -635,6 +647,9 @@ final class ChatClient_Tests: XCTestCase {
     func test_connectAnonymous_tokenProvider_callsAuthenticationRepository_success() throws {
         let client = ChatClient(config: inMemoryStorageConfig, environment: testEnv.environment)
         let authenticationRepository = try XCTUnwrap(client.authenticationRepository as? AuthenticationRepository_Mock)
+        let reconnectionTimeoutHandler = try XCTUnwrap(client.reconnectionTimeoutHandler as? ScheduledStreamTimer_Mock)
+        let connectionRecoveryHandler = try XCTUnwrap(client.connectionRecoveryHandler as? ConnectionRecoveryHandler_Mock)
+        let connectionRepository = try XCTUnwrap(client.connectionRepository as? ConnectionRepository_Mock)
         let expectation = self.expectation(description: "Connect completes")
 
         authenticationRepository.connectAnonResult = .success(())
@@ -645,8 +660,11 @@ final class ChatClient_Tests: XCTestCase {
         }
         waitForExpectations(timeout: defaultTimeout)
 
-        XCTAssertCall(AuthenticationRepository_Mock.Signature.connectAnon, on: authenticationRepository)
         XCTAssertNil(receivedError)
+        XCTAssertCall(AuthenticationRepository_Mock.Signature.connectAnon, on: authenticationRepository)
+        XCTAssertCall(ConnectionRepository_Mock.Signature.initialize, on: connectionRepository)
+        XCTAssertEqual(reconnectionTimeoutHandler.startCallCount, 1)
+        XCTAssertEqual(connectionRecoveryHandler.startCallCount, 1)
     }
 
     // MARK: - Disconnect
@@ -665,7 +683,7 @@ final class ChatClient_Tests: XCTestCase {
 
         XCTAssertCall(ConnectionRepository_Mock.Signature.disconnect, on: connectionRepository)
         XCTAssertCall(AuthenticationRepository_Mock.Signature.clearTokenProvider, on: authenticationRepository)
-        XCTAssertEqual(client.mockAuthenticationRepository.cancelTimersCallCount, 1)
+        XCTAssertEqual(client.mockAuthenticationRepository.resetCallCount, 1)
     }
 
     func test_logout_shouldDisconnect_logOut_andRemoveAllData() throws {
@@ -835,6 +853,97 @@ final class ChatClient_Tests: XCTestCase {
 
         XCTAssertEqual(streamHeader, SystemEnvironment.xStreamClientHeader)
     }
+
+    // MARK: - Reconnection Timeout Tests
+
+    func test_reconnectionTimeoutHandler_isInitializedWithConfig() {
+        // Given
+        var config = inMemoryStorageConfig
+        config.reconnectionTimeout = 20
+        let client = ChatClient(config: config)
+
+        // Then
+        XCTAssertNotNil(client.reconnectionTimeoutHandler)
+    }
+
+    func test_reconnectionTimeoutHandler_notInitialisedIfTimeoutNotProvided() {
+        // Given
+        var config = inMemoryStorageConfig
+        config.reconnectionTimeout = nil
+        let client = ChatClient(config: config)
+
+        // Then
+        XCTAssertNil(client.reconnectionTimeoutHandler)
+    }
+
+    func test_reconnectionTimeoutHandler_startsOnConnect() {
+        // Given
+        let client = ChatClient(config: inMemoryStorageConfig, environment: testEnv.environment)
+        let timerMock = try! XCTUnwrap(client.reconnectionTimeoutHandler as? ScheduledStreamTimer_Mock)
+        
+        // When
+        client.connectAnonymousUser()
+        
+        // Then
+        XCTAssertEqual(timerMock.startCallCount, 1)
+    }
+
+    func test_reconnectionTimeoutHandler_stopsOnConnected() {
+        // Given
+        let client = ChatClient(config: inMemoryStorageConfig, environment: testEnv.environment)
+        let timerMock = try! XCTUnwrap(client.reconnectionTimeoutHandler as? ScheduledStreamTimer_Mock)
+        
+        // When
+        client.webSocketClient(client.webSocketClient!, didUpdateConnectionState: .connected(connectionId: .unique))
+
+        // Then
+        XCTAssertEqual(timerMock.stopCallCount, 1)
+    }
+
+    func test_reconnectionTimeoutHandler_startsOnConnecting() {
+        // Given
+        let client = ChatClient(config: inMemoryStorageConfig, environment: testEnv.environment)
+        let timerMock = try! XCTUnwrap(client.reconnectionTimeoutHandler as? ScheduledStreamTimer_Mock)
+        timerMock.isRunning = false
+        
+        // When
+        client.webSocketClient(client.webSocketClient!, didUpdateConnectionState: .connecting)
+        
+        // Then
+        XCTAssertEqual(timerMock.startCallCount, 1)
+    }
+
+    func test_reconnectionTimeoutHandler_whenRunning_doesNotStart() {
+        let client = ChatClient(config: inMemoryStorageConfig, environment: testEnv.environment)
+        let timerMock = try! XCTUnwrap(client.reconnectionTimeoutHandler as? ScheduledStreamTimer_Mock)
+        timerMock.isRunning = true
+        
+        // When
+        client.webSocketClient(client.webSocketClient!, didUpdateConnectionState: .connecting)
+
+        // Then
+        XCTAssertEqual(timerMock.startCallCount, 0)
+    }
+
+    func test_reconnectionTimeout_onChange() throws {
+        // Given
+        let client = ChatClient(config: inMemoryStorageConfig, environment: testEnv.environment)
+        let timerMock = try XCTUnwrap(client.reconnectionTimeoutHandler as? ScheduledStreamTimer_Mock)
+        let authenticationRepository = try XCTUnwrap(client.authenticationRepository as? AuthenticationRepository_Mock)
+        let connectionRepository = try XCTUnwrap(client.connectionRepository as? ConnectionRepository_Mock)
+        connectionRepository.disconnectResult = .success(())
+        
+        // When
+        timerMock.onChange?()
+        
+        // Then
+        XCTAssertCall(ConnectionRepository_Mock.Signature.disconnect, on: connectionRepository)
+        XCTAssertCall(ConnectionRepository_Mock.Signature.completeConnectionIdWaiters, on: connectionRepository)
+        XCTAssertCall(AuthenticationRepository_Mock.Signature.completeTokenWaiters, on: authenticationRepository)
+        XCTAssertCall(AuthenticationRepository_Mock.Signature.completeTokenCompletions, on: authenticationRepository)
+        XCTAssertEqual(connectionRepository.disconnectSource, .timeout(from: .initialized))
+        XCTAssertEqual(authenticationRepository.resetCallCount, 1)
+    }
 }
 
 final class TestWorker: Worker {
@@ -904,6 +1013,9 @@ private class TestEnvironment {
                 )
                 return self.databaseContainer!
             },
+            reconnectionHandlerBuilder: { _ in
+                ScheduledStreamTimer_Mock()
+            },
             requestEncoderBuilder: {
                 if let encoder = self.requestEncoder {
                     return encoder
@@ -940,6 +1052,9 @@ private class TestEnvironment {
                 return self.backgroundTaskScheduler!
             },
             timerType: VirtualTimeTimer.self,
+            connectionRecoveryHandlerBuilder: { _, _, _, _, _, _, _ in
+                ConnectionRecoveryHandler_Mock()
+            },
             authenticationRepositoryBuilder: {
                 self.authenticationRepository = AuthenticationRepository_Mock(
                     apiClient: $0,

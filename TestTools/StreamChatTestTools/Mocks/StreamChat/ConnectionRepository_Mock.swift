@@ -8,6 +8,7 @@ import Foundation
 /// Mock implementation of `ChatClientUpdater`
 final class ConnectionRepository_Mock: ConnectionRepository, Spy {
     enum Signature {
+        static let initialize = "initialize()"
         static let connect = "connect(completion:)"
         static let disconnect = "disconnect(source:completion:)"
         static let forceConnectionInactiveMode = "forceConnectionStatusForInactiveModeIfNeeded()"
@@ -57,6 +58,10 @@ final class ConnectionRepository_Mock: ConnectionRepository, Spy {
     }
 
     // MARK: - Overrides
+
+    override func initialize() {
+        record()
+    }
 
     override func connect(completion: ((Error?) -> Void)? = nil) {
         record()

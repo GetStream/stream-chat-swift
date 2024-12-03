@@ -11,6 +11,7 @@ _December 03, 2024_
 ## StreamChat
 ### 🐞 Fixed
 - Fix a rare infinite loop triggering a crash when handling database changes [#3508](https://github.com/GetStream/stream-chat-swift/pull/3508)
+- Fix reconnection timeout handler not working in the token provider phase [#3513](https://github.com/GetStream/stream-chat-swift/pull/3513)
 
 ## StreamChatUI
 ### 🐞 Fixed
