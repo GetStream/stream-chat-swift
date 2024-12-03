@@ -5,13 +5,13 @@
 import Foundation
 @testable import StreamChat
 
-public class CurrentChatUserController_Mock: CurrentChatUserController {
-    public static func mock(client: ChatClient? = nil) -> CurrentChatUserController_Mock {
+class CurrentChatUserController_Mock: CurrentChatUserController {
+    static func mock(client: ChatClient? = nil) -> CurrentChatUserController_Mock {
         .init(client: client ?? .mock())
     }
 
-    public var currentUser_mock: CurrentChatUser?
-    override public var currentUser: CurrentChatUser? {
+    var currentUser_mock: CurrentChatUser?
+    override var currentUser: CurrentChatUser? {
         currentUser_mock
     }
 }

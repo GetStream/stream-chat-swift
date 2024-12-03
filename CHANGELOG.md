@@ -7,6 +7,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### 🐞 Fixed
 - Fix a rare infinite loop triggering a crash when handling database changes [#3508](https://github.com/GetStream/stream-chat-swift/pull/3508)
 - Fix reconnection timeout handler not working in the token provider phase [#3513](https://github.com/GetStream/stream-chat-swift/pull/3513)
+### 🔄 Changed
+- Minor breaking change in the test tools. Some mock classes were made internal and now require a `@testable` annotation [#3509](https://github.com/GetStream/stream-chat-swift/pull/3509)
 
 ## StreamChatUI
 ### 🐞 Fixed
