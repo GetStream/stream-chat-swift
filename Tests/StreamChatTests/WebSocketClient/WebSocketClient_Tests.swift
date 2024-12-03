@@ -238,7 +238,9 @@ final class WebSocketClient_Tests: XCTestCase {
         ]
 
         for source in testCases {
+            // reset state
             engine?.disconnect_calledCount = 0
+            webSocketClient.connect()
 
             // Call `disconnect` with the given source
             webSocketClient.disconnect(source: source) {}
@@ -255,6 +257,17 @@ final class WebSocketClient_Tests: XCTestCase {
             // Assert state is `disconnected` with the correct source
             AssertAsync.willBeEqual(webSocketClient.connectionState, .disconnected(source: source))
         }
+    }
+
+    func test_disconnect_whenInitialized_shouldDisconnect() {
+        // When in initialized state
+        XCTAssertEqual(webSocketClient.connectionState, .initialized)
+
+        // Call disconnect when not connected
+        webSocketClient.disconnect {}
+
+        // Assert connection state is updated
+        XCTAssertEqual(webSocketClient.connectionState, .disconnected(source: .userInitiated))
     }
 
     func test_connectionState_afterDecodingError() {

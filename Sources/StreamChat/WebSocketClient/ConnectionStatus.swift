@@ -77,7 +77,7 @@ enum WebSocketConnectionState: Equatable {
         }
     }
 
-    /// The initial state meaning that  there was no atempt to connect yet.
+    /// The initial state meaning that the web socket engine is not yet connected or connecting.
     case initialized
 
     /// The web socket is not connected. Contains the source/reason why the disconnection has happened.
