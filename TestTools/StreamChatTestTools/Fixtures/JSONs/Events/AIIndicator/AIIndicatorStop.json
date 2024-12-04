@@ -1,0 +1,16 @@
+{
+  "type": "ai_indicator.stop",
+  "cid": "messaging:general-3ac667a1-6113-4b16-b1e3-50dbff0ffb89",
+  "channel_id": "general-3ac667a1-6113-4b16-b1e3-50dbff0ffb89",
+  "channel_type": "messaging",
+  "user": {
+    "id": "ai-1e9666df-9b9e-429e-b7e4-e2f54446d5ac",
+    "role": "user",
+    "created_at": "2024-11-27T15:51:55.649597Z",
+    "updated_at": "2024-11-27T15:51:55.649597Z",
+    "last_active": "2024-11-27T15:51:55.668787Z",
+    "banned": false,
+    "online": true
+  },
+  "created_at": "2024-11-27T15:51:55.803339Z"
+}

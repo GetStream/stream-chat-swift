@@ -6,7 +6,7 @@ require 'net/http'
 import 'Sonarfile'
 import 'Allurefile'
 
-xcode_version = ENV['XCODE_VERSION'] || '15.4'
+xcode_version = ENV['XCODE_VERSION'] || '16.1'
 xcode_project = 'StreamChat.xcodeproj'
 sdk_names = ['StreamChat', 'StreamChatUI']
 github_repo = ENV['GITHUB_REPOSITORY'] || 'GetStream/stream-chat-swift'
@@ -66,7 +66,7 @@ lane :release do |options|
     File.write(artifacts_path, JSON.dump(artifacts))
 
     # Set the framework version in SystemEnvironment+Version.swift
-    new_content = File.read(swift_environment_path).gsub!(previous_version_number, release_version).gsub!('-SNAPSHOT', '')
+    new_content = File.read(swift_environment_path).gsub!(previous_version_number, release_version).gsub('-SNAPSHOT', '')
     File.open(swift_environment_path, 'w') { |f| f.puts(new_content) }
 
     # Update sdk sizes
@@ -108,7 +108,6 @@ lane :publish_release do |options|
   UI.user_error!('Release version cannot be empty') if release_version.to_s.empty?
   ensure_git_branch(branch: 'main')
 
-  xcversion(version: '14.0.1')
   clean_products
   build_xcframeworks
   compress_frameworks

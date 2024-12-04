@@ -36,7 +36,6 @@ final class DefaultConnectionRecoveryHandler: ConnectionRecoveryHandler {
     private var reconnectionStrategy: RetryStrategy
     private var reconnectionTimer: TimerControl?
     private let keepConnectionAliveInBackground: Bool
-    private var reconnectionTimeoutHandler: StreamTimer?
 
     // MARK: - Init
 
@@ -49,8 +48,7 @@ final class DefaultConnectionRecoveryHandler: ConnectionRecoveryHandler {
         internetConnection: InternetConnection,
         reconnectionStrategy: RetryStrategy,
         reconnectionTimerType: Timer.Type,
-        keepConnectionAliveInBackground: Bool,
-        reconnectionTimeoutHandler: StreamTimer?
+        keepConnectionAliveInBackground: Bool
     ) {
         self.webSocketClient = webSocketClient
         self.eventNotificationCenter = eventNotificationCenter
@@ -61,7 +59,6 @@ final class DefaultConnectionRecoveryHandler: ConnectionRecoveryHandler {
         self.reconnectionStrategy = reconnectionStrategy
         self.reconnectionTimerType = reconnectionTimerType
         self.keepConnectionAliveInBackground = keepConnectionAliveInBackground
-        self.reconnectionTimeoutHandler = reconnectionTimeoutHandler
     }
 
     func start() {
@@ -71,7 +68,6 @@ final class DefaultConnectionRecoveryHandler: ConnectionRecoveryHandler {
     func stop() {
         unsubscribeFromNotifications()
         cancelReconnectionTimer()
-        reconnectionTimeoutHandler?.stop()
     }
 
     deinit {
@@ -94,11 +90,6 @@ private extension DefaultConnectionRecoveryHandler {
             name: .internetConnectionAvailabilityDidChange,
             object: nil
         )
-
-        reconnectionTimeoutHandler?.onChange = { [weak self] in
-            self?.webSocketClient.timeout()
-            self?.cancelReconnectionTimer()
-        }
     }
 
     func unsubscribeFromNotifications() {
@@ -177,9 +168,6 @@ extension DefaultConnectionRecoveryHandler {
         switch state {
         case .connecting:
             cancelReconnectionTimer()
-            if reconnectionTimeoutHandler?.isRunning == false {
-                reconnectionTimeoutHandler?.start()
-            }
 
         case .connected:
             extensionLifecycle.setAppState(isReceivingEvents: true)
@@ -187,7 +175,6 @@ extension DefaultConnectionRecoveryHandler {
             syncRepository.syncLocalState {
                 log.info("Local state sync completed", subsystems: .offlineSupport)
             }
-            reconnectionTimeoutHandler?.stop()
 
         case .disconnected:
             extensionLifecycle.setAppState(isReceivingEvents: false)

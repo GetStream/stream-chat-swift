@@ -36,6 +36,9 @@ class EventPayload: Decodable {
         case thread
         case vote = "poll_vote"
         case poll
+        case aiState = "ai_state"
+        case messageId = "message_id"
+        case aiMessage = "ai_message"
     }
 
     let eventType: EventType
@@ -68,6 +71,10 @@ class EventPayload: Decodable {
     /// Thread Data, it is stored in Result, to be easier to debug decoding errors
     let threadDetails: Result<ThreadDetailsPayload, Error>?
     let threadPartial: Result<ThreadPartialPayload, Error>?
+    
+    let aiState: String?
+    let messageId: String?
+    let aiMessage: String?
 
     init(
         eventType: EventType,
@@ -96,7 +103,10 @@ class EventPayload: Decodable {
         threadDetails: Result<ThreadDetailsPayload, Error>? = nil,
         threadPartial: Result<ThreadPartialPayload, Error>? = nil,
         poll: PollPayload? = nil,
-        vote: PollVotePayload? = nil
+        vote: PollVotePayload? = nil,
+        aiState: String? = nil,
+        messageId: String? = nil,
+        aiMessage: String? = nil
     ) {
         self.eventType = eventType
         self.connectionId = connectionId
@@ -125,6 +135,9 @@ class EventPayload: Decodable {
         self.threadDetails = threadDetails
         self.poll = poll
         self.vote = vote
+        self.aiState = aiState
+        self.messageId = messageId
+        self.aiMessage = aiMessage
     }
 
     required init(from decoder: Decoder) throws {
@@ -158,6 +171,9 @@ class EventPayload: Decodable {
         threadPartial = container.decodeAsResultIfPresent(ThreadPartialPayload.self, forKey: .thread)
         vote = try container.decodeIfPresent(PollVotePayload.self, forKey: .vote)
         poll = try container.decodeIfPresent(PollPayload.self, forKey: .poll)
+        aiState = try container.decodeIfPresent(String.self, forKey: .aiState)
+        messageId = try container.decodeIfPresent(String.self, forKey: .messageId)
+        aiMessage = try container.decodeIfPresent(String.self, forKey: .aiMessage)
     }
 
     func event() throws -> Event {

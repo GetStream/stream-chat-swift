@@ -2988,6 +2988,8 @@ final class ChannelController_Tests: XCTestCase {
         controller.sendKeystrokeEvent {
             XCTAssertNil($0)
         }
+        wait(for: [env.eventSender!.keystroke_completion_expectation], timeout: defaultTimeout)
+        env.eventSender!.keystroke_completion_expectation = XCTestExpectation()
 
         // Simulate `keystroke` call and catch the completion
         var completionCalledError: Error?
@@ -3001,6 +3003,7 @@ final class ChannelController_Tests: XCTestCase {
         controller = nil
 
         // Check keystroke cid.
+        wait(for: [env.eventSender!.keystroke_completion_expectation], timeout: defaultTimeout)
         XCTAssertEqual(env.eventSender!.keystroke_cid, channelId)
 
         // Simulate failed update
@@ -3060,6 +3063,8 @@ final class ChannelController_Tests: XCTestCase {
         controller.sendStartTypingEvent {
             XCTAssertNil($0)
         }
+        wait(for: [env.eventSender!.startTyping_completion_expectation], timeout: defaultTimeout)
+        env.eventSender!.startTyping_completion_expectation = XCTestExpectation()
 
         // Simulate `startTyping` call and catch the completion
         var completionCalledError: Error?
@@ -3073,6 +3078,7 @@ final class ChannelController_Tests: XCTestCase {
         controller = nil
 
         // Check `startTyping` cid.
+        wait(for: [env.eventSender!.startTyping_completion_expectation], timeout: defaultTimeout)
         XCTAssertEqual(env.eventSender!.startTyping_cid, channelId)
 
         // Simulate failed update
@@ -3132,7 +3138,9 @@ final class ChannelController_Tests: XCTestCase {
         controller.sendStopTypingEvent {
             XCTAssertNil($0)
         }
-
+        wait(for: [env.eventSender!.stopTyping_completion_expectation], timeout: defaultTimeout)
+        env.eventSender!.stopTyping_completion_expectation = XCTestExpectation()
+        
         // Simulate `stopTyping` call and catch the completion
         var completionCalledError: Error?
         controller.sendStopTypingEvent { completionCalledError = $0 }
@@ -3145,6 +3153,7 @@ final class ChannelController_Tests: XCTestCase {
         controller = nil
 
         // Check `stopTyping` cid.
+        wait(for: [env.eventSender!.stopTyping_completion_expectation], timeout: defaultTimeout)
         XCTAssertEqual(env.eventSender!.stopTyping_cid, channelId)
 
         // Simulate failed update

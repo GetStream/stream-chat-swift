@@ -150,19 +150,6 @@ final class ConnectionRepository_Tests: XCTestCase {
 
     // MARK: Disconnect
 
-    func test_disconnect_noConnectionId_shouldReturnWithoutTryingToConnect() {
-        XCTAssertNil(repository.connectionId)
-
-        let expectation = self.expectation(description: "connect completes")
-        repository.disconnect(source: .userInitiated) { expectation.fulfill() }
-
-        waitForExpectations(timeout: defaultTimeout)
-
-        XCTAssertFalse(webSocketClient.disconnect_called)
-        XCTAssertCall(APIClient_Spy.Signature.flushRequestsQueue, on: apiClient)
-        XCTAssertCall(SyncRepository_Mock.Signature.cancelRecoveryFlow, on: syncRepository)
-    }
-
     func test_disconnect_withConnectionId_notInActiveMode_shouldReturnError() {
         repository.completeConnectionIdWaiters(connectionId: "123")
         XCTAssertNotNil(repository.connectionId)

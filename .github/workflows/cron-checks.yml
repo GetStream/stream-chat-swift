@@ -41,6 +41,11 @@ jobs:
     strategy:
       matrix:
         include:
+          - ios: 18.1
+            xcode: 16.1
+            os: macos-15
+            device: "iPhone 16 Pro"
+            setup_runtime: false
           - ios: 17.4
             xcode: 15.4
             os: macos-14
@@ -123,6 +128,11 @@ jobs:
     strategy:
       matrix:
         include:
+          - ios: 18.1
+            xcode: 16.1
+            os: macos-15
+            device: "iPhone 16 Pro"
+            setup_runtime: false
           - ios: 17.4
             xcode: 15.4
             os: macos-14
@@ -137,16 +147,6 @@ jobs:
             xcode: 15.3
             os: macos-14
             device: "iPhone 13 Pro"
-            setup_runtime: true
-          - ios: 14.5
-            xcode: 14.2
-            os: macos-12
-            device: "iPhone 12 Pro"
-            setup_runtime: true
-          - ios: 13.7
-            xcode: 14.2
-            os: macos-12
-            device: "iPhone 11 Pro"
             setup_runtime: true
       fail-fast: false
     runs-on: ${{ matrix.os }}
@@ -189,11 +189,11 @@ jobs:
           fastlane/test_output/logs/*/Diagnostics/**/*.txt
           fastlane/test_output/logs/*/Diagnostics/simctl_diagnostics/DiagnosticReports/*
 
-  build-xcode14:
-    name: Build LLC + UI (Xcode 14)
-    runs-on: macos-12
+  build-old-xcode:
+    name: Build LLC + UI (Xcode 15)
+    runs-on: macos-14
     env:
-      XCODE_VERSION: "14.0.1"
+      XCODE_VERSION: "15.0.1"
     steps:
     - name: Connect Bot
       uses: webfactory/ssh-agent@v0.7.0

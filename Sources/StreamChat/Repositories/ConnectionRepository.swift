@@ -42,6 +42,10 @@ class ConnectionRepository {
         self.timerType = timerType
     }
 
+    func initialize() {
+        webSocketClient?.initialize()
+    }
+
     /// Connects the chat client the controller represents to the chat servers.
     ///
     /// When the connection is established, `ChatClient` starts receiving chat updates, and `currentUser` variable is available.
@@ -91,14 +95,6 @@ class ConnectionRepository {
         // Disconnecting is not possible in connectionless mode (duh)
         guard isClientInActiveMode else {
             log.error(ClientError.ClientIsNotInActiveMode().localizedDescription)
-            completion()
-            return
-        }
-
-        if connectionId == nil {
-            if source == .userInitiated {
-                log.warning("The client is already disconnected. Skipping the `disconnect` call.")
-            }
             completion()
             return
         }

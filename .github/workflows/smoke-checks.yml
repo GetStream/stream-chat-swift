@@ -19,7 +19,7 @@ concurrency:
 
 env:
   HOMEBREW_NO_INSTALL_CLEANUP: 1 # Disable cleanup for homebrew, we don't need it on CI
-  IOS_SIMULATOR_DEVICE: "iPhone 15 Pro (17.4)"
+  IOS_SIMULATOR_DEVICE: "iPhone 16 Pro (18.1)"
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   GITHUB_PR_NUM: ${{ github.event.pull_request.number }}
 
@@ -48,9 +48,9 @@ jobs:
 
   automated-code-review:
     name: Automated Code Review
-    runs-on: macos-12
+    runs-on: macos-14
     env:
-      XCODE_VERSION: "14.0.1"
+      XCODE_VERSION: "15.0.1"
     if: ${{ github.event_name != 'push' && github.event.inputs.snapshots != 'true' }}
     steps:
       - uses: actions/checkout@v4.1.1
@@ -67,12 +67,12 @@ jobs:
         if: startsWith(github.event.pull_request.head.ref, 'release/')
         run: bundle exec fastlane pod_lint
 
-  build-xcode14:
-    name: Build LLC + UI (Xcode 14)
-    runs-on: macos-12
+  build-old-xcode:
+    name: Build LLC + UI (Xcode 15)
+    runs-on: macos-14
     if: ${{ github.event_name != 'push' && github.event.inputs.snapshots != 'true' }}
     env:
-      XCODE_VERSION: "14.0.1"
+      XCODE_VERSION: "15.0.1"
     steps:
     - uses: actions/checkout@v4.1.1
     - uses: ./.github/actions/ruby-cache
@@ -87,7 +87,7 @@ jobs:
 
   test-llc-debug:
     name: Test LLC (Debug)
-    runs-on: macos-14
+    runs-on: macos-15
     if: ${{ github.event.inputs.snapshots != 'true' }}
     needs: build-test-app-and-frameworks
     steps:
@@ -136,7 +136,7 @@ jobs:
 
   test-ui-debug:
     name: Test UI (Debug)
-    runs-on: macos-14
+    runs-on: macos-15
     needs: build-test-app-and-frameworks
     if: ${{ github.event_name != 'push' }}
     steps:
@@ -152,7 +152,7 @@ jobs:
         SKIP_BREW_BOOTSTRAP: true
     - name: Run UI Tests (Debug)
       run: bundle exec fastlane test_ui device:"${{ env.IOS_SIMULATOR_DEVICE }}" skip_build:true record:${{ github.event.inputs.snapshots }}
-      timeout-minutes: 60
+      timeout-minutes: 120
       env:
         GITHUB_TOKEN: ${{ secrets.DANGER_GITHUB_API_TOKEN }} # to open a PR
         GH_TOKEN: ${{ secrets.GITHUB_TOKEN }} # to use github cli
@@ -170,7 +170,7 @@ jobs:
 
   allure_testops_launch:
     name: Launch Allure TestOps
-    runs-on: macos-13
+    runs-on: macos-14
     if: ${{ github.event_name != 'push' && github.event.inputs.snapshots != 'true' }}
     needs: build-test-app-and-frameworks
     outputs:
@@ -189,7 +189,7 @@ jobs:
 
   test-e2e-debug:
     name: Test E2E UI (Debug)
-    runs-on: macos-14
+    runs-on: macos-15
     if: ${{ github.event_name != 'push' && github.event.inputs.snapshots != 'true' }}
     needs:
       - allure_testops_launch
@@ -216,8 +216,6 @@ jobs:
       run: bundle exec fastlane test_e2e_mock device:"${{ env.IOS_SIMULATOR_DEVICE }}" batch:'${{ matrix.batch }}' test_without_building:true
       timeout-minutes: 100
       env:
-        XCODE_VERSION: "15.0.1" # the most stable pair of Xcode
-        IOS_SIMULATOR_DEVICE: "iPhone 15 Pro (17.0)" # and iOS
         MATRIX_SIZE: ${{ strategy.job-total }}
         STREAM_DEMO_APP_SECRET: ${{ secrets.STREAM_DEMO_APP_SECRET }}
     - name: Allure TestOps Upload
