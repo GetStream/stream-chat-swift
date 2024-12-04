@@ -331,11 +331,9 @@ extension NSManagedObjectContext {
         }
 
         // Note: membership payload should be saved before all the members
-        var membershipData: (dto: MemberDTO, payload: MemberPayload)?
         if let membership = payload.membership {
             let membershipDTO = try saveMember(payload: membership, channelId: payload.channel.cid, query: nil, cache: cache)
             dto.membership = membershipDTO
-            membershipData = (membershipDTO, membership)
         } else {
             dto.membership = nil
         }
@@ -344,14 +342,6 @@ extension NSManagedObjectContext {
         try payload.members.forEach {
             let member = try saveMember(payload: $0, channelId: payload.channel.cid, query: nil, cache: cache)
             dto.members.insert(member)
-        }
-        
-        // TODO: remove this when backend has deployed the fix
-        // Prioritise values from membership:
-        // membership has pinned_at, but members does not for that user
-        // notification_muted has correct state for members, but not for membership
-        if let membershipData {
-            membershipData.dto.pinnedAt = membershipData.payload.pinnedAt?.bridgeDate
         }
 
         dto.watcherCount = Int64(clamping: payload.watcherCount ?? 0)
