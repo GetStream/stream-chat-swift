@@ -13,7 +13,7 @@
   <a href="https://sonarcloud.io/summary/new_code?id=GetStream_stream-chat-swift"><img src="https://sonarcloud.io/api/project_badges/measure?project=GetStream_stream-chat-swift&metric=coverage" /></a>
 </p>
 <p align="center">
-  <img id="stream-chat-label" alt="StreamChat" src="https://img.shields.io/badge/StreamChat-7.06%20MB-blue"/>
+  <img id="stream-chat-label" alt="StreamChat" src="https://img.shields.io/badge/StreamChat-7.08%20MB-blue"/>
   <img id="stream-chat-ui-label" alt="StreamChatUI" src="https://img.shields.io/badge/StreamChatUI-4.96%20MB-blue"/>
 </p>
 

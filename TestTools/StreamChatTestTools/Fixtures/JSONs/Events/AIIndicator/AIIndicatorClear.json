@@ -1,0 +1,16 @@
+{
+  "type": "ai_indicator.clear",
+  "cid": "messaging:general-a4ea1bed-f233-4021-b9f8-f9519367cefd",
+  "channel_id": "general-a4ea1bed-f233-4021-b9f8-f9519367cefd",
+  "channel_type": "messaging",
+  "user": {
+    "id": "ai-b076753a-830e-40b0-816d-0929bb73d7ce",
+    "role": "user",
+    "created_at": "2024-11-27T15:57:45.157276Z",
+    "updated_at": "2024-11-27T15:57:45.157276Z",
+    "last_active": "2024-11-27T15:57:45.177077Z",
+    "banned": false,
+    "online": true
+  },
+  "created_at": "2024-11-27T15:57:45.32967Z"
+}

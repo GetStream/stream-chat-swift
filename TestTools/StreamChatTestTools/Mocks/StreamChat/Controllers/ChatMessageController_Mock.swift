@@ -5,9 +5,9 @@
 import Foundation
 @testable import StreamChat
 
-public class ChatMessageController_Mock: ChatMessageController {
+class ChatMessageController_Mock: ChatMessageController {
     /// Creates a new mock instance of `ChatMessageController`.
-    public static func mock(
+    static func mock(
         currentUserId: UserId = "ID",
         cid: ChannelId? = nil,
         messageId: String = "MockMessage"
@@ -23,24 +23,24 @@ public class ChatMessageController_Mock: ChatMessageController {
         return .init(client: chatClient, cid: channelId!, messageId: messageId, replyPaginationHandler: MessagesPaginationStateHandler_Mock())
     }
 
-    public var message_mock: ChatMessage?
-    override public var message: ChatMessage? {
+    var message_mock: ChatMessage?
+    override var message: ChatMessage? {
         message_mock ?? super.message
     }
 
-    public var replies_mock: [ChatMessage]?
-    override public var replies: LazyCachedMapCollection<ChatMessage> {
+    var replies_mock: [ChatMessage]?
+    override var replies: LazyCachedMapCollection<ChatMessage> {
         replies_mock.map { $0.lazyCachedMap { $0 } } ?? super.replies
     }
 
-    public var state_mock: State?
-    override public var state: DataController.State {
+    var state_mock: State?
+    override var state: DataController.State {
         get { state_mock ?? super.state }
         set { super.state = newValue }
     }
 
-    public var startObserversIfNeeded_mock: (() -> Void)?
-    override public func startObserversIfNeeded() {
+    var startObserversIfNeeded_mock: (() -> Void)?
+    override func startObserversIfNeeded() {
         if let mock = startObserversIfNeeded_mock {
             mock()
             return
@@ -51,7 +51,7 @@ public class ChatMessageController_Mock: ChatMessageController {
 
     var synchronize_callCount = 0
     var synchronize_completion: ((Error?) -> Void)?
-    override public func synchronize(_ completion: ((Error?) -> Void)? = nil) {
+    override func synchronize(_ completion: ((Error?) -> Void)? = nil) {
         synchronize_callCount += 1
         synchronize_completion = completion
     }
@@ -59,7 +59,7 @@ public class ChatMessageController_Mock: ChatMessageController {
 
     var loadPageAroundReplyId_callCount = 0
     var loadPageAroundReplyId_completion: ((Error?) -> Void)?
-    override public func loadPageAroundReplyId(
+    override func loadPageAroundReplyId(
         _ replyId: MessageId,
         limit: Int? = nil,
         completion: ((Error?) -> Void)? = nil
@@ -69,7 +69,7 @@ public class ChatMessageController_Mock: ChatMessageController {
     }
 }
 
-public extension ChatMessageController_Mock {
+extension ChatMessageController_Mock {
     /// Simulates the initial conditions. Setting these values doesn't trigger any observer callback.
     func simulateInitial(message: ChatMessage, replies: [ChatMessage], state: DataController.State) {
         message_mock = message

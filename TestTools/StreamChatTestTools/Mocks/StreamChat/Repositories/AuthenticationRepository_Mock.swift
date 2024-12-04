@@ -14,6 +14,7 @@ class AuthenticationRepository_Mock: AuthenticationRepository, Spy {
         static let clearTokenProvider = "clearTokenProvider()"
         static let logOut = "logOutUser()"
         static let completeTokenWaiters = "completeTokenWaiters(token:)"
+        static let completeTokenCompletions = "completeTokenCompletions(error:)"
         static let setToken = "setToken(token:completeTokenWaiters:)"
         static let provideToken = "provideToken(timeout:completion:)"
     }
@@ -94,14 +95,18 @@ class AuthenticationRepository_Mock: AuthenticationRepository, Spy {
         record()
     }
 
-    var cancelTimersCallCount: Int = 0
-    override func cancelTimers() {
-        cancelTimersCallCount += 1
+    var resetCallCount: Int = 0
+    override func reset() {
+        resetCallCount += 1
     }
 
     override func completeTokenWaiters(token: Token?) {
         record()
         completeWaitersToken = token
+    }
+
+    override func completeTokenCompletions(error: (any Error)?) {
+        record()
     }
 
     override func provideToken(timeout: TimeInterval = 10, completion: @escaping (Result<Token, Error>) -> Void) {
