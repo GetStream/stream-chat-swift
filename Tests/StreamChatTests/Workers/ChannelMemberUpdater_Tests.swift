@@ -265,7 +265,6 @@ final class ChannelMemberUpdater_Tests: XCTestCase {
         let error = TestError()
         
         apiClient.test_mockResponseResult(Result<PartialMemberUpdateResponse, Error>.failure(error))
-        let extraData: [String: RawJSON] = ["pinned": .bool(true)]
         let resultingError = try waitFor { done in
             updater.pinMemberChannel(true, userId: userId, cid: cid, completion: done)
         }

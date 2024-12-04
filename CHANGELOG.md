@@ -7,7 +7,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### ✅ Added
 - Pinning channels [#3518](https://github.com/GetStream/stream-chat-swift/pull/3518)
   - Add `Chat.pin()` and `Chat.unpin()`
-  - Add `ChatChannelController.unpin(completion:)` and `ChatChannelController.unpin(completion:)`
+  - Add `ChatChannelController.pin(completion:)` and `ChatChannelController.unpin(completion:)`
   - Add `FilterKey.pinned` for filtering channel lists
   - Add `ChannelListSortingKey.pinnedAt`
   - Add `ChatChannel.membership.pinnedAt`
