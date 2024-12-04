@@ -5,6 +5,7 @@
 import Combine
 import StreamChat
 import SwiftUI
+import SwiftUICore
 
 /// Protocol of `ChatChannelListItemView` wrapper for use in SwiftUI.
 public protocol ChatChannelListItemViewSwiftUIView: View {

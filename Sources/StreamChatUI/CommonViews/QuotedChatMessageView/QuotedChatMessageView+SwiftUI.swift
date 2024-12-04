@@ -5,6 +5,7 @@
 import Combine
 import StreamChat
 import SwiftUI
+import SwiftUICore
 
 /// Protocol of `QuotedChatMessageView` wrapper for use in SwiftUI.
 public protocol QuotedChatMessageViewSwiftUIView: View {

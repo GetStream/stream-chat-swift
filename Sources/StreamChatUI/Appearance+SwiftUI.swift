@@ -5,6 +5,7 @@
 import Combine
 import StreamChat
 import SwiftUI
+import SwiftUICore
 
 extension Appearance {
     /// Used to initialize `Components` as `ObservableObject`.

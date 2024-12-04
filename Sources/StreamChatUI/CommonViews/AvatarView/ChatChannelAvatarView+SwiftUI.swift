@@ -5,6 +5,7 @@
 import Combine
 import StreamChat
 import SwiftUI
+import SwiftUICore
 
 /// Protocol of `ChatChannelAvatarView` wrapper for use in SwiftUI.
 public protocol ChatChannelAvatarViewSwiftUIView: View {
