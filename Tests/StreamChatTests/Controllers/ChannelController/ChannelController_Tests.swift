@@ -5020,7 +5020,7 @@ final class ChannelController_Tests: XCTestCase {
         XCTAssertEqual(channelId, env.memberUpdater!.partialUpdate_cid)
         XCTAssertEqual(currentUserId, env.memberUpdater!.partialUpdate_userId)
         XCTAssertEqual(nil, env.memberUpdater!.partialUpdate_unset)
-        XCTAssertEqual(["pinned": RawJSON(booleanLiteral: true)], env.memberUpdater!.partialUpdate_extraData)
+        XCTAssertEqual(MemberUpdatePayload(pinned: true), env.memberUpdater!.partialUpdate_updates)
     }
     
     func test_unpin_callsChannelUpdater() throws {
@@ -5042,7 +5042,7 @@ final class ChannelController_Tests: XCTestCase {
         XCTAssertEqual(channelId, env.memberUpdater!.partialUpdate_cid)
         XCTAssertEqual(currentUserId, env.memberUpdater!.partialUpdate_userId)
         XCTAssertEqual(["pinned"], env.memberUpdater!.partialUpdate_unset)
-        XCTAssertEqual(nil, env.memberUpdater!.partialUpdate_extraData)
+        XCTAssertEqual(nil, env.memberUpdater!.partialUpdate_updates)
     }
     
     func test_pin_propagatesErrorFromUpdater() throws {
@@ -5060,7 +5060,7 @@ final class ChannelController_Tests: XCTestCase {
         XCTAssertEqual(channelId, env.memberUpdater!.partialUpdate_cid)
         XCTAssertEqual(client.currentUserId, env.memberUpdater!.partialUpdate_userId)
         XCTAssertEqual(nil, env.memberUpdater!.partialUpdate_unset)
-        XCTAssertEqual(["pinned": RawJSON(booleanLiteral: true)], env.memberUpdater!.partialUpdate_extraData)
+        XCTAssertEqual(MemberUpdatePayload(pinned: true), env.memberUpdater!.partialUpdate_updates)
     }
     
     func test_unpin_propagatesErrorFromUpdater() throws {
@@ -5078,7 +5078,7 @@ final class ChannelController_Tests: XCTestCase {
         XCTAssertEqual(channelId, env.memberUpdater!.partialUpdate_cid)
         XCTAssertEqual(client.currentUserId, env.memberUpdater!.partialUpdate_userId)
         XCTAssertEqual(["pinned"], env.memberUpdater!.partialUpdate_unset)
-        XCTAssertEqual(nil, env.memberUpdater!.partialUpdate_extraData)
+        XCTAssertEqual(nil, env.memberUpdater!.partialUpdate_updates)
     }
 
     // MARK: - UploadAttachment

@@ -10,12 +10,12 @@ class ChannelMemberUpdater: Worker {
     /// - Parameters:
     ///   - userId: The user id of the member.
     ///   - cid: The channel which the member should be updated.
-    ///   - extraData: The additional information.
+    ///   - updates: The additional information.
     ///   - unset: The properties to be unset/cleared.
     func partialUpdate(
         userId: UserId,
         in cid: ChannelId,
-        extraData: [String: RawJSON]?,
+        updates: MemberUpdatePayload?,
         unset: [String]?,
         completion: @escaping ((Result<ChatChannelMember, Error>) -> Void)
     ) {
@@ -23,7 +23,7 @@ class ChannelMemberUpdater: Worker {
             endpoint: .partialMemberUpdate(
                 userId: userId,
                 cid: cid,
-                extraData: extraData,
+                updates: updates,
                 unset: unset
             )
         ) { result in
@@ -48,8 +48,8 @@ class ChannelMemberUpdater: Worker {
         partialUpdate(
             userId: userId,
             in: cid,
-            extraData: isPinned ? ["pinned": .bool(true)] : nil,
-            unset: isPinned ? nil : ["pinned"],
+            updates: isPinned ? MemberUpdatePayload(pinned: true) : nil,
+            unset: isPinned ? nil : [MemberUpdatePayload.CodingKeys.pinned.rawValue],
             completion: { completion($0.error) }
         )
     }

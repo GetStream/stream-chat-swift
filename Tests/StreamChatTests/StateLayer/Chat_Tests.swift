@@ -1454,7 +1454,7 @@ final class Chat_Tests: XCTestCase {
         XCTAssertEqual(channelId, env.memberUpdaterMock.partialUpdate_cid)
         XCTAssertEqual(currentUserId, env.memberUpdaterMock.partialUpdate_userId)
         XCTAssertEqual(nil, env.memberUpdaterMock.partialUpdate_unset)
-        XCTAssertEqual(["pinned": RawJSON(booleanLiteral: true)], env.memberUpdaterMock.partialUpdate_extraData)
+        XCTAssertEqual(MemberUpdatePayload(pinned: true), env.memberUpdaterMock.partialUpdate_updates)
     }
     
     func test_pin_whenChannelUpdaterSucceeds_thenPinningSucceeds() async throws {
@@ -1468,7 +1468,7 @@ final class Chat_Tests: XCTestCase {
         XCTAssertEqual(channelId, env.memberUpdaterMock.partialUpdate_cid)
         XCTAssertEqual(currentUserId, env.memberUpdaterMock.partialUpdate_userId)
         XCTAssertEqual(nil, env.memberUpdaterMock.partialUpdate_unset)
-        XCTAssertEqual(["pinned": RawJSON(booleanLiteral: true)], env.memberUpdaterMock.partialUpdate_extraData)
+        XCTAssertEqual(MemberUpdatePayload(pinned: true), env.memberUpdaterMock.partialUpdate_updates)
     }
     
     func test_unpin_whenCurrentUserIdIsNotSet_thenUnpinningFails() async throws {
@@ -1485,7 +1485,7 @@ final class Chat_Tests: XCTestCase {
         XCTAssertEqual(channelId, env.memberUpdaterMock.partialUpdate_cid)
         XCTAssertEqual(currentUserId, env.memberUpdaterMock.partialUpdate_userId)
         XCTAssertEqual(["pinned"], env.memberUpdaterMock.partialUpdate_unset)
-        XCTAssertEqual(nil, env.memberUpdaterMock.partialUpdate_extraData)
+        XCTAssertEqual(nil, env.memberUpdaterMock.partialUpdate_updates)
     }
     
     func test_unpin_whenChannelUpdaterSucceeds_thenUnpiningSucceeds() async throws {
@@ -1499,7 +1499,7 @@ final class Chat_Tests: XCTestCase {
         XCTAssertEqual(channelId, env.memberUpdaterMock.partialUpdate_cid)
         XCTAssertEqual(currentUserId, env.memberUpdaterMock.partialUpdate_userId)
         XCTAssertEqual(["pinned"], env.memberUpdaterMock.partialUpdate_unset)
-        XCTAssertEqual(nil, env.memberUpdaterMock.partialUpdate_extraData)
+        XCTAssertEqual(nil, env.memberUpdaterMock.partialUpdate_updates)
     }
     
     // MARK: - Throttling and Slow Mode

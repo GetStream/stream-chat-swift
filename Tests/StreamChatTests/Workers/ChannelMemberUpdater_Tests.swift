@@ -141,14 +141,14 @@ final class ChannelMemberUpdater_Tests: XCTestCase {
     func test_partialUpdate_makesCorrectAPICall() {
         let userId: UserId = .unique
         let cid: ChannelId = .unique
-        let extraData: [String: RawJSON] = ["key": .string("value")]
+        let updates = MemberUpdatePayload(extraData: ["key": .string("value")])
         let unset: [String] = ["field1"]
 
         // Simulate `partialUpdate` call
         updater.partialUpdate(
             userId: userId,
             in: cid,
-            extraData: extraData,
+            updates: updates,
             unset: unset,
             completion: { _ in }
         )
@@ -160,7 +160,7 @@ final class ChannelMemberUpdater_Tests: XCTestCase {
                 .partialMemberUpdate(
                     userId: userId,
                     cid: cid,
-                    extraData: extraData,
+                    updates: updates,
                     unset: unset
                 )
             )
@@ -176,7 +176,7 @@ final class ChannelMemberUpdater_Tests: XCTestCase {
         updater.partialUpdate(
             userId: .unique,
             in: cid,
-            extraData: nil,
+            updates: nil,
             unset: nil
         ) { result in
             completionResult = result
@@ -198,7 +198,7 @@ final class ChannelMemberUpdater_Tests: XCTestCase {
         updater.partialUpdate(
             userId: .unique,
             in: .unique,
-            extraData: nil,
+            updates: nil,
             unset: nil
         ) { result in
             completionResult = result
@@ -247,7 +247,7 @@ final class ChannelMemberUpdater_Tests: XCTestCase {
                 .partialMemberUpdate(
                     userId: userId,
                     cid: cid,
-                    extraData: ["pinned": .bool(true)],
+                    updates: MemberUpdatePayload(pinned: true),
                     unset: nil
                 )
             )
@@ -300,7 +300,7 @@ final class ChannelMemberUpdater_Tests: XCTestCase {
                 .partialMemberUpdate(
                     userId: userId,
                     cid: cid,
-                    extraData: nil,
+                    updates: nil,
                     unset: ["pinned"]
                 )
             )

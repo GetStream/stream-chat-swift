@@ -541,7 +541,7 @@ final class MemberController_Tests: XCTestCase {
         // Assert updater is called with correct values
         XCTAssertEqual(env.memberUpdater!.partialUpdate_userId, controller.userId)
         XCTAssertEqual(env.memberUpdater!.partialUpdate_cid, controller.cid)
-        XCTAssertEqual(env.memberUpdater!.partialUpdate_extraData, extraData)
+        XCTAssertEqual(env.memberUpdater!.partialUpdate_updates?.extraData, extraData)
         XCTAssertEqual(env.memberUpdater!.partialUpdate_unset, unsetProperties)
     }
 }
