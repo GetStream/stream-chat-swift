@@ -1134,20 +1134,28 @@ public class Chat {
     
     // MARK: - Pinning and Unpinning
     
-    /// Pins the channel for the current user.
+    /// Pins the channel with the specified scope.
     ///
-    /// - SeeAlso: Pinned channels can be queried with ``FilterKey/pinned`` filter and sorted with ``ChannelListSortingKey/pinnedAt`` sorting key.
+    /// - Important: Only pinning the channel for me is supported.
+    /// - SeeAlso: You can retrieve the list of pinned channels with ``FilterKey/pinned`` filter and sort by ``ChannelListSortingKey/pinnedAt`` key.
+    ///
+    /// - Parameter scope: The scope of the pinning action. The default scope is pinned only for me.
     ///
     /// - Throws: An error while communicating with the Stream API.
-    public func pin() async throws {
-        guard let currentUserId = client.authenticationRepository.currentUserId else { throw ClientError.CurrentUserDoesNotExist() }
-        try await memberUpdater.pinMemberChannel(true, userId: currentUserId, cid: cid)
+    public func pin(scope: ChannelPinningScope = .me) async throws {
+        switch scope {
+        case .me:
+            guard let currentUserId = client.authenticationRepository.currentUserId else { throw ClientError.CurrentUserDoesNotExist() }
+            try await memberUpdater.pinMemberChannel(true, userId: currentUserId, cid: cid)
+        }
     }
     
-    /// Unpins the channel for the current user.
+    /// Unpins the channel with the specified scope.
+    ///
+    /// - Parameter scope: The scope of the unpinning action. The default scope is unpinned only for me.
     ///
     /// - Throws: An error while communicating with the Stream API.
-    public func unpin() async throws {
+    public func unpin(scope: ChannelPinningScope = .me) async throws {
         guard let currentUserId = client.authenticationRepository.currentUserId else { throw ClientError.CurrentUserDoesNotExist() }
         try await memberUpdater.pinMemberChannel(false, userId: currentUserId, cid: cid)
     }

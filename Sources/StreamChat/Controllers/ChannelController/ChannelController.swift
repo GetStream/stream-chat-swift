@@ -1188,27 +1188,37 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
         }
     }
     
-    /// Pins the channel for the current user.
+    /// Pins the channel with the specified scope.
     ///
-    /// - Parameter completion: The completion. Will be called on a **callbackQueue** when the network request is finished.
+    /// - Important: Only pinning the channel for me is supported.
+    /// - SeeAlso: You can retrieve the list of pinned channels with ``FilterKey/pinned`` filter and sort by ``ChannelListSortingKey/pinnedAt`` key.
+    ///
+    /// - Parameters:
+    ///   - scope: The scope of the pinning action. Default is pinning for the current user only.
+    ///   - completion: The completion. Will be called on a **callbackQueue** when the network request is finished.
     /// If request fails, the completion will be called with an error.
-    public func pin(completion: ((Error?) -> Void)? = nil) {
+    public func pin(scope: ChannelPinningScope = .me, completion: ((Error?) -> Void)? = nil) {
         guard let cid, isChannelAlreadyCreated, let userId = client.currentUserId else {
             channelModificationFailed(completion)
             return
         }
-        channelMemberUpdater.pinMemberChannel(true, userId: userId, cid: cid) { error in
-            self.callback {
-                completion?(error)
+        switch scope {
+        case .me:
+            channelMemberUpdater.pinMemberChannel(true, userId: userId, cid: cid) { error in
+                self.callback {
+                    completion?(error)
+                }
             }
         }
     }
     
-    /// Unpins the channel for the current user.
+    /// Unpins the channel with the specified scope.
     ///
-    /// - Parameter completion: The completion. Will be called on a **callbackQueue** when the network request is finished.
+    /// - Parameters:
+    ///   - scope: The scope of the unpinning action. The default scope is unpinned only for me.
+    ///   - completion: The completion. Will be called on a **callbackQueue** when the network request is finished.
     /// If request fails, the completion will be called with an error.
-    public func unpin(completion: ((Error?) -> Void)? = nil) {
+    public func unpin(scope: ChannelPinningScope = .me, completion: ((Error?) -> Void)? = nil) {
         guard let cid, isChannelAlreadyCreated, let userId = client.currentUserId else {
             channelModificationFailed(completion)
             return
@@ -1704,6 +1714,12 @@ private extension ChatChannelController {
     private func messageId(at index: Int) -> MessageId? {
         message(at: index)?.id
     }
+}
+
+/// The scope of the channel pinning action.
+public enum ChannelPinningScope: String {
+    /// Channel is pinned only for the currently connected user. Other channel members do not see channels as pinned.
+    case me
 }
 
 // MARK: - Errors
