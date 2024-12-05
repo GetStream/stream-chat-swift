@@ -28,6 +28,7 @@ final class ChannelListFilterScope_Tests: XCTestCase {
         XCTAssertEqual(Key<UserId>.createdBy.rawValue, "created_by_id")
         XCTAssertEqual(Key<Bool>.joined.rawValue, "joined")
         XCTAssertEqual(Key<Bool>.muted.rawValue, "muted")
+        XCTAssertEqual(Key<Bool>.pinned.rawValue, "pinned")
         XCTAssertEqual(Key<InviteFilterValue>.invite.rawValue, "invite")
         XCTAssertEqual(Key<String>.memberName.rawValue, "member.user.name")
         XCTAssertEqual(Key<Date>.lastUpdatedAt.rawValue, "last_updated")
@@ -54,6 +55,7 @@ final class ChannelListFilterScope_Tests: XCTestCase {
         XCTAssertEqual(Key<Date>.lastUpdatedAt.keyPathString, "lastMessageAt")
         XCTAssertEqual(Key<Bool>.joined.keyPathString, "membership")
         XCTAssertEqual(Key<Bool>.muted.keyPathString, "mute")
+        XCTAssertEqual(Key<Bool>.pinned.keyPathString, "membership.pinnedAt")
         XCTAssertNil(Key<InviteFilterValue>.invite.keyPathString)
     }
 

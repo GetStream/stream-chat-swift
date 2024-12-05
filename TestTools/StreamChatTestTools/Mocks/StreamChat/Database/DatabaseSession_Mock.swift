@@ -122,6 +122,10 @@ class DatabaseSession_Mock: DatabaseSession {
 
     var currentUser: CurrentUserDTO? { underlyingSession.currentUser }
 
+    func deleteCurrentUser() {
+        underlyingSession.deleteCurrentUser()
+    }
+    
     func createNewMessage(
         in cid: ChannelId,
         messageId: MessageId?,

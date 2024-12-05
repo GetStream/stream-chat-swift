@@ -10,12 +10,12 @@ class ChannelMemberUpdater: Worker {
     /// - Parameters:
     ///   - userId: The user id of the member.
     ///   - cid: The channel which the member should be updated.
-    ///   - extraData: The additional information.
+    ///   - updates: The additional information.
     ///   - unset: The properties to be unset/cleared.
     func partialUpdate(
         userId: UserId,
         in cid: ChannelId,
-        extraData: [String: RawJSON]?,
+        updates: MemberUpdatePayload?,
         unset: [String]?,
         completion: @escaping ((Result<ChatChannelMember, Error>) -> Void)
     ) {
@@ -23,7 +23,7 @@ class ChannelMemberUpdater: Worker {
             endpoint: .partialMemberUpdate(
                 userId: userId,
                 cid: cid,
-                extraData: extraData,
+                updates: updates,
                 unset: unset
             )
         ) { result in
@@ -35,6 +35,33 @@ class ChannelMemberUpdater: Worker {
                 }
             case .failure(let error):
                 completion(.failure(error))
+            }
+        }
+    }
+    
+    func pinMemberChannel(
+        _ isPinned: Bool,
+        userId: UserId,
+        cid: ChannelId,
+        completion: @escaping (Error?) -> Void
+    ) {
+        partialUpdate(
+            userId: userId,
+            in: cid,
+            updates: isPinned ? MemberUpdatePayload(pinned: true) : nil,
+            unset: isPinned ? nil : [MemberUpdatePayload.CodingKeys.pinned.rawValue],
+            completion: { completion($0.error) }
+        )
+    }
+    
+    func pinMemberChannel(
+        _ isPinned: Bool,
+        userId: UserId,
+        cid: ChannelId
+    ) async throws {
+        try await withCheckedThrowingContinuation { continuation in
+            pinMemberChannel(isPinned, userId: userId, cid: cid) { error in
+                continuation.resume(with: error)
             }
         }
     }

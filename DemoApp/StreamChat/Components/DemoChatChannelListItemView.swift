@@ -11,7 +11,7 @@ final class DemoChatChannelListItemView: ChatChannelListItemView {
         if content?.searchResult?.message != nil {
             return super.contentBackgroundColor
         }
-        if AppConfig.shared.demoAppConfig.isChannelPinningEnabled && content?.channel.isPinned == true {
+        if content?.channel.isPinned == true {
             return appearance.colorPalette.pinnedMessageBackground
         }
         return super.contentBackgroundColor

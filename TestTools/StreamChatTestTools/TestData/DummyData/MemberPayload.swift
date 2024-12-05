@@ -12,7 +12,8 @@ extension MemberPayload {
         createdAt: Date = .unique,
         updatedAt: Date = .unique,
         role: MemberRole = .member,
-        isMemberBanned: Bool = false
+        isMemberBanned: Bool = false,
+        pinnedAt: Date? = nil
     ) -> MemberPayload {
         .init(
             user: user,
@@ -20,7 +21,8 @@ extension MemberPayload {
             role: role,
             createdAt: createdAt,
             updatedAt: updatedAt,
-            isBanned: isMemberBanned
+            isBanned: isMemberBanned,
+            pinnedAt: pinnedAt
         )
     }
 }

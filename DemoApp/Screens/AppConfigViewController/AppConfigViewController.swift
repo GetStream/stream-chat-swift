@@ -14,8 +14,6 @@ struct DemoAppConfig {
     var isAtlantisEnabled: Bool
     /// A Boolean value to define if an additional message debugger action will be added.
     var isMessageDebuggerEnabled: Bool
-    /// A Boolean value to define if channel pinning example is enabled.
-    var isChannelPinningEnabled: Bool
     /// A Boolean value to define if custom location attachments are enabled.
     var isLocationAttachmentsEnabled: Bool
     /// Set this value to define if we should mimic token refresh scenarios.
@@ -49,7 +47,6 @@ class AppConfig {
             isHardDeleteEnabled: false,
             isAtlantisEnabled: false,
             isMessageDebuggerEnabled: false,
-            isChannelPinningEnabled: false,
             isLocationAttachmentsEnabled: false,
             tokenRefreshDetails: nil,
             shouldShowConnectionBanner: false,
@@ -172,7 +169,6 @@ class AppConfigViewController: UITableViewController {
         case isHardDeleteEnabled
         case isAtlantisEnabled
         case isMessageDebuggerEnabled
-        case isChannelPinningEnabled
         case isLocationAttachmentsEnabled
         case tokenRefreshDetails
         case shouldShowConnectionBanner
@@ -321,10 +317,6 @@ class AppConfigViewController: UITableViewController {
         case .isMessageDebuggerEnabled:
             cell.accessoryView = makeSwitchButton(demoAppConfig.isMessageDebuggerEnabled) { [weak self] newValue in
                 self?.demoAppConfig.isMessageDebuggerEnabled = newValue
-            }
-        case .isChannelPinningEnabled:
-            cell.accessoryView = makeSwitchButton(demoAppConfig.isChannelPinningEnabled) { [weak self] newValue in
-                self?.demoAppConfig.isChannelPinningEnabled = newValue
             }
         case .isLocationAttachmentsEnabled:
             cell.accessoryView = makeSwitchButton(demoAppConfig.isLocationAttachmentsEnabled) { [weak self] newValue in

@@ -55,6 +55,11 @@ final class DemoChatChannelListVC: ChatChannelListVC {
         .containMembers(userIds: [currentUserId]),
         .equal("is_cool", to: true)
     ]))
+    
+    lazy var pinnedChannelsQuery: ChannelListQuery = .init(filter: .and([
+        .containMembers(userIds: [currentUserId]),
+        .equal(.pinned, to: true)
+    ]))
 
     var demoRouter: DemoChatChannelListRouter? {
         router as? DemoChatChannelListRouter
@@ -144,6 +149,14 @@ final class DemoChatChannelListVC: ChatChannelListVC {
                 self?.setMutedChannelsQuery()
             }
         )
+        
+        let pinnedChannelsAction = UIAlertAction(
+            title: "Pinned Channels",
+            style: .default
+        ) { [weak self] _ in
+            self?.title = "Pinned Channels"
+            self?.setPinnedChannelsQuery()
+        }
 
         presentAlert(
             title: "Filter Channels",
@@ -152,8 +165,9 @@ final class DemoChatChannelListVC: ChatChannelListVC {
                 unreadChannelsAction,
                 hiddenChannelsAction,
                 mutedChannelsAction,
-                coolChannelsAction
-            ],
+                coolChannelsAction,
+                pinnedChannelsAction
+            ].sorted(by: { $0.title ?? "" < $1.title ?? "" }),
             preferredStyle: .actionSheet,
             sourceView: filterChannelsButton
         )
@@ -179,6 +193,10 @@ final class DemoChatChannelListVC: ChatChannelListVC {
             }
         )
         replaceChannelListController(controller)
+    }
+    
+    func setPinnedChannelsQuery() {
+        replaceQuery(pinnedChannelsQuery)
     }
 
     func setInitialChannelsQuery() {

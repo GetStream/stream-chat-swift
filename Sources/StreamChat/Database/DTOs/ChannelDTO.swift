@@ -332,8 +332,8 @@ extension NSManagedObjectContext {
 
         // Note: membership payload should be saved before all the members
         if let membership = payload.membership {
-            let membership = try saveMember(payload: membership, channelId: payload.channel.cid, query: nil, cache: cache)
-            dto.membership = membership
+            let membershipDTO = try saveMember(payload: membership, channelId: payload.channel.cid, query: nil, cache: cache)
+            dto.membership = membershipDTO
         } else {
             dto.membership = nil
         }

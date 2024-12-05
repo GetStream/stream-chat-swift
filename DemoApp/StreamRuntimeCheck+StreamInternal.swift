@@ -15,4 +15,10 @@ extension StreamRuntimeCheck {
         guard let intValue = Int(value) else { return nil }
         return LogLevel(rawValue: intValue)
     }
+    
+    static var subsystems: LogSubsystem? {
+        guard let value = ProcessInfo.processInfo.environment["STREAM_LOG_SUBSYSTEM"] else { return nil }
+        guard let intValue = Int(value) else { return nil }
+        return LogSubsystem(rawValue: intValue)
+    }
 }

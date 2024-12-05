@@ -19,7 +19,8 @@ final class ChannelListSortingKey_Tests: XCTestCase {
             .memberCount,
             .cid,
             .hasUnread,
-            .unreadCount
+            .unreadCount,
+            .pinnedAt
         ]
 
         for key in sortingKeys {
@@ -83,6 +84,14 @@ final class ChannelListSortingKey_Tests: XCTestCase {
                 XCTAssertEqual(
                     key.localKey,
                     NSExpression(forKeyPath: \ChannelDTO.currentUserUnreadMessagesCount).keyPath
+                )
+            case .pinnedAt:
+                XCTAssertNotNil(key.sortDescriptor(isAscending: true))
+                XCTAssertEqual(key.remoteKey, "pinned_at")
+                XCTAssertFalse(key.requiresRuntimeSorting)
+                XCTAssertEqual(
+                    key.localKey,
+                    NSExpression(forKeyPath: \ChannelDTO.membership?.pinnedAt).keyPath
                 )
             default:
                 XCTFail()
