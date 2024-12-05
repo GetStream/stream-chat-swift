@@ -1223,9 +1223,12 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
             channelModificationFailed(completion)
             return
         }
-        channelMemberUpdater.pinMemberChannel(false, userId: userId, cid: cid) { error in
-            self.callback {
-                completion?(error)
+        switch scope {
+        case .me:
+            channelMemberUpdater.pinMemberChannel(false, userId: userId, cid: cid) { error in
+                self.callback {
+                    completion?(error)
+                }
             }
         }
     }

@@ -1156,8 +1156,11 @@ public class Chat {
     ///
     /// - Throws: An error while communicating with the Stream API.
     public func unpin(scope: ChannelPinningScope = .me) async throws {
-        guard let currentUserId = client.authenticationRepository.currentUserId else { throw ClientError.CurrentUserDoesNotExist() }
-        try await memberUpdater.pinMemberChannel(false, userId: currentUserId, cid: cid)
+        switch scope {
+        case .me:
+            guard let currentUserId = client.authenticationRepository.currentUserId else { throw ClientError.CurrentUserDoesNotExist() }
+            try await memberUpdater.pinMemberChannel(false, userId: currentUserId, cid: cid)
+        }
     }
     
     // MARK: - Sending and Listening to Events
