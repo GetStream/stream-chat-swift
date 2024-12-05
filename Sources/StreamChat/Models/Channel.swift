@@ -76,6 +76,11 @@ public struct ChatChannel {
     /// If the current user is a member of the channel, this variable contains the details about the membership.
     public let membership: ChatChannelMember?
     
+    /// Returns `true`, if the channel is archived.
+    public var isArchived: Bool {
+        membership?.archivedAt != nil
+    }
+    
     /// Returns `true`, if the channel is pinned.
     public var isPinned: Bool {
         membership?.pinnedAt != nil

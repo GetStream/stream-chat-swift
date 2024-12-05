@@ -307,6 +307,42 @@ final class ChannelList_Tests: XCTestCase {
         cancellable.cancel()
     }
     
+    func test_observingLocalStore_whenStoreChangesWithArchivedChannels_thenStateChanges() async throws {
+        let expectation = XCTestExpectation(description: "State changed")
+        let incomingChannelListPayload = makeMatchingChannelListPayload(
+            channelCount: 5,
+            createdAtOffset: 0,
+            membersCreator: { _, channelOffset in
+                [
+                    .dummy(
+                        user: .dummy(userId: self.memberId),
+                        archivedAt: Date(timeIntervalSinceReferenceDate: TimeInterval(channelOffset))
+                    ),
+                    .dummy()
+                ]
+            }
+        )
+        await setUpChannelList(
+            usesMockedChannelUpdater: false,
+            filter: .and([
+                .in(.members, values: [memberId]),
+                .equal(.archived, to: true)
+            ])
+        )
+        let cancellable = await channelList.state.$channels
+            .dropFirst() // ignore initial
+            .sink { channels in
+                XCTAssertEqual(incomingChannelListPayload.channels.map(\.channel.cid.rawValue), channels.map(\.cid.rawValue))
+                XCTAssertTrue(channels.allSatisfy(\.isArchived), channels.filter { !$0.isArchived }.map(\.cid.rawValue).joined())
+                expectation.fulfill()
+            }
+        try await env.client.mockDatabaseContainer.write { session in
+            session.saveChannelList(payload: incomingChannelListPayload, query: self.channelList.query)
+        }
+        await fulfillmentCompatibility(of: [expectation], timeout: defaultTimeout)
+        cancellable.cancel()
+    }
+    
     // MARK: - Linking and Unlinking Channels
     
     func test_observingEvents_whenAddedToChannelEventReceived_thenChannelIsLinkedAndStateUpdates() async throws {

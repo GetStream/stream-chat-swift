@@ -32,6 +32,7 @@ final class ChannelListFilterScope_Tests: XCTestCase {
         XCTAssertEqual(Key<InviteFilterValue>.invite.rawValue, "invite")
         XCTAssertEqual(Key<String>.memberName.rawValue, "member.user.name")
         XCTAssertEqual(Key<Date>.lastUpdatedAt.rawValue, "last_updated")
+        XCTAssertEqual(Key<Bool>.archived.rawValue, "archived")
     }
 
     func test_filterKeys_haveExpectedKeyPathValueMapper() {
@@ -55,6 +56,7 @@ final class ChannelListFilterScope_Tests: XCTestCase {
         XCTAssertEqual(Key<Date>.lastUpdatedAt.keyPathString, "lastMessageAt")
         XCTAssertEqual(Key<Bool>.joined.keyPathString, "membership")
         XCTAssertEqual(Key<Bool>.muted.keyPathString, "mute")
+        XCTAssertEqual(Key<Bool>.archived.keyPathString, "membership.archivedAt")
         XCTAssertEqual(Key<Bool>.pinned.keyPathString, "membership.pinnedAt")
         XCTAssertNil(Key<InviteFilterValue>.invite.keyPathString)
     }

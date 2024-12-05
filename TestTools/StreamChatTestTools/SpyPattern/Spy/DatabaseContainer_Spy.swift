@@ -383,7 +383,8 @@ extension DatabaseContainer {
         cid: ChannelId,
         query: ChannelMemberListQuery? = nil,
         isMemberBanned: Bool = false,
-        isGloballyBanned: Bool = false
+        isGloballyBanned: Bool = false,
+        archivedAt: Date? = nil
     ) throws {
         try writeSynchronously { session in
             try session.saveMember(
@@ -393,7 +394,8 @@ extension DatabaseContainer {
                         isBanned: isGloballyBanned
                     ),
                     role: role,
-                    isMemberBanned: isMemberBanned
+                    isMemberBanned: isMemberBanned,
+                    archivedAt: archivedAt
                 ),
                 channelId: query?.cid ?? cid,
                 query: query,

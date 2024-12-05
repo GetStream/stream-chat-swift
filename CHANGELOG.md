@@ -5,6 +5,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## StreamChat
 ### ✅ Added
+- Archiving channels for the current user [#3524](https://github.com/GetStream/stream-chat-swift/pull/3524)
+  - Add `Chat.archive(scope:)` and `Chat.unarchive(scope:)`
+  - Add `ChatChannelController.archive(scope:completion:)` and `ChatChannelController.unarchive(scope:completion:)`
+  - Add `FilterKey.archive` for filtering channel lists
+  - Add `ChatChannel.membership.archivedAt`
+  - Add `ChatChannel.isArchived`
 - Pinning channels for the current user [#3518](https://github.com/GetStream/stream-chat-swift/pull/3518)
   - Add `Chat.pin(scope:)` and `Chat.unpin(scope:)`
   - Add `ChatChannelController.pin(scope:completion:)` and `ChatChannelController.unpin(scope:completion:)`

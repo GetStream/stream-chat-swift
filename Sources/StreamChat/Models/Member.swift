@@ -26,6 +26,9 @@ public class ChatChannelMember: ChatUser {
     /// otherwise it's `nil`.
     public let inviteRejectedAt: Date?
     
+    /// Returns the date if the member has archived the channel, otherwise nil.
+    public let archivedAt: Date?
+    
     /// Returns the date if the member has pinned the channel, otherwise nil.
     public let pinnedAt: Date?
 
@@ -72,6 +75,7 @@ public class ChatChannelMember: ChatUser {
         isInvited: Bool,
         inviteAcceptedAt: Date?,
         inviteRejectedAt: Date?,
+        archivedAt: Date?,
         pinnedAt: Date?,
         isBannedFromChannel: Bool,
         banExpiresAt: Date?,
@@ -85,6 +89,7 @@ public class ChatChannelMember: ChatUser {
         self.isInvited = isInvited
         self.inviteAcceptedAt = inviteAcceptedAt
         self.inviteRejectedAt = inviteRejectedAt
+        self.archivedAt = archivedAt
         self.pinnedAt = pinnedAt
         self.isBannedFromChannel = isBannedFromChannel
         self.isShadowBannedFromChannel = isShadowBannedFromChannel

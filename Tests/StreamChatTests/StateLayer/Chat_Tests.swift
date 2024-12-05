@@ -114,6 +114,70 @@ final class Chat_Tests: XCTestCase {
         XCTAssertEqual(channelId, env.channelUpdaterMock.stopWatching_cid)
     }
     
+    // MARK: - Archiving and Unarchiving the Channel
+    
+    func test_archive_whenCurrentUserIdIsNotSet_thenArchivingFails() async throws {
+        try await setUpChat(usesMockedUpdaters: true, loggedIn: false)
+        await XCTAssertAsyncFailure(
+            try await chat.archive(),
+            expectedErrorHandler: { error in error is ClientError.CurrentUserDoesNotExist }
+        )
+    }
+    
+    func test_archive_whenChannelUpdaterFails_thenExpectedErrorIsThrown() async throws {
+        env.memberUpdaterMock.partialUpdate_completion_result = .failure(expectedTestError)
+        await XCTAssertAsyncFailure(try await chat.archive(), expectedTestError)
+        XCTAssertEqual(channelId, env.memberUpdaterMock.partialUpdate_cid)
+        XCTAssertEqual(currentUserId, env.memberUpdaterMock.partialUpdate_userId)
+        XCTAssertEqual(nil, env.memberUpdaterMock.partialUpdate_unset)
+        XCTAssertEqual(MemberUpdatePayload(archived: true), env.memberUpdaterMock.partialUpdate_updates)
+    }
+    
+    func test_archive_whenChannelUpdaterSucceeds_thenArchivingSucceeds() async throws {
+        env.memberUpdaterMock.partialUpdate_completion_result = .success(
+            ChatChannelMember.mock(
+                id: currentUserId,
+                pinnedAt: .unique
+            )
+        )
+        try await chat.archive()
+        XCTAssertEqual(channelId, env.memberUpdaterMock.partialUpdate_cid)
+        XCTAssertEqual(currentUserId, env.memberUpdaterMock.partialUpdate_userId)
+        XCTAssertEqual(nil, env.memberUpdaterMock.partialUpdate_unset)
+        XCTAssertEqual(MemberUpdatePayload(archived: true), env.memberUpdaterMock.partialUpdate_updates)
+    }
+    
+    func test_unarchive_whenCurrentUserIdIsNotSet_thenUnarchivingFails() async throws {
+        try await setUpChat(usesMockedUpdaters: true, loggedIn: false)
+        await XCTAssertAsyncFailure(
+            try await chat.unarchive(),
+            expectedErrorHandler: { error in error is ClientError.CurrentUserDoesNotExist }
+        )
+    }
+
+    func test_unarchive_whenChannelUpdaterFails_thenExpectedErrorIsThrown() async throws {
+        env.memberUpdaterMock.partialUpdate_completion_result = .failure(expectedTestError)
+        await XCTAssertAsyncFailure(try await chat.unarchive(), expectedTestError)
+        XCTAssertEqual(channelId, env.memberUpdaterMock.partialUpdate_cid)
+        XCTAssertEqual(currentUserId, env.memberUpdaterMock.partialUpdate_userId)
+        XCTAssertEqual(["archived"], env.memberUpdaterMock.partialUpdate_unset)
+        XCTAssertEqual(nil, env.memberUpdaterMock.partialUpdate_updates)
+    }
+    
+    func test_unarchive_whenChannelUpdaterSucceeds_thenUnarchivingSucceeds() async throws {
+        env.memberUpdaterMock.partialUpdate_completion_result = .success(
+            ChatChannelMember.mock(
+                id: currentUserId,
+                pinnedAt: nil
+            )
+        )
+        try await chat.unarchive()
+        XCTAssertEqual(channelId, env.memberUpdaterMock.partialUpdate_cid)
+        XCTAssertEqual(currentUserId, env.memberUpdaterMock.partialUpdate_userId)
+        XCTAssertEqual(["archived"], env.memberUpdaterMock.partialUpdate_unset)
+        XCTAssertEqual(nil, env.memberUpdaterMock.partialUpdate_updates)
+    }
+    
     // MARK: - Deleting the Channel
     
     func test_delete_whenChannelUpdaterSucceeds_thenDeleteSucceeds() async throws {

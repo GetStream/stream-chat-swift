@@ -13,6 +13,7 @@ extension MemberPayload {
         updatedAt: Date = .unique,
         role: MemberRole = .member,
         isMemberBanned: Bool = false,
+        archivedAt: Date? = nil,
         pinnedAt: Date? = nil
     ) -> MemberPayload {
         .init(
@@ -22,6 +23,7 @@ extension MemberPayload {
             createdAt: createdAt,
             updatedAt: updatedAt,
             isBanned: isMemberBanned,
+            archivedAt: archivedAt,
             pinnedAt: pinnedAt
         )
     }

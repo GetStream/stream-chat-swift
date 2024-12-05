@@ -65,6 +65,33 @@ class ChannelMemberUpdater: Worker {
             }
         }
     }
+    
+    func archiveMemberChannel(
+        _ isArchived: Bool,
+        userId: UserId,
+        cid: ChannelId,
+        completion: @escaping (Error?) -> Void
+    ) {
+        partialUpdate(
+            userId: userId,
+            in: cid,
+            updates: isArchived ? MemberUpdatePayload(archived: true) : nil,
+            unset: isArchived ? nil : [MemberUpdatePayload.CodingKeys.archived.rawValue],
+            completion: { completion($0.error) }
+        )
+    }
+    
+    func archiveMemberChannel(
+        _ isArchived: Bool,
+        userId: UserId,
+        cid: ChannelId
+    ) async throws {
+        try await withCheckedThrowingContinuation { continuation in
+            archiveMemberChannel(isArchived, userId: userId, cid: cid) { error in
+                continuation.resume(with: error)
+            }
+        }
+    }
 
     /// Bans the user in the channel.
     /// - Parameters:
