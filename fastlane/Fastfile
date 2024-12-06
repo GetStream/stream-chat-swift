@@ -761,7 +761,8 @@ lane :sync_mock_server do
 
   pr_create(
     title: '[CI] Sync Mock Server',
-    head_branch: "ci/sync-mock-server-#{Time.now.to_i}"
+    head_branch: "ci/sync-mock-server-#{Time.now.to_i}",
+    git_add: 'TestTools/StreamChatTestMockServer/Fixtures/'
   )
 end
 
