@@ -22,7 +22,7 @@ final class ChannelMemberUpdater_Mock: ChannelMemberUpdater {
 
     @Atomic var partialUpdate_userId: UserId?
     @Atomic var partialUpdate_cid: ChannelId?
-    @Atomic var partialUpdate_extraData: [String: RawJSON]?
+    @Atomic var partialUpdate_updates: MemberUpdatePayload?
     @Atomic var partialUpdate_unset: [String]?
     @Atomic var partialUpdate_completion: ((Result<ChatChannelMember, Error>) -> Void)?
     @Atomic var partialUpdate_completion_result: Result<ChatChannelMember, Error>?
@@ -43,7 +43,7 @@ final class ChannelMemberUpdater_Mock: ChannelMemberUpdater {
 
         partialUpdate_userId = nil
         partialUpdate_cid = nil
-        partialUpdate_extraData = nil
+        partialUpdate_updates = nil
         partialUpdate_unset = nil
         partialUpdate_completion = nil
         partialUpdate_completion_result = nil
@@ -79,13 +79,13 @@ final class ChannelMemberUpdater_Mock: ChannelMemberUpdater {
     override func partialUpdate(
         userId: UserId,
         in cid: ChannelId,
-        extraData: [String: RawJSON]?,
+        updates: MemberUpdatePayload?,
         unset: [String]?,
         completion: @escaping ((Result<ChatChannelMember, Error>) -> Void)
     ) {
         partialUpdate_userId = userId
         partialUpdate_cid = cid
-        partialUpdate_extraData = extraData
+        partialUpdate_updates = updates
         partialUpdate_unset = unset
         partialUpdate_completion = completion
         partialUpdate_completion_result?.invoke(with: completion)

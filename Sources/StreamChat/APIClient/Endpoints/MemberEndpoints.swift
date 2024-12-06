@@ -20,12 +20,12 @@ extension Endpoint {
     static func partialMemberUpdate(
         userId: UserId,
         cid: ChannelId,
-        extraData: [String: RawJSON]?,
+        updates: MemberUpdatePayload?,
         unset: [String]?
     ) -> Endpoint<PartialMemberUpdateResponse> {
         var body: [String: AnyEncodable] = [:]
-        if let extraData {
-            body["set"] = AnyEncodable(extraData)
+        if let updates {
+            body["set"] = AnyEncodable(updates)
         }
         if let unset {
             body["unset"] = AnyEncodable(unset)

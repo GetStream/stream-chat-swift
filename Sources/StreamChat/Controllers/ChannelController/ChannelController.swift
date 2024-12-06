@@ -68,6 +68,8 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
     /// The worker used to fetch the remote data and communicate with servers.
     private let updater: ChannelUpdater
 
+    private let channelMemberUpdater: ChannelMemberUpdater
+    
     private lazy var eventSender: TypingEventsSender = self.environment.eventSenderBuilder(
         client.databaseContainer,
         client.apiClient
@@ -222,6 +224,10 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
             client.channelRepository,
             client.messageRepository,
             client.makeMessagesPaginationStateHandler(),
+            client.databaseContainer,
+            client.apiClient
+        )
+        channelMemberUpdater = self.environment.memberUpdaterBuilder(
             client.databaseContainer,
             client.apiClient
         )
@@ -1181,6 +1187,51 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
             }
         }
     }
+    
+    /// Pins the channel with the specified scope.
+    ///
+    /// - Important: Only pinning the channel for me is supported.
+    /// - SeeAlso: You can retrieve the list of pinned channels with ``FilterKey/pinned`` filter and sort by ``ChannelListSortingKey/pinnedAt`` key.
+    ///
+    /// - Parameters:
+    ///   - scope: The scope of the pinning action. Default is pinning for the current user only.
+    ///   - completion: The completion. Will be called on a **callbackQueue** when the network request is finished.
+    /// If request fails, the completion will be called with an error.
+    public func pin(scope: ChannelPinningScope = .me, completion: ((Error?) -> Void)? = nil) {
+        guard let cid, isChannelAlreadyCreated, let userId = client.currentUserId else {
+            channelModificationFailed(completion)
+            return
+        }
+        switch scope {
+        case .me:
+            channelMemberUpdater.pinMemberChannel(true, userId: userId, cid: cid) { error in
+                self.callback {
+                    completion?(error)
+                }
+            }
+        }
+    }
+    
+    /// Unpins the channel with the specified scope.
+    ///
+    /// - Parameters:
+    ///   - scope: The scope of the unpinning action. The default scope is unpinned only for me.
+    ///   - completion: The completion. Will be called on a **callbackQueue** when the network request is finished.
+    /// If request fails, the completion will be called with an error.
+    public func unpin(scope: ChannelPinningScope = .me, completion: ((Error?) -> Void)? = nil) {
+        guard let cid, isChannelAlreadyCreated, let userId = client.currentUserId else {
+            channelModificationFailed(completion)
+            return
+        }
+        switch scope {
+        case .me:
+            channelMemberUpdater.pinMemberChannel(false, userId: userId, cid: cid) { error in
+                self.callback {
+                    completion?(error)
+                }
+            }
+        }
+    }
 
     /// Uploads the given file to CDN and returns an attachment and the remote url.
     /// - Parameters:
@@ -1388,6 +1439,11 @@ extension ChatChannelController {
             _ database: DatabaseContainer,
             _ apiClient: APIClient
         ) -> ChannelUpdater = ChannelUpdater.init
+        
+        var memberUpdaterBuilder: (
+            _ database: DatabaseContainer,
+            _ apiClient: APIClient
+        ) -> ChannelMemberUpdater = ChannelMemberUpdater.init
 
         var eventSenderBuilder: (
             _ database: DatabaseContainer,

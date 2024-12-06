@@ -18,6 +18,9 @@ extension StreamChatWrapper {
         LogConfig.formatters = [
             PrefixLogFormatter(prefixes: [.info: "ℹ️", .debug: "🛠", .warning: "⚠️", .error: "🚨"])
         ]
+        if let subsystems = StreamRuntimeCheck.subsystems {
+            LogConfig.subsystems = subsystems
+        }
 
         // Create Client
         if client == nil {

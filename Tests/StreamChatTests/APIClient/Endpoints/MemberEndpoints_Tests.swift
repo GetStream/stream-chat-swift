@@ -33,7 +33,7 @@ final class MemberEndpoints_Tests: XCTestCase {
     func test_partialMemberUpdate_buildsCorrectly() {
         let userId: UserId = "test-user"
         let cid: ChannelId = .unique
-        let extraData: [String: RawJSON] = ["is_premium": .bool(true)]
+        let updates = MemberUpdatePayload(extraData: ["is_premium": .bool(true)])
         let unset: [String] = ["is_cool"]
 
         let body: [String: AnyEncodable] = [
@@ -52,7 +52,7 @@ final class MemberEndpoints_Tests: XCTestCase {
         let endpoint: Endpoint<PartialMemberUpdateResponse> = .partialMemberUpdate(
             userId: userId,
             cid: cid,
-            extraData: extraData,
+            updates: updates,
             unset: unset
         )
 

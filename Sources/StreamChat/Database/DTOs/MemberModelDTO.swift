@@ -23,6 +23,8 @@ class MemberDTO: NSManagedObject {
     @NSManaged var inviteAcceptedAt: DBDate?
     @NSManaged var inviteRejectedAt: DBDate?
     @NSManaged var isInvited: Bool
+    
+    @NSManaged var pinnedAt: DBDate?
 
     @NSManaged var extraData: Data?
 
@@ -130,6 +132,7 @@ extension NSManagedObjectContext {
         dto.isInvited = payload.isInvited ?? false
         dto.inviteAcceptedAt = payload.inviteAcceptedAt?.bridgeDate
         dto.inviteRejectedAt = payload.inviteRejectedAt?.bridgeDate
+        dto.pinnedAt = payload.pinnedAt?.bridgeDate
         dto.notificationsMuted = payload.notificationsMuted
 
         if let extraData = payload.extraData {
@@ -226,6 +229,7 @@ extension ChatChannelMember {
             isInvited: dto.isInvited,
             inviteAcceptedAt: dto.inviteAcceptedAt?.bridgeDate,
             inviteRejectedAt: dto.inviteRejectedAt?.bridgeDate,
+            pinnedAt: dto.pinnedAt?.bridgeDate,
             isBannedFromChannel: dto.isBanned,
             banExpiresAt: dto.banExpiresAt?.bridgeDate,
             isShadowBannedFromChannel: dto.isShadowBanned,

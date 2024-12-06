@@ -241,6 +241,72 @@ final class ChannelList_Tests: XCTestCase {
         cancellable.cancel()
     }
     
+    func test_observingLocalStore_whenStoreChangesWithPinnedChannels_thenStateChanges() async throws {
+        let expectation = XCTestExpectation(description: "State changed")
+        let incomingChannelListPayload = makeMatchingChannelListPayload(
+            channelCount: 2,
+            createdAtOffset: 0,
+            membersCreator: { _, channelOffset in
+                [
+                    .dummy(
+                        user: .dummy(userId: self.memberId),
+                        pinnedAt: Date(timeIntervalSinceReferenceDate: TimeInterval(channelOffset))
+                    ),
+                    .dummy()
+                ]
+            }
+        )
+        let cancellable = await channelList.state.$channels
+            .dropFirst() // ignore initial
+            .sink { channels in
+                XCTAssertEqual(incomingChannelListPayload.channels.map(\.channel.cid.rawValue), channels.map(\.cid.rawValue))
+                XCTAssertTrue(channels.allSatisfy(\.isPinned), channels.filter { !$0.isPinned }.map(\.cid.rawValue).joined())
+                expectation.fulfill()
+            }
+        try await env.client.mockDatabaseContainer.write { session in
+            session.saveChannelList(payload: incomingChannelListPayload, query: self.channelList.query)
+        }
+        await fulfillmentCompatibility(of: [expectation], timeout: defaultTimeout)
+        cancellable.cancel()
+    }
+    
+    func test_observingLocalStore_whenStoreChangesAndSortingByPinnedAt_thenStateChanges() async throws {
+        let expectation = XCTestExpectation(description: "State changed")
+        let incomingChannelListPayload = makeMatchingChannelListPayload(
+            channelCount: 5,
+            createdAtOffset: 0,
+            membersCreator: { _, channelOffset in
+                [
+                    .dummy(
+                        user: .dummy(userId: self.memberId),
+                        pinnedAt: channelOffset < 2 ? Date(timeIntervalSinceReferenceDate: TimeInterval(channelOffset)) : nil
+                    ),
+                    .dummy()
+                ]
+            }
+        )
+        await setUpChannelList(
+            usesMockedChannelUpdater: false,
+            sort: [
+                .init(key: .pinnedAt, isAscending: false),
+                .init(key: .cid, isAscending: true)
+            ]
+        )
+        let cancellable = await channelList.state.$channels
+            .dropFirst() // ignore initial
+            .sink { channels in
+                // cid1 has newer pinned date, therefore it is the first one. cid2, cid3, cid4 are sorted by cid because pinned date is equal (nil)
+                XCTAssertEqual(["messaging:cid1", "messaging:cid0", "messaging:cid2", "messaging:cid3", "messaging:cid4"], channels.map(\.cid.rawValue))
+                XCTAssertEqual([true, true, false, false, false], channels.map(\.isPinned))
+                expectation.fulfill()
+            }
+        try await env.client.mockDatabaseContainer.write { session in
+            session.saveChannelList(payload: incomingChannelListPayload, query: self.channelList.query)
+        }
+        await fulfillmentCompatibility(of: [expectation], timeout: defaultTimeout)
+        cancellable.cancel()
+    }
+    
     // MARK: - Linking and Unlinking Channels
     
     func test_observingEvents_whenAddedToChannelEventReceived_thenChannelIsLinkedAndStateUpdates() async throws {
@@ -352,11 +418,15 @@ final class ChannelList_Tests: XCTestCase {
     @MainActor private func setUpChannelList(
         usesMockedChannelUpdater: Bool,
         loadState: Bool = true,
+        filter: Filter<ChannelListFilterScope>? = nil,
         sort: [Sorting<ChannelListSortingKey>] = [.init(key: .createdAt, isAscending: true)],
         dynamicFilter: ((ChatChannel) -> Bool)? = nil
     ) {
         channelList = ChannelList(
-            query: ChannelListQuery(filter: .in(.members, values: [memberId]), sort: sort),
+            query: ChannelListQuery(
+                filter: filter ?? .in(.members, values: [memberId]),
+                sort: sort
+            ),
             dynamicFilter: dynamicFilter,
             client: env.client,
             environment: env.channelListEnvironment(usesMockedUpdater: usesMockedChannelUpdater)
@@ -380,15 +450,17 @@ final class ChannelList_Tests: XCTestCase {
         channelCount: Int,
         createdAtOffset: Int,
         namePrefix: String = "Name",
+        membersCreator: ((ChannelId, Int) -> [MemberPayload])? = nil,
         messagesCreator: ((ChannelId, Int) -> [MessagePayload])? = nil
     ) -> ChannelListPayload {
         let channelPayloads = (0..<channelCount)
             .map {
                 let channelId = ChannelId(type: .messaging, id: "cid\($0 + createdAtOffset)")
+                let members = membersCreator?(channelId, $0 + createdAtOffset) ?? [.dummy(user: .dummy(userId: memberId))]
                 return dummyPayload(
                     with: channelId,
                     name: "\(namePrefix) \($0 + createdAtOffset)",
-                    members: [.dummy(user: .dummy(userId: memberId))],
+                    members: members,
                     messages: messagesCreator?(channelId, $0 + createdAtOffset),
                     createdAt: Date(timeIntervalSinceReferenceDate: TimeInterval($0 + createdAtOffset))
                 )

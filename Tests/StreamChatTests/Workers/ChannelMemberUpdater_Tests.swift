@@ -141,14 +141,14 @@ final class ChannelMemberUpdater_Tests: XCTestCase {
     func test_partialUpdate_makesCorrectAPICall() {
         let userId: UserId = .unique
         let cid: ChannelId = .unique
-        let extraData: [String: RawJSON] = ["key": .string("value")]
+        let updates = MemberUpdatePayload(extraData: ["key": .string("value")])
         let unset: [String] = ["field1"]
 
         // Simulate `partialUpdate` call
         updater.partialUpdate(
             userId: userId,
             in: cid,
-            extraData: extraData,
+            updates: updates,
             unset: unset,
             completion: { _ in }
         )
@@ -160,7 +160,7 @@ final class ChannelMemberUpdater_Tests: XCTestCase {
                 .partialMemberUpdate(
                     userId: userId,
                     cid: cid,
-                    extraData: extraData,
+                    updates: updates,
                     unset: unset
                 )
             )
@@ -176,7 +176,7 @@ final class ChannelMemberUpdater_Tests: XCTestCase {
         updater.partialUpdate(
             userId: .unique,
             in: cid,
-            extraData: nil,
+            updates: nil,
             unset: nil
         ) { result in
             completionResult = result
@@ -198,7 +198,7 @@ final class ChannelMemberUpdater_Tests: XCTestCase {
         updater.partialUpdate(
             userId: .unique,
             in: .unique,
-            extraData: nil,
+            updates: nil,
             unset: nil
         ) { result in
             completionResult = result
@@ -213,5 +213,114 @@ final class ChannelMemberUpdater_Tests: XCTestCase {
             Assert.willBeTrue(completionResult?.isError == true)
             Assert.willBeEqual(completionResult?.error as? TestError, error)
         }
+    }
+    
+    // MARK: - Pinning and Unpinning Channels
+
+    func test_pin_makesCorrectAPICallAndUpdatesState() throws {
+        let userId: UserId = .unique
+        let anotherUserId: UserId = .unique
+        let cid: ChannelId = .unique
+        
+        try database.createCurrentUser(id: userId)
+        try database.createChannel(cid: cid)
+        try database.createMember(userId: userId, cid: cid)
+        try database.createMember(userId: anotherUserId, cid: cid)
+        
+        let pinnedDate = Date()
+        let apiResponse = PartialMemberUpdateResponse(
+            channelMember: .dummy(
+                user: .dummy(
+                    userId: userId
+                ),
+                pinnedAt: pinnedDate
+            )
+        )
+        apiClient.test_mockResponseResult(.success(apiResponse))
+        let resultingError = try waitFor { done in
+            updater.pinMemberChannel(true, userId: userId, cid: cid, completion: done)
+        }
+        XCTAssertNil(resultingError, resultingError?.localizedDescription ?? "")
+        XCTAssertEqual(
+            apiClient.request_endpoint,
+            AnyEndpoint(
+                .partialMemberUpdate(
+                    userId: userId,
+                    cid: cid,
+                    updates: MemberUpdatePayload(pinned: true),
+                    unset: nil
+                )
+            )
+        )
+        // Assert member was updated
+        try database.readSynchronously { session in
+            guard let member = session.member(userId: userId, cid: cid) else { throw ClientError.MemberDoesNotExist(userId: userId, cid: cid) }
+            XCTAssertNearlySameDate(pinnedDate, member.pinnedAt?.bridgeDate)
+        }
+    }
+    
+    func test_pin_propagatesError() throws {
+        let userId: UserId = .unique
+        let cid: ChannelId = .unique
+        let error = TestError()
+        
+        apiClient.test_mockResponseResult(Result<PartialMemberUpdateResponse, Error>.failure(error))
+        let resultingError = try waitFor { done in
+            updater.pinMemberChannel(true, userId: userId, cid: cid, completion: done)
+        }
+        XCTAssertEqual(error, resultingError as? TestError, resultingError?.localizedDescription ?? "")
+    }
+    
+    func test_unpin_makesCorrectAPICallAndUpdatesState() throws {
+        let userId: UserId = .unique
+        let anotherUserId: UserId = .unique
+        let cid: ChannelId = .unique
+        
+        try database.createCurrentUser(id: userId)
+        try database.createChannel(cid: cid)
+        try database.createMember(userId: userId, cid: cid)
+        try database.createMember(userId: anotherUserId, cid: cid)
+        
+        let apiResponse = PartialMemberUpdateResponse(
+            channelMember: .dummy(
+                user: .dummy(
+                    userId: userId
+                ),
+                pinnedAt: nil
+            )
+        )
+        apiClient.test_mockResponseResult(.success(apiResponse))
+        let resultingError = try waitFor { done in
+            updater.pinMemberChannel(false, userId: userId, cid: cid, completion: done)
+        }
+        XCTAssertNil(resultingError)
+        XCTAssertEqual(
+            apiClient.request_endpoint,
+            AnyEndpoint(
+                .partialMemberUpdate(
+                    userId: userId,
+                    cid: cid,
+                    updates: nil,
+                    unset: ["pinned"]
+                )
+            )
+        )
+        // Assert member was updated
+        try database.readSynchronously { session in
+            guard let member = session.member(userId: userId, cid: cid) else { throw ClientError.MemberDoesNotExist(userId: userId, cid: cid) }
+            XCTAssertNil(member.pinnedAt)
+        }
+    }
+    
+    func test_unpin_propagatesError() throws {
+        let userId: UserId = .unique
+        let cid: ChannelId = .unique
+        let error = TestError()
+        
+        apiClient.test_mockResponseResult(Result<PartialMemberUpdateResponse, Error>.failure(error))
+        let resultingError = try waitFor { done in
+            updater.pinMemberChannel(false, userId: userId, cid: cid, completion: done)
+        }
+        XCTAssertEqual(error, resultingError as? TestError, resultingError?.localizedDescription ?? "")
     }
 }
