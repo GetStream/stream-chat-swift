@@ -1063,6 +1063,7 @@ final class AuthenticationRepository_Tests: XCTestCase {
         repository.reset()
         // should cancel the connection provider timer and the
         // the token provider timer
+        XCTAssertEqual(repository.isGettingToken, false)
         XCTAssertEqual(mockTimer.cancelCallCount, 2)
         XCTAssertEqual(retryStrategy.mock_resetConsecutiveFailures.count, 1)
     }
