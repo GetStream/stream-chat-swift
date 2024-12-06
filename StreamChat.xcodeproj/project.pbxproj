@@ -289,6 +289,8 @@
 		4F862F9A2C38001000062502 /* FileManager+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F862F992C38001000062502 /* FileManager+Extensions.swift */; };
 		4F877D3A2D019E0900CB66EC /* ChannelPinningScope.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F877D392D019E0400CB66EC /* ChannelPinningScope.swift */; };
 		4F877D3B2D019E0900CB66EC /* ChannelPinningScope.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F877D392D019E0400CB66EC /* ChannelPinningScope.swift */; };
+		4F877D3D2D019ED600CB66EC /* ChannelArchivingScope.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F877D3C2D019ECE00CB66EC /* ChannelArchivingScope.swift */; };
+		4F877D3E2D019ED600CB66EC /* ChannelArchivingScope.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F877D3C2D019ECE00CB66EC /* ChannelArchivingScope.swift */; };
 		4F8CA69B2CB665EB00EBEA2D /* EphemeralValuesContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F8CA69A2CB665EB00EBEA2D /* EphemeralValuesContainer.swift */; };
 		4F8CA69C2CB665EB00EBEA2D /* EphemeralValuesContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F8CA69A2CB665EB00EBEA2D /* EphemeralValuesContainer.swift */; };
 		4F8E53062B7CD01D008C0F9F /* Chat.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F8E53052B7CD01D008C0F9F /* Chat.swift */; };
@@ -3217,6 +3219,7 @@
 		4F83FA452BA43DC3008BD8CD /* MemberList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemberList.swift; sourceTree = "<group>"; };
 		4F862F992C38001000062502 /* FileManager+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "FileManager+Extensions.swift"; sourceTree = "<group>"; };
 		4F877D392D019E0400CB66EC /* ChannelPinningScope.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelPinningScope.swift; sourceTree = "<group>"; };
+		4F877D3C2D019ECE00CB66EC /* ChannelArchivingScope.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelArchivingScope.swift; sourceTree = "<group>"; };
 		4F8CA69A2CB665EB00EBEA2D /* EphemeralValuesContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EphemeralValuesContainer.swift; sourceTree = "<group>"; };
 		4F8E53052B7CD01D008C0F9F /* Chat.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Chat.swift; sourceTree = "<group>"; };
 		4F8E530A2B7CEBFB008C0F9F /* ChatClient+Factory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ChatClient+Factory.swift"; sourceTree = "<group>"; };
@@ -5898,6 +5901,7 @@
 				8A62706D24BF45360040BFD6 /* BanEnabling.swift */,
 				82BE0ACC2C009A17008DA9DC /* BlockedUserDetails.swift */,
 				79877A062498E4BC00015F8B /* Channel.swift */,
+				4F877D3C2D019ECE00CB66EC /* ChannelArchivingScope.swift */,
 				79877A072498E4BC00015F8B /* ChannelId.swift */,
 				4F877D392D019E0400CB66EC /* ChannelPinningScope.swift */,
 				79896D5D25065E6900BA8F1C /* ChannelRead.swift */,
@@ -11689,6 +11693,7 @@
 				8819DFD52525F49D00FD1A50 /* UserController.swift in Sources */,
 				40789D3C29F6AD9C0018C2BB /* Debouncer.swift in Sources */,
 				4FFB5EA02BA0507900F0454F /* Collection+Extensions.swift in Sources */,
+				4F877D3D2D019ED600CB66EC /* ChannelArchivingScope.swift in Sources */,
 				F6CCA24D251235F7004C1859 /* UserTypingStateUpdaterMiddleware.swift in Sources */,
 				4FD2BE502B99F68300FFC6F2 /* ReadStateHandler.swift in Sources */,
 				8A618E4524D19D510003D83C /* WebSocketPingController.swift in Sources */,
@@ -12402,6 +12407,7 @@
 				AD84377C2BB482CF000F3826 /* ThreadEndpoints.swift in Sources */,
 				C121E877274544AF00023E4C /* MemberModelDTO.swift in Sources */,
 				AD6E32A52BBC502D0073831B /* ThreadQuery.swift in Sources */,
+				4F877D3E2D019ED600CB66EC /* ChannelArchivingScope.swift in Sources */,
 				C121E878274544AF00023E4C /* ChannelDTO.swift in Sources */,
 				40C20EB329F69E1D00702EEE /* ChatMessageVoiceRecordingAttachment.swift in Sources */,
 				C189D7792AEBC6CD00D4B966 /* BackgroundDatabaseObserver.swift in Sources */,

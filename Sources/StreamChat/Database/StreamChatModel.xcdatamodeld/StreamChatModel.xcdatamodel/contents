@@ -172,6 +172,7 @@
         </uniquenessConstraints>
     </entity>
     <entity name="MemberDTO" representedClassName="MemberDTO" syncable="YES">
+        <attribute name="archivedAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="banExpiresAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="channelRoleRaw" optional="YES" attributeType="String"/>
         <attribute name="extraData" optional="YES" attributeType="Binary"/>

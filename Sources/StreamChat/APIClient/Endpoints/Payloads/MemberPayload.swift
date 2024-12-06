@@ -40,6 +40,7 @@ struct MemberPayload: Decodable {
         case inviteAcceptedAt = "invite_accepted_at"
         case inviteRejectedAt = "invite_rejected_at"
         case notificationsMuted = "notifications_muted"
+        case archivedAt = "archived_at"
         case pinnedAt = "pinned_at"
     }
 
@@ -64,6 +65,8 @@ struct MemberPayload: Decodable {
     let inviteAcceptedAt: Date?
     /// A date when an invited was rejected.
     let inviteRejectedAt: Date?
+    /// A date when the channel was archived.
+    let archivedAt: Date?
     /// A date when the channel was pinned.
     let pinnedAt: Date?
 
@@ -85,6 +88,7 @@ struct MemberPayload: Decodable {
         isInvited: Bool? = nil,
         inviteAcceptedAt: Date? = nil,
         inviteRejectedAt: Date? = nil,
+        archivedAt: Date? = nil,
         pinnedAt: Date? = nil,
         notificationsMuted: Bool = false,
         extraData: [String: RawJSON]? = nil
@@ -100,6 +104,7 @@ struct MemberPayload: Decodable {
         self.isInvited = isInvited
         self.inviteAcceptedAt = inviteAcceptedAt
         self.inviteRejectedAt = inviteRejectedAt
+        self.archivedAt = archivedAt
         self.pinnedAt = pinnedAt
         self.notificationsMuted = notificationsMuted
         self.extraData = extraData
@@ -117,6 +122,7 @@ struct MemberPayload: Decodable {
         isInvited = try container.decodeIfPresent(Bool.self, forKey: .isInvited)
         inviteAcceptedAt = try container.decodeIfPresent(Date.self, forKey: .inviteAcceptedAt)
         inviteRejectedAt = try container.decodeIfPresent(Date.self, forKey: .inviteRejectedAt)
+        archivedAt = try container.decodeIfPresent(Date.self, forKey: .archivedAt)
         pinnedAt = try container.decodeIfPresent(Date.self, forKey: .pinnedAt)
         notificationsMuted = try container.decodeIfPresent(Bool.self, forKey: .notificationsMuted) ?? false
 

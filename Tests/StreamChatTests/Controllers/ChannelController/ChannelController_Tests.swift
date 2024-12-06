@@ -2173,6 +2173,90 @@ final class ChannelController_Tests: XCTestCase {
         // Completion should be called with the error
         AssertAsync.willBeEqual(completionCalledError as? TestError, testError)
     }
+    
+    // MARK: - Archiving and Unarchiving Channels
+    
+    func test_archive_callsChannelUpdater() throws {
+        let currentUserId = UserId.unique
+        client.currentUserId_mock = currentUserId
+        
+        env.memberUpdater!.partialUpdate_completion_result = .success(
+            ChatChannelMember.mock(
+                id: currentUserId,
+                archivedAt: .unique
+            )
+        )
+        let resultingError = try waitFor { done in
+            controller.archive { [callbackQueueID] error in
+                AssertTestQueue(withId: callbackQueueID)
+                done(error)
+            }
+        }
+        XCTAssertNil(resultingError)
+        XCTAssertEqual(channelId, env.memberUpdater!.partialUpdate_cid)
+        XCTAssertEqual(currentUserId, env.memberUpdater!.partialUpdate_userId)
+        XCTAssertEqual(nil, env.memberUpdater!.partialUpdate_unset)
+        XCTAssertEqual(MemberUpdatePayload(archived: true), env.memberUpdater!.partialUpdate_updates)
+    }
+    
+    func test_unarchive_callsChannelUpdater() throws {
+        let currentUserId = UserId.unique
+        client.currentUserId_mock = currentUserId
+        
+        env.memberUpdater!.partialUpdate_completion_result = .success(
+            ChatChannelMember.mock(
+                id: currentUserId,
+                archivedAt: .unique
+            )
+        )
+        let resultingError = try waitFor { done in
+            controller.unarchive { [callbackQueueID] error in
+                AssertTestQueue(withId: callbackQueueID)
+                done(error)
+            }
+        }
+        XCTAssertNil(resultingError)
+        XCTAssertEqual(channelId, env.memberUpdater!.partialUpdate_cid)
+        XCTAssertEqual(currentUserId, env.memberUpdater!.partialUpdate_userId)
+        XCTAssertEqual(["archived"], env.memberUpdater!.partialUpdate_unset)
+        XCTAssertEqual(nil, env.memberUpdater!.partialUpdate_updates)
+    }
+    
+    func test_archive_propagatesErrorFromUpdater() throws {
+        client.currentUserId_mock = .unique
+        let expectedError = TestError()
+        
+        env.memberUpdater!.partialUpdate_completion_result = .failure(expectedError)
+        let resultingError = try waitFor { done in
+            controller.archive { [callbackQueueID] error in
+                AssertTestQueue(withId: callbackQueueID)
+                done(error)
+            }
+        }
+        XCTAssertEqual(expectedError, resultingError as? TestError, resultingError?.localizedDescription ?? "")
+        XCTAssertEqual(channelId, env.memberUpdater!.partialUpdate_cid)
+        XCTAssertEqual(client.currentUserId, env.memberUpdater!.partialUpdate_userId)
+        XCTAssertEqual(nil, env.memberUpdater!.partialUpdate_unset)
+        XCTAssertEqual(MemberUpdatePayload(archived: true), env.memberUpdater!.partialUpdate_updates)
+    }
+    
+    func test_unarchive_propagatesErrorFromUpdater() throws {
+        client.currentUserId_mock = .unique
+        let expectedError = TestError()
+        
+        env.memberUpdater!.partialUpdate_completion_result = .failure(expectedError)
+        let resultingError = try waitFor { done in
+            controller.unarchive { [callbackQueueID] error in
+                AssertTestQueue(withId: callbackQueueID)
+                done(error)
+            }
+        }
+        XCTAssertEqual(expectedError, resultingError as? TestError, resultingError?.localizedDescription ?? "")
+        XCTAssertEqual(channelId, env.memberUpdater!.partialUpdate_cid)
+        XCTAssertEqual(client.currentUserId, env.memberUpdater!.partialUpdate_userId)
+        XCTAssertEqual(["archived"], env.memberUpdater!.partialUpdate_unset)
+        XCTAssertEqual(nil, env.memberUpdater!.partialUpdate_updates)
+    }
 
     // MARK: - Deleting channel
 

@@ -56,6 +56,11 @@ final class DemoChatChannelListVC: ChatChannelListVC {
         .equal("is_cool", to: true)
     ]))
     
+    lazy var archivedChannelsQuery: ChannelListQuery = .init(filter: .and([
+        .containMembers(userIds: [currentUserId]),
+        .equal(.archived, to: true)
+    ]))
+    
     lazy var pinnedChannelsQuery: ChannelListQuery = .init(filter: .and([
         .containMembers(userIds: [currentUserId]),
         .equal(.pinned, to: true)
@@ -150,6 +155,14 @@ final class DemoChatChannelListVC: ChatChannelListVC {
             }
         )
         
+        let archivedChannelsAction = UIAlertAction(
+            title: "Archived Channels",
+            style: .default
+        ) { [weak self] _ in
+            self?.title = "Archived Channels"
+            self?.setArchivedChannelsQuery()
+        }
+        
         let pinnedChannelsAction = UIAlertAction(
             title: "Pinned Channels",
             style: .default
@@ -166,7 +179,8 @@ final class DemoChatChannelListVC: ChatChannelListVC {
                 hiddenChannelsAction,
                 mutedChannelsAction,
                 coolChannelsAction,
-                pinnedChannelsAction
+                pinnedChannelsAction,
+                archivedChannelsAction
             ].sorted(by: { $0.title ?? "" < $1.title ?? "" }),
             preferredStyle: .actionSheet,
             sourceView: filterChannelsButton
@@ -193,6 +207,10 @@ final class DemoChatChannelListVC: ChatChannelListVC {
             }
         )
         replaceChannelListController(controller)
+    }
+    
+    func setArchivedChannelsQuery() {
+        replaceQuery(archivedChannelsQuery)
     }
     
     func setPinnedChannelsQuery() {

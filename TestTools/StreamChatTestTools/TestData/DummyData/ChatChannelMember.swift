@@ -28,6 +28,7 @@ extension ChatChannelMember {
             isInvited: true,
             inviteAcceptedAt: .unique,
             inviteRejectedAt: nil,
+            archivedAt: nil,
             pinnedAt: nil,
             isBannedFromChannel: true,
             banExpiresAt: .unique,

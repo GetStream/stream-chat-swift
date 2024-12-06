@@ -323,4 +323,113 @@ final class ChannelMemberUpdater_Tests: XCTestCase {
         }
         XCTAssertEqual(error, resultingError as? TestError, resultingError?.localizedDescription ?? "")
     }
+    
+    // MARK: - Archiving and Unarchiving Channels
+    
+    func test_archiving_makesCorrectAPICallAndUpdatesState() throws {
+        let userId: UserId = .unique
+        let anotherUserId: UserId = .unique
+        let cid: ChannelId = .unique
+        
+        try database.createCurrentUser(id: userId)
+        try database.createChannel(cid: cid)
+        try database.createMember(userId: userId, cid: cid)
+        try database.createMember(userId: anotherUserId, cid: cid)
+        
+        let archivedDate = Date()
+        let apiResponse = PartialMemberUpdateResponse(
+            channelMember: .dummy(
+                user: .dummy(
+                    userId: userId
+                ),
+                archivedAt: archivedDate
+            )
+        )
+        apiClient.test_mockResponseResult(.success(apiResponse))
+        let resultingError = try waitFor { done in
+            updater.archiveMemberChannel(true, userId: userId, cid: cid, completion: done)
+        }
+        XCTAssertNil(resultingError, resultingError?.localizedDescription ?? "")
+        XCTAssertEqual(
+            apiClient.request_endpoint,
+            AnyEndpoint(
+                .partialMemberUpdate(
+                    userId: userId,
+                    cid: cid,
+                    updates: MemberUpdatePayload(archived: true),
+                    unset: nil
+                )
+            )
+        )
+        // Assert member was updated
+        try database.readSynchronously { session in
+            guard let member = session.member(userId: userId, cid: cid) else { throw ClientError.MemberDoesNotExist(userId: userId, cid: cid) }
+            XCTAssertNearlySameDate(archivedDate, member.archivedAt?.bridgeDate)
+        }
+    }
+    
+    func test_archiving_propagatesError() throws {
+        let userId: UserId = .unique
+        let cid: ChannelId = .unique
+        let error = TestError()
+        
+        apiClient.test_mockResponseResult(Result<PartialMemberUpdateResponse, Error>.failure(error))
+        let resultingError = try waitFor { done in
+            updater.archiveMemberChannel(true, userId: userId, cid: cid, completion: done)
+        }
+        XCTAssertEqual(error, resultingError as? TestError, resultingError?.localizedDescription ?? "")
+    }
+    
+    func test_unarchiving_makesCorrectAPICallAndUpdatesState() throws {
+        let userId: UserId = .unique
+        let anotherUserId: UserId = .unique
+        let cid: ChannelId = .unique
+        
+        try database.createCurrentUser(id: userId)
+        try database.createChannel(cid: cid)
+        try database.createMember(userId: userId, cid: cid, archivedAt: Date())
+        try database.createMember(userId: anotherUserId, cid: cid)
+        
+        let apiResponse = PartialMemberUpdateResponse(
+            channelMember: .dummy(
+                user: .dummy(
+                    userId: userId
+                ),
+                archivedAt: nil
+            )
+        )
+        apiClient.test_mockResponseResult(.success(apiResponse))
+        let resultingError = try waitFor { done in
+            updater.archiveMemberChannel(false, userId: userId, cid: cid, completion: done)
+        }
+        XCTAssertNil(resultingError)
+        XCTAssertEqual(
+            apiClient.request_endpoint,
+            AnyEndpoint(
+                .partialMemberUpdate(
+                    userId: userId,
+                    cid: cid,
+                    updates: nil,
+                    unset: ["archived"]
+                )
+            )
+        )
+        // Assert member was updated
+        try database.readSynchronously { session in
+            guard let member = session.member(userId: userId, cid: cid) else { throw ClientError.MemberDoesNotExist(userId: userId, cid: cid) }
+            XCTAssertNil(member.archivedAt)
+        }
+    }
+    
+    func test_unarchiving_propagatesError() throws {
+        let userId: UserId = .unique
+        let cid: ChannelId = .unique
+        let error = TestError()
+        
+        apiClient.test_mockResponseResult(Result<PartialMemberUpdateResponse, Error>.failure(error))
+        let resultingError = try waitFor { done in
+            updater.archiveMemberChannel(false, userId: userId, cid: cid, completion: done)
+        }
+        XCTAssertEqual(error, resultingError as? TestError, resultingError?.localizedDescription ?? "")
+    }
 }

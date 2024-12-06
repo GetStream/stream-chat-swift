@@ -113,6 +113,23 @@ public extension FilterKey where Scope: AnyChannelListFilterScope {
     /// Supported operators: `equal`
     static var blocked: FilterKey<Scope, Bool> { .init(rawValue: "blocked", keyPathString: #keyPath(ChannelDTO.isBlocked)) }
     
+    /// A filter key for matching the `archived` value.
+    static var archived: FilterKey<Scope, Bool> {
+        .init(
+            rawValue: "archived",
+            keyPathString: #keyPath(ChannelDTO.membership.archivedAt),
+            predicateMapper: { op, archived in
+                switch op {
+                case .equal:
+                    let key = #keyPath(ChannelDTO.membership.archivedAt)
+                    return NSPredicate(format: archived ? "\(key) != nil" : "\(key) == nil")
+                default:
+                    return nil
+                }
+            }
+        )
+    }
+    
     /// A filter key for matching the `pinned` value.
     static var pinned: FilterKey<Scope, Bool> {
         .init(

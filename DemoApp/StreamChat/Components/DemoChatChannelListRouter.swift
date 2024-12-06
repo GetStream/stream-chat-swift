@@ -463,6 +463,18 @@ final class DemoChatChannelListRouter: ChatChannelListRouter {
                     self.rootViewController.presentAlert(title: "Couldn't unpin channel \(cid)", message: "\(error)")
                 }
             }),
+            .init(title: "Archive channel", isEnabled: true, handler: { [unowned self] _ in
+                channelController.archive { error in
+                    guard let error else { return }
+                    self.rootViewController.presentAlert(title: "Couldn't archive channel \(cid)", message: "\(error)")
+                }
+            }),
+            .init(title: "Unarchive channel", isEnabled: true, handler: { [unowned self] _ in
+                channelController.unarchive { error in
+                    guard let error else { return }
+                    self.rootViewController.presentAlert(title: "Couldn't unarchive channel \(cid)", message: "\(error)")
+                }
+            }),
             .init(title: "Enable slow mode", isEnabled: canSetChannelCooldown, handler: { [unowned self] _ in
                 self.rootViewController
                     .presentAlert(title: "Enter cooldown", textFieldPlaceholder: "Cooldown duration, 0-120") { cooldown in

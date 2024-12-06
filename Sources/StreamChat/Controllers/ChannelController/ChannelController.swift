@@ -372,6 +372,51 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
             }
         }
     }
+    
+    /// Archives the channel with the specified scope.
+    ///
+    /// - Important: Only archiving the channel for me is supported.
+    /// - SeeAlso: You can retrieve the list of archived channels with ``FilterKey/archived`` filter.
+    ///
+    /// - Parameters:
+    ///   - scope: The scope of the archiving action. Default is archiving for the current user only.
+    ///   - completion: The completion. Will be called on a **callbackQueue** when the network request is finished.
+    /// If request fails, the completion will be called with an error.
+    public func archive(scope: ChannelArchivingScope = .me, completion: ((Error?) -> Void)? = nil) {
+        guard let cid, isChannelAlreadyCreated, let userId = client.currentUserId else {
+            channelModificationFailed(completion)
+            return
+        }
+        switch scope {
+        case .me:
+            channelMemberUpdater.archiveMemberChannel(true, userId: userId, cid: cid) { error in
+                self.callback {
+                    completion?(error)
+                }
+            }
+        }
+    }
+    
+    /// Unarchives the channel with the specified scope.
+    ///
+    /// - Parameters:
+    ///   - scope: The scope of the unarchiving action. The default scope is unarchived only for me.
+    ///   - completion: The completion. Will be called on a **callbackQueue** when the network request is finished.
+    /// If request fails, the completion will be called with an error.
+    public func unarchive(scope: ChannelArchivingScope = .me, completion: ((Error?) -> Void)? = nil) {
+        guard let cid, isChannelAlreadyCreated, let userId = client.currentUserId else {
+            channelModificationFailed(completion)
+            return
+        }
+        switch scope {
+        case .me:
+            channelMemberUpdater.archiveMemberChannel(false, userId: userId, cid: cid) { error in
+                self.callback {
+                    completion?(error)
+                }
+            }
+        }
+    }
 
     /// Delete the channel this controller manages.
     /// - Parameters:

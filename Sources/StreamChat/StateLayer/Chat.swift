@@ -120,6 +120,37 @@ public class Chat {
         client.syncRepository.stopTrackingChat(self)
     }
     
+    // MARK: - Archiving the Channel
+    
+    /// Archives the channel with the specified scope.
+    ///
+    /// - Important: Only archiving the channel for me is supported.
+    /// - SeeAlso: You can retrieve the list of archived channels with ``FilterKey/archived`` filter.
+    ///
+    /// - Parameter scope: The scope of the archiving action. The default scope is archived only for me.
+    ///
+    /// - Throws: An error while communicating with the Stream API.
+    public func archive(scope: ChannelArchivingScope = .me) async throws {
+        switch scope {
+        case .me:
+            guard let currentUserId = client.authenticationRepository.currentUserId else { throw ClientError.CurrentUserDoesNotExist() }
+            try await memberUpdater.archiveMemberChannel(true, userId: currentUserId, cid: cid)
+        }
+    }
+    
+    /// Unarchives the channel with the specified scope.
+    ///
+    /// - Parameter scope: The scope of the unarchiving action. The default scope is unarchived only for me.
+    ///
+    /// - Throws: An error while communicating with the Stream API.
+    public func unarchive(scope: ChannelArchivingScope = .me) async throws {
+        switch scope {
+        case .me:
+            guard let currentUserId = client.authenticationRepository.currentUserId else { throw ClientError.CurrentUserDoesNotExist() }
+            try await memberUpdater.archiveMemberChannel(false, userId: currentUserId, cid: cid)
+        }
+    }
+    
     // MARK: - Deleting the Channel
     
     /// Deletes the channel.
