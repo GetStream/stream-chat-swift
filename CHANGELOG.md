@@ -18,6 +18,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   - Add `ChannelListSortingKey.pinnedAt`
   - Add `ChatChannel.membership.pinnedAt`
   - Add `ChatChannel.isPinned`
+### 🐞 Fixed
+- Fix a rare issue of not ending background tasks [#3528](https://github.com/GetStream/stream-chat-swift/pull/3528)
 
 # [4.68.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.68.0)
 _December 03, 2024_
