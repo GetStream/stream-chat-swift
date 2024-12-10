@@ -51,6 +51,7 @@ class IOSBackgroundTaskScheduler: BackgroundTaskScheduler {
     }
 
     func beginTask(expirationHandler: (() -> Void)?) -> Bool {
+        endTask()
         activeBackgroundTask = app?.beginBackgroundTask { [weak self] in
             expirationHandler?()
             self?.endTask()
