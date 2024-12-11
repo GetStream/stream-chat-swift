@@ -10,7 +10,10 @@ extension StreamChatWrapper {
     // Instantiates chat client
     func setUpChat() {
         if AppConfig.shared.demoAppConfig.isLocationAttachmentsEnabled {
-            Components.default.mixedAttachmentInjector.register(.location, with: LocationAttachmentViewInjector.self)
+            Components.default.mixedAttachmentInjector.register(
+                .staticLocation,
+                with: LocationAttachmentViewInjector.self
+            )
         }
 
         // Set the log level
@@ -26,7 +29,7 @@ extension StreamChatWrapper {
         if client == nil {
             client = ChatClient(config: config)
         }
-        client?.registerAttachment(LocationAttachmentPayload.self)
+        client?.registerAttachment(StaticLocationAttachmentPayload.self)
 
         // L10N
         let localizationProvider = Appearance.default.localizationProvider

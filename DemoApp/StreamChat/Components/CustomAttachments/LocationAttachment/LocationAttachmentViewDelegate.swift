@@ -7,12 +7,12 @@ import StreamChatUI
 
 protocol LocationAttachmentViewDelegate: ChatMessageContentViewDelegate {
     func didTapOnLocationAttachment(
-        _ attachment: ChatMessageLocationAttachment
+        _ attachment: ChatMessageStaticLocationAttachment
     )
 }
 
 extension DemoChatMessageListVC: LocationAttachmentViewDelegate {
-    func didTapOnLocationAttachment(_ attachment: ChatMessageLocationAttachment) {
+    func didTapOnLocationAttachment(_ attachment: ChatMessageStaticLocationAttachment) {
         let mapViewController = LocationDetailViewController(locationAttachment: attachment)
         navigationController?.pushViewController(mapViewController, animated: true)
     }
