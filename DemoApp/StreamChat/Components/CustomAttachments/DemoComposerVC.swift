@@ -2,37 +2,43 @@
 // Copyright © 2025 Stream.io Inc. All rights reserved.
 //
 
+import CoreLocation
 import StreamChat
 import StreamChatUI
 import UIKit
 
 class DemoComposerVC: ComposerVC {
-    /// For demo purposes the locations are hard-coded.
-    var dummyLocations: [(latitude: Double, longitude: Double)] = [
-        (38.708442, -9.136822), // Lisbon, Portugal
-        (37.983810, 23.727539), // Athens, Greece
-        (53.149118, -6.079341), // Greystones, Ireland
-        (41.11722, 20.80194), // Ohrid, Macedonia
-        (51.5074, -0.1278), // London, United Kingdom
-        (52.5200, 13.4050), // Berlin, Germany
-        (40.4168, -3.7038), // Madrid, Spain
-        (50.4501, 30.5234), // Kyiv, Ukraine
-        (41.9028, 12.4964), // Rome, Italy
-        (48.8566, 2.3522), // Paris, France
-        (44.4268, 26.1025), // Bucharest, Romania
-        (48.2082, 16.3738), // Vienna, Austria
-        (47.4979, 19.0402) // Budapest, Hungary
-    ]
+    private lazy var locationManager = CLLocationManager()
+
+    var sharingType: LocationSharingType = .addToAttachments
+
+    enum LocationSharingType {
+        case addToAttachments
+        case instant
+    }
 
     override var attachmentsPickerActions: [UIAlertAction] {
         var actions = super.attachmentsPickerActions
         
         let alreadyHasLocation = content.attachments.map(\.type).contains(.staticLocation)
         if AppConfig.shared.demoAppConfig.isLocationAttachmentsEnabled && !alreadyHasLocation {
-            let sendLocationAction = UIAlertAction(
-                title: "Location",
+            let addLocationAction = UIAlertAction(
+                title: "Add Current Location",
                 style: .default,
-                handler: { [weak self] _ in self?.sendLocation() }
+                handler: { [weak self] _ in
+                    self?.sharingType = .addToAttachments
+                    self?.requestLocationPermission()
+                }
+            )
+            actions.append(addLocationAction)
+
+            let sendLocationAction = UIAlertAction(
+                title: "Send Current Location",
+                style: .default,
+                handler: { [weak self] _ in
+                    self?.sharingType = .instant
+                    self?.requestLocationPermission()
+                }
             )
             actions.append(sendLocationAction)
         }
@@ -40,16 +46,76 @@ class DemoComposerVC: ComposerVC {
         return actions
     }
 
-    func sendLocation() {
-        guard let location = dummyLocations.randomElement() else { return }
-        let locationAttachmentPayload = StaticLocationAttachmentPayload(
-            latitude: location.latitude,
-            longitude: location.longitude
+    override func setUp() {
+        super.setUp()
+
+        locationManager = CLLocationManager()
+    }
+
+    private func requestLocationPermission() {
+        locationManager.delegate = self
+
+        switch locationManager.authorizationStatus {
+        case .notDetermined:
+            locationManager.requestWhenInUseAuthorization()
+        case .authorizedWhenInUse, .authorizedAlways:
+            locationManager.startUpdatingLocation()
+        case .denied, .restricted:
+            showLocationPermissionAlert()
+        @unknown default:
+            break
+        }
+    }
+
+    private func showLocationPermissionAlert() {
+        let alert = UIAlertController(
+            title: "Location Access Required",
+            message: "Please enable location access in Settings to share your location.",
+            preferredStyle: .alert
+        )
+        
+        alert.addAction(UIAlertAction(title: "Settings", style: .default) { _ in
+            if let url = URL(string: UIApplication.openSettingsURLString) {
+                UIApplication.shared.open(url)
+            }
+        })
+        alert.addAction(UIAlertAction(title: "Cancel", style: .cancel))
+        
+        present(alert, animated: true)
+    }
+}
+
+// MARK: - CLLocationManagerDelegate
+
+extension DemoComposerVC: CLLocationManagerDelegate {
+    func locationManagerDidChangeAuthorization(_ manager: CLLocationManager) {
+        let status = manager.authorizationStatus
+        if status == .authorizedWhenInUse || status == .authorizedAlways {
+            manager.startUpdatingLocation()
+        }
+    }
+
+    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+        guard let location = locations.first else { return }
+        
+        let locationPayload = StaticLocationAttachmentPayload(
+            latitude: location.coordinate.latitude,
+            longitude: location.coordinate.longitude
         )
 
-        content.attachments.append(AnyAttachmentPayload(payload: locationAttachmentPayload))
+        switch sharingType {
+        case .addToAttachments:
+            content.attachments.append(AnyAttachmentPayload(payload: locationPayload))
+        case .instant:
+            channelController?.sendStaticLocation(locationPayload)
+        }
 
-//        // In case you would want to send the location directly, without composer preview:
-//        channelController?.sendStaticLocation(locationAttachmentPayload)
+        // We only send the location once so we can stop updating the location.
+        locationManager.stopUpdatingLocation()
+        locationManager.delegate = nil
+    }
+    
+    func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
+        print("Location manager error: \(error.localizedDescription)")
     }
 }
