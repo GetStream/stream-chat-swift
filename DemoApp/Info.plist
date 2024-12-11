@@ -12,6 +12,12 @@
 	<string>We need access to your camera for sending photo attachments.</string>
 	<key>NSMicrophoneUsageDescription</key>
 	<string>We need access to your microphone for taking a video.</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>We need access to your location to share it in the chat.</string>
+	<key>NSLocationAlwaysUsageDescription</key>
+	<string>We need access to your location to share it in the chat.</string>
+	<key>LSApplicationCategoryType</key>
+	<string></string>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleExecutable</key>
