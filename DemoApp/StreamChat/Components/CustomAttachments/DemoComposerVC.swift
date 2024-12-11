@@ -27,7 +27,7 @@ class DemoComposerVC: ComposerVC {
     override var attachmentsPickerActions: [UIAlertAction] {
         var actions = super.attachmentsPickerActions
         
-        let alreadyHasLocation = content.attachments.map(\.type).contains(.location)
+        let alreadyHasLocation = content.attachments.map(\.type).contains(.staticLocation)
         if AppConfig.shared.demoAppConfig.isLocationAttachmentsEnabled && !alreadyHasLocation {
             let sendLocationAction = UIAlertAction(
                 title: "Location",
@@ -42,8 +42,9 @@ class DemoComposerVC: ComposerVC {
 
     func sendLocation() {
         guard let location = dummyLocations.randomElement() else { return }
-        let locationAttachmentPayload = LocationAttachmentPayload(
-            coordinate: .init(latitude: location.latitude, longitude: location.longitude)
+        let locationAttachmentPayload = StaticLocationAttachmentPayload(
+            latitude: location.latitude,
+            longitude: location.longitude
         )
 
         content.attachments.append(AnyAttachmentPayload(payload: locationAttachmentPayload))

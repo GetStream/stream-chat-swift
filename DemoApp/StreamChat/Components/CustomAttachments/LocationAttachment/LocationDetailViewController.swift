@@ -3,12 +3,13 @@
 //
 
 import MapKit
+import StreamChat
 import UIKit
 
 class LocationDetailViewController: UIViewController {
-    let locationAttachment: ChatMessageLocationAttachment
+    let locationAttachment: ChatMessageStaticLocationAttachment
 
-    init(locationAttachment: ChatMessageLocationAttachment) {
+    init(locationAttachment: ChatMessageStaticLocationAttachment) {
         self.locationAttachment = locationAttachment
         super.init(nibName: nil, bundle: nil)
     }
@@ -28,8 +29,8 @@ class LocationDetailViewController: UIViewController {
         super.viewDidLoad()
 
         let locationCoordinate = CLLocationCoordinate2D(
-            latitude: locationAttachment.coordinate.latitude,
-            longitude: locationAttachment.coordinate.longitude
+            latitude: locationAttachment.latitude,
+            longitude: locationAttachment.longitude
         )
 
         mapView.region = .init(

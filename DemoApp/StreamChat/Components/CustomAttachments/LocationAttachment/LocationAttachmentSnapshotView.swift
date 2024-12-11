@@ -6,6 +6,11 @@ import MapKit
 import StreamChatUI
 import UIKit
 
+struct LocationCoordinate {
+    let latitude: CLLocationDegrees
+    let longitude: CLLocationDegrees
+}
+
 class LocationAttachmentSnapshotView: _View {
     static var snapshotsCache: NSCache<NSString, UIImage> = .init()
 

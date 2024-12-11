@@ -8,7 +8,7 @@ import UIKit
 
 class DemoQuotedChatMessageView: QuotedChatMessageView {
     override func setAttachmentPreview(for message: ChatMessage) {
-        let locationAttachments = message.attachments(payloadType: LocationAttachmentPayload.self)
+        let locationAttachments = message.attachments(payloadType: StaticLocationAttachmentPayload.self)
         if let locationPayload = locationAttachments.first?.payload {
             attachmentPreviewView.contentMode = .scaleAspectFit
             attachmentPreviewView.image = UIImage(
@@ -18,7 +18,7 @@ class DemoQuotedChatMessageView: QuotedChatMessageView {
             attachmentPreviewView.tintColor = .systemRed
             textView.text = """
             Location:
-            (\(locationPayload.coordinate.latitude),\(locationPayload.coordinate.longitude))
+            (\(locationPayload.latitude),\(locationPayload.longitude))
             """
             return
         }

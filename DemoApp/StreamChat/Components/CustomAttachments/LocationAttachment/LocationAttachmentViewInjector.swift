@@ -9,8 +9,8 @@ import UIKit
 class LocationAttachmentViewInjector: AttachmentViewInjector {
     lazy var locationAttachmentView = LocationAttachmentSnapshotView()
 
-    var locationAttachment: ChatMessageLocationAttachment? {
-        attachments(payloadType: LocationAttachmentPayload.self).first
+    var locationAttachment: ChatMessageStaticLocationAttachment? {
+        attachments(payloadType: StaticLocationAttachmentPayload.self).first
     }
 
     override func contentViewDidLayout(options: ChatMessageLayoutOptions) {
@@ -31,7 +31,11 @@ class LocationAttachmentViewInjector: AttachmentViewInjector {
     override func contentViewDidUpdateContent() {
         super.contentViewDidUpdateContent()
 
-        locationAttachmentView.coordinate = locationAttachment?.coordinate
+        guard let location = locationAttachment else {
+            return
+        }
+
+        locationAttachmentView.coordinate = .init(latitude: location.latitude, longitude: location.longitude)
     }
 
     func handleTapOnLocationAttachment() {
