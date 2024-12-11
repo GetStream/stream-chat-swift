@@ -49,9 +49,7 @@ class DemoComposerVC: ComposerVC {
 
         content.attachments.append(AnyAttachmentPayload(payload: locationAttachmentPayload))
 
-        // In case you would want to send the location directly, without composer preview:
-//        channelController?.createNewMessage(text: "", attachments: [.init(
-//            payload: locationAttachmentPayload
-//        )])
+//        // In case you would want to send the location directly, without composer preview:
+//        channelController?.sendStaticLocation(locationAttachmentPayload)
     }
 }
