@@ -61,7 +61,8 @@ public class ChatClient {
         .video: VideoAttachmentPayload.self,
         .audio: AudioAttachmentPayload.self,
         .file: FileAttachmentPayload.self,
-        .voiceRecording: VoiceRecordingAttachmentPayload.self
+        .voiceRecording: VoiceRecordingAttachmentPayload.self,
+        .staticLocation: StaticLocationAttachmentPayload.self
     ]
 
     let connectionRepository: ConnectionRepository
