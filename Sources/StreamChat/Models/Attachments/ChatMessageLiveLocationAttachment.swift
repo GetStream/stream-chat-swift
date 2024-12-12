@@ -19,7 +19,7 @@ public struct LiveLocationAttachmentPayload: AttachmentPayload {
     /// The longitude of the location.
     public let longitude: Double
     /// A boolean value indicating whether the live location sharing was stopped.
-    public let stoppedSharing: Bool
+    public let stoppedSharing: Bool?
 
     public init(latitude: Double, longitude: Double, stoppedSharing: Bool) {
         self.latitude = latitude
