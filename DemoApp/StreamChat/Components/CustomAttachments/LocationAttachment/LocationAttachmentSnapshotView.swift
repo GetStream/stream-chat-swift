@@ -13,16 +13,22 @@ struct LocationCoordinate {
 
 class LocationAttachmentSnapshotView: _View {
     static var snapshotsCache: NSCache<NSString, UIImage> = .init()
+    var snapshotter: MKMapSnapshotter?
 
-    var coordinate: LocationCoordinate? {
+    struct Content {
+        var latitude: CLLocationDegrees
+        var longitude: CLLocationDegrees
+        var isLive: Bool = false
+    }
+
+    var content: Content? {
         didSet {
             updateContent()
         }
     }
 
-    var snapshotter: MKMapSnapshotter?
-
     var didTapOnLocation: (() -> Void)?
+    var didTapOnStopSharingLocation: (() -> Void)?
 
     lazy var imageView: UIImageView = {
         let view = UIImageView()
@@ -41,6 +47,21 @@ class LocationAttachmentSnapshotView: _View {
         return view
     }()
 
+    lazy var stopButton: UIButton = {
+        let button = UIButton()
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.setImage(UIImage(systemName: "stop.circle"), for: .normal)
+        button.imageEdgeInsets = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 8)
+        button.setTitle("Stop Sharing", for: .normal)
+        button.titleLabel?.font = .preferredFont(forTextStyle: .footnote)
+        button.setTitleColor(.red, for: .normal)
+        button.tintColor = .red
+        button.backgroundColor = .clear
+        button.layer.cornerRadius = 16
+        button.addTarget(self, action: #selector(handleStopButtonTap), for: .touchUpInside)
+        return button
+    }()
+
     let mapOptions: MKMapSnapshotter.Options = .init()
 
     override func setUp() {
@@ -56,16 +77,21 @@ class LocationAttachmentSnapshotView: _View {
     override func setUpLayout() {
         super.setUpLayout()
 
-        addSubview(activityIndicatorView)
-        addSubview(imageView)
+        stopButton.isHidden = true
+        activityIndicatorView.hidesWhenStopped = true
+
+        let container = VContainer(alignment: .center) {
+            imageView
+            stopButton
+                .width(120)
+                .height(30)
+        }.embed(in: self)
+
+        container.addSubview(activityIndicatorView)
 
         NSLayoutConstraint.activate([
-            imageView.leadingAnchor.constraint(equalTo: leadingAnchor),
-            imageView.trailingAnchor.constraint(equalTo: trailingAnchor),
-            imageView.topAnchor.constraint(equalTo: topAnchor),
-            imageView.bottomAnchor.constraint(equalTo: bottomAnchor),
-            activityIndicatorView.centerXAnchor.constraint(equalTo: imageView.centerXAnchor),
-            activityIndicatorView.centerYAnchor.constraint(equalTo: imageView.centerYAnchor)
+            activityIndicatorView.centerXAnchor.constraint(equalTo: container.centerXAnchor),
+            activityIndicatorView.centerYAnchor.constraint(equalTo: container.centerYAnchor)
         ])
     }
 
@@ -76,21 +102,30 @@ class LocationAttachmentSnapshotView: _View {
     override func updateContent() {
         super.updateContent()
 
-        imageView.image = nil
-
-        guard let coordinate = self.coordinate else {
+        if content?.isLive == false {
+            imageView.image = nil
+        }
+        
+        guard let content = self.content else {
             return
         }
 
-        configureMapPosition(coordinate: coordinate)
-
-        if imageView.image == nil {
-            activityIndicatorView.startAnimating()
+        if content.isLive {
+            stopButton.isHidden = false
+        } else {
+            stopButton.isHidden = true
         }
+
+        let coordinate = LocationCoordinate(
+            latitude: content.latitude,
+            longitude: content.longitude
+        )
+        configureMapPosition(coordinate: coordinate)
 
         if let snapshotImage = Self.snapshotsCache.object(forKey: coordinate.cachingKey) {
             imageView.image = snapshotImage
         } else {
+            activityIndicatorView.startAnimating()
             loadMapSnapshotImage(coordinate: coordinate)
         }
     }
@@ -144,6 +179,10 @@ class LocationAttachmentSnapshotView: _View {
             pinImage?.draw(at: point)
         }
         return image
+    }
+
+    @objc private func handleStopButtonTap() {
+        didTapOnStopSharingLocation?()
     }
 }
 

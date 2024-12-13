@@ -9,13 +9,6 @@ import StreamChatUI
 extension StreamChatWrapper {
     // Instantiates chat client
     func setUpChat() {
-        if AppConfig.shared.demoAppConfig.isLocationAttachmentsEnabled {
-            Components.default.mixedAttachmentInjector.register(
-                .staticLocation,
-                with: LocationAttachmentViewInjector.self
-            )
-        }
-
         // Set the log level
         LogConfig.level = StreamRuntimeCheck.logLevel ?? .warning
         LogConfig.formatters = [
@@ -29,7 +22,19 @@ extension StreamChatWrapper {
         if client == nil {
             client = ChatClient(config: config)
         }
-        client?.registerAttachment(StaticLocationAttachmentPayload.self)
+
+        // Custom Attachments
+        if AppConfig.shared.demoAppConfig.isLocationAttachmentsEnabled {
+            Components.default.mixedAttachmentInjector.register(
+                .staticLocation,
+                with: LocationAttachmentViewInjector.self
+            )
+            Components.default.mixedAttachmentInjector.register(
+                .liveLocation,
+                with: LocationAttachmentViewInjector.self
+            )
+        }
+        client?.registerAttachment(LiveLocationAttachmentPayload.self)
 
         // L10N
         let localizationProvider = Appearance.default.localizationProvider

@@ -8,7 +8,7 @@ import StreamChatUI
 import UIKit
 
 class DemoComposerVC: ComposerVC {
-    private lazy var currentUserLocationProvider = CurrentUserLocationProvider()
+    private lazy var currentUserLocationProvider = CurrentUserLocationProvider.shared
 
     override var attachmentsPickerActions: [UIAlertAction] {
         var actions = super.attachmentsPickerActions
@@ -86,21 +86,34 @@ class DemoComposerVC: ComposerVC {
         }
     }
 
-    var throttler = Throttler(interval: 5)
+    var throttler = Throttler(interval: 5, broadcastLatestEvent: false)
     var messageId: MessageId?
 
     func sendInstantLiveLocation() {
-        currentUserLocationProvider.startMonitoringLocation()
-        currentUserLocationProvider.didUpdateLocation = { [weak self] location in
-            self?.throttler.execute {
+        currentUserLocationProvider.stopMonitoringLocation()
+        channelController?.stopLiveLocation { [weak self] _ in
+            self?.currentUserLocationProvider.startMonitoringLocation()
+            if let lastLocation = self?.currentUserLocationProvider.lastLocation {
                 let liveLocation = LiveLocationAttachmentPayload(
-                    latitude: location.coordinate.latitude,
-                    longitude: location.coordinate.longitude,
+                    latitude: lastLocation.coordinate.latitude,
+                    longitude: lastLocation.coordinate.longitude,
                     stoppedSharing: false
                 )
-                debugPrint("newLiveLocation: \(liveLocation)")
-                self?.channelController?.updateLiveLocation(liveLocation, messageId: self?.messageId) {
+                self?.channelController?.shareLiveLocation(liveLocation) { [weak self] in
                     self?.messageId = try? $0.get()
+                }
+            }
+            self?.currentUserLocationProvider.didUpdateLocation = { [weak self] location in
+                self?.throttler.execute {
+                    let liveLocation = LiveLocationAttachmentPayload(
+                        latitude: location.coordinate.latitude,
+                        longitude: location.coordinate.longitude,
+                        stoppedSharing: false
+                    )
+                    debugPrint("newLiveLocation: \(liveLocation)")
+                    self?.channelController?.shareLiveLocation(liveLocation) {
+                        self?.messageId = try? $0.get()
+                    }
                 }
             }
         }
@@ -137,15 +150,16 @@ class CurrentUserLocationProvider: NSObject {
     var lastLocation: CLLocation?
     var onError: ((Error) -> Void)?
 
-    init(locationManager: CLLocationManager = CLLocationManager()) {
+    private init(locationManager: CLLocationManager = CLLocationManager()) {
         self.locationManager = locationManager
         super.init()
         self.locationManager.delegate = self
     }
 
+    static let shared = CurrentUserLocationProvider()
+
     func startMonitoringLocation() {
         locationManager.allowsBackgroundLocationUpdates = true
-        locationManager.startMonitoringSignificantLocationChanges()
         requestPermission { [weak self] error in
             guard let error else { return }
             self?.onError?(error)
@@ -155,7 +169,6 @@ class CurrentUserLocationProvider: NSObject {
     func stopMonitoringLocation() {
         locationManager.allowsBackgroundLocationUpdates = false
         locationManager.stopUpdatingLocation()
-        locationManager.stopMonitoringSignificantLocationChanges()
     }
 
     func getCurrentLocation(completion: @escaping (Result<CLLocation, Error>) -> Void) {

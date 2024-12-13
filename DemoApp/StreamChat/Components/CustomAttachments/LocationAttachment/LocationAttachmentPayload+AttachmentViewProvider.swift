@@ -14,7 +14,11 @@ extension StaticLocationAttachmentPayload: AttachmentPreviewProvider {
         /// For simplicity, we are using the same view for the Composer preview,
         /// but a different one could be provided.
         let preview = LocationAttachmentSnapshotView()
-        preview.coordinate = .init(latitude: latitude, longitude: longitude)
+        preview.content = .init(
+            latitude: latitude,
+            longitude: longitude,
+            isLive: false
+        )
         return preview
     }
 }
