@@ -59,11 +59,6 @@ class MessageUpdater: Worker {
             let shouldBeHardDeleted = hard || messageDTO.isLocalOnly
             messageDTO.isHardDeleted = shouldBeHardDeleted
 
-            // If the message is a live location message, clear the channel's live location message reference.
-            if let liveLocationMessageOfChannel = messageDTO.liveLocationMessageOfChannel {
-                liveLocationMessageOfChannel.liveLocationMessage = nil
-            }
-
             if messageDTO.isLocalOnly {
                 messageDTO.type = MessageType.deleted.rawValue
                 messageDTO.deletedAt = DBDate()

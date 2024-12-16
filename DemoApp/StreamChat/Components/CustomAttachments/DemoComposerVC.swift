@@ -3,6 +3,7 @@
 //
 
 import CoreLocation
+@_spi(Experimental)
 import StreamChat
 import StreamChatUI
 import UIKit
@@ -90,31 +91,24 @@ class DemoComposerVC: ComposerVC {
     var messageId: MessageId?
 
     func sendInstantLiveLocation() {
-        currentUserLocationProvider.stopMonitoringLocation()
-        channelController?.stopLiveLocation { [weak self] _ in
-            self?.currentUserLocationProvider.startMonitoringLocation()
-            if let lastLocation = self?.currentUserLocationProvider.lastLocation {
+        currentUserLocationProvider.getCurrentLocation { [weak self] result in
+            switch result {
+            case .success(let location):
                 let liveLocation = LiveLocationAttachmentPayload(
-                    latitude: lastLocation.coordinate.latitude,
-                    longitude: lastLocation.coordinate.longitude,
+                    latitude: location.coordinate.latitude,
+                    longitude: location.coordinate.longitude,
                     stoppedSharing: false
                 )
-                self?.channelController?.shareLiveLocation(liveLocation) { [weak self] in
-                    self?.messageId = try? $0.get()
-                }
-            }
-            self?.currentUserLocationProvider.didUpdateLocation = { [weak self] location in
-                self?.throttler.execute {
-                    let liveLocation = LiveLocationAttachmentPayload(
-                        latitude: location.coordinate.latitude,
-                        longitude: location.coordinate.longitude,
-                        stoppedSharing: false
-                    )
-                    debugPrint("newLiveLocation: \(liveLocation)")
-                    self?.channelController?.shareLiveLocation(liveLocation) {
-                        self?.messageId = try? $0.get()
+                self?.channelController?.startLiveLocationSharing(liveLocation) {
+                    switch $0 {
+                    case .success(let messageId):
+                        self?.messageId = messageId
+                    case .failure(let error):
+                        print(error)
                     }
                 }
+            case .failure(let error):
+                print(error)
             }
         }
     }
