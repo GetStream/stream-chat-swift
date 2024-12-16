@@ -82,7 +82,6 @@ class MessageDTO: NSManagedObject {
     @NSManaged var quotedBy: Set<MessageDTO>
     @NSManaged var searches: Set<MessageSearchQueryDTO>
     @NSManaged var previewOfChannel: ChannelDTO?
-    @NSManaged var liveLocationMessageOfChannel: ChannelDTO?
 
     /// If the message is sent by the current user, this field
     /// contains channel reads of other channel members (excluding the current user),
@@ -585,7 +584,28 @@ class MessageDTO: NSManagedObject {
         ])
         return try load(request, context: context)
     }
-    
+
+    static func loadActiveLiveLocationMessages(
+        channelId: ChannelId?,
+        context: NSManagedObjectContext
+    ) throws -> [MessageDTO] {
+        let request = NSFetchRequest<MessageDTO>(entityName: MessageDTO.entityName)
+        MessageDTO.applyPrefetchingState(to: request)
+        request.fetchLimit = 10
+        request.sortDescriptors = [NSSortDescriptor(
+            keyPath: \MessageDTO.createdAt,
+            ascending: true
+        )]
+        var predicates: [NSPredicate] = [
+            .init(format: "ANY attachments.isActiveLocationAttachment == YES")
+        ]
+        if let channelId = channelId {
+            predicates.append(.init(format: "channel.cid == %@", channelId.rawValue))
+        }
+        request.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: predicates)
+        return try load(request, context: context)
+    }
+
     static func loadReplies(
         from fromIncludingDate: Date,
         to toIncludingDate: Date,
@@ -687,16 +707,6 @@ extension NSManagedObjectContext: MessageDatabaseSession {
         message.reactionScores = [:]
         message.reactionCounts = [:]
         message.reactionGroups = []
-
-        if let liveLocationAttachment = attachments.first(where: { $0.type == .liveLocation }),
-           let payload = liveLocationAttachment.payload as? LiveLocationAttachmentPayload {
-            let stoppedSharing = payload.stoppedSharing ?? false
-            if stoppedSharing {
-                channelDTO.liveLocationMessage = nil
-            } else {
-                channelDTO.liveLocationMessage = message
-            }
-        }
 
         // Message type
         if parentMessageId != nil {
@@ -884,16 +894,6 @@ extension NSManagedObjectContext: MessageDatabaseSession {
             }
         )
         dto.attachments = attachments
-
-        if let liveLocationAttachment = attachments.first(where: { $0.attachmentType == .liveLocation }),
-           let liveLocationAttachmentPayload = liveLocationAttachment.asAnyModel()?.attachment(payloadType: LiveLocationAttachmentPayload.self) {
-            let stoppedSharing = liveLocationAttachmentPayload.stoppedSharing ?? false
-            if stoppedSharing {
-                channelDTO.liveLocationMessage = nil
-            } else {
-                channelDTO.liveLocationMessage = dto
-            }
-        }
 
         if let poll = payload.poll {
             let pollDto = try savePoll(payload: poll, cache: cache)

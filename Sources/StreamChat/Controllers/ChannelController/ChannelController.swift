@@ -884,59 +884,18 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
         }
     }
 
-    /// Stops sharing the live location message in the channel.
-    public func stopLiveLocation(completion: ((Result<MessageId, Error>) -> Void)? = nil) {
-        guard let cid = cid, isChannelAlreadyCreated else {
-            channelModificationFailed { error in
-                completion?(.failure(error ?? ClientError.Unknown()))
-            }
-            return
-        }
-
-        client.databaseContainer.write { session in
-            let channel = session.channel(cid: cid)
-            guard let message = try channel?.liveLocationMessage?.asModel(),
-                  let liveLocation = message.attachments(payloadType: LiveLocationAttachmentPayload.self).first else {
-                completion?(.failure(ClientError("No live location message found")))
-                return
-            }
-
-            channel?.liveLocationMessage = nil
-
-            let liveLocationPayload = LiveLocationAttachmentPayload(
-                latitude: liveLocation.latitude,
-                longitude: liveLocation.longitude,
-                stoppedSharing: true
-            )
-
-            self.messageUpdater.updatePartialMessage(
-                messageId: message.id,
-                attachments: [.init(payload: liveLocationPayload)]
-            ) { result in
-                self.callback {
-                    completion?(result.map(\.id))
-                }
-            }
-        } completion: { error in
-            if let error {
-                self.callback {
-                    completion?(.failure(error))
-                }
-            }
-        }
-    }
-
-    /// Shares a live location message to the channel.
+    /// Starts a live location sharing message in the channel.
     ///
-    /// If there is already a live location message in the channel, it will update the existing message.
-    /// Otherwise, it will create a new message.
+    /// If there is already an active live location sharing message in the this channel,
+    /// it will fail with an error.
     ///
     /// - Parameters:
     ///  - location: The static location payload.
     ///  - text: The text of the message.
-    ///  - extraData:  Additional extra data of the message object.
-    ///  - completion: Called when saving the message to the local DB finishes, not when the message reaches the server.
-    public func shareLiveLocation(
+    ///  - extraData: Additional extra data of the message object.
+    ///  - completion: Called when saving the message to the local DB finishes,
+    ///  not when the message reaches the server.
+    public func startLiveLocationSharing(
         _ location: LiveLocationAttachmentPayload,
         text: String? = nil,
         extraData: [String: RawJSON] = [:],
@@ -951,23 +910,16 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
             return
         }
 
-        client.databaseContainer.write { session in
-            let channel = session.channel(cid: cid)
-            if let message = try channel?.liveLocationMessage?.asModel() {
-                self.messageUpdater.updatePartialMessage(
-                    messageId: message.id,
-                    text: text,
-                    attachments: [.init(payload: location)],
-                    extraData: extraData
-                ) { result in
-                    self.callback {
-                        completion?(result.map(\.id))
-                    }
+        client.messageRepository.getActiveLiveLocationMessages(for: cid) { [weak self] result in
+            if let message = try? result.get().first {
+                self?.callback {
+                    // TODO: Create error for this
+                    completion?(.failure(ClientError("Active Location already exists for this channel. \(message.id)")))
                 }
                 return
             }
 
-            self.updater.createNewMessage(
+            self?.updater.createNewMessage(
                 in: cid,
                 messageId: nil,
                 text: text ?? "",
@@ -987,14 +939,54 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
                 extraData: extraData
             ) { result in
                 if let newMessage = try? result.get() {
-                    self.client.eventNotificationCenter.process(NewMessagePendingEvent(message: newMessage))
+                    self?.client.eventNotificationCenter.process(NewMessagePendingEvent(message: newMessage))
                 }
-                self.callback {
+                self?.callback {
                     completion?(result.map(\.id))
                 }
             }
-        } completion: { error in
-            if let error {
+        }
+    }
+
+    /// Stops sharing the live location message in the channel.
+    public func stopLiveLocation(completion: ((Result<MessageId, Error>) -> Void)? = nil) {
+        guard let cid = cid, isChannelAlreadyCreated else {
+            channelModificationFailed { error in
+                completion?(.failure(error ?? ClientError.Unknown()))
+            }
+            return
+        }
+
+        client.messageRepository.getActiveLiveLocationMessages(for: cid) { result in
+            switch result {
+            case let .success(messages):
+                guard let message = messages.first,
+                      let liveLocation = message.attachments(
+                          payloadType: LiveLocationAttachmentPayload.self
+                      ).first
+                else {
+                    self.callback {
+                        // TODO: Create error for this
+                        completion?(.failure(ClientError("No live location message found")))
+                    }
+                    return
+                }
+
+                let liveLocationPayload = LiveLocationAttachmentPayload(
+                    latitude: liveLocation.latitude,
+                    longitude: liveLocation.longitude,
+                    stoppedSharing: true
+                )
+
+                self.messageUpdater.updatePartialMessage(
+                    messageId: message.id,
+                    attachments: [.init(payload: liveLocationPayload)]
+                ) { result in
+                    self.callback {
+                        completion?(result.map(\.id))
+                    }
+                }
+            case let .failure(error):
                 self.callback {
                     completion?(.failure(error))
                 }

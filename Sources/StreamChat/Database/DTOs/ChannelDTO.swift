@@ -66,7 +66,6 @@ class ChannelDTO: NSManagedObject {
     @NSManaged var watchers: Set<UserDTO>
     @NSManaged var memberListQueries: Set<ChannelMemberListQueryDTO>
     @NSManaged var previewMessage: MessageDTO?
-    @NSManaged var liveLocationMessage: MessageDTO?
 
     /// If the current channel is muted by the current user, `mute` contains details.
     @NSManaged var mute: ChannelMuteDTO?
