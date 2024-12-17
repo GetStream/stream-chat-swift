@@ -305,6 +305,45 @@ public class ChatMessageController: DataController, DelegateCallable, DataStoreP
         }
     }
 
+    /// Updates the message's live location attachment if it has one.
+    ///
+    /// - Parameters:
+    ///  - location: The new location for the live location attachment.
+    ///  - completion: Called when the server updates the message.
+    public func updateLiveLocation(
+        _ location: LocationAttachmentInfo,
+        completion: ((Result<ChatMessage, Error>) -> Void)? = nil
+    ) {
+        guard let locationAttachment = message?.liveLocationAttachments.first else {
+            completion?(.failure(ClientError.MessageDoesNotHaveLiveLocationAttachment()))
+            return
+        }
+
+        guard locationAttachment.stoppedSharing == false else {
+            completion?(.failure(ClientError.MessageLiveLocationAlreadyStopped()))
+            return
+        }
+
+        let liveLocationPayload = LiveLocationAttachmentPayload(
+            latitude: location.latitude,
+            longitude: location.longitude,
+            stoppedSharing: false
+        )
+
+        messageUpdater.updatePartialMessage(
+            messageId: messageId,
+            text: nil,
+            attachments: [
+                .init(payload: liveLocationPayload)
+            ],
+            extraData: nil
+        ) { result in
+            self.callback {
+                completion?(result)
+            }
+        }
+    }
+
     /// Deletes the message this controller manages.
     ///
     /// - Parameters:
@@ -997,10 +1036,22 @@ public extension ChatMessageController {
     }
 }
 
-extension ClientError {
+public extension ClientError {
     final class MessageEmptyReplies: ClientError {
         override public var localizedDescription: String {
             "You can't load previous replies when there is no replies for the message."
+        }
+    }
+
+    final class MessageDoesNotHaveLiveLocationAttachment: ClientError {
+        override public var localizedDescription: String {
+            "The message does not have a live location attachment."
+        }
+    }
+
+    final class MessageLiveLocationAlreadyStopped: ClientError {
+        override public var localizedDescription: String {
+            "The live location sharing has already been stopped."
         }
     }
 }

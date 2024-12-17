@@ -230,6 +230,32 @@ public extension CurrentChatUserController {
         }
     }
 
+    /// Gets the current user messages which have active location sharing.
+    func getAllActiveLiveLocationMessages(completion: @escaping (Result<[ChatMessage], Error>) -> Void) {
+        guard let currentUserId = client.currentUserId else {
+            completion(.failure(ClientError.CurrentUserDoesNotExist()))
+            return
+        }
+
+        client.messageRepository.getAllActiveLiveLocationMessages { result in
+            self.callback {
+                completion(result)
+            }
+        }
+    }
+
+    /// Updates the current user's active live location sharing messages.
+    func updateLiveLocation(_ location: LocationAttachmentInfo) {
+        client.messageRepository.getAllActiveLiveLocationMessages { [weak self] result in
+            guard let messages = try? result.get() else { return }
+            for message in messages {
+                guard let cid = message.cid else { continue }
+                let messageController = self?.client.messageController(cid: cid, messageId: message.id)
+                messageController?.updateLiveLocation(latitude: location.latitude, longitude: location.longitude)
+            }
+        }
+    }
+
     /// Fetches the most updated devices and syncs with the local database.
     /// - Parameter completion: Called when the devices are synced successfully, or with error.
     func synchronizeDevices(completion: ((Error?) -> Void)? = nil) {
