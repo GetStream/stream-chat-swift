@@ -1275,20 +1275,12 @@ extension MessageDTO {
 
     /// Snapshots the current state of `MessageDTO` and returns its representation for the use in API calls.
     func asRequestBody() -> MessageRequestBody {
-        var decodedExtraData: [String: RawJSON]
-
-        if let extraData = self.extraData {
-            do {
-                decodedExtraData = try JSONDecoder.default.decode([String: RawJSON].self, from: extraData)
-            } catch {
-                log.assertionFailure(
-                    "Failed decoding saved extra data with error: \(error). This should never happen because"
-                        + "the extra data must be a valid JSON to be saved."
-                )
-                decodedExtraData = [:]
-            }
-        } else {
-            decodedExtraData = [:]
+        let extraData: [String: RawJSON]
+        do {
+            extraData = try JSONDecoder.stream.decodeCachedRawJSON(from: self.extraData)
+        } catch {
+            log.assertionFailure("Failed decoding saved extra data with error: \(error). This should never happen because the extra data must be a valid JSON to be saved.")
+            extraData = [:]
         }
 
         let uploadedAttachments: [MessageAttachmentPayload] = attachments
@@ -1315,7 +1307,7 @@ extension MessageDTO {
             pinned: pinned,
             pinExpires: pinExpires?.bridgeDate,
             pollId: poll?.id,
-            extraData: decodedExtraData
+            extraData: extraData
         )
     }
 
@@ -1365,17 +1357,12 @@ private extension ChatMessage {
         moderationDetails = dto.moderationDetails.map { MessageModerationDetails(fromDTO: $0) }
         textUpdatedAt = dto.textUpdatedAt?.bridgeDate
 
-        if let extraData = dto.extraData, !extraData.isEmpty {
-            do {
-                self.extraData = try JSONDecoder.default.decode([String: RawJSON].self, from: extraData)
-            } catch {
-                log
-                    .error(
-                        "Failed to decode extra data for Message with id: <\(dto.id)>, using default value instead. Error: \(error)"
-                    )
-                self.extraData = [:]
-            }
-        } else {
+        do {
+            extraData = try JSONDecoder.stream.decodeCachedRawJSON(from: dto.extraData)
+        } catch {
+            log.error(
+                "Failed to decode extra data for Message with id: <\(dto.id)>, using default value instead. Error: \(error)"
+            )
             extraData = [:]
         }
 
