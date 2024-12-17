@@ -193,7 +193,13 @@ public class ChatMessageController: DataController, DelegateCallable, DataStoreP
     ///   - cid: The channel identifier the message belongs to.
     ///   - messageId: The message identifier.
     ///   - environment: The source of internal dependencies.
-    init(client: ChatClient, cid: ChannelId, messageId: MessageId, replyPaginationHandler: MessagesPaginationStateHandling, environment: Environment = .init()) {
+    init(
+        client: ChatClient,
+        cid: ChannelId,
+        messageId: MessageId,
+        replyPaginationHandler: MessagesPaginationStateHandling,
+        environment: Environment = .init()
+    ) {
         self.client = client
         self.cid = cid
         self.messageId = messageId
@@ -243,15 +249,15 @@ public class ChatMessageController: DataController, DelegateCallable, DataStoreP
 
     // MARK: - Actions
 
-    /// Edits the message this controller manages with the provided values.
+    /// Edits the message locally, changes the message state to pending and
+    /// schedules it to eventually be published to the server.
     ///
     /// - Parameters:
     ///   - text: The updated message text.
     ///   - skipEnrichUrl: If true, the url preview won't be attached to the message.
     ///   - attachments: An array of the attachments for the message.
     ///   - extraData: Custom extra data. When `nil` is passed the message custom fields stay the same. Equals `nil` by default.
-    ///   - completion: The completion. Will be called on a **callbackQueue** when the network request is finished.
-    ///                 If request fails, the completion will be called with an error.
+    ///   - completion: Called when the message is edited locally.
     public func editMessage(
         text: String,
         skipEnrichUrl: Bool = false,
@@ -268,6 +274,33 @@ public class ChatMessageController: DataController, DelegateCallable, DataStoreP
         ) { result in
             self.callback {
                 completion?(result.error)
+            }
+        }
+    }
+
+    /// Updates the message partially and submits the changes directly to the server.
+    ///
+    /// **Note:** The `message.localState` is not changed in this method call.
+    ///
+    /// - Parameters:
+    ///   - text: The text in case the message
+    ///   - attachments: The attachments to be updated.
+    ///   - extraData: The additional data to be updated.
+    ///   - completion: Called when the server updates the message.
+    public func updateMessage(
+        text: String? = nil,
+        attachments: [AnyAttachmentPayload]? = nil,
+        extraData: [String: RawJSON]? = nil,
+        completion: ((Result<ChatMessage, Error>) -> Void)? = nil
+    ) {
+        messageUpdater.updatePartialMessage(
+            messageId: messageId,
+            text: text,
+            attachments: attachments,
+            extraData: extraData
+        ) { result in
+            self.callback {
+                completion?(result)
             }
         }
     }
