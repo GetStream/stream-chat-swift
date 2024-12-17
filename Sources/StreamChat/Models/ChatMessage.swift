@@ -317,6 +317,16 @@ public extension ChatMessage {
         attachments(payloadType: VoiceRecordingAttachmentPayload.self)
     }
 
+    /// Returns the attachments of `.staticLocation` type.
+    var staticLocationAttachments: [ChatMessageStaticLocationAttachment] {
+        attachments(payloadType: StaticLocationAttachmentPayload.self)
+    }
+
+    /// Returns the attachments of `.liveLocation` type.
+    var liveLocationAttachments: [ChatMessageLiveLocationAttachment] {
+        attachments(payloadType: LiveLocationAttachmentPayload.self)
+    }
+
     /// Returns attachment for the given identifier.
     /// - Parameter id: Attachment identifier.
     /// - Returns: A type-erased attachment.

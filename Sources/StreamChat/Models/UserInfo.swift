@@ -4,7 +4,7 @@
 
 import Foundation
 
-/// A model containing user info that's used to connect to chat's backend
+/// The user information used to connect the user to chat.
 public struct UserInfo {
     /// The id of the user.
     public let id: UserId
