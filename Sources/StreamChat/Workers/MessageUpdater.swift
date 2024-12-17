@@ -207,6 +207,7 @@ class MessageUpdater: Worker {
                 messageId: messageId,
                 request: .init(
                     set: .init(
+                        text: text,
                         extraData: extraData,
                         attachments: attachmentPayloads
                     )

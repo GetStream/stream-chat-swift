@@ -117,10 +117,12 @@ struct MessagePartialUpdateRequest: Encodable {
     /// The available message properties that can be updated.
     struct SetProperties: Encodable {
         var pinned: Bool?
+        var text: String?
         var extraData: [String: RawJSON]?
         var attachments: [MessageAttachmentPayload]?
 
         enum CodingKeys: String, CodingKey {
+            case text
             case pinned
             case extraData
             case attachments
@@ -128,6 +130,7 @@ struct MessagePartialUpdateRequest: Encodable {
 
         func encode(to encoder: any Encoder) throws {
             var container = encoder.container(keyedBy: CodingKeys.self)
+            try container.encodeIfPresent(text, forKey: .text)
             try container.encodeIfPresent(pinned, forKey: .pinned)
             try container.encodeIfPresent(attachments, forKey: .attachments)
             try extraData?.encode(to: encoder)
