@@ -24,6 +24,14 @@ public extension FilterKey where Scope: AnyMemberListFilterScope {
     /// Filter key matching the name of the user
     /// Supported operators: `equal`, `notEqual`, `in`, `notIn`, `autocomplete`, `query`
     static var name: FilterKey<Scope, String> { "name" }
+    
+    /// Filter key matching the email of the user
+    /// Supported operators: `equal`, `in`, `autocomplete`
+    static var email: FilterKey<Scope, String> { "user.email" }
+    
+    /// Filter key matching the role of the user
+    /// Supported operators: `equal`
+    static var role: FilterKey<Scope, MemberRole> { "channel_role" }
 
     /// Filter key matching the banned status
     /// Supported operators: `equal`

@@ -159,6 +159,18 @@ public extension MemberRole {
             self = MemberRole(rawValue: value)
         }
     }
+    
+    func encode(to encoder: any Encoder) throws {
+        var container = encoder.singleValueContainer()
+        switch self {
+        case .member:
+            try container.encode("channel_member")
+        case .moderator:
+            try container.encode("channel_moderator")
+        default:
+            try container.encode(rawValue)
+        }
+    }
 }
 
 /// The member information when adding a member to a channel.

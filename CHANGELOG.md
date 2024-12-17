@@ -18,6 +18,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   - Add `ChannelListSortingKey.pinnedAt`
   - Add `ChatChannel.membership.pinnedAt`
   - Add `ChatChannel.isPinned`
+- Add member list filtering keys: `FilterKey.role` (`channel_role`) and `FilterKey.email` (`user.email`) [#3535](https://github.com/GetStream/stream-chat-swift/pull/3535)
+- Add member list sorting key: `ChannelMemberListSortingKey.role` (`channel_role`) [#3535](https://github.com/GetStream/stream-chat-swift/pull/3535)
 ### 🐞 Fixed
 - End background task before starting a new one [#3528](https://github.com/GetStream/stream-chat-swift/pull/3528)
 
