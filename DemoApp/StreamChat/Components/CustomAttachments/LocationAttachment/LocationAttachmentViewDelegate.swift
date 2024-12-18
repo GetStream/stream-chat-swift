@@ -22,7 +22,8 @@ extension DemoChatMessageListVC: LocationAttachmentViewDelegate {
     }
 
     func didTapOnStopSharingLocation(_ attachment: ChatMessageLiveLocationAttachment) {
-        CurrentUserLocationProvider.shared.stopMonitoringLocation()
-        client.channelController(for: attachment.id.cid).stopLiveLocation()
+        client
+            .channelController(for: attachment.id.cid)
+            .stopLiveLocation()
     }
 }
