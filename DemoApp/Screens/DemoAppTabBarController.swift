@@ -88,4 +88,15 @@ class DemoAppTabBarController: UITabBarController, CurrentChatUserControllerDele
         let totalUnreadBadge = unreadCount.channels + unreadCount.threads
         UIApplication.shared.applicationIconBadgeNumber = totalUnreadBadge
     }
+
+    func currentUserController(
+        _ controller: CurrentChatUserController,
+        didChangeActiveLiveLocationMessages messages: [ChatMessage]
+    ) {
+        if messages.isEmpty {
+            locationProvider.stopMonitoringLocation()
+        } else {
+            locationProvider.startMonitoringLocation()
+        }
+    }
 }
