@@ -965,7 +965,7 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
     }
 
     /// Stops sharing the live location message in the channel.
-    public func stopLiveLocation(completion: ((Result<MessageId, Error>) -> Void)? = nil) {
+    public func stopLiveLocationSharing(completion: ((Result<MessageId, Error>) -> Void)? = nil) {
         guard let cid = cid, isChannelAlreadyCreated else {
             channelModificationFailed { error in
                 completion?(.failure(error ?? ClientError.Unknown()))

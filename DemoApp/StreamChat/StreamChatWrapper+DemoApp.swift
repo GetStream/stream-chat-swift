@@ -34,7 +34,6 @@ extension StreamChatWrapper {
                 with: LocationAttachmentViewInjector.self
             )
         }
-        client?.registerAttachment(LiveLocationAttachmentPayload.self)
 
         // L10N
         let localizationProvider = Appearance.default.localizationProvider
