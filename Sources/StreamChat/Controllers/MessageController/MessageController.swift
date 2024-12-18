@@ -2,6 +2,7 @@
 // Copyright © 2025 Stream.io Inc. All rights reserved.
 //
 
+import Combine
 import CoreData
 import Foundation
 
@@ -183,8 +184,14 @@ public class ChatMessageController: DataController, DelegateCallable, DataStoreP
 
     /// The worker used to fetch the remote data and communicate with servers.
     private let messageUpdater: MessageUpdater
+
+    /// The polls repository to fetch polls data.
     private let pollsRepository: PollsRepository
+
+    /// The replies pagination hdler.
     private let replyPaginationHandler: MessagesPaginationStateHandling
+
+    /// The current state of the pagination state.
     private var replyPaginationState: MessagesPaginationState { replyPaginationHandler.state }
 
     /// Creates a new `MessageControllerGeneric`.

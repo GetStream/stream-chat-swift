@@ -9,8 +9,6 @@ import UIKit
 
 class DemoAppTabBarController: UITabBarController, CurrentChatUserControllerDelegate {
     private var locationProvider = LocationProvider.shared
-    private var locationUpdatesPublisher = PassthroughSubject<LocationAttachmentInfo, Never>()
-    private var cancellables = Set<AnyCancellable>()
 
     let channelListVC: UIViewController
     let threadListVC: UIViewController
@@ -68,18 +66,12 @@ class DemoAppTabBarController: UITabBarController, CurrentChatUserControllerDele
         viewControllers = [channelListVC, threadListVC]
 
         locationProvider.didUpdateLocation = { [weak self] location in
-            self?.locationUpdatesPublisher.send(LocationAttachmentInfo(
+            let newLocation = LocationAttachmentInfo(
                 latitude: location.coordinate.latitude,
                 longitude: location.coordinate.longitude
-            ))
+            )
+            self?.currentUserController.updateLiveLocation(newLocation)
         }
-        locationUpdatesPublisher
-            .throttle(for: 5, scheduler: DispatchQueue.global(), latest: true)
-            .sink { [weak self] newLocation in
-                debugPrint("Location: Sending new location (\(newLocation.latitude), \(newLocation.longitude) to the server.")
-                self?.currentUserController.updateLiveLocation(newLocation)
-            }
-            .store(in: &cancellables)
     }
 
     func currentUserController(_ controller: CurrentChatUserController, didChangeCurrentUserUnreadCount: UnreadCount) {
@@ -93,12 +85,30 @@ class DemoAppTabBarController: UITabBarController, CurrentChatUserControllerDele
         _ controller: CurrentChatUserController,
         activeLiveLocationMessages messages: [ChatMessage]
     ) {
-        debugPrint("Location: Started sharing live location.")
+        debugPrint("[Location] Started sharing live location.")
         locationProvider.startMonitoringLocation()
     }
 
     func currentUserControllerDidStopSharingLiveLocation(_ controller: CurrentChatUserController) {
-        debugPrint("Location: Stopped sharing live location.")
+        debugPrint("[Location] Stopped sharing live location.")
         locationProvider.stopMonitoringLocation()
+    }
+
+    func currentUserController(
+        _ controller: CurrentChatUserController,
+        didChangeActiveLiveLocationMessages messages: [ChatMessage]
+    ) {
+        guard !messages.isEmpty else {
+            return
+        }
+        
+        let locations: [String] = messages.compactMap {
+            guard let locationAttachment = $0.liveLocationAttachments.first else {
+                return nil
+            }
+            return "(\(locationAttachment.latitude), \(locationAttachment.longitude))"
+        }
+
+        debugPrint("[Location] Updated live locations to the server: \(locations)")
     }
 }

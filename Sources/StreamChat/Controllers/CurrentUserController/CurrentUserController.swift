@@ -58,22 +58,7 @@ public class CurrentChatUserController: DataController, DelegateCallable, DataSt
             }
         }
 
-    private var isSharingLiveLocation = false {
-        didSet {
-            if isSharingLiveLocation == oldValue {
-                return
-            }
-            if isSharingLiveLocation {
-                delegate?.currentUserControllerDidStartSharingLiveLocation(
-                    self,
-                    activeLiveLocationMessages: Array(activeLiveLocationMessagesObserver.items)
-                )
-            } else {
-                delegate?.currentUserControllerDidStopSharingLiveLocation(self)
-            }
-        }
-    }
-
+    /// The observer for the active live location messages.
     private lazy var activeLiveLocationMessagesObserver: BackgroundListDatabaseObserver<ChatMessage, MessageDTO> = {
         let observer = createActiveLiveLocationMessagesObserver()
         observer.onDidChange = { [weak self] _ in
@@ -86,6 +71,24 @@ public class CurrentChatUserController: DataController, DelegateCallable, DataSt
         }
         return observer
     }()
+
+    /// A flag to indicate whether the current user is sharing his live location.
+    private var isSharingLiveLocation = false {
+        didSet {
+            if isSharingLiveLocation == oldValue {
+                return
+            }
+            if isSharingLiveLocation {
+                let messages = Array(activeLiveLocationMessagesObserver.items)
+                delegate?.currentUserControllerDidStartSharingLiveLocation(self, activeLiveLocationMessages: messages)
+            } else {
+                delegate?.currentUserControllerDidStopSharingLiveLocation(self)
+            }
+        }
+    }
+
+    /// The throttler for limiting the frequency of live location updates.
+    private var locationUpdatesThrottler = Throttler(interval: 5, broadcastLatestEvent: true)
 
     /// A type-erased delegate.
     var multicastDelegate: MulticastDelegate<CurrentChatUserControllerDelegate> = .init()
@@ -261,12 +264,19 @@ public extension CurrentChatUserController {
     }
 
     /// Updates the location of all the active live location messages for the current user.
+    ///
+    /// The updates are throttled to avoid sending too many requests.
+    /// The throttling interval is set to 5 seconds.
+    ///
+    /// - Parameter location: The new location to be updated.
     func updateLiveLocation(_ location: LocationAttachmentInfo) {
-        let messages = activeLiveLocationMessagesObserver.items
-        for message in messages {
-            guard let cid = message.cid else { continue }
-            let messageController = client.messageController(cid: cid, messageId: message.id)
-            messageController.updateLiveLocation(location)
+        locationUpdatesThrottler.execute { [weak self] in
+            let messages = self?.activeLiveLocationMessagesObserver.items ?? []
+            for message in messages {
+                guard let cid = message.cid else { continue }
+                let messageController = self?.client.messageController(cid: cid, messageId: message.id)
+                messageController?.updateLiveLocation(location)
+            }
         }
     }
 
