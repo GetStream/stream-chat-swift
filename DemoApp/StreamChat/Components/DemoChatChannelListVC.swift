@@ -65,6 +65,10 @@ final class DemoChatChannelListVC: ChatChannelListVC {
         .containMembers(userIds: [currentUserId]),
         .equal(.pinned, to: true)
     ]))
+    
+    lazy var equalMembersQuery: ChannelListQuery = .init(filter:
+        .equal(.members, values: [currentUserId, "r2-d2"])
+    )
 
     var demoRouter: DemoChatChannelListRouter? {
         router as? DemoChatChannelListRouter
@@ -170,6 +174,14 @@ final class DemoChatChannelListVC: ChatChannelListVC {
             self?.title = "Pinned Channels"
             self?.setPinnedChannelsQuery()
         }
+        
+        let equalMembersAction = UIAlertAction(
+            title: "R2-D2 Channels (Equal Members)",
+            style: .default
+        ) { [weak self] _ in
+            self?.title = "R2-D2 Channels (Equal Members)"
+            self?.setEqualMembersChannelsQuery()
+        }
 
         presentAlert(
             title: "Filter Channels",
@@ -180,7 +192,8 @@ final class DemoChatChannelListVC: ChatChannelListVC {
                 mutedChannelsAction,
                 coolChannelsAction,
                 pinnedChannelsAction,
-                archivedChannelsAction
+                archivedChannelsAction,
+                equalMembersAction
             ].sorted(by: { $0.title ?? "" < $1.title ?? "" }),
             preferredStyle: .actionSheet,
             sourceView: filterChannelsButton
@@ -215,6 +228,10 @@ final class DemoChatChannelListVC: ChatChannelListVC {
     
     func setPinnedChannelsQuery() {
         replaceQuery(pinnedChannelsQuery)
+    }
+    
+    func setEqualMembersChannelsQuery() {
+        replaceQuery(equalMembersQuery)
     }
 
     func setInitialChannelsQuery() {
