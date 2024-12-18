@@ -1822,6 +1822,8 @@
 		ADFCA5B32D121EB8000F515F /* LocationAttachmentInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADFCA5B22D121EAF000F515F /* LocationAttachmentInfo.swift */; };
 		ADFCA5B42D121EB8000F515F /* LocationAttachmentInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADFCA5B22D121EAF000F515F /* LocationAttachmentInfo.swift */; };
 		ADFCA5B72D1232B3000F515F /* LocationProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADFCA5B62D1232A7000F515F /* LocationProvider.swift */; };
+		ADFCA5B92D1378E2000F515F /* Throttler.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADFCA5B82D1378E2000F515F /* Throttler.swift */; };
+		ADFCA5BA2D1378E2000F515F /* Throttler.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADFCA5B82D1378E2000F515F /* Throttler.swift */; };
 		BCE4831434E78C9538FA73F8 /* JSONDecoder_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCE48068C1C02C0689BEB64E /* JSONDecoder_Tests.swift */; };
 		BCE484BA1EE03FF336034250 /* FilterEncoding_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCE483AC99F58A9034EA2ECE /* FilterEncoding_Tests.swift */; };
 		BCE48639FD7B6B05CD63A6AF /* FilterDecoding_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCE4862E2C4943998F0DCBD9 /* FilterDecoding_Tests.swift */; };
@@ -2313,8 +2315,6 @@
 		C121EC612746AC8C00023E4C /* StreamChatUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 790881FD25432B7200896F03 /* StreamChatUI.framework */; platformFilter = ios; };
 		C121EC622746AC8C00023E4C /* StreamChatUI.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 790881FD25432B7200896F03 /* StreamChatUI.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		C121EC662746AD0E00023E4C /* StreamChat.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 799C941B247D2F80001F1104 /* StreamChat.framework */; };
-		C12297D32AC57A3200C5FF04 /* Throttler.swift in Sources */ = {isa = PBXBuildFile; fileRef = C12297D22AC57A3200C5FF04 /* Throttler.swift */; };
-		C12297D42AC57A3200C5FF04 /* Throttler.swift in Sources */ = {isa = PBXBuildFile; fileRef = C12297D22AC57A3200C5FF04 /* Throttler.swift */; };
 		C12297D62AC57F7C00C5FF04 /* ChatMessage+Equatable_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C12297D52AC57F7C00C5FF04 /* ChatMessage+Equatable_Tests.swift */; };
 		C122B8812A02645200D27F41 /* ChannelReadPayload_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C122B8802A02645200D27F41 /* ChannelReadPayload_Tests.swift */; };
 		C12D0A6028FD59B60099895A /* AuthenticationRepository_Mock.swift in Sources */ = {isa = PBXBuildFile; fileRef = C12D0A5F28FD59B60099895A /* AuthenticationRepository_Mock.swift */; };
@@ -4479,6 +4479,7 @@
 		ADFA09C726A99C71002A6EFA /* ChatThreadHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatThreadHeaderView.swift; sourceTree = "<group>"; };
 		ADFCA5B22D121EAF000F515F /* LocationAttachmentInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationAttachmentInfo.swift; sourceTree = "<group>"; };
 		ADFCA5B62D1232A7000F515F /* LocationProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationProvider.swift; sourceTree = "<group>"; };
+		ADFCA5B82D1378E2000F515F /* Throttler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Throttler.swift; sourceTree = "<group>"; };
 		BCE48068C1C02C0689BEB64E /* JSONDecoder_Tests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JSONDecoder_Tests.swift; sourceTree = "<group>"; };
 		BCE483AC99F58A9034EA2ECE /* FilterEncoding_Tests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FilterEncoding_Tests.swift; sourceTree = "<group>"; };
 		BCE4862E2C4943998F0DCBD9 /* FilterDecoding_Tests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FilterDecoding_Tests.swift; sourceTree = "<group>"; };
@@ -4516,7 +4517,6 @@
 		C11BAA4C2907EC7B004C5EA4 /* AuthenticationRepository_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthenticationRepository_Tests.swift; sourceTree = "<group>"; };
 		C121E758274543D000023E4C /* libStreamChat.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libStreamChat.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		C121EA2F2746A19400023E4C /* libStreamChatUI.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libStreamChatUI.a; sourceTree = BUILT_PRODUCTS_DIR; };
-		C12297D22AC57A3200C5FF04 /* Throttler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Throttler.swift; sourceTree = "<group>"; };
 		C12297D52AC57F7C00C5FF04 /* ChatMessage+Equatable_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ChatMessage+Equatable_Tests.swift"; sourceTree = "<group>"; };
 		C122B8802A02645200D27F41 /* ChannelReadPayload_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelReadPayload_Tests.swift; sourceTree = "<group>"; };
 		C12D0A5F28FD59B60099895A /* AuthenticationRepository_Mock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthenticationRepository_Mock.swift; sourceTree = "<group>"; };
@@ -5620,6 +5620,7 @@
 				792A4F3D247FFDE700EAF71D /* Codable+Extensions.swift */,
 				CF6E489E282341F2008416DC /* CountdownTracker.swift */,
 				792A4F3E247FFDE700EAF71D /* Data+Gzip.swift */,
+				ADFCA5B82D1378E2000F515F /* Throttler.swift */,
 				40789D3B29F6AD9C0018C2BB /* Debouncer.swift */,
 				88EA9AD725470F6A007EE76B /* Dictionary+Extensions.swift */,
 				84CF9C72274D473D00BCDE2D /* EventBatcher.swift */,
@@ -6350,7 +6351,6 @@
 				ACA3C98526CA23F300EB8B07 /* DateUtils.swift */,
 				79F691B12604C10A000AE89B /* SystemEnvironment.swift */,
 				CF7B2A2528BEAA93006BE124 /* TextViewMentionedUsersHandler.swift */,
-				C12297D22AC57A3200C5FF04 /* Throttler.swift */,
 				AD169DEC2C9B112B00F58FAC /* KeyboardHandler */,
 				AD95FD0F28F9B72200DBDF41 /* Extensions */,
 				ACCA772826C40C7A007AE2ED /* ImageLoading */,
@@ -10794,7 +10794,6 @@
 				C1FC2F7D27416E150062530F /* ImageRequest.swift in Sources */,
 				79205857264C2D6C002B145B /* TitleContainerView.swift in Sources */,
 				AD793F49270B767500B05456 /* ChatMessageReactionAuthorsVC.swift in Sources */,
-				C12297D32AC57A3200C5FF04 /* Throttler.swift in Sources */,
 				C1FC2F7527416E150062530F /* Operation.swift in Sources */,
 				AD447443263AC6A10030E583 /* ChatMentionSuggestionView.swift in Sources */,
 				ADCB578728A42D7700B81AE8 /* DifferentiableSection.swift in Sources */,
@@ -11383,6 +11382,7 @@
 				40789D1329F6AC500018C2BB /* AudioPlaybackContext.swift in Sources */,
 				22692C9725D1841E007C41D0 /* ChatMessageFileAttachment.swift in Sources */,
 				DA8407062524F84F005A0F62 /* UserListQuery.swift in Sources */,
+				ADFCA5BA2D1378E2000F515F /* Throttler.swift in Sources */,
 				4F97F2702BA86491001C4D66 /* UserSearchState.swift in Sources */,
 				DBF17AE825D48865004517B3 /* BackgroundTaskScheduler.swift in Sources */,
 				79280F4F2485308100CDEB89 /* DataController.swift in Sources */,
@@ -12316,6 +12316,7 @@
 				C121E834274544AD00023E4C /* UserPayloads.swift in Sources */,
 				C121E835274544AD00023E4C /* CurrentUserPayloads.swift in Sources */,
 				C121E836274544AD00023E4C /* ChannelCodingKeys.swift in Sources */,
+				ADFCA5B92D1378E2000F515F /* Throttler.swift in Sources */,
 				4042969629FC092F0089126D /* StreamAudioWaveformAnalyser_Tests.swift in Sources */,
 				404296EA2A011AC20089126D /* AudioSessionProtocol.swift in Sources */,
 				40789D2C29F6AC500018C2BB /* AudioRecordingContext.swift in Sources */,
@@ -12742,7 +12743,6 @@
 				C121EB942746A1E800023E4C /* ChatCommandSuggestionCollectionViewCell.swift in Sources */,
 				AD7EFDAC2C78C0B900625FC5 /* PollCommentListItemCell.swift in Sources */,
 				40824D4A2A1271EF003B61FD /* PlayPauseButton_Tests.swift in Sources */,
-				C12297D42AC57A3200C5FF04 /* Throttler.swift in Sources */,
 				C121EB952746A1E800023E4C /* AttachmentsPreviewVC.swift in Sources */,
 				AD7BE1712C234798000A5756 /* ChatThreadListLoadingView.swift in Sources */,
 				C121EB962746A1E800023E4C /* AttachmentPreviewContainer.swift in Sources */,
