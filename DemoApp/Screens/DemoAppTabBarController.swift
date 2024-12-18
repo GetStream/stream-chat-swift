@@ -2,11 +2,16 @@
 // Copyright © 2025 Stream.io Inc. All rights reserved.
 //
 
+import Combine
 import StreamChat
 import StreamChatUI
 import UIKit
 
 class DemoAppTabBarController: UITabBarController, CurrentChatUserControllerDelegate {
+    private var locationProvider = LocationProvider.shared
+    private var locationUpdatesPublisher = PassthroughSubject<LocationAttachmentInfo, Never>()
+    private var cancellables = Set<AnyCancellable>()
+
     let channelListVC: UIViewController
     let threadListVC: UIViewController
     let currentUserController: CurrentChatUserController
@@ -61,6 +66,20 @@ class DemoAppTabBarController: UITabBarController, CurrentChatUserControllerDele
         threadListVC.tabBarItem.badgeColor = .red
 
         viewControllers = [channelListVC, threadListVC]
+
+        locationProvider.didUpdateLocation = { [weak self] location in
+            self?.locationUpdatesPublisher.send(LocationAttachmentInfo(
+                latitude: location.coordinate.latitude,
+                longitude: location.coordinate.longitude
+            ))
+        }
+        locationUpdatesPublisher
+            .throttle(for: 5, scheduler: DispatchQueue.global(), latest: true)
+            .sink { [weak self] newLocation in
+                print("Sending new location to the server:", newLocation)
+                self?.currentUserController.updateLiveLocation(newLocation)
+            }
+            .store(in: &cancellables)
     }
 
     func currentUserController(_ controller: CurrentChatUserController, didChangeCurrentUserUnreadCount: UnreadCount) {
