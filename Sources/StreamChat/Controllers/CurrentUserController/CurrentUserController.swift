@@ -58,6 +58,18 @@ public class CurrentChatUserController: DataController, DelegateCallable, DataSt
             }
         }
 
+    private lazy var activeLiveLocationMessagesObserver: BackgroundListDatabaseObserver<ChatMessage, MessageDTO> = {
+        let observer = createActiveLiveLocationMessagesObserver()
+        observer.onDidChange = { [weak self] _ in
+            self?.delegateCallback { [weak self] in
+                guard let self = self else { return }
+                let messages = Array(observer.items)
+                $0.currentUserController(self, didChangeActiveLiveLocationMessages: messages)
+            }
+        }
+        return observer
+    }()
+
     /// A type-erased delegate.
     var multicastDelegate: MulticastDelegate<CurrentChatUserControllerDelegate> = .init()
 
@@ -129,6 +141,7 @@ public class CurrentChatUserController: DataController, DelegateCallable, DataSt
 
         do {
             try currentUserObserver.startObserving()
+            try activeLiveLocationMessagesObserver.startObserving()
             state = .localDataFetched
         } catch {
             log.error("""
@@ -230,29 +243,13 @@ public extension CurrentChatUserController {
         }
     }
 
-    /// Gets the current user messages which have active location sharing.
-    func getAllActiveLiveLocationMessages(completion: @escaping (Result<[ChatMessage], Error>) -> Void) {
-        guard let currentUserId = client.currentUserId else {
-            completion(.failure(ClientError.CurrentUserDoesNotExist()))
-            return
-        }
-
-        client.messageRepository.getAllActiveLiveLocationMessages { result in
-            self.callback {
-                completion(result)
-            }
-        }
-    }
-
-    /// Updates the current user's active live location sharing messages.
+    /// Updates the location of all the active live location messages for the current user.
     func updateLiveLocation(_ location: LocationAttachmentInfo) {
-        client.messageRepository.getAllActiveLiveLocationMessages { [weak self] result in
-            guard let messages = try? result.get() else { return }
-            for message in messages {
-                guard let cid = message.cid else { continue }
-                let messageController = self?.client.messageController(cid: cid, messageId: message.id)
-                messageController?.updateLiveLocation(latitude: location.latitude, longitude: location.longitude)
-            }
+        let messages = activeLiveLocationMessagesObserver.items
+        for message in messages {
+            guard let cid = message.cid else { continue }
+            let messageController = client.messageController(cid: cid, messageId: message.id)
+            messageController.updateLiveLocation(location)
         }
     }
 
@@ -376,6 +373,21 @@ extension CurrentChatUserController {
             _ fetchedResultsControllerType: NSFetchedResultsController<CurrentUserDTO>.Type
         ) -> BackgroundEntityDatabaseObserver<CurrentChatUser, CurrentUserDTO> = BackgroundEntityDatabaseObserver.init
 
+        var currentUserActiveLiveLocationMessagesObserverBuilder: (
+            _ database: DatabaseContainer,
+            _ fetchRequest: NSFetchRequest<MessageDTO>,
+            _ itemCreator: @escaping (MessageDTO) throws -> ChatMessage,
+            _ fetchedResultsControllerType: NSFetchedResultsController<MessageDTO>.Type
+        ) -> BackgroundListDatabaseObserver<ChatMessage, MessageDTO> = {
+            .init(
+                database: $0,
+                fetchRequest: $1,
+                itemCreator: $2,
+                itemReuseKeyPaths: (\ChatMessage.id, \MessageDTO.id),
+                fetchedResultsControllerType: $3
+            )
+        }
+
         var currentUserUpdaterBuilder = CurrentUserUpdater.init
     }
 }
@@ -404,6 +416,18 @@ private extension CurrentChatUserController {
             NSFetchedResultsController<CurrentUserDTO>.self
         )
     }
+
+    func createActiveLiveLocationMessagesObserver() -> BackgroundListDatabaseObserver<ChatMessage, MessageDTO> {
+        environment.currentUserActiveLiveLocationMessagesObserverBuilder(
+            client.databaseContainer,
+            MessageDTO.activeLiveLocationMessagesFetchRequest(
+                channelId: nil,
+                currentUserId: client.currentUserId
+            ),
+            { try $0.asModel() },
+            NSFetchedResultsController<MessageDTO>.self
+        )
+    }
 }
 
 // MARK: - Delegates
@@ -411,16 +435,39 @@ private extension CurrentChatUserController {
 /// `CurrentChatUserController` uses this protocol to communicate changes to its delegate.
 public protocol CurrentChatUserControllerDelegate: AnyObject {
     /// The controller observed a change in the `UnreadCount`.
-    func currentUserController(_ controller: CurrentChatUserController, didChangeCurrentUserUnreadCount: UnreadCount)
+    func currentUserController(
+        _ controller: CurrentChatUserController,
+        didChangeCurrentUserUnreadCount: UnreadCount
+    )
 
     /// The controller observed a change in the `CurrentChatUser` entity.
-    func currentUserController(_ controller: CurrentChatUserController, didChangeCurrentUser: EntityChange<CurrentChatUser>)
+    func currentUserController(
+        _ controller: CurrentChatUserController,
+        didChangeCurrentUser: EntityChange<CurrentChatUser>
+    )
+
+    /// The controller observed a change in the active live location messages.
+    func currentUserController(
+        _ controller: CurrentChatUserController,
+        didChangeActiveLiveLocationMessages messages: [ChatMessage]
+    )
 }
 
 public extension CurrentChatUserControllerDelegate {
-    func currentUserController(_ controller: CurrentChatUserController, didChangeCurrentUserUnreadCount: UnreadCount) {}
+    func currentUserController(
+        _ controller: CurrentChatUserController,
+        didChangeCurrentUserUnreadCount: UnreadCount
+    ) {}
 
-    func currentUserController(_ controller: CurrentChatUserController, didChangeCurrentUser: EntityChange<CurrentChatUser>) {}
+    func currentUserController(
+        _ controller: CurrentChatUserController,
+        didChangeCurrentUser: EntityChange<CurrentChatUser>
+    ) {}
+
+    func currentUserController(
+        _ controller: CurrentChatUserController,
+        didChangeActiveLiveLocationMessages messages: [ChatMessage]
+    ) {}
 }
 
 public extension CurrentChatUserController {

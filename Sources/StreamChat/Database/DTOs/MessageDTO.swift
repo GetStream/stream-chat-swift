@@ -585,10 +585,10 @@ class MessageDTO: NSManagedObject {
         return try load(request, context: context)
     }
 
-    static func loadActiveLiveLocationMessages(
+    static func activeLiveLocationMessagesFetchRequest(
         channelId: ChannelId?,
-        context: NSManagedObjectContext
-    ) throws -> [MessageDTO] {
+        currentUserId: UserId?
+    ) -> NSFetchRequest<MessageDTO> {
         let request = NSFetchRequest<MessageDTO>(entityName: MessageDTO.entityName)
         MessageDTO.applyPrefetchingState(to: request)
         request.fetchLimit = 10
@@ -599,10 +599,24 @@ class MessageDTO: NSManagedObject {
         var predicates: [NSPredicate] = [
             .init(format: "ANY attachments.isActiveLocationAttachment == YES")
         ]
-        if let channelId = channelId {
+        if let currentUserId {
+            predicates.append(.init(format: "user.id == %@", currentUserId))
+        }
+        if let channelId {
             predicates.append(.init(format: "channel.cid == %@", channelId.rawValue))
         }
         request.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: predicates)
+        return request
+    }
+
+    static func loadActiveLiveLocationMessages(
+        channelId: ChannelId?,
+        context: NSManagedObjectContext
+    ) throws -> [MessageDTO] {
+        let request = activeLiveLocationMessagesFetchRequest(
+            channelId: channelId,
+            currentUserId: context.currentUser?.user.id
+        )
         return try load(request, context: context)
     }
 

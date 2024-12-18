@@ -188,7 +188,6 @@ class MessageUpdater: Worker {
         extraData: [String: RawJSON]? = nil,
         completion: ((Result<ChatMessage, Error>) -> Void)? = nil
     ) {
-        // TODO: This is quite nasty, we should find more optimal way to do this.
         let attachmentPayloads: [MessageAttachmentPayload]? = attachments?.compactMap { attachment in
             guard let payloadData = try? JSONEncoder.default.encode(attachment.payload) else {
                 return nil

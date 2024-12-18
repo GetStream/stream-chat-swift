@@ -282,23 +282,6 @@ class MessageRepository {
         }
     }
 
-    func getAllActiveLiveLocationMessages(completion: @escaping (Result<[ChatMessage], Error>) -> Void) {
-        let context = database.backgroundReadOnlyContext
-        context.perform {
-            do {
-                let messages = try MessageDTO.loadActiveLiveLocationMessages(
-                    channelId: nil,
-                    context: context
-                ).map {
-                    try $0.asModel()
-                }
-                completion(.success(messages))
-            } catch {
-                completion(.failure(error))
-            }
-        }
-    }
-
     func getActiveLiveLocationMessages(
         for channelId: ChannelId,
         completion: @escaping (Result<[ChatMessage], Error>) -> Void
