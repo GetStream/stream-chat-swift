@@ -591,6 +591,7 @@ class MessageDTO: NSManagedObject {
     ) -> NSFetchRequest<MessageDTO> {
         let request = NSFetchRequest<MessageDTO>(entityName: MessageDTO.entityName)
         MessageDTO.applyPrefetchingState(to: request)
+        // Hard coded limit for now. 10 live locations messages at the same should be more than enough.
         request.fetchLimit = 10
         request.sortDescriptors = [NSSortDescriptor(
             keyPath: \MessageDTO.createdAt,

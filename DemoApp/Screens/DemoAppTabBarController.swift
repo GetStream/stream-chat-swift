@@ -93,9 +93,11 @@ class DemoAppTabBarController: UITabBarController, CurrentChatUserControllerDele
         _ controller: CurrentChatUserController,
         didChangeActiveLiveLocationMessages messages: [ChatMessage]
     ) {
+        /// If there are no active live location messages, we stop monitoring the location.
         if messages.isEmpty {
             locationProvider.stopMonitoringLocation()
-        } else {
+            /// If there are active live location messages, we start monitoring the location.
+        } else if !locationProvider.isMonitoringLocation {
             locationProvider.startMonitoringLocation()
         }
     }

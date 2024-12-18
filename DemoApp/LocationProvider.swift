@@ -25,6 +25,10 @@ class LocationProvider: NSObject {
 
     static let shared = LocationProvider()
 
+    var isMonitoringLocation: Bool {
+        locationManager.delegate != nil
+    }
+
     func startMonitoringLocation() {
         locationManager.allowsBackgroundLocationUpdates = true
         locationManager.delegate = self
@@ -55,6 +59,7 @@ class LocationProvider: NSObject {
     }
 
     func requestPermission(completion: @escaping (Error?) -> Void) {
+        locationManager.delegate = self
         switch locationManager.authorizationStatus {
         case .notDetermined:
             locationManager.requestWhenInUseAuthorization()
