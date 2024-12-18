@@ -17,17 +17,17 @@ public enum ChannelMemberListSortingKey: String, SortingKey {
     /// - Warning: This option is heavy for the backend and can slow down API requests' response time. If there's no explicit requirement for this sorting option consider using a different one.
     case name = "user.name"
     
-    /// Sort channel members by their role (`channel_role`).
-    case role = "channelRoleRaw"
+    /// Sort channel members by their channel role.
+    case channelRole = "channelRoleRaw"
 
     public func encode(to encoder: Encoder) throws {
         var container = encoder.singleValueContainer()
         let value: String
 
         switch self {
+        case .channelRole: value = "channel_role"
         case .createdAt: value = "created_at"
         case .name: value = "name"
-        case .role: value = "channel_role"
         case .userId: value = "user_id"
         }
 
