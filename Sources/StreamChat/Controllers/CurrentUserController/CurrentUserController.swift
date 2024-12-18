@@ -58,12 +58,29 @@ public class CurrentChatUserController: DataController, DelegateCallable, DataSt
             }
         }
 
+    private var isSharingLiveLocation = false {
+        didSet {
+            if isSharingLiveLocation == oldValue {
+                return
+            }
+            if isSharingLiveLocation {
+                delegate?.currentUserControllerDidStartSharingLiveLocation(
+                    self,
+                    activeLiveLocationMessages: Array(activeLiveLocationMessagesObserver.items)
+                )
+            } else {
+                delegate?.currentUserControllerDidStopSharingLiveLocation(self)
+            }
+        }
+    }
+
     private lazy var activeLiveLocationMessagesObserver: BackgroundListDatabaseObserver<ChatMessage, MessageDTO> = {
         let observer = createActiveLiveLocationMessagesObserver()
         observer.onDidChange = { [weak self] _ in
             self?.delegateCallback { [weak self] in
                 guard let self = self else { return }
                 let messages = Array(observer.items)
+                self.isSharingLiveLocation = !messages.isEmpty
                 $0.currentUserController(self, didChangeActiveLiveLocationMessages: messages)
             }
         }
@@ -451,6 +468,17 @@ public protocol CurrentChatUserControllerDelegate: AnyObject {
         _ controller: CurrentChatUserController,
         didChangeActiveLiveLocationMessages messages: [ChatMessage]
     )
+
+    /// The current user started sharing his location in message attachments.
+    func currentUserControllerDidStartSharingLiveLocation(
+        _ controller: CurrentChatUserController,
+        activeLiveLocationMessages messages: [ChatMessage]
+    )
+
+    /// The current user has no active live location attachments.
+    func currentUserControllerDidStopSharingLiveLocation(
+        _ controller: CurrentChatUserController
+    )
 }
 
 public extension CurrentChatUserControllerDelegate {
@@ -467,6 +495,15 @@ public extension CurrentChatUserControllerDelegate {
     func currentUserController(
         _ controller: CurrentChatUserController,
         didChangeActiveLiveLocationMessages messages: [ChatMessage]
+    ) {}
+
+    func currentUserControllerDidStartSharingLiveLocation(
+        _ controller: CurrentChatUserController,
+        activeLiveLocationMessages messages: [ChatMessage]
+    ) {}
+
+    func currentUserControllerDidStopSharingLiveLocation(
+        _ controller: CurrentChatUserController
     ) {}
 }
 

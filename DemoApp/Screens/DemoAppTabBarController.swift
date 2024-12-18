@@ -76,7 +76,7 @@ class DemoAppTabBarController: UITabBarController, CurrentChatUserControllerDele
         locationUpdatesPublisher
             .throttle(for: 5, scheduler: DispatchQueue.global(), latest: true)
             .sink { [weak self] newLocation in
-                print("Sending new location to the server:", newLocation)
+                debugPrint("Location: Sending new location (\(newLocation.latitude), \(newLocation.longitude) to the server.")
                 self?.currentUserController.updateLiveLocation(newLocation)
             }
             .store(in: &cancellables)
@@ -89,16 +89,16 @@ class DemoAppTabBarController: UITabBarController, CurrentChatUserControllerDele
         UIApplication.shared.applicationIconBadgeNumber = totalUnreadBadge
     }
 
-    func currentUserController(
+    func currentUserControllerDidStartSharingLiveLocation(
         _ controller: CurrentChatUserController,
-        didChangeActiveLiveLocationMessages messages: [ChatMessage]
+        activeLiveLocationMessages messages: [ChatMessage]
     ) {
-        /// If there are no active live location messages, we stop monitoring the location.
-        if messages.isEmpty {
-            locationProvider.stopMonitoringLocation()
-            /// If there are active live location messages, we start monitoring the location.
-        } else if !locationProvider.isMonitoringLocation {
-            locationProvider.startMonitoringLocation()
-        }
+        debugPrint("Location: Started sharing live location.")
+        locationProvider.startMonitoringLocation()
+    }
+
+    func currentUserControllerDidStopSharingLiveLocation(_ controller: CurrentChatUserController) {
+        debugPrint("Location: Stopped sharing live location.")
+        locationProvider.stopMonitoringLocation()
     }
 }
