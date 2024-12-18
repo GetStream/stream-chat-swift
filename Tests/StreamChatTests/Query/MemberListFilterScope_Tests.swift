@@ -12,6 +12,8 @@ final class MemberListFilterScope_Tests: XCTestCase {
     func test_filterKeys_matchChannelCodingKeys() {
         // Member specific coding keys
         XCTAssertEqual(Key<Bool>.isModerator.rawValue, "is_moderator")
+        XCTAssertEqual(Key<String>.email.rawValue, "user.email")
+        XCTAssertEqual(Key<MemberRole>.channelRole.rawValue, "channel_role")
 
         // User-related coding keys
         XCTAssertEqual(Key<UserId>.id.rawValue, UserPayloadsCodingKeys.id.rawValue)

@@ -80,6 +80,7 @@ extension Filter: FilterValue {}
 
 extension ChannelId: FilterValue {}
 extension ChannelType: FilterValue {}
+extension MemberRole: FilterValue {}
 extension UserRole: FilterValue {}
 extension AttachmentType: FilterValue {}
 extension Optional: FilterValue where Wrapped == TeamId {}
