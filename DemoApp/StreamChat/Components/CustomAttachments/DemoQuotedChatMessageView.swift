@@ -8,7 +8,7 @@ import UIKit
 
 class DemoQuotedChatMessageView: QuotedChatMessageView {
     override func setAttachmentPreview(for message: ChatMessage) {
-        let locationAttachments = message.attachments(payloadType: StaticLocationAttachmentPayload.self)
+        let locationAttachments = message.staticLocationAttachments
         if let locationPayload = locationAttachments.first?.payload {
             attachmentPreviewView.contentMode = .scaleAspectFit
             attachmentPreviewView.image = UIImage(

@@ -3,7 +3,6 @@
 //
 
 import CoreLocation
-@_spi(Experimental)
 import StreamChat
 import StreamChatUI
 import UIKit
