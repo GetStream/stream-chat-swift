@@ -46,12 +46,6 @@ extension Filter where Scope: AnyChannelListFilterScope {
     }
 }
 
-// We don't want to expose `members` publicly because it can't be used with any other operator
-// than `$in`. We expose it publicly via the `containMembers` filter helper.
-extension FilterKey where Scope: AnyChannelListFilterScope {
-    static var members: FilterKey<Scope, UserId> { .init(rawValue: "members", keyPathString: #keyPath(ChannelDTO.members.user.id)) }
-}
-
 /// Filter values to be used with `.invite` FilterKey.
 public enum InviteFilterValue: String, FilterValue {
     case pending
@@ -88,12 +82,13 @@ public extension FilterKey where Scope: AnyChannelListFilterScope {
     /// A filter key for matching the `createdBy` value.
     /// Supported operators: `equal`
     static var createdBy: FilterKey<Scope, UserId> { .init(rawValue: "created_by_id", keyPathString: #keyPath(ChannelDTO.createdBy.id)) }
+    
     /// A filter key for matching the `createdAt` value.
-    /// Supported operators: `equal`, `greaterThan`, `lessThan`, `greaterOrEqual`, `lessOrEqual`, `notEqual`
+    /// Supported operators: `equal`, `greaterThan`, `lessThan`, `greaterOrEqual`, `lessOrEqual`, `exists`
     static var createdAt: FilterKey<Scope, Date> { .init(rawValue: "created_at", keyPathString: #keyPath(ChannelDTO.createdAt)) }
 
     /// A filter key for matching the `updatedAt` value.
-    /// Supported operators: `equal`, `greaterThan`, `lessThan`, `greaterOrEqual`, `lessOrEqual`, `notEqual`
+    /// Supported operators: `equal`, `greaterThan`, `lessThan`, `greaterOrEqual`, `lessOrEqual`
     static var updatedAt: FilterKey<Scope, Date> { .init(rawValue: "updated_at", keyPathString: #keyPath(ChannelDTO.updatedAt)) }
 
     /// A filter key for matching the `deletedAt` value.
@@ -114,6 +109,7 @@ public extension FilterKey where Scope: AnyChannelListFilterScope {
     static var blocked: FilterKey<Scope, Bool> { .init(rawValue: "blocked", keyPathString: #keyPath(ChannelDTO.isBlocked)) }
     
     /// A filter key for matching the `archived` value.
+    /// Supported operators: `equal`
     static var archived: FilterKey<Scope, Bool> {
         .init(
             rawValue: "archived",
@@ -131,6 +127,7 @@ public extension FilterKey where Scope: AnyChannelListFilterScope {
     }
     
     /// A filter key for matching the `pinned` value.
+    /// Supported operators: `equal`
     static var pinned: FilterKey<Scope, Bool> {
         .init(
             rawValue: "pinned",
@@ -147,8 +144,12 @@ public extension FilterKey where Scope: AnyChannelListFilterScope {
         )
     }
 
+    /// A filter key for matching channel members.
+    /// Supported operators: `in`, `equal`
+    static var members: FilterKey<Scope, UserId> { .init(rawValue: "members", keyPathString: #keyPath(ChannelDTO.members.user.id)) }
+    
     /// A filter key for matching the `memberCount` value.
-    /// Supported operators: `equal`, `greaterThan`, `lessThan`, `greaterOrEqual`, `lessOrEqual`, `notEqual`
+    /// Supported operators: `equal`, `greaterThan`, `lessThan`, `greaterOrEqual`, `lessOrEqual`
     static var memberCount: FilterKey<Scope, Int> { .init(rawValue: "member_count", keyPathString: #keyPath(ChannelDTO.memberCount)) }
 
     /// A filter key for matching the `team` value.
@@ -192,12 +193,12 @@ public extension FilterKey where Scope: AnyChannelListFilterScope {
     static var invite: FilterKey<Scope, InviteFilterValue> { "invite" }
 
     /// Filter for checking the `name` property of a user who is a member of the channel
-    /// Supported operators: `equal`, `notEqual`, `autocomplete`
+    /// Supported operators: `equal`, `autocomplete`
     /// - Warning: This filter is considerably expensive for the backend so avoid using this when possible.
     static var memberName: FilterKey<Scope, String> { .init(rawValue: "member.user.name", keyPathString: #keyPath(ChannelDTO.members.user.name), isCollectionFilter: true) }
 
     /// Filter for the time of the last message in the channel. If the channel has no messages, then the time the channel was created.
-    /// Supported operators: `equal`, `greaterThan`, `lessThan`, `greaterOrEqual`, `lessOrEqual`, `notEqual`
+    /// Supported operators: `equal`, `greaterThan`, `lessThan`, `greaterOrEqual`, `lessOrEqual`
     static var lastUpdatedAt: FilterKey<Scope, Date> { .init(rawValue: "last_updated", keyPathString: #keyPath(ChannelDTO.lastMessageAt)) }
 }
 
