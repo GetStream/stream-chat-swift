@@ -9,6 +9,7 @@ import Foundation
 final class StreamJSONDecoder: JSONDecoder, @unchecked Sendable {
     let iso8601formatter: ISO8601DateFormatter
     let dateCache: NSCache<NSString, NSDate>
+    let rawJSONCache: RawJSONCache
 
     override convenience init() {
         let iso8601formatter = ISO8601DateFormatter()
@@ -17,12 +18,21 @@ final class StreamJSONDecoder: JSONDecoder, @unchecked Sendable {
         let dateCache = NSCache<NSString, NSDate>()
         dateCache.countLimit = 5000 // We cache at most 5000 dates, which gives good enough performance
 
-        self.init(dateFormatter: iso8601formatter, dateCache: dateCache)
+        self.init(
+            dateFormatter: iso8601formatter,
+            dateCache: dateCache,
+            rawJSONCache: RawJSONCache(countLimit: 500)
+        )
     }
 
-    init(dateFormatter: ISO8601DateFormatter, dateCache: NSCache<NSString, NSDate>) {
+    init(
+        dateFormatter: ISO8601DateFormatter,
+        dateCache: NSCache<NSString, NSDate>,
+        rawJSONCache: RawJSONCache
+    ) {
         iso8601formatter = dateFormatter
         self.dateCache = dateCache
+        self.rawJSONCache = rawJSONCache
 
         super.init()
 
@@ -47,6 +57,49 @@ final class StreamJSONDecoder: JSONDecoder, @unchecked Sendable {
             // Fail
             throw DecodingError.dataCorruptedError(in: container, debugDescription: "Invalid date: \(dateString)")
         }
+    }
+}
+
+extension StreamJSONDecoder {
+    class RawJSONCache {
+        private let storage: NSCache<NSNumber, BoxedRawJSON>
+        
+        init(countLimit: Int) {
+            storage = NSCache()
+            storage.countLimit = countLimit
+        }
+        
+        func rawJSON(forKey key: Int) -> [String: RawJSON]? {
+            storage.object(forKey: key as NSNumber)?.value
+        }
+        
+        func setRawJSON(_ value: [String: RawJSON], forKey key: Int) {
+            storage.setObject(BoxedRawJSON(value: value), forKey: key as NSNumber)
+        }
+        
+        final class BoxedRawJSON {
+            let value: [String: RawJSON]
+            
+            init(value: [String: RawJSON]) {
+                self.value = value
+            }
+        }
+    }
+    
+    /// A convenience method returning decoded RawJSON dictionary with caching enabled.
+    ///
+    /// Extra data stored in models can be large, what can significantly slow
+    /// down DTO to model conversions. This function is a convenient way for
+    /// caching some of the data in DTO to model conversions.
+    func decodeCachedRawJSON(from data: Data?) throws -> [String: RawJSON] {
+        guard let data, !data.isEmpty else { return [:] }
+        let key = data.hashValue
+        if let value = rawJSONCache.rawJSON(forKey: key) {
+            return value
+        }
+        let rawJSON = try decode([String: RawJSON].self, from: data)
+        rawJSONCache.setRawJSON(rawJSON, forKey: key)
+        return rawJSON
     }
 }
 

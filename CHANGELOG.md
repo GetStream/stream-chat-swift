@@ -3,7 +3,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 # Upcoming
 
-### 🔄 Changed
+### ⚡ Performance
+- Improve performance of accessing database model properties [#3534](https://github.com/GetStream/stream-chat-swift/pull/3534)
+- Improve performance of model conversions with large extra data [#3534](https://github.com/GetStream/stream-chat-swift/pull/3534)
 
 # [4.69.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.69.0)
 _December 18, 2024_
