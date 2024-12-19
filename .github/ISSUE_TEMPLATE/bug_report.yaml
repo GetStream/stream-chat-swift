@@ -44,7 +44,7 @@ body:
     id: sdk-version
     attributes:
       label: Which SDK version are you using?
-      placeholder: ex: 4.56.1
+      placeholder: ex: "4.56.1"
     validations:
       required: true
   - type: input
