@@ -44,27 +44,27 @@ body:
     id: sdk-version
     attributes:
       label: Which SDK version are you using?
-      placeholder: ex: "4.56.1"
+      placeholder: ex. 4.56.1
     validations:
       required: true
   - type: input
     id: ios-version
     attributes:
       label: Which iOS version is the issue reproducible?
-      placeholder: ex: iOS 15.4
+      placeholder: ex. iOS 15.4
     validations:
       required: true
   - type: input
     id: device-version
     attributes:
       label: Which iPhone Device is the issue reproducible?
-      placeholder: ex: iPhone 16 Pro
+      placeholder: ex. iPhone 16 Pro
     validations:
       required: true
   - type: input
     id: xcode-version
     attributes:
       label: Which Xcode version are you using?
-      placeholder: ex: Xcode 15.1
+      placeholder: ex. Xcode 15.1
     validations:
       required: false
