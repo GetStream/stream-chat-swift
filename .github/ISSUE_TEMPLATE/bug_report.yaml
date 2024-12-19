@@ -1,0 +1,70 @@
+name: Bug Report
+description: File a bug report.
+title: "[Bug]: "
+labels: ["🐞 Bug"]
+body:
+  - type: textarea
+    id: actual-behaviour
+    attributes:
+      label: Actual behaviour
+      description: Provide a detailed description of the current issue.
+    validations:
+      required: true
+  - type: textarea
+    id: expected-behaviour
+    attributes:
+      label: Expected behaviour
+      description: Provide a detailed description of the expected behaviour.
+    validations:
+      required: true
+  - type: textarea
+    id: repro-steps
+    attributes:
+      label: Steps to reproduce
+      description: How do you trigger this bug? Please walk us through it step by step.
+      value: |
+        1. Go to '...'
+        2. Tap on '...'
+        3. Scroll down to '...'
+        ...
+      render: bash
+    validations:
+      required: true
+  - type: dropdown
+    id: packages
+    attributes:
+      label: Which packages are you using?
+      description: You may select more than one.
+      multiple: true
+      options:
+        - StreamChat
+        - StreamChatUI
+        - StreamChatSwiftUI
+  - type: input
+    id: sdk-version
+    attributes:
+      label: Which SDK version are you using?
+      placeholder: ex: 4.56.1
+    validations:
+      required: true
+  - type: input
+    id: ios-version
+    attributes:
+      label: Which iOS version is the issue reproducible?
+      placeholder: ex: iOS 15.4
+    validations:
+      required: true
+  - type: input
+    id: device-version
+    attributes:
+      label: Which iPhone Device is the issue reproducible?
+      placeholder: ex: iPhone 16 Pro
+    validations:
+      required: true
+  - type: input
+    id: xcode-version
+    attributes:
+      label: Which Xcode version are you using?
+      placeholder: ex: Xcode 15.1
+    validations:
+      required: false
