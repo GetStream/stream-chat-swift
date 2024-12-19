@@ -79,8 +79,7 @@ public class CurrentChatUserController: DataController, DelegateCallable, DataSt
                 return
             }
             if isSharingLiveLocation {
-                let messages = Array(activeLiveLocationMessagesObserver.items)
-                delegate?.currentUserControllerDidStartSharingLiveLocation(self, activeLiveLocationMessages: messages)
+                delegate?.currentUserControllerDidStartSharingLiveLocation(self)
             } else {
                 delegate?.currentUserControllerDidStopSharingLiveLocation(self)
             }
@@ -481,8 +480,7 @@ public protocol CurrentChatUserControllerDelegate: AnyObject {
 
     /// The current user started sharing his location in message attachments.
     func currentUserControllerDidStartSharingLiveLocation(
-        _ controller: CurrentChatUserController,
-        activeLiveLocationMessages messages: [ChatMessage]
+        _ controller: CurrentChatUserController
     )
 
     /// The current user has no active live location attachments.
@@ -508,8 +506,7 @@ public extension CurrentChatUserControllerDelegate {
     ) {}
 
     func currentUserControllerDidStartSharingLiveLocation(
-        _ controller: CurrentChatUserController,
-        activeLiveLocationMessages messages: [ChatMessage]
+        _ controller: CurrentChatUserController
     ) {}
 
     func currentUserControllerDidStopSharingLiveLocation(
