@@ -33,4 +33,4 @@ _Explain how this change can be tested manually, if applicable._
 - [ ] Changelog is updated with client-facing changes
 - [ ] Changelog is updated with new localization keys
 - [ ] New code is covered by unit tests
-- [ ] Documented has been updated and there is a Draft PR in the `docs-content` repo
+- [ ] Documentation has been updated in the `docs-content` repo
