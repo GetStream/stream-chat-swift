@@ -7,7 +7,7 @@ body:
     id: actual-behaviour
     attributes:
       label: Actual behaviour
-      description: Provide a detailed description of the current issue.
+      description: Provide a detailed description of the issue.
     validations:
       required: true
   - type: textarea
