@@ -82,8 +82,7 @@ class DemoAppTabBarController: UITabBarController, CurrentChatUserControllerDele
     }
 
     func currentUserControllerDidStartSharingLiveLocation(
-        _ controller: CurrentChatUserController,
-        activeLiveLocationMessages messages: [ChatMessage]
+        _ controller: CurrentChatUserController
     ) {
         debugPrint("[Location] Started sharing live location.")
         locationProvider.startMonitoringLocation()
@@ -101,7 +100,7 @@ class DemoAppTabBarController: UITabBarController, CurrentChatUserControllerDele
         guard !messages.isEmpty else {
             return
         }
-        
+
         let locations: [String] = messages.compactMap {
             guard let locationAttachment = $0.liveLocationAttachments.first else {
                 return nil
