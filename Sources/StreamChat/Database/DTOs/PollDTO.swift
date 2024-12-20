@@ -88,11 +88,14 @@ extension PollDTO {
     func asModel() throws -> Poll {
         try isNotDeleted()
         
-        var extraData: [String: RawJSON] = [:]
-        if let custom,
-           !custom.isEmpty,
-           let decoded = try? JSONDecoder.default.decode([String: RawJSON].self, from: custom) {
-            extraData = decoded
+        let extraData: [String: RawJSON]
+        do {
+            extraData = try JSONDecoder.stream.decodeCachedRawJSON(from: custom)
+        } catch {
+            log.error(
+                "Failed to decode extra data for poll with id: <\(id)>, using default value instead. Error: \(error)"
+            )
+            extraData = [:]
         }
         
         let optionsArray = (options.array as? [PollOptionDTO]) ?? []

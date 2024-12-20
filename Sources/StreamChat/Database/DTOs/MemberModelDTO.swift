@@ -189,7 +189,7 @@ extension ChatChannelMember {
         
         let extraData: [String: RawJSON]
         do {
-            extraData = try JSONDecoder.default.decode([String: RawJSON].self, from: dto.user.extraData)
+            extraData = try JSONDecoder.stream.decodeCachedRawJSON(from: dto.user.extraData)
         } catch {
             log.error(
                 "Failed to decode extra data for user with id: <\(dto.user.id)>, using default value instead. "
@@ -198,13 +198,15 @@ extension ChatChannelMember {
             extraData = [:]
         }
 
-        var memberExtraData: [String: RawJSON] = [:]
-        if let dtoMemberExtraData = dto.extraData {
-            do {
-                memberExtraData = try JSONDecoder.default.decode([String: RawJSON].self, from: dtoMemberExtraData)
-            } catch {
-                memberExtraData = [:]
-            }
+        let memberExtraData: [String: RawJSON]
+        do {
+            memberExtraData = try JSONDecoder.stream.decodeCachedRawJSON(from: dto.extraData)
+        } catch {
+            log.error(
+                "Failed to decode extra data for channel member with id: <\(dto.user.id)>, using default value instead. "
+                    + "Error: \(error)"
+            )
+            memberExtraData = [:]
         }
 
         let role = dto.channelRoleRaw.flatMap { MemberRole(rawValue: $0) } ?? .member
