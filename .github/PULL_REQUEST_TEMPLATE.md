@@ -1,6 +1,6 @@
 ### 🔗 Issue Links
 
-_Provide all Jira tickets and/or Github issues related to this PR, if applicable._
+_Provide all Linear and/or Github issues related to this PR, if applicable._
 
 ### 🎯 Goal
 
@@ -33,9 +33,4 @@ _Explain how this change can be tested manually, if applicable._
 - [ ] Changelog is updated with client-facing changes
 - [ ] Changelog is updated with new localization keys
 - [ ] New code is covered by unit tests
-- [ ] Comparison screenshots added for visual changes
-- [ ] Affected documentation updated (docusaurus, tutorial, CMS)
-
-### 🎁 Meme
-
-_Provide a funny gif or image that relates to your work on this pull request. (Optional)_
+- [ ] Documentation has been updated in the `docs-content` repo
