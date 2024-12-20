@@ -22,11 +22,6 @@ class LocationAttachmentViewInjector: AttachmentViewInjector {
 
         contentView.bubbleContentContainer.insertArrangedSubview(locationAttachmentView, at: 0)
 
-        NSLayoutConstraint.activate([
-            locationAttachmentView.widthAnchor.constraint(equalToConstant: 250),
-            locationAttachmentView.heightAnchor.constraint(equalToConstant: 150)
-        ])
-
         locationAttachmentView.didTapOnLocation = { [weak self] in
             self?.handleTapOnLocationAttachment()
         }
@@ -40,12 +35,14 @@ class LocationAttachmentViewInjector: AttachmentViewInjector {
 
         if let staticLocation = staticLocationAttachment {
             locationAttachmentView.content = .init(
+                messageId: contentView.content?.id,
                 latitude: staticLocation.latitude,
                 longitude: staticLocation.longitude,
                 isLive: false
             )
         } else if let liveLocation = liveLocationAttachment {
             locationAttachmentView.content = .init(
+                messageId: contentView.content?.id,
                 latitude: liveLocation.latitude,
                 longitude: liveLocation.longitude,
                 isLive: liveLocation.stoppedSharing == false || liveLocation.stoppedSharing == nil
