@@ -224,16 +224,12 @@ extension CurrentChatUser {
         
         let user = dto.user
 
-        var extraData = [String: RawJSON]()
-        if !dto.user.extraData.isEmpty {
-            do {
-                extraData = try JSONDecoder.default.decode([String: RawJSON].self, from: dto.user.extraData)
-            } catch {
-                log.error(
-                    "Failed to decode extra data for user with id: <\(dto.user.id)>, using default value instead. "
-                        + "Error: \(error)"
-                )
-            }
+        let extraData: [String: RawJSON]
+        do {
+            extraData = try JSONDecoder.stream.decodeCachedRawJSON(from: dto.user.extraData)
+        } catch {
+            log.error("Failed to decode extra data for user with id: <\(dto.user.id)>, using default value instead. Error: \(error)")
+            extraData = [:]
         }
         
         let mutedUsers: [ChatUser] = try dto.mutedUsers.map { try $0.asModel() }
