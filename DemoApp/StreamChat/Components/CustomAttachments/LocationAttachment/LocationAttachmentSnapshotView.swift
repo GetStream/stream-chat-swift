@@ -3,19 +3,13 @@
 //
 
 import MapKit
+import StreamChat
 import StreamChatUI
 import UIKit
 
-struct LocationCoordinate {
-    let latitude: CLLocationDegrees
-    let longitude: CLLocationDegrees
-}
-
 class LocationAttachmentSnapshotView: _View {
-    static var snapshotsCache: NSCache<NSString, UIImage> = .init()
-    var snapshotter: MKMapSnapshotter?
-
     struct Content {
+        var messageId: MessageId?
         var latitude: CLLocationDegrees
         var longitude: CLLocationDegrees
         var isLive: Bool = false
@@ -29,6 +23,12 @@ class LocationAttachmentSnapshotView: _View {
 
     var didTapOnLocation: (() -> Void)?
     var didTapOnStopSharingLocation: (() -> Void)?
+
+    let mapOptions: MKMapSnapshotter.Options = .init()
+    let mapHeight: CGFloat = 150
+
+    static var snapshotsCache: NSCache<NSString, UIImage> = .init()
+    var snapshotter: MKMapSnapshotter?
 
     lazy var imageView: UIImageView = {
         let view = UIImageView()
@@ -62,8 +62,6 @@ class LocationAttachmentSnapshotView: _View {
         return button
     }()
 
-    let mapOptions: MKMapSnapshotter.Options = .init()
-
     override func setUp() {
         super.setUp()
 
@@ -80,18 +78,20 @@ class LocationAttachmentSnapshotView: _View {
         stopButton.isHidden = true
         activityIndicatorView.hidesWhenStopped = true
 
+        addSubview(activityIndicatorView)
+
         let container = VContainer(alignment: .center) {
             imageView
+                .height(mapHeight)
             stopButton
                 .width(120)
                 .height(30)
         }.embed(in: self)
 
-        container.addSubview(activityIndicatorView)
-
         NSLayoutConstraint.activate([
-            activityIndicatorView.centerXAnchor.constraint(equalTo: container.centerXAnchor),
-            activityIndicatorView.centerYAnchor.constraint(equalTo: container.centerYAnchor)
+            activityIndicatorView.centerXAnchor.constraint(equalTo: centerXAnchor),
+            activityIndicatorView.centerYAnchor.constraint(equalTo: centerYAnchor),
+            imageView.widthAnchor.constraint(equalTo: container.widthAnchor)
         ])
     }
 
@@ -102,10 +102,6 @@ class LocationAttachmentSnapshotView: _View {
     override func updateContent() {
         super.updateContent()
 
-        if content?.isLive == false {
-            imageView.image = nil
-        }
-        
         guard let content = self.content else {
             return
         }
@@ -116,51 +112,68 @@ class LocationAttachmentSnapshotView: _View {
             stopButton.isHidden = true
         }
 
-        let coordinate = LocationCoordinate(
-            latitude: content.latitude,
-            longitude: content.longitude
-        )
-        configureMapPosition(coordinate: coordinate)
-
-        if let snapshotImage = Self.snapshotsCache.object(forKey: coordinate.cachingKey) {
-            imageView.image = snapshotImage
-        } else {
-            activityIndicatorView.startAnimating()
-            loadMapSnapshotImage(coordinate: coordinate)
-        }
+        configureMapPosition()
+        loadMapSnapshotImage()
     }
 
-    private func configureMapPosition(coordinate: LocationCoordinate) {
+    override func layoutSubviews() {
+        super.layoutSubviews()
+
+        if frame.size.width != mapOptions.size.width {
+            imageView.image = nil
+            clearSnapshotCache()
+        }
+
+        loadMapSnapshotImage()
+    }
+
+    private func configureMapPosition() {
+        guard let content = self.content else {
+            return
+        }
+
         mapOptions.region = .init(
             center: CLLocationCoordinate2D(
-                latitude: coordinate.latitude,
-                longitude: coordinate.longitude
+                latitude: content.latitude,
+                longitude: content.longitude
             ),
             span: MKCoordinateSpan(
                 latitudeDelta: 0.01,
                 longitudeDelta: 0.01
             )
         )
-        mapOptions.size = CGSize(width: 250, height: 150)
     }
 
-    private func loadMapSnapshotImage(coordinate: LocationCoordinate) {
+    private func loadMapSnapshotImage() {
+        guard frame.size != .zero else {
+            return
+        }
+
+        mapOptions.size = CGSize(width: frame.width, height: mapHeight)
+
+        if let cachedSnapshot = getCachedSnapshot() {
+            imageView.image = cachedSnapshot
+            return
+        } else {
+            imageView.image = nil
+        }
+
+        activityIndicatorView.startAnimating()
         snapshotter?.cancel()
         snapshotter = MKMapSnapshotter(options: mapOptions)
         snapshotter?.start { snapshot, _ in
             guard let snapshot = snapshot else { return }
-            let image = self.generatePinAnnotation(for: snapshot, with: coordinate)
+            let image = self.generatePinAnnotation(for: snapshot)
             DispatchQueue.main.async {
                 self.activityIndicatorView.stopAnimating()
                 self.imageView.image = image
-                Self.snapshotsCache.setObject(image, forKey: coordinate.cachingKey)
+                self.setCachedSnapshot(image: image)
             }
         }
     }
 
     private func generatePinAnnotation(
-        for snapshot: MKMapSnapshotter.Snapshot,
-        with coordinate: LocationCoordinate
+        for snapshot: MKMapSnapshotter.Snapshot
     ) -> UIImage {
         let image = UIGraphicsImageRenderer(size: mapOptions.size).image { _ in
             snapshot.image.draw(at: .zero)
@@ -168,9 +181,13 @@ class LocationAttachmentSnapshotView: _View {
             let pinView = MKPinAnnotationView(annotation: nil, reuseIdentifier: nil)
             let pinImage = pinView.image
 
+            guard let content = self.content else {
+                return
+            }
+
             var point = snapshot.point(for: CLLocationCoordinate2D(
-                latitude: coordinate.latitude,
-                longitude: coordinate.longitude
+                latitude: content.latitude,
+                longitude: content.longitude
             ))
             point.x -= pinView.bounds.width / 2
             point.y -= pinView.bounds.height / 2
@@ -181,13 +198,39 @@ class LocationAttachmentSnapshotView: _View {
         return image
     }
 
-    @objc private func handleStopButtonTap() {
+    @objc func handleStopButtonTap() {
         didTapOnStopSharingLocation?()
     }
-}
 
-private extension LocationCoordinate {
-    var cachingKey: NSString {
-        NSString(string: "\(latitude),\(longitude)")
+    // MARK: Snapshot Caching Management
+
+    func setCachedSnapshot(image: UIImage) {
+        guard let cachingKey = cachingKey() else {
+            return
+        }
+
+        Self.snapshotsCache.setObject(image, forKey: cachingKey)
+    }
+
+    func getCachedSnapshot() -> UIImage? {
+        guard let cachingKey = cachingKey() else {
+            return nil
+        }
+
+        return Self.snapshotsCache.object(forKey: cachingKey)
+    }
+
+    func clearSnapshotCache() {
+        Self.snapshotsCache.removeAllObjects()
+    }
+
+    private func cachingKey() -> NSString? {
+        guard let content = self.content else {
+            return nil
+        }
+        guard let messageId = content.messageId else {
+            return nil
+        }
+        return NSString(string: "\(messageId)")
     }
 }

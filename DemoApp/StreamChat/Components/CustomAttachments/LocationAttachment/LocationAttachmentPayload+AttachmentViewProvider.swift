@@ -15,6 +15,7 @@ extension StaticLocationAttachmentPayload: AttachmentPreviewProvider {
         /// but a different one could be provided.
         let preview = LocationAttachmentSnapshotView()
         preview.content = .init(
+            messageId: nil,
             latitude: latitude,
             longitude: longitude,
             isLive: false
