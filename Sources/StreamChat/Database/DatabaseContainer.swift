@@ -282,6 +282,24 @@ class DatabaseContainer: NSPersistentContainer, @unchecked Sendable {
             }
         }
     }
+    
+    func readAndWait<T>(_ actions: (DatabaseSession) throws -> T) throws -> T {
+        let context = viewContext
+        var result: T?
+        var readError: Error?
+        context.performAndWait {
+            do {
+                result = try actions(context)
+            } catch {
+                readError = error
+            }
+        }
+        if let result {
+            return result
+        } else {
+            throw readError ?? ClientError.Unknown()
+        }
+    }
 
     /// Removes all data from the local storage.
     func removeAllData(completion: ((Error?) -> Void)? = nil) {
