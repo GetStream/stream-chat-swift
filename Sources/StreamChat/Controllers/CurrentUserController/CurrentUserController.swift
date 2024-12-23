@@ -87,7 +87,7 @@ public class CurrentChatUserController: DataController, DelegateCallable, DataSt
     }
 
     /// The throttler for limiting the frequency of live location updates.
-    private var locationUpdatesThrottler = Throttler(interval: 0.5, broadcastLatestEvent: true)
+    private var locationUpdatesThrottler = Throttler(interval: 3, broadcastLatestEvent: true)
 
     /// A type-erased delegate.
     var multicastDelegate: MulticastDelegate<CurrentChatUserControllerDelegate> = .init()
@@ -265,7 +265,6 @@ public extension CurrentChatUserController {
     /// Updates the location of all the active live location messages for the current user.
     ///
     /// The updates are throttled to avoid sending too many requests.
-    /// The throttling interval is set to 5 seconds.
     ///
     /// - Parameter location: The new location to be updated.
     func updateLiveLocation(_ location: LocationAttachmentInfo) {
