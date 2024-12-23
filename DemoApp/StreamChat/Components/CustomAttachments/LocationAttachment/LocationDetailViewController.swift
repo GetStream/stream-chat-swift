@@ -7,10 +7,18 @@ import StreamChat
 import UIKit
 
 class LocationDetailViewController: UIViewController {
-    let locationAttachment: ChatMessageStaticLocationAttachment
+    let locationCoordinate: CLLocationCoordinate2D
+    let isLive: Bool
+    let messageController: ChatMessageController?
 
-    init(locationAttachment: ChatMessageStaticLocationAttachment) {
-        self.locationAttachment = locationAttachment
+    init(
+        locationCoordinate: CLLocationCoordinate2D,
+        isLive: Bool,
+        messageController: ChatMessageController?
+    ) {
+        self.locationCoordinate = locationCoordinate
+        self.isLive = isLive
+        self.messageController = messageController
         super.init(nibName: nil, bundle: nil)
     }
 

@@ -55,11 +55,11 @@ class LocationAttachmentViewInjector: AttachmentViewInjector {
             return
         }
 
-        guard let locationAttachment = staticLocationAttachment else {
-            return
+        if let staticLocationAttachment = self.staticLocationAttachment {
+            locationAttachmentDelegate.didTapOnStaticLocationAttachment(staticLocationAttachment)
+        } else if let liveLocationAttachment = self.liveLocationAttachment {
+            locationAttachmentDelegate.didTapOnLiveLocationAttachment(liveLocationAttachment)
         }
-
-        locationAttachmentDelegate.didTapOnLocationAttachment(locationAttachment)
     }
 
     func handleTapOnStopSharingLocation() {
