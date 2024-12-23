@@ -87,7 +87,7 @@ public class CurrentChatUserController: DataController, DelegateCallable, DataSt
     }
 
     /// The throttler for limiting the frequency of live location updates.
-    private var locationUpdatesThrottler = Throttler(interval: 5, broadcastLatestEvent: true)
+    private var locationUpdatesThrottler = Throttler(interval: 0.5, broadcastLatestEvent: true)
 
     /// A type-erased delegate.
     var multicastDelegate: MulticastDelegate<CurrentChatUserControllerDelegate> = .init()
