@@ -84,10 +84,10 @@ extension LocationDetailViewController: ChatMessageControllerDelegate {
         userName: String
     ) {
         if let existingAnnotation = userAnnotation {
-            UIView.animate(withDuration: 3) {
+            UIView.animate(withDuration: 5) {
                 existingAnnotation.coordinate = coordinate
             }
-            UIView.animate(withDuration: 3, delay: 0.2, options: .curveEaseOut) {
+            UIView.animate(withDuration: 5, delay: 0.2, options: .curveEaseOut) {
                 self.mapView.setCenter(coordinate, animated: true)
             }
             if let annotationView = mapView.view(for: existingAnnotation) as? UserAnnotationView {
