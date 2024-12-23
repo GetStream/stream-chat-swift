@@ -46,7 +46,7 @@ The **StreamChatSwiftUI SDK** is our UI SDK for SwiftUI components. If your appl
 
 ## **Quick Links**
 
-- [iOS/Swift Chat Tutorial](https://getstream.io/tutorials/ios-chat/): Learn how to use the SDK by following our simple tutorial with UIKit (or [SwiftUI](https://getstream.io/tutorials/swiftui-chat/)).
+- [UIKit Chat Tutorial](https://getstream.io/tutorials/ios-uikit-chat/): Learn how to use the SDK by following our simple tutorial with UIKit (or [SwiftUI](https://getstream.io/tutorials/swiftui-chat/)).
 - [Register](https://getstream.io/chat/trial/): Register to get an API key for Stream Chat.
 - [Installation](https://getstream.io/chat/docs/sdk/ios/basics/integration): Learn more about how to install the SDK using SPM or CocoaPods.
   - Do you want to use Module Stable XCFrameworks? [Check this out](https://getstream.io/chat/docs/sdk/ios/basics/integration#xcframeworks)
