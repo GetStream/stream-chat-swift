@@ -337,6 +337,18 @@ public class ChatMessageController: DataController, DelegateCallable, DataStoreP
             stoppedSharing: false
         )
 
+        // Optimistic update
+        client.databaseContainer.write { session in
+            let messageDTO = try session.messageEditableByCurrentUser(self.messageId)
+            guard let liveLocationAttachmentDTO = messageDTO.attachments.first(
+                where: { $0.attachmentID == locationAttachment.id }
+            ) else {
+                return
+            }
+
+            liveLocationAttachmentDTO.data = try JSONEncoder.default.encode(liveLocationPayload)
+        }
+
         messageUpdater.updatePartialMessage(
             messageId: messageId,
             text: nil,

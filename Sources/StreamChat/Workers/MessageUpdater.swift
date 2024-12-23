@@ -1002,7 +1002,7 @@ extension ClientError {
     }
 }
 
-private extension DatabaseSession {
+extension DatabaseSession {
     /// This helper return the message if it can be edited by the current user.
     /// The message entity will be returned if it exists and authored by the current user.
     /// If any of the requirements is not met the error will be thrown.
