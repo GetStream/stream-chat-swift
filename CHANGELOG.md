@@ -3,6 +3,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 # Upcoming
 
+### 🐞 Fixed
+- Remove the main thread requirement from the `DataStore` [#3541](https://github.com/GetStream/stream-chat-swift/pull/3541)
 ### ⚡ Performance
 - Improve performance of accessing database model properties [#3534](https://github.com/GetStream/stream-chat-swift/pull/3534)
 - Improve performance of model conversions with large extra data [#3534](https://github.com/GetStream/stream-chat-swift/pull/3534)
