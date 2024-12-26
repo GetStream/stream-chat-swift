@@ -43,15 +43,21 @@ class LocationDetailViewController: UIViewController {
             UserAnnotationView.self,
             forAnnotationViewWithReuseIdentifier: "UserAnnotation"
         )
-        mapView.region = .init(
-            center: locationCoordinate,
-            span: coordinateSpan
-        )
         mapView.showsUserLocation = false
         mapView.delegate = self
 
         messageController?.synchronize()
         messageController?.delegate = self
+
+        mapView.region = .init(
+            center: locationCoordinate,
+            span: coordinateSpan
+        )
+        updateUserLocation(
+            locationCoordinate,
+            userImage: nil,
+            userName: ""
+        )
 
         view = mapView
     }
