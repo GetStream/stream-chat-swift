@@ -122,9 +122,8 @@ class LocationAttachmentSnapshotView: _View {
         if frame.size.width != mapOptions.size.width {
             imageView.image = nil
             clearSnapshotCache()
+            loadMapSnapshotImage()
         }
-
-        loadMapSnapshotImage()
     }
 
     private func configureMapPosition() {

@@ -101,10 +101,6 @@ class DemoAppTabBarController: UITabBarController, CurrentChatUserControllerDele
             return
         }
 
-        messages.forEach {
-            LocationAttachmentSnapshotView.snapshotsCache.removeObject(forKey: $0.id as NSString)
-        }
-
         let locations: [String] = messages.compactMap {
             guard let locationAttachment = $0.liveLocationAttachments.first else {
                 return nil
