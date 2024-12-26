@@ -978,9 +978,8 @@ private extension ChatMessageController {
 
     func setRepliesObserver() {
         let sortAscending = listOrdering == .topToBottom ? false : true
-        let deletedMessageVisibility = client.databaseContainer.viewContext
-            .deletedMessagesVisibility ?? .visibleForCurrentUser
-        let shouldShowShadowedMessages = client.databaseContainer.viewContext.shouldShowShadowedMessages ?? false
+        let deletedMessageVisibility = client.config.deletedMessagesVisibility
+        let shouldShowShadowedMessages = client.config.shouldShowShadowedMessages
 
         let pageSize: Int = repliesPageSize
         let observer = environment.repliesObserverBuilder(
