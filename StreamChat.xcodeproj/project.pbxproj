@@ -1441,6 +1441,8 @@
 		AD2DDA552CAA2B600040B8D4 /* PollAllOptionsListItemCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD2DDA542CAA2B600040B8D4 /* PollAllOptionsListItemCell.swift */; };
 		AD2DDA562CAA2B600040B8D4 /* PollAllOptionsListItemCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD2DDA542CAA2B600040B8D4 /* PollAllOptionsListItemCell.swift */; };
 		AD2DDA5A2CAAB7B50040B8D4 /* PollAllOptionsListVC_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD2DDA572CAAB7AC0040B8D4 /* PollAllOptionsListVC_Tests.swift */; };
+		AD2F2D992D271B07006ED24B /* UserAnnotation.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD2F2D982D271B07006ED24B /* UserAnnotation.swift */; };
+		AD2F2D9B2D271B36006ED24B /* UserAnnotationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD2F2D9A2D271B36006ED24B /* UserAnnotationView.swift */; };
 		AD3331702A30DB2E00ABF38F /* SwipeToReplyGestureHandler_Mock.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD33316F2A30DB2E00ABF38F /* SwipeToReplyGestureHandler_Mock.swift */; };
 		AD37D7C42BC979B000800D8C /* ThreadDTO.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD37D7C32BC979B000800D8C /* ThreadDTO.swift */; };
 		AD37D7C52BC979B000800D8C /* ThreadDTO.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD37D7C32BC979B000800D8C /* ThreadDTO.swift */; };
@@ -4228,6 +4230,8 @@
 		AD2C94DE29CB93C40096DCA1 /* FailingChannelListPayload.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = FailingChannelListPayload.json; sourceTree = "<group>"; };
 		AD2DDA542CAA2B600040B8D4 /* PollAllOptionsListItemCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PollAllOptionsListItemCell.swift; sourceTree = "<group>"; };
 		AD2DDA572CAAB7AC0040B8D4 /* PollAllOptionsListVC_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PollAllOptionsListVC_Tests.swift; sourceTree = "<group>"; };
+		AD2F2D982D271B07006ED24B /* UserAnnotation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserAnnotation.swift; sourceTree = "<group>"; };
+		AD2F2D9A2D271B36006ED24B /* UserAnnotationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserAnnotationView.swift; sourceTree = "<group>"; };
 		AD33316F2A30DB2E00ABF38F /* SwipeToReplyGestureHandler_Mock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwipeToReplyGestureHandler_Mock.swift; sourceTree = "<group>"; };
 		AD37D7C32BC979B000800D8C /* ThreadDTO.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThreadDTO.swift; sourceTree = "<group>"; };
 		AD37D7C62BC98A4400800D8C /* ThreadParticipantDTO.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThreadParticipantDTO.swift; sourceTree = "<group>"; };
@@ -8424,6 +8428,8 @@
 				AD053BA62B33624C003612B6 /* LocationAttachmentViewDelegate.swift */,
 				AD053BAA2B33638B003612B6 /* LocationAttachmentSnapshotView.swift */,
 				AD053BA82B336331003612B6 /* LocationDetailViewController.swift */,
+				AD2F2D9A2D271B36006ED24B /* UserAnnotationView.swift */,
+				AD2F2D982D271B07006ED24B /* UserAnnotation.swift */,
 			);
 			path = LocationAttachment;
 			sourceTree = "<group>";
@@ -11092,6 +11098,7 @@
 				A3227EC9284A52EE00EBE6CC /* PushNotifications.swift in Sources */,
 				A3227E65284A4A5C00EBE6CC /* StreamChatWrapper.swift in Sources */,
 				A3227E78284A4CAD00EBE6CC /* DemoChatMessageContentView.swift in Sources */,
+				AD2F2D992D271B07006ED24B /* UserAnnotation.swift in Sources */,
 				7933060B256FF94800FBB586 /* DemoChatChannelListRouter.swift in Sources */,
 				AD82903D2A7C5A8F00396782 /* DemoChatChannelListItemView.swift in Sources */,
 				A3227E69284A4AE800EBE6CC /* AvatarView.swift in Sources */,
@@ -11101,6 +11108,7 @@
 				84A33ABA28F86B8500CEC8FD /* StreamChatWrapper+DemoApp.swift in Sources */,
 				AD053BA92B336331003612B6 /* LocationDetailViewController.swift in Sources */,
 				ADFCA5B72D1232B3000F515F /* LocationProvider.swift in Sources */,
+				AD2F2D9B2D271B36006ED24B /* UserAnnotationView.swift in Sources */,
 				A3227E59284A484300EBE6CC /* UIImage+Resized.swift in Sources */,
 				79B8B64B285CBDC00059FB2D /* DemoChatMessageLayoutOptionsResolver.swift in Sources */,
 				AD053BA32B335A13003612B6 /* LocationAttachmentPayload+AttachmentViewProvider.swift in Sources */,
