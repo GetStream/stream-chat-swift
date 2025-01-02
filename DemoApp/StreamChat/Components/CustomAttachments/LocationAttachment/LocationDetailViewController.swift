@@ -148,18 +148,21 @@ class UserAnnotationView: MKAnnotationView {
         return view
     }()
 
+    private var size: CGSize = .init(width: 40, height: 40)
+
     private var pulseLayer: CALayer?
 
     override init(annotation: MKAnnotation?, reuseIdentifier: String?) {
         super.init(annotation: annotation, reuseIdentifier: reuseIdentifier)
         backgroundColor = .gray
-        frame = CGRect(x: 0, y: 0, width: 40, height: 40)
+        frame = CGRect(x: 0, y: 0, width: size.width, height: size.height)
         layer.cornerRadius = 20
         layer.masksToBounds = false
         layer.borderWidth = 2
         layer.borderColor = UIColor.white.cgColor
         addSubview(avatarView)
-        avatarView.bounds = bounds
+        avatarView.width(size.width)
+        avatarView.height(size.height)
     }
 
     @available(*, unavailable)
@@ -179,18 +182,27 @@ class UserAnnotationView: MKAnnotationView {
         pulseLayer.masksToBounds = false
         pulseLayer.frame = bounds
         pulseLayer.cornerRadius = bounds.width / 2
-        pulseLayer.backgroundColor = UIColor.systemBlue.withAlphaComponent(0.4).cgColor
+        pulseLayer.backgroundColor = UIColor.systemBlue.withAlphaComponent(0.5).cgColor
         layer.insertSublayer(pulseLayer, below: avatarView.layer)
 
-        let animation = CABasicAnimation(keyPath: "transform.scale")
-        animation.fromValue = 1.0
-        animation.toValue = 1.5
-        animation.duration = 1.0
-        animation.timingFunction = CAMediaTimingFunction(name: .easeOut)
-        animation.autoreverses = true
-        animation.repeatCount = .infinity
+        let animationScale = CABasicAnimation(keyPath: "transform.scale")
+        animationScale.fromValue = 1.0
+        animationScale.toValue = 1.5
+        animationScale.duration = 2.0
+        animationScale.timingFunction = CAMediaTimingFunction(name: .easeOut)
+        animationScale.autoreverses = false
+        animationScale.repeatCount = .infinity
 
-        pulseLayer.add(animation, forKey: "pulse")
+        let animationOpacity = CABasicAnimation(keyPath: "opacity")
+        animationOpacity.fromValue = 1.0
+        animationOpacity.toValue = 0
+        animationOpacity.duration = 2.0
+        animationOpacity.timingFunction = CAMediaTimingFunction(name: .easeOut)
+        animationOpacity.autoreverses = false
+        animationOpacity.repeatCount = .infinity
+
+        pulseLayer.add(animationScale, forKey: "pulseScale")
+        pulseLayer.add(animationOpacity, forKey: "pulseOpacity")
         self.pulseLayer = pulseLayer
     }
 
