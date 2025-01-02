@@ -50,6 +50,9 @@ public struct ChatChannel {
     ///
     public let isFrozen: Bool
     
+    /// Returns `true` if the channel is disabled.
+    public let isDisabled: Bool
+    
     /// Returns `true` if the channel is blocked.
     ///
     /// It's not possible to send new messages to a blocked channel.
@@ -174,6 +177,7 @@ public struct ChatChannel {
         config: ChannelConfig = .init(),
         ownCapabilities: Set<ChannelCapability> = [],
         isFrozen: Bool = false,
+        isDisabled: Bool = false,
         isBlocked: Bool = false,
         lastActiveMembers: [ChatChannelMember],
         membership: ChatChannelMember? = nil,
@@ -204,6 +208,7 @@ public struct ChatChannel {
         self.config = config
         self.ownCapabilities = ownCapabilities
         self.isFrozen = isFrozen
+        self.isDisabled = isDisabled
         self.isBlocked = isBlocked
         self.membership = membership
         self.team = team
@@ -262,6 +267,7 @@ extension ChatChannel: Hashable {
         guard lhs.extraData == rhs.extraData else { return false }
         guard lhs.imageURL == rhs.imageURL else { return false }
         guard lhs.isFrozen == rhs.isFrozen else { return false }
+        guard lhs.isDisabled == rhs.isDisabled else { return false }
         guard lhs.isHidden == rhs.isHidden else { return false }
         guard lhs.memberCount == rhs.memberCount else { return false }
         guard lhs.membership == rhs.membership else { return false }

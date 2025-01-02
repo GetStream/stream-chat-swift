@@ -14,6 +14,7 @@
    },
    "type":"messaging",
    "cid":"messaging:general",
+   "disabled" : false,
    "frozen":true,
    "cooldown":10,
    "member_count":4,

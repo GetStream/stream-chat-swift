@@ -65,6 +65,7 @@
                     },
                     "created_at": "2021-04-22T10:23:52.277819Z",
                     "updated_at": "2021-04-22T14:56:09.059605Z",
+                    "disabled": false,
                     "frozen": false,
                     "config": {
                         "created_at": "2021-03-01T19:26:18.406502Z",
@@ -149,6 +150,7 @@
                     },
                     "created_at": "2021-04-22T10:23:52.277819Z",
                     "updated_at": "2021-04-22T14:56:09.059605Z",
+                    "disabled" : false,
                     "frozen": false,
                     "config": {
                         "created_at": "2021-03-01T19:26:18.406502Z",

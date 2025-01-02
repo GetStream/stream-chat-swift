@@ -57,6 +57,7 @@
         "created_by" : null,
         "type" : "messaging",
         "cid" : "messaging:channel-ex7-63",
+        "disabled": false,
         "frozen" : false,
         "member_count" : 5,
         "updated_at" : "2019-12-17T17:11:26.131888Z",
