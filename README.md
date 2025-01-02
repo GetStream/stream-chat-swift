@@ -8,7 +8,7 @@
 </p>
 <p align="center">
   <a href="https://getstream.io/chat/docs/sdk/ios/"><img src="https://img.shields.io/badge/iOS-13%2B-lightblue" /></a>
-  <a href="https://swift.org"><img src="https://img.shields.io/badge/Swift-5.6%2B-orange.svg" /></a>
+  <a href="https://swift.org"><img src="https://img.shields.io/badge/Swift-5.7%2B-orange.svg" /></a>
   <a href="https://github.com/GetStream/stream-chat-swift/actions"><img src="https://github.com/GetStream/stream-chat-swift/actions/workflows/cron-checks.yml/badge.svg" /></a>
   <a href="https://sonarcloud.io/summary/new_code?id=GetStream_stream-chat-swift"><img src="https://sonarcloud.io/api/project_badges/measure?project=GetStream_stream-chat-swift&metric=coverage" /></a>
 </p>
@@ -39,7 +39,7 @@ The **StreamChatSwiftUI SDK** is our UI SDK for SwiftUI components. If your appl
 - **Familiar behavior**: The UI elements are good platform citizens and behave like native elements; they respect `tintColor`, `layoutMargins`, light/dark mode, dynamic font sizes, etc.
 - **Swift native API:** Uses Swift's powerful language features to make the SDK usage easy and type-safe.
 - `UIKit` and `SwiftUI` SDKs use native patterns and paradigms from respective UI frameworks: The API follows the design of native system SDKs. It makes integration with your existing code easy and familiar.
-  - `UIKit` SDK is part of this repository whereas `SwiftUI` SDK is available [here](https://github.com/GetStream/stream-chat-swiftui). 
+  - `UIKit` SDK is part of this repository whereas `SwiftUI` SDK is available [here](https://github.com/GetStream/stream-chat-swiftui).
 - **First-class support for `Combine` and `Structured Concurrency`**: Refer to our getting started guides for [Combine](https://getstream.io/chat/docs/sdk/ios/combine/) and [Structured Concurrency](https://getstream.io/chat/docs/sdk/ios/client/state-layer/state-layer-overview/).
 - **Fully open-source implementation:** You have access to the complete source code of the SDK here on GitHub.
 - **Supports iOS 13+:** We proudly support older versions of iOS, so your app can stay available to almost everyone.
