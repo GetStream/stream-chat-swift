@@ -104,6 +104,10 @@ public extension FilterKey where Scope: AnyChannelListFilterScope {
     /// Supported operators: `equal`
     static var frozen: FilterKey<Scope, Bool> { .init(rawValue: "frozen", keyPathString: #keyPath(ChannelDTO.isFrozen)) }
     
+    /// A filter key for querying disabled channels.
+    /// Supported operators: `equal`
+    static var disabled: FilterKey<Scope, Bool> { .init(rawValue: "disabled", keyPathString: #keyPath(ChannelDTO.isDisabled)) }
+    
     /// A filter key for matching the `blocked` value.
     /// Supported operators: `equal`
     static var blocked: FilterKey<Scope, Bool> { .init(rawValue: "blocked", keyPathString: #keyPath(ChannelDTO.isBlocked)) }

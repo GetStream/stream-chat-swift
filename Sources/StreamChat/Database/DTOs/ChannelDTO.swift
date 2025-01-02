@@ -33,6 +33,7 @@ class ChannelDTO: NSManagedObject {
     // This field is also used to implement the `clearHistory` option when hiding the channel.
     @NSManaged var truncatedAt: DBDate?
 
+    @NSManaged var isDisabled: Bool
     @NSManaged var isHidden: Bool
 
     @NSManaged var watcherCount: Int64
@@ -265,6 +266,7 @@ extension NSManagedObjectContext {
             }
         }
 
+        dto.isDisabled = payload.isDisabled
         dto.isFrozen = payload.isFrozen
         
         // Backend only returns a boolean
@@ -583,6 +585,7 @@ extension ChatChannel {
             config: dto.config.asModel(),
             ownCapabilities: Set(dto.ownCapabilities.compactMap(ChannelCapability.init(rawValue:))),
             isFrozen: dto.isFrozen,
+            isDisabled: dto.isDisabled,
             isBlocked: dto.isBlocked,
             lastActiveMembers: members,
             membership: membership,

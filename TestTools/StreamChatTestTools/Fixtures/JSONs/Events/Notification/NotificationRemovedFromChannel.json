@@ -8,6 +8,7 @@
     "type": "messaging",
     "cid": "messaging:91DC91CC-0",
     "created_by": null,
+    "disabled": false,
     "frozen": false,
     "disabled": false,
     "members": [

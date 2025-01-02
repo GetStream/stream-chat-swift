@@ -184,6 +184,7 @@ extension XCTestCase {
                     createdBy: dummyUser,
                     config: channelConfig,
                     ownCapabilities: ownCapabilities,
+                    isDisabled: false,
                     isFrozen: true,
                     isBlocked: false,
                     isHidden: nil,
@@ -298,6 +299,7 @@ extension XCTestCase {
                         updatedAt: .unique
                     ),
                     ownCapabilities: [],
+                    isDisabled: false,
                     isFrozen: true,
                     isBlocked: false,
                     isHidden: nil,

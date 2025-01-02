@@ -106,6 +106,7 @@
     "disabled" : false,
     "type" : "messaging",
     "cid" : "messaging:8372DE11-E",
+    "disabled" : false,
     "frozen" : false,
     "member_count" : 2,
     "updated_at" : "2022-02-16T08:20:13.865089Z",
