@@ -3,7 +3,7 @@
 //  StreamChatTests
 //
 //  Created by Pol Quintana on 7/2/23.
-//  Copyright © 2024 Stream.io Inc. All rights reserved.
+//  Copyright © 2025 Stream.io Inc. All rights reserved.
 //
 
 import Foundation
