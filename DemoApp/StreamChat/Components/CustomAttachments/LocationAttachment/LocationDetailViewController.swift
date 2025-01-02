@@ -8,17 +8,11 @@ import StreamChatUI
 import UIKit
 
 class LocationDetailViewController: UIViewController, ThemeProvider {
-    let locationCoordinate: CLLocationCoordinate2D
-    let isLive: Bool
-    let messageController: ChatMessageController?
+    let messageController: ChatMessageController
 
     init(
-        locationCoordinate: CLLocationCoordinate2D,
-        isLive: Bool,
-        messageController: ChatMessageController?
+        messageController: ChatMessageController
     ) {
-        self.locationCoordinate = locationCoordinate
-        self.isLive = isLive
         self.messageController = messageController
         super.init(nibName: nil, bundle: nil)
     }
@@ -47,16 +41,30 @@ class LocationDetailViewController: UIViewController, ThemeProvider {
         mapView.showsUserLocation = false
         mapView.delegate = self
 
-        messageController?.synchronize()
-        messageController?.delegate = self
+        messageController.synchronize()
+        messageController.delegate = self
 
-        mapView.region = .init(
-            center: locationCoordinate,
-            span: coordinateSpan
-        )
-        updateUserLocation(
-            locationCoordinate
-        )
+        var locationCoordinate: CLLocationCoordinate2D?
+        if let staticLocationAttachment = messageController.message?.staticLocationAttachments.first {
+            locationCoordinate = CLLocationCoordinate2D(
+                latitude: staticLocationAttachment.latitude,
+                longitude: staticLocationAttachment.longitude
+            )
+        } else if let liveLocationAttachment = messageController.message?.liveLocationAttachments.first {
+            locationCoordinate = CLLocationCoordinate2D(
+                latitude: liveLocationAttachment.latitude,
+                longitude: liveLocationAttachment.longitude
+            )
+        }
+        if let locationCoordinate {
+            mapView.region = .init(
+                center: locationCoordinate,
+                span: coordinateSpan
+            )
+            updateUserLocation(
+                locationCoordinate
+            )
+        }
 
         view = mapView
     }
@@ -91,7 +99,7 @@ extension LocationDetailViewController: ChatMessageControllerDelegate {
             UIView.animate(withDuration: 5, delay: 0.2, options: .curveEaseOut) {
                 self.mapView.setCenter(coordinate, animated: true)
             }
-        } else if let author = messageController?.message?.author {
+        } else if let author = messageController.message?.author {
             // Create new annotation
             let userAnnotation = UserAnnotation(
                 coordinate: coordinate,
@@ -119,7 +127,10 @@ extension LocationDetailViewController: MKMapViewDelegate {
         ) as? UserAnnotationView
 
         annotationView?.setUser(userAnnotation.user)
-        if isLive {
+        
+        let liveLocationAttachment = messageController.message?.liveLocationAttachments.first
+        let isSharingLiveLocation = liveLocationAttachment?.stoppedSharing == false
+        if isSharingLiveLocation {
             annotationView?.startPulsingAnimation()
         } else {
             annotationView?.stopPulsingAnimation()

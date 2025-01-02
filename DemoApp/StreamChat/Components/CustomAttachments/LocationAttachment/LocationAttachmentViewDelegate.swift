@@ -21,13 +21,12 @@ protocol LocationAttachmentViewDelegate: ChatMessageContentViewDelegate {
 
 extension DemoChatMessageListVC: LocationAttachmentViewDelegate {
     func didTapOnStaticLocationAttachment(_ attachment: ChatMessageStaticLocationAttachment) {
+        let messageController = client.messageController(
+            cid: attachment.id.cid,
+            messageId: attachment.id.messageId
+        )
         let mapViewController = LocationDetailViewController(
-            locationCoordinate: .init(
-                latitude: attachment.latitude,
-                longitude: attachment.longitude
-            ),
-            isLive: false,
-            messageController: nil
+            messageController: messageController
         )
         navigationController?.pushViewController(mapViewController, animated: true)
     }
@@ -38,11 +37,6 @@ extension DemoChatMessageListVC: LocationAttachmentViewDelegate {
             messageId: attachment.id.messageId
         )
         let mapViewController = LocationDetailViewController(
-            locationCoordinate: .init(
-                latitude: attachment.latitude,
-                longitude: attachment.longitude
-            ),
-            isLive: attachment.stoppedSharing == false,
             messageController: messageController
         )
         navigationController?.pushViewController(mapViewController, animated: true)
