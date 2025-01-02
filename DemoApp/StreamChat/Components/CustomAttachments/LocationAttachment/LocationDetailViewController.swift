@@ -4,9 +4,10 @@
 
 import MapKit
 import StreamChat
+import StreamChatUI
 import UIKit
 
-class LocationDetailViewController: UIViewController {
+class LocationDetailViewController: UIViewController, ThemeProvider {
     let locationCoordinate: CLLocationCoordinate2D
     let isLive: Bool
     let messageController: ChatMessageController?
@@ -54,9 +55,7 @@ class LocationDetailViewController: UIViewController {
             span: coordinateSpan
         )
         updateUserLocation(
-            locationCoordinate,
-            userImage: nil,
-            userName: ""
+            locationCoordinate
         )
 
         view = mapView
@@ -78,16 +77,12 @@ extension LocationDetailViewController: ChatMessageControllerDelegate {
         )
 
         updateUserLocation(
-            locationCoordinate,
-            userImage: UIImage(systemName: "location"),
-            userName: messageController?.message?.author.name ?? ""
+            locationCoordinate
         )
     }
 
     func updateUserLocation(
-        _ coordinate: CLLocationCoordinate2D,
-        userImage: UIImage?,
-        userName: String
+        _ coordinate: CLLocationCoordinate2D
     ) {
         if let existingAnnotation = userAnnotation {
             UIView.animate(withDuration: 5) {
@@ -96,19 +91,14 @@ extension LocationDetailViewController: ChatMessageControllerDelegate {
             UIView.animate(withDuration: 5, delay: 0.2, options: .curveEaseOut) {
                 self.mapView.setCenter(coordinate, animated: true)
             }
-            if let annotationView = mapView.view(for: existingAnnotation) as? UserAnnotationView {
-                annotationView.updateImage(userImage)
-            }
-        } else {
+        } else if let author = messageController?.message?.author {
             // Create new annotation
-            userAnnotation = UserAnnotation(
+            let userAnnotation = UserAnnotation(
                 coordinate: coordinate,
-                image: userImage,
-                title: userName
+                user: author
             )
-            if let annotation = userAnnotation {
-                mapView.addAnnotation(annotation)
-            }
+            mapView.addAnnotation(userAnnotation)
+            self.userAnnotation = userAnnotation
         }
     }
 }
@@ -128,34 +118,48 @@ extension LocationDetailViewController: MKMapViewDelegate {
             for: userAnnotation
         ) as? UserAnnotationView
 
-        annotationView?.updateImage(userAnnotation.image)
+        annotationView?.setUser(userAnnotation.user)
+        if isLive {
+            annotationView?.startPulsingAnimation()
+        } else {
+            annotationView?.stopPulsingAnimation()
+        }
         return annotationView
     }
 }
 
-// Custom annotation class to store user data
 class UserAnnotation: NSObject, MKAnnotation {
     dynamic var coordinate: CLLocationCoordinate2D
-    var image: UIImage?
-    var title: String?
+    var user: ChatUser
 
-    init(coordinate: CLLocationCoordinate2D, image: UIImage?, title: String?) {
+    init(coordinate: CLLocationCoordinate2D, user: ChatUser) {
         self.coordinate = coordinate
-        self.image = image
-        self.title = title
+        self.user = user
         super.init()
     }
 }
 
-// Custom annotation view with user avatar
 class UserAnnotationView: MKAnnotationView {
+    private lazy var avatarView: ChatUserAvatarView = {
+        let view = ChatUserAvatarView()
+        view.shouldShowOnlineIndicator = false
+        view.translatesAutoresizingMaskIntoConstraints = false
+        view.layer.masksToBounds = true
+        return view
+    }()
+
+    private var pulseLayer: CALayer?
+
     override init(annotation: MKAnnotation?, reuseIdentifier: String?) {
         super.init(annotation: annotation, reuseIdentifier: reuseIdentifier)
+        backgroundColor = .gray
         frame = CGRect(x: 0, y: 0, width: 40, height: 40)
         layer.cornerRadius = 20
-        layer.masksToBounds = true
+        layer.masksToBounds = false
         layer.borderWidth = 2
         layer.borderColor = UIColor.white.cgColor
+        addSubview(avatarView)
+        avatarView.bounds = bounds
     }
 
     @available(*, unavailable)
@@ -163,7 +167,38 @@ class UserAnnotationView: MKAnnotationView {
         fatalError("init(coder:) not implemented")
     }
 
-    func updateImage(_ image: UIImage?) {
-        self.image = image
+    func setUser(_ user: ChatUser) {
+        avatarView.content = user
+    }
+
+    func startPulsingAnimation() {
+        guard pulseLayer == nil else {
+            return
+        }
+        let pulseLayer = CALayer()
+        pulseLayer.masksToBounds = false
+        pulseLayer.frame = bounds
+        pulseLayer.cornerRadius = bounds.width / 2
+        pulseLayer.backgroundColor = UIColor.systemBlue.withAlphaComponent(0.4).cgColor
+        layer.insertSublayer(pulseLayer, below: avatarView.layer)
+
+        let animation = CABasicAnimation(keyPath: "transform.scale")
+        animation.fromValue = 1.0
+        animation.toValue = 1.5
+        animation.duration = 1.0
+        animation.timingFunction = CAMediaTimingFunction(name: .easeOut)
+        animation.autoreverses = true
+        animation.repeatCount = .infinity
+
+        pulseLayer.add(animation, forKey: "pulse")
+        self.pulseLayer = pulseLayer
+    }
+
+    func stopPulsingAnimation() {
+        guard pulseLayer != nil else {
+            return
+        }
+        pulseLayer?.removeFromSuperlayer()
+        pulseLayer = nil
     }
 }

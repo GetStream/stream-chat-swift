@@ -42,7 +42,7 @@ extension DemoChatMessageListVC: LocationAttachmentViewDelegate {
                 latitude: attachment.latitude,
                 longitude: attachment.longitude
             ),
-            isLive: true,
+            isLive: attachment.stoppedSharing == false,
             messageController: messageController
         )
         navigationController?.pushViewController(mapViewController, animated: true)
