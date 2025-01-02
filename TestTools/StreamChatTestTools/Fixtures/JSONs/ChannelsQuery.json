@@ -1255,6 +1255,7 @@
         },
         "type" : "messaging",
         "cid" : "messaging:general",
+        "disabled" : false,
         "frozen" : false,
         "member_count" : 4,
         "updated_at" : "2019-05-10T14:03:49.505006Z",
@@ -2349,6 +2350,7 @@
           "online" : true,
           "name" : "broken-waterfall-5"
         },
+        "disabled" : false,
         "frozen" : false,
         "id" : "new_channel_8884",
         "created_at" : "2019-12-12T15:41:05.022206Z",
@@ -3253,6 +3255,7 @@
           "online" : true,
           "name" : "broken-waterfall-5"
         },
+        "disabled" : false,
         "frozen" : false,
         "id" : "new_channel_7487",
         "created_at" : "2020-06-05T12:53:09.857739Z",
@@ -4262,6 +4265,7 @@
           "online" : true,
           "name" : "broken-waterfall-5"
         },
+        "disabled" : false,
         "frozen" : false,
         "id" : "new_channel_1751",
         "created_at" : "2020-06-08T11:57:36.660818Z",
@@ -5007,6 +5011,7 @@
           "online" : true,
           "name" : "broken-waterfall-5"
         },
+        "disabled" : false,
         "frozen" : false,
         "id" : "new_channel_5000",
         "created_at" : "2020-06-08T11:52:39.731147Z",
@@ -5355,6 +5360,7 @@
           "online" : true,
           "name" : "broken-waterfall-5"
         },
+        "disabled" : false,
         "frozen" : false,
         "id" : "new_channel_3124",
         "created_at" : "2020-06-08T11:51:12.271858Z",
@@ -5666,6 +5672,7 @@
           "online" : true,
           "name" : "broken-waterfall-5"
         },
+        "disabled" : false,
         "frozen" : false,
         "id" : "new_channel_6264",
         "created_at" : "2020-06-08T11:50:51.389239Z",
@@ -5983,6 +5990,7 @@
           "online" : true,
           "name" : "broken-waterfall-5"
         },
+        "disabled" : false,
         "frozen" : false,
         "id" : "new_channel_7940",
         "created_at" : "2020-06-08T11:49:28.886904Z",
@@ -6300,6 +6308,7 @@
           "online" : true,
           "name" : "broken-waterfall-5"
         },
+        "disabled" : false,
         "frozen" : false,
         "id" : "CD2595FE-985E-47A6-9E35-79F1A1AA7394",
         "created_at" : "2020-06-06T02:32:06.86138Z",
@@ -7619,6 +7628,7 @@
           "online" : true,
           "name" : "broken-waterfall-5"
         },
+        "disabled" : false,
         "frozen" : false,
         "id" : "new_channel_1877",
         "created_at" : "2019-12-13T14:29:33.347005Z",
@@ -8033,6 +8043,7 @@
           "online" : true,
           "name" : "broken-waterfall-5"
         },
+        "disabled" : false,
         "frozen" : false,
         "id" : "31149B30-87CC-4FBF-B374-E9FFF3A044F6",
         "created_at" : "2020-06-04T14:53:35.136401Z",
@@ -9369,6 +9380,7 @@
           "online" : true,
           "name" : "broken-waterfall-5"
         },
+        "disabled" : false,
         "frozen" : false,
         "id" : "new_channel_4371",
         "created_at" : "2019-12-16T15:19:47.266902Z",
@@ -11146,6 +11158,7 @@
         },
         "type" : "messaging",
         "cid" : "messaging:test-channel-3011",
+        "disabled" : false,
         "frozen" : false,
         "member_count" : 2,
         "updated_at" : "2019-12-12T20:41:06.189203Z",
@@ -11599,6 +11612,7 @@
           "online" : true,
           "name" : "broken-waterfall-5"
         },
+        "disabled" : false,
         "frozen" : false,
         "id" : "7E76CBEF-BAD6-4713-BF3A-18FE4F4A750F",
         "created_at" : "2020-05-18T02:33:45.567418Z",
@@ -11914,6 +11928,7 @@
           "online" : true,
           "name" : "broken-waterfall-5"
         },
+        "disabled" : false,
         "frozen" : false,
         "id" : "3713C2BC-F865-44FE-807F-85CD7175FCB2",
         "created_at" : "2020-05-17T02:33:45.579961Z",
@@ -12126,6 +12141,7 @@
           "online" : true,
           "name" : "broken-waterfall-5"
         },
+        "disabled" : false,
         "frozen" : false,
         "id" : "ACAE4EC2-046C-4298-85EA-5A7E41C9CB6F",
         "created_at" : "2020-05-17T02:33:12.370551Z",
@@ -12338,6 +12354,7 @@
           "online" : true,
           "name" : "broken-waterfall-5"
         },
+        "disabled" : false,
         "frozen" : false,
         "id" : "9E38A3E7-315C-441E-87CE-D65DEE26D390",
         "created_at" : "2020-05-17T02:32:06.961529Z",
@@ -12653,6 +12670,7 @@
           "online" : true,
           "name" : "broken-waterfall-5"
         },
+        "disabled" : false,
         "frozen" : false,
         "id" : "F6756D54-1EB2-4075-9AB0-F3E4AA2A5EC6",
         "created_at" : "2020-05-17T02:30:58.02951Z",
@@ -12987,6 +13005,7 @@
           "online" : true,
           "name" : "broken-waterfall-5"
         },
+        "disabled" : false,
         "frozen" : false,
         "id" : "A5DC9B6A-AB4A-493F-95A1-73409019F9EF",
         "created_at" : "2020-05-15T12:15:28.677874Z",
@@ -13346,6 +13365,7 @@
           "online" : true,
           "name" : "broken-waterfall-5"
         },
+        "disabled" : false,
         "frozen" : false,
         "id" : "BCC7555C-C3BE-438A-9791-CDB9B7B04C8E",
         "created_at" : "2020-05-15T02:42:18.260686Z",

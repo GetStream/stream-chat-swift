@@ -22,6 +22,7 @@
         "created_by" : null,
         "type" : "messaging",
         "cid" : "messaging:general",
+        "disabled" : false,
         "frozen" : false,
         "member_count" : 3,
         "updated_at" : "2019-05-10T14:03:49.505006Z",

@@ -305,6 +305,7 @@ final class IdentifiablePayload_Tests: XCTestCase {
                 createdBy: owner,
                 config: .mock(),
                 ownCapabilities: [],
+                isDisabled: false,
                 isFrozen: true,
                 isBlocked: false,
                 isHidden: false,

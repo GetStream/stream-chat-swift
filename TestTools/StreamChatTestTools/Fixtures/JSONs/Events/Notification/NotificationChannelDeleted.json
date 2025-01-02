@@ -11,6 +11,7 @@
       "updated_at":"2021-12-28T12:31:38.555137Z",
       "deleted_at":"2021-12-28T13:05:20.465131Z",
       "created_by":null,
+      "disabled": false,
       "frozen":false,
       "disabled":false,
       "config":{
