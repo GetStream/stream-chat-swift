@@ -1,4 +1,4 @@
-// swift-tools-version:5.6
+// swift-tools-version:5.7
 
 import Foundation
 import PackageDescription
@@ -56,8 +56,6 @@ let package = Package(
     ]
 )
 
-#if swift(>=5.6)
 package.dependencies.append(
     .package(url: "https://github.com/apple/swift-docc-plugin", exact: "1.0.0")
 )
-#endif
