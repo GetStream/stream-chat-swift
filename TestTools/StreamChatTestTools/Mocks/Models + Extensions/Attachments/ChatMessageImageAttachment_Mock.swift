@@ -21,6 +21,7 @@ extension ChatMessageImageAttachment {
             payload: .init(
                 title: title,
                 imageRemoteURL: imageURL,
+                file: try! AttachmentFile(url: imageURL),
                 extraData: extraData
             ),
             downloadingState: localDownloadState.map {

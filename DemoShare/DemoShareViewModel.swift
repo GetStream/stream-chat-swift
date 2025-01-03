@@ -68,30 +68,30 @@ class DemoShareViewModel: ObservableObject, ChatChannelControllerDelegate {
         channelController.delegate = self
         loading = true
         try await channelController.synchronize()
-        let remoteUrls = await withThrowingTaskGroup(of: URL.self) { taskGroup in
+        let attachmentPayloads = await withThrowingTaskGroup(of: AnyAttachmentPayload.self) { taskGroup in
             for url in imageURLs {
                 taskGroup.addTask {
+                    let file = try AttachmentFile(url: url)
                     let uploaded = try await channelController.uploadAttachment(
                         localFileURL: url,
                         type: .image
                     )
-                    return uploaded.remoteURL
+                    let attachment = ImageAttachmentPayload(
+                        title: nil,
+                        imageRemoteURL: uploaded.remoteURL,
+                        file: file
+                    )
+                    return AnyAttachmentPayload(payload: attachment)
                 }
             }
             
-            var results = [URL]()
+            var results = [AnyAttachmentPayload]()
             while let result = await taskGroup.nextResult() {
-                if let url = try? result.get() {
-                    results.append(url)
+                if let attachment = try? result.get() {
+                    results.append(attachment)
                 }
             }
             return results
-        }
-        
-        var attachmentPayloads = [AnyAttachmentPayload]()
-        for remoteUrl in remoteUrls {
-            let attachment = ImageAttachmentPayload(title: nil, imageRemoteURL: remoteUrl)
-            attachmentPayloads.append(AnyAttachmentPayload(payload: attachment))
         }
         
         messageId = try await channelController.createNewMessage(
