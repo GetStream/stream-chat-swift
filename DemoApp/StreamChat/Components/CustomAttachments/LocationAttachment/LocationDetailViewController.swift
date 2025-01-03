@@ -37,8 +37,6 @@ class LocationDetailViewController: UIViewController, ThemeProvider {
         title = "Location"
         navigationController?.navigationBar.backgroundColor = appearance.colorPalette.background
 
-        setupBottomSheet()
-
         mapView.register(
             UserAnnotationView.self,
             forAnnotationViewWithReuseIdentifier: "UserAnnotation"
@@ -52,7 +50,7 @@ class LocationDetailViewController: UIViewController, ThemeProvider {
             mapView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
             mapView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             mapView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            mapView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor)
+            mapView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
         ])
 
         messageController.synchronize()
@@ -79,6 +77,12 @@ class LocationDetailViewController: UIViewController, ThemeProvider {
                 locationCoordinate
             )
         }
+    }
+
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+
+        setupBottomSheet()
     }
 
     func updateUserLocation(
@@ -119,7 +123,7 @@ class LocationDetailViewController: UIViewController, ThemeProvider {
             nav.sheetPresentationController?.preferredCornerRadius = 16
             nav.sheetPresentationController?.largestUndimmedDetentIdentifier = customDetent.identifier
             nav.isModalInPresentation = true
-            present(nav, animated: false)
+            present(nav, animated: true)
         }
     }
 }
@@ -223,6 +227,6 @@ class LocationBottomSheetViewController: UIViewController, ThemeProvider {
     }
 
     @objc func stopSharing() {
-        // Stop sharing the live location
+        messageController.stopLiveLocationSharing()
     }
 }

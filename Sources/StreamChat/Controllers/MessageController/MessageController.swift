@@ -925,6 +925,57 @@ public class ChatMessageController: DataController, DelegateCallable, DataStoreP
             }
         }
     }
+
+    /// Stops sharing the live location for this message if it has an active location sharing attachment.
+    ///
+    /// - Parameters:
+    ///   - completion: Called when the server updates the message.
+    public func stopLiveLocationSharing(completion: ((Result<ChatMessage, Error>) -> Void)? = nil) {
+        guard let locationAttachment = message?.liveLocationAttachments.first else {
+            callback {
+                completion?(.failure(ClientError.MessageDoesNotHaveLiveLocationAttachment()))
+            }
+            return
+        }
+
+        guard locationAttachment.stoppedSharing == false else {
+            callback {
+                completion?(.failure(ClientError.MessageLiveLocationAlreadyStopped()))
+            }
+            return
+        }
+
+        let liveLocationPayload = LiveLocationAttachmentPayload(
+            latitude: locationAttachment.latitude,
+            longitude: locationAttachment.longitude,
+            stoppedSharing: true
+        )
+
+        // Optimistic update
+        client.databaseContainer.write { session in
+            let messageDTO = try session.messageEditableByCurrentUser(self.messageId)
+            guard let liveLocationAttachmentDTO = messageDTO.attachments.first(
+                where: { $0.attachmentID == locationAttachment.id }
+            ) else {
+                return
+            }
+
+            liveLocationAttachmentDTO.data = try JSONEncoder.default.encode(liveLocationPayload)
+        }
+
+        messageUpdater.updatePartialMessage(
+            messageId: messageId,
+            text: nil,
+            attachments: [
+                .init(payload: liveLocationPayload)
+            ],
+            extraData: nil
+        ) { result in
+            self.callback {
+                completion?(result)
+            }
+        }
+    }
 }
 
 // MARK: - Environment
