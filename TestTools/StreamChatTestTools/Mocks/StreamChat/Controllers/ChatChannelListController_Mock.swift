@@ -9,7 +9,6 @@ class ChatChannelListController_Mock: ChatChannelListController, Spy {
     let spyState = SpyState()
     var loadNextChannelsIsCalled = false
     var loadNextChannelsCallCount = 0
-    var resetChannelsQueryResult: Result<(synchedAndWatched: [ChatChannel], unwanted: Set<ChannelId>), Error>?
     var refreshLoadedChannelsResult: Result<Set<ChannelId>, any Error>?
 
     /// Creates a new mock instance of `ChatChannelListController`.
@@ -36,15 +35,6 @@ class ChatChannelListController_Mock: ChatChannelListController, Spy {
     override func refreshLoadedChannels(completion: @escaping (Result<Set<ChannelId>, any Error>) -> Void) {
         record()
         refreshLoadedChannelsResult.map(completion)
-    }
-    
-    override func resetQuery(
-        watchedAndSynchedChannelIds: Set<ChannelId>,
-        synchedChannelIds: Set<ChannelId>,
-        completion: @escaping (Result<(synchedAndWatched: [ChatChannel], unwanted: Set<ChannelId>), Error>) -> Void
-    ) {
-        record()
-        resetChannelsQueryResult.map(completion)
     }
 }
 

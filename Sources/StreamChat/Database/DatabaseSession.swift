@@ -302,9 +302,6 @@ protocol ChannelDatabaseSession {
     /// Removes channel list query from database.
     func delete(query: ChannelListQuery)
 
-    /// Cleans a list of channels based on their id
-    func cleanChannels(cids: Set<ChannelId>)
-
     /// Removes a list of channels based on their id
     func removeChannels(cids: Set<ChannelId>)
 }

@@ -373,18 +373,6 @@ extension NSManagedObjectContext {
         delete(dto)
     }
 
-    func cleanChannels(cids: Set<ChannelId>) {
-        let channels = ChannelDTO.load(cids: Array(cids), context: self)
-        for channelDTO in channels {
-            channelDTO.resetEphemeralValues()
-            channelDTO.messages.removeAll()
-            channelDTO.members.removeAll()
-            channelDTO.pinnedMessages.removeAll()
-            channelDTO.reads.removeAll()
-            channelDTO.oldestMessageAt = nil
-        }
-    }
-
     func removeChannels(cids: Set<ChannelId>) {
         let channels = ChannelDTO.load(cids: Array(cids), context: self)
         channels.forEach(delete)

@@ -107,25 +107,6 @@ final class RefreshChannelListOperation: AsyncOperation, @unchecked Sendable {
     }
 }
 
-final class GetChannelIdsOperation: AsyncOperation, @unchecked Sendable {
-    init(database: DatabaseContainer, context: SyncContext, activeChannelIds: [ChannelId]) {
-        super.init(maxRetries: syncOperationsMaximumRetries) { [weak database] _, done in
-            guard let database = database else {
-                done(.continue)
-                return
-            }
-            database.backgroundReadOnlyContext.perform {
-                let cids = database.backgroundReadOnlyContext.loadAllChannelListQueries()
-                    .flatMap(\.channels)
-                    .compactMap { try? ChannelId(cid: $0.cid) }
-                log.info("0. Retrieved channels from existing queries from DB. Count \(cids.count)", subsystems: .offlineSupport)
-                context.localChannelIds = Set(cids + activeChannelIds)
-                done(.continue)
-            }
-        }
-    }
-}
-
 final class SyncEventsOperation: AsyncOperation, @unchecked Sendable {
     init(syncRepository: SyncRepository, context: SyncContext, recovery: Bool) {
         super.init(maxRetries: syncOperationsMaximumRetries) { [weak syncRepository] _, done in
@@ -202,96 +183,6 @@ final class WatchChannelOperation: AsyncOperation, @unchecked Sendable {
                 } catch {
                     log.error("Failed watching active chat with error \(error.localizedDescription)", subsystems: .offlineSupport)
                     done(.retry)
-                }
-            }
-        }
-    }
-}
-
-final class RefetchChannelListQueryOperation: AsyncOperation, @unchecked Sendable {
-    init(controller: ChatChannelListController, context: SyncContext) {
-        super.init(maxRetries: syncOperationsMaximumRetries) { [weak controller] _, done in
-            guard let controller = controller, controller.canBeRecovered else {
-                done(.continue)
-                return
-            }
-
-            let query = controller.query
-
-            log.info("3 & 4. Refetching channel lists queries & Cleaning up local message history", subsystems: .offlineSupport)
-            controller.resetQuery(
-                watchedAndSynchedChannelIds: context.watchedAndSynchedChannelIds,
-                synchedChannelIds: context.synchedChannelIds
-            ) { result in
-                Self.handleResult(result, query: query, context: context, done: done)
-            }
-        }
-    }
-    
-    init(query: ChannelListQuery, channelListUpdater: ChannelListUpdater, context: SyncContext) {
-        super.init(maxRetries: syncOperationsMaximumRetries) { _, done in
-            log.info("3 & 4. Refetching channel lists queries (step 2)", subsystems: .offlineSupport)
-            channelListUpdater.resetChannelsQuery(
-                for: query,
-                pageSize: query.pagination.pageSize,
-                watchedAndSynchedChannelIds: context.watchedAndSynchedChannelIds,
-                synchedChannelIds: context.synchedChannelIds
-            ) { result in
-                Self.handleResult(result, query: query, context: context, done: done)
-            }
-        }
-    }
-    
-    private static func handleResult(
-        _ result: Result<(synchedAndWatched: [ChatChannel], unwanted: Set<ChannelId>), any Error>,
-        query: ChannelListQuery,
-        context: SyncContext,
-        done: (AsyncOperation.Output) -> Void
-    ) {
-        switch result {
-        case let .success((watchedChannels, unwantedCids)):
-            log.info("Successfully refetched query for \(query.debugDescription)", subsystems: .offlineSupport)
-            let queryChannelIds = watchedChannels.map(\.cid)
-            context.watchedAndSynchedChannelIds.formUnion(queryChannelIds)
-            context.unwantedChannelIds.formUnion(unwantedCids)
-            done(.continue)
-        case let .failure(error):
-            log.error(
-                "Failed refetching query for \(query.debugDescription): \(error)",
-                subsystems: .offlineSupport
-            )
-            done(.retry)
-        }
-    }
-}
-
-final class DeleteUnwantedChannelsOperation: AsyncOperation, @unchecked Sendable {
-    init(database: DatabaseContainer, context: SyncContext) {
-        super.init(maxRetries: syncOperationsMaximumRetries) { [weak database] _, done in
-            log.info("4. Clean up unwanted channels", subsystems: .offlineSupport)
-
-            guard let database = database, !context.unwantedChannelIds.isEmpty else {
-                done(.continue)
-                return
-            }
-
-            // We are going to remove those channels that are not present in remote queries, and that have not
-            // been watched.
-            database.write { session in
-                // We remove watchedAndSynched from unwantedChannels because it might happen that a channel marked
-                // as unwanted in one query, might still be needed in another query (scenario where multiple queries
-                // are active at the same time).
-                let idsToRemove = context.unwantedChannelIds.subtracting(context.watchedAndSynchedChannelIds)
-                session.removeChannels(cids: idsToRemove)
-            } completion: { error in
-                if let error = error {
-                    log.error(
-                        "Failed removing unwanted channels: \(error)",
-                        subsystems: .offlineSupport
-                    )
-                    done(.retry)
-                } else {
-                    done(.continue)
                 }
             }
         }

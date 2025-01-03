@@ -34,11 +34,6 @@ public enum StreamRuntimeCheck {
     
     /// For *internal use* only
     ///
-    /// Uses version 2 for offline state sync.
-    public static var _isSyncV2Enabled = true
-    
-    /// For *internal use* only
-    ///
     /// Core Data prefetches data used for creating immutable model objects (faulting is disabled).
     public static var _isDatabasePrefetchingEnabled = false
 }
