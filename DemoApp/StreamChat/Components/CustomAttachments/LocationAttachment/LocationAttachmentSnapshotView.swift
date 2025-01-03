@@ -7,7 +7,7 @@ import StreamChat
 import StreamChatUI
 import UIKit
 
-class LocationAttachmentSnapshotView: _View {
+class LocationAttachmentSnapshotView: _View, ThemeProvider {
     struct Content {
         var messageId: MessageId?
         var latitude: CLLocationDegrees
@@ -50,12 +50,9 @@ class LocationAttachmentSnapshotView: _View {
     lazy var stopButton: UIButton = {
         let button = UIButton()
         button.translatesAutoresizingMaskIntoConstraints = false
-        button.setImage(UIImage(systemName: "stop.circle"), for: .normal)
-        button.imageEdgeInsets = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 8)
         button.setTitle("Stop Sharing", for: .normal)
         button.titleLabel?.font = .preferredFont(forTextStyle: .footnote)
-        button.setTitleColor(.red, for: .normal)
-        button.tintColor = .red
+        button.setTitleColor(appearance.colorPalette.alert, for: .normal)
         button.backgroundColor = .clear
         button.layer.cornerRadius = 16
         button.addTarget(self, action: #selector(handleStopButtonTap), for: .touchUpInside)
@@ -85,7 +82,7 @@ class LocationAttachmentSnapshotView: _View {
                 .height(mapHeight)
             stopButton
                 .width(120)
-                .height(30)
+                .height(35)
         }.embed(in: self)
 
         NSLayoutConstraint.activate([

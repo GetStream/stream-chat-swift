@@ -34,12 +34,26 @@ class LocationDetailViewController: UIViewController, ThemeProvider {
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        title = "Location"
+        navigationController?.navigationBar.backgroundColor = appearance.colorPalette.background
+
+        setupBottomSheet()
+
         mapView.register(
             UserAnnotationView.self,
             forAnnotationViewWithReuseIdentifier: "UserAnnotation"
         )
         mapView.showsUserLocation = false
         mapView.delegate = self
+        view.backgroundColor = appearance.colorPalette.background
+        view.addSubview(mapView)
+        mapView.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            mapView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            mapView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            mapView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            mapView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor)
+        ])
 
         messageController.synchronize()
         messageController.delegate = self
@@ -65,8 +79,6 @@ class LocationDetailViewController: UIViewController, ThemeProvider {
                 locationCoordinate
             )
         }
-
-        view = mapView
     }
 
     func updateUserLocation(
@@ -89,6 +101,25 @@ class LocationDetailViewController: UIViewController, ThemeProvider {
             )
             mapView.addAnnotation(userAnnotation)
             self.userAnnotation = userAnnotation
+        }
+    }
+
+    func setupBottomSheet() {
+        if #available(iOS 16.0, *) {
+            let bottomSheet = LocationBottomSheetViewController(
+                messageController: messageController
+            )
+            let nav = UINavigationController(rootViewController: bottomSheet)
+            nav.modalPresentationStyle = .pageSheet
+            let customDetent = UISheetPresentationController.Detent.custom(resolver: { _ in
+                60
+            })
+            nav.sheetPresentationController?.detents = [customDetent]
+            nav.sheetPresentationController?.prefersGrabberVisible = false
+            nav.sheetPresentationController?.preferredCornerRadius = 16
+            nav.sheetPresentationController?.largestUndimmedDetentIdentifier = customDetent.identifier
+            nav.isModalInPresentation = true
+            present(nav, animated: false)
         }
     }
 }
@@ -129,7 +160,7 @@ extension LocationDetailViewController: MKMapViewDelegate {
         ) as? UserAnnotationView
 
         annotationView?.setUser(userAnnotation.user)
-        
+
         let liveLocationAttachment = messageController.message?.liveLocationAttachments.first
         let isSharingLiveLocation = liveLocationAttachment?.stoppedSharing == false
         if isSharingLiveLocation {
@@ -138,5 +169,60 @@ extension LocationDetailViewController: MKMapViewDelegate {
             annotationView?.stopPulsingAnimation()
         }
         return annotationView
+    }
+}
+
+class LocationBottomSheetViewController: UIViewController, ThemeProvider {
+    let messageController: ChatMessageController
+
+    init(
+        messageController: ChatMessageController
+    ) {
+        self.messageController = messageController
+        super.init(nibName: nil, bundle: nil)
+    }
+
+    lazy var sharingButton: UIButton = {
+        let button = UIButton()
+        button.setTitle("Stop Sharing", for: .normal)
+        button.setTitleColor(appearance.colorPalette.alert, for: .normal)
+        button.titleLabel?.font = appearance.fonts.body
+        button.addTarget(self, action: #selector(stopSharing), for: .touchUpInside)
+        return button
+    }()
+
+    lazy var locationUpdateLabel: UILabel = {
+        let label = UILabel()
+        label.text = "Location updated 5 minutes ago"
+        label.font = appearance.fonts.footnote
+        label.textColor = appearance.colorPalette.subtitleText
+        return label
+    }()
+
+    @available(*, unavailable)
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    override func viewDidLoad() {
+        super.viewDidLoad()
+
+        view.backgroundColor = appearance.colorPalette.background6
+
+        let container = VContainer(spacing: 2, alignment: .center) {
+            sharingButton
+            locationUpdateLabel
+        }
+
+        view.addSubview(container)
+        NSLayoutConstraint.activate([
+            container.topAnchor.constraint(equalTo: view.topAnchor, constant: 8),
+            container.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
+            container.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16)
+        ])
+    }
+
+    @objc func stopSharing() {
+        // Stop sharing the live location
     }
 }
