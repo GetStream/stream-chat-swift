@@ -23,18 +23,6 @@ extension StreamChatWrapper {
             client = ChatClient(config: config)
         }
 
-        // Custom Attachments
-        if AppConfig.shared.demoAppConfig.isLocationAttachmentsEnabled {
-            Components.default.mixedAttachmentInjector.register(
-                .staticLocation,
-                with: LocationAttachmentViewInjector.self
-            )
-            Components.default.mixedAttachmentInjector.register(
-                .liveLocation,
-                with: LocationAttachmentViewInjector.self
-            )
-        }
-
         // L10N
         let localizationProvider = Appearance.default.localizationProvider
         Appearance.default.localizationProvider = { key, table in
