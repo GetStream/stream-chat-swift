@@ -128,8 +128,8 @@ class LocationAttachmentSnapshotView: _View, ThemeProvider {
         addSubview(avatarView)
 
         NSLayoutConstraint.activate([
-            activityIndicatorView.centerXAnchor.constraint(equalTo: centerXAnchor),
-            activityIndicatorView.centerYAnchor.constraint(equalTo: centerYAnchor),
+            activityIndicatorView.centerXAnchor.constraint(equalTo: imageView.centerXAnchor),
+            activityIndicatorView.centerYAnchor.constraint(equalTo: imageView.centerYAnchor),
             imageView.widthAnchor.constraint(equalTo: container.widthAnchor),
             avatarView.centerXAnchor.constraint(equalTo: imageView.centerXAnchor),
             avatarView.centerYAnchor.constraint(equalTo: imageView.centerYAnchor),
