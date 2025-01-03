@@ -31,6 +31,10 @@ class LocationDetailViewController: UIViewController, ThemeProvider {
         return view
     }()
 
+    var isLiveLocationAttachment: Bool {
+        messageController.message?.liveLocationAttachments.first != nil
+    }
+
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -39,7 +43,7 @@ class LocationDetailViewController: UIViewController, ThemeProvider {
 
         mapView.register(
             UserAnnotationView.self,
-            forAnnotationViewWithReuseIdentifier: "UserAnnotation"
+            forAnnotationViewWithReuseIdentifier: UserAnnotationView.reuseIdentifier
         )
         mapView.showsUserLocation = false
         mapView.delegate = self
@@ -82,15 +86,15 @@ class LocationDetailViewController: UIViewController, ThemeProvider {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
 
-        setupBottomSheet()
+        presentLocationControlSheet()
     }
 
     func updateUserLocation(
         _ coordinate: CLLocationCoordinate2D
     ) {
         if let existingAnnotation = userAnnotation {
-            // By setting the duration to 5, and since we update the location every 3s
-            // this will make sure the annotation moves smoothly and has a constant animation.
+            // Since we update the location every 3s, by updating the coordinate with 5s animation
+            // this will make sure the annotation moves smoothly.
             UIView.animate(withDuration: 5) {
                 existingAnnotation.coordinate = coordinate
             }
@@ -108,20 +112,23 @@ class LocationDetailViewController: UIViewController, ThemeProvider {
         }
     }
 
-    func setupBottomSheet() {
-        if #available(iOS 16.0, *) {
-            let bottomSheet = LocationBottomSheetViewController(
-                messageController: messageController
+    func presentLocationControlSheet() {
+        if #available(iOS 16.0, *), isLiveLocationAttachment, messageController.message?.isSentByCurrentUser == true {
+            let locationControlSheet = LocationControlSheetViewController(
+                messageController: messageController.client.messageController(
+                    cid: messageController.cid,
+                    messageId: messageController.messageId
+                )
             )
-            bottomSheet.modalPresentationStyle = .pageSheet
+            locationControlSheet.modalPresentationStyle = .pageSheet
             let detent = UISheetPresentationController.Detent.custom(resolver: { _ in 60 })
-            bottomSheet.sheetPresentationController?.detents = [detent]
-            bottomSheet.sheetPresentationController?.prefersGrabberVisible = false
-            bottomSheet.sheetPresentationController?.preferredCornerRadius = 16
-            bottomSheet.sheetPresentationController?.prefersScrollingExpandsWhenScrolledToEdge = false
-            bottomSheet.sheetPresentationController?.largestUndimmedDetentIdentifier = detent.identifier
-            bottomSheet.isModalInPresentation = true
-            present(bottomSheet, animated: true)
+            locationControlSheet.sheetPresentationController?.detents = [detent]
+            locationControlSheet.sheetPresentationController?.prefersGrabberVisible = false
+            locationControlSheet.sheetPresentationController?.preferredCornerRadius = 16
+            locationControlSheet.sheetPresentationController?.prefersScrollingExpandsWhenScrolledToEdge = false
+            locationControlSheet.sheetPresentationController?.largestUndimmedDetentIdentifier = detent.identifier
+            locationControlSheet.isModalInPresentation = true
+            present(locationControlSheet, animated: true)
         }
     }
 }
@@ -143,6 +150,12 @@ extension LocationDetailViewController: ChatMessageControllerDelegate {
         updateUserLocation(
             locationCoordinate
         )
+
+        let isLiveLocationSharingStopped = liveLocationAttachment.stoppedSharing == true
+        if isLiveLocationSharingStopped, let userAnnotation = self.userAnnotation {
+            let userAnnotationView = mapView.view(for: userAnnotation) as? UserAnnotationView
+            userAnnotationView?.stopPulsingAnimation()
+        }
     }
 }
 
@@ -155,9 +168,8 @@ extension LocationDetailViewController: MKMapViewDelegate {
             return nil
         }
 
-        let identifier = "UserAnnotation"
         let annotationView = mapView.dequeueReusableAnnotationView(
-            withIdentifier: identifier,
+            withIdentifier: UserAnnotationView.reuseIdentifier,
             for: userAnnotation
         ) as? UserAnnotationView
 
@@ -174,7 +186,7 @@ extension LocationDetailViewController: MKMapViewDelegate {
     }
 }
 
-class LocationBottomSheetViewController: UIViewController, ThemeProvider {
+class LocationControlSheetViewController: UIViewController, ThemeProvider {
     let messageController: ChatMessageController
 
     init(
@@ -195,7 +207,6 @@ class LocationBottomSheetViewController: UIViewController, ThemeProvider {
 
     lazy var locationUpdateLabel: UILabel = {
         let label = UILabel()
-        label.text = "Location updated 5 minutes ago"
         label.font = appearance.fonts.footnote
         label.textColor = appearance.colorPalette.subtitleText
         return label
@@ -208,6 +219,9 @@ class LocationBottomSheetViewController: UIViewController, ThemeProvider {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+
+        messageController.synchronize()
+        messageController.delegate = self
 
         view.backgroundColor = appearance.colorPalette.background6
 
@@ -226,5 +240,37 @@ class LocationBottomSheetViewController: UIViewController, ThemeProvider {
 
     @objc func stopSharing() {
         messageController.stopLiveLocationSharing()
+    }
+}
+
+extension LocationControlSheetViewController: ChatMessageControllerDelegate {
+    func messageController(
+        _ controller: ChatMessageController,
+        didChangeMessage change: EntityChange<ChatMessage>
+    ) {
+        guard let liveLocationAttachment = controller.message?.liveLocationAttachments.first else {
+            return
+        }
+
+        let isSharingLiveLocation = liveLocationAttachment.stoppedSharing == false
+        sharingButton.isEnabled = isSharingLiveLocation
+        sharingButton.setTitle(
+            isSharingLiveLocation ? "Stop Sharing" : "Live location ended",
+            for: .normal
+        )
+
+        let buttonColor = appearance.colorPalette.alert
+        sharingButton.setTitleColor(
+            isSharingLiveLocation ? buttonColor : buttonColor.withAlphaComponent(0.6),
+            for: .normal
+        )
+
+        if isSharingLiveLocation {
+            locationUpdateLabel.text = "Location sharing is active"
+        } else {
+            let lastUpdated = messageController.message?.updatedAt ?? Date()
+            let formatter = appearance.formatters.channelListMessageTimestamp
+            locationUpdateLabel.text = "Location last updated at \(formatter.format(lastUpdated))"
+        }
     }
 }

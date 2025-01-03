@@ -7,6 +7,8 @@ import StreamChat
 import StreamChatUI
 
 class UserAnnotationView: MKAnnotationView {
+    static let reuseIdentifier = "UserAnnotationView"
+
     private lazy var avatarView: ChatUserAvatarView = {
         let view = ChatUserAvatarView()
         view.shouldShowOnlineIndicator = false
@@ -74,9 +76,6 @@ class UserAnnotationView: MKAnnotationView {
     }
 
     func stopPulsingAnimation() {
-        guard pulseLayer != nil else {
-            return
-        }
         pulseLayer?.removeFromSuperlayer()
         pulseLayer = nil
     }
