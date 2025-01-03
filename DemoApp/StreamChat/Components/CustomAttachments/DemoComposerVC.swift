@@ -13,8 +13,7 @@ class DemoComposerVC: ComposerVC {
     override var attachmentsPickerActions: [UIAlertAction] {
         var actions = super.attachmentsPickerActions
         
-        let alreadyHasLocation = content.attachments.map(\.type).contains(.staticLocation)
-        if AppConfig.shared.demoAppConfig.isLocationAttachmentsEnabled && !alreadyHasLocation {
+        if AppConfig.shared.demoAppConfig.isLocationAttachmentsEnabled {
             let sendLocationAction = UIAlertAction(
                 title: "Send Current Location",
                 style: .default,

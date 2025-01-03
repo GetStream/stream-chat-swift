@@ -131,7 +131,6 @@ class LocationAttachmentSnapshotView: _View, ThemeProvider {
             activityIndicatorView.centerXAnchor.constraint(equalTo: centerXAnchor),
             activityIndicatorView.centerYAnchor.constraint(equalTo: centerYAnchor),
             imageView.widthAnchor.constraint(equalTo: container.widthAnchor),
-            
             avatarView.centerXAnchor.constraint(equalTo: imageView.centerXAnchor),
             avatarView.centerYAnchor.constraint(equalTo: imageView.centerYAnchor),
             avatarView.widthAnchor.constraint(equalToConstant: 30),
