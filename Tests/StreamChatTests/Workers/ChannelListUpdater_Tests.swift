@@ -226,170 +226,6 @@ final class ChannelListUpdater_Tests: XCTestCase {
         XCTAssertEqual(channelsFromQuery.count, 3)
     }
 
-    // MARK: - Reset Channels Query
-
-    func test_resetChannelsQueryGreenPath() throws {
-        var query = ChannelListQuery(filter: .in(.members, values: [.unique]))
-        query.pagination = Pagination(pageSize: 10, offset: 4)
-
-        try database.writeSynchronously { session in
-            session.saveQuery(query: query)
-        }
-
-        let expectation = self.expectation(description: "resetChannelsQuery completion")
-        var receivedResult: Result<(synchedAndWatched: [ChatChannel], unwanted: Set<ChannelId>), Error>!
-        listUpdater.resetChannelsQuery(
-            for: query,
-            pageSize: query.pagination.pageSize,
-            watchedAndSynchedChannelIds: Set<ChannelId>(),
-            synchedChannelIds: Set<ChannelId>()
-        ) { result in
-            receivedResult = result
-            expectation.fulfill()
-        }
-
-        // Simulate API response with channel data
-        let cid = ChannelId(type: .messaging, id: .unique)
-        let payload = ChannelListPayload(channels: [dummyPayload(with: cid)])
-        apiClient.test_simulateRecoveryResponse(.success(payload))
-
-        waitForExpectations(timeout: defaultTimeout, handler: nil)
-
-        let requests = apiClient.recoveryRequest_allRecordedCalls
-        XCTAssertEqual(requests.count, 1)
-        XCTAssertFalse(receivedResult.isError)
-
-        // Should reset pagination
-        query.pagination = Pagination(pageSize: 20, offset: 0)
-        let expectedBody = ["payload": query]
-        XCTAssertEqual(requests.first?.0.body, expectedBody.asAnyEncodable)
-    }
-
-    func test_resetChannelsQuery_QueryNotInDatabase() throws {
-        let userId = "UserId"
-        var query = ChannelListQuery(filter: .in(.members, values: [userId]))
-        try database.writeSynchronously { session in
-            try session.saveUser(payload: .dummy(userId: userId))
-        }
-
-        let expectation = self.expectation(description: "resetChannelsQuery completion")
-        var receivedResult: Result<(synchedAndWatched: [ChatChannel], unwanted: Set<ChannelId>), Error>!
-        listUpdater.resetChannelsQuery(
-            for: query,
-            pageSize: query.pagination.pageSize,
-            watchedAndSynchedChannelIds: Set<ChannelId>(),
-            synchedChannelIds: Set<ChannelId>()
-        ) { result in
-            receivedResult = result
-            expectation.fulfill()
-        }
-
-        // Simulate API response with channel data
-        let cid = ChannelId(type: .messaging, id: "newChannel")
-        let payload = ChannelListPayload(
-            channels: [dummyPayload(with: cid, members: [.dummy(user: .dummy(userId: userId))])]
-        )
-        apiClient.test_simulateRecoveryResponse(.success(payload))
-
-        waitForExpectations(timeout: defaultTimeout, handler: nil)
-
-        let requests = apiClient.recoveryRequest_allRecordedCalls
-        XCTAssertEqual(requests.count, 1)
-        XCTAssertNil(receivedResult.error)
-
-        // If the query does not exist, the payload should still be saved in database
-        XCTAssertEqual(channels(for: query, database: database).count, 1)
-
-        // Should reset pagination
-        query.pagination = Pagination(pageSize: 20, offset: 0)
-        let expectedBody = ["payload": query]
-        XCTAssertEqual(requests.first?.0.body, expectedBody.asAnyEncodable)
-    }
-
-    func test_resetChannelsQuery_shouldOnlyRemoveOutdatedAndNotWatchedChannels() throws {
-        // Preparation of the environment
-        let userId = "UserId"
-        let query = ChannelListQuery(filter: .in(.members, values: [userId]))
-
-        let syncedId1 = ChannelId(type: .messaging, id: "syncedId1")
-        let syncedId2 = ChannelId(type: .messaging, id: "syncedId2")
-        let localId = ChannelId(type: .messaging, id: "localId")
-        let outdatedId = ChannelId(type: .messaging, id: "outdatedId")
-        let watchedAndSynchedId = ChannelId(type: .messaging, id: "watchedAndSynchedId")
-        let syncedAndWatchedId = ChannelId(type: .messaging, id: "syncedAndWatchedId")
-        let newRemoteChannel = ChannelId(type: .messaging, id: "newRemoteChannel")
-        let watchedChannelIds = Set<ChannelId>([syncedAndWatchedId, watchedAndSynchedId])
-        let synchedChannelIds = Set<ChannelId>([syncedId1, syncedId2, syncedAndWatchedId])
-
-        try database.writeSynchronously { session in
-            try session.saveUser(payload: .dummy(userId: userId))
-            try [syncedId1, syncedId2, outdatedId, watchedAndSynchedId, syncedAndWatchedId, localId].forEach {
-                let payload = self.dummyPayload(with: $0, members: [.dummy(user: .dummy(userId: userId))])
-                try session.saveChannel(payload: payload, query: query, cache: nil)
-            }
-        }
-
-        XCTAssertEqual(channels(for: query, database: database).count, 6)
-
-        // Reset Channels Query
-        let expectation = self.expectation(description: "resetChannelsQuery completion")
-        var receivedResult: Result<(synchedAndWatched: [ChatChannel], unwanted: Set<ChannelId>), Error>!
-        listUpdater.resetChannelsQuery(
-            for: query,
-            pageSize: query.pagination.pageSize,
-            watchedAndSynchedChannelIds: watchedChannelIds,
-            synchedChannelIds: synchedChannelIds
-        ) { result in
-            receivedResult = result
-            expectation.fulfill()
-        }
-
-        // Simulate API response with channel data
-        let payload = ChannelListPayload(channels: [syncedAndWatchedId, syncedId2, newRemoteChannel, localId].map {
-            self.dummyPayload(with: $0, numberOfMessages: 0, members: [.dummy(user: .dummy(userId: userId))])
-        })
-        apiClient.test_simulateRecoveryResponse(.success(payload))
-
-        waitForExpectations(timeout: defaultTimeout, handler: nil)
-
-        // EXPECTED RESULTS:
-        // syncedId1 -> Not present in remote query, but synched:               Unwanted    -
-        // syncedId2 -> Present in local and remote query, synched:             Kept        1
-        // outdatedId -> Not present in remote query, not synched:              Unwanted    -
-        // localId -> Present in local and remote query, not synched:           Cleaned     2
-        // watchedAndSynchedId -> Not present in remote query, but watched:     Unlinked    -
-        // syncedAndWatchedId -> Present in local and remote query, watched:    Kept        3
-        // newRemoteChannel -> Present in remote query only:                    Added       4
-
-        let requests = apiClient.recoveryRequest_allRecordedCalls
-        XCTAssertEqual(requests.count, 1)
-        XCTAssertFalse(receivedResult.isError)
-
-        // Two channels were marked as unwanted
-        XCTAssertEqual(receivedResult.value?.unwanted.count, 2)
-        XCTAssertTrue(receivedResult.value?.unwanted.contains { $0 == outdatedId } == true)
-        XCTAssertTrue(receivedResult.value?.unwanted.contains { $0 == syncedId1 } == true)
-
-        // Four channels were synched and watched, and are now part of the query
-        XCTAssertEqual(receivedResult.value?.synchedAndWatched.count, 4)
-        let queryChannels = channels(for: query, database: database)
-        XCTAssertEqual(queryChannels.count, 4)
-        [syncedId2, localId, syncedAndWatchedId, newRemoteChannel].forEach { cid in
-            XCTAssertTrue(queryChannels.contains { $0.cid == cid.rawValue })
-        }
-
-        // No channel should have been removed yet here
-        let allChannels = (try? database.viewContext.fetch(ChannelDTO.allChannelsFetchRequest)) ?? []
-        XCTAssertEqual(allChannels.count, 7)
-
-        // Cleaned channel should not have messages
-        XCTAssertEqual(queryChannels.first { $0.cid == localId.rawValue }?.messages.count, 0)
-
-        // Unlinked channels should not have been cleared
-        XCTAssertEqual(allChannels.first { $0.cid == syncedId1.rawValue }?.messages.count, 1)
-        XCTAssertEqual(allChannels.first { $0.cid == watchedAndSynchedId.rawValue }?.messages.count, 1)
-    }
-
     // MARK: - Fetch
 
     func test_fetch_makesCorrectAPICall() {
@@ -440,6 +276,48 @@ final class ChannelListUpdater_Tests: XCTestCase {
 
         // Assert updater can be deallocated without waiting for the API response.
         AssertAsync.canBeReleased(&listUpdater)
+    }
+    
+    // MARK: - Refresh Loaded Channels
+    
+    func test_refreshLoadedChannels_whenEmpty_thenRefreshStillHappens() async throws {
+        var query = ChannelListQuery(filter: .in(.members, values: [.unique]))
+        query.pagination = Pagination(pageSize: 10)
+        let initialLoadedChannelCount = 0
+        
+        try database.writeSynchronously { session in
+            session.saveChannelList(payload: .init(channels: []), query: query)
+        }
+        
+        // One new channel was added since the last refresh
+        let cid = ChannelId(type: .messaging, id: .unique)
+        let payload = ChannelListPayload(channels: [dummyPayload(with: cid)])
+        apiClient.test_mockResponseResult(.success(payload))
+        
+        let cids = try await listUpdater.refreshLoadedChannels(for: query, channelCount: initialLoadedChannelCount)
+        XCTAssertEqual(Set([cid]), cids)
+    }
+    
+    func test_refreshLoadedChannels_whenMultiplePagesAreLoaded_thenAllPagesAreReloaded() async throws {
+        let pageSize = Int.channelsPageSize
+        var query = ChannelListQuery(filter: .in(.members, values: [.unique]))
+        query.pagination = Pagination(pageSize: pageSize)
+        
+        let initialChannels = (0..<pageSize * 2 + 5)
+            .map { self.dummyPayload(with: ChannelId(type: .messaging, id: "\($0)")) }
+        try database.writeSynchronously { session in
+            session.saveChannelList(payload: .init(channels: initialChannels), query: query)
+        }
+        
+        // Refresh should be called 3 times
+        let responseChannels = (0..<pageSize * 2 + 5)
+            .map { self.dummyPayload(with: ChannelId(type: .messaging, id: "\($0)_refreshed")) }
+        apiClient.test_mockResponseResult(.success(ChannelListPayload(channels: Array(responseChannels[0..<pageSize]))))
+        apiClient.test_mockResponseResult(.success(ChannelListPayload(channels: Array(responseChannels[pageSize..<pageSize * 2]))))
+        apiClient.test_mockResponseResult(.success(ChannelListPayload(channels: Array(responseChannels[(pageSize * 2)...]))))
+        
+        let cids = try await listUpdater.refreshLoadedChannels(for: query, channelCount: initialChannels.count)
+        XCTAssertEqual(responseChannels.map(\.channel.cid.id).sorted(), cids.map(\.id).sorted())
     }
 
     // MARK: - Mark all read

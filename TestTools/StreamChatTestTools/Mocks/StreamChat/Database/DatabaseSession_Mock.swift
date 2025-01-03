@@ -98,10 +98,6 @@ class DatabaseSession_Mock: DatabaseSession {
         underlyingSession.deleteQuery(query)
     }
 
-    func cleanChannels(cids: Set<ChannelId>) {
-        underlyingSession.cleanChannels(cids: cids)
-    }
-
     func removeChannels(cids: Set<ChannelId>) {
         underlyingSession.removeChannels(cids: cids)
     }

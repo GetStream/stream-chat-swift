@@ -43,7 +43,8 @@ class ChannelListUpdater: Worker {
 
     func refreshLoadedChannels(for query: ChannelListQuery, channelCount: Int, completion: @escaping (Result<Set<ChannelId>, Error>) -> Void) {
         var allPages = [ChannelListQuery]()
-        for offset in stride(from: 0, to: channelCount, by: .channelsPageSize) {
+        // If nothing has been loaded so far, still try to refetch
+        for offset in stride(from: 0, to: max(channelCount, 1), by: .channelsPageSize) {
             var pageQuery = query
             pageQuery.pagination = Pagination(pageSize: .channelsPageSize, offset: offset)
             allPages.append(pageQuery)
@@ -86,66 +87,6 @@ class ChannelListUpdater: Worker {
                     }
                 )
             case .failure(let error):
-                completion(.failure(error))
-            }
-        }
-    }
-    
-    func resetChannelsQuery(
-        for query: ChannelListQuery,
-        pageSize: Int,
-        watchedAndSynchedChannelIds: Set<ChannelId>,
-        synchedChannelIds: Set<ChannelId>,
-        completion: @escaping (Result<(synchedAndWatched: [ChatChannel], unwanted: Set<ChannelId>), Error>) -> Void
-    ) {
-        var updatedQuery = query
-        updatedQuery.pagination = .init(pageSize: pageSize, offset: 0)
-
-        var unwantedCids = Set<ChannelId>()
-        // Fetches the channels matching the query, and stores them in the database.
-        apiClient.recoveryRequest(endpoint: .channels(query: query)) { [weak self] result in
-            switch result {
-            case let .success(channelListPayload):
-                self?.writeChannelListPayload(
-                    payload: channelListPayload,
-                    query: updatedQuery,
-                    initialActions: { session in
-                        guard let queryDTO = session.channelListQuery(filterHash: updatedQuery.filter.filterHash) else { return }
-
-                        let localQueryCIDs = Set(queryDTO.channels.compactMap { try? ChannelId(cid: $0.cid) })
-                        let remoteQueryCIDs = Set(channelListPayload.channels.map(\.channel.cid))
-
-                        let updatedChannels = synchedChannelIds.union(watchedAndSynchedChannelIds)
-                        let localNotInRemote = localQueryCIDs.subtracting(remoteQueryCIDs)
-                        let localInRemote = localQueryCIDs.intersection(remoteQueryCIDs)
-
-                        // We unlink those local channels that are no longer in remote
-                        for cid in localNotInRemote {
-                            guard let channelDTO = session.channel(cid: cid) else { continue }
-                            queryDTO.channels.remove(channelDTO)
-                        }
-
-                        // We are going to clean those channels that are present in the both the local and remote query,
-                        // and that have not been synched nor watched. Those are outdated, can contain gaps.
-                        let cidsToClean = localInRemote.subtracting(updatedChannels)
-                        session.cleanChannels(cids: cidsToClean)
-
-                        // We are also going to keep track of the unwanted channels
-                        // Those are the ones that exist locally but we are not interested in anymore in this context.
-                        // In this case, it is going to query local ones not appearing in remote, subtracting the ones
-                        // that are already being watched.
-                        unwantedCids = localNotInRemote.subtracting(watchedAndSynchedChannelIds)
-                    },
-                    completion: { result in
-                        switch result {
-                        case let .success(newSynchedAndWatchedChannels):
-                            completion(.success((newSynchedAndWatchedChannels, unwantedCids)))
-                        case let .failure(error):
-                            completion(.failure(error))
-                        }
-                    }
-                )
-            case let .failure(error):
                 completion(.failure(error))
             }
         }
