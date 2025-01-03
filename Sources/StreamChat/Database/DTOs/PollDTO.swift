@@ -155,13 +155,18 @@ extension NSManagedObjectContext {
         pollDto.name = payload.name
         pollDto.updatedAt = payload.updatedAt.bridgeDate
         pollDto.voteCount = payload.voteCount
-        pollDto.custom = try JSONEncoder.default.encode(payload.custom)
         pollDto.voteCountsByOption = payload.voteCountsByOption
         pollDto.isClosed = payload.isClosed ?? false
         if let maxVotesAllowed = payload.maxVotesAllowed {
             pollDto.maxVotesAllowed = NSNumber(value: maxVotesAllowed)
         }
         pollDto.votingVisibility = payload.votingVisibility
+        
+        if let custom = payload.custom, !custom.isEmpty {
+            pollDto.custom = try JSONEncoder.default.encode(custom)
+        } else {
+            pollDto.custom = nil
+        }
         
         if let userPayload = payload.createdBy {
             pollDto.createdBy = try saveUser(payload: userPayload, query: nil, cache: cache)
