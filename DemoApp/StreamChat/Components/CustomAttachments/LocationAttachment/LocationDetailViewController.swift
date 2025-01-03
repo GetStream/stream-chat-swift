@@ -101,14 +101,17 @@ class LocationDetailViewController: UIViewController, ThemeProvider {
             UIView.animate(withDuration: 5, delay: 0.2, options: .curveEaseOut) {
                 self.mapView.setCenter(coordinate, animated: true)
             }
-        } else if let author = messageController.message?.author {
-            // Create new annotation
+        } else if let author = messageController.message?.author, isLiveLocationAttachment {
             let userAnnotation = UserAnnotation(
                 coordinate: coordinate,
                 user: author
             )
             mapView.addAnnotation(userAnnotation)
             self.userAnnotation = userAnnotation
+        } else {
+            let annotation = MKPointAnnotation()
+            annotation.coordinate = coordinate
+            mapView.addAnnotation(annotation)
         }
     }
 
