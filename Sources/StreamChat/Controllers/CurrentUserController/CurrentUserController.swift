@@ -37,6 +37,9 @@ public class CurrentChatUserController: DataController, DelegateCallable, DataSt
         return _basePublishers as? BasePublishers ?? .init(controller: self)
     }
 
+    /// The observer for the active live location messages.
+    private var activeLiveLocationMessagesObserver: BackgroundListDatabaseObserver<ChatMessage, MessageDTO>?
+
     /// Used for observing the current user changes in a database.
     private lazy var currentUserObserver = createUserObserver()
         .onChange { [weak self] change in
@@ -46,6 +49,22 @@ public class CurrentChatUserController: DataController, DelegateCallable, DataSt
                     return
                 }
                 $0.currentUserController(self, didChangeCurrentUser: change)
+            }
+
+            /// Only when we have access to the currentUserId is when we should
+            /// create the observer for the active live location messages.
+            if self?.activeLiveLocationMessagesObserver == nil {
+                let observer = self?.createActiveLiveLocationMessagesObserver()
+                self?.activeLiveLocationMessagesObserver = observer
+                try? observer?.startObserving()
+                observer?.onDidChange = { [weak self] _ in
+                    self?.delegateCallback { [weak self] in
+                        guard let self = self else { return }
+                        let messages = Array(observer?.items ?? [])
+                        self.isSharingLiveLocation = !messages.isEmpty
+                        $0.currentUserController(self, didChangeActiveLiveLocationMessages: messages)
+                    }
+                }
             }
         }
         .onFieldChange(\.unreadCount) { [weak self] change in
@@ -57,20 +76,6 @@ public class CurrentChatUserController: DataController, DelegateCallable, DataSt
                 $0.currentUserController(self, didChangeCurrentUserUnreadCount: change.unreadCount)
             }
         }
-
-    /// The observer for the active live location messages.
-    private lazy var activeLiveLocationMessagesObserver: BackgroundListDatabaseObserver<ChatMessage, MessageDTO> = {
-        let observer = createActiveLiveLocationMessagesObserver()
-        observer.onDidChange = { [weak self] _ in
-            self?.delegateCallback { [weak self] in
-                guard let self = self else { return }
-                let messages = Array(observer.items)
-                self.isSharingLiveLocation = !messages.isEmpty
-                $0.currentUserController(self, didChangeActiveLiveLocationMessages: messages)
-            }
-        }
-        return observer
-    }()
 
     /// A flag to indicate whether the current user is sharing his live location.
     private var isSharingLiveLocation = false {
@@ -160,7 +165,6 @@ public class CurrentChatUserController: DataController, DelegateCallable, DataSt
 
         do {
             try currentUserObserver.startObserving()
-            try activeLiveLocationMessagesObserver.startObserving()
             state = .localDataFetched
         } catch {
             log.error("""
@@ -268,8 +272,11 @@ public extension CurrentChatUserController {
     ///
     /// - Parameter location: The new location to be updated.
     func updateLiveLocation(_ location: LocationAttachmentInfo) {
+        guard let messages = activeLiveLocationMessagesObserver?.items, !messages.isEmpty else {
+            return
+        }
+
         locationUpdatesThrottler.execute { [weak self] in
-            let messages = self?.activeLiveLocationMessagesObserver.items ?? []
             for message in messages {
                 guard let cid = message.cid else { continue }
                 let messageController = self?.client.messageController(cid: cid, messageId: message.id)
@@ -442,12 +449,15 @@ private extension CurrentChatUserController {
         )
     }
 
-    func createActiveLiveLocationMessagesObserver() -> BackgroundListDatabaseObserver<ChatMessage, MessageDTO> {
-        environment.currentUserActiveLiveLocationMessagesObserverBuilder(
+    func createActiveLiveLocationMessagesObserver() -> BackgroundListDatabaseObserver<ChatMessage, MessageDTO>? {
+        guard let currentUserId = client.currentUserId else {
+            return nil
+        }
+        return environment.currentUserActiveLiveLocationMessagesObserverBuilder(
             client.databaseContainer,
             MessageDTO.activeLiveLocationMessagesFetchRequest(
-                channelId: nil,
-                currentUserId: client.currentUserId
+                currentUserId: currentUserId,
+                channelId: nil
             ),
             { try $0.asModel() },
             NSFetchedResultsController<MessageDTO>.self

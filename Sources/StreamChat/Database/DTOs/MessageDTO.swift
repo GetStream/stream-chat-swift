@@ -585,9 +585,11 @@ class MessageDTO: NSManagedObject {
         return try load(request, context: context)
     }
 
+    /// Fetches all active location messages in a channel or all channels of the current user.
+    /// If `channelId` is nil, it will fetch all messages independent of the channel.
     static func activeLiveLocationMessagesFetchRequest(
-        channelId: ChannelId?,
-        currentUserId: UserId?
+        currentUserId: UserId,
+        channelId: ChannelId?
     ) -> NSFetchRequest<MessageDTO> {
         let request = NSFetchRequest<MessageDTO>(entityName: MessageDTO.entityName)
         MessageDTO.applyPrefetchingState(to: request)
@@ -598,11 +600,9 @@ class MessageDTO: NSManagedObject {
             ascending: true
         )]
         var predicates: [NSPredicate] = [
-            .init(format: "ANY attachments.isActiveLocationAttachment == YES")
+            .init(format: "ANY attachments.isActiveLocationAttachment == YES"),
+            .init(format: "user.id == %@", currentUserId)
         ]
-        if let currentUserId {
-            predicates.append(.init(format: "user.id == %@", currentUserId))
-        }
         if let channelId {
             predicates.append(.init(format: "channel.cid == %@", channelId.rawValue))
         }
@@ -611,13 +611,11 @@ class MessageDTO: NSManagedObject {
     }
 
     static func loadActiveLiveLocationMessages(
+        currentUserId: UserId,
         channelId: ChannelId?,
         context: NSManagedObjectContext
     ) throws -> [MessageDTO] {
-        let request = activeLiveLocationMessagesFetchRequest(
-            channelId: channelId,
-            currentUserId: context.currentUser?.user.id
-        )
+        let request = activeLiveLocationMessagesFetchRequest(currentUserId: currentUserId, channelId: channelId)
         return try load(request, context: context)
     }
 
