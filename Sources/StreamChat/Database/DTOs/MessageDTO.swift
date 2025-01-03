@@ -82,6 +82,7 @@ class MessageDTO: NSManagedObject {
     @NSManaged var quotedBy: Set<MessageDTO>
     @NSManaged var searches: Set<MessageSearchQueryDTO>
     @NSManaged var previewOfChannel: ChannelDTO?
+    @NSManaged var liveLocationMessageOfChannel: ChannelDTO?
 
     /// If the message is sent by the current user, this field
     /// contains channel reads of other channel members (excluding the current user),
@@ -687,6 +688,16 @@ extension NSManagedObjectContext: MessageDatabaseSession {
         message.reactionCounts = [:]
         message.reactionGroups = []
 
+        if let liveLocationAttachment = attachments.first(where: { $0.type == .liveLocation }),
+           let payload = liveLocationAttachment.payload as? LiveLocationAttachmentPayload {
+            let stoppedSharing = payload.stoppedSharing ?? false
+            if stoppedSharing {
+                channelDTO.liveLocationMessage = nil
+            } else {
+                channelDTO.liveLocationMessage = message
+            }
+        }
+
         // Message type
         if parentMessageId != nil {
             message.type = MessageType.reply.rawValue
@@ -873,7 +884,17 @@ extension NSManagedObjectContext: MessageDatabaseSession {
             }
         )
         dto.attachments = attachments
-        
+
+        if let liveLocationAttachment = attachments.first(where: { $0.attachmentType == .liveLocation }),
+           let liveLocationAttachmentPayload = liveLocationAttachment.asAnyModel()?.attachment(payloadType: LiveLocationAttachmentPayload.self) {
+            let stoppedSharing = liveLocationAttachmentPayload.stoppedSharing ?? false
+            if stoppedSharing {
+                channelDTO.liveLocationMessage = nil
+            } else {
+                channelDTO.liveLocationMessage = dto
+            }
+        }
+
         if let poll = payload.poll {
             let pollDto = try savePoll(payload: poll, cache: cache)
             dto.poll = pollDto

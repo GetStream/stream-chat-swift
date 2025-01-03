@@ -68,8 +68,12 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
     /// The worker used to fetch the remote data and communicate with servers.
     private let updater: ChannelUpdater
 
+    /// The component responsible to update a channel member.
     private let channelMemberUpdater: ChannelMemberUpdater
     
+    /// The component responsible to update a message from the channel.
+    private let messageUpdater: MessageUpdater
+
     private lazy var eventSender: TypingEventsSender = self.environment.eventSenderBuilder(
         client.databaseContainer,
         client.apiClient
@@ -227,7 +231,10 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
             client.databaseContainer,
             client.apiClient
         )
-        channelMemberUpdater = self.environment.memberUpdaterBuilder(
+        channelMemberUpdater = self.environment.memberUpdaterBuilder(client.databaseContainer, client.apiClient)
+        messageUpdater = self.environment.messageUpdaterBuilder(
+            client.config.isLocalStorageEnabled,
+            client.messageRepository,
             client.databaseContainer,
             client.apiClient
         )
@@ -873,6 +880,124 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
             }
             self.callback {
                 completion?(result.map(\.id))
+            }
+        }
+    }
+
+    /// Stops sharing the live location message in the channel.
+    public func stopLiveLocation(completion: ((Result<MessageId, Error>) -> Void)? = nil) {
+        guard let cid = cid, isChannelAlreadyCreated else {
+            channelModificationFailed { error in
+                completion?(.failure(error ?? ClientError.Unknown()))
+            }
+            return
+        }
+
+        client.databaseContainer.write { session in
+            let channel = session.channel(cid: cid)
+            guard let message = try channel?.liveLocationMessage?.asModel(),
+                  let liveLocation = message.attachments(payloadType: LiveLocationAttachmentPayload.self).first else {
+                completion?(.failure(ClientError("No live location message found")))
+                return
+            }
+
+            channel?.liveLocationMessage = nil
+
+            let liveLocationPayload = LiveLocationAttachmentPayload(
+                latitude: liveLocation.latitude,
+                longitude: liveLocation.longitude,
+                stoppedSharing: true
+            )
+
+            self.messageUpdater.updatePartialMessage(
+                messageId: message.id,
+                attachments: [.init(payload: liveLocationPayload)]
+            ) { result in
+                self.callback {
+                    completion?(result.map(\.id))
+                }
+            }
+        } completion: { error in
+            if let error {
+                self.callback {
+                    completion?(.failure(error))
+                }
+            }
+        }
+    }
+
+    /// Shares a live location message to the channel.
+    ///
+    /// If there is already a live location message in the channel, it will update the existing message.
+    /// Otherwise, it will create a new message.
+    ///
+    /// - Parameters:
+    ///  - location: The static location payload.
+    ///  - text: The text of the message.
+    ///  - extraData:  Additional extra data of the message object.
+    ///  - completion: Called when saving the message to the local DB finishes, not when the message reaches the server.
+    public func shareLiveLocation(
+        _ location: LiveLocationAttachmentPayload,
+        text: String? = nil,
+        extraData: [String: RawJSON] = [:],
+        completion: ((Result<MessageId, Error>) -> Void)? = nil
+    ) {
+        guard let cid = cid, isChannelAlreadyCreated else {
+            channelModificationFailed { error in
+                self.callback {
+                    completion?(.failure(error ?? ClientError.Unknown()))
+                }
+            }
+            return
+        }
+
+        client.databaseContainer.write { session in
+            let channel = session.channel(cid: cid)
+            if let message = try channel?.liveLocationMessage?.asModel() {
+                self.messageUpdater.updatePartialMessage(
+                    messageId: message.id,
+                    text: text,
+                    attachments: [.init(payload: location)],
+                    extraData: extraData
+                ) { result in
+                    self.callback {
+                        completion?(result.map(\.id))
+                    }
+                }
+                return
+            }
+
+            self.updater.createNewMessage(
+                in: cid,
+                messageId: nil,
+                text: text ?? "",
+                pinning: nil,
+                isSilent: false,
+                isSystem: false,
+                command: nil,
+                arguments: nil,
+                attachments: [
+                    .init(payload: location)
+                ],
+                mentionedUserIds: [],
+                quotedMessageId: nil,
+                skipPush: false,
+                skipEnrichUrl: false,
+                poll: nil,
+                extraData: extraData
+            ) { result in
+                if let newMessage = try? result.get() {
+                    self.client.eventNotificationCenter.process(NewMessagePendingEvent(message: newMessage))
+                }
+                self.callback {
+                    completion?(result.map(\.id))
+                }
+            }
+        } completion: { error in
+            if let error {
+                self.callback {
+                    completion?(.failure(error))
+                }
             }
         }
     }
@@ -1541,6 +1666,13 @@ extension ChatChannelController {
             _ database: DatabaseContainer,
             _ apiClient: APIClient
         ) -> ChannelMemberUpdater = ChannelMemberUpdater.init
+
+        var messageUpdaterBuilder: (
+            _ isLocalStorageEnabled: Bool,
+            _ messageRepository: MessageRepository,
+            _ database: DatabaseContainer,
+            _ apiClient: APIClient
+        ) -> MessageUpdater = MessageUpdater.init
 
         var eventSenderBuilder: (
             _ database: DatabaseContainer,
