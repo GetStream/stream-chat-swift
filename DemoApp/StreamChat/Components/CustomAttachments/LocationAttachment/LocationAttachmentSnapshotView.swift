@@ -9,10 +9,23 @@ import UIKit
 
 class LocationAttachmentSnapshotView: _View, ThemeProvider {
     struct Content {
+        var coordinate: CLLocationCoordinate2D
+        var isLive: Bool
+        var isSharingLiveLocation: Bool
         var messageId: MessageId?
-        var latitude: CLLocationDegrees
-        var longitude: CLLocationDegrees
-        var isLive: Bool = false
+        var author: ChatUser?
+
+        init(coordinate: CLLocationCoordinate2D, isLive: Bool, isSharingLiveLocation: Bool, messageId: MessageId?, author: ChatUser?) {
+            self.coordinate = coordinate
+            self.isLive = isLive
+            self.isSharingLiveLocation = isSharingLiveLocation
+            self.messageId = messageId
+            self.author = author
+        }
+
+        var isFromCurrentUser: Bool {
+            author?.id == StreamChatWrapper.shared.client?.currentUserId
+        }
     }
 
     var content: Content? {
@@ -59,6 +72,18 @@ class LocationAttachmentSnapshotView: _View, ThemeProvider {
         return button
     }()
 
+    lazy var avatarView: ChatUserAvatarView = {
+        let view = ChatUserAvatarView()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        view.shouldShowOnlineIndicator = false
+        view.layer.masksToBounds = true
+        view.layer.cornerRadius = 15
+        view.layer.borderWidth = 2
+        view.layer.borderColor = UIColor.white.cgColor
+        view.isHidden = true
+        return view
+    }()
+
     override func setUp() {
         super.setUp()
 
@@ -85,10 +110,16 @@ class LocationAttachmentSnapshotView: _View, ThemeProvider {
                 .height(35)
         }.embed(in: self)
 
+        addSubview(avatarView)
+
         NSLayoutConstraint.activate([
-            activityIndicatorView.centerXAnchor.constraint(equalTo: centerXAnchor),
-            activityIndicatorView.centerYAnchor.constraint(equalTo: centerYAnchor),
-            imageView.widthAnchor.constraint(equalTo: container.widthAnchor)
+            activityIndicatorView.centerXAnchor.constraint(equalTo: imageView.centerXAnchor),
+            activityIndicatorView.centerYAnchor.constraint(equalTo: imageView.centerYAnchor),
+            imageView.widthAnchor.constraint(equalTo: container.widthAnchor),
+            avatarView.centerXAnchor.constraint(equalTo: imageView.centerXAnchor),
+            avatarView.centerYAnchor.constraint(equalTo: imageView.centerYAnchor),
+            avatarView.widthAnchor.constraint(equalToConstant: 30),
+            avatarView.heightAnchor.constraint(equalToConstant: 30)
         ])
     }
 
@@ -103,7 +134,7 @@ class LocationAttachmentSnapshotView: _View, ThemeProvider {
             return
         }
 
-        if content.isLive {
+        if content.isSharingLiveLocation && content.isFromCurrentUser {
             stopButton.isHidden = false
         } else {
             stopButton.isHidden = true
@@ -129,10 +160,7 @@ class LocationAttachmentSnapshotView: _View, ThemeProvider {
         }
 
         mapOptions.region = .init(
-            center: CLLocationCoordinate2D(
-                latitude: content.latitude,
-                longitude: content.longitude
-            ),
+            center: content.coordinate,
             span: MKCoordinateSpan(
                 latitudeDelta: 0.01,
                 longitudeDelta: 0.01
@@ -149,6 +177,7 @@ class LocationAttachmentSnapshotView: _View, ThemeProvider {
 
         if let cachedSnapshot = getCachedSnapshot() {
             imageView.image = cachedSnapshot
+            updateAnnotationView()
             return
         } else {
             imageView.image = nil
@@ -159,39 +188,51 @@ class LocationAttachmentSnapshotView: _View, ThemeProvider {
         snapshotter = MKMapSnapshotter(options: mapOptions)
         snapshotter?.start { snapshot, _ in
             guard let snapshot = snapshot else { return }
-            let image = self.generatePinAnnotation(for: snapshot)
             DispatchQueue.main.async {
                 self.activityIndicatorView.stopAnimating()
-                self.imageView.image = image
-                self.setCachedSnapshot(image: image)
+
+                if let content = self.content, !content.isLive {
+                    let image = self.drawPinOnSnapshot(snapshot)
+                    self.imageView.image = image
+                    self.setCachedSnapshot(image: image)
+                } else {
+                    self.imageView.image = snapshot.image
+                    self.setCachedSnapshot(image: snapshot.image)
+                }
+                
+                self.updateAnnotationView()
             }
         }
     }
 
-    private func generatePinAnnotation(
-        for snapshot: MKMapSnapshotter.Snapshot
-    ) -> UIImage {
-        let image = UIGraphicsImageRenderer(size: mapOptions.size).image { _ in
+    private func drawPinOnSnapshot(_ snapshot: MKMapSnapshotter.Snapshot) -> UIImage {
+        UIGraphicsImageRenderer(size: mapOptions.size).image { _ in
             snapshot.image.draw(at: .zero)
+            
+            guard let content = self.content else { return }
 
             let pinView = MKPinAnnotationView(annotation: nil, reuseIdentifier: nil)
             let pinImage = pinView.image
-
-            guard let content = self.content else {
-                return
-            }
-
-            var point = snapshot.point(for: CLLocationCoordinate2D(
-                latitude: content.latitude,
-                longitude: content.longitude
-            ))
+            
+            var point = snapshot.point(for: content.coordinate)
             point.x -= pinView.bounds.width / 2
             point.y -= pinView.bounds.height / 2
             point.x += pinView.centerOffset.x
             point.y += pinView.centerOffset.y
+            
             pinImage?.draw(at: point)
         }
-        return image
+    }
+
+    private func updateAnnotationView() {
+        guard let content = self.content else { return }
+        
+        if content.isLive, let user = content.author {
+            avatarView.isHidden = false
+            avatarView.content = user
+        } else {
+            avatarView.isHidden = true
+        }
     }
 
     @objc func handleStopButtonTap() {

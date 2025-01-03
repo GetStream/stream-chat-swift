@@ -15,10 +15,11 @@ extension StaticLocationAttachmentPayload: AttachmentPreviewProvider {
         /// but a different one could be provided.
         let preview = LocationAttachmentSnapshotView()
         preview.content = .init(
+            coordinate: .init(latitude: latitude, longitude: longitude),
+            isLive: false,
+            isSharingLiveLocation: false,
             messageId: nil,
-            latitude: latitude,
-            longitude: longitude,
-            isLive: false
+            author: nil
         )
         return preview
     }

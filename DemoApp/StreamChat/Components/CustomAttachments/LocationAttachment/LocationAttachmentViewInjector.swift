@@ -35,17 +35,19 @@ class LocationAttachmentViewInjector: AttachmentViewInjector {
 
         if let staticLocation = staticLocationAttachment {
             locationAttachmentView.content = .init(
+                coordinate: .init(latitude: staticLocation.latitude, longitude: staticLocation.longitude),
+                isLive: false,
+                isSharingLiveLocation: false,
                 messageId: contentView.content?.id,
-                latitude: staticLocation.latitude,
-                longitude: staticLocation.longitude,
-                isLive: false
+                author: contentView.content?.author
             )
         } else if let liveLocation = liveLocationAttachment {
             locationAttachmentView.content = .init(
+                coordinate: .init(latitude: liveLocation.latitude, longitude: liveLocation.longitude),
+                isLive: true,
+                isSharingLiveLocation: liveLocation.stoppedSharing == false,
                 messageId: contentView.content?.id,
-                latitude: liveLocation.latitude,
-                longitude: liveLocation.longitude,
-                isLive: liveLocation.stoppedSharing == false || liveLocation.stoppedSharing == nil
+                author: contentView.content?.author
             )
         }
     }
