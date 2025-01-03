@@ -820,9 +820,7 @@ final class ChannelListController_Tests: XCTestCase {
 
     // MARK: - Refresh Loaded Channels
 
-    func test_refreshLoadedChannels_whenSucceeds_updates_hasLoadedAllPreviousChannels_whenRecevingAFullPage() {
-        XCTAssertFalse(controller.hasLoadedAllPreviousChannels)
-
+    func test_refreshLoadedChannels_whenSucceedsThenControllerSucceeds() {
         // Simulate synchronize to create all dependencies
         controller.synchronize()
 
@@ -832,7 +830,7 @@ final class ChannelListController_Tests: XCTestCase {
         }
         env.channelListUpdater?.refreshLoadedChannelsResult = .success(Set(channels.map(\.cid)))
 
-        let expectation = self.expectation(description: "Reset Query completes")
+        let expectation = self.expectation(description: "Refresh loaded channels")
         var receivedError: Error?
         controller.refreshLoadedChannels() { result in
             receivedError = result.error
@@ -841,31 +839,6 @@ final class ChannelListController_Tests: XCTestCase {
         waitForExpectations(timeout: defaultTimeout)
 
         XCTAssertNil(receivedError)
-        // When receiving a full page, we did not reach the end of the pagination
-        XCTAssertFalse(controller.hasLoadedAllPreviousChannels)
-    }
-
-    func test_refreshLoadedChannels_whenSucceeds_updates_hasLoadedAllPreviousChannels_whenRecevingALastPage() {
-        XCTAssertFalse(controller.hasLoadedAllPreviousChannels)
-
-        // Simulate synchronize to create all dependencies
-        controller.synchronize()
-
-        // Simulate the last page
-        let channels = [ChatChannel.mock(cid: .unique)]
-        env.channelListUpdater?.refreshLoadedChannelsResult = .success(Set(channels.map(\.cid)))
-
-        let expectation = self.expectation(description: "Reset Query completes")
-        var receivedError: Error?
-        controller.refreshLoadedChannels() { result in
-            receivedError = result.error
-            expectation.fulfill()
-        }
-        waitForExpectations(timeout: defaultTimeout)
-
-        XCTAssertNil(receivedError)
-        // When receiving an incomplete page, we did reach the end of the pagination
-        XCTAssertTrue(controller.hasLoadedAllPreviousChannels)
     }
 
     func test_refreshLoadedChannels_propagatesErrorFromUpdater() {

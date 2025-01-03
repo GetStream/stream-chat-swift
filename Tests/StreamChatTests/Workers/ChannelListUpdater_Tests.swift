@@ -280,22 +280,13 @@ final class ChannelListUpdater_Tests: XCTestCase {
     
     // MARK: - Refresh Loaded Channels
     
-    func test_refreshLoadedChannels_whenEmpty_thenRefreshStillHappens() async throws {
+    func test_refreshLoadedChannels_whenEmpty_thenRefreshDoesNotHappen() async throws {
         var query = ChannelListQuery(filter: .in(.members, values: [.unique]))
         query.pagination = Pagination(pageSize: 10)
         let initialLoadedChannelCount = 0
         
-        try database.writeSynchronously { session in
-            session.saveChannelList(payload: .init(channels: []), query: query)
-        }
-        
-        // One new channel was added since the last refresh
-        let cid = ChannelId(type: .messaging, id: .unique)
-        let payload = ChannelListPayload(channels: [dummyPayload(with: cid)])
-        apiClient.test_mockResponseResult(.success(payload))
-        
         let cids = try await listUpdater.refreshLoadedChannels(for: query, channelCount: initialLoadedChannelCount)
-        XCTAssertEqual(Set([cid]), cids)
+        XCTAssertEqual(Set(), cids)
     }
     
     func test_refreshLoadedChannels_whenMultiplePagesAreLoaded_thenAllPagesAreReloaded() async throws {

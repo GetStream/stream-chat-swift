@@ -42,9 +42,14 @@ class ChannelListUpdater: Worker {
     }
 
     func refreshLoadedChannels(for query: ChannelListQuery, channelCount: Int, completion: @escaping (Result<Set<ChannelId>, Error>) -> Void) {
+        guard channelCount > 0 else {
+            completion(.success(Set()))
+            return
+        }
+        
         var allPages = [ChannelListQuery]()
-        // If nothing has been loaded so far, still try to refetch
-        for offset in stride(from: 0, to: max(channelCount, 1), by: .channelsPageSize) {
+        let pageSize = query.pagination.pageSize > 0 ? query.pagination.pageSize : .channelsPageSize
+        for offset in stride(from: 0, to: channelCount, by: pageSize) {
             var pageQuery = query
             pageQuery.pagination = Pagination(pageSize: .channelsPageSize, offset: offset)
             allPages.append(pageQuery)
