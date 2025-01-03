@@ -6,7 +6,6 @@
 @testable import StreamChatTestTools
 import XCTest
 
-#if swift(>=5.7)
 @available(iOS 16.0, *)
 final class ChatMessage_Equatable_Tests: XCTestCase {
     var database: DatabaseContainer!
@@ -245,4 +244,3 @@ extension Collection {
         }
     }
 }
-#endif

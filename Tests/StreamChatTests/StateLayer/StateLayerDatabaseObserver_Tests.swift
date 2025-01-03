@@ -42,7 +42,7 @@ final class StateLayerDatabaseObserver_Tests: XCTestCase {
         
         try await waitForDuplicateCallbacks()
         
-        await fulfillmentCompatibility(of: [expectation], timeout: defaultTimeout)
+        await fulfillment(of: [expectation], timeout: defaultTimeout)
 
         XCTAssertEqual("first", observer.item?.name)
         XCTAssertEqual(1, changeCount)
@@ -70,7 +70,7 @@ final class StateLayerDatabaseObserver_Tests: XCTestCase {
         
         try await waitForDuplicateCallbacks()
         
-        await fulfillmentCompatibility(of: [expectation], timeout: defaultTimeout)
+        await fulfillment(of: [expectation], timeout: defaultTimeout)
 
         XCTAssertEqual("second", observer.item?.name)
         XCTAssertEqual(1, changeCount)
@@ -98,7 +98,7 @@ final class StateLayerDatabaseObserver_Tests: XCTestCase {
         
         try await waitForDuplicateCallbacks()
         
-        await fulfillmentCompatibility(of: [expectation], timeout: defaultTimeout)
+        await fulfillment(of: [expectation], timeout: defaultTimeout)
 
         XCTAssertEqual("second", observer.item?.name)
         XCTAssertEqual("team2", observer.item?.team)
@@ -128,7 +128,7 @@ final class StateLayerDatabaseObserver_Tests: XCTestCase {
         
         try await waitForDuplicateCallbacks()
         
-        await fulfillmentCompatibility(of: [expectation], timeout: defaultTimeout)
+        await fulfillment(of: [expectation], timeout: defaultTimeout)
 
         XCTAssertEqual(8, observer.items.count)
         let expectedIds = (firstPayload.messages + secondPayload.messages).map(\.id)
@@ -161,7 +161,7 @@ final class StateLayerDatabaseObserver_Tests: XCTestCase {
         
         try await waitForDuplicateCallbacks()
         
-        await fulfillmentCompatibility(of: [expectation], timeout: defaultTimeout)
+        await fulfillment(of: [expectation], timeout: defaultTimeout)
         
         XCTAssertEqual(3, observer.items.count)
         XCTAssertEqual(secondPayload.messages.map(\.id), observer.items.map(\.id))
@@ -195,7 +195,7 @@ final class StateLayerDatabaseObserver_Tests: XCTestCase {
         
         try await waitForDuplicateCallbacks()
         
-        await fulfillmentCompatibility(of: [expectation], timeout: defaultTimeout)
+        await fulfillment(of: [expectation], timeout: defaultTimeout)
 
         XCTAssertEqual(11, observer.items.count)
         let expectedIds = (firstPayload.messages + secondPayload.messages + thirdPayload.messages).map(\.id)
@@ -254,7 +254,7 @@ final class StateLayerDatabaseObserver_Tests: XCTestCase {
             try session.saveChannel(payload: channelPayload, query: query, cache: nil)
         }
         
-        await fulfillmentCompatibility(of: [expectation], timeout: defaultTimeout)
+        await fulfillment(of: [expectation], timeout: defaultTimeout)
 
         // 4 are reused, 1 is created
         XCTAssertEqual(6, itemCreatorCounter)
@@ -279,7 +279,7 @@ final class StateLayerDatabaseObserver_Tests: XCTestCase {
             try session.saveChannel(payload: secondPayload)
         }
         
-        await fulfillmentCompatibility(of: [expectation], timeout: defaultTimeout)
+        await fulfillment(of: [expectation], timeout: defaultTimeout)
 
         // 5 are reused, 5 are created
         XCTAssertEqual(15, messageItemCreatorCounter)
@@ -329,7 +329,7 @@ final class StateLayerDatabaseObserver_Tests: XCTestCase {
             try session.saveReaction(payload: makePayload(1).reactions[0], query: query, cache: nil)
         }
         
-        await fulfillmentCompatibility(of: [expectation], timeout: defaultTimeout)
+        await fulfillment(of: [expectation], timeout: defaultTimeout)
 
         // 4 are reused, 1 is created
         XCTAssertEqual(6, itemCreatorCounter)
@@ -365,7 +365,7 @@ final class StateLayerDatabaseObserver_Tests: XCTestCase {
             try session.saveThread(payload: makePayload(1).threads[0], cache: nil)
         }
         
-        await fulfillmentCompatibility(of: [expectation], timeout: defaultTimeout)
+        await fulfillment(of: [expectation], timeout: defaultTimeout)
 
         // 4 are reused, 1 is created
         XCTAssertEqual(6, itemCreatorCounter)
@@ -405,7 +405,7 @@ final class StateLayerDatabaseObserver_Tests: XCTestCase {
             try session.saveUser(payload: makePayload(1).users[0])
         }
         
-        await fulfillmentCompatibility(of: [expectation], timeout: defaultTimeout)
+        await fulfillment(of: [expectation], timeout: defaultTimeout)
 
         // 4 are reused, 1 is created
         XCTAssertEqual(6, itemCreatorCounter)
