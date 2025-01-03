@@ -113,17 +113,15 @@ class LocationDetailViewController: UIViewController, ThemeProvider {
             let bottomSheet = LocationBottomSheetViewController(
                 messageController: messageController
             )
-            let nav = UINavigationController(rootViewController: bottomSheet)
-            nav.modalPresentationStyle = .pageSheet
-            let customDetent = UISheetPresentationController.Detent.custom(resolver: { _ in
-                60
-            })
-            nav.sheetPresentationController?.detents = [customDetent]
-            nav.sheetPresentationController?.prefersGrabberVisible = false
-            nav.sheetPresentationController?.preferredCornerRadius = 16
-            nav.sheetPresentationController?.largestUndimmedDetentIdentifier = customDetent.identifier
-            nav.isModalInPresentation = true
-            present(nav, animated: true)
+            bottomSheet.modalPresentationStyle = .pageSheet
+            let detent = UISheetPresentationController.Detent.custom(resolver: { _ in 60 })
+            bottomSheet.sheetPresentationController?.detents = [detent]
+            bottomSheet.sheetPresentationController?.prefersGrabberVisible = false
+            bottomSheet.sheetPresentationController?.preferredCornerRadius = 16
+            bottomSheet.sheetPresentationController?.prefersScrollingExpandsWhenScrolledToEdge = false
+            bottomSheet.sheetPresentationController?.largestUndimmedDetentIdentifier = detent.identifier
+            bottomSheet.isModalInPresentation = true
+            present(bottomSheet, animated: true)
         }
     }
 }
