@@ -40,7 +40,15 @@ public struct ImageAttachmentPayload: AttachmentPayload {
     
     /// Creates `ImageAttachmentPayload` instance.
     ///
-    /// Use this initializer if the attachment is already uploaded and you have the remote URLs.
+    /// Use this initializer if the attachment is already uploaded and you have the remote URLs. Create the ``AttachmentFile`` type using the local file URL.
+    ///
+    /// - Parameters:
+    ///   - title: A title, usually the name of the image.
+    ///   - imageRemoteURL: A link to the image.
+    ///   - file: The image file size information.
+    ///   - originalWidth: The original width of the image in pixels.
+    ///   - originalHeight: The original height of the image in pixels.
+    ///   - extraData: Custom data associated with the attachment.
     public init(
         title: String?,
         imageRemoteURL: URL,
