@@ -1370,7 +1370,6 @@
 		AD053B9A2B335854003612B6 /* DemoComposerVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD053B992B335854003612B6 /* DemoComposerVC.swift */; };
 		AD053B9F2B335929003612B6 /* LocationAttachmentViewInjector.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD053B9E2B335929003612B6 /* LocationAttachmentViewInjector.swift */; };
 		AD053BA12B3359DD003612B6 /* DemoAttachmentViewCatalog.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD053BA02B3359DD003612B6 /* DemoAttachmentViewCatalog.swift */; };
-		AD053BA32B335A13003612B6 /* LocationAttachmentPayload+AttachmentViewProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD053BA22B335A13003612B6 /* LocationAttachmentPayload+AttachmentViewProvider.swift */; };
 		AD053BA52B335A63003612B6 /* DemoQuotedChatMessageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD053BA42B335A63003612B6 /* DemoQuotedChatMessageView.swift */; };
 		AD053BA72B33624C003612B6 /* LocationAttachmentViewDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD053BA62B33624C003612B6 /* LocationAttachmentViewDelegate.swift */; };
 		AD053BA92B336331003612B6 /* LocationDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD053BA82B336331003612B6 /* LocationDetailViewController.swift */; };
@@ -1477,6 +1476,7 @@
 		AD470C9E26C6D9030090759A /* ChatMessageListVCDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD470C9D26C6D9030090759A /* ChatMessageListVCDelegate.swift */; };
 		AD483B962A2658970004B406 /* ChannelMemberUnbanRequestPayload.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD483B952A2658970004B406 /* ChannelMemberUnbanRequestPayload.swift */; };
 		AD483B972A2658970004B406 /* ChannelMemberUnbanRequestPayload.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD483B952A2658970004B406 /* ChannelMemberUnbanRequestPayload.swift */; };
+		AD48F6922D2849B5007CCF3A /* LocationSharingStatusView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD48F6912D2849B5007CCF3A /* LocationSharingStatusView.swift */; };
 		AD4C15562A55874700A32955 /* ImageLoading_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD4C15552A55874700A32955 /* ImageLoading_Tests.swift */; };
 		AD4C8C222C5D479B00E1C414 /* StackedUserAvatarsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD4C8C212C5D479B00E1C414 /* StackedUserAvatarsView.swift */; };
 		AD4C8C232C5D479B00E1C414 /* StackedUserAvatarsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD4C8C212C5D479B00E1C414 /* StackedUserAvatarsView.swift */; };
@@ -4183,7 +4183,6 @@
 		AD053B992B335854003612B6 /* DemoComposerVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DemoComposerVC.swift; sourceTree = "<group>"; };
 		AD053B9E2B335929003612B6 /* LocationAttachmentViewInjector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationAttachmentViewInjector.swift; sourceTree = "<group>"; };
 		AD053BA02B3359DD003612B6 /* DemoAttachmentViewCatalog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DemoAttachmentViewCatalog.swift; sourceTree = "<group>"; };
-		AD053BA22B335A13003612B6 /* LocationAttachmentPayload+AttachmentViewProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "LocationAttachmentPayload+AttachmentViewProvider.swift"; sourceTree = "<group>"; };
 		AD053BA42B335A63003612B6 /* DemoQuotedChatMessageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DemoQuotedChatMessageView.swift; sourceTree = "<group>"; };
 		AD053BA62B33624C003612B6 /* LocationAttachmentViewDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationAttachmentViewDelegate.swift; sourceTree = "<group>"; };
 		AD053BA82B336331003612B6 /* LocationDetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationDetailViewController.swift; sourceTree = "<group>"; };
@@ -4255,6 +4254,7 @@
 		AD470C9B26C6D8C60090759A /* ChatMessageListVCDataSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessageListVCDataSource.swift; sourceTree = "<group>"; };
 		AD470C9D26C6D9030090759A /* ChatMessageListVCDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessageListVCDelegate.swift; sourceTree = "<group>"; };
 		AD483B952A2658970004B406 /* ChannelMemberUnbanRequestPayload.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelMemberUnbanRequestPayload.swift; sourceTree = "<group>"; };
+		AD48F6912D2849B5007CCF3A /* LocationSharingStatusView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationSharingStatusView.swift; sourceTree = "<group>"; };
 		AD4C15552A55874700A32955 /* ImageLoading_Tests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImageLoading_Tests.swift; sourceTree = "<group>"; };
 		AD4C8C212C5D479B00E1C414 /* StackedUserAvatarsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StackedUserAvatarsView.swift; sourceTree = "<group>"; };
 		AD4CDD81296498D20057BC8A /* ScrollViewPaginationHandler_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScrollViewPaginationHandler_Tests.swift; sourceTree = "<group>"; };
@@ -8423,11 +8423,11 @@
 		AD053B9B2B33589C003612B6 /* LocationAttachment */ = {
 			isa = PBXGroup;
 			children = (
-				AD053BA22B335A13003612B6 /* LocationAttachmentPayload+AttachmentViewProvider.swift */,
 				AD053B9E2B335929003612B6 /* LocationAttachmentViewInjector.swift */,
 				AD053BA62B33624C003612B6 /* LocationAttachmentViewDelegate.swift */,
 				AD053BAA2B33638B003612B6 /* LocationAttachmentSnapshotView.swift */,
 				AD053BA82B336331003612B6 /* LocationDetailViewController.swift */,
+				AD48F6912D2849B5007CCF3A /* LocationSharingStatusView.swift */,
 				AD2F2D9A2D271B36006ED24B /* UserAnnotationView.swift */,
 				AD2F2D982D271B07006ED24B /* UserAnnotation.swift */,
 			);
@@ -11097,6 +11097,7 @@
 				794E20F52577DF4D00790DAB /* NameGroupViewController.swift in Sources */,
 				A3227EC9284A52EE00EBE6CC /* PushNotifications.swift in Sources */,
 				A3227E65284A4A5C00EBE6CC /* StreamChatWrapper.swift in Sources */,
+				AD48F6922D2849B5007CCF3A /* LocationSharingStatusView.swift in Sources */,
 				A3227E78284A4CAD00EBE6CC /* DemoChatMessageContentView.swift in Sources */,
 				AD2F2D992D271B07006ED24B /* UserAnnotation.swift in Sources */,
 				7933060B256FF94800FBB586 /* DemoChatChannelListRouter.swift in Sources */,
@@ -11111,7 +11112,6 @@
 				AD2F2D9B2D271B36006ED24B /* UserAnnotationView.swift in Sources */,
 				A3227E59284A484300EBE6CC /* UIImage+Resized.swift in Sources */,
 				79B8B64B285CBDC00059FB2D /* DemoChatMessageLayoutOptionsResolver.swift in Sources */,
-				AD053BA32B335A13003612B6 /* LocationAttachmentPayload+AttachmentViewProvider.swift in Sources */,
 				AD053BA12B3359DD003612B6 /* DemoAttachmentViewCatalog.swift in Sources */,
 				AD053B9F2B335929003612B6 /* LocationAttachmentViewInjector.swift in Sources */,
 			);

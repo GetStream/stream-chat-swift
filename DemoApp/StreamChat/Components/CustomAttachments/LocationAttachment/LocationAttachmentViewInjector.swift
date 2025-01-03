@@ -28,6 +28,14 @@ class LocationAttachmentViewInjector: AttachmentViewInjector {
         locationAttachmentView.didTapOnStopSharingLocation = { [weak self] in
             self?.handleTapOnStopSharingLocation()
         }
+
+        let isSentByCurrentUser = contentView.content?.isSentByCurrentUser == true
+        let maskedCorners: CACornerMask = isSentByCurrentUser
+            ? [.layerMinXMaxYCorner, .layerMinXMinYCorner]
+            : [.layerMinXMinYCorner, .layerMaxXMaxYCorner, .layerMaxXMinYCorner]
+        locationAttachmentView.layer.maskedCorners = maskedCorners
+        locationAttachmentView.layer.cornerRadius = 16
+        locationAttachmentView.layer.masksToBounds = true
     }
 
     override func contentViewDidUpdateContent() {

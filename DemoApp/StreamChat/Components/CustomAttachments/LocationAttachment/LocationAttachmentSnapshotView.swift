@@ -84,6 +84,13 @@ class LocationAttachmentSnapshotView: _View, ThemeProvider {
         return view
     }()
 
+    lazy var sharingStatusView: LocationSharingStatusView = {
+        let view = LocationSharingStatusView()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        view.isHidden = true
+        return view
+    }()
+
     override func setUp() {
         super.setUp()
 
@@ -94,6 +101,12 @@ class LocationAttachmentSnapshotView: _View, ThemeProvider {
         imageView.addGestureRecognizer(tapGestureRecognizer)
     }
 
+    override func setUpAppearance() {
+        super.setUpAppearance()
+
+        backgroundColor = appearance.colorPalette.background6
+    }
+
     override func setUpLayout() {
         super.setUpLayout()
 
@@ -102,9 +115,11 @@ class LocationAttachmentSnapshotView: _View, ThemeProvider {
 
         addSubview(activityIndicatorView)
 
-        let container = VContainer(alignment: .center) {
+        let container = VContainer(spacing: 0, alignment: .center) {
             imageView
                 .height(mapHeight)
+            sharingStatusView
+                .height(30)
             stopButton
                 .width(120)
                 .height(35)
@@ -113,9 +128,10 @@ class LocationAttachmentSnapshotView: _View, ThemeProvider {
         addSubview(avatarView)
 
         NSLayoutConstraint.activate([
-            activityIndicatorView.centerXAnchor.constraint(equalTo: imageView.centerXAnchor),
-            activityIndicatorView.centerYAnchor.constraint(equalTo: imageView.centerYAnchor),
+            activityIndicatorView.centerXAnchor.constraint(equalTo: centerXAnchor),
+            activityIndicatorView.centerYAnchor.constraint(equalTo: centerYAnchor),
             imageView.widthAnchor.constraint(equalTo: container.widthAnchor),
+            
             avatarView.centerXAnchor.constraint(equalTo: imageView.centerXAnchor),
             avatarView.centerYAnchor.constraint(equalTo: imageView.centerYAnchor),
             avatarView.widthAnchor.constraint(equalToConstant: 30),
@@ -136,8 +152,15 @@ class LocationAttachmentSnapshotView: _View, ThemeProvider {
 
         if content.isSharingLiveLocation && content.isFromCurrentUser {
             stopButton.isHidden = false
+            sharingStatusView.isHidden = true
+            sharingStatusView.updateStatus(isSharing: true)
+        } else if content.isLive {
+            stopButton.isHidden = true
+            sharingStatusView.isHidden = false
+            sharingStatusView.updateStatus(isSharing: content.isSharingLiveLocation)
         } else {
             stopButton.isHidden = true
+            sharingStatusView.isHidden = true
         }
 
         configureMapPosition()

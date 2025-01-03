@@ -15,15 +15,6 @@ class DemoComposerVC: ComposerVC {
         
         let alreadyHasLocation = content.attachments.map(\.type).contains(.staticLocation)
         if AppConfig.shared.demoAppConfig.isLocationAttachmentsEnabled && !alreadyHasLocation {
-            let addLocationAction = UIAlertAction(
-                title: "Add Current Location",
-                style: .default,
-                handler: { [weak self] _ in
-                    self?.addStaticLocationToAttachments()
-                }
-            )
-            actions.append(addLocationAction)
-
             let sendLocationAction = UIAlertAction(
                 title: "Send Current Location",
                 style: .default,
@@ -44,17 +35,6 @@ class DemoComposerVC: ComposerVC {
         }
 
         return actions
-    }
-
-    func addStaticLocationToAttachments() {
-        getCurrentLocationInfo { [weak self] location in
-            guard let location = location else { return }
-            let staticLocationPayload = StaticLocationAttachmentPayload(
-                latitude: location.latitude,
-                longitude: location.longitude
-            )
-            self?.content.attachments.append(AnyAttachmentPayload(payload: staticLocationPayload))
-        }
     }
 
     func sendInstantStaticLocation() {
