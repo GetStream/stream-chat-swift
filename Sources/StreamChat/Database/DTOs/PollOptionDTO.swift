@@ -93,7 +93,11 @@ extension NSManagedObjectContext {
             cache: cache
         )
         dto.text = payload.text
-        dto.custom = try JSONEncoder.default.encode(payload.custom)
+        if let custom = payload.custom, !custom.isEmpty {
+            dto.custom = try JSONEncoder.default.encode(custom)
+        } else {
+            dto.custom = nil
+        }
         return dto
     }
     
