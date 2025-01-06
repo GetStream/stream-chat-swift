@@ -1974,7 +1974,7 @@ public extension ClientError {
     final class ActiveLiveLocationAlreadyExists: ClientError {
         let messageId: MessageId
 
-        public init(messageId: MessageId) {
+        init(messageId: MessageId) {
             self.messageId = messageId
             super.init(
                 "You can't start a new live location sharing because a message with id:\(messageId) has already one active live location."
