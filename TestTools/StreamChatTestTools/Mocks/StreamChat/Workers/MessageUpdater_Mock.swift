@@ -119,6 +119,7 @@ final class MessageUpdater_Mock: MessageUpdater {
     @Atomic var updatePartialMessage_attachments: [AnyAttachmentPayload]?
     @Atomic var updatePartialMessage_extraData: [String: RawJSON]?
     @Atomic var updatePartialMessage_completion: ((Result<ChatMessage, Error>) -> Void)?
+    @Atomic var updatePartialMessage_completion_result: Result<ChatMessage, Error>?
 
     var markThreadRead_threadId: MessageId?
     var markThreadRead_cid: ChannelId?
@@ -541,6 +542,7 @@ final class MessageUpdater_Mock: MessageUpdater {
         updatePartialMessage_attachments = attachments
         updatePartialMessage_extraData = extraData
         updatePartialMessage_completion = completion
+        updatePartialMessage_completion_result?.invoke(with: completion)
     }
 }
 
