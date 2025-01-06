@@ -114,6 +114,12 @@ final class MessageUpdater_Mock: MessageUpdater {
     @Atomic var translate_completion: ((Result<ChatMessage, Error>) -> Void)?
     @Atomic var translate_completion_result: Result<ChatMessage, Error>?
 
+    @Atomic var updatePartialMessage_messageId: MessageId?
+    @Atomic var updatePartialMessage_text: String?
+    @Atomic var updatePartialMessage_attachments: [AnyAttachmentPayload]?
+    @Atomic var updatePartialMessage_extraData: [String: RawJSON]?
+    @Atomic var updatePartialMessage_completion: ((Result<ChatMessage, Error>) -> Void)?
+
     var markThreadRead_threadId: MessageId?
     var markThreadRead_cid: ChannelId?
     var markThreadRead_callCount = 0
@@ -247,6 +253,12 @@ final class MessageUpdater_Mock: MessageUpdater {
 
         loadThread_query = nil
         loadThread_completion = nil
+
+        updatePartialMessage_messageId = nil
+        updatePartialMessage_text = nil
+        updatePartialMessage_attachments = nil
+        updatePartialMessage_extraData = nil
+        updatePartialMessage_completion = nil
     }
 
     override func getMessage(cid: ChannelId, messageId: MessageId, completion: ((Result<ChatMessage, Error>) -> Void)? = nil) {
@@ -515,6 +527,20 @@ final class MessageUpdater_Mock: MessageUpdater {
         loadThread_callCount += 1
         loadThread_query = query
         loadThread_completion = completion
+    }
+
+    override func updatePartialMessage(
+        messageId: MessageId,
+        text: String? = nil,
+        attachments: [AnyAttachmentPayload]? = nil,
+        extraData: [String: RawJSON]? = nil,
+        completion: ((Result<ChatMessage, Error>) -> Void)? = nil
+    ) {
+        updatePartialMessage_messageId = messageId
+        updatePartialMessage_text = text
+        updatePartialMessage_attachments = attachments
+        updatePartialMessage_extraData = extraData
+        updatePartialMessage_completion = completion
     }
 }
 
