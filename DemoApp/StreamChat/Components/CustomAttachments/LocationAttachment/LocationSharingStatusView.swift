@@ -36,7 +36,7 @@ class LocationSharingStatusView: _View, ThemeProvider {
     override func setUpLayout() {
         super.setUpLayout()
         
-        let container = HContainer(spacing: 4, alignment: .center) {
+        HContainer(spacing: 4, alignment: .center) {
             iconImageView
                 .width(16)
                 .height(16)
