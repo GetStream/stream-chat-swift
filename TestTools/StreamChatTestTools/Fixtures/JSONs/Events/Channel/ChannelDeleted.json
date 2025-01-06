@@ -11,6 +11,7 @@
     "updated_at": "2021-04-15T11:23:42.167781Z",
     "deleted_at": "2021-04-23T09:38:47.125555Z",
     "created_by": null,
+    "disabled" : false,
     "frozen": false,
     "members": [
       {

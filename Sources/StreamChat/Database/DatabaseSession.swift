@@ -1,5 +1,5 @@
 //
-// Copyright © 2024 Stream.io Inc. All rights reserved.
+// Copyright © 2025 Stream.io Inc. All rights reserved.
 //
 
 import CoreData
@@ -301,9 +301,6 @@ protocol ChannelDatabaseSession {
 
     /// Removes channel list query from database.
     func delete(query: ChannelListQuery)
-
-    /// Cleans a list of channels based on their id
-    func cleanChannels(cids: Set<ChannelId>)
 
     /// Removes a list of channels based on their id
     func removeChannels(cids: Set<ChannelId>)

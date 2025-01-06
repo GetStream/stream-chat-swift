@@ -1,5 +1,5 @@
 //
-// Copyright © 2024 Stream.io Inc. All rights reserved.
+// Copyright © 2025 Stream.io Inc. All rights reserved.
 //
 
 import Foundation
@@ -23,6 +23,7 @@ extension ChannelDetailPayload {
         ownCapabilities: [String] = [],
         isFrozen: Bool = false,
         isBlocked: Bool = false,
+        isDisabled: Bool = false,
         isHidden: Bool? = nil,
         members: [MemberPayload] = [],
         team: String? = nil,
@@ -42,6 +43,7 @@ extension ChannelDetailPayload {
             createdBy: createdBy,
             config: config,
             ownCapabilities: ownCapabilities,
+            isDisabled: isDisabled,
             isFrozen: isFrozen,
             isBlocked: isBlocked,
             isHidden: isHidden,

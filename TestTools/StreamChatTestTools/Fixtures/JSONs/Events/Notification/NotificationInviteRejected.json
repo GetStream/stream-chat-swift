@@ -24,6 +24,7 @@
             "online" : true,
             "name" : "steep-moon-9"
         },
+        "disabled" : false,
         "frozen" : false,
         "config" : {
             "automod_behavior" : "flag",

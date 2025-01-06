@@ -1,5 +1,5 @@
 //
-// Copyright © 2024 Stream.io Inc. All rights reserved.
+// Copyright © 2025 Stream.io Inc. All rights reserved.
 //
 
 import Foundation
@@ -10,8 +10,11 @@ extension ChatClient {
     /// Creates an instance of ``ConnectedUser`` which represents the logged-in user state and its actions.
     ///
     /// - Throws: An error if no user is currently logged-in.
-    @MainActor public func makeConnectedUser() throws -> ConnectedUser {
-        let user = try CurrentUserDTO.load(context: databaseContainer.viewContext)
+    public func makeConnectedUser() throws -> ConnectedUser {
+        let user = try databaseContainer.readAndWait { session in
+            guard let dto = session.currentUser else { throw ClientError.CurrentUserDoesNotExist() }
+            return try dto.asModel()
+        }
         return ConnectedUser(user: user, client: self)
     }
 }

@@ -1,5 +1,5 @@
 //
-// Copyright © 2024 Stream.io Inc. All rights reserved.
+// Copyright © 2025 Stream.io Inc. All rights reserved.
 //
 
 @testable import StreamChat
@@ -662,7 +662,7 @@ final class Chat_Tests: XCTestCase {
             messageId: apiResponse.message.id
         )
         
-        await fulfillmentCompatibility(of: [notificationExpectation], timeout: defaultTimeout)
+        await fulfillment(of: [notificationExpectation], timeout: defaultTimeout)
         
         XCTAssertEqual(text, message.text)
         await XCTAssertEqual(1, chat.state.messages.count)
@@ -1304,7 +1304,7 @@ final class Chat_Tests: XCTestCase {
         )
         XCTAssertEqual(apiResponse.message.id, replyMessage.id)
         
-        await fulfillmentCompatibility(of: [notificationExpectation], timeout: defaultTimeout)
+        await fulfillment(of: [notificationExpectation], timeout: defaultTimeout)
         
         let messageState = try await chat.messageState(for: lastMessageId)
         await XCTAssertEqual(lastMessageId, messageState.message.id)

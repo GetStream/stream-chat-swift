@@ -1,5 +1,5 @@
 //
-// Copyright © 2024 Stream.io Inc. All rights reserved.
+// Copyright © 2025 Stream.io Inc. All rights reserved.
 //
 
 import Foundation
@@ -118,6 +118,8 @@ struct ChannelDetailPayload {
     /// The list of actions that the current user can perform in a channel.
     /// It is optional, since not all events contain the own capabilities property for performance reasons.
     let ownCapabilities: [String]?
+    /// Checks if the channel is disabled.
+    let isDisabled: Bool
     /// Checks if the channel is frozen.
     let isFrozen: Bool
     /// Checks if the channel is blocked.
@@ -173,6 +175,7 @@ extension ChannelDetailPayload: Decodable {
             createdBy: try container.decodeIfPresent(UserPayload.self, forKey: .createdBy),
             config: try container.decode(ChannelConfig.self, forKey: .config),
             ownCapabilities: try container.decodeIfPresent([String].self, forKey: .ownCapabilities),
+            isDisabled: try container.decode(Bool.self, forKey: .disabled),
             isFrozen: try container.decode(Bool.self, forKey: .frozen),
             isBlocked: try container.decodeIfPresent(Bool.self, forKey: .blocked),
             // For `hidden`, we don't fallback to `false`

@@ -1,5 +1,5 @@
 //
-// Copyright © 2024 Stream.io Inc. All rights reserved.
+// Copyright © 2025 Stream.io Inc. All rights reserved.
 //
 
 import Foundation
@@ -20,6 +20,7 @@ final class ChannelListFilterScope_Tests: XCTestCase {
         XCTAssertEqual(Key<Date>.createdAt.rawValue, ChannelCodingKeys.createdAt.rawValue)
         XCTAssertEqual(Key<Date>.updatedAt.rawValue, ChannelCodingKeys.updatedAt.rawValue)
         XCTAssertEqual(Key<Date>.deletedAt.rawValue, ChannelCodingKeys.deletedAt.rawValue)
+        XCTAssertEqual(Key<Bool>.disabled.rawValue, ChannelCodingKeys.disabled.rawValue)
         XCTAssertEqual(Key<Bool>.frozen.rawValue, ChannelCodingKeys.frozen.rawValue)
         XCTAssertEqual(Key<Int>.memberCount.rawValue, ChannelCodingKeys.memberCount.rawValue)
         XCTAssertEqual(Key<TeamId>.team.rawValue, ChannelCodingKeys.team.rawValue)
@@ -48,6 +49,7 @@ final class ChannelListFilterScope_Tests: XCTestCase {
         XCTAssertEqual(Key<Date>.deletedAt.keyPathString, "deletedAt")
         XCTAssertEqual(Key<Bool>.blocked.keyPathString, "isBlocked")
         XCTAssertEqual(Key<Bool>.hidden.keyPathString, "isHidden")
+        XCTAssertEqual(Key<Bool>.disabled.keyPathString, "isDisabled")
         XCTAssertEqual(Key<Bool>.frozen.keyPathString, "isFrozen")
         XCTAssertEqual(Key<Int>.memberCount.keyPathString, "memberCount")
         XCTAssertEqual(Key<TeamId>.team.keyPathString, "team")

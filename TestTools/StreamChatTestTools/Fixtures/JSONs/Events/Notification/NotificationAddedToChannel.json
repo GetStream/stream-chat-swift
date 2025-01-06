@@ -33,6 +33,7 @@
       "last_active" : "2021-04-22T19:24:42.65235324Z",
       "name" : "luke_skywalker"
     },
+    "disabled" : false,
     "frozen" : false,
     "config" : {
       "typing_events" : true,

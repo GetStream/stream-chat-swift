@@ -1,5 +1,5 @@
 //
-// Copyright © 2024 Stream.io Inc. All rights reserved.
+// Copyright © 2025 Stream.io Inc. All rights reserved.
 //
 
 @testable import StreamChat
@@ -16,7 +16,7 @@ final class ChannelListUpdater_Spy: ChannelListUpdater, Spy {
     @Atomic var fetch_queries: [ChannelListQuery] = []
     @Atomic var fetch_completion: ((Result<ChannelListPayload, Error>) -> Void)?
 
-    var resetChannelsQueryResult: Result<(synchedAndWatched: [ChatChannel], unwanted: Set<ChannelId>), Error>?
+    @Atomic var refreshLoadedChannelsResult: Result<Set<ChannelId>, Error>?
 
     @Atomic var markAllRead_completion: ((Error?) -> Void)?
 
@@ -63,16 +63,14 @@ final class ChannelListUpdater_Spy: ChannelListUpdater, Spy {
         _fetch_queries.mutate { $0.append(channelListQuery) }
         fetch_completion = completion
     }
-
-    override func resetChannelsQuery(
+    
+    override func refreshLoadedChannels(
         for query: ChannelListQuery,
-        pageSize: Int,
-        watchedAndSynchedChannelIds: Set<ChannelId>,
-        synchedChannelIds: Set<ChannelId>,
-        completion: @escaping (Result<(synchedAndWatched: [ChatChannel], unwanted: Set<ChannelId>), Error>) -> Void
+        channelCount: Int,
+        completion: @escaping (Result<Set<ChannelId>, any Error>) -> Void
     ) {
         record()
-        resetChannelsQueryResult.map(completion)
+        refreshLoadedChannelsResult?.invoke(with: completion)
     }
 
     override func link(

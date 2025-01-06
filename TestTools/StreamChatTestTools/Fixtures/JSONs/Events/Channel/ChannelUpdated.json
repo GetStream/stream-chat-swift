@@ -93,6 +93,7 @@
         },
         "type" : "messaging",
         "cid" : "messaging:new_channel_7070",
+        "disabled" : false,
         "frozen" : false,
         "member_count" : 2,
         "updated_at" : "2020-07-17T11:44:16.63728Z",

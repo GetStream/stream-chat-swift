@@ -1,5 +1,5 @@
 //
-// Copyright © 2024 Stream.io Inc. All rights reserved.
+// Copyright © 2025 Stream.io Inc. All rights reserved.
 //
 
 import Foundation
@@ -103,6 +103,10 @@ public extension FilterKey where Scope: AnyChannelListFilterScope {
     /// A filter key for matching the `frozen` value.
     /// Supported operators: `equal`
     static var frozen: FilterKey<Scope, Bool> { .init(rawValue: "frozen", keyPathString: #keyPath(ChannelDTO.isFrozen)) }
+    
+    /// A filter key for querying disabled channels.
+    /// Supported operators: `equal`
+    static var disabled: FilterKey<Scope, Bool> { .init(rawValue: "disabled", keyPathString: #keyPath(ChannelDTO.isDisabled)) }
     
     /// A filter key for matching the `blocked` value.
     /// Supported operators: `equal`

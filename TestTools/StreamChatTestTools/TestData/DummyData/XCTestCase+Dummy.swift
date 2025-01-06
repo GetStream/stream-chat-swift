@@ -1,5 +1,5 @@
 //
-// Copyright © 2024 Stream.io Inc. All rights reserved.
+// Copyright © 2025 Stream.io Inc. All rights reserved.
 //
 
 @testable import StreamChat
@@ -184,6 +184,7 @@ extension XCTestCase {
                     createdBy: dummyUser,
                     config: channelConfig,
                     ownCapabilities: ownCapabilities,
+                    isDisabled: false,
                     isFrozen: true,
                     isBlocked: false,
                     isHidden: nil,
@@ -298,6 +299,7 @@ extension XCTestCase {
                         updatedAt: .unique
                     ),
                     ownCapabilities: [],
+                    isDisabled: false,
                     isFrozen: true,
                     isBlocked: false,
                     isHidden: nil,

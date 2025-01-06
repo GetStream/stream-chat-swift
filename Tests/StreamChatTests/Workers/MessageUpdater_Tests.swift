@@ -1,5 +1,5 @@
 //
-// Copyright © 2024 Stream.io Inc. All rights reserved.
+// Copyright © 2025 Stream.io Inc. All rights reserved.
 //
 
 import CoreData
@@ -1962,7 +1962,7 @@ final class MessageUpdater_Tests: XCTestCase {
         let attachment = try setUpAttachment(
             attachment: ChatMessageImageAttachment.mock(
                 id: .unique,
-                imageURL: URL(string: "http://asset.url/image.jpg")!,
+                imageURL: .localYodaImage,
                 localState: nil
             )
         )
@@ -1970,7 +1970,7 @@ final class MessageUpdater_Tests: XCTestCase {
         let result = try waitFor { messageUpdater.downloadAttachment(attachment, completion: $0) }
         let value = try XCTUnwrap(result.value)
         XCTAssertEqual("yoda.jpg", apiClient.downloadFile_localURL?.lastPathComponent)
-        XCTAssertEqual("http://asset.url/image.jpg", apiClient.downloadFile_remoteURL?.absoluteString)
+        XCTAssertEqual(URL.localYodaImage, apiClient.downloadFile_remoteURL)
         XCTAssertEqual(attachment.id, value.id)
         XCTAssertEqual(LocalAttachmentDownloadState.downloaded, value.downloadingState?.state)
         XCTAssertEqual(URL.streamAttachmentLocalStorageURL(forRelativePath: value.relativeStoragePath), value.downloadingState?.localFileURL)

@@ -1,5 +1,5 @@
 //
-// Copyright © 2024 Stream.io Inc. All rights reserved.
+// Copyright © 2025 Stream.io Inc. All rights reserved.
 //
 
 @testable import StreamChat
@@ -937,6 +937,7 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
             createdBy: nil,
             config: .init(),
             ownCapabilities: [],
+            isDisabled: false,
             isFrozen: false,
             isBlocked: false,
             isHidden: nil,

@@ -306,6 +306,7 @@
     "created_by" : null,
     "type" : "messaging",
     "cid" : "messaging:default-channel-6",
+    "disabled" : false,
     "frozen" : false,
     "member_count" : 16,
     "updated_at" : "2021-04-15T11:26:37.184658Z",

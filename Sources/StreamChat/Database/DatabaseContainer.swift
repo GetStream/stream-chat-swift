@@ -1,5 +1,5 @@
 //
-// Copyright © 2024 Stream.io Inc. All rights reserved.
+// Copyright © 2025 Stream.io Inc. All rights reserved.
 //
 
 import CoreData
@@ -284,7 +284,7 @@ class DatabaseContainer: NSPersistentContainer, @unchecked Sendable {
     }
     
     func readAndWait<T>(_ actions: (DatabaseSession) throws -> T) throws -> T {
-        let context = viewContext
+        let context = backgroundReadOnlyContext
         var result: T?
         var readError: Error?
         context.performAndWait {

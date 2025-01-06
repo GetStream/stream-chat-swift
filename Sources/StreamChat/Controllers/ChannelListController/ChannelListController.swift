@@ -1,5 +1,5 @@
 //
-// Copyright © 2024 Stream.io Inc. All rights reserved.
+// Copyright © 2025 Stream.io Inc. All rights reserved.
 //
 
 import CoreData
@@ -196,28 +196,6 @@ public class ChatChannelListController: DataController, DelegateCallable, DataSt
     func refreshLoadedChannels(completion: @escaping (Result<Set<ChannelId>, Error>) -> Void) {
         let channelCount = channelListObserver.items.count
         worker.refreshLoadedChannels(for: query, channelCount: channelCount, completion: completion)
-    }
-    
-    func resetQuery(
-        watchedAndSynchedChannelIds: Set<ChannelId>,
-        synchedChannelIds: Set<ChannelId>,
-        completion: @escaping (Result<(synchedAndWatched: [ChatChannel], unwanted: Set<ChannelId>), Error>) -> Void
-    ) {
-        let pageSize = query.pagination.pageSize
-        worker.resetChannelsQuery(
-            for: query,
-            pageSize: pageSize,
-            watchedAndSynchedChannelIds: watchedAndSynchedChannelIds,
-            synchedChannelIds: synchedChannelIds
-        ) { [weak self] result in
-            switch result {
-            case let .success((newChannels, unwantedCids)):
-                self?.hasLoadedAllPreviousChannels = newChannels.count < pageSize
-                completion(.success((newChannels, unwantedCids)))
-            case let .failure(error):
-                completion(.failure(error))
-            }
-        }
     }
 
     // MARK: - Helpers

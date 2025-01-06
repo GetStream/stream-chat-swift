@@ -1,5 +1,5 @@
 //
-// Copyright © 2024 Stream.io Inc. All rights reserved.
+// Copyright © 2025 Stream.io Inc. All rights reserved.
 //
 
 import CoreData
@@ -93,7 +93,11 @@ extension NSManagedObjectContext {
             cache: cache
         )
         dto.text = payload.text
-        dto.custom = try JSONEncoder.default.encode(payload.custom)
+        if let custom = payload.custom, !custom.isEmpty {
+            dto.custom = try JSONEncoder.default.encode(custom)
+        } else {
+            dto.custom = nil
+        }
         return dto
     }
     

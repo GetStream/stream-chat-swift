@@ -1,5 +1,5 @@
 //
-// Copyright © 2024 Stream.io Inc. All rights reserved.
+// Copyright © 2025 Stream.io Inc. All rights reserved.
 //
 
 @testable import StreamChat
@@ -305,6 +305,7 @@ final class IdentifiablePayload_Tests: XCTestCase {
                 createdBy: owner,
                 config: .mock(),
                 ownCapabilities: [],
+                isDisabled: false,
                 isFrozen: true,
                 isBlocked: false,
                 isHidden: false,

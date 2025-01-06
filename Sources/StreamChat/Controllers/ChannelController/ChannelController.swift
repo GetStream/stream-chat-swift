@@ -1,5 +1,5 @@
 //
-// Copyright © 2024 Stream.io Inc. All rights reserved.
+// Copyright © 2025 Stream.io Inc. All rights reserved.
 //
 
 import CoreData
@@ -1670,17 +1670,8 @@ private extension ChatChannelController {
             }
             guard let cid = self.cid else { return nil }
             let sortAscending = self.messageOrdering == .topToBottom ? false : true
-            var deletedMessageVisibility: ChatClientConfig.DeletedMessageVisibility?
-            var shouldShowShadowedMessages: Bool?
-            self.client.databaseContainer.viewContext.performAndWait { [weak self] in
-                guard let self = self else {
-                    log.warning("Callback called while self is nil")
-                    return
-                }
-                deletedMessageVisibility = self.client.databaseContainer.viewContext.deletedMessagesVisibility
-                shouldShowShadowedMessages = self.client.databaseContainer.viewContext.shouldShowShadowedMessages
-            }
-
+            let deletedMessageVisibility = client.config.deletedMessagesVisibility
+            let shouldShowShadowedMessages = client.config.shouldShowShadowedMessages
             let pageSize = channelQuery.pagination?.pageSize ?? .messagesPageSize
             let observer = BackgroundListDatabaseObserver(
                 database: client.databaseContainer,
@@ -1688,8 +1679,8 @@ private extension ChatChannelController {
                     for: cid,
                     pageSize: pageSize,
                     sortAscending: sortAscending,
-                    deletedMessagesVisibility: deletedMessageVisibility ?? .visibleForCurrentUser,
-                    shouldShowShadowedMessages: shouldShowShadowedMessages ?? false
+                    deletedMessagesVisibility: deletedMessageVisibility,
+                    shouldShowShadowedMessages: shouldShowShadowedMessages
                 ),
                 itemCreator: { try $0.asModel() as ChatMessage },
                 itemReuseKeyPaths: (\ChatMessage.id, \MessageDTO.id)

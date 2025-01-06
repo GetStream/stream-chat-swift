@@ -1,5 +1,5 @@
 //
-// Copyright © 2024 Stream.io Inc. All rights reserved.
+// Copyright © 2025 Stream.io Inc. All rights reserved.
 //
 
 import Foundation
@@ -117,6 +117,7 @@ public extension AnyAttachmentPayload {
             payload = ImageAttachmentPayload(
                 title: localFileURL.lastPathComponent,
                 imageRemoteURL: localFileURL,
+                file: file,
                 originalWidth: localMetadata?.originalResolution?.width,
                 originalHeight: localMetadata?.originalResolution?.height,
                 extraData: extraData

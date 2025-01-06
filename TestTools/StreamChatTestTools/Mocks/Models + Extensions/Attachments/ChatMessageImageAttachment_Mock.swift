@@ -1,5 +1,5 @@
 //
-// Copyright © 2024 Stream.io Inc. All rights reserved.
+// Copyright © 2025 Stream.io Inc. All rights reserved.
 //
 
 @testable import StreamChat
@@ -21,6 +21,7 @@ extension ChatMessageImageAttachment {
             payload: .init(
                 title: title,
                 imageRemoteURL: imageURL,
+                file: try! AttachmentFile(url: imageURL),
                 extraData: extraData
             ),
             downloadingState: localDownloadState.map {

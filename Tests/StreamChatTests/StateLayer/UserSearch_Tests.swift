@@ -1,5 +1,5 @@
 //
-// Copyright © 2024 Stream.io Inc. All rights reserved.
+// Copyright © 2025 Stream.io Inc. All rights reserved.
 //
 
 @testable import StreamChat
@@ -75,7 +75,7 @@ final class UserSearch_Tests: XCTestCase {
             expectation1.fulfill()
         }
 
-        await fulfillmentCompatibility(of: [expectation1], timeout: defaultTimeout)
+        await fulfillment(of: [expectation1], timeout: defaultTimeout)
         
         // Search for "name"
         async let result2 = try await userSearch.search(term: "name")
@@ -84,7 +84,7 @@ final class UserSearch_Tests: XCTestCase {
             expectation2.fulfill()
         }
 
-        await fulfillmentCompatibility(of: [expectation2], timeout: defaultTimeout)
+        await fulfillment(of: [expectation2], timeout: defaultTimeout)
         
         XCTAssertEqual(2, env.userListUpdaterMock.fetch_completions.count)
         

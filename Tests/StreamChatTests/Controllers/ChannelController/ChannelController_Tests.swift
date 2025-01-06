@@ -1,5 +1,5 @@
 //
-// Copyright © 2024 Stream.io Inc. All rights reserved.
+// Copyright © 2025 Stream.io Inc. All rights reserved.
 //
 
 import CoreData
@@ -22,8 +22,12 @@ final class ChannelController_Tests: XCTestCase {
     override func setUp() {
         super.setUp()
 
+        setUp(with: ChatClient_Mock.defaultMockedConfig)
+    }
+    
+    func setUp(with config: ChatClientConfig) {
         env = TestEnvironment()
-        client = ChatClient.mock
+        client = ChatClient.mock(config: config)
         channelId = ChannelId.unique
         controller = ChatChannelController(
             channelQuery: .init(cid: channelId),
@@ -1229,7 +1233,9 @@ final class ChannelController_Tests: XCTestCase {
 
     func test_deletedMessages_withVisibleForCurrentUser_messageVisibility() throws {
         // Simulate the config setting
-        client.databaseContainer.viewContext.deletedMessagesVisibility = .visibleForCurrentUser
+        var config = ChatClient_Mock.defaultMockedConfig
+        config.deletedMessagesVisibility = .visibleForCurrentUser
+        setUp(with: config)
 
         let currentUserID: UserId = .unique
 
@@ -1264,7 +1270,9 @@ final class ChannelController_Tests: XCTestCase {
 
     func test_deletedMessages_withAlwaysHidden_messageVisibility() throws {
         // Simulate the config setting
-        client.databaseContainer.viewContext.deletedMessagesVisibility = .alwaysHidden
+        var config = ChatClient_Mock.defaultMockedConfig
+        config.deletedMessagesVisibility = .alwaysHidden
+        setUp(with: config)
 
         let currentUserID: UserId = .unique
 
@@ -1334,7 +1342,9 @@ final class ChannelController_Tests: XCTestCase {
 
     func test_shadowedMessages_whenVisible() throws {
         // Simulate the config setting
-        client.databaseContainer.viewContext.shouldShowShadowedMessages = true
+        var config = ChatClient_Mock.defaultMockedConfig
+        config.shouldShowShadowedMessages = true
+        setUp(with: config)
 
         let currentUserID: UserId = .unique
 

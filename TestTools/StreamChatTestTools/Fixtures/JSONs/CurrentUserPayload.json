@@ -87,6 +87,7 @@
               "type": "messaging",
               "cid": "messaging:B1DFF9C5-E6A6-4BFA-9375-DC5E8C6852FF",
               "created_by": null,
+              "disabled": false,
               "frozen": false,
               "config": {
                   "created_at": "2021-03-01T19:26:18.406502Z",

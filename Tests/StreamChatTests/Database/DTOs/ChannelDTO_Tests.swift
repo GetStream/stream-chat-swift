@@ -1,5 +1,5 @@
 //
-// Copyright © 2024 Stream.io Inc. All rights reserved.
+// Copyright © 2025 Stream.io Inc. All rights reserved.
 //
 
 @testable import StreamChat
@@ -373,6 +373,7 @@ final class ChannelDTO_Tests: XCTestCase {
             Assert.willBeEqual(payload.channel.deletedAt, loadedChannel.deletedAt)
             Assert.willBeEqual(payload.channel.cooldownDuration, loadedChannel.cooldownDuration)
             Assert.willBeEqual(payload.channel.team!, loadedChannel.team)
+            Assert.willBeEqual(payload.channel.isDisabled, loadedChannel.isDisabled)
 
             // Config
             Assert.willBeEqual(payload.channel.config.reactionsEnabled, loadedChannel.config.reactionsEnabled)

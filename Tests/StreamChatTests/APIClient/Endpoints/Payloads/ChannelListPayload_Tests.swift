@@ -1,5 +1,5 @@
 //
-// Copyright © 2024 Stream.io Inc. All rights reserved.
+// Copyright © 2025 Stream.io Inc. All rights reserved.
 //
 
 @testable import StreamChat
@@ -149,6 +149,7 @@ final class ChannelListPayload_Tests: XCTestCase {
                     "join-channel",
                     "delete-channel"
                 ],
+                isDisabled: false,
                 isFrozen: true,
                 isBlocked: false,
                 isHidden: false,
@@ -298,6 +299,7 @@ final class ChannelPayload_Tests: XCTestCase {
         XCTAssertEqual(channel.createdAt, "2019-05-10T14:03:49.505006Z".toDate())
         XCTAssertNotNil(channel.createdBy)
         XCTAssertEqual(channel.typeRawValue, "messaging")
+        XCTAssertEqual(channel.isDisabled, true)
         XCTAssertEqual(channel.isFrozen, true)
         XCTAssertEqual(channel.memberCount, 4)
         XCTAssertEqual(channel.updatedAt, "2019-05-10T14:03:49.505006Z".toDate())

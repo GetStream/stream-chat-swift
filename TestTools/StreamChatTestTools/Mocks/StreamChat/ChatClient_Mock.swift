@@ -1,5 +1,5 @@
 //
-// Copyright © 2024 Stream.io Inc. All rights reserved.
+// Copyright © 2025 Stream.io Inc. All rights reserved.
 //
 
 import Foundation
@@ -125,7 +125,7 @@ extension ChatClient {
     }
 
     /// Create a new instance of mock `ChatClient`
-    static func mock(config: ChatClientConfig? = nil, bundle: Bundle? = nil) -> ChatClient {
+    static func mock(config: ChatClientConfig? = nil, bundle: Bundle? = nil) -> ChatClient_Mock {
         .init(
             config: config ?? defaultMockedConfig,
             environment: .init(

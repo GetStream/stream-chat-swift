@@ -1,5 +1,5 @@
 //
-// Copyright © 2024 Stream.io Inc. All rights reserved.
+// Copyright © 2025 Stream.io Inc. All rights reserved.
 //
 
 import Foundation
@@ -36,7 +36,6 @@ class SyncRepository {
     private let database: DatabaseContainer
     private let apiClient: APIClient
     private let channelListUpdater: ChannelListUpdater
-    var usesV2Sync = StreamRuntimeCheck._isSyncV2Enabled
     let offlineRequestsRepository: OfflineRequestsRepository
     let eventNotificationCenter: EventNotificationCenter
     
@@ -137,15 +136,11 @@ class SyncRepository {
                 }
                 return
             }
-            if self?.usesV2Sync == true {
-                self?.syncLocalStateV2(lastSyncAt: lastSyncAt, completion: completion)
-            } else {
-                self?.syncLocalState(lastSyncAt: lastSyncAt, completion: completion)
-            }
+            self?.syncLocalState(lastSyncAt: lastSyncAt, completion: completion)
         }
     }
     
-    // MARK: - V2
+    // MARK: -
     
     /// Runs offline tasks and updates the local state for channels
     ///
@@ -161,7 +156,7 @@ class SyncRepository {
     ///      * channel controllers targeting other channels
     ///      * no channel lists active, but channel controllers are
     /// 4. Re-watch channels what we were watching before disconnect
-    private func syncLocalStateV2(lastSyncAt: Date, completion: @escaping () -> Void) {
+    private func syncLocalState(lastSyncAt: Date, completion: @escaping () -> Void) {
         let context = SyncContext(lastSyncAt: lastSyncAt)
         var operations: [Operation] = []
         let start = CFAbsoluteTimeGetCurrent()
@@ -211,96 +206,6 @@ class SyncRepository {
             guard let previousOperation = previousOperation else { return }
             previousOperation.addDependency(operation)
         }
-        operationQueue.addOperations(operations, waitUntilFinished: false)
-    }
-    
-    // MARK: - V1
-
-    /// Syncs the local state with the server to make sure the local database is up to date.
-    /// It features queuing, serialization and retries
-    ///
-    /// [Sync and watch channels](https://www.notion.so/2-Sync-and-watch-channels-ac44feb55de3482f8f0f99e100ca40c6)
-    /// 1. Call `/sync` endpoint and get missing events for all locally existed channels
-    /// 2. Start watching open channels
-    /// 3. Refetch channel lists queries, link only what backend returns (the 1st page)
-    /// 4. Clean up unwanted channels
-    /// 5. Run offline actions requests
-    ///
-    /// - Parameter completion: A block that will get executed upon completion of the synchronization
-    private func syncLocalState(lastSyncAt: Date, completion: @escaping () -> Void) {
-        log.info("Starting to recover offline state", subsystems: .offlineSupport)
-        let context = SyncContext(lastSyncAt: lastSyncAt)
-        var operations: [Operation] = []
-
-        // Enter recovery mode so no other requests are triggered.
-        apiClient.enterRecoveryMode()
-
-        // Run offline actions requests as the first thing
-        if config.isLocalStorageEnabled {
-            operations.append(ExecutePendingOfflineActions(offlineRequestsRepository: offlineRequestsRepository))
-        }
-        
-        // Get the existing channelIds
-        let activeChannelIds = activeChannelControllers.allObjects.compactMap(\.cid)
-        operations.append(GetChannelIdsOperation(database: database, context: context, activeChannelIds: activeChannelIds))
-
-        // 1. Call `/sync` endpoint and get missing events for all locally existed channels
-        operations.append(SyncEventsOperation(syncRepository: self, context: context, recovery: true))
-
-        // 2. Start watching open channels.
-        let watchChannelOperations: [AsyncOperation] = activeChannelControllers.allObjects.map { controller in
-            WatchChannelOperation(controller: controller, context: context, recovery: true)
-        }
-        operations.append(contentsOf: watchChannelOperations)
-
-        // 3. Refetch channel lists queries, link only what backend returns (the 1st page)
-        // We use `context.synchedChannelIds` to keep track of the channels that were synched both in the previous step and
-        // after each ChannelListController recovery.
-        let refetchChannelListQueryOperations: [AsyncOperation] = activeChannelListControllers.allObjects
-            .map { controller in
-                RefetchChannelListQueryOperation(
-                    controller: controller,
-                    context: context
-                )
-            }
-        operations.append(contentsOf: refetchChannelListQueryOperations)
-        
-        let channelListQueries: [ChannelListQuery] = {
-            let queries = activeChannelLists.allObjects
-                .map(\.query)
-                .map { ($0.filter.filterHash, $0) }
-            let uniqueQueries = Dictionary(queries, uniquingKeysWith: { _, last in last })
-            return Array(uniqueQueries.values)
-        }()
-        operations.append(contentsOf: channelListQueries
-            .map { channelListQuery in
-                RefetchChannelListQueryOperation(
-                    query: channelListQuery,
-                    channelListUpdater: channelListUpdater,
-                    context: context
-                )
-            })
-
-        // 4. Clean up unwanted channels
-        operations.append(DeleteUnwantedChannelsOperation(database: database, context: context))
-
-        operations.append(BlockOperation(block: { [weak self] in
-            log.info("Finished recovering offline state", subsystems: .offlineSupport)
-            DispatchQueue.main.async {
-                self?.apiClient.exitRecoveryMode()
-                completion()
-            }
-        }))
-
-        // We are making sure the operations happen sequentially one after the other by setting one as the dependency
-        // of the following one
-        var previousOperation: Operation?
-        operations.reversed().forEach { operation in
-            defer { previousOperation = operation }
-            guard let previousOperation = previousOperation else { return }
-            previousOperation.addDependency(operation)
-        }
-
         operationQueue.addOperations(operations, waitUntilFinished: false)
     }
 

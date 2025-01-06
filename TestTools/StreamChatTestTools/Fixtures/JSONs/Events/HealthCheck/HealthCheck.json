@@ -59,6 +59,7 @@
         "channel" : {
           "id" : "B1DFF9C5-E6A6-4BFA-9375-DC5E8C6852FF",
           "created_by" : null,
+          "disabled" : false,
           "frozen" : false,
           "type" : "messaging",
           "created_at" : "2021-04-22T19:14:04.911739Z",
@@ -127,6 +128,7 @@
         "channel" : {
           "id" : "!members-dpwtNCSGs-VaJKfAVaeosq6FNNbvDDWldf231ypDWqE",
           "created_by" : null,
+          "disabled" : false,
           "frozen" : false,
           "type" : "messaging",
           "created_at" : "2021-04-22T19:14:04.911739Z",
