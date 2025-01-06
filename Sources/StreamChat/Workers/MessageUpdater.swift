@@ -217,9 +217,25 @@ class MessageUpdater: Worker {
             case .success(let messagePayloadBoxed):
                 let messagePayload = messagePayloadBoxed.message
                 self?.database.write { session in
+                    let cid: ChannelId?
+
+                    if let payloadCid = messagePayloadBoxed.message.cid {
+                        cid = payloadCid
+                    } else if let cidFromLocal = session.message(id: messageId)?.cid,
+                              let localCid = try? ChannelId(cid: cidFromLocal) {
+                        cid = localCid
+                    } else {
+                        cid = nil
+                    }
+
+                    guard let cid = cid else {
+                        completion?(.failure(ClientError.ChannelNotCreatedYet()))
+                        return
+                    }
+                    
                     let messageDTO = try session.saveMessage(
                         payload: messagePayload,
-                        for: messagePayload.cid!,
+                        for: cid,
                         syncOwnReactions: false,
                         cache: nil
                     )
