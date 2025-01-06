@@ -24,6 +24,8 @@ public struct ImageAttachmentPayload: AttachmentPayload {
     public var originalWidth: Double?
     /// The original height of the image in pixels.
     public var originalHeight: Double?
+    /// The image file size information.
+    public var file: AttachmentFile
     /// An extra data.
     public var extraData: [String: RawJSON]?
 
@@ -35,10 +37,38 @@ public struct ImageAttachmentPayload: AttachmentPayload {
             .flatMap { try? JSONEncoder.stream.encode($0) }
             .flatMap { try? JSONDecoder.stream.decode(T.self, from: $0) }
     }
+    
+    /// Creates `ImageAttachmentPayload` instance.
+    ///
+    /// Use this initializer if the attachment is already uploaded and you have the remote URLs. Create the ``AttachmentFile`` type using the local file URL.
+    ///
+    /// - Parameters:
+    ///   - title: A title, usually the name of the image.
+    ///   - imageRemoteURL: A link to the image.
+    ///   - file: The image file size information.
+    ///   - originalWidth: The original width of the image in pixels.
+    ///   - originalHeight: The original height of the image in pixels.
+    ///   - extraData: Custom data associated with the attachment.
+    public init(
+        title: String?,
+        imageRemoteURL: URL,
+        file: AttachmentFile,
+        originalWidth: Double? = nil,
+        originalHeight: Double? = nil,
+        extraData: [String: RawJSON]? = nil
+    ) {
+        self.title = title
+        imageURL = imageRemoteURL
+        self.file = file
+        self.originalWidth = originalWidth
+        self.originalHeight = originalHeight
+        self.extraData = extraData
+    }
 
     /// Creates `ImageAttachmentPayload` instance.
     ///
     /// Use this initializer if the attachment is already uploaded and you have the remote URLs.
+    @available(*, deprecated, renamed: "init(title:imageRemoteURL:file:originalWidth:originalHeight:extraData:)")
     public init(
         title: String?,
         imageRemoteURL: URL,
@@ -48,6 +78,8 @@ public struct ImageAttachmentPayload: AttachmentPayload {
     ) {
         self.title = title
         imageURL = imageRemoteURL
+        let fileType = AttachmentFileType(ext: imageRemoteURL.pathExtension)
+        file = AttachmentFile(type: fileType, size: 0, mimeType: nil)
         self.originalWidth = originalWidth
         self.originalHeight = originalHeight
         self.extraData = extraData
@@ -78,6 +110,8 @@ public struct ImageAttachmentPayload: AttachmentPayload {
         imageURL = imageRemoteURL
         self.originalWidth = originalWidth
         self.originalHeight = originalHeight
+        let fileType = AttachmentFileType(ext: imageRemoteURL.pathExtension)
+        file = AttachmentFile(type: fileType, size: 0, mimeType: nil)
         self.extraData = extraData
     }
 }
@@ -108,6 +142,11 @@ extension ImageAttachmentPayload: Encodable {
             values[AttachmentCodingKeys.originalWidth.rawValue] = .double(originalWidth)
             values[AttachmentCodingKeys.originalHeight.rawValue] = .double(originalHeight)
         }
+        
+        if file.size > 0 {
+            values[AttachmentFile.CodingKeys.size.rawValue] = .number(Double(Int(file.size)))
+            values[AttachmentFile.CodingKeys.mimeType.rawValue] = file.mimeType.map { .string($0) }
+        }
 
         try values.encode(to: encoder)
     }
@@ -134,12 +173,14 @@ extension ImageAttachmentPayload: Decodable {
             return try container.decodeIfPresent(String.self, forKey: .name)
         }()
         
+        let file = try AttachmentFile(from: decoder)
         let originalWidth = try container.decodeIfPresent(Double.self, forKey: .originalWidth)
         let originalHeight = try container.decodeIfPresent(Double.self, forKey: .originalHeight)
 
         self.init(
             title: title?.trimmingCharacters(in: .whitespacesAndNewlines),
             imageRemoteURL: imageURL,
+            file: file,
             originalWidth: originalWidth,
             originalHeight: originalHeight,
             extraData: try Self.decodeExtraData(from: decoder)
