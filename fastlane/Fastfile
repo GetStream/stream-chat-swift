@@ -51,8 +51,18 @@ lane :build_xcframeworks do
     )
     sh('../Scripts/removeUnneededSymbols.sh', sdk, output_directory)
     codesign << lane_context[SharedValues::XCFRAMEWORK_OUTPUT_PATH]
+    resolve_swiftui_xcframework_issue if sdk == 'StreamChatUI'
   end
   sh(codesign.join(' ')) # We need to sign all frameworks at once
+end
+
+desc 'https://linear.app/stream/issue/IOS-630'
+private_lane :resolve_swiftui_xcframework_issue do
+  Dir.glob("#{lane_context[SharedValues::XCFRAMEWORK_OUTPUT_PATH]}/**/*.swiftinterface").each do |file|
+    old_text = File.read(file)
+    new_text = old_text.gsub(/SwiftUICore.View/, 'View')
+    File.open(file, 'w') { |f| f.puts(new_text) } if old_text != new_text
+  end
 end
 
 desc 'Start a new release'
