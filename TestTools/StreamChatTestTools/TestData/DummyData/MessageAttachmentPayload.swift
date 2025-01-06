@@ -1,5 +1,5 @@
 //
-// Copyright © 2025 Stream.io Inc. All rights reserved.
+// Copyright 2025 Stream.io Inc. All rights reserved.
 //
 
 import Foundation
@@ -172,5 +172,43 @@ extension MessageAttachmentPayload {
                 "file_size": .string("\(file.size)")
             ])
         )
+    }
+
+    static func staticLocation(
+        latitude: Double = 51.5074,
+        longitude: Double = -0.1278
+    ) -> Self {
+        .init(
+            type: .staticLocation,
+            payload: .dictionary([
+                "latitude": .number(latitude),
+                "longitude": .number(longitude)
+            ])
+        )
+    }
+
+    static func liveLocation(
+        latitude: Double = 51.5074,
+        longitude: Double = -0.1278,
+        stoppedSharing: Bool = false
+    ) -> Self {
+        .init(
+            type: .liveLocation,
+            payload: .dictionary([
+                "latitude": .number(latitude),
+                "longitude": .number(longitude),
+                "stopped_sharing": .bool(stoppedSharing)
+            ])
+        )
+    }
+
+    var decodedStaticLocationPayload: StaticLocationAttachmentPayload? {
+        let data = try! JSONEncoder.stream.encode(payload)
+        return try? JSONDecoder.stream.decode(StaticLocationAttachmentPayload.self, from: data)
+    }
+
+    var decodedLiveLocationPayload: LiveLocationAttachmentPayload? {
+        let data = try! JSONEncoder.stream.encode(payload)
+        return try? JSONDecoder.stream.decode(LiveLocationAttachmentPayload.self, from: data)
     }
 }

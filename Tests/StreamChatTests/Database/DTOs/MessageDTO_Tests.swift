@@ -4098,6 +4098,86 @@ final class MessageDTO_Tests: XCTestCase {
         XCTAssertNil(quoted3Message)
     }
 
+    // MARK: - loadActiveLiveLocationMessages
+
+    func test_loadActiveLiveLocationMessages() throws {
+        // GIVEN
+        let currentUserId: UserId = .unique
+        let otherUserId: UserId = .unique
+        let channel1Id: ChannelId = .unique
+        let channel2Id: ChannelId = .unique
+
+        let currentUser: CurrentUserPayload = .dummy(userId: currentUserId)
+        let otherUser: UserPayload = .dummy(userId: otherUserId)
+        let channel1Payload: ChannelPayload = .dummy(channel: .dummy(cid: channel1Id))
+        let channel2Payload: ChannelPayload = .dummy(channel: .dummy(cid: channel2Id))
+
+        // Create messages with different combinations:
+        // - Current user's active live location in channel 1
+        // - Current user's inactive live location in channel 1
+        // - Current user's active live location in channel 2
+        // - Other user's active live location in channel 1
+        // - Current user's non-location message in channel 1
+        let messages: [(MessageId, UserId, ChannelId, Bool)] = [
+            (.unique, currentUserId, channel1Id, true), // Current user, channel 1, active
+            (.unique, currentUserId, channel1Id, false), // Current user, channel 1, inactive
+            (.unique, currentUserId, channel2Id, true), // Current user, channel 2, active
+            (.unique, otherUserId, channel1Id, true), // Other user, channel 1, active
+            (.unique, currentUserId, channel1Id, false) // Current user, channel 1, no location
+        ]
+
+        try database.writeSynchronously { session in
+            try session.saveCurrentUser(payload: currentUser)
+            try session.saveUser(payload: otherUser)
+            try session.saveChannel(payload: channel1Payload)
+            try session.saveChannel(payload: channel2Payload)
+
+            // Save all test messages
+            for (id, userId, channelId, isActive) in messages {
+                let attachments: [MessageAttachmentPayload] = [
+                    .liveLocation(
+                        latitude: 50,
+                        longitude: 10,
+                        stoppedSharing: !isActive
+                    )
+                ]
+
+                let messagePayload: MessagePayload = .dummy(
+                    messageId: id,
+                    attachments: attachments,
+                    authorUserId: userId
+                )
+
+                try session.saveMessage(
+                    payload: messagePayload,
+                    for: channelId,
+                    syncOwnReactions: false,
+                    cache: nil
+                )
+            }
+        }
+
+        // Test 1: Load all active live location messages for current user
+        do {
+            let loadedMessages = try MessageDTO.loadActiveLiveLocationMessages(
+                currentUserId: currentUserId,
+                channelId: nil,
+                context: database.viewContext
+            )
+            XCTAssertEqual(loadedMessages.count, 2) // Should get both active messages from channel 1 and 2
+        }
+
+        // Test 2: Load active live location messages for current user in channel 1
+        do {
+            let loadedMessages = try MessageDTO.loadActiveLiveLocationMessages(
+                currentUserId: currentUserId,
+                channelId: channel1Id,
+                context: database.viewContext
+            )
+            XCTAssertEqual(loadedMessages.count, 1) // Should only get the active message from channel 1
+        }
+    }
+
     // MARK: - Helpers:
 
     private func message(with id: MessageId) -> ChatMessage? {
