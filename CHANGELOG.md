@@ -17,7 +17,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   - Add `ChatMessage.liveLocationAttachments`
   - Add `ChatChannelController.startLiveLocationSharing()`
   - Add `ChatChannelController.stopLiveLocationSharing()`  
-  - Add `ChatMessageController.updateLiveLocation()`
   - Add `ChatMessageController.stopLiveLocationSharing()`
   - Add `CurrentChatUserController.updateLiveLocation()`
   - Add `CurrentChatUserControllerDelegate.didStartSharingLiveLocation()`
