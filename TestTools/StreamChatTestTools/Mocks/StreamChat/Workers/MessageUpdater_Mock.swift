@@ -535,6 +535,7 @@ final class MessageUpdater_Mock: MessageUpdater {
         text: String? = nil,
         attachments: [AnyAttachmentPayload]? = nil,
         extraData: [String: RawJSON]? = nil,
+        unset: [String]? = nil,
         completion: ((Result<ChatMessage, Error>) -> Void)? = nil
     ) {
         updatePartialMessage_messageId = messageId
