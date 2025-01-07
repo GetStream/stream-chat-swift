@@ -109,7 +109,7 @@ extension Endpoint {
 
 struct MessagePartialUpdateRequest: Encodable {
     var set: SetProperties?
-    var unset: [String]? = []
+    var unset: [String]? = nil
     var skipEnrichUrl: Bool?
     var userId: String?
     var user: UserRequestBody?
