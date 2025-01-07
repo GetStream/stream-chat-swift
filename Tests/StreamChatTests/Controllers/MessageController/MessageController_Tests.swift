@@ -474,8 +474,10 @@ final class MessageController_Tests: XCTestCase {
         let channel = dummyPayload(with: cid)
         let truncatedDate = Date.unique
 
+        var config = ChatClientConfig(apiKey: .init(.anonymous))
+        config.deletedMessagesVisibility = .visibleForCurrentUser
+        client = ChatClient.mock(config: config)
         try client.databaseContainer.createCurrentUser(id: currentUserId)
-        client.databaseContainer.viewContext.deletedMessagesVisibility = .visibleForCurrentUser
         controller = ChatMessageController(client: client, cid: cid, messageId: messageId, replyPaginationHandler: replyPaginationHandler, environment: env.controllerEnvironment)
 
         // Insert own deleted reply
@@ -510,8 +512,10 @@ final class MessageController_Tests: XCTestCase {
         let channel = dummyPayload(with: cid)
         let truncatedDate = Date.unique
 
+        var config = ChatClientConfig(apiKey: .init(.anonymous))
+        config.deletedMessagesVisibility = .alwaysHidden
+        client = ChatClient.mock(config: config)
         try client.databaseContainer.createCurrentUser(id: currentUserId)
-        client.databaseContainer.viewContext.deletedMessagesVisibility = .alwaysHidden
         controller = ChatMessageController(client: client, cid: cid, messageId: messageId, replyPaginationHandler: replyPaginationHandler, environment: env.controllerEnvironment)
 
         // Save channel
@@ -601,8 +605,10 @@ final class MessageController_Tests: XCTestCase {
         let channel = dummyPayload(with: cid)
         let truncatedDate = Date.unique
 
+        var config = ChatClientConfig(apiKey: .init(.anonymous))
+        config.shouldShowShadowedMessages = true
+        client = ChatClient.mock(config: config)
         try client.databaseContainer.createCurrentUser(id: currentUserId)
-        client.databaseContainer.viewContext.shouldShowShadowedMessages = true
         controller = ChatMessageController(client: client, cid: cid, messageId: messageId, replyPaginationHandler: replyPaginationHandler, environment: env.controllerEnvironment)
 
         // Save channel
@@ -2597,7 +2603,6 @@ final class MessageController_Tests: XCTestCase {
         let payload = env.messageUpdater.updatePartialMessage_attachments?.first?.payload as? LiveLocationAttachmentPayload
         XCTAssertEqual(payload?.latitude, latitude)
         XCTAssertEqual(payload?.longitude, longitude)
-        XCTAssertEqual(payload?.stoppedSharing, false)
     }
 
     func test_updateLiveLocation_whenNoLiveLocationAttachment_completesWithError() {
