@@ -895,8 +895,6 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
     /// If there is already an active live location sharing message in the this channel,
     /// it will fail with an error.
     ///
-    /// In order to
-    ///
     /// - Parameters:
     ///  - location: The location information.
     ///  - text: The text of the message.

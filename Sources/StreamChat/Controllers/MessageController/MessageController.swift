@@ -294,7 +294,7 @@ public class ChatMessageController: DataController, DelegateCallable, DataStoreP
     ///   - attachments: The attachments to be updated.
     ///   - extraData: The additional data to be updated.
     ///   - completion: Called when the server updates the message.
-    public func updateMessage(
+    public func partialUpdateMessage(
         text: String? = nil,
         attachments: [AnyAttachmentPayload]? = nil,
         extraData: [String: RawJSON]? = nil,

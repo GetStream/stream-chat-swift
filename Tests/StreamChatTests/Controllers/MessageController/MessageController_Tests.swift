@@ -2500,14 +2500,14 @@ final class MessageController_Tests: XCTestCase {
 
     // MARK: - Update Message
 
-    func test_updateMessage_callsMessageUpdater_withCorrectValues() {
+    func test_partialUpdateMessage_callsMessageUpdater_withCorrectValues() {
         // Given
         let text: String = .unique
         let attachments = [AnyAttachmentPayload.mockFile]
         let extraData: [String: RawJSON] = ["key": .string("value")]
 
         // When
-        controller.updateMessage(text: text, attachments: attachments, extraData: extraData)
+        controller.partialUpdateMessage(text: text, attachments: attachments, extraData: extraData)
 
         // Then
         XCTAssertEqual(env.messageUpdater.updatePartialMessage_messageId, messageId)
@@ -2516,14 +2516,14 @@ final class MessageController_Tests: XCTestCase {
         XCTAssertEqual(env.messageUpdater.updatePartialMessage_extraData, extraData)
     }
 
-    func test_updateMessage_propagatesError() {
+    func test_partialUpdateMessage_propagatesError() {
         // Given
         let error = TestError()
         var completionError: Error?
         
         // When
         let exp = expectation(description: "Completion is called")
-        controller.updateMessage(text: .unique) { [callbackQueueID] result in
+        controller.partialUpdateMessage(text: .unique) { [callbackQueueID] result in
             AssertTestQueue(withId: callbackQueueID)
             if case let .failure(error) = result {
                 completionError = error
@@ -2539,13 +2539,13 @@ final class MessageController_Tests: XCTestCase {
         XCTAssertEqual(completionError as? TestError, error)
     }
 
-    func test_updateMessage_propagatesSuccess() {
+    func test_partialUpdateMessage_propagatesSuccess() {
         // Given
         var completionMessage: ChatMessage?
         
         // When
         let exp = expectation(description: "Completion is called")
-        controller.updateMessage(text: .unique) { [callbackQueueID] result in
+        controller.partialUpdateMessage(text: .unique) { [callbackQueueID] result in
             AssertTestQueue(withId: callbackQueueID)
             if case let .success(message) = result {
                 completionMessage = message
