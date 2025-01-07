@@ -26,7 +26,7 @@ public struct LiveLocationAttachmentPayload: AttachmentPayload {
     public init(
         latitude: Double,
         longitude: Double,
-        stoppedSharing: Bool,
+        stoppedSharing: Bool? = nil,
         extraData: [String: RawJSON]? = nil
     ) {
         self.latitude = latitude

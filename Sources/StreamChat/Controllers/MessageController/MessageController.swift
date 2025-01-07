@@ -333,8 +333,7 @@ public class ChatMessageController: DataController, DelegateCallable, DataStoreP
 
         let liveLocationPayload = LiveLocationAttachmentPayload(
             latitude: location.latitude,
-            longitude: location.longitude,
-            stoppedSharing: false
+            longitude: location.longitude
         )
 
         // Optimistic update
