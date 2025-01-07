@@ -186,6 +186,7 @@ class MessageUpdater: Worker {
         text: String? = nil,
         attachments: [AnyAttachmentPayload]? = nil,
         extraData: [String: RawJSON]? = nil,
+        unset: [String]? = nil,
         completion: ((Result<ChatMessage, Error>) -> Void)? = nil
     ) {
         let attachmentPayloads: [MessageAttachmentPayload]? = attachments?.compactMap { attachment in
@@ -209,7 +210,8 @@ class MessageUpdater: Worker {
                         text: text,
                         extraData: extraData,
                         attachments: attachmentPayloads
-                    )
+                    ),
+                    unset: unset
                 )
             )
         ) { [weak self] result in

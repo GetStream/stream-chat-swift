@@ -293,18 +293,21 @@ public class ChatMessageController: DataController, DelegateCallable, DataStoreP
     ///   - text: The text in case the message
     ///   - attachments: The attachments to be updated.
     ///   - extraData: The additional data to be updated.
+    ///   - unsetProperties: Properties from the message to be cleared/unset.
     ///   - completion: Called when the server updates the message.
     public func partialUpdateMessage(
         text: String? = nil,
         attachments: [AnyAttachmentPayload]? = nil,
         extraData: [String: RawJSON]? = nil,
+        unsetProperties: [String]? = nil,
         completion: ((Result<ChatMessage, Error>) -> Void)? = nil
     ) {
         messageUpdater.updatePartialMessage(
             messageId: messageId,
             text: text,
             attachments: attachments,
-            extraData: extraData
+            extraData: extraData,
+            unset: unsetProperties
         ) { result in
             self.callback {
                 completion?(result)
