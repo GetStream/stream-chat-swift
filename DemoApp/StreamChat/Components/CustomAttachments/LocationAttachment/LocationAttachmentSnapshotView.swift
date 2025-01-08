@@ -150,6 +150,8 @@ class LocationAttachmentSnapshotView: _View, ThemeProvider {
         guard let content = self.content else {
             return
         }
+ 
+        avatarView.isHidden = true
 
         if content.isSharingLiveLocation && content.isFromCurrentUser {
             stopButton.isHidden = false
