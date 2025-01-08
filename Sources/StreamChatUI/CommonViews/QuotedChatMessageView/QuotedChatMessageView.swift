@@ -170,7 +170,7 @@ open class QuotedChatMessageView: _View, ThemeProvider, SwiftUIRepresentable {
             ? appearance.colorPalette.popoverBackground
             : appearance.colorPalette.highlightedAccentBackground1
         
-        setText(message.text)
+        setText(message.textContent ?? "")
         setAvatar(imageUrl: message.author.imageURL)
         setAvatarAlignment(avatarAlignment)
 
@@ -196,10 +196,11 @@ open class QuotedChatMessageView: _View, ThemeProvider, SwiftUIRepresentable {
     open func setText(_ text: String) {
         guard text != textView.text else { return }
         
+        let color = content?.message.isDeleted == true ? appearance.colorPalette.textLowEmphasis : appearance.colorPalette.text
         let attributedText = NSMutableAttributedString(
             string: text,
             attributes: [
-                .foregroundColor: appearance.colorPalette.text,
+                .foregroundColor: color,
                 .font: appearance.fonts.subheadline
             ]
         )

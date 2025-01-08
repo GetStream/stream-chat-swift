@@ -40,6 +40,19 @@ final class QuotedChatMessageView_Tests: XCTestCase {
 
         AssertSnapshot(view)
     }
+    
+    func test_withDeletedMessage() {
+        let message = ChatMessage.mock(
+            id: .unique,
+            cid: .unique,
+            text: "Hello Vader!",
+            author: .mock(id: .unique),
+            deletedAt: .unique,
+            isSentByCurrentUser: true
+        )
+        view.content = QuotedChatMessageView.Content(message: message, avatarAlignment: .leading)
+        AssertSnapshot(view)
+    }
 
     func test_withImageAttachmentAppearance() {
         let attachment = ChatMessageImageAttachment.mock(
