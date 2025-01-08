@@ -40,6 +40,8 @@ class LocationAttachmentSnapshotView: _View, ThemeProvider {
     let mapHeightRatio: CGFloat = 0.7
     let mapOptions: MKMapSnapshotter.Options = .init()
 
+    let avatarSize: CGFloat = 30
+
     static var snapshotsCache: NSCache<NSString, UIImage> = .init()
     var snapshotter: MKMapSnapshotter?
 
@@ -77,7 +79,7 @@ class LocationAttachmentSnapshotView: _View, ThemeProvider {
         view.translatesAutoresizingMaskIntoConstraints = false
         view.shouldShowOnlineIndicator = false
         view.layer.masksToBounds = true
-        view.layer.cornerRadius = 15
+        view.layer.cornerRadius = avatarSize / 2
         view.layer.borderWidth = 2
         view.layer.borderColor = UIColor.white.cgColor
         view.isHidden = true
@@ -135,8 +137,8 @@ class LocationAttachmentSnapshotView: _View, ThemeProvider {
             imageView.heightAnchor.constraint(equalTo: imageView.widthAnchor, multiplier: mapHeightRatio),
             avatarView.centerXAnchor.constraint(equalTo: imageView.centerXAnchor),
             avatarView.centerYAnchor.constraint(equalTo: imageView.centerYAnchor),
-            avatarView.widthAnchor.constraint(equalToConstant: 30),
-            avatarView.heightAnchor.constraint(equalToConstant: 30)
+            avatarView.widthAnchor.constraint(equalToConstant: avatarSize),
+            avatarView.heightAnchor.constraint(equalToConstant: avatarSize)
         ])
     }
 
