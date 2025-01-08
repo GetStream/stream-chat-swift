@@ -37,8 +37,8 @@ class LocationAttachmentSnapshotView: _View, ThemeProvider {
     var didTapOnLocation: (() -> Void)?
     var didTapOnStopSharingLocation: (() -> Void)?
 
+    let mapHeightRatio: CGFloat = 0.7
     let mapOptions: MKMapSnapshotter.Options = .init()
-    let mapHeight: CGFloat = 150
 
     static var snapshotsCache: NSCache<NSString, UIImage> = .init()
     var snapshotter: MKMapSnapshotter?
@@ -119,7 +119,6 @@ class LocationAttachmentSnapshotView: _View, ThemeProvider {
 
         let container = VContainer(spacing: 0, alignment: .center) {
             imageView
-                .height(mapHeight)
             sharingStatusView
                 .height(30)
             stopButton
@@ -133,6 +132,7 @@ class LocationAttachmentSnapshotView: _View, ThemeProvider {
             activityIndicatorView.centerXAnchor.constraint(equalTo: imageView.centerXAnchor),
             activityIndicatorView.centerYAnchor.constraint(equalTo: imageView.centerYAnchor),
             imageView.widthAnchor.constraint(equalTo: container.widthAnchor),
+            imageView.heightAnchor.constraint(equalTo: imageView.widthAnchor, multiplier: mapHeightRatio),
             avatarView.centerXAnchor.constraint(equalTo: imageView.centerXAnchor),
             avatarView.centerYAnchor.constraint(equalTo: imageView.centerYAnchor),
             avatarView.widthAnchor.constraint(equalToConstant: 30),
@@ -203,7 +203,7 @@ class LocationAttachmentSnapshotView: _View, ThemeProvider {
             return
         }
 
-        mapOptions.size = CGSize(width: frame.width, height: mapHeight)
+        mapOptions.size = CGSize(width: frame.width, height: frame.width * mapHeightRatio)
 
         if let cachedSnapshot = getCachedSnapshot() {
             imageView.image = cachedSnapshot
