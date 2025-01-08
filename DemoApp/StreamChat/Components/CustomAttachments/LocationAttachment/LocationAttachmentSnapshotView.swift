@@ -91,6 +91,8 @@ class LocationAttachmentSnapshotView: _View, ThemeProvider {
         return view
     }()
 
+    var previousOrientation = UIDevice.current.orientation
+
     override func setUp() {
         super.setUp()
 
@@ -169,9 +171,13 @@ class LocationAttachmentSnapshotView: _View, ThemeProvider {
     override func layoutSubviews() {
         super.layoutSubviews()
 
-        if frame.size.width != mapOptions.size.width {
+        let currentOrientation = UIDevice.current.orientation
+        if currentOrientation != previousOrientation {
             imageView.image = nil
             clearSnapshotCache()
+        }
+
+        if frame.size.width != mapOptions.size.width {
             loadMapSnapshotImage()
         }
     }
