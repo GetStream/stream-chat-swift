@@ -17,10 +17,13 @@ class LocationAttachmentViewInjector: AttachmentViewInjector {
         attachments(payloadType: LiveLocationAttachmentPayload.self).first
     }
 
+    let mapWidth: CGFloat = 300
+
     override func contentViewDidLayout(options: ChatMessageLayoutOptions) {
         super.contentViewDidLayout(options: options)
 
         contentView.bubbleContentContainer.insertArrangedSubview(locationAttachmentView, at: 0)
+        contentView.bubbleThreadFootnoteContainer.width(mapWidth)
 
         locationAttachmentView.didTapOnLocation = { [weak self] in
             self?.handleTapOnLocationAttachment()

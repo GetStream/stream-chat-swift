@@ -93,8 +93,6 @@ class LocationAttachmentSnapshotView: _View, ThemeProvider {
         return view
     }()
 
-    var previousOrientation = UIDevice.current.orientation
-
     override func setUp() {
         super.setUp()
 
@@ -174,12 +172,6 @@ class LocationAttachmentSnapshotView: _View, ThemeProvider {
 
     override func layoutSubviews() {
         super.layoutSubviews()
-
-        let currentOrientation = UIDevice.current.orientation
-        if currentOrientation != previousOrientation {
-            imageView.image = nil
-            clearSnapshotCache()
-        }
 
         if frame.size.width != mapOptions.size.width {
             loadMapSnapshotImage()
@@ -287,10 +279,6 @@ class LocationAttachmentSnapshotView: _View, ThemeProvider {
         }
 
         return Self.snapshotsCache.object(forKey: cachingKey)
-    }
-
-    func clearSnapshotCache() {
-        Self.snapshotsCache.removeAllObjects()
     }
 
     private func cachingKey() -> NSString? {
