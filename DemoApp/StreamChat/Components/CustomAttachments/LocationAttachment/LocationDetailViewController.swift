@@ -27,6 +27,7 @@ class LocationDetailViewController: UIViewController, ThemeProvider {
 
     let mapView: MKMapView = {
         let view = MKMapView()
+        view.translatesAutoresizingMaskIntoConstraints = false
         view.isZoomEnabled = true
         return view
     }()
@@ -35,8 +36,20 @@ class LocationDetailViewController: UIViewController, ThemeProvider {
         messageController.message?.liveLocationAttachments.first != nil
     }
 
+    private lazy var locationControlBanner: LocationControlBannerView = {
+        let banner = LocationControlBannerView()
+        banner.translatesAutoresizingMaskIntoConstraints = false
+        banner.onStopSharingTapped = { [weak self] in
+            self?.messageController.stopLiveLocationSharing()
+        }
+        return banner
+    }()
+
     override func viewDidLoad() {
         super.viewDidLoad()
+
+        messageController.synchronize()
+        messageController.delegate = self
 
         title = "Location"
         navigationController?.navigationBar.backgroundColor = appearance.colorPalette.background
@@ -49,7 +62,7 @@ class LocationDetailViewController: UIViewController, ThemeProvider {
         mapView.delegate = self
         view.backgroundColor = appearance.colorPalette.background
         view.addSubview(mapView)
-        mapView.translatesAutoresizingMaskIntoConstraints = false
+
         NSLayoutConstraint.activate([
             mapView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
             mapView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
@@ -57,8 +70,17 @@ class LocationDetailViewController: UIViewController, ThemeProvider {
             mapView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
         ])
 
-        messageController.synchronize()
-        messageController.delegate = self
+        if isLiveLocationAttachment {
+            view.addSubview(locationControlBanner)
+            NSLayoutConstraint.activate([
+                locationControlBanner.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+                locationControlBanner.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+                locationControlBanner.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+                locationControlBanner.heightAnchor.constraint(equalToConstant: 90)
+            ])
+            // Make sure the Apple's Map logo is visible
+            mapView.layoutMargins.bottom = 60
+        }
 
         var locationCoordinate: CLLocationCoordinate2D?
         if let staticLocationAttachment = messageController.message?.staticLocationAttachments.first {
@@ -81,12 +103,8 @@ class LocationDetailViewController: UIViewController, ThemeProvider {
                 locationCoordinate
             )
         }
-    }
 
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-
-        presentLocationControlSheet()
+        updateBannerState()
     }
 
     func updateUserLocation(
@@ -115,24 +133,21 @@ class LocationDetailViewController: UIViewController, ThemeProvider {
         }
     }
 
-    func presentLocationControlSheet() {
-        if #available(iOS 16.0, *), isLiveLocationAttachment, messageController.message?.isSentByCurrentUser == true {
-            let locationControlSheet = LocationControlSheetViewController(
-                messageController: messageController.client.messageController(
-                    cid: messageController.cid,
-                    messageId: messageController.messageId
-                )
-            )
-            locationControlSheet.modalPresentationStyle = .pageSheet
-            let detent = UISheetPresentationController.Detent.custom(resolver: { _ in 60 })
-            locationControlSheet.sheetPresentationController?.detents = [detent]
-            locationControlSheet.sheetPresentationController?.prefersGrabberVisible = false
-            locationControlSheet.sheetPresentationController?.preferredCornerRadius = 16
-            locationControlSheet.sheetPresentationController?.prefersScrollingExpandsWhenScrolledToEdge = false
-            locationControlSheet.sheetPresentationController?.largestUndimmedDetentIdentifier = detent.identifier
-            locationControlSheet.isModalInPresentation = true
-            present(locationControlSheet, animated: true)
+    private func updateBannerState() {
+        guard let liveLocationAttachment = messageController.message?.liveLocationAttachments.first else {
+            return
         }
+
+        let isSharingLiveLocation = liveLocationAttachment.stoppedSharing == false
+
+        let dateFormatter = appearance.formatters.channelListMessageTimestamp
+        let updatedAtText = dateFormatter.format(messageController.message?.updatedAt ?? Date())
+        locationControlBanner.configure(
+            isSharingEnabled: isSharingLiveLocation,
+            statusText: isSharingLiveLocation
+                ? "Location sharing is active"
+                : "Location last updated at \(updatedAtText)"
+        )
     }
 }
 
@@ -159,6 +174,8 @@ extension LocationDetailViewController: ChatMessageControllerDelegate {
             let userAnnotationView = mapView.view(for: userAnnotation) as? UserAnnotationView
             userAnnotationView?.stopPulsingAnimation()
         }
+
+        updateBannerState()
     }
 }
 
@@ -189,91 +206,70 @@ extension LocationDetailViewController: MKMapViewDelegate {
     }
 }
 
-class LocationControlSheetViewController: UIViewController, ThemeProvider {
-    let messageController: ChatMessageController
-
-    init(
-        messageController: ChatMessageController
-    ) {
-        self.messageController = messageController
-        super.init(nibName: nil, bundle: nil)
+class LocationControlBannerView: UIView, ThemeProvider {
+    var onStopSharingTapped: (() -> Void)?
+    
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        setupView()
     }
-
-    lazy var sharingButton: UIButton = {
-        let button = UIButton()
-        button.setTitle("Stop Sharing", for: .normal)
-        button.setTitleColor(appearance.colorPalette.alert, for: .normal)
-        button.titleLabel?.font = appearance.fonts.body
-        button.addTarget(self, action: #selector(stopSharing), for: .touchUpInside)
-        return button
-    }()
-
-    lazy var locationUpdateLabel: UILabel = {
-        let label = UILabel()
-        label.font = appearance.fonts.footnote
-        label.textColor = appearance.colorPalette.subtitleText
-        return label
-    }()
 
     @available(*, unavailable)
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+    
+    private lazy var sharingButton: UIButton = {
+        let button = UIButton()
+        button.setTitle("Stop Sharing", for: .normal)
+        button.setTitleColor(appearance.colorPalette.alert, for: .normal)
+        button.titleLabel?.font = appearance.fonts.body
+        button.addTarget(self, action: #selector(stopSharingTapped), for: .touchUpInside)
+        return button
+    }()
 
-    override func viewDidLoad() {
-        super.viewDidLoad()
+    private lazy var locationUpdateLabel: UILabel = {
+        let label = UILabel()
+        label.font = appearance.fonts.footnote
+        label.textColor = appearance.colorPalette.subtitleText
+        return label
+    }()
+    
+    private func setupView() {
+        backgroundColor = appearance.colorPalette.background6
+        layer.cornerRadius = 16
+        layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
 
-        messageController.synchronize()
-        messageController.delegate = self
-
-        view.backgroundColor = appearance.colorPalette.background6
-
-        let container = VContainer(spacing: 2, alignment: .center) {
+        let container = VContainer(spacing: 0, alignment: .center) {
             sharingButton
             locationUpdateLabel
         }
 
-        view.addSubview(container)
+        addSubview(container)
         NSLayoutConstraint.activate([
-            container.topAnchor.constraint(equalTo: view.topAnchor, constant: 8),
-            container.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
-            container.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16)
+            container.topAnchor.constraint(equalTo: topAnchor, constant: 8),
+            container.leadingAnchor.constraint(equalTo: leadingAnchor),
+            container.trailingAnchor.constraint(equalTo: trailingAnchor)
         ])
     }
-
-    @objc func stopSharing() {
-        messageController.stopLiveLocationSharing()
+    
+    @objc private func stopSharingTapped() {
+        onStopSharingTapped?()
     }
-}
-
-extension LocationControlSheetViewController: ChatMessageControllerDelegate {
-    func messageController(
-        _ controller: ChatMessageController,
-        didChangeMessage change: EntityChange<ChatMessage>
-    ) {
-        guard let liveLocationAttachment = controller.message?.liveLocationAttachments.first else {
-            return
-        }
-
-        let isSharingLiveLocation = liveLocationAttachment.stoppedSharing == false
-        sharingButton.isEnabled = isSharingLiveLocation
+    
+    func configure(isSharingEnabled: Bool, statusText: String) {
+        sharingButton.isEnabled = isSharingEnabled
         sharingButton.setTitle(
-            isSharingLiveLocation ? "Stop Sharing" : "Live location ended",
+            isSharingEnabled ? "Stop Sharing" : "Live location ended",
             for: .normal
         )
 
         let buttonColor = appearance.colorPalette.alert
         sharingButton.setTitleColor(
-            isSharingLiveLocation ? buttonColor : buttonColor.withAlphaComponent(0.6),
+            isSharingEnabled ? buttonColor : buttonColor.withAlphaComponent(0.6),
             for: .normal
         )
-
-        if isSharingLiveLocation {
-            locationUpdateLabel.text = "Location sharing is active"
-        } else {
-            let lastUpdated = messageController.message?.updatedAt ?? Date()
-            let formatter = appearance.formatters.channelListMessageTimestamp
-            locationUpdateLabel.text = "Location last updated at \(formatter.format(lastUpdated))"
-        }
+        
+        locationUpdateLabel.text = statusText
     }
 }
