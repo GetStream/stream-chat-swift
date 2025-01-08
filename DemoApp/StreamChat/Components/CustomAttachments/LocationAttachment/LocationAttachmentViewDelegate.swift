@@ -4,6 +4,7 @@
 
 import StreamChat
 import StreamChatUI
+import UIKit
 
 protocol LocationAttachmentViewDelegate: ChatMessageContentViewDelegate {
     func didTapOnStaticLocationAttachment(
@@ -25,10 +26,7 @@ extension DemoChatMessageListVC: LocationAttachmentViewDelegate {
             cid: attachment.id.cid,
             messageId: attachment.id.messageId
         )
-        let mapViewController = LocationDetailViewController(
-            messageController: messageController
-        )
-        navigationController?.pushViewController(mapViewController, animated: true)
+        showDetailViewController(messageController: messageController)
     }
 
     func didTapOnLiveLocationAttachment(_ attachment: ChatMessageLiveLocationAttachment) {
@@ -36,15 +34,24 @@ extension DemoChatMessageListVC: LocationAttachmentViewDelegate {
             cid: attachment.id.cid,
             messageId: attachment.id.messageId
         )
-        let mapViewController = LocationDetailViewController(
-            messageController: messageController
-        )
-        navigationController?.pushViewController(mapViewController, animated: true)
+        showDetailViewController(messageController: messageController)
     }
 
     func didTapOnStopSharingLocation(_ attachment: ChatMessageLiveLocationAttachment) {
         client
             .channelController(for: attachment.id.cid)
             .stopLiveLocationSharing()
+    }
+
+    private func showDetailViewController(messageController: ChatMessageController) {
+        let mapViewController = LocationDetailViewController(
+            messageController: messageController
+        )
+        if UIDevice.current.userInterfaceIdiom == .pad {
+            let nav = UINavigationController(rootViewController: mapViewController)
+            navigationController?.present(nav, animated: true)
+            return
+        }
+        navigationController?.pushViewController(mapViewController, animated: true)
     }
 }
