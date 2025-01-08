@@ -188,7 +188,7 @@ public class ChatMessageController: DataController, DelegateCallable, DataStoreP
     /// The polls repository to fetch polls data.
     private let pollsRepository: PollsRepository
 
-    /// The replies pagination hdler.
+    /// The replies pagination handler.
     private let replyPaginationHandler: MessagesPaginationStateHandling
 
     /// The current state of the pagination state.
