@@ -111,13 +111,20 @@ class LocationDetailViewController: UIViewController, ThemeProvider {
         _ coordinate: CLLocationCoordinate2D
     ) {
         if let existingAnnotation = userAnnotation {
-            // Since we update the location every 3s, by updating the coordinate with 5s animation
-            // this will make sure the annotation moves smoothly.
-            UIView.animate(withDuration: 5) {
+            if isLiveLocationAttachment {
+                // Since we update the location every 3s, by updating the coordinate with 5s animation
+                // this will make sure the annotation moves smoothly.
+                // This results in a "Tracking" like behaviour. This also blocks the user from moving the map.
+                // In a real app, we could have a toggle to enable/disable this behaviour.
+                UIView.animate(withDuration: 5) {
+                    existingAnnotation.coordinate = coordinate
+                }
+                UIView.animate(withDuration: 5, delay: 0.2, options: .curveEaseOut) {
+                    self.mapView.setCenter(coordinate, animated: true)
+                }
+            } else {
                 existingAnnotation.coordinate = coordinate
-            }
-            UIView.animate(withDuration: 5, delay: 0.2, options: .curveEaseOut) {
-                self.mapView.setCenter(coordinate, animated: true)
+                mapView.setCenter(coordinate, animated: true)
             }
         } else if let author = messageController.message?.author, isLiveLocationAttachment {
             let userAnnotation = UserAnnotation(
