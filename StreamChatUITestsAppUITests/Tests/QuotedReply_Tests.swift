@@ -3,6 +3,7 @@
 //
 
 import XCTest
+@testable import StreamChatUI
 
 final class QuotedReply_Tests: StreamTestCase {
     
@@ -217,6 +218,29 @@ final class QuotedReply_Tests: StreamTestCase {
             userRobot.assertDeletedMessage()
         }
     }
+    
+    func test_originalQuoteIsDeletedByParticipant_deletedMessageIsShown() {
+        linkToScenario(withId: 0)
+
+        GIVEN("user opens the channel") {
+            userRobot.login().openChannel()
+        }
+        AND("participant sends a message") {
+            participantRobot.sendMessage("1")
+        }
+        AND("user adds a quoted reply") {
+            userRobot.quoteMessage(replyText)
+        }
+        WHEN("participant deletes an original message") {
+            participantRobot.deleteMessage()
+        }
+        THEN("deleted message is shown") {
+            userRobot.assertDeletedMessage(at: 1)
+        }
+        AND("deleted message is shown in quoted reply bubble") {
+            userRobot.assertQuotedMessage(L10n.Message.deletedMessagePlaceholder)
+        }
+    }
 
     func test_quotedReplyIsDeletedByUser_deletedMessageIsShown() {
         linkToScenario(withId: 109)
@@ -233,6 +257,27 @@ final class QuotedReply_Tests: StreamTestCase {
         }
         THEN("deleted message is shown") {
             userRobot.assertDeletedMessage()
+        }
+    }
+    
+    func test_originalQuoteIsDeletedByUser_deletedMessageIsShown() {
+        linkToScenario(withId: 0)
+
+        GIVEN("user opens the channel") {
+            backendRobot.generateChannels(count: 1, messagesCount: 1)
+            userRobot.login().openChannel()
+        }
+        AND("user adds a quoted reply") {
+            userRobot.quoteMessage(replyText)
+        }
+        WHEN("user deletes an original message") {
+            userRobot.deleteMessage(messageCellIndex: 1)
+        }
+        THEN("deleted message is shown") {
+            userRobot.assertDeletedMessage(at: 1)
+        }
+        AND("deleted message is shown in quoted reply bubble") {
+            userRobot.assertQuotedMessage(L10n.Message.deletedMessagePlaceholder)
         }
     }
 
@@ -537,6 +582,30 @@ final class QuotedReply_Tests: StreamTestCase {
             userRobot.openThread().assertDeletedMessage()
         }
     }
+    
+    func test_originalQuoteIsDeletedByParticipant_deletedMessageIsShown_InThread() {
+        linkToScenario(withId: 0)
+
+        GIVEN("user opens the channel") {
+            backendRobot.generateChannels(count: 1, messageText: parentText, messagesCount: 1)
+            userRobot.login().openChannel()
+        }
+        AND("participant sends a message") {
+            participantRobot.replyToMessageInThread("1")
+        }
+        AND("user adds a quoted reply") {
+            userRobot.openThread().quoteMessage(replyText)
+        }
+        WHEN("participant deletes an original message") {
+            participantRobot.deleteMessage()
+        }
+        THEN("deleted message is shown") {
+            userRobot.assertDeletedMessage(at: 1)
+        }
+        AND("deleted message is shown in quoted reply bubble") {
+            userRobot.assertQuotedMessage(L10n.Message.deletedMessagePlaceholder)
+        }
+    }
 
     func test_quotedReplyIsDeletedByUser_deletedMessageIsShown_InThread() {
         linkToScenario(withId: 1965)
@@ -553,6 +622,27 @@ final class QuotedReply_Tests: StreamTestCase {
         }
         THEN("deleted message is shown") {
             userRobot.assertDeletedMessage()
+        }
+    }
+    
+    func test_originalQuoteIsDeletedByUser_deletedMessageIsShown_InThread() {
+        linkToScenario(withId: 0)
+
+        GIVEN("user opens the channel") {
+            backendRobot.generateChannels(count: 1, messagesCount: 1)
+            userRobot.login().openChannel()
+        }
+        AND("user adds a quoted reply") {
+            userRobot.openThread().quoteMessage(replyText)
+        }
+        WHEN("user deletes an original message") {
+            userRobot.deleteMessage(messageCellIndex: 1)
+        }
+        THEN("deleted message is shown") {
+            userRobot.assertDeletedMessage(at: 1)
+        }
+        AND("deleted message is shown in quoted reply bubble") {
+            userRobot.assertQuotedMessage(L10n.Message.deletedMessagePlaceholder)
         }
     }
 
