@@ -7,9 +7,11 @@ import Foundation
 /// A type alias for an attachment with `StaticLocationAttachmentPayload` payload type.
 ///
 /// Static location attachments represent a location that doesn't change.
+@_spi(ExperimentalLocation)
 public typealias ChatMessageStaticLocationAttachment = ChatMessageAttachment<StaticLocationAttachmentPayload>
 
 /// The payload for attachments with `.staticLocation` type.
+@_spi(ExperimentalLocation)
 public struct StaticLocationAttachmentPayload: AttachmentPayload {
     /// The type used to parse the attachment.
     public static var type: AttachmentType = .staticLocation

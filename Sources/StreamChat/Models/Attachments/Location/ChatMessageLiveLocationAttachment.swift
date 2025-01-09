@@ -7,9 +7,11 @@ import Foundation
 /// A type alias for an attachment with `LiveLocationAttachmentPayload` payload type.
 ///
 /// Live location attachments are used to represent a live location sharing in a chat message.
+@_spi(ExperimentalLocation)
 public typealias ChatMessageLiveLocationAttachment = ChatMessageAttachment<LiveLocationAttachmentPayload>
 
 /// The payload for attachments with `.liveLocation` type.
+@_spi(ExperimentalLocation)
 public struct LiveLocationAttachmentPayload: AttachmentPayload {
     /// The type used to parse the attachment.
     public static var type: AttachmentType = .liveLocation

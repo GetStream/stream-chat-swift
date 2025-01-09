@@ -2,6 +2,7 @@
 // Copyright © 2025 Stream.io Inc. All rights reserved.
 //
 
+@_spi(ExperimentalLocation)
 import StreamChat
 import StreamChatUI
 import UIKit

@@ -938,6 +938,7 @@ public class ChatMessageController: DataController, DelegateCallable, DataStoreP
     ///
     /// - Parameters:
     ///   - completion: Called when the server updates the message.
+    @_spi(ExperimentalLocation)
     public func stopLiveLocationSharing(completion: ((Result<ChatMessage, Error>) -> Void)? = nil) {
         guard let locationAttachment = message?.liveLocationAttachments.first else {
             callback {

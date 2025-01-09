@@ -3,6 +3,7 @@
 //
 
 import CoreData
+@_spi(ExperimentalLocation)
 @testable import StreamChat
 @testable import StreamChatTestTools
 import XCTest

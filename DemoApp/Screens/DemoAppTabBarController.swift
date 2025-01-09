@@ -3,6 +3,7 @@
 //
 
 import Combine
+@_spi(ExperimentalLocation)
 import StreamChat
 import StreamChatUI
 import UIKit
