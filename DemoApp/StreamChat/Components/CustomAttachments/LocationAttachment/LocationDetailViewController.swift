@@ -145,16 +145,18 @@ class LocationDetailViewController: UIViewController, ThemeProvider {
             return
         }
 
-        let isSharingLiveLocation = liveLocationAttachment.stoppedSharing == false
-
+        let isFromCurrentUser = messageController.message?.isSentByCurrentUser == true
         let dateFormatter = appearance.formatters.channelListMessageTimestamp
         let updatedAtText = dateFormatter.format(messageController.message?.updatedAt ?? Date())
-        locationControlBanner.configure(
-            isSharingEnabled: isSharingLiveLocation,
-            statusText: isSharingLiveLocation
-                ? "Location sharing is active"
-                : "Location last updated at \(updatedAtText)"
-        )
+        if liveLocationAttachment.stoppedSharing == false {
+            locationControlBanner.configure(
+                state: isFromCurrentUser
+                    ? .currentUserSharing
+                    : .anotherUserSharing(lastUpdatedAtText: updatedAtText)
+            )
+        } else {
+            locationControlBanner.configure(state: .ended(lastUpdatedAtText: updatedAtText))
+        }
     }
 }
 
@@ -263,20 +265,30 @@ class LocationControlBannerView: UIView, ThemeProvider {
     @objc private func stopSharingTapped() {
         onStopSharingTapped?()
     }
-    
-    func configure(isSharingEnabled: Bool, statusText: String) {
-        sharingButton.isEnabled = isSharingEnabled
-        sharingButton.setTitle(
-            isSharingEnabled ? "Stop Sharing" : "Live location ended",
-            for: .normal
-        )
 
-        let buttonColor = appearance.colorPalette.alert
-        sharingButton.setTitleColor(
-            isSharingEnabled ? buttonColor : buttonColor.withAlphaComponent(0.6),
-            for: .normal
-        )
-        
-        locationUpdateLabel.text = statusText
+    enum State {
+        case currentUserSharing
+        case anotherUserSharing(lastUpdatedAtText: String)
+        case ended(lastUpdatedAtText: String)
+    }
+
+    func configure(state: State) {
+        switch state {
+        case .currentUserSharing:
+            sharingButton.isEnabled = true
+            sharingButton.setTitle("Stop Sharing", for: .normal)
+            sharingButton.setTitleColor(appearance.colorPalette.alert, for: .normal)
+            locationUpdateLabel.text = "Location sharing is active"
+        case .anotherUserSharing(let lastUpdatedAtText):
+            sharingButton.isEnabled = false
+            sharingButton.setTitle("Live Location", for: .normal)
+            sharingButton.setTitleColor(appearance.colorPalette.alert, for: .normal)
+            locationUpdateLabel.text = "Location last updated at \(lastUpdatedAtText)"
+        case .ended(let lastUpdatedAtText):
+            sharingButton.isEnabled = false
+            sharingButton.setTitle("Live location ended", for: .normal)
+            sharingButton.setTitleColor(appearance.colorPalette.alert.withAlphaComponent(0.6), for: .normal)
+            locationUpdateLabel.text = "Location last updated at \(lastUpdatedAtText)"
+        }
     }
 }
