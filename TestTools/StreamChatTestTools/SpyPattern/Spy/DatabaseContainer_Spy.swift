@@ -7,7 +7,7 @@ import CoreData
 import XCTest
 
 /// A testable subclass of DatabaseContainer allowing response simulation.
-public final class DatabaseContainer_Spy: DatabaseContainer, Spy {
+public final class DatabaseContainer_Spy: DatabaseContainer, Spy, @unchecked Sendable {
     public let spyState = SpyState()
 
     /// If set, the `write` completion block is called with this value.

@@ -102,7 +102,7 @@ extension StreamPlayerObserver_Tests {
         }
     }
 
-    private class MockNotificationCenter: NotificationCenter {
+    private class MockNotificationCenter: NotificationCenter, @unchecked Sendable {
         private(set) var addObserverWasCalledWith: (
             name: NSNotification.Name?,
             obj: Any?,

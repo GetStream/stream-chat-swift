@@ -339,7 +339,7 @@ public class ChatClient {
                 continuation.resume(with: error)
             }
         }
-        return try await makeConnectedUser()
+        return try makeConnectedUser()
     }
 
     /// Connects the client with the given user.
@@ -391,7 +391,7 @@ public class ChatClient {
                 continuation.resume(with: error)
             }
         }
-        return try await makeConnectedUser()
+        return try makeConnectedUser()
     }
 
     /// Connects a guest user.
@@ -423,7 +423,7 @@ public class ChatClient {
                 continuation.resume(with: error)
             }
         }
-        return try await makeConnectedUser()
+        return try makeConnectedUser()
     }
 
     /// Connects an anonymous user
@@ -447,7 +447,7 @@ public class ChatClient {
                 continuation.resume(with: error)
             }
         }
-        return try await makeConnectedUser()
+        return try makeConnectedUser()
     }
     
     /// Sets the user token to the client, this method is only needed to perform API calls
