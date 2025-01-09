@@ -73,7 +73,7 @@ final class FetchCache_Tests: XCTestCase {
     }
 }
 
-class TestId: NSManagedObjectID {
+class TestId: NSManagedObjectID, @unchecked Sendable {
     override func uriRepresentation() -> URL {
         URL(string: "file://a")!
     }

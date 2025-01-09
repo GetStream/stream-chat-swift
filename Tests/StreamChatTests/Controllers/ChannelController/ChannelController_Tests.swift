@@ -5111,6 +5111,7 @@ final class ChannelController_Tests: XCTestCase {
                 done(error)
             }
         }
+        XCTAssertNil(resultingError)
         XCTAssertEqual(channelId, env.memberUpdater!.partialUpdate_cid)
         XCTAssertEqual(currentUserId, env.memberUpdater!.partialUpdate_userId)
         XCTAssertEqual(nil, env.memberUpdater!.partialUpdate_unset)
@@ -5133,6 +5134,7 @@ final class ChannelController_Tests: XCTestCase {
                 done(error)
             }
         }
+        XCTAssertNil(resultingError)
         XCTAssertEqual(channelId, env.memberUpdater!.partialUpdate_cid)
         XCTAssertEqual(currentUserId, env.memberUpdater!.partialUpdate_userId)
         XCTAssertEqual(["pinned"], env.memberUpdater!.partialUpdate_unset)
