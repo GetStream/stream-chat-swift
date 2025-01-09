@@ -123,6 +123,14 @@ class MessageDTO: NSManagedObject {
             channel.cid = cid
         }
 
+        // Refresh messages referencing the current message
+        if !quotedBy.isEmpty {
+            for message in quotedBy where !message.hasChanges && !message.isDeleted {
+                let messageId = message.id
+                message.id = messageId
+            }
+        }
+
         prepareDefaultSortKeyIfNeeded()
     }
 

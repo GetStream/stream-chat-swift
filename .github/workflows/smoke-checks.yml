@@ -26,7 +26,7 @@ env:
 jobs:
   build-test-app-and-frameworks:
     name: Build Test App and Frameworks
-    runs-on: macos-14
+    runs-on: macos-15
     if: ${{ github.event_name != 'push' }}
     steps:
     - uses: actions/checkout@v4.1.1
@@ -35,8 +35,6 @@ jobs:
     - name: Build
       run: bundle exec fastlane build_test_app_and_frameworks
       timeout-minutes: 60
-      env:
-        XCODE_VERSION: "15.0.1" # Should match the minimum version in dependent jobs
     - uses: actions/upload-artifact@v4
       if: success()
       with:
@@ -69,10 +67,10 @@ jobs:
 
   build-old-xcode:
     name: Build LLC + UI (Xcode 15)
-    runs-on: macos-14
+    runs-on: macos-15
     if: ${{ github.event_name != 'push' && github.event.inputs.snapshots != 'true' }}
     env:
-      XCODE_VERSION: "15.0.1"
+      XCODE_VERSION: "15.4"
     steps:
     - uses: actions/checkout@v4.1.1
     - uses: ./.github/actions/ruby-cache
