@@ -8,18 +8,19 @@ import UIKit
 
 class DemoQuotedChatMessageView: QuotedChatMessageView {
     override func setAttachmentPreview(for message: ChatMessage) {
-        let locationAttachments = message.staticLocationAttachments
-        if let locationPayload = locationAttachments.first?.payload {
+        if message.staticLocationAttachments.isEmpty == false {
             attachmentPreviewView.contentMode = .scaleAspectFit
-            attachmentPreviewView.image = UIImage(
-                systemName: "mappin.circle.fill",
-                withConfiguration: UIImage.SymbolConfiguration(font: .boldSystemFont(ofSize: 12))
-            )
+            attachmentPreviewView.image = UIImage(systemName: "mappin.circle.fill")
             attachmentPreviewView.tintColor = .systemRed
-            textView.text = """
-            Location:
-            (\(locationPayload.latitude),\(locationPayload.longitude))
-            """
+            textView.text = "Location"
+            return
+        }
+
+        if message.liveLocationAttachments.isEmpty == false {
+            attachmentPreviewView.contentMode = .scaleAspectFit
+            attachmentPreviewView.image = UIImage(systemName: "location.fill")
+            attachmentPreviewView.tintColor = .systemBlue
+            textView.text = "Live Location"
             return
         }
 
