@@ -220,7 +220,7 @@ final class QuotedReply_Tests: StreamTestCase {
     }
     
     func test_originalQuoteIsDeletedByParticipant_deletedMessageIsShown() {
-        linkToScenario(withId: 0)
+        linkToScenario(withId: 6643)
 
         GIVEN("user opens the channel") {
             userRobot.login().openChannel()
@@ -261,7 +261,7 @@ final class QuotedReply_Tests: StreamTestCase {
     }
     
     func test_originalQuoteIsDeletedByUser_deletedMessageIsShown() {
-        linkToScenario(withId: 0)
+        linkToScenario(withId: 6644)
 
         GIVEN("user opens the channel") {
             backendRobot.generateChannels(count: 1, messagesCount: 1)
@@ -584,7 +584,7 @@ final class QuotedReply_Tests: StreamTestCase {
     }
     
     func test_originalQuoteIsDeletedByParticipant_deletedMessageIsShown_InThread() {
-        linkToScenario(withId: 0)
+        linkToScenario(withId: 6645)
 
         GIVEN("user opens the channel") {
             backendRobot.generateChannels(count: 1, messageText: parentText, messagesCount: 1)
@@ -626,7 +626,7 @@ final class QuotedReply_Tests: StreamTestCase {
     }
     
     func test_originalQuoteIsDeletedByUser_deletedMessageIsShown_InThread() {
-        linkToScenario(withId: 0)
+        linkToScenario(withId: 6646)
 
         GIVEN("user opens the channel") {
             backendRobot.generateChannels(count: 1, messagesCount: 1)
