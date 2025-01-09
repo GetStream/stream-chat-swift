@@ -67,10 +67,10 @@ jobs:
 
   build-old-xcode:
     name: Build LLC + UI (Xcode 15)
-    runs-on: macos-14
+    runs-on: macos-15
     if: ${{ github.event_name != 'push' && github.event.inputs.snapshots != 'true' }}
     env:
-      XCODE_VERSION: "15.0.1"
+      XCODE_VERSION: "15.4"
     steps:
     - uses: actions/checkout@v4.1.1
     - uses: ./.github/actions/ruby-cache
