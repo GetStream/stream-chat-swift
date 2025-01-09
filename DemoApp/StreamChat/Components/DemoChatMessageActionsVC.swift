@@ -26,6 +26,11 @@ final class DemoChatMessageActionsVC: ChatMessageActionsVC {
             actions.append(messageDebugActionItem())
         }
 
+        let hasLocationAttachments = message?.liveLocationAttachments.isEmpty == false || message?.staticLocationAttachments.isEmpty == false
+        if hasLocationAttachments {
+            actions.removeAll(where: { $0 is EditActionItem })
+        }
+
         return actions
     }
 
