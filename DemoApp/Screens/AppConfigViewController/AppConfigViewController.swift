@@ -47,7 +47,7 @@ class AppConfig {
             isHardDeleteEnabled: false,
             isAtlantisEnabled: false,
             isMessageDebuggerEnabled: false,
-            isLocationAttachmentsEnabled: false,
+            isLocationAttachmentsEnabled: true,
             tokenRefreshDetails: nil,
             shouldShowConnectionBanner: false,
             isPremiumMemberFeatureEnabled: false
@@ -57,7 +57,6 @@ class AppConfig {
             demoAppConfig.isAtlantisEnabled = true
             demoAppConfig.isMessageDebuggerEnabled = true
             demoAppConfig.isHardDeleteEnabled = true
-            demoAppConfig.isLocationAttachmentsEnabled = true
             demoAppConfig.shouldShowConnectionBanner = true
             demoAppConfig.isPremiumMemberFeatureEnabled = true
             StreamRuntimeCheck.assertionsEnabled = true
