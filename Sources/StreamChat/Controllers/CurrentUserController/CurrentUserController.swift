@@ -271,7 +271,6 @@ public extension CurrentChatUserController {
     /// The updates are throttled to avoid sending too many requests.
     ///
     /// - Parameter location: The new location to be updated.
-    @_spi(ExperimentalLocation)
     func updateLiveLocation(_ location: LocationAttachmentInfo) {
         guard let messages = activeLiveLocationMessagesObserver?.items, !messages.isEmpty else {
             return
@@ -483,20 +482,17 @@ public protocol CurrentChatUserControllerDelegate: AnyObject {
     )
 
     /// The controller observed a change in the active live location messages.
-    @_spi(ExperimentalLocation)
     func currentUserController(
         _ controller: CurrentChatUserController,
         didChangeActiveLiveLocationMessages messages: [ChatMessage]
     )
 
     /// The current user started sharing his location in message attachments.
-    @_spi(ExperimentalLocation)
     func currentUserControllerDidStartSharingLiveLocation(
         _ controller: CurrentChatUserController
     )
 
     /// The current user has no active live location attachments.
-    @_spi(ExperimentalLocation)
     func currentUserControllerDidStopSharingLiveLocation(
         _ controller: CurrentChatUserController
     )

@@ -318,13 +318,11 @@ public extension ChatMessage {
     }
 
     /// Returns the attachments of `.staticLocation` type.
-    @_spi(ExperimentalLocation)
     var staticLocationAttachments: [ChatMessageStaticLocationAttachment] {
         attachments(payloadType: StaticLocationAttachmentPayload.self)
     }
 
     /// Returns the attachments of `.liveLocation` type.
-    @_spi(ExperimentalLocation)
     var liveLocationAttachments: [ChatMessageLiveLocationAttachment] {
         attachments(payloadType: LiveLocationAttachmentPayload.self)
     }

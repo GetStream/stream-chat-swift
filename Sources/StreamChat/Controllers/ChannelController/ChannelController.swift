@@ -841,7 +841,6 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
     ///  - quotedMessageId: The id of the quoted message, in case the location is an inline reply.
     ///  - extraData:  Additional extra data of the message object.
     ///  - completion: Called when saving the message to the local DB finishes, not when the message reaches the server.
-    @_spi(ExperimentalLocation)
     public func sendStaticLocation(
         _ location: LocationAttachmentInfo,
         text: String? = nil,
@@ -902,7 +901,6 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
     ///  - extraData: Additional extra data of the message object.
     ///  - completion: Called when saving the message to the local DB finishes,
     ///  not when the message reaches the server.
-    @_spi(ExperimentalLocation)
     public func startLiveLocationSharing(
         _ location: LocationAttachmentInfo,
         text: String? = nil,
@@ -965,7 +963,6 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
     }
 
     /// Stops sharing the live location message in the channel.
-    @_spi(ExperimentalLocation)
     public func stopLiveLocationSharing(completion: ((Result<MessageId, Error>) -> Void)? = nil) {
         guard let cid = cid, isChannelAlreadyCreated else {
             channelModificationFailed { error in

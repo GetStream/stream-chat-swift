@@ -3,7 +3,7 @@
 //
 
 import Foundation
-@testable @_spi(ExperimentalLocation) import StreamChat
+@testable import StreamChat
 
 extension MessageAttachmentPayload {
     static func dummy(
