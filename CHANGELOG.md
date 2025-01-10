@@ -8,6 +8,20 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Add `FilterKey.disabled` and `ChatChannel.isDisabled` [#3546](https://github.com/GetStream/stream-chat-swift/pull/3546)
 - Add `ImageAttachmentPayload.file` for setting `file_size` and `mime_type` for image attachments [#3548](https://github.com/GetStream/stream-chat-swift/pull/3548)
 - Add `ChatMessageController.partialUpdateMessage()` [#3531](https://github.com/GetStream/stream-chat-swift/pull/3531)
+- Add Static Location Attachment Support [#3531](https://github.com/GetStream/stream-chat-swift/pull/3531)
+  - Add `ChatMessageStaticLocationAttachment` and `StaticLocationAttachmentPayload`
+  - Add `ChatMessage.staticLocationAttachments`
+  - Add `ChatChannelController.sendStaticLocation()`
+- Add Live Location Attachment Support [#3531](https://github.com/GetStream/stream-chat-swift/pull/3531)
+  - Add `ChatMessageLiveLocationAttachment` and `LiveLocationAttachmentPayload`
+  - Add `ChatMessage.liveLocationAttachments`
+  - Add `ChatChannelController.startLiveLocationSharing()`
+  - Add `ChatChannelController.stopLiveLocationSharing()`  
+  - Add `ChatMessageController.stopLiveLocationSharing()`
+  - Add `CurrentChatUserController.updateLiveLocation()`
+  - Add `CurrentChatUserControllerDelegate.didStartSharingLiveLocation()`
+  - Add `CurrentChatUserControllerDelegate.didStopSharingLiveLocation()`
+  - Add `CurrentChatUserControllerDelegate.didChangeActiveLiveLocationMessages()`
 ### 🐞 Fixed
 - Remove the main thread requirement from the `DataStore` [#3541](https://github.com/GetStream/stream-chat-swift/pull/3541)
 - Refresh quoted message preview when the quoted message is deleted [#3553](https://github.com/GetStream/stream-chat-swift/pull/3553)
