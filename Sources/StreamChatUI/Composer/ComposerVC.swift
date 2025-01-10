@@ -405,8 +405,13 @@ open class ComposerVC: _ViewController,
 
     /// The view controller for selecting image attachments.
     open private(set) lazy var mediaPickerVC: UIViewController = {
+        let mediaTypes: [String] = {
+            let availableTypes = UIImagePickerController.availableMediaTypes(for: .savedPhotosAlbum) ?? ["public.image"]
+            let allowed = channelController?.client.appSettings?.imageUploadConfig.allowedUTITypes ?? []
+            return allowed.isEmpty ? availableTypes : allowed
+        }()
         let picker = UIImagePickerController()
-        picker.mediaTypes = UIImagePickerController.availableMediaTypes(for: .savedPhotosAlbum) ?? ["public.image"]
+        picker.mediaTypes = mediaTypes
         picker.sourceType = .savedPhotosAlbum
         picker.delegate = self
         return picker
@@ -414,17 +419,27 @@ open class ComposerVC: _ViewController,
 
     /// The View Controller for taking a picture.
     open private(set) lazy var cameraVC: UIViewController = {
+        let mediaTypes: [String] = {
+            let availableTypes = UIImagePickerController.availableMediaTypes(for: .camera) ?? ["public.image"]
+            let allowed = channelController?.client.appSettings?.imageUploadConfig.allowedUTITypes ?? []
+            return allowed.isEmpty ? availableTypes : allowed
+        }()
         let camera = UIImagePickerController()
         camera.sourceType = .camera
         camera.modalPresentationStyle = .overFullScreen
-        camera.mediaTypes = UIImagePickerController.availableMediaTypes(for: .camera) ?? ["public.image"]
+        camera.mediaTypes = mediaTypes
         camera.delegate = self
         return camera
     }()
 
     /// The view controller for selecting file attachments.
     open private(set) lazy var filePickerVC: UIViewController = {
-        let picker = UIDocumentPickerViewController(documentTypes: ["public.item"], in: .import)
+        let documentTypes: [String] = {
+            let availableTypes = ["public.item"]
+            let allowed = channelController?.client.appSettings?.fileUploadConfig.allowedUTITypes ?? []
+            return allowed.isEmpty ? availableTypes : allowed
+        }()
+        let picker = UIDocumentPickerViewController(documentTypes: documentTypes, in: .import)
         picker.delegate = self
         picker.allowsMultipleSelection = true
         return picker

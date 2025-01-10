@@ -375,6 +375,12 @@ extension ClientError {
             super.init("There is no `AttachmentDTO` instance in the DB matching id: \(id).")
         }
     }
+    
+    final class AttachmentTypeDisallowed: ClientError {
+        init(id: AttachmentId, attachmentType: AttachmentType) {
+            super.init("`AttachmentDTO` with \(id) has type \(attachmentType) which is marked as disallowed on the Stream dashboard.")
+        }
+    }
 
     final class AttachmentEditing: ClientError {
         init(id: AttachmentId, reason: String) {
