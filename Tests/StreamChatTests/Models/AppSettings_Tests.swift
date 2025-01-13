@@ -131,9 +131,3 @@ final class AppSettings_Tests: XCTestCase {
         }
     }()
 }
-
-private extension URL {
-    static func fileName(_ fileName: String) -> URL {
-        URL(fileURLWithPath: "/A/\(fileName)")
-    }
-}
