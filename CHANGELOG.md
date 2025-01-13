@@ -5,7 +5,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## StreamChat
 ### ✅ Added
-- Use `AppSettings.fileUploadConfig` and `AppSettings.imageUploadConfig` for blocking attachment uploads [#3556](https://github.com/GetStream/stream-chat-swift/pull/3556/)
+- Use `AppSettings.fileUploadConfig` and `AppSettings.imageUploadConfig` for blocking attachment uploads [#3556](https://github.com/GetStream/stream-chat-swift/pull/3556)
 - Add `FilterKey.disabled` and `ChatChannel.isDisabled` [#3546](https://github.com/GetStream/stream-chat-swift/pull/3546)
 - Add `ImageAttachmentPayload.file` for setting `file_size` and `mime_type` for image attachments [#3548](https://github.com/GetStream/stream-chat-swift/pull/3548)
 ### 🐞 Fixed
@@ -16,6 +16,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Improve performance of model conversions with large extra data [#3534](https://github.com/GetStream/stream-chat-swift/pull/3534)
 ### 🔄 Changed
 - Deprecate `ImageAttachmentPayload.init(title:imageRemoteURL:originalWidth:originalHeight:extraData:)` in favor of `ImageAttachmentPayload.init(title:imageRemoteURL:file:originalWidth:originalHeight:extraData:)` [#3548](https://github.com/GetStream/stream-chat-swift/pull/3548)
+
+## StreamChatUI
+### 🔄 Changed
+- Set supported media types based on `AppSettings` in `ComposerVC.mediaPickerVC`, `ComposerVC.filePickerVC`, and `ComposerVC.mediaPickerVC` [#3556](https://github.com/GetStream/stream-chat-swift/pull/3556)
 
 # [4.69.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.69.0)
 _December 18, 2024_
