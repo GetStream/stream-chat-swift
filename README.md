@@ -123,13 +123,15 @@ Check out our current openings and apply via [Stream's website](https://getstrea
     <td> A list of message in a channel </td>
     <th rowspan="9"><img src="ReadmeAssets/Message_List_Bezel.png?raw=true" width="80%" /></th>
   </tr>
-  <tr> <td> Photo preview </td> </tr>
+  <tr> <td> Photo and Video preview </td> </tr>
   <tr> <td> Message reactions </td> </tr>
   <tr> <td> Message grouping based on the send time </td> </tr>
   <tr> <td> Link preview </td> </tr>
   <tr> <td> Inline replies </td> </tr>
   <tr> <td> Message threads </td> </tr>
   <tr> <td> GIPHY support </td> </tr>
+  <tr> <td> Polls support </td> </tr>
+  <tr> <td> Async voice messages </td> </tr>
   <tr><td> </td> </tr>
   </tr>
 </table>
@@ -147,10 +149,13 @@ Check out our current openings and apply via [Stream's website](https://getstrea
     <td> Support for multiline text, expands and shrinks as needed </td>
     <th rowspan="6"><img src="ReadmeAssets/Message_Composer_Bezels.png?raw=true" width="80%" /></th>
   </tr>
-  <tr> <td> Image and file attachments</td> </tr>
+  <tr> <td> Image, video and file attachments</td> </tr>
   <tr> <td> Replies to messages </td> </tr>
   <tr> <td> Tagging of users </td> </tr>
   <tr> <td> Chat commands like mute, ban, giphy </td> </tr>
+  <tr> <td> Creation of polls </td> </tr>
+  <tr> <td> Link previews </td> </tr>
+  <tr> <td> Recording async voice messages </td> </tr>
   <tr><td> </td> </tr>
   </tr>
 </table>
