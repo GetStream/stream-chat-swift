@@ -129,15 +129,13 @@ class AttachmentQueueUploader: Worker {
     private func prepareAttachmentForUpload(with id: AttachmentId, completion: @escaping (Result<AnyChatMessageAttachment, Error>) -> Void) {
         let attachmentStorage = self.attachmentStorage
         var model: AnyChatMessageAttachment?
-        database.write { [weak self] session in
+        var attachmentLocalURL: URL?
+        database.write { session in
             guard let attachment = session.attachment(id: id) else {
                 throw ClientError.AttachmentDoesNotExist(id: id)
             }
 
             if let temporaryURL = attachment.localURL {
-                guard self?.isAllowedToUpload(attachment.attachmentType, localURL: temporaryURL) == true else {
-                    throw ClientError.AttachmentTypeDisallowed(id: id, attachmentType: attachment.attachmentType)
-                }
                 do {
                     let localURL = try attachmentStorage.storeAttachment(id: id, temporaryURL: temporaryURL)
                     attachment.localURL = localURL
@@ -145,11 +143,25 @@ class AttachmentQueueUploader: Worker {
                     log.error("Could not copy attachment to local storage: \(error.localizedDescription)", subsystems: .offlineSupport)
                 }
             }
+            attachmentLocalURL = attachment.localURL
             model = attachment.asAnyModel()
-        } completion: { error in
+        } completion: { [weak self] error in
             DispatchQueue.main.async {
                 if let model {
-                    completion(.success(model))
+                    // Attachment uploading state should be validated after preparing the local file (for ensuring the local file persists for retry)
+                    if let attachmentLocalURL, self?.isAllowedToUpload(model.type, localURL: attachmentLocalURL) == false {
+                        completion(
+                            .failure(
+                                ClientError.AttachmentUploadBlocked(
+                                    id: id,
+                                    attachmentType: model.type,
+                                    pathExtension: attachmentLocalURL.pathExtension
+                                )
+                            )
+                        )
+                    } else {
+                        completion(.success(model))
+                    }
                 } else if let error {
                     completion(.failure(error))
                 } else {

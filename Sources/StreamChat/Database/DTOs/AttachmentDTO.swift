@@ -376,9 +376,9 @@ extension ClientError {
         }
     }
     
-    final class AttachmentTypeDisallowed: ClientError {
-        init(id: AttachmentId, attachmentType: AttachmentType) {
-            super.init("`AttachmentDTO` with \(id) has type \(attachmentType) which is marked as disallowed on the Stream dashboard.")
+    final class AttachmentUploadBlocked: ClientError {
+        init(id: AttachmentId, attachmentType: AttachmentType, pathExtension: String) {
+            super.init("`AttachmentDTO` with \(id) and type \(attachmentType) and path extension \(pathExtension) is blocked on the Stream dashboard.")
         }
     }
 
