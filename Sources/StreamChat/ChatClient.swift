@@ -578,6 +578,8 @@ public class ChatClient {
             case let .success(payload):
                 let appSettings = payload.asModel()
                 self?.appSettings = appSettings
+                try? self?.backgroundWorker(of: AttachmentQueueUploader.self)
+                    .setAppSettings(appSettings)
                 completion?(.success(appSettings))
             case let .failure(error):
                 completion?(.failure(error))
@@ -614,6 +616,8 @@ public class ChatClient {
                 attachmentPostProcessor: config.uploadedAttachmentPostProcessor
             )
         ]
+        try? backgroundWorker(of: AttachmentQueueUploader.self)
+            .setAppSettings(appSettings)
     }
 
     func completeConnectionIdWaiters(connectionId: String?) {

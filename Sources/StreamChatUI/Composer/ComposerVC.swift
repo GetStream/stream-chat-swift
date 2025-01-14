@@ -424,7 +424,12 @@ open class ComposerVC: _ViewController,
 
     /// The view controller for selecting file attachments.
     open private(set) lazy var filePickerVC: UIViewController = {
-        let picker = UIDocumentPickerViewController(documentTypes: ["public.item"], in: .import)
+        let documentTypes: [String] = {
+            let availableTypes = ["public.item"]
+            let allowed = channelController?.client.appSettings?.fileUploadConfig.allowedUTITypes ?? []
+            return allowed.isEmpty ? availableTypes : allowed
+        }()
+        let picker = UIDocumentPickerViewController(documentTypes: documentTypes, in: .import)
         picker.delegate = self
         picker.allowsMultipleSelection = true
         return picker

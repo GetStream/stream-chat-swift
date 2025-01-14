@@ -375,6 +375,12 @@ extension ClientError {
             super.init("There is no `AttachmentDTO` instance in the DB matching id: \(id).")
         }
     }
+    
+    final class AttachmentUploadBlocked: ClientError {
+        init(id: AttachmentId, attachmentType: AttachmentType, pathExtension: String) {
+            super.init("`AttachmentDTO` with \(id) and type \(attachmentType) and path extension \(pathExtension) is blocked on the Stream dashboard.")
+        }
+    }
 
     final class AttachmentEditing: ClientError {
         init(id: AttachmentId, reason: String) {
