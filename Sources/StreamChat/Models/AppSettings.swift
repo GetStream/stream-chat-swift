@@ -2,8 +2,8 @@
 // Copyright © 2025 Stream.io Inc. All rights reserved.
 //
 
+import CoreServices
 import Foundation
-import MobileCoreServices
 
 /// A type representing the app settings.
 public struct AppSettings {
