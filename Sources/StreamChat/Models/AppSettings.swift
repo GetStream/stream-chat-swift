@@ -63,12 +63,14 @@ extension AppSettingsPayload.UploadConfigPayload {
 
 extension AppSettings.UploadConfig {
     // MARK: - UTI Validation
-        
+    
+    /// Returns an array of allowed UTI identifiers based on allowed mime types and file extensions.
     public var allowedUTITypes: [String] {
         allowedMimeTypes.compactMap { $0.utiType(mime: true) } +
             allowedFileExtensions.compactMap { $0.utiType(mime: false) }
     }
     
+    /// Returns an array of blocked UTI identifiers based on allowed mime types and file extensions.
     public var blockedUTITypes: [String] {
         blockedMimeTypes.compactMap { $0.utiType(mime: true) } +
             blockedFileExtensions.compactMap { $0.utiType(mime: false) }
