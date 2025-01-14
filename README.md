@@ -121,7 +121,7 @@ Check out our current openings and apply via [Stream's website](https://getstrea
   </tr>
   <tr>
     <td> A list of message in a channel </td>
-    <th rowspan="9"><img src="ReadmeAssets/Message_List_Bezel.png?raw=true" width="80%" /></th>
+    <th rowspan="11"><img src="ReadmeAssets/Message_List_Bezel.png?raw=true" width="80%" /></th>
   </tr>
   <tr> <td> Photo and Video preview </td> </tr>
   <tr> <td> Message reactions </td> </tr>
@@ -147,7 +147,7 @@ Check out our current openings and apply via [Stream's website](https://getstrea
   </tr>
   <tr>
     <td> Support for multiline text, expands and shrinks as needed </td>
-    <th rowspan="6"><img src="ReadmeAssets/Message_Composer_Bezels.png?raw=true" width="80%" /></th>
+    <th rowspan="9"><img src="ReadmeAssets/Message_Composer_Bezels.png?raw=true" width="80%" /></th>
   </tr>
   <tr> <td> Image, video and file attachments</td> </tr>
   <tr> <td> Replies to messages </td> </tr>
