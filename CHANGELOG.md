@@ -19,7 +19,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## StreamChatUI
 ### 🔄 Changed
-- Set supported media types based on `AppSettings` in `ComposerVC.mediaPickerVC`, `ComposerVC.filePickerVC`, and `ComposerVC.mediaPickerVC` [#3556](https://github.com/GetStream/stream-chat-swift/pull/3556)
+- Set supported media types based on `AppSettings` in `ComposerVC.filePickerVC` [#3556](https://github.com/GetStream/stream-chat-swift/pull/3556)
 
 # [4.69.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.69.0)
 _December 18, 2024_
