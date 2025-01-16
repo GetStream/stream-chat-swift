@@ -487,6 +487,7 @@ open class ChatMessageListVC: _ViewController,
 
         let actionsController = components.messageActionsVC.init()
         actionsController.messageController = messageController
+        actionsController.isInsideThread = dataSource is ChatThreadVC
         actionsController.channel = dataSource?.channel(for: self)
         actionsController.delegate = self
 
