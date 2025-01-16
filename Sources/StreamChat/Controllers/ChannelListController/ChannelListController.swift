@@ -76,7 +76,10 @@ public class ChatChannelListController: DataController, DelegateCallable, DataSt
         let observer = self.environment.createChannelListDatabaseObserver(
             client.databaseContainer,
             request,
-            { try $0.asModel() },
+            { try $0.asModel(
+                transformer: self.client.config.channelTransformer,
+                messageTransformer: self.client.config.messageTransformer
+            ) },
             query.sort.runtimeSorting
         )
 

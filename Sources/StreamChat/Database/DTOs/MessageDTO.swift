@@ -1268,13 +1268,13 @@ extension MessageDTO {
 
 extension MessageDTO {
     /// Snapshots the current state of `MessageDTO` and returns an immutable model object from it.
-    func asModel() throws -> ChatMessage { try .init(fromDTO: self, depth: 0) }
+    func asModel(transformer: ((ChatMessage) -> ChatMessage)? = nil) throws -> ChatMessage { try .init(fromDTO: self, depth: 0, transformer: transformer) }
 
     /// Snapshots the current state of `MessageDTO` and returns an immutable model object from it if the dependency depth
     /// limit has not been reached
-    func relationshipAsModel(depth: Int) throws -> ChatMessage? {
+    func relationshipAsModel(depth: Int, transformer: ((ChatMessage) -> ChatMessage)?) throws -> ChatMessage? {
         do {
-            return try ChatMessage(fromDTO: self, depth: depth + 1)
+            return try ChatMessage(fromDTO: self, depth: depth + 1, transformer: transformer)
         } catch {
             if error is RecursionLimitError { return nil }
             throw error
@@ -1332,7 +1332,7 @@ extension MessageDTO {
 }
 
 private extension ChatMessage {
-    init(fromDTO dto: MessageDTO, depth: Int) throws {
+    init(fromDTO dto: MessageDTO, depth: Int, transformer: ((ChatMessage) -> ChatMessage)?) throws {
         guard StreamRuntimeCheck._canFetchRelationship(currentDepth: depth) else {
             throw RecursionLimitError()
         }
@@ -1341,30 +1341,31 @@ private extension ChatMessage {
         }
         try dto.isNotDeleted()
 
-        id = dto.id
-        cid = try? dto.cid.map { try ChannelId(cid: $0) }
-        text = dto.text
-        type = MessageType(rawValue: dto.type) ?? .regular
-        command = dto.command
-        createdAt = dto.createdAt.bridgeDate
-        locallyCreatedAt = dto.locallyCreatedAt?.bridgeDate
-        updatedAt = dto.updatedAt.bridgeDate
-        deletedAt = dto.deletedAt?.bridgeDate
-        arguments = dto.args
-        parentMessageId = dto.parentMessageId
-        showReplyInChannel = dto.showReplyInChannel
-        replyCount = Int(dto.replyCount)
-        isBounced = dto.isBounced
-        isSilent = dto.isSilent
-        isShadowed = dto.isShadowed
-        reactionScores = dto.reactionScores.mapKeys { MessageReactionType(rawValue: $0) }
-        reactionCounts = dto.reactionCounts.mapKeys { MessageReactionType(rawValue: $0) }
-        reactionGroups = dto.reactionGroups.asModel()
-        translations = dto.translations?.mapKeys { TranslationLanguage(languageCode: $0) }
-        originalLanguage = dto.originalLanguage.map(TranslationLanguage.init)
-        moderationDetails = dto.moderationDetails.map { MessageModerationDetails(fromDTO: $0) }
-        textUpdatedAt = dto.textUpdatedAt?.bridgeDate
+        let id = dto.id
+        let cid = try? dto.cid.map { try ChannelId(cid: $0) }
+        let text = dto.text
+        let type = MessageType(rawValue: dto.type) ?? .regular
+        let command = dto.command
+        let createdAt = dto.createdAt.bridgeDate
+        let locallyCreatedAt = dto.locallyCreatedAt?.bridgeDate
+        let updatedAt = dto.updatedAt.bridgeDate
+        let deletedAt = dto.deletedAt?.bridgeDate
+        let arguments = dto.args
+        let parentMessageId = dto.parentMessageId
+        let showReplyInChannel = dto.showReplyInChannel
+        let replyCount = Int(dto.replyCount)
+        let isBounced = dto.isBounced
+        let isSilent = dto.isSilent
+        let isShadowed = dto.isShadowed
+        let reactionScores = dto.reactionScores.mapKeys { MessageReactionType(rawValue: $0) }
+        let reactionCounts = dto.reactionCounts.mapKeys { MessageReactionType(rawValue: $0) }
+        let reactionGroups = dto.reactionGroups.asModel()
+        let translations = dto.translations?.mapKeys { TranslationLanguage(languageCode: $0) }
+        let originalLanguage = dto.originalLanguage.map(TranslationLanguage.init)
+        let moderationDetails = dto.moderationDetails.map { MessageModerationDetails(fromDTO: $0) }
+        let textUpdatedAt = dto.textUpdatedAt?.bridgeDate
 
+        let extraData: [String: RawJSON]
         do {
             extraData = try JSONDecoder.stream.decodeCachedRawJSON(from: dto.extraData)
         } catch {
@@ -1374,9 +1375,10 @@ private extension ChatMessage {
             extraData = [:]
         }
 
-        localState = dto.localMessageState
-        isFlaggedByCurrentUser = dto.flaggedBy != nil
+        let localState = dto.localMessageState
+        let isFlaggedByCurrentUser = dto.flaggedBy != nil
 
+        let pinDetails: MessagePinDetails?
         if dto.pinned,
            let pinnedAt = dto.pinnedAt,
            let pinnedBy = dto.pinnedBy {
@@ -1389,8 +1391,10 @@ private extension ChatMessage {
             pinDetails = nil
         }
         
-        poll = try? dto.poll?.asModel()
+        let poll = try? dto.poll?.asModel()
 
+        let currentUserReactions: Set<ChatMessageReaction>
+        let isSentByCurrentUser: Bool
         if let currentUser = context.currentUser {
             isSentByCurrentUser = currentUser.user.id == dto.user.id
             if !dto.ownReactions.isEmpty {
@@ -1407,7 +1411,7 @@ private extension ChatMessage {
             currentUserReactions = []
         }
 
-        latestReactions = {
+        let latestReactions: Set<ChatMessageReaction> = {
             guard !dto.latestReactions.isEmpty else { return Set() }
             return Set(
                 MessageReactionDTO
@@ -1416,29 +1420,76 @@ private extension ChatMessage {
             )
         }()
 
-        threadParticipants = dto.threadParticipants.array
+        let threadParticipants = dto.threadParticipants.array
             .compactMap { $0 as? UserDTO }
             .compactMap { try? $0.asModel() }
 
-        mentionedUsers = Set(dto.mentionedUsers.compactMap { try? $0.asModel() })
+        let mentionedUsers = Set(dto.mentionedUsers.compactMap { try? $0.asModel() })
 
-        author = try dto.user.asModel()
-        _attachments = dto.attachments
+        let author = try dto.user.asModel()
+        let _attachments = dto.attachments
             .compactMap { $0.asAnyModel() }
             .sorted { $0.id.index < $1.id.index }
 
-        latestReplies = {
+        let latestReplies: [ChatMessage] = {
             guard dto.replyCount > 0 else { return [] }
             return dto.replies
                 .sorted(by: { $0.createdAt.bridgeDate > $1.createdAt.bridgeDate })
                 .prefix(5)
-                .compactMap { try? ChatMessage(fromDTO: $0, depth: depth) }
+                .compactMap { try? ChatMessage(fromDTO: $0, depth: depth, transformer: transformer) }
         }()
 
-        let message = try? dto.quotedMessage?.relationshipAsModel(depth: depth)
-        _quotedMessage = { message }
+        let quotedMessage = try? dto.quotedMessage?.relationshipAsModel(depth: depth, transformer: transformer)
 
-        readBy = Set(dto.reads.compactMap { try? $0.user.asModel() })
+        let readBy = Set(dto.reads.compactMap { try? $0.user.asModel() })
+
+        let message = ChatMessage(
+            id: id,
+            cid: cid,
+            text: text,
+            type: type,
+            command: command,
+            createdAt: createdAt,
+            locallyCreatedAt: locallyCreatedAt,
+            updatedAt: updatedAt,
+            deletedAt: deletedAt,
+            arguments: arguments,
+            parentMessageId: parentMessageId,
+            showReplyInChannel: showReplyInChannel,
+            replyCount: replyCount,
+            extraData: extraData,
+            quotedMessage: quotedMessage,
+            isBounced: isBounced,
+            isSilent: isSilent,
+            isShadowed: isShadowed,
+            reactionScores: reactionScores,
+            reactionCounts: reactionCounts,
+            reactionGroups: reactionGroups,
+            author: author,
+            mentionedUsers: mentionedUsers,
+            threadParticipants: threadParticipants,
+            attachments: _attachments,
+            latestReplies: latestReplies,
+            localState: localState,
+            isFlaggedByCurrentUser: isFlaggedByCurrentUser,
+            latestReactions: latestReactions,
+            currentUserReactions: currentUserReactions,
+            isSentByCurrentUser: isSentByCurrentUser,
+            pinDetails: pinDetails,
+            translations: translations,
+            originalLanguage: originalLanguage,
+            moderationDetails: moderationDetails,
+            readBy: readBy,
+            poll: poll,
+            textUpdatedAt: textUpdatedAt
+        )
+
+        if let transformer = transformer {
+            self = transformer(message)
+            return
+        }
+
+        self = message
     }
 }
 

@@ -763,17 +763,26 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
         extraData: [String: RawJSON] = [:],
         completion: ((Result<MessageId, Error>) -> Void)? = nil
     ) {
+        var transformableInfo = MessageTransformableInfo(
+            text: text,
+            attachments: attachments,
+            extraData: extraData
+        )
+        if let transformer = client.config.newMessageTransformer {
+            transformableInfo = transformer(transformableInfo)
+        }
+
         createNewMessage(
             messageId: messageId,
-            text: text,
+            text: transformableInfo.text,
             pinning: pinning,
             isSilent: isSilent,
-            attachments: attachments,
+            attachments: transformableInfo.attachments,
             mentionedUserIds: mentionedUserIds,
             quotedMessageId: quotedMessageId,
             skipPush: skipPush,
             skipEnrichUrl: skipEnrichUrl,
-            extraData: extraData,
+            extraData: transformableInfo.extraData,
             poll: nil,
             completion: completion
         )
@@ -1638,7 +1647,12 @@ private extension ChatChannelController {
             let observer = BackgroundEntityDatabaseObserver(
                 database: self.client.databaseContainer,
                 fetchRequest: ChannelDTO.fetchRequest(for: cid),
-                itemCreator: { try $0.asModel() as ChatChannel }
+                itemCreator: {
+                    try $0.asModel(
+                        transformer: self.client.config.channelTransformer,
+                        messageTransformer: self.client.config.messageTransformer
+                    ) as ChatChannel
+                }
             ).onChange { [weak self] change in
                 self?.delegateCallback { [weak self] in
                     guard let self = self else {
@@ -1682,7 +1696,9 @@ private extension ChatChannelController {
                     deletedMessagesVisibility: deletedMessageVisibility,
                     shouldShowShadowedMessages: shouldShowShadowedMessages
                 ),
-                itemCreator: { try $0.asModel() as ChatMessage },
+                itemCreator: {
+                    try $0.asModel(transformer: self.client.config.messageTransformer) as ChatMessage
+                },
                 itemReuseKeyPaths: (\ChatMessage.id, \MessageDTO.id)
             )
             observer.onDidChange = { [weak self] changes in
@@ -1874,5 +1890,21 @@ public extension ChatChannel {
         }
 
         return lastReadMessageId
+    }
+}
+
+public struct MessageTransformableInfo {
+    public var text: String
+    public var attachments: [AnyAttachmentPayload]
+    public var extraData: [String: RawJSON]
+
+    public init(
+        text: String,
+        attachments: [AnyAttachmentPayload],
+        extraData: [String: RawJSON]
+    ) {
+        self.text = text
+        self.attachments = attachments
+        self.extraData = extraData
     }
 }

@@ -21,7 +21,9 @@ extension MessageState {
             messageObserver = StateLayerDatabaseObserver(
                 database: database,
                 fetchRequest: MessageDTO.message(withID: messageId),
-                itemCreator: { try $0.asModel() }
+                itemCreator: { try $0.asModel(
+                    transformer: clientConfig.messageTransformer
+                ) }
             )
             reactionsObserver = StateLayerDatabaseObserver(
                 database: database,
@@ -41,7 +43,9 @@ extension MessageState {
                     deletedMessagesVisibility: clientConfig.deletedMessagesVisibility,
                     shouldShowShadowedMessages: clientConfig.shouldShowShadowedMessages
                 ),
-                itemCreator: { try $0.asModel() },
+                itemCreator: { try $0.asModel(
+                    transformer: clientConfig.messageTransformer
+                ) },
                 itemReuseKeyPaths: (\ChatMessage.id, \MessageDTO.id)
             )
         }

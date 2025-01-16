@@ -440,13 +440,22 @@ extension ChannelDTO {
 
 extension ChannelDTO {
     /// Snapshots the current state of `ChannelDTO` and returns an immutable model object from it.
-    func asModel() throws -> ChatChannel { try .create(fromDTO: self, depth: 0) }
+    func asModel(
+        transformer: ((ChatChannel) -> ChatChannel)? = nil,
+        messageTransformer: ((ChatMessage) -> ChatMessage)? = nil
+    ) throws -> ChatChannel {
+        try .create(fromDTO: self, depth: 0, transformer: transformer, messageTransformer: messageTransformer)
+    }
 
     /// Snapshots the current state of `ChannelDTO` and returns an immutable model object from it if the dependency depth
     /// limit has not been reached
-    func relationshipAsModel(depth: Int) throws -> ChatChannel? {
+    func relationshipAsModel(
+        depth: Int,
+        transformer: ((ChatChannel) -> ChatChannel)?,
+        messageTransformer: ((ChatMessage) -> ChatMessage)?
+    ) throws -> ChatChannel? {
         do {
-            return try .create(fromDTO: self, depth: depth + 1)
+            return try .create(fromDTO: self, depth: depth + 1, transformer: transformer, messageTransformer: messageTransformer)
         } catch {
             if error is RecursionLimitError { return nil }
             throw error
@@ -456,7 +465,12 @@ extension ChannelDTO {
 
 extension ChatChannel {
     /// Create a ChannelModel struct from its DTO
-    fileprivate static func create(fromDTO dto: ChannelDTO, depth: Int) throws -> ChatChannel {
+    fileprivate static func create(
+        fromDTO dto: ChannelDTO,
+        depth: Int,
+        transformer: ((ChatChannel) -> ChatChannel)?,
+        messageTransformer: ((ChatMessage) -> ChatMessage)?
+    ) throws -> ChatChannel {
         guard StreamRuntimeCheck._canFetchRelationship(currentDepth: depth) else {
             throw RecursionLimitError()
         }
@@ -501,7 +515,7 @@ extension ChatChannel {
         let latestMessages: [ChatMessage] = {
             var messages = sortedMessageDTOs
                 .prefix(dto.managedObjectContext?.localCachingSettings?.chatChannel.latestMessagesLimit ?? 25)
-                .compactMap { try? $0.relationshipAsModel(depth: depth) }
+                .compactMap { try? $0.relationshipAsModel(depth: depth, transformer: messageTransformer) }
             if let oldest = dto.oldestMessageAt?.bridgeDate {
                 messages = messages.filter { $0.createdAt >= oldest }
             }
@@ -519,7 +533,7 @@ extension ChatChannel {
                     guard messageDTO.localMessageState == nil else { return false }
                     return messageDTO.type != MessageType.ephemeral.rawValue
                 })?
-                .relationshipAsModel(depth: depth)
+                .relationshipAsModel(depth: depth, transformer: messageTransformer)
         }()
         
         let watchers = dto.watchers
@@ -555,11 +569,11 @@ extension ChatChannel {
             )
         }()
         let membership = try dto.membership.map { try $0.asModel() }
-        let pinnedMessages = dto.pinnedMessages.compactMap { try? $0.relationshipAsModel(depth: depth) }
-        let previewMessage = try? dto.previewMessage?.relationshipAsModel(depth: depth)
+        let pinnedMessages = dto.pinnedMessages.compactMap { try? $0.relationshipAsModel(depth: depth, transformer: messageTransformer) }
+        let previewMessage = try? dto.previewMessage?.relationshipAsModel(depth: depth, transformer: messageTransformer)
         let typingUsers = Set(dto.currentlyTypingUsers.compactMap { try? $0.asModel() })
-        
-        return try ChatChannel(
+
+        let channel = try ChatChannel(
             cid: cid,
             name: dto.name,
             imageURL: dto.imageURL,
@@ -592,6 +606,12 @@ extension ChatChannel {
             muteDetails: muteDetails,
             previewMessage: previewMessage
         )
+
+        if let transformer = transformer {
+            return transformer(channel)
+        }
+
+        return channel
     }
 }
 

@@ -175,9 +175,9 @@ public struct ChatMessage {
     /// Optional poll that is part of the message.
     public let poll: Poll?
 
-    internal init(
+    init(
         id: MessageId,
-        cid: ChannelId,
+        cid: ChannelId?,
         text: String,
         type: MessageType,
         command: String?,
@@ -254,6 +254,53 @@ public struct ChatMessage {
         self.readBy = readBy
         _attachments = attachments
         _quotedMessage = { quotedMessage }
+    }
+
+    public func mapped(
+        text: String?,
+        extraData: [String: RawJSON]?,
+        attachments: [AnyChatMessageAttachment]?
+    ) -> ChatMessage {
+        .init(
+            id: id,
+            cid: cid,
+            text: text ?? "",
+            type: type,
+            command: command,
+            createdAt: createdAt,
+            locallyCreatedAt: locallyCreatedAt,
+            updatedAt: updatedAt,
+            deletedAt: deletedAt,
+            arguments: arguments,
+            parentMessageId: parentMessageId,
+            showReplyInChannel: showReplyInChannel,
+            replyCount: replyCount,
+            extraData: extraData ?? [:],
+            quotedMessage: quotedMessage,
+            isBounced: isBounced,
+            isSilent: isSilent,
+            isShadowed: isShadowed,
+            reactionScores: reactionScores,
+            reactionCounts: reactionCounts,
+            reactionGroups: reactionGroups,
+            author: author,
+            mentionedUsers: mentionedUsers,
+            threadParticipants: threadParticipants,
+            attachments: attachments ?? [],
+            latestReplies: latestReplies,
+            localState: localState,
+            isFlaggedByCurrentUser: isFlaggedByCurrentUser,
+            latestReactions: latestReactions,
+            currentUserReactions: currentUserReactions,
+            isSentByCurrentUser: isSentByCurrentUser,
+            pinDetails: pinDetails,
+            translations: translations,
+            originalLanguage: originalLanguage,
+            moderationDetails: moderationDetails,
+            readBy: readBy,
+            poll: poll,
+            textUpdatedAt: textUpdatedAt
+        )
     }
 }
 

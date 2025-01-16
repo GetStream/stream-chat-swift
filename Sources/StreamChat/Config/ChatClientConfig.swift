@@ -66,6 +66,10 @@ public struct ChatClientConfig {
     ///
     public var shouldFlushLocalStorageOnStart: Bool = false
 
+    public var channelTransformer: ((StreamChat.ChatChannel) -> StreamChat.ChatChannel)?
+    public var messageTransformer: ((ChatMessage) -> ChatMessage)?
+    public var newMessageTransformer: ((MessageTransformableInfo) -> MessageTransformableInfo)?
+
     /// Advanced settings for the local caching and model serialization.
     public var localCaching = LocalCaching()
 

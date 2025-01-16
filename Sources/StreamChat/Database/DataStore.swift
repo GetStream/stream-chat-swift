@@ -17,14 +17,12 @@ extension DataStoreProvider {
 /// `DataStore` provide access to all locally available model objects based on their id.
 public struct DataStore {
     let database: DatabaseContainer
+    let client: ChatClient
 
     // Technically, we need only `database` but we use a `Client` instance to get the extra data types from it.
     init(client: ChatClient) {
+        self.client = client
         database = client.databaseContainer
-    }
-    
-    init(database: DatabaseContainer) {
-        self.database = database
     }
 
     /// Loads a user model with a matching `id` from the **local data store**.
@@ -58,7 +56,10 @@ public struct DataStore {
     ///
     /// - Parameter cid: An cid of a channel.
     public func channel(cid: ChannelId) -> ChatChannel? {
-        try? database.readAndWait { try? $0.channel(cid: cid)?.asModel() }
+        try? database.readAndWait { try? $0.channel(cid: cid)?.asModel(
+            transformer: client.config.channelTransformer,
+            messageTransformer: client.config.messageTransformer
+        ) }
     }
 
     /// Loads a message model with a matching `id` from the **local data store**.
@@ -70,7 +71,7 @@ public struct DataStore {
     ///
     /// - Parameter id: An id of a message.
     public func message(id: MessageId) -> ChatMessage? {
-        try? database.readAndWait { try? $0.message(id: id)?.asModel() }
+        try? database.readAndWait { try? $0.message(id: id)?.asModel(transformer: client.config.messageTransformer) }
     }
 
     /// Loads a thread model with a matching `parentMessageId` from the **local data store**.

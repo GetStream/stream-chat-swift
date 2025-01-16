@@ -37,6 +37,27 @@ final class StreamChatWrapper {
         config.shouldShowShadowedMessages = true
         config.applicationGroupIdentifier = applicationGroupIdentifier
         config.urlSessionConfiguration.httpAdditionalHeaders = ["Custom": "Example"]
+        config.messageTransformer = { message in
+            message.mapped(
+                text: "Yo",
+                extraData: message.extraData,
+                attachments: message.allAttachments
+            )
+        }
+        config.newMessageTransformer = { messageInfo in
+            MessageTransformableInfo(
+                text: "Changed",
+                attachments: messageInfo.attachments,
+                extraData: messageInfo.extraData
+            )
+        }
+        config.channelTransformer = { channel in
+            channel.mapped(
+                name: "Hey!",
+                imageURL: channel.imageURL,
+                extraData: channel.extraData
+            )
+        }
         configureUI()
     }
 }
