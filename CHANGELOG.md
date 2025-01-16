@@ -3,6 +3,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 # Upcoming
 
+### 🔄 Changed
+
+# [4.70.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.70.0)
+_January 14, 2025_
+
 ## StreamChat
 ### ✅ Added
 - Use `AppSettings.fileUploadConfig` and `AppSettings.imageUploadConfig` for blocking attachment uploads [#3556](https://github.com/GetStream/stream-chat-swift/pull/3556)
