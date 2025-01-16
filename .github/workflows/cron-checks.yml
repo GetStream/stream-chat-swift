@@ -52,8 +52,8 @@ jobs:
             device: "iPhone 14 Pro"
             setup_runtime: false
           - ios: 16.4
-            xcode: 15.4
-            os: macos-15
+            xcode: 15.3 # fails on 15.4
+            os: macos-14
             device: "iPhone 14 Pro"
             setup_runtime: true
           - ios: 15.5
