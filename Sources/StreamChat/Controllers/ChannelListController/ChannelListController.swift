@@ -77,8 +77,7 @@ public class ChatChannelListController: DataController, DelegateCallable, DataSt
             client.databaseContainer,
             request,
             { try $0.asModel(
-                transformer: self.client.config.channelTransformer,
-                messageTransformer: self.client.config.messageTransformer
+                transformer: self.client.config.modelsTransformer
             ) },
             query.sort.runtimeSorting
         )

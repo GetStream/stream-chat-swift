@@ -95,7 +95,7 @@ public class ChatMessageSearchController: DataController, DelegateCallable, Data
             fetchRequest: MessageDTO.messagesFetchRequest(
                 for: lastQuery ?? query
             ),
-            itemCreator: { try $0.asModel(transformer: self.client.config.messageTransformer) as ChatMessage },
+            itemCreator: { try $0.asModel(transformer: self.client.config.modelsTransformer) as ChatMessage },
             itemReuseKeyPaths: (\ChatMessage.id, \MessageDTO.id)
         )
         observer.onDidChange = { [weak self] changes in

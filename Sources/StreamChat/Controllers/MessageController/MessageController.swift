@@ -322,13 +322,13 @@ public class ChatMessageController: DataController, DelegateCallable, DataStoreP
     ) {
         let parentMessageId = self.messageId
 
-        var transformableInfo = MessageTransformableInfo(
+        var transformableInfo = NewMessageTransformableInfo(
             text: text,
             attachments: attachments,
             extraData: extraData
         )
-        if let transformer = client.config.newMessageTransformer {
-            transformableInfo = transformer(transformableInfo)
+        if let transformer = client.config.modelsTransformer {
+            transformableInfo = transformer.transform(newMessageInfo: transformableInfo)
         }
 
         messageUpdater.createNewReply(
@@ -887,7 +887,7 @@ private extension ChatMessageController {
         let observer = environment.messageObserverBuilder(
             client.databaseContainer,
             MessageDTO.message(withID: messageId),
-            { try $0.asModel(transformer: self.client.config.messageTransformer) },
+            { try $0.asModel(transformer: self.client.config.modelsTransformer) },
             NSFetchedResultsController<MessageDTO>.self
         )
 
@@ -910,7 +910,7 @@ private extension ChatMessageController {
                 deletedMessagesVisibility: deletedMessageVisibility,
                 shouldShowShadowedMessages: shouldShowShadowedMessages
             ),
-            { try $0.asModel(transformer: self.client.config.messageTransformer) as ChatMessage },
+            { try $0.asModel(transformer: self.client.config.modelsTransformer) as ChatMessage },
             NSFetchedResultsController<MessageDTO>.self
         )
         observer.onDidChange = { [weak self] changes in

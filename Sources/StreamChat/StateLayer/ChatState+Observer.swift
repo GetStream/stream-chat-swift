@@ -31,8 +31,7 @@ extension ChatState {
                 database: database,
                 fetchRequest: ChannelDTO.fetchRequest(for: cid),
                 itemCreator: { try $0.asModel(
-                    transformer: clientConfig.channelTransformer,
-                    messageTransformer: clientConfig.messageTransformer
+                    transformer: clientConfig.modelsTransformer
                 ) }
             )
             messagesObserver = StateLayerDatabaseObserver(
@@ -44,7 +43,7 @@ extension ChatState {
                     deletedMessagesVisibility: clientConfig.deletedMessagesVisibility,
                     shouldShowShadowedMessages: clientConfig.shouldShowShadowedMessages
                 ),
-                itemCreator: { try $0.asModel(transformer: clientConfig.messageTransformer) },
+                itemCreator: { try $0.asModel(transformer: clientConfig.modelsTransformer) },
                 itemReuseKeyPaths: (\ChatMessage.id, \MessageDTO.id),
                 sorting: []
             )

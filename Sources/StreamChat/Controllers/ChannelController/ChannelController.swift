@@ -763,13 +763,13 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
         extraData: [String: RawJSON] = [:],
         completion: ((Result<MessageId, Error>) -> Void)? = nil
     ) {
-        var transformableInfo = MessageTransformableInfo(
+        var transformableInfo = NewMessageTransformableInfo(
             text: text,
             attachments: attachments,
             extraData: extraData
         )
-        if let transformer = client.config.newMessageTransformer {
-            transformableInfo = transformer(transformableInfo)
+        if let transformer = client.config.modelsTransformer {
+            transformableInfo = transformer.transform(newMessageInfo: transformableInfo)
         }
 
         createNewMessage(
@@ -1649,8 +1649,7 @@ private extension ChatChannelController {
                 fetchRequest: ChannelDTO.fetchRequest(for: cid),
                 itemCreator: {
                     try $0.asModel(
-                        transformer: self.client.config.channelTransformer,
-                        messageTransformer: self.client.config.messageTransformer
+                        transformer: self.client.config.modelsTransformer
                     ) as ChatChannel
                 }
             ).onChange { [weak self] change in
@@ -1697,7 +1696,7 @@ private extension ChatChannelController {
                     shouldShowShadowedMessages: shouldShowShadowedMessages
                 ),
                 itemCreator: {
-                    try $0.asModel(transformer: self.client.config.messageTransformer) as ChatMessage
+                    try $0.asModel(transformer: self.client.config.modelsTransformer) as ChatMessage
                 },
                 itemReuseKeyPaths: (\ChatMessage.id, \MessageDTO.id)
             )
@@ -1890,21 +1889,5 @@ public extension ChatChannel {
         }
 
         return lastReadMessageId
-    }
-}
-
-public struct MessageTransformableInfo {
-    public var text: String
-    public var attachments: [AnyAttachmentPayload]
-    public var extraData: [String: RawJSON]
-
-    public init(
-        text: String,
-        attachments: [AnyAttachmentPayload],
-        extraData: [String: RawJSON]
-    ) {
-        self.text = text
-        self.attachments = attachments
-        self.extraData = extraData
     }
 }

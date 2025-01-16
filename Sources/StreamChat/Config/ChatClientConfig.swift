@@ -62,13 +62,10 @@ public struct ChatClientConfig {
     /// If set to `true`, `ChatClient` resets the local cache on the start.
     ///
     /// You should set `shouldFlushLocalStorageOnStart = true` every time the changes in your code makes the local cache invalid.
-    ///
-    ///
     public var shouldFlushLocalStorageOnStart: Bool = false
 
-    public var channelTransformer: ((StreamChat.ChatChannel) -> StreamChat.ChatChannel)?
-    public var messageTransformer: ((ChatMessage) -> ChatMessage)?
-    public var newMessageTransformer: ((MessageTransformableInfo) -> MessageTransformableInfo)?
+    /// An object that provides a way to transform Stream Chat models.
+    public var modelsTransformer: StreamModelsTransformer?
 
     /// Advanced settings for the local caching and model serialization.
     public var localCaching = LocalCaching()

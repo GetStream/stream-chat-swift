@@ -37,27 +37,7 @@ final class StreamChatWrapper {
         config.shouldShowShadowedMessages = true
         config.applicationGroupIdentifier = applicationGroupIdentifier
         config.urlSessionConfiguration.httpAdditionalHeaders = ["Custom": "Example"]
-        config.messageTransformer = { message in
-            message.mapped(
-                text: "Yo",
-                extraData: message.extraData,
-                attachments: message.allAttachments
-            )
-        }
-        config.newMessageTransformer = { messageInfo in
-            MessageTransformableInfo(
-                text: "Changed",
-                attachments: messageInfo.attachments,
-                extraData: messageInfo.extraData
-            )
-        }
-        config.channelTransformer = { channel in
-            channel.mapped(
-                name: "Hey!",
-                imageURL: channel.imageURL,
-                extraData: channel.extraData
-            )
-        }
+        // config.modelsTransformer = CustomStreamModelsTransformer()
         configureUI()
     }
 }
@@ -198,7 +178,7 @@ extension StreamChatWrapper {
     }
 }
 
-// MARK: Push Notifications
+// MARK: - Push Notifications
 
 extension StreamChatWrapper {
     func registerForPushNotifications(with deviceToken: Data) {
@@ -211,5 +191,36 @@ extension StreamChatWrapper {
 
     func notificationInfo(for response: UNNotificationResponse) -> ChatPushNotificationInfo? {
         try? ChatPushNotificationInfo(content: response.notification.request.content)
+    }
+}
+
+// MARK: - Stream Models Transformer
+
+// An object to test the Stream Models transformer.
+// By default it is not used. To use it, set it to the `modelsTransformer` property of the `ChatClientConfig`.
+
+class CustomStreamModelsTransformer: StreamModelsTransformer {
+    func transform(channel: ChatChannel) -> ChatChannel {
+        channel.mapped(
+            name: "Hey!",
+            imageURL: channel.imageURL,
+            extraData: channel.extraData
+        )
+    }
+
+    func transform(message: ChatMessage) -> ChatMessage {
+        message.mapped(
+            text: "Yo",
+            extraData: message.extraData,
+            attachments: message.allAttachments
+        )
+    }
+
+    func transform(newMessageInfo: NewMessageTransformableInfo) -> NewMessageTransformableInfo {
+        newMessageInfo.mapped(
+            text: "Changed",
+            attachments: newMessageInfo.attachments,
+            extraData: newMessageInfo.extraData
+        )
     }
 }

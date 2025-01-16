@@ -57,8 +57,7 @@ public struct DataStore {
     /// - Parameter cid: An cid of a channel.
     public func channel(cid: ChannelId) -> ChatChannel? {
         try? database.readAndWait { try? $0.channel(cid: cid)?.asModel(
-            transformer: client.config.channelTransformer,
-            messageTransformer: client.config.messageTransformer
+            transformer: client.config.modelsTransformer
         ) }
     }
 
@@ -71,7 +70,9 @@ public struct DataStore {
     ///
     /// - Parameter id: An id of a message.
     public func message(id: MessageId) -> ChatMessage? {
-        try? database.readAndWait { try? $0.message(id: id)?.asModel(transformer: client.config.messageTransformer) }
+        try? database.readAndWait { try? $0.message(id: id)?.asModel(
+            transformer: client.config.modelsTransformer
+        ) }
     }
 
     /// Loads a thread model with a matching `parentMessageId` from the **local data store**.

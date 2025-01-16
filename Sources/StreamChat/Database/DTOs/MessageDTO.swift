@@ -1268,11 +1268,11 @@ extension MessageDTO {
 
 extension MessageDTO {
     /// Snapshots the current state of `MessageDTO` and returns an immutable model object from it.
-    func asModel(transformer: ((ChatMessage) -> ChatMessage)? = nil) throws -> ChatMessage { try .init(fromDTO: self, depth: 0, transformer: transformer) }
+    func asModel(transformer: StreamModelsTransformer? = nil) throws -> ChatMessage { try .init(fromDTO: self, depth: 0, transformer: transformer) }
 
     /// Snapshots the current state of `MessageDTO` and returns an immutable model object from it if the dependency depth
     /// limit has not been reached
-    func relationshipAsModel(depth: Int, transformer: ((ChatMessage) -> ChatMessage)?) throws -> ChatMessage? {
+    func relationshipAsModel(depth: Int, transformer: StreamModelsTransformer?) throws -> ChatMessage? {
         do {
             return try ChatMessage(fromDTO: self, depth: depth + 1, transformer: transformer)
         } catch {
@@ -1332,7 +1332,7 @@ extension MessageDTO {
 }
 
 private extension ChatMessage {
-    init(fromDTO dto: MessageDTO, depth: Int, transformer: ((ChatMessage) -> ChatMessage)?) throws {
+    init(fromDTO dto: MessageDTO, depth: Int, transformer: StreamModelsTransformer?) throws {
         guard StreamRuntimeCheck._canFetchRelationship(currentDepth: depth) else {
             throw RecursionLimitError()
         }
@@ -1485,7 +1485,7 @@ private extension ChatMessage {
         )
 
         if let transformer = transformer {
-            self = transformer(message)
+            self = transformer.transform(message: message)
             return
         }
 
