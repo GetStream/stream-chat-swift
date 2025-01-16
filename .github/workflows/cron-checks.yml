@@ -46,19 +46,19 @@ jobs:
             os: macos-15
             device: "iPhone 16 Pro"
             setup_runtime: false
-          - ios: 17.4
+          - ios: 17.5
             xcode: 15.4
-            os: macos-14
+            os: macos-15
             device: "iPhone 14 Pro"
             setup_runtime: false
           - ios: 16.4
-            xcode: 15.3
-            os: macos-14
+            xcode: 15.4
+            os: macos-15
             device: "iPhone 14 Pro"
             setup_runtime: true
           - ios: 15.5
-            xcode: 15.3
-            os: macos-14
+            xcode: 15.4
+            os: macos-15
             device: "iPhone 13 Pro"
             setup_runtime: true
       fail-fast: false
@@ -133,19 +133,19 @@ jobs:
             os: macos-15
             device: "iPhone 16 Pro"
             setup_runtime: false
-          - ios: 17.4
+          - ios: 17.5
             xcode: 15.4
-            os: macos-14
+            os: macos-15
             device: "iPhone 14 Pro"
             setup_runtime: false
           - ios: 16.4
-            xcode: 15.3
-            os: macos-14
+            xcode: 15.5
+            os: macos-15
             device: "iPhone 14 Pro"
             setup_runtime: true
           - ios: 15.5
-            xcode: 15.3
-            os: macos-14
+            xcode: 15.5
+            os: macos-15
             device: "iPhone 13 Pro"
             setup_runtime: true
       fail-fast: false
@@ -191,9 +191,9 @@ jobs:
 
   build-old-xcode:
     name: Build LLC + UI (Xcode 15)
-    runs-on: macos-14
+    runs-on: macos-15
     env:
-      XCODE_VERSION: "15.0.1"
+      XCODE_VERSION: "15.4"
     steps:
     - name: Connect Bot
       uses: webfactory/ssh-agent@v0.7.0
