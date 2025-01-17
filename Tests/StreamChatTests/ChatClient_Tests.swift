@@ -578,6 +578,22 @@ final class ChatClient_Tests: XCTestCase {
         XCTAssertCall(AuthenticationRepository_Mock.Signature.connectTokenProvider, on: authenticationRepository)
         XCTAssertEqual(receivedError, mockedError)
     }
+    
+    func test_connectUserAsync_staticToken_callsAuthenticationRepository_success() async throws {
+        let client = ChatClient(config: inMemoryStorageConfig, environment: testEnv.environment)
+        let userInfo = UserInfo(id: "id")
+        
+        let authenticationRepository = try XCTUnwrap(client.authenticationRepository as? AuthenticationRepository_Mock)
+        authenticationRepository.connectUserResult = .success(())
+        let connectionRepository = try XCTUnwrap(client.connectionRepository as? ConnectionRepository_Mock)
+        connectionRepository.provideConnectionIdResult = .success(.unique)
+        try client.mockDatabaseContainer.createCurrentUser(id: userInfo.id)
+        
+        let connectedUser = try await client.connectUser(userInfo: userInfo, token: .unique())
+        XCTAssertCall(AuthenticationRepository_Mock.Signature.connectTokenProvider, on: authenticationRepository)
+        XCTAssertCall("provideConnectionId(timeout:completion:)", on: connectionRepository)
+        await XCTAssertEqual(userInfo.id, connectedUser.state.user.id)
+    }
 
     // MARK: - Connect Guest
 

@@ -3,6 +3,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 # Upcoming
 
+## StreamChat
+### 🐞 Fixed
+- Calling async `connectUser()` methods can sometimes throw `CurrentUserDoesNotExist()` unexpectedly [#3565](https://github.com/GetStream/stream-chat-swift/pull/3565)
+
 ## StreamChatUI
 ### 🐞 Fixed
 - Fix thread reply action shown when inside a Thread [#3561](https://github.com/GetStream/stream-chat-swift/pull/3561)
