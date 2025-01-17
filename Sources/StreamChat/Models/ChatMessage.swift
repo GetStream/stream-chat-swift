@@ -256,7 +256,7 @@ public struct ChatMessage {
         _quotedMessage = { quotedMessage }
     }
 
-    public func mapped(
+    public func replacing(
         text: String?,
         extraData: [String: RawJSON]?,
         attachments: [AnyChatMessageAttachment]?

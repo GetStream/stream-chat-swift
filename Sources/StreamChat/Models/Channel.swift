@@ -229,7 +229,7 @@ public struct ChatChannel {
         self.previewMessage = previewMessage
     }
 
-    public func mapped(
+    public func replacing(
         name: String?,
         imageURL: URL?,
         extraData: [String: RawJSON]?

@@ -201,7 +201,7 @@ extension StreamChatWrapper {
 
 class CustomStreamModelsTransformer: StreamModelsTransformer {
     func transform(channel: ChatChannel) -> ChatChannel {
-        channel.mapped(
+        channel.replacing(
             name: "Hey!",
             imageURL: channel.imageURL,
             extraData: channel.extraData
@@ -209,7 +209,7 @@ class CustomStreamModelsTransformer: StreamModelsTransformer {
     }
 
     func transform(message: ChatMessage) -> ChatMessage {
-        message.mapped(
+        message.replacing(
             text: "Yo",
             extraData: message.extraData,
             attachments: message.allAttachments
@@ -217,7 +217,7 @@ class CustomStreamModelsTransformer: StreamModelsTransformer {
     }
 
     func transform(newMessageInfo: NewMessageTransformableInfo) -> NewMessageTransformableInfo {
-        newMessageInfo.mapped(
+        newMessageInfo.replacing(
             text: "Changed",
             attachments: newMessageInfo.attachments,
             extraData: newMessageInfo.extraData
