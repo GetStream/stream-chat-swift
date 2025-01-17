@@ -9,7 +9,7 @@ import Foundation
 /// Only some data can be changed. The method `replacing()` is used to create a new object from existing data.
 /// All transform functions have default implementation, so you can override only the ones you need.
 ///
-/// **Note:** When using `replacing()` method, you need to provide all the properties of the existing object.
+/// - Note: When using `replacing()` method, you need to provide all the properties of the existing object.
 /// Or you can pass `nil` and that will erase the existing value.
 ///
 /// Example:
