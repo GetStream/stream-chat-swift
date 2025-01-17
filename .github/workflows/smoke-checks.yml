@@ -46,9 +46,9 @@ jobs:
 
   automated-code-review:
     name: Automated Code Review
-    runs-on: macos-14
+    runs-on: macos-15
     env:
-      XCODE_VERSION: "15.0.1"
+      XCODE_VERSION: "15.4"
     if: ${{ github.event_name != 'push' && github.event.inputs.snapshots != 'true' }}
     steps:
       - uses: actions/checkout@v4.1.1
