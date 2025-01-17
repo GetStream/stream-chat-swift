@@ -12,6 +12,8 @@ import Foundation
 /// - Note: When using `replacing()` method, you need to provide all the properties of the existing object.
 /// Or you can pass `nil` and that will erase the existing value.
 ///
+/// - Important: Transform methods can be called often and therefore, it must be performant.
+///
 /// Example:
 /// ```
 /// class CustomStreamModelsTransformer: StreamModelsTransformer {
