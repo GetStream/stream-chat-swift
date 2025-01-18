@@ -62,7 +62,7 @@ open class ChatChannelVC: _ViewController,
         .audioQueuePlayerNextItemProvider
         .init()
 
-    /// Header View
+    /// The navigation header view.
     open private(set) lazy var headerView: ChatChannelHeaderView = components
         .channelHeaderView.init()
         .withoutAutoresizingMaskConstraints
@@ -160,11 +160,11 @@ open class ChatChannelVC: _ViewController,
         // Handle pagination
         viewPaginationHandler.onNewTopPage = { [weak self] notifyElementsCount, completion in
             notifyElementsCount(self?.channelController.messages.count ?? 0)
-            self?.channelController.loadPreviousMessages(completion: completion)
+            self?.loadPreviousMessages(completion: completion)
         }
         viewPaginationHandler.onNewBottomPage = { [weak self] notifyElementsCount, completion in
             notifyElementsCount(self?.channelController.messages.count ?? 0)
-            self?.channelController.loadNextMessages(completion: completion)
+            self?.loadNextMessages(completion: completion)
         }
 
         messageListVC.audioPlayer = audioPlayer
@@ -296,6 +296,35 @@ open class ChatChannelVC: _ViewController,
         }
 
         messageListVC.jumpToMessage(id: id, animated: animated)
+    }
+
+    // MARK: - Loading previous and next messages state handling.
+
+    /// Called when the channel will load previous (older) messages.
+    open func loadPreviousMessages(completion: @escaping (Error?) -> Void) {
+        channelController.loadPreviousMessages { [weak self] error in
+            completion(error)
+            self?.didFinishLoadingPreviousMessages(with: error)
+        }
+    }
+
+    /// Called when the channel finished requesting previous (older) messages.
+    /// Can be used to handle state changes or UI updates.
+    open func didFinishLoadingPreviousMessages(with error: Error?) {
+        // no-op, override to handle the completion of loading previous messages.
+    }
+
+    /// Called when the channel will load next (newer) messages.
+    open func loadNextMessages(completion: @escaping (Error?) -> Void) {
+        channelController.loadNextMessages { [weak self] error in
+            completion(error)
+            self?.didFinishSynchronizing(with: error)
+        }
+    }
+
+    /// Called when the channel finished requesting next (newer) messages.
+    open func didFinishLoadingNextMessages(with error: Error?) {
+        // no-op, override to handle the completion of loading next messages.
     }
 
     // MARK: - ChatMessageListVCDataSource
