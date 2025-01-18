@@ -3,6 +3,7 @@
 //
 
 import Foundation
+import StreamChat
 import StreamChatUI
 import UIKit
 
@@ -17,7 +18,39 @@ final class DemoChatChannelVC: ChatChannelVC, UIGestureRecognizerDelegate {
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
+
+    // MARK: - Custom Header Views
+
+    // Example of a custom header views.
+    // The same code should be provider to `ChatThreadVC` if you want the same behaviour in threads.
+
+    lazy var messageListHeaderView: UIView? = {
+        let headerView = UIView(frame: CGRect(x: 0, y: 0, width: view.bounds.width, height: 60))
+        headerView.backgroundColor = appearance.colorPalette.background
+
+        let label = UILabel()
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.text = "All messages loaded"
+        label.font = .systemFont(ofSize: 12, weight: .medium)
+        label.textColor = .systemGray
+        headerView.addSubview(label)
+
+        NSLayoutConstraint.activate([
+            label.centerYAnchor.constraint(equalTo: headerView.centerYAnchor),
+            label.centerXAnchor.constraint(equalTo: headerView.centerXAnchor)
+        ])
+
+        return headerView
+    }()
+
+    lazy var loadingHeaderViewIndicator: UIActivityIndicatorView = {
+        let indicator = UIActivityIndicatorView(style: .medium)
+        indicator.startAnimating()
+        return indicator
+    }()
+
+    // MARK: - Lifecycle
+
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -58,5 +91,33 @@ final class DemoChatChannelVC: ChatChannelVC, UIGestureRecognizerDelegate {
 
     @objc private func goBack() {
         navigationController?.popViewController(animated: true)
+    }
+
+    // MARK: - Loading previous and next messages state handling.
+
+    override func loadPreviousMessages(completion: @escaping ((any Error)?) -> Void) {
+        messageListVC.headerView = loadingHeaderViewIndicator
+        super.loadPreviousMessages(completion: completion)
+    }
+
+    override func didFinishLoadingPreviousMessages(with error: (any Error)?) {
+        guard error == nil else {
+            return
+        }
+
+        if channelController.hasLoadedAllPreviousMessages {
+            messageListVC.headerView = messageListHeaderView
+        } else {
+            messageListVC.headerView = nil
+        }
+    }
+
+    override func loadNextMessages(completion: @escaping ((any Error)?) -> Void) {
+        messageListVC.footerView = loadingHeaderViewIndicator
+        super.loadNextMessages(completion: completion)
+    }
+
+    override func didFinishLoadingNextMessages(with error: (any Error)?) {
+        messageListVC.footerView = nil
     }
 }
