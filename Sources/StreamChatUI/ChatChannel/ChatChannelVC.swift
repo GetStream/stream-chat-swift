@@ -318,7 +318,7 @@ open class ChatChannelVC: _ViewController,
     open func loadNextMessages(completion: @escaping (Error?) -> Void) {
         channelController.loadNextMessages { [weak self] error in
             completion(error)
-            self?.didFinishSynchronizing(with: error)
+            self?.didFinishLoadingNextMessages(with: error)
         }
     }
 
