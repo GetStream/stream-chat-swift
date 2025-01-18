@@ -21,8 +21,8 @@ final class DemoChatChannelVC: ChatChannelVC, UIGestureRecognizerDelegate {
 
     // MARK: - Custom Header Views
 
-    // Example of a custom header views.
-    // The same code should be provider to `ChatThreadVC` if you want the same behaviour in threads.
+    // Example of custom header views.
+    // The same code should be provided to `ChatThreadVC` if you want the same behaviour in threads.
 
     lazy var messageListHeaderView: UIView? = {
         let headerView = UIView(frame: CGRect(x: 0, y: 0, width: view.bounds.width, height: 60))
