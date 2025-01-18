@@ -64,6 +64,26 @@ open class ChatMessageListVC: _ViewController,
         return overlay
     }()
 
+    /// The view that is displayed as the message list table header view.
+    ///
+    /// Internally, this view is set as the footer of the `listView` because the table view is inverted.
+    public var headerView: UIView? {
+        didSet {
+            headerView?.transform = .mirrorY
+            listView.tableFooterView = headerView
+        }
+    }
+
+    /// The view that is displayed as the message list table footer view.
+    ///
+    /// Internally, this view is set as the header of the `listView` because the table view is inverted.
+    public var footerView: UIView? {
+        didSet {
+            footerView?.transform = .mirrorY
+            listView.tableHeaderView = footerView
+        }
+    }
+
     /// A View which displays information about current users who are typing.
     open private(set) lazy var typingIndicatorView: TypingIndicatorView = components
         .typingIndicatorView
