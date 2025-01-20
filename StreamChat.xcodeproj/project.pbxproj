@@ -334,6 +334,8 @@
 		4FD2BE5C2B9AF8C300FFC6F2 /* ChannelListState+Observer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FD2BE5B2B9AF8C300FFC6F2 /* ChannelListState+Observer.swift */; };
 		4FD2BE5D2B9AF8C300FFC6F2 /* ChannelListState+Observer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FD2BE5B2B9AF8C300FFC6F2 /* ChannelListState+Observer.swift */; };
 		4FD94FC52BCD5EF00084FEDF /* ConnectedUser_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FD94FC42BCD5EF00084FEDF /* ConnectedUser_Tests.swift */; };
+		4FD964852D3A7EFC001B6838 /* DatabaseModelCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FD964842D3A7EF6001B6838 /* DatabaseModelCache.swift */; };
+		4FD964862D3A7EFC001B6838 /* DatabaseModelCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FD964842D3A7EF6001B6838 /* DatabaseModelCache.swift */; };
 		4FDAD05E2BC8179E004048E8 /* StateBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FDAD05D2BC8179E004048E8 /* StateBuilder.swift */; };
 		4FDAD05F2BC8179E004048E8 /* StateBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FDAD05D2BC8179E004048E8 /* StateBuilder.swift */; };
 		4FE6E1AA2BAC79F400C80AF1 /* MemberListState+Observer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FE6E1A92BAC79F400C80AF1 /* MemberListState+Observer.swift */; };
@@ -3244,6 +3246,7 @@
 		4FD2BE582B9AF8B600FFC6F2 /* ChannelListState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelListState.swift; sourceTree = "<group>"; };
 		4FD2BE5B2B9AF8C300FFC6F2 /* ChannelListState+Observer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ChannelListState+Observer.swift"; sourceTree = "<group>"; };
 		4FD94FC42BCD5EF00084FEDF /* ConnectedUser_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectedUser_Tests.swift; sourceTree = "<group>"; };
+		4FD964842D3A7EF6001B6838 /* DatabaseModelCache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DatabaseModelCache.swift; sourceTree = "<group>"; };
 		4FDAD05D2BC8179E004048E8 /* StateBuilder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StateBuilder.swift; sourceTree = "<group>"; };
 		4FE6E1A92BAC79F400C80AF1 /* MemberListState+Observer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MemberListState+Observer.swift"; sourceTree = "<group>"; };
 		4FE6E1AC2BAC7A1B00C80AF1 /* UserListState+Observer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UserListState+Observer.swift"; sourceTree = "<group>"; };
@@ -5889,6 +5892,7 @@
 				799C945D247D7283001F1104 /* DatabaseContainer.swift */,
 				792FCB4A24A3D52A000290C7 /* DatabaseSession.swift */,
 				797EEA4524FFAF4F00C81203 /* DataStore.swift */,
+				4FD964842D3A7EF6001B6838 /* DatabaseModelCache.swift */,
 				792A4F18247EA97000EAF71D /* DTOs */,
 			);
 			path = Database;
@@ -11359,6 +11363,7 @@
 				ADF9E1F72A03E7E400109108 /* MessagesPaginationState.swift in Sources */,
 				79983C8126663436000995F6 /* ChatMessageVideoAttachment.swift in Sources */,
 				ADEEB7F22BD1368900C76602 /* MessageReactionGroupPayload.swift in Sources */,
+				4FD964862D3A7EFC001B6838 /* DatabaseModelCache.swift in Sources */,
 				79877A0A2498E4BC00015F8B /* Device.swift in Sources */,
 				841BAA0D2BCE9F44000C73E4 /* UpdatePollOptionRequestBody.swift in Sources */,
 				841BA9F82BCE80FF000C73E4 /* PollsPayloads.swift in Sources */,
@@ -12403,6 +12408,7 @@
 				841BA9F62BCE8089000C73E4 /* PollsEndpoints.swift in Sources */,
 				AD57979F2978C4F7006CC435 /* UploadedAttachmentPostProcessor.swift in Sources */,
 				AD0CC02F2BDC08E9005E2C66 /* ChatClient+ReactionListController.swift in Sources */,
+				4FD964852D3A7EFC001B6838 /* DatabaseModelCache.swift in Sources */,
 				4042969929FE92320089126D /* AudioAnalysisEngine_Tests.swift in Sources */,
 				AD84377C2BB482CF000F3826 /* ThreadEndpoints.swift in Sources */,
 				C121E877274544AF00023E4C /* MemberModelDTO.swift in Sources */,

@@ -233,6 +233,10 @@ extension ChatUser {
     fileprivate static func create(fromDTO dto: UserDTO) throws -> ChatUser {
         try dto.isNotDeleted()
         
+        if let user = dto.managedObjectContext?.databaseModelCache.user(for: dto) {
+            return user
+        }
+        
         let extraData: [String: RawJSON]
         do {
             extraData = try JSONDecoder.stream.decodeCachedRawJSON(from: dto.extraData)
@@ -246,7 +250,7 @@ extension ChatUser {
 
         let language: TranslationLanguage? = dto.language.map(TranslationLanguage.init)
 
-        return ChatUser(
+        let user = ChatUser(
             id: dto.id,
             name: dto.name,
             imageURL: dto.imageURL,
@@ -262,5 +266,7 @@ extension ChatUser {
             language: language,
             extraData: extraData
         )
+        dto.managedObjectContext?.databaseModelCache.setUser(user, forObjectID: dto.objectID)
+        return user
     }
 }

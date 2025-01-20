@@ -21,6 +21,7 @@ class DatabaseContainer: NSPersistentContainer, @unchecked Sendable {
     /// All writes are happening serially using this context and its `write { }` methods.
     lazy var writableContext: NSManagedObjectContext = {
         let context = newBackgroundContext()
+        context.name = "WritableContext"
         context.automaticallyMergesChangesFromParent = true
         context.mergePolicy = NSMergeByPropertyObjectTrumpMergePolicy
         context.setChatClientConfig(chatClientConfig)
@@ -37,6 +38,7 @@ class DatabaseContainer: NSPersistentContainer, @unchecked Sendable {
     /// If you need a time sensitive context, use `viewContext` instead.
     lazy var backgroundReadOnlyContext: NSManagedObjectContext = {
         let context = newBackgroundContext()
+        context.name = "BackgroundReadOnlyContext"
         context.automaticallyMergesChangesFromParent = true
         context.mergePolicy = NSMergeByPropertyObjectTrumpMergePolicy
         context.setChatClientConfig(chatClientConfig)
@@ -54,6 +56,7 @@ class DatabaseContainer: NSPersistentContainer, @unchecked Sendable {
     /// ```
     private(set) lazy var stateLayerContext: NSManagedObjectContext = {
         let context = newBackgroundContext()
+        context.name = "StateLayerContext"
         // Context is merged manually since automatically is too slow for reacting to changes needed by the state layer
         context.automaticallyMergesChangesFromParent = false
         context.mergePolicy = NSMergeByPropertyObjectTrumpMergePolicy
@@ -194,6 +197,21 @@ class DatabaseContainer: NSPersistentContainer, @unchecked Sendable {
                 FetchCache.clear()
 
                 if self.writableContext.hasChanges {
+                    let updated = self.writableContext.updatedObjects.map(\.objectID)
+                    let deleted = self.writableContext.deletedObjects.map(\.objectID)
+                    let resetCachedObjectIds = Set(updated + deleted)
+                    for readContext in [self.backgroundReadOnlyContext, self.stateLayerContext, self.viewContext] {
+                        readContext.performAndWait {
+                            let cache = readContext.databaseModelCache
+                            cache.removeModels(for: resetCachedObjectIds)
+                            print("Toomas", "hits", cache.cacheHits, "misses", cache.cacheMisses, readContext.name ?? "")
+                        }
+                    }
+                    // TODO: review if it makes sense for writableContext
+                    let writableModelCache = self.writableContext.databaseModelCache
+                    writableModelCache.removeModels(for: resetCachedObjectIds)
+                    print("Toomas", "hits", writableModelCache.cacheHits, "misses", writableModelCache.cacheMisses, self.writableContext.name ?? "")
+                    
                     log.debug("Context has changes. Saving.", subsystems: .database)
                     try self.writableContext.save()
                 } else {
