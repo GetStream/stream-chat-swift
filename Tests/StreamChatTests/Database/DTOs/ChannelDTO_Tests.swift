@@ -548,7 +548,7 @@ final class ChannelDTO_Tests: XCTestCase {
 
         // Assert only 25 messages is serialized in the model
         let channel: ChatChannel? = try? database.viewContext.channel(cid: channelId)?.asModel()
-        XCTAssertEqual(channel?.latestMessages.count, 25)
+        XCTAssertEqual(channel?.latestMessages.count, database.chatClientConfig.localCaching.chatChannel.latestMessagesLimit)
     }
 
     func test_channelPayload_pinnedMessagesArePopulated() throws {
@@ -638,7 +638,7 @@ final class ChannelDTO_Tests: XCTestCase {
 
         // Assert only the 10 newest messages is serialized
         let channel: ChatChannel? = try? database.viewContext.channel(cid: channelId)?.asModel()
-        XCTAssertEqual(channel?.latestMessages.count, 10)
+        XCTAssertEqual(channel?.latestMessages.count, database.chatClientConfig.localCaching.chatChannel.latestMessagesLimit)
     }
 
     func test_channelPayload_pinnedMessagesOlderThanOldestMessageAtAreIgnored() throws {
