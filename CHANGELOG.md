@@ -6,7 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## StreamChatUI
 ### 🐞 Fixed
 - Fix thread reply action shown when inside a Thread [#3561](https://github.com/GetStream/stream-chat-swift/pull/3561)
-- Make creating controller from background threads safer [#3566](https://github.com/GetStream/stream-chat-swift/pull/3566)
+- Fix creating controllers from background threads leading to rare crashes [#3566](https://github.com/GetStream/stream-chat-swift/pull/3566)
 
 # [4.70.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.70.0)
 _January 14, 2025_
