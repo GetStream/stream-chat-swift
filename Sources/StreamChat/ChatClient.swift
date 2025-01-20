@@ -339,7 +339,7 @@ public class ChatClient {
                 continuation.resume(with: error)
             }
         }
-        return try makeConnectedUser()
+        return try await retrieveConnectedUser()
     }
 
     /// Connects the client with the given user.
@@ -391,7 +391,7 @@ public class ChatClient {
                 continuation.resume(with: error)
             }
         }
-        return try makeConnectedUser()
+        return try await retrieveConnectedUser()
     }
 
     /// Connects a guest user.
@@ -423,7 +423,7 @@ public class ChatClient {
                 continuation.resume(with: error)
             }
         }
-        return try makeConnectedUser()
+        return try await retrieveConnectedUser()
     }
 
     /// Connects an anonymous user
@@ -447,7 +447,7 @@ public class ChatClient {
                 continuation.resume(with: error)
             }
         }
-        return try makeConnectedUser()
+        return try await retrieveConnectedUser()
     }
     
     /// Sets the user token to the client, this method is only needed to perform API calls
@@ -695,6 +695,15 @@ extension ChatClient: ConnectionDetailsProviderDelegate {
 
     func provideConnectionId(timeout: TimeInterval = 10, completion: @escaping (Result<ConnectionId, Error>) -> Void) {
         connectionRepository.provideConnectionId(timeout: timeout, completion: completion)
+    }
+
+    @discardableResult
+    func provideConnectionId(timeout: TimeInterval = 10) async throws -> ConnectionId {
+        try await withCheckedThrowingContinuation { continuation in
+            provideConnectionId(timeout: timeout) { result in
+                continuation.resume(with: result)
+            }
+        }
     }
 }
 
