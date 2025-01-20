@@ -4,6 +4,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 # Upcoming
 
 ## StreamChatUI
+### ✅ Added
+- Add a simpler way to customize header and footer views in the Message List [#3567](https://github.com/GetStream/stream-chat-swift/pull/3567)
+  - Add `ChatMessageListVC.headerView`
+  - Add `ChatMessageListVC.footerView`
+- Make it easier to provide state handling when loading more messages [#3567](https://github.com/GetStream/stream-chat-swift/pull/3567)
+  - Adds `ChatChannelVC.loadPreviousMessages()` + `ChatChannelVC.didFinishLoadingPreviousMessages(error:)`
+  - Adds `ChatChannelVC.loadNextMessages()` + `ChatChannelVC.didFinishLoadingNextMessages(error:)`
+  - Adds `ChatThreadVC.loadPreviousReplies()` + `ChatThreadVC.didFinishLoadingPreviousReplies(error:)`
+  - Adds `ChatThreadVC.loadNextReplies()` + `ChatThreadVC.didFinishLoadingNextReplies(error:)`
 ### 🐞 Fixed
 - Fix thread reply action shown when inside a Thread [#3561](https://github.com/GetStream/stream-chat-swift/pull/3561)
 
