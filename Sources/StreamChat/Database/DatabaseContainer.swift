@@ -140,6 +140,7 @@ class DatabaseContainer: NSPersistentContainer, @unchecked Sendable {
 
         viewContext.mergePolicy = NSMergeByPropertyObjectTrumpMergePolicy
         viewContext.automaticallyMergesChangesFromParent = true
+        viewContext.setChatClientConfig(chatClientConfig)
 
         FetchCache.clear()
 

@@ -1327,17 +1327,19 @@ final class ChannelDTO_Tests: XCTestCase {
 
     func test_asModel_populatesLatestMessage_withoutFilteringDeletedMessages() throws {
         // GIVEN
+        var config = ChatClientConfig(apiKeyString: .unique)
+        config.deletedMessagesVisibility = .visibleForCurrentUser
+        config.shouldShowShadowedMessages = true
+        config.localCaching = .init(
+            chatChannel: .init(
+                lastActiveWatchersLimit: 0,
+                lastActiveMembersLimit: 0,
+                latestMessagesLimit: 3
+            )
+        )
         database = DatabaseContainer_Spy(
             kind: .inMemory,
-            localCachingSettings: .init(
-                chatChannel: .init(
-                    lastActiveWatchersLimit: 0,
-                    lastActiveMembersLimit: 0,
-                    latestMessagesLimit: 3
-                )
-            ),
-            deletedMessagesVisibility: .visibleForCurrentUser,
-            shouldShowShadowedMessages: true
+            chatClientConfig: config
         )
 
         let currentUser: CurrentUserPayload = .dummy(userId: .unique, role: .admin)

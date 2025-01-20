@@ -226,7 +226,7 @@ final class DatabaseContainer_Tests: XCTestCase {
         cachingSettings.chatChannel.lastActiveMembersLimit = .unique
         cachingSettings.chatChannel.lastActiveWatchersLimit = .unique
 
-        let database = DatabaseContainer_Spy(kind: .inMemory, localCachingSettings: cachingSettings)
+        let database = DatabaseContainer_Spy(localCachingSettings: cachingSettings)
 
         XCTAssertEqual(database.viewContext.localCachingSettings, cachingSettings)
 
@@ -274,7 +274,7 @@ final class DatabaseContainer_Tests: XCTestCase {
     func test_storingMicrosecondsDate() throws {
         let expectedCreatedAt = Date(timeIntervalSinceReferenceDate: 0.000123123)
         let currentUserId = String.unique
-        let container = DatabaseContainer_Spy()
+        let container = DatabaseContainer_Spy(kind: .inMemory)
         try container.writeSynchronously { session in
             try session.saveCurrentUser(
                 payload: .dummy(
@@ -294,7 +294,7 @@ final class DatabaseContainer_Tests: XCTestCase {
     // MARK: - Reset Ephemeral Values
     
     func test_resetEphemeralValues_inDTOs() throws {
-        let container = DatabaseContainer_Spy()
+        let container = DatabaseContainer_Spy(kind: .inMemory)
         let cid = ChannelId.unique
         let messageId = MessageId.unique
         let userId = UserId.unique
@@ -449,5 +449,25 @@ final class DatabaseContainer_Tests: XCTestCase {
             
             QueuedRequestDTO.createRequest(date: .unique, endpoint: Data(), context: container.writableContext)
         }
+    }
+}
+
+private extension DatabaseContainer {
+    convenience init(kind: DatabaseContainer.Kind = .inMemory) {
+        self.init(kind: kind, chatClientConfig: .init(apiKeyString: .unique))
+    }
+}
+
+private extension NSManagedObjectContext {
+    var deletedMessagesVisibility: ChatClientConfig.DeletedMessageVisibility {
+        chatClientConfig.deletedMessagesVisibility
+    }
+
+    var shouldShowShadowedMessages: Bool {
+        chatClientConfig.shouldShowShadowedMessages
+    }
+
+    var localCachingSettings: ChatClientConfig.LocalCaching {
+        chatClientConfig.localCaching
     }
 }

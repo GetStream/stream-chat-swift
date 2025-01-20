@@ -475,7 +475,9 @@ final class MessageController_Tests: XCTestCase {
         let truncatedDate = Date.unique
 
         try client.databaseContainer.createCurrentUser(id: currentUserId)
-        client.databaseContainer.viewContext.deletedMessagesVisibility = .visibleForCurrentUser
+        var config = ChatClientConfig(apiKeyString: .unique)
+        config.deletedMessagesVisibility = .visibleForCurrentUser
+        client.databaseContainer.viewContext.setChatClientConfig(config)
         controller = ChatMessageController(client: client, cid: cid, messageId: messageId, replyPaginationHandler: replyPaginationHandler, environment: env.controllerEnvironment)
 
         // Insert own deleted reply
@@ -511,7 +513,9 @@ final class MessageController_Tests: XCTestCase {
         let truncatedDate = Date.unique
 
         try client.databaseContainer.createCurrentUser(id: currentUserId)
-        client.databaseContainer.viewContext.deletedMessagesVisibility = .alwaysHidden
+        var config = ChatClientConfig(apiKeyString: .unique)
+        config.deletedMessagesVisibility = .alwaysHidden
+        client.databaseContainer.viewContext.setChatClientConfig(config)
         controller = ChatMessageController(client: client, cid: cid, messageId: messageId, replyPaginationHandler: replyPaginationHandler, environment: env.controllerEnvironment)
 
         // Save channel
@@ -556,7 +560,9 @@ final class MessageController_Tests: XCTestCase {
         let truncatedDate = Date.unique
 
         try client.databaseContainer.createCurrentUser(id: currentUserId)
-        client.databaseContainer.viewContext.deletedMessagesVisibility = .alwaysVisible
+        var config = ChatClientConfig(apiKeyString: .unique)
+        config.deletedMessagesVisibility = .alwaysHidden
+        client.databaseContainer.viewContext.setChatClientConfig(config)
         controller = ChatMessageController(client: client, cid: cid, messageId: messageId, replyPaginationHandler: replyPaginationHandler, environment: env.controllerEnvironment)
 
         // Save channel
@@ -602,7 +608,9 @@ final class MessageController_Tests: XCTestCase {
         let truncatedDate = Date.unique
 
         try client.databaseContainer.createCurrentUser(id: currentUserId)
-        client.databaseContainer.viewContext.shouldShowShadowedMessages = true
+        var config = ChatClientConfig(apiKeyString: .unique)
+        config.shouldShowShadowedMessages = true
+        client.databaseContainer.viewContext.setChatClientConfig(config)
         controller = ChatMessageController(client: client, cid: cid, messageId: messageId, replyPaginationHandler: replyPaginationHandler, environment: env.controllerEnvironment)
 
         // Save channel
@@ -1185,7 +1193,9 @@ final class MessageController_Tests: XCTestCase {
     func test_createNewReply_sendsNewMessagePendingEvent() throws {
         let exp = expectation(description: "should complete create new message")
 
-        let mockedEventNotificationCenter = EventNotificationCenter_Mock(database: .init(kind: .inMemory))
+        let mockedEventNotificationCenter = EventNotificationCenter_Mock(
+            database: .init(kind: .inMemory, chatClientConfig: .init(apiKeyString: .unique))
+        )
         client.mockedEventNotificationCenter = mockedEventNotificationCenter
 
         controller.createNewReply(
