@@ -45,6 +45,7 @@ final class DemoChatChannelVC: ChatChannelVC, UIGestureRecognizerDelegate {
 
     lazy var loadingViewIndicator: UIActivityIndicatorView = {
         let indicator = UIActivityIndicatorView(style: .medium)
+        indicator.frame = .init(x: 0, y: 0, width: 50, height: 50)
         indicator.startAnimating()
         return indicator
     }()
