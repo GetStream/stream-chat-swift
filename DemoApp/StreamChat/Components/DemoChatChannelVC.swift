@@ -43,7 +43,7 @@ final class DemoChatChannelVC: ChatChannelVC, UIGestureRecognizerDelegate {
         return headerView
     }()
 
-    lazy var loadingHeaderViewIndicator: UIActivityIndicatorView = {
+    lazy var loadingViewIndicator: UIActivityIndicatorView = {
         let indicator = UIActivityIndicatorView(style: .medium)
         indicator.startAnimating()
         return indicator
@@ -96,7 +96,7 @@ final class DemoChatChannelVC: ChatChannelVC, UIGestureRecognizerDelegate {
     // MARK: - Loading previous and next messages state handling.
 
     override func loadPreviousMessages(completion: @escaping (Error?) -> Void) {
-        messageListVC.headerView = loadingHeaderViewIndicator
+        messageListVC.headerView = loadingViewIndicator
         super.loadPreviousMessages(completion: completion)
     }
 
@@ -113,7 +113,7 @@ final class DemoChatChannelVC: ChatChannelVC, UIGestureRecognizerDelegate {
     }
 
     override func loadNextMessages(completion: @escaping (Error?) -> Void) {
-        messageListVC.footerView = loadingHeaderViewIndicator
+        messageListVC.footerView = loadingViewIndicator
         super.loadNextMessages(completion: completion)
     }
 
