@@ -19,30 +19,6 @@ final class DemoChatChannelVC: ChatChannelVC, UIGestureRecognizerDelegate {
         fatalError("init(coder:) has not been implemented")
     }
 
-    // MARK: - Custom Header Views
-
-    // Example of custom header views.
-    // The same code should be provided to `ChatThreadVC` if you want the same behaviour in threads.
-
-    lazy var messageListHeaderView: UIView? = {
-        let headerView = UIView(frame: CGRect(x: 0, y: 0, width: view.bounds.width, height: 60))
-        headerView.backgroundColor = appearance.colorPalette.background
-
-        let label = UILabel()
-        label.translatesAutoresizingMaskIntoConstraints = false
-        label.text = "All messages loaded"
-        label.font = .systemFont(ofSize: 12, weight: .medium)
-        label.textColor = .systemGray
-        headerView.addSubview(label)
-
-        NSLayoutConstraint.activate([
-            label.centerYAnchor.constraint(equalTo: headerView.centerYAnchor),
-            label.centerXAnchor.constraint(equalTo: headerView.centerXAnchor)
-        ])
-
-        return headerView
-    }()
-
     lazy var loadingViewIndicator: UIActivityIndicatorView = {
         let indicator = UIActivityIndicatorView(style: .medium)
         indicator.frame = .init(x: 0, y: 0, width: 50, height: 50)
@@ -102,15 +78,7 @@ final class DemoChatChannelVC: ChatChannelVC, UIGestureRecognizerDelegate {
     }
 
     override func didFinishLoadingPreviousMessages(with error: Error?) {
-        guard error == nil else {
-            return
-        }
-
-        if channelController.hasLoadedAllPreviousMessages {
-            messageListVC.headerView = messageListHeaderView
-        } else {
-            messageListVC.headerView = nil
-        }
+        messageListVC.headerView = nil
     }
 
     override func loadNextMessages(completion: @escaping (Error?) -> Void) {
