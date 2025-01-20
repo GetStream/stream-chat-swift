@@ -43,7 +43,7 @@ public final class DatabaseContainer_Spy: DatabaseContainer, Spy, @unchecked Sen
     convenience init(
         kind: DatabaseContainer.Kind,
         shouldFlushOnStart: Bool = false,
-        shouldResetEphemeralValuesOnStart: Bool = false,
+        shouldResetEphemeralValuesOnStart: Bool = true,
         localCachingSettings: ChatClientConfig.LocalCaching? = nil,
         deletedMessagesVisibility: ChatClientConfig.DeletedMessageVisibility? = nil,
         shouldShowShadowedMessages: Bool? = nil,
@@ -63,9 +63,7 @@ public final class DatabaseContainer_Spy: DatabaseContainer, Spy, @unchecked Sen
         if shouldFlushOnStart {
             config.shouldFlushLocalStorageOnStart = shouldFlushOnStart
         }
-        if shouldResetEphemeralValuesOnStart {
-            config.isClientInActiveMode = true
-        }
+        config.isClientInActiveMode = shouldResetEphemeralValuesOnStart
         self.init(
             kind: kind,
             modelName: modelName,

@@ -121,7 +121,7 @@ class DatabaseContainer: NSPersistentContainer, @unchecked Sendable {
                             "Failed to initialize the in-memory storage with error: \(error). This is a non-recoverable error."
                         )
                     }
-                    if chatClientConfig.shouldFlushLocalStorageOnStart {
+                    if chatClientConfig.isClientInActiveMode {
                         self?.resetEphemeralValues()
                     }
                 }
