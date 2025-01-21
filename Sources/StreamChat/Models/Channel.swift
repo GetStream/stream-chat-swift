@@ -261,7 +261,7 @@ public struct ChatChannel {
             memberCount: memberCount,
             reads: reads,
             cooldownDuration: cooldownDuration,
-            extraData: extraData ?? self.extraData,
+            extraData: extraData ?? [:],
             latestMessages: latestMessages,
             lastMessageFromCurrentUser: lastMessageFromCurrentUser,
             pinnedMessages: pinnedMessages,
