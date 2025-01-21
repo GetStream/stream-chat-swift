@@ -17,11 +17,9 @@ extension DataStoreProvider {
 /// `DataStore` provide access to all locally available model objects based on their id.
 public struct DataStore {
     let database: DatabaseContainer
-    let client: ChatClient
 
     // Technically, we need only `database` but we use a `Client` instance to get the extra data types from it.
     init(client: ChatClient) {
-        self.client = client
         database = client.databaseContainer
     }
 
