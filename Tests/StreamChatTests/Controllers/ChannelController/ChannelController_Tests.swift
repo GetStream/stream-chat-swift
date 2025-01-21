@@ -1307,7 +1307,9 @@ final class ChannelController_Tests: XCTestCase {
 
     func test_deletedMessages_withAlwaysVisible_messageVisibility() throws {
         // Simulate the config setting
-        client.databaseContainer.viewContext.deletedMessagesVisibility = .alwaysVisible
+        var config = ChatClient_Mock.defaultMockedConfig
+        config.deletedMessagesVisibility = .alwaysVisible
+        client.databaseContainer.viewContext.setChatClientConfig(config)
 
         let currentUserID: UserId = .unique
 
@@ -3528,7 +3530,10 @@ final class ChannelController_Tests: XCTestCase {
     func test_createNewMessage_sendsNewMessagePendingEvent() throws {
         let exp = expectation(description: "should complete create new message")
 
-        let mockedEventNotificationCenter = EventNotificationCenter_Mock(database: .init(kind: .inMemory))
+        let mockedEventNotificationCenter = EventNotificationCenter_Mock(database: .init(
+            kind: .inMemory,
+            chatClientConfig: .init(apiKeyString: .unique)
+        ))
         client.mockedEventNotificationCenter = mockedEventNotificationCenter
 
         controller.createNewMessage(

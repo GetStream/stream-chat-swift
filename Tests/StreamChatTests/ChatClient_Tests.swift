@@ -94,14 +94,13 @@ final class ChatClient_Tests: XCTestCase {
         var env = ChatClient.Environment()
         env.connectionRepositoryBuilder = ConnectionRepository_Mock.init
         env
-            .databaseContainerBuilder =
-            { kind, shouldFlushOnStart, shouldResetEphemeralValuesOnStart, cachingSettings, messageVisibility, showShadowedMessages in
+            .databaseContainerBuilder = { kind, clientConfig in
                 usedDatabaseKind = kind
-                shouldFlushDBOnStart = shouldFlushOnStart
-                shouldResetEphemeralValues = shouldResetEphemeralValuesOnStart
-                localCachingSettings = cachingSettings
-                deleteMessagesVisibility = messageVisibility
-                shouldShowShadowedMessages = showShadowedMessages
+                shouldFlushDBOnStart = clientConfig.shouldFlushLocalStorageOnStart
+                shouldResetEphemeralValues = clientConfig.isClientInActiveMode
+                localCachingSettings = clientConfig.localCaching
+                deleteMessagesVisibility = clientConfig.deletedMessagesVisibility
+                shouldShowShadowedMessages = clientConfig.shouldShowShadowedMessages
                 return DatabaseContainer_Spy()
             }
 
@@ -132,7 +131,7 @@ final class ChatClient_Tests: XCTestCase {
         // Create env object with custom database builder
         var env = ChatClient.Environment()
         env.connectionRepositoryBuilder = ConnectionRepository_Mock.init
-        env.databaseContainerBuilder = { kind, _, _, _, _, _ in
+        env.databaseContainerBuilder = { kind, _ in
             usedDatabaseKind = kind
             return DatabaseContainer_Spy()
         }
@@ -159,7 +158,7 @@ final class ChatClient_Tests: XCTestCase {
         // Create env object and store all `kinds it's called with.
         var env = ChatClient.Environment()
         env.connectionRepositoryBuilder = ConnectionRepository_Mock.init
-        env.databaseContainerBuilder = { kind, _, _, _, _, _ in
+        env.databaseContainerBuilder = { kind, _ in
             usedDatabaseKinds.append(kind)
             return DatabaseContainer_Spy()
         }
@@ -1021,11 +1020,7 @@ private class TestEnvironment {
             databaseContainerBuilder: {
                 self.databaseContainer = DatabaseContainer_Spy(
                     kind: $0,
-                    shouldFlushOnStart: $1,
-                    shouldResetEphemeralValuesOnStart: $2,
-                    localCachingSettings: $3,
-                    deletedMessagesVisibility: $4,
-                    shouldShowShadowedMessages: $5
+                    chatClientConfig: $1
                 )
                 return self.databaseContainer!
             },
