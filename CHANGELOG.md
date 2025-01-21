@@ -3,6 +3,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 # Upcoming
 
+## StreamChat
+### 🐞 Fixed
+- Calling async `connectUser()` methods can sometimes throw `CurrentUserDoesNotExist()` unexpectedly [#3565](https://github.com/GetStream/stream-chat-swift/pull/3565)
+
 ## StreamChatUI
 ### ✅ Added
 - Add a simpler way to customize header and footer views in the Message List [#3567](https://github.com/GetStream/stream-chat-swift/pull/3567)

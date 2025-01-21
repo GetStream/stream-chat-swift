@@ -10,12 +10,23 @@ extension ChatClient {
     /// Creates an instance of ``ConnectedUser`` which represents the logged-in user state and its actions.
     ///
     /// - Throws: An error if no user is currently logged-in.
+    /// - Returns: An instance of ``ConnectedUser`` which represents the logged-in user.
     public func makeConnectedUser() throws -> ConnectedUser {
         let user = try databaseContainer.readAndWait { session in
             guard let dto = session.currentUser else { throw ClientError.CurrentUserDoesNotExist() }
             return try dto.asModel()
         }
         return ConnectedUser(user: user, client: self)
+    }
+    
+    /// Creates an instance of ``ConnectedUser`` by optionally waiting for the current user data to be synced through web-socket events.
+    ///
+    /// - Throws: An error if the current user data failed to sync.
+    /// - Returns: An instance of ``ConnectedUser`` which represents the logged-in user.
+    func retrieveConnectedUser() async throws -> ConnectedUser {
+        // Returns immediately when data is in sync and therefore ensuring that current user is available locally.
+        try await provideConnectionId()
+        return try makeConnectedUser()
     }
 }
 
