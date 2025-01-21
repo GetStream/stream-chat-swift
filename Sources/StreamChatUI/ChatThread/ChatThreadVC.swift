@@ -133,11 +133,11 @@ open class ChatThreadVC: _ViewController,
         // Handle pagination
         viewPaginationHandler.onNewTopPage = { [weak self] notifyElementsCount, completion in
             notifyElementsCount(self?.messages.count ?? 0)
-            self?.messageController.loadPreviousReplies(completion: completion)
+            self?.loadPreviousReplies(completion: completion)
         }
         viewPaginationHandler.onNewBottomPage = { [weak self] notifyElementsCount, completion in
             notifyElementsCount(self?.messages.count ?? 0)
-            self?.messageController.loadNextReplies(completion: completion)
+            self?.loadNextReplies(completion: completion)
         }
 
         if let queueAudioPlayer = audioPlayer as? StreamAudioQueuePlayer {
@@ -246,6 +246,35 @@ open class ChatThreadVC: _ViewController,
         }
 
         messageListVC.jumpToMessage(id: id, animated: animated)
+    }
+
+    // MARK: - Loading previous and next replies state handling
+
+    /// Called when the thread will load previous (older) replies.
+    open func loadPreviousReplies(completion: @escaping (Error?) -> Void) {
+        messageController.loadPreviousReplies { [weak self] error in
+            completion(error)
+            self?.didFinishLoadingPreviousReplies(with: error)
+        }
+    }
+
+    /// Called when the thread finished requesting previous (older) replies.
+    /// Can be used to handle state changes or UI updates.
+    open func didFinishLoadingPreviousReplies(with error: Error?) {
+        // no-op, override to handle the completion of loading previous replies
+    }
+
+    /// Called when the thread will load next (newer) replies.
+    open func loadNextReplies(completion: @escaping (Error?) -> Void) {
+        messageController.loadNextReplies { [weak self] error in
+            completion(error)
+            self?.didFinishLoadingNextReplies(with: error)
+        }
+    }
+
+    /// Called when the thread finished requesting next (newer) replies.
+    open func didFinishLoadingNextReplies(with error: Error?) {
+        // no-op, override to handle the completion of loading next replies
     }
 
     // MARK: - ChatMessageListVCDataSource
