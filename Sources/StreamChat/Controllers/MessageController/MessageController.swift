@@ -887,7 +887,7 @@ private extension ChatMessageController {
         let observer = environment.messageObserverBuilder(
             client.databaseContainer,
             MessageDTO.message(withID: messageId),
-            { try $0.asModel(transformer: self.client.config.modelsTransformer) },
+            { try $0.asModel() },
             NSFetchedResultsController<MessageDTO>.self
         )
 
@@ -909,7 +909,7 @@ private extension ChatMessageController {
                 deletedMessagesVisibility: deletedMessageVisibility,
                 shouldShowShadowedMessages: shouldShowShadowedMessages
             ),
-            { try $0.asModel(transformer: self.client.config.modelsTransformer) as ChatMessage },
+            { try $0.asModel() as ChatMessage },
             NSFetchedResultsController<MessageDTO>.self
         )
         observer.onDidChange = { [weak self] changes in

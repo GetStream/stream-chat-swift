@@ -36,9 +36,7 @@ extension ChannelListState {
                     query: query,
                     chatClientConfig: clientConfig
                 ),
-                itemCreator: { try $0.asModel(
-                    transformer: clientConfig.modelsTransformer
-                ) },
+                itemCreator: { try $0.asModel() },
                 itemReuseKeyPaths: (\ChatChannel.cid.rawValue, \ChannelDTO.cid),
                 sorting: query.sort.runtimeSorting
             )

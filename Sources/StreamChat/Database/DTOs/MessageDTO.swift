@@ -1271,13 +1271,13 @@ extension MessageDTO {
 
 extension MessageDTO {
     /// Snapshots the current state of `MessageDTO` and returns an immutable model object from it.
-    func asModel(transformer: StreamModelsTransformer? = nil) throws -> ChatMessage { try .init(fromDTO: self, depth: 0, transformer: transformer) }
+    func asModel() throws -> ChatMessage { try .init(fromDTO: self, depth: 0) }
 
     /// Snapshots the current state of `MessageDTO` and returns an immutable model object from it if the dependency depth
     /// limit has not been reached
-    func relationshipAsModel(depth: Int, transformer: StreamModelsTransformer?) throws -> ChatMessage? {
+    func relationshipAsModel(depth: Int) throws -> ChatMessage? {
         do {
-            return try ChatMessage(fromDTO: self, depth: depth + 1, transformer: transformer)
+            return try ChatMessage(fromDTO: self, depth: depth + 1)
         } catch {
             if error is RecursionLimitError { return nil }
             throw error
@@ -1335,7 +1335,7 @@ extension MessageDTO {
 }
 
 private extension ChatMessage {
-    init(fromDTO dto: MessageDTO, depth: Int, transformer: StreamModelsTransformer?) throws {
+    init(fromDTO dto: MessageDTO, depth: Int) throws {
         guard StreamRuntimeCheck._canFetchRelationship(currentDepth: depth) else {
             throw RecursionLimitError()
         }
@@ -1367,6 +1367,7 @@ private extension ChatMessage {
         let originalLanguage = dto.originalLanguage.map(TranslationLanguage.init)
         let moderationDetails = dto.moderationDetails.map { MessageModerationDetails(fromDTO: $0) }
         let textUpdatedAt = dto.textUpdatedAt?.bridgeDate
+        let chatClientConfig = context.chatClientConfig
 
         let extraData: [String: RawJSON]
         do {
@@ -1439,10 +1440,10 @@ private extension ChatMessage {
             return dto.replies
                 .sorted(by: { $0.createdAt.bridgeDate > $1.createdAt.bridgeDate })
                 .prefix(5)
-                .compactMap { try? ChatMessage(fromDTO: $0, depth: depth, transformer: transformer) }
+                .compactMap { try? ChatMessage(fromDTO: $0, depth: depth) }
         }()
 
-        let quotedMessage = try? dto.quotedMessage?.relationshipAsModel(depth: depth, transformer: transformer)
+        let quotedMessage = try? dto.quotedMessage?.relationshipAsModel(depth: depth)
 
         let readBy = Set(dto.reads.compactMap { try? $0.user.asModel() })
 
@@ -1487,7 +1488,7 @@ private extension ChatMessage {
             textUpdatedAt: textUpdatedAt
         )
 
-        if let transformer = transformer {
+        if let transformer = chatClientConfig.modelsTransformer {
             self = transformer.transform(message: message)
             return
         }

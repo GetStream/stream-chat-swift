@@ -440,20 +440,15 @@ extension ChannelDTO {
 
 extension ChannelDTO {
     /// Snapshots the current state of `ChannelDTO` and returns an immutable model object from it.
-    func asModel(
-        transformer: StreamModelsTransformer? = nil
-    ) throws -> ChatChannel {
-        try .create(fromDTO: self, depth: 0, transformer: transformer)
+    func asModel() throws -> ChatChannel {
+        try .create(fromDTO: self, depth: 0)
     }
 
     /// Snapshots the current state of `ChannelDTO` and returns an immutable model object from it if the dependency depth
     /// limit has not been reached
-    func relationshipAsModel(
-        depth: Int,
-        transformer: StreamModelsTransformer?
-    ) throws -> ChatChannel? {
+    func relationshipAsModel(depth: Int) throws -> ChatChannel? {
         do {
-            return try .create(fromDTO: self, depth: depth + 1, transformer: transformer)
+            return try .create(fromDTO: self, depth: depth + 1)
         } catch {
             if error is RecursionLimitError { return nil }
             throw error
@@ -463,11 +458,7 @@ extension ChannelDTO {
 
 extension ChatChannel {
     /// Create a ChannelModel struct from its DTO
-    fileprivate static func create(
-        fromDTO dto: ChannelDTO,
-        depth: Int,
-        transformer: StreamModelsTransformer?
-    ) throws -> ChatChannel {
+    fileprivate static func create(fromDTO dto: ChannelDTO, depth: Int) throws -> ChatChannel {
         guard StreamRuntimeCheck._canFetchRelationship(currentDepth: depth) else {
             throw RecursionLimitError()
         }
@@ -532,7 +523,7 @@ extension ChatChannel {
                     guard messageDTO.localMessageState == nil else { return false }
                     return messageDTO.type != MessageType.ephemeral.rawValue
                 })?
-                .relationshipAsModel(depth: depth, transformer: transformer)
+                .relationshipAsModel(depth: depth)
         }()
         
         let watchers = dto.watchers
@@ -568,8 +559,8 @@ extension ChatChannel {
             )
         }()
         let membership = try dto.membership.map { try $0.asModel() }
-        let pinnedMessages = dto.pinnedMessages.compactMap { try? $0.relationshipAsModel(depth: depth, transformer: transformer) }
-        let previewMessage = try? dto.previewMessage?.relationshipAsModel(depth: depth, transformer: transformer)
+        let pinnedMessages = dto.pinnedMessages.compactMap { try? $0.relationshipAsModel(depth: depth) }
+        let previewMessage = try? dto.previewMessage?.relationshipAsModel(depth: depth)
         let typingUsers = Set(dto.currentlyTypingUsers.compactMap { try? $0.asModel() })
 
         let channel = try ChatChannel(
@@ -606,7 +597,7 @@ extension ChatChannel {
             previewMessage: previewMessage
         )
 
-        if let transformer = transformer {
+        if let transformer = clientConfig.modelsTransformer {
             return transformer.transform(channel: channel)
         }
 

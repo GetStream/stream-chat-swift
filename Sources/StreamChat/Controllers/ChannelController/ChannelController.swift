@@ -1648,9 +1648,7 @@ private extension ChatChannelController {
                 database: self.client.databaseContainer,
                 fetchRequest: ChannelDTO.fetchRequest(for: cid),
                 itemCreator: {
-                    try $0.asModel(
-                        transformer: self.client.config.modelsTransformer
-                    ) as ChatChannel
+                    try $0.asModel() as ChatChannel
                 }
             ).onChange { [weak self] change in
                 self?.delegateCallback { [weak self] in
@@ -1696,7 +1694,7 @@ private extension ChatChannelController {
                     shouldShowShadowedMessages: shouldShowShadowedMessages
                 ),
                 itemCreator: {
-                    try $0.asModel(transformer: self.client.config.modelsTransformer) as ChatMessage
+                    try $0.asModel() as ChatMessage
                 },
                 itemReuseKeyPaths: (\ChatMessage.id, \MessageDTO.id)
             )
