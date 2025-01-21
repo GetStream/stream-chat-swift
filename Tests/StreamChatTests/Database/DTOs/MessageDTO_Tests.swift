@@ -4098,6 +4098,43 @@ final class MessageDTO_Tests: XCTestCase {
         XCTAssertNil(quoted3Message)
     }
 
+    func test_asModel_whenModelTransformerProvided_transformsValues() throws {
+        class CustomMessageTransformer: StreamModelsTransformer {
+            var mockTransformedMessage: ChatMessage = .mock(
+                id: .unique,
+                text: "transformed message"
+            )
+
+            func transform(message: ChatMessage) -> ChatMessage {
+                mockTransformedMessage
+            }
+        }
+
+        // GIVEN
+        let channelId: ChannelId = .unique
+        let messageId: MessageId = .unique
+        let messagePayload: MessagePayload = .dummy(messageId: messageId, cid: channelId)
+
+        let transformer = CustomMessageTransformer()
+        var config = ChatClientConfig(apiKeyString: .unique)
+        config.modelsTransformer = transformer
+        database = DatabaseContainer_Spy(
+            kind: .inMemory,
+            chatClientConfig: config
+        )
+
+        try database.writeSynchronously { session in
+            try session.saveChannel(payload: .dummy(channel: .dummy(cid: channelId)))
+            try session.saveMessage(payload: messagePayload, for: channelId, syncOwnReactions: false, cache: nil)
+        }
+
+        // WHEN
+        let message = try XCTUnwrap(database.viewContext.message(id: messageId)?.asModel())
+
+        // THEN
+        XCTAssertEqual(message.text, "transformed message")
+    }
+
     // MARK: - Helpers:
 
     private func message(with id: MessageId) -> ChatMessage? {

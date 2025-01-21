@@ -1470,6 +1470,30 @@ final class ChannelDTO_Tests: XCTestCase {
         // 3rd level of depth is not mapped
         XCTAssertNil(quoted3Message)
     }
+
+    func test_asModel_whenModelTransformerProvided_transformsValues() throws {
+        // GIVEN
+        let cid: ChannelId = .unique
+        let channelPayload = dummyPayload(with: cid)
+
+        let transformer = CustomChannelTransformer()
+        var config = ChatClientConfig(apiKeyString: .unique)
+        config.modelsTransformer = transformer
+        database = DatabaseContainer_Spy(
+            kind: .inMemory,
+            chatClientConfig: config
+        )
+        
+        try database.writeSynchronously { session in
+            try session.saveChannel(payload: channelPayload)
+        }
+        
+        // WHEN
+        let channel = try XCTUnwrap(database.viewContext.channel(cid: cid)?.asModel())
+        
+        // THEN
+        XCTAssertEqual(channel.cid, transformer.mockTransformedChannel.cid)
+    }
 }
 
 private extension ChannelDTO_Tests {
@@ -1487,5 +1511,12 @@ private extension ChannelDTO_Tests {
 
     func channel(with cid: ChannelId) throws -> ChatChannel {
         try XCTUnwrap(database.viewContext.channel(cid: cid)).asModel()
+    }
+}
+
+private class CustomChannelTransformer: StreamModelsTransformer {
+    var mockTransformedChannel: ChatChannel = .mock(cid: .init(type: .messaging, id: "transformed"))
+    func transform(channel: ChatChannel) -> ChatChannel {
+        mockTransformedChannel
     }
 }
