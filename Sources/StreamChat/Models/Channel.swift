@@ -229,6 +229,7 @@ public struct ChatChannel {
         self.previewMessage = previewMessage
     }
 
+    /// Returns a new `ChatChannel` with the provided data replaced.
     public func replacing(
         name: String?,
         imageURL: URL?,

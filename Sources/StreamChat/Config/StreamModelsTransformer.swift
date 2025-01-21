@@ -65,6 +65,7 @@ public struct NewMessageTransformableInfo {
         self.extraData = extraData
     }
 
+    /// Creates a new instance and replaces the provided information.
     public func replacing(
         text: String,
         attachments: [AnyAttachmentPayload],

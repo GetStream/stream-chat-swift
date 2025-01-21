@@ -256,6 +256,7 @@ public struct ChatMessage {
         _quotedMessage = { quotedMessage }
     }
 
+    /// Returns a new `ChatMessage` with the provided data replaced.
     public func replacing(
         text: String?,
         extraData: [String: RawJSON]?,
