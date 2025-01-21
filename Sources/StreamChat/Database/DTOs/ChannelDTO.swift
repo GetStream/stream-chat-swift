@@ -476,6 +476,8 @@ extension ChatChannel {
             throw InvalidModel(dto)
         }
 
+        let clientConfig = context.chatClientConfig
+
         let extraData: [String: RawJSON]
         do {
             extraData = try JSONDecoder.stream.decodeCachedRawJSON(from: dto.extraData)
@@ -511,8 +513,8 @@ extension ChatChannel {
 
         let latestMessages: [ChatMessage] = {
             var messages = sortedMessageDTOs
-                .prefix(dto.managedObjectContext?.localCachingSettings?.chatChannel.latestMessagesLimit ?? 25)
-                .compactMap { try? $0.relationshipAsModel(depth: depth, transformer: transformer) }
+                .prefix(clientConfig.localCaching.chatChannel.latestMessagesLimit)
+                .compactMap { try? $0.relationshipAsModel(depth: depth) }
             if let oldest = dto.oldestMessageAt?.bridgeDate {
                 messages = messages.filter { $0.createdAt >= oldest }
             }
@@ -542,7 +544,7 @@ extension ChatChannel {
                 }
                 return lhsActivity > rhsActivity
             }
-            .prefix(context.localCachingSettings?.chatChannel.lastActiveWatchersLimit ?? 100)
+            .prefix(clientConfig.localCaching.chatChannel.lastActiveWatchersLimit)
             .compactMap { try? $0.asModel() }
         
         let members = dto.members
@@ -554,7 +556,7 @@ extension ChatChannel {
                 }
                 return lhsActivity > rhsActivity
             }
-            .prefix(context.localCachingSettings?.chatChannel.lastActiveMembersLimit ?? 100)
+            .prefix(clientConfig.localCaching.chatChannel.lastActiveMembersLimit)
             .compactMap { try? $0.asModel() }
 
         let muteDetails: MuteDetails? = {

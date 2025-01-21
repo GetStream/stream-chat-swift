@@ -141,14 +141,9 @@ extension ChatClient {
                 databaseContainerBuilder: {
                     DatabaseContainer_Spy(
                         kind: $0,
-                        shouldFlushOnStart: $1,
-                        shouldResetEphemeralValuesOnStart: $2,
-                        bundle: bundle,
-                        localCachingSettings: $3,
-                        deletedMessagesVisibility: $4,
-                        shouldShowShadowedMessages: $5
+                        chatClientConfig: $1
                     )
-                }, 
+                },
                 internetConnection: { center, _ in
                     InternetConnection_Mock(notificationCenter: center)
                 },
@@ -234,11 +229,7 @@ extension ChatClient.Environment {
             databaseContainerBuilder: {
                 DatabaseContainer_Spy(
                     kind: .inMemory,
-                    shouldFlushOnStart: $1,
-                    shouldResetEphemeralValuesOnStart: $2,
-                    localCachingSettings: $3,
-                    deletedMessagesVisibility: $4,
-                    shouldShowShadowedMessages: $5
+                    chatClientConfig: $1
                 )
             },
             extensionLifecycleBuilder: NotificationExtensionLifecycle_Mock.init,

@@ -35,7 +35,7 @@ final class ChatPushNotificationContent_Tests: XCTestCase {
         extensionLifecycle = NotificationExtensionLifecycle_Mock(appGroupIdentifier: "test")
 
         var env = ChatClient.Environment()
-        env.databaseContainerBuilder = { _, _, _, _, _, _ in self.database }
+        env.databaseContainerBuilder = { _, _ in self.database }
         env.apiClientBuilder = { _, _, _, _, _ in self.apiClient }
         env.extensionLifecycleBuilder = { _ in self.extensionLifecycle }
         env.messageRepositoryBuilder = { _, _ in self.messageRepository }

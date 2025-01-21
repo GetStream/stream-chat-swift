@@ -196,6 +196,19 @@ final class ChatMessageActionsVC_Tests: XCTestCase {
         XCTAssertFalse(vc.messageActions.contains(where: { $0 is ThreadReplyActionItem }))
     }
 
+    func test_messageActions_whenSendReply_messageIsNotPartOfThread_alreadyInsideThread_doesNotContainThreadReplyAction() {
+        chatMessageController.simulateInitial(
+            message: ChatMessage.mock(parentMessageId: nil),
+            replies: [],
+            state: .remoteDataFetched
+        )
+
+        vc.isInsideThread = true
+        vc.channel = .mock(cid: .unique, ownCapabilities: [.sendReply])
+
+        XCTAssertFalse(vc.messageActions.contains(where: { $0 is ThreadReplyActionItem }))
+    }
+
     func test_messageActions_whenUpdateOwnMessage_messageIsSentByCurrentUser_thenContainsEditAction() {
         chatMessageController.simulateInitial(
             message: ChatMessage.mock(isSentByCurrentUser: true),

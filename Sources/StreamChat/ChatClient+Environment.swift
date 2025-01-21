@@ -31,19 +31,11 @@ extension ChatClient {
 
         var databaseContainerBuilder: (
             _ kind: DatabaseContainer.Kind,
-            _ shouldFlushOnStart: Bool,
-            _ shouldResetEphemeralValuesOnStart: Bool,
-            _ localCachingSettings: ChatClientConfig.LocalCaching?,
-            _ deletedMessageVisibility: ChatClientConfig.DeletedMessageVisibility?,
-            _ shouldShowShadowedMessages: Bool?
+            _ chatClientConfig: ChatClientConfig
         ) -> DatabaseContainer = {
             DatabaseContainer(
                 kind: $0,
-                shouldFlushOnStart: $1,
-                shouldResetEphemeralValuesOnStart: $2,
-                localCachingSettings: $3,
-                deletedMessagesVisibility: $4,
-                shouldShowShadowedMessages: $5
+                chatClientConfig: $1
             )
         }
 

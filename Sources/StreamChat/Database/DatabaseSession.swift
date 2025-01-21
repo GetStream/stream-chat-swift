@@ -4,7 +4,23 @@
 
 import CoreData
 
-extension NSManagedObjectContext: DatabaseSession {}
+extension NSManagedObjectContext: DatabaseSession {
+    private static let chatClientConfigKey = "io.getStream.StreamChat.config.key"
+
+    var chatClientConfig: ChatClientConfig {
+        var config: ChatClientConfig?
+        performAndWait {
+            config = userInfo[Self.chatClientConfigKey] as? ChatClientConfig
+        }
+        return config!
+    }
+
+    func setChatClientConfig(_ config: ChatClientConfig) {
+        performAndWait {
+            userInfo[Self.chatClientConfigKey] = config
+        }
+    }
+}
 
 protocol UserDatabaseSession {
     /// Saves the provided payload to the DB. Return's the matching `UserDTO` if the save was successful. Throws an error

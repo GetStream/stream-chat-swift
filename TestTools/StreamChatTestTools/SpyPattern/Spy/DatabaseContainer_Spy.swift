@@ -33,33 +33,56 @@ public final class DatabaseContainer_Spy: DatabaseContainer, Spy, @unchecked Sen
     private(set) var sessionMock: DatabaseSession_Mock?
 
     public convenience init(localCachingSettings: ChatClientConfig.LocalCaching? = nil) {
-        self.init(kind: .inMemory, localCachingSettings: localCachingSettings)
+        var config = ChatClientConfig(apiKeyString: .unique)
+        if let localCachingSettings = localCachingSettings {
+            config.localCaching = localCachingSettings
+        }
+        self.init(kind: .inMemory, chatClientConfig: config)
     }
 
-    override public init(
+    convenience init(
         kind: DatabaseContainer.Kind,
         shouldFlushOnStart: Bool = false,
         shouldResetEphemeralValuesOnStart: Bool = true,
-        modelName: String = "StreamChatModel",
-        bundle: Bundle? = nil,
         localCachingSettings: ChatClientConfig.LocalCaching? = nil,
         deletedMessagesVisibility: ChatClientConfig.DeletedMessageVisibility? = nil,
-        shouldShowShadowedMessages: Bool? = nil
+        shouldShowShadowedMessages: Bool? = nil,
+        modelName: String = "StreamChatModel",
+        bundle: Bundle? = nil
+    ) {
+        var config = ChatClientConfig(apiKeyString: .unique)
+        if let localCachingSettings = localCachingSettings {
+            config.localCaching = localCachingSettings
+        }
+        if let deletedMessagesVisibility = deletedMessagesVisibility {
+            config.deletedMessagesVisibility = deletedMessagesVisibility
+        }
+        if let shouldShowShadowedMessages = shouldShowShadowedMessages {
+            config.shouldShowShadowedMessages = shouldShowShadowedMessages
+        }
+        if shouldFlushOnStart {
+            config.shouldFlushLocalStorageOnStart = shouldFlushOnStart
+        }
+        config.isClientInActiveMode = shouldResetEphemeralValuesOnStart
+        self.init(
+            kind: kind,
+            modelName: modelName,
+            bundle: bundle,
+            chatClientConfig: config
+        )
+    }
+
+    override init(
+        kind: DatabaseContainer.Kind,
+        modelName: String = "StreamChatModel",
+        bundle: Bundle? = .streamChat,
+        chatClientConfig: ChatClientConfig = .init(apiKeyString: .unique)
     ) {
         init_kind = kind
         if case .onDisk = kind {
             shouldCleanUpTempDBFiles = true
         }
-        super.init(
-            kind: kind,
-            shouldFlushOnStart: shouldFlushOnStart,
-            shouldResetEphemeralValuesOnStart: shouldResetEphemeralValuesOnStart,
-            modelName: modelName,
-            bundle: bundle,
-            localCachingSettings: localCachingSettings,
-            deletedMessagesVisibility: deletedMessagesVisibility,
-            shouldShowShadowedMessages: shouldShowShadowedMessages
-        )
+        super.init(kind: kind, modelName: modelName, bundle: bundle, chatClientConfig: chatClientConfig)
     }
 
     convenience init(sessionMock: DatabaseSession_Mock) {

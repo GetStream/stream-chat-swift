@@ -548,7 +548,7 @@ final class ChannelDTO_Tests: XCTestCase {
 
         // Assert only 25 messages is serialized in the model
         let channel: ChatChannel? = try? database.viewContext.channel(cid: channelId)?.asModel()
-        XCTAssertEqual(channel?.latestMessages.count, 25)
+        XCTAssertEqual(channel?.latestMessages.count, database.chatClientConfig.localCaching.chatChannel.latestMessagesLimit)
     }
 
     func test_channelPayload_pinnedMessagesArePopulated() throws {
@@ -638,7 +638,7 @@ final class ChannelDTO_Tests: XCTestCase {
 
         // Assert only the 10 newest messages is serialized
         let channel: ChatChannel? = try? database.viewContext.channel(cid: channelId)?.asModel()
-        XCTAssertEqual(channel?.latestMessages.count, 10)
+        XCTAssertEqual(channel?.latestMessages.count, database.chatClientConfig.localCaching.chatChannel.latestMessagesLimit)
     }
 
     func test_channelPayload_pinnedMessagesOlderThanOldestMessageAtAreIgnored() throws {
@@ -1327,17 +1327,19 @@ final class ChannelDTO_Tests: XCTestCase {
 
     func test_asModel_populatesLatestMessage_withoutFilteringDeletedMessages() throws {
         // GIVEN
+        var config = ChatClientConfig(apiKeyString: .unique)
+        config.deletedMessagesVisibility = .visibleForCurrentUser
+        config.shouldShowShadowedMessages = true
+        config.localCaching = .init(
+            chatChannel: .init(
+                lastActiveWatchersLimit: 0,
+                lastActiveMembersLimit: 0,
+                latestMessagesLimit: 3
+            )
+        )
         database = DatabaseContainer_Spy(
             kind: .inMemory,
-            localCachingSettings: .init(
-                chatChannel: .init(
-                    lastActiveWatchersLimit: 0,
-                    lastActiveMembersLimit: 0,
-                    latestMessagesLimit: 3
-                )
-            ),
-            deletedMessagesVisibility: .visibleForCurrentUser,
-            shouldShowShadowedMessages: true
+            chatClientConfig: config
         )
 
         let currentUser: CurrentUserPayload = .dummy(userId: .unique, role: .admin)

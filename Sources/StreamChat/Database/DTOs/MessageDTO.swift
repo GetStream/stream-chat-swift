@@ -442,7 +442,7 @@ class MessageDTO: NSManagedObject {
         MessageDTO.applyPrefetchingState(to: request)
         request.predicate = previewMessagePredicate(
             cid: cid,
-            includeShadowedMessages: context.shouldShowShadowedMessages ?? false
+            includeShadowedMessages: context.chatClientConfig.shouldShowShadowedMessages
         )
         request.sortDescriptors = [NSSortDescriptor(keyPath: \MessageDTO.createdAt, ascending: false)]
         request.fetchOffset = 0
@@ -1202,11 +1202,12 @@ extension NSManagedObjectContext: MessageDatabaseSession {
         before id: MessageId,
         cid: String
     ) throws -> MessageDTO? {
-        try MessageDTO.loadMessage(
+        let clientConfig = chatClientConfig
+        return try MessageDTO.loadMessage(
             before: id,
             cid: cid,
-            deletedMessagesVisibility: deletedMessagesVisibility ?? .alwaysVisible,
-            shouldShowShadowedMessages: shouldShowShadowedMessages ?? true,
+            deletedMessagesVisibility: clientConfig.deletedMessagesVisibility,
+            shouldShowShadowedMessages: clientConfig.shouldShowShadowedMessages,
             context: self
         )
     }
@@ -1217,13 +1218,14 @@ extension NSManagedObjectContext: MessageDatabaseSession {
         in cid: ChannelId,
         sortAscending: Bool
     ) throws -> [MessageDTO] {
-        try MessageDTO.loadMessages(
+        let clientConfig = chatClientConfig
+        return try MessageDTO.loadMessages(
             from: fromIncludingDate,
             to: toIncludingDate,
             in: cid,
             sortAscending: sortAscending,
-            deletedMessagesVisibility: deletedMessagesVisibility ?? .alwaysVisible,
-            shouldShowShadowedMessages: shouldShowShadowedMessages ?? true,
+            deletedMessagesVisibility: clientConfig.deletedMessagesVisibility,
+            shouldShowShadowedMessages: clientConfig.shouldShowShadowedMessages,
             context: self
         )
     }
@@ -1234,13 +1236,14 @@ extension NSManagedObjectContext: MessageDatabaseSession {
         in messageId: MessageId,
         sortAscending: Bool
     ) throws -> [MessageDTO] {
-        try MessageDTO.loadReplies(
+        let clientConfig = chatClientConfig
+        return try MessageDTO.loadReplies(
             from: fromIncludingDate,
             to: toIncludingDate,
             in: messageId,
             sortAscending: sortAscending,
-            deletedMessagesVisibility: deletedMessagesVisibility ?? .alwaysVisible,
-            shouldShowShadowedMessages: shouldShowShadowedMessages ?? true,
+            deletedMessagesVisibility: clientConfig.deletedMessagesVisibility,
+            shouldShowShadowedMessages: clientConfig.shouldShowShadowedMessages,
             context: self
         )
     }
