@@ -205,11 +205,36 @@ extension ChannelReadDTO {
 extension ChatChannelRead {
     fileprivate static func create(fromDTO dto: ChannelReadDTO) throws -> ChatChannelRead {
         try dto.isNotDeleted()
-        return try .init(
+        
+        if let cache = dto.databaseModelCache,
+           var cachedData = cache.channelRead(for: dto.objectID, updated: dto.isUpdated) {
+            // .user is a relationship and must be separately filled in
+            var read = cachedData.read
+            // TODO: Validate that userObjectID does not have changes
+            try read.setRelationshipModels(
+                user: cache.user(for: cachedData.userObjectID, updated: false) ?? dto.user.asModel()
+            )
+            return read
+        }
+        
+        let read = try ChatChannelRead(
             lastReadAt: dto.lastReadAt.bridgeDate,
             lastReadMessageId: dto.lastReadMessageId,
             unreadMessagesCount: Int(dto.unreadMessageCount),
             user: dto.user.asModel()
+        )
+        dto.databaseModelCache?.setChannelRead(read, for: dto)
+        return read
+    }
+}
+
+private extension ChatChannelRead {
+    mutating func setRelationshipModels(user: ChatUser) {
+        self = ChatChannelRead(
+            lastReadAt: lastReadAt,
+            lastReadMessageId: lastReadMessageId,
+            unreadMessagesCount: unreadMessagesCount,
+            user: user
         )
     }
 }
