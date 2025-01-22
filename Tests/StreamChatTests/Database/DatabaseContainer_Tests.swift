@@ -460,14 +460,14 @@ private extension DatabaseContainer {
 
 private extension NSManagedObjectContext {
     var deletedMessagesVisibility: ChatClientConfig.DeletedMessageVisibility {
-        chatClientConfig.deletedMessagesVisibility
+        chatClientConfig?.deletedMessagesVisibility ?? .alwaysVisible
     }
 
     var shouldShowShadowedMessages: Bool {
-        chatClientConfig.shouldShowShadowedMessages
+        chatClientConfig?.shouldShowShadowedMessages ?? false
     }
 
     var localCachingSettings: ChatClientConfig.LocalCaching {
-        chatClientConfig.localCaching
+        chatClientConfig?.localCaching ?? .init()
     }
 }

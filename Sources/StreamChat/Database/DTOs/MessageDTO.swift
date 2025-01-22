@@ -442,7 +442,7 @@ class MessageDTO: NSManagedObject {
         MessageDTO.applyPrefetchingState(to: request)
         request.predicate = previewMessagePredicate(
             cid: cid,
-            includeShadowedMessages: context.chatClientConfig.shouldShowShadowedMessages
+            includeShadowedMessages: context.chatClientConfig?.shouldShowShadowedMessages ?? false
         )
         request.sortDescriptors = [NSSortDescriptor(keyPath: \MessageDTO.createdAt, ascending: false)]
         request.fetchOffset = 0
@@ -1202,7 +1202,7 @@ extension NSManagedObjectContext: MessageDatabaseSession {
         before id: MessageId,
         cid: String
     ) throws -> MessageDTO? {
-        let clientConfig = chatClientConfig
+        guard let clientConfig = chatClientConfig else { return nil }
         return try MessageDTO.loadMessage(
             before: id,
             cid: cid,
@@ -1218,7 +1218,7 @@ extension NSManagedObjectContext: MessageDatabaseSession {
         in cid: ChannelId,
         sortAscending: Bool
     ) throws -> [MessageDTO] {
-        let clientConfig = chatClientConfig
+        guard let clientConfig = chatClientConfig else { return [] }
         return try MessageDTO.loadMessages(
             from: fromIncludingDate,
             to: toIncludingDate,
@@ -1236,7 +1236,7 @@ extension NSManagedObjectContext: MessageDatabaseSession {
         in messageId: MessageId,
         sortAscending: Bool
     ) throws -> [MessageDTO] {
-        let clientConfig = chatClientConfig
+        guard let clientConfig = chatClientConfig else { return [] }
         return try MessageDTO.loadReplies(
             from: fromIncludingDate,
             to: toIncludingDate,
@@ -1488,7 +1488,7 @@ private extension ChatMessage {
             textUpdatedAt: textUpdatedAt
         )
 
-        if let transformer = chatClientConfig.modelsTransformer {
+        if let transformer = chatClientConfig?.modelsTransformer {
             self = transformer.transform(message: message)
             return
         }

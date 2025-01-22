@@ -462,12 +462,14 @@ extension ChatChannel {
         guard StreamRuntimeCheck._canFetchRelationship(currentDepth: depth) else {
             throw RecursionLimitError()
         }
+
         try dto.isNotDeleted()
-        guard let cid = try? ChannelId(cid: dto.cid), let context = dto.managedObjectContext else {
+
+        guard let cid = try? ChannelId(cid: dto.cid),
+              let context = dto.managedObjectContext,
+              let clientConfig = context.chatClientConfig else {
             throw InvalidModel(dto)
         }
-
-        let clientConfig = context.chatClientConfig
 
         let extraData: [String: RawJSON]
         do {

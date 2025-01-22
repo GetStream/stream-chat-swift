@@ -266,8 +266,8 @@ class MessageRepository {
         let context = database.backgroundReadOnlyContext
         context.perform {
             let clientConfig = context.chatClientConfig
-            let deletedMessagesVisibility = clientConfig.deletedMessagesVisibility
-            let shouldShowShadowedMessages = clientConfig.shouldShowShadowedMessages
+            let deletedMessagesVisibility = clientConfig?.deletedMessagesVisibility ?? .alwaysVisible
+            let shouldShowShadowedMessages = clientConfig?.shouldShowShadowedMessages ?? false
             do {
                 let resultId = try MessageDTO.loadMessage(
                     before: messageId,
