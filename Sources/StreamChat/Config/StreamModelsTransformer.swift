@@ -26,22 +26,31 @@ import Foundation
 ///     }
 ///  ```
 public protocol StreamModelsTransformer {
-    /// Transforms the given `ChatChannel` object.
+    /// Transforms the given `ChatChannel` model.
     func transform(channel: ChatChannel) -> ChatChannel
-    /// Transforms the given `ChatMessage` object.
+
+    /// Transforms the given `ChatMessage` model.
     func transform(message: ChatMessage) -> ChatMessage
-    /// Transforms the given `NewMessageTransformableInfo` object when creating a new message.
+
+    /// Transforms the given `ChatChannelMember` model.
+    func transform(member: ChatChannelMember) -> ChatChannelMember
+
+    /// Transforms the given `NewMessageTransformableInfo` model when creating a new message.
     func transform(newMessageInfo: NewMessageTransformableInfo) -> NewMessageTransformableInfo
 }
 
 /// Default implementations.
-extension StreamModelsTransformer {
+public extension StreamModelsTransformer {
     func transform(channel: ChatChannel) -> ChatChannel {
         channel
     }
 
     func transform(message: ChatMessage) -> ChatMessage {
         message
+    }
+
+    func transform(member: ChatChannelMember) -> ChatChannelMember {
+        member
     }
 
     func transform(newMessageInfo: NewMessageTransformableInfo) -> NewMessageTransformableInfo {

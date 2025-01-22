@@ -212,7 +212,7 @@ extension ChatChannelMember {
         let role = dto.channelRoleRaw.flatMap { MemberRole(rawValue: $0) } ?? .member
         let language: TranslationLanguage? = dto.user.language.map(TranslationLanguage.init)
 
-        return ChatChannelMember(
+        var member = ChatChannelMember(
             id: dto.user.id,
             name: dto.user.name,
             imageURL: dto.user.imageURL,
@@ -241,6 +241,12 @@ extension ChatChannelMember {
             notificationsMuted: dto.notificationsMuted,
             memberExtraData: memberExtraData
         )
+
+        if let transformer = dto.managedObjectContext?.chatClientConfig.modelsTransformer {
+            member = transformer.transform(member: member)
+        }
+
+        return member
     }
 }
 
