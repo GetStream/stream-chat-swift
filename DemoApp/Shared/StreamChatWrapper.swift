@@ -37,6 +37,7 @@ final class StreamChatWrapper {
         config.shouldShowShadowedMessages = true
         config.applicationGroupIdentifier = applicationGroupIdentifier
         config.urlSessionConfiguration.httpAdditionalHeaders = ["Custom": "Example"]
+        // Uncomment this to test model transformers
         // config.modelsTransformer = CustomStreamModelsTransformer()
         configureUI()
     }
@@ -221,6 +222,15 @@ class CustomStreamModelsTransformer: StreamModelsTransformer {
             text: "Changed!",
             attachments: newMessageInfo.attachments,
             extraData: newMessageInfo.extraData
+        )
+    }
+
+    func transform(member: ChatChannelMember) -> ChatChannelMember {
+        member.replacing(
+            name: "Changed Name",
+            imageURL: member.imageURL,
+            userExtraData: member.extraData,
+            memberExtraData: member.memberExtraData
         )
     }
 }
