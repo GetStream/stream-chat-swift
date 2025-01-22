@@ -11,7 +11,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
    - Add `ChatClientConfig.modelsTransformer`
    - Add `ChatMessage.replacing()`
    - Add `ChatChannel.replacing()`
-   - Add `ChatMember.replacing()`
+   - Add `ChatChannelMember.replacing()`
 
 ## StreamChatUI
 ### ✅ Added
