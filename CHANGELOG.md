@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## StreamChat
 ### ✅ Added
 - Add `MessageHardDeletedEvent` [#3569](https://github.com/GetStream/stream-chat-swift/pull/3569)
+- Expose `Event.name` to easily check which event it is [#3569](https://github.com/GetStream/stream-chat-swift/pull/3569)
 ### 🐞 Fixed
 - Calling async `connectUser()` methods can sometimes throw `CurrentUserDoesNotExist()` unexpectedly [#3565](https://github.com/GetStream/stream-chat-swift/pull/3565)
 - Fix creating controllers from background threads leading to rare crashes [#3566](https://github.com/GetStream/stream-chat-swift/pull/3566)
@@ -14,7 +15,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
    - Add `ChatMessage.replacing()`
    - Add `ChatChannel.replacing()`
    - Add `ChatChannelMember.replacing()`
-- Expose `Event.name` to easily check which event it is [#3569](https://github.com/GetStream/stream-chat-swift/pull/3569)
 - Fix duplicated `didReceiveEvent` inside `ChatThreadVC` [#3569](https://github.com/GetStream/stream-chat-swift/pull/3569)
 - Fix hard deleted message events not being reported in `EventsController` [#3569](https://github.com/GetStream/stream-chat-swift/pull/3569)
 ### 🔄 Changed
