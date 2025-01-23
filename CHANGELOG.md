@@ -15,7 +15,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
    - Add `ChatMessage.replacing()`
    - Add `ChatChannel.replacing()`
    - Add `ChatChannelMember.replacing()`
-- Fix duplicated `didReceiveEvent` inside `ChatThreadVC` [#3569](https://github.com/GetStream/stream-chat-swift/pull/3569)
 - Fix hard deleted message events not being reported in `EventsController` [#3569](https://github.com/GetStream/stream-chat-swift/pull/3569)
 ### 🔄 Changed
 - Deprecates `MessageDeletedEvent.isHardDeleted` [#3569](https://github.com/GetStream/stream-chat-swift/pull/3569)
@@ -33,6 +32,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### 🐞 Fixed
 - Fix thread reply action shown when inside a Thread [#3561](https://github.com/GetStream/stream-chat-swift/pull/3561)
 - Fix reaction author's view with shrinked reaction images in iOS 18 [#3568](https://github.com/GetStream/stream-chat-swift/pull/3568)
+- Fix duplicated `didReceiveEvent` inside `ChatThreadVC` [#3569](https://github.com/GetStream/stream-chat-swift/pull/3569)
 ### 🔄 Changed
 - Deprecates `ChatThreadVC.channelEventsController` [#3569](https://github.com/GetStream/stream-chat-swift/pull/3569)
 
