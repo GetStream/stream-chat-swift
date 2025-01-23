@@ -190,7 +190,12 @@ extension ChatChannelMember {
         guard let clientConfig = dto.managedObjectContext?.chatClientConfig else {
             throw InvalidModel(dto)
         }
-
+        
+        if let (cache, context) = dto.databaseModelCacheAndContext,
+           let member = cache.channelMember(for: dto.objectID, context: context) {
+            return member
+        }
+        
         let extraData: [String: RawJSON]
         do {
             extraData = try JSONDecoder.stream.decodeCachedRawJSON(from: dto.user.extraData)
@@ -250,6 +255,7 @@ extension ChatChannelMember {
             member = transformer.transform(member: member)
         }
 
+        dto.databaseModelCache?.setChannelMember(member, forObjectId: dto.objectID)
         return member
     }
 }

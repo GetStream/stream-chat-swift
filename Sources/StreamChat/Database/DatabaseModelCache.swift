@@ -6,8 +6,19 @@ import CoreData
 import Foundation
 
 final class DatabaseModelCache {
+    private var channelMembers = [NSManagedObjectID: ChatChannelMember]()
     private var channelReads = [NSManagedObjectID: CachedChannelRead]()
     private var users = [NSManagedObjectID: ChatUser]()
+    
+    // MARK: - Channel Members
+    
+    func channelMember(for objectId: NSManagedObjectID, context: NSManagedObjectContext) -> ChatChannelMember? {
+        cachedData(for: objectId, in: channelMembers, tag: "members", context: context)
+    }
+    
+    func setChannelMember(_ member: ChatChannelMember, forObjectId objectId: NSManagedObjectID) {
+        channelMembers[objectId] = member
+    }
     
     // MARK: - Channel Reads
     
@@ -38,12 +49,12 @@ final class DatabaseModelCache {
     private var cacheMisses = [String: Int]()
     
     private func registerCacheHit(for identifier: String) {
-        var count = cacheHits[identifier] ?? 0
+        let count = cacheHits[identifier] ?? 0
         cacheHits[identifier] = count + 1
     }
     
     private func registerCacheMiss(for identifier: String) {
-        var count = cacheMisses[identifier] ?? 0
+        let count = cacheMisses[identifier] ?? 0
         cacheMisses[identifier] = count + 1
     }
     
@@ -67,11 +78,15 @@ final class DatabaseModelCache {
         tag: String,
         context: NSManagedObjectContext
     ) -> CachedData? {
-        if !context.hasChanges(for: objectId), let cachedData = storage[objectId] {
+        if !context.hasChanges, let cachedData = storage[objectId] {
+            #if DEBUG
             registerCacheHit(for: tag)
+            #endif
             return cachedData
         } else {
+            #if DEBUG
             registerCacheMiss(for: tag)
+            #endif
             return nil
         }
     }
@@ -80,6 +95,7 @@ final class DatabaseModelCache {
     
     func removeModels(for objectIds: Set<NSManagedObjectID>) {
         objectIds.forEach { objectId in
+            channelMembers.removeValue(forKey: objectId)
             channelReads.removeValue(forKey: objectId)
             users.removeValue(forKey: objectId)
         }
@@ -90,12 +106,6 @@ extension DatabaseModelCache {
     struct CachedChannelRead {
         let model: ChatChannelRead
         let userObjectId: NSManagedObjectID
-    }
-}
-
-private extension NSManagedObject {
-    var canUseCached: Bool {
-        !isUpdated
     }
 }
 
@@ -118,9 +128,5 @@ extension NSManagedObjectContext {
         let cache = DatabaseModelCache()
         userInfo["DatabaseModelCache"] = cache
         return cache
-    }
-    
-    func hasChanges(for objectID: NSManagedObjectID) -> Bool {
-        updatedObjects.contains(where: { $0.objectID == objectID })
     }
 }
