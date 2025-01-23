@@ -322,22 +322,31 @@ public class ChatMessageController: DataController, DelegateCallable, DataStoreP
     ) {
         let parentMessageId = self.messageId
 
+        var transformableInfo = NewMessageTransformableInfo(
+            text: text,
+            attachments: attachments,
+            extraData: extraData
+        )
+        if let transformer = client.config.modelsTransformer {
+            transformableInfo = transformer.transform(newMessageInfo: transformableInfo)
+        }
+
         messageUpdater.createNewReply(
             in: cid,
             messageId: messageId,
-            text: text,
+            text: transformableInfo.text,
             pinning: pinning,
             command: nil,
             arguments: nil,
             parentMessageId: parentMessageId,
-            attachments: attachments,
+            attachments: transformableInfo.attachments,
             mentionedUserIds: mentionedUserIds,
             showReplyInChannel: showReplyInChannel,
             isSilent: isSilent,
             quotedMessageId: quotedMessageId,
             skipPush: skipPush,
             skipEnrichUrl: skipEnrichUrl,
-            extraData: extraData
+            extraData: transformableInfo.extraData
         ) { result in
             if let newMessage = try? result.get() {
                 self.client.eventNotificationCenter.process(NewMessagePendingEvent(message: newMessage))

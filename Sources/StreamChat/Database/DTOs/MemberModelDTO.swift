@@ -186,7 +186,11 @@ extension MemberDTO {
 extension ChatChannelMember {
     fileprivate static func create(fromDTO dto: MemberDTO) throws -> ChatChannelMember {
         try dto.isNotDeleted()
-        
+
+        guard let clientConfig = dto.managedObjectContext?.chatClientConfig else {
+            throw InvalidModel(dto)
+        }
+
         let extraData: [String: RawJSON]
         do {
             extraData = try JSONDecoder.stream.decodeCachedRawJSON(from: dto.user.extraData)
@@ -212,7 +216,7 @@ extension ChatChannelMember {
         let role = dto.channelRoleRaw.flatMap { MemberRole(rawValue: $0) } ?? .member
         let language: TranslationLanguage? = dto.user.language.map(TranslationLanguage.init)
 
-        return ChatChannelMember(
+        var member = ChatChannelMember(
             id: dto.user.id,
             name: dto.user.name,
             imageURL: dto.user.imageURL,
@@ -241,6 +245,12 @@ extension ChatChannelMember {
             notificationsMuted: dto.notificationsMuted,
             memberExtraData: memberExtraData
         )
+
+        if let transformer = clientConfig.modelsTransformer {
+            member = transformer.transform(member: member)
+        }
+
+        return member
     }
 }
 

@@ -1599,6 +1599,8 @@
 		AD7EFDB82C78DC6700625FC5 /* PollCommentListSectionFooterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD7EFDB12C78C0F000625FC5 /* PollCommentListSectionFooterView.swift */; };
 		AD81AF0525ED141800F17F8F /* CellSeparatorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD81AEEC25ED135100F17F8F /* CellSeparatorView.swift */; };
 		AD81AF0D25ED141A00F17F8F /* ListCollectionViewLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD81AEF525ED13D900F17F8F /* ListCollectionViewLayout.swift */; };
+		AD81FEED2D3977AC00765FD4 /* StreamModelsTransformer.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD81FEEC2D3977AC00765FD4 /* StreamModelsTransformer.swift */; };
+		AD81FEEE2D3977AC00765FD4 /* StreamModelsTransformer.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD81FEEC2D3977AC00765FD4 /* StreamModelsTransformer.swift */; };
 		AD8258A32BD2939500B9ED74 /* MessageReactionGroup.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD8258A22BD2939500B9ED74 /* MessageReactionGroup.swift */; };
 		AD8258A42BD2939500B9ED74 /* MessageReactionGroup.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD8258A22BD2939500B9ED74 /* MessageReactionGroup.swift */; };
 		AD82903D2A7C5A8F00396782 /* DemoChatChannelListItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD82903C2A7C5A8F00396782 /* DemoChatChannelListItemView.swift */; };
@@ -4318,6 +4320,7 @@
 		AD7EFDB12C78C0F000625FC5 /* PollCommentListSectionFooterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PollCommentListSectionFooterView.swift; sourceTree = "<group>"; };
 		AD81AEEC25ED135100F17F8F /* CellSeparatorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CellSeparatorView.swift; sourceTree = "<group>"; };
 		AD81AEF525ED13D900F17F8F /* ListCollectionViewLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListCollectionViewLayout.swift; sourceTree = "<group>"; };
+		AD81FEEC2D3977AC00765FD4 /* StreamModelsTransformer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StreamModelsTransformer.swift; sourceTree = "<group>"; };
 		AD8258A22BD2939500B9ED74 /* MessageReactionGroup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageReactionGroup.swift; sourceTree = "<group>"; };
 		AD82903C2A7C5A8F00396782 /* DemoChatChannelListItemView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DemoChatChannelListItemView.swift; sourceTree = "<group>"; };
 		AD84377A2BB482CF000F3826 /* ThreadEndpoints.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThreadEndpoints.swift; sourceTree = "<group>"; };
@@ -5694,6 +5697,7 @@
 				799C9428247D2FB9001F1104 /* ChatClientConfig.swift */,
 				79FC85E624ACCBC500A665ED /* Token.swift */,
 				C1B49B3C2822A7AD00F4E89E /* StreamRuntimeCheck.swift */,
+				AD81FEEC2D3977AC00765FD4 /* StreamModelsTransformer.swift */,
 			);
 			path = Config;
 			sourceTree = "<group>";
@@ -11681,6 +11685,7 @@
 				792FCB4524A33B5B000290C7 /* EventDataProcessorMiddleware.swift in Sources */,
 				79A0E9BE2498C33100E9BD50 /* TypingEvent.swift in Sources */,
 				AD94906E2BF68BAE00E69224 /* ThreadListController+SwiftUI.swift in Sources */,
+				AD81FEED2D3977AC00765FD4 /* StreamModelsTransformer.swift in Sources */,
 				AD78568C298B268F00C2FEAD /* ChannelControllerDelegate.swift in Sources */,
 				841BAA072BCE9A49000C73E4 /* UpdatePartialRequestBody.swift in Sources */,
 				79896D5C2506593E00BA8F1C /* ChannelReadDTO.swift in Sources */,
@@ -12545,6 +12550,7 @@
 				40789D2629F6AC500018C2BB /* AudioSessionConfiguring.swift in Sources */,
 				C121E8C5274544B100023E4C /* ChannelMemberListQuery.swift in Sources */,
 				40789D3029F6AC500018C2BB /* AudioRecordingDelegate.swift in Sources */,
+				AD81FEEE2D3977AC00765FD4 /* StreamModelsTransformer.swift in Sources */,
 				C121E8C6274544B100023E4C /* ChannelWatcherListQuery.swift in Sources */,
 				4F05C0722C8832C40085B4B7 /* URLRequest+cURL.swift in Sources */,
 				AD37D7CB2BC98A5300800D8C /* ThreadReadDTO.swift in Sources */,

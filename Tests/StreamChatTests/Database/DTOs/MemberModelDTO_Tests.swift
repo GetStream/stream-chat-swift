@@ -190,6 +190,42 @@ final class MemberModelDTO_Tests: XCTestCase {
         XCTAssertEqual(Set(loadedQuery.members.map(\.user.id)), Set(allMembers.map(\.id)))
     }
 
+    func test_asModel_whenModelTransformerProvided_transformsValues() throws {
+        class CustomMemberTransformer: StreamModelsTransformer {
+            var mockTransformedMember: ChatChannelMember = .mock(
+                id: .unique,
+                name: "transformed member"
+            )
+
+            func transform(member: ChatChannelMember) -> ChatChannelMember {
+                mockTransformedMember
+            }
+        }
+
+        // GIVEN
+        let userId = UserId.unique
+        let channelId = ChannelId(type: .messaging, id: .unique)
+        let payload: MemberPayload = MemberPayload.dummy(user: .dummy(userId: userId))
+
+        let transformer = CustomMemberTransformer()
+        var config = ChatClientConfig(apiKeyString: .unique)
+        config.modelsTransformer = transformer
+        database = DatabaseContainer_Spy(
+            kind: .inMemory,
+            chatClientConfig: config
+        )
+        
+        try database.writeSynchronously { session in
+            try session.saveMember(payload: payload, channelId: channelId)
+        }
+        
+        // WHEN
+        let member = try XCTUnwrap(database.viewContext.member(userId: userId, cid: channelId)?.asModel())
+        
+        // THEN
+        XCTAssertEqual(member.name, "transformed member")
+    }
+
     private func saveDummyMembers(
         _ members: [MemberPayload] = [.dummy(), .dummy(), .dummy(), .dummy()],
         toQuery query: ChannelMemberListQuery,

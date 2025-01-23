@@ -1212,6 +1212,46 @@ final class MessageController_Tests: XCTestCase {
         XCTAssertTrue(event is NewMessagePendingEvent)
     }
 
+    func test_createNewReply_whenMessageTransformerIsProvided_callsUpdaterWithTransformedValues() throws {
+        class MockTransformer: StreamModelsTransformer {
+            var mockTransformedMessage = NewMessageTransformableInfo(
+                text: "transformed",
+                attachments: [.mockFile],
+                extraData: ["transformed": true]
+            )
+            func transform(newMessageInfo: NewMessageTransformableInfo) -> NewMessageTransformableInfo {
+                mockTransformedMessage
+            }
+        }
+
+        let transformer = MockTransformer()
+        var config = ChatClientConfig(apiKeyString: .unique)
+        config.modelsTransformer = transformer
+        client = .mock(config: config)
+        controller = ChatMessageController(
+            client: client,
+            cid: cid,
+            messageId: messageId,
+            replyPaginationHandler: replyPaginationHandler,
+            environment: env.controllerEnvironment
+        )
+
+        let exp = expectation(description: "should complete create new reply")
+
+        controller.createNewReply(
+            text: .unique
+        ) { _ in
+            exp.fulfill()
+        }
+
+        env.messageUpdater.createNewReply_completion?(.success(.unique))
+        wait(for: [exp], timeout: defaultTimeout)
+
+        XCTAssertEqual(env.messageUpdater.createNewReply_text, transformer.mockTransformedMessage.text)
+        XCTAssertEqual(env.messageUpdater.createNewReply_attachments, transformer.mockTransformedMessage.attachments)
+        XCTAssertEqual(env.messageUpdater.createNewReply_extraData, transformer.mockTransformedMessage.extraData)
+    }
+
     // MARK: - Load replies
 
     func test_loadPreviousReplies_propagatesError() {

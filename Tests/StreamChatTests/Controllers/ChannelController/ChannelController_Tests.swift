@@ -3550,6 +3550,45 @@ final class ChannelController_Tests: XCTestCase {
         XCTAssertTrue(event is NewMessagePendingEvent)
     }
 
+    func test_createNewMessage_whenMessageTransformerIsProvided_callsChannelUpdaterWithTransformedValues() throws {
+        class MockTransformer: StreamModelsTransformer {
+            var mockTransformedMessage = NewMessageTransformableInfo(
+                text: "transformed",
+                attachments: [.mockFile],
+                extraData: ["transformed": true]
+            )
+            func transform(newMessageInfo: NewMessageTransformableInfo) -> NewMessageTransformableInfo {
+                mockTransformedMessage
+            }
+        }
+
+        let transformer = MockTransformer()
+        var config = ChatClientConfig(apiKeyString: .unique)
+        config.modelsTransformer = transformer
+        client = .mock(config: config)
+        controller = ChatChannelController(
+            channelQuery: .init(cid: channelId),
+            channelListQuery: nil,
+            client: client,
+            environment: env.environment
+        )
+
+        let exp = expectation(description: "should complete create new message")
+
+        controller.createNewMessage(
+            text: .unique
+        ) { _ in
+            exp.fulfill()
+        }
+
+        env.channelUpdater?.createNewMessage_completion?(.success(.unique))
+        wait(for: [exp], timeout: defaultTimeout)
+
+        XCTAssertEqual(env.channelUpdater?.createNewMessage_text, transformer.mockTransformedMessage.text)
+        XCTAssertEqual(env.channelUpdater?.createNewMessage_attachments, transformer.mockTransformedMessage.attachments)
+        XCTAssertEqual(env.channelUpdater?.createNewMessage_extraData, transformer.mockTransformedMessage.extraData)
+    }
+
     // MARK: - Create system message
 
     func test_createSystemMessage_callsChannelUpdater() {
