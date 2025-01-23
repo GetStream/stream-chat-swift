@@ -197,6 +197,7 @@ class DatabaseContainer: NSPersistentContainer, @unchecked Sendable {
                 FetchCache.clear()
 
                 if self.writableContext.hasChanges {
+                    print("--- save ---")
                     let updated = self.writableContext.updatedObjects.map(\.objectID)
                     let deleted = self.writableContext.deletedObjects.map(\.objectID)
                     let resetCachedObjectIds = Set(updated + deleted)
@@ -204,13 +205,12 @@ class DatabaseContainer: NSPersistentContainer, @unchecked Sendable {
                         readContext.performAndWait {
                             let cache = readContext.databaseModelCache
                             cache.removeModels(for: resetCachedObjectIds)
-                            print("Toomas", "hits", cache.cacheHits, "misses", cache.cacheMisses, readContext.name ?? "")
+                            cache.printStatistics(identifier: readContext.name ?? "")
                         }
                     }
-                    // TODO: review if it makes sense for writableContext
                     let writableModelCache = self.writableContext.databaseModelCache
                     writableModelCache.removeModels(for: resetCachedObjectIds)
-                    print("Toomas", "hits", writableModelCache.cacheHits, "misses", writableModelCache.cacheMisses, self.writableContext.name ?? "")
+                    writableModelCache.printStatistics(identifier: self.writableContext.name ?? "")
                     
                     log.debug("Context has changes. Saving.", subsystems: .database)
                     try self.writableContext.save()

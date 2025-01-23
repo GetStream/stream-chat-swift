@@ -233,7 +233,8 @@ extension ChatUser {
     fileprivate static func create(fromDTO dto: UserDTO) throws -> ChatUser {
         try dto.isNotDeleted()
         
-        if let user = dto.databaseModelCache?.user(for: dto.objectID, updated: dto.isUpdated) {
+        if let (cache, context) = dto.databaseModelCacheAndContext,
+           let user = cache.user(for: dto.objectID, context: context) {
             return user
         }
         
@@ -266,7 +267,7 @@ extension ChatUser {
             language: language,
             extraData: extraData
         )
-        dto.databaseModelCache?.setUser(user, forObjectID: dto.objectID)
+        dto.databaseModelCache?.setUser(user, forObjectId: dto.objectID)
         return user
     }
 }
