@@ -25,6 +25,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   - Add `ChatThreadVC.loadNextReplies()` + `ChatThreadVC.didFinishLoadingNextReplies(error:)`
 ### 🐞 Fixed
 - Fix thread reply action shown when inside a Thread [#3561](https://github.com/GetStream/stream-chat-swift/pull/3561)
+- Fix reaction author's view with shrinked reaction images in iOS 18 [#3568](https://github.com/GetStream/stream-chat-swift/pull/3568)
 
 # [4.70.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.70.0)
 _January 14, 2025_
