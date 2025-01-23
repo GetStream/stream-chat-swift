@@ -102,31 +102,37 @@ final class DatabaseModelCache {
     }
 }
 
+extension NSManagedObjectContext {
+    var databaseModelCache: DatabaseModelCache? {
+        DatabaseModelCache.cache(for: self)
+    }
+    
+    var identifier: Int {
+        hashValue
+    }
+}
+
+private extension DatabaseModelCache {
+    private static let allCachesLock = NSLock()
+    private static var allCaches = [Int: DatabaseModelCache]()
+    
+    static func cache(for context: NSManagedObjectContext) -> DatabaseModelCache? {
+        let identifier = context.identifier
+        Self.allCachesLock.lock()
+        defer { Self.allCachesLock.unlock() }
+        if let cache = Self.allCaches[identifier] {
+            return cache
+        }
+        let cache = DatabaseModelCache()
+        Self.allCaches[identifier] = cache
+        assert(Self.allCaches.count <= 4, "\(Self.allCaches.count)")
+        return cache
+    }
+}
+
 extension DatabaseModelCache {
     struct CachedChannelRead {
         let model: ChatChannelRead
         let userObjectId: NSManagedObjectID
-    }
-}
-
-extension NSManagedObject {
-    var databaseModelCacheAndContext: (cache: DatabaseModelCache, context: NSManagedObjectContext)? {
-        guard let context = managedObjectContext else { return nil }
-        return (context.databaseModelCache, context)
-    }
-    
-    var databaseModelCache: DatabaseModelCache? {
-        managedObjectContext?.databaseModelCache
-    }
-}
-
-extension NSManagedObjectContext {
-    var databaseModelCache: DatabaseModelCache {
-        if let cache = userInfo["DatabaseModelCache"] as? DatabaseModelCache {
-            return cache
-        }
-        let cache = DatabaseModelCache()
-        userInfo["DatabaseModelCache"] = cache
-        return cache
     }
 }

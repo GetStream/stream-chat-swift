@@ -20,6 +20,11 @@ extension NSManagedObject {
         guard isDeleted else { return }
         throw DeletedModel(self)
     }
+    
+    func context() throws -> NSManagedObjectContext {
+        guard let managedObjectContext else { throw InvalidModel(self) }
+        return managedObjectContext
+    }
 }
 
 struct InvalidModel: LocalizedError {

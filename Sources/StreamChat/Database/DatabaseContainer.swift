@@ -21,7 +21,7 @@ class DatabaseContainer: NSPersistentContainer, @unchecked Sendable {
     /// All writes are happening serially using this context and its `write { }` methods.
     lazy var writableContext: NSManagedObjectContext = {
         let context = newBackgroundContext()
-        context.name = "WritableContext"
+        context.name = "Write"
         context.automaticallyMergesChangesFromParent = true
         context.mergePolicy = NSMergeByPropertyObjectTrumpMergePolicy
         context.setChatClientConfig(chatClientConfig)
@@ -38,7 +38,7 @@ class DatabaseContainer: NSPersistentContainer, @unchecked Sendable {
     /// If you need a time sensitive context, use `viewContext` instead.
     lazy var backgroundReadOnlyContext: NSManagedObjectContext = {
         let context = newBackgroundContext()
-        context.name = "BackgroundReadOnlyContext"
+        context.name = "Read"
         context.automaticallyMergesChangesFromParent = true
         context.mergePolicy = NSMergeByPropertyObjectTrumpMergePolicy
         context.setChatClientConfig(chatClientConfig)
@@ -56,7 +56,7 @@ class DatabaseContainer: NSPersistentContainer, @unchecked Sendable {
     /// ```
     private(set) lazy var stateLayerContext: NSManagedObjectContext = {
         let context = newBackgroundContext()
-        context.name = "StateLayerContext"
+        context.name = "Read (state layer)"
         // Context is merged manually since automatically is too slow for reacting to changes needed by the state layer
         context.automaticallyMergesChangesFromParent = false
         context.mergePolicy = NSMergeByPropertyObjectTrumpMergePolicy
@@ -204,13 +204,13 @@ class DatabaseContainer: NSPersistentContainer, @unchecked Sendable {
                     for readContext in [self.backgroundReadOnlyContext, self.stateLayerContext, self.viewContext] {
                         readContext.performAndWait {
                             let cache = readContext.databaseModelCache
-                            cache.removeModels(for: resetCachedObjectIds)
-                            cache.printStatistics(identifier: readContext.name ?? "")
+                            cache?.removeModels(for: resetCachedObjectIds)
+                            cache?.printStatistics(identifier: "\(readContext.name ?? "") \(readContext.identifier)")
                         }
                     }
                     let writableModelCache = self.writableContext.databaseModelCache
-                    writableModelCache.removeModels(for: resetCachedObjectIds)
-                    writableModelCache.printStatistics(identifier: self.writableContext.name ?? "")
+                    writableModelCache?.removeModels(for: resetCachedObjectIds)
+                    writableModelCache?.printStatistics(identifier: "\(self.writableContext.name ?? "") \(self.writableContext.identifier)")
                     
                     log.debug("Context has changes. Saving.", subsystems: .database)
                     try self.writableContext.save()

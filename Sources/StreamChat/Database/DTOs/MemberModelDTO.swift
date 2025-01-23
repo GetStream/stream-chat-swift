@@ -186,16 +186,17 @@ extension MemberDTO {
 extension ChatChannelMember {
     fileprivate static func create(fromDTO dto: MemberDTO) throws -> ChatChannelMember {
         try dto.isNotDeleted()
+        let context = try dto.context()
+        let cache = context.databaseModelCache
+        
+        if let cache, let member = cache.channelMember(for: dto.objectID, context: context) {
+            return member
+        }
 
         guard let clientConfig = dto.managedObjectContext?.chatClientConfig else {
             throw InvalidModel(dto)
         }
-        
-        if let (cache, context) = dto.databaseModelCacheAndContext,
-           let member = cache.channelMember(for: dto.objectID, context: context) {
-            return member
-        }
-        
+                
         let extraData: [String: RawJSON]
         do {
             extraData = try JSONDecoder.stream.decodeCachedRawJSON(from: dto.user.extraData)
@@ -255,7 +256,7 @@ extension ChatChannelMember {
             member = transformer.transform(member: member)
         }
 
-        dto.databaseModelCache?.setChannelMember(member, forObjectId: dto.objectID)
+        cache?.setChannelMember(member, forObjectId: dto.objectID)
         return member
     }
 }
