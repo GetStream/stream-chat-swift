@@ -198,8 +198,9 @@ class DatabaseSession_Mock: DatabaseSession {
         underlyingSession.unpin(message: message)
     }
 
+    var mockedMessageDTO: MessageDTO?
     func message(id: MessageId) -> MessageDTO? {
-        underlyingSession.message(id: id)
+        mockedMessageDTO ?? underlyingSession.message(id: id)
     }
 
     func messageExists(id: MessageId) -> Bool {
@@ -297,9 +298,10 @@ class DatabaseSession_Mock: DatabaseSession {
         try throwErrorIfNeeded()
         return try underlyingSession.saveChannel(payload: payload, query: query, cache: cache)
     }
-    
+
+    var mockedChannelDTO: ChannelDTO?
     func channel(cid: ChannelId) -> ChannelDTO? {
-        underlyingSession.channel(cid: cid)
+        mockedChannelDTO ?? underlyingSession.channel(cid: cid)
     }
 
     func saveMember(
