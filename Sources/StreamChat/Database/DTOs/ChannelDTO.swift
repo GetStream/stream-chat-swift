@@ -440,7 +440,9 @@ extension ChannelDTO {
 
 extension ChannelDTO {
     /// Snapshots the current state of `ChannelDTO` and returns an immutable model object from it.
-    func asModel() throws -> ChatChannel { try .create(fromDTO: self, depth: 0) }
+    func asModel() throws -> ChatChannel {
+        try .create(fromDTO: self, depth: 0)
+    }
 
     /// Snapshots the current state of `ChannelDTO` and returns an immutable model object from it if the dependency depth
     /// limit has not been reached
@@ -460,12 +462,14 @@ extension ChatChannel {
         guard StreamRuntimeCheck._canFetchRelationship(currentDepth: depth) else {
             throw RecursionLimitError()
         }
+
         try dto.isNotDeleted()
-        guard let cid = try? ChannelId(cid: dto.cid), let context = dto.managedObjectContext else {
+
+        guard let cid = try? ChannelId(cid: dto.cid),
+              let context = dto.managedObjectContext,
+              let clientConfig = context.chatClientConfig else {
             throw InvalidModel(dto)
         }
-
-        let clientConfig = context.chatClientConfig
 
         let extraData: [String: RawJSON]
         do {
@@ -560,8 +564,8 @@ extension ChatChannel {
         let pinnedMessages = dto.pinnedMessages.compactMap { try? $0.relationshipAsModel(depth: depth) }
         let previewMessage = try? dto.previewMessage?.relationshipAsModel(depth: depth)
         let typingUsers = Set(dto.currentlyTypingUsers.compactMap { try? $0.asModel() })
-        
-        return try ChatChannel(
+
+        let channel = try ChatChannel(
             cid: cid,
             name: dto.name,
             imageURL: dto.imageURL,
@@ -594,6 +598,12 @@ extension ChatChannel {
             muteDetails: muteDetails,
             previewMessage: previewMessage
         )
+
+        if let transformer = clientConfig.modelsTransformer {
+            return transformer.transform(channel: channel)
+        }
+
+        return channel
     }
 }
 

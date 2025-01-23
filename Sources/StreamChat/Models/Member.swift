@@ -114,6 +114,49 @@ public class ChatChannelMember: ChatUser {
             extraData: extraData
         )
     }
+
+    /// Returns a new `ChatChannelMember` with the provided data replaced.
+    /// - Parameters:
+    ///  - name: The new name.
+    ///  - imageURL: The new image URL.
+    ///  - userExtraData: The new extra data for the user.
+    ///  - memberExtraData: The new extra data for the member channel (only related to this channel membership).
+    public func replacing(
+        name: String?,
+        imageURL: URL?,
+        userExtraData: [String: RawJSON]?,
+        memberExtraData: [String: RawJSON]?
+    ) -> ChatChannelMember {
+        .init(
+            id: id,
+            name: name,
+            imageURL: imageURL,
+            isOnline: isOnline,
+            isBanned: isBannedFromChannel,
+            isFlaggedByCurrentUser: isFlaggedByCurrentUser,
+            userRole: userRole,
+            userCreatedAt: userCreatedAt,
+            userUpdatedAt: userUpdatedAt,
+            deactivatedAt: userDeactivatedAt,
+            lastActiveAt: lastActiveAt,
+            teams: teams,
+            language: language,
+            extraData: userExtraData ?? [:],
+            memberRole: memberRole,
+            memberCreatedAt: memberCreatedAt,
+            memberUpdatedAt: memberUpdatedAt,
+            isInvited: isInvited,
+            inviteAcceptedAt: inviteAcceptedAt,
+            inviteRejectedAt: inviteRejectedAt,
+            archivedAt: archivedAt,
+            pinnedAt: pinnedAt,
+            isBannedFromChannel: isBannedFromChannel,
+            banExpiresAt: banExpiresAt,
+            isShadowBannedFromChannel: isShadowBannedFromChannel,
+            notificationsMuted: notificationsMuted,
+            memberExtraData: memberExtraData ?? [:]
+        )
+    }
 }
 
 /// A  `struct` describing roles of a member in a channel.

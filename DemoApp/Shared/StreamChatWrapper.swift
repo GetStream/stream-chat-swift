@@ -37,6 +37,8 @@ final class StreamChatWrapper {
         config.shouldShowShadowedMessages = true
         config.applicationGroupIdentifier = applicationGroupIdentifier
         config.urlSessionConfiguration.httpAdditionalHeaders = ["Custom": "Example"]
+        // Uncomment this to test model transformers
+        // config.modelsTransformer = CustomStreamModelsTransformer()
         configureUI()
     }
 }
@@ -177,7 +179,7 @@ extension StreamChatWrapper {
     }
 }
 
-// MARK: Push Notifications
+// MARK: - Push Notifications
 
 extension StreamChatWrapper {
     func registerForPushNotifications(with deviceToken: Data) {
@@ -190,5 +192,45 @@ extension StreamChatWrapper {
 
     func notificationInfo(for response: UNNotificationResponse) -> ChatPushNotificationInfo? {
         try? ChatPushNotificationInfo(content: response.notification.request.content)
+    }
+}
+
+// MARK: - Stream Models Transformer
+
+// An object to test the Stream Models transformer.
+// By default it is not used. To use it, set it to the `modelsTransformer` property of the `ChatClientConfig`.
+
+class CustomStreamModelsTransformer: StreamModelsTransformer {
+    func transform(channel: ChatChannel) -> ChatChannel {
+        channel.replacing(
+            name: "Custom Name",
+            imageURL: channel.imageURL,
+            extraData: channel.extraData
+        )
+    }
+
+    func transform(message: ChatMessage) -> ChatMessage {
+        message.replacing(
+            text: "Hey!",
+            extraData: message.extraData,
+            attachments: message.allAttachments
+        )
+    }
+
+    func transform(newMessageInfo: NewMessageTransformableInfo) -> NewMessageTransformableInfo {
+        newMessageInfo.replacing(
+            text: "Changed!",
+            attachments: newMessageInfo.attachments,
+            extraData: newMessageInfo.extraData
+        )
+    }
+
+    func transform(member: ChatChannelMember) -> ChatChannelMember {
+        member.replacing(
+            name: "Changed Name",
+            imageURL: member.imageURL,
+            userExtraData: member.extraData,
+            memberExtraData: member.memberExtraData
+        )
     }
 }

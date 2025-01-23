@@ -228,6 +228,47 @@ public struct ChatChannel {
         self.muteDetails = muteDetails
         self.previewMessage = previewMessage
     }
+
+    /// Returns a new `ChatChannel` with the provided data replaced.
+    public func replacing(
+        name: String?,
+        imageURL: URL?,
+        extraData: [String: RawJSON]?
+    ) -> ChatChannel {
+        .init(
+            cid: cid,
+            name: name,
+            imageURL: imageURL,
+            lastMessageAt: lastMessageAt,
+            createdAt: createdAt,
+            updatedAt: updatedAt,
+            deletedAt: deletedAt,
+            truncatedAt: truncatedAt,
+            isHidden: isHidden,
+            createdBy: createdBy,
+            config: config,
+            ownCapabilities: ownCapabilities,
+            isFrozen: isFrozen,
+            isDisabled: isDisabled,
+            isBlocked: isBlocked,
+            lastActiveMembers: lastActiveMembers,
+            membership: membership,
+            currentlyTypingUsers: currentlyTypingUsers,
+            lastActiveWatchers: lastActiveWatchers,
+            team: team,
+            unreadCount: unreadCount,
+            watcherCount: watcherCount,
+            memberCount: memberCount,
+            reads: reads,
+            cooldownDuration: cooldownDuration,
+            extraData: extraData ?? [:],
+            latestMessages: latestMessages,
+            lastMessageFromCurrentUser: lastMessageFromCurrentUser,
+            pinnedMessages: pinnedMessages,
+            muteDetails: muteDetails,
+            previewMessage: previewMessage
+        )
+    }
 }
 
 extension ChatChannel {

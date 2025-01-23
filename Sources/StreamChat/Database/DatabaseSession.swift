@@ -7,12 +7,12 @@ import CoreData
 extension NSManagedObjectContext: DatabaseSession {
     private static let chatClientConfigKey = "io.getStream.StreamChat.config.key"
 
-    var chatClientConfig: ChatClientConfig {
+    var chatClientConfig: ChatClientConfig? {
         var config: ChatClientConfig?
         performAndWait {
             config = userInfo[Self.chatClientConfigKey] as? ChatClientConfig
         }
-        return config!
+        return config
     }
 
     func setChatClientConfig(_ config: ChatClientConfig) {
