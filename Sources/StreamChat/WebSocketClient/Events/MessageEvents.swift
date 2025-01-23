@@ -133,7 +133,26 @@ public struct MessageDeletedEvent: ChannelSpecificEvent {
     public let createdAt: Date
 
     /// A Boolean value indicating whether it is an hard delete or not.
+    @available(*, deprecated, message: "The `MessageHardDeletedEvent` should be used instead.")
     public let isHardDelete: Bool
+}
+
+/// Triggered when a new message is hard deleted.
+public struct MessageHardDeletedEvent: ChannelSpecificEvent {
+    /// The user who deleted the message.
+    public let user: ChatUser?
+
+    /// The channel identifier a message was deleted from.
+    public var cid: ChannelId { channel.cid }
+
+    /// The channel a message was deleted from.
+    public let channel: ChatChannel
+
+    /// The hard deleted message id.
+    public let messageId: MessageId
+
+    /// The event timestamp.
+    public let createdAt: Date
 }
 
 class MessageDeletedEventDTO: EventDTO {
@@ -154,14 +173,27 @@ class MessageDeletedEventDTO: EventDTO {
     }
 
     func toDomainEvent(session: DatabaseSession) -> Event? {
-        guard
-            let messageDTO = session.message(id: message.id),
-            let channelDTO = session.channel(cid: cid),
-            let userDTO = user.flatMap({ session.user(id: $0.id) })
-        else { return nil }
+        guard let channelDTO = session.channel(cid: cid) else {
+            return nil
+        }
+
+        let userDTO = user.flatMap { session.user(id: $0.id) }
+
+        if hardDelete {
+            return try? MessageHardDeletedEvent(
+                user: userDTO?.asModel(),
+                channel: channelDTO.asModel(),
+                messageId: message.id,
+                createdAt: createdAt
+            )
+        }
+
+        guard let messageDTO = session.message(id: message.id) else {
+            return nil
+        }
 
         return try? MessageDeletedEvent(
-            user: userDTO.asModel(),
+            user: userDTO?.asModel(),
             channel: channelDTO.asModel(),
             message: messageDTO.asModel(),
             createdAt: createdAt,
