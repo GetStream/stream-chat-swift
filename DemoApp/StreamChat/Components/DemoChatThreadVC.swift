@@ -70,6 +70,18 @@ class DemoChatThreadVC: ChatThreadVC, CurrentChatUserControllerDelegate {
         ])
     }
 
+    override func messageController(
+        _ controller: ChatMessageController,
+        didChangeReplies changes: [ListChange<ChatMessage>]
+    ) {
+        // If the message is hard deleted, dismiss the thread.
+        if controller.message == nil {
+            navigationController?.popViewController(animated: true)
+            return
+        }
+        super.messageController(controller, didChangeReplies: changes)
+    }
+
     // MARK: - Loading previous and next messages state handling.
 
     override func loadPreviousReplies(completion: @escaping (Error?) -> Void) {
