@@ -482,21 +482,23 @@ extension ChatChannel {
             extraData = [:]
         }
         
-        let sortedMessageDTOs = dto.messages.sorted(by: { $0.createdAt.bridgeDate > $1.createdAt.bridgeDate })
+        let sortedMessages = dto.messages
+            .compactMap { try? $0.relationshipAsModel(depth: depth) }
+            .sorted(by: { $0.createdAt > $1.createdAt })
         let reads: [ChatChannelRead] = try dto.reads.map { try $0.asModel() }
         let unreadCount: ChannelUnreadCount = {
-            guard let currentUserDTO = context.currentUser else {
+            guard let currentUserId = context.currentUser?.user.id else {
                 return .noUnread
             }
-            let currentUserRead = reads.first(where: { $0.user.id == currentUserDTO.user.id })
+            let currentUserRead = reads.first(where: { $0.user.id == currentUserId })
             let allUnreadMessages = currentUserRead?.unreadMessagesCount ?? 0
             // Therefore, no unread messages with mentions and we can skip the fetch
             if allUnreadMessages == 0 {
                 return .noUnread
             }
-            let unreadMentionsCount = sortedMessageDTOs
+            let unreadMentionsCount = sortedMessages
                 .prefix(allUnreadMessages)
-                .filter { $0.mentionedUsers.contains(currentUserDTO.user) }
+                .filter { $0.mentionedUsers.contains(where: { $0.id == currentUserId }) }
                 .count
             return ChannelUnreadCount(
                 messages: allUnreadMessages,
@@ -505,52 +507,50 @@ extension ChatChannel {
         }()
 
         let latestMessages: [ChatMessage] = {
-            var messages = sortedMessageDTOs
+            var messages = sortedMessages
                 .prefix(clientConfig.localCaching.chatChannel.latestMessagesLimit)
-                .compactMap { try? $0.relationshipAsModel(depth: depth) }
             if let oldest = dto.oldestMessageAt?.bridgeDate {
                 messages = messages.filter { $0.createdAt >= oldest }
             }
             if let truncated = dto.truncatedAt?.bridgeDate {
                 messages = messages.filter { $0.createdAt >= truncated }
             }
-            return messages
+            return Array(messages)
         }()
 
         let latestMessageFromUser: ChatMessage? = {
             guard let currentUserId = context.currentUser?.user.id else { return nil }
-            return try? sortedMessageDTOs
-                .first(where: { messageDTO in
-                    guard messageDTO.user.id == currentUserId else { return false }
-                    guard messageDTO.localMessageState == nil else { return false }
-                    return messageDTO.type != MessageType.ephemeral.rawValue
-                })?
-                .relationshipAsModel(depth: depth)
+            return sortedMessages
+                .first(where: { message in
+                    guard message.author.id == currentUserId else { return false }
+                    guard message.localState == nil else { return false }
+                    return message.type != MessageType.ephemeral
+                })
         }()
         
         let watchers = dto.watchers
+            .compactMap { try? $0.asModel() }
             .sorted { lhs, rhs in
-                let lhsActivity = lhs.lastActivityAt?.bridgeDate ?? .distantPast
-                let rhsActivity = rhs.lastActivityAt?.bridgeDate ?? .distantPast
+                let lhsActivity = lhs.lastActiveAt ?? .distantPast
+                let rhsActivity = rhs.lastActiveAt ?? .distantPast
                 if lhsActivity == rhsActivity {
                     return lhs.id > rhs.id
                 }
                 return lhsActivity > rhsActivity
             }
             .prefix(clientConfig.localCaching.chatChannel.lastActiveWatchersLimit)
-            .compactMap { try? $0.asModel() }
-        
+  
         let members = dto.members
+            .compactMap { try? $0.asModel() }
             .sorted { lhs, rhs in
-                let lhsActivity = lhs.user.lastActivityAt?.bridgeDate ?? .distantPast
-                let rhsActivity = rhs.user.lastActivityAt?.bridgeDate ?? .distantPast
+                let lhsActivity = lhs.lastActiveAt ?? .distantPast
+                let rhsActivity = rhs.lastActiveAt ?? .distantPast
                 if lhsActivity == rhsActivity {
                     return lhs.id > rhs.id
                 }
                 return lhsActivity > rhsActivity
             }
             .prefix(clientConfig.localCaching.chatChannel.lastActiveMembersLimit)
-            .compactMap { try? $0.asModel() }
 
         let muteDetails: MuteDetails? = {
             guard let mute = dto.mute else { return nil }
@@ -581,10 +581,10 @@ extension ChatChannel {
             isFrozen: dto.isFrozen,
             isDisabled: dto.isDisabled,
             isBlocked: dto.isBlocked,
-            lastActiveMembers: members,
+            lastActiveMembers: Array(members),
             membership: membership,
             currentlyTypingUsers: typingUsers,
-            lastActiveWatchers: watchers,
+            lastActiveWatchers: Array(watchers),
             team: dto.team,
             unreadCount: unreadCount,
             watcherCount: Int(dto.watcherCount),

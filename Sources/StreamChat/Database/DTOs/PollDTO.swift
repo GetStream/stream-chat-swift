@@ -87,6 +87,12 @@ extension PollDTO {
 extension PollDTO {
     func asModel() throws -> Poll {
         try isNotDeleted()
+        let context = try context()
+        let cache = context.databaseModelCache
+        
+        if let cache, let poll = cache.poll(for: objectID, context: context) {
+            return poll
+        }
         
         let extraData: [String: RawJSON]
         do {
@@ -101,7 +107,7 @@ extension PollDTO {
         let optionsArray = (options.array as? [PollOptionDTO]) ?? []
         let currentUserId = managedObjectContext?.currentUser?.user.id
 
-        return try Poll(
+        let poll = try Poll(
             allowAnswers: allowAnswers,
             allowUserSuggestedOptions: allowUserSuggestedOptions,
             answersCount: answersCount,
@@ -133,6 +139,8 @@ extension PollDTO {
                 .filter { !$0.isAnswer && $0.user?.id == currentUserId }
                 .map { try $0.asModel() }
         )
+        cache?.setPoll(poll, forObjectId: objectID)
+        return poll
     }
     
     private func votingVisibility(from string: String?) -> VotingVisibility? {

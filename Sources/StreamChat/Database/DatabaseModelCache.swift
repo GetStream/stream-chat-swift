@@ -6,8 +6,11 @@ import CoreData
 import Foundation
 
 final class DatabaseModelCache {
+    // Update removeModels(for:) when adding more
     private var channelMembers = [NSManagedObjectID: ChatChannelMember]()
     private var channelReads = [NSManagedObjectID: CachedChannelRead]()
+    private var messages = [NSManagedObjectID: CachedMessage]()
+    private var polls = [NSManagedObjectID: Poll]()
     private var users = [NSManagedObjectID: ChatUser]()
     
     // MARK: - Channel Members
@@ -31,6 +34,31 @@ final class DatabaseModelCache {
             model: model,
             userObjectId: dto.user.objectID
         )
+    }
+    
+    // MARK: - Messages
+    
+    func message(for objectId: NSManagedObjectID, context: NSManagedObjectContext) -> CachedMessage? {
+        cachedData(for: objectId, in: messages, tag: "messages", context: context)
+    }
+    
+    func setMessage(_ message: ChatMessage, for dto: MessageDTO) {
+        messages[dto.objectID] = CachedMessage(
+            message: message,
+            mentionedIds: dto.mentionedUsers.map(\.objectID),
+            pollObjectId: dto.poll?.objectID,
+            threadParticipantIds: (dto.threadParticipants.array as? [NSManagedObject])?.map(\.objectID) ?? []
+        )
+    }
+    
+    // MARK: - Polls
+    
+    func poll(for objectId: NSManagedObjectID, context: NSManagedObjectContext) -> Poll? {
+        cachedData(for: objectId, in: polls, tag: "polls", context: context)
+    }
+    
+    func setPoll(_ poll: Poll, forObjectId objectId: NSManagedObjectID) {
+        polls[objectId] = poll
     }
     
     // MARK: - Users
@@ -97,6 +125,8 @@ final class DatabaseModelCache {
         objectIds.forEach { objectId in
             channelMembers.removeValue(forKey: objectId)
             channelReads.removeValue(forKey: objectId)
+            messages.removeValue(forKey: objectId)
+            polls.removeValue(forKey: objectId)
             users.removeValue(forKey: objectId)
         }
     }
@@ -134,5 +164,15 @@ extension DatabaseModelCache {
     struct CachedChannelRead {
         let model: ChatChannelRead
         let userObjectId: NSManagedObjectID
+    }
+    
+    struct CachedMessage {
+        let message: ChatMessage
+        // Skipped (changes with the message):
+        // reaction groups, message moderation, pinnedBy.user, reaction.author
+        // Review: from author
+        let mentionedIds: [NSManagedObjectID]
+        let pollObjectId: NSManagedObjectID?
+        let threadParticipantIds: [NSManagedObjectID]
     }
 }

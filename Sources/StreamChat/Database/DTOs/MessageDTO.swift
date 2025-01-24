@@ -1343,6 +1343,25 @@ private extension ChatMessage {
             throw InvalidModel(dto)
         }
         try dto.isNotDeleted()
+        let cache = context.databaseModelCache
+        if let cache, let cachedMessage = cache.message(for: dto.objectID, context: context) {
+            let poll: Poll? = {
+                guard let pollObjectId = cachedMessage.pollObjectId else { return nil }
+                return try? cache.poll(for: pollObjectId, context: context) ?? dto.poll?.asModel()
+            }()
+            let threadParticipants = cachedMessage.threadParticipantIds.compactMap { id in
+                try? cache.user(for: id, context: context) ?? (context.existingObject(with: id) as? UserDTO)?.asModel()
+            }
+            let mentionedUsers = cachedMessage.mentionedIds.compactMap { id in
+                try? cache.user(for: id, context: context) ?? (context.existingObject(with: id) as? UserDTO)?.asModel()
+            }
+            self = cachedMessage.message.replacing(
+                mentionedUsers: Set(mentionedUsers),
+                poll: poll,
+                threadParticipants: threadParticipants
+            )
+            return
+        }
 
         let id = dto.id
         let cid = try? dto.cid.map { try ChannelId(cid: $0) }
@@ -1493,7 +1512,57 @@ private extension ChatMessage {
             return
         }
 
+        cache?.setMessage(message, for: dto)
         self = message
+    }
+}
+
+private extension ChatMessage {
+    func replacing(
+        mentionedUsers: Set<ChatUser>,
+        poll: Poll?,
+        threadParticipants: [ChatUser]
+    ) -> ChatMessage {
+        ChatMessage(
+            id: id,
+            cid: cid,
+            text: text,
+            type: type,
+            command: command,
+            createdAt: createdAt,
+            locallyCreatedAt: locallyCreatedAt,
+            updatedAt: updatedAt,
+            deletedAt: deletedAt,
+            arguments: arguments,
+            parentMessageId: parentMessageId,
+            showReplyInChannel: showReplyInChannel,
+            replyCount: replyCount,
+            extraData: extraData,
+            quotedMessage: quotedMessage,
+            isBounced: isBounced,
+            isSilent: isSilent,
+            isShadowed: isShadowed,
+            reactionScores: reactionScores,
+            reactionCounts: reactionCounts,
+            reactionGroups: reactionGroups,
+            author: author,
+            mentionedUsers: mentionedUsers,
+            threadParticipants: threadParticipants,
+            attachments: _attachments,
+            latestReplies: latestReplies,
+            localState: localState,
+            isFlaggedByCurrentUser: isFlaggedByCurrentUser,
+            latestReactions: latestReactions,
+            currentUserReactions: currentUserReactions,
+            isSentByCurrentUser: isSentByCurrentUser,
+            pinDetails: pinDetails,
+            translations: translations,
+            originalLanguage: originalLanguage,
+            moderationDetails: moderationDetails,
+            readBy: readBy,
+            poll: poll,
+            textUpdatedAt: textUpdatedAt
+        )
     }
 }
 
