@@ -77,7 +77,7 @@ class DemoChatThreadVC: ChatThreadVC, CurrentChatUserControllerDelegate {
         didChangeReplies changes: [ListChange<ChatMessage>]
     ) {
         // If the message is hard deleted, do not update the UI
-        // (Otherwise it would should the root message disappearing)
+        // (Otherwise it would show the root message disappearing)
         if controller.message == nil {
             navigationController?.popViewController(animated: true)
             return
