@@ -198,7 +198,9 @@ class DatabaseContainer: NSPersistentContainer, @unchecked Sendable {
 
                 if self.writableContext.hasChanges {
                     print("--- save ---")
-                    let updated = self.writableContext.updatedObjects.map(\.objectID)
+                    let updated = self.writableContext
+                        .updatedObjects
+                        .filter { !$0.changedValues().isEmpty }.map(\.objectID)
                     let deleted = self.writableContext.deletedObjects.map(\.objectID)
                     let resetCachedObjectIds = Set(updated + deleted)
                     for readContext in [self.backgroundReadOnlyContext, self.stateLayerContext, self.viewContext] {

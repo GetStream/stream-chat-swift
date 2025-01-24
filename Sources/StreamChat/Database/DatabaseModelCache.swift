@@ -100,13 +100,20 @@ final class DatabaseModelCache {
         }
     }
     
+    private func canUseCache(for objectId: NSManagedObjectID, context: NSManagedObjectContext) -> Bool {
+        guard context.hasChanges else { return true }
+        guard let dto = context.updatedObjects.first(where: { $0.objectID == objectId }) else { return true }
+        return dto.changedValues().isEmpty
+    }
+    
     private func cachedData<CachedData>(
         for objectId: NSManagedObjectID,
         in storage: [NSManagedObjectID: CachedData],
         tag: String,
         context: NSManagedObjectContext
     ) -> CachedData? {
-        if !context.hasChanges, let cachedData = storage[objectId] {
+        if canUseCache(for: objectId, context: context),
+           let cachedData = storage[objectId] {
             #if DEBUG
             registerCacheHit(for: tag)
             #endif
