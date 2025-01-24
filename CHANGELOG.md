@@ -5,7 +5,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## StreamChat
 ### ✅ Added
-- Add `MessageHardDeletedEvent` [#3569](https://github.com/GetStream/stream-chat-swift/pull/3569)
 - Expose `Event.name` to easily check which event it is [#3569](https://github.com/GetStream/stream-chat-swift/pull/3569)
 ### 🐞 Fixed
 - Calling async `connectUser()` methods can sometimes throw `CurrentUserDoesNotExist()` unexpectedly [#3565](https://github.com/GetStream/stream-chat-swift/pull/3565)
@@ -16,8 +15,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
    - Add `ChatChannel.replacing()`
    - Add `ChatChannelMember.replacing()`
 - Fix hard deleted message events not being reported in `EventsController` [#3569](https://github.com/GetStream/stream-chat-swift/pull/3569)
-### 🔄 Changed
-- Deprecates `MessageDeletedEvent.isHardDeleted` [#3569](https://github.com/GetStream/stream-chat-swift/pull/3569)
+- Fix hard deleting a parent message not deleting its replies [#3569](https://github.com/GetStream/stream-chat-swift/pull/3569)
 
 ## StreamChatUI
 ### ✅ Added
