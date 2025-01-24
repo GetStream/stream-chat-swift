@@ -72,19 +72,6 @@ class DemoChatThreadVC: ChatThreadVC, CurrentChatUserControllerDelegate {
 
     // MARK: - Dismissing the thread if the root message was hard deleted.
 
-    override func messageController(
-        _ controller: ChatMessageController,
-        didChangeReplies changes: [ListChange<ChatMessage>]
-    ) {
-        // If the message is hard deleted, do not update the UI
-        // (Otherwise it would show the root message disappearing)
-        if controller.message == nil {
-            navigationController?.popViewController(animated: true)
-            return
-        }
-        super.messageController(controller, didChangeReplies: changes)
-    }
-
     override func eventsController(_ controller: EventsController, didReceiveEvent event: any Event) {
         super.eventsController(controller, didReceiveEvent: event)
 
