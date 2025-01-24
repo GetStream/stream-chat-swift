@@ -163,7 +163,7 @@ class MessageDeletedEventDTO: EventDTO {
 
         // If the message is hard deleted, it is not available as DTO.
         // So we map the Payload Directly to the Model.
-        let message = (try? messageDTO?.asModel()) ?? message.asModel()
+        let message = (try? messageDTO?.asModel()) ?? message.asModel(currentUser: session.currentUser)
 
         return try? MessageDeletedEvent(
             user: userDTO?.asModel(),
@@ -254,7 +254,7 @@ public struct NewMessageErrorEvent: Event {
 // So some of the data will be incorrect, but for this is use case is more than enough.
 
 private extension MessagePayload {
-    func asModel() -> ChatMessage {
+    func asModel(currentUser: CurrentUserDTO?) -> ChatMessage {
         .init(
             id: id,
             cid: cid,
@@ -270,7 +270,7 @@ private extension MessagePayload {
             showReplyInChannel: showReplyInChannel,
             replyCount: replyCount,
             extraData: extraData,
-            quotedMessage: quotedMessage?.asModel(),
+            quotedMessage: quotedMessage?.asModel(currentUser: currentUser),
             isBounced: false,
             isSilent: isSilent,
             isShadowed: isShadowed,
@@ -286,7 +286,7 @@ private extension MessagePayload {
             isFlaggedByCurrentUser: false,
             latestReactions: [],
             currentUserReactions: [],
-            isSentByCurrentUser: false,
+            isSentByCurrentUser: user.id == currentUser?.user.id,
             pinDetails: nil,
             translations: nil,
             originalLanguage: originalLanguage.map { TranslationLanguage(languageCode: $0) },
