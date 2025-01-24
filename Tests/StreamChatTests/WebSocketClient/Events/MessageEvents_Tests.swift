@@ -82,7 +82,7 @@ final class MessageEvents_Tests: XCTestCase {
         XCTAssertEqual(event?.hardDelete, true)
     }
 
-    func test_messageDeletedEvent_toDomainEvent_thenIsMessageDeletedEvent() throws {
+    func test_messageDeletedEvent_toDomainEvent() throws {
         let json = XCTestCase.mockData(fromJSONFile: "MessageDeleted")
         let event = try eventDecoder.decode(from: json) as? MessageDeletedEventDTO
 
@@ -96,18 +96,18 @@ final class MessageEvents_Tests: XCTestCase {
         XCTAssertEqual(domainEvent is MessageDeletedEvent, true)
     }
 
-    func test_messageDeletedEvent_toDomainEvent_whenIsHardDeleted_thenIsMessageHardDeletedEvent() throws {
+    func test_messageDeletedEvent_toDomainEvent_whenIsHardDeleted_whenMessageNotInLocalDB() throws {
         let json = XCTestCase.mockData(fromJSONFile: "MessageDeletedHard")
         let event = try eventDecoder.decode(from: json) as? MessageDeletedEventDTO
 
         let channelId = try XCTUnwrap(event?.cid)
         let message = try XCTUnwrap(event?.message)
         let session = DatabaseContainer_Spy(kind: .inMemory).viewContext
+        // Only save the channel. Not the message. In this case the payload should be directly mapped to model.
         _ = try session.saveChannel(payload: .dummy(cid: channelId), query: nil, cache: nil)
-        _ = try session.saveMessage(payload: message, for: channelId, cache: nil)
 
-        let domainEvent = event?.toDomainEvent(session: session)
-        XCTAssertEqual(domainEvent is MessageHardDeletedEvent, true)
+        let domainEvent = try XCTUnwrap(event?.toDomainEvent(session: session) as? MessageDeletedEvent)
+        XCTAssertEqual(domainEvent.message.id, message.id)
     }
 
     func test_read() throws {

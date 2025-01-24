@@ -89,7 +89,7 @@ class DemoChatThreadVC: ChatThreadVC, CurrentChatUserControllerDelegate {
         super.eventsController(controller, didReceiveEvent: event)
 
         // Dismiss the thread if the root message was hard deleted.
-        if let event = event as? MessageHardDeletedEvent, event.messageId == messageController.messageId {
+        if let event = event as? MessageDeletedEvent, event.isHardDelete, event.message.id == messageController.messageId {
             navigationController?.popViewController(animated: true)
         }
     }
