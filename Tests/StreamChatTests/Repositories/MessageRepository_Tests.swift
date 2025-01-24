@@ -535,6 +535,53 @@ final class MessageRepositoryTests: XCTestCase {
         XCTAssertNil(error)
     }
 
+    func test_saveSuccessfullyDeletedMessage_hardDelete_shouldDeleteReplies() throws {
+        let id = MessageId.unique
+        let replyId = MessageId.unique
+        try createMessage(id: id, localState: .deleting)
+        try database.writeSynchronously { session in
+            let message = try XCTUnwrap(session.message(id: id))
+            let cid = try XCTUnwrap(message.cid)
+            _ = try session.saveMessage(
+                payload: .dummy(messageId: replyId, parentId: message.id),
+                for: ChannelId(cid: cid),
+                syncOwnReactions: false,
+                cache: nil
+            )
+            message.isHardDeleted = true
+        }
+
+        let message = MessagePayload.dummy(messageId: id, authorUserId: .anonymous)
+        let error = runSaveSuccessfullyDeletedMessageAndWait(message: message)
+
+        XCTAssertNil(self.message(for: id))
+        XCTAssertNil(self.message(for: replyId))
+        XCTAssertNil(error)
+    }
+
+    func test_saveSuccessfullyDeletedMessage_noHardDelete_shouldNotDeleteReplies() throws {
+        let id = MessageId.unique
+        let replyId = MessageId.unique
+        try createMessage(id: id, localState: .deleting)
+        try database.writeSynchronously { session in
+            let message = try XCTUnwrap(session.message(id: id))
+            let cid = try XCTUnwrap(message.cid)
+            _ = try session.saveMessage(
+                payload: .dummy(messageId: replyId, parentId: message.id),
+                for: ChannelId(cid: cid),
+                syncOwnReactions: false,
+                cache: nil
+            )
+        }
+
+        let message = MessagePayload.dummy(messageId: id, authorUserId: .anonymous)
+        let error = runSaveSuccessfullyDeletedMessageAndWait(message: message)
+
+        XCTAssertNotNil(self.message(for: id))
+        XCTAssertNotNil(self.message(for: replyId))
+        XCTAssertNil(error)
+    }
+
     private func runSaveSuccessfullyDeletedMessageAndWait(message: MessagePayload) -> Error? {
         let expectation = self.expectation(description: "Mark Message completes")
         var error: Error?
