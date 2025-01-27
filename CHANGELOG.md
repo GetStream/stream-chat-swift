@@ -4,6 +4,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 # Upcoming
 
 ## StreamChat
+### ✅ Added
+- Expose `Event.name` to easily check which event it is [#3569](https://github.com/GetStream/stream-chat-swift/pull/3569)
 ### 🐞 Fixed
 - Calling async `connectUser()` methods can sometimes throw `CurrentUserDoesNotExist()` unexpectedly [#3565](https://github.com/GetStream/stream-chat-swift/pull/3565)
 - Fix creating controllers from background threads leading to rare crashes [#3566](https://github.com/GetStream/stream-chat-swift/pull/3566)
@@ -12,6 +14,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
    - Add `ChatMessage.replacing()`
    - Add `ChatChannel.replacing()`
    - Add `ChatChannelMember.replacing()`
+- Fix hard deleted message events not being reported in `EventsController` [#3569](https://github.com/GetStream/stream-chat-swift/pull/3569)
+- Fix hard deleting a parent message not deleting its replies [#3569](https://github.com/GetStream/stream-chat-swift/pull/3569)
 
 ## StreamChatUI
 ### ✅ Added
@@ -27,6 +31,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Fix thread reply action shown when inside a Thread [#3561](https://github.com/GetStream/stream-chat-swift/pull/3561)
 - Fix reaction author's view with shrinked reaction images in iOS 18 [#3568](https://github.com/GetStream/stream-chat-swift/pull/3568)
 - Fix missing final attributes for supplementary views exception [#3570](https://github.com/GetStream/stream-chat-swift/pull/3570)
+- Fix duplicated `didReceiveEvent` inside `ChatThreadVC` [#3569](https://github.com/GetStream/stream-chat-swift/pull/3569)
+### 🔄 Changed
+- Deprecates `ChatThreadVC.channelEventsController` [#3569](https://github.com/GetStream/stream-chat-swift/pull/3569)
 
 # [4.70.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.70.0)
 _January 14, 2025_

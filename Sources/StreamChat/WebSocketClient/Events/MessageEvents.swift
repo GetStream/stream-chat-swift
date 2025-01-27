@@ -154,16 +154,21 @@ class MessageDeletedEventDTO: EventDTO {
     }
 
     func toDomainEvent(session: DatabaseSession) -> Event? {
-        guard
-            let messageDTO = session.message(id: message.id),
-            let channelDTO = session.channel(cid: cid),
-            let userDTO = user.flatMap({ session.user(id: $0.id) })
-        else { return nil }
+        guard let channelDTO = session.channel(cid: cid) else {
+            return nil
+        }
+
+        let userDTO = user.flatMap { session.user(id: $0.id) }
+        let messageDTO = session.message(id: message.id)
+
+        // If the message is hard deleted, it is not available as DTO.
+        // So we map the Payload Directly to the Model.
+        let message = (try? messageDTO?.asModel()) ?? message.asModel(currentUser: session.currentUser)
 
         return try? MessageDeletedEvent(
-            user: userDTO.asModel(),
+            user: userDTO?.asModel(),
             channel: channelDTO.asModel(),
-            message: messageDTO.asModel(),
+            message: message,
             createdAt: createdAt,
             isHardDelete: hardDelete
         )
@@ -240,4 +245,76 @@ public struct NewMessagePendingEvent: Event {
 public struct NewMessageErrorEvent: Event {
     public let messageId: MessageId
     public let error: Error
+}
+
+// MARK: - Workaround to map a deleted message to Model.
+
+// At the moment our SDK does not support mapping Payload -> Model
+// So this is just a workaround for `MessageDeletedEvent` to have the `message` non-optional.
+// So some of the data will be incorrect, but for this is use case is more than enough.
+
+private extension MessagePayload {
+    func asModel(currentUser: CurrentUserDTO?) -> ChatMessage {
+        .init(
+            id: id,
+            cid: cid,
+            text: text,
+            type: type,
+            command: command,
+            createdAt: createdAt,
+            locallyCreatedAt: nil,
+            updatedAt: updatedAt,
+            deletedAt: deletedAt,
+            arguments: args,
+            parentMessageId: parentId,
+            showReplyInChannel: showReplyInChannel,
+            replyCount: replyCount,
+            extraData: extraData,
+            quotedMessage: quotedMessage?.asModel(currentUser: currentUser),
+            isBounced: false,
+            isSilent: isSilent,
+            isShadowed: isShadowed,
+            reactionScores: reactionScores,
+            reactionCounts: reactionCounts,
+            reactionGroups: [:],
+            author: user.asModel(),
+            mentionedUsers: Set(mentionedUsers.map { $0.asModel() }),
+            threadParticipants: threadParticipants.map { $0.asModel() },
+            attachments: [],
+            latestReplies: [],
+            localState: nil,
+            isFlaggedByCurrentUser: false,
+            latestReactions: [],
+            currentUserReactions: [],
+            isSentByCurrentUser: user.id == currentUser?.user.id,
+            pinDetails: nil,
+            translations: nil,
+            originalLanguage: originalLanguage.map { TranslationLanguage(languageCode: $0) },
+            moderationDetails: nil,
+            readBy: [],
+            poll: nil,
+            textUpdatedAt: messageTextUpdatedAt
+        )
+    }
+}
+
+private extension UserPayload {
+    func asModel() -> ChatUser {
+        .init(
+            id: id,
+            name: name,
+            imageURL: imageURL,
+            isOnline: isOnline,
+            isBanned: isBanned,
+            isFlaggedByCurrentUser: false,
+            userRole: role,
+            createdAt: createdAt,
+            updatedAt: updatedAt,
+            deactivatedAt: deactivatedAt,
+            lastActiveAt: lastActiveAt,
+            teams: Set(teams),
+            language: language.map { TranslationLanguage(languageCode: $0) },
+            extraData: extraData
+        )
+    }
 }

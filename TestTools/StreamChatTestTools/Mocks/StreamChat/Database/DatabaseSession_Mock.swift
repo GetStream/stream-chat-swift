@@ -297,7 +297,7 @@ class DatabaseSession_Mock: DatabaseSession {
         try throwErrorIfNeeded()
         return try underlyingSession.saveChannel(payload: payload, query: query, cache: cache)
     }
-    
+
     func channel(cid: ChannelId) -> ChannelDTO? {
         underlyingSession.channel(cid: cid)
     }
