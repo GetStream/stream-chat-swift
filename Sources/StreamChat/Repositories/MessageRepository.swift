@@ -216,6 +216,9 @@ class MessageRepository {
 
             if messageDTO.isHardDeleted {
                 session.delete(message: deletedMessage)
+                messageDTO.replies.forEach {
+                    session.delete(message: $0)
+                }
             }
         }, completion: {
             completion?($0)

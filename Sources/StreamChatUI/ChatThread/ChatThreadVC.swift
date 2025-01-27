@@ -24,6 +24,7 @@ open class ChatThreadVC: _ViewController,
     public var initialReplyId: MessageId?
 
     /// Controller for observing typing events for this thread.
+    @available(*, deprecated, message: "Events are now handled by the `eventsController`.")
     open lazy var channelEventsController: ChannelEventsController = client.channelEventsController(for: messageController.cid)
 
     /// A controller for observing web socket events.
@@ -123,7 +124,6 @@ open class ChatThreadVC: _ViewController,
         }
 
         messageController.delegate = self
-        channelEventsController.delegate = self
         eventsController.delegate = self
 
         messageListVC.swipeToReplyGestureHandler.onReply = { [weak self] message in
