@@ -56,36 +56,43 @@ open class ListCollectionViewLayout: UICollectionViewFlowLayout {
         let separatorAttributes = separatorLayoutAttributes(forCellLayoutAttributes: cellAttributes)
         return cellAttributes + separatorAttributes
     }
+    
+    override open func layoutAttributesForSupplementaryView(ofKind elementKind: String, at indexPath: IndexPath) -> UICollectionViewLayoutAttributes? {
+        guard elementKind == Self.separatorKind else { return nil }
+        guard let collectionView else { return nil }
+        let cellFrame = layoutAttributesForItem(at: indexPath)?.frame ?? CGRect(x: 0, y: 0, width: collectionViewContentSize.width, height: 0)
+        return separatorLayoutAttributes(forCellFrame: cellFrame, indexPath: indexPath)
+    }
 
+    private func separatorLayoutAttributes(forCellFrame cellFrame: CGRect, indexPath: IndexPath) -> UICollectionViewLayoutAttributes? {
+        guard let collectionView else { return nil }
+        let delegate = collectionView.delegate as? ListCollectionViewLayoutDelegate
+        guard delegate?.collectionView(
+            collectionView,
+            layout: self,
+            shouldShowSeparatorForCellAtIndexPath: indexPath
+        ) ?? true else { return nil }
+        let separatorAttribute = UICollectionViewLayoutAttributes(
+            forSupplementaryViewOfKind: Self.separatorKind,
+            with: indexPath
+        )
+        separatorAttribute.frame = CGRect(
+            x: cellFrame.origin.x,
+            y: cellFrame.origin.y + cellFrame.size.height,
+            width: cellFrame.size.width,
+            height: minimumLineSpacing
+        )
+        return separatorAttribute
+    }
+    
     private func separatorLayoutAttributes(
         forCellLayoutAttributes cellAttributes: [UICollectionViewLayoutAttributes]
     ) -> [UICollectionViewLayoutAttributes] {
         guard let collectionView = collectionView else { return [] }
         let delegate = collectionView.delegate as? ListCollectionViewLayoutDelegate
         return cellAttributes.compactMap { cellAttribute in
-
-            // Check if the delegate explicitly returns `false` otherwise assume the separator should be shown
-            guard delegate?.collectionView(
-                collectionView,
-                layout: self,
-                shouldShowSeparatorForCellAtIndexPath: cellAttribute.indexPath
-            ) ?? true else { return nil }
-
-            let separatorAttribute = UICollectionViewLayoutAttributes(
-                forSupplementaryViewOfKind: Self.separatorKind,
-                with: cellAttribute.indexPath
-            )
-
-            let cellFrame = cellAttribute.frame
-
-            separatorAttribute.frame = CGRect(
-                x: cellFrame.origin.x,
-                y: cellFrame.origin.y + cellFrame.size.height,
-                width: cellFrame.size.width,
-                height: minimumLineSpacing
-            )
-
-            return separatorAttribute
+            guard cellAttribute.representedElementCategory == .cell else { return nil }
+            return separatorLayoutAttributes(forCellFrame: cellAttribute.frame, indexPath: cellAttribute.indexPath)
         }
     }
 }
