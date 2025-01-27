@@ -30,6 +30,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### 🐞 Fixed
 - Fix thread reply action shown when inside a Thread [#3561](https://github.com/GetStream/stream-chat-swift/pull/3561)
 - Fix reaction author's view with shrinked reaction images in iOS 18 [#3568](https://github.com/GetStream/stream-chat-swift/pull/3568)
+- Fix missing final attributes for supplementary views exception [#3570](https://github.com/GetStream/stream-chat-swift/pull/3570)
 - Fix duplicated `didReceiveEvent` inside `ChatThreadVC` [#3569](https://github.com/GetStream/stream-chat-swift/pull/3569)
 ### 🔄 Changed
 - Deprecates `ChatThreadVC.channelEventsController` [#3569](https://github.com/GetStream/stream-chat-swift/pull/3569)
