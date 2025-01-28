@@ -60,6 +60,7 @@ open class ListCollectionViewLayout: UICollectionViewFlowLayout {
     override open func layoutAttributesForSupplementaryView(ofKind elementKind: String, at indexPath: IndexPath) -> UICollectionViewLayoutAttributes? {
         guard elementKind == Self.separatorKind else { return nil }
         guard let collectionView else { return nil }
+        guard collectionView.numberOfItems(inSection: indexPath.section) > indexPath.row else { return nil }
         let cellFrame = layoutAttributesForItem(at: indexPath)?.frame ?? CGRect(x: 0, y: 0, width: collectionViewContentSize.width, height: 0)
         return separatorLayoutAttributes(forCellFrame: cellFrame, indexPath: indexPath)
     }
