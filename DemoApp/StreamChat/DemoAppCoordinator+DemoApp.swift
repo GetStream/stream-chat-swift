@@ -92,21 +92,31 @@ extension DemoAppCoordinator {
         onDisconnect: @escaping () -> Void
     ) -> UIViewController {
         // Construct channel list query
+        let sorting: [Sorting<ChannelListSortingKey>] = [
+            Sorting(key: .pinnedAt),
+            Sorting(key: .lastMessageAt),
+            Sorting(key: .createdAt)
+        ]
         let channelListQuery: ChannelListQuery
         switch user {
         case let .credentials(userCredentials):
             channelListQuery = .init(
-                filter: .containMembers(userIds: [userCredentials.id])
+                filter: .containMembers(userIds: [userCredentials.id]),
+                sort: sorting
             )
         case let .custom(userCredentials):
             guard let userId = userCredentials?.id else {
                 fallthrough
             }
             channelListQuery = .init(
-                filter: .containMembers(userIds: [userId])
+                filter: .containMembers(userIds: [userId]),
+                sort: sorting
             )
         case .anonymous, .guest:
-            channelListQuery = .init(filter: .equal(.type, to: .messaging))
+            channelListQuery = .init(
+                filter: .equal(.type, to: .messaging),
+                sort: sorting
+            )
         }
 
         let tuple = makeChannelVCs(for: cid)
