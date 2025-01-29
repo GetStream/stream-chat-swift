@@ -13,14 +13,14 @@ _January 28, 2025_
 ## StreamChat
 ### ✅ Added
 - Expose `Event.name` to easily check which event it is [#3569](https://github.com/GetStream/stream-chat-swift/pull/3569)
-### 🐞 Fixed
-- Calling async `connectUser()` methods can sometimes throw `CurrentUserDoesNotExist()` unexpectedly [#3565](https://github.com/GetStream/stream-chat-swift/pull/3565)
-- Fix creating controllers from background threads leading to rare crashes [#3566](https://github.com/GetStream/stream-chat-swift/pull/3566)
 - Add support for transforming Messages, Channels and Members [#3564](https://github.com/GetStream/stream-chat-swift/pull/3564)
    - Add `ChatClientConfig.modelsTransformer`
    - Add `ChatMessage.replacing()`
    - Add `ChatChannel.replacing()`
    - Add `ChatChannelMember.replacing()`
+### 🐞 Fixed
+- Calling async `connectUser()` methods can sometimes throw `CurrentUserDoesNotExist()` unexpectedly [#3565](https://github.com/GetStream/stream-chat-swift/pull/3565)
+- Fix creating controllers from background threads leading to rare crashes [#3566](https://github.com/GetStream/stream-chat-swift/pull/3566)
 - Fix hard deleted message events not being reported in `EventsController` [#3569](https://github.com/GetStream/stream-chat-swift/pull/3569)
 - Fix hard deleting a parent message not deleting its replies [#3569](https://github.com/GetStream/stream-chat-swift/pull/3569)
 
