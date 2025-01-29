@@ -37,6 +37,8 @@ public struct LogSubsystem: OptionSet {
     public static let audioPlayback = Self(rawValue: 1 << 6)
     /// The subsystem responsible for audio recording.
     public static let audioRecording = Self(rawValue: 1 << 7)
+    
+    public static let extraDataDebugging = Self(rawValue: 1 << 8)
 }
 
 public enum LogConfig {

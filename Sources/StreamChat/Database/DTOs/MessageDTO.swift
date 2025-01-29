@@ -755,6 +755,8 @@ extension NSManagedObjectContext: MessageDatabaseSession {
            localDate > payloadDate {
             return dto
         }
+        
+        log.debug("cid=\(cid) messageId=\(payload.id) extraData=\(payload.extraData)", subsystems: .extraDataDebugging)
 
         dto.cid = payload.cid?.rawValue
         dto.text = payload.text
@@ -1488,6 +1490,8 @@ private extension ChatMessage {
             textUpdatedAt: textUpdatedAt
         )
 
+        log.debug("cid=\(cid?.rawValue ?? "") messageId=\(id) extraData=\(extraData)", subsystems: .extraDataDebugging)
+        
         if let transformer = chatClientConfig?.modelsTransformer {
             self = transformer.transform(message: message)
             return
