@@ -17,7 +17,7 @@ jobs:
     steps:
     - uses: actions/checkout@v4.1.1
     - uses: ./.github/actions/bootstrap
-    - uses: ./.github/actions/python-cache
+    - uses: ./.github/actions/ruby-cache
     - run: bundle exec fastlane sync_mock_server
       timeout-minutes: 5
       env:

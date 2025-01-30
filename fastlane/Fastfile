@@ -758,7 +758,7 @@ private_lane :update_testplan_on_ci do |options|
 end
 
 lane :sync_mock_server do
-  sh('python3 sync_mock_server.py')
+  sh('bundle exec ruby sync_mock_server.rb')
   next unless is_ci
 
   pr_create(
