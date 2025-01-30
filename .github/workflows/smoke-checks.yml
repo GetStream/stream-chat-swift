@@ -99,6 +99,7 @@ jobs:
     - uses: ./.github/actions/bootstrap
       env:
         INSTALL_YEETD: true
+        INSTALL_SONAR: true
     - uses: ./.github/actions/python-cache
     - name: Run LLC Tests (Debug)
       run: bundle exec fastlane test device:"${{ env.IOS_SIMULATOR_DEVICE }}" skip_build:true
@@ -147,7 +148,6 @@ jobs:
       env:
         INSTALL_YEETD: true
         SKIP_MINT_BOOTSTRAP: true
-        SKIP_BREW_BOOTSTRAP: true
     - name: Run UI Tests (Debug)
       run: bundle exec fastlane test_ui device:"${{ env.IOS_SIMULATOR_DEVICE }}" skip_build:true record:${{ github.event.inputs.snapshots }}
       timeout-minutes: 120
@@ -209,7 +209,6 @@ jobs:
         INSTALL_ALLURE: true
         INSTALL_YEETD: true
         SKIP_MINT_BOOTSTRAP: true
-        SKIP_BREW_BOOTSTRAP: true
     - name: Run UI Tests (Debug)
       run: bundle exec fastlane test_e2e_mock device:"${{ env.IOS_SIMULATOR_DEVICE }}" batch:'${{ matrix.batch }}' test_without_building:true
       timeout-minutes: 100
