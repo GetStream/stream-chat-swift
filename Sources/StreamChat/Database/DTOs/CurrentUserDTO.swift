@@ -226,7 +226,7 @@ extension CurrentChatUser {
 
         let extraData: [String: RawJSON]
         do {
-            extraData = try JSONDecoder.stream.decodeCachedRawJSON(from: dto.user.extraData)
+            extraData = try JSONDecoder.stream.decodeRawJSON(from: dto.user.extraData)
         } catch {
             log.error("Failed to decode extra data for user with id: <\(dto.user.id)>, using default value instead. Error: \(error)")
             extraData = [:]
