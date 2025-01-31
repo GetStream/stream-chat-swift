@@ -94,8 +94,7 @@ extension DemoAppCoordinator {
         // Construct channel list query
         let sorting: [Sorting<ChannelListSortingKey>] = [
             Sorting(key: .pinnedAt),
-            Sorting(key: .lastMessageAt),
-            Sorting(key: .createdAt)
+            Sorting(key: .default)
         ]
         let channelListQuery: ChannelListQuery
         switch user {
