@@ -193,7 +193,7 @@ extension ChatChannelMember {
 
         let extraData: [String: RawJSON]
         do {
-            extraData = try JSONDecoder.stream.decodeCachedRawJSON(from: dto.user.extraData)
+            extraData = try JSONDecoder.stream.decodeRawJSON(from: dto.user.extraData)
         } catch {
             log.error(
                 "Failed to decode extra data for user with id: <\(dto.user.id)>, using default value instead. "
@@ -204,7 +204,7 @@ extension ChatChannelMember {
 
         let memberExtraData: [String: RawJSON]
         do {
-            memberExtraData = try JSONDecoder.stream.decodeCachedRawJSON(from: dto.extraData)
+            memberExtraData = try JSONDecoder.stream.decodeRawJSON(from: dto.extraData)
         } catch {
             log.error(
                 "Failed to decode extra data for channel member with id: <\(dto.user.id)>, using default value instead. "

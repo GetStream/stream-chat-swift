@@ -62,7 +62,7 @@ extension PollOptionDTO {
         
         let extraData: [String: RawJSON]
         do {
-            extraData = try JSONDecoder.stream.decodeCachedRawJSON(from: custom)
+            extraData = try JSONDecoder.stream.decodeRawJSON(from: custom)
         } catch {
             log.error(
                 "Failed to decode extra data for poll option with id: <\(id)>, using default value instead. Error: \(error)"

@@ -191,7 +191,7 @@ extension UserDTO {
     func asRequestBody() -> UserRequestBody {
         let extraData: [String: RawJSON]
         do {
-            extraData = try JSONDecoder.stream.decodeCachedRawJSON(from: self.extraData)
+            extraData = try JSONDecoder.stream.decodeRawJSON(from: self.extraData)
         } catch {
             log.assertionFailure(
                 "Failed decoding saved extra data with error: \(error). This should never happen because"
@@ -235,7 +235,7 @@ extension ChatUser {
         
         let extraData: [String: RawJSON]
         do {
-            extraData = try JSONDecoder.stream.decodeCachedRawJSON(from: dto.extraData)
+            extraData = try JSONDecoder.stream.decodeRawJSON(from: dto.extraData)
         } catch {
             log.error(
                 "Failed to decode extra data for user with id: <\(dto.id)>, using default value instead. "

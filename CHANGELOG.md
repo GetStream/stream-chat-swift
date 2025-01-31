@@ -4,6 +4,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 # Upcoming
 
 ### 🔄 Changed
+- Revert 'Improve performance of model conversions with large extra data' [#3576](https://github.com/GetStream/stream-chat-swift/pull/3576)
 
 # [4.71.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.71.0)
 _January 28, 2025_

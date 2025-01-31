@@ -147,7 +147,7 @@ extension ThreadDTO {
         
         let extraData: [String: RawJSON]
         do {
-            extraData = try JSONDecoder.stream.decodeCachedRawJSON(from: self.extraData)
+            extraData = try JSONDecoder.stream.decodeRawJSON(from: self.extraData)
         } catch {
             log.error(
                 "Failed to decode extra data for thread with id: <\(parentMessageId)>, using default value instead. Error: \(error)"

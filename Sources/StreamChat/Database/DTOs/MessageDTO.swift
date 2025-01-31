@@ -1288,7 +1288,7 @@ extension MessageDTO {
     func asRequestBody() -> MessageRequestBody {
         let extraData: [String: RawJSON]
         do {
-            extraData = try JSONDecoder.stream.decodeCachedRawJSON(from: self.extraData)
+            extraData = try JSONDecoder.stream.decodeRawJSON(from: self.extraData)
         } catch {
             log.assertionFailure("Failed decoding saved extra data with error: \(error). This should never happen because the extra data must be a valid JSON to be saved.")
             extraData = [:]
@@ -1371,7 +1371,7 @@ private extension ChatMessage {
 
         let extraData: [String: RawJSON]
         do {
-            extraData = try JSONDecoder.stream.decodeCachedRawJSON(from: dto.extraData)
+            extraData = try JSONDecoder.stream.decodeRawJSON(from: dto.extraData)
         } catch {
             log.error(
                 "Failed to decode extra data for Message with id: <\(dto.id)>, using default value instead. Error: \(error)"
