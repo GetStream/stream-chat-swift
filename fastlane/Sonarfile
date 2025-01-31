@@ -22,8 +22,9 @@ lane :sonar_upload do
                  '-Dsonar.swift.lizard.report="reports/lizard.xml"'
   end
 
-  options = sonar_options(sonar_args: sonar_args, version_number: version_number)
-  sonar(options)
+  Dir.chdir('..') do
+    sh("./fastlane/sonar/bin/sonar-scanner -Dsonar.projectVersion=#{version_number} -Dproject.settings=sonar-project.properties #{sonar_args}")
+  end
 
   next if sonar_args.empty? || ENV['GITHUB_EVENT_NAME'] == 'pull_request' || current_branch !~ /main|develop/
 
