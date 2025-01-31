@@ -332,18 +332,10 @@ lane :test do |options|
     devices: options[:device],
     skip_build: true,
     xcargs: buildcache_xcargs,
-    number_of_retries: options[:cron] ? 3 : nil
+    number_of_retries: options[:cron] ? 3 : 2
   }
 
-  begin
-    scan(scan_options)
-  rescue StandardError => e
-    UI.user_error!(e) unless options[:cron]
-
-    failed_tests = retreive_failed_tests
-    UI.important("Re-running #{failed_tests.size} failed tests ⌛️")
-    scan(scan_options.merge(only_testing: failed_tests))
-  end
+  scan(scan_options)
 end
 
 desc 'Starts Sinatra web server'

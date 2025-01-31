@@ -3,22 +3,15 @@
 # Usage: ./bootstrap.sh
 # This script will:
 #   - install Mint and bootstrap its dependencies
-#   - install Vale
 #   - link git hooks
 #   - install allure dependencies if `INSTALL_ALLURE` environment variable is provided
-# You should have homebrew installed.
+#   - install sonar-scanner if `INSTALL_SONAR` environment variable is provided
 # If you get `zsh: permission denied: ./bootstrap.sh` error, please run `chmod +x bootstrap.sh` first
 
 function puts {
   echo
   echo -e "👉 ${1}"
 }
-
-# Check if Homebrew is installed
-if [[ $(command -v brew) == "" ]]; then
-  echo "Homebrew not installed. Please install."
-  exit 1
-fi
 
 # Set bash to Strict Mode (http://redsymbol.net/articles/unofficial-bash-strict-mode/)
 set -Eeuo pipefail
@@ -37,15 +30,27 @@ ln -sf ../../hooks/pre-commit.sh .git/hooks/pre-commit
 chmod +x .git/hooks/pre-commit
 chmod +x ./hooks/git-format-staged
 
-
-if [ "${SKIP_BREW_BOOTSTRAP:-}" != true ]; then
-  puts "Install brew dependencies"
-  brew bundle -d
-fi
-
 if [ "${SKIP_MINT_BOOTSTRAP:-}" != true ]; then
   puts "Bootstrap Mint dependencies"
+  git clone https://github.com/yonaskolb/Mint.git fastlane/mint
+  root=$(pwd)
+  cd fastlane/mint
+  swift run mint install "yonaskolb/mint@${MINT_VERSION}"
+  cd $root
+  rm -rf fastlane/mint
   mint bootstrap --link
+fi
+
+if [[ ${INSTALL_SONAR-default} == true ]]; then
+  puts "Install sonar scanner"
+  DOWNLOAD_URL="https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-${SONAR_VERSION}-macosx-x64.zip"
+  curl -sL "${DOWNLOAD_URL}" -o ./fastlane/sonar.zip
+  cd fastlane
+  unzip sonar.zip
+  rm sonar.zip
+  cd ..
+  mv "fastlane/sonar-scanner-${SONAR_VERSION}-macosx-x64/" fastlane/sonar/
+  chmod +x ./fastlane/sonar/bin/sonar-scanner
 fi
 
 # Copy internal Xcode scheme to the right folder for

@@ -14,17 +14,6 @@ runs:
         path: ~/.mint
         key: ${{ env.IMAGE }}-mint-${{ hashFiles('**/Mintfile') }}
         restore-keys: ${{ env.IMAGE }}-mint-
-    - name: Cache brew
-      uses: actions/cache@v4
-      id: brew-cache
-      with:
-        path: |
-          ~/Library/Caches/Homebrew/mint*
-          ~/Library/Caches/Homebrew/xcparse*
-          ~/Library/Caches/Homebrew/sonar-scanner*
-          ~/Library/Caches/Homebrew/google-cloud-sdk*
-        key: ${{ env.IMAGE }}-brew-${{ hashFiles('**/Brewfile.lock.json') }}
-        restore-keys: ${{ env.IMAGE }}-brew-
     - uses: ./.github/actions/ruby-cache
     - uses: ./.github/actions/xcode-cache
     - run: ./Scripts/bootstrap.sh
