@@ -80,7 +80,6 @@ jobs:
         INSTALL_ALLURE: true
         INSTALL_YEETD: true
         SKIP_MINT_BOOTSTRAP: true
-        SKIP_BREW_BOOTSTRAP: true
     - uses: ./.github/actions/setup-ios-runtime
       if: ${{ matrix.setup_runtime }}
       timeout-minutes: 60

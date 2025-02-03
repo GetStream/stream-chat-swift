@@ -141,6 +141,7 @@ extension ChatClient {
                 databaseContainerBuilder: {
                     DatabaseContainer_Spy(
                         kind: $0,
+                        bundle: bundle,
                         chatClientConfig: $1
                     )
                 },

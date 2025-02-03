@@ -209,7 +209,7 @@ extension MessageReactionDTO {
         
         let extraData: [String: RawJSON]
         do {
-            extraData = try JSONDecoder.stream.decodeCachedRawJSON(from: self.extraData)
+            extraData = try JSONDecoder.stream.decodeRawJSON(from: self.extraData)
         } catch {
             log.error("Failed decoding saved extra data with error: \(error)")
             extraData = [:]
