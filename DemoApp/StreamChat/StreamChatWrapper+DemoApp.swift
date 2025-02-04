@@ -49,6 +49,7 @@ extension StreamChatWrapper {
         Components.default.isJumpToUnreadEnabled = true
         Components.default.messageSwipeToReplyEnabled = true
         Components.default.isComposerLinkPreviewEnabled = true
+        Components.default.isDraftMessagesEnabled = true
         Components.default.channelListSearchStrategy = .messages
 
         // Customize UI components
