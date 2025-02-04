@@ -7,6 +7,9 @@ on:
       - main
 
   pull_request:
+    paths-ignore:
+      - 'README.md'
+      - 'CHANGELOG.md'
 
   workflow_dispatch:
 

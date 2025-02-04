@@ -1,0 +1,67 @@
+{
+  "message": {
+    "id": "b78d492d-b171-4209-97fb-2327c8bfe34d",
+    "text": "https://giphy.com/gifs/test-gw3IWyGkC0rsazTi",
+    "html": "<p><a href=\"https://giphy.com/gifs/test-gw3IWyGkC0rsazTi\" rel=\"nofollow\">https://giphy.com/gifs/test-gw3IWyGkC0rsazTi</a></p>\n",
+    "type": "regular",
+    "user": {
+      "id": "luke_skywalker",
+      "name": "Luke Skywalker",
+      "image": "https://vignette.wikia.nocookie.net/starwars/images/2/20/LukeTLJ.jpg",
+      "language": "id",
+      "role": "admin",
+      "teams": [
+
+      ],
+      "created_at": "2024-04-04T09:26:11.805899Z",
+      "updated_at": "2025-01-31T09:38:22.825054Z",
+      "banned": false,
+      "online": true,
+      "last_active": "2025-01-31T16:17:53.97317831Z",
+      "blocked_user_ids": [
+
+      ],
+      "pando": "{\"speciality\":\"ios engineer\"}",
+      "birthland": "Tatooine",
+      "team": "test",
+      "type": "team"
+    },
+    "attachments": [
+      {
+        "type": "video",
+        "title": "Test Computer GIF - Find & Share on GIPHY",
+        "title_link": "https://giphy.com/gifs/test-gw3IWyGkC0rsazTi",
+        "text": "Discover & share this Test Computer GIF with everyone you know. GIPHY is how you search, share, discover, and create GIFs.",
+        "image_url": "https://media1.giphy.com/media/v1.Y2lkPTc5MGI3NjExdnN6bThhZnN4bHQ3dTl3YzA2dDB6ZWhqcm4weGJtNzR6b2p0eHN2MSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/gw3IWyGkC0rsazTi/giphy.webp",
+        "thumb_url": "https://media1.giphy.com/media/v1.Y2lkPTc5MGI3NjExdnN6bThhZnN4bHQ3dTl3YzA2dDB6ZWhqcm4weGJtNzR6b2p0eHN2MSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/gw3IWyGkC0rsazTi/giphy.webp",
+        "asset_url": "https://media1.giphy.com/media/v1.Y2lkPTc5MGI3NjExdnN6bThhZnN4bHQ3dTl3YzA2dDB6ZWhqcm4weGJtNzR6b2p0eHN2MSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/gw3IWyGkC0rsazTi/giphy.mp4",
+        "og_scrape_url": "https://giphy.com/gifs/test-gw3IWyGkC0rsazTi"
+      }
+    ],
+    "latest_reactions": [
+
+    ],
+    "own_reactions": [
+
+    ],
+    "reaction_counts": {
+    },
+    "reaction_scores": {
+    },
+    "reply_count": 0,
+    "deleted_reply_count": 0,
+    "cid": "messaging:09f99d09-a2a7-4fb0-ae8d-25927c147b67",
+    "created_at": "2025-01-31T16:18:39.448734Z",
+    "updated_at": "2025-01-31T16:18:39.448734Z",
+    "shadowed": false,
+    "mentioned_users": [
+
+    ],
+    "silent": false,
+    "pinned": false,
+    "pinned_at": null,
+    "pinned_by": null,
+    "pin_expires": null
+  },
+  "duration": "217.62ms"
+}

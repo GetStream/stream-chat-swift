@@ -2,8 +2,9 @@ name: Smoke Checks
 
 on:
   pull_request:
-    branches:
-      - '**'
+    paths-ignore:
+      - 'README.md'
+      - 'CHANGELOG.md'
 
   workflow_dispatch:
     inputs:
