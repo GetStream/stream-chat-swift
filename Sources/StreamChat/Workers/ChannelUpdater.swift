@@ -327,6 +327,7 @@ class ChannelUpdater: Worker {
                 showReplyInChannel: false,
                 isSilent: isSilent,
                 isSystem: isSystem,
+                isDraft: false,
                 quotedMessageId: quotedMessageId,
                 createdAt: nil,
                 skipPush: skipPush,
@@ -344,6 +345,97 @@ class ChannelUpdater: Worker {
                 completion?(.success(message))
             } else {
                 completion?(.failure(error ?? ClientError.Unknown()))
+            }
+        }
+    }
+
+    func updateDraftMessage(
+        in cid: ChannelId,
+        messageId: MessageId?,
+        text: String,
+        isSilent: Bool,
+        attachments: [AnyAttachmentPayload],
+        mentionedUserIds: [UserId],
+        quotedMessageId: MessageId?,
+        extraData: [String: RawJSON],
+        completion: ((Result<ChatMessage, Error>) -> Void)?
+    ) {
+        var draftRequestBody: DraftMessageRequestBody?
+        database.write({ (session) in
+            let newMessageDTO = try session.createDraftMessage(
+                in: cid,
+                messageId: messageId,
+                text: text,
+                quotedMessageId: quotedMessageId,
+                isSilent: isSilent,
+                attachments: attachments,
+                mentionedUserIds: mentionedUserIds,
+                extraData: extraData
+            )
+            draftRequestBody = newMessageDTO.asDraftRequestBody()
+        }) { error in
+            guard let requestBody = draftRequestBody, error == nil else {
+                completion?(.failure(error ?? ClientError.Unknown()))
+                return
+            }
+
+            self.apiClient.request(
+                endpoint: .updateDraftMessage(channelId: cid, requestBody: requestBody)
+            ) { [weak self] result in
+                switch result {
+                case .success(let response):
+                    self?.database.write { session in
+                        let draftPayload = response.draft
+                        let messageDTO = try session.saveDraftMessage(
+                            payload: draftPayload,
+                            for: cid,
+                            cache: nil
+                        )
+                        let message = try messageDTO.asModel()
+                        completion?(.success(message))
+                    }
+                case .failure(let error):
+                    completion?(.failure(error))
+                }
+            }
+        }
+    }
+
+    func getDraftMessage(cid: ChannelId, completion: ((Result<ChatMessage?, Error>) -> Void)? = nil) {
+        apiClient.request(endpoint: .getDraftMessage(channelId: cid)) { [weak self] result in
+            switch result {
+            case .success(let response):
+                self?.database.write { session in
+                    let draftPayload = response.draft
+                    let messageDTO = try session.saveDraftMessage(
+                        payload: draftPayload,
+                        for: cid,
+                        cache: nil
+                    )
+                    let message = try messageDTO.asModel()
+                    completion?(.success(message))
+                }
+            case .failure(let error):
+                completion?(.failure(error))
+            }
+        }
+    }
+
+    func deleteDraftMessage(cid: ChannelId, completion: ((Error?) -> Void)? = nil) {
+        apiClient.request(endpoint: .deleteDraftMessage(channelId: cid)) { [weak self] result in
+            switch result {
+            case .success:
+                self?.database.write { session in
+                    let channel = session.channel(cid: cid)
+                    guard let message = session.channel(cid: cid)?.draftMessage else {
+                        return
+                    }
+                    session.delete(message: message)
+                    channel?.draftMessage = nil
+                }
+                completion?(nil)
+            case .failure(let error):
+                completion?(error)
             }
         }
     }

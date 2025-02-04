@@ -157,6 +157,9 @@ public struct ChatChannel {
     /// because the preview message is the last `non-deleted` message sent to the channel.
     public let previewMessage: ChatMessage?
 
+    /// The draft message in the channel.
+    public let draftMessage: ChatMessage?
+
     // MARK: - Internal
 
     var hasUnread: Bool {
@@ -194,7 +197,8 @@ public struct ChatChannel {
         lastMessageFromCurrentUser: ChatMessage?,
         pinnedMessages: [ChatMessage],
         muteDetails: MuteDetails?,
-        previewMessage: ChatMessage?
+        previewMessage: ChatMessage?,
+        draftMessage: ChatMessage?
     ) {
         self.cid = cid
         self.name = name
@@ -227,6 +231,7 @@ public struct ChatChannel {
         self.pinnedMessages = pinnedMessages
         self.muteDetails = muteDetails
         self.previewMessage = previewMessage
+        self.draftMessage = draftMessage
     }
 
     /// Returns a new `ChatChannel` with the provided data replaced.
@@ -266,7 +271,8 @@ public struct ChatChannel {
             lastMessageFromCurrentUser: lastMessageFromCurrentUser,
             pinnedMessages: pinnedMessages,
             muteDetails: muteDetails,
-            previewMessage: previewMessage
+            previewMessage: previewMessage,
+            draftMessage: draftMessage
         )
     }
 }

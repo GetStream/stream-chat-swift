@@ -834,6 +834,84 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
         }
     }
 
+    /// Updates the draft message of this channel.
+    ///
+    /// If there is no draft message, a new draft message will be created.
+    /// - Parameters:
+    ///   - text: The text of the draft message.
+    ///   - attachments: The attachments of the draft message.
+    ///   - mentionedUserIds: The mentioned user ids of the draft message.
+    ///   - quotedMessageId: The message that the draft message is quoting.
+    ///   - extraData: The extra data of the draft message.
+    ///   - completion: Called when the draft message is saved to the server.
+    public func updateDraftMessage(
+        text: String,
+        isSilent: Bool = false,
+        attachments: [AnyAttachmentPayload] = [],
+        mentionedUserIds: [UserId] = [],
+        quotedMessageId: MessageId? = nil,
+        extraData: [String: RawJSON] = [:],
+        completion: ((Result<ChatMessage, Error>) -> Void)? = nil
+    ) {
+        guard let cid = cid, isChannelAlreadyCreated else {
+            channelModificationFailed { error in
+                completion?(.failure(error ?? ClientError.Unknown()))
+            }
+            return
+        }
+
+        updater.updateDraftMessage(
+            in: cid,
+            messageId: nil,
+            text: text,
+            isSilent: isSilent,
+            attachments: attachments,
+            mentionedUserIds: mentionedUserIds,
+            quotedMessageId: quotedMessageId,
+            extraData: extraData
+        ) { result in
+            self.callback {
+                completion?(result)
+            }
+        }
+    }
+
+    /// Loads the draft message of this channel.
+    ///
+    /// It is not necessary to call this method if the channel list query was called before.
+    public func loadDraftMessage(
+        completion: ((Result<ChatMessage?, Error>) -> Void)? = nil
+    ) {
+        guard let cid = cid, isChannelAlreadyCreated else {
+            channelModificationFailed { error in
+                completion?(.failure(error ?? ClientError.Unknown()))
+            }
+            return
+        }
+
+        updater.getDraftMessage(cid: cid) { result in
+            self.callback {
+                completion?(result)
+            }
+        }
+    }
+
+    /// Deletes the draft message of this channel.
+    public func deleteDraftMessage(completion: ((Error?) -> Void)? = nil) {
+        guard let cid = cid, isChannelAlreadyCreated else {
+            channelModificationFailed { error in
+                completion?(error)
+            }
+            return
+        }
+
+        updater.deleteDraftMessage(cid: cid) { error in
+            self.callback {
+                completion?(error)
+            }
+        }
+    }
+
     /// Creates a new poll.
     ///
     /// - Parameters:
