@@ -83,6 +83,8 @@ class MessageDTO: NSManagedObject {
     @NSManaged var searches: Set<MessageSearchQueryDTO>
     @NSManaged var previewOfChannel: ChannelDTO?
 
+    @NSManaged var draftOfChannel: ChannelDTO?
+
     /// If the message is sent by the current user, this field
     /// contains channel reads of other channel members (excluding the current user),
     /// where `read.lastRead >= self.createdAt`.
@@ -287,13 +289,16 @@ class MessageDTO: NSManagedObject {
             .init(format: "createdAt >= channel.oldestMessageAt")
         ])
 
+        let ignoreDraftMessages = NSPredicate(format: .init(format: "draftOfChannel == nil"))
+
         var subpredicates = [
             channelPredicate(with: cid),
             channelMessagePredicate,
             messageTypePredicate,
             nonTruncatedMessagesPredicate(),
             ignoreOlderMessagesPredicate,
-            deletedMessagesPredicate(deletedMessagesVisibility: deletedMessagesVisibility)
+            deletedMessagesPredicate(deletedMessagesVisibility: deletedMessagesVisibility),
+            ignoreDraftMessages
         ]
 
         if filterNewerMessages {
@@ -642,6 +647,7 @@ extension NSManagedObjectContext: MessageDatabaseSession {
         showReplyInChannel: Bool,
         isSilent: Bool,
         isSystem: Bool,
+        isDraft: Bool,
         quotedMessageId: MessageId?,
         createdAt: Date?,
         skipPush: Bool,
@@ -730,7 +736,7 @@ extension NSManagedObjectContext: MessageDatabaseSession {
 
         // When the current user submits the new message that will be shown
         // in the channel for sending - make it a channel preview.
-        if parentMessageId == nil || showReplyInChannel {
+        if (parentMessageId == nil || showReplyInChannel) && !isDraft {
             channelDTO.previewMessage = message
         }
 
@@ -972,6 +978,83 @@ extension NSManagedObjectContext: MessageDatabaseSession {
         }
 
         return try saveMessage(payload: payload, channelDTO: channel, syncOwnReactions: syncOwnReactions, cache: cache)
+    }
+
+    @discardableResult
+    func saveDraftMessage(
+        payload: DraftMessagePayload,
+        for cid: ChannelId,
+        cache: PreWarmedCache?
+    ) throws -> MessageDTO {
+        let channelDTO: ChannelDTO?
+        if let channelPayload = payload.channelPayload {
+            channelDTO = try saveChannel(payload: channelPayload, query: nil, cache: cache)
+        } else {
+            channelDTO = ChannelDTO.load(cid: cid, context: self)
+        }
+        guard let channelDTO = channelDTO else {
+            throw ClientError.ChannelDoesNotExist(cid: cid)
+        }
+        guard let user = currentUser?.user else {
+            throw ClientError.CurrentUserDoesNotExist()
+        }
+
+        let dto = MessageDTO.loadOrCreate(id: payload.id, context: self, cache: cache)
+        dto.cid = cid.rawValue
+        dto.text = payload.text
+        dto.createdAt = payload.createdAt.bridgeDate
+        dto.type = MessageType.regular.rawValue
+        dto.command = payload.command
+        dto.args = payload.args
+        dto.parentMessageId = payload.parentId
+        dto.showReplyInChannel = payload.showReplyInChannel
+
+        do {
+            dto.extraData = try JSONEncoder.default.encode(payload.extraData)
+        } catch {
+            log.error(
+                "Failed to decode extra payload for Message with id: <\(dto.id)>, using default value instead. "
+                    + "Error: \(error)"
+            )
+            dto.extraData = Data()
+        }
+
+        dto.isSilent = payload.isSilent
+        if let quotedMessageId = payload.quotedMessageId,
+           let quotedMessage = message(id: quotedMessageId) {
+            // In case we do not have a fully formed quoted message in the payload,
+            // we check for quotedMessageId. This can happen in the case of nested quoted messages.
+            dto.quotedMessage = quotedMessage
+        } else if let quotedMessage = payload.quotedMessage {
+            dto.quotedMessage = try saveMessage(
+                payload: quotedMessage,
+                channelDTO: channelDTO,
+                syncOwnReactions: false,
+                cache: cache
+            )
+        } else {
+            dto.quotedMessage = nil
+        }
+
+        dto.user = user
+
+        if let mentionedUsers = payload.mentionedUsers {
+            dto.mentionedUsers = try Set(mentionedUsers.map { try saveUser(payload: $0) })
+            dto.mentionedUserIds = mentionedUsers.map(\.id)
+        }
+
+        dto.channel = channelDTO
+        channelDTO.draftMessage = dto
+
+        let attachments: Set<AttachmentDTO> = try Set(
+            payload.attachments.enumerated().map { index, attachment in
+                let id = AttachmentId(cid: cid, messageId: payload.id, index: index)
+                let dto = try saveAttachment(payload: attachment, id: id)
+                return dto
+            }
+        )
+        dto.attachments = attachments
+        return dto
     }
 
     func saveMessage(payload: MessagePayload, for query: MessageSearchQuery, cache: PreWarmedCache?) throws -> MessageDTO {
@@ -1318,6 +1401,35 @@ extension MessageDTO {
             pinned: pinned,
             pinExpires: pinExpires?.bridgeDate,
             pollId: poll?.id,
+            extraData: extraData
+        )
+    }
+
+    func asDraftRequestBody() -> DraftMessageRequestBody {
+        let extraData: [String: RawJSON]
+        do {
+            extraData = try JSONDecoder.stream.decodeCachedRawJSON(from: self.extraData)
+        } catch {
+            log.assertionFailure("Failed decoding saved extra data with error: \(error). This should never happen because the extra data must be a valid JSON to be saved.")
+            extraData = [:]
+        }
+
+        let uploadedAttachments: [MessageAttachmentPayload] = attachments
+            .filter { $0.localState == .uploaded || $0.localState == nil }
+            .sorted { ($0.attachmentID?.index ?? 0) < ($1.attachmentID?.index ?? 0) }
+            .compactMap { $0.asRequestPayload() }
+
+        return .init(
+            id: id,
+            text: text,
+            command: command,
+            args: args,
+            parentId: parentMessageId,
+            showReplyInChannel: showReplyInChannel,
+            isSilent: isSilent,
+            quotedMessageId: quotedMessage?.id,
+            attachments: uploadedAttachments,
+            mentionedUserIds: mentionedUserIds,
             extraData: extraData
         )
     }

@@ -231,6 +231,7 @@ class MessageUpdater: Worker {
                 showReplyInChannel: showReplyInChannel,
                 isSilent: isSilent,
                 isSystem: false,
+                isDraft: false,
                 quotedMessageId: quotedMessageId,
                 createdAt: nil,
                 skipPush: skipPush,
