@@ -90,6 +90,14 @@ open class ComposerVC: _ViewController,
             return text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty && attachments.isEmpty
         }
 
+        /// The text that should be sent to the backend considering the command.
+        public var inputText: String {
+            if let command = command {
+                return "/\(command.name) " + text
+            }
+            return text.trimmingCharacters(in: .whitespacesAndNewlines)
+        }
+
         /// A boolean that checks if the composer is replying in a thread
         public var isInsideThread: Bool { threadMessage != nil }
         /// A boolean that checks if the composer recognised already a command.
@@ -169,6 +177,25 @@ open class ComposerVC: _ViewController,
                 extraData: [:],
                 cooldownTime: cooldownTime,
                 skipEnrichUrl: false
+            )
+        }
+
+        /// Sets the content state to new message from a saved draft.
+        ///
+        /// - Parameter message: The message which was saved as a draft.
+        public mutating func draftMessage(_ message: ChatMessage) {
+            self = .init(
+                text: message.text,
+                state: message.quotedMessage != nil ? .quote : .new,
+                editingMessage: nil,
+                quotingMessage: message.quotedMessage,
+                threadMessage: threadMessage,
+                attachments: message.allAttachments.toAnyAttachmentPayload(),
+                mentionedUsers: message.mentionedUsers,
+                command: command,
+                extraData: message.extraData,
+                cooldownTime: cooldownTime,
+                skipEnrichUrl: skipEnrichUrl
             )
         }
 
@@ -484,6 +511,12 @@ open class ComposerVC: _ViewController,
         composerView.pin(to: view)
     }
 
+    override open func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+
+        updateDraftMessage()
+    }
+
     open func setupAttachmentsView() {
         addChildViewController(attachmentsVC, embedIn: composerView.inputMessageView.attachmentsViewContainer)
         attachmentsVC.didTapRemoveItemButton = { [weak self] index in
@@ -773,12 +806,7 @@ open class ComposerVC: _ViewController,
             return
         }
 
-        let text: String
-        if let command = content.command {
-            text = "/\(command.name) " + content.text
-        } else {
-            text = content.text.trimmingCharacters(in: .whitespacesAndNewlines)
-        }
+        let text = content.inputText
 
         if let editingMessage = content.editingMessage {
             editMessage(withId: editingMessage.id, newText: text)
@@ -913,14 +941,7 @@ open class ComposerVC: _ViewController,
     open func createNewMessage(text: String) {
         guard let cid = channelController?.cid else { return }
 
-        // If the user included some mentions via suggestions,
-        // but then removed them from text, we should remove them from
-        // the content we'll send
-        for user in content.mentionedUsers {
-            if !text.contains(mentionText(for: user)) {
-                content.mentionedUsers.remove(user)
-            }
-        }
+        removeMentionUserIfNotIncluded(in: text)
 
         if let threadParentMessageId = content.threadMessage?.id {
             let messageController = channelController?.client.messageController(
@@ -948,6 +969,50 @@ open class ComposerVC: _ViewController,
             mentionedUserIds: content.mentionedUsers.map(\.id),
             quotedMessageId: content.quotingMessage?.id,
             skipEnrichUrl: content.skipEnrichUrl,
+            extraData: content.extraData
+        )
+    }
+
+    /// Updates the draft message in the channel or thread if draft messages are enabled.
+    ///
+    /// The draft is created from the current content in the composer.
+    open func updateDraftMessage() {
+        guard components.isDraftMessagesEnabled else {
+            return
+        }
+
+        let text = content.inputText
+        if text.isEmpty {
+            return
+        }
+
+        removeMentionUserIfNotIncluded(in: text)
+
+        if let threadParentMessageId = content.threadMessage?.id {
+            // TODO:
+//            let messageController = channelController?.client.messageController(
+//                cid: cid,
+//                messageId: threadParentMessageId
+//            )
+//
+//            messageController?.createNewReply(
+//                text: text,
+//                pinning: nil,
+//                attachments: content.attachments,
+//                mentionedUserIds: content.mentionedUsers.map(\.id),
+//                showReplyInChannel: composerView.checkboxControl.isSelected,
+//                quotedMessageId: content.quotingMessage?.id,
+//                skipEnrichUrl: content.skipEnrichUrl,
+//                extraData: content.extraData
+//            )
+//            return
+        }
+
+        channelController?.updateDraftMessage(
+            text: text,
+            attachments: content.attachments,
+            mentionedUserIds: content.mentionedUsers.map(\.id),
+            quotedMessageId: content.quotingMessage?.id,
             extraData: content.extraData
         )
     }
@@ -1450,6 +1515,11 @@ open class ComposerVC: _ViewController,
         guard textView.text != content.text else { return }
 
         content.text = textView.text
+
+        /// If the input message was erased and there is a draft message, the draft message should be deleted.
+        if content.isEmpty && channelController?.channel?.draftMessage != nil {
+            channelController?.deleteDraftMessage()
+        }
     }
 
     open func textView(
@@ -1662,6 +1732,17 @@ open class ComposerVC: _ViewController,
         actions.forEach(alert.addAction)
 
         present(alert, animated: true)
+    }
+
+    private func removeMentionUserIfNotIncluded(in currentText: String) {
+        // If the user included some mentions via suggestions,
+        // but then removed them from text, we should remove them from
+        // the content we'll send
+        for user in content.mentionedUsers {
+            if !currentText.contains(mentionText(for: user)) {
+                content.mentionedUsers.remove(user)
+            }
+        }
     }
 }
 
