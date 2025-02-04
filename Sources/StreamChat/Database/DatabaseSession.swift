@@ -99,6 +99,7 @@ protocol MessageDatabaseSession {
         showReplyInChannel: Bool,
         isSilent: Bool,
         isSystem: Bool,
+        isDraft: Bool,
         quotedMessageId: MessageId?,
         createdAt: Date?,
         skipPush: Bool,
@@ -127,6 +128,15 @@ protocol MessageDatabaseSession {
         payload: MessagePayload,
         for cid: ChannelId?,
         syncOwnReactions: Bool,
+        cache: PreWarmedCache?
+    ) throws -> MessageDTO
+
+    /// Saves the provided draft message payload to the DB. Return's the matching `MessageDTO` if the save was successful.
+    /// Throws an error if the save fails.
+    @discardableResult
+    func saveDraftMessage(
+        payload: DraftMessagePayload,
+        for cid: ChannelId,
         cache: PreWarmedCache?
     ) throws -> MessageDTO
 
@@ -241,6 +251,7 @@ extension MessageDatabaseSession {
         quotedMessageId: MessageId?,
         isSilent: Bool = false,
         isSystem: Bool,
+        isDraft: Bool,
         skipPush: Bool,
         skipEnrichUrl: Bool,
         attachments: [AnyAttachmentPayload] = [],
@@ -261,6 +272,7 @@ extension MessageDatabaseSession {
             showReplyInChannel: false,
             isSilent: isSilent,
             isSystem: isSystem,
+            isDraft: isDraft,
             quotedMessageId: quotedMessageId,
             createdAt: nil,
             skipPush: skipPush,
@@ -268,6 +280,44 @@ extension MessageDatabaseSession {
             poll: pollPayload,
             extraData: extraData
         )
+    }
+
+    func createDraftMessage(
+        in cid: ChannelId,
+        messageId: MessageId?,
+        text: String,
+        quotedMessageId: MessageId?,
+        isSilent: Bool,
+        attachments: [AnyAttachmentPayload],
+        mentionedUserIds: [UserId],
+        extraData: [String: RawJSON]
+    ) throws -> MessageDTO {
+        let message = try createNewMessage(
+            in: cid,
+            messageId: messageId,
+            text: text,
+            pinning: nil,
+            command: nil,
+            arguments: nil,
+            parentMessageId: nil,
+            attachments: attachments,
+            mentionedUserIds: mentionedUserIds,
+            showReplyInChannel: false,
+            isSilent: isSilent,
+            isSystem: false,
+            isDraft: true,
+            quotedMessageId: quotedMessageId,
+            createdAt: nil,
+            skipPush: false,
+            skipEnrichUrl: false,
+            poll: nil,
+            extraData: extraData
+        )
+        message.channel?.draftMessage = message
+        if quotedMessageId != nil {
+            message.showInsideThread = true
+        }
+        return message
     }
 }
 
