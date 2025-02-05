@@ -284,7 +284,7 @@ extension MessageDatabaseSession {
 
     func createDraftMessage(
         in cid: ChannelId,
-        messageId: MessageId?,
+        threadId: MessageId?,
         text: String,
         quotedMessageId: MessageId?,
         isSilent: Bool,
@@ -294,12 +294,12 @@ extension MessageDatabaseSession {
     ) throws -> MessageDTO {
         let message = try createNewMessage(
             in: cid,
-            messageId: messageId,
+            messageId: nil,
             text: text,
             pinning: nil,
             command: nil,
             arguments: nil,
-            parentMessageId: nil,
+            parentMessageId: threadId,
             attachments: attachments,
             mentionedUserIds: mentionedUserIds,
             showReplyInChannel: false,

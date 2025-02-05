@@ -8,6 +8,7 @@ import Foundation
 enum MessagePayloadsCodingKeys: String, CodingKey, CaseIterable {
     case id
     case cid
+    case channelId = "channel_cid"
     case type
     case user
     case userId = "user_id"
@@ -22,6 +23,7 @@ enum MessagePayloadsCodingKeys: String, CodingKey, CaseIterable {
     case showReplyInChannel = "show_in_channel"
     case quotedMessageId = "quoted_message_id"
     case quotedMessage = "quoted_message"
+    case parentMessage = "parent_message"
     case mentionedUsers = "mentioned_users"
     case threadParticipants = "thread_participants"
     case replyCount = "reply_count"
@@ -44,6 +46,7 @@ enum MessagePayloadsCodingKeys: String, CodingKey, CaseIterable {
     case moderationDetails = "moderation_details" // moderation v1 key
     case moderation // moderation v2 key
     case messageTextUpdatedAt = "message_text_updated_at"
+    case message
     case poll
     case pollId = "poll_id"
     case set
