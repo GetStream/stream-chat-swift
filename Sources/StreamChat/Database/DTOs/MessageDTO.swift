@@ -1003,6 +1003,9 @@ extension NSManagedObjectContext: MessageDatabaseSession {
         dto.cid = cid.rawValue
         dto.text = payload.text
         dto.createdAt = payload.createdAt.bridgeDate
+        dto.updatedAt = payload.createdAt.bridgeDate
+        dto.reactionScores = [:]
+        dto.reactionCounts = [:]
         dto.type = MessageType.regular.rawValue
         dto.command = payload.command
         dto.args = payload.args
@@ -1408,7 +1411,7 @@ extension MessageDTO {
     func asDraftRequestBody() -> DraftMessageRequestBody {
         let extraData: [String: RawJSON]
         do {
-            extraData = try JSONDecoder.stream.decodeCachedRawJSON(from: self.extraData)
+            extraData = try JSONDecoder.stream.decodeRawJSON(from: self.extraData)
         } catch {
             log.assertionFailure("Failed decoding saved extra data with error: \(error). This should never happen because the extra data must be a valid JSON to be saved.")
             extraData = [:]

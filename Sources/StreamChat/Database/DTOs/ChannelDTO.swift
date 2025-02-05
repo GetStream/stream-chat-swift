@@ -329,6 +329,10 @@ extension NSManagedObjectContext {
 
         dto.updateOldestMessageAt(payload: payload)
 
+        if let draftMessage = payload.draftMessage {
+            dto.draftMessage = try saveDraftMessage(payload: draftMessage, for: payload.channel.cid, cache: nil)
+        }
+
         try payload.pinnedMessages.forEach {
             _ = try saveMessage(payload: $0, channelDTO: dto, syncOwnReactions: true, cache: cache)
         }
