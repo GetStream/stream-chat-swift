@@ -45,6 +45,8 @@ struct ChannelPayload {
     let channelReads: [ChannelReadPayload]
 
     let isHidden: Bool?
+
+    let draftMessage: DraftMessagePayload?
 }
 
 extension ChannelPayload {
@@ -68,6 +70,7 @@ extension ChannelPayload: Decodable {
         case membership
         case watcherCount = "watcher_count"
         case hidden
+        case draft
     }
 
     init(from decoder: Decoder) throws {
@@ -83,7 +86,8 @@ extension ChannelPayload: Decodable {
             pendingMessages: try container.decodeArrayIfPresentIgnoringFailures([MessagePayload.Boxed].self, forKey: .pendingMessages)?.map(\.message),
             pinnedMessages: try container.decodeArrayIgnoringFailures([MessagePayload].self, forKey: .pinnedMessages),
             channelReads: try container.decodeArrayIfPresentIgnoringFailures([ChannelReadPayload].self, forKey: .channelReads) ?? [],
-            isHidden: try container.decodeIfPresent(Bool.self, forKey: .hidden)
+            isHidden: try container.decodeIfPresent(Bool.self, forKey: .hidden),
+            draftMessage: try container.decodeIfPresent(DraftMessagePayload.self, forKey: .draft)
         )
     }
 }
