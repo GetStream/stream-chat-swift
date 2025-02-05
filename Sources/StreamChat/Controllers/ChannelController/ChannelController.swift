@@ -187,6 +187,8 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
     
     private let pollsRepository: PollsRepository
 
+    private let draftsRepository: DraftMessagesRepository
+
     var _basePublishers: Any?
     /// An internal backing object for all publicly available Combine publishers. We use it to simplify the way we expose
     /// publishers. Instead of creating custom `Publisher` types, we use `CurrentValueSubject` and `PassthroughSubject` internally,
@@ -232,7 +234,11 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
             client.apiClient
         )
         pollsRepository = client.pollsRepository
-        
+        draftsRepository = self.environment.draftMessagesRepositoryBuilder(
+            client.databaseContainer,
+            client.apiClient
+        )
+
         super.init()
 
         setChannelObserver()
@@ -860,9 +866,9 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
             return
         }
 
-        updater.updateDraftMessage(
-            in: cid,
-            messageId: nil,
+        draftsRepository.updateDraft(
+            for: cid,
+            threadId: nil,
             text: text,
             isSilent: isSilent,
             attachments: attachments,
@@ -889,7 +895,7 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
             return
         }
 
-        updater.getDraftMessage(cid: cid) { result in
+        draftsRepository.getDraft(for: cid, threadId: nil) { result in
             self.callback {
                 completion?(result)
             }
@@ -905,7 +911,7 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
             return
         }
 
-        updater.deleteDraftMessage(cid: cid) { error in
+        draftsRepository.deleteDraft(for: cid, threadId: nil) { error in
             self.callback {
                 completion?(error)
             }
@@ -1571,7 +1577,14 @@ extension ChatChannelController {
             _ database: DatabaseContainer,
             _ apiClient: APIClient
         ) -> ChannelUpdater = ChannelUpdater.init
-        
+
+        var draftMessagesRepositoryBuilder: (
+            _ database: DatabaseContainer,
+            _ apiClient: APIClient
+        ) -> DraftMessagesRepository = {
+            DraftMessagesRepository(database: $0, apiClient: $1)
+        }
+
         var memberUpdaterBuilder: (
             _ database: DatabaseContainer,
             _ apiClient: APIClient

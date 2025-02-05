@@ -52,6 +52,7 @@ enum EndpointPath: Codable {
     case translateMessage(MessageId)
 
     // Drafts
+    case drafts
     case draftMessage(ChannelId)
 
     case banMember
@@ -130,6 +131,8 @@ enum EndpointPath: Codable {
         case let .deleteReaction(messageId, reaction): return "messages/\(messageId)/reaction/\(reaction.rawValue)"
         case let .messageAction(messageId): return "messages/\(messageId)/action"
         case let .translateMessage(messageId): return "messages/\(messageId)/translate"
+
+        case .drafts: return "drafts/query"
         case let .draftMessage(channelId): return "channels/\(channelId.apiPath)/draft"
 
         case .banMember: return "moderation/ban"

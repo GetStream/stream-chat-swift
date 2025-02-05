@@ -172,6 +172,17 @@ class MessageDTO: NSManagedObject {
         return request
     }
 
+    /// Returns all the draft messages.
+    static func draftMessagesFetchRequest(query: DraftListQuery) -> NSFetchRequest<MessageDTO> {
+        let request = NSFetchRequest<MessageDTO>(entityName: MessageDTO.entityName)
+        MessageDTO.applyPrefetchingState(to: request)
+        request.sortDescriptors = query.sorting.compactMap { $0.sortDescriptor() }
+        request.predicate = NSCompoundPredicate(orPredicateWithSubpredicates: [
+            NSPredicate(format: "draftOfChannel != nil", LocalMessageState.pendingSync.rawValue)
+        ])
+        return request
+    }
+
     static func allAttachmentsAreUploadedOrEmptyPredicate() -> NSCompoundPredicate {
         NSCompoundPredicate(orPredicateWithSubpredicates: [
             .init(
@@ -1009,8 +1020,12 @@ extension NSManagedObjectContext: MessageDatabaseSession {
         dto.type = MessageType.regular.rawValue
         dto.command = payload.command
         dto.args = payload.args
-        dto.parentMessageId = payload.parentId
+        dto.parentMessageId = payload.parentMessage?.id
         dto.showReplyInChannel = payload.showReplyInChannel
+        dto.isSilent = payload.isSilent
+        dto.user = user
+        dto.channel = channelDTO
+        channelDTO.draftMessage = dto
 
         do {
             dto.extraData = try JSONEncoder.default.encode(payload.extraData)
@@ -1022,13 +1037,7 @@ extension NSManagedObjectContext: MessageDatabaseSession {
             dto.extraData = Data()
         }
 
-        dto.isSilent = payload.isSilent
-        if let quotedMessageId = payload.quotedMessageId,
-           let quotedMessage = message(id: quotedMessageId) {
-            // In case we do not have a fully formed quoted message in the payload,
-            // we check for quotedMessageId. This can happen in the case of nested quoted messages.
-            dto.quotedMessage = quotedMessage
-        } else if let quotedMessage = payload.quotedMessage {
+        if let quotedMessage = payload.quotedMessage {
             dto.quotedMessage = try saveMessage(
                 payload: quotedMessage,
                 channelDTO: channelDTO,
@@ -1039,15 +1048,21 @@ extension NSManagedObjectContext: MessageDatabaseSession {
             dto.quotedMessage = nil
         }
 
-        dto.user = user
+        if let parentMessage = payload.parentMessage {
+            dto.parentMessage = try saveMessage(
+                payload: parentMessage,
+                channelDTO: channelDTO,
+                syncOwnReactions: false,
+                cache: cache
+            )
+        } else {
+            dto.parentMessage = nil
+        }
 
         if let mentionedUsers = payload.mentionedUsers {
             dto.mentionedUsers = try Set(mentionedUsers.map { try saveUser(payload: $0) })
             dto.mentionedUserIds = mentionedUsers.map(\.id)
         }
-
-        dto.channel = channelDTO
-        channelDTO.draftMessage = dto
 
         let attachments: Set<AttachmentDTO> = try Set(
             payload.attachments.enumerated().map { index, attachment in

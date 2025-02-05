@@ -5,6 +5,17 @@
 import Foundation
 
 extension Endpoint {
+    static func drafts(query: DraftListQuery) -> Endpoint<DraftMessageListPayloadResponse> {
+        .init(
+            path: .drafts,
+            method: .post,
+            queryItems: nil,
+            requiresConnectionId: false,
+            requiresToken: true,
+            body: query
+        )
+    }
+
     static func updateDraftMessage(channelId: ChannelId, requestBody: DraftMessageRequestBody) -> Endpoint<DraftMessagePayloadResponse> {
         let body: [String: AnyEncodable] = [
             "message": AnyEncodable(requestBody)
