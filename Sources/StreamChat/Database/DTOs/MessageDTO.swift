@@ -178,7 +178,7 @@ class MessageDTO: NSManagedObject {
         MessageDTO.applyPrefetchingState(to: request)
         request.sortDescriptors = query.sorting.compactMap { $0.sortDescriptor() }
         request.predicate = NSCompoundPredicate(orPredicateWithSubpredicates: [
-            NSPredicate(format: "draftOfChannel != nil", LocalMessageState.pendingSync.rawValue)
+            NSPredicate(format: "draftOfChannel != nil")
         ])
         return request
     }

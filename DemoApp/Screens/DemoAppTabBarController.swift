@@ -9,6 +9,7 @@ import UIKit
 class DemoAppTabBarController: UITabBarController, CurrentChatUserControllerDelegate {
     let channelListVC: UIViewController
     let threadListVC: UIViewController
+    let draftListVC: UIViewController
     let currentUserController: CurrentChatUserController
 
     init(
@@ -19,6 +20,7 @@ class DemoAppTabBarController: UITabBarController, CurrentChatUserControllerDele
         self.channelListVC = channelListVC
         self.threadListVC = threadListVC
         self.currentUserController = currentUserController
+        draftListVC = DemoDraftMessageListVC(currentUserController: currentUserController)
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -60,7 +62,10 @@ class DemoAppTabBarController: UITabBarController, CurrentChatUserControllerDele
         threadListVC.tabBarItem.image = UIImage(systemName: "text.bubble")
         threadListVC.tabBarItem.badgeColor = .red
 
-        viewControllers = [channelListVC, threadListVC]
+        draftListVC.tabBarItem.title = "Drafts"
+        draftListVC.tabBarItem.image = UIImage(systemName: "doc.text")
+
+        viewControllers = [channelListVC, threadListVC, draftListVC]
     }
 
     func currentUserController(_ controller: CurrentChatUserController, didChangeCurrentUserUnreadCount: UnreadCount) {
