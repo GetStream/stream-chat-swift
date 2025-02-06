@@ -92,15 +92,8 @@ class DemoDraftMessageListVC: UIViewController, ThemeProvider {
     private func loadDrafts() {
         currentUserController.delegate = self
         loadingIndicator.startAnimating()
-        currentUserController.loadDraftMessages { [weak self] result in
+        currentUserController.loadDraftMessages { [weak self] _ in
             self?.loadingIndicator.stopAnimating()
-            switch result {
-            case .success(let drafts):
-                self?.emptyStateLabel.isHidden = !drafts.isEmpty
-                self?.tableView.isHidden = drafts.isEmpty
-            case .failure(let error):
-                print("Failed to load drafts: \(error)")
-            }
         }
     }
     
@@ -131,6 +124,8 @@ extension DemoDraftMessageListVC: CurrentChatUserControllerDelegate {
     ) {
         drafts = draftMessages
         tableView.reloadData()
+        emptyStateLabel.isHidden = !drafts.isEmpty
+        tableView.isHidden = drafts.isEmpty
     }
 }
 
@@ -156,6 +151,18 @@ extension DemoDraftMessageListVC: UITableViewDataSource, UITableViewDelegate {
         if maximumOffset - contentOffset <= threshold {
             loadMoreDrafts()
         }
+    }
+    
+    func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
+        let deleteAction = UIContextualAction(style: .destructive, title: "Delete") { [weak self] _, _, completion in
+            guard let self = self else { return }
+            guard let draftCid = self.drafts[indexPath.row].cid else { return }
+
+            self.currentUserController.deleteDraftMessage(for: draftCid)
+            completion(true)
+        }
+        
+        return UISwipeActionsConfiguration(actions: [deleteAction])
     }
 }
 
