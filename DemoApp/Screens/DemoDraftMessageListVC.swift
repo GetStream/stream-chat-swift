@@ -170,15 +170,26 @@ extension DemoDraftMessageListVC: UITableViewDataSource, UITableViewDelegate {
         
         let draft = drafts[indexPath.row]
         guard let cid = draft.cid else { return }
-        
+
         let channelController = currentUserController.client.channelController(
             for: cid,
             messageOrdering: .topToBottom
         )
-        
+
+        if let parentId = draft.parentMessageId {
+            let messageController = currentUserController.client.messageController(
+                cid: cid,
+                messageId: parentId
+            )
+            let threadVC = DemoChatThreadVC()
+            threadVC.messageController = messageController
+            threadVC.channelController = channelController
+            navigationController?.pushViewController(threadVC, animated: true)
+            return
+        }
+
         let channelVC = DemoChatChannelVC()
         channelVC.channelController = channelController
-        
         navigationController?.pushViewController(channelVC, animated: true)
     }
 }
