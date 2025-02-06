@@ -187,6 +187,12 @@ public class ChatMessageController: DataController, DelegateCallable, DataStoreP
     private let replyPaginationHandler: MessagesPaginationStateHandling
     private var replyPaginationState: MessagesPaginationState { replyPaginationHandler.state }
 
+    /// Add draftsRepository property
+    private lazy var draftsRepository: DraftMessagesRepository = environment.draftMessagesRepositoryBuilder(
+        client.databaseContainer,
+        client.apiClient
+    )
+
     /// Creates a new `MessageControllerGeneric`.
     /// - Parameters:
     ///   - client: The `Client` instance this controller belongs to.
@@ -843,6 +849,69 @@ public class ChatMessageController: DataController, DelegateCallable, DataStoreP
             }
         }
     }
+
+    /// Updates the draft message for this thread.
+    ///
+    /// If there is no draft message, a new draft message will be created.
+    /// - Parameters:
+    ///   - text: The text of the draft message.
+    ///   - attachments: The attachments of the draft message.
+    ///   - mentionedUserIds: The mentioned user ids of the draft message.
+    ///   - quotedMessageId: The message that the draft message is quoting.
+    ///   - extraData: The extra data of the draft message.
+    ///   - completion: Called when the draft message is saved to the server.
+    public func updateDraftMessage(
+        text: String,
+        isSilent: Bool = false,
+        attachments: [AnyAttachmentPayload] = [],
+        mentionedUserIds: [UserId] = [],
+        quotedMessageId: MessageId? = nil,
+        extraData: [String: RawJSON] = [:],
+        completion: ((Result<ChatMessage, Error>) -> Void)? = nil
+    ) {
+        draftsRepository.updateDraft(
+            for: cid,
+            threadId: messageId,
+            text: text,
+            isSilent: isSilent,
+            attachments: attachments,
+            mentionedUserIds: mentionedUserIds,
+            quotedMessageId: quotedMessageId,
+            extraData: extraData
+        ) { result in
+            self.callback {
+                completion?(result)
+            }
+        }
+    }
+
+    /// Loads the draft message for this thread.
+    ///
+    /// It is not necessary to call this method if the thread was loaded before.
+    public func loadDraftMessage(
+        completion: ((Result<ChatMessage?, Error>) -> Void)? = nil
+    ) {
+        draftsRepository.getDraft(
+            for: cid,
+            threadId: messageId
+        ) { result in
+            self.callback {
+                completion?(result)
+            }
+        }
+    }
+
+    /// Deletes the draft message for this thread.
+    public func deleteDraftMessage(completion: ((Error?) -> Void)? = nil) {
+        draftsRepository.deleteDraft(
+            for: cid,
+            threadId: messageId
+        ) { error in
+            self.callback {
+                completion?(error)
+            }
+        }
+    }
 }
 
 // MARK: - Environment
@@ -877,6 +946,13 @@ extension ChatMessageController {
             _ database: DatabaseContainer,
             _ apiClient: APIClient
         ) -> MessageUpdater = MessageUpdater.init
+
+        var draftMessagesRepositoryBuilder: (
+            _ database: DatabaseContainer,
+            _ apiClient: APIClient
+        ) -> DraftMessagesRepository = {
+            DraftMessagesRepository(database: $0, apiClient: $1)
+        }
     }
 }
 
