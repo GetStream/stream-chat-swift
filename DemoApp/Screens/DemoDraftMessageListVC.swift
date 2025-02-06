@@ -181,7 +181,14 @@ class DemoDraftMessageCell: UITableViewCell {
         label.textColor = Appearance.default.colorPalette.subtitleText
         return label
     }()
-    
+
+    private let pencilImageView: UIImageView = {
+        let imageView = UIImageView(image: UIImage(systemName: "bubble.and.pencil"))
+        imageView.contentMode = .scaleAspectFit
+        imageView.tintColor = .gray
+        return imageView
+    }()
+
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         setupViews()
@@ -193,13 +200,18 @@ class DemoDraftMessageCell: UITableViewCell {
     }
     
     private func setupViews() {
-        VContainer {
+        VContainer(spacing: 4) {
             HContainer {
                 channelNameLabel
                 Spacer()
                 dateLabel
             }
-            messageLabel
+            HContainer(spacing: 4) {
+                pencilImageView
+                    .width(20)
+                    .height(20)
+                messageLabel
+            }
         }.embed(in: contentView, insets: .init(top: 8, leading: 16, bottom: 8, trailing: 16))
     }
     

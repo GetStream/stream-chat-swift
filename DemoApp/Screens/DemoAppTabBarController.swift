@@ -15,12 +15,13 @@ class DemoAppTabBarController: UITabBarController, CurrentChatUserControllerDele
     init(
         channelListVC: UIViewController,
         threadListVC: UIViewController,
+        draftListVC: UIViewController,
         currentUserController: CurrentChatUserController
     ) {
         self.channelListVC = channelListVC
         self.threadListVC = threadListVC
+        self.draftListVC = draftListVC
         self.currentUserController = currentUserController
-        draftListVC = DemoDraftMessageListVC(currentUserController: currentUserController)
         super.init(nibName: nil, bundle: nil)
     }
     
