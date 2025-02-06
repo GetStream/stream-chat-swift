@@ -47,10 +47,22 @@ extension DemoAppCoordinator {
         threadListVC.onDisconnect = { [weak self] in
             self?.disconnect()
         }
+        
+        let draftsVC = DemoDraftMessageListVC(
+            currentUserController: client.currentUserController()
+        )
+        draftsVC.onLogout = { [weak self] in
+            self?.logOut()
+        }
+        draftsVC.onDisconnect = { [weak self] in
+            self?.disconnect()
+        }
+
         let tabBarViewController = DemoAppTabBarController(
             channelListVC: chatVC,
             threadListVC: UINavigationController(rootViewController: threadListVC),
-            currentUserController: StreamChatWrapper.shared.client!.currentUserController()
+            draftListVC: UINavigationController(rootViewController: draftsVC),
+            currentUserController: client.currentUserController()
         )
         set(rootViewController: tabBarViewController, animated: animated)
         DemoAppConfiguration.showPerformanceTracker()

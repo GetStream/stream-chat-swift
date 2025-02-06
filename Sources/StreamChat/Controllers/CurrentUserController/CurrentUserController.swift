@@ -498,12 +498,19 @@ private extension CurrentChatUserController {
     }
 
     @discardableResult
-    func createDraftMessagesObserver(query: DraftListQuery) -> BackgroundListDatabaseObserver<ChatMessage, MessageDTO> {
+    private func createDraftMessagesObserver(query: DraftListQuery) -> BackgroundListDatabaseObserver<ChatMessage, MessageDTO> {
         let observer = environment.draftMessagesObserverBuilder(
             client.databaseContainer,
             MessageDTO.draftMessagesFetchRequest(query: query),
             { try $0.asModel() }
         )
+        observer.onDidChange = { [weak self] _ in
+            guard let self = self else { return }
+            self.delegateCallback {
+                $0.currentUserController(self, didChangeDraftMessages: self.draftMessages)
+            }
+        }
+        try? observer.startObserving()
         draftMessagesObserver = observer
         return observer
     }
@@ -518,12 +525,23 @@ public protocol CurrentChatUserControllerDelegate: AnyObject {
 
     /// The controller observed a change in the `CurrentChatUser` entity.
     func currentUserController(_ controller: CurrentChatUserController, didChangeCurrentUser: EntityChange<CurrentChatUser>)
+
+    /// The controller observed a change in the draft messages.
+    func currentUserController(
+        _ controller: CurrentChatUserController,
+        didChangeDraftMessages draftMessages: [ChatMessage]
+    )
 }
 
 public extension CurrentChatUserControllerDelegate {
     func currentUserController(_ controller: CurrentChatUserController, didChangeCurrentUserUnreadCount: UnreadCount) {}
 
     func currentUserController(_ controller: CurrentChatUserController, didChangeCurrentUser: EntityChange<CurrentChatUser>) {}
+
+    func currentUserController(
+        _ controller: CurrentChatUserController,
+        didChangeDraftMessages draftMessages: [ChatMessage]
+    ) {}
 }
 
 public extension CurrentChatUserController {

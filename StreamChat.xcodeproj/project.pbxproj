@@ -1509,6 +1509,7 @@
 		AD545E642D52827B008FD399 /* DraftListQuery.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD545E622D528271008FD399 /* DraftListQuery.swift */; };
 		AD545E662D53C271008FD399 /* DraftMessagesRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD545E652D53C26B008FD399 /* DraftMessagesRepository.swift */; };
 		AD545E672D53C271008FD399 /* DraftMessagesRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD545E652D53C26B008FD399 /* DraftMessagesRepository.swift */; };
+		AD545E692D5531BA008FD399 /* DemoDraftMessageListVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD545E682D5531B9008FD399 /* DemoDraftMessageListVC.swift */; };
 		AD552E0128F46CE700199A6F /* ImageLoaderOptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD552E0028F46CE700199A6F /* ImageLoaderOptions.swift */; };
 		AD552E0228F46CE700199A6F /* ImageLoaderOptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD552E0028F46CE700199A6F /* ImageLoaderOptions.swift */; };
 		AD57979E2978C4F7006CC435 /* UploadedAttachmentPostProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD57979D2978C4F7006CC435 /* UploadedAttachmentPostProcessor.swift */; };
@@ -4268,6 +4269,7 @@
 		AD545E5F2D523CA8008FD399 /* DraftMessagePayloads.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DraftMessagePayloads.swift; sourceTree = "<group>"; };
 		AD545E622D528271008FD399 /* DraftListQuery.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DraftListQuery.swift; sourceTree = "<group>"; };
 		AD545E652D53C26B008FD399 /* DraftMessagesRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DraftMessagesRepository.swift; sourceTree = "<group>"; };
+		AD545E682D5531B9008FD399 /* DemoDraftMessageListVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DemoDraftMessageListVC.swift; sourceTree = "<group>"; };
 		AD552E0028F46CE700199A6F /* ImageLoaderOptions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageLoaderOptions.swift; sourceTree = "<group>"; };
 		AD57979D2978C4F7006CC435 /* UploadedAttachmentPostProcessor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UploadedAttachmentPostProcessor.swift; sourceTree = "<group>"; };
 		AD57DE752A77D5A2005408B6 /* ChannelListSearchStrategy_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelListSearchStrategy_Tests.swift; sourceTree = "<group>"; };
@@ -6763,6 +6765,7 @@
 		A3227ECA284A607D00EBE6CC /* Screens */ = {
 			isa = PBXGroup;
 			children = (
+				AD545E682D5531B9008FD399 /* DemoDraftMessageListVC.swift */,
 				ADD328592C04DD8300BAD0E9 /* DemoAppTabBarController.swift */,
 				C10B5C712A1F794A006A5BCB /* MembersViewController.swift */,
 				C1CEF9062A1BC4E800414931 /* UserProfileViewController.swift */,
@@ -11092,6 +11095,7 @@
 				AD053B9D2B3358E2003612B6 /* LocationAttachmentPayload.swift in Sources */,
 				AD053BA12B3359DD003612B6 /* DemoAttachmentViewCatalog.swift in Sources */,
 				AD053B9F2B335929003612B6 /* LocationAttachmentViewInjector.swift in Sources */,
+				AD545E692D5531BA008FD399 /* DemoDraftMessageListVC.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
