@@ -992,24 +992,20 @@ open class ComposerVC: _ViewController,
 
         removeMentionUserIfNotIncluded(in: text)
 
-        if let threadParentMessageId = content.threadMessage?.id {
-            // TODO:
-//            let messageController = channelController?.client.messageController(
-//                cid: cid,
-//                messageId: threadParentMessageId
-//            )
-//
-//            messageController?.createNewReply(
-//                text: text,
-//                pinning: nil,
-//                attachments: content.attachments,
-//                mentionedUserIds: content.mentionedUsers.map(\.id),
-//                showReplyInChannel: composerView.checkboxControl.isSelected,
-//                quotedMessageId: content.quotingMessage?.id,
-//                skipEnrichUrl: content.skipEnrichUrl,
-//                extraData: content.extraData
-//            )
-//            return
+        if let threadParentMessageId = content.threadMessage?.id, let cid = channelController?.cid {
+            let messageController = channelController?.client.messageController(
+                cid: cid,
+                messageId: threadParentMessageId
+            )
+
+            messageController?.updateDraftMessage(
+                text: text,
+                attachments: content.attachments,
+                mentionedUserIds: content.mentionedUsers.map(\.id),
+                quotedMessageId: content.quotingMessage?.id,
+                extraData: content.extraData
+            )
+            return
         }
 
         channelController?.updateDraftMessage(

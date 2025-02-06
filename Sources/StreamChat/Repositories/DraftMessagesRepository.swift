@@ -104,7 +104,9 @@ class DraftMessagesRepository {
         threadId: MessageId?,
         completion: ((Result<ChatMessage?, Error>) -> Void)?
     ) {
-        apiClient.request(endpoint: .getDraftMessage(channelId: cid)) { [weak self] result in
+        apiClient.request(
+            endpoint: .getDraftMessage(channelId: cid, threadId: threadId)
+        ) { [weak self] result in
             switch result {
             case .success(let response):
                 self?.database.write { session in
@@ -128,7 +130,9 @@ class DraftMessagesRepository {
         threadId: MessageId?,
         completion: @escaping (Error?) -> Void
     ) {
-        apiClient.request(endpoint: .deleteDraftMessage(channelId: cid)) { [weak self] result in
+        apiClient.request(
+            endpoint: .deleteDraftMessage(channelId: cid, threadId: threadId)
+        ) { [weak self] result in
             switch result {
             case .success:
                 self?.database.write { session in
