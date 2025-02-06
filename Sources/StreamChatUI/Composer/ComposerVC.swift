@@ -806,6 +806,10 @@ open class ComposerVC: _ViewController,
             return
         }
 
+        if channelController?.channel?.draftMessage != nil {
+            channelController?.deleteDraftMessage()
+        }
+
         let text = content.inputText
 
         if let editingMessage = content.editingMessage {
