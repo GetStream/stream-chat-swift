@@ -164,6 +164,23 @@ extension DemoDraftMessageListVC: UITableViewDataSource, UITableViewDelegate {
         
         return UISwipeActionsConfiguration(actions: [deleteAction])
     }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        tableView.deselectRow(at: indexPath, animated: true)
+        
+        let draft = drafts[indexPath.row]
+        guard let cid = draft.cid else { return }
+        
+        let channelController = currentUserController.client.channelController(
+            for: cid,
+            messageOrdering: .topToBottom
+        )
+        
+        let channelVC = DemoChatChannelVC()
+        channelVC.channelController = channelController
+        
+        navigationController?.pushViewController(channelVC, animated: true)
+    }
 }
 
 class DemoDraftMessageCell: UITableViewCell {
