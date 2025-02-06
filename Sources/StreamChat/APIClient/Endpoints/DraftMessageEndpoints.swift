@@ -16,7 +16,10 @@ extension Endpoint {
         )
     }
 
-    static func updateDraftMessage(channelId: ChannelId, requestBody: DraftMessageRequestBody) -> Endpoint<DraftMessagePayloadResponse> {
+    static func updateDraftMessage(
+        channelId: ChannelId,
+        requestBody: DraftMessageRequestBody
+    ) -> Endpoint<DraftMessagePayloadResponse> {
         let body: [String: AnyEncodable] = [
             "message": AnyEncodable(requestBody)
         ]
@@ -29,23 +32,33 @@ extension Endpoint {
         )
     }
 
-    static func getDraftMessage(channelId: ChannelId) -> Endpoint<DraftMessagePayloadResponse> {
+    static func getDraftMessage(
+        channelId: ChannelId,
+        threadId: MessageId?
+    ) -> Endpoint<DraftMessagePayloadResponse> {
         .init(
             path: .draftMessage(channelId),
             method: .get,
-            queryItems: nil,
+            queryItems: [
+                "parent_id": threadId
+            ],
             requiresConnectionId: false,
             body: nil
         )
     }
 
-    static func deleteDraftMessage(channelId: ChannelId) -> Endpoint<EmptyResponse> {
+    static func deleteDraftMessage(
+        channelId: ChannelId,
+        threadId: MessageId?
+    ) -> Endpoint<EmptyResponse> {
         .init(
             path: .draftMessage(channelId),
             method: .delete,
             queryItems: nil,
             requiresConnectionId: false,
-            body: nil
+            body: [
+                "parent_id": threadId
+            ]
         )
     }
 }

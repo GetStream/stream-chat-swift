@@ -64,6 +64,10 @@ public struct ChatMessage {
     public var quotedMessage: ChatMessage? { _quotedMessage() }
     let _quotedMessage: () -> ChatMessage?
 
+    /// The draft reply to this message. Applies only for the messages of the current user.
+    public var draftReply: ChatMessage? { _draftReply() }
+    let _draftReply: () -> ChatMessage?
+
     /// A flag indicating whether the message was bounced due to moderation.
     public let isBounced: Bool
 
@@ -213,7 +217,8 @@ public struct ChatMessage {
         moderationDetails: MessageModerationDetails?,
         readBy: Set<ChatUser>,
         poll: Poll?,
-        textUpdatedAt: Date?
+        textUpdatedAt: Date?,
+        draftReply: ChatMessage?
     ) {
         self.id = id
         self.cid = cid
@@ -254,6 +259,7 @@ public struct ChatMessage {
         self.readBy = readBy
         _attachments = attachments
         _quotedMessage = { quotedMessage }
+        _draftReply = { draftReply }
     }
 
     /// Returns a new `ChatMessage` with the provided data replaced.
@@ -300,7 +306,8 @@ public struct ChatMessage {
             moderationDetails: moderationDetails,
             readBy: readBy,
             poll: poll,
-            textUpdatedAt: textUpdatedAt
+            textUpdatedAt: textUpdatedAt,
+            draftReply: draftReply
         )
     }
 }

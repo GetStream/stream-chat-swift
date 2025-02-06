@@ -84,6 +84,8 @@ class MessageDTO: NSManagedObject {
     @NSManaged var previewOfChannel: ChannelDTO?
 
     @NSManaged var draftOfChannel: ChannelDTO?
+    @NSManaged var draftOfThread: MessageDTO?
+    @NSManaged var draftReply: MessageDTO?
 
     /// If the message is sent by the current user, this field
     /// contains channel reads of other channel members (excluding the current user),
@@ -178,7 +180,8 @@ class MessageDTO: NSManagedObject {
         MessageDTO.applyPrefetchingState(to: request)
         request.sortDescriptors = query.sorting.compactMap { $0.sortDescriptor() }
         request.predicate = NSCompoundPredicate(orPredicateWithSubpredicates: [
-            NSPredicate(format: "draftOfChannel != nil")
+            NSPredicate(format: "draftOfChannel != nil"),
+            NSPredicate(format: "draftOfThread != nil")
         ])
         return request
     }
@@ -300,7 +303,10 @@ class MessageDTO: NSManagedObject {
             .init(format: "createdAt >= channel.oldestMessageAt")
         ])
 
-        let ignoreDraftMessages = NSPredicate(format: .init(format: "draftOfChannel == nil"))
+        let ignoreDraftMessages = NSCompoundPredicate(orPredicateWithSubpredicates: [
+            .init(format: "draftOfChannel == nil"),
+            .init(format: "draftOfThread == nil")
+        ])
 
         var subpredicates = [
             channelPredicate(with: cid),
@@ -1025,16 +1031,18 @@ extension NSManagedObjectContext: MessageDatabaseSession {
         dto.isSilent = payload.isSilent
         dto.user = user
         dto.channel = channelDTO
-        channelDTO.draftMessage = dto
 
-        do {
-            dto.extraData = try JSONEncoder.default.encode(payload.extraData)
-        } catch {
-            log.error(
-                "Failed to decode extra payload for Message with id: <\(dto.id)>, using default value instead. "
-                    + "Error: \(error)"
+        if let parentMessage = payload.parentMessage {
+            dto.parentMessage = try saveMessage(
+                payload: parentMessage,
+                channelDTO: channelDTO,
+                syncOwnReactions: false,
+                cache: cache
             )
-            dto.extraData = Data()
+            dto.parentMessage?.draftReply = dto
+        } else {
+            dto.parentMessage = nil
+            channelDTO.draftMessage = dto
         }
 
         if let quotedMessage = payload.quotedMessage {
@@ -1046,17 +1054,6 @@ extension NSManagedObjectContext: MessageDatabaseSession {
             )
         } else {
             dto.quotedMessage = nil
-        }
-
-        if let parentMessage = payload.parentMessage {
-            dto.parentMessage = try saveMessage(
-                payload: parentMessage,
-                channelDTO: channelDTO,
-                syncOwnReactions: false,
-                cache: cache
-            )
-        } else {
-            dto.parentMessage = nil
         }
 
         if let mentionedUsers = payload.mentionedUsers {
@@ -1072,6 +1069,17 @@ extension NSManagedObjectContext: MessageDatabaseSession {
             }
         )
         dto.attachments = attachments
+
+        do {
+            dto.extraData = try JSONEncoder.default.encode(payload.extraData)
+        } catch {
+            log.error(
+                "Failed to decode extra payload for Message with id: <\(dto.id)>, using default value instead. "
+                    + "Error: \(error)"
+            )
+            dto.extraData = Data()
+        }
+
         return dto
     }
 
@@ -1575,6 +1583,8 @@ private extension ChatMessage {
 
         let quotedMessage = try? dto.quotedMessage?.relationshipAsModel(depth: depth)
 
+        let draftReply = try? dto.draftReply?.relationshipAsModel(depth: depth)
+
         let readBy = Set(dto.reads.compactMap { try? $0.user.asModel() })
 
         let message = ChatMessage(
@@ -1615,7 +1625,8 @@ private extension ChatMessage {
             moderationDetails: moderationDetails,
             readBy: readBy,
             poll: poll,
-            textUpdatedAt: textUpdatedAt
+            textUpdatedAt: textUpdatedAt,
+            draftReply: draftReply
         )
 
         if let transformer = chatClientConfig?.modelsTransformer {
