@@ -35,7 +35,7 @@ extension Endpoint {
     static func getDraftMessage(
         channelId: ChannelId,
         threadId: MessageId?
-    ) -> Endpoint<DraftMessagePayloadResponse> {
+    ) -> Endpoint<DraftMessagePayload> {
         .init(
             path: .draftMessage(channelId),
             method: .get,
