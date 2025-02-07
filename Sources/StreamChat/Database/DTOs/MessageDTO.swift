@@ -303,7 +303,7 @@ class MessageDTO: NSManagedObject {
             .init(format: "createdAt >= channel.oldestMessageAt")
         ])
 
-        let ignoreDraftMessages = NSCompoundPredicate(orPredicateWithSubpredicates: [
+        let ignoreDraftMessages = NSCompoundPredicate(andPredicateWithSubpredicates: [
             .init(format: "draftOfChannel == nil"),
             .init(format: "draftOfThread == nil")
         ])
@@ -1087,6 +1087,18 @@ extension NSManagedObjectContext: MessageDatabaseSession {
         let messageDTO = try saveMessage(payload: payload, for: nil, cache: cache)
         messageDTO.searches.insert(saveQuery(query: query))
         return messageDTO
+    }
+
+    func deleteDraftMessage(in cid: ChannelId, threadId: MessageId?) {
+        if let threadId = threadId, let parentMessage = message(id: threadId) {
+            parentMessage.draftReply.map {
+                delete($0)
+            }
+        } else if let channel = channel(cid: cid) {
+            channel.draftMessage.map {
+                delete($0)
+            }
+        }
     }
 
     func message(id: MessageId) -> MessageDTO? { .load(id: id, context: self) }
