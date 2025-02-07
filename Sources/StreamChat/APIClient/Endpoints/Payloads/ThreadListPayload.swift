@@ -18,6 +18,7 @@ enum ThreadCodingKeys: String, CodingKey, CaseIterable {
     case title
     case latestReplies = "latest_replies"
     case read
+    case draft
 }
 
 struct ThreadListPayload: Decodable {
@@ -58,6 +59,7 @@ struct ThreadPayload: Decodable {
     let title: String?
     let latestReplies: [MessagePayload]
     let read: [ThreadReadPayload]
+    let draft: DraftPayload?
     let extraData: [String: RawJSON]
 
     init(
@@ -74,6 +76,7 @@ struct ThreadPayload: Decodable {
         title: String?,
         latestReplies: [MessagePayload],
         read: [ThreadReadPayload],
+        draft: DraftPayload,
         extraData: [String: RawJSON]
     ) {
         self.parentMessageId = parentMessageId
@@ -89,6 +92,7 @@ struct ThreadPayload: Decodable {
         self.title = title
         self.latestReplies = latestReplies
         self.read = read
+        self.draft = draft
         self.extraData = extraData
     }
 
@@ -109,6 +113,7 @@ struct ThreadPayload: Decodable {
         createdAt = try container.decode(Date.self, forKey: ThreadCodingKeys.createdAt)
         updatedAt = try container.decodeIfPresent(Date.self, forKey: ThreadCodingKeys.updatedAt)
         title = try container.decodeIfPresent(String.self, forKey: ThreadCodingKeys.title)
+        draft = try container.decodeIfPresent(DraftPayload.self, forKey: .draft)
         latestReplies = try container.decodeArrayIfPresentIgnoringFailures(
             [MessagePayload].self,
             forKey: ThreadCodingKeys.latestReplies

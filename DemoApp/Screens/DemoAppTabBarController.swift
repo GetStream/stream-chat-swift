@@ -64,7 +64,7 @@ class DemoAppTabBarController: UITabBarController, CurrentChatUserControllerDele
         threadListVC.tabBarItem.badgeColor = .red
 
         draftListVC.tabBarItem.title = "Drafts"
-        draftListVC.tabBarItem.image = UIImage(systemName: "doc.text")
+        draftListVC.tabBarItem.image = UIImage(systemName: "bubble.and.pencil")
 
         viewControllers = [channelListVC, threadListVC, draftListVC]
     }
