@@ -327,7 +327,6 @@ class ChannelUpdater: Worker {
                 showReplyInChannel: false,
                 isSilent: isSilent,
                 isSystem: isSystem,
-                isDraft: false,
                 quotedMessageId: quotedMessageId,
                 createdAt: nil,
                 skipPush: skipPush,

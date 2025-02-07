@@ -87,6 +87,10 @@ class MessageDTO: NSManagedObject {
     @NSManaged var draftOfThread: MessageDTO?
     @NSManaged var draftReply: MessageDTO?
 
+    var isDraft: Bool {
+        draftOfChannel != nil || draftOfThread != nil
+    }
+
     /// If the message is sent by the current user, this field
     /// contains channel reads of other channel members (excluding the current user),
     /// where `read.lastRead >= self.createdAt`.
@@ -664,7 +668,6 @@ extension NSManagedObjectContext: MessageDatabaseSession {
         showReplyInChannel: Bool,
         isSilent: Bool,
         isSystem: Bool,
-        isDraft: Bool,
         quotedMessageId: MessageId?,
         createdAt: Date?,
         skipPush: Bool,
@@ -745,7 +748,7 @@ extension NSManagedObjectContext: MessageDatabaseSession {
             channelDTO.defaultSortingAt = newLastMessageAt
         }
 
-        if isDraft == false, let parentMessageId = parentMessageId,
+        if let parentMessageId = parentMessageId,
            let parentMessageDTO = MessageDTO.load(id: parentMessageId, context: self) {
             parentMessageDTO.replies.insert(message)
             parentMessageDTO.replyCount += 1
@@ -753,8 +756,78 @@ extension NSManagedObjectContext: MessageDatabaseSession {
 
         // When the current user submits the new message that will be shown
         // in the channel for sending - make it a channel preview.
-        if (parentMessageId == nil || showReplyInChannel) && !isDraft {
+        if (parentMessageId == nil || showReplyInChannel) {
             channelDTO.previewMessage = message
+        }
+
+        return message
+    }
+
+    func createNewDraftMessage(
+        in cid: ChannelId,
+        text: String,
+        command: String?,
+        arguments: String?,
+        parentMessageId: MessageId?,
+        attachments: [AnyAttachmentPayload],
+        mentionedUserIds: [UserId],
+        showReplyInChannel: Bool,
+        isSilent: Bool,
+        quotedMessageId: MessageId?,
+        extraData: [String: RawJSON]
+    ) throws -> MessageDTO {
+        guard let currentUserDTO = currentUser else {
+            throw ClientError.CurrentUserDoesNotExist()
+        }
+
+        guard let channelDTO = ChannelDTO.load(cid: cid, context: self) else {
+            throw ClientError.ChannelDoesNotExist(cid: cid)
+        }
+
+        let createdAt = Date()
+        let message = MessageDTO.loadOrCreate(id: .newUniqueId, context: self, cache: nil)
+        message.locallyCreatedAt = createdAt.bridgeDate
+        message.createdAt = createdAt.bridgeDate
+        message.updatedAt = createdAt.bridgeDate
+        message.cid = cid.rawValue
+        message.text = text
+        message.command = command
+        message.args = arguments
+        message.parentMessageId = parentMessageId
+        message.extraData = try JSONEncoder.default.encode(extraData)
+        message.isSilent = isSilent
+        message.skipPush = false
+        message.skipEnrichUrl = false
+        message.reactionScores = [:]
+        message.reactionCounts = [:]
+        message.reactionGroups = []
+        message.mentionedUserIds = mentionedUserIds
+        message.showReplyInChannel = showReplyInChannel
+        message.quotedMessage = quotedMessageId.flatMap { MessageDTO.load(id: $0, context: self) }
+        message.user = currentUserDTO.user
+        message.channel = channelDTO
+        message.attachments = Set(
+            try attachments.enumerated().map { index, attachment in
+                let id = AttachmentId(cid: cid, messageId: message.id, index: index)
+                return try createNewAttachment(attachment: attachment, id: id)
+            }
+        )
+
+        if parentMessageId != nil {
+            message.type = MessageType.reply.rawValue
+        } else {
+            message.type = MessageType.regular.rawValue
+        }
+
+        if let threadId = parentMessageId {
+            let parentMessageDTO = self.message(id: threadId)
+            parentMessageDTO?.draftReply = parentMessageDTO
+        } else {
+            message.channel?.draftMessage = message
+        }
+
+        if quotedMessageId != nil {
+            message.showInsideThread = true
         }
 
         return message

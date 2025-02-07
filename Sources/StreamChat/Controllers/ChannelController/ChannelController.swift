@@ -871,6 +871,7 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
             threadId: nil,
             text: text,
             isSilent: isSilent,
+            showReplyInChannel: false,
             attachments: attachments,
             mentionedUserIds: mentionedUserIds,
             quotedMessageId: quotedMessageId,

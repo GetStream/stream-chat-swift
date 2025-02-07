@@ -99,12 +99,26 @@ protocol MessageDatabaseSession {
         showReplyInChannel: Bool,
         isSilent: Bool,
         isSystem: Bool,
-        isDraft: Bool,
         quotedMessageId: MessageId?,
         createdAt: Date?,
         skipPush: Bool,
         skipEnrichUrl: Bool,
         poll: PollPayload?,
+        extraData: [String: RawJSON]
+    ) throws -> MessageDTO
+
+    /// Creates a draft message in the database.
+    func createNewDraftMessage(
+        in cid: ChannelId,
+        text: String,
+        command: String?,
+        arguments: String?,
+        parentMessageId: MessageId?,
+        attachments: [AnyAttachmentPayload],
+        mentionedUserIds: [UserId],
+        showReplyInChannel: Bool,
+        isSilent: Bool,
+        quotedMessageId: MessageId?,
         extraData: [String: RawJSON]
     ) throws -> MessageDTO
 
@@ -251,7 +265,6 @@ extension MessageDatabaseSession {
         quotedMessageId: MessageId?,
         isSilent: Bool = false,
         isSystem: Bool,
-        isDraft: Bool = false,
         skipPush: Bool,
         skipEnrichUrl: Bool,
         attachments: [AnyAttachmentPayload] = [],
@@ -272,7 +285,6 @@ extension MessageDatabaseSession {
             showReplyInChannel: false,
             isSilent: isSilent,
             isSystem: isSystem,
-            isDraft: isDraft,
             quotedMessageId: quotedMessageId,
             createdAt: nil,
             skipPush: skipPush,
@@ -280,49 +292,6 @@ extension MessageDatabaseSession {
             poll: pollPayload,
             extraData: extraData
         )
-    }
-
-    func createDraftMessage(
-        in cid: ChannelId,
-        threadId: MessageId?,
-        text: String,
-        quotedMessageId: MessageId?,
-        isSilent: Bool,
-        attachments: [AnyAttachmentPayload],
-        mentionedUserIds: [UserId],
-        extraData: [String: RawJSON]
-    ) throws -> MessageDTO {
-        let message = try createNewMessage(
-            in: cid,
-            messageId: nil,
-            text: text,
-            pinning: nil,
-            command: nil,
-            arguments: nil,
-            parentMessageId: threadId,
-            attachments: attachments,
-            mentionedUserIds: mentionedUserIds,
-            showReplyInChannel: false,
-            isSilent: isSilent,
-            isSystem: false,
-            isDraft: true,
-            quotedMessageId: quotedMessageId,
-            createdAt: nil,
-            skipPush: false,
-            skipEnrichUrl: false,
-            poll: nil,
-            extraData: extraData
-        )
-        if let threadId = threadId {
-            let parentMessageDTO = self.message(id: threadId)
-            parentMessageDTO?.draftReply = parentMessageDTO
-        } else {
-            message.channel?.draftMessage = message
-        }
-        if quotedMessageId != nil {
-            message.showInsideThread = true
-        }
-        return message
     }
 }
 
