@@ -996,7 +996,7 @@ open class ComposerVC: _ViewController,
                 messageId: threadParentMessageId
             )
 
-            messageController?.updateDraftMessage(
+            messageController?.updateDraftReply(
                 text: text,
                 attachments: content.attachments,
                 mentionedUserIds: content.mentionedUsers.map(\.id),
@@ -1024,7 +1024,7 @@ open class ComposerVC: _ViewController,
                 messageId: threadParentMessageId
             )
             if messageController?.message?.draftReply != nil {
-                messageController?.deleteDraftMessage()
+                messageController?.deleteDraftReply()
             }
             return
         }

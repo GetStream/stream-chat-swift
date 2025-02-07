@@ -126,7 +126,7 @@ open class ChatThreadVC: _ViewController,
         if let draftMessage = messageController.message?.draftReply {
             messageComposerVC.content.draftMessage(draftMessage)
         } else {
-            messageController.loadDraftMessage {
+            messageController.loadDraftReply {
                 guard let draftMessage = try? $0.get() else { return }
                 self.messageComposerVC.content.draftMessage(draftMessage)
             }
