@@ -5,7 +5,7 @@
 import Foundation
 
 extension Endpoint {
-    static func drafts(query: DraftListQuery) -> Endpoint<DraftMessageListPayloadResponse> {
+    static func drafts(query: DraftListQuery) -> Endpoint<DraftListPayloadResponse> {
         .init(
             path: .drafts,
             method: .post,
@@ -19,7 +19,7 @@ extension Endpoint {
     static func updateDraftMessage(
         channelId: ChannelId,
         requestBody: DraftMessageRequestBody
-    ) -> Endpoint<DraftMessagePayloadResponse> {
+    ) -> Endpoint<DraftPayloadResponse> {
         let body: [String: AnyEncodable] = [
             "message": AnyEncodable(requestBody)
         ]
@@ -35,7 +35,7 @@ extension Endpoint {
     static func getDraftMessage(
         channelId: ChannelId,
         threadId: MessageId?
-    ) -> Endpoint<DraftMessagePayload> {
+    ) -> Endpoint<DraftPayload> {
         .init(
             path: .draftMessage(channelId),
             method: .get,
