@@ -1001,6 +1001,7 @@ open class ComposerVC: _ViewController,
                 attachments: content.attachments,
                 mentionedUserIds: content.mentionedUsers.map(\.id),
                 quotedMessageId: content.quotingMessage?.id,
+                showReplyInChannel: composerView.checkboxControl.isSelected,
                 extraData: content.extraData
             )
             return

@@ -52,6 +52,7 @@ class DraftMessagesRepository {
         threadId: MessageId?,
         text: String,
         isSilent: Bool,
+        showReplyInChannel: Bool,
         attachments: [AnyAttachmentPayload],
         mentionedUserIds: [UserId],
         quotedMessageId: MessageId?,
@@ -60,14 +61,17 @@ class DraftMessagesRepository {
     ) {
         var draftRequestBody: DraftMessageRequestBody?
         database.write({ (session) in
-            let newMessageDTO = try session.createDraftMessage(
+            let newMessageDTO = try session.createNewDraftMessage(
                 in: cid,
-                threadId: threadId,
                 text: text,
-                quotedMessageId: quotedMessageId,
-                isSilent: isSilent,
+                command: nil,
+                arguments: nil,
+                parentMessageId: threadId,
                 attachments: attachments,
                 mentionedUserIds: mentionedUserIds,
+                showReplyInChannel: showReplyInChannel,
+                isSilent: isSilent,
+                quotedMessageId: quotedMessageId,
                 extraData: extraData
             )
             draftRequestBody = newMessageDTO.asDraftRequestBody()
