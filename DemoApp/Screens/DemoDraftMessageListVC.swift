@@ -156,9 +156,10 @@ extension DemoDraftMessageListVC: UITableViewDataSource, UITableViewDelegate {
     func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
         let deleteAction = UIContextualAction(style: .destructive, title: "Delete") { [weak self] _, _, completion in
             guard let self = self else { return }
-            guard let draftCid = self.drafts[indexPath.row].cid else { return }
+            let draft = self.drafts[indexPath.row]
+            guard let cid = draft.cid else { return }
 
-            self.currentUserController.deleteDraftMessage(for: draftCid)
+            self.currentUserController.deleteDraftMessage(for: cid, threadId: draft.parentMessageId)
             completion(true)
         }
         
