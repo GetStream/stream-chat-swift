@@ -42,7 +42,7 @@ struct DraftMessagePayload: Decodable {
     let showReplyInChannel: Bool
     let mentionedUsers: [UserPayload]?
     let extraData: [String: RawJSON]
-    let attachments: [MessageAttachmentPayload]
+    let attachments: [MessageAttachmentPayload]?
     let isSilent: Bool
 
     init(from decoder: any Decoder) throws {
@@ -53,7 +53,7 @@ struct DraftMessagePayload: Decodable {
         args = try container.decodeIfPresent(String.self, forKey: .args)
         showReplyInChannel = try container.decodeIfPresent(Bool.self, forKey: .showReplyInChannel) ?? false
         mentionedUsers = try container.decodeIfPresent([UserPayload].self, forKey: .mentionedUsers)
-        attachments = try container.decodeIfPresent([MessageAttachmentPayload].self, forKey: .attachments) ?? []
+        attachments = try container.decodeIfPresent([MessageAttachmentPayload].self, forKey: .attachments)
         isSilent = try container.decodeIfPresent(Bool.self, forKey: .isSilent) ?? false
         if var payload = try? [String: RawJSON](from: decoder) {
             payload.removeValues(forKeys: MessagePayloadsCodingKeys.allCases.map(\.rawValue))

@@ -756,7 +756,7 @@ extension NSManagedObjectContext: MessageDatabaseSession {
 
         // When the current user submits the new message that will be shown
         // in the channel for sending - make it a channel preview.
-        if (parentMessageId == nil || showReplyInChannel) {
+        if parentMessageId == nil || showReplyInChannel {
             channelDTO.previewMessage = message
         }
 
@@ -1139,14 +1139,14 @@ extension NSManagedObjectContext: MessageDatabaseSession {
             dto.mentionedUserIds = mentionedUsers.map(\.id)
         }
 
-        let attachments: Set<AttachmentDTO> = try Set(
-            draftDetailsPayload.attachments.enumerated().map { index, attachment in
-                let id = AttachmentId(cid: cid, messageId: draftDetailsPayload.id, index: index)
-                let dto = try saveAttachment(payload: attachment, id: id)
-                return dto
-            }
-        )
-        dto.attachments = attachments
+        if let attachments = draftDetailsPayload.attachments {
+            dto.attachments = Set(
+                try attachments.enumerated().map { index, attachment in
+                    let id = AttachmentId(cid: cid, messageId: draftDetailsPayload.id, index: index)
+                    return try saveAttachment(payload: attachment, id: id)
+                }
+            )
+        }
 
         do {
             dto.extraData = try JSONEncoder.default.encode(draftDetailsPayload.extraData)
