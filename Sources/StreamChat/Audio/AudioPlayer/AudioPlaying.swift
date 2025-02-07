@@ -120,7 +120,7 @@ open class StreamAudioPlayer: AudioPlaying, AppStateObserverDelegate {
         subscriber.audioPlayer(self, didUpdateContext: context)
     }
 
-    public func loadAsset(from url: URL) {
+    open func loadAsset(from url: URL) {
         loadAsset(from: url, options: nil)
     }
 
