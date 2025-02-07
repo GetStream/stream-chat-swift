@@ -179,7 +179,15 @@ class FetchCache {
 
 extension NSManagedObjectContext {
     func fetch<T>(_ request: NSFetchRequest<T>, using cache: FetchCache) throws -> [T] where T: NSFetchRequestResult {
-        if let objectIds = cache.get(request), !objectIds.contains(where: { $0.isTemporaryID }) {
+        func canUseCachedIds(_ objectIds: [NSManagedObjectID]) -> Bool {
+            // Ignore cache when inserted (but not yet saved) object id is present
+            guard !objectIds.contains(where: { $0.isTemporaryID }) else { return false }
+            // Context has pending inserted or deleted objects of this type (can affect ids returned by the fetch request)
+            guard !insertedObjects.contains(where: { $0 is T }) && !deletedObjects.contains(where: { $0 is T }) else { return false }
+            return true
+        }
+        
+        if let objectIds = cache.get(request), canUseCachedIds(objectIds) {
             return try objectIds.compactMap { try existingObject(with: $0) as? T }
         }
 
