@@ -514,7 +514,7 @@ open class ComposerVC: _ViewController,
     override open func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
 
-        updateDraftMessage()
+        updateDraftMessageIfNeeded()
     }
 
     open func setupAttachmentsView() {
@@ -806,9 +806,7 @@ open class ComposerVC: _ViewController,
             return
         }
 
-        if channelController?.channel?.draftMessage != nil {
-            channelController?.deleteDraftMessage()
-        }
+        deleteDraftMessageIfNeeded()
 
         let text = content.inputText
 
@@ -980,7 +978,7 @@ open class ComposerVC: _ViewController,
     /// Updates the draft message in the channel or thread if draft messages are enabled.
     ///
     /// The draft is created from the current content in the composer.
-    open func updateDraftMessage() {
+    private func updateDraftMessageIfNeeded() {
         guard components.isDraftMessagesEnabled else {
             return
         }
@@ -1015,6 +1013,24 @@ open class ComposerVC: _ViewController,
             quotedMessageId: content.quotingMessage?.id,
             extraData: content.extraData
         )
+    }
+
+    /// Deletes the draft message in the channel or thread if there is one.
+    private func deleteDraftMessageIfNeeded() {
+        if let threadParentMessageId = content.threadMessage?.id, let cid = channelController?.cid {
+            let messageController = channelController?.client.messageController(
+                cid: cid,
+                messageId: threadParentMessageId
+            )
+            if messageController?.message?.draftReply != nil {
+                messageController?.deleteDraftMessage()
+            }
+            return
+        }
+
+        if channelController?.channel?.draftMessage != nil {
+            channelController?.deleteDraftMessage()
+        }
     }
 
     /// Updates an existing message.
@@ -1517,8 +1533,8 @@ open class ComposerVC: _ViewController,
         content.text = textView.text
 
         /// If the input message was erased and there is a draft message, the draft message should be deleted.
-        if content.isEmpty && channelController?.channel?.draftMessage != nil {
-            channelController?.deleteDraftMessage()
+        if content.isEmpty {
+            deleteDraftMessageIfNeeded()
         }
     }
 
