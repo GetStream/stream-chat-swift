@@ -16,22 +16,9 @@ lane :sonar_upload do
        "-Dsonar.coverageReportPaths='reports/sonarqube-generic-coverage.xml'")
   end
 
-  next if sonar_args.empty? || ENV['GITHUB_EVENT_NAME'] == 'pull_request' || current_branch !~ /main|develop/
+  next if ENV['GITHUB_EVENT_NAME'] == 'pull_request' || current_branch !~ /main|develop/
 
   slack_sonarcloud_metrics(version_number: version_number)
-end
-
-desc 'Gets Sonar options'
-private_lane :sonar_options do |options|
-  default_options = { sonar_login: ENV.fetch('SONAR_TOKEN', nil), sonar_runner_args: options[:sonar_args] }
-
-  if ENV['GITHUB_EVENT_NAME'] == 'pull_request'
-    default_options.merge(pull_request_branch: ENV.fetch('GITHUB_HEAD_REF', nil),
-                          pull_request_base: ENV.fetch('GITHUB_BASE_REF', nil),
-                          pull_request_key: ENV.fetch('GITHUB_PR_NUM', nil))
-  else
-    default_options.merge(branch_name: current_branch, project_version: options[:version_number])
-  end
 end
 
 desc 'Creates a report in Slack with SonarCloud analysis details'
