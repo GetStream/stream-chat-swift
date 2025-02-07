@@ -313,7 +313,12 @@ extension MessageDatabaseSession {
             poll: nil,
             extraData: extraData
         )
-        message.channel?.draftMessage = message
+        if let threadId = threadId {
+            let parentMessageDTO = self.message(id: threadId)
+            parentMessageDTO?.draftReply = parentMessageDTO
+        } else {
+            message.channel?.draftMessage = message
+        }
         if quotedMessageId != nil {
             message.showInsideThread = true
         }

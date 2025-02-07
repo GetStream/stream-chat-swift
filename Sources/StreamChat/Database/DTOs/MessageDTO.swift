@@ -745,7 +745,7 @@ extension NSManagedObjectContext: MessageDatabaseSession {
             channelDTO.defaultSortingAt = newLastMessageAt
         }
 
-        if let parentMessageId = parentMessageId,
+        if isDraft == false, let parentMessageId = parentMessageId,
            let parentMessageDTO = MessageDTO.load(id: parentMessageId, context: self) {
             parentMessageDTO.replies.insert(message)
             parentMessageDTO.replyCount += 1
@@ -1026,7 +1026,7 @@ extension NSManagedObjectContext: MessageDatabaseSession {
         dto.type = MessageType.regular.rawValue
         dto.command = payload.command
         dto.args = payload.args
-        dto.parentMessageId = payload.parentMessage?.id
+        dto.parentMessageId = payload.parentId
         dto.showReplyInChannel = payload.showReplyInChannel
         dto.isSilent = payload.isSilent
         dto.user = user
@@ -1040,6 +1040,10 @@ extension NSManagedObjectContext: MessageDatabaseSession {
                 cache: cache
             )
             dto.parentMessage?.draftReply = dto
+        } else if let parentMessageId = payload.parentId,
+                  let parentMessage = message(id: parentMessageId) {
+            dto.parentMessage = parentMessage
+            parentMessage.draftReply = dto
         } else {
             dto.parentMessage = nil
             channelDTO.draftMessage = dto

@@ -23,6 +23,7 @@ struct DraftMessagePayload: Decodable {
     let args: String?
     let showReplyInChannel: Bool
     let quotedMessage: MessagePayload?
+    let parentId: String?
     let parentMessage: MessagePayload?
     let mentionedUsers: [UserPayload]?
     let extraData: [String: RawJSON]
@@ -32,6 +33,7 @@ struct DraftMessagePayload: Decodable {
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: MessagePayloadsCodingKeys.self)
         cid = try container.decodeIfPresent(ChannelId.self, forKey: .channelId)
+        parentId = try container.decodeIfPresent(String.self, forKey: .parentId)
         channelPayload = try container.decodeIfPresent(ChannelDetailPayload.self, forKey: .channel)
         createdAt = try container.decode(Date.self, forKey: .createdAt)
         quotedMessage = try container.decodeIfPresent(MessagePayload.self, forKey: .quotedMessage)
