@@ -861,7 +861,7 @@ public class ChatMessageController: DataController, DelegateCallable, DataStoreP
     ///   - showReplyInChannel: If the draft message should be shown in the channel.
     ///   - extraData: The extra data of the draft message.
     ///   - completion: Called when the draft message is saved to the server.
-    public func updateDraftMessage(
+    public func updateDraftReply(
         text: String,
         isSilent: Bool = false,
         attachments: [AnyAttachmentPayload] = [],
@@ -891,7 +891,7 @@ public class ChatMessageController: DataController, DelegateCallable, DataStoreP
     /// Loads the draft message for this thread.
     ///
     /// It is not necessary to call this method if the thread was loaded before.
-    public func loadDraftMessage(
+    public func loadDraftReply(
         completion: ((Result<ChatMessage?, Error>) -> Void)? = nil
     ) {
         draftsRepository.getDraft(
@@ -905,7 +905,7 @@ public class ChatMessageController: DataController, DelegateCallable, DataStoreP
     }
 
     /// Deletes the draft message for this thread.
-    public func deleteDraftMessage(completion: ((Error?) -> Void)? = nil) {
+    public func deleteDraftReply(completion: ((Error?) -> Void)? = nil) {
         draftsRepository.deleteDraft(
             for: cid,
             threadId: messageId
