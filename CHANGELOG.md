@@ -10,6 +10,7 @@ _February 04, 2025_
 
 ### 🔄 Changed
 - Revert 'Improve performance of model conversions with large extra data' [#3576](https://github.com/GetStream/stream-chat-swift/pull/3576)
+- Expand `StreamAudioPlayer` to allow passing an `options` field to `AVURLAsset` initialiser [#3586](https://github.com/GetStream/stream-chat-swift/pull/3586)
 
 # [4.71.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.71.0)
 _January 28, 2025_
