@@ -4,31 +4,23 @@
 
 import Foundation
 
-struct DraftMessagePayloadResponse: Decodable {
-    let draft: DraftMessagePayload
+struct DraftPayloadResponse: Decodable {
+    let draft: DraftPayload
 }
 
-struct DraftMessageListPayloadResponse: Decodable {
-    let drafts: [DraftMessagePayload]
+struct DraftListPayloadResponse: Decodable {
+    let drafts: [DraftPayload]
     let next: String?
 }
 
-struct DraftMessagePayload: Decodable {
-    let id: String
+struct DraftPayload: Decodable {
     let cid: ChannelId?
     let channelPayload: ChannelDetailPayload?
     let createdAt: Date
-    let text: String
-    let command: String?
-    let args: String?
-    let showReplyInChannel: Bool
+    let message: DraftMessagePayload
     let quotedMessage: MessagePayload?
     let parentId: String?
     let parentMessage: MessagePayload?
-    let mentionedUsers: [UserPayload]?
-    let extraData: [String: RawJSON]
-    let attachments: [MessageAttachmentPayload]
-    let isSilent: Bool
 
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: MessagePayloadsCodingKeys.self)
@@ -38,18 +30,31 @@ struct DraftMessagePayload: Decodable {
         createdAt = try container.decode(Date.self, forKey: .createdAt)
         quotedMessage = try container.decodeIfPresent(MessagePayload.self, forKey: .quotedMessage)
         parentMessage = try container.decodeIfPresent(MessagePayload.self, forKey: .parentMessage)
+        message = try container.decode(DraftMessagePayload.self, forKey: .message)
+    }
+}
 
-        let draftMessageContainer = try container.nestedContainer(keyedBy: MessagePayloadsCodingKeys.self, forKey: .message)
-        id = try draftMessageContainer.decode(String.self, forKey: .id)
-        text = try draftMessageContainer.decode(String.self, forKey: .text).trimmingCharacters(in: .whitespacesAndNewlines)
-        isSilent = try draftMessageContainer.decodeIfPresent(Bool.self, forKey: .isSilent) ?? false
-        command = try draftMessageContainer.decodeIfPresent(String.self, forKey: .command)
-        args = try draftMessageContainer.decodeIfPresent(String.self, forKey: .args)
-        showReplyInChannel = try draftMessageContainer.decodeIfPresent(Bool.self, forKey: .showReplyInChannel) ?? false
-        mentionedUsers = try draftMessageContainer.decodeArrayIfPresentIgnoringFailures([UserPayload].self, forKey: .mentionedUsers)
-        attachments = try draftMessageContainer.decodeIfPresent([OptionalDecodable].self, forKey: .attachments)?
-            .compactMap(\.base) ?? []
+struct DraftMessagePayload: Decodable {
+    let id: String
+    let text: String
+    let command: String?
+    let args: String?
+    let showReplyInChannel: Bool
+    let mentionedUsers: [UserPayload]?
+    let extraData: [String: RawJSON]
+    let attachments: [MessageAttachmentPayload]
+    let isSilent: Bool
 
+    init(from decoder: any Decoder) throws {
+        let container = try decoder.container(keyedBy: MessagePayloadsCodingKeys.self)
+        id = try container.decode(String.self, forKey: .id)
+        text = try container.decode(String.self, forKey: .text)
+        command = try container.decodeIfPresent(String.self, forKey: .command)
+        args = try container.decodeIfPresent(String.self, forKey: .args)
+        showReplyInChannel = try container.decodeIfPresent(Bool.self, forKey: .showReplyInChannel) ?? false
+        mentionedUsers = try container.decodeIfPresent([UserPayload].self, forKey: .mentionedUsers)
+        attachments = try container.decodeIfPresent([MessageAttachmentPayload].self, forKey: .attachments) ?? []
+        isSilent = try container.decodeIfPresent(Bool.self, forKey: .isSilent) ?? false
         if var payload = try? [String: RawJSON](from: decoder) {
             payload.removeValues(forKeys: MessagePayloadsCodingKeys.allCases.map(\.rawValue))
             extraData = payload

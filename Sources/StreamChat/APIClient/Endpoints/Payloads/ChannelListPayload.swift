@@ -46,7 +46,7 @@ struct ChannelPayload {
 
     let isHidden: Bool?
 
-    let draftMessage: DraftMessagePayload?
+    let draftMessage: DraftPayload?
 }
 
 extension ChannelPayload {
@@ -87,7 +87,7 @@ extension ChannelPayload: Decodable {
             pinnedMessages: try container.decodeArrayIgnoringFailures([MessagePayload].self, forKey: .pinnedMessages),
             channelReads: try container.decodeArrayIfPresentIgnoringFailures([ChannelReadPayload].self, forKey: .channelReads) ?? [],
             isHidden: try container.decodeIfPresent(Bool.self, forKey: .hidden),
-            draftMessage: try container.decodeIfPresent(DraftMessagePayload.self, forKey: .draft)
+            draftMessage: try container.decodeIfPresent(DraftPayload.self, forKey: .draft)
         )
     }
 }

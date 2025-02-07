@@ -999,10 +999,11 @@ extension NSManagedObjectContext: MessageDatabaseSession {
 
     @discardableResult
     func saveDraftMessage(
-        payload: DraftMessagePayload,
+        payload: DraftPayload,
         for cid: ChannelId,
         cache: PreWarmedCache?
     ) throws -> MessageDTO {
+        let draftDetailsPayload = payload.message
         let channelDTO: ChannelDTO?
         if let channelPayload = payload.channelPayload {
             channelDTO = try saveChannel(payload: channelPayload, query: nil, cache: cache)
@@ -1016,19 +1017,19 @@ extension NSManagedObjectContext: MessageDatabaseSession {
             throw ClientError.CurrentUserDoesNotExist()
         }
 
-        let dto = MessageDTO.loadOrCreate(id: payload.id, context: self, cache: cache)
+        let dto = MessageDTO.loadOrCreate(id: draftDetailsPayload.id, context: self, cache: cache)
         dto.cid = cid.rawValue
-        dto.text = payload.text
+        dto.text = draftDetailsPayload.text
         dto.createdAt = payload.createdAt.bridgeDate
         dto.updatedAt = payload.createdAt.bridgeDate
         dto.reactionScores = [:]
         dto.reactionCounts = [:]
         dto.type = MessageType.regular.rawValue
-        dto.command = payload.command
-        dto.args = payload.args
+        dto.command = draftDetailsPayload.command
+        dto.args = draftDetailsPayload.args
         dto.parentMessageId = payload.parentId
-        dto.showReplyInChannel = payload.showReplyInChannel
-        dto.isSilent = payload.isSilent
+        dto.showReplyInChannel = draftDetailsPayload.showReplyInChannel
+        dto.isSilent = draftDetailsPayload.isSilent
         dto.user = user
         dto.channel = channelDTO
 
@@ -1060,14 +1061,14 @@ extension NSManagedObjectContext: MessageDatabaseSession {
             dto.quotedMessage = nil
         }
 
-        if let mentionedUsers = payload.mentionedUsers {
+        if let mentionedUsers = draftDetailsPayload.mentionedUsers {
             dto.mentionedUsers = try Set(mentionedUsers.map { try saveUser(payload: $0) })
             dto.mentionedUserIds = mentionedUsers.map(\.id)
         }
 
         let attachments: Set<AttachmentDTO> = try Set(
-            payload.attachments.enumerated().map { index, attachment in
-                let id = AttachmentId(cid: cid, messageId: payload.id, index: index)
+            draftDetailsPayload.attachments.enumerated().map { index, attachment in
+                let id = AttachmentId(cid: cid, messageId: draftDetailsPayload.id, index: index)
                 let dto = try saveAttachment(payload: attachment, id: id)
                 return dto
             }
@@ -1075,7 +1076,7 @@ extension NSManagedObjectContext: MessageDatabaseSession {
         dto.attachments = attachments
 
         do {
-            dto.extraData = try JSONEncoder.default.encode(payload.extraData)
+            dto.extraData = try JSONEncoder.default.encode(draftDetailsPayload.extraData)
         } catch {
             log.error(
                 "Failed to decode extra payload for Message with id: <\(dto.id)>, using default value instead. "

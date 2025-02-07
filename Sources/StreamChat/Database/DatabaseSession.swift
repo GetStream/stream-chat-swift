@@ -135,7 +135,7 @@ protocol MessageDatabaseSession {
     /// Throws an error if the save fails.
     @discardableResult
     func saveDraftMessage(
-        payload: DraftMessagePayload,
+        payload: DraftPayload,
         for cid: ChannelId,
         cache: PreWarmedCache?
     ) throws -> MessageDTO
@@ -251,7 +251,7 @@ extension MessageDatabaseSession {
         quotedMessageId: MessageId?,
         isSilent: Bool = false,
         isSystem: Bool,
-        isDraft: Bool,
+        isDraft: Bool = false,
         skipPush: Bool,
         skipEnrichUrl: Bool,
         attachments: [AnyAttachmentPayload] = [],
