@@ -321,6 +321,7 @@ extension ChatChannel: Hashable {
         guard lhs.team == rhs.team else { return false }
         guard lhs.truncatedAt == rhs.truncatedAt else { return false }
         guard lhs.ownCapabilities == rhs.ownCapabilities else { return false }
+        guard lhs.draftMessage == rhs.draftMessage else { return false }
         return true
     }
 
