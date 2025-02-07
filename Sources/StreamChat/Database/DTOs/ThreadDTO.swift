@@ -259,6 +259,10 @@ extension NSManagedObjectContext {
             currentUserUnreadCount = currentUserRead?.unreadMessagesCount ?? 0
         }
 
+        if let draft = payload.draft {
+            parentMessageDTO.draftReply = try saveDraftMessage(payload: draft, for: payload.channel.cid, cache: cache)
+        }
+
         threadDTO.fill(
             parentMessage: parentMessageDTO,
             title: payload.title,

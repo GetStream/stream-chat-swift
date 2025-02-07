@@ -329,7 +329,7 @@ extension NSManagedObjectContext {
 
         dto.updateOldestMessageAt(payload: payload)
 
-        if let draftMessage = payload.draftMessage {
+        if let draftMessage = payload.draft {
             dto.draftMessage = try saveDraftMessage(payload: draftMessage, for: payload.channel.cid, cache: nil)
         }
 

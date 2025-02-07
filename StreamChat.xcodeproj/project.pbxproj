@@ -1512,6 +1512,7 @@
 		AD545E692D5531BA008FD399 /* DemoDraftMessageListVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD545E682D5531B9008FD399 /* DemoDraftMessageListVC.swift */; };
 		AD545E6B2D5650B5008FD399 /* DraftMessagePayload_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD545E6A2D5650B5008FD399 /* DraftMessagePayload_Tests.swift */; };
 		AD545E6D2D565316008FD399 /* DraftMessage.json in Resources */ = {isa = PBXBuildFile; fileRef = AD545E6C2D565316008FD399 /* DraftMessage.json */; };
+		AD545E6F2D566D9B008FD399 /* DemoChatThreadListItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD545E6E2D566D90008FD399 /* DemoChatThreadListItemView.swift */; };
 		AD552E0128F46CE700199A6F /* ImageLoaderOptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD552E0028F46CE700199A6F /* ImageLoaderOptions.swift */; };
 		AD552E0228F46CE700199A6F /* ImageLoaderOptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD552E0028F46CE700199A6F /* ImageLoaderOptions.swift */; };
 		AD57979E2978C4F7006CC435 /* UploadedAttachmentPostProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD57979D2978C4F7006CC435 /* UploadedAttachmentPostProcessor.swift */; };
@@ -4274,6 +4275,7 @@
 		AD545E682D5531B9008FD399 /* DemoDraftMessageListVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DemoDraftMessageListVC.swift; sourceTree = "<group>"; };
 		AD545E6A2D5650B5008FD399 /* DraftMessagePayload_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DraftMessagePayload_Tests.swift; sourceTree = "<group>"; };
 		AD545E6C2D565316008FD399 /* DraftMessage.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = DraftMessage.json; sourceTree = "<group>"; };
+		AD545E6E2D566D90008FD399 /* DemoChatThreadListItemView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DemoChatThreadListItemView.swift; sourceTree = "<group>"; };
 		AD552E0028F46CE700199A6F /* ImageLoaderOptions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageLoaderOptions.swift; sourceTree = "<group>"; };
 		AD57979D2978C4F7006CC435 /* UploadedAttachmentPostProcessor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UploadedAttachmentPostProcessor.swift; sourceTree = "<group>"; };
 		AD57DE752A77D5A2005408B6 /* ChannelListSearchStrategy_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelListSearchStrategy_Tests.swift; sourceTree = "<group>"; };
@@ -6755,6 +6757,7 @@
 				A3227E6F284A4BC700EBE6CC /* DemoChatChannelVC.swift */,
 				ADD328602C06463600BAD0E9 /* DemoChatThreadListVC.swift */,
 				AD9632DE2C09F1900073B814 /* DemoChatThreadVC.swift */,
+				AD545E6E2D566D90008FD399 /* DemoChatThreadListItemView.swift */,
 				A3227E73284A4C3300EBE6CC /* DemoChatMessageActionsVC.swift */,
 				A3227E77284A4CAD00EBE6CC /* DemoChatMessageContentView.swift */,
 				79B8B64A285CBDC00059FB2D /* DemoChatMessageLayoutOptionsResolver.swift */,
@@ -11047,6 +11050,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				6428DD5526201DCC0065DA1D /* BannerShowingConnectionDelegate.swift in Sources */,
+				AD545E6F2D566D9B008FD399 /* DemoChatThreadListItemView.swift in Sources */,
 				AD053BA52B335A63003612B6 /* DemoQuotedChatMessageView.swift in Sources */,
 				AD053BAB2B33638B003612B6 /* LocationAttachmentSnapshotView.swift in Sources */,
 				AD053BAD2B336493003612B6 /* DemoChatMessageListVC.swift in Sources */,
