@@ -187,7 +187,7 @@ public class ChatMessageController: DataController, DelegateCallable, DataStoreP
     private let replyPaginationHandler: MessagesPaginationStateHandling
     private var replyPaginationState: MessagesPaginationState { replyPaginationHandler.state }
 
-    /// Add draftsRepository property
+    /// The drafts repository.
     private lazy var draftsRepository: DraftMessagesRepository = environment.draftMessagesRepositoryBuilder(
         client.databaseContainer,
         client.apiClient
