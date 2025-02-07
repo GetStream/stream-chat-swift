@@ -370,6 +370,9 @@ protocol ChannelDatabaseSession {
 
     /// Removes a list of channels based on their id
     func removeChannels(cids: Set<ChannelId>)
+
+    /// Delete the draft message.
+    func deleteDraftMessage(in cid: ChannelId, threadId: MessageId?)
 }
 
 protocol ChannelReadDatabaseSession {

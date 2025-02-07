@@ -136,12 +136,7 @@ class DraftMessagesRepository {
             switch result {
             case .success:
                 self?.database.write { session in
-                    let channel = session.channel(cid: cid)
-                    guard let message = session.channel(cid: cid)?.draftMessage else {
-                        return
-                    }
-                    session.delete(message: message)
-                    channel?.draftMessage = nil
+                    session.deleteDraftMessage(in: cid, threadId: threadId)
                 }
                 completion(nil)
             case .failure(let error):

@@ -39,9 +39,9 @@ extension Endpoint {
         .init(
             path: .draftMessage(channelId),
             method: .get,
-            queryItems: [
-                "parent_id": threadId
-            ],
+            queryItems: threadId.map {
+                ["parent_id": $0]
+            },
             requiresConnectionId: false,
             body: nil
         )
@@ -56,9 +56,9 @@ extension Endpoint {
             method: .delete,
             queryItems: nil,
             requiresConnectionId: false,
-            body: [
-                "parent_id": threadId
-            ]
+            body: threadId.map {
+                ["parent_id": $0]
+            }
         )
     }
 }
