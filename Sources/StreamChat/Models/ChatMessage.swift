@@ -438,6 +438,7 @@ extension ChatMessage: Hashable {
         guard lhs.quotedMessage == rhs.quotedMessage else { return false }
         guard lhs.translations == rhs.translations else { return false }
         guard lhs.type == rhs.type else { return false }
+        guard lhs.draftReply == rhs.draftReply else { return false }
         return true
     }
 

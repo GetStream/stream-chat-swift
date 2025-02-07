@@ -822,6 +822,8 @@ extension NSManagedObjectContext: MessageDatabaseSession {
         if let threadId = parentMessageId {
             let parentMessageDTO = self.message(id: threadId)
             parentMessageDTO?.draftReply = parentMessageDTO
+            let threadDTO = thread(parentMessageId: threadId, cache: nil)
+            threadDTO?.parentMessageId = threadId
         } else {
             message.channel?.draftMessage = message
         }
@@ -1106,6 +1108,11 @@ extension NSManagedObjectContext: MessageDatabaseSession {
         dto.user = user
         dto.channel = channelDTO
 
+        if let threadId = payload.parentId {
+            let threadDTO = thread(parentMessageId: threadId, cache: cache)
+            threadDTO?.parentMessageId = threadId
+        }
+
         if let parentMessage = payload.parentMessage {
             dto.parentMessage = try saveMessage(
                 payload: parentMessage,
@@ -1172,6 +1179,9 @@ extension NSManagedObjectContext: MessageDatabaseSession {
             parentMessage.draftReply.map {
                 delete($0)
             }
+            // Trigger thread update
+            let thread = thread(parentMessageId: threadId, cache: nil)
+            thread?.parentMessageId = threadId
         } else if let channel = channel(cid: cid) {
             channel.draftMessage.map {
                 delete($0)
