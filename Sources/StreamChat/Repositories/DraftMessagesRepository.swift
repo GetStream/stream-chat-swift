@@ -112,10 +112,10 @@ class DraftMessagesRepository {
             endpoint: .getDraftMessage(channelId: cid, threadId: threadId)
         ) { [weak self] result in
             switch result {
-            case .success(let draftPayload):
+            case .success(let response):
                 self?.database.write { session in
                     let messageDTO = try session.saveDraftMessage(
-                        payload: draftPayload,
+                        payload: response.draft,
                         for: cid,
                         cache: nil
                     )
