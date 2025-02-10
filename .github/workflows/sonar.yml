@@ -1,0 +1,50 @@
+name: Sonar
+
+on:
+  push:
+    branches:
+      - develop
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+jobs:
+  sonar:
+    runs-on: macos-15
+    steps:
+    - uses: actions/checkout@v4.1.1
+
+    - uses: actions/github-script@v6
+      id: get_pr_data
+      with:
+        script: |
+            return (
+              await github.rest.repos.listPullRequestsAssociatedWithCommit({
+                commit_sha: context.sha,
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+              })
+            ).data[0];
+
+    - uses: ./.github/actions/bootstrap
+      env:
+        INSTALL_SONAR: true
+        SKIP_MINT_BOOTSTRAP: true
+
+    - name: Run Sonar analysis
+      run: |
+          ARTIFACT_NAME="test-coverage-${{ fromJson(steps.get_pr_data.outputs.result).number }}"
+          ARTIFACT=$(gh api repos/${{ github.repository }}/actions/artifacts | jq -r ".artifacts | map(select(.name==\"$ARTIFACT_NAME\")) | first")
+          if [[ "$ARTIFACT" == null || "$ARTIFACT" == "" ]]; then
+            echo "Artifact not found. Skipping Sonar analysis."
+          else
+            gh run download $(echo $ARTIFACT | jq .workflow_run.id) -n "$ARTIFACT_NAME" -D reports
+            bundle exec fastlane sonar_upload
+          fi
+      env:
+        SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}

@@ -3,6 +3,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 # Upcoming
 
+## StreamChat
+### 🐞 Fixed
+- Update channel's preview message when coming back to online [#3574](https://github.com/GetStream/stream-chat-swift/pull/3574)
 ### 🔄 Changed
 
 # [4.72.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.72.0)
@@ -10,6 +13,7 @@ _February 04, 2025_
 
 ### 🔄 Changed
 - Revert 'Improve performance of model conversions with large extra data' [#3576](https://github.com/GetStream/stream-chat-swift/pull/3576)
+- Expand `StreamAudioPlayer` to allow passing an `options` field to `AVURLAsset` initialiser [#3586](https://github.com/GetStream/stream-chat-swift/pull/3586)
 
 # [4.71.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.71.0)
 _January 28, 2025_

@@ -56,6 +56,27 @@ final class FetchCache_Tests: XCTestCase {
 
         XCTAssertEqual(cache.cacheEntriesCount, 3)
     }
+    
+    func test_ignoringCacheIfContextHasInsertedOrDeletedObjectsOfThatType() async throws {
+        let database = DatabaseContainer(kind: .inMemory, chatClientConfig: .init(apiKeyString: .unique))
+        let cid = ChannelId.unique
+        try database.createCurrentUser(id: .unique, name: "")
+        try database.createChannel(cid: cid, withMessages: true)
+        try await database.write { session in
+            // FetchCache caches the response
+            guard let firstPreviewMessage = session.preview(for: cid) else { throw ClientError.Unknown("Preview message missing") }
+            
+            // Insert a new message what is newer than the current preview message
+            let newMessagePayload = MessagePayload.dummy(createdAt: firstPreviewMessage.createdAt.bridgeDate.addingTimeInterval(1.0))
+            try session.saveMessage(payload: newMessagePayload, for: cid, syncOwnReactions: false, cache: nil)
+            
+            guard let secondPreviewMessage = session.preview(for: cid) else { throw ClientError.Unknown("Preview message missing") }
+            XCTAssertEqual(newMessagePayload.id, secondPreviewMessage.id)
+            XCTAssertNotEqual(firstPreviewMessage.id, secondPreviewMessage.id)
+        }
+    }
+    
+    // MARK: - Test Data
 
     private var tenIds: [TestId] {
         (1...10).map { _ in TestId() }

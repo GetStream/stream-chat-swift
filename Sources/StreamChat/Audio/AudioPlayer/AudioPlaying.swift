@@ -121,47 +121,11 @@ open class StreamAudioPlayer: AudioPlaying, AppStateObserverDelegate {
     }
 
     open func loadAsset(from url: URL) {
-        /// We are going to check if the URL requested to load, represents the currentItem that we
-        /// have already loaded (if any). In this case, we will try either to resume the existing playback
-        /// or restart it, if possible.
-        if let currentItem = player.currentItem?.asset as? AVURLAsset,
-           url == currentItem.url,
-           context.assetLocation == url {
-            /// If the currentItem is paused, we want to continue the playback
-            /// Otherwise, no action is required
-            if context.state == .paused {
-                play()
-            } else if context.state == .stopped {
-                /// If the currentItem has stopped, we want to restart the playback. We are replacing
-                /// the currentItem with the same one to trigger the player's observers on the updated
-                /// currentItem.
-                player.replaceCurrentItem(with: .init(asset: currentItem))
-                play()
-            }
+        loadAsset(from: url, options: nil)
+    }
 
-            /// This case may be triggered if we call ``loadAsset`` on a player that is currently
-            /// playing the URL we provided. In this case we will Inform the delegate about the
-            /// current state.
-            notifyDelegates()
-
-            return
-        }
-
-        /// We call stop to update the currently set delegate that the playback has been stopped
-        /// and then we remove the current item from the player's queue.
-        stop()
-        player.replaceCurrentItem(with: nil)
-
-        updateContext {
-            $0.state = .loading
-            $0.assetLocation = url
-        }
-        let asset = AVURLAsset(url: url)
-
-        assetPropertyLoader.loadProperties(
-            [.init(\.duration)],
-            of: asset
-        ) { [weak self] in self?.handleDurationLoading($0) }
+    open func loadAsset(from url: URL, options: [String: Any]?) {
+        handleAssetLoading(.init(url: url, options: options))
     }
 
     open func play() {
@@ -321,6 +285,57 @@ open class StreamAudioPlayer: AudioPlaying, AppStateObserverDelegate {
         var newContext = context
         newContextProvider(&newContext)
         context = newContext
+    }
+
+    /// Loads an asset into the player and manages playback accordingly.
+    ///
+    /// If the asset matches the current item, playback is resumed if paused or
+    /// restarted if stopped. Otherwise, playback is stopped, the current item is
+    /// cleared, and the context is updated with the new asset. The asset's duration
+    /// is then loaded asynchronously.
+    ///
+    /// - Parameter asset: The AVURLAsset to load into the player.
+    private func handleAssetLoading(_ asset: AVURLAsset) {
+        /// We are going to check if the URL requested to load, represents the currentItem that we
+        /// have already loaded (if any). In this case, we will try either to resume the existing playback
+        /// or restart it, if possible.
+        if let currentItem = player.currentItem?.asset as? AVURLAsset,
+           asset.url == currentItem.url,
+           context.assetLocation == asset.url {
+            /// If the currentItem is paused, we want to continue the playback
+            /// Otherwise, no action is required
+            if context.state == .paused {
+                play()
+            } else if context.state == .stopped {
+                /// If the currentItem has stopped, we want to restart the playback. We are replacing
+                /// the currentItem with the same one to trigger the player's observers on the updated
+                /// currentItem.
+                player.replaceCurrentItem(with: .init(asset: currentItem))
+                play()
+            }
+
+            /// This case may be triggered if we call ``loadAsset`` on a player that is currently
+            /// playing the URL we provided. In this case we will Inform the delegate about the
+            /// current state.
+            notifyDelegates()
+
+            return
+        }
+
+        /// We call stop to update the currently set delegate that the playback has been stopped
+        /// and then we remove the current item from the player's queue.
+        stop()
+        player.replaceCurrentItem(with: nil)
+
+        updateContext {
+            $0.state = .loading
+            $0.assetLocation = asset.url
+        }
+
+        assetPropertyLoader.loadProperties(
+            [.init(\.duration)],
+            of: asset
+        ) { [weak self] in self?.handleDurationLoading($0) }
     }
 
     /// It's used by the assetPropertyLoader to handle the completion (successful or failed) of duration's

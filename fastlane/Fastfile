@@ -25,7 +25,7 @@ before_all do |lane|
   if is_ci
     setup_ci
     setup_git_config
-    xcversion(version: xcode_version) unless [:publish_release, :allure_launch, :allure_upload, :pod_lint, :sync_mock_server, :copyright].include?(lane)
+    xcversion(version: xcode_version) unless [:publish_release, :sonar_upload, :allure_launch, :allure_upload, :pod_lint, :sync_mock_server, :copyright].include?(lane)
   end
 end
 
@@ -336,6 +336,8 @@ lane :test do |options|
   }
 
   scan(scan_options)
+
+  slather
 end
 
 desc 'Starts Sinatra web server'
