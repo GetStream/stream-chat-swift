@@ -37,7 +37,7 @@ class DemoDraftMessageListVC: UIViewController, ThemeProvider {
         label.translatesAutoresizingMaskIntoConstraints = false
         label.text = "No draft messages"
         label.textAlignment = .center
-        label.textColor = .gray
+        label.textColor = Appearance.default.colorPalette.subtitleText
         label.isHidden = true
         return label
     }()
@@ -69,8 +69,9 @@ class DemoDraftMessageListVC: UIViewController, ThemeProvider {
     }
 
     private func setupViews() {
-        view.backgroundColor = .systemBackground
-        
+        view.backgroundColor = Appearance.default.colorPalette.background
+        tableView.backgroundColor = Appearance.default.colorPalette.background
+
         view.addSubview(tableView)
         view.addSubview(loadingIndicator)
         view.addSubview(emptyStateLabel)
@@ -199,7 +200,7 @@ class DemoDraftMessageCell: UITableViewCell {
     private let channelNameLabel: UILabel = {
         let label = UILabel()
         label.font = Appearance.default.fonts.bodyBold
-        label.textColor = .darkGray
+        label.textColor = Appearance.default.colorPalette.text
         return label
     }()
     
@@ -221,12 +222,13 @@ class DemoDraftMessageCell: UITableViewCell {
     private let pencilImageView: UIImageView = {
         let imageView = UIImageView(image: UIImage(systemName: "bubble.and.pencil"))
         imageView.contentMode = .scaleAspectFit
-        imageView.tintColor = .gray
+        imageView.tintColor = Appearance.default.colorPalette.subtitleText
         return imageView
     }()
 
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
+        backgroundColor = Appearance.default.colorPalette.background
         setupViews()
     }
 
