@@ -331,6 +331,12 @@ extension NSManagedObjectContext {
 
         if let draftMessage = payload.draft {
             dto.draftMessage = try saveDraftMessage(payload: draftMessage, for: payload.channel.cid, cache: nil)
+        } else {
+            /// If the payload does not contain a draft message, we should
+            /// delete the existing draft message if it exists.
+            if let draftMessage = dto.draftMessage {
+                deleteDraftMessage(in: payload.channel.cid, threadId: draftMessage.parentMessageId)
+            }
         }
 
         try payload.pinnedMessages.forEach {
