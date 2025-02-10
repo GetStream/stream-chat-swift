@@ -125,6 +125,7 @@ class ChatClientFactory {
                 newProcessedMessageIds: { [weak center] in center?.newMessageIds ?? [] }
             ),
             ThreadUpdaterMiddleware(),
+            DraftUpdaterMiddleware(),
             UserTypingStateUpdaterMiddleware(),
             ChannelTruncatedEventMiddleware(),
             MemberEventMiddleware(),
