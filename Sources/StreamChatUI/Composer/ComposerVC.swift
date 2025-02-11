@@ -192,7 +192,7 @@ open class ComposerVC: _ViewController,
                 threadMessage: threadMessage,
                 attachments: message.allAttachments.toAnyAttachmentPayload(),
                 mentionedUsers: message.mentionedUsers,
-                command: command,
+                command: message.command.map { Command(name: $0, args: message.text) },
                 extraData: message.extraData,
                 cooldownTime: cooldownTime,
                 skipEnrichUrl: skipEnrichUrl
@@ -983,7 +983,7 @@ open class ComposerVC: _ViewController,
             return
         }
 
-        let text = content.inputText
+        let text = content.command != nil ? content.text : content.inputText
         if text.isEmpty {
             return
         }
@@ -1002,6 +1002,7 @@ open class ComposerVC: _ViewController,
                 mentionedUserIds: content.mentionedUsers.map(\.id),
                 quotedMessageId: content.quotingMessage?.id,
                 showReplyInChannel: composerView.checkboxControl.isSelected,
+                command: content.command,
                 extraData: content.extraData
             )
             return
@@ -1012,6 +1013,7 @@ open class ComposerVC: _ViewController,
             attachments: content.attachments,
             mentionedUserIds: content.mentionedUsers.map(\.id),
             quotedMessageId: content.quotingMessage?.id,
+            command: content.command,
             extraData: content.extraData
         )
     }

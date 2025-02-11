@@ -848,6 +848,7 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
     ///   - attachments: The attachments of the draft message.
     ///   - mentionedUserIds: The mentioned user ids of the draft message.
     ///   - quotedMessageId: The message that the draft message is quoting.
+    ///   - command: The command of the draft message.
     ///   - extraData: The extra data of the draft message.
     ///   - completion: Called when the draft message is saved to the server.
     public func updateDraftMessage(
@@ -856,6 +857,7 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
         attachments: [AnyAttachmentPayload] = [],
         mentionedUserIds: [UserId] = [],
         quotedMessageId: MessageId? = nil,
+        command: Command? = nil,
         extraData: [String: RawJSON] = [:],
         completion: ((Result<ChatMessage, Error>) -> Void)? = nil
     ) {
@@ -872,6 +874,8 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
             text: text,
             isSilent: isSilent,
             showReplyInChannel: false,
+            command: command?.name,
+            arguments: command?.args,
             attachments: attachments,
             mentionedUserIds: mentionedUserIds,
             quotedMessageId: quotedMessageId,
