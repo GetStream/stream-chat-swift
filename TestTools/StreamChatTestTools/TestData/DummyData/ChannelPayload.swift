@@ -17,7 +17,8 @@ extension ChannelPayload {
         pendingMessages: [MessagePayload] = [],
         pinnedMessages: [MessagePayload] = [],
         channelReads: [ChannelReadPayload] = [],
-        isHidden: Bool? = nil
+        isHidden: Bool? = nil,
+        draft: DraftPayload? = nil
     ) -> Self {
         .init(
             channel: channel,
@@ -29,7 +30,8 @@ extension ChannelPayload {
             pendingMessages: pendingMessages,
             pinnedMessages: pinnedMessages,
             channelReads: channelReads,
-            isHidden: isHidden
+            isHidden: isHidden,
+            draft: draft
         )
     }
 }

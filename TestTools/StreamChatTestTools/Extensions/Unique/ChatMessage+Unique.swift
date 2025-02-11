@@ -52,7 +52,8 @@ extension ChatMessage {
             moderationDetails: nil,
             readBy: [],
             poll: nil,
-            textUpdatedAt: nil
+            textUpdatedAt: nil,
+            draftReply: nil
         )
     }
 }

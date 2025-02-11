@@ -53,6 +53,7 @@ final class ThreadDTO_Tests: XCTestCase {
             title: "Test",
             latestReplies: [.dummy(), .dummy()],
             read: [dummyThreadReadPayload()],
+            draft: nil,
             extraData: [:]
         )
 
@@ -91,6 +92,7 @@ final class ThreadDTO_Tests: XCTestCase {
             title: "Test",
             latestReplies: [.dummy(), .dummy()],
             read: [dummyThreadReadPayload()],
+            draft: nil,
             extraData: [:]
         )
 

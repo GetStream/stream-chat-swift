@@ -7,7 +7,6 @@ import Foundation
 
 /// This class allows you to wrap an existing `DatabaseSession` and adjust the behavior of its methods.
 class DatabaseSession_Mock: DatabaseSession {
-    
     /// The wrapped session
     let underlyingSession: DatabaseSession
 
@@ -166,6 +165,34 @@ class DatabaseSession_Mock: DatabaseSession {
         )
     }
 
+    func createNewDraftMessage(
+        in cid: ChannelId,
+        text: String,
+        command: String?,
+        arguments: String?,
+        parentMessageId: MessageId?,
+        attachments: [AnyAttachmentPayload],
+        mentionedUserIds: [UserId],
+        showReplyInChannel: Bool,
+        isSilent: Bool,
+        quotedMessageId: MessageId?,
+        extraData: [String : RawJSON]
+    ) throws -> MessageDTO {
+        try underlyingSession.createNewDraftMessage(
+            in: cid,
+            text: text,
+            command: command,
+            arguments: arguments,
+            parentMessageId: parentMessageId,
+            attachments: attachments,
+            mentionedUserIds: mentionedUserIds,
+            showReplyInChannel: showReplyInChannel,
+            isSilent: isSilent,
+            quotedMessageId: quotedMessageId,
+            extraData: extraData
+        )
+    }
+
     func saveMessage(
         payload: MessagePayload,
         for cid: ChannelId?,
@@ -208,6 +235,14 @@ class DatabaseSession_Mock: DatabaseSession {
 
     func delete(message: MessageDTO) {
         underlyingSession.delete(message: message)
+    }
+
+    func saveDraftMessage(payload: DraftPayload, for cid: ChannelId, cache: PreWarmedCache?) throws -> MessageDTO {
+        try underlyingSession.saveDraftMessage(payload: payload, for: cid, cache: cache)
+    }
+
+    func deleteDraftMessage(in cid: ChannelId, threadId: MessageId?) {
+        underlyingSession.deleteDraftMessage(in: cid, threadId: threadId)
     }
 
     func preview(for cid: ChannelId) -> MessageDTO? {
