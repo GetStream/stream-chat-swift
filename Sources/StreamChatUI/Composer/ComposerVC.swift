@@ -984,7 +984,7 @@ open class ComposerVC: _ViewController,
         }
 
         let text = content.command != nil ? content.text : content.inputText
-        if text.isEmpty {
+        if content.isEmpty {
             return
         }
 
