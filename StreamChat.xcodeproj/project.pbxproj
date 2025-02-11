@@ -1510,7 +1510,7 @@
 		AD545E662D53C271008FD399 /* DraftMessagesRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD545E652D53C26B008FD399 /* DraftMessagesRepository.swift */; };
 		AD545E672D53C271008FD399 /* DraftMessagesRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD545E652D53C26B008FD399 /* DraftMessagesRepository.swift */; };
 		AD545E692D5531BA008FD399 /* DemoDraftMessageListVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD545E682D5531B9008FD399 /* DemoDraftMessageListVC.swift */; };
-		AD545E6B2D5650B5008FD399 /* DraftMessagePayload_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD545E6A2D5650B5008FD399 /* DraftMessagePayload_Tests.swift */; };
+		AD545E6B2D5650B5008FD399 /* DraftPayloads_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD545E6A2D5650B5008FD399 /* DraftPayloads_Tests.swift */; };
 		AD545E6D2D565316008FD399 /* DraftMessage.json in Resources */ = {isa = PBXBuildFile; fileRef = AD545E6C2D565316008FD399 /* DraftMessage.json */; };
 		AD545E6F2D566D9B008FD399 /* DemoChatThreadListItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD545E6E2D566D90008FD399 /* DemoChatThreadListItemView.swift */; };
 		AD545E712D5A7463008FD399 /* DraftEvents.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD545E702D5A745F008FD399 /* DraftEvents.swift */; };
@@ -4277,7 +4277,7 @@
 		AD545E622D528271008FD399 /* DraftListQuery.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DraftListQuery.swift; sourceTree = "<group>"; };
 		AD545E652D53C26B008FD399 /* DraftMessagesRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DraftMessagesRepository.swift; sourceTree = "<group>"; };
 		AD545E682D5531B9008FD399 /* DemoDraftMessageListVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DemoDraftMessageListVC.swift; sourceTree = "<group>"; };
-		AD545E6A2D5650B5008FD399 /* DraftMessagePayload_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DraftMessagePayload_Tests.swift; sourceTree = "<group>"; };
+		AD545E6A2D5650B5008FD399 /* DraftPayloads_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DraftPayloads_Tests.swift; sourceTree = "<group>"; };
 		AD545E6C2D565316008FD399 /* DraftMessage.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = DraftMessage.json; sourceTree = "<group>"; };
 		AD545E6E2D566D90008FD399 /* DemoChatThreadListItemView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DemoChatThreadListItemView.swift; sourceTree = "<group>"; };
 		AD545E702D5A745F008FD399 /* DraftEvents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DraftEvents.swift; sourceTree = "<group>"; };
@@ -7086,6 +7086,7 @@
 		A364D09427D0BF3A0029857A /* Payloads */ = {
 			isa = PBXGroup;
 			children = (
+				AD545E6A2D5650B5008FD399 /* DraftPayloads_Tests.swift */,
 				AD8C7C622BA464E600260715 /* AppSettingsPayload_Tests.swift */,
 				AD6E32952BBB10890073831B /* ThreadListPayload_Tests.swift */,
 				DA7229E224E140260074503A /* ChannelEditDetailPayload_Tests.swift */,
@@ -11866,6 +11867,7 @@
 				84D5BC71277B61B900A65C75 /* PinnedMessagesSortingKey_Tests.swift in Sources */,
 				88381E8725825A240047A6A3 /* AttachmentEndpoints_Tests.swift in Sources */,
 				AD142ACA2C739D6600ABCC1F /* Poll_Tests.swift in Sources */,
+				AD545E6B2D5650B5008FD399 /* DraftPayloads_Tests.swift in Sources */,
 				84DCB855269F56A7006CDF32 /* EventsController+SwiftUI_Tests.swift in Sources */,
 				79B5517724E595DA00CE9FEC /* CurrentUserPayloads_Tests.swift in Sources */,
 				40B345F829C46AE500B96027 /* AudioPlaybackRate_Tests.swift in Sources */,
