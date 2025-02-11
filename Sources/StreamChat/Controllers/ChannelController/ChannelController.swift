@@ -234,10 +234,7 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
             client.apiClient
         )
         pollsRepository = client.pollsRepository
-        draftsRepository = self.environment.draftMessagesRepositoryBuilder(
-            client.databaseContainer,
-            client.apiClient
-        )
+        draftsRepository = client.draftMessagesRepository
 
         super.init()
 
@@ -1584,13 +1581,6 @@ extension ChatChannelController {
             _ database: DatabaseContainer,
             _ apiClient: APIClient
         ) -> ChannelUpdater = ChannelUpdater.init
-
-        var draftMessagesRepositoryBuilder: (
-            _ database: DatabaseContainer,
-            _ apiClient: APIClient
-        ) -> DraftMessagesRepository = {
-            DraftMessagesRepository(database: $0, apiClient: $1)
-        }
 
         var memberUpdaterBuilder: (
             _ database: DatabaseContainer,

@@ -188,10 +188,7 @@ public class ChatMessageController: DataController, DelegateCallable, DataStoreP
     private var replyPaginationState: MessagesPaginationState { replyPaginationHandler.state }
 
     /// The drafts repository.
-    private lazy var draftsRepository: DraftMessagesRepository = environment.draftMessagesRepositoryBuilder(
-        client.databaseContainer,
-        client.apiClient
-    )
+    private let draftsRepository: DraftMessagesRepository
 
     /// Creates a new `MessageControllerGeneric`.
     /// - Parameters:
@@ -212,6 +209,7 @@ public class ChatMessageController: DataController, DelegateCallable, DataStoreP
             client.databaseContainer,
             client.apiClient
         )
+        draftsRepository = client.draftMessagesRepository
         super.init()
 
         setRepliesObserver()
@@ -957,13 +955,6 @@ extension ChatMessageController {
             _ database: DatabaseContainer,
             _ apiClient: APIClient
         ) -> MessageUpdater = MessageUpdater.init
-
-        var draftMessagesRepositoryBuilder: (
-            _ database: DatabaseContainer,
-            _ apiClient: APIClient
-        ) -> DraftMessagesRepository = {
-            DraftMessagesRepository(database: $0, apiClient: $1)
-        }
     }
 }
 

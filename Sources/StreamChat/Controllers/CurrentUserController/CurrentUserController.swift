@@ -119,10 +119,7 @@ public class CurrentChatUserController: DataController, DelegateCallable, DataSt
     init(client: ChatClient, environment: Environment = .init()) {
         self.client = client
         self.environment = environment
-        draftMessagesRepository = environment.draftMessagesRepositoryBuilder(
-            client.databaseContainer,
-            client.apiClient
-        )
+        draftMessagesRepository = client.draftMessagesRepository
     }
 
     /// Synchronize local data with remote. Waits for the client to connect but doesn’t initiate the connection itself.
@@ -455,13 +452,6 @@ extension CurrentChatUserController {
             _ itemCreator: @escaping (MessageDTO) throws -> ChatMessage
         ) -> BackgroundListDatabaseObserver<ChatMessage, MessageDTO> = {
             .init(database: $0, fetchRequest: $1, itemCreator: $2, itemReuseKeyPaths: (\ChatMessage.id, \MessageDTO.id))
-        }
-
-        var draftMessagesRepositoryBuilder: (
-            _ database: DatabaseContainer,
-            _ apiClient: APIClient
-        ) -> DraftMessagesRepository = {
-            DraftMessagesRepository(database: $0, apiClient: $1)
         }
 
         var currentUserUpdaterBuilder = CurrentUserUpdater.init
