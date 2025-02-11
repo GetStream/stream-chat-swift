@@ -76,7 +76,7 @@ struct ThreadPayload: Decodable {
         title: String?,
         latestReplies: [MessagePayload],
         read: [ThreadReadPayload],
-        draft: DraftPayload,
+        draft: DraftPayload?,
         extraData: [String: RawJSON]
     ) {
         self.parentMessageId = parentMessageId

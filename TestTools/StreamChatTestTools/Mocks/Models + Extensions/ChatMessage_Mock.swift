@@ -89,7 +89,8 @@ public extension ChatMessage {
             moderationDetails: moderationsDetails,
             readBy: readBy,
             poll: poll,
-            textUpdatedAt: textUpdatedAt
+            textUpdatedAt: textUpdatedAt,
+            draftReply: nil
         )
     }
 }

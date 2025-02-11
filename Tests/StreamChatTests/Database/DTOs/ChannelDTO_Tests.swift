@@ -1105,7 +1105,8 @@ final class ChannelDTO_Tests: XCTestCase {
             pendingMessages: nil,
             pinnedMessages: [],
             channelReads: [currentUserChannelReadPayload],
-            isHidden: false
+            isHidden: false,
+            draft: nil
         )
 
         let unreadMessages = 5
@@ -1161,7 +1162,8 @@ final class ChannelDTO_Tests: XCTestCase {
             pendingMessages: nil,
             pinnedMessages: [],
             channelReads: [],
-            isHidden: nil
+            isHidden: nil,
+            draft: nil
         )
         try database.writeSynchronously { session in
             try session.saveChannel(payload: channelPayload)
