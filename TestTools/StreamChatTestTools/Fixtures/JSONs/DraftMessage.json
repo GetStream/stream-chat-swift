@@ -1,93 +1,85 @@
 {
   "draft": {
-    "channel_id": "messaging:123",
     "channel": {
-      "id": "123",
-      "type": "messaging",
-      "cid": "messaging:123",
-      "created_at": "2024-03-26T11:13:35.148035Z",
-      "updated_at": "2024-03-26T12:02:37.748782Z",
-      "config" : {
-        "automod_behavior" : "flag",
-        "reactions" : true,
-        "typing_events" : true,
-        "mutes" : true,
-        "max_message_length" : 5000,
-        "created_at" : "2019-03-21T15:49:15.40182Z",
-        "automod" : "AI",
-        "read_events" : true,
-        "skip_last_msg_update_for_system_msgs": true,
-        "commands" : [
+      "cid": "messaging:!members-vhPyEGDAjFA4JyC7fxDg3LsMFLGqKhXOKqZM-Y681_E",
+      "config": {
+        "automod": "disabled",
+        "automod_behavior": "flag",
+        "commands": [
           {
-            "set" : "fun_set",
-            "args" : "[text]",
-            "name" : "giphy",
-            "description" : "Post a random gif to the channel"
+            "args": "[text]",
+            "description": "Post a random gif to the channel",
+            "name": "giphy",
+            "set": "fun_set"
           }
         ],
-        "connect_events" : true,
-        "replies" : true,
-        "quotes" : true,
-        "updated_at" : "2020-03-17T18:54:09.460881Z",
-        "url_enrichment" : true,
-        "search" : true,
-        "message_retention" : "infinite",
-        "uploads" : true,
-        "name" : "messaging"
+        "connect_events": true,
+        "created_at": "2025-02-06T09:58:57.737862823Z",
+        "custom_events": true,
+        "mark_messages_pending": false,
+        "max_message_length": 5000,
+        "message_retention": "infinite",
+        "mutes": true,
+        "name": "messaging",
+        "polls": false,
+        "push_notifications": true,
+        "quotes": true,
+        "reactions": true,
+        "read_events": true,
+        "reminders": false,
+        "replies": true,
+        "search": true,
+        "skip_last_msg_update_for_system_msgs": false,
+        "typing_events": true,
+        "updated_at": "2025-02-06T09:58:57.737862946Z",
+        "uploads": true,
+        "url_enrichment": true
       },
+      "created_at": "2024-07-10T11:47:43.591964Z",
       "created_by": {
-        "id": "r2-d2",
-        "role": "user",
-        "created_at": "2020-12-07T11:37:35.98087Z",
-        "updated_at": "2024-03-05T21:06:56.824843Z",
-        "last_active": "2024-03-27T12:53:42.462142Z",
         "banned": false,
-        "online": false,
-        "language": "en",
-        "name": "R2-D2",
-        "image": "https://vignette.wikia.nocookie.net/starwars/images/e/eb/ArtooTFA2-Fathead.png"
+        "birthland": "Corellia",
+        "blocked_user_ids": [],
+        "created_at": "2024-07-09T10:25:12.255599Z",
+        "id": "han_solo",
+        "image": "https://vignette.wikia.nocookie.net/starwars/images/e/e2/TFAHanSolo.png",
+        "language": "",
+        "last_active": "2025-02-11T12:26:45.282392588Z",
+        "name": "Han Solo",
+        "online": true,
+        "role": "user",
+        "teams": [],
+        "updated_at": "2024-07-09T10:25:12.260463Z"
       },
-      "frozen" : true,
-      "disabled" : true,
-      "cooldown" : 10,
-      "member_count" : 4,
+      "disabled": false,
+      "frozen": false,
+      "id": "!members-vhPyEGDAjFA4JyC7fxDg3LsMFLGqKhXOKqZM-Y681_E",
+      "last_message_at": "2025-02-11T12:11:59.677265Z",
+      "member_count": 2,
+      "type": "messaging",
+      "updated_at": "2024-07-10T11:47:43.591964Z"
     },
+    "channel_cid": "messaging:!members-vhPyEGDAjFA4JyC7fxDg3LsMFLGqKhXOKqZM-Y681_E",
+    "created_at": "2025-02-11T12:27:04.780633395Z",
     "message": {
-      "id": "draft-123",
-      "text": "This is a draft message",
-      "command": "giphy",
-      "args": "hello",
-      "show_reply_in_channel": true,
-      "silent": true,
-      "attachments": [
+      "id": "eb8ab3c9-5ade-4b4d-b32d-3d7f037682c0",
+      "mentioned_users": [
         {
-          "type": "image",
-          "title": "Sample Image",
-          "image_url": "https://example.com/image.jpg"
+            "id": "leia_organa",
+            "role": "user",
+            "created_at": "2023-09-27T13:21:25.781323Z",
+            "updated_at": "2023-09-27T13:21:25.781323Z",
+            "last_active": "2024-03-26T12:03:39.847771Z",
+            "banned": false,
+            "online": false
         }
       ],
-      "mentioned_users": ["r2-d2", "han_solo"],
-      "custom_field": "custom value"
+      "show_in_channel": false,
+      "silent": false,
+      "text": "Hi @Leia Organa ahah"
     },
-    "parent_id": "parent-123",
-    "parent_message": {
-      "id": "parent-123",
-      "text": "Parent message",
-      "type": "regular",
-      "user": {
-        "id": "han_solo",
-        "name": "Han Solo"
-      }
-    },
-    "quoted_message": {
-      "id": "quoted-123",
-      "text": "Quoted message",
-      "user": {
-        "id": "r2-d2",
-        "name": "R2-D2"
-      },
-      "type": "regular"
-    },
-    "created_at": "2024-03-26T12:14:10.87779Z"
-  }
-} 
+    "parent_message": null,
+    "quoted_message": null
+  },
+  "duration": "22.64ms"
+}
