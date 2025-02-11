@@ -454,7 +454,7 @@ extension CurrentChatUserController {
             _ fetchRequest: NSFetchRequest<MessageDTO>,
             _ itemCreator: @escaping (MessageDTO) throws -> ChatMessage
         ) -> BackgroundListDatabaseObserver<ChatMessage, MessageDTO> = {
-            .init(database: $0, fetchRequest: $1, itemCreator: $2)
+            .init(database: $0, fetchRequest: $1, itemCreator: $2, itemReuseKeyPaths: (\ChatMessage.id, \MessageDTO.id))
         }
 
         var draftMessagesRepositoryBuilder: (
