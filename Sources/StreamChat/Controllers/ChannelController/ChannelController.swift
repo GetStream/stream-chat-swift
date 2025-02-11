@@ -845,6 +845,8 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
     /// If there is no draft message, a new draft message will be created.
     /// - Parameters:
     ///   - text: The text of the draft message.
+    ///   - isSilent: A flag indicating whether the message is a silent message.
+    ///   Silent messages are special messages that don't increase the unread messages count nor mark a channel as unread.
     ///   - attachments: The attachments of the draft message.
     ///   - mentionedUserIds: The mentioned user ids of the draft message.
     ///   - quotedMessageId: The message that the draft message is quoting.
