@@ -43,32 +43,127 @@ open class DefaultMarkdownFormatter: MarkdownFormatter {
     }
 
     open func format(_ string: String) -> NSAttributedString {
-        let markdownFormatter = SwiftyMarkdown(string: string)
-        modify(swiftyMarkdownFont: markdownFormatter.code, with: styles.codeFont)
-        modify(swiftyMarkdownFont: markdownFormatter.body, with: styles.bodyFont)
-        modify(swiftyMarkdownFont: markdownFormatter.link, with: styles.linkFont)
-        modify(swiftyMarkdownFont: markdownFormatter.h1, with: styles.h1Font)
-        modify(swiftyMarkdownFont: markdownFormatter.h2, with: styles.h2Font)
-        modify(swiftyMarkdownFont: markdownFormatter.h3, with: styles.h3Font)
-        modify(swiftyMarkdownFont: markdownFormatter.h4, with: styles.h4Font)
-        modify(swiftyMarkdownFont: markdownFormatter.h5, with: styles.h5Font)
-        modify(swiftyMarkdownFont: markdownFormatter.h6, with: styles.h6Font)
-        return markdownFormatter.attributedString()
+        if #available(iOS 15, *) {
+            do {
+                var attributedString = try AttributedString(
+                    markdown: string,
+                    attributes: defaultAttributes(),
+                    presentationIntentAttributes: presentationIntentAttributes(for:)
+                )
+                if let adjustedLinkAttributes {
+                    for (_, range) in attributedString.runs[\.link] {
+                        attributedString[range].mergeAttributes(adjustedLinkAttributes)
+                    }
+                }
+                return NSAttributedString(attributedString)
+            } catch {
+                log.debug("Failed to parse string for markdown: \(error.localizedDescription)")
+            }
+        }
+        return NSAttributedString(
+            string: string,
+            attributes: [.font: UIFont.font(forMarkdownFont: styles.bodyFont)]
+        )
     }
 
-    private func modify(swiftyMarkdownFont: FontProperties, with font: MarkdownFont) {
-        if let fontName = font.name {
-            swiftyMarkdownFont.fontName = fontName
+    // MARK: - Styling Attributes
+    
+    @available(iOS 15, *)
+    private func defaultAttributes() -> AttributeContainer {
+        AttributeContainer([.font: UIFont.font(forMarkdownFont: styles.bodyFont)])
+    }
+    
+    @available(iOS 15, *)
+    private var adjustedLinkAttributes: AttributeContainer? {
+        guard styles.linkFont.hasChanges else { return nil }
+        let font = UIFont.font(forMarkdownFont: styles.linkFont)
+        let foregroundColor = styles.linkFont.color
+        if let foregroundColor {
+            return AttributeContainer([.font: font, .foregroundColor: foregroundColor])
+        } else {
+            return AttributeContainer([.font: font])
         }
-        if let fontSize = font.size {
-            swiftyMarkdownFont.fontSize = fontSize
+    }
+    
+    @available(iOS 15, *)
+    private func presentationIntentAttributes(for presentationKind: PresentationIntent.Kind) -> AttributeContainer {
+        switch presentationKind {
+        case .header(let level):
+            let font: UIFont
+            let foregroundColor: UIColor?
+            switch level {
+            case 1:
+                font = UIFont.font(forMarkdownFont: styles.h1Font, textStyle: .title1, weight: .bold)
+                foregroundColor = styles.h1Font.color
+            case 2:
+                font = UIFont.font(forMarkdownFont: styles.h2Font, textStyle: .title2, weight: .semibold)
+                foregroundColor = styles.h2Font.color
+            case 3:
+                font = UIFont.font(forMarkdownFont: styles.h3Font, textStyle: .title3, weight: .medium)
+                foregroundColor = styles.h3Font.color
+            case 4:
+                font = UIFont.font(forMarkdownFont: styles.h4Font, textStyle: .headline, weight: .bold)
+                foregroundColor = styles.h4Font.color
+            case 5:
+                font = UIFont.font(forMarkdownFont: styles.h5Font, textStyle: .headline, weight: .semibold)
+                foregroundColor = styles.h5Font.color
+            default:
+                font = UIFont.font(forMarkdownFont: styles.h6Font, textStyle: .headline, weight: .medium)
+                foregroundColor = styles.h6Font.color
+            }
+            if let foregroundColor {
+                return AttributeContainer([.font: font, .foregroundColor: foregroundColor])
+            } else {
+                return AttributeContainer([.font: font])
+            }
+        case .codeBlock:
+            return AttributeContainer([
+                .backgroundColor: UIColor.secondarySystemFill,
+                .font: UIFont.font(forMarkdownFont: styles.codeFont, monospaced: true)
+            ])
+        case .blockQuote:
+            return AttributeContainer([
+                .foregroundColor: UIColor.secondaryLabel
+            ])
+        default:
+            return AttributeContainer()
         }
-        if let fontColor = font.color {
-            swiftyMarkdownFont.color = fontColor
+    }
+}
+
+private extension UIFont {
+    static func font(
+        forMarkdownFont markdownFont: MarkdownFont,
+        textStyle: TextStyle = .body,
+        weight: Weight? = nil,
+        monospaced: Bool = false
+    ) -> UIFont {
+        // Default
+        var descriptor = UIFontDescriptor.preferredFontDescriptor(withTextStyle: textStyle)
+        if monospaced, let updatedDescriptor = descriptor.withDesign(.monospaced) {
+            descriptor = updatedDescriptor
         }
-        if let fontStyle = font.styling?.asSwiftyMarkdownFontStyle() {
-            swiftyMarkdownFont.fontStyle = fontStyle
+        if let weight {
+            descriptor = descriptor.withWeight(weight)
         }
+        // MarkdownFont
+        if let fontName = markdownFont.name {
+            descriptor = descriptor.withFamily(fontName)
+        }
+        if let size = markdownFont.size {
+            descriptor = descriptor.withSize(size)
+        }
+        if let traits = markdownFont.styling?.symbolicTraits(), let descriptorWithTraits = descriptor.withSymbolicTraits(traits) {
+            descriptor = descriptorWithTraits
+        }
+        let font = UIFont(descriptor: descriptor, size: descriptor.pointSize)
+        return UIFontMetrics(forTextStyle: textStyle).scaledFont(for: font)
+    }
+}
+
+private extension UIFontDescriptor {
+    func withWeight(_ weight: UIFont.Weight) -> UIFontDescriptor {
+        addingAttributes(([.traits: [UIFontDescriptor.TraitKey.weight: weight]]))
     }
 }
 
@@ -118,6 +213,10 @@ public struct MarkdownFont {
         color = nil
         styling = nil
     }
+    
+    var hasChanges: Bool {
+        name != nil || size != nil || color != nil || styling != nil
+    }
 }
 
 public enum MarkdownFontStyle: Int {
@@ -126,16 +225,16 @@ public enum MarkdownFontStyle: Int {
     case italic
     case boldItalic
 
-    func asSwiftyMarkdownFontStyle() -> FontStyle {
+    func symbolicTraits() -> UIFontDescriptor.SymbolicTraits? {
         switch self {
         case .normal:
-            return .normal
+            return nil
         case .bold:
-            return .bold
+            return .traitBold
         case .italic:
-            return .italic
+            return .traitItalic
         case .boldItalic:
-            return .boldItalic
+            return [UIFontDescriptor.SymbolicTraits.traitBold, UIFontDescriptor.SymbolicTraits.traitItalic]
         }
     }
 }
