@@ -80,6 +80,11 @@ final class EndpointPathTests: XCTestCase {
         XCTAssertEqual(path, "channels/\(cid.apiPath)/member/1")
     }
 
+    func test_drafts_shouldNOTBeQueuedOffline() {
+        XCTAssertFalse(EndpointPath.drafts.shouldBeQueuedOffline)
+        XCTAssertFalse(EndpointPath.draftMessage(.unique).shouldBeQueuedOffline)
+    }
+
     // MARK: - Codable
 
     func test_isProperlyEncodedAndDecoded() throws {
@@ -135,6 +140,9 @@ final class EndpointPathTests: XCTestCase {
         assertResultEncodingAndDecoding(.pollOption(pollId: "test_poll", optionId: "option_id"))
         assertResultEncodingAndDecoding(.pollVoteInMessage(messageId: "test_message", pollId: "test_poll"))
         assertResultEncodingAndDecoding(.pollVote(messageId: "test_message", pollId: "test_poll", voteId: "test_vote"))
+
+        assertResultEncodingAndDecoding(.drafts)
+        assertResultEncodingAndDecoding(.draftMessage(ChannelId(type: .messaging, id: "test_channel")))
     }
 }
 
