@@ -22,6 +22,24 @@ struct DraftPayload: Decodable {
     let parentId: String?
     let parentMessage: MessagePayload?
 
+    init(
+        cid: ChannelId?,
+        channelPayload: ChannelDetailPayload?,
+        createdAt: Date,
+        message: DraftMessagePayload,
+        quotedMessage: MessagePayload?,
+        parentId: String?,
+        parentMessage: MessagePayload?
+    ) {
+        self.cid = cid
+        self.channelPayload = channelPayload
+        self.createdAt = createdAt
+        self.message = message
+        self.quotedMessage = quotedMessage
+        self.parentId = parentId
+        self.parentMessage = parentMessage
+    }
+
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: MessagePayloadsCodingKeys.self)
         cid = try container.decodeIfPresent(ChannelId.self, forKey: .channelId)
@@ -44,6 +62,28 @@ struct DraftMessagePayload: Decodable {
     let extraData: [String: RawJSON]
     let attachments: [MessageAttachmentPayload]?
     let isSilent: Bool
+
+    init(
+        id: String,
+        text: String,
+        command: String?,
+        args: String?,
+        showReplyInChannel: Bool,
+        mentionedUsers: [UserPayload]?,
+        extraData: [String: RawJSON],
+        attachments: [MessageAttachmentPayload]?,
+        isSilent: Bool
+    ) {
+        self.id = id
+        self.text = text
+        self.command = command
+        self.args = args
+        self.showReplyInChannel = showReplyInChannel
+        self.mentionedUsers = mentionedUsers
+        self.extraData = extraData
+        self.attachments = attachments
+        self.isSilent = isSilent
+    }
 
     init(from decoder: any Decoder) throws {
         let container = try decoder.container(keyedBy: MessagePayloadsCodingKeys.self)

@@ -38,6 +38,7 @@ class DraftMessagesRepository {
                 }, completion: { error in
                     if let error {
                         completion(.failure(error))
+                        return
                     }
                     completion(.success(DraftListResponse(drafts: drafts, next: response.next)))
                 })
@@ -88,7 +89,7 @@ class DraftMessagesRepository {
             ) { [weak self] result in
                 switch result {
                 case .success(let response):
-                    self?.database.write { session in
+                    self?.database.write({ session in
                         let draftPayload = response.draft
                         let messageDTO = try session.saveDraftMessage(
                             payload: draftPayload,
@@ -97,7 +98,11 @@ class DraftMessagesRepository {
                         )
                         let message = try messageDTO.asModel()
                         completion?(.success(message))
-                    }
+                    }, completion: { error in
+                        if let error {
+                            completion?(.failure(error))
+                        }
+                    })
                 case .failure(let error):
                     completion?(.failure(error))
                 }
@@ -115,7 +120,7 @@ class DraftMessagesRepository {
         ) { [weak self] result in
             switch result {
             case .success(let response):
-                self?.database.write { session in
+                self?.database.write({ session in
                     let messageDTO = try session.saveDraftMessage(
                         payload: response.draft,
                         for: cid,
@@ -123,6 +128,10 @@ class DraftMessagesRepository {
                     )
                     let message = try messageDTO.asModel()
                     completion?(.success(message))
+                }) { error in
+                    if let error {
+                        completion?(.failure(error))
+                    }
                 }
             case .failure(let error):
                 completion?(.failure(error))
