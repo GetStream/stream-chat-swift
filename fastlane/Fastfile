@@ -599,8 +599,10 @@ desc 'Runs ui tests in Debug config'
 lane :test_ui do |options|
   next unless is_check_required(sources: sources_matrix[:ui], force_check: @force_check)
 
-  record_mode = !options[:record].to_s.empty?
-  remove_snapshots if record_mode
+  soft_record_mode = options[:record].to_s == 'true'
+  hard_record_mode = options[:remove_and_record].to_s == 'true'
+  record_mode = soft_record_mode || hard_record_mode
+  remove_snapshots if hard_record_mode
 
   update_testplan_on_ci(path: 'Tests/StreamChatUITests/StreamChatUITestPlan.xctestplan')
 
@@ -632,7 +634,7 @@ lane :test_ui do |options|
     pr_create(
       title: '[CI] Snapshots',
       base_branch: current_branch,
-      head_branch: "#{current_branch}-snapshots"
+      head_branch: "#{current_branch}-snapshots-#{Time.now.to_i}"
     )
   end
 end
