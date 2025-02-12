@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
     inputs:
       remove_and_record_snapshots:
-        description: 'Remove existing snapshots before recording the new ones?'
+        description: 'Reset all the snapshots on CI?'
         type: boolean
         required: false
         default: false

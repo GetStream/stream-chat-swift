@@ -9,12 +9,12 @@ on:
   workflow_dispatch:
     inputs:
       record_snapshots:
-        description: 'Soft-record snapshots on CI?'
+        description: 'Record missing snapshots on CI?'
         type: boolean
         required: false
         default: false
       remove_and_record_snapshots:
-        description: 'Hard-record snapshots on CI?'
+        description: 'Reset all the snapshots on CI?'
         type: boolean
         required: false
         default: false
