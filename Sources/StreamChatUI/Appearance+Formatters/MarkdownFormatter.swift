@@ -47,11 +47,11 @@ open class DefaultMarkdownFormatter: MarkdownFormatter {
             do {
                 var attributedString = try AttributedString(
                     markdown: string,
-                    attributes: defaultAttributes(),
+                    attributes: AttributeContainer(defaultAttributes),
                     presentationIntentAttributes: presentationIntentAttributes(for:)
                 )
                 if let adjustedLinkAttributes {
-                    for (_, range) in attributedString.runs[\.link] {
+                    for (value, range) in attributedString.runs[\.link] where value != nil {
                         attributedString[range].mergeAttributes(adjustedLinkAttributes)
                     }
                 }
@@ -62,27 +62,29 @@ open class DefaultMarkdownFormatter: MarkdownFormatter {
         }
         return NSAttributedString(
             string: string,
-            attributes: [.font: UIFont.font(forMarkdownFont: styles.bodyFont)]
+            attributes: defaultAttributes
         )
     }
 
     // MARK: - Styling Attributes
     
-    @available(iOS 15, *)
-    private func defaultAttributes() -> AttributeContainer {
-        AttributeContainer([.font: UIFont.font(forMarkdownFont: styles.bodyFont)])
+    private var colorPalette: Appearance.ColorPalette { Appearance.default.colorPalette }
+    
+    private var defaultAttributes: [NSAttributedString.Key: Any] {
+        [
+            .font: UIFont.font(forMarkdownFont: styles.bodyFont),
+            .foregroundColor: Appearance.default.colorPalette.text
+        ]
     }
     
     @available(iOS 15, *)
     private var adjustedLinkAttributes: AttributeContainer? {
-        guard styles.linkFont.hasChanges else { return nil }
-        let font = UIFont.font(forMarkdownFont: styles.linkFont)
-        let foregroundColor = styles.linkFont.color
-        if let foregroundColor {
-            return AttributeContainer([.font: font, .foregroundColor: foregroundColor])
-        } else {
-            return AttributeContainer([.font: font])
-        }
+        let attributes: [NSAttributedString.Key: Any] = [
+            .font: styles.linkFont.hasFontChanges ? UIFont.font(forMarkdownFont: styles.linkFont) : nil,
+            .foregroundColor: styles.linkFont.color
+        ].compactMapValues { $0 }
+        guard !attributes.isEmpty else { return nil }
+        return AttributeContainer(attributes)
     }
     
     @available(iOS 15, *)
@@ -96,20 +98,20 @@ open class DefaultMarkdownFormatter: MarkdownFormatter {
                 font = UIFont.font(forMarkdownFont: styles.h1Font, textStyle: .title1, weight: .bold)
                 foregroundColor = styles.h1Font.color
             case 2:
-                font = UIFont.font(forMarkdownFont: styles.h2Font, textStyle: .title2, weight: .semibold)
+                font = UIFont.font(forMarkdownFont: styles.h2Font, textStyle: .title2, weight: .bold)
                 foregroundColor = styles.h2Font.color
             case 3:
-                font = UIFont.font(forMarkdownFont: styles.h3Font, textStyle: .title3, weight: .medium)
+                font = UIFont.font(forMarkdownFont: styles.h3Font, textStyle: .title3, weight: .bold)
                 foregroundColor = styles.h3Font.color
             case 4:
-                font = UIFont.font(forMarkdownFont: styles.h4Font, textStyle: .headline, weight: .bold)
+                font = UIFont.font(forMarkdownFont: styles.h4Font, textStyle: .headline, weight: .semibold)
                 foregroundColor = styles.h4Font.color
             case 5:
-                font = UIFont.font(forMarkdownFont: styles.h5Font, textStyle: .headline, weight: .semibold)
+                font = UIFont.font(forMarkdownFont: styles.h5Font, textStyle: .subheadline, weight: .semibold)
                 foregroundColor = styles.h5Font.color
             default:
-                font = UIFont.font(forMarkdownFont: styles.h6Font, textStyle: .headline, weight: .medium)
-                foregroundColor = styles.h6Font.color
+                font = UIFont.font(forMarkdownFont: styles.h6Font, textStyle: .footnote, weight: .semibold)
+                foregroundColor = styles.h6Font.color ?? colorPalette.subtitleText
             }
             if let foregroundColor {
                 return AttributeContainer([.font: font, .foregroundColor: foregroundColor])
@@ -117,13 +119,15 @@ open class DefaultMarkdownFormatter: MarkdownFormatter {
                 return AttributeContainer([.font: font])
             }
         case .codeBlock:
-            return AttributeContainer([
-                .backgroundColor: UIColor.secondarySystemFill,
-                .font: UIFont.font(forMarkdownFont: styles.codeFont, monospaced: true)
-            ])
+            var attributes: [NSAttributedString.Key: Any] = [
+                .backgroundColor: colorPalette.background2,
+                .font: UIFont.font(forMarkdownFont: styles.codeFont, monospaced: true),
+                .foregroundColor: styles.codeFont.color
+            ].compactMapValues { $0 }
+            return AttributeContainer(attributes)
         case .blockQuote:
             return AttributeContainer([
-                .foregroundColor: UIColor.secondaryLabel
+                .foregroundColor: colorPalette.subtitleText
             ])
         default:
             return AttributeContainer()
@@ -214,8 +218,8 @@ public struct MarkdownFont {
         styling = nil
     }
     
-    var hasChanges: Bool {
-        name != nil || size != nil || color != nil || styling != nil
+    var hasFontChanges: Bool {
+        name != nil || size != nil || styling != nil
     }
 }
 

@@ -64,15 +64,7 @@ extension AttributedString {
                     } else {
                         blockStyling.prependedString.insert("\t", at: blockStyling.prependedString.startIndex)
                     }
-                case .thematicBreak:
-                    break
-                case .table:
-                    break
-                case .tableHeaderRow:
-                    break
-                case .tableRow:
-                    break
-                case .tableCell:
+                case .thematicBreak, .table, .tableHeaderRow, .tableRow, .tableCell:
                     break
                 @unknown default:
                     break
@@ -82,7 +74,6 @@ extension AttributedString {
             if block.components.count == 1, block.components.allSatisfy({ $0.kind == .paragraph }) {
                 blockStyling.succeedingNewlineCount += 1
             }
-            
             // Preparing list items
             if let listItemOrdinal = blockStyling.listItemOrdinal {
                 if blockStyling.isOrdered == true {
@@ -95,7 +86,6 @@ extension AttributedString {
                     blockStyling.succeedingNewlineCount += 1
                 }
             }
-            
             // Inserting additional space after the current block (reverse enumeration, therefore use the previous range)
             if blockStyling.succeedingNewlineCount > 0, let previousBlockStyling {
                 let newlineString = String(repeating: "\n", count: blockStyling.succeedingNewlineCount)
