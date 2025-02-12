@@ -9,7 +9,7 @@ extension AttributedString {
     public init(
         markdown: String,
         attributes: AttributeContainer,
-        presentationIntentAttributes: (PresentationIntent.Kind) -> AttributeContainer
+        presentationIntentAttributes: (PresentationIntent.Kind, PresentationIntent) -> AttributeContainer
     ) throws {
         let options = AttributedString.MarkdownParsingOptions(
             allowsExtendedAttributes: true,
@@ -27,21 +27,21 @@ extension AttributedString {
         // Style block based intents
         var previousBlockStyling: BlockStyling?
         
-        for (block, range) in attributedString.runs[\.presentationIntent].reversed() {
-            guard let block else { continue }
+        for (presentationIntent, range) in attributedString.runs[\.presentationIntent].reversed() {
+            guard let presentationIntent else { continue }
             var blockStyling = BlockStyling(range: range)
             
-            for blockIntentType in block.components {
+            for blockIntentType in presentationIntent.components {
                 switch blockIntentType.kind {
                 case .blockQuote:
-                    blockStyling.mergedAttributes = presentationIntentAttributes(blockIntentType.kind)
+                    blockStyling.mergedAttributes = presentationIntentAttributes(blockIntentType.kind, presentationIntent)
                     blockStyling.prependedString = "| "
                     blockStyling.succeedingNewlineCount += 1
                 case .codeBlock:
-                    blockStyling.mergedAttributes = presentationIntentAttributes(blockIntentType.kind)
+                    blockStyling.mergedAttributes = presentationIntentAttributes(blockIntentType.kind, presentationIntent)
                     blockStyling.precedingNewlineCount += 1
                 case .header:
-                    blockStyling.mergedAttributes = presentationIntentAttributes(blockIntentType.kind)
+                    blockStyling.mergedAttributes = presentationIntentAttributes(blockIntentType.kind, presentationIntent)
                     blockStyling.precedingNewlineCount += 1
                     blockStyling.succeedingNewlineCount += 1
                 case .paragraph:
@@ -49,6 +49,7 @@ extension AttributedString {
                 case .listItem(ordinal: let ordinal):
                     if blockStyling.listItemOrdinal == nil {
                         blockStyling.listItemOrdinal = ordinal
+                        blockStyling.mergedAttributes = presentationIntentAttributes(blockIntentType.kind, presentationIntent)
                     }
                 case .orderedList:
                     blockStyling.listId = blockIntentType.identity
@@ -71,7 +72,7 @@ extension AttributedString {
                 }
             }
             // Give additional space for just text
-            if block.components.count == 1, block.components.allSatisfy({ $0.kind == .paragraph }) {
+            if presentationIntent.components.count == 1, presentationIntent.components.allSatisfy({ $0.kind == .paragraph }) {
                 blockStyling.succeedingNewlineCount += 1
             }
             // Preparing list items

@@ -48,7 +48,7 @@ open class DefaultMarkdownFormatter: MarkdownFormatter {
                 var attributedString = try AttributedString(
                     markdown: string,
                     attributes: AttributeContainer(defaultAttributes),
-                    presentationIntentAttributes: presentationIntentAttributes(for:)
+                    presentationIntentAttributes: presentationIntentAttributes(for:in:)
                 )
                 if let adjustedLinkAttributes {
                     for (value, range) in attributedString.runs[\.link] where value != nil {
@@ -88,8 +88,19 @@ open class DefaultMarkdownFormatter: MarkdownFormatter {
     }
     
     @available(iOS 15, *)
-    private func presentationIntentAttributes(for presentationKind: PresentationIntent.Kind) -> AttributeContainer {
+    private func presentationIntentAttributes(for presentationKind: PresentationIntent.Kind, in presentationIntent: PresentationIntent) -> AttributeContainer {
         switch presentationKind {
+        case .blockQuote:
+            return AttributeContainer([
+                .foregroundColor: colorPalette.subtitleText
+            ])
+        case .codeBlock:
+            var attributes: [NSAttributedString.Key: Any] = [
+                .backgroundColor: colorPalette.background2,
+                .font: UIFont.font(forMarkdownFont: styles.codeFont, monospaced: true),
+                .foregroundColor: styles.codeFont.color
+            ].compactMapValues { $0 }
+            return AttributeContainer(attributes)
         case .header(let level):
             let font: UIFont
             let foregroundColor: UIColor?
@@ -118,20 +129,22 @@ open class DefaultMarkdownFormatter: MarkdownFormatter {
             } else {
                 return AttributeContainer([.font: font])
             }
-        case .codeBlock:
-            var attributes: [NSAttributedString.Key: Any] = [
-                .backgroundColor: colorPalette.background2,
-                .font: UIFont.font(forMarkdownFont: styles.codeFont, monospaced: true),
-                .foregroundColor: styles.codeFont.color
-            ].compactMapValues { $0 }
-            return AttributeContainer(attributes)
-        case .blockQuote:
+        case .listItem:
             return AttributeContainer([
-                .foregroundColor: colorPalette.subtitleText
+                .paragraphStyle: listItemParagraphStyle(forIndentationLevel: presentationIntent.indentationLevel)
             ])
         default:
             return AttributeContainer()
         }
+    }
+    
+    // MARK: - Paragraph Styles
+    
+    private func listItemParagraphStyle(forIndentationLevel level: Int) -> NSParagraphStyle {
+        let style = NSMutableParagraphStyle()
+        let location = style.tabStops.first?.location ?? 28
+        style.headIndent = CGFloat(level) * location
+        return style
     }
 }
 

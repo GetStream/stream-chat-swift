@@ -83,6 +83,18 @@ final class ChatMessageMarkdown_Tests: XCTestCase {
         AssertSnapshot(view, variants: variants)
     }
     
+    func test_orderedList_nested_wrappedTextItem() {
+        let view = contentView(
+            """
+            Unordered (wrapped text)  
+            - First list item which has a very long text and when wrapped, should be aligned to the same item
+                - First nested which has a very long text and when wrapped, should be aligned to the same item
+                    - Second nested
+            """
+        )
+        AssertSnapshot(view, variants: variants)
+    }
+    
     func test_orderedLists_default() {
         let view = contentView(
             """
