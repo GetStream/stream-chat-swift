@@ -6,6 +6,11 @@ import Foundation
 
 @available(iOS 15, *)
 extension AttributedString {
+    /// Creates an attributed string from a Markdown-formatted string using the provided attributes.
+    /// - Parameters:
+    ///   - markdown: The string that contains the Markdown formatting.
+    ///   - attributes: The attributes to use for the whole string.
+    ///   - presentationIntentAttributes: The closure for customising attributes for presentation intents. Called for quote, code, list item, and headers.
     public init(
         markdown: String,
         attributes: AttributeContainer,
