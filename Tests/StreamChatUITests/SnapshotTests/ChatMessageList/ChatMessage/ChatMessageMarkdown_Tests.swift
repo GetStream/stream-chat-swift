@@ -11,6 +11,34 @@ import XCTest
 final class ChatMessageMarkdown_Tests: XCTestCase {
     let variants: [SnapshotVariant] = SnapshotVariant.all
     
+    func test_text_default() {
+        let view = contentView(
+            """
+            This is **bold** text  
+            This text is _italicized_  
+            This was ~~mistaken~~ text  
+            This has backlashes for a newline\\
+            This is regular text
+            """
+        )
+        AssertSnapshot(view, variants: variants)
+    }
+    
+    func test_text_custom() {
+        var styles = MarkdownStyles()
+        styles.bodyFont.color = .systemOrange
+        let view = contentView(
+            """
+            This is **bold** text  
+            This text is _italicized_  
+            This was ~~mistaken~~ text  
+            This has backlashes for a newline\\
+            This is regular text
+            """
+        )
+        AssertSnapshot(view, variants: variants)
+    }
+    
     func test_headers_default() {
         let view = contentView(
             """
