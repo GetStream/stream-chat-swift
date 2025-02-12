@@ -1520,6 +1520,8 @@
 		AD545E772D5BB3E0008FD399 /* DraftEndpoints_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD545E762D5BB3D6008FD399 /* DraftEndpoints_Tests.swift */; };
 		AD545E792D5BC14E008FD399 /* DraftMessagesRepository_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD545E782D5BC14E008FD399 /* DraftMessagesRepository_Tests.swift */; };
 		AD545E7B2D5BC1DC008FD399 /* DraftPayload.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD545E7A2D5BC1DC008FD399 /* DraftPayload.swift */; };
+		AD545E7D2D5CFC15008FD399 /* ChannelController+Drafts_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD545E7C2D5CFC15008FD399 /* ChannelController+Drafts_Tests.swift */; };
+		AD545E7F2D5CFC36008FD399 /* DraftMessagesRepository_Mock.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD545E7E2D5CFC36008FD399 /* DraftMessagesRepository_Mock.swift */; };
 		AD552E0128F46CE700199A6F /* ImageLoaderOptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD552E0028F46CE700199A6F /* ImageLoaderOptions.swift */; };
 		AD552E0228F46CE700199A6F /* ImageLoaderOptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD552E0028F46CE700199A6F /* ImageLoaderOptions.swift */; };
 		AD57979E2978C4F7006CC435 /* UploadedAttachmentPostProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD57979D2978C4F7006CC435 /* UploadedAttachmentPostProcessor.swift */; };
@@ -4288,6 +4290,8 @@
 		AD545E762D5BB3D6008FD399 /* DraftEndpoints_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DraftEndpoints_Tests.swift; sourceTree = "<group>"; };
 		AD545E782D5BC14E008FD399 /* DraftMessagesRepository_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DraftMessagesRepository_Tests.swift; sourceTree = "<group>"; };
 		AD545E7A2D5BC1DC008FD399 /* DraftPayload.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DraftPayload.swift; sourceTree = "<group>"; };
+		AD545E7C2D5CFC15008FD399 /* ChannelController+Drafts_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ChannelController+Drafts_Tests.swift"; sourceTree = "<group>"; };
+		AD545E7E2D5CFC36008FD399 /* DraftMessagesRepository_Mock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DraftMessagesRepository_Mock.swift; sourceTree = "<group>"; };
 		AD552E0028F46CE700199A6F /* ImageLoaderOptions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageLoaderOptions.swift; sourceTree = "<group>"; };
 		AD57979D2978C4F7006CC435 /* UploadedAttachmentPostProcessor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UploadedAttachmentPostProcessor.swift; sourceTree = "<group>"; };
 		AD57DE752A77D5A2005408B6 /* ChannelListSearchStrategy_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelListSearchStrategy_Tests.swift; sourceTree = "<group>"; };
@@ -7371,6 +7375,7 @@
 		A364D0A827D128650029857A /* ChannelController */ = {
 			isa = PBXGroup;
 			children = (
+				AD545E7C2D5CFC15008FD399 /* ChannelController+Drafts_Tests.swift */,
 				7952B3B224D314B100AC53D4 /* ChannelController_Tests.swift */,
 				DA4AA3B32502719700FAAF6E /* ChannelController+Combine_Tests.swift */,
 				DAE566E824FFD24000E39431 /* ChannelController+SwiftUI_Tests.swift */,
@@ -9146,6 +9151,7 @@
 		C12D0A5E28FD58CE0099895A /* Repositories */ = {
 			isa = PBXGroup;
 			children = (
+				AD545E7E2D5CFC36008FD399 /* DraftMessagesRepository_Mock.swift */,
 				C12D0A5F28FD59B60099895A /* AuthenticationRepository_Mock.swift */,
 				A344074E27D753530044F150 /* ConnectionRepository_Mock.swift */,
 				C1C5345929AFDDAE006F9AF4 /* ChannelRepository_Mock.swift */,
@@ -11318,6 +11324,7 @@
 				A3C3BC8527E8AB6200224761 /* Array+Subscript.swift in Sources */,
 				84196FA32805892500185E99 /* LocalMessageState+Extensions.swift in Sources */,
 				82E655452B067CAE00D64906 /* AssertResult.swift in Sources */,
+				AD545E7F2D5CFC36008FD399 /* DraftMessagesRepository_Mock.swift in Sources */,
 				82E655432B067C3600D64906 /* AssertAsync.swift in Sources */,
 				84C7CB152BC1F7EC0088890C /* MessageSearch_Mock.swift in Sources */,
 				A34ECB5C27F5D0BF00A804C1 /* TestDataModel2.xcdatamodeld in Sources */,
@@ -12011,6 +12018,7 @@
 				79CD959424F9381700E87377 /* MulticastDelegate_Tests.swift in Sources */,
 				C1C5345D29AFE526006F9AF4 /* ChannelRepository_Tests.swift in Sources */,
 				C11BAA4D2907EC7B004C5EA4 /* AuthenticationRepository_Tests.swift in Sources */,
+				AD545E7D2D5CFC15008FD399 /* ChannelController+Drafts_Tests.swift in Sources */,
 				C186BFA627A7F4E10099CCA6 /* AsyncOperation_Tests.swift in Sources */,
 				A3C7BAD127E4E02700BBF4FA /* ChannelListFilterScope_Tests.swift in Sources */,
 				DAD5C836250278AD0045117A /* ChannelController+Combine_Tests.swift in Sources */,
