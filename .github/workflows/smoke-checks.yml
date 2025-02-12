@@ -8,8 +8,13 @@ on:
 
   workflow_dispatch:
     inputs:
-      snapshots:
-        description: 'Should Snapshots be recorded on CI?'
+      record_snapshots:
+        description: 'Record missing snapshots on CI?'
+        type: boolean
+        required: false
+        default: false
+      remove_and_record_snapshots:
+        description: 'Reset all the snapshots on CI?'
         type: boolean
         required: false
         default: false
@@ -28,7 +33,6 @@ jobs:
   build-test-app-and-frameworks:
     name: Build Test App and Frameworks
     runs-on: macos-15
-    if: ${{ github.event_name != 'push' }}
     steps:
     - uses: actions/checkout@v4.1.1
     - uses: ./.github/actions/ruby-cache
@@ -50,7 +54,7 @@ jobs:
     runs-on: macos-15
     env:
       XCODE_VERSION: "15.4"
-    if: ${{ github.event_name != 'push' && github.event.inputs.snapshots != 'true' }}
+    if: ${{ github.event.inputs.record_snapshots != 'true' && github.event.inputs.remove_and_record_snapshots != 'true' }}
     steps:
       - uses: actions/checkout@v4.1.1
         with:
@@ -69,7 +73,7 @@ jobs:
   build-old-xcode:
     name: Build LLC + UI (Xcode 15)
     runs-on: macos-15
-    if: ${{ github.event_name != 'push' && github.event.inputs.snapshots != 'true' }}
+    if: ${{ github.event.inputs.record_snapshots != 'true' && github.event.inputs.remove_and_record_snapshots != 'true' }}
     env:
       XCODE_VERSION: "15.4"
     steps:
@@ -87,6 +91,7 @@ jobs:
   test-llc-debug:
     name: Test LLC (Debug)
     runs-on: macos-15
+    if: ${{ github.event.inputs.record_snapshots != 'true' && github.event.inputs.remove_and_record_snapshots != 'true' }}
     steps:
     - uses: actions/checkout@v4.1.1
       with:
@@ -126,7 +131,6 @@ jobs:
     name: Test UI (Debug)
     runs-on: macos-15
     needs: build-test-app-and-frameworks
-    if: ${{ github.event_name != 'push' }}
     steps:
     - uses: actions/checkout@v4.1.1
     - uses: actions/download-artifact@v4
@@ -138,7 +142,7 @@ jobs:
         INSTALL_YEETD: true
         SKIP_MINT_BOOTSTRAP: true
     - name: Run UI Tests (Debug)
-      run: bundle exec fastlane test_ui device:"${{ env.IOS_SIMULATOR_DEVICE }}" skip_build:true record:${{ github.event.inputs.snapshots }}
+      run: bundle exec fastlane test_ui device:"${{ env.IOS_SIMULATOR_DEVICE }}" skip_build:true record:"${{ github.event.inputs.record_snapshots }}" remove_and_record:"${{ github.event.inputs.remove_and_record_snapshots }}"
       timeout-minutes: 120
       env:
         GITHUB_TOKEN: ${{ secrets.DANGER_GITHUB_API_TOKEN }} # to open a PR
@@ -158,7 +162,7 @@ jobs:
   allure_testops_launch:
     name: Launch Allure TestOps
     runs-on: macos-14
-    if: ${{ github.event_name != 'push' && github.event.inputs.snapshots != 'true' }}
+    if: ${{ github.event.inputs.record_snapshots != 'true' && github.event.inputs.remove_and_record_snapshots != 'true' }}
     needs: build-test-app-and-frameworks
     outputs:
       launch_id: ${{ steps.get_launch_id.outputs.launch_id }}
@@ -177,7 +181,7 @@ jobs:
   test-e2e-debug:
     name: Test E2E UI (Debug)
     runs-on: macos-15
-    if: ${{ github.event_name != 'push' && github.event.inputs.snapshots != 'true' }}
+    if: ${{ github.event.inputs.record_snapshots != 'true' && github.event.inputs.remove_and_record_snapshots != 'true' }}
     needs:
       - allure_testops_launch
       - build-test-app-and-frameworks
@@ -233,7 +237,7 @@ jobs:
     name: Build Demo App + Example Apps
     runs-on: macos-14
     needs: build-test-app-and-frameworks
-    if: ${{ github.event_name != 'push' && github.event.inputs.snapshots != 'true' }}
+    if: ${{ github.event.inputs.record_snapshots != 'true' && github.event.inputs.remove_and_record_snapshots != 'true' }}
     steps:
     - uses: actions/checkout@v4.1.1
     - uses: actions/download-artifact@v4
@@ -262,7 +266,7 @@ jobs:
     name: Test Integration
     runs-on: macos-14
     needs: build-test-app-and-frameworks
-    if: ${{ github.event_name != 'push' && github.event.inputs.snapshots != 'true' }}
+    if: ${{ github.event.inputs.record_snapshots != 'true' && github.event.inputs.remove_and_record_snapshots != 'true' }}
     steps:
     - uses: actions/checkout@v4.1.1
     - uses: actions/download-artifact@v4
