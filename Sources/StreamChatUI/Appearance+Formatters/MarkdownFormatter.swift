@@ -73,7 +73,7 @@ open class DefaultMarkdownFormatter: MarkdownFormatter {
     private var defaultAttributes: [NSAttributedString.Key: Any] {
         [
             .font: UIFont.font(forMarkdownFont: styles.bodyFont),
-            .foregroundColor: Appearance.default.colorPalette.text
+            .foregroundColor: styles.bodyFont.color ?? Appearance.default.colorPalette.text
         ]
     }
     

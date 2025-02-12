@@ -28,6 +28,7 @@ final class ChatMessageMarkdown_Tests: XCTestCase {
         var styles = MarkdownStyles()
         styles.bodyFont.color = .systemOrange
         let view = contentView(
+            styles: styles,
             """
             This is **bold** text  
             This text is _italicized_  
