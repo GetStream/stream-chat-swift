@@ -45,16 +45,11 @@ open class DefaultMarkdownFormatter: MarkdownFormatter {
     open func format(_ string: String) -> NSAttributedString {
         if #available(iOS 15, *) {
             do {
-                var attributedString = try AttributedString(
+                let attributedString = try AttributedString(
                     markdown: string,
                     attributes: AttributeContainer(defaultAttributes),
                     presentationIntentAttributes: presentationIntentAttributes(for:in:)
                 )
-                if let adjustedLinkAttributes {
-                    for (value, range) in attributedString.runs[\.link] where value != nil {
-                        attributedString[range].mergeAttributes(adjustedLinkAttributes)
-                    }
-                }
                 return NSAttributedString(attributedString)
             } catch {
                 log.debug("Failed to parse string for markdown: \(error.localizedDescription)")
@@ -76,17 +71,7 @@ open class DefaultMarkdownFormatter: MarkdownFormatter {
             .foregroundColor: styles.bodyFont.color ?? Appearance.default.colorPalette.text
         ]
     }
-    
-    @available(iOS 15, *)
-    private var adjustedLinkAttributes: AttributeContainer? {
-        let attributes: [NSAttributedString.Key: Any] = [
-            .font: styles.linkFont.hasFontChanges ? UIFont.font(forMarkdownFont: styles.linkFont) : nil,
-            .foregroundColor: styles.linkFont.color
-        ].compactMapValues { $0 }
-        guard !attributes.isEmpty else { return nil }
-        return AttributeContainer(attributes)
-    }
-    
+        
     @available(iOS 15, *)
     private func presentationIntentAttributes(for presentationKind: PresentationIntent.Kind, in presentationIntent: PresentationIntent) -> AttributeContainer {
         switch presentationKind {
@@ -191,9 +176,6 @@ public struct MarkdownStyles {
 
     /// The font used for coding blocks in markdown text.
     public var codeFont: MarkdownFont = .init()
-
-    /// The font used for links found in markdown text.
-    public var linkFont: MarkdownFont = .init()
 
     /// The font used for H1 headers in markdown text.
     public var h1Font: MarkdownFont = .init()
