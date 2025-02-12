@@ -6,9 +6,9 @@
 @testable import StreamChatTestTools
 import XCTest
 
-final class ChannelController_Drafts_Tests: XCTestCase {
+final class MessageController_Drafts_Tests: XCTestCase {
     var client: ChatClient_Mock!
-    var controller: ChatChannelController!
+    var controller: ChatMessageController!
     var draftsRepository: DraftMessagesRepository_Mock!
     
     override func setUp() {
@@ -17,12 +17,13 @@ final class ChannelController_Drafts_Tests: XCTestCase {
         client = ChatClient.mock
         draftsRepository = client.draftMessagesRepository as? DraftMessagesRepository_Mock
 
-        let query = ChannelQuery(cid: .unique)
-        controller = ChatChannelController(
-            channelQuery: query,
-            channelListQuery: nil,
+        let cid = ChannelId.unique
+        let messageId = MessageId.unique
+        controller = ChatMessageController(
             client: client,
-            isChannelAlreadyCreated: true
+            cid: cid,
+            messageId: messageId,
+            replyPaginationHandler: MessagesPaginationStateHandler_Mock()
         )
     }
     
@@ -35,40 +36,20 @@ final class ChannelController_Drafts_Tests: XCTestCase {
         super.tearDown()
     }
     
-    // MARK: - Update Draft Tests
+    // MARK: - Update Draft Reply Tests
     
-    func test_updateDraftMessage_whenChannelNotCreated_fails() {
-        // Create controller with non-created channel
-        controller = ChatChannelController(
-            channelQuery: .init(cid: .unique),
-            channelListQuery: nil,
-            client: client,
-            isChannelAlreadyCreated: false
-        )
-        
-        let expectation = expectation(description: "updateDraft completion called")
-        controller.updateDraftMessage(text: "test") { result in
-            if case .failure(let error) = result {
-                XCTAssertTrue(error is ClientError.ChannelNotCreatedYet)
-                expectation.fulfill()
-            }
-        }
-        
-        waitForExpectations(timeout: defaultTimeout)
-        XCTAssertEqual(draftsRepository.updateDraft_callCount, 0)
-    }
-    
-    func test_updateDraftMessage_whenSuccessful() {
-        let text = "Draft message"
+    func test_updateDraftReply_whenSuccessful() {
+        let text = "Draft reply"
         let message = ChatMessage.mock(text: text)
         
         let expectation = expectation(description: "updateDraft completion called")
-        controller.updateDraftMessage(
+        controller.updateDraftReply(
             text: text,
             isSilent: false,
             attachments: [],
             mentionedUserIds: [],
             quotedMessageId: nil,
+            showReplyInChannel: false,
             extraData: [:]
         ) { result in
             XCTAssertEqual(try? result.get(), message)
@@ -79,16 +60,17 @@ final class ChannelController_Drafts_Tests: XCTestCase {
         
         waitForExpectations(timeout: defaultTimeout)
         XCTAssertEqual(draftsRepository.updateDraft_callCount, 1)
+        
         let calledWith = draftsRepository.updateDraft_calledWith
         XCTAssertEqual(calledWith?.cid, controller.cid)
-        XCTAssertEqual(calledWith?.threadId, nil)
+        XCTAssertEqual(calledWith?.threadId, controller.messageId)
     }
     
-    func test_updateDraftMessage_whenFailure() {
+    func test_updateDraftReply_whenFailure() {
         let error = TestError()
         
         let expectation = expectation(description: "updateDraft completion called")
-        controller.updateDraftMessage(text: "test") { result in
+        controller.updateDraftReply(text: "test") { result in
             XCTAssertEqual(error, result.error as? TestError)
             expectation.fulfill()
         }
@@ -99,34 +81,13 @@ final class ChannelController_Drafts_Tests: XCTestCase {
         XCTAssertEqual(draftsRepository.updateDraft_callCount, 1)
     }
     
-    // MARK: - Load Draft Tests
+    // MARK: - Load Draft Reply Tests
     
-    func test_loadDraftMessage_whenChannelNotCreated_fails() {
-        // Create controller with non-created channel
-        controller = ChatChannelController(
-            channelQuery: .init(cid: .unique),
-            channelListQuery: nil,
-            client: client,
-            isChannelAlreadyCreated: false
-        )
-        
-        let expectation = expectation(description: "loadDraft completion called")
-        controller.loadDraftMessage { result in
-            if case .failure(let error) = result {
-                XCTAssertTrue(error is ClientError.ChannelNotCreatedYet)
-                expectation.fulfill()
-            }
-        }
-        
-        waitForExpectations(timeout: defaultTimeout)
-        XCTAssertEqual(draftsRepository.getDraft_callCount, 0)
-    }
-    
-    func test_loadDraftMessage_whenSuccessful() {
+    func test_loadDraftReply_whenSuccessful() {
         let message = ChatMessage.mock()
         
         let expectation = expectation(description: "loadDraft completion called")
-        controller.loadDraftMessage { result in
+        controller.loadDraftReply { result in
             XCTAssertEqual(try? result.get(), message)
             expectation.fulfill()
         }
@@ -135,13 +96,17 @@ final class ChannelController_Drafts_Tests: XCTestCase {
         
         waitForExpectations(timeout: defaultTimeout)
         XCTAssertEqual(draftsRepository.getDraft_callCount, 1)
+        
+        let calledWith = draftsRepository.getDraft_calledWith
+        XCTAssertEqual(calledWith?.cid, controller.cid)
+        XCTAssertEqual(calledWith?.threadId, controller.messageId)
     }
     
-    func test_loadDraftMessage_whenFailure() {
+    func test_loadDraftReply_whenFailure() {
         let error = TestError()
         
         let expectation = expectation(description: "loadDraft completion called")
-        controller.loadDraftMessage { result in
+        controller.loadDraftReply { result in
             XCTAssertEqual(error, result.error as? TestError)
             expectation.fulfill()
         }
@@ -152,30 +117,11 @@ final class ChannelController_Drafts_Tests: XCTestCase {
         XCTAssertEqual(draftsRepository.getDraft_callCount, 1)
     }
     
-    // MARK: - Delete Draft Tests
+    // MARK: - Delete Draft Reply Tests
     
-    func test_deleteDraftMessage_whenChannelNotCreated_fails() {
-        // Create controller with non-created channel
-        controller = ChatChannelController(
-            channelQuery: .init(cid: .unique),
-            channelListQuery: nil,
-            client: client,
-            isChannelAlreadyCreated: false
-        )
-        
+    func test_deleteDraftReply_whenSuccessful() {
         let expectation = expectation(description: "deleteDraft completion called")
-        controller.deleteDraftMessage { error in
-            XCTAssertTrue(error is ClientError.ChannelNotCreatedYet)
-            expectation.fulfill()
-        }
-        
-        waitForExpectations(timeout: defaultTimeout)
-        XCTAssertEqual(draftsRepository.deleteDraft_callCount, 0)
-    }
-    
-    func test_deleteDraftMessage_whenSuccessful() {
-        let expectation = expectation(description: "deleteDraft completion called")
-        controller.deleteDraftMessage { error in
+        controller.deleteDraftReply { error in
             XCTAssertNil(error)
             expectation.fulfill()
         }
@@ -183,13 +129,18 @@ final class ChannelController_Drafts_Tests: XCTestCase {
         draftsRepository.deleteDraft_completion?(nil)
         
         waitForExpectations(timeout: defaultTimeout)
+        XCTAssertEqual(draftsRepository.deleteDraft_callCount, 1)
+        
+        let calledWith = draftsRepository.deleteDraft_calledWith
+        XCTAssertEqual(calledWith?.cid, controller.cid)
+        XCTAssertEqual(calledWith?.threadId, controller.messageId)
     }
     
-    func test_deleteDraftMessage_whenFailure() {
+    func test_deleteDraftReply_whenFailure() {
         let error = TestError()
         
         let expectation = expectation(description: "deleteDraft completion called")
-        controller.deleteDraftMessage { receivedError in
+        controller.deleteDraftReply { receivedError in
             XCTAssertEqual(error, receivedError as? TestError)
             expectation.fulfill()
         }
