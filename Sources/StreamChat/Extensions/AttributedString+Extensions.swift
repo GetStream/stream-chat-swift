@@ -6,7 +6,29 @@ import Foundation
 
 @available(iOS 15, *)
 extension AttributedString {
-    /// Creates an attributed string from a Markdown-formatted string using the provided attributes.
+    /// Creates an attributed string from a Markdown-formatted string using the provided style attributes.
+    ///
+    /// Apple's markdown initialiser parses markdown and adds ``NSPresentationIntent`` and ``NSInlinePresentationIntent``
+    /// attributes and does not do any newline handling. All the styling related attributes (font, foregroundColor etc)
+    /// and newline handling, needs to be implemented separately.
+    /// UIKit and SwiftUI support different ``AttributedString`` attributes (see ``AttributeScopes.SwiftUIAttributes``,
+    /// ``AttributeScopes.UIKitAttributes``, and ``AttributeScopes.FoundationAttributes``). The latter is shared by both.
+    /// Therefore, we need additional parsing for presentation intent attributes and add respective style related attributes.
+    ///
+    /// Here is an example of a nested list which shows why we need to do such handling below (note how parent
+    /// lists also show up).
+    /// ```
+    /// List item 1 {
+    ///     NSPresentationIntent = [paragraph (id 3), listItem 1 (id 2), unorderedList (id 1)]
+    /// }
+    /// Nested item which is very very long and keeps going until it is wrapped {
+    ///    NSPresentationIntent = [paragraph (id 6), listItem 1 (id 5), unorderedList (id 4), listItem 1 (id 2), unorderedList (id 1)]
+    /// }
+    /// Another nested item which is very very long and keeps going until it is wrapped {
+    ///     NSPresentationIntent = [paragraph (id 9), listItem 1 (id 8), unorderedList (id 7), listItem 1 (id 5), unorderedList (id 4), listItem 1 (id 2), unorderedList (id 1)]
+    /// }
+    /// ```
+    ///
     /// - Parameters:
     ///   - markdown: The string that contains the Markdown formatting.
     ///   - attributes: The attributes to use for the whole string.
@@ -31,7 +53,6 @@ extension AttributedString {
         
         // Style block based intents
         var previousBlockStyling: BlockStyling?
-        
         for (presentationIntent, range) in attributedString.runs[\.presentationIntent].reversed() {
             guard let presentationIntent else { continue }
             var blockStyling = BlockStyling(range: range)
