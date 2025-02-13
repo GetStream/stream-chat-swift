@@ -747,6 +747,7 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
     ///   - quotedMessageId: An id of the message new message quotes. (inline reply)
     ///   - skipPush: If true, skips sending push notification to channel members.
     ///   - skipEnrichUrl: If true, the url preview won't be attached to the message.
+    ///   - restrictedVisibility: The list of user ids that should be able to see the message.
     ///   - extraData: Additional extra data of the message object.
     ///   - completion: Called when saving the message to the local DB finishes.
     ///
@@ -760,6 +761,7 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
         quotedMessageId: MessageId? = nil,
         skipPush: Bool = false,
         skipEnrichUrl: Bool = false,
+        restrictedVisibility: [UserId] = [],
         extraData: [String: RawJSON] = [:],
         completion: ((Result<MessageId, Error>) -> Void)? = nil
     ) {
@@ -782,6 +784,7 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
             quotedMessageId: quotedMessageId,
             skipPush: skipPush,
             skipEnrichUrl: skipEnrichUrl,
+            restrictedVisibility: restrictedVisibility,
             extraData: transformableInfo.extraData,
             poll: nil,
             completion: completion
@@ -1432,6 +1435,7 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
         quotedMessageId: MessageId? = nil,
         skipPush: Bool = false,
         skipEnrichUrl: Bool = false,
+        restrictedVisibility: [UserId] = [],
         extraData: [String: RawJSON] = [:],
         poll: PollPayload?,
         completion: ((Result<MessageId, Error>) -> Void)? = nil
@@ -1461,6 +1465,7 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
             quotedMessageId: quotedMessageId,
             skipPush: skipPush,
             skipEnrichUrl: skipEnrichUrl,
+            restrictedVisibility: restrictedVisibility,
             poll: poll,
             extraData: extraData
         ) { result in

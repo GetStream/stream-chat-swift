@@ -65,6 +65,7 @@ class ChatChannelController_Mock: ChatChannelController {
         quotedMessageId: MessageId? = nil,
         skipPush: Bool = false,
         skipEnrichUrl: Bool = false,
+        restrictedVisibility: [UserId] = [],
         extraData: [String : RawJSON] = [:],
         completion: ((Result<MessageId, Error>) -> Void)? = nil
     ) {
