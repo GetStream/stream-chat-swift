@@ -138,6 +138,46 @@ final class ChatThreadListItemView_Tests: XCTestCase {
         AssertSnapshot(view, variants: [.defaultLight])
     }
 
+    func test_defaultAppearance_whenDraftMessage() {
+        let currentUser = mockVader
+        let thread = mockThread
+            .with(
+                parentMessage: .mock(draftReply: .init(.mock(text: "Test"))),
+                latestReplies: [
+                    .mock(text: "", author: mockYoda, attachments: [.dummy(type: .audio)])
+                ]
+            )
+
+        let view = threadItemView(
+            content: .init(
+                thread: thread,
+                currentUserId: currentUser.id
+            )
+        )
+
+        AssertSnapshot(view, variants: [.defaultLight])
+    }
+
+    func test_defaultAppearance_whenDraftMessage_withAttachment() {
+        let currentUser = mockVader
+        let thread = mockThread
+            .with(
+                parentMessage: .mock(draftReply: .init(.mock(text: "", attachments: [.dummy(type: .image)]))),
+                latestReplies: [
+                    .mock(text: "", author: mockYoda, attachments: [.dummy(type: .audio)])
+                ]
+            )
+
+        let view = threadItemView(
+            content: .init(
+                thread: thread,
+                currentUserId: currentUser.id
+            )
+        )
+
+        AssertSnapshot(view, variants: [.defaultLight], record: true)
+    }
+
     private func threadItemView(
         content: ChatThreadListItemView.Content?,
         components: Components = .mock,
