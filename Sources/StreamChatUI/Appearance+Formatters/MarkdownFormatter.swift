@@ -108,22 +108,22 @@ open class DefaultMarkdownFormatter: MarkdownFormatter {
             let foregroundColor: UIColor?
             switch level {
             case 1:
-                font = UIFont.font(forMarkdownFont: styles.h1Font, textStyle: .title1, weight: .bold)
+                font = UIFont.font(forMarkdownFont: styles.h1Font, textStyle: .title1)
                 foregroundColor = styles.h1Font.color
             case 2:
-                font = UIFont.font(forMarkdownFont: styles.h2Font, textStyle: .title2, weight: .bold)
+                font = UIFont.font(forMarkdownFont: styles.h2Font, textStyle: .title2)
                 foregroundColor = styles.h2Font.color
             case 3:
-                font = UIFont.font(forMarkdownFont: styles.h3Font, textStyle: .title3, weight: .bold)
+                font = UIFont.font(forMarkdownFont: styles.h3Font, textStyle: .title3)
                 foregroundColor = styles.h3Font.color
             case 4:
-                font = UIFont.font(forMarkdownFont: styles.h4Font, textStyle: .headline, weight: .semibold)
+                font = UIFont.font(forMarkdownFont: styles.h4Font, textStyle: .headline)
                 foregroundColor = styles.h4Font.color
             case 5:
-                font = UIFont.font(forMarkdownFont: styles.h5Font, textStyle: .subheadline, weight: .semibold)
+                font = UIFont.font(forMarkdownFont: styles.h5Font, textStyle: .subheadline)
                 foregroundColor = styles.h5Font.color
             default:
-                font = UIFont.font(forMarkdownFont: styles.h6Font, textStyle: .footnote, weight: .semibold)
+                font = UIFont.font(forMarkdownFont: styles.h6Font, textStyle: .footnote)
                 foregroundColor = styles.h6Font.color ?? colorPalette.subtitleText
             }
             if let foregroundColor {
@@ -154,7 +154,6 @@ private extension UIFont {
     static func font(
         forMarkdownFont markdownFont: MarkdownFont,
         textStyle: TextStyle = .body,
-        weight: Weight? = nil,
         monospaced: Bool = false
     ) -> UIFont {
         // Default
@@ -162,10 +161,6 @@ private extension UIFont {
         if monospaced, let updatedDescriptor = descriptor.withDesign(.monospaced) {
             descriptor = updatedDescriptor
         }
-        if let weight {
-            descriptor = descriptor.withWeight(weight)
-        }
-        
         // MarkdownFont
         // When changing family, the descriptor should be reset
         if let fontName = markdownFont.name {
@@ -179,12 +174,6 @@ private extension UIFont {
         }
         let font = UIFont(descriptor: descriptor, size: descriptor.pointSize)
         return UIFontMetrics(forTextStyle: textStyle).scaledFont(for: font)
-    }
-}
-
-private extension UIFontDescriptor {
-    func withWeight(_ weight: UIFont.Weight) -> UIFontDescriptor {
-        addingAttributes(([.traits: [UIFontDescriptor.TraitKey.weight: weight]]))
     }
 }
 
