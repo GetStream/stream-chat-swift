@@ -1,0 +1,85 @@
+{
+  "draft": {
+    "channel": {
+      "cid": "messaging:!members-vhPyEGDAjFA4JyC7fxDg3LsMFLGqKhXOKqZM-Y681_E",
+      "config": {
+        "automod": "disabled",
+        "automod_behavior": "flag",
+        "commands": [
+          {
+            "args": "[text]",
+            "description": "Post a random gif to the channel",
+            "name": "giphy",
+            "set": "fun_set"
+          }
+        ],
+        "connect_events": true,
+        "created_at": "2025-02-06T09:58:57.737862823Z",
+        "custom_events": true,
+        "mark_messages_pending": false,
+        "max_message_length": 5000,
+        "message_retention": "infinite",
+        "mutes": true,
+        "name": "messaging",
+        "polls": false,
+        "push_notifications": true,
+        "quotes": true,
+        "reactions": true,
+        "read_events": true,
+        "reminders": false,
+        "replies": true,
+        "search": true,
+        "skip_last_msg_update_for_system_msgs": false,
+        "typing_events": true,
+        "updated_at": "2025-02-06T09:58:57.737862946Z",
+        "uploads": true,
+        "url_enrichment": true
+      },
+      "created_at": "2024-07-10T11:47:43.591964Z",
+      "created_by": {
+        "banned": false,
+        "birthland": "Corellia",
+        "blocked_user_ids": [],
+        "created_at": "2024-07-09T10:25:12.255599Z",
+        "id": "han_solo",
+        "image": "https://vignette.wikia.nocookie.net/starwars/images/e/e2/TFAHanSolo.png",
+        "language": "",
+        "last_active": "2025-02-11T12:26:45.282392588Z",
+        "name": "Han Solo",
+        "online": true,
+        "role": "user",
+        "teams": [],
+        "updated_at": "2024-07-09T10:25:12.260463Z"
+      },
+      "disabled": false,
+      "frozen": false,
+      "id": "!members-vhPyEGDAjFA4JyC7fxDg3LsMFLGqKhXOKqZM-Y681_E",
+      "last_message_at": "2025-02-11T12:11:59.677265Z",
+      "member_count": 2,
+      "type": "messaging",
+      "updated_at": "2024-07-10T11:47:43.591964Z"
+    },
+    "channel_cid": "messaging:!members-vhPyEGDAjFA4JyC7fxDg3LsMFLGqKhXOKqZM-Y681_E",
+    "created_at": "2025-02-11T12:27:04.780633395Z",
+    "message": {
+      "id": "eb8ab3c9-5ade-4b4d-b32d-3d7f037682c0",
+      "mentioned_users": [
+        {
+            "id": "leia_organa",
+            "role": "user",
+            "created_at": "2023-09-27T13:21:25.781323Z",
+            "updated_at": "2023-09-27T13:21:25.781323Z",
+            "last_active": "2024-03-26T12:03:39.847771Z",
+            "banned": false,
+            "online": false
+        }
+      ],
+      "show_in_channel": false,
+      "silent": false,
+      "text": "Hi @Leia Organa ahah"
+    },
+    "parent_message": null,
+    "quoted_message": null
+  },
+  "duration": "22.64ms"
+}

@@ -22,6 +22,7 @@ extension ThreadPayload {
         title: String? = nil,
         latestReplies: [MessagePayload] = [],
         read: [ThreadReadPayload] = [],
+        draft: DraftPayload? = nil,
         extraData: [String: RawJSON] = [:]
     ) -> Self {
         .init(
@@ -38,6 +39,7 @@ extension ThreadPayload {
             title: title,
             latestReplies: latestReplies,
             read: read,
+            draft: draft,
             extraData: extraData
         )
     }

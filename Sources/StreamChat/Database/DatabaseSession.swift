@@ -107,6 +107,21 @@ protocol MessageDatabaseSession {
         extraData: [String: RawJSON]
     ) throws -> MessageDTO
 
+    /// Creates a draft message in the database.
+    func createNewDraftMessage(
+        in cid: ChannelId,
+        text: String,
+        command: String?,
+        arguments: String?,
+        parentMessageId: MessageId?,
+        attachments: [AnyAttachmentPayload],
+        mentionedUserIds: [UserId],
+        showReplyInChannel: Bool,
+        isSilent: Bool,
+        quotedMessageId: MessageId?,
+        extraData: [String: RawJSON]
+    ) throws -> MessageDTO
+
     /// Saves the provided messages list payload to the DB. Return's the matching `MessageDTO`s if the save was successful.
     /// Ignores messages that failed to be saved
     ///
@@ -127,6 +142,15 @@ protocol MessageDatabaseSession {
         payload: MessagePayload,
         for cid: ChannelId?,
         syncOwnReactions: Bool,
+        cache: PreWarmedCache?
+    ) throws -> MessageDTO
+
+    /// Saves the provided draft message payload to the DB. Return's the matching `MessageDTO` if the save was successful.
+    /// Throws an error if the save fails.
+    @discardableResult
+    func saveDraftMessage(
+        payload: DraftPayload,
+        for cid: ChannelId,
         cache: PreWarmedCache?
     ) throws -> MessageDTO
 
@@ -320,6 +344,9 @@ protocol ChannelDatabaseSession {
 
     /// Removes a list of channels based on their id
     func removeChannels(cids: Set<ChannelId>)
+
+    /// Delete the draft message.
+    func deleteDraftMessage(in cid: ChannelId, threadId: MessageId?)
 }
 
 protocol ChannelReadDatabaseSession {

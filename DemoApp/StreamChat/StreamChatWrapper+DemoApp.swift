@@ -49,6 +49,7 @@ extension StreamChatWrapper {
         Components.default.isJumpToUnreadEnabled = true
         Components.default.messageSwipeToReplyEnabled = true
         Components.default.isComposerLinkPreviewEnabled = true
+        Components.default.isDraftMessagesEnabled = true
         Components.default.channelListSearchStrategy = .messages
 
         // Customize UI components
@@ -60,6 +61,7 @@ extension StreamChatWrapper {
         Components.default.channelListRouter = DemoChatChannelListRouter.self
         Components.default.channelVC = DemoChatChannelVC.self
         Components.default.threadVC = DemoChatThreadVC.self
+        Components.default.threadListItemView = DemoChatThreadListItemView.self
         Components.default.messageContentView = DemoChatMessageContentView.self
         Components.default.messageActionsVC = DemoChatMessageActionsVC.self
         Components.default.messageLayoutOptionsResolver = DemoChatMessageLayoutOptionsResolver()

@@ -152,6 +152,10 @@ open class ChatChannelVC: _ViewController,
             self?.didFinishSynchronizing(with: error)
         }
 
+        if let draftMessage = channelController.channel?.draftMessage {
+            messageComposerVC.content.draftMessage(draftMessage)
+        }
+
         if channelController.channelQuery.pagination?.parameter == nil {
             // Load initial messages from cache if loading the first page
             messages = Array(channelController.messages)

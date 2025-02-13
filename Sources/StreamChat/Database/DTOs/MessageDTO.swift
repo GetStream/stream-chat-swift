@@ -83,6 +83,14 @@ class MessageDTO: NSManagedObject {
     @NSManaged var searches: Set<MessageSearchQueryDTO>
     @NSManaged var previewOfChannel: ChannelDTO?
 
+    @NSManaged var draftOfChannel: ChannelDTO?
+    @NSManaged var draftOfThread: MessageDTO?
+    @NSManaged var draftReply: MessageDTO?
+
+    var isDraft: Bool {
+        draftOfChannel != nil || draftOfThread != nil
+    }
+
     /// If the message is sent by the current user, this field
     /// contains channel reads of other channel members (excluding the current user),
     /// where `read.lastRead >= self.createdAt`.
@@ -167,6 +175,18 @@ class MessageDTO: NSManagedObject {
             allAttachmentsAreUploadedOrEmptyPredicate()
         ])
 
+        return request
+    }
+
+    /// Returns all the draft messages.
+    static func draftMessagesFetchRequest(query: DraftListQuery) -> NSFetchRequest<MessageDTO> {
+        let request = NSFetchRequest<MessageDTO>(entityName: MessageDTO.entityName)
+        MessageDTO.applyPrefetchingState(to: request)
+        request.sortDescriptors = query.sorting.compactMap { $0.sortDescriptor() }
+        request.predicate = NSCompoundPredicate(orPredicateWithSubpredicates: [
+            NSPredicate(format: "draftOfChannel != nil"),
+            NSPredicate(format: "draftOfThread != nil")
+        ])
         return request
     }
 
@@ -287,13 +307,19 @@ class MessageDTO: NSManagedObject {
             .init(format: "createdAt >= channel.oldestMessageAt")
         ])
 
+        let ignoreDraftMessages = NSCompoundPredicate(andPredicateWithSubpredicates: [
+            .init(format: "draftOfChannel == nil"),
+            .init(format: "draftOfThread == nil")
+        ])
+
         var subpredicates = [
             channelPredicate(with: cid),
             channelMessagePredicate,
             messageTypePredicate,
             nonTruncatedMessagesPredicate(),
             ignoreOlderMessagesPredicate,
-            deletedMessagesPredicate(deletedMessagesVisibility: deletedMessagesVisibility)
+            deletedMessagesPredicate(deletedMessagesVisibility: deletedMessagesVisibility),
+            ignoreDraftMessages
         ]
 
         if filterNewerMessages {
@@ -737,6 +763,78 @@ extension NSManagedObjectContext: MessageDatabaseSession {
         return message
     }
 
+    func createNewDraftMessage(
+        in cid: ChannelId,
+        text: String,
+        command: String?,
+        arguments: String?,
+        parentMessageId: MessageId?,
+        attachments: [AnyAttachmentPayload],
+        mentionedUserIds: [UserId],
+        showReplyInChannel: Bool,
+        isSilent: Bool,
+        quotedMessageId: MessageId?,
+        extraData: [String: RawJSON]
+    ) throws -> MessageDTO {
+        guard let currentUserDTO = currentUser else {
+            throw ClientError.CurrentUserDoesNotExist()
+        }
+
+        guard let channelDTO = ChannelDTO.load(cid: cid, context: self) else {
+            throw ClientError.ChannelDoesNotExist(cid: cid)
+        }
+
+        let createdAt = Date()
+        let message = MessageDTO.loadOrCreate(id: .newUniqueId, context: self, cache: nil)
+        message.locallyCreatedAt = createdAt.bridgeDate
+        message.createdAt = createdAt.bridgeDate
+        message.updatedAt = createdAt.bridgeDate
+        message.cid = cid.rawValue
+        message.text = text
+        message.command = command
+        message.args = arguments
+        message.parentMessageId = parentMessageId
+        message.extraData = try JSONEncoder.default.encode(extraData)
+        message.isSilent = isSilent
+        message.skipPush = false
+        message.skipEnrichUrl = false
+        message.reactionScores = [:]
+        message.reactionCounts = [:]
+        message.reactionGroups = []
+        message.mentionedUserIds = mentionedUserIds
+        message.showReplyInChannel = showReplyInChannel
+        message.quotedMessage = quotedMessageId.flatMap { MessageDTO.load(id: $0, context: self) }
+        message.user = currentUserDTO.user
+        message.channel = channelDTO
+        message.attachments = Set(
+            try attachments.enumerated().map { index, attachment in
+                let id = AttachmentId(cid: cid, messageId: message.id, index: index)
+                return try createNewAttachment(attachment: attachment, id: id)
+            }
+        )
+
+        if parentMessageId != nil {
+            message.type = MessageType.reply.rawValue
+        } else {
+            message.type = MessageType.regular.rawValue
+        }
+
+        if let threadId = parentMessageId {
+            let parentMessageDTO = self.message(id: threadId)
+            parentMessageDTO?.draftReply = parentMessageDTO
+            let threadDTO = thread(parentMessageId: threadId, cache: nil)
+            threadDTO?.parentMessageId = threadId
+        } else {
+            message.channel?.draftMessage = message
+        }
+
+        if quotedMessageId != nil {
+            message.showInsideThread = true
+        }
+
+        return message
+    }
+
     func saveMessage(
         payload: MessagePayload,
         channelDTO: ChannelDTO,
@@ -974,10 +1072,121 @@ extension NSManagedObjectContext: MessageDatabaseSession {
         return try saveMessage(payload: payload, channelDTO: channel, syncOwnReactions: syncOwnReactions, cache: cache)
     }
 
+    @discardableResult
+    func saveDraftMessage(
+        payload: DraftPayload,
+        for cid: ChannelId,
+        cache: PreWarmedCache?
+    ) throws -> MessageDTO {
+        let draftDetailsPayload = payload.message
+        let channelDTO: ChannelDTO?
+        if let channelPayload = payload.channelPayload {
+            channelDTO = try saveChannel(payload: channelPayload, query: nil, cache: cache)
+        } else {
+            channelDTO = ChannelDTO.load(cid: cid, context: self)
+        }
+        guard let channelDTO = channelDTO else {
+            throw ClientError.ChannelDoesNotExist(cid: cid)
+        }
+        guard let user = currentUser?.user else {
+            throw ClientError.CurrentUserDoesNotExist()
+        }
+
+        let dto = MessageDTO.loadOrCreate(id: draftDetailsPayload.id, context: self, cache: cache)
+        dto.cid = cid.rawValue
+        dto.text = draftDetailsPayload.text
+        dto.createdAt = payload.createdAt.bridgeDate
+        dto.updatedAt = payload.createdAt.bridgeDate
+        dto.reactionScores = [:]
+        dto.reactionCounts = [:]
+        dto.type = MessageType.regular.rawValue
+        dto.command = draftDetailsPayload.command
+        dto.args = draftDetailsPayload.args
+        dto.parentMessageId = payload.parentId
+        dto.showReplyInChannel = draftDetailsPayload.showReplyInChannel
+        dto.isSilent = draftDetailsPayload.isSilent
+        dto.user = user
+        dto.channel = channelDTO
+
+        if let threadId = payload.parentId {
+            let threadDTO = thread(parentMessageId: threadId, cache: cache)
+            threadDTO?.parentMessageId = threadId
+        }
+
+        if let parentMessage = payload.parentMessage {
+            dto.parentMessage = try saveMessage(
+                payload: parentMessage,
+                channelDTO: channelDTO,
+                syncOwnReactions: false,
+                cache: cache
+            )
+            dto.parentMessage?.draftReply = dto
+        } else if let parentMessageId = payload.parentId,
+                  let parentMessage = message(id: parentMessageId) {
+            dto.parentMessage = parentMessage
+            parentMessage.draftReply = dto
+        } else {
+            dto.parentMessage = nil
+            channelDTO.draftMessage = dto
+        }
+
+        if let quotedMessage = payload.quotedMessage {
+            dto.quotedMessage = try saveMessage(
+                payload: quotedMessage,
+                channelDTO: channelDTO,
+                syncOwnReactions: false,
+                cache: cache
+            )
+        } else {
+            dto.quotedMessage = nil
+        }
+
+        if let mentionedUsers = draftDetailsPayload.mentionedUsers {
+            dto.mentionedUsers = try Set(mentionedUsers.map { try saveUser(payload: $0) })
+            dto.mentionedUserIds = mentionedUsers.map(\.id)
+        }
+
+        if let attachments = draftDetailsPayload.attachments {
+            dto.attachments = Set(
+                try attachments.enumerated().map { index, attachment in
+                    let id = AttachmentId(cid: cid, messageId: draftDetailsPayload.id, index: index)
+                    return try saveAttachment(payload: attachment, id: id)
+                }
+            )
+        }
+
+        do {
+            dto.extraData = try JSONEncoder.default.encode(draftDetailsPayload.extraData)
+        } catch {
+            log.error(
+                "Failed to decode extra payload for Message with id: <\(dto.id)>, using default value instead. "
+                    + "Error: \(error)"
+            )
+            dto.extraData = Data()
+        }
+
+        return dto
+    }
+
     func saveMessage(payload: MessagePayload, for query: MessageSearchQuery, cache: PreWarmedCache?) throws -> MessageDTO {
         let messageDTO = try saveMessage(payload: payload, for: nil, cache: cache)
         messageDTO.searches.insert(saveQuery(query: query))
         return messageDTO
+    }
+
+    func deleteDraftMessage(in cid: ChannelId, threadId: MessageId?) {
+        if let threadId = threadId, let parentMessage = message(id: threadId) {
+            parentMessage.draftReply.map {
+                delete($0)
+            }
+            // Trigger thread update
+            let thread = thread(parentMessageId: threadId, cache: nil)
+            thread?.parentMessageId = threadId
+        } else if let channel = channel(cid: cid) {
+            channel.draftMessage.map {
+                delete($0)
+            }
+        }
     }
 
     func message(id: MessageId) -> MessageDTO? { .load(id: id, context: self) }
@@ -1322,6 +1531,35 @@ extension MessageDTO {
         )
     }
 
+    func asDraftRequestBody() -> DraftMessageRequestBody {
+        let extraData: [String: RawJSON]
+        do {
+            extraData = try JSONDecoder.stream.decodeRawJSON(from: self.extraData)
+        } catch {
+            log.assertionFailure("Failed decoding saved extra data with error: \(error). This should never happen because the extra data must be a valid JSON to be saved.")
+            extraData = [:]
+        }
+
+        let uploadedAttachments: [MessageAttachmentPayload] = attachments
+            .filter { $0.localState == .uploaded || $0.localState == nil }
+            .sorted { ($0.attachmentID?.index ?? 0) < ($1.attachmentID?.index ?? 0) }
+            .compactMap { $0.asRequestPayload() }
+
+        return .init(
+            id: id,
+            text: text,
+            command: command,
+            args: args,
+            parentId: parentMessageId,
+            showReplyInChannel: showReplyInChannel,
+            isSilent: isSilent,
+            quotedMessageId: quotedMessage?.id,
+            attachments: uploadedAttachments,
+            mentionedUserIds: mentionedUserIds,
+            extraData: extraData
+        )
+    }
+
     /// The message has been successfully sent to the server.
     func markMessageAsSent() {
         locallyCreatedAt = nil
@@ -1445,6 +1683,8 @@ private extension ChatMessage {
 
         let quotedMessage = try? dto.quotedMessage?.relationshipAsModel(depth: depth)
 
+        let draftReply = try? dto.draftReply?.relationshipAsModel(depth: depth)
+
         let readBy = Set(dto.reads.compactMap { try? $0.user.asModel() })
 
         let message = ChatMessage(
@@ -1485,7 +1725,8 @@ private extension ChatMessage {
             moderationDetails: moderationDetails,
             readBy: readBy,
             poll: poll,
-            textUpdatedAt: textUpdatedAt
+            textUpdatedAt: textUpdatedAt,
+            draftReply: draftReply
         )
 
         if let transformer = chatClientConfig?.modelsTransformer {

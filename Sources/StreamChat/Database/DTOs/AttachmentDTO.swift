@@ -110,7 +110,11 @@ class AttachmentDTO: NSManagedObject {
     static func pendingUploadFetchRequest() -> NSFetchRequest<AttachmentDTO> {
         let request = NSFetchRequest<AttachmentDTO>(entityName: AttachmentDTO.entityName)
         request.sortDescriptors = [NSSortDescriptor(keyPath: \AttachmentDTO.id, ascending: true)]
-        request.predicate = NSPredicate(format: "localStateRaw == %@", LocalAttachmentState.pendingUpload.rawValue)
+        request.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [
+            NSPredicate(format: "localStateRaw == %@", LocalAttachmentState.pendingUpload.rawValue),
+            NSPredicate(format: "message.draftOfChannel == nil"),
+            NSPredicate(format: "message.draftOfThread == nil")
+        ])
         return request
     }
     
