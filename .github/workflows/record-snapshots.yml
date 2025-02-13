@@ -2,12 +2,6 @@ name: Record Snapshots
 
 on:
   workflow_dispatch:
-    inputs:
-      remove_and_record_snapshots:
-        description: 'Reset all the snapshots on CI?'
-        type: boolean
-        required: false
-        default: false
 
 jobs:
   record:
@@ -15,7 +9,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4.1.1
-    - run: gh workflow run smoke-checks.yml --ref "${GITHUB_REF#refs/heads/}" -f record_snapshots=true -f remove_and_record_snapshots=${{ github.event.inputs.remove_and_record_snapshots }}
+    - run: gh workflow run smoke-checks.yml --ref "${GITHUB_REF#refs/heads/}" -f record_snapshots=true
       timeout-minutes: 5
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
