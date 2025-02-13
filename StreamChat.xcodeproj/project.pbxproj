@@ -1453,6 +1453,8 @@
 		AD3D0CC226A88E5100A6D813 /* MessengerChatChannelHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD3D0CC126A88E5100A6D813 /* MessengerChatChannelHeaderView.swift */; };
 		AD3D0CC426A89E6300A6D813 /* iMessageChatChannelHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD3D0CC326A89E6300A6D813 /* iMessageChatChannelHeaderView.swift */; };
 		AD3EE5442832921400ACEFD9 /* VirtualTime.swift in Sources */ = {isa = PBXBuildFile; fileRef = A3D15D8527E9D4B5006B34D7 /* VirtualTime.swift */; };
+		AD4118832D5E1368000EF88E /* UILabel+highlightText.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD4118822D5E135D000EF88E /* UILabel+highlightText.swift */; };
+		AD4118842D5E1368000EF88E /* UILabel+highlightText.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD4118822D5E135D000EF88E /* UILabel+highlightText.swift */; };
 		AD43DE6D2A712B0F0040C0FD /* ChatChannelListSearchVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD43DE6C2A712B0F0040C0FD /* ChatChannelListSearchVC.swift */; };
 		AD43DE6E2A712B0F0040C0FD /* ChatChannelListSearchVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD43DE6C2A712B0F0040C0FD /* ChatChannelListSearchVC.swift */; };
 		AD43F90926153BAD00F2D4BB /* QuotedChatMessageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD43F90826153BAD00F2D4BB /* QuotedChatMessageView.swift */; };
@@ -4252,6 +4254,7 @@
 		AD3D0CBF26A8727800A6D813 /* SlackChatChannelHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SlackChatChannelHeaderView.swift; sourceTree = "<group>"; };
 		AD3D0CC126A88E5100A6D813 /* MessengerChatChannelHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessengerChatChannelHeaderView.swift; sourceTree = "<group>"; };
 		AD3D0CC326A89E6300A6D813 /* iMessageChatChannelHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = iMessageChatChannelHeaderView.swift; sourceTree = "<group>"; };
+		AD4118822D5E135D000EF88E /* UILabel+highlightText.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UILabel+highlightText.swift"; sourceTree = "<group>"; };
 		AD43DE6C2A712B0F0040C0FD /* ChatChannelListSearchVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatChannelListSearchVC.swift; sourceTree = "<group>"; };
 		AD43F90826153BAD00F2D4BB /* QuotedChatMessageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuotedChatMessageView.swift; sourceTree = "<group>"; };
 		AD447376263ABC5C0030E583 /* ChatCommandSuggestionCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatCommandSuggestionCollectionViewCell.swift; sourceTree = "<group>"; };
@@ -6386,6 +6389,7 @@
 				79F691B12604C10A000AE89B /* SystemEnvironment.swift */,
 				CF7B2A2528BEAA93006BE124 /* TextViewMentionedUsersHandler.swift */,
 				C12297D22AC57A3200C5FF04 /* Throttler.swift */,
+				AD4118822D5E135D000EF88E /* UILabel+highlightText.swift */,
 				AD169DEC2C9B112B00F58FAC /* KeyboardHandler */,
 				AD95FD0F28F9B72200DBDF41 /* Extensions */,
 				ACCA772826C40C7A007AE2ED /* ImageLoading */,
@@ -10677,6 +10681,7 @@
 				C1FC2F8627416E150062530F /* Allocations.swift in Sources */,
 				C1FC2F8C27416E1F0062530F /* UIImage+SwiftyGif.swift in Sources */,
 				AD9632DC2C09E0350073B814 /* ChatThreadListRouter.swift in Sources */,
+				AD4118842D5E1368000EF88E /* UILabel+highlightText.swift in Sources */,
 				40FA4DE52A12A45400DA21D2 /* VoiceRecordingAttachmentComposerPreview.swift in Sources */,
 				ADC4AAB02788C8850004BB35 /* Appearance+Formatters.swift in Sources */,
 				AD6F531927175FDB00D428B4 /* ChatMessageGiphyView+GiphyBadge.swift in Sources */,
@@ -12886,6 +12891,7 @@
 				C121EBC02746A1E900023E4C /* ZoomAnimator.swift in Sources */,
 				40824D362A1271D7003B61FD /* PillButton_Tests.swift in Sources */,
 				ADD328692C06B3AE00BAD0E9 /* ChatThreadListItemView.swift in Sources */,
+				AD4118832D5E1368000EF88E /* UILabel+highlightText.swift in Sources */,
 				40824D1E2A1271B9003B61FD /* PillButton.swift in Sources */,
 				AD78F9FD28EC735700BC0FCE /* SwiftyScanner.swift in Sources */,
 				C121EBC12746A1E900023E4C /* VideoPlaybackControlView.swift in Sources */,
