@@ -4,9 +4,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 # Upcoming
 
 ## StreamChat
+### ✅ Added
+- Add `MarkdownParser.style(markdown:attributes:inlinePresentationIntentAttributes:presentationIntentAttributes:)` for parsing and styling markdown strings [#3590](https://github.com/GetStream/stream-chat-swift/pull/3590)
 ### 🐞 Fixed
 - Update channel's preview message when coming back to online [#3574](https://github.com/GetStream/stream-chat-swift/pull/3574)
+
+### StreamChatUI
 ### 🔄 Changed
+- Use `AttributedString` for parsing and rendering markdown instead of SwiftyMarkdown [#3590](https://github.com/GetStream/stream-chat-swift/pull/3590)
+### 💥 Removed
+- Remove `MarkdownStyles.linkFont` because link attributes are ignored by `UITextView`. Update `ChatMessageContentView.textView.linkTextAttributes` instead. [#3590](https://github.com/GetStream/stream-chat-swift/pull/3590)
 
 # [4.72.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.72.0)
 _February 04, 2025_

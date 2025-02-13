@@ -6,6 +6,8 @@
 import StreamSwiftTestHelpers
 import XCTest
 
+// Note: Snapshot tests are in ChatMessageMarkdown_Tests
+
 final class DefaultMarkdownFormatter_Tests: XCTestCase {
     var sut: DefaultMarkdownFormatter!
 
@@ -252,23 +254,21 @@ final class DefaultMarkdownFormatter_Tests: XCTestCase {
 
     func test_complexMarkdownPattern_doesNotHangForever() {
         let string = "**~*~~~*~*~**~*~* h e a r d ***~*~*~**~*~~~*"
+        let expected = "~~~*~** h e a r d ~~~*~~~~"
         let result = sut.format(string)
-        XCTAssertEqual(result.string, "**~~*~**~~ h e a r d ***~~~**~")
+        XCTAssertEqual(expected, result.string)
     }
     
     func test_thematicBreak_isHandled() {
-        // Note: --- is removed by SwiftyMarkdown although it should be kept
         let string = """
         ---
         hi!
         """
+        let expected = """
+        ⸻
+        hi!
+        """
         let result = sut.format(string)
-        XCTAssertEqual(
-            result.string,
-            """
-            
-            hi!
-            """
-        )
+        XCTAssertEqual(expected, result.string)
     }
 }
