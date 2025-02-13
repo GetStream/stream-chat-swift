@@ -97,6 +97,11 @@ extension AttributedString {
                     break
                 }
             }
+            // Remove presentation intent attribute from the final string because it has been handled
+            attributedString[range].replaceAttributes(
+                AttributeContainer().presentationIntent(presentationIntent),
+                with: AttributeContainer()
+            )
             // Give additional space for just text
             if presentationIntent.components.count == 1, presentationIntent.components.allSatisfy({ $0.kind == .paragraph }) {
                 blockStyling.succeedingNewlineCount += 1
@@ -106,7 +111,7 @@ extension AttributedString {
                 if blockStyling.isOrdered == true {
                     blockStyling.prependedString.append("\(listItemOrdinal).\t")
                 } else {
-                    blockStyling.prependedString.append("•\t")
+                    blockStyling.prependedString.append("・\t")
                 }
                 // Extra space when list's last item
                 if let previousBlockStyling, previousBlockStyling.listId != blockStyling.listId {
@@ -132,7 +137,6 @@ extension AttributedString {
             // Spacing before the block
             if blockStyling.precedingNewlineCount > 0, attributedString.startIndex != range.lowerBound {
                 let newlineString = String(repeating: "\n", count: blockStyling.precedingNewlineCount)
-                let attributes = attributes.merging(blockStyling.mergedAttributes ?? AttributeContainer())
                 let insertedString = AttributedString(newlineString, attributes: attributes)
                 attributedString.insert(insertedString, at: range.lowerBound)
             }

@@ -214,9 +214,9 @@ final class ChatMessageContentView_Tests: XCTestCase {
         )
 
         let messageWithMarkdown = """
-          *italics* or _italics_
-          **bold** or __bold__
-          ~~Linethrough~~Strikethroughs.
+          *italics* or _italics_  
+          **bold** or __bold__  
+          ~~Linethrough~~Strikethroughs.  
           `let property: Double = 10.0`
         """
 

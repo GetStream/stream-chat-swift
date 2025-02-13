@@ -80,7 +80,7 @@ open class DefaultMarkdownFormatter: MarkdownFormatter {
                 .foregroundColor: colorPalette.subtitleText
             ])
         case .codeBlock:
-            var attributes: [NSAttributedString.Key: Any] = [
+            let attributes: [NSAttributedString.Key: Any] = [
                 .backgroundColor: colorPalette.background2,
                 .font: UIFont.font(forMarkdownFont: styles.codeFont, monospaced: true),
                 .foregroundColor: styles.codeFont.color

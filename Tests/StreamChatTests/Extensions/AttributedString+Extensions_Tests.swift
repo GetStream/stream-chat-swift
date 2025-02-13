@@ -41,7 +41,9 @@ final class AttributedStringExtensions_Tests: XCTestCase {
             .header(level: 3),
             .header(level: 4),
             .header(level: 5),
-            .header(level: 6)
+            .header(level: 6),
+            .listItem(ordinal: 1),
+            .listItem(ordinal: 2)
         ])
         var parsedPresentationKinds = Set<PresentationIntent.Kind>()
         _ = try AttributedString(markdown: markdown, attributes: AttributeContainer()) { kind, _ in
