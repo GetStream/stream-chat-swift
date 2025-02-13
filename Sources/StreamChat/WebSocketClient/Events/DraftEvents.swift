@@ -73,12 +73,9 @@ class DraftDeletedEventDTO: EventDTO {
     }
 
     func toDomainEvent(session: any DatabaseSession) -> Event? {
-        guard let threadId = draft.parentId else {
-            return nil
-        }
-        return DraftDeletedEvent(
+        DraftDeletedEvent(
             cid: cid,
-            threadId: threadId,
+            threadId: draft.parentId,
             createdAt: createdAt
         )
     }

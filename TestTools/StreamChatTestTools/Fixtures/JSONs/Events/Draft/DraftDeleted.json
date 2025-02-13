@@ -1,0 +1,20 @@
+{
+    "type": "draft.deleted",
+    "connection_id": "12345",
+    "cid": "messaging:general",
+    "created_at": "2024-02-11T15:42:21.123Z",
+    "draft": {
+        "cid": "messaging:general",
+        "created_at": "2024-02-11T15:42:21.123Z",
+        "parent_id": "thread-123",
+        "message": {
+            "id": "draft-123",
+            "text": "Test draft message",
+            "show_reply_in_channel": false,
+            "silent": false,
+            "mentioned_users": [],
+            "attachments": [],
+            "extra_data": {}
+        }
+    }
+} 
