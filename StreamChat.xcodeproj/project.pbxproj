@@ -1524,6 +1524,7 @@
 		AD545E7F2D5CFC36008FD399 /* DraftMessagesRepository_Mock.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD545E7E2D5CFC36008FD399 /* DraftMessagesRepository_Mock.swift */; };
 		AD545E812D5D0006008FD399 /* MessageController+Drafts_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD545E802D5D0006008FD399 /* MessageController+Drafts_Tests.swift */; };
 		AD545E832D5D0389008FD399 /* CurrentUserController+Drafts_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD545E822D5D0389008FD399 /* CurrentUserController+Drafts_Tests.swift */; };
+		AD545E852D5D7591008FD399 /* DraftListQuery_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD545E842D5D7591008FD399 /* DraftListQuery_Tests.swift */; };
 		AD552E0128F46CE700199A6F /* ImageLoaderOptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD552E0028F46CE700199A6F /* ImageLoaderOptions.swift */; };
 		AD552E0228F46CE700199A6F /* ImageLoaderOptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD552E0028F46CE700199A6F /* ImageLoaderOptions.swift */; };
 		AD57979E2978C4F7006CC435 /* UploadedAttachmentPostProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD57979D2978C4F7006CC435 /* UploadedAttachmentPostProcessor.swift */; };
@@ -4296,6 +4297,7 @@
 		AD545E7E2D5CFC36008FD399 /* DraftMessagesRepository_Mock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DraftMessagesRepository_Mock.swift; sourceTree = "<group>"; };
 		AD545E802D5D0006008FD399 /* MessageController+Drafts_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MessageController+Drafts_Tests.swift"; sourceTree = "<group>"; };
 		AD545E822D5D0389008FD399 /* CurrentUserController+Drafts_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CurrentUserController+Drafts_Tests.swift"; sourceTree = "<group>"; };
+		AD545E842D5D7591008FD399 /* DraftListQuery_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DraftListQuery_Tests.swift; sourceTree = "<group>"; };
 		AD552E0028F46CE700199A6F /* ImageLoaderOptions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageLoaderOptions.swift; sourceTree = "<group>"; };
 		AD57979D2978C4F7006CC435 /* UploadedAttachmentPostProcessor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UploadedAttachmentPostProcessor.swift; sourceTree = "<group>"; };
 		AD57DE752A77D5A2005408B6 /* ChannelListSearchStrategy_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelListSearchStrategy_Tests.swift; sourceTree = "<group>"; };
@@ -7520,6 +7522,7 @@
 		A364D0B727D12A520029857A /* Query */ = {
 			isa = PBXGroup;
 			children = (
+				AD545E842D5D7591008FD399 /* DraftListQuery_Tests.swift */,
 				A3C7BAD027E4E02700BBF4FA /* ChannelListFilterScope_Tests.swift */,
 				799F611A2530B62C007F218C /* ChannelListQuery_Tests.swift */,
 				AD0CC0142BDBC68E005E2C66 /* ReactionListQuery_Tests.swift */,
@@ -11830,6 +11833,7 @@
 				F69E7F7D24ED7562000F5252 /* CurrentUserController_Tests.swift in Sources */,
 				A30C3F22276B4F8800DA5968 /* UnknownUserEvent_Tests.swift in Sources */,
 				DA84074025260CA3005A0F62 /* UserListController_Tests.swift in Sources */,
+				AD545E852D5D7591008FD399 /* DraftListQuery_Tests.swift in Sources */,
 				C1EE53A727BA53F300B1A6CA /* Endpoint_Tests.swift in Sources */,
 				84A1D2F426AB221E00014712 /* ChannelEventsController_Tests.swift in Sources */,
 				88381E6E258259310047A6A3 /* FileUploadPayload_Tests.swift in Sources */,
