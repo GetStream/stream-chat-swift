@@ -32,11 +32,13 @@ extension AttributedString {
     /// - Parameters:
     ///   - markdown: The string that contains the Markdown formatting.
     ///   - attributes: The attributes to use for the whole string.
+    ///   - inlinePresentationIntentAttributes: The closure for customising attributes for inline presentation intents.
     ///   - presentationIntentAttributes: The closure for customising attributes for presentation intents. Called for quote, code, list item, and headers.
     public init(
         markdown: String,
         attributes: AttributeContainer,
-        presentationIntentAttributes: (PresentationIntent.Kind, PresentationIntent) -> AttributeContainer
+        inlinePresentationIntentAttributes: (InlinePresentationIntent) -> AttributeContainer?,
+        presentationIntentAttributes: (PresentationIntent.Kind, PresentationIntent) -> AttributeContainer?
     ) throws {
         let options = AttributedString.MarkdownParsingOptions(
             allowsExtendedAttributes: true,
@@ -50,6 +52,13 @@ extension AttributedString {
         )
         
         attributedString.mergeAttributes(attributes)
+        
+        // Inline intents are handled by rendering automatically
+        for (inlinePresentationIntent, range) in attributedString.runs[\.inlinePresentationIntent] {
+            guard let inlinePresentationIntent else { continue }
+            guard let attributes = inlinePresentationIntentAttributes(inlinePresentationIntent) else { continue }
+            attributedString[range].mergeAttributes(attributes)
+        }
         
         // Style block based intents
         var previousBlockStyling: BlockStyling?

@@ -182,6 +182,8 @@ final class ChatMessageMarkdown_Tests: XCTestCase {
             """
             This is inline code: `git init`
             
+            ### `Inline` in header
+            
             Git commands:
             ```
             git status
@@ -207,8 +209,11 @@ final class ChatMessageMarkdown_Tests: XCTestCase {
         let view = contentView(
             styles: styles,
             """
-            Custom: font `12`, color `red`  
+            Custom: font `12`, color `red`
+            
             This is inline code: `git init`
+            
+            ### `Inline` in header
             
             Git commands:
             ```
