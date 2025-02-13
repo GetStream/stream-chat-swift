@@ -89,6 +89,7 @@ class DraftMessagesRepository {
             ) { [weak self] result in
                 switch result {
                 case .success(let response):
+                    var draft: ChatMessage?
                     self?.database.write({ session in
                         let draftPayload = response.draft
                         let messageDTO = try session.saveDraftMessage(
@@ -96,10 +97,11 @@ class DraftMessagesRepository {
                             for: cid,
                             cache: nil
                         )
-                        let message = try messageDTO.asModel()
-                        completion?(.success(message))
+                        draft = try messageDTO.asModel()
                     }, completion: { error in
-                        if let error {
+                        if let draft {
+                            completion?(.success(draft))
+                        } else if let error {
                             completion?(.failure(error))
                         }
                     })
@@ -120,16 +122,18 @@ class DraftMessagesRepository {
         ) { [weak self] result in
             switch result {
             case .success(let response):
+                var draft: ChatMessage?
                 self?.database.write({ session in
                     let messageDTO = try session.saveDraftMessage(
                         payload: response.draft,
                         for: cid,
                         cache: nil
                     )
-                    let message = try messageDTO.asModel()
-                    completion?(.success(message))
+                    draft = try messageDTO.asModel()
                 }) { error in
-                    if let error {
+                    if let draft {
+                        completion?(.success(draft))
+                    } else if let error {
                         completion?(.failure(error))
                     }
                 }
