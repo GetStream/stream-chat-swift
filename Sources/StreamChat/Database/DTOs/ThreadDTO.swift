@@ -261,6 +261,13 @@ extension NSManagedObjectContext {
 
         if let draft = payload.draft {
             parentMessageDTO.draftReply = try saveDraftMessage(payload: draft, for: payload.channel.cid, cache: cache)
+        } else {
+            /// If the payload does not contain a draft reply, we should
+            /// delete the existing draft reply if it exists.
+            if let draft = parentMessageDTO.draftReply {
+                deleteDraftMessage(in: payload.channel.cid, threadId: draft.parentMessageId)
+                parentMessageDTO.draftReply = nil
+            }
         }
 
         threadDTO.fill(
