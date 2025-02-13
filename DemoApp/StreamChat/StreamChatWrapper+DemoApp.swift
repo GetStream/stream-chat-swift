@@ -61,7 +61,6 @@ extension StreamChatWrapper {
         Components.default.channelListRouter = DemoChatChannelListRouter.self
         Components.default.channelVC = DemoChatChannelVC.self
         Components.default.threadVC = DemoChatThreadVC.self
-        Components.default.threadListItemView = DemoChatThreadListItemView.self
         Components.default.messageContentView = DemoChatMessageContentView.self
         Components.default.messageActionsVC = DemoChatMessageActionsVC.self
         Components.default.messageLayoutOptionsResolver = DemoChatMessageLayoutOptionsResolver()
