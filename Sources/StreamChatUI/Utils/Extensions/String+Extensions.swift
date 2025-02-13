@@ -87,3 +87,19 @@ extension String {
         self[self.index(startIndex, offsetBy: index)]
     }
 }
+
+extension StringProtocol {
+    func ranges<S: StringProtocol>(of string: S, options: String.CompareOptions = []) -> [Range<String.Index>] {
+        var result: [Range<Index>] = []
+        var startIndex = self.startIndex
+        while startIndex < endIndex, let range = self[startIndex...].range(of: string, options: options) {
+            result.append(range)
+            if range.lowerBound < range.upperBound {
+                startIndex = range.upperBound
+            } else {
+                startIndex = index(range.lowerBound, offsetBy: 1, limitedBy: endIndex) ?? endIndex
+            }
+        }
+        return result
+    }
+}
