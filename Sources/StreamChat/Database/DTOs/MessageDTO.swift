@@ -92,6 +92,8 @@ class MessageDTO: NSManagedObject {
     ///
     /// For messages authored NOT by the current user this field is always empty.
     @NSManaged var reads: Set<ChannelReadDTO>
+    
+    @NSManaged var restrictedVisibility: Set<String>?
 
     @NSManaged var pinned: Bool
     @NSManaged var pinnedBy: UserDTO?
@@ -647,6 +649,7 @@ extension NSManagedObjectContext: MessageDatabaseSession {
         skipPush: Bool,
         skipEnrichUrl: Bool,
         poll: PollPayload?,
+        restrictedVisibility: [UserId],
         extraData: [String: RawJSON]
     ) throws -> MessageDTO {
         guard let currentUserDTO = currentUser else {
@@ -686,6 +689,7 @@ extension NSManagedObjectContext: MessageDatabaseSession {
         message.reactionScores = [:]
         message.reactionCounts = [:]
         message.reactionGroups = []
+        message.restrictedVisibility = Set(restrictedVisibility)
 
         // Message type
         if parentMessageId != nil {
@@ -1301,6 +1305,11 @@ extension MessageDTO {
 
         // At the moment, we only provide the type for system messages when creating a message.
         let systemType = type == MessageType.system.rawValue ? type : nil
+        
+        var restrictedVisibilityArray: [UserId]?
+        if let restrictedVisibility {
+            restrictedVisibilityArray = Array(restrictedVisibility)
+        }
 
         return .init(
             id: id,
@@ -1318,6 +1327,7 @@ extension MessageDTO {
             pinned: pinned,
             pinExpires: pinExpires?.bridgeDate,
             pollId: poll?.id,
+            restrictedVisibility: restrictedVisibilityArray,
             extraData: extraData
         )
     }

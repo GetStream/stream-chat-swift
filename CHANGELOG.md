@@ -4,6 +4,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 # Upcoming
 
 ## StreamChat
+### ✅ Added
+- Add sending messages to only specific members [#3595](https://github.com/GetStream/stream-chat-swift/pull/3595)
 ### 🐞 Fixed
 - Update channel's preview message when coming back to online [#3574](https://github.com/GetStream/stream-chat-swift/pull/3574)
 ### 🔄 Changed

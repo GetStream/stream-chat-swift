@@ -1201,6 +1201,7 @@ final class MessageDTO_Tests: XCTestCase {
                 skipPush: false,
                 skipEnrichUrl: false,
                 poll: nil,
+                restrictedVisibility: [],
                 extraData: messageExtraData
             )
 
@@ -1290,6 +1291,7 @@ final class MessageDTO_Tests: XCTestCase {
                 skipPush: false,
                 skipEnrichUrl: false,
                 poll: nil,
+                restrictedVisibility: [],
                 extraData: [:]
             )
         }
@@ -1394,6 +1396,7 @@ final class MessageDTO_Tests: XCTestCase {
                     skipPush: false,
                     skipEnrichUrl: false,
                     poll: nil,
+                    restrictedVisibility: [],
                     extraData: [:]
                 )
                 message1Id = message1DTO.id
@@ -1418,6 +1421,7 @@ final class MessageDTO_Tests: XCTestCase {
                     skipPush: false,
                     skipEnrichUrl: false,
                     poll: nil,
+                    restrictedVisibility: [],
                     extraData: [:]
                 )
                 // Reset the `locallyCreateAt` value of the second message to simulate the message was sent
@@ -1561,6 +1565,7 @@ final class MessageDTO_Tests: XCTestCase {
                 skipPush: true,
                 skipEnrichUrl: true,
                 poll: nil,
+                restrictedVisibility: [],
                 extraData: [:]
             )
             newMessageId = messageDTO.id
@@ -1632,6 +1637,7 @@ final class MessageDTO_Tests: XCTestCase {
                 skipPush: true,
                 skipEnrichUrl: true,
                 poll: nil,
+                restrictedVisibility: [],
                 extraData: [:]
             )
             newMessageId = messageDTO.id
@@ -1682,6 +1688,7 @@ final class MessageDTO_Tests: XCTestCase {
                 skipPush: false,
                 skipEnrichUrl: false,
                 poll: nil,
+                restrictedVisibility: [],
                 extraData: [:]
             )
             messageId = messageDTO.id
@@ -1729,6 +1736,7 @@ final class MessageDTO_Tests: XCTestCase {
                 skipPush: false,
                 skipEnrichUrl: false,
                 poll: nil,
+                restrictedVisibility: [],
                 extraData: [:]
             )
             threadReplyId = replyShownInChannelDTO.id
@@ -1789,6 +1797,7 @@ final class MessageDTO_Tests: XCTestCase {
                 skipPush: false,
                 skipEnrichUrl: false,
                 poll: nil,
+                restrictedVisibility: [],
                 extraData: [:]
             )
         }
@@ -1818,6 +1827,7 @@ final class MessageDTO_Tests: XCTestCase {
                     skipPush: false,
                     skipEnrichUrl: false,
                     poll: nil,
+                    restrictedVisibility: [],
                     extraData: [:]
                 )
             }, completion: completion)
@@ -1861,6 +1871,7 @@ final class MessageDTO_Tests: XCTestCase {
                     skipPush: false,
                     skipEnrichUrl: false,
                     poll: nil,
+                    restrictedVisibility: [],
                     extraData: [:]
                 )
             }, completion: completion)
@@ -1950,6 +1961,7 @@ final class MessageDTO_Tests: XCTestCase {
                 skipPush: false,
                 skipEnrichUrl: false,
                 poll: nil,
+                restrictedVisibility: [],
                 extraData: [:]
             )
             // Get reply messageId
