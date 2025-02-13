@@ -45,7 +45,7 @@ open class DefaultMarkdownFormatter: MarkdownFormatter {
     open func format(_ string: String) -> NSAttributedString {
         if #available(iOS 15, *) {
             do {
-                let attributedString = try AttributedString(
+                let attributedString = try MarkdownParser.style(
                     markdown: string,
                     attributes: AttributeContainer(defaultAttributes),
                     inlinePresentationIntentAttributes: inlinePresentationIntentAttributes(for:),

@@ -5,7 +5,8 @@
 import Foundation
 
 @available(iOS 15, *)
-extension AttributedString {
+/// A parser for markdown which generates a styled attributed string.
+public enum MarkdownParser {
     /// Creates an attributed string from a Markdown-formatted string using the provided style attributes.
     ///
     /// Apple's markdown initialiser parses markdown and adds ``NSPresentationIntent`` and ``NSInlinePresentationIntent``
@@ -34,12 +35,12 @@ extension AttributedString {
     ///   - attributes: The attributes to use for the whole string.
     ///   - inlinePresentationIntentAttributes: The closure for customising attributes for inline presentation intents.
     ///   - presentationIntentAttributes: The closure for customising attributes for presentation intents. Called for quote, code, list item, and headers.
-    public init(
+    public static func style(
         markdown: String,
         attributes: AttributeContainer,
         inlinePresentationIntentAttributes: (InlinePresentationIntent) -> AttributeContainer?,
         presentationIntentAttributes: (PresentationIntent.Kind, PresentationIntent) -> AttributeContainer?
-    ) throws {
+    ) throws -> AttributedString {
         let options = AttributedString.MarkdownParsingOptions(
             allowsExtendedAttributes: true,
             interpretedSyntax: .full,
@@ -153,7 +154,7 @@ extension AttributedString {
             previousBlockStyling = blockStyling
         }
                 
-        self = attributedString
+        return attributedString
     }
 }
 

@@ -8,16 +8,16 @@ import XCTest
 // Note: Snapshot tests are in ChatMessageMarkdown_Tests
 
 @available(iOS 15, *)
-final class AttributedStringExtensions_Tests: XCTestCase {
+final class MarkdownParser_Tests: XCTestCase {
     func test_markdown_detectPresentationIntents() throws {
         let markdown = """
         # H1  
         - Unordered 1
         - Unordered 2
-            - Unordered nested
+            - Unordered _nested_
         
         ## H2  
-        1. Ordered 1
+        1. Ordered **1**
         2. Ordered 2
             1. Ordered nested
         
@@ -33,7 +33,7 @@ final class AttributedStringExtensions_Tests: XCTestCase {
         ##### H5
         ###### H6
         """
-        let expected = Set<PresentationIntent.Kind>([
+        let expectedPresentationKinds = Set<PresentationIntent.Kind>([
             .blockQuote,
             .codeBlock(languageHint: "swift"),
             .header(level: 1),
@@ -45,11 +45,24 @@ final class AttributedStringExtensions_Tests: XCTestCase {
             .listItem(ordinal: 1),
             .listItem(ordinal: 2)
         ])
+        var expectedInlinePresentationIntents = Set<InlinePresentationIntent>([
+            .emphasized, .stronglyEmphasized
+        ])
         var parsedPresentationKinds = Set<PresentationIntent.Kind>()
-        _ = try AttributedString(markdown: markdown, attributes: AttributeContainer()) { kind, _ in
-            parsedPresentationKinds.insert(kind)
-            return AttributeContainer()
-        }
-        XCTAssertEqual(expected, parsedPresentationKinds)
+        var parsedInlinePresentationKinds = Set<InlinePresentationIntent>()
+        _ = try MarkdownParser.style(
+            markdown: markdown,
+            attributes: AttributeContainer(),
+            inlinePresentationIntentAttributes: { intent in
+                parsedInlinePresentationKinds.insert(intent)
+                return nil
+            },
+            presentationIntentAttributes: { kind, _ in
+                parsedPresentationKinds.insert(kind)
+                return nil
+            }
+        )
+        XCTAssertEqual(expectedInlinePresentationIntents, parsedInlinePresentationKinds)
+        XCTAssertEqual(expectedPresentationKinds, parsedPresentationKinds)
     }
 }
