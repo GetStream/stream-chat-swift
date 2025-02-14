@@ -59,7 +59,8 @@ public class Chat_Mock: Chat, Spy {
         silent: Bool = false,
         skipPushNotification: Bool = false,
         skipEnrichURL: Bool = false,
-        messageId: MessageId? = nil
+        messageId: MessageId? = nil,
+        restrictedVisibility: [UserId] = []
     ) async throws -> ChatMessage {
         createNewMessageCallCount += 1
         return ChatMessage.mock()

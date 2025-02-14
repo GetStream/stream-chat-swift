@@ -49,6 +49,7 @@ enum MessagePayloadsCodingKeys: String, CodingKey, CaseIterable {
     case set
     case unset
     case skipEnrichUrl = "skip_enrich_url"
+    case restrictedVisibility = "restricted_visibility"
 }
 
 extension MessagePayload {
@@ -272,6 +273,7 @@ struct MessageRequestBody: Encodable {
     var pinned: Bool
     var pinExpires: Date?
     var pollId: String?
+    var restrictedVisibility: [UserId]?
     let extraData: [String: RawJSON]
 
     init(
@@ -290,6 +292,7 @@ struct MessageRequestBody: Encodable {
         pinned: Bool = false,
         pinExpires: Date? = nil,
         pollId: String? = nil,
+        restrictedVisibility: [UserId]? = nil,
         extraData: [String: RawJSON]
     ) {
         self.id = id
@@ -307,6 +310,7 @@ struct MessageRequestBody: Encodable {
         self.pinned = pinned
         self.pinExpires = pinExpires
         self.pollId = pollId
+        self.restrictedVisibility = restrictedVisibility
         self.extraData = extraData
     }
 
@@ -324,6 +328,7 @@ struct MessageRequestBody: Encodable {
         try container.encode(isSilent, forKey: .isSilent)
         try container.encodeIfPresent(pollId, forKey: .pollId)
         try container.encodeIfPresent(type, forKey: .type)
+        try container.encodeIfPresent(restrictedVisibility, forKey: .restrictedVisibility)
 
         if !attachments.isEmpty {
             try container.encode(attachments, forKey: .attachments)
