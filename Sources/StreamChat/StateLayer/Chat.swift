@@ -501,7 +501,8 @@ public class Chat {
         silent: Bool = false,
         skipPushNotification: Bool = false,
         skipEnrichURL: Bool = false,
-        messageId: MessageId? = nil
+        messageId: MessageId? = nil,
+        restrictedVisibility: [UserId] = []
     ) async throws -> ChatMessage {
         Task { try await stopTyping() } // errors explicitly ignored
         let localMessage = try await channelUpdater.createNewMessage(
@@ -518,6 +519,7 @@ public class Chat {
             quotedMessageId: quotedMessageId,
             skipPush: skipPushNotification,
             skipEnrichUrl: skipEnrichURL,
+            restrictedVisibility: restrictedVisibility,
             extraData: extraData
         )
         // Important to set up the waiter immediately
@@ -536,6 +538,7 @@ public class Chat {
     public func sendSystemMessage(
         with text: String,
         messageId: MessageId? = nil,
+        restrictedVisibility: [UserId] = [],
         extraData: [String: RawJSON] = [:]
     ) async throws -> ChatMessage {
         let localMessage = try await channelUpdater.createNewMessage(
@@ -552,6 +555,7 @@ public class Chat {
             quotedMessageId: nil,
             skipPush: false,
             skipEnrichUrl: false,
+            restrictedVisibility: restrictedVisibility,
             extraData: extraData
         )
         // Important to set up the waiter immediately
