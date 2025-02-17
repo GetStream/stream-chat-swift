@@ -9,19 +9,17 @@ import StreamSwiftTestHelpers
 import XCTest
 
 final class ChatMessageMarkdown_Tests: XCTestCase {
-    let variants: [SnapshotVariant] = SnapshotVariant.all
-    
     func test_text_default() {
         let view = contentView(
             """
             This is **bold** text  
             This text is _italicized_  
             This was ~~mistaken~~ text  
-            This has backlashes for a newline\\
+            This has backslashes for a newline\\
             This is regular text
             """
         )
-        AssertSnapshot(view, variants: variants)
+        AssertSnapshot(view)
     }
     
     func test_text_custom() {
@@ -33,11 +31,11 @@ final class ChatMessageMarkdown_Tests: XCTestCase {
             This is **bold** text  
             This text is _italicized_  
             This was ~~mistaken~~ text  
-            This has backlashes for a newline\\
+            This has backslashes for a newline\\
             This is regular text
             """
         )
-        AssertSnapshot(view, variants: variants)
+        AssertSnapshot(view)
     }
     
     func test_headers_default() {
@@ -51,7 +49,7 @@ final class ChatMessageMarkdown_Tests: XCTestCase {
             ###### A sixth level heading
             """
         )
-        AssertSnapshot(view, variants: variants)
+        AssertSnapshot(view)
     }
     
     func test_headers_custom() {
@@ -78,7 +76,7 @@ final class ChatMessageMarkdown_Tests: XCTestCase {
             ###### A sixth level heading
             """
         )
-        AssertSnapshot(view, variants: variants)
+        AssertSnapshot(view)
     }
     
     func test_unorderedLists_default() {
@@ -97,7 +95,7 @@ final class ChatMessageMarkdown_Tests: XCTestCase {
             + Rabbit
             """
         )
-        AssertSnapshot(view, variants: variants)
+        AssertSnapshot(view)
     }
     
     func test_unorderedLists_nested_default() {
@@ -109,7 +107,7 @@ final class ChatMessageMarkdown_Tests: XCTestCase {
                     - Second nested
             """
         )
-        AssertSnapshot(view, variants: variants)
+        AssertSnapshot(view)
     }
     
     func test_orderedList_nested_wrappedTextItem() {
@@ -121,7 +119,7 @@ final class ChatMessageMarkdown_Tests: XCTestCase {
                     - Second nested
             """
         )
-        AssertSnapshot(view, variants: variants)
+        AssertSnapshot(view)
     }
     
     func test_orderedLists_default() {
@@ -137,7 +135,7 @@ final class ChatMessageMarkdown_Tests: XCTestCase {
             3. Rabbit
             """
         )
-        AssertSnapshot(view, variants: variants)
+        AssertSnapshot(view)
     }
     
     func test_orderedLists_nested_default() {
@@ -150,7 +148,7 @@ final class ChatMessageMarkdown_Tests: XCTestCase {
                     2. Second nested (2)
             """
         )
-        AssertSnapshot(view, variants: variants)
+        AssertSnapshot(view)
     }
     
     func test_mixedLists_nested_default() {
@@ -163,7 +161,7 @@ final class ChatMessageMarkdown_Tests: XCTestCase {
                     2. Second nested (2)
             """
         )
-        AssertSnapshot(view, variants: variants)
+        AssertSnapshot(view)
     }
     
     func test_links_default() {
@@ -174,7 +172,7 @@ final class ChatMessageMarkdown_Tests: XCTestCase {
                 - This [link](https://getstream.io/) is in a list
             """
         )
-        AssertSnapshot(view, variants: variants)
+        AssertSnapshot(view)
     }
     
     func test_code_default() {
@@ -199,7 +197,7 @@ final class ChatMessageMarkdown_Tests: XCTestCase {
             ```
             """
         )
-        AssertSnapshot(view, variants: variants)
+        AssertSnapshot(view)
     }
     
     func test_code_custom() {
@@ -230,7 +228,7 @@ final class ChatMessageMarkdown_Tests: XCTestCase {
             ```
             """
         )
-        AssertSnapshot(view, variants: variants)
+        AssertSnapshot(view)
     }
     
     func test_quote_default() {
@@ -240,7 +238,7 @@ final class ChatMessageMarkdown_Tests: XCTestCase {
             > Text that is a quote
             """
         )
-        AssertSnapshot(view, variants: variants)
+        AssertSnapshot(view)
     }
     
     func test_inlinePresentationIntents_default() {
@@ -249,13 +247,13 @@ final class ChatMessageMarkdown_Tests: XCTestCase {
             **This is bold text with 2 letters for a newline**  
             _This text is italicized_
 
-            ~~This was mistaken text with backlash for a newline~~\
+            ~~This was mistaken text with backlash for a newline~~\\
             **This text is _extremely_ important**
 
             ***All this text is important***
             """
         )
-        AssertSnapshot(view, variants: variants)
+        AssertSnapshot(view)
     }
     
     func test_thematicBreak_default() {
@@ -265,7 +263,7 @@ final class ChatMessageMarkdown_Tests: XCTestCase {
             hi!
             """
         )
-        AssertSnapshot(view, variants: variants)
+        AssertSnapshot(view)
     }
     
     func test_thematicBreak_custom() {
@@ -278,7 +276,7 @@ final class ChatMessageMarkdown_Tests: XCTestCase {
             hi!
             """
         )
-        AssertSnapshot(view, variants: variants)
+        AssertSnapshot(view)
     }
     
     // MARK: -
