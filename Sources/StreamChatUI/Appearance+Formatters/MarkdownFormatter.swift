@@ -90,7 +90,7 @@ open class DefaultMarkdownFormatter: MarkdownFormatter {
     }
     
     @available(iOS 15, *)
-    private func presentationIntentAttributes(for presentationKind: PresentationIntent.Kind, in presentationIntent: PresentationIntent) -> AttributeContainer {
+    private func presentationIntentAttributes(for presentationKind: PresentationIntent.Kind, in presentationIntent: PresentationIntent) -> AttributeContainer? {
         switch presentationKind {
         case .blockQuote:
             return AttributeContainer([
@@ -136,7 +136,7 @@ open class DefaultMarkdownFormatter: MarkdownFormatter {
                 .paragraphStyle: listItemParagraphStyle(forIndentationLevel: presentationIntent.indentationLevel)
             ])
         default:
-            return AttributeContainer()
+            return nil
         }
     }
     
