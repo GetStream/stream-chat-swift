@@ -11,7 +11,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### StreamChatUI
 ### 🔄 Changed
-- Use `AttributedString` for parsing and rendering markdown instead of SwiftyMarkdown [#3590](https://github.com/GetStream/stream-chat-swift/pull/3590)
+- Feature rich markdown rendering with `AttributedString` [#3590](https://github.com/GetStream/stream-chat-swift/pull/3590)
 ### 💥 Removed
 - Remove `MarkdownStyles.linkFont` because link attributes are ignored by `UITextView`. Update `ChatMessageContentView.textView.linkTextAttributes` instead. [#3590](https://github.com/GetStream/stream-chat-swift/pull/3590)
 
