@@ -50,7 +50,7 @@ public extension ChatMessage {
         underlyingContext: NSManagedObjectContext? = nil,
         textUpdatedAt: Date? = nil,
         poll: Poll? = nil,
-        draftReply: ChatMessage? = nil
+        draftReply: DraftMessage? = nil
     ) -> Self {
         .init(
             id: id,

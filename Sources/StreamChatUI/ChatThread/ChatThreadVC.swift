@@ -123,7 +123,7 @@ open class ChatThreadVC: _ViewController,
             messageComposerVC.content.threadMessage = message
         }
 
-        if let draftMessage = messageController.message?.draftReply {
+        if let draftMessage = messageController.message?.draftReply.map(ChatMessage.init) {
             messageComposerVC.content.draftMessage(draftMessage)
         } else if components.isDraftMessagesEnabled {
             messageController.loadDraftReply {

@@ -2,7 +2,7 @@
 // Copyright © 2025 Stream.io Inc. All rights reserved.
 //
 
-import StreamChat
+@testable import StreamChat
 @testable import StreamChatTestTools
 @testable import StreamChatUI
 import StreamSwiftTestHelpers
@@ -842,7 +842,7 @@ final class ChatChannelListItemView_Tests: XCTestCase {
     }
 
     func test_appearance_draftPreview() throws {
-        let message: ChatMessage = .mock(
+        let message: DraftMessage = .mock(
             text: "Cool"
         )
 
@@ -863,7 +863,7 @@ final class ChatChannelListItemView_Tests: XCTestCase {
         )
         let viewWithGiphy = channelItemView(
             content: .init(
-                channel: channel(draftMessage: messageWithGiphy),
+                channel: channel(draftMessage: DraftMessage(messageWithGiphy)),
                 currentUserId: currentUser.id
             )
         )
@@ -885,7 +885,7 @@ final class ChatChannelListItemView_Tests: XCTestCase {
         )
         let viewWithVoiceRecording = channelItemView(
             content: .init(
-                channel: channel(draftMessage: messageWithVoiceRecording),
+                channel: channel(draftMessage: DraftMessage(messageWithVoiceRecording)),
                 currentUserId: currentUser.id
             )
         )
@@ -896,7 +896,7 @@ final class ChatChannelListItemView_Tests: XCTestCase {
         )
         let viewWithAudioRecording = channelItemView(
             content: .init(
-                channel: channel(draftMessage: messageWithAudioRecording),
+                channel: channel(draftMessage: DraftMessage(messageWithAudioRecording)),
                 currentUserId: currentUser.id
             )
         )
@@ -1720,7 +1720,7 @@ final class ChatChannelListItemView_Tests: XCTestCase {
 
     private func channel(
         previewMessage: ChatMessage? = nil,
-        draftMessage: ChatMessage? = nil,
+        draftMessage: DraftMessage? = nil,
         readEventsEnabled: Bool = true,
         memberCount: Int = 0,
         membership: ChatChannelMember? = nil

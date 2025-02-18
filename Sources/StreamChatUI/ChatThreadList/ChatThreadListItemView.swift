@@ -303,7 +303,7 @@ open class ChatThreadListItemView: _View, ThemeProvider {
     open var replyPreviewText: String? {
         // TODO: On v5 the logic in ChatChannelItemView.subtitleText should be extracted to `Appearance.formatters` and shared with the `ChatThreadListItemView`
 
-        if let draftReply = content?.thread.parentMessage.draftReply {
+        if let draftReply = content?.thread.parentMessage.draftReply.map(ChatMessage.init) {
             let previewText = previewText(for: draftReply)
             return "\(draftPrefixText) \(previewText)"
         }

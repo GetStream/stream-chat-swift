@@ -609,7 +609,7 @@ extension ChatChannel {
             pinnedMessages: pinnedMessages,
             muteDetails: muteDetails,
             previewMessage: previewMessage,
-            draftMessage: draftMessage
+            draftMessage: draftMessage.map(DraftMessage.init)
         )
 
         if let transformer = clientConfig.modelsTransformer {

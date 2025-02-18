@@ -92,7 +92,7 @@ public extension ChatChannel {
         pinnedMessages: [ChatMessage] = [],
         muteDetails: MuteDetails? = nil,
         previewMessage: ChatMessage? = nil,
-        draftMessage: ChatMessage? = nil
+        draftMessage: DraftMessage? = nil
     ) -> Self {
         self.init(
             cid: cid,
@@ -151,7 +151,7 @@ public extension ChatChannel {
         pinnedMessages: [ChatMessage] = [],
         muteDetails: MuteDetails? = nil,
         previewMessage: ChatMessage? = nil,
-        draftMessage: ChatMessage? = nil
+        draftMessage: DraftMessage? = nil
     ) -> Self {
         self.init(
             cid: .init(type: .messaging, id: "!members" + .newUniqueId),
@@ -207,7 +207,7 @@ public extension ChatChannel {
         pinnedMessages: [ChatMessage] = [],
         muteDetails: MuteDetails? = nil,
         previewMessage: ChatMessage? = nil,
-        draftMessage: ChatMessage? = nil
+        draftMessage: DraftMessage? = nil
     ) -> Self {
         self.init(
             cid: .init(type: .messaging, id: .newUniqueId),

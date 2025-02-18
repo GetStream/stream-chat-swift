@@ -1726,7 +1726,7 @@ private extension ChatMessage {
             readBy: readBy,
             poll: poll,
             textUpdatedAt: textUpdatedAt,
-            draftReply: draftReply
+            draftReply: draftReply.map(DraftMessage.init)
         )
 
         if let transformer = chatClientConfig?.modelsTransformer {

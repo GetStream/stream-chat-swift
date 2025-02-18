@@ -158,7 +158,7 @@ public struct ChatChannel {
     public let previewMessage: ChatMessage?
 
     /// The draft message in the channel.
-    public let draftMessage: ChatMessage?
+    public let draftMessage: DraftMessage?
 
     // MARK: - Internal
 
@@ -198,7 +198,7 @@ public struct ChatChannel {
         pinnedMessages: [ChatMessage],
         muteDetails: MuteDetails?,
         previewMessage: ChatMessage?,
-        draftMessage: ChatMessage?
+        draftMessage: DraftMessage?
     ) {
         self.cid = cid
         self.name = name
