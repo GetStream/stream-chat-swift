@@ -180,7 +180,8 @@ extension MarkdownParser {
 @available(iOS 15, *)
 private extension AttributedString {
     mutating func insertSafely(_ s: some AttributedStringProtocol, at index: AttributedString.Index) {
-        guard index >= startIndex, index < endIndex else { return }
+        // Inserting at the end index is same as appending
+        guard index >= startIndex, index <= endIndex else { return }
         insert(s, at: index)
     }
 }
