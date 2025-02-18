@@ -5,7 +5,7 @@
 import Foundation
 
 /// Triggered when a draft message is updated or created.
-public struct DraftUpdatedEvent: Event {
+public class DraftUpdatedEvent: Event {
     /// The channel identifier of the draft.
     public let cid: ChannelId
 
@@ -17,6 +17,13 @@ public struct DraftUpdatedEvent: Event {
 
     /// The event timestamp.
     public let createdAt: Date
+
+    init(cid: ChannelId, channel: ChatChannel, draftMessage: ChatMessage, createdAt: Date) {
+        self.cid = cid
+        self.channel = channel
+        self.draftMessage = draftMessage
+        self.createdAt = createdAt
+    }
 }
 
 class DraftUpdatedEventDTO: EventDTO {
@@ -48,7 +55,7 @@ class DraftUpdatedEventDTO: EventDTO {
 }
 
 /// Triggered when a draft message is deleted.
-public struct DraftDeletedEvent: Event {
+public class DraftDeletedEvent: Event {
     /// The channel identifier of the draft.
     public let cid: ChannelId
 
@@ -57,6 +64,12 @@ public struct DraftDeletedEvent: Event {
 
     /// The event timestamp.
     public let createdAt: Date
+
+    init(cid: ChannelId, threadId: MessageId?, createdAt: Date) {
+        self.cid = cid
+        self.threadId = threadId
+        self.createdAt = createdAt
+    }
 }
 
 class DraftDeletedEventDTO: EventDTO {

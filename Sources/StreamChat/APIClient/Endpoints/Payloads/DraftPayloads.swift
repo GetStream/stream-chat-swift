@@ -4,16 +4,16 @@
 
 import Foundation
 
-struct DraftPayloadResponse: Decodable {
+class DraftPayloadResponse: Decodable {
     let draft: DraftPayload
 }
 
-struct DraftListPayloadResponse: Decodable {
+class DraftListPayloadResponse: Decodable {
     let drafts: [DraftPayload]
     let next: String?
 }
 
-struct DraftPayload: Decodable {
+class DraftPayload: Decodable {
     let cid: ChannelId?
     let channelPayload: ChannelDetailPayload?
     let createdAt: Date
@@ -40,7 +40,7 @@ struct DraftPayload: Decodable {
         self.parentMessage = parentMessage
     }
 
-    init(from decoder: Decoder) throws {
+    required init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: MessagePayloadsCodingKeys.self)
         cid = try container.decodeIfPresent(ChannelId.self, forKey: .channelId)
         parentId = try container.decodeIfPresent(String.self, forKey: .parentId)
@@ -52,7 +52,7 @@ struct DraftPayload: Decodable {
     }
 }
 
-struct DraftMessagePayload: Decodable {
+class DraftMessagePayload: Decodable {
     let id: String
     let text: String
     let command: String?
@@ -85,7 +85,7 @@ struct DraftMessagePayload: Decodable {
         self.isSilent = isSilent
     }
 
-    init(from decoder: any Decoder) throws {
+    required init(from decoder: any Decoder) throws {
         let container = try decoder.container(keyedBy: MessagePayloadsCodingKeys.self)
         id = try container.decode(String.self, forKey: .id)
         text = try container.decode(String.self, forKey: .text)
@@ -104,7 +104,7 @@ struct DraftMessagePayload: Decodable {
     }
 }
 
-struct DraftMessageRequestBody: Encodable {
+class DraftMessageRequestBody: Encodable {
     let id: String
     let text: String
     let command: String?
