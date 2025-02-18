@@ -45,13 +45,14 @@ final class MarkdownParser_Tests: XCTestCase {
             .listItem(ordinal: 1),
             .listItem(ordinal: 2)
         ])
-        var expectedInlinePresentationIntents = Set<InlinePresentationIntent>([
+        let expectedInlinePresentationIntents = Set<InlinePresentationIntent>([
             .emphasized, .stronglyEmphasized
         ])
         var parsedPresentationKinds = Set<PresentationIntent.Kind>()
         var parsedInlinePresentationKinds = Set<InlinePresentationIntent>()
         _ = try MarkdownParser.style(
             markdown: markdown,
+            options: .init(layoutDirectionLeftToRight: true),
             attributes: AttributeContainer(),
             inlinePresentationIntentAttributes: { intent in
                 parsedInlinePresentationKinds.insert(intent)
