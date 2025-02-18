@@ -873,7 +873,7 @@ public class ChatMessageController: DataController, DelegateCallable, DataStoreP
         showReplyInChannel: Bool = false,
         command: Command? = nil,
         extraData: [String: RawJSON] = [:],
-        completion: ((Result<ChatMessage, Error>) -> Void)? = nil
+        completion: ((Result<DraftMessage, Error>) -> Void)? = nil
     ) {
         draftsRepository.updateDraft(
             for: cid,
@@ -898,7 +898,7 @@ public class ChatMessageController: DataController, DelegateCallable, DataStoreP
     ///
     /// It is not necessary to call this method if the thread was loaded before.
     public func loadDraftReply(
-        completion: ((Result<ChatMessage?, Error>) -> Void)? = nil
+        completion: ((Result<DraftMessage?, Error>) -> Void)? = nil
     ) {
         draftsRepository.getDraft(
             for: cid,

@@ -370,7 +370,7 @@ public extension CurrentChatUserController {
     ///  It is optional since it can be observed from the delegate events.
     func loadDraftMessages(
         query: DraftListQuery = DraftListQuery(),
-        completion: ((Result<[ChatMessage], Error>) -> Void)? = nil
+        completion: ((Result<[DraftMessage], Error>) -> Void)? = nil
     ) {
         draftListQuery = query
         createDraftMessagesObserver(query: query)
@@ -396,7 +396,7 @@ public extension CurrentChatUserController {
     ///  It is optional since it can be observed from the delegate events.
     func loadMoreDraftMessages(
         limit: Int? = nil,
-        completion: ((Result<[ChatMessage], Error>) -> Void)? = nil
+        completion: ((Result<[DraftMessage], Error>) -> Void)? = nil
     ) {
         guard let nextCursor = draftMessagesNextCursor else {
             completion?(.success([]))

@@ -60,8 +60,8 @@ final class ChannelController_Drafts_Tests: XCTestCase {
     
     func test_updateDraftMessage_whenSuccessful() {
         let text = "Draft message"
-        let message = ChatMessage.mock(text: text)
-        
+        let message = DraftMessage.mock(text: text)
+
         let expectation = expectation(description: "updateDraft completion called")
         controller.updateDraftMessage(
             text: text,
@@ -123,7 +123,7 @@ final class ChannelController_Drafts_Tests: XCTestCase {
     }
     
     func test_loadDraftMessage_whenSuccessful() {
-        let message = ChatMessage.mock()
+        let message = DraftMessage.mock()
         
         let expectation = expectation(description: "loadDraft completion called")
         controller.loadDraftMessage { result in

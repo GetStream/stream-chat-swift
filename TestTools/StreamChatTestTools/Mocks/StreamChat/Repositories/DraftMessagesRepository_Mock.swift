@@ -37,7 +37,7 @@ final class DraftMessagesRepository_Mock: DraftMessagesRepository {
         quotedMessageId: MessageId?,
         extraData: [String: RawJSON]
     )?
-    var updateDraft_completion: ((Result<ChatMessage, Error>) -> Void)?
+    var updateDraft_completion: ((Result<DraftMessage, Error>) -> Void)?
 
     override func updateDraft(
         for cid: ChannelId,
@@ -51,7 +51,7 @@ final class DraftMessagesRepository_Mock: DraftMessagesRepository {
         mentionedUserIds: [UserId],
         quotedMessageId: MessageId?,
         extraData: [String: RawJSON],
-        completion: ((Result<ChatMessage, Error>) -> Void)?
+        completion: ((Result<DraftMessage, Error>) -> Void)?
     ) {
         updateDraft_callCount += 1
         updateDraft_calledWith = (
@@ -74,12 +74,12 @@ final class DraftMessagesRepository_Mock: DraftMessagesRepository {
 
     var getDraft_callCount = 0
     var getDraft_calledWith: (cid: ChannelId, threadId: MessageId?)?
-    var getDraft_completion: ((Result<ChatMessage?, Error>) -> Void)?
+    var getDraft_completion: ((Result<DraftMessage?, Error>) -> Void)?
 
     override func getDraft(
         for cid: ChannelId,
         threadId: MessageId?,
-        completion: ((Result<ChatMessage?, Error>) -> Void)?
+        completion: ((Result<DraftMessage?, Error>) -> Void)?
     ) {
         getDraft_callCount += 1
         getDraft_calledWith = (cid: cid, threadId: threadId)

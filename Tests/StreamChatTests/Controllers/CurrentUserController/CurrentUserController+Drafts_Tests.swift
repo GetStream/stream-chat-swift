@@ -31,7 +31,7 @@ final class CurrentUserController_Drafts_Tests: XCTestCase {
     // MARK: - Load Draft Messages Tests
     
     func test_loadDraftMessages_whenSuccessful() {
-        let messages = [ChatMessage.mock(), ChatMessage.mock()]
+        let messages: [DraftMessage] = [.mock(), .mock()]
         let nextCursor = "next_page"
         
         let expectation = expectation(description: "loadDraftMessages completion called")
@@ -48,8 +48,8 @@ final class CurrentUserController_Drafts_Tests: XCTestCase {
     }
     
     func test_loadDraftMessages_whenNoNextCursor_marksAsLoadedAll() {
-        let messages = [ChatMessage.mock(), ChatMessage.mock()]
-        
+        let messages: [DraftMessage] = [.mock(), .mock()]
+
         let expectation = expectation(description: "loadDraftMessages completion called")
         controller.loadDraftMessages { result in
             XCTAssertEqual(try? result.get(), messages)
@@ -93,13 +93,13 @@ final class CurrentUserController_Drafts_Tests: XCTestCase {
     
     func test_loadMoreDraftMessages_whenSuccessful() {
         // First load initial page
-        let initialMessages = [ChatMessage.mock(), ChatMessage.mock()]
+        let initialMessages: [DraftMessage] = [.mock(), .mock()]
         let nextCursor = "next_page"
         controller.loadDraftMessages { _ in }
         draftsRepository.loadDrafts_completion?(.success(.init(drafts: initialMessages, next: nextCursor)))
         
         // Then load more
-        let moreMessages = [ChatMessage.mock(), ChatMessage.mock()]
+        let moreMessages: [DraftMessage] = [.mock(), .mock()]
         let expectation = expectation(description: "loadMoreDraftMessages completion called")
         controller.loadMoreDraftMessages { result in
             XCTAssertEqual(try? result.get(), moreMessages)
@@ -115,7 +115,7 @@ final class CurrentUserController_Drafts_Tests: XCTestCase {
     
     func test_loadMoreDraftMessages_whenFailure() {
         // First load initial page
-        let initialMessages = [ChatMessage.mock(), ChatMessage.mock()]
+        let initialMessages: [DraftMessage] = [.mock(), .mock()]
         let nextCursor = "next_page"
         controller.loadDraftMessages { _ in }
         draftsRepository.loadDrafts_completion?(.success(.init(drafts: initialMessages, next: nextCursor)))

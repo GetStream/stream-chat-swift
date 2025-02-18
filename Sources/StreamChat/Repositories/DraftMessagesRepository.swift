@@ -5,7 +5,7 @@
 import CoreData
 
 struct DraftListResponse {
-    var drafts: [ChatMessage]
+    var drafts: [DraftMessage]
     var next: String?
 }
 
@@ -25,15 +25,15 @@ class DraftMessagesRepository {
         apiClient.request(endpoint: .drafts(query: query)) { [weak self] result in
             switch result {
             case .success(let response):
-                var drafts: [ChatMessage] = []
+                var drafts: [DraftMessage] = []
                 self?.database.write({ session in
                     drafts = try response.drafts.compactMap {
                         guard let channelId = $0.channelPayload?.cid else {
                             return nil
                         }
-                        return try session
+                        return DraftMessage(try session
                             .saveDraftMessage(payload: $0, for: channelId, cache: nil)
-                            .asModel()
+                            .asModel())
                     }
                 }, completion: { error in
                     if let error {
@@ -60,7 +60,7 @@ class DraftMessagesRepository {
         mentionedUserIds: [UserId],
         quotedMessageId: MessageId?,
         extraData: [String: RawJSON],
-        completion: ((Result<ChatMessage, Error>) -> Void)?
+        completion: ((Result<DraftMessage, Error>) -> Void)?
     ) {
         var draftRequestBody: DraftMessageRequestBody?
         database.write({ (session) in
@@ -100,7 +100,7 @@ class DraftMessagesRepository {
                         draft = try messageDTO.asModel()
                     }, completion: { error in
                         if let draft {
-                            completion?(.success(draft))
+                            completion?(.success(DraftMessage(draft)))
                         } else if let error {
                             completion?(.failure(error))
                         }
@@ -115,7 +115,7 @@ class DraftMessagesRepository {
     func getDraft(
         for cid: ChannelId,
         threadId: MessageId?,
-        completion: ((Result<ChatMessage?, Error>) -> Void)?
+        completion: ((Result<DraftMessage?, Error>) -> Void)?
     ) {
         apiClient.request(
             endpoint: .getDraftMessage(channelId: cid, threadId: threadId)
@@ -132,7 +132,7 @@ class DraftMessagesRepository {
                     draft = try messageDTO.asModel()
                 }) { error in
                     if let draft {
-                        completion?(.success(draft))
+                        completion?(.success(DraftMessage(draft)))
                     } else if let error {
                         completion?(.failure(error))
                     }

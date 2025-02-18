@@ -152,7 +152,7 @@ open class ChatChannelVC: _ViewController,
             self?.didFinishSynchronizing(with: error)
         }
 
-        if let draftMessage = channelController.channel?.draftMessage.map(ChatMessage.init) {
+        if let draftMessage = channelController.channel?.draftMessage {
             messageComposerVC.content.draftMessage(draftMessage)
         }
 

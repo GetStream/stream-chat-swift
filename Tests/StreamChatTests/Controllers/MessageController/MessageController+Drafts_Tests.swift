@@ -40,8 +40,8 @@ final class MessageController_Drafts_Tests: XCTestCase {
     
     func test_updateDraftReply_whenSuccessful() {
         let text = "Draft reply"
-        let message = ChatMessage.mock(text: text)
-        
+        let message = DraftMessage.mock(text: text)
+
         let expectation = expectation(description: "updateDraft completion called")
         controller.updateDraftReply(
             text: text,
@@ -84,7 +84,7 @@ final class MessageController_Drafts_Tests: XCTestCase {
     // MARK: - Load Draft Reply Tests
     
     func test_loadDraftReply_whenSuccessful() {
-        let message = ChatMessage.mock()
+        let message = DraftMessage.mock()
         
         let expectation = expectation(description: "loadDraft completion called")
         controller.loadDraftReply { result in

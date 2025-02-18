@@ -858,7 +858,7 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
         quotedMessageId: MessageId? = nil,
         command: Command? = nil,
         extraData: [String: RawJSON] = [:],
-        completion: ((Result<ChatMessage, Error>) -> Void)? = nil
+        completion: ((Result<DraftMessage, Error>) -> Void)? = nil
     ) {
         guard let cid = cid, isChannelAlreadyCreated else {
             channelModificationFailed { error in
@@ -890,7 +890,7 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
     ///
     /// It is not necessary to call this method if the channel list query was called before.
     public func loadDraftMessage(
-        completion: ((Result<ChatMessage?, Error>) -> Void)? = nil
+        completion: ((Result<DraftMessage?, Error>) -> Void)? = nil
     ) {
         guard let cid = cid, isChannelAlreadyCreated else {
             channelModificationFailed { error in

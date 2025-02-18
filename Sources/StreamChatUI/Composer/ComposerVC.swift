@@ -183,14 +183,14 @@ open class ComposerVC: _ViewController,
         /// Sets the content state to new message from a saved draft.
         ///
         /// - Parameter message: The message which was saved as a draft.
-        public mutating func draftMessage(_ message: ChatMessage) {
+        public mutating func draftMessage(_ message: DraftMessage) {
             self = .init(
                 text: message.text,
                 state: message.quotedMessage != nil ? .quote : .new,
                 editingMessage: nil,
                 quotingMessage: message.quotedMessage,
                 threadMessage: threadMessage,
-                attachments: message.allAttachments.toAnyAttachmentPayload(),
+                attachments: message.attachments.toAnyAttachmentPayload(),
                 mentionedUsers: message.mentionedUsers,
                 command: message.command.map { Command(name: $0, args: message.text) },
                 extraData: message.extraData,
