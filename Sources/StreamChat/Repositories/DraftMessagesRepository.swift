@@ -153,10 +153,11 @@ class DraftMessagesRepository {
         ) { [weak self] result in
             switch result {
             case .success:
-                self?.database.write { session in
+                self?.database.write({ session in
                     session.deleteDraftMessage(in: cid, threadId: threadId)
-                }
-                completion(nil)
+                }, completion: { _ in
+                    completion(nil)
+                })
             case .failure(let error):
                 completion(error)
             }
