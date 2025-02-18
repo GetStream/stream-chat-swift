@@ -122,7 +122,7 @@ public enum MarkdownParser {
                 if blockStyling.isOrdered == true {
                     blockStyling.prependedString.append("\(listItemOrdinal).\t")
                 } else {
-                    blockStyling.prependedString.append("・\t")
+                    blockStyling.prependedString.append("\u{2022}\t")
                 }
                 // Extra space when list's last item
                 if let previousBlockStyling, previousBlockStyling.listId != blockStyling.listId {
