@@ -66,10 +66,11 @@ open class DefaultMarkdownFormatter: MarkdownFormatter {
     // MARK: - Styling Attributes
     
     private var colorPalette: Appearance.ColorPalette { Appearance.default.colorPalette }
+    private var fonts: Appearance.Fonts { Appearance.default.fonts }
     
     private var defaultAttributes: [NSAttributedString.Key: Any] {
         [
-            .font: UIFont.font(forMarkdownFont: styles.bodyFont),
+            .font: UIFont.font(forMarkdownFont: styles.bodyFont, defaultFont: fonts.body),
             .foregroundColor: styles.bodyFont.color ?? Appearance.default.colorPalette.text
         ]
     }
@@ -79,7 +80,7 @@ open class DefaultMarkdownFormatter: MarkdownFormatter {
         switch inlinePresentationIntent {
         case .code:
             let attributes: [NSAttributedString.Key: Any] = [
-                .font: UIFont.font(forMarkdownFont: styles.codeFont, monospaced: true),
+                .font: UIFont.font(forMarkdownFont: styles.codeFont, defaultFont: fonts.body, monospaced: true),
                 .foregroundColor: styles.codeFont.color
             ].compactMapValues { $0 }
             return AttributeContainer(attributes)
@@ -98,7 +99,7 @@ open class DefaultMarkdownFormatter: MarkdownFormatter {
             ])
         case .codeBlock:
             let attributes: [NSAttributedString.Key: Any] = [
-                .font: UIFont.font(forMarkdownFont: styles.codeFont, monospaced: true),
+                .font: UIFont.font(forMarkdownFont: styles.codeFont, defaultFont: fonts.body, monospaced: true),
                 .foregroundColor: styles.codeFont.color
             ].compactMapValues { $0 }
             return AttributeContainer(attributes)
@@ -107,22 +108,22 @@ open class DefaultMarkdownFormatter: MarkdownFormatter {
             let foregroundColor: UIColor?
             switch level {
             case 1:
-                font = UIFont.font(forMarkdownFont: styles.h1Font, textStyle: .title1)
+                font = UIFont.font(forMarkdownFont: styles.h1Font, defaultFont: fonts.title, textStyle: .title1)
                 foregroundColor = styles.h1Font.color
             case 2:
-                font = UIFont.font(forMarkdownFont: styles.h2Font, textStyle: .title2)
+                font = UIFont.font(forMarkdownFont: styles.h2Font, defaultFont: fonts.title2, textStyle: .title2)
                 foregroundColor = styles.h2Font.color
             case 3:
-                font = UIFont.font(forMarkdownFont: styles.h3Font, textStyle: .title3)
+                font = UIFont.font(forMarkdownFont: styles.h3Font, defaultFont: fonts.title3, textStyle: .title3)
                 foregroundColor = styles.h3Font.color
             case 4:
-                font = UIFont.font(forMarkdownFont: styles.h4Font, textStyle: .headline)
+                font = UIFont.font(forMarkdownFont: styles.h4Font, defaultFont: fonts.headline, textStyle: .headline)
                 foregroundColor = styles.h4Font.color
             case 5:
-                font = UIFont.font(forMarkdownFont: styles.h5Font, textStyle: .subheadline)
+                font = UIFont.font(forMarkdownFont: styles.h5Font, defaultFont: fonts.subheadline, textStyle: .subheadline)
                 foregroundColor = styles.h5Font.color
             default:
-                font = UIFont.font(forMarkdownFont: styles.h6Font, textStyle: .footnote)
+                font = UIFont.font(forMarkdownFont: styles.h6Font, defaultFont: fonts.footnote, textStyle: .footnote)
                 foregroundColor = styles.h6Font.color ?? colorPalette.subtitleText
             }
             if let foregroundColor {
@@ -152,11 +153,15 @@ open class DefaultMarkdownFormatter: MarkdownFormatter {
 private extension UIFont {
     static func font(
         forMarkdownFont markdownFont: MarkdownFont,
+        defaultFont: UIFont,
         textStyle: TextStyle = .body,
         monospaced: Bool = false
     ) -> UIFont {
+        if !markdownFont.hasFontChanges && !monospaced {
+            return UIFontMetrics(forTextStyle: textStyle).scaledFont(for: defaultFont)
+        }
         // Default
-        var descriptor = UIFontDescriptor.preferredFontDescriptor(withTextStyle: textStyle)
+        var descriptor = defaultFont.fontDescriptor
         if monospaced, let updatedDescriptor = descriptor.withDesign(.monospaced) {
             descriptor = updatedDescriptor
         }
