@@ -43,7 +43,7 @@ open class DefaultMarkdownFormatter: MarkdownFormatter {
     }
 
     open func format(_ string: String) -> NSAttributedString {
-        if #available(iOS 15, *) {
+        if #available(iOS 15, *), !string.isEmpty {
             do {
                 let attributedString = try MarkdownParser.style(
                     markdown: string,

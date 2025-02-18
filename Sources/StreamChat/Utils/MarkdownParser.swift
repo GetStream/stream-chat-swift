@@ -133,7 +133,7 @@ public enum MarkdownParser {
             if blockStyling.succeedingNewlineCount > 0, let previousBlockStyling {
                 let newlineString = String(repeating: "\n", count: blockStyling.succeedingNewlineCount)
                 let insertedString = AttributedString(newlineString, attributes: attributes)
-                attributedString.insert(insertedString, at: previousBlockStyling.range.lowerBound)
+                attributedString.insertSafely(insertedString, at: previousBlockStyling.range.lowerBound)
             }
             // Additional attributes
             if let attributes = blockStyling.mergedAttributes {
@@ -144,17 +144,17 @@ public enum MarkdownParser {
                 let attributes = attributes.merging(blockStyling.mergedAttributes ?? AttributeContainer())
                 if options.layoutDirectionLeftToRight {
                     let insertedString = AttributedString(blockStyling.prependedString, attributes: attributes)
-                    attributedString.insert(insertedString, at: range.lowerBound)
+                    attributedString.insertSafely(insertedString, at: range.lowerBound)
                 } else {
                     let insertedString = AttributedString(blockStyling.prependedString.reversed(), attributes: attributes)
-                    attributedString.insert(insertedString, at: range.upperBound)
+                    attributedString.insertSafely(insertedString, at: range.upperBound)
                 }
             }
             // Spacing before the block
             if blockStyling.precedingNewlineCount > 0, attributedString.startIndex != range.lowerBound {
                 let newlineString = String(repeating: "\n", count: blockStyling.precedingNewlineCount)
                 let insertedString = AttributedString(newlineString, attributes: attributes)
-                attributedString.insert(insertedString, at: range.lowerBound)
+                attributedString.insertSafely(insertedString, at: range.lowerBound)
             }
             
             previousBlockStyling = blockStyling
@@ -174,6 +174,14 @@ extension MarkdownParser {
         
         /// Affects insertion index for additional characters like bullets and numbers for lists.
         public var layoutDirectionLeftToRight = true
+    }
+}
+
+@available(iOS 15, *)
+private extension AttributedString {
+    mutating func insertSafely(_ s: some AttributedStringProtocol, at index: AttributedString.Index) {
+        guard index >= startIndex, index < endIndex else { return }
+        insert(s, at: index)
     }
 }
 
