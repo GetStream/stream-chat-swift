@@ -142,7 +142,7 @@ final class ChatThreadListItemView_Tests: XCTestCase {
         let currentUser = mockVader
         let thread = mockThread
             .with(
-                parentMessage: .mock(draftReply: .init(.mock(text: "Test"))),
+                parentMessage: .mock(text: "Parent", draftReply: .init(.mock(text: "Test"))),
                 latestReplies: [
                     .mock(text: "", author: mockYoda, attachments: [.dummy(type: .audio)])
                 ]
@@ -162,7 +162,7 @@ final class ChatThreadListItemView_Tests: XCTestCase {
         let currentUser = mockVader
         let thread = mockThread
             .with(
-                parentMessage: .mock(draftReply: .init(.mock(text: "", attachments: [.dummy(type: .image)]))),
+                parentMessage: .mock(text: "Parent", draftReply: .init(.mock(text: "", attachments: [.dummy(type: .image)]))),
                 latestReplies: [
                     .mock(text: "", author: mockYoda, attachments: [.dummy(type: .audio)])
                 ]
@@ -175,7 +175,7 @@ final class ChatThreadListItemView_Tests: XCTestCase {
             )
         )
 
-        AssertSnapshot(view, variants: [.defaultLight], record: true)
+        AssertSnapshot(view, variants: [.defaultLight])
     }
 
     private func threadItemView(
