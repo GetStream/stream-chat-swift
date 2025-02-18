@@ -47,6 +47,7 @@ open class DefaultMarkdownFormatter: MarkdownFormatter {
             do {
                 let attributedString = try MarkdownParser.style(
                     markdown: string,
+                    options: .init(layoutDirectionLeftToRight: UITraitCollection.current.layoutDirection == .leftToRight),
                     attributes: AttributeContainer(defaultAttributes),
                     inlinePresentationIntentAttributes: inlinePresentationIntentAttributes(for:),
                     presentationIntentAttributes: presentationIntentAttributes(for:in:)
@@ -78,7 +79,6 @@ open class DefaultMarkdownFormatter: MarkdownFormatter {
         switch inlinePresentationIntent {
         case .code:
             let attributes: [NSAttributedString.Key: Any] = [
-                // Inline currently does not have background color, although many editors prefer to do this
                 .font: UIFont.font(forMarkdownFont: styles.codeFont, monospaced: true),
                 .foregroundColor: styles.codeFont.color
             ].compactMapValues { $0 }
@@ -98,7 +98,6 @@ open class DefaultMarkdownFormatter: MarkdownFormatter {
             ])
         case .codeBlock:
             let attributes: [NSAttributedString.Key: Any] = [
-                .backgroundColor: colorPalette.background2,
                 .font: UIFont.font(forMarkdownFont: styles.codeFont, monospaced: true),
                 .foregroundColor: styles.codeFont.color
             ].compactMapValues { $0 }

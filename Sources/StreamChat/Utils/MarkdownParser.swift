@@ -33,23 +33,24 @@ public enum MarkdownParser {
     /// - Parameters:
     ///   - markdown: The string that contains the Markdown formatting.
     ///   - attributes: The attributes to use for the whole string.
+    ///   - options: Options that affect how the Markdown string is parsed and styled.
     ///   - inlinePresentationIntentAttributes: The closure for customising attributes for inline presentation intents.
     ///   - presentationIntentAttributes: The closure for customising attributes for presentation intents. Called for quote, code, list item, and headers.
     public static func style(
         markdown: String,
+        options: ParsingOptions,
         attributes: AttributeContainer,
         inlinePresentationIntentAttributes: (InlinePresentationIntent) -> AttributeContainer?,
         presentationIntentAttributes: (PresentationIntent.Kind, PresentationIntent) -> AttributeContainer?
     ) throws -> AttributedString {
-        let options = AttributedString.MarkdownParsingOptions(
-            allowsExtendedAttributes: true,
-            interpretedSyntax: .full,
-            failurePolicy: .returnPartiallyParsedIfPossible,
-            languageCode: nil
-        )
         var attributedString = try AttributedString(
             markdown: markdown,
-            options: options
+            options: AttributedString.MarkdownParsingOptions(
+                allowsExtendedAttributes: true,
+                interpretedSyntax: .full,
+                failurePolicy: .returnPartiallyParsedIfPossible,
+                languageCode: nil
+            )
         )
         
         attributedString.mergeAttributes(attributes)
@@ -141,8 +142,13 @@ public enum MarkdownParser {
             // Inserting additional characters (list items etc)
             if !blockStyling.prependedString.isEmpty {
                 let attributes = attributes.merging(blockStyling.mergedAttributes ?? AttributeContainer())
-                let insertedString = AttributedString(blockStyling.prependedString, attributes: attributes)
-                attributedString.insert(insertedString, at: range.lowerBound)
+                if options.layoutDirectionLeftToRight {
+                    let insertedString = AttributedString(blockStyling.prependedString, attributes: attributes)
+                    attributedString.insert(insertedString, at: range.lowerBound)
+                } else {
+                    let insertedString = AttributedString(blockStyling.prependedString.reversed(), attributes: attributes)
+                    attributedString.insert(insertedString, at: range.upperBound)
+                }
             }
             // Spacing before the block
             if blockStyling.precedingNewlineCount > 0, attributedString.startIndex != range.lowerBound {
@@ -155,6 +161,19 @@ public enum MarkdownParser {
         }
                 
         return attributedString
+    }
+}
+
+@available(iOS 15, *)
+extension MarkdownParser {
+    /// Options that affect how the Markdown string is parsed and styled.
+    public struct ParsingOptions {
+        public init(layoutDirectionLeftToRight: Bool = true) {
+            self.layoutDirectionLeftToRight = layoutDirectionLeftToRight
+        }
+        
+        /// Affects insertion index for additional characters like bullets and numbers for lists.
+        public var layoutDirectionLeftToRight = true
     }
 }
 
