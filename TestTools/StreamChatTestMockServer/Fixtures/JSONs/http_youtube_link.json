@@ -1,6 +1,6 @@
 {
   "message": {
-    "id": "29b0f068-c354-463c-922b-b381913da5df",
+    "id": "2eeec5e4-d9f4-4f4b-ac83-fd48ebc40e69",
     "text": "https://youtube.com/watch?v=xOX7MsrbaPY",
     "html": "<p><a href=\"https://youtube.com/watch?v=xOX7MsrbaPY\" rel=\"nofollow\">https://youtube.com/watch?v=xOX7MsrbaPY</a></p>\n",
     "type": "regular",
@@ -17,7 +17,7 @@
       "updated_at": "2025-01-31T09:38:22.825054Z",
       "banned": false,
       "online": true,
-      "last_active": "2025-01-31T16:17:53.97317831Z",
+      "last_active": "2025-02-15T00:14:49.778901469Z",
       "blocked_user_ids": [
 
       ],
@@ -51,18 +51,26 @@
     },
     "reply_count": 0,
     "deleted_reply_count": 0,
-    "cid": "messaging:09f99d09-a2a7-4fb0-ae8d-25927c147b67",
-    "created_at": "2025-01-31T16:18:38.512552Z",
-    "updated_at": "2025-01-31T16:18:38.512552Z",
+    "cid": "messaging:bf00ad34-c8b4-413f-ba3a-b1fcc321da9b",
+    "created_at": "2025-02-15T00:14:59.328297Z",
+    "updated_at": "2025-02-15T00:14:59.328297Z",
     "shadowed": false,
     "mentioned_users": [
 
     ],
+    "i18n": {
+      "id_text": "https://youtube.com/watch?v=xOX7MsrbaPY",
+      "ru_text": "https://youtube.com/watch?v=xOX7MsrbaPY",
+      "language": "id"
+    },
     "silent": false,
     "pinned": false,
     "pinned_at": null,
     "pinned_by": null,
-    "pin_expires": null
+    "pin_expires": null,
+    "restricted_visibility": [
+
+    ]
   },
-  "duration": "280.08ms"
+  "duration": "1186.74ms"
 }
