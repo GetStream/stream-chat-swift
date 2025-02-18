@@ -15,7 +15,7 @@ extension DraftPayload {
         quotedMessage: MessagePayload? = nil,
         parentId: String? = nil,
         parentMessage: MessagePayload? = nil
-    ) -> Self {
+    ) -> DraftPayload {
         .init(
             cid: cid,
             channelPayload: channelPayload,
@@ -39,7 +39,7 @@ extension DraftMessagePayload {
         extraData: [String: RawJSON] = [:],
         attachments: [MessageAttachmentPayload]? = nil,
         isSilent: Bool = false
-    ) -> Self {
+    ) -> DraftMessagePayload {
         .init(
             id: id,
             text: text,

@@ -6,11 +6,20 @@ import Foundation
 
 class DraftPayloadResponse: Decodable {
     let draft: DraftPayload
+
+    init(draft: DraftPayload) {
+        self.draft = draft
+    }
 }
 
 class DraftListPayloadResponse: Decodable {
     let drafts: [DraftPayload]
     let next: String?
+
+    init(drafts: [DraftPayload], next: String? = nil) {
+        self.drafts = drafts
+        self.next = next
+    }
 }
 
 class DraftPayload: Decodable {
