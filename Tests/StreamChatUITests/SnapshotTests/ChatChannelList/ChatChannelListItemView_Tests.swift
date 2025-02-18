@@ -1711,6 +1711,7 @@ final class ChatChannelListItemView_Tests: XCTestCase {
     ) -> ChatChannelListItemView {
         let view = ChatChannelListItemView().withoutAutoresizingMaskConstraints
         view.components = components
+        view.components.isDraftMessagesEnabled = true
         view.appearance = appearance
         view.appearance.formatters.channelListMessageTimestamp = DefaultMessageTimestampFormatter()
         view.content = content

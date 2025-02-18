@@ -154,7 +154,7 @@ open class ChatChannelListItemView: _View, ThemeProvider, SwiftUIRepresentable {
             return typingUsersInfo
         }
 
-        if let dratMessage = content.channel.draftMessage.map(ChatMessage.init) {
+        if let dratMessage = content.channel.draftMessage.map(ChatMessage.init), components.isDraftMessagesEnabled {
             let previewText = previewMessageContextText(previewMessage: dratMessage)
             return previewMessageTextForDraft(messageText: previewText)
         }
