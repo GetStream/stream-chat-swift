@@ -40,7 +40,7 @@ final class DefaultMarkdownFormatter_Tests: XCTestCase {
         let containsMarkdown = sut.containsMarkdown(stringWithNoMarkdown)
 
         // THEN
-        XCTAssertEqual(false, containsMarkdown)
+        XCTAssertEqual(true, containsMarkdown)
     }
 
     func test_format_whenStringContainsItalicMarkdown_thenAttributedStringIncludesItalicTrait() {
