@@ -86,10 +86,7 @@ class MessageDTO: NSManagedObject {
     @NSManaged var draftOfChannel: ChannelDTO?
     @NSManaged var draftOfThread: MessageDTO?
     @NSManaged var draftReply: MessageDTO?
-
-    var isDraft: Bool {
-        draftOfChannel != nil || draftOfThread != nil
-    }
+    @NSManaged var isDraft: Bool
 
     /// If the message is sent by the current user, this field
     /// contains channel reads of other channel members (excluding the current user),
@@ -183,9 +180,13 @@ class MessageDTO: NSManagedObject {
         let request = NSFetchRequest<MessageDTO>(entityName: MessageDTO.entityName)
         MessageDTO.applyPrefetchingState(to: request)
         request.sortDescriptors = query.sorting.compactMap { $0.sortDescriptor() }
-        request.predicate = NSCompoundPredicate(orPredicateWithSubpredicates: [
+        let isPartOfChannelOrThreadPredicate = NSCompoundPredicate(orPredicateWithSubpredicates: [
             NSPredicate(format: "draftOfChannel != nil"),
             NSPredicate(format: "draftOfThread != nil")
+        ])
+        request.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [
+            isPartOfChannelOrThreadPredicate,
+            NSPredicate(format: "isDraft == YES")
         ])
         return request
     }
@@ -248,6 +249,10 @@ class MessageDTO: NSManagedObject {
         .init(format: "deletedAt == nil")
     }
 
+    private static func ignoreDraftMessagesPredicate() -> NSPredicate {
+        .init(format: "isDraft == NO")
+    }
+
     private static func channelPredicate(with cid: String) -> NSPredicate {
         .init(format: "channel.cid == %@", cid)
     }
@@ -307,11 +312,6 @@ class MessageDTO: NSManagedObject {
             .init(format: "createdAt >= channel.oldestMessageAt")
         ])
 
-        let ignoreDraftMessages = NSCompoundPredicate(andPredicateWithSubpredicates: [
-            .init(format: "draftOfChannel == nil"),
-            .init(format: "draftOfThread == nil")
-        ])
-
         var subpredicates = [
             channelPredicate(with: cid),
             channelMessagePredicate,
@@ -319,7 +319,7 @@ class MessageDTO: NSManagedObject {
             nonTruncatedMessagesPredicate(),
             ignoreOlderMessagesPredicate,
             deletedMessagesPredicate(deletedMessagesVisibility: deletedMessagesVisibility),
-            ignoreDraftMessages
+            ignoreDraftMessagesPredicate()
         ]
 
         if filterNewerMessages {
@@ -355,6 +355,7 @@ class MessageDTO: NSManagedObject {
         ])
 
         var subpredicates = [
+            ignoreDraftMessagesPredicate(),
             replyMessage,
             shouldShowInsideThread,
             ignoreNewerRepliesPredicate,
@@ -375,7 +376,8 @@ class MessageDTO: NSManagedObject {
             channelPredicate(with: cid),
             messageSentPredicate(),
             nonTruncatedMessagesPredicate(),
-            nonDeletedMessagesPredicate()
+            nonDeletedMessagesPredicate(),
+            ignoreDraftMessagesPredicate()
         ])
     }
 
@@ -426,7 +428,8 @@ class MessageDTO: NSManagedObject {
         MessageDTO.applyPrefetchingState(to: request)
         request.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [
             NSPredicate(format: "ANY searches.filterHash == %@", query.filterHash),
-            NSPredicate(format: "isHardDeleted == NO")
+            NSPredicate(format: "isHardDeleted == NO"),
+            ignoreDraftMessagesPredicate()
         ])
         let sortDescriptors = query.sort.compactMap { $0.key.sortDescriptor(isAscending: $0.isAscending) }
         request.sortDescriptors = sortDescriptors.isEmpty ? [MessageSearchSortingKey.defaultSortDescriptor] : sortDescriptors
@@ -784,8 +787,12 @@ extension NSManagedObjectContext: MessageDatabaseSession {
             throw ClientError.ChannelDoesNotExist(cid: cid)
         }
 
+        /// Makes sure to delete the existing draft message if it exists.
+        deleteDraftMessage(in: cid, threadId: parentMessageId)
+
         let createdAt = Date()
         let message = MessageDTO.loadOrCreate(id: .newUniqueId, context: self, cache: nil)
+        message.isDraft = true
         message.locallyCreatedAt = createdAt.bridgeDate
         message.createdAt = createdAt.bridgeDate
         message.updatedAt = createdAt.bridgeDate
@@ -1092,6 +1099,9 @@ extension NSManagedObjectContext: MessageDatabaseSession {
             throw ClientError.CurrentUserDoesNotExist()
         }
 
+        // Delete existing draft message if it exists.
+        deleteDraftMessage(in: cid, threadId: payload.parentId)
+
         let dto = MessageDTO.loadOrCreate(id: draftDetailsPayload.id, context: self, cache: cache)
         dto.cid = cid.rawValue
         dto.text = draftDetailsPayload.text
@@ -1107,6 +1117,7 @@ extension NSManagedObjectContext: MessageDatabaseSession {
         dto.isSilent = draftDetailsPayload.isSilent
         dto.user = user
         dto.channel = channelDTO
+        dto.isDraft = true
 
         if let threadId = payload.parentId {
             let threadDTO = thread(parentMessageId: threadId, cache: cache)
