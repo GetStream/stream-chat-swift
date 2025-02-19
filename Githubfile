@@ -1,7 +1,7 @@
 #!/bin/bash
 
-export ALLURECTL_VERSION='2.15.1'
-export XCRESULTS_VERSION='1.16.3'
+export ALLURECTL_VERSION='2.16.0'
+export XCRESULTS_VERSION='1.19.1'
 export YEETD_VERSION='1.0'
 export GCLOUD_VERSION='464.0.0'
 export MINT_VERSION='0.17.5'
