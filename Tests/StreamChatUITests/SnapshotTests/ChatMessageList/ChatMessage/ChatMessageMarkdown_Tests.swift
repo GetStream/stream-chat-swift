@@ -82,13 +82,16 @@ final class ChatMessageMarkdown_Tests: XCTestCase {
     func test_unorderedLists_default() {
         let view = contentView(
             """
-            Unordered (no nesting)  
+            Unordered (no nesting)
+            
             Fruits:
             - **Oranges** (bold)
             - Apples
+
             Trees:
             * Birch
             * Maple
+
             Animals:
             + Cat
             + _Dog_ (italic)
@@ -125,11 +128,13 @@ final class ChatMessageMarkdown_Tests: XCTestCase {
     func test_orderedLists_default() {
         let view = contentView(
             """
-            Ordered (no nesting)    
-            Fruits:  
+            Ordered (no nesting)
+            
+            Fruits:
             1. **Oranges** (bold)
             1. Apples
-            Animals:  
+            
+            Animals:
             1. Cat
             2. _Dog_ (italic)
             3. Rabbit

@@ -4,9 +4,38 @@
 
 import Foundation
 
-@available(iOS 15, *)
 /// A parser for markdown which generates a styled attributed string.
-public enum MarkdownParser {
+public struct MarkdownParser {
+    private static let defaultMarkdownRegex = "((?:\\`(.*?)\\`)|(?:\\*{1,2}(.*?)\\*{1,2})|(?:\\~{2}(.*?)\\~{2})|(?:\\_{1,2}(.*?)\\_{1,2})|^(>){1}|(#){1,6}|(=){3,10}|(-){1,3}|(\\d{1,3}\\.)|(?:\\[(.*?)\\])(?:\\((.*?)\\))|(?:\\[(.*?)\\])(?:\\[(.*?)\\])|(\\]\\:))+"
+    private let regex: NSRegularExpression?
+    
+    /// Creates a parser for markdown which generates a styled attributed string.
+    ///
+    /// - Parameter markdownRegexPattern: The pattern to be used by ``containsMarkdown(_:)``. Default pattern is used in case of nil string.
+    public init(markdownRegexPattern pattern: String? = nil) {
+        markdownRegexPattern = pattern ?? Self.defaultMarkdownRegex
+        do {
+            regex = try NSRegularExpression(pattern: markdownRegexPattern, options: .anchorsMatchLines)
+        } catch {
+            log.error("Failed to create markdown regular expression with error \(error.localizedDescription)")
+            regex = nil
+        }
+    }
+    
+    /// The regex pattern used by ``containsMarkdown(_:)``.
+    public let markdownRegexPattern: String
+    
+    /// Checks for Markdown patterns in the given String.
+    ///
+    /// Useful for deciding if the string needs to go through the whole markdown parsing flow.
+    ///
+    /// - Parameter text: The string in which Markdown patters are going to be sought.
+    /// - Returns: Returns a Boolean value that indicates whether Markdown patters where found in the given String.
+    public func containsMarkdown(_ string: String) -> Bool {
+        guard let regex else { return false }
+        return regex.firstMatch(in: string, range: .init(location: 0, length: string.utf16.count)) != nil
+    }
+    
     /// Creates an attributed string from a Markdown-formatted string using the provided style attributes.
     ///
     /// Apple's markdown initialiser parses markdown and adds ``NSPresentationIntent`` and ``NSInlinePresentationIntent``
@@ -36,7 +65,8 @@ public enum MarkdownParser {
     ///   - options: Options that affect how the Markdown string is parsed and styled.
     ///   - inlinePresentationIntentAttributes: The closure for customising attributes for inline presentation intents.
     ///   - presentationIntentAttributes: The closure for customising attributes for presentation intents. Called for quote, code, list item, and headers.
-    public static func style(
+    @available(iOS 15, *)
+    public func style(
         markdown: String,
         options: ParsingOptions,
         attributes: AttributeContainer,
@@ -55,52 +85,62 @@ public enum MarkdownParser {
         
         attributedString.mergeAttributes(attributes)
         
-        // Inline intents are handled by rendering automatically
-        for (inlinePresentationIntent, range) in attributedString.runs[\.inlinePresentationIntent] {
+        // Most inline intents are handled by rendering automatically
+        for (inlinePresentationIntent, range) in attributedString.runs[\.inlinePresentationIntent].reversed() {
             guard let inlinePresentationIntent else { continue }
-            guard let attributes = inlinePresentationIntentAttributes(inlinePresentationIntent) else { continue }
-            attributedString[range].mergeAttributes(attributes)
+            if let attributes = inlinePresentationIntentAttributes(inlinePresentationIntent) {
+                attributedString[range].mergeAttributes(attributes)
+            }
+            switch inlinePresentationIntent {
+            case .softBreak:
+                // Appears as a space with inline attribute, therefore we need to replace it for preserving the line break
+                let attributes = attributes.merging(attributes)
+                let insertedString = AttributedString("\n", attributes: attributes)
+                attributedString.replaceSubrange(range, with: insertedString)
+            default:
+                break
+            }
         }
         
-        // Style block based intents
-        var previousBlockStyling: BlockStyling?
+        var previousPresentationIntentStyling: PresentationIntentStyling?
         for (presentationIntent, range) in attributedString.runs[\.presentationIntent].reversed() {
             guard let presentationIntent else { continue }
-            var blockStyling = BlockStyling(range: range)
+            var presentationIntentStyling = PresentationIntentStyling(range: range, components: presentationIntent.components)
             
-            for blockIntentType in presentationIntent.components {
-                switch blockIntentType.kind {
+            for intentType in presentationIntent.components {
+                switch intentType.kind {
                 case .blockQuote:
-                    blockStyling.mergedAttributes = presentationIntentAttributes(blockIntentType.kind, presentationIntent)
-                    blockStyling.prependedString = "| "
-                    blockStyling.succeedingNewlineCount += 1
+                    presentationIntentStyling.mergedAttributes = presentationIntentAttributes(intentType.kind, presentationIntent)
+                    presentationIntentStyling.prependedString = "| "
+                    presentationIntentStyling.precedingNewlineCount += 1
+                    presentationIntentStyling.succeedingNewlineCount += 1
                 case .codeBlock:
-                    blockStyling.mergedAttributes = presentationIntentAttributes(blockIntentType.kind, presentationIntent)
-                    blockStyling.precedingNewlineCount += 1
+                    presentationIntentStyling.mergedAttributes = presentationIntentAttributes(intentType.kind, presentationIntent)
+                    presentationIntentStyling.precedingNewlineCount += 1
                 case .header:
-                    blockStyling.mergedAttributes = presentationIntentAttributes(blockIntentType.kind, presentationIntent)
-                    blockStyling.precedingNewlineCount += 1
-                    blockStyling.succeedingNewlineCount += 1
+                    presentationIntentStyling.mergedAttributes = presentationIntentAttributes(intentType.kind, presentationIntent)
+                    presentationIntentStyling.precedingNewlineCount += 1
+                    presentationIntentStyling.succeedingNewlineCount += 1
                 case .paragraph:
-                    blockStyling.precedingNewlineCount += 1
+                    presentationIntentStyling.paragraphId = intentType.identity
                 case .listItem(ordinal: let ordinal):
-                    if blockStyling.listItemOrdinal == nil {
-                        blockStyling.listItemOrdinal = ordinal
-                        blockStyling.mergedAttributes = presentationIntentAttributes(blockIntentType.kind, presentationIntent)
+                    if presentationIntentStyling.listItemOrdinal == nil {
+                        presentationIntentStyling.listItemOrdinal = ordinal
+                        presentationIntentStyling.mergedAttributes = presentationIntentAttributes(intentType.kind, presentationIntent)
                     }
                 case .orderedList:
-                    blockStyling.listId = blockIntentType.identity
-                    if blockStyling.isOrdered == nil {
-                        blockStyling.isOrdered = true
+                    presentationIntentStyling.listId = intentType.identity
+                    if presentationIntentStyling.isOrdered == nil {
+                        presentationIntentStyling.isOrdered = true
                     } else {
-                        blockStyling.prependedString.insert("\t", at: blockStyling.prependedString.startIndex)
+                        presentationIntentStyling.prependedString.insert("\t", at: presentationIntentStyling.prependedString.startIndex)
                     }
                 case .unorderedList:
-                    blockStyling.listId = blockIntentType.identity
-                    if blockStyling.isOrdered == nil {
-                        blockStyling.isOrdered = false
+                    presentationIntentStyling.listId = intentType.identity
+                    if presentationIntentStyling.isOrdered == nil {
+                        presentationIntentStyling.isOrdered = false
                     } else {
-                        blockStyling.prependedString.insert("\t", at: blockStyling.prependedString.startIndex)
+                        presentationIntentStyling.prependedString.insert("\t", at: presentationIntentStyling.prependedString.startIndex)
                     }
                 case .thematicBreak, .table, .tableHeaderRow, .tableRow, .tableCell:
                     break
@@ -113,51 +153,61 @@ public enum MarkdownParser {
                 AttributeContainer().presentationIntent(presentationIntent),
                 with: AttributeContainer()
             )
-            // Give additional space for just text
-            if presentationIntent.components.count == 1, presentationIntent.components.allSatisfy({ $0.kind == .paragraph }) {
-                blockStyling.succeedingNewlineCount += 1
+            // Paragraph applies to text and other intents
+            if presentationIntentStyling.paragraphId != previousPresentationIntentStyling?.paragraphId {
+                presentationIntentStyling.succeedingNewlineCount += 1
+                // GitHub renderer adds another newline when paragraph changes in text
+                if presentationIntentStyling.isOnlyParagraph && previousPresentationIntentStyling?.isOnlyParagraph == true {
+                    presentationIntentStyling.succeedingNewlineCount += 1
+                }
             }
+            
             // Preparing list items
-            if let listItemOrdinal = blockStyling.listItemOrdinal {
-                if blockStyling.isOrdered == true {
-                    blockStyling.prependedString.append("\(listItemOrdinal).\t")
+            if let listItemOrdinal = presentationIntentStyling.listItemOrdinal {
+                if presentationIntentStyling.isOrdered == true {
+                    presentationIntentStyling.prependedString.append("\(listItemOrdinal).\t")
                 } else {
-                    blockStyling.prependedString.append("\u{2022}\t")
+                    presentationIntentStyling.prependedString.append("\u{2022}\t")
                 }
                 // Extra space when list's last item
-                if let previousBlockStyling, previousBlockStyling.listId != blockStyling.listId {
-                    blockStyling.succeedingNewlineCount += 1
+                if previousPresentationIntentStyling?.listId != presentationIntentStyling.listId {
+                    presentationIntentStyling.succeedingNewlineCount += 1
+                }
+            } else {
+                // Extra space when list's first item (reversed enumeration)
+                if previousPresentationIntentStyling?.listId != nil {
+                    presentationIntentStyling.succeedingNewlineCount += 1
                 }
             }
             // Inserting additional space after the current block (reverse enumeration, therefore use the previous range)
-            if blockStyling.succeedingNewlineCount > 0, let previousBlockStyling {
-                let newlineString = String(repeating: "\n", count: blockStyling.succeedingNewlineCount)
+            if presentationIntentStyling.succeedingNewlineCount > 0, let previousPresentationIntentStyling {
+                let newlineString = String(repeating: "\n", count: presentationIntentStyling.succeedingNewlineCount)
                 let insertedString = AttributedString(newlineString, attributes: attributes)
-                attributedString.insertSafely(insertedString, at: previousBlockStyling.range.lowerBound)
+                attributedString.insertSafely(insertedString, at: previousPresentationIntentStyling.range.lowerBound)
             }
             // Additional attributes
-            if let attributes = blockStyling.mergedAttributes {
+            if let attributes = presentationIntentStyling.mergedAttributes {
                 attributedString[range].mergeAttributes(attributes)
             }
             // Inserting additional characters (list items etc)
-            if !blockStyling.prependedString.isEmpty {
-                let attributes = attributes.merging(blockStyling.mergedAttributes ?? AttributeContainer())
+            if !presentationIntentStyling.prependedString.isEmpty {
+                let attributes = attributes.merging(presentationIntentStyling.mergedAttributes ?? AttributeContainer())
                 if options.layoutDirectionLeftToRight {
-                    let insertedString = AttributedString(blockStyling.prependedString, attributes: attributes)
+                    let insertedString = AttributedString(presentationIntentStyling.prependedString, attributes: attributes)
                     attributedString.insertSafely(insertedString, at: range.lowerBound)
                 } else {
-                    let insertedString = AttributedString(blockStyling.prependedString.reversed(), attributes: attributes)
+                    let insertedString = AttributedString(presentationIntentStyling.prependedString.reversed(), attributes: attributes)
                     attributedString.insertSafely(insertedString, at: range.upperBound)
                 }
             }
             // Spacing before the block
-            if blockStyling.precedingNewlineCount > 0, attributedString.startIndex != range.lowerBound {
-                let newlineString = String(repeating: "\n", count: blockStyling.precedingNewlineCount)
+            if presentationIntentStyling.precedingNewlineCount > 0, attributedString.startIndex != range.lowerBound {
+                let newlineString = String(repeating: "\n", count: presentationIntentStyling.precedingNewlineCount)
                 let insertedString = AttributedString(newlineString, attributes: attributes)
                 attributedString.insertSafely(insertedString, at: range.lowerBound)
             }
             
-            previousBlockStyling = blockStyling
+            previousPresentationIntentStyling = presentationIntentStyling
         }
                 
         return attributedString
@@ -188,8 +238,10 @@ private extension AttributedString {
 
 // Note: newlines are used instead of paragraph style because SwiftUI does render paragraph styles
 @available(iOS 15.0, *)
-private struct BlockStyling {
+private struct PresentationIntentStyling {
     let range: Range<AttributedString.Index>
+    let components: [PresentationIntent.IntentType]
+    var paragraphId: Int?
     var precedingNewlineCount = 0
     var succeedingNewlineCount = 0
     var mergedAttributes: AttributeContainer?
@@ -197,4 +249,9 @@ private struct BlockStyling {
     var listItemOrdinal: Int?
     var listId: Int?
     var isOrdered: Bool?
+    
+    var isOnlyParagraph: Bool {
+        components.count == 1 &&
+            components.allSatisfy { $0.kind == .paragraph }
+    }
 }

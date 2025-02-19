@@ -19,33 +19,30 @@ public protocol MarkdownFormatter {
 
 /// Default implementation for the Markdown formatter
 open class DefaultMarkdownFormatter: MarkdownFormatter {
+    private var markdownParser: MarkdownParser
+    
     public var styles: MarkdownStyles
-    public var markdownRegexPattern: String
-
-    private let defaultMarkdownRegex = "((?:\\`(.*?)\\`)|(?:\\*{1,2}(.*?)\\*{1,2})|(?:\\~{2}(.*?)\\~{2})|(?:\\_{1,2}(.*?)\\_{1,2})|^(>){1}|(#){1,6}|(=){3,10}|(-){1,3}|(\\d{1,3}\\.)|(?:\\[(.*?)\\])(?:\\((.*?)\\))|(?:\\[(.*?)\\])(?:\\[(.*?)\\])|(\\]\\:))+"
+    public var markdownRegexPattern: String {
+        get {
+            markdownParser.markdownRegexPattern
+        } set {
+            markdownParser = MarkdownParser(markdownRegexPattern: newValue)
+        }
+    }
 
     public init() {
         styles = MarkdownStyles()
-        markdownRegexPattern = defaultMarkdownRegex
+        markdownParser = MarkdownParser()
     }
-
-    private lazy var regex: NSRegularExpression? = {
-        guard let regex = try? NSRegularExpression(pattern: markdownRegexPattern, options: .anchorsMatchLines) else {
-            log.error("Failed to create markdown regular expression")
-            return nil
-        }
-        return regex
-    }()
     
     open func containsMarkdown(_ string: String) -> Bool {
-        guard let regex = regex else { return false }
-        return regex.numberOfMatches(in: string, range: .init(location: 0, length: string.utf16.count)) > 0
+        markdownParser.containsMarkdown(string)
     }
 
     open func format(_ string: String) -> NSAttributedString {
         if #available(iOS 15, *), !string.isEmpty {
             do {
-                let attributedString = try MarkdownParser.style(
+                let attributedString = try markdownParser.style(
                     markdown: string,
                     options: .init(layoutDirectionLeftToRight: UITraitCollection.current.layoutDirection == .leftToRight),
                     attributes: AttributeContainer(defaultAttributes),
