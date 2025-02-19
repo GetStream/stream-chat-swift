@@ -65,8 +65,7 @@ public struct ChatMessage {
     let _quotedMessage: () -> ChatMessage?
 
     /// The draft reply to this message. Applies only for the messages of the current user.
-    public var draftReply: DraftMessage? { _draftReply() }
-    let _draftReply: () -> DraftMessage?
+    public let draftReply: DraftMessage?
 
     /// A flag indicating whether the message was bounced due to moderation.
     public let isBounced: Bool
@@ -259,7 +258,7 @@ public struct ChatMessage {
         self.readBy = readBy
         _attachments = attachments
         _quotedMessage = { quotedMessage }
-        _draftReply = { draftReply }
+        self.draftReply = draftReply
     }
 
     /// Returns a new `ChatMessage` with the provided data replaced.

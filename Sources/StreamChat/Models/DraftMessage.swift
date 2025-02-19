@@ -165,6 +165,6 @@ extension ChatMessage {
         readBy = []
         poll = nil
         textUpdatedAt = nil
-        _draftReply = { nil }
+        draftReply = nil
     }
 }
