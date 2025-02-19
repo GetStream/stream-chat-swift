@@ -36,7 +36,8 @@ open class DefaultMarkdownFormatter: MarkdownFormatter {
     }
     
     open func containsMarkdown(_ string: String) -> Bool {
-        markdownParser.containsMarkdown(string)
+        guard !string.isEmpty else { return false }
+        return markdownParser.containsMarkdown(string)
     }
 
     open func format(_ string: String) -> NSAttributedString {
