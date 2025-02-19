@@ -213,7 +213,7 @@ final class DefaultMarkdownFormatter_Tests: XCTestCase {
         let expectedCodeAttributedSubstring = "let property: Double = 10.0"
         let expectedLinkAttributedSubstring = "this link"
         let expectedLinkURL = "https://docs.swift.org/swift-book/"
-        let expectedUnorderedListedSubstrings = ["・\tclass", "・\tstruct", "・\tenum", "・\tactor"]
+        let expectedUnorderedListedSubstrings = ["\u{2022}\tclass", "\u{2022}\tstruct", "\u{2022}\tenum", "\u{2022}\tactor"]
 
         // WHEN
         let attributedString = sut.format(stringWithMarkdown)
