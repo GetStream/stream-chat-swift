@@ -538,6 +538,10 @@ open class ChatChannelVC: _ViewController,
             headerView.channelController = client.channelController(for: cid)
         }
 
+        if let draftMessage = channelController.channel?.draftMessage {
+            messageComposerVC.content.draftMessage(draftMessage)
+        }
+
         channelAvatarView.content = (channelController.channel, client.currentUserId)
     }
 

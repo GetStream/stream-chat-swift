@@ -446,6 +446,10 @@ open class ChatThreadVC: _ViewController,
             return
         }
 
+        if let draftReply = controller.message?.draftReply {
+            messageComposerVC.content.draftMessage(draftReply)
+        }
+
         let indexPath = IndexPath(row: messages.count - 1, section: 0)
 
         let listChange: ListChange<ChatMessage>
