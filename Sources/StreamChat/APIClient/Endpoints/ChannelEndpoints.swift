@@ -28,7 +28,7 @@ extension Endpoint {
             path: path,
             method: .post,
             queryItems: nil,
-            requiresConnectionId: query.options.contains(oneOf: [.presence, .state, .watch]),
+            requiresConnectionId: query.options.contains(oneOf: [.presence, .watch]),
             body: query
         )
     }

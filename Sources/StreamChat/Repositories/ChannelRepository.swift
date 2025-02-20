@@ -2,6 +2,9 @@
 // Copyright © 2025 Stream.io Inc. All rights reserved.
 //
 
+import CoreData
+import Foundation
+
 class ChannelRepository {
     let database: DatabaseContainer
     let apiClient: APIClient
@@ -9,6 +12,31 @@ class ChannelRepository {
     init(database: DatabaseContainer, apiClient: APIClient) {
         self.database = database
         self.apiClient = apiClient
+    }
+    
+    func getLocalChannel(for cid: ChannelId, completion: @escaping (Result<ChatChannel?, Error>) -> Void) {
+        database.read({ try $0.channel(cid: cid)?.asModel() }, completion: completion)
+    }
+    
+    func getChannel(for query: ChannelQuery, store: Bool, completion: @escaping (Result<ChatChannel, Error>) -> Void) {
+        apiClient.request(endpoint: .createChannel(query: query)) { [database] result in
+            switch result {
+            case .success(let channelPayload):
+                database.write(converting: { session in
+                    let dto = try session.saveChannel(payload: channelPayload)
+                    let model = try dto.asModel()
+                    // Currently there is no direct payload to model conversion available
+                    // Therefore, the channel has to be added to the context and then converted.
+                    if !store {
+                        (session as? NSManagedObjectContext)?.rollback()
+                        assert(!database.writableContext.hasChanges)
+                    }
+                    return model
+                }, completion: completion)
+            case .failure(let error):
+                completion(.failure(error))
+            }
+        }
     }
 
     /// Marks a channel as read

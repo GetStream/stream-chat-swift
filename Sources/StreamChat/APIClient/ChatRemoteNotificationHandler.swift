@@ -70,16 +70,14 @@ public class ChatRemoteNotificationHandler {
     var client: ChatClient
     var content: UNNotificationContent
     let chatCategoryIdentifiers: Set<String> = ["stream.chat", "MESSAGE_NEW"]
-    let database: DatabaseContainer
-    let syncRepository: SyncRepository
+    let channelRepository: ChannelRepository
     let messageRepository: MessageRepository
     let extensionLifecycle: NotificationExtensionLifecycle
 
     public init(client: ChatClient, content: UNNotificationContent) {
         self.client = client
         self.content = content
-        database = client.databaseContainer
-        syncRepository = client.syncRepository
+        channelRepository = client.channelRepository
         messageRepository = client.messageRepository
         extensionLifecycle = client.extensionLifecycle
     }
@@ -107,7 +105,7 @@ public class ChatRemoteNotificationHandler {
                 completion(.unknown(UnknownNotificationContent(content: content)))
                 return
             }
-            getMessageAndSync(cid: channelId, messageId: id) { (message, channel) in
+            getContent(cid: channelId, messageId: id) { message, channel in
                 guard let message = message else {
                     completion(.unknown(UnknownNotificationContent(content: self.content)))
                     return
@@ -118,25 +116,35 @@ public class ChatRemoteNotificationHandler {
             completion(.unknown(UnknownNotificationContent(content: content)))
         }
     }
-
-    private func getMessageAndSync(cid: ChannelId, messageId: String, completion: @escaping (ChatMessage?, ChatChannel?) -> Void) {
-        let database = self.database
-        messageRepository.getMessage(
-            cid: cid,
-            messageId: messageId,
-            store: !extensionLifecycle.isAppReceivingWebSocketEvents
-        ) { [weak self] result in
-            guard case let .success(message) = result else {
-                completion(nil, nil)
-                return
-            }
-
-            self?.syncRepository.syncExistingChannelsEvents { _ in
-                database.backgroundReadOnlyContext.perform {
-                    let channel = try? ChannelDTO.load(cid: cid, context: database.backgroundReadOnlyContext)?.asModel()
-                    completion(message, channel)
+    
+    private func getContent(cid: ChannelId, messageId: MessageId, completion: @escaping (ChatMessage?, ChatChannel?) -> Void) {
+        getChannel(cid: cid) { [messageRepository] channelResult in
+            let channel = channelResult.value
+            // When message is already available, skip fetching the message
+            if let message = channel?.latestMessages.first(where: { $0.id == messageId }) {
+                completion(message, channel)
+            } else {
+                messageRepository.getMessage(cid: cid, messageId: messageId, store: false) { messageResult in
+                    completion(messageResult.value, channel)
                 }
             }
+        }
+    }
+
+    private func getChannel(cid: ChannelId, completion: @escaping (Result<ChatChannel, Error>) -> Void) {
+        var query = ChannelQuery(cid: cid, pageSize: 10, membersLimit: 10)
+        query.options = .state
+        // Try the local state when connected to the web-socket
+        if extensionLifecycle.isAppReceivingWebSocketEvents {
+            channelRepository.getLocalChannel(for: cid) { [channelRepository] result in
+                if case let .success(channel) = result, let channel {
+                    completion(.success(channel))
+                } else {
+                    channelRepository.getChannel(for: query, store: false, completion: completion)
+                }
+            }
+        } else {
+            channelRepository.getChannel(for: query, store: false, completion: completion)
         }
     }
 }

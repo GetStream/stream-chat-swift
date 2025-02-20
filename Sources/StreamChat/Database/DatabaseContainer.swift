@@ -222,6 +222,19 @@ class DatabaseContainer: NSPersistentContainer, @unchecked Sendable {
             }
         }
     }
+    
+    func write<T>(converting actions: @escaping (DatabaseSession) throws -> T, completion: @escaping (Result<T, Error>) -> Void) {
+        var result: T?
+        write { session in
+            result = try actions(session)
+        } completion: { error in
+            if let result {
+                completion(.success(result))
+            } else {
+                completion(.failure(error ?? ClientError.Unknown()))
+            }
+        }
+    }
         
     private func read<T>(
         from context: NSManagedObjectContext,

@@ -226,7 +226,7 @@
 		437FCA0B26D67BE40000223C /* DemoAppPush.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = 437FCA0426D67BE40000223C /* DemoAppPush.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		437FCA1026D67CB40000223C /* StreamChat.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 799C941B247D2F80001F1104 /* StreamChat.framework */; };
 		437FCA1626D79A910000223C /* ChatRemoteNotificationHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 437FCA1526D79A910000223C /* ChatRemoteNotificationHandler.swift */; };
-		437FCA1926D906B20000223C /* ChatPushNotificationContent_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 437FCA1826D906B20000223C /* ChatPushNotificationContent_Tests.swift */; };
+		437FCA1926D906B20000223C /* ChatRemoteNotificationHandler_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 437FCA1826D906B20000223C /* ChatRemoteNotificationHandler_Tests.swift */; };
 		43ABF8B526C2CD900034BD62 /* ComposerVC_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43ABF8B326C2B7140034BD62 /* ComposerVC_Tests.swift */; };
 		43D3F0FC28410A0200B74921 /* CreateCallRequestBody.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43D3F0FB28410A0200B74921 /* CreateCallRequestBody.swift */; };
 		43D3F0FD28410A0200B74921 /* CreateCallRequestBody.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43D3F0FB28410A0200B74921 /* CreateCallRequestBody.swift */; };
@@ -3167,7 +3167,7 @@
 		437FCA0826D67BE40000223C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		437FCA1526D79A910000223C /* ChatRemoteNotificationHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatRemoteNotificationHandler.swift; sourceTree = "<group>"; };
 		437FCA1726D7E60D0000223C /* DemoAppPush.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = DemoAppPush.entitlements; sourceTree = "<group>"; };
-		437FCA1826D906B20000223C /* ChatPushNotificationContent_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatPushNotificationContent_Tests.swift; sourceTree = "<group>"; };
+		437FCA1826D906B20000223C /* ChatRemoteNotificationHandler_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatRemoteNotificationHandler_Tests.swift; sourceTree = "<group>"; };
 		43854421277B46350079C472 /* NotificationChannelDeleted.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = NotificationChannelDeleted.json; sourceTree = "<group>"; };
 		43ABF8B326C2B7140034BD62 /* ComposerVC_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ComposerVC_Tests.swift; sourceTree = "<group>"; };
 		43ABF8B626C513D20034BD62 /* CurrentUserCustomRole.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = CurrentUserCustomRole.json; sourceTree = "<group>"; };
@@ -7013,7 +7013,7 @@
 			isa = PBXGroup;
 			children = (
 				79DDF811249CD5AC002F4412 /* APIClient_Tests.swift */,
-				437FCA1826D906B20000223C /* ChatPushNotificationContent_Tests.swift */,
+				437FCA1826D906B20000223C /* ChatRemoteNotificationHandler_Tests.swift */,
 				88CD395E25B5844700399F8E /* HTTPHeader_Tests.swift */,
 				79DDF80F249CB92E002F4412 /* RequestDecoder_Tests.swift */,
 				7964F3BD249A5E6E002A09EC /* RequestEncoder_Tests.swift */,
@@ -11728,7 +11728,7 @@
 				DB842E4525C9F94C000AAC46 /* LazyCachedMapCollection_Tests.swift in Sources */,
 				84EB4E76276A012900E47E73 /* ClientError_Tests.swift in Sources */,
 				DA8407232525E871005A0F62 /* UserListPayload_Tests.swift in Sources */,
-				437FCA1926D906B20000223C /* ChatPushNotificationContent_Tests.swift in Sources */,
+				437FCA1926D906B20000223C /* ChatRemoteNotificationHandler_Tests.swift in Sources */,
 				84E46A3B2CFA1BB9000CBDDE /* AIIndicatorEvents_Tests.swift in Sources */,
 				F61D7C3124FF9D1F00188A0E /* MessageEndpoints_Tests.swift in Sources */,
 				8459C9EE2BFB673E00F0D235 /* PollVoteListController+Combine_Tests.swift in Sources */,
