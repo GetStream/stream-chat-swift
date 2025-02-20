@@ -148,19 +148,13 @@ class DraftMessagesRepository {
         threadId: MessageId?,
         completion: @escaping (Error?) -> Void
     ) {
+        database.write { session in
+            session.deleteDraftMessage(in: cid, threadId: threadId)
+        }
         apiClient.request(
             endpoint: .deleteDraftMessage(channelId: cid, threadId: threadId)
-        ) { [weak self] result in
-            switch result {
-            case .success:
-                self?.database.write({ session in
-                    session.deleteDraftMessage(in: cid, threadId: threadId)
-                }, completion: { _ in
-                    completion(nil)
-                })
-            case .failure(let error):
-                completion(error)
-            }
+        ) { result in
+            completion(result.error)
         }
     }
 }
