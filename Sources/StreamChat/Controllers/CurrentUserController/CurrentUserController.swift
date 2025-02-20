@@ -89,7 +89,7 @@ public class CurrentChatUserController: DataController, DelegateCallable, DataSt
     private var draftListQuery = DraftListQuery()
 
     /// Use for observing the current user's draft messages changes.
-    private var draftMessagesObserver: BackgroundListDatabaseObserver<ChatMessage, MessageDTO>?
+    private var draftMessagesObserver: BackgroundListDatabaseObserver<DraftMessage, MessageDTO>?
 
     /// The repository for draft messages.
     private var draftMessagesRepository: DraftMessagesRepository
@@ -101,7 +101,7 @@ public class CurrentChatUserController: DataController, DelegateCallable, DataSt
     public private(set) var hasLoadedAllDrafts: Bool = false
 
     /// The current user's draft messages.
-    public var draftMessages: [ChatMessage] {
+    public var draftMessages: [DraftMessage] {
         if let observer = draftMessagesObserver {
             return Array(observer.items)
         }
@@ -449,9 +449,9 @@ extension CurrentChatUserController {
         var draftMessagesObserverBuilder: (
             _ database: DatabaseContainer,
             _ fetchRequest: NSFetchRequest<MessageDTO>,
-            _ itemCreator: @escaping (MessageDTO) throws -> ChatMessage
-        ) -> BackgroundListDatabaseObserver<ChatMessage, MessageDTO> = {
-            .init(database: $0, fetchRequest: $1, itemCreator: $2, itemReuseKeyPaths: (\ChatMessage.id, \MessageDTO.id))
+            _ itemCreator: @escaping (MessageDTO) throws -> DraftMessage
+        ) -> BackgroundListDatabaseObserver<DraftMessage, MessageDTO> = {
+            .init(database: $0, fetchRequest: $1, itemCreator: $2, itemReuseKeyPaths: (\DraftMessage.id, \MessageDTO.id))
         }
 
         var currentUserUpdaterBuilder = CurrentUserUpdater.init
@@ -488,11 +488,11 @@ private extension CurrentChatUserController {
     }
 
     @discardableResult
-    private func createDraftMessagesObserver(query: DraftListQuery) -> BackgroundListDatabaseObserver<ChatMessage, MessageDTO> {
+    private func createDraftMessagesObserver(query: DraftListQuery) -> BackgroundListDatabaseObserver<DraftMessage, MessageDTO> {
         let observer = environment.draftMessagesObserverBuilder(
             client.databaseContainer,
             MessageDTO.draftMessagesFetchRequest(query: query),
-            { try $0.asModel() }
+            { DraftMessage(try $0.asModel()) }
         )
         observer.onDidChange = { [weak self] _ in
             guard let self = self else { return }
@@ -519,7 +519,7 @@ public protocol CurrentChatUserControllerDelegate: AnyObject {
     /// The controller observed a change in the draft messages.
     func currentUserController(
         _ controller: CurrentChatUserController,
-        didChangeDraftMessages draftMessages: [ChatMessage]
+        didChangeDraftMessages draftMessages: [DraftMessage]
     )
 }
 
@@ -530,7 +530,7 @@ public extension CurrentChatUserControllerDelegate {
 
     func currentUserController(
         _ controller: CurrentChatUserController,
-        didChangeDraftMessages draftMessages: [ChatMessage]
+        didChangeDraftMessages draftMessages: [DraftMessage]
     ) {}
 }
 

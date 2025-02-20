@@ -11,7 +11,7 @@ class DemoDraftMessageListVC: UIViewController, ThemeProvider {
     var onDisconnect: (() -> Void)?
 
     private let currentUserController: CurrentChatUserController
-    private var drafts: [ChatMessage] = []
+    private var drafts: [DraftMessage] = []
     private var isPaginatingDrafts = false
     
     lazy var userAvatarView: CurrentChatUserAvatarView = components
@@ -121,7 +121,7 @@ class DemoDraftMessageListVC: UIViewController, ThemeProvider {
 extension DemoDraftMessageListVC: CurrentChatUserControllerDelegate {
     func currentUserController(
         _ controller: CurrentChatUserController,
-        didChangeDraftMessages draftMessages: [ChatMessage]
+        didChangeDraftMessages draftMessages: [DraftMessage]
     ) {
         drafts = draftMessages
         tableView.reloadData()
@@ -253,7 +253,7 @@ class DemoDraftMessageCell: UITableViewCell {
         }.embed(in: contentView, insets: .init(top: 8, leading: 16, bottom: 8, trailing: 16))
     }
     
-    func configure(with draft: ChatMessage, channel: ChatChannel?) {
+    func configure(with draft: DraftMessage, channel: ChatChannel?) {
         if let channel = channel {
             let channelName = Appearance.default.formatters.channelName.format(
                 channel: channel,

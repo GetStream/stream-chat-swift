@@ -174,7 +174,7 @@ final class CurrentUserController_Drafts_Tests: XCTestCase {
     
     func test_draftMessagesObserver_notifiesDelegate() throws {
         class DelegateMock: CurrentChatUserControllerDelegate {
-            var messages: [ChatMessage] = []
+            var messages: [DraftMessage] = []
             let expectation = XCTestExpectation(description: "Did Change Draft Messages")
             let expectedMessagesCount: Int
             
@@ -184,7 +184,7 @@ final class CurrentUserController_Drafts_Tests: XCTestCase {
             
             func currentUserController(
                 _ controller: CurrentChatUserController,
-                didChangeDraftMessages messages: [ChatMessage]
+                didChangeDraftMessages messages: [DraftMessage]
             ) {
                 self.messages = messages
                 guard expectedMessagesCount == messages.count else { return }
