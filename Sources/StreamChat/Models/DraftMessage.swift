@@ -8,11 +8,10 @@ public struct DraftMessage {
     /// A unique identifier of the message.
     public let id: MessageId
 
-    /// The ChannelId this message belongs to. This value can be temporarily `nil` for messages that are being removed from
-    /// the local cache, or when the local cache is in the process of invalidating.
+    /// The ChannelId this message belongs to.
     public let cid: ChannelId?
 
-    /// The ID of the parent message, if the message is a reply, otherwise `nil`.
+    /// The ID of the parent message, if the message is a reply.
     public let threadId: MessageId?
 
     /// The text of the message.
@@ -26,7 +25,7 @@ public struct DraftMessage {
     /// If the message was created by a specific `/` command, the command is saved in this variable.
     public let command: String?
 
-    /// Date when the message was created on the server. This date can differ from `locallyCreatedAt`.
+    /// The date when the draft was created.
     public let createdAt: Date
 
     /// If the message was created by a specific `/` command, the arguments of the command are stored in this variable.
