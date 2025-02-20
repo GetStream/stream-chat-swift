@@ -828,7 +828,7 @@ extension NSManagedObjectContext: MessageDatabaseSession {
 
         if let threadId = parentMessageId {
             let parentMessageDTO = self.message(id: threadId)
-            parentMessageDTO?.draftReply = parentMessageDTO
+            message.draftOfThread = parentMessageDTO
             let threadDTO = thread(parentMessageId: threadId, cache: nil)
             threadDTO?.parentMessageId = threadId
         } else {
@@ -1131,13 +1131,14 @@ extension NSManagedObjectContext: MessageDatabaseSession {
                 syncOwnReactions: false,
                 cache: cache
             )
-            dto.parentMessage?.draftReply = dto
+            dto.draftOfThread = dto.parentMessage
         } else if let parentMessageId = payload.parentId,
                   let parentMessage = message(id: parentMessageId) {
             dto.parentMessage = parentMessage
-            parentMessage.draftReply = dto
+            dto.draftOfThread = parentMessage
         } else {
             dto.parentMessage = nil
+            dto.draftOfThread = nil
             channelDTO.draftMessage = dto
         }
 
