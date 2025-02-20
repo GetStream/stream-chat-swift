@@ -325,7 +325,7 @@ final class ChatThreadVC_Tests: XCTestCase {
 
     func test_threadWithDraftReply_whenDraftIsUpdatedFromEvent_updatesDraftInComposer() {
         let parentMessage = ChatMessage.mock(
-            id: .unique,
+            id: messageControllerMock.messageId,
             cid: .unique,
             text: "Parent message",
             author: .mock(id: .unique),
@@ -340,18 +340,19 @@ final class ChatThreadVC_Tests: XCTestCase {
 
         vc.view.layoutIfNeeded()
 
+        let draftReply = DraftMessage.mock(threadId: parentMessage.id, text: "Updated Draft Message")
         let updatedParentMessage = ChatMessage.mock(
             id: messageControllerMock.messageId,
             cid: .unique,
             text: "Parent message",
             author: .mock(id: .unique),
-            draftReply: .mock(text: "Updated Draft Message")
+            draftReply: draftReply
         )
         messageControllerMock.message_mock = updatedParentMessage
         let updateDraftEvent = DraftUpdatedEvent(
             cid: updatedParentMessage.cid!,
             channel: .mock(cid: updatedParentMessage.cid!),
-            draftMessage: .mock(text: "Updated Draft Message", parentMessageId: updatedParentMessage.id),
+            draftMessage: draftReply,
             createdAt: .unique
         )
         vc.eventsController(vc.eventsController, didReceiveEvent: updateDraftEvent)

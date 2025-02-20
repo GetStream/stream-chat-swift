@@ -13,12 +13,12 @@ public class DraftUpdatedEvent: Event {
     public let channel: ChatChannel
 
     /// The draft message.
-    public let draftMessage: ChatMessage
+    public let draftMessage: DraftMessage
 
     /// The event timestamp.
     public let createdAt: Date
 
-    init(cid: ChannelId, channel: ChatChannel, draftMessage: ChatMessage, createdAt: Date) {
+    init(cid: ChannelId, channel: ChatChannel, draftMessage: DraftMessage, createdAt: Date) {
         self.cid = cid
         self.channel = channel
         self.draftMessage = draftMessage
@@ -48,7 +48,7 @@ class DraftUpdatedEventDTO: EventDTO {
         return try? DraftUpdatedEvent(
             cid: cid,
             channel: channelDTO.asModel(),
-            draftMessage: messageDTO.asModel(),
+            draftMessage: DraftMessage(messageDTO.asModel()),
             createdAt: createdAt
         )
     }

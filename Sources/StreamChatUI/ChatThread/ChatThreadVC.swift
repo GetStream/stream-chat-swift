@@ -490,7 +490,7 @@ open class ChatThreadVC: _ViewController,
             if !isFirstPageLoaded && newMessage.isSentByCurrentUser && newMessage.isPartOfThread {
                 messageController.loadFirstPage()
             }
-        case let event as DraftUpdatedEvent where event.draftMessage.parentMessageId == messageController.messageId:
+        case let event as DraftUpdatedEvent where event.draftMessage.threadId == messageController.messageId:
             if let draft = messageController.message?.draftReply {
                 messageComposerVC.content.draftMessage(draft)
             }

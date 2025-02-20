@@ -1593,7 +1593,7 @@ final class ChatChannelVC_Tests: XCTestCase {
         let event = DraftUpdatedEvent(
             cid: channel.cid,
             channel: channel,
-            draftMessage: ChatMessage(updatedDraftMessage),
+            draftMessage: updatedDraftMessage,
             createdAt: .unique
         )
         vc.eventsController(vc.eventsController, didReceiveEvent: event)
