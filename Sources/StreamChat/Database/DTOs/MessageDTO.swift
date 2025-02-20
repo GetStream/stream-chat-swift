@@ -835,10 +835,6 @@ extension NSManagedObjectContext: MessageDatabaseSession {
             message.channel?.draftMessage = message
         }
 
-        if quotedMessageId != nil {
-            message.showInsideThread = true
-        }
-
         return message
     }
 

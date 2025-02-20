@@ -2528,8 +2528,8 @@ final class MessageDTO_Tests: XCTestCase {
         )
 
         // Create a draft message
-        let draftPayload = DraftPayload.dummy(message: .dummy(text: "Draft message"))
-        let threadDraftPayload = DraftPayload.dummy(message: .dummy(text: "Thread draft message"), parentId: regularMessage.id)
+        let draftPayload = DraftPayload.dummy(cid: cid, message: .dummy(text: "Draft message"))
+        let threadDraftPayload = DraftPayload.dummy(cid: cid, message: .dummy(text: "Thread draft message"), parentId: regularMessage.id)
 
         // Save regular, draft message in the channel and draft message in the thread
         try database.writeSynchronously { session in
@@ -2549,6 +2549,51 @@ final class MessageDTO_Tests: XCTestCase {
         XCTAssertEqual(receivedMessages.count, 1)
         XCTAssertEqual(receivedMessages.first?.id, regularMessage.id)
         XCTAssertEqual(receivedMessages.first?.text, regularMessage.text)
+        XCTAssertEqual(database.viewContext.channel(cid: cid)?.draftMessage?.id, draftPayload.message.id)
+    }
+
+    func test_threadMessagesPredicate_shouldNotIncludeDraftMessages() throws {
+        // GIVEN
+        let cid: ChannelId = .unique
+        let currentUser: CurrentUserPayload = .dummy(userId: .unique, role: .user)
+        let channelDetailPayload = ChannelDetailPayload.dummy(cid: cid)
+        let channelPayload: ChannelPayload = .dummy(channel: channelDetailPayload)
+        let parentMessagePayload = MessagePayload.dummy(cid: cid)
+
+        // Create a regular message
+        let regularMessage = MessagePayload.dummy(
+            type: .regular,
+            messageId: .unique,
+            parentId: parentMessagePayload.id,
+            text: "Regular message",
+            cid: cid
+        )
+
+        // Create a draft message
+        let threadDraftPayload = DraftPayload.dummy(
+            cid: cid, message: .dummy(text: "Thread draft message"), parentId: regularMessage.id
+        )
+
+        // Save regular, draft message in the channel and draft message in the thread
+        try database.writeSynchronously { session in
+            try session.saveCurrentUser(payload: currentUser)
+            let channel = try session.saveChannel(payload: channelPayload)
+            try session.saveMessage(payload: parentMessagePayload, channelDTO: channel, syncOwnReactions: false, cache: nil)
+            let reply = try session.saveMessage(payload: regularMessage, for: cid, syncOwnReactions: false, cache: nil)
+            reply.showInsideThread = true
+            try session.saveDraftMessage(payload: threadDraftPayload, for: cid, cache: nil)
+        }
+
+        // Create an observer with channelMessagesPredicate
+        var receivedMessages: [ChatMessage] = []
+        let observer = try createThreadMessagesFRC(for: parentMessagePayload) { _ in }
+        receivedMessages = Array(observer.items)
+
+        // Only the regular message should be included in the results
+        XCTAssertEqual(receivedMessages.count, 1)
+        XCTAssertEqual(receivedMessages.first?.id, regularMessage.id)
+        XCTAssertEqual(receivedMessages.first?.text, regularMessage.text)
+        XCTAssertEqual(database.viewContext.message(id: regularMessage.id)?.draftReply?.id, threadDraftPayload.message.id)
     }
 
     // MARK: - allAttachmentsAreUploadedOrEmptyPredicate()
@@ -4381,6 +4426,27 @@ final class MessageDTO_Tests: XCTestCase {
                 pageSize: 25,
                 sortAscending: true,
                 deletedMessagesVisibility: .visibleForCurrentUser,
+                shouldShowShadowedMessages: false
+            ),
+            itemCreator: { try $0.asModel() as ChatMessage },
+            itemReuseKeyPaths: (\ChatMessage.id, \MessageDTO.id),
+            sorting: []
+        )
+        try observer.startObserving(onContextDidChange: { _, changes in onChange(changes) })
+        return observer
+    }
+
+    // Creates a messages observer (FRC wrapper)
+    private func createThreadMessagesFRC(
+        for payload: MessagePayload,
+        onChange: @escaping ([ListChange<ChatMessage>]) -> Void
+    ) throws -> StateLayerDatabaseObserver<ListResult, ChatMessage, MessageDTO> {
+        let observer = StateLayerDatabaseObserver(
+            database: database,
+            fetchRequest: MessageDTO.repliesFetchRequest(
+                for: payload.id,
+                pageSize: 25,
+                deletedMessagesVisibility: .alwaysHidden,
                 shouldShowShadowedMessages: false
             ),
             itemCreator: { try $0.asModel() as ChatMessage },
