@@ -538,10 +538,6 @@ open class ChatChannelVC: _ViewController,
             headerView.channelController = client.channelController(for: cid)
         }
 
-        if let draftMessage = channelController.channel?.draftMessage {
-            messageComposerVC.content.draftMessage(draftMessage)
-        }
-
         channelAvatarView.content = (channelController.channel, client.currentUserId)
     }
 
@@ -580,6 +576,12 @@ open class ChatChannelVC: _ViewController,
                 return
             }
             debugPrint("New Message Error: \(error) Message: \(message)")
+        }
+
+        if let draftUpdatedEvent = event as? DraftUpdatedEvent,
+           let draft = channelController.channel?.draftMessage,
+           draftUpdatedEvent.cid == channelController.cid {
+            messageComposerVC.content.draftMessage(draft)
         }
     }
 

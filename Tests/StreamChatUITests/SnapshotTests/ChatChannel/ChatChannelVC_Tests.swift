@@ -1586,9 +1586,17 @@ final class ChatChannelVC_Tests: XCTestCase {
 
         vc.view.layoutIfNeeded()
 
-        let updatedChannel = ChatChannel.mock(cid: .unique, draftMessage: .mock(text: "Updated draft"))
+        let updatedDraftMessage = DraftMessage.mock(text: "Updated draft")
+        let updatedChannel = ChatChannel.mock(cid: .unique, draftMessage: updatedDraftMessage)
         channelControllerMock.channel_mock = updatedChannel
-        vc.channelController(channelControllerMock, didUpdateChannel: .update(updatedChannel))
+        channelControllerMock.mockCid = channel.cid
+        let event = DraftUpdatedEvent(
+            cid: channel.cid,
+            channel: channel,
+            draftMessage: ChatMessage(updatedDraftMessage),
+            createdAt: .unique
+        )
+        vc.eventsController(vc.eventsController, didReceiveEvent: event)
 
         AssertSnapshot(vc, variants: [.defaultLight])
     }

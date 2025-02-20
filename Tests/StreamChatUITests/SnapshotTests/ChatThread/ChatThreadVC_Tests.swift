@@ -341,14 +341,20 @@ final class ChatThreadVC_Tests: XCTestCase {
         vc.view.layoutIfNeeded()
 
         let updatedParentMessage = ChatMessage.mock(
-            id: .unique,
+            id: messageControllerMock.messageId,
             cid: .unique,
             text: "Parent message",
             author: .mock(id: .unique),
             draftReply: .mock(text: "Updated Draft Message")
         )
         messageControllerMock.message_mock = updatedParentMessage
-        vc.messageController(messageControllerMock, didChangeMessage: .update(parentMessage))
+        let updateDraftEvent = DraftUpdatedEvent(
+            cid: updatedParentMessage.cid!,
+            channel: .mock(cid: updatedParentMessage.cid!),
+            draftMessage: .mock(text: "Updated Draft Message", parentMessageId: updatedParentMessage.id),
+            createdAt: .unique
+        )
+        vc.eventsController(vc.eventsController, didReceiveEvent: updateDraftEvent)
 
         AssertSnapshot(vc, variants: [.defaultLight])
     }

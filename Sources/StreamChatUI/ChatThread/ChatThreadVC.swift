@@ -446,10 +446,6 @@ open class ChatThreadVC: _ViewController,
             return
         }
 
-        if let draftReply = controller.message?.draftReply {
-            messageComposerVC.content.draftMessage(draftReply)
-        }
-
         let indexPath = IndexPath(row: messages.count - 1, section: 0)
 
         let listChange: ListChange<ChatMessage>
@@ -493,6 +489,10 @@ open class ChatThreadVC: _ViewController,
             let newMessage = event.message
             if !isFirstPageLoaded && newMessage.isSentByCurrentUser && newMessage.isPartOfThread {
                 messageController.loadFirstPage()
+            }
+        case let event as DraftUpdatedEvent where event.draftMessage.parentMessageId == messageController.messageId:
+            if let draft = messageController.message?.draftReply {
+                messageComposerVC.content.draftMessage(draft)
             }
         default:
             break
