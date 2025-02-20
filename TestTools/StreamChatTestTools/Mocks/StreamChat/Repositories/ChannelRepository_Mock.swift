@@ -13,8 +13,6 @@ class ChannelRepository_Mock: ChannelRepository, Spy {
     let spyState = SpyState()
     var getChannel_store: Bool?
     var getChannel_result: Result<ChatChannel, Error>?
-    var getLocalChannel_cid: ChannelId?
-    var getLocalChannel_result: Result<ChatChannel?, Error>?
     
     var markReadCid: ChannelId?
     var markReadUserId: UserId?
@@ -26,12 +24,6 @@ class ChannelRepository_Mock: ChannelRepository, Spy {
     var markUnreadLastReadMessageId: UserId?
     var markUnreadResult: Result<ChatChannel, Error>?
 
-    override func getLocalChannel(for cid: ChannelId, completion: @escaping (Result<ChatChannel?, any Error>) -> Void) {
-        record()
-        getLocalChannel_cid = cid
-        getLocalChannel_result?.invoke(with: completion)
-    }
-    
     override func getChannel(for query: ChannelQuery, store: Bool, completion: @escaping (Result<ChatChannel, any Error>) -> Void) {
         record()
         getChannel_store = store

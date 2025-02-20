@@ -131,48 +131,12 @@ final class ChatRemoteNotificationHandler_Tests: XCTestCase {
         }))
     }
     
-    func test_handleNotification_whenAppConnectedAndChannelExistsWithoutMessage_thenLocalChannelStateIsUsedAndMessageIsFetched() throws {
-        extensionLifecycle.mockIsAppReceivingWebSocketEvents = true
-        
-        let cid = ChannelId.unique
-        let expectation = XCTestExpectation()
-        let expectedChannel = ChatChannel.mock(cid: cid)
-        let expectedMessage = ChatMessage.mock()
-        channelRepository.getChannel_result = .failure(TestError())
-        channelRepository.getLocalChannel_result = .success(expectedChannel)
-        messageRepository.getMessageResult = .success(expectedMessage)
-        
-        let content = createNotificationContent(cid: expectedChannel.cid, messageId: expectedMessage.id)
-        let handler = ChatRemoteNotificationHandler(client: clientWithOffline, content: content)
-        let canHandle = handler.handleNotification { pushNotificationContent in
-            switch pushNotificationContent {
-            case .message(let messageNotificationContent):
-                let messageResult = messageNotificationContent.message
-                XCTAssertEqual(expectedMessage, messageResult)
-                let channelResult = messageNotificationContent.channel
-                XCTAssertEqual(expectedChannel, channelResult)
-            case .unknown(let unknownNotificationContent):
-                XCTFail(unknownNotificationContent.content.debugDescription)
-            }
-            expectation.fulfill()
-        }
-        XCTAssertEqual(true, canHandle)
-        wait(for: [expectation], timeout: defaultTimeout)
-        
-        XCTAssertEqual(["getLocalChannel(for:completion:)"], channelRepository.recordedFunctions, "Local state is read and used")
-        XCTAssertEqual(["getMessage(cid:messageId:store:completion:)"], messageRepository.recordedFunctions)
-        XCTAssertEqual(false, messageRepository.getMessage_store)
-    }
-    
-    func test_handleNotification_whenAppConnectedAndChannelDoesNotExist_thenChannelAndMessageAreFetched() throws {
-        extensionLifecycle.mockIsAppReceivingWebSocketEvents = true
-        
+    func test_handleNotification_whenChannelIsFetchedWithoutMessage_thenChannelAndMessageAreFetched() throws {
         let cid = ChannelId.unique
         let expectation = XCTestExpectation()
         let expectedChannel = ChatChannel.mock(cid: cid)
         let expectedMessage = ChatMessage.mock()
         channelRepository.getChannel_result = .success(expectedChannel)
-        channelRepository.getLocalChannel_result = .success(nil)
         messageRepository.getMessageResult = .success(expectedMessage)
         
         let content = createNotificationContent(cid: expectedChannel.cid, messageId: expectedMessage.id)
@@ -192,89 +156,18 @@ final class ChatRemoteNotificationHandler_Tests: XCTestCase {
         XCTAssertEqual(true, canHandle)
         wait(for: [expectation], timeout: defaultTimeout)
         
-        XCTAssertEqual(["getLocalChannel(for:completion:)", "getChannel(for:store:completion:)"], channelRepository.recordedFunctions, "Local state is read first")
+        XCTAssertEqual(["getChannel(for:store:completion:)"], channelRepository.recordedFunctions)
         XCTAssertEqual(["getMessage(cid:messageId:store:completion:)"], messageRepository.recordedFunctions)
         XCTAssertEqual(false, channelRepository.getChannel_store)
         XCTAssertEqual(false, messageRepository.getMessage_store)
     }
     
-    func test_handleNotification_whenAppDisconnectedAndChannelExistsWithoutMessage_thenChannelAndMessageAreFetched() throws {
-        extensionLifecycle.mockIsAppReceivingWebSocketEvents = false
-        
-        let cid = ChannelId.unique
-        let expectation = XCTestExpectation()
-        let expectedChannel = ChatChannel.mock(cid: cid)
-        let expectedMessage = ChatMessage.mock()
-        channelRepository.getChannel_result = .success(expectedChannel)
-        channelRepository.getLocalChannel_result = .success(nil)
-        messageRepository.getMessageResult = .success(expectedMessage)
-        
-        let content = createNotificationContent(cid: expectedChannel.cid, messageId: expectedMessage.id)
-        let handler = ChatRemoteNotificationHandler(client: clientWithOffline, content: content)
-        let canHandle = handler.handleNotification { pushNotificationContent in
-            switch pushNotificationContent {
-            case .message(let messageNotificationContent):
-                let messageResult = messageNotificationContent.message
-                XCTAssertEqual(expectedMessage, messageResult)
-                let channelResult = messageNotificationContent.channel
-                XCTAssertEqual(expectedChannel, channelResult)
-            case .unknown(let unknownNotificationContent):
-                XCTFail(unknownNotificationContent.content.debugDescription)
-            }
-            expectation.fulfill()
-        }
-        XCTAssertEqual(true, canHandle)
-        wait(for: [expectation], timeout: defaultTimeout)
-        
-        XCTAssertEqual(["getChannel(for:store:completion:)"], channelRepository.recordedFunctions, "Reading the local state is skipped")
-        XCTAssertEqual(["getMessage(cid:messageId:store:completion:)"], messageRepository.recordedFunctions)
-        XCTAssertEqual(false, channelRepository.getChannel_store)
-        XCTAssertEqual(false, messageRepository.getMessage_store)
-    }
-    
-    func test_handleNotification_whenAppDisconnectedAndChannelDoesNotExist_thenChannelAndMessageAreFetched() throws {
-        extensionLifecycle.mockIsAppReceivingWebSocketEvents = false
-        
-        let cid = ChannelId.unique
-        let expectation = XCTestExpectation()
-        let expectedChannel = ChatChannel.mock(cid: cid)
-        let expectedMessage = ChatMessage.mock()
-        channelRepository.getChannel_result = .success(expectedChannel)
-        channelRepository.getLocalChannel_result = .failure(TestError())
-        messageRepository.getMessageResult = .success(expectedMessage)
-        
-        let content = createNotificationContent(cid: expectedChannel.cid, messageId: expectedMessage.id)
-        let handler = ChatRemoteNotificationHandler(client: clientWithOffline, content: content)
-        let canHandle = handler.handleNotification { pushNotificationContent in
-            switch pushNotificationContent {
-            case .message(let messageNotificationContent):
-                let messageResult = messageNotificationContent.message
-                XCTAssertEqual(expectedMessage, messageResult)
-                let channelResult = messageNotificationContent.channel
-                XCTAssertEqual(expectedChannel, channelResult)
-            case .unknown(let unknownNotificationContent):
-                XCTFail(unknownNotificationContent.content.debugDescription)
-            }
-            expectation.fulfill()
-        }
-        XCTAssertEqual(true, canHandle)
-        wait(for: [expectation], timeout: defaultTimeout)
-        
-        XCTAssertEqual(["getChannel(for:store:completion:)"], channelRepository.recordedFunctions, "Reading the local state is skipped")
-        XCTAssertEqual(["getMessage(cid:messageId:store:completion:)"], messageRepository.recordedFunctions)
-        XCTAssertEqual(false, channelRepository.getChannel_store)
-        XCTAssertEqual(false, messageRepository.getMessage_store)
-    }
-    
-    func test_handleNotification_whenAppDisconnectedAndFetchedChannelContainsMessage_thenOnlyChannelIsFetched() throws {
-        extensionLifecycle.mockIsAppReceivingWebSocketEvents = false
-        
+    func test_handleNotification_whenChannelIsFetchedWithMessage_thenOnlyChannelIsFetched() throws {
         let cid = ChannelId.unique
         let expectation = XCTestExpectation()
         let expectedMessage = ChatMessage.mock()
         let expectedChannel = ChatChannel.mock(cid: cid, latestMessages: [expectedMessage])
         channelRepository.getChannel_result = .success(expectedChannel)
-        channelRepository.getLocalChannel_result = .failure(TestError())
         messageRepository.getMessageResult = .failure(TestError())
         
         let content = createNotificationContent(cid: expectedChannel.cid, messageId: expectedMessage.id)
@@ -294,20 +187,18 @@ final class ChatRemoteNotificationHandler_Tests: XCTestCase {
         XCTAssertEqual(true, canHandle)
         wait(for: [expectation], timeout: defaultTimeout)
         
-        XCTAssertEqual(["getChannel(for:store:completion:)"], channelRepository.recordedFunctions, "Reading the local state is skipped")
-        XCTAssertEqual([], messageRepository.recordedFunctions, "Message is part of the channel")
+        XCTAssertEqual(["getChannel(for:store:completion:)"], channelRepository.recordedFunctions)
+        XCTAssertEqual([], messageRepository.recordedFunctions, "Message was fetched with channel")
         XCTAssertEqual(false, channelRepository.getChannel_store)
+        XCTAssertEqual(nil, messageRepository.getMessage_store)
     }
     
-    func test_handleNotification_whenAppDisconnectedAndChannelFetchFails_thenOnlyMessageIsProvided() throws {
-        extensionLifecycle.mockIsAppReceivingWebSocketEvents = false
-        
+    func test_handleNotification_whenChannelFetchFails_thenMessageIsStillFetched() throws {
         let cid = ChannelId.unique
         let expectation = XCTestExpectation()
-        let expectedMessage = ChatMessage.mock()
         let expectedChannel: ChatChannel? = nil
+        let expectedMessage = ChatMessage.mock()
         channelRepository.getChannel_result = .failure(TestError())
-        channelRepository.getLocalChannel_result = .failure(TestError())
         messageRepository.getMessageResult = .success(expectedMessage)
         
         let content = createNotificationContent(cid: cid, messageId: expectedMessage.id)
@@ -327,7 +218,33 @@ final class ChatRemoteNotificationHandler_Tests: XCTestCase {
         XCTAssertEqual(true, canHandle)
         wait(for: [expectation], timeout: defaultTimeout)
         
-        XCTAssertEqual(["getChannel(for:store:completion:)"], channelRepository.recordedFunctions, "Reading the local state is skipped")
+        XCTAssertEqual(["getChannel(for:store:completion:)"], channelRepository.recordedFunctions)
+        XCTAssertEqual(["getMessage(cid:messageId:store:completion:)"], messageRepository.recordedFunctions)
+        XCTAssertEqual(false, channelRepository.getChannel_store)
+        XCTAssertEqual(false, messageRepository.getMessage_store)
+    }
+    
+    func test_handleNotification_whenChannelAndMessageFetchFails_thenErrorIsReturned() throws {
+        let cid = ChannelId.unique
+        let expectation = XCTestExpectation()
+        channelRepository.getChannel_result = .failure(TestError())
+        messageRepository.getMessageResult = .failure(TestError())
+        
+        let content = createNotificationContent(cid: cid, messageId: .unique)
+        let handler = ChatRemoteNotificationHandler(client: clientWithOffline, content: content)
+        let canHandle = handler.handleNotification { pushNotificationContent in
+            switch pushNotificationContent {
+            case .message(let messageNotificationContent):
+                XCTFail("Should fail with error")
+            case .unknown(let unknownNotificationContent):
+                break
+            }
+            expectation.fulfill()
+        }
+        XCTAssertEqual(true, canHandle)
+        wait(for: [expectation], timeout: defaultTimeout)
+        
+        XCTAssertEqual(["getChannel(for:store:completion:)"], channelRepository.recordedFunctions)
         XCTAssertEqual(["getMessage(cid:messageId:store:completion:)"], messageRepository.recordedFunctions)
         XCTAssertEqual(false, channelRepository.getChannel_store)
         XCTAssertEqual(false, messageRepository.getMessage_store)

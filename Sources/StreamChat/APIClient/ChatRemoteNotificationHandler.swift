@@ -72,14 +72,12 @@ public class ChatRemoteNotificationHandler {
     let chatCategoryIdentifiers: Set<String> = ["stream.chat", "MESSAGE_NEW"]
     let channelRepository: ChannelRepository
     let messageRepository: MessageRepository
-    let extensionLifecycle: NotificationExtensionLifecycle
 
     public init(client: ChatClient, content: UNNotificationContent) {
         self.client = client
         self.content = content
         channelRepository = client.channelRepository
         messageRepository = client.messageRepository
-        extensionLifecycle = client.extensionLifecycle
     }
 
     public func handleNotification(completion: @escaping (ChatPushNotificationContent) -> Void) -> Bool {
@@ -118,7 +116,9 @@ public class ChatRemoteNotificationHandler {
     }
     
     private func getContent(cid: ChannelId, messageId: MessageId, completion: @escaping (ChatMessage?, ChatChannel?) -> Void) {
-        getChannel(cid: cid) { [messageRepository] channelResult in
+        var query = ChannelQuery(cid: cid, pageSize: 10, membersLimit: 10)
+        query.options = .state
+        channelRepository.getChannel(for: query, store: false) { [messageRepository] channelResult in
             let channel = channelResult.value
             // When message is already available, skip fetching the message
             if let message = channel?.latestMessages.first(where: { $0.id == messageId }) {
@@ -128,23 +128,6 @@ public class ChatRemoteNotificationHandler {
                     completion(messageResult.value, channel)
                 }
             }
-        }
-    }
-
-    private func getChannel(cid: ChannelId, completion: @escaping (Result<ChatChannel, Error>) -> Void) {
-        var query = ChannelQuery(cid: cid, pageSize: 10, membersLimit: 10)
-        query.options = .state
-        // Try the local state when connected to the web-socket
-        if extensionLifecycle.isAppReceivingWebSocketEvents {
-            channelRepository.getLocalChannel(for: cid) { [channelRepository] result in
-                if case let .success(channel) = result, let channel {
-                    completion(.success(channel))
-                } else {
-                    channelRepository.getChannel(for: query, store: false, completion: completion)
-                }
-            }
-        } else {
-            channelRepository.getChannel(for: query, store: false, completion: completion)
         }
     }
 }

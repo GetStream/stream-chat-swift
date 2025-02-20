@@ -14,10 +14,6 @@ class ChannelRepository {
         self.apiClient = apiClient
     }
     
-    func getLocalChannel(for cid: ChannelId, completion: @escaping (Result<ChatChannel?, Error>) -> Void) {
-        database.read({ try $0.channel(cid: cid)?.asModel() }, completion: completion)
-    }
-    
     func getChannel(for query: ChannelQuery, store: Bool, completion: @escaping (Result<ChatChannel, Error>) -> Void) {
         apiClient.request(endpoint: .createChannel(query: query)) { [database] result in
             switch result {
