@@ -79,6 +79,9 @@ open class ComposerVC: _ViewController,
         public var cooldownTime: Int
         /// A boolean value indicating if the message url enrichment should be skipped.
         public var skipEnrichUrl: Bool
+        /// A boolean value indicating if the message should be shown in the channel.
+        /// If the provided value is nil, it won't change the current checkbox state.
+        public var showReplyInChannel: Bool?
 
         /// A boolean that checks if the message contains any content.
         public var isEmpty: Bool {
@@ -131,7 +134,8 @@ open class ComposerVC: _ViewController,
             command: Command?,
             extraData: [String: RawJSON] = [:],
             cooldownTime: Int = 0,
-            skipEnrichUrl: Bool = false
+            skipEnrichUrl: Bool = false,
+            showReplyInChannel: Bool? = nil
         ) {
             self.text = text
             self.state = state
@@ -144,6 +148,7 @@ open class ComposerVC: _ViewController,
             self.extraData = extraData
             self.cooldownTime = cooldownTime
             self.skipEnrichUrl = skipEnrichUrl
+            self.showReplyInChannel = showReplyInChannel
         }
 
         /// Creates a new content struct with all empty data.
@@ -195,7 +200,8 @@ open class ComposerVC: _ViewController,
                 command: message.command.map { Command(name: $0, args: message.text) },
                 extraData: message.extraData,
                 cooldownTime: cooldownTime,
-                skipEnrichUrl: skipEnrichUrl
+                skipEnrichUrl: skipEnrichUrl,
+                showReplyInChannel: message.showReplyInChannel
             )
         }
 
@@ -716,6 +722,10 @@ open class ComposerVC: _ViewController,
                 composerView.checkboxControl.label.text = L10n.Composer.Checkmark.directMessageReply
             } else {
                 composerView.checkboxControl.label.text = L10n.Composer.Checkmark.channelReply
+            }
+
+            if let showReplyInChannel = content.showReplyInChannel {
+                composerView.checkboxControl.isSelected = showReplyInChannel
             }
         }
     }
