@@ -12,7 +12,7 @@ public extension DraftMessage {
         cid: ChannelId = .unique,
         threadId: MessageId? = nil,
         text: String = .unique,
-        author: ChatUser = .unique,
+        currentUser: ChatUser = .unique,
         command: String? = nil,
         createdAt: Date = Date(timeIntervalSince1970: 113),
         arguments: String? = nil,
@@ -34,7 +34,7 @@ public extension DraftMessage {
             arguments: arguments,
             showReplyInChannel: showReplyInChannel,
             extraData: extraData,
-            author: author,
+            currentUser: currentUser,
             quotedMessage: { quotedMessage },
             mentionedUsers: mentionedUsers,
             attachments: attachments

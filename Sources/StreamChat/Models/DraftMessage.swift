@@ -51,11 +51,8 @@ public struct DraftMessage {
     /// A list of attachments of the message.
     public let attachments: [AnyChatMessageAttachment]
 
-    /// The user which is the author of the message.
-    ///
-    /// It will always be the current user. This property is used to make it easier
-    /// to convert to a regular message.
-    internal let author: ChatUser
+    /// This property is used to make it easier to convert to a regular message.
+    internal let currentUser: ChatUser
 
     init(
         id: MessageId,
@@ -68,7 +65,7 @@ public struct DraftMessage {
         arguments: String?,
         showReplyInChannel: Bool,
         extraData: [String: RawJSON],
-        author: ChatUser,
+        currentUser: ChatUser,
         quotedMessage: @escaping () -> ChatMessage?,
         mentionedUsers: Set<ChatUser>,
         attachments: [AnyChatMessageAttachment]
@@ -86,7 +83,7 @@ public struct DraftMessage {
         _quotedMessage = quotedMessage
         self.mentionedUsers = mentionedUsers
         self.attachments = attachments
-        self.author = author
+        self.currentUser = currentUser
     }
 
     init(_ message: ChatMessage) {
@@ -103,7 +100,7 @@ public struct DraftMessage {
         _quotedMessage = { message.quotedMessage }
         mentionedUsers = message.mentionedUsers
         attachments = message.allAttachments
-        author = message.author
+        currentUser = message.author
     }
 }
 
@@ -148,7 +145,7 @@ extension ChatMessage {
         reactionScores = [:]
         reactionCounts = [:]
         reactionGroups = [:]
-        author = draft.author
+        author = draft.currentUser
         mentionedUsers = draft.mentionedUsers
         threadParticipants = []
         _attachments = draft.attachments
