@@ -130,22 +130,20 @@ extension DefaultConnectionRecoveryHandler {
             return
         }
 
-        disconnectIfNeeded()
-        
-//        guard let scheduler = backgroundTaskScheduler else { return }
-//
-//        let succeed = scheduler.beginTask { [weak self] in
-//            log.debug("Background task -> ❌", subsystems: .webSocket)
-//
-//            self?.disconnectIfNeeded()
-//        }
-//
-//        if succeed {
-//            log.debug("Background task -> ✅", subsystems: .webSocket)
-//        } else {
-//            // Can't initiate a background task, close the connection
-//            disconnectIfNeeded()
-//        }
+        guard let scheduler = backgroundTaskScheduler else { return }
+
+        let succeed = scheduler.beginTask { [weak self] in
+            log.debug("Background task -> ❌", subsystems: .webSocket)
+
+            self?.disconnectIfNeeded()
+        }
+
+        if succeed {
+            log.debug("Background task -> ✅", subsystems: .webSocket)
+        } else {
+            // Can't initiate a background task, close the connection
+            disconnectIfNeeded()
+        }
     }
 
     @objc private func internetConnectionAvailabilityDidChange(_ notification: Notification) {
