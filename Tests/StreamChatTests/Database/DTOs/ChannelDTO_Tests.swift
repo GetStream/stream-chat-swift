@@ -1726,8 +1726,8 @@ final class ChannelDTO_Tests: XCTestCase {
         // THEN
         let channel = try XCTUnwrap(database.viewContext.channel(cid: cid)?.asModel())
         let draftMessage = try XCTUnwrap(channel.draftMessage)
-        XCTAssertEqual(draftMessage.parentMessageId, parentMessagePayload.id)
-        let parentMessageId = try XCTUnwrap(draftMessage.parentMessageId)
+        XCTAssertEqual(draftMessage.threadId, parentMessagePayload.id)
+        let parentMessageId = try XCTUnwrap(draftMessage.threadId)
         XCTAssertEqual(parentMessageId, parentMessagePayload.id)
     }
 }

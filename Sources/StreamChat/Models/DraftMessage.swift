@@ -12,6 +12,9 @@ public struct DraftMessage {
     /// the local cache, or when the local cache is in the process of invalidating.
     public let cid: ChannelId?
 
+    /// The ID of the parent message, if the message is a reply, otherwise `nil`.
+    public let threadId: MessageId?
+
     /// The text of the message.
     public let text: String
 
@@ -28,9 +31,6 @@ public struct DraftMessage {
 
     /// If the message was created by a specific `/` command, the arguments of the command are stored in this variable.
     public let arguments: String?
-
-    /// The ID of the parent message, if the message is a reply, otherwise `nil`.
-    public let parentMessageId: MessageId?
 
     /// If the message is a reply and this flag is `true`, the message should be also shown in the channel, not only in the
     /// reply thread.
@@ -60,12 +60,12 @@ public struct DraftMessage {
     init(
         id: MessageId,
         cid: ChannelId?,
+        threadId: MessageId?,
         text: String,
         isSilent: Bool,
         command: String?,
         createdAt: Date,
         arguments: String?,
-        parentMessageId: MessageId?,
         showReplyInChannel: Bool,
         extraData: [String: RawJSON],
         author: ChatUser,
@@ -75,12 +75,12 @@ public struct DraftMessage {
     ) {
         self.id = id
         self.cid = cid
+        self.threadId = threadId
         self.text = text
         self.isSilent = isSilent
         self.command = command
         self.createdAt = createdAt
         self.arguments = arguments
-        self.parentMessageId = parentMessageId
         self.showReplyInChannel = showReplyInChannel
         self.extraData = extraData
         _quotedMessage = quotedMessage
@@ -97,7 +97,7 @@ public struct DraftMessage {
         command = message.command
         createdAt = message.createdAt
         arguments = message.arguments
-        parentMessageId = message.parentMessageId
+        threadId = message.parentMessageId
         showReplyInChannel = message.showReplyInChannel
         extraData = message.extraData
         _quotedMessage = { message.quotedMessage }
@@ -117,7 +117,7 @@ extension DraftMessage: Equatable {
             && lhs.createdAt == rhs.createdAt
             && lhs.createdAt.timeIntervalSince1970 == rhs.createdAt.timeIntervalSince1970
             && lhs.arguments == rhs.arguments
-            && lhs.parentMessageId == rhs.parentMessageId
+            && lhs.threadId == rhs.threadId
             && lhs.quotedMessage == rhs.quotedMessage
             && lhs.attachments == rhs.attachments
     }
@@ -137,7 +137,7 @@ extension ChatMessage {
         updatedAt = draft.createdAt
         deletedAt = nil
         arguments = draft.arguments
-        parentMessageId = draft.parentMessageId
+        parentMessageId = draft.threadId
         showReplyInChannel = draft.showReplyInChannel
         replyCount = 0
         extraData = draft.extraData

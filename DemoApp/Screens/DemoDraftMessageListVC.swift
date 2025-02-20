@@ -160,7 +160,7 @@ extension DemoDraftMessageListVC: UITableViewDataSource, UITableViewDelegate {
             let draft = self.drafts[indexPath.row]
             guard let cid = draft.cid else { return }
 
-            self.currentUserController.deleteDraftMessage(for: cid, threadId: draft.parentMessageId)
+            self.currentUserController.deleteDraftMessage(for: cid, threadId: draft.threadId)
             completion(true)
         }
         
@@ -178,7 +178,7 @@ extension DemoDraftMessageListVC: UITableViewDataSource, UITableViewDelegate {
             messageOrdering: .topToBottom
         )
 
-        if let parentId = draft.parentMessageId {
+        if let parentId = draft.threadId {
             let messageController = currentUserController.client.messageController(
                 cid: cid,
                 messageId: parentId
@@ -259,7 +259,7 @@ class DemoDraftMessageCell: UITableViewCell {
                 channel: channel,
                 forCurrentUserId: StreamChatWrapper.shared.client?.currentUserId
             ) ?? ""
-            if draft.parentMessageId != nil {
+            if draft.threadId != nil {
                 channelNameLabel.text = "Thread in # \(channelName)"
             } else {
                 channelNameLabel.text = "# \(channelName)"
