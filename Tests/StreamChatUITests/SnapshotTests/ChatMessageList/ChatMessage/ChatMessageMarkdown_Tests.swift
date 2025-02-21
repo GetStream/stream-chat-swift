@@ -9,14 +9,14 @@ import StreamSwiftTestHelpers
 import XCTest
 
 final class ChatMessageMarkdown_Tests: XCTestCase {
-    func test_text_default() {
+    func test_text() {
         let view = contentView(
             """
             This is **bold** text  
             This text is _italicized_  
             This was ~~mistaken~~ text  
             This has backslashes for a newline\\
-            This is regular text
+            This has html line break<br/>Will span two lines
             """
         )
         AssertSnapshot(view)
@@ -32,13 +32,13 @@ final class ChatMessageMarkdown_Tests: XCTestCase {
             This text is _italicized_  
             This was ~~mistaken~~ text  
             This has backslashes for a newline\\
-            This is regular text
+            This has html line break<br/>Will span two lines
             """
         )
         AssertSnapshot(view)
     }
     
-    func test_headers_default() {
+    func test_headers() {
         let view = contentView(
             """
             # A first level heading
@@ -79,7 +79,7 @@ final class ChatMessageMarkdown_Tests: XCTestCase {
         AssertSnapshot(view)
     }
     
-    func test_unorderedLists_default() {
+    func test_unorderedLists() {
         let view = contentView(
             """
             Unordered (no nesting)
@@ -101,7 +101,7 @@ final class ChatMessageMarkdown_Tests: XCTestCase {
         AssertSnapshot(view)
     }
     
-    func test_unorderedLists_nested_default() {
+    func test_unorderedLists_nested() {
         let view = contentView(
             """
             Unordered (nested)  
@@ -125,7 +125,7 @@ final class ChatMessageMarkdown_Tests: XCTestCase {
         AssertSnapshot(view)
     }
     
-    func test_orderedLists_default() {
+    func test_orderedLists() {
         let view = contentView(
             """
             Ordered (no nesting)
@@ -143,7 +143,7 @@ final class ChatMessageMarkdown_Tests: XCTestCase {
         AssertSnapshot(view)
     }
     
-    func test_orderedLists_nested_default() {
+    func test_orderedLists_nested() {
         let view = contentView(
             """
             Unordered (nested)  
@@ -156,7 +156,7 @@ final class ChatMessageMarkdown_Tests: XCTestCase {
         AssertSnapshot(view)
     }
     
-    func test_mixedLists_nested_default() {
+    func test_mixedLists_nested() {
         let view = contentView(
             """
             Mixed (nested)  
@@ -169,7 +169,7 @@ final class ChatMessageMarkdown_Tests: XCTestCase {
         AssertSnapshot(view)
     }
     
-    func test_links_default() {
+    func test_links() {
         let view = contentView(
             """
             This site is cool: [Stream](https://getstream.io/)
@@ -180,7 +180,7 @@ final class ChatMessageMarkdown_Tests: XCTestCase {
         AssertSnapshot(view)
     }
     
-    func test_code_default() {
+    func test_code() {
         let view = contentView(
             """
             This is inline code: `git init`
@@ -200,6 +200,18 @@ final class ChatMessageMarkdown_Tests: XCTestCase {
                 // TODO: Implement markdown formatting
             }
             ```
+            """
+        )
+        AssertSnapshot(view)
+    }
+    
+    func test_code_inlineOnMultipleLines() {
+        let view = contentView(
+            """
+            `inline code`
+            
+            `inline code which
+            should render on a single line`
             """
         )
         AssertSnapshot(view)
@@ -236,7 +248,7 @@ final class ChatMessageMarkdown_Tests: XCTestCase {
         AssertSnapshot(view)
     }
     
-    func test_quote_default() {
+    func test_quote() {
         let view = contentView(
             """
             Text that is not a quote
@@ -246,7 +258,37 @@ final class ChatMessageMarkdown_Tests: XCTestCase {
         AssertSnapshot(view)
     }
     
-    func test_inlinePresentationIntents_default() {
+    func test_quote_multipleLines() {
+        let view = contentView(
+            """
+            Text that is not a quote
+            > Quote
+            > should
+            > render
+            > on
+            > a
+            > single
+            > line
+            """
+        )
+        AssertSnapshot(view)
+    }
+    
+    func test_quote_separate() {
+        let view = contentView(
+            """
+            Text that is not a quote
+            > Text that is a quote
+            
+            > This is a second quote
+            
+            Another text that is not a quote
+            """
+        )
+        AssertSnapshot(view)
+    }
+    
+    func test_inlinePresentationIntents() {
         let view = contentView(
             """
             **This is bold text with 2 letters for a newline**  
@@ -261,7 +303,7 @@ final class ChatMessageMarkdown_Tests: XCTestCase {
         AssertSnapshot(view)
     }
     
-    func test_thematicBreak_default() {
+    func test_thematicBreak() {
         let view = contentView(
             """
             ---
