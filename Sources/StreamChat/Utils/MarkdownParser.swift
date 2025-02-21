@@ -92,11 +92,18 @@ public struct MarkdownParser {
                 attributedString[range].mergeAttributes(attributes)
             }
             switch inlinePresentationIntent {
-            case .softBreak:
+            case .lineBreak:
                 // Appears as a space with inline attribute, therefore we need to replace it for preserving the line break
                 let attributes = attributes.merging(attributes)
                 let insertedString = AttributedString("\n", attributes: attributes)
                 attributedString.replaceSubrange(range, with: insertedString)
+            case .inlineHTML:
+                // Note: there are others like: em, strong
+                if String(attributedString[range].characters) == "<br/>" {
+                    let attributes = attributes.merging(attributes)
+                    let insertedString = AttributedString("\n", attributes: attributes)
+                    attributedString.replaceSubrange(range, with: insertedString)
+                }
             default:
                 break
             }
@@ -110,10 +117,9 @@ public struct MarkdownParser {
             for intentType in presentationIntent.components {
                 switch intentType.kind {
                 case .blockQuote:
+                    presentationIntentStyling.quoteBlockId = intentType.identity
                     presentationIntentStyling.mergedAttributes = presentationIntentAttributes(intentType.kind, presentationIntent)
-                    presentationIntentStyling.prependedString = "| "
-                    presentationIntentStyling.precedingNewlineCount += 1
-                    presentationIntentStyling.succeedingNewlineCount += 1
+                    presentationIntentStyling.prependedString = "\u{23D0}"
                 case .codeBlock:
                     presentationIntentStyling.mergedAttributes = presentationIntentAttributes(intentType.kind, presentationIntent)
                     presentationIntentStyling.precedingNewlineCount += 1
@@ -161,13 +167,22 @@ public struct MarkdownParser {
                     presentationIntentStyling.succeedingNewlineCount += 1
                 }
             }
-            
+            // More space for quotes
+            switch (presentationIntentStyling.quoteBlockId, previousPresentationIntentStyling?.quoteBlockId) {
+            case (.some(let current), .some(let previous)):
+                presentationIntentStyling.succeedingNewlineCount += current != previous ? 1 : 0
+            case (.some, .none), (.none, .some):
+                presentationIntentStyling.succeedingNewlineCount += 1
+            default:
+                break
+            }
+
             // Preparing list items
             if let listItemOrdinal = presentationIntentStyling.listItemOrdinal {
                 if presentationIntentStyling.isOrdered == true {
-                    presentationIntentStyling.prependedString.append("\(listItemOrdinal).\t")
+                    presentationIntentStyling.prependedString.append("\(listItemOrdinal).  ")
                 } else {
-                    presentationIntentStyling.prependedString.append("\u{2022}\t")
+                    presentationIntentStyling.prependedString.append("\u{2022}  ")
                 }
                 // Extra space when list's last item
                 if previousPresentationIntentStyling?.listId != presentationIntentStyling.listId {
@@ -209,7 +224,14 @@ public struct MarkdownParser {
             
             previousPresentationIntentStyling = presentationIntentStyling
         }
-                
+        
+        // Support links like "getstream.io" (URL parsing considers it as a path, not host)
+        attributedString = attributedString.transformingAttributes(\.link) { attribute in
+            guard let url = attribute.value, url.scheme == nil, url.host == nil else { return }
+            let urlString = "https://" + url.absoluteString
+            guard let urlWithScheme = URL(string: urlString) else { return }
+            attribute.value = urlWithScheme
+        }
         return attributedString
     }
 }
@@ -242,6 +264,7 @@ private struct PresentationIntentStyling {
     let range: Range<AttributedString.Index>
     let components: [PresentationIntent.IntentType]
     var paragraphId: Int?
+    var quoteBlockId: Int?
     var precedingNewlineCount = 0
     var succeedingNewlineCount = 0
     var mergedAttributes: AttributeContainer?

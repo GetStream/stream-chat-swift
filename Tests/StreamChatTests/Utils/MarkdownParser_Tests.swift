@@ -177,4 +177,26 @@ final class MarkdownParser_Tests: XCTestCase {
         XCTAssertEqual(expectedInlinePresentationIntents, parsedInlinePresentationKinds)
         XCTAssertEqual(expectedPresentationKinds, parsedPresentationKinds)
     }
+    
+    func test_style_fixLinksWithoutSchemeAndHost() throws {
+        let markdown = """
+        [link](getstream.io)
+        [link](https://example.com)
+        [link](https://getstream.io/chat/)
+        """
+        let string = try MarkdownParser().style(
+            markdown: markdown,
+            options: MarkdownParser.ParsingOptions(),
+            attributes: AttributeContainer(),
+            inlinePresentationIntentAttributes: { _ in nil },
+            presentationIntentAttributes: { _, _ in nil }
+        )
+        let expected = [
+            "https://getstream.io",
+            "https://example.com",
+            "https://getstream.io/chat/"
+        ]
+        let result = string.runs[\.link].compactMap { $0.0?.absoluteString }
+        XCTAssertEqual(expected, result)
+    }
 }

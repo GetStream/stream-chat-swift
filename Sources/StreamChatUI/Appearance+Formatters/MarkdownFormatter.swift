@@ -82,6 +82,10 @@ open class DefaultMarkdownFormatter: MarkdownFormatter {
                 .foregroundColor: styles.codeFont.color
             ].compactMapValues { $0 }
             return AttributeContainer(attributes)
+        case .extremelyStronglyEmphasized:
+            let font = UIFont.font(forMarkdownFont: styles.bodyFont, defaultFont: fonts.body)
+                .withTraits(traits: [.traitBold, .traitItalic])
+            return AttributeContainer([.font: font])
         default:
             // emphasized etc are handled automatically by UITextView
             return nil
@@ -177,6 +181,12 @@ private extension UIFont {
         let font = UIFont(descriptor: descriptor, size: descriptor.pointSize)
         return UIFontMetrics(forTextStyle: textStyle).scaledFont(for: font)
     }
+}
+
+@available(iOS 15.0, *)
+private extension InlinePresentationIntent {
+    /// An intent that represents bold with italic presentation.
+    static var extremelyStronglyEmphasized = InlinePresentationIntent(rawValue: 3)
 }
 
 /// Configures the font style properties for base Markdown elements
