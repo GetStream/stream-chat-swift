@@ -7,7 +7,8 @@ import Foundation
 /// A struct representing base URL for `ChatClient`.
 public struct BaseURL: CustomStringConvertible {
     /// The default base URL  for StreamChat service.
-    public static let `default` = BaseURL(urlString: "https://chat.stream-io-api.com/")!
+//    public static let `default` = BaseURL(urlString: "https://chat.stream-io-api.com/")!
+    public static let `default` = BaseURL(urlString: "192.168.0.120")!
 
     /// The base url for StreamChat data center located in the US East Cost.
     public static let usEast = BaseURL(urlString: "https://chat-proxy-us-east.stream-io-api.com/")!
@@ -63,8 +64,8 @@ public struct BaseURL: CustomStringConvertible {
         }
         #endif
 
-        restAPIBaseURL = URL(string: "https://\(urlString)/")!
-        webSocketBaseURL = URL(string: "wss://\(urlString)/")!
+        restAPIBaseURL = URL(string: "http://\(urlString):3030/")!
+        webSocketBaseURL = URL(string: "ws://\(urlString):8800/")!
     }
 }
 

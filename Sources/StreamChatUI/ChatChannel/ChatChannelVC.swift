@@ -179,6 +179,17 @@ open class ChatChannelVC: _ViewController,
         }
 
         updateScrollToBottomButtonCount()
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+            let reads = (self.channelController.channel?.reads.map { read in
+                "\(read.user.id), \(read.lastReadAt), \(read.lastReadMessageId)"
+            })
+            let messages = self.channelController.messages.map { message in
+                "\(message.id), \(message.text), \(message.author.id), \(message.createdAt)"
+            }
+            print("========== \(messages)")
+            print("========== \(reads)")
+        }
     }
 
     private func setChannelControllerToComposerIfNeeded(cid: ChannelId?) {

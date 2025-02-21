@@ -5,7 +5,8 @@
 import Foundation
 import StreamChat
 
-var apiKeyString = ProcessInfo.processInfo.environment["CUSTOM_API_KEY"] ?? DemoApiKeys.frankfurtC1.rawValue
+// var apiKeyString = ProcessInfo.processInfo.environment["CUSTOM_API_KEY"] ?? DemoApiKeys.frankfurtC1.rawValue
+var apiKeyString = "hd8szvscpxvd"
 let applicationGroupIdentifier = "group.io.getstream.iOS.ChatDemoApp"
 
 enum DemoUserType {
@@ -65,20 +66,7 @@ extension UserCredentials {
         [
             luke,
             leia,
-            hanSolo,
-            lando,
-            chewbacca,
-            c3po,
-            r2d2,
-            anakin,
-            obiwan,
-            padme,
-            quiGonJinn,
-            maceWindu,
-            jarJarBinks,
-            darthMaul,
-            countDooku,
-            generalGrievous
+            hanSolo
         ]
     }
 
@@ -91,7 +79,7 @@ extension UserCredentials {
             id: "luke_skywalker",
             name: "Luke Skywalker",
             avatarURL: URL(string: "https://vignette.wikia.nocookie.net/starwars/images/2/20/LukeTLJ.jpg")!,
-            token: DemoUserTokens.luke,
+            token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoibHVrZV9za3l3YWxrZXIifQ.75UE4KkzEMIyfdsZMGEQcv5o-O6faZcMhlzA3WlJC0s",
             birthLand: "Tatooine"
         )
     }
@@ -101,7 +89,7 @@ extension UserCredentials {
             id: "leia_organa",
             name: "Leia Organa",
             avatarURL: URL(string: "https://vignette.wikia.nocookie.net/starwars/images/f/fc/Leia_Organa_TLJ.png")!,
-            token: DemoUserTokens.leia,
+            token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoibGVpYV9vcmdhbmEifQ.h3-yvKMXKQR0fI7SQvgcaa3BDDey2B--xeQ3qK3ub1E",
             birthLand: "Polis Massa"
         )
     }
@@ -111,7 +99,7 @@ extension UserCredentials {
             id: "han_solo",
             name: "Han Solo",
             avatarURL: URL(string: "https://vignette.wikia.nocookie.net/starwars/images/e/e2/TFAHanSolo.png")!,
-            token: DemoUserTokens.hanSolo,
+            token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiaGFuX3NvbG8ifQ.jC08SNxdlJ4rlVRIaYTPKGamvj4Uq6B2-77bXvnFxIU",
             birthLand: "Corellia"
         )
     }
