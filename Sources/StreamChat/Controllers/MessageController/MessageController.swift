@@ -263,12 +263,21 @@ public class ChatMessageController: DataController, DelegateCallable, DataStoreP
         extraData: [String: RawJSON]? = nil,
         completion: ((Error?) -> Void)? = nil
     ) {
+        var transformableInfo = NewMessageTransformableInfo(
+            text: text,
+            attachments: attachments,
+            extraData: extraData ?? message?.extraData ?? [:]
+        )
+        if let transformer = client.config.modelsTransformer {
+            transformableInfo = transformer.transform(newMessageInfo: transformableInfo)
+        }
+
         messageUpdater.editMessage(
             messageId: messageId,
-            text: text,
+            text: transformableInfo.text,
             skipEnrichUrl: skipEnrichUrl,
-            attachments: attachments,
-            extraData: extraData
+            attachments: transformableInfo.attachments,
+            extraData: transformableInfo.extraData
         ) { result in
             self.callback {
                 completion?(result.error)
