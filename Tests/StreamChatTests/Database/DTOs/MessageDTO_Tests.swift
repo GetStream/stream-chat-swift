@@ -4488,7 +4488,7 @@ final class MessageDTO_Tests: XCTestCase {
         // WHEN
         try database.writeSynchronously { session in
             try session.saveCurrentUser(payload: currentUser)
-            let channel = try session.saveChannel(payload: channelPayload)
+            try session.saveChannel(payload: channelPayload)
             try session.saveDraftMessage(payload: draftPayload, for: cid, cache: nil)
         }
 
@@ -4547,6 +4547,44 @@ final class MessageDTO_Tests: XCTestCase {
         XCTAssertEqual(draftReply.parentMessageId, parentMessageId)
     }
 
+    func test_saveDraftMessage_whenParentOrQuotedMessageContainsDraft_shouldNotCrash() throws {
+        // GIVEN
+        let cid: ChannelId = .unique
+        let currentUser: CurrentUserPayload = .dummy(userId: .unique, role: .user)
+        let channelDetailPayload = ChannelDetailPayload.dummy(cid: cid)
+        let channelPayload: ChannelPayload = .dummy(channel: channelDetailPayload)
+        let draftMessage = DraftMessagePayload.dummy(text: "Draft Reply")
+        let parentMessageId = MessageId.unique
+        let parentMessage = MessagePayload.dummy(
+            messageId: parentMessageId,
+            draft: .dummy(cid: cid, message: draftMessage)
+        )
+        let draftPayload = DraftPayload.dummy(
+            cid: cid,
+            channelPayload: channelDetailPayload,
+            message: draftMessage,
+            quotedMessage: .dummy(cid: cid, draft: .dummy(cid: cid, message: draftMessage)),
+            parentId: parentMessageId,
+            parentMessage: parentMessage
+        )
+
+        // WHEN
+        try database.writeSynchronously { session in
+            try session.saveCurrentUser(payload: currentUser)
+            let channel = try session.saveChannel(payload: channelPayload)
+            _ = try session.saveMessage(payload: parentMessage, channelDTO: channel, syncOwnReactions: false, cache: nil)
+            try session.saveDraftMessage(payload: draftPayload, for: cid, cache: nil)
+        }
+
+        // THEN
+        let parentMessageDTO = try XCTUnwrap(database.viewContext.message(id: parentMessageId))
+        let draftReply = try XCTUnwrap(parentMessageDTO.draftReply)
+        XCTAssertEqual(draftReply.text, "Draft reply")
+        XCTAssertEqual(draftReply.type, MessageType.regular.rawValue)
+        XCTAssertTrue(draftReply.isDraft)
+        XCTAssertEqual(draftReply.parentMessageId, parentMessageId)
+    }
+
     func test_deleteDraftMessage_fromChannel() throws {
         // GIVEN
         let cid: ChannelId = .unique
@@ -4575,7 +4613,7 @@ final class MessageDTO_Tests: XCTestCase {
 
         try database.writeSynchronously { session in
             try session.saveCurrentUser(payload: currentUser)
-            let channel = try session.saveChannel(payload: channelPayload)
+            try session.saveChannel(payload: channelPayload)
             try session.saveDraftMessage(payload: draftPayload, for: cid, cache: nil)
         }
 
@@ -4699,6 +4737,31 @@ final class MessageDTO_Tests: XCTestCase {
 
         // THEN
         message = try XCTUnwrap(database.viewContext.message(id: messagePayload.id)?.asModel())
+        XCTAssertNil(message.draftReply)
+    }
+
+    func test_saveMessage_whenSkipsDraftUpdate_shouldNotSaveDraft() throws {
+        // GIVEN
+        let cid: ChannelId = .unique
+        let draftMessagePayload = DraftMessagePayload.dummy(
+            text: "Draft message text"
+        )
+        let messagePayload = MessagePayload.dummy(
+            draft: .dummy(
+                cid: cid,
+                message: draftMessagePayload
+            )
+        )
+
+        // WHEN
+        try database.writeSynchronously { session in
+            try session.saveCurrentUser(payload: .dummy(userId: .unique, role: .admin))
+            try session.saveChannel(payload: .dummy(channel: .dummy(cid: cid)))
+            try session.saveMessage(payload: messagePayload, for: cid, syncOwnReactions: false, skipDraftUpdate: true, cache: nil)
+        }
+
+        // THEN
+        let message = try XCTUnwrap(database.viewContext.message(id: messagePayload.id)?.asModel())
         XCTAssertNil(message.draftReply)
     }
 }

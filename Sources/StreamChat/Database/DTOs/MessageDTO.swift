@@ -838,10 +838,20 @@ extension NSManagedObjectContext: MessageDatabaseSession {
         return message
     }
 
+    /// Saves a message into the local DB.
+    /// - Parameters:
+    ///   - payload: The message payload
+    ///   - channelDTO: The channel dto.
+    ///   - syncOwnReactions: Whether to sync own reactions. It should be set to `true` when the payload comes from an API response and `false` when the payload is received via WS events. For performance reasons the API
+    ///   does not populate the `message.own_reactions` when sending events
+    ///   - skipDraftUpdate: Whether to skip draft update. This is used when saving quoted and parent messages from
+    ///   saveDraftMessage function to avoid an infinite loop since saving the draft would be called again.
+    ///   - cache: The pre-warmed cache.
     func saveMessage(
         payload: MessagePayload,
         channelDTO: ChannelDTO,
         syncOwnReactions: Bool,
+        skipDraftUpdate: Bool = false,
         cache: PreWarmedCache?
     ) throws -> MessageDTO {
         let cid = try ChannelId(cid: channelDTO.cid)
@@ -914,19 +924,20 @@ extension NSManagedObjectContext: MessageDatabaseSession {
                 payload: quotedMessage,
                 channelDTO: channelDTO,
                 syncOwnReactions: false,
+                skipDraftUpdate: false,
                 cache: cache
             )
         } else {
             dto.quotedMessage = nil
         }
 
-        if let draft = payload.draft {
+        if let draft = payload.draft, skipDraftUpdate == false {
             dto.draftReply = try saveDraftMessage(payload: draft, for: cid, cache: cache)
-        } else {
+        } else if skipDraftUpdate == false {
             /// If the payload does not contain a draft reply, we should
             /// delete the existing draft reply if it exists.
             if let draft = dto.draftReply {
-                deleteDraftMessage(in: cid, threadId: dto.id)
+                deleteDraftMessage(in: cid, threadId: draft.parentMessageId)
                 dto.draftReply = nil
             }
         }
@@ -1040,10 +1051,20 @@ extension NSManagedObjectContext: MessageDatabaseSession {
         return dto
     }
 
-    func saveMessages(messagesPayload: MessageListPayload, for cid: ChannelId?, syncOwnReactions: Bool = true) -> [MessageDTO] {
+    func saveMessages(
+        messagesPayload: MessageListPayload,
+        for cid: ChannelId?,
+        syncOwnReactions: Bool = true
+    ) -> [MessageDTO] {
         let cache = messagesPayload.getPayloadToModelIdMappings(context: self)
         return messagesPayload.messages.compactMapLoggingError {
-            try saveMessage(payload: $0, for: cid, syncOwnReactions: syncOwnReactions, cache: cache)
+            try saveMessage(
+                payload: $0,
+                for: cid,
+                syncOwnReactions: syncOwnReactions,
+                skipDraftUpdate: false,
+                cache: cache
+            )
         }
     }
 
@@ -1051,6 +1072,7 @@ extension NSManagedObjectContext: MessageDatabaseSession {
         payload: MessagePayload,
         for cid: ChannelId?,
         syncOwnReactions: Bool = true,
+        skipDraftUpdate: Bool = false,
         cache: PreWarmedCache?
     ) throws -> MessageDTO {
         guard payload.channel != nil || cid != nil else {
@@ -1083,7 +1105,13 @@ extension NSManagedObjectContext: MessageDatabaseSession {
             throw ClientError.MessagePayloadSavingFailure(description)
         }
 
-        return try saveMessage(payload: payload, channelDTO: channel, syncOwnReactions: syncOwnReactions, cache: cache)
+        return try saveMessage(
+            payload: payload,
+            channelDTO: channel,
+            syncOwnReactions: syncOwnReactions,
+            skipDraftUpdate: skipDraftUpdate,
+            cache: cache
+        )
     }
 
     @discardableResult
@@ -1136,6 +1164,7 @@ extension NSManagedObjectContext: MessageDatabaseSession {
                 payload: parentMessage,
                 channelDTO: channelDTO,
                 syncOwnReactions: false,
+                skipDraftUpdate: true,
                 cache: cache
             )
             dto.draftOfThread = dto.parentMessage
@@ -1154,6 +1183,7 @@ extension NSManagedObjectContext: MessageDatabaseSession {
                 payload: quotedMessage,
                 channelDTO: channelDTO,
                 syncOwnReactions: false,
+                skipDraftUpdate: true,
                 cache: cache
             )
         } else {

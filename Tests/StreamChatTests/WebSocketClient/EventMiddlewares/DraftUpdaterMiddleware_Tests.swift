@@ -75,7 +75,6 @@ final class DraftUpdaterMiddleware_Tests: XCTestCase {
         let currentUserId = UserId.unique
         let cid = ChannelId.unique
         let draftId = MessageId.unique
-        let threadId = MessageId.unique
         
         let eventPayload = EventPayload(
             eventType: .draftDeleted,

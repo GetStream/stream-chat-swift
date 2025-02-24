@@ -197,15 +197,58 @@ class DatabaseSession_Mock: DatabaseSession {
         payload: MessagePayload,
         for cid: ChannelId?,
         syncOwnReactions: Bool,
+        skipDraftUpdate: Bool,
         cache: PreWarmedCache?
     ) throws -> MessageDTO {
         try throwErrorIfNeeded()
-        return try underlyingSession.saveMessage(payload: payload, for: cid, syncOwnReactions: syncOwnReactions, cache: cache)
+        return try underlyingSession.saveMessage(
+            payload: payload,
+            for: cid,
+            syncOwnReactions: syncOwnReactions,
+            skipDraftUpdate: skipDraftUpdate,
+            cache: cache
+        )
     }
 
-    func saveMessage(payload: MessagePayload, channelDTO: ChannelDTO, syncOwnReactions: Bool, cache: PreWarmedCache?) throws -> MessageDTO {
+    func saveMessage(
+        payload: MessagePayload,
+        for cid: ChannelId?,
+        syncOwnReactions: Bool,
+        cache: PreWarmedCache?
+    ) throws -> MessageDTO {
+        try saveMessage(payload: payload, for: cid, syncOwnReactions: syncOwnReactions, skipDraftUpdate: false, cache: cache)
+    }
+
+    func saveMessage(
+        payload: MessagePayload,
+        channelDTO: ChannelDTO,
+        syncOwnReactions: Bool,
+        skipDraftUpdate: Bool,
+        cache: PreWarmedCache?
+    ) throws -> MessageDTO {
         try throwErrorIfNeeded()
-        return try underlyingSession.saveMessage(payload: payload, channelDTO: channelDTO, syncOwnReactions: syncOwnReactions, cache: cache)
+        return try underlyingSession.saveMessage(
+            payload: payload,
+            channelDTO: channelDTO,
+            syncOwnReactions: syncOwnReactions,
+            skipDraftUpdate: skipDraftUpdate,
+            cache: cache
+        )
+    }
+
+    func saveMessage(
+        payload: MessagePayload,
+        channelDTO: ChannelDTO,
+        syncOwnReactions: Bool,
+        cache: PreWarmedCache?
+    ) throws -> MessageDTO {
+        try saveMessage(
+            payload: payload,
+            channelDTO: channelDTO,
+            syncOwnReactions: syncOwnReactions,
+            skipDraftUpdate: false,
+            cache: cache
+        )
     }
 
     func saveMessages(messagesPayload: MessageListPayload, for cid: ChannelId?, syncOwnReactions: Bool) -> [MessageDTO] {
@@ -562,5 +605,39 @@ private extension DatabaseSession_Mock {
     func throwErrorIfNeeded() throws {
         guard let error = errorToReturn else { return }
         throw error
+    }
+}
+
+extension DatabaseSession {
+    @discardableResult
+    func saveMessage(
+        payload: MessagePayload,
+        for cid: ChannelId?,
+        syncOwnReactions: Bool,
+        cache: PreWarmedCache?
+    ) throws -> MessageDTO {
+        try self.saveMessage(
+            payload: payload,
+            for: cid,
+            syncOwnReactions: syncOwnReactions,
+            skipDraftUpdate: false,
+            cache: cache
+        )
+    }
+
+    @discardableResult
+    func saveMessage(
+        payload: MessagePayload,
+        channelDTO: ChannelDTO,
+        syncOwnReactions: Bool,
+        cache: PreWarmedCache?
+    ) throws -> MessageDTO {
+        try self.saveMessage(
+            payload: payload,
+            channelDTO: channelDTO,
+            syncOwnReactions: syncOwnReactions,
+            skipDraftUpdate: false,
+            cache: cache
+        )
     }
 }
