@@ -920,6 +920,17 @@ extension NSManagedObjectContext: MessageDatabaseSession {
             dto.quotedMessage = nil
         }
 
+        if let draft = payload.draft {
+            dto.draftReply = try saveDraftMessage(payload: draft, for: cid, cache: cache)
+        } else {
+            /// If the payload does not contain a draft reply, we should
+            /// delete the existing draft reply if it exists.
+            if let draft = dto.draftReply {
+                deleteDraftMessage(in: cid, threadId: dto.id)
+                dto.draftReply = nil
+            }
+        }
+
         let user = try saveUser(payload: payload.user)
         dto.user = user
 

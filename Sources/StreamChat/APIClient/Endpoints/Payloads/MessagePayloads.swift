@@ -52,6 +52,7 @@ enum MessagePayloadsCodingKeys: String, CodingKey, CaseIterable {
     case set
     case unset
     case skipEnrichUrl = "skip_enrich_url"
+    case draft
 }
 
 extension MessagePayload {
@@ -109,6 +110,8 @@ class MessagePayload: Decodable {
     var pinExpires: Date?
     
     var poll: PollPayload?
+
+    var draft: DraftPayload?
 
     /// Only message payload from `getMessage` endpoint contains channel data. It's a convenience workaround for having to
     /// make an extra call do get channel details.
@@ -174,6 +177,7 @@ class MessagePayload: Decodable {
         moderationDetails = try container.decodeIfPresent(MessageModerationDetailsPayload.self, forKey: .moderationDetails)
         messageTextUpdatedAt = try container.decodeIfPresent(Date.self, forKey: .messageTextUpdatedAt)
         poll = try container.decodeIfPresent(PollPayload.self, forKey: .poll)
+        draft = try container.decodeIfPresent(DraftPayload.self, forKey: .draft)
     }
 
     init(
@@ -213,7 +217,8 @@ class MessagePayload: Decodable {
         moderation: MessageModerationDetailsPayload? = nil,
         moderationDetails: MessageModerationDetailsPayload? = nil,
         messageTextUpdatedAt: Date? = nil,
-        poll: PollPayload? = nil
+        poll: PollPayload? = nil,
+        draft: DraftPayload? = nil
     ) {
         self.id = id
         self.cid = cid
@@ -252,6 +257,7 @@ class MessagePayload: Decodable {
         self.moderationDetails = moderationDetails
         self.messageTextUpdatedAt = messageTextUpdatedAt
         self.poll = poll
+        self.draft = draft
     }
 }
 
