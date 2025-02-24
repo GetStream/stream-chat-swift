@@ -4579,7 +4579,7 @@ final class MessageDTO_Tests: XCTestCase {
         // THEN
         let parentMessageDTO = try XCTUnwrap(database.viewContext.message(id: parentMessageId))
         let draftReply = try XCTUnwrap(parentMessageDTO.draftReply)
-        XCTAssertEqual(draftReply.text, "Draft reply")
+        XCTAssertEqual(draftReply.text, "Draft Reply")
         XCTAssertEqual(draftReply.type, MessageType.regular.rawValue)
         XCTAssertTrue(draftReply.isDraft)
         XCTAssertEqual(draftReply.parentMessageId, parentMessageId)
