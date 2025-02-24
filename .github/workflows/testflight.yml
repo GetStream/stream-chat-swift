@@ -35,7 +35,7 @@ jobs:
       with:
         status: ${{ job.status }}
         text: "You shall not pass!"
-        fields: message,commit,author,workflow
+        fields: repo,commit,author,workflow
       env:
         SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
       if: failure()
