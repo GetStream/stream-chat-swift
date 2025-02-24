@@ -97,16 +97,6 @@ jobs:
     - name: Allure TestOps Launch Removal
       if: cancelled()
       run: bundle exec fastlane allure_launch_removal launch_id:$LAUNCH_ID
-    - uses: 8398a7/action-slack@v3
-      with:
-        status: ${{ job.status }}
-        text: "You shall not pass!"
-        job_name: "${{ github.workflow }}: ${{ github.job }}"
-        fields: message,commit,author,action,workflow,job,took
-      env:
-        SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
-        MATRIX_CONTEXT: ${{ toJson(matrix) }}
-      if: failure() && github.event_name == 'schedule'
     - name: Parse xcresult
       if: failure()
       run: |
@@ -165,16 +155,6 @@ jobs:
     - name: Run LLC Tests (Debug)
       run: bundle exec fastlane test device:"${{ matrix.device }} (${{ matrix.ios }})" cron:true
       timeout-minutes: 100
-    - uses: 8398a7/action-slack@v3
-      with:
-        status: ${{ job.status }}
-        text: "You shall not pass!"
-        job_name: "${{ github.workflow }}: ${{ github.job }}"
-        fields: message,commit,author,action,workflow,job,took
-      env:
-        SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
-        MATRIX_CONTEXT: ${{ toJson(matrix) }}
-      if: failure() && github.event_name == 'schedule'
     - name: Parse xcresult
       if: failure()
       run: |
@@ -224,3 +204,18 @@ jobs:
     - run: bundle exec fastlane rubocop
     - run: ./Scripts/run-linter.sh
     - run: bundle exec fastlane pod_lint
+
+  slack:
+    name: Slack Report
+    runs-on: ubuntu-latest
+    needs: [build-and-test-debug, test-e2e-debug, build-test-app-and-frameworks, build-old-xcode, automated-code-review]
+    if: failure() && github.event_name == 'schedule'
+    steps:
+      - uses: 8398a7/action-slack@v3
+        with:
+          status: cancelled
+          text: "You shall not pass!"
+          job_name: "${{ github.workflow }}: ${{ github.job }}"
+          fields: message,commit,author,workflow
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_NIGHTLY_CHECKS }}
