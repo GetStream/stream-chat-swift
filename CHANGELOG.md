@@ -9,6 +9,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Add `Fonts.title2` for supporting markdown headers [#3590](https://github.com/GetStream/stream-chat-swift/pull/3590)
 ### 🐞 Fixed
 - Update channel's preview message when coming back to online [#3574](https://github.com/GetStream/stream-chat-swift/pull/3574)
+- Fix message transformer not being applied when editing a message [#3602](https://github.com/GetStream/stream-chat-swift/pull/3602)
 
 ### StreamChatUI
 ### 🔄 Changed
