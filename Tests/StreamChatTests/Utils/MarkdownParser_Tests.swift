@@ -98,14 +98,33 @@ final class MarkdownParser_Tests: XCTestCase {
     }
 
     func test_containsMarkdown_whenCheckForUnorderedLists_thenReturnsTrue() {
-        let stringWithUnorderedListsMarkdown = """
+        let stringWithUnorderedListsMarkdown1 = """
           - Hello,
           - This is
              - a test
                  - String
         """
-        let containsUnorderedListsMarkdown = parser.containsMarkdown(stringWithUnorderedListsMarkdown)
-        XCTAssertEqual(true, containsUnorderedListsMarkdown)
+        let stringWithUnorderedListsMarkdown2 = """
+          * Hello,
+          * This is
+             * a test
+                 * String
+        """
+        let stringWithUnorderedListsMarkdown3 = """
+          + Hello,
+          + This is
+             + a test
+                 + String
+        """
+        XCTAssertEqual(true, parser.containsMarkdown(stringWithUnorderedListsMarkdown1))
+        XCTAssertEqual(true, parser.containsMarkdown(stringWithUnorderedListsMarkdown2))
+        XCTAssertEqual(true, parser.containsMarkdown(stringWithUnorderedListsMarkdown3))
+    }
+    
+    func test_containsMarkdown_whenCheckForSingleItemUnorderedLists_thenReturnsTrue() {
+        XCTAssertEqual(true, parser.containsMarkdown("- List item"))
+        XCTAssertEqual(true, parser.containsMarkdown("* List item"))
+        XCTAssertEqual(true, parser.containsMarkdown("+ List item"))
     }
 
     func test_containsMarkdown_whenCheckForOrderedLists_thenReturnsTrue() {
