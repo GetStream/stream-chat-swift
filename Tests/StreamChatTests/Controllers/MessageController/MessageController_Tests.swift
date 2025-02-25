@@ -988,6 +988,46 @@ final class MessageController_Tests: XCTestCase {
         XCTAssertEqual(env.messageUpdater.editMessage_extraData, extraData)
     }
 
+    func test_editMessage_whenMessageTransformerIsProvided_callsUpdaterWithTransformedValues() throws {
+        class MockTransformer: StreamModelsTransformer {
+            var mockTransformedMessage = NewMessageTransformableInfo(
+                text: "transformed",
+                attachments: [.mockFile],
+                extraData: ["transformed": true]
+            )
+            func transform(newMessageInfo: NewMessageTransformableInfo) -> NewMessageTransformableInfo {
+                mockTransformedMessage
+            }
+        }
+
+        let transformer = MockTransformer()
+        var config = ChatClientConfig(apiKeyString: .unique)
+        config.modelsTransformer = transformer
+        client = .mock(config: config)
+        controller = ChatMessageController(
+            client: client,
+            cid: cid,
+            messageId: messageId,
+            replyPaginationHandler: replyPaginationHandler,
+            environment: env.controllerEnvironment
+        )
+
+        let exp = expectation(description: "should complete edit message")
+
+        controller.editMessage(
+            text: .unique
+        ) { _ in
+            exp.fulfill()
+        }
+
+        env.messageUpdater.editMessage_completion?(.success(.unique))
+        wait(for: [exp], timeout: defaultTimeout)
+
+        XCTAssertEqual(env.messageUpdater.editMessage_text, transformer.mockTransformedMessage.text)
+        XCTAssertEqual(env.messageUpdater.editMessage_attachments, transformer.mockTransformedMessage.attachments)
+        XCTAssertEqual(env.messageUpdater.editMessage_extraData, transformer.mockTransformedMessage.extraData)
+    }
+
     // MARK: - Flag message
 
     func test_flag_propagatesError() {
