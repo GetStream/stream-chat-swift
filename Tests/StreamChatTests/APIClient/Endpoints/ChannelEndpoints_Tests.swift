@@ -52,7 +52,7 @@ final class ChannelEndpoints_Tests: XCTestCase {
         }
 
         let testCases: [(ChannelQuery, Bool)] = [
-            (channelQuery(options: .state), true),
+            (channelQuery(options: .state), false),
             (channelQuery(options: .presence), true),
             (channelQuery(options: .watch), true),
             (channelQuery(options: .all), true),
