@@ -2334,10 +2334,6 @@
 		C1616DB128DC4D7F00FF993B /* UserGloballyUnbanned.json in Resources */ = {isa = PBXBuildFile; fileRef = C1616DAF28DC4D7F00FF993B /* UserGloballyUnbanned.json */; };
 		C1616DB228DC4D7F00FF993B /* UserGloballyBanned.json in Resources */ = {isa = PBXBuildFile; fileRef = C1616DB028DC4D7F00FF993B /* UserGloballyBanned.json */; };
 		C1616DB428DC9F0B00FF993B /* ChannelCreated.json in Resources */ = {isa = PBXBuildFile; fileRef = C1616DB328DC9F0B00FF993B /* ChannelCreated.json */; };
-		C163ECFB299155D0006D6124 /* NotificationExtension+Lifecycle.swift in Sources */ = {isa = PBXBuildFile; fileRef = C163ECFA299155D0006D6124 /* NotificationExtension+Lifecycle.swift */; };
-		C163ECFC299155D0006D6124 /* NotificationExtension+Lifecycle.swift in Sources */ = {isa = PBXBuildFile; fileRef = C163ECFA299155D0006D6124 /* NotificationExtension+Lifecycle.swift */; };
-		C163ECFE2992B06C006D6124 /* NotificationExtensionLifecycle_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C163ECFD2992B06C006D6124 /* NotificationExtensionLifecycle_Tests.swift */; };
-		C163ED012992B378006D6124 /* NotificationExtensionLifecycle_Mock.swift in Sources */ = {isa = PBXBuildFile; fileRef = C163ECFF2992B24E006D6124 /* NotificationExtensionLifecycle_Mock.swift */; };
 		C171041E2768C34E008FB3F2 /* Array+SafeSubscript.swift in Sources */ = {isa = PBXBuildFile; fileRef = C171041D2768C34E008FB3F2 /* Array+SafeSubscript.swift */; };
 		C171041F2768C34E008FB3F2 /* Array+SafeSubscript.swift in Sources */ = {isa = PBXBuildFile; fileRef = C171041D2768C34E008FB3F2 /* Array+SafeSubscript.swift */; };
 		C173538E27D9F804008AC412 /* KeyedDecodingContainer+Array.swift in Sources */ = {isa = PBXBuildFile; fileRef = C173538D27D9F804008AC412 /* KeyedDecodingContainer+Array.swift */; };
@@ -4530,9 +4526,6 @@
 		C1616DAF28DC4D7F00FF993B /* UserGloballyUnbanned.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = UserGloballyUnbanned.json; sourceTree = "<group>"; };
 		C1616DB028DC4D7F00FF993B /* UserGloballyBanned.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = UserGloballyBanned.json; sourceTree = "<group>"; };
 		C1616DB328DC9F0B00FF993B /* ChannelCreated.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = ChannelCreated.json; sourceTree = "<group>"; };
-		C163ECFA299155D0006D6124 /* NotificationExtension+Lifecycle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NotificationExtension+Lifecycle.swift"; sourceTree = "<group>"; };
-		C163ECFD2992B06C006D6124 /* NotificationExtensionLifecycle_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationExtensionLifecycle_Tests.swift; sourceTree = "<group>"; };
-		C163ECFF2992B24E006D6124 /* NotificationExtensionLifecycle_Mock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationExtensionLifecycle_Mock.swift; sourceTree = "<group>"; };
 		C171041D2768C34E008FB3F2 /* Array+SafeSubscript.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Array+SafeSubscript.swift"; sourceTree = "<group>"; };
 		C173538D27D9F804008AC412 /* KeyedDecodingContainer+Array.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "KeyedDecodingContainer+Array.swift"; sourceTree = "<group>"; };
 		C174E0F5284DFA5A0040B936 /* IdentifiablePayload.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IdentifiablePayload.swift; sourceTree = "<group>"; };
@@ -5610,7 +5603,6 @@
 				7985BDA9252B1E53002B8C30 /* MainQueue+Synchronous.swift */,
 				79CD959124F9380B00E87377 /* MulticastDelegate.swift */,
 				881506EB258212BF0013935B /* MultipartFormData.swift */,
-				C163ECFA299155D0006D6124 /* NotificationExtension+Lifecycle.swift */,
 				E7DD8EC025E4083B0059A322 /* OptionalDecodable.swift */,
 				792FCB4824A3BF38000290C7 /* OptionSet+Extensions.swift */,
 				DA4AA3B92502731900FAAF6E /* Publisher+Extensions.swift */,
@@ -7230,7 +7222,6 @@
 			isa = PBXGroup;
 			children = (
 				F6C56D1324F7B89D0012BB1F /* EventMiddleware_Mock.swift */,
-				C163ECFF2992B24E006D6124 /* NotificationExtensionLifecycle_Mock.swift */,
 			);
 			path = EventMiddlewares;
 			sourceTree = "<group>";
@@ -7535,7 +7526,6 @@
 				DB842E4425C9F94C000AAC46 /* LazyCachedMapCollection_Tests.swift */,
 				AD5BCCC82AB22A6600456CD9 /* Logger_Tests.swift */,
 				79CD959324F9381700E87377 /* MulticastDelegate_Tests.swift */,
-				C163ECFD2992B06C006D6124 /* NotificationExtensionLifecycle_Tests.swift */,
 				ADEDA1F92B2BC46C00020460 /* RepeatingTimer_Tests.swift */,
 				4F3554972C9C0F6500479229 /* StreamJSONDecoder_Tests.swift */,
 				AD0F7F1B2B616DD000914C4C /* TextLinkDetector_Tests.swift */,
@@ -11244,7 +11234,6 @@
 				A3C3BC2D27E87F2000224761 /* TestCustomEventPayload.swift in Sources */,
 				A3C3BC9527E8AC0A00224761 /* RequestDecoder_Spy.swift in Sources */,
 				A311B43027E8BC8400CFCF6D /* ChatUserController_Delegate.swift in Sources */,
-				C163ED012992B378006D6124 /* NotificationExtensionLifecycle_Mock.swift in Sources */,
 				82E655352B06751D00D64906 /* QueueAwareDelegate.swift in Sources */,
 				A3C3BC6D27E8AA4300224761 /* TestManagedObject.swift in Sources */,
 				8263464C2B0BACF600122D0E /* Difference.swift in Sources */,
@@ -11301,7 +11290,6 @@
 				4F8E53062B7CD01D008C0F9F /* Chat.swift in Sources */,
 				DAE566E724FFD22300E39431 /* ChannelController+SwiftUI.swift in Sources */,
 				88DA57202631AC3100FA8C53 /* ChannelMuteDTO.swift in Sources */,
-				C163ECFB299155D0006D6124 /* NotificationExtension+Lifecycle.swift in Sources */,
 				CFA41B6727DA952100427602 /* SystemEnvironment+XStreamClient.swift in Sources */,
 				792CA62624CEE93700D70A5E /* ChannelListUpdater.swift in Sources */,
 				882C5756252C791400E60C44 /* ChannelMemberListUpdater.swift in Sources */,
@@ -11738,7 +11726,6 @@
 				4F5151962BC3DEA1001B7152 /* UserSearch_Tests.swift in Sources */,
 				AD45333225D153A500CD9D47 /* ConnectionController_Tests.swift in Sources */,
 				DA84072D2525EF8D005A0F62 /* UserEndpoints_Tests.swift in Sources */,
-				C163ECFE2992B06C006D6124 /* NotificationExtensionLifecycle_Tests.swift in Sources */,
 				889B00E9252CACCB007709A8 /* ChannelMemberListQueryDTO_Tests.swift in Sources */,
 				A34ECB4827F5C9FA00A804C1 /* UserEvents_IntegrationTests.swift in Sources */,
 				AD6E32962BBB10890073831B /* ThreadListPayload_Tests.swift in Sources */,
@@ -12444,7 +12431,6 @@
 				C121E890274544AF00023E4C /* Device.swift in Sources */,
 				8413D2EA2BDC6300005ADA4E /* PollVoteListQueryDTO.swift in Sources */,
 				C121E891274544AF00023E4C /* Member.swift in Sources */,
-				C163ECFC299155D0006D6124 /* NotificationExtension+Lifecycle.swift in Sources */,
 				8451C48E2BD671A400849955 /* PollsRepository.swift in Sources */,
 				C121E892274544B000023E4C /* User.swift in Sources */,
 				C121E893274544B000023E4C /* UserInfo.swift in Sources */,

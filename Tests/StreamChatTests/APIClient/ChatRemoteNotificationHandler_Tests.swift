@@ -13,7 +13,6 @@ final class ChatRemoteNotificationHandler_Tests: XCTestCase {
     var database: DatabaseContainer_Spy!
     var channelRepository: ChannelRepository_Mock!
     var messageRepository: MessageRepository_Mock!
-    var extensionLifecycle: NotificationExtensionLifecycle_Mock!
     var currentUserUpdater: CurrentUserUpdater!
     var clientWithOffline: ChatClient!
     let apiKey: APIKey = .init("123")
@@ -34,12 +33,10 @@ final class ChatRemoteNotificationHandler_Tests: XCTestCase {
         database = DatabaseContainer_Spy()
         channelRepository = ChannelRepository_Mock(database: database, apiClient: apiClient)
         messageRepository = MessageRepository_Mock(database: database, apiClient: apiClient)
-        extensionLifecycle = NotificationExtensionLifecycle_Mock(appGroupIdentifier: "test")
 
         var env = ChatClient.Environment()
         env.databaseContainerBuilder = { _, _ in self.database }
         env.apiClientBuilder = { _, _, _, _, _ in self.apiClient }
-        env.extensionLifecycleBuilder = { _ in self.extensionLifecycle }
         env.messageRepositoryBuilder = { _, _ in self.messageRepository }
         env.channelRepositoryBuilder = { _, _ in self.channelRepository }
 
@@ -234,9 +231,9 @@ final class ChatRemoteNotificationHandler_Tests: XCTestCase {
         let handler = ChatRemoteNotificationHandler(client: clientWithOffline, content: content)
         let canHandle = handler.handleNotification { pushNotificationContent in
             switch pushNotificationContent {
-            case .message(let messageNotificationContent):
+            case .message:
                 XCTFail("Should fail with error")
-            case .unknown(let unknownNotificationContent):
+            case .unknown:
                 break
             }
             expectation.fulfill()
