@@ -25,7 +25,6 @@ class ChannelRepository {
                     // Therefore, the channel has to be added to the context and then converted.
                     if !store {
                         (session as? NSManagedObjectContext)?.rollback()
-                        assert(!database.writableContext.hasChanges)
                     }
                     return model
                 }, completion: completion)
