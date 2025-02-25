@@ -82,7 +82,10 @@ final class EndpointPathTests: XCTestCase {
 
     func test_drafts_shouldNOTBeQueuedOffline() {
         XCTAssertFalse(EndpointPath.drafts.shouldBeQueuedOffline)
-        XCTAssertFalse(EndpointPath.draftMessage(.unique).shouldBeQueuedOffline)
+    }
+
+    func test_draftMessage_shouldBeQueuedOffline() {
+        XCTAssertTrue(EndpointPath.draftMessage(.unique).shouldBeQueuedOffline)
     }
 
     // MARK: - Codable
