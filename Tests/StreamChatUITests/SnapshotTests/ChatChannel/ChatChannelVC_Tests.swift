@@ -1578,6 +1578,21 @@ final class ChatChannelVC_Tests: XCTestCase {
         AssertSnapshot(vc, variants: [.defaultLight])
     }
 
+    func test_channelWithDraftMessage_withUnknownCommand_showsDraftInComposer() {
+        let draftMessage = DraftMessage.mock(
+            text: "/test"
+        )
+
+        channelControllerMock.channel_mock = .mock(
+            cid: .unique,
+            draftMessage: draftMessage
+        )
+
+        vc.view.layoutIfNeeded()
+
+        AssertSnapshot(vc, variants: [.defaultLight])
+    }
+
     func test_channelWithDraftMessage_whenDraftIsUpdatedFromEvent_updatesDraftInComposer() {
         let draftMessage = DraftMessage.mock(text: "Draft Message")
 

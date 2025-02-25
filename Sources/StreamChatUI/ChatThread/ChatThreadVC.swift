@@ -123,10 +123,6 @@ open class ChatThreadVC: _ViewController,
             messageComposerVC.content.threadMessage = message
         }
 
-        if let draftMessage = messageController.message?.draftReply {
-            messageComposerVC.content.draftMessage(draftMessage)
-        }
-
         messageController.delegate = self
         eventsController.delegate = self
 
@@ -177,6 +173,14 @@ open class ChatThreadVC: _ViewController,
 
         navigationItem.titleView = headerView
         navigationItem.largeTitleDisplayMode = .never
+    }
+
+    override open func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+
+        if let draftMessage = messageController.message?.draftReply {
+            messageComposerVC.content.draftMessage(draftMessage)
+        }
     }
 
     override open func viewDidAppear(_ animated: Bool) {

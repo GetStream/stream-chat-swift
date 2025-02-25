@@ -152,10 +152,6 @@ open class ChatChannelVC: _ViewController,
             self?.didFinishSynchronizing(with: error)
         }
 
-        if let draftMessage = channelController.channel?.draftMessage {
-            messageComposerVC.content.draftMessage(draftMessage)
-        }
-
         if channelController.channelQuery.pagination?.parameter == nil {
             // Load initial messages from cache if loading the first page
             messages = Array(channelController.messages)
@@ -227,6 +223,14 @@ open class ChatChannelVC: _ViewController,
 
         if shouldMarkChannelRead {
             markRead()
+        }
+    }
+
+    override open func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+
+        if let draftMessage = channelController.channel?.draftMessage {
+            messageComposerVC.content.draftMessage(draftMessage)
         }
     }
 
