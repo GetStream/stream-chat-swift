@@ -467,17 +467,6 @@ class DatabaseContainer: NSPersistentContainer, @unchecked Sendable {
 }
 
 extension NSManagedObjectContext {
-    /// Discards any changes on the passed object that are pending to be saved.
-    func discardChanges(for object: NSManagedObject) {
-        refresh(object, mergeChanges: false)
-    }
-
-    func discardCurrentChanges() {
-        insertedObjects.forEach { discardChanges(for: $0) }
-        updatedObjects.forEach { discardChanges(for: $0) }
-        deletedObjects.forEach { discardChanges(for: $0) }
-    }
-    
     fileprivate func currentChangeCounts() -> [String: Int] {
         [
             "inserted": insertedObjects.count,
