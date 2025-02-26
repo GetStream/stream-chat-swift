@@ -322,7 +322,13 @@ extension DatabaseContainer {
                 reactionCounts: reactionCounts
             )
 
-            let messageDTO = try session.saveMessage(payload: message, channelDTO: channelDTO, syncOwnReactions: true, cache: nil)
+            let messageDTO = try session.saveMessage(
+                payload: message,
+                channelDTO: channelDTO,
+                syncOwnReactions: true,
+                skipDraftUpdate: true,
+                cache: nil)
+
             messageDTO.localMessageState = localState
             messageDTO.reactionCounts = reactionCounts.mapKeys(\.rawValue)
             messageDTO.reactionScores = reactionScores.mapKeys(\.rawValue)
@@ -340,7 +346,13 @@ extension DatabaseContainer {
                     extraData: extraData
                 )
 
-                let replyDTO = try session.saveMessage(payload: reply, for: cid, syncOwnReactions: true, cache: nil)
+                let replyDTO = try session.saveMessage(
+                    payload: reply,
+                    for: cid,
+                    syncOwnReactions: true,
+                    skipDraftUpdate: true,
+                    cache: nil
+                )
                 messageDTO.replies.insert(replyDTO)
             }
         }

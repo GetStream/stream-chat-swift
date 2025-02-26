@@ -62,6 +62,7 @@ struct ThreadUpdaterMiddleware: EventMiddleware {
                 payload: messagePayload,
                 channelDTO: channelDTO,
                 syncOwnReactions: false,
+                skipDraftUpdate: false,
                 cache: nil
             )
             else {

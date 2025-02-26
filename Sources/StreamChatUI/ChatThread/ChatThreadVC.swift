@@ -175,6 +175,14 @@ open class ChatThreadVC: _ViewController,
         navigationItem.largeTitleDisplayMode = .never
     }
 
+    override open func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+
+        if let draftMessage = messageController.message?.draftReply {
+            messageComposerVC.content.draftMessage(draftMessage)
+        }
+    }
+
     override open func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
 
@@ -480,6 +488,10 @@ open class ChatThreadVC: _ViewController,
             let newMessage = event.message
             if !isFirstPageLoaded && newMessage.isSentByCurrentUser && newMessage.isPartOfThread {
                 messageController.loadFirstPage()
+            }
+        case let event as DraftUpdatedEvent where event.draftMessage.threadId == messageController.messageId:
+            if let draft = messageController.message?.draftReply {
+                messageComposerVC.content.draftMessage(draft)
             }
         default:
             break

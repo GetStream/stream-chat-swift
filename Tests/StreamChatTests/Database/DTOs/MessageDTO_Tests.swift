@@ -2514,6 +2514,88 @@ final class MessageDTO_Tests: XCTestCase {
         XCTAssertEqual(predicateCount, 1)
     }
 
+    func test_channelMessagesPredicate_shouldNotIncludeDraftMessages() throws {
+        // GIVEN
+        let cid: ChannelId = .unique
+        let currentUser: CurrentUserPayload = .dummy(userId: .unique, role: .user)
+        let channelDetailPayload = ChannelDetailPayload.dummy(cid: cid)
+        let channelPayload: ChannelPayload = .dummy(channel: channelDetailPayload)
+
+        // Create a regular message
+        let regularMessage = MessagePayload.dummy(
+            messageId: .unique,
+            text: "Regular message"
+        )
+
+        // Create a draft message
+        let draftPayload = DraftPayload.dummy(cid: cid, message: .dummy(text: "Draft message"))
+        let threadDraftPayload = DraftPayload.dummy(cid: cid, message: .dummy(text: "Thread draft message"), parentId: regularMessage.id)
+
+        // Save regular, draft message in the channel and draft message in the thread
+        try database.writeSynchronously { session in
+            try session.saveCurrentUser(payload: currentUser)
+            let channel = try session.saveChannel(payload: channelPayload)
+            try session.saveMessage(payload: regularMessage, channelDTO: channel, syncOwnReactions: false, cache: nil)
+            try session.saveDraftMessage(payload: draftPayload, for: cid, cache: nil)
+            try session.saveDraftMessage(payload: threadDraftPayload, for: cid, cache: nil)
+        }
+
+        // Create an observer with channelMessagesPredicate
+        var receivedMessages: [ChatMessage] = []
+        let observer = try createMessagesFRC(for: channelPayload) { _ in }
+        receivedMessages = Array(observer.items)
+        
+        // Only the regular message should be included in the results
+        XCTAssertEqual(receivedMessages.count, 1)
+        XCTAssertEqual(receivedMessages.first?.id, regularMessage.id)
+        XCTAssertEqual(receivedMessages.first?.text, regularMessage.text)
+        XCTAssertEqual(database.viewContext.channel(cid: cid)?.draftMessage?.id, draftPayload.message.id)
+    }
+
+    func test_threadMessagesPredicate_shouldNotIncludeDraftMessages() throws {
+        // GIVEN
+        let cid: ChannelId = .unique
+        let currentUser: CurrentUserPayload = .dummy(userId: .unique, role: .user)
+        let channelDetailPayload = ChannelDetailPayload.dummy(cid: cid)
+        let channelPayload: ChannelPayload = .dummy(channel: channelDetailPayload)
+        let parentMessagePayload = MessagePayload.dummy(cid: cid)
+
+        // Create a regular message
+        let regularMessage = MessagePayload.dummy(
+            type: .regular,
+            messageId: .unique,
+            parentId: parentMessagePayload.id,
+            text: "Regular message",
+            cid: cid
+        )
+
+        // Create a draft message
+        let threadDraftPayload = DraftPayload.dummy(
+            cid: cid, message: .dummy(text: "Thread draft message"), parentId: regularMessage.id
+        )
+
+        // Save regular, draft message in the channel and draft message in the thread
+        try database.writeSynchronously { session in
+            try session.saveCurrentUser(payload: currentUser)
+            let channel = try session.saveChannel(payload: channelPayload)
+            try session.saveMessage(payload: parentMessagePayload, channelDTO: channel, syncOwnReactions: false, cache: nil)
+            let reply = try session.saveMessage(payload: regularMessage, for: cid, syncOwnReactions: false, cache: nil)
+            reply.showInsideThread = true
+            try session.saveDraftMessage(payload: threadDraftPayload, for: cid, cache: nil)
+        }
+
+        // Create an observer with channelMessagesPredicate
+        var receivedMessages: [ChatMessage] = []
+        let observer = try createThreadMessagesFRC(for: parentMessagePayload) { _ in }
+        receivedMessages = Array(observer.items)
+
+        // Only the regular message should be included in the results
+        XCTAssertEqual(receivedMessages.count, 1)
+        XCTAssertEqual(receivedMessages.first?.id, regularMessage.id)
+        XCTAssertEqual(receivedMessages.first?.text, regularMessage.text)
+        XCTAssertEqual(database.viewContext.message(id: regularMessage.id)?.draftReply?.id, threadDraftPayload.message.id)
+    }
+
     // MARK: - allAttachmentsAreUploadedOrEmptyPredicate()
 
     func test_allAttachmentsAreUploadedOrEmptyPredicate_whenEmpty_returnsMessages() throws {
@@ -4352,5 +4434,334 @@ final class MessageDTO_Tests: XCTestCase {
         )
         try observer.startObserving(onContextDidChange: { _, changes in onChange(changes) })
         return observer
+    }
+
+    // Creates a messages observer (FRC wrapper)
+    private func createThreadMessagesFRC(
+        for payload: MessagePayload,
+        onChange: @escaping ([ListChange<ChatMessage>]) -> Void
+    ) throws -> StateLayerDatabaseObserver<ListResult, ChatMessage, MessageDTO> {
+        let observer = StateLayerDatabaseObserver(
+            database: database,
+            fetchRequest: MessageDTO.repliesFetchRequest(
+                for: payload.id,
+                pageSize: 25,
+                deletedMessagesVisibility: .alwaysHidden,
+                shouldShowShadowedMessages: false
+            ),
+            itemCreator: { try $0.asModel() as ChatMessage },
+            itemReuseKeyPaths: (\ChatMessage.id, \MessageDTO.id),
+            sorting: []
+        )
+        try observer.startObserving(onContextDidChange: { _, changes in onChange(changes) })
+        return observer
+    }
+
+    // MARK: - Draft Messages Tests
+
+    func test_saveDraftMessage_inChannel() throws {
+        // GIVEN
+        let cid: ChannelId = .unique
+        let currentUser: CurrentUserPayload = .dummy(userId: .unique, role: .user)
+        let channelDetailPayload = ChannelDetailPayload.dummy(cid: cid)
+        let channelPayload: ChannelPayload = .dummy(channel: channelDetailPayload)
+        let draftPayload = DraftPayload(
+            cid: cid,
+            channelPayload: channelDetailPayload,
+            createdAt: .init(),
+            message: .init(
+                id: .unique,
+                text: "Draft message",
+                command: nil,
+                args: nil,
+                showReplyInChannel: false,
+                mentionedUsers: nil,
+                extraData: [:],
+                attachments: nil,
+                isSilent: false
+            ),
+            quotedMessage: nil,
+            parentId: nil,
+            parentMessage: nil
+        )
+
+        // WHEN
+        try database.writeSynchronously { session in
+            try session.saveCurrentUser(payload: currentUser)
+            try session.saveChannel(payload: channelPayload)
+            try session.saveDraftMessage(payload: draftPayload, for: cid, cache: nil)
+        }
+
+        // THEN
+        let channelDTO = try XCTUnwrap(database.viewContext.channel(cid: cid))
+        let draftMessage = try XCTUnwrap(channelDTO.draftMessage)
+        XCTAssertEqual(draftMessage.text, "Draft message")
+        XCTAssertEqual(draftMessage.type, MessageType.regular.rawValue)
+        XCTAssertTrue(draftMessage.isDraft)
+        XCTAssertNil(draftMessage.parentMessageId)
+    }
+
+    func test_saveDraftMessage_inThread() throws {
+        // GIVEN
+        let cid: ChannelId = .unique
+        let currentUser: CurrentUserPayload = .dummy(userId: .unique, role: .user)
+        let channelDetailPayload = ChannelDetailPayload.dummy(cid: cid)
+        let channelPayload: ChannelPayload = .dummy(channel: channelDetailPayload)
+        let parentMessageId = MessageId.unique
+        let parentMessage = MessagePayload.dummy(messageId: parentMessageId)
+        
+        let draftPayload = DraftPayload(
+            cid: cid,
+            channelPayload: channelDetailPayload,
+            createdAt: .init(),
+            message: .init(
+                id: .unique,
+                text: "Draft reply",
+                command: nil,
+                args: nil,
+                showReplyInChannel: false,
+                mentionedUsers: nil,
+                extraData: [:],
+                attachments: nil,
+                isSilent: false
+            ),
+            quotedMessage: nil,
+            parentId: parentMessageId,
+            parentMessage: parentMessage
+        )
+
+        // WHEN
+        try database.writeSynchronously { session in
+            try session.saveCurrentUser(payload: currentUser)
+            let channel = try session.saveChannel(payload: channelPayload)
+            _ = try session.saveMessage(payload: parentMessage, channelDTO: channel, syncOwnReactions: false, cache: nil)
+            try session.saveDraftMessage(payload: draftPayload, for: cid, cache: nil)
+        }
+
+        // THEN
+        let parentMessageDTO = try XCTUnwrap(database.viewContext.message(id: parentMessageId))
+        let draftReply = try XCTUnwrap(parentMessageDTO.draftReply)
+        XCTAssertEqual(draftReply.text, "Draft reply")
+        XCTAssertEqual(draftReply.type, MessageType.regular.rawValue)
+        XCTAssertTrue(draftReply.isDraft)
+        XCTAssertEqual(draftReply.parentMessageId, parentMessageId)
+    }
+
+    func test_saveDraftMessage_whenParentOrQuotedMessageContainsDraft_shouldNotCrash() throws {
+        // GIVEN
+        let cid: ChannelId = .unique
+        let currentUser: CurrentUserPayload = .dummy(userId: .unique, role: .user)
+        let channelDetailPayload = ChannelDetailPayload.dummy(cid: cid)
+        let channelPayload: ChannelPayload = .dummy(channel: channelDetailPayload)
+        let draftMessage = DraftMessagePayload.dummy(text: "Draft Reply")
+        let parentMessageId = MessageId.unique
+        let parentMessage = MessagePayload.dummy(
+            messageId: parentMessageId,
+            draft: .dummy(cid: cid, message: draftMessage)
+        )
+        let draftPayload = DraftPayload.dummy(
+            cid: cid,
+            channelPayload: channelDetailPayload,
+            message: draftMessage,
+            quotedMessage: .dummy(cid: cid, draft: .dummy(cid: cid, message: draftMessage)),
+            parentId: parentMessageId,
+            parentMessage: parentMessage
+        )
+
+        // WHEN
+        try database.writeSynchronously { session in
+            try session.saveCurrentUser(payload: currentUser)
+            let channel = try session.saveChannel(payload: channelPayload)
+            _ = try session.saveMessage(payload: parentMessage, channelDTO: channel, syncOwnReactions: false, cache: nil)
+            try session.saveDraftMessage(payload: draftPayload, for: cid, cache: nil)
+        }
+
+        // THEN
+        let parentMessageDTO = try XCTUnwrap(database.viewContext.message(id: parentMessageId))
+        let draftReply = try XCTUnwrap(parentMessageDTO.draftReply)
+        XCTAssertEqual(draftReply.text, "Draft Reply")
+        XCTAssertEqual(draftReply.type, MessageType.regular.rawValue)
+        XCTAssertTrue(draftReply.isDraft)
+        XCTAssertEqual(draftReply.parentMessageId, parentMessageId)
+    }
+
+    func test_deleteDraftMessage_fromChannel() throws {
+        // GIVEN
+        let cid: ChannelId = .unique
+        let currentUser: CurrentUserPayload = .dummy(userId: .unique, role: .user)
+        let channelDetailPayload = ChannelDetailPayload.dummy(cid: cid)
+        let channelPayload: ChannelPayload = .dummy(channel: channelDetailPayload)
+        let draftPayload = DraftPayload(
+            cid: cid,
+            channelPayload: channelDetailPayload,
+            createdAt: .init(),
+            message: .init(
+                id: .unique,
+                text: "Draft message",
+                command: nil,
+                args: nil,
+                showReplyInChannel: false,
+                mentionedUsers: nil,
+                extraData: [:],
+                attachments: nil,
+                isSilent: false
+            ),
+            quotedMessage: nil,
+            parentId: nil,
+            parentMessage: nil
+        )
+
+        try database.writeSynchronously { session in
+            try session.saveCurrentUser(payload: currentUser)
+            try session.saveChannel(payload: channelPayload)
+            try session.saveDraftMessage(payload: draftPayload, for: cid, cache: nil)
+        }
+
+        // WHEN
+        try database.writeSynchronously { session in
+            session.deleteDraftMessage(in: cid, threadId: nil)
+        }
+
+        // THEN
+        let channelDTO = try XCTUnwrap(database.viewContext.channel(cid: cid))
+        XCTAssertNil(channelDTO.draftMessage)
+    }
+
+    func test_deleteDraftMessage_fromThread() throws {
+        // GIVEN
+        let cid: ChannelId = .unique
+        let currentUser: CurrentUserPayload = .dummy(userId: .unique, role: .user)
+        let channelDetailPayload = ChannelDetailPayload.dummy(cid: cid)
+        let channelPayload: ChannelPayload = .dummy(channel: channelDetailPayload)
+        let parentMessageId = MessageId.unique
+        let parentMessage = MessagePayload.dummy(messageId: parentMessageId)
+        
+        let draftPayload = DraftPayload(
+            cid: cid,
+            channelPayload: channelDetailPayload,
+            createdAt: .init(),
+            message: .init(
+                id: .unique,
+                text: "Draft reply",
+                command: nil,
+                args: nil,
+                showReplyInChannel: false,
+                mentionedUsers: nil,
+                extraData: [:],
+                attachments: nil,
+                isSilent: false
+            ),
+            quotedMessage: nil,
+            parentId: parentMessageId,
+            parentMessage: parentMessage
+        )
+
+        try database.writeSynchronously { session in
+            try session.saveCurrentUser(payload: currentUser)
+            let channel = try session.saveChannel(payload: channelPayload)
+            _ = try session.saveMessage(payload: parentMessage, channelDTO: channel, syncOwnReactions: false, cache: nil)
+            try session.saveDraftMessage(payload: draftPayload, for: cid, cache: nil)
+        }
+
+        // WHEN
+        try database.writeSynchronously { session in
+            session.deleteDraftMessage(in: cid, threadId: parentMessageId)
+        }
+
+        // THEN
+        let parentMessageDTO = try XCTUnwrap(database.viewContext.message(id: parentMessageId))
+        XCTAssertNil(parentMessageDTO.draftReply)
+    }
+
+    func test_saveMessage_savesAndLoadsDraftReply() throws {
+        // GIVEN
+        let cid: ChannelId = .unique
+        let draftMessagePayload = DraftMessagePayload.dummy(
+            text: "Draft message text"
+        )
+        let messagePayload = MessagePayload.dummy(
+            draft: .dummy(
+                cid: cid,
+                message: draftMessagePayload
+            )
+        )
+
+        // WHEN
+        try database.writeSynchronously { session in
+            try session.saveCurrentUser(payload: .dummy(userId: .unique, role: .admin))
+            try session.saveChannel(payload: .dummy(channel: .dummy(cid: cid)))
+            try session.saveMessage(payload: messagePayload, for: cid, syncOwnReactions: false, cache: nil)
+        }
+
+        // THEN
+        let message = try XCTUnwrap(database.viewContext.message(id: messagePayload.id)?.asModel())
+        let draftReply = try XCTUnwrap(message.draftReply)
+        XCTAssertEqual(draftReply.id, draftMessagePayload.id)
+        XCTAssertEqual(draftReply.text, draftMessagePayload.text)
+        XCTAssertEqual(draftReply.extraData, draftMessagePayload.extraData)
+    }
+
+    func test_saveMessage_whenDraftReplyIsNil_removesExistingDraft() throws {
+        // GIVEN
+        let cid: ChannelId = .unique
+        let draftMessagePayload = DraftMessagePayload.dummy(
+            text: "Draft message text"
+        )
+        let messagePayload = MessagePayload.dummy(
+            draft: .dummy(
+                cid: cid,
+                message: draftMessagePayload
+            )
+        )
+
+        try database.writeSynchronously { session in
+            try session.saveCurrentUser(payload: .dummy(userId: .unique, role: .admin))
+            try session.saveChannel(payload: .dummy(channel: .dummy(cid: cid)))
+            try session.saveMessage(payload: messagePayload, for: cid, syncOwnReactions: false, cache: nil)
+        }
+
+        // Verify draft exists
+        var message = try XCTUnwrap(database.viewContext.message(id: messagePayload.id)?.asModel())
+        XCTAssertNotNil(message.draftReply)
+
+        // WHEN
+        // Save channel without draft
+        let payloadWithoutDraft = MessagePayload.dummy(
+            messageId: messagePayload.id,
+            draft: nil
+        )
+
+        try database.writeSynchronously { session in
+            try session.saveMessage(payload: payloadWithoutDraft, for: cid, syncOwnReactions: false, cache: nil)
+        }
+
+        // THEN
+        message = try XCTUnwrap(database.viewContext.message(id: messagePayload.id)?.asModel())
+        XCTAssertNil(message.draftReply)
+    }
+
+    func test_saveMessage_whenSkipsDraftUpdate_shouldNotSaveDraft() throws {
+        // GIVEN
+        let cid: ChannelId = .unique
+        let draftMessagePayload = DraftMessagePayload.dummy(
+            text: "Draft message text"
+        )
+        let messagePayload = MessagePayload.dummy(
+            draft: .dummy(
+                cid: cid,
+                message: draftMessagePayload
+            )
+        )
+
+        // WHEN
+        try database.writeSynchronously { session in
+            try session.saveCurrentUser(payload: .dummy(userId: .unique, role: .admin))
+            try session.saveChannel(payload: .dummy(channel: .dummy(cid: cid)))
+            try session.saveMessage(payload: messagePayload, for: cid, syncOwnReactions: false, skipDraftUpdate: true, cache: nil)
+        }
+
+        // THEN
+        let message = try XCTUnwrap(database.viewContext.message(id: messagePayload.id)?.asModel())
+        XCTAssertNil(message.draftReply)
     }
 }

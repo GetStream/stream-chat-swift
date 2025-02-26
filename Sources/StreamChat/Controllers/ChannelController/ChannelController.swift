@@ -187,6 +187,8 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
     
     private let pollsRepository: PollsRepository
 
+    private let draftsRepository: DraftMessagesRepository
+
     var _basePublishers: Any?
     /// An internal backing object for all publicly available Combine publishers. We use it to simplify the way we expose
     /// publishers. Instead of creating custom `Publisher` types, we use `CurrentValueSubject` and `PassthroughSubject` internally,
@@ -232,7 +234,8 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
             client.apiClient
         )
         pollsRepository = client.pollsRepository
-        
+        draftsRepository = client.draftMessagesRepository
+
         super.init()
 
         setChannelObserver()
@@ -830,6 +833,91 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
             }
             self.callback {
                 completion?(result.map(\.id))
+            }
+        }
+    }
+
+    /// Updates the draft message of this channel.
+    ///
+    /// If there is no draft message, a new draft message will be created.
+    /// - Parameters:
+    ///   - text: The text of the draft message.
+    ///   - isSilent: A flag indicating whether the message is a silent message.
+    ///   Silent messages are special messages that don't increase the unread messages count nor mark a channel as unread.
+    ///   - attachments: The attachments of the draft message.
+    ///   - mentionedUserIds: The mentioned user ids of the draft message.
+    ///   - quotedMessageId: The message that the draft message is quoting.
+    ///   - command: The command of the draft message.
+    ///   - extraData: The extra data of the draft message.
+    ///   - completion: Called when the draft message is saved to the server.
+    public func updateDraftMessage(
+        text: String,
+        isSilent: Bool = false,
+        attachments: [AnyAttachmentPayload] = [],
+        mentionedUserIds: [UserId] = [],
+        quotedMessageId: MessageId? = nil,
+        command: Command? = nil,
+        extraData: [String: RawJSON] = [:],
+        completion: ((Result<DraftMessage, Error>) -> Void)? = nil
+    ) {
+        guard let cid = cid, isChannelAlreadyCreated else {
+            channelModificationFailed { error in
+                completion?(.failure(error ?? ClientError.Unknown()))
+            }
+            return
+        }
+
+        draftsRepository.updateDraft(
+            for: cid,
+            threadId: nil,
+            text: text,
+            isSilent: isSilent,
+            showReplyInChannel: false,
+            command: command?.name,
+            arguments: command?.args,
+            attachments: attachments,
+            mentionedUserIds: mentionedUserIds,
+            quotedMessageId: quotedMessageId,
+            extraData: extraData
+        ) { result in
+            self.callback {
+                completion?(result)
+            }
+        }
+    }
+
+    /// Loads the draft message of this channel.
+    ///
+    /// It is not necessary to call this method if the channel list query was called before.
+    public func loadDraftMessage(
+        completion: ((Result<DraftMessage?, Error>) -> Void)? = nil
+    ) {
+        guard let cid = cid, isChannelAlreadyCreated else {
+            channelModificationFailed { error in
+                completion?(.failure(error ?? ClientError.Unknown()))
+            }
+            return
+        }
+
+        draftsRepository.getDraft(for: cid, threadId: nil) { result in
+            self.callback {
+                completion?(result)
+            }
+        }
+    }
+
+    /// Deletes the draft message of this channel.
+    public func deleteDraftMessage(completion: ((Error?) -> Void)? = nil) {
+        guard let cid = cid, isChannelAlreadyCreated else {
+            channelModificationFailed { error in
+                completion?(error)
+            }
+            return
+        }
+
+        draftsRepository.deleteDraft(for: cid, threadId: nil) { error in
+            self.callback {
+                completion?(error)
             }
         }
     }
@@ -1493,7 +1581,7 @@ extension ChatChannelController {
             _ database: DatabaseContainer,
             _ apiClient: APIClient
         ) -> ChannelUpdater = ChannelUpdater.init
-        
+
         var memberUpdaterBuilder: (
             _ database: DatabaseContainer,
             _ apiClient: APIClient

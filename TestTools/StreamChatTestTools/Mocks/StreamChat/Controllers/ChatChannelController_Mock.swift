@@ -132,6 +132,41 @@ class ChatChannelController_Mock: ChatChannelController {
     ) {
         loadPageAroundMessageIdCallCount += 1
     }
+
+    var updateDraftMessage_callCount = 0
+    var updateDraftMessage_completion: ((Result<DraftMessage, any Error>) -> Void)?
+    var updateDraftMessage_text = ""
+
+    override func updateDraftMessage(
+        text: String,
+        isSilent: Bool = false,
+        attachments: [AnyAttachmentPayload] = [],
+        mentionedUserIds: [UserId] = [],
+        quotedMessageId: MessageId? = nil,
+        command: Command? = nil,
+        extraData: [String : RawJSON] = [:],
+        completion: ((Result<DraftMessage, any Error>) -> Void)? = nil
+    ) {
+        updateDraftMessage_text = text
+        updateDraftMessage_callCount += 1
+        updateDraftMessage_completion = completion
+    }
+
+    var deleteDraftMessage_callCount = 0
+    var deleteDraftMessage_completion: ((Error?) -> Void)?
+
+    override func deleteDraftMessage(completion: ((Error?) -> Void)? = nil) {
+        deleteDraftMessage_callCount += 1
+        deleteDraftMessage_completion = completion
+    }
+
+    var loadDraftMessage_callCount = 0
+    var loadDraftMessage_completion: ((Result<DraftMessage?, Error>) -> Void)?
+
+    override func loadDraftMessage(completion: ((Result<DraftMessage?, Error>) -> Void)? = nil) {
+        loadDraftMessage_callCount += 1
+        loadDraftMessage_completion = completion
+    }
 }
 
 extension ChatChannelController_Mock {
