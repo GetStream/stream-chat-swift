@@ -121,7 +121,7 @@ public struct MarkdownParser {
                 case .blockQuote:
                     presentationIntentStyling.quoteBlockId = intentType.identity
                     presentationIntentStyling.mergedAttributes = presentationIntentAttributes(intentType.kind, presentationIntent)
-                    presentationIntentStyling.prependedString = "\u{23D0}"
+                    presentationIntentStyling.prependedString = "\u{2503}"
                 case .codeBlock:
                     presentationIntentStyling.mergedAttributes = presentationIntentAttributes(intentType.kind, presentationIntent)
                     presentationIntentStyling.precedingNewlineCount += 1
