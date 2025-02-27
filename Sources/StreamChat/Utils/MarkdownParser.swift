@@ -85,6 +85,10 @@ public struct MarkdownParser {
             )
         )
         
+        // Trim newlines which remain after initial parsing (e.g. code blocks)
+        attributedString.trimNewlines()
+        
+        // Default attributes
         attributedString.mergeAttributes(attributes)
         
         // Most inline intents are handled by rendering automatically
@@ -257,6 +261,17 @@ private extension AttributedString {
         // Inserting at the end index is same as appending
         guard index >= startIndex, index <= endIndex else { return }
         insert(s, at: index)
+    }
+    
+    mutating func trimNewlines() {
+        let firstValidIndex = characters.firstIndex(where: { !$0.isNewline })
+        if let firstValidIndex, firstValidIndex != startIndex {
+            self = AttributedString(self[firstValidIndex...])
+        }
+        let lastValidIndex = characters.lastIndex(where: { !$0.isNewline })
+        if let lastValidIndex, lastValidIndex < index(beforeCharacter: endIndex) {
+            self = AttributedString(self[...lastValidIndex])
+        }
     }
 }
 

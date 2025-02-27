@@ -217,6 +217,17 @@ final class ChatMessageMarkdown_Tests: XCTestCase {
         AssertSnapshot(view)
     }
     
+    func test_code_singleBlock() {
+        let view = contentView(
+            """
+            ```
+            No newlines above and below
+            ```
+            """
+        )
+        AssertSnapshot(view)
+    }
+    
     func test_code_custom() {
         var styles = MarkdownStyles()
         styles.codeFont.color = .systemRed
