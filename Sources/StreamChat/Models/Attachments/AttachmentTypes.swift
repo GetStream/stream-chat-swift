@@ -223,7 +223,7 @@ public enum AttachmentFileType: String, Codable, Equatable, CaseIterable {
     /// Video
     case mov, avi, wmv, webm
     /// Image
-    case jpeg, png, gif, bmp, webp
+    case jpeg, png, gif, bmp, webp, heic
     /// Unknown
     case unknown
 
@@ -256,6 +256,7 @@ public enum AttachmentFileType: String, Codable, Equatable, CaseIterable {
         "video/x-ms-wmv": .wmv,
         "video/webm": .webm,
         "image/jpeg": .jpeg,
+        "image/heic": .heic,
         "image/jpg": .jpeg,
         "image/png": .png,
         "image/gif": .gif,
@@ -279,11 +280,13 @@ public enum AttachmentFileType: String, Codable, Equatable, CaseIterable {
         // We lowercase it for extra safety
         let ext = ext.lowercased()
 
+        // jpeg and jpg should be recognised as jpeg
         if ext == "jpg" {
             self = .jpeg
             return
         }
 
+        // 7z and x7z should be recognised as x7z
         if ext == "7z" {
             self = .x7z
             return
@@ -298,9 +301,12 @@ public enum AttachmentFileType: String, Codable, Equatable, CaseIterable {
             return "image/jpeg"
         }
 
-        return AttachmentFileType.mimeTypes
+        let fallback = "application/octet-stream"
+
+        return AttachmentFileType
+            .mimeTypes
             .first(where: { $1 == self })?
-            .key ?? "application/octet-stream"
+            .key ?? fallback
     }
 
     public var isAudio: Bool {
