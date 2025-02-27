@@ -104,6 +104,7 @@ protocol MessageDatabaseSession {
         skipPush: Bool,
         skipEnrichUrl: Bool,
         poll: PollPayload?,
+        restrictedVisibility: [UserId],
         extraData: [String: RawJSON]
     ) throws -> MessageDTO
 
@@ -279,6 +280,7 @@ extension MessageDatabaseSession {
         attachments: [AnyAttachmentPayload] = [],
         mentionedUserIds: [UserId] = [],
         pollPayload: PollPayload? = nil,
+        restrictedVisibility: [UserId] = [],
         extraData: [String: RawJSON] = [:]
     ) throws -> MessageDTO {
         try createNewMessage(
@@ -299,6 +301,7 @@ extension MessageDatabaseSession {
             skipPush: skipPush,
             skipEnrichUrl: skipEnrichUrl,
             poll: pollPayload,
+            restrictedVisibility: restrictedVisibility,
             extraData: extraData
         )
     }

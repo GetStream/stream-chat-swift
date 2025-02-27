@@ -5,6 +5,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## StreamChat
 ### ✅ Added
+- Add sending messages to only specific members [#3595](https://github.com/GetStream/stream-chat-swift/pull/3595)
 - Add Draft Messages Support [#3588](https://github.com/GetStream/stream-chat-swift/pull/3588)
   - Add `ChatChannel.draftMessage`
   - Add `ChatMessage.draftReply`

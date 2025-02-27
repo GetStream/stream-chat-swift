@@ -139,6 +139,7 @@ class DatabaseSession_Mock: DatabaseSession {
         skipPush: Bool,
         skipEnrichUrl: Bool,
         poll: PollPayload?,
+        restrictedVisibility: [UserId] = [],
         extraData: [String: RawJSON]
     ) throws -> MessageDTO {
         try throwErrorIfNeeded()
@@ -161,6 +162,7 @@ class DatabaseSession_Mock: DatabaseSession {
             skipPush: skipPush,
             skipEnrichUrl: skipEnrichUrl, 
             poll: poll,
+            restrictedVisibility: restrictedVisibility,
             extraData: extraData
         )
     }
