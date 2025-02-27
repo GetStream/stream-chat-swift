@@ -223,7 +223,7 @@ public enum AttachmentFileType: String, Codable, Equatable, CaseIterable {
     /// Video
     case mov, avi, wmv, webm
     /// Image
-    case jpeg, png, gif, bmp, webp, heic
+    case jpeg, png, gif, bmp, webp
     /// Unknown
     case unknown
 
@@ -256,7 +256,6 @@ public enum AttachmentFileType: String, Codable, Equatable, CaseIterable {
         "video/x-ms-wmv": .wmv,
         "video/webm": .webm,
         "image/jpeg": .jpeg,
-        "image/heic": .heic,
         "image/jpg": .jpeg,
         "image/png": .png,
         "image/gif": .gif,
@@ -289,6 +288,12 @@ public enum AttachmentFileType: String, Codable, Equatable, CaseIterable {
         // 7z and x7z should be recognised as x7z
         if ext == "7z" {
             self = .x7z
+            return
+        }
+
+        // Heic and heif should be recognised as jpeg.
+        if ext == "heic" || ext == "heif" {
+            self = .jpeg
             return
         }
 
