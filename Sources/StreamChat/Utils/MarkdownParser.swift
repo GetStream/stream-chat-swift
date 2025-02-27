@@ -63,8 +63,8 @@ public struct MarkdownParser {
     ///
     /// - Parameters:
     ///   - markdown: The string that contains the Markdown formatting.
-    ///   - attributes: The attributes to use for the whole string.
     ///   - options: Options that affect how the Markdown string is parsed and styled.
+    ///   - attributes: The attributes to use for the whole string.
     ///   - inlinePresentationIntentAttributes: The closure for customising attributes for inline presentation intents.
     ///   - presentationIntentAttributes: The closure for customising attributes for presentation intents. Called for quote, code, list item, and headers.
     @available(iOS 15, *)
@@ -100,13 +100,11 @@ public struct MarkdownParser {
             switch inlinePresentationIntent {
             case .lineBreak:
                 // Appears as a space with inline attribute, therefore we need to replace it for preserving the line break
-                let attributes = attributes.merging(attributes)
                 let insertedString = AttributedString("\n", attributes: attributes)
                 attributedString.replaceSubrange(range, with: insertedString)
             case .inlineHTML:
                 // Note: there are others like: em, strong
                 if String(attributedString[range].characters) == "<br/>" {
-                    let attributes = attributes.merging(attributes)
                     let insertedString = AttributedString("\n", attributes: attributes)
                     attributedString.replaceSubrange(range, with: insertedString)
                 }
