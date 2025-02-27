@@ -296,6 +296,8 @@ internal enum L10n {
       internal static var title: String { L10n.tr("Localizable", "message.moderation.title") }
     }
     internal enum Preview {
+      /// Draft
+      internal static var draft: String { L10n.tr("Localizable", "message.preview.draft") }
       /// %@ created:
       internal static func pollSomeoneCreated(_ p1: Any) -> String {
         return L10n.tr("Localizable", "message.preview.poll-someone-created", String(describing: p1))

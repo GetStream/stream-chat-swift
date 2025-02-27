@@ -43,6 +43,11 @@ public struct Components {
     /// A boolean value that determines whether the link preview should show when typing a message with links.
     public var isComposerLinkPreviewEnabled = false
 
+    /// A boolean value indicating if draft messages should be enabled.
+    ///
+    /// If enabled, the SDK will save the message content as a draft when the user navigates away from the composer.
+    public var isDraftMessagesEnabled: Bool = false
+
     /// A view that displays a quoted message.
     public var quotedMessageView: QuotedChatMessageView.Type = QuotedChatMessageView.self
 

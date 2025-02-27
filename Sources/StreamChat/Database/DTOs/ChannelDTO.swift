@@ -66,6 +66,7 @@ class ChannelDTO: NSManagedObject {
     @NSManaged var watchers: Set<UserDTO>
     @NSManaged var memberListQueries: Set<ChannelMemberListQueryDTO>
     @NSManaged var previewMessage: MessageDTO?
+    @NSManaged var draftMessage: MessageDTO?
 
     /// If the current channel is muted by the current user, `mute` contains details.
     @NSManaged var mute: ChannelMuteDTO?
@@ -328,6 +329,16 @@ extension NSManagedObjectContext {
 
         dto.updateOldestMessageAt(payload: payload)
 
+        if let draftMessage = payload.draft {
+            dto.draftMessage = try saveDraftMessage(payload: draftMessage, for: payload.channel.cid, cache: nil)
+        } else {
+            /// If the payload does not contain a draft message, we should
+            /// delete the existing draft message if it exists.
+            if let draftMessage = dto.draftMessage {
+                deleteDraftMessage(in: payload.channel.cid, threadId: draftMessage.parentMessageId)
+            }
+        }
+
         try payload.pinnedMessages.forEach {
             _ = try saveMessage(payload: $0, channelDTO: dto, syncOwnReactions: true, cache: cache)
         }
@@ -563,6 +574,7 @@ extension ChatChannel {
         let membership = try dto.membership.map { try $0.asModel() }
         let pinnedMessages = dto.pinnedMessages.compactMap { try? $0.relationshipAsModel(depth: depth) }
         let previewMessage = try? dto.previewMessage?.relationshipAsModel(depth: depth)
+        let draftMessage = try? dto.draftMessage?.relationshipAsModel(depth: depth)
         let typingUsers = Set(dto.currentlyTypingUsers.compactMap { try? $0.asModel() })
 
         let channel = try ChatChannel(
@@ -596,7 +608,8 @@ extension ChatChannel {
             lastMessageFromCurrentUser: latestMessageFromUser,
             pinnedMessages: pinnedMessages,
             muteDetails: muteDetails,
-            previewMessage: previewMessage
+            previewMessage: previewMessage,
+            draftMessage: draftMessage.map(DraftMessage.init)
         )
 
         if let transformer = clientConfig.modelsTransformer {

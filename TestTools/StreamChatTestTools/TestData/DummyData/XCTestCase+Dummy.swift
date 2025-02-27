@@ -201,7 +201,8 @@ extension XCTestCase {
                 pendingMessages: pendingMessages,
                 pinnedMessages: pinnedMessages,
                 channelReads: channelReads ?? [dummyChannelRead],
-                isHidden: false
+                isHidden: false,
+                draft: nil
             )
 
         return payload
@@ -316,7 +317,8 @@ extension XCTestCase {
                 pendingMessages: nil,
                 pinnedMessages: [dummyMessageWithNoExtraData],
                 channelReads: [dummyChannelReadWithNoExtraData],
-                isHidden: nil
+                isHidden: nil,
+                draft: nil
             )
 
         return payload
@@ -336,6 +338,7 @@ extension XCTestCase {
         title: String? = .unique,
         latestReplies: [MessagePayload] = [],
         read: [ThreadReadPayload] = [],
+        draft: DraftPayload? = nil,
         extraData: [String: RawJSON] = [:]
     ) -> ThreadPayload {
         .init(
@@ -352,6 +355,7 @@ extension XCTestCase {
             title: title,
             latestReplies: latestReplies,
             read: read,
+            draft: draft,
             extraData: extraData
         )
     }

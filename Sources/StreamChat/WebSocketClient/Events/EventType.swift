@@ -154,6 +154,14 @@ public extension EventType {
     
     // When an AI typing indicator has been stopped.
     static let aiTypingIndicatorStop: Self = "ai_indicator.stop"
+
+    // MARK: Drafts
+
+    /// When a draft was updated.
+    static let draftUpdated: Self = "draft.updated"
+
+    /// When a draft was deleted.
+    static let draftDeleted: Self = "draft.deleted"
 }
 
 extension EventType {
@@ -222,6 +230,8 @@ extension EventType {
         case .aiTypingIndicatorChanged: return try AIIndicatorUpdateEventDTO(from: response)
         case .aiTypingIndicatorClear: return try AIIndicatorClearEventDTO(from: response)
         case .aiTypingIndicatorStop: return try AIIndicatorStopEventDTO(from: response)
+        case .draftUpdated: return try DraftUpdatedEventDTO(from: response)
+        case .draftDeleted: return try DraftDeletedEventDTO(from: response)
         default:
             if response.cid == nil {
                 throw ClientError.UnknownUserEvent(response.eventType)

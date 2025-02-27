@@ -124,6 +124,11 @@ open class ChatChannelListItemView: _View, ThemeProvider, SwiftUIRepresentable {
         .withoutAutoresizingMaskConstraints
         .withAccessibilityIdentifier(identifier: "unreadCountView")
 
+    /// The prefix text for the draft message.
+    open var draftPrefixText: String {
+        "\(L10n.Message.Preview.draft):"
+    }
+
     /// Text of `titleLabel` which contains the channel name.
     open var titleText: String? {
         if let searchedMessage = content?.searchedMessage {
@@ -149,38 +154,34 @@ open class ChatChannelListItemView: _View, ThemeProvider, SwiftUIRepresentable {
             return typingUsersInfo
         }
 
+        if let dratMessage = content.channel.draftMessage.map(ChatMessage.init), components.isDraftMessagesEnabled {
+            let previewText = previewMessageContextText(previewMessage: dratMessage)
+            return previewMessageTextForDraft(messageText: previewText)
+        }
+
         if let previewMessage = content.channel.previewMessage {
-            if let pollPreviewText = pollAttachmentPreviewText(for: previewMessage) {
-                return pollPreviewText
-            }
-
-            if isLastMessageVoiceRecording {
-                return previewMessageForAudioRecordingMessage(messageText: previewMessage.text)
-            }
-
             if previewMessage.type == .system {
                 return previewMessageTextForSystemMessage(messageText: previewMessage.text)
             }
 
-            var text = previewMessage.textContent ?? previewMessage.text
-
-            if let translatedText = translatedPreviewText(for: previewMessage, messageText: text) {
-                text = translatedText
+            if let pollPreviewText = pollAttachmentPreviewText(for: previewMessage) {
+                return pollPreviewText
             }
 
-            if let attachmentText = attachmentPreviewText(for: previewMessage, messageText: text) {
-                text = attachmentText
+            let previewText = previewMessageContextText(previewMessage: previewMessage)
+            if isLastMessageVoiceRecording {
+                return previewText
             }
 
             if previewMessage.isSentByCurrentUser {
-                return previewMessageTextForCurrentUser(messageText: text)
+                return previewMessageTextForCurrentUser(messageText: previewText)
             }
 
             if content.channel.memberCount == 2 {
-                return previewMessageTextFor1on1Channel(messageText: text)
+                return previewMessageTextFor1on1Channel(messageText: previewText)
             }
 
-            return previewMessageTextFromAnotherUser(previewMessage.author, messageText: text)
+            return previewMessageTextFromAnotherUser(previewMessage.author, messageText: previewText)
         }
 
         return previewMessageTextForEmptyMessage()
@@ -353,6 +354,14 @@ open class ChatChannelListItemView: _View, ThemeProvider, SwiftUIRepresentable {
                 at: status == .pending || status == .failed ? 0 : 1
             )
         }
+
+        if content?.channel.draftMessage != nil {
+            let highlightOptions = TextHighlightOptions(
+                color: appearance.colorPalette.accentPrimary,
+                font: appearance.fonts.footnoteBold
+            )
+            subtitleLabel.highlightText(draftPrefixText, options: highlightOptions)
+        }
     }
 
     // MARK: - Channel title rendering
@@ -374,6 +383,26 @@ open class ChatChannelListItemView: _View, ThemeProvider, SwiftUIRepresentable {
     }
 
     // MARK: - Preview message text rendering
+
+    /// The message preview text based solely on the message content.
+    /// It does not account if it is sent by the current user or it is a draft etc.
+    ///
+    /// - Parameter previewMessage: The preview message of the channel.
+    /// - Returns: A string representing the message preview text.
+    open func previewMessageContextText(previewMessage: ChatMessage) -> String {
+        if previewMessage.voiceRecordingAttachments.isEmpty == false {
+            return previewMessageForAudioRecordingMessage(messageText: previewMessage.text)
+        }
+
+        var text = previewMessage.textContent ?? previewMessage.text
+        if let translatedText = translatedPreviewText(for: previewMessage, messageText: text) {
+            text = translatedText
+        }
+        if let attachmentText = attachmentPreviewText(for: previewMessage, messageText: text) {
+            text = attachmentText
+        }
+        return text
+    }
 
     /// The message preview text in case the message is empty.
     /// - Returns:  A string representing the message preview text.
@@ -414,6 +443,13 @@ open class ChatChannelListItemView: _View, ThemeProvider, SwiftUIRepresentable {
     /// - Returns:  A string representing the message preview text.
     open func previewMessageTextFor1on1Channel(messageText: String) -> String {
         messageText
+    }
+
+    /// The message preview text in case the message is a draft.
+    /// - Parameter messageText: The current text of the message.
+    /// - Returns:  A string representing the message preview text.
+    open func previewMessageTextForDraft(messageText: String) -> String {
+        "\(draftPrefixText) \(messageText)"
     }
 
     /// The message preview text in case the message is from another user and it is not a 1on1 channel.
@@ -516,6 +552,10 @@ open class ChatChannelListItemView: _View, ThemeProvider, SwiftUIRepresentable {
 
 extension ChatChannelListItemView {
     var isLastMessageVoiceRecording: Bool {
-        content?.channel.previewMessage?.voiceRecordingAttachments.isEmpty == false && typingUserString == nil
+        let previewMessage = content?.channel.previewMessage
+        let previewHasVoiceRecording = previewMessage?.voiceRecordingAttachments.isEmpty == false
+        let doesNotHaveDraft = content?.channel.draftMessage == nil
+        let noTypingUsers = typingUserString == nil
+        return previewHasVoiceRecording && noTypingUsers && doesNotHaveDraft
     }
 }
