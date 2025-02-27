@@ -19,25 +19,34 @@ public protocol MarkdownFormatter {
 
 /// Default implementation for the Markdown formatter
 open class DefaultMarkdownFormatter: MarkdownFormatter {
-    private var markdownParser: MarkdownParser
-    
     public var styles: MarkdownStyles
     public var markdownRegexPattern: String {
-        get {
-            markdownParser.markdownRegexPattern
-        } set {
-            markdownParser = MarkdownParser(markdownRegexPattern: newValue)
+        didSet {
+            if let regex = try? NSRegularExpression(pattern: markdownRegexPattern, options: .anchorsMatchLines) {
+                self.regex = regex
+            } else {
+                log.error("Failed to create markdown regular expression")
+            }
         }
     }
-
+    
     public init() {
         styles = MarkdownStyles()
-        markdownParser = MarkdownParser()
+        markdownRegexPattern = ""
     }
     
+    private let markdownParser = MarkdownParser()
+    private var regex: NSRegularExpression?
+    
     open func containsMarkdown(_ string: String) -> Bool {
-        guard !string.isEmpty else { return false }
-        return markdownParser.containsMarkdown(string)
+        // Note: this method is not needed because MarkdownParser returns regular text if there is no markdown.
+        // When we can make a breaking change, this method should be deprecated.
+        if markdownRegexPattern.isEmpty {
+            // Text is always parsed
+            return true
+        }
+        guard let regex = regex else { return false }
+        return regex.numberOfMatches(in: string, range: .init(location: 0, length: string.utf16.count)) > 0
     }
 
     open func format(_ string: String) -> NSAttributedString {

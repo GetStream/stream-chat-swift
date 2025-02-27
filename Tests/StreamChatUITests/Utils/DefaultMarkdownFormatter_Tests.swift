@@ -20,27 +20,16 @@ final class DefaultMarkdownFormatter_Tests: XCTestCase {
         sut = nil
         try super.tearDownWithError()
     }
-
-    func test_containsMarkdown_whenCheckOnAStringWithNoMarkdown_thenReturnsFalse() {
-        // GIVEN
-        let stringWithNoMarkdown = "Hello, This is a test String"
-
-        // WHEN
-        let containsMarkdown = sut.containsMarkdown(stringWithNoMarkdown)
-
-        // THEN
-        XCTAssertEqual(false, containsMarkdown)
+    
+    func test_containsMarkdown_whenNotUsingRegex_thenAlwaysTrue() {
+        XCTAssertEqual(true, sut.containsMarkdown("Hello world!"))
+        XCTAssertEqual(true, sut.containsMarkdown("Hello *world*!"))
     }
     
-    func test_containsMarkdown_whenCheckOnAStringWithMarkdown_thenReturnsTrue() {
-        // GIVEN
-        let stringWithNoMarkdown = "Hello, This is a *test* String"
-
-        // WHEN
-        let containsMarkdown = sut.containsMarkdown(stringWithNoMarkdown)
-
-        // THEN
-        XCTAssertEqual(true, containsMarkdown)
+    func test_containsMarkdown_whenCustomRegEx_thenRegExIsEvaluated() {
+        sut.markdownRegexPattern = "((?:\\`(.*?)\\`)|(?:\\*{1,2}(.*?)\\*{1,2})|(?:\\~{2}(.*?)\\~{2})|(?:\\_{1,2}(.*?)\\_{1,2})|^(>){1}|(#){1,6}|(=){3,10}|(-){1,3}|(\\d{1,3}\\.)|(?:\\[(.*?)\\])(?:\\((.*?)\\))|(?:\\[(.*?)\\])(?:\\[(.*?)\\])|(\\]\\:))+|^[ \t]*([*+-])[ \t]+"
+        XCTAssertEqual(false, sut.containsMarkdown("Hello world!"))
+        XCTAssertEqual(true, sut.containsMarkdown("Hello *world*!"))
     }
 
     func test_format_whenStringContainsItalicMarkdown_thenAttributedStringIncludesItalicTrait() {

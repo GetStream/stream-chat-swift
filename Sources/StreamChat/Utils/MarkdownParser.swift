@@ -6,37 +6,7 @@ import Foundation
 
 /// A parser for markdown which generates a styled attributed string.
 public struct MarkdownParser {
-    private static let defaultMarkdownRegex = """
-    ((?:\\`(.*?)\\`)|(?:\\*{1,2}(.*?)\\*{1,2})|(?:\\~{2}(.*?)\\~{2})|(?:\\_{1,2}(.*?)\\_{1,2})|^(>){1}|(#){1,6}|(=){3,10}|(-){1,3}|(\\d{1,3}\\.)|(?:\\[(.*?)\\])(?:\\((.*?)\\))|(?:\\[(.*?)\\])(?:\\[(.*?)\\])|(\\]\\:))+|^[ \t]*([*+-])[ \t]+
-    """
-    private let regex: NSRegularExpression?
-    
-    /// Creates a parser for markdown which generates a styled attributed string.
-    ///
-    /// - Parameter markdownRegexPattern: The pattern to be used by ``containsMarkdown(_:)``. Default pattern is used in case of nil string.
-    public init(markdownRegexPattern pattern: String? = nil) {
-        markdownRegexPattern = pattern ?? Self.defaultMarkdownRegex
-        do {
-            regex = try NSRegularExpression(pattern: markdownRegexPattern, options: .anchorsMatchLines)
-        } catch {
-            log.error("Failed to create markdown regular expression with error \(error.localizedDescription)")
-            regex = nil
-        }
-    }
-    
-    /// The regex pattern used by ``containsMarkdown(_:)``.
-    public let markdownRegexPattern: String
-    
-    /// Checks for Markdown patterns in the given String.
-    ///
-    /// Useful for deciding if the string needs to go through the whole markdown parsing flow.
-    ///
-    /// - Parameter text: The string in which Markdown patters are going to be sought.
-    /// - Returns: Returns a Boolean value that indicates whether Markdown patters where found in the given String.
-    public func containsMarkdown(_ string: String) -> Bool {
-        guard let regex else { return false }
-        return regex.firstMatch(in: string, range: .init(location: 0, length: string.utf16.count)) != nil
-    }
+    public init() {}
     
     /// Creates an attributed string from a Markdown-formatted string using the provided style attributes.
     ///
@@ -84,6 +54,12 @@ public struct MarkdownParser {
                 languageCode: nil
             )
         )
+        
+        if !attributedString.containsMarkdown() {
+            // When there is no markdown, then it is just pure text. Markdown parsing drops newlines, therefore
+            // we recreate the string and ignore the parsed output.
+            return AttributedString(markdown, attributes: attributes)
+        }
         
         // Trim newlines which remain after initial parsing (e.g. code blocks)
         attributedString.trimNewlines()
@@ -255,6 +231,29 @@ extension MarkdownParser {
 
 @available(iOS 15, *)
 private extension AttributedString {
+    func containsMarkdown() -> Bool {
+        let containsInlineIntents = runs[\.inlinePresentationIntent].contains(where: { inlineIntent, _ in
+            switch inlineIntent {
+            case .none, .some(.softBreak):
+                return false
+            default:
+                return true
+            }
+        })
+        if containsInlineIntents {
+            return true
+        }
+        return runs[\.presentationIntent].contains(where: { intent, _ in
+            switch intent {
+            case .none:
+                return false
+            case .some(let intent):
+                // Regular text with newlines gets paragraph intents
+                return !intent.components.allSatisfy { $0.kind == .paragraph }
+            }
+        })
+    }
+    
     mutating func insertSafely(_ s: some AttributedStringProtocol, at index: AttributedString.Index) {
         // Inserting at the end index is same as appending
         guard index >= startIndex, index <= endIndex else { return }

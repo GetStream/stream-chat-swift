@@ -626,7 +626,13 @@ open class ChatMessageContentView: _View, ThemeProvider, UITextViewDelegate {
         // Markdown
         if isMarkdownEnabled, markdownFormatter.containsMarkdown(text) {
             let markdownText = markdownFormatter.format(text)
-            textView?.attributedText = markdownText
+            // If the formatter did not change the text, keep showing plain text.
+            // Ideally format would take in current text attributes and these
+            // would get applied to the final string, but it is a breaking change.
+            // Historically markdown parsed text has had different attributes.
+            if markdownText.string != text {
+                textView?.attributedText = markdownText
+            }
         }
 
         // Link Detection (Must be after Markdown)
