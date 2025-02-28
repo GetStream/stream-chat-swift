@@ -44,8 +44,6 @@ extension ChatClient {
             return ScheduledStreamTimer(interval: reconnectionTimeout, fireOnStart: false, repeats: false)
         }
 
-        var extensionLifecycleBuilder = NotificationExtensionLifecycle.init
-
         var requestEncoderBuilder: (_ baseURL: URL, _ apiKey: APIKey) -> RequestEncoder = DefaultRequestEncoder.init
         var requestDecoderBuilder: () -> RequestDecoder = DefaultRequestDecoder.init
 
@@ -91,7 +89,6 @@ extension ChatClient {
             _ webSocketClient: WebSocketClient,
             _ eventNotificationCenter: EventNotificationCenter,
             _ syncRepository: SyncRepository,
-            _ extensionLifecycle: NotificationExtensionLifecycle,
             _ backgroundTaskScheduler: BackgroundTaskScheduler?,
             _ internetConnection: InternetConnection,
             _ keepConnectionAliveInBackground: Bool
@@ -100,12 +97,11 @@ extension ChatClient {
                 webSocketClient: $0,
                 eventNotificationCenter: $1,
                 syncRepository: $2,
-                extensionLifecycle: $3,
-                backgroundTaskScheduler: $4,
-                internetConnection: $5,
+                backgroundTaskScheduler: $3,
+                internetConnection: $4,
                 reconnectionStrategy: DefaultRetryStrategy(),
                 reconnectionTimerType: DefaultTimer.self,
-                keepConnectionAliveInBackground: $6
+                keepConnectionAliveInBackground: $5
             )
         }
 

@@ -28,8 +28,6 @@ class SyncRepository {
         static let maximumDaysSinceLastSync = 30
     }
 
-    /// Do not call the sync endpoint more than once every six seconds
-    private let syncCooldown: TimeInterval = 6.0
     /// Maximum number of retries for each operation step.
     private let maxRetriesCount = 2
     private let config: ChatClientConfig
@@ -209,43 +207,9 @@ class SyncRepository {
         operationQueue.addOperations(operations, waitUntilFinished: false)
     }
 
-    /// Syncs the events for the active chat channels using the last sync date.
-    /// - Parameter completion: A block that will get executed upon completion of the synchronization
-    func syncExistingChannelsEvents(completion: @escaping (Result<[ChannelId], SyncError>) -> Void) {
-        getUser { [weak self, syncCooldown] currentUser in
-            guard let lastSyncAt = currentUser?.lastSynchedEventDate?.bridgeDate else {
-                completion(.failure(.noNeedToSync))
-                return
-            }
-            guard Date().timeIntervalSince(lastSyncAt) > syncCooldown else {
-                completion(.failure(.noNeedToSync))
-                return
-            }
-
-            self?.getChannelIds { channelIds in
-                self?.syncChannelsEvents(
-                    channelIds: channelIds,
-                    lastSyncAt: lastSyncAt,
-                    isRecovery: false,
-                    completion: completion
-                )
-            }
-        }
-    }
-
     func cancelRecoveryFlow() {
         operationQueue.cancelAllOperations()
         apiClient.exitRecoveryMode()
-    }
-
-    private func getChannelIds(completion: @escaping ([ChannelId]) -> Void) {
-        database.backgroundReadOnlyContext.perform {
-            let request = ChannelDTO.allChannelsFetchRequest
-            request.fetchLimit = 100
-            request.propertiesToFetch = ["cid"]
-            let channels = (try? self.database.backgroundReadOnlyContext.fetch(request)) ?? []
-            completion(channels.compactMap { try? ChannelId(cid: $0.cid) })
-        }
     }
 
     func syncChannelsEvents(

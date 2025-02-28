@@ -95,9 +95,6 @@ public class ChatClient {
     /// The `DatabaseContainer` instance `Client` uses to store and cache data.
     let databaseContainer: DatabaseContainer
 
-    /// Used as a bridge to communicate between the host app and the notification extension. Holds the state for the app lifecycle.
-    let extensionLifecycle: NotificationExtensionLifecycle
-
     /// The component responsible to timeout the user connection if it takes more time than the `ChatClientConfig.reconnectionTimeout`.
     var reconnectionTimeoutHandler: StreamTimer?
 
@@ -208,7 +205,6 @@ public class ChatClient {
         self.messageRepository = messageRepository
         self.syncRepository = syncRepository
         authenticationRepository = authRepository
-        extensionLifecycle = environment.extensionLifecycleBuilder(config.applicationGroupIdentifier)
         channelRepository = environment.channelRepositoryBuilder(
             databaseContainer,
             apiClient
@@ -263,7 +259,6 @@ public class ChatClient {
             webSocketClient,
             eventNotificationCenter,
             syncRepository,
-            extensionLifecycle,
             environment.backgroundTaskSchedulerBuilder(),
             environment.internetConnection(eventNotificationCenter, environment.internetMonitor),
             config.staysConnectedInBackground
