@@ -138,6 +138,46 @@ final class ChatThreadListItemView_Tests: XCTestCase {
         AssertSnapshot(view, variants: [.defaultLight])
     }
 
+    func test_defaultAppearance_whenDraftMessage() {
+        let currentUser = mockVader
+        let thread = mockThread
+            .with(
+                parentMessage: .mock(text: "Parent", draftReply: .init(.mock(text: "Test"))),
+                latestReplies: [
+                    .mock(text: "", author: mockYoda, attachments: [.dummy(type: .audio)])
+                ]
+            )
+
+        let view = threadItemView(
+            content: .init(
+                thread: thread,
+                currentUserId: currentUser.id
+            )
+        )
+
+        AssertSnapshot(view, variants: [.defaultLight])
+    }
+
+    func test_defaultAppearance_whenDraftMessage_withAttachment() {
+        let currentUser = mockVader
+        let thread = mockThread
+            .with(
+                parentMessage: .mock(text: "Parent", draftReply: .init(.mock(text: "", attachments: [.dummy(type: .image)]))),
+                latestReplies: [
+                    .mock(text: "", author: mockYoda, attachments: [.dummy(type: .audio)])
+                ]
+            )
+
+        let view = threadItemView(
+            content: .init(
+                thread: thread,
+                currentUserId: currentUser.id
+            )
+        )
+
+        AssertSnapshot(view, variants: [.defaultLight])
+    }
+
     private func threadItemView(
         content: ChatThreadListItemView.Content?,
         components: Components = .mock,
@@ -145,6 +185,7 @@ final class ChatThreadListItemView_Tests: XCTestCase {
     ) -> ChatThreadListItemView {
         let view = ChatThreadListItemView().withoutAutoresizingMaskConstraints
         view.components = components
+        view.components.isDraftMessagesEnabled = true
         view.appearance = appearance
         view.appearance.formatters.threadListMessageTimestamp = DefaultMessageTimestampFormatter()
         view.content = content

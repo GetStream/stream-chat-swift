@@ -148,7 +148,13 @@ extension ChatClient {
                 internetConnection: { center, _ in
                     InternetConnection_Mock(notificationCenter: center)
                 },
-                authenticationRepositoryBuilder: AuthenticationRepository_Mock.init
+                authenticationRepositoryBuilder: AuthenticationRepository_Mock.init,
+                syncRepositoryBuilder: SyncRepository_Mock.init,
+                pollsRepositoryBuilder: PollsRepository_Mock.init,
+                draftMessagesRepositoryBuilder: DraftMessagesRepository_Mock.init,
+                channelListUpdaterBuilder: ChannelListUpdater_Spy.init,
+                messageRepositoryBuilder: MessageRepository_Mock.init,
+                offlineRequestsRepositoryBuilder: OfflineRequestsRepository_Mock.init
             )
         )
     }
@@ -199,6 +205,10 @@ extension ChatClient {
         pollsRepository as! PollsRepository_Mock
     }
 
+    var mockDraftMessagesRepository: DraftMessagesRepository_Mock {
+        draftMessagesRepository as! DraftMessagesRepository_Mock
+    }
+
     func simulateProvidedConnectionId(connectionId: ConnectionId?) {
         guard let connectionId = connectionId else {
             webSocketClient(
@@ -236,6 +246,7 @@ extension ChatClient.Environment {
             authenticationRepositoryBuilder: AuthenticationRepository_Mock.init,
             syncRepositoryBuilder: SyncRepository_Mock.init,
             pollsRepositoryBuilder: PollsRepository_Mock.init,
+            draftMessagesRepositoryBuilder: DraftMessagesRepository_Mock.init,
             channelListUpdaterBuilder: ChannelListUpdater_Spy.init,
             messageRepositoryBuilder: MessageRepository_Mock.init,
             offlineRequestsRepositoryBuilder: OfflineRequestsRepository_Mock.init

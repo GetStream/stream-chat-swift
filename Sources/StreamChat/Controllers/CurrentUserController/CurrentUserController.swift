@@ -72,7 +72,6 @@ public class CurrentChatUserController: DataController, DelegateCallable, DataSt
     /// The unread messages and channels count for the current user.
     ///
     /// Returns `noUnread` if `currentUser` doesn't exist yet.
-    ///
     public var unreadCount: UnreadCount {
         currentUser?.unreadCount ?? .noUnread
     }
@@ -86,6 +85,31 @@ public class CurrentChatUserController: DataController, DelegateCallable, DataSt
     /// The worker used to update the current user member for a given channel.
     private lazy var currentMemberUpdater = createMemberUpdater()
 
+    /// The query used for fetching the draft messages.
+    private var draftListQuery = DraftListQuery()
+
+    /// Use for observing the current user's draft messages changes.
+    private var draftMessagesObserver: BackgroundListDatabaseObserver<DraftMessage, MessageDTO>?
+
+    /// The repository for draft messages.
+    private var draftMessagesRepository: DraftMessagesRepository
+
+    /// The token for the next page of draft messages.
+    private var draftMessagesNextCursor: String?
+
+    /// A flag to indicate whether all draft messages have been loaded.
+    public private(set) var hasLoadedAllDrafts: Bool = false
+
+    /// The current user's draft messages.
+    public var draftMessages: [DraftMessage] {
+        if let observer = draftMessagesObserver {
+            return Array(observer.items)
+        }
+
+        let observer = createDraftMessagesObserver(query: draftListQuery)
+        return Array(observer.items)
+    }
+
     /// Creates a new `CurrentUserControllerGeneric`.
     ///
     /// - Parameters:
@@ -95,6 +119,7 @@ public class CurrentChatUserController: DataController, DelegateCallable, DataSt
     init(client: ChatClient, environment: Environment = .init()) {
         self.client = client
         self.environment = environment
+        draftMessagesRepository = client.draftMessagesRepository
     }
 
     /// Synchronize local data with remote. Waits for the client to connect but doesn’t initiate the connection itself.
@@ -334,8 +359,79 @@ public extension CurrentChatUserController {
         }
     }
 
-    private func createMemberUpdater() -> ChannelMemberUpdater {
-        .init(database: client.databaseContainer, apiClient: client.apiClient)
+    /// Loads the draft messages for the current user.
+    ///
+    /// It will load the first page of drafts of the current user.
+    /// `loadMoreDraftMessages` can be used to load the next pages.
+    ///
+    /// - Parameters:
+    ///  - query: The query for filtering the drafts.
+    ///  - completion: Called when the API call is finished.
+    ///  It is optional since it can be observed from the delegate events.
+    func loadDraftMessages(
+        query: DraftListQuery = DraftListQuery(),
+        completion: ((Result<[DraftMessage], Error>) -> Void)? = nil
+    ) {
+        draftListQuery = query
+        createDraftMessagesObserver(query: query)
+        draftMessagesRepository.loadDrafts(query: query) { result in
+            self.callback {
+                switch result {
+                case let .success(response):
+                    self.draftMessagesNextCursor = response.next
+                    self.hasLoadedAllDrafts = response.next == nil
+                    completion?(.success(response.drafts))
+                case let .failure(error):
+                    completion?(.failure(error))
+                }
+            }
+        }
+    }
+
+    /// Loads more draft messages for the current user.
+    ///
+    /// - Parameters:
+    ///  - limit: The number of draft messages to load. If `nil`, the default limit will be used.
+    ///  - completion: Called when the API call is finished.
+    ///  It is optional since it can be observed from the delegate events.
+    func loadMoreDraftMessages(
+        limit: Int? = nil,
+        completion: ((Result<[DraftMessage], Error>) -> Void)? = nil
+    ) {
+        guard let nextCursor = draftMessagesNextCursor else {
+            completion?(.success([]))
+            return
+        }
+
+        let limit = limit ?? draftListQuery.pagination.pageSize
+        var updatedQuery = draftListQuery
+        updatedQuery.pagination = Pagination(pageSize: limit, cursor: nextCursor)
+
+        draftMessagesRepository.loadDrafts(query: updatedQuery) { result in
+            self.callback {
+                switch result {
+                case let .success(response):
+                    self.draftMessagesNextCursor = response.next
+                    self.hasLoadedAllDrafts = response.next == nil
+                    completion?(.success(response.drafts))
+                case let .failure(error):
+                    completion?(.failure(error))
+                }
+            }
+        }
+    }
+
+    /// Deletes the draft message of the given channel or thread.
+    func deleteDraftMessage(
+        for cid: ChannelId,
+        threadId: MessageId? = nil,
+        completion: ((Error?) -> Void)? = nil
+    ) {
+        draftMessagesRepository.deleteDraft(for: cid, threadId: threadId) { error in
+            self.callback {
+                completion?(error)
+            }
+        }
     }
 }
 
@@ -349,6 +445,14 @@ extension CurrentChatUserController {
             _ itemCreator: @escaping (CurrentUserDTO) throws -> CurrentChatUser,
             _ fetchedResultsControllerType: NSFetchedResultsController<CurrentUserDTO>.Type
         ) -> BackgroundEntityDatabaseObserver<CurrentChatUser, CurrentUserDTO> = BackgroundEntityDatabaseObserver.init
+
+        var draftMessagesObserverBuilder: (
+            _ database: DatabaseContainer,
+            _ fetchRequest: NSFetchRequest<MessageDTO>,
+            _ itemCreator: @escaping (MessageDTO) throws -> DraftMessage
+        ) -> BackgroundListDatabaseObserver<DraftMessage, MessageDTO> = {
+            .init(database: $0, fetchRequest: $1, itemCreator: $2, itemReuseKeyPaths: (\DraftMessage.id, \MessageDTO.id))
+        }
 
         var currentUserUpdaterBuilder = CurrentUserUpdater.init
     }
@@ -378,6 +482,28 @@ private extension CurrentChatUserController {
             NSFetchedResultsController<CurrentUserDTO>.self
         )
     }
+
+    private func createMemberUpdater() -> ChannelMemberUpdater {
+        .init(database: client.databaseContainer, apiClient: client.apiClient)
+    }
+
+    @discardableResult
+    private func createDraftMessagesObserver(query: DraftListQuery) -> BackgroundListDatabaseObserver<DraftMessage, MessageDTO> {
+        let observer = environment.draftMessagesObserverBuilder(
+            client.databaseContainer,
+            MessageDTO.draftMessagesFetchRequest(query: query),
+            { DraftMessage(try $0.asModel()) }
+        )
+        observer.onDidChange = { [weak self] _ in
+            guard let self = self else { return }
+            self.delegateCallback {
+                $0.currentUserController(self, didChangeDraftMessages: self.draftMessages)
+            }
+        }
+        try? observer.startObserving()
+        draftMessagesObserver = observer
+        return observer
+    }
 }
 
 // MARK: - Delegates
@@ -389,12 +515,23 @@ public protocol CurrentChatUserControllerDelegate: AnyObject {
 
     /// The controller observed a change in the `CurrentChatUser` entity.
     func currentUserController(_ controller: CurrentChatUserController, didChangeCurrentUser: EntityChange<CurrentChatUser>)
+
+    /// The controller observed a change in the draft messages.
+    func currentUserController(
+        _ controller: CurrentChatUserController,
+        didChangeDraftMessages draftMessages: [DraftMessage]
+    )
 }
 
 public extension CurrentChatUserControllerDelegate {
     func currentUserController(_ controller: CurrentChatUserController, didChangeCurrentUserUnreadCount: UnreadCount) {}
 
     func currentUserController(_ controller: CurrentChatUserController, didChangeCurrentUser: EntityChange<CurrentChatUser>) {}
+
+    func currentUserController(
+        _ controller: CurrentChatUserController,
+        didChangeDraftMessages draftMessages: [DraftMessage]
+    ) {}
 }
 
 public extension CurrentChatUserController {

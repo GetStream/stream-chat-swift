@@ -91,7 +91,8 @@ public extension ChatChannel {
         latestMessages: [ChatMessage] = [],
         pinnedMessages: [ChatMessage] = [],
         muteDetails: MuteDetails? = nil,
-        previewMessage: ChatMessage? = nil
+        previewMessage: ChatMessage? = nil,
+        draftMessage: DraftMessage? = nil
     ) -> Self {
         self.init(
             cid: cid,
@@ -120,7 +121,8 @@ public extension ChatChannel {
             lastMessageFromCurrentUser: nil,
             pinnedMessages: pinnedMessages,
             muteDetails: muteDetails,
-            previewMessage: previewMessage
+            previewMessage: previewMessage,
+            draftMessage: draftMessage
         )
     }
 
@@ -148,7 +150,8 @@ public extension ChatChannel {
         latestMessages: [ChatMessage] = [],
         pinnedMessages: [ChatMessage] = [],
         muteDetails: MuteDetails? = nil,
-        previewMessage: ChatMessage? = nil
+        previewMessage: ChatMessage? = nil,
+        draftMessage: DraftMessage? = nil
     ) -> Self {
         self.init(
             cid: .init(type: .messaging, id: "!members" + .newUniqueId),
@@ -175,7 +178,8 @@ public extension ChatChannel {
             lastMessageFromCurrentUser: nil, 
             pinnedMessages: pinnedMessages,
             muteDetails: muteDetails,
-            previewMessage: previewMessage
+            previewMessage: previewMessage,
+            draftMessage: draftMessage
         )
     }
 
@@ -202,7 +206,8 @@ public extension ChatChannel {
         latestMessages: [ChatMessage] = [],
         pinnedMessages: [ChatMessage] = [],
         muteDetails: MuteDetails? = nil,
-        previewMessage: ChatMessage? = nil
+        previewMessage: ChatMessage? = nil,
+        draftMessage: DraftMessage? = nil
     ) -> Self {
         self.init(
             cid: .init(type: .messaging, id: .newUniqueId),
@@ -228,7 +233,8 @@ public extension ChatChannel {
             lastMessageFromCurrentUser: nil,
             pinnedMessages: pinnedMessages,
             muteDetails: muteDetails,
-            previewMessage: previewMessage
+            previewMessage: previewMessage,
+            draftMessage: draftMessage
         )
     }
 }

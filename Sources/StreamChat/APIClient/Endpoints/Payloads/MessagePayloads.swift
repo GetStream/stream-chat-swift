@@ -8,6 +8,7 @@ import Foundation
 enum MessagePayloadsCodingKeys: String, CodingKey, CaseIterable {
     case id
     case cid
+    case channelId = "channel_cid"
     case type
     case user
     case userId = "user_id"
@@ -22,6 +23,7 @@ enum MessagePayloadsCodingKeys: String, CodingKey, CaseIterable {
     case showReplyInChannel = "show_in_channel"
     case quotedMessageId = "quoted_message_id"
     case quotedMessage = "quoted_message"
+    case parentMessage = "parent_message"
     case mentionedUsers = "mentioned_users"
     case threadParticipants = "thread_participants"
     case replyCount = "reply_count"
@@ -44,11 +46,14 @@ enum MessagePayloadsCodingKeys: String, CodingKey, CaseIterable {
     case moderationDetails = "moderation_details" // moderation v1 key
     case moderation // moderation v2 key
     case messageTextUpdatedAt = "message_text_updated_at"
+    case message
     case poll
     case pollId = "poll_id"
     case set
     case unset
     case skipEnrichUrl = "skip_enrich_url"
+    case restrictedVisibility = "restricted_visibility"
+    case draft
 }
 
 extension MessagePayload {
@@ -106,6 +111,8 @@ class MessagePayload: Decodable {
     var pinExpires: Date?
     
     var poll: PollPayload?
+
+    var draft: DraftPayload?
 
     /// Only message payload from `getMessage` endpoint contains channel data. It's a convenience workaround for having to
     /// make an extra call do get channel details.
@@ -171,6 +178,7 @@ class MessagePayload: Decodable {
         moderationDetails = try container.decodeIfPresent(MessageModerationDetailsPayload.self, forKey: .moderationDetails)
         messageTextUpdatedAt = try container.decodeIfPresent(Date.self, forKey: .messageTextUpdatedAt)
         poll = try container.decodeIfPresent(PollPayload.self, forKey: .poll)
+        draft = try container.decodeIfPresent(DraftPayload.self, forKey: .draft)
     }
 
     init(
@@ -210,7 +218,8 @@ class MessagePayload: Decodable {
         moderation: MessageModerationDetailsPayload? = nil,
         moderationDetails: MessageModerationDetailsPayload? = nil,
         messageTextUpdatedAt: Date? = nil,
-        poll: PollPayload? = nil
+        poll: PollPayload? = nil,
+        draft: DraftPayload? = nil
     ) {
         self.id = id
         self.cid = cid
@@ -249,6 +258,7 @@ class MessagePayload: Decodable {
         self.moderationDetails = moderationDetails
         self.messageTextUpdatedAt = messageTextUpdatedAt
         self.poll = poll
+        self.draft = draft
     }
 }
 
@@ -272,6 +282,7 @@ struct MessageRequestBody: Encodable {
     var pinned: Bool
     var pinExpires: Date?
     var pollId: String?
+    var restrictedVisibility: [UserId]?
     let extraData: [String: RawJSON]
 
     init(
@@ -290,6 +301,7 @@ struct MessageRequestBody: Encodable {
         pinned: Bool = false,
         pinExpires: Date? = nil,
         pollId: String? = nil,
+        restrictedVisibility: [UserId]? = nil,
         extraData: [String: RawJSON]
     ) {
         self.id = id
@@ -307,6 +319,7 @@ struct MessageRequestBody: Encodable {
         self.pinned = pinned
         self.pinExpires = pinExpires
         self.pollId = pollId
+        self.restrictedVisibility = restrictedVisibility
         self.extraData = extraData
     }
 
@@ -324,6 +337,7 @@ struct MessageRequestBody: Encodable {
         try container.encode(isSilent, forKey: .isSilent)
         try container.encodeIfPresent(pollId, forKey: .pollId)
         try container.encodeIfPresent(type, forKey: .type)
+        try container.encodeIfPresent(restrictedVisibility, forKey: .restrictedVisibility)
 
         if !attachments.isEmpty {
             try container.encode(attachments, forKey: .attachments)

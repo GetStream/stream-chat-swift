@@ -12,7 +12,7 @@ public struct PollVoteListQuery: Encodable {
     public var optionId: String?
     /// The pagination information to query the votes.
     public var pagination: Pagination
-    // The sorting parameter. By default votes are sorted by newest first.
+    /// The sorting parameter. By default votes are sorted by newest first.
     public var sorting: [Sorting<PollVoteListSortingKey>]
     /// The filter details to query the votes.
     public var filter: Filter<VoteListFilterScope>?

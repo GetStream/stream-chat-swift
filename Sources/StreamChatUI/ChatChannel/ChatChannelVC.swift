@@ -226,6 +226,14 @@ open class ChatChannelVC: _ViewController,
         }
     }
 
+    override open func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+
+        if let draftMessage = channelController.channel?.draftMessage {
+            messageComposerVC.content.draftMessage(draftMessage)
+        }
+    }
+
     override open func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
 
@@ -572,6 +580,12 @@ open class ChatChannelVC: _ViewController,
                 return
             }
             debugPrint("New Message Error: \(error) Message: \(message)")
+        }
+
+        if let draftUpdatedEvent = event as? DraftUpdatedEvent,
+           let draft = channelController.channel?.draftMessage,
+           draftUpdatedEvent.cid == channelController.cid {
+            messageComposerVC.content.draftMessage(draft)
         }
     }
 
