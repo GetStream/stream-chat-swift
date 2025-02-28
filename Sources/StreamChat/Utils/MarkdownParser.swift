@@ -243,13 +243,18 @@ private extension AttributedString {
         if containsInlineIntents {
             return true
         }
-        return runs[\.presentationIntent].contains(where: { intent, _ in
+        return runs[\.presentationIntent].contains(where: { intent, range in
             switch intent {
             case .none:
                 return false
             case .some(let intent):
                 // Regular text with newlines gets paragraph intents
-                return !intent.components.allSatisfy { $0.kind == .paragraph }
+                let onlyParagraphs = intent.components.allSatisfy { $0.kind == .paragraph }
+                if onlyParagraphs {
+                    return self[range].link == nil
+                } else {
+                    return true
+                }
             }
         })
     }
