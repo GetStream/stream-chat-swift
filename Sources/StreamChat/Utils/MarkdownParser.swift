@@ -231,6 +231,9 @@ extension MarkdownParser {
 
 @available(iOS 15, *)
 private extension AttributedString {
+    /// True, if it contains markdown, otherwise false.
+    ///
+    /// - Note: Use it only after creating the attributed string with markdown initializer.
     func containsMarkdown() -> Bool {
         let containsInlineIntents = runs[\.inlinePresentationIntent].contains(where: { inlineIntent, _ in
             switch inlineIntent {
@@ -243,20 +246,20 @@ private extension AttributedString {
         if containsInlineIntents {
             return true
         }
-        return runs[\.presentationIntent].contains(where: { intent, range in
+        let containsPresentationIntents = runs[\.presentationIntent].contains(where: { intent, _ in
             switch intent {
             case .none:
                 return false
             case .some(let intent):
-                // Regular text with newlines gets paragraph intents
-                let onlyParagraphs = intent.components.allSatisfy { $0.kind == .paragraph }
-                if onlyParagraphs {
-                    return self[range].link != nil
-                } else {
-                    return true
-                }
+                // Regular text gets paragraphs
+                return !intent.components.allSatisfy { $0.kind == .paragraph }
             }
         })
+        if containsPresentationIntents {
+            return true
+        }
+        // Markdown links get the same link attribute
+        return runs[\.link].contains(where: { link, _ in link != nil })
     }
     
     mutating func insertSafely(_ s: some AttributedStringProtocol, at index: AttributedString.Index) {
