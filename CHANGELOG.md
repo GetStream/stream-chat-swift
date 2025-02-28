@@ -7,9 +7,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### ✅ Added
 - Add `MarkdownParser` for parsing and styling markdown strings [#3590](https://github.com/GetStream/stream-chat-swift/pull/3590)
 - Add `Fonts.title2` for supporting markdown headers [#3590](https://github.com/GetStream/stream-chat-swift/pull/3590)
-### 🐞 Fixed
-- Update channel's preview message when coming back to online [#3574](https://github.com/GetStream/stream-chat-swift/pull/3574)
-- Fix message transformer not being applied when editing a message [#3602](https://github.com/GetStream/stream-chat-swift/pull/3602)
 
 ### StreamChatUI
 ### 🔄 Changed
@@ -17,6 +14,37 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   - Note: Markdown is rendered only on iOS 15 and above. On iOS 14 and below markdown is rendered as plain text.
 ### 💥 Removed
 - Remove `MarkdownStyles.linkFont` because link attributes are ignored by `UITextView`. Update `ChatMessageContentView.textView.linkTextAttributes` instead. [#3590](https://github.com/GetStream/stream-chat-swift/pull/3590)
+
+# [4.73.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.73.0)
+_February 27, 2025_
+
+## StreamChat
+### ✅ Added
+- Add sending messages to only specific members [#3595](https://github.com/GetStream/stream-chat-swift/pull/3595)
+- Add Draft Messages Support [#3588](https://github.com/GetStream/stream-chat-swift/pull/3588)
+  - Add `ChatChannel.draftMessage`
+  - Add `ChatMessage.draftReply`
+  - Add `ChannelController`:
+     - `updateDraftMessage()`
+     - `deleteDraftMessage()`
+     - `loadDraftMessage()`
+  - Add `MessageController`:
+     - `updateDraftReply()`
+     - `deleteDraftReply()`
+     - `loadDraftReply()`
+  - Add `CurrentUserController`:
+     - `deleteDraft()`
+     - `loadDraftMessages()`
+     - `loadMoreDraftMessages()` 
+
+### 🐞 Fixed
+- Update channel's preview message when coming back to online [#3574](https://github.com/GetStream/stream-chat-swift/pull/3574)
+- Fix message transformer not being applied when editing a message [#3602](https://github.com/GetStream/stream-chat-swift/pull/3602)
+
+## StreamChatUI
+### ✅ Added
+- Add `Components.isDraftMessagesEnabled` to enable Draft Messages [#3588](https://github.com/GetStream/stream-chat-swift/pull/3588)
+- Add draft preview in Channel List and Thread List if drafts are enabled [#3588](https://github.com/GetStream/stream-chat-swift/pull/3588)
 
 # [4.72.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.72.0)
 _February 04, 2025_

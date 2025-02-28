@@ -161,14 +161,19 @@ public func AssertJSONEqual(
 }
 
 public func AssertDictionary(
+    ignoringKeys: [String] = [],
     _ expression1: @autoclosure () throws -> [String: Any],
     _ expression2: @autoclosure () throws -> [String: Any],
     file: StaticString = #filePath,
     line: UInt = #line
 ) {
     do {
-        let expr1 = try NSDictionary(dictionary: expression1())
-        let expr2 = try NSDictionary(dictionary: expression2())
+        let expr1 = try NSDictionary(
+            dictionary: expression1().filter { !ignoringKeys.contains($0.key) }
+        )
+        let expr2 = try NSDictionary(
+            dictionary: expression2().filter { !ignoringKeys.contains($0.key) }
+        )
         XCTAssertEqual(expr1, expr2, file: file, line: line)
     } catch {
         XCTFail("Error: \(error)", file: file, line: line)

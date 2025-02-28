@@ -306,6 +306,9 @@
 /// Shown in the channel list or thread list message preview in case the current user created a poll.
 "message.preview.poll-you-created" = "You created:";
 
+/// Shown in the channel list or thread list message preview in case there is a draft.
+"message.preview.draft" = "Draft";
+
 /// Alert title when closing a poll.
 "alert.poll.end-title" = "Nobody will be able to vote in this poll anymore.";
 /// Alert title when adding a comment to a poll.

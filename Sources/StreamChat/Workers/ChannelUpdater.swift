@@ -308,6 +308,7 @@ class ChannelUpdater: Worker {
         quotedMessageId: MessageId?,
         skipPush: Bool,
         skipEnrichUrl: Bool,
+        restrictedVisibility: [UserId] = [],
         poll: PollPayload? = nil,
         extraData: [String: RawJSON],
         completion: ((Result<ChatMessage, Error>) -> Void)? = nil
@@ -332,6 +333,7 @@ class ChannelUpdater: Worker {
                 skipPush: skipPush,
                 skipEnrichUrl: skipEnrichUrl,
                 poll: poll,
+                restrictedVisibility: restrictedVisibility,
                 extraData: extraData
             )
             if quotedMessageId != nil {
@@ -743,6 +745,7 @@ extension ChannelUpdater {
         quotedMessageId: MessageId?,
         skipPush: Bool,
         skipEnrichUrl: Bool,
+        restrictedVisibility: [UserId],
         extraData: [String: RawJSON]
     ) async throws -> ChatMessage {
         try await withCheckedThrowingContinuation { continuation in
@@ -760,6 +763,7 @@ extension ChannelUpdater {
                 quotedMessageId: quotedMessageId,
                 skipPush: skipPush,
                 skipEnrichUrl: skipEnrichUrl,
+                restrictedVisibility: restrictedVisibility,
                 extraData: extraData
             ) { result in
                 continuation.resume(with: result)
