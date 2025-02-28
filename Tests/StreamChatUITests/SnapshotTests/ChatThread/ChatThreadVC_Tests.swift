@@ -2,7 +2,7 @@
 // Copyright © 2025 Stream.io Inc. All rights reserved.
 //
 
-import StreamChat
+@testable import StreamChat
 @testable import StreamChatTestTools
 @testable import StreamChatUI
 import StreamSwiftTestHelpers
@@ -295,6 +295,69 @@ final class ChatThreadVC_Tests: XCTestCase {
         XCTAssertEqual(messageControllerMock.loadPageAroundReplyId_callCount, 1)
         XCTAssertEqual(messageListVCMock?.jumpToMessageCallCount, 1)
         XCTAssertEqual(messageListVCMock?.jumpToMessageCalledWith?.animated, false)
+    }
+
+    // MARK: - Draft Messages
+
+    func test_threadWithDraftReply_showsDraftInComposer() {
+        let draftMessage = DraftMessage.mock(
+            text: "Draft reply text",
+            showReplyInChannel: true
+        )
+
+        messageControllerMock.simulateInitial(
+            message: .mock(
+                id: .unique,
+                cid: .unique,
+                text: "Parent message",
+                author: .mock(id: .unique),
+                draftReply: draftMessage
+            ),
+            replies: [],
+            state: .localDataFetched
+        )
+        messageControllerMock.simulate(state: .remoteDataFetched)
+
+        vc.view.layoutIfNeeded()
+
+        AssertSnapshot(vc, variants: [.defaultLight])
+    }
+
+    func test_threadWithDraftReply_whenDraftIsUpdatedFromEvent_updatesDraftInComposer() {
+        let parentMessage = ChatMessage.mock(
+            id: messageControllerMock.messageId,
+            cid: .unique,
+            text: "Parent message",
+            author: .mock(id: .unique),
+            draftReply: .mock(text: "Draft Message")
+        )
+        messageControllerMock.simulateInitial(
+            message: parentMessage,
+            replies: [],
+            state: .localDataFetched
+        )
+        messageControllerMock.simulate(state: .remoteDataFetched)
+
+        vc.view.layoutIfNeeded()
+
+        let draftReply = DraftMessage.mock(threadId: parentMessage.id, text: "Updated Draft Message")
+        let updatedParentMessage = ChatMessage.mock(
+            id: messageControllerMock.messageId,
+            cid: .unique,
+            text: "Parent message",
+            author: .mock(id: .unique),
+            draftReply: draftReply
+        )
+        messageControllerMock.message_mock = updatedParentMessage
+        let updateDraftEvent = DraftUpdatedEvent(
+            cid: updatedParentMessage.cid!,
+            channel: .mock(cid: updatedParentMessage.cid!),
+            draftMessage: draftReply,
+            createdAt: .unique
+        )
+        vc.eventsController(vc.eventsController, didReceiveEvent: updateDraftEvent)
+
+        AssertSnapshot(vc, variants: [.defaultLight])
     }
 
     // MARK: - audioQueuePlayerNextAssetURL

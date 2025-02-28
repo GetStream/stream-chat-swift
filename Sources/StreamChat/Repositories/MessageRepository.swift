@@ -137,7 +137,13 @@ class MessageRepository {
     ) {
         var messageModel: ChatMessage!
         database.write({
-            let messageDTO = try $0.saveMessage(payload: message, for: cid, syncOwnReactions: false, cache: nil)
+            let messageDTO = try $0.saveMessage(
+                payload: message,
+                for: cid,
+                syncOwnReactions: false,
+                skipDraftUpdate: false,
+                cache: nil
+            )
             if messageDTO.localMessageState == .sending || messageDTO.localMessageState == .sendingFailed {
                 messageDTO.markMessageAsSent()
             }
@@ -210,6 +216,7 @@ class MessageRepository {
                 payload: message,
                 for: ChannelId(cid: cid),
                 syncOwnReactions: false,
+                skipDraftUpdate: false,
                 cache: nil
             )
             deletedMessage.localMessageState = nil
@@ -238,7 +245,13 @@ class MessageRepository {
             case let .success(boxed):
                 var message: ChatMessage?
                 self.database.write({ session in
-                    message = try session.saveMessage(payload: boxed.message, for: cid, syncOwnReactions: true, cache: nil).asModel()
+                    message = try session.saveMessage(
+                        payload: boxed.message,
+                        for: cid,
+                        syncOwnReactions: true,
+                        skipDraftUpdate: false,
+                        cache: nil
+                    ).asModel()
                     if !store {
                         // Force load attachments before discarding changes
                         _ = message?.attachmentCounts

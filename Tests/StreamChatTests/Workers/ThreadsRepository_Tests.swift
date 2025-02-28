@@ -38,6 +38,7 @@ final class ThreadsRepository_Tests: XCTestCase {
                 payload: .dummy(messageId: messageId),
                 for: channelId,
                 syncOwnReactions: false,
+                skipDraftUpdate: true,
                 cache: nil
             )
         }

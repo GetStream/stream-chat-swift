@@ -35,6 +35,8 @@ final class ComposerVC_Tests: XCTestCase {
         )
 
         composerVC = .init()
+        composerVC.components = .mock
+        composerVC.components.isDraftMessagesEnabled = true
         composerVC.channelController = mockedChatChannelController
     }
     
@@ -1105,6 +1107,79 @@ final class ComposerVC_Tests: XCTestCase {
         composerVC.voiceRecording(composerVC.voiceRecordingVC, presentFloatingView: floatingView)
 
         XCTAssertTrue(containerViewController.view.subviews.last === floatingView)
+    }
+
+    // MARK: - Draft Message Handling
+
+    func test_viewWillDisappear_whenContentIsEmpty_andNoDraftExists() {
+        composerVC.content = .initial()
+        let mock = ChatChannelController_Mock.mock()
+        mock.channel_mock = .mock(cid: .unique, draftMessage: nil)
+        composerVC.channelController = mock
+
+        composerVC.viewWillDisappear(false)
+
+        XCTAssertEqual(mock.updateDraftMessage_callCount, 0)
+        XCTAssertEqual(mock.deleteDraftMessage_callCount, 0)
+    }
+
+    func test_viewWillDisappear_whenHasContent_updatesDraft() {
+        composerVC.content.draftMessage(.mock(text: "New draft text"))
+        let mock = ChatChannelController_Mock.mock()
+        mock.channel_mock = .mock(cid: .unique)
+        composerVC.channelController = mock
+
+        composerVC.viewWillDisappear(false)
+
+        XCTAssertEqual(mock.updateDraftMessage_callCount, 1)
+        XCTAssertEqual(mock.updateDraftMessage_text, "New draft text")
+    }
+
+    func test_viewWillDisappear_whenHasCommand_updatesDraft() {
+        composerVC.content.draftMessage(.mock(text: "", command: "giphy"))
+        let mock = ChatChannelController_Mock.mock()
+        mock.channel_mock = .mock(cid: .unique)
+        composerVC.channelController = mock
+
+        composerVC.viewWillDisappear(false)
+
+        XCTAssertEqual(mock.updateDraftMessage_callCount, 1)
+    }
+
+    func test_textViewDidChange_whenInputIsEmpty_whenHasDraft_deletesDraft() {
+        composerVC.content.text = "Hey"
+        let mock = ChatChannelController_Mock.mock()
+        mock.channel_mock = .mock(cid: .unique, draftMessage: .mock())
+        composerVC.channelController = mock
+
+        composerVC.composerView.inputMessageView.textView.text = ""
+        composerVC.textViewDidChange(composerVC.composerView.inputMessageView.textView)
+
+        XCTAssertEqual(mock.deleteDraftMessage_callCount, 1)
+    }
+
+    func test_textViewDidChange_whenInputIsEmpty_whenNoDraft_doesNotCallDeleteDraft() {
+        composerVC.content.text = "Hey"
+        let mock = ChatChannelController_Mock.mock()
+        mock.channel_mock = .mock(cid: .unique, draftMessage: nil)
+        composerVC.channelController = mock
+
+        composerVC.composerView.inputMessageView.textView.text = ""
+        composerVC.textViewDidChange(composerVC.composerView.inputMessageView.textView)
+
+        XCTAssertEqual(mock.deleteDraftMessage_callCount, 0)
+    }
+
+    func test_textViewDidChange_whenHasContent_whenHasDraft_doesNotCallDeleteDraft() {
+        composerVC.content.text = "Hey"
+        let mock = ChatChannelController_Mock.mock()
+        mock.channel_mock = .mock(cid: .unique, draftMessage: .mock())
+        composerVC.channelController = mock
+
+        composerVC.composerView.inputMessageView.textView.text = "Ahahah"
+        composerVC.textViewDidChange(composerVC.composerView.inputMessageView.textView)
+
+        XCTAssertEqual(mock.deleteDraftMessage_callCount, 0)
     }
 }
 

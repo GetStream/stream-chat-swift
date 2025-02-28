@@ -236,6 +236,7 @@ class MessageUpdater: Worker {
                 skipPush: skipPush,
                 skipEnrichUrl: skipEnrichUrl,
                 poll: nil,
+                restrictedVisibility: [],
                 extraData: extraData
             )
 
@@ -764,7 +765,13 @@ class MessageUpdater: Worker {
                         switch $0 {
                         case let .success(payload):
                             self.database.write({ session in
-                                try session.saveMessage(payload: payload.message, for: cid, syncOwnReactions: true, cache: nil)
+                                try session.saveMessage(
+                                    payload: payload.message,
+                                    for: cid,
+                                    syncOwnReactions: true,
+                                    skipDraftUpdate: true,
+                                    cache: nil
+                                )
                             }, completion: { error in
                                 completion?(error)
                             })
@@ -824,6 +831,7 @@ class MessageUpdater: Worker {
                         payload: boxedMessage.message,
                         for: boxedMessage.message.cid,
                         syncOwnReactions: false,
+                        skipDraftUpdate: true,
                         cache: nil
                     )
                     if completion != nil {

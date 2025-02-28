@@ -293,7 +293,8 @@ private extension MessagePayload {
             moderationDetails: nil,
             readBy: [],
             poll: nil,
-            textUpdatedAt: messageTextUpdatedAt
+            textUpdatedAt: messageTextUpdatedAt,
+            draftReply: nil
         )
     }
 }

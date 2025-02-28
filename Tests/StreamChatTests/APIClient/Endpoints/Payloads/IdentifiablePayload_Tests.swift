@@ -403,7 +403,8 @@ final class IdentifiablePayload_Tests: XCTestCase {
                         unreadMessagesCount: (0..<10).randomElement()!
                     )
                 },
-                isHidden: false
+                isHidden: false,
+                draft: nil
             )
         }
 

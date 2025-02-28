@@ -954,6 +954,7 @@ final class ChannelController_Tests: XCTestCase {
                 skipPush: false,
                 skipEnrichUrl: false,
                 poll: nil,
+                restrictedVisibility: [],
                 extraData: [:]
             )
             // Simulate sending failed for this message

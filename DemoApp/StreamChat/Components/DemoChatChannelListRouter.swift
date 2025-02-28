@@ -570,6 +570,16 @@ final class DemoChatChannelListRouter: ChatChannelListRouter {
                     channelController.createNewMessage(text: message, skipPush: true)
                 }
             }),
+            .init(title: "Say Hi to a specific member", isEnabled: canSendMessage, handler: { [unowned self] _ in
+                self.rootViewController.presentAlert(title: "Enter the channel member id", textFieldPlaceholder: "Send message") { userId in
+                    guard let userId, !userId.isEmpty,
+                          channelController.channel?.lastActiveMembers.map(\.id).contains(userId) == true else {
+                        self.rootViewController.presentAlert(title: "user id is not valid")
+                        return
+                    }
+                    channelController.createNewMessage(text: "Hi", restrictedVisibility: [userId])
+                }
+            }),
             .init(title: "Send system message", isEnabled: canSendMessage, handler: { [unowned self] _ in
                 self.rootViewController.presentAlert(title: "Enter the message text", textFieldPlaceholder: "Send message") { message in
                     guard let message = message, !message.isEmpty else {
