@@ -7,55 +7,31 @@ import StreamChat
 import UIKit
 
 public protocol MarkdownFormatter {
-    /// Checks for Markdown patterns in the given String.
-    /// - Parameter text: The string in which Markdown patters are going to be sought.
-    /// - Returns: Returns a Boolean value that indicates whether Markdown patters where found in the given String.
-    func containsMarkdown(_ string: String) -> Bool
     /// Returns an attributed string form the given Markdown-formatted string.
-    /// - Parameter string: The string to be formatted.
+    /// - Parameters
+    ///   - string: The string to be formatted
+    ///   - attributes: The set of attributes to use for the whole string.
     /// - Returns: An attributed string with the corresponding formatted attributes.
-    func format(_ string: String) -> NSAttributedString
+    func format(_ string: String, attributes: [NSAttributedString.Key: Any]) -> NSAttributedString
 }
 
 /// Default implementation for the Markdown formatter
 open class DefaultMarkdownFormatter: MarkdownFormatter {
+    private let markdownParser: MarkdownParser
     public var styles: MarkdownStyles
-    public var markdownRegexPattern: String {
-        didSet {
-            if let regex = try? NSRegularExpression(pattern: markdownRegexPattern, options: .anchorsMatchLines) {
-                self.regex = regex
-            } else {
-                log.error("Failed to create markdown regular expression")
-            }
-        }
-    }
     
     public init() {
+        markdownParser = MarkdownParser()
         styles = MarkdownStyles()
-        markdownRegexPattern = ""
-    }
-    
-    private let markdownParser = MarkdownParser()
-    private var regex: NSRegularExpression?
-    
-    open func containsMarkdown(_ string: String) -> Bool {
-        // Note: this method is not needed because MarkdownParser returns regular text if there is no markdown.
-        // When we can make a breaking change, this method should be deprecated.
-        if markdownRegexPattern.isEmpty {
-            // Text is always parsed
-            return true
-        }
-        guard let regex = regex else { return false }
-        return regex.numberOfMatches(in: string, range: .init(location: 0, length: string.utf16.count)) > 0
     }
 
-    open func format(_ string: String) -> NSAttributedString {
+    open func format(_ string: String, attributes: [NSAttributedString.Key: Any]) -> NSAttributedString {
         if #available(iOS 15, *), !string.isEmpty {
             do {
                 let attributedString = try markdownParser.style(
                     markdown: string,
                     options: .init(layoutDirectionLeftToRight: UITraitCollection.current.layoutDirection == .leftToRight),
-                    attributes: AttributeContainer(defaultAttributes),
+                    attributes: defaultAttributes(forTextAttributes: attributes),
                     inlinePresentationIntentAttributes: inlinePresentationIntentAttributes(for:),
                     presentationIntentAttributes: presentationIntentAttributes(for:in:)
                 )
@@ -74,6 +50,17 @@ open class DefaultMarkdownFormatter: MarkdownFormatter {
     
     private var colorPalette: Appearance.ColorPalette { Appearance.default.colorPalette }
     private var fonts: Appearance.Fonts { Appearance.default.fonts }
+    
+    @available(iOS 15, *)
+    private func defaultAttributes(forTextAttributes attributes: [NSAttributedString.Key: Any]) -> AttributeContainer {
+        // MarkdownStyles dictate which font and color to use.
+        let defaultFont = (attributes[.font] as? UIFont) ?? fonts.body
+        let defaultColor = (attributes[.foregroundColor] as? UIColor) ?? colorPalette.text
+        let font = UIFont.font(forMarkdownFont: styles.bodyFont, defaultFont: defaultFont)
+        let color = styles.bodyFont.color ?? defaultColor
+        let result = attributes.merging([.font: font, .foregroundColor: color], uniquingKeysWith: { _, new in new })
+        return AttributeContainer(result)
+    }
     
     private var defaultAttributes: [NSAttributedString.Key: Any] {
         [

@@ -251,7 +251,7 @@ private extension AttributedString {
                 // Regular text with newlines gets paragraph intents
                 let onlyParagraphs = intent.components.allSatisfy { $0.kind == .paragraph }
                 if onlyParagraphs {
-                    return self[range].link == nil
+                    return self[range].link != nil
                 } else {
                     return true
                 }

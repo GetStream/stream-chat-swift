@@ -20,17 +20,6 @@ final class DefaultMarkdownFormatter_Tests: XCTestCase {
         sut = nil
         try super.tearDownWithError()
     }
-    
-    func test_containsMarkdown_whenNotUsingRegex_thenAlwaysTrue() {
-        XCTAssertEqual(true, sut.containsMarkdown("Hello world!"))
-        XCTAssertEqual(true, sut.containsMarkdown("Hello *world*!"))
-    }
-    
-    func test_containsMarkdown_whenCustomRegEx_thenRegExIsEvaluated() {
-        sut.markdownRegexPattern = "((?:\\`(.*?)\\`)|(?:\\*{1,2}(.*?)\\*{1,2})|(?:\\~{2}(.*?)\\~{2})|(?:\\_{1,2}(.*?)\\_{1,2})|^(>){1}|(#){1,6}|(=){3,10}|(-){1,3}|(\\d{1,3}\\.)|(?:\\[(.*?)\\])(?:\\((.*?)\\))|(?:\\[(.*?)\\])(?:\\[(.*?)\\])|(\\]\\:))+|^[ \t]*([*+-])[ \t]+"
-        XCTAssertEqual(false, sut.containsMarkdown("Hello world!"))
-        XCTAssertEqual(true, sut.containsMarkdown("Hello *world*!"))
-    }
 
     func test_format_whenStringContainsItalicMarkdown_thenAttributedStringIncludesItalicTrait() {
         // GIVEN
@@ -39,7 +28,7 @@ final class DefaultMarkdownFormatter_Tests: XCTestCase {
         let expectedAttributedSubstring = "test"
 
         // WHEN
-        let attributedString = sut.format(stringWithMarkdown)
+        let attributedString = sut.format(stringWithMarkdown, attributes: [:])
 
         // THEN
         attributedString.enumerateAttribute(.font, in: NSRange(location: 0, length: attributedString.length)) { value, range, _ in
@@ -77,7 +66,7 @@ final class DefaultMarkdownFormatter_Tests: XCTestCase {
         let expectedUnorderedListedSubstrings = ["\u{2022}  class", "\u{2022}  struct", "\u{2022}  enum", "\u{2022}  actor"]
 
         // WHEN
-        let attributedString = sut.format(stringWithMarkdown)
+        let attributedString = sut.format(stringWithMarkdown, attributes: [:])
 
         // THEN
         attributedString.enumerateAttributes(in: NSRange(
@@ -116,7 +105,7 @@ final class DefaultMarkdownFormatter_Tests: XCTestCase {
     func test_complexMarkdownPattern_doesNotHangForever() {
         let string = "**~*~~~*~*~**~*~* h e a r d ***~*~*~**~*~~~*"
         let expected = "~~~*~** h e a r d ~~~*~~~~"
-        let result = sut.format(string)
+        let result = sut.format(string, attributes: [:])
         XCTAssertEqual(expected, result.string)
     }
     
@@ -129,7 +118,7 @@ final class DefaultMarkdownFormatter_Tests: XCTestCase {
         ⸻
         hi!
         """
-        let result = sut.format(string)
+        let result = sut.format(string, attributes: [:])
         XCTAssertEqual(expected, result.string)
     }
 }

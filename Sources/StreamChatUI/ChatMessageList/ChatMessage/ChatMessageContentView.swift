@@ -613,35 +613,25 @@ open class ChatMessageContentView: _View, ThemeProvider, UITextViewDelegate {
 
         // Set the text content
         if textView?.text != text {
-            let attributedText = NSAttributedString(
-                string: text,
-                attributes: [
-                    .foregroundColor: messageTextColor,
-                    .font: messageTextFont
-                ]
-            )
-            textView?.attributedText = attributedText
-        }
-
-        // Markdown
-        if isMarkdownEnabled, markdownFormatter.containsMarkdown(text) {
-            let markdownText = markdownFormatter.format(text)
-            // If the formatter did not change the text, keep showing plain text.
-            // Ideally format would take in current text attributes and these
-            // would get applied to the final string, but it is a breaking change.
-            // Historically markdown parsed text has had different attributes.
-            if markdownText.string != text {
-                textView?.attributedText = markdownText
+            let attributes: [NSAttributedString.Key: Any] = [
+                .foregroundColor: messageTextColor,
+                .font: messageTextFont
+            ]
+            if isMarkdownEnabled {
+                textView?.attributedText = markdownFormatter.format(text, attributes: attributes)
+            } else {
+                let attributedText = NSAttributedString(string: text, attributes: attributes)
+                textView?.attributedText = attributedText
             }
-        }
-
-        // Link Detection (Must be after Markdown)
-        if let attributedText = textView?.attributedText {
-            let mutableAttributedText = NSMutableAttributedString(attributedString: attributedText)
-            linkDetector.links(in: mutableAttributedText.string).forEach { textLink in
-                mutableAttributedText.addAttribute(.link, value: textLink.url, range: textLink.range)
+    
+            // Link Detection (Must be after Markdown)
+            if let attributedText = textView?.attributedText {
+                let mutableAttributedText = NSMutableAttributedString(attributedString: attributedText)
+                linkDetector.links(in: mutableAttributedText.string).forEach { textLink in
+                    mutableAttributedText.addAttribute(.link, value: textLink.url, range: textLink.range)
+                }
+                textView?.attributedText = mutableAttributedText
             }
-            textView?.attributedText = mutableAttributedText
         }
 
         // Mentions
