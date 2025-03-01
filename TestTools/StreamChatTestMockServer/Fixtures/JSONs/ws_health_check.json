@@ -1,5 +1,5 @@
 {
-  "connection_id": "67add740-0a15-3bf6-0200-000000000f44",
+  "connection_id": "67c091b1-0a15-3bf6-0200-00000000034f",
   "me": {
     "id": "luke_skywalker",
     "name": "Luke Skywalker",
@@ -10,16 +10,16 @@
 
     ],
     "created_at": "2024-04-04T09:26:11.805899Z",
-    "updated_at": "2025-01-31T09:38:22.825054Z",
+    "updated_at": "2025-02-28T04:46:37.3153Z",
     "banned": false,
     "online": true,
-    "last_active": "2025-02-15T00:14:49.778901469Z",
+    "last_active": "2025-03-01T00:16:41.464293451Z",
     "privacy_settings": {
       "typing_indicators": {
         "enabled": true
       },
       "read_receipts": {
-        "enabled": false
+        "enabled": true
       }
     },
     "devices": [
@@ -36,12 +36,12 @@
     "total_unread_count": 0,
     "unread_channels": 0,
     "unread_threads": 0,
-    "team": "test",
-    "type": "team",
     "pando": "{\"speciality\":\"ios engineer\"}",
-    "birthland": "Tatooine"
+    "birthland": "Tatooine",
+    "team": "test",
+    "type": "team"
   },
   "cid": "*",
   "type": "health.check",
-  "created_at": "2025-02-15T00:14:49.812925379Z"
+  "created_at": "2025-03-01T00:16:41.498659028Z"
 }
