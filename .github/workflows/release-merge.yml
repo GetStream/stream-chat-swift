@@ -9,7 +9,7 @@ on:
 jobs:
   merge-comment:
     name: Merge release to main
-    runs-on: macos-14
+    runs-on: macos-15
     if: github.event_name == 'workflow_dispatch' || (github.event.issue.pull_request && github.event.issue.state == 'open' && github.event.comment.body == '/merge release')
     steps:
       - name: Connect Bot
