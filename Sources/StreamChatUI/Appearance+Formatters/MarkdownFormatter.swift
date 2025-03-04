@@ -143,7 +143,7 @@ open class DefaultMarkdownFormatter: MarkdownFormatter {
     private func listItemParagraphStyle(forIndentationLevel level: Int) -> NSParagraphStyle {
         let style = NSMutableParagraphStyle()
         let location = style.tabStops.first?.location ?? 28
-        style.headIndent = CGFloat(level) * location
+        style.headIndent = max(0, CGFloat(level) * location - 12)
         return style
     }
 }
