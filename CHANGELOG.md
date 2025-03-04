@@ -3,7 +3,20 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 # Upcoming
 
+## StreamChat
+### ✅ Added
+- Add `MarkdownParser` for parsing and styling markdown strings [#3590](https://github.com/GetStream/stream-chat-swift/pull/3590)
+- Add `Fonts.title2` for supporting markdown headers [#3590](https://github.com/GetStream/stream-chat-swift/pull/3590)
+
+### StreamChatUI
 ### 🔄 Changed
+- Feature rich markdown rendering with `AttributedString` [#3590](https://github.com/GetStream/stream-chat-swift/pull/3590)
+  - Note: Markdown is rendered only on iOS 15 and above. On iOS 14 and below markdown is rendered as plain text
+  - Rename `MarkdownFormatter.format(_:)` to `MarkdownFormatter.format(_:attributes:)` for allowing to pass in current text attributes
+### 💥 Removed
+- Remove `MarkdownStyles.linkFont` because link attributes are ignored by `UITextView`. Update `ChatMessageContentView.textView.linkTextAttributes` instead [#3590](https://github.com/GetStream/stream-chat-swift/pull/3590)
+- Remove `DefaultMarkdownFormatter.markdownRegexPattern` because regular expression based validation was removed [#3590](https://github.com/GetStream/stream-chat-swift/pull/3590)
+- Remove `MarkdownFormatter.containsMarkdown(_:)`, optionally validate input strings in `MarkdownFormatter.format(_:attributes:)` instead [#3590](https://github.com/GetStream/stream-chat-swift/pull/3590)
 
 # [4.73.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.73.0)
 _February 27, 2025_
