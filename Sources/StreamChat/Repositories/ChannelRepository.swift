@@ -15,7 +15,8 @@ class ChannelRepository {
     }
     
     func getChannel(for query: ChannelQuery, store: Bool, completion: @escaping (Result<ChatChannel, Error>) -> Void) {
-        apiClient.request(endpoint: .createChannel(query: query)) { [database] result in
+        let endpoint: Endpoint = query.options == .state ? .channelState(query: query) : .updateChannel(query: query)
+        apiClient.request(endpoint: endpoint) { [database] result in
             switch result {
             case .success(let channelPayload):
                 database.write(converting: { session in

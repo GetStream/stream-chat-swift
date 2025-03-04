@@ -22,13 +22,24 @@ extension Endpoint {
     static func updateChannel(query: ChannelQuery) -> Endpoint<ChannelPayload> {
         createOrUpdateChannel(path: .updateChannel(query.apiPath), query: query)
     }
+    
+    static func channelState(query: ChannelQuery) -> Endpoint<ChannelPayload> {
+        assert(!query.options.contains(oneOf: [.presence, .watch]), "This method is only for fetching channel data")
+        return .init(
+            path: .updateChannel(query.apiPath),
+            method: .post,
+            queryItems: nil,
+            requiresConnectionId: false, // presence and watch require connection id
+            body: query
+        )
+    }
 
     private static func createOrUpdateChannel(path: EndpointPath, query: ChannelQuery) -> Endpoint<ChannelPayload> {
         .init(
             path: path,
             method: .post,
             queryItems: nil,
-            requiresConnectionId: query.options.contains(oneOf: [.presence, .watch]),
+            requiresConnectionId: query.options.contains(oneOf: [.presence, .state, .watch]),
             body: query
         )
     }
