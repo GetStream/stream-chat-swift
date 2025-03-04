@@ -4,7 +4,6 @@ excluded:
   - Dependencies
   - Sources/StreamChatUI/Generated
   - Sources/StreamChatUI/StreamSwiftyGif
-  - Sources/StreamChatUI/StreamSwiftyMarkdown
   - Sources/StreamChatUI/StreamNuke
   - Sources/StreamChat/StreamStarscream
   - Sources/StreamChatUI/StreamDifferenceKit
@@ -80,7 +79,8 @@ file_name_no_space:
   severity: error
 
 identifier_name:
-  excluded: [r, g, b, a, x, y, z, dx, dy, dz, i, j, k, id, op, or, me, at, to, in]
+  excluded:
+    [r, g, b, a, x, y, z, dx, dy, dz, i, j, k, id, op, or, me, at, to, in]
   allowed_symbols: ["_"]
   validates_start_with_lowercase: "warning"
 
