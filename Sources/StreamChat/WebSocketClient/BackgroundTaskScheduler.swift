@@ -60,7 +60,7 @@ class IOSBackgroundTaskScheduler: BackgroundTaskScheduler {
             self?.endTask()
             expirationHandler?()
         }
-        queue.async {
+        queue.sync {
             self.activeBackgroundTask = identifier
         }
         return identifier != .invalid
@@ -68,7 +68,7 @@ class IOSBackgroundTaskScheduler: BackgroundTaskScheduler {
 
     func endTask() {
         guard let app else { return }
-        queue.async {
+        queue.sync {
             if let identifier = self.activeBackgroundTask {
                 self.activeBackgroundTask = nil
                 app.endBackgroundTask(identifier)
