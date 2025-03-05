@@ -38,6 +38,7 @@ public struct MarkdownParser {
     ///   - inlinePresentationIntentAttributes: The closure for customising attributes for inline presentation intents.
     ///   - presentationIntentAttributes: The closure for customising attributes for presentation intents. Called for quote, code, list item, and headers.
     @available(iOS 15, *)
+    @available(macOS 12, *)
     public func style(
         markdown: String,
         options: ParsingOptions,
@@ -217,6 +218,7 @@ public struct MarkdownParser {
 }
 
 @available(iOS 15, *)
+@available(macOS 12, *)
 extension MarkdownParser {
     /// Options that affect how the Markdown string is parsed and styled.
     public struct ParsingOptions {
@@ -230,6 +232,7 @@ extension MarkdownParser {
 }
 
 @available(iOS 15, *)
+@available(macOS 12, *)
 private extension AttributedString {
     /// True, if it contains markdown, otherwise false.
     ///
@@ -282,6 +285,7 @@ private extension AttributedString {
 
 // Note: newlines are used instead of paragraph style because SwiftUI does render paragraph styles
 @available(iOS 15.0, *)
+@available(macOS 12, *)
 private struct PresentationIntentStyling {
     let range: Range<AttributedString.Index>
     let components: [PresentationIntent.IntentType]
