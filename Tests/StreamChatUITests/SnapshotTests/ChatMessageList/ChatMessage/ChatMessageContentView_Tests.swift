@@ -214,9 +214,9 @@ final class ChatMessageContentView_Tests: XCTestCase {
         )
 
         let messageWithMarkdown = """
-          *italics* or _italics_
-          **bold** or __bold__
-          ~~Linethrough~~Strikethroughs.
+          *italics* or _italics_  
+          **bold** or __bold__  
+          ~~Linethrough~~Strikethroughs.  
           `let property: Double = 10.0`
         """
 
@@ -318,12 +318,12 @@ final class ChatMessageContentView_Tests: XCTestCase {
         )
 
         let messageWithMarkdown = """
-           https://getstream.io/test_endpoint_in__snake__style
-           Test_text_in__snake__style and plain text
-           Test plain text and the_text_in__snake__style
-           _Test text in italic style_ and plain text
-           Test plain text and _text in italic style_
-           Test plain text, _text in italic style_ and plain text
+           https://getstream.io/test_endpoint_in__snake__style    
+           Test_text_in__snake__style and plain text  
+           Test plain text and the_text_in__snake__style  
+           _Test text in italic style_ and plain text  
+           Test plain text and _text in italic style_  
+           Test plain text, _text in italic style_ and plain text  
            Test plain text, __text in bold style__ and plain text
         """
 
