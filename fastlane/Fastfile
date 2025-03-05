@@ -6,7 +6,7 @@ require 'net/http'
 import 'Sonarfile'
 import 'Allurefile'
 
-xcode_version = ENV['XCODE_VERSION'] || '16.1'
+xcode_version = ENV['XCODE_VERSION'] || '16.2'
 xcode_project = 'StreamChat.xcodeproj'
 sdk_names = ['StreamChat', 'StreamChatUI']
 github_repo = ENV['GITHUB_REPOSITORY'] || 'GetStream/stream-chat-swift'
@@ -25,7 +25,7 @@ before_all do |lane|
   if is_ci
     setup_ci
     setup_git_config
-    xcversion(version: xcode_version) unless [:publish_release, :sonar_upload, :allure_launch, :allure_upload, :pod_lint, :sync_mock_server, :copyright].include?(lane)
+    xcversion(version: xcode_version) unless [:sonar_upload, :allure_launch, :allure_upload, :pod_lint, :sync_mock_server, :copyright].include?(lane)
   end
 end
 
