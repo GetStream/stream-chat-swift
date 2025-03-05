@@ -51,9 +51,10 @@ class ChannelUpdater: Worker {
             paginationStateHandler.begin(pagination: pagination)
         }
         
-        let didLoadFirstPage = channelQuery.pagination?.parameter == nil
-        let didJumpToMessage: Bool = channelQuery.pagination?.parameter?.isJumpingToMessage == true
-        let resetMembers = didLoadFirstPage
+        let didRequestMessages = channelQuery.pagination?.pageSize != 0 // no pagination returns default set of messages
+        let didLoadFirstPage = didRequestMessages && channelQuery.pagination?.parameter == nil
+        let didJumpToMessage: Bool = didRequestMessages && channelQuery.pagination?.parameter?.isJumpingToMessage == true
+        let resetMembersAndReads = didLoadFirstPage
         let resetMessages = didLoadFirstPage || didJumpToMessage
         let resetWatchers = didLoadFirstPage
         let isChannelCreate = onChannelCreated != nil
@@ -69,12 +70,20 @@ class ChannelUpdater: Worker {
                 onChannelCreated?(payload.channel.cid)
 
                 database?.write { session in
+                    let defaultMemberListQueryDTO: ChannelMemberListQueryDTO? = try {
+                        guard let sort = actions?.updateMemberList else { return nil }
+                        let defaultMemberListQuery = ChannelMemberListQuery(cid: payload.channel.cid, sort: sort)
+                        return try session.saveQuery(defaultMemberListQuery)
+                    }()
+                    
                     if let channelDTO = session.channel(cid: payload.channel.cid) {
                         if resetMessages {
                             channelDTO.cleanAllMessagesExcludingLocalOnly()
                         }
-                        if resetMembers {
+                        if resetMembersAndReads {
+                            defaultMemberListQueryDTO?.members.removeAll()
                             channelDTO.members.removeAll()
+                            channelDTO.reads.removeAll()
                         }
                         if resetWatchers {
                             channelDTO.watchers.removeAll()
@@ -85,12 +94,8 @@ class ChannelUpdater: Worker {
                     updatedChannel.oldestMessageAt = self.paginationState.oldestMessageAt?.bridgeDate
                     updatedChannel.newestMessageAt = self.paginationState.newestMessageAt?.bridgeDate
                     
-                    if let memberListSorting = actions?.memberListSorting, !memberListSorting.isEmpty {
-                        let memberListQuery = ChannelMemberListQuery(cid: payload.channel.cid, sort: memberListSorting)
-                        let queryDTO = try session.saveQuery(memberListQuery)
-                        queryDTO.members = updatedChannel.members
-                    }
-                    
+                    // Share member data with member list query without any filters (supports paginating members with channel reads)
+                    defaultMemberListQueryDTO?.members.formUnion(updatedChannel.members)
                 } completion: { error in
                     if let error = error {
                         completion?(.failure(error))
@@ -835,6 +840,37 @@ extension ChannelUpdater {
         }
     }
     
+    /// Loads channel members and reads for these members using channel query endpoint.
+    ///
+    /// - Note: Use it only if we would like to paginate channel reads (reads pagination can only be done through paginating members using the channel query endpoint).
+    func loadMembersWithReads(
+        in cid: ChannelId,
+        membersPagination: Pagination,
+        memberListSorting: [Sorting<ChannelMemberListSortingKey>]
+    ) async throws -> [ChatChannelMember] {
+        // Fetch only members by setting optional values to 0.
+        let query = ChannelQuery(
+            cid: cid,
+            pageSize: 0,
+            messagesPagination: MessagesPagination(pageSize: 0),
+            membersPagination: membersPagination,
+            watchersLimit: 0
+        )
+        let actions = ChannelUpdateActions(updateMemberList: memberListSorting)
+        let channelPayload = try await withCheckedThrowingContinuation { continuation in
+            update(
+                channelQuery: query,
+                isInRecoveryMode: false,
+                onChannelCreated: nil,
+                actions: actions,
+                completion: { continuation.resume(with: $0) }
+            )
+        }
+        return try await database.read { session in
+            channelPayload.members.compactMapLoggingError { try session.member(userId: $0.userId, cid: cid)?.asModel() }
+        }
+    }
+    
     func loadPinnedMessages(in cid: ChannelId, query: PinnedMessagesQuery) async throws -> [ChatMessage] {
         try await withCheckedThrowingContinuation { continuation in
             loadPinnedMessages(in: cid, query: query) { result in
@@ -930,7 +966,7 @@ extension ChannelUpdater {
                 channelQuery: channelQuery,
                 isInRecoveryMode: false,
                 onChannelCreated: useCreateEndpoint,
-                actions: ChannelUpdateActions(memberListSorting: memberSorting),
+                actions: ChannelUpdateActions(updateMemberList: memberSorting),
                 completion: { continuation.resume(with: $0) }
             )
         }
@@ -1029,10 +1065,12 @@ extension ChannelUpdater {
 extension ChannelUpdater {
     /// Additional operations while updating the channel.
     struct ChannelUpdateActions {
-        /// Store members in channel payload for a member list query consisting of cid and sorting.
+        /// Store members in channel payload for corresponding member list query consisting of cid and sorting.
+        ///
+        /// If nil, member list query is not updated, if non-nil, corresponding member list query is updated.
         ///
         /// - Note: Used by the state layer which creates default (all channel members) member list query internally.
-        let memberListSorting: [Sorting<ChannelMemberListSortingKey>]
+        let updateMemberList: [Sorting<ChannelMemberListSortingKey>]?
     }
 }
 

@@ -70,7 +70,8 @@ final class DemoChatChannelListRouter: ChatChannelListRouter {
     // swiftlint:disable function_body_length
     // swiftlint:disable cyclomatic_complexity
     override func didTapMoreButton(for cid: ChannelId) {
-        let channelController = rootViewController.controller.client.channelController(for: cid)
+        let client = rootViewController.controller.client
+        let channelController = client.channelController(for: cid)
         let canUpdateChannel = channelController.channel?.canUpdateChannel == true
         let canUpdateChannelMembers = channelController.channel?.canUpdateChannelMembers == true
         let canBanChannelMembers = channelController.channel?.canBanChannelMembers == true
@@ -210,6 +211,19 @@ final class DemoChatChannelListRouter: ChatChannelListRouter {
                             )
                         )
                     ), animated: true)
+                }
+            }),
+            .init(title: "Load More Members", handler: { [unowned self] _ in
+                Task { @MainActor in
+                    let chat = client.makeChat(for: cid)
+                    do {
+                        try await chat.loadMoreMembers()
+                    } catch {
+                        self.rootViewController.presentAlert(
+                            title: "Couldn't load more members to channel \(cid)",
+                            message: "\(error)"
+                        )
+                    }
                 }
             }),
             .init(title: "Add member", isEnabled: canUpdateChannelMembers, handler: { [unowned self] _ in

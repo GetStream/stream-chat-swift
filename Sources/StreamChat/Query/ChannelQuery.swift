@@ -20,13 +20,15 @@ public struct ChannelQuery: Encodable {
     /// A pagination for messages (see `MessagesPagination`).
     public var pagination: MessagesPagination?
     /// A number of members for the channel to be retrieved.
-    public let membersLimit: Int?
+    public var membersLimit: Int? { membersPagination?.pageSize }
     /// A number of watchers for the channel to be retrieved.
     public let watchersLimit: Int?
     /// A query options.
     public var options: QueryOptions = .all
     /// ChannelCreatePayload that is needed only when creating channel
     let channelPayload: ChannelEditDetailPayload?
+    /// A pagination for members for the channel to be retrieved.
+    let membersPagination: Pagination?
 
     /// `ChannelId` this query handles.
     /// If `id` part is missing then it's impossible to create valid `ChannelId`.
@@ -48,12 +50,33 @@ public struct ChannelQuery: Encodable {
         membersLimit: Int? = nil,
         watchersLimit: Int? = nil
     ) {
+        let membersPagination: Pagination? = {
+            guard let membersLimit else { return nil }
+            return Pagination(pageSize: membersLimit)
+        }()
+        let messagesPagination = MessagesPagination(pageSize: pageSize ?? .messagesPageSize, parameter: paginationParameter)
+        self.init(
+            cid: cid,
+            pageSize: pageSize,
+            messagesPagination: messagesPagination,
+            membersPagination: membersPagination,
+            watchersLimit: watchersLimit
+        )
+    }
+    
+    /// Init a channel query with base values.
+    init(
+        cid: ChannelId,
+        pageSize: Int?,
+        messagesPagination: MessagesPagination?,
+        membersPagination: Pagination?,
+        watchersLimit: Int?
+    ) {
         id = cid.id
         type = cid.type
         channelPayload = nil
-
-        pagination = MessagesPagination(pageSize: pageSize ?? .messagesPageSize, parameter: paginationParameter)
-        self.membersLimit = membersLimit
+        pagination = messagesPagination
+        self.membersPagination = membersPagination
         self.watchersLimit = watchersLimit
     }
 
@@ -65,7 +88,7 @@ public struct ChannelQuery: Encodable {
         type = channelPayload.type
         self.channelPayload = channelPayload
         pagination = nil
-        membersLimit = nil
+        membersPagination = nil
         watchersLimit = nil
     }
 
@@ -77,8 +100,8 @@ public struct ChannelQuery: Encodable {
         self.init(
             cid: cid,
             pageSize: channelQuery.pagination?.pageSize,
-            paginationParameter: channelQuery.pagination?.parameter,
-            membersLimit: channelQuery.membersLimit,
+            messagesPagination: channelQuery.pagination,
+            membersPagination: channelQuery.membersPagination,
             watchersLimit: channelQuery.watchersLimit
         )
     }
@@ -92,7 +115,7 @@ public struct ChannelQuery: Encodable {
         try container.encodeIfPresent(channelPayload, forKey: .data)
 
         try pagination.map { try container.encode($0, forKey: .messages) }
-        try membersLimit.map { try container.encode(Pagination(pageSize: $0), forKey: .members) }
+        try membersPagination.map { try container.encode($0, forKey: .members) }
         try watchersLimit.map { try container.encode(Pagination(pageSize: $0), forKey: .watchers) }
     }
 }
