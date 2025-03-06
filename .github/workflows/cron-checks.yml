@@ -49,7 +49,7 @@ jobs:
           - ios: 17.5
             xcode: 15.4
             os: macos-15
-            device: "iPhone 14 Pro"
+            device: "iPhone 15 Pro"
             setup_runtime: false
           - ios: 16.4
             xcode: 15.3 # fails on 15.4
@@ -125,7 +125,7 @@ jobs:
           - ios: 17.5
             xcode: 15.4
             os: macos-15
-            device: "iPhone 14 Pro"
+            device: "iPhone 15 Pro"
             setup_runtime: false
           - ios: 16.4
             xcode: 15.3 # fails on 15.4
