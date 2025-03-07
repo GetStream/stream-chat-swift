@@ -323,7 +323,7 @@ extension NSManagedObjectContext {
         try payload.messages.forEach { _ = try saveMessage(payload: $0, channelDTO: dto, syncOwnReactions: true, cache: cache) }
         try payload.pendingMessages?.forEach { _ = try saveMessage(payload: $0, channelDTO: dto, syncOwnReactions: true, cache: cache) }
         
-        // Recalculate reads for existing messages (saveMessage also does this)
+        // Recalculate reads for existing messages (saveMessage updates it for messages in the payload)
         let channelReadDTOs = dto.reads
         let currentUserId = currentUser?.user.id
         let payloadMessageIds = Set(payload.messages.map(\.id) + (payload.pendingMessages?.map(\.id) ?? []))

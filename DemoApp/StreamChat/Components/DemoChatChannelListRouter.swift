@@ -217,7 +217,7 @@ final class DemoChatChannelListRouter: ChatChannelListRouter {
                 Task { @MainActor in
                     let chat = client.makeChat(for: cid)
                     do {
-                        try await chat.loadMoreMembers()
+                        try await chat.loadMoreMembers(limit: 100)
                     } catch {
                         self.rootViewController.presentAlert(
                             title: "Couldn't load more members to channel \(cid)",
