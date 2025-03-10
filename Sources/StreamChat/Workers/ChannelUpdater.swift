@@ -72,17 +72,16 @@ class ChannelUpdater: Worker {
                     // State layer returns paginated members using the member list query dto.
                     // Fetching channel data should prepopulate it. Then we can save an API call
                     // for providing member data.
-                    let memberListQueryDTO: ChannelMemberListQueryDTO? = try {
-                        let memberListQuery = ChannelMemberListQuery(cid: payload.channel.cid, sort: actions?.updateMemberList ?? [])
-                        return try session.saveQuery(memberListQuery)
-                    }()
+                    let memberListQuery = ChannelMemberListQuery(cid: payload.channel.cid, sort: actions?.updateMemberList ?? [])
                     
                     if let channelDTO = session.channel(cid: payload.channel.cid) {
                         if resetMessages {
                             channelDTO.cleanAllMessagesExcludingLocalOnly()
                         }
                         if resetMembersAndReads {
-                            memberListQueryDTO?.members.removeAll()
+                            if let memberListQueryDTO = session.channelMemberListQuery(queryHash: memberListQuery.queryHash) {
+                                memberListQueryDTO.members.removeAll()
+                            }
                             channelDTO.members.removeAll()
                             channelDTO.reads.removeAll()
                         }
@@ -95,8 +94,14 @@ class ChannelUpdater: Worker {
                     updatedChannel.oldestMessageAt = self.paginationState.oldestMessageAt?.bridgeDate
                     updatedChannel.newestMessageAt = self.paginationState.newestMessageAt?.bridgeDate
                     
-                    // Share member data with member list query without any filters
-                    memberListQueryDTO?.members.formUnion(updatedChannel.members)
+                    // Share member data with member list query without any filters (requres ChannelDTO to be saved first)
+                    let memberListQueryDTO: ChannelMemberListQueryDTO = try {
+                        if let dto = session.channelMemberListQuery(queryHash: memberListQuery.queryHash) {
+                            return dto
+                        }
+                        return try session.saveQuery(memberListQuery)
+                    }()
+                    memberListQueryDTO.members.formUnion(updatedChannel.members)
                 } completion: { error in
                     if let error = error {
                         completion?(.failure(error))
