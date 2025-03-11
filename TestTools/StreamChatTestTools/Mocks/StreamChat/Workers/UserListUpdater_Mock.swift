@@ -10,6 +10,7 @@ final class UserListUpdater_Mock: UserListUpdater {
     @Atomic var update_queries: [UserListQuery] = []
     @Atomic var update_policy: UpdatePolicy?
     @Atomic var update_completion: ((Result<[ChatUser], Error>) -> Void)?
+    @Atomic var update_completion_result: Result<[ChatUser], Error>?
 
     @Atomic var fetch_queries: [UserListQuery] = []
     @Atomic var fetch_completions: [(Result<UserListPayload, Error>) -> Void] = []
@@ -22,6 +23,7 @@ final class UserListUpdater_Mock: UserListUpdater {
         update_queries.removeAll()
         update_policy = nil
         update_completion = nil
+        update_completion_result = nil
 
         fetch_queries.removeAll()
         fetch_completions.removeAll()
@@ -37,6 +39,7 @@ final class UserListUpdater_Mock: UserListUpdater {
         _update_queries.mutate { $0.append(userListQuery) }
         update_policy = policy
         update_completion = completion
+        update_completion_result?.invoke(with: completion)
     }
 
     override func fetch(

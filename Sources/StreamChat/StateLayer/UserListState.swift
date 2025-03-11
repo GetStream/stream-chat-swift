@@ -13,7 +13,10 @@ import Foundation
         self.query = query
         
         users = observer.start(
-            with: .init(usersDidChange: { [weak self] in self?.users = $0 })
+            with: .init(usersDidChange: { [weak self] in
+                self?.usersLatestChanges = $1
+                self?.users = $0
+            })
         )
     }
     
@@ -22,4 +25,8 @@ import Foundation
     
     /// An array of users for the specified ``UserListQuery``.
     @Published public private(set) var users = StreamCollection<ChatUser>([])
+    
+    // MARK: - Internal
+    
+    @Published private(set) var usersLatestChanges = [ListChange<ChatUser>]()
 }

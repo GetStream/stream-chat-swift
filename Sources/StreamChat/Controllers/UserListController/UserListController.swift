@@ -2,6 +2,7 @@
 // Copyright © 2025 Stream.io Inc. All rights reserved.
 //
 
+import Combine
 import CoreData
 import Foundation
 
@@ -34,15 +35,8 @@ public class ChatUserListController: DataController, DelegateCallable, DataStore
     ///
     public var users: LazyCachedMapCollection<ChatUser> {
         startUserListObserverIfNeeded()
-        return userListObserver.items
+        return userList.state { LazyCachedMapCollection(source: $0.state.users, map: { $0 }) }
     }
-
-    /// The worker used to fetch the remote data and communicate with servers.
-    private lazy var worker: UserListUpdater = self.environment
-        .userQueryUpdaterBuilder(
-            client.databaseContainer,
-            client.apiClient
-        )
 
     /// A type-erased delegate.
     var multicastDelegate: MulticastDelegate<ChatUserListControllerDelegate> = .init() {
@@ -54,30 +48,6 @@ public class ChatUserListController: DataController, DelegateCallable, DataStore
             startUserListObserverIfNeeded()
         }
     }
-
-    /// Used for observing the database for changes.
-    private(set) lazy var userListObserver: BackgroundListDatabaseObserver<ChatUser, UserDTO> = {
-        let request = UserDTO.userListFetchRequest(query: self.query)
-
-        let observer = self.environment.createUserListDabaseObserver(
-            client.databaseContainer,
-            request,
-            { try $0.asModel() }
-        )
-
-        observer.onDidChange = { [weak self] changes in
-            self?.delegateCallback { [weak self] in
-                guard let self = self else {
-                    log.warning("Callback called while self is nil")
-                    return
-                }
-
-                $0.controller(self, didChangeUsers: changes)
-            }
-        }
-
-        return observer
-    }()
 
     var _basePublishers: Any?
     /// An internal backing object for all publicly available Combine publishers. We use it to simplify the way we expose
@@ -91,25 +61,31 @@ public class ChatUserListController: DataController, DelegateCallable, DataStore
         return _basePublishers as? BasePublishers ?? .init(controller: self)
     }
 
-    private let environment: Environment
-
+    private let userList: StateLayerControllerAdapter<UserList>
+    
     /// Creates a new `UserListController`.
     ///
     /// - Parameters:
     ///   - query: The query used for filtering the users.
     ///   - client: The `Client` instance this controller belongs to.
-    init(query: UserListQuery, client: ChatClient, environment: Environment = .init()) {
+    init(query: UserListQuery, client: ChatClient, environment: UserList.Environment = .init()) {
         self.client = client
         self.query = query
-        self.environment = environment
+        userList = StateLayerControllerAdapter(
+            stateLayer: UserList(
+                query: query,
+                client: client,
+                environment: environment
+            )
+        )
     }
 
     override public func synchronize(_ completion: ((_ error: Error?) -> Void)? = nil) {
-        startUserListObserverIfNeeded()
-
-        worker.update(userListQuery: query) { result in
-            self.state = result.error == nil ? .remoteDataFetched : .remoteDataFetchFailed(ClientError(with: result.error))
-            self.callback { completion?(result.error) }
+        Task.run {
+            try await self.userList.stateLayer.get()
+        } completion: { error in
+            self.state = error == nil ? .remoteDataFetched : .remoteDataFetchFailed(ClientError(with: error))
+            self.callback { completion?(error) }
         }
     }
 
@@ -121,13 +97,17 @@ public class ChatUserListController: DataController, DelegateCallable, DataStore
     ///
     private func startUserListObserverIfNeeded() {
         guard state == .initialized else { return }
-        do {
-            try userListObserver.startObserving()
-            state = .localDataFetched
-        } catch {
-            state = .localDataFetchFailed(ClientError(with: error))
-            log.error("Failed to perform fetch request with error: \(error). This is an internal error.")
+        userList.observe { [weak self] userList, cancellables in
+            userList.state.$usersLatestChanges
+                .sink { [weak self] changes in
+                    guard let self else { return }
+                    self.delegateCallback {
+                        $0.controller(self, didChangeUsers: changes)
+                    }
+                }
+                .store(in: &cancellables)
         }
+        state = .localDataFetched
     }
 }
 
@@ -145,34 +125,11 @@ public extension ChatUserListController {
         limit: Int = 25,
         completion: ((Error?) -> Void)? = nil
     ) {
-        var updatedQuery = query
-        updatedQuery.pagination = Pagination(pageSize: limit, offset: users.count)
-        worker.update(userListQuery: updatedQuery) { result in
-            self.callback { completion?(result.error) }
+        Task.run {
+            try await self.userList.stateLayer.loadMoreUsers(limit: limit)
+        } completion: { error in
+            self.callback { completion?(error) }
         }
-    }
-}
-
-extension ChatUserListController {
-    struct Environment {
-        var userQueryUpdaterBuilder: (
-            _ database: DatabaseContainer,
-            _ apiClient: APIClient
-        ) -> UserListUpdater = UserListUpdater.init
-
-        var createUserListDabaseObserver: (
-            _ database: DatabaseContainer,
-            _ fetchRequest: NSFetchRequest<UserDTO>,
-            _ itemCreator: @escaping (UserDTO) throws -> ChatUser
-        )
-            -> BackgroundListDatabaseObserver<ChatUser, UserDTO> = {
-                BackgroundListDatabaseObserver(
-                    database: $0,
-                    fetchRequest: $1,
-                    itemCreator: $2,
-                    itemReuseKeyPaths: (\ChatUser.id, \UserDTO.id)
-                )
-            }
     }
 }
 
@@ -203,4 +160,68 @@ public extension ChatUserListControllerDelegate {
         _ controller: ChatUserListController,
         didChangeUsers changes: [ListChange<ChatUser>]
     ) {}
+}
+
+// MARK: - Support
+
+// TODO: move to a new file
+
+/// State layer requires main actor when accessing the current state (reduces errors made when using publishers and simplifies concurrency).
+/// Controllers do not have main actor requirements so we'll need to handle it here. Common case is that controllers are used from the main
+/// thread. In that particular case, switching to state layer gives a performance boost since managedobjectcontext thread is not used any more for reading data.
+final class StateLayerControllerAdapter<StateLayer> {
+    private var cancellables = Set<AnyCancellable>()
+    let stateLayer: StateLayer
+    
+    init(stateLayer: StateLayer) {
+        self.stateLayer = stateLayer
+    }
+    
+    func state<T>(_ read: @MainActor(StateLayer) -> T) -> T {
+        onMain {
+            read(stateLayer)
+        }
+    }
+    
+    func observe(_ block: @MainActor(StateLayer, inout Set<AnyCancellable>) -> Void) {
+        onMain {
+            block(stateLayer, &cancellables)
+        }
+    }
+    
+    private func onMain<T>(_ block: @MainActor() -> T) -> T {
+        if Thread.isMainThread {
+            return MainActor.assumeIsolated {
+                block()
+            }
+        } else {
+            return DispatchQueue.main.sync {
+                block()
+            }
+        }
+    }
+}
+
+extension Task {
+    static func run(_ actions: @escaping () async throws -> Success, completion: @escaping (Result<Success, Failure>) -> Void) where Failure == Error {
+        Task<Void, Never> {
+            do {
+                let result = try await actions()
+                completion(.success(result))
+            } catch {
+                completion(.failure(error))
+            }
+        }
+    }
+    
+    static func run(_ actions: @escaping () async throws -> Success, completion: @escaping (Error?) -> Void) where Failure == Error, Success == Void {
+        Task<Void, Never> {
+            do {
+                try await actions()
+                completion(nil)
+            } catch {
+                completion(error)
+            }
+        }
+    }
 }

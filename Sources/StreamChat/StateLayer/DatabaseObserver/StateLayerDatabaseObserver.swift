@@ -174,6 +174,12 @@ extension StateLayerDatabaseObserver where ResultType == ListResult {
         })
     }
     
+    func startObserving(didChange: @escaping @MainActor(StreamCollection<Item>, [ListChange<Item>]) async -> Void) throws -> StreamCollection<Item> {
+        try startObserving(onContextDidChange: { items, changes in
+            Task.mainActor { await didChange(items, changes) }
+        })
+    }
+    
     /// Starts observing the database and dispatches changes on the NSManagedObjectContext's queue.
     ///
     /// - Parameter onContextDidChange: The callback which is triggered when the observed item changes. Runs on the ``NSManagedObjectContext``'s queue.
