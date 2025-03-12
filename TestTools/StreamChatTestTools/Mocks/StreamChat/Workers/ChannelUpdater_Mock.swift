@@ -138,6 +138,7 @@ final class ChannelUpdater_Mock: ChannelUpdater {
     @Atomic var loadMembersWithReads_cid: ChannelId?
     @Atomic var loadMembersWithReads_pagination: Pagination?
     @Atomic var loadMembersWithReads_sorting: [Sorting<ChannelMemberListSortingKey>]?
+    @Atomic var loadMembersWithReads_completion: ((Result<[ChatChannelMember], Error>) -> Void)?
     @Atomic var loadMembersWithReads_completion_result: Result<[ChatChannelMember], Error>?
     
     @Atomic var createCall_cid: ChannelId?
@@ -270,6 +271,7 @@ final class ChannelUpdater_Mock: ChannelUpdater {
         loadMembersWithReads_cid = nil
         loadMembersWithReads_pagination = nil
         loadMembersWithReads_sorting = nil
+        loadMembersWithReads_completion = nil
         loadMembersWithReads_completion_result = nil
 
         createCall_cid = nil
@@ -543,6 +545,7 @@ final class ChannelUpdater_Mock: ChannelUpdater {
         loadMembersWithReads_cid = cid
         loadMembersWithReads_pagination = membersPagination
         loadMembersWithReads_sorting = memberListSorting
+        loadMembersWithReads_completion = completion
         loadMembersWithReads_completion_result?.invoke(with: completion)
     }
 
