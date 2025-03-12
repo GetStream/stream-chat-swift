@@ -1182,6 +1182,44 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
             }
         }
     }
+    
+    /// Loads the given number of channel reads based on the pagination parameter.
+    ///
+    /// All the currently loaded channel reads are available in ``channel.reads``.
+    ///
+    /// - Parameters:
+    ///   - pagination: The pagination parameter. If `nil` is provided, the first page of channel reads are fetched.
+    ///   - completion: The completion to be called on **callbackQueue** when request is completed.
+    public func loadChannelReads(
+        pagination: Pagination? = nil,
+        completion: @escaping (Error?) -> Void
+    ) {
+        guard let cid = cid, isChannelAlreadyCreated else {
+            channelModificationFailed { completion($0 ?? ClientError.ChannelNotCreatedYet()) }
+            return
+        }
+        updater.loadMembersWithReads(
+            in: cid,
+            membersPagination: pagination ?? Pagination(pageSize: 100),
+            memberListSorting: []
+        ) { result in
+            self.callback {
+                completion(result.error)
+            }
+        }
+    }
+    
+    /// Loads more channel reads.
+    ///
+    /// All the currently loaded channel reads are available in ``channel.reads``.
+    ///
+    /// - Parameters:
+    ///   - limit: The number of channel reads to load. The default is 100.
+    ///   - completion: The completion to be called on **callbackQueue** when request is completed.
+    public func loadMoreChannelReads(limit: Int? = nil, completion: @escaping (Error?) -> Void) {
+        let pagination = Pagination(pageSize: limit ?? 100, offset: channel?.reads.count ?? 0)
+        loadChannelReads(pagination: pagination, completion: completion)
+    }
 
     /// Enables slow mode for the channel
     ///

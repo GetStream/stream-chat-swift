@@ -84,12 +84,6 @@ class APIClient {
         let requestOperation = operation(endpoint: endpoint, isRecoveryOperation: false, completion: completion)
         operationQueue.addOperation(requestOperation)
     }
-    
-    func request<Response: Decodable>(endpoint: Endpoint<Response>) async throws -> Response {
-        try await withCheckedThrowingContinuation { continuation in
-            request(endpoint: endpoint) { continuation.resume(with: $0) }
-        }
-    }
 
     /// Performs a network request and retries in case of network failures
     ///

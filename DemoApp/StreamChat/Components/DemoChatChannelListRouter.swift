@@ -214,16 +214,12 @@ final class DemoChatChannelListRouter: ChatChannelListRouter {
                 }
             }),
             .init(title: "Load More Members", handler: { [unowned self] _ in
-                Task { @MainActor in
-                    let chat = client.makeChat(for: cid)
-                    do {
-                        try await chat.loadMoreMembers(limit: 100)
-                    } catch {
-                        self.rootViewController.presentAlert(
-                            title: "Couldn't load more members to channel \(cid)",
-                            message: "\(error)"
-                        )
-                    }
+                channelController.loadMoreChannelReads(limit: 100) { error in
+                    guard let error else { return }
+                    self.rootViewController.presentAlert(
+                        title: "Couldn't load more members to channel \(cid)",
+                        message: "\(error)"
+                    )
                 }
             }),
             .init(title: "Add member", isEnabled: canUpdateChannelMembers, handler: { [unowned self] _ in

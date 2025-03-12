@@ -135,6 +135,11 @@ final class ChannelUpdater_Mock: ChannelUpdater {
     @Atomic var loadPinnedMessages_completion: ((Result<[ChatMessage], Error>) -> Void)?
     @Atomic var loadPinnedMessages_completion_result: Result<[ChatMessage], Error>?
 
+    @Atomic var loadMembersWithReads_cid: ChannelId?
+    @Atomic var loadMembersWithReads_pagination: Pagination?
+    @Atomic var loadMembersWithReads_sorting: [Sorting<ChannelMemberListSortingKey>]?
+    @Atomic var loadMembersWithReads_completion_result: Result<[ChatChannelMember], Error>?
+    
     @Atomic var createCall_cid: ChannelId?
 
     @Atomic var enrichUrl_url: URL?
@@ -261,6 +266,11 @@ final class ChannelUpdater_Mock: ChannelUpdater {
         loadPinnedMessages_query = nil
         loadPinnedMessages_completion = nil
         loadPinnedMessages_completion_result = nil
+        
+        loadMembersWithReads_cid = nil
+        loadMembersWithReads_pagination = nil
+        loadMembersWithReads_sorting = nil
+        loadMembersWithReads_completion_result = nil
 
         createCall_cid = nil
 
@@ -527,6 +537,13 @@ final class ChannelUpdater_Mock: ChannelUpdater {
         loadPinnedMessages_query = query
         loadPinnedMessages_completion = completion
         loadPinnedMessages_completion_result?.invoke(with: completion)
+    }
+    
+    override func loadMembersWithReads(in cid: ChannelId, membersPagination: Pagination, memberListSorting: [Sorting<ChannelMemberListSortingKey>], completion: @escaping (Result<([ChatChannelMember]), any Error>) -> Void) {
+        loadMembersWithReads_cid = cid
+        loadMembersWithReads_pagination = membersPagination
+        loadMembersWithReads_sorting = memberListSorting
+        loadMembersWithReads_completion_result?.invoke(with: completion)
     }
 
     override func enrichUrl(_ url: URL, completion: @escaping (Result<LinkAttachmentPayload, Error>) -> Void) {
