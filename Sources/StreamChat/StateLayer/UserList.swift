@@ -8,6 +8,7 @@ import Foundation
 public final class UserList {
     private let query: UserListQuery
     private let stateBuilder: StateBuilder<UserListState>
+    private let stateBackgroundBuilder: StateBackgroundBuilder<UserListBackgroundState>
     private let userListUpdater: UserListUpdater
     
     init(query: UserListQuery, client: ChatClient, environment: Environment = .init()) {
@@ -20,6 +21,14 @@ public final class UserList {
             environment.stateBuilder(
                 query,
                 client.databaseContainer
+            )
+        }
+        stateBackgroundBuilder = StateBackgroundBuilder {
+            // TODO: environment builder
+            UserListBackgroundState(
+                main: false,
+                query: query,
+                database: client.databaseContainer
             )
         }
     }
@@ -69,6 +78,14 @@ public final class UserList {
             offset: state.users.count
         )
     }
+    
+    // MARK: - Internal
+    
+    private lazy var backgroundState: UserListBackgroundState = stateBackgroundBuilder.build()
+    
+    func onBackgroundState<T>(_ actions: (UserListBackgroundState) -> T) -> T {
+        backgroundState.queue.sync { actions(backgroundState) }
+    }
 }
 
 extension UserList {
@@ -82,7 +99,7 @@ extension UserList {
             _ query: UserListQuery,
             _ database: DatabaseContainer
         ) -> UserListState = { @MainActor in
-            UserListState(query: $0, database: $1)
+            UserListState(main: true, query: $0, database: $1)
         }
     }
 }

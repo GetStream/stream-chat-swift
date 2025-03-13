@@ -16,3 +16,15 @@ struct StateBuilder<State> {
         builder()
     }
 }
+
+struct StateBackgroundBuilder<State> {
+    private let builder: (() -> State)
+    
+    init(builder: (@escaping () -> State)) {
+        self.builder = builder
+    }
+    
+    func build() -> State {
+        builder()
+    }
+}

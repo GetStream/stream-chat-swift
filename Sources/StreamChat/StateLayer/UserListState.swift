@@ -5,17 +5,23 @@
 import Foundation
 
 /// Represents a list of users matching to the specified query.
-@MainActor public final class UserListState: ObservableObject {
-    private let observer: Observer
+@MainActor public final class UserListState: UserListStateBase {}
+
+final class UserListBackgroundState: UserListStateBase {}
+
+public class UserListStateBase: ObservableObject {
+    private let observer: UserListState.Observer
+    let queue: DispatchQueue
     
-    init(query: UserListQuery, database: DatabaseContainer) {
-        observer = Observer(query: query, database: database)
+    init(main: Bool, query: UserListQuery, database: DatabaseContainer) {
+        observer = UserListState.Observer(query: query, database: database)
+        queue = main ? .main : DispatchQueue(label: "io.getstream.userliststate", target: .global())
         self.query = query
-        
         users = observer.start(
-            with: .init(usersDidChange: { [weak self] in
-                self?.usersLatestChanges = $1
-                self?.users = $0
+            on: queue,
+            with: .init(usersDidChange: { [weak self] users, changes in
+                self?.usersLatestChanges = changes
+                self?.users = users
             })
         )
     }
