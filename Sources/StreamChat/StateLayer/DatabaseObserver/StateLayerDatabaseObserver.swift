@@ -174,9 +174,11 @@ extension StateLayerDatabaseObserver where ResultType == ListResult {
         })
     }
     
-    func startObserving(didChange: @escaping @MainActor(StreamCollection<Item>, [ListChange<Item>]) async -> Void) throws -> StreamCollection<Item> {
+    func startObserving(on queue: DispatchQueue, didChange: @escaping (StreamCollection<Item>, [ListChange<Item>]) -> Void) throws -> StreamCollection<Item> {
         try startObserving(onContextDidChange: { items, changes in
-            Task.mainActor { await didChange(items, changes) }
+            queue.async {
+                didChange(items, changes)
+            }
         })
     }
     

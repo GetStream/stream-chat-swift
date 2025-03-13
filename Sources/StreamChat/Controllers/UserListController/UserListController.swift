@@ -35,7 +35,7 @@ public class ChatUserListController: DataController, DelegateCallable, DataStore
     ///
     public var users: LazyCachedMapCollection<ChatUser> {
         startUserListObserverIfNeeded()
-        return userList.state { LazyCachedMapCollection(source: $0.state.users, map: { $0 }) }
+        return userList.backgroundState { LazyCachedMapCollection(source: $0.users, map: { $0 }) }
     }
 
     /// A type-erased delegate.
@@ -61,7 +61,7 @@ public class ChatUserListController: DataController, DelegateCallable, DataStore
         return _basePublishers as? BasePublishers ?? .init(controller: self)
     }
 
-    private let userList: StateLayerControllerAdapter<UserList>
+    private let userList: UserList
     
     /// Creates a new `UserListController`.
     ///
@@ -71,18 +71,16 @@ public class ChatUserListController: DataController, DelegateCallable, DataStore
     init(query: UserListQuery, client: ChatClient, environment: UserList.Environment = .init()) {
         self.client = client
         self.query = query
-        userList = StateLayerControllerAdapter(
-            stateLayer: UserList(
-                query: query,
-                client: client,
-                environment: environment
-            )
+        userList = UserList(
+            query: query,
+            client: client,
+            environment: environment
         )
     }
 
     override public func synchronize(_ completion: ((_ error: Error?) -> Void)? = nil) {
         Task.run {
-            try await self.userList.stateLayer.get()
+            try await self.userList.get()
         } completion: { error in
             self.state = error == nil ? .remoteDataFetched : .remoteDataFetchFailed(ClientError(with: error))
             self.callback { completion?(error) }
@@ -95,10 +93,13 @@ public class ChatUserListController: DataController, DelegateCallable, DataStore
     ///
     /// It's safe to call this method repeatedly.
     ///
+    
+    private var cancellables = Set<AnyCancellable>()
+    
     private func startUserListObserverIfNeeded() {
         guard state == .initialized else { return }
-        userList.observe { [weak self] userList, cancellables in
-            userList.state.$usersLatestChanges
+        userList.backgroundState { state in
+            state.$usersLatestChanges
                 .sink { [weak self] changes in
                     guard let self else { return }
                     self.delegateCallback {
@@ -126,7 +127,7 @@ public extension ChatUserListController {
         completion: ((Error?) -> Void)? = nil
     ) {
         Task.run {
-            try await self.userList.stateLayer.loadMoreUsers(limit: limit)
+            try await self.userList.loadMoreUsers(limit: limit)
         } completion: { error in
             self.callback { completion?(error) }
         }
@@ -163,44 +164,6 @@ public extension ChatUserListControllerDelegate {
 }
 
 // MARK: - Support
-
-// TODO: move to a new file
-
-/// State layer requires main actor when accessing the current state (reduces errors made when using publishers and simplifies concurrency).
-/// Controllers do not have main actor requirements so we'll need to handle it here. Common case is that controllers are used from the main
-/// thread. In that particular case, switching to state layer gives a performance boost since managedobjectcontext thread is not used any more for reading data.
-final class StateLayerControllerAdapter<StateLayer> {
-    private var cancellables = Set<AnyCancellable>()
-    let stateLayer: StateLayer
-    
-    init(stateLayer: StateLayer) {
-        self.stateLayer = stateLayer
-    }
-    
-    func state<T>(_ read: @MainActor(StateLayer) -> T) -> T {
-        onMain {
-            read(stateLayer)
-        }
-    }
-    
-    func observe(_ block: @MainActor(StateLayer, inout Set<AnyCancellable>) -> Void) {
-        onMain {
-            block(stateLayer, &cancellables)
-        }
-    }
-    
-    private func onMain<T>(_ block: @MainActor() -> T) -> T {
-        if Thread.isMainThread {
-            return MainActor.assumeIsolated {
-                block()
-            }
-        } else {
-            return DispatchQueue.main.sync {
-                block()
-            }
-        }
-    }
-}
 
 extension Task {
     static func run(_ actions: @escaping () async throws -> Success, completion: @escaping (Result<Success, Failure>) -> Void) where Failure == Error {
