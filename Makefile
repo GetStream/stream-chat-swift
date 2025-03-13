@@ -46,8 +46,6 @@ update_dependencies:
 	make update_nuke version=10.3.3
 	echo "👉 Updating SwiftyGif"
 	make update_swiftygif version=5.4.2
-	echo "👉 Updating SwiftyMarkdown"
-	make update_swiftymarkdown version=master
 	echo "👉 Updating DifferenceKit"
 	make update_differencekit version=1.3.0
 
@@ -58,10 +56,6 @@ update_nuke: check_version_parameter
 update_swiftygif: check_version_parameter
 	./Scripts/updateDependency.sh $(version) Dependencies/SwiftyGif Sources/StreamChatUI/StreamSwiftyGif SwiftyGif
 	./Scripts/removePublicDeclarations.sh Sources/StreamChatUI/StreamSwiftyGif
-
-update_swiftymarkdown: check_version_parameter
-	./Scripts/updateDependency.sh $(version) Dependencies/SwiftyMarkdown Sources/StreamChatUI/StreamSwiftyMarkdown Sources
-	./Scripts/removePublicDeclarations.sh Sources/StreamChatUI/StreamSwiftyMarkdown
 
 update_differencekit: check_version_parameter
 	./Scripts/updateDependency.sh $(version) Dependencies/DifferenceKit Sources/StreamChatUI/StreamDifferenceKit Sources

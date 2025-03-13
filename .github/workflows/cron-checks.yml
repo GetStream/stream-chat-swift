@@ -18,7 +18,7 @@ env:
 jobs:
   build-test-app-and-frameworks:
     name: Build Test App and Frameworks
-    runs-on: macos-14
+    runs-on: macos-15
     steps:
     - uses: actions/checkout@v4.1.1
     - uses: ./.github/actions/ruby-cache
@@ -41,15 +41,15 @@ jobs:
     strategy:
       matrix:
         include:
-          - ios: 18.1
-            xcode: 16.1
+          - ios: 18.2
+            xcode: 16.2
             os: macos-15
             device: "iPhone 16 Pro"
             setup_runtime: false
           - ios: 17.5
             xcode: 15.4
             os: macos-15
-            device: "iPhone 14 Pro"
+            device: "iPhone 15 Pro"
             setup_runtime: false
           - ios: 16.4
             xcode: 15.3 # fails on 15.4
@@ -117,15 +117,15 @@ jobs:
     strategy:
       matrix:
         include:
-          - ios: 18.1
-            xcode: 16.1
+          - ios: 18.2
+            xcode: 16.2
             os: macos-15
             device: "iPhone 16 Pro"
             setup_runtime: false
           - ios: 17.5
             xcode: 15.4
             os: macos-15
-            device: "iPhone 14 Pro"
+            device: "iPhone 15 Pro"
             setup_runtime: false
           - ios: 16.4
             xcode: 15.3 # fails on 15.4
@@ -197,7 +197,9 @@ jobs:
 
   automated-code-review:
     name: Automated Code Review
-    runs-on: macos-14
+    runs-on: macos-15
+    env:
+      XCODE_VERSION: "15.4"
     steps:
     - uses: actions/checkout@v4.1.1
     - uses: ./.github/actions/bootstrap

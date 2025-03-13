@@ -25,6 +25,43 @@ final class ChannelRepository_Tests: XCTestCase {
         apiClient = nil
         super.tearDown()
     }
+    
+    // MARK: - Get Channel
+    
+    func test_getChannel_storeFalse_successfulResponse() throws {
+        let cid = ChannelId.unique
+        let query = ChannelQuery(cid: cid)
+        let channelPayload = ChannelPayload.dummy(channel: .dummy(cid: cid))
+        apiClient.test_mockResponseResult(.success(channelPayload))
+        let result = try waitFor { done in
+            repository.getChannel(for: query, store: false, completion: done)
+        }
+        let expectedEndpoint = Endpoint<ChannelPayload>.createChannel(query: query)
+        XCTAssertEqual(AnyEndpoint(expectedEndpoint), apiClient.request_endpoint)
+        XCTAssertEqual(1, database.writeSessionCounter, "Write is called, but rolled back")
+        
+        let databaseChannel = try database.readSynchronously { $0.channel(cid: cid) }
+        XCTAssertEqual(nil, databaseChannel, "When store is false, nothing is stored")
+        
+        let channel = try XCTUnwrap(result.value)
+        XCTAssertEqual(cid, channel.cid)
+    }
+    
+    func test_getChannel_storeFalse_errorResponse() throws {
+        let cid = ChannelId.unique
+        let query = ChannelQuery(cid: cid)
+        let expectedError = TestError()
+        apiClient.test_mockResponseResult(Result<ChannelPayload, Error>.failure(expectedError))
+        let result = try waitFor { done in
+            repository.getChannel(for: query, store: false, completion: done)
+        }
+        let expectedEndpoint = Endpoint<ChannelPayload>.createChannel(query: query)
+        XCTAssertEqual(AnyEndpoint(expectedEndpoint), apiClient.request_endpoint)
+        XCTAssertEqual(0, database.writeSessionCounter)
+        
+        let error = try XCTUnwrap(result.error)
+        XCTAssertEqual(expectedError, error)
+    }
 
     // MARK: - Mark as read
 

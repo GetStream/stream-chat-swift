@@ -1063,7 +1063,7 @@ private class TestEnvironment {
                 return self.backgroundTaskScheduler!
             },
             timerType: VirtualTimeTimer.self,
-            connectionRecoveryHandlerBuilder: { _, _, _, _, _, _, _ in
+            connectionRecoveryHandlerBuilder: { _, _, _, _, _, _ in
                 ConnectionRecoveryHandler_Mock()
             },
             authenticationRepositoryBuilder: {

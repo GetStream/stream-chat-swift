@@ -1193,6 +1193,38 @@ final class ChannelUpdater_Tests: XCTestCase {
         // Assert the completion is called with the error
         AssertAsync.willBeEqual(completionCalledError as? TestError, error)
     }
+    
+    // MARK: - Load Members
+    
+    func test_loadMembersWithReads_makesCorrectAPICall() async throws {
+        let channelID = ChannelId.unique
+        let membersPagination = Pagination(pageSize: 25)
+        try database.createChannel(cid: channelID)
+        
+        // Dummy response for exiting the API call
+        apiClient.test_mockResponseResult(.success(ChannelPayload.dummy()))
+        
+        let result = try await channelUpdater.loadMembersWithReads(
+            in: channelID,
+            membersPagination: membersPagination,
+            memberListSorting: []
+        )
+        XCTAssertEqual(0, result.count)
+        
+        // Assert correct endpoint is called
+        var expectedQuery = ChannelQuery(
+            cid: channelID,
+            pageSize: 0,
+            messagesPagination: MessagesPagination(pageSize: 0), // avoid default set of messages
+            membersPagination: membersPagination,
+            watchersLimit: 0 // avoid default set of watchers
+        )
+        expectedQuery.options = .state
+        let referenceEndpoint: Endpoint<ChannelPayload> = .updateChannel(
+            query: expectedQuery
+        )
+        XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(referenceEndpoint))
+    }
 
     // MARK: - Add members
 

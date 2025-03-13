@@ -255,7 +255,7 @@ class MessageRepository {
                     if !store {
                         // Force load attachments before discarding changes
                         _ = message?.attachmentCounts
-                        self.database.writableContext.discardCurrentChanges()
+                        self.database.writableContext.rollback()
                     }
                 }, completion: { error in
                     if let error = error {

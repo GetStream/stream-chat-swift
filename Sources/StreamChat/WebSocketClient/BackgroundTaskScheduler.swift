@@ -24,7 +24,7 @@ protocol BackgroundTaskScheduler {
 import UIKit
 
 class IOSBackgroundTaskScheduler: BackgroundTaskScheduler {
-    private lazy var app: UIApplication? = {
+    private let app: UIApplication? = {
         // We can't use `UIApplication.shared` directly because there's no way to convince the compiler
         // this code is accessible only for non-extension executables.
         UIApplication.value(forKeyPath: "sharedApplication") as? UIApplication
@@ -32,6 +32,7 @@ class IOSBackgroundTaskScheduler: BackgroundTaskScheduler {
 
     /// The identifier of the currently running background task. `nil` if no background task is running.
     private var activeBackgroundTask: UIBackgroundTaskIdentifier?
+    private let queue = DispatchQueue(label: "io.getstream.IOSBackgroundTaskScheduler", target: .global())
 
     var isAppActive: Bool {
         let app = self.app
@@ -51,18 +52,27 @@ class IOSBackgroundTaskScheduler: BackgroundTaskScheduler {
     }
 
     func beginTask(expirationHandler: (() -> Void)?) -> Bool {
+        // Only a single task is allowed at the same time
         endTask()
-        activeBackgroundTask = app?.beginBackgroundTask { [weak self] in
-            expirationHandler?()
+        
+        guard let app else { return false }
+        let identifier = app.beginBackgroundTask { [weak self] in
             self?.endTask()
+            expirationHandler?()
         }
-        return activeBackgroundTask != .invalid
+        queue.sync {
+            self.activeBackgroundTask = identifier
+        }
+        return identifier != .invalid
     }
 
     func endTask() {
-        if let activeTask = activeBackgroundTask {
-            app?.endBackgroundTask(activeTask)
-            activeBackgroundTask = nil
+        guard let app else { return }
+        queue.sync {
+            if let identifier = self.activeBackgroundTask {
+                self.activeBackgroundTask = nil
+                app.endBackgroundTask(identifier)
+            }
         }
     }
 

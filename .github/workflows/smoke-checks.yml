@@ -20,7 +20,7 @@ concurrency:
 
 env:
   HOMEBREW_NO_INSTALL_CLEANUP: 1 # Disable cleanup for homebrew, we don't need it on CI
-  IOS_SIMULATOR_DEVICE: "iPhone 16 Pro (18.1)"
+  IOS_SIMULATOR_DEVICE: "iPhone 16 Pro (18.2)"
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   GITHUB_PR_NUM: ${{ github.event.pull_request.number }}
 
@@ -156,7 +156,7 @@ jobs:
 
   allure_testops_launch:
     name: Launch Allure TestOps
-    runs-on: macos-14
+    runs-on: macos-15
     if: ${{ github.event.inputs.record_snapshots != 'true' }}
     needs: build-test-app-and-frameworks
     outputs:
@@ -230,7 +230,7 @@ jobs:
 
   build-apps:
     name: Build Demo App + Example Apps
-    runs-on: macos-14
+    runs-on: macos-15
     needs: build-test-app-and-frameworks
     if: ${{ github.event.inputs.record_snapshots != 'true' }}
     steps:
@@ -259,7 +259,7 @@ jobs:
 
   test-integration:
     name: Test Integration
-    runs-on: macos-14
+    runs-on: macos-15
     needs: build-test-app-and-frameworks
     if: ${{ github.event.inputs.record_snapshots != 'true' }}
     steps:

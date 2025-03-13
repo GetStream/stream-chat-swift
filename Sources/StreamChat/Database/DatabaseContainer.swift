@@ -222,6 +222,19 @@ class DatabaseContainer: NSPersistentContainer, @unchecked Sendable {
             }
         }
     }
+    
+    func write<T>(converting actions: @escaping (DatabaseSession) throws -> T, completion: @escaping (Result<T, Error>) -> Void) {
+        var result: T?
+        write { session in
+            result = try actions(session)
+        } completion: { error in
+            if let result {
+                completion(.success(result))
+            } else {
+                completion(.failure(error ?? ClientError.Unknown()))
+            }
+        }
+    }
         
     private func read<T>(
         from context: NSManagedObjectContext,
@@ -454,17 +467,6 @@ class DatabaseContainer: NSPersistentContainer, @unchecked Sendable {
 }
 
 extension NSManagedObjectContext {
-    /// Discards any changes on the passed object that are pending to be saved.
-    func discardChanges(for object: NSManagedObject) {
-        refresh(object, mergeChanges: false)
-    }
-
-    func discardCurrentChanges() {
-        insertedObjects.forEach { discardChanges(for: $0) }
-        updatedObjects.forEach { discardChanges(for: $0) }
-        deletedObjects.forEach { discardChanges(for: $0) }
-    }
-    
     fileprivate func currentChangeCounts() -> [String: Int] {
         [
             "inserted": insertedObjects.count,

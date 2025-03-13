@@ -31,7 +31,7 @@ final class ChannelListSortingKey_Tests: XCTestCase {
                     key.localKey,
                     NSExpression(forKeyPath: \ChannelDTO.defaultSortingAt).keyPath
                 )
-                XCTAssertEqual(key.remoteKey, "updated_at")
+                XCTAssertEqual(key.remoteKey, "last_updated")
                 XCTAssertFalse(key.requiresRuntimeSorting)
             case .createdAt:
                 XCTAssertNotNil(key.sortDescriptor(isAscending: true))
