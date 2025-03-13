@@ -61,6 +61,7 @@ final class Chat_Tests: XCTestCase {
         
         await XCTAssertEqual(3, chat.state.messages.count)
         await XCTAssertEqual(2, chat.state.members.count)
+        await XCTAssertEqual(2, chat.state.channel?.reads.count ?? 0)
         await XCTAssertEqual(1, chat.state.watchers.count)
         await XCTAssertEqual(nextPayload.messages.map(\.id), chat.state.messages.map(\.id))
         await XCTAssertEqual(nextPayload.members.map(\.user?.id), chat.state.members.map(\.id))
@@ -84,12 +85,37 @@ final class Chat_Tests: XCTestCase {
         
         await XCTAssertEqual(3, chat.state.messages.count)
         await XCTAssertEqual(2, chat.state.members.count)
+        await XCTAssertEqual(2, chat.state.channel?.reads.count ?? 0)
         await XCTAssertEqual(1, chat.state.watchers.count)
         await XCTAssertEqual(nextPayload.messages.map(\.id), chat.state.messages.map(\.id))
         await XCTAssertEqual(nextPayload.members.map(\.user?.id), chat.state.members.map(\.id))
         await XCTAssertEqual(nextPayload.watchers?.map(\.id), chat.state.watchers.map(\.id))
     }
     
+    func test_get_whenDefaultMemberSorting_thenMembersAndChannelReadsAreLoaded() async throws {
+        try await setUpChat(usesMockedUpdaters: false, customMemberSorting: false)
+        await XCTAssertEqual(0, chat.state.messages.count)
+        await XCTAssertEqual(0, chat.state.members.count)
+        await XCTAssertEqual(0, chat.state.watchers.count)
+        
+        let nextPayload = makeChannelPayload(
+            messageCount: 3,
+            memberCount: 2,
+            watcherCount: 1,
+            createdAtOffset: 0
+        )
+        env.client.mockAPIClient.test_mockResponseResult(.success(nextPayload))
+        try await chat.get(watch: true)
+        
+        await XCTAssertEqual(3, chat.state.messages.count)
+        await XCTAssertEqual(2, chat.state.members.count)
+        await XCTAssertEqual(2, chat.state.channel?.reads.count ?? 0)
+        await XCTAssertEqual(1, chat.state.watchers.count)
+        await XCTAssertEqual(nextPayload.messages.map(\.id), chat.state.messages.map(\.id))
+        await XCTAssertEqual(nextPayload.members.compactMap(\.user?.id).sorted(), chat.state.members.map(\.id).sorted())
+        await XCTAssertEqual(nextPayload.watchers?.map(\.id), chat.state.watchers.map(\.id))
+    }
+        
     func test_startWatching_whenChannelUpdaterSucceeds_thenStartWatchingActionSucceeds() async throws {
         env.channelUpdaterMock.startWatching_completion_result = .success(())
         try await chat.watch()
@@ -329,28 +355,36 @@ final class Chat_Tests: XCTestCase {
     func test_loadMembers_whenAPIRequestSucceeds_thenStateUpdates() async throws {
         try await setUpChat(usesMockedUpdaters: false)
         
-        let apiResponse = makeMemberListPayload(count: 5, offset: 0)
+        let apiResponse = makeChannelPayload(messageCount: 5, memberCount: 5, createdAtOffset: 0)
         env.client.mockAPIClient.test_mockResponseResult(.success(apiResponse))
         let paginationMembers = try await chat.loadMembers(with: Pagination(pageSize: 5))
         XCTAssertEqual(apiResponse.members.map(\.user?.id), paginationMembers.map(\.id))
         await XCTAssertEqual(apiResponse.members.map(\.user?.id), chat.state.members.map(\.id))
+        
+        let channel = try await MainActor.run { try XCTUnwrap(chat.state.channel) }
+        XCTAssertEqual(apiResponse.channelReads.map(\.user.id).sorted(), channel.reads.map(\.user.id).sorted())
     }
     
     func test_loadMoreMembers_whenAPIRequestSucceeds_thenStateUpdates() async throws {
         try await setUpChat(usesMockedUpdaters: false)
         
         // Initial load
-        let initialResponse = makeMemberListPayload(count: 3, offset: 0)
+        let initialResponse = makeChannelPayload(messageCount: 5, memberCount: 3, createdAtOffset: 0)
         env.client.mockAPIClient.test_mockResponseResult(.success(initialResponse))
-        try await chat.loadMembers(with: Pagination(pageSize: 5))
+        try await chat.loadMembers(with: Pagination(pageSize: 3))
         
         // More
-        let moreResponse = makeMemberListPayload(count: 5, offset: 3)
+        let moreResponse = makeChannelPayload(messageCount: 0, memberCount: 5, createdAtOffset: 3)
         env.client.mockAPIClient.test_mockResponseResult(.success(moreResponse))
         let paginationMembers = try await chat.loadMoreMembers(limit: 5)
         XCTAssertEqual(moreResponse.members.map(\.user?.id), paginationMembers.map(\.id))
-        let all = initialResponse.members + moreResponse.members
-        await XCTAssertEqual(all.map(\.user?.id), chat.state.members.map(\.id))
+        
+        let allMembers = initialResponse.members + moreResponse.members
+        let allReads = initialResponse.channelReads + moreResponse.channelReads
+        await XCTAssertEqual(allMembers.map(\.user?.id), chat.state.members.map(\.id))
+        
+        let channel = try await MainActor.run { try XCTUnwrap(chat.state.channel) }
+        XCTAssertEqual(allReads.map(\.user.id).sorted(), channel.reads.map(\.user.id).sorted())
     }
     
     // MARK: - Member Moderation
@@ -1689,12 +1723,15 @@ final class Chat_Tests: XCTestCase {
         usesMockedUpdaters: Bool,
         loadState: Bool = true,
         loggedIn: Bool = true,
-        messageCount: Int = 0
+        messageCount: Int = 0,
+        memberCount: Int = 0,
+        customMemberSorting: Bool = true
     ) async throws {
+        let memberSorting: [Sorting<ChannelMemberListSortingKey>] = customMemberSorting ? [Sorting(key: .createdAt, isAscending: true)] : []
         chat = Chat(
             channelQuery: ChannelQuery(cid: channelId),
             messageOrdering: .bottomToTop,
-            memberSorting: [Sorting(key: .createdAt, isAscending: true)],
+            memberSorting: memberSorting,
             client: env.client,
             environment: env.chatEnvironment(usesMockedUpdaters: usesMockedUpdaters)
         )
@@ -1743,14 +1780,23 @@ final class Chat_Tests: XCTestCase {
                     cid: channelId
                 )
             }
-        let members: [MemberPayload] = (0..<memberCount)
+        // Backend returns channel reads per member
+        let membersAndReads: [(member: MemberPayload, read: ChannelReadPayload)] = (0..<memberCount)
             .map {
-                .dummy(
-                    user: .dummy(
-                        userId: String(format: "%03d", $0 + createdAtOffset)
-                    ),
+                let user = UserPayload.dummy(
+                    userId: String(format: "%03d", $0 + createdAtOffset)
+                )
+                let read = ChannelReadPayload(
+                    user: user,
+                    lastReadAt: .unique,
+                    lastReadMessageId: nil,
+                    unreadMessagesCount: 0
+                )
+                let member = MemberPayload.dummy(
+                    user: user,
                     createdAt: Date(timeIntervalSinceReferenceDate: TimeInterval($0 + createdAtOffset))
                 )
+                return (member: member, read: read)
             }
         let watchers: [UserPayload] = (0..<watcherCount)
             .map {
@@ -1759,9 +1805,10 @@ final class Chat_Tests: XCTestCase {
         return ChannelPayload.dummy(
             channel: .dummy(cid: channelId),
             watchers: watchers,
-            members: members,
+            members: membersAndReads.map(\.member),
             messages: messages,
-            pendingMessages: pendingMessages
+            pendingMessages: pendingMessages,
+            channelReads: membersAndReads.map(\.read)
         )
     }
     

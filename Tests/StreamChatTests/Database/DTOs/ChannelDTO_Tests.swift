@@ -190,34 +190,47 @@ final class ChannelDTO_Tests: XCTestCase {
         XCTAssertTrue(loadedOwnPinnedMessage.readBy.contains { $0.id == anotherMember.user!.id })
     }
 
-    func test_saveChannel_removesReadsNotPresentInPayload() throws {
+    func test_saveChannel_updatesExistingMessageReadBy() throws {
         // GIVEN
+        let currentUserId = UserId.unique
+        let message1Timestamp = Date.unique
+        let message2Timestamp = message1Timestamp.addingTimeInterval(1.0)
+        let message1 = MessagePayload.dummy(
+            authorUserId: currentUserId,
+            createdAt: message1Timestamp
+        )
         let read1 = ChannelReadPayload(
             user: .dummy(userId: .unique),
-            lastReadAt: .init(),
-            lastReadMessageId: .unique,
+            lastReadAt: message1Timestamp,
+            lastReadMessageId: message1.id,
             unreadMessagesCount: 0
         )
 
         var channelPayload: ChannelPayload = .dummy(
             channel: .dummy(),
+            messages: [message1],
             channelReads: [read1]
         )
-
+        try database.createCurrentUser(id: currentUserId)
         try database.writeSynchronously { session in
             try session.saveChannel(payload: channelPayload)
         }
 
         // WHEN
+        let message2 = MessagePayload.dummy(
+            authorUserId: currentUserId,
+            createdAt: message2Timestamp
+        )
         let read2 = ChannelReadPayload(
             user: .dummy(userId: .unique),
-            lastReadAt: .init(),
-            lastReadMessageId: .unique,
+            lastReadAt: message2Timestamp,
+            lastReadMessageId: message2.id,
             unreadMessagesCount: 0
         )
 
         channelPayload = .dummy(
             channel: channelPayload.channel,
+            messages: [message2],
             channelReads: [read2]
         )
 
@@ -226,22 +239,14 @@ final class ChannelDTO_Tests: XCTestCase {
         }
 
         // THEN
-        let channel = try XCTUnwrap(
-            database.viewContext.channel(cid: channelPayload.channel.cid)
-        )
-        let readToBeRemoved = database.viewContext.loadChannelRead(
-            cid: channelPayload.channel.cid,
-            userId: read1.user.id
-        )
-        let readToBeSaved = try XCTUnwrap(
-            database.viewContext.loadChannelRead(
-                cid: channelPayload.channel.cid,
-                userId: read2.user.id
-            )
-        )
-
-        XCTAssertEqual(channel.reads, [readToBeSaved])
-        XCTAssertNil(readToBeRemoved)
+        try database.readAndWait { session in
+            let channelDTO = try XCTUnwrap(session.channel(cid: channelPayload.channel.cid))
+            XCTAssertEqual(2, channelDTO.reads.count)
+            let message1DTO = try XCTUnwrap(session.message(id: message1.id))
+            XCTAssertEqual(2, message1DTO.reads.count, "Message reads should be updated for existing messages")
+            let message2DTO = try XCTUnwrap(session.message(id: message2.id))
+            XCTAssertEqual(1, message2DTO.reads.count, "Only read by one user")
+        }
     }
 
     func test_saveChannel_updatesTruncatedAt_whenExistingIsNil() throws {

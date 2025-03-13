@@ -1037,11 +1037,7 @@ extension NSManagedObjectContext: MessageDatabaseSession {
 
         // Calculate reads if the message is authored by the current user.
         if payload.user.id == currentUser?.user.id {
-            dto.reads = Set(
-                channelDTO.reads.filter {
-                    $0.lastReadAt.bridgeDate >= payload.createdAt && $0.user.id != payload.user.id
-                }
-            )
+            dto.updateReadBy(withChannelReads: channelDTO.reads)
         }
 
         // Refetch channel preview if the current preview has changed.
@@ -1628,6 +1624,14 @@ extension MessageDTO {
     /// The message failed to be sent to the server.
     func markMessageAsFailed() {
         localMessageState = .sendingFailed
+    }
+    
+    func updateReadBy(withChannelReads reads: Set<ChannelReadDTO>) {
+        let createdAtInterval = createdAt.timeIntervalSince1970
+        let messageUserId = user.id
+        self.reads = reads.filter { read in
+            read.user.id != messageUserId && read.lastReadAt.timeIntervalSince1970 >= createdAtInterval
+        }
     }
 }
 

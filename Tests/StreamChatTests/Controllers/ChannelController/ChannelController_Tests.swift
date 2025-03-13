@@ -4454,6 +4454,70 @@ final class ChannelController_Tests: XCTestCase {
         XCTAssertEqual(updater.markUnread_lastReadMessageId, previousMessageId)
         XCTAssertEqual(updater.markUnread_messageId, messageId)
     }
+    
+    // MARK: - Load more channel reads
+    
+    func test_loadChannelReads_failsForNewChannel() throws {
+        //  Create `ChannelController` for new channel
+        let query = ChannelQuery(channelPayload: .unique)
+        setupControllerForNewChannel(query: query)
+
+        // Simulate `loadChannelReads` call and assert error is returned
+        let error: Error? = try waitFor { [callbackQueueID] completion in
+            controller.loadChannelReads { error in
+                AssertTestQueue(withId: callbackQueueID)
+                completion(error)
+            }
+        }
+
+        // Assert `ClientError.ChannelNotCreatedYet` is propagated to completion
+        XCTAssert(error is ClientError.ChannelNotCreatedYet)
+    }
+
+    func test_loadChannelReads_callsChannelUpdater() {
+        let pageSize = 10
+        let pagination = Pagination(pageSize: pageSize)
+
+        // Simulate `loadChannelReads` call
+        controller.loadChannelReads(pagination: pagination) { _ in }
+
+        // Assert call is propagated to updater
+        XCTAssertEqual(controller.cid, env.channelUpdater!.loadMembersWithReads_cid)
+        XCTAssertEqual(pagination, env.channelUpdater!.loadMembersWithReads_pagination)
+        XCTAssertEqual([], env.channelUpdater!.loadMembersWithReads_sorting)
+    }
+
+    func test_loadChannelReads_propagatesErrorFromUpdater() throws {
+        // Simulate failed update
+        let testError = TestError()
+        env.channelUpdater!.loadMembersWithReads_completion_result = .failure(testError)
+
+        // Simulate `loadChannelReads` call and catch the completion
+        let completionError = try waitFor { done in
+            controller.loadChannelReads { [callbackQueueID] in
+                AssertTestQueue(withId: callbackQueueID)
+                done($0)
+            }
+        }
+
+        // Error is propagated to completion
+        XCTAssertEqual(testError, completionError as? TestError)
+    }
+
+    func test_loadChannelReads_keepsControllerAlive() {
+        // Simulate `loadChannelReads` call
+        controller.loadChannelReads { _ in }
+
+        // Keep a weak ref so we can check if it's actually deallocated
+        weak var weakController = controller
+
+        // (Try to) deallocate the controller
+        // by not keeping any references to it
+        controller = nil
+
+        // Assert controller is kept alive
+        AssertAsync.staysTrue(weakController != nil)
+    }
 
     // MARK: - Enable slow mode (cooldown)
 

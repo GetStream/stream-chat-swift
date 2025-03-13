@@ -285,27 +285,29 @@ public class Chat {
         )
     }
     
-    /// Loads channel members for the specified pagination parameters and updates ``ChatState/members``.
+    /// Loads channel members and corresponding channel read information for the specified pagination parameters and updates ``ChatState/members``.
     ///
     /// - Note: Channel member sorting keys are set when creating the ``Chat`` instance.
     /// It is also possible to create separate ``MemberList`` objects if needed with different filtering options. See ``ChatClient/makeMemberList(with:)``.
+    /// - Note: Paginating channel members using this function also paginates channel reads for these members. By default, 100 channel members and channel reads are loaded when channel is fetched.
     ///
     /// - Parameter pagination: The pagination configuration which includes a limit and an offset or a cursor.
     ///
     /// - Throws: An error while communicating with the Stream API.
     /// - Returns: An array of channel members for the pagination request.
     @discardableResult public func loadMembers(with pagination: Pagination) async throws -> [ChatChannelMember] {
-        try await memberList.loadMembers(with: pagination)
+        try await channelUpdater.loadMembersWithReads(in: cid, membersPagination: pagination, memberListSorting: state.memberSorting)
     }
     
-    /// Loads more channel members and updates ``ChatState/members``.
+    /// Loads more channel members and corresponding channel read information and updates ``ChatState/members``.
     ///
     /// - Parameter limit: The limit for the page size. The default limit is 30.
     ///
     /// - Throws: An error while communicating with the Stream API.
     /// - Returns: An array of channel members for the pagination request.
     @discardableResult public func loadMoreMembers(limit: Int? = nil) async throws -> [ChatChannelMember] {
-        try await memberList.loadMoreMembers(limit: limit)
+        let pagination = await Pagination(pageSize: limit ?? .channelMembersPageSize, offset: state.members.count)
+        return try await loadMembers(with: pagination)
     }
     
     // MARK: - Member Moderation
