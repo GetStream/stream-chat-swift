@@ -1009,7 +1009,7 @@ final class ChannelDTO_Tests: XCTestCase {
         let encoder = JSONEncoder.stream
 
         var channelListSortingKey = ChannelListSortingKey.default
-        XCTAssertEqual(encoder.encodedString(channelListSortingKey), "updated_at")
+        XCTAssertEqual(encoder.encodedString(channelListSortingKey), "last_updated")
         XCTAssertEqual(
             channelListSortingKey.sortDescriptor(isAscending: true),
             NSSortDescriptor(key: "defaultSortingAt", ascending: true)

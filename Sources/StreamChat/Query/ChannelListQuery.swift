@@ -203,7 +203,7 @@ public extension FilterKey where Scope: AnyChannelListFilterScope {
 
     /// Filter for the time of the last message in the channel. If the channel has no messages, then the time the channel was created.
     /// Supported operators: `equal`, `greaterThan`, `lessThan`, `greaterOrEqual`, `lessOrEqual`
-    static var lastUpdatedAt: FilterKey<Scope, Date> { .init(rawValue: "last_updated", keyPathString: #keyPath(ChannelDTO.lastMessageAt)) }
+    static var lastUpdatedAt: FilterKey<Scope, Date> { .init(rawValue: "last_updated", keyPathString: #keyPath(ChannelDTO.defaultSortingAt)) }
 }
 
 /// Internal filter queries for the channel list.
