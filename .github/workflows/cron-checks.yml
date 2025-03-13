@@ -41,8 +41,8 @@ jobs:
     strategy:
       matrix:
         include:
-          - ios: 18.2
-            xcode: 16.2
+          - ios: 18.1
+            xcode: 16.1 # fails on 16.2
             os: macos-15
             device: "iPhone 16 Pro"
             setup_runtime: false
