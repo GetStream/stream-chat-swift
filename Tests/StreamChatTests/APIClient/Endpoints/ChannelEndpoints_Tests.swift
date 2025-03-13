@@ -97,6 +97,28 @@ final class ChannelEndpoints_Tests: XCTestCase {
         XCTAssertEqual("channels/\(channelPayload.apiPath)", endpoint.path.value)
         XCTAssertEqual(expectedEndpoint.method, endpoint.method)
     }
+    
+    func test_channelState_buildsCorrectly() {
+        let cid = ChannelId(type: .livestream, id: "qwerty")
+
+        var query: ChannelQuery = .init(cid: cid)
+        query.options = [.state]
+
+        let expectedEndpoint = Endpoint<ChannelPayload>(
+            path: .updateChannel(query.apiPath),
+            method: .post,
+            queryItems: nil,
+            requiresConnectionId: false,
+            body: query
+        )
+        
+        // Build endpoint
+        let endpoint: Endpoint<ChannelPayload> = .channelState(query: query)
+        
+        // Assert endpoint is built correctly
+        XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
+        XCTAssertEqual("channels/\(query.apiPath)/query", endpoint.path.value)
+    }
 
     func test_partialChannelUpdate_buildsCorrectly() {
         let channelPayload: ChannelEditDetailPayload = .unique

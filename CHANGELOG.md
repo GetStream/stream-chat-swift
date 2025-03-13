@@ -9,6 +9,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Add `Fonts.title2` for supporting markdown headers [#3590](https://github.com/GetStream/stream-chat-swift/pull/3590)
 ### 🐞 Fixed
 - Fix background task warning by making task tracking thread-safe [#3604](https://github.com/GetStream/stream-chat-swift/pull/3604)
+- Fix an issue where `ChatRemoteNotificationHandler` can lead to persistent store's data inconsistencies [#3601](https://github.com/GetStream/stream-chat-swift/pull/3601)
 - Fix the order of channels when using `ChannelListSortingKey.default` [3615](https://github.com/GetStream/stream-chat-swift/pull/3615)
 
 ### StreamChatUI

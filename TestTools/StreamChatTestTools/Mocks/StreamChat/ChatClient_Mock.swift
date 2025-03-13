@@ -185,10 +185,6 @@ extension ChatClient {
         databaseContainer as! DatabaseContainer_Spy
     }
 
-    var mockExtensionLifecycle: NotificationExtensionLifecycle_Mock {
-        extensionLifecycle as! NotificationExtensionLifecycle_Mock
-    }
-
     var mockSyncRepository: SyncRepository_Mock {
         syncRepository as! SyncRepository_Mock
     }
@@ -243,7 +239,6 @@ extension ChatClient.Environment {
                     chatClientConfig: $1
                 )
             },
-            extensionLifecycleBuilder: NotificationExtensionLifecycle_Mock.init,
             requestEncoderBuilder: DefaultRequestEncoder.init,
             requestDecoderBuilder: DefaultRequestDecoder.init,
             eventDecoderBuilder: EventDecoder.init,
