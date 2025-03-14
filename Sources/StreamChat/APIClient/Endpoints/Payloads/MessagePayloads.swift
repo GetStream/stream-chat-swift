@@ -54,6 +54,7 @@ enum MessagePayloadsCodingKeys: String, CodingKey, CaseIterable {
     case skipEnrichUrl = "skip_enrich_url"
     case restrictedVisibility = "restricted_visibility"
     case draft
+    case reminder
 }
 
 extension MessagePayload {
@@ -111,8 +112,8 @@ class MessagePayload: Decodable {
     var pinExpires: Date?
     
     var poll: PollPayload?
-
     var draft: DraftPayload?
+    var reminder: ReminderPayload?
 
     /// Only message payload from `getMessage` endpoint contains channel data. It's a convenience workaround for having to
     /// make an extra call do get channel details.
@@ -179,6 +180,7 @@ class MessagePayload: Decodable {
         messageTextUpdatedAt = try container.decodeIfPresent(Date.self, forKey: .messageTextUpdatedAt)
         poll = try container.decodeIfPresent(PollPayload.self, forKey: .poll)
         draft = try container.decodeIfPresent(DraftPayload.self, forKey: .draft)
+        reminder = try container.decodeIfPresent(ReminderPayload.self, forKey: .reminder)
     }
 
     init(
@@ -219,7 +221,8 @@ class MessagePayload: Decodable {
         moderationDetails: MessageModerationDetailsPayload? = nil,
         messageTextUpdatedAt: Date? = nil,
         poll: PollPayload? = nil,
-        draft: DraftPayload? = nil
+        draft: DraftPayload? = nil,
+        reminder: ReminderPayload? = nil
     ) {
         self.id = id
         self.cid = cid
@@ -259,6 +262,7 @@ class MessagePayload: Decodable {
         self.messageTextUpdatedAt = messageTextUpdatedAt
         self.poll = poll
         self.draft = draft
+        self.reminder = reminder
     }
 }
 
@@ -381,4 +385,78 @@ public struct Command: Codable, Hashable {
         self.set = set
         self.args = args
     }
+}
+
+/// An object describing a reminder JSON payload.
+struct ReminderPayload: Decodable {
+    let userId: UserId
+    let user: UserPayload?
+    let channelCid: ChannelId
+    let messageId: MessageId
+    let message: MessagePayload?
+    let remindAt: Date?
+    let createdAt: Date
+    let updatedAt: Date
+    
+    init(
+        userId: UserId,
+        user: UserPayload? = nil,
+        channelCid: ChannelId,
+        messageId: MessageId,
+        message: MessagePayload? = nil,
+        remindAt: Date?,
+        createdAt: Date,
+        updatedAt: Date
+    ) {
+        self.userId = userId
+        self.user = user
+        self.channelCid = channelCid
+        self.messageId = messageId
+        self.message = message
+        self.remindAt = remindAt
+        self.createdAt = createdAt
+        self.updatedAt = updatedAt
+    }
+    
+    enum CodingKeys: String, CodingKey {
+        case userId = "user_id"
+        case user
+        case channelCid = "channel_cid"
+        case messageId = "message_id"
+        case message
+        case remindAt = "remind_at"
+        case createdAt = "created_at"
+        case updatedAt = "updated_at"
+    }
+}
+
+/// A request body for creating or updating a reminder
+struct ReminderRequestBody: Encodable {
+    let remindAt: Date?
+    let userId: UserId?
+    
+    init(
+        remindAt: Date?,
+        userId: UserId? = nil
+    ) {
+        self.remindAt = remindAt
+        self.userId = userId
+    }
+    
+    enum CodingKeys: String, CodingKey {
+        case remindAt = "remind_at"
+        case userId = "user_id"
+    }
+}
+
+/// A response containing a list of reminders
+struct RemindersQueryPayload: Decodable {
+    let reminders: [ReminderPayload]
+    let next: String?
+    let prev: String?
+}
+
+/// A response containing a single reminder
+struct ReminderResponsePayload: Decodable {
+    let reminder: ReminderPayload
 }
