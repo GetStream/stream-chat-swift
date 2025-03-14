@@ -1681,6 +1681,9 @@
 		ADAA377125E43C3700C31528 /* ChatSuggestionsVC_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADD5A9E725DE8AF6006DC88A /* ChatSuggestionsVC_Tests.swift */; };
 		ADAA9F412B2240300078C3D4 /* TextViewMentionedUsersHandler_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADAA9F402B2240300078C3D4 /* TextViewMentionedUsersHandler_Tests.swift */; };
 		ADAC47AA275A7C960027B672 /* ChatMessageContentView_Documentation_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADAC47A9275A7C960027B672 /* ChatMessageContentView_Documentation_Tests.swift */; };
+		ADB2087F2D849184003F1059 /* MessageReminderListQuery.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADB2087E2D849184003F1059 /* MessageReminderListQuery.swift */; };
+		ADB208802D849184003F1059 /* MessageReminderListQuery.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADB2087E2D849184003F1059 /* MessageReminderListQuery.swift */; };
+		ADB208822D8494F0003F1059 /* MessageReminderListQuery_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADB208812D8494F0003F1059 /* MessageReminderListQuery_Tests.swift */; };
 		ADB22F7C25F1626200853C92 /* OnlineIndicatorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADB22F7A25F1626200853C92 /* OnlineIndicatorView.swift */; };
 		ADB22F7D25F1626200853C92 /* ChatPresenceAvatarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADB22F7B25F1626200853C92 /* ChatPresenceAvatarView.swift */; };
 		ADB4166C26208F1C00E623E3 /* AttachmentPreviewProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADB4165026208C7900E623E3 /* AttachmentPreviewProvider.swift */; };
@@ -4394,6 +4397,8 @@
 		ADAA10EA2B90D589007AB03F /* FakeTimer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FakeTimer.swift; sourceTree = "<group>"; };
 		ADAA9F402B2240300078C3D4 /* TextViewMentionedUsersHandler_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextViewMentionedUsersHandler_Tests.swift; sourceTree = "<group>"; };
 		ADAC47A9275A7C960027B672 /* ChatMessageContentView_Documentation_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessageContentView_Documentation_Tests.swift; sourceTree = "<group>"; };
+		ADB2087E2D849184003F1059 /* MessageReminderListQuery.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageReminderListQuery.swift; sourceTree = "<group>"; };
+		ADB208812D8494F0003F1059 /* MessageReminderListQuery_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageReminderListQuery_Tests.swift; sourceTree = "<group>"; };
 		ADB22F7A25F1626200853C92 /* OnlineIndicatorView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OnlineIndicatorView.swift; sourceTree = "<group>"; };
 		ADB22F7B25F1626200853C92 /* ChatPresenceAvatarView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChatPresenceAvatarView.swift; sourceTree = "<group>"; };
 		ADB4165026208C7900E623E3 /* AttachmentPreviewProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AttachmentPreviewProvider.swift; sourceTree = "<group>"; };
@@ -5668,6 +5673,7 @@
 				AD6E32A02BBC50110073831B /* ThreadListQuery.swift */,
 				AD6E32A32BBC502D0073831B /* ThreadQuery.swift */,
 				AD545E622D528271008FD399 /* DraftListQuery.swift */,
+				ADB2087E2D849184003F1059 /* MessageReminderListQuery.swift */,
 				AD0CC0112BDBC1BF005E2C66 /* ReactionListQuery.swift */,
 				7978FBB926E15A58002CA2DF /* MessageSearchQuery.swift */,
 				792A4F442480107A00EAF71D /* Pagination.swift */,
@@ -7509,6 +7515,7 @@
 		A364D0B727D12A520029857A /* Query */ = {
 			isa = PBXGroup;
 			children = (
+				ADB208812D8494F0003F1059 /* MessageReminderListQuery_Tests.swift */,
 				AD545E842D5D7591008FD399 /* DraftListQuery_Tests.swift */,
 				A3C7BAD027E4E02700BBF4FA /* ChannelListFilterScope_Tests.swift */,
 				799F611A2530B62C007F218C /* ChannelListQuery_Tests.swift */,
@@ -11462,6 +11469,7 @@
 				AD7BE16A2C209888000A5756 /* ThreadEvents.swift in Sources */,
 				88BDCA8A2642B02D0099AD74 /* ChatMessageAttachment.swift in Sources */,
 				841BAA4E2BD1CD76000C73E4 /* PollOptionDTO.swift in Sources */,
+				ADB208802D849184003F1059 /* MessageReminderListQuery.swift in Sources */,
 				88E26D6E2580F34B00F55AB5 /* AttachmentQueueUploader.swift in Sources */,
 				4F312D0E2C905A2E0073A1BC /* FlagRequestBody.swift in Sources */,
 				88A00DD02525F08000259AB4 /* ModerationEndpoints.swift in Sources */,
@@ -11892,6 +11900,7 @@
 				792FCB4724A33CC2000290C7 /* EventDataProcessorMiddleware_Tests.swift in Sources */,
 				797EEA4A24FFC37600C81203 /* ConnectionStatus_Tests.swift in Sources */,
 				79877A2B2498E51500015F8B /* UserDTO_Tests.swift in Sources */,
+				ADB208822D8494F0003F1059 /* MessageReminderListQuery_Tests.swift in Sources */,
 				799F611B2530B62C007F218C /* ChannelListQuery_Tests.swift in Sources */,
 				792921C524C0479700116BBB /* ChannelListUpdater_Tests.swift in Sources */,
 				A3F65E3727EB7161003F6256 /* WebSocketClient_Tests.swift in Sources */,
@@ -12295,6 +12304,7 @@
 				C121E822274544AD00023E4C /* WebSocketEngine.swift in Sources */,
 				C1B0B38427BFC08900C8207D /* EndpointPath+OfflineRequest.swift in Sources */,
 				C121E823274544AD00023E4C /* URLSessionWebSocketEngine.swift in Sources */,
+				ADB2087F2D849184003F1059 /* MessageReminderListQuery.swift in Sources */,
 				79D5CDD527EA1BE300BE7D8B /* MessageTranslationsPayload.swift in Sources */,
 				C121E825274544AD00023E4C /* BackgroundTaskScheduler.swift in Sources */,
 				C121E826274544AD00023E4C /* WebSocketClient.swift in Sources */,
