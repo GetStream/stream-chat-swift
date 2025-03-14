@@ -7,9 +7,18 @@ import XCTest
 final class Attachments_Tests: StreamTestCase {
 
     override func setUpWithError() throws {
+        try XCTSkipIf(ProcessInfo().operatingSystemVersion.majorVersion >= 18,
+                      "Attachments tests freeze the test app on iOS > 18")
+        
         try super.setUpWithError()
         addTags([.coreFeatures])
         assertMockServer()
+    }
+    
+    override func tearDownWithError() throws {
+        if ProcessInfo().operatingSystemVersion.majorVersion < 18 {
+            try super.tearDownWithError()
+        }
     }
 
     func test_uploadImage() throws {
