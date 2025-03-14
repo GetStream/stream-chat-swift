@@ -433,19 +433,15 @@ struct ReminderPayload: Decodable {
 /// A request body for creating or updating a reminder
 struct ReminderRequestBody: Encodable {
     let remindAt: Date?
-    let userId: UserId?
     
     init(
-        remindAt: Date?,
-        userId: UserId? = nil
+        remindAt: Date?
     ) {
         self.remindAt = remindAt
-        self.userId = userId
     }
     
     enum CodingKeys: String, CodingKey {
         case remindAt = "remind_at"
-        case userId = "user_id"
     }
 }
 

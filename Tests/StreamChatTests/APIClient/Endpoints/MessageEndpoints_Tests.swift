@@ -232,7 +232,7 @@ final class MessageEndpoints_Tests: XCTestCase {
         XCTAssertEqual("messages/\(messageId)/reminders", endpoint.path.value)
     }
     
-    func test_deleteReminder_withoutUserId_buildsCorrectly() {
+    func test_deleteReminder_buildsCorrectly() {
         let messageId: MessageId = .unique
         
         let expectedEndpoint = Endpoint<EmptyResponse>(
@@ -250,28 +250,9 @@ final class MessageEndpoints_Tests: XCTestCase {
         XCTAssertEqual("messages/\(messageId)/reminders", endpoint.path.value)
     }
     
-    func test_deleteReminder_withUserId_buildsCorrectly() {
-        let messageId: MessageId = .unique
-        let userId: UserId = .unique
-        
-        let expectedEndpoint = Endpoint<EmptyResponse>(
-            path: .reminder(messageId),
-            method: .delete,
-            queryItems: nil,
-            requiresConnectionId: false,
-            body: ["user_id": AnyEncodable(userId)]
-        )
-        
-        let endpoint: Endpoint<EmptyResponse> = .deleteReminder(messageId: messageId, userId: userId)
-        
-        // Assert endpoint is built correctly
-        XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
-        XCTAssertEqual("messages/\(messageId)/reminders", endpoint.path.value)
-    }
-    
     func test_queryReminders_buildsCorrectly() {
         let query = MessageReminderListQuery(
-            filter: .equal(.userId, to: "test-user"),
+            filter: .equal(.channelCid, to: ChannelId.unique),
             sort: [.init(key: .remindAt, isAscending: true)],
             pageSize: 25
         )

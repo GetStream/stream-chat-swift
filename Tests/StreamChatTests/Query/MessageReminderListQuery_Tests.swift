@@ -21,7 +21,7 @@ final class MessageReminderListQuery_Tests: XCTestCase {
     }
     
     func test_customInitialization() {
-        let filter = Filter<MessageReminderListFilterScope>.equal(.userId, to: "user-id")
+        let filter = Filter<MessageReminderListFilterScope>.equal(.channelCid, to: ChannelId.unique)
         let sort = [Sorting<MessageReminderListSortingKey>(key: .createdAt, isAscending: false)]
         let next = "next-token"
         let prev = "prev-token"
@@ -44,7 +44,7 @@ final class MessageReminderListQuery_Tests: XCTestCase {
     }
     
     func test_encode_withAllFields() throws {
-        let filter = Filter<MessageReminderListFilterScope>.equal(.userId, to: "user-id")
+        let filter = Filter<MessageReminderListFilterScope>.equal(.channelCid, to: ChannelId.unique)
         let sort = [Sorting<MessageReminderListSortingKey>(key: .createdAt, isAscending: false)]
         let next = "next-token"
         let prev = "prev-token"
@@ -58,7 +58,7 @@ final class MessageReminderListQuery_Tests: XCTestCase {
         )
         
         let expectedData: [String: Any] = [
-            "filter": ["user_id": ["$eq": "user-id"]],
+            "filter": ["channel_cid": ["$eq": filter.value]],
             "sort": [["field": "created_at", "direction": -1]],
             "limit": 10,
             "next": next,
@@ -90,7 +90,7 @@ final class MessageReminderListQuery_Tests: XCTestCase {
     }
     
     func test_encode_withoutSort() throws {
-        let filter = Filter<MessageReminderListFilterScope>.equal(.userId, to: "user-id")
+        let filter = Filter<MessageReminderListFilterScope>.equal(.channelCid, to: ChannelId.unique)
         
         let query = MessageReminderListQuery(
             filter: filter,
@@ -99,7 +99,7 @@ final class MessageReminderListQuery_Tests: XCTestCase {
         )
         
         let expectedData: [String: Any] = [
-            "filter": ["user_id": ["$eq": "user-id"]],
+            "filter": ["channel_cid": ["$eq": filter.value]],
             "limit": 10
         ]
         
@@ -114,7 +114,6 @@ final class MessageReminderListQuery_Tests: XCTestCase {
         XCTAssertEqual(FilterKey<MessageReminderListFilterScope, MessageId>.messageId.rawValue, "message_id")
         XCTAssertEqual(FilterKey<MessageReminderListFilterScope, Date>.remindAt.rawValue, "remind_at")
         XCTAssertEqual(FilterKey<MessageReminderListFilterScope, Date>.createdAt.rawValue, "created_at")
-        XCTAssertEqual(FilterKey<MessageReminderListFilterScope, UserId>.userId.rawValue, "user_id")
     }
     
     func test_sortingKeys() {

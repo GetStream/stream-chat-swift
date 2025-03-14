@@ -120,18 +120,13 @@ extension Endpoint {
     }
     
     // Deletes a reminder for a message
-    static func deleteReminder(messageId: MessageId, userId: UserId? = nil) -> Endpoint<EmptyResponse> {
-        var body: [String: AnyEncodable]?
-        if let userId = userId {
-            body = ["user_id": AnyEncodable(userId)]
-        }
-        
-        return .init(
+    static func deleteReminder(messageId: MessageId) -> Endpoint<EmptyResponse> {
+        .init(
             path: .reminder(messageId),
             method: .delete,
             queryItems: nil,
             requiresConnectionId: false,
-            body: body
+            body: nil
         )
     }
     

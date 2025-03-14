@@ -27,10 +27,6 @@ public extension FilterKey where Scope: AnyMessageReminderListFilterScope {
     /// A filter key for matching the `created_at` value.
     /// Supported operators: `equal`, `greaterThan`, `lessThan`, `greaterOrEqual`, `lessOrEqual`
     static var createdAt: FilterKey<Scope, Date> { .init(rawValue: "created_at", keyPathString: "createdAt") }
-    
-    /// A filter key for matching the `user_id` value.
-    /// Supported operators: `in`, `equal`
-    static var userId: FilterKey<Scope, UserId> { .init(rawValue: "user_id", keyPathString: "userId") }
 }
 
 /// The type describing a value that can be used for sorting when querying message reminders.
