@@ -95,7 +95,8 @@ extension NSManagedObjectContext: ReminderDatabaseSession {
             context: self,
             cache: cache
         )
-        
+
+        reminderDTO.id = payload.messageId
         reminderDTO.remindAt = payload.remindAt?.bridgeDate
         reminderDTO.createdAt = payload.createdAt.bridgeDate
         reminderDTO.updatedAt = payload.updatedAt.bridgeDate
