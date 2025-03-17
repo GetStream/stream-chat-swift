@@ -389,8 +389,6 @@ public struct Command: Codable, Hashable {
 
 /// An object describing a reminder JSON payload.
 struct ReminderPayload: Decodable {
-    let userId: UserId
-    let user: UserPayload?
     let channelCid: ChannelId
     let messageId: MessageId
     let message: MessagePayload?
@@ -399,8 +397,6 @@ struct ReminderPayload: Decodable {
     let updatedAt: Date
     
     init(
-        userId: UserId,
-        user: UserPayload? = nil,
         channelCid: ChannelId,
         messageId: MessageId,
         message: MessagePayload? = nil,
@@ -408,8 +404,6 @@ struct ReminderPayload: Decodable {
         createdAt: Date,
         updatedAt: Date
     ) {
-        self.userId = userId
-        self.user = user
         self.channelCid = channelCid
         self.messageId = messageId
         self.message = message
@@ -419,8 +413,6 @@ struct ReminderPayload: Decodable {
     }
     
     enum CodingKeys: String, CodingKey {
-        case userId = "user_id"
-        case user
         case channelCid = "channel_cid"
         case messageId = "message_id"
         case message
