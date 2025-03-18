@@ -56,7 +56,7 @@ extension MessageReminder: Hashable {
 ///
 /// Does not contain any reference to the message or channel so that
 /// it can be used in these models without creating a circular reference.
-public struct MessageReminderInfo {
+public struct MessageReminderInfo: Equatable {
     /// The date when the user should be reminded about this message.
     /// If nil, this is a bookmark type reminder without a notification.
     public let remindAt: Date?
