@@ -51,3 +51,25 @@ extension MessageReminder: Hashable {
         hasher.combine(id)
     }
 }
+
+/// A type representing the reminder information.
+///
+/// Does not contain any reference to the message or channel so that
+/// it can be used in these models without creating a circular reference.
+public struct MessageReminderInfo {
+    /// The date when the user should be reminded about this message.
+    /// If nil, this is a bookmark type reminder without a notification.
+    public let remindAt: Date?
+
+    /// Date when the reminder was created on the server.
+    public let createdAt: Date
+
+    /// A date when the reminder was updated last time.
+    public let updatedAt: Date
+
+    init(remindAt: Date?, createdAt: Date, updatedAt: Date) {
+        self.remindAt = remindAt
+        self.createdAt = createdAt
+        self.updatedAt = updatedAt
+    }
+}

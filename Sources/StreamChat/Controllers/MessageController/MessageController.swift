@@ -939,7 +939,7 @@ public class ChatMessageController: DataController, DelegateCallable, DataStoreP
     ///   If nil, this creates a "save for later" type reminder without a notification.
     ///   - completion: Called when the API call is finished with the result of the operation.
     public func createReminder(
-        remindAt: Date?,
+        remindAt: Date? = nil,
         completion: ((Result<MessageReminder, Error>) -> Void)? = nil
     ) {
         messageUpdater.createReminder(
