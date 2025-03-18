@@ -1044,7 +1044,7 @@ class MessageUpdater: Worker {
     func deleteReminder(
         messageId: MessageId,
         cid: ChannelId,
-        completion: ((Error?) -> Void)? = nil
+        completion: @escaping ((Error?) -> Void)
     ) {
         let endpoint: Endpoint<EmptyResponse> = .deleteReminder(messageId: messageId)
         
@@ -1079,12 +1079,12 @@ class MessageUpdater: Worker {
             self?.apiClient.request(endpoint: endpoint) { result in
                 switch result {
                 case .success:
-                    completion?(nil)
+                    completion(nil)
                     
                 case .failure(let error):
                     // Rollback the optimistic delete if the API call fails
                     guard let originalPayload = originalPayload else {
-                        completion?(error)
+                        completion(error)
                         return
                     }
                     
@@ -1096,7 +1096,7 @@ class MessageUpdater: Worker {
                             log.warning("Failed to rollback reminder deletion: \(error)")
                         }
                     }, completion: { _ in
-                        completion?(error)
+                        completion(error)
                     })
                 }
             }
