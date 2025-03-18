@@ -2974,6 +2974,471 @@ final class MessageUpdater_Tests: XCTestCase {
 
         wait(for: [exp], timeout: defaultTimeout)
     }
+
+    // MARK: - Message Reminders
+
+    func test_createReminder_makesCorrectAPICall() throws {
+        // Prepare data for the test
+        let messageId: MessageId = .unique
+        let cid: ChannelId = .unique
+        let remindAt = Date()
+        let currentUserId: UserId = .unique
+        
+        // Create current user in the database
+        try database.createCurrentUser(id: currentUserId)
+        
+        // Create a message to add reminder to
+        try database.createMessage(id: messageId, cid: cid, text: "Test message")
+        
+        // Simulate `createReminder` call
+        let exp = expectation(description: "completion is called")
+        messageUpdater.createReminder(
+            messageId: messageId,
+            cid: cid,
+            remindAt: remindAt
+        ) { _ in
+            exp.fulfill()
+        }
+
+        apiClient.test_mockResponseResult(.success(ReminderResponsePayload(
+            reminder: .init(
+                channelCid: cid,
+                messageId: messageId,
+                remindAt: remindAt,
+                createdAt: .unique,
+                updatedAt: .unique
+            )
+        )))
+
+        wait(for: [exp], timeout: defaultTimeout)
+
+        // Assert endpoint is correct
+        let expectedEndpoint: Endpoint<ReminderResponsePayload> = .createReminder(
+            messageId: messageId,
+            request: ReminderRequestBody(remindAt: remindAt)
+        )
+        XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(expectedEndpoint))
+    }
+
+    func test_createReminder_updatesLocalMessageOptimistically() throws {
+        // Prepare data for the test
+        let messageId: MessageId = .unique
+        let cid: ChannelId = .unique
+        let remindAt = Date()
+        let currentUserId: UserId = .unique
+        
+        // Create current user in the database
+        try database.createCurrentUser(id: currentUserId)
+
+        // Create a channel in the database
+        try database.createChannel(cid: cid)
+
+        // Create a message to add reminder to
+        try database.createMessage(id: messageId, cid: cid, text: "Test message")
+
+        // Simulate `createReminder` call
+        messageUpdater.createReminder(
+            messageId: messageId,
+            cid: cid,
+            remindAt: remindAt
+        ) { _ in }
+
+        // Assert reminder was created locally
+        var expectedRemindAt: Date?
+        try database.writeSynchronously { session in
+            let message = session.message(id: messageId)
+            expectedRemindAt = message?.reminder?.remindAt?.bridgeDate
+        }
+        XCTAssertNearlySameDate(expectedRemindAt, remindAt)
+    }
+
+    func test_createReminder_rollsBackOnFailure() throws {
+        // Prepare data for the test
+        let messageId: MessageId = .unique
+        let cid: ChannelId = .unique
+        let remindAt = Date()
+        let currentUserId: UserId = .unique
+
+        // Create current user in the database
+        try database.createCurrentUser(id: currentUserId)
+
+        // Create a channel in the database
+        try database.createChannel(cid: cid)
+
+        // Create a message to add reminder to
+        try database.createMessage(id: messageId, cid: cid, text: "Test message")
+
+        // Simulate `createReminder` call
+        let exp = expectation(description: "completion is called")
+        messageUpdater.createReminder(
+            messageId: messageId,
+            cid: cid,
+            remindAt: remindAt
+        ) { _ in
+            exp.fulfill()
+        }
+
+        // Assert reminder was created locally
+        var expectedRemindAt: Date?
+        try database.writeSynchronously { session in
+            let message = session.message(id: messageId)
+            expectedRemindAt = message?.reminder?.remindAt?.bridgeDate
+        }
+        XCTAssertNearlySameDate(expectedRemindAt, remindAt)
+
+        apiClient.test_simulateResponse(Result<ReminderResponsePayload, Error>.failure(TestError()))
+
+        wait(for: [exp], timeout: defaultTimeout)
+
+        // Assert reminder was rolled back
+        var actualRemindAt: Date?
+        try database.writeSynchronously { session in
+            let message = session.message(id: messageId)
+            actualRemindAt = message?.reminder?.remindAt?.bridgeDate
+        }
+        XCTAssertNil(actualRemindAt)
+    }
+
+    func test_updateReminder_makesCorrectAPICall() throws {
+        // Prepare data for the test
+        let messageId: MessageId = .unique
+        let cid: ChannelId = .unique
+        let newRemindAt = Date().addingTimeInterval(3600) // 1 hour from now
+        let currentUserId: UserId = .unique
+        
+        // Create current user in the database
+        try database.createCurrentUser(id: currentUserId)
+        
+        // Create a channel in the database
+        try database.createChannel(cid: cid)
+        
+        // Create a message with an existing reminder
+        try database.createMessage(id: messageId, cid: cid, text: "Test message")
+        let messageDTO = try XCTUnwrap(database.viewContext.message(id: messageId))
+        
+        try database.writeSynchronously { session in
+            try session.saveReminder(
+                payload: .init(
+                    channelCid: cid,
+                    messageId: messageId,
+                    remindAt: .unique,
+                    createdAt: .unique,
+                    updatedAt: .unique
+                ),
+                cache: nil
+            )
+        }
+
+        // Simulate `updateReminder` call
+        let exp = expectation(description: "completion is called")
+        messageUpdater.updateReminder(
+            messageId: messageId,
+            cid: cid,
+            remindAt: newRemindAt
+        ) { _ in
+            exp.fulfill()
+        }
+        
+        apiClient.test_mockResponseResult(.success(ReminderResponsePayload(
+            reminder: .init(
+                channelCid: cid,
+                messageId: messageId,
+                remindAt: newRemindAt,
+                createdAt: .unique,
+                updatedAt: .unique
+            )
+        )))
+        
+        wait(for: [exp], timeout: defaultTimeout)
+        
+        // Assert endpoint is correct
+        let expectedEndpoint: Endpoint<ReminderResponsePayload> = .updateReminder(
+            messageId: messageId,
+            request: ReminderRequestBody(remindAt: newRemindAt)
+        )
+        XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(expectedEndpoint))
+    }
+    
+    func test_updateReminder_updatesLocalMessageOptimistically() throws {
+        // Prepare data for the test
+        let messageId: MessageId = .unique
+        let cid: ChannelId = .unique
+        let newRemindAt = Date().addingTimeInterval(3600) // 1 hour from now
+        let currentUserId: UserId = .unique
+        
+        // Create current user in the database
+        try database.createCurrentUser(id: currentUserId)
+        
+        // Create a channel in the database
+        try database.createChannel(cid: cid)
+        
+        // Create a message with an existing reminder
+        try database.createMessage(id: messageId, cid: cid, text: "Test message")
+        let messageDTO = try XCTUnwrap(database.viewContext.message(id: messageId))
+        
+        try database.writeSynchronously { session in
+            try session.saveReminder(
+                payload: .init(
+                    channelCid: cid,
+                    messageId: messageId,
+                    remindAt: .unique,
+                    createdAt: .unique,
+                    updatedAt: .unique
+                ),
+                cache: nil
+            )
+        }
+
+        // Simulate `updateReminder` call
+        messageUpdater.updateReminder(
+            messageId: messageId,
+            cid: cid,
+            remindAt: newRemindAt
+        ) { _ in }
+        
+        // Assert reminder was updated locally (optimistically)
+        var updatedRemindAt: Date?
+        try database.writeSynchronously { session in
+            let message = session.message(id: messageId)
+            updatedRemindAt = message?.reminder?.remindAt?.bridgeDate
+        }
+        XCTAssertNearlySameDate(updatedRemindAt, newRemindAt)
+    }
+    
+    func test_updateReminder_rollsBackOnFailure() throws {
+        // Prepare data for the test
+        let messageId: MessageId = .unique
+        let cid: ChannelId = .unique
+        let originalRemindAt = Date().addingTimeInterval(-3600) // 1 hour ago
+        let newRemindAt = Date().addingTimeInterval(3600) // 1 hour from now
+        let currentUserId: UserId = .unique
+        
+        // Create current user in the database
+        try database.createCurrentUser(id: currentUserId)
+        
+        // Create a channel in the database
+        try database.createChannel(cid: cid)
+        
+        // Create a message with an existing reminder
+        try database.createMessage(id: messageId, cid: cid, text: "Test message")
+        let messageDTO = try XCTUnwrap(database.viewContext.message(id: messageId))
+        
+        try database.writeSynchronously { session in
+            try session.saveReminder(
+                payload: .init(
+                    channelCid: cid,
+                    messageId: messageId,
+                    remindAt: originalRemindAt,
+                    createdAt: .unique,
+                    updatedAt: .unique
+                ),
+                cache: nil
+            )
+        }
+
+        // Simulate `updateReminder` call
+        let exp = expectation(description: "completion is called")
+        messageUpdater.updateReminder(
+            messageId: messageId,
+            cid: cid,
+            remindAt: newRemindAt
+        ) { _ in
+            exp.fulfill()
+        }
+        
+        // Assert reminder was updated locally (optimistically)
+        var updatedRemindAt: Date?
+        try database.writeSynchronously { session in
+            let message = session.message(id: messageId)
+            updatedRemindAt = message?.reminder?.remindAt?.bridgeDate
+        }
+        XCTAssertNearlySameDate(updatedRemindAt, newRemindAt)
+        
+        // Simulate API failure
+        apiClient.test_simulateResponse(Result<ReminderResponsePayload, Error>.failure(TestError()))
+        
+        wait(for: [exp], timeout: defaultTimeout)
+        
+        // Assert reminder was rolled back to original state
+        var rolledBackRemindAt: Date?
+        try database.writeSynchronously { session in
+            let message = session.message(id: messageId)
+            rolledBackRemindAt = message?.reminder?.remindAt?.bridgeDate
+        }
+        XCTAssertNearlySameDate(rolledBackRemindAt, originalRemindAt)
+    }
+    
+    func test_deleteReminder_makesCorrectAPICall() throws {
+        // Prepare data for the test
+        let messageId: MessageId = .unique
+        let cid: ChannelId = .unique
+        let currentUserId: UserId = .unique
+        
+        // Create current user in the database
+        try database.createCurrentUser(id: currentUserId)
+        
+        // Create a channel in the database
+        try database.createChannel(cid: cid)
+        
+        // Create a message with reminder
+        try database.createMessage(id: messageId, cid: cid, text: "Test message")
+        let messageDTO = try XCTUnwrap(database.viewContext.message(id: messageId))
+        
+        try database.writeSynchronously { session in
+            let reminderDTO = session.message(id: messageId)?.reminder
+            messageDTO.reminder = reminderDTO
+        }
+        
+        // Simulate `deleteReminder` call
+        let exp = expectation(description: "completion is called")
+        messageUpdater.deleteReminder(
+            messageId: messageId,
+            cid: cid
+        ) { _ in
+            exp.fulfill()
+        }
+        
+        apiClient.test_mockResponseResult(.success(EmptyResponse()))
+        
+        wait(for: [exp], timeout: defaultTimeout)
+        
+        // Assert endpoint is correct
+        let expectedEndpoint: Endpoint<EmptyResponse> = .deleteReminder(messageId: messageId)
+        XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(expectedEndpoint))
+    }
+    
+    func test_deleteReminder_deletesLocalReminderOptimistically() throws {
+        // Prepare data for the test
+        let messageId: MessageId = .unique
+        let cid: ChannelId = .unique
+        let currentUserId: UserId = .unique
+        
+        // Create current user in the database
+        try database.createCurrentUser(id: currentUserId)
+        
+        // Create a channel in the database
+        try database.createChannel(cid: cid)
+        
+        // Create a message with reminder
+        try database.createMessage(id: messageId, cid: cid, text: "Test message")
+        let messageDTO = try XCTUnwrap(database.viewContext.message(id: messageId))
+        
+        try database.writeSynchronously { session in
+            try session.saveReminder(
+                payload: .init(
+                    channelCid: cid,
+                    messageId: messageId,
+                    remindAt: .unique,
+                    createdAt: .unique,
+                    updatedAt: .unique
+                ),
+                cache: nil
+            )
+        }
+        
+        // Verify reminder exists before deletion
+        var hasReminderBefore = false
+        try database.writeSynchronously { session in
+            hasReminderBefore = session.message(id: messageId)?.reminder != nil
+        }
+        XCTAssertTrue(hasReminderBefore, "Message should have a reminder before deletion")
+        
+        // Simulate `deleteReminder` call
+        messageUpdater.deleteReminder(
+            messageId: messageId,
+            cid: cid
+        ) { _ in }
+        
+        // Assert reminder was deleted locally (optimistically)
+        var hasReminderAfter = true
+        try database.writeSynchronously { session in
+            hasReminderAfter = session.message(id: messageId)?.reminder != nil
+        }
+        XCTAssertFalse(hasReminderAfter, "Reminder should be optimistically deleted locally")
+    }
+    
+    func test_deleteReminder_rollsBackOnFailure() throws {
+        // Prepare data for the test
+        let messageId: MessageId = .unique
+        let cid: ChannelId = .unique
+        let currentUserId: UserId = .unique
+        
+        // Create current user in the database
+        try database.createCurrentUser(id: currentUserId)
+        
+        // Create a channel in the database
+        try database.createChannel(cid: cid)
+        
+        // Create a message with reminder
+        try database.createMessage(id: messageId, cid: cid, text: "Test message")
+        let messageDTO = try XCTUnwrap(database.viewContext.message(id: messageId))
+        
+        try database.writeSynchronously { session in
+            try session.saveReminder(
+                payload: .init(
+                    channelCid: cid,
+                    messageId: messageId,
+                    remindAt: .unique,
+                    createdAt: .unique,
+                    updatedAt: .unique
+                ),
+                cache: nil
+            )
+        }
+
+        // Store original reminder values for later comparison
+        var originalRemindAt: Date?
+        var originalCreatedAt: Date?
+        var originalUpdatedAt: Date?
+        
+        try database.writeSynchronously { session in
+            guard let reminder = session.message(id: messageId)?.reminder else { return }
+            originalRemindAt = reminder.remindAt?.bridgeDate
+            originalCreatedAt = reminder.createdAt.bridgeDate
+            originalUpdatedAt = reminder.updatedAt.bridgeDate
+        }
+        
+        // Simulate `deleteReminder` call
+        let exp = expectation(description: "completion is called")
+        messageUpdater.deleteReminder(
+            messageId: messageId,
+            cid: cid
+        ) { _ in
+            exp.fulfill()
+        }
+        
+        // Verify reminder was optimistically deleted
+        var hasReminderAfterDelete = true
+        try database.writeSynchronously { session in
+            hasReminderAfterDelete = session.message(id: messageId)?.reminder != nil
+        }
+        XCTAssertFalse(hasReminderAfterDelete, "Reminder should be optimistically deleted")
+        
+        // Simulate API failure
+        apiClient.test_simulateResponse(Result<EmptyResponse, Error>.failure(TestError()))
+        
+        wait(for: [exp], timeout: defaultTimeout)
+        
+        // Assert reminder was restored with original values
+        var restoredRemindAt: Date?
+        var restoredCreatedAt: Date?
+        var restoredUpdatedAt: Date?
+        
+        try database.writeSynchronously { session in
+            guard let reminder = session.message(id: messageId)?.reminder else {
+                XCTFail("Reminder should be restored after API failure")
+                return
+            }
+            
+            restoredRemindAt = reminder.remindAt?.bridgeDate
+            restoredCreatedAt = reminder.createdAt.bridgeDate
+            restoredUpdatedAt = reminder.updatedAt.bridgeDate
+        }
+        
+        XCTAssertNearlySameDate(restoredRemindAt, originalRemindAt)
+        XCTAssertNearlySameDate(restoredCreatedAt, originalCreatedAt)
+        XCTAssertNearlySameDate(restoredUpdatedAt, originalUpdatedAt)
+    }
 }
 
 // MARK: - Helpers

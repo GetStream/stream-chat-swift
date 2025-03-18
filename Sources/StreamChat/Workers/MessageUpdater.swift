@@ -947,13 +947,13 @@ class MessageUpdater: Worker {
             } catch {
                 log.warning("Failed to optimistically create reminder in the database: \(error)")
             }
-        } completion: { [weak self] _ in
+        } completion: { _ in
             // Make the API call to create the reminder
-            self?.apiClient.request(endpoint: endpoint) { result in
+            self.apiClient.request(endpoint: endpoint) { result in
                 switch result {
                 case .success(let payload):
                     var reminder: MessageReminder!
-                    self?.database.write({ session in
+                    self.database.write({ session in
                         let messageReminder = payload.reminder
                         reminder = try session.saveReminder(payload: messageReminder, cache: nil).asModel()
                     }, completion: { error in
@@ -965,7 +965,7 @@ class MessageUpdater: Worker {
                     })
                 case .failure(let error):
                     // Rollback the optimistic update if the API call fails
-                    self?.database.write({ session in
+                    self.database.write({ session in
                         session.deleteReminder(messageId: messageId)
                     }, completion: { _ in
                         completion(.failure(error))
