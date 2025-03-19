@@ -1691,6 +1691,7 @@
 		ADB8B8EB2D8890B900549C95 /* MessageReminderDTO.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADB8B8E92D8890B900549C95 /* MessageReminderDTO.swift */; };
 		ADB8B8ED2D8890E000549C95 /* MessageReminder.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADB8B8EC2D8890E000549C95 /* MessageReminder.swift */; };
 		ADB8B8EE2D8890E000549C95 /* MessageReminder.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADB8B8EC2D8890E000549C95 /* MessageReminder.swift */; };
+		ADB8B8F02D8A493900549C95 /* ReminderPayload.json in Resources */ = {isa = PBXBuildFile; fileRef = ADB8B8EF2D8A493900549C95 /* ReminderPayload.json */; };
 		ADB951A1291BD7CC00800554 /* UploadedAttachment.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADB951A0291BD7CC00800554 /* UploadedAttachment.swift */; };
 		ADB951A2291BD7CC00800554 /* UploadedAttachment.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADB951A0291BD7CC00800554 /* UploadedAttachment.swift */; };
 		ADB951AB291C1DE400800554 /* AttachmentUploader_Spy.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADB951A8291C1DDC00800554 /* AttachmentUploader_Spy.swift */; };
@@ -4408,6 +4409,7 @@
 		ADB4165026208C7900E623E3 /* AttachmentPreviewProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AttachmentPreviewProvider.swift; sourceTree = "<group>"; };
 		ADB8B8E92D8890B900549C95 /* MessageReminderDTO.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageReminderDTO.swift; sourceTree = "<group>"; };
 		ADB8B8EC2D8890E000549C95 /* MessageReminder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageReminder.swift; sourceTree = "<group>"; };
+		ADB8B8EF2D8A493900549C95 /* ReminderPayload.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = ReminderPayload.json; sourceTree = "<group>"; };
 		ADB951A0291BD7CC00800554 /* UploadedAttachment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UploadedAttachment.swift; sourceTree = "<group>"; };
 		ADB951A8291C1DDC00800554 /* AttachmentUploader_Spy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AttachmentUploader_Spy.swift; sourceTree = "<group>"; };
 		ADB951AC291C22DB00800554 /* UploadedAttachment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UploadedAttachment.swift; sourceTree = "<group>"; };
@@ -8151,6 +8153,7 @@
 		A3C729552840BA4800FFE8B4 /* JSONs */ = {
 			isa = PBXGroup;
 			children = (
+				ADB8B8EF2D8A493900549C95 /* ReminderPayload.json */,
 				AD545E6C2D565316008FD399 /* DraftMessage.json */,
 				798779F72498E47700015F8B /* Channel.json */,
 				AD6E32972BBB13650073831B /* Thread.json */,
@@ -10291,6 +10294,7 @@
 				A311B3E527E8B98C00CFCF6D /* MessageWithBrokenAttachments.json in Resources */,
 				A311B3ED27E8B99800CFCF6D /* ChannelHidden+HistoryCleared.json in Resources */,
 				A3D9D68827EDE3B900725066 /* chewbacca.jpg in Resources */,
+				ADB8B8F02D8A493900549C95 /* ReminderPayload.json in Resources */,
 				A311B3CE27E8B98C00CFCF6D /* CurrentUserCustomRole.json in Resources */,
 				A311B3D227E8B98C00CFCF6D /* UserPayload.json in Resources */,
 				A311B3EE27E8B99800CFCF6D /* ChannelTruncated.json in Resources */,

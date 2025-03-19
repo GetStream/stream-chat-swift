@@ -84,7 +84,7 @@ extension NSManagedObjectContext: ReminderDatabaseSession {
         let channelDTO: ChannelDTO
         if let existingChannel = ChannelDTO.load(cid: payload.channelCid, context: self) {
             channelDTO = existingChannel
-        } else if let channelPayload = payload.message?.channel {
+        } else if let channelPayload = payload.channel {
             channelDTO = try saveChannel(payload: channelPayload, query: nil, cache: nil)
         } else {
             throw ClientError.ChannelDoesNotExist(cid: payload.channelCid)

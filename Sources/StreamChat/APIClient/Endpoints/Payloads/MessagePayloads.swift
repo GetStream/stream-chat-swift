@@ -390,6 +390,7 @@ public struct Command: Codable, Hashable {
 /// An object describing a reminder JSON payload.
 struct ReminderPayload: Decodable {
     let channelCid: ChannelId
+    let channel: ChannelDetailPayload?
     let messageId: MessageId
     let message: MessagePayload?
     let remindAt: Date?
@@ -400,6 +401,7 @@ struct ReminderPayload: Decodable {
         channelCid: ChannelId,
         messageId: MessageId,
         message: MessagePayload? = nil,
+        channel: ChannelDetailPayload? = nil,
         remindAt: Date?,
         createdAt: Date,
         updatedAt: Date
@@ -407,6 +409,7 @@ struct ReminderPayload: Decodable {
         self.channelCid = channelCid
         self.messageId = messageId
         self.message = message
+        self.channel = channel
         self.remindAt = remindAt
         self.createdAt = createdAt
         self.updatedAt = updatedAt
@@ -416,6 +419,7 @@ struct ReminderPayload: Decodable {
         case channelCid = "channel_cid"
         case messageId = "message_id"
         case message
+        case channel
         case remindAt = "remind_at"
         case createdAt = "created_at"
         case updatedAt = "updated_at"
