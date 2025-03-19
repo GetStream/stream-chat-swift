@@ -342,7 +342,6 @@ final class RemindersQueryPayload_Tests: XCTestCase {
                 }
             ],
             "next": "next-page-token",
-            "prev": "prev-page-token"
         }
         """.data(using: .utf8)!
         
@@ -353,7 +352,6 @@ final class RemindersQueryPayload_Tests: XCTestCase {
         
         // Verify pagination tokens
         XCTAssertEqual(payload.next, "next-page-token")
-        XCTAssertEqual(payload.prev, "prev-page-token")
         
         // Verify first reminder details
         XCTAssertEqual(payload.reminders[0].channelCid.rawValue, "messaging:26D82FB1-5")

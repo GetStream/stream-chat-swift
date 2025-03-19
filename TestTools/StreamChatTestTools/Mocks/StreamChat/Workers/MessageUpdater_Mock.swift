@@ -133,23 +133,6 @@ final class MessageUpdater_Mock: MessageUpdater {
     var loadThread_query: ThreadQuery?
     var loadThread_completion: ((Result<ChatThread, any Error>) -> Void)?
 
-    @Atomic var createReminder_messageId: MessageId?
-    @Atomic var createReminder_cid: ChannelId?
-    @Atomic var createReminder_remindAt: Date?
-    @Atomic var createReminder_completion: ((Result<MessageReminder, Error>) -> Void)?
-    @Atomic var createReminder_completion_result: Result<MessageReminder, Error>?
-    
-    @Atomic var updateReminder_messageId: MessageId?
-    @Atomic var updateReminder_cid: ChannelId?
-    @Atomic var updateReminder_remindAt: Date?
-    @Atomic var updateReminder_completion: ((Result<MessageReminder, Error>) -> Void)?
-    @Atomic var updateReminder_completion_result: Result<MessageReminder, Error>?
-    
-    @Atomic var deleteReminder_messageId: MessageId?
-    @Atomic var deleteReminder_cid: ChannelId?
-    @Atomic var deleteReminder_completion: ((Error?) -> Void)?
-    @Atomic var deleteReminder_error: Error?
-
     // Cleans up all recorded values
     func cleanUp() {
         getMessage_cid = nil
@@ -264,23 +247,6 @@ final class MessageUpdater_Mock: MessageUpdater {
 
         loadThread_query = nil
         loadThread_completion = nil
-
-        createReminder_messageId = nil
-        createReminder_cid = nil
-        createReminder_remindAt = nil
-        createReminder_completion = nil
-        createReminder_completion_result = nil
-        
-        updateReminder_messageId = nil
-        updateReminder_cid = nil
-        updateReminder_remindAt = nil
-        updateReminder_completion = nil
-        updateReminder_completion_result = nil
-        
-        deleteReminder_messageId = nil
-        deleteReminder_cid = nil
-        deleteReminder_completion = nil
-        deleteReminder_error = nil
     }
 
     override func getMessage(cid: ChannelId, messageId: MessageId, completion: ((Result<ChatMessage, Error>) -> Void)? = nil) {
@@ -549,46 +515,6 @@ final class MessageUpdater_Mock: MessageUpdater {
         loadThread_callCount += 1
         loadThread_query = query
         loadThread_completion = completion
-    }
-
-    override func createReminder(
-        messageId: MessageId,
-        cid: ChannelId,
-        remindAt: Date?,
-        completion: @escaping ((Result<MessageReminder, Error>) -> Void)
-    ) {
-        createReminder_messageId = messageId
-        createReminder_cid = cid
-        createReminder_remindAt = remindAt
-        createReminder_completion = completion
-        
-        if let result = createReminder_completion_result {
-            completion(result)
-        }
-    }
-    
-    override func updateReminder(
-        messageId: MessageId,
-        cid: ChannelId,
-        remindAt: Date?,
-        completion: @escaping ((Result<MessageReminder, Error>) -> Void)
-    ) {
-        updateReminder_messageId = messageId
-        updateReminder_cid = cid
-        updateReminder_remindAt = remindAt
-        updateReminder_completion = completion
-        
-        if let result = updateReminder_completion_result {
-            completion(result)
-        }
-    }
-
-    override func deleteReminder(messageId: MessageId, cid: ChannelId, completion: @escaping (((any Error)?) -> Void)) {
-        deleteReminder_messageId = messageId
-        deleteReminder_cid = cid
-        deleteReminder_completion = completion
-        
-        completion(deleteReminder_error)
     }
 }
 

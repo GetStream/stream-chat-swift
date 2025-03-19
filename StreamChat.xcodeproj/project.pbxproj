@@ -1692,9 +1692,13 @@
 		ADB8B8ED2D8890E000549C95 /* MessageReminder.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADB8B8EC2D8890E000549C95 /* MessageReminder.swift */; };
 		ADB8B8EE2D8890E000549C95 /* MessageReminder.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADB8B8EC2D8890E000549C95 /* MessageReminder.swift */; };
 		ADB8B8F02D8A493900549C95 /* ReminderPayload.json in Resources */ = {isa = PBXBuildFile; fileRef = ADB8B8EF2D8A493900549C95 /* ReminderPayload.json */; };
-		ADB8B8F22D8ADA0700549C95 /* ReminderRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADB8B8F12D8ADA0700549C95 /* ReminderRepository.swift */; };
-		ADB8B8F32D8ADA0700549C95 /* ReminderRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADB8B8F12D8ADA0700549C95 /* ReminderRepository.swift */; };
+		ADB8B8F22D8ADA0700549C95 /* RemindersRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADB8B8F12D8ADA0700549C95 /* RemindersRepository.swift */; };
+		ADB8B8F32D8ADA0700549C95 /* RemindersRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADB8B8F12D8ADA0700549C95 /* RemindersRepository.swift */; };
 		ADB8B8F52D8ADC9400549C95 /* DemoReminderListVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADB8B8F42D8ADC9400549C95 /* DemoReminderListVC.swift */; };
+		ADB8B8F72D8B846D00549C95 /* RemindersRepository_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADB8B8F62D8B846D00549C95 /* RemindersRepository_Tests.swift */; };
+		ADB8B8F92D8B8A0C00549C95 /* RemindersRepository_Mock.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADB8B8F82D8B8A0C00549C95 /* RemindersRepository_Mock.swift */; };
+		ADB8B8FB2D8B904D00549C95 /* MessageController+Reminders_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADB8B8FA2D8B904D00549C95 /* MessageController+Reminders_Tests.swift */; };
+		ADB8B8FD2D8B966E00549C95 /* CurrentUserController+Reminders_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADB8B8FC2D8B966E00549C95 /* CurrentUserController+Reminders_Tests.swift */; };
 		ADB951A1291BD7CC00800554 /* UploadedAttachment.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADB951A0291BD7CC00800554 /* UploadedAttachment.swift */; };
 		ADB951A2291BD7CC00800554 /* UploadedAttachment.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADB951A0291BD7CC00800554 /* UploadedAttachment.swift */; };
 		ADB951AB291C1DE400800554 /* AttachmentUploader_Spy.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADB951A8291C1DDC00800554 /* AttachmentUploader_Spy.swift */; };
@@ -4413,8 +4417,12 @@
 		ADB8B8E92D8890B900549C95 /* MessageReminderDTO.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageReminderDTO.swift; sourceTree = "<group>"; };
 		ADB8B8EC2D8890E000549C95 /* MessageReminder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageReminder.swift; sourceTree = "<group>"; };
 		ADB8B8EF2D8A493900549C95 /* ReminderPayload.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = ReminderPayload.json; sourceTree = "<group>"; };
-		ADB8B8F12D8ADA0700549C95 /* ReminderRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReminderRepository.swift; sourceTree = "<group>"; };
+		ADB8B8F12D8ADA0700549C95 /* RemindersRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemindersRepository.swift; sourceTree = "<group>"; };
 		ADB8B8F42D8ADC9400549C95 /* DemoReminderListVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DemoReminderListVC.swift; sourceTree = "<group>"; };
+		ADB8B8F62D8B846D00549C95 /* RemindersRepository_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemindersRepository_Tests.swift; sourceTree = "<group>"; };
+		ADB8B8F82D8B8A0C00549C95 /* RemindersRepository_Mock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemindersRepository_Mock.swift; sourceTree = "<group>"; };
+		ADB8B8FA2D8B904D00549C95 /* MessageController+Reminders_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MessageController+Reminders_Tests.swift"; sourceTree = "<group>"; };
+		ADB8B8FC2D8B966E00549C95 /* CurrentUserController+Reminders_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CurrentUserController+Reminders_Tests.swift"; sourceTree = "<group>"; };
 		ADB951A0291BD7CC00800554 /* UploadedAttachment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UploadedAttachment.swift; sourceTree = "<group>"; };
 		ADB951A8291C1DDC00800554 /* AttachmentUploader_Spy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AttachmentUploader_Spy.swift; sourceTree = "<group>"; };
 		ADB951AC291C22DB00800554 /* UploadedAttachment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UploadedAttachment.swift; sourceTree = "<group>"; };
@@ -7334,6 +7342,7 @@
 		A364D0A327D126490029857A /* Repositories */ = {
 			isa = PBXGroup;
 			children = (
+				ADB8B8F62D8B846D00549C95 /* RemindersRepository_Tests.swift */,
 				AD545E782D5BC14E008FD399 /* DraftMessagesRepository_Tests.swift */,
 				C11BAA4C2907EC7B004C5EA4 /* AuthenticationRepository_Tests.swift */,
 				C18514FC292E34E10033387E /* ConnectionRepository_Tests.swift */,
@@ -7431,6 +7440,7 @@
 		A364D0AD27D1291E0029857A /* CurrentUserController */ = {
 			isa = PBXGroup;
 			children = (
+				ADB8B8FC2D8B966E00549C95 /* CurrentUserController+Reminders_Tests.swift */,
 				AD545E822D5D0389008FD399 /* CurrentUserController+Drafts_Tests.swift */,
 				F69E7F7C24ED7562000F5252 /* CurrentUserController_Tests.swift */,
 				DA4AA3B5250271B100FAAF6E /* CurrentUserController+Combine_Tests.swift */,
@@ -7482,6 +7492,7 @@
 			isa = PBXGroup;
 			children = (
 				AD545E802D5D0006008FD399 /* MessageController+Drafts_Tests.swift */,
+				ADB8B8FA2D8B904D00549C95 /* MessageController+Reminders_Tests.swift */,
 				F649B2362500F785008F98C8 /* MessageController_Tests.swift */,
 				DAF1BED625066128003CEDC0 /* MessageController+Combine_Tests.swift */,
 				DAF1BED225066107003CEDC0 /* MessageController+SwiftUI_Tests.swift */,
@@ -9156,6 +9167,7 @@
 		C12D0A5E28FD58CE0099895A /* Repositories */ = {
 			isa = PBXGroup;
 			children = (
+				ADB8B8F82D8B8A0C00549C95 /* RemindersRepository_Mock.swift */,
 				AD545E7E2D5CFC36008FD399 /* DraftMessagesRepository_Mock.swift */,
 				C12D0A5F28FD59B60099895A /* AuthenticationRepository_Mock.swift */,
 				A344074E27D753530044F150 /* ConnectionRepository_Mock.swift */,
@@ -9290,7 +9302,7 @@
 		C1E8AD59278DDC500041B775 /* Repositories */ = {
 			isa = PBXGroup;
 			children = (
-				ADB8B8F12D8ADA0700549C95 /* ReminderRepository.swift */,
+				ADB8B8F12D8ADA0700549C95 /* RemindersRepository.swift */,
 				C135A1CA28F45F6B0058EFB6 /* AuthenticationRepository.swift */,
 				88206FC325B18C88009D086A /* ConnectionRepository.swift */,
 				C1B0B38527BFE8AB00C8207D /* MessageRepository.swift */,
@@ -11239,6 +11251,7 @@
 				A3C3BC8327E8AB6200224761 /* URLSessionConfiguration+Equatable.swift in Sources */,
 				A3C3BC3C27E87F5100224761 /* RetryStrategy_Spy.swift in Sources */,
 				A344078F27D753530044F150 /* ChatChannelListController_Mock.swift in Sources */,
+				ADB8B8F92D8B8A0C00549C95 /* RemindersRepository_Mock.swift in Sources */,
 				A311B43427E8BC8400CFCF6D /* MessageSearchController_Delegate.swift in Sources */,
 				A3C3BC7427E8AA4300224761 /* TestError.swift in Sources */,
 				A311B43327E8BC8400CFCF6D /* ConnectionController_Delegate.swift in Sources */,
@@ -11622,7 +11635,7 @@
 				C1E8AD5E278EF5F30041B775 /* AsyncOperation.swift in Sources */,
 				88D85DA7252F3C1D00AE1030 /* MemberListController.swift in Sources */,
 				79280F4B248523C000CDEB89 /* ConnectionEvents.swift in Sources */,
-				ADB8B8F32D8ADA0700549C95 /* ReminderRepository.swift in Sources */,
+				ADB8B8F32D8ADA0700549C95 /* RemindersRepository.swift in Sources */,
 				79158CF425F133FB00186102 /* ChannelTruncatedEventMiddleware.swift in Sources */,
 				882C574A252C767E00E60C44 /* ChannelMemberListPayload.swift in Sources */,
 				DAFAD6A324DD8E1A0043ED06 /* ChannelEditDetailPayload.swift in Sources */,
@@ -11802,6 +11815,7 @@
 				8459C9EE2BFB673E00F0D235 /* PollVoteListController+Combine_Tests.swift in Sources */,
 				8836FFC325408210009FDF73 /* FlagUserPayload_Tests.swift in Sources */,
 				C18514FD292E34E10033387E /* ConnectionRepository_Tests.swift in Sources */,
+				ADB8B8F72D8B846D00549C95 /* RemindersRepository_Tests.swift in Sources */,
 				4FE56B902D5E002A00589F9A /* MarkdownParser_Tests.swift in Sources */,
 				7964F3AA249A19EA002A09EC /* Filter_Tests.swift in Sources */,
 				4F5151962BC3DEA1001B7152 /* UserSearch_Tests.swift in Sources */,
@@ -12060,6 +12074,7 @@
 				8AC9CBD424C7351D006E236C /* ReactionEvents_Tests.swift in Sources */,
 				C11B575629D20F3600D5A248 /* User_Tests.swift in Sources */,
 				8AC9CBE424C74ECB006E236C /* NotificationEvents_Tests.swift in Sources */,
+				ADB8B8FD2D8B966E00549C95 /* CurrentUserController+Reminders_Tests.swift in Sources */,
 				405D172D2A03E57C00A77C3B /* AVAssetTotalAudioSamples_Tests.swift in Sources */,
 				ADE57B892C3C626100DD6B88 /* ThreadEvents_Tests.swift in Sources */,
 				84EB4E78276A03DE00E47E73 /* ErrorPayload_Tests.swift in Sources */,
@@ -12095,6 +12110,7 @@
 				AD0F7F1C2B616DD000914C4C /* TextLinkDetector_Tests.swift in Sources */,
 				BCE486580F913CFFDB3B5ECD /* JSONEncoder_Tests.swift in Sources */,
 				BCE48639FD7B6B05CD63A6AF /* FilterDecoding_Tests.swift in Sources */,
+				ADB8B8FB2D8B904D00549C95 /* MessageController+Reminders_Tests.swift in Sources */,
 				C152F5FE27C65C18003B4805 /* MessageRepository_Tests.swift in Sources */,
 				BCE484BA1EE03FF336034250 /* FilterEncoding_Tests.swift in Sources */,
 			);
@@ -12407,7 +12423,7 @@
 				C121E852274544AE00023E4C /* ModerationEndpoints.swift in Sources */,
 				C121E853274544AE00023E4C /* WebSocketConnectEndpoint.swift in Sources */,
 				4F73F39F2B91C7BF00563CD9 /* MessageState+Observer.swift in Sources */,
-				ADB8B8F22D8ADA0700549C95 /* ReminderRepository.swift in Sources */,
+				ADB8B8F22D8ADA0700549C95 /* RemindersRepository.swift in Sources */,
 				C121E854274544AE00023E4C /* MemberEndpoints.swift in Sources */,
 				C121E855274544AE00023E4C /* AttachmentEndpoints.swift in Sources */,
 				C121E856274544AE00023E4C /* ChatRemoteNotificationHandler.swift in Sources */,

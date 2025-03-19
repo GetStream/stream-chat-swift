@@ -121,8 +121,8 @@ public class CurrentChatUserController: DataController, DelegateCallable, DataSt
     private var messageRemindersObserver: BackgroundListDatabaseObserver<MessageReminder, MessageReminderDTO>?
     
     /// The repository for message reminders.
-    private var reminderRepository: ReminderRepository
-    
+    private var remindersRepository: RemindersRepository
+
     /// The token for the next page of message reminders.
     private var messageRemindersNextCursor: String?
     
@@ -151,7 +151,7 @@ public class CurrentChatUserController: DataController, DelegateCallable, DataSt
         self.client = client
         self.environment = environment
         draftMessagesRepository = client.draftMessagesRepository
-        reminderRepository = client.reminderRepository
+        remindersRepository = client.remindersRepository
     }
 
     /// Synchronize local data with remote. Waits for the client to connect but doesn't initiate the connection itself.
@@ -481,7 +481,7 @@ public extension CurrentChatUserController {
     ) {
         reminderListQuery = query
         createMessageRemindersObserver(query: query)
-        reminderRepository.loadReminders(query: query) { result in
+        remindersRepository.loadReminders(query: query) { result in
             self.callback {
                 switch result {
                 case let .success(response):
@@ -514,7 +514,7 @@ public extension CurrentChatUserController {
         var updatedQuery = reminderListQuery
         updatedQuery.pagination = Pagination(pageSize: limit, cursor: nextCursor)
 
-        reminderRepository.loadReminders(query: updatedQuery) { result in
+        remindersRepository.loadReminders(query: updatedQuery) { result in
             self.callback {
                 switch result {
                 case let .success(response):

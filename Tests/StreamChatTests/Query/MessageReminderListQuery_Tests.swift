@@ -16,22 +16,16 @@ final class MessageReminderListQuery_Tests: XCTestCase {
         XCTAssertEqual(query.sort.count, 1)
         XCTAssertEqual(query.sort[0].key, .remindAt)
         XCTAssertTrue(query.sort[0].isAscending)
-        XCTAssertNil(query.next)
-        XCTAssertNil(query.prev)
     }
     
     func test_customInitialization() {
-        let filter = Filter<MessageReminderListFilterScope>.equal(.channelCid, to: ChannelId.unique)
+        let filter = Filter<MessageReminderListFilterScope>.equal(.cid, to: ChannelId.unique)
         let sort = [Sorting<MessageReminderListSortingKey>(key: .createdAt, isAscending: false)]
-        let next = "next-token"
-        let prev = "prev-token"
         
         let query = MessageReminderListQuery(
             filter: filter,
             sort: sort,
-            pageSize: 10,
-            next: next,
-            prev: prev
+            pageSize: 10
         )
         
         XCTAssertEqual(query.filter?.filterHash, filter.filterHash)
@@ -39,30 +33,22 @@ final class MessageReminderListQuery_Tests: XCTestCase {
         XCTAssertEqual(query.sort.count, 1)
         XCTAssertEqual(query.sort[0].key, .createdAt)
         XCTAssertFalse(query.sort[0].isAscending)
-        XCTAssertEqual(query.next, next)
-        XCTAssertEqual(query.prev, prev)
     }
     
     func test_encode_withAllFields() throws {
-        let filter = Filter<MessageReminderListFilterScope>.equal(.channelCid, to: ChannelId.unique)
+        let filter = Filter<MessageReminderListFilterScope>.equal(.cid, to: ChannelId.unique)
         let sort = [Sorting<MessageReminderListSortingKey>(key: .createdAt, isAscending: false)]
-        let next = "next-token"
-        let prev = "prev-token"
         
         let query = MessageReminderListQuery(
             filter: filter,
             sort: sort,
-            pageSize: 10,
-            next: next,
-            prev: prev
+            pageSize: 10
         )
         
         let expectedData: [String: Any] = [
             "filter": ["channel_cid": ["$eq": filter.value]],
             "sort": [["field": "created_at", "direction": -1]],
-            "limit": 10,
-            "next": next,
-            "prev": prev
+            "limit": 10
         ]
         
         let expectedJSON = try JSONSerialization.data(withJSONObject: expectedData, options: [])
@@ -90,8 +76,8 @@ final class MessageReminderListQuery_Tests: XCTestCase {
     }
     
     func test_encode_withoutSort() throws {
-        let filter = Filter<MessageReminderListFilterScope>.equal(.channelCid, to: ChannelId.unique)
-        
+        let filter = Filter<MessageReminderListFilterScope>.equal(.cid, to: ChannelId.unique)
+
         let query = MessageReminderListQuery(
             filter: filter,
             sort: [],
@@ -110,7 +96,7 @@ final class MessageReminderListQuery_Tests: XCTestCase {
     
     func test_filterKeys() {
         // Test the filter keys for proper values
-        XCTAssertEqual(FilterKey<MessageReminderListFilterScope, ChannelId>.channelCid.rawValue, "channel_cid")
+        XCTAssertEqual(FilterKey<MessageReminderListFilterScope, ChannelId>.cid.rawValue, "channel_cid")
         XCTAssertEqual(FilterKey<MessageReminderListFilterScope, MessageId>.messageId.rawValue, "message_id")
         XCTAssertEqual(FilterKey<MessageReminderListFilterScope, Date>.remindAt.rawValue, "remind_at")
         XCTAssertEqual(FilterKey<MessageReminderListFilterScope, Date>.createdAt.rawValue, "created_at")

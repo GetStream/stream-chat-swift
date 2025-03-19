@@ -84,8 +84,8 @@ public class ChatClient {
     }()
     
     /// Repository for handling message reminders
-    lazy var reminderRepository: ReminderRepository = {
-        environment.reminderRepositoryBuilder(databaseContainer, apiClient)
+    lazy var remindersRepository: RemindersRepository = {
+        environment.remindersRepositoryBuilder(databaseContainer, apiClient)
     }()
 
     let channelListUpdater: ChannelListUpdater

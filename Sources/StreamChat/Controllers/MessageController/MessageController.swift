@@ -190,6 +190,9 @@ public class ChatMessageController: DataController, DelegateCallable, DataStoreP
     /// The drafts repository.
     private let draftsRepository: DraftMessagesRepository
 
+    /// The reminders repository.
+    private let remindersRepository: RemindersRepository
+
     /// Creates a new `MessageControllerGeneric`.
     /// - Parameters:
     ///   - client: The `Client` instance this controller belongs to.
@@ -210,6 +213,7 @@ public class ChatMessageController: DataController, DelegateCallable, DataStoreP
             client.apiClient
         )
         draftsRepository = client.draftMessagesRepository
+        remindersRepository = client.remindersRepository
         super.init()
 
         setRepliesObserver()
@@ -942,7 +946,7 @@ public class ChatMessageController: DataController, DelegateCallable, DataStoreP
         remindAt: Date? = nil,
         completion: ((Result<MessageReminder, Error>) -> Void)? = nil
     ) {
-        messageUpdater.createReminder(
+        remindersRepository.createReminder(
             messageId: messageId,
             cid: cid,
             remindAt: remindAt
@@ -962,7 +966,7 @@ public class ChatMessageController: DataController, DelegateCallable, DataStoreP
         remindAt: Date?,
         completion: ((Result<MessageReminder, Error>) -> Void)? = nil
     ) {
-        messageUpdater.updateReminder(
+        remindersRepository.updateReminder(
             messageId: messageId,
             cid: cid,
             remindAt: remindAt
@@ -979,7 +983,7 @@ public class ChatMessageController: DataController, DelegateCallable, DataStoreP
     public func deleteReminder(
         completion: ((Error?) -> Void)? = nil
     ) {
-        messageUpdater.deleteReminder(
+        remindersRepository.deleteReminder(
             messageId: messageId,
             cid: cid
         ) { error in

@@ -252,7 +252,7 @@ final class MessageEndpoints_Tests: XCTestCase {
     
     func test_queryReminders_buildsCorrectly() {
         let query = MessageReminderListQuery(
-            filter: .equal(.channelCid, to: ChannelId.unique),
+            filter: .equal(.cid, to: ChannelId.unique),
             sort: [.init(key: .remindAt, isAscending: true)],
             pageSize: 25
         )
