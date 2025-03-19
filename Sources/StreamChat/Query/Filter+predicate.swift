@@ -4,7 +4,7 @@
 
 import Foundation
 
-extension Filter where Scope == ChannelListFilterScope {
+extension Filter {
     /// If a valueMapper was provided, then here we will try to transform the value
     /// using the mapper.
     ///
