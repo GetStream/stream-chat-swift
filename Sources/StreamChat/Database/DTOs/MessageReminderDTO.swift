@@ -8,14 +8,26 @@ import Foundation
 @objc(MessageReminderDTO)
 class MessageReminderDTO: NSManagedObject {
     @NSManaged var id: String
-    @NSManaged var remindAt: DBDate?
     @NSManaged var createdAt: DBDate
     @NSManaged var updatedAt: DBDate
-    
+    @NSManaged var remindAt: DBDate?
+
+    // An helper property that is used for sorting the reminders when `remindAt` is not set.
+    @NSManaged var sortingRemindAt: DBDate?
+
     // Relationships
     @NSManaged var message: MessageDTO
     @NSManaged var channel: ChannelDTO
-    
+
+    override func willSave() {
+        super.willSave()
+
+        let newSortingRemindAt = remindAt ?? .distantFuture.bridgeDate
+        if sortingRemindAt != newSortingRemindAt {
+            sortingRemindAt = newSortingRemindAt
+        }
+    }
+
     /// Returns a fetch request for a message reminder with the provided message ID.
     static func fetchRequest(messageId: MessageId) -> NSFetchRequest<MessageReminderDTO> {
         let request = NSFetchRequest<MessageReminderDTO>(entityName: MessageReminderDTO.entityName)
@@ -24,11 +36,35 @@ class MessageReminderDTO: NSManagedObject {
         return request
     }
     
-    /// Returns a fetch request for message reminders belonging to the provided channel.
-    static func fetchRequest(cid: ChannelId) -> NSFetchRequest<MessageReminderDTO> {
+    /// Returns a fetch request for message reminders based on the provided query.
+    static func remindersFetchRequest(query: MessageReminderListQuery) -> NSFetchRequest<MessageReminderDTO> {
         let request = NSFetchRequest<MessageReminderDTO>(entityName: MessageReminderDTO.entityName)
-        request.predicate = NSPredicate(format: "channel.cid == %@", cid.rawValue)
-        request.sortDescriptors = [NSSortDescriptor(keyPath: \MessageReminderDTO.remindAt, ascending: true)]
+        MessageReminderDTO.applyPrefetchingState(to: request)
+        
+        // Apply sort descriptors from the query
+        var sortDescriptors: [NSSortDescriptor] = []
+        for sorting in query.sort {
+            switch sorting.key {
+            case .remindAt:
+                sortDescriptors.append(NSSortDescriptor(keyPath: \MessageReminderDTO.sortingRemindAt, ascending: sorting.isAscending))
+            case .createdAt:
+                sortDescriptors.append(NSSortDescriptor(keyPath: \MessageReminderDTO.createdAt, ascending: sorting.isAscending))
+            case .updatedAt:
+                sortDescriptors.append(NSSortDescriptor(keyPath: \MessageReminderDTO.updatedAt, ascending: sorting.isAscending))
+            default:
+                continue
+            }
+        }
+        // Apply default sort if none provided
+        if sortDescriptors.isEmpty {
+            sortDescriptors = [NSSortDescriptor(keyPath: \MessageReminderDTO.sortingRemindAt, ascending: true)]
+        }
+        request.sortDescriptors = sortDescriptors
+
+        if let filter = query.filter, let predicate = filter.predicate {
+            request.predicate = predicate
+        }
+
         return request
     }
     

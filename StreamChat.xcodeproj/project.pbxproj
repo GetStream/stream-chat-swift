@@ -1692,6 +1692,8 @@
 		ADB8B8ED2D8890E000549C95 /* MessageReminder.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADB8B8EC2D8890E000549C95 /* MessageReminder.swift */; };
 		ADB8B8EE2D8890E000549C95 /* MessageReminder.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADB8B8EC2D8890E000549C95 /* MessageReminder.swift */; };
 		ADB8B8F02D8A493900549C95 /* ReminderPayload.json in Resources */ = {isa = PBXBuildFile; fileRef = ADB8B8EF2D8A493900549C95 /* ReminderPayload.json */; };
+		ADB8B8F22D8ADA0700549C95 /* ReminderRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADB8B8F12D8ADA0700549C95 /* ReminderRepository.swift */; };
+		ADB8B8F32D8ADA0700549C95 /* ReminderRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADB8B8F12D8ADA0700549C95 /* ReminderRepository.swift */; };
 		ADB951A1291BD7CC00800554 /* UploadedAttachment.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADB951A0291BD7CC00800554 /* UploadedAttachment.swift */; };
 		ADB951A2291BD7CC00800554 /* UploadedAttachment.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADB951A0291BD7CC00800554 /* UploadedAttachment.swift */; };
 		ADB951AB291C1DE400800554 /* AttachmentUploader_Spy.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADB951A8291C1DDC00800554 /* AttachmentUploader_Spy.swift */; };
@@ -4410,6 +4412,7 @@
 		ADB8B8E92D8890B900549C95 /* MessageReminderDTO.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageReminderDTO.swift; sourceTree = "<group>"; };
 		ADB8B8EC2D8890E000549C95 /* MessageReminder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageReminder.swift; sourceTree = "<group>"; };
 		ADB8B8EF2D8A493900549C95 /* ReminderPayload.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = ReminderPayload.json; sourceTree = "<group>"; };
+		ADB8B8F12D8ADA0700549C95 /* ReminderRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReminderRepository.swift; sourceTree = "<group>"; };
 		ADB951A0291BD7CC00800554 /* UploadedAttachment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UploadedAttachment.swift; sourceTree = "<group>"; };
 		ADB951A8291C1DDC00800554 /* AttachmentUploader_Spy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AttachmentUploader_Spy.swift; sourceTree = "<group>"; };
 		ADB951AC291C22DB00800554 /* UploadedAttachment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UploadedAttachment.swift; sourceTree = "<group>"; };
@@ -9284,6 +9287,7 @@
 		C1E8AD59278DDC500041B775 /* Repositories */ = {
 			isa = PBXGroup;
 			children = (
+				ADB8B8F12D8ADA0700549C95 /* ReminderRepository.swift */,
 				C135A1CA28F45F6B0058EFB6 /* AuthenticationRepository.swift */,
 				88206FC325B18C88009D086A /* ConnectionRepository.swift */,
 				C1B0B38527BFE8AB00C8207D /* MessageRepository.swift */,
@@ -11614,6 +11618,7 @@
 				C1E8AD5E278EF5F30041B775 /* AsyncOperation.swift in Sources */,
 				88D85DA7252F3C1D00AE1030 /* MemberListController.swift in Sources */,
 				79280F4B248523C000CDEB89 /* ConnectionEvents.swift in Sources */,
+				ADB8B8F32D8ADA0700549C95 /* ReminderRepository.swift in Sources */,
 				79158CF425F133FB00186102 /* ChannelTruncatedEventMiddleware.swift in Sources */,
 				882C574A252C767E00E60C44 /* ChannelMemberListPayload.swift in Sources */,
 				DAFAD6A324DD8E1A0043ED06 /* ChannelEditDetailPayload.swift in Sources */,
@@ -12398,6 +12403,7 @@
 				C121E852274544AE00023E4C /* ModerationEndpoints.swift in Sources */,
 				C121E853274544AE00023E4C /* WebSocketConnectEndpoint.swift in Sources */,
 				4F73F39F2B91C7BF00563CD9 /* MessageState+Observer.swift in Sources */,
+				ADB8B8F22D8ADA0700549C95 /* ReminderRepository.swift in Sources */,
 				C121E854274544AE00023E4C /* MemberEndpoints.swift in Sources */,
 				C121E855274544AE00023E4C /* AttachmentEndpoints.swift in Sources */,
 				C121E856274544AE00023E4C /* ChatRemoteNotificationHandler.swift in Sources */,

@@ -146,6 +146,13 @@ extension ChatClient {
             DraftMessagesRepository(database: $0, apiClient: $1)
         }
 
+        var reminderRepositoryBuilder: (
+            _ database: DatabaseContainer,
+            _ apiClient: APIClient
+        ) -> ReminderRepository = {
+            ReminderRepository(database: $0, apiClient: $1)
+        }
+
         var channelListUpdaterBuilder: (
             _ database: DatabaseContainer,
             _ apiClient: APIClient

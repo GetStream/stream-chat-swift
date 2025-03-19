@@ -85,6 +85,8 @@ public class CurrentChatUserController: DataController, DelegateCallable, DataSt
     /// The worker used to update the current user member for a given channel.
     private lazy var currentMemberUpdater = createMemberUpdater()
 
+    // MARK: - Drafts Properties
+
     /// The query used for fetching the draft messages.
     private var draftListQuery = DraftListQuery()
 
@@ -110,6 +112,35 @@ public class CurrentChatUserController: DataController, DelegateCallable, DataSt
         return Array(observer.items)
     }
 
+    // MARK: - Message Reminders Properties
+
+    /// The query used for fetching the message reminders.
+    private var reminderListQuery = MessageReminderListQuery()
+    
+    /// Use for observing the current user's message reminders changes.
+    private var messageRemindersObserver: BackgroundListDatabaseObserver<MessageReminder, MessageReminderDTO>?
+    
+    /// The repository for message reminders.
+    private var reminderRepository: ReminderRepository
+    
+    /// The token for the next page of message reminders.
+    private var messageRemindersNextCursor: String?
+    
+    /// A flag to indicate whether all message reminders have been loaded.
+    public private(set) var hasLoadedAllReminders: Bool = false
+    
+    /// The current user's message reminders.
+    public var messageReminders: [MessageReminder] {
+        if let observer = messageRemindersObserver {
+            return Array(observer.items)
+        }
+        
+        let observer = createMessageRemindersObserver(query: reminderListQuery)
+        return Array(observer.items)
+    }
+
+    // MARK: - Init
+
     /// Creates a new `CurrentUserControllerGeneric`.
     ///
     /// - Parameters:
@@ -120,9 +151,10 @@ public class CurrentChatUserController: DataController, DelegateCallable, DataSt
         self.client = client
         self.environment = environment
         draftMessagesRepository = client.draftMessagesRepository
+        reminderRepository = client.reminderRepository
     }
 
-    /// Synchronize local data with remote. Waits for the client to connect but doesn’t initiate the connection itself.
+    /// Synchronize local data with remote. Waits for the client to connect but doesn't initiate the connection itself.
     /// This is to make sure the fetched local data is up-to-date, since the current user data is updated through WebSocket events.
     ///
     /// - Parameter completion: Called when the controller has finished fetching the local data
@@ -433,6 +465,68 @@ public extension CurrentChatUserController {
             }
         }
     }
+
+    /// Loads the message reminders for the current user given the provided query.
+    ///
+    /// It will load the first page of reminders of the current user.
+    /// `loadMoreReminders` can be used to load the next pages.
+    ///
+    /// - Parameters:
+    ///  - query: The query for filtering the reminders.
+    ///  - completion: Called when the API call is finished.
+    ///  It is optional since it can be observed from the delegate events.
+    func loadReminders(
+        query: MessageReminderListQuery = MessageReminderListQuery(),
+        completion: ((Result<[MessageReminder], Error>) -> Void)? = nil
+    ) {
+        reminderListQuery = query
+        createMessageRemindersObserver(query: query)
+        reminderRepository.loadReminders(query: query) { result in
+            self.callback {
+                switch result {
+                case let .success(response):
+                    self.messageRemindersNextCursor = response.next
+                    self.hasLoadedAllReminders = response.next == nil
+                    completion?(.success(response.reminders))
+                case let .failure(error):
+                    completion?(.failure(error))
+                }
+            }
+        }
+    }
+    
+    /// Loads more message reminders for the current user.
+    ///
+    /// - Parameters:
+    ///  - limit: The number of message reminders to load. If `nil`, the default limit will be used.
+    ///  - completion: Called when the API call is finished.
+    ///  It is optional since it can be observed from the delegate events.
+    func loadMoreReminders(
+        limit: Int? = nil,
+        completion: ((Result<[MessageReminder], Error>) -> Void)? = nil
+    ) {
+        guard let nextCursor = messageRemindersNextCursor else {
+            completion?(.success([]))
+            return
+        }
+        
+        let limit = limit ?? reminderListQuery.pagination.pageSize
+        var updatedQuery = reminderListQuery
+        updatedQuery.pagination = Pagination(pageSize: limit, cursor: nextCursor)
+
+        reminderRepository.loadReminders(query: updatedQuery) { result in
+            self.callback {
+                switch result {
+                case let .success(response):
+                    self.messageRemindersNextCursor = response.next
+                    self.hasLoadedAllReminders = response.next == nil
+                    completion?(.success(response.reminders))
+                case let .failure(error):
+                    completion?(.failure(error))
+                }
+            }
+        }
+    }
 }
 
 // MARK: - Environment
@@ -452,6 +546,14 @@ extension CurrentChatUserController {
             _ itemCreator: @escaping (MessageDTO) throws -> DraftMessage
         ) -> BackgroundListDatabaseObserver<DraftMessage, MessageDTO> = {
             .init(database: $0, fetchRequest: $1, itemCreator: $2, itemReuseKeyPaths: (\DraftMessage.id, \MessageDTO.id))
+        }
+        
+        var messageRemindersObserverBuilder: (
+            _ database: DatabaseContainer,
+            _ fetchRequest: NSFetchRequest<MessageReminderDTO>,
+            _ itemCreator: @escaping (MessageReminderDTO) throws -> MessageReminder
+        ) -> BackgroundListDatabaseObserver<MessageReminder, MessageReminderDTO> = {
+            .init(database: $0, fetchRequest: $1, itemCreator: $2, itemReuseKeyPaths: (\MessageReminder.id, \MessageReminderDTO.id))
         }
 
         var currentUserUpdaterBuilder = CurrentUserUpdater.init
@@ -504,6 +606,24 @@ private extension CurrentChatUserController {
         draftMessagesObserver = observer
         return observer
     }
+    
+    @discardableResult
+    private func createMessageRemindersObserver(query: MessageReminderListQuery) -> BackgroundListDatabaseObserver<MessageReminder, MessageReminderDTO> {
+        let observer = environment.messageRemindersObserverBuilder(
+            client.databaseContainer,
+            MessageReminderDTO.remindersFetchRequest(query: query),
+            { try $0.asModel() }
+        )
+        observer.onDidChange = { [weak self] _ in
+            guard let self = self else { return }
+            self.delegateCallback {
+                $0.currentUserController(self, didChangeMessageReminders: self.messageReminders)
+            }
+        }
+        try? observer.startObserving()
+        messageRemindersObserver = observer
+        return observer
+    }
 }
 
 // MARK: - Delegates
@@ -521,6 +641,12 @@ public protocol CurrentChatUserControllerDelegate: AnyObject {
         _ controller: CurrentChatUserController,
         didChangeDraftMessages draftMessages: [DraftMessage]
     )
+    
+    /// The controller observed a change in the message reminders.
+    func currentUserController(
+        _ controller: CurrentChatUserController,
+        didChangeMessageReminders messageReminders: [MessageReminder]
+    )
 }
 
 public extension CurrentChatUserControllerDelegate {
@@ -531,6 +657,11 @@ public extension CurrentChatUserControllerDelegate {
     func currentUserController(
         _ controller: CurrentChatUserController,
         didChangeDraftMessages draftMessages: [DraftMessage]
+    ) {}
+    
+    func currentUserController(
+        _ controller: CurrentChatUserController,
+        didChangeMessageReminders messageReminders: [MessageReminder]
     ) {}
 }
 

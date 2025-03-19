@@ -445,7 +445,6 @@ struct ReminderRequestBody: Encodable {
 struct RemindersQueryPayload: Decodable {
     let reminders: [ReminderPayload]
     let next: String?
-    let prev: String?
 }
 
 /// A response containing a single reminder

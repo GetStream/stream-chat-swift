@@ -14,19 +14,45 @@ public struct MessageReminderListFilterScope: FilterScope, AnyMessageReminderLis
 public extension FilterKey where Scope: AnyMessageReminderListFilterScope {
     /// A filter key for matching the `channel_cid` value.
     /// Supported operators: `in`, `equal`
-    static var channelCid: FilterKey<Scope, ChannelId> { .init(rawValue: "channel_cid", keyPathString: "channelCid", valueMapper: { $0.rawValue }) }
-    
+    static var cid: FilterKey<Scope, ChannelId> { .init(
+        rawValue: "channel_cid",
+        keyPathString: #keyPath(MessageReminderDTO.channel.cid),
+        valueMapper: { $0.rawValue }
+    ) }
+
     /// A filter key for matching the `message_id` value.
     /// Supported operators: `in`, `equal`
-    static var messageId: FilterKey<Scope, MessageId> { .init(rawValue: "message_id", keyPathString: "messageId") }
-    
+    static var messageId: FilterKey<Scope, MessageId> { .init(rawValue: "message_id", keyPathString: #keyPath(MessageReminderDTO.id)) }
+
     /// A filter key for matching the `remind_at` value.
     /// Supported operators: `equal`, `greaterThan`, `lessThan`, `greaterOrEqual`, `lessOrEqual`
-    static var remindAt: FilterKey<Scope, Date> { .init(rawValue: "remind_at", keyPathString: "remindAt") }
-    
+    static var remindAt: FilterKey<Scope, Date> { .init(rawValue: "remind_at", keyPathString: #keyPath(MessageReminderDTO.remindAt)) }
+
     /// A filter key for matching the `created_at` value.
     /// Supported operators: `equal`, `greaterThan`, `lessThan`, `greaterOrEqual`, `lessOrEqual`
-    static var createdAt: FilterKey<Scope, Date> { .init(rawValue: "created_at", keyPathString: "createdAt") }
+    static var createdAt: FilterKey<Scope, Date> { .init(rawValue: "created_at", keyPathString: #keyPath(MessageReminderDTO.createdAt)) }
+}
+
+public extension Filter where Scope: AnyMessageReminderListFilterScope {
+    /// Returns a filter that matches message reminders without a due date.
+    static var withoutRemindAt: Filter<Scope> {
+        .isNil(.remindAt)
+    }
+
+    /// Returns a filter that matches message reminders with a due date.
+    static var withRemindAt: Filter<Scope> {
+        .exists(.remindAt)
+    }
+
+    /// Returns a filter that matches message reminders that are overdue.
+    static var overdue: Filter<Scope> {
+        .lessOrEqual(.remindAt, than: Date())
+    }
+
+    /// Returns a filter that matches message reminders that are upcoming.
+    static var upcoming: Filter<Scope> {
+        .greaterOrEqual(.remindAt, than: Date())
+    }
 }
 
 /// The type describing a value that can be used for sorting when querying message reminders.
@@ -56,9 +82,6 @@ public struct MessageReminderListQuery: Encodable {
     private enum CodingKeys: String, CodingKey {
         case filter
         case sort
-        case limit
-        case next
-        case prev
     }
     
     /// A filter for the query (see `Filter`).
@@ -67,30 +90,22 @@ public struct MessageReminderListQuery: Encodable {
     public let sort: [Sorting<MessageReminderListSortingKey>]
     /// A pagination.
     public var pagination: Pagination
-    /// Next page token for pagination
-    public var next: String?
-    /// Previous page token for pagination
-    public var prev: String?
-    
+
     /// Init a message reminders query.
     /// - Parameters:
     ///   - filter: a reminders filter.
     ///   - sort: a sorting list for reminders.
     ///   - pageSize: a page size for pagination.
     ///   - next: a token for fetching the next page.
-    ///   - prev: a token for fetching the previous page.
     public init(
         filter: Filter<MessageReminderListFilterScope>? = nil,
         sort: [Sorting<MessageReminderListSortingKey>] = [.init(key: .remindAt, isAscending: true)],
-        pageSize: Int = 25,
-        next: String? = nil,
-        prev: String? = nil
+        pageSize: Int = 5,
+        next: String? = nil
     ) {
         self.filter = filter
         self.sort = sort
-        pagination = Pagination(pageSize: pageSize)
-        self.next = next
-        self.prev = prev
+        pagination = Pagination(pageSize: pageSize, cursor: next)
     }
     
     public func encode(to encoder: Encoder) throws {
@@ -104,15 +119,7 @@ public struct MessageReminderListQuery: Encodable {
             try container.encode(sort, forKey: .sort)
         }
         
-        try container.encode(pagination.pageSize, forKey: .limit)
-        
-        if let next = next {
-            try container.encode(next, forKey: .next)
-        }
-        
-        if let prev = prev {
-            try container.encode(prev, forKey: .prev)
-        }
+        try pagination.encode(to: encoder)
     }
 }
 
