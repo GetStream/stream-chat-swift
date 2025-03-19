@@ -10,17 +10,20 @@ class DemoAppTabBarController: UITabBarController, CurrentChatUserControllerDele
     let channelListVC: UIViewController
     let threadListVC: UIViewController
     let draftListVC: UIViewController
+    let reminderListVC: UIViewController
     let currentUserController: CurrentChatUserController
 
     init(
         channelListVC: UIViewController,
         threadListVC: UIViewController,
         draftListVC: UIViewController,
+        reminderListVC: UIViewController,
         currentUserController: CurrentChatUserController
     ) {
         self.channelListVC = channelListVC
         self.threadListVC = threadListVC
         self.draftListVC = draftListVC
+        self.reminderListVC = reminderListVC
         self.currentUserController = currentUserController
         super.init(nibName: nil, bundle: nil)
     }
@@ -52,6 +55,12 @@ class DemoAppTabBarController: UITabBarController, CurrentChatUserControllerDele
         currentUserController.delegate = self
         unreadCount = currentUserController.unreadCount
 
+        // Load reminders with remindAt to update the badge.
+        currentUserController.loadReminders(query: .init(
+            filter: .withRemindAt,
+            pageSize: 50
+        ))
+
         tabBar.backgroundColor = Appearance.default.colorPalette.background
         tabBar.isTranslucent = true
 
@@ -65,8 +74,11 @@ class DemoAppTabBarController: UITabBarController, CurrentChatUserControllerDele
 
         draftListVC.tabBarItem.title = "Drafts"
         draftListVC.tabBarItem.image = UIImage(systemName: "bubble.and.pencil")
+        
+        reminderListVC.tabBarItem.title = "Reminders"
+        reminderListVC.tabBarItem.image = UIImage(systemName: "bell")
 
-        viewControllers = [channelListVC, threadListVC, draftListVC]
+        viewControllers = [channelListVC, threadListVC, draftListVC, reminderListVC]
     }
 
     func currentUserController(_ controller: CurrentChatUserController, didChangeCurrentUserUnreadCount: UnreadCount) {
@@ -74,5 +86,12 @@ class DemoAppTabBarController: UITabBarController, CurrentChatUserControllerDele
         self.unreadCount = unreadCount
         let totalUnreadBadge = unreadCount.channels + unreadCount.threads
         UIApplication.shared.applicationIconBadgeNumber = totalUnreadBadge
+    }
+
+    func currentUserController(
+        _ controller: CurrentChatUserController,
+        didChangeMessageReminders messageReminders: [MessageReminder]
+    ) {
+        reminderListVC.tabBarItem.badgeValue = messageReminders.isEmpty ? nil : "\(messageReminders.count)"
     }
 }

@@ -1694,6 +1694,7 @@
 		ADB8B8F02D8A493900549C95 /* ReminderPayload.json in Resources */ = {isa = PBXBuildFile; fileRef = ADB8B8EF2D8A493900549C95 /* ReminderPayload.json */; };
 		ADB8B8F22D8ADA0700549C95 /* ReminderRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADB8B8F12D8ADA0700549C95 /* ReminderRepository.swift */; };
 		ADB8B8F32D8ADA0700549C95 /* ReminderRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADB8B8F12D8ADA0700549C95 /* ReminderRepository.swift */; };
+		ADB8B8F52D8ADC9400549C95 /* DemoReminderListVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADB8B8F42D8ADC9400549C95 /* DemoReminderListVC.swift */; };
 		ADB951A1291BD7CC00800554 /* UploadedAttachment.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADB951A0291BD7CC00800554 /* UploadedAttachment.swift */; };
 		ADB951A2291BD7CC00800554 /* UploadedAttachment.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADB951A0291BD7CC00800554 /* UploadedAttachment.swift */; };
 		ADB951AB291C1DE400800554 /* AttachmentUploader_Spy.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADB951A8291C1DDC00800554 /* AttachmentUploader_Spy.swift */; };
@@ -4413,6 +4414,7 @@
 		ADB8B8EC2D8890E000549C95 /* MessageReminder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageReminder.swift; sourceTree = "<group>"; };
 		ADB8B8EF2D8A493900549C95 /* ReminderPayload.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = ReminderPayload.json; sourceTree = "<group>"; };
 		ADB8B8F12D8ADA0700549C95 /* ReminderRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReminderRepository.swift; sourceTree = "<group>"; };
+		ADB8B8F42D8ADC9400549C95 /* DemoReminderListVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DemoReminderListVC.swift; sourceTree = "<group>"; };
 		ADB951A0291BD7CC00800554 /* UploadedAttachment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UploadedAttachment.swift; sourceTree = "<group>"; };
 		ADB951A8291C1DDC00800554 /* AttachmentUploader_Spy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AttachmentUploader_Spy.swift; sourceTree = "<group>"; };
 		ADB951AC291C22DB00800554 /* UploadedAttachment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UploadedAttachment.swift; sourceTree = "<group>"; };
@@ -6800,6 +6802,7 @@
 		A3227ECA284A607D00EBE6CC /* Screens */ = {
 			isa = PBXGroup;
 			children = (
+				ADB8B8F42D8ADC9400549C95 /* DemoReminderListVC.swift */,
 				AD545E682D5531B9008FD399 /* DemoDraftMessageListVC.swift */,
 				ADD328592C04DD8300BAD0E9 /* DemoAppTabBarController.swift */,
 				C10B5C712A1F794A006A5BCB /* MembersViewController.swift */,
@@ -11123,6 +11126,7 @@
 				A3227E59284A484300EBE6CC /* UIImage+Resized.swift in Sources */,
 				79B8B64B285CBDC00059FB2D /* DemoChatMessageLayoutOptionsResolver.swift in Sources */,
 				AD053BA32B335A13003612B6 /* LocationAttachmentPayload+AttachmentViewProvider.swift in Sources */,
+				ADB8B8F52D8ADC9400549C95 /* DemoReminderListVC.swift in Sources */,
 				AD053B9D2B3358E2003612B6 /* LocationAttachmentPayload.swift in Sources */,
 				AD053BA12B3359DD003612B6 /* DemoAttachmentViewCatalog.swift in Sources */,
 				AD053B9F2B335929003612B6 /* LocationAttachmentViewInjector.swift in Sources */,
