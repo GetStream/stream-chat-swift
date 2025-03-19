@@ -16,7 +16,7 @@ _March 14, 2025_
     - Add `ChatChannelController.loadChannelReads()`,
     - Add `ChatChannelController.loadMoreChannelReads()`
     - Add `Chat.loadMembers()`
-    - Add `Chat.loadMoreMembers()
+    - Add `Chat.loadMoreMembers()`
 ### 🐞 Fixed
 - Fix background task warning by making task tracking thread-safe [#3604](https://github.com/GetStream/stream-chat-swift/pull/3604)
 - Fix an issue where `ChatRemoteNotificationHandler` can lead to persistent store's data inconsistencies [#3601](https://github.com/GetStream/stream-chat-swift/pull/3601)
