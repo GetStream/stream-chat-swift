@@ -5,13 +5,20 @@
 import StreamChat
 import StreamChatUI
 import UIKit
+import UserNotifications
 
-class DemoAppTabBarController: UITabBarController, CurrentChatUserControllerDelegate {
+class DemoAppTabBarController: UITabBarController, CurrentChatUserControllerDelegate, EventsControllerDelegate {
     let channelListVC: UIViewController
     let threadListVC: UIViewController
     let draftListVC: UIViewController
     let reminderListVC: UIViewController
     let currentUserController: CurrentChatUserController
+    
+    // Events controller for listening to chat events
+    private var eventsController: EventsController!
+    
+    // User notification center for displaying local notifications
+    private let notificationCenter = UNUserNotificationCenter.current()
 
     init(
         channelListVC: UIViewController,
@@ -54,6 +61,9 @@ class DemoAppTabBarController: UITabBarController, CurrentChatUserControllerDele
 
         currentUserController.delegate = self
         unreadCount = currentUserController.unreadCount
+        
+        // Initialize events controller
+        setupEventsController()
 
         // Load reminders with remindAt to update the badge.
         currentUserController.loadReminders(query: .init(
@@ -79,6 +89,44 @@ class DemoAppTabBarController: UITabBarController, CurrentChatUserControllerDele
         reminderListVC.tabBarItem.image = UIImage(systemName: "bell")
 
         viewControllers = [channelListVC, threadListVC, draftListVC, reminderListVC]
+    }
+    
+    // MARK: - Events Controller Setup
+    
+    private func setupEventsController() {
+        // Get the ChatClient instance from the currentUserController
+        let client = currentUserController.client
+        
+        // Initialize the events controller
+        eventsController = client.eventsController()
+        
+        // Set this class as the delegate for events
+        eventsController.delegate = self
+    }
+    
+    // MARK: - EventsControllerDelegate
+    
+    func eventsController(_ controller: EventsController, didReceiveEvent event: Event) {
+        // Check if the event is a ReminderDueEvent
+        if let reminderDueEvent = event as? ReminderDueEvent {
+            // Handle the reminder due event
+            handleReminderDueEvent(reminderDueEvent)
+        }
+    }
+    
+    // MARK: - Handle Reminder Due Event
+    
+    private func handleReminderDueEvent(_ event: ReminderDueEvent) {
+        let messageText = event.reminder.message.text
+        let content = UNMutableNotificationContent()
+        content.title = "Reminder due"
+        content.body = messageText
+        content.sound = .default
+
+        let identifier = "reminder-\(event.messageId)-\(Date().timeIntervalSince1970)"
+        let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 0.1, repeats: false)
+        let request = UNNotificationRequest(identifier: identifier, content: content, trigger: trigger)
+        notificationCenter.add(request)
     }
 
     func currentUserController(_ controller: CurrentChatUserController, didChangeCurrentUserUnreadCount: UnreadCount) {

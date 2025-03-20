@@ -335,6 +335,7 @@ class DemoReminderListVC: UIViewController, ThemeProvider {
         currentUserController.delegate = self
         if reminders.isEmpty {
             loadingIndicator.startAnimating()
+            emptyStateView.isHidden = true
         }
         
         let query = createFilterQuery()
