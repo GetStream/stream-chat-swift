@@ -36,7 +36,8 @@ final class MessageReminderListQuery_Tests: XCTestCase {
     }
     
     func test_encode_withAllFields() throws {
-        let filter = Filter<MessageReminderListFilterScope>.equal(.cid, to: ChannelId.unique)
+        let cid: ChannelId = .init(type: .messaging, id: "123")
+        let filter = Filter<MessageReminderListFilterScope>.equal(.cid, to: cid)
         let sort = [Sorting<MessageReminderListSortingKey>(key: .createdAt, isAscending: false)]
         
         let query = MessageReminderListQuery(
@@ -46,7 +47,7 @@ final class MessageReminderListQuery_Tests: XCTestCase {
         )
         
         let expectedData: [String: Any] = [
-            "filter": ["channel_cid": ["$eq": filter.value]],
+            "filter": ["channel_cid": ["$eq": cid.rawValue]],
             "sort": [["field": "created_at", "direction": -1]],
             "limit": 10
         ]
@@ -76,7 +77,8 @@ final class MessageReminderListQuery_Tests: XCTestCase {
     }
     
     func test_encode_withoutSort() throws {
-        let filter = Filter<MessageReminderListFilterScope>.equal(.cid, to: ChannelId.unique)
+        let cid: ChannelId = .init(type: .messaging, id: "123")
+        let filter = Filter<MessageReminderListFilterScope>.equal(.cid, to: cid)
 
         let query = MessageReminderListQuery(
             filter: filter,
@@ -85,7 +87,7 @@ final class MessageReminderListQuery_Tests: XCTestCase {
         )
         
         let expectedData: [String: Any] = [
-            "filter": ["channel_cid": ["$eq": filter.value]],
+            "filter": ["channel_cid": ["$eq": cid.rawValue]],
             "limit": 10
         ]
         

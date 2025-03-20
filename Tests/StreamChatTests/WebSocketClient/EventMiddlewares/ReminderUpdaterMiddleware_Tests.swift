@@ -116,7 +116,7 @@ final class ReminderUpdaterMiddleware_Tests: XCTestCase {
         // Assert
         let reminder = database.viewContext.message(id: messageId)?.reminder
         XCTAssertNotNil(reminder, "Reminder should exist")
-        XCTAssertEqual(reminder?.remindAt?.bridgeDate, updatedDate, "Reminder date should be updated")
+        XCTAssertNearlySameDate(reminder?.remindAt?.bridgeDate, updatedDate)
     }
     
     func test_reminderDueNotificationEvent_updatesReminder() throws {
