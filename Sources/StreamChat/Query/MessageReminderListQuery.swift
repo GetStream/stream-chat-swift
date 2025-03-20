@@ -100,7 +100,7 @@ public struct MessageReminderListQuery: Encodable {
     public init(
         filter: Filter<MessageReminderListFilterScope>? = nil,
         sort: [Sorting<MessageReminderListSortingKey>] = [.init(key: .remindAt, isAscending: true)],
-        pageSize: Int = 5,
+        pageSize: Int = 25,
         next: String? = nil
     ) {
         self.filter = filter
