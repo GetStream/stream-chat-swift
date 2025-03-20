@@ -144,11 +144,12 @@ extension NSManagedObjectContext: ReminderDatabaseSession {
     
     /// Deletes a reminder for the specified message ID.
     func deleteReminder(messageId: MessageId) {
-        guard let reminderDTO = MessageReminderDTO.load(messageId: messageId, context: self) else {
+        let message = message(id: messageId)
+        guard let reminderDTO = message?.reminder else {
             return
         }
-        
         delete(reminderDTO)
+        message?.reminder = nil
     }
 }
 
