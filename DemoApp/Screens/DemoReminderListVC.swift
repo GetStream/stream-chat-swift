@@ -599,7 +599,12 @@ class DemoReminderCell: UITableViewCell {
             channelNameLabel.text = "# \(channelName)"
         }
 
-        messageLabel.text = reminder.message.text
+        if reminder.message.text.isEmpty {
+            let attachmentType = reminder.message.allAttachments.first?.type.rawValue.capitalized ?? ""
+            messageLabel.text = "📎 \(attachmentType)"
+        } else {
+            messageLabel.text = reminder.message.text
+        }
         
         // Configure based on reminder type
         if let remindAt = reminder.remindAt {
