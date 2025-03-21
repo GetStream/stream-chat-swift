@@ -20,8 +20,11 @@ final class DemoChatMessageActionsVC: ChatMessageActionsVC {
         if message?.isBounced == false {
             actions.append(pinMessageActionItem())
             actions.append(translateActionItem())
-            actions.append(reminderActionItem())
-            actions.append(saveForLaterActionItem())
+            
+            if AppConfig.shared.demoAppConfig.isRemindersEnabled {
+                actions.append(reminderActionItem())
+                actions.append(saveForLaterActionItem())
+            }
         }
 
         if AppConfig.shared.demoAppConfig.isMessageDebuggerEnabled {

@@ -22,6 +22,8 @@ struct DemoAppConfig {
     var shouldShowConnectionBanner: Bool
     /// A Boolean value to define if the premium member feature is enabled. This is to test custom member data.
     var isPremiumMemberFeatureEnabled: Bool
+    /// A Boolean value to define if the reminders feature is enabled.
+    var isRemindersEnabled: Bool
 
     /// The details to generate expirable tokens in the demo app.
     struct TokenRefreshDetails {
@@ -50,7 +52,8 @@ class AppConfig {
             isLocationAttachmentsEnabled: false,
             tokenRefreshDetails: nil,
             shouldShowConnectionBanner: false,
-            isPremiumMemberFeatureEnabled: false
+            isPremiumMemberFeatureEnabled: false,
+            isRemindersEnabled: false
         )
 
         if StreamRuntimeCheck.isStreamInternalConfiguration {
@@ -61,6 +64,7 @@ class AppConfig {
             demoAppConfig.isHardDeleteEnabled = true
             demoAppConfig.shouldShowConnectionBanner = true
             demoAppConfig.isPremiumMemberFeatureEnabled = true
+            demoAppConfig.isRemindersEnabled = true
             StreamRuntimeCheck.assertionsEnabled = true
         }
     }
@@ -173,6 +177,7 @@ class AppConfigViewController: UITableViewController {
         case tokenRefreshDetails
         case shouldShowConnectionBanner
         case isPremiumMemberFeatureEnabled
+        case isRemindersEnabled
     }
 
     enum ComponentsConfigOption: String, CaseIterable {
@@ -337,6 +342,10 @@ class AppConfigViewController: UITableViewController {
         case .isPremiumMemberFeatureEnabled:
             cell.accessoryView = makeSwitchButton(demoAppConfig.isPremiumMemberFeatureEnabled) { [weak self] newValue in
                 self?.demoAppConfig.isPremiumMemberFeatureEnabled = newValue
+            }
+        case .isRemindersEnabled:
+            cell.accessoryView = makeSwitchButton(demoAppConfig.isRemindersEnabled) { [weak self] newValue in
+                self?.demoAppConfig.isRemindersEnabled = newValue
             }
         }
     }

@@ -29,7 +29,7 @@ final class DemoChatMessageLayoutOptionsResolver: ChatMessageLayoutOptionsResolv
             options.insert(.pinInfo)
         }
 
-        if message.reminder != nil {
+        if AppConfig.shared.demoAppConfig.isRemindersEnabled && message.reminder != nil {
             options.insert(.saveForLaterInfo)
         }
 
