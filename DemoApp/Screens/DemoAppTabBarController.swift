@@ -98,13 +98,7 @@ class DemoAppTabBarController: UITabBarController, CurrentChatUserControllerDele
     // MARK: - Events Controller Setup
     
     private func setupEventsController() {
-        // Get the ChatClient instance from the currentUserController
-        let client = currentUserController.client
-        
-        // Initialize the events controller
-        eventsController = client.eventsController()
-        
-        // Set this class as the delegate for events
+        eventsController = currentUserController.client.eventsController()
         eventsController.delegate = self
     }
     
