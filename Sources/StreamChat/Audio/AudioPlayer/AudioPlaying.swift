@@ -426,7 +426,9 @@ open class StreamAudioPlayer: AudioPlaying, AppStateObserverDelegate, @unchecked
             }
         } else {
             return DispatchQueue.main.sync {
-                actions()
+                MainActor.assumeIsolated {
+                    actions()
+                }
             }
         }
     }

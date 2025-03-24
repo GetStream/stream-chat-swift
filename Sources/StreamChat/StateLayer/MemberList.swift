@@ -64,8 +64,8 @@ public final class MemberList: Sendable {
 }
 
 extension MemberList {
-    struct Environment: @unchecked Sendable {
-        var memberListUpdaterBuilder: (
+    struct Environment: Sendable {
+        var memberListUpdaterBuilder: @Sendable(
             _ database: DatabaseContainer,
             _ apiClient: APIClient
         ) -> ChannelMemberListUpdater = ChannelMemberListUpdater.init

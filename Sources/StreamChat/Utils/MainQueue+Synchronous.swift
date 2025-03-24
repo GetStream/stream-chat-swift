@@ -17,7 +17,9 @@ extension DispatchQueue {
             }
         } else {
             try DispatchQueue.main.sync {
-                try action()
+                try MainActor.assumeIsolated {
+                    try action()
+                }
             }
         }
     }

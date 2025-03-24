@@ -68,8 +68,8 @@ public final class ReactionList: Sendable {
 }
 
 extension ReactionList {
-    struct Environment: @unchecked Sendable {
-        var reactionListUpdaterBuilder: (
+    struct Environment: Sendable {
+        var reactionListUpdaterBuilder: @Sendable(
             _ database: DatabaseContainer,
             _ apiClient: APIClient
         ) -> ReactionListUpdater = ReactionListUpdater.init
