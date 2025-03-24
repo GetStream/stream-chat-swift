@@ -178,8 +178,10 @@ class DemoShareViewModel: ObservableObject, ChatChannelControllerDelegate {
             )
             self.channelListController = chatClient.channelListController(query: channelListQuery)
             channelListController?.synchronize { [weak self] error in
-                guard let self, error == nil else { return }
-                channels = channelListController?.channels ?? []
+                Task { @MainActor [weak self] in
+                    guard let self, error == nil else { return }
+                    channels = channelListController?.channels ?? []
+                }
             }
         }
     }
