@@ -1616,6 +1616,27 @@ final class ChatChannelVC_Tests: XCTestCase {
         AssertSnapshot(vc, variants: [.defaultLight])
     }
 
+    func test_channelWithDraftMessage_whenDraftIsUpdatedFromEvent_whenThread_shouldNotUpdateChannelComposer() {
+        let draftMessage = DraftMessage.mock(text: "Draft Message")
+
+        let channel = ChatChannel.mock(cid: .unique, draftMessage: draftMessage)
+        channelControllerMock.channel_mock = channel
+
+        vc.view.layoutIfNeeded()
+
+        let updatedDraftMessage = DraftMessage.mock(threadId: .unique, text: "Updated draft")
+        channelControllerMock.mockCid = channel.cid
+        let event = DraftUpdatedEvent(
+            cid: channel.cid,
+            channel: channel,
+            draftMessage: updatedDraftMessage,
+            createdAt: .unique
+        )
+        vc.eventsController(vc.eventsController, didReceiveEvent: event)
+
+        AssertSnapshot(vc, variants: [.defaultLight])
+    }
+
     func test_channelWithDraftMessage_whenDraftIsDeletedFromEvent_updatesDraftInComposer() {
         let channel = ChatChannel.mock(cid: .unique, draftMessage: nil)
         channelControllerMock.channel_mock = channel
