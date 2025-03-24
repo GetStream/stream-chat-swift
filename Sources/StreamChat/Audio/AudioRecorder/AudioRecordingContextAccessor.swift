@@ -5,11 +5,11 @@
 import Foundation
 
 /// Provides thread-safe access to the value's storage
-final class AudioRecordingContextAccessor {
+final class AudioRecordingContextAccessor: Sendable {
     /// The queue that thread-safe access to the value's storage
-    private var accessQueue: DispatchQueue
+    private let accessQueue: DispatchQueue
 
-    private var _value: AudioRecordingContext
+    nonisolated(unsafe) private var _value: AudioRecordingContext
     var value: AudioRecordingContext {
         get { readValue() }
         set { writeValue(newValue) }

@@ -66,17 +66,17 @@ extension MessageReactionDTO {
     }
 
     static func load(reactionId: String, context: NSManagedObjectContext) -> MessageReactionDTO? {
-        load(by: reactionId, context: context).first
+        load(by: reactionId, context: context).first as? Self
     }
 
-    static let notLocallyDeletedPredicates: NSPredicate = {
+    static var notLocallyDeletedPredicates: NSPredicate {
         NSCompoundPredicate(orPredicateWithSubpredicates: [
             NSPredicate(format: "localStateRaw == %@", LocalReactionState.unknown.rawValue),
             NSPredicate(format: "localStateRaw == %@", LocalReactionState.sending.rawValue),
             NSPredicate(format: "localStateRaw == %@", LocalReactionState.pendingSend.rawValue),
             NSPredicate(format: "localStateRaw == %@", LocalReactionState.deletingFailed.rawValue)
         ])
-    }()
+    }
 
     static func loadReactions(ids: [String], context: NSManagedObjectContext) -> [MessageReactionDTO] {
         guard !ids.isEmpty else {

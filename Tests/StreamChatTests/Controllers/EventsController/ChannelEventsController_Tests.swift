@@ -148,7 +148,7 @@ final class ChannelEventsController_Tests: XCTestCase {
         controller.callbackQueue = callbackQueue
 
         // Simulate `sendEvent`.
-        var completionError: Error?
+        nonisolated(unsafe) var completionError: Error?
         controller.sendEvent(payload) { [callbackQueueID] in
             AssertTestQueue(withId: callbackQueueID!)
             completionError = $0
@@ -172,7 +172,7 @@ final class ChannelEventsController_Tests: XCTestCase {
         controller.callbackQueue = callbackQueue
 
         // Simulate `sendEvent` and catch the completion.
-        var completionCalled = false
+        nonisolated(unsafe) var completionCalled = false
         controller.sendEvent(IdeaEventPayload.unique) { [callbackQueueID] error in
             AssertTestQueue(withId: callbackQueueID!)
             XCTAssertNil(error)

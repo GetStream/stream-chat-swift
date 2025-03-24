@@ -39,7 +39,7 @@ extension Timer {
 }
 
 /// Allows resuming and suspending of a timer.
-protocol RepeatingTimerControl {
+protocol RepeatingTimerControl: Sendable {
     /// Resumes the timer.
     func resume()
 
@@ -48,12 +48,17 @@ protocol RepeatingTimerControl {
 }
 
 /// Allows cancelling a timer.
-protocol TimerControl {
+protocol TimerControl: Sendable {
     /// Cancels the timer.
     func cancel()
 }
 
 extension DispatchWorkItem: TimerControl {}
+#if compiler(>=6.0)
+extension DispatchWorkItem: @retroactive @unchecked Sendable {}
+#else
+extension DispatchWorkItem: @unchecked Sendable {}
+#endif
 
 /// Default real-world implementations of timers.
 struct DefaultTimer: Timer {
@@ -77,51 +82,51 @@ struct DefaultTimer: Timer {
     }
 }
 
-private class RepeatingTimer: RepeatingTimerControl {
+private final class RepeatingTimer: RepeatingTimerControl {
     private enum State {
         case suspended
         case resumed
     }
 
     private let queue = DispatchQueue(label: "io.getstream.repeating-timer")
-    private var state: State = .suspended
-    private let timer: DispatchSourceTimer
+    nonisolated(unsafe) private var _state: State = .suspended
+    nonisolated(unsafe) private let _timer: DispatchSourceTimer
 
     init(timeInterval: TimeInterval, queue: DispatchQueue, onFire: @escaping () -> Void) {
-        timer = DispatchSource.makeTimerSource(queue: queue)
-        timer.schedule(deadline: .now() + .milliseconds(Int(timeInterval)), repeating: timeInterval, leeway: .seconds(1))
-        timer.setEventHandler(handler: onFire)
+        _timer = DispatchSource.makeTimerSource(queue: queue)
+        _timer.schedule(deadline: .now() + .milliseconds(Int(timeInterval)), repeating: timeInterval, leeway: .seconds(1))
+        _timer.setEventHandler(handler: onFire)
     }
 
     deinit {
-        timer.setEventHandler {}
-        timer.cancel()
+        _timer.setEventHandler {}
+        _timer.cancel()
         // If the timer is suspended, calling cancel without resuming
         // triggers a crash. This is documented here https://forums.developer.apple.com/thread/15902
-        if state == .suspended {
-            timer.resume()
+        if _state == .suspended {
+            _timer.resume()
         }
     }
 
     func resume() {
         queue.async {
-            if self.state == .resumed {
+            if self._state == .resumed {
                 return
             }
 
-            self.state = .resumed
-            self.timer.resume()
+            self._state = .resumed
+            self._timer.resume()
         }
     }
 
     func suspend() {
         queue.async {
-            if self.state == .suspended {
+            if self._state == .suspended {
                 return
             }
 
-            self.state = .suspended
-            self.timer.suspend()
+            self._state = .suspended
+            self._timer.suspend()
         }
     }
 }

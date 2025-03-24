@@ -17,10 +17,15 @@ public extension ChatClient {
 
 /// `ChatConnectionController` is a controller class which allows to explicitly
 /// connect/disconnect the `ChatClient` and observe connection events.
-public class ChatConnectionController: Controller, DelegateCallable, DataStoreProvider {
-    public var callbackQueue: DispatchQueue = .main
-
-    var _basePublishers: Any?
+public class ChatConnectionController: Controller, DelegateCallable, DataStoreProvider, @unchecked Sendable {
+    public var callbackQueue: DispatchQueue {
+        get { queue.sync { _callbackQueue } }
+        set { queue.sync { _callbackQueue = newValue } }
+    }
+    
+    private let queue = DispatchQueue(label: "io.getstream.chat-connection-controller", target: .global(qos: .userInteractive))
+    private var _callbackQueue: DispatchQueue = .main
+    @Atomic private var _basePublishers: Any?
     /// An internal backing object for all publicly available Combine publishers. We use it to simplify the way we expose
     /// publishers. Instead of creating custom `Publisher` types, we use `CurrentValueSubject` and `PassthroughSubject` internally,
     /// and expose the published values by mapping them to a read-only `AnyPublisher` type.
@@ -42,7 +47,7 @@ public class ChatConnectionController: Controller, DelegateCallable, DataStorePr
     }
 
     /// The connection event observer for the connection status updates.
-    private var connectionEventObserver: ConnectionEventObserver?
+    private var _connectionEventObserver: ConnectionEventObserver?
 
     /// A type-erased delegate.
     var multicastDelegate: MulticastDelegate<ChatConnectionControllerDelegate> = .init()
@@ -63,7 +68,7 @@ public class ChatConnectionController: Controller, DelegateCallable, DataStorePr
         self.connectionRepository = connectionRepository
         self.webSocketClient = webSocketClient
         self.client = client
-        connectionEventObserver = setupObserver()
+        _connectionEventObserver = setupObserver()
     }
 
     private func setupObserver() -> ConnectionEventObserver? {
@@ -91,7 +96,7 @@ public extension ChatConnectionController {
     /// - Parameter completion: Called when the connection is established. If the connection fails, the completion is
     /// called with an error.
     ///
-    func connect(completion: ((Error?) -> Void)? = nil) {
+    func connect(completion: (@Sendable(Error?) -> Void)? = nil) {
         connectionRepository.connect { [weak self] error in
             self?.callback {
                 completion?(error)
@@ -132,8 +137,8 @@ public extension ChatConnectionController {
 private class ConnectionEventObserver: EventObserver {
     init(
         notificationCenter: NotificationCenter,
-        filter: ((ConnectionStatusUpdated) -> Bool)? = nil,
-        callback: @escaping (ConnectionStatusUpdated) -> Void
+        filter: (@Sendable(ConnectionStatusUpdated) -> Bool)? = nil,
+        callback: @escaping @Sendable(ConnectionStatusUpdated) -> Void
     ) {
         super.init(notificationCenter: notificationCenter, transform: { $0 as? ConnectionStatusUpdated }) {
             guard filter == nil || filter?($0) == true else { return }

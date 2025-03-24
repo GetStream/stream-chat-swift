@@ -6,9 +6,9 @@ import CoreData
 @testable import StreamChat
 import XCTest
 
-final class BackgroundEntityDatabaseObserver_Mock<Item, DTO: NSManagedObject>: BackgroundEntityDatabaseObserver<Item, DTO> {
-    var synchronizeError: Error?
-    var startObservingCalled: Bool = false
+final class BackgroundEntityDatabaseObserver_Mock<Item, DTO: NSManagedObject>: BackgroundEntityDatabaseObserver<Item, DTO>, @unchecked Sendable {
+    @Atomic var synchronizeError: Error?
+    @Atomic var startObservingCalled: Bool = false
 
     override func startObserving() throws {
         if let error = synchronizeError {
@@ -19,7 +19,7 @@ final class BackgroundEntityDatabaseObserver_Mock<Item, DTO: NSManagedObject>: B
         }
     }
 
-    var item_mock: Item?
+    @Atomic var item_mock: Item?
     override var item: Item? {
         item_mock ?? super.item
     }

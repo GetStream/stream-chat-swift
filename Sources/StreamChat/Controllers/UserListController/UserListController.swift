@@ -20,7 +20,7 @@ extension ChatClient {
 /// `ChatUserListController` is a controller class which allows observing a list of chat users based on the provided query.
 ///
 /// - Note: For an async-await alternative of the `ChatUserListController`, please check ``UserList`` in the async-await supported [state layer](https://getstream.io/chat/docs/sdk/ios/client/state-layer/state-layer-overview/).
-public class ChatUserListController: DataController, DelegateCallable, DataStoreProvider {
+public class ChatUserListController: DataController, DelegateCallable, DataStoreProvider, @unchecked Sendable {
     /// The query specifying and filtering the list of users.
     public let query: UserListQuery
 
@@ -38,11 +38,7 @@ public class ChatUserListController: DataController, DelegateCallable, DataStore
     }
 
     /// The worker used to fetch the remote data and communicate with servers.
-    private lazy var worker: UserListUpdater = self.environment
-        .userQueryUpdaterBuilder(
-            client.databaseContainer,
-            client.apiClient
-        )
+    private let worker: UserListUpdater
 
     /// A type-erased delegate.
     var multicastDelegate: MulticastDelegate<ChatUserListControllerDelegate> = .init() {
@@ -79,7 +75,7 @@ public class ChatUserListController: DataController, DelegateCallable, DataStore
         return observer
     }()
 
-    var _basePublishers: Any?
+    @Atomic private var _basePublishers: Any?
     /// An internal backing object for all publicly available Combine publishers. We use it to simplify the way we expose
     /// publishers. Instead of creating custom `Publisher` types, we use `CurrentValueSubject` and `PassthroughSubject` internally,
     /// and expose the published values by mapping them to a read-only `AnyPublisher` type.
@@ -102,9 +98,13 @@ public class ChatUserListController: DataController, DelegateCallable, DataStore
         self.client = client
         self.query = query
         self.environment = environment
+        worker = environment.userQueryUpdaterBuilder(
+            client.databaseContainer,
+            client.apiClient
+        )
     }
 
-    override public func synchronize(_ completion: ((_ error: Error?) -> Void)? = nil) {
+    override public func synchronize(_ completion: (@Sendable(_ error: Error?) -> Void)? = nil) {
         startUserListObserverIfNeeded()
 
         worker.update(userListQuery: query) { result in
@@ -143,7 +143,7 @@ public extension ChatUserListController {
     ///
     func loadNextUsers(
         limit: Int = 25,
-        completion: ((Error?) -> Void)? = nil
+        completion: (@Sendable(Error?) -> Void)? = nil
     ) {
         var updatedQuery = query
         updatedQuery.pagination = Pagination(pageSize: limit, offset: users.count)

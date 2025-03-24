@@ -59,7 +59,7 @@ final class ChannelMemberUpdater_Tests: XCTestCase {
 
     func test_banMember_propagatesSuccessfulResponse() {
         // Simulate `banMember` call
-        var completionCalled = false
+        nonisolated(unsafe) var completionCalled = false
         updater.banMember(.unique, in: .unique, shadow: false) { error in
             XCTAssertNil(error)
             completionCalled = true
@@ -77,7 +77,7 @@ final class ChannelMemberUpdater_Tests: XCTestCase {
 
     func test_banMember_propagatesError() {
         // Simulate `banMember` call
-        var completionCalledError: Error?
+        nonisolated(unsafe) var completionCalledError: Error?
         updater.banMember(.unique, in: .unique, shadow: false) { error in
             completionCalledError = error
         }
@@ -105,7 +105,7 @@ final class ChannelMemberUpdater_Tests: XCTestCase {
 
     func test_unbanMember_propagatesSuccessfulResponse() {
         // Simulate `unbanMember` call
-        var completionCalled = false
+        nonisolated(unsafe) var completionCalled = false
         updater.unbanMember(.unique, in: .unique) { error in
             XCTAssertNil(error)
             completionCalled = true
@@ -123,7 +123,7 @@ final class ChannelMemberUpdater_Tests: XCTestCase {
 
     func test_unbanMember_propagatesError() {
         // Simulate `unbanMember` call
-        var completionCalledError: Error?
+        nonisolated(unsafe) var completionCalledError: Error?
         updater.unbanMember(.unique, in: .unique) { error in
             completionCalledError = error
         }
@@ -172,7 +172,7 @@ final class ChannelMemberUpdater_Tests: XCTestCase {
         let memberPayload: MemberPayload = .dummy()
 
         // Simulate `partialUpdate` call
-        var completionResult: Result<ChatChannelMember, Error>?
+        nonisolated(unsafe) var completionResult: Result<ChatChannelMember, Error>?
         updater.partialUpdate(
             userId: .unique,
             in: cid,
@@ -194,7 +194,7 @@ final class ChannelMemberUpdater_Tests: XCTestCase {
 
     func test_partialUpdate_propagatesError() {
         // Simulate `partialUpdate` call
-        var completionResult: Result<ChatChannelMember, Error>?
+        nonisolated(unsafe) var completionResult: Result<ChatChannelMember, Error>?
         updater.partialUpdate(
             userId: .unique,
             in: .unique,

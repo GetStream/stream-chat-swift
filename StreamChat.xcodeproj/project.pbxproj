@@ -340,6 +340,8 @@
 		4FE6E1AB2BAC79F400C80AF1 /* MemberListState+Observer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FE6E1A92BAC79F400C80AF1 /* MemberListState+Observer.swift */; };
 		4FE6E1AD2BAC7A1B00C80AF1 /* UserListState+Observer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FE6E1AC2BAC7A1B00C80AF1 /* UserListState+Observer.swift */; };
 		4FE6E1AE2BAC7A1B00C80AF1 /* UserListState+Observer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FE6E1AC2BAC7A1B00C80AF1 /* UserListState+Observer.swift */; };
+		4FE913872D82C8ED0048AC16 /* BoxedAny.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FE913862D82C8E90048AC16 /* BoxedAny.swift */; };
+		4FE913882D82C8ED0048AC16 /* BoxedAny.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FE913862D82C8E90048AC16 /* BoxedAny.swift */; };
 		4FF2A80D2B8E011000941A64 /* ChatState+Observer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FF2A80C2B8E011000941A64 /* ChatState+Observer.swift */; };
 		4FF2A80E2B8E011000941A64 /* ChatState+Observer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FF2A80C2B8E011000941A64 /* ChatState+Observer.swift */; };
 		4FF9B2682C6F697300A3B711 /* AttachmentDownloader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FF9B2672C6F696B00A3B711 /* AttachmentDownloader.swift */; };
@@ -3254,6 +3256,7 @@
 		4FE56B8F2D5E002300589F9A /* MarkdownParser_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MarkdownParser_Tests.swift; sourceTree = "<group>"; };
 		4FE6E1A92BAC79F400C80AF1 /* MemberListState+Observer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MemberListState+Observer.swift"; sourceTree = "<group>"; };
 		4FE6E1AC2BAC7A1B00C80AF1 /* UserListState+Observer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UserListState+Observer.swift"; sourceTree = "<group>"; };
+		4FE913862D82C8E90048AC16 /* BoxedAny.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoxedAny.swift; sourceTree = "<group>"; };
 		4FF2A80C2B8E011000941A64 /* ChatState+Observer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ChatState+Observer.swift"; sourceTree = "<group>"; };
 		4FF9B2672C6F696B00A3B711 /* AttachmentDownloader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AttachmentDownloader.swift; sourceTree = "<group>"; };
 		4FFB5E9F2BA0507900F0454F /* Collection+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Collection+Extensions.swift"; sourceTree = "<group>"; };
@@ -5624,6 +5627,7 @@
 				CF324E762832FC1200E5BBE6 /* StreamTimer */,
 				40D3962D2A0910DE0020DDC9 /* Array+Sampling.swift */,
 				79280F6F2487CD2B00CDEB89 /* Atomic.swift */,
+				4FE913862D82C8E90048AC16 /* BoxedAny.swift */,
 				797A756724814F0D003CF16D /* Bundle+Extensions.swift */,
 				792A4F3D247FFDE700EAF71D /* Codable+Extensions.swift */,
 				CF6E489E282341F2008416DC /* CountdownTracker.swift */,
@@ -11500,6 +11504,7 @@
 				ADB951B2291C3CE900800554 /* AnyAttachmentUpdater.swift in Sources */,
 				79617CB125F236B600D54E61 /* UserWatchingEventMiddleware.swift in Sources */,
 				ADB951A1291BD7CC00800554 /* UploadedAttachment.swift in Sources */,
+				4FE913872D82C8ED0048AC16 /* BoxedAny.swift in Sources */,
 				7962958C248147430078EB53 /* BaseURL.swift in Sources */,
 				8802F9EF25AF3D4200475159 /* HTTPHeader.swift in Sources */,
 				8A0C3BD424C1DF2100CAFD19 /* MessageEvents.swift in Sources */,
@@ -12663,6 +12668,7 @@
 				C1FFD9FA27ECC7C7008A6848 /* Filter+ChatChannel.swift in Sources */,
 				4FE6E1AE2BAC7A1B00C80AF1 /* UserListState+Observer.swift in Sources */,
 				4FE6E1AB2BAC79F400C80AF1 /* MemberListState+Observer.swift in Sources */,
+				4FE913882D82C8ED0048AC16 /* BoxedAny.swift in Sources */,
 				AD8FEE592AA8E1A100273F88 /* ChatClient+Environment.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -13864,7 +13870,7 @@
 				"PROVISIONING_PROFILE_SPECIFIER[sdk=macosx*]" = "";
 				SKIP_INSTALL = YES;
 				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos macosx";
-				SWIFT_VERSION = 5.0;
+				SWIFT_VERSION = 6.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
@@ -13894,7 +13900,7 @@
 				"PROVISIONING_PROFILE_SPECIFIER[sdk=macosx*]" = "";
 				SKIP_INSTALL = YES;
 				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos macosx";
-				SWIFT_VERSION = 5.0;
+				SWIFT_VERSION = 6.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;
@@ -14616,7 +14622,7 @@
 				"PROVISIONING_PROFILE_SPECIFIER[sdk=macosx*]" = "";
 				SKIP_INSTALL = YES;
 				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos macosx";
-				SWIFT_VERSION = 5.0;
+				SWIFT_VERSION = 6.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Profile;

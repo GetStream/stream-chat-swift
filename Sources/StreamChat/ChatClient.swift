@@ -12,7 +12,7 @@ import Foundation
 /// case requires it (i.e. more than one window with different workspaces in a Slack-like app).
 ///
 /// - Important: When using multiple instances of `ChatClient` at the same time, it is required to use a different ``ChatClientConfig/localStorageFolderURL`` for each instance. For example, adding an additional path component to the default URL.
-public class ChatClient {
+public class ChatClient: @unchecked Sendable {
     /// The `UserId` of the currently logged in user.
     public var currentUserId: UserId? {
         authenticationRepository.currentUserId
@@ -25,7 +25,7 @@ public class ChatClient {
 
     /// The app configuration settings. It is automatically fetched when `connectUser` is called.
     /// Can be manually refetched by calling `loadAppSettings()`.
-    public private(set) var appSettings: AppSettings?
+    @Atomic public private(set) var appSettings: AppSettings?
 
     /// The current connection status of the client.
     ///
@@ -46,17 +46,22 @@ public class ChatClient {
     ///
     /// `ChatClient` initializes a set of background workers that keep observing the current state of the system and perform
     /// work if needed (i.e. when a new message pending sent appears in the database, a worker tries to send it.)
-    private(set) var backgroundWorkers: [Worker] = []
+    @Atomic private(set) var backgroundWorkers: [Worker] = []
 
     /// Background worker that takes care about client connection recovery when the Internet comes back OR app transitions from background to foreground.
-    private(set) var connectionRecoveryHandler: ConnectionRecoveryHandler?
+    @Atomic private(set) var connectionRecoveryHandler: ConnectionRecoveryHandler?
 
     /// The notification center used to send and receive notifications about incoming events.
     private(set) var eventNotificationCenter: EventNotificationCenter
 
     /// The registry that contains all the attachment payloads associated with their attachment types.
     /// For the meantime this is a static property to avoid breaking changes. On v5, this can be changed.
-    private(set) static var attachmentTypesRegistry: [AttachmentType: AttachmentPayload.Type] = [
+    private(set) static var attachmentTypesRegistry: [AttachmentType: AttachmentPayload.Type] {
+        get { Self.queue.sync { _attachmentTypesRegistry } }
+        set { Self.queue.sync { _attachmentTypesRegistry = newValue } }
+    }
+
+    nonisolated(unsafe) private(set) static var _attachmentTypesRegistry: [AttachmentType: AttachmentPayload.Type] = [
         .image: ImageAttachmentPayload.self,
         .video: VideoAttachmentPayload.self,
         .audio: AudioAttachmentPayload.self,
@@ -96,17 +101,27 @@ public class ChatClient {
     let databaseContainer: DatabaseContainer
 
     /// The component responsible to timeout the user connection if it takes more time than the `ChatClientConfig.reconnectionTimeout`.
-    var reconnectionTimeoutHandler: StreamTimer?
+    var reconnectionTimeoutHandler: StreamTimer? {
+        get { Self.queue.sync { _reconnectionTimeoutHandler } }
+        set { Self.queue.sync { _reconnectionTimeoutHandler = newValue } }
+    }
+
+    private var _reconnectionTimeoutHandler: StreamTimer?
 
     /// The environment object containing all dependencies of this `Client` instance.
     private let environment: Environment
     
-    @Atomic static var activeLocalStorageURLs = Set<URL>()
-
     /// The default configuration of URLSession to be used for both the `APIClient` and `WebSocketClient`. It contains all
     /// required header auth parameters to make a successful request.
-    private var urlSessionConfiguration: URLSessionConfiguration
+    private let urlSessionConfiguration: URLSessionConfiguration
 
+    static var activeLocalStorageURLs: Set<URL> {
+        queue.sync { _activeLocalStorageURLs }
+    }
+
+    nonisolated(unsafe) private static var _activeLocalStorageURLs = Set<URL>()
+    private static let queue = DispatchQueue(label: "io.getstream.chat-client", target: .global())
+    
     /// Creates a new instance of `ChatClient`.
     /// - Parameter config: The config object for the `Client`. See `ChatClientConfig` for all configuration options.
     public convenience init(
@@ -229,7 +244,9 @@ public class ChatClient {
     }
 
     deinit {
-        Self._activeLocalStorageURLs.mutate { $0.subtract(databaseContainer.persistentStoreDescriptions.compactMap(\.url)) }
+        Self.queue.sync {
+            Self._activeLocalStorageURLs.subtract(databaseContainer.persistentStoreDescriptions.compactMap(\.url))
+        }
         completeConnectionIdWaiters(connectionId: nil)
         completeTokenWaiters(token: nil)
         reconnectionTimeoutHandler?.stop()
@@ -266,10 +283,10 @@ public class ChatClient {
     }
     
     private func validateIntegrity() {
-        Self._activeLocalStorageURLs.mutate { urls in
-            let existingCount = urls.count
-            urls.formUnion(databaseContainer.persistentStoreDescriptions.compactMap(\.url).filter { $0.path != "/dev/null" })
-            guard existingCount == urls.count, !urls.isEmpty else { return }
+        Self.queue.async { [databaseContainer] in
+            let existingCount = Self._activeLocalStorageURLs.count
+            Self._activeLocalStorageURLs.formUnion(databaseContainer.persistentStoreDescriptions.compactMap(\.url).filter { $0.path != "/dev/null" })
+            guard existingCount == Self._activeLocalStorageURLs.count, !Self._activeLocalStorageURLs.isEmpty else { return }
             log.error(
                 """
                 There are multiple ChatClient instances using the same `ChatClientConfig.localStorageFolderURL` - this is disallowed.
@@ -304,7 +321,7 @@ public class ChatClient {
     public func connectUser(
         userInfo: UserInfo,
         tokenProvider: @escaping TokenProvider,
-        completion: ((Error?) -> Void)? = nil
+        completion: (@Sendable(Error?) -> Void)? = nil
     ) {
         reconnectionTimeoutHandler?.start()
         connectionRecoveryHandler?.start()
@@ -353,7 +370,7 @@ public class ChatClient {
     public func connectUser(
         userInfo: UserInfo,
         token: Token,
-        completion: ((Error?) -> Void)? = nil
+        completion: (@Sendable(Error?) -> Void)? = nil
     ) {
         guard token.expiration == nil else {
             let error = ClientError.MissingTokenProvider()
@@ -399,7 +416,7 @@ public class ChatClient {
     ///   - completion: The completion that will be called once the **first** user session for the given token is setup.
     public func connectGuestUser(
         userInfo: UserInfo,
-        completion: ((Error?) -> Void)? = nil
+        completion: (@Sendable(Error?) -> Void)? = nil
     ) {
         connectionRepository.initialize()
         connectionRecoveryHandler?.start()
@@ -426,7 +443,7 @@ public class ChatClient {
 
     /// Connects an anonymous user
     /// - Parameter completion: The completion that will be called once the **first** user session for the given token is setup.
-    public func connectAnonymousUser(completion: ((Error?) -> Void)? = nil) {
+    public func connectAnonymousUser(completion: (@Sendable(Error?) -> Void)? = nil) {
         connectionRepository.initialize()
         reconnectionTimeoutHandler?.start()
         connectionRecoveryHandler?.start()
@@ -464,7 +481,7 @@ public class ChatClient {
 
     /// Disconnects the chat client from the chat servers. No further updates from the servers
     /// are received.
-    public func disconnect(completion: @escaping () -> Void) {
+    public func disconnect(completion: @escaping @Sendable() -> Void) {
         connectionRepository.disconnect(source: .userInitiated) {
             log.info("The `ChatClient` has been disconnected.", subsystems: .webSocket)
             completion()
@@ -569,7 +586,7 @@ public class ChatClient {
     /// Fetches the app settings and updates the ``ChatClient/appSettings``.
     /// - Parameter completion: The completion block once the app settings has finished fetching.
     public func loadAppSettings(
-        completion: ((Result<AppSettings, Error>) -> Void)? = nil
+        completion: (@Sendable(Result<AppSettings, Error>) -> Void)? = nil
     ) {
         apiClient.request(endpoint: .appSettings()) { [weak self] result in
             switch result {
@@ -628,7 +645,7 @@ public class ChatClient {
 
     /// Starts the process to  refresh the token
     /// - Parameter completion: A block to be executed when the process is completed. Contains an error if something went wrong
-    private func refreshToken(completion: ((Error?) -> Void)?) {
+    private func refreshToken(completion: (@Sendable(Error?) -> Void)?) {
         authenticationRepository.refreshToken {
             completion?($0)
         }
@@ -687,11 +704,11 @@ extension ChatClient: ConnectionStateDelegate {
 
 /// `Client` provides connection details for the `RequestEncoder`s it creates.
 extension ChatClient: ConnectionDetailsProviderDelegate {
-    func provideToken(timeout: TimeInterval = 10, completion: @escaping (Result<Token, Error>) -> Void) {
+    func provideToken(timeout: TimeInterval = 10, completion: @escaping @Sendable(Result<Token, Error>) -> Void) {
         authenticationRepository.provideToken(timeout: timeout, completion: completion)
     }
 
-    func provideConnectionId(timeout: TimeInterval = 10, completion: @escaping (Result<ConnectionId, Error>) -> Void) {
+    func provideConnectionId(timeout: TimeInterval = 10, completion: @escaping @Sendable(Result<ConnectionId, Error>) -> Void) {
         connectionRepository.provideConnectionId(timeout: timeout, completion: completion)
     }
 
@@ -721,11 +738,11 @@ extension ChatClient {
 }
 
 extension ClientError {
-    public final class MissingLocalStorageURL: ClientError {
+    public final class MissingLocalStorageURL: ClientError, @unchecked Sendable {
         override public var localizedDescription: String { "The URL provided in ChatClientConfig is `nil`." }
     }
 
-    public final class ConnectionNotSuccessful: ClientError {
+    public final class ConnectionNotSuccessful: ClientError, @unchecked Sendable {
         override public var localizedDescription: String {
             """
             Connection to the API has failed.
@@ -737,7 +754,7 @@ extension ClientError {
         }
     }
 
-    public final class ReconnectionTimeout: ClientError {
+    public final class ReconnectionTimeout: ClientError, @unchecked Sendable {
         override public var localizedDescription: String {
             """
             The reconnection process has timed out after surpassing the value from `ChatClientConfig.reconnectionTimeout`.
@@ -745,10 +762,10 @@ extension ClientError {
         }
     }
 
-    public final class MissingToken: ClientError {}
-    final class WaiterTimeout: ClientError {}
+    public final class MissingToken: ClientError, @unchecked Sendable {}
+    final class WaiterTimeout: ClientError, @unchecked Sendable {}
 
-    public final class ClientIsNotInActiveMode: ClientError {
+    public final class ClientIsNotInActiveMode: ClientError, @unchecked Sendable {
         override public var localizedDescription: String {
             """
                 ChatClient is in connectionless mode, it cannot connect to websocket.
@@ -757,7 +774,7 @@ extension ClientError {
         }
     }
 
-    public final class ConnectionWasNotInitiated: ClientError {
+    public final class ConnectionWasNotInitiated: ClientError, @unchecked Sendable {
         override public var localizedDescription: String {
             """
                 Before performing any other actions on chat client it's required to connect by using \
@@ -766,13 +783,13 @@ extension ClientError {
         }
     }
 
-    public final class ClientHasBeenDeallocated: ClientError {
+    public final class ClientHasBeenDeallocated: ClientError, @unchecked Sendable {
         override public var localizedDescription: String {
             "ChatClient has been deallocated, make sure to keep at least one strong reference to it."
         }
     }
 
-    public final class MissingTokenProvider: ClientError {
+    public final class MissingTokenProvider: ClientError, @unchecked Sendable {
         override public var localizedDescription: String {
             """
                 Missing token refresh provider to get a new token

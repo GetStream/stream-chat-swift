@@ -18,16 +18,16 @@ class FakeTimer: StreamChat.Timer {
     }
 }
 
-class MockTimer: TimerControl {
-    var cancelCallCount = 0
+class MockTimer: TimerControl, @unchecked Sendable {
+    @Atomic var cancelCallCount = 0
     func cancel() {
         cancelCallCount += 1
     }
 }
 
-class MockRepeatingTimer: RepeatingTimerControl {
-    var resumeCallCount = 0
-    var suspendCallCount = 0
+class MockRepeatingTimer: RepeatingTimerControl, @unchecked Sendable {
+    @Atomic var resumeCallCount = 0
+    @Atomic var suspendCallCount = 0
 
     func resume() {
         resumeCallCount += 1

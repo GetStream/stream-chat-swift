@@ -5,10 +5,10 @@
 import Foundation
 
 /// An object which represents a list of `ChatMessageReaction` for the specified query.
-public final class ReactionList {
+public final class ReactionList: Sendable {
     private let query: ReactionListQuery
     private let reactionListUpdater: ReactionListUpdater
-    private let stateBuilder: StateBuilder<ReactionListState>
+    @MainActor private var stateBuilder: StateBuilder<ReactionListState>
     
     init(query: ReactionListQuery, client: ChatClient, environment: Environment = .init()) {
         self.query = query
@@ -27,7 +27,7 @@ public final class ReactionList {
     // MARK: - Accessing the State
     
     /// An observable object representing the current state of the reaction list.
-    @MainActor public lazy var state: ReactionListState = stateBuilder.build()
+    @MainActor public var state: ReactionListState { stateBuilder.reuseOrBuild() }
     
     /// Fetches the most recent state from the server and updates the local store.
     ///
@@ -68,7 +68,7 @@ public final class ReactionList {
 }
 
 extension ReactionList {
-    struct Environment {
+    struct Environment: @unchecked Sendable {
         var reactionListUpdaterBuilder: (
             _ database: DatabaseContainer,
             _ apiClient: APIClient

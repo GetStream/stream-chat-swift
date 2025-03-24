@@ -6,8 +6,8 @@ import CoreData
 @testable import StreamChat
 import XCTest
 
-final class BackgroundListDatabaseObserver_Mock<Item, DTO: NSManagedObject>: BackgroundListDatabaseObserver<Item, DTO> {
-    var synchronizeError: Error?
+final class BackgroundListDatabaseObserver_Mock<Item, DTO: NSManagedObject>: BackgroundListDatabaseObserver<Item, DTO>, @unchecked Sendable {
+    @Atomic var synchronizeError: Error?
 
     override func startObserving() throws {
         if let error = synchronizeError {
@@ -17,7 +17,7 @@ final class BackgroundListDatabaseObserver_Mock<Item, DTO: NSManagedObject>: Bac
         }
     }
 
-    var items_mock: LazyCachedMapCollection<Item>?
+    @Atomic var items_mock: LazyCachedMapCollection<Item>?
     override var items: LazyCachedMapCollection<Item> {
         items_mock ?? super.items
     }

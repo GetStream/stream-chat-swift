@@ -5,19 +5,19 @@
 import Foundation
 @testable import StreamChat
 
-final class MessageRepository_Mock: MessageRepository, Spy {
+final class MessageRepository_Mock: MessageRepository, Spy, @unchecked Sendable {
     let spyState = SpyState()
     var sendMessageIds: [MessageId] {
         Array(sendMessageCalls.keys)
     }
 
-    var sendMessageResult: Result<ChatMessage, MessageRepositoryError>?
+    @Atomic var sendMessageResult: Result<ChatMessage, MessageRepositoryError>?
     @Atomic var sendMessageCalls: [MessageId: (Result<ChatMessage, MessageRepositoryError>) -> Void] = [:]
-    var getMessageResult: Result<ChatMessage, Error>?
-    var getMessage_store: Bool?
-    var saveSuccessfullyDeletedMessageError: Error?
-    var updatedMessageLocalState: LocalMessageState?
-    var updateMessageResult: Result<ChatMessage, Error>?
+    @Atomic var getMessageResult: Result<ChatMessage, Error>?
+    @Atomic var getMessage_store: Bool?
+    @Atomic var saveSuccessfullyDeletedMessageError: Error?
+    @Atomic var updatedMessageLocalState: LocalMessageState?
+    @Atomic var updateMessageResult: Result<ChatMessage, Error>?
 
     override func sendMessage(
         with messageId: MessageId,

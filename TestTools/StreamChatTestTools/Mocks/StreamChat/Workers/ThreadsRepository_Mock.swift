@@ -6,7 +6,7 @@
 @testable import StreamChatTestTools
 import XCTest
 
-final class ThreadsRepository_Mock: ThreadsRepository {
+final class ThreadsRepository_Mock: ThreadsRepository, @unchecked Sendable {
     init() {
         super.init(
             database: DatabaseContainer_Spy(),

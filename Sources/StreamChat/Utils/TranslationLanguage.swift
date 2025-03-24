@@ -4,7 +4,7 @@
 
 import Foundation
 
-public struct TranslationLanguage: Hashable {
+public struct TranslationLanguage: Hashable, Sendable {
     public let languageCode: String
 
     public init(languageCode: String) {

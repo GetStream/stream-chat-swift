@@ -5,9 +5,9 @@
 import Foundation
 @testable import StreamChat
 
-public class UserSearch_Mock: UserSearch {
+public class UserSearch_Mock: UserSearch, @unchecked Sendable {
 
-    var searchCallCount = 0
+    @Atomic var searchCallCount = 0
 
     public static func mock(client: ChatClient? = nil) -> UserSearch_Mock {
         .init(client: client ?? .mock(bundle: Bundle(for: Self.self)))

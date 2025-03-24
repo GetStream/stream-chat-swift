@@ -18,12 +18,12 @@ import Foundation
 /// - Message edit retry
 /// - Start editing messages when connection status changes (offline -> online)
 ///
-class MessageEditor: Worker {
+class MessageEditor: Worker, @unchecked Sendable {
     @Atomic private var pendingMessageIDs: Set<MessageId> = []
 
     private let observer: StateLayerDatabaseObserver<ListResult, MessageDTO, MessageDTO>
     private let messageRepository: MessageRepository
-    private var continuations = [MessageId: CheckedContinuation<ChatMessage, Error>]()
+    private var _continuations = [MessageId: CheckedContinuation<ChatMessage, Error>]()
     private let continuationsQueue = DispatchQueue(label: "co.getStream.ChatClient.MessageEditor")
 
     init(messageRepository: MessageRepository, database: DatabaseContainer, apiClient: APIClient) {
@@ -78,14 +78,15 @@ class MessageEditor: Worker {
             }
 
             let requestBody = dto.asRequestBody() as MessageRequestBody
-            messageRepository?.updateMessage(withID: messageId, localState: .syncing) { _ in
-                self?.apiClient.request(endpoint: .editMessage(payload: requestBody, skipEnrichUrl: dto.skipEnrichUrl)) { apiResult in
+            let skipEnrichUrl = dto.skipEnrichUrl
+            messageRepository?.updateMessage(withID: messageId, localState: .syncing) { [weak self, weak messageRepository] _ in
+                self?.apiClient.request(endpoint: .editMessage(payload: requestBody, skipEnrichUrl: skipEnrichUrl)) { [weak self, weak messageRepository] apiResult in
                     let newMessageState: LocalMessageState? = apiResult.error == nil ? nil : .syncingFailed
 
                     messageRepository?.updateMessage(
                         withID: messageId,
                         localState: newMessageState
-                    ) { updateResult in
+                    ) { [weak self] updateResult in
                         switch apiResult {
                         case .success:
                             self?.removeMessageIDAndContinue(messageId, result: updateResult)
@@ -132,7 +133,7 @@ extension MessageEditor {
         continuation: CheckedContinuation<ChatMessage, Error>
     ) {
         continuationsQueue.async {
-            self.continuations[messageId] = continuation
+            self._continuations[messageId] = continuation
         }
     }
     
@@ -141,7 +142,7 @@ extension MessageEditor {
         result: Result<ChatMessage, Error>
     ) {
         continuationsQueue.async {
-            guard let continuation = self.continuations.removeValue(forKey: messageId) else { return }
+            guard let continuation = self._continuations.removeValue(forKey: messageId) else { return }
             continuation.resume(with: result)
         }
     }

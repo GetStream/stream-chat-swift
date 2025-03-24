@@ -131,7 +131,7 @@ final class BackgroundListDatabaseObserver_Tests: XCTestCase {
 
         // Insert the test object
         let testValue = String.unique
-        var item: TestManagedObject!
+        nonisolated(unsafe) var item: TestManagedObject!
         try database.writeSynchronously { _ in
             let context = self.database.writableContext
             item = NSEntityDescription.insertNewObject(forEntityName: "TestManagedObject", into: context) as? TestManagedObject

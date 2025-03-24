@@ -6,7 +6,7 @@
 import Foundation
 
 /// Mock implementation of `ChatClientUpdater`
-final class ConnectionRepository_Mock: ConnectionRepository, Spy {
+final class ConnectionRepository_Mock: ConnectionRepository, Spy, @unchecked Sendable {
     enum Signature {
         static let initialize = "initialize()"
         static let connect = "connect(completion:)"
@@ -20,18 +20,18 @@ final class ConnectionRepository_Mock: ConnectionRepository, Spy {
     }
 
     let spyState = SpyState()
-    var connectResult: Result<Void, Error>?
+    @Atomic var connectResult: Result<Void, Error>?
 
-    var disconnectSource: WebSocketConnectionState.DisconnectionSource?
-    var disconnectResult: Result<Void, Error>?
+    @Atomic var disconnectSource: WebSocketConnectionState.DisconnectionSource?
+    @Atomic var disconnectResult: Result<Void, Error>?
 
-    var updateWebSocketEndpointToken: Token?
-    var updateWebSocketEndpointUserInfo: UserInfo?
-    var completeWaitersConnectionId: ConnectionId?
-    var connectionUpdateState: WebSocketConnectionState?
-    var simulateExpiredTokenOnConnectionUpdate = false
+    @Atomic var updateWebSocketEndpointToken: Token?
+    @Atomic var updateWebSocketEndpointUserInfo: UserInfo?
+    @Atomic var completeWaitersConnectionId: ConnectionId?
+    @Atomic var connectionUpdateState: WebSocketConnectionState?
+    @Atomic var simulateExpiredTokenOnConnectionUpdate = false
     
-    var provideConnectionIdResult: Result<ConnectionId, Error>?
+    @Atomic var provideConnectionIdResult: Result<ConnectionId, Error>?
 
     convenience init() {
         self.init(isClientInActiveMode: true,

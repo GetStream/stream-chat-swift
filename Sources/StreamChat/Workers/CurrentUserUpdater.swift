@@ -6,7 +6,7 @@ import CoreData
 import Foundation
 
 /// Updates current user data to the backend and updates local storage.
-class CurrentUserUpdater: Worker {
+class CurrentUserUpdater: Worker, @unchecked Sendable {
     /// Updates the current user data.
     ///
     /// By default all data is `nil`, and it won't be updated unless a value is provided.
@@ -27,7 +27,7 @@ class CurrentUserUpdater: Worker {
         role: UserRole?,
         userExtraData: [String: RawJSON]?,
         unset: Set<String> = [],
-        completion: ((Error?) -> Void)? = nil
+        completion: (@Sendable(Error?) -> Void)? = nil
     ) {
         let params: [Any?] = [name, imageURL, userExtraData]
         guard !params.allSatisfy({ $0 == nil }) || !unset.isEmpty else {
@@ -70,7 +70,7 @@ class CurrentUserUpdater: Worker {
         pushProvider: PushProvider,
         providerName: String? = nil,
         currentUserId: UserId,
-        completion: ((Error?) -> Void)? = nil
+        completion: (@Sendable(Error?) -> Void)? = nil
     ) {
         database.write({ session in
             try session.saveCurrentDevice(deviceId)
@@ -107,7 +107,7 @@ class CurrentUserUpdater: Worker {
     ///   - currentUserId: The current user identifier.
     ///   If `currentUser.devices` is not up-to-date, please make an `fetchDevices` call.
     ///   - completion: Called when device is successfully deregistered, or with error.
-    func removeDevice(id: DeviceId, currentUserId: UserId, completion: ((Error?) -> Void)? = nil) {
+    func removeDevice(id: DeviceId, currentUserId: UserId, completion: (@Sendable(Error?) -> Void)? = nil) {
         database.write({ session in
             session.deleteDevice(id: id)
         }, completion: { databaseError in
@@ -132,33 +132,28 @@ class CurrentUserUpdater: Worker {
     /// - Parameters:
     ///     - currentUserId: The current user identifier.
     ///     - completion: Called when request is successfully completed, or with error.
-    func fetchDevices(currentUserId: UserId, completion: ((Result<[Device], Error>) -> Void)? = nil) {
+    func fetchDevices(currentUserId: UserId, completion: (@Sendable(Result<[Device], Error>) -> Void)? = nil) {
         apiClient.request(endpoint: .devices(userId: currentUserId)) { [weak self] result in
             do {
-                var devices = [Device]()
                 let devicesPayload = try result.get()
-                self?.database.write({ (session) in
+                self?.database.write(converting: { (session) in
                     // Since this call always return all device, we want' to clear the existing ones
                     // to remove the deleted devices.
-                    devices = try session.saveCurrentUserDevices(
+                    try session.saveCurrentUserDevices(
                         devicesPayload.devices,
                         clearExisting: true
                     )
                     .map { try $0.asModel() }
-                }) { error in
-                    if let error {
-                        completion?(.failure(error))
-                    } else {
-                        completion?(.success(devices))
-                    }
-                }
+                }, completion: {
+                    completion?($0)
+                })
             } catch {
                 completion?(.failure(error))
             }
         }
     }
     
-    func deleteAllLocalAttachmentDownloads(completion: @escaping (Error?) -> Void) {
+    func deleteAllLocalAttachmentDownloads(completion: @escaping @Sendable(Error?) -> Void) {
         database.write({ session in
             // Try to delete all the local files even when one of them happens to fail.
             var latestError: Error?
@@ -184,13 +179,13 @@ class CurrentUserUpdater: Worker {
 
     /// Marks all channels for a user as read.
     /// - Parameter completion: Called when the API call is finished. Called with `Error` if the remote update fails.
-    func markAllRead(completion: ((Error?) -> Void)? = nil) {
+    func markAllRead(completion: (@Sendable(Error?) -> Void)? = nil) {
         apiClient.request(endpoint: .markAllRead()) {
             completion?($0.error)
         }
     }
 
-    func loadAllUnreads(completion: @escaping ((Result<CurrentUserUnreads, Error>) -> Void)) {
+    func loadAllUnreads(completion: @escaping (@Sendable(Result<CurrentUserUnreads, Error>) -> Void)) {
         apiClient.request(endpoint: .unreads()) { result in
             switch result {
             case .success(let response):
@@ -206,7 +201,7 @@ class CurrentUserUpdater: Worker {
     ///
     /// - Parameter completion: Called when the API call is finished. Called with `Error` if the remote update fails.
     ///
-    func loadBlockedUsers(completion: @escaping (Result<[BlockedUserDetails], Error>) -> Void) {
+    func loadBlockedUsers(completion: @escaping @Sendable(Result<[BlockedUserDetails], Error>) -> Void) {
         apiClient.request(endpoint: .loadBlockedUsers()) {
             switch $0 {
             case let .success(payload):

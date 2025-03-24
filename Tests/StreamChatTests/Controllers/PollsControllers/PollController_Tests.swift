@@ -82,7 +82,7 @@ final class PollController_Tests: XCTestCase {
 
     func test_synchronize_forwardsUpdaterError() throws {
         // Simulate `synchronize` call
-        var completionError: Error?
+        nonisolated(unsafe) var completionError: Error?
         controller.synchronize {
             completionError = $0
         }
@@ -103,8 +103,8 @@ final class PollController_Tests: XCTestCase {
     func test_synchronize_changesStateCorrectly_ifNoErrorsHappen() throws {
         // Simulate `synchronize` call
         let expectation = expectation(description: "syncrhonize")
-        var completionError: Error?
-        var completionCalled = false
+        nonisolated(unsafe) var completionError: Error?
+        nonisolated(unsafe) var completionCalled = false
         controller.synchronize {
             completionError = $0
             completionCalled = true
@@ -189,7 +189,7 @@ final class PollController_Tests: XCTestCase {
     
     func test_addVote_propagatesError() {
         // Simulate `castPollVote` call and catch the completion.
-        var completionError: Error?
+        nonisolated(unsafe) var completionError: Error?
         let expectation = expectation(description: "casting-vote")
         controller.castPollVote(answerText: nil, optionId: "123") {
             completionError = $0
@@ -208,7 +208,7 @@ final class PollController_Tests: XCTestCase {
     
     func test_addVote_propagatesSuccess() {
         // Simulate `addVote` call and catch the completion.
-        var completionIsCalled = false
+        nonisolated(unsafe) var completionIsCalled = false
         let expectation = expectation(description: "casting-vote")
         controller.castPollVote(answerText: nil, optionId: "123") { error in
             XCTAssertNil(error)
@@ -232,7 +232,7 @@ final class PollController_Tests: XCTestCase {
     func test_removeVote_propagatesError() {
         // Simulate `removePollVote` call and catch the completion.
         let expectation = expectation(description: "casting-vote")
-        var completionError: Error?
+        nonisolated(unsafe) var completionError: Error?
         controller.removePollVote(voteId: "123") {
             completionError = $0
             expectation.fulfill()
@@ -250,7 +250,7 @@ final class PollController_Tests: XCTestCase {
     
     func test_removePollVote_propagatesSuccess() {
         // Simulate `removePollVote` call and catch the completion.
-        var completionIsCalled = false
+        nonisolated(unsafe) var completionIsCalled = false
         let expectation = expectation(description: "remove-vote")
         controller.removePollVote(voteId: "123") {
             XCTAssertNil($0)
@@ -274,7 +274,7 @@ final class PollController_Tests: XCTestCase {
     func test_closePoll_propagatesError() {
         // Simulate `closePoll` call and catch the completion.
         let expectation = expectation(description: "close-poll")
-        var completionError: Error?
+        nonisolated(unsafe) var completionError: Error?
         controller.closePoll {
             completionError = $0
             expectation.fulfill()
@@ -293,7 +293,7 @@ final class PollController_Tests: XCTestCase {
     func test_closePoll_propagatesSuccess() {
         // Simulate `closePoll` call and catch the completion.
         let expectation = expectation(description: "close-poll")
-        var completionIsCalled = false
+        nonisolated(unsafe) var completionIsCalled = false
         controller.closePoll {
             XCTAssertNil($0)
             completionIsCalled = true
@@ -316,7 +316,7 @@ final class PollController_Tests: XCTestCase {
     func test_suggestPollOption_propagatesError() {
         // Simulate `suggestPollOption` call and catch the completion.
         let expectation = expectation(description: "poll-option")
-        var completionError: Error?
+        nonisolated(unsafe) var completionError: Error?
         controller.suggestPollOption(text: "test") {
             completionError = $0
             expectation.fulfill()
@@ -334,7 +334,7 @@ final class PollController_Tests: XCTestCase {
     
     func test_suggestPollOption_propagatesSuccess() {
         // Simulate `suggestPollOption` call and catch the completion.
-        var completionIsCalled = false
+        nonisolated(unsafe) var completionIsCalled = false
         let expectation = expectation(description: "poll-option")
         controller.suggestPollOption(text: "test") {
             XCTAssertNil($0)

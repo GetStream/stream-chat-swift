@@ -19,17 +19,17 @@ import Foundation
 /// - Upload attachments in order declared by `locallyCreatedAt`
 /// - Start uploading attachments when connection status changes (offline -> online)
 ///
-class AttachmentQueueUploader: Worker {
+class AttachmentQueueUploader: Worker, @unchecked Sendable {
     @Atomic private var pendingAttachmentIDs: Set<AttachmentId> = []
 
     private let observer: StateLayerDatabaseObserver<ListResult, AttachmentDTO, AttachmentDTO>
     private let attachmentPostProcessor: UploadedAttachmentPostProcessor?
     private let attachmentUpdater = AnyAttachmentUpdater()
     private let attachmentStorage = AttachmentStorage()
-    private var continuations = [AttachmentId: CheckedContinuation<UploadedAttachment, Error>]()
     private let queue = DispatchQueue(label: "co.getStream.ChatClient.AttachmentQueueUploader", target: .global(qos: .utility))
-    private var fileUploadConfig: AppSettings.UploadConfig?
-    private var imageUploadConfig: AppSettings.UploadConfig?
+    private var _continuations = [AttachmentId: CheckedContinuation<UploadedAttachment, Error>]()
+    private var _fileUploadConfig: AppSettings.UploadConfig?
+    private var _imageUploadConfig: AppSettings.UploadConfig?
 
     var minSignificantUploadingProgressChange: Double = 0.05
 
@@ -48,8 +48,8 @@ class AttachmentQueueUploader: Worker {
     
     func setAppSettings(_ appSettings: AppSettings?) {
         queue.async { [weak self] in
-            self?.fileUploadConfig = appSettings?.fileUploadConfig
-            self?.imageUploadConfig = appSettings?.imageUploadConfig
+            self?._fileUploadConfig = appSettings?.fileUploadConfig
+            self?._imageUploadConfig = appSettings?.imageUploadConfig
         }
     }
 
@@ -95,7 +95,7 @@ class AttachmentQueueUploader: Worker {
                         attachmentId: id,
                         uploadedAttachment: nil,
                         newState: .uploadingFailed,
-                        completion: {
+                        completion: { [weak self] in
                             self?.removePendingAttachment(with: id, result: .failure(error))
                         }
                     )
@@ -103,7 +103,7 @@ class AttachmentQueueUploader: Worker {
             case .success(let attachment):
                 self?.apiClient.uploadAttachment(
                     attachment,
-                    progress: {
+                    progress: { [weak self] in
                         self?.updateAttachmentIfNeeded(
                             attachmentId: id,
                             uploadedAttachment: nil,
@@ -111,12 +111,12 @@ class AttachmentQueueUploader: Worker {
                             completion: {}
                         )
                     },
-                    completion: { result in
+                    completion: { [weak self] result in
                         self?.updateAttachmentIfNeeded(
                             attachmentId: id,
                             uploadedAttachment: result.value,
                             newState: result.error == nil ? .uploaded : .uploadingFailed,
-                            completion: {
+                            completion: { [weak self] in
                                 self?.removePendingAttachment(with: id, result: result)
                             }
                         )
@@ -126,11 +126,9 @@ class AttachmentQueueUploader: Worker {
         }
     }
 
-    private func prepareAttachmentForUpload(with id: AttachmentId, completion: @escaping (Result<AnyChatMessageAttachment, Error>) -> Void) {
+    private func prepareAttachmentForUpload(with id: AttachmentId, completion: @escaping @Sendable(Result<AnyChatMessageAttachment, Error>) -> Void) {
         let attachmentStorage = self.attachmentStorage
-        var model: AnyChatMessageAttachment?
-        var attachmentLocalURL: URL?
-        database.write { session in
+        database.write(converting: { session in
             guard let attachment = session.attachment(id: id) else {
                 throw ClientError.AttachmentDoesNotExist(id: id)
             }
@@ -143,40 +141,42 @@ class AttachmentQueueUploader: Worker {
                     log.error("Could not copy attachment to local storage: \(error.localizedDescription)", subsystems: .offlineSupport)
                 }
             }
-            attachmentLocalURL = attachment.localURL
-            model = attachment.asAnyModel()
-        } completion: { [weak self] error in
+            guard let model = attachment.asAnyModel() else {
+                throw ClientError.AttachmentDoesNotExist(id: id)
+            }
+            return (localURL: attachment.localURL, model: model)
+        }, completion: { [weak self] result in
             DispatchQueue.main.async {
-                if let model {
+                switch result {
+                case .success(let writeData):
                     // Attachment uploading state should be validated after preparing the local file (for ensuring the local file persists for retry)
-                    if let attachmentLocalURL, self?.isAllowedToUpload(model.type, localURL: attachmentLocalURL) == false {
+                    if let attachmentLocalURL = writeData.localURL,
+                       self?.isAllowedToUpload(writeData.model.type, localURL: attachmentLocalURL) == false {
                         completion(
                             .failure(
                                 ClientError.AttachmentUploadBlocked(
                                     id: id,
-                                    attachmentType: model.type,
+                                    attachmentType: writeData.model.type,
                                     pathExtension: attachmentLocalURL.pathExtension
                                 )
                             )
                         )
                     } else {
-                        completion(.success(model))
+                        completion(.success(writeData.model))
                     }
-                } else if let error {
+                case .failure(let error):
                     completion(.failure(error))
-                } else {
-                    completion(.failure(ClientError.Unknown("Incorrect completion handling in AttachmentQueueUploader")))
                 }
             }
-        }
+        })
     }
     
     private func isAllowedToUpload(_ attachmentType: AttachmentType, localURL: URL) -> Bool {
         switch attachmentType {
         case .image:
-            return queue.sync { imageUploadConfig?.isAllowed(localURL: localURL) ?? true }
+            return queue.sync { _imageUploadConfig?.isAllowed(localURL: localURL) ?? true }
         case .audio, .file, .unknown, .video, .voiceRecording:
-            return queue.sync { fileUploadConfig?.isAllowed(localURL: localURL) ?? true }
+            return queue.sync { _fileUploadConfig?.isAllowed(localURL: localURL) ?? true }
         default:
             return true
         }
@@ -191,7 +191,7 @@ class AttachmentQueueUploader: Worker {
         attachmentId: AttachmentId,
         uploadedAttachment: UploadedAttachment?,
         newState: LocalAttachmentState,
-        completion: @escaping () -> Void = {}
+        completion: @escaping @Sendable() -> Void = {}
     ) {
         database.write({ [minSignificantUploadingProgressChange, weak self] session in
             guard let attachmentDTO = session.attachment(id: attachmentId) else { return }
@@ -295,21 +295,19 @@ private extension Array where Element == ListChange<AttachmentDTO> {
     }
 }
 
-private class AttachmentStorage {
+private final class AttachmentStorage: Sendable {
     enum Constants {
         static let path = "LocalAttachments"
     }
 
-    private let fileManager: FileManager
-    private lazy var baseURL: URL = {
-        let base = fileManager.urls(for: .documentDirectory, in: .userDomainMask).first ?? fileManager.temporaryDirectory
+    private let baseURL: URL = {
+        let base = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first ?? FileManager.default.temporaryDirectory
         return base.appendingPathComponent(Constants.path)
     }()
 
-    init(fileManager: FileManager = .default) {
-        self.fileManager = fileManager
+    init() {
         do {
-            try fileManager.createDirectory(at: baseURL, withIntermediateDirectories: true)
+            try FileManager.default.createDirectory(at: baseURL, withIntermediateDirectories: true)
         } catch {
             log.error("Could not create a directory to store attachments: \(error.localizedDescription)")
         }
@@ -338,14 +336,14 @@ private class AttachmentStorage {
     func removeAttachment(at localURL: URL) {
         guard fileExists(at: localURL) else { return }
         do {
-            try fileManager.removeItem(at: localURL)
+            try FileManager.default.removeItem(at: localURL)
         } catch {
             log.info("Unable to remove attachment at \(localURL): \(error.localizedDescription)")
         }
     }
 
     private func fileExists(at url: URL) -> Bool {
-        fileManager.fileExists(atPath: url.path)
+        FileManager.default.fileExists(atPath: url.path)
     }
 }
 
@@ -363,7 +361,7 @@ extension AttachmentQueueUploader {
         continuation: CheckedContinuation<UploadedAttachment, Error>
     ) {
         queue.async {
-            self.continuations[attachmentId] = continuation
+            self._continuations[attachmentId] = continuation
         }
     }
     
@@ -372,7 +370,7 @@ extension AttachmentQueueUploader {
         result: Result<UploadedAttachment, Error>
     ) {
         queue.async {
-            guard let continuation = self.continuations.removeValue(forKey: attachmentId) else { return }
+            guard let continuation = self._continuations.removeValue(forKey: attachmentId) else { return }
             continuation.resume(with: result)
         }
     }

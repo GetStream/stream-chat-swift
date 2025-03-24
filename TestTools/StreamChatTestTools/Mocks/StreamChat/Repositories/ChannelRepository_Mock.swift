@@ -9,20 +9,20 @@
 @testable import StreamChat
 import Foundation
 
-class ChannelRepository_Mock: ChannelRepository, Spy {
+class ChannelRepository_Mock: ChannelRepository, Spy, @unchecked Sendable {
     let spyState = SpyState()
-    var getChannel_store: Bool?
-    var getChannel_result: Result<ChatChannel, Error>?
+    @Atomic var getChannel_store: Bool?
+    @Atomic var getChannel_result: Result<ChatChannel, Error>?
     
-    var markReadCid: ChannelId?
-    var markReadUserId: UserId?
-    var markReadResult: Result<Void, Error>?
+    @Atomic var markReadCid: ChannelId?
+    @Atomic var markReadUserId: UserId?
+    @Atomic var markReadResult: Result<Void, Error>?
 
-    var markUnreadCid: ChannelId?
-    var markUnreadUserId: UserId?
-    var markUnreadMessageId: UserId?
-    var markUnreadLastReadMessageId: UserId?
-    var markUnreadResult: Result<ChatChannel, Error>?
+    @Atomic var markUnreadCid: ChannelId?
+    @Atomic var markUnreadUserId: UserId?
+    @Atomic var markUnreadMessageId: UserId?
+    @Atomic var markUnreadLastReadMessageId: UserId?
+    @Atomic var markUnreadResult: Result<ChatChannel, Error>?
 
     override func getChannel(for query: ChannelQuery, store: Bool, completion: @escaping (Result<ChatChannel, any Error>) -> Void) {
         record()

@@ -5,12 +5,12 @@
 import Foundation
 
 /// A final class that holds the context for the ongoing operations during the sync process
-final class SyncContext {
+final class SyncContext: @unchecked Sendable {
     let lastSyncAt: Date
-    var localChannelIds: Set<ChannelId> = Set()
-    var synchedChannelIds: Set<ChannelId> = Set()
-    var watchedAndSynchedChannelIds: Set<ChannelId> = Set()
-    var unwantedChannelIds: Set<ChannelId> = Set()
+    @Atomic var localChannelIds: Set<ChannelId> = Set()
+    @Atomic var synchedChannelIds: Set<ChannelId> = Set()
+    @Atomic var watchedAndSynchedChannelIds: Set<ChannelId> = Set()
+    @Atomic var unwantedChannelIds: Set<ChannelId> = Set()
 
     init(lastSyncAt: Date) {
         self.lastSyncAt = lastSyncAt
@@ -50,10 +50,12 @@ final class ActiveChannelIdsOperation: AsyncOperation, @unchecked Sendable {
                 completion()
             } else {
                 // Main actor requirement
+                let chats = syncRepository.activeChats.allObjects
+                let channelLists = syncRepository.activeChannelLists.allObjects
                 DispatchQueue.main.async {
-                    context.localChannelIds.formUnion(syncRepository.activeChats.allObjects.compactMap { try? $0.cid })
+                    context.localChannelIds.formUnion(chats.compactMap { try? $0.cid })
                     context.localChannelIds.formUnion(
-                        syncRepository.activeChannelLists.allObjects
+                        channelLists
                             .map(\.state.channels)
                             .flatMap { $0 }
                             .map(\.cid)

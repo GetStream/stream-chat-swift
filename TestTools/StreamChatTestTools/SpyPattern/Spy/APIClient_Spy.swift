@@ -7,7 +7,7 @@ import Foundation
 import XCTest
 
 /// Mock implementation of APIClient allowing easy control and simulation of responses.
-final class APIClient_Spy: APIClient, Spy {
+final class APIClient_Spy: APIClient, Spy, @unchecked Sendable {
     enum Signature {
         static let flushRequestsQueue = "flushRequestsQueue()"
     }

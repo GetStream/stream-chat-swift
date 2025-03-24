@@ -6,8 +6,8 @@ import Foundation
 
 extension ChatClient {
     /// An object containing all dependencies of `Client`
-    struct Environment {
-        var apiClientBuilder: (
+    struct Environment: Sendable {
+        var apiClientBuilder: @Sendable(
             _ sessionConfiguration: URLSessionConfiguration,
             _ requestEncoder: RequestEncoder,
             _ requestDecoder: RequestDecoder,
@@ -15,7 +15,7 @@ extension ChatClient {
             _ attachmentUploader: AttachmentUploader
         ) -> APIClient = APIClient.init
 
-        var webSocketClientBuilder: ((
+        var webSocketClientBuilder: (@Sendable(
             _ sessionConfiguration: URLSessionConfiguration,
             _ requestEncoder: RequestEncoder,
             _ eventDecoder: AnyEventDecoder,
@@ -29,7 +29,7 @@ extension ChatClient {
             )
         }
 
-        var databaseContainerBuilder: (
+        var databaseContainerBuilder: @Sendable(
             _ kind: DatabaseContainer.Kind,
             _ chatClientConfig: ChatClientConfig
         ) -> DatabaseContainer = {
@@ -39,19 +39,19 @@ extension ChatClient {
             )
         }
 
-        var reconnectionHandlerBuilder: (_ chatClientConfig: ChatClientConfig) -> StreamTimer? = {
+        var reconnectionHandlerBuilder: @Sendable(_ chatClientConfig: ChatClientConfig) -> StreamTimer? = {
             guard let reconnectionTimeout = $0.reconnectionTimeout else { return nil }
             return ScheduledStreamTimer(interval: reconnectionTimeout, fireOnStart: false, repeats: false)
         }
 
-        var requestEncoderBuilder: (_ baseURL: URL, _ apiKey: APIKey) -> RequestEncoder = DefaultRequestEncoder.init
-        var requestDecoderBuilder: () -> RequestDecoder = DefaultRequestDecoder.init
+        var requestEncoderBuilder: @Sendable(_ baseURL: URL, _ apiKey: APIKey) -> RequestEncoder = DefaultRequestEncoder.init
+        var requestDecoderBuilder: @Sendable() -> RequestDecoder = DefaultRequestDecoder.init
 
-        var eventDecoderBuilder: () -> EventDecoder = EventDecoder.init
+        var eventDecoderBuilder: @Sendable() -> EventDecoder = EventDecoder.init
 
         var notificationCenterBuilder = EventNotificationCenter.init
 
-        var internetConnection: (_ center: NotificationCenter, _ monitor: InternetConnectionMonitor) -> InternetConnection = {
+        var internetConnection: @Sendable(_ center: NotificationCenter, _ monitor: InternetConnectionMonitor) -> InternetConnection = {
             InternetConnection(notificationCenter: $0, monitor: $1)
         }
 
@@ -67,7 +67,7 @@ extension ChatClient {
 
         var connectionRepositoryBuilder = ConnectionRepository.init
 
-        var backgroundTaskSchedulerBuilder: () -> BackgroundTaskScheduler? = {
+        var backgroundTaskSchedulerBuilder: @Sendable() -> BackgroundTaskScheduler? = {
             if Bundle.main.isAppExtension {
                 // No background task scheduler exists for app extensions.
                 return nil
@@ -85,7 +85,7 @@ extension ChatClient {
 
         var tokenExpirationRetryStrategy: RetryStrategy = DefaultRetryStrategy()
 
-        var connectionRecoveryHandlerBuilder: (
+        var connectionRecoveryHandlerBuilder: @Sendable(
             _ webSocketClient: WebSocketClient,
             _ eventNotificationCenter: EventNotificationCenter,
             _ syncRepository: SyncRepository,
@@ -107,7 +107,7 @@ extension ChatClient {
 
         var authenticationRepositoryBuilder = AuthenticationRepository.init
 
-        var syncRepositoryBuilder: (
+        var syncRepositoryBuilder: @Sendable(
             _ config: ChatClientConfig,
             _ offlineRequestsRepository: OfflineRequestsRepository,
             _ eventNotificationCenter: EventNotificationCenter,
@@ -125,42 +125,42 @@ extension ChatClient {
             )
         }
 
-        var channelRepositoryBuilder: (
+        var channelRepositoryBuilder: @Sendable(
             _ database: DatabaseContainer,
             _ apiClient: APIClient
         ) -> ChannelRepository = {
             ChannelRepository(database: $0, apiClient: $1)
         }
         
-        var pollsRepositoryBuilder: (
+        var pollsRepositoryBuilder: @Sendable(
             _ database: DatabaseContainer,
             _ apiClient: APIClient
         ) -> PollsRepository = {
             PollsRepository(database: $0, apiClient: $1)
         }
 
-        var draftMessagesRepositoryBuilder: (
+        var draftMessagesRepositoryBuilder: @Sendable(
             _ database: DatabaseContainer,
             _ apiClient: APIClient
         ) -> DraftMessagesRepository = {
             DraftMessagesRepository(database: $0, apiClient: $1)
         }
 
-        var channelListUpdaterBuilder: (
+        var channelListUpdaterBuilder: @Sendable(
             _ database: DatabaseContainer,
             _ apiClient: APIClient
         ) -> ChannelListUpdater = {
             ChannelListUpdater(database: $0, apiClient: $1)
         }
 
-        var messageRepositoryBuilder: (
+        var messageRepositoryBuilder: @Sendable(
             _ database: DatabaseContainer,
             _ apiClient: APIClient
         ) -> MessageRepository = {
             MessageRepository(database: $0, apiClient: $1)
         }
 
-        var offlineRequestsRepositoryBuilder: (
+        var offlineRequestsRepositoryBuilder: @Sendable(
             _ messageRepository: MessageRepository,
             _ database: DatabaseContainer,
             _ apiClient: APIClient,

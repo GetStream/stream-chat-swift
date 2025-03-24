@@ -5,10 +5,10 @@
 import Foundation
 
 /// An object which represents a list of `ChatChannelMember` for the specified channel.
-public final class MemberList {
+public final class MemberList: Sendable {
     private let query: ChannelMemberListQuery
     private let memberListUpdater: ChannelMemberListUpdater
-    private let stateBuilder: StateBuilder<MemberListState>
+    @MainActor private var stateBuilder: StateBuilder<MemberListState>
     
     init(query: ChannelMemberListQuery, client: ChatClient, environment: Environment = .init()) {
         self.query = query
@@ -27,7 +27,7 @@ public final class MemberList {
     // MARK: - Accessing the State
     
     /// An observable object representing the current state of the member list.
-    @MainActor public lazy var state: MemberListState = stateBuilder.build()
+    @MainActor public var state: MemberListState { stateBuilder.reuseOrBuild() }
     
     /// Fetches the most recent state from the server and updates the local store.
     ///
@@ -64,7 +64,7 @@ public final class MemberList {
 }
 
 extension MemberList {
-    struct Environment {
+    struct Environment: @unchecked Sendable {
         var memberListUpdaterBuilder: (
             _ database: DatabaseContainer,
             _ apiClient: APIClient
@@ -76,13 +76,5 @@ extension MemberList {
         ) -> MemberListState = { @MainActor in
             MemberListState(query: $0, database: $1)
         }
-    }
-}
-
-private extension ChannelMemberListQuery {
-    func withPagination(_ pagination: Pagination) -> Self {
-        var result = self
-        result.pagination = pagination
-        return result
     }
 }

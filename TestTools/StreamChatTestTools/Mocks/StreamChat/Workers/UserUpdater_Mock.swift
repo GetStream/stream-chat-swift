@@ -6,7 +6,7 @@
 import XCTest
 
 /// Mock implementation of `UserUpdater`
-final class UserUpdater_Mock: UserUpdater {
+final class UserUpdater_Mock: UserUpdater, @unchecked Sendable {
     @Atomic var muteUser_userId: UserId?
     @Atomic var muteUser_completion: ((Error?) -> Void)?
     @Atomic var muteUser_completion_result: Result<Void, Error>?

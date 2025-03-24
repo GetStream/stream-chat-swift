@@ -5,7 +5,7 @@
 import Foundation
 
 /// An object that uniquely identifies a message attachment.
-public struct AttachmentId: Hashable {
+public struct AttachmentId: Hashable, Sendable {
     /// The cid of the channel the attachment belongs to.
     public let cid: ChannelId
 

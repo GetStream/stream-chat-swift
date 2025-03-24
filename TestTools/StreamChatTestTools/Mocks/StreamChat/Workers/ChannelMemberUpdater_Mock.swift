@@ -6,7 +6,7 @@
 import XCTest
 
 /// Mock implementation of `ChannelMemberUpdater`
-final class ChannelMemberUpdater_Mock: ChannelMemberUpdater {
+final class ChannelMemberUpdater_Mock: ChannelMemberUpdater, @unchecked Sendable {
     @Atomic var banMember_userId: UserId?
     @Atomic var banMember_cid: ChannelId?
     @Atomic var banMember_shadow: Bool?

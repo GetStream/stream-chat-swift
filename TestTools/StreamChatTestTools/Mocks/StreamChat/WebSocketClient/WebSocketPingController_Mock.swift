@@ -6,9 +6,9 @@ import Foundation
 @testable import StreamChat
 import XCTest
 
-final class WebSocketPingController_Mock: WebSocketPingController {
-    var connectionStateDidChange_connectionStates: [WebSocketConnectionState] = []
-    var pongReceivedCount = 0
+final class WebSocketPingController_Mock: WebSocketPingController, @unchecked Sendable {
+    @Atomic var connectionStateDidChange_connectionStates: [WebSocketConnectionState] = []
+    @Atomic var pongReceivedCount = 0
 
     override func connectionStateDidChange(_ connectionState: WebSocketConnectionState) {
         connectionStateDidChange_connectionStates.append(connectionState)

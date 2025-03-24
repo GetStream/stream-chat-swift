@@ -35,7 +35,7 @@ public extension DraftMessage {
             showReplyInChannel: showReplyInChannel,
             extraData: extraData,
             currentUser: currentUser,
-            quotedMessage: { quotedMessage },
+            quotedMessage: quotedMessage,
             mentionedUsers: mentionedUsers,
             attachments: attachments
         )

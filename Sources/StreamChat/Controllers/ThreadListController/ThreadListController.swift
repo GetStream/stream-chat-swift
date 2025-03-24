@@ -20,7 +20,7 @@ public protocol ChatThreadListControllerDelegate: DataControllerStateDelegate {
 
 /// `ChatThreadListController` is a controller class which allows querying and
 /// observing the threads that the current user is participating.
-public class ChatThreadListController: DataController, DelegateCallable, DataStoreProvider {
+public class ChatThreadListController: DataController, DelegateCallable, DataStoreProvider, @unchecked Sendable {
     /// The query of the thread list.
     public let query: ThreadListQuery
 
@@ -28,7 +28,12 @@ public class ChatThreadListController: DataController, DelegateCallable, DataSto
     public let client: ChatClient
 
     /// The cursor of the next page in case there is more data.
-    private var nextCursor: String?
+    private var nextCursor: String? {
+        get { queue.sync { _nextCursor } }
+        set { queue.sync { _nextCursor = newValue } }
+    }
+
+    private var _nextCursor: String?
 
     /// The threads matching the query of this controller.
     ///
@@ -40,14 +45,15 @@ public class ChatThreadListController: DataController, DelegateCallable, DataSto
     }
 
     /// The repository used to fetch the data from remote and local cache.
-    private lazy var threadsRepository: ThreadsRepository = self.environment
-        .threadsRepositoryBuilder(
-            client.databaseContainer,
-            client.apiClient
-        )
+    private let threadsRepository: ThreadsRepository
 
     /// A Boolean value that returns whether pagination is finished.
-    public private(set) var hasLoadedAllThreads: Bool = false
+    public private(set) var hasLoadedAllThreads: Bool {
+        get { queue.sync { _hasLoadedAllThreads } }
+        set { queue.sync { _hasLoadedAllThreads = newValue } }
+    }
+
+    private var _hasLoadedAllThreads: Bool = false
 
     /// A type-erased delegate.
     var multicastDelegate: MulticastDelegate<ChatThreadListControllerDelegate> = .init() {
@@ -80,7 +86,7 @@ public class ChatThreadListController: DataController, DelegateCallable, DataSto
         return observer
     }()
 
-    var _basePublishers: Any?
+    @Atomic private var _basePublishers: Any?
     /// An internal backing object for all publicly available Combine publishers. We use it to simplify the way we expose
     /// publishers. Instead of creating custom `Publisher` types, we use `CurrentValueSubject` and `PassthroughSubject` internally,
     /// and expose the published values by mapping them to a read-only `AnyPublisher` type.
@@ -103,16 +109,20 @@ public class ChatThreadListController: DataController, DelegateCallable, DataSto
         self.client = client
         self.query = query
         self.environment = environment
+        threadsRepository = environment.threadsRepositoryBuilder(
+            client.databaseContainer,
+            client.apiClient
+        )
     }
 
-    override public func synchronize(_ completion: ((_ error: Error?) -> Void)? = nil) {
+    override public func synchronize(_ completion: (@Sendable(_ error: Error?) -> Void)? = nil) {
         startThreadListObserverIfNeeded()
         threadsRepository.loadThreads(
             query: query
         ) { [weak self] result in
             switch result {
             case let .success(threadListResponse):
-                self?.callback {
+                self?.callback { [weak self] in
                     self?.state = .remoteDataFetched
                     self?.nextCursor = threadListResponse.next
                     self?.hasLoadedAllThreads = threadListResponse.next == nil
@@ -134,7 +144,7 @@ public class ChatThreadListController: DataController, DelegateCallable, DataSto
     ///   - completion: The completion.
     public func loadMoreThreads(
         limit: Int? = nil,
-        completion: ((Result<[ChatThread], Error>) -> Void)? = nil
+        completion: (@Sendable(Result<[ChatThread], Error>) -> Void)? = nil
     ) {
         let limit = limit ?? query.limit
         var updatedQuery = query
@@ -143,7 +153,7 @@ public class ChatThreadListController: DataController, DelegateCallable, DataSto
         threadsRepository.loadThreads(query: updatedQuery) { [weak self] result in
             switch result {
             case let .success(threadListResponse):
-                self?.callback {
+                self?.callback { [weak self] in
                     let threads = threadListResponse.threads
                     self?.nextCursor = threadListResponse.next
                     self?.hasLoadedAllThreads = threadListResponse.next == nil

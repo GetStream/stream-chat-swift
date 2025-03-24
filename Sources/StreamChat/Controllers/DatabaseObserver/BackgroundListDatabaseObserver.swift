@@ -5,7 +5,7 @@
 import CoreData
 import Foundation
 
-class BackgroundListDatabaseObserver<Item, DTO: NSManagedObject>: BackgroundDatabaseObserver<Item, DTO> {
+class BackgroundListDatabaseObserver<Item: Sendable, DTO: NSManagedObject>: BackgroundDatabaseObserver<Item, DTO>, @unchecked Sendable {
     var items: LazyCachedMapCollection<Item> {
         LazyCachedMapCollection(elements: rawItems)
     }

@@ -608,7 +608,7 @@ final class ChannelController_Tests: XCTestCase {
 
     func test_synchronize_callsChannelUpdater() throws {
         // Simulate `synchronize` calls and catch the completion
-        var completionCalled = false
+        nonisolated(unsafe) var completionCalled = false
         controller.synchronize { [callbackQueueID] error in
             XCTAssertNil(error)
             AssertTestQueue(withId: callbackQueueID)
@@ -753,7 +753,7 @@ final class ChannelController_Tests: XCTestCase {
 
     func test_synchronize_propagesErrorFromUpdater() {
         // Simulate `synchronize` call and catch the completion
-        var completionCalledError: Error?
+        nonisolated(unsafe) var completionCalledError: Error?
         controller.synchronize { [callbackQueueID] in
             completionCalledError = $0
             AssertTestQueue(withId: callbackQueueID)
@@ -933,7 +933,7 @@ final class ChannelController_Tests: XCTestCase {
             before: sortedMessages[0].createdAt,
             after: sortedMessages[1].createdAt
         )
-        var oldMessageId: MessageId?
+        nonisolated(unsafe) var oldMessageId: MessageId?
         // Save the message payload and check `channel.lastMessageAt` is not updated by older message
         try client.databaseContainer.writeSynchronously {
             let dto = try $0.createNewMessage(
@@ -1810,7 +1810,7 @@ final class ChannelController_Tests: XCTestCase {
 
     func test_updateChannel_callsChannelUpdater() {
         // Simulate `updateChannel` call and catch the completion
-        var completionCalled = false
+        nonisolated(unsafe) var completionCalled = false
         controller.updateChannel(name: .unique, imageURL: .unique(), team: .unique, extraData: .init()) { [callbackQueueID] error in
             AssertTestQueue(withId: callbackQueueID)
             XCTAssertNil(error)
@@ -1840,7 +1840,7 @@ final class ChannelController_Tests: XCTestCase {
 
     func test_updateChannel_propagesErrorFromUpdater() {
         // Simulate `updateChannel` call and catch the completion
-        var completionCalledError: Error?
+        nonisolated(unsafe) var completionCalledError: Error?
         controller.updateChannel(name: .unique, imageURL: .unique(), team: .unique, extraData: .init()) { [callbackQueueID] in
             AssertTestQueue(withId: callbackQueueID)
             completionCalledError = $0
@@ -1861,7 +1861,7 @@ final class ChannelController_Tests: XCTestCase {
         let query = ChannelQuery(channelPayload: .unique)
         setupControllerForNewChannel(query: query)
 
-        var receivedError: Error?
+        nonisolated(unsafe) var receivedError: Error?
         let expectation = self.expectation(description: "partialChannelUpdate completes")
         controller.partialChannelUpdate { [callbackQueueID] error in
             AssertTestQueue(withId: callbackQueueID)
@@ -1882,7 +1882,7 @@ final class ChannelController_Tests: XCTestCase {
         let extraData: [String: RawJSON] = ["scope": "test"]
         let unsetProperties: [String] = ["user.id", "channel_store"]
 
-        var receivedError: Error?
+        nonisolated(unsafe) var receivedError: Error?
         let expectation = self.expectation(description: "partialChannelUpdate completes")
         controller.partialChannelUpdate(
             name: name,
@@ -1917,7 +1917,7 @@ final class ChannelController_Tests: XCTestCase {
     }
 
     func test_partialChannelUpdate_propagatesError() throws {
-        var receivedError: Error?
+        nonisolated(unsafe) var receivedError: Error?
         let expectation = self.expectation(description: "partialChannelUpdate completes")
         controller.partialChannelUpdate(
             name: .unique,
@@ -2009,7 +2009,7 @@ final class ChannelController_Tests: XCTestCase {
 
     func test_muteChannel_callsChannelUpdater() {
         // Simulate `muteChannel` call and catch the completion
-        var completionCalled = false
+        nonisolated(unsafe) var completionCalled = false
         controller.muteChannel { [callbackQueueID] error in
             AssertTestQueue(withId: callbackQueueID)
             XCTAssertNil(error)
@@ -2043,7 +2043,7 @@ final class ChannelController_Tests: XCTestCase {
         let expiration = 1_000_000
         
         // Simulate `muteChannel` call and catch the completion
-        var completionCalled = false
+        nonisolated(unsafe) var completionCalled = false
         controller.muteChannel(expiration: expiration) { [callbackQueueID] error in
             AssertTestQueue(withId: callbackQueueID)
             XCTAssertNil(error)
@@ -2076,7 +2076,7 @@ final class ChannelController_Tests: XCTestCase {
 
     func test_muteChannel_propagatesErrorFromUpdater() {
         // Simulate `muteChannel` call and catch the completion
-        var completionCalledError: Error?
+        nonisolated(unsafe) var completionCalledError: Error?
         controller.muteChannel { [callbackQueueID] in
             AssertTestQueue(withId: callbackQueueID)
             completionCalledError = $0
@@ -2094,7 +2094,7 @@ final class ChannelController_Tests: XCTestCase {
         let expiration = 1_000_000
         
         // Simulate `muteChannel` call and catch the completion
-        var completionCalledError: Error?
+        nonisolated(unsafe) var completionCalledError: Error?
         controller.muteChannel(expiration: expiration) { [callbackQueueID] in
             AssertTestQueue(withId: callbackQueueID)
             completionCalledError = $0
@@ -2141,7 +2141,7 @@ final class ChannelController_Tests: XCTestCase {
 
     func test_unmuteChannel_callsChannelUpdater() {
         // Simulate `unmuteChannel` call and catch the completion
-        var completionCalled = false
+        nonisolated(unsafe) var completionCalled = false
         controller.unmuteChannel { [callbackQueueID] error in
             AssertTestQueue(withId: callbackQueueID)
             XCTAssertNil(error)
@@ -2173,7 +2173,7 @@ final class ChannelController_Tests: XCTestCase {
 
     func test_unmuteChannel_propagatesErrorFromUpdater() {
         // Simulate `unmuteChannel` call and catch the completion
-        var completionCalledError: Error?
+        nonisolated(unsafe) var completionCalledError: Error?
         controller.unmuteChannel { [callbackQueueID] in
             AssertTestQueue(withId: callbackQueueID)
             completionCalledError = $0
@@ -2305,7 +2305,7 @@ final class ChannelController_Tests: XCTestCase {
 
     func test_deleteChannel_callsChannelUpdater() {
         // Simulate `deleteChannel` calls and catch the completion
-        var completionCalled = false
+        nonisolated(unsafe) var completionCalled = false
         controller.deleteChannel { [callbackQueueID] error in
             AssertTestQueue(withId: callbackQueueID)
             XCTAssertNil(error)
@@ -2336,7 +2336,7 @@ final class ChannelController_Tests: XCTestCase {
 
     func test_deleteChannel_callsChannelUpdaterWithError() {
         // Simulate `muteChannel` call and catch the completion
-        var completionCalledError: Error?
+        nonisolated(unsafe) var completionCalledError: Error?
         controller.deleteChannel { [callbackQueueID] in
             AssertTestQueue(withId: callbackQueueID)
             completionCalledError = $0
@@ -2383,7 +2383,7 @@ final class ChannelController_Tests: XCTestCase {
 
     func test_truncateChannel_callsChannelUpdater() {
         // Simulate `truncateChannel` calls and catch the completion
-        var completionCalled = false
+        nonisolated(unsafe) var completionCalled = false
         controller.truncateChannel { [callbackQueueID] error in
             AssertTestQueue(withId: callbackQueueID)
             XCTAssertNil(error)
@@ -2414,7 +2414,7 @@ final class ChannelController_Tests: XCTestCase {
 
     func test_truncateChannel_callsChannelUpdaterWithError() {
         // Simulate `truncateChannel` call and catch the completion
-        var completionCalledError: Error?
+        nonisolated(unsafe) var completionCalledError: Error?
         controller.truncateChannel { [callbackQueueID] in
             AssertTestQueue(withId: callbackQueueID)
             completionCalledError = $0
@@ -2461,7 +2461,7 @@ final class ChannelController_Tests: XCTestCase {
 
     func test_hideChannel_callsChannelUpdater() {
         // Simulate `hideChannel` calls and catch the completion
-        var completionCalled = false
+        nonisolated(unsafe) var completionCalled = false
         controller.hideChannel(clearHistory: false) { [callbackQueueID] error in
             AssertTestQueue(withId: callbackQueueID)
             XCTAssertNil(error)
@@ -2493,7 +2493,7 @@ final class ChannelController_Tests: XCTestCase {
 
     func test_hideChannel_callsChannelUpdaterWithError() {
         // Simulate `hideChannel` call and catch the completion
-        var completionCalledError: Error?
+        nonisolated(unsafe) var completionCalledError: Error?
         controller.hideChannel(clearHistory: false) { [callbackQueueID] in
             AssertTestQueue(withId: callbackQueueID)
             completionCalledError = $0
@@ -2540,7 +2540,7 @@ final class ChannelController_Tests: XCTestCase {
 
     func test_showChannel_callsChannelUpdater() {
         // Simulate `showChannel` calls and catch the completion
-        var completionCalled = false
+        nonisolated(unsafe) var completionCalled = false
         controller.showChannel { [callbackQueueID] error in
             AssertTestQueue(withId: callbackQueueID)
             XCTAssertNil(error)
@@ -2571,7 +2571,7 @@ final class ChannelController_Tests: XCTestCase {
 
     func test_showChannel_callsChannelUpdaterWithError() {
         // Simulate `showChannel` call and catch the completion
-        var completionCalledError: Error?
+        nonisolated(unsafe) var completionCalledError: Error?
         controller.showChannel { [callbackQueueID] in
             AssertTestQueue(withId: callbackQueueID)
             completionCalledError = $0
@@ -2591,7 +2591,7 @@ final class ChannelController_Tests: XCTestCase {
         let channel = try setupChannel(channelPayload: dummyPayload(with: channelId, numberOfMessages: 1))
         let messageId = channel.messages.first?.id
 
-        var completionCalled = false
+        nonisolated(unsafe) var completionCalled = false
         controller.loadPreviousMessages(before: messageId, limit: 25) { [callbackQueueID] error in
             AssertTestQueue(withId: callbackQueueID)
             XCTAssertNil(error)
@@ -2672,7 +2672,7 @@ final class ChannelController_Tests: XCTestCase {
         try setupChannel(channelPayload: dummyPayload(with: channelId, numberOfMessages: 1))
 
         // Simulate `loadPreviousMessages` call and catch the completion
-        var completionCalledError: Error?
+        nonisolated(unsafe) var completionCalledError: Error?
         controller.loadPreviousMessages(before: .unique) { [callbackQueueID] in
             AssertTestQueue(withId: callbackQueueID)
             completionCalledError = $0
@@ -2701,7 +2701,7 @@ final class ChannelController_Tests: XCTestCase {
         waitForExpectations(timeout: defaultTimeout)
 
         let expectation2 = self.expectation(description: "loadPreviousMessage completes")
-        var receivedError: Error?
+        nonisolated(unsafe) var receivedError: Error?
         controller.loadPreviousMessages(before: "3") { error in
             receivedError = error
             expectation2.fulfill()
@@ -2726,7 +2726,7 @@ final class ChannelController_Tests: XCTestCase {
         env.channelUpdater?.mockPaginationState.oldestFetchedMessage = .dummy(messageId: lastFetchedId)
 
         let exp = expectation(description: "loadPreviousMessage completes")
-        var receivedError: Error?
+        nonisolated(unsafe) var receivedError: Error?
         controller.loadPreviousMessages() { error in
             receivedError = error
             exp.fulfill()
@@ -2771,7 +2771,7 @@ final class ChannelController_Tests: XCTestCase {
         }
 
         let error = TestError()
-        var receivedError: Error?
+        nonisolated(unsafe) var receivedError: Error?
 
         let expectation2 = expectation(description: "loadPreviousMessage completes")
         controller.loadPreviousMessages() { error in
@@ -2807,7 +2807,7 @@ final class ChannelController_Tests: XCTestCase {
 
         messageId = channel.messages.first?.id
 
-        var completionCalled = false
+        nonisolated(unsafe) var completionCalled = false
         controller.loadNextMessages(after: messageId, limit: 25) { [callbackQueueID] error in
             AssertTestQueue(withId: callbackQueueID)
             XCTAssertNil(error)
@@ -2847,7 +2847,7 @@ final class ChannelController_Tests: XCTestCase {
             withAllNextMessagesLoaded: false
         )
 
-        var completionCalledError: Error?
+        nonisolated(unsafe) var completionCalledError: Error?
         let exp = expectation(description: "load next messages completion called")
         controller.loadNextMessages(after: .unique) { [callbackQueueID] in
             AssertTestQueue(withId: callbackQueueID)
@@ -2900,7 +2900,7 @@ final class ChannelController_Tests: XCTestCase {
         try setupChannel(withAllNextMessagesLoaded: false)
 
         let exp = expectation(description: "loadNextMessage completes")
-        var receivedError: Error?
+        nonisolated(unsafe) var receivedError: Error?
         controller.loadNextMessages(after: "3") { error in
             receivedError = error
             exp.fulfill()
@@ -2927,7 +2927,7 @@ final class ChannelController_Tests: XCTestCase {
         env.channelUpdater?.mockPaginationState.newestFetchedMessage = .dummy(messageId: lastFetchedId)
 
         let exp = expectation(description: "loadNextMessage completes")
-        var receivedError: Error?
+        nonisolated(unsafe) var receivedError: Error?
         controller.loadNextMessages() { error in
             receivedError = error
             exp.fulfill()
@@ -2962,7 +2962,7 @@ final class ChannelController_Tests: XCTestCase {
             try session.saveChannel(payload: dummyChannel)
         }
 
-        var completionCalled = false
+        nonisolated(unsafe) var completionCalled = false
         controller.loadPageAroundMessageId(messageId, limit: 5) { error in
             XCTAssertNil(error)
             completionCalled = true
@@ -3089,7 +3089,7 @@ final class ChannelController_Tests: XCTestCase {
         env.eventSender!.keystroke_completion_expectation = XCTestExpectation()
 
         // Simulate `keystroke` call and catch the completion
-        var completionCalledError: Error?
+        nonisolated(unsafe) var completionCalledError: Error?
         controller.sendKeystrokeEvent { completionCalledError = $0 }
 
         // Keep a weak ref so we can check if it's actually deallocated
@@ -3124,7 +3124,7 @@ final class ChannelController_Tests: XCTestCase {
         let parentMessageId = MessageId.unique
 
         // Simulate `keystroke` call and catch the completion
-        var completionCalledError: Error?
+        nonisolated(unsafe) var completionCalledError: Error?
         controller.sendKeystrokeEvent(parentMessageId: parentMessageId) { completionCalledError = $0 }
 
         // Keep a weak ref so we can check if it's actually deallocated
@@ -3164,7 +3164,7 @@ final class ChannelController_Tests: XCTestCase {
         env.eventSender!.startTyping_completion_expectation = XCTestExpectation()
 
         // Simulate `startTyping` call and catch the completion
-        var completionCalledError: Error?
+        nonisolated(unsafe) var completionCalledError: Error?
         controller.sendStartTypingEvent { completionCalledError = $0 }
 
         // Keep a weak ref so we can check if it's actually deallocated
@@ -3199,7 +3199,7 @@ final class ChannelController_Tests: XCTestCase {
         let parentMessageId = MessageId.unique
 
         // Simulate `startTyping` call and catch the completion
-        var completionCalledError: Error?
+        nonisolated(unsafe) var completionCalledError: Error?
         controller.sendStartTypingEvent(parentMessageId: parentMessageId) { completionCalledError = $0 }
 
         // Keep a weak ref so we can check if it's actually deallocated
@@ -3239,7 +3239,7 @@ final class ChannelController_Tests: XCTestCase {
         env.eventSender!.stopTyping_completion_expectation = XCTestExpectation()
         
         // Simulate `stopTyping` call and catch the completion
-        var completionCalledError: Error?
+        nonisolated(unsafe) var completionCalledError: Error?
         controller.sendStopTypingEvent { completionCalledError = $0 }
 
         // Keep a weak ref so we can check if it's actually deallocated
@@ -3274,7 +3274,7 @@ final class ChannelController_Tests: XCTestCase {
         let parentMessageId = MessageId.unique
 
         // Simulate `stopTyping` call and catch the completion
-        var completionCalledError: Error?
+        nonisolated(unsafe) var completionCalledError: Error?
         controller.sendStopTypingEvent(parentMessageId: parentMessageId) { completionCalledError = $0 }
 
         // Keep a weak ref so we can check if it's actually deallocated
@@ -3307,7 +3307,7 @@ final class ChannelController_Tests: XCTestCase {
             try session.saveChannel(payload: payload)
         }
 
-        var completionCalled = false
+        nonisolated(unsafe) var completionCalled = false
 
         let error: Error? = try waitFor { completion in
             controller.sendKeystrokeEvent {
@@ -3326,7 +3326,7 @@ final class ChannelController_Tests: XCTestCase {
             try session.saveChannel(payload: payload)
         }
 
-        var completionCalled = false
+        nonisolated(unsafe) var completionCalled = false
 
         let error: Error? = try waitFor { completion in
             controller.sendStartTypingEvent {
@@ -3352,7 +3352,7 @@ final class ChannelController_Tests: XCTestCase {
             try session.saveChannel(payload: payload)
         }
 
-        var completionCalled = false
+        nonisolated(unsafe) var completionCalled = false
 
         let error: Error? = try waitFor { completion in
             controller.sendStopTypingEvent {
@@ -3457,7 +3457,7 @@ final class ChannelController_Tests: XCTestCase {
         let skipEnrichUrl = false
 
         // Simulate `createNewMessage` calls and catch the completion
-        var completionCalled = false
+        nonisolated(unsafe) var completionCalled = false
         controller.createNewMessage(
             text: text,
             pinning: pin,
@@ -3552,7 +3552,7 @@ final class ChannelController_Tests: XCTestCase {
     }
 
     func test_createNewMessage_whenMessageTransformerIsProvided_callsChannelUpdaterWithTransformedValues() throws {
-        class MockTransformer: StreamModelsTransformer {
+        class MockTransformer: StreamModelsTransformer, @unchecked Sendable {
             var mockTransformedMessage = NewMessageTransformableInfo(
                 text: "transformed",
                 attachments: [.mockFile],
@@ -3599,7 +3599,7 @@ final class ChannelController_Tests: XCTestCase {
         let text: String = .unique
 
         // Simulate `createNewMessage` calls and catch the completion
-        var completionCalled = false
+        nonisolated(unsafe) var completionCalled = false
         controller.createSystemMessage(
             text: text
         ) { [callbackQueueID] result in
@@ -3655,7 +3655,7 @@ final class ChannelController_Tests: XCTestCase {
         let members: [MemberInfo] = [.init(userId: .unique, extraData: ["is_premium": true])]
 
         // Simulate `addMembers` call and catch the completion
-        var completionCalled = false
+        nonisolated(unsafe) var completionCalled = false
         controller.addMembers(members) { [callbackQueueID] error in
             AssertTestQueue(withId: callbackQueueID)
             XCTAssertNil(error)
@@ -3689,7 +3689,7 @@ final class ChannelController_Tests: XCTestCase {
         let members: [MemberInfo] = [.init(userId: .unique, extraData: nil)]
 
         // Simulate `addMembers` call and catch the completion
-        var completionCalledError: Error?
+        nonisolated(unsafe) var completionCalledError: Error?
         controller.addMembers(members) { [callbackQueueID] in
             AssertTestQueue(withId: callbackQueueID)
             completionCalledError = $0
@@ -3709,7 +3709,7 @@ final class ChannelController_Tests: XCTestCase {
         let members: Set<UserId> = [.unique, .unique]
 
         // Simulate `inviteMembers` call and catch the completion
-        var completionCalled = false
+        nonisolated(unsafe) var completionCalled = false
         controller.inviteMembers(userIds: members) { [callbackQueueID] error in
             AssertTestQueue(withId: callbackQueueID)
             XCTAssertNil(error)
@@ -3743,7 +3743,7 @@ final class ChannelController_Tests: XCTestCase {
         let members: Set<UserId> = [.unique, .unique]
 
         // Simulate `inviteMembers` call and catch the completion
-        var completionCalledError: Error?
+        nonisolated(unsafe) var completionCalledError: Error?
         controller.inviteMembers(userIds: members) { [callbackQueueID] in
             AssertTestQueue(withId: callbackQueueID)
             completionCalledError = $0
@@ -3762,7 +3762,7 @@ final class ChannelController_Tests: XCTestCase {
 
     func test_acceptInvite_callsChannelUpdater() {
         // Simulate `acceptInvite` call and catch the completion
-        var completionCalled = false
+        nonisolated(unsafe) var completionCalled = false
         let message = "Hooray"
         controller.acceptInvite(message: message) { [callbackQueueID] error in
             AssertTestQueue(withId: callbackQueueID)
@@ -3795,7 +3795,7 @@ final class ChannelController_Tests: XCTestCase {
 
     func test_acceptInvite_propagatesErrorFromUpdater() {
         // Simulate `inviteMembers` call and catch the completion
-        var completionCalledError: Error?
+        nonisolated(unsafe) var completionCalledError: Error?
         controller.acceptInvite(message: "Hooray") { [callbackQueueID] in
             AssertTestQueue(withId: callbackQueueID)
             completionCalledError = $0
@@ -3814,7 +3814,7 @@ final class ChannelController_Tests: XCTestCase {
 
     func test_rejectInvite_callsChannelUpdater() {
         // Simulate `acceptInvite` call and catch the completion
-        var completionCalled = false
+        nonisolated(unsafe) var completionCalled = false
         controller.rejectInvite { [callbackQueueID] error in
             AssertTestQueue(withId: callbackQueueID)
             XCTAssertNil(error)
@@ -3845,7 +3845,7 @@ final class ChannelController_Tests: XCTestCase {
 
     func test_rejectInvite_propagatesErrorFromUpdater() {
         // Simulate `inviteMembers` call and catch the completion
-        var completionCalledError: Error?
+        nonisolated(unsafe) var completionCalledError: Error?
         controller.rejectInvite { [callbackQueueID] in
             AssertTestQueue(withId: callbackQueueID)
             completionCalledError = $0
@@ -3896,7 +3896,7 @@ final class ChannelController_Tests: XCTestCase {
         let members: Set<UserId> = [.unique]
 
         // Simulate `removeMembers` call and catch the completion
-        var completionCalled = false
+        nonisolated(unsafe) var completionCalled = false
         controller.removeMembers(userIds: members) { [callbackQueueID] error in
             AssertTestQueue(withId: callbackQueueID)
             XCTAssertNil(error)
@@ -3930,7 +3930,7 @@ final class ChannelController_Tests: XCTestCase {
         let members: Set<UserId> = [.unique]
 
         // Simulate `removeMembers` call and catch the completion
-        var completionCalledError: Error?
+        nonisolated(unsafe) var completionCalledError: Error?
         controller.removeMembers(userIds: members) { [callbackQueueID] in
             AssertTestQueue(withId: callbackQueueID)
             completionCalledError = $0
@@ -4022,7 +4022,7 @@ final class ChannelController_Tests: XCTestCase {
         client.setToken(token: .unique(userId: currentUser.id))
 
         // WHEN
-        var completionCalled = false
+        nonisolated(unsafe) var completionCalled = false
         controller.markRead { [callbackQueueID] error in
             AssertTestQueue(withId: callbackQueueID)
             XCTAssertNil(error)
@@ -4058,7 +4058,7 @@ final class ChannelController_Tests: XCTestCase {
         }
 
         // WHEN
-        var completionCalled = false
+        nonisolated(unsafe) var completionCalled = false
         controller.markRead { [callbackQueueID] error in
             AssertTestQueue(withId: callbackQueueID)
             XCTAssertNil(error)
@@ -4101,7 +4101,7 @@ final class ChannelController_Tests: XCTestCase {
         client.setToken(token: .unique(userId: currentUser.id))
 
         // WHEN
-        var completionCalled = false
+        nonisolated(unsafe) var completionCalled = false
         controller.markRead { [callbackQueueID] error in
             AssertTestQueue(withId: callbackQueueID)
             XCTAssertNil(error)
@@ -4147,7 +4147,7 @@ final class ChannelController_Tests: XCTestCase {
         client.setToken(token: .unique(userId: currentUser.id))
 
         // WHEN
-        var completionCalled = false
+        nonisolated(unsafe) var completionCalled = false
         controller.markRead { [callbackQueueID] error in
             AssertTestQueue(withId: callbackQueueID)
             XCTAssertNil(error)
@@ -4192,7 +4192,7 @@ final class ChannelController_Tests: XCTestCase {
         client.setToken(token: .unique(userId: currentUser.id))
 
         // WHEN
-        var completionCalled = false
+        nonisolated(unsafe) var completionCalled = false
         controller.markRead { [callbackQueueID] error in
             AssertTestQueue(withId: callbackQueueID)
             XCTAssertNil(error)
@@ -4221,7 +4221,7 @@ final class ChannelController_Tests: XCTestCase {
 
         // Simulate `markRead` call and catch the completion
         let expectation = XCTestExpectation(description: "Mark read")
-        var completionCalledError: Error?
+        nonisolated(unsafe) var completionCalledError: Error?
         controller.markRead { [callbackQueueID] in
             AssertTestQueue(withId: callbackQueueID)
             completionCalledError = $0
@@ -4261,7 +4261,7 @@ final class ChannelController_Tests: XCTestCase {
     // MARK: - Mark unread
 
     func test_markUnread_whenChannelDoesNotExist() {
-        var receivedError: Error?
+        nonisolated(unsafe) var receivedError: Error?
         let expectation = self.expectation(description: "Mark Unread completes")
         controller.markUnread(from: .unique) { result in
             receivedError = result.error
@@ -4282,7 +4282,7 @@ final class ChannelController_Tests: XCTestCase {
             try session.saveChannel(payload: channel)
         }
 
-        var receivedError: Error?
+        nonisolated(unsafe) var receivedError: Error?
         let expectation = self.expectation(description: "Mark Unread completes")
         controller.markUnread(from: .unique) { result in
             receivedError = result.error
@@ -4337,7 +4337,7 @@ final class ChannelController_Tests: XCTestCase {
         client.setToken(token: .unique(userId: currentUserId))
         try simulateMarkingAsRead(userId: currentUserId)
 
-        var receivedError: Error?
+        nonisolated(unsafe) var receivedError: Error?
         let expectation = self.expectation(description: "Mark Unread completes")
         controller.markUnread(from: .unique) { result in
             receivedError = result.error
@@ -4358,7 +4358,7 @@ final class ChannelController_Tests: XCTestCase {
             try session.saveChannel(payload: channel)
         }
 
-        var receivedError: Error?
+        nonisolated(unsafe) var receivedError: Error?
         let expectation = self.expectation(description: "Mark Unread completes")
         controller.markUnread(from: .unique) { result in
             receivedError = result.error
@@ -4381,7 +4381,7 @@ final class ChannelController_Tests: XCTestCase {
 
         let mockedError = TestError()
         env.channelUpdater?.markUnread_completion_result = .failure(mockedError)
-        var receivedError: Error?
+        nonisolated(unsafe) var receivedError: Error?
         let expectation = self.expectation(description: "Mark Unread completes")
         controller.markUnread(from: .unique) { result in
             receivedError = result.error
@@ -4405,7 +4405,7 @@ final class ChannelController_Tests: XCTestCase {
         let updater = try XCTUnwrap(env.channelUpdater)
         updater.markUnread_completion_result = .success(ChatChannel.mock(cid: .unique))
         
-        var receivedError: Error?
+        nonisolated(unsafe) var receivedError: Error?
         let messageId = MessageId.unique
         let expectation = self.expectation(description: "Mark Unread completes")
         controller.markUnread(from: messageId) { result in
@@ -4441,7 +4441,7 @@ final class ChannelController_Tests: XCTestCase {
         let updater = try XCTUnwrap(env.channelUpdater)
         updater.markUnread_completion_result = .success(ChatChannel.mock(cid: .unique))
         
-        var receivedError: Error?
+        nonisolated(unsafe) var receivedError: Error?
         let expectation = self.expectation(description: "Mark Unread completes")
         controller.markUnread(from: messageId) { result in
             receivedError = result.error
@@ -4579,7 +4579,7 @@ final class ChannelController_Tests: XCTestCase {
 
     func test_enableSlowMode_callsChannelUpdater() {
         // Simulate `enableSlowMode` call and catch the completion
-        var completionCalled = false
+        nonisolated(unsafe) var completionCalled = false
         controller.enableSlowMode(cooldownDuration: .random(in: 1...120)) { [callbackQueueID] error in
             AssertTestQueue(withId: callbackQueueID)
             XCTAssertNil(error)
@@ -4610,7 +4610,7 @@ final class ChannelController_Tests: XCTestCase {
 
     func test_enableSlowMode_propagatesErrorFromUpdater() {
         // Simulate `enableSlowMode` call and catch the completion
-        var completionCalledError: Error?
+        nonisolated(unsafe) var completionCalledError: Error?
         controller.enableSlowMode(cooldownDuration: .random(in: 1...120)) { [callbackQueueID] in
             AssertTestQueue(withId: callbackQueueID)
             completionCalledError = $0
@@ -4657,7 +4657,7 @@ final class ChannelController_Tests: XCTestCase {
 
     func test_disableSlowMode_callsChannelUpdater() {
         // Simulate `disableSlowMode` call and catch the completion
-        var completionCalled = false
+        nonisolated(unsafe) var completionCalled = false
         controller.disableSlowMode { [callbackQueueID] error in
             AssertTestQueue(withId: callbackQueueID)
             XCTAssertNil(error)
@@ -4690,7 +4690,7 @@ final class ChannelController_Tests: XCTestCase {
 
     func test_disableSlowMode_propagatesErrorFromUpdater() {
         // Simulate `disableSlowMode` call and catch the completion
-        var completionCalledError: Error?
+        nonisolated(unsafe) var completionCalledError: Error?
         controller.disableSlowMode { [callbackQueueID] in
             AssertTestQueue(withId: callbackQueueID)
             completionCalledError = $0
@@ -4804,7 +4804,7 @@ final class ChannelController_Tests: XCTestCase {
 
     func test_startWatching_callsChannelUpdater() {
         // Simulate `startWatching` call and catch the completion
-        var completionCalled = false
+        nonisolated(unsafe) var completionCalled = false
         controller.startWatching(isInRecoveryMode: false) { [callbackQueueID] error in
             AssertTestQueue(withId: callbackQueueID)
             XCTAssertNil(error)
@@ -4854,7 +4854,7 @@ final class ChannelController_Tests: XCTestCase {
 
     func test_startWatching_propagatesErrorFromUpdater() {
         // Simulate `startWatching` call and catch the completion
-        var completionCalledError: Error?
+        nonisolated(unsafe) var completionCalledError: Error?
         controller.startWatching(isInRecoveryMode: false) { [callbackQueueID] in
             AssertTestQueue(withId: callbackQueueID)
             completionCalledError = $0
@@ -4927,7 +4927,7 @@ final class ChannelController_Tests: XCTestCase {
 
         env.channelUpdater?.cleanUp()
 
-        var receivedError: Error?
+        nonisolated(unsafe) var receivedError: Error?
         let expectation = self.expectation(description: "watchActiveChannel completion")
         controller.recoverWatchedChannel(recovery: true) { error in
             receivedError = error
@@ -4973,7 +4973,7 @@ final class ChannelController_Tests: XCTestCase {
 
     func test_stopWatching_callsChannelUpdater() {
         // Simulate `stopWatching` call and catch the completion
-        var completionCalled = false
+        nonisolated(unsafe) var completionCalled = false
         controller.stopWatching { [callbackQueueID] error in
             AssertTestQueue(withId: callbackQueueID)
             XCTAssertNil(error)
@@ -5006,7 +5006,7 @@ final class ChannelController_Tests: XCTestCase {
 
     func test_stopWatching_propagatesErrorFromUpdater() {
         // Simulate `stopWatching` call and catch the completion
-        var completionCalledError: Error?
+        nonisolated(unsafe) var completionCalledError: Error?
         controller.stopWatching { [callbackQueueID] in
             AssertTestQueue(withId: callbackQueueID)
             completionCalledError = $0
@@ -5069,7 +5069,7 @@ final class ChannelController_Tests: XCTestCase {
 
     func test_freezeChannel_callsChannelUpdater() {
         // Simulate `freezeChannel` call and catch the completion
-        var completionCalled = false
+        nonisolated(unsafe) var completionCalled = false
         controller.freezeChannel { [callbackQueueID] error in
             AssertTestQueue(withId: callbackQueueID)
             XCTAssertNil(error)
@@ -5105,7 +5105,7 @@ final class ChannelController_Tests: XCTestCase {
 
     func test_freezeChannel_propagatesErrorFromUpdater() {
         // Simulate `freezeChannel` call and catch the completion
-        var completionCalledError: Error?
+        nonisolated(unsafe) var completionCalledError: Error?
         controller.freezeChannel { [callbackQueueID] in
             AssertTestQueue(withId: callbackQueueID)
             completionCalledError = $0
@@ -5152,7 +5152,7 @@ final class ChannelController_Tests: XCTestCase {
 
     func test_unfreezeChannel_callsChannelUpdater() {
         // Simulate `unfreezeChannel` call and catch the completion
-        var completionCalled = false
+        nonisolated(unsafe) var completionCalled = false
         controller.unfreezeChannel { [callbackQueueID] error in
             AssertTestQueue(withId: callbackQueueID)
             XCTAssertNil(error)
@@ -5188,7 +5188,7 @@ final class ChannelController_Tests: XCTestCase {
 
     func test_unfreezeChannel_propagatesErrorFromUpdater() {
         // Simulate `freezeChannel` call and catch the completion
-        var completionCalledError: Error?
+        nonisolated(unsafe) var completionCalledError: Error?
         controller.unfreezeChannel { [callbackQueueID] in
             AssertTestQueue(withId: callbackQueueID)
             completionCalledError = $0
@@ -5305,7 +5305,7 @@ final class ChannelController_Tests: XCTestCase {
 
     func test_uploadAttachment_callsChannelUpdater() {
         // Simulate `uploadFile` call and catch the completion
-        var completionCalled = false
+        nonisolated(unsafe) var completionCalled = false
         controller.uploadAttachment(localFileURL: .localYodaImage, type: .image) { [callbackQueueID] result in
             AssertTestQueue(withId: callbackQueueID)
             XCTAssertNil(result.error)
@@ -5340,7 +5340,7 @@ final class ChannelController_Tests: XCTestCase {
 
     func test_uploadAttachment_propagatesErrorFromUpdater() {
         // Simulate `uploadFile` call and catch the completion
-        var completionCalledError: Error?
+        nonisolated(unsafe) var completionCalledError: Error?
         controller.uploadAttachment(localFileURL: .localYodaImage, type: .image) { [callbackQueueID] in
             AssertTestQueue(withId: callbackQueueID)
             completionCalledError = $0.error
@@ -5423,7 +5423,7 @@ final class ChannelController_Tests: XCTestCase {
 
     func test_loadPinnedMessages_propagatesErrorFromUpdater() {
         // Simulate `loadPinnedMessages` call and catch the completion
-        var completionError: Error?
+        nonisolated(unsafe) var completionError: Error?
         controller.loadPinnedMessages { [callbackQueueID] in
             AssertTestQueue(withId: callbackQueueID)
             completionError = $0.error
@@ -5786,7 +5786,7 @@ extension ChannelController_Tests {
         waitForMessagesUpdate(count: count) {}
     }
 
-    private func writeAndWaitForMessageUpdates(count: Int, channelChanges: Bool = false, _ actions: @escaping (DatabaseSession) throws -> Void, file: StaticString = #file, line: UInt = #line) {
+    private func writeAndWaitForMessageUpdates(count: Int, channelChanges: Bool = false, _ actions: @escaping @Sendable(DatabaseSession) throws -> Void, file: StaticString = #file, line: UInt = #line) {
         waitForMessagesUpdate(count: count, channelChanges: channelChanges, file: file, line: line) {
             do {
                 try client.databaseContainer.writeSynchronously(actions)

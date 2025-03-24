@@ -4,9 +4,10 @@
 
 import Foundation
 
-public class CooldownTracker {
+public class CooldownTracker: @unchecked Sendable {
     private var timer: StreamTimer
-
+    @Atomic private var remainingDuration = 0
+    
     public var onChange: ((Int) -> Void)?
 
     public init(timer: StreamTimer) {
@@ -15,28 +16,30 @@ public class CooldownTracker {
 
     public func start(with cooldown: Int) {
         guard cooldown > 0 else { return }
-
-        var duration = cooldown
-
+        remainingDuration = cooldown
+        
         timer.onChange = { [weak self] in
-            self?.onChange?(duration)
+            guard let self else { return }
+            onChange?(remainingDuration)
 
-            if duration == 0 {
-                self?.timer.stop()
+            if remainingDuration == 0 {
+                self.timer.stop()
             } else {
-                duration -= 1
+                _remainingDuration.mutate { value in
+                    value -= 1
+                }
             }
         }
-
+        
         timer.start()
     }
-
+    
     public func stop() {
         guard timer.isRunning else { return }
 
         timer.stop()
     }
-
+    
     deinit {
         stop()
     }

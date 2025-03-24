@@ -45,7 +45,7 @@ final class CurrentUserController_Combine_Tests: iOS13TestCase {
 
         let newCurrentUser: CurrentChatUser = .mock(id: .unique)
         controller?.currentUser_simulated = newCurrentUser
-        controller?.delegateCallback {
+        controller?.delegateCallback { [controller] in
             $0.currentUserController(controller!, didChangeCurrentUser: .create(newCurrentUser))
         }
 
@@ -68,7 +68,7 @@ final class CurrentUserController_Combine_Tests: iOS13TestCase {
 
         let newUnreadCount: UnreadCount = .dummy
         controller?.unreadCount_simulated = newUnreadCount
-        controller?.delegateCallback {
+        controller?.delegateCallback { [controller] in
             $0.currentUserController(controller!, didChangeCurrentUserUnreadCount: newUnreadCount)
         }
 

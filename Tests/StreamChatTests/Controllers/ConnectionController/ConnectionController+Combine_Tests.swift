@@ -41,7 +41,7 @@ final class ChatConnectionController_Combine_Tests: iOS13TestCase {
 
         // Simulate connection status update
         let newStatus: ConnectionStatus = .connected
-        controller?.delegateCallback { $0.connectionController(controller!, didUpdateConnectionStatus: newStatus) }
+        controller?.delegateCallback { [controller] in $0.connectionController(controller!, didUpdateConnectionStatus: newStatus) }
 
         // Assert initial value as well as the update are received
         AssertAsync.willBeEqual(recording.output, [.initialized, newStatus])

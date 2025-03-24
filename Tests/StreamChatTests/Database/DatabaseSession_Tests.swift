@@ -775,7 +775,7 @@ final class DatabaseSession_Tests: XCTestCase {
         // GIVEN
         let pollOptionId = "345"
         let pollId = "123"
-        var voteId: String!
+        nonisolated(unsafe) var voteId: String!
         let currentUserId = String.unique
         
         let payload = XCTestCase().dummyPollVotePayload(optionId: pollOptionId, pollId: pollId)
@@ -811,7 +811,7 @@ final class DatabaseSession_Tests: XCTestCase {
         // GIVEN
         let pollOptionId = "345"
         let pollId = "123"
-        var voteId: String!
+        nonisolated(unsafe) var voteId: String!
         let currentUserId = String.unique
         let secondOptionId = "789"
         let firstOption = PollOptionPayload(id: pollOptionId, text: "First", custom: [:])

@@ -5,10 +5,10 @@
 import Foundation
 
 /// An object which represents a list of ``ChatMessage`` for the specified search query.
-public class MessageSearch {
+public class MessageSearch: @unchecked Sendable {
     private let authenticationRepository: AuthenticationRepository
     private let messageUpdater: MessageUpdater
-    private let stateBuilder: StateBuilder<MessageSearchState>
+    @MainActor private var stateBuilder: StateBuilder<MessageSearchState>
     let explicitFilterHash = UUID().uuidString
     
     init(client: ChatClient, environment: Environment = .init()) {
@@ -25,7 +25,7 @@ public class MessageSearch {
     // MARK: - Accessing the State
     
     /// An observable object representing the current state of the search.
-    @MainActor public lazy var state: MessageSearchState = stateBuilder.build()
+    @MainActor public var state: MessageSearchState { stateBuilder.reuseOrBuild() }
     
     // MARK: - Search Results and Pagination
     
@@ -100,8 +100,8 @@ public class MessageSearch {
 }
 
 extension MessageSearch {
-    struct Environment {
-        var messageUpdaterBuilder: (
+    struct Environment: Sendable {
+        var messageUpdaterBuilder: @Sendable(
             _ isLocalStorageEnabled: Bool,
             _ messageRepository: MessageRepository,
             _ database: DatabaseContainer,

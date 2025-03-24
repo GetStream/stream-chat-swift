@@ -5,7 +5,7 @@
 import Foundation
 
 /// Describes the details of a message which was moderated.
-public struct MessageModerationDetails {
+public struct MessageModerationDetails: Sendable {
     /// The original message text.
     public let originalText: String
     /// The type of moderation performed to a message.
@@ -26,7 +26,7 @@ public struct MessageModerationDetails {
 }
 
 /// The type of moderation performed to a message.
-public struct MessageModerationAction: RawRepresentable, Equatable {
+public struct MessageModerationAction: RawRepresentable, Equatable, Sendable {
     public let rawValue: String
 
     public init(rawValue: String) {

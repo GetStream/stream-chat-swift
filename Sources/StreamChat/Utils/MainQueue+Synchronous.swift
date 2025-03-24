@@ -10,9 +10,11 @@ extension DispatchQueue {
     /// Performing this action is safe because the function checks the current thread, and if it's currently in the main
     /// one, it performs the action safely without dead-locking the thread.
     ///
-    static func performSynchronouslyOnMainQueue(_ action: () throws -> Void) rethrows {
+    static func performSynchronouslyOnMainQueue(_ action: @MainActor() throws -> Void) rethrows {
         if Thread.current.isMainThread {
-            try action()
+            try MainActor.assumeIsolated {
+                try action()
+            }
         } else {
             try DispatchQueue.main.sync {
                 try action()

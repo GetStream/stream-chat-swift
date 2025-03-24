@@ -9,7 +9,7 @@ public var log: Logger {
 }
 
 /// Entity for identifying which subsystem the log message comes from.
-public struct LogSubsystem: OptionSet {
+public struct LogSubsystem: OptionSet, Sendable {
     public let rawValue: Int
 
     public init(rawValue: Int) {
@@ -41,105 +41,151 @@ public struct LogSubsystem: OptionSet {
 
 public enum LogConfig {
     /// Identifier for the logger. Defaults to empty.
-    public static var identifier = "" {
-        didSet {
+    public static var identifier: String {
+        get {
+            queue.sync { _storage.identifier }
+        }
+        set {
+            queue.async { _storage.identifier = newValue }
             invalidateLogger()
         }
     }
 
-    /// Output level for the logger.
-    public static var level: LogLevel = .error {
-        didSet {
+    /// Output level for the logger. Defaults to error.
+    public static var level: LogLevel {
+        get {
+            queue.sync { _storage.level }
+        }
+        set {
+            queue.async { _storage.level = newValue }
             invalidateLogger()
         }
     }
 
     /// Date formatter for the logger. Defaults to ISO8601
-    public static var dateFormatter: DateFormatter = {
-        let df = DateFormatter()
-        df.dateFormat = "yyyy-MM-dd HH:mm:ss.SSS"
-        return df
-    }() {
-        didSet {
+    public static var dateFormatter: DateFormatter {
+        get {
+            queue.sync { _storage.dateFormatter }
+        }
+        set {
+            queue.async { _storage.dateFormatter = newValue }
             invalidateLogger()
         }
     }
 
     /// Log formatters to be applied in order before logs are outputted. Defaults to empty (no formatters).
     /// Please see `LogFormatter` for more info.
-    public static var formatters = [LogFormatter]() {
-        didSet {
+    public static var formatters: [LogFormatter] {
+        get {
+            queue.sync { _storage.formatters }
+        }
+        set {
+            queue.sync { _storage.formatters = newValue }
             invalidateLogger()
         }
     }
 
-    /// Toggle for showing date in logs
-    public static var showDate = true {
-        didSet {
+    /// Toggle for showing date in logs. Defaults to true.
+    public static var showDate: Bool {
+        get {
+            queue.sync { _storage.showDate }
+        }
+        set {
+            queue.async { _storage.showDate = newValue }
             invalidateLogger()
         }
     }
 
-    /// Toggle for showing log level in logs
-    public static var showLevel = true {
-        didSet {
+    /// Toggle for showing log level in logs. Defaults to true.
+    public static var showLevel: Bool {
+        get {
+            queue.sync { _storage.showLevel }
+        }
+        set {
+            queue.async { _storage.showLevel = newValue }
             invalidateLogger()
         }
     }
 
-    /// Toggle for showing identifier in logs
-    public static var showIdentifier = false {
-        didSet {
+    /// Toggle for showing identifier in logs. Defaults to false.
+    public static var showIdentifier: Bool {
+        get {
+            queue.sync { _storage.showIdentifier }
+        }
+        set {
+            queue.async { _storage.showIdentifier = newValue }
             invalidateLogger()
         }
     }
 
-    /// Toggle for showing thread name in logs
-    public static var showThreadName = true {
-        didSet {
+    /// Toggle for showing thread name in logs. Defaults to true.
+    public static var showThreadName: Bool {
+        get {
+            queue.sync { _storage.showThreadName }
+        }
+        set {
+            queue.async { _storage.showThreadName = newValue }
             invalidateLogger()
         }
     }
 
-    /// Toggle for showing file name in logs
-    public static var showFileName = true {
-        didSet {
+    /// Toggle for showing file name in logs. Defaults to true.
+    public static var showFileName: Bool {
+        get {
+            queue.sync { _storage.showFileName }
+        }
+        set {
+            queue.async { _storage.showFileName = newValue }
             invalidateLogger()
         }
     }
 
-    /// Toggle for showing line number in logs
-    public static var showLineNumber = true {
-        didSet {
+    /// Toggle for showing line number in logs. Defaults to true.
+    public static var showLineNumber: Bool {
+        get {
+            queue.sync { _storage.showLineNumber }
+        }
+        set {
+            queue.async { _storage.showLineNumber = newValue }
             invalidateLogger()
         }
     }
 
-    /// Toggle for showing function name in logs
-    public static var showFunctionName = true {
-        didSet {
+    /// Toggle for showing function name in logs. Defaults to true.
+    public static var showFunctionName: Bool {
+        get {
+            queue.sync { _storage.showFunctionName }
+        }
+        set {
+            queue.async { _storage.showFunctionName = newValue }
             invalidateLogger()
         }
     }
 
-    /// Subsystems for the logger
-    public static var subsystems: LogSubsystem = .all {
-        didSet {
+    /// Subsystems for the logger. Defaults to ``LogSubsystem.all``.
+    public static var subsystems: LogSubsystem {
+        get {
+            queue.sync { _storage.subsystems }
+        }
+        set {
+            queue.async { _storage.subsystems = newValue }
             invalidateLogger()
         }
     }
 
-    /// Destination types this logger will use.
+    /// Destination types this logger will use. Defaults to ``ConsoleLogDestination``.
     ///
     /// Logger will initialize the destinations with its own parameters. If you want full control on the parameters, use `destinations` directly,
     /// where you can pass parameters to destination initializers yourself.
-    public static var destinationTypes: [LogDestination.Type] = [ConsoleLogDestination.self] {
-        didSet {
+    public static var destinationTypes: [LogDestination.Type] {
+        get {
+            queue.sync { _storage.destinationTypes }
+        }
+        set {
+            queue.async { _storage.destinationTypes = newValue }
             invalidateLogger()
         }
     }
-
-    private static var _destinations: [LogDestination]?
 
     /// Destinations for the default logger. Please see `LogDestination`.
     /// Defaults to only `ConsoleLogDestination`, which only prints the messages.
@@ -147,64 +193,101 @@ public enum LogConfig {
     /// - Important: Other options in `ChatClientConfig.Logging` will not take affect if this is changed.
     public static var destinations: [LogDestination] {
         get {
-            if let destinations = _destinations {
-                return destinations
-            } else {
-                _destinations = destinationTypes.map {
-                    $0.init(
-                        identifier: identifier,
-                        level: level,
-                        subsystems: subsystems,
-                        showDate: showDate,
-                        dateFormatter: dateFormatter,
-                        formatters: formatters,
-                        showLevel: showLevel,
-                        showIdentifier: showIdentifier,
-                        showThreadName: showThreadName,
-                        showFileName: showFileName,
-                        showLineNumber: showLineNumber,
-                        showFunctionName: showFunctionName
-                    )
+            queue.sync {
+                if let destinations = _storage.destinations {
+                    return destinations
+                } else {
+                    return _setDefaultDestinationsIfNeeded()
                 }
-                return _destinations!
             }
         }
         set {
             invalidateLogger()
-            _destinations = newValue
+            queue.async { _storage.destinations = newValue }
         }
     }
+    
+    private static func _setDefaultDestinationsIfNeeded() -> [LogDestination] {
+        if let destinations = _storage.destinations {
+            return destinations
+        }
+        _storage.destinations = _storage.destinationTypes.map {
+            $0.init(
+                identifier: _storage.identifier,
+                level: _storage.level,
+                subsystems: _storage.subsystems,
+                showDate: _storage.showDate,
+                dateFormatter: _storage.dateFormatter,
+                formatters: _storage.formatters,
+                showLevel: _storage.showLevel,
+                showIdentifier: _storage.showIdentifier,
+                showThreadName: _storage.showThreadName,
+                showFileName: _storage.showFileName,
+                showLineNumber: _storage.showLineNumber,
+                showFunctionName: _storage.showFunctionName
+            )
+        }
+        return _storage.destinations!
+    }
 
-    /// Underlying logger instance to control singleton.
-    private static var _logger: Logger?
-
-    private static var queue = DispatchQueue(label: "io.getstream.logconfig")
-
+    private static let queue = DispatchQueue(label: "io.getstream.logconfig")
+    
+    /// Guarded manually with a queue
+    nonisolated(unsafe) private static var _storage: Storage = Storage()
+    
     /// Logger instance to be used by StreamChat.
     ///
     /// - Important: Other options in `LogConfig` will not take affect if this is changed.
     public static var logger: Logger {
         get {
             queue.sync {
-                if let logger = _logger {
+                if let logger = _storage.logger {
                     return logger
                 } else {
-                    _logger = Logger(identifier: identifier, destinations: destinations)
-                    return _logger!
+                    let destinations = _setDefaultDestinationsIfNeeded()
+                    let logger = Logger(identifier: _storage.identifier, destinations: destinations)
+                    _storage.logger = logger
+                    return logger
                 }
             }
         }
         set {
-            queue.async {
-                _logger = newValue
-            }
+            queue.sync { _storage.logger = newValue }
         }
     }
 
     /// Invalidates the current logger instance so it can be recreated.
     private static func invalidateLogger() {
-        _logger = nil
-        _destinations = nil
+        queue.async {
+            _storage.logger = nil
+            _storage.destinations = nil
+        }
+    }
+}
+
+extension LogConfig {
+    struct Storage {
+        init() {
+            dateFormatter = DateFormatter()
+            dateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss.SSS"
+        }
+        
+        var logger: Logger?
+        
+        var identifier: String = ""
+        var level: LogLevel = .error
+        var dateFormatter: DateFormatter
+        var formatters = [LogFormatter]()
+        var showDate = true
+        var showLevel = true
+        var showIdentifier = false
+        var showThreadName = true
+        var showFileName = true
+        var showLineNumber = true
+        var showFunctionName = true
+        var subsystems: LogSubsystem = .all
+        var destinationTypes: [LogDestination.Type] = [ConsoleLogDestination.self]
+        var destinations: [LogDestination]?
     }
 }
 
@@ -250,7 +333,7 @@ public class Logger {
     public func callAsFunction(
         _ level: LogLevel,
         functionName: StaticString = #function,
-        fileName: StaticString = #filePath,
+        fileName: StaticString = #file,
         lineNumber: UInt = #line,
         message: @autoclosure () -> Any,
         subsystems: LogSubsystem = .other
@@ -463,6 +546,9 @@ public class Logger {
     }
 }
 
+// Mutable state is guarded with a queue.
+extension Logger: @unchecked Sendable {}
+
 private extension Logger {
     var threadName: String {
         if Thread.isMainThread {
@@ -470,7 +556,7 @@ private extension Logger {
         } else {
             if let threadName = Thread.current.name, !threadName.isEmpty {
                 return "[\(threadName)] "
-            } else if let queueName = String(validatingUTF8: __dispatch_queue_get_label(nil)), !queueName.isEmpty {
+            } else if let queueName = String(validatingCString: __dispatch_queue_get_label(nil)), !queueName.isEmpty {
                 return "[\(queueName)] "
             } else {
                 return String(format: "[%p] ", Thread.current)

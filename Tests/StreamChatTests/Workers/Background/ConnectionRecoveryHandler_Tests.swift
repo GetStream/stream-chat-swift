@@ -240,7 +240,7 @@ final class ConnectionRecoveryHandler_Tests: XCTestCase {
     /// 2. app -> background (no disconnect, background task is started, no timer)
     /// 3. bg task -> killed (disconnect)
     /// 3. app -> foregorund (reconnect)
-    func test_socketIsConnected_appBackgroundTaskKilledAppForeground() {
+    func test_socketIsConnected_appBackgroundTaskKilledAppForeground() async throws {
         // Create handler active in background
         handler = makeConnectionRecoveryHandler(keepConnectionAliveInBackground: true)
 
@@ -258,7 +258,9 @@ final class ConnectionRecoveryHandler_Tests: XCTestCase {
         XCTAssertTrue(mockTime.scheduledTimers.isEmpty)
 
         // Backgroud task killed
-        mockBackgroundTaskScheduler.beginBackgroundTask_expirationHandler?()
+        try await Task.mainActor {
+            self.mockBackgroundTaskScheduler.beginBackgroundTask_expirationHandler?()
+        }.value
 
         // Assert disconnection is initiated by the system
         XCTAssertEqual(mockChatClient.mockWebSocketClient.disconnect_source, .systemInitiated)

@@ -16,14 +16,15 @@ protocol AttachmentDownloader {
     func download(
         from remoteURL: URL,
         to localURL: URL,
-        progress: ((Double) -> Void)?,
-        completion: @escaping (Error?) -> Void
+        progress: (@Sendable(Double) -> Void)?,
+        completion: @escaping @Sendable(Error?) -> Void
     )
 }
 
-final class StreamAttachmentDownloader: AttachmentDownloader {
+final class StreamAttachmentDownloader: AttachmentDownloader, Sendable {
     private let session: URLSession
-    @Atomic private var taskProgressObservers: [Int: NSKeyValueObservation] = [:]
+    nonisolated(unsafe) private var _taskProgressObservers: [Int: NSKeyValueObservation] = [:]
+    private let queue = DispatchQueue(label: "io.getstream.stream-attachment-downloader", target: .global())
     
     init(sessionConfiguration: URLSessionConfiguration) {
         session = URLSession(configuration: sessionConfiguration)
@@ -32,8 +33,8 @@ final class StreamAttachmentDownloader: AttachmentDownloader {
     func download(
         from remoteURL: URL,
         to localURL: URL,
-        progress: ((Double) -> Void)?,
-        completion: @escaping (Error?) -> Void
+        progress: (@Sendable(Double) -> Void)?,
+        completion: @escaping @Sendable(Error?) -> Void
     ) {
         let request = URLRequest(url: remoteURL)
         let task = session.downloadTask(with: request) { temporaryURL, _, downloadError in
@@ -54,13 +55,13 @@ final class StreamAttachmentDownloader: AttachmentDownloader {
         }
         if let progressHandler = progress {
             let taskID = task.taskIdentifier
-            _taskProgressObservers.mutate { observers in
-                observers[taskID] = task.progress.observe(\.fractionCompleted, options: [.initial]) { [weak self] progress, _ in
+            queue.async { [weak self] in
+                self?._taskProgressObservers[taskID] = task.progress.observe(\.fractionCompleted, options: [.initial]) { [weak self] progress, _ in
                     progressHandler(progress.fractionCompleted)
                     if progress.isFinished || progress.isCancelled {
-                        self?._taskProgressObservers.mutate { observers in
-                            observers[taskID]?.invalidate()
-                            observers[taskID] = nil
+                        self?.queue.async { [weak self] in
+                            self?._taskProgressObservers[taskID]?.invalidate()
+                            self?._taskProgressObservers[taskID] = nil
                         }
                     }
                 }

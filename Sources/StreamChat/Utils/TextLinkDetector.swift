@@ -5,7 +5,7 @@
 import Foundation
 
 /// The link details found in text.
-public struct TextLink: Equatable {
+public struct TextLink: Equatable, Sendable {
     /// The url of the link.
     public let url: URL
     /// The original text.

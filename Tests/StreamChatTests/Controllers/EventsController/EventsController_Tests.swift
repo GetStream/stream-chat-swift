@@ -61,7 +61,7 @@ final class EventsController_Tests: XCTestCase {
     // MARK: - Event propagation
 
     func test_whenEventsNotificationIsObserved_onlyEventsThatShouldBeProcessed_areForwardedToDelegate() {
-        class EventsControllerMock: EventsController {
+        class EventsControllerMock: EventsController, @unchecked Sendable {
             lazy var shouldProcessEventMockFunc = MockFunc.mock(for: shouldProcessEvent)
 
             override func shouldProcessEvent(_ event: Event) -> Bool {

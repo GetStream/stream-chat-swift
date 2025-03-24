@@ -5,7 +5,7 @@
 import Foundation
 
 /// A Client error.
-public class ClientError: Error, CustomStringConvertible {
+public class ClientError: Error, CustomStringConvertible, @unchecked Sendable {
     public struct Location: Equatable {
         public let file: String
         public let line: Int
@@ -56,10 +56,10 @@ public class ClientError: Error, CustomStringConvertible {
 
 extension ClientError {
     /// An unexpected error.
-    public final class Unexpected: ClientError {}
+    public final class Unexpected: ClientError, @unchecked Sendable {}
 
     /// An unknown error.
-    public final class Unknown: ClientError {}
+    public final class Unknown: ClientError, @unchecked Sendable {}
 }
 
 // This should probably live only in the test target since it's not "true" equatable

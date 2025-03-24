@@ -5,12 +5,12 @@
 import StreamChat
 import Foundation
 
-final class CDNClient_Spy: CDNClient, Spy {
+final class CDNClient_Spy: CDNClient, Spy, @unchecked Sendable {
     let spyState = SpyState()
 
     static var maxAttachmentSize: Int64 { .max }
-    var uploadAttachmentProgress: Double?
-    var uploadAttachmentResult: Result<URL, Error>?
+    @Atomic var uploadAttachmentProgress: Double?
+    @Atomic var uploadAttachmentResult: Result<URL, Error>?
 
     func uploadAttachment(
         _ attachment: AnyChatMessageAttachment,

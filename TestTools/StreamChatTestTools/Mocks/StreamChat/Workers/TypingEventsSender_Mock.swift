@@ -7,7 +7,7 @@ import Foundation
 import XCTest
 
 /// Mock implementation of ChannelUpdater
-final class TypingEventsSender_Mock: TypingEventsSender {
+final class TypingEventsSender_Mock: TypingEventsSender, @unchecked Sendable {
     @Atomic var keystroke_cid: ChannelId?
     @Atomic var keystroke_parentMessageId: MessageId?
     @Atomic var keystroke_completion: ((Error?) -> Void)?

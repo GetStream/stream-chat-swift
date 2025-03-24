@@ -74,7 +74,7 @@ final class ChatChannelWatcherListController_Tests: XCTestCase {
 
     func test_synchronize_changesState_and_callsCompletionOnCallbackQueue() throws {
         // Simulate `synchronize` call.
-        var completionIsCalled = false
+        nonisolated(unsafe) var completionIsCalled = false
         controller.synchronize { [callbackQueueID] error in
             // Assert callback queue is correct.
             AssertTestQueue(withId: callbackQueueID)
@@ -110,7 +110,7 @@ final class ChatChannelWatcherListController_Tests: XCTestCase {
         env.watcherListObserverSynchronizeError = observerError
 
         // Simulate `synchronize` call.
-        var synchronizeError: Error?
+        nonisolated(unsafe) var synchronizeError: Error?
         controller.synchronize { [callbackQueueID] error in
             AssertTestQueue(withId: callbackQueueID)
             synchronizeError = error
@@ -125,7 +125,7 @@ final class ChatChannelWatcherListController_Tests: XCTestCase {
 
     func test_synchronize_changesState_and_propagatesListUpdaterErrorOnCallbackQueue() {
         // Simulate `synchronize` call.
-        var synchronizeError: Error?
+        nonisolated(unsafe) var synchronizeError: Error?
         controller.synchronize { [callbackQueueID] error in
             AssertTestQueue(withId: callbackQueueID)
             synchronizeError = error
@@ -283,10 +283,10 @@ final class ChatChannelWatcherListController_Tests: XCTestCase {
         try client.databaseContainer.createChannel(cid: query.cid)
 
         // Create 2 watchers
-        var watcher1: UserPayload = .dummy(
+        nonisolated(unsafe) var watcher1: UserPayload = .dummy(
             userId: watcher1ID
         )
-        var watcher2: UserPayload = .dummy(
+        nonisolated(unsafe) var watcher2: UserPayload = .dummy(
             userId: watcher2ID
         )
 
@@ -408,7 +408,7 @@ final class ChatChannelWatcherListController_Tests: XCTestCase {
 
     func test_loadNextWatchers_propagatesError() {
         // Simulate `loadNextWatchers` call and catch the completion.
-        var completionError: Error?
+        nonisolated(unsafe) var completionError: Error?
         controller.loadNextWatchers { [callbackQueueID] in
             AssertTestQueue(withId: callbackQueueID)
             completionError = $0
@@ -424,7 +424,7 @@ final class ChatChannelWatcherListController_Tests: XCTestCase {
 
     func test_loadNextWatchers_propagatesNilError() throws {
         // Simulate `loadNextWatchers` call and catch the completion.
-        var completionIsCalled = false
+        nonisolated(unsafe) var completionIsCalled = false
         controller.loadNextWatchers { [callbackQueueID] error in
             // Assert callback queue is correct.
             AssertTestQueue(withId: callbackQueueID)

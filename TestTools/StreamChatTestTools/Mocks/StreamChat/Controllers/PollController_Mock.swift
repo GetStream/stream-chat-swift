@@ -5,7 +5,7 @@
 import Foundation
 @testable import StreamChat
 
-final class PollController_Mock: PollController {
+final class PollController_Mock: PollController, @unchecked Sendable {
     @Atomic var synchronize_called = false
     @Atomic var synchronize_completion_result: Result<Void, Error>?
     @Atomic var castPollVote_called = false
@@ -17,17 +17,17 @@ final class PollController_Mock: PollController {
     @Atomic var suggestPollOption_called = false
     @Atomic var suggestPollOption_completion_result: Result<Void, Error>?
 
-    var poll_simulated: Poll?
+    @Atomic var poll_simulated: Poll?
     override var poll: Poll? {
         poll_simulated
     }
     
-    var ownVotes_simulated: LazyCachedMapCollection<PollVote> = .init([])
+    @Atomic var ownVotes_simulated: LazyCachedMapCollection<PollVote> = .init([])
     override var ownVotes: LazyCachedMapCollection<PollVote> {
         ownVotes_simulated
     }
 
-    var state_simulated: DataController.State?
+    @Atomic var state_simulated: DataController.State?
     override var state: DataController.State {
         get { state_simulated ?? super.state }
         set { super.state = newValue }

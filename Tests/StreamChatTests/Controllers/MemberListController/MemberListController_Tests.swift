@@ -77,7 +77,7 @@ final class MemberListController_Tests: XCTestCase {
 
     func test_synchronize_changesState_and_callsCompletionOnCallbackQueue() {
         // Simulate `synchronize` call.
-        var completionIsCalled = false
+        nonisolated(unsafe) var completionIsCalled = false
         controller.synchronize { [callbackQueueID] error in
             // Assert callback queue is correct.
             AssertTestQueue(withId: callbackQueueID)
@@ -113,7 +113,7 @@ final class MemberListController_Tests: XCTestCase {
         env.memberListObserverSynchronizeError = observerError
 
         // Simulate `synchronize` call.
-        var synchronizeError: Error?
+        nonisolated(unsafe) var synchronizeError: Error?
         controller.synchronize { [callbackQueueID] error in
             AssertTestQueue(withId: callbackQueueID)
             synchronizeError = error
@@ -128,7 +128,7 @@ final class MemberListController_Tests: XCTestCase {
 
     func test_synchronize_changesState_and_propagatesListUpdaterErrorOnCallbackQueue() {
         // Simulate `synchronize` call.
-        var synchronizeError: Error?
+        nonisolated(unsafe) var synchronizeError: Error?
         controller.synchronize { [callbackQueueID] error in
             AssertTestQueue(withId: callbackQueueID)
             synchronizeError = error
@@ -286,11 +286,11 @@ final class MemberListController_Tests: XCTestCase {
         try client.databaseContainer.createChannel(cid: query.cid)
 
         // Create 2 members, the first created more recently
-        var member1: MemberPayload = .dummy(
+        nonisolated(unsafe) var member1: MemberPayload = .dummy(
             user: .dummy(userId: member1ID),
             createdAt: Date()
         )
-        var member2: MemberPayload = .dummy(
+        nonisolated(unsafe) var member2: MemberPayload = .dummy(
             user: .dummy(userId: member2ID),
             createdAt: Date().addingTimeInterval(-10)
         )
@@ -378,7 +378,7 @@ final class MemberListController_Tests: XCTestCase {
 
     func test_loadNextMembers_propagatesError() {
         // Simulate `loadNextMembers` call and catch the completion.
-        var completionError: Error?
+        nonisolated(unsafe) var completionError: Error?
         controller.loadNextMembers { [callbackQueueID] in
             AssertTestQueue(withId: callbackQueueID)
             completionError = $0
@@ -394,7 +394,7 @@ final class MemberListController_Tests: XCTestCase {
 
     func test_loadNextMembers_propagatesNilError() {
         // Simulate `loadNextMembers` call and catch the completion.
-        var completionIsCalled = false
+        nonisolated(unsafe) var completionIsCalled = false
         controller.loadNextMembers { [callbackQueueID] error in
             // Assert callback queue is correct.
             AssertTestQueue(withId: callbackQueueID)
@@ -403,13 +403,6 @@ final class MemberListController_Tests: XCTestCase {
             completionIsCalled = true
         }
 
-        // Keep a weak ref so we can check if it's actually deallocated
-        weak var weakController = controller
-
-        // (Try to) deallocate the controller
-        // by not keeping any references to it
-        controller = nil
-
         // Simulate successful network response.
         env.memberListUpdater!.load_completion!(.success([]))
         // Release reference of completion so we can deallocate stuff
@@ -417,6 +410,14 @@ final class MemberListController_Tests: XCTestCase {
 
         // Assert completion is called.
         AssertAsync.willBeTrue(completionIsCalled)
+
+        // Keep a weak ref so we can check if it's actually deallocated
+        weak var weakController = controller
+        
+        // (Try to) deallocate the controller
+        // by not keeping any references to it
+        controller = nil
+
         // `weakController` should be deallocated too
         AssertAsync.canBeReleased(&weakController)
     }

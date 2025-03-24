@@ -63,7 +63,7 @@ final class UserListController_SwiftUI_Tests: iOS13TestCase {
     }
 }
 
-final class UserListControllerMock: ChatUserListController {
+final class UserListControllerMock: ChatUserListController, @unchecked Sendable {
     @Atomic var synchronize_called = false
 
     var users_simulated: [ChatUser]?

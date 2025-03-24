@@ -93,7 +93,7 @@ final class CurrentUserController_Tests: XCTestCase {
         env.currentUserObserverStartUpdatingError = observerError
 
         // Simulate `synchronize` call.
-        var synchronizeError: Error?
+        nonisolated(unsafe) var synchronizeError: Error?
         controller.synchronize { [callbackQueueID] error in
             AssertTestQueue(withId: callbackQueueID)
             synchronizeError = error
@@ -113,7 +113,7 @@ final class CurrentUserController_Tests: XCTestCase {
         // Simulate current user
         env.currentUserObserverItem = .mock(id: .unique)
 
-        var synchronizeCalled = false
+        nonisolated(unsafe) var synchronizeCalled = false
         controller.synchronize { [callbackQueueID] error in
             AssertTestQueue(withId: callbackQueueID)
             XCTAssertNil(error)
@@ -136,7 +136,7 @@ final class CurrentUserController_Tests: XCTestCase {
         // Simulate current user
         env.currentUserObserverItem = .mock(id: .unique)
 
-        var synchronizeError: Error?
+        nonisolated(unsafe) var synchronizeError: Error?
         controller.synchronize { [callbackQueueID] error in
             AssertTestQueue(withId: callbackQueueID)
             synchronizeError = error
@@ -222,7 +222,7 @@ final class CurrentUserController_Tests: XCTestCase {
         controller.synchronize()
 
         var extraData: [String: RawJSON] = [:]
-        var currentUserPayload: CurrentUserPayload = .dummy(
+        nonisolated(unsafe) var currentUserPayload: CurrentUserPayload = .dummy(
             userId: .unique,
             role: .user,
             extraData: extraData
@@ -314,7 +314,7 @@ final class CurrentUserController_Tests: XCTestCase {
         // Simulate `connectUser`
         client.authenticationRepository.setMockToken()
 
-        var completionError: Error?
+        nonisolated(unsafe) var completionError: Error?
         controller.updateUserData(name: .unique, imageURL: .unique(), userExtraData: [:]) { [callbackQueueID] in
             AssertTestQueue(withId: callbackQueueID)
             completionError = $0
@@ -332,7 +332,7 @@ final class CurrentUserController_Tests: XCTestCase {
         // Simulate `connectUser`
         client.authenticationRepository.setMockToken()
 
-        var completionIsCalled = false
+        nonisolated(unsafe) var completionIsCalled = false
         controller
             .updateUserData(name: .unique, imageURL: .unique(), userExtraData: [:]) { [callbackQueueID] error in
                 // Assert callback queue is correct.
@@ -401,7 +401,7 @@ final class CurrentUserController_Tests: XCTestCase {
         // Simulate `connectUser`
         client.authenticationRepository.setMockToken()
 
-        var completionError: Error?
+        nonisolated(unsafe) var completionError: Error?
         controller.synchronizeDevices { [callbackQueueID] in
             AssertTestQueue(withId: callbackQueueID)
             completionError = $0
@@ -417,7 +417,7 @@ final class CurrentUserController_Tests: XCTestCase {
         // Simulate `connectUser`
         client.authenticationRepository.setMockToken()
 
-        var completionError: Error?
+        nonisolated(unsafe) var completionError: Error?
         controller.synchronizeDevices { [callbackQueueID] in
             AssertTestQueue(withId: callbackQueueID)
             completionError = $0
@@ -493,7 +493,7 @@ final class CurrentUserController_Tests: XCTestCase {
         // Simulate `connectUser`
         client.authenticationRepository.setMockToken()
 
-        var completionError: Error?
+        nonisolated(unsafe) var completionError: Error?
         controller.addDevice(.firebase(token: "test")) { [callbackQueueID] in
             AssertTestQueue(withId: callbackQueueID)
             completionError = $0
@@ -511,7 +511,7 @@ final class CurrentUserController_Tests: XCTestCase {
         // Simulate `connectUser`
         client.authenticationRepository.setMockToken()
 
-        var completionIsCalled = false
+        nonisolated(unsafe) var completionIsCalled = false
         controller.addDevice(.firebase(token: "test")) { [callbackQueueID] error in
             // Assert callback queue is correct.
             AssertTestQueue(withId: callbackQueueID)
@@ -589,7 +589,7 @@ final class CurrentUserController_Tests: XCTestCase {
 
         let expectedId = String.unique
 
-        var completionError: Error?
+        nonisolated(unsafe) var completionError: Error?
         controller.removeDevice(id: expectedId) { [callbackQueueID] in
             AssertTestQueue(withId: callbackQueueID)
             completionError = $0
@@ -609,7 +609,7 @@ final class CurrentUserController_Tests: XCTestCase {
 
         let expectedId = String.unique
 
-        var completionIsCalled = false
+        nonisolated(unsafe) var completionIsCalled = false
         controller.removeDevice(id: expectedId) { [callbackQueueID] error in
             // Assert callback queue is correct.
             AssertTestQueue(withId: callbackQueueID)
@@ -675,7 +675,7 @@ final class CurrentUserController_Tests: XCTestCase {
             authenticationRepository.refreshTokenResult = error.map { .failure($0) } ?? .success(())
 
             let expectation = self.expectation(description: "reloadCompletes")
-            var reloadUserIfNeededCompletionError: Error?
+            nonisolated(unsafe) var reloadUserIfNeededCompletionError: Error?
             controller.reloadUserIfNeeded { [callbackQueueID] error in
                 AssertTestQueue(withId: callbackQueueID)
                 reloadUserIfNeededCompletionError = error
@@ -693,7 +693,7 @@ final class CurrentUserController_Tests: XCTestCase {
 
     func test_markAllRead_callsChannelListUpdater() {
         // GIVEN
-        var completionCalled = false
+        nonisolated(unsafe) var completionCalled = false
 
         // WHEN
         controller.markAllRead { [callbackQueueID] error in
@@ -723,7 +723,7 @@ final class CurrentUserController_Tests: XCTestCase {
 
     func test_markAllRead_propagatesErrorFromUpdater() {
         // GIVEN
-        var completionCalledError: Error?
+        nonisolated(unsafe) var completionCalledError: Error?
         let testError = TestError()
 
         // WHEN
@@ -741,7 +741,7 @@ final class CurrentUserController_Tests: XCTestCase {
     // Delay execution for a bit to make sure background thread acquires lock
     // (from Atomic, in EntityDatabaseObserver.item) if we don't sleep, main thread acquires lock first
     // & no deadlock occurs
-    private func delayExecution(of function: @escaping (((Error?) -> Void)?) -> Void, onCompletion: (() -> Void)?) {
+    private func delayExecution(of function: @escaping @Sendable((@Sendable(Error?) -> Void)?) -> Void, onCompletion: (@Sendable() -> Void)?) {
         let exp = expectation(description: "completion called")
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
             function() { _ in

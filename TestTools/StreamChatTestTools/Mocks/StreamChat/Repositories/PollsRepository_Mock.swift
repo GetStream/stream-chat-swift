@@ -5,15 +5,14 @@
 import Foundation
 @testable import StreamChat
 
-final class PollsRepository_Mock: PollsRepository, Spy {
+final class PollsRepository_Mock: PollsRepository, Spy, @unchecked Sendable {
     @Atomic var getQueryPollVotes_completion: ((Result<VotePaginationResponse, Error>) -> Void)?
     @Atomic var castPollVote_completion: ((Error?) -> Void)?
     @Atomic var removePollVote_completion: ((Error?) -> Void)?
     @Atomic var closePoll_completion: ((Error?) -> Void)?
     @Atomic var suggestPollOption_completion: ((Error?) -> Void)?
     
-    var recordedFunctions: [String] = []
-    var spyState: SpyState = .init()
+    let spyState: SpyState = .init()
 
     override func queryPollVotes(
         query: PollVoteListQuery,

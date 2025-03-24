@@ -5,14 +5,20 @@
 import Foundation
 
 /// A builder for objects requiring @MainActor.
-struct StateBuilder<State> {
-    private let builder: (@MainActor() -> State)
+struct StateBuilder<State: Sendable>: Sendable {
+    private var builder: ((@MainActor() -> State))?
+    @MainActor private var _state: State?
     
     init(builder: (@escaping @MainActor() -> State)) {
         self.builder = builder
     }
     
-    @MainActor func build() -> State {
-        builder()
+    @MainActor mutating func reuseOrBuild() -> State {
+        if let _state { return _state }
+        let state = builder!()
+        _state = state
+        // Release captured values in the closure
+        builder = nil
+        return state
     }
 }

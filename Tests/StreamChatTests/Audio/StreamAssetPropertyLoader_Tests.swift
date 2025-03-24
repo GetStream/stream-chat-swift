@@ -228,7 +228,7 @@ final class StreamAssetPropertyLoader_Tests: XCTestCase {
         file: StaticString = #file,
         line: UInt = #line
     ) throws {
-        var completionWasCalledWithResult: Result<AVURLAsset, AssetPropertyLoadingCompositeError>?
+        nonisolated(unsafe) var completionWasCalledWithResult: Result<AVURLAsset, AssetPropertyLoadingCompositeError>?
         mockAsset.statusOfValueResultMap = statusOfValueResultMap
 
         subject.loadProperties(

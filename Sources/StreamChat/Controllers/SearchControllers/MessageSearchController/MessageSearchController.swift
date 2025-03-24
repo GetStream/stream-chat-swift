@@ -20,7 +20,7 @@ public extension ChatClient {
 /// `ChatMessageSearchController` is a controller class which allows observing a list of messages based on the provided query.
 ///
 /// - Note: For an async-await alternative of the `ChatMessageSearchController`, please check ``MessageSearch`` in the async-await supported [state layer](https://getstream.io/chat/docs/sdk/ios/client/state-layer/state-layer-overview/).
-public class ChatMessageSearchController: DataController, DelegateCallable, DataStoreProvider {
+public class ChatMessageSearchController: DataController, DelegateCallable, DataStoreProvider, @unchecked Sendable {
     /// The `ChatClient` instance this controller belongs to.
     public let client: ChatClient
     private let environment: Environment
@@ -28,7 +28,12 @@ public class ChatMessageSearchController: DataController, DelegateCallable, Data
     init(client: ChatClient, environment: Environment = .init()) {
         self.client = client
         self.environment = environment
-
+        messageUpdater = environment.messageUpdaterBuilder(
+            client.config.isLocalStorageEnabled,
+            client.messageRepository,
+            client.databaseContainer,
+            client.apiClient
+        )
         super.init()
 
         setMessagesObserver()
@@ -44,7 +49,12 @@ public class ChatMessageSearchController: DataController, DelegateCallable, Data
     /// Filter hash this controller observes.
     let explicitFilterHash = UUID().uuidString
 
-    private var nextPageCursor: String?
+    private var nextPageCursor: String? {
+        get { queue.sync { _nextPageCursor } }
+        set { queue.sync { _nextPageCursor = newValue } }
+    }
+
+    private var _nextPageCursor: String?
 
     lazy var query: MessageSearchQuery = {
         // Filter is just a mock, explicit hash will override it
@@ -55,7 +65,12 @@ public class ChatMessageSearchController: DataController, DelegateCallable, Data
     }()
 
     /// Copy of last search query made, used for getting next page.
-    var lastQuery: MessageSearchQuery?
+    var lastQuery: MessageSearchQuery? {
+        get { queue.sync { _lastQuery } }
+        set { queue.sync { _lastQuery = newValue } }
+    }
+
+    private var _lastQuery: MessageSearchQuery?
 
     /// The messages matching the query of this controller.
     ///
@@ -66,13 +81,7 @@ public class ChatMessageSearchController: DataController, DelegateCallable, Data
         return messagesObserver?.items ?? []
     }
 
-    lazy var messageUpdater = self.environment
-        .messageUpdaterBuilder(
-            client.config.isLocalStorageEnabled,
-            client.messageRepository,
-            client.databaseContainer,
-            client.apiClient
-        )
+    let messageUpdater: MessageUpdater
 
     /// Used for observing the database for changes.
     private var messagesObserver: BackgroundListDatabaseObserver<ChatMessage, MessageDTO>?
@@ -111,7 +120,7 @@ public class ChatMessageSearchController: DataController, DelegateCallable, Data
         messagesObserver = observer
     }
 
-    var _basePublishers: Any?
+    @Atomic private var _basePublishers: Any?
     /// An internal backing object for all publicly available Combine publishers. We use it to simplify the way we expose
     /// publishers. Instead of creating custom `Publisher` types, we use `CurrentValueSubject` and `PassthroughSubject` internally,
     /// and expose the published values by mapping them to a read-only `AnyPublisher` type.
@@ -145,7 +154,7 @@ public class ChatMessageSearchController: DataController, DelegateCallable, Data
     ///   - text: The message text.
     ///   - completion: Called when the controller has finished fetching remote data.
     ///   If the data fetching fails, the error variable contains more details about the problem.
-    public func search(text: String, completion: ((_ error: Error?) -> Void)? = nil) {
+    public func search(text: String, completion: (@Sendable(_ error: Error?) -> Void)? = nil) {
         startObserversIfNeeded()
 
         guard let currentUserId = client.currentUserId else {
@@ -191,7 +200,7 @@ public class ChatMessageSearchController: DataController, DelegateCallable, Data
     ///   - query: Search query.
     ///   - completion: Called when the controller has finished fetching remote data.
     ///   If the data fetching fails, the error variable contains more details about the problem.
-    public func search(query: MessageSearchQuery, completion: ((_ error: Error?) -> Void)? = nil) {
+    public func search(query: MessageSearchQuery, completion: (@Sendable(_ error: Error?) -> Void)? = nil) {
         var query = query
         query.filterHash = explicitFilterHash
 
@@ -222,7 +231,7 @@ public class ChatMessageSearchController: DataController, DelegateCallable, Data
     ///
     public func loadNextMessages(
         limit: Int = 25,
-        completion: ((Error?) -> Void)? = nil
+        completion: (@Sendable(Error?) -> Void)? = nil
     ) {
         guard let lastQuery = lastQuery else {
             completion?(ClientError("You should make a search before calling for next page."))

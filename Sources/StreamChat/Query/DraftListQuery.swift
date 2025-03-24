@@ -5,7 +5,7 @@
 import Foundation
 
 /// A query used to fetch the drafts of the current user.
-public struct DraftListQuery: Encodable {
+public struct DraftListQuery: Encodable, Sendable {
     /// The pagination information to query the votes.
     public var pagination: Pagination
     /// The sorting parameter. By default drafts are sorted by newest first.

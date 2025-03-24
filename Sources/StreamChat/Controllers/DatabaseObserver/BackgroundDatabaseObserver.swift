@@ -5,7 +5,7 @@
 import CoreData
 import Foundation
 
-class BackgroundDatabaseObserver<Item, DTO: NSManagedObject> {
+class BackgroundDatabaseObserver<Item: Sendable, DTO: NSManagedObject>: @unchecked Sendable {
     /// Called with the aggregated changes after the internal `NSFetchResultsController` calls `controllerWillChangeContent`
     /// on its delegate.
     var onWillChange: (() -> Void)?

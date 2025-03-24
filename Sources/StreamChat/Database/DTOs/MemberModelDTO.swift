@@ -74,7 +74,7 @@ extension MemberDTO {
     }
 
     static func load(memberId: String, context: NSManagedObjectContext) -> MemberDTO? {
-        load(by: memberId, context: context).first
+        load(by: memberId, context: context).first as? Self
     }
 
     /// If a User with the given id exists in the context, fetches and returns it. Otherwise create a new

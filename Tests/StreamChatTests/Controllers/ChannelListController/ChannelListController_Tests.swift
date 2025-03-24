@@ -226,7 +226,7 @@ final class ChannelListController_Tests: XCTestCase {
         let queueId = UUID()
         controller.callbackQueue = .testQueue(withId: queueId)
         // Simulate `synchronize` call and catch the completion
-        var completionCalledError: Error?
+        nonisolated(unsafe) var completionCalledError: Error?
         controller.synchronize {
             completionCalledError = $0
             AssertTestQueue(withId: queueId)
@@ -364,7 +364,7 @@ final class ChannelListController_Tests: XCTestCase {
         controller.synchronize()
         
         let channel = ChatChannel.mock(cid: .unique)
-        try? database.createChannel(cid: channel.cid, channelReads: [])
+        try? database.createChannel(cid: channel.cid)
         let event = makeChannelVisibleEvent(with: channel)
         let eventExpectation = XCTestExpectation(description: "Event processed")
         controller.client.eventNotificationCenter.process(event) {
@@ -481,7 +481,7 @@ final class ChannelListController_Tests: XCTestCase {
     }
 
     func test_didReceiveEvent_whenFilterMatches_shouldLinkChannelToQuery() {
-        let filter: (ChatChannel) -> Bool = { channel in
+        let filter: @Sendable(ChatChannel) -> Bool = { channel in
             channel.memberCount == 4
         }
         setupControllerWithFilter(filter)
@@ -502,7 +502,7 @@ final class ChannelListController_Tests: XCTestCase {
     }
 
     func test_didReceiveEvent_whenFilterMatches_whenChannelAlreadyPresent_shouldNotLinkChannelToQuery() throws {
-        let filter: (ChatChannel) -> Bool = { channel in
+        let filter: @Sendable(ChatChannel) -> Bool = { channel in
             channel.memberCount == 4
         }
         setupControllerWithFilter(filter)
@@ -532,7 +532,7 @@ final class ChannelListController_Tests: XCTestCase {
     }
 
     func test_didReceiveEvent_whenFilterDoesNotMatch_shouldNotLinkChannelToQuery() {
-        let filter: (ChatChannel) -> Bool = { channel in
+        let filter: @Sendable(ChatChannel) -> Bool = { channel in
             channel.memberCount == 1
         }
         setupControllerWithFilter(filter)
@@ -549,7 +549,7 @@ final class ChannelListController_Tests: XCTestCase {
     }
 
     func test_didReceiveEvent_whenChannelUpdatedEvent_whenFilterDoesNotMatch_shouldUnlinkChannelFromQuery() throws {
-        let filter: (ChatChannel) -> Bool = { channel in
+        let filter: @Sendable(ChatChannel) -> Bool = { channel in
             channel.memberCount == 1
         }
         setupControllerWithFilter(filter)
@@ -578,7 +578,7 @@ final class ChannelListController_Tests: XCTestCase {
     }
 
     func test_didReceiveEvent_whenChannelUpdatedEvent__whenFilterMatches_shouldNotUnlinkChannelFromQuery() throws {
-        let filter: (ChatChannel) -> Bool = { channel in
+        let filter: @Sendable(ChatChannel) -> Bool = { channel in
             channel.memberCount == 4
         }
         setupControllerWithFilter(filter)
@@ -606,7 +606,7 @@ final class ChannelListController_Tests: XCTestCase {
     }
 
     func test_didReceiveEvent_whenChannelUpdatedEvent__whenFilterDoesNotMatch_whenChannelNotPresent_shouldNotUnlinkChannelFromQuery() throws {
-        let filter: (ChatChannel) -> Bool = { channel in
+        let filter: @Sendable(ChatChannel) -> Bool = { channel in
             channel.memberCount == 1
         }
         setupControllerWithFilter(filter)
@@ -728,7 +728,7 @@ final class ChannelListController_Tests: XCTestCase {
     // MARK: - Channels pagination
 
     func test_loadNextChannels_callsChannelListUpdater() {
-        var completionCalled = false
+        nonisolated(unsafe) var completionCalled = false
         let limit = 42
         controller.loadNextChannels(limit: limit) { [callbackQueueID] error in
             AssertTestQueue(withId: callbackQueueID)
@@ -765,7 +765,7 @@ final class ChannelListController_Tests: XCTestCase {
 
     func test_loadNextChannels_callsChannelUpdaterWithError() {
         // Simulate `loadNextChannels` call and catch the completion
-        var completionCalledError: Error?
+        nonisolated(unsafe) var completionCalledError: Error?
         controller.loadNextChannels { [callbackQueueID] in
             AssertTestQueue(withId: callbackQueueID)
             completionCalledError = $0
@@ -780,7 +780,7 @@ final class ChannelListController_Tests: XCTestCase {
     }
 
     func test_loadNextChannels_defaultPageSize_isCorrect() {
-        var completionCalled = false
+        nonisolated(unsafe) var completionCalled = false
 
         let pageSize = Int.random(in: 1...42)
         query = .init(filter: .in(.members, values: [.unique]), pageSize: pageSize)
@@ -831,7 +831,7 @@ final class ChannelListController_Tests: XCTestCase {
         env.channelListUpdater?.refreshLoadedChannelsResult = .success(Set(channels.map(\.cid)))
 
         let expectation = self.expectation(description: "Refresh loaded channels")
-        var receivedError: Error?
+        nonisolated(unsafe) var receivedError: Error?
         controller.refreshLoadedChannels() { result in
             receivedError = result.error
             expectation.fulfill()
@@ -852,7 +852,7 @@ final class ChannelListController_Tests: XCTestCase {
         env.channelListUpdater?.refreshLoadedChannelsResult = .failure(error)
 
         let expectation = self.expectation(description: "Reset Query completes")
-        var receivedError: Error?
+        nonisolated(unsafe) var receivedError: Error?
         controller.refreshLoadedChannels { result in
             receivedError = result.error
             expectation.fulfill()
@@ -866,7 +866,7 @@ final class ChannelListController_Tests: XCTestCase {
 
     func test_markAllRead_callsChannelListUpdater() {
         // Simulate `markRead` call and catch the completion
-        var completionCalled = false
+        nonisolated(unsafe) var completionCalled = false
         controller.markAllRead { [callbackQueueID] error in
             AssertTestQueue(withId: callbackQueueID)
             XCTAssertNil(error)
@@ -895,7 +895,7 @@ final class ChannelListController_Tests: XCTestCase {
 
     func test_markAllRead_propagatesErrorFromUpdater() {
         // Simulate `markRead` call and catch the completion
-        var completionCalledError: Error?
+        nonisolated(unsafe) var completionCalledError: Error?
         controller.markAllRead { [callbackQueueID] in
             AssertTestQueue(withId: callbackQueueID)
             completionCalledError = $0
@@ -1809,7 +1809,7 @@ final class ChannelListController_Tests: XCTestCase {
         )
     }
 
-    private func setupControllerWithFilter(_ filter: @escaping (ChatChannel) -> Bool) {
+    private func setupControllerWithFilter(_ filter: @escaping @Sendable(ChatChannel) -> Bool) {
         // Prepare controller
         controller = ChatChannelListController(
             query: query,
@@ -1831,7 +1831,12 @@ final class ChannelListController_Tests: XCTestCase {
         waitForChannelsUpdate {}
     }
 
-    private func writeAndWaitForChannelsUpdates(_ actions: @escaping (DatabaseSession) throws -> Void, completion: ((Error?) -> Void)? = nil, file: StaticString = #file, line: UInt = #line) {
+    private func writeAndWaitForChannelsUpdates(
+        _ actions: @escaping @Sendable(DatabaseSession) throws -> Void,
+        completion: (@Sendable(Error?) -> Void)? = nil,
+        file: StaticString = #file,
+        line: UInt = #line
+    ) {
         waitForChannelsUpdate(file: file, line: line) {
             if let completion = completion {
                 client.databaseContainer.write(actions, completion: completion)

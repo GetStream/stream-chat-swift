@@ -17,7 +17,7 @@ public extension ChatClient {
     }
 }
 
-public class PollController: DataController, DelegateCallable, DataStoreProvider {
+public class PollController: DataController, DelegateCallable, DataStoreProvider, @unchecked Sendable {
     /// The `ChatClient` instance this controller belongs to.
     public let client: ChatClient
 
@@ -106,7 +106,7 @@ public class PollController: DataController, DelegateCallable, DataStoreProvider
         return observer
     }()
     
-    var _basePublishers: Any?
+    @Atomic private var _basePublishers: Any?
     /// An internal backing object for all publicly available Combine publishers. We use it to simplify the way we expose
     /// publishers. Instead of creating custom `Publisher` types, we use `CurrentValueSubject` and `PassthroughSubject` internally,
     /// and expose the published values by mapping them to a read-only `AnyPublisher` type.
@@ -138,7 +138,7 @@ public class PollController: DataController, DelegateCallable, DataStoreProvider
         eventsController.delegate = self
     }
     
-    override public func synchronize(_ completion: ((_ error: Error?) -> Void)? = nil) {
+    override public func synchronize(_ completion: (@Sendable(_ error: Error?) -> Void)? = nil) {
         startObserversIfNeeded()
 
         pollsRepository.queryPollVotes(query: ownVotesQuery) { [weak self] result in
@@ -161,7 +161,7 @@ public class PollController: DataController, DelegateCallable, DataStoreProvider
     public func castPollVote(
         answerText: String?,
         optionId: String?,
-        completion: ((Error?) -> Void)? = nil
+        completion: (@Sendable(Error?) -> Void)? = nil
     ) {
         if answerText == nil && optionId == nil {
             completion?(ClientError.InvalidInput())
@@ -200,7 +200,7 @@ public class PollController: DataController, DelegateCallable, DataStoreProvider
     ///   - completion: A closure to be called upon completion, with an optional `Error` if something went wrong.
     public func removePollVote(
         voteId: String,
-        completion: ((Error?) -> Void)? = nil
+        completion: (@Sendable(Error?) -> Void)? = nil
     ) {
         pollsRepository.removePollVote(
             messageId: messageId,
@@ -218,7 +218,7 @@ public class PollController: DataController, DelegateCallable, DataStoreProvider
     ///
     /// - Parameters:
     ///   - completion: A closure to be called upon completion, with an optional `Error` if something went wrong.
-    public func closePoll(completion: ((Error?) -> Void)? = nil) {
+    public func closePoll(completion: (@Sendable(Error?) -> Void)? = nil) {
         pollsRepository.closePoll(pollId: pollId, completion: { [weak self] result in
             self?.callback {
                 completion?(result)
@@ -237,7 +237,7 @@ public class PollController: DataController, DelegateCallable, DataStoreProvider
         text: String,
         position: Int? = nil,
         extraData: [String: RawJSON]? = nil,
-        completion: ((Error?) -> Void)? = nil
+        completion: (@Sendable(Error?) -> Void)? = nil
     ) {
         pollsRepository.suggestPollOption(
             pollId: pollId,
@@ -268,7 +268,7 @@ public class PollController: DataController, DelegateCallable, DataStoreProvider
 }
 
 /// Represents the visibility of votes in a poll.
-public struct VotingVisibility: RawRepresentable, Equatable {
+public struct VotingVisibility: RawRepresentable, Equatable, Sendable {
     public let rawValue: String
 
     public init(rawValue: String) {

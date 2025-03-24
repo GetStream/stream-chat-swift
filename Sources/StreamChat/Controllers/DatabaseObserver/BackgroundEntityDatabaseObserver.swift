@@ -7,7 +7,7 @@ import Foundation
 
 /// Observes changes of a single entity specified using an `NSFetchRequest`in the provided `NSManagedObjectContext`.
 /// This observation is performed on the background
-class BackgroundEntityDatabaseObserver<Item, DTO: NSManagedObject>: BackgroundDatabaseObserver<Item, DTO> {
+class BackgroundEntityDatabaseObserver<Item: Sendable, DTO: NSManagedObject>: BackgroundDatabaseObserver<Item, DTO>, @unchecked Sendable {
     var item: Item? {
         rawItems.first
     }

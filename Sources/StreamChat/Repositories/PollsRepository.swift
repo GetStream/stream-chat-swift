@@ -4,7 +4,7 @@
 
 import Foundation
 
-class PollsRepository {
+class PollsRepository: @unchecked Sendable {
     let database: DatabaseContainer
     let apiClient: APIClient
     
@@ -23,7 +23,7 @@ class PollsRepository {
         votingVisibility: String?,
         options: [PollOption]?,
         custom: [String: RawJSON]?,
-        completion: @escaping (Result<PollPayload, Error>) -> Void
+        completion: @escaping @Sendable(Result<PollPayload, Error>) -> Void
     ) {
         let request = CreatePollRequestBody(
             name: name,
@@ -54,7 +54,7 @@ class PollsRepository {
         currentUserId: String?,
         query: PollVoteListQuery?,
         deleteExistingVotes: [PollVote],
-        completion: ((Error?) -> Void)? = nil
+        completion: (@Sendable(Error?) -> Void)? = nil
     ) {
         guard let optionId, !optionId.isEmpty else {
             // No optimistic updates for answers.
@@ -78,12 +78,11 @@ class PollsRepository {
             return
         }
         
-        var pollVote: PollVote?
-        database.write { session in
+        database.write(converting: { session in
             let voteId = PollVoteDTO.localVoteId(optionId: optionId, pollId: pollId, userId: currentUserId)
             let existing = try? session.pollVote(id: voteId, pollId: pollId)
             if existing == nil {
-                pollVote = try session.savePollVote(
+                let pollVote = try session.savePollVote(
                     voteId: nil,
                     pollId: pollId,
                     optionId: optionId,
@@ -92,14 +91,15 @@ class PollsRepository {
                     query: query
                 )
                 .asModel()
+                for toDelete in deleteExistingVotes {
+                    _ = try? session.removePollVote(with: toDelete.id, pollId: toDelete.pollId)
+                }
+                return pollVote
             } else {
                 throw ClientError.PollVoteAlreadyExists()
             }
-            for toDelete in deleteExistingVotes {
-                _ = try? session.removePollVote(with: toDelete.id, pollId: toDelete.pollId)
-            }
-        } completion: { [weak self] error in
-            if let error {
+        }, completion: { [weak self] result in
+            if let error = result.error {
                 completion?(error)
                 return
             }
@@ -117,8 +117,8 @@ class PollsRepository {
                     pollId: pollId,
                     vote: request
                 )
-            ) {
-                if $0.isError, $0.error?.isBackendErrorWith400StatusCode == false, let pollVote {
+            ) { [weak self] in
+                if $0.isError, $0.error?.isBackendErrorWith400StatusCode == false, let pollVote = result.value {
                     self?.database.write { session in
                         _ = try? session.removePollVote(with: pollVote.id, pollId: pollVote.pollId)
                         for vote in deleteExistingVotes {
@@ -135,60 +135,64 @@ class PollsRepository {
                 }
                 completion?($0.error)
             }
-        }
+        })
     }
     
     func removePollVote(
         messageId: MessageId,
         pollId: String,
         voteId: String,
-        completion: ((Error?) -> Void)? = nil
+        completion: (@Sendable(Error?) -> Void)? = nil
     ) {
-        var exists = false
-        var answerText: String?
-        var optionId: String?
-        var userId: UserId?
-        var filterHash: String?
-        database.write { session in
+        struct WriteResponse {
+            var exists = false
+            var answerText: String?
+            var optionId: String?
+            var userId: UserId?
+            var filterHash: String?
+        }
+        database.write(converting: { session in
             let voteDto = try session.removePollVote(with: voteId, pollId: pollId)
-            exists = voteDto != nil
-            filterHash = voteDto?.queries?.first?.filterHash
-            answerText = voteDto?.answerText
-            optionId = voteDto?.optionId
-            userId = voteDto?.user?.id
-        } completion: { [weak self] error in
-            if error == nil {
+            var writeResponse = WriteResponse()
+            writeResponse.exists = voteDto != nil
+            writeResponse.filterHash = voteDto?.queries?.first?.filterHash
+            writeResponse.answerText = voteDto?.answerText
+            writeResponse.optionId = voteDto?.optionId
+            writeResponse.userId = voteDto?.user?.id
+            return writeResponse
+        }, completion: { [weak self] result in
+            if let writeResponse = result.value {
                 self?.apiClient.request(
                     endpoint: .removePollVote(
                         messageId: messageId,
                         pollId: pollId,
                         voteId: voteId
                     )
-                ) {
-                    if $0.error != nil, $0.error?.isBackendNotFound404StatusCode == false, exists {
+                ) { [weak self] in
+                    if $0.error != nil, $0.error?.isBackendNotFound404StatusCode == false, writeResponse.exists {
                         self?.database.write { session in
                             _ = try session.savePollVote(
                                 voteId: voteId,
                                 pollId: pollId,
-                                optionId: optionId,
-                                answerText: answerText,
-                                userId: userId,
+                                optionId: writeResponse.optionId,
+                                answerText: writeResponse.answerText,
+                                userId: writeResponse.userId,
                                 query: nil
                             )
-                            try? session.linkVote(with: voteId, in: pollId, to: filterHash)
+                            try? session.linkVote(with: voteId, in: pollId, to: writeResponse.filterHash)
                         }
                     }
                     completion?($0.error)
                 }
             } else {
-                completion?(error)
+                completion?(result.error)
             }
-        }
+        })
     }
     
     func closePoll(
         pollId: String,
-        completion: ((Error?) -> Void)? = nil
+        completion: (@Sendable(Error?) -> Void)? = nil
     ) {
         let request = UpdatePollPartialRequestBody(
             pollId: pollId,
@@ -206,7 +210,7 @@ class PollsRepository {
         text: String,
         position: Int? = nil,
         custom: [String: RawJSON]? = nil,
-        completion: ((Error?) -> Void)? = nil
+        completion: (@Sendable(Error?) -> Void)? = nil
     ) {
         let request = CreatePollOptionRequestBody(
             pollId: pollId,
@@ -224,21 +228,21 @@ class PollsRepository {
     
     func queryPollVotes(
         query: PollVoteListQuery,
-        completion: ((Result<VotePaginationResponse, Error>) -> Void)? = nil
+        completion: (@Sendable(Result<VotePaginationResponse, Error>) -> Void)? = nil
     ) {
         apiClient.request(
             endpoint: .queryPollVotes(pollId: query.pollId, query: query)
         ) { [weak self] (result: Result<PollVoteListResponse, Error>) in
             switch result {
             case let .success(payload):
-                var votes: [PollVote] = []
-                self?.database.write({ session in
-                    votes = try session.savePollVotes(payload: payload, query: query, cache: nil).map { try $0.asModel() }
-                }, completion: { error in
-                    if let error = error {
-                        completion?(.failure(error))
-                    } else {
+                self?.database.write(converting: { session in
+                    try session.savePollVotes(payload: payload, query: query, cache: nil).map { try $0.asModel() }
+                }, completion: { result in
+                    switch result {
+                    case .success(let votes):
                         completion?(.success(.init(votes: votes, next: payload.next)))
+                    case .failure(let error):
+                        completion?(.failure(error))
                     }
                 })
             case let .failure(error):
@@ -254,7 +258,7 @@ class PollsRepository {
         prev: String?,
         sort: [SortParamRequest?],
         filter: [String: RawJSON]?,
-        completion: ((Result<PollVoteListResponse, Error>) -> Void)? = nil
+        completion: (@Sendable(Result<PollVoteListResponse, Error>) -> Void)? = nil
     ) {
         let request = QueryPollVotesRequestBody(
             pollId: pollId,
@@ -303,31 +307,31 @@ class PollsRepository {
 }
 
 extension ClientError {
-    final class PollDoesNotExist: ClientError {
+    final class PollDoesNotExist: ClientError, @unchecked Sendable {
         init(pollId: String) {
             super.init("There is no `PollDTO` instance in the DB matching id: \(pollId).")
         }
     }
     
-    final class PollOptionDoesNotExist: ClientError {
+    final class PollOptionDoesNotExist: ClientError, @unchecked Sendable {
         init(optionId: String) {
             super.init("There is no `PollOptionDTO` instance in the DB matching id: \(optionId).")
         }
     }
     
-    final class PollVoteDoesNotExist: ClientError {
+    final class PollVoteDoesNotExist: ClientError, @unchecked Sendable {
         init(voteId: String) {
             super.init("There is no `PollVoteDTO` instance in the DB matching id: \(voteId).")
         }
     }
     
-    public final class PollVoteAlreadyExists: ClientError {
+    public final class PollVoteAlreadyExists: ClientError, @unchecked Sendable {
         public init() {
             super.init("There is already `PollVoteDTO` instance in the DB.")
         }
     }
     
-    final class InvalidInput: ClientError {
+    final class InvalidInput: ClientError, @unchecked Sendable {
         init() {
             super.init("Invalid input provided to the method")
         }

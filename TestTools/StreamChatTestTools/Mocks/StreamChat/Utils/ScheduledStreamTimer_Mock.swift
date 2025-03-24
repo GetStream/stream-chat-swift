@@ -6,11 +6,11 @@ import Foundation
 import StreamChat
 
 public final class ScheduledStreamTimer_Mock: StreamTimer {
-    public var stopCallCount: Int = 0
-    public var startCallCount: Int = 0
+    @Atomic public var stopCallCount: Int = 0
+    @Atomic public var startCallCount: Int = 0
 
     public var isRunning: Bool = false
-    public var onChange: (() -> Void)?
+    public var onChange: (@Sendable() -> Void)?
 
     public init() {}
 

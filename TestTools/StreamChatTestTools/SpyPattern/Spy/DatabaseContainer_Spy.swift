@@ -127,15 +127,15 @@ public final class DatabaseContainer_Spy: DatabaseContainer, Spy, @unchecked Sen
         super.recreatePersistentStore(completion: completion)
     }
 
-    override public func write(_ actions: @escaping (DatabaseSession) throws -> Void, completion: @escaping (Error?) -> Void) {
+    override public func write(_ actions: @escaping @Sendable(DatabaseSession) throws -> Void, completion: @escaping @Sendable(Error?) -> Void) {
         record()
-        let wrappedActions: ((DatabaseSession) throws -> Void) = { session in
+        let wrappedActions: (@Sendable(DatabaseSession) throws -> Void) = { session in
             self.isWriteSessionInProgress = true
             try actions(self.sessionMock ?? session)
             self.isWriteSessionInProgress = false
         }
 
-        let completion: (Error?) -> Void = { error in
+        let completion: @Sendable(Error?) -> Void = { error in
             completion(error)
             self._writeSessionCounter { $0 += 1 }
             self.didWrite?()
@@ -159,7 +159,7 @@ public final class DatabaseContainer_Spy: DatabaseContainer, Spy, @unchecked Sen
 
 extension DatabaseContainer {
     /// Reads changes from the DB synchronously. Only for test purposes!
-    func readSynchronously<T>(_ actions: @escaping (DatabaseSession) throws -> T) throws -> T {
+    func readSynchronously<T>(_ actions: @escaping @Sendable  (DatabaseSession) throws -> T) throws -> T {
         let result = try waitFor { completion in
             self.read(actions, completion: completion)
         }
@@ -172,7 +172,7 @@ extension DatabaseContainer {
     }
     
     /// Writes changes to the DB synchronously. Only for test purposes!
-    func writeSynchronously(_ actions: @escaping (DatabaseSession) throws -> Void) throws {
+    func writeSynchronously(_ actions: @escaping @Sendable(DatabaseSession) throws -> Void) throws {
         let error = try waitFor { completion in
             self.write(actions, completion: completion)
         }
@@ -207,7 +207,6 @@ extension DatabaseContainer {
         withMessages: Bool = true,
         withQuery: Bool = false,
         isHidden: Bool = false,
-        channelReads: Set<ChannelReadDTO> = [],
         channelExtraData: [String: RawJSON] = [:],
         truncatedAt: Date? = nil
     ) throws {
@@ -219,7 +218,6 @@ extension DatabaseContainer {
                 )
 
             dto.isHidden = isHidden
-            dto.reads = channelReads
             // Delete possible messages from the payload if `withMessages` is false
             if !withMessages {
                 let context = session as! NSManagedObjectContext
@@ -277,7 +275,6 @@ extension DatabaseContainer {
         id: MessageId = .unique,
         authorId: UserId = .unique,
         cid: ChannelId = .unique,
-        channel: ChannelDTO? = nil,
         text: String = .unique,
         extraData: [String: RawJSON] = [:],
         pinned: Bool = false,
@@ -297,8 +294,7 @@ extension DatabaseContainer {
         quotedMessageId: MessageId? = nil
     ) throws {
         try writeSynchronously { session in
-            guard let channelDTO = channel ??
-                (try? session.saveChannel(payload: XCTestCase().dummyPayload(with: cid, numberOfMessages: 0))) else {
+            guard let channelDTO = (try? session.saveChannel(payload: XCTestCase().dummyPayload(with: cid, numberOfMessages: 0))) else {
                 XCTFail("Failed to fetch channel when creating message")
                 return
             }

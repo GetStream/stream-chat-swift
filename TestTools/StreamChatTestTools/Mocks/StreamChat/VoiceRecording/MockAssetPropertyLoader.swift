@@ -5,7 +5,7 @@
 import AVFoundation
 @testable import StreamChat
 
-open class MockAssetPropertyLoader: AssetPropertyLoading {
+open class MockAssetPropertyLoader: AssetPropertyLoading, @unchecked Sendable {
     open var loadPropertiesWasCalledWithProperties: [AssetProperty]?
     open var loadPropertiesWasCalledWithAsset: AVAsset?
     open var loadPropertiesResult: Result<AVAsset, AssetPropertyLoadingCompositeError>?

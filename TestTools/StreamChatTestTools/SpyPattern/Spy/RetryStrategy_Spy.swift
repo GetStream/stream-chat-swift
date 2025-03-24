@@ -6,14 +6,14 @@ import Foundation
 @testable import StreamChat
 
 /// Mock implementation of `RetryStrategy`.
-final class RetryStrategy_Spy: RetryStrategy, Spy {
+final class RetryStrategy_Spy: RetryStrategy, Spy, @unchecked Sendable {
     enum Signature {
         static let nextRetryDelay = "nextRetryDelay()"
         static let resetConsecutiveFailures = "resetConsecutiveFailures()"
     }
 
     let spyState = SpyState()
-    var consecutiveFailuresCount: Int = 0
+    @Atomic var consecutiveFailuresCount: Int = 0
 
     lazy var mock_incrementConsecutiveFailures = MockFunc.mock(for: incrementConsecutiveFailures)
 

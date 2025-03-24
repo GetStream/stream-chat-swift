@@ -7,7 +7,7 @@ import Foundation
 /// A handler which enables marking channels read and unread.
 ///
 /// Only one mark read or unread request is allowed to be active.
-final class ReadStateHandler {
+final class ReadStateHandler: @unchecked Sendable {
     private let authenticationRepository: AuthenticationRepository
     private let channelUpdater: ChannelUpdater
     private let messageRepository: MessageRepository
@@ -24,7 +24,7 @@ final class ReadStateHandler {
         self.messageRepository = messageRepository
     }
     
-    func markRead(_ channel: ChatChannel, completion: @escaping (Error?) -> Void) {
+    func markRead(_ channel: ChatChannel, completion: @escaping @Sendable(Error?) -> Void) {
         guard
             !markingRead,
             let currentUserId = authenticationRepository.currentUserId,
@@ -54,7 +54,7 @@ final class ReadStateHandler {
     func markUnread(
         from messageId: MessageId,
         in channel: ChatChannel,
-        completion: @escaping (Result<ChatChannel, Error>) -> Void
+        completion: @escaping @Sendable(Result<ChatChannel, Error>) -> Void
     ) {
         guard !markingRead,
               let currentUserId = authenticationRepository.currentUserId

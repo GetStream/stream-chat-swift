@@ -202,10 +202,10 @@ extension ISO8601DateFormatter {
 
 // MARK: - Helper AnyEncodable
 
-struct AnyEncodable: Encodable {
-    let encodable: Encodable
+struct AnyEncodable: Encodable, Sendable {
+    let encodable: (Encodable & Sendable)
 
-    init(_ encodable: Encodable) {
+    init(_ encodable: Encodable & Sendable) {
         self.encodable = encodable
     }
 
@@ -215,11 +215,13 @@ struct AnyEncodable: Encodable {
     }
 }
 
-extension Encodable {
+extension Encodable where Self: Sendable {
     var asAnyEncodable: AnyEncodable {
         AnyEncodable(self)
     }
+}
 
+extension Encodable {
     // We need this helper in order to encode AnyEncodable with a singleValueContainer,
     // this is needed for the encoder to apply the encoding strategies of the inner type (encodable).
     // More details about this in the following thread:

@@ -17,7 +17,7 @@ extension ChannelListState {
         
         init(
             query: ChannelListQuery,
-            dynamicFilter: ((ChatChannel) -> Bool)?,
+            dynamicFilter: (@Sendable(ChatChannel) -> Bool)?,
             clientConfig: ChatClientConfig,
             channelListUpdater: ChannelListUpdater,
             database: DatabaseContainer,

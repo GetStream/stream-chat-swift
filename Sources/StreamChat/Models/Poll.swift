@@ -5,7 +5,7 @@
 import Foundation
 
 /// The model for a Poll.
-public struct Poll: Equatable {
+public struct Poll: Equatable, Sendable {
     /// A boolean indicating whether the poll allows answers/comments.
     public let allowAnswers: Bool
     

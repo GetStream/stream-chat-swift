@@ -40,7 +40,7 @@ final class MessageController_Combine_Tests: iOS13TestCase {
         weak var controller: ChatMessageController_Mock? = messageController
         messageController = nil
 
-        controller?.delegateCallback { $0.controller(controller!, didChangeState: .remoteDataFetched) }
+        controller?.delegateCallback { [controller] in $0.controller(controller!, didChangeState: .remoteDataFetched) }
 
         AssertAsync.willBeEqual(recording.output, [.localDataFetched, .remoteDataFetched])
     }
@@ -61,7 +61,7 @@ final class MessageController_Combine_Tests: iOS13TestCase {
 
         let newMessage: ChatMessage = .unique
         controller?.message_mock = newMessage
-        controller?.delegateCallback {
+        controller?.delegateCallback { [controller] in
             $0.messageController(controller!, didChangeMessage: .create(newMessage))
         }
 
@@ -84,7 +84,7 @@ final class MessageController_Combine_Tests: iOS13TestCase {
 
         let newReply: ChatMessage = .unique
         controller?.replies_mock = [newReply]
-        controller?.delegateCallback {
+        controller?.delegateCallback { [controller] in
             $0.messageController(controller!, didChangeReplies: [.insert(newReply, index: .init())])
         }
 
@@ -115,7 +115,7 @@ final class MessageController_Combine_Tests: iOS13TestCase {
             extraData: [:]
         )
         controller?.reactions = []
-        controller?.delegateCallback {
+        controller?.delegateCallback { [controller] in
             $0.messageController(controller!, didChangeReactions: [newReaction])
         }
 
