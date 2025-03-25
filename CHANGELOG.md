@@ -3,7 +3,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 # Upcoming
 
-### 🔄 Changed
+### 🐞 Fixed
+- Fix composer not cleared when draft deleted event is triggered [#3626](https://github.com/GetStream/stream-chat-swift/pull/3626)
 
 # [4.74.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.74.0)
 _March 14, 2025_
