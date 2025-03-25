@@ -25,19 +25,21 @@ class CreateChatViewController: UIViewController {
 
             // Create the Channel on backend
             controller.synchronize { [weak self] error in
-                if let error = error {
-                    self?.presentAlert(title: "Error when creating the channel", message: error.localizedDescription)
-                    return
+                MainActor.ensureIsolated { [weak self] in
+                    if let error = error {
+                        self?.presentAlert(title: "Error when creating the channel", message: error.localizedDescription)
+                        return
+                    }
+                    
+                    // Send the message
+                    createMessage(text)
+                    
+                    // Present the new chat and controller
+                    let vc = ChatChannelVC()
+                    vc.channelController = controller
+                    
+                    navController.setViewControllers([navController.viewControllers.first!, vc], animated: true)
                 }
-
-                // Send the message
-                createMessage(text)
-
-                // Present the new chat and controller
-                let vc = ChatChannelVC()
-                vc.channelController = controller
-
-                navController.setViewControllers([navController.viewControllers.first!, vc], animated: true)
             }
         }
     }
@@ -143,9 +145,11 @@ class CreateChatViewController: UIViewController {
         ])
 
         // Empty initial search to get all users
-        searchController.search(term: nil) { error in
+        searchController.search(term: nil) { [weak self] error in
             if error != nil {
-                self.update(for: .error)
+                MainActor.ensureIsolated { [weak self] in
+                    self?.update(for: .error)
+                }
             }
         }
         infoLabel.text = "On the platform"
@@ -235,9 +239,11 @@ class CreateChatViewController: UIViewController {
 
         operation?.cancel()
         operation = DispatchWorkItem { [weak self] in
-            self?.searchController.search(term: sender.text) { error in
+            self?.searchController.search(term: sender.text) { [weak self] error in
                 if error != nil {
-                    self?.update(for: .error)
+                    MainActor.ensureIsolated { [weak self] in
+                        self?.update(for: .error)
+                    }
                 }
             }
         }

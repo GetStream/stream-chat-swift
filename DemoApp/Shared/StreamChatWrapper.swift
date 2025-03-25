@@ -8,7 +8,7 @@ import StreamChatUI
 import UIKit
 import UserNotifications
 
-final class StreamChatWrapper {
+final class StreamChatWrapper: @unchecked Sendable {
     static var shared = StreamChatWrapper(apiKeyString: apiKeyString)
 
     static func replaceSharedInstance(apiKeyString: String) {
@@ -56,7 +56,7 @@ extension StreamChatWrapper {
 // MARK: User Authentication
 
 extension StreamChatWrapper {
-    func connect(user: DemoUserType, completion: @escaping (Error?) -> Void) {
+    func connect(user: DemoUserType, completion: @escaping @Sendable(Error?) -> Void) {
         switch user {
         case let .credentials(userCredentials):
             connectUser(credentials: userCredentials, completion: completion)
@@ -69,7 +69,7 @@ extension StreamChatWrapper {
         }
     }
 
-    func connectUser(credentials: UserCredentials?, completion: @escaping (Error?) -> Void) {
+    func connectUser(credentials: UserCredentials?, completion: @escaping @Sendable(Error?) -> Void) {
         guard let userCredentials = credentials else {
             log.error("User credentials are missing")
             return
@@ -200,7 +200,7 @@ extension StreamChatWrapper {
 // An object to test the Stream Models transformer.
 // By default it is not used. To use it, set it to the `modelsTransformer` property of the `ChatClientConfig`.
 
-class CustomStreamModelsTransformer: StreamModelsTransformer {
+final class CustomStreamModelsTransformer: StreamModelsTransformer {
     func transform(channel: ChatChannel) -> ChatChannel {
         channel.replacing(
             name: "Custom Name",

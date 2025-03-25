@@ -94,7 +94,9 @@ class DemoDraftMessageListVC: UIViewController, ThemeProvider {
         currentUserController.delegate = self
         loadingIndicator.startAnimating()
         currentUserController.loadDraftMessages { [weak self] _ in
-            self?.loadingIndicator.stopAnimating()
+            MainActor.ensureIsolated { [weak self] in
+                self?.loadingIndicator.stopAnimating()
+            }
         }
     }
     
@@ -105,7 +107,9 @@ class DemoDraftMessageListVC: UIViewController, ThemeProvider {
 
         isPaginatingDrafts = true
         currentUserController.loadMoreDraftMessages { [weak self] _ in
-            self?.isPaginatingDrafts = false
+            MainActor.ensureIsolated { [weak self] in
+                self?.isPaginatingDrafts = false
+            }
         }
     }
 

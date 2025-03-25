@@ -128,10 +128,12 @@ final class DemoChatChannelListRouter: ChatChannelListRouter {
                         team: channelController.channel?.team
                     ) { [unowned self] error in
                         if let error = error {
-                            self.rootViewController.presentAlert(
-                                title: "Couldn't update name of channel \(cid)",
-                                message: "\(error)"
-                            )
+                            MainActor.ensureIsolated {
+                                self.rootViewController.presentAlert(
+                                    title: "Couldn't update name of channel \(cid)",
+                                    message: "\(error)"
+                                )
+                            }
                         }
                     }
                 }
@@ -152,10 +154,12 @@ final class DemoChatChannelListRouter: ChatChannelListRouter {
                         extraData: channelController.channel?.extraData ?? [:]
                     ) { [unowned self] error in
                         if let error = error {
-                            self.rootViewController.presentAlert(
-                                title: "Couldn't update image url of channel \(cid)",
-                                message: "\(error)"
-                            )
+                            MainActor.ensureIsolated {
+                                self.rootViewController.presentAlert(
+                                    title: "Couldn't update image url of channel \(cid)",
+                                    message: "\(error)"
+                                )
+                            }
                         }
                     }
                 }
@@ -203,23 +207,27 @@ final class DemoChatChannelListRouter: ChatChannelListRouter {
                 let client = channelController.client
                 client.currentUserController().loadBlockedUsers { result in
                     guard let blockedUsers = try? result.get() else { return }
-                    self.rootViewController.present(MembersViewController(
-                        membersController: client.memberListController(
-                            query: .init(
-                                cid: cid,
-                                filter: .in(.id, values: blockedUsers.map(\.userId))
+                    MainActor.ensureIsolated {
+                        self.rootViewController.present(MembersViewController(
+                            membersController: client.memberListController(
+                                query: .init(
+                                    cid: cid,
+                                    filter: .in(.id, values: blockedUsers.map(\.userId))
+                                )
                             )
-                        )
-                    ), animated: true)
+                        ), animated: true)
+                    }
                 }
             }),
             .init(title: "Load More Members", handler: { [unowned self] _ in
                 channelController.loadMoreChannelReads(limit: 100) { error in
                     guard let error else { return }
-                    self.rootViewController.presentAlert(
-                        title: "Couldn't load more members to channel \(cid)",
-                        message: "\(error)"
-                    )
+                    MainActor.ensureIsolated {
+                        self.rootViewController.presentAlert(
+                            title: "Couldn't load more members to channel \(cid)",
+                            message: "\(error)"
+                        )
+                    }
                 }
             }),
             .init(title: "Add member", isEnabled: canUpdateChannelMembers, handler: { [unowned self] _ in
@@ -233,10 +241,12 @@ final class DemoChatChannelListRouter: ChatChannelListRouter {
                         message: "Members added to the channel"
                     ) { error in
                         if let error = error {
-                            self.rootViewController.presentAlert(
-                                title: "Couldn't add user \(id) to channel \(cid)",
-                                message: "\(error)"
-                            )
+                            MainActor.ensureIsolated {
+                                self.rootViewController.presentAlert(
+                                    title: "Couldn't add user \(id) to channel \(cid)",
+                                    message: "\(error)"
+                                )
+                            }
                         }
                     }
                 }
@@ -253,10 +263,12 @@ final class DemoChatChannelListRouter: ChatChannelListRouter {
                         message: "Members added to the channel"
                     ) { error in
                         if let error = error {
-                            self.rootViewController.presentAlert(
-                                title: "Couldn't add user \(id) to channel \(cid)",
-                                message: "\(error)"
-                            )
+                            MainActor.ensureIsolated {
+                                self.rootViewController.presentAlert(
+                                    title: "Couldn't add user \(id) to channel \(cid)",
+                                    message: "\(error)"
+                                )
+                            }
                         }
                     }
                 }
@@ -268,13 +280,15 @@ final class DemoChatChannelListRouter: ChatChannelListRouter {
                             userIds: [member.id],
                             message: "Members removed from the channel"
                         ) { [unowned self] error in
-                            if let error = error {
-                                self.rootViewController.presentAlert(
-                                    title: "Couldn't remove user \(member.id) from channel \(cid)",
-                                    message: "\(error)"
-                                )
-                            } else {
-                                self.rootNavigationController?.popViewController(animated: true)
+                            MainActor.ensureIsolated {
+                                if let error = error {
+                                    self.rootViewController.presentAlert(
+                                        title: "Couldn't remove user \(member.id) from channel \(cid)",
+                                        message: "\(error)"
+                                    )
+                                } else {
+                                    self.rootNavigationController?.popViewController(animated: true)
+                                }
                             }
                         }
                     }
@@ -288,10 +302,12 @@ final class DemoChatChannelListRouter: ChatChannelListRouter {
                             .memberController(userId: member.id, in: channelController.cid!)
                             .ban { error in
                                 if let error = error {
-                                    self.rootViewController.presentAlert(
-                                        title: "Couldn't ban user \(member.id) from channel \(cid)",
-                                        message: "\(error)"
-                                    )
+                                    MainActor.ensureIsolated {
+                                        self.rootViewController.presentAlert(
+                                            title: "Couldn't ban user \(member.id) from channel \(cid)",
+                                            message: "\(error)"
+                                        )
+                                    }
                                 }
                             }
                     }
@@ -305,10 +321,12 @@ final class DemoChatChannelListRouter: ChatChannelListRouter {
                             .memberController(userId: member.id, in: channelController.cid!)
                             .shadowBan { error in
                                 if let error = error {
-                                    self.rootViewController.presentAlert(
-                                        title: "Couldn't ban user \(member.id) from channel \(cid)",
-                                        message: "\(error)"
-                                    )
+                                    MainActor.ensureIsolated {
+                                        self.rootViewController.presentAlert(
+                                            title: "Couldn't ban user \(member.id) from channel \(cid)",
+                                            message: "\(error)"
+                                        )
+                                    }
                                 }
                             }
                     }
@@ -322,10 +340,12 @@ final class DemoChatChannelListRouter: ChatChannelListRouter {
                             .memberController(userId: member.id, in: channelController.cid!)
                             .unban { error in
                                 if let error = error {
-                                    self.rootViewController.presentAlert(
-                                        title: "Couldn't unban user \(member.id) from channel \(cid)",
-                                        message: "\(error)"
-                                    )
+                                    MainActor.ensureIsolated {
+                                        self.rootViewController.presentAlert(
+                                            title: "Couldn't unban user \(member.id) from channel \(cid)",
+                                            message: "\(error)"
+                                        )
+                                    }
                                 }
                             }
                     }
@@ -343,10 +363,12 @@ final class DemoChatChannelListRouter: ChatChannelListRouter {
                         message: "Premium member added to the channel"
                     ) { error in
                         if let error = error {
-                            self.rootViewController.presentAlert(
-                                title: "Couldn't add user \(id) to channel \(cid)",
-                                message: "\(error)"
-                            )
+                            MainActor.ensureIsolated {
+                                self.rootViewController.presentAlert(
+                                    title: "Couldn't add user \(id) to channel \(cid)",
+                                    message: "\(error)"
+                                )
+                            }
                         }
                     }
                 }
@@ -356,15 +378,17 @@ final class DemoChatChannelListRouter: ChatChannelListRouter {
                     UIAlertAction(title: member.id, style: .default) { _ in
                         channelController.client.memberController(userId: member.id, in: cid)
                             .partialUpdate(extraData: ["is_premium": true], unsetProperties: nil) { [unowned self] result in
-                                do {
-                                    let data = try result.get()
-                                    print("Member updated. Premium: ", data.isPremium)
-                                    self.rootNavigationController?.popViewController(animated: true)
-                                } catch {
-                                    self.rootViewController.presentAlert(
-                                        title: "Couldn't set user \(member.id) as premium.",
-                                        message: "\(error)"
-                                    )
+                                MainActor.ensureIsolated {
+                                    do {
+                                        let data = try result.get()
+                                        print("Member updated. Premium: ", data.isPremium)
+                                        self.rootNavigationController?.popViewController(animated: true)
+                                    } catch {
+                                        self.rootViewController.presentAlert(
+                                            title: "Couldn't set user \(member.id) as premium.",
+                                            message: "\(error)"
+                                        )
+                                    }
                                 }
                             }
                     }
@@ -374,15 +398,17 @@ final class DemoChatChannelListRouter: ChatChannelListRouter {
             .init(title: "Set current member as premium", isVisible: isPremiumMemberFeatureEnabled, handler: { [unowned self] _ in
                 channelController.client.currentUserController()
                     .updateMemberData(["is_premium": true], in: cid) { [unowned self] result in
-                        do {
-                            let data = try result.get()
-                            print("Member updated. Premium: ", data.isPremium)
-                            self.rootNavigationController?.popViewController(animated: true)
-                        } catch {
-                            self.rootViewController.presentAlert(
-                                title: "Couldn't set current user as premium.",
-                                message: "\(error)"
-                            )
+                        MainActor.ensureIsolated {
+                            do {
+                                let data = try result.get()
+                                print("Member updated. Premium: ", data.isPremium)
+                                self.rootNavigationController?.popViewController(animated: true)
+                            } catch {
+                                self.rootViewController.presentAlert(
+                                    title: "Couldn't set current user as premium.",
+                                    message: "\(error)"
+                                )
+                            }
                         }
                     }
             }),
@@ -391,15 +417,17 @@ final class DemoChatChannelListRouter: ChatChannelListRouter {
                     UIAlertAction(title: member.id, style: .default) { _ in
                         channelController.client.memberController(userId: member.id, in: cid)
                             .partialUpdate(extraData: nil, unsetProperties: ["is_premium"]) { [unowned self] result in
-                                do {
-                                    let data = try result.get()
-                                    print("Member updated. Premium: ", data.isPremium)
-                                    self.rootNavigationController?.popViewController(animated: true)
-                                } catch {
-                                    self.rootViewController.presentAlert(
-                                        title: "Couldn't set user \(member.id) as premium.",
-                                        message: "\(error)"
-                                    )
+                                MainActor.ensureIsolated {
+                                    do {
+                                        let data = try result.get()
+                                        print("Member updated. Premium: ", data.isPremium)
+                                        self.rootNavigationController?.popViewController(animated: true)
+                                    } catch {
+                                        self.rootViewController.presentAlert(
+                                            title: "Couldn't set user \(member.id) as premium.",
+                                            message: "\(error)"
+                                        )
+                                    }
                                 }
                             }
                     }
@@ -409,21 +437,27 @@ final class DemoChatChannelListRouter: ChatChannelListRouter {
             .init(title: "Freeze channel", isEnabled: canFreezeChannel, handler: { [unowned self] _ in
                 channelController.freezeChannel { error in
                     if let error = error {
-                        self.rootViewController.presentAlert(title: "Couldn't freeze channel \(cid)", message: "\(error)")
+                        MainActor.ensureIsolated {
+                            self.rootViewController.presentAlert(title: "Couldn't freeze channel \(cid)", message: "\(error)")
+                        }
                     }
                 }
             }),
             .init(title: "Unfreeze channel", isEnabled: canFreezeChannel, handler: { [unowned self] _ in
                 channelController.unfreezeChannel { error in
                     if let error = error {
-                        self.rootViewController.presentAlert(title: "Couldn't unfreeze channel \(cid)", message: "\(error)")
+                        MainActor.ensureIsolated {
+                            self.rootViewController.presentAlert(title: "Couldn't unfreeze channel \(cid)", message: "\(error)")
+                        }
                     }
                 }
             }),
             .init(title: "Mute channel", isEnabled: canMuteChannel, handler: { [unowned self] _ in
                 channelController.muteChannel { error in
                     if let error = error {
-                        self.rootViewController.presentAlert(title: "Couldn't mute channel \(cid)", message: "\(error)")
+                        MainActor.ensureIsolated {
+                            self.rootViewController.presentAlert(title: "Couldn't mute channel \(cid)", message: "\(error)")
+                        }
                     }
                 }
             }),
@@ -435,7 +469,9 @@ final class DemoChatChannelListRouter: ChatChannelListRouter {
                     }
                     channelController.muteChannel(expiration: expiration * 1000) { error in
                         if let error = error {
-                            self.rootViewController.presentAlert(title: "Couldn't mute channel \(cid)", message: "\(error)")
+                            MainActor.ensureIsolated {
+                                self.rootViewController.presentAlert(title: "Couldn't mute channel \(cid)", message: "\(error)")
+                            }
                         }
                     }
                 }
@@ -443,46 +479,60 @@ final class DemoChatChannelListRouter: ChatChannelListRouter {
             .init(title: "Cool channel", isEnabled: canMuteChannel, handler: { [unowned self] _ in
                 channelController.partialChannelUpdate(extraData: ["is_cool": true]) { error in
                     if let error = error {
-                        self.rootViewController.presentAlert(title: "Couldn't make a channel \(cid) cool", message: "\(error)")
+                        MainActor.ensureIsolated {
+                            self.rootViewController.presentAlert(title: "Couldn't make a channel \(cid) cool", message: "\(error)")
+                        }
                     }
                 }
             }),
             .init(title: "Uncool channel", isEnabled: canMuteChannel, handler: { [unowned self] _ in
                 channelController.partialChannelUpdate(extraData: ["is_cool": false]) { error in
                     if let error = error {
-                        self.rootViewController.presentAlert(title: "Couldn't make a channel \(cid) uncool", message: "\(error)")
+                        MainActor.ensureIsolated {
+                            self.rootViewController.presentAlert(title: "Couldn't make a channel \(cid) uncool", message: "\(error)")
+                        }
                     }
                 }
             }),
             .init(title: "Unmute channel", isEnabled: canMuteChannel, handler: { [unowned self] _ in
                 channelController.unmuteChannel { error in
                     if let error = error {
-                        self.rootViewController.presentAlert(title: "Couldn't unmute channel \(cid)", message: "\(error)")
+                        MainActor.ensureIsolated {
+                            self.rootViewController.presentAlert(title: "Couldn't unmute channel \(cid)", message: "\(error)")
+                        }
                     }
                 }
             }),
             .init(title: "Pin channel", isEnabled: true, handler: { [unowned self] _ in
                 channelController.pin { error in
                     guard let error else { return }
-                    self.rootViewController.presentAlert(title: "Couldn't pin channel \(cid)", message: "\(error)")
+                    MainActor.ensureIsolated {
+                        self.rootViewController.presentAlert(title: "Couldn't pin channel \(cid)", message: "\(error)")
+                    }
                 }
             }),
             .init(title: "Unpin channel", isEnabled: true, handler: { [unowned self] _ in
                 channelController.unpin { error in
                     guard let error else { return }
-                    self.rootViewController.presentAlert(title: "Couldn't unpin channel \(cid)", message: "\(error)")
+                    MainActor.ensureIsolated {
+                        self.rootViewController.presentAlert(title: "Couldn't unpin channel \(cid)", message: "\(error)")
+                    }
                 }
             }),
             .init(title: "Archive channel", isEnabled: true, handler: { [unowned self] _ in
                 channelController.archive { error in
                     guard let error else { return }
-                    self.rootViewController.presentAlert(title: "Couldn't archive channel \(cid)", message: "\(error)")
+                    MainActor.ensureIsolated {
+                        self.rootViewController.presentAlert(title: "Couldn't archive channel \(cid)", message: "\(error)")
+                    }
                 }
             }),
             .init(title: "Unarchive channel", isEnabled: true, handler: { [unowned self] _ in
                 channelController.unarchive { error in
                     guard let error else { return }
-                    self.rootViewController.presentAlert(title: "Couldn't unarchive channel \(cid)", message: "\(error)")
+                    MainActor.ensureIsolated {
+                        self.rootViewController.presentAlert(title: "Couldn't unarchive channel \(cid)", message: "\(error)")
+                    }
                 }
             }),
             .init(title: "Enable slow mode", isEnabled: canSetChannelCooldown, handler: { [unowned self] _ in
@@ -494,10 +544,12 @@ final class DemoChatChannelListRouter: ChatChannelListRouter {
                         }
                         channelController.enableSlowMode(cooldownDuration: duration) { [unowned self] error in
                             if let error = error {
-                                self.rootViewController.presentAlert(
-                                    title: "Couldn't enable slow mode on channel \(cid)",
-                                    message: "\(error)"
-                                )
+                                MainActor.ensureIsolated {
+                                    self.rootViewController.presentAlert(
+                                        title: "Couldn't enable slow mode on channel \(cid)",
+                                        message: "\(error)"
+                                    )
+                                }
                             }
                         }
                     }
@@ -505,10 +557,12 @@ final class DemoChatChannelListRouter: ChatChannelListRouter {
             .init(title: "Disable slow mode", isEnabled: canSetChannelCooldown, handler: { [unowned self] _ in
                 channelController.disableSlowMode { error in
                     if let error = error {
-                        self.rootViewController.presentAlert(
-                            title: "Couldn't disable slow mode on channel \(cid)",
-                            message: "\(error)"
-                        )
+                        MainActor.ensureIsolated {
+                            self.rootViewController.presentAlert(
+                                title: "Couldn't disable slow mode on channel \(cid)",
+                                message: "\(error)"
+                            )
+                        }
                     }
                 }
             }),
@@ -520,20 +574,24 @@ final class DemoChatChannelListRouter: ChatChannelListRouter {
                         .init(title: "Clear History", handler: { _ in
                             channelController.hideChannel(clearHistory: true) { error in
                                 if let error = error {
-                                    self.rootViewController.presentAlert(
-                                        title: "Couldn't hide channel \(cid)",
-                                        message: "\(error)"
-                                    )
+                                    MainActor.ensureIsolated {
+                                        self.rootViewController.presentAlert(
+                                            title: "Couldn't hide channel \(cid)",
+                                            message: "\(error)"
+                                        )
+                                    }
                                 }
                             }
                         }),
                         .init(title: "Keep History", handler: { _ in
                             channelController.hideChannel(clearHistory: false) { error in
                                 if let error = error {
-                                    self.rootViewController.presentAlert(
-                                        title: "Couldn't hide channel \(cid)",
-                                        message: "\(error)"
-                                    )
+                                    MainActor.ensureIsolated {
+                                        self.rootViewController.presentAlert(
+                                            title: "Couldn't hide channel \(cid)",
+                                            message: "\(error)"
+                                        )
+                                    }
                                 }
                             }
                         })
@@ -544,30 +602,36 @@ final class DemoChatChannelListRouter: ChatChannelListRouter {
             .init(title: "Show channel", isEnabled: channelController.channel?.isHidden == true, handler: { [unowned self] _ in
                 channelController.showChannel { error in
                     if let error = error {
-                        self.rootViewController.presentAlert(
-                            title: "Couldn't unhide channel \(cid)",
-                            message: "\(error)"
-                        )
+                        MainActor.ensureIsolated {
+                            self.rootViewController.presentAlert(
+                                title: "Couldn't unhide channel \(cid)",
+                                message: "\(error)"
+                            )
+                        }
                     }
                 }
             }),
             .init(title: "Truncate channel w/o message", isEnabled: canUpdateChannel, handler: { _ in
                 channelController.truncateChannel { [unowned self] error in
                     if let error = error {
-                        self.rootViewController.presentAlert(
-                            title: "Couldn't truncate channel \(cid)",
-                            message: "\(error.localizedDescription)"
-                        )
+                        MainActor.ensureIsolated {
+                            self.rootViewController.presentAlert(
+                                title: "Couldn't truncate channel \(cid)",
+                                message: "\(error.localizedDescription)"
+                            )
+                        }
                     }
                 }
             }),
             .init(title: "Truncate channel with message", isEnabled: canUpdateChannel, handler: { _ in
                 channelController.truncateChannel(systemMessage: "Channel truncated") { [unowned self] error in
                     if let error = error {
-                        self.rootViewController.presentAlert(
-                            title: "Couldn't truncate channel \(cid)",
-                            message: "\(error.localizedDescription)"
-                        )
+                        MainActor.ensureIsolated {
+                            self.rootViewController.presentAlert(
+                                title: "Couldn't truncate channel \(cid)",
+                                message: "\(error.localizedDescription)"
+                            )
+                        }
                     }
                 }
             }),
@@ -620,19 +684,21 @@ final class DemoChatChannelListRouter: ChatChannelListRouter {
 
                     let messageController = channelController.client.messageController(cid: cid, messageId: id)
                     messageController.synchronize { [weak self] error in
-                        let message = messageController.message
-
-                        var errorMessage: String? = error?.localizedDescription
-                        if message?.cid != cid {
-                            errorMessage = "Message ID does not belong to this channel."
+                        MainActor.ensureIsolated { [weak self] in
+                            let message = messageController.message
+                            
+                            var errorMessage: String? = error?.localizedDescription
+                            if message?.cid != cid {
+                                errorMessage = "Message ID does not belong to this channel."
+                            }
+                            
+                            if let errorMessage = errorMessage {
+                                self?.rootViewController.presentAlert(title: errorMessage)
+                                return
+                            }
+                            
+                            self?.showChannel(for: cid, at: message?.id)
                         }
-
-                        if let errorMessage = errorMessage {
-                            self?.rootViewController.presentAlert(title: errorMessage)
-                            return
-                        }
-
-                        self?.showChannel(for: cid, at: message?.id)
                     }
                 }
             }),
@@ -678,7 +744,9 @@ final class DemoChatChannelListRouter: ChatChannelListRouter {
     override func didTapDeleteButton(for cid: ChannelId) {
         rootViewController.controller.client.channelController(for: cid).deleteChannel { error in
             if let error = error {
-                self.rootViewController.presentAlert(title: "Channel \(cid) couldn't be deleted", message: "\(error)")
+                MainActor.ensureIsolated {
+                    self.rootViewController.presentAlert(title: "Channel \(cid) couldn't be deleted", message: "\(error)")
+                }
             }
         }
     }
