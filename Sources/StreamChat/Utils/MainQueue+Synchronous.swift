@@ -4,20 +4,16 @@
 
 import Foundation
 
-extension DispatchQueue {
+extension MainActor {
     /// Synchronously performs the provided action on the main thread.
-    ///
-    /// Performing this action is safe because the function checks the current thread, and if it's currently in the main
-    /// one, it performs the action safely without dead-locking the thread.
-    ///
-    static func performSynchronouslyOnMainQueue(_ action: @MainActor() throws -> Void) rethrows {
+    static func ensureIsolated<T>(_ action: @MainActor @Sendable() throws -> T) rethrows -> T where T: Sendable {
         if Thread.current.isMainThread {
-            try MainActor.assumeIsolated {
+            return try MainActor.assumeIsolated {
                 try action()
             }
         } else {
-            try DispatchQueue.main.sync {
-                try MainActor.assumeIsolated {
+            return try DispatchQueue.main.sync {
+                return try MainActor.assumeIsolated {
                     try action()
                 }
             }

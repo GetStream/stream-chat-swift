@@ -68,9 +68,11 @@ extension MemberList {
         var memberListUpdaterBuilder: @Sendable(
             _ database: DatabaseContainer,
             _ apiClient: APIClient
-        ) -> ChannelMemberListUpdater = ChannelMemberListUpdater.init
+        ) -> ChannelMemberListUpdater = {
+            ChannelMemberListUpdater(database: $0, apiClient: $1)
+        }
         
-        var stateBuilder: @MainActor(
+        var stateBuilder: @Sendable @MainActor(
             _ query: ChannelMemberListQuery,
             _ database: DatabaseContainer
         ) -> MemberListState = { @MainActor in

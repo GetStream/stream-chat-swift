@@ -15,7 +15,7 @@ public indirect enum RawJSON: Codable, Hashable, Sendable {
     case array([RawJSON])
     case `nil`
 
-    static let double = number
+    nonisolated(unsafe) static let double = number
 
     public init(from decoder: Decoder) throws {
         let singleValueContainer = try decoder.singleValueContainer()

@@ -1527,7 +1527,7 @@ extension Chat {
 
 extension Chat {
     struct Environment: Sendable {
-        var chatStateBuilder: @MainActor(
+        var chatStateBuilder: @Sendable @MainActor(
             _ channelQuery: ChannelQuery,
             _ messageOrder: MessageOrdering,
             _ memberSorting: [Sorting<ChannelMemberListSortingKey>],
@@ -1551,34 +1551,55 @@ extension Chat {
             _ paginationStateHandler: MessagesPaginationStateHandling,
             _ database: DatabaseContainer,
             _ apiClient: APIClient
-        ) -> ChannelUpdater = ChannelUpdater.init
+        ) -> ChannelUpdater = {
+            ChannelUpdater(
+                channelRepository: $0,
+                messageRepository: $1,
+                paginationStateHandler: $2,
+                database: $3,
+                apiClient: $4
+            )
+        }
 
         var eventSenderBuilder: @Sendable(
             _ database: DatabaseContainer,
             _ apiClient: APIClient
-        ) -> EventSender = EventSender.init
+        ) -> EventSender = { EventSender(database: $0, apiClient: $1) }
         
         var memberUpdaterBuilder: @Sendable(
             _ database: DatabaseContainer,
             _ apiClient: APIClient
-        ) -> ChannelMemberUpdater = ChannelMemberUpdater.init
+        ) -> ChannelMemberUpdater = { ChannelMemberUpdater(database: $0, apiClient: $1) }
 
         var messageUpdaterBuilder: @Sendable(
             _ isLocalStorageEnabled: Bool,
             _ messageRepository: MessageRepository,
             _ database: DatabaseContainer,
             _ apiClient: APIClient
-        ) -> MessageUpdater = MessageUpdater.init
+        ) -> MessageUpdater = {
+            MessageUpdater(
+                isLocalStorageEnabled: $0,
+                messageRepository: $1,
+                database: $2,
+                apiClient: $3
+            )
+        }
         
         var readStateHandlerBuilder: @Sendable(
             _ authenticationRepository: AuthenticationRepository,
             _ channelUpdater: ChannelUpdater,
             _ messageRepository: MessageRepository
-        ) -> ReadStateHandler = ReadStateHandler.init
+        ) -> ReadStateHandler = {
+            ReadStateHandler(
+                authenticationRepository: $0,
+                channelUpdater: $1,
+                messageRepository: $2
+            )
+        }
         
         var typingEventsSenderBuilder: @Sendable(
             _ database: DatabaseContainer,
             _ apiClient: APIClient
-        ) -> TypingEventsSender = TypingEventsSender.init
+        ) -> TypingEventsSender = { TypingEventsSender(database: $0, apiClient: $1) }
     }
 }

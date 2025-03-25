@@ -27,39 +27,11 @@ before_all do |lane|
     setup_ci
     setup_git_config
     xcversion(version: xcode_version) unless [:sonar_upload, :allure_launch, :allure_upload, :pod_lint, :sync_mock_server, :copyright].include?(lane)
-    fallback_to_swift_5
   end
 end
 
 after_all do |lane|
   stop_sinatra if lane == :test_e2e_mock
-end
-
-private_lane :fallback_to_swift_5 do
-  xcode_version = ENV.fetch('XCODE_VERSION', nil)
-  next unless xcode_version && xcode_version.start_with?('15.')
-
-  project = Xcodeproj::Project.open("./../#{xcode_project}")
-  target_names = ['StreamChat']
-  found_targets = []
-  target_names.each do |target_name|
-    target = project.targets.find { |t| t.name == target_name }
-    if target
-      target.build_configurations.each do |config|
-        config.build_settings["SWIFT_VERSION"] = "5.0"
-      end
-      found_targets << target_name
-      UI.success("Set SWIFT_VERSION to 5 for target #{target_name}")
-    else
-      UI.error("No target named #{target_name} found in the project")
-    end
-  end
-  if found_targets.any?
-    project.save
-    UI.success("Updated SWIFT_VERSION to 5 for targets: #{found_targets.join(', ')}")
-  else
-    UI.error("No specified targets were found in the project")
-  end
 end
 
 desc "Build .xcframeworks"

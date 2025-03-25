@@ -146,7 +146,7 @@ class AttachmentQueueUploader: Worker, @unchecked Sendable {
             }
             return (localURL: attachment.localURL, model: model)
         }, completion: { [weak self] result in
-            DispatchQueue.main.async {
+            DispatchQueue.main.async { [weak self] in
                 switch result {
                 case .success(let writeData):
                     // Attachment uploading state should be validated after preparing the local file (for ensuring the local file persists for retry)

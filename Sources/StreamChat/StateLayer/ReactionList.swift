@@ -72,9 +72,11 @@ extension ReactionList {
         var reactionListUpdaterBuilder: @Sendable(
             _ database: DatabaseContainer,
             _ apiClient: APIClient
-        ) -> ReactionListUpdater = ReactionListUpdater.init
+        ) -> ReactionListUpdater = {
+            ReactionListUpdater(database: $0, apiClient: $1)
+        }
         
-        var stateBuilder: @MainActor(
+        var stateBuilder: @Sendable @MainActor(
             _ query: ReactionListQuery,
             _ database: DatabaseContainer
         ) -> ReactionListState = { @MainActor in

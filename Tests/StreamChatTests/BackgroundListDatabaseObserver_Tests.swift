@@ -123,7 +123,7 @@ final class BackgroundListDatabaseObserver_Tests: XCTestCase {
         let onDidChangeExpectation = expectation(description: "onDidChange")
         onDidChangeExpectation.expectedFulfillmentCount = 2
 
-        var receivedChanges: [ListChange<String>] = []
+        nonisolated(unsafe) var receivedChanges: [ListChange<String>] = []
         observer.onDidChange = {
             receivedChanges.append(contentsOf: $0)
             onDidChangeExpectation.fulfill()

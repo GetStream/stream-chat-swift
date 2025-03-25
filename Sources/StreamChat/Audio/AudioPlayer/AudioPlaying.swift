@@ -131,7 +131,7 @@ open class StreamAudioPlayer: AudioPlaying, AppStateObserverDelegate, @unchecked
     open func play() {
         do {
             try audioSessionConfigurator.activatePlaybackSession()
-            mainActorAccess {
+            MainActor.ensureIsolated {
                 player.play()
             }
         } catch {
@@ -141,7 +141,7 @@ open class StreamAudioPlayer: AudioPlaying, AppStateObserverDelegate, @unchecked
     }
 
     open func pause() {
-        mainActorAccess {
+        MainActor.ensureIsolated {
             player.pause()
         }
     }
@@ -170,7 +170,7 @@ open class StreamAudioPlayer: AudioPlaying, AppStateObserverDelegate, @unchecked
     }
 
     open func updateRate(_ newRate: AudioPlaybackRate) {
-        mainActorAccess {
+        MainActor.ensureIsolated {
             player.rate = newRate.rawValue
         }
     }
@@ -203,7 +203,7 @@ open class StreamAudioPlayer: AudioPlaying, AppStateObserverDelegate, @unchecked
 
     func playbackWillStop(_ playerItem: AVPlayerItem) {
         let matchesCurrentItem: Bool = {
-            mainActorAccess {
+            MainActor.ensureIsolated {
                 let playerItemURL = (playerItem.asset as? AVURLAsset)?.url
                 let currentItemURL = (player.currentItem?.asset as? AVURLAsset)?.url
                 return playerItemURL != nil && playerItemURL == currentItemURL
@@ -236,7 +236,7 @@ open class StreamAudioPlayer: AudioPlaying, AppStateObserverDelegate, @unchecked
             guard let self = self, self.context.isSeeking == false else {
                 return
             }
-            let rate = self.mainActorAccess { player.rate }
+            let rate = MainActor.ensureIsolated { player.rate }
             self.updateContext { value in
                 let currentTime = player.currentTime().seconds
                 value.currentTime = currentTime.isFinite && !currentTime.isNaN
@@ -281,7 +281,7 @@ open class StreamAudioPlayer: AudioPlaying, AppStateObserverDelegate, @unchecked
     }
 
     private func notifyDelegates() {
-        DispatchQueue.performSynchronouslyOnMainQueue {
+        MainActor.ensureIsolated {
             multicastDelegate.invoke { $0.audioPlayer(self, didUpdateContext: context) }
         }
     }
@@ -308,7 +308,7 @@ open class StreamAudioPlayer: AudioPlaying, AppStateObserverDelegate, @unchecked
         /// We are going to check if the URL requested to load, represents the currentItem that we
         /// have already loaded (if any). In this case, we will try either to resume the existing playback
         /// or restart it, if possible.
-        let currentItem = mainActorAccess { player.currentItem?.asset as? AVURLAsset }
+        let currentItem = MainActor.ensureIsolated { player.currentItem?.asset as? AVURLAsset }
         if let currentItem,
            asset.url == currentItem.url,
            context.assetLocation == asset.url {
@@ -414,22 +414,6 @@ open class StreamAudioPlayer: AudioPlaying, AppStateObserverDelegate, @unchecked
                 return
             }
             self?.updateContext { value in value.isSeeking = false }
-        }
-    }
-    
-    /// AVPlayer and its related types mix MainActor and nonisolated.
-    /// V5 should tackle this again and possibly make the whole player @MainActor.
-    func mainActorAccess<T>(_ actions: @MainActor() -> T) -> T where T: Sendable {
-        if Thread.isMainThread {
-            return MainActor.assumeIsolated {
-                actions()
-            }
-        } else {
-            return DispatchQueue.main.sync {
-                MainActor.assumeIsolated {
-                    actions()
-                }
-            }
         }
     }
 }

@@ -106,9 +106,16 @@ extension MessageSearch {
             _ messageRepository: MessageRepository,
             _ database: DatabaseContainer,
             _ apiClient: APIClient
-        ) -> MessageUpdater = MessageUpdater.init
+        ) -> MessageUpdater = {
+            MessageUpdater(
+                isLocalStorageEnabled: $0,
+                messageRepository: $1,
+                database: $2,
+                apiClient: $3
+            )
+        }
         
-        var stateBuilder: @MainActor(
+        var stateBuilder: @Sendable @MainActor(
             _ database: DatabaseContainer
         ) -> MessageSearchState = { @MainActor in
             MessageSearchState(database: $0)

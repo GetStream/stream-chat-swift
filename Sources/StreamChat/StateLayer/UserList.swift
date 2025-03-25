@@ -76,9 +76,11 @@ extension UserList {
         var userListUpdater: @Sendable(
             _ database: DatabaseContainer,
             _ apiClient: APIClient
-        ) -> UserListUpdater = UserListUpdater.init
+        ) -> UserListUpdater = {
+            UserListUpdater(database: $0, apiClient: $1)
+        }
         
-        var stateBuilder: @MainActor(
+        var stateBuilder: @Sendable @MainActor(
             _ query: UserListQuery,
             _ database: DatabaseContainer
         ) -> UserListState = { @MainActor in

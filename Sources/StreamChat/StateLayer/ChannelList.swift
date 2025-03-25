@@ -95,9 +95,9 @@ extension ChannelList {
         var channelListUpdater: @Sendable(
             _ database: DatabaseContainer,
             _ apiClient: APIClient
-        ) -> ChannelListUpdater = ChannelListUpdater.init
+        ) -> ChannelListUpdater = { ChannelListUpdater(database: $0, apiClient: $1) }
         
-        var stateBuilder: @MainActor(
+        var stateBuilder: @Sendable @MainActor(
             _ query: ChannelListQuery,
             _ dynamicFilter: (@Sendable(ChatChannel) -> Bool)?,
             _ clientConfig: ChatClientConfig,
