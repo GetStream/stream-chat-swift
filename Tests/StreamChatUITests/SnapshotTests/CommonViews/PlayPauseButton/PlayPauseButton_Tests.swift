@@ -8,7 +8,7 @@ import StreamChat
 import StreamSwiftTestHelpers
 import XCTest
 
-final class PlayPauseButton_Tests: XCTestCase {
+@MainActor final class PlayPauseButton_Tests: XCTestCase {
     private var subject: PlayPauseButton! = .init()
 
     // MARK: - Lifecycle

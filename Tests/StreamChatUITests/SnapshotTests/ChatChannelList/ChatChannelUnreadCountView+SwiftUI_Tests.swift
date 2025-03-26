@@ -8,9 +8,9 @@ import StreamSwiftTestHelpers
 import SwiftUI
 import XCTest
 
-final class ChatChannelUnreadCountView_SwiftUI_Tests: XCTestCase {
+@MainActor final class ChatChannelUnreadCountView_SwiftUI_Tests: XCTestCase {
     func test_injectedSwiftUIView() {
-        struct CustomUnreadCountView: ChatChannelUnreadCountView.SwiftUIView {
+        @MainActor struct CustomUnreadCountView: ChatChannelUnreadCountView.SwiftUIView {
             @ObservedObject var dataSource: ChatChannelUnreadCountView.ObservedObject<Self>
 
             public init(dataSource: ChatChannelUnreadCountView.ObservedObject<Self>) {

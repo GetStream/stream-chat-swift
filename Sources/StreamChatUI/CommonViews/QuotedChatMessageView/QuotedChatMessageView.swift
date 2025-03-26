@@ -8,7 +8,7 @@ import UIKit
 
 /// The quoted author's avatar position in relation with the text message.
 /// New custom alignments can be added with extensions and by overriding the `QuotedChatMessageView.setAvatarAlignment()`.
-public struct QuotedAvatarAlignment: RawRepresentable, Equatable {
+public struct QuotedAvatarAlignment: RawRepresentable, Equatable, Sendable {
     /// The avatar will be aligned to the leading, and the message content on the trailing.
     public static let leading = QuotedAvatarAlignment(rawValue: 0)
     /// The avatar will be aligned to the trailing, and the message content on the leading.
@@ -307,11 +307,13 @@ open class QuotedChatMessageView: _View, ThemeProvider, SwiftUIRepresentable {
     /// - Parameter url: The URL of the thumbnail
     open func setVideoAttachmentThumbnail(url: URL) {
         components.imageLoader.downloadImage(with: .init(url: url, options: ImageDownloadOptions())) { [weak self] result in
-            switch result {
-            case let .success(preview):
-                self?.attachmentPreviewView.image = preview
-            case .failure:
-                self?.attachmentPreviewView.image = nil
+            MainActor.ensureIsolated { [weak self] in
+                switch result {
+                case let .success(preview):
+                    self?.attachmentPreviewView.image = preview
+                case .failure:
+                    self?.attachmentPreviewView.image = nil
+                }
             }
         }
     }
@@ -321,13 +323,15 @@ open class QuotedChatMessageView: _View, ThemeProvider, SwiftUIRepresentable {
     open func setVideoAttachmentPreviewImage(url: URL?) {
         guard let url = url else { return }
 
-        components.videoLoader.loadPreviewForVideo(at: url) { [weak self] in
-            switch $0 {
-            case let .success(preview):
-                self?.attachmentPreviewView.image = preview
-            case let .failure(error):
-                self?.attachmentPreviewView.image = nil
-                log.error("This \(error) received for processing Video Preview image.")
+        components.videoLoader.loadPreviewForVideo(at: url) { [weak self] result in
+            MainActor.ensureIsolated { [weak self] in
+                switch result {
+                case let .success(preview):
+                    self?.attachmentPreviewView.image = preview
+                case let .failure(error):
+                    self?.attachmentPreviewView.image = nil
+                    log.error("This \(error) received for processing Video Preview image.")
+                }
             }
         }
     }

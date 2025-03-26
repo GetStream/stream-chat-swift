@@ -14,10 +14,10 @@ public enum AttachmentValidationError: Error {
     /// The number of attachments reached the limit.
     case maxAttachmentsCountPerMessageExceeded(limit: Int)
 
-    internal static var fileSizeMaxLimitFallback: Int64 = 100 * 1024 * 1024
+    internal static let fileSizeMaxLimitFallback: Int64 = 100 * 1024 * 1024
 }
 
-public struct LocalAttachmentInfoKey: Hashable, Equatable, RawRepresentable {
+public struct LocalAttachmentInfoKey: Hashable, Equatable, RawRepresentable, Sendable {
     public let rawValue: String
 
     public init(rawValue: String) {
@@ -31,7 +31,7 @@ public struct LocalAttachmentInfoKey: Hashable, Equatable, RawRepresentable {
 
 /// The possible composer states. An Enum is not used so it does not cause
 /// future breaking changes and is possible to extend with new cases.
-public struct ComposerState: RawRepresentable, Equatable {
+public struct ComposerState: RawRepresentable, Equatable, Sendable {
     public let rawValue: String
     public var description: String { rawValue.uppercased() }
 
@@ -39,11 +39,11 @@ public struct ComposerState: RawRepresentable, Equatable {
         self.rawValue = rawValue
     }
 
-    public static var new = ComposerState(rawValue: "new")
-    public static var edit = ComposerState(rawValue: "edit")
-    public static var quote = ComposerState(rawValue: "quote")
-    public static var recording = ComposerState(rawValue: "recording")
-    public static var recordingLocked = ComposerState(rawValue: "recordingLocked")
+    public static let new = ComposerState(rawValue: "new")
+    public static let edit = ComposerState(rawValue: "edit")
+    public static let quote = ComposerState(rawValue: "quote")
+    public static let recording = ComposerState(rawValue: "recording")
+    public static let recordingLocked = ComposerState(rawValue: "recordingLocked")
 }
 
 /// A view controller that manages the composer view.
@@ -1355,24 +1355,26 @@ open class ComposerVC: _ViewController,
 
         enrichUrlDebouncer.execute { [weak self] in
             self?.channelController?.enrichUrl(link.url) { [weak self] result in
-                let enrichedUrlText = link.url.absoluteString
-                let currentLinks = self?.composerView.inputMessageView.textView.links ?? []
-                guard let currentUrlText = currentLinks.first?.url.absoluteString else {
-                    return
-                }
-
-                // Only show/dismiss enrichment if the current url is still the one
-                // that should be shown. Since we currently do not support
-                // cancelling previous requests, this is the current optimal solution.
-                guard enrichedUrlText == currentUrlText else {
-                    return
-                }
-
-                switch result {
-                case let .success(linkPayload):
-                    self?.showLinkPreview(for: linkPayload)
-                case .failure:
-                    self?.dismissLinkPreview()
+                MainActor.ensureIsolated { [weak self] in
+                    let enrichedUrlText = link.url.absoluteString
+                    let currentLinks = self?.composerView.inputMessageView.textView.links ?? []
+                    guard let currentUrlText = currentLinks.first?.url.absoluteString else {
+                        return
+                    }
+                    
+                    // Only show/dismiss enrichment if the current url is still the one
+                    // that should be shown. Since we currently do not support
+                    // cancelling previous requests, this is the current optimal solution.
+                    guard enrichedUrlText == currentUrlText else {
+                        return
+                    }
+                    
+                    switch result {
+                    case let .success(linkPayload):
+                        self?.showLinkPreview(for: linkPayload)
+                    case .failure:
+                        self?.dismissLinkPreview()
+                    }
                 }
             }
         }
@@ -1430,7 +1432,7 @@ open class ComposerVC: _ViewController,
         from url: URL,
         type: AttachmentType,
         info: [LocalAttachmentInfoKey: Any],
-        extraData: Encodable?
+        extraData: (Encodable & Sendable)?
     ) throws {
         guard let chatConfig = channelController?.client.config else {
             log.assertionFailure("Channel controller must be set at this point")
@@ -1758,7 +1760,7 @@ open class ComposerVC: _ViewController,
     ) {
         let alert = UIAlertController(title: title, message: message, preferredStyle: preferredStyle)
         alert.popoverPresentationController?.sourceView = sourceView
-        actions.forEach(alert.addAction)
+        actions.forEach { alert.addAction($0) }
 
         present(alert, animated: true)
     }
@@ -1804,10 +1806,12 @@ func searchUsers(_ users: [ChatUser], by searchInput: String, excludingId: Strin
 }
 
 extension ComposerVC: ChatChannelControllerDelegate {
-    public func channelController(
+    nonisolated public func channelController(
         _ channelController: ChatChannelController,
         didUpdateMessages changes: [ListChange<ChatMessage>]
     ) {
-        cooldownTracker.start(with: channelController.currentCooldownTime())
+        MainActor.ensureIsolated {
+            cooldownTracker.start(with: channelController.currentCooldownTime())
+        }
     }
 }

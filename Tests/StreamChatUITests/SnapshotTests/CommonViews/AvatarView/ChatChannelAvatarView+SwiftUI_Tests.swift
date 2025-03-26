@@ -9,9 +9,9 @@ import StreamSwiftTestHelpers
 import SwiftUI
 import XCTest
 
-final class ChatChannelAvatarView_SwiftUI_Tests: XCTestCase {
+@MainActor final class ChatChannelAvatarView_SwiftUI_Tests: XCTestCase {
     func test_injectedSwiftUIView() {
-        struct CustomChatChannelAvatarView: ChatChannelAvatarView.SwiftUIView {
+        @MainActor struct CustomChatChannelAvatarView: ChatChannelAvatarView.SwiftUIView {
             @ObservedObject var dataSource: ChatChannelAvatarView.ObservedObject<Self>
 
             init(dataSource: ChatChannelAvatarView.ObservedObject<Self>) {

@@ -102,20 +102,24 @@ open class ChatMessageAttachmentPreviewVC: _ViewController, WKNavigationDelegate
 
     // MARK: - WKNavigationDelegate
 
-    public func webView(_ webView: WKWebView, didStartProvisionalNavigation navigation: WKNavigation!) {
-        activityIndicatorView.startAnimating()
+    nonisolated public func webView(_ webView: WKWebView, didStartProvisionalNavigation navigation: WKNavigation!) {
+        MainActor.ensureIsolated {
+            activityIndicatorView.startAnimating()
+        }
     }
 
-    public func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
-        activityIndicatorView.stopAnimating()
-
-        webView.evaluateJavaScript("document.title") { data, _ in
-            if let title = data as? String, !title.isEmpty {
-                self.title = title
+    nonisolated public func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
+        MainActor.ensureIsolated {
+            activityIndicatorView.stopAnimating()
+            
+            webView.evaluateJavaScript("document.title") { data, _ in
+                if let title = data as? String, !title.isEmpty {
+                    self.title = title
+                }
             }
+            
+            goBackButton.isEnabled = webView.canGoBack
+            goForwardButton.isEnabled = webView.canGoForward
         }
-
-        goBackButton.isEnabled = webView.canGoBack
-        goForwardButton.isEnabled = webView.canGoForward
     }
 }

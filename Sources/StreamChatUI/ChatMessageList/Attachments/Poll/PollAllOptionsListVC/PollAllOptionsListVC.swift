@@ -35,7 +35,7 @@ open class PollAllOptionsListVC:
     /// You can disable the feedback generator by overriding to `nil`.
     open private(set) lazy var notificationFeedbackGenerator: UINotificationFeedbackGenerator? = UINotificationFeedbackGenerator()
 
-    public struct Section: RawRepresentable, Equatable {
+    public struct Section: RawRepresentable, Equatable, Sendable {
         public var rawValue: String
 
         public init(rawValue: String) {
@@ -43,10 +43,10 @@ open class PollAllOptionsListVC:
         }
 
         /// The section that displays the poll's name.
-        public static var name = Self(rawValue: "name")
+        public static let name = Self(rawValue: "name")
 
         /// The section that displays the options of the poll.
-        public static var options = Self(rawValue: "options")
+        public static let options = Self(rawValue: "options")
     }
 
     /// The sections of the view.
@@ -162,13 +162,17 @@ open class PollAllOptionsListVC:
         if let currentUserVote = pollController.poll?.currentUserVote(for: option) {
             pollController.removePollVote(voteId: currentUserVote.id) { [weak self] error in
                 if error != nil {
-                    self?.notificationFeedbackGenerator?.notificationOccurred(.error)
+                    MainActor.ensureIsolated { [weak self] in
+                        self?.notificationFeedbackGenerator?.notificationOccurred(.error)
+                    }
                 }
             }
         } else {
             pollController.castPollVote(answerText: nil, optionId: option.id) { [weak self] error in
                 if error != nil {
-                    self?.notificationFeedbackGenerator?.notificationOccurred(.error)
+                    MainActor.ensureIsolated { [weak self] in
+                        self?.notificationFeedbackGenerator?.notificationOccurred(.error)
+                    }
                 }
             }
         }
@@ -176,11 +180,13 @@ open class PollAllOptionsListVC:
 
     // MARK: - PollControllerDelegate
 
-    open func pollController(_ pollController: PollController, didUpdatePoll poll: EntityChange<Poll>) {
-        tableView.reloadData()
+    nonisolated open func pollController(_ pollController: PollController, didUpdatePoll poll: EntityChange<Poll>) {
+        MainActor.ensureIsolated {
+            tableView.reloadData()
+        }
     }
 
-    open func pollController(
+    nonisolated open func pollController(
         _ pollController: PollController,
         didUpdateCurrentUserVotes votes: [ListChange<PollVote>]
     ) {

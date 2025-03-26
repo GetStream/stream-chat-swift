@@ -173,17 +173,20 @@ open class PollCommentListVC:
 
     // MARK: - PollVoteListControllerDelegate
 
-    public func controller(_ controller: PollVoteListController, didChangeVotes changes: [ListChange<PollVote>]) {
-        var snapshot = NSDiffableDataSourceSnapshot<PollVote, PollVote>()
-        let comments = Array(controller.votes)
-        snapshot.appendSections(comments)
-        comments.forEach {
-            snapshot.appendItems([$0], toSection: $0)
-        }
-        dataSource.apply(snapshot, animatingDifferences: true)
-
-        if let poll = pollController.poll, let currentUserId = pollController.client.currentUserId {
-            footerView.content = .init(poll: poll, currentUserId: currentUserId)
+    nonisolated public func controller(_ controller: PollVoteListController, didChangeVotes changes: [ListChange<PollVote>]) {
+        MainActor.ensureIsolated { [weak self] in
+            guard let self else { return }
+            var snapshot = NSDiffableDataSourceSnapshot<PollVote, PollVote>()
+            let comments = Array(controller.votes)
+            snapshot.appendSections(comments)
+            comments.forEach {
+                snapshot.appendItems([$0], toSection: $0)
+            }
+            dataSource.apply(snapshot, animatingDifferences: true)
+            
+            if let poll = pollController.poll, let currentUserId = pollController.client.currentUserId {
+                footerView.content = .init(poll: poll, currentUserId: currentUserId)
+            }
         }
     }
 
@@ -197,7 +200,9 @@ open class PollCommentListVC:
 
         isPaginatingComments = true
         commentsController.loadMoreVotes { [weak self] error in
-            self?.didFinishLoadingMoreComments(with: error)
+            MainActor.ensureIsolated { [weak self] in
+                self?.didFinishLoadingMoreComments(with: error)
+            }
         }
     }
 
@@ -211,8 +216,10 @@ open class PollCommentListVC:
             in: messageId,
             currentUserId: currentUserId
         ) { [weak self] comment in
-            self?.pollController.castPollVote(answerText: comment, optionId: nil) { _ in
-                self?.tableView.scrollToRow(at: IndexPath(item: 0, section: 0), at: .top, animated: true)
+            self?.pollController.castPollVote(answerText: comment, optionId: nil) { [weak self] _ in
+                MainActor.ensureIsolated { [weak self] in
+                    self?.tableView.scrollToRow(at: IndexPath(item: 0, section: 0), at: .top, animated: true)
+                }
             }
         }
     }

@@ -121,7 +121,7 @@ open class ChatMessageActionsTransitionController: NSObject, UIViewControllerTra
             messageView
         ].compactMap { $0 }
 
-        transitionSubviews.forEach(transitionContext.containerView.addSubview)
+        transitionSubviews.forEach { transitionContext.containerView.addSubview($0) }
         messageView.mainContainer.layoutMargins = originalMessageContentView.mainContainer.layoutMargins
 
         let duration = transitionDuration(using: transitionContext)
@@ -204,7 +204,7 @@ open class ChatMessageActionsTransitionController: NSObject, UIViewControllerTra
 
         let transitionSubviews = [blurView, reactionsSnapshot, actionsSnapshot, reactionAuthorsSnapshot, messageView]
             .compactMap { $0 }
-        transitionSubviews.forEach(transitionContext.containerView.addSubview)
+        transitionSubviews.forEach { transitionContext.containerView.addSubview($0) }
 
         fromVC.view.isHidden = true
 

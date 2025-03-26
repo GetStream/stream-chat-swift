@@ -6,7 +6,7 @@ import StreamChat
 import UIKit
 
 /// The sections for the poll creation view.
-public struct PollCreationSection: RawRepresentable, Equatable {
+public struct PollCreationSection: RawRepresentable, Equatable, Sendable {
     public var rawValue: String
 
     public init(rawValue: String) {
@@ -14,25 +14,25 @@ public struct PollCreationSection: RawRepresentable, Equatable {
     }
 
     /// The section to edit the name of the poll.
-    public static var name = Self(rawValue: "name")
+    public static let name = Self(rawValue: "name")
     /// The section to provide the options of the poll.
-    public static var options = Self(rawValue: "options")
+    public static let options = Self(rawValue: "options")
     /// THe section to enable or disable the poll features.
-    public static var features = Self(rawValue: "features")
+    public static let features = Self(rawValue: "features")
 }
 
 /// The sections for the poll creation view.
-public struct PollFeatureType: Equatable {
+public struct PollFeatureType: Equatable, Sendable {
     public var rawValue: String
 
     public init(rawValue: String) {
         self.rawValue = rawValue
     }
 
-    public static var multipleVotes = Self(rawValue: "multiple-votes")
-    public static var anonymous = Self(rawValue: "anonymous")
-    public static var suggestions = Self(rawValue: "suggestions")
-    public static var comments = Self(rawValue: "comments")
+    public static let multipleVotes = Self(rawValue: "multiple-votes")
+    public static let anonymous = Self(rawValue: "anonymous")
+    public static let suggestions = Self(rawValue: "suggestions")
+    public static let comments = Self(rawValue: "comments")
 }
 
 /// The view controller to create a poll in a channel.
@@ -657,8 +657,10 @@ open class PollCreationVC:
                 .map { PollOption(text: $0) },
             extraData: extraData
         ) { [weak self] result in
-            self?.createPollButton.isEnabled = true
-            self?.handleCreatePollResponse(result: result)
+            MainActor.ensureIsolated { [weak self] in
+                self?.createPollButton.isEnabled = true
+                self?.handleCreatePollResponse(result: result)
+            }
         }
     }
 

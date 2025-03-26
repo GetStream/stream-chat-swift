@@ -149,7 +149,9 @@ open class ChatThreadVC: _ViewController,
 
         // Load data from server
         messageController.synchronize { [weak self] error in
-            self?.didFinishSynchronizing(with: error)
+            MainActor.ensureIsolated { [weak self] in
+                self?.didFinishSynchronizing(with: error)
+            }
         }
     }
 
@@ -217,9 +219,10 @@ open class ChatThreadVC: _ViewController,
                 guard error == nil else {
                     return
                 }
-
-                let shouldAnimate = self?.components.shouldAnimateJumpToMessageWhenOpeningChannel == true
-                self?.jumpToMessage(id: initialReplyId, animated: shouldAnimate)
+                MainActor.ensureIsolated { [weak self] in
+                    let shouldAnimate = self?.components.shouldAnimateJumpToMessageWhenOpeningChannel == true
+                    self?.jumpToMessage(id: initialReplyId, animated: shouldAnimate)
+                }
             }
             return
         }
@@ -227,7 +230,9 @@ open class ChatThreadVC: _ViewController,
         // When we tap on the parent message and start from oldest replies is enabled
         if shouldStartFromOldestReplies, let parentMessage = messageController.message {
             messageController.loadPageAroundReplyId(parentMessage.id) { [weak self] _ in
-                self?.messageListVC.scrollToTop(animated: false)
+                MainActor.ensureIsolated { [weak self] in
+                    self?.messageListVC.scrollToTop(animated: false)
+                }
             }
             return
         }
@@ -259,10 +264,12 @@ open class ChatThreadVC: _ViewController,
     // MARK: - Loading previous and next replies state handling
 
     /// Called when the thread will load previous (older) replies.
-    open func loadPreviousReplies(completion: @escaping (Error?) -> Void) {
+    open func loadPreviousReplies(completion: @escaping @Sendable(Error?) -> Void) {
         messageController.loadPreviousReplies { [weak self] error in
-            completion(error)
-            self?.didFinishLoadingPreviousReplies(with: error)
+            MainActor.ensureIsolated { [weak self] in
+                completion(error)
+                self?.didFinishLoadingPreviousReplies(with: error)
+            }
         }
     }
 
@@ -273,10 +280,12 @@ open class ChatThreadVC: _ViewController,
     }
 
     /// Called when the thread will load next (newer) replies.
-    open func loadNextReplies(completion: @escaping (Error?) -> Void) {
+    open func loadNextReplies(completion: @escaping @Sendable(Error?) -> Void) {
         messageController.loadNextReplies { [weak self] error in
-            completion(error)
-            self?.didFinishLoadingNextReplies(with: error)
+            MainActor.ensureIsolated { [weak self] in
+                completion(error)
+                self?.didFinishLoadingNextReplies(with: error)
+            }
         }
     }
 
@@ -381,7 +390,7 @@ open class ChatThreadVC: _ViewController,
 
     public func chatMessageListVC(
         _ vc: ChatMessageListVC, shouldLoadPageAroundMessageId messageId: MessageId,
-        _ completion: @escaping ((Error?) -> Void)
+        _ completion: @escaping @Sendable(Error?) -> Void
     ) {
         messageController.loadPageAroundReplyId(messageId, completion: completion)
     }
@@ -437,39 +446,49 @@ open class ChatThreadVC: _ViewController,
 
     // MARK: - ChatMessageControllerDelegate
 
-    open func messageController(
+    nonisolated open func messageController(
         _ controller: ChatMessageController,
         didChangeMessage change: EntityChange<ChatMessage>
     ) {
-        guard shouldRenderParentMessage && !messages.isEmpty else {
-            return
+        MainActor.ensureIsolated {
+            guard shouldRenderParentMessage && !messages.isEmpty else {
+                return
+            }
+            
+            let indexPath = IndexPath(row: messages.count - 1, section: 0)
+            
+            let listChange: ListChange<ChatMessage>
+            switch change {
+            case let .create(item):
+                listChange = .insert(item, index: indexPath)
+            case let .update(item):
+                listChange = .update(item, index: indexPath)
+            case let .remove(item):
+                listChange = .remove(item, index: indexPath)
+            }
+            
+            updateMessages(with: [listChange])
         }
-
-        let indexPath = IndexPath(row: messages.count - 1, section: 0)
-
-        let listChange: ListChange<ChatMessage>
-        switch change {
-        case let .create(item):
-            listChange = .insert(item, index: indexPath)
-        case let .update(item):
-            listChange = .update(item, index: indexPath)
-        case let .remove(item):
-            listChange = .remove(item, index: indexPath)
-        }
-
-        updateMessages(with: [listChange])
     }
 
-    open func messageController(
+    nonisolated open func messageController(
         _ controller: ChatMessageController,
         didChangeReplies changes: [ListChange<ChatMessage>]
     ) {
-        updateMessages(with: changes)
+        MainActor.ensureIsolated {
+            updateMessages(with: changes)
+        }
     }
 
     // MARK: - EventsControllerDelegate
 
-    open func eventsController(_ controller: EventsController, didReceiveEvent event: Event) {
+    nonisolated open func eventsController(_ controller: EventsController, didReceiveEvent event: Event) {
+        MainActor.ensureIsolated {
+            _eventsController(controller, didReceiveEvent: event)
+        }
+    }
+    
+    private func _eventsController(_ controller: EventsController, didReceiveEvent event: Event) {
         switch event {
         case let event as TypingEvent:
             guard event.parentId == messageController.messageId && event.user.id != client.currentUserId else { return }
@@ -524,15 +543,17 @@ open class ChatThreadVC: _ViewController,
 
     // MARK: - AudioQueuePlayerDatasource
 
-    open func audioQueuePlayerNextAssetURL(
+    nonisolated open func audioQueuePlayerNextAssetURL(
         _ audioPlayer: AudioPlaying,
         currentAssetURL: URL?
     ) -> URL? {
-        audioQueuePlayerNextItemProvider.findNextItem(
-            in: messages,
-            currentVoiceRecordingURL: currentAssetURL,
-            lookUpScope: .subsequentMessagesFromUser
-        )
+        MainActor.ensureIsolated {
+            audioQueuePlayerNextItemProvider.findNextItem(
+                in: messages,
+                currentVoiceRecordingURL: currentAssetURL,
+                lookUpScope: .subsequentMessagesFromUser
+            )
+        }
     }
 
     // MARK: - Deprecations

@@ -6,7 +6,7 @@ import StreamChat
 import UIKit
 
 /// The delegate of the `InputTextView` that notifies when an attachment is pasted in the text view.
-public protocol InputTextViewClipboardAttachmentDelegate: AnyObject {
+@MainActor public protocol InputTextViewClipboardAttachmentDelegate: AnyObject {
     /// Notifies that an `UIImage` has been pasted into the text view
     /// - Parameters:
     ///   - inputTextView: The `InputTextView` in which the image was pasted

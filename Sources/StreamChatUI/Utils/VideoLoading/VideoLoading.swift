@@ -12,7 +12,7 @@ public protocol VideoLoading: AnyObject {
     /// - Parameters:
     ///   - url: A video URL.
     ///   - completion: A completion that is called when a preview is loaded. Must be invoked on main queue.
-    func loadPreviewForVideo(at url: URL, completion: @escaping (Result<UIImage, Error>) -> Void)
+    func loadPreviewForVideo(at url: URL, completion: @escaping @Sendable(Result<UIImage, Error>) -> Void)
 
     /// Returns a video asset with the given URL.
     ///
@@ -27,8 +27,8 @@ public extension VideoLoading {
 }
 
 /// The default `VideoLoading` implementation.
-open class StreamVideoLoader: VideoLoading {
-    private let cache: Cache<URL, UIImage>
+open class StreamVideoLoader: VideoLoading, @unchecked Sendable {
+    private let cache: NSCacheWrapper<URL, UIImage>
 
     public init(cachedVideoPreviewsCountLimit: Int = 50) {
         cache = .init(countLimit: cachedVideoPreviewsCountLimit)
@@ -45,7 +45,7 @@ open class StreamVideoLoader: VideoLoading {
         NotificationCenter.default.removeObserver(self)
     }
 
-    open func loadPreviewForVideo(at url: URL, completion: @escaping (Result<UIImage, Error>) -> Void) {
+    open func loadPreviewForVideo(at url: URL, completion: @escaping @Sendable(Result<UIImage, Error>) -> Void) {
         if let cached = cache[url] {
             return call(completion, with: .success(cached))
         }
@@ -77,7 +77,7 @@ open class StreamVideoLoader: VideoLoading {
         .init(url: url)
     }
 
-    private func call(_ completion: @escaping (Result<UIImage, Error>) -> Void, with result: Result<UIImage, Error>) {
+    private func call(_ completion: @escaping @Sendable(Result<UIImage, Error>) -> Void, with result: Result<UIImage, Error>) {
         if Thread.current.isMainThread {
             completion(result)
         } else {

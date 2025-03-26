@@ -670,7 +670,13 @@ public struct Components {
 
     public init() {}
     
-    public static var `default` = Self()
+    public static var `default`: Components {
+        get { queue.sync { _default } }
+        set { queue.sync { _default = newValue } }
+    }
+    
+    private static let queue = DispatchQueue(label: "io.getstream.components", target: .global())
+    nonisolated(unsafe) private static var _default = Self()
 
     // MARK: Deprecations
 

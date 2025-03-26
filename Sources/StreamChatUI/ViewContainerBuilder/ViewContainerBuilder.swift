@@ -8,6 +8,7 @@ import UIKit
 
 /// A result builder to create a stack view given an array of views.
 /// The goal is to build UIKit layout similar to SwiftUI so that it easier to create and re-layout views.
+@preconcurrency @MainActor
 @resultBuilder
 public struct ViewContainerBuilder {
     init() {}
@@ -72,11 +73,12 @@ public struct ViewContainerBuilder {
 /// - parameter distribution: The stack view distribution, by default it is `.fill`.
 /// - parameter alignment: The stack view alignment, by default it is `.fill`.
 /// - parameter content: The result builder responsible to return the stack view with the arranged views.
+@preconcurrency @MainActor
 public func VContainer(
     spacing: CGFloat = 0,
     distribution: UIStackView.Distribution = .fill,
     alignment: UIStackView.Alignment = .fill,
-    @ViewContainerBuilder content: () -> UIStackView = { UIStackView() }
+    @ViewContainerBuilder content: @MainActor() -> UIStackView = { UIStackView() }
 ) -> UIStackView {
     let stack = content()
     stack.translatesAutoresizingMaskIntoConstraints = false
@@ -93,11 +95,12 @@ public func VContainer(
 /// - parameter distribution: The stack view distribution, by default it is `.fill`.
 /// - parameter alignment: The stack view alignment.
 /// - parameter content: The result builder responsible to return the stack view with the arranged views.
+@preconcurrency @MainActor
 public func HContainer(
     spacing: CGFloat = 0,
     distribution: UIStackView.Distribution = .fill,
     alignment: UIStackView.Alignment = .fill,
-    @ViewContainerBuilder content: () -> UIStackView = { UIStackView() }
+    @ViewContainerBuilder content: @MainActor() -> UIStackView = { UIStackView() }
 ) -> UIStackView {
     let stack = content()
     stack.translatesAutoresizingMaskIntoConstraints = false
@@ -109,6 +112,7 @@ public func HContainer(
 }
 
 /// A flexible space that expands along the major axis of its containing stack layout.
+@preconcurrency @MainActor
 public func Spacer() -> UIView {
     let view = UIStackView()
     view.translatesAutoresizingMaskIntoConstraints = false

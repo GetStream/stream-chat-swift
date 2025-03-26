@@ -6,7 +6,7 @@
 @testable import StreamChatUI
 import XCTest
 
-final class TextViewMentionedUsersHandler_Tests: XCTestCase {
+@MainActor final class TextViewMentionedUsersHandler_Tests: XCTestCase {
     func test_mentionedUserTapped_whenRangeIncludesMention() {
         let textView = UITextView()
         textView.text = "@Leia Hello!"

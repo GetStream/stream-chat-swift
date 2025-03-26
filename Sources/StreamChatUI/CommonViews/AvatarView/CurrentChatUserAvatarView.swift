@@ -82,10 +82,12 @@ open class CurrentChatUserAvatarView: _Control, ThemeProvider {
 // MARK: - CurrentChatUserControllerDelegate
 
 extension CurrentChatUserAvatarView: CurrentChatUserControllerDelegate {
-    public func currentUserController(
+    nonisolated public func currentUserController(
         _ controller: CurrentChatUserController,
         didChangeCurrentUser: EntityChange<CurrentChatUser>
     ) {
-        updateContentIfNeeded()
+        MainActor.ensureIsolated {
+            updateContentIfNeeded()
+        }
     }
 }

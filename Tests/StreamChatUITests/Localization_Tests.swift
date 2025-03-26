@@ -10,9 +10,9 @@ import XCTest
 final class Localization_Tests: XCTestCase {
     /// Testing bundle which should be empty.
     private var testBundle: Bundle!
-    private var defaultLocalizationProvider: ((String, String) -> String)!
+    private var defaultLocalizationProvider: (@Sendable(String, String) -> String)!
 
-    override func setUp() {
+    @MainActor override func setUp() {
         super.setUp()
         testBundle = Bundle(for: Self.self)
         defaultLocalizationProvider = Appearance.default.localizationProvider
@@ -22,12 +22,12 @@ final class Localization_Tests: XCTestCase {
         }
     }
 
-    override func tearDown() {
+    @MainActor override func tearDown() {
         Appearance.default.localizationProvider = defaultLocalizationProvider
         super.tearDown()
     }
 
-    func test_localizationProviderAssignment_ChangesLocalizationForBundle() {
+    @MainActor func test_localizationProviderAssignment_ChangesLocalizationForBundle() {
         // Setup some component which shows localization
         let channel: ChatChannel = .mock(cid: .unique)
         let itemView = ChatChannelListItemView()

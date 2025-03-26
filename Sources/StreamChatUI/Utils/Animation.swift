@@ -4,7 +4,7 @@
 
 import UIKit
 
-public func Animate(
+@MainActor public func Animate(
     duration: TimeInterval = 0.25,
     delay: TimeInterval = 0,
     _ actions: @escaping () -> Void,
@@ -19,7 +19,7 @@ public func Animate(
     )
 }
 
-func Animate(
+@MainActor func Animate(
     duration: TimeInterval = 0.25,
     delay: TimeInterval = 0,
     isAnimated: Bool = true,

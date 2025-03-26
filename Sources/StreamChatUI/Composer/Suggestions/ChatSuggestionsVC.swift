@@ -80,16 +80,18 @@ open class ChatSuggestionsVC: _ViewController,
             \.contentSize,
             options: [.new],
             changeHandler: { [weak self] collectionView, change in
-                guard let self = self, let newSize = change.newValue else { return }
-                guard !collectionView.isTrackingOrDecelerating else { return }
-
-                // NOTE: The defaultRowHeight height value will be used only once to set visibleCells
-                // once again, not looping it to 0 value so this controller can resize again.
-                let cellHeight = collectionView.visibleCells.first?.bounds.height ?? self.defaultRowHeight
-
-                let newHeight = min(newSize.height, cellHeight * self.numberOfVisibleRows)
-                guard self.heightConstraints.constant != newHeight else { return }
-                self.heightConstraints.constant = newHeight
+                MainActor.ensureIsolated { [weak self] in
+                    guard let self = self, let newSize = change.newValue else { return }
+                    guard !collectionView.isTrackingOrDecelerating else { return }
+                    
+                    // NOTE: The defaultRowHeight height value will be used only once to set visibleCells
+                    // once again, not looping it to 0 value so this controller can resize again.
+                    let cellHeight = collectionView.visibleCells.first?.bounds.height ?? self.defaultRowHeight
+                    
+                    let newHeight = min(newSize.height, cellHeight * self.numberOfVisibleRows)
+                    guard self.heightConstraints.constant != newHeight else { return }
+                    self.heightConstraints.constant = newHeight
+                }
             }
         )
     }
@@ -268,26 +270,32 @@ open class ChatMessageComposerSuggestionsMentionDataSource: NSObject,
         return cell
     }
 
-    public func controller(
+    nonisolated public func controller(
         _ controller: ChatUserSearchController,
         didChangeUsers changes: [ListChange<ChatUser>]
     ) {
-        users = searchController.userArray
-        collectionView.reloadData()
+        MainActor.ensureIsolated {
+            users = searchController.userArray
+            collectionView.reloadData()
+        }
     }
 
-    public func memberListController(
+    nonisolated public func memberListController(
         _ controller: ChatChannelMemberListController,
         didChangeMembers changes: [ListChange<ChatChannelMember>]
     ) {
-        users = Array(controller.members)
-        collectionView.reloadData()
+        MainActor.ensureIsolated {
+            users = Array(controller.members)
+            collectionView.reloadData()
+        }
     }
 
-    public func controller(_ controller: DataController, didChangeState state: DataController.State) {
-        if let memberListController = controller as? ChatChannelMemberListController {
-            users = Array(memberListController.members)
-            collectionView.reloadData()
+    nonisolated public func controller(_ controller: DataController, didChangeState state: DataController.State) {
+        MainActor.ensureIsolated {
+            if let memberListController = controller as? ChatChannelMemberListController {
+                users = Array(memberListController.members)
+                collectionView.reloadData()
+            }
         }
     }
 }

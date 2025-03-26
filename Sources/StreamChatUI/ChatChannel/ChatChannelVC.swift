@@ -149,7 +149,9 @@ open class ChatChannelVC: _ViewController,
 
         channelController.delegate = self
         channelController.synchronize { [weak self] error in
-            self?.didFinishSynchronizing(with: error)
+            MainActor.ensureIsolated { [weak self] in
+                self?.didFinishSynchronizing(with: error)
+            }
         }
 
         if channelController.channelQuery.pagination?.parameter == nil {
@@ -309,10 +311,12 @@ open class ChatChannelVC: _ViewController,
     // MARK: - Loading previous and next messages state handling.
 
     /// Called when the channel will load previous (older) messages.
-    open func loadPreviousMessages(completion: @escaping (Error?) -> Void) {
+    open func loadPreviousMessages(completion: @escaping @Sendable(Error?) -> Void) {
         channelController.loadPreviousMessages { [weak self] error in
             completion(error)
-            self?.didFinishLoadingPreviousMessages(with: error)
+            MainActor.ensureIsolated { [weak self] in
+                self?.didFinishLoadingPreviousMessages(with: error)
+            }
         }
     }
 
@@ -323,10 +327,12 @@ open class ChatChannelVC: _ViewController,
     }
 
     /// Called when the channel will load next (newer) messages.
-    open func loadNextMessages(completion: @escaping (Error?) -> Void) {
+    open func loadNextMessages(completion: @escaping @Sendable(Error?) -> Void) {
         channelController.loadNextMessages { [weak self] error in
-            completion(error)
-            self?.didFinishLoadingNextMessages(with: error)
+            MainActor.ensureIsolated { [weak self] in
+                completion(error)
+                self?.didFinishLoadingNextMessages(with: error)
+            }
         }
     }
 
@@ -376,7 +382,7 @@ open class ChatChannelVC: _ViewController,
     public func chatMessageListVC(
         _ vc: ChatMessageListVC,
         shouldLoadPageAroundMessageId messageId: MessageId,
-        _ completion: @escaping ((Error?) -> Void)
+        _ completion: @escaping @Sendable(Error?) -> Void
     ) {
         if let message = channelController.dataStore.message(id: messageId),
            let parentMessageId = getParentMessageId(forMessageInsideThread: message) {
@@ -386,8 +392,10 @@ open class ChatChannelVC: _ViewController,
         }
 
         channelController.loadPageAroundMessageId(messageId) { [weak self] error in
-            self?.updateJumpToUnreadRelatedComponents()
-            completion(error)
+            MainActor.ensureIsolated { [weak self] in
+                self?.updateJumpToUnreadRelatedComponents()
+                completion(error)
+            }
         }
     }
 
@@ -433,8 +441,10 @@ open class ChatChannelVC: _ViewController,
         case is MarkUnreadActionItem:
             dismiss(animated: true) { [weak self] in
                 self?.channelController.markUnread(from: message.id) { result in
-                    if case let .success(channel) = result {
-                        self?.updateAllUnreadMessagesRelatedComponents(channel: channel)
+                    MainActor.ensureIsolated {
+                        if case let .success(channel) = result {
+                            self?.updateAllUnreadMessagesRelatedComponents(channel: channel)
+                        }
                     }
                 }
             }
@@ -506,7 +516,16 @@ open class ChatChannelVC: _ViewController,
 
     // MARK: - ChatChannelControllerDelegate
 
-    open func channelController(
+    nonisolated open func channelController(
+        _ channelController: ChatChannelController,
+        didUpdateMessages changes: [ListChange<ChatMessage>]
+    ) {
+        MainActor.ensureIsolated {
+            _channelController(channelController, didUpdateMessages: changes)
+        }
+    }
+    
+    private func _channelController(
         _ channelController: ChatChannelController,
         didUpdateMessages changes: [ListChange<ChatMessage>]
     ) {
@@ -531,7 +550,16 @@ open class ChatChannelVC: _ViewController,
         viewPaginationHandler.updateElementsCount(with: channelController.messages.count)
     }
 
-    open func channelController(
+    nonisolated open func channelController(
+        _ channelController: ChatChannelController,
+        didUpdateChannel channel: EntityChange<ChatChannel>
+    ) {
+        MainActor.ensureIsolated {
+            _channelController(channelController, didUpdateChannel: channel)
+        }
+    }
+    
+    private func _channelController(
         _ channelController: ChatChannelController,
         didUpdateChannel channel: EntityChange<ChatChannel>
     ) {
@@ -545,7 +573,16 @@ open class ChatChannelVC: _ViewController,
         channelAvatarView.content = (channelController.channel, client.currentUserId)
     }
 
-    open func channelController(
+    nonisolated open func channelController(
+        _ channelController: ChatChannelController,
+        didChangeTypingUsers typingUsers: Set<ChatUser>
+    ) {
+        MainActor.ensureIsolated {
+            _channelController(channelController, didChangeTypingUsers: typingUsers)
+        }
+    }
+    
+    private func _channelController(
         _ channelController: ChatChannelController,
         didChangeTypingUsers typingUsers: Set<ChatUser>
     ) {
@@ -564,7 +601,13 @@ open class ChatChannelVC: _ViewController,
 
     // MARK: - EventsControllerDelegate
 
-    open func eventsController(_ controller: EventsController, didReceiveEvent event: Event) {
+    nonisolated open func eventsController(_ controller: EventsController, didReceiveEvent event: Event) {
+        MainActor.ensureIsolated {
+            _eventsController(controller, didReceiveEvent: event)
+        }
+    }
+    
+    private func _eventsController(_ controller: EventsController, didReceiveEvent event: Event) {
         if let newMessagePendingEvent = event as? NewMessagePendingEvent {
             let newMessage = newMessagePendingEvent.message
             if !isFirstPageLoaded && newMessage.isSentByCurrentUser && !newMessage.isPartOfThread {
@@ -591,15 +634,17 @@ open class ChatChannelVC: _ViewController,
 
     // MARK: - AudioQueuePlayerDatasource
 
-    open func audioQueuePlayerNextAssetURL(
+    nonisolated open func audioQueuePlayerNextAssetURL(
         _ audioPlayer: AudioPlaying,
         currentAssetURL: URL?
     ) -> URL? {
-        audioQueuePlayerNextItemProvider.findNextItem(
-            in: messages,
-            currentVoiceRecordingURL: currentAssetURL,
-            lookUpScope: .subsequentMessagesFromUser
-        )
+        MainActor.ensureIsolated {
+            audioQueuePlayerNextItemProvider.findNextItem(
+                in: messages,
+                currentVoiceRecordingURL: currentAssetURL,
+                lookUpScope: .subsequentMessagesFromUser
+            )
+        }
     }
 }
 

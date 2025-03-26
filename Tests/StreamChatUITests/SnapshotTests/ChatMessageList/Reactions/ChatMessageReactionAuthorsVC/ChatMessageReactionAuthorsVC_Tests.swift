@@ -8,7 +8,7 @@ import StreamChat
 import StreamSwiftTestHelpers
 import XCTest
 
-final class ChatMessageReactionAuthorsVC_Tests: XCTestCase {
+@MainActor final class ChatMessageReactionAuthorsVC_Tests: XCTestCase {
     var vc: ChatMessageReactionAuthorsVC!
     var messageControllerMock: ChatMessageController_Mock!
 

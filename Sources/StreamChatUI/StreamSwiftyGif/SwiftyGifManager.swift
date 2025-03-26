@@ -17,10 +17,10 @@ typealias PlatformImageView = NSImageView
 typealias PlatformImageView = UIImageView
 #endif
 
-class SwiftyGifManager {
+class SwiftyGifManager: @unchecked Sendable {
     
     // A convenient default manager if we only have one gif to display here and there
-    static var defaultManager = SwiftyGifManager(memoryLimit: 50)
+    nonisolated(unsafe) static var defaultManager = SwiftyGifManager(memoryLimit: 50)
     
     #if os(macOS)
     fileprivate var timer: CVDisplayLink?
@@ -161,7 +161,7 @@ class SwiftyGifManager {
         #endif
         
         for imageView in displayViews {
-            queue.sync {
+            MainActor.ensureIsolated {
                 imageView.image = imageView.currentImage
             }
             

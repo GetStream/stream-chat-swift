@@ -8,7 +8,7 @@
 import StreamSwiftTestHelpers
 import XCTest
 
-final class ChatMessageMarkdown_Tests: XCTestCase {
+@MainActor final class ChatMessageMarkdown_Tests: XCTestCase {
     func test_text() {
         let view = contentView(
             """

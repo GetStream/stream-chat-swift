@@ -6,7 +6,7 @@
 @testable import StreamChatUI
 import XCTest
 
-final class ImageLoading_Tests: XCTestCase {
+@MainActor final class ImageLoading_Tests: XCTestCase {
     var sut: ImageLoading!
     var spy: ImageLoaderSpy!
 

@@ -7,7 +7,7 @@ import StreamChat
 import StreamChatUI
 import XCTest
 
-final class AttachmentPreviewProvider_VoiceRecordingAttachmentPayload_Tests: XCTestCase {
+@MainActor final class AttachmentPreviewProvider_VoiceRecordingAttachmentPayload_Tests: XCTestCase {
     // MARK: - preferredAxis
 
     func test_preferredAxis_returnsExpectedValue() {

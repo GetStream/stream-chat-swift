@@ -13,7 +13,7 @@ class TextViewMentionedUsersHandler {
     ///   - characterRange: The location where the tap was performed.
     ///   - mentionedUsers: The current mentioned users in the message.
     /// - Returns: The `ChatUser` in case it tapped a mentioned user.
-    func mentionedUserTapped(
+    @MainActor func mentionedUserTapped(
         on textView: UITextView,
         in characterRange: NSRange,
         with mentionedUsers: Set<ChatUser>

@@ -4,8 +4,8 @@
 
 import UIKit
 
-open class StreamImageCDN: ImageCDN {
-    public static var streamCDNURL = "stream-io-cdn.com"
+open class StreamImageCDN: ImageCDN, @unchecked Sendable {
+    nonisolated(unsafe) public static var streamCDNURL = "stream-io-cdn.com"
 
     public init() {}
 
@@ -21,7 +21,7 @@ open class StreamImageCDN: ImageCDN {
             return URLRequest(url: url)
         }
 
-        let scale = UIScreen.main.scale
+        let scale = UITraitCollection.current.displayScale
         var queryItems: [String: String] = [
             "w": resize.width == 0 ? "*" : String(format: "%.0f", resize.width * scale),
             "h": resize.height == 0 ? "*" : String(format: "%.0f", resize.height * scale),

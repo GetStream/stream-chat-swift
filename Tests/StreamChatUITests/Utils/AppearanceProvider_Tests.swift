@@ -7,7 +7,7 @@ import StreamChat
 @testable import StreamChatUI
 import XCTest
 
-final class AppearanceProvider_Tests: XCTestCase {
+@MainActor final class AppearanceProvider_Tests: XCTestCase {
     func test_appearance_passedDownToSubview() {
         let parentView = TestAppearanceView()
         let subView = TestAppearanceView()

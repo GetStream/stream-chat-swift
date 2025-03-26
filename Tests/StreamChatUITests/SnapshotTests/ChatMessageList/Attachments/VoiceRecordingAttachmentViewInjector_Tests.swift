@@ -8,7 +8,7 @@ import StreamChat
 import UIKit
 import XCTest
 
-final class VoiceRecordingAttachmentViewInjector_Tests: XCTestCase {
+@MainActor final class VoiceRecordingAttachmentViewInjector_Tests: XCTestCase {
     private var contentView: ChatMessageContentView! = .init()
     private lazy var subject: VoiceRecordingAttachmentViewInjector! = .init(contentView)
 

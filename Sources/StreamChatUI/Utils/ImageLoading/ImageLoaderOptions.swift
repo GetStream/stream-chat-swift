@@ -5,7 +5,7 @@
 import UIKit
 
 /// The options for loading an image into a view.
-public struct ImageLoaderOptions {
+public struct ImageLoaderOptions: Sendable {
     // Ideally, the name would be `ImageLoadingOptions`, but this would conflict with Nuke.
 
     /// The resize information when loading an image. `Nil` if you want the full resolution of the image.

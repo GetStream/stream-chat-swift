@@ -9,7 +9,7 @@ import StreamSwiftTestHelpers
 import SwiftUI
 import XCTest
 
-final class CommandLabelView_Tests: XCTestCase {
+@MainActor final class CommandLabelView_Tests: XCTestCase {
     func test_emptyAppearance() {
         let view = CommandLabelView().withoutAutoresizingMaskConstraints
         AssertSnapshot(view)
@@ -22,7 +22,7 @@ final class CommandLabelView_Tests: XCTestCase {
     }
 }
 
-final class CommandLabelView_SwiftUI_Tests: iOS13TestCase {
+@MainActor final class CommandLabelView_SwiftUI_Tests: iOS13TestCase {
     func test_defaultAppearance_SwiftUI() {
         let view = CommandLabelView.asView(
             Command(name: "Giphy", description: "Send animated gifs", set: "", args: "")

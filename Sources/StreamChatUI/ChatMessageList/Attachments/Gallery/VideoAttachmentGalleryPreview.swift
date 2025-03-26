@@ -88,13 +88,15 @@ open class VideoAttachmentGalleryPreview: _View, ThemeProvider {
         if let thumbnailURL = content?.thumbnailURL {
             showPreview(using: thumbnailURL)
         } else if let url = content?.videoURL {
-            components.videoLoader.loadPreviewForVideo(at: url) { [weak self] in
-                self?.loadingIndicator.isHidden = true
-                switch $0 {
-                case let .success(preview):
-                    self?.showPreview(using: preview)
-                case .failure:
-                    break
+            components.videoLoader.loadPreviewForVideo(at: url) { [weak self] result in
+                MainActor.ensureIsolated { [weak self] in
+                    self?.loadingIndicator.isHidden = true
+                    switch result {
+                    case let .success(preview):
+                        self?.showPreview(using: preview)
+                    case .failure:
+                        break
+                    }
                 }
             }
         }
@@ -105,9 +107,11 @@ open class VideoAttachmentGalleryPreview: _View, ThemeProvider {
 
     private func showPreview(using thumbnailURL: URL) {
         components.imageLoader.downloadImage(with: .init(url: thumbnailURL, options: ImageDownloadOptions())) { [weak self] result in
-            self?.loadingIndicator.isHidden = true
-            guard case let .success(image) = result else { return }
-            self?.showPreview(using: image)
+            MainActor.ensureIsolated { [weak self] in
+                self?.loadingIndicator.isHidden = true
+                guard case let .success(image) = result else { return }
+                self?.showPreview(using: image)
+            }
         }
     }
 

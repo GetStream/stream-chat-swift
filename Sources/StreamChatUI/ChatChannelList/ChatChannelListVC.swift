@@ -276,7 +276,9 @@ open class ChatChannelListVC: _ViewController,
         isPaginatingChannels = true
 
         controller.loadNextChannels { [weak self] _ in
-            self?.isPaginatingChannels = false
+            MainActor.ensureIsolated { [weak self] in
+                self?.isPaginatingChannels = false
+            }
         }
     }
 
@@ -403,28 +405,34 @@ open class ChatChannelListVC: _ViewController,
 
     // MARK: - ChatChannelListControllerDelegate
 
-    open func controllerWillChangeChannels(_ controller: ChatChannelListController) {
-        collectionView.layoutIfNeeded()
+    nonisolated open func controllerWillChangeChannels(_ controller: ChatChannelListController) {
+        MainActor.ensureIsolated {
+            collectionView.layoutIfNeeded()
+        }
     }
 
-    open func controller(
+    nonisolated open func controller(
         _ controller: ChatChannelListController,
         didChangeChannels changes: [ListChange<ChatChannel>]
     ) {
-        handleStateChanges(controller.state)
-
-        if skipChannelUpdates {
-            skippedRendering = true
-            return
+        MainActor.ensureIsolated {
+            handleStateChanges(controller.state)
+            
+            if skipChannelUpdates {
+                skippedRendering = true
+                return
+            }
+            
+            reloadChannels()
         }
-
-        reloadChannels()
     }
 
     // MARK: - DataControllerStateDelegate
 
-    open func controller(_ controller: DataController, didChangeState state: DataController.State) {
-        handleStateChanges(state)
+    nonisolated open func controller(_ controller: DataController, didChangeState state: DataController.State) {
+        MainActor.ensureIsolated {
+            handleStateChanges(state)
+        }
     }
 
     /// Called whenever the channels data changes or the controller.state changes.

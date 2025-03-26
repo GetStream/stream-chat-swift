@@ -29,7 +29,7 @@ public struct Appearance {
     public var formatters = Formatters()
 
     /// Provider for custom localization which is dependent on App Bundle.
-    public var localizationProvider: (_ key: String, _ table: String) -> String = { key, table in
+    public var localizationProvider: @Sendable(_ key: String, _ table: String) -> String = { key, table in
         Bundle.streamChatUI.localizedString(forKey: key, value: nil, table: table)
     }
 
@@ -39,5 +39,11 @@ public struct Appearance {
 // MARK: - Appearance + Default
 
 public extension Appearance {
-    static var `default`: Appearance = .init()
+    static var `default`: Appearance {
+        get { queue.sync { _default } }
+        set { queue.sync { _default = newValue } }
+    }
+    
+    private static let queue = DispatchQueue(label: "io.getstream.appearance", target: .global())
+    nonisolated(unsafe) private static var _default: Appearance = .init()
 }

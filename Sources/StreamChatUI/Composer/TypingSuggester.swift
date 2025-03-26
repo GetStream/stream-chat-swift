@@ -62,7 +62,7 @@ public struct TypingSuggester {
     /// Checks if the user typed the recognising symbol and returns the typing suggestion.
     /// - Parameter textView: The `UITextView` the user is currently typing.
     /// - Returns: The typing suggestion if it was recognised, `nil` otherwise.
-    public func typingSuggestion(in textView: UITextView) -> TypingSuggestion? {
+    @MainActor public func typingSuggestion(in textView: UITextView) -> TypingSuggestion? {
         let text = textView.text as NSString
         let caretLocation = textView.selectedRange.location
 

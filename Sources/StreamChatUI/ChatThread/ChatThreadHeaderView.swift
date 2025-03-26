@@ -61,19 +61,21 @@ open class ChatThreadHeaderView: _View,
 
     // MARK: - ChatChannelControllerDelegate Implementation
 
-    open func channelController(
+    nonisolated open func channelController(
         _ channelController: ChatChannelController,
         didUpdateChannel channel: EntityChange<ChatChannel>
     ) {
-        switch channel {
-        case .update:
-            updateContentIfNeeded()
-        default:
-            break
+        MainActor.ensureIsolated {
+            switch channel {
+            case .update:
+                updateContentIfNeeded()
+            default:
+                break
+            }
         }
     }
 
-    open func channelController(
+    nonisolated open func channelController(
         _ channelController: ChatChannelController,
         didChangeTypingUsers typingUsers: Set<ChatUser>
     ) {
@@ -81,7 +83,7 @@ open class ChatThreadHeaderView: _View,
         // but this can be overridden by subclassing this component.
     }
 
-    open func channelController(
+    nonisolated open func channelController(
         _ channelController: ChatChannelController,
         didReceiveMemberEvent: MemberEvent
     ) {
@@ -89,7 +91,7 @@ open class ChatThreadHeaderView: _View,
         // but this can be overridden by subclassing this component.
     }
 
-    open func channelController(
+    nonisolated open func channelController(
         _ channelController: ChatChannelController,
         didUpdateMessages changes: [ListChange<ChatMessage>]
     ) {

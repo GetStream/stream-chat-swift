@@ -16,7 +16,7 @@ open class ChatMessageSearchVC: ChatChannelListSearchVC, ChatMessageSearchContro
     public var messageSearchController: ChatMessageSearchController!
 
     /// The closure that is triggered whenever a message is selected from the search result.
-    public var didSelectMessage: ((ChatChannel, ChatMessage) -> Void)?
+    public var didSelectMessage: (@MainActor(ChatChannel, ChatMessage) -> Void)?
 
     private var isPaginatingMessages: Bool = false
 
@@ -61,7 +61,9 @@ open class ChatMessageSearchVC: ChatChannelListSearchVC, ChatMessageSearchContro
         isPaginatingMessages = true
 
         messageSearchController.loadNextMessages { [weak self] _ in
-            self?.isPaginatingMessages = false
+            MainActor.ensureIsolated { [weak self] in
+                self?.isPaginatingMessages = false
+            }
         }
     }
 
@@ -105,7 +107,9 @@ open class ChatMessageSearchVC: ChatChannelListSearchVC, ChatMessageSearchContro
 
     // MARK: - ChatMessageSearchControllerDelegate
 
-    open func controller(_ controller: ChatMessageSearchController, didChangeMessages changes: [ListChange<ChatMessage>]) {
-        reloadMessages()
+    nonisolated open func controller(_ controller: ChatMessageSearchController, didChangeMessages changes: [ListChange<ChatMessage>]) {
+        MainActor.ensureIsolated {
+            reloadMessages()
+        }
     }
 }

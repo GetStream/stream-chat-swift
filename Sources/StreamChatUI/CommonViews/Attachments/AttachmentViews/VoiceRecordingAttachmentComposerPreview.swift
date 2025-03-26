@@ -164,26 +164,28 @@ open class VoiceRecordingAttachmentComposerPreview: _View, AppearanceProvider, C
 
     // MARK: - AudioPlayingDelegate
 
-    open func audioPlayer(
+    nonisolated open func audioPlayer(
         _ audioPlayer: AudioPlaying,
         didUpdateContext context: AudioPlaybackContext
     ) {
-        guard
-            let content = content
-        else { return }
-
-        // We check if the currentlyPlaying asset is the one we have in this view.
-        let isActive = context.assetLocation == content.audioAssetURL
-
-        switch (isActive, context.state) {
-        case (true, .playing), (true, .paused):
-            playPauseButton.isSelected = context.state == .playing
-            durationLabel.text = appearance.formatters.videoDuration.format(context.currentTime)
-        case (true, .stopped), (false, _):
-            playPauseButton.isSelected = false
-            durationLabel.text = appearance.formatters.videoDuration.format(content.duration)
-        default:
-            break
+        MainActor.ensureIsolated {
+            guard
+                let content = content
+            else { return }
+            
+            // We check if the currentlyPlaying asset is the one we have in this view.
+            let isActive = context.assetLocation == content.audioAssetURL
+            
+            switch (isActive, context.state) {
+            case (true, .playing), (true, .paused):
+                playPauseButton.isSelected = context.state == .playing
+                durationLabel.text = appearance.formatters.videoDuration.format(context.currentTime)
+            case (true, .stopped), (false, _):
+                playPauseButton.isSelected = false
+                durationLabel.text = appearance.formatters.videoDuration.format(content.duration)
+            default:
+                break
+            }
         }
     }
 }

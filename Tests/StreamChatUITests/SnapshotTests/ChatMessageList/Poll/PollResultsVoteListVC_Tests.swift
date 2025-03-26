@@ -37,7 +37,7 @@ final class PollResultsVoteListVC_Tests: XCTestCase {
     }
 }
 
-class PollVoteListController_Mock: PollVoteListController {
+class PollVoteListController_Mock: PollVoteListController, @unchecked Sendable {
     init() {
         super.init(query: .init(pollId: .unique), client: .mock)
     }
