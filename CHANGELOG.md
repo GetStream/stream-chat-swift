@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## StreamChat
 ### 🐞 Fixed
 - Fix draft local attachments erased when the draft updated event is triggered [#3625](https://github.com/GetStream/stream-chat-swift/pull/3625)
+- Fix background tasks not running in `IOSBackgroundTaskScheduler` sometimes [#3628](https://github.com/GetStream/stream-chat-swift/pull/3628)
 
 ### StreamChatUI
 ### 🐞 Fixed
