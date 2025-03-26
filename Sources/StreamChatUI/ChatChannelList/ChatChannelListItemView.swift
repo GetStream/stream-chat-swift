@@ -248,6 +248,7 @@ open class ChatChannelListItemView: _View, ThemeProvider, SwiftUIRepresentable {
         super.setUpAppearance()
         backgroundColor = contentBackgroundColor
 
+        titleLabel.textColor = appearance.colorPalette.text
         titleLabel.font = appearance.fonts.bodyBold
 
         subtitleLabel.textColor = appearance.colorPalette.subtitleText
