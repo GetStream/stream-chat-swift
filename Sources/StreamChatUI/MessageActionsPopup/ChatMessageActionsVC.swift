@@ -5,7 +5,7 @@
 import StreamChat
 import UIKit
 
-@MainActor public protocol ChatMessageActionsVCDelegate: AnyObject {
+@preconcurrency @MainActor public protocol ChatMessageActionsVCDelegate: AnyObject {
     func chatMessageActionsVC(
         _ vc: ChatMessageActionsVC,
         message: ChatMessage,

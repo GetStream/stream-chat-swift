@@ -32,7 +32,7 @@ extension AccessibilityView where Self: UIView {
 }
 
 // Just a protocol to formalize the methods required
-@MainActor public protocol Customizable {
+@preconcurrency @MainActor public protocol Customizable {
     /// Main point of customization for the view functionality.
     ///
     /// **It's called zero or one time(s) during the view's lifetime.** Calling super implementation is required.

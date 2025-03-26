@@ -5,7 +5,7 @@
 import UIKit
 
 /// A protocol for `ChatMessageListScrollOverlayView` data source.
-@MainActor public protocol ChatMessageListScrollOverlayDataSource: AnyObject {
+@preconcurrency @MainActor public protocol ChatMessageListScrollOverlayDataSource: AnyObject {
     /// Get date for item at given index path
     /// - Parameters:
     ///   - overlay: A view requesting date

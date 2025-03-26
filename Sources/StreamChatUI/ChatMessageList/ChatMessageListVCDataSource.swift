@@ -6,7 +6,7 @@ import Foundation
 import StreamChat
 
 /// The object that acts as the data source of the message list.
-@MainActor public protocol ChatMessageListVCDataSource: AnyObject {
+@preconcurrency @MainActor public protocol ChatMessageListVCDataSource: AnyObject {
     /// Asks the data source if the first (newest) page is currently loaded.
     var isFirstPageLoaded: Bool { get }
     

@@ -5,7 +5,7 @@
 import Foundation
 
 /// A component responsible to handle keyboard events and act on them.
-@MainActor public protocol KeyboardHandler {
+@preconcurrency @MainActor public protocol KeyboardHandler {
     /// Start handling events.
     func start()
     /// Stop handling events.

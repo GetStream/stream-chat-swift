@@ -8,7 +8,7 @@ import UIKit
 /// Protocol used to get path to make a cutout in a parent view.
 ///
 /// This protocol is used to make a transparent "border" around online indicator in avatar view.
-@MainActor public protocol MaskProviding {
+@preconcurrency @MainActor public protocol MaskProviding {
     /// Path used to mask space in super view.
     ///
     /// No mask is used when nil is returned

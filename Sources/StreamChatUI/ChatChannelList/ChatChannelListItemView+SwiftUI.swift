@@ -7,7 +7,7 @@ import StreamChat
 import SwiftUI
 
 /// Protocol of `ChatChannelListItemView` wrapper for use in SwiftUI.
-@MainActor public protocol ChatChannelListItemViewSwiftUIView: View {
+@preconcurrency @MainActor public protocol ChatChannelListItemViewSwiftUIView: View {
     init(dataSource: ChatChannelListItemView.ObservedObject<Self>)
 }
 

@@ -9,7 +9,7 @@ import UIKit
 ///
 /// When custom message content view is created, the protocol that inherits from this one
 /// should be created if an action can be taken on the new content view.
-@MainActor public protocol ChatMessageContentViewDelegate: AnyObject {
+@preconcurrency @MainActor public protocol ChatMessageContentViewDelegate: AnyObject {
     /// Gets called when error indicator is tapped.
     /// - Parameter indexPath: The index path of the cell displaying the content view. Equals to `nil` when
     /// the content view is displayed outside the collection/table view.

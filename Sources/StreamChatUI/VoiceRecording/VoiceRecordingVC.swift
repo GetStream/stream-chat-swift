@@ -722,7 +722,7 @@ open class VoiceRecordingVC: _ViewController, ComponentsProvider, AppearanceProv
 // MARK: - Delegate
 
 /// A delegate that the VoiceRecordingVC will use to post information or ask for support.
-@MainActor public protocol VoiceRecordingDelegate: AnyObject {
+@preconcurrency @MainActor public protocol VoiceRecordingDelegate: AnyObject {
     /// Creates and attaches a VoiceRecording attachment on the message.
     /// - Parameters:
     ///   - voiceRecordingVC: The VoiceRecordingVC responsible for this action.

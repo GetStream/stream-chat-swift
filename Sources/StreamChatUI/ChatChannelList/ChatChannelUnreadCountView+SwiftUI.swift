@@ -7,7 +7,7 @@ import StreamChat
 import SwiftUI
 
 /// Protocol of `ChatChannelUnreadCountView` wrapper for use in SwiftUI.
-@MainActor public protocol ChatChannelUnreadCountViewSwiftUIView: View {
+@preconcurrency @MainActor public protocol ChatChannelUnreadCountViewSwiftUIView: View {
     init(dataSource: ChatChannelUnreadCountView.ObservedObject<Self>)
 }
 

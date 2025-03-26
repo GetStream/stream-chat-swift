@@ -6,7 +6,7 @@ import StreamChat
 import UIKit
 
 /// The delegate used `GalleryAttachmentViewInjector` to communicate user interactions.
-@MainActor public protocol GalleryContentViewDelegate: ChatMessageContentViewDelegate {
+@preconcurrency @MainActor public protocol GalleryContentViewDelegate: ChatMessageContentViewDelegate {
     /// Called when the user taps on one of the attachment previews.
     func galleryMessageContentView(
         at indexPath: IndexPath?,

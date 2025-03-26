@@ -6,7 +6,7 @@ import Foundation
 import StreamChat
 
 /// The delegate used to handle Polls interactions in the message list.
-@MainActor public protocol PollAttachmentViewInjectorDelegate: ChatMessageContentViewDelegate {
+@preconcurrency @MainActor public protocol PollAttachmentViewInjectorDelegate: ChatMessageContentViewDelegate {
     /// Called when the user taps in an option of the poll.
     func pollAttachmentView(
         _ pollAttachmentView: PollAttachmentView,

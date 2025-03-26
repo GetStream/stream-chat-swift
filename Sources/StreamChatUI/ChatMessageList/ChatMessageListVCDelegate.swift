@@ -6,7 +6,7 @@ import StreamChat
 import UIKit
 
 /// The object that acts as the delegate of the message list.
-@MainActor public protocol ChatMessageListVCDelegate: AnyObject {
+@preconcurrency @MainActor public protocol ChatMessageListVCDelegate: AnyObject {
     /// Tells the delegate the message list is about to draw a message for a particular row.
     /// - Parameters:
     ///   - vc: The message list informing the delegate of this event.

@@ -7,7 +7,7 @@ import UIKit
 
 /// The delegate used in `LinkAttachmentViewInjector` to communicate user interactions.
 @available(iOSApplicationExtension, unavailable)
-@MainActor public protocol LinkPreviewViewDelegate: ChatMessageContentViewDelegate {
+@preconcurrency @MainActor public protocol LinkPreviewViewDelegate: ChatMessageContentViewDelegate {
     /// Called when the user taps the link preview.
     func didTapOnLinkAttachment(
         _ attachment: ChatMessageLinkAttachment,

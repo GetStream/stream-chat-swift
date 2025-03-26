@@ -7,7 +7,7 @@ import StreamChat
 import UIKit
 
 /// The type preview should conform to in order the gallery can be shown from it.
-@MainActor public protocol GalleryItemPreview {
+@preconcurrency @MainActor public protocol GalleryItemPreview {
     /// Attachment identifier.
     var attachmentId: AttachmentId? { get }
 

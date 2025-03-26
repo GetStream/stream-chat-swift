@@ -7,7 +7,7 @@ import UIKit
 
 /// The delegate that will be assigned on an AudioView and will be responsible to handle user interactions
 /// from the view.
-@MainActor public protocol VoiceRecordingAttachmentPresentationViewDelegate: ChatMessageContentViewDelegate {
+@preconcurrency @MainActor public protocol VoiceRecordingAttachmentPresentationViewDelegate: ChatMessageContentViewDelegate {
     /// Called when the user taps on the play button.
     func voiceRecordingAttachmentPresentationViewConnect(
         delegate: AudioPlayingDelegate

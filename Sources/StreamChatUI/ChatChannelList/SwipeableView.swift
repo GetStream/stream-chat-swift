@@ -6,7 +6,7 @@ import StreamChat
 import UIKit
 
 /// Delegate responsible for easily assigning swipe action buttons to collectionView cells.
-@MainActor public protocol SwipeableViewDelegate: AnyObject {
+@preconcurrency @MainActor public protocol SwipeableViewDelegate: AnyObject {
     /// Prepares the receiver that showing of actionViews will ocur.
     /// use this method to for example close other actionViews in your collectionView/tableView.
     /// - Parameter indexPath: IndexPath of `collectionViewCell` which asks for action buttons.

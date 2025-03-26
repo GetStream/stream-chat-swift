@@ -7,7 +7,7 @@ import UIKit
 
 // MARK: - Protocol
 
-@MainActor public protocol AppearanceProvider: AnyObject {
+@preconcurrency @MainActor public protocol AppearanceProvider: AnyObject {
     /// Appearance object to change appearance of the existing views or to use default appearance of the SDK by custom components.
     var appearance: Appearance { get set }
 
