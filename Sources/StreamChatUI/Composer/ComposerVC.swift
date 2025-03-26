@@ -324,6 +324,11 @@ open class ComposerVC: _ViewController,
     public var content: Content = .initial() {
         didSet {
             updateContentIfNeeded()
+
+            /// If the input message was erased or the attachments have been removed, delete the draft message.
+            if !oldValue.isEmpty && content.isEmpty {
+                deleteDraftMessageIfNeeded()
+            }
         }
     }
 
@@ -553,6 +558,7 @@ open class ComposerVC: _ViewController,
 
     override open func updateContent() {
         super.updateContent()
+
         // Note: The order of the calls is important.
         updateText()
         updateKeystrokeEvents()
@@ -1544,11 +1550,6 @@ open class ComposerVC: _ViewController,
         guard textView.text != content.text else { return }
 
         content.text = textView.text
-
-        /// If the input message was erased and there is a draft message, the draft message should be deleted.
-        if content.isEmpty {
-            deleteDraftMessageIfNeeded()
-        }
     }
 
     open func textView(
