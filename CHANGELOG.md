@@ -3,6 +3,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 # Upcoming
 
+### 🔄 Changed
+
+# [4.75.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.75.0)
+_March 26, 2025_
+
 ## StreamChat
 ### 🐞 Fixed
 - Fix draft local attachments erased when the draft updated event is triggered [#3625](https://github.com/GetStream/stream-chat-swift/pull/3625)
