@@ -53,7 +53,7 @@ class AppConfig {
             tokenRefreshDetails: nil,
             shouldShowConnectionBanner: false,
             isPremiumMemberFeatureEnabled: false,
-            isRemindersEnabled: false
+            isRemindersEnabled: true
         )
 
         if StreamRuntimeCheck.isStreamInternalConfiguration {
