@@ -24,7 +24,7 @@ protocol BackgroundTaskScheduler: Sendable {
 import UIKit
 
 class IOSBackgroundTaskScheduler: BackgroundTaskScheduler, @unchecked Sendable {
-    private let app: UIApplication? = {
+    private lazy var app: UIApplication? = {
         // We can't use `UIApplication.shared` directly because there's no way to convince the compiler
         // this code is accessible only for non-extension executables.
         UIApplication.value(forKeyPath: "sharedApplication") as? UIApplication
@@ -35,7 +35,6 @@ class IOSBackgroundTaskScheduler: BackgroundTaskScheduler, @unchecked Sendable {
     private let queue = DispatchQueue(label: "io.getstream.IOSBackgroundTaskScheduler", target: .global())
 
     var isAppActive: Bool {
-        let app = self.app
         if Thread.isMainThread {
             return MainActor.assumeIsolated {
                 app?.applicationState == .active
@@ -46,7 +45,7 @@ class IOSBackgroundTaskScheduler: BackgroundTaskScheduler, @unchecked Sendable {
         let group = DispatchGroup()
         group.enter()
         DispatchQueue.main.async {
-            isActive = app?.applicationState == .active
+            isActive = self.app?.applicationState == .active
             group.leave()
         }
         group.wait()

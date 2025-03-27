@@ -627,8 +627,13 @@ open class ChatChannelVC: _ViewController,
 
         if let draftUpdatedEvent = event as? DraftUpdatedEvent,
            let draft = channelController.channel?.draftMessage,
-           draftUpdatedEvent.cid == channelController.cid {
+           draftUpdatedEvent.cid == channelController.cid, draftUpdatedEvent.draftMessage.threadId == nil {
             messageComposerVC.content.draftMessage(draft)
+        }
+
+        if let draftDeletedEvent = event as? DraftDeletedEvent,
+           draftDeletedEvent.cid == channelController.cid, draftDeletedEvent.threadId == nil {
+            messageComposerVC.content.clear()
         }
     }
 

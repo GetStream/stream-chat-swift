@@ -910,6 +910,7 @@ import XCTest
         var appearance = Appearance()
         appearance.fonts.bodyBold = .italicSystemFont(ofSize: 20)
         appearance.colorPalette.subtitleText = .cyan
+        appearance.colorPalette.text = .red
 
         let view = channelItemView(
             content: .init(

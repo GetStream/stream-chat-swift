@@ -5,6 +5,19 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### 🔄 Changed
 
+# [4.75.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.75.0)
+_March 26, 2025_
+
+## StreamChat
+### 🐞 Fixed
+- Fix draft local attachments erased when the draft updated event is triggered [#3625](https://github.com/GetStream/stream-chat-swift/pull/3625)
+- Fix background tasks not running in `IOSBackgroundTaskScheduler` sometimes [#3628](https://github.com/GetStream/stream-chat-swift/pull/3628)
+
+### StreamChatUI
+### 🐞 Fixed
+- Fix composer content not cleared when draft deleted event is triggered [#3626](https://github.com/GetStream/stream-chat-swift/pull/3626)
+- Set `ColorPalette.text` to `titleLabel` in `ChatChannelListItemView` [#3629](https://github.com/GetStream/stream-chat-swift/pull/3629)
+
 # [4.74.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.74.0)
 _March 14, 2025_
 

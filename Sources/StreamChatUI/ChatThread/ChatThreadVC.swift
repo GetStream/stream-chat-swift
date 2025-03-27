@@ -512,6 +512,8 @@ open class ChatThreadVC: _ViewController,
             if let draft = messageController.message?.draftReply {
                 messageComposerVC.content.draftMessage(draft)
             }
+        case let event as DraftDeletedEvent where event.threadId == messageController.messageId:
+            messageComposerVC.content.clear()
         default:
             break
         }
