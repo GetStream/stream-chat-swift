@@ -4597,6 +4597,78 @@ final class MessageDTO_Tests: XCTestCase {
         XCTAssertEqual(draftReply.parentMessageId, parentMessageId)
     }
 
+    func test_saveDraftMessage_whenOneAlreadyExists_shouldNotEraseAttachments() throws {
+        // At the moment, attachments are not saved in to the server, so we should not delete them
+        // if the draft from the server does not contain attachments.
+
+        // GIVEN
+        let cid: ChannelId = .unique
+        let currentUser: CurrentUserPayload = .dummy(userId: .unique, role: .user)
+        let channelDetailPayload = ChannelDetailPayload.dummy(cid: cid)
+        let channelPayload: ChannelPayload = .dummy(channel: channelDetailPayload)
+        let draftId = MessageId.unique
+        let draftPayload = DraftPayload(
+            cid: cid,
+            channelPayload: channelDetailPayload,
+            createdAt: .init(),
+            message: .init(
+                id: draftId,
+                text: "Draft message",
+                command: nil,
+                args: nil,
+                showReplyInChannel: false,
+                mentionedUsers: nil,
+                extraData: [:],
+                attachments: [.audio()],
+                isSilent: false
+            ),
+            quotedMessage: nil,
+            parentId: nil,
+            parentMessage: nil
+        )
+
+        // First save draft with attachment.
+        try database.writeSynchronously { session in
+            try session.saveCurrentUser(payload: currentUser)
+            try session.saveChannel(payload: channelPayload)
+            try session.saveDraftMessage(payload: draftPayload, for: cid, cache: nil)
+        }
+
+        // Then save it without attachment.
+        let draftPayloadWithoutAttachment = DraftPayload(
+            cid: cid,
+            channelPayload: channelDetailPayload,
+            createdAt: .init(),
+            message: .init(
+                id: draftId,
+                text: "Draft message",
+                command: nil,
+                args: nil,
+                showReplyInChannel: false,
+                mentionedUsers: nil,
+                extraData: [:],
+                attachments: nil,
+                isSilent: false
+            ),
+            quotedMessage: nil,
+            parentId: nil,
+            parentMessage: nil
+        )
+
+        try database.writeSynchronously { session in
+            try session.saveDraftMessage(payload: draftPayloadWithoutAttachment, for: cid, cache: nil)
+        }
+
+        // THEN
+        let channelDTO = try XCTUnwrap(database.viewContext.channel(cid: cid))
+        let draftMessage = try XCTUnwrap(channelDTO.draftMessage)
+        XCTAssertEqual(draftMessage.text, "Draft message")
+        XCTAssertEqual(draftMessage.type, MessageType.regular.rawValue)
+        XCTAssertTrue(draftMessage.isDraft)
+        XCTAssertNil(draftMessage.parentMessageId)
+        XCTAssertEqual(draftMessage.attachments.count, 1)
+    }
+
     func test_deleteDraftMessage_fromChannel() throws {
         // GIVEN
         let cid: ChannelId = .unique

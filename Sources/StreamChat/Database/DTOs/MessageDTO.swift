@@ -1134,9 +1134,6 @@ extension NSManagedObjectContext: MessageDatabaseSession {
             throw ClientError.CurrentUserDoesNotExist()
         }
 
-        // Delete existing draft message if it exists.
-        deleteDraftMessage(in: cid, threadId: payload.parentId)
-
         let dto = MessageDTO.loadOrCreate(id: draftDetailsPayload.id, context: self, cache: cache)
         dto.cid = cid.rawValue
         dto.text = draftDetailsPayload.text
