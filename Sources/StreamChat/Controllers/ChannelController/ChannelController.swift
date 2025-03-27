@@ -979,6 +979,18 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
             }
         }
     }
+    
+    /// Deletes the poll with the provided poll id.
+    /// - Parameters:
+    ///  - pollId: The id of the poll to be deleted.
+    ///  - completion: A closure to be executed once the poll is deleted, returning either an `Error` on failure or `nil` on success.
+    public func deletePoll(pollId: String, completion: ((Error?) -> Void)? = nil) {
+        pollsRepository.deletePoll(pollId: pollId) { error in
+            self.callback {
+                completion?(error)
+            }
+        }
+    }
 
     /// Add users to the channel as members with additional data.
     ///

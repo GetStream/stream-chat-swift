@@ -201,6 +201,20 @@ class PollsRepository {
         }
     }
     
+    func deletePoll(
+        pollId: String,
+        completion: ((Error?) -> Void)? = nil
+    ) {
+        database.write { session in
+            _ = try? session.deletePoll(pollId: pollId)
+        } completion: { [weak self] _ in
+            // No need to check for error, since the poll can also be deleted independently.
+            self?.apiClient.request(endpoint: .deletePoll(pollId: pollId)) {
+                completion?($0.error)
+            }
+        }
+    }
+    
     func suggestPollOption(
         pollId: String,
         text: String,
