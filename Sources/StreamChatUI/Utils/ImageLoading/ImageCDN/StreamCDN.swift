@@ -21,7 +21,7 @@ open class StreamImageCDN: ImageCDN, @unchecked Sendable {
             return URLRequest(url: url)
         }
 
-        let scale = UITraitCollection.current.displayScale
+        let scale = Screen.scale
         var queryItems: [String: String] = [
             "w": resize.width == 0 ? "*" : String(format: "%.0f", resize.width * scale),
             "h": resize.height == 0 ? "*" : String(format: "%.0f", resize.height * scale),

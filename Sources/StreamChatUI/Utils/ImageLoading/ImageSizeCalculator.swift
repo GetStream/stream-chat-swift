@@ -23,7 +23,7 @@ struct ImageSizeCalculator {
         originalHeightInPixels: Double,
         maxResolutionTotalPixels: Double
     ) -> CGSize {
-        let scale = UITraitCollection.current.displayScale
+        let scale = Screen.scale
 
         let originalResolutionTotalPixels = originalWidthInPixels * originalHeightInPixels
         guard originalResolutionTotalPixels > maxResolutionTotalPixels else {
