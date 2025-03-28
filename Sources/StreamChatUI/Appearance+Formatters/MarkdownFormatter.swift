@@ -156,7 +156,12 @@ private extension UIFont {
         monospaced: Bool = false
     ) -> UIFont {
         if !markdownFont.hasFontChanges && !monospaced {
-            return UIFontMetrics(forTextStyle: textStyle).scaledFont(for: defaultFont)
+            let font = UIFont(
+                descriptor: defaultFont.fontDescriptor,
+                size: defaultFont.pointSize
+            )
+            return UIFontMetrics(forTextStyle: textStyle)
+                .scaledFont(for: font)
         }
         // Default
         var descriptor = defaultFont.fontDescriptor
