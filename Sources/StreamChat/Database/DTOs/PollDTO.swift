@@ -246,4 +246,10 @@ extension NSManagedObjectContext {
     func poll(id: String) throws -> PollDTO? {
         PollDTO.load(pollId: id, context: self)
     }
+    
+    func deletePoll(pollId: String) throws -> PollDTO? {
+        guard let poll = try poll(id: pollId) else { return nil }
+        delete(poll)
+        return poll
+    }
 }

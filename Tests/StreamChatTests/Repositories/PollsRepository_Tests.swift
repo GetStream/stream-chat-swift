@@ -520,4 +520,44 @@ final class PollsRepository_Tests: XCTestCase {
         )
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(referenceEndpoint))
     }
+    
+    // MARK: - Deleting polls
+    
+    func test_deletePoll_whenSuccessful() {
+        let completionCalled = expectation(description: "completion called")
+        let pollId = String.unique
+        
+        repository.deletePoll(pollId: pollId) { error in
+            XCTAssertNil(error)
+            completionCalled.fulfill()
+        }
+        
+        wait(for: [apiClient.request_expectation], timeout: defaultTimeout)
+        
+        let emptyResponse = EmptyResponse()
+        apiClient.test_simulateResponse(.success(emptyResponse))
+        
+        wait(for: [completionCalled], timeout: defaultTimeout)
+        let referenceEndpoint: Endpoint<EmptyResponse> = .deletePoll(pollId: pollId)
+        XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(referenceEndpoint))
+    }
+    
+    func test_deletePoll_whenFailure() {
+        let completionCalled = expectation(description: "completion called")
+        let pollId = String.unique
+        
+        repository.deletePoll(pollId: pollId) { error in
+            XCTAssertNotNil(error)
+            completionCalled.fulfill()
+        }
+        
+        wait(for: [apiClient.request_expectation], timeout: defaultTimeout)
+        
+        let error = TestError()
+        apiClient.test_simulateResponse(Result<EmptyResponse, Error>.failure(error))
+        
+        wait(for: [completionCalled], timeout: defaultTimeout)
+        let referenceEndpoint: Endpoint<EmptyResponse> = .deletePoll(pollId: pollId)
+        XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(referenceEndpoint))
+    }
 }

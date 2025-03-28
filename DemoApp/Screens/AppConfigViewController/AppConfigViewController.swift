@@ -22,6 +22,8 @@ struct DemoAppConfig {
     var shouldShowConnectionBanner: Bool
     /// A Boolean value to define if the premium member feature is enabled. This is to test custom member data.
     var isPremiumMemberFeatureEnabled: Bool
+    /// A Boolean value to define if the poll should be deleted when the message is deleted.
+    var shouldDeletePollOnMessageDeletion: Bool
 
     /// The details to generate expirable tokens in the demo app.
     struct TokenRefreshDetails {
@@ -50,7 +52,8 @@ class AppConfig {
             isLocationAttachmentsEnabled: false,
             tokenRefreshDetails: nil,
             shouldShowConnectionBanner: false,
-            isPremiumMemberFeatureEnabled: false
+            isPremiumMemberFeatureEnabled: false,
+            shouldDeletePollOnMessageDeletion: false
         )
 
         if StreamRuntimeCheck.isStreamInternalConfiguration {
@@ -61,6 +64,7 @@ class AppConfig {
             demoAppConfig.isHardDeleteEnabled = true
             demoAppConfig.shouldShowConnectionBanner = true
             demoAppConfig.isPremiumMemberFeatureEnabled = true
+            demoAppConfig.shouldDeletePollOnMessageDeletion = true
             StreamRuntimeCheck.assertionsEnabled = true
         }
     }
