@@ -7,13 +7,14 @@ import StreamChatUI
 import UIKit
 import UserNotifications
 
-class DemoAppTabBarController: UITabBarController, CurrentChatUserControllerDelegate {
+class DemoAppTabBarController: UITabBarController, CurrentChatUserControllerDelegate, MessageReminderListControllerDelegate {
     let channelListVC: UIViewController
     let threadListVC: UIViewController
     let draftListVC: UIViewController
     let reminderListVC: UIViewController
     let currentUserController: CurrentChatUserController
-    
+    let allRemindersListController: MessageReminderListController
+
     // Events controller for listening to chat events
     private var eventsController: EventsController!
     
@@ -25,13 +26,15 @@ class DemoAppTabBarController: UITabBarController, CurrentChatUserControllerDele
         threadListVC: UIViewController,
         draftListVC: UIViewController,
         reminderListVC: UIViewController,
-        currentUserController: CurrentChatUserController
+        currentUserController: CurrentChatUserController,
+        allRemindersListController: MessageReminderListController
     ) {
         self.channelListVC = channelListVC
         self.threadListVC = threadListVC
         self.draftListVC = draftListVC
         self.reminderListVC = reminderListVC
         self.currentUserController = currentUserController
+        self.allRemindersListController = allRemindersListController
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -64,6 +67,7 @@ class DemoAppTabBarController: UITabBarController, CurrentChatUserControllerDele
 
         // Update reminders badge if the feature is enabled.
         if AppConfig.shared.demoAppConfig.isRemindersEnabled {
+            allRemindersListController.delegate = self
             updateRemindersBadge()
         }
 
@@ -99,15 +103,15 @@ class DemoAppTabBarController: UITabBarController, CurrentChatUserControllerDele
         UIApplication.shared.applicationIconBadgeNumber = totalUnreadBadge
     }
 
-    func currentUserController(
-        _ controller: CurrentChatUserController,
-        didChangeMessageReminders messageReminders: [MessageReminder]
+    func controller(
+        _ controller: MessageReminderListController,
+        didChangeReminders changes: [ListChange<MessageReminder>]
     ) {
         updateRemindersBadge()
     }
 
     private func updateRemindersBadge() {
-        let reminders = currentUserController.messageReminders
+        let reminders = allRemindersListController.reminders
         reminderListVC.tabBarItem.badgeValue = reminders.isEmpty ? nil : "\(reminders.count)"
     }
 }

@@ -73,7 +73,8 @@ extension DemoAppCoordinator {
             threadListVC: UINavigationController(rootViewController: threadListVC),
             draftListVC: UINavigationController(rootViewController: draftsVC),
             reminderListVC: UINavigationController(rootViewController: reminderListVC),
-            currentUserController: client.currentUserController()
+            currentUserController: client.currentUserController(),
+            allRemindersListController: client.messageReminderListController()
         )
         set(rootViewController: tabBarViewController, animated: animated)
         DemoAppConfiguration.showPerformanceTracker()

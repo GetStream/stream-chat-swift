@@ -8,6 +8,7 @@ import XCTest
 
 /// Mock implementation of RemindersRepository
 final class RemindersRepository_Mock: RemindersRepository {
+    var loadReminders_callCount: Int = 0
     var loadReminders_query: MessageReminderListQuery?
     var loadReminders_completion: ((Result<ReminderListResponse, Error>) -> Void)?
     var loadReminders_completion_result: Result<ReminderListResponse, Error>?
@@ -67,6 +68,7 @@ final class RemindersRepository_Mock: RemindersRepository {
         query: MessageReminderListQuery,
         completion: @escaping ((Result<ReminderListResponse, Error>) -> Void)
     ) {
+        loadReminders_callCount += 1
         loadReminders_query = query
         loadReminders_completion = completion
         

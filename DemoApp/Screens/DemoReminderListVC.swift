@@ -11,9 +11,17 @@ class DemoReminderListVC: UIViewController, ThemeProvider {
     var onDisconnect: (() -> Void)?
 
     private let currentUserController: CurrentChatUserController
+
+    private var activeController: MessageReminderListController
     private var reminders: [MessageReminder] = []
     private var isPaginatingReminders = false
-    
+
+    private lazy var allRemindersController = FilterOption.all.makeController(client: currentUserController.client)
+    private lazy var upcomingRemindersController = FilterOption.upcoming.makeController(client: currentUserController.client)
+    private lazy var scheduledRemindersController = FilterOption.scheduled.makeController(client: currentUserController.client)
+    private lazy var laterRemindersController = FilterOption.later.makeController(client: currentUserController.client)
+    private lazy var overdueRemindersController = FilterOption.overdue.makeController(client: currentUserController.client)
+
     // Timer for refreshing due dates on cells
     private var refreshTimer: Timer?
     
@@ -30,12 +38,43 @@ class DemoReminderListVC: UIViewController, ThemeProvider {
             case .later: return "Saved for later"
             }
         }
+
+        var query: MessageReminderListQuery {
+            switch self {
+            case .all:
+                return MessageReminderListQuery()
+            case .scheduled:
+                return MessageReminderListQuery(
+                    filter: .withRemindAt,
+                    sort: [.init(key: .remindAt, isAscending: true)]
+                )
+            case .later:
+                return MessageReminderListQuery(
+                    filter: .withoutRemindAt,
+                    sort: [.init(key: .createdAt, isAscending: false)]
+                )
+            case .overdue:
+                return MessageReminderListQuery(
+                    filter: .overdue,
+                    sort: [.init(key: .remindAt, isAscending: false)]
+                )
+            case .upcoming:
+                return MessageReminderListQuery(
+                    filter: .upcoming,
+                    sort: [.init(key: .remindAt, isAscending: true)]
+                )
+            }
+        }
+
+        func makeController(client: ChatClient) -> MessageReminderListController {
+            client.messageReminderListController(query: query)
+        }
     }
     
     private var selectedFilter: FilterOption = .all {
         didSet {
             if oldValue != selectedFilter {
-                loadReminders()
+                switchToController(for: selectedFilter)
                 updateFilterPills()
             }
         }
@@ -102,6 +141,8 @@ class DemoReminderListVC: UIViewController, ThemeProvider {
     
     init(currentUserController: CurrentChatUserController) {
         self.currentUserController = currentUserController
+        activeController = currentUserController.client.messageReminderListController()
+
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -175,37 +216,6 @@ class DemoReminderListVC: UIViewController, ThemeProvider {
         }
     }
     
-    private func createFilterQuery() -> MessageReminderListQuery {
-        switch selectedFilter {
-        case .all:
-            return MessageReminderListQuery()
-            
-        case .scheduled:
-            return MessageReminderListQuery(
-                filter: .withRemindAt,
-                sort: [.init(key: .remindAt, isAscending: true)]
-            )
-            
-        case .later:
-            return MessageReminderListQuery(
-                filter: .withoutRemindAt,
-                sort: [.init(key: .createdAt, isAscending: false)]
-            )
-            
-        case .overdue:
-            return MessageReminderListQuery(
-                filter: .overdue,
-                sort: [.init(key: .remindAt, isAscending: false)]
-            )
-            
-        case .upcoming:
-            return MessageReminderListQuery(
-                filter: .upcoming,
-                sort: [.init(key: .remindAt, isAscending: true)]
-            )
-        }
-    }
-
     private func setupViews() {
         view.backgroundColor = Appearance.default.colorPalette.background
         tableView.backgroundColor = Appearance.default.colorPalette.background
@@ -331,26 +341,54 @@ class DemoReminderListVC: UIViewController, ThemeProvider {
         selectedFilter = filterOption
     }
     
+    private func switchToController(for filter: FilterOption) {
+        switch filter {
+        case .all:
+            activeController = allRemindersController
+        case .overdue:
+            activeController = overdueRemindersController
+        case .upcoming:
+            activeController = upcomingRemindersController
+        case .scheduled:
+            activeController = scheduledRemindersController
+        case .later:
+            activeController = laterRemindersController
+        }
+        
+        // Only load reminders if this controller hasn't loaded any yet
+        if activeController.reminders.isEmpty && !activeController.hasLoadedAllReminders {
+            loadReminders()
+        } else {
+            // Otherwise just update the UI with existing data
+            reminders = Array(activeController.reminders)
+            tableView.reloadData()
+            updateEmptyStateMessage()
+            emptyStateView.isHidden = !reminders.isEmpty
+        }
+    }
+
     private func loadReminders() {
-        currentUserController.delegate = self
+        let controller = activeController
+        controller.delegate = self
+        
         if reminders.isEmpty {
             loadingIndicator.startAnimating()
             emptyStateView.isHidden = true
         }
         
-        let query = createFilterQuery()
-        currentUserController.loadReminders(query: query) { [weak self] _ in
+        controller.synchronize { [weak self] _ in
             self?.loadingIndicator.stopAnimating()
         }
     }
     
     private func loadMoreReminders() {
-        guard !isPaginatingReminders && !currentUserController.hasLoadedAllReminders else {
+        let controller = activeController
+        guard !isPaginatingReminders && !controller.hasLoadedAllReminders else {
             return
         }
 
         isPaginatingReminders = true
-        currentUserController.loadMoreReminders { [weak self] _ in
+        controller.loadMoreReminders { [weak self] _ in
             self?.isPaginatingReminders = false
         }
     }
@@ -418,14 +456,17 @@ class DemoReminderListVC: UIViewController, ThemeProvider {
     }
 }
 
-// MARK: - CurrentChatUserControllerDelegate
+// MARK: - MessageReminderListControllerDelegate
 
-extension DemoReminderListVC: CurrentChatUserControllerDelegate {
-    func currentUserController(
-        _ controller: CurrentChatUserController,
-        didChangeMessageReminders messageReminders: [MessageReminder]
+extension DemoReminderListVC: MessageReminderListControllerDelegate {
+    func controller(
+        _ controller: MessageReminderListController,
+        didChangeReminders changes: [ListChange<MessageReminder>]
     ) {
-        reminders = messageReminders
+        // Only update UI if this is the active controller
+        guard controller === activeController else { return }
+        
+        reminders = Array(controller.reminders)
         tableView.reloadData()
         updateEmptyStateMessage()
         emptyStateView.isHidden = !reminders.isEmpty
