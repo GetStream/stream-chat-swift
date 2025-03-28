@@ -7,7 +7,7 @@ import StreamChatUI
 import UIKit
 import UserNotifications
 
-class DemoAppTabBarController: UITabBarController, CurrentChatUserControllerDelegate, EventsControllerDelegate {
+class DemoAppTabBarController: UITabBarController, CurrentChatUserControllerDelegate {
     let channelListVC: UIViewController
     let threadListVC: UIViewController
     let draftListVC: UIViewController
@@ -61,9 +61,6 @@ class DemoAppTabBarController: UITabBarController, CurrentChatUserControllerDele
 
         currentUserController.delegate = self
         unreadCount = currentUserController.unreadCount
-        
-        // Initialize events controller
-        setupEventsController()
 
         // Update reminders badge if the feature is enabled.
         if AppConfig.shared.demoAppConfig.isRemindersEnabled {
@@ -95,37 +92,6 @@ class DemoAppTabBarController: UITabBarController, CurrentChatUserControllerDele
         }
     }
     
-    // MARK: - Events Controller Setup
-    
-    private func setupEventsController() {
-        eventsController = currentUserController.client.eventsController()
-        eventsController.delegate = self
-    }
-    
-    // MARK: - EventsControllerDelegate
-    
-    func eventsController(_ controller: EventsController, didReceiveEvent event: Event) {
-        if AppConfig.shared.demoAppConfig.isRemindersEnabled,
-           let reminderDueEvent = event as? ReminderDueEvent {
-            handleReminderDueEvent(reminderDueEvent)
-        }
-    }
-    
-    // MARK: - Handle Reminder Due Event
-    
-    private func handleReminderDueEvent(_ event: ReminderDueEvent) {
-        let messageText = event.reminder.message.text
-        let content = UNMutableNotificationContent()
-        content.title = "Reminder due"
-        content.body = messageText
-        content.sound = .default
-
-        let identifier = "reminder-\(event.messageId)-\(Date().timeIntervalSince1970)"
-        let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 0.1, repeats: false)
-        let request = UNNotificationRequest(identifier: identifier, content: content, trigger: trigger)
-        notificationCenter.add(request)
-    }
-
     func currentUserController(_ controller: CurrentChatUserController, didChangeCurrentUserUnreadCount: UnreadCount) {
         let unreadCount = didChangeCurrentUserUnreadCount
         self.unreadCount = unreadCount
