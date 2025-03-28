@@ -11,6 +11,7 @@ final class PollsRepository_Mock: PollsRepository, Spy {
     @Atomic var removePollVote_completion: ((Error?) -> Void)?
     @Atomic var closePoll_completion: ((Error?) -> Void)?
     @Atomic var suggestPollOption_completion: ((Error?) -> Void)?
+    @Atomic var deletePoll_completion: ((Error?) -> Void)?
     
     var recordedFunctions: [String] = []
     var spyState: SpyState = .init()
@@ -56,5 +57,12 @@ final class PollsRepository_Mock: PollsRepository, Spy {
         completion: ((Error?) -> Void)? = nil
     ) {
         suggestPollOption_completion = completion
+    }
+    
+    override func deletePoll(
+        pollId: String,
+        completion: ((Error?) -> Void)? = nil
+    ) {
+        deletePoll_completion = completion
     }
 }

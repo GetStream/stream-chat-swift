@@ -985,8 +985,8 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
     ///  - pollId: The id of the poll to be deleted.
     ///  - completion: A closure to be executed once the poll is deleted, returning either an `Error` on failure or `nil` on success.
     public func deletePoll(pollId: String, completion: ((Error?) -> Void)? = nil) {
-        pollsRepository.deletePoll(pollId: pollId) { error in
-            self.callback {
+        pollsRepository.deletePoll(pollId: pollId) { [weak self] error in
+            self?.callback {
                 completion?(error)
             }
         }

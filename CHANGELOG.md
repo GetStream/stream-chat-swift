@@ -5,7 +5,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## StreamChat
 ### ✅ Added
-- Add method for deleting polls [#3632](https://github.com/GetStream/stream-chat-swift/pull/3632)
+- Add `ChatChannelController.deletePoll()` for deleting polls [#3632](https://github.com/GetStream/stream-chat-swift/pull/3632)
 
 ### StreamChatUI
 ### 🐞 Fixed
