@@ -5,7 +5,7 @@
 import Foundation
 
 /// An object describing a reminder JSON payload.
-struct ReminderPayload: Decodable {
+class ReminderPayload: Decodable {
     let channelCid: ChannelId
     let channel: ChannelDetailPayload?
     let messageId: MessageId
@@ -44,7 +44,7 @@ struct ReminderPayload: Decodable {
 }
 
 /// A request body for creating or updating a reminder
-struct ReminderRequestBody: Encodable {
+class ReminderRequestBody: Encodable {
     let remindAt: Date?
     
     init(
@@ -59,12 +59,12 @@ struct ReminderRequestBody: Encodable {
 }
 
 /// A response containing a list of reminders
-struct RemindersQueryPayload: Decodable {
+class RemindersQueryPayload: Decodable {
     let reminders: [ReminderPayload]
     let next: String?
 }
 
 /// A response containing a single reminder
-struct ReminderResponsePayload: Decodable {
+class ReminderResponsePayload: Decodable {
     let reminder: ReminderPayload
 }
