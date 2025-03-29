@@ -155,13 +155,27 @@ public extension EventType {
     // When an AI typing indicator has been stopped.
     static let aiTypingIndicatorStop: Self = "ai_indicator.stop"
 
-    // MARK: Drafts
+    // MARK: - Drafts
 
     /// When a draft was updated.
     static let draftUpdated: Self = "draft.updated"
 
     /// When a draft was deleted.
     static let draftDeleted: Self = "draft.deleted"
+    
+    // MARK: - Reminders
+    
+    /// When a reminder was created.
+    static let reminderCreated: Self = "reminder.created"
+    
+    /// When a reminder was updated.
+    static let reminderUpdated: Self = "reminder.updated"
+    
+    /// When a reminder was deleted.
+    static let reminderDeleted: Self = "reminder.deleted"
+    
+    /// When a reminder is due.
+    static let notificationReminderDue: Self = "notification.reminder_due"
 }
 
 extension EventType {
@@ -232,6 +246,10 @@ extension EventType {
         case .aiTypingIndicatorStop: return try AIIndicatorStopEventDTO(from: response)
         case .draftUpdated: return try DraftUpdatedEventDTO(from: response)
         case .draftDeleted: return try DraftDeletedEventDTO(from: response)
+        case .reminderCreated: return try ReminderCreatedEventDTO(from: response)
+        case .reminderUpdated: return try ReminderUpdatedEventDTO(from: response)
+        case .reminderDeleted: return try ReminderDeletedEventDTO(from: response)
+        case .notificationReminderDue: return try ReminderDueNotificationEventDTO(from: response)
         default:
             if response.cid == nil {
                 throw ClientError.UnknownUserEvent(response.eventType)

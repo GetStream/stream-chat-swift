@@ -66,6 +66,11 @@ final class EndpointPathTests: XCTestCase {
         XCTAssertFalse(EndpointPath.pollVote(messageId: "test_message", pollId: "test_poll", voteId: "test_vote").shouldBeQueuedOffline)
     }
 
+    func test_reminders_shouldNOTBeQueuedOffline() {
+        XCTAssertFalse(EndpointPath.reminders.shouldBeQueuedOffline)
+        XCTAssertFalse(EndpointPath.reminder("test_message").shouldBeQueuedOffline)
+    }
+
     func test_unread_shouldNOTBeQueuedOffline() {
         XCTAssertFalse(EndpointPath.unread.shouldBeQueuedOffline)
     }
@@ -146,6 +151,9 @@ final class EndpointPathTests: XCTestCase {
 
         assertResultEncodingAndDecoding(.drafts)
         assertResultEncodingAndDecoding(.draftMessage(ChannelId(type: .messaging, id: "test_channel")))
+        
+        assertResultEncodingAndDecoding(.reminders)
+        assertResultEncodingAndDecoding(.reminder("test_message"))
     }
 }
 
