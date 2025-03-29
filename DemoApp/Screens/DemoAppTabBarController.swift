@@ -5,7 +5,6 @@
 import StreamChat
 import StreamChatUI
 import UIKit
-import UserNotifications
 
 class DemoAppTabBarController: UITabBarController, CurrentChatUserControllerDelegate, MessageReminderListControllerDelegate {
     let channelListVC: UIViewController
@@ -17,9 +16,6 @@ class DemoAppTabBarController: UITabBarController, CurrentChatUserControllerDele
 
     // Events controller for listening to chat events
     private var eventsController: EventsController!
-    
-    // User notification center for displaying local notifications
-    private let notificationCenter = UNUserNotificationCenter.current()
 
     init(
         channelListVC: UIViewController,
