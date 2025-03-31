@@ -3,6 +3,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 # Upcoming
 
+### StreamChatUI
+### 🐞 Fixed
+- Fix runtime exception if fonts in `Appearance.default.fonts` are set to scaled fonts [#3633](https://github.com/GetStream/stream-chat-swift/pull/3633)
 
 ### StreamChatUI
 ### 🐞 Fixed
