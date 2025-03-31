@@ -62,9 +62,18 @@ class ReminderRequestBody: Encodable {
 class RemindersQueryPayload: Decodable {
     let reminders: [ReminderPayload]
     let next: String?
+
+    init(reminders: [ReminderPayload], next: String?) {
+        self.reminders = reminders
+        self.next = next
+    }
 }
 
 /// A response containing a single reminder
 class ReminderResponsePayload: Decodable {
     let reminder: ReminderPayload
+
+    init(reminder: ReminderPayload) {
+        self.reminder = reminder
+    }
 }
