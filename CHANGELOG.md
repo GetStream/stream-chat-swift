@@ -7,6 +7,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### ✅ Added
 - Add `ChatChannelController.deletePoll()` for deleting polls [#3632](https://github.com/GetStream/stream-chat-swift/pull/3632)
 
+# [4.76.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.76.0)
+_March 31, 2025_
+
+### StreamChatUI
+### 🐞 Fixed
+- Fix runtime exception if fonts in `Appearance.default.fonts` are set to scaled fonts [#3633](https://github.com/GetStream/stream-chat-swift/pull/3633)
+>>>>>>> 1105e8adc5164aace22ba9387ec18dceac90cfe7
+
 ### StreamChatUI
 ### 🐞 Fixed
 - Fix draft not deleted when attachments are removed from the composer [#3631](https://github.com/GetStream/stream-chat-swift/pull/3631)
