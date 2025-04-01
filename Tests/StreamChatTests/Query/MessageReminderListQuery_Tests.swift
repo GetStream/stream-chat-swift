@@ -99,7 +99,6 @@ final class MessageReminderListQuery_Tests: XCTestCase {
     func test_filterKeys() {
         // Test the filter keys for proper values
         XCTAssertEqual(FilterKey<MessageReminderListFilterScope, ChannelId>.cid.rawValue, "channel_cid")
-        XCTAssertEqual(FilterKey<MessageReminderListFilterScope, MessageId>.messageId.rawValue, "message_id")
         XCTAssertEqual(FilterKey<MessageReminderListFilterScope, Date>.remindAt.rawValue, "remind_at")
         XCTAssertEqual(FilterKey<MessageReminderListFilterScope, Date>.createdAt.rawValue, "created_at")
     }

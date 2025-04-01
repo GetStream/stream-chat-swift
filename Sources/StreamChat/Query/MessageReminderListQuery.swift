@@ -20,10 +20,6 @@ public extension FilterKey where Scope: AnyMessageReminderListFilterScope {
         valueMapper: { $0.rawValue }
     ) }
 
-    /// A filter key for matching the `message_id` value.
-    /// Supported operators: `in`, `equal`
-    static var messageId: FilterKey<Scope, MessageId> { .init(rawValue: "message_id", keyPathString: #keyPath(MessageReminderDTO.id)) }
-
     /// A filter key for matching the `remind_at` value.
     /// Supported operators: `equal`, `greaterThan`, `lessThan`, `greaterOrEqual`, `lessOrEqual`
     static var remindAt: FilterKey<Scope, Date> { .init(rawValue: "remind_at", keyPathString: #keyPath(MessageReminderDTO.remindAt)) }
