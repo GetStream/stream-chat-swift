@@ -83,12 +83,7 @@ class RemindersRepository {
                 createdAt: now,
                 updatedAt: now
             )
-            
-            do {
-                try session.saveReminder(payload: reminderPayload, cache: nil)
-            } catch {
-                log.warning("Failed to optimistically create reminder in the database: \(error)")
-            }
+            try session.saveReminder(payload: reminderPayload, cache: nil)
         } completion: { _ in
             // Make the API call to create the reminder
             self.apiClient.request(endpoint: endpoint) { [weak self] result in
@@ -215,11 +210,7 @@ class RemindersRepository {
                     
                     self?.database.write({ session in
                         // Restore original reminder
-                        do {
-                            try session.saveReminder(payload: originalPayload, cache: nil)
-                        } catch {
-                            log.warning("Failed to rollback reminder deletion: \(error)")
-                        }
+                        try session.saveReminder(payload: originalPayload, cache: nil)
                     }, completion: { _ in
                         completion(error)
                     })
