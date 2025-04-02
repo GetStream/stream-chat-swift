@@ -500,6 +500,7 @@ extension DemoReminderListVC: MessageReminderListControllerDelegate, EventsContr
         } else {
             return
         }
+        activeController.delegate = self
         updateRemindersData()
     }
 }
