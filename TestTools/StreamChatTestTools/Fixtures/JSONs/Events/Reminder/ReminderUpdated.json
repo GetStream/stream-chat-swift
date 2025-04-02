@@ -1,0 +1,14 @@
+{
+  "created_at": "2025-03-20T15:48:58.670372602Z",
+  "message_id": "477172a9-a59b-48dc-94a3-9aec4dc181bb",
+  "reminder": {
+    "channel_cid": "messaging:!members-vhPyEGDAjFA4JyC7fxDg3LsMFLGqKhXOKqZM-Y681_E",
+    "created_at": "2025-03-19T17:37:14.737404Z",
+    "message_id": "477172a9-a59b-48dc-94a3-9aec4dc181bb",
+    "remind_at": "2025-03-20T15:50:58.1Z",
+    "updated_at": "2025-03-20T15:48:58.664435Z",
+    "user_id": "han_solo"
+  },
+  "type": "reminder.updated",
+  "user_id": "han_solo"
+}

@@ -126,6 +126,7 @@ class ChatClientFactory {
             ),
             ThreadUpdaterMiddleware(),
             DraftUpdaterMiddleware(),
+            ReminderUpdaterMiddleware(),
             UserTypingStateUpdaterMiddleware(),
             ChannelTruncatedEventMiddleware(),
             MemberEventMiddleware(),

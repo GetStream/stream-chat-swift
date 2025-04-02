@@ -3,7 +3,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 # Upcoming
 
-### 🔄 Changed
+## StreamChat
+### ✅ Added
+- Add new `Filter.isNil` to make it easier to query by nil values [#3623](https://github.com/GetStream/stream-chat-swift/pull/3623)
+- Add Message Reminders [#3623](https://github.com/GetStream/stream-chat-swift/pull/3623)
+   - Add `ChatMessageController.createReminder()`
+   - Add `ChatMessageController.updateReminder()` 
+   - Add `ChatMessageController.deleteReminder()`
+   - Add `MessageReminderListController` and `MessageReminderListQuery`
 
 # [4.76.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.76.0)
 _March 31, 2025_

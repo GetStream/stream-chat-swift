@@ -257,14 +257,23 @@ struct DemoApiKeys: RawRepresentable, Equatable, Hashable {
     }
 
     static let frankfurtC1: DemoApiKeys = .init(rawValue: "8br4watad788") // UIKit default
-    static let frankfurtC2: DemoApiKeys = .init(rawValue: "pd67s34fzpgw")
+    static let frankfurtC2: DemoApiKeys = .init(rawValue: "pd67s34fzpgw") // Frankfurt C2 Staging
     static let usEastC6: DemoApiKeys = .init(rawValue: "zcgvnykxsfm8") // SwiftUI default
 
     var appName: String? {
         switch self {
         case .frankfurtC1: return "UIKit"
-        case .frankfurtC2: return nil
+        case .frankfurtC2: return "Frankfurt C2 Staging"
         case .usEastC6: return "SwiftUI"
+        default: return nil
+        }
+    }
+
+    var customBaseURL: URL? {
+        switch self {
+        case .frankfurtC1: return nil
+        case .frankfurtC2: return URL(string: "https://chat-edge-frankfurt-ce1.stream-io-api.com/")
+        case .usEastC6: return nil
         default: return nil
         }
     }
