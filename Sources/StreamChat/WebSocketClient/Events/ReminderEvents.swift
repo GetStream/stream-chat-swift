@@ -5,7 +5,7 @@
 import Foundation
 
 /// Triggered when a message reminder is created.
-public class ReminderCreatedEvent: Event {
+public class MessageReminderCreatedEvent: Event {
     /// The message ID associated with the reminder.
     public let messageId: MessageId
     
@@ -44,7 +44,7 @@ class ReminderCreatedEventDTO: EventDTO {
             let reminderModel = try? reminderDTO.asModel()
         else { return nil }
 
-        return ReminderCreatedEvent(
+        return MessageReminderCreatedEvent(
             messageId: messageId,
             reminder: reminderModel,
             createdAt: createdAt
@@ -53,7 +53,7 @@ class ReminderCreatedEventDTO: EventDTO {
 }
 
 /// Triggered when a message reminder is updated.
-public class ReminderUpdatedEvent: Event {
+public class MessageReminderUpdatedEvent: Event {
     /// The message ID associated with the reminder.
     public let messageId: MessageId
     
@@ -92,7 +92,7 @@ class ReminderUpdatedEventDTO: EventDTO {
             let reminderModel = try? reminderDTO.asModel()
         else { return nil }
 
-        return ReminderUpdatedEvent(
+        return MessageReminderUpdatedEvent(
             messageId: messageId,
             reminder: reminderModel,
             createdAt: createdAt
@@ -101,7 +101,7 @@ class ReminderUpdatedEventDTO: EventDTO {
 }
 
 /// Triggered when a message reminder is deleted.
-public class ReminderDeletedEvent: Event {
+public class MessageReminderDeletedEvent: Event {
     /// The message ID associated with the reminder.
     public let messageId: MessageId
     
@@ -144,7 +144,7 @@ class ReminderDeletedEventDTO: EventDTO {
         // Delete the reminder from the database
         session.deleteReminder(messageId: messageId)
 
-        return ReminderDeletedEvent(
+        return MessageReminderDeletedEvent(
             messageId: messageId,
             reminder: reminderModel,
             createdAt: createdAt
@@ -153,7 +153,7 @@ class ReminderDeletedEventDTO: EventDTO {
 }
 
 /// Triggered when a reminder is due and a notification should be shown.
-public class ReminderDueEvent: Event {
+public class MessageReminderDueEvent: Event {
     /// The message ID associated with the reminder.
     public let messageId: MessageId
     
@@ -192,7 +192,7 @@ class ReminderDueNotificationEventDTO: EventDTO {
             let reminderModel = try? reminderDTO.asModel()
         else { return nil }
 
-        return ReminderDueEvent(
+        return MessageReminderDueEvent(
             messageId: messageId,
             reminder: reminderModel,
             createdAt: createdAt

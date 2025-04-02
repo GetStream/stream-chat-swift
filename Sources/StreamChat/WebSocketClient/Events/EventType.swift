@@ -166,16 +166,16 @@ public extension EventType {
     // MARK: - Reminders
     
     /// When a reminder was created.
-    static let reminderCreated: Self = "reminder.created"
+    static let messageReminderCreated: Self = "reminder.created"
     
     /// When a reminder was updated.
-    static let reminderUpdated: Self = "reminder.updated"
+    static let messageReminderUpdated: Self = "reminder.updated"
     
     /// When a reminder was deleted.
-    static let reminderDeleted: Self = "reminder.deleted"
+    static let messageReminderDeleted: Self = "reminder.deleted"
     
     /// When a reminder is due.
-    static let notificationReminderDue: Self = "notification.reminder_due"
+    static let messageReminderDue: Self = "notification.reminder_due"
 }
 
 extension EventType {
@@ -246,10 +246,10 @@ extension EventType {
         case .aiTypingIndicatorStop: return try AIIndicatorStopEventDTO(from: response)
         case .draftUpdated: return try DraftUpdatedEventDTO(from: response)
         case .draftDeleted: return try DraftDeletedEventDTO(from: response)
-        case .reminderCreated: return try ReminderCreatedEventDTO(from: response)
-        case .reminderUpdated: return try ReminderUpdatedEventDTO(from: response)
-        case .reminderDeleted: return try ReminderDeletedEventDTO(from: response)
-        case .notificationReminderDue: return try ReminderDueNotificationEventDTO(from: response)
+        case .messageReminderCreated: return try ReminderCreatedEventDTO(from: response)
+        case .messageReminderUpdated: return try ReminderUpdatedEventDTO(from: response)
+        case .messageReminderDeleted: return try ReminderDeletedEventDTO(from: response)
+        case .messageReminderDue: return try ReminderDueNotificationEventDTO(from: response)
         default:
             if response.cid == nil {
                 throw ClientError.UnknownUserEvent(response.eventType)

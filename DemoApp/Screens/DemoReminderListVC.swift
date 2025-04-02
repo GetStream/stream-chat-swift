@@ -478,7 +478,7 @@ extension DemoReminderListVC: MessageReminderListControllerDelegate, EventsContr
     }
 
     func eventsController(_ controller: EventsController, didReceiveEvent event: any Event) {
-        if event is ReminderDueEvent {
+        if event is MessageReminderDueEvent {
             updateReminderListsWithNewNowDate()
         }
     }

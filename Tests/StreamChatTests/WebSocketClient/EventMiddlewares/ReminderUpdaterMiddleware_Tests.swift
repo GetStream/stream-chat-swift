@@ -35,7 +35,7 @@ final class ReminderUpdaterMiddleware_Tests: XCTestCase {
         )
         
         let eventPayload = EventPayload(
-            eventType: .reminderCreated,
+            eventType: .messageReminderCreated,
             createdAt: Date(),
             messageId: messageId,
             reminder: reminderPayload
@@ -102,7 +102,7 @@ final class ReminderUpdaterMiddleware_Tests: XCTestCase {
         )
         
         let eventPayload = EventPayload(
-            eventType: .reminderUpdated,
+            eventType: .messageReminderUpdated,
             createdAt: Date(),
             messageId: messageId,
             reminder: updatedReminderPayload
@@ -148,7 +148,7 @@ final class ReminderUpdaterMiddleware_Tests: XCTestCase {
         
         // Create due notification payload (same as the original in this case)
         let eventPayload = EventPayload(
-            eventType: .notificationReminderDue,
+            eventType: .messageReminderDue,
             createdAt: Date(),
             messageId: messageId,
             reminder: initialReminderPayload
@@ -195,7 +195,7 @@ final class ReminderUpdaterMiddleware_Tests: XCTestCase {
 
         // Create delete event payload
         let eventPayload = EventPayload(
-            eventType: .reminderDeleted,
+            eventType: .messageReminderDeleted,
             createdAt: Date(),
             messageId: messageId,
             reminder: reminderPayload

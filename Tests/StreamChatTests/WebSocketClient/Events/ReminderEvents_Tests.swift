@@ -46,7 +46,7 @@ final class ReminderEvents_Tests: XCTestCase {
         _ = try session.saveChannel(payload: .dummy(cid: channelId), query: nil, cache: nil)
         _ = try session.saveMessage(payload: .dummy(messageId: messageId, authorUserId: "test-user"), for: channelId, cache: nil)
         
-        let domainEvent = try XCTUnwrap(event?.toDomainEvent(session: session) as? ReminderCreatedEvent)
+        let domainEvent = try XCTUnwrap(event?.toDomainEvent(session: session) as? MessageReminderCreatedEvent)
         XCTAssertEqual(domainEvent.messageId, "f7af18f2-0a46-431d-8901-19c105de7f0a")
         XCTAssertEqual(domainEvent.reminder.id, "f7af18f2-0a46-431d-8901-19c105de7f0a")
         XCTAssertEqual(domainEvent.reminder.channel.cid, channelId)
@@ -83,7 +83,7 @@ final class ReminderEvents_Tests: XCTestCase {
         _ = try session.saveChannel(payload: .dummy(cid: cid), query: nil, cache: nil)
         _ = try session.saveMessage(payload: .dummy(messageId: messageId, authorUserId: "test-user"), for: cid, cache: nil)
         
-        let domainEvent = try XCTUnwrap(event?.toDomainEvent(session: session) as? ReminderUpdatedEvent)
+        let domainEvent = try XCTUnwrap(event?.toDomainEvent(session: session) as? MessageReminderUpdatedEvent)
         XCTAssertEqual(domainEvent.messageId, messageId)
         XCTAssertEqual(domainEvent.reminder.id, messageId)
         XCTAssertEqual(domainEvent.reminder.channel.cid, cid)
@@ -121,7 +121,7 @@ final class ReminderEvents_Tests: XCTestCase {
         _ = try session.saveChannel(payload: .dummy(cid: cid), query: nil, cache: nil)
         _ = try session.saveMessage(payload: .dummy(messageId: messageId, authorUserId: "test-user"), for: cid, cache: nil)
         
-        let domainEvent = try XCTUnwrap(event?.toDomainEvent(session: session) as? ReminderDeletedEvent)
+        let domainEvent = try XCTUnwrap(event?.toDomainEvent(session: session) as? MessageReminderDeletedEvent)
         XCTAssertEqual(domainEvent.messageId, messageId)
         XCTAssertEqual(domainEvent.reminder.id, messageId)
         XCTAssertEqual(domainEvent.reminder.channel.cid, cid)
@@ -159,7 +159,7 @@ final class ReminderEvents_Tests: XCTestCase {
         _ = try session.saveChannel(payload: .dummy(cid: cid), query: nil, cache: nil)
         _ = try session.saveMessage(payload: .dummy(messageId: messageId, authorUserId: "test-user"), for: cid, cache: nil)
         
-        let domainEvent = try XCTUnwrap(event?.toDomainEvent(session: session) as? ReminderDueEvent)
+        let domainEvent = try XCTUnwrap(event?.toDomainEvent(session: session) as? MessageReminderDueEvent)
         XCTAssertEqual(domainEvent.messageId, messageId)
         XCTAssertEqual(domainEvent.reminder.id, messageId)
         XCTAssertEqual(domainEvent.reminder.channel.cid, cid)
