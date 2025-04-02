@@ -38,19 +38,16 @@ class RemindersRepository {
         apiClient.request(endpoint: .queryReminders(query: query)) { [weak self] result in
             switch result {
             case .success(let response):
-                var reminders: [MessageReminder] = []
-                self?.database.write({ session in
-                    reminders = try response.reminders.compactMap { payload in
-                        let reminderDTO = try session.saveReminder(payload: payload, cache: nil)
-                        return try reminderDTO.asModel()
-                    }
-                }, completion: { error in
-                    if let error {
-                        completion(.failure(error))
-                        return
-                    }
-                    completion(.success(ReminderListResponse(reminders: reminders, next: response.next)))
-                })
+                self?.database.write(
+                    converting: { session in
+                        let reminders = try response.reminders.compactMap { payload in
+                            let reminderDTO = try session.saveReminder(payload: payload, cache: nil)
+                            return try reminderDTO.asModel()
+                        }
+                        return ReminderListResponse(reminders: reminders, next: response.next)
+                    },
+                    completion: completion
+                )
             case .failure(let error):
                 completion(.failure(error))
             }
@@ -94,23 +91,15 @@ class RemindersRepository {
             }
         } completion: { _ in
             // Make the API call to create the reminder
-            self.apiClient.request(endpoint: endpoint) { result in
+            self.apiClient.request(endpoint: endpoint) { [weak self] result in
                 switch result {
                 case .success(let payload):
-                    var reminder: MessageReminder!
-                    self.database.write({ session in
-                        let messageReminder = payload.reminder
-                        reminder = try session.saveReminder(payload: messageReminder, cache: nil).asModel()
-                    }, completion: { error in
-                        if let error {
-                            completion(.failure(error))
-                        } else {
-                            completion(.success(reminder))
-                        }
-                    })
+                    self?.database.write(converting: {
+                        try $0.saveReminder(payload: payload.reminder, cache: nil).asModel()
+                    }, completion: completion)
                 case .failure(let error):
                     // Rollback the optimistic update if the API call fails
-                    self.database.write({ session in
+                    self?.database.write({ session in
                         session.deleteReminder(messageId: messageId)
                     }, completion: { _ in
                         completion(.failure(error))
@@ -149,23 +138,14 @@ class RemindersRepository {
             originalRemindAt = messageDTO.reminder?.remindAt?.bridgeDate
 
             messageDTO.reminder?.remindAt = remindAt?.bridgeDate
-        } completion: { [weak self] _ in
+        } completion: { _ in
             // Make the API call to update the reminder
-            self?.apiClient.request(endpoint: endpoint) { result in
+            self.apiClient.request(endpoint: endpoint) { [weak self] result in
                 switch result {
                 case .success(let payload):
-                    var reminder: MessageReminder!
-                    self?.database.write({ session in
-                        let messageReminder = payload.reminder
-                        reminder = try session.saveReminder(payload: messageReminder, cache: nil).asModel()
-                    }, completion: { error in
-                        if let error {
-                            completion(.failure(error))
-                        } else {
-                            completion(.success(reminder))
-                        }
-                    })
-
+                    self?.database.write(converting: {
+                        try $0.saveReminder(payload: payload.reminder, cache: nil).asModel()
+                    }, completion: completion)
                 case .failure(let error):
                     self?.database.write({ session in
                         // Restore original value
@@ -219,9 +199,9 @@ class RemindersRepository {
             
             // Delete optimistically
             session.deleteReminder(messageId: messageId)
-        } completion: { [weak self] _ in
+        } completion: { _ in
             // Make the API call to delete the reminder
-            self?.apiClient.request(endpoint: endpoint) { result in
+            self.apiClient.request(endpoint: endpoint) { [weak self] result in
                 switch result {
                 case .success:
                     completion(nil)
