@@ -22,6 +22,8 @@ class DemoReminderListVC: UIViewController, ThemeProvider {
     private lazy var laterRemindersController = FilterOption.later.makeController(client: currentUserController.client)
     private lazy var overdueRemindersController = FilterOption.overdue.makeController(client: currentUserController.client)
 
+    private lazy var eventsController = currentUserController.client.eventsController()
+
     // Timer for refreshing due dates on cells
     private var refreshTimer: Timer?
     
@@ -155,7 +157,9 @@ class DemoReminderListVC: UIViewController, ThemeProvider {
         super.viewDidLoad()
 
         title = "Reminders"
-        
+
+        eventsController.delegate = self
+
         userAvatarView.controller = currentUserController
         userAvatarView.addTarget(self, action: #selector(didTapOnCurrentUserAvatar), for: .touchUpInside)
         userAvatarView.translatesAutoresizingMaskIntoConstraints = false
@@ -354,16 +358,14 @@ class DemoReminderListVC: UIViewController, ThemeProvider {
         case .later:
             activeController = laterRemindersController
         }
-        
+        activeController.delegate = self
+
         // Only load reminders if this controller hasn't loaded any yet
         if activeController.reminders.isEmpty && !activeController.hasLoadedAllReminders {
             loadReminders()
         } else {
             // Otherwise just update the UI with existing data
-            reminders = Array(activeController.reminders)
-            tableView.reloadData()
-            updateEmptyStateMessage()
-            emptyStateView.isHidden = !reminders.isEmpty
+            updateRemindersData()
         }
     }
 
@@ -454,22 +456,51 @@ class DemoReminderListVC: UIViewController, ThemeProvider {
         alert.addAction(UIAlertAction(title: "OK", style: .default))
         present(alert, animated: true)
     }
+
+    private func updateRemindersData() {
+        reminders = Array(activeController.reminders)
+        tableView.reloadData()
+        updateEmptyStateMessage()
+        emptyStateView.isHidden = !reminders.isEmpty
+    }
 }
 
 // MARK: - MessageReminderListControllerDelegate
 
-extension DemoReminderListVC: MessageReminderListControllerDelegate {
+extension DemoReminderListVC: MessageReminderListControllerDelegate, EventsControllerDelegate {
     func controller(
         _ controller: MessageReminderListController,
         didChangeReminders changes: [ListChange<MessageReminder>]
     ) {
         // Only update UI if this is the active controller
         guard controller === activeController else { return }
-        
-        reminders = Array(controller.reminders)
-        tableView.reloadData()
-        updateEmptyStateMessage()
-        emptyStateView.isHidden = !reminders.isEmpty
+        updateRemindersData()
+    }
+
+    func eventsController(_ controller: EventsController, didReceiveEvent event: any Event) {
+        if event is ReminderDueEvent {
+            updateReminderListsWithNewNowDate()
+        }
+    }
+
+    /// Update the reminder lists with the new current date.
+    /// When the controllers are created, they use the current date to query the reminders.
+    /// When a reminder is due, we need to re-create the queries with the new current date.
+    /// Otherwise, the reminders will not be updated since the current date will be outdated.
+    private func updateReminderListsWithNewNowDate() {
+        upcomingRemindersController = FilterOption.upcoming.makeController(client: currentUserController.client)
+        overdueRemindersController = FilterOption.overdue.makeController(client: currentUserController.client)
+        scheduledRemindersController = FilterOption.scheduled.makeController(client: currentUserController.client)
+        if selectedFilter == .upcoming {
+            activeController = upcomingRemindersController
+        } else if selectedFilter == .overdue {
+            activeController = overdueRemindersController
+        } else if selectedFilter == .scheduled {
+            activeController = scheduledRemindersController
+        } else {
+            return
+        }
+        updateRemindersData()
     }
 }
 
