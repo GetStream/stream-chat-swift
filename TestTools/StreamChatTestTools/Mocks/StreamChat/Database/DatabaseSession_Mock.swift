@@ -590,6 +590,10 @@ class DatabaseSession_Mock: DatabaseSession {
         try underlyingSession.pollVotes(for: userId, pollId: pollId)
     }
     
+    func deletePoll(pollId: String) throws -> PollDTO? {
+        try underlyingSession.deletePoll(pollId: pollId)
+    }
+    
     func removePollVote(with id: String, pollId: String) throws -> PollVoteDTO? {
         try underlyingSession.removePollVote(with: id, pollId: pollId)
     }
