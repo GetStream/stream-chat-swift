@@ -13,7 +13,6 @@ _March 31, 2025_
 ### StreamChatUI
 ### 🐞 Fixed
 - Fix runtime exception if fonts in `Appearance.default.fonts` are set to scaled fonts [#3633](https://github.com/GetStream/stream-chat-swift/pull/3633)
->>>>>>> 1105e8adc5164aace22ba9387ec18dceac90cfe7
 
 ### StreamChatUI
 ### 🐞 Fixed
