@@ -1458,9 +1458,12 @@ open class ComposerVC: _ViewController,
 
         var localMetadata = AnyAttachmentLocalMetadata()
         if let image = info[.originalImage] as? UIImage {
+            // At the moment the backend is not accepting floating numbers.
+            // So we round down the width and height. We do not round up
+            // to make sure there is no empty space in the image.
             localMetadata.originalResolution = (
-                width: Double(image.size.width),
-                height: Double(image.size.height)
+                width: Double(image.size.width).rounded(.down),
+                height: Double(image.size.height).rounded(.down)
             )
         }
 
