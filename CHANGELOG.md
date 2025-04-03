@@ -6,6 +6,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## StreamChat
 ### ✅ Added
 - Add `ChatChannelController.deletePoll()` for deleting polls [#3632](https://github.com/GetStream/stream-chat-swift/pull/3632)
+- Add `ChatChannel.canSendPoll` capability [#3635](https://github.com/GetStream/stream-chat-swift/pull/3635)
+- Add `ChatChannel.canCastPollVote` capability [#3635](https://github.com/GetStream/stream-chat-swift/pull/3635)
+
+## StreamChatUI
+### 🐞 Fixed
+- Fix showing Create Poll action in the composer if the user does not have the capability [#3635](https://github.com/GetStream/stream-chat-swift/pull/3635)
 
 # [4.76.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.76.0)
 _March 31, 2025_
