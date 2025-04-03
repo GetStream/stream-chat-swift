@@ -876,7 +876,7 @@ open class ComposerVC: _ViewController,
     /// Returns actions for attachments picker.
     open var attachmentsPickerActions: [UIAlertAction] {
         let isCameraAvailable = UIImagePickerController.isSourceTypeAvailable(.camera)
-        let isPollCreationEnabled = channelConfig?.pollsEnabled == true
+        let isPollCreationEnabled = channelConfig?.pollsEnabled == true && channelController?.channel?.canSendPoll == true
 
         let showFilePickerAction = UIAlertAction(
             title: L10n.Composer.Picker.file,
