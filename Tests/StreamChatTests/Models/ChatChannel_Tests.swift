@@ -285,6 +285,22 @@ final class ChatChannel_Tests: XCTestCase {
         XCTAssertEqual(channelWithoutCapability.isSlowMode, false)
     }
 
+    func test_canSendPoll() throws {
+        let channel = setupChannel(withCapabilities: [.sendPoll])
+        XCTAssertEqual(channel.canSendPoll, true)
+
+        let channelWithoutCapability = setupChannel(withCapabilities: [])
+        XCTAssertEqual(channelWithoutCapability.canSendPoll, false)
+    }
+
+    func test_canCastPollVote() throws {
+        let channel = setupChannel(withCapabilities: [.castPollVote])
+        XCTAssertEqual(channel.canCastPollVote, true)
+
+        let channelWithoutCapability = setupChannel(withCapabilities: [])
+        XCTAssertEqual(channelWithoutCapability.canCastPollVote, false)
+    }
+
     func test_lastReadMessageId_readsDontContainUser() {
         let userId: UserId = "current"
         let channel = ChatChannel.mock(cid: .unique, reads: [
