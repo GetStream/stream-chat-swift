@@ -12,6 +12,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## StreamChatUI
 ### 🐞 Fixed
 - Fix showing Create Poll action in the composer if the user does not have the capability [#3635](https://github.com/GetStream/stream-chat-swift/pull/3635)
+- Fix error when send images with floating point numbers in the original size [#3636](https://github.com/GetStream/stream-chat-swift/pull/3636)
 
 # [4.76.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.76.0)
 _March 31, 2025_
