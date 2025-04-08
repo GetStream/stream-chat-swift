@@ -40,6 +40,7 @@ final class CurrentUserUpdater_Mock: CurrentUserUpdater {
         imageURL: URL?,
         privacySettings: UserPrivacySettings?,
         role: UserRole?,
+        teamsRole: [String: String]?,
         userExtraData: [String: RawJSON]?,
         unset: Set<String>,
         completion: ((Error?) -> Void)? = nil

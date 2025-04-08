@@ -469,6 +469,7 @@
         <attribute name="lastActivityAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="name" optional="YES" attributeType="String"/>
         <attribute name="teams" attributeType="Transformable" valueTransformerName="NSSecureUnarchiveFromDataTransformer"/>
+        <attribute name="teamsRole" optional="YES" attributeType="Transformable" valueTransformerName="NSSecureUnarchiveFromDataTransformer"/>
         <attribute name="userCreatedAt" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="userDeactivatedAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="userRoleRaw" attributeType="String"/>

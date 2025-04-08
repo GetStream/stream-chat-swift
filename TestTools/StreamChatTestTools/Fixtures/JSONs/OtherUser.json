@@ -9,5 +9,6 @@
   "last_active" : "2020-06-09T18:33:04.075114Z",
   "teams": ["RED", "GREEN", "BLUE"],
   "language": "pt",
-  "name" : "Bitter cloud"
+  "name" : "Bitter cloud",
+  "teams_role" : { "ios" : "guest" }
 }
