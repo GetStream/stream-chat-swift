@@ -8,6 +8,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Add `ChatChannelController.deletePoll()` for deleting polls [#3632](https://github.com/GetStream/stream-chat-swift/pull/3632)
 - Add `ChatChannel.canSendPoll` capability [#3635](https://github.com/GetStream/stream-chat-swift/pull/3635)
 - Add `ChatChannel.canCastPollVote` capability [#3635](https://github.com/GetStream/stream-chat-swift/pull/3635)
+- Add `removeDevice: Bool` parameter to `ChatClient.logout` [#3640](https://github.com/GetStream/stream-chat-swift/pull/3640)
+### 🔄 Changed
+- The `ChatClient.logout()` function now automatically removes the user's current device if it has not been removed already [#3640](https://github.com/GetStream/stream-chat-swift/pull/3640)
 
 ## StreamChatUI
 ### 🐞 Fixed
