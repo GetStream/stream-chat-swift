@@ -792,7 +792,7 @@ final class ChatClient_Tests: XCTestCase {
         connectionRepository.disconnectResult = .success(())
 
         let expectation = self.expectation(description: "logout completes")
-        client.logout {
+        client.logout(removeDevice: false) {
             expectation.fulfill()
         }
         waitForExpectations(timeout: defaultTimeout)
