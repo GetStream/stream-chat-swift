@@ -28,6 +28,7 @@ enum UserPayloadsCodingKeys: String, CodingKey, CaseIterable {
     case language
     case privacySettings = "privacy_settings"
     case blockedUserIds = "blocked_user_ids"
+    case teamsRole = "teams_role"
 }
 
 // MARK: - GET users
@@ -38,6 +39,7 @@ class UserPayload: Decodable {
     let name: String?
     let imageURL: URL?
     let role: UserRole
+    let teamsRole: [String: UserRole]?
     let createdAt: Date
     let updatedAt: Date
     let deactivatedAt: Date?
@@ -54,6 +56,7 @@ class UserPayload: Decodable {
         name: String?,
         imageURL: URL?,
         role: UserRole,
+        teamsRole: [String: UserRole]?,
         createdAt: Date,
         updatedAt: Date,
         deactivatedAt: Date?,
@@ -69,6 +72,7 @@ class UserPayload: Decodable {
         self.name = name
         self.imageURL = imageURL
         self.role = role
+        self.teamsRole = teamsRole
         self.createdAt = createdAt
         self.updatedAt = updatedAt
         self.deactivatedAt = deactivatedAt
@@ -88,6 +92,7 @@ class UserPayload: Decodable {
         name = try container.decodeIfPresent(String.self, forKey: .name)
         imageURL = try container.decodeIfPresent(String.self, forKey: .imageURL).flatMap(URL.init(string:))
         role = try container.decode(UserRole.self, forKey: .role)
+        teamsRole = try container.decodeIfPresent([String: UserRole].self, forKey: .teamsRole)
         createdAt = try container.decode(Date.self, forKey: .createdAt)
         updatedAt = try container.decode(Date.self, forKey: .updatedAt)
         deactivatedAt = try container.decodeIfPresent(Date.self, forKey: .deactivatedAt)
@@ -168,12 +173,14 @@ struct UserUpdateRequestBody: Encodable {
     let privacySettings: UserPrivacySettingsPayload?
     let role: UserRole?
     let extraData: [String: RawJSON]?
+    let teamsRole: [String: String]?
 
     init(
         name: String?,
         imageURL: URL?,
         privacySettings: UserPrivacySettingsPayload?,
         role: UserRole?,
+        teamsRole: [String: String]?,
         extraData: [String: RawJSON]?
     ) {
         self.name = name
@@ -181,6 +188,7 @@ struct UserUpdateRequestBody: Encodable {
         self.privacySettings = privacySettings
         self.role = role
         self.extraData = extraData
+        self.teamsRole = teamsRole
     }
 
     func encode(to encoder: Encoder) throws {
@@ -189,6 +197,7 @@ struct UserUpdateRequestBody: Encodable {
         try container.encodeIfPresent(imageURL, forKey: .imageURL)
         try container.encodeIfPresent(privacySettings, forKey: .privacySettings)
         try container.encodeIfPresent(role, forKey: .role)
+        try container.encodeIfPresent(teamsRole, forKey: .teamsRole)
         try extraData?.encode(to: encoder)
     }
 }
