@@ -309,6 +309,89 @@ final class ChatClient_Tests: XCTestCase {
         XCTAssertTrue(testEnv.databaseContainer!.removeAllData_called)
     }
 
+    func test_logout_whenCurrentDevice_removesDevice() throws {
+        // GIVEN
+        let client = ChatClient(
+            config: inMemoryStorageConfig,
+            environment: testEnv.environment
+        )
+        let connectionRepository = try XCTUnwrap(client.connectionRepository as? ConnectionRepository_Mock)
+        connectionRepository.disconnectResult = .success(())
+
+        // WHEN
+        let userId = UserId.unique
+        testEnv.authenticationRepository?.mockedCurrentUserId = userId
+        try testEnv.databaseContainer?.writeSynchronously {
+            try $0.saveCurrentUser(payload: .dummy(userId: userId, role: .admin))
+            try $0.saveCurrentDevice(.unique)
+        }
+        let expectation = self.expectation(description: "logout completes")
+        client.logout {
+            expectation.fulfill()
+        }
+        waitForExpectations(timeout: defaultTimeout)
+
+        // THEN
+        XCTAssertCall(ConnectionRepository_Mock.Signature.disconnect, on: testEnv.connectionRepository!)
+        XCTAssertEqual(testEnv.apiClient?.request_endpoint?.path, .devices)
+        XCTAssertEqual(testEnv.apiClient?.request_endpoint?.method, .delete)
+    }
+
+    func test_logout_whenNoCurrentDevice_doesNotRemoveDevice() throws {
+        // GIVEN
+        let client = ChatClient(
+            config: inMemoryStorageConfig,
+            environment: testEnv.environment
+        )
+        let connectionRepository = try XCTUnwrap(client.connectionRepository as? ConnectionRepository_Mock)
+        connectionRepository.disconnectResult = .success(())
+
+        // WHEN
+        let userId = UserId.unique
+        testEnv.authenticationRepository?.mockedCurrentUserId = userId
+        try testEnv.databaseContainer?.writeSynchronously {
+            try $0.saveCurrentUser(payload: .dummy(userId: userId, role: .admin))
+        }
+        let expectation = self.expectation(description: "logout completes")
+        client.logout {
+            expectation.fulfill()
+        }
+        waitForExpectations(timeout: defaultTimeout)
+
+        // THEN
+        XCTAssertCall(ConnectionRepository_Mock.Signature.disconnect, on: testEnv.connectionRepository!)
+        XCTAssertNil(testEnv.apiClient?.request_endpoint?.path)
+        XCTAssertNil(testEnv.apiClient?.request_endpoint?.method)
+    }
+
+    func test_logout_whenRemoveDeviceIsFalse_doesNotRemoveDevice() throws {
+        // GIVEN
+        let client = ChatClient(
+            config: inMemoryStorageConfig,
+            environment: testEnv.environment
+        )
+        let connectionRepository = try XCTUnwrap(client.connectionRepository as? ConnectionRepository_Mock)
+        connectionRepository.disconnectResult = .success(())
+
+        // WHEN
+        let userId = UserId.unique
+        testEnv.authenticationRepository?.mockedCurrentUserId = userId
+        try testEnv.databaseContainer?.writeSynchronously {
+            try $0.saveCurrentUser(payload: .dummy(userId: userId, role: .admin))
+            try $0.saveCurrentDevice(.unique)
+        }
+        let expectation = self.expectation(description: "logout completes")
+        client.logout(removeDevice: false) {
+            expectation.fulfill()
+        }
+        waitForExpectations(timeout: defaultTimeout)
+
+        // THEN
+        XCTAssertCall(ConnectionRepository_Mock.Signature.disconnect, on: testEnv.connectionRepository!)
+        XCTAssertNil(testEnv.apiClient?.request_endpoint?.path)
+        XCTAssertNil(testEnv.apiClient?.request_endpoint?.method)
+    }
+
     func test_logout_clearsActiveControllers() throws {
         // GIVEN
         let client = ChatClient(
@@ -709,7 +792,7 @@ final class ChatClient_Tests: XCTestCase {
         connectionRepository.disconnectResult = .success(())
 
         let expectation = self.expectation(description: "logout completes")
-        client.logout {
+        client.logout(removeDevice: false) {
             expectation.fulfill()
         }
         waitForExpectations(timeout: defaultTimeout)
