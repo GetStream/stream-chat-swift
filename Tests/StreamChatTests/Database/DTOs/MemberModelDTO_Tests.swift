@@ -29,6 +29,7 @@ final class MemberModelDTO_Tests: XCTestCase {
             name: .unique,
             imageURL: .unique(),
             role: .admin,
+            teamsRole: ["ios": "guest"],
             createdAt: .unique,
             updatedAt: .unique,
             deactivatedAt: nil,
@@ -84,6 +85,7 @@ final class MemberModelDTO_Tests: XCTestCase {
             Assert.willBeEqual(Set(payload.user!.teams), loadedMember?.teams)
             Assert.willBeEqual(payload.user!.language!, loadedMember?.language?.languageCode)
             Assert.willBeEqual(true, loadedMember?.memberExtraData["is_premium"]?.boolValue)
+            Assert.willBeEqual(payload.user!.teamsRole, loadedMember?.teamsRole)
         }
     }
 
@@ -96,6 +98,7 @@ final class MemberModelDTO_Tests: XCTestCase {
             name: .unique,
             imageURL: .unique(),
             role: .admin,
+            teamsRole: ["ios": "guest"],
             createdAt: .unique,
             updatedAt: .unique,
             deactivatedAt: nil,

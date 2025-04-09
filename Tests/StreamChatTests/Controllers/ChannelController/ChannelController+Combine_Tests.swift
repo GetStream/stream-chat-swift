@@ -135,6 +135,7 @@ final class ChannelController_Combine_Tests: iOS13TestCase {
             isBanned: false,
             isFlaggedByCurrentUser: false,
             userRole: .user,
+            teamsRole: nil,
             createdAt: .unique,
             updatedAt: .unique,
             deactivatedAt: nil,

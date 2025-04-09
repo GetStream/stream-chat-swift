@@ -192,6 +192,7 @@ public extension CurrentChatUserController {
     ///   - imageURL: Optionally provide a new image to be updated.
     ///   - privacySettings: The privacy settings of the user. Example: If the user does not want to expose typing events or read events.
     ///   - role: The role for the user.
+    ///   - teamsRole: The role for the user in a specific team. Example: `["teamId": "role"]`.
     ///   - userExtraData: Optionally provide new user extra data to be updated.
     ///   - unset: Existing values for specified properties are removed. For example, `image` or `name`.
     ///   - completion: Called when user is successfuly updated, or with error.
@@ -200,6 +201,7 @@ public extension CurrentChatUserController {
         imageURL: URL? = nil,
         privacySettings: UserPrivacySettings? = nil,
         role: UserRole? = nil,
+        teamsRole: [String: String]? = nil,
         userExtraData: [String: RawJSON] = [:],
         unsetProperties: Set<String> = [],
         completion: ((Error?) -> Void)? = nil
@@ -215,6 +217,7 @@ public extension CurrentChatUserController {
             imageURL: imageURL,
             privacySettings: privacySettings,
             role: role,
+            teamsRole: teamsRole,
             userExtraData: userExtraData
         ) { error in
             self.callback {

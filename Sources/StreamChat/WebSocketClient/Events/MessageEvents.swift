@@ -309,6 +309,7 @@ private extension UserPayload {
             isBanned: isBanned,
             isFlaggedByCurrentUser: false,
             userRole: role,
+            teamsRole: teamsRole,
             createdAt: createdAt,
             updatedAt: updatedAt,
             deactivatedAt: deactivatedAt,

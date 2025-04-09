@@ -67,6 +67,7 @@ final class CurrentUserUpdater_Tests: XCTestCase {
                 readReceipts: .init(enabled: true)
             ),
             role: expectedRole,
+            teamsRole: ["ios": "guest"],
             userExtraData: nil,
             completion: { error in
                 XCTAssertNil(error)
@@ -80,6 +81,7 @@ final class CurrentUserUpdater_Tests: XCTestCase {
                 name: expectedName,
                 imageUrl: expectedImageUrl,
                 role: expectedRole,
+                teamsRole: ["ios": "guest"],
                 privacySettings: .init(
                     typingIndicators: .init(enabled: true),
                     readReceipts: .init(enabled: true)
@@ -99,6 +101,7 @@ final class CurrentUserUpdater_Tests: XCTestCase {
                     readReceipts: .init(enabled: true)
                 ),
                 role: expectedRole,
+                teamsRole: ["ios": "guest"],
                 extraData: [:]
             ),
             unset: []
@@ -132,6 +135,7 @@ final class CurrentUserUpdater_Tests: XCTestCase {
                 imageURL: nil,
                 privacySettings: nil,
                 role: nil,
+                teamsRole: nil,
                 extraData: nil
             ),
             unset: ["image"]

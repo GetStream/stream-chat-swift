@@ -59,6 +59,10 @@ class MembersViewController: UITableViewController, ChatChannelMemberListControl
             Nuke.loadImage(with: imageURL, into: cell.avatarView)
         }
         cell.nameLabel.text = member.name ?? member.id
+        if let roles = member.teamsRole {
+            cell.detailsLabel.text = roles.map { "\($0.key): \($0.value.rawValue)" }.joined(separator: ", ")
+            cell.detailsLabel.isHidden = false
+        }
         cell.removeButton.isHidden = true
         cell.premiumImageView.isHidden = member.isPremium == false || !isPremiumMemberFeatureEnabled
         return cell
