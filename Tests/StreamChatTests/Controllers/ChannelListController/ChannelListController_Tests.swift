@@ -1703,6 +1703,23 @@ final class ChannelListController_Tests: XCTestCase {
         )
     }
 
+    func test_filterPredicate_id_returnsExpectedResults() throws {
+        let cid1 = ChannelId(type: .commerce, id: "123")
+        let cid2 = ChannelId(type: .livestream, id: "123")
+
+        try assertFilterPredicate(
+            .equal(.id, to: "123"),
+            channelsInDB: [
+                .dummy(channel: .dummy(cid: cid1)),
+                .dummy(channel: .dummy()),
+                .dummy(channel: .dummy()),
+                .dummy(channel: .dummy()),
+                .dummy(channel: .dummy(cid: cid2))
+            ],
+            expectedResult: [cid1, cid2]
+        )
+    }
+
     // MARK: - Private Helpers
 
     private func assertFilterPredicate(
