@@ -291,21 +291,16 @@ open class ChatChannelListItemView: _View, ThemeProvider, SwiftUIRepresentable {
             topContainer, bottomContainer
         ])
 
-        let avatarView: UIView
-
-        if content?.searchedMessage != nil {
-            avatarView = userAvatarView
-        } else {
-            avatarView = self.avatarView
-        }
-
         NSLayoutConstraint.activate([
             avatarView.heightAnchor.pin(equalToConstant: 48),
-            avatarView.widthAnchor.pin(equalTo: avatarView.heightAnchor)
+            avatarView.widthAnchor.pin(equalTo: avatarView.heightAnchor),
+            userAvatarView.heightAnchor.pin(equalToConstant: 48),
+            userAvatarView.widthAnchor.pin(equalTo: userAvatarView.heightAnchor)
         ])
 
         mainContainer.addArrangedSubviews([
             avatarView,
+            userAvatarView,
             rightContainer
         ])
 
@@ -332,8 +327,12 @@ open class ChatChannelListItemView: _View, ThemeProvider, SwiftUIRepresentable {
 
         if let searchedMessage = content?.searchedMessage {
             userAvatarView.content = searchedMessage.author
+            userAvatarView.isHidden = false
+            avatarView.isHidden = true
         } else {
             avatarView.content = (content?.channel, content?.currentUserId)
+            avatarView.isHidden = false
+            userAvatarView.isHidden = true
         }
 
         unreadCountView.content = content?.channel.unreadCount ?? .noUnread
