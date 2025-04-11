@@ -108,11 +108,7 @@ class ChannelDTO: NSManagedObject {
                 newestMessageAt = nil
             }
         }
-
-        if id == nil || id?.isEmpty == true {
-            id = cid.replacingOccurrences(of: "\(typeRawValue):", with: "")
-        }
-
+        
         // Update the date for sorting every time new message in this channel arrive.
         // This will ensure that the channel list is updated/sorted when new message arrives.
         // Note: If a channel is truncated, the server will update the lastMessageAt to a minimum value, and not remove it.
@@ -247,6 +243,7 @@ extension NSManagedObjectContext {
             dto.extraData = Data()
         }
         dto.typeRawValue = payload.typeRawValue
+        dto.id = payload.cid.id
         dto.config = payload.config.asDTO(context: self, cid: dto.cid)
         if let ownCapabilities = payload.ownCapabilities {
             dto.ownCapabilities = ownCapabilities
