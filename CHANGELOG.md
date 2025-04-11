@@ -7,6 +7,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### 🐞 Fixed
 - Fix `FilterKey.id` not returning any channels in `ChannelListQuery` [#3643](https://github.com/GetStream/stream-chat-swift/pull/3643)
 
+## StreamChatUI
+### 🐞 Fixed
+- Fix message search with empty avatars [#3644](https://github.com/GetStream/stream-chat-swift/pull/3644)
+
 # [4.77.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.77.0)
 _April 09, 2025_
 
