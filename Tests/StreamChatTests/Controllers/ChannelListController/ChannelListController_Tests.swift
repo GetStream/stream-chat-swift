@@ -1088,14 +1088,14 @@ final class ChannelListController_Tests: XCTestCase {
 
         // When all the channel ids are in DB.
         try assertFilterPredicate(
-            .in(.id, values: expectedCids.map(\.rawValue)),
+            .in(.cid, values: expectedCids),
             channelsInDB: expectedChannels + unexpectedChannels,
             expectedResult: expectedCids
         )
 
         // When not all the channel ids are in DB.
         try assertFilterPredicate(
-            .in(.id, values: expectedCids.map(\.rawValue)),
+            .in(.cid, values: expectedCids),
             channelsInDB: expectedChannels.dropLast() + unexpectedChannels,
             expectedResult: [cid1, cid2]
         )
@@ -1489,7 +1489,7 @@ final class ChannelListController_Tests: XCTestCase {
         )
     }
 
-    func test_filterPredicate_inWithArrayOfIds_returnsExpectedResults() throws {
+    func test_filterPredicate_inWithArrayOfCids_returnsExpectedResults() throws {
         let chatIds: [String] = [
             "suggestions-63986de56549624f314b75cb",
             "suggestions-6ukh3986de56549624f314b75cjkhagfdkjhab",
@@ -1500,7 +1500,7 @@ final class ChannelListController_Tests: XCTestCase {
         let channelIds = chatIds.map { ChannelId(type: .custom("daisy-dashboard"), id: $0) }
 
         try assertFilterPredicate(
-            .in(.id, values: channelIds.map(\.rawValue)),
+            .in(.cid, values: channelIds),
             channelsInDB: [
                 .dummy(channel: .dummy(cid: channelIds[0])),
                 .dummy(channel: .dummy(cid: channelIds[1])),
