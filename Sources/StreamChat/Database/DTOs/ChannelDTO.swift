@@ -7,6 +7,9 @@ import Foundation
 
 @objc(ChannelDTO)
 class ChannelDTO: NSManagedObject {
+    // The cid without the channel type.
+    @NSManaged var id: String?
+    // The channel id which includes channelType:channelId.
     @NSManaged var cid: String
     @NSManaged var name: String?
     @NSManaged var imageURL: URL?
@@ -105,7 +108,7 @@ class ChannelDTO: NSManagedObject {
                 newestMessageAt = nil
             }
         }
-
+        
         // Update the date for sorting every time new message in this channel arrive.
         // This will ensure that the channel list is updated/sorted when new message arrives.
         // Note: If a channel is truncated, the server will update the lastMessageAt to a minimum value, and not remove it.
@@ -240,6 +243,7 @@ extension NSManagedObjectContext {
             dto.extraData = Data()
         }
         dto.typeRawValue = payload.typeRawValue
+        dto.id = payload.cid.id
         dto.config = payload.config.asDTO(context: self, cid: dto.cid)
         if let ownCapabilities = payload.ownCapabilities {
             dto.ownCapabilities = ownCapabilities
