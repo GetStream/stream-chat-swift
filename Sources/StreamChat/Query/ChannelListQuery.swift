@@ -63,7 +63,10 @@ public extension FilterKey where Scope: AnyChannelListFilterScope {
     /// Supported operators: `in`, `equal`
     /// - Warning: Querying by the channel Identifier should be done using the `cid` field as much as possible to optimize API performance.
     /// As the full channel ID, `cid`s are indexed everywhere in Stream database where `id` is not.
-    static var id: FilterKey<Scope, String> { .init(rawValue: "id", keyPathString: #keyPath(ChannelDTO.cid)) }
+    static var id: FilterKey<Scope, String> { .init(
+        rawValue: "id",
+        keyPathString: #keyPath(ChannelDTO.id)
+    ) }
 
     /// A filter key for matching the `name` value.
     static var name: FilterKey<Scope, String> { .init(rawValue: "name", keyPathString: #keyPath(ChannelDTO.name)) }
