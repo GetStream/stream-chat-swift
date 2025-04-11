@@ -1711,7 +1711,7 @@ final class ChannelListController_Tests: XCTestCase {
             .equal(.id, to: "123"),
             channelsInDB: [
                 .dummy(channel: .dummy(cid: cid1)),
-                .dummy(channel: .dummy()),
+                .dummy(channel: .dummy(cid: .init(type: .commerce, id: "123123"))),
                 .dummy(channel: .dummy()),
                 .dummy(channel: .dummy()),
                 .dummy(channel: .dummy(cid: cid2))

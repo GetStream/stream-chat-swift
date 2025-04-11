@@ -65,19 +65,7 @@ public extension FilterKey where Scope: AnyChannelListFilterScope {
     /// As the full channel ID, `cid`s are indexed everywhere in Stream database where `id` is not.
     static var id: FilterKey<Scope, String> { .init(
         rawValue: "id",
-        keyPathString: #keyPath(ChannelDTO.cid),
-        predicateMapper: { op, id in
-            switch op {
-            case .equal:
-                // Our ChannelDTO does not have an `id` so when querying by equals,
-                // we need to actually perform a contains in the `cid` to ignore the channel type.
-                // Example: messaging:123 and livestream:123. Both should be returned when id is 123.
-                let key = #keyPath(ChannelDTO.cid)
-                return NSPredicate(format: "\(key) CONTAINS[cd] %@", id)
-            default:
-                return nil
-            }
-        }
+        keyPathString: #keyPath(ChannelDTO.id)
     ) }
 
     /// A filter key for matching the `name` value.

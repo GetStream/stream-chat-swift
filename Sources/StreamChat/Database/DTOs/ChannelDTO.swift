@@ -7,6 +7,9 @@ import Foundation
 
 @objc(ChannelDTO)
 class ChannelDTO: NSManagedObject {
+    // The cid without the channel type.
+    @NSManaged var id: String?
+    // The channel id which includes channelType:channelId.
     @NSManaged var cid: String
     @NSManaged var name: String?
     @NSManaged var imageURL: URL?
@@ -104,6 +107,10 @@ class ChannelDTO: NSManagedObject {
             if newestMessageAt != nil {
                 newestMessageAt = nil
             }
+        }
+
+        if id == nil || id?.isEmpty == true {
+            id = cid.replacingOccurrences(of: "\(typeRawValue):", with: "")
         }
 
         // Update the date for sorting every time new message in this channel arrive.
