@@ -1632,6 +1632,51 @@ final class ChannelListController_Tests: XCTestCase {
         )
     }
 
+    func test_filterPredicate_sortedByHasUnread_returnsExpectedResults() throws {
+        let cid1 = ChannelId.unique
+        let cid2 = ChannelId.unique
+        let cid3 = ChannelId.unique
+        let cid4 = ChannelId.unique
+        let currentUserId = UserId.unique
+        let createdAt = Date()
+
+        try assertFilterPredicate(
+            .in(.cid, values: [cid1, cid2, cid3, cid4]),
+            sort: [
+                .init(key: .hasUnread, isAscending: false),
+                .init(key: .createdAt, isAscending: false)
+            ],
+            currentUserId: currentUserId,
+            channelsInDB: [
+                .dummy(
+                    channel: .dummy(cid: cid1, createdAt: createdAt.addingTimeInterval(100)),
+                    channelReads: [
+                        .init(
+                            user: .dummy(userId: currentUserId),
+                            lastReadAt: .unique,
+                            lastReadMessageId: nil,
+                            unreadMessagesCount: 3
+                        )
+                    ]
+                ),
+                .dummy(channel: .dummy(cid: cid3, createdAt: createdAt.addingTimeInterval(200))),
+                .dummy(channel: .dummy(cid: cid4, createdAt: createdAt.addingTimeInterval(300))),
+                .dummy(
+                    channel: .dummy(cid: cid2, createdAt: createdAt),
+                    channelReads: [
+                        .init(
+                            user: .dummy(userId: currentUserId),
+                            lastReadAt: .unique,
+                            lastReadMessageId: nil,
+                            unreadMessagesCount: 20
+                        )
+                    ]
+                )
+            ],
+            expectedResult: [cid2, cid1, cid3, cid4]
+        )
+    }
+
     func test_filterPredicate_muted_returnsExpectedResults() throws {
         let cid1 = ChannelId.unique
         let userId = memberId

@@ -63,7 +63,7 @@ public struct ChannelListSortingKey: SortingKey, Equatable {
     /// **Note:** If you want to sort by number of unreads, you should use the `unreadCount` sorting key.
     public static let hasUnread = Self(
         keyPath: \.hasUnread,
-        localKey: nil,
+        localKey: #keyPath(ChannelDTO.hasUnreadSorting),
         remoteKey: "has_unread"
     )
 

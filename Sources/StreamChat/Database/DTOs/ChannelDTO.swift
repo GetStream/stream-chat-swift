@@ -65,7 +65,11 @@ class ChannelDTO: NSManagedObject {
     @NSManaged var messages: Set<MessageDTO>
     @NSManaged var pinnedMessages: Set<MessageDTO>
     @NSManaged var reads: Set<ChannelReadDTO>
+
+    /// Helper properties used for sorting channels with unread counts of the current user.
     @NSManaged var currentUserUnreadMessagesCount: Int32
+    @NSManaged var hasUnreadSorting: Int16
+
     @NSManaged var watchers: Set<UserDTO>
     @NSManaged var memberListQueries: Set<ChannelMemberListQueryDTO>
     @NSManaged var previewMessage: MessageDTO?
@@ -82,12 +86,13 @@ class ChannelDTO: NSManagedObject {
         }
 
         // Update the unreadMessagesCount for the current user.
-        // At the moment this computed property is used for `hasUnread` automatic channel list filtering.
+        // At the moment this computed property is used for `hasUnread` and `unreadCount` automatic channel list filtering.
         if let currentUserId = managedObjectContext?.currentUser?.user.id {
             let currentUserUnread = reads.first(where: { $0.user.id == currentUserId })
             let newUnreadCount = currentUserUnread?.unreadMessageCount ?? 0
             if newUnreadCount != currentUserUnreadMessagesCount {
                 currentUserUnreadMessagesCount = newUnreadCount
+                hasUnreadSorting = newUnreadCount > 0 ? 1 : 0
             }
         }
 
