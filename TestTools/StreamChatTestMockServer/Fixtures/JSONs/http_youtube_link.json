@@ -1,6 +1,6 @@
 {
   "message": {
-    "id": "1ba2f092-6dab-49e5-a500-83a1d2e477c1",
+    "id": "2c66ad88-45e6-49e2-9f92-cae4f03f1fdd",
     "text": "https://youtube.com/watch?v=xOX7MsrbaPY",
     "html": "<p><a href=\"https://youtube.com/watch?v=xOX7MsrbaPY\" rel=\"nofollow\">https://youtube.com/watch?v=xOX7MsrbaPY</a></p>\n",
     "type": "regular",
@@ -8,34 +8,32 @@
       "id": "luke_skywalker",
       "name": "Luke Skywalker",
       "image": "https://vignette.wikia.nocookie.net/starwars/images/2/20/LukeTLJ.jpg",
-      "language": "id",
+      "language": "zh",
       "role": "admin",
       "teams": [
 
       ],
       "created_at": "2024-04-04T09:26:11.805899Z",
-      "updated_at": "2025-03-04T17:42:53.930104Z",
+      "updated_at": "2025-04-09T08:51:24.319893Z",
       "banned": false,
       "online": true,
-      "last_active": "2025-03-15T00:15:52.376423417Z",
+      "last_active": "2025-04-15T00:16:21.951683176Z",
       "blocked_user_ids": [
 
       ],
+      "birthland": "Tatooine",
       "team": "test",
       "type": "team",
-      "pando": "{\"speciality\":\"ios engineer\"}",
-      "birthland": "Tatooine"
+      "pando": "{\"speciality\":\"ios engineer\"}"
     },
     "attachments": [
       {
         "type": "video",
-        "author_name": "YouTube",
+        "author_name": "Introducing MotionScape",
         "title": "Introducing MotionScape: Prototype SwiftUI Animation Easings",
         "title_link": "https://www.youtube.com/watch?v=xOX7MsrbaPY",
-        "text": "MotionScape is your SwiftUI animation's playground as a developer. You can see all animations and their parameters in effect with beautifully designed and handcrafted animation examples. Best of all: directly preview and export your settings as production-ready SwiftUI code that you can use in your apps as-is.\n\nSupercharge your apps with animations and get to know how to use them - with MotionScape!\n\nDownload MotionScape from the Mac AppStore: \nhttps://gstrm.io/motionscape-yt\n\nWebpage:\nhttps://getstream.github.io/motionscape-app/\n\nSwiftUI chat messaging:\nhttps://getstream.io/chat/sdk/swiftui/\n...",
-        "image_url": "https://i.ytimg.com/vi/xOX7MsrbaPY/mqdefault.jpg",
-        "thumb_url": "https://i.ytimg.com/vi/xOX7MsrbaPY/mqdefault.jpg",
-        "asset_url": "https://www.youtube.com/watch?v=xOX7MsrbaPY",
+        "text": "MotionScape is your SwiftUI animation's playground as a developer. You can see all animations and their parameters in effect with beautifully designed and handcrafted animation examples. Best of all: directly preview and export your settings as production-ready SwiftUI code that you can use in your apps as-is.  Supercharge your apps with animations and get to know how to use them - with MotionScape!  Download MotionScape from the Mac AppStore:  https://gstrm.io/motionscape-yt  Webpage: https://getstream.github.io/motionscape-app/  SwiftUI chat messaging: https://getstream.io/chat/sdk/swiftui/  Chapters: 00:00 Introducing MotionScape 00:31 Adjusting animation parameters 00:54 Supported interpolations 01:03 Previewing animation examples 01:50 Find and download MotionScape",
+        "asset_url": "https://www.youtube.com/embed/xOX7MsrbaPY",
         "og_scrape_url": "https://youtube.com/watch?v=xOX7MsrbaPY"
       }
     ],
@@ -51,18 +49,13 @@
     },
     "reply_count": 0,
     "deleted_reply_count": 0,
-    "cid": "messaging:277d1327-0afd-4d76-87e8-fac1b3231ba7",
-    "created_at": "2025-03-15T00:15:59.807218Z",
-    "updated_at": "2025-03-15T00:15:59.807218Z",
+    "cid": "messaging:3309bb37-ca72-4606-be98-5fc3a4c01d5a",
+    "created_at": "2025-04-15T00:16:32.692774Z",
+    "updated_at": "2025-04-15T00:16:32.692774Z",
     "shadowed": false,
     "mentioned_users": [
 
     ],
-    "i18n": {
-      "id_text": "https://youtube.com/watch?v=xOX7MsrbaPY",
-      "ru_text": "https://youtube.com/watch?v=xOX7MsrbaPY",
-      "language": "id"
-    },
     "silent": false,
     "pinned": false,
     "pinned_at": null,
@@ -72,5 +65,5 @@
 
     ]
   },
-  "duration": "313.78ms"
+  "duration": "3655.81ms"
 }

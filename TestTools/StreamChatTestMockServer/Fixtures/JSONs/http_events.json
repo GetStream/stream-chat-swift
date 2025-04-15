@@ -1,23 +1,23 @@
 {
   "event": {
     "type": "typing.start",
-    "cid": "messaging:277d1327-0afd-4d76-87e8-fac1b3231ba7",
-    "channel_id": "277d1327-0afd-4d76-87e8-fac1b3231ba7",
+    "cid": "messaging:3309bb37-ca72-4606-be98-5fc3a4c01d5a",
+    "channel_id": "3309bb37-ca72-4606-be98-5fc3a4c01d5a",
     "channel_type": "messaging",
     "user": {
       "id": "luke_skywalker",
       "name": "Luke Skywalker",
       "image": "https://vignette.wikia.nocookie.net/starwars/images/2/20/LukeTLJ.jpg",
-      "language": "id",
+      "language": "zh",
       "role": "admin",
       "teams": [
 
       ],
       "created_at": "2024-04-04T09:26:11.805899Z",
-      "updated_at": "2025-03-04T17:42:53.930104Z",
+      "updated_at": "2025-04-09T08:51:24.319893Z",
       "banned": false,
       "online": true,
-      "last_active": "2025-03-15T00:15:52.376423417Z",
+      "last_active": "2025-04-15T00:16:21.951683176Z",
       "blocked_user_ids": [
 
       ],
@@ -26,7 +26,7 @@
       "team": "test",
       "type": "team"
     },
-    "created_at": "2025-03-15T00:15:54.695807648Z"
+    "created_at": "2025-04-15T00:16:24.291020033Z"
   },
-  "duration": "6.26ms"
+  "duration": "5.87ms"
 }
