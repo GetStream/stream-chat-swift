@@ -4,9 +4,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 # Upcoming
 
 ## StreamChat
+### ✅ Added
+- Add `CurrentUserUnreads.totalUnreadMessagesCount` [#3651](https://github.com/GetStream/stream-chat-swift/pull/3651)
 ### 🐞 Fixed
 - Fix `FilterKey.id` not returning any channels in `ChannelListQuery` [#3643](https://github.com/GetStream/stream-chat-swift/pull/3643)
 - Fix incorrect channel list sorting when sorted by `.hasUnread` [#3646](https://github.com/GetStream/stream-chat-swift/pull/3646)
+- Fix `CurrentUserUnreads.totalUnreadChannelsCount` with incorrect value [#3651](https://github.com/GetStream/stream-chat-swift/pull/3651)
 
 ## StreamChatUI
 ### 🐞 Fixed
