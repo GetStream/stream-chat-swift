@@ -661,7 +661,8 @@ final class DemoChatChannelListRouter: ChatChannelListRouter {
             .init(title: "Add a team role for the current user", isEnabled: true, handler: { [unowned self] _ in
                 self.rootViewController.presentAlert(title: "Enter the team role", textFieldPlaceholder: "Enter role") { role in
                     if let role, !role.isEmpty {
-                        client.currentUserController().updateUserData(teamsRole: ["ios": role]) { error in
+                        let userRole = UserRole(rawValue: role)
+                        client.currentUserController().updateUserData(teamsRole: ["ios": userRole]) { error in
                             if let error {
                                 log.error("Couldn't add role to custom team for the current user: \(error)")
                             }

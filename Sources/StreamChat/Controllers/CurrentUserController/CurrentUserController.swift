@@ -185,7 +185,7 @@ public extension CurrentChatUserController {
     ///
     /// By default all data is `nil`, and it won't be updated unless a value is provided.
     ///
-    /// - Note: This operation does a partial user update which keeps existing data if not modified. Use ``unset`` for clearing the existing state.
+    /// - Note: This operation does a partial user update which keeps existing data if not modified. Use ``unsetProperties`` for clearing the existing state.
     ///
     /// - Parameters:
     ///   - name: Optionally provide a new name to be updated.
