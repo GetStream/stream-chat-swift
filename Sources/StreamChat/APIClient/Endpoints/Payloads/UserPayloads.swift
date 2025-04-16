@@ -173,14 +173,14 @@ struct UserUpdateRequestBody: Encodable {
     let privacySettings: UserPrivacySettingsPayload?
     let role: UserRole?
     let extraData: [String: RawJSON]?
-    let teamsRole: [String: String]?
+    let teamsRole: [TeamId: UserRole]?
 
     init(
         name: String?,
         imageURL: URL?,
         privacySettings: UserPrivacySettingsPayload?,
         role: UserRole?,
-        teamsRole: [String: String]?,
+        teamsRole: [TeamId: UserRole]?,
         extraData: [String: RawJSON]?
     ) {
         self.name = name
