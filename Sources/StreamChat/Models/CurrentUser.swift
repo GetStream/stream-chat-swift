@@ -120,6 +120,8 @@ public class CurrentChatUser: ChatUser {
 
 /// The total unread information from the current user.
 public struct CurrentUserUnreads {
+    /// The total number of unread messages.
+    public let totalUnreadMessagesCount: Int
     /// The total number of unread channels.
     public let totalUnreadChannelsCount: Int
     /// The total number of unread threads.
@@ -166,14 +168,16 @@ public struct UnreadThread {
 
 extension CurrentUserUnreadsPayload {
     func asModel() -> CurrentUserUnreads {
-        CurrentUserUnreads(
-            totalUnreadChannelsCount: totalUnreadCount,
+        let unreadChannels: [UnreadChannel] = channels.map { .init(
+            channelId: $0.channelId,
+            unreadMessagesCount: $0.unreadCount,
+            lastRead: $0.lastRead
+        ) }
+        return CurrentUserUnreads(
+            totalUnreadMessagesCount: totalUnreadCount,
+            totalUnreadChannelsCount: unreadChannels.count,
             totalUnreadThreadsCount: totalUnreadThreadsCount,
-            unreadChannels: channels.map { .init(
-                channelId: $0.channelId,
-                unreadMessagesCount: $0.unreadCount,
-                lastRead: $0.lastRead
-            ) },
+            unreadChannels: unreadChannels,
             unreadThreads: threads.map { .init(
                 parentMessageId: $0.parentMessageId,
                 unreadRepliesCount: $0.unreadCount,

@@ -34,6 +34,8 @@ final class CurrentUserUpdater_Mock: CurrentUserUpdater {
     @Atomic var deleteAllLocalAttachmentDownloads_completion: ((Error?) -> Void)?
     @Atomic var deleteAllLocalAttachmentDownloads_completion_result: Result<Void, Error>?
 
+    @Atomic var loadAllUnreads_completion: ((Result<CurrentUserUnreads, Error>) -> Void)?
+
     override func updateUserData(
         currentUserId: UserId,
         name: String?,
@@ -88,6 +90,10 @@ final class CurrentUserUpdater_Mock: CurrentUserUpdater {
         deleteAllLocalAttachmentDownloads_completion_result?.invoke(with: completion)
     }
 
+    override func loadAllUnreads(completion: @escaping ((Result<CurrentUserUnreads, Error>) -> Void)) {
+        loadAllUnreads_completion = completion
+    }
+
     // Cleans up all recorded values
     func cleanUp() {
         updateUserData_currentUserId = nil
@@ -114,6 +120,8 @@ final class CurrentUserUpdater_Mock: CurrentUserUpdater {
         
         deleteAllLocalAttachmentDownloads_completion = nil
         deleteAllLocalAttachmentDownloads_completion_result = nil
+
+        loadAllUnreads_completion = nil
     }
 
     override func markAllRead(completion: ((Error?) -> Void)? = nil) {
