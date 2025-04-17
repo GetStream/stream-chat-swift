@@ -185,7 +185,7 @@ public extension CurrentChatUserController {
     ///
     /// By default all data is `nil`, and it won't be updated unless a value is provided.
     ///
-    /// - Note: This operation does a partial user update which keeps existing data if not modified. Use ``unset`` for clearing the existing state.
+    /// - Note: This operation does a partial user update which keeps existing data if not modified. Use ``unsetProperties`` for clearing the existing state.
     ///
     /// - Parameters:
     ///   - name: Optionally provide a new name to be updated.
@@ -194,14 +194,14 @@ public extension CurrentChatUserController {
     ///   - role: The role for the user.
     ///   - teamsRole: The role for the user in a specific team. Example: `["teamId": "role"]`.
     ///   - userExtraData: Optionally provide new user extra data to be updated.
-    ///   - unset: Existing values for specified properties are removed. For example, `image` or `name`.
+    ///   - unsetProperties: Remove existing properties from the user. For example, `image` or `name`.
     ///   - completion: Called when user is successfuly updated, or with error.
     func updateUserData(
         name: String? = nil,
         imageURL: URL? = nil,
         privacySettings: UserPrivacySettings? = nil,
         role: UserRole? = nil,
-        teamsRole: [String: String]? = nil,
+        teamsRole: [TeamId: UserRole]? = nil,
         userExtraData: [String: RawJSON] = [:],
         unsetProperties: Set<String> = [],
         completion: ((Error?) -> Void)? = nil
@@ -218,7 +218,8 @@ public extension CurrentChatUserController {
             privacySettings: privacySettings,
             role: role,
             teamsRole: teamsRole,
-            userExtraData: userExtraData
+            userExtraData: userExtraData,
+            unset: unsetProperties
         ) { error in
             self.callback {
                 completion?(error)
@@ -232,7 +233,7 @@ public extension CurrentChatUserController {
     ///
     /// - Parameters:
     ///   - extraData: The additional data to be added to the member object.
-    ///   - unsetProperties: The custom properties to be removed from the member object.
+    ///   - unsetProperties: The properties to be removed from the member object.
     ///   - channelId: The channel where the member data is updated.
     ///   - completion: Returns the updated member object or an error if the update fails.
     func updateMemberData(

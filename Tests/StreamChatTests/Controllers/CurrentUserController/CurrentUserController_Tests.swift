@@ -299,7 +299,9 @@ final class CurrentUserController_Tests: XCTestCase {
             privacySettings: .init(
                 typingIndicators: .init(enabled: true), readReceipts: .init(enabled: true)
             ),
-            userExtraData: [:]
+            teamsRole: ["teamId": "role"],
+            userExtraData: [:],
+            unsetProperties: ["image"]
         )
 
         // Assert udpater is called with correct data
@@ -307,6 +309,8 @@ final class CurrentUserController_Tests: XCTestCase {
         XCTAssertEqual(env.currentUserUpdater.updateUserData_imageURL, expectedImageUrl)
         XCTAssertEqual(env.currentUserUpdater.updateUserData_privacySettings?.typingIndicators?.enabled, true)
         XCTAssertEqual(env.currentUserUpdater.updateUserData_privacySettings?.readReceipts?.enabled, true)
+        XCTAssertEqual(env.currentUserUpdater.updateUserData_unset, ["image"])
+        XCTAssertEqual(env.currentUserUpdater.updateUserData_teamsRole, ["teamId": "role"])
         XCTAssertNotNil(env.currentUserUpdater.updateUserData_completion)
     }
 

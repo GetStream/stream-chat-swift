@@ -25,9 +25,9 @@ class CurrentUserUpdater: Worker {
         imageURL: URL?,
         privacySettings: UserPrivacySettings?,
         role: UserRole?,
-        teamsRole: [String: String]? = nil,
+        teamsRole: [TeamId: UserRole]?,
         userExtraData: [String: RawJSON]?,
-        unset: Set<String> = [],
+        unset: Set<String>,
         completion: ((Error?) -> Void)? = nil
     ) {
         let params: [Any?] = [name, imageURL, userExtraData]
@@ -290,7 +290,7 @@ extension CurrentUserUpdater {
         imageURL: URL?,
         privacySettings: UserPrivacySettings?,
         role: UserRole?,
-        teamsRole: [String: String]?,
+        teamsRole: [TeamId: UserRole]?,
         userExtraData: [String: RawJSON]?,
         unset: Set<String>
     ) async throws {

@@ -13,6 +13,7 @@ final class CurrentUserUpdater_Mock: CurrentUserUpdater {
     @Atomic var updateUserData_userExtraData: [String: RawJSON]?
     @Atomic var updateUserData_privacySettings: UserPrivacySettings?
     @Atomic var updateUserData_unset: Set<String>?
+    @Atomic var updateUserData_teamsRole: [TeamId: UserRole]?
     @Atomic var updateUserData_completion: ((Error?) -> Void)?
 
     @Atomic var addDevice_id: DeviceId?
@@ -42,7 +43,7 @@ final class CurrentUserUpdater_Mock: CurrentUserUpdater {
         imageURL: URL?,
         privacySettings: UserPrivacySettings?,
         role: UserRole?,
-        teamsRole: [String: String]?,
+        teamsRole: [TeamId: UserRole]?,
         userExtraData: [String: RawJSON]?,
         unset: Set<String>,
         completion: ((Error?) -> Void)? = nil
@@ -53,6 +54,7 @@ final class CurrentUserUpdater_Mock: CurrentUserUpdater {
         updateUserData_userExtraData = userExtraData
         updateUserData_privacySettings = privacySettings
         updateUserData_unset = unset
+        updateUserData_teamsRole = teamsRole
         updateUserData_completion = completion
     }
 

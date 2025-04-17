@@ -10,6 +10,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Fix `FilterKey.id` not returning any channels in `ChannelListQuery` [#3643](https://github.com/GetStream/stream-chat-swift/pull/3643)
 - Fix incorrect channel list sorting when sorted by `.hasUnread` [#3646](https://github.com/GetStream/stream-chat-swift/pull/3646)
 - Fix `CurrentUserUnreads.totalUnreadChannelsCount` with incorrect value [#3651](https://github.com/GetStream/stream-chat-swift/pull/3651)
+- Fix `unsetProperties` not having any effect in `CurrentUserController.updateUserData()` [#3650](https://github.com/GetStream/stream-chat-swift/pull/3650)
+### 🔄 Changed
+- Change the `teamsRole` parameter from `[String: String]` to `[TeamId: UserRole]` [#3650](https://github.com/GetStream/stream-chat-swift/pull/3650)
 
 ## StreamChatUI
 ### 🐞 Fixed

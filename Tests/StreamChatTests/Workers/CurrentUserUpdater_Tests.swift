@@ -69,6 +69,7 @@ final class CurrentUserUpdater_Tests: XCTestCase {
             role: expectedRole,
             teamsRole: ["ios": "guest"],
             userExtraData: nil,
+            unset: ["image"],
             completion: { error in
                 XCTAssertNil(error)
             }
@@ -104,7 +105,7 @@ final class CurrentUserUpdater_Tests: XCTestCase {
                 teamsRole: ["ios": "guest"],
                 extraData: [:]
             ),
-            unset: []
+            unset: ["image"]
         )
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(expectedEndpoint))
     }
@@ -122,6 +123,7 @@ final class CurrentUserUpdater_Tests: XCTestCase {
             imageURL: nil,
             privacySettings: nil,
             role: nil,
+            teamsRole: nil,
             userExtraData: nil,
             unset: ["image"],
             completion: { _ in }
@@ -167,7 +169,9 @@ final class CurrentUserUpdater_Tests: XCTestCase {
                 readReceipts: .init(enabled: false)
             ),
             role: expectedRole,
+            teamsRole: nil,
             userExtraData: nil,
+            unset: [],
             completion: { _ in
                 completionCalled = true
             }
@@ -218,7 +222,9 @@ final class CurrentUserUpdater_Tests: XCTestCase {
             imageURL: nil,
             privacySettings: nil,
             role: nil,
-            userExtraData: [:],
+            teamsRole: nil,
+            userExtraData: nil,
+            unset: [],
             completion: { error in
                 completionError = error
             }
@@ -251,7 +257,9 @@ final class CurrentUserUpdater_Tests: XCTestCase {
                 imageURL: nil,
                 privacySettings: nil,
                 role: nil,
+                teamsRole: nil,
                 userExtraData: nil,
+                unset: [],
                 completion: $0
             )
         }
@@ -279,7 +287,9 @@ final class CurrentUserUpdater_Tests: XCTestCase {
             imageURL: nil,
             privacySettings: nil,
             role: nil,
+            teamsRole: nil,
             userExtraData: nil,
+            unset: [],
             completion: { error in
                 completionError = error
             }

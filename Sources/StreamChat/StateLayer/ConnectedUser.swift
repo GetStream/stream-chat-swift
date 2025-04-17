@@ -55,7 +55,7 @@ public final class ConnectedUser {
         imageURL: URL? = nil,
         privacySettings: UserPrivacySettings? = nil,
         role: UserRole? = nil,
-        teamRoles: [String: String]? = nil,
+        teamRoles: [TeamId: UserRole]? = nil,
         extraData: [String: RawJSON] = [:],
         unset: Set<String> = []
     ) async throws {
