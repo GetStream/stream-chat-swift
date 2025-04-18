@@ -781,6 +781,98 @@ final class CurrentUserController_Tests: XCTestCase {
         env.currentUserUpdater.deleteAllLocalAttachmentDownloads_completion?(nil)
         wait(for: [expectation], timeout: defaultTimeout)
     }
+
+    // MARK: - Load All Unreads
+    
+    func test_loadAllUnreads_callsUpdaterCorrectly() {
+        // Simulate having a current user
+        client.authenticationRepository.setMockToken()
+        
+        // Call loadAllUnreads
+        var receivedUnreads: CurrentUserUnreads?
+        let exp = expectation(description: "loadAllUnreads called")
+        controller.loadAllUnreads { result in
+            receivedUnreads = try? result.get()
+            exp.fulfill()
+        }
+        
+        // Simulate successful response
+        let expectedUnreads = CurrentUserUnreads(
+            totalUnreadMessagesCount: 10,
+            totalUnreadChannelsCount: 5,
+            totalUnreadThreadsCount: 3,
+            unreadChannels: [
+                UnreadChannel(
+                    channelId: .init(type: .messaging, id: "channel1"),
+                    unreadMessagesCount: 5,
+                    lastRead: Date()
+                )
+            ],
+            unreadThreads: [
+                UnreadThread(
+                    parentMessageId: "thread1",
+                    unreadRepliesCount: 3,
+                    lastRead: Date(),
+                    lastReadMessageId: "lastRead1"
+                )
+            ],
+            unreadChannelsByType: [
+                UnreadChannelByType(
+                    channelType: .messaging,
+                    unreadChannelCount: 5,
+                    unreadMessagesCount: 10
+                )
+            ]
+        )
+        
+        // Simulate completion with success
+        env.currentUserUpdater.loadAllUnreads_completion?(.success(expectedUnreads))
+        
+        wait(for: [exp], timeout: defaultTimeout)
+
+        // Assert the result is correct
+        XCTAssertEqual(receivedUnreads?.totalUnreadMessagesCount, expectedUnreads.totalUnreadMessagesCount)
+    }
+    
+    func test_loadAllUnreads_propagatesError() {
+        // Simulate having a current user
+        client.authenticationRepository.setMockToken()
+        
+        // Call loadAllUnreads
+        var receivedError: Error?
+        let exp = expectation(description: "loadAllUnreads called")
+        controller.loadAllUnreads { [callbackQueueID] result in
+            AssertTestQueue(withId: callbackQueueID)
+            receivedError = result.error
+            exp.fulfill()
+        }
+        
+        // Simulate error response
+        let expectedError = TestError()
+        env.currentUserUpdater.loadAllUnreads_completion?(.failure(expectedError))
+
+        wait(for: [exp], timeout: defaultTimeout)
+
+        // Assert error is received correctly
+        XCTAssertEqual(receivedError as? TestError, expectedError)
+    }
+    
+    func test_loadAllUnreads_keepsControllerAlive() {
+        // Simulate having a current user
+        client.authenticationRepository.setMockToken()
+        
+        // Create weak reference to controller
+        weak var weakController = controller
+        
+        // Call loadAllUnreads
+        controller.loadAllUnreads { _ in }
+        
+        // Try to deallocate controller
+        controller = nil
+        
+        // Verify controller is still alive due to the async operation
+        AssertAsync.staysTrue(weakController != nil)
+    }
 }
 
 private class TestEnvironment {

@@ -722,6 +722,83 @@ final class CurrentUserUpdater_Tests: XCTestCase {
         }
     }
     
+    // MARK: - Load All Unreads
+    
+    func test_loadAllUnreads_makesCorrectAPICall() {
+        // Call loadAllUnreads
+        var receivedUnreads: CurrentUserUnreads?
+        currentUserUpdater.loadAllUnreads { result in
+            receivedUnreads = try? result.get()
+        }
+        
+        // Assert request is made to the correct endpoint
+        XCTAssertNotNil(apiClient.request_endpoint)
+        let endpoint = apiClient.request_endpoint
+        XCTAssertEqual(endpoint?.path.value, "unread")
+        XCTAssertEqual(endpoint?.method, .get)
+        
+        // Create test payload for the response
+        let payload = CurrentUserUnreadsPayload(
+            totalUnreadCount: 10,
+            totalUnreadThreadsCount: 3,
+            channels: [
+                CurrentUserChannelUnreadPayload(
+                    channelId: .init(type: .messaging, id: "channel1"),
+                    unreadCount: 5,
+                    lastRead: Date()
+                ),
+                CurrentUserChannelUnreadPayload(
+                    channelId: .init(type: .messaging, id: "channel2"),
+                    unreadCount: 5,
+                    lastRead: Date()
+                )
+            ],
+            channelType: [
+                ChannelUnreadByTypePayload(
+                    channelType: .messaging,
+                    channelCount: 2,
+                    unreadCount: 10
+                )
+            ],
+            threads: [
+                CurrentUserThreadUnreadPayload(
+                    parentMessageId: "thread1",
+                    lastRead: Date(),
+                    lastReadMessageId: "message1",
+                    unreadCount: 3
+                )
+            ]
+        )
+        
+        // Simulate API response
+        apiClient.test_simulateResponse(.success(payload))
+        
+        // Verify the result is correctly transformed into the model
+        XCTAssertEqual(receivedUnreads?.totalUnreadMessagesCount, payload.totalUnreadCount)
+        XCTAssertEqual(receivedUnreads?.totalUnreadChannelsCount, payload.channels.count)
+        XCTAssertEqual(receivedUnreads?.totalUnreadThreadsCount, payload.totalUnreadThreadsCount)
+        XCTAssertEqual(receivedUnreads?.unreadChannels.count, payload.channels.count)
+        XCTAssertEqual(receivedUnreads?.unreadThreads.count, payload.threads.count)
+        XCTAssertEqual(receivedUnreads?.unreadChannelsByType.count, payload.channelType.count)
+    }
+    
+    func test_loadAllUnreads_propagatesNetworkError() {
+        // Call loadAllUnreads
+        var receivedError: Error?
+        currentUserUpdater.loadAllUnreads { result in
+            if case let .failure(error) = result {
+                receivedError = error
+            }
+        }
+        
+        // Simulate API error
+        let expectedError = TestError()
+        apiClient.test_simulateResponse(Result<CurrentUserUnreadsPayload, Error>.failure(expectedError))
+        
+        // Verify the error is propagated
+        XCTAssertEqual(receivedError as? TestError, expectedError)
+    }
+    
     // MARK: -
     
     private func setUpDownloadedAttachment(with payload: AnyAttachmentPayload, messageId: MessageId = .unique, cid: ChannelId = .unique) throws -> AttachmentId {
