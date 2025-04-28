@@ -16,33 +16,13 @@ env:
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
 jobs:
-  build-test-app-and-frameworks:
-    name: Build Test App and Frameworks
-    runs-on: macos-15
-    steps:
-    - uses: actions/checkout@v4.1.1
-    - uses: ./.github/actions/ruby-cache
-    - uses: ./.github/actions/xcode-cache
-    - name: Build
-      run: bundle exec fastlane build_test_app_and_frameworks
-      timeout-minutes: 60
-    - uses: actions/upload-artifact@v4
-      if: success()
-      with:
-        name: cache-derived-data
-        path: |
-          derived_data/Build/**/*.app
-          derived_data/Build/**/*.xctestrun
-          derived_data/Build/**/*.framework
-
   test-e2e-debug:
     name: Test E2E UI (Debug)
-    needs: build-test-app-and-frameworks
     strategy:
       matrix:
         include:
-          - ios: 18.2
-            xcode: 16.2
+          - ios: 18.3
+            xcode: 16.3
             os: macos-15
             device: "iPhone 16 Pro"
             setup_runtime: false
@@ -71,10 +51,6 @@ jobs:
       IOS_SIMULATOR_DEVICE: "${{ matrix.device }} (${{ matrix.ios }})" # For the Allure report
     steps:
     - uses: actions/checkout@v4.1.1
-    - uses: actions/download-artifact@v4
-      with:
-        name: cache-derived-data
-        path: derived_data/Build/
     - uses: ./.github/actions/bootstrap
       env:
         INSTALL_ALLURE: true
@@ -90,7 +66,7 @@ jobs:
     - name: Launch Allure TestOps
       run: bundle exec fastlane allure_launch cron:true
     - name: Run UI Tests (Debug)
-      run: bundle exec fastlane test_e2e_mock device:"${{ matrix.device }} (${{ matrix.ios }})" cron:true test_without_building:true
+      run: bundle exec fastlane test_e2e_mock device:"${{ matrix.device }} (${{ matrix.ios }})"
       timeout-minutes: 120
     - name: Allure TestOps Upload
       if: success() || failure()
@@ -118,8 +94,8 @@ jobs:
     strategy:
       matrix:
         include:
-          - ios: 18.2
-            xcode: 16.2
+          - ios: 18.3
+            xcode: 16.3
             os: macos-15
             device: "iPhone 16 Pro"
             setup_runtime: false
@@ -212,7 +188,7 @@ jobs:
   slack:
     name: Slack Report
     runs-on: ubuntu-latest
-    needs: [build-and-test-debug, test-e2e-debug, build-test-app-and-frameworks, build-old-xcode, automated-code-review]
+    needs: [build-and-test-debug, test-e2e-debug, build-old-xcode, automated-code-review]
     if: failure() && github.event_name == 'schedule'
     steps:
       - uses: 8398a7/action-slack@v3
