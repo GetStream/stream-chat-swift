@@ -25,7 +25,7 @@ The **StreamChat SDK** is a low level client for Stream chat service that doesn'
 
 ## UIKit SDK
 
-The **StreamChatUI SDK** is our UI SDK for UIKit components. If your application needs to support iOS 13 and below, this is the right UI SDK for you.
+The **StreamChatUI SDK** is our UI SDK for UIKit components. If your application needs to support iOS 13 and above, this is the right UI SDK for you.
 
 ## SwiftUI SDK
 
