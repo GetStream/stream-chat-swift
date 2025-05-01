@@ -1,7 +1,7 @@
 {
   "type": "member.added",
-  "cid": "messaging:3309bb37-ca72-4606-be98-5fc3a4c01d5a",
-  "channel_id": "3309bb37-ca72-4606-be98-5fc3a4c01d5a",
+  "cid": "messaging:d76ce957-ae58-4d1e-a483-6fd05dcfd3f8",
+  "channel_id": "d76ce957-ae58-4d1e-a483-6fd05dcfd3f8",
   "channel_type": "messaging",
   "member": {
     "user_id": "leia_organa",
@@ -11,8 +11,8 @@
       "teams_role": null,
       "created_at": "2024-04-04T09:42:00.68335Z",
       "updated_at": "2025-03-28T15:21:20.061525Z",
-      "last_active": "2025-04-14T14:52:53.853303Z",
-      "last_engaged_at": "2025-04-14T14:53:28.003807Z",
+      "last_active": "2025-04-30T06:59:40.44848Z",
+      "last_engaged_at": "2025-04-30T00:43:23.823992Z",
       "banned": false,
       "online": false,
       "language": "zh",
@@ -29,8 +29,8 @@
       }
     },
     "status": "member",
-    "created_at": "2025-04-15T00:16:27.384218Z",
-    "updated_at": "2025-04-15T00:16:27.384218Z",
+    "created_at": "2025-05-01T00:19:12.258675Z",
+    "updated_at": "2025-05-01T00:19:12.258675Z",
     "banned": false,
     "shadow_banned": false,
     "is_global_banned": false,
@@ -46,14 +46,11 @@
     "teams_role": null,
     "created_at": "2024-04-04T09:42:00.68335Z",
     "updated_at": "2025-03-28T15:21:20.061525Z",
-    "last_active": "2025-04-14T14:52:53.853303Z",
-    "last_engaged_at": "2025-04-14T14:53:28.003807Z",
+    "last_active": "2025-04-30T06:59:40.44848Z",
+    "last_engaged_at": "2025-04-30T00:43:23.823992Z",
     "banned": false,
     "online": false,
     "language": "zh",
-    "name": "Leia Organa",
-    "image": "https://vignette.wikia.nocookie.net/starwars/images/f/fc/Leia_Organa_TLJ.png",
-    "birthland": "Polis Massa",
     "private_settings": {
       "readReceipts": {
         "enabled": false
@@ -61,8 +58,11 @@
       "typingIndicators": {
         "enabled": false
       }
-    }
+    },
+    "name": "Leia Organa",
+    "image": "https://vignette.wikia.nocookie.net/starwars/images/f/fc/Leia_Organa_TLJ.png",
+    "birthland": "Polis Massa"
   },
-  "channel_last_message_at": "2025-04-15T00:16:26.330954Z",
-  "created_at": "2025-04-15T00:16:27.392736671Z"
+  "channel_last_message_at": "2025-05-01T00:19:10.910056Z",
+  "created_at": "2025-05-01T00:19:12.266568362Z"
 }
