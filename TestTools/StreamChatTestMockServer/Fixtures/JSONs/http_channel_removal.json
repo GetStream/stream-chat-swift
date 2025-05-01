@@ -1,12 +1,12 @@
 {
-  "duration": "32.63ms",
+  "duration": "28.35ms",
   "channel": {
-    "id": "3309bb37-ca72-4606-be98-5fc3a4c01d5a",
+    "id": "d76ce957-ae58-4d1e-a483-6fd05dcfd3f8",
     "type": "messaging",
-    "cid": "messaging:3309bb37-ca72-4606-be98-5fc3a4c01d5a",
-    "created_at": "2025-04-15T00:16:22.748759Z",
-    "updated_at": "2025-04-15T00:16:38.373565Z",
-    "deleted_at": "2025-04-15T00:16:38.948897Z",
+    "cid": "messaging:d76ce957-ae58-4d1e-a483-6fd05dcfd3f8",
+    "created_at": "2025-05-01T00:19:06.048649Z",
+    "updated_at": "2025-05-01T00:19:16.53681Z",
+    "deleted_at": "2025-05-01T00:19:17.199239Z",
     "created_by": null,
     "frozen": false,
     "disabled": false,
@@ -19,22 +19,18 @@
           "image": "https://vignette.wikia.nocookie.net/starwars/images/b/b8/Dooku_Headshot.jpg",
           "language": "",
           "role": "user",
-          "teams": [
-
-          ],
+          "teams": [],
           "created_at": "2024-04-22T06:42:08.562992Z",
-          "updated_at": "2025-03-03T10:00:37.133281Z",
+          "updated_at": "2025-04-23T13:02:29.974824Z",
           "banned": false,
           "online": false,
-          "last_active": "2025-04-13T17:46:17.972722Z",
-          "blocked_user_ids": [
-
-          ],
+          "last_active": "2025-04-23T13:03:51.783496Z",
+          "blocked_user_ids": [],
           "birthland": "Serenno"
         },
         "status": "member",
-        "created_at": "2025-04-15T00:16:22.77601Z",
-        "updated_at": "2025-04-15T00:16:22.77601Z",
+        "created_at": "2025-05-01T00:19:06.052786Z",
+        "updated_at": "2025-05-01T00:19:06.052786Z",
         "banned": false,
         "shadow_banned": false,
         "role": "member",
@@ -47,24 +43,20 @@
           "id": "han_solo",
           "name": "Han Solo",
           "image": "https://vignette.wikia.nocookie.net/starwars/images/e/e2/TFAHanSolo.png",
-          "language": "zh",
+          "language": "fr",
           "role": "user",
-          "teams": [
-
-          ],
+          "teams": [],
           "created_at": "2024-04-04T09:18:11.060737Z",
-          "updated_at": "2025-03-28T13:23:50.000852Z",
+          "updated_at": "2025-04-24T15:07:52.050477Z",
           "banned": false,
           "online": false,
-          "last_active": "2025-04-11T10:38:19.970146Z",
-          "blocked_user_ids": [
-
-          ],
+          "last_active": "2025-04-30T20:23:05.666916Z",
+          "blocked_user_ids": [],
           "birthland": "Corellia"
         },
         "status": "member",
-        "created_at": "2025-04-15T00:16:22.77601Z",
-        "updated_at": "2025-04-15T00:16:22.77601Z",
+        "created_at": "2025-05-01T00:19:06.052786Z",
+        "updated_at": "2025-05-01T00:19:06.052786Z",
         "banned": false,
         "shadow_banned": false,
         "role": "member",
@@ -79,25 +71,21 @@
           "image": "https://vignette.wikia.nocookie.net/starwars/images/2/20/LukeTLJ.jpg",
           "language": "zh",
           "role": "admin",
-          "teams": [
-
-          ],
+          "teams": [],
           "created_at": "2024-04-04T09:26:11.805899Z",
-          "updated_at": "2025-04-09T08:51:24.319893Z",
+          "updated_at": "2025-04-19T12:19:13.801419Z",
           "banned": false,
           "online": true,
-          "last_active": "2025-04-15T00:16:21.951683176Z",
-          "blocked_user_ids": [
-
-          ],
-          "team": "test",
+          "last_active": "2025-05-01T00:19:05.024788871Z",
+          "blocked_user_ids": [],
           "type": "team",
           "pando": "{\"speciality\":\"ios engineer\"}",
-          "birthland": "Tatooine"
+          "birthland": "Tatooine",
+          "team": "test"
         },
         "status": "member",
-        "created_at": "2025-04-15T00:16:22.77601Z",
-        "updated_at": "2025-04-15T00:16:22.77601Z",
+        "created_at": "2025-05-01T00:19:06.052786Z",
+        "updated_at": "2025-05-01T00:19:06.052786Z",
         "banned": false,
         "shadow_banned": false,
         "role": "owner",
@@ -112,17 +100,13 @@
           "image": "https://vignette.wikia.nocookie.net/starwars/images/f/fc/Leia_Organa_TLJ.png",
           "language": "zh",
           "role": "admin",
-          "teams": [
-
-          ],
+          "teams": [],
           "created_at": "2024-04-04T09:42:00.68335Z",
           "updated_at": "2025-03-28T15:21:20.061525Z",
           "banned": false,
           "online": false,
-          "last_active": "2025-04-14T14:52:53.853303Z",
-          "blocked_user_ids": [
-
-          ],
+          "last_active": "2025-04-30T06:59:40.44848Z",
+          "blocked_user_ids": [],
           "private_settings": {
             "readReceipts": {
               "enabled": false
@@ -134,8 +118,8 @@
           "birthland": "Polis Massa"
         },
         "status": "member",
-        "created_at": "2025-04-15T00:16:27.384218Z",
-        "updated_at": "2025-04-15T00:16:27.384218Z",
+        "created_at": "2025-05-01T00:19:12.258675Z",
+        "updated_at": "2025-05-01T00:19:12.258675Z",
         "banned": false,
         "shadow_banned": false,
         "role": "admin",
@@ -145,7 +129,7 @@
     ],
     "config": {
       "created_at": "2021-03-01T19:26:18.406502Z",
-      "updated_at": "2025-02-13T14:46:16.795117Z",
+      "updated_at": "2025-04-23T11:44:08.360401Z",
       "name": "messaging",
       "typing_events": true,
       "read_events": true,
@@ -192,24 +176,20 @@
         }
       ]
     },
-    "truncated_at": "2025-04-15T00:16:38.948897Z",
+    "truncated_at": "2025-05-01T00:19:17.199239Z",
     "truncated_by": {
       "id": "luke_skywalker",
       "name": "Luke Skywalker",
       "image": "https://vignette.wikia.nocookie.net/starwars/images/2/20/LukeTLJ.jpg",
       "language": "zh",
       "role": "admin",
-      "teams": [
-
-      ],
+      "teams": [],
       "created_at": "2024-04-04T09:26:11.805899Z",
-      "updated_at": "2025-04-09T08:51:24.319893Z",
+      "updated_at": "2025-04-19T12:19:13.801419Z",
       "banned": false,
       "online": true,
-      "last_active": "2025-04-15T00:16:21.951683176Z",
-      "blocked_user_ids": [
-
-      ],
+      "last_active": "2025-05-01T00:19:05.024788871Z",
+      "blocked_user_ids": [],
       "birthland": "Tatooine",
       "team": "test",
       "type": "team",
