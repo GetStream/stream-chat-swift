@@ -1146,6 +1146,32 @@ import XCTest
         XCTAssertEqual(mock.updateDraftMessage_callCount, 1)
     }
 
+    func test_content_whenAttachmentsCleared_whenHasDraft_deletesDraft() {
+        composerVC.content.text = ""
+        composerVC.content.attachments = [.mockFile]
+
+        let mock = ChatChannelController_Mock.mock()
+        mock.channel_mock = .mock(cid: .unique, draftMessage: .mock())
+        composerVC.channelController = mock
+
+        composerVC.content.attachments = []
+
+        XCTAssertEqual(mock.deleteDraftMessage_callCount, 1)
+    }
+
+    func test_content_whenAttachmentsCleared_whenHasText_doesNotCallDeleteDraft() {
+        composerVC.content.text = "Hey"
+        composerVC.content.attachments = [.mockFile]
+
+        let mock = ChatChannelController_Mock.mock()
+        mock.channel_mock = .mock(cid: .unique, draftMessage: .mock())
+        composerVC.channelController = mock
+
+        composerVC.content.attachments = []
+
+        XCTAssertEqual(mock.deleteDraftMessage_callCount, 0)
+    }
+
     func test_textViewDidChange_whenInputIsEmpty_whenHasDraft_deletesDraft() {
         composerVC.content.text = "Hey"
         let mock = ChatChannelController_Mock.mock()

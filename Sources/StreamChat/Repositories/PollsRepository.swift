@@ -205,6 +205,20 @@ class PollsRepository: @unchecked Sendable {
         }
     }
     
+    func deletePoll(
+        pollId: String,
+        completion: ((Error?) -> Void)? = nil
+    ) {
+        apiClient.request(endpoint: .deletePoll(pollId: pollId)) { [weak self] in
+            if $0.error == nil {
+                self?.database.write { session in
+                    _ = try? session.deletePoll(pollId: pollId)
+                }
+            }
+            completion?($0.error)
+        }
+    }
+    
     func suggestPollOption(
         pollId: String,
         text: String,

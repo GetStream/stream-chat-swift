@@ -36,6 +36,9 @@ public class ChatUser: @unchecked Sendable {
 
     /// The role of the user.
     public let userRole: UserRole
+    
+    /// The role of the user in different teams.
+    public let teamsRole: [String: UserRole]?
 
     /// The date the user was created.
     public let userCreatedAt: Date
@@ -74,6 +77,7 @@ public class ChatUser: @unchecked Sendable {
         isBanned: Bool,
         isFlaggedByCurrentUser: Bool,
         userRole: UserRole,
+        teamsRole: [String: UserRole]?,
         createdAt: Date,
         updatedAt: Date,
         deactivatedAt: Date?,
@@ -96,6 +100,7 @@ public class ChatUser: @unchecked Sendable {
         self.teams = teams
         self.language = language
         self.extraData = extraData
+        self.teamsRole = teamsRole
     }
 }
 
@@ -114,6 +119,7 @@ extension ChatUser: Equatable {
             && lhs.isBanned == rhs.isBanned
             && lhs.isFlaggedByCurrentUser == rhs.isFlaggedByCurrentUser
             && lhs.userRole == rhs.userRole
+            && lhs.teamsRole == rhs.teamsRole
             && lhs.userCreatedAt == rhs.userCreatedAt
             && lhs.userDeactivatedAt == rhs.userDeactivatedAt
             && lhs.lastActiveAt == rhs.lastActiveAt

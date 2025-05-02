@@ -38,7 +38,7 @@ final class ChannelListFilterScope_Tests: XCTestCase {
 
     func test_filterKeys_haveExpectedKeyPathValueMapper() {
         XCTAssertEqual(Key<ChannelId>.cid.keyPathString, "cid")
-        XCTAssertEqual(Key<String>.id.keyPathString, "cid")
+        XCTAssertEqual(Key<String>.id.keyPathString, "id")
         XCTAssertEqual(Key<String>.name.keyPathString, "name")
         XCTAssertEqual(Key<URL>.imageURL.keyPathString, "imageURL")
         XCTAssertEqual(Key<ChannelType>.type.keyPathString, "typeRawValue")

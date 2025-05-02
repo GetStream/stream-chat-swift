@@ -5,6 +5,53 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### 🔄 Changed
 
+# [4.78.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.78.0)
+_April 24, 2025_
+
+## StreamChat
+### ✅ Added
+- Add `CurrentUserUnreads.totalUnreadMessagesCount` [#3651](https://github.com/GetStream/stream-chat-swift/pull/3651)
+### 🐞 Fixed
+- Fix `FilterKey.id` not returning any channels in `ChannelListQuery` [#3643](https://github.com/GetStream/stream-chat-swift/pull/3643)
+- Fix incorrect channel list sorting when sorted by `.hasUnread` [#3646](https://github.com/GetStream/stream-chat-swift/pull/3646)
+- Fix `CurrentUserUnreads.totalUnreadChannelsCount` with incorrect value [#3651](https://github.com/GetStream/stream-chat-swift/pull/3651)
+- Fix `unsetProperties` not having any effect in `CurrentUserController.updateUserData()` [#3650](https://github.com/GetStream/stream-chat-swift/pull/3650)
+### 🔄 Changed
+- Change the `teamsRole` parameter from `[String: String]` to `[TeamId: UserRole]` [#3650](https://github.com/GetStream/stream-chat-swift/pull/3650)
+
+## StreamChatUI
+### 🐞 Fixed
+- Fix message search with empty avatars [#3644](https://github.com/GetStream/stream-chat-swift/pull/3644)
+
+# [4.77.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.77.0)
+_April 09, 2025_
+
+## StreamChat
+### ✅ Added
+- Add `ChatChannelController.deletePoll()` for deleting polls [#3632](https://github.com/GetStream/stream-chat-swift/pull/3632)
+- Add `ChatChannel.canSendPoll` capability [#3635](https://github.com/GetStream/stream-chat-swift/pull/3635)
+- Add `ChatChannel.canCastPollVote` capability [#3635](https://github.com/GetStream/stream-chat-swift/pull/3635)
+- Add teams role support for users [#3639](https://github.com/GetStream/stream-chat-swift/pull/3639)
+- Add `removeDevice: Bool` parameter to `ChatClient.logout()` [#3640](https://github.com/GetStream/stream-chat-swift/pull/3640)
+### 🔄 Changed
+- The `ChatClient.logout()` function now automatically removes the user's current device if it has not been removed already [#3640](https://github.com/GetStream/stream-chat-swift/pull/3640)
+
+## StreamChatUI
+### 🐞 Fixed
+- Fix showing Create Poll action in the composer if the user does not have the capability [#3635](https://github.com/GetStream/stream-chat-swift/pull/3635)
+- Fix error when send images with floating point numbers in the original size [#3636](https://github.com/GetStream/stream-chat-swift/pull/3636)
+
+# [4.76.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.76.0)
+_March 31, 2025_
+
+### StreamChatUI
+### 🐞 Fixed
+- Fix runtime exception if fonts in `Appearance.default.fonts` are set to scaled fonts [#3633](https://github.com/GetStream/stream-chat-swift/pull/3633)
+
+### StreamChatUI
+### 🐞 Fixed
+- Fix draft not deleted when attachments are removed from the composer [#3631](https://github.com/GetStream/stream-chat-swift/pull/3631)
+
 # [4.75.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.75.0)
 _March 26, 2025_
 

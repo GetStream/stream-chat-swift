@@ -1088,14 +1088,14 @@ final class ChannelListController_Tests: XCTestCase {
 
         // When all the channel ids are in DB.
         try assertFilterPredicate(
-            .in(.id, values: expectedCids.map(\.rawValue)),
+            .in(.cid, values: expectedCids),
             channelsInDB: expectedChannels + unexpectedChannels,
             expectedResult: expectedCids
         )
 
         // When not all the channel ids are in DB.
         try assertFilterPredicate(
-            .in(.id, values: expectedCids.map(\.rawValue)),
+            .in(.cid, values: expectedCids),
             channelsInDB: expectedChannels.dropLast() + unexpectedChannels,
             expectedResult: [cid1, cid2]
         )
@@ -1489,7 +1489,7 @@ final class ChannelListController_Tests: XCTestCase {
         )
     }
 
-    func test_filterPredicate_inWithArrayOfIds_returnsExpectedResults() throws {
+    func test_filterPredicate_inWithArrayOfCids_returnsExpectedResults() throws {
         let chatIds: [String] = [
             "suggestions-63986de56549624f314b75cb",
             "suggestions-6ukh3986de56549624f314b75cjkhagfdkjhab",
@@ -1500,7 +1500,7 @@ final class ChannelListController_Tests: XCTestCase {
         let channelIds = chatIds.map { ChannelId(type: .custom("daisy-dashboard"), id: $0) }
 
         try assertFilterPredicate(
-            .in(.id, values: channelIds.map(\.rawValue)),
+            .in(.cid, values: channelIds),
             channelsInDB: [
                 .dummy(channel: .dummy(cid: channelIds[0])),
                 .dummy(channel: .dummy(cid: channelIds[1])),
@@ -1632,6 +1632,51 @@ final class ChannelListController_Tests: XCTestCase {
         )
     }
 
+    func test_filterPredicate_sortedByHasUnread_returnsExpectedResults() throws {
+        let cid1 = ChannelId.unique
+        let cid2 = ChannelId.unique
+        let cid3 = ChannelId.unique
+        let cid4 = ChannelId.unique
+        let currentUserId = UserId.unique
+        let createdAt = Date()
+
+        try assertFilterPredicate(
+            .in(.cid, values: [cid1, cid2, cid3, cid4]),
+            sort: [
+                .init(key: .hasUnread, isAscending: false),
+                .init(key: .createdAt, isAscending: false)
+            ],
+            currentUserId: currentUserId,
+            channelsInDB: [
+                .dummy(
+                    channel: .dummy(cid: cid1, createdAt: createdAt.addingTimeInterval(100)),
+                    channelReads: [
+                        .init(
+                            user: .dummy(userId: currentUserId),
+                            lastReadAt: .unique,
+                            lastReadMessageId: nil,
+                            unreadMessagesCount: 3
+                        )
+                    ]
+                ),
+                .dummy(channel: .dummy(cid: cid3, createdAt: createdAt.addingTimeInterval(200))),
+                .dummy(channel: .dummy(cid: cid4, createdAt: createdAt.addingTimeInterval(300))),
+                .dummy(
+                    channel: .dummy(cid: cid2, createdAt: createdAt),
+                    channelReads: [
+                        .init(
+                            user: .dummy(userId: currentUserId),
+                            lastReadAt: .unique,
+                            lastReadMessageId: nil,
+                            unreadMessagesCount: 20
+                        )
+                    ]
+                )
+            ],
+            expectedResult: [cid2, cid1, cid3, cid4]
+        )
+    }
+
     func test_filterPredicate_muted_returnsExpectedResults() throws {
         let cid1 = ChannelId.unique
         let userId = memberId
@@ -1700,6 +1745,23 @@ final class ChannelListController_Tests: XCTestCase {
                 .dummy(channel: .dummy(team: .unique))
             ],
             expectedResult: [cid]
+        )
+    }
+
+    func test_filterPredicate_id_returnsExpectedResults() throws {
+        let cid1 = ChannelId(type: .commerce, id: "123")
+        let cid2 = ChannelId(type: .livestream, id: "123")
+
+        try assertFilterPredicate(
+            .equal(.id, to: "123"),
+            channelsInDB: [
+                .dummy(channel: .dummy(cid: cid1)),
+                .dummy(channel: .dummy(cid: .init(type: .commerce, id: "123123"))),
+                .dummy(channel: .dummy()),
+                .dummy(channel: .dummy()),
+                .dummy(channel: .dummy(cid: cid2))
+            ],
+            expectedResult: [cid1, cid2]
         )
     }
 

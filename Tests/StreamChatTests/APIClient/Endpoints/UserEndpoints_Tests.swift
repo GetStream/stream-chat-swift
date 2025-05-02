@@ -39,6 +39,7 @@ final class UserEndpoints_Tests: XCTestCase {
                 readReceipts: .init(enabled: true)
             ),
             role: .anonymous,
+            teamsRole: ["ios": "guest"],
             extraData: ["company": .string(.unique)]
         )
         let unset = ["image", "name"]

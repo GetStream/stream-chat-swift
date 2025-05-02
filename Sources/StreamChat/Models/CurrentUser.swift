@@ -69,6 +69,7 @@ public class CurrentChatUser: ChatUser, @unchecked Sendable {
         isInvisible: Bool,
         isBanned: Bool,
         userRole: UserRole,
+        teamsRole: [String: UserRole]?,
         createdAt: Date,
         updatedAt: Date,
         deactivatedAt: Date?,
@@ -105,6 +106,7 @@ public class CurrentChatUser: ChatUser, @unchecked Sendable {
             isBanned: isBanned,
             isFlaggedByCurrentUser: false,
             userRole: userRole,
+            teamsRole: teamsRole,
             createdAt: createdAt,
             updatedAt: updatedAt,
             deactivatedAt: deactivatedAt,
@@ -118,6 +120,8 @@ public class CurrentChatUser: ChatUser, @unchecked Sendable {
 
 /// The total unread information from the current user.
 public struct CurrentUserUnreads: Sendable {
+    /// The total number of unread messages.
+    public let totalUnreadMessagesCount: Int
     /// The total number of unread channels.
     public let totalUnreadChannelsCount: Int
     /// The total number of unread threads.
@@ -164,14 +168,16 @@ public struct UnreadThread: Sendable {
 
 extension CurrentUserUnreadsPayload {
     func asModel() -> CurrentUserUnreads {
-        CurrentUserUnreads(
-            totalUnreadChannelsCount: totalUnreadCount,
+        let unreadChannels: [UnreadChannel] = channels.map { .init(
+            channelId: $0.channelId,
+            unreadMessagesCount: $0.unreadCount,
+            lastRead: $0.lastRead
+        ) }
+        return CurrentUserUnreads(
+            totalUnreadMessagesCount: totalUnreadCount,
+            totalUnreadChannelsCount: unreadChannels.count,
             totalUnreadThreadsCount: totalUnreadThreadsCount,
-            unreadChannels: channels.map { .init(
-                channelId: $0.channelId,
-                unreadMessagesCount: $0.unreadCount,
-                lastRead: $0.lastRead
-            ) },
+            unreadChannels: unreadChannels,
             unreadThreads: threads.map { .init(
                 parentMessageId: $0.parentMessageId,
                 unreadRepliesCount: $0.unreadCount,

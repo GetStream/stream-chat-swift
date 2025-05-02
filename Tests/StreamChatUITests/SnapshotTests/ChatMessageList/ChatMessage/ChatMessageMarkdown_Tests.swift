@@ -9,6 +9,10 @@ import StreamSwiftTestHelpers
 import XCTest
 
 @MainActor final class ChatMessageMarkdown_Tests: XCTestCase {
+    override func tearDownWithError() throws {
+        Appearance.default = Appearance()
+    }
+    
     func test_text() {
         let view = contentView(
             """
@@ -67,6 +71,26 @@ import XCTest
         styles.h6Font.color = .systemBrown
         let view = contentView(
             styles: styles,
+            """
+            # A first level heading
+            ## A _second_ level heading
+            ### A `third` level heading
+            #### A ~fourth~ level heading
+            ##### A fifth level heading
+            ###### A sixth level heading
+            """
+        )
+        AssertSnapshot(view)
+    }
+    
+    func test_headers_appearance_scaled_font() {
+        Appearance.default.fonts.title = UIFontMetrics.default.scaledFont(for: Appearance.default.fonts.title)
+        Appearance.default.fonts.title2 = UIFontMetrics.default.scaledFont(for: Appearance.default.fonts.title2)
+        Appearance.default.fonts.title3 = UIFontMetrics.default.scaledFont(for: Appearance.default.fonts.title3)
+        Appearance.default.fonts.headline = UIFontMetrics.default.scaledFont(for: Appearance.default.fonts.headline)
+        Appearance.default.fonts.subheadline = UIFontMetrics.default.scaledFont(for: Appearance.default.fonts.subheadline)
+        Appearance.default.fonts.footnote = UIFontMetrics.default.scaledFont(for: Appearance.default.fonts.footnote)
+        let view = contentView(
             """
             # A first level heading
             ## A _second_ level heading
