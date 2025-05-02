@@ -1,19 +1,17 @@
 {
-  "connection_id": "67d2d057-0a15-3975-0200-000000000552",
+  "connection_id": "680ff235-0a15-3975-0200-0000000003db",
   "me": {
     "id": "luke_skywalker",
     "name": "Luke Skywalker",
     "image": "https://vignette.wikia.nocookie.net/starwars/images/2/20/LukeTLJ.jpg",
-    "language": "id",
+    "language": "zh",
     "role": "admin",
-    "teams": [
-
-    ],
+    "teams": [],
     "created_at": "2024-04-04T09:26:11.805899Z",
-    "updated_at": "2025-03-04T17:42:53.930104Z",
+    "updated_at": "2025-04-19T12:19:13.801419Z",
     "banned": false,
     "online": true,
-    "last_active": "2025-03-15T00:15:52.376423417Z",
+    "last_active": "2025-05-01T00:19:05.024788871Z",
     "privacy_settings": {
       "typing_indicators": {
         "enabled": true
@@ -22,16 +20,10 @@
         "enabled": true
       }
     },
-    "devices": [
-
-    ],
+    "devices": [],
     "invisible": false,
-    "mutes": [
-
-    ],
-    "channel_mutes": [
-
-    ],
+    "mutes": [],
+    "channel_mutes": [],
     "unread_count": 0,
     "total_unread_count": 0,
     "unread_channels": 0,
@@ -43,5 +35,5 @@
   },
   "cid": "*",
   "type": "health.check",
-  "created_at": "2025-03-15T00:15:52.39176372Z"
+  "created_at": "2025-05-01T00:19:05.063136926Z"
 }

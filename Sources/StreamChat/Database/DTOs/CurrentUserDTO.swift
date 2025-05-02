@@ -248,6 +248,7 @@ extension CurrentChatUser {
             isInvisible: dto.isInvisible,
             isBanned: user.isBanned,
             userRole: UserRole(rawValue: user.userRoleRaw),
+            teamsRole: user.teamsRole?.mapValues { UserRole(rawValue: $0) },
             createdAt: user.userCreatedAt.bridgeDate,
             updatedAt: user.userUpdatedAt.bridgeDate,
             deactivatedAt: user.userDeactivatedAt?.bridgeDate,

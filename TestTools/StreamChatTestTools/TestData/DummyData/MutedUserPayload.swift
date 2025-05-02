@@ -17,6 +17,7 @@ extension MutedUserPayload {
                 name: .unique,
                 imageURL: .unique(),
                 role: .user,
+                teamsRole: nil,
                 createdAt: .unique,
                 updatedAt: .unique,
                 deactivatedAt: nil,

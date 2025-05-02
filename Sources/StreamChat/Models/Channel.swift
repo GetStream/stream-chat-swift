@@ -426,6 +426,10 @@ public struct ChannelCapability: RawRepresentable, ExpressibleByStringLiteral, H
     public static let joinCall: Self = "join-call"
     /// Ability to create a call.
     public static let createCall: Self = "create-call"
+    /// Ability to send a poll.
+    public static let sendPoll: Self = "send-poll"
+    /// Ability to cast a poll vote.
+    public static let castPollVote: Self = "cast-poll-vote"
 }
 
 public extension ChatChannel {
@@ -572,5 +576,15 @@ public extension ChatChannel {
     /// Is slow mode active in this channel.
     var isSlowMode: Bool {
         ownCapabilities.contains(.slowMode)
+    }
+
+    /// Can the current user send a poll in this channel.
+    var canSendPoll: Bool {
+        ownCapabilities.contains(.sendPoll)
+    }
+
+    /// Can the current user cast a poll vote in this channel.
+    var canCastPollVote: Bool {
+        ownCapabilities.contains(.castPollVote)
     }
 }

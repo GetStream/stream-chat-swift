@@ -717,17 +717,23 @@ final class DemoChatChannelListRouter: ChatChannelListRouter {
                 }
             }),
             .init(title: "Reset User Image", handler: { [unowned self] _ in
-                do {
-                    let connectedUser = try self.rootViewController.controller.client.makeConnectedUser()
-                    Task {
-                        do {
-                            try await connectedUser.update(unset: ["image"])
-                        } catch {
+                channelController.client.currentUserController()
+                    .updateUserData(unsetProperties: ["image"]) { [unowned self] error in
+                        if let error {
                             self.rootViewController.presentAlert(title: error.localizedDescription)
                         }
                     }
-                } catch {
-                    self.rootViewController.presentAlert(title: error.localizedDescription)
+            }),
+            .init(title: "Add a team role for the current user", isEnabled: true, handler: { [unowned self] _ in
+                self.rootViewController.presentAlert(title: "Enter the team role", textFieldPlaceholder: "Enter role") { role in
+                    if let role, !role.isEmpty {
+                        let userRole = UserRole(rawValue: role)
+                        client.currentUserController().updateUserData(teamsRole: ["ios": userRole]) { error in
+                            if let error {
+                                log.error("Couldn't add role to custom team for the current user: \(error)")
+                            }
+                        }
+                    }
                 }
             })
         ]

@@ -216,6 +216,7 @@ final class ChatMessage_Equatable_Tests: XCTestCase {
             name: userId,
             imageURL: nil,
             role: .user,
+            teamsRole: nil,
             createdAt: Date(timeIntervalSince1970: 3),
             updatedAt: Date(timeIntervalSince1970: 3),
             deactivatedAt: Date(timeIntervalSince1970: 3),

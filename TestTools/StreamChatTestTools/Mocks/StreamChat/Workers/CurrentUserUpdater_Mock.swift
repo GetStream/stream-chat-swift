@@ -13,6 +13,7 @@ final class CurrentUserUpdater_Mock: CurrentUserUpdater, @unchecked Sendable {
     @Atomic var updateUserData_userExtraData: [String: RawJSON]?
     @Atomic var updateUserData_privacySettings: UserPrivacySettings?
     @Atomic var updateUserData_unset: Set<String>?
+    @Atomic var updateUserData_teamsRole: [TeamId: UserRole]?
     @Atomic var updateUserData_completion: ((Error?) -> Void)?
 
     @Atomic var addDevice_id: DeviceId?
@@ -34,12 +35,15 @@ final class CurrentUserUpdater_Mock: CurrentUserUpdater, @unchecked Sendable {
     @Atomic var deleteAllLocalAttachmentDownloads_completion: ((Error?) -> Void)?
     @Atomic var deleteAllLocalAttachmentDownloads_completion_result: Result<Void, Error>?
 
+    @Atomic var loadAllUnreads_completion: ((Result<CurrentUserUnreads, Error>) -> Void)?
+
     override func updateUserData(
         currentUserId: UserId,
         name: String?,
         imageURL: URL?,
         privacySettings: UserPrivacySettings?,
         role: UserRole?,
+        teamsRole: [TeamId: UserRole]?,
         userExtraData: [String: RawJSON]?,
         unset: Set<String>,
         completion: ((Error?) -> Void)? = nil
@@ -50,6 +54,7 @@ final class CurrentUserUpdater_Mock: CurrentUserUpdater, @unchecked Sendable {
         updateUserData_userExtraData = userExtraData
         updateUserData_privacySettings = privacySettings
         updateUserData_unset = unset
+        updateUserData_teamsRole = teamsRole
         updateUserData_completion = completion
     }
 
@@ -87,6 +92,10 @@ final class CurrentUserUpdater_Mock: CurrentUserUpdater, @unchecked Sendable {
         deleteAllLocalAttachmentDownloads_completion_result?.invoke(with: completion)
     }
 
+    override func loadAllUnreads(completion: @escaping ((Result<CurrentUserUnreads, Error>) -> Void)) {
+        loadAllUnreads_completion = completion
+    }
+
     // Cleans up all recorded values
     func cleanUp() {
         updateUserData_currentUserId = nil
@@ -113,6 +122,8 @@ final class CurrentUserUpdater_Mock: CurrentUserUpdater, @unchecked Sendable {
         
         deleteAllLocalAttachmentDownloads_completion = nil
         deleteAllLocalAttachmentDownloads_completion_result = nil
+
+        loadAllUnreads_completion = nil
     }
 
     override func markAllRead(completion: ((Error?) -> Void)? = nil) {

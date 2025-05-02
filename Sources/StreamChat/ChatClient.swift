@@ -500,15 +500,33 @@ public class ChatClient: @unchecked Sendable {
         }
     }
     
-    /// Disconnects the chat client form the chat servers and removes all the local data related.
+    /// Disconnects the chat client from the chat servers and removes all the local data related.
     @available(*, deprecated, message: "Use the asynchronous version of `logout` for increased safety")
     public func logout() {
         logout {}
     }
 
     /// Disconnects the chat client from the chat servers and removes all the local data related.
-    public func logout(completion: @escaping () -> Void) {
-        authenticationRepository.logOutUser()
+    /// - Parameters:
+    ///  - removeDevice: If `true`, it removes the current device from the user's registered devices automatically.
+    ///  By default it is enabled.
+    public func logout(
+        removeDevice: Bool = true,
+        completion: @escaping () -> Void
+    ) {
+        let currentUserController = currentUserController()
+        if removeDevice, let currentUserDevice = currentUserController.currentUser?.currentDevice {
+            currentUserController.removeDevice(id: currentUserDevice.id) { [weak self] error in
+                if let error {
+                    log.error(error)
+                }
+                self?.authenticationRepository.logOutUser()
+            }
+        }
+
+        if !removeDevice {
+            authenticationRepository.logOutUser()
+        }
 
         // Stop tracking active components
         syncRepository.removeAllTracked()
@@ -663,7 +681,7 @@ public class ChatClient: @unchecked Sendable {
 
 extension ChatClient: AuthenticationRepositoryDelegate {
     func logOutUser(completion: @escaping () -> Void) {
-        logout(completion: completion)
+        logout(removeDevice: false, completion: completion)
     }
 
     func didFinishSettingUpAuthenticationEnvironment(for state: EnvironmentState) {

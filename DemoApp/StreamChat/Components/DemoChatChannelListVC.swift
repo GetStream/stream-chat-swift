@@ -41,10 +41,23 @@ final class DemoChatChannelListVC: ChatChannelListVC {
         .equal(.hidden, to: true)
     ]))
 
-    lazy var unreadChannelsQuery: ChannelListQuery = .init(filter: .and([
-        .containMembers(userIds: [currentUserId]),
-        .hasUnread
-    ]), sort: [.init(key: .unreadCount, isAscending: false)])
+    lazy var unreadCountChannelsQuery: ChannelListQuery = .init(
+        filter: .and([
+            .containMembers(userIds: [currentUserId]),
+            .hasUnread
+        ]),
+        sort: [.init(key: .unreadCount, isAscending: false)]
+    )
+
+    lazy var sortedByHasUnreadChannelsQuery: ChannelListQuery = .init(
+        filter: .and([
+            .containMembers(userIds: [currentUserId])
+        ]),
+        sort: [
+            .init(key: .hasUnread, isAscending: false),
+            .init(key: .updatedAt, isAscending: false)
+        ]
+    )
 
     lazy var mutedChannelsQuery: ChannelListQuery = .init(filter: .and([
         .containMembers(userIds: [currentUserId]),
@@ -132,12 +145,21 @@ final class DemoChatChannelListVC: ChatChannelListVC {
             }
         )
 
-        let unreadChannelsAction = UIAlertAction(
-            title: "Unread Channels",
+        let unreadCountChannelsAction = UIAlertAction(
+            title: "Unread Count Channels",
             style: .default,
             handler: { [weak self] _ in
-                self?.title = "Unread Channels"
-                self?.setUnreadChannelsQuery()
+                self?.title = "Unread Count Channels"
+                self?.setUnreadCountChannelsQuery()
+            }
+        )
+
+        let hasUnreadChannelsAction = UIAlertAction(
+            title: "Sorted hasUnread Channels",
+            style: .default,
+            handler: { [weak self] _ in
+                self?.title = "Sorted hasUnread Channels"
+                self?.setSortedByHasUnreadChannelsQuery()
             }
         )
 
@@ -187,7 +209,8 @@ final class DemoChatChannelListVC: ChatChannelListVC {
             title: "Filter Channels",
             actions: [
                 defaultChannelsAction,
-                unreadChannelsAction,
+                unreadCountChannelsAction,
+                hasUnreadChannelsAction,
                 hiddenChannelsAction,
                 mutedChannelsAction,
                 coolChannelsAction,
@@ -204,8 +227,12 @@ final class DemoChatChannelListVC: ChatChannelListVC {
         replaceQuery(hiddenChannelsQuery)
     }
 
-    func setUnreadChannelsQuery() {
-        replaceQuery(unreadChannelsQuery)
+    func setUnreadCountChannelsQuery() {
+        replaceQuery(unreadCountChannelsQuery)
+    }
+
+    func setSortedByHasUnreadChannelsQuery() {
+        replaceQuery(sortedByHasUnreadChannelsQuery)
     }
 
     func setMutedChannelsQuery() {
