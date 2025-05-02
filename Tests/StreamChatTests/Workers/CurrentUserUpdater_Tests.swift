@@ -726,7 +726,7 @@ final class CurrentUserUpdater_Tests: XCTestCase {
     
     func test_loadAllUnreads_makesCorrectAPICall() {
         // Call loadAllUnreads
-        var receivedUnreads: CurrentUserUnreads?
+        nonisolated(unsafe) var receivedUnreads: CurrentUserUnreads?
         currentUserUpdater.loadAllUnreads { result in
             receivedUnreads = try? result.get()
         }
@@ -784,7 +784,7 @@ final class CurrentUserUpdater_Tests: XCTestCase {
     
     func test_loadAllUnreads_propagatesNetworkError() {
         // Call loadAllUnreads
-        var receivedError: Error?
+        nonisolated(unsafe) var receivedError: Error?
         currentUserUpdater.loadAllUnreads { result in
             if case let .failure(error) = result {
                 receivedError = error

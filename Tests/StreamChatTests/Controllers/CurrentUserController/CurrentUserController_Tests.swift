@@ -789,7 +789,7 @@ final class CurrentUserController_Tests: XCTestCase {
         client.authenticationRepository.setMockToken()
         
         // Call loadAllUnreads
-        var receivedUnreads: CurrentUserUnreads?
+        nonisolated(unsafe) var receivedUnreads: CurrentUserUnreads?
         let exp = expectation(description: "loadAllUnreads called")
         controller.loadAllUnreads { result in
             receivedUnreads = try? result.get()
@@ -839,7 +839,7 @@ final class CurrentUserController_Tests: XCTestCase {
         client.authenticationRepository.setMockToken()
         
         // Call loadAllUnreads
-        var receivedError: Error?
+        nonisolated(unsafe) var receivedError: Error?
         let exp = expectation(description: "loadAllUnreads called")
         controller.loadAllUnreads { [callbackQueueID] result in
             AssertTestQueue(withId: callbackQueueID)
