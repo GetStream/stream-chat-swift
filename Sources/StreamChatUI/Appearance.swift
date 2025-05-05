@@ -6,7 +6,7 @@ import Foundation
 import StreamChat
 
 /// An object containing visual configuration for whole application.
-public struct Appearance {
+public struct Appearance: @unchecked Sendable {
     /// A color pallete to provide basic set of colors for the Views.
     ///
     /// By providing different object or changing individual colors, you can change the look of the views.
@@ -40,10 +40,15 @@ public struct Appearance {
 
 public extension Appearance {
     static var `default`: Appearance {
-        get { queue.sync { _default } }
-        set { queue.sync { _default = newValue } }
+        get {
+            MainActor.ensureIsolated { _default }
+        }
+        set {
+            MainActor.ensureIsolated { _default = newValue }
+        }
     }
     
-    private static let queue = DispatchQueue(label: "io.getstream.appearance", target: .global())
+    // Shared instance is mutated only on the main thread without explicit
+    // main actor annotation for easier SDK setup.
     nonisolated(unsafe) private static var _default: Appearance = .init()
 }

@@ -6,7 +6,7 @@ import StreamChat
 import UIKit
 
 /// An object containing types of UI Components that are used through the UI SDK.
-public struct Components {
+public struct Components: @unchecked Sendable {
     /// A view that displays a title label and subtitle in a container stack view.
     public var titleContainerView: TitleContainerView.Type = TitleContainerView.self
 
@@ -671,11 +671,16 @@ public struct Components {
     public init() {}
     
     public static var `default`: Components {
-        get { queue.sync { _default } }
-        set { queue.sync { _default = newValue } }
+        get {
+            MainActor.ensureIsolated { _default }
+        }
+        set {
+            MainActor.ensureIsolated { _default = newValue }
+        }
     }
     
-    private static let queue = DispatchQueue(label: "io.getstream.components", target: .global())
+    // Shared instance is mutated only on the main thread without explicit
+    // main actor annotation for easier SDK setup.
     nonisolated(unsafe) private static var _default = Self()
 
     // MARK: Deprecations
