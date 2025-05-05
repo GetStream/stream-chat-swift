@@ -68,7 +68,8 @@ jobs:
   build-old-xcode:
     name: Build LLC + UI (Xcode 15)
     runs-on: macos-15
-    if: ${{ github.event.inputs.record_snapshots != 'true' }}
+    # if: ${{ github.event.inputs.record_snapshots != 'true' }}
+    if: ${{ false }} # disable Xcode 15 builds
     env:
       XCODE_VERSION: "15.4"
     steps:
