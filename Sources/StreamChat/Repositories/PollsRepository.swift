@@ -207,7 +207,7 @@ class PollsRepository: @unchecked Sendable {
     
     func deletePoll(
         pollId: String,
-        completion: ((Error?) -> Void)? = nil
+        completion: (@Sendable(Error?) -> Void)? = nil
     ) {
         apiClient.request(endpoint: .deletePoll(pollId: pollId)) { [weak self] in
             if $0.error == nil {
