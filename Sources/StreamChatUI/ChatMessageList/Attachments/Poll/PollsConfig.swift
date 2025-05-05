@@ -60,7 +60,6 @@ public struct PollsEntryConfig: Sendable {
 
 extension PollsEntryConfig {
     /// The default configuration for a poll entry. It will make it configurable but disabled by default.
-    // TODO: Uncomment later
     public static var `default`: PollsEntryConfig { PollsEntryConfig(configurable: true, defaultValue: false) }
     /// The feature should not be supported, so it is not configurable by the user.
     public static let notConfigurable = PollsEntryConfig(configurable: false, defaultValue: false)
