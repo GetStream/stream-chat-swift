@@ -5651,7 +5651,7 @@ final class ChannelController_Tests: XCTestCase {
         let pollId = String.unique
         
         // Simulate `deletePoll` call and capture error
-        var receivedError: Error?
+        nonisolated(unsafe) var receivedError: Error?
         let error: Error? = try waitFor { [callbackQueueID] completion in
             controller.deletePoll(pollId: pollId) { error in
                 AssertTestQueue(withId: callbackQueueID)
@@ -5674,7 +5674,7 @@ final class ChannelController_Tests: XCTestCase {
         let testError = TestError()
         
         // Simulate `deletePoll` call and capture error
-        var receivedError: Error?
+        nonisolated(unsafe) var receivedError: Error?
         let error: Error? = try waitFor { [callbackQueueID] completion in
             controller.deletePoll(pollId: pollId) { error in
                 AssertTestQueue(withId: callbackQueueID)
