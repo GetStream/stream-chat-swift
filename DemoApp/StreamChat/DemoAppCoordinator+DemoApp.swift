@@ -218,7 +218,7 @@ private extension DemoAppCoordinator {
 
     func disconnect() {
         chat.client?.disconnect { [weak self] in
-            MainActor.ensureIsolated { [weak self] in
+            Task { @MainActor in
                 self?.showLogin(animated: true)
             }
         }
