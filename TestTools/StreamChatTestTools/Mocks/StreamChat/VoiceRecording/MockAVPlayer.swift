@@ -6,19 +6,19 @@ import AVFoundation
 import StreamChat
 
 public class MockAVPlayer: AVPlayer {
-    public var playWasCalled = false
+    @Atomic public var playWasCalled = false
 
-    public private(set) var pauseWasCalled = false
+    @Atomic public private(set) var pauseWasCalled = false
 
-    public var replaceCurrentItemWasCalled = false
-    public var replaceCurrentItemWasCalledWithItem: AVPlayerItem?
+    @Atomic public var replaceCurrentItemWasCalled = false
+    @Atomic public var replaceCurrentItemWasCalledWithItem: AVPlayerItem?
 
-    public private(set) var rateWasUpdatedTo: Float?
+    @Atomic public private(set) var rateWasUpdatedTo: Float?
 
-    public private(set) var seekWasCalledWithTime: CMTime?
-    public private(set) var seekWasCalledWithToleranceBefore: CMTime?
-    public private(set) var seekWasCalledWithToleranceAfter: CMTime?
-    public var holdSeekCompletion = false
+    @Atomic public private(set) var seekWasCalledWithTime: CMTime?
+    @Atomic public private(set) var seekWasCalledWithToleranceBefore: CMTime?
+    @Atomic public private(set) var seekWasCalledWithToleranceAfter: CMTime?
+    @Atomic public var holdSeekCompletion = false
 
     public override var rate: Float {
         didSet {
@@ -27,7 +27,7 @@ public class MockAVPlayer: AVPlayer {
         }
     }
 
-    public var mockPlayerObserver: MockAudioPlayerObserver?
+    @Atomic public var mockPlayerObserver: MockAudioPlayerObserver?
 
     override public func play() {
         playWasCalled = true
