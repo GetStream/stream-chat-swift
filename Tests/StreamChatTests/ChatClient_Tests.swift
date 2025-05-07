@@ -33,7 +33,7 @@ final class ChatClient_Tests: XCTestCase {
         userId = .unique
         testEnv = .init()
         time = VirtualTime()
-        VirtualTimeTimer.time = time
+        VirtualTimeTimer.time.value = time
     }
 
     override func tearDown() {

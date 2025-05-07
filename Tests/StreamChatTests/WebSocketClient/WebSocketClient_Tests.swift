@@ -32,7 +32,7 @@ final class WebSocketClient_Tests: XCTestCase {
         super.setUp()
 
         time = VirtualTime()
-        VirtualTimeTimer.time = time
+        VirtualTimeTimer.time.value = time
 
         endpoint = .webSocketConnect(
             userInfo: UserInfo(id: .unique)

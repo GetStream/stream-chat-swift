@@ -6,7 +6,7 @@ import CoreData
 @testable import StreamChat
 import XCTest
 
-final class BackgroundEntityDatabaseObserver_Mock<Item, DTO: NSManagedObject>: BackgroundEntityDatabaseObserver<Item, DTO>, @unchecked Sendable {
+final class BackgroundEntityDatabaseObserver_Mock<Item: Sendable, DTO: NSManagedObject>: BackgroundEntityDatabaseObserver<Item, DTO>, @unchecked Sendable {
     @Atomic var synchronizeError: Error?
     @Atomic var startObservingCalled: Bool = false
 

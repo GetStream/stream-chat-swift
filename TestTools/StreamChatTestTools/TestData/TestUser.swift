@@ -4,7 +4,7 @@
 
 import Foundation
 
-public struct TestUser: Codable, Equatable {
+public struct TestUser: Codable, Equatable, Sendable {
     public let name: String
     public let age: Int
 

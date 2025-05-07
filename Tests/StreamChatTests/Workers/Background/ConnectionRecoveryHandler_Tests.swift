@@ -13,12 +13,12 @@ final class ConnectionRecoveryHandler_Tests: XCTestCase {
     var mockInternetConnection: InternetConnection_Mock!
     var mockBackgroundTaskScheduler: BackgroundTaskScheduler_Mock!
     var mockRetryStrategy: RetryStrategy_Spy!
-    var mockTime: VirtualTime { VirtualTimeTimer.time }
+    var mockTime: VirtualTime { VirtualTimeTimer.time.value! }
 
     override func setUp() {
         super.setUp()
 
-        VirtualTimeTimer.time = .init()
+        VirtualTimeTimer.time.value = .init()
 
         mockChatClient = ChatClient_Mock(config: .init(apiKeyString: .unique))
         mockBackgroundTaskScheduler = BackgroundTaskScheduler_Mock()
