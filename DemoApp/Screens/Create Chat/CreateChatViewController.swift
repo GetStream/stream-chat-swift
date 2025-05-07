@@ -25,7 +25,7 @@ class CreateChatViewController: UIViewController {
 
             // Create the Channel on backend
             controller.synchronize { [weak self] error in
-                MainActor.ensureIsolated { [weak self] in
+                Task { @MainActor in
                     if let error = error {
                         self?.presentAlert(title: "Error when creating the channel", message: error.localizedDescription)
                         return
@@ -147,7 +147,7 @@ class CreateChatViewController: UIViewController {
         // Empty initial search to get all users
         searchController.search(term: nil) { [weak self] error in
             if error != nil {
-                MainActor.ensureIsolated { [weak self] in
+                Task { @MainActor in
                     self?.update(for: .error)
                 }
             }
@@ -241,7 +241,7 @@ class CreateChatViewController: UIViewController {
         operation = DispatchWorkItem { [weak self] in
             self?.searchController.search(term: sender.text) { [weak self] error in
                 if error != nil {
-                    MainActor.ensureIsolated { [weak self] in
+                    Task { @MainActor in
                         self?.update(for: .error)
                     }
                 }

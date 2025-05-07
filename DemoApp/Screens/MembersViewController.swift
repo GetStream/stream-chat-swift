@@ -37,7 +37,7 @@ class MembersViewController: UITableViewController, ChatChannelMemberListControl
 
     private func synchronizeAndUpdateData() {
         membersController.synchronize { [weak self] _ in
-            MainActor.ensureIsolated { [weak self] in
+            Task { @MainActor in
                 self?.updateData()
             }
         }

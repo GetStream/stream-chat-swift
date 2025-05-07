@@ -131,8 +131,8 @@ class NameGroupViewController: UIViewController {
                 name: name,
                 members: Set(selectedUsers.map(\.id))
             )
-            channelController?.synchronize { error in
-                MainActor.ensureIsolated { [weak self] in
+            channelController?.synchronize { [weak self] error in
+                Task { @MainActor in
                     if let error = error {
                         self?.presentAlert(title: "Error when creating the channel", message: error.localizedDescription)
                     } else {
