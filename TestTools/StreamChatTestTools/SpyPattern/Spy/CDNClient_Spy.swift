@@ -14,8 +14,8 @@ final class CDNClient_Spy: CDNClient, Spy, @unchecked Sendable {
 
     func uploadAttachment(
         _ attachment: AnyChatMessageAttachment,
-        progress: ((Double) -> Void)?,
-        completion: @escaping (Result<URL, Error>) -> Void
+        progress: (@Sendable(Double) -> Void)?,
+        completion: @escaping @Sendable(Result<URL, Error>) -> Void
     ) {
         record()
         if let uploadAttachmentProgress = uploadAttachmentProgress {

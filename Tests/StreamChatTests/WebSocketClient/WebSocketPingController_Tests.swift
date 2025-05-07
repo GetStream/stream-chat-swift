@@ -14,7 +14,7 @@ final class WebSocketPingController_Tests: XCTestCase {
     override func setUp() {
         super.setUp()
         time = VirtualTime()
-        VirtualTimeTimer.time = time
+        VirtualTimeTimer.time.value = time
         pingController = .init(timerType: VirtualTimeTimer.self, timerQueue: .main)
 
         delegate = WebSocketPingController_Delegate()

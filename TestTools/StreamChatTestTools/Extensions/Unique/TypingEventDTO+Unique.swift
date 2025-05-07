@@ -6,7 +6,7 @@ import Foundation
 @testable import StreamChat
 
 extension TypingEventDTO {
-    static var unique: TypingEventDTO = try!
+    static let unique: TypingEventDTO = try!
         .init(
             from: EventPayload(
                 eventType: .userStartTyping,

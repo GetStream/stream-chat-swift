@@ -3,22 +3,22 @@
 //
 
 import AVFoundation
-import StreamChat
+@testable import StreamChat
 
 public class MockAVPlayer: AVPlayer {
-    @Atomic public var playWasCalled = false
+    public var playWasCalled = false
 
-    @Atomic public private(set) var pauseWasCalled = false
+    public private(set) var pauseWasCalled = false
 
-    @Atomic public var replaceCurrentItemWasCalled = false
-    @Atomic public var replaceCurrentItemWasCalledWithItem: AVPlayerItem?
+    public var replaceCurrentItemWasCalled = false
+    public var replaceCurrentItemWasCalledWithItem: AVPlayerItem?
 
-    @Atomic public private(set) var rateWasUpdatedTo: Float?
+    public private(set) var rateWasUpdatedTo: Float?
 
-    @Atomic public private(set) var seekWasCalledWithTime: CMTime?
-    @Atomic public private(set) var seekWasCalledWithToleranceBefore: CMTime?
-    @Atomic public private(set) var seekWasCalledWithToleranceAfter: CMTime?
-    @Atomic public var holdSeekCompletion = false
+    public private(set) var seekWasCalledWithTime: CMTime?
+    public private(set) var seekWasCalledWithToleranceBefore: CMTime?
+    public private(set) var seekWasCalledWithToleranceAfter: CMTime?
+    public var holdSeekCompletion = false
 
     public override var rate: Float {
         didSet {
@@ -27,7 +27,7 @@ public class MockAVPlayer: AVPlayer {
         }
     }
 
-    @Atomic public var mockPlayerObserver: MockAudioPlayerObserver?
+    public var mockPlayerObserver: MockAudioPlayerObserver?
 
     override public func play() {
         playWasCalled = true
@@ -44,8 +44,10 @@ public class MockAVPlayer: AVPlayer {
     override public func replaceCurrentItem(
         with item: AVPlayerItem?
     ) {
-        replaceCurrentItemWasCalled = true
-        replaceCurrentItemWasCalledWithItem = item
+        MainActor.ensureIsolated {
+            replaceCurrentItemWasCalled = true
+            replaceCurrentItemWasCalledWithItem = item
+        }
         super.replaceCurrentItem(with: item)
     }
 
@@ -53,16 +55,22 @@ public class MockAVPlayer: AVPlayer {
         to time: CMTime,
         toleranceBefore: CMTime,
         toleranceAfter: CMTime,
-        completionHandler: @escaping (Bool) -> Void
+        completionHandler: @escaping @Sendable(Bool) -> Void
     ) {
-        seekWasCalledWithTime = time
-        seekWasCalledWithToleranceBefore = toleranceBefore
-        seekWasCalledWithToleranceAfter = toleranceAfter
+        MainActor.ensureIsolated {
+            seekWasCalledWithTime = time
+            seekWasCalledWithToleranceBefore = toleranceBefore
+            seekWasCalledWithToleranceAfter = toleranceAfter
+        }
         super.seek(
             to: time,
             toleranceBefore: toleranceBefore,
             toleranceAfter: toleranceAfter,
-            completionHandler: { _ in completionHandler(!self.holdSeekCompletion) }
+            completionHandler: { _ in
+                MainActor.ensureIsolated {
+                    completionHandler(!self.holdSeekCompletion)
+                }
+            }
         )
     }
 }

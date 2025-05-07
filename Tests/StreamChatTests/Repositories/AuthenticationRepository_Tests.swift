@@ -1043,7 +1043,7 @@ final class AuthenticationRepository_Tests: XCTestCase {
 
     func test_reset() {
         let mockTimer = MockTimer()
-        FakeTimer.mockTimer = mockTimer
+        FakeTimer.mockTimer.value = mockTimer
         retryStrategy.consecutiveFailuresCount = 5
         let repository = AuthenticationRepository(
             apiClient: apiClient,

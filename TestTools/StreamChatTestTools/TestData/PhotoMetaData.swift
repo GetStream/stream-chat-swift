@@ -5,8 +5,8 @@
 import Foundation
 @testable import StreamChat
 
-public struct PhotoMetadata: Codable, Equatable {
-    public struct Location: Codable, Equatable {
+public struct PhotoMetadata: Codable, Equatable, Sendable {
+    public struct Location: Codable, Equatable, Sendable {
         public let longitude: Double
         public let latitude: Double
     }

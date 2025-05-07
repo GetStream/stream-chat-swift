@@ -6,15 +6,17 @@ import Foundation
 @testable import StreamChat
 
 struct VirtualTimeTimer: StreamChat.Timer {
-    static var time: VirtualTime!
+    static let time = AllocatedUnfairLock<VirtualTime?>(nil)
 
     static func invalidate() {
-        time.invalidate()
-        time = nil
+        time.withLock {
+            $0?.invalidate()
+            $0 = nil
+        }
     }
 
     static func schedule(timeInterval: TimeInterval, queue: DispatchQueue, onFire: @escaping () -> Void) -> TimerControl {
-        Self.time.scheduleTimer(
+        Self.time.value!.scheduleTimer(
             interval: timeInterval,
             repeating: false,
             callback: { _ in onFire() }
@@ -26,7 +28,7 @@ struct VirtualTimeTimer: StreamChat.Timer {
         queue: DispatchQueue,
         onFire: @escaping () -> Void
     ) -> RepeatingTimerControl {
-        Self.time.scheduleTimer(
+        Self.time.value!.scheduleTimer(
             interval: timeInterval,
             repeating: true,
             callback: { _ in onFire() }
@@ -34,7 +36,7 @@ struct VirtualTimeTimer: StreamChat.Timer {
     }
 
     static func currentTime() -> Date {
-        Date(timeIntervalSinceReferenceDate: time.currentTime)
+        Date(timeIntervalSinceReferenceDate: time.value!.currentTime)
     }
 }
 

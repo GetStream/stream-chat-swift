@@ -22,7 +22,7 @@ final class RequestEncoder_Tests: XCTestCase {
         connectionDetailsProvider = ConnectionDetailsProviderDelegate_Spy()
         encoder.connectionDetailsProviderDelegate = connectionDetailsProvider
 
-        VirtualTimeTimer.time = VirtualTime()
+        VirtualTimeTimer.time.value = VirtualTime()
     }
 
     override func tearDown() {
