@@ -8,7 +8,7 @@
 import StreamSwiftTestHelpers
 import XCTest
 
-final class ChatMessageBubbleView_Tests: XCTestCase {
+@MainActor final class ChatMessageBubbleView_Tests: XCTestCase {
     private var bubbleContent = ChatMessageBubbleView.Content(
         backgroundColor: Appearance.default.colorPalette.background2,
         roundedCorners: CACornerMask.all.subtracting(.layerMaxXMinYCorner)

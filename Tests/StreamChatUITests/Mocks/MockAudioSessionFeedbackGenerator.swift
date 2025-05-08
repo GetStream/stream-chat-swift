@@ -7,7 +7,7 @@ import Foundation
 import StreamChatUI
 
 public final class MockAudioSessionFeedbackGenerator: AudioSessionFeedbackGenerator, Spy {
-    public let spyState = SpyState()
+    nonisolated public let spyState = SpyState()
 
     public init() {}
 

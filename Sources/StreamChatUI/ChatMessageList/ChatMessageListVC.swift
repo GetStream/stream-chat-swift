@@ -647,12 +647,12 @@ open class ChatMessageListVC: _ViewController,
     /// Jump to the current unread message if there is one.
     /// - Parameter animated: `true` if you want to animate the change in position; `false` if it should be immediate.
     /// - Parameter onHighlight: An optional closure to provide highlighting style when the message appears on screen.
-    open func jumpToUnreadMessage(animated: Bool = true, onHighlight: ((IndexPath) -> Void)? = nil) {
+    open func jumpToUnreadMessage(animated: Bool = true, onHighlight: (@Sendable(IndexPath) -> Void)? = nil) {
         getCurrentUnreadMessageId { [weak self] messageId in
             guard let jumpToUnreadMessageId = messageId else { return }
 
             // The delay helps having a smoother scrolling animation.
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) { [weak self] in
                 self?.jumpToMessage(id: jumpToUnreadMessageId, animated: animated, onHighlight: onHighlight)
             }
         }
@@ -680,13 +680,14 @@ open class ChatMessageListVC: _ViewController,
                 log.error("Loading message around failed with error: \(error)")
                 return
             }
-
-            self?.updateScrollToBottomButtonVisibility()
-
-            // When we load the mid-page, the UI is not yet updated, so we can't scroll here.
-            // So we need to wait when the updates messages are available in the UI, and only then
-            // we can scroll to it.
-            self?.messagePendingScrolling = (id, animated)
+            MainActor.ensureIsolated { [weak self] in
+                self?.updateScrollToBottomButtonVisibility()
+                
+                // When we load the mid-page, the UI is not yet updated, so we can't scroll here.
+                // So we need to wait when the updates messages are available in the UI, and only then
+                // we can scroll to it.
+                self?.messagePendingScrolling = (id, animated)
+            }
         }
     }
 
@@ -750,7 +751,7 @@ open class ChatMessageListVC: _ViewController,
     ///
     /// Note: This is a current backend limitation. Ideally, in the future,
     /// we will get the `unreadMessageId` directly from the backend.
-    private func getCurrentUnreadMessageId(completion: @escaping (MessageId?) -> Void) {
+    private func getCurrentUnreadMessageId(completion: @escaping @Sendable(MessageId?) -> Void) {
         if let jumpToUnreadMessageId = self.jumpToUnreadMessageId {
             return completion(jumpToUnreadMessageId)
         }
@@ -764,11 +765,13 @@ open class ChatMessageListVC: _ViewController,
                 return completion(nil)
             }
 
-            guard let jumpToUnreadMessageId = self.jumpToUnreadMessageId else {
-                return completion(nil)
+            MainActor.ensureIsolated {
+                guard let jumpToUnreadMessageId = self.jumpToUnreadMessageId else {
+                    return completion(nil)
+                }
+                
+                completion(jumpToUnreadMessageId)
             }
-
-            completion(jumpToUnreadMessageId)
         }
     }
 
@@ -1158,8 +1161,10 @@ open class ChatMessageListVC: _ViewController,
             currentUserId: currentUserId
         ) { [weak self] comment in
             let pollController = self?.client.pollController(messageId: message.id, pollId: poll.id)
-            pollController?.castPollVote(answerText: comment, optionId: nil) { error in
-                self?.notificationFeedbackGenerator?.notificationOccurred(error == nil ? .success : .error)
+            pollController?.castPollVote(answerText: comment, optionId: nil) { [weak self] error in
+                MainActor.ensureIsolated { [weak self] in
+                    self?.notificationFeedbackGenerator?.notificationOccurred(error == nil ? .success : .error)
+                }
             }
         }
     }
@@ -1178,8 +1183,10 @@ open class ChatMessageListVC: _ViewController,
             if isDuplicate {
                 return
             }
-            pollController?.suggestPollOption(text: suggestion) { error in
-                self?.notificationFeedbackGenerator?.notificationOccurred(error == nil ? .success : .error)
+            pollController?.suggestPollOption(text: suggestion) { [weak self] error in
+                MainActor.ensureIsolated { [weak self] in
+                    self?.notificationFeedbackGenerator?.notificationOccurred(error == nil ? .success : .error)
+                }
             }
         }
     }
@@ -1192,7 +1199,9 @@ open class ChatMessageListVC: _ViewController,
         alertRouter.showPollEndVoteAlert(for: poll, in: message.id) { [weak self] in
             let pollController = self?.client.pollController(messageId: message.id, pollId: poll.id)
             pollController?.closePoll { [weak self] error in
-                self?.notificationFeedbackGenerator?.notificationOccurred(error == nil ? .success : .error)
+                MainActor.ensureIsolated { [weak self] in
+                    self?.notificationFeedbackGenerator?.notificationOccurred(error == nil ? .success : .error)
+                }
             }
         }
     }
@@ -1214,11 +1223,15 @@ open class ChatMessageListVC: _ViewController,
         let pollController = makePollController(for: poll, in: message)
         if let currentUserVote = poll.currentUserVote(for: option) {
             pollController.removePollVote(voteId: currentUserVote.id) { [weak self] error in
-                self?.didRemovePollVote(currentUserVote, for: option, in: message, error: error)
+                MainActor.ensureIsolated { [weak self] in
+                    self?.didRemovePollVote(currentUserVote, for: option, in: message, error: error)
+                }
             }
         } else {
             pollController.castPollVote(answerText: nil, optionId: option.id) { [weak self] error in
-                self?.didCastPollVote(for: option, in: message, error: error)
+                MainActor.ensureIsolated { [weak self] in
+                    self?.didCastPollVote(for: option, in: message, error: error)
+                }
             }
         }
     }

@@ -96,7 +96,9 @@ open class ChatThreadListVC:
         super.setUp()
 
         threadListController.synchronize { [weak self] error in
-            self?.didFinishSynchronizingThreads(with: error)
+            MainActor.ensureIsolated { [weak self] in
+                self?.didFinishSynchronizingThreads(with: error)
+            }
         }
         threadListController.delegate = self
         eventsController.delegate = self
@@ -148,7 +150,9 @@ open class ChatThreadListVC:
         if !newAvailableThreadIds.isEmpty {
             showLoadingBannerView()
             threadListController.synchronize { [weak self] error in
-                self?.didFinishSynchronizingThreads(with: error)
+                MainActor.ensureIsolated { [weak self] in
+                    self?.didFinishSynchronizingThreads(with: error)
+                }
             }
         }
     }
@@ -161,7 +165,9 @@ open class ChatThreadListVC:
 
         isPaginatingThreads = true
         threadListController.loadMoreThreads { [weak self] result in
-            self?.didFinishLoadingMoreThreads(with: result)
+            MainActor.ensureIsolated { [weak self] in
+                self?.didFinishLoadingMoreThreads(with: result)
+            }
         }
     }
 
@@ -170,7 +176,9 @@ open class ChatThreadListVC:
         hideHeaderBannerView()
         showLoadingBannerView()
         threadListController.synchronize { [weak self] error in
-            self?.didFinishSynchronizingThreads(with: error)
+            MainActor.ensureIsolated { [weak self] in
+                self?.didFinishSynchronizingThreads(with: error)
+            }
         }
     }
 
@@ -188,7 +196,9 @@ open class ChatThreadListVC:
         }
 
         threadListController.synchronize { [weak self] error in
-            self?.didFinishSynchronizingThreads(with: error)
+            MainActor.ensureIsolated { [weak self] in
+                self?.didFinishSynchronizingThreads(with: error)
+            }
         }
     }
 
@@ -273,25 +283,29 @@ open class ChatThreadListVC:
 
     // MARK: - ChatThreadListControllerDelegate
 
-    public func controller(_ controller: DataController, didChangeState state: DataController.State) {
-        handleStateChanges(state)
+    nonisolated public func controller(_ controller: DataController, didChangeState state: DataController.State) {
+        MainActor.ensureIsolated {
+            handleStateChanges(state)
+        }
     }
 
-    open func controller(
+    nonisolated open func controller(
         _ controller: ChatThreadListController,
         didChangeThreads changes: [ListChange<ChatThread>]
     ) {
-        handleStateChanges(controller.state)
-        
-        let previousThreads = threads
-        let newThreads = Array(controller.threads)
-        let stagedChangeset = StagedChangeset(source: previousThreads, target: newThreads)
-        tableView.reload(
-            using: stagedChangeset,
-            with: .fade,
-            reconfigure: { _ in true }
-        ) { [weak self] newThreads in
-            self?.threads = newThreads
+        MainActor.ensureIsolated {
+            handleStateChanges(controller.state)
+            
+            let previousThreads = threads
+            let newThreads = Array(controller.threads)
+            let stagedChangeset = StagedChangeset(source: previousThreads, target: newThreads)
+            tableView.reload(
+                using: stagedChangeset,
+                with: .fade,
+                reconfigure: { _ in true }
+            ) { [weak self] newThreads in
+                self?.threads = newThreads
+            }
         }
     }
 
@@ -346,19 +360,21 @@ open class ChatThreadListVC:
 
     // MARK: - EventsControllerDelegate
 
-    open func eventsController(_ controller: EventsController, didReceiveEvent event: any Event) {
-        switch event {
-        case let event as ThreadMessageNewEvent:
-            guard let parentId = event.message.parentMessageId else { break }
-            let isNewThread = threadListController.dataStore.thread(parentMessageId: parentId) == nil
-            if isNewThread {
-                newAvailableThreadIds.insert(parentId)
-                if isViewVisible {
-                    showHeaderBannerView()
+    nonisolated open func eventsController(_ controller: EventsController, didReceiveEvent event: any Event) {
+        MainActor.ensureIsolated {
+            switch event {
+            case let event as ThreadMessageNewEvent:
+                guard let parentId = event.message.parentMessageId else { break }
+                let isNewThread = threadListController.dataStore.thread(parentMessageId: parentId) == nil
+                if isNewThread {
+                    newAvailableThreadIds.insert(parentId)
+                    if isViewVisible {
+                        showHeaderBannerView()
+                    }
                 }
+            default:
+                break
             }
-        default:
-            break
         }
     }
 }

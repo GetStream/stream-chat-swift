@@ -6,7 +6,7 @@ import StreamChat
 import UIKit
 
 /// The type preview should conform to in order the gallery can be shown from it.
-public protocol GalleryItemPreview {
+@preconcurrency @MainActor public protocol GalleryItemPreview {
     /// Attachment identifier.
     var attachmentId: AttachmentId? { get }
 
@@ -95,8 +95,10 @@ extension ChatMessageGalleryView {
                 from: attachment?.payload,
                 maxResolutionInPixels: components.imageAttachmentMaxPixels
             ) { [weak self] _ in
-                self?.loadingIndicator.isVisible = false
-                self?.imageTask = nil
+                MainActor.ensureIsolated { [weak self] in
+                    self?.loadingIndicator.isVisible = false
+                    self?.imageTask = nil
+                }
             }
 
             uploadingOverlay.content = content?.uploadingState
@@ -113,7 +115,9 @@ extension ChatMessageGalleryView {
         // MARK: - Init & Deinit
 
         deinit {
-            imageTask?.cancel()
+            MainActor.ensureIsolated {
+                imageTask?.cancel()
+            }
         }
     }
 }

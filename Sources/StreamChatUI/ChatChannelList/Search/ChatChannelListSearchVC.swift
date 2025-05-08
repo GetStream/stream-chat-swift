@@ -120,6 +120,8 @@ open class ChatChannelListSearchVC: ChatChannelListVC, UISearchResultsUpdating {
     // MARK: - Deinit
 
     deinit {
-        debouncer.invalidate()
+        MainActor.ensureIsolated {
+            debouncer.invalidate()
+        }
     }
 }

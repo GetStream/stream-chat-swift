@@ -206,11 +206,13 @@ open class PollResultsVC:
 
     // MARK: - PollControllerDelegate
 
-    open func pollController(_ pollController: PollController, didUpdatePoll poll: EntityChange<Poll>) {
-        updateDataSource()
+    nonisolated open func pollController(_ pollController: PollController, didUpdatePoll poll: EntityChange<Poll>) {
+        MainActor.ensureIsolated {
+            updateDataSource()
+        }
     }
 
-    open func pollController(
+    nonisolated open func pollController(
         _ pollController: PollController,
         didUpdateCurrentUserVotes votes: [ListChange<PollVote>]
     ) {

@@ -8,7 +8,7 @@ import StreamChat
 import StreamSwiftTestHelpers
 import XCTest
 
-final class TypingIndicatorViewTests: XCTestCase {
+@MainActor final class TypingIndicatorViewTests: XCTestCase {
     override func setUp() {
         super.setUp()
         // Disable animations.

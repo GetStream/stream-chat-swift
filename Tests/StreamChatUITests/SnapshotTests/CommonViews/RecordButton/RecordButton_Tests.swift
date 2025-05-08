@@ -8,7 +8,7 @@ import StreamChat
 import StreamSwiftTestHelpers
 import XCTest
 
-final class RecordButton_Tests: XCTestCase {
+@MainActor final class RecordButton_Tests: XCTestCase {
     private var subject: RecordButton! = .init()
 
     // MARK: - Lifecycle

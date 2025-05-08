@@ -141,11 +141,13 @@ open class PollResultsVoteListVC:
 
     // MARK: - PollVoteListControllerDelegate
 
-    public func controller(_ controller: PollVoteListController, didChangeVotes changes: [ListChange<PollVote>]) {
-        var snapshot = NSDiffableDataSourceSnapshot<PollOption, PollVote>()
-        snapshot.appendSections([option])
-        snapshot.appendItems(Array(controller.votes))
-        dataSource.apply(snapshot, animatingDifferences: true)
+    nonisolated public func controller(_ controller: PollVoteListController, didChangeVotes changes: [ListChange<PollVote>]) {
+        MainActor.ensureIsolated {
+            var snapshot = NSDiffableDataSourceSnapshot<PollOption, PollVote>()
+            snapshot.appendSections([option])
+            snapshot.appendItems(Array(controller.votes))
+            dataSource.apply(snapshot, animatingDifferences: true)
+        }
     }
 
     // MARK: - Actions
@@ -158,7 +160,9 @@ open class PollResultsVoteListVC:
 
         isPaginatingVotes = true
         pollVoteListController.loadMoreVotes { [weak self] error in
-            self?.didFinishLoadingMoreVotes(with: error)
+            MainActor.ensureIsolated { [weak self] in
+                self?.didFinishLoadingMoreVotes(with: error)
+            }
         }
     }
 

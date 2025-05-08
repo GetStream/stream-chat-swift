@@ -28,45 +28,47 @@ open class NukeImageLoader: ImageLoading {
         into imageView: UIImageView,
         from url: URL?,
         with options: ImageLoaderOptions,
-        completion: ((Result<UIImage, Error>) -> Void)?
+        completion: (@Sendable(Result<UIImage, Error>) -> Void)?
     ) -> Cancellable? {
-        imageView.currentImageLoadingTask?.cancel()
-
-        guard let url = url else {
-            imageView.image = options.placeholder
-            return nil
-        }
-
-        let urlRequest = imageCDN.urlRequest(forImageUrl: url, resize: options.resize)
-        let cachingKey = imageCDN.cachingKey(forImageUrl: url)
-
-        var processors: [ImageProcessing] = []
-        if let resize = options.resize {
-            let cgSize = CGSize(width: resize.width, height: resize.height)
-            processors.append(ImageProcessors.Resize(size: cgSize))
-        }
-
-        let request = ImageRequest(
-            urlRequest: urlRequest,
-            processors: processors,
-            userInfo: [.imageIdKey: cachingKey]
-        )
-
-        let nukeOptions = ImageLoadingOptions(placeholder: options.placeholder)
-        imageView.currentImageLoadingTask = StreamChatUI.loadImage(
-            with: request,
-            options: nukeOptions,
-            into: imageView
-        ) { result in
-            switch result {
-            case let .success(imageResponse):
-                completion?(.success(imageResponse.image))
-            case let .failure(error):
-                completion?(.failure(error))
+        let imageTask: ImageTask? = MainActor.ensureIsolated { [imageCDN] in
+            imageView.currentImageLoadingTask?.cancel()
+            
+            guard let url = url else {
+                imageView.image = options.placeholder
+                return nil
             }
+            
+            let urlRequest = imageCDN.urlRequest(forImageUrl: url, resize: options.resize)
+            let cachingKey = imageCDN.cachingKey(forImageUrl: url)
+            
+            var processors: [ImageProcessing] = []
+            if let resize = options.resize {
+                let cgSize = CGSize(width: resize.width, height: resize.height)
+                processors.append(ImageProcessors.Resize(size: cgSize))
+            }
+            
+            let request = ImageRequest(
+                urlRequest: urlRequest,
+                processors: processors,
+                userInfo: [.imageIdKey: cachingKey]
+            )
+            
+            let nukeOptions = ImageLoadingOptions(placeholder: options.placeholder)
+            imageView.currentImageLoadingTask = StreamChatUI.loadImage(
+                with: request,
+                options: nukeOptions,
+                into: imageView
+            ) { result in
+                switch result {
+                case let .success(imageResponse):
+                    completion?(.success(imageResponse.image))
+                case let .failure(error):
+                    completion?(.failure(error))
+                }
+            }
+            return imageView.currentImageLoadingTask
         }
-
-        return imageView.currentImageLoadingTask
+        return imageTask
     }
 
     @discardableResult

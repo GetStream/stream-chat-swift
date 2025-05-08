@@ -8,7 +8,7 @@ import UIKit
 
 extension ChatMessageVoiceRecordingAttachmentListView {
     /// The Presenter that drives interactions and events for
-    internal class ItemViewPresenter: AudioPlayingDelegate {
+    @MainActor internal class ItemViewPresenter: AudioPlayingDelegate {
         /// The delegate to which the Presenter will forward all audioPlayback events.
         internal weak var delegate: VoiceRecordingAttachmentPresentationViewDelegate?
 
@@ -120,61 +120,72 @@ extension ChatMessageVoiceRecordingAttachmentListView {
 
         // MARK: - AudioPlayingDelegate
 
-        internal func audioPlayer(
+        nonisolated internal func audioPlayer(
             _ audioPlayer: AudioPlaying,
             didUpdateContext context: AudioPlaybackContext
         ) {
-            guard let view = view, let content = view.content else {
-                return
+            MainActor.ensureIsolated {
+                _audioPlayer(audioPlayer, didUpdateContext: context)
             }
-
-            let isCurrentItemActive = context.assetLocation == content.voiceRecordingURL
-            let contextForViewUpdate = isCurrentItemActive ? context : .notLoaded
-            let contentDuration = content.duration ?? contextForViewUpdate.duration
-
-            view.updatePlayPauseButton(for: contextForViewUpdate.state)
-            view.updateFileIconImageView(for: contextForViewUpdate.state)
-            view.updateWaveformView(
-                for: contextForViewUpdate.state,
-                duration: contentDuration,
-                currentTime: contextForViewUpdate.currentTime
-            )
-
-            let playbackRate: Float = {
-                switch contextForViewUpdate.state {
-                case .paused, .playing:
-                    return contextForViewUpdate.rate.rawValue != 0
-                        ? contextForViewUpdate.rate.rawValue
-                        : currentPlaybackRate.rawValue
-                default:
-                    return contextForViewUpdate.rate.rawValue
+        }
+        
+        func _audioPlayer(
+            _ audioPlayer: AudioPlaying,
+            didUpdateContext context: AudioPlaybackContext
+        ) {
+            MainActor.ensureIsolated {
+                guard let view = view, let content = view.content else {
+                    return
                 }
-            }()
-
-            view.updatePlaybackRateButton(
-                for: contextForViewUpdate.state,
-                value: playbackRate
-            )
-
-            if contextForViewUpdate.rate != .zero {
-                currentPlaybackRate = contextForViewUpdate.rate
-            }
-
-            let loadingIndicatorAndDurationLabel = { [view] in
-                view.updatePlaybackLoadingIndicator(for: contextForViewUpdate.state)
-                view.updateDurationLabel(
+                
+                let isCurrentItemActive = context.assetLocation == content.voiceRecordingURL
+                let contextForViewUpdate = isCurrentItemActive ? context : .notLoaded
+                let contentDuration = content.duration ?? contextForViewUpdate.duration
+                
+                view.updatePlayPauseButton(for: contextForViewUpdate.state)
+                view.updateFileIconImageView(for: contextForViewUpdate.state)
+                view.updateWaveformView(
                     for: contextForViewUpdate.state,
                     duration: contentDuration,
                     currentTime: contextForViewUpdate.currentTime
                 )
-                view.durationLabel.isHidden = view.durationLabel.isHidden || !view.playbackLoadingIndicator.isHidden
-            }
-
-            debouncer.invalidate()
-            if contextForViewUpdate.state == .loading {
-                debouncer.execute { loadingIndicatorAndDurationLabel() }
-            } else {
-                loadingIndicatorAndDurationLabel()
+                
+                let playbackRate: Float = {
+                    switch contextForViewUpdate.state {
+                    case .paused, .playing:
+                        return contextForViewUpdate.rate.rawValue != 0
+                            ? contextForViewUpdate.rate.rawValue
+                            : currentPlaybackRate.rawValue
+                    default:
+                        return contextForViewUpdate.rate.rawValue
+                    }
+                }()
+                
+                view.updatePlaybackRateButton(
+                    for: contextForViewUpdate.state,
+                    value: playbackRate
+                )
+                
+                if contextForViewUpdate.rate != .zero {
+                    currentPlaybackRate = contextForViewUpdate.rate
+                }
+                
+                let loadingIndicatorAndDurationLabel = { [view] in
+                    view.updatePlaybackLoadingIndicator(for: contextForViewUpdate.state)
+                    view.updateDurationLabel(
+                        for: contextForViewUpdate.state,
+                        duration: contentDuration,
+                        currentTime: contextForViewUpdate.currentTime
+                    )
+                    view.durationLabel.isHidden = view.durationLabel.isHidden || !view.playbackLoadingIndicator.isHidden
+                }
+                
+                debouncer.invalidate()
+                if contextForViewUpdate.state == .loading {
+                    debouncer.execute { loadingIndicatorAndDurationLabel() }
+                } else {
+                    loadingIndicatorAndDurationLabel()
+                }
             }
         }
     }

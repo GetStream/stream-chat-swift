@@ -93,13 +93,15 @@ open class VideoAttachmentComposerPreview: _View, ThemeProvider {
         videoDurationLabel.text = nil
 
         if let url = content {
-            components.videoLoader.loadPreviewForVideo(at: url) { [weak self] in
-                self?.loadingIndicator.isHidden = true
-                switch $0 {
-                case let .success(preview):
-                    self?.previewImageView.image = preview
-                case .failure:
-                    self?.previewImageView.image = nil
+            components.videoLoader.loadPreviewForVideo(at: url) { [weak self] result in
+                MainActor.ensureIsolated { [weak self] in
+                    self?.loadingIndicator.isHidden = true
+                    switch result {
+                    case let .success(preview):
+                        self?.previewImageView.image = preview
+                    case .failure:
+                        self?.previewImageView.image = nil
+                    }
                 }
             }
             videoDurationLabel.text = appearance.formatters.videoDuration.format(
