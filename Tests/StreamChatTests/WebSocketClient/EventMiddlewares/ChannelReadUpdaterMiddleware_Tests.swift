@@ -591,6 +591,35 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
         XCTAssertEqual(Int(read.unreadMessageCount), currentUserReadPayload.unreadMessagesCount)
     }
 
+    func test_messageNewEvent_whenMessageIsShadowed_doesNotIncrementUnreadCount() throws {
+        // WHEN
+        let shadowedMessage: MessagePayload = .dummy(
+            type: .regular,
+            messageId: .unique,
+            authorUserId: anotherUserPayload.id,
+            createdAt: currentUserReadPayload.lastReadAt.addingTimeInterval(1),
+            isShadowed: true
+        )
+
+        let messageNewEvent = try MessageNewEventDTO(
+            from: .init(
+                eventType: .messageNew,
+                cid: channelPayload.channel.cid,
+                user: anotherUserPayload,
+                message: shadowedMessage,
+                createdAt: shadowedMessage.createdAt
+            )
+        )
+
+        try database.writeSynchronously { session in
+            _ = self.middleware.handle(event: messageNewEvent, session: session)
+        }
+
+        // THEN
+        let read = try XCTUnwrap(currentUserReadDTO)
+        XCTAssertEqual(Int(read.unreadMessageCount), currentUserReadPayload.unreadMessagesCount)
+    }
+
     func test_messageNewEvent_whenMessageIsRead_doesNotIncrementUnreadCount() throws {
         // WHEN
         let regularMessageEarlierThanLastRead: MessagePayload = .dummy(
