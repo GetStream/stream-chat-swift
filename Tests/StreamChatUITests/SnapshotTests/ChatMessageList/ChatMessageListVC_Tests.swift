@@ -1156,13 +1156,13 @@ import XCTest
 
     // MARK: - handlePan
 
-    func test_handlePan_whenCanReply_whenSwipeToReplyIsEnabled_thenShouldHandleSwipingToReply() {
+    func test_handlePan_whenCanQuoteReply_whenSwipeToReplyIsEnabled_thenShouldHandleSwipingToReply() {
         // Given
         let handlerMock = SwipeToReplyGestureHandler_Mock(listView: sut.listView)
         sut.swipeToReplyGestureHandler = handlerMock
 
         // When
-        mockedDataSource.mockedChannel = .mock(cid: .unique, ownCapabilities: [.sendReply])
+        mockedDataSource.mockedChannel = .mock(cid: .unique, ownCapabilities: [.quoteMessage])
         sut.components.messageSwipeToReplyEnabled = true
 
         // Then
@@ -1170,13 +1170,13 @@ import XCTest
         XCTAssertEqual(handlerMock.handleCallCount, 1)
     }
 
-    func test_handlePan_whenCanReply_whenSwipeToReplyIsDisabled_thenDoesNotHandleSwipingToReply() {
+    func test_handlePan_whenCanQuoteReply_whenSwipeToReplyIsDisabled_thenDoesNotHandleSwipingToReply() {
         // Given
         let handlerMock = SwipeToReplyGestureHandler_Mock(listView: sut.listView)
         sut.swipeToReplyGestureHandler = handlerMock
 
         // When
-        mockedDataSource.mockedChannel = .mock(cid: .unique, ownCapabilities: [.sendReply])
+        mockedDataSource.mockedChannel = .mock(cid: .unique, ownCapabilities: [.quoteMessage])
         sut.components.messageSwipeToReplyEnabled = false
 
         // Then
@@ -1184,7 +1184,7 @@ import XCTest
         XCTAssertEqual(handlerMock.handleCallCount, 0)
     }
 
-    func test_handlePan_whenCanNotReply_thenDoesNotHandleSwipingToReply() {
+    func test_handlePan_whenCanNotQuoteReply_thenDoesNotHandleSwipingToReply() {
         // Given
         let handlerMock = SwipeToReplyGestureHandler_Mock(listView: sut.listView)
         sut.swipeToReplyGestureHandler = handlerMock
