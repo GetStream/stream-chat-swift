@@ -51,7 +51,10 @@ let package = Package(
             dependencies: ["StreamChat"],
             path: "TestTools/StreamChatTestMockServer",
             exclude: ["Info.plist"],
-            resources: [.process("Fixtures")]
+            resources: [.process("Fixtures")],
+            swiftSettings: [
+                .swiftLanguageMode(.v5)
+            ]
         ),
     ]
 )
