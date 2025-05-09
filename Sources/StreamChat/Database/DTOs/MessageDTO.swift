@@ -615,7 +615,41 @@ class MessageDTO: NSManagedObject {
         ])
         return try load(request, context: context)
     }
-    
+
+    /// Fetches all active location messages in a channel or all channels of the current user.
+    /// If `channelId` is nil, it will fetch all messages independent of the channel.
+    static func activeLiveLocationMessagesFetchRequest(
+        currentUserId: UserId,
+        channelId: ChannelId?
+    ) -> NSFetchRequest<MessageDTO> {
+        let request = NSFetchRequest<MessageDTO>(entityName: MessageDTO.entityName)
+        MessageDTO.applyPrefetchingState(to: request)
+        // Hard coded limit for now. 10 live locations messages at the same should be more than enough.
+        request.fetchLimit = 10
+        request.sortDescriptors = [NSSortDescriptor(
+            keyPath: \MessageDTO.createdAt,
+            ascending: true
+        )]
+        var predicates: [NSPredicate] = [
+            .init(format: "ANY attachments.isActiveLocationAttachment == YES"),
+            .init(format: "user.id == %@", currentUserId)
+        ]
+        if let channelId {
+            predicates.append(.init(format: "channel.cid == %@", channelId.rawValue))
+        }
+        request.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: predicates)
+        return request
+    }
+
+    static func loadActiveLiveLocationMessages(
+        currentUserId: UserId,
+        channelId: ChannelId?,
+        context: NSManagedObjectContext
+    ) throws -> [MessageDTO] {
+        let request = activeLiveLocationMessagesFetchRequest(currentUserId: currentUserId, channelId: channelId)
+        return try load(request, context: context)
+    }
+
     static func loadReplies(
         from fromIncludingDate: Date,
         to toIncludingDate: Date,
@@ -1000,7 +1034,7 @@ extension NSManagedObjectContext: MessageDatabaseSession {
             }
         )
         dto.attachments = attachments
-        
+
         if let poll = payload.poll {
             let pollDto = try savePoll(payload: poll, cache: cache)
             dto.poll = pollDto

@@ -2974,6 +2974,124 @@ final class MessageUpdater_Tests: XCTestCase {
 
         wait(for: [exp], timeout: defaultTimeout)
     }
+
+    // MARK: - Update Partial Message Tests
+
+    func test_updatePartialMessage_makesCorrectAPICall() throws {
+        let messageId: MessageId = .unique
+        let text: String = .unique
+        let extraData: [String: RawJSON] = ["custom": .number(1)]
+        let attachments: [AnyAttachmentPayload] = [.mockImage]
+        
+        // Convert attachments to expected format
+        let expectedAttachmentPayloads: [MessageAttachmentPayload] = attachments.compactMap { attachment in
+            guard let payloadData = try? JSONEncoder.default.encode(attachment.payload),
+                  let payloadRawJSON = try? JSONDecoder.default.decode(RawJSON.self, from: payloadData) else {
+                return nil
+            }
+            return MessageAttachmentPayload(
+                type: attachment.type,
+                payload: payloadRawJSON
+            )
+        }
+
+        let exp = expectation(description: "updatePartialMessage completes")
+        
+        // Call updatePartialMessage
+        messageUpdater.updatePartialMessage(
+            messageId: messageId,
+            text: text,
+            attachments: attachments,
+            extraData: extraData
+        ) { _ in
+            exp.fulfill()
+        }
+
+        // Simulate successful API response
+        apiClient.test_simulateResponse(
+            .success(MessagePayload.Boxed(message: .dummy(messageId: messageId)))
+        )
+
+        // Assert correct endpoint is called
+        let expectedEndpoint: Endpoint<MessagePayload.Boxed> = .partialUpdateMessage(
+            messageId: messageId,
+            request: .init(
+                set: .init(
+                    text: text,
+                    extraData: extraData,
+                    attachments: expectedAttachmentPayloads
+                )
+            )
+        )
+        XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(expectedEndpoint))
+        
+        wait(for: [exp], timeout: defaultTimeout)
+    }
+
+    func test_updatePartialMessage_propagatesNetworkError() throws {
+        let messageId: MessageId = .unique
+        let networkError = TestError()
+
+        let exp = expectation(description: "updatePartialMessage completes")
+        
+        // Call updatePartialMessage and store result
+        var completionCalledError: Error?
+        messageUpdater.updatePartialMessage(messageId: messageId) { result in
+            if case let .failure(error) = result {
+                completionCalledError = error
+            }
+            exp.fulfill()
+        }
+
+        // Simulate API response with error
+        apiClient.test_simulateResponse(Result<MessagePayload.Boxed, Error>.failure(networkError))
+
+        wait(for: [exp], timeout: defaultTimeout)
+        
+        // Assert error is propagated
+        XCTAssertEqual(completionCalledError as? TestError, networkError)
+    }
+
+    func test_updatePartialMessage_savesMessageToDatabase() throws {
+        let currentUserId: UserId = .unique
+        let messageId: MessageId = .unique
+        let cid: ChannelId = .unique
+        let text: String = .unique
+
+        try database.createCurrentUser(id: currentUserId)
+        try database.createChannel(cid: cid)
+
+        let exp = expectation(description: "updatePartialMessage completes")
+        
+        // Call updatePartialMessage
+        var receivedMessage: ChatMessage?
+        messageUpdater.updatePartialMessage(
+            messageId: messageId,
+            text: text
+        ) { result in
+            if case let .success(message) = result {
+                receivedMessage = message
+            }
+            exp.fulfill()
+        }
+
+        // Simulate successful API response
+        let messagePayload = MessagePayload.dummy(
+            messageId: messageId,
+            authorUserId: currentUserId,
+            text: text,
+            cid: cid
+        )
+        apiClient.test_simulateResponse(Result<MessagePayload.Boxed, Error>.success(.init(message: messagePayload)))
+
+        wait(for: [exp], timeout: defaultTimeout)
+        
+        // Assert message is saved and returned correctly
+        XCTAssertNotNil(receivedMessage)
+        XCTAssertEqual(receivedMessage?.id, messageId)
+        XCTAssertEqual(receivedMessage?.text, text)
+        XCTAssertEqual(receivedMessage?.author.id, currentUserId)
+    }
 }
 
 // MARK: - Helpers

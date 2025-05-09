@@ -9,29 +9,58 @@ import UIKit
 class LocationAttachmentViewInjector: AttachmentViewInjector {
     lazy var locationAttachmentView = LocationAttachmentSnapshotView()
 
-    var locationAttachment: ChatMessageLocationAttachment? {
-        attachments(payloadType: LocationAttachmentPayload.self).first
+    var staticLocationAttachment: ChatMessageStaticLocationAttachment? {
+        attachments(payloadType: StaticLocationAttachmentPayload.self).first
     }
+
+    var liveLocationAttachment: ChatMessageLiveLocationAttachment? {
+        attachments(payloadType: LiveLocationAttachmentPayload.self).first
+    }
+
+    let mapWidth: CGFloat = 300
 
     override func contentViewDidLayout(options: ChatMessageLayoutOptions) {
         super.contentViewDidLayout(options: options)
 
         contentView.bubbleContentContainer.insertArrangedSubview(locationAttachmentView, at: 0)
-
-        NSLayoutConstraint.activate([
-            locationAttachmentView.widthAnchor.constraint(equalToConstant: 250),
-            locationAttachmentView.heightAnchor.constraint(equalToConstant: 150)
-        ])
+        contentView.bubbleThreadFootnoteContainer.width(mapWidth)
 
         locationAttachmentView.didTapOnLocation = { [weak self] in
             self?.handleTapOnLocationAttachment()
         }
+        locationAttachmentView.didTapOnStopSharingLocation = { [weak self] in
+            self?.handleTapOnStopSharingLocation()
+        }
+
+        let isSentByCurrentUser = contentView.content?.isSentByCurrentUser == true
+        let maskedCorners: CACornerMask = isSentByCurrentUser
+            ? [.layerMinXMaxYCorner, .layerMinXMinYCorner]
+            : [.layerMinXMinYCorner, .layerMaxXMaxYCorner, .layerMaxXMinYCorner]
+        locationAttachmentView.layer.maskedCorners = maskedCorners
+        locationAttachmentView.layer.cornerRadius = 16
+        locationAttachmentView.layer.masksToBounds = true
     }
 
     override func contentViewDidUpdateContent() {
         super.contentViewDidUpdateContent()
 
-        locationAttachmentView.coordinate = locationAttachment?.coordinate
+        if let staticLocation = staticLocationAttachment {
+            locationAttachmentView.content = .init(
+                coordinate: .init(latitude: staticLocation.latitude, longitude: staticLocation.longitude),
+                isLive: false,
+                isSharingLiveLocation: false,
+                messageId: contentView.content?.id,
+                author: contentView.content?.author
+            )
+        } else if let liveLocation = liveLocationAttachment {
+            locationAttachmentView.content = .init(
+                coordinate: .init(latitude: liveLocation.latitude, longitude: liveLocation.longitude),
+                isLive: true,
+                isSharingLiveLocation: liveLocation.stoppedSharing == false,
+                messageId: contentView.content?.id,
+                author: contentView.content?.author
+            )
+        }
     }
 
     func handleTapOnLocationAttachment() {
@@ -39,10 +68,22 @@ class LocationAttachmentViewInjector: AttachmentViewInjector {
             return
         }
 
-        guard let locationAttachment = self.locationAttachment else {
+        if let staticLocationAttachment = self.staticLocationAttachment {
+            locationAttachmentDelegate.didTapOnStaticLocationAttachment(staticLocationAttachment)
+        } else if let liveLocationAttachment = self.liveLocationAttachment {
+            locationAttachmentDelegate.didTapOnLiveLocationAttachment(liveLocationAttachment)
+        }
+    }
+
+    func handleTapOnStopSharingLocation() {
+        guard let locationAttachmentDelegate = contentView.delegate as? LocationAttachmentViewDelegate else {
             return
         }
 
-        locationAttachmentDelegate.didTapOnLocationAttachment(locationAttachment)
+        guard let locationAttachment = liveLocationAttachment else {
+            return
+        }
+
+        locationAttachmentDelegate.didTapOnStopSharingLocation(locationAttachment)
     }
 }
