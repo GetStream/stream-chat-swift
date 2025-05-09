@@ -4,7 +4,7 @@
 
 import Foundation
 
-class DraftPayloadResponse: Decodable {
+final class DraftPayloadResponse: Decodable, Sendable {
     let draft: DraftPayload
 
     init(draft: DraftPayload) {
@@ -12,7 +12,7 @@ class DraftPayloadResponse: Decodable {
     }
 }
 
-class DraftListPayloadResponse: Decodable {
+final class DraftListPayloadResponse: Decodable, Sendable {
     let drafts: [DraftPayload]
     let next: String?
 
@@ -22,7 +22,7 @@ class DraftListPayloadResponse: Decodable {
     }
 }
 
-class DraftPayload: Decodable {
+final class DraftPayload: Decodable, Sendable {
     let cid: ChannelId?
     let channelPayload: ChannelDetailPayload?
     let createdAt: Date
@@ -61,7 +61,7 @@ class DraftPayload: Decodable {
     }
 }
 
-class DraftMessagePayload: Decodable {
+final class DraftMessagePayload: Decodable, Sendable {
     let id: String
     let text: String
     let command: String?
@@ -113,7 +113,7 @@ class DraftMessagePayload: Decodable {
     }
 }
 
-class DraftMessageRequestBody: Encodable {
+final class DraftMessageRequestBody: Encodable, Sendable {
     let id: String
     let text: String
     let command: String?

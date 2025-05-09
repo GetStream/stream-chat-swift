@@ -25,7 +25,7 @@ import Foundation
 ///         )
 ///     }
 ///  ```
-public protocol StreamModelsTransformer {
+public protocol StreamModelsTransformer: Sendable {
     /// Transforms the given `ChatChannel` model.
     func transform(channel: ChatChannel) -> ChatChannel
 

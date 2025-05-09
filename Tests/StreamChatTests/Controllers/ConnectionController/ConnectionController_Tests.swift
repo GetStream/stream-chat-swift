@@ -103,7 +103,7 @@ final class ChatConnectionController_Tests: XCTestCase {
 
             connectionRepository.connectResult = error.map { .failure($0) } ?? .success(())
 
-            var connectCompletionError: Error?
+            nonisolated(unsafe) var connectCompletionError: Error?
             let expectation = self.expectation(description: "Connect completes")
             controller.connect { [callbackQueueID] error in
                 AssertTestQueue(withId: callbackQueueID)

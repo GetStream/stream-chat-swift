@@ -6,15 +6,15 @@ import Foundation
 @testable import StreamChat
 import XCTest
 
-final class RequestDecoder_Spy: RequestDecoder, Spy {
+final class RequestDecoder_Spy: RequestDecoder, Spy, @unchecked Sendable {
     let spyState = SpyState()
-    var decodeRequestResponse: Result<Any, Error>?
-    var decodeRequestDelay: TimeInterval?
+    @Atomic var decodeRequestResponse: Result<Any, Error>?
+    @Atomic var decodeRequestDelay: TimeInterval?
 
-    var decodeRequestResponse_data: Data?
-    var decodeRequestResponse_response: HTTPURLResponse?
-    var decodeRequestResponse_error: Error?
-    var onDecodeRequestResponseCall: (() -> Void)?
+    @Atomic var decodeRequestResponse_data: Data?
+    @Atomic var decodeRequestResponse_response: HTTPURLResponse?
+    @Atomic var decodeRequestResponse_error: Error?
+    @Atomic var onDecodeRequestResponseCall: (() -> Void)?
 
     func decodeRequestResponse<ResponseType>(
         data: Data?,

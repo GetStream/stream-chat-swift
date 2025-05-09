@@ -23,7 +23,7 @@ enum AttachmentCodingKeys: String, CodingKey, CaseIterable {
 }
 
 /// A local state of the attachment. Applies only for attachments linked to the new messages sent from current device.
-public enum LocalAttachmentState: Hashable {
+public enum LocalAttachmentState: Hashable, Sendable {
     /// The current state is unknown
     case unknown
     /// The attachment is waiting to be uploaded.
@@ -37,7 +37,7 @@ public enum LocalAttachmentState: Hashable {
 }
 
 /// A local download state of the attachment.
-public enum LocalAttachmentDownloadState: Hashable {
+public enum LocalAttachmentDownloadState: Hashable, Sendable {
     /// The attachment is being downloaded.
     case downloading(progress: Double)
     /// The attachment download failed.
@@ -47,7 +47,7 @@ public enum LocalAttachmentDownloadState: Hashable {
 }
 
 /// An attachment action, e.g. send, shuffle.
-public struct AttachmentAction: Codable, Hashable {
+public struct AttachmentAction: Codable, Hashable, Sendable {
     /// A name.
     public let name: String
     /// A value of an action.
@@ -84,12 +84,12 @@ public struct AttachmentAction: Codable, Hashable {
     public var isCancel: Bool { value.lowercased() == "cancel" }
 
     /// An attachment action type, e.g. button.
-    public enum ActionType: String, Codable {
+    public enum ActionType: String, Codable, Sendable {
         case button
     }
 
     /// An attachment action style, e.g. primary button.
-    public enum ActionStyle: String, Codable {
+    public enum ActionStyle: String, Codable, Sendable {
         case `default`
         case primary
     }
@@ -97,7 +97,7 @@ public struct AttachmentAction: Codable, Hashable {
 
 /// An attachment type.
 /// There are some predefined types on backend but any type can be introduced and sent to backend.
-public struct AttachmentType: RawRepresentable, Codable, Hashable, ExpressibleByStringLiteral {
+public struct AttachmentType: RawRepresentable, Codable, Hashable, ExpressibleByStringLiteral, Sendable {
     public let rawValue: String
 
     public init(rawValue: String) {
@@ -140,7 +140,7 @@ public extension AttachmentType {
 }
 
 /// An attachment file description.
-public struct AttachmentFile: Codable, Hashable {
+public struct AttachmentFile: Codable, Hashable, Sendable {
     enum CodingKeys: String, CodingKey, CaseIterable {
         case mimeType = "mime_type"
         case size = "file_size"
@@ -153,7 +153,7 @@ public struct AttachmentFile: Codable, Hashable {
     /// A mime type.
     public let mimeType: String?
     /// A file size formatter.
-    public static let sizeFormatter = ByteCountFormatter()
+    public static var sizeFormatter: ByteCountFormatter { ByteCountFormatter() }
 
     // TODO: This should be deprecated in the future. UI Formatting should not belong to domain models.
     // All formatting logic should come from `Appearance.formatters`.
@@ -213,7 +213,7 @@ public struct AttachmentFile: Codable, Hashable {
 }
 
 /// An attachment file type.
-public enum AttachmentFileType: String, Codable, Equatable, CaseIterable {
+public enum AttachmentFileType: String, Codable, Equatable, CaseIterable, Sendable {
     /// File
     case generic, doc, docx, pdf, ppt, pptx, tar, xls, zip, x7z, xz, ods, odt, xlsx
     /// Text
@@ -318,7 +318,7 @@ public enum AttachmentFileType: String, Codable, Equatable, CaseIterable {
 }
 
 extension ClientError {
-    final class InvalidAttachmentFileURL: ClientError {
+    final class InvalidAttachmentFileURL: ClientError, @unchecked Sendable {
         init(_ url: URL) {
             super.init("The \(url) is invalid since it is not a file URL.")
         }

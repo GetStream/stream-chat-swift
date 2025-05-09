@@ -3,7 +3,7 @@
 //
 
 import AVFoundation
-import StreamChat
+@testable import StreamChat
 
 public class MockAVPlayer: AVPlayer {
     public var playWasCalled = false
@@ -44,8 +44,10 @@ public class MockAVPlayer: AVPlayer {
     override public func replaceCurrentItem(
         with item: AVPlayerItem?
     ) {
-        replaceCurrentItemWasCalled = true
-        replaceCurrentItemWasCalledWithItem = item
+        MainActor.ensureIsolated {
+            replaceCurrentItemWasCalled = true
+            replaceCurrentItemWasCalledWithItem = item
+        }
         super.replaceCurrentItem(with: item)
     }
 
@@ -53,16 +55,22 @@ public class MockAVPlayer: AVPlayer {
         to time: CMTime,
         toleranceBefore: CMTime,
         toleranceAfter: CMTime,
-        completionHandler: @escaping (Bool) -> Void
+        completionHandler: @escaping @Sendable(Bool) -> Void
     ) {
-        seekWasCalledWithTime = time
-        seekWasCalledWithToleranceBefore = toleranceBefore
-        seekWasCalledWithToleranceAfter = toleranceAfter
+        MainActor.ensureIsolated {
+            seekWasCalledWithTime = time
+            seekWasCalledWithToleranceBefore = toleranceBefore
+            seekWasCalledWithToleranceAfter = toleranceAfter
+        }
         super.seek(
             to: time,
             toleranceBefore: toleranceBefore,
             toleranceAfter: toleranceAfter,
-            completionHandler: { _ in completionHandler(!self.holdSeekCompletion) }
+            completionHandler: { _ in
+                MainActor.ensureIsolated {
+                    completionHandler(!self.holdSeekCompletion)
+                }
+            }
         )
     }
 }

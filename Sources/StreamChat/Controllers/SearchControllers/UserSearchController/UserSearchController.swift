@@ -20,18 +20,23 @@ extension ChatClient {
 /// `ChatUserSearchController` is a controller class which allows observing a list of chat users based on the provided query.
 ///
 /// - Note: For an async-await alternative of the `ChatUserSearchController`, please check ``UserSearch`` in the async-await supported [state layer](https://getstream.io/chat/docs/sdk/ios/client/state-layer/state-layer-overview/).
-public class ChatUserSearchController: DataController, DelegateCallable, DataStoreProvider {
+public class ChatUserSearchController: DataController, DelegateCallable, DataStoreProvider, @unchecked Sendable {
     /// The `ChatClient` instance this controller belongs to.
     public let client: ChatClient
 
     /// Copy of last search query made, used for getting next page.
-    public private(set) var query: UserListQuery?
+    public private(set) var query: UserListQuery? {
+        get { queue.sync { _query } }
+        set { queue.async { self._query = newValue } }
+    }
+
+    private var _query: UserListQuery?
 
     /// The users matching the last query of this controller.
     private var _users: [ChatUser] = []
     public var userArray: [ChatUser] {
         setLocalDataFetchedStateIfNeeded()
-        return _users
+        return queue.sync { _users }
     }
 
     @available(*, deprecated, message: "Please, switch to `userArray: [ChatUser]`")
@@ -73,7 +78,7 @@ public class ChatUserSearchController: DataController, DelegateCallable, DataSto
     ///   - term: Search term. If empty string or `nil`, all users are fetched.
     ///   - completion: Called when the controller has finished fetching remote data.
     ///   If the data fetching fails, the error variable contains more details about the problem.
-    public func search(term: String?, completion: ((_ error: Error?) -> Void)? = nil) {
+    public func search(term: String?, completion: (@Sendable(_ error: Error?) -> Void)? = nil) {
         fetch(.search(term: term), completion: completion)
     }
 
@@ -88,7 +93,7 @@ public class ChatUserSearchController: DataController, DelegateCallable, DataSto
     ///   - query: Search query.
     ///   - completion: Called when the controller has finished fetching remote data.
     ///   If the data fetching fails, the error variable contains more details about the problem.
-    public func search(query: UserListQuery, completion: ((_ error: Error?) -> Void)? = nil) {
+    public func search(query: UserListQuery, completion: (@Sendable(_ error: Error?) -> Void)? = nil) {
         fetch(query, completion: completion)
     }
 
@@ -101,7 +106,7 @@ public class ChatUserSearchController: DataController, DelegateCallable, DataSto
     ///
     public func loadNextUsers(
         limit: Int = 25,
-        completion: ((Error?) -> Void)? = nil
+        completion: (@Sendable(Error?) -> Void)? = nil
     ) {
         guard let lastQuery = query else {
             completion?(ClientError("You should make a search before calling for next page."))
@@ -116,7 +121,7 @@ public class ChatUserSearchController: DataController, DelegateCallable, DataSto
 
     /// Clears the current search results.
     public func clearResults() {
-        _users = []
+        queue.async { self._users = [] }
     }
 }
 
@@ -126,7 +131,7 @@ private extension ChatUserSearchController {
     /// - Parameters:
     ///   - query: The query to fetch.
     ///   - completion: The completion that is triggered when the query is processed.
-    func fetch(_ query: UserListQuery, completion: ((Error?) -> Void)? = nil) {
+    func fetch(_ query: UserListQuery, completion: (@Sendable(Error?) -> Void)? = nil) {
         // TODO: Remove with the next major
         //
         // This is needed to make the delegate fire about state changes at the same time with the same
@@ -136,7 +141,7 @@ private extension ChatUserSearchController {
         userQueryUpdater.fetch(userListQuery: query) { [weak self] result in
             switch result {
             case let .success(page):
-                self?.save(page: page) { loadedUsers in
+                self?.save(page: page) { [weak self] loadedUsers in
                     let listChanges = self?.prepareListChanges(
                         loadedPage: loadedUsers,
                         updatePolicy: query.pagination?.offset == 0 ? .replace : .merge
@@ -144,11 +149,11 @@ private extension ChatUserSearchController {
 
                     self?.query = query
                     if let listChanges = listChanges, let users = self?.userList(after: listChanges) {
-                        self?._users = users
+                        self?.queue.async { [weak self] in self?._users = users }
                     }
                     self?.state = .remoteDataFetched
 
-                    self?.callback {
+                    self?.callback { [weak self] in
                         self?.multicastDelegate.invoke {
                             guard let self = self, let listChanges = listChanges else { return }
                             $0.controller(self, didChangeUsers: listChanges)
@@ -168,16 +173,13 @@ private extension ChatUserSearchController {
     /// - Parameters:
     ///   - page: The page of users fetched from the API.
     ///   - completion: The completion that will be called with user models when database write is completed.
-    func save(page: UserListPayload, completion: @escaping ([ChatUser]) -> Void) {
-        var loadedUsers: [ChatUser] = []
-
-        client.databaseContainer.write({ session in
-            loadedUsers = page
+    func save(page: UserListPayload, completion: @escaping @Sendable([ChatUser]) -> Void) {
+        client.databaseContainer.write(converting: { session in
+            page
                 .users
                 .compactMap { try? session.saveUser(payload: $0).asModel() }
-
-        }, completion: { _ in
-            completion(loadedUsers)
+        }, completion: { result in
+            completion(result.value ?? [])
         })
     }
 

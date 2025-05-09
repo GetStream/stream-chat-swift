@@ -13,7 +13,7 @@ enum ReachabilityError: Error {
     case unableToGetFlags(Int32)
 }
 
-class Reachability {
+class Reachability: @unchecked Sendable {
     typealias NetworkReachable = (Reachability) -> Void
     typealias NetworkUnreachable = (Reachability) -> Void
 
@@ -55,7 +55,12 @@ class Reachability {
         #endif
     }()
 
-    private(set) var notifierRunning = false
+    private(set) var notifierRunning: Bool {
+        get { reachabilitySerialQueue.sync { _notifierRunning } }
+        set { reachabilitySerialQueue.sync { _notifierRunning = newValue } }
+    }
+
+    private var _notifierRunning = false
     private let reachabilityRef: SCNetworkReachability
     private let reachabilitySerialQueue: DispatchQueue
     private let notificationQueue: DispatchQueue?
@@ -209,7 +214,7 @@ private extension Reachability {
     }
 
     func notifyReachabilityChanged() {
-        let notify = { [weak self] in
+        let notify: @Sendable() -> Void = { [weak self] in
             guard let self = self else { return }
             self.connection != .unavailable ? self.whenReachable?(self) : self.whenUnreachable?(self)
         }

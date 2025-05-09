@@ -5,7 +5,7 @@
 import Foundation
 
 /// Defines a struct that describes the audio playback rate with a raw value of Float
-public struct AudioPlaybackRate: Comparable, Equatable {
+public struct AudioPlaybackRate: Comparable, Equatable, Sendable {
     public let rawValue: Float
 
     public init(rawValue: Float) {

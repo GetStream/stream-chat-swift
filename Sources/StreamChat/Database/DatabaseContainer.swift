@@ -2,7 +2,7 @@
 // Copyright © 2025 Stream.io Inc. All rights reserved.
 //
 
-import CoreData
+@preconcurrency import CoreData
 import Foundation
 
 /// Convenience subclass of `NSPersistentContainer` allowing easier setup of the database stack.
@@ -70,7 +70,8 @@ class DatabaseContainer: NSPersistentContainer, @unchecked Sendable {
 
     let chatClientConfig: ChatClientConfig
 
-    static var cachedModels = [String: NSManagedObjectModel]()
+    private static let cachedModelsQueue = DispatchQueue(label: "io.getstream.database-container", target: .global())
+    private nonisolated(unsafe) static var _cachedModels = [String: NSManagedObjectModel]()
 
     /// All `NSManagedObjectContext`s this container owns.
     private(set) lazy var allContext: [NSManagedObjectContext] = [viewContext, backgroundReadOnlyContext, stateLayerContext, writableContext]
@@ -94,7 +95,7 @@ class DatabaseContainer: NSPersistentContainer, @unchecked Sendable {
         chatClientConfig: ChatClientConfig
     ) {
         let managedObjectModel: NSManagedObjectModel
-        if let cachedModel = Self.cachedModels[modelName] {
+        if let cachedModel = Self.cachedModelsQueue.sync(execute: { Self._cachedModels[modelName] }) {
             managedObjectModel = cachedModel
         } else {
             // It's safe to unwrap the following values because this is not settable by users and it's always a programmer error.
@@ -102,7 +103,9 @@ class DatabaseContainer: NSPersistentContainer, @unchecked Sendable {
             let modelURL = bundle.url(forResource: modelName, withExtension: "momd")!
             let model = NSManagedObjectModel(contentsOf: modelURL)!
             managedObjectModel = model
-            Self.cachedModels[modelName] = model
+            Self.cachedModelsQueue.async {
+                Self._cachedModels[modelName] = model
+            }
         }
 
         self.chatClientConfig = chatClientConfig
@@ -173,7 +176,7 @@ class DatabaseContainer: NSPersistentContainer, @unchecked Sendable {
     /// Use this method to safely mutate the content of the database. This method is asynchronous.
     ///
     /// - Parameter actions: A block that performs the actual mutation.
-    func write(_ actions: @escaping (DatabaseSession) throws -> Void) {
+    func write(_ actions: @escaping @Sendable(DatabaseSession) throws -> Void) {
         write(actions, completion: { _ in })
     }
 
@@ -185,7 +188,7 @@ class DatabaseContainer: NSPersistentContainer, @unchecked Sendable {
     /// - Parameters:
     ///   - actions: A block that performs the actual mutation.
     ///   - completion: Called when the changes are saved to the DB. If the changes can't be saved, called with an error.
-    func write(_ actions: @escaping (DatabaseSession) throws -> Void, completion: @escaping (Error?) -> Void) {
+    func write(_ actions: @escaping @Sendable(DatabaseSession) throws -> Void, completion: @escaping @Sendable(Error?) -> Void) {
         writableContext.perform {
             log.debug("Starting a database session.", subsystems: .database)
             do {
@@ -211,7 +214,7 @@ class DatabaseContainer: NSPersistentContainer, @unchecked Sendable {
         }
     }
     
-    func write(_ actions: @escaping (DatabaseSession) throws -> Void) async throws {
+    func write(_ actions: @escaping @Sendable(DatabaseSession) throws -> Void) async throws {
         try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
             write(actions) { error in
                 if let error {
@@ -223,23 +226,34 @@ class DatabaseContainer: NSPersistentContainer, @unchecked Sendable {
         }
     }
     
-    func write<T>(converting actions: @escaping (DatabaseSession) throws -> T, completion: @escaping (Result<T, Error>) -> Void) {
-        var result: T?
+    func write<T>(converting actions: @escaping @Sendable(DatabaseSession) throws -> T, completion: @escaping @Sendable(Result<T, Error>) -> Void) where T: Sendable {
+        nonisolated(unsafe) var result: T?
         write { session in
             result = try actions(session)
         } completion: { error in
-            if let result {
+            // Note: actions can pass which returns a value, but underlying write can fail
+            if let error {
+                completion(.failure(error))
+            } else if let result {
                 completion(.success(result))
             } else {
-                completion(.failure(error ?? ClientError.Unknown()))
+                completion(.failure(ClientError.Unknown()))
+            }
+        }
+    }
+    
+    func writeConverting<T>(_ actions: @escaping @Sendable(DatabaseSession) throws -> T) async throws -> T where T: Sendable {
+        try await withCheckedThrowingContinuation { continuation in
+            write(converting: actions) { result in
+                continuation.resume(with: result)
             }
         }
     }
         
     private func read<T>(
         from context: NSManagedObjectContext,
-        _ actions: @escaping (DatabaseSession) throws -> T,
-        completion: @escaping (Result<T, Error>) -> Void
+        _ actions: @escaping @Sendable(DatabaseSession) throws -> T,
+        completion: @escaping @Sendable(Result<T, Error>) -> Void
     ) {
         context.perform {
             do {
@@ -255,11 +269,11 @@ class DatabaseContainer: NSPersistentContainer, @unchecked Sendable {
         }
     }
     
-    func read<T>(_ actions: @escaping (DatabaseSession) throws -> T, completion: @escaping (Result<T, Error>) -> Void) {
+    func read<T>(_ actions: @escaping @Sendable(DatabaseSession) throws -> T, completion: @escaping @Sendable(Result<T, Error>) -> Void) {
         read(from: backgroundReadOnlyContext, actions, completion: completion)
     }
     
-    func read<T>(_ actions: @escaping (DatabaseSession) throws -> T) async throws -> T {
+    func read<T>(_ actions: @escaping @Sendable(DatabaseSession) throws -> T) async throws -> T where T: Sendable {
         try await withCheckedThrowingContinuation { continuation in
             read(from: stateLayerContext, actions) { result in
                 continuation.resume(with: result)

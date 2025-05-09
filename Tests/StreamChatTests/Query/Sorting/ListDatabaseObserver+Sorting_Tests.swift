@@ -342,7 +342,7 @@ final class ListDatabaseObserver_Sorting_Tests: XCTestCase {
 
     @discardableResult
     private func createChannels(mapping: [(name: String, createdAt: Date, messageCreatedAt: Date)]) throws -> [ChannelId] {
-        var cids: [ChannelId] = []
+        nonisolated(unsafe) var cids: [ChannelId] = []
         try database.writeSynchronously { session in
             session.saveQuery(query: self.query)
             let channels = try mapping.map { (name, createdAt, messageCreatedAt) -> ChannelDTO in

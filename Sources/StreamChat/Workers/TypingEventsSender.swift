@@ -20,7 +20,7 @@ private struct TypingInfo {
 }
 
 /// Sends typing events.
-class TypingEventsSender: Worker {
+class TypingEventsSender: Worker, @unchecked Sendable {
     /// A timer type.
     var timer: Timer.Type = DefaultTimer.self
     /// `TypingInfo` for channel (and parent message) that typing has occurred in. Stored to stop typing when `TypingEventsSender` is deallocated
@@ -42,7 +42,7 @@ class TypingEventsSender: Worker {
 
     // MARK: Typing events
 
-    func keystroke(in cid: ChannelId, parentMessageId: MessageId?, completion: ((Error?) -> Void)? = nil) {
+    func keystroke(in cid: ChannelId, parentMessageId: MessageId?, completion: (@Sendable(Error?) -> Void)? = nil) {
         cancelScheduledTypingTimerControl()
 
         currentUserTypingTimerControl = timer.schedule(timeInterval: .startTypingEventTimeout, queue: .main) { [weak self] in
@@ -60,7 +60,7 @@ class TypingEventsSender: Worker {
         startTyping(in: cid, parentMessageId: parentMessageId, completion: completion)
     }
 
-    func startTyping(in cid: ChannelId, parentMessageId: MessageId?, completion: ((Error?) -> Void)? = nil) {
+    func startTyping(in cid: ChannelId, parentMessageId: MessageId?, completion: (@Sendable(Error?) -> Void)? = nil) {
         typingInfo = .init(channelId: cid, parentMessageId: parentMessageId)
         currentUserLastTypingDate = timer.currentTime()
 
@@ -71,7 +71,7 @@ class TypingEventsSender: Worker {
         }
     }
 
-    func stopTyping(in cid: ChannelId, parentMessageId: MessageId?, completion: ((Error?) -> Void)? = nil) {
+    func stopTyping(in cid: ChannelId, parentMessageId: MessageId?, completion: (@Sendable(Error?) -> Void)? = nil) {
         // If there's a timer set, we clear it
         if currentUserLastTypingDate != nil {
             cancelScheduledTypingTimerControl()

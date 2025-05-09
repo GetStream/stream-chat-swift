@@ -6,7 +6,7 @@ import AVFoundation
 import Foundation
 
 /// A protocol describing an object that can be manage the playback of an audio file or stream.
-public protocol AudioPlaying: AnyObject {
+public protocol AudioPlaying: AnyObject, Sendable {
     init()
 
     /// Subscribes the provided object on AudioPlayer's updates
@@ -41,7 +41,7 @@ public protocol AudioPlaying: AnyObject {
 }
 
 /// An implementation of ``AudioPlaying`` that can be used to stream audio files from a URL
-open class StreamAudioPlayer: AudioPlaying, AppStateObserverDelegate {
+open class StreamAudioPlayer: AudioPlaying, AppStateObserverDelegate, @unchecked Sendable {
     // MARK: - Properties
     
     /// Provides thread-safe access to context storage
@@ -131,7 +131,9 @@ open class StreamAudioPlayer: AudioPlaying, AppStateObserverDelegate {
     open func play() {
         do {
             try audioSessionConfigurator.activatePlaybackSession()
-            player.play()
+            MainActor.ensureIsolated {
+                player.play()
+            }
         } catch {
             log.error(error)
             stop()
@@ -139,7 +141,9 @@ open class StreamAudioPlayer: AudioPlaying, AppStateObserverDelegate {
     }
 
     open func pause() {
-        player.pause()
+        MainActor.ensureIsolated {
+            player.pause()
+        }
     }
 
     open func stop() {
@@ -166,7 +170,9 @@ open class StreamAudioPlayer: AudioPlaying, AppStateObserverDelegate {
     }
 
     open func updateRate(_ newRate: AudioPlaybackRate) {
-        player.rate = newRate.rawValue
+        MainActor.ensureIsolated {
+            player.rate = newRate.rawValue
+        }
     }
 
     open func seek(to time: TimeInterval) {
@@ -196,13 +202,14 @@ open class StreamAudioPlayer: AudioPlaying, AppStateObserverDelegate {
     // MARK: - Helpers
 
     func playbackWillStop(_ playerItem: AVPlayerItem) {
-        guard
-            let playerItemURL = (playerItem.asset as? AVURLAsset)?.url,
-            let currentItemURL = (player.currentItem?.asset as? AVURLAsset)?.url,
-            playerItemURL == currentItemURL
-        else {
-            return
-        }
+        let matchesCurrentItem: Bool = {
+            MainActor.ensureIsolated {
+                let playerItemURL = (playerItem.asset as? AVURLAsset)?.url
+                let currentItemURL = (player.currentItem?.asset as? AVURLAsset)?.url
+                return playerItemURL != nil && playerItemURL == currentItemURL
+            }
+        }()
+        guard matchesCurrentItem else { return }
         updateContext { value in
             value.state = .stopped
             value.currentTime = 0
@@ -229,7 +236,7 @@ open class StreamAudioPlayer: AudioPlaying, AppStateObserverDelegate {
             guard let self = self, self.context.isSeeking == false else {
                 return
             }
-
+            let rate = MainActor.ensureIsolated { player.rate }
             self.updateContext { value in
                 let currentTime = player.currentTime().seconds
                 value.currentTime = currentTime.isFinite && !currentTime.isNaN
@@ -238,7 +245,7 @@ open class StreamAudioPlayer: AudioPlaying, AppStateObserverDelegate {
 
                 value.isSeeking = false
 
-                value.rate = .init(rawValue: player.rate)
+                value.rate = .init(rawValue: rate)
             }
         }
 
@@ -274,7 +281,9 @@ open class StreamAudioPlayer: AudioPlaying, AppStateObserverDelegate {
     }
 
     private func notifyDelegates() {
-        multicastDelegate.invoke { $0.audioPlayer(self, didUpdateContext: context) }
+        MainActor.ensureIsolated {
+            multicastDelegate.invoke { $0.audioPlayer(self, didUpdateContext: context) }
+        }
     }
 
     /// Provides thread-safe updates for the player's context and makes sure to forward any updates
@@ -299,7 +308,8 @@ open class StreamAudioPlayer: AudioPlaying, AppStateObserverDelegate {
         /// We are going to check if the URL requested to load, represents the currentItem that we
         /// have already loaded (if any). In this case, we will try either to resume the existing playback
         /// or restart it, if possible.
-        if let currentItem = player.currentItem?.asset as? AVURLAsset,
+        let currentItem = MainActor.ensureIsolated { player.currentItem?.asset as? AVURLAsset }
+        if let currentItem,
            asset.url == currentItem.url,
            context.assetLocation == asset.url {
             /// If the currentItem is paused, we want to continue the playback

@@ -11,14 +11,14 @@ class AsyncOperation: BaseOperation, @unchecked Sendable {
     }
 
     private let maxRetries: Int
-    private(set) var executionBlock: (AsyncOperation, @escaping (_ output: Output) -> Void) -> Void
+    private(set) var executionBlock: (AsyncOperation, @escaping @Sendable(_ output: Output) -> Void) -> Void
     private var executedRetries = 0
 
     var canRetry: Bool {
         executedRetries < maxRetries && !isCancelled && !isFinished
     }
 
-    init(maxRetries: Int = 0, executionBlock: @escaping (AsyncOperation, @escaping (_ output: Output) -> Void) -> Void) {
+    init(maxRetries: Int = 0, executionBlock: @escaping (AsyncOperation, @escaping @Sendable(_ output: Output) -> Void) -> Void) {
         self.maxRetries = maxRetries
         self.executionBlock = executionBlock
         super.init()

@@ -6,23 +6,23 @@ import Foundation
 @testable import StreamChat
 
 /// Mock implementation of `WebSocketClient`.
-final class WebSocketClient_Mock: WebSocketClient {
+final class WebSocketClient_Mock: WebSocketClient, @unchecked Sendable {
     let init_sessionConfiguration: URLSessionConfiguration
     let init_requestEncoder: RequestEncoder
     let init_eventDecoder: AnyEventDecoder
     let init_eventNotificationCenter: EventNotificationCenter
     let init_environment: WebSocketClient.Environment
 
-    var connect_calledCounter = 0
+    @Atomic var connect_calledCounter = 0
     var connect_called: Bool { connect_calledCounter > 0 }
 
-    var disconnect_calledCounter = 0
-    var disconnect_source: WebSocketConnectionState.DisconnectionSource?
+    @Atomic var disconnect_calledCounter = 0
+    @Atomic var disconnect_source: WebSocketConnectionState.DisconnectionSource?
     var disconnect_called: Bool { disconnect_calledCounter > 0 }
-    var disconnect_completion: (() -> Void)?
+    @Atomic var disconnect_completion: (() -> Void)?
 
 
-    var mockedConnectionState: WebSocketConnectionState?
+    @Atomic var mockedConnectionState: WebSocketConnectionState?
 
     override var connectionState: WebSocketConnectionState {
         return mockedConnectionState ?? super.connectionState

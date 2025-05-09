@@ -6,7 +6,7 @@ import CoreServices
 import Foundation
 
 /// A type representing the app settings.
-public struct AppSettings {
+public struct AppSettings: Sendable {
     /// The name of the app.
     public let name: String
     /// The the file uploading configuration.
@@ -18,7 +18,7 @@ public struct AppSettings {
     /// A boolean value determining if async url enrichment is enabled.
     public let asyncUrlEnrichEnabled: Bool
 
-    public struct UploadConfig {
+    public struct UploadConfig: Sendable {
         /// The allowed file extensions.
         public let allowedFileExtensions: [String]
         /// The blocked file extensions.

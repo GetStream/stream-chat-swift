@@ -5,7 +5,7 @@
 import CoreData
 import Foundation
 
-class ChannelRepository {
+class ChannelRepository: @unchecked Sendable {
     let database: DatabaseContainer
     let apiClient: APIClient
 
@@ -14,7 +14,7 @@ class ChannelRepository {
         self.apiClient = apiClient
     }
     
-    func getChannel(for query: ChannelQuery, store: Bool, completion: @escaping (Result<ChatChannel, Error>) -> Void) {
+    func getChannel(for query: ChannelQuery, store: Bool, completion: @escaping @Sendable(Result<ChatChannel, Error>) -> Void) {
         let endpoint: Endpoint = query.options == .state ? .channelState(query: query) : .updateChannel(query: query)
         apiClient.request(endpoint: endpoint) { [database] result in
             switch result {
@@ -42,7 +42,7 @@ class ChannelRepository {
     func markRead(
         cid: ChannelId,
         userId: UserId,
-        completion: ((Error?) -> Void)? = nil
+        completion: (@Sendable(Error?) -> Void)? = nil
     ) {
         apiClient.request(endpoint: .markRead(cid: cid)) { [weak self] result in
             if let error = result.error {
@@ -71,7 +71,7 @@ class ChannelRepository {
         userId: UserId,
         from messageId: MessageId,
         lastReadMessageId: MessageId?,
-        completion: ((Result<ChatChannel, Error>) -> Void)? = nil
+        completion: (@Sendable(Result<ChatChannel, Error>) -> Void)? = nil
     ) {
         apiClient.request(
             endpoint: .markUnread(cid: cid, messageId: messageId, userId: userId)
@@ -81,8 +81,7 @@ class ChannelRepository {
                 return
             }
 
-            var channel: ChatChannel?
-            self?.database.write({ session in
+            self?.database.write(converting: { session in
                 session.markChannelAsUnread(
                     for: cid,
                     userId: userId,
@@ -91,13 +90,12 @@ class ChannelRepository {
                     lastReadAt: nil,
                     unreadMessagesCount: nil
                 )
-                channel = try session.channel(cid: cid)?.asModel()
-            }, completion: { error in
-                if let channel = channel, error == nil {
-                    completion?(.success(channel))
-                } else {
-                    completion?(.failure(error ?? ClientError.ChannelNotCreatedYet()))
+                guard let channelDTO = session.channel(cid: cid) else {
+                    throw ClientError.ChannelDoesNotExist(cid: cid)
                 }
+                return try channelDTO.asModel()
+            }, completion: {
+                completion?($0)
             })
         }
     }

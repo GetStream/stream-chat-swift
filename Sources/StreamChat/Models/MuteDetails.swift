@@ -5,7 +5,7 @@
 import Foundation
 
 /// Describes user/channel mute details.
-public struct MuteDetails: Equatable {
+public struct MuteDetails: Equatable, Sendable {
     /// The time when the mute action was taken.
     public let createdAt: Date
     /// The time when the mute was updated.

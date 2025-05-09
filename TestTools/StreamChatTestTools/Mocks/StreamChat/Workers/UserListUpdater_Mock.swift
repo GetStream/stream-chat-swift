@@ -6,7 +6,7 @@
 import XCTest
 
 /// Mock implementation of UserListUpdater
-final class UserListUpdater_Mock: UserListUpdater {
+final class UserListUpdater_Mock: UserListUpdater, @unchecked Sendable {
     @Atomic var update_queries: [UserListQuery] = []
     @Atomic var update_policy: UpdatePolicy?
     @Atomic var update_completion: ((Result<[ChatUser], Error>) -> Void)?

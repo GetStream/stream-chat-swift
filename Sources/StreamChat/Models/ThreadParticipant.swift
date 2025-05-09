@@ -5,7 +5,7 @@
 import Foundation
 
 /// The details of a participant in a thread.
-public struct ThreadParticipant: Equatable {
+public struct ThreadParticipant: Equatable, Sendable {
     /// The user information of the participant.
     public let user: ChatUser
     /// The id of the thread, which is also the id of the parent message.

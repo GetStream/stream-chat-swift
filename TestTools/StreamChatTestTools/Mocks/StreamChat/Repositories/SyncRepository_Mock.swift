@@ -5,13 +5,13 @@
 import Foundation
 @testable import StreamChat
 
-final class SyncRepository_Mock: SyncRepository, Spy {
+final class SyncRepository_Mock: SyncRepository, Spy, @unchecked Sendable {
     enum Signature {
         static let cancelRecoveryFlow = "cancelRecoveryFlow()"
     }
 
     let spyState = SpyState()
-    var syncMissingEventsResult: Result<[ChannelId], SyncError>?
+    @Atomic var syncMissingEventsResult: Result<[ChannelId], SyncError>?
 
     convenience init() {
         let apiClient = APIClient_Spy()

@@ -5,7 +5,7 @@
 import Foundation
 @testable import StreamChat
 
-public class Chat_Mock: Chat, Spy {
+public class Chat_Mock: Chat, Spy, @unchecked Sendable {
     public let spyState = SpyState()
     
     static let cid = try! ChannelId(cid: "mock:channel")
@@ -48,7 +48,7 @@ public class Chat_Mock: Chat, Spy {
         )
     }
 
-    var createNewMessageCallCount = 0
+    @Atomic var createNewMessageCallCount = 0
     public override func sendMessage(
         with text: String,
         attachments: [AnyAttachmentPayload] = [],
@@ -66,7 +66,7 @@ public class Chat_Mock: Chat, Spy {
         return ChatMessage.mock()
     }
     
-    public var loadPageAroundMessageIdCallCount = 0
+    @Atomic public var loadPageAroundMessageIdCallCount = 0
     public override func loadMessages(around messageId: MessageId, limit: Int? = nil) async throws {
         loadPageAroundMessageIdCallCount += 1
     }

@@ -5,9 +5,9 @@
 import Foundation
 @testable import StreamChat
 
-final class Logger_Spy: Logger, Spy {
+final class Logger_Spy: Logger, Spy, @unchecked Sendable {
     let spyState = SpyState()
-    var originalLogger: Logger?
+    @Atomic var originalLogger: Logger?
     @Atomic var failedAsserts: Int = 0
 
     func injectMock() {
