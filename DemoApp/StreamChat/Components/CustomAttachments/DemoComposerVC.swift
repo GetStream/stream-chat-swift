@@ -85,3 +85,25 @@ class DemoComposerVC: ComposerVC {
         present(alert, animated: true)
     }
 }
+
+class DemoInputTextView: InputTextView {
+    override func setUpAppearance() {
+        backgroundColor = .clear
+        textContainer.lineFragmentPadding = 8
+        font = appearance.fonts.body
+        textColor = appearance.colorPalette.text
+        textAlignment = .natural
+        adjustsFontForContentSizeCategory = true
+
+        // Calling the layoutManager in debug builds loads a dynamic lib
+        // Which causes a big performance penalty. So in our Demo App
+        // we avoid the performance penalty, unless it is using the our internal scheme.
+        if StreamRuntimeCheck.isStreamInternalConfiguration {
+            layoutManager.allowsNonContiguousLayout = false
+        }
+
+        placeholderLabel.font = font
+        placeholderLabel.textColor = appearance.colorPalette.subtitleText
+        placeholderLabel.adjustsFontSizeToFitWidth = true
+    }
+}

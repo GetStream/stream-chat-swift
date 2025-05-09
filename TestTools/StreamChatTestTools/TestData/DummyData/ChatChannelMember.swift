@@ -15,6 +15,7 @@ extension ChatChannelMember {
             isBanned: false,
             isFlaggedByCurrentUser: false,
             userRole: .user,
+            teamsRole: nil,
             userCreatedAt: .unique,
             userUpdatedAt: .unique,
             deactivatedAt: nil,

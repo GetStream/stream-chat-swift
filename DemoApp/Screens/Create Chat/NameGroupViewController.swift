@@ -14,6 +14,7 @@ class NameGroupViewController: UIViewController {
 
         let avatarView = AvatarView()
         let nameLabel = UILabel()
+        let detailsLabel = UILabel()
         let removeButton = UIButton()
         let premiumImageView = UIImageView(image: .init(systemName: "crown.fill")!)
 
@@ -35,12 +36,17 @@ class NameGroupViewController: UIViewController {
             premiumImageView.contentMode = .scaleAspectFill
             premiumImageView.tintColor = .systemBlue
             premiumImageView.isHidden = true
+            detailsLabel.isHidden = true
+            detailsLabel.font = .systemFont(ofSize: 14)
 
             HContainer(spacing: 8, alignment: .center) {
                 avatarView
                     .width(30)
                     .height(30)
-                nameLabel
+                VContainer(spacing: 0, alignment: .leading) {
+                    nameLabel
+                    detailsLabel
+                }
                 Spacer()
                 premiumImageView
                     .width(20)

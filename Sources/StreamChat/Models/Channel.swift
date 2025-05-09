@@ -157,6 +157,9 @@ public struct ChatChannel {
     /// because the preview message is the last `non-deleted` message sent to the channel.
     public let previewMessage: ChatMessage?
 
+    /// The draft message in the channel.
+    public let draftMessage: DraftMessage?
+
     // MARK: - Internal
 
     var hasUnread: Bool {
@@ -194,7 +197,8 @@ public struct ChatChannel {
         lastMessageFromCurrentUser: ChatMessage?,
         pinnedMessages: [ChatMessage],
         muteDetails: MuteDetails?,
-        previewMessage: ChatMessage?
+        previewMessage: ChatMessage?,
+        draftMessage: DraftMessage?
     ) {
         self.cid = cid
         self.name = name
@@ -227,6 +231,49 @@ public struct ChatChannel {
         self.pinnedMessages = pinnedMessages
         self.muteDetails = muteDetails
         self.previewMessage = previewMessage
+        self.draftMessage = draftMessage
+    }
+
+    /// Returns a new `ChatChannel` with the provided data replaced.
+    public func replacing(
+        name: String?,
+        imageURL: URL?,
+        extraData: [String: RawJSON]?
+    ) -> ChatChannel {
+        .init(
+            cid: cid,
+            name: name,
+            imageURL: imageURL,
+            lastMessageAt: lastMessageAt,
+            createdAt: createdAt,
+            updatedAt: updatedAt,
+            deletedAt: deletedAt,
+            truncatedAt: truncatedAt,
+            isHidden: isHidden,
+            createdBy: createdBy,
+            config: config,
+            ownCapabilities: ownCapabilities,
+            isFrozen: isFrozen,
+            isDisabled: isDisabled,
+            isBlocked: isBlocked,
+            lastActiveMembers: lastActiveMembers,
+            membership: membership,
+            currentlyTypingUsers: currentlyTypingUsers,
+            lastActiveWatchers: lastActiveWatchers,
+            team: team,
+            unreadCount: unreadCount,
+            watcherCount: watcherCount,
+            memberCount: memberCount,
+            reads: reads,
+            cooldownDuration: cooldownDuration,
+            extraData: extraData ?? [:],
+            latestMessages: latestMessages,
+            lastMessageFromCurrentUser: lastMessageFromCurrentUser,
+            pinnedMessages: pinnedMessages,
+            muteDetails: muteDetails,
+            previewMessage: previewMessage,
+            draftMessage: draftMessage
+        )
     }
 }
 
@@ -274,6 +321,7 @@ extension ChatChannel: Hashable {
         guard lhs.team == rhs.team else { return false }
         guard lhs.truncatedAt == rhs.truncatedAt else { return false }
         guard lhs.ownCapabilities == rhs.ownCapabilities else { return false }
+        guard lhs.draftMessage == rhs.draftMessage else { return false }
         return true
     }
 
@@ -378,6 +426,10 @@ public struct ChannelCapability: RawRepresentable, ExpressibleByStringLiteral, H
     public static let joinCall: Self = "join-call"
     /// Ability to create a call.
     public static let createCall: Self = "create-call"
+    /// Ability to send a poll.
+    public static let sendPoll: Self = "send-poll"
+    /// Ability to cast a poll vote.
+    public static let castPollVote: Self = "cast-poll-vote"
 }
 
 public extension ChatChannel {
@@ -524,5 +576,15 @@ public extension ChatChannel {
     /// Is slow mode active in this channel.
     var isSlowMode: Bool {
         ownCapabilities.contains(.slowMode)
+    }
+
+    /// Can the current user send a poll in this channel.
+    var canSendPoll: Bool {
+        ownCapabilities.contains(.sendPoll)
+    }
+
+    /// Can the current user cast a poll vote in this channel.
+    var canCastPollVote: Bool {
+        ownCapabilities.contains(.castPollVote)
     }
 }

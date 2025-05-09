@@ -16,48 +16,28 @@ env:
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
 jobs:
-  build-test-app-and-frameworks:
-    name: Build Test App and Frameworks
-    runs-on: macos-14
-    steps:
-    - uses: actions/checkout@v4.1.1
-    - uses: ./.github/actions/ruby-cache
-    - uses: ./.github/actions/xcode-cache
-    - name: Build
-      run: bundle exec fastlane build_test_app_and_frameworks
-      timeout-minutes: 60
-    - uses: actions/upload-artifact@v4
-      if: success()
-      with:
-        name: cache-derived-data
-        path: |
-          derived_data/Build/**/*.app
-          derived_data/Build/**/*.xctestrun
-          derived_data/Build/**/*.framework
-
   test-e2e-debug:
     name: Test E2E UI (Debug)
-    needs: build-test-app-and-frameworks
     strategy:
       matrix:
         include:
-          - ios: 18.1
-            xcode: 16.1
+          - ios: 18.3
+            xcode: 16.3
             os: macos-15
             device: "iPhone 16 Pro"
             setup_runtime: false
-          - ios: 17.4
+          - ios: 17.5
             xcode: 15.4
-            os: macos-14
-            device: "iPhone 14 Pro"
+            os: macos-15
+            device: "iPhone 15 Pro"
             setup_runtime: false
           - ios: 16.4
-            xcode: 15.3
+            xcode: 15.3 # fails on 15.4
             os: macos-14
             device: "iPhone 14 Pro"
             setup_runtime: true
           - ios: 15.5
-            xcode: 15.3
+            xcode: 15.3 # fails on 15.4
             os: macos-14
             device: "iPhone 13 Pro"
             setup_runtime: true
@@ -71,16 +51,12 @@ jobs:
       IOS_SIMULATOR_DEVICE: "${{ matrix.device }} (${{ matrix.ios }})" # For the Allure report
     steps:
     - uses: actions/checkout@v4.1.1
-    - uses: actions/download-artifact@v4
-      with:
-        name: cache-derived-data
-        path: derived_data/Build/
     - uses: ./.github/actions/bootstrap
       env:
         INSTALL_ALLURE: true
         INSTALL_YEETD: true
+        INSTALL_IPSW: true
         SKIP_MINT_BOOTSTRAP: true
-        SKIP_BREW_BOOTSTRAP: true
     - uses: ./.github/actions/setup-ios-runtime
       if: ${{ matrix.setup_runtime }}
       timeout-minutes: 60
@@ -90,7 +66,7 @@ jobs:
     - name: Launch Allure TestOps
       run: bundle exec fastlane allure_launch cron:true
     - name: Run UI Tests (Debug)
-      run: bundle exec fastlane test_e2e_mock device:"${{ matrix.device }} (${{ matrix.ios }})" cron:true test_without_building:true
+      run: bundle exec fastlane test_e2e_mock device:"${{ matrix.device }} (${{ matrix.ios }})"
       timeout-minutes: 120
     - name: Allure TestOps Upload
       if: success() || failure()
@@ -98,16 +74,6 @@ jobs:
     - name: Allure TestOps Launch Removal
       if: cancelled()
       run: bundle exec fastlane allure_launch_removal launch_id:$LAUNCH_ID
-    - uses: 8398a7/action-slack@v3
-      with:
-        status: ${{ job.status }}
-        text: "You shall not pass!"
-        job_name: "${{ github.workflow }}: ${{ github.job }}"
-        fields: message,commit,author,action,workflow,job,took
-      env:
-        SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
-        MATRIX_CONTEXT: ${{ toJson(matrix) }}
-      if: failure() && github.event_name == 'schedule'
     - name: Parse xcresult
       if: failure()
       run: |
@@ -128,23 +94,23 @@ jobs:
     strategy:
       matrix:
         include:
-          - ios: 18.1
-            xcode: 16.1
+          - ios: 18.3
+            xcode: 16.3
             os: macos-15
             device: "iPhone 16 Pro"
             setup_runtime: false
-          - ios: 17.4
+          - ios: 17.5
             xcode: 15.4
-            os: macos-14
-            device: "iPhone 14 Pro"
+            os: macos-15
+            device: "iPhone 15 Pro"
             setup_runtime: false
           - ios: 16.4
-            xcode: 15.3
+            xcode: 15.3 # fails on 15.4
             os: macos-14
             device: "iPhone 14 Pro"
             setup_runtime: true
           - ios: 15.5
-            xcode: 15.3
+            xcode: 15.3 # fails on 15.4
             os: macos-14
             device: "iPhone 13 Pro"
             setup_runtime: true
@@ -157,6 +123,7 @@ jobs:
     - uses: ./.github/actions/bootstrap
       env:
         INSTALL_YEETD: true
+        INSTALL_IPSW: true
     - uses: ./.github/actions/setup-ios-runtime
       if: ${{ matrix.setup_runtime }}
       timeout-minutes: 60
@@ -166,16 +133,6 @@ jobs:
     - name: Run LLC Tests (Debug)
       run: bundle exec fastlane test device:"${{ matrix.device }} (${{ matrix.ios }})" cron:true
       timeout-minutes: 100
-    - uses: 8398a7/action-slack@v3
-      with:
-        status: ${{ job.status }}
-        text: "You shall not pass!"
-        job_name: "${{ github.workflow }}: ${{ github.job }}"
-        fields: message,commit,author,action,workflow,job,took
-      env:
-        SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
-        MATRIX_CONTEXT: ${{ toJson(matrix) }}
-      if: failure() && github.event_name == 'schedule'
     - name: Parse xcresult
       if: failure()
       run: |
@@ -191,9 +148,9 @@ jobs:
 
   build-old-xcode:
     name: Build LLC + UI (Xcode 15)
-    runs-on: macos-14
+    runs-on: macos-15
     env:
-      XCODE_VERSION: "15.0.1"
+      XCODE_VERSION: "15.4"
     steps:
     - name: Connect Bot
       uses: webfactory/ssh-agent@v0.7.0
@@ -218,10 +175,27 @@ jobs:
 
   automated-code-review:
     name: Automated Code Review
-    runs-on: macos-14
+    runs-on: macos-15
+    env:
+      XCODE_VERSION: "15.4"
     steps:
     - uses: actions/checkout@v4.1.1
     - uses: ./.github/actions/bootstrap
     - run: bundle exec fastlane rubocop
     - run: ./Scripts/run-linter.sh
     - run: bundle exec fastlane pod_lint
+
+  slack:
+    name: Slack Report
+    runs-on: ubuntu-latest
+    needs: [build-and-test-debug, test-e2e-debug, build-old-xcode, automated-code-review]
+    if: failure() && github.event_name == 'schedule'
+    steps:
+      - uses: 8398a7/action-slack@v3
+        with:
+          status: cancelled
+          text: "You shall not pass!"
+          job_name: "${{ github.workflow }}: ${{ github.job }}"
+          fields: repo,commit,author,workflow
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_NIGHTLY_CHECKS }}

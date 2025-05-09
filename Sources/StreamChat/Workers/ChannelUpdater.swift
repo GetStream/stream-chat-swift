@@ -53,7 +53,7 @@ class ChannelUpdater: Worker {
         
         let didLoadFirstPage = channelQuery.pagination?.parameter == nil
         let didJumpToMessage: Bool = channelQuery.pagination?.parameter?.isJumpingToMessage == true
-        let resetMembers = didLoadFirstPage
+        let resetMembersAndReads = didLoadFirstPage
         let resetMessages = didLoadFirstPage || didJumpToMessage
         let resetWatchers = didLoadFirstPage
         let isChannelCreate = onChannelCreated != nil
@@ -69,12 +69,21 @@ class ChannelUpdater: Worker {
                 onChannelCreated?(payload.channel.cid)
 
                 database?.write { session in
+                    // State layer returns paginated members using the member list query dto.
+                    // Fetching channel data should prepopulate it. Then we can save an API call
+                    // for providing member data.
+                    let memberListQuery = ChannelMemberListQuery(cid: payload.channel.cid, sort: actions?.updateMemberList ?? [])
+                    
                     if let channelDTO = session.channel(cid: payload.channel.cid) {
                         if resetMessages {
                             channelDTO.cleanAllMessagesExcludingLocalOnly()
                         }
-                        if resetMembers {
+                        if resetMembersAndReads {
+                            if let memberListQueryDTO = session.channelMemberListQuery(queryHash: memberListQuery.queryHash) {
+                                memberListQueryDTO.members.removeAll()
+                            }
                             channelDTO.members.removeAll()
+                            channelDTO.reads.removeAll()
                         }
                         if resetWatchers {
                             channelDTO.watchers.removeAll()
@@ -85,12 +94,14 @@ class ChannelUpdater: Worker {
                     updatedChannel.oldestMessageAt = self.paginationState.oldestMessageAt?.bridgeDate
                     updatedChannel.newestMessageAt = self.paginationState.newestMessageAt?.bridgeDate
                     
-                    if let memberListSorting = actions?.memberListSorting, !memberListSorting.isEmpty {
-                        let memberListQuery = ChannelMemberListQuery(cid: payload.channel.cid, sort: memberListSorting)
-                        let queryDTO = try session.saveQuery(memberListQuery)
-                        queryDTO.members = updatedChannel.members
-                    }
-                    
+                    // Share member data with member list query without any filters (requres ChannelDTO to be saved first)
+                    let memberListQueryDTO: ChannelMemberListQueryDTO = try {
+                        if let dto = session.channelMemberListQuery(queryHash: memberListQuery.queryHash) {
+                            return dto
+                        }
+                        return try session.saveQuery(memberListQuery)
+                    }()
+                    memberListQueryDTO.members.formUnion(updatedChannel.members)
                 } completion: { error in
                     if let error = error {
                         completion?(.failure(error))
@@ -135,6 +146,63 @@ class ChannelUpdater: Worker {
     ) {
         apiClient.request(endpoint: .partialChannelUpdate(updates: updates, unsetProperties: unsetProperties)) {
             completion?($0.error)
+        }
+    }
+    
+    /// Loads channel members and reads for these members using channel query endpoint.
+    ///
+    /// - Note: Use it only if we would like to paginate channel reads (reads pagination can only be done through paginating members using the channel query endpoint).
+    func loadMembersWithReads(
+        in cid: ChannelId,
+        membersPagination: Pagination,
+        memberListSorting: [Sorting<ChannelMemberListSortingKey>],
+        completion: @escaping (Result<([ChatChannelMember]), Error>) -> Void
+    ) {
+        if membersPagination.pageSize <= 0 {
+            completion(.success([]))
+            return
+        }
+        // Fetch only members by setting optional values to 0 (otherwise server returns default set of messages)
+        var channelQuery = ChannelQuery(
+            cid: cid,
+            pageSize: 0,
+            messagesPagination: MessagesPagination(pageSize: 0),
+            membersPagination: membersPagination,
+            watchersLimit: 0
+        )
+        channelQuery.options = .state
+        apiClient.request(endpoint: .updateChannel(query: channelQuery)) { [database] result in
+            var paginatedMembers: [ChatChannelMember]?
+            switch result {
+            case .success(let payload):
+                database.write { session in
+                    // State layer uses member list query to return all the paginated members
+                    // In addition to this, we want to save channel data because reads are
+                    // stored and returned through channel data.
+                    let memberListQuery = ChannelMemberListQuery(cid: cid, sort: memberListSorting)
+                    
+                    // Keep the default logic where loading the first page, resets the pagination state.
+                    if membersPagination.offset == 0 {
+                        let channelDTO = session.channel(cid: cid)
+                        channelDTO?.members.removeAll()
+                        channelDTO?.reads.removeAll()
+                        session.channelMemberListQuery(queryHash: memberListQuery.queryHash)?.members.removeAll()
+                    }
+                    let updatedChannel = try session.saveChannel(payload: payload)
+                    let memberListQueryDTO = try session.saveQuery(memberListQuery)
+                    memberListQueryDTO.members.formUnion(updatedChannel.members)
+                    
+                    paginatedMembers = payload.members.compactMapLoggingError { try session.member(userId: $0.userId, cid: cid)?.asModel() }
+                } completion: { error in
+                    if let paginatedMembers {
+                        completion(.success(paginatedMembers))
+                    } else {
+                        completion(.failure(error ?? ClientError.Unknown()))
+                    }
+                }
+            case .failure(let apiError):
+                completion(.failure(apiError))
+            }
         }
     }
 
@@ -308,6 +376,7 @@ class ChannelUpdater: Worker {
         quotedMessageId: MessageId?,
         skipPush: Bool,
         skipEnrichUrl: Bool,
+        restrictedVisibility: [UserId] = [],
         poll: PollPayload? = nil,
         extraData: [String: RawJSON],
         completion: ((Result<ChatMessage, Error>) -> Void)? = nil
@@ -332,6 +401,7 @@ class ChannelUpdater: Worker {
                 skipPush: skipPush,
                 skipEnrichUrl: skipEnrichUrl,
                 poll: poll,
+                restrictedVisibility: restrictedVisibility,
                 extraData: extraData
             )
             if quotedMessageId != nil {
@@ -743,6 +813,7 @@ extension ChannelUpdater {
         quotedMessageId: MessageId?,
         skipPush: Bool,
         skipEnrichUrl: Bool,
+        restrictedVisibility: [UserId],
         extraData: [String: RawJSON]
     ) async throws -> ChatMessage {
         try await withCheckedThrowingContinuation { continuation in
@@ -760,6 +831,7 @@ extension ChannelUpdater {
                 quotedMessageId: quotedMessageId,
                 skipPush: skipPush,
                 skipEnrichUrl: skipEnrichUrl,
+                restrictedVisibility: restrictedVisibility,
                 extraData: extraData
             ) { result in
                 continuation.resume(with: result)
@@ -827,6 +899,18 @@ extension ChannelUpdater {
         try await withCheckedThrowingContinuation { continuation in
             inviteMembers(cid: cid, userIds: userIds) { error in
                 continuation.resume(with: error)
+            }
+        }
+    }
+    
+    func loadMembersWithReads(
+        in cid: ChannelId,
+        membersPagination: Pagination,
+        memberListSorting: [Sorting<ChannelMemberListSortingKey>]
+    ) async throws -> [ChatChannelMember] {
+        try await withCheckedThrowingContinuation { continuation in
+            loadMembersWithReads(in: cid, membersPagination: membersPagination, memberListSorting: memberListSorting) { result in
+                continuation.resume(with: result)
             }
         }
     }
@@ -926,7 +1010,7 @@ extension ChannelUpdater {
                 channelQuery: channelQuery,
                 isInRecoveryMode: false,
                 onChannelCreated: useCreateEndpoint,
-                actions: ChannelUpdateActions(memberListSorting: memberSorting),
+                actions: ChannelUpdateActions(updateMemberList: memberSorting),
                 completion: { continuation.resume(with: $0) }
             )
         }
@@ -1025,10 +1109,12 @@ extension ChannelUpdater {
 extension ChannelUpdater {
     /// Additional operations while updating the channel.
     struct ChannelUpdateActions {
-        /// Store members in channel payload for a member list query consisting of cid and sorting.
+        /// Store members in channel payload for corresponding member list query consisting of cid and sorting.
+        ///
+        /// If nil, member list query is not updated, if non-nil, corresponding member list query is updated.
         ///
         /// - Note: Used by the state layer which creates default (all channel members) member list query internally.
-        let memberListSorting: [Sorting<ChannelMemberListSortingKey>]
+        let updateMemberList: [Sorting<ChannelMemberListSortingKey>]?
     }
 }
 

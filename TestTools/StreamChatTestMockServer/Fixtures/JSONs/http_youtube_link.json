@@ -1,61 +1,62 @@
 {
-    "duration": "319.98ms",
-    "message": {
-        "attachments": [
-            {
-                "asset_url": "https://www.youtube.com/watch?v=xOX7MsrbaPY",
-                "author_name": "YouTube",
-                "image_url": "https://i.ytimg.com/vi/xOX7MsrbaPY/mqdefault.jpg",
-                "og_scrape_url": "https://youtube.com/watch?v=xOX7MsrbaPY",
-                "text": "MotionScape is your SwiftUI animation's playground as a developer. You can see all animations and their parameters in effect with beautifully designed and handcrafted animation examples. Best of all: directly preview and export your settings as production-ready SwiftUI code that you can use in your apps as-is.\n\nSupercharge your apps with animations and get to know how to use them - with MotionScape!\n\nDownload MotionScape from the Mac AppStore: \nhttps://gstrm.io/motionscape-yt\n\nWebpage:\nhttps://getstream.github.io/motionscape-app/\n\nSwiftUI chat messaging:\nhttps://getstream.io/chat/sdk/swiftui/\n...",
-                "thumb_url": "https://i.ytimg.com/vi/xOX7MsrbaPY/mqdefault.jpg",
-                "title": "Introducing MotionScape: Prototype SwiftUI Animation Easings",
-                "title_link": "https://www.youtube.com/watch?v=xOX7MsrbaPY",
-                "type": "video"
-            }
-        ],
-        "cid": "messaging:a1697d5c-c7d5-11ef-b210-ca08f9476ff8",
-        "created_at": "2025-01-01T00:16:27.423599Z",
-        "deleted_reply_count": 0,
-        "html": "<p><a href=\"https://youtube.com/watch?v=xOX7MsrbaPY\" rel=\"nofollow\">https://youtube.com/watch?v=xOX7MsrbaPY</a></p>\n",
-        "i18n": {
-            "en_text": "https://youtube.com/watch?v=xOX7MsrbaPY",
-            "language": "en",
-            "ru_text": "https://youtube.com/watch?v=xOX7MsrbaPY"
-        },
-        "id": "a42dc2d2-c7d5-11ef-b210-ca08f9476ff8",
-        "latest_reactions": [],
-        "mentioned_users": [],
-        "own_reactions": [],
-        "pin_expires": null,
-        "pinned": false,
-        "pinned_at": null,
-        "pinned_by": null,
-        "reaction_counts": {},
-        "reaction_scores": {},
-        "reply_count": 0,
-        "shadowed": false,
-        "silent": false,
-        "text": "https://youtube.com/watch?v=xOX7MsrbaPY",
-        "type": "regular",
-        "updated_at": "2025-01-01T00:16:27.423599Z",
-        "user": {
-            "banned": false,
-            "birthland": "Tatooine",
-            "blocked_user_ids": [],
-            "created_at": "2024-04-04T09:26:11.805899Z",
-            "id": "luke_skywalker",
-            "image": "https://vignette.wikia.nocookie.net/starwars/images/2/20/LukeTLJ.jpg",
-            "language": "en",
-            "last_active": "2025-01-01T00:16:22.080976834Z",
-            "name": "Luke Skywalker",
-            "online": true,
-            "pando": "{\"speciality\":\"ios engineer\"}",
-            "role": "admin",
-            "team": "test",
-            "teams": [],
-            "type": "team",
-            "updated_at": "2024-12-31T01:33:53.616251Z"
-        }
-    }
+  "message": {
+    "id": "60adeb99-4f63-4f97-a7de-e2788b5eebfa",
+    "text": "https://youtube.com/watch?v=xOX7MsrbaPY",
+    "html": "<p><a href=\"https://youtube.com/watch?v=xOX7MsrbaPY\" rel=\"nofollow\">https://youtube.com/watch?v=xOX7MsrbaPY</a></p>\n",
+    "type": "regular",
+    "user": {
+      "id": "luke_skywalker",
+      "name": "Luke Skywalker",
+      "image": "https://vignette.wikia.nocookie.net/starwars/images/2/20/LukeTLJ.jpg",
+      "language": "zh",
+      "role": "admin",
+      "teams": [],
+      "created_at": "2024-04-04T09:26:11.805899Z",
+      "updated_at": "2025-04-19T12:19:13.801419Z",
+      "banned": false,
+      "online": true,
+      "last_active": "2025-05-01T00:19:05.024788871Z",
+      "blocked_user_ids": [],
+      "pando": "{\"speciality\":\"ios engineer\"}",
+      "birthland": "Tatooine",
+      "team": "test",
+      "type": "team"
+    },
+    "attachments": [
+      {
+        "type": "video",
+        "author_name": "YouTube",
+        "title": "Introducing MotionScape: Prototype SwiftUI Animation Easings",
+        "title_link": "https://www.youtube.com/watch?v=xOX7MsrbaPY",
+        "text": "MotionScape is your SwiftUI animation's playground as a developer. You can see all animations and their parameters in effect with beautifully designed and handcrafted animation examples. Best of all: directly preview and export your settings as production-ready SwiftUI code that you can use in your apps as-is.\n\nSupercharge your apps with animations and get to know how to use them - with MotionScape!\n\nDownload MotionScape from the Mac AppStore: \nhttps://gstrm.io/motionscape-yt\n\nWebpage:\nhttps://getstream.github.io/motionscape-app/\n\nSwiftUI chat messaging:\nhttps://getstream.io/chat/sdk/swiftui/\n...",
+        "image_url": "https://i.ytimg.com/vi/xOX7MsrbaPY/mqdefault.jpg",
+        "thumb_url": "https://i.ytimg.com/vi/xOX7MsrbaPY/mqdefault.jpg",
+        "asset_url": "https://www.youtube.com/watch?v=xOX7MsrbaPY",
+        "og_scrape_url": "https://youtube.com/watch?v=xOX7MsrbaPY"
+      }
+    ],
+    "latest_reactions": [],
+    "own_reactions": [],
+    "reaction_counts": {},
+    "reaction_scores": {},
+    "reply_count": 0,
+    "deleted_reply_count": 0,
+    "cid": "messaging:d76ce957-ae58-4d1e-a483-6fd05dcfd3f8",
+    "created_at": "2025-05-01T00:19:14.506343Z",
+    "updated_at": "2025-05-01T00:19:14.506343Z",
+    "shadowed": false,
+    "mentioned_users": [],
+    "i18n": {
+      "zh_text": "https://youtube.com/watch?v=xOX7MsrbaPY",
+      "language": "zh",
+      "fr_text": "https://youtube.com/watch?v=xOX7MsrbaPY"
+    },
+    "silent": false,
+    "pinned": false,
+    "pinned_at": null,
+    "pinned_by": null,
+    "pin_expires": null,
+    "restricted_visibility": []
+  },
+  "duration": "244.76ms"
 }

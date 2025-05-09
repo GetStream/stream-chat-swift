@@ -9,13 +9,22 @@ on:
     types: [published]
 
   workflow_dispatch:
+    inputs:
+      release:
+        description: 'Build configuration'
+        required: true
+        default: 'Debug'
+        type: choice
+        options:
+          - Debug
+          - Release
 
 env:
   HOMEBREW_NO_INSTALL_CLEANUP: 1
 
 jobs:
   deploy:
-    runs-on: macos-14
+    runs-on: macos-15
     steps:
     - name: Connect Bot
       uses: webfactory/ssh-agent@v0.7.0
@@ -30,13 +39,12 @@ jobs:
         APPSTORE_API_KEY: ${{ secrets.APPSTORE_API_KEY }}
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         GITHUB_PR_NUM: ${{ github.event.number }}
-      run: bundle exec fastlane uikit_testflight_build
+      run: bundle exec fastlane uikit_testflight_build configuration:"${{ github.event.inputs.release }}"
     - uses: 8398a7/action-slack@v3
       with:
         status: ${{ job.status }}
         text: "You shall not pass!"
-        fields: message,commit,author,action,workflow,job,took
+        fields: repo,commit,author,workflow
       env:
         SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
-        MATRIX_CONTEXT: ${{ toJson(matrix) }}
       if: failure()

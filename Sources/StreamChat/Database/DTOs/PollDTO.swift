@@ -90,7 +90,7 @@ extension PollDTO {
         
         let extraData: [String: RawJSON]
         do {
-            extraData = try JSONDecoder.stream.decodeCachedRawJSON(from: custom)
+            extraData = try JSONDecoder.stream.decodeRawJSON(from: custom)
         } catch {
             log.error(
                 "Failed to decode extra data for poll with id: <\(id)>, using default value instead. Error: \(error)"
@@ -245,5 +245,11 @@ extension NSManagedObjectContext {
     
     func poll(id: String) throws -> PollDTO? {
         PollDTO.load(pollId: id, context: self)
+    }
+    
+    func deletePoll(pollId: String) throws -> PollDTO? {
+        guard let poll = try poll(id: pollId) else { return nil }
+        delete(poll)
+        return poll
     }
 }

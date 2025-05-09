@@ -4,43 +4,21 @@ desc 'Get code coverage report and run complexity analysis for Sonar'
 lane :sonar_upload do
   next unless is_check_required(sources: sources_matrix[:unit], force_check: @force_check)
 
-  sonar_args = ''
   version_number = get_version_number(
     xcodeproj: 'StreamChat.xcodeproj',
     target: 'StreamChat'
   )[/\d+\.\d+\.\d/]
 
-  unless Dir.glob('test_output/*.xcresult').empty?
-    slather
-    lizard(
-      source_folder: './Sources/',
-      language: 'swift',
-      export_type: 'xml',
-      report_file: 'reports/lizard.xml'
-    )
-    sonar_args = '-Dsonar.coverageReportPaths="reports/sonarqube-generic-coverage.xml" ' \
-                 '-Dsonar.swift.lizard.report="reports/lizard.xml"'
+  Dir.chdir('..') do
+    sh("./fastlane/sonar/bin/sonar-scanner " \
+       "-Dsonar.projectVersion=#{version_number} " \
+       "-Dproject.settings=sonar-project.properties " \
+       "-Dsonar.coverageReportPaths='reports/sonarqube-generic-coverage.xml'")
   end
 
-  options = sonar_options(sonar_args: sonar_args, version_number: version_number)
-  sonar(options)
-
-  next if sonar_args.empty? || ENV['GITHUB_EVENT_NAME'] == 'pull_request' || current_branch !~ /main|develop/
+  next if ENV['GITHUB_EVENT_NAME'] == 'pull_request' || current_branch !~ /main|develop/
 
   slack_sonarcloud_metrics(version_number: version_number)
-end
-
-desc 'Gets Sonar options'
-private_lane :sonar_options do |options|
-  default_options = { sonar_login: ENV.fetch('SONAR_TOKEN', nil), sonar_runner_args: options[:sonar_args] }
-
-  if ENV['GITHUB_EVENT_NAME'] == 'pull_request'
-    default_options.merge(pull_request_branch: ENV.fetch('GITHUB_HEAD_REF', nil),
-                          pull_request_base: ENV.fetch('GITHUB_BASE_REF', nil),
-                          pull_request_key: ENV.fetch('GITHUB_PR_NUM', nil))
-  else
-    default_options.merge(branch_name: current_branch, project_version: options[:version_number])
-  end
 end
 
 desc 'Creates a report in Slack with SonarCloud analysis details'

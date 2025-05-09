@@ -147,7 +147,7 @@ extension ThreadDTO {
         
         let extraData: [String: RawJSON]
         do {
-            extraData = try JSONDecoder.stream.decodeCachedRawJSON(from: self.extraData)
+            extraData = try JSONDecoder.stream.decodeRawJSON(from: self.extraData)
         } catch {
             log.error(
                 "Failed to decode extra data for thread with id: <\(parentMessageId)>, using default value instead. Error: \(error)"
@@ -257,6 +257,17 @@ extension NSManagedObjectContext {
         if let currentUserId = currentUser?.user.id {
             let currentUserRead = payload.read.first(where: { $0.user.id == currentUserId })
             currentUserUnreadCount = currentUserRead?.unreadMessagesCount ?? 0
+        }
+
+        if let draft = payload.draft {
+            parentMessageDTO.draftReply = try saveDraftMessage(payload: draft, for: payload.channel.cid, cache: cache)
+        } else {
+            /// If the payload does not contain a draft reply, we should
+            /// delete the existing draft reply if it exists.
+            if let draft = parentMessageDTO.draftReply {
+                deleteDraftMessage(in: payload.channel.cid, threadId: draft.parentMessageId)
+                parentMessageDTO.draftReply = nil
+            }
         }
 
         threadDTO.fill(

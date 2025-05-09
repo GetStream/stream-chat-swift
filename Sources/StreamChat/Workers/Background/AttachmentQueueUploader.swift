@@ -27,7 +27,9 @@ class AttachmentQueueUploader: Worker {
     private let attachmentUpdater = AnyAttachmentUpdater()
     private let attachmentStorage = AttachmentStorage()
     private var continuations = [AttachmentId: CheckedContinuation<UploadedAttachment, Error>]()
-    private let continuationsQueue = DispatchQueue(label: "co.getStream.ChatClient.AttachmentQueueUploader")
+    private let queue = DispatchQueue(label: "co.getStream.ChatClient.AttachmentQueueUploader", target: .global(qos: .utility))
+    private var fileUploadConfig: AppSettings.UploadConfig?
+    private var imageUploadConfig: AppSettings.UploadConfig?
 
     var minSignificantUploadingProgressChange: Double = 0.05
 
@@ -42,6 +44,13 @@ class AttachmentQueueUploader: Worker {
         super.init(database: database, apiClient: apiClient)
 
         startObserving()
+    }
+    
+    func setAppSettings(_ appSettings: AppSettings?) {
+        queue.async { [weak self] in
+            self?.fileUploadConfig = appSettings?.fileUploadConfig
+            self?.imageUploadConfig = appSettings?.imageUploadConfig
+        }
     }
 
     // MARK: - Private
@@ -76,42 +85,54 @@ class AttachmentQueueUploader: Worker {
     }
 
     private func uploadAttachment(with id: AttachmentId) {
-        prepareAttachmentForUpload(with: id) { [weak self] attachment in
-            guard let attachment = attachment else {
-                self?.removePendingAttachment(with: id, result: .failure(ClientError.AttachmentDoesNotExist(id: id)))
-                return
-            }
-
-            self?.apiClient.uploadAttachment(
-                attachment,
-                progress: {
+        prepareAttachmentForUpload(with: id) { [weak self] result in
+            switch result {
+            case .failure(let error):
+                if error is ClientError.AttachmentDoesNotExist {
+                    self?.removePendingAttachment(with: id, result: .failure(error))
+                } else {
                     self?.updateAttachmentIfNeeded(
                         attachmentId: id,
                         uploadedAttachment: nil,
-                        newState: .uploading(progress: $0),
-                        completion: {}
-                    )
-                },
-                completion: { result in
-                    self?.updateAttachmentIfNeeded(
-                        attachmentId: id,
-                        uploadedAttachment: result.value,
-                        newState: result.error == nil ? .uploaded : .uploadingFailed,
+                        newState: .uploadingFailed,
                         completion: {
-                            self?.removePendingAttachment(with: id, result: result)
+                            self?.removePendingAttachment(with: id, result: .failure(error))
                         }
                     )
                 }
-            )
+            case .success(let attachment):
+                self?.apiClient.uploadAttachment(
+                    attachment,
+                    progress: {
+                        self?.updateAttachmentIfNeeded(
+                            attachmentId: id,
+                            uploadedAttachment: nil,
+                            newState: .uploading(progress: $0),
+                            completion: {}
+                        )
+                    },
+                    completion: { result in
+                        self?.updateAttachmentIfNeeded(
+                            attachmentId: id,
+                            uploadedAttachment: result.value,
+                            newState: result.error == nil ? .uploaded : .uploadingFailed,
+                            completion: {
+                                self?.removePendingAttachment(with: id, result: result)
+                            }
+                        )
+                    }
+                )
+            }
         }
     }
 
-    private func prepareAttachmentForUpload(with id: AttachmentId, completion: @escaping (AnyChatMessageAttachment?) -> Void) {
+    private func prepareAttachmentForUpload(with id: AttachmentId, completion: @escaping (Result<AnyChatMessageAttachment, Error>) -> Void) {
         let attachmentStorage = self.attachmentStorage
+        var model: AnyChatMessageAttachment?
+        var attachmentLocalURL: URL?
         database.write { session in
             guard let attachment = session.attachment(id: id) else {
-                completion(nil)
-                return
+                throw ClientError.AttachmentDoesNotExist(id: id)
             }
 
             if let temporaryURL = attachment.localURL {
@@ -122,12 +143,42 @@ class AttachmentQueueUploader: Worker {
                     log.error("Could not copy attachment to local storage: \(error.localizedDescription)", subsystems: .offlineSupport)
                 }
             }
-
-            let model = attachment.asAnyModel()
-
+            attachmentLocalURL = attachment.localURL
+            model = attachment.asAnyModel()
+        } completion: { [weak self] error in
             DispatchQueue.main.async {
-                completion(model)
+                if let model {
+                    // Attachment uploading state should be validated after preparing the local file (for ensuring the local file persists for retry)
+                    if let attachmentLocalURL, self?.isAllowedToUpload(model.type, localURL: attachmentLocalURL) == false {
+                        completion(
+                            .failure(
+                                ClientError.AttachmentUploadBlocked(
+                                    id: id,
+                                    attachmentType: model.type,
+                                    pathExtension: attachmentLocalURL.pathExtension
+                                )
+                            )
+                        )
+                    } else {
+                        completion(.success(model))
+                    }
+                } else if let error {
+                    completion(.failure(error))
+                } else {
+                    completion(.failure(ClientError.Unknown("Incorrect completion handling in AttachmentQueueUploader")))
+                }
             }
+        }
+    }
+    
+    private func isAllowedToUpload(_ attachmentType: AttachmentType, localURL: URL) -> Bool {
+        switch attachmentType {
+        case .image:
+            return queue.sync { imageUploadConfig?.isAllowed(localURL: localURL) ?? true }
+        case .audio, .file, .unknown, .video, .voiceRecording:
+            return queue.sync { fileUploadConfig?.isAllowed(localURL: localURL) ?? true }
+        default:
+            return true
         }
     }
 
@@ -311,7 +362,7 @@ extension AttachmentQueueUploader {
         for attachmentId: AttachmentId,
         continuation: CheckedContinuation<UploadedAttachment, Error>
     ) {
-        continuationsQueue.async {
+        queue.async {
             self.continuations[attachmentId] = continuation
         }
     }
@@ -320,7 +371,7 @@ extension AttachmentQueueUploader {
         for attachmentId: AttachmentId,
         result: Result<UploadedAttachment, Error>
     ) {
-        continuationsQueue.async {
+        queue.async {
             guard let continuation = self.continuations.removeValue(forKey: attachmentId) else { return }
             continuation.resume(with: result)
         }

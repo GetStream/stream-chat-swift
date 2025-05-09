@@ -32,9 +32,9 @@ class IOSBackgroundTaskScheduler: BackgroundTaskScheduler {
 
     /// The identifier of the currently running background task. `nil` if no background task is running.
     private var activeBackgroundTask: UIBackgroundTaskIdentifier?
+    private let queue = DispatchQueue(label: "io.getstream.IOSBackgroundTaskScheduler", target: .global())
 
     var isAppActive: Bool {
-        let app = self.app
         if Thread.isMainThread {
             return app?.applicationState == .active
         }
@@ -43,7 +43,7 @@ class IOSBackgroundTaskScheduler: BackgroundTaskScheduler {
         let group = DispatchGroup()
         group.enter()
         DispatchQueue.main.async {
-            isActive = app?.applicationState == .active
+            isActive = self.app?.applicationState == .active
             group.leave()
         }
         group.wait()
@@ -51,18 +51,27 @@ class IOSBackgroundTaskScheduler: BackgroundTaskScheduler {
     }
 
     func beginTask(expirationHandler: (() -> Void)?) -> Bool {
+        // Only a single task is allowed at the same time
         endTask()
-        activeBackgroundTask = app?.beginBackgroundTask { [weak self] in
-            expirationHandler?()
+        
+        guard let app else { return false }
+        let identifier = app.beginBackgroundTask { [weak self] in
             self?.endTask()
+            expirationHandler?()
         }
-        return activeBackgroundTask != .invalid
+        queue.sync {
+            self.activeBackgroundTask = identifier
+        }
+        return identifier != .invalid
     }
 
     func endTask() {
-        if let activeTask = activeBackgroundTask {
-            app?.endBackgroundTask(activeTask)
-            activeBackgroundTask = nil
+        guard let app else { return }
+        queue.sync {
+            if let identifier = self.activeBackgroundTask {
+                self.activeBackgroundTask = nil
+                app.endBackgroundTask(identifier)
+            }
         }
     }
 

@@ -94,11 +94,7 @@ class ChatClientFactory {
                 let dbFileURL = storeURL.appendingPathComponent(config.apiKey.apiKeyString)
                 return environment.databaseContainerBuilder(
                     .onDisk(databaseFileURL: dbFileURL),
-                    config.shouldFlushLocalStorageOnStart,
-                    config.isClientInActiveMode, // Only reset Ephemeral values in active mode
-                    config.localCaching,
-                    config.deletedMessagesVisibility,
-                    config.shouldShowShadowedMessages
+                    config
                 )
             }
 
@@ -111,11 +107,7 @@ class ChatClientFactory {
 
         return environment.databaseContainerBuilder(
             .inMemory,
-            config.shouldFlushLocalStorageOnStart,
-            config.isClientInActiveMode, // Only reset Ephemeral values in active mode
-            config.localCaching,
-            config.deletedMessagesVisibility,
-            config.shouldShowShadowedMessages
+            config
         )
     }
 
@@ -133,6 +125,7 @@ class ChatClientFactory {
                 newProcessedMessageIds: { [weak center] in center?.newMessageIds ?? [] }
             ),
             ThreadUpdaterMiddleware(),
+            DraftUpdaterMiddleware(),
             UserTypingStateUpdaterMiddleware(),
             ChannelTruncatedEventMiddleware(),
             MemberEventMiddleware(),

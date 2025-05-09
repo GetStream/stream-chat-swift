@@ -7,69 +7,187 @@ import StreamChat
 import UIKit
 
 public protocol MarkdownFormatter {
-    /// Checks for Markdown patterns in the given String.
-    /// - Parameter text: The string in which Markdown patters are going to be sought.
-    /// - Returns: Returns a Boolean value that indicates whether Markdown patters where found in the given String.
-    func containsMarkdown(_ string: String) -> Bool
     /// Returns an attributed string form the given Markdown-formatted string.
-    /// - Parameter string: The string to be formatted.
+    /// - Parameters
+    ///   - string: The string to be formatted
+    ///   - attributes: The set of attributes to use for the whole string.
     /// - Returns: An attributed string with the corresponding formatted attributes.
-    func format(_ string: String) -> NSAttributedString
+    func format(_ string: String, attributes: [NSAttributedString.Key: Any]) -> NSAttributedString
 }
 
 /// Default implementation for the Markdown formatter
 open class DefaultMarkdownFormatter: MarkdownFormatter {
+    private let markdownParser: MarkdownParser
     public var styles: MarkdownStyles
-    public var markdownRegexPattern: String
-
-    private let defaultMarkdownRegex = "((?:\\`(.*?)\\`)|(?:\\*{1,2}(.*?)\\*{1,2})|(?:\\~{2}(.*?)\\~{2})|(?:\\_{1,2}(.*?)\\_{1,2})|^(>){1}|(#){1,6}|(=){3,10}|(-){1,3}|(\\d{1,3}\\.)|(?:\\[(.*?)\\])(?:\\((.*?)\\))|(?:\\[(.*?)\\])(?:\\[(.*?)\\])|(\\]\\:))+"
-
+    
     public init() {
+        markdownParser = MarkdownParser()
         styles = MarkdownStyles()
-        markdownRegexPattern = defaultMarkdownRegex
     }
 
-    private lazy var regex: NSRegularExpression? = {
-        guard let regex = try? NSRegularExpression(pattern: markdownRegexPattern, options: .anchorsMatchLines) else {
-            log.error("Failed to create markdown regular expression")
+    open func format(_ string: String, attributes: [NSAttributedString.Key: Any]) -> NSAttributedString {
+        if #available(iOS 15, *), !string.isEmpty {
+            do {
+                let attributedString = try markdownParser.style(
+                    markdown: string,
+                    options: .init(layoutDirectionLeftToRight: UITraitCollection.current.layoutDirection == .leftToRight),
+                    attributes: defaultAttributes(forTextAttributes: attributes),
+                    inlinePresentationIntentAttributes: inlinePresentationIntentAttributes(for:),
+                    presentationIntentAttributes: presentationIntentAttributes(for:in:)
+                )
+                return NSAttributedString(attributedString)
+            } catch {
+                log.debug("Failed to parse string for markdown: \(error.localizedDescription)")
+            }
+        }
+        return NSAttributedString(
+            string: string,
+            attributes: defaultAttributes
+        )
+    }
+
+    // MARK: - Styling Attributes
+    
+    private var colorPalette: Appearance.ColorPalette { Appearance.default.colorPalette }
+    private var fonts: Appearance.Fonts { Appearance.default.fonts }
+    
+    @available(iOS 15, *)
+    private func defaultAttributes(forTextAttributes attributes: [NSAttributedString.Key: Any]) -> AttributeContainer {
+        // MarkdownStyles dictate which font and color to use.
+        let defaultFont = (attributes[.font] as? UIFont) ?? fonts.body
+        let defaultColor = (attributes[.foregroundColor] as? UIColor) ?? colorPalette.text
+        let font = UIFont.font(forMarkdownFont: styles.bodyFont, defaultFont: defaultFont)
+        let color = styles.bodyFont.color ?? defaultColor
+        let result = attributes.merging([.font: font, .foregroundColor: color], uniquingKeysWith: { _, new in new })
+        return AttributeContainer(result)
+    }
+    
+    private var defaultAttributes: [NSAttributedString.Key: Any] {
+        [
+            .font: UIFont.font(forMarkdownFont: styles.bodyFont, defaultFont: fonts.body),
+            .foregroundColor: styles.bodyFont.color ?? Appearance.default.colorPalette.text
+        ]
+    }
+    
+    @available(iOS 15, *)
+    private func inlinePresentationIntentAttributes(for inlinePresentationIntent: InlinePresentationIntent) -> AttributeContainer? {
+        switch inlinePresentationIntent {
+        case .code:
+            let attributes: [NSAttributedString.Key: Any] = [
+                .font: UIFont.font(forMarkdownFont: styles.codeFont, defaultFont: fonts.body, monospaced: true),
+                .foregroundColor: styles.codeFont.color
+            ].compactMapValues { $0 }
+            return AttributeContainer(attributes)
+        case .extremelyStronglyEmphasized:
+            let font = UIFont.font(forMarkdownFont: styles.bodyFont, defaultFont: fonts.body)
+                .withTraits(traits: [.traitBold, .traitItalic])
+            return AttributeContainer([.font: font])
+        default:
+            // emphasized etc are handled automatically by UITextView
             return nil
         }
-        return regex
-    }()
+    }
     
-    open func containsMarkdown(_ string: String) -> Bool {
-        guard let regex = regex else { return false }
-        return regex.numberOfMatches(in: string, range: .init(location: 0, length: string.utf16.count)) > 0
+    @available(iOS 15, *)
+    private func presentationIntentAttributes(for presentationKind: PresentationIntent.Kind, in presentationIntent: PresentationIntent) -> AttributeContainer? {
+        switch presentationKind {
+        case .blockQuote:
+            return AttributeContainer([
+                .foregroundColor: colorPalette.subtitleText
+            ])
+        case .codeBlock:
+            let attributes: [NSAttributedString.Key: Any] = [
+                .font: UIFont.font(forMarkdownFont: styles.codeFont, defaultFont: fonts.body, monospaced: true),
+                .foregroundColor: styles.codeFont.color
+            ].compactMapValues { $0 }
+            return AttributeContainer(attributes)
+        case .header(let level):
+            let font: UIFont
+            let foregroundColor: UIColor?
+            switch level {
+            case 1:
+                font = UIFont.font(forMarkdownFont: styles.h1Font, defaultFont: fonts.title, textStyle: .title1)
+                foregroundColor = styles.h1Font.color
+            case 2:
+                font = UIFont.font(forMarkdownFont: styles.h2Font, defaultFont: fonts.title2, textStyle: .title2)
+                foregroundColor = styles.h2Font.color
+            case 3:
+                font = UIFont.font(forMarkdownFont: styles.h3Font, defaultFont: fonts.title3, textStyle: .title3)
+                foregroundColor = styles.h3Font.color
+            case 4:
+                font = UIFont.font(forMarkdownFont: styles.h4Font, defaultFont: fonts.headline, textStyle: .headline)
+                foregroundColor = styles.h4Font.color
+            case 5:
+                font = UIFont.font(forMarkdownFont: styles.h5Font, defaultFont: fonts.subheadline, textStyle: .subheadline)
+                foregroundColor = styles.h5Font.color
+            default:
+                font = UIFont.font(forMarkdownFont: styles.h6Font, defaultFont: fonts.footnote, textStyle: .footnote)
+                foregroundColor = styles.h6Font.color ?? colorPalette.subtitleText
+            }
+            if let foregroundColor {
+                return AttributeContainer([.font: font, .foregroundColor: foregroundColor])
+            } else {
+                return AttributeContainer([.font: font])
+            }
+        case .listItem:
+            return AttributeContainer([
+                .paragraphStyle: listItemParagraphStyle(forIndentationLevel: presentationIntent.indentationLevel)
+            ])
+        default:
+            return nil
+        }
     }
+    
+    // MARK: - Paragraph Styles
+    
+    private func listItemParagraphStyle(forIndentationLevel level: Int) -> NSParagraphStyle {
+        let style = NSMutableParagraphStyle()
+        let location = style.tabStops.first?.location ?? 28
+        style.headIndent = max(0, CGFloat(level) * location - 12)
+        return style
+    }
+}
 
-    open func format(_ string: String) -> NSAttributedString {
-        let markdownFormatter = SwiftyMarkdown(string: string)
-        modify(swiftyMarkdownFont: markdownFormatter.code, with: styles.codeFont)
-        modify(swiftyMarkdownFont: markdownFormatter.body, with: styles.bodyFont)
-        modify(swiftyMarkdownFont: markdownFormatter.link, with: styles.linkFont)
-        modify(swiftyMarkdownFont: markdownFormatter.h1, with: styles.h1Font)
-        modify(swiftyMarkdownFont: markdownFormatter.h2, with: styles.h2Font)
-        modify(swiftyMarkdownFont: markdownFormatter.h3, with: styles.h3Font)
-        modify(swiftyMarkdownFont: markdownFormatter.h4, with: styles.h4Font)
-        modify(swiftyMarkdownFont: markdownFormatter.h5, with: styles.h5Font)
-        modify(swiftyMarkdownFont: markdownFormatter.h6, with: styles.h6Font)
-        return markdownFormatter.attributedString()
+private extension UIFont {
+    static func font(
+        forMarkdownFont markdownFont: MarkdownFont,
+        defaultFont: UIFont,
+        textStyle: TextStyle = .body,
+        monospaced: Bool = false
+    ) -> UIFont {
+        if !markdownFont.hasFontChanges && !monospaced {
+            let font = UIFont(
+                descriptor: defaultFont.fontDescriptor,
+                size: defaultFont.pointSize
+            )
+            return UIFontMetrics(forTextStyle: textStyle)
+                .scaledFont(for: font)
+        }
+        // Default
+        var descriptor = defaultFont.fontDescriptor
+        if monospaced, let updatedDescriptor = descriptor.withDesign(.monospaced) {
+            descriptor = updatedDescriptor
+        }
+        // MarkdownFont
+        // When changing family, the descriptor should be reset
+        if let fontName = markdownFont.name {
+            descriptor = UIFontDescriptor(name: fontName, size: descriptor.pointSize)
+        }
+        if let size = markdownFont.size {
+            descriptor = descriptor.withSize(size)
+        }
+        if let traits = markdownFont.styling?.symbolicTraits(), let descriptorWithTraits = descriptor.withSymbolicTraits(traits) {
+            descriptor = descriptorWithTraits
+        }
+        let font = UIFont(descriptor: descriptor, size: descriptor.pointSize)
+        return UIFontMetrics(forTextStyle: textStyle).scaledFont(for: font)
     }
+}
 
-    private func modify(swiftyMarkdownFont: FontProperties, with font: MarkdownFont) {
-        if let fontName = font.name {
-            swiftyMarkdownFont.fontName = fontName
-        }
-        if let fontSize = font.size {
-            swiftyMarkdownFont.fontSize = fontSize
-        }
-        if let fontColor = font.color {
-            swiftyMarkdownFont.color = fontColor
-        }
-        if let fontStyle = font.styling?.asSwiftyMarkdownFontStyle() {
-            swiftyMarkdownFont.fontStyle = fontStyle
-        }
-    }
+@available(iOS 15.0, *)
+private extension InlinePresentationIntent {
+    /// An intent that represents bold with italic presentation.
+    static var extremelyStronglyEmphasized = InlinePresentationIntent(rawValue: 3)
 }
 
 /// Configures the font style properties for base Markdown elements
@@ -79,9 +197,6 @@ public struct MarkdownStyles {
 
     /// The font used for coding blocks in markdown text.
     public var codeFont: MarkdownFont = .init()
-
-    /// The font used for links found in markdown text.
-    public var linkFont: MarkdownFont = .init()
 
     /// The font used for H1 headers in markdown text.
     public var h1Font: MarkdownFont = .init()
@@ -118,6 +233,10 @@ public struct MarkdownFont {
         color = nil
         styling = nil
     }
+    
+    var hasFontChanges: Bool {
+        name != nil || size != nil || styling != nil
+    }
 }
 
 public enum MarkdownFontStyle: Int {
@@ -126,16 +245,16 @@ public enum MarkdownFontStyle: Int {
     case italic
     case boldItalic
 
-    func asSwiftyMarkdownFontStyle() -> FontStyle {
+    func symbolicTraits() -> UIFontDescriptor.SymbolicTraits? {
         switch self {
         case .normal:
-            return .normal
+            return nil
         case .bold:
-            return .bold
+            return .traitBold
         case .italic:
-            return .italic
+            return .traitItalic
         case .boldItalic:
-            return .boldItalic
+            return [UIFontDescriptor.SymbolicTraits.traitBold, UIFontDescriptor.SymbolicTraits.traitItalic]
         }
     }
 }

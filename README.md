@@ -13,8 +13,8 @@
   <a href="https://sonarcloud.io/summary/new_code?id=GetStream_stream-chat-swift"><img src="https://sonarcloud.io/api/project_badges/measure?project=GetStream_stream-chat-swift&metric=coverage" /></a>
 </p>
 <p align="center">
-  <img id="stream-chat-label" alt="StreamChat" src="https://img.shields.io/badge/StreamChat-7.21%20MB-blue"/>
-  <img id="stream-chat-ui-label" alt="StreamChatUI" src="https://img.shields.io/badge/StreamChatUI-4.98%20MB-blue"/>
+  <img id="stream-chat-label" alt="StreamChat" src="https://img.shields.io/badge/StreamChat-7.41%20MB-blue"/>
+  <img id="stream-chat-ui-label" alt="StreamChatUI" src="https://img.shields.io/badge/StreamChatUI-4.78%20MB-blue"/>
 </p>
 
 This is the official iOS SDK for [Stream Chat](https://getstream.io/chat/sdk/ios/), a service for building chat and messaging applications. This library includes both a low-level SDK and a set of reusable UI components.
@@ -25,7 +25,7 @@ The **StreamChat SDK** is a low level client for Stream chat service that doesn'
 
 ## UIKit SDK
 
-The **StreamChatUI SDK** is our UI SDK for UIKit components. If your application needs to support iOS 13 and below, this is the right UI SDK for you.
+The **StreamChatUI SDK** is our UI SDK for UIKit components. If your application needs to support iOS 13 and above, this is the right UI SDK for you.
 
 ## SwiftUI SDK
 
@@ -121,15 +121,17 @@ Check out our current openings and apply via [Stream's website](https://getstrea
   </tr>
   <tr>
     <td> A list of message in a channel </td>
-    <th rowspan="9"><img src="ReadmeAssets/Message_List_Bezel.png?raw=true" width="80%" /></th>
+    <th rowspan="11"><img src="ReadmeAssets/Message_List_Bezel.png?raw=true" width="80%" /></th>
   </tr>
-  <tr> <td> Photo preview </td> </tr>
+  <tr> <td> Photo and Video preview </td> </tr>
   <tr> <td> Message reactions </td> </tr>
   <tr> <td> Message grouping based on the send time </td> </tr>
   <tr> <td> Link preview </td> </tr>
   <tr> <td> Inline replies </td> </tr>
   <tr> <td> Message threads </td> </tr>
   <tr> <td> GIPHY support </td> </tr>
+  <tr> <td> Polls support </td> </tr>
+  <tr> <td> Async voice messages </td> </tr>
   <tr><td> </td> </tr>
   </tr>
 </table>
@@ -145,12 +147,15 @@ Check out our current openings and apply via [Stream's website](https://getstrea
   </tr>
   <tr>
     <td> Support for multiline text, expands and shrinks as needed </td>
-    <th rowspan="6"><img src="ReadmeAssets/Message_Composer_Bezels.png?raw=true" width="80%" /></th>
+    <th rowspan="9"><img src="ReadmeAssets/Message_Composer_Bezels.png?raw=true" width="80%" /></th>
   </tr>
-  <tr> <td> Image and file attachments</td> </tr>
+  <tr> <td> Image, video and file attachments</td> </tr>
   <tr> <td> Replies to messages </td> </tr>
   <tr> <td> Tagging of users </td> </tr>
   <tr> <td> Chat commands like mute, ban, giphy </td> </tr>
+  <tr> <td> Creation of polls </td> </tr>
+  <tr> <td> Link previews </td> </tr>
+  <tr> <td> Recording async voice messages </td> </tr>
   <tr><td> </td> </tr>
   </tr>
 </table>

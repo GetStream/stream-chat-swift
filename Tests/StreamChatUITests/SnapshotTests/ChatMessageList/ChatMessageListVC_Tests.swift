@@ -200,6 +200,44 @@ final class ChatMessageListVC_Tests: XCTestCase {
         XCTAssertEqual(mockedMessageWithoutCid.cid, nil)
     }
 
+    func test_didSelectMessageCell_whenDataSourceIsChatThreadVC_shouldSetIsIndideThreadForActions() {
+        mockedListView.mockedCellForRow = .init()
+        mockedListView.mockedCellForRow?.mockedMessage = .mock()
+
+        let mockedRouter = ChatMessageListRouter_Mock(rootViewController: UIViewController())
+        sut.router = mockedRouter
+
+        let threadVC = ChatThreadVC()
+        let mock = ChatChannelController_Mock.mock()
+        mock.channel_mock = .mock(cid: .unique)
+        threadVC.channelController = mock
+        sut.dataSource = threadVC
+
+        sut.didSelectMessageCell(at: IndexPath(item: 0, section: 0))
+
+        XCTAssertEqual(mockedRouter.showMessageActionsPopUpCallCount, 1)
+        XCTAssertEqual(mockedRouter.showMessageActionsPopUpCalledWith?.messageActionsController.isInsideThread, true)
+    }
+
+    func test_didSelectMessageCell_whenDataSourceIsChatChannelVC_shouldNotSetIsIndideThreadForActions() {
+        mockedListView.mockedCellForRow = .init()
+        mockedListView.mockedCellForRow?.mockedMessage = .mock()
+
+        let mockedRouter = ChatMessageListRouter_Mock(rootViewController: UIViewController())
+        sut.router = mockedRouter
+
+        let channelVC = ChatChannelVC()
+        let mock = ChatChannelController_Mock.mock()
+        mock.channel_mock = .mock(cid: .unique)
+        channelVC.channelController = mock
+        sut.dataSource = channelVC
+
+        sut.didSelectMessageCell(at: IndexPath(item: 0, section: 0))
+
+        XCTAssertEqual(mockedRouter.showMessageActionsPopUpCallCount, 1)
+        XCTAssertEqual(mockedRouter.showMessageActionsPopUpCalledWith?.messageActionsController.isInsideThread, false)
+    }
+
     // MARK: - isContentEqual (Message Diffing)
 
     func test_messageIsContentEqual_whenCustomAttachmentDataDifferent() throws {
@@ -1118,13 +1156,13 @@ final class ChatMessageListVC_Tests: XCTestCase {
 
     // MARK: - handlePan
 
-    func test_handlePan_whenCanReply_whenSwipeToReplyIsEnabled_thenShouldHandleSwipingToReply() {
+    func test_handlePan_whenCanQuoteReply_whenSwipeToReplyIsEnabled_thenShouldHandleSwipingToReply() {
         // Given
         let handlerMock = SwipeToReplyGestureHandler_Mock(listView: sut.listView)
         sut.swipeToReplyGestureHandler = handlerMock
 
         // When
-        mockedDataSource.mockedChannel = .mock(cid: .unique, ownCapabilities: [.sendReply])
+        mockedDataSource.mockedChannel = .mock(cid: .unique, ownCapabilities: [.quoteMessage])
         sut.components.messageSwipeToReplyEnabled = true
 
         // Then
@@ -1132,13 +1170,13 @@ final class ChatMessageListVC_Tests: XCTestCase {
         XCTAssertEqual(handlerMock.handleCallCount, 1)
     }
 
-    func test_handlePan_whenCanReply_whenSwipeToReplyIsDisabled_thenDoesNotHandleSwipingToReply() {
+    func test_handlePan_whenCanQuoteReply_whenSwipeToReplyIsDisabled_thenDoesNotHandleSwipingToReply() {
         // Given
         let handlerMock = SwipeToReplyGestureHandler_Mock(listView: sut.listView)
         sut.swipeToReplyGestureHandler = handlerMock
 
         // When
-        mockedDataSource.mockedChannel = .mock(cid: .unique, ownCapabilities: [.sendReply])
+        mockedDataSource.mockedChannel = .mock(cid: .unique, ownCapabilities: [.quoteMessage])
         sut.components.messageSwipeToReplyEnabled = false
 
         // Then
@@ -1146,7 +1184,7 @@ final class ChatMessageListVC_Tests: XCTestCase {
         XCTAssertEqual(handlerMock.handleCallCount, 0)
     }
 
-    func test_handlePan_whenCanNotReply_thenDoesNotHandleSwipingToReply() {
+    func test_handlePan_whenCanNotQuoteReply_thenDoesNotHandleSwipingToReply() {
         // Given
         let handlerMock = SwipeToReplyGestureHandler_Mock(listView: sut.listView)
         sut.swipeToReplyGestureHandler = handlerMock

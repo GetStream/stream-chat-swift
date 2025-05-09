@@ -31,19 +31,11 @@ extension ChatClient {
 
         var databaseContainerBuilder: (
             _ kind: DatabaseContainer.Kind,
-            _ shouldFlushOnStart: Bool,
-            _ shouldResetEphemeralValuesOnStart: Bool,
-            _ localCachingSettings: ChatClientConfig.LocalCaching?,
-            _ deletedMessageVisibility: ChatClientConfig.DeletedMessageVisibility?,
-            _ shouldShowShadowedMessages: Bool?
+            _ chatClientConfig: ChatClientConfig
         ) -> DatabaseContainer = {
             DatabaseContainer(
                 kind: $0,
-                shouldFlushOnStart: $1,
-                shouldResetEphemeralValuesOnStart: $2,
-                localCachingSettings: $3,
-                deletedMessagesVisibility: $4,
-                shouldShowShadowedMessages: $5
+                chatClientConfig: $1
             )
         }
 
@@ -51,8 +43,6 @@ extension ChatClient {
             guard let reconnectionTimeout = $0.reconnectionTimeout else { return nil }
             return ScheduledStreamTimer(interval: reconnectionTimeout, fireOnStart: false, repeats: false)
         }
-
-        var extensionLifecycleBuilder = NotificationExtensionLifecycle.init
 
         var requestEncoderBuilder: (_ baseURL: URL, _ apiKey: APIKey) -> RequestEncoder = DefaultRequestEncoder.init
         var requestDecoderBuilder: () -> RequestDecoder = DefaultRequestDecoder.init
@@ -99,7 +89,6 @@ extension ChatClient {
             _ webSocketClient: WebSocketClient,
             _ eventNotificationCenter: EventNotificationCenter,
             _ syncRepository: SyncRepository,
-            _ extensionLifecycle: NotificationExtensionLifecycle,
             _ backgroundTaskScheduler: BackgroundTaskScheduler?,
             _ internetConnection: InternetConnection,
             _ keepConnectionAliveInBackground: Bool
@@ -108,12 +97,11 @@ extension ChatClient {
                 webSocketClient: $0,
                 eventNotificationCenter: $1,
                 syncRepository: $2,
-                extensionLifecycle: $3,
-                backgroundTaskScheduler: $4,
-                internetConnection: $5,
+                backgroundTaskScheduler: $3,
+                internetConnection: $4,
                 reconnectionStrategy: DefaultRetryStrategy(),
                 reconnectionTimerType: DefaultTimer.self,
-                keepConnectionAliveInBackground: $6
+                keepConnectionAliveInBackground: $5
             )
         }
 
@@ -150,7 +138,14 @@ extension ChatClient {
         ) -> PollsRepository = {
             PollsRepository(database: $0, apiClient: $1)
         }
-        
+
+        var draftMessagesRepositoryBuilder: (
+            _ database: DatabaseContainer,
+            _ apiClient: APIClient
+        ) -> DraftMessagesRepository = {
+            DraftMessagesRepository(database: $0, apiClient: $1)
+        }
+
         var channelListUpdaterBuilder: (
             _ database: DatabaseContainer,
             _ apiClient: APIClient

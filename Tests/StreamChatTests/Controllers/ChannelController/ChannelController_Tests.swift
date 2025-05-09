@@ -955,6 +955,7 @@ final class ChannelController_Tests: XCTestCase {
                 skipPush: false,
                 skipEnrichUrl: false,
                 poll: nil,
+                restrictedVisibility: [],
                 extraData: [:]
             )
             // Simulate sending failed for this message
@@ -1308,7 +1309,9 @@ final class ChannelController_Tests: XCTestCase {
 
     func test_deletedMessages_withAlwaysVisible_messageVisibility() throws {
         // Simulate the config setting
-        client.databaseContainer.viewContext.deletedMessagesVisibility = .alwaysVisible
+        var config = ChatClient_Mock.defaultMockedConfig
+        config.deletedMessagesVisibility = .alwaysVisible
+        client.databaseContainer.viewContext.setChatClientConfig(config)
 
         let currentUserID: UserId = .unique
 
@@ -3529,7 +3532,10 @@ final class ChannelController_Tests: XCTestCase {
     func test_createNewMessage_sendsNewMessagePendingEvent() throws {
         let exp = expectation(description: "should complete create new message")
 
-        let mockedEventNotificationCenter = EventNotificationCenter_Mock(database: .init(kind: .inMemory))
+        let mockedEventNotificationCenter = EventNotificationCenter_Mock(database: .init(
+            kind: .inMemory,
+            chatClientConfig: .init(apiKeyString: .unique)
+        ))
         client.mockedEventNotificationCenter = mockedEventNotificationCenter
 
         controller.createNewMessage(
@@ -3544,6 +3550,45 @@ final class ChannelController_Tests: XCTestCase {
 
         let event = try XCTUnwrap(mockedEventNotificationCenter.mock_process.calls.first?.0.first)
         XCTAssertTrue(event is NewMessagePendingEvent)
+    }
+
+    func test_createNewMessage_whenMessageTransformerIsProvided_callsChannelUpdaterWithTransformedValues() throws {
+        class MockTransformer: StreamModelsTransformer {
+            var mockTransformedMessage = NewMessageTransformableInfo(
+                text: "transformed",
+                attachments: [.mockFile],
+                extraData: ["transformed": true]
+            )
+            func transform(newMessageInfo: NewMessageTransformableInfo) -> NewMessageTransformableInfo {
+                mockTransformedMessage
+            }
+        }
+
+        let transformer = MockTransformer()
+        var config = ChatClientConfig(apiKeyString: .unique)
+        config.modelsTransformer = transformer
+        client = .mock(config: config)
+        controller = ChatChannelController(
+            channelQuery: .init(cid: channelId),
+            channelListQuery: nil,
+            client: client,
+            environment: env.environment
+        )
+
+        let exp = expectation(description: "should complete create new message")
+
+        controller.createNewMessage(
+            text: .unique
+        ) { _ in
+            exp.fulfill()
+        }
+
+        env.channelUpdater?.createNewMessage_completion?(.success(.unique))
+        wait(for: [exp], timeout: defaultTimeout)
+
+        XCTAssertEqual(env.channelUpdater?.createNewMessage_text, transformer.mockTransformedMessage.text)
+        XCTAssertEqual(env.channelUpdater?.createNewMessage_attachments, transformer.mockTransformedMessage.attachments)
+        XCTAssertEqual(env.channelUpdater?.createNewMessage_extraData, transformer.mockTransformedMessage.extraData)
     }
 
     // MARK: - Create system message
@@ -4409,6 +4454,70 @@ final class ChannelController_Tests: XCTestCase {
         XCTAssertNil(receivedError)
         XCTAssertEqual(updater.markUnread_lastReadMessageId, previousMessageId)
         XCTAssertEqual(updater.markUnread_messageId, messageId)
+    }
+    
+    // MARK: - Load more channel reads
+    
+    func test_loadChannelReads_failsForNewChannel() throws {
+        //  Create `ChannelController` for new channel
+        let query = ChannelQuery(channelPayload: .unique)
+        setupControllerForNewChannel(query: query)
+
+        // Simulate `loadChannelReads` call and assert error is returned
+        let error: Error? = try waitFor { [callbackQueueID] completion in
+            controller.loadChannelReads { error in
+                AssertTestQueue(withId: callbackQueueID)
+                completion(error)
+            }
+        }
+
+        // Assert `ClientError.ChannelNotCreatedYet` is propagated to completion
+        XCTAssert(error is ClientError.ChannelNotCreatedYet)
+    }
+
+    func test_loadChannelReads_callsChannelUpdater() {
+        let pageSize = 10
+        let pagination = Pagination(pageSize: pageSize)
+
+        // Simulate `loadChannelReads` call
+        controller.loadChannelReads(pagination: pagination) { _ in }
+
+        // Assert call is propagated to updater
+        XCTAssertEqual(controller.cid, env.channelUpdater!.loadMembersWithReads_cid)
+        XCTAssertEqual(pagination, env.channelUpdater!.loadMembersWithReads_pagination)
+        XCTAssertEqual([], env.channelUpdater!.loadMembersWithReads_sorting)
+    }
+
+    func test_loadChannelReads_propagatesErrorFromUpdater() throws {
+        // Simulate failed update
+        let testError = TestError()
+        env.channelUpdater!.loadMembersWithReads_completion_result = .failure(testError)
+
+        // Simulate `loadChannelReads` call and catch the completion
+        let completionError = try waitFor { done in
+            controller.loadChannelReads { [callbackQueueID] in
+                AssertTestQueue(withId: callbackQueueID)
+                done($0)
+            }
+        }
+
+        // Error is propagated to completion
+        XCTAssertEqual(testError, completionError as? TestError)
+    }
+
+    func test_loadChannelReads_keepsControllerAlive() {
+        // Simulate `loadChannelReads` call
+        controller.loadChannelReads { _ in }
+
+        // Keep a weak ref so we can check if it's actually deallocated
+        weak var weakController = controller
+
+        // (Try to) deallocate the controller
+        // by not keeping any references to it
+        controller = nil
+
+        // Assert controller is kept alive
+        AssertAsync.staysTrue(weakController != nil)
     }
 
     // MARK: - Enable slow mode (cooldown)
@@ -5534,6 +5643,54 @@ final class ChannelController_Tests: XCTestCase {
             let dto = try XCTUnwrap(session.channel(cid: self.channelId))
             XCTAssertEqual(4, dto.messages.count)
         }
+    }
+    
+    // MARK: - Delete Poll
+    
+    func test_deletePoll_callsPollsRepository_withSuccess() throws {
+        // Prepare test values
+        let pollId = String.unique
+        
+        // Simulate `deletePoll` call and capture error
+        var receivedError: Error?
+        let error: Error? = try waitFor { [callbackQueueID] completion in
+            controller.deletePoll(pollId: pollId) { error in
+                AssertTestQueue(withId: callbackQueueID)
+                receivedError = error
+                completion(error)
+            }
+            
+            // Simulate successful response
+            client.mockPollsRepository.deletePoll_completion?(nil)
+        }
+        
+        // Assert
+        XCTAssertNil(error)
+        XCTAssertNil(receivedError)
+    }
+    
+    func test_deletePoll_callsPollsRepository_withError() throws {
+        // Prepare test values
+        let pollId = String.unique
+        let testError = TestError()
+        
+        // Simulate `deletePoll` call and capture error
+        var receivedError: Error?
+        let error: Error? = try waitFor { [callbackQueueID] completion in
+            controller.deletePoll(pollId: pollId) { error in
+                AssertTestQueue(withId: callbackQueueID)
+                receivedError = error
+                completion(error)
+            }
+            
+            // Simulate error response
+            client.mockPollsRepository.deletePoll_completion?(testError)
+        }
+        
+        // Assert
+        XCTAssertNotNil(error)
+        XCTAssertNotNil(receivedError)
+        XCTAssertEqual(receivedError as? TestError, testError)
     }
     
     // MARK: - Logout

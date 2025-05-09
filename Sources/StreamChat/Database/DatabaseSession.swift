@@ -4,7 +4,23 @@
 
 import CoreData
 
-extension NSManagedObjectContext: DatabaseSession {}
+extension NSManagedObjectContext: DatabaseSession {
+    private static let chatClientConfigKey = "io.getStream.StreamChat.config.key"
+
+    var chatClientConfig: ChatClientConfig? {
+        var config: ChatClientConfig?
+        performAndWait {
+            config = userInfo[Self.chatClientConfigKey] as? ChatClientConfig
+        }
+        return config
+    }
+
+    func setChatClientConfig(_ config: ChatClientConfig) {
+        performAndWait {
+            userInfo[Self.chatClientConfigKey] = config
+        }
+    }
+}
 
 protocol UserDatabaseSession {
     /// Saves the provided payload to the DB. Return's the matching `UserDTO` if the save was successful. Throws an error
@@ -88,6 +104,22 @@ protocol MessageDatabaseSession {
         skipPush: Bool,
         skipEnrichUrl: Bool,
         poll: PollPayload?,
+        restrictedVisibility: [UserId],
+        extraData: [String: RawJSON]
+    ) throws -> MessageDTO
+
+    /// Creates a draft message in the database.
+    func createNewDraftMessage(
+        in cid: ChannelId,
+        text: String,
+        command: String?,
+        arguments: String?,
+        parentMessageId: MessageId?,
+        attachments: [AnyAttachmentPayload],
+        mentionedUserIds: [UserId],
+        showReplyInChannel: Bool,
+        isSilent: Bool,
+        quotedMessageId: MessageId?,
         extraData: [String: RawJSON]
     ) throws -> MessageDTO
 
@@ -100,30 +132,48 @@ protocol MessageDatabaseSession {
     @discardableResult
     func saveMessages(messagesPayload: MessageListPayload, for cid: ChannelId?, syncOwnReactions: Bool) -> [MessageDTO]
 
-    /// Saves the provided message payload to the DB. Return's the matching `MessageDTO` if the save was successful.
-    /// Throws an error if the save fails.
-    ///
-    /// You must either provide `cid` or `payload.channel` value must not be `nil`.
-    /// The `syncOwnReactions` should be set to `true` when the payload comes from an API response and `false` when the payload
-    /// is received via WS events. For performance reasons the API does not populate the `message.own_reactions` when sending events
+    /// Saves a message into the local DB.
+    /// - Parameters:
+    ///   - payload: The message payload
+    ///   - cid: The channel ID.
+    ///   - syncOwnReactions: Whether to sync own reactions. It should be set to `true` when the payload comes from an API response and `false` when the payload is received via WS events. For performance reasons the API
+    ///   does not populate the `message.own_reactions` when sending events
+    ///   - skipDraftUpdate: Whether to skip draft update. This is used when saving quoted and parent messages from
+    ///   saveDraftMessage function to avoid an infinite loop since saving the draft would be called again.
+    ///   - cache: The pre-warmed cache.
     @discardableResult
     func saveMessage(
         payload: MessagePayload,
         for cid: ChannelId?,
         syncOwnReactions: Bool,
+        skipDraftUpdate: Bool,
         cache: PreWarmedCache?
     ) throws -> MessageDTO
 
-    /// Saves the provided message payload to the DB. Return's the matching `MessageDTO` if the save was successful.
+    /// Saves the provided draft message payload to the DB. Return's the matching `MessageDTO` if the save was successful.
     /// Throws an error if the save fails.
-    ///
-    /// The `syncOwnReactions` should be set to `true` when the payload comes from an API response and `false` when the payload
-    /// is received via WS events. For performance reasons the API does not populate the `message.own_reactions` when sending events
+    @discardableResult
+    func saveDraftMessage(
+        payload: DraftPayload,
+        for cid: ChannelId,
+        cache: PreWarmedCache?
+    ) throws -> MessageDTO
+
+    /// Saves a message into the local DB.
+    /// - Parameters:
+    ///   - payload: The message payload
+    ///   - channelDTO: The channel dto.
+    ///   - syncOwnReactions: Whether to sync own reactions. It should be set to `true` when the payload comes from an API response and `false` when the payload is received via WS events. For performance reasons the API
+    ///   does not populate the `message.own_reactions` when sending events
+    ///   - skipDraftUpdate: Whether to skip draft update. This is used when saving quoted and parent messages from
+    ///   saveDraftMessage function to avoid an infinite loop since saving the draft would be called again.
+    ///   - cache: The pre-warmed cache.
     @discardableResult
     func saveMessage(
         payload: MessagePayload,
         channelDTO: ChannelDTO,
         syncOwnReactions: Bool,
+        skipDraftUpdate: Bool,
         cache: PreWarmedCache?
     ) throws -> MessageDTO
 
@@ -230,6 +280,7 @@ extension MessageDatabaseSession {
         attachments: [AnyAttachmentPayload] = [],
         mentionedUserIds: [UserId] = [],
         pollPayload: PollPayload? = nil,
+        restrictedVisibility: [UserId] = [],
         extraData: [String: RawJSON] = [:]
     ) throws -> MessageDTO {
         try createNewMessage(
@@ -250,6 +301,7 @@ extension MessageDatabaseSession {
             skipPush: skipPush,
             skipEnrichUrl: skipEnrichUrl,
             poll: pollPayload,
+            restrictedVisibility: restrictedVisibility,
             extraData: extraData
         )
     }
@@ -304,6 +356,9 @@ protocol ChannelDatabaseSession {
 
     /// Removes a list of channels based on their id
     func removeChannels(cids: Set<ChannelId>)
+
+    /// Delete the draft message.
+    func deleteDraftMessage(in cid: ChannelId, threadId: MessageId?)
 }
 
 protocol ChannelReadDatabaseSession {
@@ -574,6 +629,12 @@ protocol PollDatabaseSession {
     /// - Throws: An error if the retrieval operation fails.
     func pollVotes(for userId: String, pollId: String) throws -> [PollVoteDTO]
     
+    /// Deletes a poll.
+    /// - Parameter pollId: The ID of the poll to delete.
+    /// - Returns: The deleted poll.
+    /// - Throws: An error if the deletion operation fails.
+    func deletePoll(pollId: String) throws -> PollDTO?
+    
     /// Removes a poll vote by its ID and poll ID.
     /// - Parameters:
     ///   - id: The ID of the poll vote to remove.
@@ -732,6 +793,7 @@ extension DatabaseSession {
             payload: messagePayload,
             channelDTO: channelDTO,
             syncOwnReactions: false,
+            skipDraftUpdate: false,
             cache: nil
         )
 

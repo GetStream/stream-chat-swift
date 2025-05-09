@@ -148,7 +148,7 @@ final class JSONDecoder_Tests: XCTestCase {
         let dateFormatter = ISO8601DateFormatter_Spy()
         dateFormatter.formatOptions = [.withFractionalSeconds, .withInternetDateTime]
         let dateCache = NSCache_Spy()
-        let decoder = StreamJSONDecoder(dateFormatter: dateFormatter, dateCache: dateCache, rawJSONCache: RawJSONCache_Spy())
+        let decoder = StreamJSONDecoder(dateFormatter: dateFormatter, dateCache: dateCache)
 
         // When we decode a payload with repeated dates
         let repeatedDate = "2020-06-09T08:10:40.800912Z" // If you change this, make sure to change `actualDecodedDate` below
@@ -177,33 +177,6 @@ final class JSONDecoder_Tests: XCTestCase {
         for (_, value) in dateDict {
             XCTAssertEqual(value, actualDecodedDate)
         }
-    }
-    
-    func test_extraDataIsCached() throws {
-        let extraData1: [String: RawJSON] = [
-            "key": .string("value")
-        ]
-        let extraData2: [String: RawJSON] = [
-            "key2": .string("value2")
-        ]
-        let data1 = try JSONEncoder().encode(extraData1)
-        let data2 = try JSONEncoder().encode(extraData2)
-        
-        let cacheSpy = RawJSONCache_Spy()
-        let decoder = StreamJSONDecoder(
-            dateFormatter: ISO8601DateFormatter(),
-            dateCache: NSCache(),
-            rawJSONCache: cacheSpy
-        )
-        let decoded1 = try decoder.decodeCachedRawJSON(from: data1)
-        let decoded2 = try decoder.decodeCachedRawJSON(from: data2)
-        let decoded1Again = try decoder.decodeCachedRawJSON(from: data1)
-        
-        XCTAssertEqual(extraData1, decoded1)
-        XCTAssertEqual(extraData2, decoded2)
-        XCTAssertEqual(extraData1, decoded1Again)
-        XCTAssertEqual(3, cacheSpy.numberOfCalls(on: "rawJSON(forKey:)"), cacheSpy.recordedFunctions.joined(separator: " "))
-        XCTAssertEqual(2, cacheSpy.numberOfCalls(on: "setRawJSON(_:forKey:)"), cacheSpy.recordedFunctions.joined(separator: " "))
     }
 
     // MARK: Helpers
@@ -276,23 +249,5 @@ final class JSONDecoder_Tests: XCTestCase {
             // Then
             XCTAssertNotNil(error, file: file, line: line)
         }
-    }
-}
-
-private final class RawJSONCache_Spy: StreamJSONDecoder.RawJSONCache, Spy {
-    let spyState = SpyState()
-    
-    init() {
-        super.init(countLimit: 3)
-    }
-    
-    override func rawJSON(forKey key: Int) -> [String: RawJSON]? {
-        record()
-        return super.rawJSON(forKey: key)
-    }
-    
-    override func setRawJSON(_ value: [String: RawJSON], forKey key: Int) {
-        record()
-        super.setRawJSON(value, forKey: key)
     }
 }

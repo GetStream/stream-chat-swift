@@ -2,7 +2,7 @@
 // Copyright © 2025 Stream.io Inc. All rights reserved.
 //
 
-import StreamChat
+@testable import StreamChat
 @testable import StreamChatTestTools
 @testable import StreamChatUI
 import StreamSwiftTestHelpers
@@ -841,10 +841,76 @@ final class ChatChannelListItemView_Tests: XCTestCase {
         AssertSnapshot(view, variants: [.defaultLight])
     }
 
+    func test_appearance_draftPreview() throws {
+        let message: DraftMessage = .mock(
+            text: "Cool"
+        )
+
+        let view = channelItemView(
+            content: .init(
+                channel: channel(draftMessage: message),
+                currentUserId: currentUser.id
+            )
+        )
+
+        AssertSnapshot(view)
+    }
+
+    func test_appearance_draftPreview_withAttachments() throws {
+        let messageWithGiphy: ChatMessage = try mockGiphyMessage(
+            text: "Example message",
+            isSentByCurrentUser: true
+        )
+        let viewWithGiphy = channelItemView(
+            content: .init(
+                channel: channel(draftMessage: DraftMessage(messageWithGiphy)),
+                currentUserId: currentUser.id
+            )
+        )
+
+        let messageWithVoiceRecording = ChatMessage.mock(
+            attachments: [
+                .dummy(
+                    type: .voiceRecording,
+                    payload: try JSONEncoder().encode(VoiceRecordingAttachmentPayload(
+                        title: nil,
+                        voiceRecordingRemoteURL: .unique(),
+                        file: .init(type: .aac, size: 120, mimeType: nil),
+                        duration: nil,
+                        waveformData: nil,
+                        extraData: nil
+                    ))
+                )
+            ]
+        )
+        let viewWithVoiceRecording = channelItemView(
+            content: .init(
+                channel: channel(draftMessage: DraftMessage(messageWithVoiceRecording)),
+                currentUserId: currentUser.id
+            )
+        )
+
+        let messageWithAudioRecording = try mockAudioMessage(
+            text: "Example message",
+            isSentByCurrentUser: true
+        )
+        let viewWithAudioRecording = channelItemView(
+            content: .init(
+                channel: channel(draftMessage: DraftMessage(messageWithAudioRecording)),
+                currentUserId: currentUser.id
+            )
+        )
+
+        AssertSnapshot(viewWithGiphy, variants: .onlyUserInterfaceStyles, suffix: "giphy")
+        AssertSnapshot(viewWithVoiceRecording, variants: .onlyUserInterfaceStyles, suffix: "voiceRecording")
+        AssertSnapshot(viewWithAudioRecording, variants: .onlyUserInterfaceStyles, suffix: "audioRecording")
+    }
+
     func test_appearanceCustomization_usingAppearance() {
         var appearance = Appearance()
         appearance.fonts.bodyBold = .italicSystemFont(ofSize: 20)
         appearance.colorPalette.subtitleText = .cyan
+        appearance.colorPalette.text = .red
 
         let view = channelItemView(
             content: .init(
@@ -937,7 +1003,7 @@ final class ChatChannelListItemView_Tests: XCTestCase {
             id: .unique,
             cid: .unique,
             text: .unique,
-            author: .mock(id: .unique),
+            author: .mock(id: .unique, name: "Luke"),
             attachments: [
                 .dummy(
                     type: .voiceRecording,
@@ -1261,7 +1327,7 @@ final class ChatChannelListItemView_Tests: XCTestCase {
             id: .unique,
             cid: .unique,
             text: .unique,
-            author: .mock(id: .unique),
+            author: .mock(id: .unique, name: "Luke"),
             attachments: [
                 .dummy(
                     type: .voiceRecording,
@@ -1646,6 +1712,7 @@ final class ChatChannelListItemView_Tests: XCTestCase {
     ) -> ChatChannelListItemView {
         let view = ChatChannelListItemView().withoutAutoresizingMaskConstraints
         view.components = components
+        view.components.isDraftMessagesEnabled = true
         view.appearance = appearance
         view.appearance.formatters.channelListMessageTimestamp = DefaultMessageTimestampFormatter()
         view.content = content
@@ -1655,6 +1722,7 @@ final class ChatChannelListItemView_Tests: XCTestCase {
 
     private func channel(
         previewMessage: ChatMessage? = nil,
+        draftMessage: DraftMessage? = nil,
         readEventsEnabled: Bool = true,
         memberCount: Int = 0,
         membership: ChatChannelMember? = nil
@@ -1667,7 +1735,8 @@ final class ChatChannelListItemView_Tests: XCTestCase {
             config: .mock(readEventsEnabled: readEventsEnabled),
             membership: membership,
             memberCount: memberCount,
-            previewMessage: previewMessage
+            previewMessage: previewMessage,
+            draftMessage: draftMessage
         )
     }
 

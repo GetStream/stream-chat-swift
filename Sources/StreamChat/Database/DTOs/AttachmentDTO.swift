@@ -113,7 +113,11 @@ class AttachmentDTO: NSManagedObject {
     static func pendingUploadFetchRequest() -> NSFetchRequest<AttachmentDTO> {
         let request = NSFetchRequest<AttachmentDTO>(entityName: AttachmentDTO.entityName)
         request.sortDescriptors = [NSSortDescriptor(keyPath: \AttachmentDTO.id, ascending: true)]
-        request.predicate = NSPredicate(format: "localStateRaw == %@", LocalAttachmentState.pendingUpload.rawValue)
+        request.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [
+            NSPredicate(format: "localStateRaw == %@", LocalAttachmentState.pendingUpload.rawValue),
+            NSPredicate(format: "message.draftOfChannel == nil"),
+            NSPredicate(format: "message.draftOfThread == nil")
+        ])
         return request
     }
     
@@ -383,6 +387,12 @@ extension ClientError {
     final class AttachmentDoesNotExist: ClientError {
         init(id: AttachmentId) {
             super.init("There is no `AttachmentDTO` instance in the DB matching id: \(id).")
+        }
+    }
+    
+    final class AttachmentUploadBlocked: ClientError {
+        init(id: AttachmentId, attachmentType: AttachmentType, pathExtension: String) {
+            super.init("`AttachmentDTO` with \(id) and type \(attachmentType) and path extension \(pathExtension) is blocked on the Stream dashboard.")
         }
     }
 

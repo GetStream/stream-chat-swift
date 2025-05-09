@@ -26,7 +26,7 @@ import Foundation
         self.channelQuery = channelQuery
         self.channelUpdater = channelUpdater
         self.client = client
-        dataStore = DataStore(database: client.databaseContainer)
+        dataStore = DataStore(client: client)
         self.environment = environment
         self.memberSorting = memberSorting
         self.messageOrder = messageOrder

@@ -17,6 +17,7 @@ final class MissingEventsPayload_Tests: XCTestCase {
             name: "Broken Waterfall",
             imageURL: URL(string: "https://api.adorable.io/avatars/285/broken-waterfall-5.png"),
             role: .user,
+            teamsRole: nil,
             createdAt: "2019-12-12T15:33:46.488935Z".toDate(),
             updatedAt: "2020-09-07T12:27:43.096437Z".toDate(),
             deactivatedAt: nil,

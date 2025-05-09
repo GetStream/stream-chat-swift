@@ -79,6 +79,9 @@ open class ComposerVC: _ViewController,
         public var cooldownTime: Int
         /// A boolean value indicating if the message url enrichment should be skipped.
         public var skipEnrichUrl: Bool
+        /// A boolean value indicating if the message should be shown in the channel.
+        /// If the provided value is nil, it won't change the current checkbox state.
+        public var showReplyInChannel: Bool?
 
         /// A boolean that checks if the message contains any content.
         public var isEmpty: Bool {
@@ -88,6 +91,14 @@ open class ComposerVC: _ViewController,
             }
             // All other cases
             return text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty && attachments.isEmpty
+        }
+
+        /// The text that should be sent to the backend considering the command.
+        public var inputText: String {
+            if let command = command {
+                return "/\(command.name) " + text
+            }
+            return text.trimmingCharacters(in: .whitespacesAndNewlines)
         }
 
         /// A boolean that checks if the composer is replying in a thread
@@ -123,7 +134,8 @@ open class ComposerVC: _ViewController,
             command: Command?,
             extraData: [String: RawJSON] = [:],
             cooldownTime: Int = 0,
-            skipEnrichUrl: Bool = false
+            skipEnrichUrl: Bool = false,
+            showReplyInChannel: Bool? = nil
         ) {
             self.text = text
             self.state = state
@@ -136,6 +148,7 @@ open class ComposerVC: _ViewController,
             self.extraData = extraData
             self.cooldownTime = cooldownTime
             self.skipEnrichUrl = skipEnrichUrl
+            self.showReplyInChannel = showReplyInChannel
         }
 
         /// Creates a new content struct with all empty data.
@@ -169,6 +182,26 @@ open class ComposerVC: _ViewController,
                 extraData: [:],
                 cooldownTime: cooldownTime,
                 skipEnrichUrl: false
+            )
+        }
+
+        /// Sets the content state to new message from a saved draft.
+        ///
+        /// - Parameter message: The message which was saved as a draft.
+        public mutating func draftMessage(_ message: DraftMessage) {
+            self = .init(
+                text: message.text,
+                state: message.quotedMessage != nil ? .quote : .new,
+                editingMessage: nil,
+                quotingMessage: message.quotedMessage,
+                threadMessage: threadMessage,
+                attachments: message.attachments.toAnyAttachmentPayload(),
+                mentionedUsers: message.mentionedUsers,
+                command: message.command.map { Command(name: $0, args: message.text) },
+                extraData: message.extraData,
+                cooldownTime: cooldownTime,
+                skipEnrichUrl: skipEnrichUrl,
+                showReplyInChannel: message.showReplyInChannel
             )
         }
 
@@ -291,6 +324,11 @@ open class ComposerVC: _ViewController,
     public var content: Content = .initial() {
         didSet {
             updateContentIfNeeded()
+
+            /// If the input message was erased or the attachments have been removed, delete the draft message.
+            if !oldValue.isEmpty && content.isEmpty {
+                deleteDraftMessageIfNeeded()
+            }
         }
     }
 
@@ -424,7 +462,12 @@ open class ComposerVC: _ViewController,
 
     /// The view controller for selecting file attachments.
     open private(set) lazy var filePickerVC: UIViewController = {
-        let picker = UIDocumentPickerViewController(documentTypes: ["public.item"], in: .import)
+        let documentTypes: [String] = {
+            let availableTypes = ["public.item"]
+            let allowed = channelController?.client.appSettings?.fileUploadConfig.allowedUTITypes ?? []
+            return allowed.isEmpty ? availableTypes : allowed
+        }()
+        let picker = UIDocumentPickerViewController(documentTypes: documentTypes, in: .import)
         picker.delegate = self
         picker.allowsMultipleSelection = true
         return picker
@@ -479,6 +522,12 @@ open class ComposerVC: _ViewController,
         composerView.pin(to: view)
     }
 
+    override open func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+
+        updateDraftMessageIfNeeded()
+    }
+
     open func setupAttachmentsView() {
         addChildViewController(attachmentsVC, embedIn: composerView.inputMessageView.attachmentsViewContainer)
         attachmentsVC.didTapRemoveItemButton = { [weak self] index in
@@ -509,6 +558,7 @@ open class ComposerVC: _ViewController,
 
     override open func updateContent() {
         super.updateContent()
+
         // Note: The order of the calls is important.
         updateText()
         updateKeystrokeEvents()
@@ -679,6 +729,10 @@ open class ComposerVC: _ViewController,
             } else {
                 composerView.checkboxControl.label.text = L10n.Composer.Checkmark.channelReply
             }
+
+            if let showReplyInChannel = content.showReplyInChannel {
+                composerView.checkboxControl.isSelected = showReplyInChannel
+            }
         }
     }
 
@@ -768,12 +822,9 @@ open class ComposerVC: _ViewController,
             return
         }
 
-        let text: String
-        if let command = content.command {
-            text = "/\(command.name) " + content.text
-        } else {
-            text = content.text.trimmingCharacters(in: .whitespacesAndNewlines)
-        }
+        deleteDraftMessageIfNeeded()
+
+        let text = content.inputText
 
         if let editingMessage = content.editingMessage {
             editMessage(withId: editingMessage.id, newText: text)
@@ -825,7 +876,7 @@ open class ComposerVC: _ViewController,
     /// Returns actions for attachments picker.
     open var attachmentsPickerActions: [UIAlertAction] {
         let isCameraAvailable = UIImagePickerController.isSourceTypeAvailable(.camera)
-        let isPollCreationEnabled = channelConfig?.pollsEnabled == true
+        let isPollCreationEnabled = channelConfig?.pollsEnabled == true && channelController?.channel?.canSendPoll == true
 
         let showFilePickerAction = UIAlertAction(
             title: L10n.Composer.Picker.file,
@@ -908,14 +959,7 @@ open class ComposerVC: _ViewController,
     open func createNewMessage(text: String) {
         guard let cid = channelController?.cid else { return }
 
-        // If the user included some mentions via suggestions,
-        // but then removed them from text, we should remove them from
-        // the content we'll send
-        for user in content.mentionedUsers {
-            if !text.contains(mentionText(for: user)) {
-                content.mentionedUsers.remove(user)
-            }
-        }
+        removeMentionUserIfNotIncluded(in: text)
 
         if let threadParentMessageId = content.threadMessage?.id {
             let messageController = channelController?.client.messageController(
@@ -945,6 +989,67 @@ open class ComposerVC: _ViewController,
             skipEnrichUrl: content.skipEnrichUrl,
             extraData: content.extraData
         )
+    }
+
+    /// Updates the draft message in the channel or thread if draft messages are enabled.
+    ///
+    /// The draft is created from the current content in the composer.
+    private func updateDraftMessageIfNeeded() {
+        guard components.isDraftMessagesEnabled else {
+            return
+        }
+
+        let text = content.command != nil ? content.text : content.inputText
+        if content.isEmpty {
+            return
+        }
+
+        removeMentionUserIfNotIncluded(in: text)
+
+        if let threadParentMessageId = content.threadMessage?.id, let cid = channelController?.cid {
+            let messageController = channelController?.client.messageController(
+                cid: cid,
+                messageId: threadParentMessageId
+            )
+
+            messageController?.updateDraftReply(
+                text: text,
+                attachments: content.attachments,
+                mentionedUserIds: content.mentionedUsers.map(\.id),
+                quotedMessageId: content.quotingMessage?.id,
+                showReplyInChannel: composerView.checkboxControl.isSelected,
+                command: content.command,
+                extraData: content.extraData
+            )
+            return
+        }
+
+        channelController?.updateDraftMessage(
+            text: text,
+            attachments: content.attachments,
+            mentionedUserIds: content.mentionedUsers.map(\.id),
+            quotedMessageId: content.quotingMessage?.id,
+            command: content.command,
+            extraData: content.extraData
+        )
+    }
+
+    /// Deletes the draft message in the channel or thread if there is one.
+    private func deleteDraftMessageIfNeeded() {
+        if let threadParentMessageId = content.threadMessage?.id, let cid = channelController?.cid {
+            let messageController = channelController?.client.messageController(
+                cid: cid,
+                messageId: threadParentMessageId
+            )
+            if messageController?.message?.draftReply != nil {
+                messageController?.deleteDraftReply()
+            }
+            return
+        }
+
+        if channelController?.channel?.draftMessage != nil {
+            channelController?.deleteDraftMessage()
+        }
     }
 
     /// Updates an existing message.
@@ -1353,9 +1458,12 @@ open class ComposerVC: _ViewController,
 
         var localMetadata = AnyAttachmentLocalMetadata()
         if let image = info[.originalImage] as? UIImage {
+            // At the moment the backend is not accepting floating numbers.
+            // So we round down the width and height. We do not round up
+            // to make sure there is no empty space in the image.
             localMetadata.originalResolution = (
-                width: Double(image.size.width),
-                height: Double(image.size.height)
+                width: Double(image.size.width).rounded(.down),
+                height: Double(image.size.height).rounded(.down)
             )
         }
 
@@ -1657,6 +1765,17 @@ open class ComposerVC: _ViewController,
         actions.forEach(alert.addAction)
 
         present(alert, animated: true)
+    }
+
+    private func removeMentionUserIfNotIncluded(in currentText: String) {
+        // If the user included some mentions via suggestions,
+        // but then removed them from text, we should remove them from
+        // the content we'll send
+        for user in content.mentionedUsers {
+            if !currentText.contains(mentionText(for: user)) {
+                content.mentionedUsers.remove(user)
+            }
+        }
     }
 }
 

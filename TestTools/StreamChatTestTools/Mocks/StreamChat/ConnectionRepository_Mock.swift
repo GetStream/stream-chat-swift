@@ -30,6 +30,8 @@ final class ConnectionRepository_Mock: ConnectionRepository, Spy {
     var completeWaitersConnectionId: ConnectionId?
     var connectionUpdateState: WebSocketConnectionState?
     var simulateExpiredTokenOnConnectionUpdate = false
+    
+    var provideConnectionIdResult: Result<ConnectionId, Error>?
 
     convenience init() {
         self.init(isClientInActiveMode: true,
@@ -103,6 +105,7 @@ final class ConnectionRepository_Mock: ConnectionRepository, Spy {
 
     override func provideConnectionId(timeout: TimeInterval = 10, completion: @escaping (Result<ConnectionId, Error>) -> Void) {
         record()
+        provideConnectionIdResult?.invoke(with: completion)
     }
 
     override func handleConnectionUpdate(state: WebSocketConnectionState, onExpiredToken: () -> Void) {

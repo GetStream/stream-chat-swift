@@ -643,6 +643,123 @@ final class AttachmentQueueUploader_Tests: XCTestCase {
             attachmentPayloads.count
         )
     }
+    
+    // MARK: - App Settings
+    
+    func test_uploadedAttachmentWithAllowedPathExtension() throws {
+        try uploadAttachmentsWithAppSettings(
+            AppSettings.mock(
+                fileUploadConfig: .mock(allowedFileExtensions: [".txt"]),
+                imageUploadConfig: .mock(allowedFileExtensions: [".jpg"])
+            ),
+            expectedState: [
+                "txt": .pendingUpload,
+                "jpg": .pendingUpload,
+                "mov": .uploadingFailed,
+                "m4a": .uploadingFailed
+            ]
+        )
+    }
+    
+    func test_uploadedAttachmentWithAllowedMimeTypes() throws {
+        try uploadAttachmentsWithAppSettings(
+            AppSettings.mock(
+                fileUploadConfig: .mock(allowedMimeTypes: ["video/quicktime"]),
+                imageUploadConfig: .mock(allowedMimeTypes: ["image/jpeg"])
+            ),
+            expectedState: [
+                "txt": .uploadingFailed,
+                "jpg": .pendingUpload,
+                "mov": .pendingUpload,
+                "m4a": .uploadingFailed
+            ]
+        )
+    }
+    
+    func test_uploadedAttachmentWithBlockedPathExtension() throws {
+        try uploadAttachmentsWithAppSettings(
+            AppSettings.mock(
+                fileUploadConfig: .mock(blockedFileExtensions: [".txt"]),
+                imageUploadConfig: .mock(blockedFileExtensions: [".jpg"])
+            ),
+            expectedState: [
+                "txt": .uploadingFailed,
+                "jpg": .uploadingFailed,
+                "mov": .pendingUpload,
+                "m4a": .pendingUpload
+            ]
+        )
+    }
+    
+    func test_uploadedAttachmentWithBlockedMimeTypes() throws {
+        try uploadAttachmentsWithAppSettings(
+            AppSettings.mock(
+                fileUploadConfig: .mock(blockedMimeTypes: ["video/quicktime"]),
+                imageUploadConfig: .mock(blockedMimeTypes: ["image/jpeg"])
+            ),
+            expectedState: [
+                "txt": .pendingUpload,
+                "jpg": .uploadingFailed,
+                "mov": .uploadingFailed,
+                "m4a": .pendingUpload
+            ]
+        )
+    }
+    
+    func uploadAttachmentsWithAppSettings(_ appSettings: AppSettings, expectedState: Dictionary<String, LocalAttachmentState>) throws {
+        queueUploader.setAppSettings(appSettings)
+        
+        let cid: ChannelId = .unique
+        let messageId: MessageId = .unique
+
+        // Create channel in the database.
+        try database.createChannel(cid: cid, withMessages: false)
+        // Create message in the database.
+        try database.createMessage(id: messageId, cid: cid, localState: .pendingSend)
+
+        let attachmentPayloads: [AnyAttachmentPayload] = [
+            .mockFile, // txt
+            .mockImage, // jpg
+            try AnyAttachmentPayload(localFileURL: try createLocalFile(fileName: "myvideo.mov"), attachmentType: .video),
+            try AnyAttachmentPayload(localFileURL: try createLocalFile(fileName: "myaudio.m4a"), attachmentType: .audio)
+        ]
+        
+        for (index, envelope) in attachmentPayloads.enumerated() {
+            let attachmentId = AttachmentId(cid: cid, messageId: messageId, index: index)
+            // Seed attachment in `.pendingUpload` state to the database.
+            try database.writeSynchronously { session in
+                try session.createNewAttachment(attachment: envelope, id: attachmentId)
+            }
+        }
+        
+        let expectation = XCTestExpectation()
+        let observer = StateLayerDatabaseObserver(
+            database: database,
+            fetchRequest: MessageDTO.message(withID: messageId),
+            itemCreator: { try $0.asModel() }
+        )
+        try observer.startObserving { message, _ in
+            guard let message else { return }
+            let states = Dictionary(uniqueKeysWithValues: message.allAttachments.map { ($0.uploadingState?.localFileURL.pathExtension, $0.uploadingState?.state) })
+            guard states == expectedState else { return }
+            expectation.fulfill()
+        }
+        wait(for: [expectation], timeout: defaultTimeout)
+        XCTAssertEqual(messageId, observer.item?.id)
+    }
+    
+    // MARK: - Test Data
+    
+    func createLocalFile(fileName: String) throws -> URL {
+        let fileManager = FileManager.default
+        let fileContent = "This is the file content"
+        let fileData = try XCTUnwrap(fileContent.data(using: .utf8))
+        let folderURL = fileManager.temporaryDirectory.appendingPathComponent(UUID().uuidString)
+        try fileManager.createDirectory(at: folderURL, withIntermediateDirectories: true)
+        let temporaryFileURL = folderURL.appendingPathComponent(fileName)
+        try fileData.write(to: temporaryFileURL)
+        return temporaryFileURL
+    }
 }
 
 private extension URL {

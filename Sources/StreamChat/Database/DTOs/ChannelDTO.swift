@@ -7,6 +7,9 @@ import Foundation
 
 @objc(ChannelDTO)
 class ChannelDTO: NSManagedObject {
+    // The cid without the channel type.
+    @NSManaged var id: String?
+    // The channel id which includes channelType:channelId.
     @NSManaged var cid: String
     @NSManaged var name: String?
     @NSManaged var imageURL: URL?
@@ -62,10 +65,15 @@ class ChannelDTO: NSManagedObject {
     @NSManaged var messages: Set<MessageDTO>
     @NSManaged var pinnedMessages: Set<MessageDTO>
     @NSManaged var reads: Set<ChannelReadDTO>
+
+    /// Helper properties used for sorting channels with unread counts of the current user.
     @NSManaged var currentUserUnreadMessagesCount: Int32
+    @NSManaged var hasUnreadSorting: Int16
+
     @NSManaged var watchers: Set<UserDTO>
     @NSManaged var memberListQueries: Set<ChannelMemberListQueryDTO>
     @NSManaged var previewMessage: MessageDTO?
+    @NSManaged var draftMessage: MessageDTO?
 
     /// If the current channel is muted by the current user, `mute` contains details.
     @NSManaged var mute: ChannelMuteDTO?
@@ -78,12 +86,13 @@ class ChannelDTO: NSManagedObject {
         }
 
         // Update the unreadMessagesCount for the current user.
-        // At the moment this computed property is used for `hasUnread` automatic channel list filtering.
+        // At the moment this computed property is used for `hasUnread` and `unreadCount` automatic channel list filtering.
         if let currentUserId = managedObjectContext?.currentUser?.user.id {
             let currentUserUnread = reads.first(where: { $0.user.id == currentUserId })
             let newUnreadCount = currentUserUnread?.unreadMessageCount ?? 0
             if newUnreadCount != currentUserUnreadMessagesCount {
                 currentUserUnreadMessagesCount = newUnreadCount
+                hasUnreadSorting = newUnreadCount > 0 ? 1 : 0
             }
         }
 
@@ -104,7 +113,7 @@ class ChannelDTO: NSManagedObject {
                 newestMessageAt = nil
             }
         }
-
+        
         // Update the date for sorting every time new message in this channel arrive.
         // This will ensure that the channel list is updated/sorted when new message arrives.
         // Note: If a channel is truncated, the server will update the lastMessageAt to a minimum value, and not remove it.
@@ -239,6 +248,7 @@ extension NSManagedObjectContext {
             dto.extraData = Data()
         }
         dto.typeRawValue = payload.typeRawValue
+        dto.id = payload.cid.id
         dto.config = payload.config.asDTO(context: self, cid: dto.cid)
         if let ownCapabilities = payload.ownCapabilities {
             dto.ownCapabilities = ownCapabilities
@@ -311,22 +321,42 @@ extension NSManagedObjectContext {
     ) throws -> ChannelDTO {
         let dto = try saveChannel(payload: payload.channel, query: query, cache: cache)
 
+        // Save reads (note that returned reads are for currently fetched members)
         let reads = Set(
             try payload.channelReads.map {
                 try saveChannelRead(payload: $0, for: payload.channel.cid, cache: cache)
             }
         )
-        dto.reads.subtracting(reads).forEach { delete($0) }
-        dto.reads = reads
-
+        dto.reads.formUnion(reads)
+        
         try payload.messages.forEach { _ = try saveMessage(payload: $0, channelDTO: dto, syncOwnReactions: true, cache: cache) }
         try payload.pendingMessages?.forEach { _ = try saveMessage(payload: $0, channelDTO: dto, syncOwnReactions: true, cache: cache) }
+        
+        // Recalculate reads for existing messages (saveMessage updates it for messages in the payload)
+        let channelReadDTOs = dto.reads
+        let currentUserId = currentUser?.user.id
+        let payloadMessageIds = Set(payload.messages.map(\.id) + (payload.pendingMessages?.map(\.id) ?? []))
+        for message in dto.messages {
+            guard message.user.id == currentUserId else { continue }
+            guard !payloadMessageIds.contains(message.id) else { continue }
+            message.updateReadBy(withChannelReads: channelReadDTOs)
+        }
         
         if dto.needsPreviewUpdate(payload) {
             dto.previewMessage = preview(for: payload.channel.cid)
         }
 
         dto.updateOldestMessageAt(payload: payload)
+
+        if let draftMessage = payload.draft {
+            dto.draftMessage = try saveDraftMessage(payload: draftMessage, for: payload.channel.cid, cache: nil)
+        } else {
+            /// If the payload does not contain a draft message, we should
+            /// delete the existing draft message if it exists.
+            if let draftMessage = dto.draftMessage {
+                deleteDraftMessage(in: payload.channel.cid, threadId: draftMessage.parentMessageId)
+            }
+        }
 
         try payload.pinnedMessages.forEach {
             _ = try saveMessage(payload: $0, channelDTO: dto, syncOwnReactions: true, cache: cache)
@@ -440,7 +470,9 @@ extension ChannelDTO {
 
 extension ChannelDTO {
     /// Snapshots the current state of `ChannelDTO` and returns an immutable model object from it.
-    func asModel() throws -> ChatChannel { try .create(fromDTO: self, depth: 0) }
+    func asModel() throws -> ChatChannel {
+        try .create(fromDTO: self, depth: 0)
+    }
 
     /// Snapshots the current state of `ChannelDTO` and returns an immutable model object from it if the dependency depth
     /// limit has not been reached
@@ -460,14 +492,18 @@ extension ChatChannel {
         guard StreamRuntimeCheck._canFetchRelationship(currentDepth: depth) else {
             throw RecursionLimitError()
         }
+
         try dto.isNotDeleted()
-        guard let cid = try? ChannelId(cid: dto.cid), let context = dto.managedObjectContext else {
+
+        guard let cid = try? ChannelId(cid: dto.cid),
+              let context = dto.managedObjectContext,
+              let clientConfig = context.chatClientConfig else {
             throw InvalidModel(dto)
         }
 
         let extraData: [String: RawJSON]
         do {
-            extraData = try JSONDecoder.stream.decodeCachedRawJSON(from: dto.extraData)
+            extraData = try JSONDecoder.stream.decodeRawJSON(from: dto.extraData)
         } catch {
             log.error(
                 "Failed to decode extra data for Channel with cid: <\(dto.cid)>, using default value instead. "
@@ -500,7 +536,7 @@ extension ChatChannel {
 
         let latestMessages: [ChatMessage] = {
             var messages = sortedMessageDTOs
-                .prefix(dto.managedObjectContext?.localCachingSettings?.chatChannel.latestMessagesLimit ?? 25)
+                .prefix(clientConfig.localCaching.chatChannel.latestMessagesLimit)
                 .compactMap { try? $0.relationshipAsModel(depth: depth) }
             if let oldest = dto.oldestMessageAt?.bridgeDate {
                 messages = messages.filter { $0.createdAt >= oldest }
@@ -531,7 +567,7 @@ extension ChatChannel {
                 }
                 return lhsActivity > rhsActivity
             }
-            .prefix(context.localCachingSettings?.chatChannel.lastActiveWatchersLimit ?? 100)
+            .prefix(clientConfig.localCaching.chatChannel.lastActiveWatchersLimit)
             .compactMap { try? $0.asModel() }
         
         let members = dto.members
@@ -543,7 +579,7 @@ extension ChatChannel {
                 }
                 return lhsActivity > rhsActivity
             }
-            .prefix(context.localCachingSettings?.chatChannel.lastActiveMembersLimit ?? 100)
+            .prefix(clientConfig.localCaching.chatChannel.lastActiveMembersLimit)
             .compactMap { try? $0.asModel() }
 
         let muteDetails: MuteDetails? = {
@@ -557,9 +593,10 @@ extension ChatChannel {
         let membership = try dto.membership.map { try $0.asModel() }
         let pinnedMessages = dto.pinnedMessages.compactMap { try? $0.relationshipAsModel(depth: depth) }
         let previewMessage = try? dto.previewMessage?.relationshipAsModel(depth: depth)
+        let draftMessage = try? dto.draftMessage?.relationshipAsModel(depth: depth)
         let typingUsers = Set(dto.currentlyTypingUsers.compactMap { try? $0.asModel() })
-        
-        return try ChatChannel(
+
+        let channel = try ChatChannel(
             cid: cid,
             name: dto.name,
             imageURL: dto.imageURL,
@@ -590,8 +627,15 @@ extension ChatChannel {
             lastMessageFromCurrentUser: latestMessageFromUser,
             pinnedMessages: pinnedMessages,
             muteDetails: muteDetails,
-            previewMessage: previewMessage
+            previewMessage: previewMessage,
+            draftMessage: draftMessage.map(DraftMessage.init)
         )
+
+        if let transformer = clientConfig.modelsTransformer {
+            return transformer.transform(channel: channel)
+        }
+
+        return channel
     }
 }
 

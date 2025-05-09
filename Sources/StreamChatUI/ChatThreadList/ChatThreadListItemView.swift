@@ -252,6 +252,14 @@ open class ChatThreadListItemView: _View, ThemeProvider {
         replyAuthorAvatarView.content = latestReply?.author
         replyTitleLabel.text = latestReply?.author.name
         threadUnreadCountView.content = unreadReplies
+
+        if thread.parentMessage.draftReply != nil {
+            let highlightOptions = TextHighlightOptions(
+                color: appearance.colorPalette.accentPrimary,
+                font: appearance.fonts.footnoteBold
+            )
+            replyDescriptionLabel.highlightText(draftPrefixText, options: highlightOptions)
+        }
     }
 
     /// The timestamp text formatted.
@@ -294,18 +302,33 @@ open class ChatThreadListItemView: _View, ThemeProvider {
     /// The reply preview text.
     open var replyPreviewText: String? {
         // TODO: On v5 the logic in ChatChannelItemView.subtitleText should be extracted to `Appearance.formatters` and shared with the `ChatThreadListItemView`
+
+        if let draftReply = content?.thread.parentMessage.draftReply.map(ChatMessage.init), components.isDraftMessagesEnabled {
+            let previewText = previewText(for: draftReply)
+            return "\(draftPrefixText) \(previewText)"
+        }
+
         guard let latestReply = content?.thread.latestReplies.last else {
             return nil
         }
-        
-        if latestReply.text.isEmpty {
-            return latestReply.allAttachments.first?.type.rawValue
+
+        return previewText(for: latestReply)
+    }
+
+    /// The prefix text for the draft message.
+    open var draftPrefixText: String {
+        "\(L10n.Message.Preview.draft):"
+    }
+
+    private func previewText(for message: ChatMessage) -> String {
+        if message.text.isEmpty {
+            return message.allAttachments.first?.type.rawValue.capitalized ?? ""
         }
 
-        if latestReply.isDeleted {
+        if message.isDeleted {
             return L10n.Message.Item.deleted
         }
 
-        return latestReply.text
+        return message.text
     }
 }

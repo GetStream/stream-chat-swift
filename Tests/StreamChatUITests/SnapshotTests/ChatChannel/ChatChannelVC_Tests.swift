@@ -659,6 +659,58 @@ final class ChatChannelVC_Tests: XCTestCase {
         AssertSnapshot(vc, variants: [.defaultLight])
     }
 
+    func test_messageListHeaderViewAppearance() {
+        channelControllerMock.simulateInitial(
+            channel: .mock(cid: .unique),
+            messages: [
+                .mock(id: .unique, cid: .unique, text: "One", author: .mock(id: .unique)),
+                .mock(id: .unique, cid: .unique, text: "Two", author: .mock(id: .unique)),
+                .mock(id: .unique, cid: .unique, text: "Three", author: .mock(id: .unique))
+            ],
+            state: .localDataFetched
+        )
+
+        let loadingIndicatorView: UIActivityIndicatorView = {
+            let indicator = UIActivityIndicatorView(style: .medium)
+            indicator.frame = .init(x: 0, y: 0, width: 50, height: 50)
+            indicator.startAnimating()
+            return indicator
+        }()
+        vc.messageListVC.headerView = loadingIndicatorView
+        
+        AssertSnapshot(
+            vc,
+            isEmbeddedInNavigationController: true,
+            variants: [.defaultLight]
+        )
+    }
+
+    func test_messageListFooterViewAppearance() {
+        channelControllerMock.simulateInitial(
+            channel: .mock(cid: .unique),
+            messages: [
+                .mock(id: .unique, cid: .unique, text: "One", author: .mock(id: .unique)),
+                .mock(id: .unique, cid: .unique, text: "Two", author: .mock(id: .unique)),
+                .mock(id: .unique, cid: .unique, text: "Three", author: .mock(id: .unique))
+            ],
+            state: .localDataFetched
+        )
+
+        let loadingIndicatorView: UIActivityIndicatorView = {
+            let indicator = UIActivityIndicatorView(style: .medium)
+            indicator.frame = .init(x: 0, y: 0, width: 50, height: 50)
+            indicator.startAnimating()
+            return indicator
+        }()
+        vc.messageListVC.footerView = loadingIndicatorView
+
+        AssertSnapshot(
+            vc,
+            isEmbeddedInNavigationController: true,
+            variants: [.defaultLight]
+        )
+    }
+
     func test_didReceiveNewMessagePendingEvent_whenFirstPageNotLoaded_whenMessageSentByCurrentUser_whenMessageNotPartOfThread_thenLoadsFirstPage() {
         channelControllerMock.hasLoadedAllNextMessages_mock = false
         let message = ChatMessage.mock(
@@ -1470,6 +1522,133 @@ final class ChatChannelVC_Tests: XCTestCase {
         XCTAssertEqual(mockAudioQueuePlayerNextItemProvider.findNextItemWasCalledWithCurrentVoiceRecordingURL, currentAssetURL)
         XCTAssertEqual(mockAudioQueuePlayerNextItemProvider.findNextItemWasCalledWithLookUpScope, .subsequentMessagesFromUser)
         XCTAssertEqual(actual, expected)
+    }
+
+    // MARK: - Draft Messages
+
+    func test_channelWithDraftMessage_showsDraftInComposer() {
+        let draftMessage = DraftMessage.mock(text: "Draft message text")
+        
+        channelControllerMock.channel_mock = .mock(
+            cid: .unique,
+            draftMessage: draftMessage
+        )
+        
+        vc.view.layoutIfNeeded()
+        
+        AssertSnapshot(vc, variants: [.defaultLight])
+    }
+
+    func test_channelWithDraftMessage_withQuotedMessage_showsDraftInComposer() {
+        let quotedMessage = ChatMessage.mock(
+            id: .unique,
+            cid: .unique,
+            text: "Quoted message",
+            author: .mock(id: .unique)
+        )
+        
+        let draftMessage = DraftMessage.mock(
+            text: "Draft with quote",
+            quotedMessage: quotedMessage
+        )
+        
+        channelControllerMock.channel_mock = .mock(
+            cid: .unique,
+            draftMessage: draftMessage
+        )
+        
+        vc.view.layoutIfNeeded()
+        
+        AssertSnapshot(vc, variants: [.defaultLight])
+    }
+
+    func test_channelWithDraftMessage_withCommand_showsDraftInComposer() {
+        let draftMessage = DraftMessage.mock(
+            text: "Hey",
+            command: "Giphy"
+        )
+
+        channelControllerMock.channel_mock = .mock(
+            cid: .unique,
+            draftMessage: draftMessage
+        )
+
+        vc.view.layoutIfNeeded()
+
+        AssertSnapshot(vc, variants: [.defaultLight])
+    }
+
+    func test_channelWithDraftMessage_withUnknownCommand_showsDraftInComposer() {
+        let draftMessage = DraftMessage.mock(
+            text: "/test"
+        )
+
+        channelControllerMock.channel_mock = .mock(
+            cid: .unique,
+            draftMessage: draftMessage
+        )
+
+        vc.view.layoutIfNeeded()
+
+        AssertSnapshot(vc, variants: [.defaultLight])
+    }
+
+    func test_channelWithDraftMessage_whenDraftIsUpdatedFromEvent_updatesDraftInComposer() {
+        let draftMessage = DraftMessage.mock(text: "Draft Message")
+
+        let channel = ChatChannel.mock(cid: .unique, draftMessage: draftMessage)
+        channelControllerMock.channel_mock = channel
+
+        vc.view.layoutIfNeeded()
+
+        let updatedDraftMessage = DraftMessage.mock(text: "Updated draft")
+        let updatedChannel = ChatChannel.mock(cid: .unique, draftMessage: updatedDraftMessage)
+        channelControllerMock.channel_mock = updatedChannel
+        channelControllerMock.mockCid = channel.cid
+        let event = DraftUpdatedEvent(
+            cid: channel.cid,
+            channel: channel,
+            draftMessage: updatedDraftMessage,
+            createdAt: .unique
+        )
+        vc.eventsController(vc.eventsController, didReceiveEvent: event)
+
+        AssertSnapshot(vc, variants: [.defaultLight])
+    }
+
+    func test_channelWithDraftMessage_whenDraftIsUpdatedFromEvent_whenThread_shouldNotUpdateChannelComposer() {
+        let draftMessage = DraftMessage.mock(text: "Draft Message")
+
+        let channel = ChatChannel.mock(cid: .unique, draftMessage: draftMessage)
+        channelControllerMock.channel_mock = channel
+
+        vc.view.layoutIfNeeded()
+
+        let updatedDraftMessage = DraftMessage.mock(threadId: .unique, text: "Updated draft")
+        channelControllerMock.mockCid = channel.cid
+        let event = DraftUpdatedEvent(
+            cid: channel.cid,
+            channel: channel,
+            draftMessage: updatedDraftMessage,
+            createdAt: .unique
+        )
+        vc.eventsController(vc.eventsController, didReceiveEvent: event)
+
+        AssertSnapshot(vc, variants: [.defaultLight])
+    }
+
+    func test_channelWithDraftMessage_whenDraftIsDeletedFromEvent_updatesDraftInComposer() {
+        let channel = ChatChannel.mock(cid: .unique, draftMessage: nil)
+        channelControllerMock.channel_mock = channel
+
+        vc.messageComposerVC.content.draftMessage(.mock(text: "Draft Message"))
+        XCTAssertFalse(vc.messageComposerVC.content.text.isEmpty)
+
+        channelControllerMock.mockCid = channel.cid
+        let event = DraftDeletedEvent(cid: channel.cid, threadId: nil, createdAt: .unique)
+        vc.eventsController(vc.eventsController, didReceiveEvent: event)
+
+        XCTAssertTrue(vc.messageComposerVC.content.text.isEmpty)
     }
 }
 

@@ -17,6 +17,7 @@ extension XCTestCase {
             name: .unique,
             imageURL: nil,
             role: .user,
+            teamsRole: nil,
             createdAt: .unique,
             updatedAt: .unique,
             deactivatedAt: nil,
@@ -39,6 +40,7 @@ extension XCTestCase {
             name: .unique,
             imageURL: .unique(),
             role: .user,
+            teamsRole: nil,
             createdAt: .unique,
             updatedAt: .unique,
             deactivatedAt: nil,
@@ -201,7 +203,8 @@ extension XCTestCase {
                 pendingMessages: pendingMessages,
                 pinnedMessages: pinnedMessages,
                 channelReads: channelReads ?? [dummyChannelRead],
-                isHidden: false
+                isHidden: false,
+                draft: nil
             )
 
         return payload
@@ -243,6 +246,7 @@ extension XCTestCase {
                     name: .unique,
                     imageURL: nil,
                     role: .admin,
+                    teamsRole: nil,
                     createdAt: .unique,
                     updatedAt: .unique,
                     deactivatedAt: nil,
@@ -316,7 +320,8 @@ extension XCTestCase {
                 pendingMessages: nil,
                 pinnedMessages: [dummyMessageWithNoExtraData],
                 channelReads: [dummyChannelReadWithNoExtraData],
-                isHidden: nil
+                isHidden: nil,
+                draft: nil
             )
 
         return payload
@@ -336,6 +341,7 @@ extension XCTestCase {
         title: String? = .unique,
         latestReplies: [MessagePayload] = [],
         read: [ThreadReadPayload] = [],
+        draft: DraftPayload? = nil,
         extraData: [String: RawJSON] = [:]
     ) -> ThreadPayload {
         .init(
@@ -352,6 +358,7 @@ extension XCTestCase {
             title: title,
             latestReplies: latestReplies,
             read: read,
+            draft: draft,
             extraData: extraData
         )
     }
@@ -480,6 +487,7 @@ private extension MemberPayload {
                 name: .unique,
                 imageURL: nil,
                 role: .admin,
+                teamsRole: nil,
                 createdAt: .unique,
                 updatedAt: .unique,
                 deactivatedAt: nil,
@@ -506,6 +514,7 @@ private extension UserPayload {
             name: .unique,
             imageURL: nil,
             role: .admin,
+            teamsRole: nil,
             createdAt: .unique,
             updatedAt: .unique,
             deactivatedAt: nil,

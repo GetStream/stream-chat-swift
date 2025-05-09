@@ -63,7 +63,10 @@ public extension FilterKey where Scope: AnyChannelListFilterScope {
     /// Supported operators: `in`, `equal`
     /// - Warning: Querying by the channel Identifier should be done using the `cid` field as much as possible to optimize API performance.
     /// As the full channel ID, `cid`s are indexed everywhere in Stream database where `id` is not.
-    static var id: FilterKey<Scope, String> { .init(rawValue: "id", keyPathString: #keyPath(ChannelDTO.cid)) }
+    static var id: FilterKey<Scope, String> { .init(
+        rawValue: "id",
+        keyPathString: #keyPath(ChannelDTO.id)
+    ) }
 
     /// A filter key for matching the `name` value.
     static var name: FilterKey<Scope, String> { .init(rawValue: "name", keyPathString: #keyPath(ChannelDTO.name)) }
@@ -203,7 +206,7 @@ public extension FilterKey where Scope: AnyChannelListFilterScope {
 
     /// Filter for the time of the last message in the channel. If the channel has no messages, then the time the channel was created.
     /// Supported operators: `equal`, `greaterThan`, `lessThan`, `greaterOrEqual`, `lessOrEqual`
-    static var lastUpdatedAt: FilterKey<Scope, Date> { .init(rawValue: "last_updated", keyPathString: #keyPath(ChannelDTO.lastMessageAt)) }
+    static var lastUpdatedAt: FilterKey<Scope, Date> { .init(rawValue: "last_updated", keyPathString: #keyPath(ChannelDTO.defaultSortingAt)) }
 }
 
 /// Internal filter queries for the channel list.

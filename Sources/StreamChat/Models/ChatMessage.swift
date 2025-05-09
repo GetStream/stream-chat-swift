@@ -64,6 +64,9 @@ public struct ChatMessage {
     public var quotedMessage: ChatMessage? { _quotedMessage() }
     let _quotedMessage: () -> ChatMessage?
 
+    /// The draft reply to this message. Applies only for the messages of the current user.
+    public let draftReply: DraftMessage?
+
     /// A flag indicating whether the message was bounced due to moderation.
     public let isBounced: Bool
 
@@ -175,9 +178,9 @@ public struct ChatMessage {
     /// Optional poll that is part of the message.
     public let poll: Poll?
 
-    internal init(
+    init(
         id: MessageId,
-        cid: ChannelId,
+        cid: ChannelId?,
         text: String,
         type: MessageType,
         command: String?,
@@ -213,7 +216,8 @@ public struct ChatMessage {
         moderationDetails: MessageModerationDetails?,
         readBy: Set<ChatUser>,
         poll: Poll?,
-        textUpdatedAt: Date?
+        textUpdatedAt: Date?,
+        draftReply: DraftMessage?
     ) {
         self.id = id
         self.cid = cid
@@ -254,6 +258,56 @@ public struct ChatMessage {
         self.readBy = readBy
         _attachments = attachments
         _quotedMessage = { quotedMessage }
+        self.draftReply = draftReply
+    }
+
+    /// Returns a new `ChatMessage` with the provided data replaced.
+    public func replacing(
+        text: String?,
+        extraData: [String: RawJSON]?,
+        attachments: [AnyChatMessageAttachment]?
+    ) -> ChatMessage {
+        .init(
+            id: id,
+            cid: cid,
+            text: text ?? "",
+            type: type,
+            command: command,
+            createdAt: createdAt,
+            locallyCreatedAt: locallyCreatedAt,
+            updatedAt: updatedAt,
+            deletedAt: deletedAt,
+            arguments: arguments,
+            parentMessageId: parentMessageId,
+            showReplyInChannel: showReplyInChannel,
+            replyCount: replyCount,
+            extraData: extraData ?? [:],
+            quotedMessage: quotedMessage,
+            isBounced: isBounced,
+            isSilent: isSilent,
+            isShadowed: isShadowed,
+            reactionScores: reactionScores,
+            reactionCounts: reactionCounts,
+            reactionGroups: reactionGroups,
+            author: author,
+            mentionedUsers: mentionedUsers,
+            threadParticipants: threadParticipants,
+            attachments: attachments ?? [],
+            latestReplies: latestReplies,
+            localState: localState,
+            isFlaggedByCurrentUser: isFlaggedByCurrentUser,
+            latestReactions: latestReactions,
+            currentUserReactions: currentUserReactions,
+            isSentByCurrentUser: isSentByCurrentUser,
+            pinDetails: pinDetails,
+            translations: translations,
+            originalLanguage: originalLanguage,
+            moderationDetails: moderationDetails,
+            readBy: readBy,
+            poll: poll,
+            textUpdatedAt: textUpdatedAt,
+            draftReply: draftReply
+        )
     }
 }
 
@@ -393,6 +447,7 @@ extension ChatMessage: Hashable {
         guard lhs.quotedMessage == rhs.quotedMessage else { return false }
         guard lhs.translations == rhs.translations else { return false }
         guard lhs.type == rhs.type else { return false }
+        guard lhs.draftReply == rhs.draftReply else { return false }
         return true
     }
 

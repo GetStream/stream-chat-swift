@@ -27,6 +27,7 @@ class UserDTO: NSManagedObject {
     @NSManaged var currentUser: CurrentUserDTO?
     @NSManaged var teams: [TeamId]
     @NSManaged var language: String?
+    @NSManaged var teamsRole: [String: String]?
 
     /// Returns a fetch request for the dto with the provided `userId`.
     static func user(withID userId: UserId) -> NSFetchRequest<UserDTO> {
@@ -154,6 +155,7 @@ extension NSManagedObjectContext: UserDatabaseSession {
         dto.userUpdatedAt = payload.updatedAt.bridgeDate
         dto.userDeactivatedAt = payload.deactivatedAt?.bridgeDate
         dto.language = payload.language
+        dto.teamsRole = payload.teamsRole?.mapValues { $0.rawValue }
 
         do {
             dto.extraData = try JSONEncoder.default.encode(payload.extraData)
@@ -191,7 +193,7 @@ extension UserDTO {
     func asRequestBody() -> UserRequestBody {
         let extraData: [String: RawJSON]
         do {
-            extraData = try JSONDecoder.stream.decodeCachedRawJSON(from: self.extraData)
+            extraData = try JSONDecoder.stream.decodeRawJSON(from: self.extraData)
         } catch {
             log.assertionFailure(
                 "Failed decoding saved extra data with error: \(error). This should never happen because"
@@ -235,7 +237,7 @@ extension ChatUser {
         
         let extraData: [String: RawJSON]
         do {
-            extraData = try JSONDecoder.stream.decodeCachedRawJSON(from: dto.extraData)
+            extraData = try JSONDecoder.stream.decodeRawJSON(from: dto.extraData)
         } catch {
             log.error(
                 "Failed to decode extra data for user with id: <\(dto.id)>, using default value instead. "
@@ -254,6 +256,7 @@ extension ChatUser {
             isBanned: dto.isBanned,
             isFlaggedByCurrentUser: dto.flaggedBy != nil,
             userRole: UserRole(rawValue: dto.userRoleRaw),
+            teamsRole: dto.teamsRole?.mapValues { UserRole(rawValue: $0) },
             createdAt: dto.userCreatedAt.bridgeDate,
             updatedAt: dto.userUpdatedAt.bridgeDate,
             deactivatedAt: dto.userDeactivatedAt?.bridgeDate,

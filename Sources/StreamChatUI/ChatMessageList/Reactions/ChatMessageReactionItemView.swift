@@ -28,7 +28,7 @@ open class ChatMessageReactionItemView: _Button, AppearanceProvider {
     }
 
     override open var intrinsicContentSize: CGSize {
-        image(for: .normal)?.size ?? super.intrinsicContentSize
+        image(for: .normal)?.size ?? .init(width: 25, height: 25)
     }
 
     open var reactionImage: UIImage? {

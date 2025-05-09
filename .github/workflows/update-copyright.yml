@@ -13,7 +13,7 @@ env:
 jobs:
   copyright:
     name: Copyright
-    runs-on: macos-14
+    runs-on: macos-15
     steps:
     - uses: actions/checkout@v4.1.1
     - uses: ./.github/actions/ruby-cache
@@ -26,8 +26,7 @@ jobs:
         status: ${{ job.status }}
         text: "You shall not pass!"
         job_name: "${{ github.workflow }}: ${{ github.job }}"
-        fields: message,commit,author,action,workflow,job,took
+        fields: repo,commit,author,workflow
       env:
         SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
-        MATRIX_CONTEXT: ${{ toJson(matrix) }}
       if: failure()

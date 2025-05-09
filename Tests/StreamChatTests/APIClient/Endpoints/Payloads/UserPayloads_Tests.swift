@@ -63,6 +63,7 @@ final class UserPayload_Tests: XCTestCase {
         XCTAssertEqual(payload.language, "pt")
         XCTAssertEqual(payload.role, .guest)
         XCTAssertEqual(payload.isOnline, true)
+        XCTAssertEqual(payload.teamsRole, ["ios": "guest"])
     }
 
     func test_deactivatedUserJSON_isSerialized() throws {
@@ -135,6 +136,7 @@ final class UserUpdateRequestBody_Tests: XCTestCase {
                 readReceipts: .init(enabled: true)
             ),
             role: .admin,
+            teamsRole: ["ios": "guest"],
             extraData: ["secret_note": .string(value)]
         )
 
@@ -146,7 +148,10 @@ final class UserUpdateRequestBody_Tests: XCTestCase {
                 "read_receipts": ["enabled": true]
             ],
             "role": UserRole.admin.rawValue,
-            "secret_note": value
+            "secret_note": value,
+            "teams_role": [
+                "ios": "guest"
+            ]
         ]
 
         let encodedJSON = try JSONEncoder.default.encode(payload)

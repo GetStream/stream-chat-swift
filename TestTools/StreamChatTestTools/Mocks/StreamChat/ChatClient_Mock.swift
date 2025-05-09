@@ -141,18 +141,20 @@ extension ChatClient {
                 databaseContainerBuilder: {
                     DatabaseContainer_Spy(
                         kind: $0,
-                        shouldFlushOnStart: $1,
-                        shouldResetEphemeralValuesOnStart: $2,
                         bundle: bundle,
-                        localCachingSettings: $3,
-                        deletedMessagesVisibility: $4,
-                        shouldShowShadowedMessages: $5
+                        chatClientConfig: $1
                     )
-                }, 
+                },
                 internetConnection: { center, _ in
                     InternetConnection_Mock(notificationCenter: center)
                 },
-                authenticationRepositoryBuilder: AuthenticationRepository_Mock.init
+                authenticationRepositoryBuilder: AuthenticationRepository_Mock.init,
+                syncRepositoryBuilder: SyncRepository_Mock.init,
+                pollsRepositoryBuilder: PollsRepository_Mock.init,
+                draftMessagesRepositoryBuilder: DraftMessagesRepository_Mock.init,
+                channelListUpdaterBuilder: ChannelListUpdater_Spy.init,
+                messageRepositoryBuilder: MessageRepository_Mock.init,
+                offlineRequestsRepositoryBuilder: OfflineRequestsRepository_Mock.init
             )
         )
     }
@@ -183,10 +185,6 @@ extension ChatClient {
         databaseContainer as! DatabaseContainer_Spy
     }
 
-    var mockExtensionLifecycle: NotificationExtensionLifecycle_Mock {
-        extensionLifecycle as! NotificationExtensionLifecycle_Mock
-    }
-
     var mockSyncRepository: SyncRepository_Mock {
         syncRepository as! SyncRepository_Mock
     }
@@ -205,6 +203,10 @@ extension ChatClient {
     
     var mockPollsRepository: PollsRepository_Mock {
         pollsRepository as! PollsRepository_Mock
+    }
+
+    var mockDraftMessagesRepository: DraftMessagesRepository_Mock {
+        draftMessagesRepository as! DraftMessagesRepository_Mock
     }
 
     func simulateProvidedConnectionId(connectionId: ConnectionId?) {
@@ -234,14 +236,9 @@ extension ChatClient.Environment {
             databaseContainerBuilder: {
                 DatabaseContainer_Spy(
                     kind: .inMemory,
-                    shouldFlushOnStart: $1,
-                    shouldResetEphemeralValuesOnStart: $2,
-                    localCachingSettings: $3,
-                    deletedMessagesVisibility: $4,
-                    shouldShowShadowedMessages: $5
+                    chatClientConfig: $1
                 )
             },
-            extensionLifecycleBuilder: NotificationExtensionLifecycle_Mock.init,
             requestEncoderBuilder: DefaultRequestEncoder.init,
             requestDecoderBuilder: DefaultRequestDecoder.init,
             eventDecoderBuilder: EventDecoder.init,
@@ -249,6 +246,7 @@ extension ChatClient.Environment {
             authenticationRepositoryBuilder: AuthenticationRepository_Mock.init,
             syncRepositoryBuilder: SyncRepository_Mock.init,
             pollsRepositoryBuilder: PollsRepository_Mock.init,
+            draftMessagesRepositoryBuilder: DraftMessagesRepository_Mock.init,
             channelListUpdaterBuilder: ChannelListUpdater_Spy.init,
             messageRepositoryBuilder: MessageRepository_Mock.init,
             offlineRequestsRepositoryBuilder: OfflineRequestsRepository_Mock.init

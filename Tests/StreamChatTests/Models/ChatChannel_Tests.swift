@@ -285,6 +285,22 @@ final class ChatChannel_Tests: XCTestCase {
         XCTAssertEqual(channelWithoutCapability.isSlowMode, false)
     }
 
+    func test_canSendPoll() throws {
+        let channel = setupChannel(withCapabilities: [.sendPoll])
+        XCTAssertEqual(channel.canSendPoll, true)
+
+        let channelWithoutCapability = setupChannel(withCapabilities: [])
+        XCTAssertEqual(channelWithoutCapability.canSendPoll, false)
+    }
+
+    func test_canCastPollVote() throws {
+        let channel = setupChannel(withCapabilities: [.castPollVote])
+        XCTAssertEqual(channel.canCastPollVote, true)
+
+        let channelWithoutCapability = setupChannel(withCapabilities: [])
+        XCTAssertEqual(channelWithoutCapability.canCastPollVote, false)
+    }
+
     func test_lastReadMessageId_readsDontContainUser() {
         let userId: UserId = "current"
         let channel = ChatChannel.mock(cid: .unique, reads: [
@@ -313,6 +329,43 @@ final class ChatChannel_Tests: XCTestCase {
         ])
 
         XCTAssertEqual(channel.lastReadMessageId(userId: userId), lastReadId)
+    }
+
+    func test_replacing() {
+        let originalChannel = ChatChannel.mock(
+            cid: .unique,
+            name: "Original Name",
+            imageURL: URL(string: "http://original.com/image.jpg"),
+            extraData: ["original": .string("data")]
+        )
+        
+        // Test replacing all fields
+        let allFieldsReplaced = originalChannel.replacing(
+            name: "New Name",
+            imageURL: URL(string: "http://new.com/image.jpg"),
+            extraData: ["new": .string("data")]
+        )
+        
+        // Verify replaced fields
+        XCTAssertEqual(allFieldsReplaced.name, "New Name")
+        XCTAssertEqual(allFieldsReplaced.imageURL?.absoluteString, "http://new.com/image.jpg")
+        XCTAssertEqual(allFieldsReplaced.extraData["new"]?.stringValue, "data")
+        
+        // Verify other fields remain unchanged
+        XCTAssertEqual(allFieldsReplaced.cid, originalChannel.cid)
+        XCTAssertEqual(allFieldsReplaced.lastMessageAt, originalChannel.lastMessageAt)
+        XCTAssertEqual(allFieldsReplaced.createdAt, originalChannel.createdAt)
+        
+        // Test replacing some fields while erasing others
+        let partialReplacement = originalChannel.replacing(
+            name: "New Name",
+            imageURL: nil,
+            extraData: nil
+        )
+        
+        XCTAssertEqual(partialReplacement.name, "New Name")
+        XCTAssertEqual(partialReplacement.imageURL, nil)
+        XCTAssertEqual(partialReplacement.extraData, [:])
     }
 
     private func setupChannel(withCapabilities capabilities: Set<ChannelCapability>) -> ChatChannel {

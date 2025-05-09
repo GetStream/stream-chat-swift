@@ -94,14 +94,13 @@ final class ChatClient_Tests: XCTestCase {
         var env = ChatClient.Environment()
         env.connectionRepositoryBuilder = ConnectionRepository_Mock.init
         env
-            .databaseContainerBuilder =
-            { kind, shouldFlushOnStart, shouldResetEphemeralValuesOnStart, cachingSettings, messageVisibility, showShadowedMessages in
+            .databaseContainerBuilder = { kind, clientConfig in
                 usedDatabaseKind = kind
-                shouldFlushDBOnStart = shouldFlushOnStart
-                shouldResetEphemeralValues = shouldResetEphemeralValuesOnStart
-                localCachingSettings = cachingSettings
-                deleteMessagesVisibility = messageVisibility
-                shouldShowShadowedMessages = showShadowedMessages
+                shouldFlushDBOnStart = clientConfig.shouldFlushLocalStorageOnStart
+                shouldResetEphemeralValues = clientConfig.isClientInActiveMode
+                localCachingSettings = clientConfig.localCaching
+                deleteMessagesVisibility = clientConfig.deletedMessagesVisibility
+                shouldShowShadowedMessages = clientConfig.shouldShowShadowedMessages
                 return DatabaseContainer_Spy()
             }
 
@@ -132,7 +131,7 @@ final class ChatClient_Tests: XCTestCase {
         // Create env object with custom database builder
         var env = ChatClient.Environment()
         env.connectionRepositoryBuilder = ConnectionRepository_Mock.init
-        env.databaseContainerBuilder = { kind, _, _, _, _, _ in
+        env.databaseContainerBuilder = { kind, _ in
             usedDatabaseKind = kind
             return DatabaseContainer_Spy()
         }
@@ -159,7 +158,7 @@ final class ChatClient_Tests: XCTestCase {
         // Create env object and store all `kinds it's called with.
         var env = ChatClient.Environment()
         env.connectionRepositoryBuilder = ConnectionRepository_Mock.init
-        env.databaseContainerBuilder = { kind, _, _, _, _, _ in
+        env.databaseContainerBuilder = { kind, _ in
             usedDatabaseKinds.append(kind)
             return DatabaseContainer_Spy()
         }
@@ -308,6 +307,89 @@ final class ChatClient_Tests: XCTestCase {
         // THEN
         XCTAssertCall(ConnectionRepository_Mock.Signature.disconnect, on: testEnv.connectionRepository!)
         XCTAssertTrue(testEnv.databaseContainer!.removeAllData_called)
+    }
+
+    func test_logout_whenCurrentDevice_removesDevice() throws {
+        // GIVEN
+        let client = ChatClient(
+            config: inMemoryStorageConfig,
+            environment: testEnv.environment
+        )
+        let connectionRepository = try XCTUnwrap(client.connectionRepository as? ConnectionRepository_Mock)
+        connectionRepository.disconnectResult = .success(())
+
+        // WHEN
+        let userId = UserId.unique
+        testEnv.authenticationRepository?.mockedCurrentUserId = userId
+        try testEnv.databaseContainer?.writeSynchronously {
+            try $0.saveCurrentUser(payload: .dummy(userId: userId, role: .admin))
+            try $0.saveCurrentDevice(.unique)
+        }
+        let expectation = self.expectation(description: "logout completes")
+        client.logout {
+            expectation.fulfill()
+        }
+        waitForExpectations(timeout: defaultTimeout)
+
+        // THEN
+        XCTAssertCall(ConnectionRepository_Mock.Signature.disconnect, on: testEnv.connectionRepository!)
+        XCTAssertEqual(testEnv.apiClient?.request_endpoint?.path, .devices)
+        XCTAssertEqual(testEnv.apiClient?.request_endpoint?.method, .delete)
+    }
+
+    func test_logout_whenNoCurrentDevice_doesNotRemoveDevice() throws {
+        // GIVEN
+        let client = ChatClient(
+            config: inMemoryStorageConfig,
+            environment: testEnv.environment
+        )
+        let connectionRepository = try XCTUnwrap(client.connectionRepository as? ConnectionRepository_Mock)
+        connectionRepository.disconnectResult = .success(())
+
+        // WHEN
+        let userId = UserId.unique
+        testEnv.authenticationRepository?.mockedCurrentUserId = userId
+        try testEnv.databaseContainer?.writeSynchronously {
+            try $0.saveCurrentUser(payload: .dummy(userId: userId, role: .admin))
+        }
+        let expectation = self.expectation(description: "logout completes")
+        client.logout {
+            expectation.fulfill()
+        }
+        waitForExpectations(timeout: defaultTimeout)
+
+        // THEN
+        XCTAssertCall(ConnectionRepository_Mock.Signature.disconnect, on: testEnv.connectionRepository!)
+        XCTAssertNil(testEnv.apiClient?.request_endpoint?.path)
+        XCTAssertNil(testEnv.apiClient?.request_endpoint?.method)
+    }
+
+    func test_logout_whenRemoveDeviceIsFalse_doesNotRemoveDevice() throws {
+        // GIVEN
+        let client = ChatClient(
+            config: inMemoryStorageConfig,
+            environment: testEnv.environment
+        )
+        let connectionRepository = try XCTUnwrap(client.connectionRepository as? ConnectionRepository_Mock)
+        connectionRepository.disconnectResult = .success(())
+
+        // WHEN
+        let userId = UserId.unique
+        testEnv.authenticationRepository?.mockedCurrentUserId = userId
+        try testEnv.databaseContainer?.writeSynchronously {
+            try $0.saveCurrentUser(payload: .dummy(userId: userId, role: .admin))
+            try $0.saveCurrentDevice(.unique)
+        }
+        let expectation = self.expectation(description: "logout completes")
+        client.logout(removeDevice: false) {
+            expectation.fulfill()
+        }
+        waitForExpectations(timeout: defaultTimeout)
+
+        // THEN
+        XCTAssertCall(ConnectionRepository_Mock.Signature.disconnect, on: testEnv.connectionRepository!)
+        XCTAssertNil(testEnv.apiClient?.request_endpoint?.path)
+        XCTAssertNil(testEnv.apiClient?.request_endpoint?.method)
     }
 
     func test_logout_clearsActiveControllers() throws {
@@ -578,6 +660,22 @@ final class ChatClient_Tests: XCTestCase {
         XCTAssertCall(AuthenticationRepository_Mock.Signature.connectTokenProvider, on: authenticationRepository)
         XCTAssertEqual(receivedError, mockedError)
     }
+    
+    func test_connectUserAsync_staticToken_callsAuthenticationRepository_success() async throws {
+        let client = ChatClient(config: inMemoryStorageConfig, environment: testEnv.environment)
+        let userInfo = UserInfo(id: "id")
+        
+        let authenticationRepository = try XCTUnwrap(client.authenticationRepository as? AuthenticationRepository_Mock)
+        authenticationRepository.connectUserResult = .success(())
+        let connectionRepository = try XCTUnwrap(client.connectionRepository as? ConnectionRepository_Mock)
+        connectionRepository.provideConnectionIdResult = .success(.unique)
+        try client.mockDatabaseContainer.createCurrentUser(id: userInfo.id)
+        
+        let connectedUser = try await client.connectUser(userInfo: userInfo, token: .unique())
+        XCTAssertCall(AuthenticationRepository_Mock.Signature.connectTokenProvider, on: authenticationRepository)
+        XCTAssertCall("provideConnectionId(timeout:completion:)", on: connectionRepository)
+        await XCTAssertEqual(userInfo.id, connectedUser.state.user.id)
+    }
 
     // MARK: - Connect Guest
 
@@ -694,7 +792,7 @@ final class ChatClient_Tests: XCTestCase {
         connectionRepository.disconnectResult = .success(())
 
         let expectation = self.expectation(description: "logout completes")
-        client.logout {
+        client.logout(removeDevice: false) {
             expectation.fulfill()
         }
         waitForExpectations(timeout: defaultTimeout)
@@ -1005,11 +1103,7 @@ private class TestEnvironment {
             databaseContainerBuilder: {
                 self.databaseContainer = DatabaseContainer_Spy(
                     kind: $0,
-                    shouldFlushOnStart: $1,
-                    shouldResetEphemeralValuesOnStart: $2,
-                    localCachingSettings: $3,
-                    deletedMessagesVisibility: $4,
-                    shouldShowShadowedMessages: $5
+                    chatClientConfig: $1
                 )
                 return self.databaseContainer!
             },
@@ -1052,7 +1146,7 @@ private class TestEnvironment {
                 return self.backgroundTaskScheduler!
             },
             timerType: VirtualTimeTimer.self,
-            connectionRecoveryHandlerBuilder: { _, _, _, _, _, _, _ in
+            connectionRecoveryHandlerBuilder: { _, _, _, _, _, _ in
                 ConnectionRecoveryHandler_Mock()
             },
             authenticationRepositoryBuilder: {

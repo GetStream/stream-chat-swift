@@ -47,10 +47,22 @@ extension DemoAppCoordinator {
         threadListVC.onDisconnect = { [weak self] in
             self?.disconnect()
         }
+        
+        let draftsVC = DemoDraftMessageListVC(
+            currentUserController: client.currentUserController()
+        )
+        draftsVC.onLogout = { [weak self] in
+            self?.logOut()
+        }
+        draftsVC.onDisconnect = { [weak self] in
+            self?.disconnect()
+        }
+
         let tabBarViewController = DemoAppTabBarController(
             channelListVC: chatVC,
             threadListVC: UINavigationController(rootViewController: threadListVC),
-            currentUserController: StreamChatWrapper.shared.client!.currentUserController()
+            draftListVC: UINavigationController(rootViewController: draftsVC),
+            currentUserController: client.currentUserController()
         )
         set(rootViewController: tabBarViewController, animated: animated)
         DemoAppConfiguration.showPerformanceTracker()
@@ -92,21 +104,30 @@ extension DemoAppCoordinator {
         onDisconnect: @escaping () -> Void
     ) -> UIViewController {
         // Construct channel list query
+        let sorting: [Sorting<ChannelListSortingKey>] = [
+            Sorting(key: .pinnedAt),
+            Sorting(key: .default)
+        ]
         let channelListQuery: ChannelListQuery
         switch user {
         case let .credentials(userCredentials):
             channelListQuery = .init(
-                filter: .containMembers(userIds: [userCredentials.id])
+                filter: .containMembers(userIds: [userCredentials.id]),
+                sort: sorting
             )
         case let .custom(userCredentials):
             guard let userId = userCredentials?.id else {
                 fallthrough
             }
             channelListQuery = .init(
-                filter: .containMembers(userIds: [userId])
+                filter: .containMembers(userIds: [userId]),
+                sort: sorting
             )
         case .anonymous, .guest:
-            channelListQuery = .init(filter: .equal(.type, to: .messaging))
+            channelListQuery = .init(
+                filter: .equal(.type, to: .messaging),
+                sort: sorting
+            )
         }
 
         let tuple = makeChannelVCs(for: cid)

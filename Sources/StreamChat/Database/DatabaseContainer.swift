@@ -23,11 +23,7 @@ class DatabaseContainer: NSPersistentContainer, @unchecked Sendable {
         let context = newBackgroundContext()
         context.automaticallyMergesChangesFromParent = true
         context.mergePolicy = NSMergeByPropertyObjectTrumpMergePolicy
-        context.perform { [localCachingSettings, deletedMessageVisibility, shouldShowShadowedMessages] in
-            context.localCachingSettings = localCachingSettings
-            context.deletedMessagesVisibility = deletedMessageVisibility
-            context.shouldShowShadowedMessages = shouldShowShadowedMessages
-        }
+        context.setChatClientConfig(chatClientConfig)
         return context
     }()
 
@@ -43,11 +39,7 @@ class DatabaseContainer: NSPersistentContainer, @unchecked Sendable {
         let context = newBackgroundContext()
         context.automaticallyMergesChangesFromParent = true
         context.mergePolicy = NSMergeByPropertyObjectTrumpMergePolicy
-        context.perform { [localCachingSettings, deletedMessageVisibility, shouldShowShadowedMessages] in
-            context.localCachingSettings = localCachingSettings
-            context.deletedMessagesVisibility = deletedMessageVisibility
-            context.shouldShowShadowedMessages = shouldShowShadowedMessages
-        }
+        context.setChatClientConfig(chatClientConfig)
         return context
     }()
     
@@ -65,23 +57,18 @@ class DatabaseContainer: NSPersistentContainer, @unchecked Sendable {
         // Context is merged manually since automatically is too slow for reacting to changes needed by the state layer
         context.automaticallyMergesChangesFromParent = false
         context.mergePolicy = NSMergeByPropertyObjectTrumpMergePolicy
-        context.perform { [localCachingSettings, deletedMessageVisibility, shouldShowShadowedMessages] in
-            context.localCachingSettings = localCachingSettings
-            context.deletedMessagesVisibility = deletedMessageVisibility
-            context.shouldShowShadowedMessages = shouldShowShadowedMessages
-        }
         stateLayerContextRefreshObservers = [
             context.observeChanges(in: writableContext),
             context.observeChanges(in: viewContext)
         ]
+        context.setChatClientConfig(chatClientConfig)
         return context
     }()
 
     private var stateLayerContextRefreshObservers = [NSObjectProtocol]()
     private var loggerNotificationObserver: NSObjectProtocol?
-    private let localCachingSettings: ChatClientConfig.LocalCaching?
-    private let deletedMessageVisibility: ChatClientConfig.DeletedMessageVisibility?
-    private let shouldShowShadowedMessages: Bool?
+
+    let chatClientConfig: ChatClientConfig
 
     static var cachedModels = [String: NSManagedObjectModel]()
 
@@ -102,13 +89,9 @@ class DatabaseContainer: NSPersistentContainer, @unchecked Sendable {
     ///
     init(
         kind: Kind,
-        shouldFlushOnStart: Bool = false,
-        shouldResetEphemeralValuesOnStart: Bool = true,
         modelName: String = "StreamChatModel",
         bundle: Bundle? = .streamChat,
-        localCachingSettings: ChatClientConfig.LocalCaching? = nil,
-        deletedMessagesVisibility: ChatClientConfig.DeletedMessageVisibility? = nil,
-        shouldShowShadowedMessages: Bool? = nil
+        chatClientConfig: ChatClientConfig
     ) {
         let managedObjectModel: NSManagedObjectModel
         if let cachedModel = Self.cachedModels[modelName] {
@@ -122,9 +105,7 @@ class DatabaseContainer: NSPersistentContainer, @unchecked Sendable {
             Self.cachedModels[modelName] = model
         }
 
-        self.localCachingSettings = localCachingSettings
-        deletedMessageVisibility = deletedMessagesVisibility
-        self.shouldShowShadowedMessages = shouldShowShadowedMessages
+        self.chatClientConfig = chatClientConfig
 
         super.init(name: modelName, managedObjectModel: managedObjectModel)
 
@@ -140,18 +121,18 @@ class DatabaseContainer: NSPersistentContainer, @unchecked Sendable {
                             "Failed to initialize the in-memory storage with error: \(error). This is a non-recoverable error."
                         )
                     }
-                    if shouldResetEphemeralValuesOnStart {
+                    if chatClientConfig.isClientInActiveMode {
                         self?.resetEphemeralValues()
                     }
                 }
                 return
             }
-            if shouldResetEphemeralValuesOnStart {
+            if chatClientConfig.isClientInActiveMode {
                 self?.resetEphemeralValues()
             }
         }
 
-        if shouldFlushOnStart {
+        if chatClientConfig.shouldFlushLocalStorageOnStart {
             recreatePersistentStore(completion: persistentStoreCreatedCompletion)
         } else {
             setupPersistentStore(completion: persistentStoreCreatedCompletion)
@@ -159,17 +140,7 @@ class DatabaseContainer: NSPersistentContainer, @unchecked Sendable {
 
         viewContext.mergePolicy = NSMergeByPropertyObjectTrumpMergePolicy
         viewContext.automaticallyMergesChangesFromParent = true
-        if Thread.current.isMainThread {
-            viewContext.localCachingSettings = localCachingSettings
-            viewContext.deletedMessagesVisibility = deletedMessagesVisibility
-            viewContext.shouldShowShadowedMessages = shouldShowShadowedMessages
-        } else {
-            viewContext.perform { [viewContext, localCachingSettings, deletedMessagesVisibility, shouldShowShadowedMessages] in
-                viewContext.localCachingSettings = localCachingSettings
-                viewContext.deletedMessagesVisibility = deletedMessagesVisibility
-                viewContext.shouldShowShadowedMessages = shouldShowShadowedMessages
-            }
-        }
+        viewContext.setChatClientConfig(chatClientConfig)
 
         FetchCache.clear()
 
@@ -248,6 +219,19 @@ class DatabaseContainer: NSPersistentContainer, @unchecked Sendable {
                 } else {
                     continuation.resume(returning: ())
                 }
+            }
+        }
+    }
+    
+    func write<T>(converting actions: @escaping (DatabaseSession) throws -> T, completion: @escaping (Result<T, Error>) -> Void) {
+        var result: T?
+        write { session in
+            result = try actions(session)
+        } completion: { error in
+            if let result {
+                completion(.success(result))
+            } else {
+                completion(.failure(error ?? ClientError.Unknown()))
             }
         }
     }
@@ -483,17 +467,6 @@ class DatabaseContainer: NSPersistentContainer, @unchecked Sendable {
 }
 
 extension NSManagedObjectContext {
-    /// Discards any changes on the passed object that are pending to be saved.
-    func discardChanges(for object: NSManagedObject) {
-        refresh(object, mergeChanges: false)
-    }
-
-    func discardCurrentChanges() {
-        insertedObjects.forEach { discardChanges(for: $0) }
-        updatedObjects.forEach { discardChanges(for: $0) }
-        deletedObjects.forEach { discardChanges(for: $0) }
-    }
-    
     fileprivate func currentChangeCounts() -> [String: Int] {
         [
             "inserted": insertedObjects.count,

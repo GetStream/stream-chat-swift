@@ -4,7 +4,176 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 # Upcoming
 
 ## StreamChat
+### 🐞 Fixed
+- Fix swipe to reply enabled when quoting a message is disabled [#3662](https://github.com/GetStream/stream-chat-swift/pull/3662)
+
+# [4.78.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.78.0)
+_April 24, 2025_
+
+## StreamChat
 ### ✅ Added
+- Add `CurrentUserUnreads.totalUnreadMessagesCount` [#3651](https://github.com/GetStream/stream-chat-swift/pull/3651)
+### 🐞 Fixed
+- Fix `FilterKey.id` not returning any channels in `ChannelListQuery` [#3643](https://github.com/GetStream/stream-chat-swift/pull/3643)
+- Fix incorrect channel list sorting when sorted by `.hasUnread` [#3646](https://github.com/GetStream/stream-chat-swift/pull/3646)
+- Fix `CurrentUserUnreads.totalUnreadChannelsCount` with incorrect value [#3651](https://github.com/GetStream/stream-chat-swift/pull/3651)
+- Fix `unsetProperties` not having any effect in `CurrentUserController.updateUserData()` [#3650](https://github.com/GetStream/stream-chat-swift/pull/3650)
+### 🔄 Changed
+- Change the `teamsRole` parameter from `[String: String]` to `[TeamId: UserRole]` [#3650](https://github.com/GetStream/stream-chat-swift/pull/3650)
+
+## StreamChatUI
+### 🐞 Fixed
+- Fix message search with empty avatars [#3644](https://github.com/GetStream/stream-chat-swift/pull/3644)
+
+# [4.77.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.77.0)
+_April 09, 2025_
+
+## StreamChat
+### ✅ Added
+- Add `ChatChannelController.deletePoll()` for deleting polls [#3632](https://github.com/GetStream/stream-chat-swift/pull/3632)
+- Add `ChatChannel.canSendPoll` capability [#3635](https://github.com/GetStream/stream-chat-swift/pull/3635)
+- Add `ChatChannel.canCastPollVote` capability [#3635](https://github.com/GetStream/stream-chat-swift/pull/3635)
+- Add teams role support for users [#3639](https://github.com/GetStream/stream-chat-swift/pull/3639)
+- Add `removeDevice: Bool` parameter to `ChatClient.logout()` [#3640](https://github.com/GetStream/stream-chat-swift/pull/3640)
+### 🔄 Changed
+- The `ChatClient.logout()` function now automatically removes the user's current device if it has not been removed already [#3640](https://github.com/GetStream/stream-chat-swift/pull/3640)
+
+## StreamChatUI
+### 🐞 Fixed
+- Fix showing Create Poll action in the composer if the user does not have the capability [#3635](https://github.com/GetStream/stream-chat-swift/pull/3635)
+- Fix error when send images with floating point numbers in the original size [#3636](https://github.com/GetStream/stream-chat-swift/pull/3636)
+
+# [4.76.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.76.0)
+_March 31, 2025_
+
+### StreamChatUI
+### 🐞 Fixed
+- Fix runtime exception if fonts in `Appearance.default.fonts` are set to scaled fonts [#3633](https://github.com/GetStream/stream-chat-swift/pull/3633)
+
+### StreamChatUI
+### 🐞 Fixed
+- Fix draft not deleted when attachments are removed from the composer [#3631](https://github.com/GetStream/stream-chat-swift/pull/3631)
+
+# [4.75.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.75.0)
+_March 26, 2025_
+
+## StreamChat
+### 🐞 Fixed
+- Fix draft local attachments erased when the draft updated event is triggered [#3625](https://github.com/GetStream/stream-chat-swift/pull/3625)
+- Fix background tasks not running in `IOSBackgroundTaskScheduler` sometimes [#3628](https://github.com/GetStream/stream-chat-swift/pull/3628)
+
+### StreamChatUI
+### 🐞 Fixed
+- Fix composer content not cleared when draft deleted event is triggered [#3626](https://github.com/GetStream/stream-chat-swift/pull/3626)
+- Set `ColorPalette.text` to `titleLabel` in `ChatChannelListItemView` [#3629](https://github.com/GetStream/stream-chat-swift/pull/3629)
+
+# [4.74.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.74.0)
+_March 14, 2025_
+
+## StreamChat
+### ✅ Added
+- Add `MarkdownParser` for parsing and styling markdown strings [#3590](https://github.com/GetStream/stream-chat-swift/pull/3590)
+- Add `Fonts.title2` for supporting markdown headers [#3590](https://github.com/GetStream/stream-chat-swift/pull/3590)
+- Add channel reads pagination support [#3613](https://github.com/GetStream/stream-chat-swift/pull/3613)
+    - Add `ChatChannelController.loadChannelReads()`,
+    - Add `ChatChannelController.loadMoreChannelReads()`
+    - Add `Chat.loadMembers()`
+    - Add `Chat.loadMoreMembers()`
+### 🐞 Fixed
+- Fix background task warning by making task tracking thread-safe [#3604](https://github.com/GetStream/stream-chat-swift/pull/3604)
+- Fix an issue where `ChatRemoteNotificationHandler` can lead to persistent store's data inconsistencies [#3601](https://github.com/GetStream/stream-chat-swift/pull/3601)
+- Fix the order of channels when using `ChannelListSortingKey.default` [3615](https://github.com/GetStream/stream-chat-swift/pull/3615)
+- Fix channel membership not updated when the current user adds itself to a channel [#3618](https://github.com/GetStream/stream-chat-swift/pull/3618)
+
+### StreamChatUI
+### 🔄 Changed
+- Feature rich markdown rendering with `AttributedString` [#3590](https://github.com/GetStream/stream-chat-swift/pull/3590)
+  - Note: Markdown is rendered only on iOS 15 and above. On iOS 14 and below markdown is rendered as plain text
+  - Rename `MarkdownFormatter.format(_:)` to `MarkdownFormatter.format(_:attributes:)` for allowing to pass in current text attributes
+### 💥 Removed
+- Remove `MarkdownStyles.linkFont` because link attributes are ignored by `UITextView`. Update `ChatMessageContentView.textView.linkTextAttributes` instead [#3590](https://github.com/GetStream/stream-chat-swift/pull/3590)
+- Remove `DefaultMarkdownFormatter.markdownRegexPattern` because regular expression based validation was removed [#3590](https://github.com/GetStream/stream-chat-swift/pull/3590)
+- Remove `MarkdownFormatter.containsMarkdown(_:)`, optionally validate input strings in `MarkdownFormatter.format(_:attributes:)` instead [#3590](https://github.com/GetStream/stream-chat-swift/pull/3590)
+
+# [4.73.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.73.0)
+_February 27, 2025_
+
+## StreamChat
+### ✅ Added
+- Add sending messages to only specific members [#3595](https://github.com/GetStream/stream-chat-swift/pull/3595)
+- Add Draft Messages Support [#3588](https://github.com/GetStream/stream-chat-swift/pull/3588)
+  - Add `ChatChannel.draftMessage`
+  - Add `ChatMessage.draftReply`
+  - Add `ChannelController`:
+     - `updateDraftMessage()`
+     - `deleteDraftMessage()`
+     - `loadDraftMessage()`
+  - Add `MessageController`:
+     - `updateDraftReply()`
+     - `deleteDraftReply()`
+     - `loadDraftReply()`
+  - Add `CurrentUserController`:
+     - `deleteDraft()`
+     - `loadDraftMessages()`
+     - `loadMoreDraftMessages()` 
+
+### 🐞 Fixed
+- Update channel's preview message when coming back to online [#3574](https://github.com/GetStream/stream-chat-swift/pull/3574)
+- Fix message transformer not being applied when editing a message [#3602](https://github.com/GetStream/stream-chat-swift/pull/3602)
+
+## StreamChatUI
+### ✅ Added
+- Add `Components.isDraftMessagesEnabled` to enable Draft Messages [#3588](https://github.com/GetStream/stream-chat-swift/pull/3588)
+- Add draft preview in Channel List and Thread List if drafts are enabled [#3588](https://github.com/GetStream/stream-chat-swift/pull/3588)
+
+# [4.72.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.72.0)
+_February 04, 2025_
+
+### 🔄 Changed
+- Revert 'Improve performance of model conversions with large extra data' [#3576](https://github.com/GetStream/stream-chat-swift/pull/3576)
+- Expand `StreamAudioPlayer` to allow passing an `options` field to `AVURLAsset` initialiser [#3586](https://github.com/GetStream/stream-chat-swift/pull/3586)
+
+# [4.71.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.71.0)
+_January 28, 2025_
+
+## StreamChat
+### ✅ Added
+- Expose `Event.name` to easily check which event it is [#3569](https://github.com/GetStream/stream-chat-swift/pull/3569)
+- Add support for transforming Messages, Channels and Members [#3564](https://github.com/GetStream/stream-chat-swift/pull/3564)
+   - Add `ChatClientConfig.modelsTransformer`
+   - Add `ChatMessage.replacing()`
+   - Add `ChatChannel.replacing()`
+   - Add `ChatChannelMember.replacing()`
+### 🐞 Fixed
+- Calling async `connectUser()` methods can sometimes throw `CurrentUserDoesNotExist()` unexpectedly [#3565](https://github.com/GetStream/stream-chat-swift/pull/3565)
+- Fix creating controllers from background threads leading to rare crashes [#3566](https://github.com/GetStream/stream-chat-swift/pull/3566)
+- Fix hard deleted message events not being reported in `EventsController` [#3569](https://github.com/GetStream/stream-chat-swift/pull/3569)
+- Fix hard deleting a parent message not deleting its replies [#3569](https://github.com/GetStream/stream-chat-swift/pull/3569)
+
+## StreamChatUI
+### ✅ Added
+- Add a simpler way to customize header and footer views in the Message List [#3567](https://github.com/GetStream/stream-chat-swift/pull/3567)
+  - Add `ChatMessageListVC.headerView`
+  - Add `ChatMessageListVC.footerView`
+- Make it easier to provide state handling when loading more messages [#3567](https://github.com/GetStream/stream-chat-swift/pull/3567)
+  - Add `ChatChannelVC.loadPreviousMessages()` + `ChatChannelVC.didFinishLoadingPreviousMessages(error:)`
+  - Add `ChatChannelVC.loadNextMessages()` + `ChatChannelVC.didFinishLoadingNextMessages(error:)`
+  - Add `ChatThreadVC.loadPreviousReplies()` + `ChatThreadVC.didFinishLoadingPreviousReplies(error:)`
+  - Add `ChatThreadVC.loadNextReplies()` + `ChatThreadVC.didFinishLoadingNextReplies(error:)`
+### 🐞 Fixed
+- Fix thread reply action shown when inside a Thread [#3561](https://github.com/GetStream/stream-chat-swift/pull/3561)
+- Fix reaction author's view with shrinked reaction images in iOS 18 [#3568](https://github.com/GetStream/stream-chat-swift/pull/3568)
+- Fix missing final attributes for supplementary views exception [#3570](https://github.com/GetStream/stream-chat-swift/pull/3570)
+- Fix duplicated `didReceiveEvent` inside `ChatThreadVC` [#3569](https://github.com/GetStream/stream-chat-swift/pull/3569)
+### 🔄 Changed
+- Deprecates `ChatThreadVC.channelEventsController` [#3569](https://github.com/GetStream/stream-chat-swift/pull/3569)
+
+# [4.70.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.70.0)
+_January 14, 2025_
+
+## StreamChat
+### ✅ Added
+- Use `AppSettings.fileUploadConfig` and `AppSettings.imageUploadConfig` for blocking attachment uploads [#3556](https://github.com/GetStream/stream-chat-swift/pull/3556)
 - Add `FilterKey.disabled` and `ChatChannel.isDisabled` [#3546](https://github.com/GetStream/stream-chat-swift/pull/3546)
 - Add `ImageAttachmentPayload.file` for setting `file_size` and `mime_type` for image attachments [#3548](https://github.com/GetStream/stream-chat-swift/pull/3548)
 - Add `ChatMessageController.partialUpdateMessage()` [#3531](https://github.com/GetStream/stream-chat-swift/pull/3531)
@@ -30,6 +199,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Improve performance of model conversions with large extra data [#3534](https://github.com/GetStream/stream-chat-swift/pull/3534)
 ### 🔄 Changed
 - Deprecate `ImageAttachmentPayload.init(title:imageRemoteURL:originalWidth:originalHeight:extraData:)` in favor of `ImageAttachmentPayload.init(title:imageRemoteURL:file:originalWidth:originalHeight:extraData:)` [#3548](https://github.com/GetStream/stream-chat-swift/pull/3548)
+
+## StreamChatUI
+### 🔄 Changed
+- Set supported media types based on `AppSettings` in `ComposerVC.filePickerVC` [#3556](https://github.com/GetStream/stream-chat-swift/pull/3556)
 
 # [4.69.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.69.0)
 _December 18, 2024_

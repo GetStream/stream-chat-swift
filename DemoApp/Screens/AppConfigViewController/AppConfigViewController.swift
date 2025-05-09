@@ -22,6 +22,8 @@ struct DemoAppConfig {
     var shouldShowConnectionBanner: Bool
     /// A Boolean value to define if the premium member feature is enabled. This is to test custom member data.
     var isPremiumMemberFeatureEnabled: Bool
+    /// A Boolean value to define if the poll should be deleted when the message is deleted.
+    var shouldDeletePollOnMessageDeletion: Bool
 
     /// The details to generate expirable tokens in the demo app.
     struct TokenRefreshDetails {
@@ -50,7 +52,8 @@ class AppConfig {
             isLocationAttachmentsEnabled: true,
             tokenRefreshDetails: nil,
             shouldShowConnectionBanner: false,
-            isPremiumMemberFeatureEnabled: false
+            isPremiumMemberFeatureEnabled: false,
+            shouldDeletePollOnMessageDeletion: false
         )
 
         if StreamRuntimeCheck.isStreamInternalConfiguration {
@@ -59,6 +62,7 @@ class AppConfig {
             demoAppConfig.isHardDeleteEnabled = true
             demoAppConfig.shouldShowConnectionBanner = true
             demoAppConfig.isPremiumMemberFeatureEnabled = true
+            demoAppConfig.shouldDeletePollOnMessageDeletion = true
             StreamRuntimeCheck.assertionsEnabled = true
         }
     }
@@ -192,6 +196,7 @@ class AppConfigViewController: UITableViewController {
     }
 
     enum ChatClientConfigOption: String, CaseIterable {
+        case baseURL
         case isLocalStorageEnabled
         case staysConnectedInBackground
         case reconnectionTimeout
@@ -349,6 +354,9 @@ class AppConfigViewController: UITableViewController {
         cell.textLabel?.text = option.rawValue
 
         switch option {
+        case .baseURL:
+            cell.detailTextLabel?.text = chatClientConfig.baseURL.description
+            cell.accessoryType = .disclosureIndicator
         case .isLocalStorageEnabled:
             cell.accessoryView = makeSwitchButton(chatClientConfig.isLocalStorageEnabled) { [weak self] newValue in
                 self?.chatClientConfig.isLocalStorageEnabled = newValue
@@ -382,6 +390,8 @@ class AppConfigViewController: UITableViewController {
     ) {
         let option = options[indexPath.row]
         switch option {
+        case .baseURL:
+            showBaseURLInputAlert()
         case .deletedMessagesVisibility:
             pushDeletedMessagesVisibilitySelectorVC()
         case .reconnectionTimeout:
@@ -630,6 +640,36 @@ class AppConfigViewController: UITableViewController {
         }
 
         navigationController?.pushViewController(selectorViewController, animated: true)
+    }
+
+    private func showBaseURLInputAlert() {
+        let alert = UIAlertController(
+            title: "Base URL",
+            message: "Input the base URL for the Chat Client.",
+            preferredStyle: .alert
+        )
+
+        alert.addTextField { textField in
+            textField.placeholder = "Base URL"
+            textField.autocapitalizationType = .none
+            textField.autocorrectionType = .no
+            textField.text = self.chatClientConfig.baseURL.description
+            textField.textContentType = .URL
+        }
+
+        alert.addAction(.init(title: "Set", style: .default, handler: { _ in
+            guard let urlString = alert.textFields?.first?.text,
+                  let url = URL(string: urlString)
+            else {
+                return
+            }
+            self.chatClientConfig.baseURL = .init(url: url)
+            self.tableView.reloadData()
+        }))
+
+        alert.addAction(.init(title: "Cancel", style: .destructive, handler: nil))
+
+        present(alert, animated: true, completion: nil)
     }
 
     private func showTokenDetailsAlert() {

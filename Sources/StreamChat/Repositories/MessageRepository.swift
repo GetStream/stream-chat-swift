@@ -137,7 +137,13 @@ class MessageRepository {
     ) {
         var messageModel: ChatMessage!
         database.write({
-            let messageDTO = try $0.saveMessage(payload: message, for: cid, syncOwnReactions: false, cache: nil)
+            let messageDTO = try $0.saveMessage(
+                payload: message,
+                for: cid,
+                syncOwnReactions: false,
+                skipDraftUpdate: false,
+                cache: nil
+            )
             if messageDTO.localMessageState == .sending || messageDTO.localMessageState == .sendingFailed {
                 messageDTO.markMessageAsSent()
             }
@@ -210,12 +216,16 @@ class MessageRepository {
                 payload: message,
                 for: ChannelId(cid: cid),
                 syncOwnReactions: false,
+                skipDraftUpdate: false,
                 cache: nil
             )
             deletedMessage.localMessageState = nil
 
             if messageDTO.isHardDeleted {
                 session.delete(message: deletedMessage)
+                messageDTO.replies.forEach {
+                    session.delete(message: $0)
+                }
             }
         }, completion: {
             completion?($0)
@@ -235,11 +245,17 @@ class MessageRepository {
             case let .success(boxed):
                 var message: ChatMessage?
                 self.database.write({ session in
-                    message = try session.saveMessage(payload: boxed.message, for: cid, syncOwnReactions: true, cache: nil).asModel()
+                    message = try session.saveMessage(
+                        payload: boxed.message,
+                        for: cid,
+                        syncOwnReactions: true,
+                        skipDraftUpdate: false,
+                        cache: nil
+                    ).asModel()
                     if !store {
                         // Force load attachments before discarding changes
                         _ = message?.attachmentCounts
-                        self.database.writableContext.discardCurrentChanges()
+                        self.database.writableContext.rollback()
                     }
                 }, completion: { error in
                     if let error = error {
@@ -265,8 +281,9 @@ class MessageRepository {
     ) {
         let context = database.backgroundReadOnlyContext
         context.perform {
-            let deletedMessagesVisibility = context.deletedMessagesVisibility ?? .alwaysVisible
-            let shouldShowShadowedMessages = context.shouldShowShadowedMessages ?? true
+            let clientConfig = context.chatClientConfig
+            let deletedMessagesVisibility = clientConfig?.deletedMessagesVisibility ?? .alwaysVisible
+            let shouldShowShadowedMessages = clientConfig?.shouldShowShadowedMessages ?? false
             do {
                 let resultId = try MessageDTO.loadMessage(
                     before: messageId,

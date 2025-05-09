@@ -70,7 +70,8 @@ final class DemoChatChannelListRouter: ChatChannelListRouter {
     // swiftlint:disable function_body_length
     // swiftlint:disable cyclomatic_complexity
     override func didTapMoreButton(for cid: ChannelId) {
-        let channelController = rootViewController.controller.client.channelController(for: cid)
+        let client = rootViewController.controller.client
+        let channelController = client.channelController(for: cid)
         let canUpdateChannel = channelController.channel?.canUpdateChannel == true
         let canUpdateChannelMembers = channelController.channel?.canUpdateChannelMembers == true
         let canBanChannelMembers = channelController.channel?.canBanChannelMembers == true
@@ -210,6 +211,15 @@ final class DemoChatChannelListRouter: ChatChannelListRouter {
                             )
                         )
                     ), animated: true)
+                }
+            }),
+            .init(title: "Load More Members", handler: { [unowned self] _ in
+                channelController.loadMoreChannelReads(limit: 100) { error in
+                    guard let error else { return }
+                    self.rootViewController.presentAlert(
+                        title: "Couldn't load more members to channel \(cid)",
+                        message: "\(error)"
+                    )
                 }
             }),
             .init(title: "Add member", isEnabled: canUpdateChannelMembers, handler: { [unowned self] _ in
@@ -570,6 +580,16 @@ final class DemoChatChannelListRouter: ChatChannelListRouter {
                     channelController.createNewMessage(text: message, skipPush: true)
                 }
             }),
+            .init(title: "Say Hi to a specific member", isEnabled: canSendMessage, handler: { [unowned self] _ in
+                self.rootViewController.presentAlert(title: "Enter the channel member id", textFieldPlaceholder: "Send message") { userId in
+                    guard let userId, !userId.isEmpty,
+                          channelController.channel?.lastActiveMembers.map(\.id).contains(userId) == true else {
+                        self.rootViewController.presentAlert(title: "user id is not valid")
+                        return
+                    }
+                    channelController.createNewMessage(text: "Hi", restrictedVisibility: [userId])
+                }
+            }),
             .init(title: "Send system message", isEnabled: canSendMessage, handler: { [unowned self] _ in
                 self.rootViewController.presentAlert(title: "Enter the message text", textFieldPlaceholder: "Send message") { message in
                     guard let message = message, !message.isEmpty else {
@@ -631,17 +651,23 @@ final class DemoChatChannelListRouter: ChatChannelListRouter {
                 }
             }),
             .init(title: "Reset User Image", handler: { [unowned self] _ in
-                do {
-                    let connectedUser = try self.rootViewController.controller.client.makeConnectedUser()
-                    Task {
-                        do {
-                            try await connectedUser.update(unset: ["image"])
-                        } catch {
+                channelController.client.currentUserController()
+                    .updateUserData(unsetProperties: ["image"]) { [unowned self] error in
+                        if let error {
                             self.rootViewController.presentAlert(title: error.localizedDescription)
                         }
                     }
-                } catch {
-                    self.rootViewController.presentAlert(title: error.localizedDescription)
+            }),
+            .init(title: "Add a team role for the current user", isEnabled: true, handler: { [unowned self] _ in
+                self.rootViewController.presentAlert(title: "Enter the team role", textFieldPlaceholder: "Enter role") { role in
+                    if let role, !role.isEmpty {
+                        let userRole = UserRole(rawValue: role)
+                        client.currentUserController().updateUserData(teamsRole: ["ios": userRole]) { error in
+                            if let error {
+                                log.error("Couldn't add role to custom team for the current user: \(error)")
+                            }
+                        }
+                    }
                 }
             })
         ]

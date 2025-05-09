@@ -186,10 +186,14 @@ extension MemberDTO {
 extension ChatChannelMember {
     fileprivate static func create(fromDTO dto: MemberDTO) throws -> ChatChannelMember {
         try dto.isNotDeleted()
-        
+
+        guard let clientConfig = dto.managedObjectContext?.chatClientConfig else {
+            throw InvalidModel(dto)
+        }
+
         let extraData: [String: RawJSON]
         do {
-            extraData = try JSONDecoder.stream.decodeCachedRawJSON(from: dto.user.extraData)
+            extraData = try JSONDecoder.stream.decodeRawJSON(from: dto.user.extraData)
         } catch {
             log.error(
                 "Failed to decode extra data for user with id: <\(dto.user.id)>, using default value instead. "
@@ -200,7 +204,7 @@ extension ChatChannelMember {
 
         let memberExtraData: [String: RawJSON]
         do {
-            memberExtraData = try JSONDecoder.stream.decodeCachedRawJSON(from: dto.extraData)
+            memberExtraData = try JSONDecoder.stream.decodeRawJSON(from: dto.extraData)
         } catch {
             log.error(
                 "Failed to decode extra data for channel member with id: <\(dto.user.id)>, using default value instead. "
@@ -212,7 +216,7 @@ extension ChatChannelMember {
         let role = dto.channelRoleRaw.flatMap { MemberRole(rawValue: $0) } ?? .member
         let language: TranslationLanguage? = dto.user.language.map(TranslationLanguage.init)
 
-        return ChatChannelMember(
+        var member = ChatChannelMember(
             id: dto.user.id,
             name: dto.user.name,
             imageURL: dto.user.imageURL,
@@ -220,6 +224,7 @@ extension ChatChannelMember {
             isBanned: dto.user.isBanned,
             isFlaggedByCurrentUser: dto.user.flaggedBy != nil,
             userRole: UserRole(rawValue: dto.user.userRoleRaw),
+            teamsRole: dto.user.teamsRole?.mapValues { UserRole(rawValue: $0) },
             userCreatedAt: dto.user.userCreatedAt.bridgeDate,
             userUpdatedAt: dto.user.userUpdatedAt.bridgeDate,
             deactivatedAt: dto.user.userDeactivatedAt?.bridgeDate,
@@ -241,6 +246,12 @@ extension ChatChannelMember {
             notificationsMuted: dto.notificationsMuted,
             memberExtraData: memberExtraData
         )
+
+        if let transformer = clientConfig.modelsTransformer {
+            member = transformer.transform(member: member)
+        }
+
+        return member
     }
 }
 

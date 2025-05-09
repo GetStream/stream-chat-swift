@@ -75,6 +75,7 @@ final class DatabaseSession_Tests: XCTestCase {
             name: .unique,
             imageURL: .unique(),
             role: .admin,
+            teamsRole: nil,
             createdAt: .unique,
             updatedAt: .unique,
             deactivatedAt: nil,

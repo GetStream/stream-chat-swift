@@ -15,6 +15,9 @@ struct MemberEventMiddleware: EventMiddleware {
             case let event as MemberAddedEventDTO:
                 if let channel = session.channel(cid: event.cid) {
                     let member = try session.saveMember(payload: event.member, channelId: event.cid)
+                    if member.user.id == session.currentUser?.user.id {
+                        channel.membership = member
+                    }
 
                     insertMemberToMemberListQueries(channel, member)
                 }

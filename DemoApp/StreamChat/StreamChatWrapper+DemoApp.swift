@@ -44,6 +44,7 @@ extension StreamChatWrapper {
         Components.default.isJumpToUnreadEnabled = true
         Components.default.messageSwipeToReplyEnabled = true
         Components.default.isComposerLinkPreviewEnabled = true
+        Components.default.isDraftMessagesEnabled = true
         Components.default.channelListSearchStrategy = .messages
 
         // Customize UI components
@@ -51,6 +52,7 @@ extension StreamChatWrapper {
         Components.default.messageListVC = DemoChatMessageListVC.self
         Components.default.quotedMessageView = DemoQuotedChatMessageView.self
         Components.default.messageComposerVC = DemoComposerVC.self
+        Components.default.inputTextView = DemoInputTextView.self
         Components.default.channelContentView = DemoChatChannelListItemView.self
         Components.default.channelListRouter = DemoChatChannelListRouter.self
         Components.default.channelVC = DemoChatChannelVC.self
@@ -61,17 +63,19 @@ extension StreamChatWrapper {
         Components.default.reactionsSorting = ReactionSorting.byFirstReactionAt
         Components.default.channelListErrorView = DemoChatChannelListErrorView.self
 
-        // Customize MarkdownFormatter
-        let defaultFormatter = DefaultMarkdownFormatter()
-        defaultFormatter.styles.bodyFont.color = .systemOrange
-        defaultFormatter.styles.codeFont.color = .systemPurple
-        defaultFormatter.styles.h1Font.color = .systemBlue
-        defaultFormatter.styles.h2Font.color = .systemRed
-        defaultFormatter.styles.h3Font.color = .systemYellow
-        defaultFormatter.styles.h4Font.color = .systemGreen
-        defaultFormatter.styles.h5Font.color = .systemBrown
-        defaultFormatter.styles.h6Font.color = .systemPink
-        Appearance.default.formatters.markdownFormatter = defaultFormatter
+        // Example of how to customize Markdown
+        /*
+         let defaultFormatter = DefaultMarkdownFormatter()
+         defaultFormatter.styles.bodyFont.color = .systemOrange
+         defaultFormatter.styles.codeFont.color = .systemPurple
+         defaultFormatter.styles.h1Font.color = .systemBlue
+         defaultFormatter.styles.h2Font.color = .systemRed
+         defaultFormatter.styles.h3Font.color = .systemYellow
+         defaultFormatter.styles.h4Font.color = .systemGreen
+         defaultFormatter.styles.h5Font.color = .systemBrown
+         defaultFormatter.styles.h6Font.color = .systemPink
+         Appearance.default.formatters.markdownFormatter = defaultFormatter
+         */
     }
 }
 

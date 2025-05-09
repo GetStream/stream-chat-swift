@@ -31,7 +31,7 @@ final class ChannelListSortingKey_Tests: XCTestCase {
                     key.localKey,
                     NSExpression(forKeyPath: \ChannelDTO.defaultSortingAt).keyPath
                 )
-                XCTAssertEqual(key.remoteKey, "updated_at")
+                XCTAssertEqual(key.remoteKey, "last_updated")
                 XCTAssertFalse(key.requiresRuntimeSorting)
             case .createdAt:
                 XCTAssertNotNil(key.sortDescriptor(isAscending: true))
@@ -74,9 +74,10 @@ final class ChannelListSortingKey_Tests: XCTestCase {
                 XCTAssertEqual(key.remoteKey, "cid")
                 XCTAssertFalse(key.requiresRuntimeSorting)
             case .hasUnread:
-                XCTAssertNil(key.sortDescriptor(isAscending: true))
+                XCTAssertNotNil(key.sortDescriptor(isAscending: false))
+                XCTAssertEqual(key.localKey, "hasUnreadSorting")
                 XCTAssertEqual(key.remoteKey, "has_unread")
-                XCTAssertTrue(key.requiresRuntimeSorting)
+                XCTAssertFalse(key.requiresRuntimeSorting)
             case .unreadCount:
                 XCTAssertNotNil(key.sortDescriptor(isAscending: true))
                 XCTAssertEqual(key.remoteKey, "unread_count")

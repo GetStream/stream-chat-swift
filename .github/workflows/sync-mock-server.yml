@@ -13,11 +13,11 @@ env:
 jobs:
   sync:
     name: Sync
-    runs-on: macos-14
+    runs-on: macos-15
     steps:
     - uses: actions/checkout@v4.1.1
     - uses: ./.github/actions/bootstrap
-    - uses: ./.github/actions/python-cache
+    - uses: ./.github/actions/ruby-cache
     - run: bundle exec fastlane sync_mock_server
       timeout-minutes: 5
       env:
@@ -27,8 +27,7 @@ jobs:
         status: ${{ job.status }}
         text: "You shall not pass!"
         job_name: "${{ github.workflow }}: ${{ github.job }}"
-        fields: message,commit,author,action,workflow,job,took
+        fields: repo,commit,author,workflow
       env:
         SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
-        MATRIX_CONTEXT: ${{ toJson(matrix) }}
       if: failure()

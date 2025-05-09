@@ -62,6 +62,7 @@ public class ChatChannelMember: ChatUser {
         isBanned: Bool,
         isFlaggedByCurrentUser: Bool,
         userRole: UserRole,
+        teamsRole: [String: UserRole]?,
         userCreatedAt: Date,
         userUpdatedAt: Date,
         deactivatedAt: Date?,
@@ -105,6 +106,7 @@ public class ChatChannelMember: ChatUser {
             isBanned: isBanned,
             isFlaggedByCurrentUser: isFlaggedByCurrentUser,
             userRole: userRole,
+            teamsRole: teamsRole,
             createdAt: userCreatedAt,
             updatedAt: userUpdatedAt,
             deactivatedAt: deactivatedAt,
@@ -112,6 +114,50 @@ public class ChatChannelMember: ChatUser {
             teams: teams,
             language: language,
             extraData: extraData
+        )
+    }
+
+    /// Returns a new `ChatChannelMember` with the provided data replaced.
+    /// - Parameters:
+    ///  - name: The new name.
+    ///  - imageURL: The new image URL.
+    ///  - userExtraData: The new extra data for the user.
+    ///  - memberExtraData: The new extra data for the member channel (only related to this channel membership).
+    public func replacing(
+        name: String?,
+        imageURL: URL?,
+        userExtraData: [String: RawJSON]?,
+        memberExtraData: [String: RawJSON]?
+    ) -> ChatChannelMember {
+        .init(
+            id: id,
+            name: name,
+            imageURL: imageURL,
+            isOnline: isOnline,
+            isBanned: isBannedFromChannel,
+            isFlaggedByCurrentUser: isFlaggedByCurrentUser,
+            userRole: userRole,
+            teamsRole: teamsRole,
+            userCreatedAt: userCreatedAt,
+            userUpdatedAt: userUpdatedAt,
+            deactivatedAt: userDeactivatedAt,
+            lastActiveAt: lastActiveAt,
+            teams: teams,
+            language: language,
+            extraData: userExtraData ?? [:],
+            memberRole: memberRole,
+            memberCreatedAt: memberCreatedAt,
+            memberUpdatedAt: memberUpdatedAt,
+            isInvited: isInvited,
+            inviteAcceptedAt: inviteAcceptedAt,
+            inviteRejectedAt: inviteRejectedAt,
+            archivedAt: archivedAt,
+            pinnedAt: pinnedAt,
+            isBannedFromChannel: isBannedFromChannel,
+            banExpiresAt: banExpiresAt,
+            isShadowBannedFromChannel: isShadowBannedFromChannel,
+            notificationsMuted: notificationsMuted,
+            memberExtraData: memberExtraData ?? [:]
         )
     }
 }

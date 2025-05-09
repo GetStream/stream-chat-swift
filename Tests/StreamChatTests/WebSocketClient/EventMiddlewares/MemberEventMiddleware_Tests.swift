@@ -152,6 +152,55 @@ final class MemberEventMiddleware_Tests: XCTestCase {
         // Assert the new member is linked to the query
         XCTAssertEqual(memberListQueryDTO?.members.count, 2)
         XCTAssertEqual(memberListQueryDTO?.members.map(\.user.id).sorted(), [existingMember.user!.id, newMemberId].sorted())
+
+        // Assert the membership is nil
+        let channelDTO = try XCTUnwrap(database.viewContext.channel(cid: cid))
+        XCTAssertNil(channelDTO.membership)
+    }
+
+    func test_memberAddedEvent_whenCurrentUser_addToChannelMembership() throws {
+        try XCTSkipIf(
+            ProcessInfo().operatingSystemVersion.majorVersion < 15,
+            "https://github.com/GetStream/ios-issues-tracking/issues/515"
+        )
+
+        let cid = ChannelId.unique
+        let newMemberId = UserId.unique
+
+        // Create MemberAddedEventDTO payload
+        let eventPayload: EventPayload = .init(
+            eventType: .memberAdded,
+            cid: cid,
+            user: .dummy(userId: newMemberId),
+            memberContainer: .dummy(userId: newMemberId),
+            createdAt: .unique
+        )
+
+        // Create event with payload.
+        let event = try MemberAddedEventDTO(from: eventPayload)
+
+        // Create query
+        let memberListQuery = ChannelMemberListQuery(cid: cid)
+        let channelPayload = dummyPayload(with: cid, numberOfMessages: 0, includeMembership: false)
+        let existingMember = try XCTUnwrap(channelPayload.members.first)
+
+        // Create channel and MemberListQuery in the database.
+        try database.writeSynchronously { session in
+            try session.saveCurrentUser(payload: .dummy(userId: newMemberId, role: .admin))
+            try session.saveChannel(payload: channelPayload)
+            try session.saveMember(payload: existingMember, channelId: cid, query: memberListQuery, cache: nil)
+        }
+
+        // Load the ChannelDTO
+        var channelDTO: ChannelDTO? {
+            database.viewContext.channel(cid: cid)
+        }
+
+        // Simulate `MemberAddedEventDTO` event.
+        _ = middleware.handle(event: event, session: database.viewContext)
+
+        // Assert the membership is updated
+        XCTAssertEqual(channelDTO?.membership?.user.id, newMemberId)
     }
 
     func test_memberAddedEvent_doesNotMarkChannelAsRead() throws {

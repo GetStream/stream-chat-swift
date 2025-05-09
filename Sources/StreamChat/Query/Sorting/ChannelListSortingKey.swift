@@ -6,11 +6,11 @@ import Foundation
 
 /// `ChannelListSortingKey` is keys by which you can get sorted channels after query.
 public struct ChannelListSortingKey: SortingKey, Equatable {
-    /// The default sorting is by the last massage date or a channel created date. The same as by `updatedDate`.
+    /// The default sorting is by the last message date or a channel created date if no messages.
     public static let `default` = Self(
         keyPath: \.defaultSortingAt,
         localKey: #keyPath(ChannelDTO.defaultSortingAt),
-        remoteKey: ChannelCodingKeys.updatedAt.rawValue
+        remoteKey: "last_updated"
     )
 
     /// Sort channels by date they were created.
@@ -63,7 +63,7 @@ public struct ChannelListSortingKey: SortingKey, Equatable {
     /// **Note:** If you want to sort by number of unreads, you should use the `unreadCount` sorting key.
     public static let hasUnread = Self(
         keyPath: \.hasUnread,
-        localKey: nil,
+        localKey: #keyPath(ChannelDTO.hasUnreadSorting),
         remoteKey: "has_unread"
     )
 

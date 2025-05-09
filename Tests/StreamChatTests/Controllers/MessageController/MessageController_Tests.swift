@@ -474,7 +474,7 @@ final class MessageController_Tests: XCTestCase {
         let channel = dummyPayload(with: cid)
         let truncatedDate = Date.unique
 
-        var config = ChatClientConfig(apiKey: .init(.anonymous))
+        var config = ChatClientConfig(apiKeyString: .unique)
         config.deletedMessagesVisibility = .visibleForCurrentUser
         client = ChatClient.mock(config: config)
         try client.databaseContainer.createCurrentUser(id: currentUserId)
@@ -512,7 +512,7 @@ final class MessageController_Tests: XCTestCase {
         let channel = dummyPayload(with: cid)
         let truncatedDate = Date.unique
 
-        var config = ChatClientConfig(apiKey: .init(.anonymous))
+        var config = ChatClientConfig(apiKeyString: .unique)
         config.deletedMessagesVisibility = .alwaysHidden
         client = ChatClient.mock(config: config)
         try client.databaseContainer.createCurrentUser(id: currentUserId)
@@ -559,8 +559,10 @@ final class MessageController_Tests: XCTestCase {
         let channel = dummyPayload(with: cid)
         let truncatedDate = Date.unique
 
+        var config = ChatClientConfig(apiKeyString: .unique)
+        config.deletedMessagesVisibility = .alwaysVisible
+        client = .mock(config: config)
         try client.databaseContainer.createCurrentUser(id: currentUserId)
-        client.databaseContainer.viewContext.deletedMessagesVisibility = .alwaysVisible
         controller = ChatMessageController(client: client, cid: cid, messageId: messageId, replyPaginationHandler: replyPaginationHandler, environment: env.controllerEnvironment)
 
         // Save channel
@@ -605,9 +607,9 @@ final class MessageController_Tests: XCTestCase {
         let channel = dummyPayload(with: cid)
         let truncatedDate = Date.unique
 
-        var config = ChatClientConfig(apiKey: .init(.anonymous))
+        var config = ChatClientConfig(apiKeyString: .unique)
         config.shouldShowShadowedMessages = true
-        client = ChatClient.mock(config: config)
+        client = .mock(config: config)
         try client.databaseContainer.createCurrentUser(id: currentUserId)
         controller = ChatMessageController(client: client, cid: cid, messageId: messageId, replyPaginationHandler: replyPaginationHandler, environment: env.controllerEnvironment)
 
@@ -986,6 +988,46 @@ final class MessageController_Tests: XCTestCase {
         XCTAssertEqual(env.messageUpdater.editMessage_extraData, extraData)
     }
 
+    func test_editMessage_whenMessageTransformerIsProvided_callsUpdaterWithTransformedValues() throws {
+        class MockTransformer: StreamModelsTransformer {
+            var mockTransformedMessage = NewMessageTransformableInfo(
+                text: "transformed",
+                attachments: [.mockFile],
+                extraData: ["transformed": true]
+            )
+            func transform(newMessageInfo: NewMessageTransformableInfo) -> NewMessageTransformableInfo {
+                mockTransformedMessage
+            }
+        }
+
+        let transformer = MockTransformer()
+        var config = ChatClientConfig(apiKeyString: .unique)
+        config.modelsTransformer = transformer
+        client = .mock(config: config)
+        controller = ChatMessageController(
+            client: client,
+            cid: cid,
+            messageId: messageId,
+            replyPaginationHandler: replyPaginationHandler,
+            environment: env.controllerEnvironment
+        )
+
+        let exp = expectation(description: "should complete edit message")
+
+        controller.editMessage(
+            text: .unique
+        ) { _ in
+            exp.fulfill()
+        }
+
+        env.messageUpdater.editMessage_completion?(.success(.unique))
+        wait(for: [exp], timeout: defaultTimeout)
+
+        XCTAssertEqual(env.messageUpdater.editMessage_text, transformer.mockTransformedMessage.text)
+        XCTAssertEqual(env.messageUpdater.editMessage_attachments, transformer.mockTransformedMessage.attachments)
+        XCTAssertEqual(env.messageUpdater.editMessage_extraData, transformer.mockTransformedMessage.extraData)
+    }
+
     // MARK: - Flag message
 
     func test_flag_propagatesError() {
@@ -1191,7 +1233,9 @@ final class MessageController_Tests: XCTestCase {
     func test_createNewReply_sendsNewMessagePendingEvent() throws {
         let exp = expectation(description: "should complete create new message")
 
-        let mockedEventNotificationCenter = EventNotificationCenter_Mock(database: .init(kind: .inMemory))
+        let mockedEventNotificationCenter = EventNotificationCenter_Mock(
+            database: .init(kind: .inMemory, chatClientConfig: .init(apiKeyString: .unique))
+        )
         client.mockedEventNotificationCenter = mockedEventNotificationCenter
 
         controller.createNewReply(
@@ -1206,6 +1250,46 @@ final class MessageController_Tests: XCTestCase {
 
         let event = try XCTUnwrap(mockedEventNotificationCenter.mock_process.calls.first?.0.first)
         XCTAssertTrue(event is NewMessagePendingEvent)
+    }
+
+    func test_createNewReply_whenMessageTransformerIsProvided_callsUpdaterWithTransformedValues() throws {
+        class MockTransformer: StreamModelsTransformer {
+            var mockTransformedMessage = NewMessageTransformableInfo(
+                text: "transformed",
+                attachments: [.mockFile],
+                extraData: ["transformed": true]
+            )
+            func transform(newMessageInfo: NewMessageTransformableInfo) -> NewMessageTransformableInfo {
+                mockTransformedMessage
+            }
+        }
+
+        let transformer = MockTransformer()
+        var config = ChatClientConfig(apiKeyString: .unique)
+        config.modelsTransformer = transformer
+        client = .mock(config: config)
+        controller = ChatMessageController(
+            client: client,
+            cid: cid,
+            messageId: messageId,
+            replyPaginationHandler: replyPaginationHandler,
+            environment: env.controllerEnvironment
+        )
+
+        let exp = expectation(description: "should complete create new reply")
+
+        controller.createNewReply(
+            text: .unique
+        ) { _ in
+            exp.fulfill()
+        }
+
+        env.messageUpdater.createNewReply_completion?(.success(.unique))
+        wait(for: [exp], timeout: defaultTimeout)
+
+        XCTAssertEqual(env.messageUpdater.createNewReply_text, transformer.mockTransformedMessage.text)
+        XCTAssertEqual(env.messageUpdater.createNewReply_attachments, transformer.mockTransformedMessage.attachments)
+        XCTAssertEqual(env.messageUpdater.createNewReply_extraData, transformer.mockTransformedMessage.extraData)
     }
 
     // MARK: - Load replies

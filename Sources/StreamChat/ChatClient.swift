@@ -80,6 +80,8 @@ public class ChatClient {
     
     let pollsRepository: PollsRepository
 
+    let draftMessagesRepository: DraftMessagesRepository
+
     let channelListUpdater: ChannelListUpdater
 
     func makeMessagesPaginationStateHandler() -> MessagesPaginationStateHandling {
@@ -94,9 +96,6 @@ public class ChatClient {
 
     /// The `DatabaseContainer` instance `Client` uses to store and cache data.
     let databaseContainer: DatabaseContainer
-
-    /// Used as a bridge to communicate between the host app and the notification extension. Holds the state for the app lifecycle.
-    let extensionLifecycle: NotificationExtensionLifecycle
 
     /// The component responsible to timeout the user connection if it takes more time than the `ChatClientConfig.reconnectionTimeout`.
     var reconnectionTimeoutHandler: StreamTimer?
@@ -208,12 +207,12 @@ public class ChatClient {
         self.messageRepository = messageRepository
         self.syncRepository = syncRepository
         authenticationRepository = authRepository
-        extensionLifecycle = environment.extensionLifecycleBuilder(config.applicationGroupIdentifier)
         channelRepository = environment.channelRepositoryBuilder(
             databaseContainer,
             apiClient
         )
         pollsRepository = environment.pollsRepositoryBuilder(databaseContainer, apiClient)
+        draftMessagesRepository = environment.draftMessagesRepositoryBuilder(databaseContainer, apiClient)
 
         authRepository.delegate = self
         apiClientEncoder.connectionDetailsProviderDelegate = self
@@ -262,7 +261,6 @@ public class ChatClient {
             webSocketClient,
             eventNotificationCenter,
             syncRepository,
-            extensionLifecycle,
             environment.backgroundTaskSchedulerBuilder(),
             environment.internetConnection(eventNotificationCenter, environment.internetMonitor),
             config.staysConnectedInBackground
@@ -341,7 +339,7 @@ public class ChatClient {
                 continuation.resume(with: error)
             }
         }
-        return try makeConnectedUser()
+        return try await retrieveConnectedUser()
     }
 
     /// Connects the client with the given user.
@@ -393,7 +391,7 @@ public class ChatClient {
                 continuation.resume(with: error)
             }
         }
-        return try makeConnectedUser()
+        return try await retrieveConnectedUser()
     }
 
     /// Connects a guest user.
@@ -425,7 +423,7 @@ public class ChatClient {
                 continuation.resume(with: error)
             }
         }
-        return try makeConnectedUser()
+        return try await retrieveConnectedUser()
     }
 
     /// Connects an anonymous user
@@ -449,7 +447,7 @@ public class ChatClient {
                 continuation.resume(with: error)
             }
         }
-        return try makeConnectedUser()
+        return try await retrieveConnectedUser()
     }
     
     /// Sets the user token to the client, this method is only needed to perform API calls
@@ -487,15 +485,33 @@ public class ChatClient {
         }
     }
     
-    /// Disconnects the chat client form the chat servers and removes all the local data related.
+    /// Disconnects the chat client from the chat servers and removes all the local data related.
     @available(*, deprecated, message: "Use the asynchronous version of `logout` for increased safety")
     public func logout() {
         logout {}
     }
 
     /// Disconnects the chat client from the chat servers and removes all the local data related.
-    public func logout(completion: @escaping () -> Void) {
-        authenticationRepository.logOutUser()
+    /// - Parameters:
+    ///  - removeDevice: If `true`, it removes the current device from the user's registered devices automatically.
+    ///  By default it is enabled.
+    public func logout(
+        removeDevice: Bool = true,
+        completion: @escaping () -> Void
+    ) {
+        let currentUserController = currentUserController()
+        if removeDevice, let currentUserDevice = currentUserController.currentUser?.currentDevice {
+            currentUserController.removeDevice(id: currentUserDevice.id) { [weak self] error in
+                if let error {
+                    log.error(error)
+                }
+                self?.authenticationRepository.logOutUser()
+            }
+        }
+
+        if !removeDevice {
+            authenticationRepository.logOutUser()
+        }
 
         // Stop tracking active components
         syncRepository.removeAllTracked()
@@ -580,6 +596,8 @@ public class ChatClient {
             case let .success(payload):
                 let appSettings = payload.asModel()
                 self?.appSettings = appSettings
+                try? self?.backgroundWorker(of: AttachmentQueueUploader.self)
+                    .setAppSettings(appSettings)
                 completion?(.success(appSettings))
             case let .failure(error):
                 completion?(.failure(error))
@@ -616,6 +634,8 @@ public class ChatClient {
                 attachmentPostProcessor: config.uploadedAttachmentPostProcessor
             )
         ]
+        try? backgroundWorker(of: AttachmentQueueUploader.self)
+            .setAppSettings(appSettings)
     }
 
     func completeConnectionIdWaiters(connectionId: String?) {
@@ -646,7 +666,7 @@ public class ChatClient {
 
 extension ChatClient: AuthenticationRepositoryDelegate {
     func logOutUser(completion: @escaping () -> Void) {
-        logout(completion: completion)
+        logout(removeDevice: false, completion: completion)
     }
 
     func didFinishSettingUpAuthenticationEnvironment(for state: EnvironmentState) {
@@ -693,6 +713,15 @@ extension ChatClient: ConnectionDetailsProviderDelegate {
 
     func provideConnectionId(timeout: TimeInterval = 10, completion: @escaping (Result<ConnectionId, Error>) -> Void) {
         connectionRepository.provideConnectionId(timeout: timeout, completion: completion)
+    }
+
+    @discardableResult
+    func provideConnectionId(timeout: TimeInterval = 10) async throws -> ConnectionId {
+        try await withCheckedThrowingContinuation { continuation in
+            provideConnectionId(timeout: timeout) { result in
+                continuation.resume(with: result)
+            }
+        }
     }
 }
 

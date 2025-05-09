@@ -29,11 +29,6 @@ public enum StreamRuntimeCheck {
     
     /// For *internal use* only
     ///
-    /// Enables reusing unchanged converted items in database observers.
-    public static var _isDatabaseObserverItemReusingEnabled = true
-    
-    /// For *internal use* only
-    ///
     /// Core Data prefetches data used for creating immutable model objects (faulting is disabled).
     public static var _isDatabasePrefetchingEnabled = false
 }

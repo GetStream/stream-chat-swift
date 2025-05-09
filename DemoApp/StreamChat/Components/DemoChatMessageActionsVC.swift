@@ -33,6 +33,32 @@ final class DemoChatMessageActionsVC: ChatMessageActionsVC {
 
         return actions
     }
+    
+    override func deleteActionItem() -> ChatMessageActionItem {
+        DeleteActionItem(
+            action: { [weak self] _ in
+                guard let self = self else { return }
+                self.alertsRouter.showMessageDeletionConfirmationAlert { confirmed in
+                    guard confirmed else { return }
+
+                    self.messageController.deleteMessage { _ in
+                        let pollId = self.messageController.message?.poll?.id
+                        if let pollId, AppConfig.shared.demoAppConfig.shouldDeletePollOnMessageDeletion {
+                            let channelController = self.messageController.client.channelController(
+                                for: self.messageController.cid
+                            )
+                            channelController.deletePoll(pollId: pollId) { _ in
+                                self.delegate?.chatMessageActionsVCDidFinish(self)
+                            }
+                        } else {
+                            self.delegate?.chatMessageActionsVCDidFinish(self)
+                        }
+                    }
+                }
+            },
+            appearance: appearance
+        )
+    }
 
     func pinMessageActionItem() -> PinMessageActionItem {
         PinMessageActionItem(
