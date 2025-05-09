@@ -239,6 +239,7 @@ class MessageUpdater: Worker {
                         payload: messagePayload,
                         for: cid,
                         syncOwnReactions: false,
+                        skipDraftUpdate: true,
                         cache: nil
                     )
                     let message = try messageDTO.asModel()

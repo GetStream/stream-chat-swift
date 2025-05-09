@@ -656,7 +656,7 @@ public extension CurrentChatUserControllerDelegate {
 
     func currentUserControllerDidStopSharingLiveLocation(
         _ controller: CurrentChatUserController
-    )
+    ) {}
 
     func currentUserController(
         _ controller: CurrentChatUserController,
