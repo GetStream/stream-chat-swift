@@ -50,11 +50,11 @@ class DemoComposerVC: ComposerVC {
         }
     }
 
-    private func getCurrentLocationInfo(completion: @escaping (LocationAttachmentInfo?) -> Void) {
+    private func getCurrentLocationInfo(completion: @escaping (LocationInfo?) -> Void) {
         locationProvider.getCurrentLocation { [weak self] result in
             switch result {
             case .success(let location):
-                let location = LocationAttachmentInfo(
+                let location = LocationInfo(
                     latitude: location.coordinate.latitude,
                     longitude: location.coordinate.longitude
                 )

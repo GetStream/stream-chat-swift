@@ -300,7 +300,7 @@ public extension CurrentChatUserController {
     /// The updates are throttled to avoid sending too many requests.
     ///
     /// - Parameter location: The new location to be updated.
-    func updateLiveLocation(_ location: LocationAttachmentInfo) {
+    func updateLiveLocation(_ location: LocationInfo) {
         guard let messages = activeLiveLocationMessagesObserver?.items, !messages.isEmpty else {
             return
         }

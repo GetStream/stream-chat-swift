@@ -67,7 +67,7 @@ class DemoAppTabBarController: UITabBarController, CurrentChatUserControllerDele
         threadListVC.tabBarItem.badgeColor = .red
 
         locationProvider.didUpdateLocation = { [weak self] location in
-            let newLocation = LocationAttachmentInfo(
+            let newLocation = LocationInfo(
                 latitude: location.coordinate.latitude,
                 longitude: location.coordinate.longitude
             )

@@ -4,8 +4,8 @@
 
 import Foundation
 
-/// The location attachment information.
-public struct LocationAttachmentInfo {
+/// The location information.
+public struct LocationInfo {
     public var latitude: Double
     public var longitude: Double
     public var extraData: [String: RawJSON]?

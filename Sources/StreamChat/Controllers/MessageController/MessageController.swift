@@ -340,7 +340,7 @@ public class ChatMessageController: DataController, DelegateCallable, DataStoreP
     ///  - location: The new location for the live location attachment.
     ///  - completion: Called when the server updates the message.
     internal func updateLiveLocation(
-        _ location: LocationAttachmentInfo,
+        _ location: LocationInfo,
         completion: ((Result<ChatMessage, Error>) -> Void)? = nil
     ) {
         guard let locationAttachment = message?.liveLocationAttachments.first else {

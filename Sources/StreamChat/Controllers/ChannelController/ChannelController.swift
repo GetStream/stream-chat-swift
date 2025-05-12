@@ -860,7 +860,7 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
     ///  - extraData:  Additional extra data of the message object.
     ///  - completion: Called when saving the message to the local DB finishes, not when the message reaches the server.
     public func sendStaticLocation(
-        _ location: LocationAttachmentInfo,
+        _ location: LocationInfo,
         text: String? = nil,
         messageId: MessageId? = nil,
         quotedMessageId: MessageId? = nil,
@@ -920,7 +920,7 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
     ///  - completion: Called when saving the message to the local DB finishes,
     ///  not when the message reaches the server.
     public func startLiveLocationSharing(
-        _ location: LocationAttachmentInfo,
+        _ location: LocationInfo,
         text: String? = nil,
         extraData: [String: RawJSON] = [:],
         completion: ((Result<MessageId, Error>) -> Void)? = nil
