@@ -69,7 +69,9 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
     private let updater: ChannelUpdater
 
     private let channelMemberUpdater: ChannelMemberUpdater
-    
+
+    private lazy var allEventsController: EventsController = client.eventsController()
+
     private lazy var eventSender: TypingEventsSender = self.environment.eventSenderBuilder(
         client.databaseContainer,
         client.apiClient
@@ -843,6 +845,8 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
         }
     }
 
+    var createLocalMessageCompletion: ((Result<ChatMessage, Error>) -> Void)?
+
     /// Creates a new message locally only.
     ///
     /// - Parameters:
@@ -865,6 +869,8 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
         extraData: [String: RawJSON] = [:],
         completion: @escaping ((Result<ChatMessage, Error>) -> Void)
     ) {
+        allEventsController.delegate = self
+
         /// Perform action only if channel is already created on backend side and have a valid `cid`.
         guard let cid = cid, isChannelAlreadyCreated else {
             channelModificationFailed { error in
@@ -875,6 +881,8 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
 
         /// Send stop typing event.
         eventSender.stopTyping(in: cid, parentMessageId: nil)
+
+        createLocalMessageCompletion = completion
 
         updater.createLocalMessage(
             with: messageId,
@@ -888,7 +896,14 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
             extraData: extraData
         ) { result in
             self.callback {
-                completion?(result)
+                if attachments.isEmpty {
+                    self.createLocalMessageCompletion?(result)
+                    self.createLocalMessageCompletion = nil
+                }
+            }
+        }
+    }
+
     public func publishMessage(
         _ message: ChatMessage,
         completion: ((Result<ChatMessage, Error>) -> Void)? = nil
@@ -1686,6 +1701,19 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
         dataStore.database.write { session in
             let channelDTO = session.channel(cid: cid)
             channelDTO?.cleanAllMessagesExcludingLocalOnly()
+        }
+    }
+}
+
+extension ChatChannelController: EventsControllerDelegate {
+    public func eventsController(_ controller: EventsController, didReceiveEvent event: any Event) {
+        if let didFinishUploadAttachmentsEvent = event as? AllAttachmentsUploadedEvent {
+            if let createLocalMessageCompletion = self.createLocalMessageCompletion {
+                callback {
+                    createLocalMessageCompletion(.success(didFinishUploadAttachmentsEvent.message))
+                    self.createLocalMessageCompletion = nil
+                }
+            }
         }
     }
 }
