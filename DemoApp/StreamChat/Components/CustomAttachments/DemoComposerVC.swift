@@ -6,7 +6,7 @@ import StreamChat
 import StreamChatUI
 import UIKit
 
-class DemoComposerVC: ComposerVC {
+class DemoComposerVC: ComposerVC, EventsControllerDelegate {
     /// For demo purposes the locations are hard-coded.
     var dummyLocations: [(latitude: Double, longitude: Double)] = [
         (38.708442, -9.136822), // Lisbon, Portugal
@@ -23,6 +23,14 @@ class DemoComposerVC: ComposerVC {
         (48.2082, 16.3738), // Vienna, Austria
         (47.4979, 19.0402) // Budapest, Hungary
     ]
+
+    lazy var eventsController = channelController?.client.eventsController()
+
+    override func viewDidLoad() {
+        super.viewDidLoad()
+
+        eventsController?.delegate = self
+    }
 
     override var attachmentsPickerActions: [UIAlertAction] {
         var actions = super.attachmentsPickerActions
@@ -52,6 +60,27 @@ class DemoComposerVC: ComposerVC {
 //        channelController?.createNewMessage(text: "", attachments: [.init(
 //            payload: locationAttachmentPayload
 //        )])
+    }
+
+    override func createNewMessage(text: String) {
+        if content.command != nil {
+            super.createNewMessage(text: text)
+            return
+        }
+
+        channelController?.createLocalMessage(
+            text: text,
+            attachments: content.attachments
+        ) { result in
+        ) { [weak self] result in
+            guard let message = try? result.get() else { return }
+            self?.channelController?.publishMessage(message)
+        }
+    }
+
+    func eventsController(_ controller: EventsController, didReceiveEvent event: any Event) {
+        guard let attachmentsUploadedFinished = event as? NewMessageAttachmentsUploaded else { return }
+        print("attachmentsFinished", attachmentsUploadedFinished)
     }
 }
 

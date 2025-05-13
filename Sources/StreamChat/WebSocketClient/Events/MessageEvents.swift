@@ -241,6 +241,10 @@ public struct NewMessagePendingEvent: Event {
     public var message: ChatMessage
 }
 
+public struct AllAttachmentsUploadedEvent: Event {
+    public var message: ChatMessage
+}
+
 // Triggered when a message failed being sent.
 public struct NewMessageErrorEvent: Event {
     public let messageId: MessageId

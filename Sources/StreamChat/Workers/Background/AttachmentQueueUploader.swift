@@ -26,6 +26,7 @@ class AttachmentQueueUploader: Worker {
     private let attachmentPostProcessor: UploadedAttachmentPostProcessor?
     private let attachmentUpdater = AnyAttachmentUpdater()
     private let attachmentStorage = AttachmentStorage()
+    private let eventCenter: EventNotificationCenter
     private var continuations = [AttachmentId: CheckedContinuation<UploadedAttachment, Error>]()
     private let queue = DispatchQueue(label: "co.getStream.ChatClient.AttachmentQueueUploader", target: .global(qos: .utility))
     private var fileUploadConfig: AppSettings.UploadConfig?
@@ -33,13 +34,19 @@ class AttachmentQueueUploader: Worker {
 
     var minSignificantUploadingProgressChange: Double = 0.05
 
-    init(database: DatabaseContainer, apiClient: APIClient, attachmentPostProcessor: UploadedAttachmentPostProcessor?) {
+    init(
+        database: DatabaseContainer,
+        apiClient: APIClient,
+        attachmentPostProcessor: UploadedAttachmentPostProcessor?,
+        eventCenter: EventNotificationCenter
+    ) {
         observer = StateLayerDatabaseObserver(
             context: database.backgroundReadOnlyContext,
             fetchRequest: AttachmentDTO.pendingUploadFetchRequest()
         )
         
         self.attachmentPostProcessor = attachmentPostProcessor
+        self.eventCenter = eventCenter
 
         super.init(database: database, apiClient: apiClient)
 
@@ -216,12 +223,17 @@ class AttachmentQueueUploader: Worker {
 
             // When all attachments finish uploading, mark message pending send
             if newState == .uploaded {
-                let allAttachmentsAreUploaded = message.attachments.filter { $0.localState != .uploaded }.isEmpty
+                let allAttachmentsAreUploaded = message.attachments
+                    .filter { $0.localState != .uploaded }
+                    .isEmpty
+
                 // We only want to make a message to be resent when it is in failed state
                 // If we did not check the state, when editing a message, it would resend an existing message
                 if allAttachmentsAreUploaded && message.localMessageState == .sendingFailed {
                     message.localMessageState = .pendingSend
                 }
+
+                self?.eventCenter.process(AllAttachmentsUploadedEvent(message: try message.asModel()))
             }
             
             // If attachment failed upload, mark message as failed

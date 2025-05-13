@@ -232,6 +232,7 @@
         <attribute name="reactionScores" attributeType="Transformable" valueTransformerName="NSSecureUnarchiveFromData"/>
         <attribute name="replyCount" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="restrictedVisibility" optional="YES" attributeType="Transformable" valueTransformerName="NSSecureUnarchiveFromDataTransformer"/>
+        <attribute name="shouldBeQueuedToServer" attributeType="Boolean" defaultValueString="YES" usesScalarValueType="YES"/>
         <attribute name="showInsideThread" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
         <attribute name="showReplyInChannel" attributeType="Boolean" usesScalarValueType="YES"/>
         <attribute name="skipEnrichUrl" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
