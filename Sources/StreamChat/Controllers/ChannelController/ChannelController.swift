@@ -904,11 +904,30 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
         }
     }
 
+    public func updateLocalMessage(
+        messageId: MessageId,
+        text: String?,
+        error: Error? = nil,
+        extraData: [String: RawJSON] = [:],
+        completion: ((Result<ChatMessage, Error>) -> Void)? = nil
+    ) {
+        updater.updateLocalMessage(
+            id: messageId,
+            text: text,
+            error: error,
+            extraData: extraData
+        ) { result in
+            self.callback {
+                completion?(result)
+            }
+        }
+    }
+
     public func publishMessage(
         _ message: ChatMessage,
         completion: ((Result<ChatMessage, Error>) -> Void)? = nil
     ) {
-        updater.messageRepository.sendMessage(with: message.id) { result in
+        updater.messageRepository.sendMessage(with: message.id, ignoreCurrentState: true) { result in
             self.callback {
                 switch result {
                 case .success(let message):

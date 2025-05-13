@@ -471,18 +471,29 @@ class ChannelUpdater: Worker {
     /// Updates a message which is local only.
     func updateLocalMessage(
         id: MessageId,
-        text: String,
-        type: MessageType,
-        state: LocalMessageState,
-        extraData: [String: RawJSON]?
+        text: String?,
+        error: Error? = nil,
+        extraData: [String: RawJSON]?,
+        completion: ((Result<ChatMessage, Error>) -> Void)? = nil
     ) {
-        database.write { (session) in
-            let dto = session.message(id: id)
-            dto?.text = text
-            dto?.localMessageState = state
-            dto?.type = type.rawValue
+        database.write({ (session) in
+            guard let dto = session.message(id: id) else {
+                throw ClientError.MessageDoesNotExist(messageId: id)
+            }
+            if let text {
+                dto.text = text
+            }
+            if let error {
+                dto.localMessageState = .sendingFailed
+            }
             if let extraData {
-                dto?.extraData = try JSONEncoder.default.encode(extraData)
+                dto.extraData = try JSONEncoder.default.encode(extraData)
+            }
+            let newMessage = try dto.asModel()
+            completion?(.success(newMessage))
+        }) { error in
+            if let error {
+                completion?(.failure(error))
             }
         }
     }

@@ -59,8 +59,21 @@ class DemoComposerVC: ComposerVC {
             text: text,
             attachments: content.attachments
         ) { [weak self] result in
-            guard let message = try? result.get() else { return }
-            self?.channelController?.publishMessage(message)
+            guard let message = try? result.get() else {
+                return
+            }
+            self?.channelController?.publishMessage(message) { result in
+                switch result {
+                case .failure(let error):
+                    self?.channelController?.updateLocalMessage(
+                        messageId: message.id,
+                        text: nil,
+                        error: error
+                    )
+                case .success:
+                    break
+                }
+            }
         }
     }
 }
