@@ -378,6 +378,7 @@ class ChannelUpdater: Worker {
         skipEnrichUrl: Bool,
         restrictedVisibility: [UserId] = [],
         poll: PollPayload? = nil,
+        location: LocationRequestPayload? = nil,
         extraData: [String: RawJSON],
         completion: ((Result<ChatMessage, Error>) -> Void)? = nil
     ) {

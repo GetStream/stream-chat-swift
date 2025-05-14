@@ -4,6 +4,38 @@
 
 import Foundation
 
+struct LocationResponsePayload: Decodable {
+    let channelId: ChannelId
+    let messageId: MessageId
+    let latitude: Double
+    let longitude: Double
+    let endAt: Date?
+    let createdByDeviceId: String
+
+    enum CodingKeys: String, CodingKey {
+        case channelId = "channel_cid"
+        case messageId = "message_id"
+        case latitude
+        case longitude
+        case createdByDeviceId = "created_by_device_id"
+        case endAt = "end_at"
+    }
+}
+
+struct LocationRequestPayload: Encodable {
+    let latitude: Double
+    let longitude: Double
+    let endAt: Date?
+    let createdByDeviceId: String
+
+    enum CodingKeys: String, CodingKey {
+        case latitude
+        case longitude
+        case endAt = "end_at"
+        case createdByDeviceId = "created_by_device_id"
+    }
+}
+
 /// A type alias for an attachment with `LiveLocationAttachmentPayload` payload type.
 ///
 /// Live location attachments are used to represent a live location sharing in a chat message.

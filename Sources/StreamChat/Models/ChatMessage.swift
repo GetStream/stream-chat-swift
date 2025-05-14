@@ -178,6 +178,9 @@ public struct ChatMessage {
     /// Optional poll that is part of the message.
     public let poll: Poll?
 
+    /// The location information of the message.
+    public let location: LocationInfo?
+
     init(
         id: MessageId,
         cid: ChannelId?,

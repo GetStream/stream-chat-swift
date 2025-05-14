@@ -176,6 +176,20 @@
             </uniquenessConstraint>
         </uniquenessConstraints>
     </entity>
+    <entity name="LocationDTO" representedClassName="LocationDTO" syncable="YES">
+        <attribute name="channelId" optional="YES" attributeType="String"/>
+        <attribute name="deviceId" optional="YES" attributeType="String"/>
+        <attribute name="endAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="latitude" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
+        <attribute name="longitude" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
+        <attribute name="messageId" optional="YES" attributeType="String"/>
+        <relationship name="message" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="MessageDTO" inverseName="location" inverseEntity="MessageDTO"/>
+        <uniquenessConstraints>
+            <uniquenessConstraint>
+                <constraint value="messageId"/>
+            </uniquenessConstraint>
+        </uniquenessConstraints>
+    </entity>
     <entity name="MemberDTO" representedClassName="MemberDTO" syncable="YES">
         <attribute name="archivedAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="banExpiresAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
@@ -249,6 +263,7 @@
         <relationship name="draftOfThread" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="MessageDTO" inverseName="draftReply" inverseEntity="MessageDTO"/>
         <relationship name="draftReply" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="MessageDTO" inverseName="draftOfThread" inverseEntity="MessageDTO"/>
         <relationship name="flaggedBy" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="CurrentUserDTO" inverseName="flaggedMessages" inverseEntity="CurrentUserDTO"/>
+        <relationship name="location" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="LocationDTO" inverseName="message" inverseEntity="LocationDTO"/>
         <relationship name="mentionedUsers" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="UserDTO" inverseName="mentionedMessages" inverseEntity="UserDTO"/>
         <relationship name="moderationDetails" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="MessageModerationDetailsDTO" inverseName="message" inverseEntity="MessageModerationDetailsDTO"/>
         <relationship name="parentMessage" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="MessageDTO" inverseName="replies" inverseEntity="MessageDTO"/>

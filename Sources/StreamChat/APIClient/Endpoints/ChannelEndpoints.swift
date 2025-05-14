@@ -135,7 +135,12 @@ extension Endpoint {
         )
     }
 
-    static func sendMessage(cid: ChannelId, messagePayload: MessageRequestBody, skipPush: Bool, skipEnrichUrl: Bool)
+    static func sendMessage(
+        cid: ChannelId,
+        messagePayload: MessageRequestBody,
+        skipPush: Bool,
+        skipEnrichUrl: Bool
+    )
         -> Endpoint<MessagePayload.Boxed> {
         let body: [String: AnyEncodable] = [
             "message": AnyEncodable(messagePayload),
