@@ -67,6 +67,9 @@ public struct ChatClientConfig {
     /// An object that provides a way to transform Stream Chat models.
     public var modelsTransformer: StreamModelsTransformer?
 
+    /// An object that provides a way to intercept messages before sending them to the server.
+    public var sendMessageInterceptor: SendMessageInterceptor?
+
     /// Advanced settings for the local caching and model serialization.
     public var localCaching = LocalCaching()
 
