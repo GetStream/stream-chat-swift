@@ -88,6 +88,12 @@ class MessageDTO: NSManagedObject {
     @NSManaged var draftReply: MessageDTO?
     @NSManaged var isDraft: Bool
 
+    /// Whether if the message should be automatically queued and published to the server.
+    /// If it is false, the app is responsible to publish it.
+    /// (At the moment, we do not expose the publish only call, for now
+    /// this only used for creating local messages only)
+    @NSManaged var shouldBeQueuedToServer: Bool
+
     /// If the message is sent by the current user, this field
     /// contains channel reads of other channel members (excluding the current user),
     /// where `read.lastRead >= self.createdAt`.
@@ -159,7 +165,8 @@ class MessageDTO: NSManagedObject {
         )
         request.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [
             pendingSendMessage,
-            allAttachmentsAreUploadedOrEmptyPredicate()
+            allAttachmentsAreUploadedOrEmptyPredicate(),
+            automaticallyQueuedMessagesPredicate()
         ])
 
         return request
@@ -171,7 +178,8 @@ class MessageDTO: NSManagedObject {
         request.sortDescriptors = [NSSortDescriptor(keyPath: \MessageDTO.locallyCreatedAt, ascending: true)]
         request.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [
             NSPredicate(format: "localMessageStateRaw == %@", LocalMessageState.pendingSync.rawValue),
-            allAttachmentsAreUploadedOrEmptyPredicate()
+            allAttachmentsAreUploadedOrEmptyPredicate(),
+            automaticallyQueuedMessagesPredicate()
         ])
 
         return request
@@ -269,6 +277,10 @@ class MessageDTO: NSManagedObject {
             .init(format: "channel.truncatedAt == nil"),
             .init(format: "createdAt >= channel.truncatedAt")
         ])
+    }
+
+    private static func automaticallyQueuedMessagesPredicate() -> NSPredicate {
+        .init(format: "\(#keyPath(MessageDTO.shouldBeQueuedToServer)) == YES")
     }
 
     /// Returns predicate for the channel preview message.
@@ -567,7 +579,10 @@ class MessageDTO: NSManagedObject {
     static func loadSendingMessages(context: NSManagedObjectContext) -> [MessageDTO] {
         let request = NSFetchRequest<MessageDTO>(entityName: MessageDTO.entityName)
         request.sortDescriptors = [NSSortDescriptor(keyPath: \MessageDTO.locallyCreatedAt, ascending: false)]
-        request.predicate = NSPredicate(format: "localMessageStateRaw == %@", LocalMessageState.sending.rawValue)
+        request.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [
+            NSPredicate(format: "localMessageStateRaw == %@", LocalMessageState.sending.rawValue),
+            automaticallyQueuedMessagesPredicate()
+        ])
         return load(by: request, context: context)
     }
     

@@ -23,6 +23,7 @@ class MessageRepository {
 
     func sendMessage(
         with messageId: MessageId,
+        ignoreCurrentState: Bool = false,
         completion: @escaping (Result<ChatMessage, MessageRepositoryError>) -> Void
     ) {
         // Check the message with the given id is still in the DB.
@@ -34,7 +35,7 @@ class MessageRepository {
             }
 
             // Check the message still have `pendingSend` state.
-            guard dto.localMessageState == .pendingSend else {
+            if dto.localMessageState != .pendingSend && !ignoreCurrentState {
                 log.info("Skipping sending message with id \(dto.id) because it doesn't have `pendingSend` local state.")
                 completion(.failure(.messageNotPendingSend))
                 return

@@ -55,6 +55,30 @@ final class DemoChatMessageActionsVC: ChatMessageActionsVC {
         )
     }
 
+    override func resendActionItem() -> ChatMessageActionItem {
+        ResendActionItem(
+            action: { [weak self] _ in
+                guard let self = self else { return }
+                guard let message = message, let cid = message.cid else { return }
+                let channelController = self.messageController.client.channelController(for: cid)
+                channelController.publishMessage(message) { result in
+                    self.delegate?.chatMessageActionsVCDidFinish(self)
+                    switch result {
+                    case .failure(let error):
+                        channelController.updateLocalMessage(
+                            messageId: message.id,
+                            text: nil,
+                            error: error
+                        )
+                    case .success:
+                        break
+                    }
+                }
+            },
+            appearance: appearance
+        )
+    }
+
     func pinMessageActionItem() -> PinMessageActionItem {
         PinMessageActionItem(
             title: message?.isPinned == false ? "Pin to Conversation" : "Unpin from Conservation",

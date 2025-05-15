@@ -23,7 +23,7 @@ class DemoComposerVC: ComposerVC {
         (48.2082, 16.3738), // Vienna, Austria
         (47.4979, 19.0402) // Budapest, Hungary
     ]
-
+    
     override var attachmentsPickerActions: [UIAlertAction] {
         var actions = super.attachmentsPickerActions
         
@@ -52,6 +52,29 @@ class DemoComposerVC: ComposerVC {
 //        channelController?.createNewMessage(text: "", attachments: [.init(
 //            payload: locationAttachmentPayload
 //        )])
+    }
+
+    override func createNewMessage(text: String) {
+        channelController?.createLocalMessage(
+            text: text,
+            attachments: content.attachments
+        ) { [weak self] result in
+            guard let message = try? result.get() else {
+                return
+            }
+            self?.channelController?.publishMessage(message) { result in
+                switch result {
+                case .failure(let error):
+                    self?.channelController?.updateLocalMessage(
+                        messageId: message.id,
+                        text: nil,
+                        error: error
+                    )
+                case .success:
+                    break
+                }
+            }
+        }
     }
 }
 

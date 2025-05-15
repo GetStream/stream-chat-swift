@@ -7,7 +7,7 @@ import Foundation
 /// Makes a channel query call to the backend and updates the local storage with the results.
 class ChannelUpdater: Worker {
     private let channelRepository: ChannelRepository
-    private let messageRepository: MessageRepository
+    let messageRepository: MessageRepository
     let paginationStateHandler: MessagesPaginationStateHandling
 
     init(
@@ -414,6 +414,86 @@ class ChannelUpdater: Worker {
                 completion?(.success(message))
             } else {
                 completion?(.failure(error ?? ClientError.Unknown()))
+            }
+        }
+    }
+
+    /// Creates a message only in the local DB.
+    func createLocalMessage(
+        with messageId: MessageId?,
+        in cid: ChannelId,
+        text: String,
+        attachments: [AnyAttachmentPayload] = [],
+        mentionedUserIds: [UserId],
+        quotedMessageId: MessageId?,
+        skipPush: Bool,
+        skipEnrichUrl: Bool,
+        extraData: [String: RawJSON],
+        completion: ((Result<ChatMessage, Error>) -> Void)? = nil
+    ) {
+        database.write({ (session) in
+            let newMessageDTO = try session.createNewMessage(
+                in: cid,
+                messageId: messageId,
+                text: text,
+                pinning: nil,
+                command: nil,
+                arguments: nil,
+                parentMessageId: nil,
+                attachments: attachments,
+                mentionedUserIds: mentionedUserIds,
+                showReplyInChannel: false,
+                isSilent: false,
+                isSystem: false,
+                quotedMessageId: quotedMessageId,
+                createdAt: nil,
+                skipPush: skipPush,
+                skipEnrichUrl: skipEnrichUrl,
+                poll: nil,
+                restrictedVisibility: [],
+                extraData: extraData
+            )
+            if quotedMessageId != nil {
+                newMessageDTO.showInsideThread = true
+            }
+            newMessageDTO.type = MessageType.regular.rawValue
+            newMessageDTO.localMessageState = .sending
+            newMessageDTO.shouldBeQueuedToServer = false
+            let newMessage = try newMessageDTO.asModel()
+            completion?(.success(newMessage))
+        }) { error in
+            if let error {
+                completion?(.failure(error))
+            }
+        }
+    }
+
+    /// Updates a message which is local only.
+    func updateLocalMessage(
+        id: MessageId,
+        text: String?,
+        error: Error? = nil,
+        extraData: [String: RawJSON]?,
+        completion: ((Result<ChatMessage, Error>) -> Void)? = nil
+    ) {
+        database.write({ (session) in
+            guard let dto = session.message(id: id) else {
+                throw ClientError.MessageDoesNotExist(messageId: id)
+            }
+            if let text {
+                dto.text = text
+            }
+            if let error {
+                dto.localMessageState = .sendingFailed
+            }
+            if let extraData {
+                dto.extraData = try JSONEncoder.default.encode(extraData)
+            }
+            let newMessage = try dto.asModel()
+            completion?(.success(newMessage))
+        }) { error in
+            if let error {
+                completion?(.failure(error))
             }
         }
     }

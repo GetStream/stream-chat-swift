@@ -629,7 +629,8 @@ public class ChatClient {
             AttachmentQueueUploader(
                 database: databaseContainer,
                 apiClient: apiClient,
-                attachmentPostProcessor: config.uploadedAttachmentPostProcessor
+                attachmentPostProcessor: config.uploadedAttachmentPostProcessor,
+                eventCenter: eventNotificationCenter
             )
         ]
         try? backgroundWorker(of: AttachmentQueueUploader.self)
