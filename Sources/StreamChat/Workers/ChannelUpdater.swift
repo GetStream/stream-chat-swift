@@ -457,7 +457,7 @@ class ChannelUpdater: Worker {
                 newMessageDTO.showInsideThread = true
             }
             newMessageDTO.type = MessageType.regular.rawValue
-            newMessageDTO.localMessageState = .pendingSend
+            newMessageDTO.localMessageState = .sending
             newMessageDTO.shouldBeQueuedToServer = false
             let newMessage = try newMessageDTO.asModel()
             completion?(.success(newMessage))
