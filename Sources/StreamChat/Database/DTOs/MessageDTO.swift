@@ -876,9 +876,6 @@ extension NSManagedObjectContext: MessageDatabaseSession {
         let cid = try ChannelId(cid: channelDTO.cid)
         let dto = MessageDTO.loadOrCreate(id: payload.id, context: self, cache: cache)
 
-        if dto.localMessageState == .pendingSend || dto.localMessageState == .pendingSync {
-            return dto
-        }
         // Local text edit before receiving the WS event
         if let localDate = dto.textUpdatedAt?.bridgeDate,
            let payloadDate = payload.messageTextUpdatedAt,
