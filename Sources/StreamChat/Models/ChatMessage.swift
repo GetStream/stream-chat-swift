@@ -261,11 +261,132 @@ public struct ChatMessage {
         self.draftReply = draftReply
     }
 
+    /// Returns a new `ChatMessage` with the provided data changed.
+    ///
+    /// If the provided data is `nil`, it will keep the original value.
+    public func changing(
+        text: String? = nil,
+        type: MessageType? = nil,
+        state: LocalMessageState? = nil,
+        command: String? = nil,
+        arguments: String? = nil,
+        attachments: [AnyChatMessageAttachment]? = nil,
+        translations: [TranslationLanguage: String]? = nil,
+        originalLanguage: TranslationLanguage? = nil,
+        moderationDetails: MessageModerationDetails? = nil,
+        extraData: [String: RawJSON]? = nil
+    ) -> ChatMessage {
+        .init(
+            id: id,
+            cid: cid,
+            text: text ?? self.text,
+            type: type ?? self.type,
+            command: command ?? self.command,
+            createdAt: createdAt,
+            locallyCreatedAt: locallyCreatedAt,
+            updatedAt: updatedAt,
+            deletedAt: deletedAt,
+            arguments: arguments ?? self.arguments,
+            parentMessageId: parentMessageId,
+            showReplyInChannel: showReplyInChannel,
+            replyCount: replyCount,
+            extraData: extraData ?? self.extraData,
+            quotedMessage: quotedMessage,
+            isBounced: isBounced,
+            isSilent: isSilent,
+            isShadowed: isShadowed,
+            reactionScores: reactionScores,
+            reactionCounts: reactionCounts,
+            reactionGroups: reactionGroups,
+            author: author,
+            mentionedUsers: mentionedUsers,
+            threadParticipants: threadParticipants,
+            attachments: attachments ?? allAttachments,
+            latestReplies: latestReplies,
+            localState: localState,
+            isFlaggedByCurrentUser: isFlaggedByCurrentUser,
+            latestReactions: latestReactions,
+            currentUserReactions: currentUserReactions,
+            isSentByCurrentUser: isSentByCurrentUser,
+            pinDetails: pinDetails,
+            translations: translations ?? self.translations,
+            originalLanguage: originalLanguage ?? self.originalLanguage,
+            moderationDetails: moderationDetails ?? self.moderationDetails,
+            readBy: readBy,
+            poll: poll,
+            textUpdatedAt: textUpdatedAt,
+            draftReply: draftReply
+        )
+    }
+
     /// Returns a new `ChatMessage` with the provided data replaced.
+    ///
+    /// If the provided data is `nil`, it will overwrite the existing value with `nil`.
+    /// If you want to keep the original data, use the original object data, example:
+    ///
+    /// ```swift
+    /// /// Updating only the text of the message
+    /// let newMessage = oldMessage.replacing(
+    ///     text: "New text"
+    ///     extraData: oldMessage.extraData,
+    ///     attachments: oldMessage.attachments
+    /// )
+    ///
+    /// /// Updating the text and removing the attachments
+    /// let newMessage = oldMessage.replacing(
+    ///    text: "New text",
+    ///    extraData: oldMessage.extraData,
+    ///    attachments: nil
+    /// )
+    /// ```
     public func replacing(
         text: String?,
         extraData: [String: RawJSON]?,
         attachments: [AnyChatMessageAttachment]?
+    ) -> ChatMessage {
+        replacing(
+            text: text,
+            type: type,
+            state: localState,
+            command: command,
+            arguments: arguments,
+            attachments: attachments,
+            translations: translations,
+            originalLanguage: originalLanguage,
+            moderationDetails: moderationDetails,
+            extraData: extraData
+        )
+    }
+    
+    /// Returns a new `ChatMessage` with the provided data replaced.
+    ///
+    /// If the provided data is `nil`, it will overwrite the existing value with `nil`.
+    /// If you want to keep the original data, use the original object data.
+    ///
+    /// - Parameters:
+    ///   - text: The new text of the message. If `nil`, the text will be empty.
+    ///   - type: The new type of the message. If `nil`, the type will be `.regular`.
+    ///   - state: The new local state of the message. If `nil`, the local state will be empty
+    ///   which means the message is published to the server.
+    ///   - command: The new command of the message. If `nil`, the command will be empty.
+    ///   - arguments: The new arguments of the message. If `nil`, the arguments will be empty.
+    ///   - attachments: The new attachments of the message. If `nil`, the attachments will be empty.
+    ///   - translations: The new translations of the message. If `nil`, the translations will be empty.
+    ///   - originalLanguage: The original language of the message. If `nil`, the original language will be empty.
+    ///   - moderationDetails: The new moderation details of the message. If `nil`, the moderation details will be empty.
+    ///   - extraData: The new extra data of the message. If `nil`, the extra data will be empty.
+    /// - Returns: The message with the updated data.
+    public func replacing(
+        text: String?,
+        type: MessageType,
+        state: LocalMessageState?,
+        command: String?,
+        arguments: String?,
+        attachments: [AnyChatMessageAttachment]?,
+        translations: [TranslationLanguage: String]?,
+        originalLanguage: TranslationLanguage?,
+        moderationDetails: MessageModerationDetails?,
+        extraData: [String: RawJSON]?
     ) -> ChatMessage {
         .init(
             id: id,
@@ -294,7 +415,7 @@ public struct ChatMessage {
             threadParticipants: threadParticipants,
             attachments: attachments ?? [],
             latestReplies: latestReplies,
-            localState: localState,
+            localState: state,
             isFlaggedByCurrentUser: isFlaggedByCurrentUser,
             latestReactions: latestReactions,
             currentUserReactions: currentUserReactions,
