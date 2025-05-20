@@ -50,6 +50,17 @@ extension Endpoint {
         )
     }
 
+    static func partialUpdateMessage(messageId: MessageId, request: MessagePartialUpdateRequest)
+        -> Endpoint<MessagePayload.Boxed> {
+        .init(
+            path: .editMessage(messageId),
+            method: .put,
+            queryItems: nil,
+            requiresConnectionId: false,
+            body: request
+        )
+    }
+
     static func loadReplies(messageId: MessageId, pagination: MessagesPagination)
         -> Endpoint<MessageRepliesPayload> {
         .init(
@@ -98,7 +109,7 @@ extension Endpoint {
 
 struct MessagePartialUpdateRequest: Encodable {
     var set: SetProperties?
-    var unset: [String]? = []
+    var unset: [String]? = nil
     var skipEnrichUrl: Bool?
     var userId: String?
     var user: UserRequestBody?
@@ -106,6 +117,24 @@ struct MessagePartialUpdateRequest: Encodable {
     /// The available message properties that can be updated.
     struct SetProperties: Encodable {
         var pinned: Bool?
+        var text: String?
+        var extraData: [String: RawJSON]?
+        var attachments: [MessageAttachmentPayload]?
+
+        enum CodingKeys: String, CodingKey {
+            case text
+            case pinned
+            case extraData
+            case attachments
+        }
+
+        func encode(to encoder: any Encoder) throws {
+            var container = encoder.container(keyedBy: CodingKeys.self)
+            try container.encodeIfPresent(text, forKey: .text)
+            try container.encodeIfPresent(pinned, forKey: .pinned)
+            try container.encodeIfPresent(attachments, forKey: .attachments)
+            try extraData?.encode(to: encoder)
+        }
     }
     
     func encode(to encoder: Encoder) throws {

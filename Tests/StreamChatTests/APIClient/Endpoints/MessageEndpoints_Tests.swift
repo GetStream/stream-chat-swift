@@ -189,4 +189,28 @@ final class MessageEndpoints_Tests: XCTestCase {
         XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
         XCTAssertEqual("messages/\(messageId)/translate", endpoint.path.value)
     }
+
+    func test_partialUpdateMessage_buildsCorrectly() {
+        let messageId: MessageId = .unique
+        let request = MessagePartialUpdateRequest(
+            set: .init(pinned: false, text: .unique),
+            unset: ["custom_text"],
+            skipEnrichUrl: true
+        )
+
+        let expectedEndpoint = Endpoint<MessagePayload.Boxed>(
+            path: .editMessage(messageId),
+            method: .put,
+            queryItems: nil,
+            requiresConnectionId: false,
+            body: request
+        )
+
+        // Build endpoint
+        let endpoint: Endpoint<MessagePayload.Boxed> = .partialUpdateMessage(messageId: messageId, request: request)
+
+        // Assert endpoint is built correctly
+        XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
+        XCTAssertEqual("messages/\(messageId)", endpoint.path.value)
+    }
 }

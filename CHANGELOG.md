@@ -4,6 +4,22 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 # Upcoming
 
 ## StreamChat
+### ✅ Added
+- Add `ChatMessageController.partialUpdateMessage()` [#3531](https://github.com/GetStream/stream-chat-swift/pull/3531)
+- Add Static Location Attachment Support [#3531](https://github.com/GetStream/stream-chat-swift/pull/3531)
+  - Add `ChatMessageStaticLocationAttachment` and `StaticLocationAttachmentPayload`
+  - Add `ChatMessage.staticLocationAttachments`
+  - Add `ChatChannelController.sendStaticLocation()`
+- Add Live Location Attachment Support [#3531](https://github.com/GetStream/stream-chat-swift/pull/3531)
+  - Add `ChatMessageLiveLocationAttachment` and `LiveLocationAttachmentPayload`
+  - Add `ChatMessage.liveLocationAttachments`
+  - Add `ChatChannelController.startLiveLocationSharing()`
+  - Add `ChatChannelController.stopLiveLocationSharing()`  
+  - Add `ChatMessageController.stopLiveLocationSharing()`
+  - Add `CurrentChatUserController.updateLiveLocation()`
+  - Add `CurrentChatUserControllerDelegate.didStartSharingLiveLocation()`
+  - Add `CurrentChatUserControllerDelegate.didStopSharingLiveLocation()`
+  - Add `CurrentChatUserControllerDelegate.didChangeActiveLiveLocationMessages()`
 ### 🐞 Fixed
 - Fix swipe to reply enabled when quoting a message is disabled [#3662](https://github.com/GetStream/stream-chat-swift/pull/3662)
 - Fix shadowed messages increasing the channel messages unread count [#3665](https://github.com/GetStream/stream-chat-swift/pull/3665)
