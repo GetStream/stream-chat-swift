@@ -16,7 +16,7 @@ final class MessageRepositoryTests: XCTestCase {
         let client = ChatClient.mock
         database = client.mockDatabaseContainer
         apiClient = client.mockAPIClient
-        repository = MessageRepository(database: database, apiClient: apiClient)
+        repository = MessageRepository(database: database, apiClient: apiClient, interceptor: nil)
         cid = .unique
     }
 

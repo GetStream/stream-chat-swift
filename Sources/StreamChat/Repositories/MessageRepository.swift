@@ -15,10 +15,16 @@ enum MessageRepositoryError: LocalizedError {
 class MessageRepository {
     let database: DatabaseContainer
     let apiClient: APIClient
+    var interceptor: SendMessageInterceptor?
 
-    init(database: DatabaseContainer, apiClient: APIClient) {
+    init(
+        database: DatabaseContainer,
+        apiClient: APIClient,
+        interceptor: SendMessageInterceptor?
+    ) {
         self.database = database
         self.apiClient = apiClient
+        self.interceptor = interceptor
     }
 
     func sendMessage(
@@ -49,43 +55,66 @@ class MessageRepository {
             let requestBody = dto.asRequestBody() as MessageRequestBody
             let skipPush: Bool = dto.skipPush
             let skipEnrichUrl: Bool = dto.skipEnrichUrl
+            var message: ChatMessage?
 
             // Change the message state to `.sending` and the proceed with the actual sending
-            self?.database.write({
-                let messageDTO = $0.message(id: messageId)
-                messageDTO?.localMessageState = .sending
-            }, completion: { error in
-                if let error = error {
-                    log.error("Error changing localMessageState message with id \(messageId) to `sending`: \(error)")
-                    self?.markMessageAsFailedToSend(id: messageId) {
-                        completion(.failure(.failedToSendMessage(error)))
+            self?.database.write(
+                {
+                    let messageDTO = $0.message(id: messageId)
+                    messageDTO?.localMessageState = .sending
+                    message = try messageDTO?.asModel()
+                },
+                completion: { error in
+                    if let error = error {
+                        log.error("Error changing localMessageState message with id \(messageId) to `sending`: \(error)")
+                        self?.markMessageAsFailedToSend(id: messageId) {
+                            completion(.failure(.failedToSendMessage(error)))
+                        }
+                        return
                     }
-                    return
-                }
-
-                let endpoint: Endpoint<MessagePayload.Boxed> = .sendMessage(
-                    cid: cid,
-                    messagePayload: requestBody,
-                    skipPush: skipPush,
-                    skipEnrichUrl: skipEnrichUrl
-                )
-                self?.apiClient.request(endpoint: endpoint) {
-                    switch $0 {
-                    case let .success(payload):
-                        self?.saveSuccessfullySentMessage(cid: cid, message: payload.message) { result in
-                            switch result {
+                    
+                    if let interceptor = self?.interceptor, let message {
+                        let options = SendMessageOptions(
+                            skipPush: skipPush,
+                            skipEnrichUrl: skipEnrichUrl
+                        )
+                        interceptor.sendMessage(message, options: options) {
+                            switch $0 {
                             case let .success(message):
+                                self?.database.write { session in
+                                    guard let messageDTO = session.message(id: message.id) else { return }
+                                    if message.localState == nil {
+                                        messageDTO.markMessageAsSent()
+                                    }
+                                }
                                 completion(.success(message))
                             case let .failure(error):
-                                completion(.failure(.failedToSendMessage(error)))
+                                self?.handleSendingMessageError(
+                                    error,
+                                    messageId: messageId,
+                                    completion: completion
+                                )
                             }
                         }
-
-                    case let .failure(error):
-                        self?.handleSendingMessageError(error, messageId: messageId, completion: completion)
+                        return
+                    }
+                    
+                    let endpoint: Endpoint<MessagePayload.Boxed> = .sendMessage(
+                        cid: cid,
+                        messagePayload: requestBody,
+                        skipPush: skipPush,
+                        skipEnrichUrl: skipEnrichUrl
+                    )
+                    self?.apiClient.request(endpoint: endpoint) {
+                        self?.handleNewMessage(
+                            messageId: messageId,
+                            cid: cid,
+                            result: $0.map(\.message),
+                            completion: completion
+                        )
                     }
                 }
-            })
+            )
         }
     }
     

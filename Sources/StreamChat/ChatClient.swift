@@ -155,7 +155,8 @@ public class ChatClient {
         )
         let messageRepository = environment.messageRepositoryBuilder(
             databaseContainer,
-            apiClient
+            apiClient,
+            config.sendMessageInterceptor
         )
         let offlineRequestsRepository = environment.offlineRequestsRepositoryBuilder(
             messageRepository,
