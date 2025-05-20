@@ -78,23 +78,8 @@ class MessageRepository {
                             skipPush: skipPush,
                             skipEnrichUrl: skipEnrichUrl
                         )
-                        interceptor.sendMessage(message, options: options) {
-                            switch $0 {
-                            case let .success(message):
-                                self?.database.write { session in
-                                    guard let messageDTO = session.message(id: message.id) else { return }
-                                    if message.localState == nil {
-                                        messageDTO.markMessageAsSent()
-                                    }
-                                }
-                                completion(.success(message))
-                            case let .failure(error):
-                                self?.handleSendingMessageError(
-                                    error,
-                                    messageId: messageId,
-                                    completion: completion
-                                )
-                            }
+                        interceptor.sendMessage(message, options: options) { result in
+                            self?.handleInterceptedMessage(result, messageId: messageId, completion: completion)
                         }
                         return
                     }
@@ -105,13 +90,8 @@ class MessageRepository {
                         skipPush: skipPush,
                         skipEnrichUrl: skipEnrichUrl
                     )
-                    self?.apiClient.request(endpoint: endpoint) {
-                        self?.handleNewMessage(
-                            messageId: messageId,
-                            cid: cid,
-                            result: $0.map(\.message),
-                            completion: completion
-                        )
+                    self?.apiClient.request(endpoint: endpoint) { result in
+                        self?.handleSentMessage(result, cid: cid, messageId: messageId, completion: completion)
                     }
                 }
             )
@@ -185,6 +165,57 @@ class MessageRepository {
                 completion(.success(messageModel))
             }
         })
+    }
+
+    /// Handles the result when sending the message to the server.
+    private func handleSentMessage(
+        _ result: Result<MessagePayload.Boxed, Error>,
+        cid: ChannelId,
+        messageId: MessageId,
+        completion: @escaping (Result<ChatMessage, MessageRepositoryError>) -> Void
+    ) {
+        switch result {
+        case let .success(payload):
+            saveSuccessfullySentMessage(cid: cid, message: payload.message) { result in
+                switch result {
+                case let .success(message):
+                    completion(.success(message))
+                case let .failure(error):
+                    completion(.failure(.failedToSendMessage(error)))
+                }
+            }
+        case let .failure(error):
+            handleSendingMessageError(
+                error,
+                messageId: messageId,
+                completion: completion
+            )
+        }
+    }
+
+    /// Handles the result when the message is intercepted.
+    private func handleInterceptedMessage(
+        _ result: Result<SendMessageResponse, Error>,
+        messageId: MessageId,
+        completion: @escaping (Result<ChatMessage, MessageRepositoryError>) -> Void
+    ) {
+        switch result {
+        case let .success(response):
+            let message = response.message
+            database.write { session in
+                guard let messageDTO = session.message(id: message.id) else { return }
+                if message.localState == nil {
+                    messageDTO.markMessageAsSent()
+                }
+            }
+            completion(.success(message))
+        case let .failure(error):
+            handleSendingMessageError(
+                error,
+                messageId: messageId,
+                completion: completion
+            )
+        }
     }
 
     private func handleSendingMessageError(
