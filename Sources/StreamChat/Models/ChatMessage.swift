@@ -303,7 +303,7 @@ public struct ChatMessage {
             threadParticipants: threadParticipants,
             attachments: attachments ?? allAttachments,
             latestReplies: latestReplies,
-            localState: localState,
+            localState: state ?? localState,
             isFlaggedByCurrentUser: isFlaggedByCurrentUser,
             latestReactions: latestReactions,
             currentUserReactions: currentUserReactions,
