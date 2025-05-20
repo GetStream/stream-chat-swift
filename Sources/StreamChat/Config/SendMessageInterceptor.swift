@@ -32,25 +32,3 @@ public protocol SendMessageInterceptor {
 public protocol SendMessageInterceptorFactory {
     func makeSendMessageInterceptor(client: ChatClient) -> SendMessageInterceptor
 }
-
-class CustomMessageInterceptor: SendMessageInterceptor {
-    let defaultInterceptor: DefaultMessageInterceptor
-
-    init(defaultInterceptor: DefaultMessageInterceptor) {
-        self.defaultInterceptor = defaultInterceptor
-    }
-
-    func sendMessage(
-        _ message: ChatMessage,
-        options: SendMessageOptions,
-        completion: @escaping ((Result<SendMessageResponse, any Error>) -> Void)
-    ) {
-        if message.type == .regular {
-            defaultInterceptor.sendMessage(message, options: options, completion: completion)
-            return
-        }
-        // Custom logic for other message types
-        print(message)
-        completion(.success(SendMessageResponse(message: message)))
-    }
-}
