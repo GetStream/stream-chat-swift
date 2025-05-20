@@ -5,6 +5,179 @@
 import CoreData
 import Foundation
 
+public class DefaultMessageInterceptor: SendMessageInterceptor {
+    public let client: ChatClient
+    private let database: DatabaseContainer
+    private let apiClient: APIClient
+
+    public init(client: ChatClient) {
+        self.client = client
+        database = client.databaseContainer
+        apiClient = client.apiClient
+    }
+
+    public func sendMessage(
+        _ message: ChatMessage,
+        options: SendMessageOptions,
+        completion: @escaping (Result<SendMessageResponse, Error>) -> Void
+    ) {
+        database.backgroundReadOnlyContext.perform { [weak self] in
+            guard let messageDTO = self?.database.backgroundReadOnlyContext.message(id: message.id),
+                  let messageCid = messageDTO.cid,
+                  let cid = try? ChannelId(cid: messageCid)
+            else {
+                completion(.failure(MessageRepositoryError.messageDoesNotExist))
+                return
+            }
+
+            let requestBody = messageDTO.asRequestBody() as MessageRequestBody
+            let endpoint: Endpoint<MessagePayload.Boxed> = .sendMessage(
+                cid: cid,
+                messagePayload: requestBody,
+                skipPush: options.skipPush,
+                skipEnrichUrl: options.skipEnrichUrl
+            )
+            self?.apiClient.request(endpoint: endpoint) { result in
+                self?.handleSentMessage(result, cid: cid, messageId: message.id) { result in
+                    let newResult = result
+                        .map {
+                            SendMessageResponse(message: $0)
+                        }.mapError {
+                            $0 as Error
+                        }
+                    completion(newResult)
+                }
+            }
+        }
+    }
+
+    func saveSuccessfullySentMessage(
+        cid: ChannelId,
+        message: MessagePayload,
+        completion: @escaping (Result<ChatMessage, Error>) -> Void
+    ) {
+        var messageModel: ChatMessage!
+        database.write({
+            let messageDTO = try $0.saveMessage(
+                payload: message,
+                for: cid,
+                syncOwnReactions: false,
+                skipDraftUpdate: false,
+                cache: nil
+            )
+            if messageDTO.localMessageState == .sending || messageDTO.localMessageState == .sendingFailed {
+                messageDTO.markMessageAsSent()
+            }
+            messageModel = try messageDTO.asModel()
+        }, completion: {
+            if let error = $0 {
+                log.error("Error saving sent message with id \(message.id): \(error)", subsystems: .offlineSupport)
+                completion(.failure(error))
+            } else {
+                completion(.success(messageModel))
+            }
+        })
+    }
+
+    /// Handles the result when sending the message to the server.
+    private func handleSentMessage(
+        _ result: Result<MessagePayload.Boxed, Error>,
+        cid: ChannelId,
+        messageId: MessageId,
+        completion: @escaping (Result<ChatMessage, MessageRepositoryError>) -> Void
+    ) {
+        switch result {
+        case let .success(payload):
+            saveSuccessfullySentMessage(cid: cid, message: payload.message) { result in
+                switch result {
+                case let .success(message):
+                    completion(.success(message))
+                case let .failure(error):
+                    completion(.failure(.failedToSendMessage(error)))
+                }
+            }
+        case let .failure(error):
+            handleSendingMessageError(
+                error,
+                messageId: messageId,
+                completion: completion
+            )
+        }
+    }
+
+    /// Handles the result when the message is intercepted.
+    private func handleInterceptedMessage(
+        _ result: Result<SendMessageResponse, Error>,
+        messageId: MessageId,
+        completion: @escaping (Result<ChatMessage, MessageRepositoryError>) -> Void
+    ) {
+        switch result {
+        case let .success(response):
+            let message = response.message
+            database.write { session in
+                guard let messageDTO = session.message(id: message.id) else { return }
+                if message.localState == nil {
+                    messageDTO.markMessageAsSent()
+                }
+            }
+            completion(.success(message))
+        case let .failure(error):
+            handleSendingMessageError(
+                error,
+                messageId: messageId,
+                completion: completion
+            )
+        }
+    }
+
+    private func handleSendingMessageError(
+        _ error: Error,
+        messageId: MessageId,
+        completion: @escaping (Result<ChatMessage, MessageRepositoryError>) -> Void
+    ) {
+        log.error("Sending the message with id \(messageId) failed with error: \(error)")
+
+        if let clientError = error as? ClientError, let errorPayload = clientError.errorPayload {
+            // If the message already exists on the server we do not want to mark it as failed,
+            // since this will cause an unrecoverable state, where the user will keep resending
+            // the message and it will always fail. Right now, the only way to check this error is
+            // by checking a combination of the error code and description, since there is no special
+            // error code for duplicated messages.
+            let isDuplicatedMessageError = errorPayload.code == 4 && errorPayload.message.contains("already exists")
+            if isDuplicatedMessageError {
+                database.write({
+                    let messageDTO = $0.message(id: messageId)
+                    messageDTO?.markMessageAsSent()
+                }, completion: { _ in
+                    completion(.failure(.failedToSendMessage(error)))
+                })
+                return
+            }
+        }
+
+        markMessageAsFailedToSend(id: messageId) {
+            completion(.failure(.failedToSendMessage(error)))
+        }
+    }
+
+    private func markMessageAsFailedToSend(id: MessageId, completion: @escaping () -> Void) {
+        database.write({
+            let dto = $0.message(id: id)
+            if dto?.localMessageState == .sending {
+                dto?.markMessageAsFailed()
+            }
+        }, completion: {
+            if let error = $0 {
+                log.error(
+                    "Error changing localMessageState message with id \(id) to `sendingFailed`: \(error)",
+                    subsystems: .offlineSupport
+                )
+            }
+            completion()
+        })
+    }
+}
+
 enum MessageRepositoryError: Error {
     case messageDoesNotExist
     case messageNotPendingSend
