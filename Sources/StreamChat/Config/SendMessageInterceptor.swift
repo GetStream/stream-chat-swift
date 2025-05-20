@@ -27,3 +27,8 @@ public protocol SendMessageInterceptor {
         completion: @escaping ((Result<SendMessageResponse, Error>) -> Void)
     )
 }
+
+/// A factory responsible for creating message interceptors.
+public protocol SendMessageInterceptorFactory {
+    func makeSendMessageInterceptor(client: ChatClient) -> SendMessageInterceptor
+}

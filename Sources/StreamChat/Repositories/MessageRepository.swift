@@ -5,7 +5,7 @@
 import CoreData
 import Foundation
 
-enum MessageRepositoryError: LocalizedError {
+enum MessageRepositoryError: Error {
     case messageDoesNotExist
     case messageNotPendingSend
     case messageDoesNotHaveValidChannel
@@ -19,11 +19,13 @@ class MessageRepository {
 
     init(
         database: DatabaseContainer,
-        apiClient: APIClient,
-        interceptor: SendMessageInterceptor?
+        apiClient: APIClient
     ) {
         self.database = database
         self.apiClient = apiClient
+    }
+
+    func setInterceptor(_ interceptor: SendMessageInterceptor?) {
         self.interceptor = interceptor
     }
 

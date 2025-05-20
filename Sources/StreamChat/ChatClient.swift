@@ -155,8 +155,7 @@ public class ChatClient {
         )
         let messageRepository = environment.messageRepositoryBuilder(
             databaseContainer,
-            apiClient,
-            config.sendMessageInterceptor
+            apiClient
         )
         let offlineRequestsRepository = environment.offlineRequestsRepositoryBuilder(
             messageRepository,
@@ -222,6 +221,9 @@ public class ChatClient {
         setupOfflineRequestQueue()
         setupConnectionRecoveryHandler(with: environment)
         validateIntegrity()
+
+        let interceptor = config.sendMessageInterceptorFactory?.makeSendMessageInterceptor(client: self)
+        messageRepository.setInterceptor(interceptor)
 
         reconnectionTimeoutHandler = environment.reconnectionHandlerBuilder(config)
         reconnectionTimeoutHandler?.onChange = { [weak self] in

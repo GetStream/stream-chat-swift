@@ -155,10 +155,9 @@ extension ChatClient {
 
         var messageRepositoryBuilder: (
             _ database: DatabaseContainer,
-            _ apiClient: APIClient,
-            _ interceptor: SendMessageInterceptor?
+            _ apiClient: APIClient
         ) -> MessageRepository = {
-            MessageRepository(database: $0, apiClient: $1, interceptor: $2)
+            MessageRepository(database: $0, apiClient: $1)
         }
 
         var offlineRequestsRepositoryBuilder: (
