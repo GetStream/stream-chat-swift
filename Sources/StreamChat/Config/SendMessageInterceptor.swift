@@ -4,13 +4,13 @@
 
 import Foundation
 
-/// A struct that contains additional date when sending messages.
+/// A struct that contains additional info when sending messages.
 public struct SendMessageOptions {
     public let skipPush: Bool
     public let skipEnrichUrl: Bool
 }
 
-/// A struct that represents the response of sending a message.
+/// A struct that represents the response when sending a message.
 public struct SendMessageResponse {
     public let message: ChatMessage
 
