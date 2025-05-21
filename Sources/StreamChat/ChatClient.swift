@@ -222,6 +222,9 @@ public class ChatClient {
         setupConnectionRecoveryHandler(with: environment)
         validateIntegrity()
 
+        let interceptor = config.sendMessageInterceptorFactory?.makeSendMessageInterceptor(client: self)
+        messageRepository.setInterceptor(interceptor)
+
         reconnectionTimeoutHandler = environment.reconnectionHandlerBuilder(config)
         reconnectionTimeoutHandler?.onChange = { [weak self] in
             self?.timeout()

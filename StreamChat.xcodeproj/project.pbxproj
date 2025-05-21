@@ -1665,6 +1665,8 @@
 		AD99C909279B0E9D009DD9C5 /* MessageDateSeparatorFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD99C906279B0C9B009DD9C5 /* MessageDateSeparatorFormatter.swift */; };
 		AD99C90C279B136B009DD9C5 /* UserLastActivityFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD99C90A279B1363009DD9C5 /* UserLastActivityFormatter.swift */; };
 		AD99C90D279B136D009DD9C5 /* UserLastActivityFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD99C90A279B1363009DD9C5 /* UserLastActivityFormatter.swift */; };
+		AD9C92702DD4DD070013A7E6 /* SendMessageInterceptor.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD9C926F2DD4DCF90013A7E6 /* SendMessageInterceptor.swift */; };
+		AD9C92712DD4DD070013A7E6 /* SendMessageInterceptor.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD9C926F2DD4DCF90013A7E6 /* SendMessageInterceptor.swift */; };
 		ADA03A222D64EFE900DFE048 /* DraftMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADA03A212D64EFE900DFE048 /* DraftMessage.swift */; };
 		ADA03A232D64EFE900DFE048 /* DraftMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADA03A212D64EFE900DFE048 /* DraftMessage.swift */; };
 		ADA03A252D65041B00DFE048 /* DraftMessage_Mock.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADA03A242D65041300DFE048 /* DraftMessage_Mock.swift */; };
@@ -4381,6 +4383,7 @@
 		AD99C906279B0C9B009DD9C5 /* MessageDateSeparatorFormatter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageDateSeparatorFormatter.swift; sourceTree = "<group>"; };
 		AD99C90A279B1363009DD9C5 /* UserLastActivityFormatter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserLastActivityFormatter.swift; sourceTree = "<group>"; };
 		AD9BE32526680E4200A6D284 /* Stream.playground */ = {isa = PBXFileReference; lastKnownFileType = file.playground; path = Stream.playground; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
+		AD9C926F2DD4DCF90013A7E6 /* SendMessageInterceptor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SendMessageInterceptor.swift; sourceTree = "<group>"; };
 		ADA03A212D64EFE900DFE048 /* DraftMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DraftMessage.swift; sourceTree = "<group>"; };
 		ADA03A242D65041300DFE048 /* DraftMessage_Mock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DraftMessage_Mock.swift; sourceTree = "<group>"; };
 		ADA2D6492C46B66E001D2B44 /* DemoChatChannelListErrorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DemoChatChannelListErrorView.swift; sourceTree = "<group>"; };
@@ -5715,6 +5718,7 @@
 				79FC85E624ACCBC500A665ED /* Token.swift */,
 				C1B49B3C2822A7AD00F4E89E /* StreamRuntimeCheck.swift */,
 				AD81FEEC2D3977AC00765FD4 /* StreamModelsTransformer.swift */,
+				AD9C926F2DD4DCF90013A7E6 /* SendMessageInterceptor.swift */,
 			);
 			path = Config;
 			sourceTree = "<group>";
@@ -11537,6 +11541,7 @@
 				AD52A2192804850700D0157E /* ChannelConfigDTO.swift in Sources */,
 				797A756824814F0D003CF16D /* Bundle+Extensions.swift in Sources */,
 				7908829C2546D95A00896F03 /* FlagMessagePayload.swift in Sources */,
+				AD9C92712DD4DD070013A7E6 /* SendMessageInterceptor.swift in Sources */,
 				DA0BB1612513B5F200CAEFBD /* StringInterpolation+Extensions.swift in Sources */,
 				64C8C86E26934C6100329F82 /* UserInfo.swift in Sources */,
 				C1FFD9F927ECC7C7008A6848 /* Filter+ChatChannel.swift in Sources */,
@@ -12588,6 +12593,7 @@
 				C121E8C6274544B100023E4C /* ChannelWatcherListQuery.swift in Sources */,
 				4F05C0722C8832C40085B4B7 /* URLRequest+cURL.swift in Sources */,
 				AD37D7CB2BC98A5300800D8C /* ThreadReadDTO.swift in Sources */,
+				AD9C92702DD4DD070013A7E6 /* SendMessageInterceptor.swift in Sources */,
 				C121E8C7274544B100023E4C /* ChannelListQuery.swift in Sources */,
 				841BAA0B2BCE9B57000C73E4 /* CreatePollOptionRequestBody.swift in Sources */,
 				C121E8C8274544B100023E4C /* UserListQuery.swift in Sources */,
