@@ -57,25 +57,19 @@ class MessageRepository {
             let requestBody = dto.asRequestBody() as MessageRequestBody
             let skipPush: Bool = dto.skipPush
             let skipEnrichUrl: Bool = dto.skipEnrichUrl
-            var message: ChatMessage?
 
             // Change the message state to `.sending` and the proceed with the actual sending
-            self?.database.write(
-                {
-                    let messageDTO = $0.message(id: messageId)
-                    messageDTO?.localMessageState = .sending
-                    message = try messageDTO?.asModel()
-                },
-                completion: { error in
-                    if let error = error {
-                        log.error("Error changing localMessageState message with id \(messageId) to `sending`: \(error)")
-                        self?.markMessageAsFailedToSend(id: messageId) {
-                            completion(.failure(.failedToSendMessage(error)))
-                        }
-                        return
-                    }
-                    
-                    if let interceptor = self?.interceptor, let message {
+            self?.database.write(converting: { session in
+                let messageDTO = session.message(id: messageId)
+                messageDTO?.localMessageState = .sending
+                guard let message = try messageDTO?.asModel() else {
+                    throw MessageRepositoryError.messageDoesNotExist
+                }
+                return message
+            }, completion: { result in
+                switch result {
+                case let .success(message):
+                    if let interceptor = self?.interceptor {
                         let options = SendMessageOptions(
                             skipPush: skipPush,
                             skipEnrichUrl: skipEnrichUrl
@@ -85,7 +79,7 @@ class MessageRepository {
                         }
                         return
                     }
-                    
+
                     let endpoint: Endpoint<MessagePayload.Boxed> = .sendMessage(
                         cid: cid,
                         messagePayload: requestBody,
@@ -95,8 +89,13 @@ class MessageRepository {
                     self?.apiClient.request(endpoint: endpoint) { result in
                         self?.handleSentMessage(result, cid: cid, messageId: messageId, completion: completion)
                     }
+                case let .failure(error):
+                    log.error("Error changing localMessageState message with id \(messageId) to `sending`: \(error)")
+                    self?.markMessageAsFailedToSend(id: messageId) {
+                        completion(.failure(.failedToSendMessage(error)))
+                    }
                 }
-            )
+            })
         }
     }
     
@@ -206,6 +205,8 @@ class MessageRepository {
             let message = response.message
             database.write { session in
                 guard let messageDTO = session.message(id: message.id) else { return }
+                // The customer changes the local state to nil in the interceptor,
+                // it means we should mark it as sent and not wait for message new event.
                 if message.localState == nil {
                     messageDTO.markMessageAsSent()
                 }
