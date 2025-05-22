@@ -89,4 +89,14 @@ final class DemoChatChannelVC: ChatChannelVC, UIGestureRecognizerDelegate {
     override func didFinishLoadingNextMessages(with: Error?) {
         messageListVC.footerView = nil
     }
+    
+    // MARK: - EventsControllerDelegate
+
+    override func eventsController(_ controller: EventsController, didReceiveEvent event: Event) {
+        super.eventsController(controller, didReceiveEvent: event)
+        
+        if event is MessageUpdatedEvent {
+            channelController.synchronize()
+        }
+    }
 }

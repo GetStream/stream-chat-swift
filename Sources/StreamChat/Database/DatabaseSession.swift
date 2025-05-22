@@ -782,7 +782,7 @@ extension DatabaseSession {
         }
 
         let messageExistsLocally = message(id: messagePayload.id) != nil
-        let messageMustBeCreated = payload.eventType.shouldCreateMessageInDatabase
+        let messageMustBeCreated = payload.shouldCreateMessageInDatabase
 
         guard messageExistsLocally || messageMustBeCreated else {
             // Message does not exits locally and should not be saved
@@ -809,6 +809,11 @@ extension DatabaseSession {
         if payload.eventType == .messageUpdated {
             savedMessage.quotedBy.forEach { message in
                 message.updatedAt = savedMessage.updatedAt
+            }
+            // Do not automatically insert messages with restricted visibility
+            if !messageExistsLocally, !messagePayload.restrictedVisibility.isEmpty {
+                channelDTO.messages.remove(savedMessage)
+                channelDTO.pinnedMessages.remove(savedMessage)
             }
         }
 
@@ -918,8 +923,16 @@ extension DatabaseSession {
     }
 }
 
-private extension EventType {
+private extension EventPayload {
     var shouldCreateMessageInDatabase: Bool {
-        [.channelUpdated, .messageNew, .notificationMessageNew, .channelTruncated].contains(self)
+        switch eventType {
+        case .channelUpdated, .messageNew, .notificationMessageNew, .channelTruncated:
+            return true
+        case .messageUpdated:
+            guard let message else { return false }
+            return !message.restrictedVisibility.isEmpty
+        default:
+            return false
+        }
     }
 }

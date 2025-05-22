@@ -110,6 +110,7 @@ class MessageUpdater: Worker {
         text: String,
         skipEnrichUrl: Bool,
         attachments: [AnyAttachmentPayload] = [],
+        restrictedVisibility: [UserId],
         extraData: [String: RawJSON]? = nil,
         completion: ((Result<ChatMessage, Error>) -> Void)? = nil
     ) {
@@ -132,6 +133,7 @@ class MessageUpdater: Worker {
                 messageDTO.localMessageState = localState
 
                 messageDTO.skipEnrichUrl = skipEnrichUrl
+                messageDTO.restrictedVisibility = Set(restrictedVisibility)
 
                 messageDTO.quotedBy.forEach { message in
                     message.updatedAt = messageDTO.updatedAt
@@ -1101,6 +1103,7 @@ extension MessageUpdater {
         text: String,
         skipEnrichUrl: Bool,
         attachments: [AnyAttachmentPayload] = [],
+        restrictedVisibility: [UserId] = [],
         extraData: [String: RawJSON]? = nil
     ) async throws -> ChatMessage {
         try await withCheckedThrowingContinuation { continuation in
@@ -1109,6 +1112,7 @@ extension MessageUpdater {
                 text: text,
                 skipEnrichUrl: skipEnrichUrl,
                 attachments: attachments,
+                restrictedVisibility: restrictedVisibility,
                 extraData: extraData
             ) { result in
                 continuation.resume(with: result)

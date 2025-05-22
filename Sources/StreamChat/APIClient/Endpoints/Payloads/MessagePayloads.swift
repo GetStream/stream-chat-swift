@@ -88,6 +88,7 @@ class MessagePayload: Decodable {
     let quotedMessage: MessagePayload?
     let quotedMessageId: MessageId?
     let mentionedUsers: [UserPayload]
+    let restrictedVisibility: [UserId]
     let threadParticipants: [UserPayload]
     let replyCount: Int
     let extraData: [String: RawJSON]
@@ -141,6 +142,7 @@ class MessagePayload: Decodable {
         replyCount = try container.decode(Int.self, forKey: .replyCount)
         latestReactions = try container.decodeArrayIgnoringFailures([MessageReactionPayload].self, forKey: .latestReactions)
         ownReactions = try container.decodeArrayIgnoringFailures([MessageReactionPayload].self, forKey: .ownReactions)
+        restrictedVisibility = try container.decodeArrayIfPresentIgnoringFailures([UserId].self, forKey: .restrictedVisibility) ?? []
 
         reactionScores = try container
             .decodeIfPresent([String: Int].self, forKey: .reactionScores)?
@@ -199,6 +201,7 @@ class MessagePayload: Decodable {
         mentionedUsers: [UserPayload],
         threadParticipants: [UserPayload] = [],
         replyCount: Int,
+        restrictedVisibility: [UserId] = [],
         extraData: [String: RawJSON],
         latestReactions: [MessageReactionPayload] = [],
         ownReactions: [MessageReactionPayload] = [],
@@ -237,6 +240,7 @@ class MessagePayload: Decodable {
         self.mentionedUsers = mentionedUsers
         self.threadParticipants = threadParticipants
         self.replyCount = replyCount
+        self.restrictedVisibility = restrictedVisibility
         self.extraData = extraData
         self.latestReactions = latestReactions
         self.ownReactions = ownReactions
