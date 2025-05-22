@@ -348,6 +348,43 @@ final class DatabaseSession_Tests: XCTestCase {
         // We set the same updateAt to to both messages, to trigger a DB update
         XCTAssertEqual(message.updatedAt, quotingMessage.updatedAt)
     }
+    
+    func test_saveEvent_whenMessageUpdated_shouldSaveMessageWithRestrictedVisibilityLocally() throws {
+        let currentUserId = UserId.unique
+        let messageId = MessageId.unique
+        let cid = ChannelId.unique
+        try database.createCurrentUser(id: currentUserId)
+        try database.createChannel(cid: cid, withMessages: false)
+        
+        let eventPayload = EventPayload(
+            eventType: .messageUpdated,
+            cid: cid,
+            user: .dummy(userId: currentUserId),
+            message: .dummy(
+                messageId: messageId,
+                restrictedVisibility: [currentUserId],
+                cid: cid,
+                pinned: true
+            ),
+            createdAt: .distantFuture
+        )
+        try database.writeSynchronously { session in
+            try session.saveEvent(payload: eventPayload)
+        }
+        try database.readSynchronously { session in
+            let channelDTO = try XCTUnwrap(session.channel(cid: cid))
+            // Message is associated with the channel
+            XCTAssertTrue(channelDTO.messages.contains(where: { $0.id == messageId }))
+            // And locally available
+            let messageDTO = session.message(id: messageId)
+            XCTAssertEqual(Set(arrayLiteral: currentUserId), messageDTO?.restrictedVisibility)
+            // Ensure that we can create the local event message
+            let eventDTO = try MessageUpdatedEventDTO(from: eventPayload)
+            let event = eventDTO.toDomainEvent(session: session)
+            XCTAssertNotNil(event, "Updated event must be created for restricted visibility messages")
+            XCTAssertTrue(event is MessageUpdatedEvent)
+        }
+    }
 
     func test_saveEvent_whenMessageDelete_whenHardDeleted_shouldHardDeleteMessageFromDatabase() throws {
         let userId: UserId = .unique
