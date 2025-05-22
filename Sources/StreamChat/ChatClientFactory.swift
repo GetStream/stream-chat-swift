@@ -133,7 +133,6 @@ class ChatClientFactory {
             UserWatchingEventMiddleware(),
             UserUpdateMiddleware(),
             ChannelVisibilityEventMiddleware(),
-            MessageVisibilityEventMiddleware(),
             EventDTOConverterMiddleware()
         ]
 
