@@ -50,8 +50,6 @@ public class EventsController: Controller, DelegateCallable, @unchecked Sendable
         get { multicastDelegate.mainDelegate }
         set { multicastDelegate.set(mainDelegate: newValue) }
     }
-    
-    private let queue = DispatchQueue(label: "io.getstream.events-controller", target: .global())
 
     /// Create a new instance of `EventsController`.
     ///
