@@ -82,6 +82,12 @@ You can still integrate our SDKs if your project is using Objective-C. In that c
 
 ---
 
+## Video SDK
+
+We also offer [Video SDK](https://github.com/GetStream/stream-video-swift) that seamlessly integrates with our Chat SDK. To find out more about this product, please check our [docs](https://getstream.io/video/docs/ios/). 
+
+---
+
 ## We are hiring
 
 We've recently closed a [\$38 million Series B funding round](https://techcrunch.com/2021/03/04/stream-raises-38m-as-its-chat-and-activity-feed-apis-power-communications-for-1b-users/) and we keep actively growing.

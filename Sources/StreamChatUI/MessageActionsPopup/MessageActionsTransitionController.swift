@@ -95,6 +95,7 @@ open class ChatMessageActionsTransitionController: NSObject, UIViewControllerTra
         toVC.messageContentView = messageView
         toVC.messageViewFrame = messageViewFrame
         toVC.setUpLayout()
+        toVC.view.layoutIfNeeded()
 
         let blurView = UIVisualEffectView()
         blurView.frame = transitionContext.finalFrame(for: toVC)
