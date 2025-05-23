@@ -50,5 +50,5 @@ public extension Appearance {
     
     // Shared instance is mutated only on the main thread without explicit
     // main actor annotation for easier SDK setup.
-    nonisolated(unsafe) private static var _default: Appearance = .init()
+    @MainActor private static var _default: Appearance = .init()
 }
