@@ -8,7 +8,7 @@
 import StreamSwiftTestHelpers
 import XCTest
 
-final class ChatChannelListItemView_Tests: XCTestCase {
+@MainActor final class ChatChannelListItemView_Tests: XCTestCase {
     let currentUser: ChatUser = .mock(
         id: "yoda",
         name: "Yoda"

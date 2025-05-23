@@ -9,7 +9,7 @@ import StreamSwiftTestHelpers
 import SwiftUI
 import XCTest
 
-final class ChatThreadView_Tests: iOS13TestCase {
+@MainActor final class ChatThreadView_Tests: iOS13TestCase {
     var chatThreadView: SwiftUIViewControllerRepresentable<ChatThreadVC>!
 
     var channelControllerMock: ChatChannelController_Mock!

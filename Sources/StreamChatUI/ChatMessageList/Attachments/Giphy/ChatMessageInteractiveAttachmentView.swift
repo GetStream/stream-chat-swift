@@ -72,9 +72,11 @@ open class ChatMessageInteractiveAttachmentView: _View, ThemeProvider {
 
         actionsStackView.removeAllArrangedSubviews()
 
-        (content?.actions ?? [])
-            .map(createActionButton)
-            .forEach(actionsStackView.addArrangedSubview)
+        let actions = content?.actions ?? []
+        for action in actions {
+            let button = createActionButton(for: action)
+            actionsStackView.addArrangedSubview(button)
+        }
     }
 
     // MARK: - Private
