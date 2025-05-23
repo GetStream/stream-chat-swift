@@ -699,7 +699,7 @@ public extension Components {
         deprecated,
         message: "Please use `Appearance.default.formatters.channelName` instead"
     )
-    var channelNamer: ChatChannelNamer {
+    @preconcurrency @MainActor var channelNamer: ChatChannelNamer {
         get {
             DefaultChannelNameFormatter.channelNamer
         }

@@ -7,7 +7,7 @@ import StreamChat
 
 /// A formatter that generates a name for the given channel.
 public protocol ChannelNameFormatter {
-    func format(channel: ChatChannel, forCurrentUserId currentUserId: UserId?) -> String?
+    @preconcurrency @MainActor func format(channel: ChatChannel, forCurrentUserId currentUserId: UserId?) -> String?
 }
 
 /// The default channel name formatter.
@@ -15,7 +15,7 @@ open class DefaultChannelNameFormatter: ChannelNameFormatter {
     public init() {}
 
     /// Internal static property to add backwards compatibility to `Components.channelNamer`
-    nonisolated(unsafe) internal static var channelNamer: (
+    @MainActor static var channelNamer: (
         _ channel: ChatChannel,
         _ currentUserId: UserId?
     ) -> String? = DefaultChatChannelNamer()
