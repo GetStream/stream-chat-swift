@@ -44,7 +44,7 @@ public class MockAVPlayer: AVPlayer {
     override public func replaceCurrentItem(
         with item: AVPlayerItem?
     ) {
-        DispatchQueue.performSynchronouslyOnMainQueue {
+        MainActor.ensureIsolated {
             replaceCurrentItemWasCalled = true
             replaceCurrentItemWasCalledWithItem = item
         }
@@ -57,7 +57,7 @@ public class MockAVPlayer: AVPlayer {
         toleranceAfter: CMTime,
         completionHandler: @escaping @Sendable(Bool) -> Void
     ) {
-        DispatchQueue.performSynchronouslyOnMainQueue {
+        MainActor.ensureIsolated {
             seekWasCalledWithTime = time
             seekWasCalledWithToleranceBefore = toleranceBefore
             seekWasCalledWithToleranceAfter = toleranceAfter
@@ -67,7 +67,7 @@ public class MockAVPlayer: AVPlayer {
             toleranceBefore: toleranceBefore,
             toleranceAfter: toleranceAfter,
             completionHandler: { _ in
-                Task { @MainActor in
+                MainActor.ensureIsolated {
                     completionHandler(!self.holdSeekCompletion)
                 }
             }
