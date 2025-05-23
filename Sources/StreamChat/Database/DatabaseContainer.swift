@@ -241,14 +241,6 @@ class DatabaseContainer: NSPersistentContainer, @unchecked Sendable {
             }
         }
     }
-    
-    func writeConverting<T>(_ actions: @escaping @Sendable(DatabaseSession) throws -> T) async throws -> T where T: Sendable {
-        try await withCheckedThrowingContinuation { continuation in
-            write(converting: actions) { result in
-                continuation.resume(with: result)
-            }
-        }
-    }
         
     private func read<T>(
         from context: NSManagedObjectContext,
