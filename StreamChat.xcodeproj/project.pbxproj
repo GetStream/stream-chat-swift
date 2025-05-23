@@ -612,7 +612,7 @@
 		797EEA4624FFAF4F00C81203 /* DataStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 797EEA4524FFAF4F00C81203 /* DataStore.swift */; };
 		797EEA4824FFB4C200C81203 /* DataStore_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 797EEA4724FFB4C200C81203 /* DataStore_Tests.swift */; };
 		797EEA4A24FFC37600C81203 /* ConnectionStatus_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 797EEA4924FFC37600C81203 /* ConnectionStatus_Tests.swift */; };
-		7985BDAA252B1E53002B8C30 /* MainQueue+Synchronous.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7985BDA9252B1E53002B8C30 /* MainQueue+Synchronous.swift */; };
+		7985BDAA252B1E53002B8C30 /* StreamConcurrency.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7985BDA9252B1E53002B8C30 /* StreamConcurrency.swift */; };
 		79877A092498E4BC00015F8B /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79877A012498E4BB00015F8B /* User.swift */; };
 		79877A0A2498E4BC00015F8B /* Device.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79877A022498E4BB00015F8B /* Device.swift */; };
 		79877A0B2498E4BC00015F8B /* Member.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79877A032498E4BB00015F8B /* Member.swift */; };
@@ -2213,7 +2213,7 @@
 		C121E8EC274544B200023E4C /* Publisher+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA4AA3B92502731900FAAF6E /* Publisher+Extensions.swift */; };
 		C121E8ED274544B200023E4C /* UniqueId.swift in Sources */ = {isa = PBXBuildFile; fileRef = 797E10A724EAF6DE00353791 /* UniqueId.swift */; };
 		C121E8EE274544B200023E4C /* MulticastDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79CD959124F9380B00E87377 /* MulticastDelegate.swift */; };
-		C121E8EF274544B200023E4C /* MainQueue+Synchronous.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7985BDA9252B1E53002B8C30 /* MainQueue+Synchronous.swift */; };
+		C121E8EF274544B200023E4C /* StreamConcurrency.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7985BDA9252B1E53002B8C30 /* StreamConcurrency.swift */; };
 		C121E8F0274544B200023E4C /* Dictionary+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88EA9AD725470F6A007EE76B /* Dictionary+Extensions.swift */; };
 		C121E8F1274544B200023E4C /* MultipartFormData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 881506EB258212BF0013935B /* MultipartFormData.swift */; };
 		C121E8F2274544B200023E4C /* SystemEnvironment+Version.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7AD954E25D536AA00076DC3 /* SystemEnvironment+Version.swift */; };
@@ -3537,7 +3537,7 @@
 		797EEA4524FFAF4F00C81203 /* DataStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataStore.swift; sourceTree = "<group>"; };
 		797EEA4724FFB4C200C81203 /* DataStore_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataStore_Tests.swift; sourceTree = "<group>"; };
 		797EEA4924FFC37600C81203 /* ConnectionStatus_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectionStatus_Tests.swift; sourceTree = "<group>"; };
-		7985BDA9252B1E53002B8C30 /* MainQueue+Synchronous.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MainQueue+Synchronous.swift"; sourceTree = "<group>"; };
+		7985BDA9252B1E53002B8C30 /* StreamConcurrency.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StreamConcurrency.swift; sourceTree = "<group>"; };
 		798779F62498E47700015F8B /* Member.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = Member.json; sourceTree = "<group>"; };
 		798779F72498E47700015F8B /* Channel.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = Channel.json; sourceTree = "<group>"; };
 		798779F82498E47700015F8B /* OtherUser.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = OtherUser.json; sourceTree = "<group>"; };
@@ -5853,7 +5853,6 @@
 				84CF9C72274D473D00BCDE2D /* EventBatcher.swift */,
 				C173538D27D9F804008AC412 /* KeyedDecodingContainer+Array.swift */,
 				DBCAFE2325C44B920015AD58 /* LazyCachedMapCollection.swift */,
-				7985BDA9252B1E53002B8C30 /* MainQueue+Synchronous.swift */,
 				4FE56B8C2D5DFE3A00589F9A /* MarkdownParser.swift */,
 				79CD959124F9380B00E87377 /* MulticastDelegate.swift */,
 				881506EB258212BF0013935B /* MultipartFormData.swift */,
@@ -5863,6 +5862,7 @@
 				DAFAD6A024DC476A0043ED06 /* Result+Extensions.swift */,
 				C14D27B52869EEE40063F6F2 /* Sequence+CompactMapLoggingError.swift */,
 				4FDAD05D2BC8179E004048E8 /* StateBuilder.swift */,
+				7985BDA9252B1E53002B8C30 /* StreamConcurrency.swift */,
 				4FD2BE522B9AEE3500FFC6F2 /* StreamCollection.swift */,
 				797A756524814EF8003CF16D /* SystemEnvironment.swift */,
 				CFA41B6527DA724400427602 /* SystemEnvironment+XStreamClient.swift */,
@@ -11542,7 +11542,7 @@
 				4F1BEE792BE384FE00B6685C /* ReactionListState.swift in Sources */,
 				79C5CBE825F66DBD00D98001 /* ChatChannelWatcherListController.swift in Sources */,
 				8A62706E24BF45360040BFD6 /* BanEnabling.swift in Sources */,
-				7985BDAA252B1E53002B8C30 /* MainQueue+Synchronous.swift in Sources */,
+				7985BDAA252B1E53002B8C30 /* StreamConcurrency.swift in Sources */,
 				ADF9E1F72A03E7E400109108 /* MessagesPaginationState.swift in Sources */,
 				79983C8126663436000995F6 /* ChatMessageVideoAttachment.swift in Sources */,
 				ADEEB7F22BD1368900C76602 /* MessageReactionGroupPayload.swift in Sources */,
@@ -12821,7 +12821,7 @@
 				C121E8EC274544B200023E4C /* Publisher+Extensions.swift in Sources */,
 				C121E8ED274544B200023E4C /* UniqueId.swift in Sources */,
 				C121E8EE274544B200023E4C /* MulticastDelegate.swift in Sources */,
-				C121E8EF274544B200023E4C /* MainQueue+Synchronous.swift in Sources */,
+				C121E8EF274544B200023E4C /* StreamConcurrency.swift in Sources */,
 				C121E8F0274544B200023E4C /* Dictionary+Extensions.swift in Sources */,
 				C121E8F1274544B200023E4C /* MultipartFormData.swift in Sources */,
 				AD545E672D53C271008FD399 /* DraftMessagesRepository.swift in Sources */,
