@@ -26,11 +26,11 @@ public struct PollsConfig: Sendable {
     ///   - addComments: Configuration for adding comments. Defaults to `.default`.
     ///   - maxVotesPerPerson: Configuration for setting the maximum number of votes per person. Defaults to `.default`.
     public init(
-        multipleVotes: PollsEntryConfig = PollsEntryConfig(),
-        anonymousPoll: PollsEntryConfig = PollsEntryConfig(),
-        suggestAnOption: PollsEntryConfig = PollsEntryConfig(),
-        addComments: PollsEntryConfig = PollsEntryConfig(),
-        maxVotesPerPerson: PollsEntryConfig = PollsEntryConfig()
+        multipleVotes: PollsEntryConfig = .default,
+        anonymousPoll: PollsEntryConfig = .default,
+        suggestAnOption: PollsEntryConfig = .default,
+        addComments: PollsEntryConfig = .default,
+        maxVotesPerPerson: PollsEntryConfig = .default
     ) {
         self.multipleVotes = multipleVotes
         self.anonymousPoll = anonymousPoll
@@ -47,12 +47,7 @@ public struct PollsEntryConfig: Sendable {
     /// Indicates the default value of the poll entry.
     public var defaultValue: Bool
 
-    public init() {
-        configurable = true
-        defaultValue = false
-    }
-    
-    public init(configurable: Bool = true, defaultValue: Bool) {
+    public init(configurable: Bool, defaultValue: Bool) {
         self.configurable = configurable
         self.defaultValue = defaultValue
     }
@@ -60,7 +55,7 @@ public struct PollsEntryConfig: Sendable {
 
 extension PollsEntryConfig {
     /// The default configuration for a poll entry. It will make it configurable but disabled by default.
-    public static var `default`: PollsEntryConfig { PollsEntryConfig(configurable: true, defaultValue: false) }
+    public static let `default` = PollsEntryConfig(configurable: true, defaultValue: false)
     /// The feature should not be supported, so it is not configurable by the user.
     public static let notConfigurable = PollsEntryConfig(configurable: false, defaultValue: false)
 }
