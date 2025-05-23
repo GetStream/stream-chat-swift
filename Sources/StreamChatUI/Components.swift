@@ -672,10 +672,10 @@ public struct Components: @unchecked Sendable {
     
     public static var `default`: Components {
         get {
-            MainActor.ensureIsolated { _default }
+            StreamConcurrency.onMain { _default }
         }
         set {
-            MainActor.ensureIsolated { _default = newValue }
+            StreamConcurrency.onMain { _default = newValue }
         }
     }
     

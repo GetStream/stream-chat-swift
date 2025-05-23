@@ -65,7 +65,7 @@ open class ChatThreadHeaderView: _View,
         _ channelController: ChatChannelController,
         didUpdateChannel channel: EntityChange<ChatChannel>
     ) {
-        MainActor.ensureIsolated {
+        StreamConcurrency.onMain {
             switch channel {
             case .update:
                 updateContentIfNeeded()

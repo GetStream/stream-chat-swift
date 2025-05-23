@@ -33,7 +33,7 @@ open class ChatMessageListScrollOverlayView: _View, ThemeProvider {
         didSet {
             listView?.accessibilityIdentifier = "listView"
             contentOffsetObservation = listView?.observe(\.contentOffset) { [weak self] tb, _ in
-                MainActor.ensureIsolated { [weak self] in
+                StreamConcurrency.onMain { [weak self] in
                     guard let self = self else { return }
                     
                     // To display correct date we use bottom edge of scroll overlay

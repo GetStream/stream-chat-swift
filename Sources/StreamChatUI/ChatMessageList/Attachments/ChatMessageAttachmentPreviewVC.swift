@@ -103,13 +103,13 @@ open class ChatMessageAttachmentPreviewVC: _ViewController, WKNavigationDelegate
     // MARK: - WKNavigationDelegate
 
     nonisolated public func webView(_ webView: WKWebView, didStartProvisionalNavigation navigation: WKNavigation!) {
-        MainActor.ensureIsolated {
+        StreamConcurrency.onMain {
             activityIndicatorView.startAnimating()
         }
     }
 
     nonisolated public func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
-        MainActor.ensureIsolated {
+        StreamConcurrency.onMain {
             activityIndicatorView.stopAnimating()
             
             webView.evaluateJavaScript("document.title") { data, _ in

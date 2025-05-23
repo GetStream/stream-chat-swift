@@ -20,7 +20,7 @@ import UIKit
         self.scrollView = scrollView
 
         observation = self.scrollView?.observe(\.contentOffset, changeHandler: { [weak self] scrollView, _ in
-            MainActor.ensureIsolated { [weak self] in
+            StreamConcurrency.onMain { [weak self] in
                 self?.onChanged(scrollView)
             }
         })

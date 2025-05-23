@@ -464,7 +464,7 @@ open class VoiceRecordingVC: _ViewController, ComponentsProvider, AppearanceProv
             delegate?.voiceRecordingWillBeginRecording(self)
             audioPlayer?.stop()
             audioRecorder.beginRecording { [weak self] in
-                MainActor.ensureIsolated { [weak self] in
+                StreamConcurrency.onMain { [weak self] in
                     self?.content = .beginRecording
                 }
             }
@@ -573,7 +573,7 @@ open class VoiceRecordingVC: _ViewController, ComponentsProvider, AppearanceProv
         _ audioRecorder: AudioRecording,
         didUpdateContext context: AudioRecordingContext
     ) {
-        MainActor.ensureIsolated {
+        StreamConcurrency.onMain {
             content.updatedWithDuration(context.duration)
             content.updatedWithWaveform(context.averagePower)
             
@@ -593,14 +593,14 @@ open class VoiceRecordingVC: _ViewController, ComponentsProvider, AppearanceProv
         _ audioRecorder: AudioRecording,
         didFinishRecordingAtURL location: URL
     ) {
-        MainActor.ensureIsolated {
+        StreamConcurrency.onMain {
             guard content != .idle else { return }
             
             audioAnalysisFactory?.waveformVisualisation(
                 fromAudioURL: location,
                 for: waveformTargetSamples
             ) { [weak self] result in
-                MainActor.ensureIsolated { [weak self] in
+                StreamConcurrency.onMain { [weak self] in
                     guard let self = self else { return }
                     switch result {
                     case let .success(waveform):
@@ -637,7 +637,7 @@ open class VoiceRecordingVC: _ViewController, ComponentsProvider, AppearanceProv
         _ audioRecorder: AudioRecording,
         didFailWithError error: Error
     ) {
-        MainActor.ensureIsolated {
+        StreamConcurrency.onMain {
             log.error(error)
             content = .idle
         }
@@ -649,7 +649,7 @@ open class VoiceRecordingVC: _ViewController, ComponentsProvider, AppearanceProv
         _ audioPlayer: AudioPlaying,
         didUpdateContext context: AudioPlaybackContext
     ) {
-        MainActor.ensureIsolated {
+        StreamConcurrency.onMain {
             let isActive = context.assetLocation == content.location
             
             switch (isActive, context.state) {

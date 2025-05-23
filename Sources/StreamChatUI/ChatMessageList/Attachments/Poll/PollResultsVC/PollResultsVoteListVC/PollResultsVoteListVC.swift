@@ -142,7 +142,7 @@ open class PollResultsVoteListVC:
     // MARK: - PollVoteListControllerDelegate
 
     nonisolated public func controller(_ controller: PollVoteListController, didChangeVotes changes: [ListChange<PollVote>]) {
-        MainActor.ensureIsolated {
+        StreamConcurrency.onMain {
             var snapshot = NSDiffableDataSourceSnapshot<PollOption, PollVote>()
             snapshot.appendSections([option])
             snapshot.appendItems(Array(controller.votes))
@@ -160,7 +160,7 @@ open class PollResultsVoteListVC:
 
         isPaginatingVotes = true
         pollVoteListController.loadMoreVotes { [weak self] error in
-            MainActor.ensureIsolated { [weak self] in
+            StreamConcurrency.onMain { [weak self] in
                 self?.didFinishLoadingMoreVotes(with: error)
             }
         }

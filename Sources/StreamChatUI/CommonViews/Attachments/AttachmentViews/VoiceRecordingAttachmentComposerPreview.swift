@@ -168,7 +168,7 @@ open class VoiceRecordingAttachmentComposerPreview: _View, AppearanceProvider, C
         _ audioPlayer: AudioPlaying,
         didUpdateContext context: AudioPlaybackContext
     ) {
-        MainActor.ensureIsolated {
+        StreamConcurrency.onMain {
             guard
                 let content = content
             else { return }

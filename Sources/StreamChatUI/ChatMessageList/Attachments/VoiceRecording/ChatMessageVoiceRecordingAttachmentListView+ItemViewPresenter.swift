@@ -124,7 +124,7 @@ extension ChatMessageVoiceRecordingAttachmentListView {
             _ audioPlayer: AudioPlaying,
             didUpdateContext context: AudioPlaybackContext
         ) {
-            MainActor.ensureIsolated {
+            StreamConcurrency.onMain {
                 _audioPlayer(audioPlayer, didUpdateContext: context)
             }
         }
@@ -133,7 +133,7 @@ extension ChatMessageVoiceRecordingAttachmentListView {
             _ audioPlayer: AudioPlaying,
             didUpdateContext context: AudioPlaybackContext
         ) {
-            MainActor.ensureIsolated {
+            StreamConcurrency.onMain {
                 guard let view = view, let content = view.content else {
                     return
                 }

@@ -96,7 +96,7 @@ open class ChatThreadListVC:
         super.setUp()
 
         threadListController.synchronize { [weak self] error in
-            MainActor.ensureIsolated { [weak self] in
+            StreamConcurrency.onMain { [weak self] in
                 self?.didFinishSynchronizingThreads(with: error)
             }
         }
@@ -150,7 +150,7 @@ open class ChatThreadListVC:
         if !newAvailableThreadIds.isEmpty {
             showLoadingBannerView()
             threadListController.synchronize { [weak self] error in
-                MainActor.ensureIsolated { [weak self] in
+                StreamConcurrency.onMain { [weak self] in
                     self?.didFinishSynchronizingThreads(with: error)
                 }
             }
@@ -165,7 +165,7 @@ open class ChatThreadListVC:
 
         isPaginatingThreads = true
         threadListController.loadMoreThreads { [weak self] result in
-            MainActor.ensureIsolated { [weak self] in
+            StreamConcurrency.onMain { [weak self] in
                 self?.didFinishLoadingMoreThreads(with: result)
             }
         }
@@ -176,7 +176,7 @@ open class ChatThreadListVC:
         hideHeaderBannerView()
         showLoadingBannerView()
         threadListController.synchronize { [weak self] error in
-            MainActor.ensureIsolated { [weak self] in
+            StreamConcurrency.onMain { [weak self] in
                 self?.didFinishSynchronizingThreads(with: error)
             }
         }
@@ -196,7 +196,7 @@ open class ChatThreadListVC:
         }
 
         threadListController.synchronize { [weak self] error in
-            MainActor.ensureIsolated { [weak self] in
+            StreamConcurrency.onMain { [weak self] in
                 self?.didFinishSynchronizingThreads(with: error)
             }
         }
@@ -284,7 +284,7 @@ open class ChatThreadListVC:
     // MARK: - ChatThreadListControllerDelegate
 
     nonisolated public func controller(_ controller: DataController, didChangeState state: DataController.State) {
-        MainActor.ensureIsolated {
+        StreamConcurrency.onMain {
             handleStateChanges(state)
         }
     }
@@ -293,7 +293,7 @@ open class ChatThreadListVC:
         _ controller: ChatThreadListController,
         didChangeThreads changes: [ListChange<ChatThread>]
     ) {
-        MainActor.ensureIsolated {
+        StreamConcurrency.onMain {
             handleStateChanges(controller.state)
             
             let previousThreads = threads
@@ -361,7 +361,7 @@ open class ChatThreadListVC:
     // MARK: - EventsControllerDelegate
 
     nonisolated open func eventsController(_ controller: EventsController, didReceiveEvent event: any Event) {
-        MainActor.ensureIsolated {
+        StreamConcurrency.onMain {
             switch event {
             case let event as ThreadMessageNewEvent:
                 guard let parentId = event.message.parentMessageId else { break }

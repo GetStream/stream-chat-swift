@@ -174,7 +174,7 @@ open class PollCommentListVC:
     // MARK: - PollVoteListControllerDelegate
 
     nonisolated public func controller(_ controller: PollVoteListController, didChangeVotes changes: [ListChange<PollVote>]) {
-        MainActor.ensureIsolated { [weak self] in
+        StreamConcurrency.onMain { [weak self] in
             guard let self else { return }
             var snapshot = NSDiffableDataSourceSnapshot<PollVote, PollVote>()
             let comments = Array(controller.votes)
@@ -200,7 +200,7 @@ open class PollCommentListVC:
 
         isPaginatingComments = true
         commentsController.loadMoreVotes { [weak self] error in
-            MainActor.ensureIsolated { [weak self] in
+            StreamConcurrency.onMain { [weak self] in
                 self?.didFinishLoadingMoreComments(with: error)
             }
         }
@@ -217,7 +217,7 @@ open class PollCommentListVC:
             currentUserId: currentUserId
         ) { [weak self] comment in
             self?.pollController.castPollVote(answerText: comment, optionId: nil) { [weak self] _ in
-                MainActor.ensureIsolated { [weak self] in
+                StreamConcurrency.onMain { [weak self] in
                     self?.tableView.scrollToRow(at: IndexPath(item: 0, section: 0), at: .top, animated: true)
                 }
             }

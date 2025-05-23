@@ -103,7 +103,7 @@ open class ChatChannelAvatarView: _View, ThemeProvider, SwiftUIRepresentable {
         urls = Array(urls.prefix(maxNumberOfImagesInCombinedAvatar))
 
         loadAvatarsFrom(urls: urls, channelId: channel.cid) { [weak self] avatars, channelId in
-            MainActor.ensureIsolated { [weak self] in
+            StreamConcurrency.onMain { [weak self] in
                 guard let self = self, channelId == self.content.channel?.cid else { return }
                 
                 let combinedImage = self.createMergedAvatar(from: avatars) ?? self.appearance.images.userAvatarPlaceholder2

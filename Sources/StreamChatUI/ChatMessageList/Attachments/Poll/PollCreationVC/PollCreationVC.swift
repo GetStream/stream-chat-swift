@@ -657,7 +657,7 @@ open class PollCreationVC:
                 .map { PollOption(text: $0) },
             extraData: extraData
         ) { [weak self] result in
-            MainActor.ensureIsolated { [weak self] in
+            StreamConcurrency.onMain { [weak self] in
                 self?.createPollButton.isEnabled = true
                 self?.handleCreatePollResponse(result: result)
             }

@@ -61,7 +61,7 @@ open class VideoAttachmentGalleryCell: GalleryCollectionViewCell {
                 showPreview(using: thumbnailURL)
             } else if let url = newAssetURL {
                 components.videoLoader.loadPreviewForVideo(at: url) { [weak self] result in
-                    MainActor.ensureIsolated { [weak self] in
+                    StreamConcurrency.onMain { [weak self] in
                         switch result {
                         case let .success(preview):
                             self?.showPreview(using: preview)
@@ -76,7 +76,7 @@ open class VideoAttachmentGalleryCell: GalleryCollectionViewCell {
 
     private func showPreview(using thumbnailURL: URL) {
         components.imageLoader.downloadImage(with: .init(url: thumbnailURL, options: ImageDownloadOptions())) { [weak self] result in
-            MainActor.ensureIsolated { [weak self] in
+            StreamConcurrency.onMain { [weak self] in
                 switch result {
                 case let .success(preview):
                     self?.showPreview(using: preview)

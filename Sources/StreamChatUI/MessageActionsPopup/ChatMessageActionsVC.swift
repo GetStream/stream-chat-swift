@@ -204,7 +204,7 @@ open class ChatMessageActionsVC: _ViewController, ThemeProvider {
                     guard confirmed else { return }
 
                     self.messageController.deleteMessage { _ in
-                        MainActor.ensureIsolated {
+                        StreamConcurrency.onMain {
                             self.delegate?.chatMessageActionsVCDidFinish(self)
                         }
                     }
@@ -220,7 +220,7 @@ open class ChatMessageActionsVC: _ViewController, ThemeProvider {
             action: { [weak self] _ in
                 guard let self = self else { return }
                 self.messageController.resendMessage { _ in
-                    MainActor.ensureIsolated {
+                    StreamConcurrency.onMain {
                         self.delegate?.chatMessageActionsVCDidFinish(self)
                     }
                 }
@@ -241,7 +241,7 @@ open class ChatMessageActionsVC: _ViewController, ThemeProvider {
                 self.messageController.client
                     .userController(userId: author.id)
                     .mute { _ in
-                        MainActor.ensureIsolated {
+                        StreamConcurrency.onMain {
                             self.delegate?.chatMessageActionsVCDidFinish(self)
                         }
                     }
@@ -262,7 +262,7 @@ open class ChatMessageActionsVC: _ViewController, ThemeProvider {
                 self.messageController.client
                     .userController(userId: author.id)
                     .unmute { _ in
-                        MainActor.ensureIsolated {
+                        StreamConcurrency.onMain {
                             self.delegate?.chatMessageActionsVCDidFinish(self)
                         }
                     }
@@ -283,7 +283,7 @@ open class ChatMessageActionsVC: _ViewController, ThemeProvider {
                 self.messageController.client
                     .userController(userId: author.id)
                     .block { _ in
-                        MainActor.ensureIsolated {
+                        StreamConcurrency.onMain {
                             self.delegate?.chatMessageActionsVCDidFinish(self)
                         }
                     }
@@ -304,7 +304,7 @@ open class ChatMessageActionsVC: _ViewController, ThemeProvider {
                 self.messageController.client
                     .userController(userId: author.id)
                     .unblock { _ in
-                        MainActor.ensureIsolated {
+                        StreamConcurrency.onMain {
                             self.delegate?.chatMessageActionsVCDidFinish(self)
                         }
                     }
@@ -367,7 +367,7 @@ open class ChatMessageActionsVC: _ViewController, ThemeProvider {
                     guard confirmed else { return }
 
                     self.messageController.flag { _ in
-                        MainActor.ensureIsolated {
+                        StreamConcurrency.onMain {
                             self.delegate?.chatMessageActionsVCDidFinish(self)
                         }
                     }

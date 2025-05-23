@@ -30,7 +30,7 @@ import UIKit
         self.scrollView = scrollView
 
         observation = self.scrollView?.observe(\.contentOffset, changeHandler: { [weak self] scrollView, _ in
-            MainActor.ensureIsolated { [weak self] in
+            StreamConcurrency.onMain { [weak self] in
                 self?.onChanged(scrollView)
             }
         })
@@ -46,7 +46,7 @@ import UIKit
         if canRequestNewBottomPage, position > scrollView.contentSize.height - bottomThreshold - scrollView.frame.size.height {
             onNewBottomPage?({ bottomPageRequestItemCount = $0 }, { [weak self] error in
                 if error != nil {
-                    MainActor.ensureIsolated { [weak self] in
+                    StreamConcurrency.onMain { [weak self] in
                         self?.bottomPageRequestItemCount = nil
                     }
                 }
@@ -57,7 +57,7 @@ import UIKit
         if canRequestNewTopPage, position >= 0 && position <= topThreshold && position <= max(0, previousPosition) {
             onNewTopPage?({ topPageRequestItemCount = $0 }, { [weak self] error in
                 if error != nil {
-                    MainActor.ensureIsolated { [weak self] in
+                    StreamConcurrency.onMain { [weak self] in
                         self?.topPageRequestItemCount = nil
                     }
                 }

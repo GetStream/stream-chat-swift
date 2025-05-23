@@ -314,7 +314,7 @@ extension UIImageView {
     ///
     /// - Returns : A boolean for weather the imageView was discarded
     nonisolated func isDiscarded(_ imageView: UIView?) -> Bool {
-        MainActor.ensureIsolated {
+        StreamConcurrency.onMain {
             return imageView?.superview == nil
         }
     }
@@ -323,7 +323,7 @@ extension UIImageView {
     ///
     /// - Returns : A boolean for weather the imageView is displayed
     nonisolated func isDisplayedInScreen(_ imageView: UIView?) -> Bool {
-        MainActor.ensureIsolated {
+        StreamConcurrency.onMain {
             guard !isHidden, let imageView = imageView else  {
                 return false
             }
@@ -345,7 +345,7 @@ extension UIImageView {
         currentImage = nil
         cache?.removeAllObjects()
         animationManager = nil
-        MainActor.ensureIsolated {
+        StreamConcurrency.onMain {
             image = nil
         }
     }

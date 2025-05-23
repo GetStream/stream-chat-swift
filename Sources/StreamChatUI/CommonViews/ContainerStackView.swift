@@ -202,7 +202,7 @@ public class ContainerStackView: UIView {
 
         hidingObserversByView[subview] = subview
             .observe(\.isHidden, options: [.new]) { [weak self] (view, isHiddenChange) in
-                MainActor.ensureIsolated { [weak self] in
+                StreamConcurrency.onMain { [weak self] in
                     if isHiddenChange.newValue == true {
                         self?.hideArrangedSubview(view)
                     } else {

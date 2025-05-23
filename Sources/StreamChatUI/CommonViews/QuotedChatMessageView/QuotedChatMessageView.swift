@@ -307,7 +307,7 @@ open class QuotedChatMessageView: _View, ThemeProvider, SwiftUIRepresentable {
     /// - Parameter url: The URL of the thumbnail
     open func setVideoAttachmentThumbnail(url: URL) {
         components.imageLoader.downloadImage(with: .init(url: url, options: ImageDownloadOptions())) { [weak self] result in
-            MainActor.ensureIsolated { [weak self] in
+            StreamConcurrency.onMain { [weak self] in
                 switch result {
                 case let .success(preview):
                     self?.attachmentPreviewView.image = preview
@@ -324,7 +324,7 @@ open class QuotedChatMessageView: _View, ThemeProvider, SwiftUIRepresentable {
         guard let url = url else { return }
 
         components.videoLoader.loadPreviewForVideo(at: url) { [weak self] result in
-            MainActor.ensureIsolated { [weak self] in
+            StreamConcurrency.onMain { [weak self] in
                 switch result {
                 case let .success(preview):
                     self?.attachmentPreviewView.image = preview

@@ -149,7 +149,7 @@ open class ChatThreadVC: _ViewController,
 
         // Load data from server
         messageController.synchronize { [weak self] error in
-            MainActor.ensureIsolated { [weak self] in
+            StreamConcurrency.onMain { [weak self] in
                 self?.didFinishSynchronizing(with: error)
             }
         }
@@ -219,7 +219,7 @@ open class ChatThreadVC: _ViewController,
                 guard error == nil else {
                     return
                 }
-                MainActor.ensureIsolated { [weak self] in
+                StreamConcurrency.onMain { [weak self] in
                     let shouldAnimate = self?.components.shouldAnimateJumpToMessageWhenOpeningChannel == true
                     self?.jumpToMessage(id: initialReplyId, animated: shouldAnimate)
                 }
@@ -230,7 +230,7 @@ open class ChatThreadVC: _ViewController,
         // When we tap on the parent message and start from oldest replies is enabled
         if shouldStartFromOldestReplies, let parentMessage = messageController.message {
             messageController.loadPageAroundReplyId(parentMessage.id) { [weak self] _ in
-                MainActor.ensureIsolated { [weak self] in
+                StreamConcurrency.onMain { [weak self] in
                     self?.messageListVC.scrollToTop(animated: false)
                 }
             }
@@ -266,7 +266,7 @@ open class ChatThreadVC: _ViewController,
     /// Called when the thread will load previous (older) replies.
     open func loadPreviousReplies(completion: @escaping @Sendable(Error?) -> Void) {
         messageController.loadPreviousReplies { [weak self] error in
-            MainActor.ensureIsolated { [weak self] in
+            StreamConcurrency.onMain { [weak self] in
                 completion(error)
                 self?.didFinishLoadingPreviousReplies(with: error)
             }
@@ -282,7 +282,7 @@ open class ChatThreadVC: _ViewController,
     /// Called when the thread will load next (newer) replies.
     open func loadNextReplies(completion: @escaping @Sendable(Error?) -> Void) {
         messageController.loadNextReplies { [weak self] error in
-            MainActor.ensureIsolated { [weak self] in
+            StreamConcurrency.onMain { [weak self] in
                 completion(error)
                 self?.didFinishLoadingNextReplies(with: error)
             }
@@ -450,7 +450,7 @@ open class ChatThreadVC: _ViewController,
         _ controller: ChatMessageController,
         didChangeMessage change: EntityChange<ChatMessage>
     ) {
-        MainActor.ensureIsolated {
+        StreamConcurrency.onMain {
             guard shouldRenderParentMessage && !messages.isEmpty else {
                 return
             }
@@ -475,7 +475,7 @@ open class ChatThreadVC: _ViewController,
         _ controller: ChatMessageController,
         didChangeReplies changes: [ListChange<ChatMessage>]
     ) {
-        MainActor.ensureIsolated {
+        StreamConcurrency.onMain {
             updateMessages(with: changes)
         }
     }
@@ -483,7 +483,7 @@ open class ChatThreadVC: _ViewController,
     // MARK: - EventsControllerDelegate
 
     nonisolated open func eventsController(_ controller: EventsController, didReceiveEvent event: Event) {
-        MainActor.ensureIsolated {
+        StreamConcurrency.onMain {
             _eventsController(controller, didReceiveEvent: event)
         }
     }
@@ -549,7 +549,7 @@ open class ChatThreadVC: _ViewController,
         _ audioPlayer: AudioPlaying,
         currentAssetURL: URL?
     ) -> URL? {
-        MainActor.ensureIsolated {
+        StreamConcurrency.onMain {
             audioQueuePlayerNextItemProvider.findNextItem(
                 in: messages,
                 currentVoiceRecordingURL: currentAssetURL,

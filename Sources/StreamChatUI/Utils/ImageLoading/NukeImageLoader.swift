@@ -30,7 +30,7 @@ open class NukeImageLoader: ImageLoading {
         with options: ImageLoaderOptions,
         completion: (@Sendable(Result<UIImage, Error>) -> Void)?
     ) -> Cancellable? {
-        let imageTask: ImageTask? = MainActor.ensureIsolated { [imageCDN] in
+        let imageTask: ImageTask? = StreamConcurrency.onMain { [imageCDN] in
             imageView.currentImageLoadingTask?.cancel()
             
             guard let url = url else {

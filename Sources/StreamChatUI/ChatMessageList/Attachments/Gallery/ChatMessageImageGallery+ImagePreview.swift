@@ -95,7 +95,7 @@ extension ChatMessageGalleryView {
                 from: attachment?.payload,
                 maxResolutionInPixels: components.imageAttachmentMaxPixels
             ) { [weak self] _ in
-                MainActor.ensureIsolated { [weak self] in
+                StreamConcurrency.onMain { [weak self] in
                     self?.loadingIndicator.isVisible = false
                     self?.imageTask = nil
                 }
@@ -115,7 +115,7 @@ extension ChatMessageGalleryView {
         // MARK: - Init & Deinit
 
         deinit {
-            MainActor.ensureIsolated {
+            StreamConcurrency.onMain {
                 imageTask?.cancel()
             }
         }

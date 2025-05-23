@@ -1361,7 +1361,7 @@ open class ComposerVC: _ViewController,
 
         enrichUrlDebouncer.execute { [weak self] in
             self?.channelController?.enrichUrl(link.url) { [weak self] result in
-                MainActor.ensureIsolated { [weak self] in
+                StreamConcurrency.onMain { [weak self] in
                     let enrichedUrlText = link.url.absoluteString
                     let currentLinks = self?.composerView.inputMessageView.textView.links ?? []
                     guard let currentUrlText = currentLinks.first?.url.absoluteString else {
@@ -1814,7 +1814,7 @@ extension ComposerVC: ChatChannelControllerDelegate {
         _ channelController: ChatChannelController,
         didUpdateMessages changes: [ListChange<ChatMessage>]
     ) {
-        MainActor.ensureIsolated {
+        StreamConcurrency.onMain {
             cooldownTracker.start(with: channelController.currentCooldownTime())
         }
     }

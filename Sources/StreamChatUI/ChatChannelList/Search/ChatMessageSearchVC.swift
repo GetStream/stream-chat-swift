@@ -61,7 +61,7 @@ open class ChatMessageSearchVC: ChatChannelListSearchVC, ChatMessageSearchContro
         isPaginatingMessages = true
 
         messageSearchController.loadNextMessages { [weak self] _ in
-            MainActor.ensureIsolated { [weak self] in
+            StreamConcurrency.onMain { [weak self] in
                 self?.isPaginatingMessages = false
             }
         }
@@ -108,7 +108,7 @@ open class ChatMessageSearchVC: ChatChannelListSearchVC, ChatMessageSearchContro
     // MARK: - ChatMessageSearchControllerDelegate
 
     nonisolated open func controller(_ controller: ChatMessageSearchController, didChangeMessages changes: [ListChange<ChatMessage>]) {
-        MainActor.ensureIsolated {
+        StreamConcurrency.onMain {
             reloadMessages()
         }
     }

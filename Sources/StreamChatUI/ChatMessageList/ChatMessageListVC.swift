@@ -680,7 +680,7 @@ open class ChatMessageListVC: _ViewController,
                 log.error("Loading message around failed with error: \(error)")
                 return
             }
-            MainActor.ensureIsolated { [weak self] in
+            StreamConcurrency.onMain { [weak self] in
                 self?.updateScrollToBottomButtonVisibility()
                 
                 // When we load the mid-page, the UI is not yet updated, so we can't scroll here.
@@ -765,7 +765,7 @@ open class ChatMessageListVC: _ViewController,
                 return completion(nil)
             }
 
-            MainActor.ensureIsolated {
+            StreamConcurrency.onMain {
                 guard let jumpToUnreadMessageId = self.jumpToUnreadMessageId else {
                     return completion(nil)
                 }
@@ -1162,7 +1162,7 @@ open class ChatMessageListVC: _ViewController,
         ) { [weak self] comment in
             let pollController = self?.client.pollController(messageId: message.id, pollId: poll.id)
             pollController?.castPollVote(answerText: comment, optionId: nil) { [weak self] error in
-                MainActor.ensureIsolated { [weak self] in
+                StreamConcurrency.onMain { [weak self] in
                     self?.notificationFeedbackGenerator?.notificationOccurred(error == nil ? .success : .error)
                 }
             }
@@ -1184,7 +1184,7 @@ open class ChatMessageListVC: _ViewController,
                 return
             }
             pollController?.suggestPollOption(text: suggestion) { [weak self] error in
-                MainActor.ensureIsolated { [weak self] in
+                StreamConcurrency.onMain { [weak self] in
                     self?.notificationFeedbackGenerator?.notificationOccurred(error == nil ? .success : .error)
                 }
             }
@@ -1199,7 +1199,7 @@ open class ChatMessageListVC: _ViewController,
         alertRouter.showPollEndVoteAlert(for: poll, in: message.id) { [weak self] in
             let pollController = self?.client.pollController(messageId: message.id, pollId: poll.id)
             pollController?.closePoll { [weak self] error in
-                MainActor.ensureIsolated { [weak self] in
+                StreamConcurrency.onMain { [weak self] in
                     self?.notificationFeedbackGenerator?.notificationOccurred(error == nil ? .success : .error)
                 }
             }
@@ -1223,13 +1223,13 @@ open class ChatMessageListVC: _ViewController,
         let pollController = makePollController(for: poll, in: message)
         if let currentUserVote = poll.currentUserVote(for: option) {
             pollController.removePollVote(voteId: currentUserVote.id) { [weak self] error in
-                MainActor.ensureIsolated { [weak self] in
+                StreamConcurrency.onMain { [weak self] in
                     self?.didRemovePollVote(currentUserVote, for: option, in: message, error: error)
                 }
             }
         } else {
             pollController.castPollVote(answerText: nil, optionId: option.id) { [weak self] error in
-                MainActor.ensureIsolated { [weak self] in
+                StreamConcurrency.onMain { [weak self] in
                     self?.didCastPollVote(for: option, in: message, error: error)
                 }
             }

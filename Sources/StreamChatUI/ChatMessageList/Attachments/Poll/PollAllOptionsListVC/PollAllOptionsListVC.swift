@@ -162,7 +162,7 @@ open class PollAllOptionsListVC:
         if let currentUserVote = pollController.poll?.currentUserVote(for: option) {
             pollController.removePollVote(voteId: currentUserVote.id) { [weak self] error in
                 if error != nil {
-                    MainActor.ensureIsolated { [weak self] in
+                    StreamConcurrency.onMain { [weak self] in
                         self?.notificationFeedbackGenerator?.notificationOccurred(.error)
                     }
                 }
@@ -170,7 +170,7 @@ open class PollAllOptionsListVC:
         } else {
             pollController.castPollVote(answerText: nil, optionId: option.id) { [weak self] error in
                 if error != nil {
-                    MainActor.ensureIsolated { [weak self] in
+                    StreamConcurrency.onMain { [weak self] in
                         self?.notificationFeedbackGenerator?.notificationOccurred(.error)
                     }
                 }
@@ -181,7 +181,7 @@ open class PollAllOptionsListVC:
     // MARK: - PollControllerDelegate
 
     nonisolated open func pollController(_ pollController: PollController, didUpdatePoll poll: EntityChange<Poll>) {
-        MainActor.ensureIsolated {
+        StreamConcurrency.onMain {
             tableView.reloadData()
         }
     }

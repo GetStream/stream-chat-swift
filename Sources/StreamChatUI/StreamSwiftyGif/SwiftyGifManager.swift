@@ -161,7 +161,7 @@ class SwiftyGifManager: @unchecked Sendable {
         #endif
         
         for imageView in displayViews {
-            MainActor.ensureIsolated {
+            StreamConcurrency.onMain {
                 imageView.image = imageView.currentImage
             }
             

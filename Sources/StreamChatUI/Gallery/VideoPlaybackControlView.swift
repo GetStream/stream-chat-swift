@@ -242,7 +242,7 @@ open class VideoPlaybackControlView: _View, ThemeProvider {
 
         playerStatusObserver = player.observe(\.timeControlStatus, options: [.new, .initial]) { [weak self] player, _ in
             guard let self = self else { return }
-            MainActor.ensureIsolated {
+            StreamConcurrency.onMain {
                 switch player.timeControlStatus {
                 case .playing:
                     self.content.videoState = .playing
@@ -256,10 +256,10 @@ open class VideoPlaybackControlView: _View, ThemeProvider {
 
         playerItemObserver = player.observe(\.currentItem, options: [.new, .initial]) { [weak self] player, _ in
             guard let self = self else { return }
-            MainActor.ensureIsolated {
+            StreamConcurrency.onMain {
                 self.content.videoDuration = 0
                 self.itemDurationObserver = player.currentItem?.observe(\.duration, options: [.new, .initial]) { [weak self] item, _ in
-                    MainActor.ensureIsolated { [weak self] in
+                    StreamConcurrency.onMain { [weak self] in
                         self?.content.videoDuration = item.duration.isNumeric ? item.duration.seconds : 0
                     }
                 }
@@ -279,7 +279,7 @@ open class VideoPlaybackControlView: _View, ThemeProvider {
 
     deinit {
         NotificationCenter.default.removeObserver(self)
-        MainActor.ensureIsolated {
+        StreamConcurrency.onMain {
             unsubscribeFromPlayerNotifications(_currentPlayer)
         }
     }

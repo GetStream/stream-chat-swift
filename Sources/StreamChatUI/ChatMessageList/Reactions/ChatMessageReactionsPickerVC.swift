@@ -60,7 +60,7 @@ open class ChatMessageReactionsPickerVC: _ViewController, ThemeProvider, ChatMes
         guard let message = messageController.message else { return }
 
         let completion: @Sendable(Error?) -> Void = { [weak self] _ in
-            MainActor.ensureIsolated { [weak self] in
+            StreamConcurrency.onMain { [weak self] in
                 self?.dismiss(animated: true)
             }
         }
@@ -77,7 +77,7 @@ open class ChatMessageReactionsPickerVC: _ViewController, ThemeProvider, ChatMes
         _ controller: ChatMessageController,
         didChangeMessage change: EntityChange<ChatMessage>
     ) {
-        MainActor.ensureIsolated {
+        StreamConcurrency.onMain {
             switch change {
             case .create, .remove: break
             case .update: updateContentIfNeeded()

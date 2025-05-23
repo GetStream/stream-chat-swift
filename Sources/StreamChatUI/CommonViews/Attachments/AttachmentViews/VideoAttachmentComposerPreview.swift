@@ -94,7 +94,7 @@ open class VideoAttachmentComposerPreview: _View, ThemeProvider {
 
         if let url = content {
             components.videoLoader.loadPreviewForVideo(at: url) { [weak self] result in
-                MainActor.ensureIsolated { [weak self] in
+                StreamConcurrency.onMain { [weak self] in
                     self?.loadingIndicator.isHidden = true
                     switch result {
                     case let .success(preview):

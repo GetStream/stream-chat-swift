@@ -166,7 +166,7 @@ open class ChatMessageReactionAuthorsVC: _ViewController,
         _ controller: ChatMessageController,
         didChangeReactions reactions: [ChatMessageReaction]
     ) {
-        MainActor.ensureIsolated {
+        StreamConcurrency.onMain {
             collectionView.reloadData()
             updateContent()
         }
@@ -185,7 +185,7 @@ open class ChatMessageReactionAuthorsVC: _ViewController,
 
         isLoadingReactions = true
         messageController.loadNextReactions { [weak self] _ in
-            MainActor.ensureIsolated { [weak self] in
+            StreamConcurrency.onMain { [weak self] in
                 self?.isLoadingReactions = false
             }
         }

@@ -41,10 +41,10 @@ public struct Appearance: @unchecked Sendable {
 public extension Appearance {
     static var `default`: Appearance {
         get {
-            MainActor.ensureIsolated { _default }
+            StreamConcurrency.onMain { _default }
         }
         set {
-            MainActor.ensureIsolated { _default = newValue }
+            StreamConcurrency.onMain { _default = newValue }
         }
     }
     

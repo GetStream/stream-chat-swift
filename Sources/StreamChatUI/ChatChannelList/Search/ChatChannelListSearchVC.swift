@@ -120,7 +120,7 @@ open class ChatChannelListSearchVC: ChatChannelListVC, UISearchResultsUpdating {
     // MARK: - Deinit
 
     deinit {
-        MainActor.ensureIsolated {
+        StreamConcurrency.onMain {
             debouncer.invalidate()
         }
     }

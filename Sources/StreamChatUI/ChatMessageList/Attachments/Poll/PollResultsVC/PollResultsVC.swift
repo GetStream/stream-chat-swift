@@ -207,7 +207,7 @@ open class PollResultsVC:
     // MARK: - PollControllerDelegate
 
     nonisolated open func pollController(_ pollController: PollController, didUpdatePoll poll: EntityChange<Poll>) {
-        MainActor.ensureIsolated {
+        StreamConcurrency.onMain {
             updateDataSource()
         }
     }

@@ -276,7 +276,7 @@ open class ChatChannelListVC: _ViewController,
         isPaginatingChannels = true
 
         controller.loadNextChannels { [weak self] _ in
-            MainActor.ensureIsolated { [weak self] in
+            StreamConcurrency.onMain { [weak self] in
                 self?.isPaginatingChannels = false
             }
         }
@@ -406,7 +406,7 @@ open class ChatChannelListVC: _ViewController,
     // MARK: - ChatChannelListControllerDelegate
 
     nonisolated open func controllerWillChangeChannels(_ controller: ChatChannelListController) {
-        MainActor.ensureIsolated {
+        StreamConcurrency.onMain {
             collectionView.layoutIfNeeded()
         }
     }
@@ -415,7 +415,7 @@ open class ChatChannelListVC: _ViewController,
         _ controller: ChatChannelListController,
         didChangeChannels changes: [ListChange<ChatChannel>]
     ) {
-        MainActor.ensureIsolated {
+        StreamConcurrency.onMain {
             handleStateChanges(controller.state)
             
             if skipChannelUpdates {
@@ -430,7 +430,7 @@ open class ChatChannelListVC: _ViewController,
     // MARK: - DataControllerStateDelegate
 
     nonisolated open func controller(_ controller: DataController, didChangeState state: DataController.State) {
-        MainActor.ensureIsolated {
+        StreamConcurrency.onMain {
             handleStateChanges(state)
         }
     }

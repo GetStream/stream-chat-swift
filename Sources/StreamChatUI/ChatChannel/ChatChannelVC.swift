@@ -149,7 +149,7 @@ open class ChatChannelVC: _ViewController,
 
         channelController.delegate = self
         channelController.synchronize { [weak self] error in
-            MainActor.ensureIsolated { [weak self] in
+            StreamConcurrency.onMain { [weak self] in
                 self?.didFinishSynchronizing(with: error)
             }
         }
@@ -314,7 +314,7 @@ open class ChatChannelVC: _ViewController,
     open func loadPreviousMessages(completion: @escaping @Sendable(Error?) -> Void) {
         channelController.loadPreviousMessages { [weak self] error in
             completion(error)
-            MainActor.ensureIsolated { [weak self] in
+            StreamConcurrency.onMain { [weak self] in
                 self?.didFinishLoadingPreviousMessages(with: error)
             }
         }
@@ -329,7 +329,7 @@ open class ChatChannelVC: _ViewController,
     /// Called when the channel will load next (newer) messages.
     open func loadNextMessages(completion: @escaping @Sendable(Error?) -> Void) {
         channelController.loadNextMessages { [weak self] error in
-            MainActor.ensureIsolated { [weak self] in
+            StreamConcurrency.onMain { [weak self] in
                 completion(error)
                 self?.didFinishLoadingNextMessages(with: error)
             }
@@ -392,7 +392,7 @@ open class ChatChannelVC: _ViewController,
         }
 
         channelController.loadPageAroundMessageId(messageId) { [weak self] error in
-            MainActor.ensureIsolated { [weak self] in
+            StreamConcurrency.onMain { [weak self] in
                 self?.updateJumpToUnreadRelatedComponents()
                 completion(error)
             }
@@ -441,7 +441,7 @@ open class ChatChannelVC: _ViewController,
         case is MarkUnreadActionItem:
             dismiss(animated: true) { [weak self] in
                 self?.channelController.markUnread(from: message.id) { result in
-                    MainActor.ensureIsolated {
+                    StreamConcurrency.onMain {
                         if case let .success(channel) = result {
                             self?.updateAllUnreadMessagesRelatedComponents(channel: channel)
                         }
@@ -520,7 +520,7 @@ open class ChatChannelVC: _ViewController,
         _ channelController: ChatChannelController,
         didUpdateMessages changes: [ListChange<ChatMessage>]
     ) {
-        MainActor.ensureIsolated {
+        StreamConcurrency.onMain {
             _channelController(channelController, didUpdateMessages: changes)
         }
     }
@@ -554,7 +554,7 @@ open class ChatChannelVC: _ViewController,
         _ channelController: ChatChannelController,
         didUpdateChannel channel: EntityChange<ChatChannel>
     ) {
-        MainActor.ensureIsolated {
+        StreamConcurrency.onMain {
             _channelController(channelController, didUpdateChannel: channel)
         }
     }
@@ -577,7 +577,7 @@ open class ChatChannelVC: _ViewController,
         _ channelController: ChatChannelController,
         didChangeTypingUsers typingUsers: Set<ChatUser>
     ) {
-        MainActor.ensureIsolated {
+        StreamConcurrency.onMain {
             _channelController(channelController, didChangeTypingUsers: typingUsers)
         }
     }
@@ -602,7 +602,7 @@ open class ChatChannelVC: _ViewController,
     // MARK: - EventsControllerDelegate
 
     nonisolated open func eventsController(_ controller: EventsController, didReceiveEvent event: Event) {
-        MainActor.ensureIsolated {
+        StreamConcurrency.onMain {
             _eventsController(controller, didReceiveEvent: event)
         }
     }
@@ -643,7 +643,7 @@ open class ChatChannelVC: _ViewController,
         _ audioPlayer: AudioPlaying,
         currentAssetURL: URL?
     ) -> URL? {
-        MainActor.ensureIsolated {
+        StreamConcurrency.onMain {
             audioQueuePlayerNextItemProvider.findNextItem(
                 in: messages,
                 currentVoiceRecordingURL: currentAssetURL,

@@ -104,7 +104,7 @@ open class ChatChannelHeaderView: _View,
             withTimeInterval: statusUpdateInterval,
             repeats: true
         ) { [weak self] _ in
-            MainActor.ensureIsolated { [weak self] in
+            StreamConcurrency.onMain { [weak self] in
                 self?.updateContentIfNeeded()
             }
         }
@@ -116,7 +116,7 @@ open class ChatChannelHeaderView: _View,
         _ channelController: ChatChannelController,
         didUpdateChannel channel: EntityChange<ChatChannel>
     ) {
-        MainActor.ensureIsolated {
+        StreamConcurrency.onMain {
             switch channel {
             case .update, .create:
                 updateContent()
@@ -151,7 +151,7 @@ open class ChatChannelHeaderView: _View,
     }
 
     deinit {
-        MainActor.ensureIsolated {
+        StreamConcurrency.onMain {
             timer?.invalidate()
         }
     }

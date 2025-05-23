@@ -80,7 +80,7 @@ open class ChatSuggestionsVC: _ViewController,
             \.contentSize,
             options: [.new],
             changeHandler: { [weak self] collectionView, change in
-                MainActor.ensureIsolated { [weak self] in
+                StreamConcurrency.onMain { [weak self] in
                     guard let self = self, let newSize = change.newValue else { return }
                     guard !collectionView.isTrackingOrDecelerating else { return }
                     
@@ -274,7 +274,7 @@ open class ChatMessageComposerSuggestionsMentionDataSource: NSObject,
         _ controller: ChatUserSearchController,
         didChangeUsers changes: [ListChange<ChatUser>]
     ) {
-        MainActor.ensureIsolated {
+        StreamConcurrency.onMain {
             users = searchController.userArray
             collectionView.reloadData()
         }
@@ -284,14 +284,14 @@ open class ChatMessageComposerSuggestionsMentionDataSource: NSObject,
         _ controller: ChatChannelMemberListController,
         didChangeMembers changes: [ListChange<ChatChannelMember>]
     ) {
-        MainActor.ensureIsolated {
+        StreamConcurrency.onMain {
             users = Array(controller.members)
             collectionView.reloadData()
         }
     }
 
     nonisolated public func controller(_ controller: DataController, didChangeState state: DataController.State) {
-        MainActor.ensureIsolated {
+        StreamConcurrency.onMain {
             if let memberListController = controller as? ChatChannelMemberListController {
                 users = Array(memberListController.members)
                 collectionView.reloadData()

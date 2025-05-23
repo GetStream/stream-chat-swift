@@ -86,7 +86,7 @@ extension CurrentChatUserAvatarView: CurrentChatUserControllerDelegate {
         _ controller: CurrentChatUserController,
         didChangeCurrentUser: EntityChange<CurrentChatUser>
     ) {
-        MainActor.ensureIsolated {
+        StreamConcurrency.onMain {
             updateContentIfNeeded()
         }
     }
