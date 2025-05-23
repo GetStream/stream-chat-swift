@@ -144,24 +144,20 @@ class PollsRepository: @unchecked Sendable {
         voteId: String,
         completion: (@Sendable(Error?) -> Void)? = nil
     ) {
-        struct WriteResponse {
-            var exists = false
-            var answerText: String?
-            var optionId: String?
-            var userId: UserId?
-            var filterHash: String?
-        }
-        database.write(converting: { session in
+        nonisolated(unsafe) var exists = false
+        nonisolated(unsafe) var answerText: String?
+        nonisolated(unsafe) var optionId: String?
+        nonisolated(unsafe) var userId: UserId?
+        nonisolated(unsafe) var filterHash: String?
+        database.write { session in
             let voteDto = try session.removePollVote(with: voteId, pollId: pollId)
-            var writeResponse = WriteResponse()
-            writeResponse.exists = voteDto != nil
-            writeResponse.filterHash = voteDto?.queries?.first?.filterHash
-            writeResponse.answerText = voteDto?.answerText
-            writeResponse.optionId = voteDto?.optionId
-            writeResponse.userId = voteDto?.user?.id
-            return writeResponse
-        }, completion: { [weak self] result in
-            if let writeResponse = result.value {
+            exists = voteDto != nil
+            filterHash = voteDto?.queries?.first?.filterHash
+            answerText = voteDto?.answerText
+            optionId = voteDto?.optionId
+            userId = voteDto?.user?.id
+        } completion: { [weak self] error in
+            if error == nil {
                 self?.apiClient.request(
                     endpoint: .removePollVote(
                         messageId: messageId,
@@ -169,25 +165,25 @@ class PollsRepository: @unchecked Sendable {
                         voteId: voteId
                     )
                 ) { [weak self] in
-                    if $0.error != nil, $0.error?.isBackendNotFound404StatusCode == false, writeResponse.exists {
+                    if $0.error != nil, $0.error?.isBackendNotFound404StatusCode == false, exists {
                         self?.database.write { session in
                             _ = try session.savePollVote(
                                 voteId: voteId,
                                 pollId: pollId,
-                                optionId: writeResponse.optionId,
-                                answerText: writeResponse.answerText,
-                                userId: writeResponse.userId,
+                                optionId: optionId,
+                                answerText: answerText,
+                                userId: userId,
                                 query: nil
                             )
-                            try? session.linkVote(with: voteId, in: pollId, to: writeResponse.filterHash)
+                            try? session.linkVote(with: voteId, in: pollId, to: filterHash)
                         }
                     }
                     completion?($0.error)
                 }
             } else {
-                completion?(result.error)
+                completion?(error)
             }
-        })
+        }
     }
     
     func closePoll(

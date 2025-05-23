@@ -153,7 +153,7 @@ public struct AttachmentFile: Codable, Hashable, Sendable {
     /// A mime type.
     public let mimeType: String?
     /// A file size formatter.
-    public static var sizeFormatter: ByteCountFormatter { ByteCountFormatter() }
+    public nonisolated(unsafe) static let sizeFormatter = ByteCountFormatter()
 
     // TODO: This should be deprecated in the future. UI Formatting should not belong to domain models.
     // All formatting logic should come from `Appearance.formatters`.
