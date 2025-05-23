@@ -279,8 +279,8 @@ final class AttachmentDTO_Tests: XCTestCase {
 
     func test_attachmentChange_triggerMessageUpdate() throws {
         // Arrange: Store message with attachment in database
-        var messageId: MessageId!
-        var attachmentId: AttachmentId!
+        nonisolated(unsafe) var messageId: MessageId!
+        nonisolated(unsafe) var attachmentId: AttachmentId!
 
         let cid: ChannelId = .unique
 

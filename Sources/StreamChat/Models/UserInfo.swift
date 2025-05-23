@@ -5,7 +5,7 @@
 import Foundation
 
 /// A model containing user info that's used to connect to chat's backend
-public struct UserInfo {
+public struct UserInfo: Sendable {
     /// The id of the user.
     public let id: UserId
     /// The name of the user.
@@ -45,7 +45,7 @@ public struct UserInfo {
 }
 
 /// The privacy settings of the user.
-public struct UserPrivacySettings {
+public struct UserPrivacySettings: Sendable {
     /// The settings for typing indicator events.
     public var typingIndicators: TypingIndicatorPrivacySettings?
     /// The settings for the read receipt events.
@@ -61,7 +61,7 @@ public struct UserPrivacySettings {
 }
 
 /// The settings for typing indicator events.
-public struct TypingIndicatorPrivacySettings {
+public struct TypingIndicatorPrivacySettings: Sendable {
     public var enabled: Bool
 
     public init(enabled: Bool = true) {
@@ -70,7 +70,7 @@ public struct TypingIndicatorPrivacySettings {
 }
 
 /// The settings for the read receipt events.
-public struct ReadReceiptsPrivacySettings {
+public struct ReadReceiptsPrivacySettings: Sendable {
     public var enabled: Bool
 
     public init(enabled: Bool = true) {

@@ -84,7 +84,7 @@ final class PollVoteListController_Tests: XCTestCase {
 
     func test_synchronize_forwardsUpdaterError() throws {
         // Simulate `synchronize` call
-        var completionError: Error?
+        nonisolated(unsafe) var completionError: Error?
         let expectation = expectation(description: "synchronize")
         controller.synchronize {
             completionError = $0
@@ -104,8 +104,8 @@ final class PollVoteListController_Tests: XCTestCase {
 
     func test_synchronize_changesStateCorrectly_ifNoErrorsHappen() throws {
         // Simulate `synchronize` call
-        var completionError: Error?
-        var completionCalled = false
+        nonisolated(unsafe) var completionError: Error?
+        nonisolated(unsafe) var completionCalled = false
         let expectation = expectation(description: "synchronize")
         controller.synchronize {
             completionError = $0

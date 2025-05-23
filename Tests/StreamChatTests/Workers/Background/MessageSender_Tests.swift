@@ -63,7 +63,7 @@ final class MessageSender_Tests: XCTestCase {
 
     func test_senderSendsMessage_withPendingSendLocalState_and_uploadedOrEmptyAttachments() throws {
         let message1Id: MessageId = .unique
-        var message2Id: MessageId!
+        nonisolated(unsafe) var message2Id: MessageId!
 
         let message = ChatMessage.mock(id: message1Id, cid: cid, text: "Message sent", author: .unique)
         messageRepository.sendMessageResult = .success(message)
@@ -150,7 +150,7 @@ final class MessageSender_Tests: XCTestCase {
     }
 
     func test_sender_sendsMessage_withUploadedAttachments() throws {
-        var messageId: MessageId!
+        nonisolated(unsafe) var messageId: MessageId!
 
         try database.writeSynchronously { session in
             let message = try session.createNewMessage(
@@ -178,7 +178,7 @@ final class MessageSender_Tests: XCTestCase {
     }
 
     func test_sender_sendsMessage_withBothNotUploadableAttachmentAndUploadedAttachments() throws {
-        var messageId: MessageId!
+        nonisolated(unsafe) var messageId: MessageId!
 
         try database.writeSynchronously { session in
             let message = try session.createNewMessage(
@@ -216,9 +216,9 @@ final class MessageSender_Tests: XCTestCase {
     }
 
     func test_senderSendsMessage_inTheOrderTheyWereCreatedLocally() throws {
-        var message1Id: MessageId!
-        var message2Id: MessageId!
-        var message3Id: MessageId!
+        nonisolated(unsafe) var message1Id: MessageId!
+        nonisolated(unsafe) var message2Id: MessageId!
+        nonisolated(unsafe) var message3Id: MessageId!
 
         // Create 3 messages in the DB, all with `.pendingSend` local state
         try database.writeSynchronously { session in
@@ -294,11 +294,11 @@ final class MessageSender_Tests: XCTestCase {
         let cidB = ChannelId.unique
         try database.createChannel(cid: cidB)
 
-        var channelA_message1: MessageId!
-        var channelA_message2: MessageId!
+        nonisolated(unsafe) var channelA_message1: MessageId!
+        nonisolated(unsafe) var channelA_message2: MessageId!
 
-        var channelB_message1: MessageId!
-        var channelB_message2: MessageId!
+        nonisolated(unsafe) var channelB_message1: MessageId!
+        nonisolated(unsafe) var channelB_message2: MessageId!
 
         // Create 2 new messages in two channel the DB
         try database.writeSynchronously { session in
@@ -387,7 +387,7 @@ final class MessageSender_Tests: XCTestCase {
     }
 
     func test_sender_sendsMessage_whenError_sendsEvent() throws {
-        var messageId: MessageId!
+        nonisolated(unsafe) var messageId: MessageId!
 
         struct MockError: Error {}
         messageRepository.sendMessageResult = .failure(.failedToSendMessage(MockError()))

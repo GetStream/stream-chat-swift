@@ -19,7 +19,7 @@ public extension Int {
 
 /// Basic pagination with `pageSize` and `offset`.
 /// Used everywhere except `ChannelQuery`. (See `MessagesPagination`)
-public struct Pagination: Encodable, Equatable {
+public struct Pagination: Encodable, Equatable, Sendable {
     /// A page size.
     public let pageSize: Int
     /// An offset.
@@ -56,7 +56,7 @@ public struct Pagination: Encodable, Equatable {
     }
 }
 
-public struct MessagesPagination: Encodable, Equatable {
+public struct MessagesPagination: Encodable, Equatable, Sendable {
     /// A page size
     public let pageSize: Int
     /// Parameter for pagination.
@@ -79,7 +79,7 @@ public struct MessagesPagination: Encodable, Equatable {
 }
 
 /// Pagination parameters
-public enum PaginationParameter: Encodable, Hashable {
+public enum PaginationParameter: Encodable, Hashable, Sendable {
     enum CodingKeys: String, CodingKey {
         case greaterThan = "id_gt"
         case greaterThanOrEqual = "id_gte"

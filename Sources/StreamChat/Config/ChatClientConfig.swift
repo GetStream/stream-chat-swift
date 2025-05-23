@@ -13,7 +13,7 @@ import Foundation
 ///     config.channel.keystrokeEventTimeout = 15
 ///   ```
 ///
-public struct ChatClientConfig {
+public struct ChatClientConfig: Sendable {
     /// The `APIKey` unique for your chat app.
     ///
     /// The API key can be obtained by registering on [our website](https://getstream.io/chat/\).
@@ -155,7 +155,7 @@ public struct ChatClientConfig {
     public var maxAttachmentCountPerMessage = 30
 
     /// Specifies the visibility of deleted messages.
-    public enum DeletedMessageVisibility: String, CustomStringConvertible, CustomDebugStringConvertible {
+    public enum DeletedMessageVisibility: String, CustomStringConvertible, CustomDebugStringConvertible, Sendable {
         /// All deleted messages are always hidden.
         case alwaysHidden
         /// Deleted message by current user are visible, other deleted messages are hidden.
@@ -222,13 +222,13 @@ extension ChatClientConfig {
 
 extension ChatClientConfig {
     /// Advanced settings for the local caching and model serialization.
-    public struct LocalCaching: Equatable {
+    public struct LocalCaching: Equatable, Sendable {
         /// `ChatChannel` specific local caching and model serialization settings.
         public var chatChannel = ChatChannel()
     }
 
     /// `ChatChannel` specific local caching and model serialization settings.
-    public struct ChatChannel: Equatable {
+    public struct ChatChannel: Equatable, Sendable {
         /// Limit the max number of watchers included in `ChatChannel.lastActiveWatchers`.
         public var lastActiveWatchersLimit = 100
         /// Limit the max number of members included in `ChatChannel.lastActiveMembers`.
@@ -242,7 +242,7 @@ extension ChatClientConfig {
 ///
 /// An API key can be obtained by registering on [our website](https://getstream.io/chat/trial/\).
 ///
-public struct APIKey: Equatable {
+public struct APIKey: Equatable, Sendable {
     /// The string representation of the API key
     public let apiKeyString: String
 

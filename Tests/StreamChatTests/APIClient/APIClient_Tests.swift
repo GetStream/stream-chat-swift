@@ -131,7 +131,7 @@ final class APIClient_Tests: XCTestCase {
         encoder.onEncodeRequestCall = {
             firstEncodeRequestExpectation.fulfill()
         }
-        var result: Result<Data, Error>?
+        nonisolated(unsafe) var result: Result<Data, Error>?
         apiClient.request(endpoint: testEndpoint) {
             result = $0
             requestCompletesExpectation.fulfill()
@@ -357,8 +357,8 @@ final class APIClient_Tests: XCTestCase {
             )
         )
 
-        var receivedProgress: Double?
-        var receivedResult: Result<UploadedAttachment, Error>?
+        nonisolated(unsafe) var receivedProgress: Double?
+        nonisolated(unsafe) var receivedResult: Result<UploadedAttachment, Error>?
         waitUntil(timeout: defaultTimeout) { done in
             apiClient.uploadAttachment(
                 attachment,
@@ -379,8 +379,8 @@ final class APIClient_Tests: XCTestCase {
         let networkError = NSError(domain: "", code: NSURLErrorNotConnectedToInternet, userInfo: nil)
         attachmentUploader.uploadAttachmentResult = .failure(networkError)
 
-        var receivedProgress: Double?
-        var receivedResult: Result<UploadedAttachment, Error>?
+        nonisolated(unsafe) var receivedProgress: Double?
+        nonisolated(unsafe) var receivedResult: Result<UploadedAttachment, Error>?
         let expectation = self.expectation(description: "Upload completes")
         apiClient.uploadAttachment(
             attachment,
@@ -402,8 +402,8 @@ final class APIClient_Tests: XCTestCase {
         let error = NSError(domain: "", code: 1, userInfo: nil)
         attachmentUploader.uploadAttachmentResult = .failure(error)
 
-        var receivedProgress: Double?
-        var receivedResult: Result<UploadedAttachment, Error>?
+        nonisolated(unsafe) var receivedProgress: Double?
+        nonisolated(unsafe) var receivedResult: Result<UploadedAttachment, Error>?
         let expectation = self.expectation(description: "Upload completes")
         apiClient.uploadAttachment(
             attachment,
@@ -447,7 +447,7 @@ final class APIClient_Tests: XCTestCase {
         let encoderError = ClientError.ExpiredToken()
         decoder.decodeRequestResponse = .failure(encoderError)
 
-        var result: Result<TestUser, Error>?
+        nonisolated(unsafe) var result: Result<TestUser, Error>?
         apiClient.request(
             endpoint: Endpoint<TestUser>.mock(),
             completion: {
@@ -622,7 +622,7 @@ final class APIClient_Tests: XCTestCase {
 
         // Put 5 requests on the queue. Only one should be executed at a time
         let lastRequestExpectation = expectation(description: "Last request completed")
-        var results: [Result<TestUser, Error>] = []
+        nonisolated(unsafe) var results: [Result<TestUser, Error>] = []
         (1...5).forEach { index in
             let channelId = ChannelId(type: .messaging, id: "\(index)")
             self.apiClient.recoveryRequest(endpoint: Endpoint<TestUser>.mock(path: .sendMessage(channelId))) { result in

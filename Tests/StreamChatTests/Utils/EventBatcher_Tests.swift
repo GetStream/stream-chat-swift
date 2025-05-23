@@ -7,12 +7,12 @@
 import XCTest
 
 final class Batch_Tests: XCTestCase {
-    var time: VirtualTime { VirtualTimeTimer.time }
+    var time: VirtualTime { VirtualTimeTimer.time.value! }
 
     override func setUp() {
         super.setUp()
 
-        VirtualTimeTimer.time = .init()
+        VirtualTimeTimer.time.value = .init()
     }
 
     override func tearDown() {

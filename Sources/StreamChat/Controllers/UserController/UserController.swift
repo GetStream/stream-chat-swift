@@ -19,7 +19,7 @@ public extension ChatClient {
 ///
 /// `ChatUserController` objects are lightweight, and they can be used for both, continuous data change observations,
 /// and for quick user actions (like mute/unmute).
-public class ChatUserController: DataController, DelegateCallable, DataStoreProvider {
+public class ChatUserController: DataController, DelegateCallable, DataStoreProvider, @unchecked Sendable {
     /// The identifier of tge user this controller observes.
     public let userId: UserId
 
@@ -46,23 +46,45 @@ public class ChatUserController: DataController, DelegateCallable, DataStoreProv
     }
 
     /// The worker used to fetch the remote data and communicate with servers.
-    private lazy var userUpdater = createUserUpdater()
+    private var userUpdater: UserUpdater {
+        queue.sync {
+            if let _userUpdater {
+                return _userUpdater
+            }
+            let updater = createUserUpdater()
+            _userUpdater = updater
+            return updater
+        }
+    }
+
+    private var _userUpdater: UserUpdater?
 
     /// The observer used to track the user changes in the database.
-    private lazy var userObserver = createUserObserver()
-        .onChange { [weak self] change in
-            self?.delegateCallback { [weak self] in
-                guard let self = self else {
-                    log.warning("Callback called while self is nil")
-                    return
-                }
-                $0.userController(self, didUpdateUser: change)
+    private var userObserver: BackgroundEntityDatabaseObserver<ChatUser, UserDTO> {
+        queue.sync {
+            if let observer = _userObserver {
+                return observer
             }
+            var observer = createUserObserver()
+            observer = observer.onChange { [weak self] change in
+                self?.delegateCallback { [weak self] in
+                    guard let self = self else {
+                        log.warning("Callback called while self is nil")
+                        return
+                    }
+                    $0.userController(self, didUpdateUser: change)
+                }
+            }
+            _userObserver = observer
+            return observer
         }
+    }
+
+    private var _userObserver: BackgroundEntityDatabaseObserver<ChatUser, UserDTO>?
 
     private let environment: Environment
 
-    var _basePublishers: Any?
+    @Atomic private var _basePublishers: Any?
     /// An internal backing object for all publicly available Combine publishers. We use it to simplify the way we expose
     /// publishers. Instead of creating custom `Publisher` types, we use `CurrentValueSubject` and `PassthroughSubject` internally,
     /// and expose the published values by mapping them to a read-only `AnyPublisher` type.
@@ -89,7 +111,7 @@ public class ChatUserController: DataController, DelegateCallable, DataStoreProv
         self.environment = environment
     }
 
-    override public func synchronize(_ completion: ((_ error: Error?) -> Void)? = nil) {
+    override public func synchronize(_ completion: (@Sendable(_ error: Error?) -> Void)? = nil) {
         startObservingIfNeeded()
 
         if case let .localDataFetchFailed(error) = state {
@@ -140,7 +162,7 @@ public extension ChatUserController {
     /// Mutes the user this controller manages.
     /// - Parameter completion: The completion. Will be called on a **callbackQueue** when the network request is finished.
     ///                         If request fails, the completion will be called with an error.
-    func mute(completion: ((Error?) -> Void)? = nil) {
+    func mute(completion: (@Sendable(Error?) -> Void)? = nil) {
         userUpdater.muteUser(userId) { error in
             self.callback {
                 completion?(error)
@@ -151,7 +173,7 @@ public extension ChatUserController {
     /// Unmutes the user this controller manages.
     /// - Parameter completion: The completion. Will be called on a **callbackQueue** when the network request is finished.
     ///
-    func unmute(completion: ((Error?) -> Void)? = nil) {
+    func unmute(completion: (@Sendable(Error?) -> Void)? = nil) {
         userUpdater.unmuteUser(userId) { error in
             self.callback {
                 completion?(error)
@@ -162,7 +184,7 @@ public extension ChatUserController {
     /// Blocks the user this controller manages.
     /// - Parameter completion: The completion. Will be called on a **callbackQueue** when the network request is finished.
     ///                         If request fails, the completion will be called with an error.
-    func block(completion: ((Error?) -> Void)? = nil) {
+    func block(completion: (@Sendable(Error?) -> Void)? = nil) {
         userUpdater.blockUser(userId) { error in
             self.callback {
                 completion?(error)
@@ -173,7 +195,7 @@ public extension ChatUserController {
     /// Unblocks the user this controller manages.
     /// - Parameter completion: The completion. Will be called on a **callbackQueue** when the network request is finished.
     ///
-    func unblock(completion: ((Error?) -> Void)? = nil) {
+    func unblock(completion: (@Sendable(Error?) -> Void)? = nil) {
         userUpdater.unblockUser(userId) { error in
             self.callback {
                 completion?(error)
@@ -191,7 +213,7 @@ public extension ChatUserController {
     func flag(
         reason: String? = nil,
         extraData: [String: RawJSON]? = nil,
-        completion: ((Error?) -> Void)? = nil
+        completion: (@Sendable(Error?) -> Void)? = nil
     ) {
         userUpdater.flagUser(true, with: userId, reason: reason, extraData: extraData) { error in
             self.callback {
@@ -203,7 +225,7 @@ public extension ChatUserController {
     /// Unflags the user this controller manages.
     /// - Parameter completion: The completion. Will be called on a **callbackQueue** when the network request is finished.
     ///
-    func unflag(completion: ((Error?) -> Void)? = nil) {
+    func unflag(completion: (@Sendable(Error?) -> Void)? = nil) {
         userUpdater.flagUser(false, with: userId, reason: nil, extraData: nil) { error in
             self.callback {
                 completion?(error)

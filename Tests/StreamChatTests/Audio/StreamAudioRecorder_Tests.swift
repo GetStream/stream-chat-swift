@@ -449,7 +449,7 @@ final class StreamAudioRecorder_Tests: XCTestCase {
     }
 }
 
-private final class MockΑudioRecorderMeterNormaliser: AudioValuePercentageNormaliser {
+private final class MockΑudioRecorderMeterNormaliser: AudioValuePercentageNormaliser, @unchecked Sendable {
     private(set) var normaliseWasCalledWithValue: Float?
     var normaliseResult: Float = 0
 

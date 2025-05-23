@@ -37,16 +37,20 @@ final class DemoChatMessageActionsVC: ChatMessageActionsVC {
                     guard confirmed else { return }
 
                     self.messageController.deleteMessage { _ in
-                        let pollId = self.messageController.message?.poll?.id
-                        if let pollId, AppConfig.shared.demoAppConfig.shouldDeletePollOnMessageDeletion {
-                            let channelController = self.messageController.client.channelController(
-                                for: self.messageController.cid
-                            )
-                            channelController.deletePoll(pollId: pollId) { _ in
+                        Task { @MainActor in
+                            let pollId = self.messageController.message?.poll?.id
+                            if let pollId, AppConfig.shared.demoAppConfig.shouldDeletePollOnMessageDeletion {
+                                let channelController = self.messageController.client.channelController(
+                                    for: self.messageController.cid
+                                )
+                                channelController.deletePoll(pollId: pollId) { _ in
+                                    Task { @MainActor in
+                                        self.delegate?.chatMessageActionsVCDidFinish(self)
+                                    }
+                                }
+                            } else {
                                 self.delegate?.chatMessageActionsVCDidFinish(self)
                             }
-                        } else {
-                            self.delegate?.chatMessageActionsVCDidFinish(self)
                         }
                     }
                 }
@@ -65,14 +69,18 @@ final class DemoChatMessageActionsVC: ChatMessageActionsVC {
                         if let error = error {
                             log.error("Error when pinning message: \(error)")
                         }
-                        self.delegate?.chatMessageActionsVCDidFinish(self)
+                        Task { @MainActor in
+                            self.delegate?.chatMessageActionsVCDidFinish(self)
+                        }
                     }
                 } else {
                     self.messageController.unpin { error in
                         if let error = error {
                             log.error("Error when unpinning message: \(error)")
                         }
-                        self.delegate?.chatMessageActionsVCDidFinish(self)
+                        Task { @MainActor in
+                            self.delegate?.chatMessageActionsVCDidFinish(self)
+                        }
                     }
                 }
             },
@@ -88,7 +96,9 @@ final class DemoChatMessageActionsVC: ChatMessageActionsVC {
                     guard confirmed else { return }
 
                     self.messageController.deleteMessage(hard: true) { _ in
-                        self.delegate?.chatMessageActionsVCDidFinish(self)
+                        Task { @MainActor in
+                            self.delegate?.chatMessageActionsVCDidFinish(self)
+                        }
                     }
                 }
             },
@@ -101,7 +111,9 @@ final class DemoChatMessageActionsVC: ChatMessageActionsVC {
             action: { [weak self] _ in
                 guard let self = self else { return }
                 self.messageController.translate(to: .turkish) { _ in
-                    self.delegate?.chatMessageActionsVCDidFinish(self)
+                    Task { @MainActor in
+                        self.delegate?.chatMessageActionsVCDidFinish(self)
+                    }
                 }
 
             },

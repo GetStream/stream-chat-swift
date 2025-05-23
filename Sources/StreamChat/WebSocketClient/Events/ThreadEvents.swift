@@ -22,7 +22,7 @@ public struct ThreadMessageNewEvent: Event {
     public let createdAt: Date
 }
 
-class ThreadMessageNewEventDTO: EventDTO {
+final class ThreadMessageNewEventDTO: EventDTO {
     let cid: ChannelId
     let message: MessagePayload
     let channel: ChannelDetailPayload
@@ -64,7 +64,7 @@ public struct ThreadUpdatedEvent: Event {
     public let createdAt: Date?
 }
 
-class ThreadUpdatedEventDTO: EventDTO {
+final class ThreadUpdatedEventDTO: EventDTO {
     let thread: ThreadPartialPayload
     let createdAt: Date
     let payload: EventPayload

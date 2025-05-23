@@ -4,14 +4,12 @@
 
 import Foundation
 
-class WebSocketClient {
+class WebSocketClient: @unchecked Sendable {
     /// The notification center `WebSocketClient` uses to send notifications about incoming events.
     let eventNotificationCenter: EventNotificationCenter
 
     /// The batch of events received via the web-socket that wait to be processed.
-    private(set) lazy var eventsBatcher = environment.eventBatcherBuilder { [weak self] events, completion in
-        self?.eventNotificationCenter.process(events, completion: completion)
-    }
+    let eventsBatcher: EventBatcher
 
     /// The current state the web socket connection.
     @Atomic private(set) var connectionState: WebSocketConnectionState = .initialized {
@@ -42,13 +40,13 @@ class WebSocketClient {
     ///
     /// Changing this value doesn't automatically update the existing connection. You need to manually call `disconnect`
     /// and `connect` to make a new connection to the updated endpoint.
-    var connectEndpoint: Endpoint<EmptyResponse>?
+    @Atomic var connectEndpoint: Endpoint<EmptyResponse>?
 
     /// The decoder used to decode incoming events
     private let eventDecoder: AnyEventDecoder
 
     /// The web socket engine used to make the actual WS connection
-    private(set) var engine: WebSocketEngine?
+    @Atomic private(set) var engine: WebSocketEngine?
 
     /// The queue on which web socket engine methods are called
     private let engineQueue: DispatchQueue = .init(label: "io.getStream.chat.core.web_socket_engine_queue", qos: .userInitiated)
@@ -61,11 +59,7 @@ class WebSocketClient {
     /// An object containing external dependencies of `WebSocketClient`
     private let environment: Environment
 
-    private(set) lazy var pingController: WebSocketPingController = {
-        let pingController = environment.createPingController(environment.timerType, engineQueue)
-        pingController.delegate = self
-        return pingController
-    }()
+    let pingController: WebSocketPingController
 
     private func createEngineIfNeeded(for connectEndpoint: Endpoint<EmptyResponse>) throws -> WebSocketEngine {
         let request: URLRequest
@@ -98,6 +92,11 @@ class WebSocketClient {
         self.eventDecoder = eventDecoder
 
         self.eventNotificationCenter = eventNotificationCenter
+        eventsBatcher = environment.eventBatcherBuilder { [eventNotificationCenter] events, completion in
+            eventNotificationCenter.process(events, completion: completion)
+        }
+        pingController = environment.createPingController(environment.timerType, engineQueue)
+        pingController.delegate = self
     }
 
     func initialize() {
@@ -139,7 +138,7 @@ class WebSocketClient {
     /// - Parameter source: Additional information about the source of the disconnection. Default value is `.userInitiated`.
     func disconnect(
         source: WebSocketConnectionState.DisconnectionSource = .userInitiated,
-        completion: @escaping () -> Void
+        completion: @escaping @Sendable() -> Void
     ) {
         switch connectionState {
         case .initialized, .disconnected, .disconnecting:
@@ -180,7 +179,7 @@ extension WebSocketClient {
         }
 
         var eventBatcherBuilder: (
-            _ handler: @escaping ([Event], @escaping () -> Void) -> Void
+            _ handler: @escaping ([Event], @escaping @Sendable() -> Void) -> Void
         ) -> EventBatcher = {
             Batcher<Event>(period: 0.5, handler: $0)
         }
@@ -291,7 +290,7 @@ extension WebSocketClient {
 #endif
 
 extension ClientError {
-    public final class WebSocket: ClientError {}
+    public final class WebSocket: ClientError, @unchecked Sendable {}
 }
 
 /// WebSocket Error

@@ -109,7 +109,7 @@ final class MessageSearchController_Tests: XCTestCase {
         controller.callbackQueue = .testQueue(withId: queueId)
 
         // Simulate `search` calls and catch the completion
-        var completionCalled = false
+        nonisolated(unsafe) var completionCalled = false
         controller.search(text: "test") { error in
             XCTAssertNil(error)
             AssertTestQueue(withId: queueId)
@@ -278,7 +278,7 @@ final class MessageSearchController_Tests: XCTestCase {
         let testError = TestError()
 
         // Make a search
-        var reportedError: Error?
+        nonisolated(unsafe) var reportedError: Error?
         controller.search(text: "test") { error in
             reportedError = error
         }
@@ -320,7 +320,7 @@ final class MessageSearchController_Tests: XCTestCase {
         controller.callbackQueue = .testQueue(withId: queueId)
 
         // Simulate `search` calls and catch the completion
-        var completionCalled = false
+        nonisolated(unsafe) var completionCalled = false
         controller.search(query: query) { error in
             XCTAssertNil(error)
             AssertTestQueue(withId: queueId)
@@ -529,7 +529,7 @@ final class MessageSearchController_Tests: XCTestCase {
         let testError = TestError()
 
         // Make a search
-        var reportedError: Error?
+        nonisolated(unsafe) var reportedError: Error?
         controller.search(query: query) { error in
             reportedError = error
         }
@@ -544,7 +544,7 @@ final class MessageSearchController_Tests: XCTestCase {
 
     func test_loadNextMessages_propagatesError() {
         let testError = TestError()
-        var reportedError: Error?
+        nonisolated(unsafe) var reportedError: Error?
 
         // Make a search so we can call `loadNextMessages`
         controller.search(text: "test")
@@ -649,7 +649,7 @@ final class MessageSearchController_Tests: XCTestCase {
     }
 
     func test_loadNextMessages_nextResultsPage_cantBeCalledBeforeSearch() {
-        var reportedError: Error?
+        nonisolated(unsafe) var reportedError: Error?
         controller.loadNextMessages { error in
             reportedError = error
         }

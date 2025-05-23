@@ -4,7 +4,7 @@
 
 import Foundation
 
-struct MessageModerationDetailsPayload: Decodable {
+struct MessageModerationDetailsPayload: Decodable, Sendable {
     let originalText: String
     let action: String
     let textHarms: [String]?

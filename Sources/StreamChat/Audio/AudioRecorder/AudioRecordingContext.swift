@@ -5,7 +5,7 @@
 import Foundation
 
 /// A struct that represents the current state of an audio recording session
-public struct AudioRecordingContext: Hashable {
+public struct AudioRecordingContext: Hashable, Sendable {
     /// The current state of the audio recording session
     public var state: AudioRecordingState
 

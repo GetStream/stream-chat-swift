@@ -7,7 +7,7 @@ import XCTest
 
 /// The maximum time `AssertNetworkRequest` waits for the request. When running stress tests, this value
 /// is much higher because the system might be under very heavy load.
-private var assertNetworkRequestTimeout: TimeInterval = TestRunnerEnvironment.isStressTest ? 10 : 1
+private let assertNetworkRequestTimeout: TimeInterval = TestRunnerEnvironment.isStressTest ? 10 : 1
 
 /// Synchronously waits for a network request to be made and asserts its properties.
 ///

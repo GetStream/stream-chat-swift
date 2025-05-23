@@ -6,9 +6,25 @@ import Foundation
 @testable import StreamChat
 
 public final class MockAudioAnalyser: AudioAnalysing {
-    public private(set) var analyseWasCalledWithAudioAnalysisContext: AudioAnalysisContext?
-    public private(set) var analyseWasCalledWithTargetSamples: Int?
-    public var analyseResult: Result<[Float], Error> = .success([])
+    private let queue = DispatchQueue(label: "io.getstream.mock-audio-analyzer", target: .global())
+    
+    public private(set) var analyseWasCalledWithAudioAnalysisContext: AudioAnalysisContext? {
+        get { queue.sync { _analyseWasCalledWithAudioAnalysisContext } }
+        set { queue.sync { _analyseWasCalledWithAudioAnalysisContext = newValue } }
+    }
+    nonisolated(unsafe) private var _analyseWasCalledWithAudioAnalysisContext: AudioAnalysisContext?
+    
+    public private(set) var analyseWasCalledWithTargetSamples: Int? {
+        get { queue.sync { _analyseWasCalledWithTargetSamples } }
+        set { queue.sync { _analyseWasCalledWithTargetSamples = newValue } }
+    }
+    nonisolated(unsafe) private var _analyseWasCalledWithTargetSamples: Int?
+    
+    public var analyseResult: Result<[Float], Error> {
+        get { queue.sync { _analyseResult } }
+        set { queue.sync { _analyseResult = newValue } }
+    }
+    nonisolated(unsafe) private var _analyseResult: Result<[Float], Error> = .success([])
 
     public init() {}
 
