@@ -51,7 +51,7 @@ public final class ChatChannelMessageHeaderDecoratorView: ChatMessageDecorationV
         container.axis = .vertical
         container.spacing = 4
 
-        [dateView, unreadCountView].forEach { container.addArrangedSubview($0) }
+        [dateView, unreadCountView].forEach(container.addArrangedSubview)
     }
 
     override public func setUpAppearance() {
