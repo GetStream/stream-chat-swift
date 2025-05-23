@@ -21,9 +21,7 @@ enum StreamConcurrency {
         } else {
             // We use sync here, because this function supports returning a value.
             return try DispatchQueue.main.sync {
-                return try MainActor.assumeIsolated {
-                    try action()
-                }
+                try action()
             }
         }
     }
