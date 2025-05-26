@@ -179,7 +179,7 @@ public struct ChatMessage {
     public let poll: Poll?
 
     /// The location information of the message.
-    public let location: LocationInfo?
+    public let sharedLocation: SharedLocation?
 
     init(
         id: MessageId,
@@ -220,7 +220,8 @@ public struct ChatMessage {
         readBy: Set<ChatUser>,
         poll: Poll?,
         textUpdatedAt: Date?,
-        draftReply: DraftMessage?
+        draftReply: DraftMessage?,
+        sharedLocation: SharedLocation?
     ) {
         self.id = id
         self.cid = cid
@@ -262,6 +263,7 @@ public struct ChatMessage {
         _attachments = attachments
         _quotedMessage = { quotedMessage }
         self.draftReply = draftReply
+        self.sharedLocation = sharedLocation
     }
 
     /// Returns a new `ChatMessage` with the provided data replaced.
@@ -309,7 +311,8 @@ public struct ChatMessage {
             readBy: readBy,
             poll: poll,
             textUpdatedAt: textUpdatedAt,
-            draftReply: draftReply
+            draftReply: draftReply,
+            sharedLocation: sharedLocation
         )
     }
 }
@@ -372,16 +375,6 @@ public extension ChatMessage {
     /// Returns the attachments of `.voiceRecording` type.
     var voiceRecordingAttachments: [ChatMessageVoiceRecordingAttachment] {
         attachments(payloadType: VoiceRecordingAttachmentPayload.self)
-    }
-
-    /// Returns the attachments of `.staticLocation` type.
-    var staticLocationAttachments: [ChatMessageStaticLocationAttachment] {
-        attachments(payloadType: StaticLocationAttachmentPayload.self)
-    }
-
-    /// Returns the attachments of `.liveLocation` type.
-    var liveLocationAttachments: [ChatMessageLiveLocationAttachment] {
-        attachments(payloadType: LiveLocationAttachmentPayload.self)
     }
 
     /// Returns attachment for the given identifier.

@@ -7,39 +7,27 @@ import StreamChatUI
 import UIKit
 
 protocol LocationAttachmentViewDelegate: ChatMessageContentViewDelegate {
-    func didTapOnStaticLocationAttachment(
-        _ attachment: ChatMessageStaticLocationAttachment
-    )
-
-    func didTapOnLiveLocationAttachment(
-        _ attachment: ChatMessageLiveLocationAttachment
+    func didTapOnLocation(
+        _ location: SharedLocation
     )
 
     func didTapOnStopSharingLocation(
-        _ attachment: ChatMessageLiveLocationAttachment
+        _ location: SharedLocation
     )
 }
 
 extension DemoChatMessageListVC: LocationAttachmentViewDelegate {
-    func didTapOnStaticLocationAttachment(_ attachment: ChatMessageStaticLocationAttachment) {
+    func didTapOnLocation(_ location: SharedLocation) {
         let messageController = client.messageController(
-            cid: attachment.id.cid,
-            messageId: attachment.id.messageId
+            cid: location.channelId,
+            messageId: location.messageId
         )
         showDetailViewController(messageController: messageController)
     }
 
-    func didTapOnLiveLocationAttachment(_ attachment: ChatMessageLiveLocationAttachment) {
-        let messageController = client.messageController(
-            cid: attachment.id.cid,
-            messageId: attachment.id.messageId
-        )
-        showDetailViewController(messageController: messageController)
-    }
-
-    func didTapOnStopSharingLocation(_ attachment: ChatMessageLiveLocationAttachment) {
+    func didTapOnStopSharingLocation(_ location: SharedLocation) {
         client
-            .channelController(for: attachment.id.cid)
+            .channelController(for: location.channelId)
             .stopLiveLocationSharing()
     }
 

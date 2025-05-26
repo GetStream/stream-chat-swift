@@ -9,14 +9,6 @@ import UIKit
 class LocationAttachmentViewInjector: AttachmentViewInjector {
     lazy var locationAttachmentView = LocationAttachmentSnapshotView()
 
-    var staticLocationAttachment: ChatMessageStaticLocationAttachment? {
-        attachments(payloadType: StaticLocationAttachmentPayload.self).first
-    }
-
-    var liveLocationAttachment: ChatMessageLiveLocationAttachment? {
-        attachments(payloadType: LiveLocationAttachmentPayload.self).first
-    }
-
     let mapWidth: CGFloat = 300
 
     override func contentViewDidLayout(options: ChatMessageLayoutOptions) {
@@ -44,19 +36,11 @@ class LocationAttachmentViewInjector: AttachmentViewInjector {
     override func contentViewDidUpdateContent() {
         super.contentViewDidUpdateContent()
 
-        if let staticLocation = staticLocationAttachment {
+        if let location = contentView.content?.sharedLocation {
             locationAttachmentView.content = .init(
-                coordinate: .init(latitude: staticLocation.latitude, longitude: staticLocation.longitude),
-                isLive: false,
-                isSharingLiveLocation: false,
-                messageId: contentView.content?.id,
-                author: contentView.content?.author
-            )
-        } else if let liveLocation = liveLocationAttachment {
-            locationAttachmentView.content = .init(
-                coordinate: .init(latitude: liveLocation.latitude, longitude: liveLocation.longitude),
-                isLive: true,
-                isSharingLiveLocation: liveLocation.stoppedSharing == false,
+                coordinate: .init(latitude: location.latitude, longitude: location.longitude),
+                isLive: location.isLive,
+                isSharingLiveLocation: location.isLiveSharingActive,
                 messageId: contentView.content?.id,
                 author: contentView.content?.author
             )
@@ -68,11 +52,11 @@ class LocationAttachmentViewInjector: AttachmentViewInjector {
             return
         }
 
-        if let staticLocationAttachment = self.staticLocationAttachment {
-            locationAttachmentDelegate.didTapOnStaticLocationAttachment(staticLocationAttachment)
-        } else if let liveLocationAttachment = self.liveLocationAttachment {
-            locationAttachmentDelegate.didTapOnLiveLocationAttachment(liveLocationAttachment)
+        guard let location = contentView.content?.sharedLocation else {
+            return
         }
+
+        locationAttachmentDelegate.didTapOnStopSharingLocation(location)
     }
 
     func handleTapOnStopSharingLocation() {
@@ -80,10 +64,10 @@ class LocationAttachmentViewInjector: AttachmentViewInjector {
             return
         }
 
-        guard let locationAttachment = liveLocationAttachment else {
+        guard let location = contentView.content?.sharedLocation else {
             return
         }
 
-        locationAttachmentDelegate.didTapOnStopSharingLocation(locationAttachment)
+        locationAttachmentDelegate.didTapOnStopSharingLocation(location)
     }
 }

@@ -32,8 +32,8 @@ class LocationDetailViewController: UIViewController, ThemeProvider {
         return view
     }()
 
-    var isLiveLocationAttachment: Bool {
-        messageController.message?.liveLocationAttachments.first != nil
+    var isLiveLocation: Bool {
+        messageController.message?.sharedLocation?.isLive == true
     }
 
     private lazy var locationControlBanner: LocationControlBannerView = {
@@ -70,7 +70,7 @@ class LocationDetailViewController: UIViewController, ThemeProvider {
             mapView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
         ])
 
-        if isLiveLocationAttachment {
+        if isLiveLocation {
             view.addSubview(locationControlBanner)
             NSLayoutConstraint.activate([
                 locationControlBanner.leadingAnchor.constraint(equalTo: view.leadingAnchor),
@@ -83,17 +83,13 @@ class LocationDetailViewController: UIViewController, ThemeProvider {
         }
 
         var locationCoordinate: CLLocationCoordinate2D?
-        if let staticLocationAttachment = messageController.message?.staticLocationAttachments.first {
+        if let location = messageController.message?.sharedLocation {
             locationCoordinate = CLLocationCoordinate2D(
-                latitude: staticLocationAttachment.latitude,
-                longitude: staticLocationAttachment.longitude
-            )
-        } else if let liveLocationAttachment = messageController.message?.liveLocationAttachments.first {
-            locationCoordinate = CLLocationCoordinate2D(
-                latitude: liveLocationAttachment.latitude,
-                longitude: liveLocationAttachment.longitude
+                latitude: location.latitude,
+                longitude: location.longitude
             )
         }
+
         if let locationCoordinate {
             mapView.region = .init(
                 center: locationCoordinate,
@@ -111,7 +107,7 @@ class LocationDetailViewController: UIViewController, ThemeProvider {
         _ coordinate: CLLocationCoordinate2D
     ) {
         if let existingAnnotation = userAnnotation {
-            if isLiveLocationAttachment {
+            if isLiveLocation {
                 // Since we update the location every 3s, by updating the coordinate with 5s animation
                 // this will make sure the annotation moves smoothly.
                 // This results in a "Tracking" like behaviour. This also blocks the user from moving the map.
@@ -126,7 +122,7 @@ class LocationDetailViewController: UIViewController, ThemeProvider {
                 existingAnnotation.coordinate = coordinate
                 mapView.setCenter(coordinate, animated: true)
             }
-        } else if let author = messageController.message?.author, isLiveLocationAttachment {
+        } else if let author = messageController.message?.author, isLiveLocation {
             let userAnnotation = UserAnnotation(
                 coordinate: coordinate,
                 user: author
@@ -141,14 +137,14 @@ class LocationDetailViewController: UIViewController, ThemeProvider {
     }
 
     private func updateBannerState() {
-        guard let liveLocationAttachment = messageController.message?.liveLocationAttachments.first else {
+        guard let location = messageController.message?.sharedLocation, location.isLive else {
             return
         }
 
         let isFromCurrentUser = messageController.message?.isSentByCurrentUser == true
         let dateFormatter = appearance.formatters.channelListMessageTimestamp
         let updatedAtText = dateFormatter.format(messageController.message?.updatedAt ?? Date())
-        if liveLocationAttachment.stoppedSharing == false {
+        if location.isLiveSharingActive {
             locationControlBanner.configure(
                 state: isFromCurrentUser
                     ? .currentUserSharing
@@ -165,20 +161,20 @@ extension LocationDetailViewController: ChatMessageControllerDelegate {
         _ controller: ChatMessageController,
         didChangeMessage change: EntityChange<ChatMessage>
     ) {
-        guard let liveLocationAttachment = controller.message?.liveLocationAttachments.first else {
+        guard let location = messageController.message?.sharedLocation, location.isLive else {
             return
         }
 
         let locationCoordinate = CLLocationCoordinate2D(
-            latitude: liveLocationAttachment.latitude,
-            longitude: liveLocationAttachment.longitude
+            latitude: location.latitude,
+            longitude: location.longitude
         )
 
         updateUserLocation(
             locationCoordinate
         )
 
-        let isLiveLocationSharingStopped = liveLocationAttachment.stoppedSharing == true
+        let isLiveLocationSharingStopped = location.isLiveSharingActive == false
         if isLiveLocationSharingStopped, let userAnnotation = self.userAnnotation {
             let userAnnotationView = mapView.view(for: userAnnotation) as? UserAnnotationView
             userAnnotationView?.stopPulsingAnimation()
@@ -204,9 +200,8 @@ extension LocationDetailViewController: MKMapViewDelegate {
 
         annotationView?.setUser(userAnnotation.user)
 
-        let liveLocationAttachment = messageController.message?.liveLocationAttachments.first
-        let isSharingLiveLocation = liveLocationAttachment?.stoppedSharing == false
-        if isSharingLiveLocation {
+        let location = messageController.message?.sharedLocation
+        if location?.isLiveSharingActive == true {
             annotationView?.startPulsingAnimation()
         } else {
             annotationView?.stopPulsingAnimation()

@@ -88,6 +88,8 @@ class MessageDTO: NSManagedObject {
     @NSManaged var draftReply: MessageDTO?
     @NSManaged var isDraft: Bool
 
+    @NSManaged var location: LocationDTO?
+
     /// If the message is sent by the current user, this field
     /// contains channel reads of other channel members (excluding the current user),
     /// where `read.lastRead >= self.createdAt`.
@@ -631,7 +633,7 @@ class MessageDTO: NSManagedObject {
             ascending: true
         )]
         var predicates: [NSPredicate] = [
-            .init(format: "ANY attachments.isActiveLocationAttachment == YES"),
+            .init(format: "location.endAt < %@", Date().bridgeDate),
             .init(format: "user.id == %@", currentUserId)
         ]
         if let channelId {
@@ -712,6 +714,7 @@ extension NSManagedObjectContext: MessageDatabaseSession {
         skipPush: Bool,
         skipEnrichUrl: Bool,
         poll: PollPayload?,
+        location: NewLocationInfo?,
         restrictedVisibility: [UserId],
         extraData: [String: RawJSON]
     ) throws -> MessageDTO {
@@ -723,7 +726,8 @@ extension NSManagedObjectContext: MessageDatabaseSession {
             throw ClientError.ChannelDoesNotExist(cid: cid)
         }
 
-        let message = MessageDTO.loadOrCreate(id: messageId ?? .newUniqueId, context: self, cache: nil)
+        let id = messageId ?? .newUniqueId
+        let message = MessageDTO.loadOrCreate(id: id, context: self, cache: nil)
 
         // We make `createdDate` 0.1 second bigger than Channel's most recent message
         // so if the local time is not in sync, the message will still appear in the correct position
@@ -765,6 +769,20 @@ extension NSManagedObjectContext: MessageDatabaseSession {
 
         if let poll {
             message.poll = try? savePoll(payload: poll, cache: nil)
+        }
+
+        if let location, let deviceId = currentUser?.currentDevice?.id {
+            message.location = try? saveLocation(
+                payload: .init(
+                    channelId: cid.rawValue,
+                    messageId: id,
+                    latitude: location.latitude,
+                    longitude: location.longitude,
+                    endAt: location.endAt,
+                    createdByDeviceId: deviceId
+                ),
+                cache: nil
+            )
         }
 
         message.attachments = Set(
@@ -978,6 +996,10 @@ extension NSManagedObjectContext: MessageDatabaseSession {
                 deleteDraftMessage(in: cid, threadId: draft.parentMessageId)
                 dto.draftReply = nil
             }
+        }
+
+        if let location = payload.location {
+            dto.location = try saveLocation(payload: location, cache: cache)
         }
 
         let user = try saveUser(payload: payload.user)
@@ -1613,6 +1635,14 @@ extension MessageDTO {
             pinExpires: pinExpires?.bridgeDate,
             pollId: poll?.id,
             restrictedVisibility: restrictedVisibilityArray,
+            location: location.map {
+                .init(
+                    latitude: $0.latitude,
+                    longitude: $0.longitude,
+                    endAt: $0.endAt?.bridgeDate,
+                    createdByDeviceId: $0.deviceId
+                )
+            },
             extraData: extraData
         )
     }
@@ -1728,6 +1758,7 @@ private extension ChatMessage {
         }
         
         let poll = try? dto.poll?.asModel()
+        let location = try? dto.location?.asModel()
 
         let currentUserReactions: Set<ChatMessageReaction>
         let isSentByCurrentUser: Bool
@@ -1820,7 +1851,8 @@ private extension ChatMessage {
             readBy: readBy,
             poll: poll,
             textUpdatedAt: textUpdatedAt,
-            draftReply: draftReply.map(DraftMessage.init)
+            draftReply: draftReply.map(DraftMessage.init),
+            sharedLocation: location
         )
 
         if let transformer = chatClientConfig?.modelsTransformer {

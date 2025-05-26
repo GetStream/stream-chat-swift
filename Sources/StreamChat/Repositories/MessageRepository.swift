@@ -299,7 +299,7 @@ class MessageRepository {
         }
     }
 
-    func getActiveLiveLocationMessages(
+    func getCurrentUserActiveLiveLocationMessages(
         for channelId: ChannelId,
         completion: @escaping (Result<[ChatMessage], Error>) -> Void
     ) {

@@ -378,7 +378,7 @@ class ChannelUpdater: Worker {
         skipEnrichUrl: Bool,
         restrictedVisibility: [UserId] = [],
         poll: PollPayload? = nil,
-        location: LocationRequestPayload? = nil,
+        location: NewLocationInfo? = nil,
         extraData: [String: RawJSON],
         completion: ((Result<ChatMessage, Error>) -> Void)? = nil
     ) {
@@ -402,6 +402,7 @@ class ChannelUpdater: Worker {
                 skipPush: skipPush,
                 skipEnrichUrl: skipEnrichUrl,
                 poll: poll,
+                location: location,
                 restrictedVisibility: restrictedVisibility,
                 extraData: extraData
             )
@@ -1141,4 +1142,11 @@ extension ChannelQuery {
         result.options = watch ? .all : .state
         return result
     }
+}
+
+/// Data model for the new location info used in `createNewMessage`.
+struct NewLocationInfo {
+    let latitude: Double
+    let longitude: Double
+    let endAt: Date?
 }

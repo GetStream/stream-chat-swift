@@ -1564,10 +1564,8 @@
 		AD76CE342A5F112D003CA182 /* ChatChannelSearchVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD76CE312A5F1104003CA182 /* ChatChannelSearchVC.swift */; };
 		AD76CE352A5F1133003CA182 /* ChatChannelSearchVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD76CE312A5F1104003CA182 /* ChatChannelSearchVC.swift */; };
 		AD76CE362A5F1138003CA182 /* ChatMessageSearchVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD76CE2F2A5F10F2003CA182 /* ChatMessageSearchVC.swift */; };
-		AD770B652D09BA15003AC602 /* ChatMessageStaticLocationAttachment.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD770B642D09BA0C003AC602 /* ChatMessageStaticLocationAttachment.swift */; };
-		AD770B662D09BA15003AC602 /* ChatMessageStaticLocationAttachment.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD770B642D09BA0C003AC602 /* ChatMessageStaticLocationAttachment.swift */; };
-		AD770B682D09E2D5003AC602 /* ChatMessageLiveLocationAttachment.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD770B672D09E2CB003AC602 /* ChatMessageLiveLocationAttachment.swift */; };
-		AD770B692D09E2D5003AC602 /* ChatMessageLiveLocationAttachment.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD770B672D09E2CB003AC602 /* ChatMessageLiveLocationAttachment.swift */; };
+		AD770B682D09E2D5003AC602 /* SharedLocation.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD770B672D09E2CB003AC602 /* SharedLocation.swift */; };
+		AD770B692D09E2D5003AC602 /* SharedLocation.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD770B672D09E2CB003AC602 /* SharedLocation.swift */; };
 		AD78568C298B268F00C2FEAD /* ChannelControllerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD78568B298B268F00C2FEAD /* ChannelControllerDelegate.swift */; };
 		AD78568D298B268F00C2FEAD /* ChannelControllerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD78568B298B268F00C2FEAD /* ChannelControllerDelegate.swift */; };
 		AD78568F298B273900C2FEAD /* ChatClient+ChannelController.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD78568E298B273900C2FEAD /* ChatClient+ChannelController.swift */; };
@@ -1816,6 +1814,8 @@
 		ADEEB7F52BD168D500C76602 /* MessageReactionGroupDTO.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADEEB7F42BD168D500C76602 /* MessageReactionGroupDTO.swift */; };
 		ADEEB7F62BD168D500C76602 /* MessageReactionGroupDTO.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADEEB7F42BD168D500C76602 /* MessageReactionGroupDTO.swift */; };
 		ADEED08127F202C100A42B52 /* yoda_with_long_file_name.txt in Resources */ = {isa = PBXBuildFile; fileRef = ADEED08027F202C100A42B52 /* yoda_with_long_file_name.txt */; };
+		ADF0473A2DE4DAE4001C23D2 /* LocationPayloads.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADF047392DE4DADC001C23D2 /* LocationPayloads.swift */; };
+		ADF0473B2DE4DAE4001C23D2 /* LocationPayloads.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADF047392DE4DADC001C23D2 /* LocationPayloads.swift */; };
 		ADF2BBE82B9B61E30069D467 /* AppEndpoints.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADF2BBE72B9B61E30069D467 /* AppEndpoints.swift */; };
 		ADF2BBE92B9B61E30069D467 /* AppEndpoints.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADF2BBE72B9B61E30069D467 /* AppEndpoints.swift */; };
 		ADF2BBEB2B9B622B0069D467 /* AppSettingsPayload.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADF2BBEA2B9B622B0069D467 /* AppSettingsPayload.swift */; };
@@ -4323,8 +4323,7 @@
 		AD75CB6A27886746005F5FF7 /* OptionsSelectorViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OptionsSelectorViewController.swift; sourceTree = "<group>"; };
 		AD76CE2F2A5F10F2003CA182 /* ChatMessageSearchVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessageSearchVC.swift; sourceTree = "<group>"; };
 		AD76CE312A5F1104003CA182 /* ChatChannelSearchVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatChannelSearchVC.swift; sourceTree = "<group>"; };
-		AD770B642D09BA0C003AC602 /* ChatMessageStaticLocationAttachment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessageStaticLocationAttachment.swift; sourceTree = "<group>"; };
-		AD770B672D09E2CB003AC602 /* ChatMessageLiveLocationAttachment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessageLiveLocationAttachment.swift; sourceTree = "<group>"; };
+		AD770B672D09E2CB003AC602 /* SharedLocation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharedLocation.swift; sourceTree = "<group>"; };
 		AD78568B298B268F00C2FEAD /* ChannelControllerDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelControllerDelegate.swift; sourceTree = "<group>"; };
 		AD78568E298B273900C2FEAD /* ChatClient+ChannelController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ChatClient+ChannelController.swift"; sourceTree = "<group>"; };
 		AD7909902811CBCB0013C434 /* ChatMessageReactionsView_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessageReactionsView_Tests.swift; sourceTree = "<group>"; };
@@ -4495,6 +4494,7 @@
 		ADEEB7F12BD1368900C76602 /* MessageReactionGroupPayload.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageReactionGroupPayload.swift; sourceTree = "<group>"; };
 		ADEEB7F42BD168D500C76602 /* MessageReactionGroupDTO.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageReactionGroupDTO.swift; sourceTree = "<group>"; };
 		ADEED08027F202C100A42B52 /* yoda_with_long_file_name.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = yoda_with_long_file_name.txt; sourceTree = "<group>"; };
+		ADF047392DE4DADC001C23D2 /* LocationPayloads.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationPayloads.swift; sourceTree = "<group>"; };
 		ADF2BBE72B9B61E30069D467 /* AppEndpoints.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppEndpoints.swift; sourceTree = "<group>"; };
 		ADF2BBEA2B9B622B0069D467 /* AppSettingsPayload.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppSettingsPayload.swift; sourceTree = "<group>"; };
 		ADF34F6A25CD6A1D00AD637C /* ConnectionController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectionController.swift; sourceTree = "<group>"; };
@@ -5785,6 +5785,7 @@
 		79682C4724BF37550071578E /* Payloads */ = {
 			isa = PBXGroup;
 			children = (
+				ADF047392DE4DADC001C23D2 /* LocationPayloads.swift */,
 				ADF2BBEA2B9B622B0069D467 /* AppSettingsPayload.swift */,
 				DA9985ED24E175AA000E9885 /* ChannelCodingKeys.swift */,
 				DAFAD6A224DD8E1A0043ED06 /* ChannelEditDetailPayload.swift */,
@@ -9132,8 +9133,7 @@
 			isa = PBXGroup;
 			children = (
 				ADFCA5B22D121EAF000F515F /* LocationInfo.swift */,
-				AD770B642D09BA0C003AC602 /* ChatMessageStaticLocationAttachment.swift */,
-				AD770B672D09E2CB003AC602 /* ChatMessageLiveLocationAttachment.swift */,
+				AD770B672D09E2CB003AC602 /* SharedLocation.swift */,
 			);
 			path = Location;
 			sourceTree = "<group>";
@@ -11460,7 +11460,7 @@
 				AD52A21C2804851600D0157E /* CommandDTO.swift in Sources */,
 				AD37D7CD2BC9937200800D8C /* Thread.swift in Sources */,
 				792AF91624D812440010097B /* EntityChange.swift in Sources */,
-				AD770B682D09E2D5003AC602 /* ChatMessageLiveLocationAttachment.swift in Sources */,
+				AD770B682D09E2D5003AC602 /* SharedLocation.swift in Sources */,
 				AD84377B2BB482CF000F3826 /* ThreadEndpoints.swift in Sources */,
 				404296EB2A011B050089126D /* AudioSessionProtocol.swift in Sources */,
 				C186BFAF27AADB410099CCA6 /* SyncOperations.swift in Sources */,
@@ -11593,7 +11593,6 @@
 				792FCB4924A3BF38000290C7 /* OptionSet+Extensions.swift in Sources */,
 				79A0E9AD2498BD0C00E9BD50 /* ChatClient.swift in Sources */,
 				F688643624E6DA8700A71361 /* CurrentUserController.swift in Sources */,
-				AD770B662D09BA15003AC602 /* ChatMessageStaticLocationAttachment.swift in Sources */,
 				4F8E531C2B833D6C008C0F9F /* ChatState.swift in Sources */,
 				88BEBCD32536FD7600D9E8B7 /* MemberListController+Combine.swift in Sources */,
 				888E8C36252B2AAF00195E03 /* UserController+SwiftUI.swift in Sources */,
@@ -11785,6 +11784,7 @@
 				79D6CF1825FA671C00BE2EEC /* MemberEventMiddleware.swift in Sources */,
 				C189D7782AEBC6CD00D4B966 /* BackgroundDatabaseObserver.swift in Sources */,
 				649968D5264E66EB000515AB /* CDNClient.swift in Sources */,
+				ADF0473B2DE4DAE4001C23D2 /* LocationPayloads.swift in Sources */,
 				40A458ED2A03AC7C00C198F7 /* AVAsset+TotalAudioSamples.swift in Sources */,
 				8899BC53254318CC003CB98B /* MessageReaction.swift in Sources */,
 				8A0175F02501174000570345 /* TypingEventsSender.swift in Sources */,
@@ -12457,7 +12457,6 @@
 				C121E869274544AF00023E4C /* ConnectionRecoveryHandler.swift in Sources */,
 				C121E86B274544AF00023E4C /* AttachmentQueueUploader.swift in Sources */,
 				841BAA552BD26136000C73E4 /* PollOption.swift in Sources */,
-				AD770B652D09BA15003AC602 /* ChatMessageStaticLocationAttachment.swift in Sources */,
 				4042968A29FACA6A0089126D /* AudioValuePercentageNormaliser.swift in Sources */,
 				841BAA112BCEADAC000C73E4 /* PollsEvents.swift in Sources */,
 				C121E86D274544AF00023E4C /* DatabaseContainer.swift in Sources */,
@@ -12599,7 +12598,7 @@
 				C121E8B3274544B000023E4C /* CurrentUserController.swift in Sources */,
 				4F6AD5E42CABEAB6007E769C /* KeyPath+Extensions.swift in Sources */,
 				C174E0F7284DFA5A0040B936 /* IdentifiablePayload.swift in Sources */,
-				AD770B692D09E2D5003AC602 /* ChatMessageLiveLocationAttachment.swift in Sources */,
+				AD770B692D09E2D5003AC602 /* SharedLocation.swift in Sources */,
 				AD0CC0382BDC4B5A005E2C66 /* ReactionListController+SwiftUI.swift in Sources */,
 				841BAA052BCE94F8000C73E4 /* QueryPollsRequestBody.swift in Sources */,
 				C121E8B4274544B000023E4C /* CurrentUserController+SwiftUI.swift in Sources */,
@@ -12683,6 +12682,7 @@
 				C121E8E4274544B200023E4C /* LazyCachedMapCollection.swift in Sources */,
 				40789D3D29F6AD9C0018C2BB /* Debouncer.swift in Sources */,
 				AD6E32A22BBC50110073831B /* ThreadListQuery.swift in Sources */,
+				ADF0473A2DE4DAE4001C23D2 /* LocationPayloads.swift in Sources */,
 				C121E8E5274544B200023E4C /* Timers.swift in Sources */,
 				C121E8E6274544B200023E4C /* SystemEnvironment.swift in Sources */,
 				4F97F2712BA86491001C4D66 /* UserSearchState.swift in Sources */,

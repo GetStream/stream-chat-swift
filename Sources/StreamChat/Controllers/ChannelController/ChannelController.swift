@@ -874,12 +874,6 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
             return
         }
 
-        let locationPayload = StaticLocationAttachmentPayload(
-            latitude: location.latitude,
-            longitude: location.longitude,
-            extraData: location.extraData
-        )
-
         updater.createNewMessage(
             in: cid,
             messageId: messageId,
@@ -889,14 +883,17 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
             isSystem: false,
             command: nil,
             arguments: nil,
-            attachments: [
-                .init(payload: locationPayload)
-            ],
+            attachments: [],
             mentionedUserIds: [],
             quotedMessageId: quotedMessageId,
             skipPush: false,
             skipEnrichUrl: false,
             poll: nil,
+            location: .init(
+                latitude: location.latitude,
+                longitude: location.longitude,
+                endAt: nil
+            ),
             extraData: extraData
         ) { result in
             if let newMessage = try? result.get() {
@@ -915,12 +912,14 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
     ///
     /// - Parameters:
     ///  - location: The location information.
+    ///  - endDate: The date when the location sharing ends.
     ///  - text: The text of the message.
     ///  - extraData: Additional extra data of the message object.
     ///  - completion: Called when saving the message to the local DB finishes,
     ///  not when the message reaches the server.
     public func startLiveLocationSharing(
         _ location: LocationInfo,
+        endDate: Date,
         text: String? = nil,
         extraData: [String: RawJSON] = [:],
         completion: ((Result<MessageId, Error>) -> Void)? = nil
@@ -934,7 +933,7 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
             return
         }
 
-        client.messageRepository.getActiveLiveLocationMessages(for: cid) { [weak self] result in
+        client.messageRepository.getCurrentUserActiveLiveLocationMessages(for: cid) { [weak self] result in
             if let message = try? result.get().first {
                 self?.callback {
                     completion?(.failure(
@@ -943,13 +942,6 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
                 }
                 return
             }
-
-            let liveLocationSharingPayload = LiveLocationAttachmentPayload(
-                latitude: location.latitude,
-                longitude: location.longitude,
-                stoppedSharing: false,
-                extraData: location.extraData
-            )
 
             self?.updater.createNewMessage(
                 in: cid,
@@ -960,14 +952,17 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
                 isSystem: false,
                 command: nil,
                 arguments: nil,
-                attachments: [
-                    .init(payload: liveLocationSharingPayload)
-                ],
+                attachments: [],
                 mentionedUserIds: [],
                 quotedMessageId: nil,
                 skipPush: false,
                 skipEnrichUrl: false,
                 poll: nil,
+                location: NewLocationInfo(
+                    latitude: location.latitude,
+                    longitude: location.longitude,
+                    endAt: endDate
+                ),
                 extraData: extraData
             ) { result in
                 if let newMessage = try? result.get() {
@@ -989,11 +984,11 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
             return
         }
 
-        client.messageRepository.getActiveLiveLocationMessages(for: cid) { result in
+        client.messageRepository.getCurrentUserActiveLiveLocationMessages(for: cid) { result in
             switch result {
             case let .success(messages):
                 guard let message = messages.first,
-                      let liveLocation = message.liveLocationAttachments.first
+                      let location = message.sharedLocation
                 else {
                     self.callback {
                         completion?(.failure(ClientError.MessageDoesNotHaveLiveLocationAttachment()))
@@ -1001,15 +996,10 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
                     return
                 }
 
-                let liveLocationPayload = LiveLocationAttachmentPayload(
-                    latitude: liveLocation.latitude,
-                    longitude: liveLocation.longitude,
-                    stoppedSharing: true
-                )
-
+                /// Stop sharing the live location message.
                 self.messageUpdater.updatePartialMessage(
                     messageId: message.id,
-                    attachments: [.init(payload: liveLocationPayload)]
+                    attachments: []
                 ) { result in
                     self.callback {
                         completion?(result.map(\.id))

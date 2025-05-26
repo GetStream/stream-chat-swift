@@ -46,7 +46,8 @@ class DemoComposerVC: ComposerVC {
     func sendInstantLiveLocation() {
         getCurrentLocationInfo { [weak self] location in
             guard let location = location else { return }
-            self?.channelController?.startLiveLocationSharing(location)
+            let endDate = Date().addingTimeInterval(3600) // 1 hour
+            self?.channelController?.startLiveLocationSharing(location, endDate: endDate)
         }
     }
 

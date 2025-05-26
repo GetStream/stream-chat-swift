@@ -107,11 +107,11 @@ class DemoAppTabBarController: UITabBarController, CurrentChatUserControllerDele
         }
 
         let locations: [String] = messages.compactMap {
-            guard let locationAttachment = $0.liveLocationAttachments.first else {
+            guard let location = $0.sharedLocation else {
                 return nil
             }
 
-            return "(\(locationAttachment.latitude), \(locationAttachment.longitude))"
+            return "(\(location.latitude), \(location.longitude))"
         }
 
         debugPrint("[Location] Updated live locations to the server: \(locations)")

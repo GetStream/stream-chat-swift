@@ -309,6 +309,7 @@ class MessageUpdater: Worker {
                 skipPush: skipPush,
                 skipEnrichUrl: skipEnrichUrl,
                 poll: nil,
+                location: nil,
                 restrictedVisibility: [],
                 extraData: extraData
             )

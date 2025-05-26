@@ -98,3 +98,9 @@ extension PollVoteDTO: IdentifiableModel {
     static var idKeyPath: String? { #keyPath(PollVoteDTO.id) }
     static func id(for model: NSManagedObject) -> DatabaseId? { (model as? Self)?.id }
 }
+
+extension LocationDTO: IdentifiableModel {
+    static var className: DatabaseType { _className }
+    static var idKeyPath: String? { #keyPath(LocationDTO.messageId) }
+    static func id(for model: NSManagedObject) -> DatabaseId? { (model as? Self)?.messageId }
+}

@@ -343,39 +343,28 @@ public class ChatMessageController: DataController, DelegateCallable, DataStoreP
         _ location: LocationInfo,
         completion: ((Result<ChatMessage, Error>) -> Void)? = nil
     ) {
-        guard let locationAttachment = message?.liveLocationAttachments.first else {
+        guard let location = message?.sharedLocation else {
             completion?(.failure(ClientError.MessageDoesNotHaveLiveLocationAttachment()))
             return
         }
 
-        guard locationAttachment.stoppedSharing == false else {
+        guard location.isLiveSharingActive else {
             completion?(.failure(ClientError.MessageLiveLocationAlreadyStopped()))
             return
         }
 
-        let liveLocationPayload = LiveLocationAttachmentPayload(
-            latitude: location.latitude,
-            longitude: location.longitude
-        )
-
         // Optimistic update
         client.databaseContainer.write { session in
             let messageDTO = try session.messageEditableByCurrentUser(self.messageId)
-            guard let liveLocationAttachmentDTO = messageDTO.attachments.first(
-                where: { $0.attachmentID == locationAttachment.id }
-            ) else {
-                return
-            }
-
-            liveLocationAttachmentDTO.data = try JSONEncoder.default.encode(liveLocationPayload)
+            messageDTO.location?.latitude = location.latitude
+            messageDTO.location?.longitude = location.longitude
         }
 
+        // TODO: Location Update endpoint
         messageUpdater.updatePartialMessage(
             messageId: messageId,
             text: nil,
-            attachments: [
-                .init(payload: liveLocationPayload)
-            ],
+            attachments: [],
             extraData: nil
         ) { result in
             self.callback {
@@ -963,44 +952,33 @@ public class ChatMessageController: DataController, DelegateCallable, DataStoreP
     /// - Parameters:
     ///   - completion: Called when the server updates the message.
     public func stopLiveLocationSharing(completion: ((Result<ChatMessage, Error>) -> Void)? = nil) {
-        guard let locationAttachment = message?.liveLocationAttachments.first else {
+        guard let location = message?.sharedLocation else {
             callback {
                 completion?(.failure(ClientError.MessageDoesNotHaveLiveLocationAttachment()))
             }
             return
         }
 
-        guard locationAttachment.stoppedSharing == false else {
+        guard location.isLiveSharingActive else {
             callback {
                 completion?(.failure(ClientError.MessageLiveLocationAlreadyStopped()))
             }
             return
         }
 
-        let liveLocationPayload = LiveLocationAttachmentPayload(
-            latitude: locationAttachment.latitude,
-            longitude: locationAttachment.longitude,
-            stoppedSharing: true
-        )
+        let endDate = Date().bridgeDate
 
         // Optimistic update
         client.databaseContainer.write { session in
             let messageDTO = try session.messageEditableByCurrentUser(self.messageId)
-            guard let liveLocationAttachmentDTO = messageDTO.attachments.first(
-                where: { $0.attachmentID == locationAttachment.id }
-            ) else {
-                return
-            }
-
-            liveLocationAttachmentDTO.data = try JSONEncoder.default.encode(liveLocationPayload)
+            messageDTO.location?.endAt = endDate
         }
 
+        // TODO: Location Update endpoint
         messageUpdater.updatePartialMessage(
             messageId: messageId,
             text: nil,
-            attachments: [
-                .init(payload: liveLocationPayload)
-            ],
+            attachments: [],
             extraData: nil
         ) { result in
             self.callback {

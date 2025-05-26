@@ -10,17 +10,14 @@ final class DemoChatChannelListItemView: ChatChannelListItemView {
         guard let previewMessage = content?.channel.previewMessage else {
             return super.subtitleText
         }
-        if previewMessage.liveLocationAttachments.isEmpty == false {
+
+        if let location = previewMessage.sharedLocation {
+            let text = location.isLive ? "Live location" : "Static location"
             return previewMessage.isSentByCurrentUser
-                ? previewMessageTextForCurrentUser(messageText: "Live location")
-                : previewMessageTextFromAnotherUser(previewMessage.author, messageText: "Live Location")
+                ? previewMessageTextForCurrentUser(messageText: text)
+                : previewMessageTextFromAnotherUser(previewMessage.author, messageText: text)
         }
-        
-        if previewMessage.staticLocationAttachments.isEmpty == false {
-            return previewMessage.isSentByCurrentUser
-                ? previewMessageTextForCurrentUser(messageText: "Static location")
-                : previewMessageTextFromAnotherUser(previewMessage.author, messageText: "Static Location")
-        }
+
         return super.subtitleText
     }
 

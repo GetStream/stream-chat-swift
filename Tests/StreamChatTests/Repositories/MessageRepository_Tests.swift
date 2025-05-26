@@ -710,7 +710,7 @@ final class MessageRepositoryTests: XCTestCase {
         let expectation = self.expectation(description: "getActiveLiveLocationMessages completes")
         var receivedError: Error?
         
-        repository.getActiveLiveLocationMessages(for: cid) { result in
+        repository.getCurrentUserActiveLiveLocationMessages(for: cid) { result in
             if case .failure(let error) = result {
                 receivedError = error
             }
@@ -749,7 +749,7 @@ final class MessageRepositoryTests: XCTestCase {
         let expectation = self.expectation(description: "getActiveLiveLocationMessages completes")
         var receivedMessages: [ChatMessage]?
         
-        repository.getActiveLiveLocationMessages(for: cid) { result in
+        repository.getCurrentUserActiveLiveLocationMessages(for: cid) { result in
             if case .success(let messages) = result {
                 receivedMessages = messages
             }

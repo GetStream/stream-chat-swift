@@ -60,9 +60,6 @@ class AttachmentDTO: NSManagedObject {
     /// An attachment raw `Data`.
     @NSManaged var data: Data
 
-    /// A property to easily fetch active location attachments.
-    @NSManaged var isActiveLocationAttachment: Bool
-
     func clearLocalState() {
         localDownloadState = nil
         localRelativePath = nil
@@ -178,13 +175,6 @@ extension NSManagedObjectContext: AttachmentDatabaseSession {
         dto.attachmentType = payload.type
         dto.data = try JSONEncoder.default.encode(payload.payload)
         dto.message = messageDTO
-
-        dto.isActiveLocationAttachment = false
-        if payload.type == .liveLocation {
-            let stoppedSharingKey = LiveLocationAttachmentPayload.CodingKeys.stoppedSharing.rawValue
-            let stoppedSharing = payload.payload[stoppedSharingKey]?.boolValue ?? false
-            dto.isActiveLocationAttachment = !stoppedSharing
-        }
 
         // Keep local state for downloaded attachments
         if dto.localDownloadState == nil {

@@ -8,7 +8,7 @@ import UIKit
 
 class DemoQuotedChatMessageView: QuotedChatMessageView {
     override func setAttachmentPreview(for message: ChatMessage) {
-        if message.staticLocationAttachments.isEmpty == false {
+        if message.sharedLocation?.isLive == false {
             attachmentPreviewView.contentMode = .scaleAspectFit
             attachmentPreviewView.image = UIImage(systemName: "mappin.circle.fill")
             attachmentPreviewView.tintColor = .systemRed
@@ -16,7 +16,7 @@ class DemoQuotedChatMessageView: QuotedChatMessageView {
             return
         }
 
-        if message.liveLocationAttachments.isEmpty == false {
+        if message.sharedLocation?.isLive == true {
             attachmentPreviewView.contentMode = .scaleAspectFit
             attachmentPreviewView.image = UIImage(systemName: "location.fill")
             attachmentPreviewView.tintColor = .systemBlue
