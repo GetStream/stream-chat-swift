@@ -15455,8 +15455,8 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/ProxymanApp/atlantis";
 			requirement = {
-				kind = exactVersion;
-				version = 1.18.0;
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.28.0;
 			};
 		};
 		C1B49B39282283C100F4E89E /* XCRemoteSwiftPackageReference "GDPerformanceView-Swift" */ = {
