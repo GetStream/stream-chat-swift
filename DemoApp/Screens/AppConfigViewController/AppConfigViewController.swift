@@ -55,7 +55,7 @@ class AppConfig {
             tokenRefreshDetails: nil,
             shouldShowConnectionBanner: false,
             isPremiumMemberFeatureEnabled: false,
-            isRemindersEnabled: true
+            isRemindersEnabled: true,
             shouldDeletePollOnMessageDeletion: false
         )
 

@@ -320,7 +320,8 @@ public struct ChatMessage {
             readBy: readBy,
             poll: poll,
             textUpdatedAt: textUpdatedAt,
-            draftReply: draftReply
+            draftReply: draftReply,
+            reminder: reminder
         )
     }
 
