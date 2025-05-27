@@ -9,6 +9,15 @@ on:
     types: [published]
 
   workflow_dispatch:
+    inputs:
+      release:
+        description: 'Build configuration'
+        required: true
+        default: 'Debug'
+        type: choice
+        options:
+          - Debug
+          - Release
 
 env:
   HOMEBREW_NO_INSTALL_CLEANUP: 1
@@ -30,7 +39,7 @@ jobs:
         APPSTORE_API_KEY: ${{ secrets.APPSTORE_API_KEY }}
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         GITHUB_PR_NUM: ${{ github.event.number }}
-      run: bundle exec fastlane uikit_testflight_build
+      run: bundle exec fastlane uikit_testflight_build configuration:"${{ github.event.inputs.release }}"
     - uses: 8398a7/action-slack@v3
       with:
         status: ${{ job.status }}

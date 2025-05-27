@@ -24,6 +24,8 @@ struct DemoAppConfig {
     var isPremiumMemberFeatureEnabled: Bool
     /// A Boolean value to define if the reminders feature is enabled.
     var isRemindersEnabled: Bool
+    /// A Boolean value to define if the poll should be deleted when the message is deleted.
+    var shouldDeletePollOnMessageDeletion: Bool
 
     /// The details to generate expirable tokens in the demo app.
     struct TokenRefreshDetails {
@@ -54,6 +56,7 @@ class AppConfig {
             shouldShowConnectionBanner: false,
             isPremiumMemberFeatureEnabled: false,
             isRemindersEnabled: true
+            shouldDeletePollOnMessageDeletion: false
         )
 
         if StreamRuntimeCheck.isStreamInternalConfiguration {
@@ -65,6 +68,7 @@ class AppConfig {
             demoAppConfig.shouldShowConnectionBanner = true
             demoAppConfig.isPremiumMemberFeatureEnabled = true
             demoAppConfig.isRemindersEnabled = true
+            demoAppConfig.shouldDeletePollOnMessageDeletion = true
             StreamRuntimeCheck.assertionsEnabled = true
         }
     }

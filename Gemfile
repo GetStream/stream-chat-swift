@@ -6,7 +6,6 @@ git_source(:github) { |repo_name| "https://github.com/#{repo_name}" }
 
 gem 'danger', group: :danger_dependencies
 gem 'fastlane', group: :fastlane_dependencies
-gem 'jazzy'
 gem 'json'
 gem 'rubocop', '1.38', group: :rubocop_dependencies
 gem 'sinatra', group: :sinatra_dependencies
@@ -18,7 +17,6 @@ group :fastlane_dependencies do
   gem 'cocoapods'
   gem 'fastlane-plugin-lizard'
   gem 'plist'
-  gem 'xcode-install'
   gem 'xctest_list'
 end
 

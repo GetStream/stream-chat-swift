@@ -88,3 +88,12 @@ if [[ ${INSTALL_GCLOUD-default} == true ]]; then
   gcloud config set project stream-chat-swift
   gcloud services enable toolresults.googleapis.com
 fi
+
+if [[ ${INSTALL_IPSW-default} == true ]]; then
+  puts "Install ipsw v${IPSW_VERSION}"
+  FILE="ipsw_${IPSW_VERSION}_macOS_universal.tar.gz"
+  wget "https://github.com/blacktop/ipsw/releases/download/v${IPSW_VERSION}/${FILE}"
+  tar -xzf "$FILE"
+  chmod +x ipsw
+  sudo mv ipsw /usr/local/bin/
+fi

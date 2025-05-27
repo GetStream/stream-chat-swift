@@ -6,7 +6,7 @@ require 'net/http'
 import 'Sonarfile'
 import 'Allurefile'
 
-xcode_version = ENV['XCODE_VERSION'] || '16.2'
+xcode_version = ENV['XCODE_VERSION'] || '16.3'
 xcode_project = 'StreamChat.xcodeproj'
 sdk_names = ['StreamChat', 'StreamChatUI']
 github_repo = ENV['GITHUB_REPOSITORY'] || 'GetStream/stream-chat-swift'
@@ -25,7 +25,7 @@ before_all do |lane|
   if is_ci
     setup_ci
     setup_git_config
-    xcversion(version: xcode_version) unless [:sonar_upload, :allure_launch, :allure_upload, :pod_lint, :sync_mock_server, :copyright].include?(lane)
+    select_xcode(version: xcode_version) unless [:sonar_upload, :allure_launch, :allure_upload, :pod_lint, :sync_mock_server, :copyright].include?(lane)
   end
 end
 
@@ -273,14 +273,31 @@ lane :match_me do |options|
 end
 
 desc 'Builds the latest version of Demo app and uploads it to TestFlight'
-lane :uikit_testflight_build do
+lane :uikit_testflight_build do |options|
+  is_manual_upload = is_localhost || !options[:configuration].to_s.empty?
+  configuration = options[:configuration].to_s.empty? ? 'Release' : options[:configuration]
+
   match_me
+
+  sdk_version = get_sdk_version_from_environment
+  app_version =
+    if is_manual_upload
+      major, minor, _patch = sdk_version.split('.').map(&:to_i)
+      minor += 1
+      "#{major}.#{minor}.0"
+    else
+      sdk_version
+    end
+  UI.important("[TestFlight] Uploading DemoApp version: #{app_version}")
+
   testflight_build(
     api_key: appstore_api_key,
     xcode_project: xcode_project,
     sdk_target: 'StreamChat',
     app_target: 'DemoApp',
+    app_version: app_version,
     app_identifier: 'io.getstream.iOS.ChatDemoApp',
+    configuration: configuration,
     extensions: ['DemoShare']
   )
 end
@@ -540,36 +557,31 @@ lane :test_e2e_mock do |options|
     derived_data_path: derived_data_path,
     cloned_source_packages_path: source_packages_path,
     clean: is_localhost,
-    test_without_building: options[:cron] && options[:device].include?('17.') ? nil : options[:test_without_building],
+    test_without_building: options[:test_without_building],
     xcargs: buildcache_xcargs,
     devices: options[:device],
     prelaunch_simulator: is_ci,
     number_of_retries: 3
   }
 
-  if is_localhost
-    scan(scan_options)
-  else
-    parallelize_tests_on_ci(scan: scan_options, batch: options[:batch], cron: options[:cron])
+  if ENV['MATRIX_SIZE'] && options[:batch]
+    products_dir = File.expand_path("../#{derived_data_path}/Build/Products")
+    xctestrun = Dir.glob(File.expand_path("#{products_dir}/*.xctestrun")).first
+    tests = retrieve_xctest_names(xctestrun: xctestrun).values.flatten
+    slice_size = (tests.size / ENV['MATRIX_SIZE'].to_f).ceil
+    only_testing = []
+    tests.each_slice(slice_size) { |test| only_testing << test }
+    only_testing_batch = only_testing[options[:batch].to_i]
+    scan_options[:only_testing] = only_testing_batch
+    UI.important("Tests in total: #{only_testing.flatten.size}. Running #{only_testing_batch.size} of them ⌛️")
   end
-end
-
-private_lane :parallelize_tests_on_ci do |options|
-  products_dir = File.expand_path("../#{derived_data_path}/Build/Products")
-  xctestrun = Dir.glob(File.expand_path("#{products_dir}/*.xctestrun")).first
-  tests = retrieve_xctest_names(xctestrun: xctestrun).values.flatten
-  slice_size = options[:cron] ? tests.size : (tests.size / ENV['MATRIX_SIZE'].to_f).ceil
-  only_testing = []
-  tests.each_slice(slice_size) { |test| only_testing << test }
-  only_testing_batch = only_testing[options[:batch].to_i]
 
   begin
-    UI.success("Tests in total: #{only_testing.flatten.size}. Running #{only_testing_batch.size} of them ⌛️")
-    scan(options[:scan].merge(only_testing: only_testing_batch))
+    scan(scan_options)
   rescue StandardError
     failed_tests = retreive_failed_tests
     UI.important("Re-running #{failed_tests.size} failed tests ⌛️")
-    scan(options[:scan].merge(only_testing: failed_tests))
+    scan(scan_options.merge(only_testing: failed_tests))
   end
 end
 

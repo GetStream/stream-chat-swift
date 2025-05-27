@@ -876,7 +876,7 @@ open class ComposerVC: _ViewController,
     /// Returns actions for attachments picker.
     open var attachmentsPickerActions: [UIAlertAction] {
         let isCameraAvailable = UIImagePickerController.isSourceTypeAvailable(.camera)
-        let isPollCreationEnabled = channelConfig?.pollsEnabled == true
+        let isPollCreationEnabled = channelConfig?.pollsEnabled == true && channelController?.channel?.canSendPoll == true
 
         let showFilePickerAction = UIAlertAction(
             title: L10n.Composer.Picker.file,
@@ -1458,9 +1458,12 @@ open class ComposerVC: _ViewController,
 
         var localMetadata = AnyAttachmentLocalMetadata()
         if let image = info[.originalImage] as? UIImage {
+            // At the moment the backend is not accepting floating numbers.
+            // So we round down the width and height. We do not round up
+            // to make sure there is no empty space in the image.
             localMetadata.originalResolution = (
-                width: Double(image.size.width),
-                height: Double(image.size.height)
+                width: Double(image.size.width).rounded(.down),
+                height: Double(image.size.height).rounded(.down)
             )
         }
 

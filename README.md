@@ -25,7 +25,7 @@ The **StreamChat SDK** is a low level client for Stream chat service that doesn'
 
 ## UIKit SDK
 
-The **StreamChatUI SDK** is our UI SDK for UIKit components. If your application needs to support iOS 13 and below, this is the right UI SDK for you.
+The **StreamChatUI SDK** is our UI SDK for UIKit components. If your application needs to support iOS 13 and above, this is the right UI SDK for you.
 
 ## SwiftUI SDK
 
@@ -79,6 +79,12 @@ Learn more about our dependencies [here](https://getstream.io/chat/docs/sdk/ios/
 ## Using Objective-C
 
 You can still integrate our SDKs if your project is using Objective-C. In that case, any customizations would need to be done by subclassing our components in Swift, and then use those directly from the Objective-C code.
+
+---
+
+## Video SDK
+
+We also offer [Video SDK](https://github.com/GetStream/stream-video-swift) that seamlessly integrates with our Chat SDK. To find out more about this product, please check our [docs](https://getstream.io/video/docs/ios/). 
 
 ---
 

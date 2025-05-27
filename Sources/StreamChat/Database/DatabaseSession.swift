@@ -646,6 +646,12 @@ protocol PollDatabaseSession {
     /// - Throws: An error if the retrieval operation fails.
     func pollVotes(for userId: String, pollId: String) throws -> [PollVoteDTO]
     
+    /// Deletes a poll.
+    /// - Parameter pollId: The ID of the poll to delete.
+    /// - Returns: The deleted poll.
+    /// - Throws: An error if the deletion operation fails.
+    func deletePoll(pollId: String) throws -> PollDTO?
+    
     /// Removes a poll vote by its ID and poll ID.
     /// - Parameters:
     ///   - id: The ID of the poll vote to remove.

@@ -25,8 +25,9 @@ class CurrentUserUpdater: Worker {
         imageURL: URL?,
         privacySettings: UserPrivacySettings?,
         role: UserRole?,
+        teamsRole: [TeamId: UserRole]?,
         userExtraData: [String: RawJSON]?,
-        unset: Set<String> = [],
+        unset: Set<String>,
         completion: ((Error?) -> Void)? = nil
     ) {
         let params: [Any?] = [name, imageURL, userExtraData]
@@ -41,6 +42,7 @@ class CurrentUserUpdater: Worker {
             imageURL: imageURL,
             privacySettings: privacySettings.map { UserPrivacySettingsPayload(settings: $0) },
             role: role,
+            teamsRole: teamsRole,
             extraData: userExtraData
         )
 
@@ -288,6 +290,7 @@ extension CurrentUserUpdater {
         imageURL: URL?,
         privacySettings: UserPrivacySettings?,
         role: UserRole?,
+        teamsRole: [TeamId: UserRole]?,
         userExtraData: [String: RawJSON]?,
         unset: Set<String>
     ) async throws {
@@ -298,6 +301,7 @@ extension CurrentUserUpdater {
                 imageURL: imageURL,
                 privacySettings: privacySettings,
                 role: role,
+                teamsRole: teamsRole,
                 userExtraData: userExtraData,
                 unset: unset
             ) { error in

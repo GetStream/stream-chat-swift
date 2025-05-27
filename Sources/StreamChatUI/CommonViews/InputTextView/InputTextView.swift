@@ -142,7 +142,10 @@ open class InputTextView: UITextView, ThemeProvider {
         textAlignment = .natural
         adjustsFontForContentSizeCategory = true
 
-        // This makes scrollToCaretPosition() more precise.
+        // This makes scrollToCaretPosition() more precise. When writing multiple lines fast
+        // in the composer, the caret position should remain in the last character.
+        // Without this the composer jumps a lot into different character positions.
+        //
         // This should be disabled by default according to Apple, but in some iOS versions is not.
         // Reference: https://stackoverflow.com/a/48602171/5493299
         layoutManager.allowsNonContiguousLayout = false

@@ -45,6 +45,7 @@ public final class ConnectedUser {
     ///   - imageURL: The URL of the avatar image.
     ///   - privacySettings: The privacy settings of the user. Example: If the user does not want to expose typing events or read events.
     ///   - role: The role for the user.
+    ///   - teamRoles: The roles for the user in the teams. Example: `["teamId": "role"]`.
     ///   - extraData: Additional data associated with the user.
     ///   - unset: Existing values for specified fields are removed. For example, `image` or `name`.
     ///
@@ -54,6 +55,7 @@ public final class ConnectedUser {
         imageURL: URL? = nil,
         privacySettings: UserPrivacySettings? = nil,
         role: UserRole? = nil,
+        teamRoles: [TeamId: UserRole]? = nil,
         extraData: [String: RawJSON] = [:],
         unset: Set<String> = []
     ) async throws {
@@ -63,6 +65,7 @@ public final class ConnectedUser {
             imageURL: imageURL,
             privacySettings: privacySettings,
             role: role,
+            teamsRole: teamRoles,
             userExtraData: extraData,
             unset: unset
         )

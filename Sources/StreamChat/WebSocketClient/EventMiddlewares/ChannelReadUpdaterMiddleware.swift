@@ -222,6 +222,10 @@ struct ChannelReadUpdaterMiddleware: EventMiddleware {
             return .messageIsSystem
         }
 
+        if message.isShadowed {
+            return .messageIsShadowed
+        }
+
         if message.createdAt <= channelRead.lastReadAt.bridgeDate {
             return .messageIsSeen
         }
@@ -237,6 +241,7 @@ private enum UnreadSkippingReason: CustomStringConvertible {
     case messageIsSilent
     case messageIsThreadReply
     case messageIsSystem
+    case messageIsShadowed
     case messageIsSeen
     case messageIsSoftDeleted
 
@@ -254,6 +259,8 @@ private enum UnreadSkippingReason: CustomStringConvertible {
             return "Thread replies do not affect unread counts"
         case .messageIsSystem:
             return "System messages do not affect unread counts"
+        case .messageIsShadowed:
+            return "Shadowed messages do not affect unread counts"
         case .messageIsSeen:
             return "Seen messages do not affect unread counts"
         case .messageIsSoftDeleted:

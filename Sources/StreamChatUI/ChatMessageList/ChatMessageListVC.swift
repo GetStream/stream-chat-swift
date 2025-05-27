@@ -456,9 +456,9 @@ open class ChatMessageListVC: _ViewController,
     ///
     /// By default, this will trigger the swipe to reply gesture recognition.
     @objc open func handlePan(_ gesture: UIPanGestureRecognizer) {
-        let canReply = dataSource?.channel(for: self)?.canSendReply ?? false
+        let canQuoteReply = dataSource?.channel(for: self)?.canQuoteMessage ?? false
         let isSwipeToReplyEnabled = components.messageSwipeToReplyEnabled
-        if canReply && isSwipeToReplyEnabled {
+        if canQuoteReply && isSwipeToReplyEnabled {
             swipeToReplyGestureHandler.handle(gesture: gesture)
         }
     }

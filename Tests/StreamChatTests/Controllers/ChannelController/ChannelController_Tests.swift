@@ -5644,6 +5644,54 @@ final class ChannelController_Tests: XCTestCase {
         }
     }
     
+    // MARK: - Delete Poll
+    
+    func test_deletePoll_callsPollsRepository_withSuccess() throws {
+        // Prepare test values
+        let pollId = String.unique
+        
+        // Simulate `deletePoll` call and capture error
+        var receivedError: Error?
+        let error: Error? = try waitFor { [callbackQueueID] completion in
+            controller.deletePoll(pollId: pollId) { error in
+                AssertTestQueue(withId: callbackQueueID)
+                receivedError = error
+                completion(error)
+            }
+            
+            // Simulate successful response
+            client.mockPollsRepository.deletePoll_completion?(nil)
+        }
+        
+        // Assert
+        XCTAssertNil(error)
+        XCTAssertNil(receivedError)
+    }
+    
+    func test_deletePoll_callsPollsRepository_withError() throws {
+        // Prepare test values
+        let pollId = String.unique
+        let testError = TestError()
+        
+        // Simulate `deletePoll` call and capture error
+        var receivedError: Error?
+        let error: Error? = try waitFor { [callbackQueueID] completion in
+            controller.deletePoll(pollId: pollId) { error in
+                AssertTestQueue(withId: callbackQueueID)
+                receivedError = error
+                completion(error)
+            }
+            
+            // Simulate error response
+            client.mockPollsRepository.deletePoll_completion?(testError)
+        }
+        
+        // Assert
+        XCTAssertNotNil(error)
+        XCTAssertNotNil(receivedError)
+        XCTAssertEqual(receivedError as? TestError, testError)
+    }
+    
     // MARK: - Logout
     
     func test_channels_afterLogout() throws {
