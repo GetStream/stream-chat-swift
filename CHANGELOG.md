@@ -11,7 +11,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Fix swipe to reply enabled when quoting a message is disabled [#3662](https://github.com/GetStream/stream-chat-swift/pull/3662)
 - Fix shadowed messages increasing the channel messages unread count [#3665](https://github.com/GetStream/stream-chat-swift/pull/3665)
 - Fix publishing `MessageUpdatedEvent` for messages with restricted visibility [#3674](https://github.com/GetStream/stream-chat-swift/pull/3674)
-- Show message with restricted visiblity in the message list on the `message.updated` web-socket event [#3674](https://github.com/GetStream/stream-chat-swift/pull/3674)
+- Show message with restricted visibility in the message list on the `message.updated` web-socket event [#3674](https://github.com/GetStream/stream-chat-swift/pull/3674)
 
 ## StreamChatUI
 ### 🐞 Fixed
