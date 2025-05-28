@@ -3,7 +3,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 # Upcoming
 
-### 🔄 Changed
+## StreamChat
+### ✅ Added
+- Add new `Filter.isNil` to make it easier to query by nil values [#3623](https://github.com/GetStream/stream-chat-swift/pull/3623)
+- Add Message Reminders [#3623](https://github.com/GetStream/stream-chat-swift/pull/3623)
+   - Add `ChatMessageController.createReminder()`
+   - Add `ChatMessageController.updateReminder()` 
+   - Add `ChatMessageController.deleteReminder()`
+   - Add `MessageReminderListController` and `MessageReminderListQuery`
 
 # [4.79.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.79.0)
 _May 28, 2025_
@@ -12,12 +19,6 @@ _May 28, 2025_
 ### ✅ Added
 - Add `SendMessageInterceptor` to intercept send message requests [#3671](https://github.com/GetStream/stream-chat-swift/pull/3671)
 - Add `ChatMessage.changing()` to allow overriding message data temporarily [#3671](https://github.com/GetStream/stream-chat-swift/pull/3671)
-- Add new `Filter.isNil` to make it easier to query by nil values [#3623](https://github.com/GetStream/stream-chat-swift/pull/3623)
-- Add Message Reminders [#3623](https://github.com/GetStream/stream-chat-swift/pull/3623)
-   - Add `ChatMessageController.createReminder()`
-   - Add `ChatMessageController.updateReminder()` 
-   - Add `ChatMessageController.deleteReminder()`
-   - Add `MessageReminderListController` and `MessageReminderListQuery`
 ### 🐞 Fixed
 - Fix swipe to reply enabled when quoting a message is disabled [#3662](https://github.com/GetStream/stream-chat-swift/pull/3662)
 - Fix shadowed messages increasing the channel messages unread count [#3665](https://github.com/GetStream/stream-chat-swift/pull/3665)
