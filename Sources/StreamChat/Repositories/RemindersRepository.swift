@@ -40,9 +40,14 @@ class RemindersRepository {
             case .success(let response):
                 self?.database.write(
                     converting: { session in
-                        let reminders = try response.reminders.compactMap { payload in
-                            let reminderDTO = try session.saveReminder(payload: payload, cache: nil)
-                            return try reminderDTO.asModel()
+                        let reminders = response.reminders.compactMap { payload in
+                            do {
+                                let reminderDTO = try session.saveReminder(payload: payload, cache: nil)
+                                return try reminderDTO.asModel()
+                            } catch {
+                                log.error("Failed to convert reminder payload to model: \(error.localizedDescription)")
+                                return nil
+                            }
                         }
                         return ReminderListResponse(reminders: reminders, next: response.next)
                     },
