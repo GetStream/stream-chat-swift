@@ -110,11 +110,9 @@ class NotificationService: UNNotificationServiceExtension {
                 }
             default:
                 let streamPayload = content.userInfo["stream"] as? [String: String]
-                if let streamNotificationType = streamPayload?["type"] {
-                    if streamNotificationType == EventType.messageReminderDue.rawValue {
-                        contentHandler(content)
-                        return
-                    }
+                if streamPayload?["type"] == EventType.messageReminderDue.rawValue {
+                    contentHandler(content)
+                    return
                 }
                 content.title = "You received an update to one conversation"
                 contentHandler(content)

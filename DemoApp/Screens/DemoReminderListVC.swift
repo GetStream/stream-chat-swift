@@ -406,8 +406,8 @@ class DemoReminderListVC: UIViewController, ThemeProvider {
     private func showEditReminderOptions(for reminder: MessageReminder, at indexPath: IndexPath) {
         let alert = UIAlertController(title: "Edit Reminder", message: nil, preferredStyle: .actionSheet)
         
-        alert.addAction(UIAlertAction(title: "Remind in 2 Minutes", style: .default) { [weak self] _ in
-            let date = Date().addingTimeInterval(2 * 60)
+        alert.addAction(UIAlertAction(title: "Remind in 1 Minutes", style: .default) { [weak self] _ in
+            let date = Date().addingTimeInterval(1.05 * 60)
             self?.updateReminderDate(for: reminder, newDate: date)
         })
 

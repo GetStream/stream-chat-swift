@@ -128,8 +128,8 @@ final class DemoChatMessageActionsVC: ChatMessageActionsVC {
                 )
                 
                 let actions = [
-                    UIAlertAction(title: "2 Minute", style: .default) { _ in
-                        let remindAt = Date().addingTimeInterval(120)
+                    UIAlertAction(title: "1 Minute", style: .default) { _ in
+                        let remindAt = Date().addingTimeInterval(61)
                         self.updateOrCreateReminder(remindAt: remindAt)
                     },
                     UIAlertAction(title: "30 Minutes", style: .default) { _ in
