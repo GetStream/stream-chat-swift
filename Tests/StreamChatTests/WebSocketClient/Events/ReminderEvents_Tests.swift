@@ -52,13 +52,15 @@ final class ReminderEvents_Tests: XCTestCase {
         XCTAssertEqual(domainEvent.reminder.channel.cid, channelId)
     }
     
-    func test_reminderCreatedEvent_toDomainEvent_returnsNilWhenMissingData() throws {
+    func test_reminderCreatedEvent_toDomainEvent_whenRemoveChannelOnly_shouldSaveChannelFromEvent() throws {
         let json = XCTestCase.mockData(fromJSONFile: "ReminderCreated")
         let event = try eventDecoder.decode(from: json) as? ReminderCreatedEventDTO
         let session = DatabaseContainer_Spy(kind: .inMemory).viewContext
-        
-        // Don't save any data to test nil case
-        XCTAssertNil(event?.toDomainEvent(session: session))
+
+        let domainEvent = try XCTUnwrap(event?.toDomainEvent(session: session) as? MessageReminderCreatedEvent)
+        XCTAssertEqual(domainEvent.messageId, event?.messageId)
+        XCTAssertEqual(domainEvent.reminder.id, event?.messageId)
+        XCTAssertEqual(domainEvent.reminder.channel.name, event?.reminder.channel?.name)
     }
     
     // MARK: - ReminderUpdatedEvent Tests
