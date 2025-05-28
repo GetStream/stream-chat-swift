@@ -102,7 +102,7 @@ class NotificationService: UNNotificationServiceExtension {
 
                 let authorName = messageNotification.message.author.name ?? "somebody"
                 let channelName = messageNotification.channel?.name ?? "a conversation with you"
-                content.title = "\(authorName) on \(channelName) a conversation with you"
+                content.title = "\(authorName) on \(channelName)"
                 content.subtitle = ""
                 content.body = messageNotification.message.text
                 self.addMessageAttachments(message: messageNotification.message, content: content) {
