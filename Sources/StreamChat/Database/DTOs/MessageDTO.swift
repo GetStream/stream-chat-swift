@@ -973,6 +973,8 @@ extension NSManagedObjectContext: MessageDatabaseSession {
         dto.threadParticipants = try NSOrderedSet(
             array: payload.threadParticipants.map { try saveUser(payload: $0) }
         )
+        let restrictedVisibility = Set(payload.restrictedVisibility)
+        dto.restrictedVisibility = restrictedVisibility.isEmpty ? nil : restrictedVisibility
 
         let isSystemMessage = dto.type == MessageType.system.rawValue
         let shouldNotUpdateLastMessageAt = isSystemMessage && channelDTO.config.skipLastMsgAtUpdateForSystemMsg
