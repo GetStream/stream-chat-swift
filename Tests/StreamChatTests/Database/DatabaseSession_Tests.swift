@@ -385,6 +385,35 @@ final class DatabaseSession_Tests: XCTestCase {
             XCTAssertTrue(event is MessageUpdatedEvent)
         }
     }
+    
+    func test_saveEvent_whenMessageUpdated_shouldNotSaveMessageWithRestrictedVisibilityLocallyIfCurrentUserNotInTheList() throws {
+        let currentUserId = UserId.unique
+        let messageId = MessageId.unique
+        let cid = ChannelId.unique
+        try database.createCurrentUser(id: currentUserId)
+        try database.createChannel(cid: cid, withMessages: false)
+        
+        let eventPayload = EventPayload(
+            eventType: .messageUpdated,
+            cid: cid,
+            user: .dummy(userId: .unique),
+            message: .dummy(
+                messageId: messageId,
+                restrictedVisibility: [.unique],
+                cid: cid,
+                pinned: true
+            ),
+            createdAt: .distantFuture
+        )
+        try database.writeSynchronously { session in
+            try session.saveEvent(payload: eventPayload)
+        }
+        try database.readSynchronously { session in
+            let channelDTO = try XCTUnwrap(session.channel(cid: cid))
+            // Message is not saved if the current user is not in the restricted visibility list
+            XCTAssertFalse(channelDTO.messages.contains(where: { $0.id == messageId }))
+        }
+    }
 
     func test_saveEvent_whenMessageDelete_whenHardDeleted_shouldHardDeleteMessageFromDatabase() throws {
         let userId: UserId = .unique
