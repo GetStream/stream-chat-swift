@@ -5745,15 +5745,15 @@
 		796610B7248E64EC00761629 /* EventMiddlewares */ = {
 			isa = PBXGroup;
 			children = (
-				AD545E732D5A79B5008FD399 /* DraftUpdaterMiddleware.swift */,
 				79896D63250A62EE00BA8F1C /* ChannelReadUpdaterMiddleware.swift */,
-				AD9632E02C0A43630073B814 /* ThreadUpdaterMiddleware.swift */,
 				79158CF325F133FB00186102 /* ChannelTruncatedEventMiddleware.swift */,
 				79AF43B32632AF1B00E75CDA /* ChannelVisibilityEventMiddleware.swift */,
+				AD545E732D5A79B5008FD399 /* DraftUpdaterMiddleware.swift */,
 				792FCB4424A33B5B000290C7 /* EventDataProcessorMiddleware.swift */,
 				84AA4E3526F264610056A684 /* EventDTOConverterMiddleware.swift */,
 				796610B8248E651800761629 /* EventMiddleware.swift */,
 				79D6CF1725FA671C00BE2EEC /* MemberEventMiddleware.swift */,
+				AD9632E02C0A43630073B814 /* ThreadUpdaterMiddleware.swift */,
 				79A0E9B92498C31300E9BD50 /* TypingStartCleanupMiddleware.swift */,
 				796CBC1225F7CD48003299B0 /* UserChannelBanEventsMiddleware.swift */,
 				F6CCA24C251235F7004C1859 /* UserTypingStateUpdaterMiddleware.swift */,
@@ -6995,20 +6995,20 @@
 		A364D08D27D0BD8E0029857A /* EventMiddlewares */ = {
 			isa = PBXGroup;
 			children = (
-				AD545E8D2D5D827B008FD399 /* DraftUpdaterMiddleware_Tests.swift */,
 				79896D65250A6D1500BA8F1C /* ChannelReadUpdaterMiddleware_Tests.swift */,
-				AD7BE16C2C20CC02000A5756 /* ThreadUpdaterMiddlware_Tests.swift */,
 				79158CEA25F0EADF00186102 /* ChannelTruncatedEventMiddleware_Tests.swift */,
 				79342EEB2632C7770018F0F7 /* ChannelVisibilityEventMiddleware_Tests.swift */,
+				AD545E8D2D5D827B008FD399 /* DraftUpdaterMiddleware_Tests.swift */,
 				792FCB4624A33CC2000290C7 /* EventDataProcessorMiddleware_Tests.swift */,
 				8486CAF826FA51EE00A9AD96 /* EventDTOConverterMiddleware_Tests.swift */,
 				796610BA248E687000761629 /* EventMiddleware_Tests.swift */,
 				79D6CF2025FA6ACF00BE2EEC /* MemberEventMiddleware_Tests.swift */,
+				AD7BE16C2C20CC02000A5756 /* ThreadUpdaterMiddlware_Tests.swift */,
 				79A0E9B82498C31300E9BD50 /* TypingStartCleanupMiddleware_Tests.swift */,
 				796CBC1B25F7CD58003299B0 /* UserChannelBanEventsMiddleware_Tests.swift */,
 				F6CCA24E2512491B004C1859 /* UserTypingStateUpdaterMiddleware_Tests.swift */,
-				79617CB925F23AA400D54E61 /* UserWatchingEventMiddleware_Tests.swift */,
 				C1CEF90B2A1CF8A900414931 /* UserUpdateMiddleware_Tests.swift */,
+				79617CB925F23AA400D54E61 /* UserWatchingEventMiddleware_Tests.swift */,
 			);
 			path = EventMiddlewares;
 			sourceTree = "<group>";
