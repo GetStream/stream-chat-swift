@@ -96,15 +96,26 @@ class NotificationService: UNNotificationServiceExtension {
         let chatNotification = chatHandler.handleNotification { chatContent in
             switch chatContent {
             case let .message(messageNotification):
-                content
-                    .title = (messageNotification.message.author.name ?? "somebody") +
-                    (" on \(messageNotification.channel?.name ?? "a conversation with you")")
+                if messageNotification.type == .reminderDue {
+                    return contentHandler(content)
+                }
+
+                let authorName = messageNotification.message.author.name ?? "somebody"
+                let channelName = messageNotification.channel?.name ?? "a conversation with you"
+                content.title = "\(authorName) on \(channelName) a conversation with you"
                 content.subtitle = ""
                 content.body = messageNotification.message.text
                 self.addMessageAttachments(message: messageNotification.message, content: content) {
                     contentHandler($0)
                 }
             default:
+                let streamPayload = content.userInfo["stream"] as? [String: String]
+                if let streamNotificationType = streamPayload?["type"] {
+                    if streamNotificationType == EventType.messageReminderDue.rawValue {
+                        contentHandler(content)
+                        return
+                    }
+                }
                 content.title = "You received an update to one conversation"
                 contentHandler(content)
             }
