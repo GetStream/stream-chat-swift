@@ -782,7 +782,7 @@ extension DatabaseSession {
         }
 
         let messageExistsLocally = message(id: messagePayload.id) != nil
-        let messageMustBeCreated = payload.shouldCreateMessageInDatabase
+        let messageMustBeCreated = shouldCreateMessageInDatabase(eventPayload: payload)
 
         guard messageExistsLocally || messageMustBeCreated else {
             // Message does not exits locally and should not be saved
@@ -918,14 +918,15 @@ extension DatabaseSession {
     }
 }
 
-private extension EventPayload {
-    var shouldCreateMessageInDatabase: Bool {
-        switch eventType {
+private extension DatabaseSession {
+    func shouldCreateMessageInDatabase(eventPayload: EventPayload) -> Bool {
+        switch eventPayload.eventType {
         case .channelUpdated, .messageNew, .notificationMessageNew, .channelTruncated:
             return true
         case .messageUpdated:
-            guard let message else { return false }
-            return !message.restrictedVisibility.isEmpty
+            guard let message = eventPayload.message else { return false }
+            guard let currentUserId = currentUser?.user.id else { return false }
+            return message.restrictedVisibility.contains(currentUserId)
         default:
             return false
         }
