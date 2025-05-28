@@ -20,8 +20,10 @@ final class DemoChatMessageActionsVC: ChatMessageActionsVC {
         if message?.isBounced == false {
             actions.append(pinMessageActionItem())
             actions.append(translateActionItem())
-            
-            if AppConfig.shared.demoAppConfig.isRemindersEnabled {
+
+            let isDemoAppRemindersEnabled = AppConfig.shared.demoAppConfig.isRemindersEnabled
+            let isChannelRemindersEnabled = channel?.config.messageRemindersEnabled ?? false
+            if isDemoAppRemindersEnabled && isChannelRemindersEnabled {
                 actions.append(reminderActionItem())
                 actions.append(saveForLaterActionItem())
             }
