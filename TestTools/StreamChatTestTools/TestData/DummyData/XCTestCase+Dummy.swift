@@ -139,6 +139,7 @@ extension XCTestCase {
             searchEnabled: true,
             mutesEnabled: true,
             urlEnrichmentEnabled: true,
+            messageRemindersEnabled: true,
             messageRetention: "1000",
             maxMessageLength: 100,
             commands: [

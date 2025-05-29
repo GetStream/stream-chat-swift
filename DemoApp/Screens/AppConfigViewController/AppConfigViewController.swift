@@ -22,6 +22,8 @@ struct DemoAppConfig {
     var shouldShowConnectionBanner: Bool
     /// A Boolean value to define if the premium member feature is enabled. This is to test custom member data.
     var isPremiumMemberFeatureEnabled: Bool
+    /// A Boolean value to define if the reminders feature is enabled.
+    var isRemindersEnabled: Bool
     /// A Boolean value to define if the poll should be deleted when the message is deleted.
     var shouldDeletePollOnMessageDeletion: Bool
 
@@ -53,6 +55,7 @@ class AppConfig {
             tokenRefreshDetails: nil,
             shouldShowConnectionBanner: false,
             isPremiumMemberFeatureEnabled: false,
+            isRemindersEnabled: true,
             shouldDeletePollOnMessageDeletion: false
         )
 
@@ -64,6 +67,7 @@ class AppConfig {
             demoAppConfig.isHardDeleteEnabled = true
             demoAppConfig.shouldShowConnectionBanner = true
             demoAppConfig.isPremiumMemberFeatureEnabled = true
+            demoAppConfig.isRemindersEnabled = true
             demoAppConfig.shouldDeletePollOnMessageDeletion = true
             StreamRuntimeCheck.assertionsEnabled = true
         }
@@ -177,6 +181,7 @@ class AppConfigViewController: UITableViewController {
         case tokenRefreshDetails
         case shouldShowConnectionBanner
         case isPremiumMemberFeatureEnabled
+        case isRemindersEnabled
     }
 
     enum ComponentsConfigOption: String, CaseIterable {
@@ -341,6 +346,10 @@ class AppConfigViewController: UITableViewController {
         case .isPremiumMemberFeatureEnabled:
             cell.accessoryView = makeSwitchButton(demoAppConfig.isPremiumMemberFeatureEnabled) { [weak self] newValue in
                 self?.demoAppConfig.isPremiumMemberFeatureEnabled = newValue
+            }
+        case .isRemindersEnabled:
+            cell.accessoryView = makeSwitchButton(demoAppConfig.isRemindersEnabled) { [weak self] newValue in
+                self?.demoAppConfig.isRemindersEnabled = newValue
             }
         }
     }
@@ -739,6 +748,9 @@ class AppConfigViewController: UITableViewController {
             guard let selectedOption = options.first else { return }
             apiKeyString = selectedOption.rawValue
             StreamChatWrapper.replaceSharedInstance(apiKeyString: apiKeyString)
+            if let baseURL = selectedOption.customBaseURL {
+                self?.chatClientConfig.baseURL = .init(url: baseURL)
+            }
             self?.tableView.reloadData()
         }
 

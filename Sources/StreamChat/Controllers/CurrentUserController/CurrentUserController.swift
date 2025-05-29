@@ -85,6 +85,8 @@ public class CurrentChatUserController: DataController, DelegateCallable, DataSt
     /// The worker used to update the current user member for a given channel.
     private lazy var currentMemberUpdater = createMemberUpdater()
 
+    // MARK: - Drafts Properties
+
     /// The query used for fetching the draft messages.
     private var draftListQuery = DraftListQuery()
 
@@ -110,6 +112,8 @@ public class CurrentChatUserController: DataController, DelegateCallable, DataSt
         return Array(observer.items)
     }
 
+    // MARK: - Init
+
     /// Creates a new `CurrentUserControllerGeneric`.
     ///
     /// - Parameters:
@@ -120,9 +124,10 @@ public class CurrentChatUserController: DataController, DelegateCallable, DataSt
         self.client = client
         self.environment = environment
         draftMessagesRepository = client.draftMessagesRepository
+        super.init()
     }
 
-    /// Synchronize local data with remote. Waits for the client to connect but doesn’t initiate the connection itself.
+    /// Synchronize local data with remote. Waits for the client to connect but doesn't initiate the connection itself.
     /// This is to make sure the fetched local data is up-to-date, since the current user data is updated through WebSocket events.
     ///
     /// - Parameter completion: Called when the controller has finished fetching the local data

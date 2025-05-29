@@ -78,7 +78,15 @@ public class ChatClient {
     
     let pollsRepository: PollsRepository
 
-    let draftMessagesRepository: DraftMessagesRepository
+    /// Repository for handling draft messages
+    lazy var draftMessagesRepository: DraftMessagesRepository = {
+        environment.draftMessagesRepositoryBuilder(databaseContainer, apiClient)
+    }()
+    
+    /// Repository for handling message reminders
+    lazy var remindersRepository: RemindersRepository = {
+        environment.remindersRepositoryBuilder(databaseContainer, apiClient)
+    }()
 
     let channelListUpdater: ChannelListUpdater
 
@@ -210,7 +218,6 @@ public class ChatClient {
             apiClient
         )
         pollsRepository = environment.pollsRepositoryBuilder(databaseContainer, apiClient)
-        draftMessagesRepository = environment.draftMessagesRepositoryBuilder(databaseContainer, apiClient)
 
         authRepository.delegate = self
         apiClientEncoder.connectionDetailsProviderDelegate = self

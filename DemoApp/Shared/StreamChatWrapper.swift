@@ -37,6 +37,11 @@ final class StreamChatWrapper {
         config.shouldShowShadowedMessages = true
         config.applicationGroupIdentifier = applicationGroupIdentifier
         config.urlSessionConfiguration.httpAdditionalHeaders = ["Custom": "Example"]
+
+        let apiKey = DemoApiKeys(rawValue: apiKeyString)
+        if let baseURL = apiKey.customBaseURL {
+            config.baseURL = .init(url: baseURL)
+        }
         // Uncomment this to test model transformers
         // config.modelsTransformer = CustomStreamModelsTransformer()
         configureUI()

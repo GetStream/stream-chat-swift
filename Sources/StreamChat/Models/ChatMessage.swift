@@ -67,6 +67,9 @@ public struct ChatMessage {
     /// The draft reply to this message. Applies only for the messages of the current user.
     public let draftReply: DraftMessage?
 
+    /// The reminder information for this message if it has been added to reminders.
+    public let reminder: MessageReminderInfo?
+
     /// A flag indicating whether the message was bounced due to moderation.
     public let isBounced: Bool
 
@@ -217,7 +220,8 @@ public struct ChatMessage {
         readBy: Set<ChatUser>,
         poll: Poll?,
         textUpdatedAt: Date?,
-        draftReply: DraftMessage?
+        draftReply: DraftMessage?,
+        reminder: MessageReminderInfo?
     ) {
         self.id = id
         self.cid = cid
@@ -259,6 +263,7 @@ public struct ChatMessage {
         _attachments = attachments
         _quotedMessage = { quotedMessage }
         self.draftReply = draftReply
+        self.reminder = reminder
     }
 
     /// Returns a new `ChatMessage` with the provided data changed.
@@ -315,7 +320,8 @@ public struct ChatMessage {
             readBy: readBy,
             poll: poll,
             textUpdatedAt: textUpdatedAt,
-            draftReply: draftReply
+            draftReply: draftReply,
+            reminder: reminder
         )
     }
 
@@ -427,7 +433,8 @@ public struct ChatMessage {
             readBy: readBy,
             poll: poll,
             textUpdatedAt: textUpdatedAt,
-            draftReply: draftReply
+            draftReply: draftReply,
+            reminder: reminder
         )
     }
 }
@@ -559,6 +566,7 @@ extension ChatMessage: Hashable {
         guard lhs.translations == rhs.translations else { return false }
         guard lhs.type == rhs.type else { return false }
         guard lhs.draftReply == rhs.draftReply else { return false }
+        guard lhs.reminder == rhs.reminder else { return false }
         return true
     }
 

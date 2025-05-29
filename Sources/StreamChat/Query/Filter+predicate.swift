@@ -4,43 +4,12 @@
 
 import Foundation
 
-extension Filter where Scope == ChannelListFilterScope {
-    /// If a valueMapper was provided, then here we will try to transform the value
-    /// using the mapper.
+extension Filter {
+    /// Converts the current filter into an NSPredicate if it can be translated.
     ///
-    /// If the mapper returns nil, the original value will be returned
-    var mappedValue: FilterValue {
-        valueMapper?(value) ?? value
-    }
-
-    /// If the mappedValues is an array of FilterValues, we will try to transform them using the valueMapper
-    /// to ensure that both parts of the comparison are of the same type.
+    /// This is useful to make sure the backend filters can be used to filter data in CoreData.
     ///
-    /// If the value is not an array, this value will return nil.
-    /// If the valueMapper isn't provided or the value mapper returns nil, the original value will be included
-    /// in the array.
-    var mappedArrayValue: [FilterValue]? {
-        guard let filterArray = mappedValue as? [FilterValue] else {
-            return nil
-        }
-        return filterArray.map { valueMapper?($0) ?? $0 }
-    }
-
-    /// If it can be translated, this will return
-    /// an NSPredicate instance that is equivalent
-    /// to the current filter.
-    ///
-    /// For now it's limited to ChannelList as it's not
-    /// needed anywhere else
-    ///
-    /// The predicate will be automatically be used
-    /// by the ChannelDTO to create the
-    /// fetchRequest.
-    ///
-    /// - Important:
-    /// The behaviour of the ChannelDTO, to include or not
-    /// the predicate in the fetchRequest, it's controlled by
-    /// `ChatClientConfig.isChannelAutomaticFilteringEnabled`
+    /// **Note:** Extra data properties will be ignored since they are stored in binary format.
     var predicate: NSPredicate? {
         guard let op = FilterOperator(rawValue: `operator`) else {
             return nil
@@ -233,6 +202,27 @@ extension Filter where Scope == ChannelListFilterScope {
             log.debug("Unhandled operator \(op) and filterValue \(mappedValue)")
             return nil
         }
+    }
+
+    /// If a valueMapper was provided, then here we will try to transform the value
+    /// using the mapper.
+    ///
+    /// If the mapper returns nil, the original value will be returned
+    var mappedValue: FilterValue {
+        valueMapper?(value) ?? value
+    }
+
+    /// If the mappedValues is an array of FilterValues, we will try to transform them using the valueMapper
+    /// to ensure that both parts of the comparison are of the same type.
+    ///
+    /// If the value is not an array, this value will return nil.
+    /// If the valueMapper isn't provided or the value mapper returns nil, the original value will be included
+    /// in the array.
+    var mappedArrayValue: [FilterValue]? {
+        guard let filterArray = mappedValue as? [FilterValue] else {
+            return nil
+        }
+        return filterArray.map { valueMapper?($0) ?? $0 }
     }
 }
 
