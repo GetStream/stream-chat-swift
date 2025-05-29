@@ -7,7 +7,7 @@ import Foundation
 
 /// A type representing a chat channel. `ChatChannel` is an immutable snapshot of a channel entity at the given time.
 ///
-public struct ChatChannel {
+public struct ChatChannel: Sendable {
     /// The `ChannelId` of the channel.
     public let cid: ChannelId
 
@@ -331,7 +331,7 @@ extension ChatChannel: Hashable {
 }
 
 /// A struct describing unread counts for a channel.
-public struct ChannelUnreadCount: Decodable, Equatable {
+public struct ChannelUnreadCount: Decodable, Equatable, Sendable {
     /// The default value representing no unread messages.
     public static let noUnread = ChannelUnreadCount(messages: 0, mentions: 0)
 
@@ -353,7 +353,7 @@ public extension ChannelUnreadCount {
 }
 
 /// An action that can be performed in a channel.
-public struct ChannelCapability: RawRepresentable, ExpressibleByStringLiteral, Hashable {
+public struct ChannelCapability: RawRepresentable, ExpressibleByStringLiteral, Hashable, Sendable {
     public var rawValue: String
 
     public init?(rawValue: String) {

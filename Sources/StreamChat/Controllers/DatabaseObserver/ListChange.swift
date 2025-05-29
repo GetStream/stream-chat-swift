@@ -136,6 +136,7 @@ extension ListChange {
 }
 
 extension ListChange: Equatable where Item: Equatable {}
+extension ListChange: Sendable where Item: Sendable {}
 
 /// When this object is set as `NSFetchedResultsControllerDelegate`, it aggregates the callbacks from the fetched results
 /// controller and forwards them in the way of `[Change<Item>]`. You can set the `onDidChange` callback to receive these updates.

@@ -5,9 +5,9 @@
 import Foundation
 
 /// The base class for controllers which represent and control a data entity. Not meant to be used directly.
-public class DataController: Controller {
+public class DataController: Controller, @unchecked Sendable {
     /// Describes the possible states of `DataController`
-    public enum State: Equatable {
+    public enum State: Equatable, Sendable {
         /// The controller is created but no data fetched.
         case initialized
         /// The controllers already fetched local data if any.
@@ -20,14 +20,22 @@ public class DataController: Controller {
         case remoteDataFetchFailed(ClientError)
     }
 
+    let queue = DispatchQueue(label: "io.getstream.data-controller", target: .global(qos: .userInteractive))
+    
     /// The current state of the controller.
-    public internal(set) var state: State = .initialized {
-        didSet {
+    public internal(set) var state: State {
+        get {
+            queue.sync { _state }
+        }
+        set {
+            queue.sync { _state = newValue }
             callback {
                 self.stateMulticastDelegate.invoke { $0.controller(self, didChangeState: self.state) }
             }
         }
     }
+    
+    private var _state: State = .initialized
 
     /// Determines whether the controller can be recovered. A failure fetching remote data can mean that we failed to fetch the data that is present on the server, or
     /// that we failed to synchronize a locally created channel
@@ -50,7 +58,7 @@ public class DataController: Controller {
     /// the `error` variable contains more details about the problem.
     ///
     // swiftlint:disable unavailable_function
-    public func synchronize(_ completion: ((_ error: Error?) -> Void)? = nil) {
+    public func synchronize(_ completion: (@Sendable(_ error: Error?) -> Void)? = nil) {
         fatalError("`synchronize` method must be overriden by the subclass.")
     }
 
@@ -80,9 +88,9 @@ public extension DataControllerStateDelegate {
 }
 
 /// A helper protocol allowing calling delegate using existing `callback` method.
-protocol DelegateCallable {
+protocol DelegateCallable: Sendable {
     associatedtype Delegate
-    func callback(_ action: @escaping () -> Void)
+    func callback(_ action: @escaping @Sendable() -> Void)
 
     /// The multicast delegate wrapper for all delegates of the controller
     var multicastDelegate: MulticastDelegate<Delegate> { get }
@@ -90,7 +98,7 @@ protocol DelegateCallable {
 
 extension DelegateCallable {
     /// A helper function to ensure the delegate callback is performed using the `callback` method.
-    func delegateCallback(_ callback: @escaping (Delegate) -> Void) {
+    func delegateCallback(_ callback: @escaping @Sendable(Delegate) -> Void) {
         self.callback {
             self.multicastDelegate.invoke(callback)
         }

@@ -33,10 +33,7 @@ final class NSManagedObject_Validation_Tests: XCTestCase {
     }
 
     func test_isValid_ReturnsFalse_WhenTheObjectIsDeleted() throws {
-        guard let message = try createMessage() else {
-            XCTFail()
-            return
-        }
+        nonisolated(unsafe) let message = try XCTUnwrap(createMessage())
 
         try database.writeSynchronously { session in
             session.delete(message: message)
@@ -48,10 +45,7 @@ final class NSManagedObject_Validation_Tests: XCTestCase {
     }
 
     func test_deletedObject_doesNotCrash_whenAccessingDate() throws {
-        guard let message = try createMessage() else {
-            XCTFail()
-            return
-        }
+        nonisolated(unsafe) let message = try XCTUnwrap(createMessage())
 
         try database.writeSynchronously { session in
             session.delete(message: message)
@@ -87,7 +81,7 @@ final class NSManagedObject_Validation_Tests: XCTestCase {
 private extension NSManagedObject_Validation_Tests {
     private func createMessage() throws -> MessageDTO? {
         let channelId = ChannelId(type: .messaging, id: "123")
-        var message: MessageDTO?
+        nonisolated(unsafe) var message: MessageDTO?
         try database.createCurrentUser()
         try database.createChannel(cid: channelId)
         try database.writeSynchronously { session in

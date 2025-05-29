@@ -6,7 +6,7 @@ import Accelerate
 import AVFoundation
 
 /// An object with the purpose to prepare the provided audio data for visualisation or further processing.
-internal class AudioSamplesProcessor {
+class AudioSamplesProcessor: @unchecked Sendable {
     let noiseFloor: Float
 
     /// Creates a new instances with the desired noiseFloor value

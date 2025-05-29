@@ -5,7 +5,7 @@
 import Foundation
 @testable import StreamChat
 
-class AuthenticationRepository_Mock: AuthenticationRepository, Spy {
+class AuthenticationRepository_Mock: AuthenticationRepository, Spy, @unchecked Sendable {
     enum Signature {
         static let connectTokenProvider = "connectUser(userInfo:tokenProvider:completion:)"
         static let connectGuest = "connectGuestUser(userInfo:completion:)"
@@ -20,14 +20,14 @@ class AuthenticationRepository_Mock: AuthenticationRepository, Spy {
     }
 
     let spyState = SpyState()
-    var mockedToken: Token?
-    var mockedCurrentUserId: UserId?
+    @Atomic var mockedToken: Token?
+    @Atomic var mockedCurrentUserId: UserId?
 
-    var connectUserResult: Result<Void, Error>?
-    var connectGuestResult: Result<Void, Error>?
-    var connectAnonResult: Result<Void, Error>?
-    var refreshTokenResult: Result<Void, Error>?
-    var completeWaitersToken: Token?
+    @Atomic var connectUserResult: Result<Void, Error>?
+    @Atomic var connectGuestResult: Result<Void, Error>?
+    @Atomic var connectAnonResult: Result<Void, Error>?
+    @Atomic var refreshTokenResult: Result<Void, Error>?
+    @Atomic var completeWaitersToken: Token?
 
     override var currentUserId: UserId? {
         return mockedCurrentUserId
@@ -95,7 +95,7 @@ class AuthenticationRepository_Mock: AuthenticationRepository, Spy {
         record()
     }
 
-    var resetCallCount: Int = 0
+    @Atomic var resetCallCount: Int = 0
     override func reset() {
         resetCallCount += 1
     }

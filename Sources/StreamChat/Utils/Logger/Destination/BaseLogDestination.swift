@@ -6,7 +6,7 @@ import Foundation
 
 /// Base class for log destinations. Already implements basic functionality to allow easy destination implementation.
 /// Extending this class, instead of implementing `LogDestination` is easier (and recommended) for creating new destinations.
-open class BaseLogDestination: LogDestination {
+open class BaseLogDestination: LogDestination, @unchecked Sendable {
     open var identifier: String
     open var level: LogLevel
     open var subsystems: LogSubsystem

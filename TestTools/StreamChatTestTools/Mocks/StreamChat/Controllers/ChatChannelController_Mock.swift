@@ -5,14 +5,14 @@
 import Foundation
 @testable import StreamChat
 
-class ChatChannelController_Mock: ChatChannelController {
+class ChatChannelController_Mock: ChatChannelController, @unchecked Sendable {
 
-    var mockCid: ChannelId?
+    @Atomic var mockCid: ChannelId?
     override var cid: ChannelId? {
         mockCid ?? super.cid
     }
 
-    var mockFirstUnreadMessageId: MessageId?
+    @Atomic var mockFirstUnreadMessageId: MessageId?
     override var firstUnreadMessageId: MessageId? {
         mockFirstUnreadMessageId ?? super.firstUnreadMessageId
     }
@@ -55,7 +55,7 @@ class ChatChannelController_Mock: ChatChannelController {
         )
     }
 
-    var createNewMessageCallCount = 0
+    @Atomic var createNewMessageCallCount = 0
     override func createNewMessage(
         messageId: MessageId? = nil,
         text: String, pinning: MessagePinning? = nil,
@@ -72,60 +72,60 @@ class ChatChannelController_Mock: ChatChannelController {
         createNewMessageCallCount += 1
     }
 
-    var hasLoadedAllNextMessages_mock: Bool? = true
+    @Atomic var hasLoadedAllNextMessages_mock: Bool? = true
     override var hasLoadedAllNextMessages: Bool {
         hasLoadedAllNextMessages_mock ?? super.hasLoadedAllNextMessages
     }
 
-    var hasLoadedAllPreviousMessages_mock: Bool? = true
+    @Atomic var hasLoadedAllPreviousMessages_mock: Bool? = true
     override var hasLoadedAllPreviousMessages: Bool {
         hasLoadedAllPreviousMessages_mock ?? super.hasLoadedAllPreviousMessages
     }
 
-    var markedAsUnread_mock: Bool? = true
+    @Atomic var markedAsUnread_mock: Bool? = true
     override var isMarkedAsUnread: Bool {
         markedAsUnread_mock ?? super.isMarkedAsUnread
     }
 
-    var channel_mock: ChatChannel?
+    @Atomic var channel_mock: ChatChannel?
     override var channel: ChatChannel? {
         channel_mock ?? super.channel
     }
 
-    var channelQuery_mock: ChannelQuery?
+    @Atomic var channelQuery_mock: ChannelQuery?
     override var channelQuery: ChannelQuery {
         channelQuery_mock ?? super.channelQuery
     }
 
-    var messages_mock: [ChatMessage]?
+    @Atomic var messages_mock: [ChatMessage]?
     override var messages: LazyCachedMapCollection<ChatMessage> {
         messages_mock.map { $0.lazyCachedMap { $0 } } ?? super.messages
     }
 
-    var markReadCallCount = 0
+    @Atomic var markReadCallCount = 0
     override func markRead(completion: ((Error?) -> Void)?) {
         markReadCallCount += 1
     }
 
-    var state_mock: State?
+    @Atomic var state_mock: State?
     override var state: DataController.State {
         get { state_mock ?? super.state }
         set { super.state = newValue }
     }
 
-    private(set) var synchronize_completion: ((Error?) -> Void)?
+    @Atomic private(set) var synchronize_completion: ((Error?) -> Void)?
     override func synchronize(_ completion: ((Error?) -> Void)? = nil) {
         synchronize_completion = completion
     }
 
-    var loadFirstPageCallCount = 0
-    var loadFirstPage_result: Error?
+    @Atomic var loadFirstPageCallCount = 0
+    @Atomic var loadFirstPage_result: Error?
     override func loadFirstPage(_ completion: ((Error?) -> Void)? = nil) {
         loadFirstPageCallCount += 1
         completion?(loadFirstPage_result)
     }
 
-    var loadPageAroundMessageIdCallCount = 0
+    @Atomic var loadPageAroundMessageIdCallCount = 0
     override func loadPageAroundMessageId(
         _ messageId: MessageId,
         limit: Int? = nil,
@@ -134,9 +134,9 @@ class ChatChannelController_Mock: ChatChannelController {
         loadPageAroundMessageIdCallCount += 1
     }
 
-    var updateDraftMessage_callCount = 0
-    var updateDraftMessage_completion: ((Result<DraftMessage, any Error>) -> Void)?
-    var updateDraftMessage_text = ""
+    @Atomic var updateDraftMessage_callCount = 0
+    @Atomic var updateDraftMessage_completion: ((Result<DraftMessage, any Error>) -> Void)?
+    @Atomic var updateDraftMessage_text = ""
 
     override func updateDraftMessage(
         text: String,
@@ -153,16 +153,16 @@ class ChatChannelController_Mock: ChatChannelController {
         updateDraftMessage_completion = completion
     }
 
-    var deleteDraftMessage_callCount = 0
-    var deleteDraftMessage_completion: ((Error?) -> Void)?
+    @Atomic var deleteDraftMessage_callCount = 0
+    @Atomic var deleteDraftMessage_completion: ((Error?) -> Void)?
 
     override func deleteDraftMessage(completion: ((Error?) -> Void)? = nil) {
         deleteDraftMessage_callCount += 1
         deleteDraftMessage_completion = completion
     }
 
-    var loadDraftMessage_callCount = 0
-    var loadDraftMessage_completion: ((Result<DraftMessage?, Error>) -> Void)?
+    @Atomic var loadDraftMessage_callCount = 0
+    @Atomic var loadDraftMessage_completion: ((Result<DraftMessage?, Error>) -> Void)?
 
     override func loadDraftMessage(completion: ((Result<DraftMessage?, Error>) -> Void)? = nil) {
         loadDraftMessage_callCount += 1

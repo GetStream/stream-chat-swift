@@ -3,7 +3,7 @@
 //
 
 /// An option to enable ban users.
-public enum BanEnabling {
+public enum BanEnabling: Sendable {
     /// Disabled for everyone.
     case disabled
 

@@ -4,21 +4,21 @@
 
 import Foundation
 
-struct Endpoint<ResponseType: Decodable>: Codable {
+struct Endpoint<ResponseType: Decodable>: Codable, Sendable {
     let path: EndpointPath
     let method: EndpointMethod
-    let queryItems: Encodable?
+    let queryItems: (Encodable & Sendable)?
     let requiresConnectionId: Bool
     let requiresToken: Bool
-    let body: Encodable?
+    let body: (Encodable & Sendable)?
 
     init(
         path: EndpointPath,
         method: EndpointMethod,
-        queryItems: Encodable? = nil,
+        queryItems: (Encodable & Sendable)? = nil,
         requiresConnectionId: Bool = false,
         requiresToken: Bool = true,
-        body: Encodable? = nil
+        body: (Encodable & Sendable)? = nil
     ) {
         self.path = path
         self.method = method
@@ -64,7 +64,7 @@ struct Endpoint<ResponseType: Decodable>: Codable {
     }
 }
 
-private extension Encodable {
+private extension Encodable where Self: Sendable {
     func encodedAsData() throws -> Data {
         try JSONEncoder.stream.encode(AnyEncodable(self))
     }
@@ -79,7 +79,7 @@ enum EndpointMethod: String, Codable, Equatable {
 }
 
 /// A type representing empty response of an Endpoint.
-public struct EmptyResponse: Decodable {}
+public struct EmptyResponse: Decodable, Sendable {}
 
 /// A type representing empty body for `.post` Endpoints.
 /// Our backend currently expects a body (not `nil`), even if it's empty.

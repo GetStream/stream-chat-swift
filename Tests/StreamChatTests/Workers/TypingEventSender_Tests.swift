@@ -21,7 +21,7 @@ final class TypingEventsSender_Tests: XCTestCase {
         database = DatabaseContainer_Spy()
 
         time = VirtualTime()
-        VirtualTimeTimer.time = time
+        VirtualTimeTimer.time.value = time
 
         eventSender = TypingEventsSender(database: database, apiClient: apiClient)
         eventSender.timer = VirtualTimeTimer.self

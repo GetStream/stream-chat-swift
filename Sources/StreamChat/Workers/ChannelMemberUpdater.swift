@@ -5,7 +5,7 @@
 import Foundation
 
 /// Makes channel member related calls to the backend.
-class ChannelMemberUpdater: Worker {
+class ChannelMemberUpdater: Worker, @unchecked Sendable {
     /// Updates the channel member with additional information.
     /// - Parameters:
     ///   - userId: The user id of the member.
@@ -17,7 +17,7 @@ class ChannelMemberUpdater: Worker {
         in cid: ChannelId,
         updates: MemberUpdatePayload?,
         unset: [String]?,
-        completion: @escaping ((Result<ChatChannelMember, Error>) -> Void)
+        completion: @escaping (@Sendable(Result<ChatChannelMember, Error>) -> Void)
     ) {
         apiClient.request(
             endpoint: .partialMemberUpdate(
@@ -43,7 +43,7 @@ class ChannelMemberUpdater: Worker {
         _ isPinned: Bool,
         userId: UserId,
         cid: ChannelId,
-        completion: @escaping (Error?) -> Void
+        completion: @escaping @Sendable(Error?) -> Void
     ) {
         partialUpdate(
             userId: userId,
@@ -70,7 +70,7 @@ class ChannelMemberUpdater: Worker {
         _ isArchived: Bool,
         userId: UserId,
         cid: ChannelId,
-        completion: @escaping (Error?) -> Void
+        completion: @escaping @Sendable(Error?) -> Void
     ) {
         partialUpdate(
             userId: userId,
@@ -107,7 +107,7 @@ class ChannelMemberUpdater: Worker {
         shadow: Bool,
         for timeoutInMinutes: Int? = nil,
         reason: String? = nil,
-        completion: ((Error?) -> Void)? = nil
+        completion: (@Sendable(Error?) -> Void)? = nil
     ) {
         apiClient.request(
             endpoint: .banMember(userId, cid: cid, shadow: shadow, timeoutInMinutes: timeoutInMinutes, reason: reason)
@@ -124,7 +124,7 @@ class ChannelMemberUpdater: Worker {
     func unbanMember(
         _ userId: UserId,
         in cid: ChannelId,
-        completion: ((Error?) -> Void)? = nil
+        completion: (@Sendable(Error?) -> Void)? = nil
     ) {
         apiClient.request(endpoint: .unbanMember(userId, cid: cid)) {
             completion?($0.error)

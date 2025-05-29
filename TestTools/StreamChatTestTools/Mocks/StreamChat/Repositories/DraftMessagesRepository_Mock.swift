@@ -5,12 +5,12 @@
 @testable import StreamChat
 import XCTest
 
-final class DraftMessagesRepository_Mock: DraftMessagesRepository {
+final class DraftMessagesRepository_Mock: DraftMessagesRepository, @unchecked Sendable {
     // MARK: - Load Drafts
 
-    var loadDrafts_callCount = 0
-    var loadDrafts_calledWith: DraftListQuery?
-    var loadDrafts_completion: ((Result<DraftListResponse, Error>) -> Void)?
+    @Atomic var loadDrafts_callCount = 0
+    @Atomic var loadDrafts_calledWith: DraftListQuery?
+    @Atomic var loadDrafts_completion: ((Result<DraftListResponse, Error>) -> Void)?
 
     override func loadDrafts(
         query: DraftListQuery,
@@ -23,8 +23,8 @@ final class DraftMessagesRepository_Mock: DraftMessagesRepository {
 
     // MARK: - Update Draft
 
-    var updateDraft_callCount = 0
-    var updateDraft_calledWith: (
+    @Atomic var updateDraft_callCount = 0
+    @Atomic var updateDraft_calledWith: (
         cid: ChannelId,
         threadId: MessageId?,
         text: String,
@@ -37,7 +37,7 @@ final class DraftMessagesRepository_Mock: DraftMessagesRepository {
         quotedMessageId: MessageId?,
         extraData: [String: RawJSON]
     )?
-    var updateDraft_completion: ((Result<DraftMessage, Error>) -> Void)?
+    @Atomic var updateDraft_completion: ((Result<DraftMessage, Error>) -> Void)?
 
     override func updateDraft(
         for cid: ChannelId,
@@ -72,9 +72,9 @@ final class DraftMessagesRepository_Mock: DraftMessagesRepository {
 
     // MARK: - Get Draft
 
-    var getDraft_callCount = 0
-    var getDraft_calledWith: (cid: ChannelId, threadId: MessageId?)?
-    var getDraft_completion: ((Result<DraftMessage?, Error>) -> Void)?
+    @Atomic var getDraft_callCount = 0
+    @Atomic var getDraft_calledWith: (cid: ChannelId, threadId: MessageId?)?
+    @Atomic var getDraft_completion: ((Result<DraftMessage?, Error>) -> Void)?
 
     override func getDraft(
         for cid: ChannelId,
@@ -88,9 +88,9 @@ final class DraftMessagesRepository_Mock: DraftMessagesRepository {
 
     // MARK: - Delete Draft
 
-    var deleteDraft_callCount = 0
-    var deleteDraft_calledWith: (cid: ChannelId, threadId: MessageId?)?
-    var deleteDraft_completion: ((Error?) -> Void)?
+    @Atomic var deleteDraft_callCount = 0
+    @Atomic var deleteDraft_calledWith: (cid: ChannelId, threadId: MessageId?)?
+    @Atomic var deleteDraft_completion: ((Error?) -> Void)?
 
     override func deleteDraft(
         for cid: ChannelId,

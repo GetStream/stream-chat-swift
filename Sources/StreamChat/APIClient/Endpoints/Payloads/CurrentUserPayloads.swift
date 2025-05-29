@@ -5,7 +5,7 @@
 import Foundation
 
 /// An object describing the incoming current user JSON payload.
-class CurrentUserPayload: UserPayload {
+final class CurrentUserPayload: UserPayload, @unchecked Sendable {
     /// A list of devices.
     let devices: [DevicePayload]
     /// Muted users.

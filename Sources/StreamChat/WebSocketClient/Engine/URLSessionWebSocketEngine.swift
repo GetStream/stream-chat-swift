@@ -4,7 +4,8 @@
 
 import Foundation
 
-class URLSessionWebSocketEngine: NSObject, WebSocketEngine {
+// Note: Synchronization of the instance is handled by WebSocketClient, therefore all the properties are unsafe here.
+class URLSessionWebSocketEngine: NSObject, WebSocketEngine, @unchecked Sendable {
     private weak var task: URLSessionWebSocketTask? {
         didSet {
             oldValue?.cancel()
@@ -93,7 +94,7 @@ class URLSessionWebSocketEngine: NSObject, WebSocketEngine {
     private func makeURLSessionDelegateHandler() -> URLSessionDelegateHandler {
         let urlSessionDelegateHandler = URLSessionDelegateHandler()
         urlSessionDelegateHandler.onOpen = { [weak self] _ in
-            self?.callbackQueue.async {
+            self?.callbackQueue.async { [weak self] in
                 self?.delegate?.webSocketDidConnect()
             }
         }
@@ -109,7 +110,7 @@ class URLSessionWebSocketEngine: NSObject, WebSocketEngine {
                 )
             }
 
-            self?.callbackQueue.async { [weak self] in
+            self?.callbackQueue.async { [weak self, error] in
                 self?.delegate?.webSocketDidDisconnect(error: error)
             }
         }
@@ -134,7 +135,7 @@ class URLSessionWebSocketEngine: NSObject, WebSocketEngine {
     }
 }
 
-final class URLSessionDelegateHandler: NSObject, URLSessionDataDelegate, URLSessionWebSocketDelegate {
+final class URLSessionDelegateHandler: NSObject, URLSessionDataDelegate, URLSessionWebSocketDelegate, @unchecked Sendable {
     var onOpen: ((_ protocol: String?) -> Void)?
     var onClose: ((_ code: URLSessionWebSocketTask.CloseCode, _ reason: Data?) -> Void)?
     var onCompletion: ((Error?) -> Void)?

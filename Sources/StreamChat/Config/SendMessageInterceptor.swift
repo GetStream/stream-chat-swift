@@ -29,6 +29,6 @@ public protocol SendMessageInterceptor {
 }
 
 /// A factory responsible for creating message interceptors.
-public protocol SendMessageInterceptorFactory {
+public protocol SendMessageInterceptorFactory: Sendable {
     func makeSendMessageInterceptor(client: ChatClient) -> SendMessageInterceptor
 }
