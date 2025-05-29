@@ -654,6 +654,20 @@ final class DemoChatChannelListRouter: ChatChannelListRouter {
                     channelController.createNewMessage(text: "Hi", restrictedVisibility: [userId])
                 }
             }),
+            .init(title: "Send and update restricted message", isEnabled: canSendMessage, handler: { [unowned self] _ in
+                Task { @MainActor in
+                    do {
+                        let chat = client.makeChat(for: cid)
+                        let currentUserId = client.currentUserId!
+                        let otherUserId = chat.state.channel!.lastActiveMembers.first(where: { $0.id != currentUserId })!.id
+                        let message = try await chat.sendMessage(with: "This is a restricted message only visible to myself", restrictedVisibility: [currentUserId])
+                        try await Task.sleep(nanoseconds: 5_000_000_000)
+                        try await chat.updateMessage(message.id, text: "This is visible to me and \(otherUserId)", restrictedVisibility: [currentUserId, otherUserId])
+                    } catch {
+                        self.rootViewController.presentAlert(title: error.localizedDescription)
+                    }
+                }
+            }),
             .init(title: "Send system message", isEnabled: canSendMessage, handler: { [unowned self] _ in
                 self.rootViewController.presentAlert(title: "Enter the message text", textFieldPlaceholder: "Send message") { message in
                     guard let message = message, !message.isEmpty else {

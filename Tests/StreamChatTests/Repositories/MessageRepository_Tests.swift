@@ -700,6 +700,158 @@ final class MessageRepositoryTests: XCTestCase {
         XCTAssertEqual(reactionState, .deletingFailed)
         XCTAssertEqual(reactionScore, 10)
     }
+
+    // MARK: - Interceptor Tests
+
+    final class MockSendMessageInterceptor: SendMessageInterceptor {
+        var sendMessageCalled = false
+        var receivedMessage: ChatMessage?
+        var receivedOptions: SendMessageOptions?
+        var completionResult: Result<SendMessageResponse, Error> = .success(.init(message: .mock()))
+
+        func sendMessage(
+            _ message: ChatMessage,
+            options: SendMessageOptions,
+            completion: @escaping ((Result<SendMessageResponse, Error>) -> Void)
+        ) {
+            sendMessageCalled = true
+            receivedMessage = message
+            receivedOptions = options
+            completion(completionResult)
+        }
+        
+        func simulateSuccess(message: ChatMessage) {
+            completionResult = .success(.init(message: message))
+        }
+        
+        func simulateFailure(error: Error) {
+            completionResult = .failure(error)
+        }
+    }
+
+    func test_setInterceptor_storesInterceptor() {
+        // Given
+        let interceptor = MockSendMessageInterceptor()
+        
+        // When
+        repository.setInterceptor(interceptor)
+        
+        // Then
+        XCTAssertNotNil(repository.interceptor)
+    }
+    
+    func test_sendMessage_withInterceptor_usesInterceptor() throws {
+        // Given
+        let id = MessageId.unique
+        let interceptor = MockSendMessageInterceptor()
+        repository.setInterceptor(interceptor)
+        try createMessage(id: id, localState: .pendingSend)
+
+        // When
+        interceptor.simulateSuccess(message: .mock(id: id))
+        let exp = expectation(description: "Send Message completes")
+        repository.sendMessage(with: id) { _ in
+            exp.fulfill()
+        }
+        wait(for: [exp], timeout: defaultTimeout)
+
+        // Then
+        XCTAssertTrue(interceptor.sendMessageCalled)
+        XCTAssertEqual(interceptor.receivedMessage?.id, id)
+        XCTAssertFalse(interceptor.receivedOptions?.skipPush ?? true)
+        XCTAssertFalse(interceptor.receivedOptions?.skipEnrichUrl ?? true)
+        XCTAssertNil(apiClient.request_endpoint) // API client should not be called
+    }
+    
+    func test_sendMessage_withInterceptor_passesSkipOptions() throws {
+        // Given
+        let id = MessageId.unique
+        let interceptor = MockSendMessageInterceptor()
+        repository.setInterceptor(interceptor)
+        try createMessage(id: id, localState: .pendingSend, skipPush: true, skipEnrichUrl: true)
+        
+        // When
+        interceptor.simulateSuccess(message: .mock(id: id))
+        let exp = expectation(description: "Send Message completes")
+        repository.sendMessage(with: id) { _ in
+            exp.fulfill()
+        }
+        wait(for: [exp], timeout: defaultTimeout)
+
+        // Then
+        XCTAssertTrue(interceptor.sendMessageCalled)
+        XCTAssertTrue(interceptor.receivedOptions?.skipPush ?? false)
+        XCTAssertTrue(interceptor.receivedOptions?.skipEnrichUrl ?? false)
+    }
+    
+    func test_sendMessage_withInterceptor_whenLocalStatePendingSend_shouldMarkStateSending() throws {
+        // Given
+        let id = MessageId.unique
+        let interceptor = MockSendMessageInterceptor()
+        repository.setInterceptor(interceptor)
+        try createMessage(id: id, localState: .pendingSend)
+        
+        // When
+        interceptor.simulateSuccess(message: .mock(id: id, localState: .pendingSend))
+        let exp = expectation(description: "Send Message completes")
+        repository.sendMessage(with: id) { _ in
+            exp.fulfill()
+        }
+        wait(for: [exp], timeout: defaultTimeout)
+
+        // Then
+        var messageState: LocalMessageState?
+        try database.writeSynchronously { session in
+            messageState = session.message(id: id)?.localMessageState
+        }
+        XCTAssertEqual(messageState, .sending)
+    }
+    
+    func test_sendMessage_withInterceptor_whenLocalStateNil_shouldMarkStatePublished() throws {
+        // Given
+        let id = MessageId.unique
+        let interceptor = MockSendMessageInterceptor()
+        repository.setInterceptor(interceptor)
+        try createMessage(id: id, localState: .pendingSend)
+
+        // When
+        interceptor.simulateSuccess(message: .mock(id: id, localState: nil))
+        let exp = expectation(description: "Send Message completes")
+        repository.sendMessage(with: id) { _ in
+            exp.fulfill()
+        }
+        wait(for: [exp], timeout: defaultTimeout)
+
+        // Then
+        var messageState: LocalMessageState?
+        try database.writeSynchronously { session in
+            messageState = session.message(id: id)?.localMessageState
+        }
+        XCTAssertNil(messageState)
+    }
+
+    func test_sendMessage_withInterceptor_whenFailure_shouldMarkStateSendingFailed() throws {
+        // Given
+        let id = MessageId.unique
+        let interceptor = MockSendMessageInterceptor()
+        repository.setInterceptor(interceptor)
+        try createMessage(id: id, localState: .pendingSend)
+
+        // When
+        interceptor.simulateFailure(error: TestError())
+        let exp = expectation(description: "Send Message completes")
+        repository.sendMessage(with: id) { _ in
+            exp.fulfill()
+        }
+        wait(for: [exp], timeout: defaultTimeout)
+
+        // Then
+        var messageState: LocalMessageState?
+        try database.writeSynchronously { session in
+            messageState = session.message(id: id)?.localMessageState
+        }
+        XCTAssertEqual(messageState, .sendingFailed)
+    }
 }
 
 extension MessageRepositoryTests {
