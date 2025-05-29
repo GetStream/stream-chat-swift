@@ -1,6 +1,6 @@
 {
   "message": {
-    "id": "c87e39ec-8815-47da-b57a-10aa8d1889e4",
+    "id": "91d8a96e-a487-4861-aea6-307b272368f5",
     "text": "Test",
     "html": "<p>Test</p>\n",
     "type": "regular",
@@ -12,10 +12,10 @@
       "role": "admin",
       "teams": [],
       "created_at": "2024-04-04T09:26:11.805899Z",
-      "updated_at": "2025-04-19T12:19:13.801419Z",
+      "updated_at": "2025-05-08T03:41:20.115606Z",
       "banned": false,
       "online": true,
-      "last_active": "2025-05-01T00:19:05.024788871Z",
+      "last_active": "2025-05-15T00:15:15.27436253Z",
       "blocked_user_ids": [],
       "team": "test",
       "type": "team",
@@ -29,9 +29,9 @@
     "reaction_scores": {},
     "reply_count": 0,
     "deleted_reply_count": 0,
-    "cid": "messaging:d76ce957-ae58-4d1e-a483-6fd05dcfd3f8",
-    "created_at": "2025-05-01T00:19:10.910056Z",
-    "updated_at": "2025-05-01T00:19:10.910056Z",
+    "cid": "messaging:14c74678-8567-46e8-917c-09db824963fa",
+    "created_at": "2025-05-15T00:15:19.911132Z",
+    "updated_at": "2025-05-15T00:15:19.911132Z",
     "shadowed": false,
     "mentioned_users": [],
     "i18n": {
@@ -46,5 +46,5 @@
     "pin_expires": null,
     "restricted_visibility": []
   },
-  "duration": "2592.13ms"
+  "duration": "1823.73ms"
 }
