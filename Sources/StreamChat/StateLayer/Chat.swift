@@ -575,6 +575,7 @@ public class Chat: @unchecked Sendable {
     ///   - text: Text of the message.
     ///   - attachments: An array of the attachments for the message.
     ///   - extraData: Additional extra data of the message object.
+    ///   - restrictedVisibility: The list of user ids that can see the message.
     ///   - skipEnrichURL: If true, the url preview won't be attached to the message.
     ///
     /// - Throws: An error while communicating with the Stream API.
@@ -584,6 +585,7 @@ public class Chat: @unchecked Sendable {
         text: String,
         attachments: [AnyAttachmentPayload] = [],
         extraData: [String: RawJSON]? = nil,
+        restrictedVisibility: [UserId] = [],
         skipEnrichURL: Bool = false
     ) async throws -> ChatMessage {
         Task { try await stopTyping() } // errors explicitly ignored
@@ -592,6 +594,7 @@ public class Chat: @unchecked Sendable {
             text: text,
             skipEnrichUrl: skipEnrichURL,
             attachments: attachments,
+            restrictedVisibility: restrictedVisibility,
             extraData: extraData
         )
         return try await waitForAPIRequest(localMessage: localMessage)

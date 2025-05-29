@@ -271,6 +271,7 @@ public class ChatMessageController: DataController, DelegateCallable, DataStoreP
     ///   - text: The updated message text.
     ///   - skipEnrichUrl: If true, the url preview won't be attached to the message.
     ///   - attachments: An array of the attachments for the message.
+    ///   - restrictedVisibility: The list of user ids that can see the message.
     ///   - extraData: Custom extra data. When `nil` is passed the message custom fields stay the same. Equals `nil` by default.
     ///   - completion: The completion. Will be called on a **callbackQueue** when the network request is finished.
     ///                 If request fails, the completion will be called with an error.
@@ -278,6 +279,7 @@ public class ChatMessageController: DataController, DelegateCallable, DataStoreP
         text: String,
         skipEnrichUrl: Bool = false,
         attachments: [AnyAttachmentPayload] = [],
+        restrictedVisibility: [UserId] = [],
         extraData: [String: RawJSON]? = nil,
         completion: (@Sendable(Error?) -> Void)? = nil
     ) {
@@ -295,6 +297,7 @@ public class ChatMessageController: DataController, DelegateCallable, DataStoreP
             text: transformableInfo.text,
             skipEnrichUrl: skipEnrichUrl,
             attachments: transformableInfo.attachments,
+            restrictedVisibility: restrictedVisibility,
             extraData: transformableInfo.extraData
         ) { result in
             self.callback {

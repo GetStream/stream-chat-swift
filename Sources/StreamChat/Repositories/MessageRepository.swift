@@ -5,7 +5,7 @@
 import CoreData
 import Foundation
 
-enum MessageRepositoryError: LocalizedError {
+enum MessageRepositoryError: Error {
     case messageDoesNotExist
     case messageNotPendingSend
     case messageDoesNotHaveValidChannel
@@ -15,10 +15,18 @@ enum MessageRepositoryError: LocalizedError {
 class MessageRepository: @unchecked Sendable {
     let database: DatabaseContainer
     let apiClient: APIClient
+    var interceptor: SendMessageInterceptor?
 
-    init(database: DatabaseContainer, apiClient: APIClient) {
+    init(
+        database: DatabaseContainer,
+        apiClient: APIClient
+    ) {
         self.database = database
         self.apiClient = apiClient
+    }
+
+    func setInterceptor(_ interceptor: SendMessageInterceptor?) {
+        self.interceptor = interceptor
     }
 
     func sendMessage(
@@ -51,38 +59,40 @@ class MessageRepository: @unchecked Sendable {
             let skipEnrichUrl: Bool = dto.skipEnrichUrl
 
             // Change the message state to `.sending` and the proceed with the actual sending
-            self?.database.write({
-                let messageDTO = $0.message(id: messageId)
+            self?.database.write(converting: { session in
+                let messageDTO = session.message(id: messageId)
                 messageDTO?.localMessageState = .sending
-            }, completion: { [weak self] error in
-                if let error = error {
+                guard let message = try messageDTO?.asModel() else {
+                    throw MessageRepositoryError.messageDoesNotExist
+                }
+                return message
+            }, completion: { [weak self] result in
+                switch result {
+                case let .success(message):
+                    if let interceptor = self?.interceptor {
+                        let options = SendMessageOptions(
+                            skipPush: skipPush,
+                            skipEnrichUrl: skipEnrichUrl
+                        )
+                        interceptor.sendMessage(message, options: options) { result in
+                            self?.handleInterceptedMessage(result, messageId: messageId, completion: completion)
+                        }
+                        return
+                    }
+                    
+                    let endpoint: Endpoint<MessagePayload.Boxed> = .sendMessage(
+                        cid: cid,
+                        messagePayload: requestBody,
+                        skipPush: skipPush,
+                        skipEnrichUrl: skipEnrichUrl
+                    )
+                    self?.apiClient.request(endpoint: endpoint) { [weak self] result in
+                        self?.handleSentMessage(result, cid: cid, messageId: messageId, completion: completion)
+                    }
+                case let .failure(error):
                     log.error("Error changing localMessageState message with id \(messageId) to `sending`: \(error)")
                     self?.markMessageAsFailedToSend(id: messageId) {
                         completion(.failure(.failedToSendMessage(error)))
-                    }
-                    return
-                }
-
-                let endpoint: Endpoint<MessagePayload.Boxed> = .sendMessage(
-                    cid: cid,
-                    messagePayload: requestBody,
-                    skipPush: skipPush,
-                    skipEnrichUrl: skipEnrichUrl
-                )
-                self?.apiClient.request(endpoint: endpoint) { [weak self] in
-                    switch $0 {
-                    case let .success(payload):
-                        self?.saveSuccessfullySentMessage(cid: cid, message: payload.message) { result in
-                            switch result {
-                            case let .success(message):
-                                completion(.success(message))
-                            case let .failure(error):
-                                completion(.failure(.failedToSendMessage(error)))
-                            }
-                        }
-
-                    case let .failure(error):
-                        self?.handleSendingMessageError(error, messageId: messageId, completion: completion)
                     }
                 }
             })
@@ -156,6 +166,59 @@ class MessageRepository: @unchecked Sendable {
                 completion(.success(messageModel))
             }
         })
+    }
+
+    /// Handles the result when sending the message to the server.
+    private func handleSentMessage(
+        _ result: Result<MessagePayload.Boxed, Error>,
+        cid: ChannelId,
+        messageId: MessageId,
+        completion: @escaping @Sendable(Result<ChatMessage, MessageRepositoryError>) -> Void
+    ) {
+        switch result {
+        case let .success(payload):
+            saveSuccessfullySentMessage(cid: cid, message: payload.message) { result in
+                switch result {
+                case let .success(message):
+                    completion(.success(message))
+                case let .failure(error):
+                    completion(.failure(.failedToSendMessage(error)))
+                }
+            }
+        case let .failure(error):
+            handleSendingMessageError(
+                error,
+                messageId: messageId,
+                completion: completion
+            )
+        }
+    }
+
+    /// Handles the result when the message is intercepted.
+    private func handleInterceptedMessage(
+        _ result: Result<SendMessageResponse, Error>,
+        messageId: MessageId,
+        completion: @escaping @Sendable(Result<ChatMessage, MessageRepositoryError>) -> Void
+    ) {
+        switch result {
+        case let .success(response):
+            let message = response.message
+            database.write { session in
+                guard let messageDTO = session.message(id: message.id) else { return }
+                // The customer changes the local state to nil in the interceptor,
+                // it means we should mark it as sent and not wait for message new event.
+                if message.localState == nil {
+                    messageDTO.markMessageAsSent()
+                }
+            }
+            completion(.success(message))
+        case let .failure(error):
+            handleSendingMessageError(
+                error,
+                messageId: messageId,
+                completion: completion
+            )
+        }
     }
 
     private func handleSendingMessageError(

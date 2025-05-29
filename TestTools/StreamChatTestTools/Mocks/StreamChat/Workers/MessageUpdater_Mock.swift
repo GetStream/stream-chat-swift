@@ -25,6 +25,7 @@ final class MessageUpdater_Mock: MessageUpdater, @unchecked Sendable {
     @Atomic var editMessage_messageId: MessageId?
     @Atomic var editMessage_text: String?
     @Atomic var editMessage_skipEnrichUrl: Bool?
+    @Atomic var editMessage_restrictedVisibility: [UserId]?
     @Atomic var editMessage_attachments: [AnyAttachmentPayload]?
     @Atomic var editMessage_completion: ((Result<ChatMessage, Error>) -> Void)?
     @Atomic var editMessage_extraData: [String: RawJSON]?
@@ -293,12 +294,14 @@ final class MessageUpdater_Mock: MessageUpdater, @unchecked Sendable {
         text: String,
         skipEnrichUrl: Bool,
         attachments: [AnyAttachmentPayload] = [],
+        restrictedVisibility: [UserId] = [],
         extraData: [String: RawJSON]? = nil,
         completion: ((Result<ChatMessage, Error>) -> Void)? = nil
     ) {
         editMessage_messageId = messageId
         editMessage_text = text
         editMessage_skipEnrichUrl = skipEnrichUrl
+        editMessage_restrictedVisibility = restrictedVisibility
         editMessage_attachments = attachments
         editMessage_extraData = extraData
         editMessage_completion = completion
