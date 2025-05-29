@@ -9,7 +9,7 @@ import StreamSwiftTestHelpers
 import UIKit
 import XCTest
 
-final class ChatMessageVoiceRecordingAttachmentListView_Tests: XCTestCase {
+@MainActor final class ChatMessageVoiceRecordingAttachmentListView_Tests: XCTestCase {
     private lazy var playbackDelegate: MockVoiceRecordingAttachmentPresentationViewDelegate! = .init()
     private lazy var subject: ChatMessageVoiceRecordingAttachmentListView! = .init().withoutAutoresizingMaskConstraints
     private lazy var duration: TimeInterval! = 10

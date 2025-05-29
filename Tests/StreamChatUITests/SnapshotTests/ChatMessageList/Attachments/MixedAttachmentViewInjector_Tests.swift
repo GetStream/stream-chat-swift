@@ -8,7 +8,7 @@ import StreamChat
 import UIKit
 import XCTest
 
-final class MixedAttachmentViewInjector_Tests: XCTestCase {
+@MainActor final class MixedAttachmentViewInjector_Tests: XCTestCase {
     func test_injectors_whenNoAttachments_isEmpty() {
         let message = ChatMessage.mock(attachments: [])
         let injectors = MixedAttachmentViewInjector.injectors(for: message)

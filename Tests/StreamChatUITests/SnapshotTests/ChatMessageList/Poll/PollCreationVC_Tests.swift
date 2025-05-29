@@ -9,7 +9,7 @@ import StreamSwiftTestHelpers
 import UIKit
 import XCTest
 
-final class PollCreationVC_Tests: XCTestCase {
+@MainActor final class PollCreationVC_Tests: XCTestCase {
     var mockChannelController = ChatChannelController_Spy(client: .mock)
 
     func test_appearance() {

@@ -9,7 +9,7 @@ import StreamSwiftTestHelpers
 import UIKit
 import XCTest
 
-final class PollAttachmentView_Tests: XCTestCase {
+@MainActor final class PollAttachmentView_Tests: XCTestCase {
     /// Static setUp() is only run once. Which is what we want in this case to preload the images.
     override class func setUp() {
         /// Dummy snapshot to preload the TestImages.yoda.url image

@@ -8,7 +8,7 @@
 import UIKit
 import XCTest
 
-final class ChatMessageVoiceRecordingAttachmentListViewItemViewPresenter_Tests: XCTestCase {
+@MainActor final class ChatMessageVoiceRecordingAttachmentListViewItemViewPresenter_Tests: XCTestCase {
     private lazy var view: ChatMessageVoiceRecordingAttachmentListView.ItemView! = .init()
     private lazy var spyView: SpyChatMessageVoiceRecordingAttachmentListViewItemView! = .init()
     private lazy var delegate: MockVoiceRecordingAttachmentPresentationViewDelegate! = .init()
