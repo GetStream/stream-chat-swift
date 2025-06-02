@@ -1579,6 +1579,8 @@
 		AD793F49270B767500B05456 /* ChatMessageReactionAuthorsVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD793F48270B767500B05456 /* ChatMessageReactionAuthorsVC.swift */; };
 		AD793F4B270B769E00B05456 /* ChatMessageReactionAuthorViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD793F4A270B769E00B05456 /* ChatMessageReactionAuthorViewCell.swift */; };
 		AD7977BA2936D9450008B5FB /* Token_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD7977B92936D9450008B5FB /* Token_Tests.swift */; };
+		AD7A11902DEE008C00B8F963 /* LocationDTO.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD9C926C2DD3A3900013A7E6 /* LocationDTO.swift */; };
+		AD7A11912DEE00A000B8F963 /* SendMessageInterceptor.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD9C926F2DD4DCF90013A7E6 /* SendMessageInterceptor.swift */; };
 		AD7AC99B260A9572004AADA5 /* MessagePinning.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD7AC98B260A94C6004AADA5 /* MessagePinning.swift */; };
 		AD7B51D327EDECA80068CBD1 /* MixedAttachmentViewInjector.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD7B51D227EDECA80068CBD1 /* MixedAttachmentViewInjector.swift */; };
 		AD7B51D427EDECA80068CBD1 /* MixedAttachmentViewInjector.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD7B51D227EDECA80068CBD1 /* MixedAttachmentViewInjector.swift */; };
@@ -11578,7 +11580,6 @@
 				AD52A2192804850700D0157E /* ChannelConfigDTO.swift in Sources */,
 				797A756824814F0D003CF16D /* Bundle+Extensions.swift in Sources */,
 				7908829C2546D95A00896F03 /* FlagMessagePayload.swift in Sources */,
-				AD9C92712DD4DD070013A7E6 /* SendMessageInterceptor.swift in Sources */,
 				DA0BB1612513B5F200CAEFBD /* StringInterpolation+Extensions.swift in Sources */,
 				64C8C86E26934C6100329F82 /* UserInfo.swift in Sources */,
 				C1FFD9F927ECC7C7008A6848 /* Filter+ChatChannel.swift in Sources */,
@@ -11615,13 +11616,14 @@
 				79280F47248515FA00CDEB89 /* ChannelEvents.swift in Sources */,
 				7978FBBC26E16295002CA2DF /* MessageSearchQueryDTO.swift in Sources */,
 				DA640FBE2535CF9200D32944 /* UserListSortingKey.swift in Sources */,
-				AD9C926E2DD3A3950013A7E6 /* LocationDTO.swift in Sources */,
 				79877A182498E4EE00015F8B /* ChannelEndpoints.swift in Sources */,
+				AD7A11902DEE008C00B8F963 /* LocationDTO.swift in Sources */,
 				40789D2D29F6AC500018C2BB /* AudioRecordingState.swift in Sources */,
 				40789D3529F6AC500018C2BB /* AudioAnalysisEngine.swift in Sources */,
 				7964F3BA249A314D002A09EC /* LogDestination.swift in Sources */,
 				4F427F692BA2F52100D92238 /* ConnectedUserState.swift in Sources */,
 				F63CC37324E592D30052844D /* MemberEventObserver.swift in Sources */,
+				AD7A11912DEE00A000B8F963 /* SendMessageInterceptor.swift in Sources */,
 				4FF2A80D2B8E011000941A64 /* ChatState+Observer.swift in Sources */,
 				88EA9AD825470F6A007EE76B /* Dictionary+Extensions.swift in Sources */,
 				8AE335A824FCF999002B6677 /* Reachability_Vendor.swift in Sources */,
