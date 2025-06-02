@@ -21,8 +21,24 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   - Add `CurrentChatUserControllerDelegate.didStopSharingLiveLocation()`
   - Add `CurrentChatUserControllerDelegate.didChangeActiveLiveLocationMessages()`
 ### 🐞 Fixed
+- Fix an issue where completion handler was called twice after waiting for token refresh [#3683](https://github.com/GetStream/stream-chat-swift/pull/3683)
+
+# [4.79.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.79.0)
+_May 28, 2025_
+
+## StreamChat
+### ✅ Added
+- Add `SendMessageInterceptor` to intercept send message requests [#3671](https://github.com/GetStream/stream-chat-swift/pull/3671)
+- Add `ChatMessage.changing()` to allow overriding message data temporarily [#3671](https://github.com/GetStream/stream-chat-swift/pull/3671)
+### 🐞 Fixed
 - Fix swipe to reply enabled when quoting a message is disabled [#3662](https://github.com/GetStream/stream-chat-swift/pull/3662)
 - Fix shadowed messages increasing the channel messages unread count [#3665](https://github.com/GetStream/stream-chat-swift/pull/3665)
+- Fix publishing `MessageUpdatedEvent` for messages with restricted visibility [#3674](https://github.com/GetStream/stream-chat-swift/pull/3674)
+- Show message with restricted visibility in the message list on the `message.updated` web-socket event [#3674](https://github.com/GetStream/stream-chat-swift/pull/3674)
+
+## StreamChatUI
+### 🐞 Fixed
+- Fix `ChatMessagePopupVC` transition animation when there are no reactions [#3670](https://github.com/GetStream/stream-chat-swift/pull/3670)
 
 # [4.78.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.78.0)
 _April 24, 2025_

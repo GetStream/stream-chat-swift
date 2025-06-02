@@ -13,8 +13,8 @@
   <a href="https://sonarcloud.io/summary/new_code?id=GetStream_stream-chat-swift"><img src="https://sonarcloud.io/api/project_badges/measure?project=GetStream_stream-chat-swift&metric=coverage" /></a>
 </p>
 <p align="center">
-  <img id="stream-chat-label" alt="StreamChat" src="https://img.shields.io/badge/StreamChat-7.41%20MB-blue"/>
-  <img id="stream-chat-ui-label" alt="StreamChatUI" src="https://img.shields.io/badge/StreamChatUI-4.78%20MB-blue"/>
+  <img id="stream-chat-label" alt="StreamChat" src="https://img.shields.io/badge/StreamChat-7.2%20MB-blue"/>
+  <img id="stream-chat-ui-label" alt="StreamChatUI" src="https://img.shields.io/badge/StreamChatUI-4.72%20MB-blue"/>
 </p>
 
 This is the official iOS SDK for [Stream Chat](https://getstream.io/chat/sdk/ios/), a service for building chat and messaging applications. This library includes both a low-level SDK and a set of reusable UI components.
@@ -79,6 +79,12 @@ Learn more about our dependencies [here](https://getstream.io/chat/docs/sdk/ios/
 ## Using Objective-C
 
 You can still integrate our SDKs if your project is using Objective-C. In that case, any customizations would need to be done by subclassing our components in Swift, and then use those directly from the Objective-C code.
+
+---
+
+## Video SDK
+
+We also offer [Video SDK](https://github.com/GetStream/stream-video-swift) that seamlessly integrates with our Chat SDK. To find out more about this product, please check our [docs](https://getstream.io/video/docs/ios/). 
 
 ---
 

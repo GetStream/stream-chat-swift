@@ -571,4 +571,154 @@ final class ChatMessage_Tests: XCTestCase {
         XCTAssertEqual(partialReplacement.extraData, [:])
         XCTAssertEqual(partialReplacement.allAttachments, [])
     }
+    
+    func test_replacing_allParameters() {
+        // Create a mock message with initial values
+        let originalMessage = ChatMessage.mock(
+            id: .unique,
+            cid: .unique,
+            text: "Original text",
+            type: .regular,
+            command: "original-command",
+            arguments: "original-arguments",
+            extraData: ["original": .string("data")],
+            translations: [.english: "Original text"],
+            originalLanguage: .french,
+            moderationsDetails: nil,
+            attachments: [
+                .dummy(id: .init(cid: .unique, messageId: .unique, index: 0))
+            ],
+            localState: .pendingSend
+        )
+
+        // Test replacing all available fields
+        let allFieldsReplaced = originalMessage.replacing(
+            text: "New text",
+            type: .reply,
+            state: .sending,
+            command: "new-command",
+            arguments: "new-arguments",
+            attachments: [
+                .dummy(id: .init(cid: .unique, messageId: .unique, index: 99))
+            ],
+            translations: [.spanish: "Texto nuevo"],
+            originalLanguage: .german,
+            moderationDetails: nil,
+            extraData: ["new": .string("data")]
+        )
+        
+        // Verify all replaced fields
+        XCTAssertEqual(allFieldsReplaced.text, "New text")
+        XCTAssertEqual(allFieldsReplaced.type, .reply)
+        XCTAssertEqual(allFieldsReplaced.localState, .sending)
+        XCTAssertEqual(allFieldsReplaced.command, "new-command")
+        XCTAssertEqual(allFieldsReplaced.arguments, "new-arguments")
+        XCTAssertEqual(allFieldsReplaced.extraData["new"]?.stringValue, "data")
+        XCTAssertEqual(allFieldsReplaced.allAttachments.first?.id.index, 99)
+        XCTAssertEqual(allFieldsReplaced.translations?[.spanish], "Texto nuevo")
+        XCTAssertEqual(allFieldsReplaced.originalLanguage, .german)
+        XCTAssertNil(allFieldsReplaced.moderationDetails)
+
+        // Verify fields that should remain unchanged
+        XCTAssertEqual(allFieldsReplaced.id, originalMessage.id)
+        XCTAssertEqual(allFieldsReplaced.cid, originalMessage.cid)
+        XCTAssertEqual(allFieldsReplaced.author, originalMessage.author)
+        XCTAssertEqual(allFieldsReplaced.createdAt, originalMessage.createdAt)
+        
+        // Test replacing with nil values (should clear the fields)
+        let nilValuesReplacement = originalMessage.replacing(
+            text: nil,
+            type: .regular,
+            state: nil,
+            command: nil,
+            arguments: nil,
+            attachments: nil,
+            translations: nil,
+            originalLanguage: nil,
+            moderationDetails: nil,
+            extraData: nil
+        )
+        
+        // Verify fields are cleared
+        XCTAssertEqual(nilValuesReplacement.text, "")
+        XCTAssertEqual(nilValuesReplacement.command, nil)
+        XCTAssertEqual(nilValuesReplacement.arguments, nil)
+        XCTAssertEqual(nilValuesReplacement.extraData, [:])
+        XCTAssertEqual(nilValuesReplacement.allAttachments, [])
+        XCTAssertEqual(nilValuesReplacement.translations, nil)
+        XCTAssertEqual(nilValuesReplacement.originalLanguage, nil)
+        XCTAssertNil(nilValuesReplacement.moderationDetails)
+    }
+    
+    func test_changing() {
+        // Create a mock message with initial values
+        let originalMessage = ChatMessage.mock(
+            id: .unique,
+            cid: .unique,
+            text: "Original text",
+            type: .regular,
+            command: "original-command",
+            arguments: "original-arguments",
+            extraData: ["original": .string("data")],
+            translations: [.english: "Original text"],
+            originalLanguage: .french,
+            moderationsDetails: nil,
+            attachments: [
+                .dummy(id: .init(cid: .unique, messageId: .unique, index: 0))
+            ]
+        )
+
+        // Test changing only some fields
+        let partiallyChangedMessage = originalMessage.changing(
+            text: "New text",
+            type: .reply,
+            command: "new-command"
+        )
+        
+        // Verify changed fields
+        XCTAssertEqual(partiallyChangedMessage.text, "New text")
+        XCTAssertEqual(partiallyChangedMessage.type, .reply)
+        XCTAssertEqual(partiallyChangedMessage.command, "new-command")
+        
+        // Verify unchanged fields
+        XCTAssertEqual(partiallyChangedMessage.arguments, originalMessage.arguments)
+        XCTAssertEqual(partiallyChangedMessage.extraData, originalMessage.extraData)
+        XCTAssertEqual(partiallyChangedMessage.allAttachments, originalMessage.allAttachments)
+        XCTAssertEqual(partiallyChangedMessage.translations, originalMessage.translations)
+        XCTAssertEqual(partiallyChangedMessage.originalLanguage, originalMessage.originalLanguage)
+        XCTAssertNil(partiallyChangedMessage.moderationDetails)
+
+        // Test changing all available fields
+        let translations: [TranslationLanguage: String] = [.spanish: "Texto nuevo"]
+        let fullyChangedMessage = originalMessage.changing(
+            text: "New text",
+            type: .reply,
+            state: .sending,
+            command: "new-command",
+            arguments: "new-arguments",
+            attachments: [
+                .dummy(id: .init(cid: .unique, messageId: .unique, index: 99))
+            ],
+            translations: translations,
+            originalLanguage: .german,
+            moderationDetails: nil,
+            extraData: ["new": .string("data")]
+        )
+        
+        // Verify all changed fields
+        XCTAssertEqual(fullyChangedMessage.text, "New text")
+        XCTAssertEqual(fullyChangedMessage.type, .reply)
+        XCTAssertEqual(fullyChangedMessage.localState, .sending)
+        XCTAssertEqual(fullyChangedMessage.command, "new-command")
+        XCTAssertEqual(fullyChangedMessage.arguments, "new-arguments")
+        XCTAssertEqual(fullyChangedMessage.extraData["new"]?.stringValue, "data")
+        XCTAssertEqual(fullyChangedMessage.allAttachments.first?.id.index, 99)
+        XCTAssertEqual(fullyChangedMessage.translations?[.spanish], "Texto nuevo")
+        XCTAssertEqual(fullyChangedMessage.originalLanguage, .german)
+
+        // Verify key identifiers remain unchanged
+        XCTAssertEqual(fullyChangedMessage.id, originalMessage.id)
+        XCTAssertEqual(fullyChangedMessage.cid, originalMessage.cid)
+        XCTAssertEqual(fullyChangedMessage.author, originalMessage.author)
+    }
 }
