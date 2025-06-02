@@ -7,23 +7,21 @@ import StreamChatUI
 import UIKit
 
 class DemoQuotedChatMessageView: QuotedChatMessageView {
-    override func setAttachmentPreview(for message: ChatMessage) {
-        if message.sharedLocation?.isLive == false {
-            attachmentPreviewView.contentMode = .scaleAspectFit
-            attachmentPreviewView.image = UIImage(systemName: "mappin.circle.fill")
-            attachmentPreviewView.tintColor = .systemRed
-            textView.text = "Location"
-            return
-        }
+    override func updateContent() {
+        super.updateContent()
 
-        if message.sharedLocation?.isLive == true {
-            attachmentPreviewView.contentMode = .scaleAspectFit
-            attachmentPreviewView.image = UIImage(systemName: "location.fill")
-            attachmentPreviewView.tintColor = .systemBlue
-            textView.text = "Live Location"
-            return
+        if let sharedLocation = content?.message.sharedLocation {
+            if sharedLocation.isLive {
+                attachmentPreviewView.contentMode = .scaleAspectFit
+                attachmentPreviewView.image = UIImage(systemName: "location.fill")
+                attachmentPreviewView.tintColor = .systemBlue
+                textView.text = "Live Location"
+            } else {
+                attachmentPreviewView.contentMode = .scaleAspectFit
+                attachmentPreviewView.image = UIImage(systemName: "mappin.circle.fill")
+                attachmentPreviewView.tintColor = .systemRed
+                textView.text = "Location"
+            }
         }
-
-        super.setAttachmentPreview(for: message)
     }
 }

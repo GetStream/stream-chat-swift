@@ -136,8 +136,6 @@ public extension AttachmentType {
     static let audio = Self(rawValue: "audio")
     static let voiceRecording = Self(rawValue: "voiceRecording")
     static let linkPreview = Self(rawValue: "linkPreview")
-    static let staticLocation = Self(rawValue: "static_location")
-    static let liveLocation = Self(rawValue: "live_location")
     static let unknown = Self(rawValue: "unknown")
 }
 
