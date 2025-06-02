@@ -660,7 +660,7 @@ protocol PollDatabaseSession {
 
 protocol LocationDatabaseSession {
     /// Saves the provided location payload to the DB.
-    func saveLocation(payload: LocationPayload, cache: PreWarmedCache?) throws -> LocationDTO
+    func saveLocation(payload: SharedLocationPayload, cache: PreWarmedCache?) throws -> LocationDTO
 }
 
 protocol DatabaseSession: UserDatabaseSession,

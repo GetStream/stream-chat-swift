@@ -1581,6 +1581,8 @@
 		AD7977BA2936D9450008B5FB /* Token_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD7977B92936D9450008B5FB /* Token_Tests.swift */; };
 		AD7A11902DEE008C00B8F963 /* LocationDTO.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD9C926C2DD3A3900013A7E6 /* LocationDTO.swift */; };
 		AD7A11912DEE00A000B8F963 /* SendMessageInterceptor.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD9C926F2DD4DCF90013A7E6 /* SendMessageInterceptor.swift */; };
+		AD7A11CB2DEE091400B8F963 /* LocationEndpoints.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD7A11CA2DEE090B00B8F963 /* LocationEndpoints.swift */; };
+		AD7A11CC2DEE091400B8F963 /* LocationEndpoints.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD7A11CA2DEE090B00B8F963 /* LocationEndpoints.swift */; };
 		AD7AC99B260A9572004AADA5 /* MessagePinning.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD7AC98B260A94C6004AADA5 /* MessagePinning.swift */; };
 		AD7B51D327EDECA80068CBD1 /* MixedAttachmentViewInjector.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD7B51D227EDECA80068CBD1 /* MixedAttachmentViewInjector.swift */; };
 		AD7B51D427EDECA80068CBD1 /* MixedAttachmentViewInjector.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD7B51D227EDECA80068CBD1 /* MixedAttachmentViewInjector.swift */; };
@@ -4332,6 +4334,7 @@
 		AD793F48270B767500B05456 /* ChatMessageReactionAuthorsVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessageReactionAuthorsVC.swift; sourceTree = "<group>"; };
 		AD793F4A270B769E00B05456 /* ChatMessageReactionAuthorViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessageReactionAuthorViewCell.swift; sourceTree = "<group>"; };
 		AD7977B92936D9450008B5FB /* Token_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Token_Tests.swift; sourceTree = "<group>"; };
+		AD7A11CA2DEE090B00B8F963 /* LocationEndpoints.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationEndpoints.swift; sourceTree = "<group>"; };
 		AD7AC98B260A94C6004AADA5 /* MessagePinning.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessagePinning.swift; sourceTree = "<group>"; };
 		AD7B51D227EDECA80068CBD1 /* MixedAttachmentViewInjector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MixedAttachmentViewInjector.swift; sourceTree = "<group>"; };
 		AD7BBFCA2901AF3F004E8B76 /* ImageResultsMapper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageResultsMapper.swift; sourceTree = "<group>"; };
@@ -5871,6 +5874,7 @@
 				84355D872AB2FCAC00FD5838 /* FilesEndpoints.swift */,
 				ADF2BBE72B9B61E30069D467 /* AppEndpoints.swift */,
 				841BA9F42BCE8089000C73E4 /* PollsEndpoints.swift */,
+				AD7A11CA2DEE090B00B8F963 /* LocationEndpoints.swift */,
 				79682C4724BF37550071578E /* Payloads */,
 				DAEAF4B624DADA990015FB28 /* Requests */,
 			);
@@ -11754,6 +11758,7 @@
 				AD94906E2BF68BAE00E69224 /* ThreadListController+SwiftUI.swift in Sources */,
 				AD81FEED2D3977AC00765FD4 /* StreamModelsTransformer.swift in Sources */,
 				AD78568C298B268F00C2FEAD /* ChannelControllerDelegate.swift in Sources */,
+				AD7A11CB2DEE091400B8F963 /* LocationEndpoints.swift in Sources */,
 				841BAA072BCE9A49000C73E4 /* UpdatePartialRequestBody.swift in Sources */,
 				79896D5C2506593E00BA8F1C /* ChannelReadDTO.swift in Sources */,
 				8819DFD52525F49D00FD1A50 /* UserController.swift in Sources */,
@@ -12687,6 +12692,7 @@
 				C121E8E3274544B200023E4C /* Data+Gzip.swift in Sources */,
 				C121E8E4274544B200023E4C /* LazyCachedMapCollection.swift in Sources */,
 				40789D3D29F6AD9C0018C2BB /* Debouncer.swift in Sources */,
+				AD7A11CC2DEE091400B8F963 /* LocationEndpoints.swift in Sources */,
 				AD6E32A22BBC50110073831B /* ThreadListQuery.swift in Sources */,
 				ADF0473A2DE4DAE4001C23D2 /* LocationPayloads.swift in Sources */,
 				C121E8E5274544B200023E4C /* Timers.swift in Sources */,
