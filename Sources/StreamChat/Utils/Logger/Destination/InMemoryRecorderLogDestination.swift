@@ -56,4 +56,18 @@ public struct LogEntry: Identifiable {
     public let subsystems: LogSubsystem
     public let functionName: String
     public let description: String
+
+    public init(
+        timestamp: Date,
+        level: LogLevel,
+        subsystems: LogSubsystem,
+        functionName: String,
+        description: String
+    ) {
+        self.timestamp = timestamp
+        self.level = level
+        self.subsystems = subsystems
+        self.functionName = functionName
+        self.description = description
+    }
 }
