@@ -29,6 +29,7 @@ public struct LogDetails {
     public let functionName: StaticString
     public let fileName: StaticString
     public let lineNumber: UInt
+    public let subsystems: LogSubsystem
 }
 
 public protocol LogDestination {

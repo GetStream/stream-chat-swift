@@ -305,7 +305,8 @@ public class Logger {
                 threadName: threadName,
                 functionName: functionName,
                 fileName: fileName,
-                lineNumber: lineNumber
+                lineNumber: lineNumber,
+                subsystems: subsystems
             )
             for destination in enabledDestinations {
                 destination.process(logDetails: logDetails)
