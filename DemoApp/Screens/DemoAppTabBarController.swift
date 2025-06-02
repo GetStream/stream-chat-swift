@@ -4,6 +4,7 @@
 
 import StreamChat
 import StreamChatUI
+import SwiftUI
 import UIKit
 
 class DemoAppTabBarController: UITabBarController, CurrentChatUserControllerDelegate {
@@ -67,6 +68,45 @@ class DemoAppTabBarController: UITabBarController, CurrentChatUserControllerDele
         draftListVC.tabBarItem.image = UIImage(systemName: "bubble.and.pencil")
 
         viewControllers = [channelListVC, threadListVC, draftListVC]
+    }
+
+    // MARK: - Shake Detection
+    
+    override func motionEnded(_ motion: UIEvent.EventSubtype, with event: UIEvent?) {
+        if motion == .motionShake {
+            presentLogsView()
+        }
+    }
+    
+    private func presentLogsView() {
+        // Check if LogsView is already presented
+        if presentedViewController != nil {
+            return
+        }
+        
+        if #available(iOS 16.0, *) {
+            let logsView = LogListView()
+            let hostingController = UIHostingController(rootView: logsView)
+            hostingController.modalPresentationStyle = .pageSheet
+            
+            // Configure the sheet presentation
+            if let sheet = hostingController.sheetPresentationController {
+                sheet.detents = [.medium(), .large()]
+                sheet.prefersGrabberVisible = true
+                sheet.preferredCornerRadius = 16
+            }
+            
+            present(hostingController, animated: true)
+        } else {
+            // For iOS versions below 16.0, show a simple alert
+            let alert = UIAlertController(
+                title: "Logs Unavailable",
+                message: "Logs view requires iOS 16.0 or later",
+                preferredStyle: .alert
+            )
+            alert.addAction(UIAlertAction(title: "OK", style: .default))
+            present(alert, animated: true)
+        }
     }
 
     func currentUserController(_ controller: CurrentChatUserController, didChangeCurrentUserUnreadCount: UnreadCount) {
