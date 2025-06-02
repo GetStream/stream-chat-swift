@@ -22,6 +22,10 @@ extension StreamChatWrapper {
             LogConfig.subsystems = subsystems
         }
 
+        LogConfig.level = .debug
+        LogConfig.subsystems = [.httpRequests, .webSocket]
+        LogConfig.destinationTypes.append(InMemoryRecorderLogDestination.self)
+
         // Create Client
         if client == nil {
             client = ChatClient(config: config)
