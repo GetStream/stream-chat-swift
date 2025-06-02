@@ -975,44 +975,6 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
         }
     }
 
-    /// Stops sharing the live location message in the channel.
-    public func stopLiveLocationSharing(completion: ((Result<MessageId, Error>) -> Void)? = nil) {
-        guard let cid = cid, isChannelAlreadyCreated else {
-            channelModificationFailed { error in
-                completion?(.failure(error ?? ClientError.Unknown()))
-            }
-            return
-        }
-
-        client.messageRepository.getCurrentUserActiveLiveLocationMessages(for: cid) { result in
-            switch result {
-            case let .success(messages):
-                guard let message = messages.first,
-                      let location = message.sharedLocation
-                else {
-                    self.callback {
-                        completion?(.failure(ClientError.MessageDoesNotHaveLiveLocationAttachment()))
-                    }
-                    return
-                }
-
-                /// Stop sharing the live location message.
-                self.messageUpdater.updatePartialMessage(
-                    messageId: message.id,
-                    attachments: []
-                ) { result in
-                    self.callback {
-                        completion?(result.map(\.id))
-                    }
-                }
-            case let .failure(error):
-                self.callback {
-                    completion?(.failure(error))
-                }
-            }
-        }
-    }
-
     /// Updates the draft message of this channel.
     ///
     /// If there is no draft message, a new draft message will be created.
