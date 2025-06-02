@@ -46,8 +46,18 @@ class DemoComposerVC: ComposerVC {
     func sendInstantLiveLocation() {
         getCurrentLocationInfo { [weak self] location in
             guard let location = location else { return }
-            let endDate = Date().addingTimeInterval(3600) // 1 hour
-            self?.channelController?.startLiveLocationSharing(location, endDate: endDate)
+            let endDate = Date().addingTimeInterval(2 * 3600) // 2 hour
+            self?.channelController?.startLiveLocationSharing(location, endDate: endDate) { [weak self] result in
+                switch result {
+                case .success:
+                    break
+                case .failure(let error):
+                    self?.presentAlert(
+                        title: "Could not start live location sharing",
+                        message: error.localizedDescription
+                    )
+                }
+            }
         }
     }
 

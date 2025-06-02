@@ -4,7 +4,7 @@
 
 import Foundation
 
-public struct SharedLocation {
+public struct SharedLocation: Equatable {
     /// The ID of the message that the location is attached to.
     public let messageId: MessageId
     /// The ID of the channel that the location is attached to.

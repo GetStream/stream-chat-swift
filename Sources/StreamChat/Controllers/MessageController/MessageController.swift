@@ -954,7 +954,7 @@ public class ChatMessageController: DataController, DelegateCallable, DataStoreP
     ///
     /// - Parameters:
     ///   - completion: Called when the server updates the message.
-    public func stopLiveLocationSharing(completion: ((Result<ChatMessage, Error>) -> Void)? = nil) {
+    public func stopLiveLocationSharing(completion: ((Result<SharedLocation, Error>) -> Void)? = nil) {
         guard let location = message?.sharedLocation else {
             callback {
                 completion?(.failure(ClientError.MessageDoesNotHaveLiveLocationAttachment()))
@@ -969,21 +969,13 @@ public class ChatMessageController: DataController, DelegateCallable, DataStoreP
             return
         }
 
-        let endDate = Date().bridgeDate
-
         // Optimistic update
         client.databaseContainer.write { session in
             let messageDTO = try session.messageEditableByCurrentUser(self.messageId)
-            messageDTO.location?.endAt = endDate
+            messageDTO.location?.endAt = Date().bridgeDate
         }
 
-        // TODO: Location Update endpoint
-        messageUpdater.updatePartialMessage(
-            messageId: messageId,
-            text: nil,
-            attachments: [],
-            extraData: nil
-        ) { result in
+        messageUpdater.stopLiveLocationSharing(messageId: messageId) { result in
             self.callback {
                 completion?(result)
             }

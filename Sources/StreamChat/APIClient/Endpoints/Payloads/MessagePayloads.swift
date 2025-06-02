@@ -290,7 +290,7 @@ struct MessageRequestBody: Encodable {
     var pinned: Bool
     var pinExpires: Date?
     var pollId: String?
-    var location: LocationRequestPayload?
+    var location: NewLocationRequestPayload?
     var restrictedVisibility: [UserId]?
     let extraData: [String: RawJSON]
 
@@ -311,7 +311,7 @@ struct MessageRequestBody: Encodable {
         pinExpires: Date? = nil,
         pollId: String? = nil,
         restrictedVisibility: [UserId]? = nil,
-        location: LocationRequestPayload? = nil,
+        location: NewLocationRequestPayload? = nil,
         extraData: [String: RawJSON]
     ) {
         self.id = id

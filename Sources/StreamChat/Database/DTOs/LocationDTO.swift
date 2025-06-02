@@ -15,6 +15,20 @@ class LocationDTO: NSManagedObject {
     @NSManaged var endAt: DBDate?
     @NSManaged var message: MessageDTO
 
+    override func willSave() {
+        super.willSave()
+
+        guard !isDeleted && !message.isDeleted else {
+            return
+        }
+
+        // When location changed, we need to propagate this change up to holding message
+        if hasPersistentChangedValues, !message.hasChanges {
+            // this will not change object, but mark it as dirty, triggering updates
+            message.id = message.id
+        }
+    }
+
     static func loadOrCreate(
         messageId: String,
         context: NSManagedObjectContext,

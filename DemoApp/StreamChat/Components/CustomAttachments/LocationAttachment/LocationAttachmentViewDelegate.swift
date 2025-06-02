@@ -27,8 +27,18 @@ extension DemoChatMessageListVC: LocationAttachmentViewDelegate {
 
     func didTapOnStopSharingLocation(_ location: SharedLocation) {
         client
-            .channelController(for: location.channelId)
-            .stopLiveLocationSharing()
+            .messageController(cid: location.channelId, messageId: location.messageId)
+            .stopLiveLocationSharing { result in
+                switch result {
+                case .success:
+                    break
+                case .failure(let error):
+                    self.presentAlert(
+                        title: "Could not stop sharing location",
+                        message: error.localizedDescription
+                    )
+                }
+            }
     }
 
     private func showDetailViewController(messageController: ChatMessageController) {

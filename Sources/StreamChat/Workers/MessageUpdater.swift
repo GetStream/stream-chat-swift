@@ -329,6 +329,40 @@ class MessageUpdater: Worker {
         }
     }
 
+    /// Stops live location sharing for the given message.
+    func stopLiveLocationSharing(
+        messageId: MessageId,
+        completion: @escaping ((Result<SharedLocation, Error>) -> Void)
+    ) {
+        database.backgroundReadOnlyContext.perform { [weak self] in
+            guard let currentUser = self?.database.backgroundReadOnlyContext.currentUser,
+                  let currentDeviceId = currentUser.currentDevice?.id else {
+                completion(.failure(ClientError.CurrentUserDoesNotExist()))
+                return
+            }
+            let request = StopLiveLocationRequestPayload(
+                messageId: messageId,
+                createdByDeviceId: currentDeviceId
+            )
+            let endpoint = Endpoint<SharedLocationPayload>.stopLiveLocation(
+                request: request
+            )
+            self?.apiClient.request(endpoint: endpoint) { result in
+                switch result {
+                case let .success(payload):
+                    self?.database.write { session in
+                        let sharedLocation = try session.saveLocation(payload: payload, cache: nil)
+                        return try sharedLocation.asModel()
+                    } completion: { result in
+                        completion(result)
+                    }
+                case let .failure(error):
+                    completion(.failure(error))
+                }
+            }
+        }
+    }
+
     /// Loads replies for the given message.
     ///
     ///  - Parameters:
