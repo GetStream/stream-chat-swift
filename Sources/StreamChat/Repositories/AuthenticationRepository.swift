@@ -285,15 +285,13 @@ class AuthenticationRepository {
 
     func completeTokenCompletions(error: Error?) {
         let completionBlocks: [(Error?) -> Void]? = tokenQueue.sync(flags: .barrier) {
-            self._isGettingToken = false
             let completions = self._tokenRequestCompletions
+            self._isGettingToken = false
+            self._tokenRequestCompletions = []
+            self._consecutiveRefreshFailures = 0
             return completions
         }
         completionBlocks?.forEach { $0(error) }
-        tokenQueue.async(flags: .barrier) {
-            self._tokenRequestCompletions = []
-            self._consecutiveRefreshFailures = 0
-        }
     }
 
     private func updateToken(token: Token?, notifyTokenWaiters: Bool) {
