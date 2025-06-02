@@ -633,7 +633,7 @@ class MessageDTO: NSManagedObject {
             ascending: true
         )]
         var predicates: [NSPredicate] = [
-            .init(format: "location.endAt < %@", Date().bridgeDate),
+            .init(format: "location.endAt > %@", Date().bridgeDate),
             .init(format: "user.id == %@", currentUserId)
         ]
         if let channelId {

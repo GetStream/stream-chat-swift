@@ -969,12 +969,6 @@ public class ChatMessageController: DataController, DelegateCallable, DataStoreP
             return
         }
 
-        // Optimistic update
-        client.databaseContainer.write { session in
-            let messageDTO = try session.messageEditableByCurrentUser(self.messageId)
-            messageDTO.location?.endAt = Date().bridgeDate
-        }
-
         messageUpdater.stopLiveLocationSharing(messageId: messageId) { result in
             self.callback {
                 completion?(result)

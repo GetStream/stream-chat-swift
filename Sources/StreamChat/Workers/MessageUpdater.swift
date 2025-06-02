@@ -334,6 +334,14 @@ class MessageUpdater: Worker {
         messageId: MessageId,
         completion: @escaping ((Result<SharedLocation, Error>) -> Void)
     ) {
+        // Optimistic update
+        var previousEndAt: DBDate?
+        database.write { session in
+            let messageDTO = try session.messageEditableByCurrentUser(messageId)
+            previousEndAt = messageDTO.location?.endAt
+            messageDTO.location?.endAt = Date().bridgeDate
+        }
+
         database.backgroundReadOnlyContext.perform { [weak self] in
             guard let currentUser = self?.database.backgroundReadOnlyContext.currentUser,
                   let currentDeviceId = currentUser.currentDevice?.id else {
@@ -357,6 +365,11 @@ class MessageUpdater: Worker {
                         completion(result)
                     }
                 case let .failure(error):
+                    self?.database.write { session in
+                        // If the request fails, we revert the optimistic update.
+                        guard let messageDTO = session.message(id: messageId) else { return }
+                        messageDTO.location?.endAt = previousEndAt
+                    }
                     completion(.failure(error))
                 }
             }
