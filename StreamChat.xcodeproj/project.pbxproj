@@ -8688,6 +8688,7 @@
 		AD7A11E22DEE50DE00B8F963 /* LogsView */ = {
 			isa = PBXGroup;
 			children = (
+				AD7A11FA2DEE623E00B8F963 /* LogListView.swift */,
 				AD7A11FD2DEE623E00B8F963 /* Views */,
 				AD7A12052DEE626200B8F963 /* Styles */,
 				AD7A12082DEE626D00B8F963 /* Layout */,
@@ -8703,7 +8704,6 @@
 				AD7A11F72DEE623E00B8F963 /* DetailRow.swift */,
 				AD7A11F82DEE623E00B8F963 /* HighlightedText.swift */,
 				AD7A11F92DEE623E00B8F963 /* LogDetailView.swift */,
-				AD7A11FA2DEE623E00B8F963 /* LogListView.swift */,
 				AD7A11FB2DEE623E00B8F963 /* LogRowView.swift */,
 				AD7A11FC2DEE623E00B8F963 /* SelectableTextView.swift */,
 			);
