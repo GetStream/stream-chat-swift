@@ -1576,6 +1576,8 @@
 		AD793F49270B767500B05456 /* ChatMessageReactionAuthorsVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD793F48270B767500B05456 /* ChatMessageReactionAuthorsVC.swift */; };
 		AD793F4B270B769E00B05456 /* ChatMessageReactionAuthorViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD793F4A270B769E00B05456 /* ChatMessageReactionAuthorViewCell.swift */; };
 		AD7977BA2936D9450008B5FB /* Token_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD7977B92936D9450008B5FB /* Token_Tests.swift */; };
+		AD7A11DD2DEE419900B8F963 /* InMemoryRecorderLogDestination.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD7A11DC2DEE418400B8F963 /* InMemoryRecorderLogDestination.swift */; };
+		AD7A11DE2DEE419900B8F963 /* InMemoryRecorderLogDestination.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD7A11DC2DEE418400B8F963 /* InMemoryRecorderLogDestination.swift */; };
 		AD7A11E02DEE448300B8F963 /* OSLogDestination.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD7A11DF2DEE447D00B8F963 /* OSLogDestination.swift */; };
 		AD7A11E12DEE448300B8F963 /* OSLogDestination.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD7A11DF2DEE447D00B8F963 /* OSLogDestination.swift */; };
 		AD7AC99B260A9572004AADA5 /* MessagePinning.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD7AC98B260A94C6004AADA5 /* MessagePinning.swift */; };
@@ -4320,6 +4322,7 @@
 		AD793F48270B767500B05456 /* ChatMessageReactionAuthorsVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessageReactionAuthorsVC.swift; sourceTree = "<group>"; };
 		AD793F4A270B769E00B05456 /* ChatMessageReactionAuthorViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessageReactionAuthorViewCell.swift; sourceTree = "<group>"; };
 		AD7977B92936D9450008B5FB /* Token_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Token_Tests.swift; sourceTree = "<group>"; };
+		AD7A11DC2DEE418400B8F963 /* InMemoryRecorderLogDestination.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InMemoryRecorderLogDestination.swift; sourceTree = "<group>"; };
 		AD7A11DF2DEE447D00B8F963 /* OSLogDestination.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OSLogDestination.swift; sourceTree = "<group>"; };
 		AD7AC98B260A94C6004AADA5 /* MessagePinning.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessagePinning.swift; sourceTree = "<group>"; };
 		AD7B51D227EDECA80068CBD1 /* MixedAttachmentViewInjector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MixedAttachmentViewInjector.swift; sourceTree = "<group>"; };
@@ -5738,6 +5741,7 @@
 		7964F3B2249A314D002A09EC /* Destination */ = {
 			isa = PBXGroup;
 			children = (
+				AD7A11DC2DEE418400B8F963 /* InMemoryRecorderLogDestination.swift */,
 				AD7A11DF2DEE447D00B8F963 /* OSLogDestination.swift */,
 				7964F3B3249A314D002A09EC /* ConsoleLogDestination.swift */,
 				7964F3B4249A314D002A09EC /* BaseLogDestination.swift */,
@@ -11372,6 +11376,7 @@
 				8AC9CBD624C73689006E236C /* NotificationEvents.swift in Sources */,
 				F6FF1DA824FD232C00151735 /* MessageUpdater.swift in Sources */,
 				40789D3729F6AC500018C2BB /* AssetPropertyLoading.swift in Sources */,
+				AD7A11DE2DEE419900B8F963 /* InMemoryRecorderLogDestination.swift in Sources */,
 				7931818C24FD2660002F8C84 /* ChannelListController+Combine.swift in Sources */,
 				40789D2F29F6AC500018C2BB /* AudioRecordingDelegate.swift in Sources */,
 				4FE6E1AA2BAC79F400C80AF1 /* MemberListState+Observer.swift in Sources */,
@@ -12433,6 +12438,7 @@
 				C121E871274544AF00023E4C /* MessageDTO.swift in Sources */,
 				40789D3629F6AC500018C2BB /* AudioAnalysisEngine.swift in Sources */,
 				C121E872274544AF00023E4C /* AttachmentDTO.swift in Sources */,
+				AD7A11DD2DEE419900B8F963 /* InMemoryRecorderLogDestination.swift in Sources */,
 				C121E874274544AF00023E4C /* UserDTO.swift in Sources */,
 				8413D2F32BDDAAEE005ADA4E /* PollVoteListController+Combine.swift in Sources */,
 				4FF9B2682C6F697300A3B711 /* AttachmentDownloader.swift in Sources */,
