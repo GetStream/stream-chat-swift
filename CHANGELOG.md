@@ -3,7 +3,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 # Upcoming
 
-### 🔄 Changed
+## StreamChat
+### 🐞 Fixed
+- Fix an issue where completion handler was called twice after waiting for token refresh [#3683](https://github.com/GetStream/stream-chat-swift/pull/3683)
 
 # [4.79.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.79.0)
 _May 28, 2025_
