@@ -738,7 +738,7 @@ class DemoReminderCell: UITableViewCell {
         
         // If less than a minute, show "1 min" instead of "0 min"
         if roundedInterval == 0 {
-            return "1 min"
+            return "1m"
         }
         
         let formatter = DateComponentsFormatter()
