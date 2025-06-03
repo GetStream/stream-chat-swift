@@ -35,61 +35,58 @@ struct LogListView: View {
 
     var body: some View {
         NavigationStack {
-            VStack(spacing: 0) {
-                // Filter bar
-                ScrollView(.horizontal, showsIndicators: false) {
-                    HStack(spacing: 8) {
-                        Button("All") {
-                            selectedLevel = nil
-                        }
-                        .buttonStyle(FilterButtonStyle(isSelected: selectedLevel == nil))
+            ScrollView {
+                LazyVStack(alignment: .leading, spacing: 0, pinnedViews: [.sectionHeaders]) {
+                    Section(header:
+                        VStack(spacing: 0) {
+                            // Filter bar
+                            ScrollView(.horizontal, showsIndicators: false) {
+                                HStack(spacing: 8) {
+                                    Button("All") {
+                                        selectedLevel = nil
+                                    }
+                                    .buttonStyle(FilterButtonStyle(isSelected: selectedLevel == nil))
 
-                        ForEach(LogLevel.allCases, id: \.self) { level in
-                            Button(level.displayName) {
-                                selectedLevel = selectedLevel == level ? nil : level
+                                    ForEach(LogLevel.allCases, id: \ .self) { level in
+                                        Button(level.displayName) {
+                                            selectedLevel = selectedLevel == level ? nil : level
+                                        }
+                                        .buttonStyle(FilterButtonStyle(isSelected: selectedLevel == level))
+                                    }
+                                }
+                                .padding(.horizontal)
                             }
-                            .buttonStyle(FilterButtonStyle(isSelected: selectedLevel == level))
-                        }
-                    }
-                    .padding(.horizontal)
-                }
-                .padding(.vertical, 8)
-                .background(Color(.systemGray6))
+                            .padding(.vertical, 8)
+                            .background(Color(.systemBackground))
 
-                Divider()
+                            Divider()
+                                .background(Color(.systemBackground))
 
-                // Results info
-                if !searchText.isEmpty || selectedLevel != nil {
-                    HStack {
-                        Text("\(filteredLogs.count) result\(filteredLogs.count == 1 ? "" : "s")")
-                            .font(.caption)
-                            .foregroundColor(.secondary)
+                            // Results info
+                            if !searchText.isEmpty || selectedLevel != nil {
+                                HStack {
+                                    Text("\(filteredLogs.count) result\(filteredLogs.count == 1 ? "" : "s")")
+                                        .font(.caption)
+                                        .foregroundColor(.secondary)
 
-                        Spacer()
+                                    Spacer()
 
-                        if !searchText.isEmpty && selectedLevel != nil {
-                            Button("Clear all filters") {
-                                searchText = ""
-                                selectedLevel = nil
+                                    if !searchText.isEmpty && selectedLevel != nil {
+                                        Button("Clear all filters") {
+                                            searchText = ""
+                                            selectedLevel = nil
+                                        }
+                                        .font(.caption)
+                                        .foregroundColor(.accentColor)
+                                    }
+                                }
+                                .padding(.horizontal)
+                                .padding(.vertical, 4)
+                                .background(Color(.systemBackground))
                             }
-                            .font(.caption)
-                            .foregroundColor(.accentColor)
                         }
-                    }
-                    .padding(.horizontal)
-                    .padding(.vertical, 4)
-                    .background(Color(.systemGray6).opacity(0.5))
-                }
-
-                // Log list
-                List(filteredLogs) { log in
-                    NavigationLink(destination: LogDetailView(log: log)) {
-                        LogRowView(log: log, searchText: searchText)
-                    }
-                }
-                .listStyle(PlainListStyle())
-                .overlay(
-                    Group {
+                        .background(Color(.systemBackground))
+                    ) {
                         if filteredLogs.isEmpty {
                             VStack(spacing: 16) {
                                 Image(systemName: "doc.text.magnifyingglass")
@@ -107,19 +104,30 @@ struct LogListView: View {
                                         .multilineTextAlignment(.center)
                                 }
                             }
-                            .frame(maxWidth: .infinity, maxHeight: .infinity)
+                            .frame(maxWidth: .infinity, minHeight: 300)
                             .background(Color(.systemBackground))
+                        } else {
+                            ForEach(filteredLogs) { log in
+                                NavigationLink(destination: LogDetailView(log: log)) {
+                                    LogRowView(log: log, searchText: searchText)
+                                }
+                                .buttonStyle(PlainButtonStyle())
+                                .padding(.horizontal)
+                                .padding(.vertical, 4)
+                            }
                         }
                     }
-                )
+                }
             }
             .navigationTitle("Logs")
-            .navigationBarTitleDisplayMode(.large)
+            .navigationBarTitleDisplayMode(.inline)
             .searchable(text: $searchText, placement: .navigationBarDrawer(displayMode: .automatic), prompt: "Search logs...")
             .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    Button("Clear All") {
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button(action: {
                         logStore.clear()
+                    }) {
+                        Image(systemName: "trash")
                     }
                     .foregroundColor(.red)
                 }
@@ -128,5 +136,13 @@ struct LogListView: View {
                 self.logs = logs
             }
         }
+    }
+}
+
+// Helper for sticky header offset
+private struct OffsetKey: PreferenceKey {
+    static var defaultValue: CGFloat = 0
+    static func reduce(value: inout CGFloat, nextValue: () -> CGFloat) {
+        value = nextValue()
     }
 }

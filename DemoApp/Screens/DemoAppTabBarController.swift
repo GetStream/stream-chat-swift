@@ -88,14 +88,16 @@ class DemoAppTabBarController: UITabBarController, CurrentChatUserControllerDele
             let logsView = LogListView()
             let hostingController = UIHostingController(rootView: logsView)
             hostingController.modalPresentationStyle = .pageSheet
-            
+            hostingController.navigationItem.hidesSearchBarWhenScrolling = true
+
             // Configure the sheet presentation
             if let sheet = hostingController.sheetPresentationController {
                 sheet.detents = [.medium(), .large()]
-                sheet.prefersGrabberVisible = true
+                sheet.prefersGrabberVisible = false
                 sheet.preferredCornerRadius = 16
+                sheet.prefersScrollingExpandsWhenScrolledToEdge = false
             }
-            
+
             present(hostingController, animated: true)
         } else {
             // For iOS versions below 16.0, show a simple alert
