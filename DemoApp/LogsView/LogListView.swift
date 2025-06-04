@@ -108,12 +108,7 @@ struct LogListView: View {
                             .background(Color(.systemBackground))
                         } else {
                             ForEach(filteredLogs) { log in
-                                ZStack {
-                                    NavigationLink(destination: LogDetailView(log: log)) {
-                                        EmptyView()
-                                    }
-                                    .opacity(0)
-
+                                NavigationLink(destination: LogDetailView(log: log)) {
                                     VStack(spacing: 0) {
                                         LogRowView(log: log, searchText: searchText)
                                             .padding(.horizontal)
