@@ -108,12 +108,24 @@ struct LogListView: View {
                             .background(Color(.systemBackground))
                         } else {
                             ForEach(filteredLogs) { log in
-                                NavigationLink(destination: LogDetailView(log: log)) {
+                                ZStack {
+                                    NavigationLink(destination: LogDetailView(log: log)) {
+                                        EmptyView()
+                                    }
+                                    .opacity(0)
+
                                     LogRowView(log: log, searchText: searchText)
+                                        .padding(.horizontal)
+                                        .padding(.vertical, 4)
                                 }
-                                .buttonStyle(PlainButtonStyle())
-                                .padding(.horizontal)
-                                .padding(.vertical, 4)
+                                .contentShape(Rectangle())
+                                .contextMenu {
+                                    Button(role: .destructive) {
+                                        logStore.deleteLog(with: log.id)
+                                    } label: {
+                                        Label("Delete", systemImage: "trash")
+                                    }
+                                }
                             }
                         }
                     }
