@@ -955,6 +955,7 @@ final class ChannelController_Tests: XCTestCase {
                 skipPush: false,
                 skipEnrichUrl: false,
                 poll: nil,
+                location: nil,
                 restrictedVisibility: [],
                 extraData: [:]
             )
@@ -5729,7 +5730,7 @@ final class ChannelController_Tests: XCTestCase {
 
     func test_sendStaticLocation_callsChannelUpdater() throws {
         // Given
-        let location = LocationAttachmentInfo(latitude: 123.45, longitude: 67.89)
+        let location = LocationInfo(latitude: 123.45, longitude: 67.89)
         let messageId = MessageId.unique
         let text = "Custom message"
         let extraData: [String: RawJSON] = ["key": .string("value")]
@@ -5760,16 +5761,14 @@ final class ChannelController_Tests: XCTestCase {
         XCTAssertEqual(env.channelUpdater?.createNewMessage_quotedMessageId, quotedMessageId)
         XCTAssertEqual(env.channelUpdater?.createNewMessage_extraData, extraData)
 
-        let attachment = env.channelUpdater?.createNewMessage_attachments?.first
-        XCTAssertEqual(attachment?.type, .staticLocation)
-        let payload = attachment?.payload as? StaticLocationAttachmentPayload
-        XCTAssertEqual(payload?.latitude, location.latitude)
-        XCTAssertEqual(payload?.longitude, location.longitude)
+        let messageLocation = env.channelUpdater?.createNewMessage_location
+        XCTAssertEqual(messageLocation?.latitude, location.latitude)
+        XCTAssertEqual(messageLocation?.longitude, location.longitude)
     }
 
     func test_startLiveLocationSharing_whenActiveLiveLocationExists_fails() throws {
         // Given
-        let location = LocationAttachmentInfo(latitude: 123.45, longitude: 67.89)
+        let location = LocationInfo(latitude: 123.45, longitude: 67.89)
         let existingMessageId = MessageId.unique
         try client.databaseContainer.createChannel(cid: channelId)
         let userId: UserId = .unique
@@ -5778,25 +5777,28 @@ final class ChannelController_Tests: XCTestCase {
         // Simulate existing live location message
         try client.databaseContainer.writeSynchronously {
             try $0.saveMessage(
-                payload: .dummy(messageId: existingMessageId, authorUserId: userId),
+                payload: .dummy(
+                    messageId: existingMessageId,
+                    authorUserId: userId,
+                    sharedLocation: .init(
+                        channelId: self.channelId.rawValue,
+                        messageId: existingMessageId,
+                        latitude: location.latitude,
+                        longitude: location.longitude,
+                        endAt: .distantFuture,
+                        createdByDeviceId: .unique
+                    )
+                ),
                 for: self.channelId,
                 syncOwnReactions: false,
                 cache: nil
-            )
-            try $0.saveAttachment(
-                payload: .liveLocation(
-                    latitude: location.latitude,
-                    longitude: location.longitude,
-                    stoppedSharing: false
-                ),
-                id: .init(cid: self.channelId, messageId: existingMessageId, index: 0)
             )
         }
 
         // When
         var receivedError: Error?
         let exp = expectation(description: "startLiveLocationSharing")
-        controller.startLiveLocationSharing(location) { result in
+        controller.startLiveLocationSharing(location, endDate: .distantFuture) { result in
             if case .failure(let error) = result {
                 receivedError = error
             }
@@ -5813,7 +5815,7 @@ final class ChannelController_Tests: XCTestCase {
 
     func test_startLiveLocationSharing_whenNoActiveLiveLocation_callsChannelUpdater() throws {
         // Given
-        let location = LocationAttachmentInfo(latitude: 123.45, longitude: 67.89)
+        let location = LocationInfo(latitude: 123.45, longitude: 67.89)
         let text = "Custom message"
         let extraData: [String: RawJSON] = ["key": .string("value")]
         try client.databaseContainer.createChannel(cid: channelId)
@@ -5824,6 +5826,7 @@ final class ChannelController_Tests: XCTestCase {
         let exp = expectation(description: "startLiveLocationSharing")
         controller.startLiveLocationSharing(
             location,
+            endDate: .distantFuture,
             text: text,
             extraData: extraData
         ) { _ in
@@ -5840,81 +5843,9 @@ final class ChannelController_Tests: XCTestCase {
         XCTAssertEqual(env.channelUpdater?.createNewMessage_text, text)
         XCTAssertEqual(env.channelUpdater?.createNewMessage_extraData, extraData)
         
-        let attachment = env.channelUpdater?.createNewMessage_attachments?.first
-        XCTAssertEqual(attachment?.type, .liveLocation)
-        let payload = attachment?.payload as? LiveLocationAttachmentPayload
-        XCTAssertEqual(payload?.latitude, location.latitude)
-        XCTAssertEqual(payload?.longitude, location.longitude)
-        XCTAssertEqual(payload?.stoppedSharing, false)
-    }
-
-    func test_stopLiveLocationSharing_whenNoActiveLiveLocation_fails() throws {
-        // Given
-        try client.databaseContainer.createChannel(cid: channelId)
-        try client.databaseContainer.createCurrentUser()
-
-        // When
-        var receivedError: Error?
-        let exp = expectation(description: "stopLiveLocationSharing")
-        controller.stopLiveLocationSharing { result in
-            if case .failure(let error) = result {
-                receivedError = error
-            }
-            exp.fulfill()
-        }
-
-        env.channelUpdater?.createNewMessage_completion?(.success(.mock()))
-
-        wait(for: [exp], timeout: defaultTimeout)
-
-        // Then
-        XCTAssertTrue(receivedError is ClientError.MessageDoesNotHaveLiveLocationAttachment)
-    }
-
-    func test_stopLiveLocationSharing_whenActiveLiveLocationExists_updatesMessage() throws {
-        // Given
-        let location = LocationAttachmentInfo(latitude: 123.45, longitude: 67.89)
-        let existingMessageId = MessageId.unique
-        try client.databaseContainer.createChannel(cid: channelId)
-        let userId: UserId = .unique
-        try client.databaseContainer.createCurrentUser(id: userId)
-
-        // Simulate existing live location message
-        try client.databaseContainer.writeSynchronously {
-            try $0.saveMessage(
-                payload: .dummy(messageId: existingMessageId, authorUserId: userId),
-                for: self.channelId,
-                syncOwnReactions: false,
-                cache: nil
-            )
-            try $0.saveAttachment(
-                payload: .liveLocation(
-                    latitude: location.latitude,
-                    longitude: location.longitude,
-                    stoppedSharing: false
-                ),
-                id: .init(cid: self.channelId, messageId: existingMessageId, index: 0)
-            )
-        }
-
-        // When
-        let exp = expectation(description: "stopLiveLocationSharing")
-        controller.stopLiveLocationSharing { _ in
-            exp.fulfill()
-        }
-
-        env.messageUpdater?.updatePartialMessage_completion_result = .success(.mock())
-        env.messageUpdater?.updatePartialMessage_completion?(.success(.mock()))
-
-        wait(for: [exp], timeout: defaultTimeout)
-
-        // Then
-        let attachment = env.messageUpdater?.updatePartialMessage_attachments?.first
-        XCTAssertEqual(attachment?.type, .liveLocation)
-        let payload = attachment?.payload as? LiveLocationAttachmentPayload
-        XCTAssertEqual(payload?.latitude, location.latitude)
-        XCTAssertEqual(payload?.longitude, location.longitude)
-        XCTAssertEqual(payload?.stoppedSharing, true)
+        let messageLocation = env.channelUpdater?.createNewMessage_location
+        XCTAssertEqual(messageLocation?.latitude, location.latitude)
+        XCTAssertEqual(messageLocation?.longitude, location.longitude)
     }
 }
 

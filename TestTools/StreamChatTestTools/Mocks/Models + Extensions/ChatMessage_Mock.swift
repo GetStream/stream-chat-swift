@@ -50,7 +50,8 @@ public extension ChatMessage {
         underlyingContext: NSManagedObjectContext? = nil,
         textUpdatedAt: Date? = nil,
         poll: Poll? = nil,
-        draftReply: DraftMessage? = nil
+        draftReply: DraftMessage? = nil,
+        sharedLocation: SharedLocation? = nil
     ) -> Self {
         .init(
             id: id,
@@ -91,7 +92,8 @@ public extension ChatMessage {
             readBy: readBy,
             poll: poll,
             textUpdatedAt: textUpdatedAt,
-            draftReply: draftReply
+            draftReply: draftReply,
+            sharedLocation: sharedLocation
         )
     }
 }

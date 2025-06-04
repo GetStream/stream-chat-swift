@@ -737,13 +737,27 @@ final class MessageRepositoryTests: XCTestCase {
             id: messageId1,
             authorId: currentUserId,
             cid: cid,
-            attachments: [.dummy(type: .liveLocation)]
+            location: .init(
+                channelId: cid.rawValue,
+                messageId: messageId1,
+                latitude: 1,
+                longitude: 1,
+                endAt: .distantFuture,
+                createdByDeviceId: .unique
+            )
         )
         try database.createMessage(
             id: messageId2,
             authorId: currentUserId,
             cid: cid,
-            attachments: [.dummy(type: .liveLocation)]
+            location: .init(
+                channelId: cid.rawValue,
+                messageId: messageId2,
+                latitude: 1,
+                longitude: 1,
+                endAt: .distantFuture,
+                createdByDeviceId: .unique
+            )
         )
         
         let expectation = self.expectation(description: "getActiveLiveLocationMessages completes")

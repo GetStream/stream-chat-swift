@@ -2651,67 +2651,57 @@ final class MessageController_Tests: XCTestCase {
         // Given
         let latitude = 51.5074
         let longitude = -0.1278
+        let sharedLocation = SharedLocation(
+            messageId: messageId,
+            channelId: .unique,
+            latitude: latitude,
+            longitude: longitude,
+            endAt: .distantFuture,
+            createdByDeviceId: .unique
+        )
 
         // Save message with live location
         _ = controller.message
         env.messageObserver.item_mock = .mock(
             id: messageId,
-            attachments: [
-                ChatMessageLiveLocationAttachment(
-                    id: .unique,
-                    type: .liveLocation,
-                    payload: .init(latitude: latitude, longitude: longitude, stoppedSharing: false),
-                    downloadingState: nil,
-                    uploadingState: nil
-                ).asAnyAttachment
-            ]
+            sharedLocation: sharedLocation
         )
 
         // When
-        let location = LocationAttachmentInfo(
-            latitude: latitude,
-            longitude: longitude
-        )
+        let location = LocationInfo(latitude: latitude, longitude: longitude)
         controller.updateLiveLocation(location)
 
         // Simulate
-        env.messageUpdater.updatePartialMessage_completion?(.success(.mock(id: messageId)))
+        env.messageUpdater.updateLiveLocation_completion?(.success(sharedLocation))
 
         // Then
-        XCTAssertEqual(env.messageUpdater.updatePartialMessage_messageId, messageId)
-        XCTAssertEqual(
-            env.messageUpdater.updatePartialMessage_attachments?.first?.type,
-            AttachmentType.liveLocation
-        )
-        
-        let payload = env.messageUpdater.updatePartialMessage_attachments?.first?.payload as? LiveLocationAttachmentPayload
-        XCTAssertEqual(payload?.latitude, latitude)
-        XCTAssertEqual(payload?.longitude, longitude)
+        XCTAssertEqual(env.messageUpdater.updateLiveLocation_messageId, messageId)
+        XCTAssertEqual(env.messageUpdater.updateLiveLocation_locationInfo?.latitude, latitude)
+        XCTAssertEqual(env.messageUpdater.updateLiveLocation_locationInfo?.longitude, longitude)
     }
 
-    func test_updateLiveLocation_whenNoLiveLocationAttachment_completesWithError() {
-        // Create a mock message without live location attachment
+    func test_updateLiveLocation_whenLiveLocationHasAlreadyStopped_completesWithError() {
+        // Given
+        let latitude = 51.5074
+        let longitude = -0.1278
+        let sharedLocation = SharedLocation(
+            messageId: messageId,
+            channelId: .unique,
+            latitude: latitude,
+            longitude: longitude,
+            endAt: .distantPast,
+            createdByDeviceId: .unique
+        )
+
+        // Save message with live location
         _ = controller.message
         env.messageObserver.item_mock = .mock(
             id: messageId,
-            attachments: [
-                ChatMessageLiveLocationAttachment(
-                    id: .unique,
-                    type: .liveLocation,
-                    payload: .init(latitude: 10, longitude: 30, stoppedSharing: true),
-                    downloadingState: nil,
-                    uploadingState: nil
-                ).asAnyAttachment
-            ]
+            sharedLocation: sharedLocation
         )
 
-        // Create the location info to update
-        let location = LocationAttachmentInfo(
-            latitude: 1.0,
-            longitude: 1.0
-        )
-
-        // Update live location
+        // When
+        let location = LocationInfo(latitude: latitude, longitude: longitude)
         var receivedError: Error?
         controller.updateLiveLocation(location) { result in
             if case let .failure(error) = result {
@@ -2723,19 +2713,16 @@ final class MessageController_Tests: XCTestCase {
         XCTAssertTrue(receivedError is ClientError.MessageLiveLocationAlreadyStopped)
     }
 
-    func test_updateLiveLocation_whenLiveLocationHasAlreadyStopped_completesWithError() {
+    func test_updateLiveLocation_whenNoLiveLocationAttachment_completesWithError() {
         // Create a mock message without live location attachment
         _ = controller.message
         env.messageObserver.item_mock = .mock(
             id: messageId,
-            attachments: []
+            sharedLocation: nil
         )
 
         // Create the location info to update
-        let location = LocationAttachmentInfo(
-            latitude: 1.0,
-            longitude: 1.0
-        )
+        let location = LocationInfo(latitude: 1, longitude: 1)
 
         // Update live location
         var receivedError: Error?
@@ -2753,37 +2740,30 @@ final class MessageController_Tests: XCTestCase {
 
     func test_stopLiveLocationSharing_callsMessageUpdater_withCorrectValues() {
         // Save message with live location
+        let latitude = 51.5074
+        let longitude = -0.1278
+        let sharedLocation = SharedLocation(
+            messageId: messageId,
+            channelId: .unique,
+            latitude: latitude,
+            longitude: longitude,
+            endAt: .distantFuture,
+            createdByDeviceId: .unique
+        )
         _ = controller.message
         env.messageObserver.item_mock = .mock(
             id: messageId,
-            attachments: [
-                ChatMessageLiveLocationAttachment(
-                    id: .unique,
-                    type: .liveLocation,
-                    payload: .init(latitude: 10, longitude: 10, stoppedSharing: false),
-                    downloadingState: nil,
-                    uploadingState: nil
-                ).asAnyAttachment
-            ]
+            sharedLocation: sharedLocation
         )
 
         // When
         controller.stopLiveLocationSharing()
 
         // Simulate
-        env.messageUpdater.updatePartialMessage_completion?(.success(.mock(id: messageId)))
+        env.messageUpdater.stopLiveLocationSharing_completion?(.success(sharedLocation))
 
         // Then
-        XCTAssertEqual(env.messageUpdater.updatePartialMessage_messageId, messageId)
-        XCTAssertEqual(
-            env.messageUpdater.updatePartialMessage_attachments?.first?.type,
-            AttachmentType.liveLocation
-        )
-
-        let payload = env.messageUpdater.updatePartialMessage_attachments?.first?.payload as? LiveLocationAttachmentPayload
-        XCTAssertEqual(payload?.latitude, 10)
-        XCTAssertEqual(payload?.longitude, 10)
-        XCTAssertEqual(payload?.stoppedSharing, true)
+        XCTAssertEqual(env.messageUpdater.stopLiveLocationSharing_messageId, messageId)
     }
 
     func test_stopLiveLocationSharing_whenNoLiveLocationAttachment_completesWithError() {
@@ -2792,7 +2772,7 @@ final class MessageController_Tests: XCTestCase {
         _ = controller.message
         env.messageObserver.item_mock = .mock(
             id: messageId,
-            attachments: []
+            sharedLocation: nil
         )
 
         // When
@@ -2813,24 +2793,28 @@ final class MessageController_Tests: XCTestCase {
 
     func test_stopLiveLocationSharing_whenLiveLocationAlreadyStopped_completesWithError() {
         // Given
-        // Create a mock message with stopped live location
+        let latitude = 51.5074
+        let longitude = -0.1278
+        let sharedLocation = SharedLocation(
+            messageId: messageId,
+            channelId: .unique,
+            latitude: latitude,
+            longitude: longitude,
+            endAt: .distantPast,
+            createdByDeviceId: .unique
+        )
+
+        // Save message with live location
         _ = controller.message
         env.messageObserver.item_mock = .mock(
             id: messageId,
-            attachments: [
-                ChatMessageLiveLocationAttachment(
-                    id: .unique,
-                    type: .liveLocation,
-                    payload: .init(latitude: 10, longitude: 30, stoppedSharing: true),
-                    downloadingState: nil,
-                    uploadingState: nil
-                ).asAnyAttachment
-            ]
+            sharedLocation: sharedLocation
         )
 
         // When
-        var receivedError: Error?
         let exp = expectation(description: "stopLiveLocationSharing")
+        let location = LocationInfo(latitude: latitude, longitude: longitude)
+        var receivedError: Error?
         controller.stopLiveLocationSharing { result in
             if case let .failure(error) = result {
                 receivedError = error

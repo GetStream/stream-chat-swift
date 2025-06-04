@@ -1201,6 +1201,7 @@ final class MessageDTO_Tests: XCTestCase {
                 skipPush: false,
                 skipEnrichUrl: false,
                 poll: nil,
+                location: nil,
                 restrictedVisibility: [],
                 extraData: messageExtraData
             )
@@ -1291,6 +1292,7 @@ final class MessageDTO_Tests: XCTestCase {
                 skipPush: false,
                 skipEnrichUrl: false,
                 poll: nil,
+                location: nil,
                 restrictedVisibility: [],
                 extraData: [:]
             )
@@ -1396,6 +1398,7 @@ final class MessageDTO_Tests: XCTestCase {
                     skipPush: false,
                     skipEnrichUrl: false,
                     poll: nil,
+                    location: nil,
                     restrictedVisibility: [],
                     extraData: [:]
                 )
@@ -1421,6 +1424,7 @@ final class MessageDTO_Tests: XCTestCase {
                     skipPush: false,
                     skipEnrichUrl: false,
                     poll: nil,
+                    location: nil,
                     restrictedVisibility: [],
                     extraData: [:]
                 )
@@ -1565,6 +1569,7 @@ final class MessageDTO_Tests: XCTestCase {
                 skipPush: true,
                 skipEnrichUrl: true,
                 poll: nil,
+                location: nil,
                 restrictedVisibility: [],
                 extraData: [:]
             )
@@ -1637,6 +1642,7 @@ final class MessageDTO_Tests: XCTestCase {
                 skipPush: true,
                 skipEnrichUrl: true,
                 poll: nil,
+                location: nil,
                 restrictedVisibility: [],
                 extraData: [:]
             )
@@ -1688,6 +1694,7 @@ final class MessageDTO_Tests: XCTestCase {
                 skipPush: false,
                 skipEnrichUrl: false,
                 poll: nil,
+                location: nil,
                 restrictedVisibility: [],
                 extraData: [:]
             )
@@ -1736,6 +1743,7 @@ final class MessageDTO_Tests: XCTestCase {
                 skipPush: false,
                 skipEnrichUrl: false,
                 poll: nil,
+                location: nil,
                 restrictedVisibility: [],
                 extraData: [:]
             )
@@ -1797,6 +1805,7 @@ final class MessageDTO_Tests: XCTestCase {
                 skipPush: false,
                 skipEnrichUrl: false,
                 poll: nil,
+                location: nil,
                 restrictedVisibility: [],
                 extraData: [:]
             )
@@ -1827,6 +1836,7 @@ final class MessageDTO_Tests: XCTestCase {
                     skipPush: false,
                     skipEnrichUrl: false,
                     poll: nil,
+                    location: nil,
                     restrictedVisibility: [],
                     extraData: [:]
                 )
@@ -1871,6 +1881,7 @@ final class MessageDTO_Tests: XCTestCase {
                     skipPush: false,
                     skipEnrichUrl: false,
                     poll: nil,
+                    location: nil,
                     restrictedVisibility: [],
                     extraData: [:]
                 )
@@ -1961,6 +1972,7 @@ final class MessageDTO_Tests: XCTestCase {
                 skipPush: false,
                 skipEnrichUrl: false,
                 poll: nil,
+                location: nil,
                 restrictedVisibility: [],
                 extraData: [:]
             )
@@ -4228,18 +4240,17 @@ final class MessageDTO_Tests: XCTestCase {
 
             // Save all test messages
             for (id, userId, channelId, isActive) in messages {
-                let attachments: [MessageAttachmentPayload] = [
-                    .liveLocation(
-                        latitude: 50,
-                        longitude: 10,
-                        stoppedSharing: !isActive
-                    )
-                ]
-
                 let messagePayload: MessagePayload = .dummy(
                     messageId: id,
-                    attachments: attachments,
-                    authorUserId: userId
+                    authorUserId: userId,
+                    sharedLocation: .init(
+                        channelId: channelId.rawValue,
+                        messageId: id,
+                        latitude: 50,
+                        longitude: 10,
+                        endAt: isActive ? .distantFuture : .distantPast,
+                        createdByDeviceId: .unique
+                    )
                 )
 
                 try session.saveMessage(
