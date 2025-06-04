@@ -43,6 +43,8 @@ public class InMemoryRecorderLogDestination: BaseLogDestination {
             level: logDetails.level,
             subsystems: logDetails.subsystems,
             functionName: "\(logDetails.functionName)",
+            fileName: logDetails.fileName,
+            lineNumber: logDetails.lineNumber,
             description: logDetails.message
         )
         logsStoreProvider.addLog(entry)
@@ -55,6 +57,8 @@ public struct LogEntry: Identifiable {
     public let level: LogLevel
     public let subsystems: LogSubsystem
     public let functionName: String
+    public let fileName: StaticString
+    public let lineNumber: UInt
     public let description: String
 
     public init(
@@ -62,12 +66,16 @@ public struct LogEntry: Identifiable {
         level: LogLevel,
         subsystems: LogSubsystem,
         functionName: String,
+        fileName: StaticString,
+        lineNumber: UInt,
         description: String
     ) {
         self.timestamp = timestamp
         self.level = level
         self.subsystems = subsystems
         self.functionName = functionName
+        self.fileName = fileName
+        self.lineNumber = lineNumber
         self.description = description
     }
 }
