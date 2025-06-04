@@ -53,6 +53,7 @@ class DemoAppTabBarController: UITabBarController, CurrentChatUserControllerDele
         super.viewDidLoad()
 
         currentUserController.delegate = self
+        currentUserController.loadActiveLiveLocationMessages()
         unreadCount = currentUserController.unreadCount
 
         tabBar.backgroundColor = Appearance.default.colorPalette.background

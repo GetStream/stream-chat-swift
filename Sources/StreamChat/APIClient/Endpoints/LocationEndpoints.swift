@@ -10,7 +10,7 @@ import Foundation
 extension Endpoint {
     static func updateLiveLocation(request: LiveLocationUpdateRequestPayload) -> Endpoint<SharedLocationPayload> {
         .init(
-            path: .liveLocation,
+            path: .liveLocations,
             method: .put,
             queryItems: nil,
             requiresConnectionId: false,
@@ -21,7 +21,7 @@ extension Endpoint {
 
     static func stopLiveLocation(request: StopLiveLocationRequestPayload) -> Endpoint<SharedLocationPayload> {
         .init(
-            path: .liveLocation,
+            path: .liveLocations,
             method: .put,
             queryItems: nil,
             requiresConnectionId: false,
@@ -32,7 +32,7 @@ extension Endpoint {
 
     static func currentUserActiveLiveLocations() -> Endpoint<ActiveLiveLocationsResponsePayload> {
         .init(
-            path: .liveLocation,
+            path: .liveLocations,
             method: .get,
             queryItems: nil,
             requiresConnectionId: false,

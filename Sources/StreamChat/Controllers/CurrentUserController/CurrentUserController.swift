@@ -295,6 +295,14 @@ public extension CurrentChatUserController {
         }
     }
 
+    func loadActiveLiveLocationMessages(completion: ((Result<[SharedLocation], Error>) -> Void)? = nil) {
+        currentUserUpdater.loadActiveLiveLocations { result in
+            self.callback {
+                completion?(result)
+            }
+        }
+    }
+
     /// Updates the location of all the active live location messages for the current user.
     ///
     /// The updates are throttled to avoid sending too many requests.

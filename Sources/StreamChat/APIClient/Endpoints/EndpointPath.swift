@@ -70,8 +70,7 @@ enum EndpointPath: Codable {
 
     case appSettings
 
-    case liveLocation
-    case activeLiveLocations
+    case liveLocations
 
     case polls
     case pollsQuery
@@ -106,8 +105,7 @@ enum EndpointPath: Codable {
         case let .markThreadUnread(cid):
             return "channels/\(cid.apiPath)/unread"
 
-        case .liveLocation: return "users/live_location"
-        case .activeLiveLocations: return "users/locations"
+        case .liveLocations: return "users/live_locations"
 
         case .channels: return "channels"
         case let .createChannel(queryString): return "channels/\(queryString)/query"
