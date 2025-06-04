@@ -33,19 +33,16 @@ struct LogRowView: View {
 
             // Subsystems
             if !log.subsystems.displayNames.isEmpty {
-                ScrollView(.horizontal, showsIndicators: false) {
-                    HStack(spacing: 6) {
-                        ForEach(log.subsystems.displayNames, id: \.self) { subsystem in
-                            HighlightedText(text: subsystem, searchText: searchText)
-                                .font(.caption)
-                                .padding(.horizontal, 6)
-                                .padding(.vertical, 2)
-                                .background(Color.blue.opacity(0.1))
-                                .foregroundColor(.blue)
-                                .cornerRadius(4)
-                        }
+                HStack(spacing: 6) {
+                    ForEach(log.subsystems.displayNames, id: \.self) { subsystem in
+                        HighlightedText(text: subsystem, searchText: searchText)
+                            .font(.caption)
+                            .padding(.horizontal, 6)
+                            .padding(.vertical, 2)
+                            .background(Color.blue.opacity(0.1))
+                            .foregroundColor(.blue)
+                            .cornerRadius(4)
                     }
-                    .padding(.horizontal, 1)
                 }
             }
 

@@ -95,7 +95,6 @@ class DemoAppTabBarController: UITabBarController, CurrentChatUserControllerDele
                 sheet.detents = [.medium(), .large()]
                 sheet.prefersGrabberVisible = false
                 sheet.preferredCornerRadius = 16
-                sheet.prefersScrollingExpandsWhenScrolledToEdge = false
             }
 
             present(hostingController, animated: true)
