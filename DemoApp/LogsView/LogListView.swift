@@ -15,6 +15,7 @@ struct LogListView: View {
     @State private var showingSubsystemPicker = false
     @State private var searchText: String = ""
     @State private var logs: [LogEntry] = []
+    @State private var isRecording: Bool = true
 
     var availableSubsystems: [String] {
         let allSubsystems = LogSubsystem.all.displayNames
@@ -183,16 +184,33 @@ struct LogListView: View {
             }
             .navigationTitle("Logs")
             .navigationBarTitleDisplayMode(.inline)
-            .searchable(text: $searchText, placement: .navigationBarDrawer(displayMode: .automatic), prompt: "Search logs...")
+            .searchable(
+                text: $searchText,
+                placement: .navigationBarDrawer(displayMode: .automatic),
+                prompt: "Search logs..."
+            )
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
-                    Button(action: {
-                        logStore.clear()
-                    }) {
-                        Image(systemName: "trash")
+                    HStack(spacing: 12) {
+                        Button(action: {
+                            isRecording.toggle()
+                            InMemoryRecorderLogDestination.isRecording = isRecording
+                        }) {
+                            Image(systemName: isRecording ? "record.circle.fill" : "record.circle")
+                                .foregroundColor(isRecording ? .red : .gray)
+                        }
+                        
+                        Button(action: {
+                            logStore.clear()
+                        }) {
+                            Image(systemName: "trash")
+                        }
+                        .foregroundColor(.accentColor)
                     }
-                    .foregroundColor(.accentColor)
                 }
+            }
+            .onAppear {
+                isRecording = InMemoryRecorderLogDestination.isRecording
             }
             .onReceive(logStore.$logs.receive(on: DispatchQueue.main)) { logs in
                 self.logs = logs
