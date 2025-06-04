@@ -114,9 +114,14 @@ struct LogListView: View {
                                     }
                                     .opacity(0)
 
-                                    LogRowView(log: log, searchText: searchText)
-                                        .padding(.horizontal)
-                                        .padding(.vertical, 4)
+                                    VStack(spacing: 0) {
+                                        LogRowView(log: log, searchText: searchText)
+                                            .padding(.horizontal)
+                                            .padding(.vertical, 8)
+                                        Divider()
+                                            .padding(.leading)
+                                            .background(Color(.systemGray5))
+                                    }
                                 }
                                 .contentShape(Rectangle())
                                 .contextMenu {
