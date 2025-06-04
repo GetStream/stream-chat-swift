@@ -35,7 +35,7 @@ struct LogRowView: View {
             if !log.subsystems.displayNames.isEmpty {
                 HStack(spacing: 6) {
                     ForEach(log.subsystems.displayNames, id: \.self) { subsystem in
-                        HighlightedText(text: subsystem, searchText: searchText)
+                        HighlightedSearchText(text: subsystem, searchText: searchText)
                             .font(.caption)
                             .padding(.horizontal, 6)
                             .padding(.vertical, 2)
@@ -48,13 +48,13 @@ struct LogRowView: View {
 
             // Function name
             let fileAndFunctionName = "[\(log.fileName):\(log.lineNumber)] \(log.functionName)"
-            HighlightedText(text: fileAndFunctionName, searchText: searchText)
+            HighlightedSearchText(text: fileAndFunctionName, searchText: searchText)
                 .font(.caption.weight(.medium))
                 .foregroundColor(.primary)
                 .multilineTextAlignment(.leading)
 
             // Description preview
-            HighlightedText(text: log.description, searchText: searchText)
+            HighlightedSearchText(text: log.description, searchText: searchText)
                 .font(.footnote)
                 .foregroundColor(.secondary)
                 .lineLimit(3)

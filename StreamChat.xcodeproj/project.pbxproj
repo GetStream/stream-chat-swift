@@ -1585,7 +1585,7 @@
 		AD7A12002DEE623E00B8F963 /* LogListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD7A11FA2DEE623E00B8F963 /* LogListView.swift */; };
 		AD7A12012DEE623E00B8F963 /* SelectableTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD7A11FC2DEE623E00B8F963 /* SelectableTextView.swift */; };
 		AD7A12022DEE623E00B8F963 /* DetailRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD7A11F72DEE623E00B8F963 /* DetailRow.swift */; };
-		AD7A12032DEE623E00B8F963 /* HighlightedText.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD7A11F82DEE623E00B8F963 /* HighlightedText.swift */; };
+		AD7A12032DEE623E00B8F963 /* HighlightedSearchText.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD7A11F82DEE623E00B8F963 /* HighlightedSearchText.swift */; };
 		AD7A12062DEE626200B8F963 /* FilterButtonStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD7A12042DEE626200B8F963 /* FilterButtonStyle.swift */; };
 		AD7A12092DEE626D00B8F963 /* FlowLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD7A12072DEE626D00B8F963 /* FlowLayout.swift */; };
 		AD7A120E2DEE628100B8F963 /* LogSubsystem+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD7A120C2DEE628100B8F963 /* LogSubsystem+Extensions.swift */; };
@@ -4335,7 +4335,7 @@
 		AD7A11DC2DEE418400B8F963 /* InMemoryRecorderLogDestination.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InMemoryRecorderLogDestination.swift; sourceTree = "<group>"; };
 		AD7A11DF2DEE447D00B8F963 /* OSLogDestination.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OSLogDestination.swift; sourceTree = "<group>"; };
 		AD7A11F72DEE623E00B8F963 /* DetailRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailRow.swift; sourceTree = "<group>"; };
-		AD7A11F82DEE623E00B8F963 /* HighlightedText.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HighlightedText.swift; sourceTree = "<group>"; };
+		AD7A11F82DEE623E00B8F963 /* HighlightedSearchText.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HighlightedSearchText.swift; sourceTree = "<group>"; };
 		AD7A11F92DEE623E00B8F963 /* LogDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogDetailView.swift; sourceTree = "<group>"; };
 		AD7A11FA2DEE623E00B8F963 /* LogListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogListView.swift; sourceTree = "<group>"; };
 		AD7A11FB2DEE623E00B8F963 /* LogRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogRowView.swift; sourceTree = "<group>"; };
@@ -8699,7 +8699,7 @@
 			isa = PBXGroup;
 			children = (
 				AD7A11F72DEE623E00B8F963 /* DetailRow.swift */,
-				AD7A11F82DEE623E00B8F963 /* HighlightedText.swift */,
+				AD7A11F82DEE623E00B8F963 /* HighlightedSearchText.swift */,
 				AD7A11F92DEE623E00B8F963 /* LogDetailView.swift */,
 				AD7A11FB2DEE623E00B8F963 /* LogRowView.swift */,
 				AD7A11FC2DEE623E00B8F963 /* SelectableTextView.swift */,
@@ -11156,7 +11156,7 @@
 				AD7A12002DEE623E00B8F963 /* LogListView.swift in Sources */,
 				AD7A12012DEE623E00B8F963 /* SelectableTextView.swift in Sources */,
 				AD7A12022DEE623E00B8F963 /* DetailRow.swift in Sources */,
-				AD7A12032DEE623E00B8F963 /* HighlightedText.swift in Sources */,
+				AD7A12032DEE623E00B8F963 /* HighlightedSearchText.swift in Sources */,
 				792DDAA825753BEA001DB91B /* CreateGroupViewController.swift in Sources */,
 				C1B15A1429115E8D00C9CD80 /* Token+Development.swift in Sources */,
 				AD9632DF2C09F1900073B814 /* DemoChatThreadVC.swift in Sources */,
