@@ -1590,7 +1590,6 @@
 		AD7A12092DEE626D00B8F963 /* FlowLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD7A12072DEE626D00B8F963 /* FlowLayout.swift */; };
 		AD7A120E2DEE628100B8F963 /* LogSubsystem+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD7A120C2DEE628100B8F963 /* LogSubsystem+Extensions.swift */; };
 		AD7A12102DEE628100B8F963 /* LogLevel+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD7A120B2DEE628100B8F963 /* LogLevel+Extensions.swift */; };
-		AD7A12142DEE62B200B8F963 /* LogSampleData.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD7A12122DEE62B200B8F963 /* LogSampleData.swift */; };
 		AD7AC99B260A9572004AADA5 /* MessagePinning.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD7AC98B260A94C6004AADA5 /* MessagePinning.swift */; };
 		AD7B51D327EDECA80068CBD1 /* MixedAttachmentViewInjector.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD7B51D227EDECA80068CBD1 /* MixedAttachmentViewInjector.swift */; };
 		AD7B51D427EDECA80068CBD1 /* MixedAttachmentViewInjector.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD7B51D227EDECA80068CBD1 /* MixedAttachmentViewInjector.swift */; };
@@ -4345,7 +4344,6 @@
 		AD7A12072DEE626D00B8F963 /* FlowLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlowLayout.swift; sourceTree = "<group>"; };
 		AD7A120B2DEE628100B8F963 /* LogLevel+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "LogLevel+Extensions.swift"; sourceTree = "<group>"; };
 		AD7A120C2DEE628100B8F963 /* LogSubsystem+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "LogSubsystem+Extensions.swift"; sourceTree = "<group>"; };
-		AD7A12122DEE62B200B8F963 /* LogSampleData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogSampleData.swift; sourceTree = "<group>"; };
 		AD7AC98B260A94C6004AADA5 /* MessagePinning.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessagePinning.swift; sourceTree = "<group>"; };
 		AD7B51D227EDECA80068CBD1 /* MixedAttachmentViewInjector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MixedAttachmentViewInjector.swift; sourceTree = "<group>"; };
 		AD7BBFCA2901AF3F004E8B76 /* ImageResultsMapper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageResultsMapper.swift; sourceTree = "<group>"; };
@@ -8693,7 +8691,6 @@
 				AD7A12052DEE626200B8F963 /* Styles */,
 				AD7A12082DEE626D00B8F963 /* Layout */,
 				AD7A120D2DEE628100B8F963 /* Extensions */,
-				AD7A12132DEE62B200B8F963 /* SampleData */,
 			);
 			path = LogsView;
 			sourceTree = "<group>";
@@ -8733,14 +8730,6 @@
 				AD7A120C2DEE628100B8F963 /* LogSubsystem+Extensions.swift */,
 			);
 			path = Extensions;
-			sourceTree = "<group>";
-		};
-		AD7A12132DEE62B200B8F963 /* SampleData */ = {
-			isa = PBXGroup;
-			children = (
-				AD7A12122DEE62B200B8F963 /* LogSampleData.swift */,
-			);
-			path = SampleData;
 			sourceTree = "<group>";
 		};
 		AD7EFDA42C776EB700625FC5 /* PollCommentListVC */ = {
@@ -11197,7 +11186,6 @@
 				A3227E5B284A489000EBE6CC /* UIViewController+Alert.swift in Sources */,
 				A3227E6D284A4B6A00EBE6CC /* UserCredentialsCell.swift in Sources */,
 				84A33ABA28F86B8500CEC8FD /* StreamChatWrapper+DemoApp.swift in Sources */,
-				AD7A12142DEE62B200B8F963 /* LogSampleData.swift in Sources */,
 				AD053BA92B336331003612B6 /* LocationDetailViewController.swift in Sources */,
 				A3227E59284A484300EBE6CC /* UIImage+Resized.swift in Sources */,
 				79B8B64B285CBDC00059FB2D /* DemoChatMessageLayoutOptionsResolver.swift in Sources */,
