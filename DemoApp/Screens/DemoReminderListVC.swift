@@ -380,6 +380,7 @@ class DemoReminderListVC: UIViewController, ThemeProvider {
         
         controller.synchronize { [weak self] _ in
             self?.loadingIndicator.stopAnimating()
+            self?.updateRemindersData()
         }
     }
     
