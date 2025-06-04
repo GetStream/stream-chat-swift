@@ -10,8 +10,16 @@ struct LogListView: View {
     private var logStore = InMemoryLogEntryStoreProvider.shared
 
     @State private var selectedLevel: LogLevel?
+    @State private var selectedSubsystems: Set<String> = ["HTTP", "WebSocket"]
+    @State private var showingLevelPicker = false
+    @State private var showingSubsystemPicker = false
     @State private var searchText: String = ""
     @State private var logs: [LogEntry] = []
+
+    var availableSubsystems: [String] {
+        let allSubsystems = LogSubsystem.all.displayNames
+        return Array(Set(allSubsystems)).sorted()
+    }
 
     var filteredLogs: [LogEntry] {
         var filtered = logs
@@ -19,6 +27,14 @@ struct LogListView: View {
         // Apply level filter
         if let selectedLevel = selectedLevel {
             filtered = filtered.filter { $0.level == selectedLevel }
+        }
+
+        // Apply subsystem filter
+        if !selectedSubsystems.isEmpty {
+            filtered = filtered.filter { log in
+                let logSubsystems = Set(log.subsystems.displayNames)
+                return !selectedSubsystems.isDisjoint(with: logSubsystems)
+            }
         }
 
         // Apply text search
@@ -42,16 +58,59 @@ struct LogListView: View {
                             // Filter bar
                             ScrollView(.horizontal, showsIndicators: false) {
                                 HStack(spacing: 8) {
-                                    Button("All") {
-                                        selectedLevel = nil
-                                    }
-                                    .buttonStyle(FilterButtonStyle(isSelected: selectedLevel == nil))
-
-                                    ForEach(LogLevel.allCases, id: \ .self) { level in
-                                        Button(level.displayName) {
-                                            selectedLevel = selectedLevel == level ? nil : level
+                                    // Level selector button
+                                    Button(action: {
+                                        showingLevelPicker = true
+                                    }) {
+                                        HStack(spacing: 4) {
+                                            Image(systemName: "slider.horizontal.3")
+                                                .font(.caption2)
+                                            Text(selectedLevel?.displayName ?? "All Levels")
+                                            Image(systemName: "chevron.down")
+                                                .font(.caption2)
                                         }
-                                        .buttonStyle(FilterButtonStyle(isSelected: selectedLevel == level))
+                                    }
+                                    .buttonStyle(FilterButtonStyle(
+                                        isSelected: selectedLevel != nil,
+                                        backgroundColor: selectedLevel != nil ? selectedLevel?.color.opacity(0.2) : nil,
+                                        foregroundColor: selectedLevel != nil ? selectedLevel?.color : nil
+                                    ))
+                                    .sheet(isPresented: $showingLevelPicker) {
+                                        LevelPickerView(selectedLevel: $selectedLevel)
+                                    }
+
+                                    // Subsystem selector button
+                                    Button(action: {
+                                        showingSubsystemPicker = true
+                                    }) {
+                                        HStack(spacing: 4) {
+                                            Image(systemName: "gearshape.2")
+                                                .font(.caption2)
+                                            Text("Subsystems")
+                                            Image(systemName: "chevron.down")
+                                                .font(.caption2)
+                                        }
+                                    }
+                                    .buttonStyle(FilterButtonStyle(isSelected: !selectedSubsystems.isEmpty))
+                                    .sheet(isPresented: $showingSubsystemPicker) {
+                                        SubsystemPickerView(
+                                            selectedSubsystems: $selectedSubsystems,
+                                            availableSubsystems: availableSubsystems
+                                        )
+                                    }
+
+                                    // Selected subsystem pills
+                                    ForEach(selectedSubsystems.sorted(), id: \.self) { subsystem in
+                                        Button(action: {
+                                            selectedSubsystems.remove(subsystem)
+                                        }) {
+                                            HStack(spacing: 4) {
+                                                Text(subsystem)
+                                                Image(systemName: "xmark")
+                                                    .font(.caption2)
+                                            }
+                                        }
+                                        .buttonStyle(FilterButtonStyle(isSelected: true))
                                     }
                                 }
                                 .padding(.horizontal)
@@ -63,22 +122,13 @@ struct LogListView: View {
                                 .background(Color(.systemBackground))
 
                             // Results info
-                            if !searchText.isEmpty || selectedLevel != nil {
+                            if !searchText.isEmpty {
                                 HStack {
                                     Text("\(filteredLogs.count) result\(filteredLogs.count == 1 ? "" : "s")")
                                         .font(.caption)
                                         .foregroundColor(.secondary)
 
                                     Spacer()
-
-                                    if !searchText.isEmpty && selectedLevel != nil {
-                                        Button("Clear all filters") {
-                                            searchText = ""
-                                            selectedLevel = nil
-                                        }
-                                        .font(.caption)
-                                        .foregroundColor(.accentColor)
-                                    }
                                 }
                                 .padding(.horizontal)
                                 .padding(.vertical, 4)
@@ -148,6 +198,93 @@ struct LogListView: View {
                 self.logs = logs
             }
         }
+    }
+}
+
+@available(iOS 16.0, *)
+struct LevelPickerView: View {
+    @Binding var selectedLevel: LogLevel?
+    @Environment(\.dismiss) private var dismiss
+    
+    var body: some View {
+        NavigationStack {
+            List {
+                Section("Log Level") {
+                    Button("All Levels") {
+                        selectedLevel = nil
+                        dismiss()
+                    }
+                    .foregroundColor(selectedLevel == nil ? .accentColor : .primary)
+                    .fontWeight(selectedLevel == nil ? .semibold : .regular)
+                    
+                    ForEach(LogLevel.allCases, id: \.self) { level in
+                        Button(level.displayName) {
+                            selectedLevel = level
+                            dismiss()
+                        }
+                        .foregroundColor(selectedLevel == level ? .accentColor : .primary)
+                        .fontWeight(selectedLevel == level ? .semibold : .regular)
+                    }
+                }
+            }
+            .navigationTitle("Select Level")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button("Done") {
+                        dismiss()
+                    }
+                }
+            }
+        }
+        .presentationDetents([.medium])
+        .presentationDragIndicator(.visible)
+    }
+}
+
+@available(iOS 16.0, *)
+struct SubsystemPickerView: View {
+    @Binding var selectedSubsystems: Set<String>
+    let availableSubsystems: [String]
+    @Environment(\.dismiss) private var dismiss
+    
+    var body: some View {
+        NavigationStack {
+            List {
+                Section("Subsystems") {
+                    ForEach(availableSubsystems, id: \.self) { subsystem in
+                        Button(action: {
+                            if selectedSubsystems.contains(subsystem) {
+                                selectedSubsystems.remove(subsystem)
+                            } else {
+                                selectedSubsystems.insert(subsystem)
+                            }
+                        }) {
+                            HStack {
+                                Text(subsystem)
+                                    .foregroundColor(.primary)
+                                Spacer()
+                                if selectedSubsystems.contains(subsystem) {
+                                    Image(systemName: "checkmark")
+                                        .foregroundColor(.accentColor)
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            .navigationTitle("Select Subsystems")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button("Done") {
+                        dismiss()
+                    }
+                }
+            }
+        }
+        .presentationDetents([.medium])
+        .presentationDragIndicator(.visible)
     }
 }
 
