@@ -37,6 +37,12 @@ public class InMemoryLogEntryStoreProvider {
 public class InMemoryRecorderLogDestination: BaseLogDestination {
     private let logsStoreProvider = InMemoryLogEntryStoreProvider.shared
 
+    static var isRecording: Bool = true
+
+    override public func isEnabled(level: LogLevel, subsystems: LogSubsystem) -> Bool {
+        Self.isRecording
+    }
+
     override public func process(logDetails: LogDetails) {
         let entry = LogEntry(
             timestamp: Date(),
