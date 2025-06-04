@@ -344,32 +344,19 @@ public class ChatMessageController: DataController, DelegateCallable, DataStoreP
     ///  - completion: Called when the server updates the message.
     internal func updateLiveLocation(
         _ location: LocationInfo,
-        completion: ((Result<ChatMessage, Error>) -> Void)? = nil
+        completion: ((Result<SharedLocation, Error>) -> Void)? = nil
     ) {
-        guard let location = message?.sharedLocation else {
+        guard message?.sharedLocation?.isLive == true else {
             completion?(.failure(ClientError.MessageDoesNotHaveLiveLocationAttachment()))
             return
         }
 
-        guard location.isLiveSharingActive else {
+        guard message?.sharedLocation?.isLiveSharingActive == true else {
             completion?(.failure(ClientError.MessageLiveLocationAlreadyStopped()))
             return
         }
 
-        // Optimistic update
-        client.databaseContainer.write { session in
-            let messageDTO = try session.messageEditableByCurrentUser(self.messageId)
-            messageDTO.location?.latitude = location.latitude
-            messageDTO.location?.longitude = location.longitude
-        }
-
-        // TODO: Location Update endpoint
-        messageUpdater.updatePartialMessage(
-            messageId: messageId,
-            text: nil,
-            attachments: [],
-            extraData: nil
-        ) { result in
+        messageUpdater.updateLiveLocation(messageId: messageId, locationInfo: location) { result in
             self.callback {
                 completion?(result)
             }

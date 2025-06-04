@@ -330,6 +330,49 @@ class MessageUpdater: Worker {
     }
 
     /// Stops live location sharing for the given message.
+    func updateLiveLocation(
+        messageId: MessageId,
+        locationInfo: LocationInfo,
+        completion: @escaping ((Result<SharedLocation, Error>) -> Void)
+    ) {
+        // Optimistic update
+        database.write { session in
+            let messageDTO = try session.messageEditableByCurrentUser(messageId)
+            messageDTO.location?.latitude = locationInfo.latitude
+            messageDTO.location?.longitude = locationInfo.longitude
+        }
+
+        database.backgroundReadOnlyContext.perform { [weak self] in
+            guard let currentUser = self?.database.backgroundReadOnlyContext.currentUser,
+                  let currentDeviceId = currentUser.currentDevice?.id else {
+                completion(.failure(ClientError.CurrentUserDoesNotExist()))
+                return
+            }
+            let request = LiveLocationUpdateRequestPayload(
+                messageId: messageId,
+                latitude: locationInfo.latitude,
+                longitude: locationInfo.longitude,
+                createdByDeviceId: currentDeviceId
+            )
+
+            let endpoint = Endpoint<SharedLocationPayload>.updateLiveLocation(request: request)
+            self?.apiClient.request(endpoint: endpoint) { result in
+                switch result {
+                case let .success(payload):
+                    self?.database.write { session in
+                        let sharedLocation = try session.saveLocation(payload: payload, cache: nil)
+                        return try sharedLocation.asModel()
+                    } completion: { result in
+                        completion(result)
+                    }
+                case let .failure(error):
+                    completion(.failure(error))
+                }
+            }
+        }
+    }
+
+    /// Stops live location sharing for the given message.
     func stopLiveLocationSharing(
         messageId: MessageId,
         completion: @escaping ((Result<SharedLocation, Error>) -> Void)
