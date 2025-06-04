@@ -8,6 +8,7 @@ import SwiftUI
 @available(iOS 16.0, *)
 struct LogDetailView: View {
     let log: LogEntry
+    @State private var isCopied = false
 
     var body: some View {
         ScrollView {
@@ -68,8 +69,29 @@ struct LogDetailView: View {
 
                 // Description section
                 VStack(alignment: .leading, spacing: 8) {
-                    Text("Description")
-                        .font(.headline)
+                    HStack {
+                        Text("Description")
+                            .font(.headline)
+                        
+                        Spacer()
+                        
+                        Button(action: {
+                            UIPasteboard.general.string = log.description
+                            isCopied = true
+                            
+                            // Reset after 1.5 seconds
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
+                                isCopied = false
+                            }
+                        }) {
+                            HStack(spacing: 4) {
+                                Image(systemName: isCopied ? "checkmark" : "doc.on.doc")
+                                Text(isCopied ? "Copied!" : "Copy")
+                            }
+                            .font(.caption)
+                            .foregroundColor(isCopied ? .green : .blue)
+                        }
+                    }
 
                     SelectableTextView(text: log.description)
                         .frame(minHeight: 200)

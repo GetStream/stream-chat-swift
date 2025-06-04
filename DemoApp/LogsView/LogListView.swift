@@ -16,6 +16,7 @@ struct LogListView: View {
     @State private var searchText: String = ""
     @State private var logs: [LogEntry] = []
     @State private var isRecording: Bool = true
+    @State private var showCopyAlert = false
 
     var availableSubsystems: [String] {
         let allSubsystems = LogSubsystem.all.displayNames
@@ -54,131 +55,8 @@ struct LogListView: View {
         NavigationStack {
             ScrollView {
                 LazyVStack(alignment: .leading, spacing: 0, pinnedViews: [.sectionHeaders]) {
-                    Section(header:
-                        VStack(spacing: 0) {
-                            // Filter bar
-                            ScrollView(.horizontal, showsIndicators: false) {
-                                HStack(spacing: 8) {
-                                    // Level selector button
-                                    Button(action: {
-                                        showingLevelPicker = true
-                                    }) {
-                                        HStack(spacing: 4) {
-                                            Image(systemName: "slider.horizontal.3")
-                                                .font(.caption2)
-                                            Text(selectedLevel?.displayName ?? "All Levels")
-                                            Image(systemName: "chevron.down")
-                                                .font(.caption2)
-                                        }
-                                    }
-                                    .buttonStyle(FilterButtonStyle(
-                                        isSelected: selectedLevel != nil,
-                                        backgroundColor: selectedLevel != nil ? selectedLevel?.color.opacity(0.2) : nil,
-                                        foregroundColor: selectedLevel != nil ? selectedLevel?.color : nil
-                                    ))
-                                    .sheet(isPresented: $showingLevelPicker) {
-                                        LevelPickerView(selectedLevel: $selectedLevel)
-                                    }
-
-                                    // Subsystem selector button
-                                    Button(action: {
-                                        showingSubsystemPicker = true
-                                    }) {
-                                        HStack(spacing: 4) {
-                                            Image(systemName: "gearshape.2")
-                                                .font(.caption2)
-                                            Text("Subsystems")
-                                            Image(systemName: "chevron.down")
-                                                .font(.caption2)
-                                        }
-                                    }
-                                    .buttonStyle(FilterButtonStyle(isSelected: !selectedSubsystems.isEmpty))
-                                    .sheet(isPresented: $showingSubsystemPicker) {
-                                        SubsystemPickerView(
-                                            selectedSubsystems: $selectedSubsystems,
-                                            availableSubsystems: availableSubsystems
-                                        )
-                                    }
-
-                                    // Selected subsystem pills
-                                    ForEach(selectedSubsystems.sorted(), id: \.self) { subsystem in
-                                        Button(action: {
-                                            selectedSubsystems.remove(subsystem)
-                                        }) {
-                                            HStack(spacing: 4) {
-                                                Text(subsystem)
-                                                Image(systemName: "xmark")
-                                                    .font(.caption2)
-                                            }
-                                        }
-                                        .buttonStyle(FilterButtonStyle(isSelected: true))
-                                    }
-                                }
-                                .padding(.horizontal)
-                            }
-                            .padding(.vertical, 8)
-                            .background(Color(.systemBackground))
-
-                            Divider()
-                                .background(Color(.systemBackground))
-
-                            // Results info
-                            if !searchText.isEmpty {
-                                HStack {
-                                    Text("\(filteredLogs.count) result\(filteredLogs.count == 1 ? "" : "s")")
-                                        .font(.caption)
-                                        .foregroundColor(.secondary)
-
-                                    Spacer()
-                                }
-                                .padding(.horizontal)
-                                .padding(.vertical, 4)
-                                .background(Color(.systemBackground))
-                            }
-                        }
-                        .background(Color(.systemBackground))
-                    ) {
-                        if filteredLogs.isEmpty {
-                            VStack(spacing: 16) {
-                                Image(systemName: "doc.text.magnifyingglass")
-                                    .font(.system(size: 48))
-                                    .foregroundColor(.secondary)
-
-                                Text(searchText.isEmpty ? "No logs available" : "No matching logs found")
-                                    .font(.headline)
-                                    .foregroundColor(.secondary)
-
-                                if !searchText.isEmpty {
-                                    Text("Try adjusting your search terms or filters")
-                                        .font(.subheadline)
-                                        .foregroundColor(.secondary)
-                                        .multilineTextAlignment(.center)
-                                }
-                            }
-                            .frame(maxWidth: .infinity, minHeight: 300)
-                            .background(Color(.systemBackground))
-                        } else {
-                            ForEach(filteredLogs) { log in
-                                NavigationLink(destination: LogDetailView(log: log)) {
-                                    VStack(spacing: 0) {
-                                        LogRowView(log: log, searchText: searchText)
-                                            .padding(.horizontal)
-                                            .padding(.vertical, 8)
-                                        Divider()
-                                            .padding(.leading)
-                                            .background(Color(.systemGray5))
-                                    }
-                                }
-                                .contentShape(Rectangle())
-                                .contextMenu {
-                                    Button(role: .destructive) {
-                                        logStore.deleteLog(with: log.id)
-                                    } label: {
-                                        Label("Delete", systemImage: "trash")
-                                    }
-                                }
-                            }
-                        }
+                    Section(header: headerView) {
+                        logListContent
                     }
                 }
             }
@@ -215,6 +93,154 @@ struct LogListView: View {
             .onReceive(logStore.$logs.receive(on: DispatchQueue.main)) { logs in
                 self.logs = logs
             }
+        }
+    }
+    
+    @ViewBuilder
+    private var headerView: some View {
+        VStack(spacing: 0) {
+            // Filter bar
+            ScrollView(.horizontal, showsIndicators: false) {
+                HStack(spacing: 8) {
+                    // Level selector button
+                    Button(action: {
+                        showingLevelPicker = true
+                    }) {
+                        HStack(spacing: 4) {
+                            Image(systemName: "slider.horizontal.3")
+                                .font(.caption2)
+                            Text(selectedLevel?.displayName ?? "All Levels")
+                            Image(systemName: "chevron.down")
+                                .font(.caption2)
+                        }
+                    }
+                    .buttonStyle(FilterButtonStyle(
+                        isSelected: selectedLevel != nil,
+                        backgroundColor: selectedLevel != nil ? selectedLevel?.color.opacity(0.2) : nil,
+                        foregroundColor: selectedLevel != nil ? selectedLevel?.color : nil
+                    ))
+                    .sheet(isPresented: $showingLevelPicker) {
+                        LevelPickerView(selectedLevel: $selectedLevel)
+                    }
+
+                    // Subsystem selector button
+                    Button(action: {
+                        showingSubsystemPicker = true
+                    }) {
+                        HStack(spacing: 4) {
+                            Image(systemName: "gearshape.2")
+                                .font(.caption2)
+                            Text("Subsystems")
+                            Image(systemName: "chevron.down")
+                                .font(.caption2)
+                        }
+                    }
+                    .buttonStyle(FilterButtonStyle(isSelected: !selectedSubsystems.isEmpty))
+                    .sheet(isPresented: $showingSubsystemPicker) {
+                        SubsystemPickerView(
+                            selectedSubsystems: $selectedSubsystems,
+                            availableSubsystems: availableSubsystems
+                        )
+                    }
+
+                    // Selected subsystem pills
+                    ForEach(selectedSubsystems.sorted(), id: \.self) { subsystem in
+                        Button(action: {
+                            selectedSubsystems.remove(subsystem)
+                        }) {
+                            HStack(spacing: 4) {
+                                Text(subsystem)
+                                Image(systemName: "xmark")
+                                    .font(.caption2)
+                            }
+                        }
+                        .buttonStyle(FilterButtonStyle(isSelected: true))
+                    }
+                }
+                .padding(.horizontal)
+            }
+            .padding(.vertical, 8)
+            .background(Color(.systemBackground))
+
+            Divider()
+                .background(Color(.systemBackground))
+
+            // Results info
+            if !searchText.isEmpty {
+                HStack {
+                    Text("\(filteredLogs.count) result\(filteredLogs.count == 1 ? "" : "s")")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+
+                    Spacer()
+                }
+                .padding(.horizontal)
+                .padding(.vertical, 4)
+                .background(Color(.systemBackground))
+            }
+        }
+        .background(Color(.systemBackground))
+    }
+    
+    @ViewBuilder
+    private var logListContent: some View {
+        if filteredLogs.isEmpty {
+            VStack(spacing: 16) {
+                Image(systemName: "doc.text.magnifyingglass")
+                    .font(.system(size: 48))
+                    .foregroundColor(.secondary)
+
+                Text(searchText.isEmpty ? "No logs available" : "No matching logs found")
+                    .font(.headline)
+                    .foregroundColor(.secondary)
+
+                if !searchText.isEmpty {
+                    Text("Try adjusting your search terms or filters")
+                        .font(.subheadline)
+                        .foregroundColor(.secondary)
+                        .multilineTextAlignment(.center)
+                }
+            }
+            .frame(maxWidth: .infinity, minHeight: 300)
+            .background(Color(.systemBackground))
+        } else {
+            ForEach(filteredLogs) { log in
+                logRowView(for: log)
+            }
+        }
+    }
+    
+    @ViewBuilder
+    private func logRowView(for log: LogEntry) -> some View {
+        NavigationLink(destination: LogDetailView(log: log)) {
+            VStack(spacing: 0) {
+                LogRowView(log: log, searchText: searchText)
+                    .padding(.horizontal)
+                    .padding(.vertical, 8)
+                Divider()
+                    .padding(.leading)
+                    .background(Color(.systemGray5))
+            }
+        }
+        .contentShape(Rectangle())
+        .contextMenu {
+            Button {
+                UIPasteboard.general.string = log.description
+                showCopyAlert = true
+            } label: {
+                Label("Copy Message", systemImage: "doc.on.doc")
+            }
+            
+            Button(role: .destructive) {
+                logStore.deleteLog(with: log.id)
+            } label: {
+                Label("Delete", systemImage: "trash")
+            }
+        }
+        .alert("Copied!", isPresented: $showCopyAlert) {
+            Button("OK") {}
+        } message: {
+            Text("Log message copied to clipboard")
         }
     }
 }
