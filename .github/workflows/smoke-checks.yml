@@ -46,7 +46,7 @@ jobs:
 
   automated-code-review:
     name: Automated Code Review
-    runs-on: macos-15
+    runs-on: macos-14
     env:
       XCODE_VERSION: "15.4"
     if: ${{ github.event.inputs.record_snapshots != 'true' }}
@@ -67,7 +67,7 @@ jobs:
 
   build-old-xcode:
     name: Build LLC + UI (Xcode 15)
-    runs-on: macos-15
+    runs-on: macos-14
     if: ${{ github.event.inputs.record_snapshots != 'true' }}
     env:
       XCODE_VERSION: "15.4"
