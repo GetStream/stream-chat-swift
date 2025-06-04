@@ -141,7 +141,7 @@ struct LogListView: View {
                     }) {
                         Image(systemName: "trash")
                     }
-                    .foregroundColor(.red)
+                    .foregroundColor(.accentColor)
                 }
             }
             .onReceive(logStore.$logs.receive(on: DispatchQueue.main)) { logs in
