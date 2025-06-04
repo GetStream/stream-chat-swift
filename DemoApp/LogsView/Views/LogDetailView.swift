@@ -27,12 +27,12 @@ struct LogDetailView: View {
 
                         Spacer()
 
-                        Text(log.timestamp, style: .date)
+                        Text(Self.dateFormatter.string(from: log.timestamp))
                             .font(.subheadline)
                             .foregroundColor(.secondary)
                     }
 
-                    Text(log.timestamp, style: .time)
+                    Text(Self.timeFormatter.string(from: log.timestamp))
                         .font(.subheadline)
                         .foregroundColor(.secondary)
 
@@ -87,4 +87,17 @@ struct LogDetailView: View {
         .navigationTitle("Log Details")
         .navigationBarTitleDisplayMode(.inline)
     }
+
+    private static let dateFormatter: DateFormatter = {
+        let formatter = DateFormatter()
+        formatter.dateStyle = .medium
+        formatter.timeStyle = .none
+        return formatter
+    }()
+
+    private static let timeFormatter: DateFormatter = {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "HH:mm:ss.SSS"
+        return formatter
+    }()
 }

@@ -26,7 +26,7 @@ struct LogRowView: View {
 
                 Spacer()
 
-                Text(log.timestamp, style: .time)
+                Text(Self.timeFormatter.string(from: log.timestamp))
                     .font(.caption)
                     .foregroundColor(.secondary)
             }
@@ -60,4 +60,10 @@ struct LogRowView: View {
         }
         .padding(.vertical, 4)
     }
+
+    private static let timeFormatter: DateFormatter = {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "HH:mm:ss.SSS"
+        return formatter
+    }()
 }
