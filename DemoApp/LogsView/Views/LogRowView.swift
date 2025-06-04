@@ -47,15 +47,17 @@ struct LogRowView: View {
             }
 
             // Function name
-            HighlightedText(text: log.functionName, searchText: searchText)
+            let fileAndFunctionName = "[\(log.fileName):\(log.lineNumber)] \(log.functionName)"
+            HighlightedText(text: fileAndFunctionName, searchText: searchText)
                 .font(.caption.weight(.medium))
                 .foregroundColor(.primary)
+                .multilineTextAlignment(.leading)
 
             // Description preview
             HighlightedText(text: log.description, searchText: searchText)
                 .font(.footnote)
                 .foregroundColor(.secondary)
-                .lineLimit(2)
+                .lineLimit(3)
                 .multilineTextAlignment(.leading)
         }
         .padding(.vertical, 4)

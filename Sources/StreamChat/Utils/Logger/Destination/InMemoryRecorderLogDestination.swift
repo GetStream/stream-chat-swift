@@ -43,7 +43,7 @@ public class InMemoryRecorderLogDestination: BaseLogDestination {
             level: logDetails.level,
             subsystems: logDetails.subsystems,
             functionName: "\(logDetails.functionName)",
-            fileName: logDetails.fileName,
+            fileName: URL(fileURLWithPath: String(describing: logDetails.fileName)).lastPathComponent,
             lineNumber: logDetails.lineNumber,
             description: logDetails.message
         )
@@ -57,7 +57,7 @@ public struct LogEntry: Identifiable {
     public let level: LogLevel
     public let subsystems: LogSubsystem
     public let functionName: String
-    public let fileName: StaticString
+    public let fileName: String
     public let lineNumber: UInt
     public let description: String
 
@@ -66,7 +66,7 @@ public struct LogEntry: Identifiable {
         level: LogLevel,
         subsystems: LogSubsystem,
         functionName: String,
-        fileName: StaticString,
+        fileName: String,
         lineNumber: UInt,
         description: String
     ) {

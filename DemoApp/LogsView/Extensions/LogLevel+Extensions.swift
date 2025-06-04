@@ -22,11 +22,11 @@ extension LogLevel {
     var color: Color {
         switch self {
         case .debug:
-            return .gray
+            return .purple
         case .info:
             return .blue
         case .warning:
-            return .orange
+            return .yellow
         case .error:
             return .red
         }
