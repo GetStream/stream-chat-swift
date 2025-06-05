@@ -54,7 +54,9 @@ class DemoChatThreadVC: ChatThreadVC, CurrentChatUserControllerDelegate {
                         return
                     }
                     self.messageController.updateThread(title: title) { [weak self] result in
-                        self?.thread = try? result.get()
+                        Task { @MainActor in
+                            self?.thread = try? result.get()
+                        }
                     }
                 }
             }),
@@ -63,8 +65,10 @@ class DemoChatThreadVC: ChatThreadVC, CurrentChatUserControllerDelegate {
             }),
             .init(title: "Load newest thread info", style: .default, handler: { [unowned self] _ in
                 self.messageController.loadThread { [weak self] result in
-                    self?.thread = try? result.get()
-                    self?.present(DebugObjectViewController(object: self?.thread), animated: true)
+                    Task { @MainActor in
+                        self?.thread = try? result.get()
+                        self?.present(DebugObjectViewController(object: self?.thread), animated: true)
+                    }
                 }
             })
         ])

@@ -40,7 +40,7 @@ final class ChannelListController_Combine_Tests: iOS13TestCase {
         weak var controller: ChannelListController_Mock? = channelListController
         channelListController = nil
 
-        controller?.delegateCallback { $0.controller(controller!, didChangeState: .remoteDataFetched) }
+        controller?.delegateCallback { [controller] in $0.controller(controller!, didChangeState: .remoteDataFetched) }
 
         XCTAssertEqual(recording.output, [.localDataFetched, .remoteDataFetched])
     }
@@ -61,7 +61,7 @@ final class ChannelListController_Combine_Tests: iOS13TestCase {
 
         let newChannel: ChatChannel = .mock(cid: .unique, name: .unique, imageURL: .unique(), extraData: [:])
         controller?.channels_simulated = [newChannel]
-        controller?.delegateCallback {
+        controller?.delegateCallback { [controller] in
             $0.controller(controller!, didChangeChannels: [.insert(newChannel, index: [0, 1])])
         }
 

@@ -4,12 +4,12 @@
 
 import CoreData
 
-struct ThreadListResponse {
+struct ThreadListResponse: Sendable {
     var threads: [ChatThread]
     var next: String?
 }
 
-class ThreadsRepository {
+class ThreadsRepository: @unchecked Sendable {
     let database: DatabaseContainer
     let apiClient: APIClient
 
@@ -20,34 +20,26 @@ class ThreadsRepository {
 
     func loadThreads(
         query: ThreadListQuery,
-        completion: @escaping (Result<ThreadListResponse, Error>) -> Void
+        completion: @escaping @Sendable(Result<ThreadListResponse, Error>) -> Void
     ) {
         apiClient.request(endpoint: .threads(query: query)) { [weak self] result in
             switch result {
             case .success(let threadListPayload):
-                var threads: [ChatThread] = []
-                self?.database.write({ session in
+                self?.database.write(converting: { session in
                     if query.next == nil {
                         /// For now, there is no `ThreadListQuery.filter` support.
                         /// So we only have 1  thread list, which is all threads.
                         /// So when fetching the first page, we need to cleanup all threads.
                         try session.deleteAllThreads()
                     }
-                    threads = try session.saveThreadList(payload: threadListPayload).map {
+                    let threads = try session.saveThreadList(payload: threadListPayload).map {
                         try $0.asModel()
                     }
-                }, completion: { error in
-                    if let error = error {
-                        completion(.failure(error))
-                    } else {
-                        completion(.success(
-                            ThreadListResponse(
-                                threads: threads,
-                                next: threadListPayload.next
-                            )
-                        ))
-                    }
-                })
+                    return ThreadListResponse(
+                        threads: threads,
+                        next: threadListPayload.next
+                    )
+                }, completion: completion)
             case .failure(let error):
                 completion(.failure(error))
             }

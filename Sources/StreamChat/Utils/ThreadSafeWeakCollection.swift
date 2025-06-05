@@ -4,9 +4,9 @@
 
 import Foundation
 
-final class ThreadSafeWeakCollection<T: AnyObject> {
+final class ThreadSafeWeakCollection<T: AnyObject & Sendable>: Sendable {
     private let queue = DispatchQueue(label: "io.stream.com.weak-collection", attributes: .concurrent)
-    private let storage = NSHashTable<T>.weakObjects()
+    nonisolated(unsafe) private let storage = NSHashTable<T>.weakObjects()
 
     var allObjects: [T] {
         var objects: [T]!

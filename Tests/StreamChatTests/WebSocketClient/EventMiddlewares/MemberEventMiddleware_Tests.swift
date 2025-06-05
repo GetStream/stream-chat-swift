@@ -85,7 +85,7 @@ final class MemberEventMiddleware_Tests: XCTestCase {
         let channelListObserver = TestChannelListObserver(database: database)
 
         // Simulate `MemberAddedEvent` event.
-        var forwardedEvent: Event?
+        nonisolated(unsafe) var forwardedEvent: Event?
         try database.writeSynchronously { session in
             forwardedEvent = self.middleware.handle(event: event, session: session)
         }
@@ -416,7 +416,7 @@ final class MemberEventMiddleware_Tests: XCTestCase {
         let event = try MemberUpdatedEventDTO(from: eventPayload)
 
         // Simulate `MemberUpdatedEvent` event.
-        var forwardedEvent: Event?
+        nonisolated(unsafe) var forwardedEvent: Event?
         try database.writeSynchronously { session in
             forwardedEvent = self.middleware.handle(event: event, session: session)
         }
@@ -472,7 +472,7 @@ final class MemberEventMiddleware_Tests: XCTestCase {
         let channelListObserver = TestChannelListObserver(database: database)
 
         // Simulate `NotificationAddedToChannelEvent` event.
-        var forwardedEvent: Event?
+        nonisolated(unsafe) var forwardedEvent: Event?
         try database.writeSynchronously { session in
             forwardedEvent = self.middleware.handle(event: event, session: session)
         }
@@ -616,7 +616,7 @@ final class MemberEventMiddleware_Tests: XCTestCase {
         let channelListObserver = TestChannelListObserver(database: database)
 
         // Simulate `NotificationAddedToChannelEvent` event.
-        var forwardedEvent: Event?
+        nonisolated(unsafe) var forwardedEvent: Event?
         try database.writeSynchronously { session in
             forwardedEvent = self.middleware.handle(event: event, session: session)
         }
@@ -712,7 +712,7 @@ final class MemberEventMiddleware_Tests: XCTestCase {
         let channelListObserver = TestChannelListObserver(database: database)
 
         // Simulate `NotificationAddedToChannelEvent` event.
-        var forwardedEvent: Event?
+        nonisolated(unsafe) var forwardedEvent: Event?
         try database.writeSynchronously { session in
             forwardedEvent = self.middleware.handle(event: event, session: session)
         }
@@ -765,7 +765,7 @@ final class MemberEventMiddleware_Tests: XCTestCase {
         let channelListObserver = TestChannelListObserver(database: database)
 
         // Simulate `NotificationAddedToChannelEvent` event.
-        var forwardedEvent: Event?
+        nonisolated(unsafe) var forwardedEvent: Event?
         try database.writeSynchronously { session in
             forwardedEvent = self.middleware.handle(event: event, session: session)
         }

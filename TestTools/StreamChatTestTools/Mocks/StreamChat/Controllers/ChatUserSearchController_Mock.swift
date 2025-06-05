@@ -5,15 +5,15 @@
 import Foundation
 @testable import StreamChat
 
-class ChatUserSearchController_Mock: ChatUserSearchController {
+class ChatUserSearchController_Mock: ChatUserSearchController, @unchecked Sendable {
 
-    var searchCallCount = 0
+    @Atomic var searchCallCount = 0
 
     static func mock(client: ChatClient? = nil) -> ChatUserSearchController_Mock {
         .init(client: client ?? .mock())
     }
 
-    var users_mock: [ChatUser]?
+    @Atomic var users_mock: [ChatUser]?
     override var userArray: [ChatUser] {
         users_mock ?? super.userArray
     }

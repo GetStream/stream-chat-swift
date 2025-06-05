@@ -69,7 +69,7 @@ extension ChannelId: Codable {
 }
 
 extension ClientError {
-    public final class InvalidChannelId: ClientError {}
+    public final class InvalidChannelId: ClientError, @unchecked Sendable {}
 }
 
 extension ChannelId: APIPathConvertible {

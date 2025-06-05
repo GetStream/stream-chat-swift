@@ -45,7 +45,7 @@ final class ChannelMemberListUpdater_Tests: XCTestCase {
         try database.createChannel(cid: query.cid)
 
         // Simulate `load` call.
-        var completionCalled = false
+        nonisolated(unsafe) var completionCalled = false
         listUpdater.load(query) { result in
             XCTAssertNil(result.error)
             completionCalled = true
@@ -80,7 +80,7 @@ final class ChannelMemberListUpdater_Tests: XCTestCase {
 
     func test_load_happyPath_whenChannelDoesNotExistsLocally() {
         // Simulate `load` call.
-        var completionCalled = false
+        nonisolated(unsafe) var completionCalled = false
         listUpdater.load(query) { result in
             XCTAssertNil(result.error)
             completionCalled = true
@@ -135,7 +135,7 @@ final class ChannelMemberListUpdater_Tests: XCTestCase {
 
     func test_load_propagatesChannelNetworkError() {
         // Simulate `load` call and catch the error.
-        var completionCalledError: Error?
+        nonisolated(unsafe) var completionCalledError: Error?
         listUpdater.load(query) {
             completionCalledError = $0.error
         }
@@ -158,7 +158,7 @@ final class ChannelMemberListUpdater_Tests: XCTestCase {
         database.write_errorResponse = databaseError
 
         // Simulate `load` call and catch the error.
-        var completionCalledError: Error?
+        nonisolated(unsafe) var completionCalledError: Error?
         listUpdater.load(query) {
             completionCalledError = $0.error
         }
@@ -179,7 +179,7 @@ final class ChannelMemberListUpdater_Tests: XCTestCase {
         try database.createChannel(cid: query.cid)
 
         // Simulate `load` call and catch the error.
-        var completionCalledError: Error?
+        nonisolated(unsafe) var completionCalledError: Error?
         listUpdater.load(query) {
             completionCalledError = $0.error
         }
@@ -201,7 +201,7 @@ final class ChannelMemberListUpdater_Tests: XCTestCase {
         try database.createChannel(cid: query.cid)
 
         // Simulate `load` call and catch the error.
-        var completionCalledError: Error?
+        nonisolated(unsafe) var completionCalledError: Error?
         listUpdater.load(query) {
             completionCalledError = $0.error
         }

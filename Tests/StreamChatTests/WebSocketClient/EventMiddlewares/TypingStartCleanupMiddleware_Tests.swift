@@ -19,7 +19,7 @@ final class TypingStartCleanupMiddleware_Tests: XCTestCase {
         currentUser = .mock(id: "Luke")
 
         time = VirtualTime()
-        VirtualTimeTimer.time = time
+        VirtualTimeTimer.time.value = time
 
         database = DatabaseContainer_Spy()
         try database.writeSynchronously { session in

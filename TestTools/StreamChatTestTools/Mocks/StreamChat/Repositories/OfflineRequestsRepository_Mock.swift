@@ -5,7 +5,7 @@
 import Foundation
 @testable import StreamChat
 
-final class OfflineRequestsRepository_Mock: OfflineRequestsRepository, Spy {
+final class OfflineRequestsRepository_Mock: OfflineRequestsRepository, Spy, @unchecked Sendable {
     let spyState = SpyState()
 
     convenience init() {

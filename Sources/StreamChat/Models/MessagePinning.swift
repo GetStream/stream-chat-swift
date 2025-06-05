@@ -5,7 +5,7 @@
 import Foundation
 
 /// Describes the pinning expiration
-public struct MessagePinning: Equatable {
+public struct MessagePinning: Equatable, Sendable {
     /// The expiration date of the pinning. Infinite expiration in case it is `nil`.
     public let expirationDate: Date?
 
