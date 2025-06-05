@@ -866,6 +866,7 @@ extension NSManagedObjectContext: MessageDatabaseSession {
         if dto.localMessageState == .pendingSend || dto.localMessageState == .pendingSync {
             return dto
         }
+
         // Local text edit before receiving the WS event
         if let localDate = dto.textUpdatedAt?.bridgeDate,
            let payloadDate = payload.messageTextUpdatedAt,
