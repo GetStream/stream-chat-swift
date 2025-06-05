@@ -14,7 +14,7 @@ struct LogDetailView: View {
         ScrollView {
             VStack(alignment: .leading, spacing: 16) {
                 // Header card
-                VStack(alignment: .leading, spacing: 12) {
+                VStack(alignment: .leading, spacing: 16) {
                     HStack {
                         HStack(spacing: 6) {
                             Image(systemName: log.level.icon)
@@ -28,25 +28,29 @@ struct LogDetailView: View {
 
                         Spacer()
 
-                        Text(Self.dateFormatter.string(from: log.timestamp))
-                            .font(.subheadline)
-                            .foregroundColor(.secondary)
+                        VStack(alignment: .trailing, spacing: 2) {
+                            Text(Self.dateFormatter.string(from: log.timestamp))
+                                .font(.subheadline)
+                                .foregroundColor(.secondary)
+                            
+                            Text(Self.timeFormatter.string(from: log.timestamp))
+                                .font(.caption)
+                                .foregroundColor(.secondary)
+                        }
                     }
-
-                    Text(Self.timeFormatter.string(from: log.timestamp))
-                        .font(.subheadline)
-                        .foregroundColor(.secondary)
 
                     Divider()
 
-                    VStack(alignment: .leading, spacing: 8) {
+                    // Information grid
+                    VStack(alignment: .leading, spacing: 12) {
                         if !log.subsystems.displayNames.isEmpty {
                             VStack(alignment: .leading, spacing: 4) {
-                                Text("Subsystems:")
-                                    .font(.subheadline.weight(.medium))
+                                Text("Subsystems")
+                                    .font(.caption.weight(.medium))
                                     .foregroundColor(.secondary)
+                                    .textCase(.uppercase)
 
-                                FlowLayout(spacing: 6) {
+                                HStack(spacing: 6) {
                                     ForEach(log.subsystems.displayNames, id: \.self) { subsystem in
                                         Text(subsystem)
                                             .font(.caption)
@@ -56,11 +60,32 @@ struct LogDetailView: View {
                                             .foregroundColor(.blue)
                                             .cornerRadius(6)
                                     }
+                                    Spacer()
                                 }
                             }
                         }
 
-                        DetailRow(title: "Function", value: log.functionName)
+                        VStack(alignment: .leading, spacing: 4) {
+                            Text("File")
+                                .font(.caption.weight(.medium))
+                                .foregroundColor(.secondary)
+                                .textCase(.uppercase)
+
+                            Text("\(log.fileName):\(log.lineNumber)")
+                                .font(.subheadline)
+                                .foregroundColor(.primary)
+                        }
+
+                        VStack(alignment: .leading, spacing: 4) {
+                            Text("Function")
+                                .font(.caption.weight(.medium))
+                                .foregroundColor(.secondary)
+                                .textCase(.uppercase)
+                            
+                            Text(log.functionName)
+                                .font(.subheadline)
+                                .foregroundColor(.primary)
+                        }
                     }
                 }
                 .padding()
@@ -70,7 +95,7 @@ struct LogDetailView: View {
                 // Description section
                 VStack(alignment: .leading, spacing: 8) {
                     HStack {
-                        Text("Description")
+                        Text("Log Message")
                             .font(.headline)
                         
                         Spacer()
