@@ -12,9 +12,17 @@ struct LogDetailView: View {
     @State private var isCurlCopied = false
     @State private var isJsonCopied = false
     
-    // Check if this is an HTTP response log
+    // Check if this log contains extractable data
     private var isHttpResponse: Bool {
         log.description.contains("URL request response:") && log.description.contains("Status Code:")
+    }
+    
+    private var isWebSocketEvent: Bool {
+        log.description.contains("Event received:")
+    }
+    
+    private var hasJsonData: Bool {
+        isHttpResponse || isWebSocketEvent
     }
 
     var body: some View {
@@ -146,8 +154,10 @@ struct LogDetailView: View {
                                     .font(.caption)
                                     .foregroundColor(isCurlCopied ? .green : .orange)
                                 }
-                                
-                                // JSON button (only for HTTP responses)
+                            }
+                            
+                            // JSON button (for both HTTP responses and WebSocket events)
+                            if hasJsonData {
                                 Button(action: {
                                     if let jsonData = extractJsonData(from: log.description) {
                                         UIPasteboard.general.string = jsonData
@@ -297,23 +307,31 @@ struct LogDetailView: View {
     }
     
     private func extractJsonData(from logText: String) -> String? {
-        // Look for JSON data after "data:" or "}, data:"
-        guard let dataIndex = logText.range(of: "}, data:")?.upperBound ?? logText.range(of: "data:")?.upperBound else {
+        var dataText: String?
+        
+        // Handle WebSocket events
+        if let eventIndex = logText.range(of: "Event received:")?.upperBound {
+            dataText = String(logText[eventIndex...]).trimmingCharacters(in: .whitespacesAndNewlines)
+        }
+        // Handle HTTP responses
+        else if let httpDataIndex = logText.range(of: "}, data:")?.upperBound ?? logText.range(of: "data:")?.upperBound {
+            dataText = String(logText[httpDataIndex...])
+        }
+        
+        guard let text = dataText else {
             return nil
         }
         
-        let dataText = String(logText[dataIndex...])
-        
         // Find the JSON object - look for the first { and match braces
-        guard let startIndex = dataText.firstIndex(of: "{") else {
+        guard let startIndex = text.firstIndex(of: "{") else {
             return nil
         }
         
         var braceCount = 0
         var endIndex = startIndex
         
-        for index in dataText[startIndex...].indices {
-            let char = dataText[index]
+        for index in text[startIndex...].indices {
+            let char = text[index]
             if char == "{" {
                 braceCount += 1
             } else if char == "}" {
@@ -325,7 +343,7 @@ struct LogDetailView: View {
             }
         }
         
-        let jsonText = String(dataText[startIndex...endIndex])
+        let jsonText = String(text[startIndex...endIndex])
         
         // Pretty format the JSON
         if let data = jsonText.data(using: .utf8),
