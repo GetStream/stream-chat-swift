@@ -2573,15 +2573,259 @@ final class MessageController_Tests: XCTestCase {
 
         return replies
     }
-    
-    // MARK: -
-    
+
     func waitForRepliesChange(count: Int) throws {
         let delegate = try XCTUnwrap(controller.delegate as? TestDelegate)
         let expectation = XCTestExpectation(description: "RepliesChange")
         delegate.didChangeRepliesExpectation = expectation
         delegate.didChangeRepliesExpectedCount = count
         wait(for: [expectation], timeout: defaultTimeout)
+    }
+
+    // MARK: - Update Message
+
+    func test_partialUpdateMessage_callsMessageUpdater_withCorrectValues() {
+        // Given
+        let text: String = .unique
+        let attachments = [AnyAttachmentPayload.mockFile]
+        let extraData: [String: RawJSON] = ["key": .string("value")]
+
+        // When
+        controller.partialUpdateMessage(text: text, attachments: attachments, extraData: extraData)
+
+        // Then
+        XCTAssertEqual(env.messageUpdater.updatePartialMessage_messageId, messageId)
+        XCTAssertEqual(env.messageUpdater.updatePartialMessage_text, text)
+        XCTAssertEqual(env.messageUpdater.updatePartialMessage_attachments, attachments)
+        XCTAssertEqual(env.messageUpdater.updatePartialMessage_extraData, extraData)
+    }
+
+    func test_partialUpdateMessage_propagatesError() {
+        // Given
+        let error = TestError()
+        var completionError: Error?
+        
+        // When
+        let exp = expectation(description: "Completion is called")
+        controller.partialUpdateMessage(text: .unique) { [callbackQueueID] result in
+            AssertTestQueue(withId: callbackQueueID)
+            if case let .failure(error) = result {
+                completionError = error
+            }
+            exp.fulfill()
+        }
+        
+        env.messageUpdater.updatePartialMessage_completion?(.failure(error))
+
+        wait(for: [exp], timeout: defaultTimeout)
+
+        // Then
+        XCTAssertEqual(completionError as? TestError, error)
+    }
+
+    func test_partialUpdateMessage_propagatesSuccess() {
+        // Given
+        var completionMessage: ChatMessage?
+        
+        // When
+        let exp = expectation(description: "Completion is called")
+        controller.partialUpdateMessage(text: .unique) { [callbackQueueID] result in
+            AssertTestQueue(withId: callbackQueueID)
+            if case let .success(message) = result {
+                completionMessage = message
+            }
+            exp.fulfill()
+        }
+        
+        env.messageUpdater.updatePartialMessage_completion?(.success(.unique))
+
+        wait(for: [exp], timeout: defaultTimeout)
+
+        // Then
+        XCTAssertNotNil(completionMessage)
+    }
+
+    // MARK: - Live Location
+
+    func test_updateLiveLocation_callsMessageUpdater_withCorrectValues() {
+        // Given
+        let latitude = 51.5074
+        let longitude = -0.1278
+        let sharedLocation = SharedLocation(
+            messageId: messageId,
+            channelId: .unique,
+            latitude: latitude,
+            longitude: longitude,
+            endAt: .distantFuture,
+            createdByDeviceId: .unique
+        )
+
+        // Save message with live location
+        _ = controller.message
+        env.messageObserver.item_mock = .mock(
+            id: messageId,
+            sharedLocation: sharedLocation
+        )
+
+        // When
+        let location = LocationInfo(latitude: latitude, longitude: longitude)
+        controller.updateLiveLocation(location)
+
+        // Simulate
+        env.messageUpdater.updateLiveLocation_completion?(.success(sharedLocation))
+
+        // Then
+        XCTAssertEqual(env.messageUpdater.updateLiveLocation_messageId, messageId)
+        XCTAssertEqual(env.messageUpdater.updateLiveLocation_locationInfo?.latitude, latitude)
+        XCTAssertEqual(env.messageUpdater.updateLiveLocation_locationInfo?.longitude, longitude)
+    }
+
+    func test_updateLiveLocation_whenLiveLocationHasAlreadyStopped_completesWithError() {
+        // Given
+        let latitude = 51.5074
+        let longitude = -0.1278
+        let sharedLocation = SharedLocation(
+            messageId: messageId,
+            channelId: .unique,
+            latitude: latitude,
+            longitude: longitude,
+            endAt: .distantPast,
+            createdByDeviceId: .unique
+        )
+
+        // Save message with live location
+        _ = controller.message
+        env.messageObserver.item_mock = .mock(
+            id: messageId,
+            sharedLocation: sharedLocation
+        )
+
+        // When
+        let location = LocationInfo(latitude: latitude, longitude: longitude)
+        var receivedError: Error?
+        controller.updateLiveLocation(location) { result in
+            if case let .failure(error) = result {
+                receivedError = error
+            }
+        }
+
+        // Assert error is returned
+        XCTAssertTrue(receivedError is ClientError.MessageLiveLocationAlreadyStopped)
+    }
+
+    func test_updateLiveLocation_whenNoLiveLocationAttachment_completesWithError() {
+        // Create a mock message without live location attachment
+        _ = controller.message
+        env.messageObserver.item_mock = .mock(
+            id: messageId,
+            sharedLocation: nil
+        )
+
+        // Create the location info to update
+        let location = LocationInfo(latitude: 1, longitude: 1)
+
+        // Update live location
+        var receivedError: Error?
+        controller.updateLiveLocation(location) { result in
+            if case let .failure(error) = result {
+                receivedError = error
+            }
+        }
+
+        // Assert error is returned
+        XCTAssertTrue(receivedError is ClientError.MessageDoesNotHaveLiveLocationAttachment)
+    }
+
+    // MARK: - Stop Live Location Tests
+
+    func test_stopLiveLocationSharing_callsMessageUpdater_withCorrectValues() {
+        // Save message with live location
+        let latitude = 51.5074
+        let longitude = -0.1278
+        let sharedLocation = SharedLocation(
+            messageId: messageId,
+            channelId: .unique,
+            latitude: latitude,
+            longitude: longitude,
+            endAt: .distantFuture,
+            createdByDeviceId: .unique
+        )
+        _ = controller.message
+        env.messageObserver.item_mock = .mock(
+            id: messageId,
+            sharedLocation: sharedLocation
+        )
+
+        // When
+        controller.stopLiveLocationSharing()
+
+        // Simulate
+        env.messageUpdater.stopLiveLocationSharing_completion?(.success(sharedLocation))
+
+        // Then
+        XCTAssertEqual(env.messageUpdater.stopLiveLocationSharing_messageId, messageId)
+    }
+
+    func test_stopLiveLocationSharing_whenNoLiveLocationAttachment_completesWithError() {
+        // Given
+        // Create a mock message without live location attachment
+        _ = controller.message
+        env.messageObserver.item_mock = .mock(
+            id: messageId,
+            sharedLocation: nil
+        )
+
+        // When
+        let exp = expectation(description: "stopLiveLocationSharing")
+        var receivedError: Error?
+        controller.stopLiveLocationSharing { result in
+            if case let .failure(error) = result {
+                receivedError = error
+            }
+            exp.fulfill()
+        }
+
+        wait(for: [exp], timeout: defaultTimeout)
+
+        // Then
+        XCTAssertTrue(receivedError is ClientError.MessageDoesNotHaveLiveLocationAttachment)
+    }
+
+    func test_stopLiveLocationSharing_whenLiveLocationAlreadyStopped_completesWithError() {
+        // Given
+        let latitude = 51.5074
+        let longitude = -0.1278
+        let sharedLocation = SharedLocation(
+            messageId: messageId,
+            channelId: .unique,
+            latitude: latitude,
+            longitude: longitude,
+            endAt: .distantPast,
+            createdByDeviceId: .unique
+        )
+
+        // Save message with live location
+        _ = controller.message
+        env.messageObserver.item_mock = .mock(
+            id: messageId,
+            sharedLocation: sharedLocation
+        )
+
+        // When
+        let exp = expectation(description: "stopLiveLocationSharing")
+        let location = LocationInfo(latitude: latitude, longitude: longitude)
+        var receivedError: Error?
+        controller.stopLiveLocationSharing { result in
+            if case let .failure(error) = result {
+                receivedError = error
+            }
+            exp.fulfill()
+        }
+
+        wait(for: [exp], timeout: defaultTimeout)
+
+        // Then
+        XCTAssertTrue(receivedError is ClientError.MessageLiveLocationAlreadyStopped)
     }
 }
 

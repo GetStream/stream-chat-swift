@@ -393,6 +393,8 @@ final class ChatMessage_Tests: XCTestCase {
         XCTAssertEqual(actualIds, expectedIds)
     }
 
+    // MARK: - replacing
+
     func test_replacing() {
         let originalMessage = ChatMessage.mock(
             id: .unique,

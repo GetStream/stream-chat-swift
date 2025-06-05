@@ -43,6 +43,7 @@ final class ChannelController_Tests: XCTestCase {
         client?.cleanUp()
         env?.channelUpdater?.cleanUp()
         env?.memberUpdater?.cleanUp()
+        env?.messageUpdater?.cleanUp()
         env?.eventSender?.cleanUp()
         env = nil
 
@@ -954,6 +955,7 @@ final class ChannelController_Tests: XCTestCase {
                 skipPush: false,
                 skipEnrichUrl: false,
                 poll: nil,
+                location: nil,
                 restrictedVisibility: [],
                 extraData: [:]
             )
@@ -5723,6 +5725,128 @@ final class ChannelController_Tests: XCTestCase {
         XCTAssertEqual(channelId, controller.cid)
         XCTAssertEqual(0, controller.messages.count)
     }
+
+    // MARK: - Location Tests
+
+    func test_sendStaticLocation_callsChannelUpdater() throws {
+        // Given
+        let location = LocationInfo(latitude: 123.45, longitude: 67.89)
+        let messageId = MessageId.unique
+        let text = "Custom message"
+        let extraData: [String: RawJSON] = ["key": .string("value")]
+        let quotedMessageId = MessageId.unique
+        
+        try client.databaseContainer.createChannel(cid: channelId)
+        
+        // When
+        let exp = expectation(description: "sendStaticLocation")
+        controller.sendStaticLocation(
+            location,
+            text: text,
+            messageId: messageId,
+            quotedMessageId: quotedMessageId,
+            extraData: extraData
+        ) { _ in
+            exp.fulfill()
+        }
+
+        env.channelUpdater?.createNewMessage_completion?(.success(.mock()))
+
+        wait(for: [exp], timeout: defaultTimeout)
+
+        // Then
+        XCTAssertEqual(env.channelUpdater?.createNewMessage_cid, channelId)
+        XCTAssertEqual(env.channelUpdater?.createNewMessage_text, text)
+        XCTAssertEqual(env.channelUpdater?.createNewMessage_isSilent, false)
+        XCTAssertEqual(env.channelUpdater?.createNewMessage_quotedMessageId, quotedMessageId)
+        XCTAssertEqual(env.channelUpdater?.createNewMessage_extraData, extraData)
+
+        let messageLocation = env.channelUpdater?.createNewMessage_location
+        XCTAssertEqual(messageLocation?.latitude, location.latitude)
+        XCTAssertEqual(messageLocation?.longitude, location.longitude)
+    }
+
+    func test_startLiveLocationSharing_whenActiveLiveLocationExists_fails() throws {
+        // Given
+        let location = LocationInfo(latitude: 123.45, longitude: 67.89)
+        let existingMessageId = MessageId.unique
+        try client.databaseContainer.createChannel(cid: channelId)
+        let userId: UserId = .unique
+        try client.databaseContainer.createCurrentUser(id: userId)
+
+        // Simulate existing live location message
+        try client.databaseContainer.writeSynchronously {
+            try $0.saveMessage(
+                payload: .dummy(
+                    messageId: existingMessageId,
+                    authorUserId: userId,
+                    sharedLocation: .init(
+                        channelId: self.channelId.rawValue,
+                        messageId: existingMessageId,
+                        latitude: location.latitude,
+                        longitude: location.longitude,
+                        endAt: .distantFuture,
+                        createdByDeviceId: .unique
+                    )
+                ),
+                for: self.channelId,
+                syncOwnReactions: false,
+                cache: nil
+            )
+        }
+
+        // When
+        var receivedError: Error?
+        let exp = expectation(description: "startLiveLocationSharing")
+        controller.startLiveLocationSharing(location, endDate: .distantFuture) { result in
+            if case .failure(let error) = result {
+                receivedError = error
+            }
+            exp.fulfill()
+        }
+
+        env.channelUpdater?.createNewMessage_completion?(.success(.mock()))
+
+        wait(for: [exp], timeout: defaultTimeout)
+
+        // Then
+        XCTAssertTrue(receivedError is ClientError.ActiveLiveLocationAlreadyExists)
+    }
+
+    func test_startLiveLocationSharing_whenNoActiveLiveLocation_callsChannelUpdater() throws {
+        // Given
+        let location = LocationInfo(latitude: 123.45, longitude: 67.89)
+        let text = "Custom message"
+        let extraData: [String: RawJSON] = ["key": .string("value")]
+        try client.databaseContainer.createChannel(cid: channelId)
+        let userId: UserId = .unique
+        try client.databaseContainer.createCurrentUser(id: userId)
+
+        // When
+        let exp = expectation(description: "startLiveLocationSharing")
+        controller.startLiveLocationSharing(
+            location,
+            endDate: .distantFuture,
+            text: text,
+            extraData: extraData
+        ) { _ in
+            exp.fulfill()
+        }
+
+        env.channelUpdater?.createNewMessage_completion_result = .success(.mock())
+        env.channelUpdater?.createNewMessage_completion?(.success(.mock()))
+
+        wait(for: [exp], timeout: defaultTimeout)
+
+        // Then
+        XCTAssertEqual(env.channelUpdater?.createNewMessage_cid, channelId)
+        XCTAssertEqual(env.channelUpdater?.createNewMessage_text, text)
+        XCTAssertEqual(env.channelUpdater?.createNewMessage_extraData, extraData)
+        
+        let messageLocation = env.channelUpdater?.createNewMessage_location
+        XCTAssertEqual(messageLocation?.latitude, location.latitude)
+        XCTAssertEqual(messageLocation?.longitude, location.longitude)
+    }
 }
 
 // MARK: Test Helpers
@@ -5964,6 +6088,7 @@ private class ControllerUpdateWaiter: ChatChannelControllerDelegate {
 private class TestEnvironment {
     var channelUpdater: ChannelUpdater_Mock?
     var memberUpdater: ChannelMemberUpdater_Mock?
+    var messageUpdater: MessageUpdater_Mock?
     var eventSender: TypingEventsSender_Mock?
 
     lazy var environment: ChatChannelController.Environment = .init(
@@ -5980,6 +6105,15 @@ private class TestEnvironment {
         memberUpdaterBuilder: { [unowned self] in
             self.memberUpdater = ChannelMemberUpdater_Mock(database: $0, apiClient: $1)
             return self.memberUpdater!
+        },
+        messageUpdaterBuilder: { [unowned self] in
+            self.messageUpdater = MessageUpdater_Mock(
+                isLocalStorageEnabled: $0,
+                messageRepository: $1,
+                database: $2,
+                apiClient: $3
+            )
+            return self.messageUpdater!
         },
         eventSenderBuilder: { [unowned self] in
             self.eventSender = TypingEventsSender_Mock(database: $0, apiClient: $1)

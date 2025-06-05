@@ -2,6 +2,7 @@
 // Copyright © 2025 Stream.io Inc. All rights reserved.
 //
 
+import Combine
 import CoreData
 import Foundation
 
@@ -183,8 +184,14 @@ public class ChatMessageController: DataController, DelegateCallable, DataStoreP
 
     /// The worker used to fetch the remote data and communicate with servers.
     private let messageUpdater: MessageUpdater
+
+    /// The polls repository to fetch polls data.
     private let pollsRepository: PollsRepository
+
+    /// The replies pagination handler.
     private let replyPaginationHandler: MessagesPaginationStateHandling
+
+    /// The current state of the pagination state.
     private var replyPaginationState: MessagesPaginationState { replyPaginationHandler.state }
 
     /// The drafts repository.
@@ -196,7 +203,13 @@ public class ChatMessageController: DataController, DelegateCallable, DataStoreP
     ///   - cid: The channel identifier the message belongs to.
     ///   - messageId: The message identifier.
     ///   - environment: The source of internal dependencies.
-    init(client: ChatClient, cid: ChannelId, messageId: MessageId, replyPaginationHandler: MessagesPaginationStateHandling, environment: Environment = .init()) {
+    init(
+        client: ChatClient,
+        cid: ChannelId,
+        messageId: MessageId,
+        replyPaginationHandler: MessagesPaginationStateHandling,
+        environment: Environment = .init()
+    ) {
         self.client = client
         self.cid = cid
         self.messageId = messageId
@@ -247,7 +260,8 @@ public class ChatMessageController: DataController, DelegateCallable, DataStoreP
 
     // MARK: - Actions
 
-    /// Edits the message this controller manages with the provided values.
+    /// Edits the message locally, changes the message state to pending and
+    /// schedules it to eventually be published to the server.
     ///
     /// - Parameters:
     ///   - text: The updated message text.
@@ -255,8 +269,7 @@ public class ChatMessageController: DataController, DelegateCallable, DataStoreP
     ///   - attachments: An array of the attachments for the message.
     ///   - restrictedVisibility: The list of user ids that can see the message.
     ///   - extraData: Custom extra data. When `nil` is passed the message custom fields stay the same. Equals `nil` by default.
-    ///   - completion: The completion. Will be called on a **callbackQueue** when the network request is finished.
-    ///                 If request fails, the completion will be called with an error.
+    ///   - completion: Called when the message is edited locally.
     public func editMessage(
         text: String,
         skipEnrichUrl: Bool = false,
@@ -284,6 +297,68 @@ public class ChatMessageController: DataController, DelegateCallable, DataStoreP
         ) { result in
             self.callback {
                 completion?(result.error)
+            }
+        }
+    }
+
+    /// Updates the message partially and submits the changes directly to the server.
+    ///
+    /// **Note:** The `message.localState` is not changed in this method call.
+    ///
+    /// - Parameters:
+    ///   - text: The text in case the message
+    ///   - attachments: The attachments to be updated.
+    ///   - extraData: The additional data to be updated.
+    ///   - unsetProperties: Properties from the message to be cleared/unset.
+    ///   - completion: Called when the server updates the message.
+    public func partialUpdateMessage(
+        text: String? = nil,
+        attachments: [AnyAttachmentPayload]? = nil,
+        extraData: [String: RawJSON]? = nil,
+        unsetProperties: [String]? = nil,
+        completion: ((Result<ChatMessage, Error>) -> Void)? = nil
+    ) {
+        messageUpdater.updatePartialMessage(
+            messageId: messageId,
+            text: text,
+            attachments: attachments,
+            extraData: extraData,
+            unset: unsetProperties
+        ) { result in
+            self.callback {
+                completion?(result)
+            }
+        }
+    }
+
+    /// Updates the message's live location attachment if it has one.
+    ///
+    /// This method is for internal use only.
+    ///
+    /// In order to update live location attachments, the `CurrentUserController.updateLiveLocation()` method should be used
+    /// since it will automatically update all attachments with active location sharing of the current user. It also makes
+    /// sure that the requests are throttled while this one is not.
+    ///
+    /// - Parameters:
+    ///  - location: The new location for the live location attachment.
+    ///  - completion: Called when the server updates the message.
+    internal func updateLiveLocation(
+        _ location: LocationInfo,
+        completion: ((Result<SharedLocation, Error>) -> Void)? = nil
+    ) {
+        guard message?.sharedLocation?.isLive == true else {
+            completion?(.failure(ClientError.MessageDoesNotHaveLiveLocationAttachment()))
+            return
+        }
+
+        guard message?.sharedLocation?.isLiveSharingActive == true else {
+            completion?(.failure(ClientError.MessageLiveLocationAlreadyStopped()))
+            return
+        }
+
+        messageUpdater.updateLiveLocation(messageId: messageId, locationInfo: location) { result in
+            self.callback {
+                completion?(result)
             }
         }
     }
@@ -862,6 +937,32 @@ public class ChatMessageController: DataController, DelegateCallable, DataStoreP
         }
     }
 
+    /// Stops sharing the live location for this message if it has an active location sharing attachment.
+    ///
+    /// - Parameters:
+    ///   - completion: Called when the server updates the message.
+    public func stopLiveLocationSharing(completion: ((Result<SharedLocation, Error>) -> Void)? = nil) {
+        guard let location = message?.sharedLocation else {
+            callback {
+                completion?(.failure(ClientError.MessageDoesNotHaveLiveLocationAttachment()))
+            }
+            return
+        }
+
+        guard location.isLiveSharingActive else {
+            callback {
+                completion?(.failure(ClientError.MessageLiveLocationAlreadyStopped()))
+            }
+            return
+        }
+
+        messageUpdater.stopLiveLocationSharing(messageId: messageId) { result in
+            self.callback {
+                completion?(result)
+            }
+        }
+    }
+    
     /// Updates the draft message for this thread.
     ///
     /// If there is no draft message, a new draft message will be created.
@@ -1062,10 +1163,22 @@ public extension ChatMessageController {
     }
 }
 
-extension ClientError {
+public extension ClientError {
     final class MessageEmptyReplies: ClientError {
         override public var localizedDescription: String {
             "You can't load previous replies when there is no replies for the message."
+        }
+    }
+
+    final class MessageDoesNotHaveLiveLocationAttachment: ClientError {
+        override public var localizedDescription: String {
+            "The message does not have a live location attachment."
+        }
+    }
+
+    final class MessageLiveLocationAlreadyStopped: ClientError {
+        override public var localizedDescription: String {
+            "The live location sharing has already been stopped."
         }
     }
 }

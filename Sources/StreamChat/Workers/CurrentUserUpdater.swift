@@ -228,6 +228,24 @@ class CurrentUserUpdater: Worker {
             }
         }
     }
+
+    func loadActiveLiveLocations(completion: @escaping (Result<[SharedLocation], Error>) -> Void) {
+        apiClient.request(endpoint: .currentUserActiveLiveLocations()) { result in
+            switch result {
+            case let .success(payload):
+                self.database.write { session in
+                    try payload.locations.map {
+                        try session.saveLocation(payload: $0, cache: nil).asModel()
+                    }
+                } completion: { result in
+                    completion(result)
+                }
+
+            case let .failure(error):
+                completion(.failure(error))
+            }
+        }
+    }
 }
 
 extension CurrentUserUpdater {

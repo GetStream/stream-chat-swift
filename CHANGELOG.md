@@ -9,6 +9,22 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 _June 03, 2025_
 
 ## StreamChat
+### ✅ Added
+- Add `ChatMessageController.partialUpdateMessage()` [#3531](https://github.com/GetStream/stream-chat-swift/pull/3531)
+- Add Static Location Attachment Support [#3531](https://github.com/GetStream/stream-chat-swift/pull/3531)
+  - Add `ChatMessageStaticLocationAttachment` and `StaticLocationAttachmentPayload`
+  - Add `ChatMessage.staticLocationAttachments`
+  - Add `ChatChannelController.sendStaticLocation()`
+- Add Live Location Attachment Support [#3531](https://github.com/GetStream/stream-chat-swift/pull/3531)
+  - Add `ChatMessageLiveLocationAttachment` and `LiveLocationAttachmentPayload`
+  - Add `ChatMessage.liveLocationAttachments`
+  - Add `ChatChannelController.startLiveLocationSharing()`
+  - Add `ChatChannelController.stopLiveLocationSharing()`  
+  - Add `ChatMessageController.stopLiveLocationSharing()`
+  - Add `CurrentChatUserController.updateLiveLocation()`
+  - Add `CurrentChatUserControllerDelegate.didStartSharingLiveLocation()`
+  - Add `CurrentChatUserControllerDelegate.didStopSharingLiveLocation()`
+  - Add `CurrentChatUserControllerDelegate.didChangeActiveLiveLocationMessages()`
 ### 🐞 Fixed
 - Fix an issue where completion handler was called twice after waiting for token refresh [#3683](https://github.com/GetStream/stream-chat-swift/pull/3683)
 - Fix message not marked as published if it was previously intercepted [#3687](https://github.com/GetStream/stream-chat-swift/pull/3687)

@@ -178,6 +178,9 @@ public struct ChatMessage {
     /// Optional poll that is part of the message.
     public let poll: Poll?
 
+    /// The location information of the message.
+    public let sharedLocation: SharedLocation?
+
     init(
         id: MessageId,
         cid: ChannelId?,
@@ -217,7 +220,8 @@ public struct ChatMessage {
         readBy: Set<ChatUser>,
         poll: Poll?,
         textUpdatedAt: Date?,
-        draftReply: DraftMessage?
+        draftReply: DraftMessage?,
+        sharedLocation: SharedLocation?
     ) {
         self.id = id
         self.cid = cid
@@ -259,6 +263,7 @@ public struct ChatMessage {
         _attachments = attachments
         _quotedMessage = { quotedMessage }
         self.draftReply = draftReply
+        self.sharedLocation = sharedLocation
     }
 
     /// Returns a new `ChatMessage` with the provided data changed.
@@ -315,7 +320,8 @@ public struct ChatMessage {
             readBy: readBy,
             poll: poll,
             textUpdatedAt: textUpdatedAt,
-            draftReply: draftReply
+            draftReply: draftReply,
+            sharedLocation: sharedLocation
         )
     }
 
@@ -427,7 +433,8 @@ public struct ChatMessage {
             readBy: readBy,
             poll: poll,
             textUpdatedAt: textUpdatedAt,
-            draftReply: draftReply
+            draftReply: draftReply,
+            sharedLocation: sharedLocation
         )
     }
 }
@@ -559,6 +566,7 @@ extension ChatMessage: Hashable {
         guard lhs.translations == rhs.translations else { return false }
         guard lhs.type == rhs.type else { return false }
         guard lhs.draftReply == rhs.draftReply else { return false }
+        guard lhs.sharedLocation == rhs.sharedLocation else { return false }
         return true
     }
 

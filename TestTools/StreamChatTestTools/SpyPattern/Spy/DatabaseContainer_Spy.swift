@@ -291,6 +291,7 @@ extension DatabaseContainer {
         reactionScores: [MessageReactionType: Int] = [:],
         reactionCounts: [MessageReactionType: Int] = [:],
         reactionGroups: [MessageReactionType: MessageReactionGroupPayload] = [:],
+        location: SharedLocationPayload? = nil,
         localState: LocalMessageState? = nil,
         type: MessageType? = nil,
         numberOfReplies: Int = 0,
@@ -319,7 +320,8 @@ extension DatabaseContainer {
                 pinnedAt: pinnedAt,
                 pinExpires: pinExpires,
                 reactionScores: reactionScores,
-                reactionCounts: reactionCounts
+                reactionCounts: reactionCounts,
+                sharedLocation: location
             )
 
             let messageDTO = try session.saveMessage(
