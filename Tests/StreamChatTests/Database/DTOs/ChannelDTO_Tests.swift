@@ -396,6 +396,7 @@ final class ChannelDTO_Tests: XCTestCase {
             Assert.willBeEqual(payload.channel.config.commands, loadedChannel.config.commands)
             Assert.willBeEqual(payload.channel.config.createdAt, loadedChannel.config.createdAt)
             Assert.willBeEqual(payload.channel.config.updatedAt, loadedChannel.config.updatedAt)
+            Assert.willBeEqual(payload.channel.config.messageRemindersEnabled, loadedChannel.config.messageRemindersEnabled)
 
             // Own Capabilities
             Assert.willBeEqual(payload.channel.ownCapabilities, ["join-channel", "delete-channel"])

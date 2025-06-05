@@ -9,6 +9,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 _June 03, 2025_
 
 ## StreamChat
+### ✅ Added
+- Add new `Filter.isNil` to make it easier to query by nil values [#3623](https://github.com/GetStream/stream-chat-swift/pull/3623)
+- Add Message Reminders [#3623](https://github.com/GetStream/stream-chat-swift/pull/3623)
+   - Add `ChatMessageController.createReminder()`
+   - Add `ChatMessageController.updateReminder()` 
+   - Add `ChatMessageController.deleteReminder()`
+   - Add `MessageReminderListController` and `MessageReminderListQuery`
 ### 🐞 Fixed
 - Fix an issue where completion handler was called twice after waiting for token refresh [#3683](https://github.com/GetStream/stream-chat-swift/pull/3683)
 - Fix message not marked as published if it was previously intercepted [#3687](https://github.com/GetStream/stream-chat-swift/pull/3687)

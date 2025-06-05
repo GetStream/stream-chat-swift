@@ -20,6 +20,7 @@ final class ChannelConfigDTO: NSManagedObject {
     @NSManaged var pollsEnabled: Bool
     @NSManaged var urlEnrichmentEnabled: Bool
     @NSManaged var messageRetention: String
+    @NSManaged var messageRemindersEnabled: Bool
     @NSManaged var maxMessageLength: Int32
     @NSManaged var createdAt: DBDate
     @NSManaged var updatedAt: DBDate
@@ -40,6 +41,7 @@ final class ChannelConfigDTO: NSManagedObject {
             pollsEnabled: pollsEnabled,
             urlEnrichmentEnabled: urlEnrichmentEnabled,
             skipLastMsgAtUpdateForSystemMsg: skipLastMsgAtUpdateForSystemMsg,
+            messageRemindersEnabled: messageRemindersEnabled,
             messageRetention: messageRetention,
             maxMessageLength: Int(maxMessageLength),
             commands: Array(Set(
@@ -80,6 +82,7 @@ extension ChannelConfig {
         dto.commands = NSOrderedSet(array: commands.map { $0.asDTO(context: context) })
         dto.pollsEnabled = pollsEnabled
         dto.skipLastMsgAtUpdateForSystemMsg = skipLastMsgAtUpdateForSystemMsg
+        dto.messageRemindersEnabled = messageRemindersEnabled
         return dto
     }
 }

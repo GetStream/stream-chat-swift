@@ -6,22 +6,31 @@ import StreamChat
 import StreamChatUI
 import UIKit
 
-class DemoAppTabBarController: UITabBarController, CurrentChatUserControllerDelegate {
+class DemoAppTabBarController: UITabBarController, CurrentChatUserControllerDelegate, MessageReminderListControllerDelegate {
     let channelListVC: UIViewController
     let threadListVC: UIViewController
     let draftListVC: UIViewController
+    let reminderListVC: UIViewController
     let currentUserController: CurrentChatUserController
+    let allRemindersListController: MessageReminderListController
+
+    // Events controller for listening to chat events
+    private var eventsController: EventsController!
 
     init(
         channelListVC: UIViewController,
         threadListVC: UIViewController,
         draftListVC: UIViewController,
-        currentUserController: CurrentChatUserController
+        reminderListVC: UIViewController,
+        currentUserController: CurrentChatUserController,
+        allRemindersListController: MessageReminderListController
     ) {
         self.channelListVC = channelListVC
         self.threadListVC = threadListVC
         self.draftListVC = draftListVC
+        self.reminderListVC = reminderListVC
         self.currentUserController = currentUserController
+        self.allRemindersListController = allRemindersListController
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -52,6 +61,12 @@ class DemoAppTabBarController: UITabBarController, CurrentChatUserControllerDele
         currentUserController.delegate = self
         unreadCount = currentUserController.unreadCount
 
+        // Update reminders badge if the feature is enabled.
+        if AppConfig.shared.demoAppConfig.isRemindersEnabled {
+            allRemindersListController.delegate = self
+            updateRemindersBadge()
+        }
+
         tabBar.backgroundColor = Appearance.default.colorPalette.background
         tabBar.isTranslucent = true
 
@@ -65,14 +80,34 @@ class DemoAppTabBarController: UITabBarController, CurrentChatUserControllerDele
 
         draftListVC.tabBarItem.title = "Drafts"
         draftListVC.tabBarItem.image = UIImage(systemName: "bubble.and.pencil")
+        
+        reminderListVC.tabBarItem.title = "Reminders"
+        reminderListVC.tabBarItem.image = UIImage(systemName: "bell")
 
-        viewControllers = [channelListVC, threadListVC, draftListVC]
+        // Only show reminders tab if the feature is enabled
+        if AppConfig.shared.demoAppConfig.isRemindersEnabled {
+            viewControllers = [channelListVC, threadListVC, draftListVC, reminderListVC]
+        } else {
+            viewControllers = [channelListVC, threadListVC, draftListVC]
+        }
     }
-
+    
     func currentUserController(_ controller: CurrentChatUserController, didChangeCurrentUserUnreadCount: UnreadCount) {
         let unreadCount = didChangeCurrentUserUnreadCount
         self.unreadCount = unreadCount
         let totalUnreadBadge = unreadCount.channels + unreadCount.threads
         UIApplication.shared.applicationIconBadgeNumber = totalUnreadBadge
+    }
+
+    func controller(
+        _ controller: MessageReminderListController,
+        didChangeReminders changes: [ListChange<MessageReminder>]
+    ) {
+        updateRemindersBadge()
+    }
+
+    private func updateRemindersBadge() {
+        let reminders = allRemindersListController.reminders
+        reminderListVC.tabBarItem.badgeValue = reminders.isEmpty ? nil : "\(reminders.count)"
     }
 }

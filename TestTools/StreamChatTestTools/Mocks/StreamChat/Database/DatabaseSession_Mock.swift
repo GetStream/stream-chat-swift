@@ -62,6 +62,14 @@ class DatabaseSession_Mock: DatabaseSession {
         return try underlyingSession.saveQuery(query: query)
     }
 
+    func saveReminder(payload: ReminderPayload, cache: PreWarmedCache?) throws -> MessageReminderDTO {
+        return try underlyingSession.saveReminder(payload: payload, cache: cache)
+    }
+
+    func deleteReminder(messageId: MessageId) {
+        underlyingSession.deleteReminder(messageId: messageId)
+    }
+
     func saveChannel(
         payload: ChannelDetailPayload,
         query: ChannelListQuery?,

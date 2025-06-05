@@ -57,12 +57,24 @@ extension DemoAppCoordinator {
         draftsVC.onDisconnect = { [weak self] in
             self?.disconnect()
         }
+        
+        let reminderListVC = DemoReminderListVC(
+            currentUserController: client.currentUserController()
+        )
+        reminderListVC.onLogout = { [weak self] in
+            self?.logOut()
+        }
+        reminderListVC.onDisconnect = { [weak self] in
+            self?.disconnect()
+        }
 
         let tabBarViewController = DemoAppTabBarController(
             channelListVC: chatVC,
             threadListVC: UINavigationController(rootViewController: threadListVC),
             draftListVC: UINavigationController(rootViewController: draftsVC),
-            currentUserController: client.currentUserController()
+            reminderListVC: UINavigationController(rootViewController: reminderListVC),
+            currentUserController: client.currentUserController(),
+            allRemindersListController: client.messageReminderListController()
         )
         set(rootViewController: tabBarViewController, animated: animated)
         DemoAppConfiguration.showPerformanceTracker()

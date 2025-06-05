@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="23507" systemVersion="24B83" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="23507" systemVersion="24F74" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
     <entity name="AttachmentDTO" representedClassName="AttachmentDTO" syncable="YES">
         <attribute name="data" attributeType="Binary"/>
         <attribute name="id" attributeType="String"/>
@@ -20,6 +20,7 @@
         <attribute name="connectEventsEnabled" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
         <attribute name="createdAt" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="maxMessageLength" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="messageRemindersEnabled" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
         <attribute name="messageRetention" attributeType="String" defaultValueString=""/>
         <attribute name="mutesEnabled" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
         <attribute name="pollsEnabled" optional="YES" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
@@ -75,6 +76,7 @@
         <relationship name="previewMessage" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="MessageDTO" inverseName="previewOfChannel" inverseEntity="MessageDTO"/>
         <relationship name="queries" toMany="YES" deletionRule="Nullify" destinationEntity="ChannelListQueryDTO" inverseName="channels" inverseEntity="ChannelListQueryDTO"/>
         <relationship name="reads" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="ChannelReadDTO" inverseName="channel" inverseEntity="ChannelReadDTO"/>
+        <relationship name="reminders" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="MessageReminderDTO" inverseName="channel" inverseEntity="MessageReminderDTO"/>
         <relationship name="threads" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="ThreadDTO" inverseName="channel" inverseEntity="ThreadDTO"/>
         <relationship name="watchers" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="UserDTO" inverseName="watchedChannels" inverseEntity="UserDTO"/>
         <fetchIndex name="defaultSortingIndex">
@@ -261,6 +263,7 @@
         <relationship name="reactionGroups" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="MessageReactionGroupDTO" inverseName="message" inverseEntity="MessageReactionGroupDTO"/>
         <relationship name="reactions" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="MessageReactionDTO" inverseName="message" inverseEntity="MessageReactionDTO"/>
         <relationship name="reads" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="ChannelReadDTO" inverseName="readMessagesFromCurrentUser" inverseEntity="ChannelReadDTO"/>
+        <relationship name="reminder" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="MessageReminderDTO" inverseName="message" inverseEntity="MessageReminderDTO"/>
         <relationship name="replies" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="MessageDTO" inverseName="parentMessage" inverseEntity="MessageDTO"/>
         <relationship name="searches" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="MessageSearchQueryDTO" inverseName="messages" inverseEntity="MessageSearchQueryDTO"/>
         <relationship name="threadParticipants" optional="YES" toMany="YES" deletionRule="Nullify" ordered="YES" destinationEntity="UserDTO" inverseName="participatedThreads" inverseEntity="UserDTO"/>
@@ -317,6 +320,18 @@
         <relationship name="message" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="MessageDTO" inverseName="reactionGroups" inverseEntity="MessageDTO"/>
         <fetchIndex name="type">
             <fetchIndexElement property="type" type="Binary" order="ascending"/>
+        </fetchIndex>
+    </entity>
+    <entity name="MessageReminderDTO" representedClassName="MessageReminderDTO" syncable="YES">
+        <attribute name="createdAt" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="id" optional="YES" attributeType="String"/>
+        <attribute name="remindAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="sortingRemindAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="updatedAt" attributeType="Date" usesScalarValueType="NO"/>
+        <relationship name="channel" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="ChannelDTO" inverseName="reminders" inverseEntity="ChannelDTO"/>
+        <relationship name="message" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="MessageDTO" inverseName="reminder" inverseEntity="MessageDTO"/>
+        <fetchIndex name="id">
+            <fetchIndexElement property="id" type="Binary" order="ascending"/>
         </fetchIndex>
     </entity>
     <entity name="MessageSearchQueryDTO" representedClassName="MessageSearchQueryDTO" syncable="YES">

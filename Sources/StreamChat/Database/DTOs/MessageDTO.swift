@@ -88,6 +88,8 @@ class MessageDTO: NSManagedObject {
     @NSManaged var draftReply: MessageDTO?
     @NSManaged var isDraft: Bool
 
+    @NSManaged var reminder: MessageReminderDTO?
+
     /// If the message is sent by the current user, this field
     /// contains channel reads of other channel members (excluding the current user),
     /// where `read.lastRead >= self.createdAt`.
@@ -1043,6 +1045,13 @@ extension NSManagedObjectContext: MessageDatabaseSession {
             dto.updateReadBy(withChannelReads: channelDTO.reads)
         }
 
+        if let reminder = payload.reminder {
+            dto.reminder = try saveReminder(payload: reminder, cache: cache)
+        } else if let reminderDTO = dto.reminder {
+            delete(reminderDTO)
+            dto.reminder = nil
+        }
+
         // Refetch channel preview if the current preview has changed.
         //
         // The current message can stop being a valid preview e.g.
@@ -1789,7 +1798,12 @@ private extension ChatMessage {
             readBy: readBy,
             poll: poll,
             textUpdatedAt: textUpdatedAt,
-            draftReply: draftReply.map(DraftMessage.init)
+            draftReply: draftReply.map(DraftMessage.init),
+            reminder: dto.reminder.map { .init(
+                remindAt: $0.remindAt?.bridgeDate,
+                createdAt: $0.createdAt.bridgeDate,
+                updatedAt: $0.updatedAt.bridgeDate
+            ) }
         )
 
         if let transformer = chatClientConfig?.modelsTransformer {
