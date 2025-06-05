@@ -14,7 +14,7 @@ struct LogDetailView: View {
     
     // Check if this log contains extractable data
     private var isHttpResponse: Bool {
-        log.description.contains("URL request response:") && log.description.contains("Status Code:")
+        log.description.contains("curl ")
     }
     
     private var isWebSocketEvent: Bool {
@@ -211,99 +211,32 @@ struct LogDetailView: View {
     }()
 
     private func generateCurlCommand(from logText: String) -> String? {
-        guard let url = extractUrl(from: logText),
-              let headers = extractHeaders(from: logText) else {
+        extractPrebuiltCurl(from: logText)
+    }
+    
+    private func extractPrebuiltCurl(from logText: String) -> String? {
+        // Find the curl command in the text
+        guard let curlStart = logText.range(of: "curl ") else {
             return nil
         }
         
-        let method = extractMethod(from: logText) ?? "GET"
-        var curlCommand = "curl -X \(method) \\\n  '\(url)'"
+        // Extract everything from "curl" to the end
+        let curlText = String(logText[curlStart.lowerBound...])
         
-        // Add headers
-        for (key, value) in headers {
-            // Skip some response-only headers that shouldn't be in requests
-            let skipHeaders = [
-                "content-length",
-                "date",
-                "server",
-                "access-control-allow-origin",
-                
-                "access-control-allow-headers",
-                "access-control-allow-methods",
-                
-                "access-control-max-age",
-                "x-envoy-upstream-service-time",
-                
-                "x-ratelimit-limit",
-                "x-ratelimit-remaining",
-                "x-ratelimit-reset"
-            ]
-            
-            if !skipHeaders.contains(key.lowercased()) {
-                curlCommand += " \\\n  -H '\(key): \(value)'"
+        // Find the end of the curl command (usually ends with a URL in quotes)
+        let lines = curlText.components(separatedBy: .newlines)
+        var curlLines: [String] = []
+        
+        for line in lines {
+            curlLines.append(line)
+            // Stop when we find a line that ends with a quoted URL or looks like the end
+            if line.trimmingCharacters(in: .whitespacesAndNewlines).hasSuffix("\"") &&
+                (line.contains("http") || line.contains("api")) {
+                break
             }
         }
         
-        // Add data if this was a POST/PUT/PATCH request
-        if ["POST", "PUT", "PATCH"].contains(method.uppercased()) {
-            if let jsonData = extractJsonData(from: logText) {
-                curlCommand += " \\\n  -d '\(jsonData.replacingOccurrences(of: "'", with: "\\'"))'"
-            }
-        }
-        
-        return curlCommand
-    }
-    
-    private func extractUrl(from logText: String) -> String? {
-        let pattern = #"URL: ([^}]+)"#
-        guard let regex = try? NSRegularExpression(pattern: pattern),
-              let match = regex.firstMatch(in: logText, range: NSRange(logText.startIndex..., in: logText)) else {
-            return nil
-        }
-        
-        let urlRange = Range(match.range(at: 1), in: logText)!
-        return String(logText[urlRange]).trimmingCharacters(in: .whitespacesAndNewlines)
-    }
-    
-    private func extractMethod(from logText: String) -> String? {
-        // Try to infer method from status code context or default to GET
-        if logText.contains("Status Code: 201") {
-            return "POST"
-        } else if logText.contains("Status Code: 200") && logText.contains("data:") {
-            return "GET"
-        }
-        return "GET"
-    }
-    
-    private func extractHeaders(from logText: String) -> [String: String]? {
-        let pattern = #"Headers \{([^}]+)\}"#
-        guard let regex = try? NSRegularExpression(pattern: pattern, options: .dotMatchesLineSeparators),
-              let match = regex.firstMatch(in: logText, range: NSRange(logText.startIndex..., in: logText)) else {
-            return nil
-        }
-        
-        let headersRange = Range(match.range(at: 1), in: logText)!
-        let headersText = String(logText[headersRange])
-        
-        var headers: [String: String] = [:]
-        
-        // Parse header format: "Header-Name" = ( "value" );
-        let headerPattern = #""([^"]+)"\s*=\s*\(\s*"([^"]+)""#
-        guard let headerRegex = try? NSRegularExpression(pattern: headerPattern) else {
-            return headers
-        }
-        
-        let matches = headerRegex.matches(in: headersText, range: NSRange(headersText.startIndex..., in: headersText))
-        for match in matches {
-            if let keyRange = Range(match.range(at: 1), in: headersText),
-               let valueRange = Range(match.range(at: 2), in: headersText) {
-                let key = String(headersText[keyRange])
-                let value = String(headersText[valueRange])
-                headers[key] = value
-            }
-        }
-        
-        return headers
+        return curlLines.joined(separator: "\n").trimmingCharacters(in: .whitespacesAndNewlines)
     }
     
     private func extractJsonData(from logText: String) -> String? {
@@ -313,9 +246,11 @@ struct LogDetailView: View {
         if let eventIndex = logText.range(of: "Event received:")?.upperBound {
             dataText = String(logText[eventIndex...]).trimmingCharacters(in: .whitespacesAndNewlines)
         }
-        // Handle HTTP responses
-        else if let httpDataIndex = logText.range(of: "}, data:")?.upperBound ?? logText.range(of: "data:")?.upperBound {
-            dataText = String(logText[httpDataIndex...])
+        // Handle HTTP format (skip first line which is status code)
+        else if isHttpResponse {
+            let lines = logText.components(separatedBy: .newlines)
+            let remainingLines = Array(lines.dropFirst())
+            dataText = remainingLines.joined(separator: "\n")
         }
         
         guard let text = dataText else {

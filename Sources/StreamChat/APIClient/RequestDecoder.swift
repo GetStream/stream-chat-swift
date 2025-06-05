@@ -56,10 +56,10 @@ struct DefaultRequestDecoder: RequestDecoder {
 
         log.debug(
             """
-            \(httpResponse.statusCode)
+            \(httpResponse.statusCode) \(request.url?.pathComponentsString ?? "unknown path")
             \(data.debugPrettyPrintedJSON))
-        
-            \(request.cURLRepresentation(for: URLSession.shared))
+
+            \(request.toCurlString())
             """,
             subsystems: .httpRequests
         )
@@ -136,5 +136,51 @@ extension ClientError {
         }
 
         return false
+    }
+}
+
+extension URLRequest {
+    /// Converts the URLRequest to a cURL command string
+    /// - Returns: A cURL command string representation of the request
+    func toCurlString() -> String {
+        guard let url = self.url else {
+            return "curl # Invalid URL"
+        }
+
+        var components = ["curl"]
+
+        // Add URL (with proper escaping)
+        let escapedUrl = "'\(url.absoluteString)'"
+        components.append(escapedUrl)
+
+        // Add HTTP method if not GET
+        if let httpMethod = self.httpMethod, httpMethod != "GET" {
+            components.append("-X \(httpMethod)")
+        }
+
+        // Add headers
+        if let headers = allHTTPHeaderFields {
+            for (key, value) in headers.sorted(by: { $0.key < $1.key }) {
+                let escapedHeader = "'\(key): \(value)'"
+                components.append("-H \(escapedHeader)")
+            }
+            components.append("-H 'Content-Type: application/json'")
+        }
+
+        // Add body data
+        if let httpBody = self.httpBody, let bodyString = String(data: httpBody, encoding: .utf8) {
+            let escapedBody = bodyString.replacingOccurrences(of: "'", with: "'\"'\"'")
+            components.append("--data-raw '\(escapedBody)'")
+        }
+
+        return components.joined(separator: " \\\n  ")
+    }
+}
+
+extension URL {
+    /// Returns the path components joined with "/"
+    /// - Returns: Path string without leading slash (e.g., "api/v1/users/123")
+    var pathComponentsString: String {
+        pathComponents.dropFirst().joined(separator: "/")
     }
 }
