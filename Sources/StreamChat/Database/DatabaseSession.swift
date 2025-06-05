@@ -817,6 +817,10 @@ extension DatabaseSession {
         if isNewMessage && isThreadReply {
             savedMessage.showInsideThread = true
         }
+
+        if isNewMessage && savedMessage.localMessageState != nil {
+            savedMessage.markMessageAsSent()
+        }
     }
 
     func updateChannelPreview(from payload: EventPayload) {

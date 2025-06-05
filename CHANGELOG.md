@@ -5,6 +5,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### 🔄 Changed
 
+# [4.79.1](https://github.com/GetStream/stream-chat-swift/releases/tag/4.79.1)
+_June 03, 2025_
+
+## StreamChat
+### 🐞 Fixed
+- Fix an issue where completion handler was called twice after waiting for token refresh [#3683](https://github.com/GetStream/stream-chat-swift/pull/3683)
+- Fix message not marked as published if it was previously intercepted [#3687](https://github.com/GetStream/stream-chat-swift/pull/3687)
+
 # [4.79.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.79.0)
 _May 28, 2025_
 
