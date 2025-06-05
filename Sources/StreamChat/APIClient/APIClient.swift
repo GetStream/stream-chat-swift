@@ -241,6 +241,7 @@ class APIClient {
             let task = self.session.dataTask(with: urlRequest) { [decoder = self.decoder] (data, response, error) in
                 do {
                     let decodedResponse: Response = try decoder.decodeRequestResponse(
+                        request: urlRequest,
                         data: data,
                         response: response,
                         error: error

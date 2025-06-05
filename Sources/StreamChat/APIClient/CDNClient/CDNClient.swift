@@ -134,6 +134,7 @@ class StreamCDNClient: CDNClient {
             let task = self.session.dataTask(with: urlRequest) { [decoder = self.decoder] (data, response, error) in
                 do {
                     let response: FileUploadPayload = try decoder.decodeRequestResponse(
+                        request: urlRequest,
                         data: data,
                         response: response,
                         error: error

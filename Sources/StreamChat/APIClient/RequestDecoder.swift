@@ -9,17 +9,28 @@ protocol RequestDecoder {
     /// Decodes an incoming URL request response.
     ///
     /// - Parameters:
+    ///   - request: The URL request that was sent.
     ///   - data: The incoming data.
     ///   - response: The response object from the network.
     ///   - error: An error object returned by the data task.
     ///
     /// - Throws: An error if the decoding fails.
-    func decodeRequestResponse<ResponseType: Decodable>(data: Data?, response: URLResponse?, error: Error?) throws -> ResponseType
+    func decodeRequestResponse<ResponseType: Decodable>(
+        request: URLRequest,
+        data: Data?,
+        response: URLResponse?,
+        error: Error?
+    ) throws -> ResponseType
 }
 
 /// The default implementation of `RequestDecoder`.
 struct DefaultRequestDecoder: RequestDecoder {
-    func decodeRequestResponse<ResponseType: Decodable>(data: Data?, response: URLResponse?, error: Error?) throws -> ResponseType {
+    func decodeRequestResponse<ResponseType: Decodable>(
+        request: URLRequest,
+        data: Data?,
+        response: URLResponse?,
+        error: Error?
+    ) throws -> ResponseType {
         // Handle the error case
         guard error == nil else {
             let error = error!
