@@ -8,7 +8,7 @@ import StreamChat
 import StreamSwiftTestHelpers
 import XCTest
 
-final class ChatMentionSuggestionView_Tests: XCTestCase {
+@MainActor final class ChatMentionSuggestionView_Tests: XCTestCase {
     /// Default reference width for the cell. Not related to any screen size.
     private static var defaultCellWidth: CGFloat = 300
 

@@ -5,7 +5,7 @@
 import UIKit
 
 /// A component responsible to handle when to load new pages in a scrollView holding state associated to the content view
-final class StatefulScrollViewPaginationHandler: StatefulViewPaginationHandling {
+@MainActor final class StatefulScrollViewPaginationHandler: StatefulViewPaginationHandling {
     private var bottomPageRequestItemCount: Int?
     private var topPageRequestItemCount: Int?
     private var canRequestNewTopPage: Bool {
@@ -30,7 +30,9 @@ final class StatefulScrollViewPaginationHandler: StatefulViewPaginationHandling 
         self.scrollView = scrollView
 
         observation = self.scrollView?.observe(\.contentOffset, changeHandler: { [weak self] scrollView, _ in
-            self?.onChanged(scrollView)
+            StreamConcurrency.onMain { [weak self] in
+                self?.onChanged(scrollView)
+            }
         })
     }
 
@@ -44,7 +46,9 @@ final class StatefulScrollViewPaginationHandler: StatefulViewPaginationHandling 
         if canRequestNewBottomPage, position > scrollView.contentSize.height - bottomThreshold - scrollView.frame.size.height {
             onNewBottomPage?({ bottomPageRequestItemCount = $0 }, { [weak self] error in
                 if error != nil {
-                    self?.bottomPageRequestItemCount = nil
+                    StreamConcurrency.onMain { [weak self] in
+                        self?.bottomPageRequestItemCount = nil
+                    }
                 }
             })
         }
@@ -53,7 +57,9 @@ final class StatefulScrollViewPaginationHandler: StatefulViewPaginationHandling 
         if canRequestNewTopPage, position >= 0 && position <= topThreshold && position <= max(0, previousPosition) {
             onNewTopPage?({ topPageRequestItemCount = $0 }, { [weak self] error in
                 if error != nil {
-                    self?.topPageRequestItemCount = nil
+                    StreamConcurrency.onMain { [weak self] in
+                        self?.topPageRequestItemCount = nil
+                    }
                 }
             })
         }

@@ -7,7 +7,7 @@ import UIKit.UIImpactFeedbackGenerator
 import UIKit.UISelectionFeedbackGenerator
 
 /// A protocol that defines the required methods for providing haptic feedback for different events in an audio session
-public protocol AudioSessionFeedbackGenerator {
+@preconcurrency @MainActor public protocol AudioSessionFeedbackGenerator {
     /// Initialises an instance of the conforming type
     init()
 

@@ -89,8 +89,7 @@ open class ListCollectionViewLayout: UICollectionViewFlowLayout {
     private func separatorLayoutAttributes(
         forCellLayoutAttributes cellAttributes: [UICollectionViewLayoutAttributes]
     ) -> [UICollectionViewLayoutAttributes] {
-        guard let collectionView = collectionView else { return [] }
-        let delegate = collectionView.delegate as? ListCollectionViewLayoutDelegate
+        guard collectionView != nil else { return [] }
         return cellAttributes.compactMap { cellAttribute in
             guard cellAttribute.representedElementCategory == .cell else { return nil }
             return separatorLayoutAttributes(forCellFrame: cellAttribute.frame, indexPath: cellAttribute.indexPath)

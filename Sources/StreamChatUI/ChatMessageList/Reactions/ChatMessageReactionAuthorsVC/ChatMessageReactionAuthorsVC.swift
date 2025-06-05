@@ -162,12 +162,14 @@ open class ChatMessageReactionAuthorsVC: _ViewController,
 
     // MARK: - ChatMessageControllerDelegate
 
-    open func messageController(
+    nonisolated open func messageController(
         _ controller: ChatMessageController,
         didChangeReactions reactions: [ChatMessageReaction]
     ) {
-        collectionView.reloadData()
-        updateContent()
+        StreamConcurrency.onMain {
+            collectionView.reloadData()
+            updateContent()
+        }
     }
 
     // MARK: - Public API
@@ -183,7 +185,9 @@ open class ChatMessageReactionAuthorsVC: _ViewController,
 
         isLoadingReactions = true
         messageController.loadNextReactions { [weak self] _ in
-            self?.isLoadingReactions = false
+            StreamConcurrency.onMain { [weak self] in
+                self?.isLoadingReactions = false
+            }
         }
     }
 }
