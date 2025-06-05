@@ -236,7 +236,6 @@ class APIClient {
                 completion(.failure(ClientError("APIClient was deallocated")))
                 return
             }
-            log.debug(urlRequest.cURLRepresentation(for: self.session), subsystems: .httpRequests)
 
             let task = self.session.dataTask(with: urlRequest) { [decoder = self.decoder] (data, response, error) in
                 do {

@@ -54,7 +54,15 @@ struct DefaultRequestDecoder: RequestDecoder {
             throw ClientError.ResponseBodyEmpty()
         }
 
-        log.debug("URL request response: \(httpResponse), data:\n\(data.debugPrettyPrintedJSON))", subsystems: .httpRequests)
+        log.debug(
+            """
+            \(httpResponse.statusCode)
+            \(data.debugPrettyPrintedJSON))
+        
+            \(request.cURLRepresentation(for: URLSession.shared))
+            """,
+            subsystems: .httpRequests
+        )
 
         guard httpResponse.statusCode < 300 else {
             let serverError: ErrorPayload

@@ -8,14 +8,14 @@ extension URLRequest {
     /// Gives cURL representation of the request for an easy API request reproducibility in Terminal.
     /// - Parameter urlSession: The URLSession handling the request.
     /// - Returns: cURL representation of the URLRequest.
-    func cURLRepresentation(for urlSession: URLSession) -> String {
+    func cURLRepresentation(for urlSession: URLSession?) -> String {
         guard let url, let httpMethod else { return "$ curl failed to create" }
         var cURL = [String]()
-        cURL.append("$ curl -v")
+        cURL.append("curl -v")
         cURL.append("-X \(httpMethod)")
         
         var allHeaders = [String: String]()
-        if let additionalHeaders = urlSession.configuration.httpAdditionalHeaders as? [String: String] {
+        if let additionalHeaders = urlSession?.configuration.httpAdditionalHeaders as? [String: String] {
             allHeaders.merge(additionalHeaders, uniquingKeysWith: { _, new in new })
         }
         if let allHTTPHeaderFields {
