@@ -688,6 +688,51 @@ final class DatabaseSession_Tests: XCTestCase {
         XCTAssertEqual(channelDTO.previewMessage?.id, previousPreviewMessage.id)
     }
 
+    func test_saveEvent_whenMessageNewEventComes_whenMessageIsNotMarkedAsSent_markItAsSent() throws {
+        // GIVEN
+        let channel: ChannelPayload = .dummy(channel: .dummy(cid: .unique))
+
+        try database.writeSynchronously { session in
+            try session.saveChannel(payload: channel)
+        }
+
+        // WHEN
+        let newMessage: MessagePayload = .dummy(
+            messageId: .unique,
+            parentId: .unique,
+            authorUserId: .unique,
+            channel: channel.channel
+        )
+
+        // Save a message in pending state (SendMessageInterceptor use case)
+        try database.writeSynchronously { session in
+            try session.saveChannel(payload: channel)
+            let dto = try session.saveMessage(
+                payload: newMessage,
+                for: nil,
+                syncOwnReactions: false,
+                skipDraftUpdate: true,
+                cache: nil
+            )
+            dto.localMessageState = .sending
+        }
+
+        let messageNewEvent = EventPayload(
+            eventType: .messageNew,
+            cid: channel.channel.cid,
+            message: newMessage
+        )
+
+        try database.writeSynchronously { session in
+            try session.saveEvent(payload: messageNewEvent)
+        }
+
+        // THEN
+        let messageDTO = try XCTUnwrap(database.viewContext.message(id: newMessage.id))
+        XCTAssertEqual(messageDTO.showInsideThread, true)
+        XCTAssertNil(messageDTO.localMessageState)
+    }
+
     func test_saveEvent_whenNotificationMessageNewEventComes_updatesChannelPreview() throws {
         // GIVEN
         let previewMessage: MessagePayload = .dummy(

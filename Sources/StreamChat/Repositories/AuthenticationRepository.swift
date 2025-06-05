@@ -284,16 +284,14 @@ class AuthenticationRepository: @unchecked Sendable {
     }
 
     func completeTokenCompletions(error: Error?) {
-        let completionBlocks: [@Sendable(Error?) -> Void]? = tokenQueue.sync(flags: .barrier) {
-            self._isGettingToken = false
+        let completionBlocks: [(Error?) -> Void]? = tokenQueue.sync(flags: .barrier) {
             let completions = self._tokenRequestCompletions
+            self._isGettingToken = false
+            self._tokenRequestCompletions = []
+            self._consecutiveRefreshFailures = 0
             return completions
         }
         completionBlocks?.forEach { $0(error) }
-        tokenQueue.async(flags: .barrier) {
-            self._tokenRequestCompletions = []
-            self._consecutiveRefreshFailures = 0
-        }
     }
 
     private func updateToken(token: Token?, notifyTokenWaiters: Bool) {
