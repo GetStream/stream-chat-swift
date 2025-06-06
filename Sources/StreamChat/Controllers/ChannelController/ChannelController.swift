@@ -70,9 +70,6 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
 
     /// The component responsible to update a channel member.
     private let channelMemberUpdater: ChannelMemberUpdater
-    
-    /// The component responsible to update a message from the channel.
-    private let messageUpdater: MessageUpdater
 
     private lazy var eventSender: TypingEventsSender = self.environment.eventSenderBuilder(
         client.databaseContainer,
@@ -234,12 +231,6 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
             client.apiClient
         )
         channelMemberUpdater = self.environment.memberUpdaterBuilder(client.databaseContainer, client.apiClient)
-        messageUpdater = self.environment.messageUpdaterBuilder(
-            client.config.isLocalStorageEnabled,
-            client.messageRepository,
-            client.databaseContainer,
-            client.apiClient
-        )
         pollsRepository = client.pollsRepository
         draftsRepository = client.draftMessagesRepository
 
@@ -933,6 +924,7 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
             return
         }
 
+        // TODO: Get it from ChatChannel.activeLiveLocations?
         client.messageRepository.getCurrentUserActiveLiveLocationMessages(for: cid) { [weak self] result in
             if let message = try? result.get().first {
                 self?.callback {
@@ -1776,13 +1768,6 @@ extension ChatChannelController {
             _ database: DatabaseContainer,
             _ apiClient: APIClient
         ) -> ChannelMemberUpdater = ChannelMemberUpdater.init
-
-        var messageUpdaterBuilder: (
-            _ isLocalStorageEnabled: Bool,
-            _ messageRepository: MessageRepository,
-            _ database: DatabaseContainer,
-            _ apiClient: APIClient
-        ) -> MessageUpdater = MessageUpdater.init
 
         var eventSenderBuilder: (
             _ database: DatabaseContainer,
