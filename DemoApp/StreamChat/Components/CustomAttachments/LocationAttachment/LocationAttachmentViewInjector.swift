@@ -41,7 +41,7 @@ class LocationAttachmentViewInjector: AttachmentViewInjector {
                 coordinate: .init(latitude: location.latitude, longitude: location.longitude),
                 isLive: location.isLive,
                 isSharingLiveLocation: location.isLiveSharingActive,
-                messageId: contentView.content?.id,
+                message: contentView.content,
                 author: contentView.content?.author
             )
         }

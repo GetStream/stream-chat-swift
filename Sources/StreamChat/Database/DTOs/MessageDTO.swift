@@ -634,7 +634,8 @@ class MessageDTO: NSManagedObject {
         )]
         var predicates: [NSPredicate] = [
             .init(format: "location.endAt > %@", Date().bridgeDate),
-            .init(format: "user.id == %@", currentUserId)
+            .init(format: "user.id == %@", currentUserId),
+            .init(format: "localMessageStateRaw == nil")
         ]
         if let channelId {
             predicates.append(.init(format: "channel.cid == %@", channelId.rawValue))

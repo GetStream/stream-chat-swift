@@ -112,7 +112,7 @@ class DemoAppTabBarController: UITabBarController, CurrentChatUserControllerDele
                 return nil
             }
 
-            return "(\(location.latitude), \(location.longitude))"
+            return "(lat:\(location.latitude), lon:\(location.longitude), endAt: \(location.endAt?.description ?? "nil"))"
         }
 
         debugPrint("[Location] Updated live locations to the server: \(locations)")

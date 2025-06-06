@@ -12,14 +12,20 @@ class LocationAttachmentSnapshotView: _View, ThemeProvider {
         var coordinate: CLLocationCoordinate2D
         var isLive: Bool
         var isSharingLiveLocation: Bool
-        var messageId: MessageId?
+        var message: ChatMessage?
         var author: ChatUser?
 
-        init(coordinate: CLLocationCoordinate2D, isLive: Bool, isSharingLiveLocation: Bool, messageId: MessageId?, author: ChatUser?) {
+        init(
+            coordinate: CLLocationCoordinate2D,
+            isLive: Bool,
+            isSharingLiveLocation: Bool,
+            message: ChatMessage?,
+            author: ChatUser?
+        ) {
             self.coordinate = coordinate
             self.isLive = isLive
             self.isSharingLiveLocation = isSharingLiveLocation
-            self.messageId = messageId
+            self.message = message
             self.author = author
         }
 
@@ -153,7 +159,10 @@ class LocationAttachmentSnapshotView: _View, ThemeProvider {
  
         avatarView.isHidden = true
 
-        if content.isSharingLiveLocation && content.isFromCurrentUser {
+        if content.message?.isLocalOnly == true {
+            stopButton.isHidden = true
+            sharingStatusView.isHidden = true
+        } else if content.isSharingLiveLocation && content.isFromCurrentUser {
             stopButton.isHidden = false
             sharingStatusView.isHidden = true
             sharingStatusView.updateStatus(isSharing: true)
@@ -285,7 +294,7 @@ class LocationAttachmentSnapshotView: _View, ThemeProvider {
         guard let content = self.content else {
             return nil
         }
-        guard let messageId = content.messageId else {
+        guard let messageId = content.message?.id else {
             return nil
         }
         return NSString(string: "\(messageId)")

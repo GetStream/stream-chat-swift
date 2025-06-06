@@ -162,14 +162,15 @@ class LocationDetailViewController: UIViewController, ThemeProvider {
     }
 
     private func updateBannerState() {
-        guard let location = messageController.message?.sharedLocation, location.isLive else {
+        guard let message = messageController.message else { return }
+        guard let location = message.sharedLocation, location.isLive else {
             return
         }
 
-        let isFromCurrentUser = messageController.message?.isSentByCurrentUser == true
+        let isFromCurrentUser = message.isSentByCurrentUser
         let dateFormatter = appearance.formatters.channelListMessageTimestamp
         let updatedAtText = dateFormatter.format(messageController.message?.updatedAt ?? Date())
-        if location.isLiveSharingActive {
+        if location.isLiveSharingActive && message.isLocalOnly == false {
             locationControlBanner.configure(
                 state: isFromCurrentUser
                     ? .currentUserSharing

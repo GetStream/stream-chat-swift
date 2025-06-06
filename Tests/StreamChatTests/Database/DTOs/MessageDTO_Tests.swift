@@ -4283,6 +4283,122 @@ final class MessageDTO_Tests: XCTestCase {
         }
     }
 
+    func test_loadActiveLiveLocationMessages_excludesMessagesWithLocalState() throws {
+        // GIVEN
+        let currentUserId: UserId = .unique
+        let channelId: ChannelId = .unique
+
+        let currentUser: CurrentUserPayload = .dummy(userId: currentUserId)
+        let channelPayload: ChannelPayload = .dummy(channel: .dummy(cid: channelId))
+
+        try database.writeSynchronously { session in
+            try session.saveCurrentUser(payload: currentUser)
+            try session.saveChannel(payload: channelPayload)
+
+            // Create test messages with different local states:
+            // 1. Message with no local state (successfully sent) - should be included
+            let sentMessagePayload: MessagePayload = .dummy(
+                messageId: .unique,
+                authorUserId: currentUserId,
+                sharedLocation: .init(
+                    channelId: channelId.rawValue,
+                    messageId: .unique,
+                    latitude: 50,
+                    longitude: 10,
+                    endAt: .distantFuture, // Active location
+                    createdByDeviceId: .unique
+                )
+            )
+
+            let sentMessage = try session.saveMessage(
+                payload: sentMessagePayload,
+                for: channelId,
+                syncOwnReactions: false,
+                cache: nil
+            )
+            // Successfully sent message has no local state
+            sentMessage.localMessageState = nil
+
+            // 2. Message with pendingSend state - should be excluded
+            let pendingSendMessagePayload: MessagePayload = .dummy(
+                messageId: .unique,
+                authorUserId: currentUserId,
+                sharedLocation: .init(
+                    channelId: channelId.rawValue,
+                    messageId: .unique,
+                    latitude: 51,
+                    longitude: 11,
+                    endAt: .distantFuture, // Active location
+                    createdByDeviceId: .unique
+                )
+            )
+
+            let pendingSendMessage = try session.saveMessage(
+                payload: pendingSendMessagePayload,
+                for: channelId,
+                syncOwnReactions: false,
+                cache: nil
+            )
+            pendingSendMessage.localMessageState = .pendingSend
+
+            // 3. Message with sendingFailed state - should be excluded
+            let sendingFailedMessagePayload: MessagePayload = .dummy(
+                messageId: .unique,
+                authorUserId: currentUserId,
+                sharedLocation: .init(
+                    channelId: channelId.rawValue,
+                    messageId: .unique,
+                    latitude: 52,
+                    longitude: 12,
+                    endAt: .distantFuture, // Active location
+                    createdByDeviceId: .unique
+                )
+            )
+
+            let sendingFailedMessage = try session.saveMessage(
+                payload: sendingFailedMessagePayload,
+                for: channelId,
+                syncOwnReactions: false,
+                cache: nil
+            )
+            sendingFailedMessage.localMessageState = .sendingFailed
+
+            // 4. Message with pendingSync state - should be excluded
+            let pendingSyncMessagePayload: MessagePayload = .dummy(
+                messageId: .unique,
+                authorUserId: currentUserId,
+                sharedLocation: .init(
+                    channelId: channelId.rawValue,
+                    messageId: .unique,
+                    latitude: 53,
+                    longitude: 13,
+                    endAt: .distantFuture, // Active location
+                    createdByDeviceId: .unique
+                )
+            )
+
+            let pendingSyncMessage = try session.saveMessage(
+                payload: pendingSyncMessagePayload,
+                for: channelId,
+                syncOwnReactions: false,
+                cache: nil
+            )
+            pendingSyncMessage.localMessageState = .pendingSync
+        }
+
+        // WHEN
+        let loadedMessages = try MessageDTO.loadActiveLiveLocationMessages(
+            currentUserId: currentUserId,
+            channelId: channelId,
+            context: database.viewContext
+        )
+
+        // THEN
+        // Only the successfully sent message (with no local state) should be loaded
+        XCTAssertEqual(loadedMessages.count, 1, "Only messages with no local state should be included")
+        XCTAssertNil(loadedMessages.first?.localMessageState, "Loaded message should have no local state")
+    }
+
     func test_asModel_whenModelTransformerProvided_transformsValues() throws {
         class CustomMessageTransformer: StreamModelsTransformer {
             var mockTransformedMessage: ChatMessage = .mock(
