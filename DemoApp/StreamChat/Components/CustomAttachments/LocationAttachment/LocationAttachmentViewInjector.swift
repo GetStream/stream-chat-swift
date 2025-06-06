@@ -56,7 +56,7 @@ class LocationAttachmentViewInjector: AttachmentViewInjector {
             return
         }
 
-        locationAttachmentDelegate.didTapOnStopSharingLocation(location)
+        locationAttachmentDelegate.didTapOnLocation(location)
     }
 
     func handleTapOnStopSharingLocation() {
