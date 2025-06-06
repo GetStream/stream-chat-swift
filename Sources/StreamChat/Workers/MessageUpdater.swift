@@ -329,7 +329,7 @@ class MessageUpdater: Worker {
         }
     }
 
-    /// Stops live location sharing for the given message.
+    /// Updates live location sharing for the given message.
     func updateLiveLocation(
         messageId: MessageId,
         locationInfo: LocationInfo,
