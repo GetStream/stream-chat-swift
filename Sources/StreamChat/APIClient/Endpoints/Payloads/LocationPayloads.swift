@@ -66,6 +66,6 @@ struct ActiveLiveLocationsResponsePayload: Decodable {
     let locations: [SharedLocationPayload]
 
     enum CodingKeys: String, CodingKey {
-        case locations = "live_locations"
+        case locations = "active_live_locations"
     }
 }
