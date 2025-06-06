@@ -335,13 +335,6 @@ class MessageUpdater: Worker {
         locationInfo: LocationInfo,
         completion: @escaping ((Result<SharedLocation, Error>) -> Void)
     ) {
-        // Optimistic update
-        database.write { session in
-            let messageDTO = try session.messageEditableByCurrentUser(messageId)
-            messageDTO.location?.latitude = locationInfo.latitude
-            messageDTO.location?.longitude = locationInfo.longitude
-        }
-
         database.backgroundReadOnlyContext.perform { [weak self] in
             guard let currentUser = self?.database.backgroundReadOnlyContext.currentUser,
                   let currentDeviceId = currentUser.currentDevice?.id else {
