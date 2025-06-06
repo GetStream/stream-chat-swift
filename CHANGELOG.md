@@ -6,20 +6,19 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## StreamChat
 ### ✅ Added
 - Add `ChatMessageController.partialUpdateMessage()` [#3531](https://github.com/GetStream/stream-chat-swift/pull/3531)
-- Add Static Location Attachment Support [#3531](https://github.com/GetStream/stream-chat-swift/pull/3531)
-  - Add `ChatMessageStaticLocationAttachment` and `StaticLocationAttachmentPayload`
-  - Add `ChatMessage.staticLocationAttachments`
-  - Add `ChatChannelController.sendStaticLocation()`
-- Add Live Location Attachment Support [#3531](https://github.com/GetStream/stream-chat-swift/pull/3531)
-  - Add `ChatMessageLiveLocationAttachment` and `LiveLocationAttachmentPayload`
-  - Add `ChatMessage.liveLocationAttachments`
-  - Add `ChatChannelController.startLiveLocationSharing()`
-  - Add `ChatChannelController.stopLiveLocationSharing()`  
+- Add Location Sharing Support [#3531](https://github.com/GetStream/stream-chat-swift/pull/3531)
+  - Add `ChatMessage.sharedLocation`
   - Add `ChatMessageController.stopLiveLocationSharing()`
-  - Add `CurrentChatUserController.updateLiveLocation()`
-  - Add `CurrentChatUserControllerDelegate.didStartSharingLiveLocation()`
-  - Add `CurrentChatUserControllerDelegate.didStopSharingLiveLocation()`
-  - Add `CurrentChatUserControllerDelegate.didChangeActiveLiveLocationMessages()`
+  - Add `ChatChannelController`:
+    - `sendStaticLocation()`
+    - `startLiveLocationSharing()`
+  - Add `CurrentChatUserController`:
+    - `loadActiveLiveLocationMessages()`
+    - `updateLiveLocation()`
+  - Add `CurrentChatUserControllerDelegate`:
+    - `didStartSharingLiveLocation()`
+    - `didStopSharingLiveLocation()`
+    - `didChangeActiveLiveLocationMessages()`
 ### 🐞 Fixed
 - Fix an issue where completion handler was called twice after waiting for token refresh [#3683](https://github.com/GetStream/stream-chat-swift/pull/3683)
 
