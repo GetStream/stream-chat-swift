@@ -89,6 +89,7 @@ class MessageDTO: NSManagedObject {
     @NSManaged var isDraft: Bool
 
     @NSManaged var location: LocationDTO?
+    @NSManaged var isActiveLiveLocation: Bool
 
     /// If the message is sent by the current user, this field
     /// contains channel reads of other channel members (excluding the current user),
@@ -123,6 +124,13 @@ class MessageDTO: NSManagedObject {
 
         if let channel = channel, self.cid != channel.cid {
             self.cid = channel.cid
+        }
+
+        if let locationEndAt = location?.endAt?.bridgeDate {
+            let isActiveLiveLocation = locationEndAt > Date()
+            if isActiveLiveLocation != self.isActiveLiveLocation {
+                self.isActiveLiveLocation = isActiveLiveLocation
+            }
         }
 
         // Manually mark the channel as dirty to trigger the entity update and give the UI a chance
@@ -620,7 +628,7 @@ class MessageDTO: NSManagedObject {
 
     /// Fetches all active location messages in a channel or all channels of the current user.
     /// If `channelId` is nil, it will fetch all messages independent of the channel.
-    static func activeLiveLocationMessagesFetchRequest(
+    static func currentUserActiveLiveLocationMessagesFetchRequest(
         currentUserId: UserId,
         channelId: ChannelId?
     ) -> NSFetchRequest<MessageDTO> {
@@ -633,7 +641,7 @@ class MessageDTO: NSManagedObject {
             ascending: true
         )]
         var predicates: [NSPredicate] = [
-            .init(format: "location.endAt > %@", Date().bridgeDate),
+            .init(format: "isActiveLiveLocation == YES"),
             .init(format: "user.id == %@", currentUserId),
             .init(format: "localMessageStateRaw == nil")
         ]
@@ -644,12 +652,12 @@ class MessageDTO: NSManagedObject {
         return request
     }
 
-    static func loadActiveLiveLocationMessages(
+    static func loadCurrentUserActiveLiveLocationMessages(
         currentUserId: UserId,
         channelId: ChannelId?,
         context: NSManagedObjectContext
     ) throws -> [MessageDTO] {
-        let request = activeLiveLocationMessagesFetchRequest(currentUserId: currentUserId, channelId: channelId)
+        let request = currentUserActiveLiveLocationMessagesFetchRequest(currentUserId: currentUserId, channelId: channelId)
         return try load(request, context: context)
     }
 

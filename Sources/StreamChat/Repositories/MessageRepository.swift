@@ -372,7 +372,7 @@ class MessageRepository {
                 guard let currentUserId = context.currentUser?.user.id else {
                     return completion(.failure(ClientError.CurrentUserDoesNotExist()))
                 }
-                let messages = try MessageDTO.loadActiveLiveLocationMessages(
+                let messages = try MessageDTO.loadCurrentUserActiveLiveLocationMessages(
                     currentUserId: currentUserId,
                     channelId: channelId,
                     context: context

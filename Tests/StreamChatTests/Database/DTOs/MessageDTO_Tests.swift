@@ -4264,7 +4264,7 @@ final class MessageDTO_Tests: XCTestCase {
 
         // Test 1: Load all active live location messages for current user
         do {
-            let loadedMessages = try MessageDTO.loadActiveLiveLocationMessages(
+            let loadedMessages = try MessageDTO.loadCurrentUserActiveLiveLocationMessages(
                 currentUserId: currentUserId,
                 channelId: nil,
                 context: database.viewContext
@@ -4274,7 +4274,7 @@ final class MessageDTO_Tests: XCTestCase {
 
         // Test 2: Load active live location messages for current user in channel 1
         do {
-            let loadedMessages = try MessageDTO.loadActiveLiveLocationMessages(
+            let loadedMessages = try MessageDTO.loadCurrentUserActiveLiveLocationMessages(
                 currentUserId: currentUserId,
                 channelId: channel1Id,
                 context: database.viewContext
@@ -4387,7 +4387,7 @@ final class MessageDTO_Tests: XCTestCase {
         }
 
         // WHEN
-        let loadedMessages = try MessageDTO.loadActiveLiveLocationMessages(
+        let loadedMessages = try MessageDTO.loadCurrentUserActiveLiveLocationMessages(
             currentUserId: currentUserId,
             channelId: channelId,
             context: database.viewContext

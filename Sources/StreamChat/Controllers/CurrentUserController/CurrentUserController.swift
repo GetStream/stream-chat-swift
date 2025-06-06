@@ -571,7 +571,7 @@ private extension CurrentChatUserController {
         }
         return environment.currentUserActiveLiveLocationMessagesObserverBuilder(
             client.databaseContainer,
-            MessageDTO.activeLiveLocationMessagesFetchRequest(
+            MessageDTO.currentUserActiveLiveLocationMessagesFetchRequest(
                 currentUserId: currentUserId,
                 channelId: nil
             ),
