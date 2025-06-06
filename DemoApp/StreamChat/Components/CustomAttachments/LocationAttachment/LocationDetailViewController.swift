@@ -24,12 +24,27 @@ class LocationDetailViewController: UIViewController, ThemeProvider {
 
     private var userAnnotation: UserAnnotation?
     private let coordinateSpan = MKCoordinateSpan(latitudeDelta: 0.01, longitudeDelta: 0.01)
+    private var isAutoCenteringEnabled = false
 
     let mapView: MKMapView = {
         let view = MKMapView()
         view.translatesAutoresizingMaskIntoConstraints = false
         view.isZoomEnabled = true
+        view.showsCompass = false
         return view
+    }()
+
+    private lazy var autoCenterButton: UIButton = {
+        let button = UIButton(type: .system)
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.backgroundColor = appearance.colorPalette.background
+        button.layer.cornerRadius = 22
+        button.layer.shadowColor = UIColor.black.cgColor
+        button.layer.shadowOffset = CGSize(width: 0, height: 2)
+        button.layer.shadowOpacity = 0.1
+        button.layer.shadowRadius = 4
+        button.addTarget(self, action: #selector(autoCenterButtonTapped), for: .touchUpInside)
+        return button
     }()
 
     var isLiveLocation: Bool {
@@ -48,6 +63,8 @@ class LocationDetailViewController: UIViewController, ThemeProvider {
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        updateAutoCenterButtonAppearance()
+
         messageController.synchronize()
         messageController.delegate = self
 
@@ -60,14 +77,21 @@ class LocationDetailViewController: UIViewController, ThemeProvider {
         )
         mapView.showsUserLocation = false
         mapView.delegate = self
+
         view.backgroundColor = appearance.colorPalette.background
         view.addSubview(mapView)
+        view.addSubview(autoCenterButton)
 
         NSLayoutConstraint.activate([
             mapView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
             mapView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             mapView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            mapView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
+            mapView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            
+            autoCenterButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 16),
+            autoCenterButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
+            autoCenterButton.widthAnchor.constraint(equalToConstant: 44),
+            autoCenterButton.heightAnchor.constraint(equalToConstant: 44)
         ])
 
         if isLiveLocation {
@@ -110,13 +134,14 @@ class LocationDetailViewController: UIViewController, ThemeProvider {
             if isLiveLocation {
                 // Since we update the location every 3s, by updating the coordinate with 5s animation
                 // this will make sure the annotation moves smoothly.
-                // This results in a "Tracking" like behaviour. This also blocks the user from moving the map.
-                // In a real app, we could have a toggle to enable/disable this behaviour.
-                UIView.animate(withDuration: 5) {
+                // This results in a "Tracking" like behaviour when auto-centering is enabled.
+                UIView.animate(withDuration: 5, delay: 0, options: .allowUserInteraction) {
                     existingAnnotation.coordinate = coordinate
                 }
-                UIView.animate(withDuration: 5, delay: 0.2, options: .curveEaseOut) {
-                    self.mapView.setCenter(coordinate, animated: true)
+                if isAutoCenteringEnabled {
+                    UIView.animate(withDuration: 5, delay: 0.2, options: [.curveEaseOut, .allowUserInteraction]) {
+                        self.mapView.setCenter(coordinate, animated: true)
+                    }
                 }
             } else {
                 existingAnnotation.coordinate = coordinate
@@ -153,6 +178,23 @@ class LocationDetailViewController: UIViewController, ThemeProvider {
         } else {
             locationControlBanner.configure(state: .ended(lastUpdatedAtText: updatedAtText))
         }
+    }
+
+    @objc private func autoCenterButtonTapped() {
+        isAutoCenteringEnabled.toggle()
+        updateAutoCenterButtonAppearance()
+        if let coordinate = userAnnotation?.coordinate {
+            mapView.setCenter(coordinate, animated: true)
+        }
+    }
+
+    private func updateAutoCenterButtonAppearance() {
+        let imageName = isAutoCenteringEnabled ? "location.fill" : "location"
+        let image = UIImage(systemName: imageName)
+        autoCenterButton.setImage(image, for: .normal)
+        autoCenterButton.tintColor = isAutoCenteringEnabled
+            ? appearance.colorPalette.accentPrimary
+            : appearance.colorPalette.subtitleText
     }
 }
 
