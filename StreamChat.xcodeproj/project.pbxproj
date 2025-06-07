@@ -1699,6 +1699,7 @@
 		ADAC47AA275A7C960027B672 /* ChatMessageContentView_Documentation_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADAC47A9275A7C960027B672 /* ChatMessageContentView_Documentation_Tests.swift */; };
 		ADB22F7C25F1626200853C92 /* OnlineIndicatorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADB22F7A25F1626200853C92 /* OnlineIndicatorView.swift */; };
 		ADB22F7D25F1626200853C92 /* ChatPresenceAvatarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADB22F7B25F1626200853C92 /* ChatPresenceAvatarView.swift */; };
+		ADB267F12DF3B86F00CFA8A1 /* LogTimelineView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADB267F02DF3B86F00CFA8A1 /* LogTimelineView.swift */; };
 		ADB4166C26208F1C00E623E3 /* AttachmentPreviewProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADB4165026208C7900E623E3 /* AttachmentPreviewProvider.swift */; };
 		ADB951A1291BD7CC00800554 /* UploadedAttachment.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADB951A0291BD7CC00800554 /* UploadedAttachment.swift */; };
 		ADB951A2291BD7CC00800554 /* UploadedAttachment.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADB951A0291BD7CC00800554 /* UploadedAttachment.swift */; };
@@ -4425,6 +4426,7 @@
 		ADAC47A9275A7C960027B672 /* ChatMessageContentView_Documentation_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessageContentView_Documentation_Tests.swift; sourceTree = "<group>"; };
 		ADB22F7A25F1626200853C92 /* OnlineIndicatorView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OnlineIndicatorView.swift; sourceTree = "<group>"; };
 		ADB22F7B25F1626200853C92 /* ChatPresenceAvatarView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChatPresenceAvatarView.swift; sourceTree = "<group>"; };
+		ADB267F02DF3B86F00CFA8A1 /* LogTimelineView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogTimelineView.swift; sourceTree = "<group>"; };
 		ADB4165026208C7900E623E3 /* AttachmentPreviewProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AttachmentPreviewProvider.swift; sourceTree = "<group>"; };
 		ADB951A0291BD7CC00800554 /* UploadedAttachment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UploadedAttachment.swift; sourceTree = "<group>"; };
 		ADB951A8291C1DDC00800554 /* AttachmentUploader_Spy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AttachmentUploader_Spy.swift; sourceTree = "<group>"; };
@@ -8698,6 +8700,7 @@
 		AD7A11FD2DEE623E00B8F963 /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				ADB267F02DF3B86F00CFA8A1 /* LogTimelineView.swift */,
 				AD7A11F72DEE623E00B8F963 /* DetailRow.swift */,
 				AD7A11F82DEE623E00B8F963 /* HighlightedSearchText.swift */,
 				AD7A11F92DEE623E00B8F963 /* LogDetailView.swift */,
@@ -11170,6 +11173,7 @@
 				AD7A12062DEE626200B8F963 /* FilterButtonStyle.swift in Sources */,
 				C1CEF9072A1BC4E800414931 /* UserProfileViewController.swift in Sources */,
 				A3227E62284A499500EBE6CC /* SearchUserCell.swift in Sources */,
+				ADB267F12DF3B86F00CFA8A1 /* LogTimelineView.swift in Sources */,
 				A3227E76284A4C6400EBE6CC /* MessageReactionType+Position.swift in Sources */,
 				A3227E74284A4C3300EBE6CC /* DemoChatMessageActionsVC.swift in Sources */,
 				AD053BA72B33624C003612B6 /* LocationAttachmentViewDelegate.swift in Sources */,

@@ -51,7 +51,8 @@ public class InMemoryRecorderLogDestination: BaseLogDestination {
             functionName: "\(logDetails.functionName)",
             fileName: URL(fileURLWithPath: String(describing: logDetails.fileName)).lastPathComponent,
             lineNumber: logDetails.lineNumber,
-            description: logDetails.message
+            description: logDetails.message,
+            duration: Double.random(in: 0.1...0.5)
         )
         logsStoreProvider.addLog(entry)
     }
@@ -66,6 +67,7 @@ public struct LogEntry: Identifiable {
     public let fileName: String
     public let lineNumber: UInt
     public let description: String
+    public let duration: TimeInterval?
 
     public init(
         timestamp: Date,
@@ -74,7 +76,8 @@ public struct LogEntry: Identifiable {
         functionName: String,
         fileName: String,
         lineNumber: UInt,
-        description: String
+        description: String,
+        duration: TimeInterval? = nil
     ) {
         self.timestamp = timestamp
         self.level = level
@@ -83,5 +86,6 @@ public struct LogEntry: Identifiable {
         self.fileName = fileName
         self.lineNumber = lineNumber
         self.description = description
+        self.duration = duration
     }
 }

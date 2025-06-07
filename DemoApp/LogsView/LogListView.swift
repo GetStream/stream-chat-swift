@@ -17,6 +17,7 @@ struct LogListView: View {
     @State private var logs: [LogEntry] = []
     @State private var isRecording: Bool = true
     @State private var showCopyAlert = false
+    @State private var isTimelineView = false
 
     var availableSubsystems: [String] {
         let allSubsystems = LogSubsystem.all.displayNames
@@ -32,7 +33,12 @@ struct LogListView: View {
         }
 
         // Apply subsystem filter
-        if !selectedSubsystems.isEmpty {
+        if isTimelineView {
+            // In timeline view, always filter to HTTP requests only
+            filtered = filtered.filter { log in
+                log.subsystems.contains(.httpRequests)
+            }
+        } else if !selectedSubsystems.isEmpty {
             filtered = filtered.filter { log in
                 let logSubsystems = Set(log.subsystems.displayNames)
                 return !selectedSubsystems.isDisjoint(with: logSubsystems)
@@ -56,11 +62,15 @@ struct LogListView: View {
             ScrollView {
                 LazyVStack(alignment: .leading, spacing: 0, pinnedViews: [.sectionHeaders]) {
                     Section(header: headerView) {
-                        logListContent
+                        if isTimelineView {
+                            LogTimelineView(logs: filteredLogs, searchText: searchText)
+                        } else {
+                            logListContent
+                        }
                     }
                 }
             }
-            .navigationTitle("Logs")
+            .navigationTitle(isTimelineView ? "HTTP Timeline" : "Logs")
             .navigationBarTitleDisplayMode(.inline)
             .searchable(
                 text: $searchText,
@@ -70,6 +80,14 @@ struct LogListView: View {
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
                     HStack(spacing: 12) {
+                        // Timeline toggle button
+                        Button(action: {
+                            isTimelineView.toggle()
+                        }) {
+                            Image(systemName: isTimelineView ? "list.bullet" : "timeline.selection")
+                                .foregroundColor(.accentColor)
+                        }
+                        
                         Button(action: {
                             isRecording.toggle()
                             InMemoryRecorderLogDestination.isRecording = isRecording
@@ -123,38 +141,53 @@ struct LogListView: View {
                         LevelPickerView(selectedLevel: $selectedLevel)
                     }
 
-                    // Subsystem selector button
-                    Button(action: {
-                        showingSubsystemPicker = true
-                    }) {
-                        HStack(spacing: 4) {
-                            Image(systemName: "gearshape.2")
-                                .font(.caption2)
-                            Text("Subsystems")
-                            Image(systemName: "chevron.down")
-                                .font(.caption2)
-                        }
-                    }
-                    .buttonStyle(FilterButtonStyle(isSelected: !selectedSubsystems.isEmpty))
-                    .sheet(isPresented: $showingSubsystemPicker) {
-                        SubsystemPickerView(
-                            selectedSubsystems: $selectedSubsystems,
-                            availableSubsystems: availableSubsystems
-                        )
-                    }
-
-                    // Selected subsystem pills
-                    ForEach(selectedSubsystems.sorted(), id: \.self) { subsystem in
+                    // Subsystem selector button (hidden in timeline mode)
+                    if !isTimelineView {
                         Button(action: {
-                            selectedSubsystems.remove(subsystem)
+                            showingSubsystemPicker = true
                         }) {
                             HStack(spacing: 4) {
-                                Text(subsystem)
-                                Image(systemName: "xmark")
+                                Image(systemName: "gearshape.2")
+                                    .font(.caption2)
+                                Text("Subsystems")
+                                Image(systemName: "chevron.down")
                                     .font(.caption2)
                             }
                         }
-                        .buttonStyle(FilterButtonStyle(isSelected: true))
+                        .buttonStyle(FilterButtonStyle(isSelected: !selectedSubsystems.isEmpty))
+                        .sheet(isPresented: $showingSubsystemPicker) {
+                            SubsystemPickerView(
+                                selectedSubsystems: $selectedSubsystems,
+                                availableSubsystems: availableSubsystems
+                            )
+                        }
+
+                        // Selected subsystem pills
+                        ForEach(selectedSubsystems.sorted(), id: \.self) { subsystem in
+                            Button(action: {
+                                selectedSubsystems.remove(subsystem)
+                            }) {
+                                HStack(spacing: 4) {
+                                    Text(subsystem)
+                                    Image(systemName: "xmark")
+                                        .font(.caption2)
+                                }
+                            }
+                            .buttonStyle(FilterButtonStyle(isSelected: true))
+                        }
+                    } else {
+                        // Show HTTP indicator in timeline mode
+                        HStack(spacing: 4) {
+                            Image(systemName: "globe")
+                                .font(.caption2)
+                            Text("HTTP Requests Only")
+                        }
+                        .font(.caption.weight(.medium))
+                        .padding(.horizontal, 12)
+                        .padding(.vertical, 6)
+                        .background(Color.blue.opacity(0.1))
+                        .foregroundColor(.blue)
+                        .cornerRadius(16)
                     }
                 }
                 .padding(.horizontal)
@@ -166,11 +199,18 @@ struct LogListView: View {
                 .background(Color(.systemBackground))
 
             // Results info
-            if !searchText.isEmpty {
+            if !searchText.isEmpty || isTimelineView {
                 HStack {
-                    Text("\(filteredLogs.count) result\(filteredLogs.count == 1 ? "" : "s")")
-                        .font(.caption)
-                        .foregroundColor(.secondary)
+                    if isTimelineView {
+                        let httpLogs = filteredLogs.filter { $0.subsystems.contains(.httpRequests) && $0.duration != nil }
+                        Text("\(httpLogs.count) HTTP request\(httpLogs.count == 1 ? "" : "s")")
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                    } else {
+                        Text("\(filteredLogs.count) result\(filteredLogs.count == 1 ? "" : "s")")
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                    }
 
                     Spacer()
                 }
