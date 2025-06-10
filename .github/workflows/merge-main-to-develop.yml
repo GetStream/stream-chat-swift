@@ -21,3 +21,12 @@ jobs:
       - run: bundle exec fastlane merge_main
         env:
           GITHUB_TOKEN: ${{ secrets.ADMIN_API_TOKEN }}
+
+      - uses: 8398a7/action-slack@v3
+        if: failure()
+        with:
+          status: ${{ job.status }}
+          text: "⚠️ <!subteam^S030AAHLDLN>, the merge of `main` to `develop` failed on CI. Consider using this command locally: `bundle exec fastlane merge_main`"
+          fields: repo,commit,author,workflow
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
