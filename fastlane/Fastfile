@@ -107,7 +107,7 @@ lane :merge_main do
   update_release_version_to_snapshot(file_path: swift_environment_path)
   ensure_git_branch(branch: 'develop')
   sh("git add #{swift_environment_path}")
-  sh("git commit -m 'Update release version to snapshot")
+  sh("git commit -m 'Update release version to snapshot'")
   sh('git push')
 end
 
