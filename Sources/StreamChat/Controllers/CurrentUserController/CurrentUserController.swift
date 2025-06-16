@@ -58,10 +58,11 @@ public class CurrentChatUserController: DataController, DelegateCallable, DataSt
                 self?.activeLiveLocationMessagesObserver = observer
                 try? observer?.startObserving()
                 observer?.onDidChange = { [weak self] _ in
-                    self?.delegateCallback { [weak self] _ in
+                    self?.delegateCallback { [weak self] in
                         guard let self = self else { return }
                         let messages = Array(observer?.items ?? [])
                         self.isSharingLiveLocation = !messages.isEmpty
+                        $0.currentUserController(self, didChangeActiveLiveLocationMessages: messages)
                     }
                 }
             }
@@ -649,6 +650,11 @@ public extension CurrentChatUserControllerDelegate {
     func currentUserController(
         _ controller: CurrentChatUserController,
         didChangeCurrentUser: EntityChange<CurrentChatUser>
+    ) {}
+
+    func currentUserController(
+        _ controller: CurrentChatUserController,
+        didChangeActiveLiveLocationMessages messages: [ChatMessage]
     ) {}
 
     func currentUserControllerDidStartSharingLiveLocation(

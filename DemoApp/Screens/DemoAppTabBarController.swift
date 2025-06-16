@@ -122,6 +122,25 @@ class DemoAppTabBarController: UITabBarController, CurrentChatUserControllerDele
         locationProvider.stopMonitoringLocation()
     }
 
+    func currentUserController(
+        _ controller: CurrentChatUserController,
+        didChangeActiveLiveLocationMessages messages: [ChatMessage]
+    ) {
+        guard !messages.isEmpty else {
+            return
+        }
+
+        let locations: [String] = messages.compactMap {
+            guard let location = $0.sharedLocation else {
+                return nil
+            }
+
+            return "(lat:\(location.latitude), lon:\(location.longitude), endAt: \(location.endAt?.description ?? "nil"))"
+        }
+
+        debugPrint("[Location] Updated live locations to the server: \(locations)")
+    }
+    
     func controller(
         _ controller: MessageReminderListController,
         didChangeReminders changes: [ListChange<MessageReminder>]

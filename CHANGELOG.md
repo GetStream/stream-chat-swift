@@ -24,6 +24,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   - Add `CurrentChatUserControllerDelegate`:
     - `didStartSharingLiveLocation()`
     - `didStopSharingLiveLocation()`
+    - `didChangeActiveLiveLocationMessages()`
 
 # [4.79.1](https://github.com/GetStream/stream-chat-swift/releases/tag/4.79.1)
 _June 03, 2025_
