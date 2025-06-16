@@ -46,18 +46,35 @@ class DemoComposerVC: ComposerVC {
     func sendInstantLiveLocation() {
         getCurrentLocationInfo { [weak self] location in
             guard let location = location else { return }
-            let endDate = Date().addingTimeInterval(2 * 3600) // 2 hour
-            self?.channelController?.startLiveLocationSharing(location, endDate: endDate) { [weak self] result in
-                switch result {
-                case .success:
-                    break
-                case .failure(let error):
-                    self?.presentAlert(
-                        title: "Could not start live location sharing",
-                        message: error.localizedDescription
-                    )
+            let alertController = UIAlertController(
+                title: "Share Live Location",
+                message: "Select the duration for sharing your live location.",
+                preferredStyle: .actionSheet
+            )
+            let durations: [(String, TimeInterval)] = [
+                ("1 minute", 60),
+                ("10 minutes", 600),
+                ("1 hour", 3600)
+            ]
+            for (title, duration) in durations {
+                let action = UIAlertAction(title: title, style: .default) { [weak self] _ in
+                    let endDate = Date().addingTimeInterval(duration)
+                    self?.channelController?.startLiveLocationSharing(location, endDate: endDate) { [weak self] result in
+                        switch result {
+                        case .success:
+                            break
+                        case .failure(let error):
+                            self?.presentAlert(
+                                title: "Could not start live location sharing",
+                                message: error.localizedDescription
+                            )
+                        }
+                    }
                 }
+                alertController.addAction(action)
             }
+            alertController.addAction(UIAlertAction(title: "Cancel", style: .cancel))
+            self?.present(alertController, animated: true)
         }
     }
 
