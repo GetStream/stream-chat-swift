@@ -25,7 +25,7 @@ before_all do |lane|
   if is_ci
     setup_ci
     setup_git_config
-    select_xcode(version: xcode_version) unless [:sonar_upload, :allure_launch, :allure_upload, :pod_lint, :sync_mock_server, :copyright].include?(lane)
+    select_xcode(version: xcode_version) unless [:sonar_upload, :allure_launch, :allure_upload, :pod_lint, :sync_mock_server, :copyright, :merge_main].include?(lane)
   end
 end
 
