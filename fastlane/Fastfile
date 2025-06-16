@@ -793,6 +793,11 @@ lane :rubocop do
   sh('bundle exec rubocop')
 end
 
+desc 'Run PR linting'
+lane :lint_pr do
+  danger(dangerfile: 'Dangerfile') if is_ci
+end
+
 lane :install_runtime do |options|
   install_ios_runtime(version: options[:ios], custom_script: 'Scripts/install_ios_runtime.sh')
 end
