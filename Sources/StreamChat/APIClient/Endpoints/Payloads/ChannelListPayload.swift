@@ -232,6 +232,7 @@ public class ChannelConfig: Codable {
         case createdAt = "created_at"
         case updatedAt = "updated_at"
         case skipLastMsgAtUpdateForSystemMsg = "skip_last_msg_update_for_system_msgs"
+        case messageRemindersEnabled = "user_message_reminders"
     }
 
     /// If users are allowed to add reactions to messages. Enabled by default.
@@ -268,6 +269,8 @@ public class ChannelConfig: Codable {
     public let pollsEnabled: Bool
     /// Determines if system messages should not update the last message at date.
     public let skipLastMsgAtUpdateForSystemMsg: Bool
+    /// Determines if user message reminders are enabled.
+    public let messageRemindersEnabled: Bool
 
     public required init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
@@ -293,6 +296,7 @@ public class ChannelConfig: Codable {
         updatedAt = try container.decode(Date.self, forKey: .updatedAt)
         pollsEnabled = try container.decodeIfPresent(Bool.self, forKey: .pollsEnabled) ?? false
         skipLastMsgAtUpdateForSystemMsg = try container.decodeIfPresent(Bool.self, forKey: .skipLastMsgAtUpdateForSystemMsg) ?? false
+        messageRemindersEnabled = try container.decodeIfPresent(Bool.self, forKey: .messageRemindersEnabled) ?? false
     }
 
     internal required init(
@@ -308,6 +312,7 @@ public class ChannelConfig: Codable {
         pollsEnabled: Bool = false,
         urlEnrichmentEnabled: Bool = false,
         skipLastMsgAtUpdateForSystemMsg: Bool = false,
+        messageRemindersEnabled: Bool = false,
         messageRetention: String = "",
         maxMessageLength: Int = 0,
         commands: [Command] = [],
@@ -331,5 +336,6 @@ public class ChannelConfig: Codable {
         self.updatedAt = updatedAt
         self.pollsEnabled = pollsEnabled
         self.skipLastMsgAtUpdateForSystemMsg = skipLastMsgAtUpdateForSystemMsg
+        self.messageRemindersEnabled = messageRemindersEnabled
     }
 }

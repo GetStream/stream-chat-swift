@@ -55,6 +55,7 @@ enum MessagePayloadsCodingKeys: String, CodingKey, CaseIterable {
     case restrictedVisibility = "restricted_visibility"
     case draft
     case location = "shared_location"
+    case reminder
 }
 
 extension MessagePayload {
@@ -115,6 +116,7 @@ class MessagePayload: Decodable {
     var poll: PollPayload?
     var draft: DraftPayload?
     var location: SharedLocationPayload?
+    var reminder: ReminderPayload?
 
     /// Only message payload from `getMessage` endpoint contains channel data. It's a convenience workaround for having to
     /// make an extra call do get channel details.
@@ -183,6 +185,7 @@ class MessagePayload: Decodable {
         poll = try container.decodeIfPresent(PollPayload.self, forKey: .poll)
         draft = try container.decodeIfPresent(DraftPayload.self, forKey: .draft)
         location = try container.decodeIfPresent(SharedLocationPayload.self, forKey: .location)
+        reminder = try container.decodeIfPresent(ReminderPayload.self, forKey: .reminder)
     }
 
     init(
@@ -225,6 +228,7 @@ class MessagePayload: Decodable {
         messageTextUpdatedAt: Date? = nil,
         poll: PollPayload? = nil,
         draft: DraftPayload? = nil,
+        reminder: ReminderPayload? = nil,
         location: SharedLocationPayload? = nil
     ) {
         self.id = id
@@ -267,6 +271,7 @@ class MessagePayload: Decodable {
         self.poll = poll
         self.draft = draft
         self.location = location
+        self.reminder = reminder
     }
 }
 

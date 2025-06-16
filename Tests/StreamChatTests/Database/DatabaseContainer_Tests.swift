@@ -435,6 +435,16 @@ final class DatabaseContainer_Tests: XCTestCase {
                     query: .init(messageId: message.id, filter: .equal(.authorId, to: currentUserId)),
                     cache: nil
                 )
+                try session.saveReminder(
+                    payload: .init(
+                        channelCid: cid,
+                        messageId: message.id,
+                        remindAt: .unique,
+                        createdAt: .unique,
+                        updatedAt: .unique
+                    ),
+                    cache: nil
+                )
             }
             try session.saveMessage(
                 payload: .dummy(channel: .dummy(cid: cid)),

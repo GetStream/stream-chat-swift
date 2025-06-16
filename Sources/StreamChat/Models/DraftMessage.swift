@@ -162,6 +162,7 @@ extension ChatMessage {
         poll = nil
         textUpdatedAt = nil
         draftReply = nil
+        reminder = nil
         sharedLocation = nil
     }
 }

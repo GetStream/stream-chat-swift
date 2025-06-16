@@ -46,7 +46,7 @@ jobs:
 
   automated-code-review:
     name: Automated Code Review
-    runs-on: macos-15
+    runs-on: macos-14
     env:
       XCODE_VERSION: "15.4"
     if: ${{ github.event.inputs.record_snapshots != 'true' }}
@@ -56,7 +56,7 @@ jobs:
           fetch-depth: 100
       - uses: ./.github/actions/bootstrap
       - name: Run Danger
-        run: bundle exec danger
+        run: bundle exec fastlane lint_pr
       - name: Run Fastlane Linting
         run: bundle exec fastlane rubocop
       - name: Run SwiftFormat Linting
@@ -67,7 +67,7 @@ jobs:
 
   build-old-xcode:
     name: Build LLC + UI (Xcode 15)
-    runs-on: macos-15
+    runs-on: macos-14
     if: ${{ github.event.inputs.record_snapshots != 'true' }}
     env:
       XCODE_VERSION: "15.4"

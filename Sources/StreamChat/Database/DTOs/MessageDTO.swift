@@ -90,6 +90,8 @@ class MessageDTO: NSManagedObject {
 
     @NSManaged var location: LocationDTO?
     @NSManaged var isActiveLiveLocation: Bool
+    
+    @NSManaged var reminder: MessageReminderDTO?
 
     /// If the message is sent by the current user, this field
     /// contains channel reads of other channel members (excluding the current user),
@@ -925,6 +927,7 @@ extension NSManagedObjectContext: MessageDatabaseSession {
         if dto.localMessageState == .pendingSend || dto.localMessageState == .pendingSync {
             return dto
         }
+
         // Local text edit before receiving the WS event
         if let localDate = dto.textUpdatedAt?.bridgeDate,
            let payloadDate = payload.messageTextUpdatedAt,
@@ -1105,6 +1108,13 @@ extension NSManagedObjectContext: MessageDatabaseSession {
         // Calculate reads if the message is authored by the current user.
         if payload.user.id == currentUser?.user.id {
             dto.updateReadBy(withChannelReads: channelDTO.reads)
+        }
+
+        if let reminder = payload.reminder {
+            dto.reminder = try saveReminder(payload: reminder, cache: cache)
+        } else if let reminderDTO = dto.reminder {
+            delete(reminderDTO)
+            dto.reminder = nil
         }
 
         // Refetch channel preview if the current preview has changed.
@@ -1863,6 +1873,11 @@ private extension ChatMessage {
             poll: poll,
             textUpdatedAt: textUpdatedAt,
             draftReply: draftReply.map(DraftMessage.init),
+            reminder: dto.reminder.map { .init(
+                remindAt: $0.remindAt?.bridgeDate,
+                createdAt: $0.createdAt.bridgeDate,
+                updatedAt: $0.updatedAt.bridgeDate
+            ) },
             sharedLocation: location
         )
 

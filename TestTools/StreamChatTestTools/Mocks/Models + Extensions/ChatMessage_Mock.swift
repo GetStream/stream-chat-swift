@@ -51,6 +51,7 @@ public extension ChatMessage {
         textUpdatedAt: Date? = nil,
         poll: Poll? = nil,
         draftReply: DraftMessage? = nil,
+        reminder: MessageReminderInfo? = nil,
         sharedLocation: SharedLocation? = nil
     ) -> Self {
         .init(
@@ -93,6 +94,7 @@ public extension ChatMessage {
             poll: poll,
             textUpdatedAt: textUpdatedAt,
             draftReply: draftReply,
+            reminder: reminder,
             sharedLocation: sharedLocation
         )
     }

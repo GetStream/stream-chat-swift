@@ -544,6 +544,23 @@ protocol ThreadReadDatabaseSession {
     )
 }
 
+protocol ReminderDatabaseSession {
+    /// Saves a reminder with the provided payload.
+    /// - Parameters:
+    ///   - payload: The `ReminderPayload` containing the details of the reminder to be saved.
+    ///   - cache: An optional `PreWarmedCache` to optimize the save operation.
+    /// - Returns: A `MessageReminderDTO` representing the saved reminder.
+    /// - Throws: An error if the save operation fails.
+    @discardableResult
+    func saveReminder(
+        payload: ReminderPayload,
+        cache: PreWarmedCache?
+    ) throws -> MessageReminderDTO
+    
+    /// Deletes a reminder for the specified message ID.
+    func deleteReminder(messageId: MessageId)
+}
+
 protocol PollDatabaseSession {
     /// Saves a poll with the provided payload.
     /// - Parameters:
@@ -677,7 +694,9 @@ protocol DatabaseSession: UserDatabaseSession,
     ThreadDatabaseSession,
     ThreadReadDatabaseSession,
     PollDatabaseSession,
-    LocationDatabaseSession {}
+    ReminderDatabaseSession,
+    LocationDatabaseSession,
+    PollDatabaseSession {}
 
 extension DatabaseSession {
     @discardableResult
@@ -824,6 +843,10 @@ extension DatabaseSession {
         let isThreadReply = savedMessage.parentMessageId != nil
         if isNewMessage && isThreadReply {
             savedMessage.showInsideThread = true
+        }
+
+        if isNewMessage && savedMessage.localMessageState != nil {
+            savedMessage.markMessageAsSent()
         }
     }
 

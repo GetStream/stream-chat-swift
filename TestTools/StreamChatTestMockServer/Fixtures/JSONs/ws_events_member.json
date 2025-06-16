@@ -1,7 +1,7 @@
 {
   "type": "member.added",
-  "cid": "messaging:14c74678-8567-46e8-917c-09db824963fa",
-  "channel_id": "14c74678-8567-46e8-917c-09db824963fa",
+  "cid": "messaging:ec2807ff-5c60-41bc-a816-49578260471a",
+  "channel_id": "ec2807ff-5c60-41bc-a816-49578260471a",
   "channel_type": "messaging",
   "member": {
     "user_id": "leia_organa",
@@ -11,13 +11,11 @@
       "teams_role": null,
       "created_at": "2024-04-04T09:42:00.68335Z",
       "updated_at": "2025-03-28T15:21:20.061525Z",
-      "last_active": "2025-05-14T15:26:18.64251Z",
-      "last_engaged_at": "2025-05-14T12:32:57.25422Z",
+      "last_active": "2025-06-14T17:34:03.224367Z",
+      "last_engaged_at": "2025-06-14T17:34:05.446982Z",
       "banned": false,
       "online": false,
       "language": "zh",
-      "name": "Leia Organa",
-      "image": "https://vignette.wikia.nocookie.net/starwars/images/f/fc/Leia_Organa_TLJ.png",
       "birthland": "Polis Massa",
       "private_settings": {
         "readReceipts": {
@@ -26,11 +24,13 @@
         "typingIndicators": {
           "enabled": false
         }
-      }
+      },
+      "name": "Leia Organa",
+      "image": "https://vignette.wikia.nocookie.net/starwars/images/f/fc/Leia_Organa_TLJ.png"
     },
     "status": "member",
-    "created_at": "2025-05-15T00:15:20.999934Z",
-    "updated_at": "2025-05-15T00:15:20.999934Z",
+    "created_at": "2025-06-15T00:25:38.137522Z",
+    "updated_at": "2025-06-15T00:25:38.137522Z",
     "banned": false,
     "shadow_banned": false,
     "is_global_banned": false,
@@ -46,8 +46,8 @@
     "teams_role": null,
     "created_at": "2024-04-04T09:42:00.68335Z",
     "updated_at": "2025-03-28T15:21:20.061525Z",
-    "last_active": "2025-05-14T15:26:18.64251Z",
-    "last_engaged_at": "2025-05-14T12:32:57.25422Z",
+    "last_active": "2025-06-14T17:34:03.224367Z",
+    "last_engaged_at": "2025-06-14T17:34:05.446982Z",
     "banned": false,
     "online": false,
     "language": "zh",
@@ -63,6 +63,6 @@
     },
     "name": "Leia Organa"
   },
-  "channel_last_message_at": "2025-05-15T00:15:19.911132Z",
-  "created_at": "2025-05-15T00:15:21.010059176Z"
+  "channel_last_message_at": "2025-06-15T00:25:36.86243Z",
+  "created_at": "2025-06-15T00:25:38.150649795Z"
 }
