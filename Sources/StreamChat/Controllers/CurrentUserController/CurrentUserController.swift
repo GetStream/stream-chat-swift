@@ -623,7 +623,7 @@ public protocol CurrentChatUserControllerDelegate: AnyObject {
         didChangeCurrentUser: EntityChange<CurrentChatUser>
     )
 
-    /// The current user started sharing his location in message attachments.
+    /// The current user has currently active live location attachments.
     func currentUserControllerDidStartSharingLiveLocation(
         _ controller: CurrentChatUserController
     )
