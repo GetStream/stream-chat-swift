@@ -43,7 +43,6 @@ final class ChannelController_Tests: XCTestCase {
         client?.cleanUp()
         env?.channelUpdater?.cleanUp()
         env?.memberUpdater?.cleanUp()
-        env?.messageUpdater?.cleanUp()
         env?.eventSender?.cleanUp()
         env = nil
 
@@ -6088,7 +6087,6 @@ private class ControllerUpdateWaiter: ChatChannelControllerDelegate {
 private class TestEnvironment {
     var channelUpdater: ChannelUpdater_Mock?
     var memberUpdater: ChannelMemberUpdater_Mock?
-    var messageUpdater: MessageUpdater_Mock?
     var eventSender: TypingEventsSender_Mock?
 
     lazy var environment: ChatChannelController.Environment = .init(
@@ -6105,15 +6103,6 @@ private class TestEnvironment {
         memberUpdaterBuilder: { [unowned self] in
             self.memberUpdater = ChannelMemberUpdater_Mock(database: $0, apiClient: $1)
             return self.memberUpdater!
-        },
-        messageUpdaterBuilder: { [unowned self] in
-            self.messageUpdater = MessageUpdater_Mock(
-                isLocalStorageEnabled: $0,
-                messageRepository: $1,
-                database: $2,
-                apiClient: $3
-            )
-            return self.messageUpdater!
         },
         eventSenderBuilder: { [unowned self] in
             self.eventSender = TypingEventsSender_Mock(database: $0, apiClient: $1)
