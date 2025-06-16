@@ -335,12 +335,24 @@ class MessageUpdater: Worker {
         locationInfo: LocationInfo,
         completion: @escaping ((Result<SharedLocation, Error>) -> Void)
     ) {
-        database.backgroundReadOnlyContext.perform { [weak self] in
-            guard let currentUser = self?.database.backgroundReadOnlyContext.currentUser,
+        database.write { [weak self] session in
+            // Update the location locally first so that the observers
+            // can report if active live location are not available anymore.
+            let messageDTO = try session.messageEditableByCurrentUser(messageId)
+            messageDTO.location?.latitude = locationInfo.latitude
+            messageDTO.location?.longitude = locationInfo.longitude
+
+            guard messageDTO.isActiveLiveLocation else {
+                completion(.failure(ClientError.MessageDoesNotHaveLiveLocationAttachment()))
+                return
+            }
+
+            guard let currentUser = session.currentUser,
                   let currentDeviceId = currentUser.currentDevice?.id else {
                 completion(.failure(ClientError.CurrentUserDoesNotExist()))
                 return
             }
+
             let request = LiveLocationUpdateRequestPayload(
                 messageId: messageId,
                 latitude: locationInfo.latitude,

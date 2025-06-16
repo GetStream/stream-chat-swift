@@ -355,11 +355,6 @@ public class ChatMessageController: DataController, DelegateCallable, DataStoreP
             return
         }
 
-        guard message?.sharedLocation?.isLiveSharingActive == true else {
-            completion?(.failure(ClientError.MessageLiveLocationAlreadyStopped()))
-            return
-        }
-
         messageUpdater.updateLiveLocation(messageId: messageId, locationInfo: location) { result in
             self.callback {
                 completion?(result)
