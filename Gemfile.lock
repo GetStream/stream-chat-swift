@@ -208,7 +208,7 @@ GEM
       fastlane
       pry
     fastlane-plugin-sonarcloud_metric_kit (0.2.1)
-    fastlane-plugin-stream_actions (0.3.83)
+    fastlane-plugin-stream_actions (0.3.84)
       xctest_list (= 1.2.1)
     fastlane-plugin-versioning (0.7.1)
     fastlane-sirp (1.0.0)
@@ -440,7 +440,7 @@ DEPENDENCIES
   fastlane-plugin-create_xcframework
   fastlane-plugin-lizard
   fastlane-plugin-sonarcloud_metric_kit
-  fastlane-plugin-stream_actions (= 0.3.83)
+  fastlane-plugin-stream_actions (= 0.3.84)
   fastlane-plugin-versioning
   faye-websocket
   json
