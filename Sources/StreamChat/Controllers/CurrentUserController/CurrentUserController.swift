@@ -322,7 +322,17 @@ public extension CurrentChatUserController {
             for message in messages {
                 guard let cid = message.cid else { continue }
                 let messageController = self?.client.messageController(cid: cid, messageId: message.id)
-                messageController?.updateLiveLocation(location)
+                messageController?.updateLiveLocation(location) { result in
+                    if let error = result.error, let self = self, let location = message.sharedLocation {
+                        self.delegateCallback { delegate in
+                            delegate.currentUserController(
+                                self,
+                                didFailToUpdateLiveLocation: location,
+                                with: error
+                            )
+                        }
+                    }
+                }
             }
         }
     }
@@ -634,6 +644,13 @@ public protocol CurrentChatUserControllerDelegate: AnyObject {
         _ controller: CurrentChatUserController
     )
 
+    /// There was an error when updating one of the live location messages.
+    func currentUserController(
+        _ controller: CurrentChatUserController,
+        didFailToUpdateLiveLocation location: SharedLocation,
+        with error: Error
+    )
+
     /// The controller observed a change in the draft messages.
     func currentUserController(
         _ controller: CurrentChatUserController,
@@ -663,6 +680,12 @@ public extension CurrentChatUserControllerDelegate {
 
     func currentUserControllerDidStopSharingLiveLocation(
         _ controller: CurrentChatUserController
+    ) {}
+
+    func currentUserController(
+        _ controller: CurrentChatUserController,
+        didFailToUpdateLiveLocation location: SharedLocation,
+        with error: Error
     ) {}
 
     func currentUserController(
