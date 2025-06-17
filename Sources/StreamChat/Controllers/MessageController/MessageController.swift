@@ -335,33 +335,6 @@ public class ChatMessageController: DataController, DelegateCallable, DataStoreP
         }
     }
 
-    /// Updates the message's live location attachment if it has one.
-    ///
-    /// This method is for internal use only.
-    ///
-    /// In order to update live location attachments, the `CurrentUserController.updateLiveLocation()` method should be used
-    /// since it will automatically update all attachments with active location sharing of the current user. It also makes
-    /// sure that the requests are throttled while this one is not.
-    ///
-    /// - Parameters:
-    ///  - location: The new location for the live location attachment.
-    ///  - completion: Called when the server updates the message.
-    internal func updateLiveLocation(
-        _ location: LocationInfo,
-        completion: ((Result<SharedLocation, Error>) -> Void)? = nil
-    ) {
-        guard message?.sharedLocation?.isLive == true else {
-            completion?(.failure(ClientError.MessageDoesNotHaveLiveLocationAttachment()))
-            return
-        }
-
-        messageUpdater.updateLiveLocation(messageId: messageId, locationInfo: location) { result in
-            self.callback {
-                completion?(result)
-            }
-        }
-    }
-
     /// Deletes the message this controller manages.
     ///
     /// - Parameters:

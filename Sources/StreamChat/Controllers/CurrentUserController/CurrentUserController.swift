@@ -121,6 +121,9 @@ public class CurrentChatUserController: DataController, DelegateCallable, DataSt
     /// The worker used to update the current user member for a given channel.
     private lazy var currentMemberUpdater = createMemberUpdater()
 
+    /// The worker used to update messages. Used for updating live locations of messages.
+    private lazy var messageUpdater = createMessageUpdater()
+
     // MARK: - Drafts Properties
 
     /// The query used for fetching the draft messages.
@@ -320,17 +323,19 @@ public extension CurrentChatUserController {
 
         locationUpdatesThrottler.execute { [weak self] in
             for message in messages {
-                guard let cid = message.cid else { continue }
-                let messageController = self?.client.messageController(cid: cid, messageId: message.id)
-                messageController?.updateLiveLocation(location) { result in
-                    if let error = result.error, let self = self, let location = message.sharedLocation {
-                        self.delegateCallback { delegate in
-                            delegate.currentUserController(
-                                self,
-                                didFailToUpdateLiveLocation: location,
-                                with: error
-                            )
-                        }
+                self?.messageUpdater.updateLiveLocation(
+                    messageId: message.id,
+                    locationInfo: location
+                ) { result in
+                    guard let self = self else { return }
+                    guard let error = result.error else { return }
+                    guard let location = message.sharedLocation else { return }
+                    self.delegateCallback { delegate in
+                        delegate.currentUserController(
+                            self,
+                            didFailToUpdateLiveLocation: location,
+                            with: error
+                        )
                     }
                 }
             }
@@ -597,6 +602,15 @@ private extension CurrentChatUserController {
     
     private func createMemberUpdater() -> ChannelMemberUpdater {
         .init(database: client.databaseContainer, apiClient: client.apiClient)
+    }
+
+    private func createMessageUpdater() -> MessageUpdater {
+        .init(
+            isLocalStorageEnabled: client.config.isLocalStorageEnabled,
+            messageRepository: client.messageRepository,
+            database: client.databaseContainer,
+            apiClient: client.apiClient
+        )
     }
 
     @discardableResult
