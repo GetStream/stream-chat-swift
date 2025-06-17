@@ -189,7 +189,11 @@ extension DatabaseContainer {
     }
 
     /// Synchronously creates a new CurrentUserDTO in the DB with the given id.
-    func createCurrentUser(id: UserId = .unique, name: String = .unique) throws {
+    func createCurrentUser(
+        id: UserId = .unique,
+        currentDeviceId: DeviceId? = nil,
+        name: String = .unique
+    ) throws {
         try writeSynchronously { session in
             let payload: CurrentUserPayload = .dummy(
                 userId: id,
@@ -198,6 +202,9 @@ extension DatabaseContainer {
                 extraData: [:]
             )
             try session.saveCurrentUser(payload: payload)
+            if let currentDeviceId = currentDeviceId {
+                try session.saveCurrentDevice(currentDeviceId)
+            }
         }
     }
 

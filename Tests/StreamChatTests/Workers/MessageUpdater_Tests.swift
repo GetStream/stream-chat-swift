@@ -3095,6 +3095,242 @@ final class MessageUpdater_Tests: XCTestCase {
         XCTAssertEqual(receivedMessage?.text, text)
         XCTAssertEqual(receivedMessage?.author.id, currentUserId)
     }
+
+    // MARK: - Live Location
+
+    func test_updateLiveLocation_success() throws {
+        let currentUserId: UserId = .unique
+        let deviceId = "device-123"
+        let messageId: MessageId = .unique
+        let cid: ChannelId = .unique
+        let initialLatitude = 10.0
+        let initialLongitude = 20.0
+        let updatedLatitude = 30.0
+        let updatedLongitude = 40.0
+
+        // Create current user and device
+        try database.createCurrentUser(id: currentUserId, currentDeviceId: deviceId)
+        try database.createChannel(cid: cid)
+        // Create a message with a live location
+        try database.createMessage(
+            id: messageId,
+            cid: cid,
+            location: .dummy(
+                latitude: initialLatitude,
+                longitude: initialLongitude,
+                endAt: Date().addingTimeInterval(1000)
+            )
+        )
+
+        // Prepare API response
+        let payload = SharedLocationPayload(
+            channelId: cid.rawValue,
+            messageId: messageId,
+            latitude: updatedLatitude,
+            longitude: updatedLongitude,
+            endAt: Date().addingTimeInterval(1000),
+            createdByDeviceId: deviceId
+        )
+        apiClient.test_mockResponseResult(.success(payload))
+
+        let exp = expectation(description: "updateLiveLocation completes")
+        var result: Result<SharedLocation, Error>?
+        messageUpdater.updateLiveLocation(
+            messageId: messageId,
+            locationInfo: .init(latitude: updatedLatitude, longitude: updatedLongitude)
+        ) {
+            result = $0
+            exp.fulfill()
+        }
+        wait(for: [exp], timeout: defaultTimeout)
+        let sharedLocation = try result?.get()
+        XCTAssertEqual(sharedLocation?.latitude, updatedLatitude)
+        XCTAssertEqual(sharedLocation?.longitude, updatedLongitude)
+        XCTAssertEqual(sharedLocation?.messageId, messageId)
+        XCTAssertEqual(sharedLocation?.channelId, cid)
+        XCTAssertEqual(sharedLocation?.createdByDeviceId, deviceId)
+    }
+
+    func test_updateLiveLocation_liveLocationExpired_propagatesError() throws {
+        let currentUserId: UserId = .unique
+        let deviceId = "device-123"
+        let messageId: MessageId = .unique
+        let cid: ChannelId = .unique
+        try database.createCurrentUser(id: currentUserId, currentDeviceId: deviceId)
+        try database.createChannel(cid: cid)
+        // Create a message with a static location (no endAt)
+        try database.createMessage(
+            id: messageId,
+            cid: cid,
+            location: .dummy(
+                latitude: 1,
+                longitude: 1,
+                endAt: .distantPast
+            )
+        )
+        let result = try waitFor {
+            messageUpdater.updateLiveLocation(
+                messageId: messageId,
+                locationInfo: .init(latitude: 3, longitude: 4),
+                completion: $0
+            )
+        }
+        XCTAssertTrue(result.error is ClientError.MessageDoesNotHaveLiveLocationAttachment)
+    }
+
+    func test_updateLiveLocation_noCurrentUserDevice_propagatesError() throws {
+        let currentUserId: UserId = .unique
+        let messageId: MessageId = .unique
+        let cid: ChannelId = .unique
+        try database.createCurrentUser(id: currentUserId, currentDeviceId: nil)
+        try database.createChannel(cid: cid)
+        try database.createMessage(
+            id: messageId,
+            cid: cid,
+            location: .dummy(
+                latitude: 2,
+                longitude: 3,
+                endAt: Date().addingTimeInterval(1000)
+            )
+        )
+        let result = try waitFor {
+            messageUpdater.updateLiveLocation(
+                messageId: messageId,
+                locationInfo: .init(latitude: 1, longitude: 2),
+                completion: $0
+            )
+        }
+        XCTAssertTrue(result.error is ClientError.CurrentUserDoesNotExist)
+    }
+
+    func test_updateLiveLocation_apiFailure_propagatesError() throws {
+        let currentUserId: UserId = .unique
+        let deviceId = "device-123"
+        let messageId: MessageId = .unique
+        let cid: ChannelId = .unique
+        try database.createCurrentUser(id: currentUserId, currentDeviceId: deviceId)
+        try database.createChannel(cid: cid)
+        try database.createMessage(
+            id: messageId,
+            cid: cid,
+            location: .dummy(
+                latitude: 2,
+                longitude: 3,
+                endAt: Date().addingTimeInterval(1000)
+            )
+        )
+
+        let testError = TestError()
+        apiClient.test_mockResponseResult(Result<SharedLocationPayload, Error>.failure(testError))
+
+        let result = try waitFor {
+            messageUpdater.updateLiveLocation(
+                messageId: messageId,
+                locationInfo: .init(latitude: 1, longitude: 2),
+                completion: $0
+            )
+        }
+        XCTAssertEqual(result.error as? TestError, testError)
+    }
+
+    func test_stopLiveLocationSharing_success() throws {
+        let currentUserId: UserId = .unique
+        let deviceId = "device-123"
+        let messageId: MessageId = .unique
+        let cid: ChannelId = .unique
+        let latitude = 10.0
+        let longitude = 20.0
+        let endAt = Date().addingTimeInterval(1000)
+        try database.createCurrentUser(id: currentUserId, currentDeviceId: deviceId)
+        try database.createChannel(cid: cid)
+        // Create a message with a live location
+        try database.createMessage(
+            id: messageId,
+            cid: cid,
+            location: .dummy(
+                latitude: latitude,
+                longitude: longitude,
+                endAt: Date().addingTimeInterval(1000)
+            )
+        )
+
+        // Prepare API response
+        let payload = SharedLocationPayload(
+            channelId: cid.rawValue,
+            messageId: messageId,
+            latitude: latitude,
+            longitude: longitude,
+            endAt: Date(),
+            createdByDeviceId: deviceId
+        )
+        apiClient.test_mockResponseResult(.success(payload))
+
+        let exp = expectation(description: "stopLiveLocationSharing completes")
+        var result: Result<SharedLocation, Error>?
+        messageUpdater.stopLiveLocationSharing(messageId: messageId) {
+            result = $0
+            exp.fulfill()
+        }
+        wait(for: [exp], timeout: defaultTimeout)
+
+        let sharedLocation = try result?.get()
+        XCTAssertEqual(sharedLocation?.latitude, latitude)
+        XCTAssertEqual(sharedLocation?.longitude, longitude)
+        XCTAssertEqual(sharedLocation?.messageId, messageId)
+        XCTAssertEqual(sharedLocation?.channelId, cid)
+        XCTAssertEqual(sharedLocation?.createdByDeviceId, deviceId)
+        XCTAssertEqual(sharedLocation?.isLiveSharingActive, false)
+    }
+
+    func test_stopLiveLocationSharing_noCurrentUserDevice_propagatesError() throws {
+        let currentUserId: UserId = .unique
+        let messageId: MessageId = .unique
+        let cid: ChannelId = .unique
+        try database.createCurrentUser(id: currentUserId, currentDeviceId: nil)
+        try database.createChannel(cid: cid)
+        try database.createMessage(
+            id: messageId,
+            cid: cid,
+            location: .dummy(
+                latitude: 2,
+                longitude: 3,
+                endAt: Date().addingTimeInterval(1000)
+            )
+        )
+        let result = try waitFor {
+            messageUpdater.stopLiveLocationSharing(messageId: messageId, completion: $0)
+        }
+        XCTAssertTrue(result.error is ClientError.CurrentUserDoesNotExist)
+    }
+
+    func test_stopLiveLocationSharing_apiFailure_revertsOptimisticUpdate() throws {
+        let currentUserId: UserId = .unique
+        let deviceId = "device-123"
+        let messageId: MessageId = .unique
+        let cid: ChannelId = .unique
+        let originalEndAt = Date().addingTimeInterval(1000)
+        try database.createCurrentUser(id: currentUserId, currentDeviceId: deviceId)
+        try database.createChannel(cid: cid)
+        // Create a message with a live location
+        try database.createMessage(
+            id: messageId,
+            cid: cid,
+            location: .dummy(
+                latitude: 2,
+                longitude: 3,
+                endAt: originalEndAt
+            )
+        )
+        let testError = TestError()
+        apiClient.test_mockResponseResult(Result<SharedLocationPayload, Error>.failure(testError))
+        let result = try waitFor {
+            messageUpdater.stopLiveLocationSharing(messageId: messageId, completion: $0)
+        }
+        XCTAssertEqual(result.error as? TestError, testError)
+        // The optimistic update should be reverted
+        let message = try XCTUnwrap(database.viewContext.message(id: messageId))
+        XCTAssertEqual(message.location?.endAt?.bridgeDate, originalEndAt)
+    }
 }
 
 // MARK: - Helpers
