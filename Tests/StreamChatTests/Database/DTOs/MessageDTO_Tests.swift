@@ -1936,6 +1936,66 @@ final class MessageDTO_Tests: XCTestCase {
         XCTAssertEqual(loadedMessage.channel!.defaultSortingAt, loadedMessage.createdAt)
     }
 
+    func test_createNewMessage_whenIsLiveLocation() throws {
+        // Prepare the current user and channel first
+        let cid: ChannelId = .unique
+        let currentUserId: UserId = .unique
+        let deviceId: DeviceId = .unique
+
+        try database.writeSynchronously { session in
+            let currentUserPayload: CurrentUserPayload = .dummy(
+                userId: currentUserId,
+                role: .admin,
+                extraData: [:]
+            )
+
+            try session.saveCurrentUser(payload: currentUserPayload)
+            try session.saveCurrentDevice(deviceId)
+            try session.saveChannel(payload: self.dummyPayload(with: cid))
+        }
+
+        // Create a new message
+        var newMessageId: MessageId!
+        let newMessageText: String = .unique
+        try database.writeSynchronously { session in
+            let messageDTO = try session.createNewMessage(
+                in: cid,
+                messageId: .unique,
+                text: newMessageText,
+                pinning: nil,
+                command: nil,
+                arguments: nil,
+                parentMessageId: nil,
+                attachments: [],
+                mentionedUserIds: [],
+                showReplyInChannel: true,
+                isSilent: false,
+                isSystem: true,
+                quotedMessageId: nil,
+                createdAt: nil,
+                skipPush: true,
+                skipEnrichUrl: true,
+                poll: nil,
+                location: .init(latitude: 10, longitude: 10, endAt: .distantFuture),
+                restrictedVisibility: [],
+                extraData: [:]
+            )
+            newMessageId = messageDTO.id
+        }
+
+        let messageDTO: MessageDTO = try XCTUnwrap(database.viewContext.message(id: newMessageId))
+        XCTAssertEqual(messageDTO.isActiveLiveLocation, true)
+        XCTAssertEqual(messageDTO.location?.latitude, 10)
+        XCTAssertEqual(messageDTO.location?.longitude, 10)
+
+        let loadedMessage: ChatMessage = try messageDTO.asModel()
+        XCTAssertEqual(loadedMessage.sharedLocation?.isLiveSharingActive, true)
+        XCTAssertEqual(loadedMessage.sharedLocation?.endAt, .distantFuture)
+        XCTAssertEqual(loadedMessage.sharedLocation?.latitude, 10)
+        XCTAssertEqual(loadedMessage.sharedLocation?.longitude, 10)
+        XCTAssertEqual(loadedMessage.sharedLocation?.createdByDeviceId, deviceId)
+    }
+
     func test_replies_linkedToParentMessage_onCreatingNewMessage() throws {
         // Create current user
         try database.createCurrentUser()
