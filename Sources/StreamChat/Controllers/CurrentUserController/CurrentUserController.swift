@@ -57,7 +57,7 @@ public class CurrentChatUserController: DataController, DelegateCallable, DataSt
                 let observer = self?.createActiveLiveLocationMessagesObserver()
                 self?.activeLiveLocationMessagesObserver = observer
                 try? observer?.startObserving()
-                observer?.onDidChange = { [weak self] _ in
+                observer?.onDidChange = { [weak self, weak observer] _ in
                     self?.delegateCallback { [weak self] in
                         guard let self = self else { return }
                         let messages = Array(observer?.items ?? [])
