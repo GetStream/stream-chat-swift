@@ -165,11 +165,15 @@ class LocationAttachmentSnapshotView: _View, ThemeProvider {
         } else if content.isSharingLiveLocation && content.isFromCurrentUser {
             stopButton.isHidden = false
             sharingStatusView.isHidden = true
-            sharingStatusView.updateStatus(isSharing: true)
+            if let location = content.message?.sharedLocation {
+                sharingStatusView.updateStatus(location: location)
+            }
         } else if content.isLive {
             stopButton.isHidden = true
             sharingStatusView.isHidden = false
-            sharingStatusView.updateStatus(isSharing: content.isSharingLiveLocation)
+            if let location = content.message?.sharedLocation {
+                sharingStatusView.updateStatus(location: location)
+            }
         } else {
             stopButton.isHidden = true
             sharingStatusView.isHidden = true

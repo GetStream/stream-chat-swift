@@ -169,12 +169,13 @@ class LocationDetailViewController: UIViewController, ThemeProvider {
 
         let isFromCurrentUser = message.isSentByCurrentUser
         let dateFormatter = appearance.formatters.channelListMessageTimestamp
+        let endingAtText = dateFormatter.format(messageController.message?.sharedLocation?.endAt ?? Date())
         let updatedAtText = dateFormatter.format(messageController.message?.updatedAt ?? Date())
         if location.isLiveSharingActive && message.isLocalOnly == false {
             locationControlBanner.configure(
                 state: isFromCurrentUser
-                    ? .currentUserSharing
-                    : .anotherUserSharing(lastUpdatedAtText: updatedAtText)
+                    ? .currentUserSharing(endingAtText: endingAtText)
+                    : .anotherUserSharing(endingAtText: endingAtText)
             )
         } else {
             locationControlBanner.configure(state: .ended(lastUpdatedAtText: updatedAtText))
@@ -305,23 +306,23 @@ class LocationControlBannerView: UIView, ThemeProvider {
     }
 
     enum State {
-        case currentUserSharing
-        case anotherUserSharing(lastUpdatedAtText: String)
+        case currentUserSharing(endingAtText: String)
+        case anotherUserSharing(endingAtText: String)
         case ended(lastUpdatedAtText: String)
     }
 
     func configure(state: State) {
         switch state {
-        case .currentUserSharing:
+        case .currentUserSharing(let endingAtText):
             sharingButton.isEnabled = true
             sharingButton.setTitle("Stop Sharing", for: .normal)
             sharingButton.setTitleColor(appearance.colorPalette.alert, for: .normal)
-            locationUpdateLabel.text = "Location sharing is active"
-        case .anotherUserSharing(let lastUpdatedAtText):
+            locationUpdateLabel.text = "Live until \(endingAtText)"
+        case .anotherUserSharing(let endingAtText):
             sharingButton.isEnabled = false
             sharingButton.setTitle("Live Location", for: .normal)
             sharingButton.setTitleColor(appearance.colorPalette.alert, for: .normal)
-            locationUpdateLabel.text = "Location last updated at \(lastUpdatedAtText)"
+            locationUpdateLabel.text = "Live until \(endingAtText)"
         case .ended(let lastUpdatedAtText):
             sharingButton.isEnabled = false
             sharingButton.setTitle("Live location ended", for: .normal)

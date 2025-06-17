@@ -44,10 +44,12 @@ class LocationSharingStatusView: _View, ThemeProvider {
         }.embed(in: self)
     }
 
-    func updateStatus(isSharing: Bool) {
-        statusLabel.text = isSharing ? "Live location active" : "Live location ended"
-        iconImageView.image = isSharing ? activeSharingImage : inactiveSharingImage
-        iconImageView.tintColor = isSharing
+    func updateStatus(location: SharedLocation) {
+        guard let endAt = location.endAt else { return }
+        let endAtText = appearance.formatters.channelListMessageTimestamp.format(endAt)
+        statusLabel.text = location.isLiveSharingActive ? "Live until \(endAtText)" : "Live location ended"
+        iconImageView.image = location.isLiveSharingActive ? activeSharingImage : inactiveSharingImage
+        iconImageView.tintColor = location.isLiveSharingActive
             ? appearance.colorPalette.accentPrimary
             : appearance.colorPalette.subtitleText
     }
