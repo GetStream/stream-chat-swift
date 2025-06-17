@@ -8,7 +8,7 @@ import Foundation
 extension SharedLocationPayload {
     /// Returns dummy draft payload with the given values.
     static func dummy(
-        channelId: String = .unique,
+        channelId: ChannelId = .unique,
         messageId: String = .unique,
         latitude: Double,
         longitude: Double,
@@ -16,7 +16,7 @@ extension SharedLocationPayload {
         createdByDeviceId: DeviceId = .unique
     ) -> SharedLocationPayload {
         .init(
-            channelId: channelId,
+            channelId: channelId.rawValue,
             messageId: messageId,
             latitude: latitude,
             longitude: longitude,
