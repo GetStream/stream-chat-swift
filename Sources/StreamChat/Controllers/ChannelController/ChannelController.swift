@@ -749,6 +749,7 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
     ///   - skipPush: If true, skips sending push notification to channel members.
     ///   - skipEnrichUrl: If true, the url preview won't be attached to the message.
     ///   - restrictedVisibility: The list of user ids that should be able to see the message.
+    ///   - location: The new location information of the message.
     ///   - extraData: Additional extra data of the message object.
     ///   - completion: Called when saving the message to the local DB finishes.
     ///
