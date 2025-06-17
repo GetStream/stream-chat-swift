@@ -52,7 +52,7 @@ class DemoComposerVC: ComposerVC {
                 preferredStyle: .actionSheet
             )
             let durations: [(String, TimeInterval)] = [
-                ("1 minute", 60),
+                ("1 minute", 61),
                 ("10 minutes", 600),
                 ("1 hour", 3600)
             ]
