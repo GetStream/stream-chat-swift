@@ -3,19 +3,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 # Upcoming
 
-### 🔄 Changed
-
-# [4.80.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.80.0)
-_June 17, 2025_
-
 ## StreamChat
 ### ✅ Added
-- Add new `Filter.isNil` to make it easier to query by nil values [#3623](https://github.com/GetStream/stream-chat-swift/pull/3623)
-- Add Message Reminders [#3623](https://github.com/GetStream/stream-chat-swift/pull/3623)
-   - Add `ChatMessageController.createReminder()`
-   - Add `ChatMessageController.updateReminder()` 
-   - Add `ChatMessageController.deleteReminder()`
-   - Add `MessageReminderListController` and `MessageReminderListQuery`
 - Add `ChatMessageController.partialUpdateMessage()` [#3531](https://github.com/GetStream/stream-chat-swift/pull/3531)
 - Add Location Sharing Support [#3531](https://github.com/GetStream/stream-chat-swift/pull/3531)
   - Add `ChatMessage.sharedLocation`
@@ -30,6 +19,20 @@ _June 17, 2025_
     - `didStartSharingLiveLocation()`
     - `didStopSharingLiveLocation()`
     - `didChangeActiveLiveLocationMessages()`
+    - `didFailToUpdateLiveLocation()`
+
+
+# [4.80.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.80.0)
+_June 17, 2025_
+
+## StreamChat
+### ✅ Added
+- Add new `Filter.isNil` to make it easier to query by nil values [#3623](https://github.com/GetStream/stream-chat-swift/pull/3623)
+- Add Message Reminders [#3623](https://github.com/GetStream/stream-chat-swift/pull/3623)
+   - Add `ChatMessageController.createReminder()`
+   - Add `ChatMessageController.updateReminder()` 
+   - Add `ChatMessageController.deleteReminder()`
+   - Add `MessageReminderListController` and `MessageReminderListQuery`
 
 # [4.79.1](https://github.com/GetStream/stream-chat-swift/releases/tag/4.79.1)
 _June 03, 2025_
