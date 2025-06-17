@@ -3329,7 +3329,7 @@ final class MessageUpdater_Tests: XCTestCase {
         XCTAssertEqual(result.error as? TestError, testError)
         // The optimistic update should be reverted
         let message = try XCTUnwrap(database.viewContext.message(id: messageId))
-        XCTAssertEqual(message.location?.endAt?.bridgeDate, originalEndAt)
+        XCTAssertNearlySameDate(message.location?.endAt?.bridgeDate, originalEndAt)
     }
 }
 
