@@ -61,10 +61,7 @@ public class CurrentChatUserController: DataController, DelegateCallable, DataSt
                     self?.delegateCallback { [weak self] in
                         guard let self = self else { return }
                         let messages = Array(observer?.items ?? [])
-                        let isLocationFromCurrentDevice: (ChatMessage) -> Bool = {
-                            $0.sharedLocation?.createdByDeviceId == self.currentUser?.currentDevice?.id
-                        }
-                        self.isSharingLiveLocation = !messages.filter(isLocationFromCurrentDevice).isEmpty
+                        self.isSharingLiveLocation = !messages.isEmpty
                         $0.currentUserController(self, didChangeActiveLiveLocationMessages: messages)
                     }
                 }
@@ -325,14 +322,8 @@ public extension CurrentChatUserController {
             return
         }
 
-        let isLocationFromCurrentDevice: (ChatMessage) -> Bool = {
-            $0.sharedLocation?.createdByDeviceId == self.currentUser?.currentDevice?.id
-        }
-
-        let currentDeviceLiveLocationMessages = messages.filter(isLocationFromCurrentDevice)
-
         locationUpdatesThrottler.execute { [weak self] in
-            for message in currentDeviceLiveLocationMessages {
+            for message in messages {
                 self?.messageUpdater.updateLiveLocation(
                     messageId: message.id,
                     locationInfo: location
@@ -658,12 +649,12 @@ public protocol CurrentChatUserControllerDelegate: AnyObject {
         didChangeCurrentUser: EntityChange<CurrentChatUser>
     )
 
-    /// The current user has currently active live location attachments from this device.
+    /// The current user has currently active live location attachments.
     func currentUserControllerDidStartSharingLiveLocation(
         _ controller: CurrentChatUserController
     )
 
-    /// The current user has no active live location attachments from this device.
+    /// The current user has no active live location attachments.
     func currentUserControllerDidStopSharingLiveLocation(
         _ controller: CurrentChatUserController
     )
@@ -671,11 +662,11 @@ public protocol CurrentChatUserControllerDelegate: AnyObject {
     /// The current user active location messages have changed.
     ///
     /// Whenever there are changes of the current user's live location messages, this method is called.
-    /// This includes live locations from the current user independent of the device.
     ///
     /// - If a new live location message is added, the array will contain the new message.
     /// - If a live location message is removed, the array will not contain it anymore.
     /// - If all live location messages are removed, the array will be empty.
+    ///
     /// - Parameter messages: The currently active live location messages for the current user.
     func currentUserController(
         _ controller: CurrentChatUserController,
