@@ -19,25 +19,24 @@ jobs:
     - uses: actions/checkout@v4.1.1
 
     - uses: actions/github-script@v6
-      id: get_pr_data
+      id: get_pr_number
       with:
         script: |
-            return (
-              await github.rest.repos.listPullRequestsAssociatedWithCommit({
-                commit_sha: context.sha,
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-              })
-            ).data[0];
-
-    - uses: ./.github/actions/bootstrap
-      env:
-        INSTALL_SONAR: true
-        SKIP_MINT_BOOTSTRAP: true
+            const prs = await github.rest.repos.listPullRequestsAssociatedWithCommit({
+              commit_sha: context.sha,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+            });
+            return prs.data[0]?.number || '';
 
     - name: Run Sonar analysis
       run: |
-          ARTIFACT_NAME="test-coverage-${{ fromJson(steps.get_pr_data.outputs.result).number }}"
+          if [[ -z "${{ steps.get_pr_number.outputs.result }}" ]]; then
+            echo "No PR found. Skipping Sonar analysis."
+            exit 0
+          fi
+
+          ARTIFACT_NAME="test-coverage-${{ steps.get_pr_number.outputs.result }}"
           ARTIFACT=$(gh api repos/${{ github.repository }}/actions/artifacts | jq -r ".artifacts | map(select(.name==\"$ARTIFACT_NAME\")) | first")
           if [[ "$ARTIFACT" == null || "$ARTIFACT" == "" ]]; then
             echo "Artifact not found. Skipping Sonar analysis."
