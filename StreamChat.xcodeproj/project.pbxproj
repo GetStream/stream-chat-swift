@@ -1418,6 +1418,8 @@
 		AD17CDF927E4DB2700E0D092 /* PushProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD17CDF827E4DB2700E0D092 /* PushProvider.swift */; };
 		AD17CDFA27E4DB2700E0D092 /* PushProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD17CDF827E4DB2700E0D092 /* PushProvider.swift */; };
 		AD17E1212E00985B001AF308 /* SharedLocationPayload.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD17E1202E009853001AF308 /* SharedLocationPayload.swift */; };
+		AD17E1232E01CAAF001AF308 /* NewLocationInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD17E1222E01CAAF001AF308 /* NewLocationInfo.swift */; };
+		AD17E1242E01CAAF001AF308 /* NewLocationInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD17E1222E01CAAF001AF308 /* NewLocationInfo.swift */; };
 		AD1D7A8526A2131D00494CA5 /* ChatChannelVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD1D7A8326A212D000494CA5 /* ChatChannelVC.swift */; };
 		AD25070D272C0C8D00BC14C4 /* ChatMessageReactionAuthorsVC_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD25070B272C0C8800BC14C4 /* ChatMessageReactionAuthorsVC_Tests.swift */; };
 		AD2525212ACB3C0800F1433C /* ChatClientFactory_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD2525202ACB3C0800F1433C /* ChatClientFactory_Tests.swift */; };
@@ -4262,6 +4264,7 @@
 		AD169E012C9F969C00F58FAC /* DefaultScrollViewKeyboardHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DefaultScrollViewKeyboardHandler.swift; sourceTree = "<group>"; };
 		AD17CDF827E4DB2700E0D092 /* PushProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PushProvider.swift; sourceTree = "<group>"; };
 		AD17E1202E009853001AF308 /* SharedLocationPayload.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharedLocationPayload.swift; sourceTree = "<group>"; };
+		AD17E1222E01CAAF001AF308 /* NewLocationInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewLocationInfo.swift; sourceTree = "<group>"; };
 		AD1D7A8326A212D000494CA5 /* ChatChannelVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatChannelVC.swift; sourceTree = "<group>"; };
 		AD25070B272C0C8800BC14C4 /* ChatMessageReactionAuthorsVC_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessageReactionAuthorsVC_Tests.swift; sourceTree = "<group>"; };
 		AD2525202ACB3C0800F1433C /* ChatClientFactory_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatClientFactory_Tests.swift; sourceTree = "<group>"; };
@@ -9250,8 +9253,9 @@
 		ADFCA5B52D121EE9000F515F /* Location */ = {
 			isa = PBXGroup;
 			children = (
-				ADFCA5B22D121EAF000F515F /* LocationInfo.swift */,
 				AD770B672D09E2CB003AC602 /* SharedLocation.swift */,
+				ADFCA5B22D121EAF000F515F /* LocationInfo.swift */,
+				AD17E1222E01CAAF001AF308 /* NewLocationInfo.swift */,
 			);
 			path = Location;
 			sourceTree = "<group>";
@@ -11667,6 +11671,7 @@
 				792A4F3F247FFDE700EAF71D /* Codable+Extensions.swift in Sources */,
 				8819DFCF2525F3C600FD1A50 /* UserUpdater.swift in Sources */,
 				79C750BB248FC4100023F0B7 /* ErrorPayload.swift in Sources */,
+				AD17E1232E01CAAF001AF308 /* NewLocationInfo.swift in Sources */,
 				799BE2EA248A8C9D00DAC8A0 /* RetryStrategy.swift in Sources */,
 				DA84070C25250581005A0F62 /* UserListPayload.swift in Sources */,
 				79877A272498E50D00015F8B /* MemberModelDTO.swift in Sources */,
@@ -12651,6 +12656,7 @@
 				841BAA522BD1CD81000C73E4 /* PollDTO.swift in Sources */,
 				C121E87B274544AF00023E4C /* MessageSearchQueryDTO.swift in Sources */,
 				4042967E29FAC9DA0089126D /* AudioAnalysisContext.swift in Sources */,
+				AD17E1242E01CAAF001AF308 /* NewLocationInfo.swift in Sources */,
 				40789D4929F6C1DC0018C2BB /* StreamAppStateObserver_Tests.swift in Sources */,
 				C1E8AD5F278EF5F40041B775 /* AsyncOperation.swift in Sources */,
 				8413D2F62BDDAAFF005ADA4E /* PollVoteListController+SwiftUI.swift in Sources */,

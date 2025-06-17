@@ -763,6 +763,7 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
         skipPush: Bool = false,
         skipEnrichUrl: Bool = false,
         restrictedVisibility: [UserId] = [],
+        location: NewLocationInfo? = nil,
         extraData: [String: RawJSON] = [:],
         completion: ((Result<MessageId, Error>) -> Void)? = nil
     ) {
@@ -786,6 +787,7 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
             skipPush: skipPush,
             skipEnrichUrl: skipEnrichUrl,
             restrictedVisibility: restrictedVisibility,
+            location: location,
             extraData: transformableInfo.extraData,
             poll: nil,
             completion: completion
@@ -924,7 +926,6 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
             return
         }
 
-        // TODO: Get it from ChatChannel.activeLiveLocations?
         client.messageRepository.getCurrentUserActiveLiveLocationMessages(for: cid) { [weak self] result in
             if let message = try? result.get().first {
                 self?.callback {
@@ -1701,6 +1702,7 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
         skipPush: Bool = false,
         skipEnrichUrl: Bool = false,
         restrictedVisibility: [UserId] = [],
+        location: NewLocationInfo? = nil,
         extraData: [String: RawJSON] = [:],
         poll: PollPayload?,
         completion: ((Result<MessageId, Error>) -> Void)? = nil
@@ -1732,6 +1734,7 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
             skipEnrichUrl: skipEnrichUrl,
             restrictedVisibility: restrictedVisibility,
             poll: poll,
+            location: location,
             extraData: extraData
         ) { result in
             if let newMessage = try? result.get() {

@@ -1143,10 +1143,3 @@ extension ChannelQuery {
         return result
     }
 }
-
-/// Data model for the new location info used in `createNewMessage`.
-struct NewLocationInfo {
-    let latitude: Double
-    let longitude: Double
-    let endAt: Date?
-}
