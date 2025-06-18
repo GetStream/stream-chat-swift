@@ -233,13 +233,14 @@ public class ChannelConfig: Codable {
         case updatedAt = "updated_at"
         case skipLastMsgAtUpdateForSystemMsg = "skip_last_msg_update_for_system_msgs"
         case messageRemindersEnabled = "user_message_reminders"
+        case sharedLocationsEnabled = "shared_locations"
     }
 
     /// If users are allowed to add reactions to messages. Enabled by default.
     public let reactionsEnabled: Bool
     /// Controls if typing indicators are shown. Enabled by default.
     public let typingEventsEnabled: Bool
-    /// Controls whether the chat shows how far you’ve read. Enabled by default.
+    /// Controls whether the chat shows how far you've read. Enabled by default.
     public let readEventsEnabled: Bool
     /// Determines if events are fired for connecting and disconnecting to a chat. Enabled by default.
     public let connectEventsEnabled: Bool
@@ -271,6 +272,8 @@ public class ChannelConfig: Codable {
     public let skipLastMsgAtUpdateForSystemMsg: Bool
     /// Determines if user message reminders are enabled.
     public let messageRemindersEnabled: Bool
+    /// Determines if shared locations are enabled.
+    public let sharedLocationsEnabled: Bool
 
     public required init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
@@ -297,6 +300,7 @@ public class ChannelConfig: Codable {
         pollsEnabled = try container.decodeIfPresent(Bool.self, forKey: .pollsEnabled) ?? false
         skipLastMsgAtUpdateForSystemMsg = try container.decodeIfPresent(Bool.self, forKey: .skipLastMsgAtUpdateForSystemMsg) ?? false
         messageRemindersEnabled = try container.decodeIfPresent(Bool.self, forKey: .messageRemindersEnabled) ?? false
+        sharedLocationsEnabled = try container.decodeIfPresent(Bool.self, forKey: .sharedLocationsEnabled) ?? false
     }
 
     internal required init(
@@ -313,6 +317,7 @@ public class ChannelConfig: Codable {
         urlEnrichmentEnabled: Bool = false,
         skipLastMsgAtUpdateForSystemMsg: Bool = false,
         messageRemindersEnabled: Bool = false,
+        sharedLocationsEnabled: Bool = false,
         messageRetention: String = "",
         maxMessageLength: Int = 0,
         commands: [Command] = [],
@@ -337,5 +342,6 @@ public class ChannelConfig: Codable {
         self.pollsEnabled = pollsEnabled
         self.skipLastMsgAtUpdateForSystemMsg = skipLastMsgAtUpdateForSystemMsg
         self.messageRemindersEnabled = messageRemindersEnabled
+        self.sharedLocationsEnabled = sharedLocationsEnabled
     }
 }

@@ -1320,6 +1320,7 @@
       "automod" : "AI",
       "read_events" : true,
       "skip_last_msg_update_for_system_msgs": true,
+      "shared_locations": true,
       "commands" : [
         {
           "set" : "fun_set",

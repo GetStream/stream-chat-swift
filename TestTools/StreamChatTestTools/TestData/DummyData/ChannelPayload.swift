@@ -18,7 +18,8 @@ extension ChannelPayload {
         pinnedMessages: [MessagePayload] = [],
         channelReads: [ChannelReadPayload] = [],
         isHidden: Bool? = nil,
-        draft: DraftPayload? = nil
+        draft: DraftPayload? = nil,
+        sharedLocationsEnabled: Bool = false
     ) -> Self {
         .init(
             channel: channel,

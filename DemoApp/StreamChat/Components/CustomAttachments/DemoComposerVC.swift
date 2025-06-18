@@ -12,8 +12,10 @@ class DemoComposerVC: ComposerVC {
 
     override var attachmentsPickerActions: [UIAlertAction] {
         var actions = super.attachmentsPickerActions
-        
-        if AppConfig.shared.demoAppConfig.isLocationAttachmentsEnabled && content.isInsideThread == false {
+
+        let isDemoAppLocationsEnabled = AppConfig.shared.demoAppConfig.isLocationAttachmentsEnabled
+        let isLocationEnabled = channelController?.channel?.config.sharedLocationsEnabled == true
+        if isLocationEnabled && isDemoAppLocationsEnabled && content.isInsideThread == false {
             let sendLocationAction = UIAlertAction(
                 title: "Send Current Location",
                 style: .default,
