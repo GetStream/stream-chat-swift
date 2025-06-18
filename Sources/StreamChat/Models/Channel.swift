@@ -430,6 +430,8 @@ public struct ChannelCapability: RawRepresentable, ExpressibleByStringLiteral, H
     public static let sendPoll: Self = "send-poll"
     /// Ability to cast a poll vote.
     public static let castPollVote: Self = "cast-poll-vote"
+    /// Ability to share location.
+    public static let shareLocation: Self = "share-location"
 }
 
 public extension ChatChannel {
@@ -586,5 +588,10 @@ public extension ChatChannel {
     /// Can the current user cast a poll vote in this channel.
     var canCastPollVote: Bool {
         ownCapabilities.contains(.castPollVote)
+    }
+
+    /// Can the current user share location in this channel.
+    var canShareLocation: Bool {
+        ownCapabilities.contains(.shareLocation)
     }
 }
