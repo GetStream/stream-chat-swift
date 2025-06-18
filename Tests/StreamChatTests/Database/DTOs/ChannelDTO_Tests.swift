@@ -1113,7 +1113,8 @@ final class ChannelDTO_Tests: XCTestCase {
             pinnedMessages: [],
             channelReads: [currentUserChannelReadPayload],
             isHidden: false,
-            draft: nil
+            draft: nil,
+            activeLiveLocations: []
         )
 
         let unreadMessages = 5
@@ -1170,7 +1171,8 @@ final class ChannelDTO_Tests: XCTestCase {
             pinnedMessages: [],
             channelReads: [],
             isHidden: nil,
-            draft: nil
+            draft: nil,
+            activeLiveLocations: []
         )
         try database.writeSynchronously { session in
             try session.saveChannel(payload: channelPayload)
@@ -1538,7 +1540,8 @@ final class ChannelDTO_Tests: XCTestCase {
                 quotedMessage: nil,
                 parentId: nil,
                 parentMessage: nil
-            )
+            ),
+            activeLiveLocations: [.dummy(latitude: 10, longitude: 10)]
         )
 
         // WHEN
@@ -1553,6 +1556,8 @@ final class ChannelDTO_Tests: XCTestCase {
         XCTAssertEqual(draftMessage.id, draftMessagePayload.id)
         XCTAssertEqual(draftMessage.text, draftMessagePayload.text)
         XCTAssertEqual(draftMessage.extraData, draftMessagePayload.extraData)
+        XCTAssertEqual(channel.activeLiveLocations.first?.latitude, 10)
+        XCTAssertEqual(channel.activeLiveLocations.first?.longitude, 10)
     }
 
     func test_saveChannel_whenDraftMessageIsNil_removesExistingDraft() throws {
@@ -1589,7 +1594,8 @@ final class ChannelDTO_Tests: XCTestCase {
                 quotedMessage: nil,
                 parentId: nil,
                 parentMessage: nil
-            )
+            ),
+            activeLiveLocations: []
         )
 
         try database.writeSynchronously { session in
@@ -1614,7 +1620,8 @@ final class ChannelDTO_Tests: XCTestCase {
             pinnedMessages: [],
             channelReads: [],
             isHidden: nil,
-            draft: nil
+            draft: nil,
+            activeLiveLocations: []
         )
 
         try database.writeSynchronously { session in
@@ -1665,7 +1672,8 @@ final class ChannelDTO_Tests: XCTestCase {
                 quotedMessage: quotedMessagePayload,
                 parentId: nil,
                 parentMessage: nil
-            )
+            ),
+            activeLiveLocations: []
         )
 
         // WHEN
@@ -1721,7 +1729,8 @@ final class ChannelDTO_Tests: XCTestCase {
                 quotedMessage: nil,
                 parentId: parentMessagePayload.id,
                 parentMessage: parentMessagePayload
-            )
+            ),
+            activeLiveLocations: []
         )
 
         // WHEN

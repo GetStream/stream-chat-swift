@@ -248,7 +248,8 @@ final class ChannelListPayload_Tests: XCTestCase {
                     )
                 },
                 isHidden: false,
-                draft: nil
+                draft: nil,
+                activeLiveLocations: []
             )
         }
 
@@ -342,6 +343,7 @@ final class ChannelPayload_Tests: XCTestCase {
 
         XCTAssertEqual(payload.membership?.user?.id, "broken-waterfall-5")
         XCTAssertEqual(payload.channel.ownCapabilities?.count, 27)
+        XCTAssertEqual(payload.activeLiveLocations.count, 1)
     }
 
     func test_newestMessage_whenMessagesAreSortedDesc() throws {

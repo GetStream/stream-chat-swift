@@ -160,6 +160,9 @@ public struct ChatChannel {
     /// The draft message in the channel.
     public let draftMessage: DraftMessage?
 
+    /// A list of active live locations in the channel.
+    public let activeLiveLocations: [SharedLocation]
+
     // MARK: - Internal
 
     var hasUnread: Bool {
@@ -198,7 +201,8 @@ public struct ChatChannel {
         pinnedMessages: [ChatMessage],
         muteDetails: MuteDetails?,
         previewMessage: ChatMessage?,
-        draftMessage: DraftMessage?
+        draftMessage: DraftMessage?,
+        activeLiveLocations: [SharedLocation]
     ) {
         self.cid = cid
         self.name = name
@@ -232,6 +236,7 @@ public struct ChatChannel {
         self.muteDetails = muteDetails
         self.previewMessage = previewMessage
         self.draftMessage = draftMessage
+        self.activeLiveLocations = activeLiveLocations
     }
 
     /// Returns a new `ChatChannel` with the provided data replaced.
@@ -272,7 +277,8 @@ public struct ChatChannel {
             pinnedMessages: pinnedMessages,
             muteDetails: muteDetails,
             previewMessage: previewMessage,
-            draftMessage: draftMessage
+            draftMessage: draftMessage,
+            activeLiveLocations: activeLiveLocations
         )
     }
 }
@@ -322,6 +328,7 @@ extension ChatChannel: Hashable {
         guard lhs.truncatedAt == rhs.truncatedAt else { return false }
         guard lhs.ownCapabilities == rhs.ownCapabilities else { return false }
         guard lhs.draftMessage == rhs.draftMessage else { return false }
+        guard lhs.activeLiveLocations.count == rhs.activeLiveLocations.count else { return false }
         return true
     }
 

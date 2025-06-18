@@ -96,7 +96,8 @@ public extension ChatChannel {
         pinnedMessages: [ChatMessage] = [],
         muteDetails: MuteDetails? = nil,
         previewMessage: ChatMessage? = nil,
-        draftMessage: DraftMessage? = nil
+        draftMessage: DraftMessage? = nil,
+        activeLiveLocations: [SharedLocation] = []
     ) -> Self {
         self.init(
             cid: cid,
@@ -126,7 +127,8 @@ public extension ChatChannel {
             pinnedMessages: pinnedMessages,
             muteDetails: muteDetails,
             previewMessage: previewMessage,
-            draftMessage: draftMessage
+            draftMessage: draftMessage,
+            activeLiveLocations: activeLiveLocations
         )
     }
 
@@ -155,7 +157,8 @@ public extension ChatChannel {
         pinnedMessages: [ChatMessage] = [],
         muteDetails: MuteDetails? = nil,
         previewMessage: ChatMessage? = nil,
-        draftMessage: DraftMessage? = nil
+        draftMessage: DraftMessage? = nil,
+        activeLiveLocations: [SharedLocation] = []
     ) -> Self {
         self.init(
             cid: .init(type: .messaging, id: "!members" + .newUniqueId),
@@ -183,7 +186,8 @@ public extension ChatChannel {
             pinnedMessages: pinnedMessages,
             muteDetails: muteDetails,
             previewMessage: previewMessage,
-            draftMessage: draftMessage
+            draftMessage: draftMessage,
+            activeLiveLocations: activeLiveLocations
         )
     }
 
@@ -211,7 +215,8 @@ public extension ChatChannel {
         pinnedMessages: [ChatMessage] = [],
         muteDetails: MuteDetails? = nil,
         previewMessage: ChatMessage? = nil,
-        draftMessage: DraftMessage? = nil
+        draftMessage: DraftMessage? = nil,
+        activeLiveLocations: [SharedLocation] = []
     ) -> Self {
         self.init(
             cid: .init(type: .messaging, id: .newUniqueId),
@@ -238,7 +243,8 @@ public extension ChatChannel {
             pinnedMessages: pinnedMessages,
             muteDetails: muteDetails,
             previewMessage: previewMessage,
-            draftMessage: draftMessage
+            draftMessage: draftMessage,
+            activeLiveLocations: activeLiveLocations
         )
     }
 }
