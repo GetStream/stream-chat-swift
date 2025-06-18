@@ -1582,7 +1582,7 @@
 		AD793F49270B767500B05456 /* ChatMessageReactionAuthorsVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD793F48270B767500B05456 /* ChatMessageReactionAuthorsVC.swift */; };
 		AD793F4B270B769E00B05456 /* ChatMessageReactionAuthorViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD793F4A270B769E00B05456 /* ChatMessageReactionAuthorViewCell.swift */; };
 		AD7977BA2936D9450008B5FB /* Token_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD7977B92936D9450008B5FB /* Token_Tests.swift */; };
-		AD7A11902DEE008C00B8F963 /* LocationDTO.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD9C926C2DD3A3900013A7E6 /* LocationDTO.swift */; };
+		AD7A11902DEE008C00B8F963 /* SharedLocationDTO.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD9C926C2DD3A3900013A7E6 /* SharedLocationDTO.swift */; };
 		AD7A11912DEE00A000B8F963 /* SendMessageInterceptor.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD9C926F2DD4DCF90013A7E6 /* SendMessageInterceptor.swift */; };
 		AD7A11CB2DEE091400B8F963 /* LocationEndpoints.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD7A11CA2DEE090B00B8F963 /* LocationEndpoints.swift */; };
 		AD7A11CC2DEE091400B8F963 /* LocationEndpoints.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD7A11CA2DEE090B00B8F963 /* LocationEndpoints.swift */; };
@@ -1675,7 +1675,7 @@
 		AD99C909279B0E9D009DD9C5 /* MessageDateSeparatorFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD99C906279B0C9B009DD9C5 /* MessageDateSeparatorFormatter.swift */; };
 		AD99C90C279B136B009DD9C5 /* UserLastActivityFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD99C90A279B1363009DD9C5 /* UserLastActivityFormatter.swift */; };
 		AD99C90D279B136D009DD9C5 /* UserLastActivityFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD99C90A279B1363009DD9C5 /* UserLastActivityFormatter.swift */; };
-		AD9C926D2DD3A3950013A7E6 /* LocationDTO.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD9C926C2DD3A3900013A7E6 /* LocationDTO.swift */; };
+		AD9C926D2DD3A3950013A7E6 /* SharedLocationDTO.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD9C926C2DD3A3900013A7E6 /* SharedLocationDTO.swift */; };
 		AD9C92702DD4DD070013A7E6 /* SendMessageInterceptor.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD9C926F2DD4DCF90013A7E6 /* SendMessageInterceptor.swift */; };
 		ADA03A222D64EFE900DFE048 /* DraftMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADA03A212D64EFE900DFE048 /* DraftMessage.swift */; };
 		ADA03A232D64EFE900DFE048 /* DraftMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADA03A212D64EFE900DFE048 /* DraftMessage.swift */; };
@@ -4440,7 +4440,7 @@
 		AD99C906279B0C9B009DD9C5 /* MessageDateSeparatorFormatter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageDateSeparatorFormatter.swift; sourceTree = "<group>"; };
 		AD99C90A279B1363009DD9C5 /* UserLastActivityFormatter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserLastActivityFormatter.swift; sourceTree = "<group>"; };
 		AD9BE32526680E4200A6D284 /* Stream.playground */ = {isa = PBXFileReference; lastKnownFileType = file.playground; path = Stream.playground; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
-		AD9C926C2DD3A3900013A7E6 /* LocationDTO.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationDTO.swift; sourceTree = "<group>"; };
+		AD9C926C2DD3A3900013A7E6 /* SharedLocationDTO.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharedLocationDTO.swift; sourceTree = "<group>"; };
 		AD9C926F2DD4DCF90013A7E6 /* SendMessageInterceptor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SendMessageInterceptor.swift; sourceTree = "<group>"; };
 		ADA03A212D64EFE900DFE048 /* DraftMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DraftMessage.swift; sourceTree = "<group>"; };
 		ADA03A242D65041300DFE048 /* DraftMessage_Mock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DraftMessage_Mock.swift; sourceTree = "<group>"; };
@@ -5691,7 +5691,7 @@
 				ADEEB7F42BD168D500C76602 /* MessageReactionGroupDTO.swift */,
 				7978FBBB26E16295002CA2DF /* MessageSearchQueryDTO.swift */,
 				C1B49B3F2822C01C00F4E89E /* NSManagedObject+Validation.swift */,
-				AD9C926C2DD3A3900013A7E6 /* LocationDTO.swift */,
+				AD9C926C2DD3A3900013A7E6 /* SharedLocationDTO.swift */,
 				841BAA502BD1CD81000C73E4 /* PollDTO.swift */,
 				841BAA4D2BD1CD76000C73E4 /* PollOptionDTO.swift */,
 				841BAA4A2BD1CCC0000C73E4 /* PollVoteDTO.swift */,
@@ -11753,7 +11753,7 @@
 				7978FBBC26E16295002CA2DF /* MessageSearchQueryDTO.swift in Sources */,
 				DA640FBE2535CF9200D32944 /* UserListSortingKey.swift in Sources */,
 				79877A182498E4EE00015F8B /* ChannelEndpoints.swift in Sources */,
-				AD7A11902DEE008C00B8F963 /* LocationDTO.swift in Sources */,
+				AD7A11902DEE008C00B8F963 /* SharedLocationDTO.swift in Sources */,
 				40789D2D29F6AC500018C2BB /* AudioRecordingState.swift in Sources */,
 				40789D3529F6AC500018C2BB /* AudioAnalysisEngine.swift in Sources */,
 				7964F3BA249A314D002A09EC /* LogDestination.swift in Sources */,
@@ -12438,7 +12438,7 @@
 			files = (
 				4F1BEE7D2BE3851200B6685C /* ReactionListState+Observer.swift in Sources */,
 				82BE0ACE2C009A17008DA9DC /* BlockedUserDetails.swift in Sources */,
-				AD9C926D2DD3A3950013A7E6 /* LocationDTO.swift in Sources */,
+				AD9C926D2DD3A3950013A7E6 /* SharedLocationDTO.swift in Sources */,
 				40789D1C29F6AC500018C2BB /* AudioPlaybackState.swift in Sources */,
 				AD8C7C612BA3DF2800260715 /* AppSettings.json in Sources */,
 				C121E804274544AC00023E4C /* ChatClient.swift in Sources */,

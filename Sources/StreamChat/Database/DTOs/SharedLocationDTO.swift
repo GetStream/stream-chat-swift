@@ -5,8 +5,8 @@
 import CoreData
 import Foundation
 
-@objc(LocationDTO)
-class LocationDTO: NSManagedObject {
+@objc(SharedLocationDTO)
+class SharedLocationDTO: NSManagedObject {
     @NSManaged var messageId: String
     @NSManaged var channelId: String
     @NSManaged var deviceId: String
@@ -33,8 +33,8 @@ class LocationDTO: NSManagedObject {
         messageId: String,
         context: NSManagedObjectContext,
         cache: PreWarmedCache?
-    ) -> LocationDTO {
-        if let cachedObject = cache?.model(for: messageId, context: context, type: LocationDTO.self) {
+    ) -> SharedLocationDTO {
+        if let cachedObject = cache?.model(for: messageId, context: context, type: SharedLocationDTO.self) {
             return cachedObject
         }
 
@@ -48,21 +48,21 @@ class LocationDTO: NSManagedObject {
         return new
     }
 
-    static func load(messageId: String, context: NSManagedObjectContext) -> LocationDTO? {
+    static func load(messageId: String, context: NSManagedObjectContext) -> SharedLocationDTO? {
         let request = fetchRequest(for: messageId)
         return load(by: request, context: context).first
     }
 
-    static func fetchRequest(for messageId: String) -> NSFetchRequest<LocationDTO> {
-        let request = NSFetchRequest<LocationDTO>(entityName: LocationDTO.entityName)
-        LocationDTO.applyPrefetchingState(to: request)
-        request.sortDescriptors = [NSSortDescriptor(keyPath: \LocationDTO.message.createdAt, ascending: false)]
+    static func fetchRequest(for messageId: String) -> NSFetchRequest<SharedLocationDTO> {
+        let request = NSFetchRequest<SharedLocationDTO>(entityName: SharedLocationDTO.entityName)
+        SharedLocationDTO.applyPrefetchingState(to: request)
+        request.sortDescriptors = [NSSortDescriptor(keyPath: \SharedLocationDTO.message.createdAt, ascending: false)]
         request.predicate = NSPredicate(format: "messageId == %@", messageId)
         return request
     }
 }
 
-extension LocationDTO {
+extension SharedLocationDTO {
     func asModel() throws -> SharedLocation {
         try isNotDeleted()
 
@@ -79,8 +79,8 @@ extension LocationDTO {
 
 extension NSManagedObjectContext {
     @discardableResult
-    func saveLocation(payload: SharedLocationPayload, cache: PreWarmedCache?) throws -> LocationDTO {
-        let locationDTO = LocationDTO.loadOrCreate(
+    func saveLocation(payload: SharedLocationPayload, cache: PreWarmedCache?) throws -> SharedLocationDTO {
+        let locationDTO = SharedLocationDTO.loadOrCreate(
             messageId: payload.messageId,
             context: self,
             cache: cache

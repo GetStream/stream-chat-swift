@@ -88,7 +88,7 @@ class MessageDTO: NSManagedObject {
     @NSManaged var draftReply: MessageDTO?
     @NSManaged var isDraft: Bool
 
-    @NSManaged var location: LocationDTO?
+    @NSManaged var location: SharedLocationDTO?
     @NSManaged var isActiveLiveLocation: Bool
     
     @NSManaged var reminder: MessageReminderDTO?
