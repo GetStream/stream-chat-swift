@@ -94,6 +94,8 @@ class LocationDetailViewController: UIViewController, ThemeProvider {
             autoCenterButton.heightAnchor.constraint(equalToConstant: 44)
         ])
 
+        autoCenterButton.isHidden = !isLiveLocation
+
         if isLiveLocation {
             view.addSubview(locationControlBanner)
             NSLayoutConstraint.activate([
