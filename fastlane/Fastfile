@@ -282,22 +282,14 @@ lane :uikit_testflight_build do |options|
   match_me
 
   sdk_version = get_sdk_version_from_environment
-  app_version =
-    if is_manual_upload
-      major, minor, _patch = sdk_version.split('.').map(&:to_i)
-      minor += 1
-      "#{major}.#{minor}.0"
-    else
-      sdk_version
-    end
-  UI.important("[TestFlight] Uploading DemoApp version: #{app_version}")
+  UI.important("[TestFlight] Uploading DemoApp version: #{sdk_version}")
 
   testflight_build(
     api_key: appstore_api_key,
     xcode_project: xcode_project,
     sdk_target: 'StreamChat',
     app_target: 'DemoApp',
-    app_version: app_version,
+    app_version: sdk_version,
     app_identifier: 'io.getstream.iOS.ChatDemoApp',
     configuration: configuration,
     extensions: ['DemoShare'],
