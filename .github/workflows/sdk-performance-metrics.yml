@@ -28,6 +28,10 @@ jobs:
         with:
           ssh-private-key: ${{ secrets.BOT_SSH_PRIVATE_KEY }}
 
+      - uses: actions/setup-python@v5
+        with:
+          python-version: 3.12 # gsutil requires Python version 3.8-3.12
+
       - uses: actions/checkout@v3.1.0
         if: ${{ github.event_name != 'pull_request' || github.event.pull_request.draft == false }}
         with:
