@@ -654,6 +654,23 @@ class MessageDTO: NSManagedObject {
         return request
     }
 
+    /// Fetches all active location messages in any given channel and from every user.
+    static func activeLiveLocationMessagesFetchRequest() -> NSFetchRequest<MessageDTO> {
+        let request = NSFetchRequest<MessageDTO>(entityName: MessageDTO.entityName)
+        MessageDTO.applyPrefetchingState(to: request)
+        request.fetchLimit = 25
+        request.sortDescriptors = [NSSortDescriptor(
+            keyPath: \MessageDTO.createdAt,
+            ascending: true
+        )]
+        var predicates: [NSPredicate] = [
+            .init(format: "isActiveLiveLocation == YES"),
+            .init(format: "localMessageStateRaw == nil")
+        ]
+        request.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: predicates)
+        return request
+    }
+
     static func loadCurrentUserActiveLiveLocationMessages(
         currentUserId: UserId,
         channelId: ChannelId?,

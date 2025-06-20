@@ -1638,6 +1638,8 @@
 		AD8C7C662BA46A4A00260715 /* AppEndpoints_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD8C7C652BA46A4A00260715 /* AppEndpoints_Tests.swift */; };
 		AD8D1809268F7290004E3A5C /* TypingSuggester.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD8D1808268F7290004E3A5C /* TypingSuggester.swift */; };
 		AD8D180B268F8ED4004E3A5C /* SlackComposerVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD8D180A268F8ED4004E3A5C /* SlackComposerVC.swift */; };
+		AD8E75E62E04963200AE0F70 /* ActiveLiveLocationsEndTimeTracker.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD8E75E52E04953C00AE0F70 /* ActiveLiveLocationsEndTimeTracker.swift */; };
+		AD8E75E72E04963200AE0F70 /* ActiveLiveLocationsEndTimeTracker.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD8E75E52E04953C00AE0F70 /* ActiveLiveLocationsEndTimeTracker.swift */; };
 		AD8FEE582AA8E1A100273F88 /* ChatClient+Environment.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD8FEE572AA8E1A100273F88 /* ChatClient+Environment.swift */; };
 		AD8FEE592AA8E1A100273F88 /* ChatClient+Environment.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD8FEE572AA8E1A100273F88 /* ChatClient+Environment.swift */; };
 		AD8FEE5B2AA8E1E400273F88 /* ChatClientFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD8FEE5A2AA8E1E400273F88 /* ChatClientFactory.swift */; };
@@ -4412,6 +4414,7 @@
 		AD8C7C652BA46A4A00260715 /* AppEndpoints_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppEndpoints_Tests.swift; sourceTree = "<group>"; };
 		AD8D1808268F7290004E3A5C /* TypingSuggester.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TypingSuggester.swift; sourceTree = "<group>"; };
 		AD8D180A268F8ED4004E3A5C /* SlackComposerVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SlackComposerVC.swift; sourceTree = "<group>"; };
+		AD8E75E52E04953C00AE0F70 /* ActiveLiveLocationsEndTimeTracker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActiveLiveLocationsEndTimeTracker.swift; sourceTree = "<group>"; };
 		AD8FEE572AA8E1A100273F88 /* ChatClient+Environment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ChatClient+Environment.swift"; sourceTree = "<group>"; };
 		AD8FEE5A2AA8E1E400273F88 /* ChatClientFactory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatClientFactory.swift; sourceTree = "<group>"; };
 		AD90D18425D56196001D03BB /* CurrentUserUpdater_Tests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CurrentUserUpdater_Tests.swift; sourceTree = "<group>"; };
@@ -5651,6 +5654,7 @@
 		79280F4524850ECC00CDEB89 /* Background */ = {
 			isa = PBXGroup;
 			children = (
+				AD8E75E52E04953C00AE0F70 /* ActiveLiveLocationsEndTimeTracker.swift */,
 				88E26D6D2580F34B00F55AB5 /* AttachmentQueueUploader.swift */,
 				F6ED5F7325023EB4005D7327 /* ConnectionRecoveryHandler.swift */,
 				F670B50E24FE6EA900003B1A /* MessageEditor.swift */,
@@ -11811,6 +11815,7 @@
 				792A4F482480107A00EAF71D /* Pagination.swift in Sources */,
 				79AF43B42632AF1C00E75CDA /* ChannelVisibilityEventMiddleware.swift in Sources */,
 				DAF1BED525066114003CEDC0 /* MessageController+Combine.swift in Sources */,
+				AD8E75E62E04963200AE0F70 /* ActiveLiveLocationsEndTimeTracker.swift in Sources */,
 				ADB8B8EA2D8890B900549C95 /* MessageReminderDTO.swift in Sources */,
 				A36C39F52860680A0004EB7E /* URL+EnrichedURL.swift in Sources */,
 				8A0C3BBC24C0947400CAFD19 /* UserEvents.swift in Sources */,
@@ -12725,6 +12730,7 @@
 				40789D3229F6AC500018C2BB /* AudioRecording.swift in Sources */,
 				C121E89F274544B000023E4C /* MessageSearchController+Combine.swift in Sources */,
 				C121E8A0274544B000023E4C /* MessageSearchController+SwiftUI.swift in Sources */,
+				AD8E75E72E04963200AE0F70 /* ActiveLiveLocationsEndTimeTracker.swift in Sources */,
 				C121E8A1274544B000023E4C /* UserController.swift in Sources */,
 				AD0CC01D2BDBD22D005E2C66 /* ReactionEndpoints.swift in Sources */,
 				C121E8A2274544B000023E4C /* UserController+Combine.swift in Sources */,
