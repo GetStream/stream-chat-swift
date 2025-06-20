@@ -18,7 +18,7 @@ class ActiveLiveLocationsEndTimeTracker: Worker {
         apiClient: APIClient
     ) {
         activeLiveLocationsObserver = ActiveLiveLocationsObserver(
-            context: database.backgroundReadOnlyContext,
+            context: database.writableContext,
             fetchRequest: MessageDTO.activeLiveLocationMessagesFetchRequest()
         )
         super.init(database: database, apiClient: apiClient)
@@ -44,16 +44,19 @@ class ActiveLiveLocationsEndTimeTracker: Worker {
             return
         }
 
-        for change in changes {
-            switch change {
-            case .insert(let message, _):
-                guard let endAt = message.location?.endAt?.bridgeDate else { continue }
-                scheduleInactiveLocation(for: message.id, at: endAt)
-            case .remove(let message, _):
-                setInactiveLocation(for: message.id)
-                cancelWorkItem(for: message.id)
-            case .move, .update:
-                break
+        database.write { _ in
+            for change in changes {
+                switch change {
+                case .insert(let message, _):
+                    // Fix multithread crash here
+                    guard let endAt = message.location?.endAt?.bridgeDate else { continue }
+                    self.scheduleInactiveLocation(for: message.id, at: endAt)
+                case .remove(let message, _):
+                    self.setInactiveLocation(for: message.id)
+                    self.cancelWorkItem(for: message.id)
+                case .move, .update:
+                    break
+                }
             }
         }
     }
