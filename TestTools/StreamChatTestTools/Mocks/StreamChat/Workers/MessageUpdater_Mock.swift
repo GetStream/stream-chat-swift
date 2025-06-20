@@ -30,6 +30,13 @@ final class MessageUpdater_Mock: MessageUpdater {
     @Atomic var editMessage_completion: ((Result<ChatMessage, Error>) -> Void)?
     @Atomic var editMessage_extraData: [String: RawJSON]?
 
+    @Atomic var updateLiveLocation_messageId: MessageId?
+    @Atomic var updateLiveLocation_locationInfo: LocationInfo?
+    @Atomic var updateLiveLocation_completion: ((Result<SharedLocation, Error>) -> Void)?
+
+    @Atomic var stopLiveLocationSharing_messageId: MessageId?
+    @Atomic var stopLiveLocationSharing_completion: ((Result<SharedLocation, Error>) -> Void)?
+
     @Atomic var createNewReply_cid: ChannelId?
     @Atomic var createNewReply_text: String?
     @Atomic var createNewReply_command: String?
@@ -114,6 +121,13 @@ final class MessageUpdater_Mock: MessageUpdater {
     @Atomic var translate_language: TranslationLanguage?
     @Atomic var translate_completion: ((Result<ChatMessage, Error>) -> Void)?
     @Atomic var translate_completion_result: Result<ChatMessage, Error>?
+
+    @Atomic var updatePartialMessage_messageId: MessageId?
+    @Atomic var updatePartialMessage_text: String?
+    @Atomic var updatePartialMessage_attachments: [AnyAttachmentPayload]?
+    @Atomic var updatePartialMessage_extraData: [String: RawJSON]?
+    @Atomic var updatePartialMessage_completion: ((Result<ChatMessage, Error>) -> Void)?
+    @Atomic var updatePartialMessage_completion_result: Result<ChatMessage, Error>?
 
     var markThreadRead_threadId: MessageId?
     var markThreadRead_cid: ChannelId?
@@ -248,6 +262,15 @@ final class MessageUpdater_Mock: MessageUpdater {
 
         loadThread_query = nil
         loadThread_completion = nil
+
+        updatePartialMessage_messageId = nil
+        updatePartialMessage_text = nil
+        updatePartialMessage_attachments = nil
+        updatePartialMessage_extraData = nil
+        updatePartialMessage_completion = nil
+
+        stopLiveLocationSharing_completion = nil
+        updateLiveLocation_completion = nil
     }
 
     override func getMessage(cid: ChannelId, messageId: MessageId, completion: ((Result<ChatMessage, Error>) -> Void)? = nil) {
@@ -311,6 +334,24 @@ final class MessageUpdater_Mock: MessageUpdater {
         resendMessage_messageId = messageId
         resendMessage_completion = completion
         resendMessage_completion_result?.invoke(with: completion)
+    }
+
+    override func updateLiveLocation(
+        messageId: MessageId,
+        locationInfo: LocationInfo,
+        completion: @escaping ((Result<SharedLocation, any Error>) -> Void)
+    ) {
+        updateLiveLocation_messageId = messageId
+        updateLiveLocation_locationInfo = locationInfo
+        updateLiveLocation_completion = completion
+    }
+
+    override func stopLiveLocationSharing(
+        messageId: MessageId,
+        completion: @escaping ((Result<SharedLocation, any Error>) -> Void)
+    ) {
+        stopLiveLocationSharing_messageId = messageId
+        stopLiveLocationSharing_completion = completion
     }
 
     override func createNewReply(
@@ -518,6 +559,22 @@ final class MessageUpdater_Mock: MessageUpdater {
         loadThread_callCount += 1
         loadThread_query = query
         loadThread_completion = completion
+    }
+
+    override func updatePartialMessage(
+        messageId: MessageId,
+        text: String? = nil,
+        attachments: [AnyAttachmentPayload]? = nil,
+        extraData: [String: RawJSON]? = nil,
+        unset: [String]? = nil,
+        completion: ((Result<ChatMessage, Error>) -> Void)? = nil
+    ) {
+        updatePartialMessage_messageId = messageId
+        updatePartialMessage_text = text
+        updatePartialMessage_attachments = attachments
+        updatePartialMessage_extraData = extraData
+        updatePartialMessage_completion = completion
+        updatePartialMessage_completion_result?.invoke(with: completion)
     }
 }
 

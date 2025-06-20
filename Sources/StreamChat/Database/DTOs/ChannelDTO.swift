@@ -74,6 +74,7 @@ class ChannelDTO: NSManagedObject {
     @NSManaged var memberListQueries: Set<ChannelMemberListQueryDTO>
     @NSManaged var previewMessage: MessageDTO?
     @NSManaged var draftMessage: MessageDTO?
+    @NSManaged var activeLiveLocations: Set<SharedLocationDTO>
 
     /// If the current channel is muted by the current user, `mute` contains details.
     @NSManaged var mute: ChannelMuteDTO?
@@ -358,6 +359,10 @@ extension NSManagedObjectContext {
             }
         }
 
+        dto.activeLiveLocations = Set(try payload.activeLiveLocations.map {
+            try saveLocation(payload: $0, cache: cache)
+        })
+
         try payload.pinnedMessages.forEach {
             _ = try saveMessage(payload: $0, channelDTO: dto, syncOwnReactions: true, cache: cache)
         }
@@ -595,6 +600,7 @@ extension ChatChannel {
         let previewMessage = try? dto.previewMessage?.relationshipAsModel(depth: depth)
         let draftMessage = try? dto.draftMessage?.relationshipAsModel(depth: depth)
         let typingUsers = Set(dto.currentlyTypingUsers.compactMap { try? $0.asModel() })
+        let activeLiveLocations = try dto.activeLiveLocations.map { try $0.asModel() }
 
         let channel = try ChatChannel(
             cid: cid,
@@ -628,7 +634,8 @@ extension ChatChannel {
             pinnedMessages: pinnedMessages,
             muteDetails: muteDetails,
             previewMessage: previewMessage,
-            draftMessage: draftMessage.map(DraftMessage.init)
+            draftMessage: draftMessage.map(DraftMessage.init),
+            activeLiveLocations: activeLiveLocations
         )
 
         if let transformer = clientConfig.modelsTransformer {

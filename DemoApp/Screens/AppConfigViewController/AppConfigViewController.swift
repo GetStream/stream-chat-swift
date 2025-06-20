@@ -51,7 +51,7 @@ class AppConfig {
             isHardDeleteEnabled: false,
             isAtlantisEnabled: false,
             isMessageDebuggerEnabled: false,
-            isLocationAttachmentsEnabled: false,
+            isLocationAttachmentsEnabled: true,
             tokenRefreshDetails: nil,
             shouldShowConnectionBanner: false,
             isPremiumMemberFeatureEnabled: false,
@@ -62,8 +62,6 @@ class AppConfig {
         if StreamRuntimeCheck.isStreamInternalConfiguration {
             demoAppConfig.isAtlantisEnabled = true
             demoAppConfig.isMessageDebuggerEnabled = true
-            demoAppConfig.isLocationAttachmentsEnabled = true
-            demoAppConfig.isLocationAttachmentsEnabled = true
             demoAppConfig.isHardDeleteEnabled = true
             demoAppConfig.shouldShowConnectionBanner = true
             demoAppConfig.isPremiumMemberFeatureEnabled = true

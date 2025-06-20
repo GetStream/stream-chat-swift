@@ -640,6 +640,10 @@ public class ChatClient {
                 database: databaseContainer,
                 apiClient: apiClient,
                 attachmentPostProcessor: config.uploadedAttachmentPostProcessor
+            ),
+            ActiveLiveLocationsEndTimeTracker(
+                database: databaseContainer,
+                apiClient: apiClient
             )
         ]
         try? backgroundWorker(of: AttachmentQueueUploader.self)

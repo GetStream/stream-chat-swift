@@ -20,6 +20,7 @@
    "member_count":4,
    "updated_at":"2019-05-10T14:03:49.505006Z",
    "config":{
+      "shared_locations": true,
       "automod_behavior":"flag",
       "reactions":true,
       "typing_events":true,

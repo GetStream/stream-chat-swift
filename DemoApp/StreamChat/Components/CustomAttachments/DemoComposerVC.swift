@@ -2,56 +2,117 @@
 // Copyright © 2025 Stream.io Inc. All rights reserved.
 //
 
+import CoreLocation
 import StreamChat
 import StreamChatUI
 import UIKit
 
 class DemoComposerVC: ComposerVC {
-    /// For demo purposes the locations are hard-coded.
-    var dummyLocations: [(latitude: Double, longitude: Double)] = [
-        (38.708442, -9.136822), // Lisbon, Portugal
-        (37.983810, 23.727539), // Athens, Greece
-        (53.149118, -6.079341), // Greystones, Ireland
-        (41.11722, 20.80194), // Ohrid, Macedonia
-        (51.5074, -0.1278), // London, United Kingdom
-        (52.5200, 13.4050), // Berlin, Germany
-        (40.4168, -3.7038), // Madrid, Spain
-        (50.4501, 30.5234), // Kyiv, Ukraine
-        (41.9028, 12.4964), // Rome, Italy
-        (48.8566, 2.3522), // Paris, France
-        (44.4268, 26.1025), // Bucharest, Romania
-        (48.2082, 16.3738), // Vienna, Austria
-        (47.4979, 19.0402) // Budapest, Hungary
-    ]
+    private var locationProvider = LocationProvider.shared
 
     override var attachmentsPickerActions: [UIAlertAction] {
         var actions = super.attachmentsPickerActions
-        
-        let alreadyHasLocation = content.attachments.map(\.type).contains(.location)
-        if AppConfig.shared.demoAppConfig.isLocationAttachmentsEnabled && !alreadyHasLocation {
+
+        let isDemoAppLocationsEnabled = AppConfig.shared.demoAppConfig.isLocationAttachmentsEnabled
+        let isLocationEnabled = channelController?.channel?.config.sharedLocationsEnabled == true
+        if isLocationEnabled && isDemoAppLocationsEnabled && content.isInsideThread == false {
             let sendLocationAction = UIAlertAction(
-                title: "Location",
+                title: "Send Current Location",
                 style: .default,
-                handler: { [weak self] _ in self?.sendLocation() }
+                handler: { [weak self] _ in
+                    self?.sendInstantStaticLocation()
+                }
             )
             actions.append(sendLocationAction)
+
+            let sendLiveLocationAction = UIAlertAction(
+                title: "Share Live Location",
+                style: .default,
+                handler: { [weak self] _ in
+                    self?.sendInstantLiveLocation()
+                }
+            )
+            actions.append(sendLiveLocationAction)
         }
 
         return actions
     }
 
-    func sendLocation() {
-        guard let location = dummyLocations.randomElement() else { return }
-        let locationAttachmentPayload = LocationAttachmentPayload(
-            coordinate: .init(latitude: location.latitude, longitude: location.longitude)
+    func sendInstantStaticLocation() {
+        getCurrentLocationInfo { [weak self] location in
+            guard let location = location else { return }
+            self?.channelController?.sendStaticLocation(location)
+        }
+    }
+
+    func sendInstantLiveLocation() {
+        getCurrentLocationInfo { [weak self] location in
+            guard let location = location else { return }
+            let alertController = UIAlertController(
+                title: "Share Live Location",
+                message: "Select the duration for sharing your live location.",
+                preferredStyle: .actionSheet
+            )
+            let durations: [(String, TimeInterval)] = [
+                ("1 minute", 61),
+                ("10 minutes", 600),
+                ("1 hour", 3600)
+            ]
+            for (title, duration) in durations {
+                let action = UIAlertAction(title: title, style: .default) { [weak self] _ in
+                    let endDate = Date().addingTimeInterval(duration)
+                    self?.channelController?.startLiveLocationSharing(location, endDate: endDate) { [weak self] result in
+                        switch result {
+                        case .success:
+                            break
+                        case .failure(let error):
+                            self?.presentAlert(
+                                title: "Could not start live location sharing",
+                                message: error.localizedDescription
+                            )
+                        }
+                    }
+                }
+                alertController.addAction(action)
+            }
+            alertController.addAction(UIAlertAction(title: "Cancel", style: .cancel))
+            self?.present(alertController, animated: true)
+        }
+    }
+
+    private func getCurrentLocationInfo(completion: @escaping (LocationInfo?) -> Void) {
+        locationProvider.getCurrentLocation { [weak self] result in
+            switch result {
+            case .success(let location):
+                let location = LocationInfo(
+                    latitude: location.coordinate.latitude,
+                    longitude: location.coordinate.longitude
+                )
+                completion(location)
+            case .failure(let error):
+                if error is LocationPermissionError {
+                    self?.showLocationPermissionAlert()
+                }
+                completion(nil)
+            }
+        }
+    }
+
+    private func showLocationPermissionAlert() {
+        let alert = UIAlertController(
+            title: "Location Access Required",
+            message: "Please enable location access in Settings to share your location.",
+            preferredStyle: .alert
         )
-
-        content.attachments.append(AnyAttachmentPayload(payload: locationAttachmentPayload))
-
-        // In case you would want to send the location directly, without composer preview:
-//        channelController?.createNewMessage(text: "", attachments: [.init(
-//            payload: locationAttachmentPayload
-//        )])
+        
+        alert.addAction(UIAlertAction(title: "Settings", style: .default) { _ in
+            if let url = URL(string: UIApplication.openSettingsURLString) {
+                UIApplication.shared.open(url)
+            }
+        })
+        alert.addAction(UIAlertAction(title: "Cancel", style: .cancel))
+        
+        present(alert, animated: true)
     }
 }
 

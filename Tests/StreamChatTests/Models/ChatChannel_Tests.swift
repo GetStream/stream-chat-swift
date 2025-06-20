@@ -301,6 +301,14 @@ final class ChatChannel_Tests: XCTestCase {
         XCTAssertEqual(channelWithoutCapability.canCastPollVote, false)
     }
 
+    func test_canShareLocation() throws {
+        let channel = setupChannel(withCapabilities: [.shareLocation])
+        XCTAssertEqual(channel.canShareLocation, true)
+
+        let channelWithoutCapability = setupChannel(withCapabilities: [])
+        XCTAssertEqual(channelWithoutCapability.canShareLocation, false)
+    }
+
     func test_lastReadMessageId_readsDontContainUser() {
         let userId: UserId = "current"
         let channel = ChatChannel.mock(cid: .unique, reads: [

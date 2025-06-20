@@ -54,6 +54,7 @@ enum MessagePayloadsCodingKeys: String, CodingKey, CaseIterable {
     case skipEnrichUrl = "skip_enrich_url"
     case restrictedVisibility = "restricted_visibility"
     case draft
+    case location = "shared_location"
     case reminder
 }
 
@@ -114,6 +115,7 @@ class MessagePayload: Decodable {
     
     var poll: PollPayload?
     var draft: DraftPayload?
+    var location: SharedLocationPayload?
     var reminder: ReminderPayload?
 
     /// Only message payload from `getMessage` endpoint contains channel data. It's a convenience workaround for having to
@@ -182,6 +184,7 @@ class MessagePayload: Decodable {
         messageTextUpdatedAt = try container.decodeIfPresent(Date.self, forKey: .messageTextUpdatedAt)
         poll = try container.decodeIfPresent(PollPayload.self, forKey: .poll)
         draft = try container.decodeIfPresent(DraftPayload.self, forKey: .draft)
+        location = try container.decodeIfPresent(SharedLocationPayload.self, forKey: .location)
         reminder = try container.decodeIfPresent(ReminderPayload.self, forKey: .reminder)
     }
 
@@ -225,7 +228,8 @@ class MessagePayload: Decodable {
         messageTextUpdatedAt: Date? = nil,
         poll: PollPayload? = nil,
         draft: DraftPayload? = nil,
-        reminder: ReminderPayload? = nil
+        reminder: ReminderPayload? = nil,
+        location: SharedLocationPayload? = nil
     ) {
         self.id = id
         self.cid = cid
@@ -266,6 +270,7 @@ class MessagePayload: Decodable {
         self.messageTextUpdatedAt = messageTextUpdatedAt
         self.poll = poll
         self.draft = draft
+        self.location = location
         self.reminder = reminder
     }
 }
@@ -290,6 +295,7 @@ struct MessageRequestBody: Encodable {
     var pinned: Bool
     var pinExpires: Date?
     var pollId: String?
+    var location: NewLocationRequestPayload?
     var restrictedVisibility: [UserId]?
     let extraData: [String: RawJSON]
 
@@ -310,6 +316,7 @@ struct MessageRequestBody: Encodable {
         pinExpires: Date? = nil,
         pollId: String? = nil,
         restrictedVisibility: [UserId]? = nil,
+        location: NewLocationRequestPayload? = nil,
         extraData: [String: RawJSON]
     ) {
         self.id = id
@@ -328,6 +335,7 @@ struct MessageRequestBody: Encodable {
         self.pinExpires = pinExpires
         self.pollId = pollId
         self.restrictedVisibility = restrictedVisibility
+        self.location = location
         self.extraData = extraData
     }
 
@@ -346,6 +354,7 @@ struct MessageRequestBody: Encodable {
         try container.encodeIfPresent(pollId, forKey: .pollId)
         try container.encodeIfPresent(type, forKey: .type)
         try container.encodeIfPresent(restrictedVisibility, forKey: .restrictedVisibility)
+        try container.encodeIfPresent(location, forKey: .location)
 
         if !attachments.isEmpty {
             try container.encode(attachments, forKey: .attachments)

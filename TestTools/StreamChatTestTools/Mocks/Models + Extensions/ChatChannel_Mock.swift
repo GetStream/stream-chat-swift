@@ -19,6 +19,8 @@ public extension ChannelConfig {
         mutesEnabled: Bool = true,
         urlEnrichmentEnabled: Bool = true,
         skipLastMsgAtUpdateForSystemMsg: Bool = false,
+        messageRemindersEnabled: Bool = false,
+        sharedLocationsEnabled: Bool = false,
         messageRetention: String = "",
         maxMessageLength: Int = 0,
         commands: [Command] = [Command(name: "Giphy", description: "", set: "", args: "")],
@@ -37,6 +39,8 @@ public extension ChannelConfig {
             mutesEnabled: mutesEnabled,
             urlEnrichmentEnabled: urlEnrichmentEnabled,
             skipLastMsgAtUpdateForSystemMsg: skipLastMsgAtUpdateForSystemMsg,
+            messageRemindersEnabled: messageRemindersEnabled,
+            sharedLocationsEnabled: sharedLocationsEnabled,
             messageRetention: messageRetention,
             maxMessageLength: maxMessageLength,
             commands: commands,
@@ -92,7 +96,8 @@ public extension ChatChannel {
         pinnedMessages: [ChatMessage] = [],
         muteDetails: MuteDetails? = nil,
         previewMessage: ChatMessage? = nil,
-        draftMessage: DraftMessage? = nil
+        draftMessage: DraftMessage? = nil,
+        activeLiveLocations: [SharedLocation] = []
     ) -> Self {
         self.init(
             cid: cid,
@@ -122,7 +127,8 @@ public extension ChatChannel {
             pinnedMessages: pinnedMessages,
             muteDetails: muteDetails,
             previewMessage: previewMessage,
-            draftMessage: draftMessage
+            draftMessage: draftMessage,
+            activeLiveLocations: activeLiveLocations
         )
     }
 
@@ -151,7 +157,8 @@ public extension ChatChannel {
         pinnedMessages: [ChatMessage] = [],
         muteDetails: MuteDetails? = nil,
         previewMessage: ChatMessage? = nil,
-        draftMessage: DraftMessage? = nil
+        draftMessage: DraftMessage? = nil,
+        activeLiveLocations: [SharedLocation] = []
     ) -> Self {
         self.init(
             cid: .init(type: .messaging, id: "!members" + .newUniqueId),
@@ -179,7 +186,8 @@ public extension ChatChannel {
             pinnedMessages: pinnedMessages,
             muteDetails: muteDetails,
             previewMessage: previewMessage,
-            draftMessage: draftMessage
+            draftMessage: draftMessage,
+            activeLiveLocations: activeLiveLocations
         )
     }
 
@@ -207,7 +215,8 @@ public extension ChatChannel {
         pinnedMessages: [ChatMessage] = [],
         muteDetails: MuteDetails? = nil,
         previewMessage: ChatMessage? = nil,
-        draftMessage: DraftMessage? = nil
+        draftMessage: DraftMessage? = nil,
+        activeLiveLocations: [SharedLocation] = []
     ) -> Self {
         self.init(
             cid: .init(type: .messaging, id: .newUniqueId),
@@ -234,7 +243,8 @@ public extension ChatChannel {
             pinnedMessages: pinnedMessages,
             muteDetails: muteDetails,
             previewMessage: previewMessage,
-            draftMessage: draftMessage
+            draftMessage: draftMessage,
+            activeLiveLocations: activeLiveLocations
         )
     }
 }

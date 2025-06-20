@@ -66,6 +66,7 @@ class ChatChannelController_Mock: ChatChannelController {
         skipPush: Bool = false,
         skipEnrichUrl: Bool = false,
         restrictedVisibility: [UserId] = [],
+        location: NewLocationInfo? = nil,
         extraData: [String : RawJSON] = [:],
         completion: ((Result<MessageId, Error>) -> Void)? = nil
     ) {

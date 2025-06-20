@@ -73,7 +73,9 @@ enum EndpointPath: Codable {
     case deleteImage(String)
 
     case appSettings
-    
+
+    case liveLocations
+
     case polls
     case pollsQuery
     case poll(pollId: String)
@@ -106,6 +108,8 @@ enum EndpointPath: Codable {
             return "channels/\(cid.apiPath)/read"
         case let .markThreadUnread(cid):
             return "channels/\(cid.apiPath)/unread"
+
+        case .liveLocations: return "users/live_locations"
 
         case .channels: return "channels"
         case let .createChannel(queryString): return "channels/\(queryString)/query"
