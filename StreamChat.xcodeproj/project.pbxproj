@@ -1783,6 +1783,7 @@
 		ADCB578C28A42D7700B81AE8 /* Differentiable.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADCB577428A42D7700B81AE8 /* Differentiable.swift */; };
 		ADCBBFD526D66A560023FCB2 /* iMessageChatMessageListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADCBBFD426D66A560023FCB2 /* iMessageChatMessageListViewController.swift */; };
 		ADCBBFD726D66ADC0023FCB2 /* SlackChatMessageListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADCBBFD626D66ADC0023FCB2 /* SlackChatMessageListViewController.swift */; };
+		ADCC179F2E09D96A00510415 /* ActiveLiveLocationsEndTimeTracker_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADCC179E2E09D96A00510415 /* ActiveLiveLocationsEndTimeTracker_Tests.swift */; };
 		ADCD5E4327987EFE00E66911 /* StreamModalTransitioningDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADCD5E4227987EFE00E66911 /* StreamModalTransitioningDelegate.swift */; };
 		ADCD5E4427987EFE00E66911 /* StreamModalTransitioningDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADCD5E4227987EFE00E66911 /* StreamModalTransitioningDelegate.swift */; };
 		ADCE32F72A055A9200B52559 /* MessagesPaginationStateHandler_Mock.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADCE32F62A055A9200B52559 /* MessagesPaginationStateHandler_Mock.swift */; };
@@ -4518,6 +4519,7 @@
 		ADCB577428A42D7700B81AE8 /* Differentiable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Differentiable.swift; sourceTree = "<group>"; };
 		ADCBBFD426D66A560023FCB2 /* iMessageChatMessageListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = iMessageChatMessageListViewController.swift; sourceTree = "<group>"; };
 		ADCBBFD626D66ADC0023FCB2 /* SlackChatMessageListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SlackChatMessageListViewController.swift; sourceTree = "<group>"; };
+		ADCC179E2E09D96A00510415 /* ActiveLiveLocationsEndTimeTracker_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActiveLiveLocationsEndTimeTracker_Tests.swift; sourceTree = "<group>"; };
 		ADCD5E4227987EFE00E66911 /* StreamModalTransitioningDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StreamModalTransitioningDelegate.swift; sourceTree = "<group>"; };
 		ADCDDCC425AE1293004E15FB /* UserUpdateResponse.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = UserUpdateResponse.json; sourceTree = "<group>"; };
 		ADCE32F62A055A9200B52559 /* MessagesPaginationStateHandler_Mock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessagesPaginationStateHandler_Mock.swift; sourceTree = "<group>"; };
@@ -7310,6 +7312,7 @@
 		A364D09927D0C5D80029857A /* Background */ = {
 			isa = PBXGroup;
 			children = (
+				ADCC179E2E09D96A00510415 /* ActiveLiveLocationsEndTimeTracker_Tests.swift */,
 				88F7692A25837EE600BD36B0 /* AttachmentQueueUploader_Tests.swift */,
 				A3960E0C27DA5973003AB2B0 /* ConnectionRecoveryHandler_Tests.swift */,
 				F61D7C3624FFE17200188A0E /* MessageEditor_Tests.swift */,
@@ -12202,6 +12205,7 @@
 				88EA9AFC25472269007EE76B /* MessageReactionType_Tests.swift in Sources */,
 				4042968F29FBCE1D0089126D /* AudioSamplesExtractor_Tests.swift in Sources */,
 				40789D3F29F6AFC40018C2BB /* Debouncer_Tests.swift in Sources */,
+				ADCC179F2E09D96A00510415 /* ActiveLiveLocationsEndTimeTracker_Tests.swift in Sources */,
 				796610BB248E687000761629 /* EventMiddleware_Tests.swift in Sources */,
 				4F1BEE7F2BE38B5500B6685C /* ReactionList_Tests.swift in Sources */,
 				AD9490602BF65DE400E69224 /* ChatThreadListController_Tests.swift in Sources */,

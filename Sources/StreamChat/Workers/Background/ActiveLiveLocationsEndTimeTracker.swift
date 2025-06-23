@@ -10,7 +10,7 @@ typealias ActiveLiveLocationsObserver = StateLayerDatabaseObserver<ListResult, M
 /// A worker that is responsible for tracking when the end time of active locations is reached.
 class ActiveLiveLocationsEndTimeTracker: Worker {
     private let activeLiveLocationsObserver: ActiveLiveLocationsObserver
-    private var workItems: [String: DispatchWorkItem] = [:]
+    internal var workItems: [String: DispatchWorkItem] = [:]
     private let queue = DispatchQueue(label: "io.getstream.ActiveLiveLocationsEndTimeTracker")
 
     override init(
