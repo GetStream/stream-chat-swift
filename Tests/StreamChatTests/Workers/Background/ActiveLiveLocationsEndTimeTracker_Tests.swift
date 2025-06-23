@@ -127,6 +127,7 @@ final class ActiveLiveLocationsEndTimeTracker_Tests: XCTestCase {
         let messageId: MessageId = .unique
         let currentUserId: UserId = .unique
         let endAt = Date().addingTimeInterval(100)
+        let updatedAt = Date.unique
 
         // Create current user and channel
         try database.createCurrentUser(id: currentUserId)
@@ -144,7 +145,7 @@ final class ActiveLiveLocationsEndTimeTracker_Tests: XCTestCase {
                 latitude: 10.0,
                 longitude: 20.0,
                 createdAt: Date(),
-                updatedAt: Date(),
+                updatedAt: updatedAt,
                 endAt: endAt,
                 createdByDeviceId: .unique
             )
@@ -162,6 +163,9 @@ final class ActiveLiveLocationsEndTimeTracker_Tests: XCTestCase {
 
         // Verify work item is removed
         AssertAsync.willBeEqual(tracker.workItems.count, 0)
+        let newUpdatedAt = try XCTUnwrap(database.viewContext.message(id: messageId)?.updatedAt)
+        // The updateAt should be updated especially to trigger an UI Update.
+        XCTAssertNotEqual(String(newUpdatedAt.timeIntervalSince1970), String(updatedAt.timeIntervalSince1970))
     }
 
     func test_trackerDoesNotScheduleWorkItem_forMessageWithoutEndTime() throws {

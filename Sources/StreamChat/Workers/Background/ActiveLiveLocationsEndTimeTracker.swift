@@ -73,10 +73,17 @@ class ActiveLiveLocationsEndTimeTracker: Worker {
         queue.asyncAfter(deadline: .now() + endAtTime, execute: workItem)
     }
 
+    /// It sets the location as inactive in the database and removes it from the active live locations.
+    ///
+    /// The update of `updatedAt` is needed for the UI to be updated.
+    /// The reason is because otherwise the `Equatable` of `SharedLocation` won't have any effect.
+    /// Since the `endAt` is not changed, and the `isLiveSharingActive` property is a computed one.
+    /// Which means, that when the `Equatable` is checked, it will return `true` and the UI won't update.
     private func setInactiveLocation(for messageId: String) {
         database.write { session in
             let message = session.message(id: messageId)
             message?.isActiveLiveLocation = false
+            message?.location?.updatedAt = DBDate() // This is need for the UI to be updated.
             if let location = message?.location {
                 message?.channel?.activeLiveLocations.remove(location)
             }
