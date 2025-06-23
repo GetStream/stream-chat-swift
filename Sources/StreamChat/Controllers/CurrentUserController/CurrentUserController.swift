@@ -112,6 +112,14 @@ public class CurrentChatUserController: DataController, DelegateCallable, DataSt
         currentUser?.unreadCount ?? .noUnread
     }
 
+    /// The active live location messages for the current user.
+    ///
+    /// To observe changes of the active live locations, set your class as
+    /// a delegate of this controller.
+    public var activeLiveLocationMessages: [ChatMessage] {
+        Array(activeLiveLocationMessagesObserver?.items ?? [])
+    }
+
     /// The worker used to update the current user.
     private lazy var currentUserUpdater = environment.currentUserUpdaterBuilder(
         client.databaseContainer,
