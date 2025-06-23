@@ -5765,7 +5765,7 @@ final class ChannelController_Tests: XCTestCase {
         XCTAssertEqual(messageLocation?.longitude, location.longitude)
     }
 
-    func test_startLiveLocationSharing_whenActiveLiveLocationExists_fails() throws {
+    func test_startLiveLocationSharing_whenActiveLiveLocationExists_shouldStopActiveLocation() throws {
         // Given
         let location = LocationInfo(latitude: 123.45, longitude: 67.89)
         let existingMessageId = MessageId.unique
@@ -5782,8 +5782,11 @@ final class ChannelController_Tests: XCTestCase {
                     sharedLocation: .init(
                         channelId: self.channelId.rawValue,
                         messageId: existingMessageId,
+                        userId: .unique,
                         latitude: location.latitude,
                         longitude: location.longitude,
+                        createdAt: .unique,
+                        updatedAt: .unique,
                         endAt: .distantFuture,
                         createdByDeviceId: .unique
                     )
@@ -5794,13 +5797,16 @@ final class ChannelController_Tests: XCTestCase {
             )
         }
 
+        var existingMessage: MessageDTO? {
+            client.databaseContainer.viewContext.message(id: existingMessageId)
+        }
+
+        XCTAssertEqual(existingMessage?.isActiveLiveLocation, true)
+
         // When
-        var receivedError: Error?
         let exp = expectation(description: "startLiveLocationSharing")
         controller.startLiveLocationSharing(location, endDate: .distantFuture) { result in
-            if case .failure(let error) = result {
-                receivedError = error
-            }
+            XCTAssertNil(result.error)
             exp.fulfill()
         }
 
@@ -5809,7 +5815,9 @@ final class ChannelController_Tests: XCTestCase {
         wait(for: [exp], timeout: defaultTimeout)
 
         // Then
-        XCTAssertTrue(receivedError is ClientError.ActiveLiveLocationAlreadyExists)
+        AssertAsync {
+            Assert.willBeEqual(existingMessage?.isActiveLiveLocation, false)
+        }
     }
 
     func test_startLiveLocationSharing_whenNoActiveLiveLocation_callsChannelUpdater() throws {

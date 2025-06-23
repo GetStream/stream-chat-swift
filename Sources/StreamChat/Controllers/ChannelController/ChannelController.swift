@@ -927,44 +927,45 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
             return
         }
 
+        // Stop existing live location sharing message if it exists.
+        // It is an optimistic update, since the backend will also stop the existing live location message.
         client.messageRepository.getCurrentUserActiveLiveLocationMessages(for: cid) { [weak self] result in
             if let message = try? result.get().first {
-                self?.callback {
-                    completion?(.failure(
-                        ClientError.ActiveLiveLocationAlreadyExists(messageId: message.id)
-                    ))
+                self?.client.databaseContainer.write { session in
+                    let existingLiveLocation = session.message(id: message.id)
+                    existingLiveLocation?.isActiveLiveLocation = false
+                    existingLiveLocation?.location?.endAt = DBDate()
                 }
-                return
             }
+        }
 
-            self?.updater.createNewMessage(
-                in: cid,
-                messageId: nil,
-                text: text ?? "",
-                pinning: nil,
-                isSilent: false,
-                isSystem: false,
-                command: nil,
-                arguments: nil,
-                attachments: [],
-                mentionedUserIds: [],
-                quotedMessageId: nil,
-                skipPush: false,
-                skipEnrichUrl: false,
-                poll: nil,
-                location: NewLocationInfo(
-                    latitude: location.latitude,
-                    longitude: location.longitude,
-                    endAt: endDate
-                ),
-                extraData: extraData
-            ) { result in
-                if let newMessage = try? result.get() {
-                    self?.client.eventNotificationCenter.process(NewMessagePendingEvent(message: newMessage))
-                }
-                self?.callback {
-                    completion?(result.map(\.id))
-                }
+        updater.createNewMessage(
+            in: cid,
+            messageId: nil,
+            text: text ?? "",
+            pinning: nil,
+            isSilent: false,
+            isSystem: false,
+            command: nil,
+            arguments: nil,
+            attachments: [],
+            mentionedUserIds: [],
+            quotedMessageId: nil,
+            skipPush: false,
+            skipEnrichUrl: false,
+            poll: nil,
+            location: NewLocationInfo(
+                latitude: location.latitude,
+                longitude: location.longitude,
+                endAt: endDate
+            ),
+            extraData: extraData
+        ) { result in
+            if let newMessage = try? result.get() {
+                self.client.eventNotificationCenter.process(NewMessagePendingEvent(message: newMessage))
+            }
+            self.callback {
+                completion?(result.map(\.id))
             }
         }
     }
@@ -2066,17 +2067,6 @@ public extension ClientError {
     final class InvalidCooldownDuration: ClientError {
         override public var localizedDescription: String {
             "You can't specify a value outside the range 1-120 for cooldown duration."
-        }
-    }
-
-    final class ActiveLiveLocationAlreadyExists: ClientError {
-        let messageId: MessageId
-
-        init(messageId: MessageId) {
-            self.messageId = messageId
-            super.init(
-                "You can't start a new live location sharing because a message with id:\(messageId) has already one active live location."
-            )
         }
     }
 }
