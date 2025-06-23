@@ -4306,8 +4306,11 @@ final class MessageDTO_Tests: XCTestCase {
                     sharedLocation: .init(
                         channelId: channelId.rawValue,
                         messageId: id,
+                        userId: .unique,
                         latitude: 50,
                         longitude: 10,
+                        createdAt: .unique,
+                        updatedAt: .unique,
                         endAt: isActive ? .distantFuture : .distantPast,
                         createdByDeviceId: .unique
                     )
@@ -4363,8 +4366,11 @@ final class MessageDTO_Tests: XCTestCase {
                 sharedLocation: .init(
                     channelId: channelId.rawValue,
                     messageId: .unique,
+                    userId: .unique,
                     latitude: 50,
                     longitude: 10,
+                    createdAt: .unique,
+                    updatedAt: .unique,
                     endAt: .distantFuture, // Active location
                     createdByDeviceId: .unique
                 )
@@ -4386,9 +4392,12 @@ final class MessageDTO_Tests: XCTestCase {
                 sharedLocation: .init(
                     channelId: channelId.rawValue,
                     messageId: .unique,
+                    userId: .unique,
                     latitude: 51,
                     longitude: 11,
-                    endAt: .distantFuture, // Active location
+                    createdAt: .unique,
+                    updatedAt: .unique,
+                    endAt: .distantFuture,
                     createdByDeviceId: .unique
                 )
             )
@@ -4408,9 +4417,12 @@ final class MessageDTO_Tests: XCTestCase {
                 sharedLocation: .init(
                     channelId: channelId.rawValue,
                     messageId: .unique,
+                    userId: .unique,
                     latitude: 52,
                     longitude: 12,
-                    endAt: .distantFuture, // Active location
+                    createdAt: .unique,
+                    updatedAt: .unique,
+                    endAt: .distantFuture,
                     createdByDeviceId: .unique
                 )
             )
@@ -4430,9 +4442,12 @@ final class MessageDTO_Tests: XCTestCase {
                 sharedLocation: .init(
                     channelId: channelId.rawValue,
                     messageId: .unique,
+                    userId: .unique,
                     latitude: 53,
                     longitude: 13,
-                    endAt: .distantFuture, // Active location
+                    createdAt: .unique,
+                    updatedAt: .unique,
+                    endAt: .distantFuture,
                     createdByDeviceId: .unique
                 )
             )

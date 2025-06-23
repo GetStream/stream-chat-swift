@@ -799,13 +799,16 @@ extension NSManagedObjectContext: MessageDatabaseSession {
             message.poll = try? savePoll(payload: poll, cache: nil)
         }
 
-        if let location, let deviceId = currentUser?.currentDevice?.id {
+        if let location, let currentUser, let deviceId = currentUser.currentDevice?.id {
             message.location = try? saveLocation(
                 payload: .init(
                     channelId: cid.rawValue,
                     messageId: id,
+                    userId: currentUser.user.id,
                     latitude: location.latitude,
                     longitude: location.longitude,
+                    createdAt: Date(),
+                    updatedAt: Date(),
                     endAt: location.endAt,
                     createdByDeviceId: deviceId
                 ),

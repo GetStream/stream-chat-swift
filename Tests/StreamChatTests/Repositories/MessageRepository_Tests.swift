@@ -740,8 +740,11 @@ final class MessageRepositoryTests: XCTestCase {
             location: .init(
                 channelId: cid.rawValue,
                 messageId: messageId1,
+                userId: .unique,
                 latitude: 1,
                 longitude: 1,
+                createdAt: .unique,
+                updatedAt: .unique,
                 endAt: .distantFuture,
                 createdByDeviceId: .unique
             )
@@ -753,8 +756,11 @@ final class MessageRepositoryTests: XCTestCase {
             location: .init(
                 channelId: cid.rawValue,
                 messageId: messageId2,
+                userId: .unique,
                 latitude: 1,
                 longitude: 1,
+                createdAt: .unique,
+                updatedAt: .unique,
                 endAt: .distantFuture,
                 createdByDeviceId: .unique
             )

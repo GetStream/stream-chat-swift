@@ -2654,10 +2654,13 @@ final class MessageController_Tests: XCTestCase {
         let sharedLocation = SharedLocation(
             messageId: messageId,
             channelId: .unique,
+            userId: .unique,
+            createdByDeviceId: .unique,
             latitude: latitude,
             longitude: longitude,
-            endAt: .distantFuture,
-            createdByDeviceId: .unique
+            updatedAt: .unique,
+            createdAt: .unique,
+            endAt: .distantFuture
         )
         _ = controller.message
         env.messageObserver.item_mock = .mock(
@@ -2707,10 +2710,13 @@ final class MessageController_Tests: XCTestCase {
         let sharedLocation = SharedLocation(
             messageId: messageId,
             channelId: .unique,
+            userId: .unique,
+            createdByDeviceId: .unique,
             latitude: latitude,
             longitude: longitude,
-            endAt: .distantPast,
-            createdByDeviceId: .unique
+            updatedAt: .unique,
+            createdAt: .unique,
+            endAt: .distantPast
         )
 
         // Save message with live location

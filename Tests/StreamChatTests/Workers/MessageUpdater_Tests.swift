@@ -3102,6 +3102,7 @@ final class MessageUpdater_Tests: XCTestCase {
         let currentUserId: UserId = .unique
         let deviceId = "device-123"
         let messageId: MessageId = .unique
+        let userId: UserId = .unique
         let cid: ChannelId = .unique
         let initialLatitude = 10.0
         let initialLongitude = 20.0
@@ -3126,8 +3127,11 @@ final class MessageUpdater_Tests: XCTestCase {
         let payload = SharedLocationPayload(
             channelId: cid.rawValue,
             messageId: messageId,
+            userId: userId,
             latitude: updatedLatitude,
             longitude: updatedLongitude,
+            createdAt: .unique,
+            updatedAt: .unique,
             endAt: Date().addingTimeInterval(1000),
             createdByDeviceId: deviceId
         )
@@ -3148,6 +3152,7 @@ final class MessageUpdater_Tests: XCTestCase {
         XCTAssertEqual(sharedLocation?.longitude, updatedLongitude)
         XCTAssertEqual(sharedLocation?.messageId, messageId)
         XCTAssertEqual(sharedLocation?.channelId, cid)
+        XCTAssertEqual(sharedLocation?.userId, userId)
         XCTAssertEqual(sharedLocation?.createdByDeviceId, deviceId)
     }
 
@@ -3258,8 +3263,11 @@ final class MessageUpdater_Tests: XCTestCase {
         let payload = SharedLocationPayload(
             channelId: cid.rawValue,
             messageId: messageId,
+            userId: .unique,
             latitude: latitude,
             longitude: longitude,
+            createdAt: .unique,
+            updatedAt: .unique,
             endAt: Date(),
             createdByDeviceId: deviceId
         )

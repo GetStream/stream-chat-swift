@@ -9,9 +9,12 @@ import Foundation
 class SharedLocationDTO: NSManagedObject {
     @NSManaged var messageId: String
     @NSManaged var channelId: String
+    @NSManaged var userId: String
     @NSManaged var deviceId: String
     @NSManaged var latitude: Double
     @NSManaged var longitude: Double
+    @NSManaged var updatedAt: DBDate
+    @NSManaged var createdAt: DBDate
     @NSManaged var endAt: DBDate?
     @NSManaged var message: MessageDTO
 
@@ -69,10 +72,13 @@ extension SharedLocationDTO {
         return SharedLocation(
             messageId: messageId,
             channelId: try ChannelId(cid: channelId),
+            userId: userId,
+            createdByDeviceId: deviceId,
             latitude: latitude,
             longitude: longitude,
-            endAt: endAt?.bridgeDate,
-            createdByDeviceId: deviceId
+            updatedAt: updatedAt.bridgeDate,
+            createdAt: createdAt.bridgeDate,
+            endAt: endAt?.bridgeDate
         )
     }
 }
@@ -92,6 +98,9 @@ extension NSManagedObjectContext {
         locationDTO.latitude = payload.latitude
         locationDTO.longitude = payload.longitude
         locationDTO.endAt = payload.endAt?.bridgeDate
+        locationDTO.userId = payload.userId
+        locationDTO.updatedAt = payload.updatedAt.bridgeDate
+        locationDTO.createdAt = payload.createdAt.bridgeDate
         return locationDTO
     }
 }

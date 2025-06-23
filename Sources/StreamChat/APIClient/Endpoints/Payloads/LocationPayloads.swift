@@ -7,16 +7,22 @@ import Foundation
 struct SharedLocationPayload: Decodable {
     let channelId: String
     let messageId: String
+    let userId: String
     let latitude: Double
     let longitude: Double
+    let createdAt: Date
+    let updatedAt: Date
     let endAt: Date?
     let createdByDeviceId: String
 
     enum CodingKeys: String, CodingKey {
         case channelId = "channel_cid"
         case messageId = "message_id"
+        case userId = "user_id"
         case latitude
         case longitude
+        case createdAt = "created_at"
+        case updatedAt = "updated_at"
         case createdByDeviceId = "created_by_device_id"
         case endAt = "end_at"
     }
