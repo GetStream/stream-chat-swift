@@ -48,7 +48,6 @@ class ActiveLiveLocationsEndTimeTracker: Worker {
             for change in changes {
                 switch change {
                 case .insert(let message, _):
-                    // Fix multithread crash here
                     guard let endAt = message.location?.endAt?.bridgeDate else { continue }
                     self.scheduleInactiveLocation(for: message.id, at: endAt)
                 case .remove(let message, _):
