@@ -3316,7 +3316,7 @@ final class MessageUpdater_Tests: XCTestCase {
         let deviceId = "device-123"
         let messageId: MessageId = .unique
         let cid: ChannelId = .unique
-        let originalEndAt = Date().addingTimeInterval(1000)
+        let originalEndAt = Date.distantFuture
         try database.createCurrentUser(id: currentUserId, currentDeviceId: deviceId)
         try database.createChannel(cid: cid)
         // Create a message with a live location
@@ -3337,7 +3337,8 @@ final class MessageUpdater_Tests: XCTestCase {
         XCTAssertEqual(result.error as? TestError, testError)
         // The optimistic update should be reverted
         let message = try XCTUnwrap(database.viewContext.message(id: messageId))
-        XCTAssertNearlySameDate(message.location?.endAt?.bridgeDate, originalEndAt)
+        let newEndAt = message.location?.endAt?.bridgeDate
+        AssertAsync.willBeEqual(newEndAt?.timeIntervalSince1970, originalEndAt.timeIntervalSince1970)
     }
 }
 
