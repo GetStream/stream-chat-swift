@@ -311,6 +311,8 @@ public extension CurrentChatUserController {
         }
     }
 
+    /// Loads all active live location messages for the current user.
+    /// This method is only needed to be called once to make sure all live location messages are tracked.
     func loadActiveLiveLocationMessages(completion: ((Result<[SharedLocation], Error>) -> Void)? = nil) {
         currentUserUpdater.loadActiveLiveLocations { result in
             self.callback {
