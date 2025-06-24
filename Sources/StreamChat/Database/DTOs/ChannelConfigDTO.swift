@@ -25,6 +25,7 @@ final class ChannelConfigDTO: NSManagedObject {
     @NSManaged var createdAt: DBDate
     @NSManaged var updatedAt: DBDate
     @NSManaged var commands: NSOrderedSet
+    @NSManaged var sharedLocationsEnabled: Bool
 
     func asModel() throws -> ChannelConfig {
         try isNotDeleted()
@@ -42,6 +43,7 @@ final class ChannelConfigDTO: NSManagedObject {
             urlEnrichmentEnabled: urlEnrichmentEnabled,
             skipLastMsgAtUpdateForSystemMsg: skipLastMsgAtUpdateForSystemMsg,
             messageRemindersEnabled: messageRemindersEnabled,
+            sharedLocationsEnabled: sharedLocationsEnabled,
             messageRetention: messageRetention,
             maxMessageLength: Int(maxMessageLength),
             commands: Array(Set(
@@ -83,6 +85,7 @@ extension ChannelConfig {
         dto.pollsEnabled = pollsEnabled
         dto.skipLastMsgAtUpdateForSystemMsg = skipLastMsgAtUpdateForSystemMsg
         dto.messageRemindersEnabled = messageRemindersEnabled
+        dto.sharedLocationsEnabled = sharedLocationsEnabled
         return dto
     }
 }

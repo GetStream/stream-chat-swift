@@ -379,6 +379,7 @@ final class DatabaseContainer_Tests: XCTestCase {
             try session.saveChannel(payload: self.dummyPayload(with: .unique), query: nil, cache: nil)
             try session.saveMember(payload: .dummy(), channelId: cid, query: .init(cid: cid), cache: nil)
             try session.saveCurrentUser(payload: .dummy(userId: currentUserId, role: .admin))
+            try session.saveLocation(payload: .dummy(latitude: 10, longitude: 10), cache: nil)
             try session.saveCurrentDevice("123")
             try session.saveChannelMute(payload: .init(
                 mutedChannel: .dummy(cid: cid),

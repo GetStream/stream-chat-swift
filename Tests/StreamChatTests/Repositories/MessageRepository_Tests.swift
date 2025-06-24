@@ -701,8 +701,89 @@ final class MessageRepositoryTests: XCTestCase {
         XCTAssertEqual(reactionScore, 10)
     }
 
-    // MARK: - Interceptor Tests
+    // MARK: - getActiveLiveLocationMessages
 
+    func test_getActiveLiveLocationMessages_whenCurrentUserDoesNotExist_failsWithError() throws {
+        // Create channel but no current user
+        try database.createChannel(cid: cid)
+        
+        let expectation = self.expectation(description: "getActiveLiveLocationMessages completes")
+        var receivedError: Error?
+        
+        repository.getCurrentUserActiveLiveLocationMessages(for: cid) { result in
+            if case .failure(let error) = result {
+                receivedError = error
+            }
+            expectation.fulfill()
+        }
+        
+        waitForExpectations(timeout: defaultTimeout)
+        
+        XCTAssertTrue(receivedError is ClientError)
+        XCTAssertTrue(receivedError is ClientError.CurrentUserDoesNotExist)
+    }
+    
+    func test_getActiveLiveLocationMessages_returnsMessagesForChannel() throws {
+        let currentUserId: UserId = .unique
+        let messageId1: MessageId = .unique
+        let messageId2: MessageId = .unique
+        
+        // Create current user and channel
+        try database.createCurrentUser(id: currentUserId)
+        try database.createChannel(cid: cid)
+        
+        // Create messages with live location attachments
+        try database.createMessage(
+            id: messageId1,
+            authorId: currentUserId,
+            cid: cid,
+            location: .init(
+                channelId: cid.rawValue,
+                messageId: messageId1,
+                userId: .unique,
+                latitude: 1,
+                longitude: 1,
+                createdAt: .unique,
+                updatedAt: .unique,
+                endAt: .distantFuture,
+                createdByDeviceId: .unique
+            )
+        )
+        try database.createMessage(
+            id: messageId2,
+            authorId: currentUserId,
+            cid: cid,
+            location: .init(
+                channelId: cid.rawValue,
+                messageId: messageId2,
+                userId: .unique,
+                latitude: 1,
+                longitude: 1,
+                createdAt: .unique,
+                updatedAt: .unique,
+                endAt: .distantFuture,
+                createdByDeviceId: .unique
+            )
+        )
+        
+        let expectation = self.expectation(description: "getActiveLiveLocationMessages completes")
+        var receivedMessages: [ChatMessage]?
+        
+        repository.getCurrentUserActiveLiveLocationMessages(for: cid) { result in
+            if case .success(let messages) = result {
+                receivedMessages = messages
+            }
+            expectation.fulfill()
+        }
+        
+        waitForExpectations(timeout: defaultTimeout)
+        
+        XCTAssertEqual(receivedMessages?.count, 2)
+        XCTAssertEqual(Set(receivedMessages?.map(\.id) ?? []), Set([messageId1, messageId2]))
+    }
+
+    // MARK: - Interceptor Tests
+    
     final class MockSendMessageInterceptor: SendMessageInterceptor {
         var sendMessageCalled = false
         var receivedMessage: ChatMessage?

@@ -205,7 +205,8 @@ extension XCTestCase {
                 pinnedMessages: pinnedMessages,
                 channelReads: channelReads ?? [dummyChannelRead],
                 isHidden: false,
-                draft: nil
+                draft: nil,
+                activeLiveLocations: []
             )
 
         return payload
@@ -322,7 +323,8 @@ extension XCTestCase {
                 pinnedMessages: [dummyMessageWithNoExtraData],
                 channelReads: [dummyChannelReadWithNoExtraData],
                 isHidden: nil,
-                draft: nil
+                draft: nil,
+                activeLiveLocations: []
             )
 
         return payload

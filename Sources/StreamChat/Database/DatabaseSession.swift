@@ -104,6 +104,7 @@ protocol MessageDatabaseSession {
         skipPush: Bool,
         skipEnrichUrl: Bool,
         poll: PollPayload?,
+        location: NewLocationInfo?,
         restrictedVisibility: [UserId],
         extraData: [String: RawJSON]
     ) throws -> MessageDTO
@@ -301,6 +302,7 @@ extension MessageDatabaseSession {
             skipPush: skipPush,
             skipEnrichUrl: skipEnrichUrl,
             poll: pollPayload,
+            location: nil,
             restrictedVisibility: restrictedVisibility,
             extraData: extraData
         )
@@ -673,6 +675,12 @@ protocol PollDatabaseSession {
     func delete(pollVote: PollVoteDTO)
 }
 
+protocol LocationDatabaseSession {
+    /// Saves the provided location payload to the DB.
+    @discardableResult
+    func saveLocation(payload: SharedLocationPayload, cache: PreWarmedCache?) throws -> SharedLocationDTO
+}
+
 protocol DatabaseSession: UserDatabaseSession,
     CurrentUserDatabaseSession,
     MessageDatabaseSession,
@@ -686,7 +694,9 @@ protocol DatabaseSession: UserDatabaseSession,
     QueuedRequestDatabaseSession,
     ThreadDatabaseSession,
     ThreadReadDatabaseSession,
+    PollDatabaseSession,
     ReminderDatabaseSession,
+    LocationDatabaseSession,
     PollDatabaseSession {}
 
 extension DatabaseSession {
