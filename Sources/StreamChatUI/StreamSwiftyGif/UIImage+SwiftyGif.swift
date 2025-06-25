@@ -41,7 +41,7 @@ extension UIImage {
     ///
     /// - Parameter imageData: The actual image data, can be GIF or some other format
     /// - Parameter levelOfIntegrity: 0 to 1, 1 meaning no frame skipping
-    convenience init?(imageData:Data, levelOfIntegrity: GifLevelOfIntegrity = .default) throws {
+    @MainActor convenience init?(imageData:Data, levelOfIntegrity: GifLevelOfIntegrity = .default) throws {
         do {
             try self.init(gifData: imageData, levelOfIntegrity: levelOfIntegrity)
         } catch {
@@ -53,7 +53,7 @@ extension UIImage {
     ///
     /// - Parameter imageName: Filename
     /// - Parameter levelOfIntegrity: 0 to 1, 1 meaning no frame skipping
-    convenience init?(imageName: String, levelOfIntegrity: GifLevelOfIntegrity = .default) throws {
+    @MainActor convenience init?(imageName: String, levelOfIntegrity: GifLevelOfIntegrity = .default) throws {
         self.init()
 
         do {
@@ -72,7 +72,7 @@ extension UIImage {
     ///
     /// - Parameter gifData: The actual gif data
     /// - Parameter levelOfIntegrity: 0 to 1, 1 meaning no frame skipping
-    convenience init(gifData:Data, levelOfIntegrity: GifLevelOfIntegrity = .default) throws {
+    @MainActor convenience init(gifData:Data, levelOfIntegrity: GifLevelOfIntegrity = .default) throws {
         self.init()
         try setGifFromData(gifData, levelOfIntegrity: levelOfIntegrity)
     }
@@ -81,7 +81,7 @@ extension UIImage {
     ///
     /// - Parameter gifName: Filename
     /// - Parameter levelOfIntegrity: 0 to 1, 1 meaning no frame skipping
-    convenience init(gifName: String, levelOfIntegrity: GifLevelOfIntegrity = .default) throws {
+    @MainActor convenience init(gifName: String, levelOfIntegrity: GifLevelOfIntegrity = .default) throws {
         self.init()
         try setGif(gifName, levelOfIntegrity: levelOfIntegrity)
     }
@@ -90,7 +90,7 @@ extension UIImage {
     ///
     /// - Parameter data: The actual gif data
     /// - Parameter levelOfIntegrity: 0 to 1, 1 meaning no frame skipping
-    func setGifFromData(_ data: Data, levelOfIntegrity: GifLevelOfIntegrity) throws {
+    @MainActor func setGifFromData(_ data: Data, levelOfIntegrity: GifLevelOfIntegrity) throws {
         guard let imageSource = CGImageSourceCreateWithData(data as CFData, nil) else { return }
         self.imageSource = imageSource
         imageData = data
@@ -102,7 +102,7 @@ extension UIImage {
     /// Set backing data for this gif. Overwrites any existing data.
     ///
     /// - Parameter name: Filename
-    func setGif(_ name: String) throws {
+    @MainActor func setGif(_ name: String) throws {
         try setGif(name, levelOfIntegrity: .default)
     }
     
@@ -117,7 +117,7 @@ extension UIImage {
     ///
     /// - Parameter name: Filename
     /// - Parameter levelOfIntegrity: 0 to 1, 1 meaning no frame skipping
-    func setGif(_ name: String, levelOfIntegrity: GifLevelOfIntegrity) throws {
+    @MainActor func setGif(_ name: String, levelOfIntegrity: GifLevelOfIntegrity) throws {
         if let url = Bundle.main.url(forResource: name,
                                      withExtension: name.pathExtension() == "gif" ? "" : "gif") {
             if let data = try? Data(contentsOf: url) {
@@ -206,7 +206,7 @@ extension UIImage {
     ///
     /// - Parameter delaysArray: decoded delay times for this gif
     /// - Parameter levelOfIntegrity: 0 to 1, 1 meaning no frame skipping
-    private func calculateFrameDelay(_ delaysArray: [Float], levelOfIntegrity: GifLevelOfIntegrity) {
+    @MainActor private func calculateFrameDelay(_ delaysArray: [Float], levelOfIntegrity: GifLevelOfIntegrity) {
         let levelOfIntegrity = max(0, min(1, levelOfIntegrity))
         var delays = delaysArray
 
@@ -288,12 +288,12 @@ extension UIImage {
 
 // MARK: - Properties
 
-private let _imageSourceKey = malloc(4)
-private let _displayRefreshFactorKey = malloc(4)
-private let _imageSizeKey = malloc(4)
-private let _imageCountKey = malloc(4)
-private let _displayOrderKey = malloc(4)
-private let _imageDataKey = malloc(4)
+nonisolated(unsafe) private let _imageSourceKey = malloc(4)
+nonisolated(unsafe) private let _displayRefreshFactorKey = malloc(4)
+nonisolated(unsafe) private let _imageSizeKey = malloc(4)
+nonisolated(unsafe) private let _imageCountKey = malloc(4)
+nonisolated(unsafe) private let _displayOrderKey = malloc(4)
+nonisolated(unsafe) private let _imageDataKey = malloc(4)
 
 extension UIImage {
     

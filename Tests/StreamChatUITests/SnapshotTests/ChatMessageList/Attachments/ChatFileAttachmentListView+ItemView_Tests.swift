@@ -9,7 +9,7 @@ import StreamSwiftTestHelpers
 import UIKit
 import XCTest
 
-final class ChatFileAttachmentListViewItemView_Tests: XCTestCase {
+@MainActor final class ChatFileAttachmentListViewItemView_Tests: XCTestCase {
     private var fileAttachmentView: ChatMessageFileAttachmentListView.ItemView!
     private var vc: UIViewController!
 

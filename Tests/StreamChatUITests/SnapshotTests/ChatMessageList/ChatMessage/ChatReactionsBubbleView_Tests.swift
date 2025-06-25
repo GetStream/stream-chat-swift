@@ -8,7 +8,7 @@
 import StreamSwiftTestHelpers
 import XCTest
 
-final class ChatReactionsBubbleView_Tests: XCTestCase {
+@MainActor final class ChatReactionsBubbleView_Tests: XCTestCase {
     func test_defaultAppearance_toLeadingTail() {
         // Create a bubble
         let bubble = ChatReactionsBubbleView().withFixedSize

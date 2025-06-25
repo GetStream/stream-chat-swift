@@ -66,10 +66,12 @@ class DemoComposerVC: ComposerVC {
                         case .success:
                             break
                         case .failure(let error):
-                            self?.presentAlert(
-                                title: "Could not start live location sharing",
-                                message: error.localizedDescription
-                            )
+                            Task { @MainActor in
+                                self?.presentAlert(
+                                    title: "Could not start live location sharing",
+                                    message: error.localizedDescription
+                                )
+                            }
                         }
                     }
                 }

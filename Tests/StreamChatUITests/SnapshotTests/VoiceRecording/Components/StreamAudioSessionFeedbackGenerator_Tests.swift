@@ -9,7 +9,7 @@ import Foundation
 import UIKit
 import XCTest
 
-final class StreamAudioSessionFeedbackGenerator_Tests: XCTestCase {
+@MainActor final class StreamAudioSessionFeedbackGenerator_Tests: XCTestCase {
     private lazy var lightImpactFeedbackGenerator: SpyUIImpactFeedbackGenerator! = .init()
     private lazy var mediumImpactFeedbackGenerator: SpyUIImpactFeedbackGenerator! = .init()
     private lazy var heavyImpactFeedbackGenerator: SpyUIImpactFeedbackGenerator! = .init()
@@ -142,7 +142,7 @@ final class StreamAudioSessionFeedbackGenerator_Tests: XCTestCase {
         )
     }
 
-    func assertFeedbackGenerator(
+    @MainActor func assertFeedbackGenerator(
         _ action: @autoclosure () -> Void,
         expectedCalledFeedbackGenerator: @autoclosure () -> UIFeedbackGenerator,
         file: StaticString = #file,
